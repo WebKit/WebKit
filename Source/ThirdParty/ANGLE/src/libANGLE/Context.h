@@ -43,9 +43,11 @@
 
 namespace angle
 {
+class Closure;
 class FrameCapture;
 class FrameCaptureShared;
 struct FrontendFeatures;
+class WaitableEvent;
 }  // namespace angle
 
 namespace rx
@@ -697,6 +699,10 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     // GL_KHR_parallel_shader_compile
     std::shared_ptr<angle::WorkerThreadPool> getShaderCompileThreadPool() const;
+    std::shared_ptr<angle::WaitableEvent> postCompileLinkTask(
+        const std::shared_ptr<angle::Closure> &task,
+        angle::JobThreadSafety safety,
+        angle::JobResultExpectancy resultExpectancy) const;
 
     // Single-threaded pool; runs everything instantly
     std::shared_ptr<angle::WorkerThreadPool> getSingleThreadPool() const;

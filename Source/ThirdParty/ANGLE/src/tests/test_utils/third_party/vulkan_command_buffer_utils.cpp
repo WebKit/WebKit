@@ -30,6 +30,8 @@ samples utility functions
 #include <cstdlib>
 #include <iterator>
 
+#include "SPIRV/GlslangToSpv.h"
+
 #if defined(VK_USE_PLATFORM_WAYLAND_KHR)
 #    include <linux/input.h>
 #endif
@@ -147,7 +149,7 @@ VkResult init_device_extension_properties(struct sample_info &info, layer_proper
         layer_props.device_extensions.resize(device_extension_count);
         device_extensions = layer_props.device_extensions.data();
         res               = vkEnumerateDeviceExtensionProperties(info.gpus[0], layer_name,
-                                                   &device_extension_count, device_extensions);
+                                                                 &device_extension_count, device_extensions);
     } while (res == VK_INCOMPLETE);
 
     return res;
@@ -517,7 +519,7 @@ void init_window(struct sample_info &info)
 
     info.window = xcb_generate_id(info.connection);
 
-    value_mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
+    value_mask    = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
     value_list[0] = info.screen->black_pixel;
     value_list[1] = XCB_EVENT_MASK_KEY_RELEASE | XCB_EVENT_MASK_EXPOSURE;
 
@@ -527,10 +529,10 @@ void init_window(struct sample_info &info)
 
     /* Magic code that will send notification when window is destroyed */
     xcb_intern_atom_cookie_t cookie = xcb_intern_atom(info.connection, 1, 12, "WM_PROTOCOLS");
-    xcb_intern_atom_reply_t *reply = xcb_intern_atom_reply(info.connection, cookie, 0);
+    xcb_intern_atom_reply_t *reply  = xcb_intern_atom_reply(info.connection, cookie, 0);
 
     xcb_intern_atom_cookie_t cookie2 = xcb_intern_atom(info.connection, 0, 16, "WM_DELETE_WINDOW");
-    info.atom_wm_delete_window = xcb_intern_atom_reply(info.connection, cookie2, 0);
+    info.atom_wm_delete_window       = xcb_intern_atom_reply(info.connection, cookie2, 0);
 
     xcb_change_property(info.connection, XCB_PROP_MODE_REPLACE, info.window, (*reply).atom, 4, 32,
                         1, &(*info.atom_wm_delete_window).atom);
@@ -590,24 +592,24 @@ void init_swapchain_extension(struct sample_info &info)
 #elif defined(__ANDROID__)
     GET_INSTANCE_PROC_ADDR(info.inst, CreateAndroidSurfaceKHR);
     VkAndroidSurfaceCreateInfoKHR createInfo;
-    createInfo.sType = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
-    createInfo.pNext = nullptr;
-    createInfo.flags = 0;
+    createInfo.sType  = VK_STRUCTURE_TYPE_ANDROID_SURFACE_CREATE_INFO_KHR;
+    createInfo.pNext  = nullptr;
+    createInfo.flags  = 0;
     createInfo.window = info.mOSWindow->getNativeWindow();
     res = info.fpCreateAndroidSurfaceKHR(info.inst, &createInfo, nullptr, &info.surface);
 #elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
     VkWaylandSurfaceCreateInfoKHR createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
-    createInfo.pNext = NULL;
-    createInfo.display = info.display;
-    createInfo.surface = info.window;
+    createInfo.sType                         = VK_STRUCTURE_TYPE_WAYLAND_SURFACE_CREATE_INFO_KHR;
+    createInfo.pNext                         = NULL;
+    createInfo.display                       = info.display;
+    createInfo.surface                       = info.window;
     res = vkCreateWaylandSurfaceKHR(info.inst, &createInfo, NULL, &info.surface);
 #else
     VkXcbSurfaceCreateInfoKHR createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
-    createInfo.pNext = NULL;
-    createInfo.connection = info.connection;
-    createInfo.window = info.window;
+    createInfo.sType                     = VK_STRUCTURE_TYPE_XCB_SURFACE_CREATE_INFO_KHR;
+    createInfo.pNext                     = NULL;
+    createInfo.connection                = info.connection;
+    createInfo.window                    = info.window;
     res = vkCreateXcbSurfaceKHR(info.inst, &createInfo, NULL, &info.surface);
 #endif  // __ANDROID__  && _WIN32
     ASSERT(res == VK_SUCCESS);
@@ -920,7 +922,7 @@ void init_swap_chain(struct sample_info &info, VkImageUsageFlags usageFlags)
     swapchain_ci.queueFamilyIndexCount = 0;
     swapchain_ci.pQueueFamilyIndices   = NULL;
     uint32_t queueFamilyIndices[2]     = {(uint32_t)info.graphics_queue_family_index,
-                                      (uint32_t)info.present_queue_family_index};
+                                          (uint32_t)info.present_queue_family_index};
     if (info.graphics_queue_family_index != info.present_queue_family_index)
     {
         // If the graphics and present queues are from different queue families,
@@ -1514,7 +1516,7 @@ void init_shaders(struct sample_info &info, const char *vertShaderText, const ch
         moduleCreateInfo.codeSize = vtx_spv.size() * sizeof(unsigned int);
         moduleCreateInfo.pCode    = vtx_spv.data();
         res                       = vkCreateShaderModule(info.device, &moduleCreateInfo, NULL,
-                                   &info.shaderStages[0].module);
+                                                         &info.shaderStages[0].module);
         ASSERT(res == VK_SUCCESS);
     }
 
@@ -1537,7 +1539,7 @@ void init_shaders(struct sample_info &info, const char *vertShaderText, const ch
         moduleCreateInfo.codeSize = frag_spv.size() * sizeof(unsigned int);
         moduleCreateInfo.pCode    = frag_spv.data();
         res                       = vkCreateShaderModule(info.device, &moduleCreateInfo, NULL,
-                                   &info.shaderStages[1].module);
+                                                         &info.shaderStages[1].module);
         ASSERT(res == VK_SUCCESS);
     }
 
@@ -1644,19 +1646,19 @@ void init_pipeline(struct sample_info &info, VkBool32 include_depth, VkBool32 in
     VkViewport viewports;
     viewports.minDepth = 0.0f;
     viewports.maxDepth = 1.0f;
-    viewports.x = 0;
-    viewports.y = 0;
-    viewports.width = info.width;
-    viewports.height = info.height;
+    viewports.x        = 0;
+    viewports.y        = 0;
+    viewports.width    = info.width;
+    viewports.height   = info.height;
     VkRect2D scissor;
-    scissor.extent.width = info.width;
+    scissor.extent.width  = info.width;
     scissor.extent.height = info.height;
-    scissor.offset.x = 0;
-    scissor.offset.y = 0;
-    vp.viewportCount = NUM_VIEWPORTS;
-    vp.scissorCount = NUM_SCISSORS;
-    vp.pScissors = &scissor;
-    vp.pViewports = &viewports;
+    scissor.offset.x      = 0;
+    scissor.offset.y      = 0;
+    vp.viewportCount      = NUM_VIEWPORTS;
+    vp.scissorCount       = NUM_SCISSORS;
+    vp.pScissors          = &scissor;
+    vp.pViewports         = &viewports;
 #endif
     VkPipelineDepthStencilStateCreateInfo ds;
     ds.sType                 = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
@@ -1728,12 +1730,12 @@ void init_viewports(struct sample_info &info)
 // Disable dynamic viewport on Android. Some drive has an issue with the dynamic viewport
 // feature.
 #else
-    info.viewport.height = (float)info.height;
-    info.viewport.width = (float)info.width;
+    info.viewport.height   = (float)info.height;
+    info.viewport.width    = (float)info.width;
     info.viewport.minDepth = (float)0.0f;
     info.viewport.maxDepth = (float)1.0f;
-    info.viewport.x = 0;
-    info.viewport.y = 0;
+    info.viewport.x        = 0;
+    info.viewport.y        = 0;
     vkCmdSetViewport(info.cmd, 0, NUM_VIEWPORTS, &info.viewport);
 #endif
 }
@@ -1744,12 +1746,12 @@ void init_viewports_array(struct sample_info &info, int index)
 // Disable dynamic viewport on Android. Some drive has an issue with the dynamic viewport
 // feature.
 #else
-    info.viewport.height = (float)info.height;
-    info.viewport.width = (float)info.width;
+    info.viewport.height   = (float)info.height;
+    info.viewport.width    = (float)info.width;
     info.viewport.minDepth = (float)0.0f;
     info.viewport.maxDepth = (float)1.0f;
-    info.viewport.x = 0;
-    info.viewport.y = 0;
+    info.viewport.x        = 0;
+    info.viewport.y        = 0;
     vkCmdSetViewport(info.cmds[index], 0, NUM_VIEWPORTS, &info.viewport);
 #endif
 }
@@ -1760,12 +1762,12 @@ void init_viewports2_array(struct sample_info &info, int index)
 // Disable dynamic viewport on Android. Some drive has an issue with the dynamic viewport
 // feature.
 #else
-    info.viewport.height = (float)info.height;
-    info.viewport.width = (float)info.width;
+    info.viewport.height   = (float)info.height;
+    info.viewport.width    = (float)info.width;
     info.viewport.minDepth = (float)0.0f;
     info.viewport.maxDepth = (float)1.0f;
-    info.viewport.x = 0;
-    info.viewport.y = 0;
+    info.viewport.x        = 0;
+    info.viewport.y        = 0;
     vkCmdSetViewport(info.cmd2s[index], 0, NUM_VIEWPORTS, &info.viewport);
 #endif
 }
@@ -1776,10 +1778,10 @@ void init_scissors(struct sample_info &info)
 // Disable dynamic viewport on Android. Some drive has an issue with the dynamic scissors
 // feature.
 #else
-    info.scissor.extent.width = info.width;
+    info.scissor.extent.width  = info.width;
     info.scissor.extent.height = info.height;
-    info.scissor.offset.x = 0;
-    info.scissor.offset.y = 0;
+    info.scissor.offset.x      = 0;
+    info.scissor.offset.y      = 0;
     vkCmdSetScissor(info.cmd, 0, NUM_SCISSORS, &info.scissor);
 #endif
 }
@@ -1790,10 +1792,10 @@ void init_scissors_array(struct sample_info &info, int index)
 // Disable dynamic viewport on Android. Some drive has an issue with the dynamic scissors
 // feature.
 #else
-    info.scissor.extent.width = info.width;
+    info.scissor.extent.width  = info.width;
     info.scissor.extent.height = info.height;
-    info.scissor.offset.x = 0;
-    info.scissor.offset.y = 0;
+    info.scissor.offset.x      = 0;
+    info.scissor.offset.y      = 0;
     vkCmdSetScissor(info.cmds[index], 0, NUM_SCISSORS, &info.scissor);
 #endif
 }
@@ -1804,10 +1806,10 @@ void init_scissors2_array(struct sample_info &info, int index)
 // Disable dynamic viewport on Android. Some drive has an issue with the dynamic scissors
 // feature.
 #else
-    info.scissor.extent.width = info.width;
+    info.scissor.extent.width  = info.width;
     info.scissor.extent.height = info.height;
-    info.scissor.offset.x = 0;
-    info.scissor.offset.y = 0;
+    info.scissor.offset.x      = 0;
+    info.scissor.offset.y      = 0;
     vkCmdSetScissor(info.cmd2s[index], 0, NUM_SCISSORS, &info.scissor);
 #endif
 }

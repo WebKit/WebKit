@@ -6699,7 +6699,7 @@ constexpr const TFunction ftransform_(BuiltInId::ftransform,
                                       0,
                                       StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                       EOpFtransform,
-                                      false);
+                                      true);
 constexpr const TFunction matrixCompMult_50B50B(
     BuiltInId::matrixCompMult_Float2x2_Float2x2,
     BuiltInName::matrixCompMult,
@@ -8124,7 +8124,7 @@ constexpr const TFunction texture2D_00I10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2D,
-    false);
+    true);
 constexpr const TFunction texture2DProj_00I20B(
     BuiltInId::texture2DProj_Sampler2D1_Float3,
     BuiltInName::texture2DProj,
@@ -8133,7 +8133,7 @@ constexpr const TFunction texture2DProj_00I20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DProj,
-    false);
+    true);
 constexpr const TFunction texture2DProj_00I30B(
     BuiltInId::texture2DProj_Sampler2D1_Float4,
     BuiltInName::texture2DProj,
@@ -8142,7 +8142,7 @@ constexpr const TFunction texture2DProj_00I30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DProj,
-    false);
+    true);
 constexpr const TFunction textureCube_00K20B(
     BuiltInId::textureCube_SamplerCube1_Float3,
     BuiltInName::textureCube,
@@ -8151,7 +8151,7 @@ constexpr const TFunction textureCube_00K20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureCube,
-    false);
+    true);
 constexpr const TFunction texture1D_00g00B(
     BuiltInId::texture1D_Sampler1D1_Float1,
     BuiltInName::texture1D,
@@ -8160,7 +8160,7 @@ constexpr const TFunction texture1D_00g00B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture1D,
-    false);
+    true);
 constexpr const TFunction texture1DProj_00g10B(
     BuiltInId::texture1DProj_Sampler1D1_Float2,
     BuiltInName::texture1DProj,
@@ -8169,7 +8169,7 @@ constexpr const TFunction texture1DProj_00g10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture1DProj,
-    false);
+    true);
 constexpr const TFunction texture1DProj_00g30B(
     BuiltInId::texture1DProj_Sampler1D1_Float4,
     BuiltInName::texture1DProj,
@@ -8178,7 +8178,7 @@ constexpr const TFunction texture1DProj_00g30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture1DProj,
-    false);
+    true);
 constexpr const TFunction texture3D_00J20B(
     BuiltInId::texture3D_Sampler3D1_Float3,
     BuiltInName::texture3D,
@@ -8187,7 +8187,7 @@ constexpr const TFunction texture3D_00J20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture3D,
-    false);
+    true);
 constexpr const TFunction texture3DProj_00J30B(
     BuiltInId::texture3DProj_Sampler3D1_Float4,
     BuiltInName::texture3DProj,
@@ -8196,7 +8196,7 @@ constexpr const TFunction texture3DProj_00J30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture3DProj,
-    false);
+    true);
 constexpr const TFunction shadow1D_00m20B(
     BuiltInId::shadow1D_Sampler1DShadow1_Float3,
     BuiltInName::shadow1D,
@@ -8205,7 +8205,7 @@ constexpr const TFunction shadow1D_00m20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpShadow1D,
-    false);
+    true);
 constexpr const TFunction shadow1DProj_00m30B(
     BuiltInId::shadow1DProj_Sampler1DShadow1_Float4,
     BuiltInName::shadow1DProj,
@@ -8214,7 +8214,7 @@ constexpr const TFunction shadow1DProj_00m30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpShadow1DProj,
-    false);
+    true);
 constexpr const TFunction shadow2D_00d20B(
     BuiltInId::shadow2D_Sampler2DShadow1_Float3,
     BuiltInName::shadow2D,
@@ -8223,7 +8223,7 @@ constexpr const TFunction shadow2D_00d20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpShadow2D,
-    false);
+    true);
 constexpr const TFunction shadow2DProj_00d30B(
     BuiltInId::shadow2DProj_Sampler2DShadow1_Float4,
     BuiltInName::shadow2DProj,
@@ -8232,7 +8232,7 @@ constexpr const TFunction shadow2DProj_00d30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpShadow2DProj,
-    false);
+    true);
 constexpr const TFunction shadow2DEXT_00d20B(
     BuiltInId::shadow2DEXT_Sampler2DShadow1_Float3,
     BuiltInName::shadow2DEXT,
@@ -8241,7 +8241,7 @@ constexpr const TFunction shadow2DEXT_00d20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpShadow2DEXT,
-    false);
+    true);
 constexpr const TFunction shadow2DProjEXT_00d30B(
     BuiltInId::shadow2DProjEXT_Sampler2DShadow1_Float4,
     BuiltInName::shadow2DProjEXT,
@@ -8250,7 +8250,7 @@ constexpr const TFunction shadow2DProjEXT_00d30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpShadow2DProjEXT,
-    false);
+    true);
 constexpr const TFunction texture2D_00M10B(
     BuiltInId::texture2D_SamplerExternalOES1_Float2,
     BuiltInName::texture2D,
@@ -8260,7 +8260,7 @@ constexpr const TFunction texture2D_00M10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2D,
-    false);
+    true);
 constexpr const TFunction texture2DProj_00M20B(
     BuiltInId::texture2DProj_SamplerExternalOES1_Float3,
     BuiltInName::texture2DProj,
@@ -8270,7 +8270,7 @@ constexpr const TFunction texture2DProj_00M20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DProj,
-    false);
+    true);
 constexpr const TFunction texture2DProj_00M30B(
     BuiltInId::texture2DProj_SamplerExternalOES1_Float4,
     BuiltInName::texture2DProj,
@@ -8280,7 +8280,7 @@ constexpr const TFunction texture2DProj_00M30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DProj,
-    false);
+    true);
 constexpr const TFunction texture2DRect_00O10B(
     BuiltInId::texture2DRect_Sampler2DRect1_Float2,
     BuiltInName::texture2DRect,
@@ -8289,7 +8289,7 @@ constexpr const TFunction texture2DRect_00O10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DRect,
-    false);
+    true);
 constexpr const TFunction texture2DRectProj_00O20B(
     BuiltInId::texture2DRectProj_Sampler2DRect1_Float3,
     BuiltInName::texture2DRectProj,
@@ -8298,7 +8298,7 @@ constexpr const TFunction texture2DRectProj_00O20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DRectProj,
-    false);
+    true);
 constexpr const TFunction texture2DRectProj_00O30B(
     BuiltInId::texture2DRectProj_Sampler2DRect1_Float4,
     BuiltInName::texture2DRectProj,
@@ -8307,7 +8307,7 @@ constexpr const TFunction texture2DRectProj_00O30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DRectProj,
-    false);
+    true);
 constexpr const TFunction texture2DGradEXT_00I10B10B10B(
     BuiltInId::texture2DGradEXT_Sampler2D1_Float2_Float2_Float2,
     BuiltInName::texture2DGradEXT,
@@ -8316,7 +8316,7 @@ constexpr const TFunction texture2DGradEXT_00I10B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DGradEXT,
-    false);
+    true);
 constexpr const TFunction texture2DProjGradEXT_00I20B10B10B(
     BuiltInId::texture2DProjGradEXT_Sampler2D1_Float3_Float2_Float2,
     BuiltInName::texture2DProjGradEXT,
@@ -8325,7 +8325,7 @@ constexpr const TFunction texture2DProjGradEXT_00I20B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DProjGradEXT,
-    false);
+    true);
 constexpr const TFunction texture2DProjGradEXT_00I30B10B10B(
     BuiltInId::texture2DProjGradEXT_Sampler2D1_Float4_Float2_Float2,
     BuiltInName::texture2DProjGradEXT,
@@ -8334,7 +8334,7 @@ constexpr const TFunction texture2DProjGradEXT_00I30B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DProjGradEXT,
-    false);
+    true);
 constexpr const TFunction textureCubeGradEXT_00K20B20B20B(
     BuiltInId::textureCubeGradEXT_SamplerCube1_Float3_Float3_Float3,
     BuiltInName::textureCubeGradEXT,
@@ -8343,7 +8343,7 @@ constexpr const TFunction textureCubeGradEXT_00K20B20B20B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureCubeGradEXT,
-    false);
+    true);
 constexpr const TFunction textureVideoWEBGL_00y10B(
     BuiltInId::textureVideoWEBGL_SamplerVideoWEBGL1_Float2,
     BuiltInName::textureVideoWEBGL,
@@ -8352,7 +8352,7 @@ constexpr const TFunction textureVideoWEBGL_00y10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureVideoWEBGL,
-    false);
+    true);
 constexpr const TFunction texture2D_00I10B00B(
     BuiltInId::texture2D_Sampler2D1_Float2_Float1,
     BuiltInName::texture2D,
@@ -8361,7 +8361,7 @@ constexpr const TFunction texture2D_00I10B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DBias,
-    false);
+    true);
 constexpr const TFunction texture2DProj_00I20B00B(
     BuiltInId::texture2DProj_Sampler2D1_Float3_Float1,
     BuiltInName::texture2DProj,
@@ -8370,7 +8370,7 @@ constexpr const TFunction texture2DProj_00I20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DProjBias,
-    false);
+    true);
 constexpr const TFunction texture2DProj_00I30B00B(
     BuiltInId::texture2DProj_Sampler2D1_Float4_Float1,
     BuiltInName::texture2DProj,
@@ -8379,7 +8379,7 @@ constexpr const TFunction texture2DProj_00I30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DProjBias,
-    false);
+    true);
 constexpr const TFunction textureCube_00K20B00B(
     BuiltInId::textureCube_SamplerCube1_Float3_Float1,
     BuiltInName::textureCube,
@@ -8388,7 +8388,7 @@ constexpr const TFunction textureCube_00K20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureCubeBias,
-    false);
+    true);
 constexpr const TFunction texture3D_00J20B00B(
     BuiltInId::texture3D_Sampler3D1_Float3_Float1,
     BuiltInName::texture3D,
@@ -8397,7 +8397,7 @@ constexpr const TFunction texture3D_00J20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture3DBias,
-    false);
+    true);
 constexpr const TFunction texture3DProj_00J30B00B(
     BuiltInId::texture3DProj_Sampler3D1_Float4_Float1,
     BuiltInName::texture3DProj,
@@ -8406,7 +8406,7 @@ constexpr const TFunction texture3DProj_00J30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture3DProjBias,
-    false);
+    true);
 constexpr const TFunction texture1D_00g00B00B(
     BuiltInId::texture1D_Sampler1D1_Float1_Float1,
     BuiltInName::texture1D,
@@ -8415,7 +8415,7 @@ constexpr const TFunction texture1D_00g00B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture1DBias,
-    false);
+    true);
 constexpr const TFunction texture1DProj_00g10B00B(
     BuiltInId::texture1DProj_Sampler1D1_Float2_Float1,
     BuiltInName::texture1DProj,
@@ -8424,7 +8424,7 @@ constexpr const TFunction texture1DProj_00g10B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture1DProjBias,
-    false);
+    true);
 constexpr const TFunction texture1DProj_00g30B00B(
     BuiltInId::texture1DProj_Sampler1D1_Float4_Float1,
     BuiltInName::texture1DProj,
@@ -8433,7 +8433,7 @@ constexpr const TFunction texture1DProj_00g30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture1DProjBias,
-    false);
+    true);
 constexpr const TFunction shadow1D_00m20B00B(
     BuiltInId::shadow1D_Sampler1DShadow1_Float3_Float1,
     BuiltInName::shadow1D,
@@ -8442,7 +8442,7 @@ constexpr const TFunction shadow1D_00m20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpShadow1DBias,
-    false);
+    true);
 constexpr const TFunction shadow1DProj_00m30B00B(
     BuiltInId::shadow1DProj_Sampler1DShadow1_Float4_Float1,
     BuiltInName::shadow1DProj,
@@ -8451,7 +8451,7 @@ constexpr const TFunction shadow1DProj_00m30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpShadow1DProjBias,
-    false);
+    true);
 constexpr const TFunction shadow2D_00d20B00B(
     BuiltInId::shadow2D_Sampler2DShadow1_Float3_Float1,
     BuiltInName::shadow2D,
@@ -8460,7 +8460,7 @@ constexpr const TFunction shadow2D_00d20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpShadow2DBias,
-    false);
+    true);
 constexpr const TFunction shadow2DProj_00d30B00B(
     BuiltInId::shadow2DProj_Sampler2DShadow1_Float4_Float1,
     BuiltInName::shadow2DProj,
@@ -8469,7 +8469,7 @@ constexpr const TFunction shadow2DProj_00d30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpShadow2DProjBias,
-    false);
+    true);
 constexpr const TFunction texture2DLod_00I10B00B(
     BuiltInId::texture2DLod_Sampler2D1_Float2_Float1,
     BuiltInName::texture2DLod,
@@ -8478,7 +8478,7 @@ constexpr const TFunction texture2DLod_00I10B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DLod,
-    false);
+    true);
 constexpr const TFunction texture2DProjLod_00I20B00B(
     BuiltInId::texture2DProjLod_Sampler2D1_Float3_Float1,
     BuiltInName::texture2DProjLod,
@@ -8487,7 +8487,7 @@ constexpr const TFunction texture2DProjLod_00I20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DProjLod,
-    false);
+    true);
 constexpr const TFunction texture2DProjLod_00I30B00B(
     BuiltInId::texture2DProjLod_Sampler2D1_Float4_Float1,
     BuiltInName::texture2DProjLod,
@@ -8496,7 +8496,7 @@ constexpr const TFunction texture2DProjLod_00I30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DProjLod,
-    false);
+    true);
 constexpr const TFunction textureCubeLod_00K20B00B(
     BuiltInId::textureCubeLod_SamplerCube1_Float3_Float1,
     BuiltInName::textureCubeLod,
@@ -8505,7 +8505,7 @@ constexpr const TFunction textureCubeLod_00K20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureCubeLod,
-    false);
+    true);
 constexpr const TFunction texture1DLod_00g00B00B(
     BuiltInId::texture1DLod_Sampler1D1_Float1_Float1,
     BuiltInName::texture1DLod,
@@ -8514,7 +8514,7 @@ constexpr const TFunction texture1DLod_00g00B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture1DLod,
-    false);
+    true);
 constexpr const TFunction texture1DProjLod_00g10B00B(
     BuiltInId::texture1DProjLod_Sampler1D1_Float2_Float1,
     BuiltInName::texture1DProjLod,
@@ -8523,7 +8523,7 @@ constexpr const TFunction texture1DProjLod_00g10B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture1DProjLod,
-    false);
+    true);
 constexpr const TFunction texture1DProjLod_00g30B00B(
     BuiltInId::texture1DProjLod_Sampler1D1_Float4_Float1,
     BuiltInName::texture1DProjLod,
@@ -8532,7 +8532,7 @@ constexpr const TFunction texture1DProjLod_00g30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture1DProjLod,
-    false);
+    true);
 constexpr const TFunction shadow1DLod_00m20B00B(
     BuiltInId::shadow1DLod_Sampler1DShadow1_Float3_Float1,
     BuiltInName::shadow1DLod,
@@ -8541,7 +8541,7 @@ constexpr const TFunction shadow1DLod_00m20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpShadow1DLod,
-    false);
+    true);
 constexpr const TFunction shadow1DProjLod_00m30B00B(
     BuiltInId::shadow1DProjLod_Sampler1DShadow1_Float4_Float1,
     BuiltInName::shadow1DProjLod,
@@ -8550,7 +8550,7 @@ constexpr const TFunction shadow1DProjLod_00m30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpShadow1DProjLod,
-    false);
+    true);
 constexpr const TFunction shadow2DLod_00d20B00B(
     BuiltInId::shadow2DLod_Sampler2DShadow1_Float3_Float1,
     BuiltInName::shadow2DLod,
@@ -8559,7 +8559,7 @@ constexpr const TFunction shadow2DLod_00d20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpShadow2DLod,
-    false);
+    true);
 constexpr const TFunction shadow2DProjLod_00d30B00B(
     BuiltInId::shadow2DProjLod_Sampler2DShadow1_Float4_Float1,
     BuiltInName::shadow2DProjLod,
@@ -8568,7 +8568,7 @@ constexpr const TFunction shadow2DProjLod_00d30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpShadow2DProjLod,
-    false);
+    true);
 constexpr const TFunction texture3DLod_00J20B00B(
     BuiltInId::texture3DLod_Sampler3D1_Float3_Float1,
     BuiltInName::texture3DLod,
@@ -8577,7 +8577,7 @@ constexpr const TFunction texture3DLod_00J20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture3DLod,
-    false);
+    true);
 constexpr const TFunction texture3DProjLod_00J30B00B(
     BuiltInId::texture3DProjLod_Sampler3D1_Float4_Float1,
     BuiltInName::texture3DProjLod,
@@ -8586,7 +8586,7 @@ constexpr const TFunction texture3DProjLod_00J30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture3DProjLod,
-    false);
+    true);
 constexpr const TFunction texture2DLodEXT_00I10B00B(
     BuiltInId::texture2DLodEXT_Sampler2D1_Float2_Float1,
     BuiltInName::texture2DLodEXT,
@@ -8595,7 +8595,7 @@ constexpr const TFunction texture2DLodEXT_00I10B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DLodEXTFS,
-    false);
+    true);
 constexpr const TFunction texture2DProjLodEXT_00I20B00B(
     BuiltInId::texture2DProjLodEXT_Sampler2D1_Float3_Float1,
     BuiltInName::texture2DProjLodEXT,
@@ -8604,7 +8604,7 @@ constexpr const TFunction texture2DProjLodEXT_00I20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DProjLodEXTFS,
-    false);
+    true);
 constexpr const TFunction texture2DProjLodEXT_00I30B00B(
     BuiltInId::texture2DProjLodEXT_Sampler2D1_Float4_Float1,
     BuiltInName::texture2DProjLodEXT,
@@ -8613,7 +8613,7 @@ constexpr const TFunction texture2DProjLodEXT_00I30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture2DProjLodEXTFS,
-    false);
+    true);
 constexpr const TFunction textureCubeLodEXT_00K20B00B(
     BuiltInId::textureCubeLodEXT_SamplerCube1_Float3_Float1,
     BuiltInName::textureCubeLodEXT,
@@ -8622,7 +8622,7 @@ constexpr const TFunction textureCubeLodEXT_00K20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureCubeLodEXTFS,
-    false);
+    true);
 constexpr const TFunction texture_00I10B(BuiltInId::texture_Sampler2D1_Float2,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8630,7 +8630,7 @@ constexpr const TFunction texture_00I10B(BuiltInId::texture_Sampler2D1_Float2,
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00R10B(BuiltInId::texture_ISampler2D1_Float2,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8638,7 +8638,7 @@ constexpr const TFunction texture_00R10B(BuiltInId::texture_ISampler2D1_Float2,
                                          2,
                                          StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00X10B(BuiltInId::texture_USampler2D1_Float2,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8646,7 +8646,7 @@ constexpr const TFunction texture_00X10B(BuiltInId::texture_USampler2D1_Float2,
                                          2,
                                          StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00J20B(BuiltInId::texture_Sampler3D1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8654,7 +8654,7 @@ constexpr const TFunction texture_00J20B(BuiltInId::texture_Sampler3D1_Float3,
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00S20B(BuiltInId::texture_ISampler3D1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8662,7 +8662,7 @@ constexpr const TFunction texture_00S20B(BuiltInId::texture_ISampler3D1_Float3,
                                          2,
                                          StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00Y20B(BuiltInId::texture_USampler3D1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8670,7 +8670,7 @@ constexpr const TFunction texture_00Y20B(BuiltInId::texture_USampler3D1_Float3,
                                          2,
                                          StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00K20B(BuiltInId::texture_SamplerCube1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8678,7 +8678,7 @@ constexpr const TFunction texture_00K20B(BuiltInId::texture_SamplerCube1_Float3,
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00T20B(BuiltInId::texture_ISamplerCube1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8686,7 +8686,7 @@ constexpr const TFunction texture_00T20B(BuiltInId::texture_ISamplerCube1_Float3
                                          2,
                                          StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00Z20B(BuiltInId::texture_USamplerCube1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8694,7 +8694,7 @@ constexpr const TFunction texture_00Z20B(BuiltInId::texture_USamplerCube1_Float3
                                          2,
                                          StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00L20B(BuiltInId::texture_Sampler2DArray1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8702,7 +8702,7 @@ constexpr const TFunction texture_00L20B(BuiltInId::texture_Sampler2DArray1_Floa
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00U20B(BuiltInId::texture_ISampler2DArray1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8710,7 +8710,7 @@ constexpr const TFunction texture_00U20B(BuiltInId::texture_ISampler2DArray1_Flo
                                          2,
                                          StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00a20B(BuiltInId::texture_USampler2DArray1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8718,7 +8718,7 @@ constexpr const TFunction texture_00a20B(BuiltInId::texture_USampler2DArray1_Flo
                                          2,
                                          StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00d20B(BuiltInId::texture_Sampler2DShadow1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8726,7 +8726,7 @@ constexpr const TFunction texture_00d20B(BuiltInId::texture_Sampler2DShadow1_Flo
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00e30B(BuiltInId::texture_SamplerCubeShadow1_Float4,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8734,7 +8734,7 @@ constexpr const TFunction texture_00e30B(BuiltInId::texture_SamplerCubeShadow1_F
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00f30B(BuiltInId::texture_Sampler2DArrayShadow1_Float4,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8742,7 +8742,7 @@ constexpr const TFunction texture_00f30B(BuiltInId::texture_Sampler2DArrayShadow
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00g00B(BuiltInId::texture_Sampler1D1_Float1,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8750,7 +8750,7 @@ constexpr const TFunction texture_00g00B(BuiltInId::texture_Sampler1D1_Float1,
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00o00B(BuiltInId::texture_ISampler1D1_Float1,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8758,7 +8758,7 @@ constexpr const TFunction texture_00o00B(BuiltInId::texture_ISampler1D1_Float1,
                                          2,
                                          StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00t00B(BuiltInId::texture_USampler1D1_Float1,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8766,7 +8766,7 @@ constexpr const TFunction texture_00t00B(BuiltInId::texture_USampler1D1_Float1,
                                          2,
                                          StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00m20B(BuiltInId::texture_Sampler1DShadow1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8774,7 +8774,7 @@ constexpr const TFunction texture_00m20B(BuiltInId::texture_Sampler1DShadow1_Flo
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00h20B(BuiltInId::texture_Sampler1DArray1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8782,7 +8782,7 @@ constexpr const TFunction texture_00h20B(BuiltInId::texture_Sampler1DArray1_Floa
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00p20B(BuiltInId::texture_ISampler1DArray1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8790,7 +8790,7 @@ constexpr const TFunction texture_00p20B(BuiltInId::texture_ISampler1DArray1_Flo
                                          2,
                                          StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00u20B(BuiltInId::texture_USampler1DArray1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8798,7 +8798,7 @@ constexpr const TFunction texture_00u20B(BuiltInId::texture_USampler1DArray1_Flo
                                          2,
                                          StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00i20B(BuiltInId::texture_Sampler1DArrayShadow1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8806,7 +8806,7 @@ constexpr const TFunction texture_00i20B(BuiltInId::texture_Sampler1DArrayShadow
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00O10B(BuiltInId::texture_Sampler2DRect1_Float2,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8814,7 +8814,7 @@ constexpr const TFunction texture_00O10B(BuiltInId::texture_Sampler2DRect1_Float
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00q10B(BuiltInId::texture_ISampler2DRect1_Float2,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8822,7 +8822,7 @@ constexpr const TFunction texture_00q10B(BuiltInId::texture_ISampler2DRect1_Floa
                                          2,
                                          StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00v10B(BuiltInId::texture_USampler2DRect1_Float2,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8830,7 +8830,7 @@ constexpr const TFunction texture_00v10B(BuiltInId::texture_USampler2DRect1_Floa
                                          2,
                                          StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00n20B(BuiltInId::texture_Sampler2DRectShadow1_Float3,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8838,7 +8838,7 @@ constexpr const TFunction texture_00n20B(BuiltInId::texture_Sampler2DRectShadow1
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00k30B(BuiltInId::texture_SamplerCubeArray1_Float4,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8846,7 +8846,7 @@ constexpr const TFunction texture_00k30B(BuiltInId::texture_SamplerCubeArray1_Fl
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00s30B(BuiltInId::texture_ISamplerCubeArray1_Float4,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8854,7 +8854,7 @@ constexpr const TFunction texture_00s30B(BuiltInId::texture_ISamplerCubeArray1_F
                                          2,
                                          StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00x30B(BuiltInId::texture_USamplerCubeArray1_Float4,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8862,7 +8862,7 @@ constexpr const TFunction texture_00x30B(BuiltInId::texture_USamplerCubeArray1_F
                                          2,
                                          StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00l30B00B(
     BuiltInId::texture_SamplerCubeArrayShadow1_Float4_Float1,
     BuiltInName::texture,
@@ -8871,7 +8871,7 @@ constexpr const TFunction texture_00l30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTexture,
-    false);
+    true);
 constexpr const TFunction textureExt_00k30B(
     BuiltInId::textureExt_SamplerCubeArray1_Float4,
     BuiltInName::textureExt,
@@ -8881,7 +8881,7 @@ constexpr const TFunction textureExt_00k30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture,
-    false);
+    true);
 constexpr const TFunction textureExt_00s30B(
     BuiltInId::textureExt_ISamplerCubeArray1_Float4,
     BuiltInName::textureExt,
@@ -8891,7 +8891,7 @@ constexpr const TFunction textureExt_00s30B(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture,
-    false);
+    true);
 constexpr const TFunction textureExt_00x30B(
     BuiltInId::textureExt_USamplerCubeArray1_Float4,
     BuiltInName::textureExt,
@@ -8901,7 +8901,7 @@ constexpr const TFunction textureExt_00x30B(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexture,
-    false);
+    true);
 constexpr const TFunction textureExt_00l30B00B(
     BuiltInId::textureExt_SamplerCubeArrayShadow1_Float4_Float1,
     BuiltInName::textureExt,
@@ -8911,7 +8911,7 @@ constexpr const TFunction textureExt_00l30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTexture,
-    false);
+    true);
 constexpr const TFunction texture_00M10B(BuiltInId::texture_SamplerExternalOES1_Float2,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{
@@ -8920,7 +8920,7 @@ constexpr const TFunction texture_00M10B(BuiltInId::texture_SamplerExternalOES1_
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00N10B(BuiltInId::texture_SamplerExternal2DY2YEXT1_Float2,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::EXT_YUV_target}},
@@ -8928,7 +8928,7 @@ constexpr const TFunction texture_00N10B(BuiltInId::texture_SamplerExternal2DY2Y
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction texture_00y10B(BuiltInId::texture_SamplerVideoWEBGL1_Float2,
                                          BuiltInName::texture,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -8936,7 +8936,7 @@ constexpr const TFunction texture_00y10B(BuiltInId::texture_SamplerVideoWEBGL1_F
                                          2,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpTexture,
-                                         false);
+                                         true);
 constexpr const TFunction textureProj_00I20B(
     BuiltInId::textureProj_Sampler2D1_Float3,
     BuiltInName::textureProj,
@@ -8945,7 +8945,7 @@ constexpr const TFunction textureProj_00I20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00R20B(
     BuiltInId::textureProj_ISampler2D1_Float3,
     BuiltInName::textureProj,
@@ -8954,7 +8954,7 @@ constexpr const TFunction textureProj_00R20B(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00X20B(
     BuiltInId::textureProj_USampler2D1_Float3,
     BuiltInName::textureProj,
@@ -8963,7 +8963,7 @@ constexpr const TFunction textureProj_00X20B(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00I30B(
     BuiltInId::textureProj_Sampler2D1_Float4,
     BuiltInName::textureProj,
@@ -8972,7 +8972,7 @@ constexpr const TFunction textureProj_00I30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00R30B(
     BuiltInId::textureProj_ISampler2D1_Float4,
     BuiltInName::textureProj,
@@ -8981,7 +8981,7 @@ constexpr const TFunction textureProj_00R30B(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00X30B(
     BuiltInId::textureProj_USampler2D1_Float4,
     BuiltInName::textureProj,
@@ -8990,7 +8990,7 @@ constexpr const TFunction textureProj_00X30B(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00J30B(
     BuiltInId::textureProj_Sampler3D1_Float4,
     BuiltInName::textureProj,
@@ -8999,7 +8999,7 @@ constexpr const TFunction textureProj_00J30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00S30B(
     BuiltInId::textureProj_ISampler3D1_Float4,
     BuiltInName::textureProj,
@@ -9008,7 +9008,7 @@ constexpr const TFunction textureProj_00S30B(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00Y30B(
     BuiltInId::textureProj_USampler3D1_Float4,
     BuiltInName::textureProj,
@@ -9017,7 +9017,7 @@ constexpr const TFunction textureProj_00Y30B(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00d30B(
     BuiltInId::textureProj_Sampler2DShadow1_Float4,
     BuiltInName::textureProj,
@@ -9026,7 +9026,7 @@ constexpr const TFunction textureProj_00d30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00g10B(
     BuiltInId::textureProj_Sampler1D1_Float2,
     BuiltInName::textureProj,
@@ -9035,7 +9035,7 @@ constexpr const TFunction textureProj_00g10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00o10B(
     BuiltInId::textureProj_ISampler1D1_Float2,
     BuiltInName::textureProj,
@@ -9044,7 +9044,7 @@ constexpr const TFunction textureProj_00o10B(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00t10B(
     BuiltInId::textureProj_USampler1D1_Float2,
     BuiltInName::textureProj,
@@ -9053,7 +9053,7 @@ constexpr const TFunction textureProj_00t10B(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00g30B(
     BuiltInId::textureProj_Sampler1D1_Float4,
     BuiltInName::textureProj,
@@ -9062,7 +9062,7 @@ constexpr const TFunction textureProj_00g30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00o30B(
     BuiltInId::textureProj_ISampler1D1_Float4,
     BuiltInName::textureProj,
@@ -9071,7 +9071,7 @@ constexpr const TFunction textureProj_00o30B(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00t30B(
     BuiltInId::textureProj_USampler1D1_Float4,
     BuiltInName::textureProj,
@@ -9080,7 +9080,7 @@ constexpr const TFunction textureProj_00t30B(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00m30B(
     BuiltInId::textureProj_Sampler1DShadow1_Float4,
     BuiltInName::textureProj,
@@ -9089,7 +9089,7 @@ constexpr const TFunction textureProj_00m30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00O20B(
     BuiltInId::textureProj_Sampler2DRect1_Float3,
     BuiltInName::textureProj,
@@ -9098,7 +9098,7 @@ constexpr const TFunction textureProj_00O20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00q20B(
     BuiltInId::textureProj_ISampler2DRect1_Float3,
     BuiltInName::textureProj,
@@ -9107,7 +9107,7 @@ constexpr const TFunction textureProj_00q20B(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00v20B(
     BuiltInId::textureProj_USampler2DRect1_Float3,
     BuiltInName::textureProj,
@@ -9116,7 +9116,7 @@ constexpr const TFunction textureProj_00v20B(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00O30B(
     BuiltInId::textureProj_Sampler2DRect1_Float4,
     BuiltInName::textureProj,
@@ -9125,7 +9125,7 @@ constexpr const TFunction textureProj_00O30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00q30B(
     BuiltInId::textureProj_ISampler2DRect1_Float4,
     BuiltInName::textureProj,
@@ -9134,7 +9134,7 @@ constexpr const TFunction textureProj_00q30B(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00v30B(
     BuiltInId::textureProj_USampler2DRect1_Float4,
     BuiltInName::textureProj,
@@ -9143,7 +9143,7 @@ constexpr const TFunction textureProj_00v30B(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00n30B(
     BuiltInId::textureProj_Sampler2DRectShadow1_Float4,
     BuiltInName::textureProj,
@@ -9152,7 +9152,7 @@ constexpr const TFunction textureProj_00n30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00M20B(
     BuiltInId::textureProj_SamplerExternalOES1_Float3,
     BuiltInName::textureProj,
@@ -9161,7 +9161,7 @@ constexpr const TFunction textureProj_00M20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00M30B(
     BuiltInId::textureProj_SamplerExternalOES1_Float4,
     BuiltInName::textureProj,
@@ -9170,7 +9170,7 @@ constexpr const TFunction textureProj_00M30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00N20B(
     BuiltInId::textureProj_SamplerExternal2DY2YEXT1_Float3,
     BuiltInName::textureProj,
@@ -9179,7 +9179,7 @@ constexpr const TFunction textureProj_00N20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureProj_00N30B(
     BuiltInId::textureProj_SamplerExternal2DY2YEXT1_Float4,
     BuiltInName::textureProj,
@@ -9188,7 +9188,7 @@ constexpr const TFunction textureProj_00N30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProj,
-    false);
+    true);
 constexpr const TFunction textureLod_00I10B00B(
     BuiltInId::textureLod_Sampler2D1_Float2_Float1,
     BuiltInName::textureLod,
@@ -9197,7 +9197,7 @@ constexpr const TFunction textureLod_00I10B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00R10B00B(
     BuiltInId::textureLod_ISampler2D1_Float2_Float1,
     BuiltInName::textureLod,
@@ -9206,7 +9206,7 @@ constexpr const TFunction textureLod_00R10B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00X10B00B(
     BuiltInId::textureLod_USampler2D1_Float2_Float1,
     BuiltInName::textureLod,
@@ -9215,7 +9215,7 @@ constexpr const TFunction textureLod_00X10B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00J20B00B(
     BuiltInId::textureLod_Sampler3D1_Float3_Float1,
     BuiltInName::textureLod,
@@ -9224,7 +9224,7 @@ constexpr const TFunction textureLod_00J20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00S20B00B(
     BuiltInId::textureLod_ISampler3D1_Float3_Float1,
     BuiltInName::textureLod,
@@ -9233,7 +9233,7 @@ constexpr const TFunction textureLod_00S20B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00Y20B00B(
     BuiltInId::textureLod_USampler3D1_Float3_Float1,
     BuiltInName::textureLod,
@@ -9242,7 +9242,7 @@ constexpr const TFunction textureLod_00Y20B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00K20B00B(
     BuiltInId::textureLod_SamplerCube1_Float3_Float1,
     BuiltInName::textureLod,
@@ -9251,7 +9251,7 @@ constexpr const TFunction textureLod_00K20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00T20B00B(
     BuiltInId::textureLod_ISamplerCube1_Float3_Float1,
     BuiltInName::textureLod,
@@ -9260,7 +9260,7 @@ constexpr const TFunction textureLod_00T20B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00Z20B00B(
     BuiltInId::textureLod_USamplerCube1_Float3_Float1,
     BuiltInName::textureLod,
@@ -9269,7 +9269,7 @@ constexpr const TFunction textureLod_00Z20B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00L20B00B(
     BuiltInId::textureLod_Sampler2DArray1_Float3_Float1,
     BuiltInName::textureLod,
@@ -9278,7 +9278,7 @@ constexpr const TFunction textureLod_00L20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00U20B00B(
     BuiltInId::textureLod_ISampler2DArray1_Float3_Float1,
     BuiltInName::textureLod,
@@ -9287,7 +9287,7 @@ constexpr const TFunction textureLod_00U20B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00a20B00B(
     BuiltInId::textureLod_USampler2DArray1_Float3_Float1,
     BuiltInName::textureLod,
@@ -9296,7 +9296,7 @@ constexpr const TFunction textureLod_00a20B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00d20B00B(
     BuiltInId::textureLod_Sampler2DShadow1_Float3_Float1,
     BuiltInName::textureLod,
@@ -9305,7 +9305,7 @@ constexpr const TFunction textureLod_00d20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00g00B00B(
     BuiltInId::textureLod_Sampler1D1_Float1_Float1,
     BuiltInName::textureLod,
@@ -9314,7 +9314,7 @@ constexpr const TFunction textureLod_00g00B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00o00B00B(
     BuiltInId::textureLod_ISampler1D1_Float1_Float1,
     BuiltInName::textureLod,
@@ -9323,7 +9323,7 @@ constexpr const TFunction textureLod_00o00B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00t00B00B(
     BuiltInId::textureLod_USampler1D1_Float1_Float1,
     BuiltInName::textureLod,
@@ -9332,7 +9332,7 @@ constexpr const TFunction textureLod_00t00B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00m20B00B(
     BuiltInId::textureLod_Sampler1DShadow1_Float3_Float1,
     BuiltInName::textureLod,
@@ -9341,7 +9341,7 @@ constexpr const TFunction textureLod_00m20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00h10B00B(
     BuiltInId::textureLod_Sampler1DArray1_Float2_Float1,
     BuiltInName::textureLod,
@@ -9350,7 +9350,7 @@ constexpr const TFunction textureLod_00h10B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00p10B00B(
     BuiltInId::textureLod_ISampler1DArray1_Float2_Float1,
     BuiltInName::textureLod,
@@ -9359,7 +9359,7 @@ constexpr const TFunction textureLod_00p10B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00u10B00B(
     BuiltInId::textureLod_USampler1DArray1_Float2_Float1,
     BuiltInName::textureLod,
@@ -9368,7 +9368,7 @@ constexpr const TFunction textureLod_00u10B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00i20B00B(
     BuiltInId::textureLod_Sampler1DArrayShadow1_Float3_Float1,
     BuiltInName::textureLod,
@@ -9377,7 +9377,7 @@ constexpr const TFunction textureLod_00i20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00k30B00B(
     BuiltInId::textureLod_SamplerCubeArray1_Float4_Float1,
     BuiltInName::textureLod,
@@ -9386,7 +9386,7 @@ constexpr const TFunction textureLod_00k30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00s30B00B(
     BuiltInId::textureLod_ISamplerCubeArray1_Float4_Float1,
     BuiltInName::textureLod,
@@ -9395,7 +9395,7 @@ constexpr const TFunction textureLod_00s30B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLod_00x30B00B(
     BuiltInId::textureLod_USamplerCubeArray1_Float4_Float1,
     BuiltInName::textureLod,
@@ -9404,7 +9404,7 @@ constexpr const TFunction textureLod_00x30B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLodExt_00k30B00B(
     BuiltInId::textureLodExt_SamplerCubeArray1_Float4_Float1,
     BuiltInName::textureLodExt,
@@ -9414,7 +9414,7 @@ constexpr const TFunction textureLodExt_00k30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLodExt_00s30B00B(
     BuiltInId::textureLodExt_ISamplerCubeArray1_Float4_Float1,
     BuiltInName::textureLodExt,
@@ -9424,7 +9424,7 @@ constexpr const TFunction textureLodExt_00s30B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureLodExt_00x30B00B(
     BuiltInId::textureLodExt_USamplerCubeArray1_Float4_Float1,
     BuiltInName::textureLodExt,
@@ -9434,7 +9434,7 @@ constexpr const TFunction textureLodExt_00x30B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLod,
-    false);
+    true);
 constexpr const TFunction textureSize_00I00D(
     BuiltInId::textureSize_Sampler2D1_Int1,
     BuiltInName::textureSize,
@@ -9443,7 +9443,7 @@ constexpr const TFunction textureSize_00I00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00R00D(
     BuiltInId::textureSize_ISampler2D1_Int1,
     BuiltInName::textureSize,
@@ -9452,7 +9452,7 @@ constexpr const TFunction textureSize_00R00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00X00D(
     BuiltInId::textureSize_USampler2D1_Int1,
     BuiltInName::textureSize,
@@ -9461,7 +9461,7 @@ constexpr const TFunction textureSize_00X00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00J00D(
     BuiltInId::textureSize_Sampler3D1_Int1,
     BuiltInName::textureSize,
@@ -9470,7 +9470,7 @@ constexpr const TFunction textureSize_00J00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00S00D(
     BuiltInId::textureSize_ISampler3D1_Int1,
     BuiltInName::textureSize,
@@ -9479,7 +9479,7 @@ constexpr const TFunction textureSize_00S00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00Y00D(
     BuiltInId::textureSize_USampler3D1_Int1,
     BuiltInName::textureSize,
@@ -9488,7 +9488,7 @@ constexpr const TFunction textureSize_00Y00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00K00D(
     BuiltInId::textureSize_SamplerCube1_Int1,
     BuiltInName::textureSize,
@@ -9497,7 +9497,7 @@ constexpr const TFunction textureSize_00K00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00T00D(
     BuiltInId::textureSize_ISamplerCube1_Int1,
     BuiltInName::textureSize,
@@ -9506,7 +9506,7 @@ constexpr const TFunction textureSize_00T00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00Z00D(
     BuiltInId::textureSize_USamplerCube1_Int1,
     BuiltInName::textureSize,
@@ -9515,7 +9515,7 @@ constexpr const TFunction textureSize_00Z00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00L00D(
     BuiltInId::textureSize_Sampler2DArray1_Int1,
     BuiltInName::textureSize,
@@ -9524,7 +9524,7 @@ constexpr const TFunction textureSize_00L00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00U00D(
     BuiltInId::textureSize_ISampler2DArray1_Int1,
     BuiltInName::textureSize,
@@ -9533,7 +9533,7 @@ constexpr const TFunction textureSize_00U00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00a00D(
     BuiltInId::textureSize_USampler2DArray1_Int1,
     BuiltInName::textureSize,
@@ -9542,7 +9542,7 @@ constexpr const TFunction textureSize_00a00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00d00D(
     BuiltInId::textureSize_Sampler2DShadow1_Int1,
     BuiltInName::textureSize,
@@ -9551,7 +9551,7 @@ constexpr const TFunction textureSize_00d00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00e00D(
     BuiltInId::textureSize_SamplerCubeShadow1_Int1,
     BuiltInName::textureSize,
@@ -9560,7 +9560,7 @@ constexpr const TFunction textureSize_00e00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00f00D(
     BuiltInId::textureSize_Sampler2DArrayShadow1_Int1,
     BuiltInName::textureSize,
@@ -9569,7 +9569,7 @@ constexpr const TFunction textureSize_00f00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00g00D(
     BuiltInId::textureSize_Sampler1D1_Int1,
     BuiltInName::textureSize,
@@ -9578,7 +9578,7 @@ constexpr const TFunction textureSize_00g00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00o00D(
     BuiltInId::textureSize_ISampler1D1_Int1,
     BuiltInName::textureSize,
@@ -9587,7 +9587,7 @@ constexpr const TFunction textureSize_00o00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00t00D(
     BuiltInId::textureSize_USampler1D1_Int1,
     BuiltInName::textureSize,
@@ -9596,7 +9596,7 @@ constexpr const TFunction textureSize_00t00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00m00D(
     BuiltInId::textureSize_Sampler1DShadow1_Int1,
     BuiltInName::textureSize,
@@ -9605,7 +9605,7 @@ constexpr const TFunction textureSize_00m00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00k00D(
     BuiltInId::textureSize_SamplerCubeArray1_Int1,
     BuiltInName::textureSize,
@@ -9614,7 +9614,7 @@ constexpr const TFunction textureSize_00k00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00s00D(
     BuiltInId::textureSize_ISamplerCubeArray1_Int1,
     BuiltInName::textureSize,
@@ -9623,7 +9623,7 @@ constexpr const TFunction textureSize_00s00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00x00D(
     BuiltInId::textureSize_USamplerCubeArray1_Int1,
     BuiltInName::textureSize,
@@ -9632,7 +9632,7 @@ constexpr const TFunction textureSize_00x00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00l00D(
     BuiltInId::textureSize_SamplerCubeArrayShadow1_Int1,
     BuiltInName::textureSize,
@@ -9641,7 +9641,7 @@ constexpr const TFunction textureSize_00l00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSizeExt_00k00D(
     BuiltInId::textureSizeExt_SamplerCubeArray1_Int1,
     BuiltInName::textureSizeExt,
@@ -9651,7 +9651,7 @@ constexpr const TFunction textureSizeExt_00k00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSizeExt_00s00D(
     BuiltInId::textureSizeExt_ISamplerCubeArray1_Int1,
     BuiltInName::textureSizeExt,
@@ -9661,7 +9661,7 @@ constexpr const TFunction textureSizeExt_00s00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSizeExt_00x00D(
     BuiltInId::textureSizeExt_USamplerCubeArray1_Int1,
     BuiltInName::textureSizeExt,
@@ -9671,7 +9671,7 @@ constexpr const TFunction textureSizeExt_00x00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSizeExt_00l00D(
     BuiltInId::textureSizeExt_SamplerCubeArrayShadow1_Int1,
     BuiltInName::textureSizeExt,
@@ -9681,7 +9681,7 @@ constexpr const TFunction textureSizeExt_00l00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00O(BuiltInId::textureSize_Sampler2DRect1,
                                           BuiltInName::textureSize,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -9689,7 +9689,7 @@ constexpr const TFunction textureSize_00O(BuiltInId::textureSize_Sampler2DRect1,
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                           EOpTextureSize,
-                                          false);
+                                          true);
 constexpr const TFunction textureSize_00q(BuiltInId::textureSize_ISampler2DRect1,
                                           BuiltInName::textureSize,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -9697,7 +9697,7 @@ constexpr const TFunction textureSize_00q(BuiltInId::textureSize_ISampler2DRect1
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                           EOpTextureSize,
-                                          false);
+                                          true);
 constexpr const TFunction textureSize_00v(BuiltInId::textureSize_USampler2DRect1,
                                           BuiltInName::textureSize,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -9705,7 +9705,7 @@ constexpr const TFunction textureSize_00v(BuiltInId::textureSize_USampler2DRect1
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                           EOpTextureSize,
-                                          false);
+                                          true);
 constexpr const TFunction textureSize_00n(BuiltInId::textureSize_Sampler2DRectShadow1,
                                           BuiltInName::textureSize,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -9713,7 +9713,7 @@ constexpr const TFunction textureSize_00n(BuiltInId::textureSize_Sampler2DRectSh
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                           EOpTextureSize,
-                                          false);
+                                          true);
 constexpr const TFunction textureSize_00h00D(
     BuiltInId::textureSize_Sampler1DArray1_Int1,
     BuiltInName::textureSize,
@@ -9722,7 +9722,7 @@ constexpr const TFunction textureSize_00h00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00p00D(
     BuiltInId::textureSize_ISampler1DArray1_Int1,
     BuiltInName::textureSize,
@@ -9731,7 +9731,7 @@ constexpr const TFunction textureSize_00p00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00u00D(
     BuiltInId::textureSize_USampler1DArray1_Int1,
     BuiltInName::textureSize,
@@ -9740,7 +9740,7 @@ constexpr const TFunction textureSize_00u00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00i00D(
     BuiltInId::textureSize_Sampler1DArrayShadow1_Int1,
     BuiltInName::textureSize,
@@ -9749,7 +9749,7 @@ constexpr const TFunction textureSize_00i00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00j(BuiltInId::textureSize_SamplerBuffer1,
                                           BuiltInName::textureSize,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -9757,7 +9757,7 @@ constexpr const TFunction textureSize_00j(BuiltInId::textureSize_SamplerBuffer1,
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                           EOpTextureSize,
-                                          false);
+                                          true);
 constexpr const TFunction textureSize_00r(BuiltInId::textureSize_ISamplerBuffer1,
                                           BuiltInName::textureSize,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -9765,7 +9765,7 @@ constexpr const TFunction textureSize_00r(BuiltInId::textureSize_ISamplerBuffer1
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                           EOpTextureSize,
-                                          false);
+                                          true);
 constexpr const TFunction textureSize_00w(BuiltInId::textureSize_USamplerBuffer1,
                                           BuiltInName::textureSize,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -9773,7 +9773,7 @@ constexpr const TFunction textureSize_00w(BuiltInId::textureSize_USamplerBuffer1
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                           EOpTextureSize,
-                                          false);
+                                          true);
 constexpr const TFunction textureSizeExt_00j(
     BuiltInId::textureSizeExt_SamplerBuffer1,
     BuiltInName::textureSizeExt,
@@ -9782,7 +9782,7 @@ constexpr const TFunction textureSizeExt_00j(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSizeExt_00r(
     BuiltInId::textureSizeExt_ISamplerBuffer1,
     BuiltInName::textureSizeExt,
@@ -9791,7 +9791,7 @@ constexpr const TFunction textureSizeExt_00r(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSizeExt_00w(
     BuiltInId::textureSizeExt_USamplerBuffer1,
     BuiltInName::textureSizeExt,
@@ -9800,7 +9800,7 @@ constexpr const TFunction textureSizeExt_00w(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00P(BuiltInId::textureSize_Sampler2DMS1,
                                           BuiltInName::textureSize,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -9808,7 +9808,7 @@ constexpr const TFunction textureSize_00P(BuiltInId::textureSize_Sampler2DMS1,
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                           EOpTextureSize,
-                                          false);
+                                          true);
 constexpr const TFunction textureSize_00V(BuiltInId::textureSize_ISampler2DMS1,
                                           BuiltInName::textureSize,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -9816,7 +9816,7 @@ constexpr const TFunction textureSize_00V(BuiltInId::textureSize_ISampler2DMS1,
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                           EOpTextureSize,
-                                          false);
+                                          true);
 constexpr const TFunction textureSize_00b(BuiltInId::textureSize_USampler2DMS1,
                                           BuiltInName::textureSize,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -9824,7 +9824,7 @@ constexpr const TFunction textureSize_00b(BuiltInId::textureSize_USampler2DMS1,
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                           EOpTextureSize,
-                                          false);
+                                          true);
 constexpr const TFunction textureSizeExt_00P(
     BuiltInId::textureSizeExt_Sampler2DMS1,
     BuiltInName::textureSizeExt,
@@ -9833,7 +9833,7 @@ constexpr const TFunction textureSizeExt_00P(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSizeExt_00V(
     BuiltInId::textureSizeExt_ISampler2DMS1,
     BuiltInName::textureSizeExt,
@@ -9842,7 +9842,7 @@ constexpr const TFunction textureSizeExt_00V(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSizeExt_00b(
     BuiltInId::textureSizeExt_USampler2DMS1,
     BuiltInName::textureSizeExt,
@@ -9851,7 +9851,7 @@ constexpr const TFunction textureSizeExt_00b(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00Q(BuiltInId::textureSize_Sampler2DMSArray1,
                                           BuiltInName::textureSize,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -9859,7 +9859,7 @@ constexpr const TFunction textureSize_00Q(BuiltInId::textureSize_Sampler2DMSArra
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                           EOpTextureSize,
-                                          false);
+                                          true);
 constexpr const TFunction textureSize_00W(BuiltInId::textureSize_ISampler2DMSArray1,
                                           BuiltInName::textureSize,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -9867,7 +9867,7 @@ constexpr const TFunction textureSize_00W(BuiltInId::textureSize_ISampler2DMSArr
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                           EOpTextureSize,
-                                          false);
+                                          true);
 constexpr const TFunction textureSize_00c(BuiltInId::textureSize_USampler2DMSArray1,
                                           BuiltInName::textureSize,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -9875,7 +9875,7 @@ constexpr const TFunction textureSize_00c(BuiltInId::textureSize_USampler2DMSArr
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                           EOpTextureSize,
-                                          false);
+                                          true);
 constexpr const TFunction textureSizeExt_00Q(
     BuiltInId::textureSizeExt_Sampler2DMSArray1,
     BuiltInName::textureSizeExt,
@@ -9884,7 +9884,7 @@ constexpr const TFunction textureSizeExt_00Q(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSizeExt_00W(
     BuiltInId::textureSizeExt_ISampler2DMSArray1,
     BuiltInName::textureSizeExt,
@@ -9893,7 +9893,7 @@ constexpr const TFunction textureSizeExt_00W(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSizeExt_00c(
     BuiltInId::textureSizeExt_USampler2DMSArray1,
     BuiltInName::textureSizeExt,
@@ -9902,7 +9902,7 @@ constexpr const TFunction textureSizeExt_00c(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00M00D(
     BuiltInId::textureSize_SamplerExternalOES1_Int1,
     BuiltInName::textureSize,
@@ -9911,7 +9911,7 @@ constexpr const TFunction textureSize_00M00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureSize_00N00D(
     BuiltInId::textureSize_SamplerExternal2DY2YEXT1_Int1,
     BuiltInName::textureSize,
@@ -9920,7 +9920,7 @@ constexpr const TFunction textureSize_00N00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureSize,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00I20B00B(
     BuiltInId::textureProjLod_Sampler2D1_Float3_Float1,
     BuiltInName::textureProjLod,
@@ -9929,7 +9929,7 @@ constexpr const TFunction textureProjLod_00I20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00R20B00B(
     BuiltInId::textureProjLod_ISampler2D1_Float3_Float1,
     BuiltInName::textureProjLod,
@@ -9938,7 +9938,7 @@ constexpr const TFunction textureProjLod_00R20B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00X20B00B(
     BuiltInId::textureProjLod_USampler2D1_Float3_Float1,
     BuiltInName::textureProjLod,
@@ -9947,7 +9947,7 @@ constexpr const TFunction textureProjLod_00X20B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00I30B00B(
     BuiltInId::textureProjLod_Sampler2D1_Float4_Float1,
     BuiltInName::textureProjLod,
@@ -9956,7 +9956,7 @@ constexpr const TFunction textureProjLod_00I30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00R30B00B(
     BuiltInId::textureProjLod_ISampler2D1_Float4_Float1,
     BuiltInName::textureProjLod,
@@ -9965,7 +9965,7 @@ constexpr const TFunction textureProjLod_00R30B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00X30B00B(
     BuiltInId::textureProjLod_USampler2D1_Float4_Float1,
     BuiltInName::textureProjLod,
@@ -9974,7 +9974,7 @@ constexpr const TFunction textureProjLod_00X30B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00J30B00B(
     BuiltInId::textureProjLod_Sampler3D1_Float4_Float1,
     BuiltInName::textureProjLod,
@@ -9983,7 +9983,7 @@ constexpr const TFunction textureProjLod_00J30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00S30B00B(
     BuiltInId::textureProjLod_ISampler3D1_Float4_Float1,
     BuiltInName::textureProjLod,
@@ -9992,7 +9992,7 @@ constexpr const TFunction textureProjLod_00S30B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00Y30B00B(
     BuiltInId::textureProjLod_USampler3D1_Float4_Float1,
     BuiltInName::textureProjLod,
@@ -10001,7 +10001,7 @@ constexpr const TFunction textureProjLod_00Y30B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00d30B00B(
     BuiltInId::textureProjLod_Sampler2DShadow1_Float4_Float1,
     BuiltInName::textureProjLod,
@@ -10010,7 +10010,7 @@ constexpr const TFunction textureProjLod_00d30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00g10B00B(
     BuiltInId::textureProjLod_Sampler1D1_Float2_Float1,
     BuiltInName::textureProjLod,
@@ -10019,7 +10019,7 @@ constexpr const TFunction textureProjLod_00g10B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00o10B00B(
     BuiltInId::textureProjLod_ISampler1D1_Float2_Float1,
     BuiltInName::textureProjLod,
@@ -10028,7 +10028,7 @@ constexpr const TFunction textureProjLod_00o10B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00t10B00B(
     BuiltInId::textureProjLod_USampler1D1_Float2_Float1,
     BuiltInName::textureProjLod,
@@ -10037,7 +10037,7 @@ constexpr const TFunction textureProjLod_00t10B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00g30B00B(
     BuiltInId::textureProjLod_Sampler1D1_Float4_Float1,
     BuiltInName::textureProjLod,
@@ -10046,7 +10046,7 @@ constexpr const TFunction textureProjLod_00g30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00o30B00B(
     BuiltInId::textureProjLod_ISampler1D1_Float4_Float1,
     BuiltInName::textureProjLod,
@@ -10055,7 +10055,7 @@ constexpr const TFunction textureProjLod_00o30B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00t30B00B(
     BuiltInId::textureProjLod_USampler1D1_Float4_Float1,
     BuiltInName::textureProjLod,
@@ -10064,7 +10064,7 @@ constexpr const TFunction textureProjLod_00t30B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction textureProjLod_00m30B00B(
     BuiltInId::textureProjLod_Sampler1DShadow1_Float4_Float1,
     BuiltInName::textureProjLod,
@@ -10073,7 +10073,7 @@ constexpr const TFunction textureProjLod_00m30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjLod,
-    false);
+    true);
 constexpr const TFunction texelFetch_00I10D00D(
     BuiltInId::texelFetch_Sampler2D1_Int2_Int1,
     BuiltInName::texelFetch,
@@ -10082,7 +10082,7 @@ constexpr const TFunction texelFetch_00I10D00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00R10D00D(
     BuiltInId::texelFetch_ISampler2D1_Int2_Int1,
     BuiltInName::texelFetch,
@@ -10091,7 +10091,7 @@ constexpr const TFunction texelFetch_00R10D00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00X10D00D(
     BuiltInId::texelFetch_USampler2D1_Int2_Int1,
     BuiltInName::texelFetch,
@@ -10100,7 +10100,7 @@ constexpr const TFunction texelFetch_00X10D00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00J20D00D(
     BuiltInId::texelFetch_Sampler3D1_Int3_Int1,
     BuiltInName::texelFetch,
@@ -10109,7 +10109,7 @@ constexpr const TFunction texelFetch_00J20D00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00S20D00D(
     BuiltInId::texelFetch_ISampler3D1_Int3_Int1,
     BuiltInName::texelFetch,
@@ -10118,7 +10118,7 @@ constexpr const TFunction texelFetch_00S20D00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00Y20D00D(
     BuiltInId::texelFetch_USampler3D1_Int3_Int1,
     BuiltInName::texelFetch,
@@ -10127,7 +10127,7 @@ constexpr const TFunction texelFetch_00Y20D00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00L20D00D(
     BuiltInId::texelFetch_Sampler2DArray1_Int3_Int1,
     BuiltInName::texelFetch,
@@ -10136,7 +10136,7 @@ constexpr const TFunction texelFetch_00L20D00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00U20D00D(
     BuiltInId::texelFetch_ISampler2DArray1_Int3_Int1,
     BuiltInName::texelFetch,
@@ -10145,7 +10145,7 @@ constexpr const TFunction texelFetch_00U20D00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00a20D00D(
     BuiltInId::texelFetch_USampler2DArray1_Int3_Int1,
     BuiltInName::texelFetch,
@@ -10154,7 +10154,7 @@ constexpr const TFunction texelFetch_00a20D00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00g00D00D(
     BuiltInId::texelFetch_Sampler1D1_Int1_Int1,
     BuiltInName::texelFetch,
@@ -10163,7 +10163,7 @@ constexpr const TFunction texelFetch_00g00D00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00o00D00D(
     BuiltInId::texelFetch_ISampler1D1_Int1_Int1,
     BuiltInName::texelFetch,
@@ -10172,7 +10172,7 @@ constexpr const TFunction texelFetch_00o00D00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00t00D00D(
     BuiltInId::texelFetch_USampler1D1_Int1_Int1,
     BuiltInName::texelFetch,
@@ -10181,7 +10181,7 @@ constexpr const TFunction texelFetch_00t00D00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00O10D(
     BuiltInId::texelFetch_Sampler2DRect1_Int2,
     BuiltInName::texelFetch,
@@ -10190,7 +10190,7 @@ constexpr const TFunction texelFetch_00O10D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00q10D(
     BuiltInId::texelFetch_ISampler2DRect1_Int2,
     BuiltInName::texelFetch,
@@ -10199,7 +10199,7 @@ constexpr const TFunction texelFetch_00q10D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00v10D(
     BuiltInId::texelFetch_USampler2DRect1_Int2,
     BuiltInName::texelFetch,
@@ -10208,7 +10208,7 @@ constexpr const TFunction texelFetch_00v10D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00h10D00D(
     BuiltInId::texelFetch_Sampler1DArray1_Int2_Int1,
     BuiltInName::texelFetch,
@@ -10217,7 +10217,7 @@ constexpr const TFunction texelFetch_00h10D00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00p10D00D(
     BuiltInId::texelFetch_ISampler1DArray1_Int2_Int1,
     BuiltInName::texelFetch,
@@ -10226,7 +10226,7 @@ constexpr const TFunction texelFetch_00p10D00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00u10D00D(
     BuiltInId::texelFetch_USampler1DArray1_Int2_Int1,
     BuiltInName::texelFetch,
@@ -10235,7 +10235,7 @@ constexpr const TFunction texelFetch_00u10D00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00j00D(
     BuiltInId::texelFetch_SamplerBuffer1_Int1,
     BuiltInName::texelFetch,
@@ -10244,7 +10244,7 @@ constexpr const TFunction texelFetch_00j00D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00r00D(
     BuiltInId::texelFetch_ISamplerBuffer1_Int1,
     BuiltInName::texelFetch,
@@ -10253,7 +10253,7 @@ constexpr const TFunction texelFetch_00r00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00w00D(
     BuiltInId::texelFetch_USamplerBuffer1_Int1,
     BuiltInName::texelFetch,
@@ -10262,7 +10262,7 @@ constexpr const TFunction texelFetch_00w00D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetchExt_00j00D(
     BuiltInId::texelFetchExt_SamplerBuffer1_Int1,
     BuiltInName::texelFetchExt,
@@ -10271,7 +10271,7 @@ constexpr const TFunction texelFetchExt_00j00D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetchExt_00r00D(
     BuiltInId::texelFetchExt_ISamplerBuffer1_Int1,
     BuiltInName::texelFetchExt,
@@ -10280,7 +10280,7 @@ constexpr const TFunction texelFetchExt_00r00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetchExt_00w00D(
     BuiltInId::texelFetchExt_USamplerBuffer1_Int1,
     BuiltInName::texelFetchExt,
@@ -10289,7 +10289,7 @@ constexpr const TFunction texelFetchExt_00w00D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00P10D00D(
     BuiltInId::texelFetch_Sampler2DMS1_Int2_Int1,
     BuiltInName::texelFetch,
@@ -10298,7 +10298,7 @@ constexpr const TFunction texelFetch_00P10D00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00V10D00D(
     BuiltInId::texelFetch_ISampler2DMS1_Int2_Int1,
     BuiltInName::texelFetch,
@@ -10307,7 +10307,7 @@ constexpr const TFunction texelFetch_00V10D00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00b10D00D(
     BuiltInId::texelFetch_USampler2DMS1_Int2_Int1,
     BuiltInName::texelFetch,
@@ -10316,7 +10316,7 @@ constexpr const TFunction texelFetch_00b10D00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetchExt_00P10D00D(
     BuiltInId::texelFetchExt_Sampler2DMS1_Int2_Int1,
     BuiltInName::texelFetchExt,
@@ -10325,7 +10325,7 @@ constexpr const TFunction texelFetchExt_00P10D00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetchExt_00V10D00D(
     BuiltInId::texelFetchExt_ISampler2DMS1_Int2_Int1,
     BuiltInName::texelFetchExt,
@@ -10334,7 +10334,7 @@ constexpr const TFunction texelFetchExt_00V10D00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetchExt_00b10D00D(
     BuiltInId::texelFetchExt_USampler2DMS1_Int2_Int1,
     BuiltInName::texelFetchExt,
@@ -10343,7 +10343,7 @@ constexpr const TFunction texelFetchExt_00b10D00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00Q20D00D(
     BuiltInId::texelFetch_Sampler2DMSArray1_Int3_Int1,
     BuiltInName::texelFetch,
@@ -10352,7 +10352,7 @@ constexpr const TFunction texelFetch_00Q20D00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00W20D00D(
     BuiltInId::texelFetch_ISampler2DMSArray1_Int3_Int1,
     BuiltInName::texelFetch,
@@ -10361,7 +10361,7 @@ constexpr const TFunction texelFetch_00W20D00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00c20D00D(
     BuiltInId::texelFetch_USampler2DMSArray1_Int3_Int1,
     BuiltInName::texelFetch,
@@ -10370,7 +10370,7 @@ constexpr const TFunction texelFetch_00c20D00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetchExt_00Q20D00D(
     BuiltInId::texelFetchExt_Sampler2DMSArray1_Int3_Int1,
     BuiltInName::texelFetchExt,
@@ -10379,7 +10379,7 @@ constexpr const TFunction texelFetchExt_00Q20D00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetchExt_00W20D00D(
     BuiltInId::texelFetchExt_ISampler2DMSArray1_Int3_Int1,
     BuiltInName::texelFetchExt,
@@ -10388,7 +10388,7 @@ constexpr const TFunction texelFetchExt_00W20D00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetchExt_00c20D00D(
     BuiltInId::texelFetchExt_USampler2DMSArray1_Int3_Int1,
     BuiltInName::texelFetchExt,
@@ -10397,7 +10397,7 @@ constexpr const TFunction texelFetchExt_00c20D00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00M10D00D(
     BuiltInId::texelFetch_SamplerExternalOES1_Int2_Int1,
     BuiltInName::texelFetch,
@@ -10406,7 +10406,7 @@ constexpr const TFunction texelFetch_00M10D00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction texelFetch_00N10D00D(
     BuiltInId::texelFetch_SamplerExternal2DY2YEXT1_Int2_Int1,
     BuiltInName::texelFetch,
@@ -10415,7 +10415,7 @@ constexpr const TFunction texelFetch_00N10D00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetch,
-    false);
+    true);
 constexpr const TFunction textureGrad_00I10B10B10B(
     BuiltInId::textureGrad_Sampler2D1_Float2_Float2_Float2,
     BuiltInName::textureGrad,
@@ -10424,7 +10424,7 @@ constexpr const TFunction textureGrad_00I10B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00R10B10B10B(
     BuiltInId::textureGrad_ISampler2D1_Float2_Float2_Float2,
     BuiltInName::textureGrad,
@@ -10433,7 +10433,7 @@ constexpr const TFunction textureGrad_00R10B10B10B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00X10B10B10B(
     BuiltInId::textureGrad_USampler2D1_Float2_Float2_Float2,
     BuiltInName::textureGrad,
@@ -10442,7 +10442,7 @@ constexpr const TFunction textureGrad_00X10B10B10B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00J20B20B20B(
     BuiltInId::textureGrad_Sampler3D1_Float3_Float3_Float3,
     BuiltInName::textureGrad,
@@ -10451,7 +10451,7 @@ constexpr const TFunction textureGrad_00J20B20B20B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00S20B20B20B(
     BuiltInId::textureGrad_ISampler3D1_Float3_Float3_Float3,
     BuiltInName::textureGrad,
@@ -10460,7 +10460,7 @@ constexpr const TFunction textureGrad_00S20B20B20B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00Y20B20B20B(
     BuiltInId::textureGrad_USampler3D1_Float3_Float3_Float3,
     BuiltInName::textureGrad,
@@ -10469,7 +10469,7 @@ constexpr const TFunction textureGrad_00Y20B20B20B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00K20B20B20B(
     BuiltInId::textureGrad_SamplerCube1_Float3_Float3_Float3,
     BuiltInName::textureGrad,
@@ -10478,7 +10478,7 @@ constexpr const TFunction textureGrad_00K20B20B20B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00T20B20B20B(
     BuiltInId::textureGrad_ISamplerCube1_Float3_Float3_Float3,
     BuiltInName::textureGrad,
@@ -10487,7 +10487,7 @@ constexpr const TFunction textureGrad_00T20B20B20B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00Z20B20B20B(
     BuiltInId::textureGrad_USamplerCube1_Float3_Float3_Float3,
     BuiltInName::textureGrad,
@@ -10496,7 +10496,7 @@ constexpr const TFunction textureGrad_00Z20B20B20B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00I00B00B00B(
     BuiltInId::textureGrad_Sampler2D1_Float1_Float1_Float1,
     BuiltInName::textureGrad,
@@ -10505,7 +10505,7 @@ constexpr const TFunction textureGrad_00I00B00B00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00R00B00B00B(
     BuiltInId::textureGrad_ISampler2D1_Float1_Float1_Float1,
     BuiltInName::textureGrad,
@@ -10514,7 +10514,7 @@ constexpr const TFunction textureGrad_00R00B00B00B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00X00B00B00B(
     BuiltInId::textureGrad_USampler2D1_Float1_Float1_Float1,
     BuiltInName::textureGrad,
@@ -10523,7 +10523,7 @@ constexpr const TFunction textureGrad_00X00B00B00B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00O10B10B10B(
     BuiltInId::textureGrad_Sampler2DRect1_Float2_Float2_Float2,
     BuiltInName::textureGrad,
@@ -10532,7 +10532,7 @@ constexpr const TFunction textureGrad_00O10B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00q10B10B10B(
     BuiltInId::textureGrad_ISampler2DRect1_Float2_Float2_Float2,
     BuiltInName::textureGrad,
@@ -10541,7 +10541,7 @@ constexpr const TFunction textureGrad_00q10B10B10B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00v10B10B10B(
     BuiltInId::textureGrad_USampler2DRect1_Float2_Float2_Float2,
     BuiltInName::textureGrad,
@@ -10550,7 +10550,7 @@ constexpr const TFunction textureGrad_00v10B10B10B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00n20B10B10B(
     BuiltInId::textureGrad_Sampler2DRectShadow1_Float3_Float2_Float2,
     BuiltInName::textureGrad,
@@ -10559,7 +10559,7 @@ constexpr const TFunction textureGrad_00n20B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00d20B10B10B(
     BuiltInId::textureGrad_Sampler2DShadow1_Float3_Float2_Float2,
     BuiltInName::textureGrad,
@@ -10568,7 +10568,7 @@ constexpr const TFunction textureGrad_00d20B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00e30B20B20B(
     BuiltInId::textureGrad_SamplerCubeShadow1_Float4_Float3_Float3,
     BuiltInName::textureGrad,
@@ -10577,7 +10577,7 @@ constexpr const TFunction textureGrad_00e30B20B20B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00L20B10B10B(
     BuiltInId::textureGrad_Sampler2DArray1_Float3_Float2_Float2,
     BuiltInName::textureGrad,
@@ -10586,7 +10586,7 @@ constexpr const TFunction textureGrad_00L20B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00U20B10B10B(
     BuiltInId::textureGrad_ISampler2DArray1_Float3_Float2_Float2,
     BuiltInName::textureGrad,
@@ -10595,7 +10595,7 @@ constexpr const TFunction textureGrad_00U20B10B10B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00a20B10B10B(
     BuiltInId::textureGrad_USampler2DArray1_Float3_Float2_Float2,
     BuiltInName::textureGrad,
@@ -10604,7 +10604,7 @@ constexpr const TFunction textureGrad_00a20B10B10B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00f30B10B10B(
     BuiltInId::textureGrad_Sampler2DArrayShadow1_Float4_Float2_Float2,
     BuiltInName::textureGrad,
@@ -10613,7 +10613,7 @@ constexpr const TFunction textureGrad_00f30B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00m20B00B00B(
     BuiltInId::textureGrad_Sampler1DShadow1_Float3_Float1_Float1,
     BuiltInName::textureGrad,
@@ -10622,7 +10622,7 @@ constexpr const TFunction textureGrad_00m20B00B00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00h10B00B00B(
     BuiltInId::textureGrad_Sampler1DArray1_Float2_Float1_Float1,
     BuiltInName::textureGrad,
@@ -10631,7 +10631,7 @@ constexpr const TFunction textureGrad_00h10B00B00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00p10B00B00B(
     BuiltInId::textureGrad_ISampler1DArray1_Float2_Float1_Float1,
     BuiltInName::textureGrad,
@@ -10640,7 +10640,7 @@ constexpr const TFunction textureGrad_00p10B00B00B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00u10B00B00B(
     BuiltInId::textureGrad_USampler1DArray1_Float2_Float1_Float1,
     BuiltInName::textureGrad,
@@ -10649,7 +10649,7 @@ constexpr const TFunction textureGrad_00u10B00B00B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00i20B00B00B(
     BuiltInId::textureGrad_Sampler1DArrayShadow1_Float3_Float1_Float1,
     BuiltInName::textureGrad,
@@ -10658,7 +10658,7 @@ constexpr const TFunction textureGrad_00i20B00B00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00k30B20B20B(
     BuiltInId::textureGrad_SamplerCubeArray1_Float4_Float3_Float3,
     BuiltInName::textureGrad,
@@ -10667,7 +10667,7 @@ constexpr const TFunction textureGrad_00k30B20B20B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00s30B20B20B(
     BuiltInId::textureGrad_ISamplerCubeArray1_Float4_Float3_Float3,
     BuiltInName::textureGrad,
@@ -10676,7 +10676,7 @@ constexpr const TFunction textureGrad_00s30B20B20B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGrad_00x30B20B20B(
     BuiltInId::textureGrad_USamplerCubeArray1_Float4_Float3_Float3,
     BuiltInName::textureGrad,
@@ -10685,7 +10685,7 @@ constexpr const TFunction textureGrad_00x30B20B20B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGradExt_00k30B20B20B(
     BuiltInId::textureGradExt_SamplerCubeArray1_Float4_Float3_Float3,
     BuiltInName::textureGradExt,
@@ -10695,7 +10695,7 @@ constexpr const TFunction textureGradExt_00k30B20B20B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGradExt_00s30B20B20B(
     BuiltInId::textureGradExt_ISamplerCubeArray1_Float4_Float3_Float3,
     BuiltInName::textureGradExt,
@@ -10705,7 +10705,7 @@ constexpr const TFunction textureGradExt_00s30B20B20B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureGradExt_00x30B20B20B(
     BuiltInId::textureGradExt_USamplerCubeArray1_Float4_Float3_Float3,
     BuiltInName::textureGradExt,
@@ -10715,7 +10715,7 @@ constexpr const TFunction textureGradExt_00x30B20B20B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00I20B10B10B(
     BuiltInId::textureProjGrad_Sampler2D1_Float3_Float2_Float2,
     BuiltInName::textureProjGrad,
@@ -10724,7 +10724,7 @@ constexpr const TFunction textureProjGrad_00I20B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00R20B10B10B(
     BuiltInId::textureProjGrad_ISampler2D1_Float3_Float2_Float2,
     BuiltInName::textureProjGrad,
@@ -10733,7 +10733,7 @@ constexpr const TFunction textureProjGrad_00R20B10B10B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00X20B10B10B(
     BuiltInId::textureProjGrad_USampler2D1_Float3_Float2_Float2,
     BuiltInName::textureProjGrad,
@@ -10742,7 +10742,7 @@ constexpr const TFunction textureProjGrad_00X20B10B10B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00I30B10B10B(
     BuiltInId::textureProjGrad_Sampler2D1_Float4_Float2_Float2,
     BuiltInName::textureProjGrad,
@@ -10751,7 +10751,7 @@ constexpr const TFunction textureProjGrad_00I30B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00R30B10B10B(
     BuiltInId::textureProjGrad_ISampler2D1_Float4_Float2_Float2,
     BuiltInName::textureProjGrad,
@@ -10760,7 +10760,7 @@ constexpr const TFunction textureProjGrad_00R30B10B10B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00X30B10B10B(
     BuiltInId::textureProjGrad_USampler2D1_Float4_Float2_Float2,
     BuiltInName::textureProjGrad,
@@ -10769,7 +10769,7 @@ constexpr const TFunction textureProjGrad_00X30B10B10B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00J30B20B20B(
     BuiltInId::textureProjGrad_Sampler3D1_Float4_Float3_Float3,
     BuiltInName::textureProjGrad,
@@ -10778,7 +10778,7 @@ constexpr const TFunction textureProjGrad_00J30B20B20B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00S30B20B20B(
     BuiltInId::textureProjGrad_ISampler3D1_Float4_Float3_Float3,
     BuiltInName::textureProjGrad,
@@ -10787,7 +10787,7 @@ constexpr const TFunction textureProjGrad_00S30B20B20B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00Y30B20B20B(
     BuiltInId::textureProjGrad_USampler3D1_Float4_Float3_Float3,
     BuiltInName::textureProjGrad,
@@ -10796,7 +10796,7 @@ constexpr const TFunction textureProjGrad_00Y30B20B20B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00d30B10B10B(
     BuiltInId::textureProjGrad_Sampler2DShadow1_Float4_Float2_Float2,
     BuiltInName::textureProjGrad,
@@ -10805,7 +10805,7 @@ constexpr const TFunction textureProjGrad_00d30B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00g10B00B00B(
     BuiltInId::textureProjGrad_Sampler1D1_Float2_Float1_Float1,
     BuiltInName::textureProjGrad,
@@ -10814,7 +10814,7 @@ constexpr const TFunction textureProjGrad_00g10B00B00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00o10B00B00B(
     BuiltInId::textureProjGrad_ISampler1D1_Float2_Float1_Float1,
     BuiltInName::textureProjGrad,
@@ -10823,7 +10823,7 @@ constexpr const TFunction textureProjGrad_00o10B00B00B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00t10B00B00B(
     BuiltInId::textureProjGrad_USampler1D1_Float2_Float1_Float1,
     BuiltInName::textureProjGrad,
@@ -10832,7 +10832,7 @@ constexpr const TFunction textureProjGrad_00t10B00B00B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00g30B00B00B(
     BuiltInId::textureProjGrad_Sampler1D1_Float4_Float1_Float1,
     BuiltInName::textureProjGrad,
@@ -10841,7 +10841,7 @@ constexpr const TFunction textureProjGrad_00g30B00B00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00o30B00B00B(
     BuiltInId::textureProjGrad_ISampler1D1_Float4_Float1_Float1,
     BuiltInName::textureProjGrad,
@@ -10850,7 +10850,7 @@ constexpr const TFunction textureProjGrad_00o30B00B00B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00t30B00B00B(
     BuiltInId::textureProjGrad_USampler1D1_Float4_Float1_Float1,
     BuiltInName::textureProjGrad,
@@ -10859,7 +10859,7 @@ constexpr const TFunction textureProjGrad_00t30B00B00B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00m30B00B00B(
     BuiltInId::textureProjGrad_Sampler1DShadow1_Float4_Float1_Float1,
     BuiltInName::textureProjGrad,
@@ -10868,7 +10868,7 @@ constexpr const TFunction textureProjGrad_00m30B00B00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00O20B10B10B(
     BuiltInId::textureProjGrad_Sampler2DRect1_Float3_Float2_Float2,
     BuiltInName::textureProjGrad,
@@ -10877,7 +10877,7 @@ constexpr const TFunction textureProjGrad_00O20B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00q20B10B10B(
     BuiltInId::textureProjGrad_ISampler2DRect1_Float3_Float2_Float2,
     BuiltInName::textureProjGrad,
@@ -10886,7 +10886,7 @@ constexpr const TFunction textureProjGrad_00q20B10B10B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00v20B10B10B(
     BuiltInId::textureProjGrad_USampler2DRect1_Float3_Float2_Float2,
     BuiltInName::textureProjGrad,
@@ -10895,7 +10895,7 @@ constexpr const TFunction textureProjGrad_00v20B10B10B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00O30B10B10B(
     BuiltInId::textureProjGrad_Sampler2DRect1_Float4_Float2_Float2,
     BuiltInName::textureProjGrad,
@@ -10904,7 +10904,7 @@ constexpr const TFunction textureProjGrad_00O30B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00q30B10B10B(
     BuiltInId::textureProjGrad_ISampler2DRect1_Float4_Float2_Float2,
     BuiltInName::textureProjGrad,
@@ -10913,7 +10913,7 @@ constexpr const TFunction textureProjGrad_00q30B10B10B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00v30B10B10B(
     BuiltInId::textureProjGrad_USampler2DRect1_Float4_Float2_Float2,
     BuiltInName::textureProjGrad,
@@ -10922,7 +10922,7 @@ constexpr const TFunction textureProjGrad_00v30B10B10B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureProjGrad_00n30B10B10B(
     BuiltInId::textureProjGrad_Sampler2DRectShadow1_Float4_Float2_Float2,
     BuiltInName::textureProjGrad,
@@ -10931,7 +10931,7 @@ constexpr const TFunction textureProjGrad_00n30B10B10B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjGrad,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00g(
     BuiltInId::textureQueryLevels_Sampler1D1,
     BuiltInName::textureQueryLevels,
@@ -10940,7 +10940,7 @@ constexpr const TFunction textureQueryLevels_00g(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00o(
     BuiltInId::textureQueryLevels_ISampler1D1,
     BuiltInName::textureQueryLevels,
@@ -10949,7 +10949,7 @@ constexpr const TFunction textureQueryLevels_00o(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00t(
     BuiltInId::textureQueryLevels_USampler1D1,
     BuiltInName::textureQueryLevels,
@@ -10958,7 +10958,7 @@ constexpr const TFunction textureQueryLevels_00t(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00I(
     BuiltInId::textureQueryLevels_Sampler2D1,
     BuiltInName::textureQueryLevels,
@@ -10967,7 +10967,7 @@ constexpr const TFunction textureQueryLevels_00I(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00R(
     BuiltInId::textureQueryLevels_ISampler2D1,
     BuiltInName::textureQueryLevels,
@@ -10976,7 +10976,7 @@ constexpr const TFunction textureQueryLevels_00R(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00X(
     BuiltInId::textureQueryLevels_USampler2D1,
     BuiltInName::textureQueryLevels,
@@ -10985,7 +10985,7 @@ constexpr const TFunction textureQueryLevels_00X(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00J(
     BuiltInId::textureQueryLevels_Sampler3D1,
     BuiltInName::textureQueryLevels,
@@ -10994,7 +10994,7 @@ constexpr const TFunction textureQueryLevels_00J(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00S(
     BuiltInId::textureQueryLevels_ISampler3D1,
     BuiltInName::textureQueryLevels,
@@ -11003,7 +11003,7 @@ constexpr const TFunction textureQueryLevels_00S(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00Y(
     BuiltInId::textureQueryLevels_USampler3D1,
     BuiltInName::textureQueryLevels,
@@ -11012,7 +11012,7 @@ constexpr const TFunction textureQueryLevels_00Y(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00K(
     BuiltInId::textureQueryLevels_SamplerCube1,
     BuiltInName::textureQueryLevels,
@@ -11021,7 +11021,7 @@ constexpr const TFunction textureQueryLevels_00K(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00T(
     BuiltInId::textureQueryLevels_ISamplerCube1,
     BuiltInName::textureQueryLevels,
@@ -11030,7 +11030,7 @@ constexpr const TFunction textureQueryLevels_00T(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00Z(
     BuiltInId::textureQueryLevels_USamplerCube1,
     BuiltInName::textureQueryLevels,
@@ -11039,7 +11039,7 @@ constexpr const TFunction textureQueryLevels_00Z(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00h(
     BuiltInId::textureQueryLevels_Sampler1DArray1,
     BuiltInName::textureQueryLevels,
@@ -11048,7 +11048,7 @@ constexpr const TFunction textureQueryLevels_00h(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00p(
     BuiltInId::textureQueryLevels_ISampler1DArray1,
     BuiltInName::textureQueryLevels,
@@ -11057,7 +11057,7 @@ constexpr const TFunction textureQueryLevels_00p(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00u(
     BuiltInId::textureQueryLevels_USampler1DArray1,
     BuiltInName::textureQueryLevels,
@@ -11066,7 +11066,7 @@ constexpr const TFunction textureQueryLevels_00u(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00L(
     BuiltInId::textureQueryLevels_Sampler2DArray1,
     BuiltInName::textureQueryLevels,
@@ -11075,7 +11075,7 @@ constexpr const TFunction textureQueryLevels_00L(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00U(
     BuiltInId::textureQueryLevels_ISampler2DArray1,
     BuiltInName::textureQueryLevels,
@@ -11084,7 +11084,7 @@ constexpr const TFunction textureQueryLevels_00U(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00a(
     BuiltInId::textureQueryLevels_USampler2DArray1,
     BuiltInName::textureQueryLevels,
@@ -11093,7 +11093,7 @@ constexpr const TFunction textureQueryLevels_00a(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00k(
     BuiltInId::textureQueryLevels_SamplerCubeArray1,
     BuiltInName::textureQueryLevels,
@@ -11102,7 +11102,7 @@ constexpr const TFunction textureQueryLevels_00k(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00s(
     BuiltInId::textureQueryLevels_ISamplerCubeArray1,
     BuiltInName::textureQueryLevels,
@@ -11111,7 +11111,7 @@ constexpr const TFunction textureQueryLevels_00s(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00x(
     BuiltInId::textureQueryLevels_USamplerCubeArray1,
     BuiltInName::textureQueryLevels,
@@ -11120,7 +11120,7 @@ constexpr const TFunction textureQueryLevels_00x(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00m(
     BuiltInId::textureQueryLevels_Sampler1DShadow1,
     BuiltInName::textureQueryLevels,
@@ -11129,7 +11129,7 @@ constexpr const TFunction textureQueryLevels_00m(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00d(
     BuiltInId::textureQueryLevels_Sampler2DShadow1,
     BuiltInName::textureQueryLevels,
@@ -11138,7 +11138,7 @@ constexpr const TFunction textureQueryLevels_00d(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00e(
     BuiltInId::textureQueryLevels_SamplerCubeShadow1,
     BuiltInName::textureQueryLevels,
@@ -11147,7 +11147,7 @@ constexpr const TFunction textureQueryLevels_00e(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00i(
     BuiltInId::textureQueryLevels_Sampler1DArrayShadow1,
     BuiltInName::textureQueryLevels,
@@ -11156,7 +11156,7 @@ constexpr const TFunction textureQueryLevels_00i(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00f(
     BuiltInId::textureQueryLevels_Sampler2DArrayShadow1,
     BuiltInName::textureQueryLevels,
@@ -11165,7 +11165,7 @@ constexpr const TFunction textureQueryLevels_00f(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureQueryLevels_00l(
     BuiltInId::textureQueryLevels_SamplerCubeArrayShadow1,
     BuiltInName::textureQueryLevels,
@@ -11174,7 +11174,7 @@ constexpr const TFunction textureQueryLevels_00l(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureQueryLevels,
-    false);
+    true);
 constexpr const TFunction textureSamples_00P(
     BuiltInId::textureSamples_Sampler2DMS1,
     BuiltInName::textureSamples,
@@ -11183,7 +11183,7 @@ constexpr const TFunction textureSamples_00P(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureSamples,
-    false);
+    true);
 constexpr const TFunction textureSamples_00V(
     BuiltInId::textureSamples_ISampler2DMS1,
     BuiltInName::textureSamples,
@@ -11192,7 +11192,7 @@ constexpr const TFunction textureSamples_00V(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureSamples,
-    false);
+    true);
 constexpr const TFunction textureSamples_00b(
     BuiltInId::textureSamples_USampler2DMS1,
     BuiltInName::textureSamples,
@@ -11201,7 +11201,7 @@ constexpr const TFunction textureSamples_00b(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureSamples,
-    false);
+    true);
 constexpr const TFunction textureSamples_00Q(
     BuiltInId::textureSamples_Sampler2DMSArray1,
     BuiltInName::textureSamples,
@@ -11210,7 +11210,7 @@ constexpr const TFunction textureSamples_00Q(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureSamples,
-    false);
+    true);
 constexpr const TFunction textureSamples_00W(
     BuiltInId::textureSamples_ISampler2DMSArray1,
     BuiltInName::textureSamples,
@@ -11219,7 +11219,7 @@ constexpr const TFunction textureSamples_00W(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureSamples,
-    false);
+    true);
 constexpr const TFunction textureSamples_00c(
     BuiltInId::textureSamples_USampler2DMSArray1,
     BuiltInName::textureSamples,
@@ -11228,7 +11228,7 @@ constexpr const TFunction textureSamples_00c(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureSamples,
-    false);
+    true);
 constexpr const TFunction texture_00I10B00B(
     BuiltInId::texture_Sampler2D1_Float2_Float1,
     BuiltInName::texture,
@@ -11237,7 +11237,7 @@ constexpr const TFunction texture_00I10B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00R10B00B(
     BuiltInId::texture_ISampler2D1_Float2_Float1,
     BuiltInName::texture,
@@ -11246,7 +11246,7 @@ constexpr const TFunction texture_00R10B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00X10B00B(
     BuiltInId::texture_USampler2D1_Float2_Float1,
     BuiltInName::texture,
@@ -11255,7 +11255,7 @@ constexpr const TFunction texture_00X10B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00J20B00B(
     BuiltInId::texture_Sampler3D1_Float3_Float1,
     BuiltInName::texture,
@@ -11264,7 +11264,7 @@ constexpr const TFunction texture_00J20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00S20B00B(
     BuiltInId::texture_ISampler3D1_Float3_Float1,
     BuiltInName::texture,
@@ -11273,7 +11273,7 @@ constexpr const TFunction texture_00S20B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00Y20B00B(
     BuiltInId::texture_USampler3D1_Float3_Float1,
     BuiltInName::texture,
@@ -11282,7 +11282,7 @@ constexpr const TFunction texture_00Y20B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00K20B00B(
     BuiltInId::texture_SamplerCube1_Float3_Float1,
     BuiltInName::texture,
@@ -11291,7 +11291,7 @@ constexpr const TFunction texture_00K20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00T20B00B(
     BuiltInId::texture_ISamplerCube1_Float3_Float1,
     BuiltInName::texture,
@@ -11300,7 +11300,7 @@ constexpr const TFunction texture_00T20B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00Z20B00B(
     BuiltInId::texture_USamplerCube1_Float3_Float1,
     BuiltInName::texture,
@@ -11309,7 +11309,7 @@ constexpr const TFunction texture_00Z20B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00L20B00B(
     BuiltInId::texture_Sampler2DArray1_Float3_Float1,
     BuiltInName::texture,
@@ -11318,7 +11318,7 @@ constexpr const TFunction texture_00L20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00U20B00B(
     BuiltInId::texture_ISampler2DArray1_Float3_Float1,
     BuiltInName::texture,
@@ -11327,7 +11327,7 @@ constexpr const TFunction texture_00U20B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00a20B00B(
     BuiltInId::texture_USampler2DArray1_Float3_Float1,
     BuiltInName::texture,
@@ -11336,7 +11336,7 @@ constexpr const TFunction texture_00a20B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00I20B00B(
     BuiltInId::textureProj_Sampler2D1_Float3_Float1,
     BuiltInName::textureProj,
@@ -11345,7 +11345,7 @@ constexpr const TFunction textureProj_00I20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00R20B00B(
     BuiltInId::textureProj_ISampler2D1_Float3_Float1,
     BuiltInName::textureProj,
@@ -11354,7 +11354,7 @@ constexpr const TFunction textureProj_00R20B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00X20B00B(
     BuiltInId::textureProj_USampler2D1_Float3_Float1,
     BuiltInName::textureProj,
@@ -11363,7 +11363,7 @@ constexpr const TFunction textureProj_00X20B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00I30B00B(
     BuiltInId::textureProj_Sampler2D1_Float4_Float1,
     BuiltInName::textureProj,
@@ -11372,7 +11372,7 @@ constexpr const TFunction textureProj_00I30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00R30B00B(
     BuiltInId::textureProj_ISampler2D1_Float4_Float1,
     BuiltInName::textureProj,
@@ -11381,7 +11381,7 @@ constexpr const TFunction textureProj_00R30B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00X30B00B(
     BuiltInId::textureProj_USampler2D1_Float4_Float1,
     BuiltInName::textureProj,
@@ -11390,7 +11390,7 @@ constexpr const TFunction textureProj_00X30B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00J30B00B(
     BuiltInId::textureProj_Sampler3D1_Float4_Float1,
     BuiltInName::textureProj,
@@ -11399,7 +11399,7 @@ constexpr const TFunction textureProj_00J30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00S30B00B(
     BuiltInId::textureProj_ISampler3D1_Float4_Float1,
     BuiltInName::textureProj,
@@ -11408,7 +11408,7 @@ constexpr const TFunction textureProj_00S30B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00Y30B00B(
     BuiltInId::textureProj_USampler3D1_Float4_Float1,
     BuiltInName::textureProj,
@@ -11417,7 +11417,7 @@ constexpr const TFunction textureProj_00Y30B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction texture_00d20B00B(
     BuiltInId::texture_Sampler2DShadow1_Float3_Float1,
     BuiltInName::texture,
@@ -11426,7 +11426,7 @@ constexpr const TFunction texture_00d20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00e30B00B(
     BuiltInId::texture_SamplerCubeShadow1_Float4_Float1,
     BuiltInName::texture,
@@ -11435,7 +11435,7 @@ constexpr const TFunction texture_00e30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00d30B00B(
     BuiltInId::textureProj_Sampler2DShadow1_Float4_Float1,
     BuiltInName::textureProj,
@@ -11444,7 +11444,7 @@ constexpr const TFunction textureProj_00d30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction texture_00g00B00B(
     BuiltInId::texture_Sampler1D1_Float1_Float1,
     BuiltInName::texture,
@@ -11453,7 +11453,7 @@ constexpr const TFunction texture_00g00B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00o00B00B(
     BuiltInId::texture_ISampler1D1_Float1_Float1,
     BuiltInName::texture,
@@ -11462,7 +11462,7 @@ constexpr const TFunction texture_00o00B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00t00B00B(
     BuiltInId::texture_USampler1D1_Float1_Float1,
     BuiltInName::texture,
@@ -11471,7 +11471,7 @@ constexpr const TFunction texture_00t00B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00m20B00B(
     BuiltInId::texture_Sampler1DShadow1_Float3_Float1,
     BuiltInName::texture,
@@ -11480,7 +11480,7 @@ constexpr const TFunction texture_00m20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00h20B00B(
     BuiltInId::texture_Sampler1DArray1_Float3_Float1,
     BuiltInName::texture,
@@ -11489,7 +11489,7 @@ constexpr const TFunction texture_00h20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00p20B00B(
     BuiltInId::texture_ISampler1DArray1_Float3_Float1,
     BuiltInName::texture,
@@ -11498,7 +11498,7 @@ constexpr const TFunction texture_00p20B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00u20B00B(
     BuiltInId::texture_USampler1DArray1_Float3_Float1,
     BuiltInName::texture,
@@ -11507,7 +11507,7 @@ constexpr const TFunction texture_00u20B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00i20B00B(
     BuiltInId::texture_Sampler1DArrayShadow1_Float3_Float1,
     BuiltInName::texture,
@@ -11516,7 +11516,7 @@ constexpr const TFunction texture_00i20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00f30B00B(
     BuiltInId::texture_Sampler2DArrayShadow1_Float4_Float1,
     BuiltInName::texture,
@@ -11525,7 +11525,7 @@ constexpr const TFunction texture_00f30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00g10B00B(
     BuiltInId::textureProj_Sampler1D1_Float2_Float1,
     BuiltInName::textureProj,
@@ -11534,7 +11534,7 @@ constexpr const TFunction textureProj_00g10B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00o10B00B(
     BuiltInId::textureProj_ISampler1D1_Float2_Float1,
     BuiltInName::textureProj,
@@ -11543,7 +11543,7 @@ constexpr const TFunction textureProj_00o10B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00t10B00B(
     BuiltInId::textureProj_USampler1D1_Float2_Float1,
     BuiltInName::textureProj,
@@ -11552,7 +11552,7 @@ constexpr const TFunction textureProj_00t10B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00g30B00B(
     BuiltInId::textureProj_Sampler1D1_Float4_Float1,
     BuiltInName::textureProj,
@@ -11561,7 +11561,7 @@ constexpr const TFunction textureProj_00g30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00o30B00B(
     BuiltInId::textureProj_ISampler1D1_Float4_Float1,
     BuiltInName::textureProj,
@@ -11570,7 +11570,7 @@ constexpr const TFunction textureProj_00o30B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00t30B00B(
     BuiltInId::textureProj_USampler1D1_Float4_Float1,
     BuiltInName::textureProj,
@@ -11579,7 +11579,7 @@ constexpr const TFunction textureProj_00t30B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00m30B00B(
     BuiltInId::textureProj_Sampler1DShadow1_Float4_Float1,
     BuiltInName::textureProj,
@@ -11588,7 +11588,7 @@ constexpr const TFunction textureProj_00m30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction texture_00k30B00B(
     BuiltInId::texture_SamplerCubeArray1_Float4_Float1,
     BuiltInName::texture,
@@ -11597,7 +11597,7 @@ constexpr const TFunction texture_00k30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00s30B00B(
     BuiltInId::texture_ISamplerCubeArray1_Float4_Float1,
     BuiltInName::texture,
@@ -11606,7 +11606,7 @@ constexpr const TFunction texture_00s30B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00x30B00B(
     BuiltInId::texture_USamplerCubeArray1_Float4_Float1,
     BuiltInName::texture,
@@ -11615,7 +11615,7 @@ constexpr const TFunction texture_00x30B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction textureExt_00k30B00B(
     BuiltInId::textureExt_SamplerCubeArray1_Float4_Float1,
     BuiltInName::textureExt,
@@ -11625,7 +11625,7 @@ constexpr const TFunction textureExt_00k30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction textureExt_00s30B00B(
     BuiltInId::textureExt_ISamplerCubeArray1_Float4_Float1,
     BuiltInName::textureExt,
@@ -11635,7 +11635,7 @@ constexpr const TFunction textureExt_00s30B00B(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction textureExt_00x30B00B(
     BuiltInId::textureExt_USamplerCubeArray1_Float4_Float1,
     BuiltInName::textureExt,
@@ -11645,7 +11645,7 @@ constexpr const TFunction textureExt_00x30B00B(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction texture_00M10B00B(
     BuiltInId::texture_SamplerExternalOES1_Float2_Float1,
     BuiltInName::texture,
@@ -11654,7 +11654,7 @@ constexpr const TFunction texture_00M10B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00M20B00B(
     BuiltInId::textureProj_SamplerExternalOES1_Float3_Float1,
     BuiltInName::textureProj,
@@ -11663,7 +11663,7 @@ constexpr const TFunction textureProj_00M20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00M30B00B(
     BuiltInId::textureProj_SamplerExternalOES1_Float4_Float1,
     BuiltInName::textureProj,
@@ -11672,7 +11672,7 @@ constexpr const TFunction textureProj_00M30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction texture_00N10B00B(
     BuiltInId::texture_SamplerExternal2DY2YEXT1_Float2_Float1,
     BuiltInName::texture,
@@ -11681,7 +11681,7 @@ constexpr const TFunction texture_00N10B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00N20B00B(
     BuiltInId::textureProj_SamplerExternal2DY2YEXT1_Float3_Float1,
     BuiltInName::textureProj,
@@ -11690,7 +11690,7 @@ constexpr const TFunction textureProj_00N20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureProj_00N30B00B(
     BuiltInId::textureProj_SamplerExternal2DY2YEXT1_Float4_Float1,
     BuiltInName::textureProj,
@@ -11699,7 +11699,7 @@ constexpr const TFunction textureProj_00N30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjBias,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00g00B(
     BuiltInId::textureQueryLod_Sampler1D1_Float1,
     BuiltInName::textureQueryLod,
@@ -11708,7 +11708,7 @@ constexpr const TFunction textureQueryLod_00g00B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00o00B(
     BuiltInId::textureQueryLod_ISampler1D1_Float1,
     BuiltInName::textureQueryLod,
@@ -11717,7 +11717,7 @@ constexpr const TFunction textureQueryLod_00o00B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00t00B(
     BuiltInId::textureQueryLod_USampler1D1_Float1,
     BuiltInName::textureQueryLod,
@@ -11726,7 +11726,7 @@ constexpr const TFunction textureQueryLod_00t00B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00I10B(
     BuiltInId::textureQueryLod_Sampler2D1_Float2,
     BuiltInName::textureQueryLod,
@@ -11735,7 +11735,7 @@ constexpr const TFunction textureQueryLod_00I10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00R10B(
     BuiltInId::textureQueryLod_ISampler2D1_Float2,
     BuiltInName::textureQueryLod,
@@ -11744,7 +11744,7 @@ constexpr const TFunction textureQueryLod_00R10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00X10B(
     BuiltInId::textureQueryLod_USampler2D1_Float2,
     BuiltInName::textureQueryLod,
@@ -11753,7 +11753,7 @@ constexpr const TFunction textureQueryLod_00X10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00J20B(
     BuiltInId::textureQueryLod_Sampler3D1_Float3,
     BuiltInName::textureQueryLod,
@@ -11762,7 +11762,7 @@ constexpr const TFunction textureQueryLod_00J20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00S20B(
     BuiltInId::textureQueryLod_ISampler3D1_Float3,
     BuiltInName::textureQueryLod,
@@ -11771,7 +11771,7 @@ constexpr const TFunction textureQueryLod_00S20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00Y20B(
     BuiltInId::textureQueryLod_USampler3D1_Float3,
     BuiltInName::textureQueryLod,
@@ -11780,7 +11780,7 @@ constexpr const TFunction textureQueryLod_00Y20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00K20B(
     BuiltInId::textureQueryLod_SamplerCube1_Float3,
     BuiltInName::textureQueryLod,
@@ -11789,7 +11789,7 @@ constexpr const TFunction textureQueryLod_00K20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00T20B(
     BuiltInId::textureQueryLod_ISamplerCube1_Float3,
     BuiltInName::textureQueryLod,
@@ -11798,7 +11798,7 @@ constexpr const TFunction textureQueryLod_00T20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00Z20B(
     BuiltInId::textureQueryLod_USamplerCube1_Float3,
     BuiltInName::textureQueryLod,
@@ -11807,7 +11807,7 @@ constexpr const TFunction textureQueryLod_00Z20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00h00B(
     BuiltInId::textureQueryLod_Sampler1DArray1_Float1,
     BuiltInName::textureQueryLod,
@@ -11816,7 +11816,7 @@ constexpr const TFunction textureQueryLod_00h00B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00p00B(
     BuiltInId::textureQueryLod_ISampler1DArray1_Float1,
     BuiltInName::textureQueryLod,
@@ -11825,7 +11825,7 @@ constexpr const TFunction textureQueryLod_00p00B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00u00B(
     BuiltInId::textureQueryLod_USampler1DArray1_Float1,
     BuiltInName::textureQueryLod,
@@ -11834,7 +11834,7 @@ constexpr const TFunction textureQueryLod_00u00B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00L10B(
     BuiltInId::textureQueryLod_Sampler2DArray1_Float2,
     BuiltInName::textureQueryLod,
@@ -11843,7 +11843,7 @@ constexpr const TFunction textureQueryLod_00L10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00U10B(
     BuiltInId::textureQueryLod_ISampler2DArray1_Float2,
     BuiltInName::textureQueryLod,
@@ -11852,7 +11852,7 @@ constexpr const TFunction textureQueryLod_00U10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00a10B(
     BuiltInId::textureQueryLod_USampler2DArray1_Float2,
     BuiltInName::textureQueryLod,
@@ -11861,7 +11861,7 @@ constexpr const TFunction textureQueryLod_00a10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00k20B(
     BuiltInId::textureQueryLod_SamplerCubeArray1_Float3,
     BuiltInName::textureQueryLod,
@@ -11870,7 +11870,7 @@ constexpr const TFunction textureQueryLod_00k20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00s20B(
     BuiltInId::textureQueryLod_ISamplerCubeArray1_Float3,
     BuiltInName::textureQueryLod,
@@ -11879,7 +11879,7 @@ constexpr const TFunction textureQueryLod_00s20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00x20B(
     BuiltInId::textureQueryLod_USamplerCubeArray1_Float3,
     BuiltInName::textureQueryLod,
@@ -11888,7 +11888,7 @@ constexpr const TFunction textureQueryLod_00x20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00m00B(
     BuiltInId::textureQueryLod_Sampler1DShadow1_Float1,
     BuiltInName::textureQueryLod,
@@ -11897,7 +11897,7 @@ constexpr const TFunction textureQueryLod_00m00B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00d10B(
     BuiltInId::textureQueryLod_Sampler2DShadow1_Float2,
     BuiltInName::textureQueryLod,
@@ -11906,7 +11906,7 @@ constexpr const TFunction textureQueryLod_00d10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00e20B(
     BuiltInId::textureQueryLod_SamplerCubeShadow1_Float3,
     BuiltInName::textureQueryLod,
@@ -11915,7 +11915,7 @@ constexpr const TFunction textureQueryLod_00e20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00i00B(
     BuiltInId::textureQueryLod_Sampler1DArrayShadow1_Float1,
     BuiltInName::textureQueryLod,
@@ -11924,7 +11924,7 @@ constexpr const TFunction textureQueryLod_00i00B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00f10B(
     BuiltInId::textureQueryLod_Sampler2DArrayShadow1_Float2,
     BuiltInName::textureQueryLod,
@@ -11933,7 +11933,7 @@ constexpr const TFunction textureQueryLod_00f10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureQueryLod_00l20B(
     BuiltInId::textureQueryLod_SamplerCubeArrayShadow1_Float3,
     BuiltInName::textureQueryLod,
@@ -11942,7 +11942,7 @@ constexpr const TFunction textureQueryLod_00l20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpTextureQueryLod,
-    false);
+    true);
 constexpr const TFunction textureOffset_00I10B10D(
     BuiltInId::textureOffset_Sampler2D1_Float2_Int2,
     BuiltInName::textureOffset,
@@ -11951,7 +11951,7 @@ constexpr const TFunction textureOffset_00I10B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00R10B10D(
     BuiltInId::textureOffset_ISampler2D1_Float2_Int2,
     BuiltInName::textureOffset,
@@ -11960,7 +11960,7 @@ constexpr const TFunction textureOffset_00R10B10D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00X10B10D(
     BuiltInId::textureOffset_USampler2D1_Float2_Int2,
     BuiltInName::textureOffset,
@@ -11969,7 +11969,7 @@ constexpr const TFunction textureOffset_00X10B10D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00J20B20D(
     BuiltInId::textureOffset_Sampler3D1_Float3_Int3,
     BuiltInName::textureOffset,
@@ -11978,7 +11978,7 @@ constexpr const TFunction textureOffset_00J20B20D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00S20B20D(
     BuiltInId::textureOffset_ISampler3D1_Float3_Int3,
     BuiltInName::textureOffset,
@@ -11987,7 +11987,7 @@ constexpr const TFunction textureOffset_00S20B20D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00Y20B20D(
     BuiltInId::textureOffset_USampler3D1_Float3_Int3,
     BuiltInName::textureOffset,
@@ -11996,7 +11996,7 @@ constexpr const TFunction textureOffset_00Y20B20D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00d20B10D(
     BuiltInId::textureOffset_Sampler2DShadow1_Float3_Int2,
     BuiltInName::textureOffset,
@@ -12005,7 +12005,7 @@ constexpr const TFunction textureOffset_00d20B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00L20B10D(
     BuiltInId::textureOffset_Sampler2DArray1_Float3_Int2,
     BuiltInName::textureOffset,
@@ -12014,7 +12014,7 @@ constexpr const TFunction textureOffset_00L20B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00U20B10D(
     BuiltInId::textureOffset_ISampler2DArray1_Float3_Int2,
     BuiltInName::textureOffset,
@@ -12023,7 +12023,7 @@ constexpr const TFunction textureOffset_00U20B10D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00a20B10D(
     BuiltInId::textureOffset_USampler2DArray1_Float3_Int2,
     BuiltInName::textureOffset,
@@ -12032,7 +12032,7 @@ constexpr const TFunction textureOffset_00a20B10D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00g00B00D(
     BuiltInId::textureOffset_Sampler1D1_Float1_Int1,
     BuiltInName::textureOffset,
@@ -12041,7 +12041,7 @@ constexpr const TFunction textureOffset_00g00B00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00o00B00D(
     BuiltInId::textureOffset_ISampler1D1_Float1_Int1,
     BuiltInName::textureOffset,
@@ -12050,7 +12050,7 @@ constexpr const TFunction textureOffset_00o00B00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00t00B00D(
     BuiltInId::textureOffset_USampler1D1_Float1_Int1,
     BuiltInName::textureOffset,
@@ -12059,7 +12059,7 @@ constexpr const TFunction textureOffset_00t00B00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00O10B10D(
     BuiltInId::textureOffset_Sampler2DRect1_Float2_Int2,
     BuiltInName::textureOffset,
@@ -12068,7 +12068,7 @@ constexpr const TFunction textureOffset_00O10B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00q10B10D(
     BuiltInId::textureOffset_ISampler2DRect1_Float2_Int2,
     BuiltInName::textureOffset,
@@ -12077,7 +12077,7 @@ constexpr const TFunction textureOffset_00q10B10D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00v10B10D(
     BuiltInId::textureOffset_USampler2DRect1_Float2_Int2,
     BuiltInName::textureOffset,
@@ -12086,7 +12086,7 @@ constexpr const TFunction textureOffset_00v10B10D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00n20B10D(
     BuiltInId::textureOffset_Sampler2DRectShadow1_Float3_Int2,
     BuiltInName::textureOffset,
@@ -12095,7 +12095,7 @@ constexpr const TFunction textureOffset_00n20B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00m20B00D(
     BuiltInId::textureOffset_Sampler1DShadow1_Float3_Int1,
     BuiltInName::textureOffset,
@@ -12104,7 +12104,7 @@ constexpr const TFunction textureOffset_00m20B00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00h10B00D(
     BuiltInId::textureOffset_Sampler1DArray1_Float2_Int1,
     BuiltInName::textureOffset,
@@ -12113,7 +12113,7 @@ constexpr const TFunction textureOffset_00h10B00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00p10B00D(
     BuiltInId::textureOffset_ISampler1DArray1_Float2_Int1,
     BuiltInName::textureOffset,
@@ -12122,7 +12122,7 @@ constexpr const TFunction textureOffset_00p10B00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00u10B00D(
     BuiltInId::textureOffset_USampler1DArray1_Float2_Int1,
     BuiltInName::textureOffset,
@@ -12131,7 +12131,7 @@ constexpr const TFunction textureOffset_00u10B00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00i20B00D(
     BuiltInId::textureOffset_Sampler1DArrayShadow1_Float3_Int1,
     BuiltInName::textureOffset,
@@ -12140,7 +12140,7 @@ constexpr const TFunction textureOffset_00i20B00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00f30B10D(
     BuiltInId::textureOffset_Sampler2DArrayShadow1_Float4_Int2,
     BuiltInName::textureOffset,
@@ -12149,7 +12149,7 @@ constexpr const TFunction textureOffset_00f30B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00I20B10D(
     BuiltInId::textureProjOffset_Sampler2D1_Float3_Int2,
     BuiltInName::textureProjOffset,
@@ -12158,7 +12158,7 @@ constexpr const TFunction textureProjOffset_00I20B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00R20B10D(
     BuiltInId::textureProjOffset_ISampler2D1_Float3_Int2,
     BuiltInName::textureProjOffset,
@@ -12167,7 +12167,7 @@ constexpr const TFunction textureProjOffset_00R20B10D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00X20B10D(
     BuiltInId::textureProjOffset_USampler2D1_Float3_Int2,
     BuiltInName::textureProjOffset,
@@ -12176,7 +12176,7 @@ constexpr const TFunction textureProjOffset_00X20B10D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00I30B10D(
     BuiltInId::textureProjOffset_Sampler2D1_Float4_Int2,
     BuiltInName::textureProjOffset,
@@ -12185,7 +12185,7 @@ constexpr const TFunction textureProjOffset_00I30B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00R30B10D(
     BuiltInId::textureProjOffset_ISampler2D1_Float4_Int2,
     BuiltInName::textureProjOffset,
@@ -12194,7 +12194,7 @@ constexpr const TFunction textureProjOffset_00R30B10D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00X30B10D(
     BuiltInId::textureProjOffset_USampler2D1_Float4_Int2,
     BuiltInName::textureProjOffset,
@@ -12203,7 +12203,7 @@ constexpr const TFunction textureProjOffset_00X30B10D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00J30B20D(
     BuiltInId::textureProjOffset_Sampler3D1_Float4_Int3,
     BuiltInName::textureProjOffset,
@@ -12212,7 +12212,7 @@ constexpr const TFunction textureProjOffset_00J30B20D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00S30B20D(
     BuiltInId::textureProjOffset_ISampler3D1_Float4_Int3,
     BuiltInName::textureProjOffset,
@@ -12221,7 +12221,7 @@ constexpr const TFunction textureProjOffset_00S30B20D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00Y30B20D(
     BuiltInId::textureProjOffset_USampler3D1_Float4_Int3,
     BuiltInName::textureProjOffset,
@@ -12230,7 +12230,7 @@ constexpr const TFunction textureProjOffset_00Y30B20D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00d30B10D(
     BuiltInId::textureProjOffset_Sampler2DShadow1_Float4_Int2,
     BuiltInName::textureProjOffset,
@@ -12239,7 +12239,7 @@ constexpr const TFunction textureProjOffset_00d30B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00g10B00D(
     BuiltInId::textureProjOffset_Sampler1D1_Float2_Int1,
     BuiltInName::textureProjOffset,
@@ -12248,7 +12248,7 @@ constexpr const TFunction textureProjOffset_00g10B00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00o10B00D(
     BuiltInId::textureProjOffset_ISampler1D1_Float2_Int1,
     BuiltInName::textureProjOffset,
@@ -12257,7 +12257,7 @@ constexpr const TFunction textureProjOffset_00o10B00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00t10B00D(
     BuiltInId::textureProjOffset_USampler1D1_Float2_Int1,
     BuiltInName::textureProjOffset,
@@ -12266,7 +12266,7 @@ constexpr const TFunction textureProjOffset_00t10B00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00g30B00D(
     BuiltInId::textureProjOffset_Sampler1D1_Float4_Int1,
     BuiltInName::textureProjOffset,
@@ -12275,7 +12275,7 @@ constexpr const TFunction textureProjOffset_00g30B00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00o30B00D(
     BuiltInId::textureProjOffset_ISampler1D1_Float4_Int1,
     BuiltInName::textureProjOffset,
@@ -12284,7 +12284,7 @@ constexpr const TFunction textureProjOffset_00o30B00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00t30B00D(
     BuiltInId::textureProjOffset_USampler1D1_Float4_Int1,
     BuiltInName::textureProjOffset,
@@ -12293,7 +12293,7 @@ constexpr const TFunction textureProjOffset_00t30B00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00O20B10D(
     BuiltInId::textureProjOffset_Sampler2DRect1_Float3_Int2,
     BuiltInName::textureProjOffset,
@@ -12302,7 +12302,7 @@ constexpr const TFunction textureProjOffset_00O20B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00q20B10D(
     BuiltInId::textureProjOffset_ISampler2DRect1_Float3_Int2,
     BuiltInName::textureProjOffset,
@@ -12311,7 +12311,7 @@ constexpr const TFunction textureProjOffset_00q20B10D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00v20B10D(
     BuiltInId::textureProjOffset_USampler2DRect1_Float3_Int2,
     BuiltInName::textureProjOffset,
@@ -12320,7 +12320,7 @@ constexpr const TFunction textureProjOffset_00v20B10D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00O30B10D(
     BuiltInId::textureProjOffset_Sampler2DRect1_Float4_Int2,
     BuiltInName::textureProjOffset,
@@ -12329,7 +12329,7 @@ constexpr const TFunction textureProjOffset_00O30B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00q30B10D(
     BuiltInId::textureProjOffset_ISampler2DRect1_Float4_Int2,
     BuiltInName::textureProjOffset,
@@ -12338,7 +12338,7 @@ constexpr const TFunction textureProjOffset_00q30B10D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00v30B10D(
     BuiltInId::textureProjOffset_USampler2DRect1_Float4_Int2,
     BuiltInName::textureProjOffset,
@@ -12347,7 +12347,7 @@ constexpr const TFunction textureProjOffset_00v30B10D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00n30B10D(
     BuiltInId::textureProjOffset_Sampler2DRectShadow1_Float4_Int2,
     BuiltInName::textureProjOffset,
@@ -12356,7 +12356,7 @@ constexpr const TFunction textureProjOffset_00n30B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00m30B00D(
     BuiltInId::textureProjOffset_Sampler1DShadow1_Float4_Int1,
     BuiltInName::textureProjOffset,
@@ -12365,7 +12365,7 @@ constexpr const TFunction textureProjOffset_00m30B00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00I10B00B10D(
     BuiltInId::textureLodOffset_Sampler2D1_Float2_Float1_Int2,
     BuiltInName::textureLodOffset,
@@ -12374,7 +12374,7 @@ constexpr const TFunction textureLodOffset_00I10B00B10D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00R10B00B10D(
     BuiltInId::textureLodOffset_ISampler2D1_Float2_Float1_Int2,
     BuiltInName::textureLodOffset,
@@ -12383,7 +12383,7 @@ constexpr const TFunction textureLodOffset_00R10B00B10D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00X10B00B10D(
     BuiltInId::textureLodOffset_USampler2D1_Float2_Float1_Int2,
     BuiltInName::textureLodOffset,
@@ -12392,7 +12392,7 @@ constexpr const TFunction textureLodOffset_00X10B00B10D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00J20B00B20D(
     BuiltInId::textureLodOffset_Sampler3D1_Float3_Float1_Int3,
     BuiltInName::textureLodOffset,
@@ -12401,7 +12401,7 @@ constexpr const TFunction textureLodOffset_00J20B00B20D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00S20B00B20D(
     BuiltInId::textureLodOffset_ISampler3D1_Float3_Float1_Int3,
     BuiltInName::textureLodOffset,
@@ -12410,7 +12410,7 @@ constexpr const TFunction textureLodOffset_00S20B00B20D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00Y20B00B20D(
     BuiltInId::textureLodOffset_USampler3D1_Float3_Float1_Int3,
     BuiltInName::textureLodOffset,
@@ -12419,7 +12419,7 @@ constexpr const TFunction textureLodOffset_00Y20B00B20D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00d20B00B10D(
     BuiltInId::textureLodOffset_Sampler2DShadow1_Float3_Float1_Int2,
     BuiltInName::textureLodOffset,
@@ -12428,7 +12428,7 @@ constexpr const TFunction textureLodOffset_00d20B00B10D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00L20B00B10D(
     BuiltInId::textureLodOffset_Sampler2DArray1_Float3_Float1_Int2,
     BuiltInName::textureLodOffset,
@@ -12437,7 +12437,7 @@ constexpr const TFunction textureLodOffset_00L20B00B10D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00U20B00B10D(
     BuiltInId::textureLodOffset_ISampler2DArray1_Float3_Float1_Int2,
     BuiltInName::textureLodOffset,
@@ -12446,7 +12446,7 @@ constexpr const TFunction textureLodOffset_00U20B00B10D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00a20B00B10D(
     BuiltInId::textureLodOffset_USampler2DArray1_Float3_Float1_Int2,
     BuiltInName::textureLodOffset,
@@ -12455,7 +12455,7 @@ constexpr const TFunction textureLodOffset_00a20B00B10D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00g00B00B00D(
     BuiltInId::textureLodOffset_Sampler1D1_Float1_Float1_Int1,
     BuiltInName::textureLodOffset,
@@ -12464,7 +12464,7 @@ constexpr const TFunction textureLodOffset_00g00B00B00D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00o00B00B00D(
     BuiltInId::textureLodOffset_ISampler1D1_Float1_Float1_Int1,
     BuiltInName::textureLodOffset,
@@ -12473,7 +12473,7 @@ constexpr const TFunction textureLodOffset_00o00B00B00D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00t00B00B00D(
     BuiltInId::textureLodOffset_USampler1D1_Float1_Float1_Int1,
     BuiltInName::textureLodOffset,
@@ -12482,7 +12482,7 @@ constexpr const TFunction textureLodOffset_00t00B00B00D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00m20B00B00D(
     BuiltInId::textureLodOffset_Sampler1DShadow1_Float3_Float1_Int1,
     BuiltInName::textureLodOffset,
@@ -12491,7 +12491,7 @@ constexpr const TFunction textureLodOffset_00m20B00B00D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00h10B00B00D(
     BuiltInId::textureLodOffset_Sampler1DArray1_Float2_Float1_Int1,
     BuiltInName::textureLodOffset,
@@ -12500,7 +12500,7 @@ constexpr const TFunction textureLodOffset_00h10B00B00D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00p10B00B00D(
     BuiltInId::textureLodOffset_ISampler1DArray1_Float2_Float1_Int1,
     BuiltInName::textureLodOffset,
@@ -12509,7 +12509,7 @@ constexpr const TFunction textureLodOffset_00p10B00B00D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00u10B00B00D(
     BuiltInId::textureLodOffset_USampler1DArray1_Float2_Float1_Int1,
     BuiltInName::textureLodOffset,
@@ -12518,7 +12518,7 @@ constexpr const TFunction textureLodOffset_00u10B00B00D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureLodOffset_00i20B00B00D(
     BuiltInId::textureLodOffset_Sampler1DArrayShadow1_Float3_Float1_Int1,
     BuiltInName::textureLodOffset,
@@ -12527,7 +12527,7 @@ constexpr const TFunction textureLodOffset_00i20B00B00D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00I20B00B10D(
     BuiltInId::textureProjLodOffset_Sampler2D1_Float3_Float1_Int2,
     BuiltInName::textureProjLodOffset,
@@ -12536,7 +12536,7 @@ constexpr const TFunction textureProjLodOffset_00I20B00B10D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00R20B00B10D(
     BuiltInId::textureProjLodOffset_ISampler2D1_Float3_Float1_Int2,
     BuiltInName::textureProjLodOffset,
@@ -12545,7 +12545,7 @@ constexpr const TFunction textureProjLodOffset_00R20B00B10D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00X20B00B10D(
     BuiltInId::textureProjLodOffset_USampler2D1_Float3_Float1_Int2,
     BuiltInName::textureProjLodOffset,
@@ -12554,7 +12554,7 @@ constexpr const TFunction textureProjLodOffset_00X20B00B10D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00I30B00B10D(
     BuiltInId::textureProjLodOffset_Sampler2D1_Float4_Float1_Int2,
     BuiltInName::textureProjLodOffset,
@@ -12563,7 +12563,7 @@ constexpr const TFunction textureProjLodOffset_00I30B00B10D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00R30B00B10D(
     BuiltInId::textureProjLodOffset_ISampler2D1_Float4_Float1_Int2,
     BuiltInName::textureProjLodOffset,
@@ -12572,7 +12572,7 @@ constexpr const TFunction textureProjLodOffset_00R30B00B10D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00X30B00B10D(
     BuiltInId::textureProjLodOffset_USampler2D1_Float4_Float1_Int2,
     BuiltInName::textureProjLodOffset,
@@ -12581,7 +12581,7 @@ constexpr const TFunction textureProjLodOffset_00X30B00B10D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00J30B00B20D(
     BuiltInId::textureProjLodOffset_Sampler3D1_Float4_Float1_Int3,
     BuiltInName::textureProjLodOffset,
@@ -12590,7 +12590,7 @@ constexpr const TFunction textureProjLodOffset_00J30B00B20D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00S30B00B20D(
     BuiltInId::textureProjLodOffset_ISampler3D1_Float4_Float1_Int3,
     BuiltInName::textureProjLodOffset,
@@ -12599,7 +12599,7 @@ constexpr const TFunction textureProjLodOffset_00S30B00B20D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00Y30B00B20D(
     BuiltInId::textureProjLodOffset_USampler3D1_Float4_Float1_Int3,
     BuiltInName::textureProjLodOffset,
@@ -12608,7 +12608,7 @@ constexpr const TFunction textureProjLodOffset_00Y30B00B20D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00d30B00B10D(
     BuiltInId::textureProjLodOffset_Sampler2DShadow1_Float4_Float1_Int2,
     BuiltInName::textureProjLodOffset,
@@ -12617,7 +12617,7 @@ constexpr const TFunction textureProjLodOffset_00d30B00B10D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00g10B00B00D(
     BuiltInId::textureProjLodOffset_Sampler1D1_Float2_Float1_Int1,
     BuiltInName::textureProjLodOffset,
@@ -12626,7 +12626,7 @@ constexpr const TFunction textureProjLodOffset_00g10B00B00D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00o10B00B00D(
     BuiltInId::textureProjLodOffset_ISampler1D1_Float2_Float1_Int1,
     BuiltInName::textureProjLodOffset,
@@ -12635,7 +12635,7 @@ constexpr const TFunction textureProjLodOffset_00o10B00B00D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00t10B00B00D(
     BuiltInId::textureProjLodOffset_USampler1D1_Float2_Float1_Int1,
     BuiltInName::textureProjLodOffset,
@@ -12644,7 +12644,7 @@ constexpr const TFunction textureProjLodOffset_00t10B00B00D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00g30B00B00D(
     BuiltInId::textureProjLodOffset_Sampler1D1_Float4_Float1_Int1,
     BuiltInName::textureProjLodOffset,
@@ -12653,7 +12653,7 @@ constexpr const TFunction textureProjLodOffset_00g30B00B00D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00o30B00B00D(
     BuiltInId::textureProjLodOffset_ISampler1D1_Float4_Float1_Int1,
     BuiltInName::textureProjLodOffset,
@@ -12662,7 +12662,7 @@ constexpr const TFunction textureProjLodOffset_00o30B00B00D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00t30B00B00D(
     BuiltInId::textureProjLodOffset_USampler1D1_Float4_Float1_Int1,
     BuiltInName::textureProjLodOffset,
@@ -12671,7 +12671,7 @@ constexpr const TFunction textureProjLodOffset_00t30B00B00D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction textureProjLodOffset_00m30B00B00D(
     BuiltInId::textureProjLodOffset_Sampler1DShadow1_Float4_Float1_Int1,
     BuiltInName::textureProjLodOffset,
@@ -12680,7 +12680,7 @@ constexpr const TFunction textureProjLodOffset_00m30B00B00D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjLodOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00I10D00D10D(
     BuiltInId::texelFetchOffset_Sampler2D1_Int2_Int1_Int2,
     BuiltInName::texelFetchOffset,
@@ -12689,7 +12689,7 @@ constexpr const TFunction texelFetchOffset_00I10D00D10D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00R10D00D10D(
     BuiltInId::texelFetchOffset_ISampler2D1_Int2_Int1_Int2,
     BuiltInName::texelFetchOffset,
@@ -12698,7 +12698,7 @@ constexpr const TFunction texelFetchOffset_00R10D00D10D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00X10D00D10D(
     BuiltInId::texelFetchOffset_USampler2D1_Int2_Int1_Int2,
     BuiltInName::texelFetchOffset,
@@ -12707,7 +12707,7 @@ constexpr const TFunction texelFetchOffset_00X10D00D10D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00J20D00D20D(
     BuiltInId::texelFetchOffset_Sampler3D1_Int3_Int1_Int3,
     BuiltInName::texelFetchOffset,
@@ -12716,7 +12716,7 @@ constexpr const TFunction texelFetchOffset_00J20D00D20D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00S20D00D20D(
     BuiltInId::texelFetchOffset_ISampler3D1_Int3_Int1_Int3,
     BuiltInName::texelFetchOffset,
@@ -12725,7 +12725,7 @@ constexpr const TFunction texelFetchOffset_00S20D00D20D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00Y20D00D20D(
     BuiltInId::texelFetchOffset_USampler3D1_Int3_Int1_Int3,
     BuiltInName::texelFetchOffset,
@@ -12734,7 +12734,7 @@ constexpr const TFunction texelFetchOffset_00Y20D00D20D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00L20D00D10D(
     BuiltInId::texelFetchOffset_Sampler2DArray1_Int3_Int1_Int2,
     BuiltInName::texelFetchOffset,
@@ -12743,7 +12743,7 @@ constexpr const TFunction texelFetchOffset_00L20D00D10D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00U20D00D10D(
     BuiltInId::texelFetchOffset_ISampler2DArray1_Int3_Int1_Int2,
     BuiltInName::texelFetchOffset,
@@ -12752,7 +12752,7 @@ constexpr const TFunction texelFetchOffset_00U20D00D10D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00a20D00D10D(
     BuiltInId::texelFetchOffset_USampler2DArray1_Int3_Int1_Int2,
     BuiltInName::texelFetchOffset,
@@ -12761,7 +12761,7 @@ constexpr const TFunction texelFetchOffset_00a20D00D10D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00g00D00D00D(
     BuiltInId::texelFetchOffset_Sampler1D1_Int1_Int1_Int1,
     BuiltInName::texelFetchOffset,
@@ -12770,7 +12770,7 @@ constexpr const TFunction texelFetchOffset_00g00D00D00D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00o00D00D00D(
     BuiltInId::texelFetchOffset_ISampler1D1_Int1_Int1_Int1,
     BuiltInName::texelFetchOffset,
@@ -12779,7 +12779,7 @@ constexpr const TFunction texelFetchOffset_00o00D00D00D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00t00D00D00D(
     BuiltInId::texelFetchOffset_USampler1D1_Int1_Int1_Int1,
     BuiltInName::texelFetchOffset,
@@ -12788,7 +12788,7 @@ constexpr const TFunction texelFetchOffset_00t00D00D00D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00O10D10D(
     BuiltInId::texelFetchOffset_Sampler2DRect1_Int2_Int2,
     BuiltInName::texelFetchOffset,
@@ -12797,7 +12797,7 @@ constexpr const TFunction texelFetchOffset_00O10D10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00q10D10D(
     BuiltInId::texelFetchOffset_ISampler2DRect1_Int2_Int2,
     BuiltInName::texelFetchOffset,
@@ -12806,7 +12806,7 @@ constexpr const TFunction texelFetchOffset_00q10D10D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00v10D10D(
     BuiltInId::texelFetchOffset_USampler2DRect1_Int2_Int2,
     BuiltInName::texelFetchOffset,
@@ -12815,7 +12815,7 @@ constexpr const TFunction texelFetchOffset_00v10D10D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00h10D00D00D(
     BuiltInId::texelFetchOffset_Sampler1DArray1_Int2_Int1_Int1,
     BuiltInName::texelFetchOffset,
@@ -12824,7 +12824,7 @@ constexpr const TFunction texelFetchOffset_00h10D00D00D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00p10D00D00D(
     BuiltInId::texelFetchOffset_ISampler1DArray1_Int2_Int1_Int1,
     BuiltInName::texelFetchOffset,
@@ -12833,7 +12833,7 @@ constexpr const TFunction texelFetchOffset_00p10D00D00D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction texelFetchOffset_00u10D00D00D(
     BuiltInId::texelFetchOffset_USampler1DArray1_Int2_Int1_Int1,
     BuiltInName::texelFetchOffset,
@@ -12842,7 +12842,7 @@ constexpr const TFunction texelFetchOffset_00u10D00D00D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTexelFetchOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00I10B10B10B10D(
     BuiltInId::textureGradOffset_Sampler2D1_Float2_Float2_Float2_Int2,
     BuiltInName::textureGradOffset,
@@ -12851,7 +12851,7 @@ constexpr const TFunction textureGradOffset_00I10B10B10B10D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00R10B10B10B10D(
     BuiltInId::textureGradOffset_ISampler2D1_Float2_Float2_Float2_Int2,
     BuiltInName::textureGradOffset,
@@ -12860,7 +12860,7 @@ constexpr const TFunction textureGradOffset_00R10B10B10B10D(
     5,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00X10B10B10B10D(
     BuiltInId::textureGradOffset_USampler2D1_Float2_Float2_Float2_Int2,
     BuiltInName::textureGradOffset,
@@ -12869,7 +12869,7 @@ constexpr const TFunction textureGradOffset_00X10B10B10B10D(
     5,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00J20B20B20B20D(
     BuiltInId::textureGradOffset_Sampler3D1_Float3_Float3_Float3_Int3,
     BuiltInName::textureGradOffset,
@@ -12878,7 +12878,7 @@ constexpr const TFunction textureGradOffset_00J20B20B20B20D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00S20B20B20B20D(
     BuiltInId::textureGradOffset_ISampler3D1_Float3_Float3_Float3_Int3,
     BuiltInName::textureGradOffset,
@@ -12887,7 +12887,7 @@ constexpr const TFunction textureGradOffset_00S20B20B20B20D(
     5,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00Y20B20B20B20D(
     BuiltInId::textureGradOffset_USampler3D1_Float3_Float3_Float3_Int3,
     BuiltInName::textureGradOffset,
@@ -12896,7 +12896,7 @@ constexpr const TFunction textureGradOffset_00Y20B20B20B20D(
     5,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00d20B10B10B10D(
     BuiltInId::textureGradOffset_Sampler2DShadow1_Float3_Float2_Float2_Int2,
     BuiltInName::textureGradOffset,
@@ -12905,7 +12905,7 @@ constexpr const TFunction textureGradOffset_00d20B10B10B10D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00L20B10B10B10D(
     BuiltInId::textureGradOffset_Sampler2DArray1_Float3_Float2_Float2_Int2,
     BuiltInName::textureGradOffset,
@@ -12914,7 +12914,7 @@ constexpr const TFunction textureGradOffset_00L20B10B10B10D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00U20B10B10B10D(
     BuiltInId::textureGradOffset_ISampler2DArray1_Float3_Float2_Float2_Int2,
     BuiltInName::textureGradOffset,
@@ -12923,7 +12923,7 @@ constexpr const TFunction textureGradOffset_00U20B10B10B10D(
     5,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00a20B10B10B10D(
     BuiltInId::textureGradOffset_USampler2DArray1_Float3_Float2_Float2_Int2,
     BuiltInName::textureGradOffset,
@@ -12932,7 +12932,7 @@ constexpr const TFunction textureGradOffset_00a20B10B10B10D(
     5,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00f30B10B10B10D(
     BuiltInId::textureGradOffset_Sampler2DArrayShadow1_Float4_Float2_Float2_Int2,
     BuiltInName::textureGradOffset,
@@ -12941,7 +12941,7 @@ constexpr const TFunction textureGradOffset_00f30B10B10B10D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00g00B00B00B00D(
     BuiltInId::textureGradOffset_Sampler1D1_Float1_Float1_Float1_Int1,
     BuiltInName::textureGradOffset,
@@ -12950,7 +12950,7 @@ constexpr const TFunction textureGradOffset_00g00B00B00B00D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00o00B00B00B00D(
     BuiltInId::textureGradOffset_ISampler1D1_Float1_Float1_Float1_Int1,
     BuiltInName::textureGradOffset,
@@ -12959,7 +12959,7 @@ constexpr const TFunction textureGradOffset_00o00B00B00B00D(
     5,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00t00B00B00B00D(
     BuiltInId::textureGradOffset_USampler1D1_Float1_Float1_Float1_Int1,
     BuiltInName::textureGradOffset,
@@ -12968,7 +12968,7 @@ constexpr const TFunction textureGradOffset_00t00B00B00B00D(
     5,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00O10B10B10B10D(
     BuiltInId::textureGradOffset_Sampler2DRect1_Float2_Float2_Float2_Int2,
     BuiltInName::textureGradOffset,
@@ -12977,7 +12977,7 @@ constexpr const TFunction textureGradOffset_00O10B10B10B10D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00q10B10B10B10D(
     BuiltInId::textureGradOffset_ISampler2DRect1_Float2_Float2_Float2_Int2,
     BuiltInName::textureGradOffset,
@@ -12986,7 +12986,7 @@ constexpr const TFunction textureGradOffset_00q10B10B10B10D(
     5,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00v10B10B10B10D(
     BuiltInId::textureGradOffset_USampler2DRect1_Float2_Float2_Float2_Int2,
     BuiltInName::textureGradOffset,
@@ -12995,7 +12995,7 @@ constexpr const TFunction textureGradOffset_00v10B10B10B10D(
     5,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00n20B10B10B10D(
     BuiltInId::textureGradOffset_Sampler2DRectShadow1_Float3_Float2_Float2_Int2,
     BuiltInName::textureGradOffset,
@@ -13004,7 +13004,7 @@ constexpr const TFunction textureGradOffset_00n20B10B10B10D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00m20B00B00B00D(
     BuiltInId::textureGradOffset_Sampler1DShadow1_Float3_Float1_Float1_Int1,
     BuiltInName::textureGradOffset,
@@ -13013,7 +13013,7 @@ constexpr const TFunction textureGradOffset_00m20B00B00B00D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00h10B00B00B00D(
     BuiltInId::textureGradOffset_Sampler1DArray1_Float2_Float1_Float1_Int1,
     BuiltInName::textureGradOffset,
@@ -13022,7 +13022,7 @@ constexpr const TFunction textureGradOffset_00h10B00B00B00D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00p10B00B00B00D(
     BuiltInId::textureGradOffset_ISampler1DArray1_Float2_Float1_Float1_Int1,
     BuiltInName::textureGradOffset,
@@ -13031,7 +13031,7 @@ constexpr const TFunction textureGradOffset_00p10B00B00B00D(
     5,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00u10B00B00B00D(
     BuiltInId::textureGradOffset_USampler1DArray1_Float2_Float1_Float1_Int1,
     BuiltInName::textureGradOffset,
@@ -13040,7 +13040,7 @@ constexpr const TFunction textureGradOffset_00u10B00B00B00D(
     5,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureGradOffset_00i20B00B00B00D(
     BuiltInId::textureGradOffset_Sampler1DArrayShadow1_Float3_Float1_Float1_Int1,
     BuiltInName::textureGradOffset,
@@ -13049,7 +13049,7 @@ constexpr const TFunction textureGradOffset_00i20B00B00B00D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00I20B10B10B10D(
     BuiltInId::textureProjGradOffset_Sampler2D1_Float3_Float2_Float2_Int2,
     BuiltInName::textureProjGradOffset,
@@ -13058,7 +13058,7 @@ constexpr const TFunction textureProjGradOffset_00I20B10B10B10D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00R20B10B10B10D(
     BuiltInId::textureProjGradOffset_ISampler2D1_Float3_Float2_Float2_Int2,
     BuiltInName::textureProjGradOffset,
@@ -13067,7 +13067,7 @@ constexpr const TFunction textureProjGradOffset_00R20B10B10B10D(
     5,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00X20B10B10B10D(
     BuiltInId::textureProjGradOffset_USampler2D1_Float3_Float2_Float2_Int2,
     BuiltInName::textureProjGradOffset,
@@ -13076,7 +13076,7 @@ constexpr const TFunction textureProjGradOffset_00X20B10B10B10D(
     5,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00I30B10B10B10D(
     BuiltInId::textureProjGradOffset_Sampler2D1_Float4_Float2_Float2_Int2,
     BuiltInName::textureProjGradOffset,
@@ -13085,7 +13085,7 @@ constexpr const TFunction textureProjGradOffset_00I30B10B10B10D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00R30B10B10B10D(
     BuiltInId::textureProjGradOffset_ISampler2D1_Float4_Float2_Float2_Int2,
     BuiltInName::textureProjGradOffset,
@@ -13094,7 +13094,7 @@ constexpr const TFunction textureProjGradOffset_00R30B10B10B10D(
     5,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00X30B10B10B10D(
     BuiltInId::textureProjGradOffset_USampler2D1_Float4_Float2_Float2_Int2,
     BuiltInName::textureProjGradOffset,
@@ -13103,7 +13103,7 @@ constexpr const TFunction textureProjGradOffset_00X30B10B10B10D(
     5,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00J30B20B20B20D(
     BuiltInId::textureProjGradOffset_Sampler3D1_Float4_Float3_Float3_Int3,
     BuiltInName::textureProjGradOffset,
@@ -13112,7 +13112,7 @@ constexpr const TFunction textureProjGradOffset_00J30B20B20B20D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00S30B20B20B20D(
     BuiltInId::textureProjGradOffset_ISampler3D1_Float4_Float3_Float3_Int3,
     BuiltInName::textureProjGradOffset,
@@ -13121,7 +13121,7 @@ constexpr const TFunction textureProjGradOffset_00S30B20B20B20D(
     5,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00Y30B20B20B20D(
     BuiltInId::textureProjGradOffset_USampler3D1_Float4_Float3_Float3_Int3,
     BuiltInName::textureProjGradOffset,
@@ -13130,7 +13130,7 @@ constexpr const TFunction textureProjGradOffset_00Y30B20B20B20D(
     5,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00d30B10B10B10D(
     BuiltInId::textureProjGradOffset_Sampler2DShadow1_Float4_Float2_Float2_Int2,
     BuiltInName::textureProjGradOffset,
@@ -13139,7 +13139,7 @@ constexpr const TFunction textureProjGradOffset_00d30B10B10B10D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00g10B00B00B00D(
     BuiltInId::textureProjGradOffset_Sampler1D1_Float2_Float1_Float1_Int1,
     BuiltInName::textureProjGradOffset,
@@ -13148,7 +13148,7 @@ constexpr const TFunction textureProjGradOffset_00g10B00B00B00D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00o10B00B00B00D(
     BuiltInId::textureProjGradOffset_ISampler1D1_Float2_Float1_Float1_Int1,
     BuiltInName::textureProjGradOffset,
@@ -13157,7 +13157,7 @@ constexpr const TFunction textureProjGradOffset_00o10B00B00B00D(
     5,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00t10B00B00B00D(
     BuiltInId::textureProjGradOffset_USampler1D1_Float2_Float1_Float1_Int1,
     BuiltInName::textureProjGradOffset,
@@ -13166,7 +13166,7 @@ constexpr const TFunction textureProjGradOffset_00t10B00B00B00D(
     5,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00g30B00B00B00D(
     BuiltInId::textureProjGradOffset_Sampler1D1_Float4_Float1_Float1_Int1,
     BuiltInName::textureProjGradOffset,
@@ -13175,7 +13175,7 @@ constexpr const TFunction textureProjGradOffset_00g30B00B00B00D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00o30B00B00B00D(
     BuiltInId::textureProjGradOffset_ISampler1D1_Float4_Float1_Float1_Int1,
     BuiltInName::textureProjGradOffset,
@@ -13184,7 +13184,7 @@ constexpr const TFunction textureProjGradOffset_00o30B00B00B00D(
     5,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00t30B00B00B00D(
     BuiltInId::textureProjGradOffset_USampler1D1_Float4_Float1_Float1_Int1,
     BuiltInName::textureProjGradOffset,
@@ -13193,7 +13193,7 @@ constexpr const TFunction textureProjGradOffset_00t30B00B00B00D(
     5,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00O20B10B10B10D(
     BuiltInId::textureProjGradOffset_Sampler2DRect1_Float3_Float2_Float2_Int2,
     BuiltInName::textureProjGradOffset,
@@ -13202,7 +13202,7 @@ constexpr const TFunction textureProjGradOffset_00O20B10B10B10D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00q20B10B10B10D(
     BuiltInId::textureProjGradOffset_ISampler2DRect1_Float3_Float2_Float2_Int2,
     BuiltInName::textureProjGradOffset,
@@ -13211,7 +13211,7 @@ constexpr const TFunction textureProjGradOffset_00q20B10B10B10D(
     5,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00v20B10B10B10D(
     BuiltInId::textureProjGradOffset_USampler2DRect1_Float3_Float2_Float2_Int2,
     BuiltInName::textureProjGradOffset,
@@ -13220,7 +13220,7 @@ constexpr const TFunction textureProjGradOffset_00v20B10B10B10D(
     5,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00O30B10B10B10D(
     BuiltInId::textureProjGradOffset_Sampler2DRect1_Float4_Float2_Float2_Int2,
     BuiltInName::textureProjGradOffset,
@@ -13229,7 +13229,7 @@ constexpr const TFunction textureProjGradOffset_00O30B10B10B10D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00q30B10B10B10D(
     BuiltInId::textureProjGradOffset_ISampler2DRect1_Float4_Float2_Float2_Int2,
     BuiltInName::textureProjGradOffset,
@@ -13238,7 +13238,7 @@ constexpr const TFunction textureProjGradOffset_00q30B10B10B10D(
     5,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00v30B10B10B10D(
     BuiltInId::textureProjGradOffset_USampler2DRect1_Float4_Float2_Float2_Int2,
     BuiltInName::textureProjGradOffset,
@@ -13247,7 +13247,7 @@ constexpr const TFunction textureProjGradOffset_00v30B10B10B10D(
     5,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00n30B10B10B10D(
     BuiltInId::textureProjGradOffset_Sampler2DRectShadow1_Float4_Float2_Float2_Int2,
     BuiltInName::textureProjGradOffset,
@@ -13256,7 +13256,7 @@ constexpr const TFunction textureProjGradOffset_00n30B10B10B10D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureProjGradOffset_00m30B00B00B00D(
     BuiltInId::textureProjGradOffset_Sampler1DShadow1_Float4_Float1_Float1_Int1,
     BuiltInName::textureProjGradOffset,
@@ -13265,7 +13265,7 @@ constexpr const TFunction textureProjGradOffset_00m30B00B00B00D(
     5,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjGradOffset,
-    false);
+    true);
 constexpr const TFunction textureOffset_00I10B10D00B(
     BuiltInId::textureOffset_Sampler2D1_Float2_Int2_Float1,
     BuiltInName::textureOffset,
@@ -13274,7 +13274,7 @@ constexpr const TFunction textureOffset_00I10B10D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00R10B10D00B(
     BuiltInId::textureOffset_ISampler2D1_Float2_Int2_Float1,
     BuiltInName::textureOffset,
@@ -13283,7 +13283,7 @@ constexpr const TFunction textureOffset_00R10B10D00B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00X10B10D00B(
     BuiltInId::textureOffset_USampler2D1_Float2_Int2_Float1,
     BuiltInName::textureOffset,
@@ -13292,7 +13292,7 @@ constexpr const TFunction textureOffset_00X10B10D00B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00J20B20D00B(
     BuiltInId::textureOffset_Sampler3D1_Float3_Int3_Float1,
     BuiltInName::textureOffset,
@@ -13301,7 +13301,7 @@ constexpr const TFunction textureOffset_00J20B20D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00S20B20D00B(
     BuiltInId::textureOffset_ISampler3D1_Float3_Int3_Float1,
     BuiltInName::textureOffset,
@@ -13310,7 +13310,7 @@ constexpr const TFunction textureOffset_00S20B20D00B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00Y20B20D00B(
     BuiltInId::textureOffset_USampler3D1_Float3_Int3_Float1,
     BuiltInName::textureOffset,
@@ -13319,7 +13319,7 @@ constexpr const TFunction textureOffset_00Y20B20D00B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00d20B10D00B(
     BuiltInId::textureOffset_Sampler2DShadow1_Float3_Int2_Float1,
     BuiltInName::textureOffset,
@@ -13328,7 +13328,7 @@ constexpr const TFunction textureOffset_00d20B10D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00L20B10D00B(
     BuiltInId::textureOffset_Sampler2DArray1_Float3_Int2_Float1,
     BuiltInName::textureOffset,
@@ -13337,7 +13337,7 @@ constexpr const TFunction textureOffset_00L20B10D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00U20B10D00B(
     BuiltInId::textureOffset_ISampler2DArray1_Float3_Int2_Float1,
     BuiltInName::textureOffset,
@@ -13346,7 +13346,7 @@ constexpr const TFunction textureOffset_00U20B10D00B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00a20B10D00B(
     BuiltInId::textureOffset_USampler2DArray1_Float3_Int2_Float1,
     BuiltInName::textureOffset,
@@ -13355,7 +13355,7 @@ constexpr const TFunction textureOffset_00a20B10D00B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00g00B00D00B(
     BuiltInId::textureOffset_Sampler1D1_Float1_Int1_Float1,
     BuiltInName::textureOffset,
@@ -13364,7 +13364,7 @@ constexpr const TFunction textureOffset_00g00B00D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00o00B00D00B(
     BuiltInId::textureOffset_ISampler1D1_Float1_Int1_Float1,
     BuiltInName::textureOffset,
@@ -13373,7 +13373,7 @@ constexpr const TFunction textureOffset_00o00B00D00B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00t00B00D00B(
     BuiltInId::textureOffset_USampler1D1_Float1_Int1_Float1,
     BuiltInName::textureOffset,
@@ -13382,7 +13382,7 @@ constexpr const TFunction textureOffset_00t00B00D00B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00m20B00D00B(
     BuiltInId::textureOffset_Sampler1DShadow1_Float3_Int1_Float1,
     BuiltInName::textureOffset,
@@ -13391,7 +13391,7 @@ constexpr const TFunction textureOffset_00m20B00D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00h10B00D00B(
     BuiltInId::textureOffset_Sampler1DArray1_Float2_Int1_Float1,
     BuiltInName::textureOffset,
@@ -13400,7 +13400,7 @@ constexpr const TFunction textureOffset_00h10B00D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00p10B00D00B(
     BuiltInId::textureOffset_ISampler1DArray1_Float2_Int1_Float1,
     BuiltInName::textureOffset,
@@ -13409,7 +13409,7 @@ constexpr const TFunction textureOffset_00p10B00D00B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00u10B00D00B(
     BuiltInId::textureOffset_USampler1DArray1_Float2_Int1_Float1,
     BuiltInName::textureOffset,
@@ -13418,7 +13418,7 @@ constexpr const TFunction textureOffset_00u10B00D00B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureOffset_00i20B00D00B(
     BuiltInId::textureOffset_Sampler1DArrayShadow1_Float3_Int1_Float1,
     BuiltInName::textureOffset,
@@ -13427,7 +13427,7 @@ constexpr const TFunction textureOffset_00i20B00D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00I20B10D00B(
     BuiltInId::textureProjOffset_Sampler2D1_Float3_Int2_Float1,
     BuiltInName::textureProjOffset,
@@ -13436,7 +13436,7 @@ constexpr const TFunction textureProjOffset_00I20B10D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00R20B10D00B(
     BuiltInId::textureProjOffset_ISampler2D1_Float3_Int2_Float1,
     BuiltInName::textureProjOffset,
@@ -13445,7 +13445,7 @@ constexpr const TFunction textureProjOffset_00R20B10D00B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00X20B10D00B(
     BuiltInId::textureProjOffset_USampler2D1_Float3_Int2_Float1,
     BuiltInName::textureProjOffset,
@@ -13454,7 +13454,7 @@ constexpr const TFunction textureProjOffset_00X20B10D00B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00I30B10D00B(
     BuiltInId::textureProjOffset_Sampler2D1_Float4_Int2_Float1,
     BuiltInName::textureProjOffset,
@@ -13463,7 +13463,7 @@ constexpr const TFunction textureProjOffset_00I30B10D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00R30B10D00B(
     BuiltInId::textureProjOffset_ISampler2D1_Float4_Int2_Float1,
     BuiltInName::textureProjOffset,
@@ -13472,7 +13472,7 @@ constexpr const TFunction textureProjOffset_00R30B10D00B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00X30B10D00B(
     BuiltInId::textureProjOffset_USampler2D1_Float4_Int2_Float1,
     BuiltInName::textureProjOffset,
@@ -13481,7 +13481,7 @@ constexpr const TFunction textureProjOffset_00X30B10D00B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00J30B20D00B(
     BuiltInId::textureProjOffset_Sampler3D1_Float4_Int3_Float1,
     BuiltInName::textureProjOffset,
@@ -13490,7 +13490,7 @@ constexpr const TFunction textureProjOffset_00J30B20D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00S30B20D00B(
     BuiltInId::textureProjOffset_ISampler3D1_Float4_Int3_Float1,
     BuiltInName::textureProjOffset,
@@ -13499,7 +13499,7 @@ constexpr const TFunction textureProjOffset_00S30B20D00B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00Y30B20D00B(
     BuiltInId::textureProjOffset_USampler3D1_Float4_Int3_Float1,
     BuiltInName::textureProjOffset,
@@ -13508,7 +13508,7 @@ constexpr const TFunction textureProjOffset_00Y30B20D00B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00d30B10D00B(
     BuiltInId::textureProjOffset_Sampler2DShadow1_Float4_Int2_Float1,
     BuiltInName::textureProjOffset,
@@ -13517,7 +13517,7 @@ constexpr const TFunction textureProjOffset_00d30B10D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00g10B00D00B(
     BuiltInId::textureProjOffset_Sampler1D1_Float2_Int1_Float1,
     BuiltInName::textureProjOffset,
@@ -13526,7 +13526,7 @@ constexpr const TFunction textureProjOffset_00g10B00D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00o10B00D00B(
     BuiltInId::textureProjOffset_ISampler1D1_Float2_Int1_Float1,
     BuiltInName::textureProjOffset,
@@ -13535,7 +13535,7 @@ constexpr const TFunction textureProjOffset_00o10B00D00B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00t10B00D00B(
     BuiltInId::textureProjOffset_USampler1D1_Float2_Int1_Float1,
     BuiltInName::textureProjOffset,
@@ -13544,7 +13544,7 @@ constexpr const TFunction textureProjOffset_00t10B00D00B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00g30B00D00B(
     BuiltInId::textureProjOffset_Sampler1D1_Float4_Int1_Float1,
     BuiltInName::textureProjOffset,
@@ -13553,7 +13553,7 @@ constexpr const TFunction textureProjOffset_00g30B00D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00o30B00D00B(
     BuiltInId::textureProjOffset_ISampler1D1_Float4_Int1_Float1,
     BuiltInName::textureProjOffset,
@@ -13562,7 +13562,7 @@ constexpr const TFunction textureProjOffset_00o30B00D00B(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00t30B00D00B(
     BuiltInId::textureProjOffset_USampler1D1_Float4_Int1_Float1,
     BuiltInName::textureProjOffset,
@@ -13571,7 +13571,7 @@ constexpr const TFunction textureProjOffset_00t30B00D00B(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureProjOffset_00m30B00D00B(
     BuiltInId::textureProjOffset_Sampler1DShadow1_Float4_Int1_Float1,
     BuiltInName::textureProjOffset,
@@ -13580,7 +13580,7 @@ constexpr const TFunction textureProjOffset_00m30B00D00B(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpTextureProjOffsetBias,
-    false);
+    true);
 constexpr const TFunction textureGather_00I10B(
     BuiltInId::textureGather_Sampler2D1_Float2,
     BuiltInName::textureGather,
@@ -13589,7 +13589,7 @@ constexpr const TFunction textureGather_00I10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00R10B(
     BuiltInId::textureGather_ISampler2D1_Float2,
     BuiltInName::textureGather,
@@ -13598,7 +13598,7 @@ constexpr const TFunction textureGather_00R10B(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00X10B(
     BuiltInId::textureGather_USampler2D1_Float2,
     BuiltInName::textureGather,
@@ -13607,7 +13607,7 @@ constexpr const TFunction textureGather_00X10B(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00I10B00D(
     BuiltInId::textureGather_Sampler2D1_Float2_Int1,
     BuiltInName::textureGather,
@@ -13616,7 +13616,7 @@ constexpr const TFunction textureGather_00I10B00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00R10B00D(
     BuiltInId::textureGather_ISampler2D1_Float2_Int1,
     BuiltInName::textureGather,
@@ -13625,7 +13625,7 @@ constexpr const TFunction textureGather_00R10B00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00X10B00D(
     BuiltInId::textureGather_USampler2D1_Float2_Int1,
     BuiltInName::textureGather,
@@ -13634,7 +13634,7 @@ constexpr const TFunction textureGather_00X10B00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00L20B(
     BuiltInId::textureGather_Sampler2DArray1_Float3,
     BuiltInName::textureGather,
@@ -13643,7 +13643,7 @@ constexpr const TFunction textureGather_00L20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00U20B(
     BuiltInId::textureGather_ISampler2DArray1_Float3,
     BuiltInName::textureGather,
@@ -13652,7 +13652,7 @@ constexpr const TFunction textureGather_00U20B(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00a20B(
     BuiltInId::textureGather_USampler2DArray1_Float3,
     BuiltInName::textureGather,
@@ -13661,7 +13661,7 @@ constexpr const TFunction textureGather_00a20B(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00L20B00D(
     BuiltInId::textureGather_Sampler2DArray1_Float3_Int1,
     BuiltInName::textureGather,
@@ -13670,7 +13670,7 @@ constexpr const TFunction textureGather_00L20B00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00U20B00D(
     BuiltInId::textureGather_ISampler2DArray1_Float3_Int1,
     BuiltInName::textureGather,
@@ -13679,7 +13679,7 @@ constexpr const TFunction textureGather_00U20B00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00a20B00D(
     BuiltInId::textureGather_USampler2DArray1_Float3_Int1,
     BuiltInName::textureGather,
@@ -13688,7 +13688,7 @@ constexpr const TFunction textureGather_00a20B00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00K20B(
     BuiltInId::textureGather_SamplerCube1_Float3,
     BuiltInName::textureGather,
@@ -13697,7 +13697,7 @@ constexpr const TFunction textureGather_00K20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00T20B(
     BuiltInId::textureGather_ISamplerCube1_Float3,
     BuiltInName::textureGather,
@@ -13706,7 +13706,7 @@ constexpr const TFunction textureGather_00T20B(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00Z20B(
     BuiltInId::textureGather_USamplerCube1_Float3,
     BuiltInName::textureGather,
@@ -13715,7 +13715,7 @@ constexpr const TFunction textureGather_00Z20B(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00K20B00D(
     BuiltInId::textureGather_SamplerCube1_Float3_Int1,
     BuiltInName::textureGather,
@@ -13724,7 +13724,7 @@ constexpr const TFunction textureGather_00K20B00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00T20B00D(
     BuiltInId::textureGather_ISamplerCube1_Float3_Int1,
     BuiltInName::textureGather,
@@ -13733,7 +13733,7 @@ constexpr const TFunction textureGather_00T20B00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00Z20B00D(
     BuiltInId::textureGather_USamplerCube1_Float3_Int1,
     BuiltInName::textureGather,
@@ -13742,7 +13742,7 @@ constexpr const TFunction textureGather_00Z20B00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00k30B(
     BuiltInId::textureGather_SamplerCubeArray1_Float4,
     BuiltInName::textureGather,
@@ -13751,7 +13751,7 @@ constexpr const TFunction textureGather_00k30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00s30B(
     BuiltInId::textureGather_ISamplerCubeArray1_Float4,
     BuiltInName::textureGather,
@@ -13760,7 +13760,7 @@ constexpr const TFunction textureGather_00s30B(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00x30B(
     BuiltInId::textureGather_USamplerCubeArray1_Float4,
     BuiltInName::textureGather,
@@ -13769,7 +13769,7 @@ constexpr const TFunction textureGather_00x30B(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00k30B00D(
     BuiltInId::textureGather_SamplerCubeArray1_Float4_Int1,
     BuiltInName::textureGather,
@@ -13778,7 +13778,7 @@ constexpr const TFunction textureGather_00k30B00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00s30B00D(
     BuiltInId::textureGather_ISamplerCubeArray1_Float4_Int1,
     BuiltInName::textureGather,
@@ -13787,7 +13787,7 @@ constexpr const TFunction textureGather_00s30B00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00x30B00D(
     BuiltInId::textureGather_USamplerCubeArray1_Float4_Int1,
     BuiltInName::textureGather,
@@ -13796,7 +13796,7 @@ constexpr const TFunction textureGather_00x30B00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00l30B00B(
     BuiltInId::textureGather_SamplerCubeArrayShadow1_Float4_Float1,
     BuiltInName::textureGather,
@@ -13805,7 +13805,7 @@ constexpr const TFunction textureGather_00l30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGatherExt_00k30B(
     BuiltInId::textureGatherExt_SamplerCubeArray1_Float4,
     BuiltInName::textureGatherExt,
@@ -13815,7 +13815,7 @@ constexpr const TFunction textureGatherExt_00k30B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGatherExt_00s30B(
     BuiltInId::textureGatherExt_ISamplerCubeArray1_Float4,
     BuiltInName::textureGatherExt,
@@ -13825,7 +13825,7 @@ constexpr const TFunction textureGatherExt_00s30B(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGatherExt_00x30B(
     BuiltInId::textureGatherExt_USamplerCubeArray1_Float4,
     BuiltInName::textureGatherExt,
@@ -13835,7 +13835,7 @@ constexpr const TFunction textureGatherExt_00x30B(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGatherExt_00k30B00D(
     BuiltInId::textureGatherExt_SamplerCubeArray1_Float4_Int1,
     BuiltInName::textureGatherExt,
@@ -13845,7 +13845,7 @@ constexpr const TFunction textureGatherExt_00k30B00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGatherExt_00s30B00D(
     BuiltInId::textureGatherExt_ISamplerCubeArray1_Float4_Int1,
     BuiltInName::textureGatherExt,
@@ -13855,7 +13855,7 @@ constexpr const TFunction textureGatherExt_00s30B00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGatherExt_00x30B00D(
     BuiltInId::textureGatherExt_USamplerCubeArray1_Float4_Int1,
     BuiltInName::textureGatherExt,
@@ -13865,7 +13865,7 @@ constexpr const TFunction textureGatherExt_00x30B00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGatherExt_00l30B00B(
     BuiltInId::textureGatherExt_SamplerCubeArrayShadow1_Float4_Float1,
     BuiltInName::textureGatherExt,
@@ -13875,7 +13875,7 @@ constexpr const TFunction textureGatherExt_00l30B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00O20B(
     BuiltInId::textureGather_Sampler2DRect1_Float3,
     BuiltInName::textureGather,
@@ -13884,7 +13884,7 @@ constexpr const TFunction textureGather_00O20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00q20B(
     BuiltInId::textureGather_ISampler2DRect1_Float3,
     BuiltInName::textureGather,
@@ -13893,7 +13893,7 @@ constexpr const TFunction textureGather_00q20B(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00v20B(
     BuiltInId::textureGather_USampler2DRect1_Float3,
     BuiltInName::textureGather,
@@ -13902,7 +13902,7 @@ constexpr const TFunction textureGather_00v20B(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00O20B00D(
     BuiltInId::textureGather_Sampler2DRect1_Float3_Int1,
     BuiltInName::textureGather,
@@ -13911,7 +13911,7 @@ constexpr const TFunction textureGather_00O20B00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00q20B00D(
     BuiltInId::textureGather_ISampler2DRect1_Float3_Int1,
     BuiltInName::textureGather,
@@ -13920,7 +13920,7 @@ constexpr const TFunction textureGather_00q20B00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00v20B00D(
     BuiltInId::textureGather_USampler2DRect1_Float3_Int1,
     BuiltInName::textureGather,
@@ -13929,7 +13929,7 @@ constexpr const TFunction textureGather_00v20B00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00n10B00B(
     BuiltInId::textureGather_Sampler2DRectShadow1_Float2_Float1,
     BuiltInName::textureGather,
@@ -13938,7 +13938,7 @@ constexpr const TFunction textureGather_00n10B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00d10B(
     BuiltInId::textureGather_Sampler2DShadow1_Float2,
     BuiltInName::textureGather,
@@ -13947,7 +13947,7 @@ constexpr const TFunction textureGather_00d10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00d10B00B(
     BuiltInId::textureGather_Sampler2DShadow1_Float2_Float1,
     BuiltInName::textureGather,
@@ -13956,7 +13956,7 @@ constexpr const TFunction textureGather_00d10B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00f20B(
     BuiltInId::textureGather_Sampler2DArrayShadow1_Float3,
     BuiltInName::textureGather,
@@ -13965,7 +13965,7 @@ constexpr const TFunction textureGather_00f20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00f20B00B(
     BuiltInId::textureGather_Sampler2DArrayShadow1_Float3_Float1,
     BuiltInName::textureGather,
@@ -13974,7 +13974,7 @@ constexpr const TFunction textureGather_00f20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00e20B(
     BuiltInId::textureGather_SamplerCubeShadow1_Float3,
     BuiltInName::textureGather,
@@ -13983,7 +13983,7 @@ constexpr const TFunction textureGather_00e20B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGather_00e20B00B(
     BuiltInId::textureGather_SamplerCubeShadow1_Float3_Float1,
     BuiltInName::textureGather,
@@ -13992,7 +13992,7 @@ constexpr const TFunction textureGather_00e20B00B(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGather,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00I10B10D(
     BuiltInId::textureGatherOffset_Sampler2D1_Float2_Int2,
     BuiltInName::textureGatherOffset,
@@ -14001,7 +14001,7 @@ constexpr const TFunction textureGatherOffset_00I10B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffset,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00R10B10D(
     BuiltInId::textureGatherOffset_ISampler2D1_Float2_Int2,
     BuiltInName::textureGatherOffset,
@@ -14010,7 +14010,7 @@ constexpr const TFunction textureGatherOffset_00R10B10D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffset,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00X10B10D(
     BuiltInId::textureGatherOffset_USampler2D1_Float2_Int2,
     BuiltInName::textureGatherOffset,
@@ -14019,7 +14019,7 @@ constexpr const TFunction textureGatherOffset_00X10B10D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffset,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00L20B10D(
     BuiltInId::textureGatherOffset_Sampler2DArray1_Float3_Int2,
     BuiltInName::textureGatherOffset,
@@ -14028,7 +14028,7 @@ constexpr const TFunction textureGatherOffset_00L20B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffset,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00U20B10D(
     BuiltInId::textureGatherOffset_ISampler2DArray1_Float3_Int2,
     BuiltInName::textureGatherOffset,
@@ -14037,7 +14037,7 @@ constexpr const TFunction textureGatherOffset_00U20B10D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffset,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00a20B10D(
     BuiltInId::textureGatherOffset_USampler2DArray1_Float3_Int2,
     BuiltInName::textureGatherOffset,
@@ -14046,7 +14046,7 @@ constexpr const TFunction textureGatherOffset_00a20B10D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffset,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00d10B00B10D(
     BuiltInId::textureGatherOffset_Sampler2DShadow1_Float2_Float1_Int2,
     BuiltInName::textureGatherOffset,
@@ -14055,7 +14055,7 @@ constexpr const TFunction textureGatherOffset_00d10B00B10D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffset,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00f20B00B10D(
     BuiltInId::textureGatherOffset_Sampler2DArrayShadow1_Float3_Float1_Int2,
     BuiltInName::textureGatherOffset,
@@ -14064,7 +14064,7 @@ constexpr const TFunction textureGatherOffset_00f20B00B10D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffset,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00O10B10D(
     BuiltInId::textureGatherOffset_Sampler2DRect1_Float2_Int2,
     BuiltInName::textureGatherOffset,
@@ -14073,7 +14073,7 @@ constexpr const TFunction textureGatherOffset_00O10B10D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffset,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00q10B10D(
     BuiltInId::textureGatherOffset_ISampler2DRect1_Float2_Int2,
     BuiltInName::textureGatherOffset,
@@ -14082,7 +14082,7 @@ constexpr const TFunction textureGatherOffset_00q10B10D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffset,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00v10B10D(
     BuiltInId::textureGatherOffset_USampler2DRect1_Float2_Int2,
     BuiltInName::textureGatherOffset,
@@ -14091,7 +14091,7 @@ constexpr const TFunction textureGatherOffset_00v10B10D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffset,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00n10B00B10D(
     BuiltInId::textureGatherOffset_Sampler2DRectShadow1_Float2_Float1_Int2,
     BuiltInName::textureGatherOffset,
@@ -14100,7 +14100,7 @@ constexpr const TFunction textureGatherOffset_00n10B00B10D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffset,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00I10B10D00D(
     BuiltInId::textureGatherOffset_Sampler2D1_Float2_Int2_Int1,
     BuiltInName::textureGatherOffset,
@@ -14109,7 +14109,7 @@ constexpr const TFunction textureGatherOffset_00I10B10D00D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00R10B10D00D(
     BuiltInId::textureGatherOffset_ISampler2D1_Float2_Int2_Int1,
     BuiltInName::textureGatherOffset,
@@ -14118,7 +14118,7 @@ constexpr const TFunction textureGatherOffset_00R10B10D00D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00X10B10D00D(
     BuiltInId::textureGatherOffset_USampler2D1_Float2_Int2_Int1,
     BuiltInName::textureGatherOffset,
@@ -14127,7 +14127,7 @@ constexpr const TFunction textureGatherOffset_00X10B10D00D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00L20B10D00D(
     BuiltInId::textureGatherOffset_Sampler2DArray1_Float3_Int2_Int1,
     BuiltInName::textureGatherOffset,
@@ -14136,7 +14136,7 @@ constexpr const TFunction textureGatherOffset_00L20B10D00D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00U20B10D00D(
     BuiltInId::textureGatherOffset_ISampler2DArray1_Float3_Int2_Int1,
     BuiltInName::textureGatherOffset,
@@ -14145,7 +14145,7 @@ constexpr const TFunction textureGatherOffset_00U20B10D00D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00a20B10D00D(
     BuiltInId::textureGatherOffset_USampler2DArray1_Float3_Int2_Int1,
     BuiltInName::textureGatherOffset,
@@ -14154,7 +14154,7 @@ constexpr const TFunction textureGatherOffset_00a20B10D00D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00O10B10D00D(
     BuiltInId::textureGatherOffset_Sampler2DRect1_Float2_Int2_Int1,
     BuiltInName::textureGatherOffset,
@@ -14163,7 +14163,7 @@ constexpr const TFunction textureGatherOffset_00O10B10D00D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00q10B10D00D(
     BuiltInId::textureGatherOffset_ISampler2DRect1_Float2_Int2_Int1,
     BuiltInName::textureGatherOffset,
@@ -14172,7 +14172,7 @@ constexpr const TFunction textureGatherOffset_00q10B10D00D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffset_00v10B10D00D(
     BuiltInId::textureGatherOffset_USampler2DRect1_Float2_Int2_Int1,
     BuiltInName::textureGatherOffset,
@@ -14181,7 +14181,7 @@ constexpr const TFunction textureGatherOffset_00v10B10D00D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00I10B10Dx4(
     BuiltInId::textureGatherOffsets_Sampler2D1_Float2_4xInt2,
     BuiltInName::textureGatherOffsets,
@@ -14190,7 +14190,7 @@ constexpr const TFunction textureGatherOffsets_00I10B10Dx4(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00R10B10Dx4(
     BuiltInId::textureGatherOffsets_ISampler2D1_Float2_4xInt2,
     BuiltInName::textureGatherOffsets,
@@ -14199,7 +14199,7 @@ constexpr const TFunction textureGatherOffsets_00R10B10Dx4(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00X10B10Dx4(
     BuiltInId::textureGatherOffsets_USampler2D1_Float2_4xInt2,
     BuiltInName::textureGatherOffsets,
@@ -14208,7 +14208,7 @@ constexpr const TFunction textureGatherOffsets_00X10B10Dx4(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00L20B10Dx4(
     BuiltInId::textureGatherOffsets_Sampler2DArray1_Float3_4xInt2,
     BuiltInName::textureGatherOffsets,
@@ -14217,7 +14217,7 @@ constexpr const TFunction textureGatherOffsets_00L20B10Dx4(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00U20B10Dx4(
     BuiltInId::textureGatherOffsets_ISampler2DArray1_Float3_4xInt2,
     BuiltInName::textureGatherOffsets,
@@ -14226,7 +14226,7 @@ constexpr const TFunction textureGatherOffsets_00U20B10Dx4(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00a20B10Dx4(
     BuiltInId::textureGatherOffsets_USampler2DArray1_Float3_4xInt2,
     BuiltInName::textureGatherOffsets,
@@ -14235,7 +14235,7 @@ constexpr const TFunction textureGatherOffsets_00a20B10Dx4(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00d10B00B10Dx4(
     BuiltInId::textureGatherOffsets_Sampler2DShadow1_Float2_Float1_4xInt2,
     BuiltInName::textureGatherOffsets,
@@ -14244,7 +14244,7 @@ constexpr const TFunction textureGatherOffsets_00d10B00B10Dx4(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00f20B00B10Dx4(
     BuiltInId::textureGatherOffsets_Sampler2DArrayShadow1_Float3_Float1_4xInt2,
     BuiltInName::textureGatherOffsets,
@@ -14253,7 +14253,7 @@ constexpr const TFunction textureGatherOffsets_00f20B00B10Dx4(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsetsExt_00I10B10Dx4(
     BuiltInId::textureGatherOffsetsExt_Sampler2D1_Float2_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
@@ -14262,7 +14262,7 @@ constexpr const TFunction textureGatherOffsetsExt_00I10B10Dx4(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsetsExt_00R10B10Dx4(
     BuiltInId::textureGatherOffsetsExt_ISampler2D1_Float2_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
@@ -14271,7 +14271,7 @@ constexpr const TFunction textureGatherOffsetsExt_00R10B10Dx4(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsetsExt_00X10B10Dx4(
     BuiltInId::textureGatherOffsetsExt_USampler2D1_Float2_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
@@ -14280,7 +14280,7 @@ constexpr const TFunction textureGatherOffsetsExt_00X10B10Dx4(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsetsExt_00L20B10Dx4(
     BuiltInId::textureGatherOffsetsExt_Sampler2DArray1_Float3_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
@@ -14289,7 +14289,7 @@ constexpr const TFunction textureGatherOffsetsExt_00L20B10Dx4(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsetsExt_00U20B10Dx4(
     BuiltInId::textureGatherOffsetsExt_ISampler2DArray1_Float3_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
@@ -14298,7 +14298,7 @@ constexpr const TFunction textureGatherOffsetsExt_00U20B10Dx4(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsetsExt_00a20B10Dx4(
     BuiltInId::textureGatherOffsetsExt_USampler2DArray1_Float3_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
@@ -14307,7 +14307,7 @@ constexpr const TFunction textureGatherOffsetsExt_00a20B10Dx4(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsetsExt_00d10B00B10Dx4(
     BuiltInId::textureGatherOffsetsExt_Sampler2DShadow1_Float2_Float1_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
@@ -14316,7 +14316,7 @@ constexpr const TFunction textureGatherOffsetsExt_00d10B00B10Dx4(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsetsExt_00f20B00B10Dx4(
     BuiltInId::textureGatherOffsetsExt_Sampler2DArrayShadow1_Float3_Float1_4xInt2,
     BuiltInName::textureGatherOffsetsExt,
@@ -14325,7 +14325,7 @@ constexpr const TFunction textureGatherOffsetsExt_00f20B00B10Dx4(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00O10B10Dx4(
     BuiltInId::textureGatherOffsets_Sampler2DRect1_Float2_4xInt2,
     BuiltInName::textureGatherOffsets,
@@ -14334,7 +14334,7 @@ constexpr const TFunction textureGatherOffsets_00O10B10Dx4(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00q10B10Dx4(
     BuiltInId::textureGatherOffsets_ISampler2DRect1_Float2_4xInt2,
     BuiltInName::textureGatherOffsets,
@@ -14343,7 +14343,7 @@ constexpr const TFunction textureGatherOffsets_00q10B10Dx4(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00v10B10Dx4(
     BuiltInId::textureGatherOffsets_USampler2DRect1_Float2_4xInt2,
     BuiltInName::textureGatherOffsets,
@@ -14352,7 +14352,7 @@ constexpr const TFunction textureGatherOffsets_00v10B10Dx4(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00n10B00B10Dx4(
     BuiltInId::textureGatherOffsets_Sampler2DRectShadow1_Float2_Float1_4xInt2,
     BuiltInName::textureGatherOffsets,
@@ -14361,7 +14361,7 @@ constexpr const TFunction textureGatherOffsets_00n10B00B10Dx4(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsets,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00I10B10Dx400D(
     BuiltInId::textureGatherOffsets_Sampler2D1_Float2_4xInt2_Int1,
     BuiltInName::textureGatherOffsets,
@@ -14370,7 +14370,7 @@ constexpr const TFunction textureGatherOffsets_00I10B10Dx400D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00R10B10Dx400D(
     BuiltInId::textureGatherOffsets_ISampler2D1_Float2_4xInt2_Int1,
     BuiltInName::textureGatherOffsets,
@@ -14379,7 +14379,7 @@ constexpr const TFunction textureGatherOffsets_00R10B10Dx400D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00X10B10Dx400D(
     BuiltInId::textureGatherOffsets_USampler2D1_Float2_4xInt2_Int1,
     BuiltInName::textureGatherOffsets,
@@ -14388,7 +14388,7 @@ constexpr const TFunction textureGatherOffsets_00X10B10Dx400D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00L20B10Dx400D(
     BuiltInId::textureGatherOffsets_Sampler2DArray1_Float3_4xInt2_Int1,
     BuiltInName::textureGatherOffsets,
@@ -14397,7 +14397,7 @@ constexpr const TFunction textureGatherOffsets_00L20B10Dx400D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00U20B10Dx400D(
     BuiltInId::textureGatherOffsets_ISampler2DArray1_Float3_4xInt2_Int1,
     BuiltInName::textureGatherOffsets,
@@ -14406,7 +14406,7 @@ constexpr const TFunction textureGatherOffsets_00U20B10Dx400D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00a20B10Dx400D(
     BuiltInId::textureGatherOffsets_USampler2DArray1_Float3_4xInt2_Int1,
     BuiltInName::textureGatherOffsets,
@@ -14415,7 +14415,7 @@ constexpr const TFunction textureGatherOffsets_00a20B10Dx400D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsetsExt_00I10B10Dx400D(
     BuiltInId::textureGatherOffsetsExt_Sampler2D1_Float2_4xInt2_Int1,
     BuiltInName::textureGatherOffsetsExt,
@@ -14424,7 +14424,7 @@ constexpr const TFunction textureGatherOffsetsExt_00I10B10Dx400D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsetsExt_00R10B10Dx400D(
     BuiltInId::textureGatherOffsetsExt_ISampler2D1_Float2_4xInt2_Int1,
     BuiltInName::textureGatherOffsetsExt,
@@ -14433,7 +14433,7 @@ constexpr const TFunction textureGatherOffsetsExt_00R10B10Dx400D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsetsExt_00X10B10Dx400D(
     BuiltInId::textureGatherOffsetsExt_USampler2D1_Float2_4xInt2_Int1,
     BuiltInName::textureGatherOffsetsExt,
@@ -14442,7 +14442,7 @@ constexpr const TFunction textureGatherOffsetsExt_00X10B10Dx400D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsetsExt_00L20B10Dx400D(
     BuiltInId::textureGatherOffsetsExt_Sampler2DArray1_Float3_4xInt2_Int1,
     BuiltInName::textureGatherOffsetsExt,
@@ -14451,7 +14451,7 @@ constexpr const TFunction textureGatherOffsetsExt_00L20B10Dx400D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsetsExt_00U20B10Dx400D(
     BuiltInId::textureGatherOffsetsExt_ISampler2DArray1_Float3_4xInt2_Int1,
     BuiltInName::textureGatherOffsetsExt,
@@ -14460,7 +14460,7 @@ constexpr const TFunction textureGatherOffsetsExt_00U20B10Dx400D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsetsExt_00a20B10Dx400D(
     BuiltInId::textureGatherOffsetsExt_USampler2DArray1_Float3_4xInt2_Int1,
     BuiltInName::textureGatherOffsetsExt,
@@ -14469,7 +14469,7 @@ constexpr const TFunction textureGatherOffsetsExt_00a20B10Dx400D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00O10B10Dx400D(
     BuiltInId::textureGatherOffsets_Sampler2DRect1_Float2_4xInt2_Int1,
     BuiltInName::textureGatherOffsets,
@@ -14478,7 +14478,7 @@ constexpr const TFunction textureGatherOffsets_00O10B10Dx400D(
     4,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00q10B10Dx400D(
     BuiltInId::textureGatherOffsets_ISampler2DRect1_Float2_4xInt2_Int1,
     BuiltInName::textureGatherOffsets,
@@ -14487,7 +14487,7 @@ constexpr const TFunction textureGatherOffsets_00q10B10Dx400D(
     4,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction textureGatherOffsets_00v10B10Dx400D(
     BuiltInId::textureGatherOffsets_USampler2DRect1_Float2_4xInt2_Int1,
     BuiltInName::textureGatherOffsets,
@@ -14496,7 +14496,7 @@ constexpr const TFunction textureGatherOffsets_00v10B10Dx400D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
-    false);
+    true);
 constexpr const TFunction rgb_2_yuv_20B00H(
     BuiltInId::rgb_2_yuv_Float3_YuvCscStandardEXT1,
     BuiltInName::rgb_2_yuv,
@@ -14505,7 +14505,7 @@ constexpr const TFunction rgb_2_yuv_20B00H(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpRgb_2_yuv,
-    false);
+    true);
 constexpr const TFunction yuv_2_rgb_20B00H(
     BuiltInId::yuv_2_rgb_Float3_YuvCscStandardEXT1,
     BuiltInName::yuv_2_rgb,
@@ -14514,7 +14514,7 @@ constexpr const TFunction yuv_2_rgb_20B00H(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpYuv_2_rgb,
-    false);
+    true);
 constexpr const TFunction dFdxExt_00B(BuiltInId::dFdxExt_Float1,
                                       BuiltInName::dFdxExt,
                                       std::array<TExtension, 1u>{
@@ -14523,7 +14523,7 @@ constexpr const TFunction dFdxExt_00B(BuiltInId::dFdxExt_Float1,
                                       1,
                                       StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                       EOpDFdx,
-                                      false);
+                                      true);
 constexpr const TFunction dFdxExt_10B(BuiltInId::dFdxExt_Float2,
                                       BuiltInName::dFdxExt,
                                       std::array<TExtension, 1u>{
@@ -14532,7 +14532,7 @@ constexpr const TFunction dFdxExt_10B(BuiltInId::dFdxExt_Float2,
                                       1,
                                       StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                       EOpDFdx,
-                                      false);
+                                      true);
 constexpr const TFunction dFdxExt_20B(BuiltInId::dFdxExt_Float3,
                                       BuiltInName::dFdxExt,
                                       std::array<TExtension, 1u>{
@@ -14541,7 +14541,7 @@ constexpr const TFunction dFdxExt_20B(BuiltInId::dFdxExt_Float3,
                                       1,
                                       StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                       EOpDFdx,
-                                      false);
+                                      true);
 constexpr const TFunction dFdxExt_30B(BuiltInId::dFdxExt_Float4,
                                       BuiltInName::dFdxExt,
                                       std::array<TExtension, 1u>{
@@ -14550,7 +14550,7 @@ constexpr const TFunction dFdxExt_30B(BuiltInId::dFdxExt_Float4,
                                       1,
                                       StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                       EOpDFdx,
-                                      false);
+                                      true);
 constexpr const TFunction dFdyExt_00B(BuiltInId::dFdyExt_Float1,
                                       BuiltInName::dFdyExt,
                                       std::array<TExtension, 1u>{
@@ -14559,7 +14559,7 @@ constexpr const TFunction dFdyExt_00B(BuiltInId::dFdyExt_Float1,
                                       1,
                                       StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                       EOpDFdy,
-                                      false);
+                                      true);
 constexpr const TFunction dFdyExt_10B(BuiltInId::dFdyExt_Float2,
                                       BuiltInName::dFdyExt,
                                       std::array<TExtension, 1u>{
@@ -14568,7 +14568,7 @@ constexpr const TFunction dFdyExt_10B(BuiltInId::dFdyExt_Float2,
                                       1,
                                       StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                       EOpDFdy,
-                                      false);
+                                      true);
 constexpr const TFunction dFdyExt_20B(BuiltInId::dFdyExt_Float3,
                                       BuiltInName::dFdyExt,
                                       std::array<TExtension, 1u>{
@@ -14577,7 +14577,7 @@ constexpr const TFunction dFdyExt_20B(BuiltInId::dFdyExt_Float3,
                                       1,
                                       StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                       EOpDFdy,
-                                      false);
+                                      true);
 constexpr const TFunction dFdyExt_30B(BuiltInId::dFdyExt_Float4,
                                       BuiltInName::dFdyExt,
                                       std::array<TExtension, 1u>{
@@ -14586,7 +14586,7 @@ constexpr const TFunction dFdyExt_30B(BuiltInId::dFdyExt_Float4,
                                       1,
                                       StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                       EOpDFdy,
-                                      false);
+                                      true);
 constexpr const TFunction fwidthExt_00B(BuiltInId::fwidthExt_Float1,
                                         BuiltInName::fwidthExt,
                                         std::array<TExtension, 1u>{
@@ -14595,7 +14595,7 @@ constexpr const TFunction fwidthExt_00B(BuiltInId::fwidthExt_Float1,
                                         1,
                                         StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                         EOpFwidth,
-                                        false);
+                                        true);
 constexpr const TFunction fwidthExt_10B(BuiltInId::fwidthExt_Float2,
                                         BuiltInName::fwidthExt,
                                         std::array<TExtension, 1u>{
@@ -14604,7 +14604,7 @@ constexpr const TFunction fwidthExt_10B(BuiltInId::fwidthExt_Float2,
                                         1,
                                         StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpFwidth,
-                                        false);
+                                        true);
 constexpr const TFunction fwidthExt_20B(BuiltInId::fwidthExt_Float3,
                                         BuiltInName::fwidthExt,
                                         std::array<TExtension, 1u>{
@@ -14613,7 +14613,7 @@ constexpr const TFunction fwidthExt_20B(BuiltInId::fwidthExt_Float3,
                                         1,
                                         StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpFwidth,
-                                        false);
+                                        true);
 constexpr const TFunction fwidthExt_30B(BuiltInId::fwidthExt_Float4,
                                         BuiltInName::fwidthExt,
                                         std::array<TExtension, 1u>{
@@ -14622,7 +14622,7 @@ constexpr const TFunction fwidthExt_30B(BuiltInId::fwidthExt_Float4,
                                         1,
                                         StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                         EOpFwidth,
-                                        false);
+                                        true);
 constexpr const TFunction dFdx_00B(BuiltInId::dFdx_Float1,
                                    BuiltInName::dFdx,
                                    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14630,7 +14630,7 @@ constexpr const TFunction dFdx_00B(BuiltInId::dFdx_Float1,
                                    1,
                                    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                    EOpDFdx,
-                                   false);
+                                   true);
 constexpr const TFunction dFdx_10B(BuiltInId::dFdx_Float2,
                                    BuiltInName::dFdx,
                                    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14638,7 +14638,7 @@ constexpr const TFunction dFdx_10B(BuiltInId::dFdx_Float2,
                                    1,
                                    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                    EOpDFdx,
-                                   false);
+                                   true);
 constexpr const TFunction dFdx_20B(BuiltInId::dFdx_Float3,
                                    BuiltInName::dFdx,
                                    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14646,7 +14646,7 @@ constexpr const TFunction dFdx_20B(BuiltInId::dFdx_Float3,
                                    1,
                                    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                    EOpDFdx,
-                                   false);
+                                   true);
 constexpr const TFunction dFdx_30B(BuiltInId::dFdx_Float4,
                                    BuiltInName::dFdx,
                                    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14654,7 +14654,7 @@ constexpr const TFunction dFdx_30B(BuiltInId::dFdx_Float4,
                                    1,
                                    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                    EOpDFdx,
-                                   false);
+                                   true);
 constexpr const TFunction dFdy_00B(BuiltInId::dFdy_Float1,
                                    BuiltInName::dFdy,
                                    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14662,7 +14662,7 @@ constexpr const TFunction dFdy_00B(BuiltInId::dFdy_Float1,
                                    1,
                                    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                    EOpDFdy,
-                                   false);
+                                   true);
 constexpr const TFunction dFdy_10B(BuiltInId::dFdy_Float2,
                                    BuiltInName::dFdy,
                                    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14670,7 +14670,7 @@ constexpr const TFunction dFdy_10B(BuiltInId::dFdy_Float2,
                                    1,
                                    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                    EOpDFdy,
-                                   false);
+                                   true);
 constexpr const TFunction dFdy_20B(BuiltInId::dFdy_Float3,
                                    BuiltInName::dFdy,
                                    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14678,7 +14678,7 @@ constexpr const TFunction dFdy_20B(BuiltInId::dFdy_Float3,
                                    1,
                                    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                    EOpDFdy,
-                                   false);
+                                   true);
 constexpr const TFunction dFdy_30B(BuiltInId::dFdy_Float4,
                                    BuiltInName::dFdy,
                                    std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14686,7 +14686,7 @@ constexpr const TFunction dFdy_30B(BuiltInId::dFdy_Float4,
                                    1,
                                    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                    EOpDFdy,
-                                   false);
+                                   true);
 constexpr const TFunction fwidth_00B(BuiltInId::fwidth_Float1,
                                      BuiltInName::fwidth,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14694,7 +14694,7 @@ constexpr const TFunction fwidth_00B(BuiltInId::fwidth_Float1,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                      EOpFwidth,
-                                     false);
+                                     true);
 constexpr const TFunction fwidth_10B(BuiltInId::fwidth_Float2,
                                      BuiltInName::fwidth,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14702,7 +14702,7 @@ constexpr const TFunction fwidth_10B(BuiltInId::fwidth_Float2,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                      EOpFwidth,
-                                     false);
+                                     true);
 constexpr const TFunction fwidth_20B(BuiltInId::fwidth_Float3,
                                      BuiltInName::fwidth,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14710,7 +14710,7 @@ constexpr const TFunction fwidth_20B(BuiltInId::fwidth_Float3,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                      EOpFwidth,
-                                     false);
+                                     true);
 constexpr const TFunction fwidth_30B(BuiltInId::fwidth_Float4,
                                      BuiltInName::fwidth,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14718,7 +14718,7 @@ constexpr const TFunction fwidth_30B(BuiltInId::fwidth_Float4,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                      EOpFwidth,
-                                     false);
+                                     true);
 constexpr const TFunction dFdxFine_00B(BuiltInId::dFdxFine_Float1,
                                        BuiltInName::dFdxFine,
                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14726,7 +14726,7 @@ constexpr const TFunction dFdxFine_00B(BuiltInId::dFdxFine_Float1,
                                        1,
                                        StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                        EOpDFdxFine,
-                                       false);
+                                       true);
 constexpr const TFunction dFdxFine_10B(BuiltInId::dFdxFine_Float2,
                                        BuiltInName::dFdxFine,
                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14734,7 +14734,7 @@ constexpr const TFunction dFdxFine_10B(BuiltInId::dFdxFine_Float2,
                                        1,
                                        StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                        EOpDFdxFine,
-                                       false);
+                                       true);
 constexpr const TFunction dFdxFine_20B(BuiltInId::dFdxFine_Float3,
                                        BuiltInName::dFdxFine,
                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14742,7 +14742,7 @@ constexpr const TFunction dFdxFine_20B(BuiltInId::dFdxFine_Float3,
                                        1,
                                        StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                        EOpDFdxFine,
-                                       false);
+                                       true);
 constexpr const TFunction dFdxFine_30B(BuiltInId::dFdxFine_Float4,
                                        BuiltInName::dFdxFine,
                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14750,7 +14750,7 @@ constexpr const TFunction dFdxFine_30B(BuiltInId::dFdxFine_Float4,
                                        1,
                                        StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                        EOpDFdxFine,
-                                       false);
+                                       true);
 constexpr const TFunction dFdyFine_00B(BuiltInId::dFdyFine_Float1,
                                        BuiltInName::dFdyFine,
                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14758,7 +14758,7 @@ constexpr const TFunction dFdyFine_00B(BuiltInId::dFdyFine_Float1,
                                        1,
                                        StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                        EOpDFdyFine,
-                                       false);
+                                       true);
 constexpr const TFunction dFdyFine_10B(BuiltInId::dFdyFine_Float2,
                                        BuiltInName::dFdyFine,
                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14766,7 +14766,7 @@ constexpr const TFunction dFdyFine_10B(BuiltInId::dFdyFine_Float2,
                                        1,
                                        StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                        EOpDFdyFine,
-                                       false);
+                                       true);
 constexpr const TFunction dFdyFine_20B(BuiltInId::dFdyFine_Float3,
                                        BuiltInName::dFdyFine,
                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14774,7 +14774,7 @@ constexpr const TFunction dFdyFine_20B(BuiltInId::dFdyFine_Float3,
                                        1,
                                        StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                        EOpDFdyFine,
-                                       false);
+                                       true);
 constexpr const TFunction dFdyFine_30B(BuiltInId::dFdyFine_Float4,
                                        BuiltInName::dFdyFine,
                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14782,7 +14782,7 @@ constexpr const TFunction dFdyFine_30B(BuiltInId::dFdyFine_Float4,
                                        1,
                                        StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                        EOpDFdyFine,
-                                       false);
+                                       true);
 constexpr const TFunction dFdxCoarse_00B(BuiltInId::dFdxCoarse_Float1,
                                          BuiltInName::dFdxCoarse,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14790,7 +14790,7 @@ constexpr const TFunction dFdxCoarse_00B(BuiltInId::dFdxCoarse_Float1,
                                          1,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                          EOpDFdxCoarse,
-                                         false);
+                                         true);
 constexpr const TFunction dFdxCoarse_10B(BuiltInId::dFdxCoarse_Float2,
                                          BuiltInName::dFdxCoarse,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14798,7 +14798,7 @@ constexpr const TFunction dFdxCoarse_10B(BuiltInId::dFdxCoarse_Float2,
                                          1,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                          EOpDFdxCoarse,
-                                         false);
+                                         true);
 constexpr const TFunction dFdxCoarse_20B(BuiltInId::dFdxCoarse_Float3,
                                          BuiltInName::dFdxCoarse,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14806,7 +14806,7 @@ constexpr const TFunction dFdxCoarse_20B(BuiltInId::dFdxCoarse_Float3,
                                          1,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                          EOpDFdxCoarse,
-                                         false);
+                                         true);
 constexpr const TFunction dFdxCoarse_30B(BuiltInId::dFdxCoarse_Float4,
                                          BuiltInName::dFdxCoarse,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14814,7 +14814,7 @@ constexpr const TFunction dFdxCoarse_30B(BuiltInId::dFdxCoarse_Float4,
                                          1,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpDFdxCoarse,
-                                         false);
+                                         true);
 constexpr const TFunction dFdyCoarse_00B(BuiltInId::dFdyCoarse_Float1,
                                          BuiltInName::dFdyCoarse,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14822,7 +14822,7 @@ constexpr const TFunction dFdyCoarse_00B(BuiltInId::dFdyCoarse_Float1,
                                          1,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                          EOpDFdyCoarse,
-                                         false);
+                                         true);
 constexpr const TFunction dFdyCoarse_10B(BuiltInId::dFdyCoarse_Float2,
                                          BuiltInName::dFdyCoarse,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14830,7 +14830,7 @@ constexpr const TFunction dFdyCoarse_10B(BuiltInId::dFdyCoarse_Float2,
                                          1,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                          EOpDFdyCoarse,
-                                         false);
+                                         true);
 constexpr const TFunction dFdyCoarse_20B(BuiltInId::dFdyCoarse_Float3,
                                          BuiltInName::dFdyCoarse,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14838,7 +14838,7 @@ constexpr const TFunction dFdyCoarse_20B(BuiltInId::dFdyCoarse_Float3,
                                          1,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                          EOpDFdyCoarse,
-                                         false);
+                                         true);
 constexpr const TFunction dFdyCoarse_30B(BuiltInId::dFdyCoarse_Float4,
                                          BuiltInName::dFdyCoarse,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14846,7 +14846,7 @@ constexpr const TFunction dFdyCoarse_30B(BuiltInId::dFdyCoarse_Float4,
                                          1,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpDFdyCoarse,
-                                         false);
+                                         true);
 constexpr const TFunction fwidthFine_00B(BuiltInId::fwidthFine_Float1,
                                          BuiltInName::fwidthFine,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14854,7 +14854,7 @@ constexpr const TFunction fwidthFine_00B(BuiltInId::fwidthFine_Float1,
                                          1,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                          EOpFwidthFine,
-                                         false);
+                                         true);
 constexpr const TFunction fwidthFine_10B(BuiltInId::fwidthFine_Float2,
                                          BuiltInName::fwidthFine,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14862,7 +14862,7 @@ constexpr const TFunction fwidthFine_10B(BuiltInId::fwidthFine_Float2,
                                          1,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                          EOpFwidthFine,
-                                         false);
+                                         true);
 constexpr const TFunction fwidthFine_20B(BuiltInId::fwidthFine_Float3,
                                          BuiltInName::fwidthFine,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14870,7 +14870,7 @@ constexpr const TFunction fwidthFine_20B(BuiltInId::fwidthFine_Float3,
                                          1,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                          EOpFwidthFine,
-                                         false);
+                                         true);
 constexpr const TFunction fwidthFine_30B(BuiltInId::fwidthFine_Float4,
                                          BuiltInName::fwidthFine,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -14878,7 +14878,7 @@ constexpr const TFunction fwidthFine_30B(BuiltInId::fwidthFine_Float4,
                                          1,
                                          StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                          EOpFwidthFine,
-                                         false);
+                                         true);
 constexpr const TFunction fwidthCoarse_00B(
     BuiltInId::fwidthCoarse_Float1,
     BuiltInName::fwidthCoarse,
@@ -14887,7 +14887,7 @@ constexpr const TFunction fwidthCoarse_00B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpFwidthCoarse,
-    false);
+    true);
 constexpr const TFunction fwidthCoarse_10B(
     BuiltInId::fwidthCoarse_Float2,
     BuiltInName::fwidthCoarse,
@@ -14896,7 +14896,7 @@ constexpr const TFunction fwidthCoarse_10B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpFwidthCoarse,
-    false);
+    true);
 constexpr const TFunction fwidthCoarse_20B(
     BuiltInId::fwidthCoarse_Float3,
     BuiltInName::fwidthCoarse,
@@ -14905,7 +14905,7 @@ constexpr const TFunction fwidthCoarse_20B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpFwidthCoarse,
-    false);
+    true);
 constexpr const TFunction fwidthCoarse_30B(
     BuiltInId::fwidthCoarse_Float4,
     BuiltInName::fwidthCoarse,
@@ -14914,7 +14914,7 @@ constexpr const TFunction fwidthCoarse_30B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpFwidthCoarse,
-    false);
+    true);
 constexpr const TFunction interpolateAtCentroid_00B(
     BuiltInId::interpolateAtCentroid_Float1,
     BuiltInName::interpolateAtCentroid,
@@ -14923,7 +14923,7 @@ constexpr const TFunction interpolateAtCentroid_00B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpInterpolateAtCentroid,
-    false);
+    true);
 constexpr const TFunction interpolateAtCentroid_10B(
     BuiltInId::interpolateAtCentroid_Float2,
     BuiltInName::interpolateAtCentroid,
@@ -14932,7 +14932,7 @@ constexpr const TFunction interpolateAtCentroid_10B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpInterpolateAtCentroid,
-    false);
+    true);
 constexpr const TFunction interpolateAtCentroid_20B(
     BuiltInId::interpolateAtCentroid_Float3,
     BuiltInName::interpolateAtCentroid,
@@ -14941,7 +14941,7 @@ constexpr const TFunction interpolateAtCentroid_20B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpInterpolateAtCentroid,
-    false);
+    true);
 constexpr const TFunction interpolateAtCentroid_30B(
     BuiltInId::interpolateAtCentroid_Float4,
     BuiltInName::interpolateAtCentroid,
@@ -14950,7 +14950,7 @@ constexpr const TFunction interpolateAtCentroid_30B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpInterpolateAtCentroid,
-    false);
+    true);
 constexpr const TFunction interpolateAtSample_00B00D(
     BuiltInId::interpolateAtSample_Float1_Int1,
     BuiltInName::interpolateAtSample,
@@ -14959,7 +14959,7 @@ constexpr const TFunction interpolateAtSample_00B00D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpInterpolateAtSample,
-    false);
+    true);
 constexpr const TFunction interpolateAtSample_10B00D(
     BuiltInId::interpolateAtSample_Float2_Int1,
     BuiltInName::interpolateAtSample,
@@ -14968,7 +14968,7 @@ constexpr const TFunction interpolateAtSample_10B00D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpInterpolateAtSample,
-    false);
+    true);
 constexpr const TFunction interpolateAtSample_20B00D(
     BuiltInId::interpolateAtSample_Float3_Int1,
     BuiltInName::interpolateAtSample,
@@ -14977,7 +14977,7 @@ constexpr const TFunction interpolateAtSample_20B00D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpInterpolateAtSample,
-    false);
+    true);
 constexpr const TFunction interpolateAtSample_30B00D(
     BuiltInId::interpolateAtSample_Float4_Int1,
     BuiltInName::interpolateAtSample,
@@ -14986,7 +14986,7 @@ constexpr const TFunction interpolateAtSample_30B00D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpInterpolateAtSample,
-    false);
+    true);
 constexpr const TFunction interpolateAtOffset_00B10B(
     BuiltInId::interpolateAtOffset_Float1_Float2,
     BuiltInName::interpolateAtOffset,
@@ -14995,7 +14995,7 @@ constexpr const TFunction interpolateAtOffset_00B10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpInterpolateAtOffset,
-    false);
+    true);
 constexpr const TFunction interpolateAtOffset_10B10B(
     BuiltInId::interpolateAtOffset_Float2_Float2,
     BuiltInName::interpolateAtOffset,
@@ -15004,7 +15004,7 @@ constexpr const TFunction interpolateAtOffset_10B10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpInterpolateAtOffset,
-    false);
+    true);
 constexpr const TFunction interpolateAtOffset_20B10B(
     BuiltInId::interpolateAtOffset_Float3_Float2,
     BuiltInName::interpolateAtOffset,
@@ -15013,7 +15013,7 @@ constexpr const TFunction interpolateAtOffset_20B10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpInterpolateAtOffset,
-    false);
+    true);
 constexpr const TFunction interpolateAtOffset_30B10B(
     BuiltInId::interpolateAtOffset_Float4_Float2,
     BuiltInName::interpolateAtOffset,
@@ -15022,7 +15022,7 @@ constexpr const TFunction interpolateAtOffset_30B10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpInterpolateAtOffset,
-    false);
+    true);
 constexpr const TFunction interpolateAtCentroidExt_00B(
     BuiltInId::interpolateAtCentroidExt_Float1,
     BuiltInName::interpolateAtCentroidExt,
@@ -15031,7 +15031,7 @@ constexpr const TFunction interpolateAtCentroidExt_00B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpInterpolateAtCentroid,
-    false);
+    true);
 constexpr const TFunction interpolateAtCentroidExt_10B(
     BuiltInId::interpolateAtCentroidExt_Float2,
     BuiltInName::interpolateAtCentroidExt,
@@ -15040,7 +15040,7 @@ constexpr const TFunction interpolateAtCentroidExt_10B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpInterpolateAtCentroid,
-    false);
+    true);
 constexpr const TFunction interpolateAtCentroidExt_20B(
     BuiltInId::interpolateAtCentroidExt_Float3,
     BuiltInName::interpolateAtCentroidExt,
@@ -15049,7 +15049,7 @@ constexpr const TFunction interpolateAtCentroidExt_20B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpInterpolateAtCentroid,
-    false);
+    true);
 constexpr const TFunction interpolateAtCentroidExt_30B(
     BuiltInId::interpolateAtCentroidExt_Float4,
     BuiltInName::interpolateAtCentroidExt,
@@ -15058,7 +15058,7 @@ constexpr const TFunction interpolateAtCentroidExt_30B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpInterpolateAtCentroid,
-    false);
+    true);
 constexpr const TFunction interpolateAtSampleExt_00B00D(
     BuiltInId::interpolateAtSampleExt_Float1_Int1,
     BuiltInName::interpolateAtSampleExt,
@@ -15067,7 +15067,7 @@ constexpr const TFunction interpolateAtSampleExt_00B00D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpInterpolateAtSample,
-    false);
+    true);
 constexpr const TFunction interpolateAtSampleExt_10B00D(
     BuiltInId::interpolateAtSampleExt_Float2_Int1,
     BuiltInName::interpolateAtSampleExt,
@@ -15076,7 +15076,7 @@ constexpr const TFunction interpolateAtSampleExt_10B00D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpInterpolateAtSample,
-    false);
+    true);
 constexpr const TFunction interpolateAtSampleExt_20B00D(
     BuiltInId::interpolateAtSampleExt_Float3_Int1,
     BuiltInName::interpolateAtSampleExt,
@@ -15085,7 +15085,7 @@ constexpr const TFunction interpolateAtSampleExt_20B00D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpInterpolateAtSample,
-    false);
+    true);
 constexpr const TFunction interpolateAtSampleExt_30B00D(
     BuiltInId::interpolateAtSampleExt_Float4_Int1,
     BuiltInName::interpolateAtSampleExt,
@@ -15094,7 +15094,7 @@ constexpr const TFunction interpolateAtSampleExt_30B00D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpInterpolateAtSample,
-    false);
+    true);
 constexpr const TFunction interpolateAtOffsetExt_00B10B(
     BuiltInId::interpolateAtOffsetExt_Float1_Float2,
     BuiltInName::interpolateAtOffsetExt,
@@ -15103,7 +15103,7 @@ constexpr const TFunction interpolateAtOffsetExt_00B10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpInterpolateAtOffset,
-    false);
+    true);
 constexpr const TFunction interpolateAtOffsetExt_10B10B(
     BuiltInId::interpolateAtOffsetExt_Float2_Float2,
     BuiltInName::interpolateAtOffsetExt,
@@ -15112,7 +15112,7 @@ constexpr const TFunction interpolateAtOffsetExt_10B10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpInterpolateAtOffset,
-    false);
+    true);
 constexpr const TFunction interpolateAtOffsetExt_20B10B(
     BuiltInId::interpolateAtOffsetExt_Float3_Float2,
     BuiltInName::interpolateAtOffsetExt,
@@ -15121,7 +15121,7 @@ constexpr const TFunction interpolateAtOffsetExt_20B10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpInterpolateAtOffset,
-    false);
+    true);
 constexpr const TFunction interpolateAtOffsetExt_30B10B(
     BuiltInId::interpolateAtOffsetExt_Float4_Float2,
     BuiltInName::interpolateAtOffsetExt,
@@ -15130,7 +15130,7 @@ constexpr const TFunction interpolateAtOffsetExt_30B10B(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpInterpolateAtOffset,
-    false);
+    true);
 constexpr const TFunction atomicCounter_00G(
     BuiltInId::atomicCounter_AtomicCounter1,
     BuiltInName::atomicCounter,
@@ -15383,7 +15383,7 @@ constexpr const TFunction imageSize_00z(BuiltInId::imageSize_Image2D1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01K(BuiltInId::imageSize_IImage2D1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15391,7 +15391,7 @@ constexpr const TFunction imageSize_01K(BuiltInId::imageSize_IImage2D1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01V(BuiltInId::imageSize_UImage2D1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15399,7 +15399,7 @@ constexpr const TFunction imageSize_01V(BuiltInId::imageSize_UImage2D1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01A(BuiltInId::imageSize_Image3D1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15407,7 +15407,7 @@ constexpr const TFunction imageSize_01A(BuiltInId::imageSize_Image3D1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01L(BuiltInId::imageSize_IImage3D1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15415,7 +15415,7 @@ constexpr const TFunction imageSize_01L(BuiltInId::imageSize_IImage3D1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01W(BuiltInId::imageSize_UImage3D1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15423,7 +15423,7 @@ constexpr const TFunction imageSize_01W(BuiltInId::imageSize_UImage3D1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01B(BuiltInId::imageSize_Image2DArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15431,7 +15431,7 @@ constexpr const TFunction imageSize_01B(BuiltInId::imageSize_Image2DArray1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01M(BuiltInId::imageSize_IImage2DArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15439,7 +15439,7 @@ constexpr const TFunction imageSize_01M(BuiltInId::imageSize_IImage2DArray1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01X(BuiltInId::imageSize_UImage2DArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15447,7 +15447,7 @@ constexpr const TFunction imageSize_01X(BuiltInId::imageSize_UImage2DArray1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01C(BuiltInId::imageSize_ImageCube1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15455,7 +15455,7 @@ constexpr const TFunction imageSize_01C(BuiltInId::imageSize_ImageCube1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01N(BuiltInId::imageSize_IImageCube1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15463,7 +15463,7 @@ constexpr const TFunction imageSize_01N(BuiltInId::imageSize_IImageCube1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01Y(BuiltInId::imageSize_UImageCube1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15471,7 +15471,7 @@ constexpr const TFunction imageSize_01Y(BuiltInId::imageSize_UImageCube1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01H(BuiltInId::imageSize_ImageCubeArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15479,7 +15479,7 @@ constexpr const TFunction imageSize_01H(BuiltInId::imageSize_ImageCubeArray1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01S(BuiltInId::imageSize_IImageCubeArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15487,7 +15487,7 @@ constexpr const TFunction imageSize_01S(BuiltInId::imageSize_IImageCubeArray1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01d(BuiltInId::imageSize_UImageCubeArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15495,7 +15495,7 @@ constexpr const TFunction imageSize_01d(BuiltInId::imageSize_UImageCubeArray1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSizeExt_01H(BuiltInId::imageSizeExt_ImageCubeArray1,
                                            BuiltInName::imageSizeExt,
                                            std::array<TExtension, 2u>{
@@ -15505,7 +15505,7 @@ constexpr const TFunction imageSizeExt_01H(BuiltInId::imageSizeExt_ImageCubeArra
                                            1,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                            EOpImageSize,
-                                           false);
+                                           true);
 constexpr const TFunction imageSizeExt_01S(BuiltInId::imageSizeExt_IImageCubeArray1,
                                            BuiltInName::imageSizeExt,
                                            std::array<TExtension, 2u>{
@@ -15515,7 +15515,7 @@ constexpr const TFunction imageSizeExt_01S(BuiltInId::imageSizeExt_IImageCubeArr
                                            1,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                            EOpImageSize,
-                                           false);
+                                           true);
 constexpr const TFunction imageSizeExt_01d(BuiltInId::imageSizeExt_UImageCubeArray1,
                                            BuiltInName::imageSizeExt,
                                            std::array<TExtension, 2u>{
@@ -15525,7 +15525,7 @@ constexpr const TFunction imageSizeExt_01d(BuiltInId::imageSizeExt_UImageCubeArr
                                            1,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                            EOpImageSize,
-                                           false);
+                                           true);
 constexpr const TFunction imageSize_01J(BuiltInId::imageSize_ImageBuffer1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15533,7 +15533,7 @@ constexpr const TFunction imageSize_01J(BuiltInId::imageSize_ImageBuffer1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01U(BuiltInId::imageSize_IImageBuffer1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15541,7 +15541,7 @@ constexpr const TFunction imageSize_01U(BuiltInId::imageSize_IImageBuffer1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01f(BuiltInId::imageSize_UImageBuffer1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15549,7 +15549,7 @@ constexpr const TFunction imageSize_01f(BuiltInId::imageSize_UImageBuffer1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSizeExt_01J(
     BuiltInId::imageSizeExt_ImageBuffer1,
     BuiltInName::imageSizeExt,
@@ -15558,7 +15558,7 @@ constexpr const TFunction imageSizeExt_01J(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageSize,
-    false);
+    true);
 constexpr const TFunction imageSizeExt_01U(
     BuiltInId::imageSizeExt_IImageBuffer1,
     BuiltInName::imageSizeExt,
@@ -15567,7 +15567,7 @@ constexpr const TFunction imageSizeExt_01U(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageSize,
-    false);
+    true);
 constexpr const TFunction imageSizeExt_01f(
     BuiltInId::imageSizeExt_UImageBuffer1,
     BuiltInName::imageSizeExt,
@@ -15576,7 +15576,7 @@ constexpr const TFunction imageSizeExt_01f(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpImageSize,
-    false);
+    true);
 constexpr const TFunction imageSize_01D(BuiltInId::imageSize_Image1D1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15584,7 +15584,7 @@ constexpr const TFunction imageSize_01D(BuiltInId::imageSize_Image1D1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01O(BuiltInId::imageSize_IImage1D1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15592,7 +15592,7 @@ constexpr const TFunction imageSize_01O(BuiltInId::imageSize_IImage1D1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01Z(BuiltInId::imageSize_UImage1D1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15600,7 +15600,7 @@ constexpr const TFunction imageSize_01Z(BuiltInId::imageSize_UImage1D1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01I(BuiltInId::imageSize_ImageRect1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15608,7 +15608,7 @@ constexpr const TFunction imageSize_01I(BuiltInId::imageSize_ImageRect1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01T(BuiltInId::imageSize_IImageRect1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15616,7 +15616,7 @@ constexpr const TFunction imageSize_01T(BuiltInId::imageSize_IImageRect1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01e(BuiltInId::imageSize_UImageRect1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15624,7 +15624,7 @@ constexpr const TFunction imageSize_01e(BuiltInId::imageSize_UImageRect1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01E(BuiltInId::imageSize_Image1DArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15632,7 +15632,7 @@ constexpr const TFunction imageSize_01E(BuiltInId::imageSize_Image1DArray1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01P(BuiltInId::imageSize_IImage1DArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15640,7 +15640,7 @@ constexpr const TFunction imageSize_01P(BuiltInId::imageSize_IImage1DArray1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01a(BuiltInId::imageSize_UImage1DArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15648,7 +15648,7 @@ constexpr const TFunction imageSize_01a(BuiltInId::imageSize_UImage1DArray1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01F(BuiltInId::imageSize_Image2DMS1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15656,7 +15656,7 @@ constexpr const TFunction imageSize_01F(BuiltInId::imageSize_Image2DMS1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01Q(BuiltInId::imageSize_IImage2DMS1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15664,7 +15664,7 @@ constexpr const TFunction imageSize_01Q(BuiltInId::imageSize_IImage2DMS1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01b(BuiltInId::imageSize_UImage2DMS1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15672,7 +15672,7 @@ constexpr const TFunction imageSize_01b(BuiltInId::imageSize_UImage2DMS1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 2, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01G(BuiltInId::imageSize_Image2DMSArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15680,7 +15680,7 @@ constexpr const TFunction imageSize_01G(BuiltInId::imageSize_Image2DMSArray1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01R(BuiltInId::imageSize_IImage2DMSArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15688,7 +15688,7 @@ constexpr const TFunction imageSize_01R(BuiltInId::imageSize_IImage2DMSArray1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSize_01c(BuiltInId::imageSize_UImage2DMSArray1,
                                         BuiltInName::imageSize,
                                         std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15696,7 +15696,7 @@ constexpr const TFunction imageSize_01c(BuiltInId::imageSize_UImage2DMSArray1,
                                         1,
                                         StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 3, 1>(),
                                         EOpImageSize,
-                                        false);
+                                        true);
 constexpr const TFunction imageSamples_01F(BuiltInId::imageSamples_Image2DMS1,
                                            BuiltInName::imageSamples,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15704,7 +15704,7 @@ constexpr const TFunction imageSamples_01F(BuiltInId::imageSamples_Image2DMS1,
                                            1,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                            EOpImageSamples,
-                                           false);
+                                           true);
 constexpr const TFunction imageSamples_01Q(BuiltInId::imageSamples_IImage2DMS1,
                                            BuiltInName::imageSamples,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15712,7 +15712,7 @@ constexpr const TFunction imageSamples_01Q(BuiltInId::imageSamples_IImage2DMS1,
                                            1,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                            EOpImageSamples,
-                                           false);
+                                           true);
 constexpr const TFunction imageSamples_01b(BuiltInId::imageSamples_UImage2DMS1,
                                            BuiltInName::imageSamples,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15720,7 +15720,7 @@ constexpr const TFunction imageSamples_01b(BuiltInId::imageSamples_UImage2DMS1,
                                            1,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                            EOpImageSamples,
-                                           false);
+                                           true);
 constexpr const TFunction imageSamples_01G(BuiltInId::imageSamples_Image2DMSArray1,
                                            BuiltInName::imageSamples,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15728,7 +15728,7 @@ constexpr const TFunction imageSamples_01G(BuiltInId::imageSamples_Image2DMSArra
                                            1,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                            EOpImageSamples,
-                                           false);
+                                           true);
 constexpr const TFunction imageSamples_01R(BuiltInId::imageSamples_IImage2DMSArray1,
                                            BuiltInName::imageSamples,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15736,7 +15736,7 @@ constexpr const TFunction imageSamples_01R(BuiltInId::imageSamples_IImage2DMSArr
                                            1,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                            EOpImageSamples,
-                                           false);
+                                           true);
 constexpr const TFunction imageSamples_01c(BuiltInId::imageSamples_UImage2DMSArray1,
                                            BuiltInName::imageSamples,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -15744,7 +15744,7 @@ constexpr const TFunction imageSamples_01c(BuiltInId::imageSamples_UImage2DMSArr
                                            1,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                            EOpImageSamples,
-                                           false);
+                                           true);
 constexpr const TFunction imageStore_00z10D30B(
     BuiltInId::imageStore_Image2D1_Int2_Float4,
     BuiltInName::imageStore,
@@ -16107,7 +16107,7 @@ constexpr const TFunction imageLoad_00z10D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01K10D(BuiltInId::imageLoad_IImage2D1_Int2,
                                            BuiltInName::imageLoad,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -16115,7 +16115,7 @@ constexpr const TFunction imageLoad_01K10D(BuiltInId::imageLoad_IImage2D1_Int2,
                                            2,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                            EOpImageLoad,
-                                           false);
+                                           true);
 constexpr const TFunction imageLoad_01V10D(
     BuiltInId::imageLoad_UImage2D1_Int2,
     BuiltInName::imageLoad,
@@ -16124,7 +16124,7 @@ constexpr const TFunction imageLoad_01V10D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01A20D(
     BuiltInId::imageLoad_Image3D1_Int3,
     BuiltInName::imageLoad,
@@ -16133,7 +16133,7 @@ constexpr const TFunction imageLoad_01A20D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01L20D(BuiltInId::imageLoad_IImage3D1_Int3,
                                            BuiltInName::imageLoad,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -16141,7 +16141,7 @@ constexpr const TFunction imageLoad_01L20D(BuiltInId::imageLoad_IImage3D1_Int3,
                                            2,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                            EOpImageLoad,
-                                           false);
+                                           true);
 constexpr const TFunction imageLoad_01W20D(
     BuiltInId::imageLoad_UImage3D1_Int3,
     BuiltInName::imageLoad,
@@ -16150,7 +16150,7 @@ constexpr const TFunction imageLoad_01W20D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01B20D(
     BuiltInId::imageLoad_Image2DArray1_Int3,
     BuiltInName::imageLoad,
@@ -16159,7 +16159,7 @@ constexpr const TFunction imageLoad_01B20D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01M20D(BuiltInId::imageLoad_IImage2DArray1_Int3,
                                            BuiltInName::imageLoad,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -16167,7 +16167,7 @@ constexpr const TFunction imageLoad_01M20D(BuiltInId::imageLoad_IImage2DArray1_I
                                            2,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                            EOpImageLoad,
-                                           false);
+                                           true);
 constexpr const TFunction imageLoad_01X20D(
     BuiltInId::imageLoad_UImage2DArray1_Int3,
     BuiltInName::imageLoad,
@@ -16176,7 +16176,7 @@ constexpr const TFunction imageLoad_01X20D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01C20D(
     BuiltInId::imageLoad_ImageCube1_Int3,
     BuiltInName::imageLoad,
@@ -16185,7 +16185,7 @@ constexpr const TFunction imageLoad_01C20D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01N20D(BuiltInId::imageLoad_IImageCube1_Int3,
                                            BuiltInName::imageLoad,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -16193,7 +16193,7 @@ constexpr const TFunction imageLoad_01N20D(BuiltInId::imageLoad_IImageCube1_Int3
                                            2,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                            EOpImageLoad,
-                                           false);
+                                           true);
 constexpr const TFunction imageLoad_01Y20D(
     BuiltInId::imageLoad_UImageCube1_Int3,
     BuiltInName::imageLoad,
@@ -16202,7 +16202,7 @@ constexpr const TFunction imageLoad_01Y20D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01H20D(
     BuiltInId::imageLoad_ImageCubeArray1_Int3,
     BuiltInName::imageLoad,
@@ -16211,7 +16211,7 @@ constexpr const TFunction imageLoad_01H20D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01S20D(BuiltInId::imageLoad_IImageCubeArray1_Int3,
                                            BuiltInName::imageLoad,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -16219,7 +16219,7 @@ constexpr const TFunction imageLoad_01S20D(BuiltInId::imageLoad_IImageCubeArray1
                                            2,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                            EOpImageLoad,
-                                           false);
+                                           true);
 constexpr const TFunction imageLoad_01d20D(
     BuiltInId::imageLoad_UImageCubeArray1_Int3,
     BuiltInName::imageLoad,
@@ -16228,7 +16228,7 @@ constexpr const TFunction imageLoad_01d20D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoadExt_01H20D(
     BuiltInId::imageLoadExt_ImageCubeArray1_Int3,
     BuiltInName::imageLoadExt,
@@ -16238,7 +16238,7 @@ constexpr const TFunction imageLoadExt_01H20D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoadExt_01S20D(
     BuiltInId::imageLoadExt_IImageCubeArray1_Int3,
     BuiltInName::imageLoadExt,
@@ -16248,7 +16248,7 @@ constexpr const TFunction imageLoadExt_01S20D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoadExt_01d20D(
     BuiltInId::imageLoadExt_UImageCubeArray1_Int3,
     BuiltInName::imageLoadExt,
@@ -16258,7 +16258,7 @@ constexpr const TFunction imageLoadExt_01d20D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01J00D(
     BuiltInId::imageLoad_ImageBuffer1_Int1,
     BuiltInName::imageLoad,
@@ -16267,7 +16267,7 @@ constexpr const TFunction imageLoad_01J00D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01U00D(BuiltInId::imageLoad_IImageBuffer1_Int1,
                                            BuiltInName::imageLoad,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -16275,7 +16275,7 @@ constexpr const TFunction imageLoad_01U00D(BuiltInId::imageLoad_IImageBuffer1_In
                                            2,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                            EOpImageLoad,
-                                           false);
+                                           true);
 constexpr const TFunction imageLoad_01f00D(
     BuiltInId::imageLoad_UImageBuffer1_Int1,
     BuiltInName::imageLoad,
@@ -16284,7 +16284,7 @@ constexpr const TFunction imageLoad_01f00D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoadExt_01J00D(
     BuiltInId::imageLoadExt_ImageBuffer1_Int1,
     BuiltInName::imageLoadExt,
@@ -16293,7 +16293,7 @@ constexpr const TFunction imageLoadExt_01J00D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoadExt_01U00D(
     BuiltInId::imageLoadExt_IImageBuffer1_Int1,
     BuiltInName::imageLoadExt,
@@ -16302,7 +16302,7 @@ constexpr const TFunction imageLoadExt_01U00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoadExt_01f00D(
     BuiltInId::imageLoadExt_UImageBuffer1_Int1,
     BuiltInName::imageLoadExt,
@@ -16311,7 +16311,7 @@ constexpr const TFunction imageLoadExt_01f00D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01D00D(
     BuiltInId::imageLoad_Image1D1_Int1,
     BuiltInName::imageLoad,
@@ -16320,7 +16320,7 @@ constexpr const TFunction imageLoad_01D00D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01O00D(BuiltInId::imageLoad_IImage1D1_Int1,
                                            BuiltInName::imageLoad,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -16328,7 +16328,7 @@ constexpr const TFunction imageLoad_01O00D(BuiltInId::imageLoad_IImage1D1_Int1,
                                            2,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                            EOpImageLoad,
-                                           false);
+                                           true);
 constexpr const TFunction imageLoad_01Z00D(
     BuiltInId::imageLoad_UImage1D1_Int1,
     BuiltInName::imageLoad,
@@ -16337,7 +16337,7 @@ constexpr const TFunction imageLoad_01Z00D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01E10D(
     BuiltInId::imageLoad_Image1DArray1_Int2,
     BuiltInName::imageLoad,
@@ -16346,7 +16346,7 @@ constexpr const TFunction imageLoad_01E10D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01P10D(BuiltInId::imageLoad_IImage1DArray1_Int2,
                                            BuiltInName::imageLoad,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -16354,7 +16354,7 @@ constexpr const TFunction imageLoad_01P10D(BuiltInId::imageLoad_IImage1DArray1_I
                                            2,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                            EOpImageLoad,
-                                           false);
+                                           true);
 constexpr const TFunction imageLoad_01a10D(
     BuiltInId::imageLoad_UImage1DArray1_Int2,
     BuiltInName::imageLoad,
@@ -16363,7 +16363,7 @@ constexpr const TFunction imageLoad_01a10D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01I10D(
     BuiltInId::imageLoad_ImageRect1_Int2,
     BuiltInName::imageLoad,
@@ -16372,7 +16372,7 @@ constexpr const TFunction imageLoad_01I10D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01T10D(BuiltInId::imageLoad_IImageRect1_Int2,
                                            BuiltInName::imageLoad,
                                            std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -16380,7 +16380,7 @@ constexpr const TFunction imageLoad_01T10D(BuiltInId::imageLoad_IImageRect1_Int2
                                            2,
                                            StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                            EOpImageLoad,
-                                           false);
+                                           true);
 constexpr const TFunction imageLoad_01e10D(
     BuiltInId::imageLoad_UImageRect1_Int2,
     BuiltInName::imageLoad,
@@ -16389,7 +16389,7 @@ constexpr const TFunction imageLoad_01e10D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01F10D00D(
     BuiltInId::imageLoad_Image2DMS1_Int2_Int1,
     BuiltInName::imageLoad,
@@ -16398,7 +16398,7 @@ constexpr const TFunction imageLoad_01F10D00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01Q10D00D(
     BuiltInId::imageLoad_IImage2DMS1_Int2_Int1,
     BuiltInName::imageLoad,
@@ -16407,7 +16407,7 @@ constexpr const TFunction imageLoad_01Q10D00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01b10D00D(
     BuiltInId::imageLoad_UImage2DMS1_Int2_Int1,
     BuiltInName::imageLoad,
@@ -16416,7 +16416,7 @@ constexpr const TFunction imageLoad_01b10D00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01G20D00D(
     BuiltInId::imageLoad_Image2DMSArray1_Int3_Int1,
     BuiltInName::imageLoad,
@@ -16425,7 +16425,7 @@ constexpr const TFunction imageLoad_01G20D00D(
     3,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01R20D00D(
     BuiltInId::imageLoad_IImage2DMSArray1_Int3_Int1,
     BuiltInName::imageLoad,
@@ -16434,7 +16434,7 @@ constexpr const TFunction imageLoad_01R20D00D(
     3,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageLoad_01c20D00D(
     BuiltInId::imageLoad_UImage2DMSArray1_Int3_Int1,
     BuiltInName::imageLoad,
@@ -16443,7 +16443,7 @@ constexpr const TFunction imageLoad_01c20D00D(
     3,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpImageLoad,
-    false);
+    true);
 constexpr const TFunction imageAtomicAdd_00z10D00E(
     BuiltInId::imageAtomicAdd_Image2D1_Int2_UInt1,
     BuiltInName::imageAtomicAdd,
@@ -26550,7 +26550,7 @@ constexpr const TFunction pixelLocalLoadANGLE_01g(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpPixelLocalLoadANGLE,
-    false);
+    true);
 constexpr const TFunction pixelLocalLoadANGLE_01h(
     BuiltInId::pixelLocalLoadANGLE_IPixelLocalANGLE1,
     BuiltInName::pixelLocalLoadANGLE,
@@ -26559,7 +26559,7 @@ constexpr const TFunction pixelLocalLoadANGLE_01h(
     1,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpPixelLocalLoadANGLE,
-    false);
+    true);
 constexpr const TFunction pixelLocalLoadANGLE_01i(
     BuiltInId::pixelLocalLoadANGLE_UPixelLocalANGLE1,
     BuiltInName::pixelLocalLoadANGLE,
@@ -26568,7 +26568,7 @@ constexpr const TFunction pixelLocalLoadANGLE_01i(
     1,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpPixelLocalLoadANGLE,
-    false);
+    true);
 constexpr const TFunction pixelLocalStoreANGLE_01g30B(
     BuiltInId::pixelLocalStoreANGLE_PixelLocalANGLE1_Float4,
     BuiltInName::pixelLocalStoreANGLE,
@@ -26648,7 +26648,7 @@ constexpr const TFunction noise1_00B(BuiltInId::noise1_Float1,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                      EOpNoise1,
-                                     false);
+                                     true);
 constexpr const TFunction noise1_10B(BuiltInId::noise1_Float2,
                                      BuiltInName::noise1,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26656,7 +26656,7 @@ constexpr const TFunction noise1_10B(BuiltInId::noise1_Float2,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                      EOpNoise1,
-                                     false);
+                                     true);
 constexpr const TFunction noise1_20B(BuiltInId::noise1_Float3,
                                      BuiltInName::noise1,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26664,7 +26664,7 @@ constexpr const TFunction noise1_20B(BuiltInId::noise1_Float3,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                      EOpNoise1,
-                                     false);
+                                     true);
 constexpr const TFunction noise1_30B(BuiltInId::noise1_Float4,
                                      BuiltInName::noise1,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26672,7 +26672,7 @@ constexpr const TFunction noise1_30B(BuiltInId::noise1_Float4,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                      EOpNoise1,
-                                     false);
+                                     true);
 constexpr const TFunction noise2_00B(BuiltInId::noise2_Float1,
                                      BuiltInName::noise2,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26680,7 +26680,7 @@ constexpr const TFunction noise2_00B(BuiltInId::noise2_Float1,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                      EOpNoise2,
-                                     false);
+                                     true);
 constexpr const TFunction noise2_10B(BuiltInId::noise2_Float2,
                                      BuiltInName::noise2,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26688,7 +26688,7 @@ constexpr const TFunction noise2_10B(BuiltInId::noise2_Float2,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                      EOpNoise2,
-                                     false);
+                                     true);
 constexpr const TFunction noise2_20B(BuiltInId::noise2_Float3,
                                      BuiltInName::noise2,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26696,7 +26696,7 @@ constexpr const TFunction noise2_20B(BuiltInId::noise2_Float3,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                      EOpNoise2,
-                                     false);
+                                     true);
 constexpr const TFunction noise2_30B(BuiltInId::noise2_Float4,
                                      BuiltInName::noise2,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26704,7 +26704,7 @@ constexpr const TFunction noise2_30B(BuiltInId::noise2_Float4,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                      EOpNoise2,
-                                     false);
+                                     true);
 constexpr const TFunction noise3_00B(BuiltInId::noise3_Float1,
                                      BuiltInName::noise3,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26712,7 +26712,7 @@ constexpr const TFunction noise3_00B(BuiltInId::noise3_Float1,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                      EOpNoise3,
-                                     false);
+                                     true);
 constexpr const TFunction noise3_10B(BuiltInId::noise3_Float2,
                                      BuiltInName::noise3,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26720,7 +26720,7 @@ constexpr const TFunction noise3_10B(BuiltInId::noise3_Float2,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                      EOpNoise3,
-                                     false);
+                                     true);
 constexpr const TFunction noise3_20B(BuiltInId::noise3_Float3,
                                      BuiltInName::noise3,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26728,7 +26728,7 @@ constexpr const TFunction noise3_20B(BuiltInId::noise3_Float3,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                      EOpNoise3,
-                                     false);
+                                     true);
 constexpr const TFunction noise3_30B(BuiltInId::noise3_Float4,
                                      BuiltInName::noise3,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26736,7 +26736,7 @@ constexpr const TFunction noise3_30B(BuiltInId::noise3_Float4,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                      EOpNoise3,
-                                     false);
+                                     true);
 constexpr const TFunction noise4_00B(BuiltInId::noise4_Float1,
                                      BuiltInName::noise4,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26744,7 +26744,7 @@ constexpr const TFunction noise4_00B(BuiltInId::noise4_Float1,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                      EOpNoise4,
-                                     false);
+                                     true);
 constexpr const TFunction noise4_10B(BuiltInId::noise4_Float2,
                                      BuiltInName::noise4,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26752,7 +26752,7 @@ constexpr const TFunction noise4_10B(BuiltInId::noise4_Float2,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                      EOpNoise4,
-                                     false);
+                                     true);
 constexpr const TFunction noise4_20B(BuiltInId::noise4_Float3,
                                      BuiltInName::noise4,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26760,7 +26760,7 @@ constexpr const TFunction noise4_20B(BuiltInId::noise4_Float3,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                      EOpNoise4,
-                                     false);
+                                     true);
 constexpr const TFunction noise4_30B(BuiltInId::noise4_Float4,
                                      BuiltInName::noise4,
                                      std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26768,7 +26768,7 @@ constexpr const TFunction noise4_30B(BuiltInId::noise4_Float4,
                                      1,
                                      StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                      EOpNoise4,
-                                     false);
+                                     true);
 constexpr const TFunction memoryBarrier_(BuiltInId::memoryBarrier,
                                          BuiltInName::memoryBarrier,
                                          std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26910,7 +26910,7 @@ constexpr const TFunction subpassLoad_01j(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpSubpassLoad,
-    false);
+    true);
 constexpr const TFunction subpassLoad_01k(BuiltInId::subpassLoad_ISubpassInput1,
                                           BuiltInName::subpassLoad,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26918,7 +26918,7 @@ constexpr const TFunction subpassLoad_01k(BuiltInId::subpassLoad_ISubpassInput1,
                                           1,
                                           StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                           EOpSubpassLoad,
-                                          false);
+                                          true);
 constexpr const TFunction subpassLoad_01l(BuiltInId::subpassLoad_USubpassInput1,
                                           BuiltInName::subpassLoad,
                                           std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26926,7 +26926,7 @@ constexpr const TFunction subpassLoad_01l(BuiltInId::subpassLoad_USubpassInput1,
                                           1,
                                           StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
                                           EOpSubpassLoad,
-                                          false);
+                                          true);
 constexpr const TFunction subpassLoad_01m00D(
     BuiltInId::subpassLoad_SubpassInputMS1_Int1,
     BuiltInName::subpassLoad,
@@ -26935,7 +26935,7 @@ constexpr const TFunction subpassLoad_01m00D(
     2,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpSubpassLoad,
-    false);
+    true);
 constexpr const TFunction subpassLoad_01n00D(
     BuiltInId::subpassLoad_ISubpassInputMS1_Int1,
     BuiltInName::subpassLoad,
@@ -26944,7 +26944,7 @@ constexpr const TFunction subpassLoad_01n00D(
     2,
     StaticType::Get<EbtInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpSubpassLoad,
-    false);
+    true);
 constexpr const TFunction subpassLoad_01o00D(
     BuiltInId::subpassLoad_USubpassInputMS1_Int1,
     BuiltInName::subpassLoad,
@@ -26953,7 +26953,7 @@ constexpr const TFunction subpassLoad_01o00D(
     2,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpSubpassLoad,
-    false);
+    true);
 constexpr const TFunction anyInvocation_00F(
     BuiltInId::anyInvocation_Bool1,
     BuiltInName::anyInvocation,
@@ -26962,7 +26962,7 @@ constexpr const TFunction anyInvocation_00F(
     1,
     StaticType::Get<EbtBool, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpAnyInvocation,
-    false);
+    true);
 constexpr const TFunction allInvocations_00F(
     BuiltInId::allInvocations_Bool1,
     BuiltInName::allInvocations,
@@ -26971,7 +26971,7 @@ constexpr const TFunction allInvocations_00F(
     1,
     StaticType::Get<EbtBool, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpAllInvocations,
-    false);
+    true);
 constexpr const TFunction allInvocationsEqual_00F(
     BuiltInId::allInvocationsEqual_Bool1,
     BuiltInName::allInvocationsEqual,
@@ -26980,7 +26980,7 @@ constexpr const TFunction allInvocationsEqual_00F(
     1,
     StaticType::Get<EbtBool, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpAllInvocationsEqual,
-    false);
+    true);
 constexpr const TFunction numSamples_(BuiltInId::numSamples,
                                       BuiltInName::numSamples,
                                       std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -26988,7 +26988,7 @@ constexpr const TFunction numSamples_(BuiltInId::numSamples,
                                       0,
                                       StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 1, 1>(),
                                       EOpNumSamples,
-                                      false);
+                                      true);
 constexpr const TFunction samplePosition_00E(
     BuiltInId::samplePosition_UInt1,
     BuiltInName::samplePosition,
@@ -26997,7 +26997,7 @@ constexpr const TFunction samplePosition_00E(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpSamplePosition,
-    false);
+    true);
 constexpr const TFunction interpolateAtCenter_00B(
     BuiltInId::interpolateAtCenter_Float1,
     BuiltInName::interpolateAtCenter,
@@ -27006,7 +27006,7 @@ constexpr const TFunction interpolateAtCenter_00B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
     EOpInterpolateAtCenter,
-    false);
+    true);
 constexpr const TFunction interpolateAtCenter_10B(
     BuiltInId::interpolateAtCenter_Float2,
     BuiltInName::interpolateAtCenter,
@@ -27015,7 +27015,7 @@ constexpr const TFunction interpolateAtCenter_10B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
     EOpInterpolateAtCenter,
-    false);
+    true);
 constexpr const TFunction interpolateAtCenter_20B(
     BuiltInId::interpolateAtCenter_Float3,
     BuiltInName::interpolateAtCenter,
@@ -27024,7 +27024,7 @@ constexpr const TFunction interpolateAtCenter_20B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
     EOpInterpolateAtCenter,
-    false);
+    true);
 constexpr const TFunction interpolateAtCenter_30B(
     BuiltInId::interpolateAtCenter_Float4,
     BuiltInName::interpolateAtCenter,
@@ -27033,7 +27033,7 @@ constexpr const TFunction interpolateAtCenter_30B(
     1,
     StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpInterpolateAtCenter,
-    false);
+    true);
 constexpr const TFunction saturate_00B(BuiltInId::saturate_Float1,
                                        BuiltInName::saturate,
                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -27041,7 +27041,7 @@ constexpr const TFunction saturate_00B(BuiltInId::saturate_Float1,
                                        1,
                                        StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 1, 1>(),
                                        EOpSaturate,
-                                       false);
+                                       true);
 constexpr const TFunction saturate_10B(BuiltInId::saturate_Float2,
                                        BuiltInName::saturate,
                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -27049,7 +27049,7 @@ constexpr const TFunction saturate_10B(BuiltInId::saturate_Float2,
                                        1,
                                        StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
                                        EOpSaturate,
-                                       false);
+                                       true);
 constexpr const TFunction saturate_20B(BuiltInId::saturate_Float3,
                                        BuiltInName::saturate,
                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -27057,7 +27057,7 @@ constexpr const TFunction saturate_20B(BuiltInId::saturate_Float3,
                                        1,
                                        StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 3, 1>(),
                                        EOpSaturate,
-                                       false);
+                                       true);
 constexpr const TFunction saturate_30B(BuiltInId::saturate_Float4,
                                        BuiltInName::saturate,
                                        std::array<TExtension, 1u>{{TExtension::UNDEFINED}},
@@ -27065,7 +27065,7 @@ constexpr const TFunction saturate_30B(BuiltInId::saturate_Float4,
                                        1,
                                        StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 4, 1>(),
                                        EOpSaturate,
-                                       false);
+                                       true);
 
 }  // namespace Func
 

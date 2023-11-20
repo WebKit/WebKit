@@ -182,6 +182,13 @@ struct FrontendFeatures : FeatureSetBase
         &members, "https://issuetracker.google.com/292285899"
     };
 
+    FeatureInfo forceMinimumMaxVertexAttributes = {
+        "forceMinimumMaxVertexAttributes",
+        FeatureCategory::FrontendFeatures,
+        "Force the minimum GL_MAX_VERTEX_ATTRIBS that the context's client version allows.",
+        &members, ""
+    };
+
 };
 
 inline FrontendFeatures::FrontendFeatures()  = default;

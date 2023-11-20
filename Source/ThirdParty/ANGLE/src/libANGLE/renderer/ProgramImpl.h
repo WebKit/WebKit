@@ -82,7 +82,8 @@ class ProgramImpl : angle::NonCopyable
 
     virtual angle::Result load(const gl::Context *context,
                                gl::BinaryInputStream *stream,
-                               std::shared_ptr<LinkTask> *loadTaskOut)            = 0;
+                               std::shared_ptr<LinkTask> *loadTaskOut,
+                               bool *successOut)                                  = 0;
     virtual void save(const gl::Context *context, gl::BinaryOutputStream *stream) = 0;
     virtual void setBinaryRetrievableHint(bool retrievable)                       = 0;
     virtual void setSeparable(bool separable)                                     = 0;

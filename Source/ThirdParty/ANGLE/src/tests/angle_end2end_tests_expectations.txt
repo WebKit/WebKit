@@ -401,6 +401,7 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 7329 WIN D3D11 : StateChangeTestES3.PrimitiveRestart/* = SKIP
 8100 WIN D3D11 : WebGL2GLSLTest.InitOutputParams/* = SKIP
 1456243 WIN D3D11 : WebGL2CompatibilityTest.DrawWithZeroSizedBuffer/* = SKIP
+8411 WIN D3D9 : GLSLTest.VectorScalarArithmeticWithSideEffectInLoop/* = SKIP
 
 // Android
 6095 ANDROID GLES : GLSLTest_ES3.InitGlobalComplexConstant/* = SKIP

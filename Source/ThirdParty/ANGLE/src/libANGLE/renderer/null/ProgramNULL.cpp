@@ -38,9 +38,11 @@ ProgramNULL::~ProgramNULL() {}
 
 angle::Result ProgramNULL::load(const gl::Context *context,
                                 gl::BinaryInputStream *stream,
-                                std::shared_ptr<LinkTask> *loadTaskOut)
+                                std::shared_ptr<LinkTask> *loadTaskOut,
+                                bool *successOut)
 {
     *loadTaskOut = {};
+    *successOut  = true;
     return angle::Result::Continue;
 }
 

@@ -2238,14 +2238,16 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
                     gl::VertexArray::DirtyBindingBitsArray dirtBindingBits;
 
                     dirtyBits.set(gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER);
-                    for (size_t attrib = 0; attrib < mDefaultVAOState.attributes.size(); attrib++)
+                    for (GLint attrib = 0; attrib < context->getCaps().maxVertexAttributes;
+                         attrib++)
                     {
                         dirtyBits.set(gl::VertexArray::DIRTY_BIT_ATTRIB_0 + attrib);
                         dirtyAttribBits[attrib].set(gl::VertexArray::DIRTY_ATTRIB_ENABLED);
                         dirtyAttribBits[attrib].set(gl::VertexArray::DIRTY_ATTRIB_POINTER);
                         dirtyAttribBits[attrib].set(gl::VertexArray::DIRTY_ATTRIB_POINTER_BUFFER);
                     }
-                    for (size_t binding = 0; binding < mDefaultVAOState.bindings.size(); binding++)
+                    for (GLint binding = 0; binding < context->getCaps().maxVertexAttribBindings;
+                         binding++)
                     {
                         dirtyBits.set(gl::VertexArray::DIRTY_BIT_BINDING_0 + binding);
                         dirtBindingBits[binding].set(gl::VertexArray::DIRTY_BINDING_DIVISOR);
@@ -2380,13 +2382,14 @@ angle::Result StateManagerGL::syncState(const gl::Context *context,
             {
                 gl::AttributesMask combinedMask =
                     (state.getAndResetDirtyCurrentValues() | mLocalDirtyCurrentValues);
-                mLocalDirtyCurrentValues.reset();
 
                 for (auto attribIndex : combinedMask)
                 {
                     setAttributeCurrentData(attribIndex,
                                             state.getVertexAttribCurrentValue(attribIndex));
                 }
+
+                mLocalDirtyCurrentValues.reset();
                 break;
             }
             case gl::state::DIRTY_BIT_PROVOKING_VERTEX:

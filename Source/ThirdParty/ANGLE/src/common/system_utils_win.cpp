@@ -261,4 +261,8 @@ std::wstring Widen(const std::string_view &utf8)
     return utf16;
 }
 
+void SetCurrentThreadName(const char *name)
+{
+    // Not implemented
+}
 }  // namespace angle

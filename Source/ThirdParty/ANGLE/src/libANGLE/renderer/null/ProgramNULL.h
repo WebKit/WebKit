@@ -23,7 +23,8 @@ class ProgramNULL : public ProgramImpl
 
     angle::Result load(const gl::Context *context,
                        gl::BinaryInputStream *stream,
-                       std::shared_ptr<LinkTask> *loadTaskOut) override;
+                       std::shared_ptr<LinkTask> *loadTaskOut,
+                       bool *successOut) override;
     void save(const gl::Context *context, gl::BinaryOutputStream *stream) override;
     void setBinaryRetrievableHint(bool retrievable) override;
     void setSeparable(bool separable) override;

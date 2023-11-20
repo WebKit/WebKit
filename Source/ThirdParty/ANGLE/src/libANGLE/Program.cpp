@@ -725,6 +725,7 @@ void Program::onDestroy(const Context *context)
         {
             shader->release(context);
         }
+        mState.mShaderCompileJobs[shaderType].reset();
         mState.mAttachedShaders[shaderType].reset();
         mAttachedShaders[shaderType] = nullptr;
     }
@@ -779,6 +780,7 @@ void Program::detachShader(const Context *context, Shader *shader)
     ASSERT(mAttachedShaders[shaderType] == shader);
     shader->release(context);
     mAttachedShaders[shaderType] = nullptr;
+    mState.mShaderCompileJobs[shaderType].reset();
     mState.mAttachedShaders[shaderType].reset();
 }
 
@@ -847,19 +849,20 @@ void Program::makeNewExecutable(const Context *context)
     onStateChange(angle::SubjectMessage::ProgramUnlinked);
 }
 
-angle::Result Program::link(const Context *context)
+angle::Result Program::link(const Context *context, angle::JobResultExpectancy resultExpectancy)
 {
+    auto *platform   = ANGLEPlatformCurrent();
+    double startTime = platform->currentTime(platform);
+
     // Create a new executable to hold the result of the link.  The previous executable may still be
     // referenced by the contexts the program is current on, and any program pipelines it may be
-    // used in.  Once link succeeds, the users of the program are notified to update thier
+    // used in.  Once link succeeds, the users of the program are notified to update their
     // executables.
     makeNewExecutable(context);
 
-    // Make sure no compile jobs are pending.
-    //
-    // For every attached shader, get the compiled state.  This is done at link time (instead of
-    // earlier, such as attachShader time), because the shader could get recompiled between attach
-    // and link.
+    // For every attached shader, get the compile job and compiled state.  This is done at link time
+    // (instead of earlier, such as attachShader time), because the shader could get recompiled
+    // between attach and link.
     //
     // Additionally, make sure the backend is also able to cache the compiled state of its own
     // ShaderImpl objects.
@@ -867,14 +870,15 @@ angle::Result Program::link(const Context *context)
     for (ShaderType shaderType : AllShaderTypes())
     {
         Shader *shader = mAttachedShaders[shaderType];
+        SharedCompileJob compileJob;
         SharedCompiledShaderState shaderCompiledState;
         if (shader != nullptr)
         {
-            shader->resolveCompile(context);
-            shaderCompiledState     = shader->getCompiledState();
+            compileJob              = shader->getCompileJob(&shaderCompiledState);
             shaderImpls[shaderType] = shader->getImplementation();
         }
-        mState.mAttachedShaders[shaderType] = std::move(shaderCompiledState);
+        mState.mShaderCompileJobs[shaderType] = std::move(compileJob);
+        mState.mAttachedShaders[shaderType]   = std::move(shaderCompiledState);
     }
     mProgram->prepareForLink(shaderImpls);
 
@@ -883,17 +887,6 @@ angle::Result Program::link(const Context *context)
     {
         dumpProgramInfo(context);
     }
-
-    return linkImpl(context);
-}
-
-// The attached shaders are checked for linking errors by matching up their variables.
-// Uniform, input and output variables get collected.
-// The code gets compiled into binaries.
-angle::Result Program::linkImpl(const Context *context)
-{
-    auto *platform   = ANGLEPlatformCurrent();
-    double startTime = platform->currentTime(platform);
 
     // Make sure the executable state is in sync with the program.
     //
@@ -924,6 +917,9 @@ angle::Result Program::linkImpl(const Context *context)
 
         if (success)
         {
+            // No need to care about the compile jobs any more.
+            mState.mShaderCompileJobs = {};
+
             std::scoped_lock lock(mHistogramMutex);
             // Succeeded in loading the binaries in the front-end, back end may still be loading
             // asynchronously
@@ -952,14 +948,11 @@ angle::Result Program::linkImpl(const Context *context)
 
     // While the subtasks are currently always thread-safe, the main task is not safe on all
     // backends.  A front-end feature selects whether the single-threaded pool must be used.
-    std::shared_ptr<angle::WorkerThreadPool> mainLinkWorkerPool =
-        context->getFrontendFeatures().linkJobIsThreadSafe.enabled
-            ? context->getShaderCompileThreadPool()
-            : context->getSingleThreadPool();
-
-    // TODO: add the possibility to perform this in an unlocked tail call.  http://anglebug.com/8297
+    const angle::JobThreadSafety threadSafety =
+        context->getFrontendFeatures().linkJobIsThreadSafe.enabled ? angle::JobThreadSafety::Safe
+                                                                   : angle::JobThreadSafety::Unsafe;
     std::shared_ptr<angle::WaitableEvent> mainLinkEvent =
-        mainLinkWorkerPool->postWorkerTask(mainLinkTask);
+        context->postCompileLinkTask(mainLinkTask, threadSafety, resultExpectancy);
 
     mLinkingState                    = std::move(linkingState);
     mLinkingState->linkingFromBinary = false;
@@ -1299,7 +1292,10 @@ angle::Result Program::loadBinary(const Context *context,
     unlink();
 
     BinaryInputStream stream(binary, length);
-    ANGLE_TRY(deserialize(context, stream));
+    if (!deserialize(context, stream))
+    {
+        return angle::Result::Continue;
+    }
     // Currently we require the full shader text to compute the program hash.
     // We could also store the binary in the internal program cache.
 
@@ -1310,18 +1306,17 @@ angle::Result Program::loadBinary(const Context *context,
         mState.mExecutable->mDirtyBits.set(uniformBlockIndex);
     }
 
-    // If load returns incomplete, we know for sure that the binary is not compatible with the
+    // If load does not succeed, we know for sure that the binary is not compatible with the
     // backend.  The loaded binary could have been read from the on-disk shader cache and be
     // corrupted or serialized with different revision and subsystem id than the currently loaded
-    // backend.  Returning 'Incomplete' to the caller results in link happening using the original
-    // shader sources.
+    // backend.  Returning to the caller results in link happening using the original shader
+    // sources.
     std::shared_ptr<rx::LinkTask> loadTask;
-    angle::Result result = mProgram->load(context, &stream, &loadTask);
-    if (result == angle::Result::Incomplete)
+    ANGLE_TRY(mProgram->load(context, &stream, &loadTask, successOut));
+    if (!*successOut)
     {
-        return angle::Result::Incomplete;
+        return angle::Result::Continue;
     }
-    ANGLE_TRY(result);
 
     std::unique_ptr<LinkEvent> loadEvent;
     if (loadTask)
@@ -1556,6 +1551,24 @@ void Program::setTransformFeedbackVaryings(GLsizei count,
 
 bool Program::linkValidateShaders()
 {
+    // Wait for attached shaders to finish compilation.  At this point, they need to be checked
+    // whether they successfully compiled.  This information is cached so that all compile jobs can
+    // be waited on and their corresponding objects released before the actual check.
+    //
+    // Note that this function is called from the link job, and is therefore not protected by any
+    // locks.
+    ShaderBitSet successfullyCompiledShaders;
+    for (ShaderType shaderType : AllShaderTypes())
+    {
+        const SharedCompileJob &compileJob = mState.mShaderCompileJobs[shaderType];
+        if (compileJob)
+        {
+            const bool success = WaitCompileJobUnlocked(compileJob);
+            successfullyCompiledShaders.set(shaderType, success);
+        }
+    }
+    mState.mShaderCompileJobs = {};
+
     const ShaderMap<SharedCompiledShaderState> &shaders = mState.mAttachedShaders;
 
     bool isComputeShaderAttached  = shaders[ShaderType::Compute].get() != nullptr;
@@ -1584,7 +1597,7 @@ bool Program::linkValidateShaders()
             continue;
         }
 
-        if (!shader->successfullyCompiled)
+        if (!successfullyCompiledShaders.test(shaderType))
         {
             mState.mInfoLog << ShaderTypeToString(shaderType) << " shader is not compiled.";
             return false;
@@ -2029,9 +2042,7 @@ void Program::initInterfaceBlockBindings()
 angle::Result Program::syncState(const Context *context)
 {
     ASSERT(!mLinkingState);
-    ANGLE_TRY(mProgram->syncState(context));
-
-    return angle::Result::Continue;
+    return mProgram->syncState(context);
 }
 
 angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *binaryOut) const
@@ -2112,13 +2123,13 @@ angle::Result Program::serialize(const Context *context, angle::MemoryBuffer *bi
         ANGLE_PERF_WARNING(context->getState().getDebug(), GL_DEBUG_SEVERITY_LOW,
                            "Failed to allocate enough memory to serialize a program. (%zu bytes)",
                            stream.length());
-        return angle::Result::Incomplete;
+        return angle::Result::Stop;
     }
     memcpy(binaryOut->data(), stream.data(), stream.length());
     return angle::Result::Continue;
 }
 
-angle::Result Program::deserialize(const Context *context, BinaryInputStream &stream)
+bool Program::deserialize(const Context *context, BinaryInputStream &stream)
 {
     std::vector<uint8_t> angleShaderProgramVersionString(
         angle::GetANGLEShaderProgramVersionHashSize(), 0);
@@ -2128,28 +2139,28 @@ angle::Result Program::deserialize(const Context *context, BinaryInputStream &st
                angleShaderProgramVersionString.size()) != 0)
     {
         mState.mInfoLog << "Invalid program binary version.";
-        return angle::Result::Stop;
+        return false;
     }
 
     bool binaryIs64Bit = stream.readBool();
     if (binaryIs64Bit != angle::Is64Bit())
     {
         mState.mInfoLog << "cannot load program binaries across CPU architectures.";
-        return angle::Result::Stop;
+        return false;
     }
 
     int angleSHVersion = stream.readInt<int>();
     if (angleSHVersion != angle::GetANGLESHVersion())
     {
         mState.mInfoLog << "cannot load program binaries across different angle sh version.";
-        return angle::Result::Stop;
+        return false;
     }
 
     std::string rendererString = stream.readString();
     if (rendererString != context->getRendererString())
     {
         mState.mInfoLog << "Cannot load program binary due to changed renderer string.";
-        return angle::Result::Stop;
+        return false;
     }
 
     int majorVersion = stream.readInt<int>();
@@ -2158,7 +2169,7 @@ angle::Result Program::deserialize(const Context *context, BinaryInputStream &st
         minorVersion != context->getClientMinorVersion())
     {
         mState.mInfoLog << "Cannot load program binaries across different ES context versions.";
-        return angle::Result::Stop;
+        return false;
     }
 
     mState.mSeparable                   = stream.readBool();
@@ -2183,7 +2194,7 @@ angle::Result Program::deserialize(const Context *context, BinaryInputStream &st
         context->getFrontendFeatures().disableProgramCachingForTransformFeedback.enabled)
     {
         mState.mInfoLog << "Current driver does not support transform feedback in binary programs.";
-        return angle::Result::Stop;
+        return false;
     }
 
     if (!mState.mAttachedShaders[ShaderType::Compute])
@@ -2209,7 +2220,7 @@ angle::Result Program::deserialize(const Context *context, BinaryInputStream &st
                                                                              std::move(sources));
     }
 
-    return angle::Result::Continue;
+    return true;
 }
 
 void Program::postResolveLink(const Context *context)

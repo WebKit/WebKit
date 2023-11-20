@@ -33,6 +33,7 @@
 #include "libANGLE/ProgramExecutable.h"
 #include "libANGLE/ProgramLinkedResources.h"
 #include "libANGLE/RefCountObject.h"
+#include "libANGLE/Shader.h"
 #include "libANGLE/Uniform.h"
 #include "libANGLE/angletypes.h"
 
@@ -53,7 +54,6 @@ class Context;
 struct Extensions;
 class Framebuffer;
 class ProgramExecutable;
-class Shader;
 class ShaderProgramManager;
 class State;
 struct UnusedUniform;
@@ -281,6 +281,7 @@ class ProgramState final : angle::NonCopyable
 
     std::string mLabel;
 
+    ShaderMap<SharedCompileJob> mShaderCompileJobs;
     ShaderMap<SharedCompiledShaderState> mAttachedShaders;
 
     std::vector<std::string> mTransformFeedbackVaryingNames;
@@ -362,7 +363,7 @@ class Program final : public LabeledObject, public angle::Subject
     // KHR_parallel_shader_compile
     // Try to link the program asynchronously. As a result, background threads may be launched to
     // execute the linking tasks concurrently.
-    angle::Result link(const Context *context);
+    angle::Result link(const Context *context, angle::JobResultExpectancy resultExpectancy);
 
     // Peek whether there is any running linking tasks.
     bool isLinking() const;
@@ -495,13 +496,12 @@ class Program final : public LabeledObject, public angle::Subject
     struct LinkingState;
     ~Program() override;
 
-    // Loads program state according to the specified binary blob.
-    angle::Result deserialize(const Context *context, BinaryInputStream &stream);
+    // Loads program state according to the specified binary blob.  Returns true on success.
+    bool deserialize(const Context *context, BinaryInputStream &stream);
 
     void unlink();
     void deleteSelf(const Context *context);
 
-    angle::Result linkImpl(const Context *context);
     angle::Result linkJobImpl(const Caps &caps,
                               const Limitations &limitations,
                               const Version &clientVersion,

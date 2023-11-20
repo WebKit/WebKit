@@ -188,7 +188,8 @@ void ProgramGL::destroy(const gl::Context *context)
 
 angle::Result ProgramGL::load(const gl::Context *context,
                               gl::BinaryInputStream *stream,
-                              std::shared_ptr<LinkTask> *loadTaskOut)
+                              std::shared_ptr<LinkTask> *loadTaskOut,
+                              bool *successOut)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "ProgramGL::load");
     ProgramExecutableGL *executableGL = getExecutable();
@@ -205,13 +206,14 @@ angle::Result ProgramGL::load(const gl::Context *context,
     // Verify that the program linked
     if (!checkLinkStatus())
     {
-        return angle::Result::Incomplete;
+        return angle::Result::Continue;
     }
 
     executableGL->postLink(mFunctions, mStateManager, mFeatures, mProgramID);
     reapplyUBOBindingsIfNeeded(context);
 
     *loadTaskOut = {};
+    *successOut  = true;
 
     return angle::Result::Continue;
 }

@@ -1,73 +1,3 @@
-diff --git a/commit-message.txt b/commit-message.txt
-new file mode 100644
-index 0000000000000000000000000000000000000000..c0ce3fc686ee07e5bd66a90ec2bb41db4ca9098f
---- /dev/null
-+++ b/commit-message.txt
-@@ -0,0 +1,64 @@
-+Update ANGLE to 2023-11-06 (0584ffd8fbdd1e58dffceecea77c32989751def8)
-+Need the bug URL (OOPS!).
-+Include a Radar link (OOPS!).
-+
-+Reviewed by NOBODY (OOPS!)
-+
-+Contains upstream commits:
-+git log --oneline 06819324b129363163068c8f7ae8396bf83b4ec5..0584ffd8fbdd1e58dffceecea77c32989751def8 --pretty=%h %s
-+0584ffd8fb Unsuppress VUID-VkGraphicsPipelineCreateInfo-pStages-00739
-+c114fc265b Reland: Verify shader link correctness after looking up in program cache
-+5a71be901c D3D: Make non-constant loop indexing limitation a feature flag
-+2a433353ef Skip unnecessary default blend equation validation
-+e7ce481fe5 Consolidate parallel compilation in front-end
-+32f209b83f Vulkan: Fix __samplerExternal2DY2YEXTtnd combined with swizzle
-+8b4901d044 Avoid GLenum conversion in BlendStateExt blend and equation
-+ad4617f5fe Metal: Fix cross-compile build
-+34e5620b33 Metal: Reuse UBO conversion buffer only if size matches
-+eebf069c1d Roll vulkan-deps from 8c0916849657 to c4f7658f287b (6 revisions)
-+0e42512eed Roll Chromium from ab9dfa25fd4d to a63a2e689083 (785 revisions)
-+ae3af8ee0c Manual roll VK-GL-CTS from 7d738783bf28 to b127977ddad4 (29 revisions)
-+146a01ea1d Vulkan: Do not pad pipelineCacheData with zeroes
-+f441e3ee4f Metal: Fix missing mix(float,float,bool) overload
-+bfc764c553 Metal: Optimize vertex conversion using compute shader.
-+0a8a7c2bc4 Vulkan: Remove rx::WaitableCompressEvent class
-+59f7467a30 Metal: Add missing ScalarMatrix ops
-+eaae3b4b01 Roll vulkan-deps from c604e04c8136 to 8c0916849657 (7 revisions)
-+a3095f0cd9 Roll Chromium from c02a3bfd314f to ab9dfa25fd4d (687 revisions)
-+9f9c35f347 Metal: Don't map index buffer in drawArraysProvokingVertexImpl
-+67222ef476 Reland "Vulkan: merge client buffer data."
-+221117abfb Tests: Add The Sims Mobile trace
-+4cc9e0afa0 Capture Tests: Fix unintentional gen-on-bind usage
-+6a879893fc Roll vulkan-deps from 54bfabb1adb0 to c604e04c8136 (9 revisions)
-+fbebf772ef Roll Chromium from c274ac05ad19 to c02a3bfd314f (535 revisions)
-+053aa9155a Vulkan: Disable VK_EXT_graphics_pipeline_library on RADV
-+918028a253 Update bot detection in capture_replay_tests
-+9a5d75de4b Vulkan: Fix incompatible redefinition of cube faces
-+3e54582615 Roll vulkan-deps from e55b4f78bcf3 to 54bfabb1adb0 (11 revisions)
-+f71a5bade9 Roll Chromium from 58d756134d9b to c274ac05ad19 (1331 revisions)
-+4681785688 Revert "Vulkan: merge client buffer data."
-+4066fddda8 Add flag to move ANGLE binaries to /system/${LIB}.
-+563569acfc Vulkan: merge client buffer data.
-+c0c2067375 Remove expections for some AHB tests which are now fixed
-+b660767216 Test sampling from a texture with renderable levels below base
-+36f4199756 D3D11: CopySubTexture: Handle sRGB source with D3D11
-+2ee06400a6 Vulkan: fix dynamic buffer alignment issue.
-+c6dc00d213 Manual roll vulkan-deps from 69081d0e32f7 to e55b4f78bcf3 (110 revisions)
-+118a9b142e Test sampling from a texture with extra renderable levels
-+907ccf8419 Vulkan: Stop compiling vulkan validation layers on Android
-+f4a472332c DEPS: update reclient
-+85549ffa89 Roll SwiftShader from d9ec9befba05 to 5c95af798ba4 (1 revision)
-+8e8b4dc940 Aosp builds -O2 instead of -Os
-+c0f94afb70 Vulkan: Limit ImageTestES3.RGBXAHBImportMultipleLayers to 1 layer
-+471b50407d Vulkan: Only enable DS dynamic state if there is DS attachment.
-+d67aafacd3 Keep default_optimization on Fuchsia
-+5fa65ec81e ImageTest: check support before test cubemap
-+e519da9a27 Tests: Add Streets of Rage 4 trace
-+b48d9daf00 Capture/Replay: Gen gen-on-bind resources on replay
-+bcd331f15f ImageTest: Allow writeAHBData to fail
-+53c5b14506 Capture/Replay: Restore texture bindings on reset
-+acb0ae0931 Vulkan: Swizzle YUV output from GL component order to vulkan
-+3b555e8da6 GL: Add emulateClipOrigin workaround
-+b56a72045a Roll Chromium from 63a05c417b61 to 58d756134d9b (825 revisions)
-+95fe7e4704 [Android] Update NDK version check for hardware buffer.
-+a7882c416c Skip InstancingTestES3.LargeDivisor on Linux ASAN
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
 index 34826b47554d0d89e8b9619d46828177b2c1b873..2e03a110de26a7cb888d8e9a5997deaf3745c12c 100644
 --- a/src/common/utilities.cpp
@@ -99,10 +29,10 @@ index a7607c9e529ce7a57bdc6c3c82134b144eb67130..c9ec1adec020589bd4fcfe226721042a
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/compiler/translator/Compiler.cpp b/src/compiler/translator/Compiler.cpp
-index 10c1250219792691ab458b71bd45f53ea3f9a3a4..16669fcd71563dd72f09f7e10b6734dc0de57b28 100644
+index 1a25aa2ed9c57c8c7b9f3a8613361755356b899a..c0824c284b6f55795a2a5f64f3e3b82448293827 100644
 --- a/src/compiler/translator/Compiler.cpp
 +++ b/src/compiler/translator/Compiler.cpp
-@@ -1223,7 +1223,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
+@@ -1224,7 +1224,7 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
  
  bool TCompiler::resizeClipAndCullDistanceBuiltins(TIntermBlock *root)
  {
@@ -138,7 +68,7 @@ index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b391270790498186
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 359e677502efe92ef9fbd52a86599afd6cd0c772..53ecd38240cb84c57891a980fe83f82ba4efe42a 100644
+index 0ae7f46d2c75b0d6363a63ffb124b4f53ee455a1..92a7db6bc90d16e52e8c27cf2333a7f5f50a24e5 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -307,10 +237,10 @@ index d7e21ea1aa8fc2c29c854e2ece0e6caeee4f36cd..c6fbfb2dd449b52a1918d0b0f0b828cd
          id<MTLFunction> vertexShader = nil;
          ANGLE_TRY(
 diff --git a/src/libANGLE/renderer/metal/VertexArrayMtl.mm b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-index afb9b76afdf7f31eccf55ebcea1ae577e8762298..be8a4266828e5f28f6acdedb66b38cda63fffd0a 100644
+index 03ac18a2525b489a458effd79f9ab1f3e3b1a8d9..9289b2b4203af7d46189245c549984a606e7acf8 100644
 --- a/src/libANGLE/renderer/metal/VertexArrayMtl.mm
 +++ b/src/libANGLE/renderer/metal/VertexArrayMtl.mm
-@@ -1101,16 +1101,23 @@ angle::Result VertexArrayMtl::convertVertexBufferGPU(const gl::Context *glContex
+@@ -1098,16 +1098,23 @@ angle::Result VertexArrayMtl::convertVertexBufferGPU(const gl::Context *glContex
      ANGLE_TRY(conversion->data.allocate(contextMtl, numVertices * targetStride, nullptr, &newBuffer,
                                          &newBufferOffset));
  
@@ -422,10 +352,10 @@ index 145400aec715ddfadcf33dc941201e1064d33ca0..106cdcbb6fcc2ec5fd24e86026a419cb
      {
          // Record this command buffer's elapsed time.
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-index 1bcef1db4c33718300336394590064503519b2a9..f9b73ab8f9d97e8a1143d38a1012e61c95fd5bec 100644
+index e3f4da4f69bfd3060355d697354979db06505f62..5a2a9f4ec3bdd4b54ea6916ff1af73939899a236 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-@@ -603,7 +603,8 @@ void DispatchCompute(ContextMtl *contextMtl,
+@@ -601,7 +601,8 @@ void DispatchCompute(ContextMtl *contextMtl,
                       id<MTLComputePipelineState> pipelineState,
                       size_t numThreads)
  {

@@ -282,20 +282,16 @@ uint8_t *TraceLibrary::LoadBinaryData(const char *fileName)
 
         if (!UncompressData(compressedData, &mBinaryData))
         {
-            // Temporary tests for https://anglebug.com/8307
+            // Workaround for sporadic failures https://issuetracker.google.com/296921272
             std::vector<uint8_t> uncompressedData;
             bool secondResult = UncompressData(compressedData, &uncompressedData);
-            std::cerr << "Retry: " << secondResult << " usize=" << uncompressedData.size() << "\n";
-
-            // Data from `echo test | gzip`
-            std::vector<uint8_t> gzTest{0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-                                        0x03, 0x2b, 0x49, 0x2d, 0x2e, 0xe1, 0x02, 0x00, 0xc6,
-                                        0x35, 0xb9, 0x3b, 0x05, 0x00, 0x00, 0x00};
-            bool testResult = UncompressData(gzTest, &uncompressedData);
-            std::cerr << "Test attempt: " << testResult << " usize=" << uncompressedData.size()
-                      << " data[0]=" << uncompressedData[0] << "\n";
-
-            exit(1);
+            if (!secondResult)
+            {
+                std::cerr << "Uncompress retry failed\n";
+                exit(1);
+            }
+            std::cerr << "Uncompress retry succeeded, moving to mBinaryData\n";
+            mBinaryData = std::move(uncompressedData);
         }
     }
     else

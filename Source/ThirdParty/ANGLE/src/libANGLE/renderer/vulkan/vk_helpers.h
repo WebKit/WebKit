@@ -1775,6 +1775,7 @@ enum class ImageLayout
     ExternalShadersWrite,
     TransferSrc,
     TransferDst,
+    TransferSrcDst,
     // Used when the image is transitioned on the host for use by host image copy
     HostCopy,
     VertexShaderReadOnly,
@@ -3402,6 +3403,16 @@ class CommandBufferAccess : angle::NonCopyable
     {
         onImageWrite(levelStart, levelCount, layerStart, layerCount, aspectFlags,
                      ImageLayout::TransferDst, image);
+    }
+    void onImageSelfCopy(gl::LevelIndex writeLevelStart,
+                         uint32_t writeLevelCount,
+                         uint32_t writeLayerStart,
+                         uint32_t writeLayerCount,
+                         VkImageAspectFlags aspectFlags,
+                         ImageHelper *image)
+    {
+        onImageWrite(writeLevelStart, writeLevelCount, writeLayerStart, writeLayerCount,
+                     aspectFlags, ImageLayout::TransferSrcDst, image);
     }
     void onImageComputeShaderRead(VkImageAspectFlags aspectFlags, ImageHelper *image)
     {

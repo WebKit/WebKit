@@ -565,7 +565,8 @@ angle::Result ProgramExecutableVk::ensurePipelineCacheInitialized(vk::Context *c
 
 angle::Result ProgramExecutableVk::load(ContextVk *contextVk,
                                         bool isSeparable,
-                                        gl::BinaryInputStream *stream)
+                                        gl::BinaryInputStream *stream,
+                                        bool *successOut)
 {
     mVariableInfoMap.load(stream);
     mOriginalShaderInfo.load(stream);
@@ -603,8 +604,11 @@ angle::Result ProgramExecutableVk::load(ContextVk *contextVk,
     ANGLE_TRY(createPipelineLayout(contextVk, &contextVk->getPipelineLayoutCache(),
                                    &contextVk->getDescriptorSetLayoutCache(), nullptr));
 
-    return initializeDescriptorPools(contextVk, &contextVk->getDescriptorSetLayoutCache(),
-                                     &contextVk->getMetaDescriptorPools());
+    ANGLE_TRY(initializeDescriptorPools(contextVk, &contextVk->getDescriptorSetLayoutCache(),
+                                        &contextVk->getMetaDescriptorPools()));
+
+    *successOut = true;
+    return angle::Result::Continue;
 }
 
 void ProgramExecutableVk::save(ContextVk *contextVk,

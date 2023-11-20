@@ -9055,6 +9055,45 @@ void main() {
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Test a fuzzer-discovered bug with the VectorizeVectorScalarArithmetic transformation.
+TEST_P(GLSLTest, VectorScalarArithmeticWithSideEffectInLoop)
+{
+    // The VectorizeVectorScalarArithmetic transformation was generating invalid code in the past
+    // (notice how sbcd references i outside the for loop.  The loop condition doesn't look right
+    // either):
+    //
+    //     #version 450
+    //     void main(){
+    //     (gl_Position = vec4(0.0, 0.0, 0.0, 0.0));
+    //     mat3 _utmp = mat3(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    //     vec3 _ures = vec3(0.0, 0.0, 0.0);
+    //     vec3 sbcd = vec3(_ures[_ui]);
+    //     for (int _ui = 0; (_ures[((_utmp[_ui] += (((sbcd *= _ures[_ui]), (_ures[_ui] = sbcd.x)),
+    //     sbcd)), _ui)], (_ui < 7)); )
+    //     {
+    //     }
+    //     }
+
+    constexpr char kVS[] = R"(
+void main()
+{
+    mat3 tmp;
+    vec3 res;
+    for(int i; res[tmp[i]+=res[i]*=res[i],i],i<7;);
+})";
+
+    GLuint shader = glCreateShader(GL_VERTEX_SHADER);
+
+    const char *sourceArray[1] = {kVS};
+    GLint lengths[1]           = {static_cast<GLint>(sizeof(kVS) - 1)};
+    glShaderSource(shader, 1, sourceArray, lengths);
+    glCompileShader(shader);
+
+    GLint compileResult;
+    glGetShaderiv(shader, GL_COMPILE_STATUS, &compileResult);
+    EXPECT_NE(compileResult, 0);
+}
+
 // Test that a varying with a flat qualifier that is used as an operand of a folded ternary operator
 // is handled correctly.
 TEST_P(GLSLTest_ES3, FlatVaryingUsedInFoldedTernary)
@@ -9611,8 +9650,7 @@ TEST_P(GLSLTest_ES31, ExceedCombinedShaderOutputResourcesInVSAndFS)
                     "}\n";
 
     std::ostringstream fragmentStream;
-    fragmentStream << "#version 310 es\n"
-                   << "precision highp float;\n";
+    fragmentStream << "#version 310 es\n" << "precision highp float;\n";
     for (int i = 0; i < fragmentSSBOs; ++i)
     {
         fragmentStream << "layout(shared, binding = " << i << ") buffer blockName" << i
