@@ -29,11 +29,12 @@
 #if PLATFORM(COCOA)
 
 #import "ArgumentCodersCocoa.h"
+#import "CoreIPCTypes.h"
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
 
-static CoreIPCNSCFObject::ObjectValue valueFromID(id object)
+static ObjectValue valueFromID(id object)
 {
     if (!object)
         return nullptr;
@@ -75,7 +76,12 @@ static CoreIPCNSCFObject::ObjectValue valueFromID(id object)
 }
 
 CoreIPCNSCFObject::CoreIPCNSCFObject(id object)
-    : m_value(valueFromID(object))
+    : m_value(makeUniqueRefWithoutFastMallocCheck<ObjectValue>(valueFromID(object)))
+{
+}
+
+CoreIPCNSCFObject::CoreIPCNSCFObject(UniqueRef<ObjectValue>&& value)
+    : m_value(WTFMove(value))
 {
 }
 
@@ -83,7 +89,7 @@ RetainPtr<id> CoreIPCNSCFObject::toID() const
 {
     RetainPtr<id> result;
 
-    WTF::switchOn(m_value, [&](auto& object) {
+    WTF::switchOn(*m_value, [&](auto& object) {
         result = object.toID();
     }, [](std::nullptr_t) {
         // result should be nil, which is the default value initialized above.
@@ -107,5 +113,22 @@ bool CoreIPCNSCFObject::valueIsAllowed(IPC::Decoder& decoder, ObjectValue& value
 }
 
 } // namespace WebKit
+
+namespace IPC {
+
+void ArgumentCoder<UniqueRef<WebKit::ObjectValue>>::encode(Encoder& encoder, const UniqueRef<WebKit::ObjectValue>& object)
+{
+    encoder << *object;
+}
+
+std::optional<UniqueRef<WebKit::ObjectValue>> ArgumentCoder<UniqueRef<WebKit::ObjectValue>>::decode(Decoder& decoder)
+{
+    auto object = decoder.decode<WebKit::ObjectValue>();
+    if (!object)
+        return std::nullopt;
+    return makeUniqueRefWithoutFastMallocCheck<WebKit::ObjectValue>(WTFMove(*object));
+}
+
+} // namespace IPC
 
 #endif // PLATFORM(COCOA)

@@ -23,12 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CoreIPCDictionary.h"
+#import "config.h"
+#import "CoreIPCDictionary.h"
 
 #if PLATFORM(COCOA)
 
-#include "CoreIPCNSCFObject.h"
+#import "CoreIPCTypes.h"
 
 namespace WebKit {
 

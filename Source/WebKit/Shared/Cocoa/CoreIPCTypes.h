@@ -25,42 +25,17 @@
 
 #pragma once
 
-#if ENABLE(DATA_DETECTION)
-
-#include "ArgumentCodersCocoa.h"
-#include "CoreIPCDictionary.h"
-#include "CoreIPCSecureCoding.h"
-#include <wtf/RetainPtr.h>
-
-OBJC_CLASS DDScannerResult;
-
-namespace WebKit {
-
-class CoreIPCDDScannerResult {
-public:
-    CoreIPCDDScannerResult(DDScannerResult *);
-    CoreIPCDDScannerResult(const RetainPtr<DDScannerResult>& result)
-        : CoreIPCDDScannerResult(result.get())
-    {
-    }
-
-    RetainPtr<id> toID() const;
-
-private:
-    friend struct IPC::ArgumentCoder<CoreIPCDDScannerResult, void>;
-
-    using Value = std::variant<CoreIPCDictionary, CoreIPCSecureCoding>;
-
-    static Value valueFromDDScannerResult(DDScannerResult *);
-
-    CoreIPCDDScannerResult(Value&& value)
-        : m_value(WTFMove(value))
-    {
-    }
-
-    Value m_value;
-};
-
-} // namespace WebKit
-
-#endif // ENABLE(DATA_DETECTION)
+#import "CoreIPCArray.h"
+#import "CoreIPCCFType.h"
+#import "CoreIPCColor.h"
+#import "CoreIPCDDScannerResult.h"
+#import "CoreIPCData.h"
+#import "CoreIPCDate.h"
+#import "CoreIPCDictionary.h"
+#import "CoreIPCError.h"
+#import "CoreIPCFont.h"
+#import "CoreIPCNSValue.h"
+#import "CoreIPCNumber.h"
+#import "CoreIPCSecureCoding.h"
+#import "CoreIPCString.h"
+#import "CoreIPCURL.h"

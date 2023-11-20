@@ -29,10 +29,8 @@
 #if PLATFORM(COCOA)
 
 #import "ArgumentCodersCF.h"
-#import "CoreIPCData.h"
-#import "CoreIPCDate.h"
 #import "CoreIPCNSCFObject.h"
-#import "CoreIPCNumber.h"
+#import "CoreIPCTypes.h"
 #import "CoreTextHelpers.h"
 #import "DataReference.h"
 #import "LegacyGlobalSettings.h"
