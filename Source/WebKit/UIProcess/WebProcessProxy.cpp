@@ -1292,8 +1292,11 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     m_throttler.setShouldTakeNearSuspendedAssertion(shouldTakeNearSuspendedAssertion());
     m_throttler.setShouldDropNearSuspendedAssertionAfterDelay(shouldDropNearSuspendedAssertionAfterDelay());
 
-#if PLATFORM(COCOA) && ENABLE(REMOTE_INSPECTOR)
+#if PLATFORM(COCOA)
+    unblockAccessibilityServerIfNeeded();
+#if ENABLE(REMOTE_INSPECTOR)
     enableRemoteInspectorIfNeeded();
+#endif
 #endif
 
     beginResponsivenessChecks();

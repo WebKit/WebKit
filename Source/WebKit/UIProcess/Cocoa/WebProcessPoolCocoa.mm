@@ -795,6 +795,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif // !PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(IOS_FAMILY)
+    m_accessibilityEnabledObserver = [[NSNotificationCenter defaultCenter] addObserverForName:(__bridge id)kAXSApplicationAccessibilityEnabledNotification object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *) {
+        if (!_AXSApplicationAccessibilityEnabled())
+            return;
+        for (auto& process : m_processes)
+            process->unblockAccessibilityServerIfNeeded();
+    }];
 #if ENABLE(CFPREFS_DIRECT_MODE)
     m_activationObserver = [[NSNotificationCenter defaultCenter] addObserverForName:@"UIApplicationDidBecomeActiveNotification" object:nil queue:[NSOperationQueue currentQueue] usingBlock:^(NSNotification *notification) {
         startObservingPreferenceChanges();
@@ -870,6 +876,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif // !PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(IOS_FAMILY)
+    [[NSNotificationCenter defaultCenter] removeObserver:m_accessibilityEnabledObserver.get()];
     [[NSNotificationCenter defaultCenter] removeObserver:m_applicationLaunchObserver.get()];
 #endif
 

@@ -5427,7 +5427,7 @@ void WebPage::changeSelectedIndex(int32_t index)
 }
 
 #if PLATFORM(IOS_FAMILY)
-void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>& files, const String& displayString, const IPC::DataReference& iconData, WebKit::SandboxExtension::Handle&& machBootstrapHandle, SandboxExtension::Handle&& iconServicesSandboxExtensionHandle)
+void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<String>& files, const String& displayString, const IPC::DataReference& iconData, WebKit::SandboxExtension::Handle&& machBootstrapHandle, SandboxExtension::Handle&& frontboardServicesSandboxExtensionHandle, SandboxExtension::Handle&& iconServicesSandboxExtensionHandle)
 {
     if (!m_activeOpenPanelResultListener)
         return;
@@ -5437,6 +5437,15 @@ void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<St
         bool consumed = machBootstrapSandboxExtension->consume();
         ASSERT_UNUSED(consumed, consumed);
     }
+
+#if HAVE(FRONTBOARD_SYSTEM_APP_SERVICES)
+    auto frontboardServicesSandboxExtension = SandboxExtension::create(WTFMove(frontboardServicesSandboxExtensionHandle));
+    if (frontboardServicesSandboxExtension) {
+        bool consumed = frontboardServicesSandboxExtension->consume();
+        ASSERT_UNUSED(consumed, consumed);
+    }
+    RELEASE_ASSERT(!sandbox_check(getpid(), "mach-lookup", static_cast<enum sandbox_filter_type>(SANDBOX_FILTER_GLOBAL_NAME | SANDBOX_CHECK_NO_REPORT), "com.apple.frontboard.systemappservices"));
+#endif
 
     auto iconServicesSandboxExtension = SandboxExtension::create(WTFMove(iconServicesSandboxExtensionHandle));
     if (iconServicesSandboxExtension) {
@@ -5456,6 +5465,13 @@ void WebPage::didChooseFilesForOpenPanelWithDisplayStringAndIcon(const Vector<St
 
     m_activeOpenPanelResultListener->didChooseFilesWithDisplayStringAndIcon(files, displayString, icon.get());
     m_activeOpenPanelResultListener = nullptr;
+
+#if HAVE(FRONTBOARD_SYSTEM_APP_SERVICES)
+    if (frontboardServicesSandboxExtension) {
+        bool revoked = frontboardServicesSandboxExtension->revoke();
+        ASSERT_UNUSED(revoked, revoked);
+    }
+#endif
 
     if (iconServicesSandboxExtension) {
         bool revoked = iconServicesSandboxExtension->revoke();

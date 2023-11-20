@@ -303,7 +303,8 @@
         "com.apple.preferences.sounds")
 
     (deny mach-lookup
-        (global-name "com.apple.frontboard.systemappservices"))                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
+        (global-name "com.apple.frontboard.systemappservices")                 ; -[UIViewServiceInterface _createProcessAssertion] -> SBSProcessIDForDisplayIdentifier()
+    )
 
 #if !ENABLE(CARENDERSERVER_BLOCKING_IN_WEBCONTENT)
     (with-filter (require-not (state-flag "EnableExperimentalSandbox"))
@@ -931,6 +932,7 @@
 
 (define (mach-extension-list)
     (global-name
+        "com.apple.frontboard.systemappservices"
         "com.apple.iconservices"
         "com.apple.mobileassetd.v2"
         "com.apple.mobilegestalt.xpc"))

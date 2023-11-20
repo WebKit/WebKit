@@ -238,6 +238,28 @@ void WebProcessProxy::setCaptionLanguage(const String& language)
 }
 #endif
 
+void WebProcessProxy::unblockAccessibilityServerIfNeeded()
+{
+    if (m_hasSentMessageToUnblockAccessibilityServer)
+        return;
+#if PLATFORM(IOS_FAMILY)
+    if (!_AXSApplicationAccessibilityEnabled())
+        return;
+#endif
+    if (!processID())
+        return;
+    if (!canSendMessage())
+        return;
+
+    Vector<SandboxExtension::Handle> handleArray;
+#if PLATFORM(IOS_FAMILY)
+    handleArray = SandboxExtension::createHandlesForMachLookup({ "com.apple.frontboard.systemappservices"_s }, auditToken(), SandboxExtension::MachBootstrapOptions::EnableMachBootstrap);
+#endif
+
+    send(Messages::WebProcess::UnblockServicesRequiredByAccessibility(WTFMove(handleArray)), 0);
+    m_hasSentMessageToUnblockAccessibilityServer = true;
+}
+
 #if PLATFORM(MAC)
 void WebProcessProxy::isAXAuthenticated(audit_token_t auditToken, CompletionHandler<void(bool)>&& completionHandler)
 {
