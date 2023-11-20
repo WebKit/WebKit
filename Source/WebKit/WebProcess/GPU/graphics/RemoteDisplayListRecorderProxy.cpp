@@ -28,6 +28,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include "Logging.h"
 #include "RemoteDisplayListRecorderMessages.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteRenderingBackendProxy.h"
