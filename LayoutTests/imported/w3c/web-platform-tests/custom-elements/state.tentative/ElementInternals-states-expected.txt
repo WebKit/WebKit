@@ -1,5 +1,0 @@
-
-FAIL DOMTokenList behavior of ElementInternals.states: Initial state assert_true: expected true got false
-FAIL DOMTokenList behavior of ElementInternals.states: Exceptions assert_throws_dom: function "() => { i.states.add(''); }" threw object "TypeError: undefined is not an object (evaluating 'i.states.add')" that is not a DOMException SyntaxError: property "code" is equal to undefined, expected 12
-FAIL DOMTokenList behavior of ElementInternals.states: Modifications undefined is not an object (evaluating 'i.states.add')
-

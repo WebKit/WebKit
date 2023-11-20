@@ -2261,6 +2261,12 @@
     "imported/w3c/web-platform-tests/css/selectors/media/media-loading-state.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/custom-state-pseudo-class/custom-state-set-strong-ref.tentative.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/custom-state-pseudo-class/state-css-selector.tentative.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/dom/events/Event-dispatch-on-disabled-elements.html": [
         "slow"
     ],

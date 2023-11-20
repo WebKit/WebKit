@@ -87,6 +87,7 @@
     "web-platform-tests/css/selectors": "import",
     "web-platform-tests/css/support": "import",
     "web-platform-tests/custom-elements": "import",
+    "web-platform-tests/custom-state-pseudo-class": "import",
     "web-platform-tests/deprecation-reporting": "import",
     "web-platform-tests/docs": "import",
     "web-platform-tests/dom": "import",
