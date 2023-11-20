@@ -934,7 +934,7 @@ bool Quirks::shouldBypassAsyncScriptDeferring() const
 }
 
 // smoothscroll JS library rdar://52712513
-bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, const AtomString& eventType, const EventListener& eventListener)
+bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, const AtomString& eventType)
 {
     auto eventTargetIsRoot = [](const EventTarget& eventTarget) {
         if (is<LocalDOMWindow>(eventTarget))
@@ -964,25 +964,6 @@ bool Quirks::shouldMakeEventListenerPassive(const EventTarget& eventTarget, cons
             if (auto* document = documentFromEventTarget(eventTarget))
                 return document->settings().passiveWheelListenersAsDefaultOnDocument();
         }
-        return false;
-    }
-
-    if (eventType == eventNames().mousewheelEvent) {
-        if (!is<JSEventListener>(eventListener))
-            return false;
-
-        // For SmoothScroll.js
-        // Matches Blink intervention in https://chromium.googlesource.com/chromium/src/+/b6b13c9cfe64d52a4168d9d8d1ad9bb8f0b46a2a%5E%21/
-        if (is<LocalDOMWindow>(eventTarget)) {
-            auto* document = downcast<LocalDOMWindow>(eventTarget).document();
-            if (!document || !document->quirks().needsQuirks())
-                return false;
-
-            auto& jsEventListener = downcast<JSEventListener>(eventListener);
-            if (jsEventListener.functionName() == "ssc_wheel"_s)
-                return true;
-        }
-
         return false;
     }
 

@@ -92,7 +92,7 @@ bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListene
 
     auto passive = options.passive;
 
-    if (!passive.has_value() && Quirks::shouldMakeEventListenerPassive(*this, eventType, listener.get()))
+    if (!passive.has_value() && Quirks::shouldMakeEventListenerPassive(*this, eventType))
         passive = true;
 
     bool listenerCreatedFromScript = [&] {

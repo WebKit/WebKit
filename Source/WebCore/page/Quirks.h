@@ -113,7 +113,7 @@ public:
     bool shouldBypassBackForwardCache() const;
     bool shouldBypassAsyncScriptDeferring() const;
 
-    static bool shouldMakeEventListenerPassive(const EventTarget&, const AtomString& eventType, const EventListener&);
+    static bool shouldMakeEventListenerPassive(const EventTarget&, const AtomString& eventType);
 
 #if ENABLE(MEDIA_STREAM)
     bool shouldEnableLegacyGetUserMediaQuirk() const;
