@@ -62,6 +62,7 @@
 #include "TextTransform.h"
 #include "VisiblePosition.h"
 #include "WidthIterator.h"
+#include <bitset>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SortedArrayMap.h>
@@ -305,8 +306,16 @@ static void initiateFontLoadingByAccessingGlyphDataIfApplicable(const String& te
         fontVariant = NormalVariant;
     }
 #endif
-    for (UChar32 character : StringView(textContent).codePoints())
+    // FIXME: Pre-warm glyph loading in FontCascade with the most common range.
+    std::bitset<256> hasSeen;
+    for (UChar32 character : StringView(textContent).codePoints()) {
+        if (character < 256) {
+            if (hasSeen[character])
+                continue;
+            hasSeen.set(character);
+        }
         fontCascade.glyphDataForCharacter(character, false, fontVariant);
+    }
 }
 
 void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
