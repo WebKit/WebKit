@@ -3004,8 +3004,7 @@ ShadowRoot& Element::createUserAgentShadowRoot()
 
 inline void Node::setCustomElementState(CustomElementState state)
 {
-    RELEASE_ASSERT(is<Element>(this));
-    Style::PseudoClassChangeInvalidation styleInvalidation(downcast<Element>(*this),
+    Style::PseudoClassChangeInvalidation styleInvalidation(checkedDowncast<Element>(*this),
         CSSSelector::PseudoClassType::Defined,
         state == CustomElementState::Custom || state == CustomElementState::Uncustomized
     );
@@ -5421,10 +5420,10 @@ void Element::setAttributeStyleMap(Ref<StylePropertyMap>&& map)
 
 void Element::ensureFormAssociatedCustomElement()
 {
-    RELEASE_ASSERT(is<HTMLMaybeFormAssociatedCustomElement>(*this));
+    auto& customElement = checkedDowncast<HTMLMaybeFormAssociatedCustomElement>(*this);
     auto& data = ensureElementRareData();
     if (!data.formAssociatedCustomElement())
-        data.setFormAssociatedCustomElement(makeUniqueWithoutRefCountedCheck<FormAssociatedCustomElement>(downcast<HTMLMaybeFormAssociatedCustomElement>(*this)));
+        data.setFormAssociatedCustomElement(makeUniqueWithoutRefCountedCheck<FormAssociatedCustomElement>(customElement));
 }
 
 FormAssociatedCustomElement& Element::formAssociatedCustomElementUnsafe() const

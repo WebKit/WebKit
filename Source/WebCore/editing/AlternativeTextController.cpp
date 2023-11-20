@@ -371,7 +371,7 @@ bool AlternativeTextController::canEnableAutomaticSpellingCorrection() const
     if (RefPtr control = enclosingTextFormControl(position)) {
         if (!control->shouldAutocorrect())
             return false;
-    } else if (RefPtr editableRoot = position.rootEditableElement(); is<HTMLElement>(editableRoot) && !downcast<HTMLElement>(*editableRoot).shouldAutocorrect())
+    } else if (RefPtr editableRoot = dynamicDowncast<HTMLElement>(position.rootEditableElement()); editableRoot && !editableRoot->shouldAutocorrect())
         return false;
 #endif
 

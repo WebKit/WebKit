@@ -243,29 +243,29 @@ inline void ElementData::deref()
 
 inline unsigned ElementData::length() const
 {
-    if (is<UniqueElementData>(*this))
-        return downcast<UniqueElementData>(*this).m_attributeVector.size();
+    if (auto* uniqueData = dynamicDowncast<UniqueElementData>(*this))
+        return uniqueData->m_attributeVector.size();
     return arraySize();
 }
 
 inline const Attribute* ElementData::attributeBase() const
 {
-    if (is<UniqueElementData>(*this))
-        return downcast<UniqueElementData>(*this).m_attributeVector.data();
+    if (auto* uniqueData = dynamicDowncast<UniqueElementData>(*this))
+        return uniqueData->m_attributeVector.data();
     return downcast<ShareableElementData>(*this).m_attributeArray;
 }
 
 inline const ImmutableStyleProperties* ElementData::presentationalHintStyle() const
 {
-    if (!is<UniqueElementData>(*this))
-        return nullptr;
-    return downcast<UniqueElementData>(*this).m_presentationalHintStyle.get();
+    if (auto* uniqueData = dynamicDowncast<UniqueElementData>(*this))
+        return uniqueData->m_presentationalHintStyle.get();
+    return nullptr;
 }
 
 inline AttributeIteratorAccessor ElementData::attributesIterator() const
 {
-    if (is<UniqueElementData>(*this)) {
-        const Vector<Attribute, 4>& attributeVector = downcast<UniqueElementData>(*this).m_attributeVector;
+    if (auto* uniqueData = dynamicDowncast<UniqueElementData>(*this)) {
+        auto& attributeVector = uniqueData->m_attributeVector;
         return AttributeIteratorAccessor(attributeVector.data(), attributeVector.size());
     }
     return AttributeIteratorAccessor(downcast<ShareableElementData>(*this).m_attributeArray, arraySize());

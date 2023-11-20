@@ -315,9 +315,9 @@ inline ElementRareData* Element::elementRareData() const
 
 inline ShadowRoot* Node::shadowRoot() const
 {
-    if (!is<Element>(*this))
-        return nullptr;
-    return downcast<Element>(*this).shadowRoot();
+    if (auto* element = dynamicDowncast<Element>(*this))
+        return element->shadowRoot();
+    return nullptr;
 }
 
 inline ShadowRoot* Element::shadowRoot() const

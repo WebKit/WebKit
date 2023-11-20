@@ -950,5 +950,9 @@ inline bool isInTopLayerOrBackdrop(const RenderStyle&, const Element*);
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Element)
     static bool isType(const WebCore::Node& node) { return node.isElementNode(); }
-    static bool isType(const WebCore::EventTarget& target) { return is<WebCore::Node>(target) && isType(downcast<WebCore::Node>(target)); }
+    static bool isType(const WebCore::EventTarget& target)
+    {
+        auto* node = dynamicDowncast<WebCore::Node>(target);
+        return node && isType(*node);
+    }
 SPECIALIZE_TYPE_TRAITS_END()
