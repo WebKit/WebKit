@@ -3518,7 +3518,7 @@ imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-coni
 webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]
 
 # This is fallout from turning Web Animations on.
-webkit.org/b/190032 animations/animation-playstate-paused-style-resolution.html [ Failure ]
+webkit.org/b/265157 animations/animation-playstate-paused-style-resolution.html [ Pass Failure ]
 webkit.org/b/190032 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Failure ]
 webkit.org/b/190032 compositing/layer-creation/mismatched-rotated-transform-transition-overlap.html [ Failure ]
 webkit.org/b/190032 compositing/layer-creation/mismatched-transform-transition-overlap.html [ Failure ]
