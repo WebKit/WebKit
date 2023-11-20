@@ -58,24 +58,6 @@ TouchEvent::TouchEvent(const AtomString& type, const Init& initializer, IsTruste
 
 TouchEvent::~TouchEvent() = default;
 
-void TouchEvent::initTouchEvent(TouchList* touches, TouchList* targetTouches,
-        TouchList* changedTouches, const AtomString& type, 
-        RefPtr<WindowProxy>&& view, int screenX, int screenY, int clientX, int clientY,
-        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
-{
-    if (isBeingDispatched())
-        return;
-
-    initUIEvent(type, true, true, WTFMove(view), 0);
-
-    m_touches = touches;
-    m_targetTouches = targetTouches;
-    m_changedTouches = changedTouches;
-    m_screenLocation = IntPoint(screenX, screenY);
-    setModifierKeys(ctrlKey, altKey, shiftKey, metaKey);
-    initCoordinates(IntPoint(clientX, clientY));
-}
-
 EventInterface TouchEvent::eventInterface() const
 {
     return TouchEventInterfaceType;
