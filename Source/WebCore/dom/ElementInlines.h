@@ -51,12 +51,15 @@ inline unsigned Element::findAttributeIndexByName(const AtomString& name, bool s
 
 inline bool Node::hasAttributes() const
 {
-    return is<Element>(*this) && downcast<Element>(*this).hasAttributes();
+    auto* element = dynamicDowncast<Element>(*this);
+    return element && element->hasAttributes();
 }
 
 inline NamedNodeMap* Node::attributes() const
 {
-    return is<Element>(*this) ? &downcast<Element>(*this).attributes() : nullptr;
+    if (auto* element = dynamicDowncast<Element>(*this))
+        return &element->attributes();
+    return nullptr;
 }
 
 inline Element* Node::parentElement() const

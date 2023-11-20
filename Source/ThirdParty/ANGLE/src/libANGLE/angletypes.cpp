@@ -613,17 +613,12 @@ void BlendStateExt::setFactors(const GLenum srcColor,
 }
 
 void BlendStateExt::setFactorsIndexed(const size_t index,
-                                      const GLenum srcColor,
-                                      const GLenum dstColor,
-                                      const GLenum srcAlpha,
-                                      const GLenum dstAlpha)
+                                      const gl::BlendFactorType srcColorFactor,
+                                      const gl::BlendFactorType dstColorFactor,
+                                      const gl::BlendFactorType srcAlphaFactor,
+                                      const gl::BlendFactorType dstAlphaFactor)
 {
     ASSERT(index < mDrawBufferCount);
-
-    const gl::BlendFactorType srcColorFactor = FromGLenum<BlendFactorType>(srcColor);
-    const gl::BlendFactorType dstColorFactor = FromGLenum<BlendFactorType>(dstColor);
-    const gl::BlendFactorType srcAlphaFactor = FromGLenum<BlendFactorType>(srcAlpha);
-    const gl::BlendFactorType dstAlphaFactor = FromGLenum<BlendFactorType>(dstAlpha);
 
     FactorStorage::SetValueIndexed(index, srcColorFactor, &mSrcColor);
     FactorStorage::SetValueIndexed(index, dstColorFactor, &mDstColor);
@@ -634,6 +629,20 @@ void BlendStateExt::setFactorsIndexed(const size_t index,
         IsExtendedBlendFactor(srcColorFactor) || IsExtendedBlendFactor(dstColorFactor) ||
         IsExtendedBlendFactor(srcAlphaFactor) || IsExtendedBlendFactor(dstAlphaFactor);
     mUsesExtendedBlendFactorMask.set(index, isExtended);
+}
+
+void BlendStateExt::setFactorsIndexed(const size_t index,
+                                      const GLenum srcColor,
+                                      const GLenum dstColor,
+                                      const GLenum srcAlpha,
+                                      const GLenum dstAlpha)
+{
+    const gl::BlendFactorType srcColorFactor = FromGLenum<BlendFactorType>(srcColor);
+    const gl::BlendFactorType dstColorFactor = FromGLenum<BlendFactorType>(dstColor);
+    const gl::BlendFactorType srcAlphaFactor = FromGLenum<BlendFactorType>(srcAlpha);
+    const gl::BlendFactorType dstAlphaFactor = FromGLenum<BlendFactorType>(dstAlpha);
+
+    setFactorsIndexed(index, srcColorFactor, dstColorFactor, srcAlphaFactor, dstAlphaFactor);
 }
 
 void BlendStateExt::setFactorsIndexed(const size_t index,

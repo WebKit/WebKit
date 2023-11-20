@@ -1394,6 +1394,111 @@ TEST_P(VertexAttributeTest, DrawArraysWithUnalignedShortBufferOffset)
     EXPECT_GL_NO_ERROR();
 }
 
+// Verify that using a GL_FLOATx2 attribute with offset not divisible by 8 works.
+TEST_P(VertexAttributeTest, DrawArraysWith2FloatAtOffsetNotDivisbleBy8)
+{
+    initBasicProgram();
+    glUseProgram(mProgram);
+
+    // input data is GL_FLOATx2 (8 bytes) and stride=36
+    std::array<GLubyte, 36 * kVertexCount> inputData;
+    std::array<GLfloat, 2 * kVertexCount> expectedData;
+    for (size_t i = 0; i < kVertexCount; ++i)
+    {
+        expectedData[2 * i]     = 2 * i;
+        expectedData[2 * i + 1] = 2 * i + 1;
+
+        GLubyte *input = inputData.data() + 36 * i;
+        memcpy(input, &expectedData[2 * i], sizeof(float));
+        memcpy(input + sizeof(float), &expectedData[2 * i + 1], sizeof(float));
+    }
+
+    GLBuffer quadBuffer;
+    InitQuadPlusOneVertexBuffer(&quadBuffer);
+
+    GLint positionLocation = glGetAttribLocation(mProgram, "position");
+    ASSERT_NE(-1, positionLocation);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    // offset is not float2 aligned (28)
+    GLsizei dataSize = 36 * kVertexCount + 28;
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    glBufferData(GL_ARRAY_BUFFER, dataSize, nullptr, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 28, dataSize - 28, inputData.data());
+    glVertexAttribPointer(mTestAttrib, 2, GL_FLOAT, GL_FALSE, /* stride */ 36,
+                          reinterpret_cast<void *>(28));
+    glEnableVertexAttribArray(mTestAttrib);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribPointer(mExpectedAttrib, 2, GL_FLOAT, GL_FALSE, 0, expectedData.data());
+    glEnableVertexAttribArray(mExpectedAttrib);
+
+    // Vertex draw with no start vertex offset (second argument is zero).
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    checkPixels();
+
+    // Draw offset by one vertex.
+    glDrawArrays(GL_TRIANGLES, 1, 6);
+    checkPixels();
+
+    EXPECT_GL_NO_ERROR();
+}
+
+// Verify that using offset=1 for GL_BYTE vertex attribute doesn't mess up the draw.
+// Depending on backend, offset=1 for GL_BYTE could be natively supported or not.
+// In the latter case, a vertex data conversion will have to be performed.
+TEST_P(VertexAttributeTest, DrawArraysWithByteAtOffset1)
+{
+    initBasicProgram();
+    glUseProgram(mProgram);
+
+    // input data is GL_BYTEx3 (3 bytes) but stride=4
+    std::array<GLbyte, 4 * kVertexCount> inputData;
+    std::array<GLfloat, 3 * kVertexCount> expectedData;
+    for (size_t i = 0; i < kVertexCount; ++i)
+    {
+        inputData[4 * i]     = 3 * i;
+        inputData[4 * i + 1] = 3 * i + 1;
+        inputData[4 * i + 2] = 3 * i + 2;
+
+        expectedData[3 * i]     = 3 * i;
+        expectedData[3 * i + 1] = 3 * i + 1;
+        expectedData[3 * i + 2] = 3 * i + 2;
+    }
+
+    GLBuffer quadBuffer;
+    InitQuadPlusOneVertexBuffer(&quadBuffer);
+
+    GLint positionLocation = glGetAttribLocation(mProgram, "position");
+    ASSERT_NE(-1, positionLocation);
+    glVertexAttribPointer(positionLocation, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnableVertexAttribArray(positionLocation);
+
+    // Buffer offset (1)
+    GLsizei dataSize = 4 * kVertexCount + 1;
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    glBufferData(GL_ARRAY_BUFFER, dataSize, nullptr, GL_STATIC_DRAW);
+    glBufferSubData(GL_ARRAY_BUFFER, 1, dataSize - 1, inputData.data());
+    glVertexAttribPointer(mTestAttrib, 3, GL_BYTE, GL_FALSE, /* stride */ 4,
+                          reinterpret_cast<void *>(1));
+    glEnableVertexAttribArray(mTestAttrib);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribPointer(mExpectedAttrib, 3, GL_FLOAT, GL_FALSE, 0, expectedData.data());
+    glEnableVertexAttribArray(mExpectedAttrib);
+
+    // Vertex draw with no start vertex offset (second argument is zero).
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    checkPixels();
+
+    // Draw offset by one vertex.
+    glDrawArrays(GL_TRIANGLES, 1, 6);
+    checkPixels();
+
+    EXPECT_GL_NO_ERROR();
+}
+
 // Verify that using an aligned but non-multiples of 4 offset vertex attribute doesn't mess up the
 // draw.
 TEST_P(VertexAttributeTest, DrawArraysWithShortBufferOffsetNotMultipleOf4)
@@ -3682,6 +3787,12 @@ TEST_P(VertexAttributeTest, AliasingVectorAttribLocations)
     // TODO(anglebug.com/5491): iOS GLSL compiler rejects attribute aliasing.
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
+    // This test needs 10 total attributes. All backends support this except some old Android
+    // devices.
+    GLint maxVertexAttribs = 0;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttribs);
+    ANGLE_SKIP_TEST_IF(maxVertexAttribs < 10);
+
     constexpr char kVS[] = R"(attribute vec4 position;
 // 4 aliasing attributes
 attribute float attr0f;
@@ -3841,6 +3952,12 @@ TEST_P(VertexAttributeTest, AliasingMatrixAttribLocations)
 
     // TODO(anglebug.com/5491): iOS GLSL compiler rejects attribute aliasing.
     ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
+
+    // This test needs 16 total attributes. All backends support this except some old Android
+    // devices.
+    GLint maxVertexAttribs = 0;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &maxVertexAttribs);
+    ANGLE_SKIP_TEST_IF(maxVertexAttribs < 16);
 
     constexpr char kVS[] = R"(attribute vec4 position;
 // attributes aliasing location 0 and above
@@ -4728,6 +4845,8 @@ ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
     ES3_VULKAN_SWIFTSHADER().enable(Feature::ForceFallbackFormat),
     ES3_METAL().disable(Feature::HasExplicitMemBarrier).disable(Feature::HasCheapRenderPass),
     ES3_METAL().disable(Feature::HasExplicitMemBarrier).enable(Feature::HasCheapRenderPass),
+    ES2_OPENGL().enable(Feature::ForceMinimumMaxVertexAttributes),
+    ES2_OPENGLES().enable(Feature::ForceMinimumMaxVertexAttributes),
     EMULATED_VAO_CONFIGS);
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(

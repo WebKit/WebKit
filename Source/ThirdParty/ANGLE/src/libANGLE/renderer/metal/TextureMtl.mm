@@ -816,7 +816,12 @@ angle::Result TextureMtl::ensureSamplerStateCreated(const gl::Context *context)
 
         samplerDesc.maxAnisotropy = 1;
     }
-    if (mState.getType() == gl::TextureType::Rectangle)
+
+    // OpenGL ES 3.x: The rules for texel selection are modified
+    // for cube maps so that texture wrap modes are ignored.
+    if ((mState.getType() == gl::TextureType::CubeMap ||
+         mState.getType() == gl::TextureType::CubeMapArray) &&
+        context->getState().getClientMajorVersion() >= 3)
     {
         samplerDesc.rAddressMode = MTLSamplerAddressModeClampToEdge;
         samplerDesc.sAddressMode = MTLSamplerAddressModeClampToEdge;

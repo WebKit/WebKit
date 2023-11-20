@@ -747,6 +747,11 @@ class BlendStateExt final
                     const GLenum srcAlpha,
                     const GLenum dstAlpha);
     void setFactorsIndexed(const size_t index,
+                           const gl::BlendFactorType srcColorFactor,
+                           const gl::BlendFactorType dstColorFactor,
+                           const gl::BlendFactorType srcAlphaFactor,
+                           const gl::BlendFactorType dstAlphaFactor);
+    void setFactorsIndexed(const size_t index,
                            const GLenum srcColor,
                            const GLenum dstColor,
                            const GLenum srcAlpha,
@@ -1221,6 +1226,22 @@ class UnlockedTailCall final : angle::NonCopyable
     // the max count is surpassed.
     static constexpr size_t kMaxCallCount = 2;
     angle::FixedVector<CallType, kMaxCallCount> mCalls;
+};
+
+enum class JobThreadSafety
+{
+    Safe,
+    Unsafe,
+};
+
+enum class JobResultExpectancy
+{
+    // Whether the compile or link job's results are immediately needed.  This is the case for GLES1
+    // programs for example, or shader compilation in glCreateShaderProgramv.
+    Immediate,
+    // Whether the compile or link job's results are needed after the end of the current entry point
+    // call.  In this case, the job may be done in an unlocked tail call.
+    Future,
 };
 
 // Zero-based for better array indexing

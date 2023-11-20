@@ -11,6 +11,7 @@
 #include "common/WorkerThread.h"
 
 #include "common/angleutils.h"
+#include "common/system_utils.h"
 
 // Controls if our threading code uses std::async or falls back to single-threaded operations.
 // Note that we can't easily use std::async in UWPs due to UWP threading restrictions.
@@ -19,9 +20,7 @@
 #endif  // !defined(ANGLE_STD_ASYNC_WORKERS) && & !defined(ANGLE_ENABLE_WINDOWS_UWP)
 
 #if ANGLE_DELEGATE_WORKERS || ANGLE_STD_ASYNC_WORKERS
-#    include <condition_variable>
 #    include <future>
-#    include <mutex>
 #    include <queue>
 #    include <thread>
 #endif  // ANGLE_DELEGATE_WORKERS || ANGLE_STD_ASYNC_WORKERS
@@ -38,27 +37,6 @@ bool WaitableEventDone::isReady()
 {
     return true;
 }
-
-// A waitable event that can be completed asynchronously
-class AsyncWaitableEvent final : public WaitableEvent
-{
-  public:
-    AsyncWaitableEvent()           = default;
-    ~AsyncWaitableEvent() override = default;
-
-    void wait() override;
-    bool isReady() override;
-
-    void markAsReady();
-
-  private:
-    // To protect the concurrent accesses from both main thread and background
-    // threads to the member fields.
-    std::mutex mMutex;
-
-    bool mIsReady = false;
-    std::condition_variable mCondition;
-};
 
 void AsyncWaitableEvent::markAsReady()
 {
@@ -85,13 +63,13 @@ WorkerThreadPool::~WorkerThreadPool() = default;
 class SingleThreadedWorkerPool final : public WorkerThreadPool
 {
   public:
-    std::shared_ptr<WaitableEvent> postWorkerTask(std::shared_ptr<Closure> task) override;
+    std::shared_ptr<WaitableEvent> postWorkerTask(const std::shared_ptr<Closure> &task) override;
     bool isAsync() override;
 };
 
 // SingleThreadedWorkerPool implementation.
 std::shared_ptr<WaitableEvent> SingleThreadedWorkerPool::postWorkerTask(
-    std::shared_ptr<Closure> task)
+    const std::shared_ptr<Closure> &task)
 {
     // Thread safety: This function is thread-safe because the task is run on the calling thread
     // itself.
@@ -113,7 +91,7 @@ class AsyncWorkerPool final : public WorkerThreadPool
 
     ~AsyncWorkerPool() override;
 
-    std::shared_ptr<WaitableEvent> postWorkerTask(std::shared_ptr<Closure> task) override;
+    std::shared_ptr<WaitableEvent> postWorkerTask(const std::shared_ptr<Closure> &task) override;
 
     bool isAsync() override;
 
@@ -168,7 +146,7 @@ void AsyncWorkerPool::createThreads()
     }
 }
 
-std::shared_ptr<WaitableEvent> AsyncWorkerPool::postWorkerTask(std::shared_ptr<Closure> task)
+std::shared_ptr<WaitableEvent> AsyncWorkerPool::postWorkerTask(const std::shared_ptr<Closure> &task)
 {
     // Thread safety: This function is thread-safe because access to |mTaskQueue| is protected by
     // |mMutex|.
@@ -187,6 +165,8 @@ std::shared_ptr<WaitableEvent> AsyncWorkerPool::postWorkerTask(std::shared_ptr<C
 
 void AsyncWorkerPool::threadLoop()
 {
+    angle::SetCurrentThreadName("ANGLE-Worker");
+
     while (true)
     {
         Task task;
@@ -226,7 +206,7 @@ class DelegateWorkerPool final : public WorkerThreadPool
     DelegateWorkerPool(PlatformMethods *platform) : mPlatform(platform) {}
     ~DelegateWorkerPool() override = default;
 
-    std::shared_ptr<WaitableEvent> postWorkerTask(std::shared_ptr<Closure> task) override;
+    std::shared_ptr<WaitableEvent> postWorkerTask(const std::shared_ptr<Closure> &task) override;
 
     bool isAsync() override;
 
@@ -239,7 +219,8 @@ class DelegateWorkerPool final : public WorkerThreadPool
 class DelegateWorkerTask
 {
   public:
-    DelegateWorkerTask(std::shared_ptr<Closure> task, std::shared_ptr<AsyncWaitableEvent> waitable)
+    DelegateWorkerTask(const std::shared_ptr<Closure> &task,
+                       std::shared_ptr<AsyncWaitableEvent> waitable)
         : mTask(task), mWaitable(waitable)
     {}
     DelegateWorkerTask()                     = delete;
@@ -263,7 +244,8 @@ class DelegateWorkerTask
 };
 
 ANGLE_NO_SANITIZE_CFI_ICALL
-std::shared_ptr<WaitableEvent> DelegateWorkerPool::postWorkerTask(std::shared_ptr<Closure> task)
+std::shared_ptr<WaitableEvent> DelegateWorkerPool::postWorkerTask(
+    const std::shared_ptr<Closure> &task)
 {
     if (mPlatform->postWorkerTask == nullptr)
     {

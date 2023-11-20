@@ -4994,34 +4994,6 @@ bool ValidateGetSamplerParameteriv(const Context *context,
     return ValidateGetSamplerParameterBase(context, entryPoint, sampler, pname, nullptr);
 }
 
-bool ValidateGetSamplerParameterIivOES(const Context *context,
-                                       angle::EntryPoint entryPoint,
-                                       SamplerID sampler,
-                                       GLenum pname,
-                                       const GLint *params)
-{
-    if (context->getClientMajorVersion() < 3)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
-        return false;
-    }
-    return ValidateGetSamplerParameterBase(context, entryPoint, sampler, pname, nullptr);
-}
-
-bool ValidateGetSamplerParameterIuivOES(const Context *context,
-                                        angle::EntryPoint entryPoint,
-                                        SamplerID sampler,
-                                        GLenum pname,
-                                        const GLuint *params)
-{
-    if (context->getClientMajorVersion() < 3)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
-        return false;
-    }
-    return ValidateGetSamplerParameterBase(context, entryPoint, sampler, pname, nullptr);
-}
-
 bool ValidateSamplerParameterf(const Context *context,
                                angle::EntryPoint entryPoint,
                                SamplerID sampler,
@@ -5055,34 +5027,6 @@ bool ValidateSamplerParameteriv(const Context *context,
                                 GLenum pname,
                                 const GLint *params)
 {
-    return ValidateSamplerParameterBase(context, entryPoint, sampler, pname, -1, true, params);
-}
-
-bool ValidateSamplerParameterIivOES(const Context *context,
-                                    angle::EntryPoint entryPoint,
-                                    SamplerID sampler,
-                                    GLenum pname,
-                                    const GLint *params)
-{
-    if (context->getClientMajorVersion() < 3)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
-        return false;
-    }
-    return ValidateSamplerParameterBase(context, entryPoint, sampler, pname, -1, true, params);
-}
-
-bool ValidateSamplerParameterIuivOES(const Context *context,
-                                     angle::EntryPoint entryPoint,
-                                     SamplerID sampler,
-                                     GLenum pname,
-                                     const GLuint *params)
-{
-    if (context->getClientMajorVersion() < 3)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
-        return false;
-    }
     return ValidateSamplerParameterBase(context, entryPoint, sampler, pname, -1, true, params);
 }
 

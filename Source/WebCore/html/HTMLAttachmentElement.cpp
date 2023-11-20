@@ -488,10 +488,7 @@ void HTMLAttachmentElement::setUniqueIdentifier(const String& uniqueIdentifier)
 
 RefPtr<HTMLImageElement> HTMLAttachmentElement::enclosingImageElement() const
 {
-    if (auto hostElement = shadowHost(); is<HTMLImageElement>(hostElement))
-        return downcast<HTMLImageElement>(hostElement);
-
-    return { };
+    return dynamicDowncast<HTMLImageElement>(shadowHost());
 }
 
 void HTMLAttachmentElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

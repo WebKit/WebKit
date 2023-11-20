@@ -113,6 +113,8 @@
 
 6926 : Texture2DTestES3.TextureRGBUpdateWithPBO/ES3_Vulkan* = NOT_RUN
 
+8409 : Texture2DTestES3.CopyImageDepthStencil/ES3_Vulkan* = SKIP_FOR_CAPTURE
+
 7112 : TransformFeedbackTest.BaseInstance/* = NOT_RUN
 
 # GLES 3.2 tests that fail because of missing features

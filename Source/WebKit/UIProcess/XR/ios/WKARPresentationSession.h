@@ -28,6 +28,7 @@
 #if ENABLE(WEBXR) && USE(ARKITXR_IOS)
 
 #import <Metal/Metal.h>
+#import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

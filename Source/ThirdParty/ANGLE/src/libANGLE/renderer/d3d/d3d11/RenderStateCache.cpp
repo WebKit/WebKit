@@ -107,18 +107,18 @@ d3d11::BlendStateKey RenderStateCache::GetBlendStateKey(const gl::Context *conte
                                          equationAlpha != gl::BlendEquationType::Max;
             if (setColorFactors || setAlphaFactors)
             {
-                const GLenum srcColor =
-                    setColorFactors ? ToGLenum(blendStateExt.getSrcColorIndexed(sourceIndex))
-                                    : GL_ONE;
-                const GLenum dstColor =
-                    setColorFactors ? ToGLenum(blendStateExt.getDstColorIndexed(sourceIndex))
-                                    : GL_ZERO;
-                const GLenum srcAlpha =
-                    setAlphaFactors ? ToGLenum(blendStateExt.getSrcAlphaIndexed(sourceIndex))
-                                    : GL_ONE;
-                const GLenum dstAlpha =
-                    setAlphaFactors ? ToGLenum(blendStateExt.getDstAlphaIndexed(sourceIndex))
-                                    : GL_ZERO;
+                const gl::BlendFactorType srcColor =
+                    setColorFactors ? blendStateExt.getSrcColorIndexed(sourceIndex)
+                                    : gl::BlendFactorType::One;
+                const gl::BlendFactorType dstColor =
+                    setColorFactors ? blendStateExt.getDstColorIndexed(sourceIndex)
+                                    : gl::BlendFactorType::Zero;
+                const gl::BlendFactorType srcAlpha =
+                    setAlphaFactors ? blendStateExt.getSrcAlphaIndexed(sourceIndex)
+                                    : gl::BlendFactorType::One;
+                const gl::BlendFactorType dstAlpha =
+                    setAlphaFactors ? blendStateExt.getDstAlphaIndexed(sourceIndex)
+                                    : gl::BlendFactorType::Zero;
                 key.blendStateExt.setFactorsIndexed(keyBlendIndex, srcColor, dstColor, srcAlpha,
                                                     dstAlpha);
             }
@@ -163,17 +163,16 @@ angle::Result RenderStateCache::getBlendState(const gl::Context *context,
         {
             rtDesc.BlendEnable = true;
             rtDesc.SrcBlend =
-                gl_d3d11::ConvertBlendFunc(ToGLenum(blendStateExt.getSrcColorIndexed(i)), false);
+                gl_d3d11::ConvertBlendFunc(blendStateExt.getSrcColorIndexed(i), false);
             rtDesc.DestBlend =
-                gl_d3d11::ConvertBlendFunc(ToGLenum(blendStateExt.getDstColorIndexed(i)), false);
-            rtDesc.BlendOp =
-                gl_d3d11::ConvertBlendOp(ToGLenum(blendStateExt.getEquationColorIndexed(i)));
+                gl_d3d11::ConvertBlendFunc(blendStateExt.getDstColorIndexed(i), false);
+            rtDesc.BlendOp = gl_d3d11::ConvertBlendOp(blendStateExt.getEquationColorIndexed(i));
             rtDesc.SrcBlendAlpha =
-                gl_d3d11::ConvertBlendFunc(ToGLenum(blendStateExt.getSrcAlphaIndexed(i)), true);
+                gl_d3d11::ConvertBlendFunc(blendStateExt.getSrcAlphaIndexed(i), true);
             rtDesc.DestBlendAlpha =
-                gl_d3d11::ConvertBlendFunc(ToGLenum(blendStateExt.getDstAlphaIndexed(i)), true);
+                gl_d3d11::ConvertBlendFunc(blendStateExt.getDstAlphaIndexed(i), true);
             rtDesc.BlendOpAlpha =
-                gl_d3d11::ConvertBlendOp(ToGLenum(blendStateExt.getEquationAlphaIndexed(i)));
+                gl_d3d11::ConvertBlendOp(blendStateExt.getEquationAlphaIndexed(i));
         }
 
         // blendStateExt.colorMask follows the same packing scheme as

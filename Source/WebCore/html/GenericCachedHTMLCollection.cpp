@@ -68,8 +68,10 @@ bool GenericCachedHTMLCollection<traversalType>::elementMatches(Element& element
         return element.hasTagName(tdTag) || element.hasTagName(thTag);
     case CollectionType::TSectionRows:
         return element.hasTagName(trTag);
-    case CollectionType::SelectedOptions:
-        return is<HTMLOptionElement>(element) && downcast<HTMLOptionElement>(element).selected();
+    case CollectionType::SelectedOptions: {
+        auto* optionElement = dynamicDowncast<HTMLOptionElement>(element);
+        return optionElement && optionElement->selected();
+    }
     case CollectionType::DataListOptions:
         return is<HTMLOptionElement>(element);
     case CollectionType::MapAreas:

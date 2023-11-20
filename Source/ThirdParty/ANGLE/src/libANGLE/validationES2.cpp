@@ -5806,34 +5806,6 @@ bool ValidateGetTexParameteriv(const Context *context,
     return ValidateGetTexParameterBase(context, entryPoint, target, pname, nullptr);
 }
 
-bool ValidateGetTexParameterIivOES(const Context *context,
-                                   angle::EntryPoint entryPoint,
-                                   TextureType target,
-                                   GLenum pname,
-                                   const GLint *params)
-{
-    if (context->getClientMajorVersion() < 3)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
-        return false;
-    }
-    return ValidateGetTexParameterBase(context, entryPoint, target, pname, nullptr);
-}
-
-bool ValidateGetTexParameterIuivOES(const Context *context,
-                                    angle::EntryPoint entryPoint,
-                                    TextureType target,
-                                    GLenum pname,
-                                    const GLuint *params)
-{
-    if (context->getClientMajorVersion() < 3)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
-        return false;
-    }
-    return ValidateGetTexParameterBase(context, entryPoint, target, pname, nullptr);
-}
-
 bool ValidateGetUniformfv(const Context *context,
                           angle::EntryPoint entryPoint,
                           ShaderProgramID program,
@@ -5960,34 +5932,6 @@ bool ValidateTexParameteriv(const Context *context,
                             GLenum pname,
                             const GLint *params)
 {
-    return ValidateTexParameterBase(context, entryPoint, target, pname, -1, true, params);
-}
-
-bool ValidateTexParameterIivOES(const Context *context,
-                                angle::EntryPoint entryPoint,
-                                TextureType target,
-                                GLenum pname,
-                                const GLint *params)
-{
-    if (context->getClientMajorVersion() < 3)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
-        return false;
-    }
-    return ValidateTexParameterBase(context, entryPoint, target, pname, -1, true, params);
-}
-
-bool ValidateTexParameterIuivOES(const Context *context,
-                                 angle::EntryPoint entryPoint,
-                                 TextureType target,
-                                 GLenum pname,
-                                 const GLuint *params)
-{
-    if (context->getClientMajorVersion() < 3)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES3Required);
-        return false;
-    }
     return ValidateTexParameterBase(context, entryPoint, target, pname, -1, true, params);
 }
 

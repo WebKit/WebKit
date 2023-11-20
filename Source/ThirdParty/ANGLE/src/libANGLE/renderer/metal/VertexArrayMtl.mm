@@ -466,13 +466,11 @@ angle::Result VertexArrayMtl::setupDraw(const gl::Context *glContext,
                 uint32_t bufferIdx    = mtl::kVboBindingIndexStart + v;
                 uint32_t bufferOffset = static_cast<uint32_t>(mCurrentArrayBufferOffsets[v]);
 
-                const angle::Format &angleFormat =
-                    mCurrentArrayBufferFormats[v]->actualAngleFormat();
                 desc.attributes[v].format = mCurrentArrayBufferFormats[v]->metalFormat;
 
                 desc.attributes[v].bufferIndex = bufferIdx;
                 desc.attributes[v].offset      = 0;
-                ASSERT((bufferOffset % angleFormat.pixelBytes) == 0);
+                ASSERT((bufferOffset % mtl::kVertexAttribBufferStrideAlignment) == 0);
 
                 ASSERT(bufferIdx < mtl::kMaxVertexAttribs);
                 if (binding.getDivisor() == 0)
@@ -677,7 +675,6 @@ angle::Result VertexArrayMtl::syncDirtyAttrib(const gl::Context *glContext,
             mContentsObservers->enableForBuffer(bufferGL, static_cast<uint32_t>(attribIndex));
             bool needConversion =
                 format.actualFormatId != format.intendedFormatId ||
-                (binding.getOffset() % format.actualAngleFormat().pixelBytes) != 0 ||
                 (binding.getOffset() % mtl::kVertexAttribBufferStrideAlignment) != 0 ||
                 (binding.getStride() < format.actualAngleFormat().pixelBytes) ||
                 (binding.getStride() % mtl::kVertexAttribBufferStrideAlignment) != 0;

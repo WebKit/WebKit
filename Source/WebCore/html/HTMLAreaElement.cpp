@@ -198,11 +198,9 @@ Path HTMLAreaElement::getRegion(const LayoutSize& size) const
 
 RefPtr<HTMLImageElement> HTMLAreaElement::imageElement() const
 {
-    RefPtr<Node> mapElement = parentNode();
-    if (!is<HTMLMapElement>(mapElement))
-        return nullptr;
-    
-    return downcast<HTMLMapElement>(*mapElement).imageElement();
+    if (RefPtr mapElement = dynamicDowncast<HTMLMapElement>(parentNode()))
+        return mapElement->imageElement();
+    return nullptr;
 }
 
 bool HTMLAreaElement::isKeyboardFocusable(KeyboardEvent*) const
@@ -235,11 +233,8 @@ void HTMLAreaElement::setFocus(bool shouldBeFocused, FocusVisibility visibility)
     if (!imageElement)
         return;
 
-    auto* renderer = imageElement->renderer();
-    if (!is<RenderImage>(renderer))
-        return;
-
-    downcast<RenderImage>(*renderer).areaElementFocusChanged(this);
+    if (CheckedPtr renderer = dynamicDowncast<RenderImage>(imageElement->renderer()))
+        renderer->areaElementFocusChanged(this);
 }
 
 RefPtr<Element> HTMLAreaElement::focusAppearanceUpdateTarget()

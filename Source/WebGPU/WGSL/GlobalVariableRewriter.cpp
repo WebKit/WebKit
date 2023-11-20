@@ -323,6 +323,9 @@ auto RewriteGlobalVariables::pack(Packing expectedPacking, AST::Expression& expr
             case Types::Primitive::F32:
                 operation = packing == Packing::Packed ? "float3"_s : "packed_float3"_s;
                 break;
+            case Types::Primitive::F16:
+                operation = packing == Packing::Packed ? "half3"_s : "packed_half3"_s;
+                break;
             default:
                 RELEASE_ASSERT_NOT_REACHED();
             }
@@ -840,6 +843,7 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
         case Types::Primitive::U32:
         case Types::Primitive::AbstractFloat:
         case Types::Primitive::F32:
+        case Types::Primitive::F16:
         case Types::Primitive::Void:
         case Types::Primitive::Bool:
             return BufferBindingLayout {
@@ -1032,6 +1036,7 @@ void RewriteGlobalVariables::usesOverride(AST::Variable& variable)
         constantType = Reflection::SpecializationConstantType::Boolean;
         break;
     case Types::Primitive::F32:
+    case Types::Primitive::F16: // Is this correct?
         constantType = Reflection::SpecializationConstantType::Float;
         break;
     case Types::Primitive::I32:

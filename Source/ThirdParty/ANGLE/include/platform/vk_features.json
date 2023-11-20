@@ -1413,6 +1413,14 @@
             "description": [
                 "VkDevice supports the VK_ANDROID_external_format_resolve extension"
             ]
+        },
+        {
+            "name": "force_AHB_layer_count_to_one",
+            "category": "Workarounds",
+            "description": [
+                "Force AHB's layerCount to 1"
+            ],
+            "issue": "http://b/239181279"
         }
     ]
 }

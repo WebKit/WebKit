@@ -2498,5 +2498,9 @@ WTF::TextStream& operator<<(WTF::TextStream&, const Document&);
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Document)
     static bool isType(const WebCore::ScriptExecutionContext& context) { return context.isDocument(); }
     static bool isType(const WebCore::Node& node) { return node.isDocumentNode(); }
-    static bool isType(const WebCore::EventTarget& target) { return is<WebCore::Node>(target) && isType(downcast<WebCore::Node>(target)); }
+    static bool isType(const WebCore::EventTarget& target)
+    {
+        auto* node = dynamicDowncast<WebCore::Node>(target);
+        return node && isType(*node);
+    }
 SPECIALIZE_TYPE_TRAITS_END()

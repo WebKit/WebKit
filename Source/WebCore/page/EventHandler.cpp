@@ -1740,7 +1740,7 @@ static LayoutPoint documentPointForWindowPoint(LocalFrame& frame, const IntPoint
     return view ? view->windowToContents(windowPoint) : windowPoint;
 }
 
-std::optional<RemoteUserInputEventData> EventHandler::mouseEventDataForRemoteFrame(const RemoteFrame* remoteFrame, const IntPoint& pointInFrame)
+std::optional<RemoteUserInputEventData> EventHandler::userInputEventDataForRemoteFrame(const RemoteFrame* remoteFrame, const IntPoint& pointInFrame)
 {
     if (!remoteFrame)
         return std::nullopt;
@@ -1790,7 +1790,7 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
         return true;
 
 #if ENABLE(TOUCH_EVENTS)
-    bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(platformMouseEvent);
+    bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(platformMouseEvent).wasHandled();
     if (defaultPrevented)
         return true;
 #endif
@@ -1843,7 +1843,7 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
 
     if (!passedToScrollbar) {
         auto subframe = subframeForHitTestResult(mouseEvent);
-        if (auto remoteMouseEventData = mouseEventDataForRemoteFrame(dynamicDowncast<RemoteFrame>(subframe).get(), mouseEvent.hitTestResult().roundedPointInInnerNodeFrame()))
+        if (auto remoteMouseEventData = userInputEventDataForRemoteFrame(dynamicDowncast<RemoteFrame>(subframe).get(), mouseEvent.hitTestResult().roundedPointInInnerNodeFrame()))
             return *remoteMouseEventData;
 
         auto captureMouseEventsElementIfNeeded = [&](RefPtr<Element>&& element = nullptr) {
@@ -2088,7 +2088,7 @@ HitTestResult EventHandler::getHitTestResultForMouseEvent(const PlatformMouseEve
 HandleUserInputEventResult EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& platformMouseEvent, HitTestResult* hitTestResult, bool onlyUpdateScrollbars)
 {
 #if ENABLE(TOUCH_EVENTS)
-    bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(platformMouseEvent);
+    bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(platformMouseEvent).wasHandled();
     if (defaultPrevented)
         return true;
 #endif
@@ -2161,7 +2161,7 @@ HandleUserInputEventResult EventHandler::handleMouseMoveEvent(const PlatformMous
 
     bool swallowEvent = false;
     auto subframe = isCapturingMouseEventsElement() ? subframeForTargetNode(m_capturingMouseEventsElement.get()) : subframeForHitTestResult(mouseEvent);
-    if (auto remoteMouseEventData = mouseEventDataForRemoteFrame(dynamicDowncast<RemoteFrame>(subframe).get(), mouseEvent.hitTestResult().roundedPointInInnerNodeFrame()))
+    if (auto remoteMouseEventData = userInputEventDataForRemoteFrame(dynamicDowncast<RemoteFrame>(subframe).get(), mouseEvent.hitTestResult().roundedPointInInnerNodeFrame()))
         return *remoteMouseEventData;
 
     RefPtr localSubframe = dynamicDowncast<LocalFrame>(subframe.get());
@@ -2257,7 +2257,7 @@ HandleUserInputEventResult EventHandler::handleMouseReleaseEvent(const PlatformM
         return true;
 
 #if ENABLE(TOUCH_EVENTS)
-    bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(platformMouseEvent);
+    bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(platformMouseEvent).wasHandled();
     if (defaultPrevented)
         return true;
 #endif
@@ -2300,7 +2300,7 @@ HandleUserInputEventResult EventHandler::handleMouseReleaseEvent(const PlatformM
     if (m_eventHandlerWillResetCapturingMouseEventsElement)
         resetCapturingMouseEventsElement();
 
-    if (auto remoteMouseEventData = mouseEventDataForRemoteFrame(dynamicDowncast<RemoteFrame>(subframe).get(), mouseEvent.hitTestResult().roundedPointInInnerNodeFrame()))
+    if (auto remoteMouseEventData = userInputEventDataForRemoteFrame(dynamicDowncast<RemoteFrame>(subframe).get(), mouseEvent.hitTestResult().roundedPointInInnerNodeFrame()))
         return *remoteMouseEventData;
 
     RefPtr localSubframe = dynamicDowncast<LocalFrame>(subframe.get());
@@ -4841,7 +4841,7 @@ static HitTestResult hitTestResultInFrame(LocalFrame* frame, const LayoutPoint& 
     return result;
 }
 
-bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
+HandleUserInputEventResult EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 {
     Ref frame = m_frame.get();
 
@@ -5076,7 +5076,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 #endif // ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
 
 #if ENABLE(TOUCH_EVENTS)
-bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent& platformMouseEvent)
+HandleUserInputEventResult EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent& platformMouseEvent)
 {
 #if ENABLE(IOS_TOUCH_EVENTS)
     UNUSED_PARAM(platformMouseEvent);

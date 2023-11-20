@@ -27,6 +27,7 @@
 
 #if PLATFORM(COCOA)
 
+#include "CoreIPCNSCFObject.h"
 #include <wtf/ArgumentCoder.h>
 #include <wtf/KeyValuePair.h>
 #include <wtf/RetainPtr.h>
@@ -34,8 +35,6 @@
 #include <wtf/Vector.h>
 
 namespace WebKit {
-
-class CoreIPCNSCFObject;
 
 class CoreIPCDictionary {
     WTF_MAKE_FAST_ALLOCATED;

@@ -81,6 +81,15 @@ SourceBufferPrivateGStreamer::SourceBufferPrivateGStreamer(MediaSourcePrivateGSt
 {
 }
 
+SourceBufferPrivateGStreamer::~SourceBufferPrivateGStreamer()
+{
+    if (!m_appendPromise)
+        return;
+
+    m_appendPromise->reject(PlatformMediaError::BufferRemoved);
+    m_appendPromise.reset();
+}
+
 Ref<MediaPromise> SourceBufferPrivateGStreamer::appendInternal(Ref<SharedBuffer>&& data)
 {
     ASSERT(isMainThread());

@@ -619,6 +619,7 @@ private:
     String m_errorMessage;
 
 #if USE(TEXTURE_MAPPER_DMABUF)
+    HashSet<GRefPtr<GstMemory>> m_dmabufMemory;
     RefPtr<GBMBufferSwapchain> m_swapchain;
 #endif
 

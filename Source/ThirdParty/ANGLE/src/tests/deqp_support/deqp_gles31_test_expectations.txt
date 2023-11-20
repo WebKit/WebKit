@@ -406,11 +406,6 @@ b/224537784 SWIFTSHADER : dEQP-GLES31.functional.debug.error_groups.case_9 = SKI
 // and VkPhysicalDeviceCustomBorderColorFeaturesEXT.customBorderColorWithoutFormat
 b/224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
 
-// NVIDIA on LINUX bot misses GL_EXT_texture_border_clamp extension support
-// TODO: b/286572199
-b/224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.debug.negative_coverage.* = SKIP
-b/224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.debug.error_filters.case_22 = SKIP
-b/224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.primitive_bounding_box.*tessellation* = SKIP
 b/224537784 LINUX NVIDIA VULKAN : dEQP-GLES31.functional.android_extension_pack.shaders.es32.extension_macros.android_extension_pack_es31a = FAIL
 
 // Pixel 4 does not support VK_EXT_transform_feedback (required for geometry/tessellation).

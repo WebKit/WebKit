@@ -424,7 +424,7 @@ class WindowSurfaceVk : public SurfaceVk
     virtual angle::Result createSurfaceVk(vk::Context *context, gl::Extents *extentsOut)      = 0;
     virtual angle::Result getCurrentWindowSize(vk::Context *context, gl::Extents *extentsOut) = 0;
 
-    angle::Result initializeImpl(DisplayVk *displayVk);
+    angle::Result initializeImpl(DisplayVk *displayVk, bool *anyMatchesOut);
     angle::Result recreateSwapchain(ContextVk *contextVk, const gl::Extents &extents);
     angle::Result createSwapChain(vk::Context *context,
                                   const gl::Extents &extents,

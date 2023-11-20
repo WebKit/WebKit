@@ -325,37 +325,25 @@ constant bool kSourceTexture2TypeCube = kSourceTexture2Type == kTextureTypeCube;
 struct BlitParams
 {
 
-    float2 srcTexCoords[3];
+    float4 srcTexCoords;
     int srcLevel;
     int srcLayer;
-    bool dstFlipViewportX;
-    bool dstFlipViewportY;
     bool dstLuminance;
-    uint8_t padding[13];
+    uint8_t padding[7];
 };
 
 struct BlitVSOut
 {
     float4 position [[position]];
-    float2 texCoords [[user(locn1)]];
+    float2 texCoords [[center_no_perspective, user(locn1)]];
 };
 
 vertex BlitVSOut blitVS(unsigned int vid [[vertex_id]], constant BlitParams &options [[buffer(0)]])
 {
     BlitVSOut output;
-    output.position = float4(gCorners[vid], 0.0, 1.0);
-    output.texCoords = options.srcTexCoords[vid];
-
-    if (options.dstFlipViewportX)
-    {
-        output.position.x = -output.position.x;
-    }
-    if (!options.dstFlipViewportY)
-    {
-
-
-        output.position.y = -output.position.y;
-    }
+    output.position.xy = select(float2(-1.0f), float2(1.0f), bool2(vid & uint2(2, 1)));
+    output.position.zw = float2(0.0, 1.0);
+    output.texCoords = select(options.srcTexCoords.xy, options.srcTexCoords.zw, bool2(vid & uint2(2, 1)));
 
     return output;
 }
@@ -387,7 +375,7 @@ static inline vec<T, 4> blitSampleTexture3D(texture3d<T> srcTexture,
 
     return srcTexture.sample(textureSampler, float3(texCoords, zCoord), level(options.srcLevel));
 }
-# 113 "./blit.metal"
+# 101 "./blit.metal"
 template <typename T>
 static inline vec<T, 4> blitReadTexture(BlitVSOut input [[stage_in]], texture2d<T> srcTexture2d [[texture(0), function_constant(kSourceTextureType2D)]], texture2d_array<T> srcTexture2dArray [[texture(0), function_constant(kSourceTextureType2DArray)]], texture2d_ms<T> srcTexture2dMS [[texture(0), function_constant(kSourceTextureType2DMS)]], texturecube<T> srcTextureCube [[texture(0), function_constant(kSourceTextureTypeCube)]], texture3d<T> srcTexture3d [[texture(0), function_constant(kSourceTextureType3D)]], sampler textureSampler [[sampler(0)]], constant BlitParams &options [[buffer(0)]])
 {

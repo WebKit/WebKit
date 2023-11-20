@@ -219,6 +219,9 @@ void Visitor::visit(Expression& expression)
     case AST::NodeKind::Float32Literal:
         checkErrorAndVisit(downcast<AST::Float32Literal>(expression));
         break;
+    case AST::NodeKind::Float16Literal:
+        checkErrorAndVisit(downcast<AST::Float16Literal>(expression));
+        break;
     case AST::NodeKind::IdentifierExpression:
         checkErrorAndVisit(downcast<AST::IdentifierExpression>(expression));
         break;
@@ -287,6 +290,10 @@ void Visitor::visit(AST::FieldAccessExpression& fieldAccessExpression)
 }
 
 void Visitor::visit(AST::Float32Literal&)
+{
+}
+
+void Visitor::visit(AST::Float16Literal&)
 {
 }
 

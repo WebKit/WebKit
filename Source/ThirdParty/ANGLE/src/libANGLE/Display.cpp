@@ -2299,6 +2299,8 @@ void Display::initializeFrontendFeatures()
     // Togglable until work on the extension is complete - anglebug.com/7279.
     ANGLE_FEATURE_CONDITION(&mFrontendFeatures, emulatePixelLocalStorage, true);
 
+    ANGLE_FEATURE_CONDITION(&mFrontendFeatures, forceMinimumMaxVertexAttributes, false);
+
     mImplementation->initializeFrontendFeatures(&mFrontendFeatures);
 }
 

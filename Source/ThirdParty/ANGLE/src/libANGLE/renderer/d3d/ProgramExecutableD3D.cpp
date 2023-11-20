@@ -738,7 +738,7 @@ angle::Result ProgramExecutableD3D::loadBinaryShaderExecutables(d3d::Context *co
         if (!shaderExecutable)
         {
             infoLog << "Could not create vertex shader.";
-            return angle::Result::Incomplete;
+            return angle::Result::Stop;
         }
 
         // generated converted input layout
@@ -773,7 +773,7 @@ angle::Result ProgramExecutableD3D::loadBinaryShaderExecutables(d3d::Context *co
         if (!shaderExecutable)
         {
             infoLog << "Could not create pixel shader.";
-            return angle::Result::Incomplete;
+            return angle::Result::Stop;
         }
 
         // add new binary
@@ -801,7 +801,7 @@ angle::Result ProgramExecutableD3D::loadBinaryShaderExecutables(d3d::Context *co
         if (!geometryExecutable)
         {
             infoLog << "Could not create geometry shader.";
-            return angle::Result::Incomplete;
+            return angle::Result::Stop;
         }
 
         geometryExe.reset(geometryExecutable);
@@ -835,7 +835,7 @@ angle::Result ProgramExecutableD3D::loadBinaryShaderExecutables(d3d::Context *co
         if (!computeExecutable)
         {
             infoLog << "Could not create compute shader.";
-            return angle::Result::Incomplete;
+            return angle::Result::Stop;
         }
 
         // add new binary

@@ -1227,6 +1227,7 @@
 		51D124991E763C01002B2820 /* WKHTTPCookieStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D124841E734AE3002B2820 /* WKHTTPCookieStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51D130541382EAC000351EDD /* SecItemRequestData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D130501382EAC000351EDD /* SecItemRequestData.h */; };
 		51D130561382EAC000351EDD /* SecItemResponseData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D130521382EAC000351EDD /* SecItemResponseData.h */; };
+		51D1B6942B09723A00FEA5CB /* CoreIPCTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D1B6932B09723A00FEA5CB /* CoreIPCTypes.h */; };
 		51D7E0AD2356555E00A67D3A /* WKPDFConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D7E0AC2356555400A67D3A /* WKPDFConfiguration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		51DD9F2816367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51DD9F2616367DA2001578E9 /* NetworkConnectionToWebProcessMessageReceiver.cpp */; };
 		51DD9F2916367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */; };
@@ -5347,6 +5348,7 @@
 		51D194352AEC1C8200E8E475 /* CFTypes.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CFTypes.serialization.in; sourceTree = "<group>"; };
 		51D194392AEC9BC900E8E475 /* CoreIPCBoolean.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCBoolean.h; sourceTree = "<group>"; };
 		51D1943A2AEC9BC900E8E475 /* CoreIPCBoolean.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCBoolean.serialization.in; sourceTree = "<group>"; };
+		51D1B6932B09723A00FEA5CB /* CoreIPCTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCTypes.h; sourceTree = "<group>"; };
 		51D7E0AC2356555400A67D3A /* WKPDFConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKPDFConfiguration.h; sourceTree = "<group>"; };
 		51D7E0AE2356616300A67D3A /* WKPDFConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPDFConfiguration.mm; sourceTree = "<group>"; };
 		51DAAEBF2AA198DE00DB2AA4 /* com.apple.WebKit.webpushd.relocatable.mac.sb */ = {isa = PBXFileReference; lastKnownFileType = file; path = com.apple.WebKit.webpushd.relocatable.mac.sb; sourceTree = "<group>"; };
@@ -10845,6 +10847,7 @@
 				5197FAD12AFD33B0009180C5 /* CoreIPCSecureCoding.serialization.in */,
 				5197FACC2AFD33AE009180C5 /* CoreIPCString.h */,
 				5197FAD42AFD33B0009180C5 /* CoreIPCString.serialization.in */,
+				51D1B6932B09723A00FEA5CB /* CoreIPCTypes.h */,
 				5197FADB2AFD33B2009180C5 /* CoreIPCURL.h */,
 				5197FAC92AFD33AE009180C5 /* CoreIPCURL.serialization.in */,
 				1C739E872347BD0F00C621EC /* CoreTextHelpers.h */,
@@ -15056,6 +15059,7 @@
 				F4EFF36D2AF0267300479AB8 /* CoreIPCNumber.h in Headers */,
 				5197FAE92AFD33CF009180C5 /* CoreIPCSecureCoding.h in Headers */,
 				5197FAE52AFD33CF009180C5 /* CoreIPCString.h in Headers */,
+				51D1B6942B09723A00FEA5CB /* CoreIPCTypes.h in Headers */,
 				5197FAE62AFD33CF009180C5 /* CoreIPCURL.h in Headers */,
 				A15799BC2584433200528236 /* CoreMediaWrapped.h in Headers */,
 				37C21CAE1E994C0C0029D5F9 /* CorePredictionSPI.h in Headers */,

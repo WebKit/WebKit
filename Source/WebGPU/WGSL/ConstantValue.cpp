@@ -60,6 +60,11 @@ void ConstantValue::dump(PrintStream& out) const
             if (std::isfinite(f))
                 out.print("f");
         },
+        [&](half h) {
+            out.print(String::number(h));
+            if (std::isfinite(static_cast<double>(h)))
+                out.print("h");
+        },
         [&](int64_t i) {
             out.print(String::number(i));
         },

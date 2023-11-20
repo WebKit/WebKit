@@ -248,6 +248,11 @@ void StringDumper::visit(Float32Literal& literal)
     m_out.print(literal.value(), "f");
 }
 
+void StringDumper::visit(Float16Literal& literal)
+{
+    m_out.print(String::number(literal.value()), "h");
+}
+
 void StringDumper::visit(IdentifierExpression& identifier)
 {
     m_out.print(identifier.identifier());

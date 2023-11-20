@@ -3074,13 +3074,17 @@ def get_unlocked_tail_call(api, cmd_name):
     # - glTexImage2D, glTexImage3D, glTexSubImage2D, glTexSubImage3D,
     #   glCompressedTexImage2D, glCompressedTexImage3D,
     #   glCompressedTexSubImage2D, glCompressedTexSubImage3D -> May perform the
-    #   data upload on the host in  tail call
+    #   data upload on the host in tail call
+    #
+    # - glCompileShader and glLinkProgram -> May perform the compilation / link
+    #   in tail call
     #
     if (cmd_name in [
             'eglDestroySurface', 'eglMakeCurrent', 'eglReleaseThread', 'eglCreateWindowSurface',
             'eglCreatePlatformWindowSurface', 'eglCreatePlatformWindowSurfaceEXT',
             'eglPrepareSwapBuffersANGLE', 'eglSwapBuffers', 'eglSwapBuffersWithDamageKHR',
-            'eglSwapBuffersWithFrameTokenANGLE', 'glFinishFenceNV'
+            'eglSwapBuffersWithFrameTokenANGLE', 'glFinishFenceNV', 'glCompileShader',
+            'glLinkProgram'
     ] or cmd_name.startswith('glTexImage2D') or cmd_name.startswith('glTexImage3D') or
             cmd_name.startswith('glTexSubImage2D') or cmd_name.startswith('glTexSubImage3D') or
             cmd_name.startswith('glCompressedTexImage2D') or

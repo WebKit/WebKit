@@ -495,6 +495,21 @@ constexpr angle::PackedEnumMap<ImageLayout, ImageMemoryBarrierData> kImageMemory
         },
     },
     {
+        ImageLayout::TransferSrcDst,
+        ImageMemoryBarrierData{
+            "TransferSrcDst",
+            VK_IMAGE_LAYOUT_GENERAL,
+            VK_PIPELINE_STAGE_TRANSFER_BIT,
+            VK_PIPELINE_STAGE_TRANSFER_BIT,
+            // Transition to: all reads and writes must happen after barrier.
+            VK_ACCESS_TRANSFER_READ_BIT | VK_ACCESS_TRANSFER_WRITE_BIT,
+            // Transition from: all writes must finish before barrier.
+            VK_ACCESS_TRANSFER_WRITE_BIT,
+            ResourceAccess::ReadWrite,
+            PipelineStage::Transfer,
+        },
+    },
+    {
         ImageLayout::HostCopy,
         ImageMemoryBarrierData{
             "HostCopy",
@@ -2894,8 +2909,7 @@ void RenderPassCommandBufferHelper::addCommandDiagnostics(ContextVk *contextVk)
     {
         if (subpass > 0)
         {
-            out << "Next Subpass"
-                << "\\l";
+            out << "Next Subpass" << "\\l";
         }
         out << mCommandBuffers[subpass].dumpCommands("\\l");
     }
@@ -3615,8 +3629,7 @@ void BufferPool::addStats(std::ostringstream *out) const
         VkDeviceSize unusedBytes = statInfo.unusedBytes;
 #else
         ASSERT(statInfo.basicInfo.blockCount == 1);
-        INFO() << "[" << i << "]={"
-               << " allocationCount:" << statInfo.basicInfo.allocationCount
+        INFO() << "[" << i << "]={" << " allocationCount:" << statInfo.basicInfo.allocationCount
                << " blockBytes:" << statInfo.basicInfo.blockBytes
                << " allocationBytes:" << statInfo.basicInfo.allocationBytes
                << " unusedRangeCount:" << statInfo.unusedRangeCount
@@ -7051,17 +7064,20 @@ angle::Result ImageHelper::CopyImageSubData(const gl::Context *context,
     if (CanCopyWithTransferForCopyImage(contextVk->getRenderer(), srcImage, srcTilingMode, dstImage,
                                         destTilingMode))
     {
-        bool isSrc3D = srcImage->getType() == VK_IMAGE_TYPE_3D;
-        bool isDst3D = dstImage->getType() == VK_IMAGE_TYPE_3D;
+        bool isSrc3D                         = srcImage->getType() == VK_IMAGE_TYPE_3D;
+        bool isDst3D                         = dstImage->getType() == VK_IMAGE_TYPE_3D;
+        const VkImageAspectFlags aspectFlags = srcImage->getAspectFlags();
+
+        ASSERT(srcImage->getAspectFlags() == dstImage->getAspectFlags());
 
         VkImageCopy region = {};
 
-        region.srcSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+        region.srcSubresource.aspectMask     = aspectFlags;
         region.srcSubresource.mipLevel       = srcImage->toVkLevel(srcLevelGL).get();
         region.srcSubresource.baseArrayLayer = isSrc3D ? 0 : srcZ;
         region.srcSubresource.layerCount     = isSrc3D ? 1 : srcDepth;
 
-        region.dstSubresource.aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT;
+        region.dstSubresource.aspectMask     = aspectFlags;
         region.dstSubresource.mipLevel       = dstImage->toVkLevel(dstLevelGL).get();
         region.dstSubresource.baseArrayLayer = isDst3D ? 0 : dstZ;
         region.dstSubresource.layerCount     = isDst3D ? 1 : srcDepth;
@@ -7077,17 +7093,26 @@ angle::Result ImageHelper::CopyImageSubData(const gl::Context *context,
         region.extent.depth  = (isSrc3D || isDst3D) ? srcDepth : 1;
 
         CommandBufferAccess access;
-        access.onImageTransferRead(VK_IMAGE_ASPECT_COLOR_BIT, srcImage);
-        access.onImageTransferWrite(dstLevelGL, 1, region.dstSubresource.baseArrayLayer,
-                                    region.dstSubresource.layerCount, VK_IMAGE_ASPECT_COLOR_BIT,
-                                    dstImage);
+        if (srcImage == dstImage)
+        {
+            access.onImageSelfCopy(dstLevelGL, 1, region.dstSubresource.baseArrayLayer,
+                                   region.dstSubresource.layerCount, aspectFlags, srcImage);
+        }
+        else
+        {
+            access.onImageTransferRead(aspectFlags, srcImage);
+            access.onImageTransferWrite(dstLevelGL, 1, region.dstSubresource.baseArrayLayer,
+                                        region.dstSubresource.layerCount, aspectFlags, dstImage);
+        }
 
         OutsideRenderPassCommandBuffer *commandBuffer;
         ANGLE_TRY(contextVk->getOutsideRenderPassCommandBuffer(access, &commandBuffer));
 
         ASSERT(srcImage->valid() && dstImage->valid());
-        ASSERT(srcImage->getCurrentLayout(contextVk) == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-        ASSERT(dstImage->getCurrentLayout(contextVk) == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+        ASSERT(srcImage->getCurrentLayout(contextVk) == VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL ||
+               srcImage->getCurrentLayout(contextVk) == VK_IMAGE_LAYOUT_GENERAL);
+        ASSERT(dstImage->getCurrentLayout(contextVk) == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL ||
+               dstImage->getCurrentLayout(contextVk) == VK_IMAGE_LAYOUT_GENERAL);
 
         commandBuffer->copyImage(srcImage->getImage(), srcImage->getCurrentLayout(contextVk),
                                  dstImage->getImage(), dstImage->getCurrentLayout(contextVk), 1,
@@ -7406,7 +7431,7 @@ angle::Result ImageHelper::stageSubresourceUpdateImpl(ContextVk *contextVk,
     else
     {
         ASSERT(storageFormat.pixelBytes != 0);
-        const bool stencilOnly = formatInfo.internalFormat == GL_STENCIL_INDEX8;
+        const bool stencilOnly = formatInfo.sizedInternalFormat == GL_STENCIL_INDEX8;
 
         if (!stencilOnly && storageFormat.id == angle::FormatID::D24_UNORM_S8_UINT)
         {

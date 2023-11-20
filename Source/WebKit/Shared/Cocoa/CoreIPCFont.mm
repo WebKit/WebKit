@@ -23,12 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CoreIPCFont.h"
+#import "config.h"
+#import "CoreIPCFont.h"
 
 #if PLATFORM(COCOA)
 
 #import "CoreIPCNSCFObject.h"
+#import "CoreIPCTypes.h"
 #import "CoreTextHelpers.h"
 #import <wtf/BlockObjCExceptions.h>
 

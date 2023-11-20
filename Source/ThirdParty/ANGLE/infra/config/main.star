@@ -139,10 +139,6 @@ os = struct(
 
 _RECIPE_NAME_PREFIX = "recipe:"
 _DEFAULT_BUILDERLESS_OS_CATEGORIES = [os_category.LINUX, os_category.WINDOWS]
-_GOMA_RBE_PROD = {
-    "server_host": "goma.chromium.org",
-    "rpc_extra_params": "?prod",
-}
 
 def _recipe_for_package(cipd_package):
     def recipe(*, name, cipd_version = None, recipe = None, use_python3 = False):
@@ -198,12 +194,8 @@ def angle_builder(name, cpu):
     dimensions = {}
     dimensions["os"] = config_os.dimension
 
-    goma_props = {}
-    goma_props.update(_GOMA_RBE_PROD)
-
     if config_os.category in _DEFAULT_BUILDERLESS_OS_CATEGORIES:
         dimensions["builderless"] = "1"
-        goma_props["enable_ats"] = True
 
     is_asan = "-asan" in name
     is_tsan = "-tsan" in name
@@ -227,16 +219,14 @@ def angle_builder(name, cpu):
         category = "trace"
 
         # Trace tests are only run on CQ if files in the capture folders change.
-        # Temporarily disabled until goma->reclient switch anglebug.com/8309
-        # location_filters = [
-        #     cq.location_filter(path_regexp = "DEPS"),
-        #     cq.location_filter(path_regexp = "src/libANGLE/capture/.+"),
-        #     cq.location_filter(path_regexp = "src/tests/angle_end2end_tests_expectations.txt"),
-        #     cq.location_filter(path_regexp = "src/tests/capture.+"),
-        #     cq.location_filter(path_regexp = "src/tests/egl_tests/.+"),
-        #     cq.location_filter(path_regexp = "src/tests/gl_tests/.+"),
-        # ]
-
+        location_filters = [
+            cq.location_filter(path_regexp = "DEPS"),
+            cq.location_filter(path_regexp = "src/libANGLE/capture/.+"),
+            cq.location_filter(path_regexp = "src/tests/angle_end2end_tests_expectations.txt"),
+            cq.location_filter(path_regexp = "src/tests/capture.+"),
+            cq.location_filter(path_regexp = "src/tests/egl_tests/.+"),
+            cq.location_filter(path_regexp = "src/tests/gl_tests/.+"),
+        ]
     elif is_perf:
         test_mode = "compile_and_test"
         category = "perf"
@@ -274,7 +264,6 @@ def angle_builder(name, cpu):
 
     properties = {
         "builder_group": "angle",
-        "$build/goma": goma_props,
         "$build/reclient": {
             "instance": "rbe-chromium-untrusted",
             "metrics_project": "chromium-reclient-metrics",
@@ -287,7 +276,6 @@ def angle_builder(name, cpu):
 
     ci_properties = {
         "builder_group": "angle",
-        "$build/goma": goma_props,
         "$build/reclient": {
             "instance": "rbe-chromium-trusted",
             "metrics_project": "chromium-reclient-metrics",
@@ -368,9 +356,7 @@ def angle_builder(name, cpu):
         )
 
         # Don't add experimental bots to CQ.
-        # Temporarily don't add trace bots to CQ,
-        # until goma->reclient switch anglebug.com/8309
-        if not (is_exp or is_trace):
+        if not is_exp:
             luci.cq_tryjob_verifier(
                 cq_group = "main",
                 builder = "angle:try/" + name,

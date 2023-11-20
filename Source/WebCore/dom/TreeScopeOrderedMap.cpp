@@ -135,7 +135,6 @@ inline RefPtr<Element> TreeScopeOrderedMap::get(const AtomString& key, const Tre
     if (auto* currentScope = ContainerChildRemovalScope::currentScope()) {
         ASSERT(&scope.rootNode() == &currentScope->parentOfRemovedTree().rootNode());
         Ref removedTree = currentScope->removedChild();
-        ASSERT(is<ContainerNode>(removedTree));
         for (Ref element : descendantsOfType<Element>(downcast<ContainerNode>(removedTree.get()))) {
             if (!keyMatches(key, element))
                 continue;

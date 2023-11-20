@@ -213,10 +213,11 @@ void HTMLCollection::updateNamedElementCache() const
         const AtomString& id = element.getIdAttribute();
         if (!id.isEmpty())
             cache->appendToIdCache(id, element);
-        if (!is<HTMLElement>(element))
+        auto* htmlElement = dynamicDowncast<HTMLElement>(element);
+        if (!htmlElement)
             continue;
         const AtomString& name = element.getNameAttribute();
-        if (!name.isEmpty() && id != name && (type() != CollectionType::DocAll || nameShouldBeVisibleInDocumentAll(downcast<HTMLElement>(element))))
+        if (!name.isEmpty() && id != name && (type() != CollectionType::DocAll || nameShouldBeVisibleInDocumentAll(*htmlElement)))
             cache->appendToNameCache(name, element);
     }
 

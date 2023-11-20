@@ -1102,15 +1102,13 @@ void WindowSurfaceVk::destroy(const egl::Display *display)
 egl::Error WindowSurfaceVk::initialize(const egl::Display *display)
 {
     DisplayVk *displayVk = vk::GetImpl(display);
-    angle::Result result = initializeImpl(displayVk);
-    if (result == angle::Result::Incomplete)
+    bool anyMatches      = false;
+    angle::Result result = initializeImpl(displayVk, &anyMatches);
+    if (result == angle::Result::Continue && !anyMatches)
     {
-        return angle::ToEGL(result, EGL_BAD_MATCH);
+        return angle::ToEGL(angle::Result::Stop, EGL_BAD_MATCH);
     }
-    else
-    {
-        return angle::ToEGL(result, EGL_BAD_SURFACE);
-    }
+    return angle::ToEGL(result, EGL_BAD_SURFACE);
 }
 
 egl::Error WindowSurfaceVk::unMakeCurrent(const gl::Context *context)
@@ -1126,7 +1124,7 @@ egl::Error WindowSurfaceVk::unMakeCurrent(const gl::Context *context)
     return angle::ToEGL(result, EGL_BAD_CURRENT_SURFACE);
 }
 
-angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk)
+angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk, bool *anyMatchesOut)
 {
     RendererVk *renderer = displayVk->getRenderer();
 
@@ -1318,7 +1316,7 @@ angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk)
         renderer, static_cast<EGLenum>(mState.attributes.get(EGL_GL_COLORSPACE, EGL_NONE)));
     if (!displayVk->isSurfaceFormatColorspacePairSupported(mSurface, nativeFormat, colorSpace))
     {
-        return angle::Result::Incomplete;
+        return angle::Result::Continue;
     }
 
     mCompositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
@@ -1349,6 +1347,7 @@ angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk)
     ASSERT(vkResult != VK_SUBOPTIMAL_KHR);
     ANGLE_VK_TRY(displayVk, vkResult);
 
+    *anyMatchesOut = true;
     return angle::Result::Continue;
 }
 

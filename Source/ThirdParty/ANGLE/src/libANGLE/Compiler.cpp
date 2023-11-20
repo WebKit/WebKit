@@ -212,6 +212,7 @@ Compiler::Compiler(rx::GLImplFactory *implFactory, const State &state, egl::Disp
     mResources.MaxShaderStorageBufferBindings = caps.maxShaderStorageBufferBindings;
 
     // Needed by point size clamping workaround
+    mResources.MinPointSize = caps.minAliasedPointSize;
     mResources.MaxPointSize = caps.maxAliasedPointSize;
 
     if (state.getClientMajorVersion() == 2 && !extensions.drawBuffersEXT)

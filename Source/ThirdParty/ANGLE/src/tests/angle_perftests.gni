@@ -23,6 +23,7 @@ angle_perf_tests_sources = [
   "perf_tests/MultisampledRenderToTexturePerf.cpp",
   "perf_tests/MultisampledSwapchainResolve.cpp",
   "perf_tests/MultiviewPerf.cpp",
+  "perf_tests/ParallelLinkProgramPerfTest.cpp",
   "perf_tests/PointSprites.cpp",
   "perf_tests/PreRotationPerf.cpp",
   "perf_tests/ProgramPipelineObjectPerfTest.cpp",

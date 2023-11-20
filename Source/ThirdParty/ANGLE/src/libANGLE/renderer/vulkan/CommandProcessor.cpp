@@ -610,6 +610,8 @@ void CommandProcessor::requestCommandsAndGarbageCleanup()
 
 void CommandProcessor::processTasks()
 {
+    angle::SetCurrentThreadName("ANGLE-Submit");
+
     while (true)
     {
         bool exitThread      = false;

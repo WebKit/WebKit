@@ -449,6 +449,7 @@ module DSL
         i32 = PrimitiveType.new(:I32)
         u32 = PrimitiveType.new(:U32)
         f32 = PrimitiveType.new(:F32)
+        f16 = PrimitiveType.new(:F16)
         sampler = PrimitiveType.new(:Sampler)
         sampler_comparison = PrimitiveType.new(:SamplerComparison)
         texture_external = PrimitiveType.new(:TextureExternal)

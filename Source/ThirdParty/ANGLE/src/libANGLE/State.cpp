@@ -454,6 +454,8 @@ void PrivateState::initialize(Context *context)
         SetComponentTypeMask(ComponentType::Float, i, &mCurrentValuesTypeMask);
     }
 
+    mAllAttribsMask = AttributesMask(angle::BitMask<uint32_t>(mCaps.maxVertexAttributes));
+
     mMultiSampling    = true;
     mSampleAlphaToOne = false;
 

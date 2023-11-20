@@ -121,7 +121,10 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     void destroy(const gl::Context *context) override;
 
     void save(ContextVk *contextVk, bool isSeparable, gl::BinaryOutputStream *stream);
-    angle::Result load(ContextVk *contextVk, bool isSeparable, gl::BinaryInputStream *stream);
+    angle::Result load(ContextVk *contextVk,
+                       bool isSeparable,
+                       gl::BinaryInputStream *stream,
+                       bool *successOut);
 
     void setUniform1fv(GLint location, GLsizei count, const GLfloat *v) override;
     void setUniform2fv(GLint location, GLsizei count, const GLfloat *v) override;

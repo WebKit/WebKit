@@ -655,7 +655,7 @@ void GL_APIENTRY GL_CompileShader(GLuint shader)
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_CompressedTexImage2D(GLenum target,
@@ -2722,7 +2722,7 @@ void GL_APIENTRY GL_LinkProgram(GLuint program)
     {
         GenerateContextLostErrorOnCurrentGlobalContext();
     }
-    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+    egl::Display::GetCurrentThreadUnlockedTailCall()->run(nullptr);
 }
 
 void GL_APIENTRY GL_PixelStorei(GLenum pname, GLint param)

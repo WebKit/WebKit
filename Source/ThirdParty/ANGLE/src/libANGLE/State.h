@@ -582,7 +582,7 @@ class PrivateState : angle::NonCopyable
     {
         mDirtyBits.set();
         mExtendedDirtyBits.set();
-        mDirtyCurrentValues.set();
+        mDirtyCurrentValues = mAllAttribsMask;
     }
 
     const state::ExtendedDirtyBits &getExtendedDirtyBits() const { return mExtendedDirtyBits; }
@@ -655,6 +655,9 @@ class PrivateState : angle::NonCopyable
     using VertexAttribVector = std::vector<VertexAttribCurrentValueData>;
     VertexAttribVector mVertexAttribCurrentValues;  // From glVertexAttrib
     ComponentTypeMask mCurrentValuesTypeMask;
+
+    // Mask of all attributes that are available to this context: [0, maxVertexAttributes)
+    AttributesMask mAllAttribsMask;
 
     // Texture and sampler bindings
     GLint mActiveSampler;  // Active texture unit selector - GL_TEXTURE0

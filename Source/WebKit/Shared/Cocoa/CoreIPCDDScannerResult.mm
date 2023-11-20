@@ -29,8 +29,7 @@
 #if ENABLE(DATA_DETECTION)
 #if PLATFORM(COCOA)
 
-#import "CoreIPCDictionary.h"
-#import "CoreIPCNSCFObject.h"
+#import "CoreIPCTypes.h"
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 
 @interface DDScannerResult ()

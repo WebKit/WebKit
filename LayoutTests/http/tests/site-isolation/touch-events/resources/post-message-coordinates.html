@@ -1,0 +1,9 @@
+<script>
+function coordinates(event) {
+    return event.pageX + "," + event.pageY;
+}
+
+addEventListener("touchstart", (event) => window.parent.postMessage("touchstart " + coordinates(event), "*"));
+addEventListener("touchmove", (event) => window.parent.postMessage("touchmove " + coordinates(event), "*"));
+addEventListener("touchend", (event) => window.parent.postMessage("touchend " + coordinates(event), "*"));
+</script>

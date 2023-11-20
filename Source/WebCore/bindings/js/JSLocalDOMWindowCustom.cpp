@@ -198,6 +198,7 @@ bool JSLocalDOMWindow::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexi
 
     auto* thisObject = jsCast<JSLocalDOMWindow*>(object);
 
+    ASSERT(lexicalGlobalObject->vm().currentThreadIsHoldingAPILock());
     // Construct3 assumes that the presence of OffscreenCanvas implies
     // that WebGL will always be available, which isn't true yet.
     // Disable OffscreenCanvas when the Construct3 library is present
@@ -245,6 +246,7 @@ bool JSLocalDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObjec
     // Indexed getters take precendence over regular properties, so caching would be invalid.
     slot.disableCaching();
 
+    ASSERT(lexicalGlobalObject->vm().currentThreadIsHoldingAPILock());
     // These are also allowed cross-origin, so come before the access check.
     if (frame && index < frame->tree().scopedChildCount()) {
         // FIXME: <rdar://118263337> LocalDOMWindow::length needs to include RemoteFrames.

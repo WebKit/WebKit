@@ -2527,11 +2527,12 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
 
             // If a block contains floats and the child's height isn't specified, then
             // give up also, since our height could end up being influenced by the floats.
-            if (checkingLogicalHeight && !hasSpecifiedLogicalHeight && currentBox->isRenderBlockFlow()) {
-                CheckedRef currentBlockFlow = downcast<RenderBlockFlow>(*currentBox);
-                if (currentBlockFlow->containsFloats() && previousBox && !previousBox->isFloatingOrOutOfFlowPositioned()) {
-                    requireFullLayout = true;
-                    break;
+            if (checkingLogicalHeight && !hasSpecifiedLogicalHeight) {
+                if (CheckedPtr currentBlockFlow = dynamicDowncast<RenderBlockFlow>(*currentBox)) {
+                    if (currentBlockFlow->containsFloats() && previousBox && !previousBox->isFloatingOrOutOfFlowPositioned()) {
+                        requireFullLayout = true;
+                        break;
+                    }
                 }
             }
 
@@ -3289,7 +3290,6 @@ std::unique_ptr<FontLoadRequest> Document::fontLoadRequest(const String& url, bo
 
 void Document::beginLoadingFontSoon(FontLoadRequest& request)
 {
-    ASSERT(is<CachedFontLoadRequest>(request));
     CachedResourceHandle font = downcast<CachedFontLoadRequest>(request).cachedFont();
     m_fontLoader->beginLoadingFontSoon(*font);
 }
@@ -5600,8 +5600,7 @@ void Document::enqueueOverflowEvent(Ref<Event>&& event)
     // FIXME: This event is totally unspecified.
     RefPtr target = event->target();
     RELEASE_ASSERT(target);
-    RELEASE_ASSERT(is<Node>(target));
-    eventLoop().queueTask(TaskSource::DOMManipulation, [protectedTarget = GCReachableRef<Node>(downcast<Node>(*target)), event = WTFMove(event)] {
+    eventLoop().queueTask(TaskSource::DOMManipulation, [protectedTarget = GCReachableRef<Node>(checkedDowncast<Node>(*target)), event = WTFMove(event)] {
         protectedTarget->dispatchEvent(event);
     });
 }

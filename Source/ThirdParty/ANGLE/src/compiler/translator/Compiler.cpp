@@ -1188,7 +1188,8 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
 
     if (getShaderType() == GL_VERTEX_SHADER && compileOptions.clampPointSize)
     {
-        if (!ClampPointSize(this, root, mResources.MaxPointSize, &getSymbolTable()))
+        if (!ClampPointSize(this, root, mResources.MinPointSize, mResources.MaxPointSize,
+                            &getSymbolTable()))
         {
             return false;
         }

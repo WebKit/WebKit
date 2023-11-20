@@ -185,6 +185,14 @@
                 "Make egl surface uncurrent when calling eglDestroySurface(), if the surface is still bound by the context of current render thread"
             ],
             "issue": "https://issuetracker.google.com/292285899"
+        },
+        {
+            "name": "force_minimum_max_vertex_attributes",
+            "category": "Features",
+            "description": [
+                "Force the minimum GL_MAX_VERTEX_ATTRIBS that the context's client version allows."
+            ],
+            "issue": ""
         }
     ]
 }

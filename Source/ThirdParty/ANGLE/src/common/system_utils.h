@@ -253,6 +253,8 @@ ANGLE_INLINE ThreadId InvalidThreadId()
     return ThreadId();
 }
 #endif
+
+void SetCurrentThreadName(const char *name);
 }  // namespace angle
 
 #endif  // COMMON_SYSTEM_UTILS_H_

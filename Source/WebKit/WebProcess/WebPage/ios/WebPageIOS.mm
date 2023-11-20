@@ -4505,20 +4505,20 @@ void WebPage::willStartUserTriggeredZooming()
 }
 
 #if ENABLE(IOS_TOUCH_EVENTS)
-void WebPage::dispatchAsynchronousTouchEvents(Vector<std::pair<WebTouchEvent, CompletionHandler<void(bool)>>, 1>&& queue)
+void WebPage::dispatchAsynchronousTouchEvents(Vector<EventDispatcher::TouchEventData, 1>&& queue)
 {
-    for (auto& eventAndCallbackID : queue) {
-        bool handled = dispatchTouchEvent(eventAndCallbackID.first);
-        if (auto& completionHandler = eventAndCallbackID.second)
-            completionHandler(handled);
+    for (auto& touchEventData : queue) {
+        auto handleTouchEventResult = dispatchTouchEvent(touchEventData.frameID, touchEventData.event);
+        if (auto& completionHandler = touchEventData.completionHandler)
+            completionHandler(handleTouchEventResult.wasHandled(), handleTouchEventResult.remoteUserInputEventData());
     }
 }
 
-void WebPage::cancelAsynchronousTouchEvents(Vector<std::pair<WebTouchEvent, CompletionHandler<void(bool)>>, 1>&& queue)
+void WebPage::cancelAsynchronousTouchEvents(Vector<EventDispatcher::TouchEventData, 1>&& queue)
 {
-    for (auto& eventAndCallbackID : queue) {
-        if (auto& completionHandler = eventAndCallbackID.second)
-            completionHandler(true);
+    for (auto& touchEventData : queue) {
+        if (auto& completionHandler = touchEventData.completionHandler)
+            completionHandler(true, std::nullopt);
     }
 }
 #endif

@@ -26,7 +26,6 @@
 #pragma once
 
 #if ENABLE(DATA_DETECTION)
-#if PLATFORM(COCOA)
 
 #include "ArgumentCodersCocoa.h"
 #include "CoreIPCDictionary.h"
@@ -36,8 +35,6 @@
 OBJC_CLASS DDScannerResult;
 
 namespace WebKit {
-
-class CoreIPCNSCFObject;
 
 class CoreIPCDDScannerResult {
 public:
@@ -66,5 +63,4 @@ private:
 
 } // namespace WebKit
 
-#endif // PLATFORM(COCOA)
 #endif // ENABLE(DATA_DETECTION)

@@ -33,6 +33,28 @@
 
 namespace WGSL {
 
+#if HAVE(FP16_HALF_SUPPORT)
+using half = __fp16;
+#else
+struct half {
+    half()
+    {
+    }
+
+    half(auto val)
+        : value(static_cast<float>(val))
+    {
+    }
+
+    operator float() const
+    {
+        return static_cast<float>(value);
+    }
+
+    __fp16 value { 0.f };
+};
+#endif
+
 // A constant value might be:
 // - a scalar
 // - a vector
@@ -103,7 +125,7 @@ struct ConstantStruct {
     HashMap<String, ConstantValue> fields;
 };
 
-using BaseValue = std::variant<float, double, int32_t, uint32_t, int64_t, bool, ConstantArray, ConstantVector, ConstantMatrix, ConstantStruct>;
+using BaseValue = std::variant<float, half, double, int32_t, uint32_t, int64_t, bool, ConstantArray, ConstantVector, ConstantMatrix, ConstantStruct>;
 struct ConstantValue : BaseValue {
     ConstantValue() = default;
 
@@ -112,17 +134,11 @@ struct ConstantValue : BaseValue {
     void dump(PrintStream&) const;
 
     bool isBool() const { return std::holds_alternative<bool>(*this); }
-    bool isI32() const { return std::holds_alternative<int32_t>(*this); }
-    bool isU32() const { return std::holds_alternative<uint32_t>(*this); }
-    bool isAbstractInt() const { return std::holds_alternative<int64_t>(*this); }
-    bool isF32() const { return std::holds_alternative<float>(*this); }
-    bool isAbstractFloat() const { return std::holds_alternative<double>(*this); }
     bool isVector() const { return std::holds_alternative<ConstantVector>(*this); }
     bool isMatrix() const { return std::holds_alternative<ConstantMatrix>(*this); }
     bool isArray() const { return std::holds_alternative<ConstantArray>(*this); }
 
     bool toBool() const { return std::get<bool>(*this); }
-    float toF32() const { return std::get<float>(*this); }
 
     int64_t integerValue() const
     {
@@ -153,14 +169,28 @@ std::optional<To> convertInteger(From value)
 template<typename To, typename From>
 std::optional<To> convertFloat(From value)
 {
-    static_assert(std::is_floating_point<To>::value || std::is_same<To, __fp16>::value, "Result type is expected to be a floating point type: double, float, or __fp16");
-    if (value > std::numeric_limits<To>::max())
+    static_assert(std::is_floating_point<To>::value || std::is_same<To, half>::value, "Result type is expected to be a floating point type: double, float, or half");
+
+    static To max;
+    static To lowest;
+    static To min;
+    if constexpr (std::is_floating_point<To>::value) {
+        max = std::numeric_limits<To>::max();
+        lowest = std::numeric_limits<To>::lowest();
+        min = std::numeric_limits<To>::min();
+    } else {
+        max = 0x1.ffcp15;
+        lowest = -max;
+        min = 0x1.0p-14;
+    }
+
+    if (value > max)
         return std::nullopt;
-    if (value < std::numeric_limits<To>::lowest())
+    if (value < lowest)
         return std::nullopt;
     if (std::isnan(value))
         return std::nullopt;
-    if (std::abs(value) < std::numeric_limits<To>::min())
+    if (std::abs(value) < min)
         return { 0 };
 
     return { value };

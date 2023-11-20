@@ -302,7 +302,6 @@ static std::optional<size_t> findTrailingRunIndexBeforeBreakableRun(const Inline
 
 static bool isBreakableRun(const InlineContentBreaker::ContinuousContent::Run& run)
 {
-    ASSERT(run.inlineItem.isText() || run.inlineItem.isInlineBoxStart() || run.inlineItem.isInlineBoxEnd() || run.inlineItem.isOpaque() || run.inlineItem.layoutBox().isImage() || run.inlineItem.layoutBox().isListMarkerBox());
     if (!run.inlineItem.isText()) {
         // Can't break horizontal spacing -> e.g. <span style="padding-right: 100px;">textcontent</span>, if the [inline box end] is the overflown inline item
         // we need to check if there's another inline item beyond the [inline box end] to split.

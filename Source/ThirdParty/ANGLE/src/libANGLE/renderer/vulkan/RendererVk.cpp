@@ -201,6 +201,8 @@ VkResult VerifyExtensionsPresent(const vk::ExtensionNameList &haystack,
 
 // Array of Validation error/warning messages that will be ignored, should include bugID
 constexpr const char *kSkippedMessages[] = {
+    // http://anglebug.com/8401
+    "Undefined-Value-ShaderOutputNotConsumed",
     // http://anglebug.com/5304
     "VUID-vkCmdDraw-magFilter-04553", "VUID-vkCmdDrawIndexed-magFilter-04553",
     // http://anglebug.com/5309
@@ -4828,7 +4830,12 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 void RendererVk::appBasedFeatureOverrides(DisplayVk *display,
                                           const vk::ExtensionNameList &extensions)
 {
-    // NOOP for now.
+    // BUG: b/239181279 Android camera app sometimes uses an uninitialized value for layerCount of
+    // the ANativeWindowBuffer. Force layerCount to 1 until we can root cause and fix the AHB
+    // creation.
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, forceAHBLayerCountToOne,
+        strcmp(mApplicationInfo.pApplicationName, "com.google.android.GoogleCamera") == 0);
 }
 
 angle::Result RendererVk::initPipelineCache(DisplayVk *display,

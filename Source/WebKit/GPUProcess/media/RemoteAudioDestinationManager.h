@@ -30,6 +30,7 @@
 #include "Connection.h"
 #include "IPCSemaphore.h"
 #include "RemoteAudioDestinationIdentifier.h"
+#include "SharedMemory.h"
 #include <memory>
 #include <wtf/CompletionHandler.h>
 #include <wtf/HashMap.h>

@@ -342,14 +342,10 @@ foreach(is_shared_library,
     if (is_fuchsia) {
       public_deps += [
         "$angle_root/src/common/fuchsia_egl",
-        "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.images",
-        "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.policy",
-        "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.scenic",
-        "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.ui.views",
+        "//third_party/fuchsia-sdk/sdk/fidl/fuchsia.element",
         "//third_party/fuchsia-sdk/sdk/pkg/async-loop-cpp",
         "//third_party/fuchsia-sdk/sdk/pkg/async-loop-default",
         "//third_party/fuchsia-sdk/sdk/pkg/fdio",
-        "//third_party/fuchsia-sdk/sdk/pkg/scenic_cpp",
       ]
     }
 

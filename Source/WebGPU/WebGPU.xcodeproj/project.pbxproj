@@ -167,6 +167,7 @@
 		97C36CFF29F1730100CFB379 /* Constraints.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97C36CFD29F1730000CFB379 /* Constraints.cpp */; };
 		97D398E62B06A85B00D8C4AA /* ASTDiagnosticDirective.h in Headers */ = {isa = PBXBuildFile; fileRef = 97D398E42B06A85B00D8C4AA /* ASTDiagnosticDirective.h */; };
 		97D398E72B06A85B00D8C4AA /* ASTDiagnostic.h in Headers */ = {isa = PBXBuildFile; fileRef = 97D398E52B06A85B00D8C4AA /* ASTDiagnostic.h */; };
+		97D398E32B05106000D8C4AA /* ASTFloat16Literal.h in Headers */ = {isa = PBXBuildFile; fileRef = 97D398E22B05106000D8C4AA /* ASTFloat16Literal.h */; };
 		97E21C8B2A1F5DCC009CEB0E /* ASTDecrementIncrementStatement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E21C8A2A1F5DCC009CEB0E /* ASTDecrementIncrementStatement.cpp */; };
 		97E21C972A2512F7009CEB0E /* ConstantValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E21C942A2512F7009CEB0E /* ConstantValue.cpp */; };
 		97E21C982A2512F7009CEB0E /* ConstantValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E21C952A2512F7009CEB0E /* ConstantValue.h */; };
@@ -452,6 +453,7 @@
 		97C36CFD29F1730000CFB379 /* Constraints.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Constraints.cpp; sourceTree = "<group>"; };
 		97D398E42B06A85B00D8C4AA /* ASTDiagnosticDirective.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTDiagnosticDirective.h; sourceTree = "<group>"; };
 		97D398E52B06A85B00D8C4AA /* ASTDiagnostic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTDiagnostic.h; sourceTree = "<group>"; };
+		97D398E22B05106000D8C4AA /* ASTFloat16Literal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTFloat16Literal.h; sourceTree = "<group>"; };
 		97E21C8A2A1F5DCC009CEB0E /* ASTDecrementIncrementStatement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ASTDecrementIncrementStatement.cpp; sourceTree = "<group>"; };
 		97E21C942A2512F7009CEB0E /* ConstantValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstantValue.cpp; sourceTree = "<group>"; };
 		97E21C952A2512F7009CEB0E /* ConstantValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstantValue.h; sourceTree = "<group>"; };
@@ -724,6 +726,7 @@
 				97099ABE2AA60D58003B41F8 /* ASTElaboratedTypeExpression.h */,
 				33EA186B27BC1CBC00A1DD52 /* ASTExpression.h */,
 				33EA188327BC268600A1DD52 /* ASTFieldAccessExpression.h */,
+				97D398E22B05106000D8C4AA /* ASTFloat16Literal.h */,
 				3A12AED228FCFC5500C1B975 /* ASTFloat32Literal.h */,
 				3A12AE9628FCE94B00C1B975 /* ASTForStatement.h */,
 				3A1337E928FBD56E00F29B73 /* ASTForward.h */,
@@ -838,6 +841,7 @@
 				97099AC12AA60D58003B41F8 /* ASTElaboratedTypeExpression.h in Headers */,
 				33EA186C27BC1CBC00A1DD52 /* ASTExpression.h in Headers */,
 				33EA188427BC268600A1DD52 /* ASTFieldAccessExpression.h in Headers */,
+				97D398E32B05106000D8C4AA /* ASTFloat16Literal.h in Headers */,
 				3A12AED828FCFC5600C1B975 /* ASTFloat32Literal.h in Headers */,
 				3A12AEB028FCE94C00C1B975 /* ASTForStatement.h in Headers */,
 				3A1337EA28FBD56E00F29B73 /* ASTForward.h in Headers */,

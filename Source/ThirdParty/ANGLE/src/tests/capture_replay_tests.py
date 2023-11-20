@@ -31,7 +31,6 @@ import logging
 import math
 import multiprocessing
 import os
-import psutil
 import queue
 import re
 import shutil
@@ -87,17 +86,6 @@ default_case_with_return_template = """\
 def winext(name, ext):
     return ("%s.%s" % (name, ext)) if sys.platform == "win32" else name
 
-
-def AutodetectGoma():
-    for p in psutil.process_iter():
-        try:
-            if winext('compiler_proxy', 'exe') == p.name():
-                return True
-        except:
-            pass
-    return False
-
-
 class SubProcess():
 
     def __init__(self, command, logger, env=os.environ, pipe_stdout=PIPE_STDOUT):
@@ -137,8 +125,8 @@ class ChildProcessesManager():
         return os.path.join('third_party', 'depot_tools', winext('gn', 'bat'))
 
     @classmethod
-    def _GetNinjaAbsolutePaths(self):
-        return os.path.join('third_party', 'ninja', 'ninja')
+    def _GetAutoNinjaAbsolutePaths(self):
+        return os.path.join('third_party', 'depot_tools', 'autoninja.py')
 
     def __init__(self, args, logger, ninja_lock):
         # a dictionary of Subprocess, with pid as key
@@ -147,8 +135,7 @@ class ChildProcessesManager():
         self.workers = []
 
         self._gn_path = self._GetGnAbsolutePaths()
-        self._ninja_path = self._GetNinjaAbsolutePaths()
-        self._use_goma = AutodetectGoma()
+        self._autoninja_path = self._GetAutoNinjaAbsolutePaths()
         self._logger = logger
         self._ninja_lock = ninja_lock
         self.runtimes = {}
@@ -214,10 +201,8 @@ class ChildProcessesManager():
 
     def RunGNGen(self, build_dir, pipe_stdout, extra_gn_args=[]):
         gn_args = [('angle_with_capture_by_default', 'true')] + extra_gn_args
-        if self._use_goma:
-            gn_args.append(('use_goma', 'true'))
-            if self._args.goma_dir:
-                gn_args.append(('goma_dir', '"%s"' % self._args.goma_dir))
+        if self._args.use_reclient:
+            gn_args.append(('use_remoteexec', 'true'))
         if not self._args.debug:
             gn_args.append(('is_debug', 'false'))
             gn_args.append(('symbol_level', '1'))
@@ -229,30 +214,8 @@ class ChildProcessesManager():
         self._logger.info(' '.join(cmd))
         return self.RunSubprocess(cmd, pipe_stdout=pipe_stdout)
 
-    def RunNinja(self, build_dir, target, pipe_stdout):
-        cmd = [self._ninja_path]
-
-        # This code is taken from depot_tools/autoninja.py
-        if self._use_goma:
-            num_cores = multiprocessing.cpu_count()
-            cmd.append('-j')
-            core_multiplier = 40
-            j_value = num_cores * core_multiplier
-
-            if sys.platform.startswith('win'):
-                # On windows, j value higher than 1000 does not improve build performance.
-                j_value = min(j_value, 1000)
-            elif sys.platform == 'darwin':
-                # On Mac, j value higher than 500 causes 'Too many open files' error
-                # (crbug.com/936864).
-                j_value = min(j_value, 500)
-
-            cmd.append('%d' % j_value)
-        else:
-            cmd.append('-l')
-            cmd.append('%d' % os.cpu_count())
-
-        cmd += ['-C', build_dir, target]
+    def RunAutoNinja(self, build_dir, target, pipe_stdout):
+        cmd = [sys.executable, self._autoninja_path, '-C', build_dir, target]
         with self._ninja_lock:
             self._logger.info(' '.join(cmd))
             return self.RunSubprocess(cmd, pipe_stdout=pipe_stdout)
@@ -533,8 +496,8 @@ class TestBatch():
                 GroupedResult(GroupedResult.CompileFailed, "Build replay failed at gn generation",
                               output, tests))
             return False
-        returncode, output = child_processes_manager.RunNinja(replay_build_dir, REPLAY_BINARY,
-                                                              True)
+        returncode, output = child_processes_manager.RunAutoNinja(replay_build_dir, REPLAY_BINARY,
+                                                                  True)
         if returncode != 0:
             self.logger.warning('Ninja failure output: %s' % output)
             self.results.append(
@@ -909,8 +872,8 @@ def main(args):
             child_processes_manager.KillAll()
             return EXIT_FAILURE
         # run ninja to build all tests
-        returncode, output = child_processes_manager.RunNinja(capture_build_dir, args.test_suite,
-                                                              False)
+        returncode, output = child_processes_manager.RunAutoNinja(capture_build_dir,
+                                                                  args.test_suite, False)
         if returncode != 0:
             logger.error(output)
             child_processes_manager.KillAll()
@@ -1108,9 +1071,10 @@ if __name__ == '__main__':
         help='Whether to keep the temp files and folders. Off by default')
     parser.add_argument('--purge', help='Purge all build directories on exit.')
     parser.add_argument(
-        '--goma-dir',
-        default='',
-        help='Set custom goma directory. Uses the goma in path by default.')
+        '--use-reclient',
+        default=False,
+        action='store_true',
+        help='Set use_remoteexec=true in args.gn.')
     parser.add_argument(
         '--output-to-file',
         action='store_true',

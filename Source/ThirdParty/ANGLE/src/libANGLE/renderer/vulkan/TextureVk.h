@@ -530,7 +530,9 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     angle::Result maybeUpdateBaseMaxLevels(ContextVk *contextVk,
                                            TextureUpdateResult *changeResultOut);
 
-    bool isFastUnpackPossible(const vk::Format &vkFormat, size_t offset) const;
+    bool isFastUnpackPossible(const vk::Format &vkFormat,
+                              size_t offset,
+                              const vk::Format &bufferVkFormat) const;
 
     bool shouldUpdateBeStaged(gl::LevelIndex textureLevelIndexGL,
                               angle::FormatID dstFormatID) const;

@@ -6895,3 +6895,5 @@ imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-on-synthetic-event.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-without-intercept.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/no-args.html [ Pass ]
+
+http/tests/site-isolation/touch-events [ Skip ]

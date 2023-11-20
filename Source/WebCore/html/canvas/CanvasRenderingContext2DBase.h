@@ -53,6 +53,7 @@
 
 namespace WebCore {
 
+class ByteArrayPixelBuffer;
 class CachedImage;
 class CanvasGradient;
 class DOMMatrix;
@@ -324,11 +325,10 @@ protected:
 
 private:
     struct CachedImageData {
-        CachedImageData(CanvasRenderingContext2DBase&);
+        CachedImageData(CanvasRenderingContext2DBase&, Ref<ByteArrayPixelBuffer>);
 
-        RefPtr<ImageData> imageData;
+        Ref<ByteArrayPixelBuffer> imageData;
         DeferrableOneShotTimer evictionTimer;
-        unsigned requestCount = 0;
     };
 
     void applyLineDash() const;
@@ -444,7 +444,7 @@ private:
 
     FloatPoint textOffset(float width, TextDirection);
 
-    bool cacheImageDataIfPossible(ImageData&, const IntPoint& destinationPosition, const IntRect& sourceRect);
+    RefPtr<ByteArrayPixelBuffer> cacheImageDataIfPossible(const ImageData&, const IntRect& sourceRect, const IntPoint& destinationPosition);
     RefPtr<ImageData> takeCachedImageDataIfPossible(const IntRect& sourceRect, PredefinedColorSpace) const;
     void evictCachedImageData();
 

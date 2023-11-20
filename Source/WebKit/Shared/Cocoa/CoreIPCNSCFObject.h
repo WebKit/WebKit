@@ -27,47 +27,52 @@
 
 #if PLATFORM(COCOA)
 
-#include "CoreIPCArray.h"
-#include "CoreIPCCFType.h"
-#include "CoreIPCColor.h"
-#include "CoreIPCDDScannerResult.h"
-#include "CoreIPCData.h"
-#include "CoreIPCDate.h"
-#include "CoreIPCDictionary.h"
-#include "CoreIPCError.h"
-#include "CoreIPCFont.h"
-#include "CoreIPCNSValue.h"
-#include "CoreIPCNumber.h"
-#include "CoreIPCSecureCoding.h"
-#include "CoreIPCString.h"
-#include "CoreIPCURL.h"
+#include "ArgumentCodersCocoa.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebKit {
+
+class CoreIPCArray;
+class CoreIPCCFType;
+class CoreIPCColor;
+#if ENABLE(DATA_DETECTION)
+class CoreIPCDDScannerResult;
+#endif
+class CoreIPCData;
+class CoreIPCDate;
+class CoreIPCDictionary;
+class CoreIPCError;
+class CoreIPCFont;
+class CoreIPCNSValue;
+class CoreIPCNumber;
+class CoreIPCSecureCoding;
+class CoreIPCString;
+class CoreIPCURL;
+
+using ObjectValue = std::variant<
+    std::nullptr_t,
+    CoreIPCArray,
+    CoreIPCCFType,
+    CoreIPCColor,
+#if ENABLE(DATA_DETECTION)
+    CoreIPCDDScannerResult,
+#endif
+    CoreIPCData,
+    CoreIPCDate,
+    CoreIPCDictionary,
+    CoreIPCError,
+    CoreIPCFont,
+    CoreIPCNSValue,
+    CoreIPCNumber,
+    CoreIPCSecureCoding,
+    CoreIPCString,
+    CoreIPCURL
+>;
 
 class CoreIPCNSCFObject {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    using ObjectValue = std::variant<
-        std::nullptr_t,
-        CoreIPCArray,
-        CoreIPCCFType,
-        CoreIPCColor,
-#if ENABLE(DATA_DETECTION)
-        CoreIPCDDScannerResult,
-#endif
-        CoreIPCData,
-        CoreIPCDate,
-        CoreIPCDictionary,
-        CoreIPCError,
-        CoreIPCFont,
-        CoreIPCNSValue,
-        CoreIPCNumber,
-        CoreIPCSecureCoding,
-        CoreIPCString,
-        CoreIPCURL
-    >;
-
     CoreIPCNSCFObject(id);
 
     RetainPtr<id> toID() const;
@@ -77,14 +82,22 @@ public:
 private:
     friend struct IPC::ArgumentCoder<CoreIPCNSCFObject, void>;
 
-    CoreIPCNSCFObject(ObjectValue&& value)
-        : m_value(WTFMove(value))
-    {
-    }
+    CoreIPCNSCFObject(UniqueRef<ObjectValue>&&);
 
-    ObjectValue m_value;
+    UniqueRef<ObjectValue> m_value;
 };
 
 } // namespace WebKit
+
+namespace IPC {
+
+// This ArgumentCoders specialization for UniqueRef<ObjectValue> is to allow us to use
+// makeUniqueRefWithoutFastMallocCheck<>, since we can't make the variant fast malloc'ed
+template<> struct ArgumentCoder<UniqueRef<WebKit::ObjectValue>> {
+    static void encode(Encoder&, const UniqueRef<WebKit::ObjectValue>&);
+    static std::optional<UniqueRef<WebKit::ObjectValue>> decode(Decoder&);
+};
+
+} // namespace IPC
 
 #endif // PLATFORM(COCOA)

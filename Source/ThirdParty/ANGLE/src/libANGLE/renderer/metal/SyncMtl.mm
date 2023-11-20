@@ -133,7 +133,7 @@ angle::Result Sync::clientWait(ContextMtl *contextMtl,
                        [this] { return mMetalSharedEvent.get().signaledValue >= mSignalValue; }))
     {
         *outResult = GL_TIMEOUT_EXPIRED;
-        return angle::Result::Incomplete;
+        return angle::Result::Continue;
     }
 
     ASSERT(mMetalSharedEvent.get().signaledValue >= mSignalValue);

@@ -94,11 +94,11 @@ bool isFeaturePolicyAllowedByDocumentAndAllOwners(FeaturePolicy::Type type, cons
         }
 
         auto* ownerElement = ancestorDocument->ownerElement();
-        if (is<HTMLIFrameElement>(ownerElement)) {
-            const auto& featurePolicy = downcast<HTMLIFrameElement>(ownerElement)->featurePolicy();
+        if (auto* iframe = dynamicDowncast<HTMLIFrameElement>(ownerElement)) {
+            const auto& featurePolicy = iframe->featurePolicy();
             if (!featurePolicy.allows(type, ancestorDocument->securityOrigin().data())) {
                 if (logFailure == LogFeaturePolicyFailure::Yes && document.domWindow()) {
-                    auto& allowValue = downcast<HTMLIFrameElement>(ownerElement)->attributeWithoutSynchronization(HTMLNames::allowAttr);
+                    auto& allowValue = iframe->attributeWithoutSynchronization(HTMLNames::allowAttr);
                     document.domWindow()->printErrorMessage(makeString("Feature policy '", policyTypeName(type), "' check failed for iframe with origin '", document.securityOrigin().toString(), "' and allow attribute '", allowValue, "'."));
                 }
                 return false;

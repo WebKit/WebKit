@@ -70,6 +70,7 @@ public:
     void visit(CallExpression&) override;
     void visit(FieldAccessExpression&) override;
     void visit(Float32Literal&) override;
+    void visit(Float16Literal&) override;
     void visit(IdentifierExpression&) override;
     void visit(IndexAccessExpression&) override;
     void visit(PointerDereferenceExpression&) override;
