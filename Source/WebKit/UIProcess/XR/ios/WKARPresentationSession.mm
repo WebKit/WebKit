@@ -28,8 +28,13 @@
 
 #if ENABLE(WEBXR) && USE(ARKITXR_IOS)
 
+#import "Logging.h"
+
 #import <Metal/Metal.h>
+#import <wtf/RunLoop.h>
 #import <wtf/WeakObjCPtr.h>
+
+#import "ARKitSoftLink.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -122,19 +127,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - WKARPresentationSession
 
--(ARFrame *)currentFrame {
+- (ARFrame *)currentFrame {
     return [_session currentFrame];
 }
 
--(ARSession *)session {
+- (ARSession *)session {
     return (ARSession *) _session;
 }
 
--(nonnull id<MTLSharedEvent>)completionEvent {
+- (nonnull id<MTLSharedEvent>)completionEvent {
     return (id<MTLSharedEvent>) _completionEvent;
 }
 
--(nullable id<MTLTexture>)colorTexture {
+- (nullable id<MTLTexture>)colorTexture {
     return [_currentDrawable texture];
 }
 
