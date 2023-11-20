@@ -714,8 +714,17 @@ public:
 
         asanSetInitialBufferSizeTo(size);
 
-        for (size_t i = 0; i < size; ++i)
-            unsafeAppendWithoutCapacityCheck(valueGenerator(i));
+        if constexpr (std::is_same_v<std::invoke_result_t<Functor, size_t>, std::optional<T>>) {
+            for (size_t i = 0; i < size; ++i) {
+                if (auto item = valueGenerator(i))
+                    unsafeAppendWithoutCapacityCheck(WTFMove(*item));
+                else
+                    return;
+            }
+        } else {
+            for (size_t i = 0; i < size; ++i)
+                unsafeAppendWithoutCapacityCheck(valueGenerator(i));
+        }
     }
 
     template<typename U = T>
