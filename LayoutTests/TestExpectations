@@ -6896,4 +6896,8 @@ imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-on-synthet
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-without-intercept.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/no-args.html [ Pass ]
 
+# View Transitions
+imported/w3c/web-platform-tests/css/css-view-transitions [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/parsing [ Pass ]
+
 http/tests/site-isolation/touch-events [ Skip ]

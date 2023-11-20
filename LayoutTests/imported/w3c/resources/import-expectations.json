@@ -75,6 +75,7 @@
     "web-platform-tests/css/css-ui": "import",
     "web-platform-tests/css/css-values": "import",
     "web-platform-tests/css/css-variables": "import",
+    "web-platform-tests/css/css-view-transitions": "import",
     "web-platform-tests/css/css-will-change": "import",
     "web-platform-tests/css/css-writing-modes": "import",
     "web-platform-tests/css/cssom": "import",
