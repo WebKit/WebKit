@@ -557,10 +557,15 @@ inline bool RenderStyle::setTextOrientation(TextOrientation textOrientation)
     return true;
 }
 
+inline void RenderStyle::setVerticalAlign(VerticalAlign align)
+{
+    SET_NESTED(m_nonInheritedData, boxData, m_verticalAlign, static_cast<unsigned>(align));
+}
+
 inline void RenderStyle::setVerticalAlignLength(Length&& length)
 {
     setVerticalAlign(VerticalAlign::Length);
-    SET_NESTED(m_nonInheritedData, boxData, m_verticalAlign, WTFMove(length));
+    SET_NESTED(m_nonInheritedData, boxData, m_verticalAlignLength, WTFMove(length));
 }
 
 inline void RenderStyle::setWidows(unsigned short count)
