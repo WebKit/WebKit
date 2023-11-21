@@ -1248,7 +1248,6 @@ $(PROJECT_DIR)/css/StyleSheetList.idl
 $(PROJECT_DIR)/css/WebKitCSSViewportRule.idl
 $(PROJECT_DIR)/css/WebKitFontFamilyNames.in
 $(PROJECT_DIR)/css/counterStyles.css
-$(PROJECT_DIR)/css/dialog.css
 $(PROJECT_DIR)/css/fullscreen.css
 $(PROJECT_DIR)/css/horizontalFormControls.css
 $(PROJECT_DIR)/css/html.css

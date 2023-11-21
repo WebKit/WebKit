@@ -41,7 +41,6 @@
 #include "HTMLBRElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDataListElement.h"
-#include "HTMLDialogElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLHeadElement.h"
@@ -75,7 +74,6 @@ unsigned UserAgentStyle::defaultStyleVersion;
 
 StyleSheetContents* UserAgentStyle::defaultStyleSheet;
 StyleSheetContents* UserAgentStyle::quirksStyleSheet;
-StyleSheetContents* UserAgentStyle::dialogStyleSheet;
 StyleSheetContents* UserAgentStyle::svgStyleSheet;
 StyleSheetContents* UserAgentStyle::mathMLStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaControlsStyleSheet;
@@ -193,11 +191,6 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
                     plugInsRules = String(StringImpl::createWithoutCopying(plugInsUserAgentStyleSheet, sizeof(plugInsUserAgentStyleSheet)));
                 plugInsStyleSheet = parseUASheet(plugInsRules);
                 addToDefaultStyle(*plugInsStyleSheet);
-            }
-        } else if (is<HTMLDialogElement>(element)) {
-            if (!dialogStyleSheet) {
-                dialogStyleSheet = parseUASheet(StringImpl::createWithoutCopying(dialogUserAgentStyleSheet, sizeof(dialogUserAgentStyleSheet)));
-                addToDefaultStyle(*dialogStyleSheet);
             }
         }
 #if ENABLE(VIDEO) && !ENABLE(MODERN_MEDIA_CONTROLS)
