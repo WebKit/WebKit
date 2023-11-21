@@ -92,6 +92,7 @@ struct SameSizeAsRenderText : public RenderObject {
     void* pointers[2];
     String text;
     std::optional<bool> canUseSimplifiedTextMeasuring;
+    std::optional<bool> hasPositionDependentContentWidth;
     uint32_t bitfields : 16;
 };
 
@@ -321,6 +322,7 @@ void RenderText::initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifi
         m_canUseSimplifiedTextMeasuring = fontCascade.codePath(run) == FontCascade::CodePath::Simple;
     }
 
+    m_hasPositionDependentContentWidth = false;
     // FIXME: Pre-warm glyph loading in FontCascade with the most common range.
     std::bitset<256> hasSeen;
     for (UChar32 character : StringView(textContent).codePoints()) {
@@ -331,6 +333,7 @@ void RenderText::initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifi
         }
         auto glyphData = fontCascade.glyphDataForCharacter(character, false, fontVariant);
         m_canUseSimplifiedTextMeasuring = *m_canUseSimplifiedTextMeasuring && WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed) && glyphData.isValid() && glyphData.font == &primaryFont;
+        m_hasPositionDependentContentWidth = *m_hasPositionDependentContentWidth || character == tabCharacter;
     }
 }
 
@@ -1605,6 +1608,7 @@ void RenderText::setRenderedText(const String& newText)
     m_containsOnlyASCII = text().containsOnlyASCII();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
     m_canUseSimplifiedTextMeasuring = { };
+    m_hasPositionDependentContentWidth = { };
 
     if (m_text != originalText) {
         originalTextMap().set(this, originalText);

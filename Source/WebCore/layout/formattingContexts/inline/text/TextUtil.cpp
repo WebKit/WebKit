@@ -594,6 +594,15 @@ bool TextUtil::canUseSimplifiedTextMeasuring(StringView textContent, const Rende
     return canUseSimplifiedTextMeasuringForCharacters(textContent.span16(), fontCascade, primaryFont, whitespaceIsCollapsed);
 }
 
+bool TextUtil::hasPositionDependentContentWidth(StringView textContent)
+{
+    for (UChar32 character : StringView(textContent).codePoints()) {
+        if (character == tabCharacter)
+            return true;
+    }
+    return false;
+}
+
 void TextUtil::computedExpansions(const Line::RunList& runs, WTF::Range<size_t> runRange, size_t hangingTrailingWhitespaceLength, ExpansionInfo& expansionInfo)
 {
     // Collect and distribute the expansion opportunities.

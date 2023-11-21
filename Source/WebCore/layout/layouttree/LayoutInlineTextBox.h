@@ -35,7 +35,7 @@ namespace Layout {
 class InlineTextBox : public Box {
     WTF_MAKE_ISO_ALLOCATED(InlineTextBox);
 public:
-    InlineTextBox(String, bool canUseSimplifiedContentMeasuring, bool isCombined, bool canUseSimpleFontCodePath, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
+    InlineTextBox(String, bool canUseSimplifiedContentMeasuring, bool isCombined, bool canUseSimpleFontCodePath, bool hasPositionDependentContentWidth, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
     virtual ~InlineTextBox() = default;
 
     const String& content() const { return m_content; }
@@ -43,21 +43,24 @@ public:
     // FIXME: This should not be a box's property.
     bool canUseSimplifiedContentMeasuring() const { return m_canUseSimplifiedContentMeasuring; }
     bool canUseSimpleFontCodePath() const { return m_canUseSimpleFontCodePath; }
+    bool hasPositionDependentContentWidth() const { return m_hasPositionDependentContentWidth; }
 
-    void updateContent(String newContent, bool canUseSimpleFontCodePath, bool canUseSimplifiedContentMeasuring);
+    void updateContent(String newContent, bool canUseSimpleFontCodePath, bool canUseSimplifiedContentMeasuring, bool hasPositionDependentContentWidth);
 
 private:
     String m_content;
     bool m_isCombined { false };
     bool m_canUseSimplifiedContentMeasuring { false };
     bool m_canUseSimpleFontCodePath { true };
+    bool m_hasPositionDependentContentWidth { false };
 };
 
-inline void InlineTextBox::updateContent(String newContent, bool canUseSimpleFontCodePath, bool canUseSimplifiedContentMeasuring)
+inline void InlineTextBox::updateContent(String newContent, bool canUseSimpleFontCodePath, bool canUseSimplifiedContentMeasuring, bool hasPositionDependentContentWidth)
 {
     m_content = newContent;
     m_canUseSimpleFontCodePath = canUseSimpleFontCodePath;
     m_canUseSimplifiedContentMeasuring = canUseSimplifiedContentMeasuring;
+    m_hasPositionDependentContentWidth = hasPositionDependentContentWidth;
 }
 
 }
