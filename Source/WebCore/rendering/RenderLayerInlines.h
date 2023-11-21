@@ -65,7 +65,7 @@ inline bool RenderLayer::hasNonOpacityTransparency() const
         return false;
 
     // SVG clip-paths may use clipping masks, if so, flag this layer as transparent.
-    if (auto* svgClipper = svgClipperFromStyle(); svgClipper && !svgClipper->shouldApplyPathClipping())
+    if (auto* svgClipper = renderer().svgClipperResourceFromStyle(); svgClipper && !svgClipper->shouldApplyPathClipping())
         return true;
 #endif
 

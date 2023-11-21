@@ -30,6 +30,7 @@ namespace WebCore {
 
 class KeyframeList;
 class RenderLayer;
+class RenderSVGResourceClipper;
 class SVGGraphicsElement;
 
 class RenderLayerModelObject : public RenderElement {
@@ -91,6 +92,9 @@ public:
     LayoutPoint nominalSVGLayoutLocation() const { return flooredLayoutPoint(objectBoundingBoxWithoutTransformations().minXMinYCorner()); }
     virtual LayoutPoint currentSVGLayoutLocation() const { ASSERT_NOT_REACHED(); return { }; }
     virtual void setCurrentSVGLayoutLocation(const LayoutPoint&) { ASSERT_NOT_REACHED(); }
+
+    // TODO: [LBSE] Add more cases here, as soon as we add the corresponding resources.
+    RenderSVGResourceClipper* svgClipperResourceFromStyle() const;
 #endif
 
     TransformationMatrix* layerTransform() const;

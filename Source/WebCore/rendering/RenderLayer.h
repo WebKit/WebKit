@@ -849,7 +849,6 @@ public:
     void establishesTopLayerWillChange();
     void establishesTopLayerDidChange();
 
-    RenderSVGResourceClipper* svgClipperFromStyle() const;
     RenderLayer* enclosingSVGRootLayer() const;
 
     bool isBitmapOnly() const;

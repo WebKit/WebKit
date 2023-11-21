@@ -471,6 +471,7 @@ public:
     virtual bool isLegacyRenderSVGResourceContainer() const { return false; }
     bool isRenderSVGResourceContainer() const { return type() == Type::SVGResourceClipper; }
     bool isRenderSVGResourceFilter() const { return type() == Type::SVGResourceFilter; }
+    bool isLegacyRenderSVGResourceMarker() const { return type() == Type::SVGResourceMarker; }
     bool isLegacyRenderSVGResourceClipper() const { return type() == Type::LegacySVGResourceClipper; }
     bool isRenderSVGResourceClipper() const { return type() == Type::SVGResourceClipper; }
     bool isRenderSVGResourceFilterPrimitive() const { return type() == Type::SVGResourceFilterPrimitive; }

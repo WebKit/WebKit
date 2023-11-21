@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
 <body onload="run();">
 <svg width="450" height="250">
     <defs>
@@ -42,19 +42,19 @@
 </svg>
 <script>
 function run() {
-    if (window.testRunner) {
+    if (window.testRunner)
         testRunner.waitUntilDone();
-        requestAnimationFrame(function() {
-            r1.setAttribute("clip-path", "url(#c1)"); // change from no clipPath to some clipPath
-            r2.setAttribute("clip-path", "url(#c2b)"); // change from one clipPath to another
-            r3.removeAttribute("clip-path"); // change from a clipPath to no clipPath
-            r4.setAttribute("fill", "blue"); // change style of clipPath resource client
-            r5.setAttribute("width", "75"); // change layout of clipPath resource client
-            c6.setAttribute("clipPathUnits", "objectBoundingBox"); // change clipPath attribute
-            c7.firstElementChild.setAttribute("visibility", "visible"); // change style of clipPath contents
-            c8.firstElementChild.setAttribute("width", "1"); // change other attribute of clipPath contents
+    requestAnimationFrame(function() {
+        r1.setAttribute("clip-path", "url(#c1)"); // change from no clipPath to some clipPath
+        r2.setAttribute("clip-path", "url(#c2b)"); // change from one clipPath to another
+        r3.removeAttribute("clip-path"); // change from a clipPath to no clipPath
+        r4.setAttribute("fill", "blue"); // change style of clipPath resource client
+        r5.setAttribute("width", "75"); // change layout of clipPath resource client
+        c6.setAttribute("clipPathUnits", "objectBoundingBox"); // change clipPath attribute
+        c7.firstElementChild.setAttribute("visibility", "visible"); // change style of clipPath contents
+        c8.firstElementChild.setAttribute("width", "1"); // change other attribute of clipPath contents
+        if (window.testRunner)
             testRunner.notifyDone();
-        });
-    }
+    });
 }
 </script>

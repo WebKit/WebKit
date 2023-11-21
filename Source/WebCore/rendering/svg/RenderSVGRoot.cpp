@@ -235,7 +235,7 @@ void RenderSVGRoot::layout()
 void RenderSVGRoot::layoutChildren()
 {
     SVGContainerLayout containerLayout(*this);
-    containerLayout.layoutChildren(selfNeedsLayout() || SVGRenderSupport::filtersForceContainerLayout(*this));
+    containerLayout.layoutChildren(selfNeedsLayout());
 
     SVGBoundingBoxComputation boundingBoxComputation(*this);
     m_objectBoundingBox = boundingBoxComputation.computeDecoratedBoundingBox(SVGBoundingBoxComputation::objectBoundingBoxDecoration);
@@ -351,6 +351,12 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     // Don't paint if we don't have kids, except if we have filters we should paint those.
     if (!firstChild()) {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        // FIXME: [LBSE] Missing filter support
+        if (document().settings().layerBasedSVGEngineEnabled())
+            return;
+#endif
+
         auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
         if (!resources || !resources->filter()) {
             if (paintInfo.phase == PaintPhase::Foreground)
