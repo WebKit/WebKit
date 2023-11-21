@@ -3518,7 +3518,7 @@ imported/w3c/web-platform-tests/css/css-images/multiple-position-color-stop-coni
 webkit.org/b/187773 http/tests/webAPIStatistics [ Skip ]
 
 # This is fallout from turning Web Animations on.
-webkit.org/b/190032 animations/animation-playstate-paused-style-resolution.html [ Failure ]
+webkit.org/b/265157 animations/animation-playstate-paused-style-resolution.html [ Pass Failure ]
 webkit.org/b/190032 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Failure ]
 webkit.org/b/190032 compositing/layer-creation/mismatched-rotated-transform-transition-overlap.html [ Failure ]
 webkit.org/b/190032 compositing/layer-creation/mismatched-transform-transition-overlap.html [ Failure ]
@@ -6895,5 +6895,9 @@ imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-on-synthetic-event.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-without-intercept.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/no-args.html [ Pass ]
+
+# View Transitions
+imported/w3c/web-platform-tests/css/css-view-transitions [ Skip ]
+imported/w3c/web-platform-tests/css/css-view-transitions/parsing [ Pass ]
 
 http/tests/site-isolation/touch-events [ Skip ]

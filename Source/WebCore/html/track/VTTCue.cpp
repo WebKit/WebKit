@@ -152,10 +152,12 @@ void VTTCueBox::applyCSSPropertiesWithRegion()
 {
     auto textTrackCue = getCue();
     ASSERT(!textTrackCue || is<VTTCue>(textTrackCue));
-    if (!textTrackCue || !is<VTTCue>(textTrackCue))
+    if (!textTrackCue)
         return;
 
-    Ref cue = downcast<VTTCue>(*textTrackCue);
+    RefPtr cue = dynamicDowncast<VTTCue>(*textTrackCue);
+    if (!cue)
+        return;
 
     // the 'left' property must be set to left
     std::visit(WTF::makeVisitor([&] (double left) {
@@ -175,10 +177,9 @@ void VTTCueBox::applyCSSProperties()
 {
     auto textTrackCue = getCue();
     ASSERT(!textTrackCue || is<VTTCue>(textTrackCue));
-    if (!is<VTTCue>(textTrackCue))
+    RefPtr cue = dynamicDowncast<VTTCue>(*textTrackCue);
+    if (!cue)
         return;
-
-    Ref cue = downcast<VTTCue>(*textTrackCue);
 
     // https://w3c.github.io/webvtt/#applying-css-properties
     // 7.4. Applying CSS properties to WebVTT Node Objects
@@ -495,15 +496,15 @@ void VTTCue::createWebVTTNodeTree()
 
 static void copyWebVTTNodeToDOMTree(ContainerNode& webVTTNode, Node& parent)
 {
-    for (RefPtr<Node> node = webVTTNode.firstChild(); node; node = node->nextSibling()) {
+    for (RefPtr node = webVTTNode.firstChild(); node; node = node->nextSibling()) {
         RefPtr<Node> clonedNode;
-        if (is<WebVTTElement>(*node))
-            clonedNode = downcast<WebVTTElement>(*node).createEquivalentHTMLElement(parent.document());
+        if (RefPtr element = dynamicDowncast<WebVTTElement>(*node))
+            clonedNode = element->createEquivalentHTMLElement(parent.document());
         else
             clonedNode = node->cloneNode(false);
         parent.appendChild(*clonedNode);
-        if (is<ContainerNode>(*node))
-            copyWebVTTNodeToDOMTree(downcast<ContainerNode>(*node), *clonedNode);
+        if (RefPtr containerNode = dynamicDowncast<ContainerNode>(*node))
+            copyWebVTTNodeToDOMTree(*containerNode, *clonedNode);
     }
 }
 
@@ -1002,16 +1003,16 @@ void VTTCue::markFutureAndPastNodes(ContainerNode* root, const MediaTime& previo
                 isPastNode = false;
         }
         
-        if (is<WebVTTElement>(*child))
-            downcast<WebVTTElement>(*child).setIsPastNode(isPastNode);
-        else if (is<WebVTTRubyElement>(*child))
-            downcast<WebVTTRubyElement>(*child).setIsPastNode(isPastNode);
-        else if (is<WebVTTRubyTextElement>(*child))
-            downcast<WebVTTRubyTextElement>(*child).setIsPastNode(isPastNode);
+        if (auto* childElement = dynamicDowncast<WebVTTElement>(*child))
+            childElement->setIsPastNode(isPastNode);
+        else if (auto* childElement = dynamicDowncast<WebVTTRubyElement>(*child))
+            childElement->setIsPastNode(isPastNode);
+        else if (auto* childElement = dynamicDowncast<WebVTTRubyTextElement>(*child))
+            childElement->setIsPastNode(isPastNode);
 
         // Make an element id match a cue id for style matching purposes.
-        if (!id().isEmpty() && is<Element>(*child))
-            downcast<Element>(*child).setIdAttribute(id());
+        if (auto* childElement = dynamicDowncast<Element>(*child); !id().isEmpty() && childElement)
+            childElement->setIdAttribute(id());
     }
 }
 

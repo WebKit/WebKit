@@ -136,14 +136,18 @@ void RangeInputType::handleMouseDownEvent(MouseEvent& event)
     if (element()->isDisabledFormControl())
         return;
 
-    if (event.button() != MouseButton::Left || !is<Node>(event.target()))
+    if (event.button() != MouseButton::Left)
         return;
+
+    auto* targetNode = dynamicDowncast<Node>(event.target());
+    if (!targetNode)
+        return;
+
     ASSERT(element()->shadowRoot());
-    auto& targetNode = downcast<Node>(*event.target());
-    if (&targetNode != element() && !targetNode.isDescendantOf(element()->userAgentShadowRoot().get()))
+    if (targetNode != element() && !targetNode->isDescendantOf(element()->userAgentShadowRoot().get()))
         return;
     auto& thumb = typedSliderThumbElement();
-    if (&targetNode == &thumb)
+    if (targetNode == &thumb)
         return;
     thumb.dragFrom(event.absoluteLocation());
 }

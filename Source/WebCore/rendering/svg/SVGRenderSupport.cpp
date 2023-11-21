@@ -36,6 +36,7 @@
 #include "LegacyRenderSVGTransformableContainer.h"
 #include "LegacyRenderSVGViewportContainer.h"
 #include "NodeRenderStyle.h"
+#include "ReferencedSVGResources.h"
 #include "RenderChildIterator.h"
 #include "RenderElement.h"
 #include "RenderGeometryMap.h"
@@ -46,6 +47,7 @@
 #include "RenderSVGRoot.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderSVGText.h"
+#include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGGeometryElement.h"
 #include "SVGRenderStyle.h"
@@ -438,6 +440,17 @@ bool SVGRenderSupport::pointInClippingArea(const RenderElement& renderer, const 
     if (is<ShapePathOperation>(clipPathOperation) || is<BoxPathOperation>(clipPathOperation))
         return isPointInCSSClippingArea(renderer, point);
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (renderer.document().settings().layerBasedSVGEngineEnabled()) {
+        if (auto* layerRenderer = dynamicDowncast<RenderLayerModelObject>(renderer)) {
+            if (auto* referencedClipperRenderer = layerRenderer->svgClipperResourceFromStyle())
+                return referencedClipperRenderer->hitTestClipContent(renderer.objectBoundingBox(), LayoutPoint(point));
+        }
+
+        return true;
+    }
+#endif
+
     // We just take clippers into account to determine if a point is on the node. The Specification may
     // change later and we also need to check maskers.
     auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
@@ -657,6 +670,7 @@ FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderEl
 #endif
 }
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
 // FIXME: maybe in future RenderLayerModelObject is a better place for this.
 void SVGRenderSupport::paintSVGClippingMask(const RenderLayerModelObject& renderer, PaintInfo& paintInfo)
 {
@@ -667,15 +681,11 @@ void SVGRenderSupport::paintSVGClippingMask(const RenderLayerModelObject& render
         return;
 
     ASSERT(renderer.isSVGLayerAwareRenderer());
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    const auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*renderer.style().clipPath());
-    auto* renderResource = renderer.document().lookupSVGResourceById(referenceClipPathOperation.fragment());
-    if (!renderResource)
-        return;
 
-    if (auto clipper = dynamicDowncast<RenderSVGResourceClipper>(renderResource))
-        clipper->applyMaskClipping(paintInfo, renderer, renderer.objectBoundingBox());
-#endif // ENABLE(LAYER_BASED_SVG_ENGINE)
+    ASSERT(renderer.document().settings().layerBasedSVGEngineEnabled());
+    if (auto* referencedClipperRenderer = renderer.svgClipperResourceFromStyle())
+        referencedClipperRenderer->applyMaskClipping(paintInfo, renderer, renderer.objectBoundingBox());
 }
+#endif
 
 }

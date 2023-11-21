@@ -37,15 +37,18 @@ class CSSSVGResourceElementClient;
 class Document;
 class LegacyRenderSVGResourceClipper;
 class LegacyRenderSVGResourceContainer;
-class ReferencePathOperation;
+class QualifiedName;
 class ReferenceFilterOperation;
+class ReferencePathOperation;
 class RenderElement;
 class RenderSVGResourceFilter;
 class RenderStyle;
-class QualifiedName;
 class SVGClipPathElement;
 class SVGElement;
 class SVGFilterElement;
+class SVGMarkerElement;
+class SVGMaskElement;
+class StyleImage;
 class TreeScope;
 
 class ReferencedSVGResources {
@@ -57,12 +60,18 @@ public:
     static Vector<std::pair<AtomString, QualifiedName>> referencedSVGResourceIDs(const RenderStyle&);
     void updateReferencedResources(TreeScope&, const Vector<std::pair<AtomString, QualifiedName>>&);
 
-    // Clipping needs a renderer, filters use an element.
+    // Legacy: Clipping needs a renderer, filters use an element.
     static LegacyRenderSVGResourceClipper* referencedClipperRenderer(TreeScope&, const ReferencePathOperation&);
-    static RefPtr<SVGClipPathElement> referencedClipPathElement(TreeScope&, const ReferencePathOperation&);
     static RefPtr<SVGFilterElement> referencedFilterElement(TreeScope&, const ReferenceFilterOperation&);
 
     static LegacyRenderSVGResourceContainer* referencedRenderResource(TreeScope&, const AtomString& fragment);
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // LBSE: All element based.
+    static RefPtr<SVGClipPathElement> referencedClipPathElement(TreeScope&, const ReferencePathOperation&);
+    static RefPtr<SVGMarkerElement> referencedMarkerElement(TreeScope&, const String&);
+    static RefPtr<SVGMaskElement> referencedMaskElement(TreeScope&, const StyleImage&);
+#endif
 
 private:
     static RefPtr<SVGElement> elementForResourceID(TreeScope&, const AtomString& resourceID, const QualifiedName& tagName);

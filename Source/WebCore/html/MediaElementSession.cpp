@@ -866,7 +866,6 @@ bool MediaElementSession::requiresFullscreenForVideoPlayback() const
         return false;
 
     if (m_element.document().isMediaDocument()) {
-        ASSERT(is<HTMLVideoElement>(m_element));
         const HTMLVideoElement& videoElement = *downcast<const HTMLVideoElement>(&m_element);
         if (m_element.readyState() < HTMLVideoElement::HAVE_METADATA || !videoElement.hasEverHadVideo())
             return false;

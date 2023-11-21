@@ -279,7 +279,8 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& f
 
     resetInsertionModeAppropriately();
 
-    m_tree.setForm(is<HTMLFormElement>(contextElement) ? &downcast<HTMLFormElement>(contextElement) : HTMLFormElement::findClosestFormAncestor(contextElement));
+    auto* formElement = dynamicDowncast<HTMLFormElement>(contextElement);
+    m_tree.setForm(formElement ? formElement : HTMLFormElement::findClosestFormAncestor(contextElement));
 
 #if ASSERT_ENABLED
     m_destructionProhibited = false;
@@ -972,8 +973,7 @@ bool HTMLTreeBuilder::processTemplateEndTag(AtomHTMLToken&& token)
     if (m_tree.currentStackItem().elementName() != HTML::template_)
         parseError(token);
     m_tree.openElements().popUntil(HTML::template_);
-    RELEASE_ASSERT(is<HTMLTemplateElement>(m_tree.openElements().top()));
-    Ref templateElement = downcast<HTMLTemplateElement>(m_tree.openElements().top());
+    Ref templateElement = checkedDowncast<HTMLTemplateElement>(m_tree.openElements().top());
     m_tree.openElements().pop();
 
     auto& item = adjustedCurrentStackItem();
@@ -2497,10 +2497,11 @@ static inline bool disallowTelephoneNumberParsing(const ContainerNode& node)
     if (node.isLink() || is<HTMLFormControlElement>(node))
         return true;
 
-    if (!is<Element>(node))
+    auto* element = dynamicDowncast<Element>(node);
+    if (!element)
         return false;
 
-    switch (downcast<Element>(node).elementName()) {
+    switch (element->elementName()) {
     case HTML::a:
     case HTML::script:
     case HTML::style:

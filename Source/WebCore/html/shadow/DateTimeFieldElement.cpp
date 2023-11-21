@@ -83,16 +83,15 @@ void DateTimeFieldElement::defaultEventHandler(Event& event)
     if (event.type() == eventNames().blurEvent)
         handleBlurEvent(event);
 
-    if (is<KeyboardEvent>(event)) {
-        auto& keyboardEvent = downcast<KeyboardEvent>(event);
+    if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
         if (!isFieldOwnerDisabled() && !isFieldOwnerReadOnly()) {
-            handleKeyboardEvent(keyboardEvent);
-            if (keyboardEvent.defaultHandled())
+            handleKeyboardEvent(*keyboardEvent);
+            if (keyboardEvent->defaultHandled())
                 return;
         }
 
-        defaultKeyboardEventHandler(keyboardEvent);
-        if (keyboardEvent.defaultHandled())
+        defaultKeyboardEventHandler(*keyboardEvent);
+        if (keyboardEvent->defaultHandled())
             return;
     }
 

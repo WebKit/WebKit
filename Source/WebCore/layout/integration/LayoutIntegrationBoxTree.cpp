@@ -192,13 +192,21 @@ UniqueRef<Layout::Box> BoxTree::createLayoutBox(RenderObject& renderer)
         auto text = style.textSecurity() == TextSecurity::None
             ? (isCombinedText ? textRenderer.originalText() : textRenderer.text())
             : RenderBlock::updateSecurityDiscCharacters(style, isCombinedText ? textRenderer.originalText() : textRenderer.text());
+
         auto canUseSimpleFontCodePath = textRenderer.canUseSimpleFontCodePath();
         auto canUseSimplifiedTextMeasuring = textRenderer.canUseSimplifiedTextMeasuring();
         if (!canUseSimplifiedTextMeasuring) {
             canUseSimplifiedTextMeasuring = canUseSimpleFontCodePath && Layout::TextUtil::canUseSimplifiedTextMeasuring(text, style, firstLineStyle.get());
             textRenderer.setCanUseSimplifiedTextMeasuring(*canUseSimplifiedTextMeasuring);
         }
-        return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, *canUseSimplifiedTextMeasuring, canUseSimpleFontCodePath, WTFMove(style), WTFMove(firstLineStyle));
+
+        auto hasPositionDependentContentWidth = textRenderer.hasPositionDependentContentWidth();
+        if (!hasPositionDependentContentWidth) {
+            hasPositionDependentContentWidth = Layout::TextUtil::hasPositionDependentContentWidth(text);
+            textRenderer.setHasPositionDependentContentWidth(*hasPositionDependentContentWidth);
+        }
+
+        return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, *canUseSimplifiedTextMeasuring, canUseSimpleFontCodePath, *hasPositionDependentContentWidth, WTFMove(style), WTFMove(firstLineStyle));
     }
 
     auto& renderElement = downcast<RenderElement>(renderer);
@@ -278,8 +286,9 @@ void BoxTree::updateContent(const RenderText& textRenderer)
     auto text = style.textSecurity() == TextSecurity::None ? (isCombinedText ? textRenderer.originalText() : textRenderer.text()) : RenderBlock::updateSecurityDiscCharacters(style, isCombinedText ? textRenderer.originalText() : textRenderer.text());
     auto canUseSimpleFontCodePath = textRenderer.canUseSimpleFontCodePath();
     auto canUseSimplifiedTextMeasuring = canUseSimpleFontCodePath && Layout::TextUtil::canUseSimplifiedTextMeasuring(text, style, &inlineTextBox.firstLineStyle());
+    auto hasPositionDependentContentWidth = Layout::TextUtil::hasPositionDependentContentWidth(text);
 
-    inlineTextBox.updateContent(text, canUseSimpleFontCodePath, canUseSimplifiedTextMeasuring);
+    inlineTextBox.updateContent(text, canUseSimpleFontCodePath, canUseSimplifiedTextMeasuring, hasPositionDependentContentWidth);
 }
 
 const Layout::Box& BoxTree::insert(const RenderElement& parent, RenderObject& child, const RenderObject* beforeChild)

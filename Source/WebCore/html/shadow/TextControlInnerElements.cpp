@@ -82,7 +82,8 @@ RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(Render
 
 static inline bool isStrongPasswordTextField(const Element* element)
 {
-    return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element)->hasAutoFillStrongPasswordButton();
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
+    return inputElement && inputElement->hasAutoFillStrongPasswordButton();
 }
 
 std::optional<Style::ResolvedStyle> TextControlInnerContainer::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle*)
@@ -222,9 +223,8 @@ std::optional<Style::ResolvedStyle> TextControlPlaceholderElement::resolveCustom
     auto& controlElement = downcast<HTMLTextFormControlElement>(*containingShadowRoot()->host());
     style.style->setDisplay(controlElement.isPlaceholderVisible() ? DisplayType::Block : DisplayType::None);
 
-    if (is<HTMLInputElement>(controlElement)) {
-        auto& inputElement = downcast<HTMLInputElement>(controlElement);
-        style.style->setTextOverflow(inputElement.shouldTruncateText(*shadowHostStyle) ? TextOverflow::Ellipsis : TextOverflow::Clip);
+    if (auto* inputElement = dynamicDowncast<HTMLInputElement>(controlElement)) {
+        style.style->setTextOverflow(inputElement->shouldTruncateText(*shadowHostStyle) ? TextOverflow::Ellipsis : TextOverflow::Clip);
         style.style->setPaddingTop(Length { 0, LengthType::Fixed });
         style.style->setPaddingBottom(Length { 0, LengthType::Fixed });
     }
@@ -280,22 +280,24 @@ std::optional<Style::ResolvedStyle> SearchFieldResultsButtonElement::resolveCust
 void SearchFieldResultsButtonElement::defaultEventHandler(Event& event)
 {
     // On mousedown, bring up a menu, if needed
-    RefPtr input = downcast<HTMLInputElement>(shadowHost());
-    if (input && event.type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == MouseButton::Left) {
-        input->focus();
-        input->select();
+    if (RefPtr input = downcast<HTMLInputElement>(shadowHost())) {
+        auto* mouseEvent = dynamicDowncast<MouseEvent>(event);
+        if (event.type() == eventNames().mousedownEvent && mouseEvent && mouseEvent->button() == MouseButton::Left) {
+            input->focus();
+            input->select();
 #if !PLATFORM(IOS_FAMILY)
-        document().updateStyleIfNeeded();
+            document().updateStyleIfNeeded();
 
-        if (auto* renderer = input->renderer()) {
-            auto& searchFieldRenderer = downcast<RenderSearchField>(*renderer);
-            if (searchFieldRenderer.popupIsVisible())
-                searchFieldRenderer.hidePopup();
-            else if (input->maxResults() > 0)
-                searchFieldRenderer.showPopup();
-        }
+            if (auto* renderer = input->renderer()) {
+                auto& searchFieldRenderer = downcast<RenderSearchField>(*renderer);
+                if (searchFieldRenderer.popupIsVisible())
+                    searchFieldRenderer.hidePopup();
+                else if (input->maxResults() > 0)
+                    searchFieldRenderer.showPopup();
+            }
 #endif
-        event.setDefaultHandled();
+            event.setDefaultHandled();
+        }
     }
 
     if (!event.defaultHandled())
@@ -343,14 +345,14 @@ std::optional<Style::ResolvedStyle> SearchFieldCancelButtonElement::resolveCusto
 
 void SearchFieldCancelButtonElement::defaultEventHandler(Event& event)
 {
-    RefPtr<HTMLInputElement> input(downcast<HTMLInputElement>(shadowHost()));
+    RefPtr input = downcast<HTMLInputElement>(shadowHost());
     if (!input || !input->isMutable()) {
         if (!event.defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
         return;
     }
 
-    if (event.type() == eventNames().mousedownEvent && is<MouseEvent>(event) && downcast<MouseEvent>(event).button() == MouseButton::Left) {
+    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); event.type() == eventNames().mousedownEvent && mouseEvent && mouseEvent->button() == MouseButton::Left) {
         input->focus();
         input->select();
         event.setDefaultHandled();
@@ -370,7 +372,7 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event& event)
 #if !PLATFORM(IOS_FAMILY)
 bool SearchFieldCancelButtonElement::willRespondToMouseClickEventsWithEditability(Editability editability) const
 {
-    const RefPtr<HTMLInputElement> input = downcast<HTMLInputElement>(shadowHost());
+    RefPtr input = downcast<HTMLInputElement>(shadowHost());
     if (input && input->isMutable())
         return true;
 

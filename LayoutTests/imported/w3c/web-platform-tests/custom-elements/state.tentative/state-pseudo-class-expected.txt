@@ -1,8 +1,0 @@
-
-PASS :state() parsing failures
-FAIL :state() serialization undefined is not an object (evaluating 'document.styleSheets[0].cssRules[1].cssText')
-FAIL :state() in simple cases ':state(foo)' is not a valid selector.
-FAIL :state() and other pseudo classes undefined is not an object (evaluating 'states.value = 'foo'')
-FAIL :state() and ::part() undefined is not an object (evaluating 'innerStates.add')
-FAIL :state() and :host() undefined is not an object (evaluating 'outer.i.states.toggle')
-

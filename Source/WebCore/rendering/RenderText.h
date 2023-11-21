@@ -185,6 +185,8 @@ public:
 
     void setCanUseSimplifiedTextMeasuring(bool canUseSimplifiedTextMeasuring) { m_canUseSimplifiedTextMeasuring = canUseSimplifiedTextMeasuring; }
     std::optional<bool> canUseSimplifiedTextMeasuring() const { return m_canUseSimplifiedTextMeasuring; }
+    void setHasPositionDependentContentWidth(bool hasPositionDependentContentWidth) { m_hasPositionDependentContentWidth = hasPositionDependentContentWidth; }
+    std::optional<bool> hasPositionDependentContentWidth() const { return m_hasPositionDependentContentWidth; }
 
 protected:
     virtual void computePreferredLogicalWidths(float leadWidth, bool forcedMinMaxWidthComputation = false);
@@ -229,6 +231,7 @@ private:
 
     float maxWordFragmentWidth(const RenderStyle&, const FontCascade&, StringView word, unsigned minimumPrefixLength, unsigned minimumSuffixLength, bool currentCharacterIsSpace, unsigned characterIndex, float xPos, float entireWordWidth, WordTrailingSpace&, WeakHashSet<const Font>& fallbackFonts, GlyphOverflow&);
     float widthFromCacheConsideringPossibleTrailingSpace(const RenderStyle&, const FontCascade&, unsigned startIndex, unsigned wordLen, float xPos, bool currentCharacterIsSpace, WordTrailingSpace&, WeakHashSet<const Font>& fallbackFonts, GlyphOverflow&) const;
+    void initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifiedTextMeasuring(const String&);
 
 #if ENABLE(TEXT_AUTOSIZING)
     // FIXME: This should probably be part of the text sizing structures in Document instead. That would save some memory.
@@ -242,6 +245,7 @@ private:
     String m_text;
 
     std::optional<bool> m_canUseSimplifiedTextMeasuring;
+    std::optional<bool> m_hasPositionDependentContentWidth;
     unsigned m_hasBreakableChar : 1 { false }; // Whether or not we can be broken into multiple lines.
     unsigned m_hasBreak : 1 { false }; // Whether or not we have a hard break (e.g., <pre> with '\n').
     unsigned m_hasTab : 1 { false }; // Whether or not we have a variable width tab character (e.g., <pre> with '\t').

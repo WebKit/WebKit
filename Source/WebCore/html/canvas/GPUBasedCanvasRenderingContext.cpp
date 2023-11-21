@@ -40,10 +40,7 @@ GPUBasedCanvasRenderingContext::GPUBasedCanvasRenderingContext(CanvasBase& canva
 
 HTMLCanvasElement* GPUBasedCanvasRenderingContext::htmlCanvas() const
 {
-    auto& base = canvasBase();
-    if (!is<HTMLCanvasElement>(base))
-        return nullptr;
-    return &downcast<HTMLCanvasElement>(base);
+    return dynamicDowncast<HTMLCanvasElement>(canvasBase());
 }
 
 void GPUBasedCanvasRenderingContext::notifyCanvasContentChanged()

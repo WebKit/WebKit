@@ -409,18 +409,12 @@ MediaTime SourceBufferPrivate::findPreviousSyncSamplePresentationTime(const Medi
 
 Ref<MediaPromise> SourceBufferPrivate::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime)
 {
-    MediaPromise::Producer producer;
-    Ref promise = producer.promise();
-
-    m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, start, end, currentTime](auto&& result) mutable {
+    m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, start, end, currentTime](auto result) mutable -> Ref<OperationPromise> {
         if (!weakThis || !result)
-            return MediaPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
-        return removeCodedFramesInternal(start, end, currentTime);
-    })->whenSettled(RunLoop::current(), [producer = WTFMove(producer)](auto&& result) mutable {
-        producer.settle(result);
-        return MediaPromise::createAndSettle(WTFMove(result));
+            return OperationPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
+        return removeCodedFramesInternal(start, end, currentTime).get();
     });
-    return promise;
+    return m_currentSourceBufferOperation.get();
 }
 
 Ref<MediaPromise> SourceBufferPrivate::removeCodedFramesInternal(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime)
@@ -598,7 +592,7 @@ void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&
     processPendingMediaSamples();
 
     auto segmentCopy = segment;
-    m_currentAppendProcessing = m_currentAppendProcessing->whenSettled(RunLoop::current(), [segment = WTFMove(segment), weakThis = WeakPtr { *this }, this, abortCount = m_abortCount](auto&& result) mutable {
+    m_currentAppendProcessing = m_currentAppendProcessing->whenSettled(RunLoop::current(), [segment = WTFMove(segment), weakThis = WeakPtr { *this }, this, abortCount = m_abortCount](auto result) mutable {
         if (!weakThis || !isAttached())
             return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
 
@@ -612,7 +606,7 @@ void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&
         }
 
         return client().sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment));
-    })->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { *this }, segment = WTFMove(segmentCopy)] (auto&& result) mutable {
+    })->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { *this }, segment = WTFMove(segmentCopy)] (auto result) mutable {
         if (!weakThis)
             return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
 
@@ -628,7 +622,7 @@ void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&
 
 void SourceBufferPrivate::didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&& formatDescription, uint64_t trackId)
 {
-    m_currentAppendProcessing = m_currentAppendProcessing->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, formatDescription = WTFMove(formatDescription), trackId] (auto&& result) mutable {
+    m_currentAppendProcessing = m_currentAppendProcessing->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, formatDescription = WTFMove(formatDescription), trackId] (auto result) mutable {
         if (!weakThis || !result)
             return MediaPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
         processFormatDescriptionForTrackId(WTFMove(formatDescription), trackId);
@@ -676,10 +670,7 @@ void SourceBufferPrivate::didReceiveSample(Ref<MediaSample>&& sample)
 
 Ref<MediaPromise> SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
 {
-    MediaPromise::Producer producer;
-    Ref promise = producer.promise();
-
-    m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, buffer = WTFMove(buffer), abortCount = m_abortCount](auto&& result) mutable {
+    m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, buffer = WTFMove(buffer), abortCount = m_abortCount](auto result) mutable {
         if (!weakThis || !result)
             return MediaPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
 
@@ -694,21 +685,21 @@ Ref<MediaPromise> SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
 
         // Before the promise returned by appendInternal is resolved, the various callbacks would have been called and populating m_currentAppendProcessing.
         return appendInternal(WTFMove(buffer));
-    })->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this](auto&& result) mutable -> Ref<MediaPromise> {
+    })->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this](auto result) mutable -> Ref<OperationPromise> {
         if (!weakThis)
-            return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
+            return OperationPromise::createAndReject(PlatformMediaError::BufferRemoved);
 
         processPendingMediaSamples();
 
         // We need to wait for m_currentAppendOperation to be settled (which will occur once all the init and media segments have been processed)
-        return m_currentAppendProcessing->whenSettled(RunLoop::current(), [previousResult = WTFMove(result)](auto&& result) {
-            return (previousResult && result) ? MediaPromise::createAndResolve() : MediaPromise::createAndReject(!result ? result.error() : previousResult.error());
+        return m_currentAppendProcessing->whenSettled(RunLoop::current(), [previousResult = WTFMove(result)](auto result) {
+            return (previousResult && result) ? OperationPromise::createAndResolve() : OperationPromise::createAndReject(!result ? result.error() : previousResult.error());
         });
-    })->whenSettled(RunLoop::current(), [weakThis = WeakPtr { * this }, this, abortCount = m_abortCount](auto&& result) mutable {
+    })->whenSettled(RunLoop::current(), [weakThis = WeakPtr { * this }, this, abortCount = m_abortCount](auto result) mutable -> Ref<OperationPromise> {
         if (!weakThis || !result || !isAttached())
-            return MediaPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
+            return OperationPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
         if (abortCount != m_abortCount)
-            return MediaPromise::createAndResolve();
+            return OperationPromise::createAndResolve();
 
         // Resolve the changes in TrackBuffers' buffered ranges
         // into the SourceBuffer's buffered ranges
@@ -725,12 +716,9 @@ Ref<MediaPromise> SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
         }
         client().sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
 
-        return MediaPromise::all(RunLoop::current(), promises);
-    })->whenSettled(RunLoop::current(), [producer = WTFMove(producer)](auto&& result) mutable {
-        producer.settle(result);
-        return MediaPromise::createAndSettle(WTFMove(result));
+        return MediaPromise::all(RunLoop::current(), promises).get();
     });
-    return promise;
+    return m_currentSourceBufferOperation.get();
 }
 
 void SourceBufferPrivate::processPendingMediaSamples()
@@ -738,7 +726,7 @@ void SourceBufferPrivate::processPendingMediaSamples()
     if (m_pendingSamples.isEmpty())
         return;
     auto samples = std::exchange(m_pendingSamples, { });
-    m_currentAppendProcessing = m_currentAppendProcessing->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, samples = WTFMove(samples), abortCount = m_abortCount](auto&& result) mutable {
+    m_currentAppendProcessing = m_currentAppendProcessing->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, samples = WTFMove(samples), abortCount = m_abortCount](auto result) mutable {
         if (!weakThis || !result || !isAttached())
             return MediaPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
         if (abortCount != m_abortCount)
@@ -1188,11 +1176,11 @@ void SourceBufferPrivate::abort()
 
 void SourceBufferPrivate::resetParserState()
 {
-    m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this](auto&& result) mutable {
+    m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this](auto result) mutable {
         if (!weakThis)
-            return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
+            return OperationPromise::createAndReject(PlatformMediaError::BufferRemoved);
         resetParserStateInternal();
-        return MediaPromise::createAndSettle(WTFMove(result));
+        return OperationPromise::createAndSettle(WTFMove(result));
     });
 }
 
@@ -1200,14 +1188,14 @@ void SourceBufferPrivate::memoryPressure(uint64_t maximumBufferSize, const Media
 {
     ALWAYS_LOG(LOGIDENTIFIER, "isActive = ", isActive());
 
-    m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, maximumBufferSize, currentTime](auto&& result) mutable {
+    m_currentSourceBufferOperation = m_currentSourceBufferOperation->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *this }, this, maximumBufferSize, currentTime](auto result) mutable {
         if (isActive())
             evictFrames(maximumBufferSize, maximumBufferSize, currentTime);
         else {
             resetTrackBuffers();
             clearTrackBuffers(true);
         }
-        return MediaPromise::createAndSettle(WTFMove(result));
+        return OperationPromise::createAndSettle(WTFMove(result));
     });
 }
 

@@ -226,19 +226,21 @@ void ValidatedFormListedElement::setDisabledInternal(bool disabled, bool disable
 
 static void addInvalidElementToAncestorFromInsertionPoint(const HTMLElement& element, ContainerNode* insertionPoint)
 {
-    if (!is<Element>(insertionPoint))
+    auto* insertionPointElement = dynamicDowncast<Element>(insertionPoint);
+    if (!insertionPointElement)
         return;
 
-    for (auto& ancestor : lineageOfType<HTMLFieldSetElement>(downcast<Element>(*insertionPoint)))
+    for (auto& ancestor : lineageOfType<HTMLFieldSetElement>(*insertionPointElement))
         ancestor.addInvalidDescendant(element);
 }
 
 static void removeInvalidElementToAncestorFromInsertionPoint(const HTMLElement& element, ContainerNode* insertionPoint)
 {
-    if (!is<Element>(insertionPoint))
+    auto* insertionPointElement = dynamicDowncast<Element>(insertionPoint);
+    if (!insertionPointElement)
         return;
 
-    for (auto& ancestor : lineageOfType<HTMLFieldSetElement>(downcast<Element>(*insertionPoint)))
+    for (auto& ancestor : lineageOfType<HTMLFieldSetElement>(*insertionPointElement))
         ancestor.removeInvalidDescendant(element);
 }
 
@@ -368,8 +370,8 @@ bool ValidatedFormListedElement::computeIsDisabledByFieldsetAncestor() const
 {
     RefPtr<const Element> previousAncestor;
     for (auto& ancestor : ancestorsOfType<Element>(asHTMLElement())) {
-        if (is<HTMLFieldSetElement>(ancestor) && ancestor.hasAttributeWithoutSynchronization(disabledAttr)) {
-            bool isInFirstLegend = is<HTMLLegendElement>(previousAncestor) && previousAncestor == downcast<HTMLFieldSetElement>(ancestor).legend();
+        if (auto* fieldset = dynamicDowncast<HTMLFieldSetElement>(ancestor); fieldset && ancestor.hasAttributeWithoutSynchronization(disabledAttr)) {
+            bool isInFirstLegend = is<HTMLLegendElement>(previousAncestor) && previousAncestor == fieldset->legend();
             return !isInFirstLegend;
         }
         previousAncestor = &ancestor;

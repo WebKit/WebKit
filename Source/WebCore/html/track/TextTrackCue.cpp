@@ -134,42 +134,41 @@ enum RequiredNodes {
 
 static ExceptionOr<void> tagPseudoObjects(Node& node, OptionSet<RequiredNodes>& nodeTypes)
 {
-    if (!is<Element>(node))
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element)
         return { };
 
-    auto& element = downcast<Element>(node);
-
-    if (element.hasAttributeWithoutSynchronization(HTMLNames::cuebackgroundAttr)) {
-        element.setPseudo(ShadowPseudoIds::webkitMediaTextTrackDisplayBackdrop());
+    if (element->hasAttributeWithoutSynchronization(HTMLNames::cuebackgroundAttr)) {
+        element->setPseudo(ShadowPseudoIds::webkitMediaTextTrackDisplayBackdrop());
         nodeTypes.add(RequiredNodes::CueBackground);
     }
 
-    if (element.hasAttributeWithoutSynchronization(HTMLNames::cueAttr)) {
-        if (!nodeTypes.contains(RequiredNodes::CueBackground) || !element.closest("[cuebackground]"_s).returnValue())
+    if (element->hasAttributeWithoutSynchronization(HTMLNames::cueAttr)) {
+        if (!nodeTypes.contains(RequiredNodes::CueBackground) || !element->closest("[cuebackground]"_s).returnValue())
             return Exception { ExceptionCode::HierarchyRequestError, "Found cue attribute but no cuebackground attribute in hierarchy "_s };
 
-        element.setPseudo(ShadowPseudoIds::cue());
+        element->setPseudo(ShadowPseudoIds::cue());
         nodeTypes.add(RequiredNodes::Cue);
     }
 
     if (nodeTypes.contains(RequiredNodes::CueBackground) && nodeTypes.contains(RequiredNodes::Cue))
         return { };
 
-    for (auto* child = element.firstChild(); child; child = child->nextSibling())
+    for (RefPtr child = element->firstChild(); child; child = child->nextSibling())
         tagPseudoObjects(*child, nodeTypes);
     return { };
 }
 
 static void removePseudoAttributes(Node& node)
 {
-    if (!is<Element>(node))
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (!element)
         return;
 
-    auto& element = downcast<Element>(node);
-    if (element.hasAttributeWithoutSynchronization(HTMLNames::cueAttr) || element.hasAttributeWithoutSynchronization(HTMLNames::cuebackgroundAttr))
-        element.removeAttribute(HTMLNames::pseudoAttr);
+    if (element->hasAttributeWithoutSynchronization(HTMLNames::cueAttr) || element->hasAttributeWithoutSynchronization(HTMLNames::cuebackgroundAttr))
+        element->removeAttribute(HTMLNames::pseudoAttr);
 
-    for (auto* child = element.firstChild(); child; child = child->nextSibling())
+    for (RefPtr child = element->firstChild(); child; child = child->nextSibling())
         removePseudoAttributes(*child);
 }
 

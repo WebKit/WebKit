@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021, 2022 Igalia S.L.
+ * Copyright (C) 2021, 2022, 2023 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,10 +21,7 @@
 #include "SVGBoundingBoxComputation.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-
-#include "LegacyRenderSVGResourceClipper.h"
-#include "LegacyRenderSVGResourceMarker.h"
-#include "LegacyRenderSVGResourceMasker.h"
+#include "ReferencedSVGResources.h"
 #include "RenderChildIterator.h"
 #include "RenderObjectInlines.h"
 #include "RenderSVGContainer.h"
@@ -33,13 +30,13 @@
 #include "RenderSVGImage.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGPath.h"
+#include "RenderSVGResourceClipper.h"
 #include "RenderSVGResourceFilter.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderSVGText.h"
+#include "SVGClipPathElement.h"
 #include "SVGLayerTransformComputation.h"
-#include "SVGResources.h"
-#include "SVGResourcesCache.h"
 
 namespace WebCore {
 
@@ -255,26 +252,13 @@ void SVGBoundingBoxComputation::adjustBoxForClippingAndEffects(const SVGBounding
         }
     }
 
-    bool includeClipper = options.contains(DecorationOption::IncludeClippers);
-    bool includeMasker = options.contains(DecorationOption::IncludeMaskers);
+    // FIXME: Implement masker + filter support.
+    UNUSED_PARAM(includeFilter);
 
-    if (includeFilter || includeClipper || includeMasker) {
-        if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(m_renderer)) {
+    if (options.contains(DecorationOption::IncludeClippers)) {
+        if (auto* referencedClipperRenderer = m_renderer.svgClipperResourceFromStyle()) {
             auto repaintRectCalculation = options.contains(DecorationOption::CalculateFastRepaintRect) ? RepaintRectCalculation::Fast : RepaintRectCalculation::Accurate;
-            if (includeFilter) {
-                if (auto* filter = resources->filter())
-                    box = filter->resourceBoundingBox(m_renderer, repaintRectCalculation);
-            }
-
-            if (includeClipper) {
-                if (auto* clipper = resources->clipper())
-                    box.intersect(clipper->resourceBoundingBox(m_renderer, repaintRectCalculation));
-            }
-
-            if (includeMasker) {
-                if (auto* masker = resources->masker())
-                    box.intersect(masker->resourceBoundingBox(m_renderer, repaintRectCalculation));
-            }
+            box.intersect(referencedClipperRenderer->resourceBoundingBox(m_renderer, repaintRectCalculation));
         }
     }
 

@@ -636,11 +636,11 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
     }
 }
 
-bool WidthIterator::characterCanUseSimplifiedTextMeasuring(UChar character, bool whitespaceIsCollapsed)
+bool WidthIterator::characterCanUseSimplifiedTextMeasuring(UChar32 codePoint, bool whitespaceIsCollapsed)
 {
     // This function needs to be kept in sync with applyCSSVisibilityRules().
 
-    switch (character) {
+    switch (codePoint) {
     case newlineCharacter:
     case carriageReturn:
         return true;
@@ -669,7 +669,7 @@ bool WidthIterator::characterCanUseSimplifiedTextMeasuring(UChar character, bool
         break;
     }
 
-    if (character >= HiraganaLetterSmallA || isControlCharacter(character))
+    if (codePoint >= HiraganaLetterSmallA || isControlCharacter(codePoint))
         return false;
 
     return true;

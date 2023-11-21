@@ -271,9 +271,52 @@ private:
             WTFBreakpointTrap();
 
         StringPrintStream out;
-        out.print("WebAssembly.Module doesn't validate: "_s, args...);
+        out.print("WebAssembly.Module doesn't validate: "_s, validationFailHelper(args)...);
         return UnexpectedResult(out.toString());
     }
+
+    template <typename Arg>
+    String WARN_UNUSED_RETURN validationFailHelper(const Arg& arg) const
+    {
+        if constexpr (std::is_same<Arg, Type>())
+            return typeToStringModuleRelative(arg);
+        else
+            return FailureHelper::makeString(arg);
+    }
+
+    String typeToStringModuleRelative(const Type& type) const
+    {
+        if (isRefType(type) && Options::useWebAssemblyTypedFunctionReferences()) {
+            StringPrintStream out;
+            out.print("(ref ");
+            if (type.isNullable())
+                out.print("null ");
+            if (typeIndexIsType(type.index))
+                out.print(heapTypeKindAsString(static_cast<TypeKind>(type.index)));
+            // FIXME: use name section if it exists to provide a nicer name.
+            else {
+                const auto& typeDefinition = TypeInformation::get(type.index);
+                const auto& expandedDefinition = typeDefinition.expand();
+                if (expandedDefinition.is<FunctionSignature>())
+                    out.print("<func:");
+                else if (expandedDefinition.is<ArrayType>())
+                    out.print("<array:");
+                else {
+                    ASSERT(expandedDefinition.is<StructType>());
+                    out.print("<struct:");
+                }
+                ASSERT(m_info.typeSignatures.contains(Ref { typeDefinition }));
+                out.print(m_info.typeSignatures.findIf([&](auto& sig) {
+                    return sig.get() == typeDefinition;
+                }));
+                out.print(">");
+            }
+            out.print(")");
+            return out.toString();
+        }
+        return FailureHelper::makeString(type);
+    }
+
 
 #define WASM_VALIDATOR_FAIL_IF(condition, ...) do { \
         if (UNLIKELY(condition)) \

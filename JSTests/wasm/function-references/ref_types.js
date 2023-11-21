@@ -267,7 +267,7 @@ async function testNonNullExternrefIncompatible() {
         "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x07\x01\x60\x01\x6f\x01\x64\x6f\x03\x02\x01\x00\x0a\x06\x01\x04\x00\x20\x00\x0b\x00\x0b\x04\x6e\x61\x6d\x65\x01\x04\x01\x00\x01\x66"
       ),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Externref is not a Externref, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null extern) is not a (ref extern), in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
   );
 }
 
@@ -295,7 +295,7 @@ async function testNonNullFuncrefIncompatible() {
         "\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x07\x01\x60\x01\x70\x01\x64\x70\x03\x02\x01\x00\x0a\x06\x01\x04\x00\x20\x00\x0b\x00\x0b\x04\x6e\x61\x6d\x65\x01\x04\x01\x00\x01\x66"
       ),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Funcref is not a Funcref, in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null func) is not a (ref func), in function at index 0 (evaluating 'new WebAssembly.Module(buffer)')"
   );
 }
 

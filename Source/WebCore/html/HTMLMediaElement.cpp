@@ -4832,7 +4832,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
 
     Page* page = document().page();
     CaptionUserPreferences* captionPreferences = page ? &page->group().ensureCaptionPreferences() : nullptr;
-    CaptionUserPreferences::CaptionDisplayMode displayMode = captionPreferences ? captionPreferences->captionDisplayMode() : CaptionUserPreferences::Automatic;
+    CaptionUserPreferences::CaptionDisplayMode displayMode = captionPreferences ? captionPreferences->captionDisplayMode() : CaptionUserPreferences::CaptionDisplayMode::Automatic;
 
     // First, find the track in the group that should be enabled (if any).
     Vector<RefPtr<TextTrack>> currentlyEnabledTracks;
@@ -4888,7 +4888,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
             // * If the track element has a default attribute specified, and there is no other text track in the media
             // element's list of text tracks whose text track mode is showing or showing by default
             //    Let the text track mode be showing by default.
-            if (group.kind != TrackGroup::CaptionsAndSubtitles || displayMode != CaptionUserPreferences::ForcedOnly)
+            if (group.kind != TrackGroup::CaptionsAndSubtitles || displayMode != CaptionUserPreferences::CaptionDisplayMode::ForcedOnly)
                 defaultTrack = textTrack;
         } else if (group.kind == TrackGroup::Description) {
             if (!defaultTrack && !fallbackTrack && m_userPrefersTextDescriptions)
@@ -4896,7 +4896,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
         }
     }
 
-    if (displayMode != CaptionUserPreferences::Manual) {
+    if (displayMode != CaptionUserPreferences::CaptionDisplayMode::Manual) {
         if (!trackToEnable && defaultTrack)
             trackToEnable = defaultTrack;
 
@@ -4906,7 +4906,7 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group)
             trackToEnable = forcedSubitleTrack;
 
         // If no track matches, don't disable an already visible track unless preferences say they all should be off.
-        if (group.kind != TrackGroup::CaptionsAndSubtitles || displayMode != CaptionUserPreferences::ForcedOnly) {
+        if (group.kind != TrackGroup::CaptionsAndSubtitles || displayMode != CaptionUserPreferences::CaptionDisplayMode::ForcedOnly) {
             if (!trackToEnable && !defaultTrack && group.visibleTrack)
                 trackToEnable = group.visibleTrack;
         }
@@ -5066,13 +5066,13 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
         return;
 
     if (trackToSelect == &TextTrack::captionMenuAutomaticItem()) {
-        if (captionDisplayMode() != CaptionUserPreferences::Automatic)
+        if (captionDisplayMode() != CaptionUserPreferences::CaptionDisplayMode::Automatic)
             m_textTracks->scheduleChangeEvent();
     } else if (trackToSelect == &TextTrack::captionMenuOffItem()) {
         for (int i = 0, length = trackList->length(); i < length; ++i)
             trackList->item(i)->setMode(TextTrack::Mode::Disabled);
 
-        if (captionDisplayMode() != CaptionUserPreferences::ForcedOnly && !trackList->isChangeEventScheduled())
+        if (captionDisplayMode() != CaptionUserPreferences::CaptionDisplayMode::ForcedOnly && !trackList->isChangeEventScheduled())
             m_textTracks->scheduleChangeEvent();
     } else {
         if (!trackToSelect || !trackList->contains(*trackToSelect))
@@ -5093,11 +5093,11 @@ void HTMLMediaElement::setSelectedTextTrack(TextTrack* trackToSelect)
     auto& captionPreferences = document().page()->group().ensureCaptionPreferences();
     CaptionUserPreferences::CaptionDisplayMode displayMode;
     if (trackToSelect == &TextTrack::captionMenuOffItem())
-        displayMode = CaptionUserPreferences::ForcedOnly;
+        displayMode = CaptionUserPreferences::CaptionDisplayMode::ForcedOnly;
     else if (trackToSelect == &TextTrack::captionMenuAutomaticItem())
-        displayMode = CaptionUserPreferences::Automatic;
+        displayMode = CaptionUserPreferences::CaptionDisplayMode::Automatic;
     else {
-        displayMode = CaptionUserPreferences::AlwaysOn;
+        displayMode = CaptionUserPreferences::CaptionDisplayMode::AlwaysOn;
         if (trackToSelect->validBCP47Language().length())
             captionPreferences.setPreferredLanguage(trackToSelect->validBCP47Language());
     }
@@ -5757,7 +5757,7 @@ void HTMLMediaElement::mediaPlayerCharacteristicChanged()
 
     beginProcessingMediaPlayerCallback();
 
-    if (captionDisplayMode() == CaptionUserPreferences::Automatic) {
+    if (captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::Automatic) {
         auto languageOfPrimaryAudioTrack = m_player->languageOfPrimaryAudioTrack();
         auto audioLanguageChanged = !m_languageOfPrimaryAudioTrack || *m_languageOfPrimaryAudioTrack != languageOfPrimaryAudioTrack;
         if (audioLanguageChanged && m_subtitleTrackLanguage != languageOfPrimaryAudioTrack) {
@@ -7355,7 +7355,7 @@ void HTMLMediaElement::captionPreferencesChanged()
         return;
 
     m_captionDisplayMode = displayMode;
-    setClosedCaptionsVisible(captionDisplayMode() == CaptionUserPreferences::AlwaysOn);
+    setClosedCaptionsVisible(captionDisplayMode() == CaptionUserPreferences::CaptionDisplayMode::AlwaysOn);
 }
 
 CaptionUserPreferences::CaptionDisplayMode HTMLMediaElement::captionDisplayMode()
@@ -7364,7 +7364,7 @@ CaptionUserPreferences::CaptionDisplayMode HTMLMediaElement::captionDisplayMode(
         if (document().page())
             m_captionDisplayMode = document().page()->group().ensureCaptionPreferences().captionDisplayMode();
         else
-            m_captionDisplayMode = CaptionUserPreferences::Automatic;
+            m_captionDisplayMode = CaptionUserPreferences::CaptionDisplayMode::Automatic;
     }
 
     return m_captionDisplayMode.value();

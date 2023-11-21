@@ -182,7 +182,7 @@ function testI31Get() {
       )
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: i31.get_s ref to type Externref expected I31ref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
+    "WebAssembly.Module doesn't validate: i31.get_s ref to type (ref null extern) expected I31ref, in function at index 0 (evaluating 'new WebAssembly.Module(binary)')"
   )
 
   assert.throws(

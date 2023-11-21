@@ -2671,3 +2671,9 @@ workers/wasm-hashset-many-2.html [ Skip ] # Timeout
 workers/wasm-hashset-many.html [ Skip ] # Timeout
 workers/wasm-hashset.html [ Skip ] # Timeout
 workers/wasm-references.html [ Skip ] # Timeout
+
+# Makes a subsequent performance resource timing test flaky with --order=random
+webkit.org/b/226299 http/tests/performance/performance-resource-timing-resourcetimingbufferfull-shrinking-buffer-crash.html [ Skip ]
+webkit.org/b/226299 http/tests/performance/performance-resource-timing-resourcetimingbufferfull-queue-resource-entry.html [ Skip ]
+
+webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html [ Pass Failure ]

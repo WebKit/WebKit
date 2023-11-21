@@ -68,9 +68,9 @@ public:
     bool matchesHTMLTag(const AtomString&) const;
 
 private:
-    RefPtr<ContainerNode> m_node;
     ElementName m_elementName = ElementName::Unknown;
     Namespace m_namespace = Namespace::Unknown;
+    RefPtr<ContainerNode> m_node;
     Vector<Attribute> m_attributes;
 };
 
@@ -79,25 +79,25 @@ bool isNumberedHeaderElement(const HTMLStackItem&);
 bool isSpecialNode(const HTMLStackItem&);
 
 inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, AtomHTMLToken&& token)
-    : m_node(WTFMove(element))
-    , m_elementName(downcast<Element>(*m_node).elementName())
-    , m_namespace(downcast<Element>(*m_node).nodeNamespace())
+    : m_elementName(element->elementName())
+    , m_namespace(element->nodeNamespace())
+    , m_node(WTFMove(element))
     , m_attributes(WTFMove(token.attributes()))
 {
 }
 
 inline HTMLStackItem::HTMLStackItem(Ref<Element>&& element, Vector<Attribute>&& attributes)
-    : m_node(WTFMove(element))
-    , m_elementName(downcast<Element>(*m_node).elementName())
-    , m_namespace(downcast<Element>(*m_node).nodeNamespace())
+    : m_elementName(element->elementName())
+    , m_namespace(element->nodeNamespace())
+    , m_node(WTFMove(element))
     , m_attributes(WTFMove(attributes))
 {
 }
 
 inline HTMLStackItem::HTMLStackItem(Element& element)
-    : m_node(&element)
-    , m_elementName(element.elementName())
+    : m_elementName(element.elementName())
     , m_namespace(element.nodeNamespace())
+    , m_node(&element)
 {
 }
 

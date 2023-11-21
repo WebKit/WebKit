@@ -63,8 +63,8 @@ void SearchInputType::addSearchResult()
     // we don't update the associated renderers until after the next tree update, so we could actually end up here
     // with a mismatched renderer (e.g. through form submission).
     ASSERT(element());
-    if (is<RenderSearchField>(element()->renderer()))
-        downcast<RenderSearchField>(*element()->renderer()).addSearchResult();
+    if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(element()->renderer()))
+        renderer->addSearchResult();
 #endif
 }
 
@@ -199,8 +199,10 @@ bool SearchInputType::searchEventsShouldBeDispatched() const
 void SearchInputType::didSetValueByUserEdit()
 {
     ASSERT(element());
-    if (m_cancelButton && is<RenderSearchField>(element()->renderer()))
-        downcast<RenderSearchField>(*element()->renderer()).updateCancelButtonVisibility();
+    if (m_cancelButton) {
+        if (CheckedPtr renderer = dynamicDowncast<RenderSearchField>(element()->renderer()))
+            renderer->updateCancelButtonVisibility();
+    }
     // If the incremental attribute is set, then dispatch the search event
     if (searchEventsShouldBeDispatched())
         startSearchEventTimer();

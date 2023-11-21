@@ -175,6 +175,11 @@ void SVGFEImageElement::notifyFinished(CachedResource&, const NetworkLoadMetrics
     if (!parentRenderer)
         return;
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // FIXME: [LBSE] Implement filters.
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return;
+#endif
     LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*parentRenderer);
 }
 

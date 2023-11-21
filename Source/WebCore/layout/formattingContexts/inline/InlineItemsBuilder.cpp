@@ -624,7 +624,7 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItemList& inlineItemLis
     setBidiLevelForOpaqueInlineItems();
 }
 
-static inline bool canCacheMeasuredWidthOnInlineTextItem(const InlineTextBox& inlineTextBox, size_t start, size_t length, bool isWhitespace)
+static inline bool canCacheMeasuredWidthOnInlineTextItem(const InlineTextBox& inlineTextBox, bool isWhitespace)
 {
     // Do not cache when:
     // 1. first-line style's unique font properties may produce non-matching width values.
@@ -633,13 +633,7 @@ static inline bool canCacheMeasuredWidthOnInlineTextItem(const InlineTextBox& in
         return false;
     if (!isWhitespace || !TextUtil::shouldPreserveSpacesAndTabs(inlineTextBox))
         return true;
-    // FIXME: Currently we opt out of caching only when we see a preserved \t character (position dependent measured width).
-    auto textContent = inlineTextBox.content();
-    for (auto index = start; index < start + length; ++index) {
-        if (textContent[index] == tabCharacter)
-            return false;
-    }
-    return true;
+    return !inlineTextBox.hasPositionDependentContentWidth();
 }
 
 void InlineItemsBuilder::computeInlineTextItemWidths(InlineItemList& inlineItemList)
@@ -653,7 +647,7 @@ void InlineItemsBuilder::computeInlineTextItemWidths(InlineItemList& inlineItemL
         auto start = inlineTextItem.start();
         auto length = inlineTextItem.length();
         auto needsMeasuring = length && !inlineTextItem.isZeroWidthSpaceSeparator();
-        if (!needsMeasuring || !canCacheMeasuredWidthOnInlineTextItem(inlineTextBox, start, length, inlineTextItem.isWhitespace()))
+        if (!needsMeasuring || !canCacheMeasuredWidthOnInlineTextItem(inlineTextBox, inlineTextItem.isWhitespace()))
             continue;
         inlineTextItem.setWidth(TextUtil::width(inlineTextItem, inlineTextItem.style().fontCascade(), start, start + length, { }));
     }

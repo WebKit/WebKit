@@ -53,8 +53,8 @@ TextPlaceholderElement::TextPlaceholderElement(Document& document, const LayoutS
 auto TextPlaceholderElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree) -> InsertedIntoAncestorResult
 {
     if (insertionType.treeScopeChanged) {
-        if (RefPtr shadowHost = parentOfInsertedTree.shadowHost(); is<HTMLTextFormControlElement>(shadowHost))
-            downcast<HTMLTextFormControlElement>(*shadowHost).setCanShowPlaceholder(false);
+        if (RefPtr shadowHost = dynamicDowncast<HTMLTextFormControlElement>(parentOfInsertedTree.shadowHost()))
+            shadowHost->setCanShowPlaceholder(false);
     }
     return HTMLDivElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
 }
@@ -62,8 +62,8 @@ auto TextPlaceholderElement::insertedIntoAncestor(InsertionType insertionType, C
 void TextPlaceholderElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     if (removalType.treeScopeChanged) {
-        if (RefPtr shadowHost = oldParentOfRemovedTree.shadowHost(); is<HTMLTextFormControlElement>(shadowHost))
-            downcast<HTMLTextFormControlElement>(*shadowHost).setCanShowPlaceholder(true);
+        if (RefPtr shadowHost = dynamicDowncast<HTMLTextFormControlElement>(oldParentOfRemovedTree.shadowHost()))
+            shadowHost->setCanShowPlaceholder(true);
     }
     HTMLDivElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
 }

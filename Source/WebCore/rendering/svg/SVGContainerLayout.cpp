@@ -55,7 +55,6 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
 {
     bool layoutSizeChanged = layoutSizeOfNearestViewportChanged();
     bool transformChanged = transformToRootChanged(&m_container);
-    WeakHashSet<RenderElement> elementsThatDidNotReceiveLayout;
 
     m_positionedChildren.clear();
     for (auto& child : childrenOfType<RenderObject>(m_container)) {
@@ -96,28 +95,17 @@ void SVGContainerLayout::layoutChildren(bool containerNeedsLayout)
         if (needsLayout)
             child.setNeedsLayout(MarkOnlyThis);
 
-        bool childNeededLayout = child.needsLayout();
         if (is<RenderElement>(child)) {
             auto& element = downcast<RenderElement>(child);
-            if (childNeededLayout) {
-                layoutDifferentRootIfNeeded(element);
+            if (element.needsLayout())
                 element.layout();
-            } else if (layoutSizeChanged)
-                elementsThatDidNotReceiveLayout.add(element);
 
             if (!childEverHadLayout && element.checkForRepaintDuringLayout())
-                child.repaint();
+                element.repaint();
         }
 
         ASSERT(!child.needsLayout());
     }
-
-    if (layoutSizeChanged) {
-        // If the layout size changed, invalidate all resources of all children that didn't go through the layout() code path.
-        for (auto& element : elementsThatDidNotReceiveLayout)
-            invalidateResourcesOfChildren(element);
-    } else
-        ASSERT(elementsThatDidNotReceiveLayout.isEmptyIgnoringNullReferences());
 }
 
 void SVGContainerLayout::positionChildrenRelativeToContainer()
@@ -214,25 +202,6 @@ void SVGContainerLayout::verifyLayoutLocationConsistency(const RenderLayerModelO
             << " - verifyLayoutLocationConsistency() end");
     }
 #endif
-}
-
-void SVGContainerLayout::layoutDifferentRootIfNeeded(const RenderElement& renderer)
-{
-    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer)) {
-        auto* svgRoot = SVGRenderSupport::findTreeRootObject(renderer);
-        ASSERT(svgRoot);
-        resources->layoutDifferentRootIfNeeded(svgRoot);
-    }
-}
-
-void SVGContainerLayout::invalidateResourcesOfChildren(RenderElement& renderer)
-{
-    ASSERT(!renderer.needsLayout());
-    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer))
-        resources->removeClientFromCache(renderer, false);
-
-    for (auto& child : childrenOfType<RenderElement>(renderer))
-        invalidateResourcesOfChildren(child);
 }
 
 bool SVGContainerLayout::layoutSizeOfNearestViewportChanged() const

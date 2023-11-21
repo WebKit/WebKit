@@ -278,8 +278,8 @@ public:
     void scrollTo(const ScrollToOptions&, ScrollClamping = ScrollClamping::Clamped, ScrollSnapPointSelectionMethod = ScrollSnapPointSelectionMethod::Closest, std::optional<FloatSize> originalScrollDelta = std::nullopt) const;
     void scrollTo(double x, double y, ScrollClamping = ScrollClamping::Clamped) const;
 
-    void moveBy(float x, float y) const;
-    void moveTo(float x, float y) const;
+    void moveBy(int x, int y) const;
+    void moveTo(int x, int y) const;
 
     void resizeBy(float x, float y) const;
     void resizeTo(float width, float height) const;

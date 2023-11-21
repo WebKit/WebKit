@@ -21,7 +21,7 @@ function testValidation() {
         (func (call 0 (ref.null extern))))
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: argument type mismatch in call, got Externref, expected Anyref, in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
+    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref null extern), expected (ref null any), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
   );
 
   assert.throws(
@@ -32,7 +32,7 @@ function testValidation() {
         (func (call 0 (ref.null any))))
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: argument type mismatch in call, got Anyref, expected (), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
+    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref null any), expected (ref null <struct:0>), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
   );
 
   assert.throws(
@@ -42,7 +42,7 @@ function testValidation() {
         (func (call 0 (ref.null any))))
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: argument type mismatch in call, got Anyref, expected Nullref, in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
+    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref null any), expected (ref null none), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
   );
 
   assert.throws(
@@ -53,7 +53,7 @@ function testValidation() {
         (func (call 0 (struct.new 0))))
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (), expected Nullref, in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
+    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref <struct:0>), expected (ref none), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
   );
 }
 
@@ -106,7 +106,7 @@ function testNullfuncref() {
         (func (export "f") (result nullfuncref) (ref.null func)))
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Funcref is not a Nullfuncref"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null func) is not a (ref null nofunc)"
   )
 
   assert.throws(
@@ -115,7 +115,7 @@ function testNullfuncref() {
         (func (export "f") (result nullref) (ref.null nofunc)))
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Nullfuncref is not a Nullref"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null nofunc) is not a (ref null none)"
   )
 
   instantiate(`
@@ -145,7 +145,7 @@ function testNullexternref() {
         (func (export "f") (result nullexternref) (ref.null extern)))
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Externref is not a Nullexternref"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null extern) is not a (ref null noextern)"
   )
 
   assert.throws(
@@ -154,7 +154,7 @@ function testNullexternref() {
         (func (export "f") (result nullref) (ref.null noextern)))
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. Nullexternref is not a Nullref"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null noextern) is not a (ref null none)"
   )
 
   instantiate(`

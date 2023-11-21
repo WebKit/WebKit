@@ -73,7 +73,6 @@
 #include "WebCodecsVideoFrame.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
@@ -781,7 +780,7 @@ void CanvasRenderingContext2DBase::rotate(double angleInRadians)
         return;
 
     AffineTransform newTransform = state().transform;
-    newTransform.rotate(angleInRadians / piDouble * 180.0);
+    newTransform.rotateRadians(angleInRadians);
     if (state().transform == newTransform)
         return;
 
@@ -789,7 +788,7 @@ void CanvasRenderingContext2DBase::rotate(double angleInRadians)
 
     modifiableState().transform = newTransform;
     c->rotate(angleInRadians);
-    m_path.transform(AffineTransform().rotate(-angleInRadians / piDouble * 180.0));
+    m_path.transform(AffineTransform().rotateRadians(-angleInRadians));
 }
 
 void CanvasRenderingContext2DBase::translate(double tx, double ty)
@@ -1406,8 +1405,8 @@ static LayoutSize size(CachedImage* cachedImage, RenderElement* renderer, ImageS
     if (!cachedImage)
         return { };
     LayoutSize size = cachedImage->imageSizeForRenderer(renderer, 1.0f); // FIXME: Not sure about this.
-    if (sizeType == ImageSizeType::AfterDevicePixelRatio && is<RenderImage>(renderer) && cachedImage->image() && !cachedImage->image()->hasRelativeWidth())
-        size.scale(downcast<RenderImage>(*renderer).imageDevicePixelRatio());
+    if (auto* renderImage = dynamicDowncast<RenderImage>(renderer); sizeType == ImageSizeType::AfterDevicePixelRatio && renderImage && cachedImage->image() && !cachedImage->image()->hasRelativeWidth())
+        size.scale(renderImage->imageDevicePixelRatio());
     return size;
 }
 
@@ -1642,14 +1641,15 @@ ExceptionOr<void> CanvasRenderingContext2DBase::drawImage(Document& document, Ca
         image->setContainerSize(imageRect.size());
     }
 
-    if (image->isBitmapImage()) {
+    if (RefPtr bitmapImage = dynamicDowncast<BitmapImage>(*image)) {
         // Drawing an animated image to a canvas should draw the first frame (except for a few layout tests)
         if (image->isAnimated() && !document.settings().animatedImageDebugCanvasDrawingEnabled()) {
-            image = BitmapImage::create(image->nativeImage());
-            if (!image)
+            bitmapImage = BitmapImage::create(image->nativeImage());
+            if (!bitmapImage)
                 return { };
+            image = bitmapImage.copyRef();
         }
-        downcast<BitmapImage>(*image).updateFromSettings(document.settings());
+        bitmapImage->updateFromSettings(document.settings());
         shouldPostProcess = false;
     }
 
@@ -2436,8 +2436,8 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     }
 
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, toDestinationColorSpace(computedColorSpace) };
-    auto pixelBuffer = buffer->getPixelBuffer(format, imageDataRect);
-    if (!is<ByteArrayPixelBuffer>(pixelBuffer)) {
+    RefPtr pixelBuffer = dynamicDowncast<ByteArrayPixelBuffer>(buffer->getPixelBuffer(format, imageDataRect));
+    if (!pixelBuffer) {
         canvasBase().scriptExecutionContext()->addConsoleMessage(MessageSource::Rendering, MessageLevel::Error,
             makeString("Unable to get image data from canvas. Requested size was ", imageDataRect.width(), " x ", imageDataRect.height()));
         return Exception { ExceptionCode::InvalidStateError };
@@ -2445,7 +2445,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
 
     ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace));
 
-    return { { ImageData::create(downcast<ByteArrayPixelBuffer>(pixelBuffer.releaseNonNull())) } };
+    return { { ImageData::create(pixelBuffer.releaseNonNull()) } };
 }
 
 void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy)

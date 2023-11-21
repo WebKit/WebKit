@@ -169,7 +169,7 @@ public:
 
     void applyConstraints(WebCore::MediaConstraints&& constraints, CompletionHandler<void(std::optional<RealtimeMediaSource::ApplyConstraintsError>&&)> callback)
     {
-        queueAndProcessSerialAction([this, weakThis = WeakPtr { this }, constraints = WTFMove(constraints), callback = WTFMove(callback)]() mutable -> Ref<GenericPromise> {
+        queueAndProcessSerialAction([this, weakThis = WeakPtr { this }, constraints = WTFMove(constraints), callback = WTFMove(callback)]() mutable {
 
             if (!weakThis) {
                 callback(RealtimeMediaSource::ApplyConstraintsError { { }, { } });
@@ -246,17 +246,12 @@ public:
                 return GenericPromise::createAndResolve();
             }
 
-            GenericPromise::Producer serialActionProducer;
-            Ref<GenericPromise> serialActionPromise = serialActionProducer;
-
-            m_source->takePhoto(WTFMove(photoSettings))->whenSettled(RunLoop::main(), [takePhotoProducer = WTFMove(takePhotoProducer), serialActionProducer = WTFMove(serialActionProducer)] (auto&& result) mutable {
+            return m_source->takePhoto(WTFMove(photoSettings))->whenSettled(RunLoop::main(), [takePhotoProducer = WTFMove(takePhotoProducer)] (auto&& result) mutable {
                 ASSERT(isMainRunLoop());
 
                 takePhotoProducer.settle(WTFMove(result));
-                serialActionProducer.resolve();
+                return GenericPromise::createAndResolve();
             });
-
-            return serialActionPromise;
         });
 
         return takePhotoPromise;

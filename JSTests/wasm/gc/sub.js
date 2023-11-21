@@ -231,7 +231,7 @@ function testSubDeclaration() {
       )
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. ((((())(I32, mutable))(I32, mutable, I64, mutable))(I32, mutable, I64, mutable, F32, mutable)) is not a (((())(I32, mutable))(I32, mutable, F64, mutable)), in function at index 0"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref null <struct:4>) is not a (ref null <struct:3>), in function at index 0"
   );
 
   assert.throws(
@@ -245,7 +245,7 @@ function testSubDeclaration() {
       )
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (() -> []) is not a ((() -> [])() -> []), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
+    "WebAssembly.Module doesn't validate: control flow returns with unexpected type. (ref <func:0>) is not a (ref <func:1>), in function at index 1 (evaluating 'new WebAssembly.Module(binary)')"
   );
 
   instantiate(`
@@ -470,7 +470,7 @@ function testSubDeclaration() {
       )
     `),
     WebAssembly.CompileError,
-    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (((() -> []), ((<current-rec-group>.0)() -> [])).1), expected (((() -> []), (), ((<current-rec-group>.0)() -> [])).0), in function at index 1"
+    "WebAssembly.Module doesn't validate: argument type mismatch in call, got (ref null <func:4>), expected (ref null <func:0>), in function at index 1"
   );
 
   // Check cases with a single non-recursive sub in a recursion group.
