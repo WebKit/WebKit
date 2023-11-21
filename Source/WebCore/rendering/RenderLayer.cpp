@@ -1345,11 +1345,18 @@ void RenderLayer::dirtyAncestorChainHasBlendingDescendants()
 
 FloatRect RenderLayer::referenceBoxRectForClipPath(CSSBoxType boxType, const LayoutSize& offsetFromRoot, const LayoutRect& rootRelativeBounds) const
 {
-    // FIXME: [LBSE] Upstream clipping support for SVG.
+    bool isReferenceBox = false;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (renderer().document().settings().layerBasedSVGEngineEnabled() && renderer().isSVGLayerAwareRenderer())
+        isReferenceBox = true;
+    else
+#endif
+        isReferenceBox = renderer().isRenderBox();
 
     // FIXME: Support different reference boxes for inline content.
     // https://bugs.webkit.org/show_bug.cgi?id=129047
-    if (!renderer().isRenderBox())
+    if (!isReferenceBox)
         return rootRelativeBounds;
 
     auto referenceBoxRect = renderer().referenceBoxRect(boxType);
