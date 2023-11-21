@@ -241,8 +241,6 @@ macro doVMEntry(makeCall)
     storep t4, VMEntryRecord::m_prevTopCallFrame[sp]
     loadp VM::topEntryFrame[vm], t4
     storep t4, VMEntryRecord::m_prevTopEntryFrame[sp]
-    loadp ProtoCallFrame::calleeValue[protoCallFrame], t4
-    storep t4, VMEntryRecord::m_callee[sp]
 
     # Align stack pointer
     if X86_WIN or MIPS
