@@ -1383,7 +1383,7 @@ class Port(object):
         _log.debug('ImageDiff not found at {}, using {} instead'.format(default_image_diff, built_image_diff))
         return built_image_diff
 
-    API_TEST_BINARY_NAMES = ['TestWTF', 'TestWebKitAPI']
+    API_TEST_BINARY_NAMES = ['TestWTF', 'TestWebKitAPI', 'TestIPC']
 
     def path_to_api_test_binaries(self):
         return {binary: self._build_path(binary) for binary in self.API_TEST_BINARY_NAMES}

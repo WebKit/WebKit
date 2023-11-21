@@ -418,6 +418,52 @@ if (ENABLE_WEBKIT)
     WEBKIT_EXECUTABLE_DECLARE(TestWebKit)
 endif ()
 
+if (ENABLE_IPC_TESTING_API)
+    set(TestIPC_SOURCES
+        TestsController.cpp
+        Utilities.cpp
+
+        Tests/IPC/ArgumentCoderTests.cpp
+        Tests/IPC/ConnectionTests.cpp
+        Tests/IPC/EventTests.cpp
+        Tests/IPC/IPCTestUtilities.cpp
+        Tests/IPC/MessageSenderTests.cpp
+        Tests/IPC/StreamConnectionBufferTests.cpp
+        Tests/IPC/StreamConnectionEncoderTests.cpp
+        Tests/IPC/StreamConnectionTests.cpp
+        Tests/IPC/StreamConnectionWorkQueueTests.cpp
+        Tests/IPC/ThreadSafeObjectHeapTests.cpp
+    )
+
+    set(TestIPC_LIBRARIES
+        WebKit::gtest
+        # FIXME
+        $<TARGET_OBJECTS:WebKit>
+    )
+
+    set(TestIPC_FRAMEWORKS
+        JavaScriptCore
+        PAL
+        WTF
+        WebCore
+    )
+    if (NOT USE_SYSTEM_MALLOC)
+        list(APPEND TestIPC_FRAMEWORKS bmalloc)
+    endif ()
+
+    set(TestIPC_PRIVATE_INCLUDE_DIRECTORIES
+        ${CMAKE_BINARY_DIR}
+        ${TESTWEBKITAPI_DIR}
+        # FIXME
+        ${WEBKIT_DIR}/Platform
+        ${WEBKIT_DIR}/Platform/IPC
+        ${WEBKIT_DIR}/Platform/IPC/unix
+        ${WebKit_DERIVED_SOURCES_DIR}
+    )
+
+    WEBKIT_EXECUTABLE_DECLARE(TestIPC)
+endif ()
+
 # Include platform specific files
 WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
 
@@ -442,4 +488,9 @@ endif ()
 # TestWebKit target
 if (ENABLE_WEBKIT)
     WEBKIT_TEST(TestWebKit)
+endif ()
+
+# TestIPC target
+if (ENABLE_IPC_TESTING_API)
+    WEBKIT_TEST(TestIPC)
 endif ()

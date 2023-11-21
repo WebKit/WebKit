@@ -27,6 +27,7 @@
 
 #include "ThreadSafeObjectHeap.h"
 #include <atomic>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace TestWebKitAPI {

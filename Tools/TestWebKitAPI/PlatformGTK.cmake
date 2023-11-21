@@ -90,6 +90,20 @@ target_include_directories(TestWebKitAPIInjectedBundle SYSTEM PRIVATE
     ${GLIB_INCLUDE_DIRS}
 )
 
+# TestIPC
+list(APPEND TestIPC_SOURCES
+    ${test_main_SOURCES}
+)
+
+list(APPEND TestIPC_SYSTEM_INCLUDE_DIRECTORIES
+    ${GLIB_INCLUDE_DIRS}
+    ${GSTREAMER_INCLUDE_DIRS}
+    ${GSTREAMER_AUDIO_INCLUDE_DIRS}
+    ${GSTREAMER_PBUTILS_INCLUDE_DIRS}
+    ${GSTREAMER_VIDEO_INCLUDE_DIRS}
+    ${LIBSOUP_INCLUDE_DIRS}
+)
+
 # TestJSC
 set(TestJSC_SOURCES
     Tests/JavaScriptCore/glib/TestJSC.cpp

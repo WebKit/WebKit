@@ -156,12 +156,6 @@ JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, u
     return jsValueForDecodedNumericArgumentValue(globalObject, value, "uint64_t"_s);
 }
 
-template<>
-JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* globalObject, size_t value)
-{
-    return jsValueForDecodedNumericArgumentValue(globalObject, value, "size_t"_s);
-}
-
 template<typename RectType>
 JSC::JSValue jsValueForDecodedArgumentRect(JSC::JSGlobalObject* globalObject, const RectType& value, const String& type)
 {

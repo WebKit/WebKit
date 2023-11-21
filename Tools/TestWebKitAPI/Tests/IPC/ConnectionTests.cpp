@@ -526,7 +526,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendAsync)
         for (uint64_t i = 100u; i < 160u; ++i) {
             b()->sendWithAsyncReply(MockTestMessageWithAsyncReply1 { }, [&, j = i] (uint64_t value) {
                 if (!value)
-                    WTFLogAlways("GOT: %llu", j);
+                    WTFLogAlways("GOT: %" PRId64, j);
                 EXPECT_GE(value, 100u);
                 replies.add(value);
             }, i);
@@ -560,7 +560,7 @@ TEST_P(ConnectionRunLoopTest, RunLoopSendWithPromisedReply)
             b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, i)->then(runLoop,
                 [&, j = i] (uint64_t value) {
                     if (!value)
-                        WTFLogAlways("GOT: %llu", j);
+                        WTFLogAlways("GOT: %" PRId64, j);
                     EXPECT_GE(value, 100u);
                     replies.add(value);
                 },
