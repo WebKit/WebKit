@@ -73,7 +73,6 @@
 #include "WebCodecsVideoFrame.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/IsoMallocInlines.h>
-#include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
@@ -781,7 +780,7 @@ void CanvasRenderingContext2DBase::rotate(double angleInRadians)
         return;
 
     AffineTransform newTransform = state().transform;
-    newTransform.rotate(angleInRadians / piDouble * 180.0);
+    newTransform.rotateRadians(angleInRadians);
     if (state().transform == newTransform)
         return;
 
@@ -789,7 +788,7 @@ void CanvasRenderingContext2DBase::rotate(double angleInRadians)
 
     modifiableState().transform = newTransform;
     c->rotate(angleInRadians);
-    m_path.transform(AffineTransform().rotate(-angleInRadians / piDouble * 180.0));
+    m_path.transform(AffineTransform().rotateRadians(-angleInRadians));
 }
 
 void CanvasRenderingContext2DBase::translate(double tx, double ty)
