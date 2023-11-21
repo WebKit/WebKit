@@ -74,7 +74,7 @@ struct DMABufReleaseFlag {
             return;
 
         uint64_t value { 1 };
-        if (write(fd.value(), &value, sizeof(value)) != sizeof(value))
+        if (::write(fd.value(), &value, sizeof(value)) != sizeof(value))
             WTFLogAlways("Error writing to the eventfd at DMABufReleaseFlag: %s", safeStrerror(errno).data());
     }
 
