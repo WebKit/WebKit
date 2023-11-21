@@ -322,4 +322,41 @@ HbUniquePtr<hb_font_t> FontPlatformData::createOpenTypeMathHarfBuzzFont() const
 }
 #endif
 
+FontPlatformData FontPlatformData::create(const Attributes& data, const FontCustomPlatformData* custom)
+{
+    static FcPattern* pattern = nullptr;
+    static bool fixedWidth = false;
+
+    RefPtr<cairo_font_face_t> fontFace;
+    if (custom && custom->m_fontFace)
+        fontFace = custom->m_fontFace;
+    else {
+        // Get some generic default settings from fontconfig for web fonts. Strategy
+        // from Behdad Esfahbod in https://code.google.com/p/chromium/issues/detail?id=173207#c35
+        // For web fonts, the hint style is overridden in FontCustomPlatformData::FontCustomPlatformData
+        // so Fontconfig will not affect the hint style, but it may disable hinting completely.
+        static std::once_flag flag;
+        std::call_once(flag, [](FcPattern*) {
+            pattern = FcPatternCreate();
+            FcConfigSubstitute(nullptr, pattern, FcMatchPattern);
+            cairo_ft_font_options_substitute(getDefaultCairoFontOptions(), pattern);
+            FcDefaultSubstitute(pattern);
+            FcPatternDel(pattern, FC_FAMILY);
+            FcConfigSubstitute(nullptr, pattern, FcMatchFont);
+        }, pattern);
+
+        int spacing;
+        if (FcPatternGetInteger(pattern, FC_SPACING, 0, &spacing) == FcResultMatch && spacing == FC_MONO)
+            fixedWidth = true;
+        fontFace = adoptRef(cairo_ft_font_face_create_for_pattern(pattern));
+    }
+
+    return FontPlatformData(fontFace.get(), adoptRef(pattern), data.m_size, fixedWidth, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, custom);
+}
+
+FontPlatformData::Attributes FontPlatformData::attributes() const
+{
+    return Attributes(m_size, m_orientation, m_widthVariant, m_textRenderingMode, m_syntheticBold, m_syntheticOblique);
+}
+
 } // namespace WebCore
