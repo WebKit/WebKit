@@ -467,7 +467,8 @@ void RenderLayerModelObject::updateHasSVGTransformFlags()
 
 RenderSVGResourceClipper* RenderLayerModelObject::svgClipperResourceFromStyle() const
 {
-    ASSERT(document().settings().layerBasedSVGEngineEnabled());
+    if (!document().settings().layerBasedSVGEngineEnabled())
+        return nullptr;
 
     auto* clipPathOperation = style().clipPath();
     if (!clipPathOperation || !is<ReferencePathOperation>(clipPathOperation))

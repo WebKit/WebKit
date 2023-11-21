@@ -27,12 +27,12 @@
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "LegacyInlineFlowBox.h"
+#include "LegacyRenderSVGResourceSolidColor.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
 #include "PointerEventsHitRules.h"
 #include "RenderBlock.h"
 #include "RenderInline.h"
-#include "RenderSVGResourceSolidColor.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "SVGInlineTextBoxInlines.h"
@@ -346,7 +346,7 @@ bool SVGInlineTextBox::acquirePaintingResource(GraphicsContext*& context, float 
             return false;
         }
         
-        RenderSVGResourceSolidColor* fallbackResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
+        LegacyRenderSVGResourceSolidColor* fallbackResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
         fallbackResource->setColor(fallbackColor);
 
         m_paintingResource = fallbackResource;

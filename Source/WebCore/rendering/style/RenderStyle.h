@@ -1071,6 +1071,8 @@ public:
 
     inline MathStyle mathStyle() const;
 
+    inline const std::optional<Style::ScopedName>& viewTransitionName() const;
+
     void setDisplay(DisplayType value)
     {
         m_nonInheritedFlags.originalDisplay = static_cast<unsigned>(value);
@@ -1701,6 +1703,8 @@ public:
     inline QuotesData* quotes() const;
     void setQuotes(RefPtr<QuotesData>&&);
 
+    inline void setViewTransitionName(std::optional<Style::ScopedName>);
+
     inline WillChangeData* willChange() const;
     void setWillChange(RefPtr<WillChangeData>&&);
 
@@ -1805,6 +1809,7 @@ public:
     static constexpr ListStylePosition initialListStylePosition();
     static inline ListStyleType initialListStyleType();
     static constexpr OptionSet<TextTransform> initialTextTransform();
+    static inline std::optional<Style::ScopedName> initialViewTransitionName();
     static constexpr Visibility initialVisibility();
     static constexpr WhiteSpaceCollapse initialWhiteSpaceCollapse();
     static float initialHorizontalBorderSpacing() { return 0; }

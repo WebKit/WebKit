@@ -27,7 +27,6 @@
 
 #include <WebCore/AutocapitalizeTypes.h>
 #include <WebCore/InputMode.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/OptionSet.h>
 
 namespace IPC {
@@ -41,26 +40,29 @@ class HTMLInputElement;
 
 namespace WebKit {
 
-struct InputMethodState {
-    enum class Purpose {
-        FreeForm,
-        Digits,
-        Number,
-        Phone,
-        Url,
-        Email,
-        Password
-    };
+enum class InputMethodStatePurpose : uint8_t {
+    FreeForm,
+    Digits,
+    Number,
+    Phone,
+    Url,
+    Email,
+    Password
+};
 
-    enum class Hint : uint8_t {
-        None = 0,
-        Spellcheck = 1 << 0,
-        Lowercase = 1 << 1,
-        UppercaseChars = 1 << 2,
-        UppercaseWords = 1 << 3,
-        UppercaseSentences = 1 << 4,
-        InhibitOnScreenKeyboard = 1 << 5
-    };
+enum class InputMethodStateHint : uint8_t {
+    None = 0,
+    Spellcheck = 1 << 0,
+    Lowercase = 1 << 1,
+    UppercaseChars = 1 << 2,
+    UppercaseWords = 1 << 3,
+    UppercaseSentences = 1 << 4,
+    InhibitOnScreenKeyboard = 1 << 5
+};
+
+struct InputMethodState {
+    using Purpose = InputMethodStatePurpose;
+    using Hint = InputMethodStateHint;
 
     void setPurposeOrHintForInputMode(WebCore::InputMode);
     void setPurposeForInputElement(WebCore::HTMLInputElement&);
@@ -76,33 +78,3 @@ struct InputMethodState {
 };
 
 } // namespace WebKit
-
-namespace WTF {
-
-template<> struct EnumTraits<WebKit::InputMethodState::Hint> {
-    using values = EnumValues<
-        WebKit::InputMethodState::Hint,
-        WebKit::InputMethodState::Hint::None,
-        WebKit::InputMethodState::Hint::Spellcheck,
-        WebKit::InputMethodState::Hint::Lowercase,
-        WebKit::InputMethodState::Hint::UppercaseChars,
-        WebKit::InputMethodState::Hint::UppercaseWords,
-        WebKit::InputMethodState::Hint::UppercaseSentences,
-        WebKit::InputMethodState::Hint::InhibitOnScreenKeyboard
-    >;
-};
-
-template<> struct EnumTraits<WebKit::InputMethodState::Purpose> {
-    using values = EnumValues<
-        WebKit::InputMethodState::Purpose,
-        WebKit::InputMethodState::Purpose::FreeForm,
-        WebKit::InputMethodState::Purpose::Digits,
-        WebKit::InputMethodState::Purpose::Number,
-        WebKit::InputMethodState::Purpose::Phone,
-        WebKit::InputMethodState::Purpose::Url,
-        WebKit::InputMethodState::Purpose::Email,
-        WebKit::InputMethodState::Purpose::Password
-    >;
-};
-
-} // namespace WTF

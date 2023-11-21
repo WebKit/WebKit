@@ -154,6 +154,7 @@ public:
     RefPtr<PathOperation> offsetPath;
 
     Vector<Style::ScopedName> containerNames;
+    std::optional<Style::ScopedName> viewTransitionName;
 
     GapLength columnGap;
     GapLength rowGap;

@@ -350,6 +350,7 @@ PASS translate
 PASS unicode-bidi
 PASS vector-effect
 PASS vertical-align
+PASS view-transition-name
 PASS visibility
 PASS white-space-collapse
 PASS widows

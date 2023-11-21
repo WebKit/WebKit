@@ -18,6 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://html.spec.whatwg.org/multipage/dom.html#htmlelement
+
 [
     CustomPushEventHandlerScope,
     CustomToJSObject,
@@ -45,8 +47,7 @@
     readonly attribute DOMString accessKeyLabel;
     [CEReactions=Needed] attribute boolean draggable;
     [CEReactions=Needed] attribute boolean spellcheck;
-    // FIXME: 'autocapitalize' should not be [LegacyNullToEmptyString].
-    [Conditional=AUTOCAPITALIZE, CEReactions=Needed] attribute [LegacyNullToEmptyString, AtomString] DOMString autocapitalize;
+    [Conditional=AUTOCAPITALIZE, CEReactions=Needed] attribute [AtomString] DOMString autocapitalize;
 
     [CEReactions=Needed] attribute [LegacyNullToEmptyString] DOMString innerText;
 

@@ -206,7 +206,15 @@ UniqueRef<Layout::Box> BoxTree::createLayoutBox(RenderObject& renderer)
             textRenderer.setHasPositionDependentContentWidth(*hasPositionDependentContentWidth);
         }
 
-        return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, *canUseSimplifiedTextMeasuring, canUseSimpleFontCodePath, *hasPositionDependentContentWidth, WTFMove(style), WTFMove(firstLineStyle));
+        auto contentCharacteristic = OptionSet<Layout::InlineTextBox::ContentCharacteristic> { };
+        if (canUseSimpleFontCodePath)
+            contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpledFontCodepath);
+        if (*canUseSimplifiedTextMeasuring)
+            contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimplifiedContentMeasuring);
+        if (*hasPositionDependentContentWidth)
+            contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
+
+        return makeUniqueRef<Layout::InlineTextBox>(text, isCombinedText, contentCharacteristic, WTFMove(style), WTFMove(firstLineStyle));
     }
 
     auto& renderElement = downcast<RenderElement>(renderer);
@@ -284,11 +292,15 @@ void BoxTree::updateContent(const RenderText& textRenderer)
     auto& style = inlineTextBox.style();
     auto isCombinedText = is<RenderCombineText>(textRenderer) && downcast<RenderCombineText>(textRenderer).isCombined();
     auto text = style.textSecurity() == TextSecurity::None ? (isCombinedText ? textRenderer.originalText() : textRenderer.text()) : RenderBlock::updateSecurityDiscCharacters(style, isCombinedText ? textRenderer.originalText() : textRenderer.text());
-    auto canUseSimpleFontCodePath = textRenderer.canUseSimpleFontCodePath();
-    auto canUseSimplifiedTextMeasuring = canUseSimpleFontCodePath && Layout::TextUtil::canUseSimplifiedTextMeasuring(text, style, &inlineTextBox.firstLineStyle());
-    auto hasPositionDependentContentWidth = Layout::TextUtil::hasPositionDependentContentWidth(text);
+    auto contentCharacteristic = OptionSet<Layout::InlineTextBox::ContentCharacteristic> { };
+    if (textRenderer.canUseSimpleFontCodePath())
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpledFontCodepath);
+    if (textRenderer.canUseSimpleFontCodePath() && Layout::TextUtil::canUseSimplifiedTextMeasuring(text, style, &inlineTextBox.firstLineStyle()))
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimplifiedContentMeasuring);
+    if (Layout::TextUtil::hasPositionDependentContentWidth(text))
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
 
-    inlineTextBox.updateContent(text, canUseSimpleFontCodePath, canUseSimplifiedTextMeasuring, hasPositionDependentContentWidth);
+    inlineTextBox.updateContent(text, contentCharacteristic);
 }
 
 const Layout::Box& BoxTree::insert(const RenderElement& parent, RenderObject& child, const RenderObject* beforeChild)

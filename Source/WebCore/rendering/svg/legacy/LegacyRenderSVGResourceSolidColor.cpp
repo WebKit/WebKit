@@ -18,7 +18,7 @@
  */
 
 #include "config.h"
-#include "RenderSVGResourceSolidColor.h"
+#include "LegacyRenderSVGResourceSolidColor.h"
 
 #include "GraphicsContext.h"
 #include "LocalFrame.h"
@@ -31,11 +31,11 @@
 
 namespace WebCore {
 
-RenderSVGResourceSolidColor::RenderSVGResourceSolidColor() = default;
+LegacyRenderSVGResourceSolidColor::LegacyRenderSVGResourceSolidColor() = default;
 
-RenderSVGResourceSolidColor::~RenderSVGResourceSolidColor() = default;
+LegacyRenderSVGResourceSolidColor::~LegacyRenderSVGResourceSolidColor() = default;
 
-bool RenderSVGResourceSolidColor::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
+bool LegacyRenderSVGResourceSolidColor::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());
@@ -70,7 +70,7 @@ bool RenderSVGResourceSolidColor::applyResource(RenderElement& renderer, const R
     return true;
 }
 
-void RenderSVGResourceSolidColor::postApplyResource(RenderElement&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderElement* shape)
+void LegacyRenderSVGResourceSolidColor::postApplyResource(RenderElement&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderElement* shape)
 {
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());

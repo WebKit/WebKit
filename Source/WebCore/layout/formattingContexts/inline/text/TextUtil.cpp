@@ -424,6 +424,18 @@ TextBreakIterator::ContentAnalysis TextUtil::contentAnalysis(WordBreak wordBreak
     return TextBreakIterator::ContentAnalysis::Mechanical;
 }
 
+bool TextUtil::isStrongDirectionalityCharacter(UChar32 character)
+{
+    auto bidiCategory = u_charDirection(character);
+    return bidiCategory == U_RIGHT_TO_LEFT
+        || bidiCategory == U_RIGHT_TO_LEFT_ARABIC
+        || bidiCategory == U_RIGHT_TO_LEFT_EMBEDDING
+        || bidiCategory == U_RIGHT_TO_LEFT_OVERRIDE
+        || bidiCategory == U_LEFT_TO_RIGHT_EMBEDDING
+        || bidiCategory == U_LEFT_TO_RIGHT_OVERRIDE
+        || bidiCategory == U_POP_DIRECTIONAL_FORMAT;
+}
+
 bool TextUtil::containsStrongDirectionalityText(StringView text)
 {
     if (text.is8Bit())
@@ -433,16 +445,7 @@ bool TextUtil::containsStrongDirectionalityText(StringView text)
     for (size_t position = 0; position < length;) {
         UChar32 character;
         U16_NEXT(text.characters16(), position, length, character);
-
-        auto bidiCategory = u_charDirection(character);
-        bool hasBidiContent = bidiCategory == U_RIGHT_TO_LEFT
-            || bidiCategory == U_RIGHT_TO_LEFT_ARABIC
-            || bidiCategory == U_RIGHT_TO_LEFT_EMBEDDING
-            || bidiCategory == U_RIGHT_TO_LEFT_OVERRIDE
-            || bidiCategory == U_LEFT_TO_RIGHT_EMBEDDING
-            || bidiCategory == U_LEFT_TO_RIGHT_OVERRIDE
-            || bidiCategory == U_POP_DIRECTIONAL_FORMAT;
-        if (hasBidiContent)
+        if (isStrongDirectionalityCharacter(character))
             return true;
     }
 

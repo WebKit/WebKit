@@ -208,6 +208,8 @@ public:
     static TextAutospace convertTextAutospace(BuilderState&, const CSSValue&);
 
     static std::optional<Length> convertBlockStepSize(BuilderState&, const CSSValue&);
+
+    static std::optional<Style::ScopedName> convertViewTransitionName(BuilderState&, const CSSValue&);
     static RefPtr<WillChangeData> convertWillChange(BuilderState&, const CSSValue&);
     
 private:
@@ -2024,6 +2026,17 @@ inline OptionSet<Containment> BuilderConverter::convertContain(BuilderState&, co
         };
     }
     return containment;
+}
+
+inline std::optional<Style::ScopedName> BuilderConverter::convertViewTransitionName(BuilderState& state, const CSSValue& value)
+{
+    if (!is<CSSPrimitiveValue>(value))
+        return { };
+
+    if (value.valueID() == CSSValueNone)
+        return std::nullopt;
+
+    return Style::ScopedName { AtomString { downcast<CSSPrimitiveValue>(value).stringValue() }, state.styleScopeOrdinal() };
 }
 
 inline RefPtr<WillChangeData> BuilderConverter::convertWillChange(BuilderState& builderState, const CSSValue& value)

@@ -91,6 +91,8 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
 
 list(APPEND WebCore_SERIALIZATION_IN_FILES SoupNetworkProxySettings.serialization.in)
 
+list(APPEND WebKit_SERIALIZATION_IN_FILES Shared/glib/InputMethodState.serialization.in)
+
 list(APPEND WebKit_DERIVED_SOURCES
     ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c
     ${WebKit_DERIVED_SOURCES_DIR}/WebKitDirectoryInputStreamData.cpp

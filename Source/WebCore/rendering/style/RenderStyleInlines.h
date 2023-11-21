@@ -491,6 +491,7 @@ constexpr UserDrag RenderStyle::initialUserDrag() { return UserDrag::Auto; }
 constexpr UserModify RenderStyle::initialUserModify() { return UserModify::ReadOnly; }
 constexpr UserSelect RenderStyle::initialUserSelect() { return UserSelect::Text; }
 constexpr VerticalAlign RenderStyle::initialVerticalAlign() { return VerticalAlign::Baseline; }
+inline std::optional<Style::ScopedName> RenderStyle::initialViewTransitionName() { return std::nullopt; }
 constexpr Visibility RenderStyle::initialVisibility() { return Visibility::Visible; }
 constexpr WhiteSpaceCollapse RenderStyle::initialWhiteSpaceCollapse() { return WhiteSpaceCollapse::Collapse; }
 constexpr WordBreak RenderStyle::initialWordBreak() { return WordBreak::Normal; }
@@ -707,6 +708,7 @@ inline UserDrag RenderStyle::userDrag() const { return static_cast<UserDrag>(m_n
 inline UserModify RenderStyle::userModify() const { return static_cast<UserModify>(m_rareInheritedData->userModify); }
 inline UserSelect RenderStyle::userSelect() const { return static_cast<UserSelect>(m_rareInheritedData->userSelect); }
 inline const Length& RenderStyle::verticalAlignLength() const { return m_nonInheritedData->boxData->verticalAlign(); }
+inline const std::optional<Style::ScopedName>& RenderStyle::viewTransitionName() const { return m_nonInheritedData->rareData->viewTransitionName; }
 inline const StyleColor& RenderStyle::visitedLinkBackgroundColor() const { return m_nonInheritedData->miscData->visitedLinkColor->background; }
 inline const StyleColor& RenderStyle::visitedLinkBorderBottomColor() const { return m_nonInheritedData->miscData->visitedLinkColor->borderBottom; }
 inline const StyleColor& RenderStyle::visitedLinkBorderLeftColor() const { return m_nonInheritedData->miscData->visitedLinkColor->borderLeft; }

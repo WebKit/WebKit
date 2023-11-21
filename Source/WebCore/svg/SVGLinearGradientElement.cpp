@@ -27,9 +27,9 @@
 
 #include "Document.h"
 #include "FloatPoint.h"
+#include "LegacyRenderSVGResourceLinearGradient.h"
 #include "LinearGradientAttributes.h"
 #include "NodeName.h"
-#include "RenderSVGResourceLinearGradient.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGLengthValue.h"
 #include "SVGNames.h"
@@ -100,7 +100,7 @@ void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName
 
 RenderPtr<RenderElement> SVGLinearGradientElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGResourceLinearGradient>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGResourceLinearGradient>(*this, WTFMove(style));
 }
 
 static void setGradientAttributes(SVGGradientElement& element, LinearGradientAttributes& attributes, bool isLinear = true)

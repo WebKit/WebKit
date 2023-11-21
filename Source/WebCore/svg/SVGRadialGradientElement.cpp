@@ -27,9 +27,9 @@
 
 #include "FloatConversion.h"
 #include "FloatPoint.h"
+#include "LegacyRenderSVGResourceRadialGradient.h"
 #include "NodeName.h"
 #include "RadialGradientAttributes.h"
-#include "RenderSVGResourceRadialGradient.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGStopElement.h"
@@ -107,7 +107,7 @@ void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName
 
 RenderPtr<RenderElement> SVGRadialGradientElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
-    return createRenderer<RenderSVGResourceRadialGradient>(*this, WTFMove(style));
+    return createRenderer<LegacyRenderSVGResourceRadialGradient>(*this, WTFMove(style));
 }
 
 static void setGradientAttributes(SVGGradientElement& element, RadialGradientAttributes& attributes, bool isRadial = true)

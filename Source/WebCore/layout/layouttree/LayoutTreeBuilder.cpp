@@ -140,7 +140,14 @@ std::unique_ptr<Box> TreeBuilder::createReplacedBox(Box::ElementAttributes eleme
 
 std::unique_ptr<Box> TreeBuilder::createTextBox(String text, bool isCombined, bool canUseSimplifiedTextMeasuring, bool canUseSimpleFontCodePath, bool hasPositionDependentContentWidth, RenderStyle&& style)
 {
-    return makeUnique<InlineTextBox>(text, isCombined, canUseSimplifiedTextMeasuring, canUseSimpleFontCodePath, hasPositionDependentContentWidth, WTFMove(style));
+    auto contentCharacteristic = OptionSet<Layout::InlineTextBox::ContentCharacteristic> { };
+    if (canUseSimpleFontCodePath)
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimpledFontCodepath);
+    if (canUseSimplifiedTextMeasuring)
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::CanUseSimplifiedContentMeasuring);
+    if (hasPositionDependentContentWidth)
+        contentCharacteristic.add(Layout::InlineTextBox::ContentCharacteristic::HasPositionDependentContentWidth);
+    return makeUnique<InlineTextBox>(text, isCombined, contentCharacteristic, WTFMove(style));
 }
 
 std::unique_ptr<ElementBox> TreeBuilder::createContainer(Box::ElementAttributes elementAttributes, RenderStyle&& style)

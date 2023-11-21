@@ -1,5 +1,3 @@
-CONSOLE MESSAGE: A MediaStreamTrack ended due to a capture failure
-CONSOLE MESSAGE: A MediaStreamTrack ended due to a capture failure
 
 PASS 'devicechange' event fired when device list changes
 PASS 'devicechange' events fired quickly are coalesced

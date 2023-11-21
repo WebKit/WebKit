@@ -29,6 +29,7 @@
 
 #include "ElementAncestorIteratorInlines.h"
 #include "LegacyRenderSVGResourceClipper.h"
+#include "LegacyRenderSVGResourceFilter.h"
 #include "LegacyRenderSVGResourceMarker.h"
 #include "LegacyRenderSVGResourceMasker.h"
 #include "LegacyRenderSVGRoot.h"
@@ -43,7 +44,6 @@
 #include "RenderIterator.h"
 #include "RenderLayer.h"
 #include "RenderSVGResourceClipper.h"
-#include "RenderSVGResourceFilter.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderSVGText.h"
@@ -336,7 +336,7 @@ void SVGRenderSupport::intersectRepaintRectWithResources(const RenderElement& re
     if (!resources)
         return;
 
-    if (RenderSVGResourceFilter* filter = resources->filter())
+    if (LegacyRenderSVGResourceFilter* filter = resources->filter())
         repaintRect = filter->resourceBoundingBox(renderer, repaintRectCalculation);
 
     if (LegacyRenderSVGResourceClipper* clipper = resources->clipper())

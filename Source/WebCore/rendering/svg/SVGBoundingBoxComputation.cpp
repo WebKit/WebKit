@@ -21,6 +21,7 @@
 #include "SVGBoundingBoxComputation.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
+
 #include "ReferencedSVGResources.h"
 #include "RenderChildIterator.h"
 #include "RenderObjectInlines.h"
@@ -31,7 +32,6 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResourceClipper.h"
-#include "RenderSVGResourceFilter.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderSVGText.h"

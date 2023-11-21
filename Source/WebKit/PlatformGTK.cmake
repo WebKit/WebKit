@@ -65,6 +65,7 @@ list(APPEND WebKit_MESSAGES_IN_FILES
 list(APPEND WebKit_SERIALIZATION_IN_FILES
     Shared/glib/DMABufRendererBufferFormat.serialization.in
     Shared/glib/DMABufRendererBufferMode.serialization.in
+    Shared/glib/InputMethodState.serialization.in
 )
 
 list(APPEND WebCore_SERIALIZATION_IN_FILES SoupNetworkProxySettings.serialization.in)

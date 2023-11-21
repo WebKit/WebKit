@@ -35,8 +35,8 @@
 #include "CachedSVGDocument.h"
 #include "CachedSVGDocumentReference.h"
 #include "FilterTargetSwitcher.h"
+#include "LegacyRenderSVGResourceFilter.h"
 #include "Logging.h"
-#include "RenderSVGResourceFilter.h"
 #include "RenderStyleInlines.h"
 #include <wtf/NeverDestroyed.h>
 
@@ -95,7 +95,7 @@ void RenderLayerFilters::updateReferenceFilterClients(const FilterOperations& op
             RefPtr filterElement = m_layer.renderer().document().getElementById(referenceOperation.fragment());
             if (!filterElement)
                 continue;
-            CheckedPtr renderer = dynamicDowncast<RenderSVGResourceFilter>(filterElement->renderer());
+            CheckedPtr renderer = dynamicDowncast<LegacyRenderSVGResourceFilter>(filterElement->renderer());
             if (!renderer)
                 continue;
             renderer->addClientRenderLayer(m_layer);

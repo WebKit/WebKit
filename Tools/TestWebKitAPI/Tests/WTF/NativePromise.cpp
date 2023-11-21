@@ -657,6 +657,35 @@ TEST(NativePromise, InvokeAsyncAutoConversion)
     Util::run(&done);
 }
 
+TEST(NativePromise, InvokeAsyncWithExpected)
+{
+    runInCurrentRunLoopUntilDone([](auto& runLoop, bool& done) {
+        auto asyncMethodWithExpected = [] {
+            return Expected<int, long> { 1 };
+        };
+
+        invokeAsync(runLoop, WTFMove(asyncMethodWithExpected))->whenSettled(runLoop, [&](auto&& result) {
+            EXPECT_TRUE(!!result);
+            EXPECT_EQ(result.value(), 1L);
+            done = true;
+        });
+    });
+}
+
+TEST(NativePromise, InvokeAsyncWithVoid)
+{
+    runInCurrentRunLoopUntilDone([](auto& runLoop, bool& done) {
+        invokeAsync(runLoop, [] {
+            EXPECT_TRUE(true);
+        })->whenSettled(runLoop, [&](auto&& result) {
+            EXPECT_TRUE(!!result);
+            static_assert(std::is_same_v<std::remove_reference_t<decltype(result)>, GenericPromise::Result>, "We must be getting a GenericPromise");
+            static_assert(std::is_void_v<typename std::remove_reference_t<decltype(result)>::value_type>);
+            done = true;
+        });
+    });
+}
+
 static Ref<GenericPromise> myMethodReturningProducer()
 {
     assertIsCurrent(RunLoop::main());
@@ -1613,6 +1642,22 @@ TEST(NativePromise, MismatchChainToVoidPromise)
             done = true;
         });
         intPromise3->chainTo(WTFMove(genericPromiseProducer2));
+    });
+}
+
+TEST(NativePromise, CreateSettledPromise)
+{
+    runInCurrentRunLoopUntilDone([](auto& runLoop, bool& done) {
+        using MyExpected = Expected<int, long>;
+        createSettledPromise(MyExpected { makeUnexpected<long>(1) })->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!result);
+            EXPECT_EQ(result.error(), 1L);
+        });
+        createSettledPromise(MyExpected { 1 })->whenSettled(runLoop, [&](auto&& result) {
+            EXPECT_TRUE(!!result);
+            EXPECT_EQ(result.value(), 1);
+            done = true;
+        });
     });
 }
 

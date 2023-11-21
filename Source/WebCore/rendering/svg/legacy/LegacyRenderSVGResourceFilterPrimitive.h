@@ -26,17 +26,17 @@
 
 #pragma once
 
-#include "RenderSVGResourceFilter.h"
+#include "LegacyRenderSVGResourceFilter.h"
 
 namespace WebCore {
 
 class FilterEffect;
 class SVGFilterPrimitiveStandardAttributes;
 
-class RenderSVGResourceFilterPrimitive final : public LegacyRenderSVGHiddenContainer {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceFilterPrimitive);
+class LegacyRenderSVGResourceFilterPrimitive final : public LegacyRenderSVGHiddenContainer {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceFilterPrimitive);
 public:
-    RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&, RenderStyle&&);
+    LegacyRenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes&, RenderStyle&&);
     SVGFilterPrimitiveStandardAttributes& filterPrimitiveElement() const;
 
     void styleDidChange(StyleDifference, const RenderStyle*) override;
@@ -52,4 +52,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(RenderSVGResourceFilterPrimitive, isRenderSVGResourceFilterPrimitive())
+SPECIALIZE_TYPE_TRAITS_RENDER_OBJECT(LegacyRenderSVGResourceFilterPrimitive, isRenderSVGResourceFilterPrimitive())

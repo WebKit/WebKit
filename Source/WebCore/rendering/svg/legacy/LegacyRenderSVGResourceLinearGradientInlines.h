@@ -25,25 +25,15 @@
 
 #pragma once
 
-#include "RenderSVGResourceFilter.h"
-#include "SVGFilterElement.h"
+#include "LegacyRenderSVGResourceLinearGradient.h"
+#include "SVGElementTypeHelpers.h"
+#include "SVGLinearGradientElement.h"
 
 namespace WebCore {
 
-inline SVGFilterElement& RenderSVGResourceFilter::filterElement() const
+inline SVGLinearGradientElement& LegacyRenderSVGResourceLinearGradient::linearGradientElement() const
 {
-    return downcast<SVGFilterElement>(LegacyRenderSVGResourceContainer::element());
-}
-
-inline SVGUnitTypes::SVGUnitType RenderSVGResourceFilter::filterUnits() const
-{
-    return filterElement().filterUnits();
-}
-
-inline SVGUnitTypes::SVGUnitType RenderSVGResourceFilter::primitiveUnits() const
-{
-    return filterElement().primitiveUnits();
+    return downcast<SVGLinearGradientElement>(LegacyRenderSVGResourceGradient::gradientElement());
 }
 
 } // namespace WebCore
-

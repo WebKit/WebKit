@@ -23,14 +23,14 @@
  */
 
 #include "config.h"
-#include "RenderSVGResourceFilter.h"
+#include "LegacyRenderSVGResourceFilter.h"
 
 #include "FilterEffect.h"
 #include "FloatPoint.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
+#include "LegacyRenderSVGResourceFilterInlines.h"
 #include "Logging.h"
-#include "RenderSVGResourceFilterInlines.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
@@ -40,32 +40,32 @@
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FilterData);
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceFilter);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceFilter);
 
-RenderSVGResourceFilter::RenderSVGResourceFilter(SVGFilterElement& element, RenderStyle&& style)
+LegacyRenderSVGResourceFilter::LegacyRenderSVGResourceFilter(SVGFilterElement& element, RenderStyle&& style)
     : LegacyRenderSVGResourceContainer(Type::SVGResourceFilter, element, WTFMove(style))
 {
 }
 
-RenderSVGResourceFilter::~RenderSVGResourceFilter() = default;
+LegacyRenderSVGResourceFilter::~LegacyRenderSVGResourceFilter() = default;
 
-bool RenderSVGResourceFilter::isIdentity() const
+bool LegacyRenderSVGResourceFilter::isIdentity() const
 {
     return SVGFilter::isIdentity(filterElement());
 }
 
-void RenderSVGResourceFilter::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
+void LegacyRenderSVGResourceFilter::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
 {
-    LOG(Filters, "RenderSVGResourceFilter %p removeAllClientsFromCacheIfNeeded", this);
+    LOG(Filters, "LegacyRenderSVGResourceFilter %p removeAllClientsFromCacheIfNeeded", this);
 
     m_rendererFilterDataMap.clear();
 
     markAllClientsForInvalidationIfNeeded(markForInvalidation ? LayoutAndBoundariesInvalidation : ParentOnlyInvalidation, visitedRenderers);
 }
 
-void RenderSVGResourceFilter::removeClientFromCache(RenderElement& client, bool markForInvalidation)
+void LegacyRenderSVGResourceFilter::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
-    LOG(Filters, "RenderSVGResourceFilter %p removing client %p", this, &client);
+    LOG(Filters, "LegacyRenderSVGResourceFilter %p removing client %p", this, &client);
     
     auto findResult = m_rendererFilterDataMap.find(&client);
     if (findResult != m_rendererFilterDataMap.end()) {
@@ -79,12 +79,12 @@ void RenderSVGResourceFilter::removeClientFromCache(RenderElement& client, bool 
     markClientForInvalidation(client, markForInvalidation ? BoundariesInvalidation : ParentOnlyInvalidation);
 }
 
-bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
+bool LegacyRenderSVGResourceFilter::applyResource(RenderElement& renderer, const RenderStyle&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, !resourceMode);
 
-    LOG(Filters, "RenderSVGResourceFilter %p applyResource renderer %p", this, &renderer);
+    LOG(Filters, "LegacyRenderSVGResourceFilter %p applyResource renderer %p", this, &renderer);
 
     if (m_rendererFilterDataMap.contains(&renderer)) {
         FilterData* filterData = m_rendererFilterDataMap.get(&renderer);
@@ -172,7 +172,7 @@ bool RenderSVGResourceFilter::applyResource(RenderElement& renderer, const Rende
     return true;
 }
 
-void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path*, const RenderElement*)
+void LegacyRenderSVGResourceFilter::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path*, const RenderElement*)
 {
     ASSERT(context);
     ASSERT_UNUSED(resourceMode, !resourceMode);
@@ -218,17 +218,17 @@ void RenderSVGResourceFilter::postApplyResource(RenderElement& renderer, Graphic
         filterData.targetSwitcher->endDrawSourceImage(*context);
     }
 
-    LOG_WITH_STREAM(Filters, stream << "RenderSVGResourceFilter " << this << " postApplyResource done\n");
+    LOG_WITH_STREAM(Filters, stream << "LegacyRenderSVGResourceFilter " << this << " postApplyResource done\n");
 }
 
-FloatRect RenderSVGResourceFilter::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation)
+FloatRect LegacyRenderSVGResourceFilter::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation)
 {
     return SVGLengthContext::resolveRectangle<SVGFilterElement>(&filterElement(), filterElement().filterUnits(), object.objectBoundingBox());
 }
 
-void RenderSVGResourceFilter::markFilterForRepaint(FilterEffect& effect)
+void LegacyRenderSVGResourceFilter::markFilterForRepaint(FilterEffect& effect)
 {
-    LOG(Filters, "RenderSVGResourceFilter %p markFilterForRepaint effect %p", this, &effect);
+    LOG(Filters, "LegacyRenderSVGResourceFilter %p markFilterForRepaint effect %p", this, &effect);
 
     for (const auto& objectFilterDataPair : m_rendererFilterDataMap) {
         const auto& filterData = objectFilterDataPair.value;
@@ -242,14 +242,14 @@ void RenderSVGResourceFilter::markFilterForRepaint(FilterEffect& effect)
     }
 }
 
-void RenderSVGResourceFilter::markFilterForRebuild()
+void LegacyRenderSVGResourceFilter::markFilterForRebuild()
 {
-    LOG(Filters, "RenderSVGResourceFilter %p markFilterForRebuild", this);
+    LOG(Filters, "LegacyRenderSVGResourceFilter %p markFilterForRebuild", this);
 
     removeAllClientsFromCache();
 }
 
-FloatRect RenderSVGResourceFilter::drawingRegion(RenderObject* object) const
+FloatRect LegacyRenderSVGResourceFilter::drawingRegion(RenderObject* object) const
 {
     FilterData* filterData = m_rendererFilterDataMap.get(object);
     return filterData ? filterData->sourceImageRect : FloatRect();

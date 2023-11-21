@@ -22,8 +22,8 @@
 #pragma once
 
 #include "FilterEffectGeometry.h"
-#include "RenderSVGResourceFilter.h"
-#include "RenderSVGResourceFilterPrimitive.h"
+#include "LegacyRenderSVGResourceFilter.h"
+#include "LegacyRenderSVGResourceFilterPrimitive.h"
 #include "SVGElement.h"
 #include "SVGNames.h"
 #include <wtf/RefPtr.h>

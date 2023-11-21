@@ -121,11 +121,11 @@ void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& exten
     if (m_styleRuleToCSSOMWrapperMap.isEmpty()) {
         collectFromStyleSheetContents(UserAgentStyle::defaultStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::quirksStyleSheet);
-        collectFromStyleSheetContents(UserAgentStyle::dialogStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::svgStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::mathMLStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::mediaControlsStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::horizontalFormControlsStyleSheet);
+        collectFromStyleSheetContents(UserAgentStyle::viewTransitionsStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::htmlSwitchControlStyleSheet);
 #if ENABLE(FULLSCREEN_API)
         collectFromStyleSheetContents(UserAgentStyle::fullscreenStyleSheet);

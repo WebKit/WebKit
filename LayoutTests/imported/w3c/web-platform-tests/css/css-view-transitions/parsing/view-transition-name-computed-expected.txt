@@ -1,6 +1,6 @@
 
-FAIL Property view-transition-name value 'none' assert_true: view-transition-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-transition-name value 'foo' assert_true: view-transition-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-transition-name value 'bar' assert_true: view-transition-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-transition-name value 'baz' assert_true: view-transition-name doesn't seem to be supported in the computed style expected true got false
+PASS Property view-transition-name value 'none'
+PASS Property view-transition-name value 'foo'
+PASS Property view-transition-name value 'bar'
+PASS Property view-transition-name value 'baz'
 

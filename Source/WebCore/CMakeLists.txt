@@ -1861,7 +1861,6 @@ set(WebCore_CSS_VALUE_KEYWORDS
 
 set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/counterStyles.css
-    ${WEBCORE_DIR}/css/dialog.css
     ${WEBCORE_DIR}/css/fullscreen.css
     ${WEBCORE_DIR}/css/horizontalFormControls.css
     ${WEBCORE_DIR}/css/html.css
@@ -1872,6 +1871,7 @@ set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/quirks.css
     ${WEBCORE_DIR}/css/ruby.css
     ${WEBCORE_DIR}/css/svg.css
+    ${WEBCORE_DIR}/css/viewTransitions.css
     ${WEBCORE_DIR}/html/shadow/attachmentElementShadow.css
     ${WEBCORE_DIR}/html/shadow/imageOverlay.css
     ${WEBCORE_DIR}/html/shadow/meterElementShadow.css

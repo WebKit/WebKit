@@ -34,13 +34,11 @@ namespace Layout {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(InlineTextBox);
 
-InlineTextBox::InlineTextBox(String content, bool isCombined, bool canUseSimplifiedContentMeasuring, bool canUseSimpleFontCodePath, bool hasPositionDependentContentWidth, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
+InlineTextBox::InlineTextBox(String content, bool isCombined, OptionSet<ContentCharacteristic> contentCharacteristicSet, RenderStyle&& style, std::unique_ptr<RenderStyle>&& firstLineStyle)
 : Box({ NodeType::Text, IsAnonymous::Yes }, WTFMove(style), WTFMove(firstLineStyle), Box::InlineTextBoxFlag)
     , m_content(content)
     , m_isCombined(isCombined)
-    , m_canUseSimplifiedContentMeasuring(canUseSimplifiedContentMeasuring)
-    , m_canUseSimpleFontCodePath(canUseSimpleFontCodePath)
-    , m_hasPositionDependentContentWidth(hasPositionDependentContentWidth)
+    , m_contentCharacteristicSet(contentCharacteristicSet)
 {
 }
 

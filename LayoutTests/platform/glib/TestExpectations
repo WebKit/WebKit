@@ -1200,6 +1200,8 @@ imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.html [ 
 imported/w3c/web-platform-tests/webcodecs/audio-encoder-config.https.any.worker.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Pass DumpJSConsoleLogInStdErr ]
 
+http/tests/webcodecs/h264-reordering.html [ Failure ]
+
 # This test is flaky crashing with the current GStreamer version of the SDK (1.22), raising a
 # critical warning in GStreamer, but the issue is not happening with GStreamer 1.23. So this test is
 # expected to pass again once we update to GStreamer 1.24.

@@ -24,9 +24,9 @@
 #include "SVGGradientElement.h"
 
 #include "ElementChildIteratorInlines.h"
+#include "LegacyRenderSVGResourceLinearGradient.h"
+#include "LegacyRenderSVGResourceRadialGradient.h"
 #include "NodeName.h"
-#include "RenderSVGResourceLinearGradient.h"
-#include "RenderSVGResourceRadialGradient.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGStopElement.h"
 #include "SVGTransformable.h"

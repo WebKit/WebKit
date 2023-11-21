@@ -53,11 +53,11 @@ public:
     FilterDataState state { PaintingSource };
 };
 
-class RenderSVGResourceFilter final : public LegacyRenderSVGResourceContainer {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceFilter);
+class LegacyRenderSVGResourceFilter final : public LegacyRenderSVGResourceContainer {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceFilter);
 public:
-    RenderSVGResourceFilter(SVGFilterElement&, RenderStyle&&);
-    virtual ~RenderSVGResourceFilter();
+    LegacyRenderSVGResourceFilter(SVGFilterElement&, RenderStyle&&);
+    virtual ~LegacyRenderSVGResourceFilter();
 
     inline SVGFilterElement& filterElement() const;
     bool isIdentity() const;
@@ -91,7 +91,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, FilterData::FilterDataState);
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::RenderSVGResourceFilter)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::LegacyRenderSVGResourceFilter)
     static bool isType(const WebCore::RenderObject& renderer) { return renderer.isRenderSVGResourceFilter(); }
     static bool isType(const WebCore::LegacyRenderSVGResource& resource) { return resource.resourceType() == WebCore::FilterResourceType; }
 SPECIALIZE_TYPE_TRAITS_END()

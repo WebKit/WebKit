@@ -39,10 +39,10 @@ public:
     AffineTransform transform;
 };
 
-class RenderSVGResourcePattern final : public LegacyRenderSVGResourceContainer {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourcePattern);
+class LegacyRenderSVGResourcePattern final : public LegacyRenderSVGResourceContainer {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourcePattern);
 public:
-    RenderSVGResourcePattern(SVGPatternElement&, RenderStyle&&);
+    LegacyRenderSVGResourcePattern(SVGPatternElement&, RenderStyle&&);
     SVGPatternElement& patternElement() const;
 
     void removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers) override;
@@ -73,4 +73,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(RenderSVGResourcePattern, PatternResourceType)
+SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(LegacyRenderSVGResourcePattern, PatternResourceType)

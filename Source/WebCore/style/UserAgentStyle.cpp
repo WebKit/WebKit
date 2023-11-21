@@ -41,7 +41,6 @@
 #include "HTMLBRElement.h"
 #include "HTMLBodyElement.h"
 #include "HTMLDataListElement.h"
-#include "HTMLDialogElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLHeadElement.h"
@@ -75,7 +74,6 @@ unsigned UserAgentStyle::defaultStyleVersion;
 
 StyleSheetContents* UserAgentStyle::defaultStyleSheet;
 StyleSheetContents* UserAgentStyle::quirksStyleSheet;
-StyleSheetContents* UserAgentStyle::dialogStyleSheet;
 StyleSheetContents* UserAgentStyle::svgStyleSheet;
 StyleSheetContents* UserAgentStyle::mathMLStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaControlsStyleSheet;
@@ -86,6 +84,7 @@ StyleSheetContents* UserAgentStyle::horizontalFormControlsStyleSheet;
 StyleSheetContents* UserAgentStyle::htmlSwitchControlStyleSheet;
 StyleSheetContents* UserAgentStyle::counterStylesStyleSheet;
 StyleSheetContents* UserAgentStyle::rubyStyleSheet;
+StyleSheetContents* UserAgentStyle::viewTransitionsStyleSheet;
 #if ENABLE(FULLSCREEN_API)
 StyleSheetContents* UserAgentStyle::fullscreenStyleSheet;
 #endif
@@ -193,11 +192,6 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
                 plugInsStyleSheet = parseUASheet(plugInsRules);
                 addToDefaultStyle(*plugInsStyleSheet);
             }
-        } else if (is<HTMLDialogElement>(element)) {
-            if (!dialogStyleSheet) {
-                dialogStyleSheet = parseUASheet(StringImpl::createWithoutCopying(dialogUserAgentStyleSheet, sizeof(dialogUserAgentStyleSheet)));
-                addToDefaultStyle(*dialogStyleSheet);
-            }
         }
 #if ENABLE(VIDEO) && !ENABLE(MODERN_MEDIA_CONTROLS)
         else if (is<HTMLMediaElement>(element)) {
@@ -285,6 +279,11 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
             horizontalFormControlsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(horizontalFormControlsUserAgentStyleSheet, sizeof(horizontalFormControlsUserAgentStyleSheet)));
             addToDefaultStyle(*horizontalFormControlsStyleSheet);
         }
+    }
+
+    if (!viewTransitionsStyleSheet && element.document().settings().viewTransitionsEnabled()) {
+        viewTransitionsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(viewTransitionsUserAgentStyleSheet, sizeof(viewTransitionsUserAgentStyleSheet)));
+        addToDefaultStyle(*viewTransitionsStyleSheet);
     }
 
     ASSERT(defaultStyle->features().idsInRules.isEmpty());

@@ -166,7 +166,7 @@ private:
         const Length& lineHeight;
         TextBoxEdge textBoxEdge;
         TextBoxTrim textBoxTrim;
-        WTF::OptionSet<LineBoxContain> lineBoxContain;
+        OptionSet<LineBoxContain> lineBoxContain;
         InlineLayoutUnit primaryFontSize { 0 };
         VerticalAlignment verticalAlignment { };
     };

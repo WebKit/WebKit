@@ -56,8 +56,8 @@ struct GradientData {
     Inputs inputs;
 };
 
-class RenderSVGResourceGradient : public LegacyRenderSVGResourceContainer {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceGradient);
+class LegacyRenderSVGResourceGradient : public LegacyRenderSVGResourceContainer {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceGradient);
 public:
     SVGGradientElement& gradientElement() const { return static_cast<SVGGradientElement&>(LegacyRenderSVGResourceContainer::element()); }
 
@@ -69,7 +69,7 @@ public:
     FloatRect resourceBoundingBox(const RenderObject&, RepaintRectCalculation) final { return FloatRect(); }
 
 protected:
-    RenderSVGResourceGradient(Type, SVGGradientElement&, RenderStyle&&);
+    LegacyRenderSVGResourceGradient(Type, SVGGradientElement&, RenderStyle&&);
 
     static GradientColorStops stopsByApplyingColorFilter(const GradientColorStops&, const RenderStyle&);
     static GradientSpreadMethod platformSpreadMethodFromSVGType(SVGSpreadMethodType);

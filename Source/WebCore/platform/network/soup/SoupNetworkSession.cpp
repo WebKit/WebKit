@@ -327,12 +327,27 @@ void SoupNetworkSession::setIgnoreTLSErrors(bool ignoreTLSErrors)
     m_ignoreTLSErrors = ignoreTLSErrors;
 }
 
+static StringView hostForComparison(const URL& requestURL)
+{
+    StringView host = requestURL.host();
+
+    // If the host component of the URL is an IPv6 address, it will be
+    // surrounded by [ ] brackets. We have to remove them because they're part
+    // of the WTF::URL's host component and the string representation of the URL,
+    // but not part of GUri or SoupURI's host and not part of the host passed to
+    // allowSpecificHTTPSCertificateForHost.
+    if (host[0] == '[' && host.length() >= 2 && host[host.length() - 1] == ']')
+        return host.substring(1, host.length() - 2);
+
+    return host;
+}
+
 std::optional<ResourceError> SoupNetworkSession::checkTLSErrors(const URL& requestURL, GTlsCertificate* certificate, GTlsCertificateFlags tlsErrors)
 {
     if (m_ignoreTLSErrors || !tlsErrors)
         return std::nullopt;
 
-    auto it = m_allowedCertificates.find<ASCIICaseInsensitiveStringViewHashTranslator>(requestURL.host());
+    auto it = m_allowedCertificates.find<ASCIICaseInsensitiveStringViewHashTranslator>(hostForComparison(requestURL));
     if (it != m_allowedCertificates.end() && it->value.contains(certificate))
         return std::nullopt;
 
