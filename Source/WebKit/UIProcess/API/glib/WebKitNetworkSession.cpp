@@ -468,6 +468,9 @@ WebKitTLSErrorsPolicy webkit_network_session_get_tls_errors_policy(WebKitNetwork
  *
  * Ignore further TLS errors on the @host for the certificate present in @info.
  *
+ * If @host is an IPv6 address, it should not be surrounded by brackets. This
+ * expectation matches g_uri_get_host().
+ *
  * Since: 2.40
  */
 void webkit_network_session_allow_tls_certificate_for_host(WebKitNetworkSession* session, GTlsCertificate* certificate, const char* host)
