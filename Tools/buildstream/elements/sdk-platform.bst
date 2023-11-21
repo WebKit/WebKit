@@ -17,6 +17,7 @@ depends:
 - sdk/flite.bst
 - sdk/gi-docgen.bst
 - sdk/graphviz.bst
+- sdk/gst-plugin-audiofx.bst
 - sdk/gst-plugin-closedcaption.bst
 - sdk/gst-plugin-dav1d.bst
 - sdk/gst-plugin-rtp.bst
