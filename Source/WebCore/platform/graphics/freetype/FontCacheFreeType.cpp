@@ -350,8 +350,7 @@ static bool areStronglyAliased(const String& familyA, const String& familyB)
 
 static inline bool isCommonlyUsedGenericFamily(const String& familyNameString)
 {
-    return equalLettersIgnoringASCIICase(familyNameString, "sans"_s)
-        || equalLettersIgnoringASCIICase(familyNameString, "sans-serif"_s)
+    return equalLettersIgnoringASCIICase(familyNameString, "sans-serif"_s)
         || equalLettersIgnoringASCIICase(familyNameString, "serif"_s)
         || equalLettersIgnoringASCIICase(familyNameString, "monospace"_s)
         || equalLettersIgnoringASCIICase(familyNameString, "fantasy"_s)
