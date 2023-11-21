@@ -20,9 +20,9 @@
 #pragma once
 
 #include "LegacyRenderSVGResourceClipper.h"
+#include "LegacyRenderSVGResourceFilter.h"
 #include "LegacyRenderSVGResourceMarker.h"
 #include "LegacyRenderSVGResourceMasker.h"
-#include "RenderSVGResourceFilter.h"
 #include <memory>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -54,7 +54,7 @@ public:
     LegacyRenderSVGResourceMarker* markerEnd() const { return m_markerData ? m_markerData->markerEnd.get() : nullptr; }
     bool markerReverseStart() const;
     LegacyRenderSVGResourceMasker* masker() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->masker.get() : nullptr; }
-    RenderSVGResourceFilter* filter() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->filter.get() : nullptr; }
+    LegacyRenderSVGResourceFilter* filter() const { return m_clipperFilterMaskerData ? m_clipperFilterMaskerData->filter.get() : nullptr; }
 
     // Paint servers
     LegacyRenderSVGResourceContainer* fill() const { return m_fillStrokeData ? m_fillStrokeData->fill.get() : nullptr; }
@@ -90,7 +90,7 @@ private:
 
 private:
     bool setClipper(LegacyRenderSVGResourceClipper*);
-    bool setFilter(RenderSVGResourceFilter*);
+    bool setFilter(LegacyRenderSVGResourceFilter*);
     bool setMarkerStart(LegacyRenderSVGResourceMarker*);
     bool setMarkerMid(LegacyRenderSVGResourceMarker*);
     bool setMarkerEnd(LegacyRenderSVGResourceMarker*);
@@ -111,7 +111,7 @@ private:
     public:
         ClipperFilterMaskerData() = default;
         WeakPtr<LegacyRenderSVGResourceClipper> clipper;
-        WeakPtr<RenderSVGResourceFilter> filter;
+        WeakPtr<LegacyRenderSVGResourceFilter> filter;
         WeakPtr<LegacyRenderSVGResourceMasker> masker;
     };
 

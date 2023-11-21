@@ -29,7 +29,6 @@
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
 #include "RenderIterator.h"
-#include "RenderSVGResourceFilter.h"
 #include "RenderTreeBuilder.h"
 #include "RenderView.h"
 #include "SVGRenderingContext.h"

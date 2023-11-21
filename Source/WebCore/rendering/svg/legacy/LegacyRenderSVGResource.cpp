@@ -25,13 +25,13 @@
 #include "LegacyRenderSVGResource.h"
 
 #include "LegacyRenderSVGResourceClipper.h"
+#include "LegacyRenderSVGResourceFilter.h"
 #include "LegacyRenderSVGResourceMasker.h"
+#include "LegacyRenderSVGResourceSolidColor.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShape.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
-#include "RenderSVGResourceFilter.h"
-#include "RenderSVGResourceSolidColor.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderView.h"
@@ -65,7 +65,7 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
             return nullptr;
         
         // But always use the initial fill paint server.
-        RenderSVGResourceSolidColor* colorResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
+        LegacyRenderSVGResourceSolidColor* colorResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
         colorResource->setColor(SVGRenderStyle::initialFillPaintColor().absoluteColor());
         return colorResource;
     }
@@ -102,7 +102,7 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
     }
 
     // If the primary resource is just a color, return immediately.
-    RenderSVGResourceSolidColor* colorResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
+    LegacyRenderSVGResourceSolidColor* colorResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
     if (paintType < SVGPaintType::URINone) {
         if (!inheritColorFromParentStyleIfNeeded(renderer, applyToFill, color))
             return nullptr;
@@ -153,18 +153,18 @@ LegacyRenderSVGResource* LegacyRenderSVGResource::strokePaintingResource(RenderE
     return requestPaintingResource(RenderSVGResourceMode::ApplyToStroke, renderer, style, fallbackColor);
 }
 
-RenderSVGResourceSolidColor* LegacyRenderSVGResource::sharedSolidPaintingResource()
+LegacyRenderSVGResourceSolidColor* LegacyRenderSVGResource::sharedSolidPaintingResource()
 {
-    static RenderSVGResourceSolidColor* s_sharedSolidPaintingResource = 0;
+    static LegacyRenderSVGResourceSolidColor* s_sharedSolidPaintingResource = 0;
     if (!s_sharedSolidPaintingResource)
-        s_sharedSolidPaintingResource = new RenderSVGResourceSolidColor;
+        s_sharedSolidPaintingResource = new LegacyRenderSVGResourceSolidColor;
     return s_sharedSolidPaintingResource;
 }
 
 static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bool needsLayout, WeakHashSet<RenderObject>* visitedRenderers)
 {
     if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer)) {
-        if (RenderSVGResourceFilter* filter = resources->filter())
+        if (LegacyRenderSVGResourceFilter* filter = resources->filter())
             filter->removeClientFromCache(renderer);
 
         if (LegacyRenderSVGResourceMasker* masker = resources->masker())

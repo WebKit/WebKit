@@ -19,39 +19,39 @@
  */
 
 #include "config.h"
-#include "RenderSVGResourceLinearGradient.h"
+#include "LegacyRenderSVGResourceLinearGradient.h"
 
-#include "RenderSVGResourceLinearGradientInlines.h"
+#include "LegacyRenderSVGResourceLinearGradientInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceLinearGradient);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceLinearGradient);
 
-RenderSVGResourceLinearGradient::RenderSVGResourceLinearGradient(SVGLinearGradientElement& element, RenderStyle&& style)
-    : RenderSVGResourceGradient(Type::SVGResourceLinearGradient, element, WTFMove(style))
+LegacyRenderSVGResourceLinearGradient::LegacyRenderSVGResourceLinearGradient(SVGLinearGradientElement& element, RenderStyle&& style)
+    : LegacyRenderSVGResourceGradient(Type::SVGResourceLinearGradient, element, WTFMove(style))
 {
 }
 
-RenderSVGResourceLinearGradient::~RenderSVGResourceLinearGradient() = default;
+LegacyRenderSVGResourceLinearGradient::~LegacyRenderSVGResourceLinearGradient() = default;
 
-bool RenderSVGResourceLinearGradient::collectGradientAttributes()
+bool LegacyRenderSVGResourceLinearGradient::collectGradientAttributes()
 {
     m_attributes = LinearGradientAttributes();
     return linearGradientElement().collectGradientAttributes(m_attributes);
 }
 
-FloatPoint RenderSVGResourceLinearGradient::startPoint(const LinearGradientAttributes& attributes) const
+FloatPoint LegacyRenderSVGResourceLinearGradient::startPoint(const LinearGradientAttributes& attributes) const
 {
     return SVGLengthContext::resolvePoint(&linearGradientElement(), attributes.gradientUnits(), attributes.x1(), attributes.y1());
 }
 
-FloatPoint RenderSVGResourceLinearGradient::endPoint(const LinearGradientAttributes& attributes) const
+FloatPoint LegacyRenderSVGResourceLinearGradient::endPoint(const LinearGradientAttributes& attributes) const
 {
     return SVGLengthContext::resolvePoint(&linearGradientElement(), attributes.gradientUnits(), attributes.x2(), attributes.y2());
 }
 
-Ref<Gradient> RenderSVGResourceLinearGradient::buildGradient(const RenderStyle& style) const
+Ref<Gradient> LegacyRenderSVGResourceLinearGradient::buildGradient(const RenderStyle& style) const
 {
     return Gradient::create(
         Gradient::LinearData { startPoint(m_attributes), endPoint(m_attributes) },

@@ -33,8 +33,13 @@
 #include "ColorSerialization.h"
 #include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGResourceClipperInlines.h"
+#include "LegacyRenderSVGResourceFilterInlines.h"
+#include "LegacyRenderSVGResourceLinearGradientInlines.h"
 #include "LegacyRenderSVGResourceMarkerInlines.h"
 #include "LegacyRenderSVGResourceMaskerInlines.h"
+#include "LegacyRenderSVGResourcePattern.h"
+#include "LegacyRenderSVGResourceRadialGradientInlines.h"
+#include "LegacyRenderSVGResourceSolidColor.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LegacyRenderSVGShapeInlines.h"
 #include "NodeRenderStyle.h"
@@ -44,11 +49,6 @@
 #include "RenderSVGContainer.h"
 #include "RenderSVGGradientStopInlines.h"
 #include "RenderSVGInlineText.h"
-#include "RenderSVGResourceFilterInlines.h"
-#include "RenderSVGResourceLinearGradientInlines.h"
-#include "RenderSVGResourcePattern.h"
-#include "RenderSVGResourceRadialGradientInlines.h"
-#include "RenderSVGResourceSolidColor.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderSVGText.h"
@@ -158,7 +158,7 @@ static void writeSVGPaintingResource(TextStream& ts, const LegacyRenderSVGResour
 {
     auto resourceType = resource.resourceType();
     if (resourceType == SolidColorResourceType) {
-        ts << "[type=SOLID] [color=" << downcast<RenderSVGResourceSolidColor>(resource).color() << "]";
+        ts << "[type=SOLID] [color=" << downcast<LegacyRenderSVGResourceSolidColor>(resource).color() << "]";
         return;
     }
 
@@ -468,7 +468,7 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
         writeNameValuePair(ts, "maskContentUnits", masker.maskContentUnits());
         ts << "\n";
     } else if (resource.resourceType() == FilterResourceType) {
-        const auto& filter = static_cast<const RenderSVGResourceFilter&>(resource);
+        const auto& filter = static_cast<const LegacyRenderSVGResourceFilter&>(resource);
         writeNameValuePair(ts, "filterUnits", filter.filterUnits());
         writeNameValuePair(ts, "primitiveUnits", filter.primitiveUnits());
         ts << "\n";
@@ -494,7 +494,7 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
         else
             ts << "auto" << "]\n";
     } else if (resource.resourceType() == PatternResourceType) {
-        const auto& pattern = static_cast<const RenderSVGResourcePattern&>(resource);
+        const auto& pattern = static_cast<const LegacyRenderSVGResourcePattern&>(resource);
 
         // Dump final results that are used for rendering. No use in asking SVGPatternElement for its patternUnits(), as it may
         // link to other patterns using xlink:href, we need to build the full inheritance chain, aka. collectPatternProperties()
@@ -509,7 +509,7 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
             ts << " [patternTransform=" << transform << "]";
         ts << "\n";
     } else if (resource.resourceType() == LinearGradientResourceType) {
-        const auto& gradient = static_cast<const RenderSVGResourceLinearGradient&>(resource);
+        const auto& gradient = static_cast<const LegacyRenderSVGResourceLinearGradient&>(resource);
 
         // Dump final results that are used for rendering. No use in asking SVGGradientElement for its gradientUnits(), as it may
         // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
@@ -519,7 +519,7 @@ void writeSVGResourceContainer(TextStream& ts, const LegacyRenderSVGResourceCont
 
         ts << " [start=" << gradient.startPoint(attributes) << "] [end=" << gradient.endPoint(attributes) << "]\n";
     }  else if (resource.resourceType() == RadialGradientResourceType) {
-        const auto& gradient = static_cast<const RenderSVGResourceRadialGradient&>(resource);
+        const auto& gradient = static_cast<const LegacyRenderSVGResourceRadialGradient&>(resource);
 
         // Dump final results that are used for rendering. No use in asking SVGGradientElement for its gradientUnits(), as it may
         // link to other gradients using xlink:href, we need to build the full inheritance chain, aka. collectGradientProperties()
@@ -637,7 +637,7 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
             if (filterOperation.type() == FilterOperation::Type::Reference) {
                 const auto& referenceFilterOperation = downcast<ReferenceFilterOperation>(filterOperation);
                 AtomString id = SVGURIReference::fragmentIdentifierFromIRIString(referenceFilterOperation.url(), renderer.document());
-                if (RenderSVGResourceFilter* filter = getRenderSVGResourceById<RenderSVGResourceFilter>(renderer.treeScopeForSVGReferences(), id)) {
+                if (LegacyRenderSVGResourceFilter* filter = getRenderSVGResourceById<LegacyRenderSVGResourceFilter>(renderer.treeScopeForSVGReferences(), id)) {
                     ts << indent << " ";
                     writeNameAndQuotedValue(ts, "filter", id);
                     ts << " ";

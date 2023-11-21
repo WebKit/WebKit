@@ -25,15 +25,15 @@
 
 #pragma once
 
-#include "RenderSVGResourceRadialGradient.h"
+#include "LegacyRenderSVGResourceRadialGradient.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGRadialGradientElement.h"
 
 namespace WebCore {
 
-inline SVGRadialGradientElement& RenderSVGResourceRadialGradient::radialGradientElement() const
+inline SVGRadialGradientElement& LegacyRenderSVGResourceRadialGradient::radialGradientElement() const
 {
-    return downcast<SVGRadialGradientElement>(RenderSVGResourceGradient::gradientElement());
+    return downcast<SVGRadialGradientElement>(LegacyRenderSVGResourceGradient::gradientElement());
 }
 
 } // namespace WebCore

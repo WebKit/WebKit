@@ -23,6 +23,7 @@
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
 
 #include "LegacyRenderSVGResourceClipper.h"
+#include "LegacyRenderSVGResourceFilter.h"
 #include "LegacyRenderSVGResourceMarker.h"
 #include "LegacyRenderSVGResourceMasker.h"
 #include "RenderChildIterator.h"
@@ -33,7 +34,6 @@
 #include "RenderSVGImage.h"
 #include "RenderSVGInline.h"
 #include "RenderSVGPath.h"
-#include "RenderSVGResourceFilter.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGShape.h"
 #include "RenderSVGText.h"

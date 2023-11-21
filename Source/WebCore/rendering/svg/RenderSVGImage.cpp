@@ -41,7 +41,6 @@
 #include "RenderImageResource.h"
 #include "RenderLayer.h"
 #include "RenderSVGModelObjectInlines.h"
-#include "RenderSVGResourceFilter.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImageElement.h"
 #include "SVGRenderStyle.h"

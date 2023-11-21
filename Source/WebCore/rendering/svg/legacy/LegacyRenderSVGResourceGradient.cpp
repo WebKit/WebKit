@@ -22,7 +22,7 @@
  */
 
 #include "config.h"
-#include "RenderSVGResourceGradient.h"
+#include "LegacyRenderSVGResourceGradient.h"
 
 #include "GradientAttributes.h"
 #include "GraphicsContext.h"
@@ -34,21 +34,21 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceGradient);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceGradient);
 
-RenderSVGResourceGradient::RenderSVGResourceGradient(Type type, SVGGradientElement& node, RenderStyle&& style)
+LegacyRenderSVGResourceGradient::LegacyRenderSVGResourceGradient(Type type, SVGGradientElement& node, RenderStyle&& style)
     : LegacyRenderSVGResourceContainer(type, node, WTFMove(style))
 {
 }
 
-void RenderSVGResourceGradient::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
+void LegacyRenderSVGResourceGradient::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
 {
     m_gradientMap.clear();
     m_shouldCollectGradientAttributes = true;
     markAllClientsForInvalidationIfNeeded(markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation, visitedRenderers);
 }
 
-void RenderSVGResourceGradient::removeClientFromCache(RenderElement& client, bool markForInvalidation)
+void LegacyRenderSVGResourceGradient::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
     m_gradientMap.remove(&client);
     markClientForInvalidation(client, markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
@@ -109,7 +109,7 @@ static inline AffineTransform clipToTextMask(GraphicsContext& context, RefPtr<Im
 }
 #endif
 
-GradientData::Inputs RenderSVGResourceGradient::computeInputs(RenderElement& renderer, OptionSet<RenderSVGResourceMode> resourceMode)
+GradientData::Inputs LegacyRenderSVGResourceGradient::computeInputs(RenderElement& renderer, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     std::optional<FloatRect> objectBoundingBox;
     if (gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
@@ -122,7 +122,7 @@ GradientData::Inputs RenderSVGResourceGradient::computeInputs(RenderElement& ren
     return { objectBoundingBox, textPaintingScale };
 }
 
-bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
+bool LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());
@@ -206,7 +206,7 @@ bool RenderSVGResourceGradient::applyResource(RenderElement& renderer, const Ren
     return true;
 }
 
-void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderElement* shape)
+void LegacyRenderSVGResourceGradient::postApplyResource(RenderElement& renderer, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderElement* shape)
 {
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());
@@ -240,7 +240,7 @@ void RenderSVGResourceGradient::postApplyResource(RenderElement& renderer, Graph
     context->restore();
 }
 
-GradientColorStops RenderSVGResourceGradient::stopsByApplyingColorFilter(const GradientColorStops& stops, const RenderStyle& style)
+GradientColorStops LegacyRenderSVGResourceGradient::stopsByApplyingColorFilter(const GradientColorStops& stops, const RenderStyle& style)
 {
     if (!style.hasAppleColorFilter())
         return stops;
@@ -248,7 +248,7 @@ GradientColorStops RenderSVGResourceGradient::stopsByApplyingColorFilter(const G
     return stops.mapColors([&] (auto& color) { return style.colorByApplyingColorFilter(color); });
 }
 
-GradientSpreadMethod RenderSVGResourceGradient::platformSpreadMethodFromSVGType(SVGSpreadMethodType method)
+GradientSpreadMethod LegacyRenderSVGResourceGradient::platformSpreadMethodFromSVGType(SVGSpreadMethodType method)
 {
     switch (method) {
     case SVGSpreadMethodUnknown:

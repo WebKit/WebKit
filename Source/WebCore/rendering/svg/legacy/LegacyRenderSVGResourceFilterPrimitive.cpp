@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "RenderSVGResourceFilterPrimitive.h"
+#include "LegacyRenderSVGResourceFilterPrimitive.h"
 
 #include "SVGElementTypeHelpers.h"
 #include "SVGFEDiffuseLightingElement.h"
@@ -41,19 +41,19 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourceFilterPrimitive);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourceFilterPrimitive);
 
-RenderSVGResourceFilterPrimitive::RenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes& filterPrimitiveElement, RenderStyle&& style)
+LegacyRenderSVGResourceFilterPrimitive::LegacyRenderSVGResourceFilterPrimitive(SVGFilterPrimitiveStandardAttributes& filterPrimitiveElement, RenderStyle&& style)
     : LegacyRenderSVGHiddenContainer(Type::SVGResourceFilterPrimitive, filterPrimitiveElement, WTFMove(style))
 {
 }
 
-SVGFilterPrimitiveStandardAttributes& RenderSVGResourceFilterPrimitive::filterPrimitiveElement() const
+SVGFilterPrimitiveStandardAttributes& LegacyRenderSVGResourceFilterPrimitive::filterPrimitiveElement() const
 {
     return static_cast<SVGFilterPrimitiveStandardAttributes&>(LegacyRenderSVGHiddenContainer::element());
 }
 
-void RenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+void LegacyRenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     LegacyRenderSVGHiddenContainer::styleDidChange(diff, oldStyle);
 
@@ -72,13 +72,13 @@ void RenderSVGResourceFilterPrimitive::styleDidChange(StyleDifference diff, cons
     }
 }
 
-void RenderSVGResourceFilterPrimitive::markFilterEffectForRepaint(FilterEffect* effect)
+void LegacyRenderSVGResourceFilterPrimitive::markFilterEffectForRepaint(FilterEffect* effect)
 {
     auto parent = this->parent();
-    if (!is<RenderSVGResourceFilter>(parent))
+    if (!is<LegacyRenderSVGResourceFilter>(parent))
         return;
 
-    auto& filterRenderer = downcast<RenderSVGResourceFilter>(*parent);
+    auto& filterRenderer = downcast<LegacyRenderSVGResourceFilter>(*parent);
 
     if (effect)
         filterRenderer.markFilterForRepaint(*effect);
@@ -86,13 +86,13 @@ void RenderSVGResourceFilterPrimitive::markFilterEffectForRepaint(FilterEffect* 
     filterRenderer.markAllClientLayersForInvalidation();
 }
 
-void RenderSVGResourceFilterPrimitive::markFilterEffectForRebuild()
+void LegacyRenderSVGResourceFilterPrimitive::markFilterEffectForRebuild()
 {
     auto parent = this->parent();
-    if (!is<RenderSVGResourceFilter>(parent))
+    if (!is<LegacyRenderSVGResourceFilter>(parent))
         return;
 
-    auto& filterRenderer = downcast<RenderSVGResourceFilter>(*parent);
+    auto& filterRenderer = downcast<LegacyRenderSVGResourceFilter>(*parent);
 
     filterRenderer.markFilterForRebuild();
     filterRenderer.markAllClientLayersForInvalidation();

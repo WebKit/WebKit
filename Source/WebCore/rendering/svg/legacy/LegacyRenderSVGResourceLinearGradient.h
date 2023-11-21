@@ -20,41 +20,39 @@
 
 #pragma once
 
-#include "RadialGradientAttributes.h"
-#include "RenderSVGResourceGradient.h"
+#include "LegacyRenderSVGResourceGradient.h"
+#include "LinearGradientAttributes.h"
 
 namespace WebCore {
 
-class SVGRadialGradientElement;
+class SVGLinearGradientElement;
 
-class RenderSVGResourceRadialGradient final : public RenderSVGResourceGradient {
-    WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceRadialGradient);
+class LegacyRenderSVGResourceLinearGradient final : public LegacyRenderSVGResourceGradient {
+    WTF_MAKE_ISO_ALLOCATED(LegacyRenderSVGResourceLinearGradient);
 public:
-    RenderSVGResourceRadialGradient(SVGRadialGradientElement&, RenderStyle&&);
-    virtual ~RenderSVGResourceRadialGradient();
+    LegacyRenderSVGResourceLinearGradient(SVGLinearGradientElement&, RenderStyle&&);
+    virtual ~LegacyRenderSVGResourceLinearGradient();
 
-    inline SVGRadialGradientElement& radialGradientElement() const;
+    inline SVGLinearGradientElement& linearGradientElement() const;
 
-    FloatPoint centerPoint(const RadialGradientAttributes&) const;
-    FloatPoint focalPoint(const RadialGradientAttributes&) const;
-    float radius(const RadialGradientAttributes&) const;
-    float focalRadius(const RadialGradientAttributes&) const;
+    FloatPoint startPoint(const LinearGradientAttributes&) const;
+    FloatPoint endPoint(const LinearGradientAttributes&) const;
 
 private:
-    RenderSVGResourceType resourceType() const final { return RadialGradientResourceType; }
+    RenderSVGResourceType resourceType() const final { return LinearGradientResourceType; }
 
     SVGUnitTypes::SVGUnitType gradientUnits() const final { return m_attributes.gradientUnits(); }
     AffineTransform gradientTransform() const final { return m_attributes.gradientTransform(); }
+    bool collectGradientAttributes() final;
     Ref<Gradient> buildGradient(const RenderStyle&) const final;
 
     void gradientElement() const = delete;
 
-    ASCIILiteral renderName() const final { return "RenderSVGResourceRadialGradient"_s; }
-    bool collectGradientAttributes() final;
+    ASCIILiteral renderName() const final { return "RenderSVGResourceLinearGradient"_s; }
 
-    RadialGradientAttributes m_attributes;
+    LinearGradientAttributes m_attributes;
 };
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(RenderSVGResourceRadialGradient, RadialGradientResourceType)
+SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(LegacyRenderSVGResourceLinearGradient, LinearGradientResourceType)

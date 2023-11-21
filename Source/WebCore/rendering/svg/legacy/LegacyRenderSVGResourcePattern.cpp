@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "RenderSVGResourcePattern.h"
+#include "LegacyRenderSVGResourcePattern.h"
 
 #include "ElementChildIteratorInlines.h"
 #include "GraphicsContext.h"
@@ -36,46 +36,46 @@
 
 namespace WebCore {
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderSVGResourcePattern);
+WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRenderSVGResourcePattern);
 
-RenderSVGResourcePattern::RenderSVGResourcePattern(SVGPatternElement& element, RenderStyle&& style)
+LegacyRenderSVGResourcePattern::LegacyRenderSVGResourcePattern(SVGPatternElement& element, RenderStyle&& style)
     : LegacyRenderSVGResourceContainer(Type::SVGResourcePattern, element, WTFMove(style))
 {
 }
 
-SVGPatternElement& RenderSVGResourcePattern::patternElement() const
+SVGPatternElement& LegacyRenderSVGResourcePattern::patternElement() const
 {
     return downcast<SVGPatternElement>(LegacyRenderSVGResourceContainer::element());
 }
 
-void RenderSVGResourcePattern::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
+void LegacyRenderSVGResourcePattern::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
 {
     m_patternMap.clear();
     m_shouldCollectPatternAttributes = true;
     markAllClientsForInvalidationIfNeeded(markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation, visitedRenderers);
 }
 
-void RenderSVGResourcePattern::removeClientFromCache(RenderElement& client, bool markForInvalidation)
+void LegacyRenderSVGResourcePattern::removeClientFromCache(RenderElement& client, bool markForInvalidation)
 {
     m_patternMap.remove(&client);
     markClientForInvalidation(client, markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
-void RenderSVGResourcePattern::collectPatternAttributes(PatternAttributes& attributes) const
+void LegacyRenderSVGResourcePattern::collectPatternAttributes(PatternAttributes& attributes) const
 {
-    const RenderSVGResourcePattern* current = this;
+    const LegacyRenderSVGResourcePattern* current = this;
 
     while (current) {
         const SVGPatternElement& pattern = current->patternElement();
         pattern.collectPatternAttributes(attributes);
 
         auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*current);
-        ASSERT_IMPLIES(resources && resources->linkedResource(), is<RenderSVGResourcePattern>(resources->linkedResource()));
-        current = resources ? downcast<RenderSVGResourcePattern>(resources->linkedResource()) : nullptr;
+        ASSERT_IMPLIES(resources && resources->linkedResource(), is<LegacyRenderSVGResourcePattern>(resources->linkedResource()));
+        current = resources ? downcast<LegacyRenderSVGResourcePattern>(resources->linkedResource()) : nullptr;
     }
 }
 
-PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, OptionSet<RenderSVGResourceMode> resourceMode, GraphicsContext& context)
+PatternData* LegacyRenderSVGResourcePattern::buildPattern(RenderElement& renderer, OptionSet<RenderSVGResourceMode> resourceMode, GraphicsContext& context)
 {
     ASSERT(!m_shouldCollectPatternAttributes);
 
@@ -137,7 +137,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderElement& renderer, Opt
     return m_patternMap.set(&renderer, WTFMove(patternData)).iterator->value.get();
 }
 
-bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
+bool LegacyRenderSVGResourcePattern::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());
@@ -196,7 +196,7 @@ bool RenderSVGResourcePattern::applyResource(RenderElement& renderer, const Rend
     return true;
 }
 
-void RenderSVGResourcePattern::postApplyResource(RenderElement&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderElement* shape)
+void LegacyRenderSVGResourcePattern::postApplyResource(RenderElement&, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderElement* shape)
 {
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());
@@ -211,7 +211,7 @@ static inline FloatRect calculatePatternBoundaries(const PatternAttributes& attr
     return SVGLengthContext::resolveRectangle(&patternElement, attributes.patternUnits(), objectBoundingBox, attributes.x(), attributes.y(), attributes.width(), attributes.height());
 }
 
-bool RenderSVGResourcePattern::buildTileImageTransform(RenderElement& renderer,
+bool LegacyRenderSVGResourcePattern::buildTileImageTransform(RenderElement& renderer,
                                                        const PatternAttributes& attributes,
                                                        const SVGPatternElement& patternElement,
                                                        FloatRect& patternBoundaries,
@@ -233,7 +233,7 @@ bool RenderSVGResourcePattern::buildTileImageTransform(RenderElement& renderer,
     return true;
 }
 
-RefPtr<ImageBuffer> RenderSVGResourcePattern::createTileImage(GraphicsContext& context, const FloatSize& size, const FloatSize& scale, const AffineTransform& tileImageTransform, const PatternAttributes& attributes) const
+RefPtr<ImageBuffer> LegacyRenderSVGResourcePattern::createTileImage(GraphicsContext& context, const FloatSize& size, const FloatSize& scale, const AffineTransform& tileImageTransform, const PatternAttributes& attributes) const
 {
     // This is equivalent to making createImageBuffer() use roundedIntSize().
     auto roundedUnscaledImageBufferSize = [](const FloatSize& size, const FloatSize& scale) -> FloatSize {

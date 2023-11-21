@@ -27,11 +27,11 @@ namespace WebCore {
 
 class RenderObject;
 
-class RenderSVGResourceSolidColor final : public LegacyRenderSVGResource {
+class LegacyRenderSVGResourceSolidColor final : public LegacyRenderSVGResource {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RenderSVGResourceSolidColor();
-    virtual ~RenderSVGResourceSolidColor();
+    LegacyRenderSVGResourceSolidColor();
+    virtual ~LegacyRenderSVGResourceSolidColor();
 
     void removeAllClientsFromCacheIfNeeded(bool, WeakHashSet<RenderObject>*) override { }
     void removeClientFromCache(RenderElement&, bool = true) override { }
@@ -51,4 +51,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(RenderSVGResourceSolidColor, SolidColorResourceType)
+SPECIALIZE_TYPE_TRAITS_LEGACY_RENDER_SVG_RESOURCE(LegacyRenderSVGResourceSolidColor, SolidColorResourceType)

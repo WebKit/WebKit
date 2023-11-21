@@ -20,11 +20,11 @@
 #include "config.h"
 #include "SVGResourcesCycleSolver.h"
 
+#include "LegacyRenderSVGResourceFilter.h"
 #include "LegacyRenderSVGResourceMarker.h"
 #include "LegacyRenderSVGResourceMasker.h"
 #include "Logging.h"
 #include "RenderAncestorIterator.h"
-#include "RenderSVGResourceFilter.h"
 #include "SVGGradientElement.h"
 #include "SVGPatternElement.h"
 #include "SVGResources.h"

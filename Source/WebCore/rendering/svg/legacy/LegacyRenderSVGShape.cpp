@@ -36,9 +36,9 @@
 #include "HitTestResult.h"
 #include "LayoutRepainter.h"
 #include "LegacyRenderSVGResourceMarker.h"
+#include "LegacyRenderSVGResourceSolidColor.h"
 #include "LegacyRenderSVGShapeInlines.h"
 #include "PointerEventsHitRules.h"
-#include "RenderSVGResourceSolidColor.h"
 #include "RenderStyleInlines.h"
 #include "SVGPathData.h"
 #include "SVGRenderStyle.h"
@@ -206,7 +206,7 @@ void LegacyRenderSVGShape::fillShape(const RenderStyle& style, GraphicsContext& 
         if (fillPaintingResource->applyResource(*this, style, context, RenderSVGResourceMode::ApplyToFill))
             fillPaintingResource->postApplyResource(*this, context, RenderSVGResourceMode::ApplyToFill, nullptr, this);
         else if (fallbackColor.isValid()) {
-            RenderSVGResourceSolidColor* fallbackResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
+            LegacyRenderSVGResourceSolidColor* fallbackResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
             fallbackResource->setColor(fallbackColor);
             if (fallbackResource->applyResource(*this, style, context, RenderSVGResourceMode::ApplyToFill))
                 fallbackResource->postApplyResource(*this, context, RenderSVGResourceMode::ApplyToFill, nullptr, this);
@@ -222,7 +222,7 @@ void LegacyRenderSVGShape::strokeShapeInternal(const RenderStyle& style, Graphic
         if (strokePaintingResource->applyResource(*this, style, context, RenderSVGResourceMode::ApplyToStroke))
             strokePaintingResource->postApplyResource(*this, context, RenderSVGResourceMode::ApplyToStroke, nullptr, this);
         else if (fallbackColor.isValid()) {
-            RenderSVGResourceSolidColor* fallbackResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
+            LegacyRenderSVGResourceSolidColor* fallbackResource = LegacyRenderSVGResource::sharedSolidPaintingResource();
             fallbackResource->setColor(fallbackColor);
             if (fallbackResource->applyResource(*this, style, context, RenderSVGResourceMode::ApplyToStroke))
                 fallbackResource->postApplyResource(*this, context, RenderSVGResourceMode::ApplyToStroke, nullptr, this);

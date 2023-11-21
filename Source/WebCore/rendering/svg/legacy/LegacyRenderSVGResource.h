@@ -49,10 +49,10 @@ enum class RepaintRectCalculation : bool;
 class Color;
 class FloatRect;
 class GraphicsContext;
+class LegacyRenderSVGResourceSolidColor;
 class Path;
 class RenderElement;
 class RenderObject;
-class RenderSVGResourceSolidColor;
 class RenderStyle;
 
 class LegacyRenderSVGResource {
@@ -73,7 +73,7 @@ public:
     // Helper utilities used in the render tree to access resources used for painting shapes/text (gradients & patterns & solid colors only)
     static LegacyRenderSVGResource* fillPaintingResource(RenderElement&, const RenderStyle&, Color& fallbackColor);
     static LegacyRenderSVGResource* strokePaintingResource(RenderElement&, const RenderStyle&, Color& fallbackColor);
-    static RenderSVGResourceSolidColor* sharedSolidPaintingResource();
+    static LegacyRenderSVGResourceSolidColor* sharedSolidPaintingResource();
 
     static void markForLayoutAndParentResourceInvalidation(RenderObject&, bool needsLayout = true);
     static void markForLayoutAndParentResourceInvalidationIfNeeded(RenderObject&, bool needsLayout, WeakHashSet<RenderObject>* visitedRenderers);
