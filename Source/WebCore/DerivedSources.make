@@ -1996,6 +1996,7 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/quirks.css \
     $(WebCore)/css/ruby.css \
     $(WebCore)/css/svg.css \
+    $(WebCore)/css/viewTransitions.css \
     $(WebCore)/html/shadow/mac/imageControlsMac.css \
     $(WebCore)/html/shadow/attachmentElementShadow.css \
     $(WebCore)/html/shadow/imageOverlay.css \

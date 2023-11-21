@@ -1266,6 +1266,7 @@ $(PROJECT_DIR)/css/process-css-values.py
 $(PROJECT_DIR)/css/quirks.css
 $(PROJECT_DIR)/css/ruby.css
 $(PROJECT_DIR)/css/svg.css
+$(PROJECT_DIR)/css/viewTransitions.css
 $(PROJECT_DIR)/css/typedom/CSSKeywordValue.idl
 $(PROJECT_DIR)/css/typedom/CSSNumericValue.idl
 $(PROJECT_DIR)/css/typedom/CSSOMVariableReferenceValue.idl

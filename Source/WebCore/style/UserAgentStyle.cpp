@@ -86,6 +86,7 @@ StyleSheetContents* UserAgentStyle::horizontalFormControlsStyleSheet;
 StyleSheetContents* UserAgentStyle::htmlSwitchControlStyleSheet;
 StyleSheetContents* UserAgentStyle::counterStylesStyleSheet;
 StyleSheetContents* UserAgentStyle::rubyStyleSheet;
+StyleSheetContents* UserAgentStyle::viewTransitionsStyleSheet;
 #if ENABLE(FULLSCREEN_API)
 StyleSheetContents* UserAgentStyle::fullscreenStyleSheet;
 #endif
@@ -285,6 +286,11 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
             horizontalFormControlsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(horizontalFormControlsUserAgentStyleSheet, sizeof(horizontalFormControlsUserAgentStyleSheet)));
             addToDefaultStyle(*horizontalFormControlsStyleSheet);
         }
+    }
+
+    if (!viewTransitionsStyleSheet && element.document().settings().viewTransitionsEnabled()) {
+        viewTransitionsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(viewTransitionsUserAgentStyleSheet, sizeof(viewTransitionsUserAgentStyleSheet)));
+        addToDefaultStyle(*viewTransitionsStyleSheet);
     }
 
     ASSERT(defaultStyle->features().idsInRules.isEmpty());
