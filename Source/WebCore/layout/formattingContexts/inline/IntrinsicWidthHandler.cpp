@@ -37,7 +37,8 @@ namespace Layout {
 
 static bool isEligibleForNonLineBuilderProcess(const RenderStyle& style)
 {
-    return TextUtil::isWrappingAllowed(style) && (style.lineBreak() == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord);
+    // Note that hanging trailing content needs line builder (combination of wrapping is allowed but whitespace is preserved).
+    return TextUtil::isWrappingAllowed(style) && (style.lineBreak() == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord) && style.whiteSpaceCollapse() != WhiteSpaceCollapse::Preserve;
 }
 
 IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineFormattingContext, const InlineItemList& inlineItemList, bool mayUseSimplifiedTextOnlyInlineLayout)
