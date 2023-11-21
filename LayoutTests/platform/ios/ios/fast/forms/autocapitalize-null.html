@@ -1,28 +1,27 @@
 <!DOCTYPE html>
 <html>
 <body>
-<script src="../../../../../resources/js-test-pre.js"></script>
+<script src="../../../../../resources/js-test.js"></script>
 <script>
 description("Test null handling on the autocapitalize attribute");
 
 var form = document.createElement("form");
 shouldBeNull("form.getAttribute('autocapitalize')");
 evalAndLog("form.autocapitalize = null");
-shouldBeEqualToString("form.getAttribute('autocapitalize')", "");
-shouldBeEqualToString("form.autocapitalize", "");
+shouldBeEqualToString("form.getAttribute('autocapitalize')", "null");
+shouldBeEqualToString("form.autocapitalize", "sentences");
 
 var input = document.createElement("input");
 shouldBeNull("input.getAttribute('autocapitalize')");
 evalAndLog("input.autocapitalize = null");
-shouldBeEqualToString("input.getAttribute('autocapitalize')", "");
-shouldBeEqualToString("input.autocapitalize", "");
+shouldBeEqualToString("input.getAttribute('autocapitalize')", "null");
+shouldBeEqualToString("input.autocapitalize", "sentences");
 
 var textarea = document.createElement("textarea");
 shouldBeNull("textarea.getAttribute('autocapitalize')");
 evalAndLog("textarea.autocapitalize = null");
-shouldBeEqualToString("textarea.getAttribute('autocapitalize')", "");
-shouldBeEqualToString("textarea.autocapitalize", "");
+shouldBeEqualToString("textarea.getAttribute('autocapitalize')", "null");
+shouldBeEqualToString("textarea.autocapitalize", "sentences");
 </script>
-<script src="../../../../../resources/js-test-post.js"></script>
 </body>
 </html>
