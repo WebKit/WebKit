@@ -569,7 +569,7 @@ public:
 
     TextDirection direction() const { return static_cast<TextDirection>(m_inheritedFlags.direction); }
     inline bool isLeftToRightDirection() const;
-    bool hasExplicitlySetDirection() const { return m_nonInheritedFlags.hasExplicitlySetDirection; }
+    inline bool hasExplicitlySetDirection() const;
 
     const Length& specifiedLineHeight() const;
     WEBCORE_EXPORT const Length& lineHeight() const;
@@ -1222,7 +1222,7 @@ public:
     inline void setTextUnderlineOffset(TextUnderlineOffset);
     inline void setTextDecorationThickness(TextDecorationThickness);
     void setDirection(TextDirection v) { m_inheritedFlags.direction = static_cast<unsigned>(v); }
-    void setHasExplicitlySetDirection(bool v) { m_nonInheritedFlags.hasExplicitlySetDirection = v; }
+    inline void setHasExplicitlySetDirection();
     void setLineHeight(Length&&);
     bool setZoom(float);
     void setZoomWithoutReturnValue(float f) { setZoom(f); }
@@ -1740,8 +1740,8 @@ public:
 
     inline bool setWritingMode(WritingMode);
 
-    bool hasExplicitlySetWritingMode() const { return m_nonInheritedFlags.hasExplicitlySetWritingMode; }
-    void setHasExplicitlySetWritingMode(bool v) { m_nonInheritedFlags.hasExplicitlySetWritingMode = v; }
+    inline bool hasExplicitlySetWritingMode() const;
+    inline void setHasExplicitlySetWritingMode();
 
     // A unique style is one that has matches something that makes it impossible to share.
     bool unique() const { return m_nonInheritedFlags.isUnique; }
@@ -2171,8 +2171,6 @@ private:
         unsigned tableLayout : 1; // TableLayoutType
         unsigned textDecorationLine : TextDecorationLineBits; // Text decorations defined *only* by this element.
 
-        unsigned hasExplicitlySetDirection : 1;
-        unsigned hasExplicitlySetWritingMode : 1;
         unsigned usesViewportUnits : 1;
         unsigned usesContainerUnits : 1;
         unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.

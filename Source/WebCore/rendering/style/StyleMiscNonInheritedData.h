@@ -94,6 +94,8 @@ public:
 #if ENABLE(DARK_MODE_CSS)
     unsigned hasExplicitlySetColorScheme : 1 { false };
 #endif
+    unsigned hasExplicitlySetDirection : 1 { false };
+    unsigned hasExplicitlySetWritingMode : 1 { false };
     unsigned aspectRatioType : 2; // AspectRatioType
     unsigned appearance : appearanceBitWidth; // EAppearance
     unsigned effectiveAppearance : appearanceBitWidth; // EAppearance

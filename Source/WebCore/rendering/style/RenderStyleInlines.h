@@ -773,6 +773,9 @@ inline bool RenderStyle::hasBackdropFilter() const { return !backdropFilter().op
 inline FilterOperations RenderStyle::initialBackdropFilter() { return { }; }
 #endif
 
+inline bool RenderStyle::hasExplicitlySetDirection() const { return m_nonInheritedData->miscData->hasExplicitlySetDirection; }
+inline bool RenderStyle::hasExplicitlySetWritingMode() const { return m_nonInheritedData->miscData->hasExplicitlySetWritingMode; }
+
 #if PLATFORM(IOS_FAMILY)
 inline bool RenderStyle::touchCalloutEnabled() const { return m_rareInheritedData->touchCalloutEnabled; }
 #endif

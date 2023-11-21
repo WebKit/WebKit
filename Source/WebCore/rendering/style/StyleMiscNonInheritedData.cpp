@@ -101,6 +101,8 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData(const StyleMiscNonInherited
 #if ENABLE(DARK_MODE_CSS)
     , hasExplicitlySetColorScheme(o.hasExplicitlySetColorScheme)
 #endif
+    , hasExplicitlySetDirection(o.hasExplicitlySetDirection)
+    , hasExplicitlySetWritingMode(o.hasExplicitlySetWritingMode)
     , aspectRatioType(o.aspectRatioType)
     , appearance(o.appearance)
     , effectiveAppearance(o.effectiveAppearance)
@@ -147,6 +149,8 @@ bool StyleMiscNonInheritedData::operator==(const StyleMiscNonInheritedData& o) c
 #if ENABLE(DARK_MODE_CSS)
         && hasExplicitlySetColorScheme == o.hasExplicitlySetColorScheme
 #endif
+        && hasExplicitlySetDirection == o.hasExplicitlySetDirection
+        && hasExplicitlySetWritingMode == o.hasExplicitlySetWritingMode
         && aspectRatioType == o.aspectRatioType
         && appearance == o.appearance
         && effectiveAppearance == o.effectiveAppearance

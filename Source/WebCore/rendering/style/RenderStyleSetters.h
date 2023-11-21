@@ -476,6 +476,16 @@ inline void RenderStyle::setGridRowList(const GridTrackList& list)
         m_nonInheritedData.access().rareData.access().grid.access().setRows(list);
 }
 
+inline void RenderStyle::setHasExplicitlySetDirection()
+{
+    SET_NESTED(m_nonInheritedData, miscData, hasExplicitlySetDirection, true);
+}
+
+inline void RenderStyle::setHasExplicitlySetWritingMode()
+{
+    SET_NESTED(m_nonInheritedData, miscData, hasExplicitlySetWritingMode, true);
+}
+
 inline void RenderStyle::setLogicalHeight(Length&& height)
 {
     if (isHorizontalWritingMode())

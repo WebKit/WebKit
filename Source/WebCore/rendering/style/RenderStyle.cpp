@@ -216,8 +216,6 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_nonInheritedFlags.floating = static_cast<unsigned>(initialFloating());
     m_nonInheritedFlags.tableLayout = static_cast<unsigned>(initialTableLayout());
     m_nonInheritedFlags.textDecorationLine = initialTextDecorationLine().toRaw();
-    m_nonInheritedFlags.hasExplicitlySetDirection = false;
-    m_nonInheritedFlags.hasExplicitlySetWritingMode = false;
     m_nonInheritedFlags.usesViewportUnits = false;
     m_nonInheritedFlags.usesContainerUnits = false;
     m_nonInheritedFlags.hasExplicitlyInheritedProperties = false;
@@ -398,8 +396,6 @@ inline void RenderStyle::NonInheritedFlags::copyNonInheritedFrom(const NonInheri
     floating = other.floating;
     tableLayout = other.tableLayout;
     textDecorationLine = other.textDecorationLine;
-    hasExplicitlySetDirection = other.hasExplicitlySetDirection;
-    hasExplicitlySetWritingMode = other.hasExplicitlySetWritingMode;
     usesViewportUnits = other.usesViewportUnits;
     usesContainerUnits = other.usesContainerUnits;
     hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
@@ -1555,8 +1551,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // effectiveDisplay
         // originalDisplay
         // unicodeBidi
-        // hasExplicitlySetDirection
-        // hasExplicitlySetWritingMode
         // usesViewportUnits
         // usesContainerUnits
         // hasExplicitlyInheritedProperties
@@ -1803,6 +1797,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // deprecatedFlexibleBox
         // hasAttrContent
         // hasExplicitlySetColorScheme
+        // hasExplicitlySetDirection
+        // hasExplicitlySetWritingMode
         // appearance
         // effectiveAppearance
         // userDrag
