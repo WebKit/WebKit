@@ -69,6 +69,7 @@ void h265DecompressionOutputCallback(void* decoderRef,
   // TODO(tkchin): Handle CVO properly.
   RTCCVPixelBuffer* frameBuffer =
       [[RTCCVPixelBuffer alloc] initWithPixelBuffer:imageBuffer];
+  // FIXME: compute reorderSize.
   RTCVideoFrame* decodedFrame = [[RTCVideoFrame alloc]
       initWithBuffer:frameBuffer
             rotation:RTCVideoRotation_0

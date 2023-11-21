@@ -18,6 +18,7 @@
 #import "components/video_frame_buffer/RTCCVPixelBuffer.h"
 #import "helpers.h"
 #import "helpers/scoped_cftyperef.h"
+#import <queue>
 
 #if defined(WEBRTC_IOS)
 #import "helpers/UIDevice+RTCDevice.h"
@@ -26,19 +27,22 @@
 #include "modules/video_coding/include/video_error_codes.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/time_utils.h"
 #include "sdk/objc/components/video_codec/nalu_rewriter.h"
 
 // Struct that we pass to the decoder per frame to decode. We receive it again
 // in the decoder callback.
 struct RTCFrameDecodeParams {
-  RTCFrameDecodeParams(RTCVideoDecoderCallback cb, int64_t ts) : callback(cb), timestamp(ts) {}
+  RTCFrameDecodeParams(RTCVideoDecoderCallback callback, int64_t timestamp, uint64_t reorderSize) : callback(callback), timestamp(timestamp), reorderSize(reorderSize) {}
   RTCVideoDecoderCallback callback;
   int64_t timestamp;
+  uint64_t reorderSize { 0 };
 };
 
 @interface RTCVideoDecoderH264 ()
 - (void)setError:(OSStatus)error;
+- (void)processFrame:(RTCVideoFrame*)decodedFrame reorderSize:(uint64_t)reorderSize;
 @end
 
 static void overrideColorSpaceAttachments(CVImageBufferRef imageBuffer) {
@@ -48,6 +52,32 @@ static void overrideColorSpaceAttachments(CVImageBufferRef imageBuffer) {
   CVBufferSetAttachment(imageBuffer, kCVImageBufferYCbCrMatrixKey, kCVImageBufferYCbCrMatrix_ITU_R_709_2, kCVAttachmentMode_ShouldPropagate);
   CVBufferSetAttachment(imageBuffer, (CFStringRef)@"ColorInfoGuessedBy", (CFStringRef)@"RTCVideoDecoderH264", kCVAttachmentMode_ShouldPropagate);
 }
+
+struct RTCVideoFrameWithOrder {
+    RTCVideoFrameWithOrder(RTCVideoFrame* frame, uint64_t reorderSize)
+        : frame((__bridge_retained void*)frame)
+        , timeStamp(frame.timeStamp)
+        , reorderSize(reorderSize)
+    {
+    }
+
+    ~RTCVideoFrameWithOrder()
+    {
+      if (frame)
+        take();
+    }
+
+    RTCVideoFrame* take()
+    {
+        auto* rtcFrame = (__bridge_transfer RTCVideoFrame *)frame;
+        frame = nullptr;
+        return rtcFrame;
+    }
+
+    void* frame;
+    uint64_t timeStamp;
+    uint64_t reorderSize;
+};
 
 // This is the callback function that VideoToolbox calls when decode is
 // complete.
@@ -59,8 +89,8 @@ void decompressionOutputCallback(void *decoderRef,
                                  CMTime timestamp,
                                  CMTime duration) {
   std::unique_ptr<RTCFrameDecodeParams> decodeParams(reinterpret_cast<RTCFrameDecodeParams *>(params));
+  RTCVideoDecoderH264 *decoder = (__bridge RTCVideoDecoderH264 *)decoderRef;
   if (status != noErr || !imageBuffer) {
-    RTCVideoDecoderH264 *decoder = (__bridge RTCVideoDecoderH264 *)decoderRef;
     [decoder setError:status != noErr ? status : 1];
     RTC_LOG(LS_ERROR) << "Failed to decode frame. Status: " << status;
     decodeParams->callback(nil);
@@ -76,7 +106,7 @@ void decompressionOutputCallback(void *decoderRef,
                                    rotation:RTCVideoRotation_0
                                 timeStampNs:CMTimeGetSeconds(timestamp) * rtc::kNumNanosecsPerSec];
   decodedFrame.timeStamp = decodeParams->timestamp;
-  decodeParams->callback(decodedFrame);
+  [decoder processFrame:decodedFrame reorderSize:decodeParams->reorderSize];
 }
 
 // Decoder.
@@ -87,6 +117,9 @@ void decompressionOutputCallback(void *decoderRef,
   RTCVideoDecoderCallback _callback;
   OSStatus _error;
   bool _useAVC;
+  std::deque<std::unique_ptr<RTCVideoFrameWithOrder>> _reorderQueue;
+  uint8_t _reorderSize;
+  webrtc::Mutex _reorderQueueLock;
 }
 
 - (instancetype)init {
@@ -94,6 +127,7 @@ void decompressionOutputCallback(void *decoderRef,
   if (self) {
     _memoryPool = CMMemoryPoolCreate(nil);
     _useAVC = false;
+    _reorderSize = 0;
   }
   return self;
 }
@@ -156,6 +190,7 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
   rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat =
       rtc::ScopedCF(webrtc::CreateVideoFormatDescription(data, size));
   if (inputFormat) {
+    _reorderSize = webrtc::ComputeH264ReorderSizeFromAnnexB(data, size);
     // Check if the video format has changed, and reinitialize decoder if
      // needed.
     if (!CMFormatDescriptionEqual(inputFormat.get(), _videoFormat)) {
@@ -192,7 +227,7 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
   RTC_DCHECK(sampleBuffer);
   VTDecodeFrameFlags decodeFlags = kVTDecodeFrame_EnableAsynchronousDecompression;
   std::unique_ptr<RTCFrameDecodeParams> frameDecodeParams;
-  frameDecodeParams.reset(new RTCFrameDecodeParams(_callback, timeStamp));
+  frameDecodeParams.reset(new RTCFrameDecodeParams(_callback, timeStamp, _reorderSize));
   OSStatus status = VTDecompressionSessionDecodeFrame(
       _decompressionSession, sampleBuffer, decodeFlags, frameDecodeParams.release(), nullptr);
 #if defined(WEBRTC_IOS)
@@ -202,7 +237,7 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
       [self resetDecompressionSession] == WEBRTC_VIDEO_CODEC_OK) {
     RTC_LOG(LS_INFO) << "Failed to decode frame with code: " << status
                      << " retrying decode after decompression session reset";
-    frameDecodeParams.reset(new RTCFrameDecodeParams(_callback, timeStamp));
+    frameDecodeParams.reset(new RTCFrameDecodeParams(_callback, timeStamp, _reorderSize));
     status = VTDecompressionSessionDecodeFrame(
         _decompressionSession, sampleBuffer, decodeFlags, frameDecodeParams.release(), nullptr);
   }
@@ -244,6 +279,8 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
 
   rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat = rtc::ScopedCF(videoFormatDescription);
   if (inputFormat) {
+    _reorderSize = webrtc::ComputeH264ReorderSizeFromAVC(data, size);
+
     // Check if the video format has changed, and reinitialize decoder if
     // needed.
     if (!CMFormatDescriptionEqual(inputFormat.get(), _videoFormat)) {
@@ -359,6 +396,12 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
 - (void)flush {
   if (_decompressionSession)
     VTDecompressionSessionWaitForAsynchronousFrames(_decompressionSession);
+
+  webrtc::MutexLock lock(&_reorderQueueLock);
+  while (!_reorderQueue.empty()) {
+    _callback(_reorderQueue.front()->take());
+    _reorderQueue.pop_front();
+  }
 }
 
 - (void)setVideoFormat:(CMVideoFormatDescriptionRef)videoFormat {
@@ -378,4 +421,21 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
   return @"VideoToolbox";
 }
 
+- (void)processFrame:(RTCVideoFrame*)decodedFrame reorderSize:(uint64_t)reorderSize {
+  // FIXME: In case of IDR, we could push out all queued frames.
+  if (!_reorderQueue.empty() || reorderSize) {
+    webrtc::MutexLock lock(&_reorderQueueLock);
+    _reorderQueue.push_back(std::make_unique<RTCVideoFrameWithOrder>(decodedFrame, reorderSize));
+    std::sort(_reorderQueue.begin(), _reorderQueue.end(), [](auto& a, auto& b) {
+      return a->timeStamp < b->timeStamp;
+    });
+    while (_reorderQueue.size() > _reorderQueue.front()->reorderSize) {
+      auto *frame = _reorderQueue.front()->take();
+      _callback(frame);
+      _reorderQueue.pop_front();
+    }
+    return;
+  }
+  _callback(decodedFrame);
+}
 @end
