@@ -69,6 +69,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , translate(RenderStyle::initialTranslate())
     , offsetPath(RenderStyle::initialOffsetPath())
     // containerNames
+    // viewTransitionName
     , columnGap(RenderStyle::initialColumnGap())
     , rowGap(RenderStyle::initialRowGap())
     , offsetDistance(RenderStyle::initialOffsetDistance())
@@ -153,6 +154,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , translate(o.translate)
     , offsetPath(o.offsetPath)
     , containerNames(o.containerNames)
+    , viewTransitionName(o.viewTransitionName)
     , columnGap(o.columnGap)
     , rowGap(o.rowGap)
     , offsetDistance(o.offsetDistance)
@@ -289,6 +291,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && containerType == o.containerType
         && textBoxTrim == o.textBoxTrim
         && overflowAnchor == o.overflowAnchor
+        && viewTransitionName == o.viewTransitionName
         && hasClip == o.hasClip;
 }
 

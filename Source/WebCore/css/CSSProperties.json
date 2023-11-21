@@ -9145,6 +9145,17 @@
                 "url": "https://www.w3.org/TR/css-shapes/#propdef-shape-image-threshold"
             }
         },
+        "view-transition-name": {
+            "codegen-properties": {
+                "converter": "ViewTransitionName",
+                "parser-grammar": "none | <custom-ident>",
+                "settings-flag": "viewTransitionsEnabled"
+            },
+            "specification": {
+                "category": "css-view-transitions",
+                "url": "https://drafts.csswg.org/css-view-transitions/#view-transition-name-prop"
+            }
+        },
         "-webkit-tap-highlight-color": {
             "inherited": true,
             "codegen-properties": {
@@ -10006,6 +10017,11 @@
             "shortname": "CSS Basic User Interface",
             "longname": "CSS Basic User Interface Module",
             "url": "https://www.w3.org/TR/css-ui-3/"
+        },
+        "css-view-transitions": {
+            "shortname": "CSS View Transitions",
+            "longname": "CSS View Transitions Module",
+            "url": "https://drafts.csswg.org/css-view-transitions/"
         },
         "css-will-change": {
             "shortname": "CSS Will Change",

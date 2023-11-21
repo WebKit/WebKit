@@ -3766,6 +3766,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         }
         ASSERT_NOT_REACHED();
         return nullptr;
+    case CSSPropertyViewTransitionName: {
+        auto& viewTransitionName = style.viewTransitionName();
+        if (!viewTransitionName)
+            return CSSPrimitiveValue::create(CSSValueNone);
+        return valueForScopedName(*viewTransitionName);
+    }
     case CSSPropertyVisibility:
         return createConvertingToCSSValueID(style.visibility());
     case CSSPropertyWhiteSpace:
