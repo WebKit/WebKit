@@ -240,7 +240,8 @@ private:
 
     SourceBufferAppendMode m_appendMode { SourceBufferAppendMode::Segments };
 
-    Ref<MediaPromise> m_currentSourceBufferOperation { MediaPromise::createAndResolve() };
+    using OperationPromise = NativePromise<void, PlatformMediaError, WTF::PromiseOption::Default | WTF::PromiseOption::NonExclusive>;
+    Ref<OperationPromise> m_currentSourceBufferOperation { OperationPromise::createAndResolve() };
 
     bool m_shouldGenerateTimestamps { false };
     bool m_receivedFirstInitializationSegment { false };

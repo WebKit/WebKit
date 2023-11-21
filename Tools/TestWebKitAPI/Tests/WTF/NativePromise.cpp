@@ -180,6 +180,19 @@ static void runInCurrentRunLoop(Function<void(RunLoop&)>&& function)
         runLoop.cycle();
 }
 
+static void runInCurrentRunLoopUntilDone(Function<void(RunLoop&, bool&)>&& function)
+{
+    WTF::initializeMainThread();
+    auto& runLoop = RunLoop::current();
+
+    bool done = false;
+
+    function(runLoop, done);
+
+    while (!done)
+        runLoop.cycle();
+}
+
 // Basis usage, create a resolved promise, then on a different workqueue.
 TEST(NativePromise, BasicResolve)
 {
@@ -1435,6 +1448,106 @@ TEST(NativePromise, RunSynchronouslyOnTarget)
     });
 }
 
+// Test that you can convert a NativePromise of different types (exclusive vs non-exclusive)
+TEST(NativePromise, PromiseConversion)
+{
+    using MyPromise = NativePromise<void, int>;
+    using MyNonExclusivePromise = NativePromise<void, int, PromiseOption::Default | PromiseOption::NonExclusive>;
+    using MyNonExclusiveLongPromise = NativePromise<void, long, PromiseOption::Default | PromiseOption::NonExclusive>;
+    runInCurrentRunLoop([](auto& runLoop) {
+        auto nonExclusivePromise = MyNonExclusivePromise::createAndResolve();
+        Ref<MyPromise> promise1 = nonExclusivePromise.get();
+        promise1->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!!result);
+        });
+        Ref<MyPromise> promise2 = nonExclusivePromise.get();
+        promise2->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!!result);
+        });
+
+        auto promise3 = nonExclusivePromise->convert<GenericPromise>();
+        static_assert(std::is_same_v<Ref<GenericPromise>, decltype(promise3)>);
+        promise3->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!!result);
+        });
+
+        auto promise4 = MyNonExclusiveLongPromise::createAndReject(1)->convert<GenericPromise>();
+        static_assert(std::is_same_v<Ref<GenericPromise>, decltype(promise4)>);
+        promise4->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!result);
+            EXPECT_EQ(result.error(), 1);
+        });
+    });
+}
+
+TEST(NativePromise, MismatchChainTo)
+{
+    using MyPromise = NativePromise<void, int>;
+    using MyNonExclusivePromise = NativePromise<void, int, PromiseOption::Default | PromiseOption::NonExclusive>;
+    runInCurrentRunLoopUntilDone([](auto& runLoop, bool& done) {
+
+        // Chaining resolved promise from producer
+        auto nonExclusivePromise = MyNonExclusivePromise::createAndResolve();
+        MyPromise::Producer producer1;
+        producer1->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!!result);
+        });
+        nonExclusivePromise->chainTo(WTFMove(producer1));
+
+        // Chaining promise, not yet resolved
+        MyNonExclusivePromise::Producer producer2;
+        auto promise2 = producer2.promise();
+        MyPromise::Producer producer3;
+        auto promise3 = producer3.promise();
+        promise3->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!!result);
+        });
+        producer2->chainTo(WTFMove(producer3));
+        EXPECT_FALSE(promise2->isSettled());
+        EXPECT_FALSE(promise3->isSettled());
+        producer2->resolve();
+        // Resolving one producer synchronously resolve the other.
+        EXPECT_TRUE(promise2->isSettled());
+        EXPECT_TRUE(promise3->isSettled());
+
+        // Chaining promise from convertible type
+        using IntPromise = NativePromise<int, int>;
+        using LongPromise = NativePromise<long, long>;
+        auto intPromise1 = IntPromise::createAndResolve(1);
+        LongPromise::Producer longPromiseProducer1;
+        auto longPromise1 = longPromiseProducer1.promise();
+        intPromise1->chainTo(WTFMove(longPromiseProducer1));
+        longPromise1->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!!result);
+            EXPECT_EQ(*result, long(1));
+        });
+
+        // chaining with void promise
+        auto intPromise2 = IntPromise::createAndResolve(1);
+        GenericPromise::Producer genericPromiseProducer;
+        genericPromiseProducer->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!!result);
+        });
+        intPromise2->chainTo(WTFMove(genericPromiseProducer));
+
+        // chaining ThenCommand
+        auto intPromise3 = IntPromise::createAndResolve(1);
+        LongPromise::Producer longPromiseProducer2;
+        auto longPromise2 = longPromiseProducer2.promise();
+
+        longPromise2->whenSettled(runLoop, [&](auto&& result) mutable {
+            EXPECT_TRUE(!!result);
+            EXPECT_EQ(*result, long(2));
+            done = true;
+        });
+        intPromise3->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!!result);
+            EXPECT_EQ(*result, long(1));
+            return IntPromise::createAndResolve(2);
+        })->chainTo(WTFMove(longPromiseProducer2));
+    });
+}
+
 // Example:
 // Consider a PhotoProducer class that can take a photo and returns an image and its mimetype.
 // The PhotoProducer uses some system framework that takes a completion handler which will receive the photo once taken.
@@ -1456,7 +1569,7 @@ template<class F>
 auto makeMoveableFunction(F&& f)
 {
     return [sharedPtr = std::make_shared<std::decay_t<F>>(std::forward<F>(f))] (auto&&... args) {
-        return (*sharedPtr)(decltype(args)(args)...);
+        return std::invoke(*sharedPtr, decltype(args)(args)...);
     };
 }
 
