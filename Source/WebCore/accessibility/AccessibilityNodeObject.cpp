@@ -425,7 +425,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     if (node()->hasTagName(menuTag) || node()->hasTagName(olTag) || node()->hasTagName(ulTag))
         return AccessibilityRole::List;
     if (node()->hasTagName(fieldsetTag))
-        return AccessibilityRole::Group;
+        return AccessibilityRole::ApplicationGroup;
     if (node()->hasTagName(figureTag))
         return AccessibilityRole::Figure;
     if (node()->hasTagName(pTag))
@@ -467,7 +467,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     if (node()->hasTagName(sectionTag))
         return hasAttribute(aria_labelAttr) || hasAttribute(aria_labelledbyAttr) ? AccessibilityRole::LandmarkRegion : AccessibilityRole::TextGroup;
     if (node()->hasTagName(addressTag))
-        return AccessibilityRole::Group;
+        return AccessibilityRole::ApplicationGroup;
     if (node()->hasTagName(blockquoteTag))
         return AccessibilityRole::Blockquote;
     if (node()->hasTagName(captionTag) || node()->hasTagName(figcaptionTag))
