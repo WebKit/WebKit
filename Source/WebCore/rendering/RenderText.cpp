@@ -60,6 +60,7 @@
 #include "Text.h"
 #include "TextResourceDecoder.h"
 #include "TextTransform.h"
+#include "TextUtil.h"
 #include "VisiblePosition.h"
 #include "WidthIterator.h"
 #include <bitset>
@@ -93,6 +94,7 @@ struct SameSizeAsRenderText : public RenderObject {
     String text;
     std::optional<bool> canUseSimplifiedTextMeasuring;
     std::optional<bool> hasPositionDependentContentWidth;
+    std::optional<bool> m_hasStrongDirectionalityContent;
     uint32_t bitfields : 16;
 };
 
@@ -323,6 +325,8 @@ void RenderText::initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifi
     }
 
     m_hasPositionDependentContentWidth = false;
+    m_hasStrongDirectionalityContent = false;
+    auto mayHaveStrongDirectionalityContent = !textContent.is8Bit();
     // FIXME: Pre-warm glyph loading in FontCascade with the most common range.
     std::bitset<256> hasSeen;
     for (UChar32 character : StringView(textContent).codePoints()) {
@@ -334,6 +338,7 @@ void RenderText::initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifi
         auto glyphData = fontCascade.glyphDataForCharacter(character, false, fontVariant);
         m_canUseSimplifiedTextMeasuring = *m_canUseSimplifiedTextMeasuring && WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed) && glyphData.isValid() && glyphData.font == &primaryFont;
         m_hasPositionDependentContentWidth = *m_hasPositionDependentContentWidth || character == tabCharacter;
+        m_hasStrongDirectionalityContent = *m_hasStrongDirectionalityContent || (mayHaveStrongDirectionalityContent && Layout::TextUtil::isStrongDirectionalityCharacter(character));
     }
 }
 
@@ -1609,6 +1614,7 @@ void RenderText::setRenderedText(const String& newText)
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
     m_canUseSimplifiedTextMeasuring = { };
     m_hasPositionDependentContentWidth = { };
+    m_hasStrongDirectionalityContent = { };
 
     if (m_text != originalText) {
         originalTextMap().set(this, originalText);

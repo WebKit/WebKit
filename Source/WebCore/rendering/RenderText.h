@@ -246,6 +246,7 @@ private:
 
     std::optional<bool> m_canUseSimplifiedTextMeasuring;
     std::optional<bool> m_hasPositionDependentContentWidth;
+    std::optional<bool> m_hasStrongDirectionalityContent;
     unsigned m_hasBreakableChar : 1 { false }; // Whether or not we can be broken into multiple lines.
     unsigned m_hasBreak : 1 { false }; // Whether or not we have a hard break (e.g., <pre> with '\n').
     unsigned m_hasTab : 1 { false }; // Whether or not we have a variable width tab character (e.g., <pre> with '\t').
