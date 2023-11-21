@@ -12,7 +12,8 @@ PACKAGES+=(
     libgirepository1.0-dev
     libgl1-mesa-dev
     $(aptIfExists libgl1-mesa-glx)
-    $(aptIfElse libgtk-4-dev libgtk-3-dev)
+    $(aptIfExists libgtk-4-dev)
+    libgtk-3-dev
     libgudev-1.0-dev
     libhyphen-dev
     libmount-dev
