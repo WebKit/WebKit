@@ -46,7 +46,5 @@
     attribute EventHandler onenter;
     attribute EventHandler onexit;
 
-    // FIXME: Add 'unrestricted' to 'endTime' to align with the specification. See: https://bugs.webkit.org/show_bug.cgi?id=260765
-    [CallWith=CurrentDocument] constructor(double startTime, double endTime, DocumentFragment cueNode);
     [EnabledBySetting=GenericCueAPIEnabled] DocumentFragment getCueAsHTML();
 };
