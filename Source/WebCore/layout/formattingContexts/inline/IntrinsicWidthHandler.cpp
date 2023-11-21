@@ -35,10 +35,26 @@
 namespace WebCore {
 namespace Layout {
 
-static bool isEligibleForNonLineBuilderProcess(const RenderStyle& style)
+static bool isBoxEligibleForNonLineBuilderMinimumWidth(const ElementBox& box)
 {
     // Note that hanging trailing content needs line builder (combination of wrapping is allowed but whitespace is preserved).
+    auto& style = box.style();
     return TextUtil::isWrappingAllowed(style) && (style.lineBreak() == LineBreak::Anywhere || style.wordBreak() == WordBreak::BreakAll || style.wordBreak() == WordBreak::BreakWord) && style.whiteSpaceCollapse() != WhiteSpaceCollapse::Preserve;
+}
+
+static bool isSubtreeEligibleForNonLineBuilderMinimumWidth(const ElementBox& root)
+{
+    auto isSimpleBreakableContent = isBoxEligibleForNonLineBuilderMinimumWidth(root);
+    for (auto* child = root.firstChild(); child && isSimpleBreakableContent; child = child->nextSibling()) {
+        if (child->isFloatingPositioned()) {
+            isSimpleBreakableContent = false;
+            break;
+        }
+        auto isInlineBoxWithInlineContent = child->isInlineBox() && !child->isInlineTextBox() && !child->isLineBreakBox();
+        if (isInlineBoxWithInlineContent)
+            isSimpleBreakableContent = isSubtreeEligibleForNonLineBuilderMinimumWidth(downcast<ElementBox>(*child));
+    }
+    return isSimpleBreakableContent;
 }
 
 IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineFormattingContext, const InlineItemList& inlineItemList, bool mayUseSimplifiedTextOnlyInlineLayout)
@@ -57,12 +73,13 @@ IntrinsicWidthConstraints IntrinsicWidthHandler::computedIntrinsicSizes()
 
     if (m_mayUseSimplifiedTextOnlyInlineLayout) {
         auto simplifiedLineBuilder = TextOnlySimpleLineBuilder { formattingContext(), { }, m_inlineItemList };
-        auto minimumWidth = isEligibleForNonLineBuilderProcess(rootStyle()) ? ceiledLayoutUnit(simplifiedMinimumWidth()) : computedIntrinsicValue(IntrinsicWidthMode::Minimum, simplifiedLineBuilder);
+        auto minimumWidth = isBoxEligibleForNonLineBuilderMinimumWidth(root()) ? ceiledLayoutUnit(simplifiedMinimumWidth(root())) : computedIntrinsicValue(IntrinsicWidthMode::Minimum, simplifiedLineBuilder);
         return { minimumWidth, computedIntrinsicValue(IntrinsicWidthMode::Maximum, simplifiedLineBuilder, MayCacheLayoutResult::Yes) };
     }
 
     auto lineBuilder = LineBuilder { formattingContext(), { }, m_inlineItemList };
-    return { computedIntrinsicValue(IntrinsicWidthMode::Minimum, lineBuilder), computedIntrinsicValue(IntrinsicWidthMode::Maximum, lineBuilder) };
+    auto minimumWidth = isSubtreeEligibleForNonLineBuilderMinimumWidth(root()) ? ceiledLayoutUnit(simplifiedMinimumWidth(root())) : computedIntrinsicValue(IntrinsicWidthMode::Minimum, lineBuilder);
+    return { minimumWidth, computedIntrinsicValue(IntrinsicWidthMode::Maximum, lineBuilder) };
 }
 
 LayoutUnit IntrinsicWidthHandler::maximumContentSize()
@@ -122,30 +139,35 @@ InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(Intr
     return maximumContentWidth;
 }
 
-InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth() const
+InlineLayoutUnit IntrinsicWidthHandler::simplifiedMinimumWidth(const ElementBox& root) const
 {
-    auto& fontCascade = rootStyle().fontCascade();
-
     auto maximumWidth = InlineLayoutUnit { };
-    for (auto& inlineItem : m_inlineItemList) {
-        if (inlineItem.isText()) {
-            auto& inlineTextItem = downcast<InlineTextItem>(inlineItem);
-            auto contentLength = inlineTextItem.length();
+
+    for (auto* child = root.firstChild(); child; child = child->nextInFlowSibling()) {
+        if (child->isInlineTextBox()) {
+            auto& inlineTextBox = downcast<InlineTextBox>(*child);
+            auto& fontCascade = inlineTextBox.style().fontCascade();
+            auto contentLength = inlineTextBox.content().length();
             size_t index = 0;
             while (index < contentLength) {
-                auto characterIndex = inlineTextItem.start() + index;
-                auto characterLength = TextUtil::firstUserPerceivedCharacterLength(inlineTextItem.inlineTextBox(), characterIndex, contentLength - index);
+                auto characterLength = TextUtil::firstUserPerceivedCharacterLength(inlineTextBox, index, contentLength - index);
                 ASSERT(characterLength);
-                if (characterIndex + characterLength > inlineTextItem.end()) {
-                    // grapheme clusters could span across multiple adjacent inline text items.
-                    maximumWidth = std::max(maximumWidth, TextUtil::width(inlineTextItem.inlineTextBox(), fontCascade, characterIndex, characterIndex + characterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No));
-                } else
-                    maximumWidth = std::max(maximumWidth, TextUtil::width(inlineTextItem, fontCascade, characterIndex, characterIndex + characterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No));
+                maximumWidth = std::max(maximumWidth, TextUtil::width(inlineTextBox, fontCascade, index, index + characterLength, { }, TextUtil::UseTrailingWhitespaceMeasuringOptimization::No));
                 index += characterLength;
             }
             continue;
         }
-        ASSERT(inlineItem.isLineBreak());
+        if (child->isAtomicInlineLevelBox() || child->isReplacedBox()) {
+            maximumWidth = std::max<InlineLayoutUnit>(maximumWidth, formattingContext().geometryForBox(*child).marginBoxWidth());
+            continue;
+        }
+        auto isInlineBoxWithInlineContent = child->isInlineBox() && !child->isLineBreakBox();
+        if (isInlineBoxWithInlineContent) {
+            auto& boxGeometry = formattingContext().geometryForBox(*child);
+            maximumWidth = std::max(maximumWidth, std::max<InlineLayoutUnit>(boxGeometry.marginBorderAndPaddingStart(), boxGeometry.marginBorderAndPaddingEnd()));
+            maximumWidth = std::max(maximumWidth, simplifiedMinimumWidth(downcast<ElementBox>(*child)));
+            continue;
+        }
     }
     return maximumWidth;
 }
@@ -160,9 +182,9 @@ const InlineFormattingContext& IntrinsicWidthHandler::formattingContext() const
     return m_inlineFormattingContext;
 }
 
-const RenderStyle& IntrinsicWidthHandler::rootStyle() const
+const ElementBox& IntrinsicWidthHandler::root() const
 {
-    return m_inlineFormattingContext.root().style();
+    return m_inlineFormattingContext.root();
 }
 
 }
