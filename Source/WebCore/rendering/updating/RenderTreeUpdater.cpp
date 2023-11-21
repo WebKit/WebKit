@@ -308,8 +308,19 @@ void RenderTreeUpdater::updateSVGRenderer(Element& element)
 {
     ASSERT(element.needsSVGRendererUpdate());
     element.setNeedsSVGRendererUpdate(false);
-    if (element.renderer())
-        LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*element.renderer());
+
+    auto* renderer = element.renderer();
+    if (!renderer)
+        return;
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (element.document().settings().layerBasedSVGEngineEnabled()) {
+        renderer->setNeedsLayout();
+        return;
+    }
+#endif
+
+    LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 }
 
 void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& elementUpdate)

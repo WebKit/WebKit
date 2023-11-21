@@ -137,19 +137,19 @@ void RenderSVGResourceClipper::applyMaskClipping(PaintInfo& paintInfo, const Ren
     ASSERT(layer()->isSelfPaintingLayer());
     ASSERT(targetRenderer.hasLayer());
 
+    if (SVGHitTestCycleDetectionScope::isVisiting(*this))
+        return;
+
     ASSERT(currentClippingMode() == ClippingMode::NoClipping || currentClippingMode() == ClippingMode::MaskClipping);
     SetForScope<ClippingMode> switchClippingMode(currentClippingMode(), ClippingMode::MaskClipping);
 
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    if (style().clipPath()) {
-        auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*style().clipPath());
-
-        if (RefPtr referencedClipPathElement = ReferencedSVGResources::referencedClipPathElement(treeScopeForSVGReferences(), referenceClipPathOperation)) {
-            if (auto* referencedClipperRenderer = dynamicDowncast<RenderSVGResourceClipper>(referencedClipPathElement->renderer()))
-                referencedClipperRenderer->applyMaskClipping(paintInfo, targetRenderer, objectBoundingBox);
-        }
+    if (auto* referencedClipperRenderer = svgClipperResourceFromStyle()) {
+        // FIXME: Rename SVGHitTestCycleDetectionScope -> SVGResourceCycleDetectionScope
+        SVGHitTestCycleDetectionScope clippingScope(*this);
+        referencedClipperRenderer->applyMaskClipping(paintInfo, targetRenderer, objectBoundingBox);
     }
 
     AffineTransform contentTransform;
@@ -213,14 +213,14 @@ bool RenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectBoundin
 
 FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& object, RepaintRectCalculation repaintRectCalculation)
 {
-    FloatRect targetBoundingBox = object.objectBoundingBox();
+    auto targetBoundingBox = object.objectBoundingBox();
 
-    // Resource was not layouted yet. Give back the boundingBox of the object.
-    if (selfNeedsLayout())
+    if (SVGHitTestCycleDetectionScope::isVisiting(*this))
         return targetBoundingBox;
 
-    auto clipContentRepaintRect = clipPathElement().calculateClipContentRepaintRect(repaintRectCalculation);
+    SVGHitTestCycleDetectionScope queryScope(*this);
 
+    auto clipContentRepaintRect = clipPathElement().calculateClipContentRepaintRect(repaintRectCalculation);
     if (clipPathUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX) {
         AffineTransform contentTransform;
         contentTransform.translate(targetBoundingBox.location());

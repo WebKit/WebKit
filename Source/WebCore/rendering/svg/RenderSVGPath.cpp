@@ -8,7 +8,7 @@
  * Copyright (C) 2009 Jeff Schiller <codedread@gmail.com>
  * Copyright (C) 2011 Renata Hodovan <reni@webkit.org>
  * Copyright (C) 2011 University of Szeged
- * Copyright (C) 2020, 2021, 2022 Igalia S.L.
+ * Copyright (C) 2020, 2021, 2022, 2023 Igalia S.L.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -30,13 +30,13 @@
 #include "RenderSVGPath.h"
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-
 #include "Gradient.h"
+#include "LegacyRenderSVGResourceMarker.h"
+#include "ReferencedSVGResources.h"
 #include "RenderSVGShapeInlines.h"
 #include "RenderStyleInlines.h"
+#include "SVGMarkerElement.h"
 #include "SVGPathElement.h"
-#include "SVGResources.h"
-#include "SVGResourcesCache.h"
 #include "SVGSubpathData.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -202,17 +202,23 @@ static inline LegacyRenderSVGResourceMarker* markerForType(SVGMarkerType type, L
 
 bool RenderSVGPath::shouldGenerateMarkerPositions() const
 {
-    if (!style().svgStyle().hasMarkers())
+    const auto& svgStyle = style().svgStyle();
+    if (!svgStyle.hasMarkers())
         return false;
 
     if (!graphicsElement().supportsMarkers())
         return false;
 
-    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
-    if (!resources)
-        return false;
+    if (RefPtr element = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerStartResource()))
+        return true;
 
-    return resources->markerStart() || resources->markerMid() || resources->markerEnd();
+    if (RefPtr element = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerMidResource()))
+        return true;
+
+    if (RefPtr element = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerEndResource()))
+        return true;
+
+    return false;
 }
 
 void RenderSVGPath::drawMarkers(PaintInfo&)
@@ -220,13 +226,19 @@ void RenderSVGPath::drawMarkers(PaintInfo&)
     if (m_markerPositions.isEmpty())
         return;
 
-    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
-    if (!resources)
-        return;
+    const auto& svgStyle = style().svgStyle();
+    LegacyRenderSVGResourceMarker* markerStart = nullptr;
+    if (RefPtr markerStartElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerStartResource()))
+        markerStart = dynamicDowncast<LegacyRenderSVGResourceMarker>(markerStartElement->renderer());
 
-    auto* markerStart = resources->markerStart();
-    auto* markerMid = resources->markerMid();
-    auto* markerEnd = resources->markerEnd();
+    LegacyRenderSVGResourceMarker* markerMid = nullptr;
+    if (RefPtr markerMidElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerMidResource()))
+        markerMid = dynamicDowncast<LegacyRenderSVGResourceMarker>(markerMidElement->renderer());
+
+    LegacyRenderSVGResourceMarker* markerEnd = nullptr;
+    if (RefPtr markerEndElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerEndResource()))
+        markerEnd = dynamicDowncast<LegacyRenderSVGResourceMarker>(markerEndElement->renderer());
+
     if (!markerStart && !markerMid && !markerEnd)
         return;
 
@@ -251,12 +263,19 @@ FloatRect RenderSVGPath::computeMarkerBoundingBox(const SVGBoundingBoxComputatio
     if (m_markerPositions.isEmpty())
         return FloatRect();
 
-    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this);
-    ASSERT(resources);
+    const auto& svgStyle = style().svgStyle();
+    LegacyRenderSVGResourceMarker* markerStart = nullptr;
+    if (RefPtr markerStartElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerStartResource()))
+        markerStart = dynamicDowncast<LegacyRenderSVGResourceMarker>(markerStartElement->renderer());
 
-    auto* markerStart = resources->markerStart();
-    auto* markerMid = resources->markerMid();
-    auto* markerEnd = resources->markerEnd();
+    LegacyRenderSVGResourceMarker* markerMid = nullptr;
+    if (RefPtr markerMidElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerMidResource()))
+        markerMid = dynamicDowncast<LegacyRenderSVGResourceMarker>(markerMidElement->renderer());
+
+    LegacyRenderSVGResourceMarker* markerEnd = nullptr;
+    if (RefPtr markerEndElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), svgStyle.markerEndResource()))
+        markerEnd = dynamicDowncast<LegacyRenderSVGResourceMarker>(markerEndElement->renderer());
+
     if (!markerStart && !markerMid && !markerEnd)
         return FloatRect();
 
@@ -282,7 +301,11 @@ void RenderSVGPath::processMarkerPositions()
 
     ASSERT(hasPath());
 
-    SVGMarkerData markerData(m_markerPositions, SVGResourcesCache::cachedResourcesForRenderer(*this)->markerReverseStart());
+    bool markerReverseStart = false;
+    if (RefPtr markerStartElement = ReferencedSVGResources::referencedMarkerElement(treeScopeForSVGReferences(), style().svgStyle().markerStartResource()))
+        markerReverseStart = markerStartElement->orientType() == SVGMarkerOrientAutoStartReverse;
+
+    SVGMarkerData markerData(m_markerPositions, markerReverseStart);
     path().applyElements([&markerData](const PathElement& pathElement) {
         SVGMarkerData::updateFromPathElement(markerData, pathElement);
     });

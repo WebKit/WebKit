@@ -344,13 +344,26 @@ void RenderSVGImage::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
     if (renderTreeBeingDestroyed())
         return;
 
-    // The image resource defaults to nullImage until the resource arrives.
-    // This empty image may be cached by SVG resources which must be invalidated.
-    if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this))
-        resources->removeClientFromCache(*this);
+    bool invalidateLegacyResources = true;
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    invalidateLegacyResources = !document().settings().layerBasedSVGEngineEnabled();
+#endif
 
-    // Eventually notify parent resources, that we've changed.
-    LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*this, false);
+    if (invalidateLegacyResources) {
+        // The image resource defaults to nullImage until the resource arrives.
+        // This empty image may be cached by SVG resources which must be invalidated.
+        if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(*this))
+            resources->removeClientFromCache(*this);
+
+        // Eventually notify parent resources, that we've changed.
+        LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*this, false);
+    }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    // For LBSE it is sufficient to trigger repainting of all resources that make use of this image.
+    if (!invalidateLegacyResources)
+        repaintClientsOfReferencedSVGResources();
+#endif
 
     if (hasVisibleBoxDecorations() || hasMask() || hasShapeOutside())
         RenderSVGModelObject::imageChanged(newImage, rect);

@@ -26,7 +26,9 @@
 #include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGRoot.h"
 #include "SVGElementTypeHelpers.h"
+#include "SVGResourceElementClient.h"
 #include "SVGResourcesCache.h"
+
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackStats.h>
@@ -46,11 +48,7 @@ RenderSVGResourceContainer::~RenderSVGResourceContainer() = default;
 
 void RenderSVGResourceContainer::willBeDestroyed()
 {
-    if (m_registered) {
-        treeScopeForSVGReferences().removeSVGResource(m_id);
-        m_registered = false;
-    }
-
+    m_registered = false;
     RenderSVGHiddenContainer::willBeDestroyed();
 }
 
@@ -67,7 +65,6 @@ void RenderSVGResourceContainer::styleDidChange(StyleDifference diff, const Rend
 void RenderSVGResourceContainer::idChanged()
 {
     // Remove old id, that is guaranteed to be present in cache.
-    treeScopeForSVGReferences().removeSVGResource(m_id);
     m_id = element().getIdAttribute();
 
     registerResource();
@@ -76,14 +73,31 @@ void RenderSVGResourceContainer::idChanged()
 void RenderSVGResourceContainer::registerResource()
 {
     auto& treeScope = this->treeScopeForSVGReferences();
-    if (!treeScope.isIdOfPendingSVGResource(m_id)) {
-        treeScope.addSVGResource(m_id, *this);
+    if (!treeScope.isIdOfPendingSVGResource(m_id))
         return;
-    }
 
     auto elements = copyToVectorOf<Ref<SVGElement>>(treeScope.removePendingSVGResource(m_id));
+    for (auto& element : elements) {
+        ASSERT(element->hasPendingResources());
+        treeScope.clearHasPendingSVGResourcesIfPossible(element);
 
-    treeScope.addSVGResource(m_id, *this);
+        for (auto& cssClient : element->referencingCSSClients()) {
+            if (!cssClient)
+                continue;
+            cssClient->resourceChanged(element.get());
+        }
+    }
+}
+
+void RenderSVGResourceContainer::repaintAllClients() const
+{
+    Ref svgElement = element();
+
+    for (auto& cssClient : svgElement->referencingCSSClients()) {
+        if (!cssClient)
+            continue;
+        cssClient->resourceChanged(svgElement.get());
+    }
 }
 
 }
