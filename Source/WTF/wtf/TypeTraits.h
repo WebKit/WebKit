@@ -31,6 +31,7 @@
 #pragma once
 
 #include <type_traits>
+#include <wtf/Forward.h>
 #include <wtf/FunctionDispatcher.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
@@ -169,5 +170,12 @@ constexpr bool IsConvertibleToNativePromise = std::is_base_of<ConvertibleToNativ
 template <typename T, typename U>
 constexpr bool RelatedNativePromise = IsConvertibleToNativePromise<T> && IsConvertibleToNativePromise<U>;
 #endif
+
+
+template <typename T>
+struct IsExpected : std::false_type { };
+
+template <typename T, typename E>
+struct IsExpected<Expected<T, E>> : std::true_type { };
 
 } // namespace NTF

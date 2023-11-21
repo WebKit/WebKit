@@ -276,7 +276,7 @@ class ConvertibleToNativePromise { };
 template<typename T>
 class NativePromiseRequest;
 
-template<typename ResolveValueT, typename RejectValueT, unsigned options>
+template<typename ResolveValueT, typename RejectValueT, unsigned options = 0>
 class NativePromiseProducer;
 
 enum class PromiseDispatchMode : uint8_t {
@@ -1466,23 +1466,47 @@ private:
     RefPtr<typename PromiseType::Request> m_request;
 };
 
+template<typename S, typename E>
+Ref<NativePromise<S, E>> createSettledPromise(Expected<S, E>&& result)
+{
+    return NativePromise<S, E>::createAndSettle(WTFMove(result));
+}
+
 // Invoke a function object (e.g., lambda) asynchronously.
 // Returns a promise that the function should eventually resolve or reject once the original promise returned by the lambda
 // is itself resolved or rejected.
+// The lambda can return an Expected<T, U> or void.
 template<typename Function>
 static auto invokeAsync(SerialFunctionDispatcher& targetQueue, Function&& function, const Logger::LogSiteIdentifier& callerName = DEFAULT_LOGSITEIDENTIFIER)
 {
     static_assert(!std::is_lvalue_reference_v<Function>, "Function object must not be passed by lvalue-ref (to avoid unplanned copies); WTFMove() the object.");
-    static_assert(IsConvertibleToNativePromise<typename RemoveSmartPointer<decltype(function())>::type>, "Function object must return Ref<NativePromise>");
-    using ReturnType = typename RemoveSmartPointer<decltype(function())>::type;
+    using ReturnType = decltype(function());
+    using ReturnTypeNoRef = typename RemoveSmartPointer<ReturnType>::type;
+    static_assert((IsSmartRef<ReturnType>::value && IsConvertibleToNativePromise<ReturnTypeNoRef>) || IsExpected<ReturnType>::value || std::is_void_v<ReturnType>, "Function object must return Ref<NativePromise>, Expected<T, F> or void");
 
-    typename ReturnType::PromiseType::Producer proxyPromiseProducer(PromiseDispatchMode::Default, callerName);
-    auto promise = proxyPromiseProducer.promise();
-    targetQueue.dispatch([producer = WTFMove(proxyPromiseProducer), function = WTFMove(function)] () mutable {
-        Ref<typename ReturnType::PromiseType> p = function();
-        p->chainTo(WTFMove(producer), { "invokeAsync proxy", nullptr });
-    });
-    return promise;
+    if constexpr (IsConvertibleToNativePromise<ReturnTypeNoRef>) {
+        typename ReturnTypeNoRef::PromiseType::Producer proxyPromiseProducer(PromiseDispatchMode::Default, callerName);
+        auto promise = proxyPromiseProducer.promise();
+        targetQueue.dispatch([producer = WTFMove(proxyPromiseProducer), function = WTFMove(function)] () mutable {
+            static_cast<Ref<typename ReturnTypeNoRef::PromiseType>>(function())->chainTo(WTFMove(producer), { "invokeAsync proxy", nullptr });
+        });
+        return promise;
+    } else if constexpr (std::is_void_v<ReturnType>) {
+        GenericPromise::Producer proxyPromiseProducer(PromiseDispatchMode::Default, callerName);
+        auto promise = proxyPromiseProducer.promise();
+        targetQueue.dispatch([producer = WTFMove(proxyPromiseProducer), function = WTFMove(function)] () mutable {
+            function();
+            producer.resolve({ "invokeAsync proxy", nullptr });
+        });
+        return promise;
+    } else {
+        NativePromiseProducer<typename ReturnType::value_type, typename ReturnType::error_type> proxyPromiseProducer(PromiseDispatchMode::Default, callerName);
+        auto promise = proxyPromiseProducer.promise();
+        targetQueue.dispatch([producer = WTFMove(proxyPromiseProducer), function = WTFMove(function)] () mutable {
+            createSettledPromise(function())->chainTo(WTFMove(producer), { "invokeAsync proxy", nullptr });
+        });
+        return promise;
+    }
 }
 
 template<typename ResolveValueT, typename RejectValueT, unsigned options>
