@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-    <script src="../../../resources/js-test-pre.js"></script>
+    <script src="../../../resources/js-test.js"></script>
 </head>
 <body>
 <script language="JavaScript" type="text/javascript">
@@ -86,14 +86,14 @@
     debug('');
 
     debug("Testing - moveTo with 0 arguments");
-    window.moveTo();
+    shouldThrow('window.moveTo()');
     shouldBe('window.screenX', 'resetX');
     shouldBe('window.screenY', 'resetY');
     reset();
 
     debug("Testing - moveTo with 1 argument");
-    window.moveTo(x);
-    shouldBe('window.screenX', 'resetX + x');
+    shouldThrow('window.moveTo(x)');
+    shouldBe('window.screenX', 'resetX');
     shouldBe('window.screenY', 'resetY');
     reset();
 
@@ -111,14 +111,14 @@
     debug('');
 
     debug("Testing - moveBy with 0 arguments");
-    window.moveBy();
+    shouldThrow('window.moveBy()');
     shouldBe('window.screenX', 'resetX');
     shouldBe('window.screenY', 'resetY');
     reset();
 
     debug("Testing - moveBy with 1 argument");
-    window.moveBy(x);
-    shouldBe('window.screenX', 'resetX + x');
+    shouldThrow('window.moveBy(x)');
+    shouldBe('window.screenX', 'resetX');
     shouldBe('window.screenY', 'resetY');
     reset();
 
@@ -127,6 +127,5 @@
     shouldBe('window.screenX', 'resetX + x');
     shouldBe('window.screenY', 'resetY + y');
 </script>
-<script src="../../../resources/js-test-post.js"></script>
 </body>
 </html>
