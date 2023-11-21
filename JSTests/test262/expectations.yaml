@@ -340,24 +340,6 @@ test/built-ins/Temporal/Instant/prototype/until/roundingmode-halfTrunc.js:
 test/built-ins/Temporal/Instant/prototype/until/roundingmode-trunc.js:
   default: 'Test262Error: rounds to hours (rounding mode = trunc, negative case) hours result Expected SameValue(«-376436», «-376435») to be true'
   strict mode: 'Test262Error: rounds to hours (rounding mode = trunc, negative case) hours result Expected SameValue(«-376436», «-376435») to be true'
-test/built-ins/Temporal/Now/timeZoneId/extensible.js:
-  default: 'Test262Error: Object.isExtensible(Temporal.Now.timeZoneId) must return true'
-  strict mode: 'Test262Error: Object.isExtensible(Temporal.Now.timeZoneId) must return true'
-test/built-ins/Temporal/Now/timeZoneId/length.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(obj, name)')"
-test/built-ins/Temporal/Now/timeZoneId/name.js:
-  default: "TypeError: undefined is not an object (evaluating 'Temporal.Now.timeZoneId.name')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.Now.timeZoneId.name')"
-test/built-ins/Temporal/Now/timeZoneId/not-a-constructor.js:
-  default: 'Test262Error: isConstructor invoked with a non-function value'
-  strict mode: 'Test262Error: isConstructor invoked with a non-function value'
-test/built-ins/Temporal/Now/timeZoneId/prop-desc.js:
-  default: 'Test262Error: typeof is function Expected SameValue(«undefined», «function») to be true'
-  strict mode: 'Test262Error: typeof is function Expected SameValue(«undefined», «function») to be true'
-test/built-ins/Temporal/Now/timeZoneId/return-value.js:
-  default: "TypeError: Temporal.Now.timeZoneId is not a function. (In 'Temporal.Now.timeZoneId()', 'Temporal.Now.timeZoneId' is undefined)"
-  strict mode: "TypeError: Temporal.Now.timeZoneId is not a function. (In 'Temporal.Now.timeZoneId()', 'Temporal.Now.timeZoneId' is undefined)"
 test/built-ins/Temporal/PlainDate/calendar-case-insensitive.js:
   default: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «iso8601») to be true'
   strict mode: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «iso8601») to be true'

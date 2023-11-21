@@ -33,7 +33,7 @@ namespace JSC {
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(TemporalNow);
 
 static JSC_DECLARE_HOST_FUNCTION(temporalNowFuncInstant);
-static JSC_DECLARE_HOST_FUNCTION(temporalNowFuncTimeZone);
+static JSC_DECLARE_HOST_FUNCTION(temporalNowFuncTimeZoneId);
 
 } // namespace JSC
 
@@ -44,7 +44,7 @@ namespace JSC {
 /* Source for TemporalNow.lut.h
 @begin temporalNowTable
     instant         temporalNowFuncInstant      DontEnum|Function 0
-    timeZone        temporalNowFuncTimeZone     DontEnum|Function 0
+    timeZoneId      temporalNowFuncTimeZoneId   DontEnum|Function 0
 @end
 */
 
@@ -80,17 +80,12 @@ JSC_DEFINE_HOST_FUNCTION(temporalNowFuncInstant, (JSGlobalObject* globalObject, 
     return JSValue::encode(TemporalInstant::tryCreateIfValid(globalObject, ISO8601::ExactTime::now()));
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal.now.timezone
-// https://tc39.es/proposal-temporal/#sec-temporal-systemtimezone
-JSC_DEFINE_HOST_FUNCTION(temporalNowFuncTimeZone, (JSGlobalObject* globalObject, CallFrame*))
+// https://tc39.es/proposal-temporal/#sec-temporal.now.timezoneid
+// https://tc39.es/proposal-temporal/#sec-temporal-systemtimezoneidentifier
+JSC_DEFINE_HOST_FUNCTION(temporalNowFuncTimeZoneId, (JSGlobalObject* globalObject, CallFrame*))
 {
     VM& vm = globalObject->vm();
-
-    String timeZoneString = vm.dateCache.defaultTimeZone();
-    std::optional<TimeZoneID> identifier = ISO8601::parseTimeZoneName(timeZoneString);
-    if (!identifier)
-        return JSValue::encode(TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), 0));
-    return JSValue::encode(TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), identifier.value()));
+    return JSValue::encode(jsNontrivialString(vm, vm.dateCache.defaultTimeZone()));
 }
 
 } // namespace JSC
