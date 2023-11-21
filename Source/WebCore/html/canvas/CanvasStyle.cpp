@@ -59,8 +59,8 @@ Color parseColor(const String& colorString, CanvasBase& canvasBase)
 #endif
 
     Color color;
-    if (is<HTMLCanvasElement>(canvasBase))
-        color = CSSParser::parseColor(colorString, downcast<HTMLCanvasElement>(canvasBase).cssParserContext());
+    if (auto* canvas = dynamicDowncast<HTMLCanvasElement>(canvasBase))
+        color = CSSParser::parseColor(colorString, canvas->cssParserContext());
     else
         color = CSSParser::parseColorWithoutContext(colorString);
 
@@ -79,13 +79,13 @@ Color parseColor(const String& colorString)
 
 Color currentColor(CanvasBase& canvasBase)
 {
-    if (!is<HTMLCanvasElement>(canvasBase))
+    RefPtr canvas = dynamicDowncast<HTMLCanvasElement>(canvasBase);
+    if (!canvas)
         return Color::black;
 
-    auto& canvas = downcast<HTMLCanvasElement>(canvasBase);
-    if (!canvas.isConnected() || !canvas.inlineStyle())
+    if (!canvas->isConnected() || !canvas->inlineStyle())
         return Color::black;
-    Color color = CSSParser::parseColorWithoutContext(canvas.inlineStyle()->getPropertyValue(CSSPropertyColor));
+    Color color = CSSParser::parseColorWithoutContext(canvas->inlineStyle()->getPropertyValue(CSSPropertyColor));
     if (!color.isValid())
         return Color::black;
     return color;

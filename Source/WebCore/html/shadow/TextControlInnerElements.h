@@ -138,10 +138,18 @@ private:
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::TextControlInnerTextElement)
     static bool isType(const WebCore::HTMLElement& element) { return element.isTextControlInnerTextElement(); }
-    static bool isType(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && isType(downcast<WebCore::HTMLElement>(node)); }
+    static bool isType(const WebCore::Node& node)
+    {
+        auto* htmlElement = dynamicDowncast<WebCore::HTMLElement>(node);
+        return htmlElement && isType(*htmlElement);
+    }
 SPECIALIZE_TYPE_TRAITS_END()
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SearchFieldResultsButtonElement)
     static bool isType(const WebCore::HTMLElement& element) { return element.isSearchFieldResultsButtonElement(); }
-    static bool isType(const WebCore::Node& node) { return is<WebCore::HTMLElement>(node) && isType(downcast<WebCore::HTMLElement>(node)); }
+    static bool isType(const WebCore::Node& node)
+    {
+        auto* htmlElement = dynamicDowncast<WebCore::HTMLElement>(node);
+        return htmlElement && isType(*htmlElement);
+    }
 SPECIALIZE_TYPE_TRAITS_END()

@@ -217,10 +217,10 @@ bool TextTrackCueGeneric::isOrderedBefore(const TextTrackCue* that) const
     if (VTTCue::isOrderedBefore(that))
         return true;
 
-    if (is<TextTrackCueGeneric>(*that) && startTime() == that->startTime() && endTime() == that->endTime()) {
+    if (auto* thatCue = dynamicDowncast<TextTrackCueGeneric>(*that); thatCue && startTime() == that->startTime() && endTime() == that->endTime()) {
         // Further order generic cues by their calculated line value.
         auto thisPosition = getPositionCoordinates();
-        auto thatPosition = downcast<TextTrackCueGeneric>(*that).getPositionCoordinates();
+        auto thatPosition = thatCue->getPositionCoordinates();
         return thisPosition.second > thatPosition.second || (thisPosition.second == thatPosition.second && thisPosition.first < thatPosition.first);
     }
 
@@ -229,14 +229,14 @@ bool TextTrackCueGeneric::isOrderedBefore(const TextTrackCue* that) const
 
 bool TextTrackCueGeneric::isPositionedAbove(const TextTrackCue* that) const
 {
-    if (is<TextTrackCueGeneric>(*that)) {
-        if (startTime() == that->startTime() && endTime() == that->endTime()) {
+    if (auto* thatCue = dynamicDowncast<TextTrackCueGeneric>(*that)) {
+        if (startTime() == thatCue->startTime() && endTime() == thatCue->endTime()) {
             // Further order generic cues by their calculated line value.
             auto thisPosition = getPositionCoordinates();
-            auto thatPosition = downcast<TextTrackCueGeneric>(*that).getPositionCoordinates();
+            auto thatPosition = thatCue->getPositionCoordinates();
             return thisPosition.second > thatPosition.second || (thisPosition.second == thatPosition.second && thisPosition.first < thatPosition.first);
         }
-        return startTime() > that->startTime();
+        return startTime() > thatCue->startTime();
     }
 
     return VTTCue::isOrderedBefore(that);

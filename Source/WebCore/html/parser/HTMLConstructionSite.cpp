@@ -100,10 +100,11 @@ static bool hasImpliedEndTag(const HTMLStackItem& item)
 
 static bool shouldUseLengthLimit(const ContainerNode& node)
 {
-    if (!is<Element>(node))
+    auto* element = dynamicDowncast<Element>(node);
+    if (!element)
         return true;
 
-    switch (downcast<Element>(node).elementName()) {
+    switch (element->elementName()) {
     case HTML::script:
     case HTML::style:
     case SVG::script:
@@ -558,8 +559,7 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
             if (!exceptionOrShadowRoot.hasException()) {
                 Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
                 auto element = createHTMLElement(token);
-                RELEASE_ASSERT(is<HTMLTemplateElement>(element));
-                downcast<HTMLTemplateElement>(element.get()).setDeclarativeShadowRoot(shadowRoot);
+                checkedDowncast<HTMLTemplateElement>(element.get()).setDeclarativeShadowRoot(shadowRoot);
                 m_openElements.push(HTMLStackItem(WTFMove(element), WTFMove(token)));
                 return;
             }
@@ -771,8 +771,8 @@ Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const Ato
 
 inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
 {
-    if (is<HTMLTemplateElement>(currentNode()))
-        return downcast<HTMLTemplateElement>(currentNode()).fragmentForInsertion().document();
+    if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode()))
+        return templateElement->fragmentForInsertion().document();
     return currentNode().document();
 }
 
@@ -824,8 +824,10 @@ RefPtr<HTMLElement> HTMLConstructionSite::createHTMLElementOrFindCustomElementIn
     // loading is working. When this hack is removed, the assertion just before
     // the setPictureElement() call in HTMLImageElement::insertedIntoAncestor
     // can be simplified.
-    if (is<HTMLPictureElement>(currentNode()) && is<HTMLImageElement>(*element))
-        downcast<HTMLImageElement>(*element).setPictureElement(&downcast<HTMLPictureElement>(currentNode()));
+    if (auto* currentPictureElement = dynamicDowncast<HTMLPictureElement>(currentNode())) {
+        if (auto* imageElement = dynamicDowncast<HTMLImageElement>(*element))
+            imageElement->setPictureElement(currentPictureElement);
+    }
 
     setAttributes(*element, token, m_parserContentPolicy);
     return element;

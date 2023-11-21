@@ -51,9 +51,8 @@ private:
         for (auto& entry : entries) {
             if (!entry->isIntersecting())
                 continue;
-            auto* element = entry->target();
-            if (is<HTMLImageElement>(element)) {
-                downcast<HTMLImageElement>(*element).loadDeferredImage();
+            if (RefPtr element = dynamicDowncast<HTMLImageElement>(entry->target())) {
+                element->loadDeferredImage();
                 element->document().lazyLoadImageObserver().unobserve(*element, element->document());
             }
         }

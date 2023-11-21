@@ -136,11 +136,7 @@ GPUCanvasContextCocoa::CanvasType GPUCanvasContextCocoa::htmlOrOffscreenCanvas()
 {
     if (auto* c = htmlCanvas())
         return c;
-
-    auto& base = canvasBase();
-    RELEASE_ASSERT(is<OffscreenCanvas>(base));
-
-    return &downcast<OffscreenCanvas>(base);
+    return &checkedDowncast<OffscreenCanvas>(canvasBase());
 }
 
 GPUCanvasContextCocoa::GPUCanvasContextCocoa(CanvasBase& canvas, GPU& gpu)

@@ -55,15 +55,14 @@ DataListButtonElement::~DataListButtonElement() { }
 
 void DataListButtonElement::defaultEventHandler(Event& event)
 {
-    if (!is<MouseEvent>(event)) {
+    auto* mouseEvent = dynamicDowncast<MouseEvent>(event);
+    if (!mouseEvent) {
         if (!event.defaultHandled())
             HTMLDivElement::defaultEventHandler(event);
         return;
     }
 
-    MouseEvent& mouseEvent = downcast<MouseEvent>(event);
-
-    if (mouseEvent.type() == eventNames().clickEvent) {
+    if (mouseEvent->type() == eventNames().clickEvent) {
         m_owner.dataListButtonElementWasClicked();
         event.setDefaultHandled();
     }
