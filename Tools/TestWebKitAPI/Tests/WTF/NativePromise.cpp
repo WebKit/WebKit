@@ -150,7 +150,7 @@ private:
     const TestPromise::Result m_result;
 };
 
-static std::function<void()> doFail()
+static auto doFail()
 {
     return [] {
         EXPECT_TRUE(false);
@@ -252,7 +252,7 @@ TEST(NativePromise, BasicSettleRejected)
     });
 }
 
-// Example use with a GenericPromise which is a NativePromise<void, int>
+// Example use with a GenericPromise which is a NativePromise<void, void>
 //
 TEST(NativePromise, GenericPromise)
 {
@@ -270,10 +270,9 @@ TEST(NativePromise, GenericPromise)
                 EXPECT_TRUE(result);
             });
 
-        GenericPromise::createAndReject(123)->whenSettled(queue,
+        GenericPromise::createAndReject()->whenSettled(queue,
             [](GenericPromise::Result result) {
                 EXPECT_TRUE(!result);
-                EXPECT_EQ(result.error(), 123);
             });
 
         GenericPromise::Producer producer1;
@@ -288,13 +287,11 @@ TEST(NativePromise, GenericPromise)
 
         GenericPromise::Producer producer2;
         Ref<GenericPromise> promise2 = producer2;
-        producer2.reject(123);
+        producer2.reject();
         promise2->then(queue,
+            doFail(),
             []() {
                 EXPECT_TRUE(true);
-            },
-            [](int value) {
-                EXPECT_EQ(value, 123);
             });
 
         GenericPromise::Producer producer3;
@@ -1283,12 +1280,11 @@ TEST(NativePromise, HeterogeneousChaining)
     TestPromise::createAndResolve(1)->whenSettled(queue,
         [queue] {
             return TestPromiseExcl::createAndResolve(2)->whenSettled(queue, [] {
-                return GenericPromise::createAndReject(1);
+                return GenericPromise::createAndReject();
             });
         })->whenSettled(queue,
             [queue](GenericPromise::Result result) {
                 EXPECT_FALSE(result.has_value());
-                EXPECT_EQ(1, result.error());
                 queue->beginShutdown();
             });
 }
@@ -1313,7 +1309,7 @@ TEST(NativePromise, ImplicitConversionWithForwardPreviousReturn)
             [](const TestPromise::Result& result) {
                 return TestPromise::createAndSettle(result);
             });
-        promise->whenSettled(runLoop, [&](const TestPromise::Result& result) {
+        promise->whenSettled(runLoop, [promise](const TestPromise::Result& result) {
             EXPECT_TRUE(!result.has_value());
             EXPECT_FALSE(promise->isResolved());
         });
@@ -1471,11 +1467,29 @@ TEST(NativePromise, PromiseConversion)
             EXPECT_TRUE(!!result);
         });
 
+        // Converting a promise taking void as reject.
         auto promise4 = MyNonExclusiveLongPromise::createAndReject(1)->convert<GenericPromise>();
         static_assert(std::is_same_v<Ref<GenericPromise>, decltype(promise4)>);
         promise4->whenSettled(runLoop, [](auto&& result) {
             EXPECT_TRUE(!result);
-            EXPECT_EQ(result.error(), 1);
+        });
+
+        // Converting a promise with different type.
+        using IntPromise = NativePromise<int, int>;
+        using DoublePromise = NativePromise<double, double>;
+
+        auto promise5 = IntPromise::createAndResolve(1)->convert<DoublePromise>();
+        static_assert(std::is_same_v<Ref<DoublePromise>, decltype(promise5)>);
+        promise5->whenSettled(runLoop, [](auto&& result) {
+            static_assert(std::is_same_v<double, std::remove_reference_t<decltype(result.value())>>);
+            EXPECT_TRUE(result.has_value());
+        });
+
+        // Can convert to promise taking a data/void mix
+        using DoubleVoidPromise = NativePromise<double, void>;
+        auto promise6 = IntPromise::createAndReject(1)->convert<DoubleVoidPromise>();
+        promise6->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!result);
         });
     });
 }
@@ -1522,20 +1536,28 @@ TEST(NativePromise, MismatchChainTo)
             EXPECT_EQ(*result, long(1));
         });
 
-        // chaining with void promise
-        auto intPromise2 = IntPromise::createAndResolve(1);
-        GenericPromise::Producer genericPromiseProducer;
-        genericPromiseProducer->whenSettled(runLoop, [](auto&& result) {
+        // Chaining non-exclusive promise to exclusive, check the end result is movable.
+        using IntPromiseNonExcl = NativePromise<int, int, PromiseOption::Default | PromiseOption::NonExclusive>;
+        auto intPromise2 = IntPromiseNonExcl::createAndResolve(1);
+        LongPromise::Producer longPromiseProducer2;
+        auto longPromise2 = longPromiseProducer2.promise();
+        intPromise2->chainTo(WTFMove(longPromiseProducer2));
+        longPromise2->whenSettled(runLoop, [](auto&& result) {
+            using NonRefQualifiedType = typename std::remove_reference<decltype(result)>::type;
+            static_assert(!std::is_const<NonRefQualifiedType>::value, "result is const qualified.");
             EXPECT_TRUE(!!result);
+            EXPECT_EQ(*result, long(1));
         });
-        intPromise2->chainTo(WTFMove(genericPromiseProducer));
+        intPromise2->whenSettled(runLoop, [](auto result) {
+            EXPECT_TRUE(!!result);
+            EXPECT_EQ(*result, 1);
+        });
 
         // chaining ThenCommand
         auto intPromise3 = IntPromise::createAndResolve(1);
-        LongPromise::Producer longPromiseProducer2;
-        auto longPromise2 = longPromiseProducer2.promise();
-
-        longPromise2->whenSettled(runLoop, [&](auto&& result) mutable {
+        LongPromise::Producer longPromiseProducer3;
+        auto longPromise3 = longPromiseProducer3.promise();
+        longPromise3->whenSettled(runLoop, [&](auto&& result) mutable {
             EXPECT_TRUE(!!result);
             EXPECT_EQ(*result, long(2));
             done = true;
@@ -1544,7 +1566,53 @@ TEST(NativePromise, MismatchChainTo)
             EXPECT_TRUE(!!result);
             EXPECT_EQ(*result, long(1));
             return IntPromise::createAndResolve(2);
-        })->chainTo(WTFMove(longPromiseProducer2));
+        })->chainTo(WTFMove(longPromiseProducer3));
+
+        auto intPromise4 = IntPromise::createAndResolve(1);
+        LongPromise::Producer longPromiseProducer4;
+        auto longPromise4 = longPromiseProducer4.promise();
+        intPromise4->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!!result);
+            EXPECT_EQ(*result, long(1));
+            return IntPromise::createAndReject(2);
+        })->chainTo(WTFMove(longPromiseProducer4));
+        longPromise4->whenSettled(runLoop, [&](auto&& result) mutable {
+            EXPECT_TRUE(!result);
+            EXPECT_EQ(result.error(), long(2));
+            done = true;
+        });
+    });
+}
+
+TEST(NativePromise, MismatchChainToVoidPromise)
+{
+    runInCurrentRunLoopUntilDone([](auto& runLoop, bool& done) {
+        // chaining with void promise
+        using IntPromise = NativePromise<int, int>;
+        using LongPromise = NativePromise<long, long>;
+        auto intPromise1 = IntPromise::createAndResolve(1);
+        LongPromise::Producer longPromiseProducer1;
+        auto longPromise1 = longPromiseProducer1.promise();
+        intPromise1->chainTo(WTFMove(longPromiseProducer1));
+        longPromise1->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!!result);
+            EXPECT_EQ(*result, long(1));
+        });
+
+        auto intPromise2 = IntPromise::createAndResolve(1);
+        GenericPromise::Producer genericPromiseProducer1;
+        genericPromiseProducer1->whenSettled(runLoop, [](auto&& result) {
+            EXPECT_TRUE(!!result);
+        });
+        intPromise2->chainTo(WTFMove(genericPromiseProducer1));
+
+        auto intPromise3 = IntPromise::createAndReject(1);
+        GenericPromise::Producer genericPromiseProducer2;
+        genericPromiseProducer2->whenSettled(runLoop, [&](auto&& result) {
+            EXPECT_TRUE(!result);
+            done = true;
+        });
+        intPromise3->chainTo(WTFMove(genericPromiseProducer2));
     });
 }
 

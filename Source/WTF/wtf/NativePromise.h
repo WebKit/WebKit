@@ -308,15 +308,21 @@ constexpr unsigned operator&(unsigned a, PromiseOption b)
     return a & static_cast<unsigned>(b);
 }
 
+namespace detail {
+struct VoidPlaceholder {
+};
+} // namespace detail
+
 template<typename ResolveValueT, typename RejectValueT, unsigned options>
 class NativePromise final : public NativePromiseBase, public ConvertibleToNativePromise {
 public:
+
     static constexpr bool IsExclusive = !(options & PromiseOption::NonExclusive);
     static constexpr bool WithCrossThreadCopy = !!(options & PromiseOption::WithCrossThreadCopy);
     static constexpr bool WithAutomaticCrossThreadCopy = !(options & (PromiseOption::WithCrossThreadCopy | PromiseOption::WithoutCrossThreadCopy)) && (CrossThreadCopier<ResolveValueT>::IsNeeded || CrossThreadCopier<RejectValueT>::IsNeeded);
     static_assert(!WithAutomaticCrossThreadCopy || IsExclusive, "Using Non-Exclusive NativePromise with a ResolveValueT or RejectValueT requiring a call to isolatedCopy() must be explicitly set with WithCrossThreadCopy or WithoutCrossThreadCopy option");
     using ResolveValueType = std::conditional_t<WithAutomaticCrossThreadCopy || WithCrossThreadCopy, typename CrossThreadCopier<ResolveValueT>::Type, ResolveValueT>;
-    using RejectValueType = std::conditional_t<WithAutomaticCrossThreadCopy || WithCrossThreadCopy, typename CrossThreadCopier<RejectValueT>::Type, RejectValueT>;
+    using RejectValueType = std::conditional_t<std::is_void_v<RejectValueT>, detail::VoidPlaceholder, std::conditional_t<WithAutomaticCrossThreadCopy || WithCrossThreadCopy, typename CrossThreadCopier<RejectValueT>::Type, RejectValueT>>;
     using Result = Expected<ResolveValueType, RejectValueType>;
     using Error = Unexpected<RejectValueType>;
 
@@ -418,11 +424,19 @@ public:
         return p;
     }
 
-    template<typename RejectValueType_>
+    template<typename RejectValueType_, typename = std::enable_if<!std::is_void_v<RejectValueT>>>
     static Ref<NativePromise> createAndReject(RejectValueType_&& rejectValue, const Logger::LogSiteIdentifier& rejectSite = DEFAULT_LOGSITEIDENTIFIER)
     {
         auto p = adoptRef(*new NativePromise(rejectSite));
         p->reject(std::forward<RejectValueType_>(rejectValue), rejectSite);
+        return p;
+    }
+
+    template<typename = std::enable_if<std::is_void_v<RejectValueT>>>
+    static Ref<NativePromise> createAndReject(const Logger::LogSiteIdentifier& rejectSite = DEFAULT_LOGSITEIDENTIFIER)
+    {
+        auto p = adoptRef(*new NativePromise(rejectSite));
+        p->reject(rejectSite);
         return p;
     }
 
@@ -440,9 +454,6 @@ public:
 private:
     template<typename ResolveValueT2, typename RejectValueT2, unsigned options2>
     friend class NativePromiseProducer;
-
-    struct VoidPlaceholder {
-    };
 
     template<typename SettleValueType>
     inline void settleImpl(SettleValueType&& result, Locker<Lock>& lock)
@@ -473,7 +484,7 @@ private:
         settleImpl(Result { }, lock);
     }
 
-    template<typename RejectValueType_>
+    template<typename RejectValueType_, typename = std::enable_if<!std::is_void_v<RejectValueT>>>
     void reject(RejectValueType_&& rejectValue, const Logger::LogSiteIdentifier& rejectSite)
     {
         static_assert(std::is_convertible_v<RejectValueType_, RejectValueT>, "reject() argument must be implicitly convertible to NativePromise's RejectValueT");
@@ -483,6 +494,14 @@ private:
             settleImpl(Unexpected<RejectValueT>(crossThreadCopy(std::forward<RejectValueType_>(rejectValue))), lock);
         else
             settleImpl(Unexpected<RejectValueT>(std::forward<RejectValueType_>(rejectValue)), lock);
+    }
+
+    template<typename = std::enable_if<std::is_void_v<RejectValueT>>>
+    void reject(const Logger::LogSiteIdentifier& rejectSite)
+    {
+        Locker lock { m_lock };
+        PROMISE_LOG(rejectSite, " rejecting ", *this);
+        settleImpl(makeUnexpected(detail::VoidPlaceholder()), lock);
     }
 
     template<typename SettleValueType>
@@ -559,7 +578,10 @@ private:
                 // Already resolved or rejected.
                 return;
             }
-            m_producer->reject(std::forward<RejectValueType_>(rejectValue));
+            if constexpr (std::is_void_v<RejectValueT>)
+                m_producer->reject();
+            else
+                m_producer->reject(std::forward<RejectValueType_>(rejectValue));
             m_producer = nullptr;
             if constexpr (!std::is_void_v<ResolveValueT>)
                 m_resolveValues.clear();
@@ -568,7 +590,7 @@ private:
         Ref<AllPromiseType> promise() { return static_cast<Ref<AllPromiseType>>(*m_producer); }
 
     private:
-        NO_UNIQUE_ADDRESS std::conditional_t<!std::is_void_v<ResolveValueT>, Vector<std::optional<ResolveValueType>>, VoidPlaceholder> m_resolveValues;
+        NO_UNIQUE_ADDRESS std::conditional_t<!std::is_void_v<ResolveValueT>, Vector<std::optional<ResolveValueType>>, detail::VoidPlaceholder> m_resolveValues;
         std::unique_ptr<typename AllPromiseType::Producer> m_producer;
         size_t m_outstandingPromises;
     };
@@ -624,10 +646,14 @@ public:
             promises[i]->whenSettled(targetQueue, [producer, i] (ResultParam result) {
                 if (result) {
                     if constexpr (std::is_void_v<ResolveValueT>)
-                        producer->resolve(i, VoidPlaceholder());
+                        producer->resolve(i, detail::VoidPlaceholder());
                     else
                         producer->resolve(i, maybeMove(result.value()));
-                } else
+                    return;
+                }
+                if constexpr (std::is_void_v<RejectValueT>)
+                    producer->reject(detail::VoidPlaceholder());
+                else
                     producer->reject(maybeMove(result.error()));
             });
         }
@@ -791,8 +817,8 @@ private:
         }
 #endif
 
-        NO_UNIQUE_ADDRESS std::conditional_t<IsChaining, Lock, VoidPlaceholder> m_lock;
-        NO_UNIQUE_ADDRESS std::conditional_t<IsChaining, std::unique_ptr<typename ReturnPromiseType::Producer>, VoidPlaceholder> m_completionProducer WTF_GUARDED_BY_LOCK(m_lock);
+        NO_UNIQUE_ADDRESS std::conditional_t<IsChaining, Lock, detail::VoidPlaceholder> m_lock;
+        NO_UNIQUE_ADDRESS std::conditional_t<IsChaining, std::unique_ptr<typename ReturnPromiseType::Producer>, detail::VoidPlaceholder> m_completionProducer WTF_GUARDED_BY_LOCK(m_lock);
     private:
         CallBackType m_settleFunction;
     };
@@ -998,8 +1024,8 @@ public:
         using DispatcherRealType = typename RemoveSmartPointer<DispatcherType>::type;
         static_assert(LooksLikeRCSerialDispatcher<DispatcherRealType>::value, "Must be used with a RefCounted SerialFunctionDispatcher");
 
-        using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(std::forward<ResolveFunction>(resolveFunction), std::declval<std::conditional_t<std::is_void_v<ResolveValueT>, VoidPlaceholder, ResolveValueType>>()))>::type;
-        using R2 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(std::forward<RejectFunction>(rejectFunction), std::declval<RejectValueT>()))>::type;
+        using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(std::forward<ResolveFunction>(resolveFunction), std::declval<std::conditional_t<std::is_void_v<ResolveValueT>, detail::VoidPlaceholder, ResolveValueType>>()))>::type;
+        using R2 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(std::forward<RejectFunction>(rejectFunction), std::declval<RejectValueType>()))>::type;
         using IsChaining = std::bool_constant<RelatedNativePromise<R1, R2>>;
         static_assert(IsChaining::value || (std::is_void_v<R1> && std::is_void_v<R2>), "resolve/reject methods must return a promise of the same type or nothing");
         using LambdaReturnType = decltype(std::declval<LambdaReturnTrait>().template lambda<R1>());
@@ -1007,7 +1033,7 @@ public:
         return whenSettled(targetQueue, [resolveFunction = std::forward<ResolveFunction>(resolveFunction), rejectFunction = std::forward<RejectFunction>(rejectFunction)] (ResultParam result) mutable -> LambdaReturnType {
             if (result) {
                 if constexpr (std::is_void_v<ResolveValueT>)
-                    return invokeWithVoidOrWithArg(WTFMove(resolveFunction), VoidPlaceholder());
+                    return invokeWithVoidOrWithArg(WTFMove(resolveFunction), detail::VoidPlaceholder());
                 else
                     return invokeWithVoidOrWithArg(WTFMove(resolveFunction), maybeMove(result.value()));
             }
@@ -1019,8 +1045,8 @@ public:
     auto then(DispatcherType& targetQueue, ThisType& thisVal, ResolveMethod resolveMethod, RejectMethod rejectMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
         static_assert(HasRefCountMethods<ThisType>::value, "ThisType must be refounted object");
-        using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(thisVal, resolveMethod, std::declval<std::conditional_t<std::is_void_v<ResolveValueT>, VoidPlaceholder, ResolveValueType>>()))>::type;
-        using R2 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(thisVal, rejectMethod, std::declval<RejectValueT>()))>::type;
+        using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(thisVal, resolveMethod, std::declval<std::conditional_t<std::is_void_v<ResolveValueT>, detail::VoidPlaceholder, ResolveValueType>>()))>::type;
+        using R2 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(thisVal, rejectMethod, std::declval<RejectValueType>()))>::type;
         using IsChaining = std::bool_constant<RelatedNativePromise<R1, R2>>;
         static_assert(IsChaining::value || (std::is_void_v<R1> && std::is_void_v<R2>), "resolve/reject methods must return a promise of the same type or nothing");
         using LambdaReturnType = decltype(std::declval<LambdaReturnTrait>().template lambda<R1>());
@@ -1028,7 +1054,7 @@ public:
         return whenSettled(targetQueue, [thisVal = Ref { thisVal }, resolveMethod, rejectMethod] (ResultParam result) -> LambdaReturnType {
             if (result) {
                 if constexpr (std::is_void_v<ResolveValueT>)
-                    return invokeWithVoidOrWithArg(thisVal.get(), resolveMethod, VoidPlaceholder());
+                    return invokeWithVoidOrWithArg(thisVal.get(), resolveMethod, detail::VoidPlaceholder());
                 else
                     return invokeWithVoidOrWithArg(thisVal.get(), resolveMethod, maybeMove(result.value()));
             }
@@ -1056,14 +1082,17 @@ public:
     void chainTo(NativePromiseProducer<ResolveValueT2, RejectValueT2, options2>&& chainedPromise, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
         static_assert(std::is_convertible_v<ResolveValueT, ResolveValueT2> || std::is_void_v<ResolveValueT2>, "resolve type must be compatible");
-        static_assert(std::is_convertible_v<RejectValueT, RejectValueT2>, "reject type must be compatible");
+        static_assert(std::is_convertible_v<RejectValueT, RejectValueT2> || std::is_void_v<RejectValueT2>, "reject type must be compatible");
         PROMISE_LOG(callSite, " invoking chainTo() [", *this, " chainedPromise:", chainedPromise.promise().get(), " isSettled:", isSettled(), "]");
         if constexpr (NativePromiseProducer<ResolveValueT2, RejectValueT2, options2>::PromiseType::IsExclusive && IsExclusive)
             chainedPromise.setDispatchMode(m_dispatchMode, callSite);
 
         whenSettled([producer = WTFMove(chainedPromise)](auto&& result) {
             if (!result) {
-                producer.reject(maybeMove(result.error()));
+                if constexpr (std::is_void_v<RejectValueT2>)
+                    producer.reject();
+                else
+                    producer.reject(maybeMove(result.error()));
                 return;
             }
             if constexpr (std::is_void_v<ResolveValueT2>)
@@ -1274,7 +1303,7 @@ public:
         m_promise->resolve(resolveSite);
     }
 
-    template<typename RejectValueType_>
+    template<typename RejectValueType_, typename = std::enable_if<!std::is_void_v<RejectValueT>>>
     void reject(RejectValueType_&& rejectValue, const Logger::LogSiteIdentifier& rejectSite = DEFAULT_LOGSITEIDENTIFIER) const
     {
         ASSERT(isNothing());
@@ -1283,6 +1312,17 @@ public:
             return;
         }
         m_promise->reject(std::forward<RejectValueType_>(rejectValue), rejectSite);
+    }
+
+    template<typename = std::enable_if<std::is_void_v<RejectValueT>>>
+    void reject(const Logger::LogSiteIdentifier& rejectSite = DEFAULT_LOGSITEIDENTIFIER) const
+    {
+        ASSERT(isNothing());
+        if (!isNothing()) {
+            PROMISE_LOG(rejectSite, " ignored already resolved or rejected ", *m_promise);
+            return;
+        }
+        m_promise->reject(rejectSite);
     }
 
     template<typename SettleValue>
@@ -1381,10 +1421,10 @@ private:
 };
 
 // A generic promise type that does the trick for simple use cases.
-using GenericPromise = NativePromise<void, int>;
+using GenericPromise = NativePromise<void, void>;
 
 // A generic, non-exclusive promise type that does the trick for simple use cases.
-using GenericNonExclusivePromise = NativePromise<void, int, PromiseOption::Default | PromiseOption::NonExclusive>;
+using GenericNonExclusivePromise = NativePromise<void, void, PromiseOption::Default | PromiseOption::NonExclusive>;
 
 template<typename PromiseType>
 class NativePromiseRequest final {
@@ -1469,6 +1509,8 @@ struct LogArgument<GenericPromise> {
 
 using WTF::invokeAsync;
 using WTF::GenericPromise;
+using WTF::GenericNonExclusivePromise;
 using WTF::NativePromise;
 using WTF::NativePromiseRequest;
 using WTF::PromiseDispatchMode;
+using WTF::PromiseOption;
