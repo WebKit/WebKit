@@ -173,11 +173,6 @@ public:
     enum class RequiresFullRepaint : bool { No, Yes };
     bool repaintAfterLayoutIfNeeded(const RenderLayerModelObject* repaintContainer, RequiresFullRepaint, const LayoutRect& oldBounds, const LayoutRect& oldOutlineBox, const LayoutRect* newBoundsPtr = nullptr, const LayoutRect* newOutlineBoxPtr = nullptr);
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    void repaintClientsOfReferencedSVGResources() const;
-    void repaintRendererOrClientsOfReferencedSVGResources() const;
-#endif
-
     bool borderImageIsLoadedAndCanBeRendered() const;
     bool isVisibleIgnoringGeometry() const;
     bool mayCauseRepaintInsideViewport(const IntRect* visibleRect = nullptr) const;

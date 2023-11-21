@@ -27,7 +27,6 @@
 
 #include "InspectorInstrumentation.h"
 #include "MotionPath.h"
-#include "ReferencedSVGResources.h"
 #include "RenderDescendantIterator.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -37,11 +36,9 @@
 #include "RenderObjectInlines.h"
 #include "RenderSVGBlock.h"
 #include "RenderSVGModelObject.h"
-#include "RenderSVGResourceClipper.h"
 #include "RenderSVGText.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
-#include "SVGClipPathElement.h"
 #include "SVGGraphicsElement.h"
 #include "SVGTextElement.h"
 #include "Settings.h"
@@ -464,29 +461,6 @@ void RenderLayerModelObject::updateHasSVGTransformFlags()
     setHasTransformRelatedProperty(hasSVGTransform || style().hasTransformRelatedProperty());
     setHasSVGTransform(hasSVGTransform);
 }
-
-RenderSVGResourceClipper* RenderLayerModelObject::svgClipperResourceFromStyle() const
-{
-    ASSERT(document().settings().layerBasedSVGEngineEnabled());
-
-    auto* clipPathOperation = style().clipPath();
-    if (!clipPathOperation || !is<ReferencePathOperation>(clipPathOperation))
-        return nullptr;
-
-    auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*clipPathOperation);
-
-    if (RefPtr referencedClipPathElement = ReferencedSVGResources::referencedClipPathElement(treeScopeForSVGReferences(), referenceClipPathOperation)) {
-        if (auto* referencedClipperRenderer = dynamicDowncast<RenderSVGResourceClipper>(referencedClipPathElement->renderer()))
-            return referencedClipperRenderer;
-    }
-
-    if (auto* element = this->element()) {
-        ASSERT(is<SVGElement>(element));
-        document().addPendingSVGResource(referenceClipPathOperation.fragment(), downcast<SVGElement>(*element));
-    }
-
-    return nullptr;
-}
 #endif // ENABLE(LAYER_BASED_SVG_ENGINE)
 
 CheckedPtr<RenderLayer> RenderLayerModelObject::checkedLayer() const
@@ -555,7 +529,7 @@ void RenderLayerModelObject::repaintOrRelayoutAfterSVGTransformChange()
     // Instead of performing a full-fledged layout (issuing repaints), just recompute the layer transform, and repaint.
     // In LBSE transformations do not affect the layout (except for text, where it still does!) -- SVG follows closely the CSS/HTML route, to avoid costly layouts.
     updateLayerTransform();
-    repaintRendererOrClientsOfReferencedSVGResources();
+    repaint();
 }
 #endif
 

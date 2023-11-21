@@ -33,8 +33,6 @@
 #include "SVGClipPathElement.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGFilterElement.h"
-#include "SVGMarkerElement.h"
-#include "SVGMaskElement.h"
 #include "SVGResourceElementClient.h"
 
 #include <wtf/IsoMallocInlines.h>
@@ -148,7 +146,6 @@ RefPtr<SVGElement> ReferencedSVGResources::elementForResourceID(TreeScope& treeS
     return downcast<SVGElement>(WTFMove(element));
 }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
 RefPtr<SVGClipPathElement> ReferencedSVGResources::referencedClipPathElement(TreeScope& treeScope, const ReferencePathOperation& clipPath)
 {
     if (clipPath.fragment().isEmpty())
@@ -156,31 +153,6 @@ RefPtr<SVGClipPathElement> ReferencedSVGResources::referencedClipPathElement(Tre
     RefPtr element = elementForResourceID(treeScope, clipPath.fragment(), SVGNames::clipPathTag);
     return element ? downcast<SVGClipPathElement>(WTFMove(element)) : nullptr;
 }
-
-RefPtr<SVGMarkerElement> ReferencedSVGResources::referencedMarkerElement(TreeScope& treeScope, const String& markerResource)
-{
-    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(markerResource, treeScope.documentScope());
-    if (resourceID.isEmpty())
-        return nullptr;
-
-    RefPtr element = elementForResourceID(treeScope, resourceID, SVGNames::maskTag);
-    return element ? downcast<SVGMarkerElement>(WTFMove(element)) : nullptr;
-}
-
-RefPtr<SVGMaskElement> ReferencedSVGResources::referencedMaskElement(TreeScope& treeScope, const StyleImage& maskImage)
-{
-    auto reresolvedURL = maskImage.reresolvedURL(treeScope.documentScope());
-    if (reresolvedURL.isEmpty())
-        return nullptr;
-
-    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(reresolvedURL.string(), treeScope.documentScope());
-    if (resourceID.isEmpty())
-        return nullptr;
-
-    RefPtr element = elementForResourceID(treeScope, resourceID, SVGNames::maskTag);
-    return element ? downcast<SVGMaskElement>(WTFMove(element)) : nullptr;
-}
-#endif
 
 RefPtr<SVGFilterElement> ReferencedSVGResources::referencedFilterElement(TreeScope& treeScope, const ReferenceFilterOperation& referenceFilter)
 {

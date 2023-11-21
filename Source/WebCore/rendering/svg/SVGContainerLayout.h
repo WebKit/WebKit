@@ -44,6 +44,9 @@ public:
     static bool transformToRootChanged(const RenderObject* ancestor);
 
 private:
+    void layoutDifferentRootIfNeeded(const RenderElement&);
+    void invalidateResourcesOfChildren(RenderElement&);
+
     bool layoutSizeOfNearestViewportChanged() const;
 
     RenderLayerModelObject& m_container;

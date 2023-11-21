@@ -640,6 +640,9 @@ struct SVGResourcesMap {
 
     MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResources;
     MemoryCompactRobinHoodHashMap<AtomString, WeakHashSet<SVGElement, WeakPtrImplWithEventTargetData>> pendingResourcesForRemoval;
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    MemoryCompactRobinHoodHashMap<AtomString, RenderSVGResourceContainer*> resources;
+#endif
     MemoryCompactRobinHoodHashMap<AtomString, LegacyRenderSVGResourceContainer*> legacyResources;
 };
 
@@ -649,6 +652,17 @@ SVGResourcesMap& TreeScope::svgResourcesMap() const
         const_cast<TreeScope&>(*this).m_svgResourcesMap = makeUnique<SVGResourcesMap>();
     return *m_svgResourcesMap;
 }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+void TreeScope::addSVGResource(const AtomString& id, RenderSVGResourceContainer& resource)
+{
+    if (id.isEmpty())
+        return;
+
+    // Replaces resource if already present, to handle potential id changes
+    svgResourcesMap().resources.set(id, &resource);
+}
+#endif
 
 void TreeScope::addSVGResource(const AtomString& id, LegacyRenderSVGResourceContainer& resource)
 {
@@ -664,8 +678,21 @@ void TreeScope::removeSVGResource(const AtomString& id)
     if (id.isEmpty())
         return;
 
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    svgResourcesMap().resources.remove(id);
+#endif
     svgResourcesMap().legacyResources.remove(id);
 }
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+RenderSVGResourceContainer* TreeScope::lookupSVGResourceById(const AtomString& id) const
+{
+    if (id.isEmpty())
+        return nullptr;
+
+    return svgResourcesMap().resources.get(id);
+}
+#endif
 
 LegacyRenderSVGResourceContainer* TreeScope::lookupLegacySVGResoureById(const AtomString& id) const
 {

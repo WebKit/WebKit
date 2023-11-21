@@ -34,12 +34,6 @@ SVGResourcesCache::~SVGResourcesCache() = default;
 
 void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const RenderStyle& style)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    // Verify that LBSE does not make use of SVGResourcesCache.
-    if (renderer.document().settings().layerBasedSVGEngineEnabled())
-        RELEASE_ASSERT_NOT_REACHED();
-#endif
-
     ASSERT(!m_cache.contains(&renderer));
 
     // Build a list of all resources associated with the passed RenderObject
@@ -63,12 +57,6 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
 
 void SVGResourcesCache::removeResourcesFromRenderer(RenderElement& renderer)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    // Verify that LBSE does not make use of SVGResourcesCache.
-    if (renderer.document().settings().layerBasedSVGEngineEnabled())
-        RELEASE_ASSERT_NOT_REACHED();
-#endif
-
     std::unique_ptr<SVGResources> resources = m_cache.take(&renderer);
     if (!resources)
         return;
@@ -83,12 +71,6 @@ void SVGResourcesCache::removeResourcesFromRenderer(RenderElement& renderer)
 
 static inline SVGResourcesCache& resourcesCacheFromRenderer(const RenderElement& renderer)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    // Verify that LBSE does not make use of SVGResourcesCache.
-    if (renderer.document().settings().layerBasedSVGEngineEnabled())
-        RELEASE_ASSERT_NOT_REACHED();
-#endif
-
     return renderer.document().accessSVGExtensions().resourcesCache();
 }
 
@@ -109,11 +91,6 @@ static bool hasResourcesRequiringRemovalOnClientLayoutChange(SVGResources& resou
 
 void SVGResourcesCache::clientLayoutChanged(RenderElement& renderer)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (renderer.document().settings().layerBasedSVGEngineEnabled())
-        return;
-#endif
-
     auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
     if (!resources)
         return;
@@ -132,11 +109,6 @@ static inline bool rendererCanHaveResources(RenderObject& renderer)
 void SVGResourcesCache::clientStyleChanged(RenderElement& renderer, StyleDifference diff, const RenderStyle* oldStyle, const RenderStyle& newStyle)
 {
     ASSERT(!renderer.element() || renderer.element()->isSVGElement());
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (renderer.document().settings().layerBasedSVGEngineEnabled())
-        return;
-#endif
 
     if (!renderer.parent())
         return;
@@ -202,11 +174,6 @@ void SVGResourcesCache::clientWasAddedToTree(RenderObject& renderer)
     if (renderer.isAnonymous())
         return;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (renderer.document().settings().layerBasedSVGEngineEnabled())
-        return;
-#endif
-
     LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 
     if (!rendererCanHaveResources(renderer))
@@ -220,11 +187,6 @@ void SVGResourcesCache::clientWillBeRemovedFromTree(RenderObject& renderer)
     if (renderer.isAnonymous())
         return;
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (renderer.document().settings().layerBasedSVGEngineEnabled())
-        return;
-#endif
-
     LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer, false);
 
     if (!rendererCanHaveResources(renderer))
@@ -235,11 +197,6 @@ void SVGResourcesCache::clientWillBeRemovedFromTree(RenderObject& renderer)
 
 void SVGResourcesCache::clientDestroyed(RenderElement& renderer)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (renderer.document().settings().layerBasedSVGEngineEnabled())
-        return;
-#endif
-
     if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer))
         resources->removeClientFromCache(renderer);
 
@@ -248,11 +205,6 @@ void SVGResourcesCache::clientDestroyed(RenderElement& renderer)
 
 void SVGResourcesCache::resourceDestroyed(LegacyRenderSVGResourceContainer& resource)
 {
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (resource.document().settings().layerBasedSVGEngineEnabled())
-        return;
-#endif
-
     auto& cache = resourcesCacheFromRenderer(resource);
 
     // The resource itself may have clients, that need to be notified.
@@ -285,12 +237,6 @@ void SVGResourcesCache::SetStyleForScope::setStyle(const RenderStyle& style)
 {
     if (!m_needsNewStyle)
         return;
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    // FIXME: Check if a similar mechanism is needed for LBSE + text rendering.
-    if (m_renderer.document().settings().layerBasedSVGEngineEnabled())
-        return;
-#endif
 
     auto& cache = resourcesCacheFromRenderer(m_renderer);
     cache.removeResourcesFromRenderer(m_renderer);

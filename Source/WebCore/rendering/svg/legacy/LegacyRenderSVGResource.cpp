@@ -111,16 +111,8 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
         return colorResource;
     }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    // FIXME: [LBSE] Add support for non-solid color resources in LBSE (gradient/pattern).
-    SVGResources* resources = nullptr;
-    if (!renderer.document().settings().layerBasedSVGEngineEnabled())
-        resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
-#else
-    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
-#endif
-
     // If no resources are associated with the given renderer, return the color resource.
+    auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer);
     if (!resources) {
         if (paintType == SVGPaintType::URINone || !inheritColorFromParentStyleIfNeeded(renderer, applyToFill, color))
             return nullptr;
@@ -217,12 +209,6 @@ void LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderO
 void LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidationIfNeeded(RenderObject& object, bool needsLayout, WeakHashSet<RenderObject>* visitedRenderers)
 {
     ASSERT(object.node());
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (object.document().settings().layerBasedSVGEngineEnabled()) {
-        RELEASE_ASSERT_NOT_REACHED();
-        return;
-    }
-#endif
 
     if (visitedRenderers) {
         auto addResult = visitedRenderers->add(object);
@@ -235,6 +221,10 @@ void LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidationIfNeeded
         // invalidate the ancestor renderer because it may have finished its layout already.
         if (is<LegacyRenderSVGRoot>(object) && downcast<LegacyRenderSVGRoot>(object).isInLayout())
             object.setNeedsLayout(MarkOnlyThis);
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+        else if (is<RenderSVGRoot>(object) && downcast<RenderSVGRoot>(object).isInLayout())
+            object.setNeedsLayout(MarkOnlyThis);
+#endif
         else {
             if (!is<RenderElement>(object))
                 object.setNeedsLayout(MarkOnlyThis);

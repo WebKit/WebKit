@@ -29,7 +29,8 @@ namespace WebCore {
 
 class RenderLayer;
 
-class RenderSVGResourceContainer : public RenderSVGHiddenContainer {
+// FIXME: Get rid of LegacyRenderSVGResource inheritance.
+class RenderSVGResourceContainer : public RenderSVGHiddenContainer, public LegacyRenderSVGResource {
     WTF_MAKE_ISO_ALLOCATED(RenderSVGResourceContainer);
 public:
     virtual ~RenderSVGResourceContainer();
@@ -37,8 +38,6 @@ public:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
     void idChanged();
-
-    void repaintAllClients() const;
 
 protected:
     RenderSVGResourceContainer(Type, SVGElement&, RenderStyle&&);

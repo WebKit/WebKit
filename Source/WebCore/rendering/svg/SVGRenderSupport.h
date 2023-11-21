@@ -93,9 +93,7 @@ public:
     static LegacyRenderSVGRoot* findTreeRootObject(RenderElement&);
     static const LegacyRenderSVGRoot* findTreeRootObject(const RenderElement&);
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
     static void paintSVGClippingMask(const RenderLayerModelObject&, PaintInfo&);
-#endif
 
 private:
     // This class is not constructable.

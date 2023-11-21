@@ -130,7 +130,6 @@
 #include "RenderTreeAsText.h"
 #include "RenderTreeMutationDisallowedScope.h"
 #include "RenderView.h"
-#include "SVGClipPathElement.h"
 #include "SVGNames.h"
 #include "ScaleTransformOperation.h"
 #include "ScrollAnimator.h"
@@ -2933,11 +2932,7 @@ void RenderLayer::paintSVGResourceLayer(GraphicsContext& context, GraphicsContex
     if (!renderer().hasNonVisibleOverflow())
         flags.add(PaintLayerFlag::PaintingOverflowContents);
 
-    {
-        // FIXME: Rename SVGHitTestCycleDetectionScope -> SVGResourceCycleDetectionScope
-        SVGHitTestCycleDetectionScope paintingScope(renderer());
-        paintLayer(context, paintingInfo, flags);
-    }
+    paintLayer(context, paintingInfo, flags);
 
     m_isPaintingSVGResourceLayer = wasPaintingSVGResourceLayer;
 #else
@@ -3173,7 +3168,7 @@ void RenderLayer::setupClipPath(GraphicsContext& context, GraphicsContextStateSa
     if (is<ReferencePathOperation>(style.clipPath())) {
         auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*style.clipPath());
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-        if (auto* svgClipper = renderer().svgClipperResourceFromStyle()) {
+        if (auto* svgClipper = svgClipperFromStyle()) {
             auto* graphicsElement = svgClipper->shouldApplyPathClipping();
             if (!graphicsElement) {
                 paintFlags.add(PaintLayerFlag::PaintingSVGClippingMask);
@@ -5547,6 +5542,29 @@ bool RenderLayer::isVisuallyNonEmpty(PaintedContentRequest* request) const
         request = &localRequest;
 
     return hasNonEmptyChildRenderers(*request);
+}
+
+// FIXME: this probably belongs in RenderLayerModelObject or SVGResourcesCache.
+RenderSVGResourceClipper* RenderLayer::svgClipperFromStyle() const
+{
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (!renderer().document().settings().layerBasedSVGEngineEnabled())
+        return nullptr;
+
+    if (!renderer().style().clipPath() || !is<ReferencePathOperation>(renderer().style().clipPath()))
+        return nullptr;
+
+    const auto& referenceClipPathOperation = downcast<ReferencePathOperation>(*renderer().style().clipPath());
+    if (auto* renderResource = dynamicDowncast<RenderSVGResourceClipper>(renderer().document().lookupSVGResourceById(referenceClipPathOperation.fragment())))
+        return renderResource;
+
+    if (auto* element = enclosingElement()) {
+        ASSERT(is<SVGElement>(element));
+        renderer().document().addPendingSVGResource(referenceClipPathOperation.fragment(), downcast<SVGElement>(*element));
+    }
+#endif
+
+    return nullptr;
 }
 
 void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle)

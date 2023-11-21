@@ -71,7 +71,6 @@
 #include "RenderLineBreak.h"
 #include "RenderListItem.h"
 #include "RenderMultiColumnSpannerPlaceholder.h"
-#include "RenderSVGResourceContainer.h"
 #include "RenderSVGViewportContainer.h"
 #include "RenderStyleSetters.h"
 #include "RenderTableCaption.h"
@@ -971,13 +970,8 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
 
     SVGRenderSupport::styleChanged(*this, oldStyle);
 
-    if (diff >= StyleDifference::Repaint) {
+    if (diff >= StyleDifference::Repaint)
         updateReferencedSVGResources();
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-        if (oldStyle && diff <= StyleDifference::RepaintLayer)
-            repaintClientsOfReferencedSVGResources();
-#endif
-    }
 
     if (!m_parent)
         return;
@@ -2103,29 +2097,6 @@ void RenderElement::updateReferencedSVGResources()
     else
         clearReferencedSVGResources();
 }
-
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-void RenderElement::repaintRendererOrClientsOfReferencedSVGResources() const
-{
-    auto* enclosingResourceContainer = lineageOfType<RenderSVGResourceContainer>(*this).first();
-    if (!enclosingResourceContainer) {
-        repaint();
-        return;
-    }
-
-    // This implicitly checks if LBSE is activated. If not, no 'RenderSVGResourceContainer' objects are present in the render tree.
-    enclosingResourceContainer->repaintAllClients();
-}
-
-void RenderElement::repaintClientsOfReferencedSVGResources() const
-{
-    if (!document().settings().layerBasedSVGEngineEnabled())
-        return;
-
-    if (auto* enclosingResourceContainer = lineageOfType<RenderSVGResourceContainer>(*this).first())
-        enclosingResourceContainer->repaintAllClients();
-}
-#endif
 
 #if ENABLE(TEXT_AUTOSIZING)
 static RenderObject::BlockContentHeightType includeNonFixedHeight(const RenderObject& renderer)
