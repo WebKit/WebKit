@@ -2389,6 +2389,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/SVGRenderStyleDefs.h
     rendering/style/ShadowData.h
     rendering/style/ShapeValue.h
+    rendering/style/StyleAnimationData.h
     rendering/style/StyleBackgroundData.h
     rendering/style/StyleBoxData.h
     rendering/style/StyleColorScheme.h

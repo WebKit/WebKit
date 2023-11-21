@@ -33,6 +33,7 @@
 #include "RenderStyle.h"
 #include "ScrollTypes.h"
 #include "ScrollbarColor.h"
+#include "StyleAnimationData.h"
 #include "StyleAppearance.h"
 #include "StyleBackgroundData.h"
 #include "StyleBoxData.h"
@@ -64,8 +65,7 @@ inline const StyleContentAlignmentData& RenderStyle::alignContent() const { retu
 inline const StyleSelfAlignmentData& RenderStyle::alignItems() const { return m_nonInheritedData->miscData->alignItems; }
 inline const StyleSelfAlignmentData& RenderStyle::alignSelf() const { return m_nonInheritedData->miscData->alignSelf; }
 constexpr auto RenderStyle::allTransformOperations() -> OptionSet<TransformOperationOption> { return { TransformOperationOption::TransformOrigin, TransformOperationOption::Translate, TransformOperationOption::Rotate, TransformOperationOption::Scale, TransformOperationOption::Offset }; }
-inline const AnimationList* RenderStyle::animations() const { return m_nonInheritedData->miscData->animations.get(); }
-inline AnimationList* RenderStyle::animations() { return m_nonInheritedData->miscData->animations.get(); }
+inline const AnimationList* RenderStyle::animations() const { return m_nonInheritedData->miscData->animationData->animations.get(); }
 inline StyleAppearance RenderStyle::appearance() const { return static_cast<StyleAppearance>(m_nonInheritedData->miscData->appearance); }
 inline const FilterOperations& RenderStyle::appleColorFilter() const { return m_rareInheritedData->appleColorFilter->operations; }
 inline double RenderStyle::aspectRatioHeight() const { return m_nonInheritedData->miscData->aspectRatioHeight; }
@@ -697,8 +697,7 @@ inline LengthPoint RenderStyle::transformOriginXY() const { return m_nonInherite
 inline const Length& RenderStyle::transformOriginY() const { return m_nonInheritedData->miscData->transform->y; }
 inline float RenderStyle::transformOriginZ() const { return m_nonInheritedData->miscData->transform->z; }
 inline TransformStyle3D RenderStyle::transformStyle3D() const { return static_cast<TransformStyle3D>(m_nonInheritedData->rareData->transformStyle3D); }
-inline const AnimationList* RenderStyle::transitions() const { return m_nonInheritedData->miscData->transitions.get(); }
-inline AnimationList* RenderStyle::transitions() { return m_nonInheritedData->miscData->transitions.get(); }
+inline const AnimationList* RenderStyle::transitions() const { return m_nonInheritedData->miscData->animationData->transitions.get(); }
 inline TranslateTransformOperation* RenderStyle::translate() const { return m_nonInheritedData->rareData->translate.get(); }
 inline bool RenderStyle::useSmoothScrolling() const { return m_nonInheritedData->rareData->useSmoothScrolling; }
 inline float RenderStyle::usedPerspective() const { return std::max(1.0f, perspective()); }

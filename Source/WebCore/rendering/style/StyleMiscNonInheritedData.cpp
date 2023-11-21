@@ -26,11 +26,11 @@
 #include "config.h"
 #include "StyleMiscNonInheritedData.h"
 
-#include "AnimationList.h"
 #include "ContentData.h"
 #include "FillLayer.h"
 #include "RenderStyleInlines.h"
 #include "ShadowData.h"
+#include "StyleAnimationData.h"
 #include "StyleDeprecatedFlexibleBoxData.h"
 #include "StyleFilterData.h"
 #include "StyleFlexibleBoxData.h"
@@ -52,6 +52,7 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData()
     , transform(StyleTransformData::create())
     , mask(FillLayer::create(FillLayerType::Mask))
     , visitedLinkColor(StyleVisitedLinkColorData::create())
+    , animationData(StyleAnimationData::create())
     , aspectRatioWidth(RenderStyle::initialAspectRatioWidth())
     , aspectRatioHeight(RenderStyle::initialAspectRatioHeight())
     , alignContent(RenderStyle::initialContentAlignment())
@@ -82,8 +83,7 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData(const StyleMiscNonInherited
     , transform(o.transform)
     , mask(o.mask)
     , visitedLinkColor(o.visitedLinkColor)
-    , animations(o.animations ? o.animations->copy() : o.animations)
-    , transitions(o.transitions ? o.transitions->copy() : o.transitions)
+    , animationData(o.animationData)
     , content(o.content ? o.content->clone() : nullptr)
     , boxShadow(o.boxShadow ? makeUnique<ShadowData>(*o.boxShadow) : nullptr)
     , altText(o.altText)
@@ -128,8 +128,7 @@ bool StyleMiscNonInheritedData::operator==(const StyleMiscNonInheritedData& o) c
         && transform == o.transform
         && mask == o.mask
         && visitedLinkColor == o.visitedLinkColor
-        && arePointingToEqualData(animations, o.animations)
-        && arePointingToEqualData(transitions, o.transitions)
+        && animationData == o.animationData
         && contentDataEquivalent(o)
         && arePointingToEqualData(boxShadow, o.boxShadow)
         && altText == o.altText

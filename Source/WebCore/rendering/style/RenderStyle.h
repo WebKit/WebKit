@@ -928,9 +928,6 @@ public:
     inline const AnimationList* animations() const;
     inline const AnimationList* transitions() const;
 
-    AnimationList* animations();
-    AnimationList* transitions();
-    
     inline bool hasAnimationsOrTransitions() const;
 
     AnimationList& ensureAnimations();
@@ -1496,9 +1493,6 @@ public:
     inline void setLineAlign(LineAlign);
 
     void setPointerEvents(PointerEvents p) { m_inheritedFlags.pointerEvents = static_cast<unsigned>(p); }
-
-    inline void clearAnimations();
-    inline void clearTransitions();
 
     void adjustAnimations();
     void adjustTransitions();

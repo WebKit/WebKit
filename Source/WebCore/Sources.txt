@@ -2731,6 +2731,7 @@ rendering/style/ScrollbarColor.cpp
 rendering/style/ScrollbarGutter.cpp
 rendering/style/ShadowData.cpp
 rendering/style/ShapeValue.cpp
+rendering/style/StyleAnimationData.cpp
 rendering/style/StyleBackgroundData.cpp
 rendering/style/StyleBoxData.cpp
 rendering/style/StyleCachedImage.cpp
