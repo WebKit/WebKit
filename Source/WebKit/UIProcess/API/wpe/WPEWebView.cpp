@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WPEView.h"
+#include "WPEWebView.h"
 
 #include "APIPageConfiguration.h"
 #include "APIViewClient.h"
