@@ -66,6 +66,8 @@
     "web-platform-tests/css/css-shadow-parts": "import",
     "web-platform-tests/css/css-shapes": "import",
     "web-platform-tests/css/css-sizing/aspect-ratio": "import",
+    "web-platform-tests/css/css-sizing/block-size-with-min-or-max-content-table-1a.html": "import",
+    "web-platform-tests/css/css-sizing/block-size-with-min-or-max-content-table-1b.html": "import",
     "web-platform-tests/css/css-sizing/contain-intrinsic-size": "import",
     "web-platform-tests/css/css-tables": "import",
     "web-platform-tests/css/css-text": "import",
