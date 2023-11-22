@@ -67,10 +67,9 @@ public:
     WEBCORE_EXPORT static IconAndSize iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
 
 private:
-    bool canPaint(const PaintInfo&, const Settings&, StyleAppearance) const final;
     bool canCreateControlPartForRenderer(const RenderObject&) const final;
 
-    LengthBox popupInternalPaddingBox(const RenderStyle&, const Settings&) const override;
+    LengthBox popupInternalPaddingBox(const RenderStyle&) const override;
 
     LayoutRect adjustedPaintRect(const RenderBox&, const LayoutRect&) const override;
 
@@ -80,14 +79,10 @@ private:
 
     // Methods for each appearance value.
     void adjustCheckboxStyle(RenderStyle&, const Element*) const override;
-    void paintCheckboxDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     void adjustRadioStyle(RenderStyle&, const Element*) const override;
-    void paintRadioDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     void adjustButtonStyle(RenderStyle&, const Element*) const override;
-    void paintButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
-    void paintPushButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     void adjustTextFieldStyle(RenderStyle&, const Element*) const final;
     void paintTextFieldDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
@@ -103,7 +98,6 @@ private:
     bool paintSliderTrack(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     void adjustSliderThumbSize(RenderStyle&, const Element*) const override;
-    void paintSliderThumbDecorations(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
     bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
@@ -115,7 +109,6 @@ private:
     void adjustSearchFieldStyle(RenderStyle&, const Element*) const override;
     void paintSearchFieldDecorations(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
     Color checkboxRadioBorderColor(OptionSet<ControlStates::States>, OptionSet<StyleColorOptions>);
     Color checkboxRadioBackgroundColor(bool useAlternateDesign, const RenderStyle&, OptionSet<ControlStates::States>, OptionSet<StyleColorOptions>);
     RefPtr<Gradient> checkboxRadioBackgroundGradient(const FloatRect&, OptionSet<ControlStates::States>);
@@ -128,7 +121,7 @@ private:
 
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
 
-    bool supportsMeter(StyleAppearance, const HTMLMeterElement&) const final;
+    bool supportsMeter(StyleAppearance) const final;
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -138,7 +131,7 @@ private:
 #endif
 
 #if ENABLE(INPUT_TYPE_COLOR)
-    String colorInputStyleSheet(const Settings&) const final;
+    String colorInputStyleSheet() const final;
 
     void adjustColorWellStyle(RenderStyle&, const Element*) const final;
     bool paintColorWell(const RenderObject&, const PaintInfo&, const IntRect&) final;
@@ -153,7 +146,6 @@ private:
 
     void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const final;
     bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) final;
-#endif
 
     bool supportsFocusRing(const RenderStyle&) const final;
 
@@ -188,12 +180,6 @@ private:
 
 #if PLATFORM(WATCHOS)
     String extraDefaultStyleSheet() final;
-#endif
-
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    bool paintProgressBarWithFormControlRefresh(const RenderObject&, const PaintInfo&, const IntRect&);
-    bool paintSliderTrackWithFormControlRefresh(const RenderObject&, const PaintInfo&, const IntRect&);
-    void paintMenuListButtonDecorationsWithFormControlRefresh(const RenderBox&, const PaintInfo&, const FloatRect&);
 #endif
 
     bool isSubmitStyleButton(const Element&) const;

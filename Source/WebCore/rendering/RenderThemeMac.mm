@@ -1050,7 +1050,7 @@ FloatSize RenderThemeMac::meterSizeForBounds(const RenderMeter& renderMeter, con
     return control->sizeForBounds(bounds, controlStyle);
 }
 
-bool RenderThemeMac::supportsMeter(StyleAppearance appearance, const HTMLMeterElement&) const
+bool RenderThemeMac::supportsMeter(StyleAppearance appearance) const
 {
     return appearance == StyleAppearance::Meter;
 }
@@ -1116,7 +1116,7 @@ void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* e) c
     style.setBoxShadow(nullptr);
 }
 
-LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style, const Settings&) const
+LengthBox RenderThemeMac::popupInternalPaddingBox(const RenderStyle& style) const
 {
     if (style.effectiveAppearance() == StyleAppearance::Menulist) {
         const int* padding = popupButtonPadding(controlSizeForFont(style), style.direction() == TextDirection::RTL);

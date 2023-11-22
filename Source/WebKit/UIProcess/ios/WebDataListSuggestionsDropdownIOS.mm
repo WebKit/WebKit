@@ -72,14 +72,12 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 - (void)reloadData;
 @end
 
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
 #if USE(UICONTEXTMENU)
 @interface WKDataListSuggestionsDropdown : WKDataListSuggestionsControl <UIContextMenuInteractionDelegate>
 #else
 @interface WKDataListSuggestionsDropdown : WKDataListSuggestionsControl
 #endif
 @end
-#endif
 
 @implementation WKDataListTextSuggestion
 @end
@@ -108,13 +106,11 @@ void WebDataListSuggestionsDropdownIOS::show(WebCore::DataListSuggestionInformat
 
     WebCore::DataListSuggestionActivationType type = information.activationType;
 
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
     if (m_contentView._shouldUseContextMenusForFormControls) {
         m_suggestionsControl = adoptNS([[WKDataListSuggestionsDropdown alloc] initWithInformation:WTFMove(information) inView:m_contentView]);
         [m_suggestionsControl showSuggestionsDropdown:*this activationType:type];
         return;
     }
-#endif
 
     if (PAL::currentUserInterfaceIdiomIsSmallScreen())
         m_suggestionsControl = adoptNS([[WKDataListSuggestionsPicker alloc] initWithInformation:WTFMove(information) inView:m_contentView]);
@@ -401,8 +397,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 @end
 
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-
 #pragma mark - WKDataListSuggestionsDropdown
 
 @implementation WKDataListSuggestionsDropdown {
@@ -589,7 +583,5 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif // USE(UICONTEXTMENU)
 
 @end
-
-#endif // ENABLE(IOS_FORM_CONTROL_REFRESH)
 
 #endif // ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)

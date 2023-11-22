@@ -223,7 +223,7 @@ bool Quirks::shouldTooltipPreventFromProceedingWithClick(const Element& element)
 // FIXME: Remove after the site is fixed, <rdar://problem/75792913>
 bool Quirks::shouldHideSearchFieldResultsButton() const
 {
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+#if PLATFORM(IOS_FAMILY)
     if (!needsQuirks())
         return false;
 

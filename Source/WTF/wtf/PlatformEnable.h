@@ -342,10 +342,6 @@
 #define ENABLE_IOS_TOUCH_EVENTS 0
 #endif
 
-#if !defined(ENABLE_IOS_FORM_CONTROL_REFRESH)
-#define ENABLE_IOS_FORM_CONTROL_REFRESH 0
-#endif
-
 #if !defined(ENABLE_IPC_TESTING_API)
 /* Enable IPC testing on all ASAN builds and debug builds. */
 #if (ASAN_ENABLED || !defined(NDEBUG)) && PLATFORM(COCOA)

@@ -100,9 +100,6 @@ StyleSheetContents* UserAgentStyle::dataListStyleSheet;
 #if ENABLE(INPUT_TYPE_COLOR)
 StyleSheetContents* UserAgentStyle::colorInputStyleSheet;
 #endif
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-StyleSheetContents* UserAgentStyle::legacyFormControlsIOSStyleSheet;
-#endif
 
 static const MQ::MediaQueryEvaluator& screenEval()
 {
@@ -219,7 +216,7 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
 #endif // ENABLE(DATALIST_ELEMENT)
 #if ENABLE(INPUT_TYPE_COLOR)
         else if (!colorInputStyleSheet && is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isColorControl()) {
-            colorInputStyleSheet = parseUASheet(RenderTheme::singleton().colorInputStyleSheet(element.document().settings()));
+            colorInputStyleSheet = parseUASheet(RenderTheme::singleton().colorInputStyleSheet());
             addToDefaultStyle(*colorInputStyleSheet);
         }
 #endif // ENABLE(INPUT_TYPE_COLOR)
@@ -266,13 +263,6 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
         addToDefaultStyle(*fullscreenStyleSheet);
     }
 #endif // ENABLE(FULLSCREEN_API)
-
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (!legacyFormControlsIOSStyleSheet && !element.document().settings().iOSFormControlRefreshEnabled()) {
-        legacyFormControlsIOSStyleSheet = parseUASheet(StringImpl::createWithoutCopying(legacyFormControlsIOSUserAgentStyleSheet, sizeof(legacyFormControlsIOSUserAgentStyleSheet)));
-        addToDefaultStyle(*legacyFormControlsIOSStyleSheet);
-    }
-#endif
 
     if ((is<HTMLFormControlElement>(element) || is<HTMLMeterElement>(element) || is<HTMLProgressElement>(element)) && !element.document().settings().verticalFormControlsEnabled()) {
         if (!horizontalFormControlsStyleSheet) {

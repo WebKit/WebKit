@@ -140,8 +140,6 @@ private:
     void didSelectDataListOption(const String&) final;
     void didCloseSuggestions() final;
 
-    bool shouldOnlyShowDataListDropdownButtonWhenFocusedOrEdited() const;
-
     void dataListButtonElementWasClicked() final;
     bool m_isFocusingWithDataListDropdown { false };
     RefPtr<DataListButtonElement> m_dataListDropdownIndicator;

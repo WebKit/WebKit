@@ -114,7 +114,7 @@ public:
     String dataListStyleSheet() const;
 #endif
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual String colorInputStyleSheet(const Settings&) const;
+    virtual String colorInputStyleSheet() const;
 #endif
 
     virtual LayoutRect adjustedPaintRect(const RenderBox&, const LayoutRect& paintRect) const { return paintRect; }
@@ -209,7 +209,7 @@ public:
 
     virtual void adjustSliderThumbSize(RenderStyle&, const Element*) const { }
 
-    virtual LengthBox popupInternalPaddingBox(const RenderStyle&, const Settings&) const { return { 0, 0, 0, 0 }; }
+    virtual LengthBox popupInternalPaddingBox(const RenderStyle&) const { return { 0, 0, 0, 0 }; }
     virtual bool popupOptionSupportsTextIndent() const { return false; }
     virtual PopupMenuStyle::PopupMenuSize popupMenuSize(const RenderStyle&, IntRect&) const { return PopupMenuStyle::PopupMenuSizeNormal; }
 
@@ -222,7 +222,7 @@ public:
     virtual IntRect progressBarRectForBounds(const RenderProgress&, const IntRect&) const;
 
     virtual FloatSize meterSizeForBounds(const RenderMeter&, const FloatRect&) const;
-    virtual bool supportsMeter(StyleAppearance, const HTMLMeterElement&) const { return false; }
+    virtual bool supportsMeter(StyleAppearance) const { return false; }
 
 #if ENABLE(DATALIST_ELEMENT)
     // Returns the threshold distance for snapping to a slider tick mark.
@@ -310,11 +310,8 @@ protected:
 #endif
 #endif // !USE(NEW_THEME)
 
-    virtual void paintCheckboxDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { }
-    virtual void paintRadioDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { }
-    virtual void paintButtonDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { }
 #if ENABLE(INPUT_TYPE_COLOR)
-    virtual void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&);
+    virtual void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) { }
 #endif
 
     virtual void adjustTextFieldStyle(RenderStyle&, const Element*) const { }
@@ -369,7 +366,6 @@ protected:
 
     virtual void adjustSliderThumbStyle(RenderStyle&, const Element*) const;
     virtual bool paintSliderThumb(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
-    virtual void paintSliderThumbDecorations(const RenderObject&, const PaintInfo&, const IntRect&) { }
 
     virtual void adjustSearchFieldStyle(RenderStyle&, const Element*) const { }
     virtual bool paintSearchField(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }

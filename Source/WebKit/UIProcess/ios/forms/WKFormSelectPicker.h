@@ -42,8 +42,6 @@
 - (instancetype)initWithView:(WKContentView *)view;
 @end
 
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-
 @interface WKSelectPicker : NSObject <WKFormControl
 #if USE(UICONTEXTMENU)
 , UIContextMenuInteractionDelegate
@@ -55,7 +53,5 @@
 @interface WKSelectMultiplePicker : NSObject <WKFormControl>
 - (instancetype)initWithView:(WKContentView *)view;
 @end
-
-#endif
 
 #endif // PLATFORM(IOS_FAMILY)
