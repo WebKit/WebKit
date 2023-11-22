@@ -17,4 +17,10 @@ PASS Test empty nonces for svg in SVG namespace
 PASS Basic nonce tests for script in SVG namespace
 PASS Ensure that removal of content attribute does not affect IDL attribute for script in SVG namespace
 PASS Test empty nonces for script in SVG namespace
+PASS Basic nonce tests for style in HTML namespace
+PASS Ensure that removal of content attribute does not affect IDL attribute for style in HTML namespace
+PASS Test empty nonces for style in HTML namespace
+PASS Basic nonce tests for link in HTML namespace
+PASS Ensure that removal of content attribute does not affect IDL attribute for link in HTML namespace
+PASS Test empty nonces for link in HTML namespace
 

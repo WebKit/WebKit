@@ -24,8 +24,6 @@
     attribute boolean disabled;
     [CEReactions=NotNeeded, Reflect] attribute DOMString media;
     [CEReactions=NotNeeded, Reflect] attribute DOMString type;
-
-    [Reflect] attribute DOMString nonce;
 };
 
 HTMLStyleElement includes LinkStyle;
