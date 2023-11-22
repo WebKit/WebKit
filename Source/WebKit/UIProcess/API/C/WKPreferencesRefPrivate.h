@@ -425,10 +425,6 @@ WK_EXPORT void WKPreferencesSetWebShareEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetWebShareEnabled(WKPreferencesRef);
 
 // Defaults to false
-WK_EXPORT void WKPreferencesSetPaintTimingEnabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetPaintTimingEnabled(WKPreferencesRef);
-
-// Defaults to false
 WK_EXPORT void WKPreferencesSetWebRTCPlatformCodecsInGPUProcessEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetWebRTCPlatformCodecsInGPUProcessEnabled(WKPreferencesRef);
 
@@ -507,6 +503,8 @@ WK_EXPORT bool WKPreferencesGetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesR
 
 // The following are all deprecated and do nothing. They should be removed when possible.
 
+WK_EXPORT void WKPreferencesSetPaintTimingEnabled(WKPreferencesRef, bool flag) WK_C_API_DEPRECATED;
+WK_EXPORT bool WKPreferencesGetPaintTimingEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
 WK_EXPORT void WKPreferencesSetRequestAnimationFrameEnabled(WKPreferencesRef, bool) WK_C_API_DEPRECATED;
 WK_EXPORT bool WKPreferencesGetRequestAnimationFrameEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
 WK_EXPORT void WKPreferencesSetNewBlockInsideInlineModelEnabled(WKPreferencesRef, bool) WK_C_API_DEPRECATED;

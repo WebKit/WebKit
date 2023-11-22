@@ -3526,7 +3526,7 @@ bool Document::isLayoutPending() const
 
 bool Document::supportsPaintTiming() const
 {
-    return DeprecatedGlobalSettings::paintTimingEnabled() && securityOrigin().isSameOriginDomain(topOrigin());
+    return securityOrigin().isSameOriginDomain(topOrigin());
 }
 
 // https://w3c.github.io/paint-timing/#ref-for-mark-paint-timing

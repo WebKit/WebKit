@@ -4915,19 +4915,6 @@ PageVisibilityBasedProcessSuppressionEnabled:
     WebKit:
       default: true
 
-# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
-PaintTimingEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Paint Timing"
-  humanReadableDescription: "Enable PaintTiming API"
-  webcoreBinding: DeprecatedGlobalSettings
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-
 PassiveTouchListenersAsDefaultOnDocument:
   type: bool
   status: embedder
