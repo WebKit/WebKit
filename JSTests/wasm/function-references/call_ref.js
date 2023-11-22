@@ -91,7 +91,25 @@ async function invalidTypeIndex() {
   );
 }
 
+async function tailCallDisabled() {
+  /*
+  (module
+    (elem declare funcref (ref.func 0))
+    (func (return i32) (i32.const 42))
+    (func (param (func 0)) (return i32)
+      (return_call_ref 0 (local.get 0)))
+    (func (export "main") (result i32)
+      (call 1 (ref.func 0)))
+  )
+  */
+  assert.throws(
+    () => new WebAssembly.Module(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x8b\x80\x80\x80\x00\x02\x60\x00\x01\x7f\x60\x01\x64\x00\x01\x7f\x03\x84\x80\x80\x80\x00\x03\x00\x01\x00\x07\x88\x80\x80\x80\x00\x01\x04\x6d\x61\x69\x6e\x00\x02\x09\x87\x80\x80\x80\x00\x01\x07\x70\x01\xd2\x00\x0b\x0a\xa0\x80\x80\x80\x00\x03\x84\x80\x80\x80\x00\x00\x41\x2a\x0b\x86\x80\x80\x80\x00\x00\x20\x00\x15\x00\x0b\x86\x80\x80\x80\x00\x00\xd2\x00\x10\x01\x0b")),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't parse at byte 4: wasm tail calls are not enabled, in function at index 1"
+  );
+}
 assert.asyncTest(callFunctionFromTheSameInstance());
 assert.asyncTest(callFunctionFromTheDifferentInstance());
 assert.asyncTest(callFunctionFromJS());
 assert.asyncTest(invalidTypeIndex());
+assert.asyncTest(tailCallDisabled());

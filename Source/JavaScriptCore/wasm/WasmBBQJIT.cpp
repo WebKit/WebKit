@@ -8078,7 +8078,7 @@ public:
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition& originalSignature, Vector<Value>& args, ResultList& results)
+    PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition& originalSignature, Vector<Value>& args, ResultList& results, CallType callType = CallType::Call)
     {
         Value callee = args.takeLast();
         const TypeDefinition& signature = originalSignature.expand();
@@ -8116,7 +8116,7 @@ public:
 
         }
 
-        emitIndirectCall("CallRef", callee, calleeInstance, calleeCode, jsCalleeAnchor, signature, args, results, CallType::Call);
+        emitIndirectCall("CallRef", callee, calleeInstance, calleeCode, jsCalleeAnchor, signature, args, results, callType);
         return { };
     }
 
