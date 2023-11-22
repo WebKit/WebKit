@@ -3727,7 +3727,7 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
             information.autocapitalizeType = focusedHTMLElement.autocapitalizeType();
             information.inputMode = focusedHTMLElement.canonicalInputMode();
             information.enterKeyHint = focusedHTMLElement.canonicalEnterKeyHint();
-            information.shouldSynthesizeKeyEventsForEditing = focusedHTMLElement.document().settings().syntheticEditingCommandsEnabled();
+            information.shouldSynthesizeKeyEventsForEditing = true;
         } else {
             information.isAutocorrect = true;
             information.autocapitalizeType = WebCore::AutocapitalizeType::Default;

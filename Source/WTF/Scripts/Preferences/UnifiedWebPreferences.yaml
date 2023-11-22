@@ -6416,19 +6416,6 @@ SwitchControlEnabled:
     WebCore:
       default: false
 
-SyntheticEditingCommandsEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Synthetic Editing Commands"
-  humanReadableDescription: "Enable Synthetic Editing Commands"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 # FIXME: There is no custom binding implemented for WebKitLegacy.
 SystemLayoutDirection:
   type: uint32_t
