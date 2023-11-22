@@ -48,34 +48,6 @@ namespace WebCore {
 static AtomString serializeANPlusB(const std::pair<int, int>&);
 static bool consumeANPlusB(CSSParserTokenRange&, std::pair<int, int>&);
 
-CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& context)
-    : mode(context.mode)
-    , cssNestingEnabled(context.cssNestingEnabled)
-    , focusVisibleEnabled(context.focusVisibleEnabled)
-    , hasPseudoClassEnabled(context.hasPseudoClassEnabled)
-    , popoverAttributeEnabled(context.popoverAttributeEnabled)
-{
-}
-
-CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
-    : mode(document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode)
-    , cssNestingEnabled(document.settings().cssNestingEnabled())
-    , focusVisibleEnabled(document.settings().focusVisibleEnabled())
-    , hasPseudoClassEnabled(document.settings().hasPseudoClassEnabled())
-    , popoverAttributeEnabled(document.settings().popoverAttributeEnabled())
-{
-}
-
-void add(Hasher& hasher, const CSSSelectorParserContext& context)
-{
-    add(hasher,
-        context.mode,
-        context.cssNestingEnabled,
-        context.focusVisibleEnabled,
-        context.hasPseudoClassEnabled
-    );
-}
-
 std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext, CSSParserEnum::IsForgiving isForgiving)
 {
     CSSSelectorParser parser(context, styleSheet, isNestedContext);
