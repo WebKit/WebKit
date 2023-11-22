@@ -238,10 +238,12 @@ void HTMLTextAreaElement::updateFocusAppearance(SelectionRestorationMode restora
 
 void HTMLTextAreaElement::defaultEventHandler(Event& event)
 {
-    if (renderer() && (event.isMouseEvent() || event.type() == eventNames().blurEvent))
-        forwardEvent(event);
-    else if (renderer() && is<BeforeTextInsertedEvent>(event))
-        handleBeforeTextInsertedEvent(downcast<BeforeTextInsertedEvent>(event));
+    if (renderer()) {
+        if (event.isMouseEvent() || event.type() == eventNames().blurEvent)
+            forwardEvent(event);
+        else if (auto* insertedEvent = dynamicDowncast<BeforeTextInsertedEvent>(event))
+            handleBeforeTextInsertedEvent(*insertedEvent);
+    }
 
     HTMLTextFormControlElement::defaultEventHandler(event);
 }

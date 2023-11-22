@@ -214,8 +214,8 @@ bool HTMLObjectElement::hasFallbackContent() const
 {
     for (RefPtr<Node> child = firstChild(); child; child = child->nextSibling()) {
         // Ignore whitespace-only text, and <param> tags, any other content is fallback content.
-        if (is<Text>(*child)) {
-            if (!downcast<Text>(*child).data().containsOnly<isASCIIWhitespace>())
+        if (auto* textChild = dynamicDowncast<Text>(*child)) {
+            if (!textChild->data().containsOnly<isASCIIWhitespace>())
                 return true;
         } else if (!is<HTMLParamElement>(*child))
             return true;
