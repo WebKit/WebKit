@@ -1223,7 +1223,22 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                 return true;
             if (checkingContext.pseudoId != PseudoId::Highlight || !selector.argumentList())
                 return false;
-            return selector.argumentList()->first() == checkingContext.nameForHightlightPseudoElement;
+            return selector.argumentList()->first() == checkingContext.nameIdentifier;
+
+        case CSSSelector::PseudoElementViewTransitionGroup:
+        case CSSSelector::PseudoElementViewTransitionImagePair:
+        case CSSSelector::PseudoElementViewTransitionOld:
+        case CSSSelector::PseudoElementViewTransitionNew: {
+            // Always matches when not specifically requested so it gets added to the pseudoIdSet.
+            if (checkingContext.pseudoId == PseudoId::None)
+                return true;
+            if (checkingContext.pseudoId != CSSSelector::pseudoId(selector.pseudoElementType()) || !selector.argumentList())
+                return false;
+
+            // Wildcard always matches.
+            auto& argument = selector.argumentList()->first();
+            return argument == starAtom() || argument == checkingContext.nameIdentifier;
+        }
 
         default:
             return true;

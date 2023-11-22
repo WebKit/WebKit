@@ -20,11 +20,12 @@
 
 #pragma once
 
-#include "CSSParserContext.h"
 #include "CSSSelector.h"
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
+
+struct CSSSelectorParserContext;
 
 enum class CSSParserSelectorCombinator {
     Child,
@@ -37,7 +38,7 @@ class CSSParserSelector {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static std::unique_ptr<CSSParserSelector> parsePseudoClassSelector(StringView);
-    static std::unique_ptr<CSSParserSelector> parsePseudoElementSelector(StringView, CSSParserMode);
+    static std::unique_ptr<CSSParserSelector> parsePseudoElementSelector(StringView, const CSSSelectorParserContext&);
     static std::unique_ptr<CSSParserSelector> parsePagePseudoSelector(StringView);
 
     CSSParserSelector();

@@ -30,6 +30,7 @@
 namespace WebCore {
 
 class CSSSelectorList;
+struct CSSSelectorParserContext;
 
 struct PossiblyQuotedIdentifier {
     AtomString identifier;
@@ -221,6 +222,11 @@ struct PossiblyQuotedIdentifier {
             PseudoElementScrollbarTrackPiece,
             PseudoElementSelection,
             PseudoElementSlotted,
+            PseudoElementViewTransition,
+            PseudoElementViewTransitionGroup,
+            PseudoElementViewTransitionImagePair,
+            PseudoElementViewTransitionOld,
+            PseudoElementViewTransitionNew,
             PseudoElementWebKitCustom,
 
             // WebKitCustom that appeared in an old prefixed form
@@ -253,7 +259,7 @@ struct PossiblyQuotedIdentifier {
             RightBottomMarginBox,
         };
 
-        static PseudoElementType parsePseudoElementType(StringView, CSSParserMode = HTMLStandardMode);
+        static PseudoElementType parsePseudoElementType(StringView, const CSSSelectorParserContext&);
         static PseudoId pseudoId(PseudoElementType);
 
         // Selectors are kept in an array by CSSSelectorList.

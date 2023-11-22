@@ -32,6 +32,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
+#include "CSSSelectorParser.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ComposedTreeIterator.h"
@@ -1672,7 +1673,10 @@ RefPtr<CSSRuleList> LocalDOMWindow::getMatchedCSSRules(Element* element, const S
         return nullptr;
 
     unsigned colonStart = pseudoElement[0] == ':' ? (pseudoElement[1] == ':' ? 2 : 1) : 0;
-    auto pseudoType = CSSSelector::parsePseudoElementType(StringView { pseudoElement }.substring(colonStart));
+
+    // FIXME: This parser context won't get the right settings without a document.
+    auto parserContext = document() ? CSSSelectorParserContext { *document() } : CSSSelectorParserContext { CSSParserContext { HTMLStandardMode } };
+    auto pseudoType = CSSSelector::parsePseudoElementType(StringView { pseudoElement }.substring(colonStart), parserContext);
     if (pseudoType == CSSSelector::PseudoElementUnknown && !pseudoElement.isEmpty())
         return nullptr;
 
