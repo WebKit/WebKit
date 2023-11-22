@@ -6811,3 +6811,10 @@ enum class WebCore::CaptionUserPreferencesDisplayMode : uint8_t {
     AlwaysOn,
     Manual,
 };
+
+header: <WebCore/InspectorClient.h>
+enum class WebCore::InspectorClientDeveloperPreference : uint8_t {
+    PrivateClickMeasurementDebugModeEnabled,
+    ITPDebugModeEnabled,
+    MockCaptureDevicesEnabled,
+};
