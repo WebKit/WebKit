@@ -29,7 +29,7 @@
 #include "CSSMarkup.h"
 #include "CSSParserSelector.h"
 #include "CSSSelectorList.h"
-#include "CSSSelectorParser.h"
+#include "CSSSelectorParserContext.h"
 #include "CommonAtomStrings.h"
 #include "DeprecatedGlobalSettings.h"
 #include "HTMLNames.h"
