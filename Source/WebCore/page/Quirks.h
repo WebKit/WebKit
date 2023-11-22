@@ -117,6 +117,7 @@ public:
 
 #if ENABLE(MEDIA_STREAM)
     bool shouldEnableLegacyGetUserMediaQuirk() const;
+    bool shouldDisableImageCaptureQuirk() const;
 #endif
 
     bool needsCanPlayAfterSeekedQuirk() const;
@@ -218,6 +219,7 @@ private:
     mutable std::optional<bool> m_requiresUserGestureToLoadInPictureInPicture;
 #if ENABLE(MEDIA_STREAM)
     mutable std::optional<bool> m_shouldEnableLegacyGetUserMediaQuirk;
+    mutable std::optional<bool> m_shouldDisableImageCaptureQuirk;
 #endif
     mutable std::optional<bool> m_blocksReturnToFullscreenFromPictureInPictureQuirk;
     mutable std::optional<bool> m_blocksEnteringStandardFullscreenFromPictureInPictureQuirk;

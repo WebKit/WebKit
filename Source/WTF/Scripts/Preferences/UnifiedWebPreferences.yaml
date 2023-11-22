@@ -3111,6 +3111,21 @@ ImageAnimationControlEnabled:
     WebCore:
       default: true
 
+ImageCaptureEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "Image Capture API"
+  humanReadableDescription: "Enable Image Capture API"
+  condition: ENABLE(MEDIA_STREAM)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ImageControlsEnabled:
   type: bool
   status: unstable

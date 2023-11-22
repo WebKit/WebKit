@@ -984,6 +984,18 @@ bool Quirks::shouldEnableLegacyGetUserMediaQuirk() const
     }
     return m_shouldEnableLegacyGetUserMediaQuirk.value();
 }
+
+// zoom.us rdar://118185086
+bool Quirks::shouldDisableImageCaptureQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_shouldDisableImageCaptureQuirk)
+        m_shouldDisableImageCaptureQuirk = isDomain("zoom.us"_s);
+
+    return m_shouldDisableImageCaptureQuirk.value();
+}
 #endif
 
 // hulu.com rdar://55041979
