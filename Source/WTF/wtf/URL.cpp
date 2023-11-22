@@ -307,13 +307,16 @@ String URL::fileSystemPath() const
         return { };
 
 #if OS(WINDOWS)
-    if (UNLIKELY(auto unc_host = host())) {
-        return makeString("\\\\"_s, unc_host, decodeEscapeSequencesFromParsedURLForWindowsPath(path()));
+    // UNC paths look like '\\server\share\etc', but in a URL they look like 'file://server/share/etc'.
+    auto unc_host = host();
+    if (UNLIKELY(unc_host)) {
+        return makeString("\\\\"_s, unc_host, "\\"_s, decodeEscapeSequencesFromParsedURLForWindowsPath(path()));
     }
-    auto result = decodeEscapeSequencesFromParsedURLForWindowsPath(path());
-    if (result.startsWith('\\'))
-        result = result.substring(1);
-    return result;
+    // It should be impossible to construct a file:// url without a host and not start with a slash.
+    // Doing `new URL("file://C:/hello")` parses to have host "/C:/hello"
+    // UNC paths will take advantage of this for the output, while regular paths will 
+    ASSERT(path().startsWith('/'));
+    return decodeEscapeSequencesFromParsedURLForWindowsPath(path().substring(1));
 #else
     return decodeEscapeSequencesFromParsedURL(path());
 #endif
