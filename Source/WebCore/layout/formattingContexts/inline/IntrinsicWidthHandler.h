@@ -51,12 +51,12 @@ public:
 private:
     enum class MayCacheLayoutResult : bool { No, Yes };
     InlineLayoutUnit computedIntrinsicWidthForConstraint(IntrinsicWidthMode, AbstractLineBuilder&, MayCacheLayoutResult = MayCacheLayoutResult::No);
-    InlineLayoutUnit simplifiedMinimumWidth() const;
+    InlineLayoutUnit simplifiedMinimumWidth(const ElementBox& root) const;
 
     InlineFormattingContext& formattingContext();
     const InlineFormattingContext& formattingContext() const;
     const InlineContentCache& formattingState() const;
-    const RenderStyle& rootStyle() const;
+    const ElementBox& root() const;
 
 private:
     InlineFormattingContext& m_inlineFormattingContext;

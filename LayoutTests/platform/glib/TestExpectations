@@ -1079,7 +1079,6 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/URL-createObjec
 
 # Need changes in the demuxers and AppendPipeline to enable aborts not followed by an initialization segment:
 webkit.org/b/228820 media/media-source/media-mp4-h264-partial-abort.html [ Failure ]
-webkit.org/b/228820 media/media-source/media-webm-opus-partial-abort.html [ Failure ]
 
 webkit.org/b/224767 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Crash Pass ]
 
@@ -1225,7 +1224,15 @@ webkit.org/b/264708 [ Debug ] media/media-source/media-source-error-crash.html [
 webkit.org/b/264708 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Pass Crash ]
 webkit.org/b/264708 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec.html [ Pass Crash ]
 
+# webkit.org/b/228820 media/media-source/media-webm-opus-partial-abort.html [ Failure ]
+webkit.org/b/264708 [ Debug ] media/media-source/media-webm-opus-partial-abort.html [ Pass Crash ]
+
 webkit.org/b/264934 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-called-on-globalthis.https.html [ Pass Crash ]
+webkit.org/b/264934 http/wpt/webaudio/the-audio-api/the-audioworklet-interface/exposed-properties.https.html [ Pass Crash ]
+
+webkit.org/b/265205 imported/w3c/web-platform-tests/media-source/mediasource-remove-preserves-currentTime.html [ Pass Crash ]
+
+webkit.org/b/265206 media/encrypted-media/encrypted-media-append-encrypted-unencrypted.html [ Pass Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs

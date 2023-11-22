@@ -185,7 +185,7 @@ private:
 inline void BuilderCustom::applyValueDirection(BuilderState& builderState, CSSValue& value)
 {
     builderState.style().setDirection(fromCSSValue<TextDirection>(value));
-    builderState.style().setHasExplicitlySetDirection(true);
+    builderState.style().setHasExplicitlySetDirection();
 }
 
 inline void BuilderCustom::resetEffectiveZoom(BuilderState& builderState)
@@ -815,7 +815,7 @@ inline void BuilderCustom::applyValueWebkitLocale(BuilderState& builderState, CS
 inline void BuilderCustom::applyValueWritingMode(BuilderState& builderState, CSSValue& value)
 {
     builderState.setWritingMode(fromCSSValue<WritingMode>(value));
-    builderState.style().setHasExplicitlySetWritingMode(true);
+    builderState.style().setHasExplicitlySetWritingMode();
 }
 
 inline void BuilderCustom::applyValueTextOrientation(BuilderState& builderState, CSSValue& value)

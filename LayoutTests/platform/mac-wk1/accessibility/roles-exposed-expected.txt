@@ -19,7 +19,7 @@ abbr[title]
 
 address
       AXRole: AXGroup
-      AXSubrole:
+      AXSubrole: AXApplicationGroup
       AXRoleDescription: group
 
 article

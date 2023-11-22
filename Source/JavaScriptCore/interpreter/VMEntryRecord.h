@@ -43,9 +43,6 @@ struct VMEntryRecord {
     VM* const m_vm;
     CallFrame* const m_prevTopCallFrame;
     EntryFrame* const m_prevTopEntryFrame;
-    JSObject* const m_callee;
-
-    JSObject* callee() const { return m_callee; }
 
 #if !ENABLE(C_LOOP) && NUMBER_OF_CALLEE_SAVES_REGISTERS > 0
     CPURegister calleeSaveRegistersBuffer[NUMBER_OF_CALLEE_SAVES_REGISTERS];

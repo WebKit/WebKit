@@ -210,15 +210,12 @@ RenderStyle::RenderStyle(CreateDefaultStyleTag)
     m_nonInheritedFlags.originalDisplay = static_cast<unsigned>(initialDisplay());
     m_nonInheritedFlags.overflowX = static_cast<unsigned>(initialOverflowX());
     m_nonInheritedFlags.overflowY = static_cast<unsigned>(initialOverflowY());
-    m_nonInheritedFlags.verticalAlign = static_cast<unsigned>(initialVerticalAlign());
     m_nonInheritedFlags.clear = static_cast<unsigned>(initialClear());
     m_nonInheritedFlags.position = static_cast<unsigned>(initialPosition());
     m_nonInheritedFlags.unicodeBidi = static_cast<unsigned>(initialUnicodeBidi());
     m_nonInheritedFlags.floating = static_cast<unsigned>(initialFloating());
     m_nonInheritedFlags.tableLayout = static_cast<unsigned>(initialTableLayout());
     m_nonInheritedFlags.textDecorationLine = initialTextDecorationLine().toRaw();
-    m_nonInheritedFlags.hasExplicitlySetDirection = false;
-    m_nonInheritedFlags.hasExplicitlySetWritingMode = false;
     m_nonInheritedFlags.usesViewportUnits = false;
     m_nonInheritedFlags.usesContainerUnits = false;
     m_nonInheritedFlags.hasExplicitlyInheritedProperties = false;
@@ -393,15 +390,12 @@ inline void RenderStyle::NonInheritedFlags::copyNonInheritedFrom(const NonInheri
     originalDisplay = other.originalDisplay;
     overflowX = other.overflowX;
     overflowY = other.overflowY;
-    verticalAlign = other.verticalAlign;
     clear = other.clear;
     position = other.position;
     unicodeBidi = other.unicodeBidi;
     floating = other.floating;
     tableLayout = other.tableLayout;
     textDecorationLine = other.textDecorationLine;
-    hasExplicitlySetDirection = other.hasExplicitlySetDirection;
-    hasExplicitlySetWritingMode = other.hasExplicitlySetWritingMode;
     usesViewportUnits = other.usesViewportUnits;
     usesContainerUnits = other.usesContainerUnits;
     hasExplicitlyInheritedProperties = other.hasExplicitlyInheritedProperties;
@@ -959,7 +953,8 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
                 || m_nonInheritedData->boxData->maxHeight() != other.m_nonInheritedData->boxData->maxHeight())
                 return true;
 
-            if (m_nonInheritedData->boxData->verticalAlign() != other.m_nonInheritedData->boxData->verticalAlign())
+            if (m_nonInheritedData->boxData->verticalAlign() != other.m_nonInheritedData->boxData->verticalAlign()
+                || m_nonInheritedData->boxData->verticalAlignLength() != other.m_nonInheritedData->boxData->verticalAlignLength())
                 return true;
 
             if (m_nonInheritedData->boxData->boxSizing() != other.m_nonInheritedData->boxData->boxSizing())
@@ -1032,8 +1027,7 @@ bool RenderStyle::changeRequiresLayout(const RenderStyle& other, OptionSet<Style
         || m_inheritedFlags.rtlOrdering != other.m_inheritedFlags.rtlOrdering
         || m_nonInheritedFlags.position != other.m_nonInheritedFlags.position
         || m_nonInheritedFlags.floating != other.m_nonInheritedFlags.floating
-        || m_nonInheritedFlags.originalDisplay != other.m_nonInheritedFlags.originalDisplay
-        || m_nonInheritedFlags.verticalAlign != other.m_nonInheritedFlags.verticalAlign)
+        || m_nonInheritedFlags.originalDisplay != other.m_nonInheritedFlags.originalDisplay)
         return true;
 
     if (static_cast<DisplayType>(m_nonInheritedFlags.effectiveDisplay) >= DisplayType::Table) {
@@ -1542,8 +1536,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyOverflowX);
         if (first.overflowY != second.overflowY)
             changingProperties.m_properties.set(CSSPropertyOverflowY);
-        if (first.verticalAlign != second.verticalAlign)
-            changingProperties.m_properties.set(CSSPropertyVerticalAlign);
         if (first.clear != second.clear)
             changingProperties.m_properties.set(CSSPropertyClear);
         if (first.position != second.position)
@@ -1559,8 +1551,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // effectiveDisplay
         // originalDisplay
         // unicodeBidi
-        // hasExplicitlySetDirection
-        // hasExplicitlySetWritingMode
         // usesViewportUnits
         // usesContainerUnits
         // hasExplicitlyInheritedProperties
@@ -1601,7 +1591,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyMinHeight);
         if (first.maxHeight() != second.maxHeight())
             changingProperties.m_properties.set(CSSPropertyMaxHeight);
-        if (first.verticalAlign() != second.verticalAlign())
+        if (first.verticalAlign() != second.verticalAlign() || first.verticalAlignLength() != second.verticalAlignLength())
             changingProperties.m_properties.set(CSSPropertyVerticalAlign);
         if (first.specifiedZIndex() != second.specifiedZIndex() || first.hasAutoSpecifiedZIndex() != second.hasAutoSpecifiedZIndex())
             changingProperties.m_properties.set(CSSPropertyZIndex);
@@ -1807,6 +1797,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // deprecatedFlexibleBox
         // hasAttrContent
         // hasExplicitlySetColorScheme
+        // hasExplicitlySetDirection
+        // hasExplicitlySetWritingMode
         // appearance
         // effectiveAppearance
         // userDrag

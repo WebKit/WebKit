@@ -476,6 +476,16 @@ inline void RenderStyle::setGridRowList(const GridTrackList& list)
         m_nonInheritedData.access().rareData.access().grid.access().setRows(list);
 }
 
+inline void RenderStyle::setHasExplicitlySetDirection()
+{
+    SET_NESTED(m_nonInheritedData, miscData, hasExplicitlySetDirection, true);
+}
+
+inline void RenderStyle::setHasExplicitlySetWritingMode()
+{
+    SET_NESTED(m_nonInheritedData, miscData, hasExplicitlySetWritingMode, true);
+}
+
 inline void RenderStyle::setLogicalHeight(Length&& height)
 {
     if (isHorizontalWritingMode())
@@ -557,10 +567,15 @@ inline bool RenderStyle::setTextOrientation(TextOrientation textOrientation)
     return true;
 }
 
+inline void RenderStyle::setVerticalAlign(VerticalAlign align)
+{
+    SET_NESTED(m_nonInheritedData, boxData, m_verticalAlign, static_cast<unsigned>(align));
+}
+
 inline void RenderStyle::setVerticalAlignLength(Length&& length)
 {
     setVerticalAlign(VerticalAlign::Length);
-    SET_NESTED(m_nonInheritedData, boxData, m_verticalAlign, WTFMove(length));
+    SET_NESTED(m_nonInheritedData, boxData, m_verticalAlignLength, WTFMove(length));
 }
 
 inline void RenderStyle::setWidows(unsigned short count)
