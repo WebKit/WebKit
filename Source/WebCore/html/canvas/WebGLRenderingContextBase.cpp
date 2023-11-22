@@ -4540,8 +4540,8 @@ void WebGLRenderingContextBase::useProgram(WebGLProgram* program)
 
     // Extend the base useProgram method instead of overriding it in
     // WebGL2RenderingContext to keep the preceding validations in the same order.
-    if (isWebGL2()) {
-        if (downcast<WebGL2RenderingContext>(*this).isTransformFeedbackActiveAndNotPaused()) {
+    if (auto* context = dynamicDowncast<WebGL2RenderingContext>(*this)) {
+        if (context->isTransformFeedbackActiveAndNotPaused()) {
             synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, "useProgram", "transform feedback is active and not paused");
             return;
         }

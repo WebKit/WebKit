@@ -79,16 +79,16 @@ Node::InsertedIntoAncestorResult HTMLSourceElement::insertedIntoAncestor(Inserti
     RefPtr<Element> parent = parentElement();
     if (parent == &parentOfInsertedTree) {
 #if ENABLE(VIDEO)
-        if (is<HTMLMediaElement>(*parent))
-            downcast<HTMLMediaElement>(*parent).sourceWasAdded(*this);
+        if (auto* mediaElement = dynamicDowncast<HTMLMediaElement>(*parent))
+            mediaElement->sourceWasAdded(*this);
         else
 #endif
 #if ENABLE(MODEL_ELEMENT)
-        if (is<HTMLModelElement>(*parent))
-            downcast<HTMLModelElement>(*parent).sourcesChanged();
+        if (auto* modelElement = dynamicDowncast<HTMLModelElement>(*parent))
+            modelElement->sourcesChanged();
         else
 #endif
-        if (is<HTMLPictureElement>(*parent)) {
+        if (auto* pictureElement = dynamicDowncast<HTMLPictureElement>(*parent)) {
             // The new source element only is a relevant mutation if it precedes any img element.
             m_shouldCallSourcesChanged = true;
             for (const Node* node = previousSibling(); node; node = node->previousSibling()) {
@@ -96,7 +96,7 @@ Node::InsertedIntoAncestorResult HTMLSourceElement::insertedIntoAncestor(Inserti
                     m_shouldCallSourcesChanged = false;
             }
             if (m_shouldCallSourcesChanged)
-                downcast<HTMLPictureElement>(*parent).sourcesChanged();
+                pictureElement->sourcesChanged();
         }
     }
     return InsertedIntoAncestorResult::Done;
@@ -107,13 +107,13 @@ void HTMLSourceElement::removedFromAncestor(RemovalType removalType, ContainerNo
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
     if (!parentNode() && is<Element>(oldParentOfRemovedTree)) {
 #if ENABLE(VIDEO)
-        if (is<HTMLMediaElement>(oldParentOfRemovedTree))
-            downcast<HTMLMediaElement>(oldParentOfRemovedTree).sourceWasRemoved(*this);
+        if (auto* medialElement = dynamicDowncast<HTMLMediaElement>(oldParentOfRemovedTree))
+            medialElement->sourceWasRemoved(*this);
         else
 #endif
 #if ENABLE(MODEL_ELEMENT)
-        if (is<HTMLModelElement>(oldParentOfRemovedTree))
-            downcast<HTMLModelElement>(oldParentOfRemovedTree).sourcesChanged();
+        if (auto* model = dynamicDowncast<HTMLModelElement>(oldParentOfRemovedTree))
+            model->sourcesChanged();
         else
 #endif
         if (m_shouldCallSourcesChanged) {

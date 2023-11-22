@@ -80,13 +80,11 @@ void HTMLSummaryElement::didAddUserAgentShadowRoot(ShadowRoot& root)
 
 RefPtr<HTMLDetailsElement> HTMLSummaryElement::detailsElement() const
 {
-    auto* parent = parentElement();
-    if (parent && is<HTMLDetailsElement>(*parent))
-        return downcast<HTMLDetailsElement>(parent);
+    if (auto* parent = dynamicDowncast<HTMLDetailsElement>(parentElement()))
+        return parent;
     // Fallback summary element is in the shadow tree.
-    auto* host = shadowHost();
-    if (host && is<HTMLDetailsElement>(*host))
-        return downcast<HTMLDetailsElement>(host);
+    if (auto* details = dynamicDowncast<HTMLDetailsElement>(shadowHost()))
+        return details;
     return nullptr;
 }
 
@@ -100,10 +98,9 @@ bool HTMLSummaryElement::isActiveSummary() const
 
 static bool isInSummaryInteractiveContent(EventTarget* target)
 {
-    if (!is<Element>(target))
-        return false;
-    for (RefPtr element = downcast<Element>(target); element && !is<HTMLSummaryElement>(element); element = element->parentOrShadowHostElement()) {
-        if ((is<HTMLElement>(element) && downcast<HTMLElement>(element)->isInteractiveContent()) || is<SVGAElement>(element))
+    for (RefPtr element = dynamicDowncast<Element>(target); element && !is<HTMLSummaryElement>(element); element = element->parentOrShadowHostElement()) {
+        auto* htmlElement = dynamicDowncast<HTMLElement>(*element);
+        if ((htmlElement && htmlElement->isInteractiveContent()) || is<SVGAElement>(element))
             return true;
     }
     return false;
@@ -130,29 +127,28 @@ void HTMLSummaryElement::defaultEventHandler(Event& event)
             return;
         }
 
-        if (is<KeyboardEvent>(event)) {
-            KeyboardEvent& keyboardEvent = downcast<KeyboardEvent>(event);
-            if (keyboardEvent.type() == eventNames.keydownEvent && keyboardEvent.keyIdentifier() == "U+0020"_s) {
+        if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event)) {
+            if (keyboardEvent->type() == eventNames.keydownEvent && keyboardEvent->keyIdentifier() == "U+0020"_s) {
                 setActive(true);
                 // No setDefaultHandled() - IE dispatches a keypress in this case.
                 return;
             }
-            if (keyboardEvent.type() == eventNames.keypressEvent) {
-                switch (keyboardEvent.charCode()) {
+            if (keyboardEvent->type() == eventNames.keypressEvent) {
+                switch (keyboardEvent->charCode()) {
                 case '\r':
                     dispatchSimulatedClick(&event);
-                    keyboardEvent.setDefaultHandled();
+                    keyboardEvent->setDefaultHandled();
                     return;
                 case ' ':
                     // Prevent scrolling down the page.
-                    keyboardEvent.setDefaultHandled();
+                    keyboardEvent->setDefaultHandled();
                     return;
                 }
             }
-            if (keyboardEvent.type() == eventNames.keyupEvent && keyboardEvent.keyIdentifier() == "U+0020"_s) {
+            if (keyboardEvent->type() == eventNames.keyupEvent && keyboardEvent->keyIdentifier() == "U+0020"_s) {
                 if (active())
                     dispatchSimulatedClick(&event);
-                keyboardEvent.setDefaultHandled();
+                keyboardEvent->setDefaultHandled();
                 return;
             }
         }
