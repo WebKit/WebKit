@@ -47,7 +47,7 @@ struct CSSSelectorParserContext {
     CSSSelectorParserContext(const CSSParserContext&);
     explicit CSSSelectorParserContext(const Document&);
 
-    bool operator==(const CSSSelectorParserContext&, const CSSSelectorParserContext&) = default;
+    friend bool operator==(const CSSSelectorParserContext&, const CSSSelectorParserContext&) = default;
 };
 
 void add(Hasher&, const CSSSelectorParserContext&);
