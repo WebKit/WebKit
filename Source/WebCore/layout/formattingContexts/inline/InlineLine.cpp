@@ -1028,6 +1028,8 @@ bool Line::Run::isContentfulOrHasDecoration(const Run& run, const InlineFormatti
     if (run.isInlineBox()) {
         if (run.logicalWidth())
             return true;
+        if (run.layoutBox().isRenderRubyBase())
+            return true;
         // Even negative horizontal margin makes the line "contentful".
         auto& inlineBoxGeometry = formattingContext.geometryForBox(run.layoutBox());
         if (run.isInlineBoxStart())

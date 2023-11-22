@@ -281,6 +281,31 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild
     return *newParent;
 }
 
+void RenderTreeBuilder::Ruby::attachForStyleBasedRuby(RenderElement& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild)
+{
+    if (parent.style().display() == DisplayType::RubyBlock) {
+        ASSERT(child->style().display() == DisplayType::Ruby);
+        m_builder.attachToRenderElementInternal(parent, WTFMove(child), beforeChild);
+        return;
+    }
+    ASSERT(parent.style().display() == DisplayType::Ruby);
+    ASSERT(child->style().display() == DisplayType::RubyBase || child->style().display() == DisplayType::RubyAnnotation);
+
+    while (beforeChild && beforeChild->parent() && beforeChild->parent() != &parent)
+        beforeChild = beforeChild->parent();
+
+    if (child->style().display() == DisplayType::RubyAnnotation) {
+        // Create an empty anonymous base if it is missing.
+        WeakPtr previous = beforeChild ? beforeChild->previousSibling() : parent.lastChild();
+        if (!previous || previous->style().display() != DisplayType::RubyBase) {
+            auto rubyBase = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::RubyBase));
+            rubyBase->initializeStyle();
+            m_builder.attachToRenderElementInternal(parent, WTFMove(rubyBase), beforeChild);
+        }
+    }
+    m_builder.attachToRenderElementInternal(parent, WTFMove(child), beforeChild);
+}
+
 RenderRubyBase& RenderTreeBuilder::Ruby::rubyBaseSafe(RenderRubyRun& rubyRun)
 {
     auto* base = rubyRun.rubyBase();
