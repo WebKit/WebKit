@@ -42,8 +42,10 @@
 #include <wtf/Algorithms.h>
 #include <wtf/Lock.h>
 #include <wtf/MainThread.h>
+#include <wtf/NativePromise.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
+#include <wtf/WorkQueue.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "AVAudioSessionCaptureDeviceManager.h"
@@ -63,11 +65,16 @@ namespace WebCore {
 const UInt32 outputBus = 0;
 const UInt32 inputBus = 1;
 
+void CoreAudioSharedUnit::AudioUnitDeallocator::operator()(AudioUnit unit) const
+{
+    PAL::AudioComponentInstanceDispose(unit);
+}
+
 class CoreAudioSharedInternalUnit final :  public CoreAudioSharedUnit::InternalUnit {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static Expected<UniqueRef<InternalUnit>, OSStatus> create(bool shouldUseVPIO);
-    CoreAudioSharedInternalUnit(AudioUnit, bool shouldUseVPIO);
+    CoreAudioSharedInternalUnit(CoreAudioSharedUnit::StoredAudioUnit&&, bool shouldUseVPIO);
     ~CoreAudioSharedInternalUnit() final;
 
 private:
@@ -80,22 +87,13 @@ private:
     OSStatus render(AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32, UInt32, AudioBufferList*) final;
     OSStatus defaultInputDevice(uint32_t*) final;
     OSStatus defaultOutputDevice(uint32_t*) final;
-    void storeVPIOUnitIfNeeded() final;
 
-    AudioUnit m_ioUnit { nullptr };
+    CoreAudioSharedUnit::StoredAudioUnit m_ioUnit;
     bool m_shouldUseVPIO { false };
 };
 
-Expected<UniqueRef<CoreAudioSharedUnit::InternalUnit>, OSStatus> CoreAudioSharedInternalUnit::create(bool shouldUseVPIO)
+static Expected<CoreAudioSharedUnit::StoredAudioUnit, OSStatus> createAudioUnit(bool shouldUseVPIO)
 {
-    if (shouldUseVPIO) {
-        if (auto ioUnit = CoreAudioSharedUnit::unit().takeStoredVPIOUnit()) {
-            RELEASE_LOG(WebRTC, "Creating a CoreAudioSharedInternalUnit wilth a stored VPIO unit");
-            UniqueRef<CoreAudioSharedUnit::InternalUnit> result = makeUniqueRef<CoreAudioSharedInternalUnit>(ioUnit, shouldUseVPIO);
-            return result;
-        }
-    }
-
     OSType unitSubType = kAudioUnitSubType_VoiceProcessingIO;
     if (!shouldUseVPIO) {
 #if PLATFORM(MAC)
@@ -130,63 +128,77 @@ Expected<UniqueRef<CoreAudioSharedUnit::InternalUnit>, OSStatus> CoreAudioShared
         return makeUnexpected(err);
     }
 
-    RELEASE_LOG(WebRTC, "Successfully created a CoreAudioSharedInternalUnit");
+    return CoreAudioSharedUnit::StoredAudioUnit(ioUnit);
+}
 
-    UniqueRef<CoreAudioSharedUnit::InternalUnit> result = makeUniqueRef<CoreAudioSharedInternalUnit>(ioUnit, shouldUseVPIO);
+Expected<UniqueRef<CoreAudioSharedUnit::InternalUnit>, OSStatus> CoreAudioSharedInternalUnit::create(bool shouldUseVPIO)
+{
+#if PLATFORM(MAC)
+    if (shouldUseVPIO) {
+        if (auto ioUnit = CoreAudioSharedUnit::unit().takeStoredVPIOUnit()) {
+            RELEASE_LOG(WebRTC, "Creating a CoreAudioSharedInternalUnit with a stored VPIO unit");
+            UniqueRef<CoreAudioSharedUnit::InternalUnit> result = makeUniqueRef<CoreAudioSharedInternalUnit>(WTFMove(ioUnit), shouldUseVPIO);
+            return result;
+        }
+    }
+#endif
+
+    auto audioUnitOrError = createAudioUnit(shouldUseVPIO);
+    if (!audioUnitOrError.has_value())
+        return makeUnexpected(audioUnitOrError.error());
+
+    RELEASE_LOG(WebRTC, "Successfully created a CoreAudioSharedInternalUnit");
+    UniqueRef<CoreAudioSharedUnit::InternalUnit> result = makeUniqueRef<CoreAudioSharedInternalUnit>(WTFMove(audioUnitOrError.value()), shouldUseVPIO);
     return result;
 }
 
-CoreAudioSharedInternalUnit::CoreAudioSharedInternalUnit(AudioUnit ioUnit, bool shouldUseVPIO)
-    : m_ioUnit(ioUnit)
+CoreAudioSharedInternalUnit::CoreAudioSharedInternalUnit(CoreAudioSharedUnit::StoredAudioUnit&& ioUnit, bool shouldUseVPIO)
+    : m_ioUnit(WTFMove(ioUnit))
     , m_shouldUseVPIO(shouldUseVPIO)
 {
 }
 
 CoreAudioSharedInternalUnit::~CoreAudioSharedInternalUnit()
 {
-    if (!CoreAudioSharedUnit::unit().iStoredVPIOUnit(m_ioUnit))
-        PAL::AudioComponentInstanceDispose(m_ioUnit);
-}
-
-void CoreAudioSharedInternalUnit::storeVPIOUnitIfNeeded()
-{
+#if PLATFORM(MAC)
     if (m_shouldUseVPIO)
-        CoreAudioSharedUnit::unit().setStoredVPIOUnit(m_ioUnit);
+        CoreAudioSharedUnit::unit().setStoredVPIOUnit(std::exchange(m_ioUnit, { }));
+#endif
 }
 
 OSStatus CoreAudioSharedInternalUnit::initialize()
 {
-    return PAL::AudioUnitInitialize(m_ioUnit);
+    return PAL::AudioUnitInitialize(m_ioUnit.get());
 }
 
 OSStatus CoreAudioSharedInternalUnit::uninitialize()
 {
-    return PAL::AudioUnitUninitialize(m_ioUnit);
+    return PAL::AudioUnitUninitialize(m_ioUnit.get());
 }
 
 OSStatus CoreAudioSharedInternalUnit::start()
 {
-    return PAL::AudioOutputUnitStart(m_ioUnit);
+    return PAL::AudioOutputUnitStart(m_ioUnit.get());
 }
 
 OSStatus CoreAudioSharedInternalUnit::stop()
 {
-    return PAL::AudioOutputUnitStop(m_ioUnit);
+    return PAL::AudioOutputUnitStop(m_ioUnit.get());
 }
 
 OSStatus CoreAudioSharedInternalUnit::set(AudioUnitPropertyID propertyID, AudioUnitScope scope, AudioUnitElement element, const void* value, UInt32 size)
 {
-    return PAL::AudioUnitSetProperty(m_ioUnit, propertyID, scope, element, value, size);
+    return PAL::AudioUnitSetProperty(m_ioUnit.get(), propertyID, scope, element, value, size);
 }
 
 OSStatus CoreAudioSharedInternalUnit::get(AudioUnitPropertyID propertyID, AudioUnitScope scope, AudioUnitElement element, void* value, UInt32* size)
 {
-    return PAL::AudioUnitGetProperty(m_ioUnit, propertyID, scope, element, value, size);
+    return PAL::AudioUnitGetProperty(m_ioUnit.get(), propertyID, scope, element, value, size);
 }
 
 OSStatus CoreAudioSharedInternalUnit::render(AudioUnitRenderActionFlags* ioActionFlags, const AudioTimeStamp* inTimeStamp, UInt32 inOutputBusNumber, UInt32 inNumberFrames, AudioBufferList* list)
 {
-    return PAL::AudioUnitRender(m_ioUnit, ioActionFlags, inTimeStamp, inOutputBusNumber, inNumberFrames, list);
+    return PAL::AudioUnitRender(m_ioUnit.get(), ioActionFlags, inTimeStamp, inOutputBusNumber, inNumberFrames, list);
 }
 
 OSStatus CoreAudioSharedInternalUnit::defaultInputDevice(uint32_t* deviceID)
@@ -241,14 +253,14 @@ CoreAudioSharedUnit::CoreAudioSharedUnit()
 
 CoreAudioSharedUnit::~CoreAudioSharedUnit()
 {
-    ASSERT(!m_storedVPIOUnit);
 }
 
-void CoreAudioSharedUnit::setStoredVPIOUnit(AudioUnit unit)
+#if PLATFORM(MAC)
+void CoreAudioSharedUnit::setStoredVPIOUnit(StoredAudioUnit&& unit)
 {
-    ASSERT(!m_storedVPIOUnit);
-    m_storedVPIOUnit = unit;
+    m_storedVPIOUnit = WTFMove(unit);
 }
+#endif
 
 void CoreAudioSharedUnit::resetSampleRate()
 {
@@ -577,16 +589,6 @@ OSStatus CoreAudioSharedUnit::reconfigureAudioUnit()
         }
     }
 
-#if PLATFORM(MAC)
-    m_ioUnit->storeVPIOUnitIfNeeded();
-    auto scopeVPIOUnit = makeScopeExit([this] {
-        if (auto unit = takeStoredVPIOUnit()) {
-            RELEASE_LOG_INFO(WebRTC, "CoreAudioSharedUnit::reconfigureAudioUnit disposing VPIO unit");
-            PAL::AudioComponentInstanceDispose(unit);
-        }
-    });
-#endif
-
     cleanupAudioUnit();
     if (auto err = setupAudioUnit())
         return err;
@@ -681,8 +683,22 @@ bool CoreAudioSharedUnit::migrateToNewDefaultDevice(const CaptureDevice& capture
     handleNewCurrentMicrophoneDevice(WTFMove(*device));
     return true;
 }
-#endif
 
+void CoreAudioSharedUnit::prewarmAudioUnitCreation(CompletionHandler<void()>&& callback)
+{
+    if (!m_audioUnitCreationWarmupPromise) {
+        m_audioUnitCreationWarmupPromise = invokeAsync(WorkQueue::create("CoreAudioSharedUnit AudioUnit creation").get(), [] {
+            return createAudioUnit(true);
+        })->whenSettled(RunLoop::main(), [weakThis = WeakPtr { *this }] (auto&& vpioUnitOrError) {
+            if (weakThis && vpioUnitOrError.has_value())
+                weakThis->setStoredVPIOUnit(WTFMove(vpioUnitOrError.value()));
+            return GenericNonExclusivePromise::createAndResolve();
+        });
+    }
+
+    m_audioUnitCreationWarmupPromise->whenSettled(RunLoop::main(), WTFMove(callback));
+}
+#endif
 
 void CoreAudioSharedUnit::verifyIsCapturing()
 {

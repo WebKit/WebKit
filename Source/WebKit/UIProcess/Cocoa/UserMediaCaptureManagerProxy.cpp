@@ -524,12 +524,20 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     auto proxy = makeUnique<SourceProxy>(id, WTFMove(connection), ProcessIdentity { m_connectionProxy->resourceOwner() }, WTFMove(source), WTFMove(remoteVideoFrameObjectHeap));
     proxy->observeMedia();
 
-    auto completeSetup = [this](std::unique_ptr<SourceProxy>&& proxy, RealtimeMediaSourceIdentifier id, CreateSourceCallback&& completionHandler) mutable {
-        auto settings = proxy->settings();
-        auto capabilities = proxy->source().capabilities();
-        m_proxies.add(id, WTFMove(proxy));
+    auto completeSetup = [weakThis = WeakPtr { *this }, this](std::unique_ptr<SourceProxy>&& proxy, RealtimeMediaSourceIdentifier id, CreateSourceCallback&& completionHandler) mutable {
+        if (!weakThis) {
+            completionHandler({ "Capture proxy disappeared"_s, WebCore::MediaAccessDenialReason::OtherFailure }, { }, { });
+            return;
+        }
 
-        completionHandler({ }, WTFMove(settings), WTFMove(capabilities));
+        proxy->source().whenReady([completionHandler = WTFMove(completionHandler), proxy = WeakPtr { *proxy }] (auto&& error) mutable {
+            if (!!error || !proxy) {
+                completionHandler(error, { }, { });
+                return;
+            }
+            completionHandler({ }, proxy->settings(), proxy->source().capabilities());
+        });
+        m_proxies.add(id, WTFMove(proxy));
     };
 
     if (!constraints || proxy->source().type() != RealtimeMediaSource::Type::Video) {

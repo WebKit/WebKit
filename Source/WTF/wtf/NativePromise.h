@@ -876,6 +876,11 @@ private:
         // Defined -> operator for consistency in calling pattern.
         ThenCommand* operator->() { return this; }
 
+        operator RefPtr<PromiseType>()
+        {
+            return Ref<PromiseType>(*this);
+        }
+
         // Allow conversion from ThenCommand to Ref<NativePromise> like:
         // Ref<NativePromise> p = somePromise->then(...);
         // p->then(thread1, ...);

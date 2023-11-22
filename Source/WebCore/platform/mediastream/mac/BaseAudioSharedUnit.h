@@ -55,6 +55,7 @@ public:
     virtual bool isProducingData() const = 0;
 
     virtual void delaySamples(Seconds) { }
+    virtual void prewarmAudioUnitCreation(CompletionHandler<void()>&& callback) { callback(); };
 
     void prepareForNewCapture();
 

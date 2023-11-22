@@ -42,8 +42,10 @@ struct AudioTimeStamp;
 
 #if TARGET_OS_IPHONE || (defined(AUDIOCOMPONENT_NOCARBONINSTANCES) && AUDIOCOMPONENT_NOCARBONINSTANCES)
 typedef struct OpaqueAudioComponentInstance* AudioComponentInstance;
+using AudioUnitStruct = OpaqueAudioComponentInstance;
 #else
 typedef struct ComponentInstanceRecord* AudioComponentInstance;
+using AudioUnitStruct = ComponentInstanceRecord;
 #endif
 typedef AudioComponentInstance AudioUnit;
 
@@ -71,7 +73,6 @@ public:
         virtual OSStatus defaultOutputDevice(uint32_t*) = 0;
         virtual void delaySamples(Seconds) { }
         virtual Seconds verifyCaptureInterval(bool isProducingSamples) const { return isProducingSamples ? 20_s : 2_s; }
-        virtual void storeVPIOUnitIfNeeded() { }
     };
 
     WEBCORE_EXPORT static CoreAudioSharedUnit& unit();
@@ -96,9 +97,15 @@ public:
 
     bool isUsingVPIO() const { return m_shouldUseVPIO; }
 
-    void setStoredVPIOUnit(AudioUnit);
-    bool iStoredVPIOUnit(AudioUnit unit) const { return unit == m_storedVPIOUnit; }
-    AudioUnit takeStoredVPIOUnit() { return std::exchange(m_storedVPIOUnit, nullptr); }
+    struct AudioUnitDeallocator {
+        void operator()(AudioUnit) const;
+    };
+    using StoredAudioUnit = std::unique_ptr<AudioUnitStruct, AudioUnitDeallocator>;
+
+#if PLATFORM(MAC)
+    void setStoredVPIOUnit(StoredAudioUnit&&);
+    StoredAudioUnit takeStoredVPIOUnit() { return std::exchange(m_storedVPIOUnit, nullptr); }
+#endif
 
 private:
     static size_t preferredIOBufferSize();
@@ -120,6 +127,7 @@ private:
     void validateOutputDevice(uint32_t deviceID) final;
 #if PLATFORM(MAC)
     bool migrateToNewDefaultDevice(const CaptureDevice&) final;
+    void prewarmAudioUnitCreation(CompletionHandler<void()>&&) final;
 #endif
     int actualSampleRate() const final;
     void resetSampleRate();
@@ -183,7 +191,10 @@ private:
 #endif
 
     bool m_shouldUseVPIO { true };
-    AudioUnit m_storedVPIOUnit { nullptr };
+#if PLATFORM(MAC)
+    StoredAudioUnit m_storedVPIOUnit { nullptr };
+    RefPtr<GenericNonExclusivePromise> m_audioUnitCreationWarmupPromise;
+#endif
 };
 
 } // namespace WebCore
