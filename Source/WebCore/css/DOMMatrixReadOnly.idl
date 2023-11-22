@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.fxtf.org/geometry/#dommatrixreadonly
+
 [
     ExportMacro=WEBCORE_EXPORT,
     Exposed=(Window,Worker),
@@ -76,6 +78,8 @@
                                   optional unrestricted double originX = 0,
                                   optional unrestricted double originY = 0,
                                   optional unrestricted double originZ = 0);
+    [NewObject] DOMMatrix scaleNonUniform(optional unrestricted double scaleX = 1,
+                                          optional unrestricted double scaleY = 1);
     [NewObject] DOMMatrix rotate(optional unrestricted double rotX = 0,
                                  optional unrestricted double rotY,
                                  optional unrestricted double rotZ); // Angles are in degrees.
