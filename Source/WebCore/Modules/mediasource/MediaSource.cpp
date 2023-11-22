@@ -247,7 +247,7 @@ void MediaSource::completeSeek()
     auto seekTarget = *m_pendingSeekTarget;
     m_pendingSeekTarget.reset();
 
-    Ref<MediaTimePromise> promise = SourceBuffer::ComputeSeekPromise::all(RunLoop::current(), WTF::map(*m_activeSourceBuffers, [&](auto&& sourceBuffer) {
+    Ref<MediaTimePromise> promise = SourceBuffer::ComputeSeekPromise::all(WTF::map(*m_activeSourceBuffers, [&](auto&& sourceBuffer) {
         return sourceBuffer->computeSeekTime(seekTarget);
     }))->whenSettled(RunLoop::current(), [time = seekTarget.time, protectedThis = Ref { *this }] (auto&& results) mutable {
         if (!results)

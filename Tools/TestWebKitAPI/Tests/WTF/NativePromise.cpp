@@ -726,7 +726,7 @@ TEST(NativePromise, PromiseAllResolve)
         promises.append(TestPromise::createAndResolve(32));
         promises.append(TestPromise::createAndResolve(42));
 
-        TestPromise::all(queue, promises)->then(queue,
+        TestPromise::all(promises)->then(queue,
             [queue](const Vector<int>& resolveValues) {
                 EXPECT_EQ(resolveValues.size(), 3UL);
                 EXPECT_EQ(resolveValues[0], 22);
@@ -748,13 +748,13 @@ TEST(NativePromise, PromiseVoidAllResolve)
         promises.append(GenericPromise::createAndResolve());
         promises.append(GenericPromise::createAndResolve());
 
-        GenericPromise::all(queue, promises)->then(queue,
+        GenericPromise::all(promises)->then(queue,
             [] () {
                 EXPECT_TRUE(true);
             },
             doFail());
 
-        GenericPromise::all(queue, Vector<Ref<GenericPromise>>(10, [](size_t) {
+        GenericPromise::all(Vector<Ref<GenericPromise>>(10, [](size_t) {
             return GenericPromise::createAndResolve();
         }))->then(queue,
             [queue] () {
@@ -780,7 +780,7 @@ TEST(NativePromise, PromiseAllResolveAsync)
             return TestPromise::createAndResolve(42);
         }));
 
-        TestPromise::all(queue, promises)->then(queue,
+        TestPromise::all(promises)->then(queue,
             [queue](const Vector<int>& resolveValues) {
                 EXPECT_EQ(resolveValues.size(), 3UL);
                 EXPECT_EQ(resolveValues[0], 22);
@@ -804,7 +804,7 @@ TEST(NativePromise, PromiseAllReject)
         // Ensure that more than one rejection doesn't cause a crash
         promises.append(TestPromise::createAndReject(52.0));
 
-        TestPromise::all(queue, promises)->then(queue,
+        TestPromise::all(promises)->then(queue,
             doFail(),
             [queue](float rejectValue) {
                 EXPECT_EQ(rejectValue, 32.0);
@@ -833,7 +833,7 @@ TEST(NativePromise, PromiseAllRejectAsync)
             return TestPromise::createAndReject(52.0);
         }));
 
-        TestPromise::all(queue, promises)->then(queue,
+        TestPromise::all(promises)->then(queue,
             doFail(),
             [queue](float rejectValue) {
                 EXPECT_EQ(rejectValue, 32.0);
@@ -853,7 +853,7 @@ TEST(NativePromise, PromiseAllSettled)
         promises.append(TestPromise::createAndResolve(42));
         promises.append(TestPromise::createAndReject(52.0));
 
-        TestPromise::allSettled(queue, promises)->then(
+        TestPromise::allSettled(promises)->then(
             queue,
             [queue](const TestPromise::AllSettledPromiseType::ResolveValueType& resolveValues) {
                 EXPECT_EQ(resolveValues.size(), 4UL);
@@ -891,7 +891,7 @@ TEST(NativePromise, PromiseAllSettledAsync)
             return TestPromise::createAndReject(52.0);
         }));
 
-        TestPromise::allSettled(queue, promises)->then(queue,
+        TestPromise::allSettled(promises)->then(queue,
             [queue](const TestPromise::AllSettledPromiseType::ResolveValueType& resolveValues) {
                 EXPECT_EQ(resolveValues.size(), 4UL);
                 EXPECT_TRUE(resolveValues[0].has_value());

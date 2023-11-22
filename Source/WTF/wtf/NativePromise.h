@@ -552,6 +552,7 @@ private:
         template<typename ResolveValueType_>
         void resolve(size_t index, ResolveValueType_&& resolveValue)
         {
+            Locker lock { m_lock };
             if (!m_producer) {
                 // Already resolved or rejected.
                 return;
@@ -574,6 +575,7 @@ private:
         template<typename RejectValueType_>
         void reject(RejectValueType_&& rejectValue)
         {
+            Locker lock { m_lock };
             if (!m_producer) {
                 // Already resolved or rejected.
                 return;
@@ -587,12 +589,17 @@ private:
                 m_resolveValues.clear();
         }
 
-        Ref<AllPromiseType> promise() { return static_cast<Ref<AllPromiseType>>(*m_producer); }
+        Ref<AllPromiseType> promise()
+        {
+            Locker lock { m_lock };
+            return m_producer->promise();
+        }
 
     private:
-        NO_UNIQUE_ADDRESS std::conditional_t<!std::is_void_v<ResolveValueT>, Vector<std::optional<ResolveValueType>>, detail::VoidPlaceholder> m_resolveValues;
-        std::unique_ptr<typename AllPromiseType::Producer> m_producer;
-        size_t m_outstandingPromises;
+        Lock m_lock;
+        NO_UNIQUE_ADDRESS std::conditional_t<!std::is_void_v<ResolveValueT>, Vector<std::optional<ResolveValueType>>, detail::VoidPlaceholder> m_resolveValues WTF_GUARDED_BY_LOCK(m_lock);
+        std::unique_ptr<typename AllPromiseType::Producer> m_producer WTF_GUARDED_BY_LOCK(m_lock);
+        size_t m_outstandingPromises WTF_GUARDED_BY_LOCK(m_lock);
     };
 
     class AllSettledPromiseProducer : public ThreadSafeRefCounted<AllSettledPromiseProducer> {
@@ -607,6 +614,7 @@ private:
 
         void settle(size_t index, ResultParam result)
         {
+            Locker lock { m_lock };
             if (!m_producer) {
                 // Already settled.
                 return;
@@ -621,19 +629,22 @@ private:
             }
         }
 
-        Ref<AllSettledPromiseType> promise() { return static_cast<Ref<AllSettledPromiseType>>(*m_producer); }
+        Ref<AllSettledPromiseType> promise()
+        {
+            Locker lock { m_lock };
+            return m_producer->promise();
+        }
 
     private:
-        Vector<std::optional<Result>> m_results;
-        std::unique_ptr<typename AllSettledPromiseType::Producer> m_producer;
-        size_t m_outstandingPromises;
+        Lock m_lock;
+        Vector<std::optional<Result>> m_results WTF_GUARDED_BY_LOCK(m_lock);
+        std::unique_ptr<typename AllSettledPromiseType::Producer> m_producer WTF_GUARDED_BY_LOCK(m_lock);
+        size_t m_outstandingPromises WTF_GUARDED_BY_LOCK(m_lock);
     };
 
 public:
-    template <class Dispatcher>
-    static Ref<AllPromiseType> all(Dispatcher& targetQueue, const Vector<Ref<NativePromise>>& promises)
+    static Ref<AllPromiseType> all(const Vector<Ref<NativePromise>>& promises)
     {
-        static_assert(LooksLikeRCSerialDispatcher<typename RemoveSmartPointer<Dispatcher>::type>::value, "Must be used with a RefCounted SerialFunctionDispatcher");
         if (promises.isEmpty()) {
             if constexpr (std::is_void_v<ResolveValueT>)
                 return AllPromiseType::createAndResolve();
@@ -643,7 +654,7 @@ public:
         auto producer = adoptRef(new AllPromiseProducer(promises.size()));
         auto promise = producer->promise();
         for (size_t i = 0; i < promises.size(); ++i) {
-            promises[i]->whenSettled(targetQueue, [producer, i] (ResultParam result) {
+            promises[i]->whenSettled([producer, i] (ResultParam result) {
                 if (result) {
                     if constexpr (std::is_void_v<ResolveValueT>)
                         producer->resolve(i, detail::VoidPlaceholder());
@@ -660,17 +671,15 @@ public:
         return promise;
     }
 
-    template <class Dispatcher>
-    static Ref<AllSettledPromiseType> allSettled(Dispatcher& targetQueue, const Vector<Ref<NativePromise>>& promises)
+    static Ref<AllSettledPromiseType> allSettled(const Vector<Ref<NativePromise>>& promises)
     {
-        static_assert(LooksLikeRCSerialDispatcher<typename RemoveSmartPointer<Dispatcher>::type>::value, "Must be used with a RefCounted SerialFunctionDispatcher");
         if (promises.isEmpty())
             return AllSettledPromiseType::createAndResolve(Vector<Result>());
 
         auto producer = adoptRef(new AllSettledPromiseProducer(promises.size()));
         auto promise = producer->promise();
         for (size_t i = 0; i < promises.size(); ++i) {
-            promises[i]->whenSettled(targetQueue, [producer, i] (ResultParam result) {
+            promises[i]->whenSettled([producer, i] (ResultParam result) {
                 producer->settle(i, maybeMove(result));
             });
         }
