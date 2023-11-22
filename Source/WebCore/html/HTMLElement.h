@@ -227,14 +227,19 @@ inline HTMLElement::HTMLElement(const QualifiedName& tagName, Document& document
 
 inline bool Node::hasTagName(const HTMLQualifiedName& name) const
 {
-    return is<HTMLElement>(*this) && downcast<HTMLElement>(*this).hasTagName(name);
+    auto* htmlElement = dynamicDowncast<HTMLElement>(*this);
+    return htmlElement && htmlElement->hasTagName(name);
 }
 
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::HTMLElement)
     static bool isType(const WebCore::Node& node) { return node.isHTMLElement(); }
-    static bool isType(const WebCore::EventTarget& target) { return is<WebCore::Node>(target) && isType(downcast<WebCore::Node>(target)); }
+    static bool isType(const WebCore::EventTarget& target)
+    {
+        auto* node = dynamicDowncast<WebCore::Node>(target);
+        return node && isType(*node);
+    }
 SPECIALIZE_TYPE_TRAITS_END()
 
 #include "HTMLElementTypeHelpers.h"

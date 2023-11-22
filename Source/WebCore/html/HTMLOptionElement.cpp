@@ -271,10 +271,10 @@ void HTMLOptionElement::childrenChanged(const ChildChange& change)
 HTMLSelectElement* HTMLOptionElement::ownerSelectElement() const
 {
     if (auto* parent = parentElement()) {
-        if (is<HTMLSelectElement>(*parent))
-            return downcast<HTMLSelectElement>(parent);
-        if (is<HTMLOptGroupElement>(*parent))
-            return downcast<HTMLOptGroupElement>(*parent).ownerSelectElement();
+        if (auto* select = dynamicDowncast<HTMLSelectElement>(*parent))
+            return select;
+        if (auto* optGroup = dynamicDowncast<HTMLOptGroupElement>(*parent))
+            return optGroup->ownerSelectElement();
     }
     return nullptr;
 }
@@ -323,20 +323,18 @@ bool HTMLOptionElement::isDisabledFormControl() const
     if (ownElementDisabled())
         return true;
 
-    if (!is<HTMLOptGroupElement>(parentNode()))
-        return false;
-
-    return downcast<HTMLOptGroupElement>(*parentNode()).isDisabledFormControl();
+    auto* parentOptGroup = dynamicDowncast<HTMLOptGroupElement>(parentNode());
+    return parentOptGroup && parentOptGroup->isDisabledFormControl();
 }
 
 String HTMLOptionElement::collectOptionInnerText() const
 {
     StringBuilder text;
     for (RefPtr node = firstChild(); node; ) {
-        if (is<Text>(*node))
-            text.append(node->nodeValue());
+        if (auto* textNode = dynamicDowncast<Text>(*node))
+            text.append(textNode->data());
         // Text nodes inside script elements are not part of the option text.
-        if (is<Element>(*node) && isScriptElement(downcast<Element>(*node)))
+        if (auto* element = dynamicDowncast<Element>(*node); element && isScriptElement(*element))
             node = NodeTraversal::nextSkippingChildren(*node, this);
         else
             node = NodeTraversal::next(*node, this);

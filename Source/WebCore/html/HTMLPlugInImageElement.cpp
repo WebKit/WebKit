@@ -171,10 +171,12 @@ void HTMLPlugInImageElement::didAttachRenderers()
     scheduleUpdateForAfterStyleResolution();
 
     // Update the RenderImageResource of the associated RenderImage.
-    if (m_imageLoader && is<RenderImage>(renderer())) {
-        auto& renderImageResource = downcast<RenderImage>(*renderer()).imageResource();
-        if (!renderImageResource.cachedImage())
-            renderImageResource.setCachedImage(m_imageLoader->image());
+    if (m_imageLoader) {
+        if (auto* renderImage = dynamicDowncast<RenderImage>(renderer())) {
+            auto& renderImageResource = renderImage->imageResource();
+            if (!renderImageResource.cachedImage())
+                renderImageResource.setCachedImage(m_imageLoader->image());
+        }
     }
 
     HTMLPlugInElement::didAttachRenderers();

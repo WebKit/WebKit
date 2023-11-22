@@ -372,10 +372,10 @@ static inline bool preventsParentObjectFromExposure(const Element& child)
 
 static inline bool preventsParentObjectFromExposure(const Node& child)
 {
-    if (is<Element>(child))
-        return preventsParentObjectFromExposure(downcast<Element>(child));
-    if (is<Text>(child))
-        return !downcast<Text>(child).data().containsOnly<isASCIIWhitespace>();
+    if (auto* childElement = dynamicDowncast<Element>(child))
+        return preventsParentObjectFromExposure(*childElement);
+    if (auto* childText = dynamicDowncast<Text>(child))
+        return !childText->data().containsOnly<isASCIIWhitespace>();
     return true;
 }
 
@@ -399,23 +399,23 @@ void HTMLObjectElement::updateExposedState()
 {
     bool wasExposed = std::exchange(m_isExposed, shouldBeExposed(*this));
 
-    if (m_isExposed != wasExposed && isConnected() && !isInShadowTree() && is<HTMLDocument>(document())) {
-        auto& document = downcast<HTMLDocument>(this->document());
+    if (m_isExposed != wasExposed && isConnected() && !isInShadowTree()) {
+        if (RefPtr document = dynamicDowncast<HTMLDocument>(this->document())) {
+            auto& id = getIdAttribute();
+            if (!id.isEmpty()) {
+                if (m_isExposed)
+                    document->addDocumentNamedItem(id, *this);
+                else
+                    document->removeDocumentNamedItem(id, *this);
+            }
 
-        auto& id = getIdAttribute();
-        if (!id.isEmpty()) {
-            if (m_isExposed)
-                document.addDocumentNamedItem(id, *this);
-            else
-                document.removeDocumentNamedItem(id, *this);
-        }
-
-        auto& name = getNameAttribute();
-        if (!name.isEmpty() && id != name) {
-            if (m_isExposed)
-                document.addDocumentNamedItem(name, *this);
-            else
-                document.removeDocumentNamedItem(name, *this);
+            auto& name = getNameAttribute();
+            if (!name.isEmpty() && id != name) {
+                if (m_isExposed)
+                    document->addDocumentNamedItem(name, *this);
+                else
+                    document->removeDocumentNamedItem(name, *this);
+            }
         }
     }
 }

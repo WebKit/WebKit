@@ -184,21 +184,18 @@ void HTMLPlugInElement::defaultEventHandler(Event& event)
 
     // FIXME: Mouse down and scroll events are passed down to plug-in via custom code in EventHandler; these code paths should be united.
 
-    auto renderer = this->renderer();
-    if (!is<RenderWidget>(renderer))
+    auto* renderer = dynamicDowncast<RenderWidget>(this->renderer());
+    if (!renderer)
         return;
 
-    if (is<RenderEmbeddedObject>(*renderer) && downcast<RenderEmbeddedObject>(*renderer).isPluginUnavailable())
-        downcast<RenderEmbeddedObject>(*renderer).handleUnavailablePluginIndicatorEvent(&event);
+    if (CheckedPtr renderEmbedded = dynamicDowncast<RenderEmbeddedObject>(*renderer); renderEmbedded && renderEmbedded->isPluginUnavailable())
+        renderEmbedded->handleUnavailablePluginIndicatorEvent(&event);
 
-    // Don't keep the widget alive over the defaultEventHandler call, since that can do things like navigate.
-    {
-        RefPtr<Widget> widget = downcast<RenderWidget>(*renderer).widget();
-        if (widget)
-            widget->handleEvent(event);
-        if (event.defaultHandled())
-            return;
-    }
+    if (RefPtr widget = renderer->widget())
+        widget->handleEvent(event);
+    if (event.defaultHandled())
+        return;
+
     HTMLFrameOwnerElement::defaultEventHandler(event);
 }
 
@@ -219,9 +216,11 @@ bool HTMLPlugInElement::supportsFocus() const
     if (HTMLFrameOwnerElement::supportsFocus())
         return true;
 
-    if (useFallbackContent() || !is<RenderEmbeddedObject>(renderer()))
+    if (useFallbackContent())
         return false;
-    return !downcast<RenderEmbeddedObject>(*renderer()).isPluginUnavailable();
+
+    auto* renderer = dynamicDowncast<RenderEmbeddedObject>(this->renderer());
+    return renderer && !renderer->isPluginUnavailable();
 }
 
 RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition& insertionPosition)
@@ -356,18 +355,21 @@ bool HTMLPlugInElement::requestObject(const String& relativeURL, const String& m
 
 bool HTMLPlugInElement::setReplacement(RenderEmbeddedObject::PluginUnavailabilityReason reason, const String& unavailabilityDescription)
 {
-    if (!is<RenderEmbeddedObject>(renderer()))
-        return false;
+    Ref protectedThis { *this };
+    {
+        CheckedPtr renderer = dynamicDowncast<RenderEmbeddedObject>(this->renderer());
+        if (!renderer)
+            return false;
 
-    if (reason == RenderEmbeddedObject::UnsupportedPlugin)
-        document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Tried to use an unsupported plug-in."_s);
+        if (reason == RenderEmbeddedObject::UnsupportedPlugin)
+            document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Tried to use an unsupported plug-in."_s);
 
-    Ref<HTMLPlugInElement> protectedThis(*this);
-    downcast<RenderEmbeddedObject>(*renderer()).setPluginUnavailabilityReasonWithDescription(reason, unavailabilityDescription);
+        renderer->setPluginUnavailabilityReasonWithDescription(reason, unavailabilityDescription);
+    }
     bool replacementIsObscured = isReplacementObscured();
     // hittest in isReplacementObscured() method could destroy the renderer. Let's refetch it.
-    if (is<RenderEmbeddedObject>(renderer()))
-        downcast<RenderEmbeddedObject>(*renderer()).setUnavailablePluginIndicatorIsHidden(replacementIsObscured);
+    if (CheckedPtr renderer = dynamicDowncast<RenderEmbeddedObject>(this->renderer()))
+        renderer->setUnavailablePluginIndicatorIsHidden(replacementIsObscured);
     return replacementIsObscured;
 }
 
@@ -385,19 +387,20 @@ bool HTMLPlugInElement::isReplacementObscured()
     if (!renderView || !document().view() || &document().topDocument() != topDocument.ptr())
         return false;
 
-    if (!renderer() || !is<RenderEmbeddedObject>(*renderer()))
+    CheckedPtr pluginRenderer = dynamicDowncast<RenderEmbeddedObject>(renderer());
+    if (!pluginRenderer)
         return false;
-    auto& pluginRenderer = downcast<RenderEmbeddedObject>(*renderer());
+
     // Check the opacity of each layer containing the element or its ancestors.
     float opacity = 1.0;
-    for (auto* layer = pluginRenderer.enclosingLayer(); layer; layer = layer->parent()) {
+    for (auto* layer = pluginRenderer->enclosingLayer(); layer; layer = layer->parent()) {
         opacity *= layer->renderer().style().opacity();
         if (opacity < 0.1)
             return true;
     }
     // Calculate the absolute rect for the blocked plugin replacement text.
-    LayoutPoint absoluteLocation(pluginRenderer.absoluteBoundingBoxRect().location());
-    LayoutRect rect = pluginRenderer.unavailablePluginIndicatorBounds(absoluteLocation);
+    LayoutPoint absoluteLocation(pluginRenderer->absoluteBoundingBoxRect().location());
+    LayoutRect rect = pluginRenderer->unavailablePluginIndicatorBounds(absoluteLocation);
     if (rect.isEmpty())
         return true;
     auto viewRect = document().view()->convertToRootView(snappedIntRect(rect));
@@ -413,27 +416,27 @@ bool HTMLPlugInElement::isReplacementObscured()
     ASSERT(!renderView->needsLayout());
     ASSERT(!renderView->document().needsStyleRecalc());
     bool hit = topDocument->hitTest(hitType, location, result);
-    if (!hit || result.innerNode() != &pluginRenderer.frameOwnerElement())
+    if (!hit || result.innerNode() != &pluginRenderer->frameOwnerElement())
         return true;
 
     location = LayoutPoint(x, y);
     hit = topDocument->hitTest(hitType, location, result);
-    if (!hit || result.innerNode() != &pluginRenderer.frameOwnerElement())
+    if (!hit || result.innerNode() != &pluginRenderer->frameOwnerElement())
         return true;
 
     location = LayoutPoint(x + width, y);
     hit = topDocument->hitTest(hitType, location, result);
-    if (!hit || result.innerNode() != &pluginRenderer.frameOwnerElement())
+    if (!hit || result.innerNode() != &pluginRenderer->frameOwnerElement())
         return true;
 
     location = LayoutPoint(x + width, y + height);
     hit = topDocument->hitTest(hitType, location, result);
-    if (!hit || result.innerNode() != &pluginRenderer.frameOwnerElement())
+    if (!hit || result.innerNode() != &pluginRenderer->frameOwnerElement())
         return true;
 
     location = LayoutPoint(x, y + height);
     hit = topDocument->hitTest(hitType, location, result);
-    if (!hit || result.innerNode() != &pluginRenderer.frameOwnerElement())
+    if (!hit || result.innerNode() != &pluginRenderer->frameOwnerElement())
         return true;
     return false;
 }

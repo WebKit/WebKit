@@ -214,11 +214,8 @@ void HTMLFrameSetElement::removedFromAncestor(RemovalType removalType, Container
 
 WindowProxy* HTMLFrameSetElement::namedItem(const AtomString& name)
 {
-    RefPtr frameElement = children()->namedItem(name);
-    if (!is<HTMLFrameElement>(frameElement))
-        return nullptr;
-
-    return downcast<HTMLFrameElement>(*frameElement).contentWindow();
+    RefPtr frameElement = dynamicDowncast<HTMLFrameElement>(children()->namedItem(name));
+    return frameElement ? frameElement->contentWindow() : nullptr;
 }
 
 bool HTMLFrameSetElement::isSupportedPropertyName(const AtomString& name)
