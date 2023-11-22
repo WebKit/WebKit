@@ -329,7 +329,6 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         return { };
     }
 
-#if ENABLE(TRACKING_PREVENTION)
     auto reportRegistrableDomain = [domain = RegistrableDomain(m_url).isolatedCopy()](auto& context) mutable {
         if (RefPtr frame = downcast<Document>(context).frame())
             frame->loader().client().didLoadFromRegistrableDomain(WTFMove(domain));
@@ -338,7 +337,6 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         reportRegistrableDomain(context);
     else
         downcast<WorkerGlobalScope>(context).thread().workerLoaderProxy().postTaskToLoader(WTFMove(reportRegistrableDomain));
-#endif
 
     m_pendingActivity = makePendingActivity(*this);
 

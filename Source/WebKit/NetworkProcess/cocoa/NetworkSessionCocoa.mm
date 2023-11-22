@@ -549,7 +549,6 @@ static String stringForSSLCipher(SSLCipherSuite cipher)
     completionHandler(WebCore::createHTTPBodyNSInputStream(body.releaseNonNull()).get());
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 static NSURLRequest* downgradeRequest(NSURLRequest *request)
 {
     auto nsMutableRequest = adoptNS([request mutableCopy]);
@@ -570,7 +569,6 @@ static bool schemeWasUpgradedDueToDynamicHSTS(NSURLRequest *request)
     return [request respondsToSelector:@selector(_schemeWasUpgradedDueToDynamicHSTS)]
         && [request _schemeWasUpgradedDueToDynamicHSTS];
 }
-#endif
 
 static void setIgnoreHSTS(NSMutableURLRequest *request, bool ignoreHSTS)
 {
@@ -613,7 +611,6 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
 
     if (auto networkDataTask = [self existingTask:task]) {
         bool shouldIgnoreHSTS = false;
-#if ENABLE(TRACKING_PREVENTION)
         if (auto* sessionCocoa = networkDataTask->networkSession()) {
             auto* storageSession = sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID());
             NSURL *firstPartyForCookies = networkDataTask->isTopLevelNavigation() ? request.URL : request.mainDocumentURL;
@@ -626,7 +623,6 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
             }
         } else
             ASSERT_NOT_REACHED();
-#endif
 
         WebCore::ResourceResponse resourceResponse(response);
         networkDataTask->checkTAO(resourceResponse);
@@ -665,7 +661,6 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
 
     if (auto networkDataTask = [self existingTask:task]) {
         bool shouldIgnoreHSTS = false;
-#if ENABLE(TRACKING_PREVENTION)
         if (auto* sessionCocoa = networkDataTask->networkSession()) {
             auto* storageSession = sessionCocoa->networkProcess().storageSession(sessionCocoa->sessionID());
             shouldIgnoreHSTS = schemeWasUpgradedDueToDynamicHSTS(request)
@@ -677,7 +672,6 @@ static void updateIgnoreStrictTransportSecuritySetting(RetainPtr<NSURLRequest>& 
             }
         } else
             ASSERT_NOT_REACHED();
-#endif
 
         WebCore::ResourceResponse synthesizedResponse = WebCore::synthesizeRedirectResponseIfNecessary([task currentRequest], request, nil);
         NSString *origin = [request valueForHTTPHeaderField:@"Origin"] ?: @"*";
@@ -1574,16 +1568,12 @@ SessionWrapper& NetworkSessionCocoa::sessionWrapperForTask(WebPageProxyIdentifie
     if (isParentProcessAFullWebBrowser(networkProcess()))
         shouldBeConsideredAppBound = NavigatingToAppBoundDomain::No;
 
-#if ENABLE(TRACKING_PREVENTION)
     if (auto* storageSession = networkStorageSession()) {
         auto firstParty = WebCore::RegistrableDomain(request.firstPartyForCookies());
         if (storageSession->shouldBlockThirdPartyCookiesButKeepFirstPartyCookiesFor(firstParty))
             return sessionSetForPage(webPageProxyID).isolatedSession(storedCredentialsPolicy, firstParty, shouldBeConsideredAppBound, *this);
     } else
         ASSERT_NOT_REACHED();
-#else
-    UNUSED_PARAM(request);
-#endif
 
 #if ENABLE(APP_BOUND_DOMAINS)
     if (shouldBeConsideredAppBound == NavigatingToAppBoundDomain::Yes)

@@ -425,11 +425,9 @@ private:
 
     void didInvalidateDocumentMarkerRects() final;
 
-#if ENABLE(TRACKING_PREVENTION)
     void hasStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebCore::LocalFrame&, WTF::CompletionHandler<void(bool)>&&) final;
     void requestStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebCore::LocalFrame&, WebCore::StorageAccessScope, WTF::CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&) final;
     bool hasPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain) const final;
-#endif
 
 #if ENABLE(DEVICE_ORIENTATION)
     void shouldAllowDeviceOrientationAndMotionAccess(WebCore::LocalFrame&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&) final;

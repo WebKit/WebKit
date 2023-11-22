@@ -208,9 +208,7 @@ public:
     
     PAL::SessionID sessionID() const { ASSERT(m_sessionID); return *m_sessionID; }
 
-#if ENABLE(TRACKING_PREVENTION)
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode() const { return m_thirdPartyCookieBlockingMode; }
-#endif
 
 #if PLATFORM(COCOA)
     const WTF::MachSendRight& compositingRenderServerPort() const { return m_compositingRenderServerPort; }
@@ -576,12 +574,10 @@ private:
 
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode, CompletionHandler<void()>&&);
     void setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&&);
     void setDomainsWithCrossPageStorageAccess(HashMap<TopFrameDomain, SubResourceDomain>&&, CompletionHandler<void()>&&);
     void sendResourceLoadStatisticsDataImmediately(CompletionHandler<void()>&&);
-#endif
 
 #if HAVE(DISPLAY_LINK)
     void displayDidRefresh(uint32_t displayID, const WebCore::DisplayUpdate&);
@@ -807,9 +803,7 @@ private:
     // By the time the WebProcess gets a WebPage, it is guaranteed to have a sessionID.
     std::optional<PAL::SessionID> m_sessionID;
 
-#if ENABLE(TRACKING_PREVENTION)
     WebCore::ThirdPartyCookieBlockingMode m_thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
-#endif
 
     Vector<RefPtr<SandboxExtension>> m_assetServicesExtensions;
 

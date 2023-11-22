@@ -40,10 +40,8 @@ struct ResourceLoadStatisticsParameters {
     bool enableLogTestingEvent { false };
     bool shouldIncludeLocalhost { true };
     bool enableDebugMode { false };
-#if ENABLE(TRACKING_PREVENTION)
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode { WebCore::ThirdPartyCookieBlockingMode::All };
     WebCore::SameSiteStrictEnforcementEnabled sameSiteStrictEnforcementEnabled { WebCore::SameSiteStrictEnforcementEnabled::No };
-#endif
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode { WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies };
     WebCore::RegistrableDomain standaloneApplicationDomain;
     HashSet<WebCore::RegistrableDomain> appBoundDomains;

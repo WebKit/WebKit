@@ -67,7 +67,6 @@ bool NetworkTaskCocoa::shouldApplyCookiePolicyForThirdPartyCloaking() const
     return m_networkSession->networkStorageSession() && m_networkSession->networkStorageSession()->trackingPreventionEnabled();
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 NSHTTPCookieStorage *NetworkTaskCocoa::statelessCookieStorage()
 {
     static NeverDestroyed<RetainPtr<NSHTTPCookieStorage>> statelessCookieStorage;
@@ -125,7 +124,6 @@ bool NetworkTaskCocoa::needsFirstPartyCookieBlockingLatchModeQuirk(const URL& fi
 
     return quirk->value == requestDomain;
 }
-#endif
 
 void NetworkTaskCocoa::applyCookiePolicyForThirdPartyCloaking(const WebCore::ResourceRequest& request)
 {
@@ -245,7 +243,6 @@ void NetworkTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& re
     request.setIsAppInitiated(request.nsURLRequest(WebCore::HTTPBodyUpdatePolicy::DoNotUpdateHTTPBody).attribution == NSURLRequestAttributionDeveloper);
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     applyCookiePolicyForThirdPartyCloaking(request);
     if (!m_hasBeenSetToUseStatelessCookieStorage) {
         if (storedCredentialsPolicy() == WebCore::StoredCredentialsPolicy::EphemeralStateless
@@ -258,7 +255,6 @@ void NetworkTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& re
         RELEASE_LOG_IF(isAlwaysOnLoggingAllowed(), Network, "%p - NetworkTaskCocoa::willPerformHTTPRedirection::logCookieInformation: pageID=%" PRIu64 ", frameID=%" PRIu64 ", taskID=%lu: %s cookies for redirect URL %s", this, pageID()->toUInt64(), frameID()->object().toUInt64(), (unsigned long)[task() taskIdentifier], (m_hasBeenSetToUseStatelessCookieStorage ? "Blocking" : "Not blocking"), request.url().string().utf8().data());
 #else
     LOG(NetworkSession, "%lu %s cookies for redirect URL %s", (unsigned long)[task() taskIdentifier], (m_hasBeenSetToUseStatelessCookieStorage ? "Blocking" : "Not blocking"), request.url().string().utf8().data());
-#endif
 #endif
 
     updateTaskWithFirstPartyForSameSiteCookies(task(), request);

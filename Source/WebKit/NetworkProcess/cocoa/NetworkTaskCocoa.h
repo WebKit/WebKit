@@ -55,7 +55,6 @@ public:
 protected:
     NetworkTaskCocoa(NetworkSession&, WebCore::ShouldRelaxThirdPartyCookieBlocking);
 
-#if ENABLE(TRACKING_PREVENTION)
     static NSHTTPCookieStorage *statelessCookieStorage();
     bool shouldApplyCookiePolicyForThirdPartyCloaking() const;
     void applyCookiePolicyForThirdPartyCloaking(const WebCore::ResourceRequest&);
@@ -65,7 +64,6 @@ protected:
     bool needsFirstPartyCookieBlockingLatchModeQuirk(const URL& firstPartyURL, const URL& requestURL, const URL& redirectingURL) const;
     static NSString *lastRemoteIPAddress(NSURLSessionTask *);
     static WebCore::RegistrableDomain lastCNAMEDomain(String);
-#endif
 
     bool isAlwaysOnLoggingAllowed() const { return m_isAlwaysOnLoggingAllowed; }
     virtual NSURLSessionTask* task() const = 0;
@@ -73,10 +71,8 @@ protected:
 
 private:
     WeakPtr<NetworkSession> m_networkSession;
-#if ENABLE(TRACKING_PREVENTION)
     bool m_hasBeenSetToUseStatelessCookieStorage { false };
     Seconds m_ageCapForCNAMECloakedCookies { 24_h * 7 };
-#endif
     bool m_isAlwaysOnLoggingAllowed { false };
     WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
 };

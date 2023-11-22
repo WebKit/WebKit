@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(TRACKING_PREVENTION)
-
 #include "ITPThirdPartyDataForSpecificFirstParty.h"
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/Forward.h>
@@ -44,5 +42,3 @@ struct ITPThirdPartyData {
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(TRACKING_PREVENTION)

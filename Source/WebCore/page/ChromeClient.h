@@ -584,11 +584,9 @@ public:
     virtual void reportProcessCPUTime(Seconds, ActivityStateForCPUSampling) { }
     virtual RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) = 0;
 
-#if ENABLE(TRACKING_PREVENTION)
     virtual void hasStorageAccess(RegistrableDomain&& /*subFrameDomain*/, RegistrableDomain&& /*topFrameDomain*/, LocalFrame&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
     virtual void requestStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, LocalFrame&, StorageAccessScope scope, CompletionHandler<void(RequestStorageAccessResult)>&& completionHandler) { completionHandler({ StorageAccessWasGranted::No, StorageAccessPromptWasShown::No, scope, WTFMove(topFrameDomain), WTFMove(subFrameDomain) }); }
     virtual bool hasPageLevelStorageAccess(const RegistrableDomain& /*topLevelDomain*/, const RegistrableDomain& /*resourceDomain*/) const { return false; }
-#endif
 
 #if ENABLE(DEVICE_ORIENTATION)
     virtual void shouldAllowDeviceOrientationAndMotionAccess(LocalFrame&, bool /* mayPrompt */, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback) { callback(DeviceOrientationOrMotionPermissionState::Denied); }

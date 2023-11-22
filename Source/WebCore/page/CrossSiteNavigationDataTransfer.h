@@ -25,7 +25,6 @@
 
 #pragma once
 
-#if ENABLE(TRACKING_PREVENTION)
 #include <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -40,5 +39,3 @@ struct CrossSiteNavigationDataTransfer {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(TRACKING_PREVENTION)

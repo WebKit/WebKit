@@ -198,9 +198,7 @@ private:
     RefPtr<LegacyPreviewLoaderClient> createPreviewLoaderClient(const String&, const String&) final;
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     bool hasFrameSpecificStorageAccess() final;
-#endif
 
     void dispatchLoadEventToOwnerElementInAnotherProcess() final;
 };

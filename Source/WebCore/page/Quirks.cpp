@@ -1027,7 +1027,6 @@ bool Quirks::shouldAvoidPastingImagesAsWebContent() const
 #endif
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 // kinja.com and related sites rdar://60601895
 static bool isKinjaLoginAvatarElement(const Element& element)
 {
@@ -1129,7 +1128,6 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
     });
     return Quirks::StorageAccessResult::ShouldCancelEvent;
 }
-#endif
 
 // rdar://64549429
 Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& element, const PlatformMouseEvent& platformEvent, const AtomString& eventType, int detail, Element* relatedTarget, bool isParentProcessAFullWebBrowser, IsSyntheticClick isSyntheticClick) const
@@ -1137,7 +1135,6 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
     if (!DeprecatedGlobalSettings::trackingPreventionEnabled() || !isParentProcessAFullWebBrowser)
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 
-#if ENABLE(TRACKING_PREVENTION)
     if (!needsQuirks())
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 
@@ -1220,14 +1217,6 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
             });
         }
     }
-#else
-    UNUSED_PARAM(element);
-    UNUSED_PARAM(platformEvent);
-    UNUSED_PARAM(eventType);
-    UNUSED_PARAM(detail);
-    UNUSED_PARAM(relatedTarget);
-    UNUSED_PARAM(isSyntheticClick);
-#endif
     return Quirks::StorageAccessResult::ShouldNotCancelEvent;
 }
 

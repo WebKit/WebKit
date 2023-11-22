@@ -1393,7 +1393,6 @@ public:
 
     void flushPendingEditorStateUpdate();
 
-#if ENABLE(TRACKING_PREVENTION)
     void hasStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebFrame&, CompletionHandler<void(bool)>&&);
     void requestStorageAccess(WebCore::RegistrableDomain&& subFrameDomain, WebCore::RegistrableDomain&& topFrameDomain, WebFrame&, WebCore::StorageAccessScope, CompletionHandler<void(WebCore::RequestStorageAccessResult)>&&);
     bool hasPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain) const;
@@ -1404,7 +1403,6 @@ public:
     void clearLoadedSubresourceDomains();
     void getLoadedSubresourceDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>)>&&);
     const HashSet<WebCore::RegistrableDomain>& loadedSubresourceDomains() const { return m_loadedSubresourceDomains; }
-#endif
 
 #if ENABLE(DEVICE_ORIENTATION)
     void shouldAllowDeviceOrientationAndMotionAccess(WebCore::FrameIdentifier, FrameInfoData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
@@ -2566,10 +2564,8 @@ private:
     WebCore::Timer m_textAutoSizingAdjustmentTimer;
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> m_domainsWithPageLevelStorageAccess;
     HashSet<WebCore::RegistrableDomain> m_loadedSubresourceDomains;
-#endif
 
     AtomString m_overriddenMediaType;
     String m_processDisplayName;

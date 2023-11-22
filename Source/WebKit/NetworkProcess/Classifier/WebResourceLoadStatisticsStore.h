@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(TRACKING_PREVENTION)
-
 #include "ArgumentCoders.h"
 #include "Decoder.h"
 #include "Encoder.h"
@@ -262,5 +260,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif

@@ -7197,9 +7197,7 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_elementsPendingTextRecognition.clear();
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     clearLoadedSubresourceDomains();
-#endif
     
     // If previous URL is invalid, then it's not a real page that's being navigated away from.
     // Most likely, this is actually the first load to be committed in this page.
@@ -7839,7 +7837,6 @@ void WebPage::setIsSuspended(bool suspended)
     suspendForProcessSwap();
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 void WebPage::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, WebFrame& frame, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (hasPageLevelStorageAccess(topFrameDomain, subFrameDomain)) {
@@ -7911,8 +7908,6 @@ void WebPage::clearLoadedSubresourceDomains()
 {
     m_loadedSubresourceDomains.clear();
 }
-
-#endif
 
 #if ENABLE(DEVICE_ORIENTATION)
 void WebPage::shouldAllowDeviceOrientationAndMotionAccess(FrameIdentifier frameID, FrameInfoData&& frameInfo, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& completionHandler)

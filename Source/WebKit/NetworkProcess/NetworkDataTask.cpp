@@ -205,10 +205,8 @@ NetworkSession* NetworkDataTask::networkSession()
 
 void NetworkDataTask::restrictRequestReferrerToOriginIfNeeded(WebCore::ResourceRequest& request)
 {
-#if ENABLE(TRACKING_PREVENTION)
     if ((m_session->sessionID().isEphemeral() || m_session->isTrackingPreventionEnabled()) && m_session->shouldDowngradeReferrer() && request.isThirdParty())
         request.setExistingHTTPReferrerToOriginString();
-#endif
 }
 
 String NetworkDataTask::attributedBundleIdentifier(WebPageProxyIdentifier pageID)

@@ -168,7 +168,6 @@ std::unique_ptr<Entry> Entry::decodeStorageRecord(const Storage::Record& storage
     return entry;
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 bool Entry::hasReachedPrevalentResourceAgeCap() const
 {
     return m_maxAgeCap && WebCore::computeCurrentAge(response(), timeStamp()) > m_maxAgeCap;
@@ -178,7 +177,6 @@ void Entry::capMaxAge(const Seconds seconds)
 {
     m_maxAgeCap = seconds;
 }
-#endif
 
 void Entry::initializeBufferFromStorageRecord() const
 {

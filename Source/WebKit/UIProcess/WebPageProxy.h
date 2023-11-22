@@ -1833,12 +1833,10 @@ public:
     void scheduleFullEditorStateUpdate();
     void dispatchDidUpdateEditorState();
 
-#if ENABLE(TRACKING_PREVENTION)
     void requestStorageAccessConfirm(const WebCore::RegistrableDomain& subFrameDomain, const WebCore::RegistrableDomain& topFrameDomain, WebCore::FrameIdentifier, CompletionHandler<void(bool)>&&);
     void didCommitCrossSiteLoadWithDataTransferFromPrevalentResource();
     void getLoadedSubresourceDomains(CompletionHandler<void(Vector<WebCore::RegistrableDomain>&&)>&&);
     void clearLoadedSubresourceDomains();
-#endif
 
 #if ENABLE(DEVICE_ORIENTATION)
     void shouldAllowDeviceOrientationAndMotionAccess(WebCore::FrameIdentifier, FrameInfoData&&, bool mayPrompt, CompletionHandler<void(WebCore::DeviceOrientationOrMotionPermissionState)>&&);
@@ -2793,9 +2791,7 @@ private:
 
     void didAttachToRunningProcess();
 
-#if ENABLE(TRACKING_PREVENTION)
     void logFrameNavigation(const WebFrameProxy&, const URL& pageURL, const WebCore::ResourceRequest&, const URL& redirectURL, bool wasPotentiallyInitiatedByUser);
-#endif
 
 #if ENABLE(SPEECH_SYNTHESIS)
     void resetSpeechSynthesizer();

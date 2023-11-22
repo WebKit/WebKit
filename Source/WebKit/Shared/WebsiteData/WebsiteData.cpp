@@ -103,9 +103,7 @@ WebsiteData WebsiteData::isolatedCopy() const &
         crossThreadCopy(entries),
         crossThreadCopy(hostNamesWithCookies),
         crossThreadCopy(hostNamesWithHSTSCache),
-#if ENABLE(TRACKING_PREVENTION)
         crossThreadCopy(registrableDomainsWithResourceLoadStatistics),
-#endif
     };
 }
 
@@ -115,9 +113,7 @@ WebsiteData WebsiteData::isolatedCopy() &&
         crossThreadCopy(WTFMove(entries)),
         crossThreadCopy(WTFMove(hostNamesWithCookies)),
         crossThreadCopy(WTFMove(hostNamesWithHSTSCache)),
-#if ENABLE(TRACKING_PREVENTION)
         crossThreadCopy(WTFMove(registrableDomainsWithResourceLoadStatistics)),
-#endif
     };
 }
 

@@ -110,7 +110,6 @@ static NSString* applicationOrProcessIdentifier()
     return identifier;
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlockingMode() const
 {
     if (!m_thirdPartyCookieBlockingMode) {
@@ -121,7 +120,6 @@ WebCore::ThirdPartyCookieBlockingMode WebsiteDataStore::thirdPartyCookieBlocking
     }
     return *m_thirdPartyCookieBlockingMode;
 }
-#endif
 
 void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& parameters)
 {
@@ -132,7 +130,6 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     auto sameSiteStrictEnforcementEnabled = WebCore::SameSiteStrictEnforcementEnabled::No;
     auto firstPartyWebsiteDataRemovalMode = WebCore::FirstPartyWebsiteDataRemovalMode::AllButCookies;
     WebCore::RegistrableDomain resourceLoadStatisticsManualPrevalentResource { };
-#if ENABLE(TRACKING_PREVENTION)
     if (experimentalFeatureEnabled(WebPreferencesKey::isSameSiteStrictEnforcementEnabledKey()))
         sameSiteStrictEnforcementEnabled = WebCore::SameSiteStrictEnforcementEnabled::Yes;
 
@@ -158,7 +155,6 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
     shouldLogCookieInformation = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
 #endif
-#endif // ENABLE(TRACKING_PREVENTION)
 
     URL httpProxy = m_configuration->httpProxy();
     URL httpsProxy = m_configuration->httpsProxy();

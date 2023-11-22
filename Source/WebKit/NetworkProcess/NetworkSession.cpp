@@ -123,7 +123,6 @@ static Ref<NetworkStorageManager> createNetworkStorageManager(NetworkProcess& ne
 NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSessionCreationParameters& parameters)
     : m_sessionID(parameters.sessionID)
     , m_networkProcess(networkProcess)
-#if ENABLE(TRACKING_PREVENTION)
     , m_resourceLoadStatisticsDirectory(parameters.resourceLoadStatisticsParameters.directory)
     , m_shouldIncludeLocalhostInResourceLoadStatistics(parameters.resourceLoadStatisticsParameters.shouldIncludeLocalhost ? ShouldIncludeLocalhost::Yes : ShouldIncludeLocalhost::No)
     , m_enableResourceLoadStatisticsDebugMode(parameters.resourceLoadStatisticsParameters.enableDebugMode ? EnableResourceLoadStatisticsDebugMode::Yes : EnableResourceLoadStatisticsDebugMode::No)
@@ -133,7 +132,6 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_sameSiteStrictEnforcementEnabled(parameters.resourceLoadStatisticsParameters.sameSiteStrictEnforcementEnabled)
     , m_firstPartyWebsiteDataRemovalMode(parameters.resourceLoadStatisticsParameters.firstPartyWebsiteDataRemovalMode)
     , m_standaloneApplicationDomain(parameters.resourceLoadStatisticsParameters.standaloneApplicationDomain)
-#endif
     , m_privateClickMeasurement(managerOrProxy(*this, networkProcess, parameters))
     , m_privateClickMeasurementDebugModeEnabled(parameters.enablePrivateClickMeasurementDebugMode)
     , m_broadcastChannelRegistry(makeUniqueRef<NetworkBroadcastChannelRegistry>(networkProcess))
@@ -178,9 +176,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
     m_isStaleWhileRevalidateEnabled = parameters.staleWhileRevalidateEnabled;
 
-#if ENABLE(TRACKING_PREVENTION)
     setTrackingPreventionEnabled(parameters.resourceLoadStatisticsParameters.enabled);
-#endif
 
     setBlobRegistryTopOriginPartitioningEnabled(parameters.isBlobRegistryTopOriginPartitioningEnabled);
 
@@ -195,14 +191,11 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
 NetworkSession::~NetworkSession()
 {
-#if ENABLE(TRACKING_PREVENTION)
     destroyResourceLoadStatistics([] { });
-#endif
     for (auto& loader : std::exchange(m_keptAliveLoads, { }))
         loader->abort();
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 void NetworkSession::destroyResourceLoadStatistics(CompletionHandler<void()>&& completionHandler)
 {
     if (!m_resourceLoadStatistics)
@@ -211,17 +204,14 @@ void NetworkSession::destroyResourceLoadStatistics(CompletionHandler<void()>&& c
     m_resourceLoadStatistics->didDestroyNetworkSession(WTFMove(completionHandler));
     m_resourceLoadStatistics = nullptr;
 }
-#endif
 
 void NetworkSession::invalidateAndCancel()
 {
     m_dataTaskSet.forEach([] (auto& task) {
         task.invalidateAndCancel();
     });
-#if ENABLE(TRACKING_PREVENTION)
     if (m_resourceLoadStatistics)
         m_resourceLoadStatistics->invalidateAndCancel();
-#endif
 #if ASSERT_ENABLED
     m_isInvalidated = true;
 #endif
@@ -238,7 +228,6 @@ void NetworkSession::destroyPrivateClickMeasurementStore(CompletionHandler<void(
     privateClickMeasurement().destroyStoreForTesting(WTFMove(completionHandler));
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 void NetworkSession::setTrackingPreventionEnabled(bool enable)
 {
     ASSERT(!m_isInvalidated);
@@ -375,7 +364,6 @@ std::optional<WebCore::IPAddress> NetworkSession::firstPartyHostIPAddress(const 
 
     return { iterator->value };
 }
-#endif // ENABLE(TRACKING_PREVENTION)
 
 void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasurement&& unattributedPrivateClickMeasurement)
 {

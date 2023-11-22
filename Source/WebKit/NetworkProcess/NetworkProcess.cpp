@@ -602,31 +602,26 @@ void NetworkProcess::destroySession(PAL::SessionID sessionID, CompletionHandler<
 
 void NetworkProcess::registrableDomainsWithLastAccessedTime(PAL::SessionID sessionID, CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>)>&& completionHandler)
 {
-#if ENABLE(TRACKING_PREVENTION)
     if (auto* session = networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = session->resourceLoadStatistics()) {
             resourceLoadStatistics->registrableDomainsWithLastAccessedTime(WTFMove(completionHandler));
             return;
         }
     }
-#endif
     completionHandler(std::nullopt);
 }
 
 void NetworkProcess::registrableDomainsExemptFromWebsiteDataDeletion(PAL::SessionID sessionID, CompletionHandler<void(HashSet<RegistrableDomain>)>&& completionHandler)
 {
-#if ENABLE(TRACKING_PREVENTION)
     if (auto* session = networkSession(sessionID)) {
         if (auto* resourceLoadStatistics = session->resourceLoadStatistics()) {
             resourceLoadStatistics->registrableDomainsExemptFromWebsiteDataDeletion(WTFMove(completionHandler));
             return;
         }
     }
-#endif
     completionHandler({ });
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 void NetworkProcess::dumpResourceLoadStatistics(PAL::SessionID sessionID, CompletionHandler<void(String)>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID)) {
@@ -1409,7 +1404,6 @@ void NetworkProcess::setThirdPartyCNAMEDomainForTesting(PAL::SessionID sessionID
         session->setThirdPartyCNAMEDomainForTesting(WTFMove(domain));
     completionHandler();
 }
-#endif // ENABLE(TRACKING_PREVENTION)
 
 void NetworkProcess::setPrivateClickMeasurementEnabled(bool enabled)
 {
@@ -1589,7 +1583,6 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
     }
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     if (websiteDataTypes.contains(WebsiteDataType::ResourceLoadStatistics) && session) {
         if (auto* resourceLoadStatistics = session->resourceLoadStatistics()) {
             resourceLoadStatistics->registrableDomains([callbackAggregator](auto&& domains) mutable {
@@ -1598,7 +1591,6 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
             });
         }
     }
-#endif
 
     if (NetworkStorageManager::canHandleTypes(websiteDataTypes) && session) {
         auto shouldComputeSize = fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes) ? NetworkStorageManager::ShouldComputeSize::Yes : NetworkStorageManager::ShouldComputeSize::No;
@@ -1646,7 +1638,6 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
     }
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     if (websiteDataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
         if (auto* resourceLoadStatistics = session ? session->resourceLoadStatistics() : nullptr) {
             // If we are deleting all of the data types that the resource load statistics store monitors
@@ -1655,7 +1646,6 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
             resourceLoadStatistics->scheduleClearInMemoryAndPersistent(modifiedSince, shouldGrandfather, [clearTasksHandler] { });
         }
     }
-#endif
 
     if (session)
         session->removeNetworkWebsiteData(modifiedSince, std::nullopt, [clearTasksHandler] { });
@@ -1786,14 +1776,12 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
             session->removeCredentialsForOrigins(originDatas);
     }
 
-#if ENABLE(TRACKING_PREVENTION)
     if (websiteDataTypes.contains(WebsiteDataType::ResourceLoadStatistics) && session) {
         for (auto& domain : registrableDomains) {
             if (auto* resourceLoadStatistics = session->resourceLoadStatistics())
                 resourceLoadStatistics->removeDataForDomain(domain, [clearTasksHandler] { });
         }
     }
-#endif
 
     if (NetworkStorageManager::canHandleTypes(websiteDataTypes) && session)
         session->storageManager().deleteData(websiteDataTypes, originDatas, [clearTasksHandler] { });
@@ -1813,7 +1801,6 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
     }
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 static Vector<String> filterForRegistrableDomains(const Vector<RegistrableDomain>& registrableDomains, const HashSet<String>& foundValues)
 {
     Vector<String> result;
@@ -2096,8 +2083,6 @@ void NetworkProcess::closeITPDatabase(PAL::SessionID sessionID, CompletionHandle
     completionHandler();
 }
 
-#endif // ENABLE(TRACKING_PREVENTION)
-
 void NetworkProcess::downloadRequest(PAL::SessionID sessionID, DownloadID downloadID, const ResourceRequest& request, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain> isNavigatingToAppBoundDomain, const String& suggestedFilename)
 {
     downloadManager().startDownload(sessionID, downloadID, request, topOrigin, isNavigatingToAppBoundDomain, suggestedFilename);
@@ -2259,9 +2244,7 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime e
         completionHandler();
     });
     
-#if ENABLE(TRACKING_PREVENTION)
     WebResourceLoadStatisticsStore::suspend([callbackAggregator] { });
-#endif
     PCM::PersistentStore::prepareForProcessToSuspend([callbackAggregator] { });
 
     forEachNetworkSession([&] (auto& session) {
@@ -2292,9 +2275,7 @@ void NetworkProcess::processDidResume(bool forForegroundActivity)
     for (auto& connection : m_webProcessConnections.values())
         connection->endSuspension();
 
-#if ENABLE(TRACKING_PREVENTION)
     WebResourceLoadStatisticsStore::resume();
-#endif
     PCM::PersistentStore::processDidResume();
 
     forEachNetworkSession([](auto& session) {

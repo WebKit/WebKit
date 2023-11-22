@@ -25,7 +25,6 @@
 
 #include "config.h"
 
-#if ENABLE(TRACKING_PREVENTION)
 #include "ITPThirdPartyData.h"
 
 namespace WebKit {
@@ -46,5 +45,3 @@ bool ITPThirdPartyData::operator<(const ITPThirdPartyData& other) const
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(TRACKING_PREVENTION)

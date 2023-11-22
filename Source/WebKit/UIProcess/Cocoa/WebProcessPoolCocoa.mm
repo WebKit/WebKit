@@ -149,7 +149,7 @@ static NSString * const WebKitSuppressMemoryPressureHandlerDefaultsKey = @"WebKi
 
 static NSString * const WebKitMediaStreamingActivity = @"WebKitMediaStreamingActivity";
 
-#if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
 static NSString * const WebKitLogCookieInformationDefaultsKey = @"WebKitLogCookieInformation";
 #endif
 
@@ -396,7 +396,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
     parameters.networkATSContext = adoptCF(_CFNetworkCopyATSContext());
 
-#if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
     parameters.shouldLogUserInteraction = [defaults boolForKey:WebKitLogCookieInformationDefaultsKey];
 #endif
 

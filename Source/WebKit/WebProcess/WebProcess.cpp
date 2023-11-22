@@ -603,7 +603,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
 #endif
     SharedWorkerProvider::setSharedProvider(WebSharedWorkerProvider::singleton());
 
-#if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
     WebResourceLoadObserver::setShouldLogUserInteraction(parameters.shouldLogUserInteraction);
 #endif
 
@@ -638,7 +638,6 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
 
     setTrackingPreventionEnabled(parameters.trackingPreventionEnabled);
 
-#if ENABLE(TRACKING_PREVENTION)
     m_thirdPartyCookieBlockingMode = parameters.thirdPartyCookieBlockingMode;
     if (parameters.trackingPreventionEnabled) {
         if (!ResourceLoadObserver::sharedIfExists())
@@ -647,8 +646,6 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
         if (!parameters.sessionID.isEphemeral())
             ResourceLoadObserver::shared().setDomainsWithCrossPageStorageAccess(WTFMove(parameters.domainsWithStorageAccessQuirk), [] { });
     }
-    
-#endif
 
     m_mediaKeysStorageDirectory = parameters.mediaKeyStorageDirectory;
     m_mediaKeysStorageSalt = parameters.mediaKeysStorageSalt;
@@ -1820,36 +1817,28 @@ void WebProcess::setTrackingPreventionEnabled(bool enabled)
     if (WebCore::DeprecatedGlobalSettings::trackingPreventionEnabled() == enabled)
         return;
     WebCore::DeprecatedGlobalSettings::setTrackingPreventionEnabled(enabled);
-#if ENABLE(TRACKING_PREVENTION)
     if (enabled && !ResourceLoadObserver::sharedIfExists())
         WebCore::ResourceLoadObserver::setShared(*new WebResourceLoadObserver(m_sessionID && m_sessionID->isEphemeral() ? WebCore::ResourceLoadStatistics::IsEphemeral::Yes : WebCore::ResourceLoadStatistics::IsEphemeral::No));
-#endif
 }
 
 void WebProcess::clearResourceLoadStatistics()
 {
-#if ENABLE(TRACKING_PREVENTION)
     if (auto* observer = ResourceLoadObserver::sharedIfExists())
         observer->clearState();
     for (auto& page : m_pageMap.values())
         page->clearPageLevelStorageAccess();
-#endif
 }
 
 void WebProcess::flushResourceLoadStatistics()
 {
-#if ENABLE(TRACKING_PREVENTION)
     if (auto* observer = ResourceLoadObserver::sharedIfExists())
         observer->updateCentralStatisticsStore([] { });
-#endif
 }
 
 void WebProcess::seedResourceLoadStatisticsForTesting(const RegistrableDomain& firstPartyDomain, const RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification, CompletionHandler<void()>&& completionHandler)
 {
-#if ENABLE(TRACKING_PREVENTION)
     if (auto* observer = ResourceLoadObserver::sharedIfExists())
         observer->logSubresourceLoadingForTesting(firstPartyDomain, thirdPartyDomain, shouldScheduleNotification);
-#endif
     completionHandler();
 }
 
@@ -2162,7 +2151,6 @@ void WebProcess::displayDidRefresh(uint32_t displayID, const DisplayUpdate& disp
 }
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
 void WebProcess::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode, CompletionHandler<void()>&& completionHandler)
 {
     m_thirdPartyCookieBlockingMode = thirdPartyCookieBlockingMode;
@@ -2187,7 +2175,6 @@ void WebProcess::sendResourceLoadStatisticsDataImmediately(CompletionHandler<voi
 {
     ResourceLoadObserver::shared().updateCentralStatisticsStore(WTFMove(completionHandler));
 }
-#endif
 
 #if ENABLE(GPU_PROCESS)
 void WebProcess::setUseGPUProcessForCanvasRendering(bool useGPUProcessForCanvasRendering)

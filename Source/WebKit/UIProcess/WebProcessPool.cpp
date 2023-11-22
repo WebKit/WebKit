@@ -781,11 +781,9 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         WTFMove(mediaKeyStorageSalt),
         WTFMove(javaScriptConfigurationDirectory),
         WTFMove(javaScriptConfigurationDirectoryExtensionHandle),
-#if ENABLE(TRACKING_PREVENTION)
         websiteDataStore.thirdPartyCookieBlockingMode(),
         m_domainsWithUserInteraction,
         m_domainsWithCrossPageStorageAccessQuirk,
-#endif
 #if ENABLE(ARKIT_INLINE_PREVIEW)
         WTFMove(modelElementCacheDirectory),
         WTFMove(modelElementCacheDirectoryExtensionHandle),
@@ -2092,7 +2090,6 @@ void WebProcessPool::clearCurrentModifierStateForTesting()
     sendToAllProcesses(Messages::WebProcess::ClearCurrentModifierStateForTesting());
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 void WebProcessPool::setDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain>&& domains)
 {
     sendToAllProcesses(Messages::WebProcess::SetDomainsWithUserInteraction(domains));
@@ -2129,7 +2126,6 @@ void WebProcessPool::sendResourceLoadStatisticsDataImmediately(CompletionHandler
         process->sendWithAsyncReply(Messages::WebProcess::SendResourceLoadStatisticsDataImmediately(), [callbackAggregator] { });
     }
 }
-#endif
 
 WebProcessWithAudibleMediaToken WebProcessPool::webProcessWithAudibleMediaToken() const
 {

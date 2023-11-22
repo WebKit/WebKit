@@ -71,14 +71,12 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
 
     ClearPageSpecificData(WebCore::PageIdentifier pageID);
 
-#if ENABLE(TRACKING_PREVENTION)
     RemoveStorageAccessForFrame(WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID);
     LogUserInteraction(WebCore::RegistrableDomain domain)
     ResourceLoadStatisticsUpdated(Vector<WebCore::ResourceLoadStatistics> statistics) -> ()
     HasStorageAccess(WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier pageID) -> (bool hasStorageAccess)
     RequestStorageAccess(WebCore::RegistrableDomain subFrameDomain, WebCore::RegistrableDomain topFrameDomain, WebCore::FrameIdentifier frameID, WebCore::PageIdentifier webPageID, WebKit::WebPageProxyIdentifier webPageProxyID, enum:bool WebCore::StorageAccessScope scope) -> (struct WebCore::RequestStorageAccessResult result)
     RequestStorageAccessUnderOpener(WebCore::RegistrableDomain domainInNeedOfStorageAccess, WebCore::PageIdentifier openerPageID, WebCore::RegistrableDomain openerDomain)
-#endif
 
     AddOriginAccessAllowListEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);
     RemoveOriginAccessAllowListEntry(String sourceOrigin, String destinationProtocol, String destinationHost, bool allowDestinationSubdomains);

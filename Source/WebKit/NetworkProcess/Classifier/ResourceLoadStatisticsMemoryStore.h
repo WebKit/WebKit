@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(TRACKING_PREVENTION)
-
 #include "ResourceLoadStatisticsStore.h"
 #include "WebResourceLoadStatisticsStore.h"
 #include <wtf/CompletionHandler.h>
@@ -146,5 +144,3 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ResourceLoadStatisticsMemoryStore)
     static bool isType(const WebKit::ResourceLoadStatisticsStore& store) { return store.isMemoryStore(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-#endif

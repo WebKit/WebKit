@@ -1716,12 +1716,10 @@ public:
     bool handlingTouchEvent() const { return m_handlingTouchEvent; }
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     WEBCORE_EXPORT bool hasRequestedPageSpecificStorageAccessWithUserInteraction(const RegistrableDomain&);
     WEBCORE_EXPORT void setHasRequestedPageSpecificStorageAccessWithUserInteraction(const RegistrableDomain&);
     WEBCORE_EXPORT void wasLoadedWithDataTransferFromPrevalentResource();
     void downgradeReferrerToRegistrableDomain();
-#endif
 
     void registerArticleElement(Element&);
     void unregisterArticleElement(Element&);
@@ -2256,10 +2254,8 @@ private:
     RefPtr<SWClientConnection> m_serviceWorkerConnection;
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     RegistrableDomain m_registrableDomainRequestedPageSpecificStorageAccessWithUserInteraction { };
     String m_referrerOverride;
-#endif
     
     std::optional<FixedVector<CSSPropertyID>> m_exposedComputedCSSPropertyIDs;
 

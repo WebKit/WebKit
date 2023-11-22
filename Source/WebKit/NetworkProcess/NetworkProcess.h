@@ -217,7 +217,6 @@ public:
 
     void registrableDomainsWithLastAccessedTime(PAL::SessionID, CompletionHandler<void(std::optional<HashMap<RegistrableDomain, WallTime>>)>&&);
     void registrableDomainsExemptFromWebsiteDataDeletion(PAL::SessionID, CompletionHandler<void(HashSet<RegistrableDomain>)>&&);
-#if ENABLE(TRACKING_PREVENTION)
     void clearPrevalentResource(PAL::SessionID, RegistrableDomain&&, CompletionHandler<void()>&&);
     void clearUserInteraction(PAL::SessionID, RegistrableDomain&&, CompletionHandler<void()>&&);
     void deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::SessionID, OptionSet<WebsiteDataType>, RegistrableDomainsToDeleteOrRestrictWebsiteDataFor&&, bool shouldNotifyPage, CompletionHandler<void(HashSet<RegistrableDomain>&&)>&&);
@@ -290,7 +289,6 @@ public:
     void setToSameSiteStrictCookiesForTesting(PAL::SessionID, const WebCore::RegistrableDomain&, CompletionHandler<void()>&&);
     void setFirstPartyHostCNAMEDomainForTesting(PAL::SessionID, String&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain, CompletionHandler<void()>&&);
     void setThirdPartyCNAMEDomainForTesting(PAL::SessionID, WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
-#endif
 
     void notifyMediaStreamingActivity(bool);
 

@@ -76,10 +76,8 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
         }
     }
 
-#if ENABLE(TRACKING_PREVENTION)
     if (shouldBlockCookies(request))
         blockCookies();
-#endif
     restrictRequestReferrerToOriginIfNeeded(request);
 
     m_curlRequest = createCurlRequest(WTFMove(request));
@@ -386,10 +384,8 @@ void NetworkDataTaskCurl::willPerformHTTPRedirection()
         }
     }
 
-#if ENABLE(TRACKING_PREVENTION)
     if (!m_blockingCookies && shouldBlockCookies(request))
         blockCookies();
-#endif
     auto response = ResourceResponse(m_response);
     m_client->willPerformHTTPRedirection(WTFMove(response), WTFMove(request), [this, protectedThis = Ref { *this }, didChangeCredential](const ResourceRequest& newRequest) {
         if (newRequest.isNull() || m_state == State::Canceling)
@@ -553,21 +549,16 @@ void NetworkDataTaskCurl::handleCookieHeaders(const WebCore::ResourceRequest& re
 
 void NetworkDataTaskCurl::blockCookies()
 {
-#if ENABLE(TRACKING_PREVENTION)
     m_blockingCookies = true;
-#endif
 }
 
 void NetworkDataTaskCurl::unblockCookies()
 {
-#if ENABLE(TRACKING_PREVENTION)
     m_blockingCookies = false;
-#endif
 }
 
 bool NetworkDataTaskCurl::shouldBlockCookies(const WebCore::ResourceRequest& request)
 {
-#if ENABLE(TRACKING_PREVENTION)
     bool shouldBlockCookies = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless;
 
     if (!shouldBlockCookies && m_session->networkStorageSession())
@@ -575,7 +566,6 @@ bool NetworkDataTaskCurl::shouldBlockCookies(const WebCore::ResourceRequest& req
 
     if (shouldBlockCookies)
         return true;
-#endif
     return false;
 }
 

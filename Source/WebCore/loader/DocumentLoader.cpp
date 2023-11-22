@@ -124,10 +124,6 @@
 #include "QuickLook.h"
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
-#include "NetworkStorageSession.h"
-#endif
-
 #if PLATFORM(COCOA)
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
@@ -899,12 +895,10 @@ void DocumentLoader::stopLoadingAfterXFrameOptionsOrContentSecurityPolicyDenied(
         cancelMainResourceLoad(frameLoader->cancelledError(m_request));
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 static URL microsoftTeamsRedirectURL()
 {
     return URL { "https://www.microsoft.com/en-us/microsoft-365/microsoft-teams/"_str };
 }
-#endif
 
 void DocumentLoader::responseReceived(CachedResource& resource, const ResourceResponse& response, CompletionHandler<void()>&& completionHandler)
 {
@@ -925,7 +919,6 @@ void DocumentLoader::responseReceived(CachedResource& resource, const ResourceRe
     if (m_frame->settings().clearSiteDataHTTPHeaderEnabled())
         m_responseClearSiteDataValues = parseClearSiteDataHeader(response);
 
-#if ENABLE(TRACKING_PREVENTION)
     // FIXME(218779): Remove this quirk once microsoft.com completes their login flow redesign.
     if (m_frame && m_frame->document()) {
         auto& document = *m_frame->document();
@@ -939,7 +932,6 @@ void DocumentLoader::responseReceived(CachedResource& resource, const ResourceRe
             }
         }
     }
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     if (m_canUseServiceWorkers && response.source() == ResourceResponse::Source::MemoryCache) {

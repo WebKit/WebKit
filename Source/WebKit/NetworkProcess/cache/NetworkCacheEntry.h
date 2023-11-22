@@ -72,10 +72,8 @@ public:
 
     void asJSON(StringBuilder&, const Storage::RecordInfo&) const;
 
-#if ENABLE(TRACKING_PREVENTION)
     bool hasReachedPrevalentResourceAgeCap() const;
     void capMaxAge(const Seconds);
-#endif
 
 private:
     void initializeBufferFromStorageRecord() const;

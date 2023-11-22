@@ -60,9 +60,7 @@ CachedPage::CachedPage(Page& page)
     : m_page(page)
     , m_expirationTime(MonotonicTime::now() + page.settings().backForwardCacheExpirationInterval())
     , m_cachedMainFrame(is<LocalFrame>(page.mainFrame()) ? makeUnique<CachedFrame>(downcast<LocalFrame>(page.mainFrame())) : nullptr)
-#if ENABLE(TRACKING_PREVENTION)
     , m_loadedSubresourceDomains(is<LocalFrame>(page.mainFrame()) ? downcast<LocalFrame>(page.mainFrame()).loader().client().loadedSubresourceDomains() : Vector<RegistrableDomain>())
-#endif
 {
 #ifndef NDEBUG
     cachedPageCounter.increment();
@@ -180,10 +178,8 @@ void CachedPage::restore(Page& page)
 
     firePageShowEvent(page);
 
-#if ENABLE(TRACKING_PREVENTION)
     for (auto& domain : m_loadedSubresourceDomains)
         localMainFrame->loader().client().didLoadFromRegistrableDomain(WTFMove(domain));
-#endif
 
     clear();
 }
@@ -198,9 +194,7 @@ void CachedPage::clear()
 #endif
     m_needsDeviceOrPageScaleChanged = false;
     m_needsUpdateContentsSize = false;
-#if ENABLE(TRACKING_PREVENTION)
     m_loadedSubresourceDomains.clear();
-#endif
 }
 
 bool CachedPage::hasExpired() const

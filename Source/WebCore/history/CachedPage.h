@@ -70,9 +70,7 @@ private:
 #endif
     bool m_needsDeviceOrPageScaleChanged { false };
     bool m_needsUpdateContentsSize { false };
-#if ENABLE(TRACKING_PREVENTION)
     Vector<RegistrableDomain> m_loadedSubresourceDomains;
-#endif
 };
 
 } // namespace WebCore

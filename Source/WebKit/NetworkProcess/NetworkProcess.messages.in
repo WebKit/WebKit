@@ -83,7 +83,6 @@ messages -> NetworkProcess LegacyReceiver {
     SetInspectionForServiceWorkersAllowed(PAL::SessionID sessionID, bool inspectable)
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     ClearPrevalentResource(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> ()
     ClearUserInteraction(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> ()
     DumpResourceLoadStatistics(PAL::SessionID sessionID) -> (String dumpedStatistics)
@@ -154,7 +153,6 @@ messages -> NetworkProcess LegacyReceiver {
     SetToSameSiteStrictCookiesForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain) -> ()
     SetFirstPartyHostCNAMEDomainForTesting(PAL::SessionID sessionID, String firstPartyHost, WebCore::RegistrableDomain cnameDomain) -> ()
     SetThirdPartyCNAMEDomainForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain) -> ()
-#endif
 
     SetPrivateClickMeasurementDebugMode(PAL::SessionID sessionID, bool debugMode)
 
