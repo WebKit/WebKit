@@ -1,8 +1,8 @@
 
-FAIL ASCII name and utf-8 value assert_equals: The cookie was set as expected. expected "test=1春节回家路·春运完全手册" but got "test=1"
-FAIL utf-8 name and ASCII value assert_equals: The cookie was set as expected. expected "тест=2" but got ""
-FAIL ASCII name and quoted utf-8 value assert_equals: The cookie was set as expected. expected "test=\"3春节回家路·春运完全手册\"" but got "test=\"3"
-FAIL utf-8 name and value assert_equals: The cookie was set as expected. expected "春节回=4家路·春运完全手册" but got ""
-FAIL quoted utf-8 name and value assert_equals: The cookie was set as expected. expected "\"春节回=5家路·春运完全手册\"" but got "\""
-FAIL utf-8 name and value, with (invalid) utf-8 attribute assert_equals: The cookie was set as expected. expected "春节回=6家路·春运" but got ""
+PASS ASCII name and utf-8 value
+PASS utf-8 name and ASCII value
+PASS ASCII name and quoted utf-8 value
+PASS utf-8 name and value
+PASS quoted utf-8 name and value
+PASS utf-8 name and value, with (invalid) utf-8 attribute
 

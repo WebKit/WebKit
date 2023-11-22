@@ -9,6 +9,6 @@ PASS (non-secure) Ignore cookie for Secure equals space
 PASS (non-secure) Ignore cookie for spaced Secure
 PASS (non-secure) Ignore cookie for space Secure with ;
 PASS (non-secure) Ignore cookie with __Secure- prefix and Secure
-FAIL (non-secure) Ignore cookie with __Secure- prefix and without Secure assert_equals: The cookie was rejected. expected "" but got "__Secure-test=10"
-FAIL (non-secure) Cookie returned with __%53ecure- prefix and without Secure assert_equals: The cookie was set as expected. expected "__%53ecure-test=11" but got "__Secure-test=10; __%53ecure-test=11"
+PASS (non-secure) Ignore cookie with __Secure- prefix and without Secure
+PASS (non-secure) Cookie returned with __%53ecure- prefix and without Secure
 
