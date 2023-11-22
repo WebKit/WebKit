@@ -6568,19 +6568,6 @@ TextRecognitionInVideosEnabled:
     WebKit:
       default: defaultTextRecognitionInVideosEnabled()
 
-ThirdPartyIframeRedirectBlockingEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Block top-level redirects by third-party iframes"
-  humanReadableDescription: "Block top-level redirects by third-party iframes"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 ThreadedAnimationResolutionEnabled:
   type: bool
   status: unstable
