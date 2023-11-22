@@ -50,7 +50,9 @@ bool LegacyRenderSVGResourceSolidColor::applyResource(RenderElement& renderer, c
         else
             context->setAlpha(1);
         context->setFillColor(style.colorByApplyingColorFilter(m_color));
-        if (!isRenderingMask)
+        if (isRenderingMask)
+            context->setFillRule(svgStyle.clipRule());
+        else
             context->setFillRule(svgStyle.fillRule());
 
         if (resourceMode.contains(RenderSVGResourceMode::ApplyToText))
