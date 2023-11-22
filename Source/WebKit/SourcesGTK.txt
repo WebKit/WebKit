@@ -337,9 +337,10 @@ WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
 WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
 
+WebProcess/WebPage/dmabuf/AcceleratedSurfaceDMABuf.cpp @no-unify
+
 WebProcess/WebPage/glib/WebPageGLib.cpp
 
-WebProcess/WebPage/gtk/AcceleratedSurfaceDMABuf.cpp @no-unify
 WebProcess/WebPage/gtk/AcceleratedSurfaceX11.cpp @no-unify
 WebProcess/WebPage/gtk/WebPageGtk.cpp
 WebProcess/WebPage/gtk/WebPrintOperationGtk.cpp
