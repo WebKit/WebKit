@@ -304,6 +304,12 @@ Ref<DOMMatrix> DOMMatrixReadOnly::scale3d(double scale, double originX, double o
     return matrix->scale3dSelf(scale, originX, originY, originZ);
 }
 
+Ref<DOMMatrix> DOMMatrixReadOnly::scaleNonUniform(double scaleX, double scaleY)
+{
+    auto matrix = cloneAsDOMMatrix();
+    return matrix->scaleSelf(scaleX, scaleY, 1, 0, 0, 0);
+}
+
 Ref<DOMMatrix> DOMMatrixReadOnly::rotate(double rotX, std::optional<double> rotY, std::optional<double> rotZ)
 {
     auto matrix = cloneAsDOMMatrix();
