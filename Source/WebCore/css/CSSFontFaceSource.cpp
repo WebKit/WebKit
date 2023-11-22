@@ -161,14 +161,15 @@ void CSSFontFaceSource::load(Document* document)
     } else {
         bool success = false;
         if (m_hasSVGFontFaceElement) {
-            if (m_svgFontFaceElement && is<SVGFontElement>(m_svgFontFaceElement->parentNode())) {
-                ASSERT(!m_inDocumentCustomPlatformData);
-                SVGFontElement& fontElement = downcast<SVGFontElement>(*m_svgFontFaceElement->parentNode());
-                if (auto otfFont = convertSVGToOTFFont(fontElement))
-                    m_generatedOTFBuffer = SharedBuffer::create(WTFMove(otfFont.value()));
-                if (m_generatedOTFBuffer) {
-                    m_inDocumentCustomPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer, String());
-                    success = static_cast<bool>(m_inDocumentCustomPlatformData);
+            if (m_svgFontFaceElement) {
+                if (auto* fontElement = dynamicDowncast<SVGFontElement>(m_svgFontFaceElement->parentNode())) {
+                    ASSERT(!m_inDocumentCustomPlatformData);
+                    if (auto otfFont = convertSVGToOTFFont(*fontElement))
+                        m_generatedOTFBuffer = SharedBuffer::create(WTFMove(otfFont.value()));
+                    if (m_generatedOTFBuffer) {
+                        m_inDocumentCustomPlatformData = createFontCustomPlatformData(*m_generatedOTFBuffer, String());
+                        success = static_cast<bool>(m_inDocumentCustomPlatformData);
+                    }
                 }
             }
         } else if (m_immediateSource) {
@@ -233,7 +234,10 @@ RefPtr<Font> CSSFontFaceSource::font(const FontDescription& fontDescription, boo
 
 bool CSSFontFaceSource::isSVGFontFaceSource() const
 {
-    return m_hasSVGFontFaceElement || (is<CachedFontLoadRequest>(m_fontRequest) && is<CachedSVGFont>(downcast<CachedFontLoadRequest>(m_fontRequest.get())->cachedFont()));
+    if (m_hasSVGFontFaceElement)
+        return true;
+    auto* fontRequest = dynamicDowncast<CachedFontLoadRequest>(m_fontRequest.get());
+    return fontRequest && is<CachedSVGFont>(fontRequest->cachedFont());
 }
 
 }

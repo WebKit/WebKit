@@ -35,10 +35,11 @@
 
 namespace WebCore {
 
-Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& imageValue, const std::optional<IntPoint>& hotSpot, LoadedFromOpaqueSource loadedFromOpaqueSource)
+Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& value, const std::optional<IntPoint>& hotSpot, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
-    auto originalURL = is<CSSImageValue>(imageValue) ? downcast<CSSImageValue>(imageValue.get()).imageURL() : URL();
-    return adoptRef(*new CSSCursorImageValue(WTFMove(imageValue), hotSpot, WTFMove(originalURL), loadedFromOpaqueSource));
+    auto* imageValue = dynamicDowncast<CSSImageValue>(value.get());
+    auto originalURL = imageValue ? imageValue->imageURL() : URL();
+    return adoptRef(*new CSSCursorImageValue(WTFMove(value), hotSpot, WTFMove(originalURL), loadedFromOpaqueSource));
 }
 
 Ref<CSSCursorImageValue> CSSCursorImageValue::create(Ref<CSSValue>&& imageValue, const std::optional<IntPoint>& hotSpot, URL originalURL, LoadedFromOpaqueSource loadedFromOpaqueSource)
