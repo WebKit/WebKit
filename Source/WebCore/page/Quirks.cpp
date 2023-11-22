@@ -477,7 +477,6 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
 
 // maps.google.com https://bugs.webkit.org/show_bug.cgi?id=199904
 // desmos.com rdar://50925173
-// airtable.com rdar://51557377
 std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(EventTarget* target) const
 {
     if (!shouldDispatchSimulatedMouseEvents(target))
@@ -492,18 +491,6 @@ std::optional<Event::IsCancelable> Quirks::simulatedMouseEventTypeForTarget(Even
 
     if (isDomain("desmos.com"_s))
         return Event::IsCancelable::No;
-
-    if (isDomain("airtable.com"_s)) {
-        // We want to limit simulated mouse events to elements under <div id="paneContainer"> to allow for column re-ordering and multiple cell selection.
-        if (is<Node>(target)) {
-            auto* node = downcast<Node>(target);
-            if (auto* paneContainer = node->treeScope().getElementById(AtomString("paneContainer"_s))) {
-                if (paneContainer->contains(node))
-                    return Event::IsCancelable::Yes;
-            }
-        }
-        return { };
-    }
 
     return Event::IsCancelable::Yes;
 }
