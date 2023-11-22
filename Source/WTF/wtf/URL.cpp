@@ -215,6 +215,36 @@ static String decodeEscapeSequencesFromParsedURL(StringView input)
     return String::fromUTF8(percentDecoded.data(), percentDecoded.size());
 }
 
+#if OS(WINDOWS)
+// This decodes url escape sequences and also converts / into \ for the Windows
+// port of URL::fileSystemPath(). It is done here to avoid a second copy when url
+// escapes AND slashes are present in the file. The check to skip copying is not
+// done as every valid absolute file path on Windows will include a slash.
+static String decodeEscapeSequencesFromParsedURLForWindowsPath(StringView input)
+{
+    ASSERT(input.containsOnlyASCII());
+
+    auto length = input.length();
+
+    // FIXME: This 100 is arbitrary. Should make a histogram of how this function is actually used to choose a better value.
+    Vector<LChar, 100> percentDecoded;
+    percentDecoded.reserveInitialCapacity(length);
+    for (unsigned i = 1; i < length; ) {
+        if (auto decodedCharacter = decodeEscapeSequence(input, i, length)) {
+            percentDecoded.uncheckedAppend(*decodedCharacter);
+            i += 3;
+        } else {
+            percentDecoded.uncheckedAppend(UNLIKELY(input[i]) == '/' ? '\\' : input[i]);
+            ++i;
+        }
+    }
+
+    // FIXME: Is UTF-8 always the correct encoding?
+    // FIXME: This returns a null string when we encounter an invalid UTF-8 sequence. Is that OK?
+    return String::fromUTF8(percentDecoded.data(), percentDecoded.size());
+}
+#endif // OS(WINDOWS)
+
 String URL::user() const
 {
     return decodeEscapeSequencesFromParsedURL(encodedUser());
@@ -276,12 +306,20 @@ String URL::fileSystemPath() const
     if (!protocolIsFile())
         return { };
 
-    auto result = decodeEscapeSequencesFromParsedURL(path());
-#if PLATFORM(WIN)
-    if (result.startsWith('/'))
-        result = result.substring(1);
+#if OS(WINDOWS)
+    // UNC paths look like '\\server\share\etc', but in a URL they look like 'file://server/share/etc'.
+    auto unc_host = host();
+    if (UNLIKELY(unc_host)) {
+        return makeString("\\\\"_s, unc_host, "\\"_s, decodeEscapeSequencesFromParsedURLForWindowsPath(path()));
+    }
+    // It should be impossible to construct a file:// url without a host and not start with a slash.
+    // Doing `new URL("file://C:/hello")` parses to have path() = "/C:/hello"
+    // UNC paths will take advantage of this for the output, while regular paths will 
+    ASSERT(path().startsWith('/'));
+    return decodeEscapeSequencesFromParsedURLForWindowsPath(path().substring(1));
+#else
+    return decodeEscapeSequencesFromParsedURL(path());
 #endif
-    return result;
 }
 
 #endif
@@ -1101,6 +1139,12 @@ URL URL::fakeURLWithRelativePart(StringView relativePart)
 
 URL URL::fileURLWithFileSystemPath(StringView path)
 {
+#if OS(WINDOWS)
+    // Handle UNC paths on Windows. should result in file://server/share
+    if (path.startsWith("//"_s)) {
+        return URL(makeString("file://"_s, path.substring(2)));
+    }
+#endif
     return URL(makeString(
         "file://"_s,
         path.startsWith('/') ? ""_s : "/"_s,
