@@ -564,16 +564,9 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 - (void)_seedResourceLoadStatisticsForTestingWithFirstParty:(NSURL *)firstPartyURL thirdParty:(NSURL *)thirdPartyURL shouldScheduleNotification:(BOOL)shouldScheduleNotification completionHandler:(void(^)(void))completionHandler
 {
-#if ENABLE(TRACKING_PREVENTION)
     _processPool->seedResourceLoadStatisticsForTesting(WebCore::RegistrableDomain { firstPartyURL }, WebCore::RegistrableDomain { thirdPartyURL }, shouldScheduleNotification, [completionHandler = makeBlockPtr(completionHandler)] () {
         completionHandler();
     });
-#else
-    UNUSED_PARAM(firstPartyURL);
-    UNUSED_PARAM(thirdPartyURL);
-    UNUSED_PARAM(shouldScheduleNotification);
-    UNUSED_PARAM(completionHandler);
-#endif
 }
 
 + (void)_setWebProcessCountLimit:(unsigned)limit

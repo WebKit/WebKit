@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(TRACKING_PREVENTION)
-
 #include "DatabaseUtilities.h"
 #include "ResourceLoadStatisticsClassifier.h"
 #include "WebResourceLoadStatisticsStore.h"
@@ -412,5 +410,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif

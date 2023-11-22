@@ -4745,8 +4745,6 @@ struct WebCore::MessageWithMessagePorts {
     Vector<WebCore::TransferredMessagePort> transferredPorts;
 };
 
-#if ENABLE(TRACKING_PREVENTION)
-
 enum class WebCore::StorageAccessWasGranted : bool
 
 enum class WebCore::StorageAccessPromptWasShown : bool
@@ -4763,8 +4761,6 @@ header: <WebCore/DocumentStorageAccess.h>
     WebCore::RegistrableDomain topFrameDomain;
     WebCore::RegistrableDomain subFrameDomain;
 };
-
-#endif // ENABLE(TRACKING_PREVENTION)
 
 class WebCore::Exception {
     WebCore::ExceptionCode code();
@@ -6761,13 +6757,11 @@ enum class WebCore::ContextMenuContextType : uint8_t {
 };
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
 header: <WebCore/CrossSiteNavigationDataTransfer.h>
 [OptionSet] enum class WebCore::CrossSiteNavigationDataTransferFlag : uint8_t {
     DestinationLinkDecoration,
     ReferrerLinkDecoration
 };
-#endif
 
 header: <WebCore/ScrollingCoordinatorTypes.h>
 [Nested, OptionSet] enum class WebCore::SynchronousScrollingReason : uint8_t {

@@ -85,8 +85,8 @@ StylePropertyMap& CSSStyleRule::styleMap()
 
 String CSSStyleRule::generateSelectorText() const
 {
-    if (m_styleRule->isStyleRuleWithNesting())
-        return downcast<StyleRuleWithNesting>(m_styleRule.get()).originalSelectorList().selectorsText();
+    if (auto* styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
+        return styleRule->originalSelectorList().selectorsText();
 
     return m_styleRule->selectorList().selectorsText();
 }
@@ -125,8 +125,8 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
-    if (m_styleRule->isStyleRuleWithNesting())
-        downcast<StyleRuleWithNesting>(m_styleRule)->wrapperAdoptOriginalSelectorList(WTFMove(*selectorList));
+    if (auto* styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
+        styleRule->wrapperAdoptOriginalSelectorList(WTFMove(*selectorList));
     else
         m_styleRule->wrapperAdoptSelectorList(WTFMove(*selectorList));
 
@@ -138,8 +138,8 @@ void CSSStyleRule::setSelectorText(const String& selectorText)
 
 Vector<Ref<StyleRuleBase>> CSSStyleRule::nestedRules() const
 {
-    if (m_styleRule->isStyleRuleWithNesting())
-        return downcast<StyleRuleWithNesting>(m_styleRule.get()).nestedRules();
+    if (auto* styleRule = dynamicDowncast<StyleRuleWithNesting>(m_styleRule.get()))
+        return styleRule->nestedRules();
 
     return { };
 }
@@ -219,8 +219,8 @@ String CSSStyleRule::cssTextInternal(StringBuilder& declarations, StringBuilder&
 
 void CSSStyleRule::reattach(StyleRuleBase& rule)
 {
-    if (rule.isStyleRuleWithNesting())
-        m_styleRule = downcast<StyleRuleWithNesting>(rule);        
+    if (auto* styleRuleWithNesting = dynamicDowncast<StyleRuleWithNesting>(rule))
+        m_styleRule = *styleRuleWithNesting;
     else
         m_styleRule = downcast<StyleRule>(rule);
         
@@ -257,7 +257,6 @@ ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigne
     }
 
     CSSStyleSheet::RuleMutationScope mutationScope(this);
-    ASSERT(m_styleRule->isStyleRuleWithNesting());
     downcast<StyleRuleWithNesting>(m_styleRule)->nestedRules().insert(index, newRule.releaseNonNull());
     m_childRuleCSSOMWrappers.insert(index, RefPtr<CSSRule>());
     return index;
@@ -273,7 +272,6 @@ ExceptionOr<void> CSSStyleRule::deleteRule(unsigned index)
         return Exception { ExceptionCode::IndexSizeError };
     }
 
-    ASSERT(m_styleRule->isStyleRuleWithNesting());
     auto& rules = downcast<StyleRuleWithNesting>(m_styleRule.get()).nestedRules();
     
     CSSStyleSheet::RuleMutationScope mutationScope(this);

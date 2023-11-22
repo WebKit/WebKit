@@ -1326,30 +1326,7 @@ void UIScriptControllerIOS::activateDataListSuggestion(unsigned index, JSValueRe
 
 bool UIScriptControllerIOS::isShowingDataListSuggestions() const
 {
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
     return [webView() _isShowingDataListSuggestions];
-#else
-    Class remoteKeyboardWindowClass = NSClassFromString(@"UIRemoteKeyboardWindow");
-    Class suggestionsPickerViewClass = NSClassFromString(@"WKDataListSuggestionsPickerView");
-    UIWindow *remoteInputHostingWindow = nil;
-    for (UIWindow *window in UIApplication.sharedApplication.windows) {
-        if ([window isKindOfClass:remoteKeyboardWindowClass])
-            remoteInputHostingWindow = window;
-    }
-
-    if (!remoteInputHostingWindow)
-        return false;
-
-    __block bool foundDataListSuggestionsPickerView = false;
-    forEachViewInHierarchy(remoteInputHostingWindow, ^(UIView *subview, BOOL *stop) {
-        if (![subview isKindOfClass:suggestionsPickerViewClass])
-            return;
-
-        foundDataListSuggestionsPickerView = true;
-        *stop = YES;
-    });
-    return foundDataListSuggestionsPickerView;
-#endif
 }
 
 void UIScriptControllerIOS::setSelectedColorForColorPicker(double red, double green, double blue)

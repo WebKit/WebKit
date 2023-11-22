@@ -99,9 +99,7 @@ private:
     bool tryPasswordBasedAuthentication(const WebCore::AuthenticationChallenge&, ChallengeCompletionHandler&);
     void applySniffingPoliciesAndBindRequestToInferfaceIfNeeded(RetainPtr<NSURLRequest>&, bool shouldContentSniff, WebCore::ContentEncodingSniffingPolicy);
 
-#if ENABLE(TRACKING_PREVENTION)
     void updateFirstPartyInfoForSession(const URL&);
-#endif
 
     NSURLSessionTask* task() const final;
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const final { return m_storedCredentialsPolicy; }

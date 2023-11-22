@@ -66,9 +66,6 @@ public:
 #if ENABLE(INPUT_TYPE_COLOR)
     static StyleSheetContents* colorInputStyleSheet;
 #endif
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    static StyleSheetContents* legacyFormControlsIOSStyleSheet;
-#endif
 
     static void initDefaultStyleSheet();
     static void ensureDefaultStyleSheetsForElement(const Element&);

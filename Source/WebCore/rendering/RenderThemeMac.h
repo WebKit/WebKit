@@ -75,13 +75,13 @@ public:
     int sliderTickOffsetFromTrackCenter() const final;
 #endif
 
-    LengthBox popupInternalPaddingBox(const RenderStyle&, const Settings&) const final;
+    LengthBox popupInternalPaddingBox(const RenderStyle&) const final;
     PopupMenuStyle::PopupMenuSize popupMenuSize(const RenderStyle&, IntRect&) const final;
 
     bool popsMenuByArrowKeys() const final { return true; }
 
     FloatSize meterSizeForBounds(const RenderMeter&, const FloatRect&) const final;
-    bool supportsMeter(StyleAppearance, const HTMLMeterElement&) const final;
+    bool supportsMeter(StyleAppearance) const final;
 
     // Returns the repeat interval of the animation for the progress bar.
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;

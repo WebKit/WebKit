@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DocumentStorageAccess.h"
 
-#if ENABLE(TRACKING_PREVENTION)
-
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Document.h"
@@ -319,5 +317,3 @@ bool DocumentStorageAccess::hasFrameSpecificStorageAccess() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(TRACKING_PREVENTION)

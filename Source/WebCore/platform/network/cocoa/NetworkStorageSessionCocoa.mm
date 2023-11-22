@@ -351,14 +351,8 @@ NSHTTPCookie *NetworkStorageSession::capExpiryOfPersistentCookie(NSHTTPCookie *c
 
 RetainPtr<NSArray> NetworkStorageSession::cookiesForURL(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking) const
 {
-#if ENABLE(TRACKING_PREVENTION)
     if (applyTrackingPrevention == ApplyTrackingPrevention::Yes && shouldBlockCookies(firstParty, url, frameID, pageID, shouldRelaxThirdPartyCookieBlocking))
         return nil;
-#else
-    UNUSED_PARAM(frameID);
-    UNUSED_PARAM(pageID);
-    UNUSED_PARAM(applyTrackingPrevention);
-#endif
     return httpCookiesForURL(cookieStorage().get(), firstParty, sameSiteInfo, url);
 }
 
@@ -488,21 +482,12 @@ void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameS
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-#if ENABLE(TRACKING_PREVENTION)
     if (applyTrackingPrevention == ApplyTrackingPrevention::Yes && shouldBlockCookies(firstParty, url, frameID, pageID, shouldRelaxThirdPartyCookieBlocking))
         return;
-#else
-    UNUSED_PARAM(frameID);
-    UNUSED_PARAM(pageID);
-    UNUSED_PARAM(applyTrackingPrevention);
-#endif
 
     NSURL *cookieURL = url;
 
-    std::optional<Seconds> cookieCap;
-#if ENABLE(TRACKING_PREVENTION)
-    cookieCap = clientSideCookieCap(RegistrableDomain { firstParty }, pageID);
-#endif
+    std::optional<Seconds> cookieCap = clientSideCookieCap(RegistrableDomain { firstParty }, pageID);
 
     NSHTTPCookie *cookie = parseDOMCookie(cookieString, cookieURL, cookieCap);
     if (!cookie)
@@ -519,14 +504,8 @@ bool NetworkStorageSession::setCookieFromDOM(const URL& firstParty, const SameSi
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
-#if ENABLE(TRACKING_PREVENTION)
     if (applyTrackingPrevention == ApplyTrackingPrevention::Yes && shouldBlockCookies(firstParty, url, frameID, pageID, shouldRelaxThirdPartyCookieBlocking))
         return false;
-#else
-    UNUSED_PARAM(frameID);
-    UNUSED_PARAM(pageID);
-    UNUSED_PARAM(applyTrackingPrevention);
-#endif
 
     NSHTTPCookie *nshttpCookie = (NSHTTPCookie *)cookie;
     if (!nshttpCookie)

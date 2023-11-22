@@ -39,15 +39,12 @@ class HTMLElement;
 class HTMLVideoElement;
 class LayoutUnit;
 class PlatformMouseEvent;
-class WeakPtrImplWithEventTargetData;
-class SecurityOriginData;
-
-#if ENABLE(TRACKING_PREVENTION)
 class RegistrableDomain;
-enum class StorageAccessWasGranted : bool;
-#endif
+class SecurityOriginData;
+class WeakPtrImplWithEventTargetData;
 
 enum class IsSyntheticClick : bool;
+enum class StorageAccessWasGranted : bool;
 
 class Quirks {
     WTF_MAKE_NONCOPYABLE(Quirks); WTF_MAKE_FAST_ALLOCATED;
@@ -138,11 +135,9 @@ public:
     bool shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk() const;
     bool shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk() const;
 
-#if ENABLE(TRACKING_PREVENTION)
     static bool isMicrosoftTeamsRedirectURL(const URL&);
     static bool hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>&, const RegistrableDomain&);
     StorageAccessResult requestStorageAccessAndHandleClick(CompletionHandler<void(ShouldDispatchClick)>&&) const;
-#endif
 
     static bool shouldOmitHTMLDocumentSupportedPropertyNames();
 

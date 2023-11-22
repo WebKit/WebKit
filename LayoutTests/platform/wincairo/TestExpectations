@@ -632,7 +632,7 @@ js/dom/modules/module-fetch-failure-not-cached.html [ Failure ]
 
 js/date-timeClip-large-values.html [ Failure Pass ]
 
-js/weakref-finalizationregistry.html [ Timeout Pass ]
+webkit.org/b/214673 js/weakref-finalizationregistry.html [ Skip ] # Timeout Pass
 
 webkit.org/b/129758 js/dom/create-lots-of-workers.html [ Skip ]
 
@@ -849,6 +849,7 @@ http/tests/ssl/media-stream [ Skip ]
 
 http/tests/subresource-integrity [ Skip ]
 http/tests/webarchive [ Skip ]
+http/tests/webcodecs [ Skip ]
 http/tests/webgpu [ Skip ]
 http/tests/webrtc [ Skip ]
 http/tests/webshare [ Skip ]
@@ -2608,7 +2609,7 @@ fast/canvas/image-buffer-backend-variants.html [ Skip ]
 
 webkit.org/b/238227 fast/dom/intersection-observer-document-leak.html [ Pass Failure ]
 
-webkit.org/b/262687 [ Release ] fast/workers/pending-requestAnimationFrame-upon-destruction.html [ Pass Failure ]
+webkit.org/b/262687 fast/workers/pending-requestAnimationFrame-upon-destruction.html [ Pass Failure ]
 
 fast/box-shadow/box-shadow-radius.html [ Failure ]
 fast/box-shadow/scaled-box-shadow.html [ Failure ]
@@ -2677,3 +2678,5 @@ webkit.org/b/226299 http/tests/performance/performance-resource-timing-resourcet
 webkit.org/b/226299 http/tests/performance/performance-resource-timing-resourcetimingbufferfull-queue-resource-entry.html [ Skip ]
 
 webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html [ Pass Failure ]
+
+webkit.org/b/265213 fast/dom/Range/detach-range-during-deletecontents.html [ Skip ] # Timeout

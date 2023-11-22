@@ -140,7 +140,6 @@ std::optional<WebPageProxyIdentifier> WebLocalFrameLoaderClient::webPageProxyID(
     return std::nullopt;
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 void WebLocalFrameLoaderClient::setHasFrameSpecificStorageAccess(FrameSpecificStorageAccessIdentifier&& frameSpecificStorageAccessIdentifier )
 {
     ASSERT(!m_frameSpecificStorageAccessIdentifier);
@@ -165,8 +164,6 @@ Vector<RegistrableDomain> WebLocalFrameLoaderClient::loadedSubresourceDomains() 
 
     return copyToVector(webPage->loadedSubresourceDomains());
 }
-
-#endif
 
 bool WebLocalFrameLoaderClient::hasHTMLView() const
 {
@@ -199,13 +196,11 @@ void WebLocalFrameLoaderClient::detachedFromParent2()
     if (!webPage)
         return;
 
-#if ENABLE(TRACKING_PREVENTION)
     if (m_frameSpecificStorageAccessIdentifier) {
         WebProcess::singleton().ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::RemoveStorageAccessForFrame(
             m_frameSpecificStorageAccessIdentifier->frameID, m_frameSpecificStorageAccessIdentifier->pageID), 0);
         m_frameSpecificStorageAccessIdentifier = std::nullopt;
     }
-#endif
 
     RefPtr<API::Object> userData;
 
@@ -438,7 +433,6 @@ void WebLocalFrameLoaderClient::dispatchDidChangeMainDocument()
 
 void WebLocalFrameLoaderClient::dispatchWillChangeDocument(const URL& currentURL, const URL& newURL)
 {
-#if ENABLE(TRACKING_PREVENTION)
     if (m_frame->isMainFrame())
         return;
 
@@ -451,7 +445,6 @@ void WebLocalFrameLoaderClient::dispatchWillChangeDocument(const URL& currentURL
             m_frameSpecificStorageAccessIdentifier->frameID, m_frameSpecificStorageAccessIdentifier->pageID), 0);
         m_frameSpecificStorageAccessIdentifier = std::nullopt;
     }
-#endif
 }
 
 void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJSHistoryAPI(SameDocumentNavigationType navigationType)

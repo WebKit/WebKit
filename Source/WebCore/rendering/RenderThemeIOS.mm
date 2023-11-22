@@ -108,181 +108,6 @@ using namespace HTMLNames;
 const float ControlBaseHeight = 20;
 const float ControlBaseFontSize = 11;
 
-struct IOSGradient {
-    float* start; // points to static float[4]
-    float* end; // points to static float[4]
-    IOSGradient(float start[4], float end[4])
-        : start(start)
-        , end(end)
-    {
-    }
-};
-
-typedef IOSGradient* IOSGradientRef;
-
-enum Interpolation
-{
-    LinearInterpolation,
-    ExponentialInterpolation
-};
-
-static void interpolateLinearGradient(void *info, const CGFloat *inData, CGFloat *outData)
-{
-    IOSGradientRef gradient = static_cast<IOSGradientRef>(info);
-    float alpha = inData[0];
-    float inverse = 1.0f - alpha;
-
-    outData[0] = inverse * gradient->start[0] + alpha * gradient->end[0];
-    outData[1] = inverse * gradient->start[1] + alpha * gradient->end[1];
-    outData[2] = inverse * gradient->start[2] + alpha * gradient->end[2];
-    outData[3] = inverse * gradient->start[3] + alpha * gradient->end[3];
-}
-
-static void interpolateExponentialGradient(void *info, const CGFloat *inData, CGFloat *outData)
-{
-    IOSGradientRef gradient = static_cast<IOSGradientRef>(info);
-    float a = inData[0];
-    for (int paintInfo = 0; paintInfo < 4; ++paintInfo) {
-        float end = logf(std::max(gradient->end[paintInfo], 0.01f));
-        float start = logf(std::max(gradient->start[paintInfo], 0.01f));
-        outData[paintInfo] = expf(start - (end + start) * a);
-    }
-}
-
-static CGFunctionRef getSharedFunctionRef(IOSGradientRef gradient, Interpolation interpolation)
-{
-    static NeverDestroyed<HashMap<IOSGradientRef, RetainPtr<CGFunctionRef>>> linearFunctionRefs;
-    static NeverDestroyed<HashMap<IOSGradientRef, RetainPtr<CGFunctionRef>>> exponentialFunctionRefs;
-
-    if (interpolation == LinearInterpolation) {
-        auto function = linearFunctionRefs->get(gradient);
-        if (!function) {
-            static struct CGFunctionCallbacks linearFunctionCallbacks =  { 0, interpolateLinearGradient, 0 };
-            linearFunctionRefs->set(gradient, function = adoptCF(CGFunctionCreate(gradient, 1, nullptr, 4, nullptr, &linearFunctionCallbacks)));
-        }
-
-        return function.get();
-    }
-
-    auto function = exponentialFunctionRefs->get(gradient);
-    if (!function) {
-        static struct CGFunctionCallbacks exponentialFunctionCallbacks =  { 0, interpolateExponentialGradient, 0 };
-        exponentialFunctionRefs->set(gradient, function = adoptCF(CGFunctionCreate(gradient, 1, 0, 4, 0, &exponentialFunctionCallbacks)));
-    }
-    return function.get();
-}
-
-static void drawAxialGradient(CGContextRef context, IOSGradientRef gradient, const FloatPoint& startPoint, const FloatPoint& stopPoint, Interpolation interpolation)
-{
-    RetainPtr<CGShadingRef> shading = adoptCF(CGShadingCreateAxial(sRGBColorSpaceRef(), startPoint, stopPoint, getSharedFunctionRef(gradient, interpolation), false, false));
-    CGContextDrawShading(context, shading.get());
-}
-
-static void drawRadialGradient(CGContextRef context, IOSGradientRef gradient, const FloatPoint& startPoint, float startRadius, const FloatPoint& stopPoint, float stopRadius, Interpolation interpolation)
-{
-    RetainPtr<CGShadingRef> shading = adoptCF(CGShadingCreateRadial(sRGBColorSpaceRef(), startPoint, startRadius, stopPoint, stopRadius, getSharedFunctionRef(gradient, interpolation), false, false));
-    CGContextDrawShading(context, shading.get());
-}
-
-enum IOSGradientType {
-    InsetGradient,
-    ShineGradient,
-    ShadeGradient,
-    ConvexGradient,
-    ConcaveGradient,
-    SliderTrackGradient,
-    ReadonlySliderTrackGradient,
-    SliderThumbOpaquePressedGradient,
-};
-
-static IOSGradientRef getInsetGradient()
-{
-    static float end[4] = { 0 / 255.0, 0 / 255.0, 0 / 255.0, 0 };
-    static float start[4] = { 0 / 255.0, 0 / 255.0, 0 / 255.0, 0.2 };
-    static NeverDestroyed<IOSGradient> gradient(start, end);
-    return &gradient.get();
-}
-
-static IOSGradientRef getShineGradient()
-{
-    static float end[4] = { 1, 1, 1, 0.8 };
-    static float start[4] = { 1, 1, 1, 0 };
-    static NeverDestroyed<IOSGradient> gradient(start, end);
-    return &gradient.get();
-}
-
-static IOSGradientRef getShadeGradient()
-{
-    static float end[4] = { 178 / 255.0, 178 / 255.0, 178 / 255.0, 0.65 };
-    static float start[4] = { 252 / 255.0, 252 / 255.0, 252 / 255.0, 0.65 };
-    static NeverDestroyed<IOSGradient> gradient(start, end);
-    return &gradient.get();
-}
-
-static IOSGradientRef getConvexGradient()
-{
-    static float end[4] = { 255 / 255.0, 255 / 255.0, 255 / 255.0, 0.05 };
-    static float start[4] = { 255 / 255.0, 255 / 255.0, 255 / 255.0, 0.43 };
-    static NeverDestroyed<IOSGradient> gradient(start, end);
-    return &gradient.get();
-}
-
-static IOSGradientRef getConcaveGradient()
-{
-    static float end[4] = { 255 / 255.0, 255 / 255.0, 255 / 255.0, 0.46 };
-    static float start[4] = { 255 / 255.0, 255 / 255.0, 255 / 255.0, 0 };
-    static NeverDestroyed<IOSGradient> gradient(start, end);
-    return &gradient.get();
-}
-
-static IOSGradientRef getSliderTrackGradient()
-{
-    static float end[4] = { 132 / 255.0, 132 / 255.0, 132 / 255.0, 1 };
-    static float start[4] = { 74 / 255.0, 77 / 255.0, 80 / 255.0, 1 };
-    static NeverDestroyed<IOSGradient> gradient(start, end);
-    return &gradient.get();
-}
-
-static IOSGradientRef getReadonlySliderTrackGradient()
-{
-    static float end[4] = { 132 / 255.0, 132 / 255.0, 132 / 255.0, 0.4 };
-    static float start[4] = { 74 / 255.0, 77 / 255.0, 80 /255.0, 0.4 };
-    static NeverDestroyed<IOSGradient> gradient(start, end);
-    return &gradient.get();
-}
-
-static IOSGradientRef getSliderThumbOpaquePressedGradient()
-{
-    static float end[4] = { 144 / 255.0, 144 / 255.0, 144 / 255.0, 1};
-    static float start[4] = { 55 / 255.0, 55 / 255.0, 55 / 255.0, 1 };
-    static NeverDestroyed<IOSGradient> gradient(start, end);
-    return &gradient.get();
-}
-
-static IOSGradientRef gradientWithName(IOSGradientType gradientType)
-{
-    switch (gradientType) {
-    case InsetGradient:
-        return getInsetGradient();
-    case ShineGradient:
-        return getShineGradient();
-    case ShadeGradient:
-        return getShadeGradient();
-    case ConvexGradient:
-        return getConvexGradient();
-    case ConcaveGradient:
-        return getConcaveGradient();
-    case SliderTrackGradient:
-        return getSliderTrackGradient();
-    case ReadonlySliderTrackGradient:
-        return getReadonlySliderTrackGradient();
-    case SliderThumbOpaquePressedGradient:
-        return getSliderThumbOpaquePressedGradient();
-    }
-    ASSERT_NOT_REACHED();
-    return nullptr;
-}
-
 RenderThemeIOS::RenderThemeIOS() = default;
 
 RenderTheme& RenderTheme::singleton()
@@ -353,113 +178,6 @@ void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element* elem
     style.setHeight({ size, LengthType::Fixed });
 }
 
-static CGPoint shortened(CGPoint start, CGPoint end, float width)
-{
-    float x = end.x - start.x;
-    float y = end.y - start.y;
-    float ratio = (!x && !y) ? 0 : width / std::hypot(x, y);
-    return CGPointMake(start.x + x * ratio, start.y + y * ratio);
-}
-
-static void drawJoinedLines(CGContextRef context, const Vector<CGPoint>& points, CGLineCap lineCap, float lineWidth, Color strokeColor)
-{
-    CGContextSetLineWidth(context, lineWidth);
-    CGContextSetStrokeColorWithColor(context, cachedCGColor(strokeColor).get());
-    CGContextSetShouldAntialias(context, true);
-    CGContextBeginPath(context);
-    CGContextSetLineCap(context, lineCap);
-    CGContextMoveToPoint(context, points[0].x, points[0].y);
-    
-    for (unsigned i = 1; i < points.size(); ++i)
-        CGContextAddLineToPoint(context, points[i].x, points[i].y);
-
-    CGContextStrokePath(context);
-}
-
-bool RenderThemeIOS::canPaint(const PaintInfo& paintInfo, const Settings& settings, StyleAppearance) const
-{
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (settings.iOSFormControlRefreshEnabled())
-        return true;
-#else
-    UNUSED_PARAM(settings);
-#endif
-    return paintInfo.context().hasPlatformContext();
-}
-
-void RenderThemeIOS::paintCheckboxDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
-{
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (box.settings().iOSFormControlRefreshEnabled())
-        return;
-#endif
-
-    bool checked = isChecked(box);
-    bool indeterminate = isIndeterminate(box);
-    CGContextRef cgContext = paintInfo.context().platformContext();
-    GraphicsContextStateSaver stateSaver { paintInfo.context() };
-
-    if (checked || indeterminate) {
-        auto border = box.style().getRoundedBorderFor(rect);
-        paintInfo.context().fillRoundedRect(border.pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor()), Color::black.colorWithAlphaByte(204));
-
-        auto clip = addRoundedBorderClip(box, paintInfo.context(), rect);
-        auto width = clip.width();
-        auto height = clip.height();
-        drawAxialGradient(cgContext, gradientWithName(ConcaveGradient), clip.location(), FloatPoint { clip.x(), clip.maxY() }, LinearInterpolation);
-
-        constexpr float thicknessRatio = 2 / 14.0;
-        float lineWidth = std::min(width, height) * 2.0f * thicknessRatio;
-
-        Vector<CGPoint, 3> line;
-        Vector<CGPoint, 3> shadow;
-        if (checked) {
-            constexpr CGSize size { 14.0f, 14.0f };
-            constexpr CGPoint pathRatios[] = {
-                { 2.5f / size.width, 7.5f / size.height },
-                { 5.5f / size.width, 10.5f / size.height },
-                { 11.5f / size.width, 2.5f / size.height }
-            };
-
-            line.appendList({
-                CGPointMake(clip.x() + width * pathRatios[0].x, clip.y() + height * pathRatios[0].y),
-                CGPointMake(clip.x() + width * pathRatios[1].x, clip.y() + height * pathRatios[1].y),
-                CGPointMake(clip.x() + width * pathRatios[2].x, clip.y() + height * pathRatios[2].y)
-            });
-
-            shadow.appendList({
-                shortened(line[0], line[1], lineWidth / 4.0f),
-                line[1],
-                shortened(line[2], line[1], lineWidth / 4.0f)
-            });
-        } else {
-            line.appendList({
-                CGPointMake(clip.x() + 3.5, clip.center().y()),
-                CGPointMake(clip.maxX() - 3.5, clip.center().y())
-            });
-
-            shadow.appendList({
-                shortened(line[0], line[1], lineWidth / 4.0f),
-                shortened(line[1], line[0], lineWidth / 4.0f)
-            });
-        }
-
-        lineWidth = std::max<float>(lineWidth, 1);
-        drawJoinedLines(cgContext, Vector<CGPoint> { WTFMove(shadow) }, kCGLineCapSquare, lineWidth, Color::black.colorWithAlphaByte(179));
-
-        lineWidth = std::max<float>(std::min(width, height) * thicknessRatio, 1);
-        drawJoinedLines(cgContext, Vector<CGPoint> { WTFMove(line) }, kCGLineCapButt, lineWidth, Color::white.colorWithAlphaByte(240));
-    } else {
-        auto clip = addRoundedBorderClip(box, paintInfo.context(), rect);
-        auto width = clip.width();
-        auto height = clip.height();
-        FloatPoint bottomCenter { clip.x() + width / 2.0f, clip.maxY() };
-
-        drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint { clip.x(), clip.maxY() }, LinearInterpolation);
-        drawRadialGradient(cgContext, gradientWithName(ShineGradient), bottomCenter, 0, bottomCenter, sqrtf((width * width) / 4.0f + height * height), ExponentialInterpolation);
-    }
-}
-
 LayoutRect RenderThemeIOS::adjustedPaintRect(const RenderBox& box, const LayoutRect& paintRect) const
 {
     // Workaround for <rdar://problem/6209763>. Force the painting bounds of checkboxes and radio controls to be square.
@@ -523,49 +241,6 @@ void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element* element
     style.setWidth({ size, LengthType::Fixed });
     style.setHeight({ size, LengthType::Fixed });
     style.setBorderRadius({ static_cast<int>(size / 2), static_cast<int>(size / 2) });
-}
-
-void RenderThemeIOS::paintRadioDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
-{
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (box.settings().iOSFormControlRefreshEnabled())
-        return;
-#endif
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    CGContextRef cgContext = paintInfo.context().platformContext();
-
-    auto drawShadeAndShineGradients = [&](auto clip) {
-        FloatPoint bottomCenter(clip.x() + clip.width() / 2.0, clip.maxY());
-        drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
-        drawRadialGradient(cgContext, gradientWithName(ShineGradient), bottomCenter, 0, bottomCenter, std::max(clip.width(), clip.height()), ExponentialInterpolation);
-    };
-
-    if (isChecked(box)) {
-        auto border = box.style().getRoundedBorderFor(rect);
-        paintInfo.context().fillRoundedRect(border.pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor()), Color::black.colorWithAlphaByte(204));
-
-        auto clip = addRoundedBorderClip(box, paintInfo.context(), rect);
-        drawAxialGradient(cgContext, gradientWithName(ConcaveGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
-
-        // The inner circle is 6 / 14 the size of the surrounding circle, 
-        // leaving 8 / 14 around it. (8 / 14) / 2 = 2 / 7.
-
-        static const float InnerInverseRatio = 2 / 7.0;
-
-        clip.inflateX(-clip.width() * InnerInverseRatio);
-        clip.inflateY(-clip.height() * InnerInverseRatio);
-        
-        constexpr auto shadowColor = Color::black.colorWithAlphaByte(179);
-        paintInfo.context().drawRaisedEllipse(clip, Color::white, shadowColor);
-
-        FloatSize radius(clip.width() / 2.0f, clip.height() / 2.0f);
-        paintInfo.context().clipRoundedRect(FloatRoundedRect(clip, radius, radius, radius, radius));
-        drawShadeAndShineGradients(clip);
-    } else {
-        auto clip = addRoundedBorderClip(box, paintInfo.context(), rect);
-        drawShadeAndShineGradients(clip);
-    }
 }
 
 void RenderThemeIOS::adjustTextFieldStyle(RenderStyle& style, const Element* element) const
@@ -639,40 +314,24 @@ void RenderThemeIOS::paintTextFieldDecorations(const RenderBox& box, const Paint
     auto& style = box.style();
     auto roundedRect = style.getRoundedBorderFor(LayoutRect(rect)).pixelSnappedRoundedRectForPainting(box.document().deviceScaleFactor());
 
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (box.settings().iOSFormControlRefreshEnabled()) {
-        bool shouldPaintFillAndInnerShadow = false;
-        auto element = box.element();
-        if (is<HTMLInputElement>(*element)) {
-            auto& input = downcast<HTMLInputElement>(*element);
-            if (input.isTextField() && !input.isSearchField())
-                shouldPaintFillAndInnerShadow = true;
-        } else if (is<HTMLTextAreaElement>(*element))
+    auto shouldPaintFillAndInnerShadow = false;
+    auto element = box.element();
+    if (is<HTMLInputElement>(*element)) {
+        auto& input = downcast<HTMLInputElement>(*element);
+        if (input.isTextField() && !input.isSearchField())
             shouldPaintFillAndInnerShadow = true;
+    } else if (is<HTMLTextAreaElement>(*element))
+        shouldPaintFillAndInnerShadow = true;
 
-        bool useAlternateDesign = box.settings().alternateFormControlDesignEnabled();
-        if (useAlternateDesign && shouldPaintFillAndInnerShadow) {
-            Path path;
-            path.addRoundedRect(roundedRect);
+    auto useAlternateDesign = box.settings().alternateFormControlDesignEnabled();
+    if (useAlternateDesign && shouldPaintFillAndInnerShadow) {
+        Path path;
+        path.addRoundedRect(roundedRect);
 
-            context.setFillColor(Color::black.colorWithAlphaByte(10));
-            context.drawPath(path);
-            context.clipPath(path);
-            paintTextFieldInnerShadow(paintInfo, roundedRect);
-        }
-
-        return;
-    }
-#endif
-
-    context.clipRoundedRect(roundedRect);
-
-    // This gradient gets drawn black when printing.
-    // Do not draw the gradient if there is no visible top border.
-    bool topBorderIsInvisible = !style.hasBorder() || !style.borderTopWidth() || style.borderTopIsTransparent();
-    if (!box.view().printing() && !topBorderIsInvisible) {
-        FloatPoint point(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth());
-        drawAxialGradient(context.platformContext(), gradientWithName(InsetGradient), point, FloatPoint(CGPointMake(point.x(), point.y() + 3.0f)), LinearInterpolation);
+        context.setFillColor(Color::black.colorWithAlphaByte(10));
+        context.drawPath(path);
+        context.clipPath(path);
+        paintTextFieldInnerShadow(paintInfo, roundedRect);
     }
 }
 
@@ -706,13 +365,10 @@ const float MenuListArrowWidth = 7;
 const float MenuListArrowHeight = 6;
 const float MenuListButtonPaddingAfter = 19;
 
-LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style, const Settings& settings) const
+LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style) const
 {
-    float padding = MenuListButtonPaddingAfter;
-    if (settings.iOSFormControlRefreshEnabled()) {
-        auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
-        padding = emSize->computeLength<float>({ style, nullptr, nullptr, nullptr });
-    }
+    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
+    auto padding = emSize->computeLength<float>({ style, nullptr, nullptr, nullptr });
 
     if (style.effectiveAppearance() == StyleAppearance::MenulistButton) {
         if (style.direction() == TextDirection::RTL)
@@ -725,17 +381,14 @@ LengthBox RenderThemeIOS::popupInternalPaddingBox(const RenderStyle& style, cons
 static inline bool canAdjustBorderRadiusForAppearance(StyleAppearance appearance, const RenderBox& box)
 {
     switch (appearance) {
-    case StyleAppearance::None:
 #if ENABLE(APPLE_PAY)
     case StyleAppearance::ApplePayButton:
 #endif
-        return false;
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
+    case StyleAppearance::None:
     case StyleAppearance::SearchField:
-        return !box.settings().iOSFormControlRefreshEnabled();
+        return false;
     case StyleAppearance::MenulistButton:
-        return !box.style().hasExplicitlySetBorderRadius() && box.settings().iOSFormControlRefreshEnabled();
-#endif
+        return !box.style().hasExplicitlySetBorderRadius();
     default:
         return true;
     };
@@ -824,11 +477,7 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
     ASSERT(maximumWidth >= 0);
 
     if (maximumWidth > 0) {
-        int width = static_cast<int>(maximumWidth + MenuListButtonPaddingAfter);
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-        if (inputElement.document().settings().iOSFormControlRefreshEnabled())
-            width = static_cast<int>(std::ceil(maximumWidth));
-#endif
+        int width = static_cast<int>(std::ceil(maximumWidth));
         style.setLogicalWidth(Length(width, LengthType::Fixed));
         style.setBoxSizing(BoxSizing::ContentBox);
     }
@@ -860,128 +509,92 @@ void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element
 
 void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (box.settings().iOSFormControlRefreshEnabled()) {
-        paintMenuListButtonDecorationsWithFormControlRefresh(box, paintInfo, rect);
+    if (is<HTMLInputElement>(box.element()))
         return;
-    }
-#endif
+
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
 
     auto& style = box.style();
-    bool isRTL = style.direction() == TextDirection::RTL;
-    float borderTopWidth = style.borderTopWidth();
-    FloatRect clip(rect.x() + style.borderLeftWidth(), rect.y() + style.borderTopWidth(), rect.width() - style.borderLeftWidth() - style.borderRightWidth(), rect.height() - style.borderTopWidth() - style.borderBottomWidth());
-    CGContextRef cgContext = paintInfo.context().platformContext();
 
-    float adjustLeft = 0.5;
-    float adjustRight = 0.5;
-    float adjustTop = 0.5;
-    float adjustBottom = 0.5;
-
-    // Paint title portion.
-    {
-        float leftInset = isRTL ? MenuListButtonPaddingAfter : 0;
-        FloatRect titleClip(clip.x() + leftInset - adjustLeft, clip.y() - adjustTop, clip.width() - MenuListButtonPaddingAfter + adjustLeft, clip.height() + adjustTop + adjustBottom);
-
-        GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-        FloatSize topLeftRadius;
-        FloatSize topRightRadius;
-        FloatSize bottomLeftRadius;
-        FloatSize bottomRightRadius;
-
-        if (isRTL) {
-            topRightRadius = FloatSize(valueForLength(style.borderTopRightRadius().width, rect.width()) - style.borderRightWidth(), valueForLength(style.borderTopRightRadius().height, rect.height()) - style.borderTopWidth());
-            bottomRightRadius = FloatSize(valueForLength(style.borderBottomRightRadius().width, rect.width()) - style.borderRightWidth(), valueForLength(style.borderBottomRightRadius().height, rect.height()) - style.borderBottomWidth());
-        } else {
-            topLeftRadius = FloatSize(valueForLength(style.borderTopLeftRadius().width, rect.width()) - style.borderLeftWidth(), valueForLength(style.borderTopLeftRadius().height, rect.height()) - style.borderTopWidth());
-            bottomLeftRadius = FloatSize(valueForLength(style.borderBottomLeftRadius().width, rect.width()) - style.borderLeftWidth(), valueForLength(style.borderBottomLeftRadius().height, rect.height()) - style.borderBottomWidth());
-        }
-
-        paintInfo.context().clipRoundedRect(FloatRoundedRect(titleClip,
-            topLeftRadius, topRightRadius,
-            bottomLeftRadius, bottomRightRadius));
-
-        drawAxialGradient(cgContext, gradientWithName(ShadeGradient), titleClip.location(), FloatPoint(titleClip.x(), titleClip.maxY()), LinearInterpolation);
-        drawAxialGradient(cgContext, gradientWithName(ShineGradient), FloatPoint(titleClip.x(), titleClip.maxY()), titleClip.location(), ExponentialInterpolation);
-    }
-
-    // Draw the separator after the initial padding.
-
-    float separatorPosition = isRTL ? (clip.x() + MenuListButtonPaddingAfter) : (clip.maxX() - MenuListButtonPaddingAfter);
-
-    BorderPainter::drawLineForBoxSide(paintInfo.context(), box.document(), FloatRect(FloatPoint(separatorPosition - borderTopWidth, clip.y()), FloatPoint(separatorPosition, clip.maxY())), BoxSide::Right, style.visitedDependentColor(CSSPropertyBorderTopColor), style.borderTopStyle(), 0, 0);
-
-    FloatRect buttonClip;
-    if (isRTL)
-        buttonClip = FloatRect(clip.x() - adjustTop, clip.y() - adjustTop, MenuListButtonPaddingAfter + adjustTop + adjustLeft, clip.height() + adjustTop + adjustBottom);
-    else
-        buttonClip = FloatRect(separatorPosition - adjustTop, clip.y() - adjustTop, MenuListButtonPaddingAfter + adjustTop + adjustRight, clip.height() + adjustTop + adjustBottom);
-
-    // Now paint the button portion.
-    {
-        GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-        FloatSize topLeftRadius;
-        FloatSize topRightRadius;
-        FloatSize bottomLeftRadius;
-        FloatSize bottomRightRadius;
-
-        if (isRTL) {
-            topLeftRadius = FloatSize(valueForLength(style.borderTopLeftRadius().width, rect.width()) - style.borderLeftWidth(), valueForLength(style.borderTopLeftRadius().height, rect.height()) - style.borderTopWidth());
-            bottomLeftRadius = FloatSize(valueForLength(style.borderBottomLeftRadius().width, rect.width()) - style.borderLeftWidth(), valueForLength(style.borderBottomLeftRadius().height, rect.height()) - style.borderBottomWidth());
-        } else {
-            topRightRadius = FloatSize(valueForLength(style.borderTopRightRadius().width, rect.width()) - style.borderRightWidth(), valueForLength(style.borderTopRightRadius().height, rect.height()) - style.borderTopWidth());
-            bottomRightRadius = FloatSize(valueForLength(style.borderBottomRightRadius().width, rect.width()) - style.borderRightWidth(), valueForLength(style.borderBottomRightRadius().height, rect.height()) - style.borderBottomWidth());
-        }
-
-        paintInfo.context().clipRoundedRect(FloatRoundedRect(buttonClip,
-            topLeftRadius, topRightRadius,
-            bottomLeftRadius, bottomRightRadius));
-
-        paintInfo.context().fillRect(buttonClip, style.visitedDependentColor(CSSPropertyBorderTopColor));
-
-        drawAxialGradient(cgContext, gradientWithName(isFocused(box) && !isReadOnlyControl(box) ? ConcaveGradient : ConvexGradient), buttonClip.location(), FloatPoint(buttonClip.x(), buttonClip.maxY()), LinearInterpolation);
-    }
-
-    // Paint Indicators.
+    Path glyphPath;
+    FloatSize glyphSize;
 
     if (box.isRenderMenuList() && downcast<HTMLSelectElement>(box.element())->multiple()) {
-        int size = 2;
-        int count = 3;
-        int padding = 3;
+        constexpr int length = 18;
+        constexpr int count = 3;
+        constexpr int padding = 12;
 
-        FloatRect ellipse(buttonClip.x() + (buttonClip.width() - count * (size + padding) + padding) / 2.0, buttonClip.maxY() - 10.0, size, size);
+        FloatRect ellipse(0, 0, length, length);
 
         for (int i = 0; i < count; ++i) {
-            paintInfo.context().drawRaisedEllipse(ellipse, Color::white, Color::black.colorWithAlphaByte(128));
-            ellipse.move(size + padding, 0);
+            glyphPath.addEllipseInRect(ellipse);
+            ellipse.move(length + padding, 0);
         }
-    }  else {
-        float centerX = floorf(buttonClip.x() + buttonClip.width() / 2.0) - 0.5;
-        float centerY = floorf(buttonClip.y() + buttonClip.height() * 3.0 / 8.0);
 
-        Vector<FloatPoint> arrow = {
-            { centerX - MenuListArrowWidth / 2, centerY },
-            { centerX + MenuListArrowWidth / 2, centerY },
-            { centerX, centerY + MenuListArrowHeight }
-        };
+        glyphSize = { length * count + padding * (count - 1), length };
+    } else {
+        constexpr int glyphWidth = 63;
+        constexpr int glyphHeight = 73;
+        glyphSize = { glyphWidth, glyphHeight };
 
-        Vector<FloatPoint> shadow = {
-            { arrow[0].x(), arrow[0].y() + 1 },
-            { arrow[1].x(), arrow[1].y() + 1 },
-            { arrow[2].x(), arrow[2].y() + 1 }
-        };
-
-        uint8_t opacity = isReadOnlyControl(box) ? 51 : 128;
-        paintInfo.context().setStrokeColor(Color::black.colorWithAlphaByte(opacity));
-        paintInfo.context().setFillColor(Color::black.colorWithAlphaByte(opacity));
-        paintInfo.context().drawPath(Path(shadow));
-
-        paintInfo.context().setStrokeColor(Color::white);
-        paintInfo.context().setFillColor(Color::white);
-        paintInfo.context().drawPath(Path(arrow));
+        glyphPath.moveTo({ 31.8593f, 1.0f });
+        glyphPath.addBezierCurveTo({ 30.541f, 1.0f }, { 29.418f, 1.586f }, { 28.0507f, 2.66f });
+        glyphPath.addLineTo({ 2.5625f, 23.168f });
+        glyphPath.addBezierCurveTo({ 1.5859f, 23.998f }, { 1.0f, 25.2188f }, { 1.0f, 26.7325f });
+        glyphPath.addBezierCurveTo({ 1.0f, 29.6133f }, { 3.246f, 31.7129f }, { 5.9316f, 31.7129f });
+        glyphPath.addBezierCurveTo({ 7.1523f, 31.7129f }, { 8.3242f, 31.2246f }, { 9.5449f, 30.248f });
+        glyphPath.addLineTo({ 31.8593f, 12.377f });
+        glyphPath.addLineTo({ 54.2226f, 30.248f });
+        glyphPath.addBezierCurveTo({ 55.3945f, 31.2246f }, { 56.6152f, 31.7129f }, { 57.7871f, 31.7129 });
+        glyphPath.addBezierCurveTo({ 60.4726f, 31.7129f }, { 62.7187f, 29.6133f }, { 62.7187f, 26.7325 });
+        glyphPath.addBezierCurveTo({ 62.7187f, 25.2188f }, { 62.1327f, 23.9981f }, { 61.1562f, 23.168 });
+        glyphPath.addLineTo({ 35.6679f, 2.6602f });
+        glyphPath.addBezierCurveTo({ 34.3496f, 1.586f }, { 33.1777f, 1.0f }, { 31.8593f, 1.0f });
+        glyphPath.moveTo({ 31.8593f, 72.3867f });
+        glyphPath.addBezierCurveTo({ 33.1777f, 72.3867f }, { 34.3496f, 71.8007f }, { 35.6679f, 70.7266f });
+        glyphPath.addLineTo({ 61.1562f, 50.2188f });
+        glyphPath.addBezierCurveTo({ 62.1328f, 49.3888f }, { 62.7187f, 48.168f }, { 62.7187f, 46.6543f });
+        glyphPath.addBezierCurveTo({ 62.7187f, 43.7735f }, { 60.4726f, 41.6739f }, { 57.7871f, 41.6739f });
+        glyphPath.addBezierCurveTo({ 56.6151f, 41.6739f }, { 55.3945f, 42.162f }, { 54.2226f, 43.09f });
+        glyphPath.addLineTo({ 31.8593f, 61.01f });
+        glyphPath.addLineTo({ 9.545f, 43.0898f });
+        glyphPath.addBezierCurveTo({ 8.3243f, 42.1619f }, { 7.1524f, 41.6738f }, { 5.9317f, 41.6738f });
+        glyphPath.addBezierCurveTo({ 3.246f, 41.6739f }, { 1.0f, 43.7735f }, { 1.0f, 46.6543f });
+        glyphPath.addBezierCurveTo({ 1.0f, 48.168f }, { 1.5859, 49.3887 }, { 2.5625, 50.2188f });
+        glyphPath.addLineTo({ 28.0507f, 70.7266f });
+        glyphPath.addBezierCurveTo({ 29.4179f, 71.8f }, { 30.541f, 72.3867f }, { 31.8593f, 72.3867 });
     }
+
+    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
+    auto emPixels = emSize->computeLength<float>({ style, nullptr, nullptr, nullptr });
+    auto glyphScale = 0.65f * emPixels / glyphSize.width();
+    glyphSize = glyphScale * glyphSize;
+
+    bool isHorizontalWritingMode = style.isHorizontalWritingMode();
+    auto logicalRect = isHorizontalWritingMode ? rect : rect.transposedRect();
+
+    FloatPoint glyphOrigin;
+    glyphOrigin.setY(logicalRect.center().y() - glyphSize.height() / 2.0f);
+    if (style.isLeftToRightDirection())
+        glyphOrigin.setX(logicalRect.maxX() - glyphSize.width() - box.style().borderEndWidth() - valueForLength(box.style().paddingEnd(), logicalRect.width()));
+    else
+        glyphOrigin.setX(logicalRect.x() + box.style().borderEndWidth() + valueForLength(box.style().paddingEnd(), logicalRect.width()));
+
+    if (!isHorizontalWritingMode)
+        glyphOrigin = glyphOrigin.transposedPoint();
+
+    AffineTransform transform;
+    transform.translate(glyphOrigin);
+    transform.scale(glyphScale);
+    glyphPath.transform(transform);
+
+    if (isEnabled(box))
+        context.setFillColor(style.color());
+    else
+        context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, box.styleColorOptions()));
+
+    context.fillPath(glyphPath);
 }
 
 const CGFloat kTrackThickness = 4.0;
@@ -997,26 +610,28 @@ void RenderThemeIOS::adjustSliderTrackStyle(RenderStyle& style, const Element* e
     style.setBorderRadius({ { radius, LengthType::Fixed }, { radius, LengthType::Fixed } });
 }
 
+constexpr auto nativeControlBorderInlineSize = 1.0f;
+
 bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (box.settings().iOSFormControlRefreshEnabled())
-        return paintSliderTrackWithFormControlRefresh(box, paintInfo, rect);
-#endif
+    if (!is<RenderSlider>(box))
+        return true;
+    auto& renderSlider = downcast<RenderSlider>(box);
 
-    IntRect trackClip = rect;
-    auto& style = box.style();
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
 
     bool isHorizontal = true;
-    switch (style.effectiveAppearance()) {
+    FloatRect trackClip = rect;
+
+    switch (box.style().effectiveAppearance()) {
     case StyleAppearance::SliderHorizontal:
-        isHorizontal = true;
         // Inset slightly so the thumb covers the edge.
         if (trackClip.width() > 2) {
             trackClip.setWidth(trackClip.width() - 2);
             trackClip.setX(trackClip.x() + 1);
         }
-        trackClip.setHeight(static_cast<int>(kTrackThickness));
+        trackClip.setHeight(kTrackThickness);
         trackClip.setY(rect.y() + rect.height() / 2 - kTrackThickness / 2);
         break;
     case StyleAppearance::SliderVertical:
@@ -1033,49 +648,42 @@ bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& 
         ASSERT_NOT_REACHED();
     }
 
-    ASSERT(trackClip.width() >= 0);
-    ASSERT(trackClip.height() >= 0);
-    CGFloat cornerWidth = trackClip.width() < kTrackThickness ? trackClip.width() / 2.0f : kTrackRadius;
-    CGFloat cornerHeight = trackClip.height() < kTrackThickness ? trackClip.height() / 2.0f : kTrackRadius;
+    auto styleColorOptions = box.styleColorOptions();
 
-    bool readonly = isReadOnlyControl(box);
+    auto cornerWidth = trackClip.width() < kTrackThickness ? trackClip.width() / 2.0f : kTrackRadius;
+    auto cornerHeight = trackClip.height() < kTrackThickness ? trackClip.height() / 2.0f : kTrackRadius;
+
+    FloatRoundedRect::Radii cornerRadii(cornerWidth, cornerHeight);
+    FloatRoundedRect innerBorder(trackClip, cornerRadii);
+
+    FloatRoundedRect outerBorder(innerBorder);
+    outerBorder.inflateWithRadii(nativeControlBorderInlineSize);
+    context.fillRoundedRect(outerBorder, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
+
+    context.fillRoundedRect(innerBorder, systemColor(CSSValueAppleSystemOpaqueFill, styleColorOptions));
 
 #if ENABLE(DATALIST_ELEMENT)
     paintSliderTicks(box, paintInfo, trackClip);
 #endif
 
-    // Draw the track gradient.
-    {
-        GraphicsContextStateSaver stateSaver(paintInfo.context());
+    double valueRatio = renderSlider.valueRatio();
+    if (isHorizontal) {
+        double newWidth = trackClip.width() * valueRatio;
 
-        IntSize cornerSize(cornerWidth, cornerHeight);
-        FloatRoundedRect innerBorder(trackClip, cornerSize, cornerSize, cornerSize, cornerSize);
-        paintInfo.context().clipRoundedRect(innerBorder);
+        if (!box.style().isLeftToRightDirection())
+            trackClip.move(trackClip.width() - newWidth, 0);
 
-        CGContextRef cgContext = paintInfo.context().platformContext();
-        IOSGradientRef gradient = readonly ? gradientWithName(ReadonlySliderTrackGradient) : gradientWithName(SliderTrackGradient);
-        if (isHorizontal)
-            drawAxialGradient(cgContext, gradient, trackClip.location(), FloatPoint(trackClip.x(), trackClip.maxY()), LinearInterpolation);
-        else
-            drawAxialGradient(cgContext, gradient, trackClip.location(), FloatPoint(trackClip.maxX(), trackClip.y()), LinearInterpolation);
+        trackClip.setWidth(newWidth);
+    } else {
+        float height = trackClip.height();
+        trackClip.setHeight(height * valueRatio);
+
+        if (box.style().isHorizontalWritingMode() || !box.style().isLeftToRightDirection())
+            trackClip.setY(trackClip.y() + height - trackClip.height());
     }
 
-    // Draw the track border.
-    {
-        GraphicsContextStateSaver stateSaver(paintInfo.context());
-
-        CGContextRef cgContext = paintInfo.context().platformContext();
-        if (readonly)
-            paintInfo.context().setStrokeColor(SRGBA<uint8_t> { 178, 178, 178 });
-        else
-            paintInfo.context().setStrokeColor(SRGBA<uint8_t> { 76, 76, 76 });
-
-        RetainPtr<CGMutablePathRef> roundedRectPath = adoptCF(CGPathCreateMutable());
-        CGPathAddRoundedRect(roundedRectPath.get(), 0, trackClip, cornerWidth, cornerHeight);
-        CGContextAddPath(cgContext, roundedRectPath.get());
-        CGContextSetLineWidth(cgContext, 1);
-        CGContextStrokePath(cgContext);
-    }
+    FloatRoundedRect fillRect(trackClip, cornerRadii);
+    context.fillRoundedRect(fillRect, controlTintColor(box.style(), styleColorOptions));
 
     return false;
 }
@@ -1095,108 +703,95 @@ void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, const Element*) c
     }
 }
 
-void RenderThemeIOS::paintSliderThumbDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
-{
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (box.settings().iOSFormControlRefreshEnabled())
-        return;
-#endif
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    FloatRect clip = addRoundedBorderClip(box, paintInfo.context(), rect);
-
-    CGContextRef cgContext = paintInfo.context().platformContext();
-    FloatPoint bottomCenter(clip.x() + clip.width() / 2.0f, clip.maxY());
-    if (isPressed(box))
-        drawAxialGradient(cgContext, gradientWithName(SliderThumbOpaquePressedGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
-    else {
-        drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
-        drawRadialGradient(cgContext, gradientWithName(ShineGradient), bottomCenter, 0.0f, bottomCenter, std::max(clip.width(), clip.height()), ExponentialInterpolation);
-    }
-}
+constexpr auto reducedMotionProgressAnimationMinOpacity = 0.3f;
+constexpr auto reducedMotionProgressAnimationMaxOpacity = 0.6f;
 
 bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (renderer.settings().iOSFormControlRefreshEnabled())
-        return paintProgressBarWithFormControlRefresh(renderer, paintInfo, rect);
-#endif
-
     if (!is<RenderProgress>(renderer))
         return true;
+    auto& renderProgress = downcast<RenderProgress>(renderer);
 
-    const int progressBarHeight = 9;
-    const float verticalOffset = (rect.height() - progressBarHeight) / 2.0f;
+    auto& context = paintInfo.context();
+    GraphicsContextStateSaver stateSaver(context);
 
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    if (rect.width() < 10 || rect.height() < 9) {
-        // The rect is smaller than the standard progress bar. We clip to the element's rect to avoid
-        // leaking pixels outside the repaint rect.
-        paintInfo.context().clip(rect);
+    auto styleColorOptions = renderer.styleColorOptions();
+    auto isHorizontalWritingMode = renderer.style().isHorizontalWritingMode();
+
+    constexpr auto barBlockSize = 4.0f;
+
+    constexpr auto barCornerRadiusInlineSize = 2.5f;
+    constexpr auto barCornerRadiusBlockSize = 1.5f;
+
+    FloatRoundedRect::Radii barCornerRadii(
+        isHorizontalWritingMode ? barCornerRadiusInlineSize : barCornerRadiusBlockSize,
+        isHorizontalWritingMode ? barCornerRadiusBlockSize : barCornerRadiusInlineSize
+    );
+
+    auto logicalRect = isHorizontalWritingMode ? rect : rect.transposedRect();
+
+    float rectInlineSize = logicalRect.width();
+    float rectInlineStart = logicalRect.x();
+    float rectBlockSize = logicalRect.height();
+    float rectBlockStart = logicalRect.y();
+
+    if (rectBlockSize < barBlockSize) {
+        // The rect is smaller than the standard progress bar. We clip to the
+        // element's rect to avoid leaking pixels outside the repaint rect.
+        context.clip(rect);
     }
 
-    // 1) Draw the progress bar track.
-    // 1.1) Draw the white background with grey gradient border.
-    GraphicsContext& context = paintInfo.context();
-    context.setStrokeThickness(0.68f);
-    context.setStrokeStyle(StrokeStyle::SolidStroke);
+    float trackInlineStart = rectInlineStart + nativeControlBorderInlineSize;
+    float trackBlockStart = rectBlockStart + (rectBlockSize - barBlockSize) / 2.0f;
+    float trackInlineSize = rectInlineSize - 2 * nativeControlBorderInlineSize;
 
-    const float verticalRenderingPosition = rect.y() + verticalOffset;
-    auto strokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-    strokeGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 141, 141, 141 } });
-    strokeGradient->addColorStop({ 0.45f, SRGBA<uint8_t> { 238, 238, 238 } });
-    strokeGradient->addColorStop({ 0.55f, SRGBA<uint8_t> { 238, 238, 238 } });
-    strokeGradient->addColorStop({ 1.0f, SRGBA<uint8_t> { 141, 141, 141 } });
-    context.setStrokeGradient(WTFMove(strokeGradient));
+    FloatRect trackRect(trackInlineStart, trackBlockStart, trackInlineSize, barBlockSize);
+    FloatRoundedRect roundedTrackRect(isHorizontalWritingMode ? trackRect : trackRect.transposedRect(), barCornerRadii);
 
-    context.setFillColor(Color::black);
+    FloatRoundedRect roundedTrackBorderRect(roundedTrackRect);
+    roundedTrackBorderRect.inflateWithRadii(nativeControlBorderInlineSize);
+    context.fillRoundedRect(roundedTrackBorderRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
 
-    Path trackPath;
-    FloatRect trackRect(rect.x() + 0.25f, verticalRenderingPosition + 0.25f, rect.width() - 0.5f, progressBarHeight - 0.5f);
-    FloatSize roundedCornerRadius(5, 4);
-    trackPath.addRoundedRect(trackRect, roundedCornerRadius);
-    context.drawPath(trackPath);
+    context.fillRoundedRect(roundedTrackRect, systemColor(CSSValueAppleSystemOpaqueFill, styleColorOptions));
 
-    // 1.2) Draw top gradient on the upper half. It is supposed to overlay the fill from the background and darker the stroked path.
-    FloatRect border(rect.x(), rect.y() + verticalOffset, rect.width(), progressBarHeight);
-    paintInfo.context().clipRoundedRect(FloatRoundedRect(border, roundedCornerRadius, roundedCornerRadius, roundedCornerRadius, roundedCornerRadius));
+    float barInlineSize;
+    float barInlineStart = trackInlineStart;
+    float barBlockStart = trackBlockStart;
+    float alpha = 1.0f;
 
-    float upperGradientHeight = progressBarHeight / 2.;
-    auto upperGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5f), FloatPoint(rect.x(), verticalRenderingPosition + upperGradientHeight - 1.5) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-    upperGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 133, 133, 133, 188 } });
-    upperGradient->addColorStop({ 1.0f, SRGBA<uint8_t> { 18, 18, 18, 51 } });
-    context.setFillGradient(WTFMove(upperGradient));
-
-    context.fillRect(FloatRect(rect.x(), verticalRenderingPosition, rect.width(), upperGradientHeight));
-
-    const auto& renderProgress = downcast<RenderProgress>(renderer);
     if (renderProgress.isDeterminate()) {
-        // 2) Draw the progress bar.
-        double position = clampTo(renderProgress.position(), 0.0, 1.0);
-        float barWidth = position * rect.width();
-        auto barGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition + 0.5f), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-        barGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 195, 217, 247 } });
-        barGradient->addColorStop({ 0.45f, SRGBA<uint8_t> { 118, 164, 228 } });
-        barGradient->addColorStop({ 0.49f, SRGBA<uint8_t> { 118, 164, 228 } });
-        barGradient->addColorStop({ 0.51f, SRGBA<uint8_t> { 36, 114, 210 } });
-        barGradient->addColorStop({ 0.55f, SRGBA<uint8_t> { 36, 114, 210 } });
-        barGradient->addColorStop({ 1.0f, SRGBA<uint8_t> { 57, 142, 244 } });
-        context.setFillGradient(WTFMove(barGradient));
+        barInlineSize = clampTo<float>(renderProgress.position(), 0.0f, 1.0f) * trackInlineSize;
 
-        auto barStrokeGradient = Gradient::create(Gradient::LinearData { FloatPoint(rect.x(), verticalRenderingPosition), FloatPoint(rect.x(), verticalRenderingPosition + progressBarHeight - 1) }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
-        barStrokeGradient->addColorStop({ 0.0f, SRGBA<uint8_t> { 95, 107, 183 } });
-        barStrokeGradient->addColorStop({ 0.5f, SRGBA<uint8_t> { 66, 106, 174, 240 } });
-        barStrokeGradient->addColorStop({ 1.0f, SRGBA<uint8_t> { 38, 104, 166 } });
-        context.setStrokeGradient(WTFMove(barStrokeGradient));
-
-        Path barPath;
-        int left = rect.x();
         if (!renderProgress.style().isLeftToRightDirection())
-            left = rect.maxX() - barWidth;
-        FloatRect barRect(left + 0.25f, verticalRenderingPosition + 0.25f, std::max(barWidth - 0.5f, 0.0f), progressBarHeight - 0.5f);
-        barPath.addRoundedRect(barRect, roundedCornerRadius);
-        context.drawPath(barPath);
+            barInlineStart = trackInlineStart + trackInlineSize - barInlineSize;
+    } else {
+        Seconds elapsed = MonotonicTime::now() - renderProgress.animationStartTime();
+        float position = fmodf(elapsed.value(), 1.0f);
+        bool reverseDirection = static_cast<int>(elapsed.value()) % 2;
+
+        if (Theme::singleton().userPrefersReducedMotion()) {
+            barInlineSize = trackInlineSize;
+
+            float difference = position * (reducedMotionProgressAnimationMaxOpacity - reducedMotionProgressAnimationMinOpacity);
+            if (reverseDirection)
+                alpha = reducedMotionProgressAnimationMaxOpacity - difference;
+            else
+                alpha = reducedMotionProgressAnimationMinOpacity + difference;
+        } else {
+            barInlineSize = 0.25f * trackInlineSize;
+
+            float offset = position * (trackInlineSize + barInlineSize);
+            if (reverseDirection)
+                barInlineStart = trackInlineStart + trackInlineSize - offset;
+            else
+                barInlineStart -= barInlineSize - offset;
+
+            context.clipRoundedRect(roundedTrackRect);
+        }
     }
+
+    FloatRect barRect(barInlineStart, barBlockStart, barInlineSize, barBlockSize);
+    context.fillRoundedRect(FloatRoundedRect(isHorizontalWritingMode ? barRect : barRect.transposedRect(), barCornerRadii), controlTintColor(renderer.style(), styleColorOptions).colorWithAlphaMultipliedBy(alpha));
 
     return false;
 }
@@ -1253,10 +848,6 @@ bool RenderThemeIOS::isSubmitStyleButton(const Element& element) const
 
 void RenderThemeIOS::adjustButtonLikeControlStyle(RenderStyle& style, const Element& element) const
 {
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (!element.document().settings().iOSFormControlRefreshEnabled())
-        return;
-
     // FIXME: Implement button-like control adjustments for the alternate design.
     if (element.document().settings().alternateFormControlDesignEnabled())
         return;
@@ -1282,7 +873,6 @@ void RenderThemeIOS::adjustButtonLikeControlStyle(RenderStyle& style, const Elem
     auto backgroundColor = style.colorResolvingCurrentColor(style.backgroundColor());
     if (backgroundColor.isValid())
         style.setBackgroundColor(backgroundColor.colorWithAlphaMultipliedBy(pressedStateOpacity));
-#endif
 }
 
 void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* element) const
@@ -1323,38 +913,6 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
         return;
 
     adjustRoundBorderRadius(style, *box);
-}
-
-void RenderThemeIOS::paintButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    paintPushButtonDecorations(box, paintInfo, rect);
-}
-
-static bool shouldUseConvexGradient(const Color& backgroundColor)
-{
-    // FIXME: This should probably be using luminance.
-    auto [r, g, b, a] = backgroundColor.toColorTypeLossy<SRGBA<float>>().resolved();
-    float largestNonAlphaChannel = std::max({ r, g, b });
-    return a > 0.5 && largestNonAlphaChannel < 0.5;
-}
-
-void RenderThemeIOS::paintPushButtonDecorations(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
-{
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-    if (box.settings().iOSFormControlRefreshEnabled())
-        return;
-#endif
-
-    GraphicsContextStateSaver stateSaver(paintInfo.context());
-    FloatRect clip = addRoundedBorderClip(box, paintInfo.context(), rect);
-
-    CGContextRef cgContext = paintInfo.context().platformContext();
-    if (shouldUseConvexGradient(box.style().visitedDependentColor(CSSPropertyBackgroundColor)))
-        drawAxialGradient(cgContext, gradientWithName(ConvexGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
-    else {
-        drawAxialGradient(cgContext, gradientWithName(ShadeGradient), clip.location(), FloatPoint(clip.x(), clip.maxY()), LinearInterpolation);
-        drawAxialGradient(cgContext, gradientWithName(ShineGradient), FloatPoint(clip.x(), clip.maxY()), clip.location(), ExponentialInterpolation);
-    }
 }
 
 Color RenderThemeIOS::platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions>) const
@@ -1798,10 +1356,6 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
 }
 #endif
 
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-
-constexpr auto nativeControlBorderInlineSize = 1.0f;
-
 constexpr auto checkboxRadioBorderWidth = 1.5f;
 constexpr auto checkboxRadioBorderDisabledOpacity = 0.3f;
 
@@ -1912,9 +1466,6 @@ void RenderThemeIOS::paintCheckboxRadioInnerShadow(const PaintInfo& paintInfo, c
 
 bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    if (!box.settings().iOSFormControlRefreshEnabled())
-        return true;
-
     bool useAlternateDesign = box.settings().alternateFormControlDesignEnabled();
 
     auto& context = paintInfo.context();
@@ -2000,9 +1551,6 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
 
 bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    if (!box.settings().iOSFormControlRefreshEnabled())
-        return true;
-
     bool useAlternateDesign = box.settings().alternateFormControlDesignEnabled();
 
     auto& context = paintInfo.context();
@@ -2055,118 +1603,19 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
 
 constexpr Seconds progressAnimationRepeatInterval = 16_ms;
 
-constexpr auto reducedMotionProgressAnimationMinOpacity = 0.3f;
-constexpr auto reducedMotionProgressAnimationMaxOpacity = 0.6f;
-
-Seconds RenderThemeIOS::animationRepeatIntervalForProgressBar(const RenderProgress& renderProgress) const
+Seconds RenderThemeIOS::animationRepeatIntervalForProgressBar(const RenderProgress&) const
 {
-    if (!renderProgress.settings().iOSFormControlRefreshEnabled())
-        return RenderTheme::animationRepeatIntervalForProgressBar(renderProgress);
-
     return progressAnimationRepeatInterval;
 }
 
-bool RenderThemeIOS::paintProgressBarWithFormControlRefresh(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::supportsMeter(StyleAppearance appearance) const
 {
-    if (!is<RenderProgress>(renderer))
-        return true;
-    auto& renderProgress = downcast<RenderProgress>(renderer);
-
-    auto& context = paintInfo.context();
-    GraphicsContextStateSaver stateSaver(context);
-
-    auto styleColorOptions = renderer.styleColorOptions();
-    auto isHorizontalWritingMode = renderer.style().isHorizontalWritingMode();
-
-    constexpr auto barBlockSize = 4.0f;
-
-    constexpr auto barCornerRadiusInlineSize = 2.5f;
-    constexpr auto barCornerRadiusBlockSize = 1.5f;
-
-    FloatRoundedRect::Radii barCornerRadii(
-        isHorizontalWritingMode ? barCornerRadiusInlineSize : barCornerRadiusBlockSize,
-        isHorizontalWritingMode ? barCornerRadiusBlockSize : barCornerRadiusInlineSize
-    );
-
-    auto logicalRect = isHorizontalWritingMode ? rect : rect.transposedRect();
-
-    float rectInlineSize = logicalRect.width();
-    float rectInlineStart = logicalRect.x();
-    float rectBlockSize = logicalRect.height();
-    float rectBlockStart = logicalRect.y();
-
-    if (rectBlockSize < barBlockSize) {
-        // The rect is smaller than the standard progress bar. We clip to the
-        // element's rect to avoid leaking pixels outside the repaint rect.
-        context.clip(rect);
-    }
-
-    float trackInlineStart = rectInlineStart + nativeControlBorderInlineSize;
-    float trackBlockStart = rectBlockStart + (rectBlockSize - barBlockSize) / 2.0f;
-    float trackInlineSize = rectInlineSize - 2 * nativeControlBorderInlineSize;
-
-    FloatRect trackRect(trackInlineStart, trackBlockStart, trackInlineSize, barBlockSize);
-    FloatRoundedRect roundedTrackRect(isHorizontalWritingMode ? trackRect : trackRect.transposedRect(), barCornerRadii);
-
-    FloatRoundedRect roundedTrackBorderRect(roundedTrackRect);
-    roundedTrackBorderRect.inflateWithRadii(nativeControlBorderInlineSize);
-    context.fillRoundedRect(roundedTrackBorderRect, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
-
-    context.fillRoundedRect(roundedTrackRect, systemColor(CSSValueAppleSystemOpaqueFill, styleColorOptions));
-
-    float barInlineSize;
-    float barInlineStart = trackInlineStart;
-    float barBlockStart = trackBlockStart;
-    float alpha = 1.0f;
-
-    if (renderProgress.isDeterminate()) {
-        barInlineSize = clampTo<float>(renderProgress.position(), 0.0f, 1.0f) * trackInlineSize;
-
-        if (!renderProgress.style().isLeftToRightDirection())
-            barInlineStart = trackInlineStart + trackInlineSize - barInlineSize;
-    } else {
-        Seconds elapsed = MonotonicTime::now() - renderProgress.animationStartTime();
-        float position = fmodf(elapsed.value(), 1.0f);
-        bool reverseDirection = static_cast<int>(elapsed.value()) % 2;
-
-        if (Theme::singleton().userPrefersReducedMotion()) {
-            barInlineSize = trackInlineSize;
-
-            float difference = position * (reducedMotionProgressAnimationMaxOpacity - reducedMotionProgressAnimationMinOpacity);
-            if (reverseDirection)
-                alpha = reducedMotionProgressAnimationMaxOpacity - difference;
-            else
-                alpha = reducedMotionProgressAnimationMinOpacity + difference;
-        } else {
-            barInlineSize = 0.25f * trackInlineSize;
-
-            float offset = position * (trackInlineSize + barInlineSize);
-            if (reverseDirection)
-                barInlineStart = trackInlineStart + trackInlineSize - offset;
-            else
-                barInlineStart -= barInlineSize - offset;
-
-            context.clipRoundedRect(roundedTrackRect);
-        }
-    }
-
-    FloatRect barRect(barInlineStart, barBlockStart, barInlineSize, barBlockSize);
-    context.fillRoundedRect(FloatRoundedRect(isHorizontalWritingMode ? barRect : barRect.transposedRect(), barCornerRadii), controlTintColor(renderer.style(), styleColorOptions).colorWithAlphaMultipliedBy(alpha));
-
-    return false;
-}
-
-bool RenderThemeIOS::supportsMeter(StyleAppearance appearance, const HTMLMeterElement& element) const
-{
-    if (appearance == StyleAppearance::Meter)
-        return element.document().settings().iOSFormControlRefreshEnabled();
-
-    return false;
+    return appearance == StyleAppearance::Meter;
 }
 
 bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!renderer.settings().iOSFormControlRefreshEnabled() || !is<RenderMeter>(renderer))
+    if (!is<RenderMeter>(renderer))
         return true;
 
     auto& renderMeter = downcast<RenderMeter>(renderer);
@@ -2265,11 +1714,6 @@ bool RenderThemeIOS::paintListButton(const RenderObject& box, const PaintInfo& p
 
 void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    if (!box.settings().iOSFormControlRefreshEnabled()) {
-        RenderTheme::paintSliderTicks(box, paintInfo, rect);
-        return;
-    }
-
     if (!is<HTMLInputElement>(box.node()))
         return;
 
@@ -2329,117 +1773,25 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
 
 #endif // ENABLE(DATALIST_ELEMENT)
 
-bool RenderThemeIOS::paintSliderTrackWithFormControlRefresh(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
-{
-    if (!is<RenderSlider>(box))
-        return true;
-    auto& renderSlider = downcast<RenderSlider>(box);
-
-    auto& context = paintInfo.context();
-    GraphicsContextStateSaver stateSaver(context);
-
-    bool isHorizontal = true;
-    FloatRect trackClip = rect;
-
-    switch (box.style().effectiveAppearance()) {
-    case StyleAppearance::SliderHorizontal:
-        // Inset slightly so the thumb covers the edge.
-        if (trackClip.width() > 2) {
-            trackClip.setWidth(trackClip.width() - 2);
-            trackClip.setX(trackClip.x() + 1);
-        }
-        trackClip.setHeight(kTrackThickness);
-        trackClip.setY(rect.y() + rect.height() / 2 - kTrackThickness / 2);
-        break;
-    case StyleAppearance::SliderVertical:
-        isHorizontal = false;
-        // Inset slightly so the thumb covers the edge.
-        if (trackClip.height() > 2) {
-            trackClip.setHeight(trackClip.height() - 2);
-            trackClip.setY(trackClip.y() + 1);
-        }
-        trackClip.setWidth(kTrackThickness);
-        trackClip.setX(rect.x() + rect.width() / 2 - kTrackThickness / 2);
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-
-    auto styleColorOptions = box.styleColorOptions();
-
-    auto cornerWidth = trackClip.width() < kTrackThickness ? trackClip.width() / 2.0f : kTrackRadius;
-    auto cornerHeight = trackClip.height() < kTrackThickness ? trackClip.height() / 2.0f : kTrackRadius;
-
-    FloatRoundedRect::Radii cornerRadii(cornerWidth, cornerHeight);
-    FloatRoundedRect innerBorder(trackClip, cornerRadii);
-
-    FloatRoundedRect outerBorder(innerBorder);
-    outerBorder.inflateWithRadii(nativeControlBorderInlineSize);
-    context.fillRoundedRect(outerBorder, systemColor(CSSValueWebkitControlBackground, styleColorOptions));
-
-    context.fillRoundedRect(innerBorder, systemColor(CSSValueAppleSystemOpaqueFill, styleColorOptions));
-
-#if ENABLE(DATALIST_ELEMENT)
-    paintSliderTicks(box, paintInfo, trackClip);
-#endif
-
-    double valueRatio = renderSlider.valueRatio();
-    if (isHorizontal) {
-        double newWidth = trackClip.width() * valueRatio;
-
-        if (!box.style().isLeftToRightDirection())
-            trackClip.move(trackClip.width() - newWidth, 0);
-
-        trackClip.setWidth(newWidth);
-    } else {
-        float height = trackClip.height();
-        trackClip.setHeight(height * valueRatio);
-
-        if (box.style().isHorizontalWritingMode() || !box.style().isLeftToRightDirection())
-            trackClip.setY(trackClip.y() + height - trackClip.height());
-    }
-
-    FloatRoundedRect fillRect(trackClip, cornerRadii);
-    context.fillRoundedRect(fillRect, controlTintColor(box.style(), styleColorOptions));
-
-    return false;
-}
-
 #if ENABLE(INPUT_TYPE_COLOR)
 
-String RenderThemeIOS::colorInputStyleSheet(const Settings& settings) const
+String RenderThemeIOS::colorInputStyleSheet() const
 {
-    if (!settings.iOSFormControlRefreshEnabled())
-        return RenderTheme::colorInputStyleSheet(settings);
-
     return "input[type=\"color\"] { appearance: auto; width: 28px; height: 28px; box-sizing: border-box; outline: none; border: initial; border-radius: 50%; } "_s;
 }
 
 void RenderThemeIOS::adjustColorWellStyle(RenderStyle& style, const Element* element) const
 {
     adjustStyleForAlternateFormControlDesignTransition(style, element);
-
-    if (!element || element->document().settings().iOSFormControlRefreshEnabled())
-        return;
-
-    RenderTheme::adjustColorWellStyle(style, element);
 }
 
-bool RenderThemeIOS::paintColorWell(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
+bool RenderThemeIOS::paintColorWell(const RenderObject&, const PaintInfo&, const IntRect&)
 {
-    if (!box.settings().iOSFormControlRefreshEnabled())
-        return RenderTheme::paintColorWell(box, paintInfo, rect);
-
     return true;
 }
 
-void RenderThemeIOS::paintColorWellDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
+void RenderThemeIOS::paintColorWellDecorations(const RenderObject&, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    if (!box.settings().iOSFormControlRefreshEnabled()) {
-        RenderTheme::paintColorWellDecorations(box, paintInfo, rect);
-        return;
-    }
-
     constexpr int strokeThickness = 3;
     constexpr DisplayP3<float> colorStops[] = {
         { 1, 1, 0, 1 },
@@ -2472,99 +1824,9 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderObject& box, const Pa
 
 #endif // ENABLE(INPUT_TYPE_COLOR)
 
-void RenderThemeIOS::paintMenuListButtonDecorationsWithFormControlRefresh(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
-{
-    if (is<HTMLInputElement>(box.element()))
-        return;
-
-    auto& context = paintInfo.context();
-    GraphicsContextStateSaver stateSaver(context);
-
-    auto& style = box.style();
-
-    Path glyphPath;
-    FloatSize glyphSize;
-
-    if (box.isRenderMenuList() && downcast<HTMLSelectElement>(box.element())->multiple()) {
-        constexpr int length = 18;
-        constexpr int count = 3;
-        constexpr int padding = 12;
-
-        FloatRect ellipse(0, 0, length, length);
-
-        for (int i = 0; i < count; ++i) {
-            glyphPath.addEllipseInRect(ellipse);
-            ellipse.move(length + padding, 0);
-        }
-
-        glyphSize = { length * count + padding * (count - 1), length };
-    } else {
-        constexpr int glyphWidth = 63;
-        constexpr int glyphHeight = 73;
-        glyphSize = { glyphWidth, glyphHeight };
-
-        glyphPath.moveTo({ 31.8593f, 1.0f });
-        glyphPath.addBezierCurveTo({ 30.541f, 1.0f }, { 29.418f, 1.586f }, { 28.0507f, 2.66f });
-        glyphPath.addLineTo({ 2.5625f, 23.168f });
-        glyphPath.addBezierCurveTo({ 1.5859f, 23.998f }, { 1.0f, 25.2188f }, { 1.0f, 26.7325f });
-        glyphPath.addBezierCurveTo({ 1.0f, 29.6133f }, { 3.246f, 31.7129f }, { 5.9316f, 31.7129f });
-        glyphPath.addBezierCurveTo({ 7.1523f, 31.7129f }, { 8.3242f, 31.2246f }, { 9.5449f, 30.248f });
-        glyphPath.addLineTo({ 31.8593f, 12.377f });
-        glyphPath.addLineTo({ 54.2226f, 30.248f });
-        glyphPath.addBezierCurveTo({ 55.3945f, 31.2246f }, { 56.6152f, 31.7129f }, { 57.7871f, 31.7129 });
-        glyphPath.addBezierCurveTo({ 60.4726f, 31.7129f }, { 62.7187f, 29.6133f }, { 62.7187f, 26.7325 });
-        glyphPath.addBezierCurveTo({ 62.7187f, 25.2188f }, { 62.1327f, 23.9981f }, { 61.1562f, 23.168 });
-        glyphPath.addLineTo({ 35.6679f, 2.6602f });
-        glyphPath.addBezierCurveTo({ 34.3496f, 1.586f }, { 33.1777f, 1.0f }, { 31.8593f, 1.0f });
-        glyphPath.moveTo({ 31.8593f, 72.3867f });
-        glyphPath.addBezierCurveTo({ 33.1777f, 72.3867f }, { 34.3496f, 71.8007f }, { 35.6679f, 70.7266f });
-        glyphPath.addLineTo({ 61.1562f, 50.2188f });
-        glyphPath.addBezierCurveTo({ 62.1328f, 49.3888f }, { 62.7187f, 48.168f }, { 62.7187f, 46.6543f });
-        glyphPath.addBezierCurveTo({ 62.7187f, 43.7735f }, { 60.4726f, 41.6739f }, { 57.7871f, 41.6739f });
-        glyphPath.addBezierCurveTo({ 56.6151f, 41.6739f }, { 55.3945f, 42.162f }, { 54.2226f, 43.09f });
-        glyphPath.addLineTo({ 31.8593f, 61.01f });
-        glyphPath.addLineTo({ 9.545f, 43.0898f });
-        glyphPath.addBezierCurveTo({ 8.3243f, 42.1619f }, { 7.1524f, 41.6738f }, { 5.9317f, 41.6738f });
-        glyphPath.addBezierCurveTo({ 3.246f, 41.6739f }, { 1.0f, 43.7735f }, { 1.0f, 46.6543f });
-        glyphPath.addBezierCurveTo({ 1.0f, 48.168f }, { 1.5859, 49.3887 }, { 2.5625, 50.2188f });
-        glyphPath.addLineTo({ 28.0507f, 70.7266f });
-        glyphPath.addBezierCurveTo({ 29.4179f, 71.8f }, { 30.541f, 72.3867f }, { 31.8593f, 72.3867 });
-    }
-
-    auto emSize = CSSPrimitiveValue::create(1.0, CSSUnitType::CSS_EM);
-    auto emPixels = emSize->computeLength<float>({ style, nullptr, nullptr, nullptr });
-    auto glyphScale = 0.65f * emPixels / glyphSize.width();
-    glyphSize = glyphScale * glyphSize;
-
-    bool isHorizontalWritingMode = style.isHorizontalWritingMode();
-    auto logicalRect = isHorizontalWritingMode ? rect : rect.transposedRect();
-
-    FloatPoint glyphOrigin;
-    glyphOrigin.setY(logicalRect.center().y() - glyphSize.height() / 2.0f);
-    if (style.isLeftToRightDirection())
-        glyphOrigin.setX(logicalRect.maxX() - glyphSize.width() - box.style().borderEndWidth() - valueForLength(box.style().paddingEnd(), logicalRect.width()));
-    else
-        glyphOrigin.setX(logicalRect.x() + box.style().borderEndWidth() + valueForLength(box.style().paddingEnd(), logicalRect.width()));
-
-    if (!isHorizontalWritingMode)
-        glyphOrigin = glyphOrigin.transposedPoint();
-
-    AffineTransform transform;
-    transform.translate(glyphOrigin);
-    transform.scale(glyphScale);
-    glyphPath.transform(transform);
-
-    if (isEnabled(box))
-        context.setFillColor(style.color());
-    else
-        context.setFillColor(systemColor(CSSValueAppleSystemTertiaryLabel, box.styleColorOptions()));
-
-    context.fillPath(glyphPath);
-}
-
 void RenderThemeIOS::adjustSearchFieldDecorationPartStyle(RenderStyle& style, const Element* element) const
 {
-    if (!element || !element->document().settings().iOSFormControlRefreshEnabled())
+    if (!element)
         return;
 
     constexpr int searchFieldDecorationEmSize = 1;
@@ -2582,9 +1844,6 @@ void RenderThemeIOS::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
 
 bool RenderThemeIOS::paintSearchFieldDecorationPart(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!box.settings().iOSFormControlRefreshEnabled())
-        return RenderTheme::paintSearchFieldDecorationPart(box, paintInfo, rect);
-
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
@@ -2641,8 +1900,6 @@ bool RenderThemeIOS::paintSearchFieldResultsButton(const RenderBox& box, const P
 {
     return paintSearchFieldDecorationPart(box, paintInfo, rect);
 }
-
-#endif // ENABLE(IOS_FORM_CONTROL_REFRESH)
 
 } // namespace WebCore
 

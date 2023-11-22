@@ -576,7 +576,10 @@ CSSStyleSheet::RuleMutationScope::RuleMutationScope(CSSRule* rule)
     , m_mutationType(is<CSSKeyframesRule>(rule) ? KeyframesRuleMutation : OtherMutation)
     , m_contentsWereClonedForMutation(ContentsWereNotClonedForMutation)
     , m_insertedKeyframesRule(nullptr)
-    , m_modifiedKeyframesRuleName(is<CSSKeyframesRule>(rule) ? downcast<CSSKeyframesRule>(*rule).name() : emptyAtom())
+    , m_modifiedKeyframesRuleName([rule] {
+        auto* cssKeyframeRule = dynamicDowncast<CSSKeyframesRule>(rule);
+        return cssKeyframeRule ? cssKeyframeRule->name() : emptyAtom();
+    }())
 {
     if (m_styleSheet)
         m_contentsWereClonedForMutation = m_styleSheet->willMutateRules();

@@ -286,9 +286,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     Deque<QueuedTouchEvents> touchEventQueue;
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     MonotonicTime didFinishDocumentLoadForMainFrameTimestamp;
-#endif
 
 #if ENABLE(UI_SIDE_COMPOSITING)
     VisibleContentRectUpdateInfo lastVisibleContentRectUpdate;

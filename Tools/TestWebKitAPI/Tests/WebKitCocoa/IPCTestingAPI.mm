@@ -355,7 +355,6 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForPrompt)
     EXPECT_STREQ([[webView stringByEvaluatingJavaScript:@"JSON.stringify(result.arguments)"] UTF8String], "[{\"type\":\"String\",\"value\":\"foo\"}]");
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 TEST(IPCTestingAPI, DecodesReplyArgumentsForAsyncMessage)
 {
     auto webView = createWebViewWithIPCTestingAPI();
@@ -372,7 +371,6 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForAsyncMessage)
 
     EXPECT_STREQ([alertMessage UTF8String], "[{\"type\":\"bool\",\"value\":false}]");
 }
-#endif
 
 TEST(IPCTestingAPI, DescribesArguments)
 {

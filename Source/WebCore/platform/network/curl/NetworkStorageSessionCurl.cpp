@@ -116,12 +116,7 @@ CookieJarDB& NetworkStorageSession::cookieDatabase() const
 
 void NetworkStorageSession::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo&, const URL& url, std::optional<FrameIdentifier>, std::optional<PageIdentifier> pageID, ApplyTrackingPrevention, const String& value, ShouldRelaxThirdPartyCookieBlocking) const
 {
-#if ENABLE(TRACKING_PREVENTION)
     std::optional<Seconds> cappedLifetime = clientSideCookieCap(RegistrableDomain { firstParty }, pageID);
-#else
-    UNUSED_PARAM(pageID);
-    std::optional<Seconds> cappedLifetime = std::nullopt;
-#endif
     cookieDatabase().setCookie(firstParty, url, value, CookieJarDB::Source::Script, cappedLifetime);
 }
 

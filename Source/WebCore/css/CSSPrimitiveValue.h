@@ -345,7 +345,8 @@ inline CSSValueID valueID(const CSSPrimitiveValue* value)
 
 inline CSSValueID valueID(const CSSValue& value)
 {
-    return value.isPrimitiveValue() ? valueID(downcast<CSSPrimitiveValue>(value)) : CSSValueInvalid;
+    auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
+    return primitiveValue ? valueID(*primitiveValue) : CSSValueInvalid;
 }
 
 inline CSSValueID valueID(const CSSValue* value)

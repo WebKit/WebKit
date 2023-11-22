@@ -317,7 +317,6 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
 void NetworkResourceLoader::retrieveCacheEntryInternal(std::unique_ptr<NetworkCache::Entry>&& entry, WebCore::ResourceRequest&& request)
 {
     LOADER_RELEASE_LOG("retrieveCacheEntryInternal:");
-#if ENABLE(TRACKING_PREVENTION)
     if (entry->hasReachedPrevalentResourceAgeCap()) {
         LOADER_RELEASE_LOG("retrieveCacheEntryInternal: Revalidating cached entry because it reached the prevalent resource age cap");
         m_cacheEntryForMaxAgeCapValidation = WTFMove(entry);
@@ -325,7 +324,6 @@ void NetworkResourceLoader::retrieveCacheEntryInternal(std::unique_ptr<NetworkCa
         startNetworkLoad(WTFMove(revalidationRequest), FirstLoad::Yes);
         return;
     }
-#endif
     if (entry->redirectRequest()) {
         LOADER_RELEASE_LOG("retrieveCacheEntryInternal: Cached entry is a redirect");
         dispatchWillSendRequestForCacheEntry(WTFMove(request), WTFMove(entry));
@@ -1059,7 +1057,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
         return;
     }
 
-#if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
     if (shouldLogCookieInformation(m_connection, sessionID()))
         logCookieInformation();
 #endif
@@ -1146,7 +1144,6 @@ void NetworkResourceLoader::didReceiveChallenge(const AuthenticationChallenge& c
 
 std::optional<Seconds> NetworkResourceLoader::validateCacheEntryForMaxAgeCapValidation(const ResourceRequest& request, const ResourceRequest& redirectRequest, const ResourceResponse& redirectResponse)
 {
-#if ENABLE(TRACKING_PREVENTION)
     bool existingCacheEntryMatchesNewResponse = false;
     if (m_cacheEntryForMaxAgeCapValidation) {
         ASSERT(redirectResponse.source() == ResourceResponse::Source::Network);
@@ -1162,7 +1159,6 @@ std::optional<Seconds> NetworkResourceLoader::validateCacheEntryForMaxAgeCapVali
         if (auto* networkStorageSession = m_connection->networkProcess().storageSession(sessionID()))
             return networkStorageSession->maxAgeCacheCap(request);
     }
-#endif
     return std::nullopt;
 }
 
@@ -1647,7 +1643,7 @@ void NetworkResourceLoader::sendResultForCacheEntry(std::unique_ptr<NetworkCache
     }
 #endif
 
-#if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
     if (shouldLogCookieInformation(m_connection, sessionID()))
         logCookieInformation();
 #endif
@@ -1750,7 +1746,7 @@ bool NetworkResourceLoader::crossOriginAccessControlCheckEnabled() const
     return m_parameters.crossOriginAccessControlCheckEnabled;
 }
 
-#if ENABLE(TRACKING_PREVENTION) && !RELEASE_LOG_DISABLED
+#if !RELEASE_LOG_DISABLED
 bool NetworkResourceLoader::shouldLogCookieInformation(NetworkConnectionToWebProcess& connection, PAL::SessionID sessionID)
 {
     if (auto* session = connection.networkProcess().networkSession(sessionID))
@@ -1882,7 +1878,7 @@ void NetworkResourceLoader::logCookieInformation(NetworkConnectionToWebProcess& 
     else
         logCookieInformationInternal(connection, label, loggedObject, networkStorageSession, firstParty, sameSiteInfo, url, referrer, frameID, pageID, identifier);
 }
-#endif
+#endif // !RELEASE_LOG_DISABLED
 
 void NetworkResourceLoader::addConsoleMessage(MessageSource messageSource, MessageLevel messageLevel, const String& message, unsigned long)
 {

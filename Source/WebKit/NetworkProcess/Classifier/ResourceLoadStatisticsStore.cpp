@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ResourceLoadStatisticsStore.h"
 
-#if ENABLE(TRACKING_PREVENTION)
-
 #include "ITPThirdPartyData.h"
 #include "Logging.h"
 #include "NetworkProcess.h"
@@ -589,8 +587,6 @@ void ResourceLoadStatisticsStore::updateClientSideCookiesAgeCap()
 {
     ASSERT(!RunLoop::isMain());
 
-#if ENABLE(TRACKING_PREVENTION)
-    
     Seconds capTime;
 #if ENABLE(JS_COOKIE_CHECKING)
     capTime = m_parameters.clientSideCookiesForLinkDecorationTargetPageAgeCapTime;
@@ -604,7 +600,6 @@ void ResourceLoadStatisticsStore::updateClientSideCookiesAgeCap()
                 storageSession->setAgeCapForClientSideCookies(seconds);
         }
     });
-#endif
 }
 
 bool ResourceLoadStatisticsStore::shouldRemoveDataRecords() const
@@ -3345,5 +3340,3 @@ void ResourceLoadStatisticsStore::insertExpiredStatisticForTesting(const Registr
 
 #undef ITP_RELEASE_LOG
 #undef ITP_RELEASE_LOG_ERROR
-
-#endif

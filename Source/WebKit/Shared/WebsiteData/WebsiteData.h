@@ -64,9 +64,7 @@ struct WebsiteData {
     HashSet<String> hostNamesWithCookies;
 
     HashSet<String> hostNamesWithHSTSCache;
-#if ENABLE(TRACKING_PREVENTION)
     HashSet<WebCore::RegistrableDomain> registrableDomainsWithResourceLoadStatistics;
-#endif
     static WebsiteDataProcessType ownerProcess(WebsiteDataType);
     static OptionSet<WebsiteDataType> filter(OptionSet<WebsiteDataType>, WebsiteDataProcessType);
 };

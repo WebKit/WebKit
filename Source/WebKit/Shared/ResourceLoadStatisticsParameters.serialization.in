@@ -28,10 +28,8 @@
     bool enableLogTestingEvent;
     bool shouldIncludeLocalhost;
     bool enableDebugMode;
-#if ENABLE(TRACKING_PREVENTION)
     WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode;
     WebCore::SameSiteStrictEnforcementEnabled sameSiteStrictEnforcementEnabled;
-#endif
     WebCore::FirstPartyWebsiteDataRemovalMode firstPartyWebsiteDataRemovalMode;
     WebCore::RegistrableDomain standaloneApplicationDomain;
     HashSet<WebCore::RegistrableDomain> appBoundDomains;

@@ -46,13 +46,11 @@ NetworkSessionCurl::NetworkSessionCurl(NetworkProcess& networkProcess, const Net
         networkStorageSession()->setCookieDatabase(makeUniqueRef<CookieJarDB>(parameters.cookiePersistentStorageFile));
     networkStorageSession()->setProxySettings(parameters.proxySettings);
 
-#if ENABLE(TRACKING_PREVENTION)
     m_resourceLoadStatisticsDirectory = parameters.resourceLoadStatisticsParameters.directory;
     m_shouldIncludeLocalhostInResourceLoadStatistics = parameters.resourceLoadStatisticsParameters.shouldIncludeLocalhost ? ShouldIncludeLocalhost::Yes : ShouldIncludeLocalhost::No;
     m_enableResourceLoadStatisticsDebugMode = parameters.resourceLoadStatisticsParameters.enableDebugMode ? EnableResourceLoadStatisticsDebugMode::Yes : EnableResourceLoadStatisticsDebugMode::No;
     m_resourceLoadStatisticsManualPrevalentResource = parameters.resourceLoadStatisticsParameters.manualPrevalentResource;
     setTrackingPreventionEnabled(parameters.resourceLoadStatisticsParameters.enabled);
-#endif
 }
 
 NetworkSessionCurl::~NetworkSessionCurl()

@@ -31,15 +31,13 @@
 #include "CookieJar.h"
 #include "HTTPCookieAcceptPolicy.h"
 #include "NotImplemented.h"
+#include "ResourceRequest.h"
 #include "RuntimeApplicationChecks.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessPrivilege.h>
 
-#if ENABLE(TRACKING_PREVENTION)
-#include "ResourceRequest.h"
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 #include "PublicSuffix.h"
-#endif
 #endif
 
 namespace WebCore {
@@ -67,8 +65,6 @@ Vector<Cookie> NetworkStorageSession::domCookiesForHost(const String&)
     return { };
 }
 #endif // !PLATFORM(COCOA)
-
-#if ENABLE(TRACKING_PREVENTION)
 
 #if !USE(SOUP)
 void NetworkStorageSession::setTrackingPreventionEnabled(bool enabled)
@@ -461,8 +457,6 @@ std::optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomai
 
     return std::nullopt;
 }
-
-#endif // ENABLE(TRACKING_PREVENTION)
 
 void NetworkStorageSession::deleteCookiesForHostnames(const Vector<String>& cookieHostNames, CompletionHandler<void()>&& completionHandler)
 {

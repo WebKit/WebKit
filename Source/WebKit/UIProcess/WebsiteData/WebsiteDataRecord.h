@@ -51,9 +51,7 @@ struct WebsiteDataRecord {
     void addCookieHostName(const String& hostName);
     void addHSTSCacheHostname(const String& hostName);
     void addAlternativeServicesHostname(const String& hostName);
-#if ENABLE(TRACKING_PREVENTION)
     void addResourceLoadStatisticsRegistrableDomain(const WebCore::RegistrableDomain&);
-#endif
 
     bool matches(const WebCore::RegistrableDomain&) const;
     String topPrivatelyControlledDomain();
@@ -74,9 +72,7 @@ struct WebsiteDataRecord {
     HashSet<String> cookieHostNames;
     HashSet<String> HSTSCacheHostNames;
     HashSet<String> alternativeServicesHostNames;
-#if ENABLE(TRACKING_PREVENTION)
     HashSet<WebCore::RegistrableDomain> resourceLoadStatisticsRegistrableDomains;
-#endif
 };
 
 }

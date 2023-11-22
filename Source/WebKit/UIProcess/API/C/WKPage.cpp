@@ -3213,27 +3213,18 @@ void WKPageTriggerMockCaptureConfigurationChange(WKPageRef pageRef, bool forMicr
 void WKPageLoadedSubresourceDomains(WKPageRef pageRef, WKPageLoadedSubresourceDomainsFunction callback, void* callbackContext)
 {
     CRASH_IF_SUSPENDED;
-#if ENABLE(TRACKING_PREVENTION)
     toImpl(pageRef)->getLoadedSubresourceDomains([callbackContext, callback](Vector<RegistrableDomain>&& domains) {
         Vector<RefPtr<API::Object>> apiDomains = WTF::map(domains, [](auto& domain) {
             return RefPtr<API::Object>(API::String::create(String(domain.string())));
         });
         callback(toAPI(API::Array::create(WTFMove(apiDomains)).ptr()), callbackContext);
     });
-#else
-    UNUSED_PARAM(pageRef);
-    callback(nullptr, callbackContext);
-#endif
 }
 
 void WKPageClearLoadedSubresourceDomains(WKPageRef pageRef)
 {
     CRASH_IF_SUSPENDED;
-#if ENABLE(TRACKING_PREVENTION)
     toImpl(pageRef)->clearLoadedSubresourceDomains();
-#else
-    UNUSED_PARAM(pageRef);
-#endif
 }
 
 void WKPageSetMediaCaptureReportingDelayForTesting(WKPageRef pageRef, double delay)

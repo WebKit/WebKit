@@ -1017,15 +1017,6 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
     case StyleAppearance::TextArea:
         paintTextAreaDecorations(box, paintInfo, devicePixelSnappedRect);
         break;
-    case StyleAppearance::Checkbox:
-        paintCheckboxDecorations(box, paintInfo, integralSnappedRect);
-        break;
-    case StyleAppearance::Radio:
-        paintRadioDecorations(box, paintInfo, integralSnappedRect);
-        break;
-    case StyleAppearance::PushButton:
-        paintPushButtonDecorations(box, paintInfo, integralSnappedRect);
-        break;
     case StyleAppearance::SquareButton:
         paintSquareButtonDecorations(box, paintInfo, integralSnappedRect);
         break;
@@ -1034,16 +1025,10 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
         paintColorWellDecorations(box, paintInfo, devicePixelSnappedRect);
         break;
 #endif
-    case StyleAppearance::Button:
-        paintButtonDecorations(box, paintInfo, integralSnappedRect);
-        break;
     case StyleAppearance::Menulist:
         paintMenuListDecorations(box, paintInfo, integralSnappedRect);
         break;
     case StyleAppearance::SliderThumbHorizontal:
-    case StyleAppearance::SliderThumbVertical:
-        paintSliderThumbDecorations(box, paintInfo, integralSnappedRect);
-        break;
     case StyleAppearance::SearchField:
         paintSearchFieldDecorations(box, paintInfo, integralSnappedRect);
         break;
@@ -1466,13 +1451,6 @@ FloatSize RenderTheme::meterSizeForBounds(const RenderMeter&, const FloatRect& b
     return bounds.size();
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
-void RenderTheme::paintColorWellDecorations(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
-{
-    paintButtonDecorations(box, paintInfo, snappedIntRect(LayoutRect(rect)));
-}
-#endif // ENABLE(INPUT_TYPE_COLOR)
-
 #if ENABLE(ATTACHMENT_ELEMENT)
 
 String RenderTheme::attachmentStyleSheet() const
@@ -1485,7 +1463,7 @@ String RenderTheme::attachmentStyleSheet() const
 
 #if ENABLE(INPUT_TYPE_COLOR)
 
-String RenderTheme::colorInputStyleSheet(const Settings&) const
+String RenderTheme::colorInputStyleSheet() const
 {
     return "input[type=\"color\"] { appearance: auto; inline-size: 44px; block-size: 23px; box-sizing: border-box; outline: none; } "_s;
 }

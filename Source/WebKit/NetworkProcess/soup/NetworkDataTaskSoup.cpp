@@ -186,7 +186,6 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
     }
     soup_message_set_flags(m_soupMessage.get(), static_cast<SoupMessageFlags>(soup_message_get_flags(m_soupMessage.get()) | messageFlags));
 
-#if ENABLE(TRACKING_PREVENTION)
     bool shouldBlockCookies = wasBlockingCookies == WasBlockingCookies::Yes ? true : m_storedCredentialsPolicy == StoredCredentialsPolicy::EphemeralStateless;
     if (!shouldBlockCookies) {
         if (auto* networkStorageSession = m_session->networkStorageSession())
@@ -195,7 +194,6 @@ void NetworkDataTaskSoup::createRequest(ResourceRequest&& request, WasBlockingCo
     if (shouldBlockCookies)
         soup_message_disable_feature(m_soupMessage.get(), SOUP_TYPE_COOKIE_JAR);
     m_isBlockingCookies = shouldBlockCookies;
-#endif
 
 #if SOUP_CHECK_VERSION(2, 67, 1)
     if ((m_currentRequest.url().protocolIs("https"_s) && !shouldAllowHSTSPolicySetting()) || (m_currentRequest.url().protocolIs("http"_s) && !shouldAllowHSTSProtocolUpgrade()))

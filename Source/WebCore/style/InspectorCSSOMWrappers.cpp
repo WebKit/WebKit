@@ -136,9 +136,6 @@ void InspectorCSSOMWrappers::collectDocumentWrappers(ExtensionStyleSheets& exten
 #if ENABLE(INPUT_TYPE_COLOR)
         collectFromStyleSheetContents(UserAgentStyle::colorInputStyleSheet);
 #endif
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-        collectFromStyleSheetContents(UserAgentStyle::legacyFormControlsIOSStyleSheet);
-#endif
         collectFromStyleSheetContents(UserAgentStyle::plugInsStyleSheet);
         collectFromStyleSheetContents(UserAgentStyle::mediaQueryStyleSheet);
 

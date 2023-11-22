@@ -132,7 +132,7 @@ void RenderMenuList::adjustInnerStyle()
         innerStyle.setAlignSelfPosition(ItemPosition::FlexStart);
     }
 
-    auto paddingBox = theme().popupInternalPaddingBox(style(), document().settings());
+    auto paddingBox = theme().popupInternalPaddingBox(style());
     if (!style().isHorizontalWritingMode())
         paddingBox = LengthBox(paddingBox.left().value(), paddingBox.top().value(), paddingBox.right().value(), paddingBox.bottom().value());
 

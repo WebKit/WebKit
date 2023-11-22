@@ -1616,7 +1616,6 @@ void WebChromeClient::didInvalidateDocumentMarkerRects()
     protectedPage()->findController().didInvalidateDocumentMarkerRects();
 }
 
-#if ENABLE(TRACKING_PREVENTION)
 void WebChromeClient::hasStorageAccess(RegistrableDomain&& subFrameDomain, RegistrableDomain&& topFrameDomain, LocalFrame& frame, CompletionHandler<void(bool)>&& completionHandler)
 {
     auto webFrame = WebFrame::fromCoreFrame(frame);
@@ -1635,7 +1634,6 @@ bool WebChromeClient::hasPageLevelStorageAccess(const WebCore::RegistrableDomain
 {
     return protectedPage()->hasPageLevelStorageAccess(topLevelDomain, resourceDomain);
 }
-#endif
 
 #if ENABLE(DEVICE_ORIENTATION)
 void WebChromeClient::shouldAllowDeviceOrientationAndMotionAccess(LocalFrame& frame, bool mayPrompt, CompletionHandler<void(DeviceOrientationOrMotionPermissionState)>&& callback)

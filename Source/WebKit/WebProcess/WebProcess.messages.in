@@ -159,13 +159,11 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SendMessageToWebProcessExtension(struct WebKit::UserMessage userMessage)
 #endif
 
-#if ENABLE(TRACKING_PREVENTION)
     SeedResourceLoadStatisticsForTesting(WebCore::RegistrableDomain firstPartyDomain, WebCore::RegistrableDomain thirdPartyDomain, bool shouldScheduleNotification) -> ()
     SetThirdPartyCookieBlockingMode(enum:uint8_t WebCore::ThirdPartyCookieBlockingMode blockingMode) -> ()
     SetDomainsWithUserInteraction(HashSet<WebCore::RegistrableDomain> domains)
     SetDomainsWithCrossPageStorageAccess(HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> domains) -> ()
     SendResourceLoadStatisticsDataImmediately() -> ()
-#endif
 
     GrantAccessToAssetServices(Vector<WebKit::SandboxExtension::Handle> assetServicesHandles)
     RevokeAccessToAssetServices()

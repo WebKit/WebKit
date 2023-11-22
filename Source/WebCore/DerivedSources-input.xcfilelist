@@ -1252,7 +1252,6 @@ $(PROJECT_DIR)/css/fullscreen.css
 $(PROJECT_DIR)/css/horizontalFormControls.css
 $(PROJECT_DIR)/css/html.css
 $(PROJECT_DIR)/css/htmlSwitchControl.css
-$(PROJECT_DIR)/css/legacyFormControlsIOS.css
 $(PROJECT_DIR)/css/make-css-file-arrays.pl
 $(PROJECT_DIR)/css/makeSelectorPseudoClassAndCompatibilityElementMap.py
 $(PROJECT_DIR)/css/makeSelectorPseudoElementsMap.py

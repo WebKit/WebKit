@@ -130,7 +130,6 @@ public:
 
     void destroyPrivateClickMeasurementStore(CompletionHandler<void()>&&);
 
-#if ENABLE(TRACKING_PREVENTION)
     WebResourceLoadStatisticsStore* resourceLoadStatistics() const { return m_resourceLoadStatistics.get(); }
     void setTrackingPreventionEnabled(bool);
     bool isTrackingPreventionEnabled() const;
@@ -154,7 +153,6 @@ public:
     std::optional<WebCore::RegistrableDomain> thirdPartyCNAMEDomainForTesting() const { return m_thirdPartyCNAMEDomainForTesting; }
     void resetFirstPartyDNSData();
     void destroyResourceLoadStatistics(CompletionHandler<void()>&&);
-#endif
     
 #if ENABLE(APP_BOUND_DOMAINS)
     virtual bool hasAppBoundSession() const { return false; }
@@ -281,9 +279,7 @@ public:
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
-#if ENABLE(TRACKING_PREVENTION)
     void forwardResourceLoadStatisticsSettings();
-#endif
 
 #if ENABLE(SERVICE_WORKER)
     // SWServerDelegate
@@ -302,7 +298,6 @@ protected:
     PAL::SessionID m_sessionID;
     Ref<NetworkProcess> m_networkProcess;
     ThreadSafeWeakHashSet<NetworkDataTask> m_dataTaskSet;
-#if ENABLE(TRACKING_PREVENTION)
     String m_resourceLoadStatisticsDirectory;
     RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
     ShouldIncludeLocalhost m_shouldIncludeLocalhostInResourceLoadStatistics { ShouldIncludeLocalhost::Yes };
@@ -317,7 +312,6 @@ protected:
     HashMap<String, WebCore::RegistrableDomain> m_firstPartyHostCNAMEDomains;
     HashMap<String, WebCore::IPAddress> m_firstPartyHostIPAddresses;
     std::optional<WebCore::RegistrableDomain> m_thirdPartyCNAMEDomainForTesting;
-#endif
     bool m_isStaleWhileRevalidateEnabled { false };
     UniqueRef<PCM::ManagerInterface> m_privateClickMeasurement;
     bool m_privateClickMeasurementDebugModeEnabled { false };

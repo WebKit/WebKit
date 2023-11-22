@@ -164,21 +164,19 @@ FontFace* CSSFontFace::existingWrapper()
 
 static FontSelectionRange calculateWeightRange(CSSValue& value)
 {
-    if (value.isValueList()) {
-        auto& valueList = downcast<CSSValueList>(value);
-        ASSERT(valueList.length() == 2);
-        if (valueList.length() != 2)
+    if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {
+        ASSERT(valueList->length() == 2);
+        if (valueList->length() != 2)
             return { normalWeightValue(), normalWeightValue() };
-        ASSERT(valueList.item(0)->isPrimitiveValue());
-        ASSERT(valueList.item(1)->isPrimitiveValue());
-        auto& value0 = downcast<CSSPrimitiveValue>(*valueList.item(0));
-        auto& value1 = downcast<CSSPrimitiveValue>(*valueList.item(1));
+        ASSERT(valueList->item(0)->isPrimitiveValue());
+        ASSERT(valueList->item(1)->isPrimitiveValue());
+        auto& value0 = downcast<CSSPrimitiveValue>(*valueList->item(0));
+        auto& value1 = downcast<CSSPrimitiveValue>(*valueList->item(1));
         auto result0 = Style::BuilderConverter::convertFontWeightFromValue(value0);
         auto result1 = Style::BuilderConverter::convertFontWeightFromValue(value1);
         return { result0, result1 };
     }
 
-    ASSERT(is<CSSPrimitiveValue>(value));
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     FontSelectionValue result = Style::BuilderConverter::convertFontWeightFromValue(primitiveValue);
     return { result, result };
@@ -201,21 +199,19 @@ void CSSFontFace::setWeight(CSSValue& weight)
 
 static FontSelectionRange calculateStretchRange(CSSValue& value)
 {
-    if (value.isValueList()) {
-        auto& valueList = downcast<CSSValueList>(value);
-        ASSERT(valueList.length() == 2);
-        if (valueList.length() != 2)
+    if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {
+        ASSERT(valueList->length() == 2);
+        if (valueList->length() != 2)
             return { normalStretchValue(), normalStretchValue() };
-        ASSERT(valueList.item(0)->isPrimitiveValue());
-        ASSERT(valueList.item(1)->isPrimitiveValue());
-        auto& value0 = downcast<CSSPrimitiveValue>(*valueList.item(0));
-        auto& value1 = downcast<CSSPrimitiveValue>(*valueList.item(1));
+        ASSERT(valueList->item(0)->isPrimitiveValue());
+        ASSERT(valueList->item(1)->isPrimitiveValue());
+        auto& value0 = downcast<CSSPrimitiveValue>(*valueList->item(0));
+        auto& value1 = downcast<CSSPrimitiveValue>(*valueList->item(1));
         auto result0 = Style::BuilderConverter::convertFontStretchFromValue(value0);
         auto result1 = Style::BuilderConverter::convertFontStretchFromValue(value1);
         return { result0, result1 };
     }
 
-    ASSERT(is<CSSPrimitiveValue>(value));
     const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
     FontSelectionValue result = Style::BuilderConverter::convertFontStretchFromValue(primitiveValue);
     return { result, result };
@@ -238,22 +234,22 @@ void CSSFontFace::setStretch(CSSValue& style)
 
 static FontSelectionRange calculateItalicRange(CSSValue& value)
 {
-    if (!is<CSSFontStyleRangeValue>(value))
+    auto* rangeValue = dynamicDowncast<CSSFontStyleRangeValue>(value);
+    if (!rangeValue)
         return FontSelectionRange { Style::BuilderConverter::convertFontStyleFromValue(value).value_or(normalItalicValue()) };
 
-    auto& rangeValue = downcast<CSSFontStyleRangeValue>(value);
-    auto keyword = rangeValue.fontStyleValue->valueID();
-    if (!rangeValue.obliqueValues) {
+    auto keyword = rangeValue->fontStyleValue->valueID();
+    if (!rangeValue->obliqueValues) {
         if (keyword == CSSValueNormal)
             return FontSelectionRange { normalItalicValue() };
         ASSERT(keyword == CSSValueItalic || keyword == CSSValueOblique);
         return FontSelectionRange { italicValue() };
     }
     ASSERT(keyword == CSSValueOblique);
-    auto length = rangeValue.obliqueValues->length();
+    auto length = rangeValue->obliqueValues->length();
     ASSERT(length == 1 || length == 2);
     auto angleAtIndex = [&] (size_t index) {
-        return Style::BuilderConverter::convertFontStyleAngle(*rangeValue.obliqueValues->itemWithoutBoundsCheck(index));
+        return Style::BuilderConverter::convertFontStyleAngle(*rangeValue->obliqueValues->itemWithoutBoundsCheck(index));
     };
     if (length == 1)
         return FontSelectionRange { angleAtIndex(0) };
@@ -303,9 +299,8 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
 
     FontFeatureSettings settings;
 
-    if (is<CSSValueList>(featureSettings)) {
-        auto& list = downcast<CSSValueList>(featureSettings);
-        for (auto& rangeValue : list) {
+    if (auto* list = dynamicDowncast<CSSValueList>(featureSettings)) {
+        for (auto& rangeValue : *list) {
             auto& feature = downcast<CSSFontFeatureValue>(rangeValue);
             settings.insert({ feature.tag(), feature.value() });
         }
@@ -461,8 +456,8 @@ void CSSFontFace::timeoutFired()
 
 Document* CSSFontFace::document()
 {
-    if (m_wrapper && is<Document>(m_wrapper->scriptExecutionContext()))
-        return &downcast<Document>(*m_wrapper->scriptExecutionContext());
+    if (m_wrapper)
+        return dynamicDowncast<Document>(m_wrapper->scriptExecutionContext());
     return nullptr;
 }
 

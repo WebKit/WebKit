@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(TRACKING_PREVENTION)
-
 #include "RegistrableDomain.h"
 #include "Supplementable.h"
 #include <wtf/CheckedRef.h>
@@ -106,5 +104,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(TRACKING_PREVENTION)

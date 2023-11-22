@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebResourceLoadStatisticsStore.h"
 
-#if ENABLE(TRACKING_PREVENTION)
-
 #include "APIDictionary.h"
 #include "ITPThirdPartyData.h"
 #include "Logging.h"
@@ -1541,5 +1539,3 @@ void WebResourceLoadStatisticsStore::insertExpiredStatisticForTesting(Registrabl
 }
 
 } // namespace WebKit
-
-#endif

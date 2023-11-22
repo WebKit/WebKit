@@ -5798,7 +5798,6 @@ ExceptionOr<void> Document::setCookie(const String& value)
 
 String Document::referrer()
 {
-#if ENABLE(TRACKING_PREVENTION)
     if (!m_referrerOverride.isEmpty())
         return m_referrerOverride;
     if (DeprecatedGlobalSettings::trackingPreventionEnabled() && frame()) {
@@ -5812,7 +5811,6 @@ String Document::referrer()
             }
         }
     }
-#endif
     if (frame())
         return frame()->loader().referrer();
     return String();
@@ -8874,8 +8872,6 @@ void Document::updateMainArticleElementAfterLayout()
     m_mainArticleElement = tallestArticle.get();
 }
 
-#if ENABLE(TRACKING_PREVENTION)
-
 bool Document::hasRequestedPageSpecificStorageAccessWithUserInteraction(const RegistrableDomain& domain)
 {
     return m_registrableDomainRequestedPageSpecificStorageAccessWithUserInteraction == domain;
@@ -8906,8 +8902,6 @@ void Document::downgradeReferrerToRegistrableDomain()
     else
         m_referrerOverride = makeString(referrerURL.protocol(), "://", domainString, '/');
 }
-
-#endif
 
 void Document::setConsoleMessageListener(RefPtr<StringCallback>&& listener)
 {

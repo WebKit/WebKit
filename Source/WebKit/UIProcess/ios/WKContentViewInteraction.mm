@@ -2676,10 +2676,8 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
     case WebKit::InputType::Time:
         return NO;
     case WebKit::InputType::Select: {
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
         if (self._shouldUseContextMenusForFormControls)
             return NO;
-#endif
         return PAL::currentUserInterfaceIdiomIsSmallScreen();
     }
     default:
@@ -3887,10 +3885,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
     case WebKit::InputType::Time:
         return NO;
     case WebKit::InputType::Select: {
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
         if (self._shouldUseContextMenusForFormControls)
             return NO;
-#endif
         return PAL::currentUserInterfaceIdiomIsSmallScreen();
     }
     case WebKit::InputType::Text:
@@ -7486,17 +7482,13 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
         [self _updateAccessory];
 }
 
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
-
 - (BOOL)_formControlRefreshEnabled
 {
     if (!_page)
         return NO;
 
-    return _page->preferences().iOSFormControlRefreshEnabled();
+    return YES;
 }
-
-#endif
 
 - (const WebKit::FocusedElementInformation&)focusedElementInformation
 {
@@ -9161,10 +9153,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (BOOL)_shouldUseContextMenusForFormControls
 {
-#if ENABLE(IOS_FORM_CONTROL_REFRESH)
     return self._formControlRefreshEnabled && self._shouldUseContextMenus;
-#endif
-    return NO;
 }
 
 - (BOOL)_shouldAvoidResizingWhenInputViewBoundsChange
