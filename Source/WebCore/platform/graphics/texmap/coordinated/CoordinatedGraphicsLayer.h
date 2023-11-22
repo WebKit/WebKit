@@ -229,7 +229,7 @@ private:
 
     struct {
         bool completeLayer { false };
-        Vector<FloatRect, 32> rects;
+        Vector<FloatRect> rects;
     } m_needsDisplay;
 
     RefPtr<Image> m_compositedImage;
