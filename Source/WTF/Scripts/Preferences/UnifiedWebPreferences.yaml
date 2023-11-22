@@ -3111,6 +3111,21 @@ ImageAnimationControlEnabled:
     WebCore:
       default: true
 
+ImageCaptureEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "Image Capture API"
+  humanReadableDescription: "Enable Image Capture API"
+  condition: ENABLE(MEDIA_STREAM)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ImageControlsEnabled:
   type: bool
   status: unstable
@@ -4915,19 +4930,6 @@ PageVisibilityBasedProcessSuppressionEnabled:
     WebKit:
       default: true
 
-# FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
-PaintTimingEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Paint Timing"
-  humanReadableDescription: "Enable PaintTiming API"
-  webcoreBinding: DeprecatedGlobalSettings
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
-
 PassiveTouchListenersAsDefaultOnDocument:
   type: bool
   status: embedder
@@ -6429,19 +6431,6 @@ SwitchControlEnabled:
     WebCore:
       default: false
 
-SyntheticEditingCommandsEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Synthetic Editing Commands"
-  humanReadableDescription: "Enable Synthetic Editing Commands"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 # FIXME: There is no custom binding implemented for WebKitLegacy.
 SystemLayoutDirection:
   type: uint32_t
@@ -6580,19 +6569,6 @@ TextRecognitionInVideosEnabled:
       default: false
     WebKit:
       default: defaultTextRecognitionInVideosEnabled()
-
-ThirdPartyIframeRedirectBlockingEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Block top-level redirects by third-party iframes"
-  humanReadableDescription: "Block top-level redirects by third-party iframes"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 ThreadedAnimationResolutionEnabled:
   type: bool

@@ -101,7 +101,7 @@
 #endif
 
 #if PLATFORM(WPE)
-#include "WPEView.h"
+#include "WPEWebView.h"
 #include "WebKitOptionMenuPrivate.h"
 #include "WebKitWebViewBackendPrivate.h"
 #include "WebKitWebViewClient.h"

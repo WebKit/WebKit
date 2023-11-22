@@ -28,6 +28,8 @@
     Conditional=MEDIA_STREAM,
     SecureContext,
     JSGenerateToNativeObject,
+    EnabledBySetting=ImageCaptureEnabled,
+    DisabledByQuirk=shouldDisableImageCapture,
     Exposed=Window
 ] interface ImageCapture {
     [CallWith=CurrentDocument] constructor(MediaStreamTrack videoTrack);

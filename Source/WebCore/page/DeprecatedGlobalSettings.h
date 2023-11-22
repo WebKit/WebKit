@@ -85,9 +85,6 @@ public:
     WEBCORE_EXPORT static void setAllowsAnySSLCertificate(bool);
     WEBCORE_EXPORT static bool allowsAnySSLCertificate();
 
-    static void setPaintTimingEnabled(bool isEnabled) { shared().m_isPaintTimingEnabled = isEnabled; }
-    static bool paintTimingEnabled() { return shared().m_isPaintTimingEnabled; }
-
     static void setCustomPasteboardDataEnabled(bool isEnabled) { shared().m_isCustomPasteboardDataEnabled = isEnabled; }
     static bool customPasteboardDataEnabled() { return shared().m_isCustomPasteboardDataEnabled; }
 
@@ -206,8 +203,6 @@ private:
     bool m_lowPowerVideoAudioBufferSizeEnabled { false };
     bool m_trackingPreventionEnabled { false };
     bool m_allowsAnySSLCertificate { false };
-
-    bool m_isPaintTimingEnabled { false };
 
     bool m_isCustomPasteboardDataEnabled { false };
     bool m_isRestrictedHTTPResponseAccess { true };

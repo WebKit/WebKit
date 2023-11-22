@@ -39,13 +39,13 @@ PASS closeEvent.reason is 'ok'
 WebSocketTest.onopen() was called with testId = 3.
 WebSocketTest.onclose() was called with testId = 3.
 PASS typeof closeEvent.wasClean is 'boolean'
-FAIL closeEvent.wasClean should be false. Was true.
-FAIL closeEvent.code should be 1006. Was 1005.
-FAIL closeEvent.reason should be . Was foo.
+PASS closeEvent.wasClean is false
+PASS closeEvent.code is 1006
+PASS closeEvent.reason is ''
 PASS typeof closeEvent.wasClean is 'boolean'
-FAIL closeEvent.wasClean should be false. Was true.
-FAIL closeEvent.code should be 1006. Was 1005.
-FAIL closeEvent.reason should be . Was foo.
+PASS closeEvent.wasClean is false
+PASS closeEvent.code is 1006
+PASS closeEvent.reason is ''
 WebSocketTest.onopen() was called with testId = 4.
 WebSocketTest.onclose() was called with testId = 4.
 PASS typeof closeEvent.wasClean is 'boolean'
@@ -69,13 +69,13 @@ PASS closeEvent.reason is ''
 WebSocketTest.onopen() was called with testId = 6.
 WebSocketTest.onclose() was called with testId = 6.
 PASS typeof closeEvent.wasClean is 'boolean'
-PASS closeEvent.wasClean is true
-PASS closeEvent.code is 65535
-PASS closeEvent.reason is 'good bye'
+FAIL closeEvent.wasClean should be true. Was false.
+FAIL closeEvent.code should be 65535. Was 1006.
+FAIL closeEvent.reason should be good bye. Was .
 PASS typeof closeEvent.wasClean is 'boolean'
-PASS closeEvent.wasClean is true
-PASS closeEvent.code is 65535
-PASS closeEvent.reason is 'good bye'
+FAIL closeEvent.wasClean should be true. Was false.
+FAIL closeEvent.code should be 65535. Was 1006.
+FAIL closeEvent.reason should be good bye. Was .
 PASS successfullyParsed is true
 
 TEST COMPLETE

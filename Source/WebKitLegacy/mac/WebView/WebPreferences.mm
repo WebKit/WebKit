@@ -2926,16 +2926,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitVisualViewportAPIEnabledPreferenceKey];
 }
 
-- (BOOL)syntheticEditingCommandsEnabled
-{
-    return [self _boolValueForKey:WebKitSyntheticEditingCommandsEnabledPreferenceKey];
-}
-
-- (void)setSyntheticEditingCommandsEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitSyntheticEditingCommandsEnabledPreferenceKey];
-}
-
 - (BOOL)CSSOMViewSmoothScrollingEnabled
 {
     return [self _boolValueForKey:WebKitCSSOMViewSmoothScrollingEnabledPreferenceKey];
@@ -3112,6 +3102,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
+
+- (BOOL)syntheticEditingCommandsEnabled
+{
+    return YES;
+}
+
+- (void)setSyntheticEditingCommandsEnabled:(BOOL)flag
+{
+}
 
 - (BOOL)aspectRatioOfImgFromWidthAndHeightEnabled
 {

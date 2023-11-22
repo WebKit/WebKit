@@ -705,10 +705,7 @@ void CoordinatedGraphicsLayer::setNeedsDisplayInRect(const FloatRect& initialRec
     if (alreadyRecorded)
         return;
 
-    if (rects.size() < 32)
-        rects.append(rect);
-    else
-        rects[0].unite(rect);
+    rects.append(rect);
 
     notifyFlushRequired();
     addRepaintRect(rect);

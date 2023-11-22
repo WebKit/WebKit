@@ -195,13 +195,14 @@ void HTMLFormElement::submitImplicitly(Event& event, bool fromImplicitSubmission
 {
     unsigned submissionTriggerCount = 0;
     for (auto& listedElement : m_listedElements) {
-        if (!is<HTMLFormControlElement>(*listedElement))
+        auto* formElement = dynamicDowncast<HTMLFormControlElement>(*listedElement);
+        if (!formElement)
             continue;
-        HTMLFormControlElement& formElement = downcast<HTMLFormControlElement>(*listedElement);
-        if (formElement.isSuccessfulSubmitButton()) {
-            formElement.dispatchSimulatedClick(&event);
+        if (formElement->isSuccessfulSubmitButton()) {
+            formElement->dispatchSimulatedClick(&event);
             return;
-        } else if (formElement.canTriggerImplicitSubmission())
+        }
+        if (formElement->canTriggerImplicitSubmission())
             ++submissionTriggerCount;
     }
 
@@ -338,13 +339,10 @@ ExceptionOr<void> HTMLFormElement::requestSubmit(HTMLElement* submitter)
 StringPairVector HTMLFormElement::textFieldValues() const
 {
     return WTF::compactMap(m_listedElements, [](auto& weakElement) -> std::optional<std::pair<String, String>> {
-        RefPtr element { weakElement.get() };
-        if (!is<HTMLInputElement>(element))
+        RefPtr input = dynamicDowncast<HTMLInputElement>(weakElement.get());
+        if (!input || !input->isTextField())
             return std::nullopt;
-        auto& input = downcast<HTMLInputElement>(*element);
-        if (!input.isTextField())
-            return std::nullopt;
-        return std::pair { input.name().string(), input.value() };
+        return std::pair { input->name().string(), input->value() };
     });
 }
 
@@ -356,13 +354,13 @@ RefPtr<HTMLFormControlElement> HTMLFormElement::findSubmitButton(HTMLFormControl
         return nullptr;
     RefPtr<HTMLFormControlElement> firstSuccessfulSubmitButton;
     for (auto& listedElement : m_listedElements) {
-        if (!is<HTMLFormControlElement>(*listedElement))
+        auto* control = dynamicDowncast<HTMLFormControlElement>(*listedElement);
+        if (!control)
             continue;
-        auto& control = downcast<HTMLFormControlElement>(*listedElement);
-        if (control.isActivatedSubmit())
+        if (control->isActivatedSubmit())
             return nullptr;
-        if (!firstSuccessfulSubmitButton && control.isSuccessfulSubmitButton())
-            firstSuccessfulSubmitButton = &control;
+        if (!firstSuccessfulSubmitButton && control->isSuccessfulSubmitButton())
+            firstSuccessfulSubmitButton = control;
     }
     return firstSuccessfulSubmitButton;
 }
@@ -590,15 +588,12 @@ void HTMLFormElement::registerFormListedElement(FormListedElement& element)
 {
     m_listedElements.insert(formElementIndex(element), element.asHTMLElement());
 
-    if (!is<HTMLFormControlElement>(element))
-        return;
-
-    auto& control = downcast<HTMLFormControlElement>(element);
-    if (!control.isSuccessfulSubmitButton())
+    auto* control = dynamicDowncast<HTMLFormControlElement>(element);
+    if (!control || !control->isSuccessfulSubmitButton())
         return;
 
     if (!m_defaultButton)
-        control.invalidateStyleForSubtree();
+        control->invalidateStyleForSubtree();
     else
         resetDefaultButton();
 }
@@ -748,10 +743,14 @@ bool HTMLFormElement::wasUserSubmitted() const
 
 HTMLFormControlElement* HTMLFormElement::findSubmitter(const Event* event) const
 {
-    if (!event || !is<Node>(event->target()))
+    if (!event)
         return nullptr;
-    auto& node = downcast<Node>(*event->target());
-    auto* element = is<Element>(node) ? &downcast<Element>(node) : node.parentElement();
+    auto* node = dynamicDowncast<Node>(event->target());
+    if (!node)
+        return nullptr;
+    auto* element = dynamicDowncast<Element>(*node);
+    if (!element)
+        element = node->parentElement();
     return element ? lineageOfType<HTMLFormControlElement>(*element).first() : nullptr;
 }
 
@@ -760,12 +759,9 @@ HTMLFormControlElement* HTMLFormElement::defaultButton() const
     if (m_defaultButton)
         return m_defaultButton.get();
     for (auto& listedElement : m_listedElements) {
-        if (!is<HTMLFormControlElement>(*listedElement))
-            continue;
-        HTMLFormControlElement& control = downcast<HTMLFormControlElement>(*listedElement);
-        if (control.isSuccessfulSubmitButton()) {
-            m_defaultButton = control;
-            return &control;
+        if (auto* control = dynamicDowncast<HTMLFormControlElement>(*listedElement); control && control->isSuccessfulSubmitButton()) {
+            m_defaultButton = *control;
+            return control;
         }
     }
     return nullptr;
@@ -991,11 +987,10 @@ RefPtr<DOMFormData> HTMLFormElement::constructEntryList(RefPtr<HTMLFormControlEl
         auto& element = control->asHTMLElement();
         if (!element.isDisabledFormControl())
             control->appendFormData(domFormData.get());
-        if (formValues && is<HTMLInputElement>(element)) {
-            auto& input = downcast<HTMLInputElement>(element);
-            if (input.isTextField()) {
-                formValues->append({ input.name(), input.value() });
-                input.addSearchResult();
+        if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); formValues && input) {
+            if (input->isTextField()) {
+                formValues->append({ input->name(), input->value() });
+                input->addSearchResult();
             }
         }
     }

@@ -228,9 +228,7 @@ void HTMLMeterElement::didElementStateChange()
 
 RenderMeter* HTMLMeterElement::renderMeter() const
 {
-    if (is<RenderMeter>(renderer()))
-        return downcast<RenderMeter>(renderer());
-    return nullptr;
+    return dynamicDowncast<RenderMeter>(renderer());
 }
 
 void HTMLMeterElement::didAddUserAgentShadowRoot(ShadowRoot& root)

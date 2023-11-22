@@ -716,7 +716,7 @@ Ref<MediaPromise> SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
         }
         client().sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
 
-        return MediaPromise::all(RunLoop::current(), promises).get();
+        return MediaPromise::all(promises).get();
     });
     return m_currentSourceBufferOperation.get();
 }

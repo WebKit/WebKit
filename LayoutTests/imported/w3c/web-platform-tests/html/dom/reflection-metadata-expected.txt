@@ -1773,23 +1773,23 @@ PASS link.nonce: setAttribute() to "\0"
 PASS link.nonce: setAttribute() to null
 PASS link.nonce: setAttribute() to object "test-toString"
 PASS link.nonce: setAttribute() to object "test-valueOf"
-PASS link.nonce: IDL set to ""
-PASS link.nonce: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
-PASS link.nonce: IDL set to undefined
-PASS link.nonce: IDL set to 7
-PASS link.nonce: IDL set to 1.5
-PASS link.nonce: IDL set to "5%"
-PASS link.nonce: IDL set to "+100"
-PASS link.nonce: IDL set to ".5"
-PASS link.nonce: IDL set to true
-PASS link.nonce: IDL set to false
-PASS link.nonce: IDL set to object "[object Object]"
-PASS link.nonce: IDL set to NaN
-PASS link.nonce: IDL set to Infinity
-PASS link.nonce: IDL set to -Infinity
-PASS link.nonce: IDL set to "\0"
-PASS link.nonce: IDL set to null
-PASS link.nonce: IDL set to object "test-toString"
+FAIL link.nonce: IDL set to "" assert_equals: getAttribute() expected "" but got "test-valueOf"
+FAIL link.nonce: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "test-valueOf"
+FAIL link.nonce: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "test-valueOf"
+FAIL link.nonce: IDL set to 7 assert_equals: getAttribute() expected "7" but got "test-valueOf"
+FAIL link.nonce: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "test-valueOf"
+FAIL link.nonce: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "test-valueOf"
+FAIL link.nonce: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "test-valueOf"
+FAIL link.nonce: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "test-valueOf"
+FAIL link.nonce: IDL set to true assert_equals: getAttribute() expected "true" but got "test-valueOf"
+FAIL link.nonce: IDL set to false assert_equals: getAttribute() expected "false" but got "test-valueOf"
+FAIL link.nonce: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "test-valueOf"
+FAIL link.nonce: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "test-valueOf"
+FAIL link.nonce: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "test-valueOf"
+FAIL link.nonce: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "test-valueOf"
+FAIL link.nonce: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "test-valueOf"
+FAIL link.nonce: IDL set to null assert_equals: getAttribute() expected "null" but got "test-valueOf"
+FAIL link.nonce: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "test-valueOf"
 PASS link.nonce: IDL set to object "test-valueOf"
 PASS link.integrity: typeof IDL attribute
 PASS link.integrity: IDL get with DOM attribute unset
@@ -3043,23 +3043,23 @@ PASS style.nonce: setAttribute() to "\0"
 PASS style.nonce: setAttribute() to null
 PASS style.nonce: setAttribute() to object "test-toString"
 PASS style.nonce: setAttribute() to object "test-valueOf"
-PASS style.nonce: IDL set to ""
-PASS style.nonce: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo "
-PASS style.nonce: IDL set to undefined
-PASS style.nonce: IDL set to 7
-PASS style.nonce: IDL set to 1.5
-PASS style.nonce: IDL set to "5%"
-PASS style.nonce: IDL set to "+100"
-PASS style.nonce: IDL set to ".5"
-PASS style.nonce: IDL set to true
-PASS style.nonce: IDL set to false
-PASS style.nonce: IDL set to object "[object Object]"
-PASS style.nonce: IDL set to NaN
-PASS style.nonce: IDL set to Infinity
-PASS style.nonce: IDL set to -Infinity
-PASS style.nonce: IDL set to "\0"
-PASS style.nonce: IDL set to null
-PASS style.nonce: IDL set to object "test-toString"
+FAIL style.nonce: IDL set to "" assert_equals: getAttribute() expected "" but got "test-valueOf"
+FAIL style.nonce: IDL set to " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " assert_equals: getAttribute() expected " \0\x01\x02\x03\x04\x05\x06\x07 \b\t\n\v\f\r\x0e\x0f \x10\x11\x12\x13\x14\x15\x16\x17 \x18\x19\x1a\x1b\x1c\x1d\x1e\x1f  foo " but got "test-valueOf"
+FAIL style.nonce: IDL set to undefined assert_equals: getAttribute() expected "undefined" but got "test-valueOf"
+FAIL style.nonce: IDL set to 7 assert_equals: getAttribute() expected "7" but got "test-valueOf"
+FAIL style.nonce: IDL set to 1.5 assert_equals: getAttribute() expected "1.5" but got "test-valueOf"
+FAIL style.nonce: IDL set to "5%" assert_equals: getAttribute() expected "5%" but got "test-valueOf"
+FAIL style.nonce: IDL set to "+100" assert_equals: getAttribute() expected "+100" but got "test-valueOf"
+FAIL style.nonce: IDL set to ".5" assert_equals: getAttribute() expected ".5" but got "test-valueOf"
+FAIL style.nonce: IDL set to true assert_equals: getAttribute() expected "true" but got "test-valueOf"
+FAIL style.nonce: IDL set to false assert_equals: getAttribute() expected "false" but got "test-valueOf"
+FAIL style.nonce: IDL set to object "[object Object]" assert_equals: getAttribute() expected "[object Object]" but got "test-valueOf"
+FAIL style.nonce: IDL set to NaN assert_equals: getAttribute() expected "NaN" but got "test-valueOf"
+FAIL style.nonce: IDL set to Infinity assert_equals: getAttribute() expected "Infinity" but got "test-valueOf"
+FAIL style.nonce: IDL set to -Infinity assert_equals: getAttribute() expected "-Infinity" but got "test-valueOf"
+FAIL style.nonce: IDL set to "\0" assert_equals: getAttribute() expected "\0" but got "test-valueOf"
+FAIL style.nonce: IDL set to null assert_equals: getAttribute() expected "null" but got "test-valueOf"
+FAIL style.nonce: IDL set to object "test-toString" assert_equals: getAttribute() expected "test-toString" but got "test-valueOf"
 PASS style.nonce: IDL set to object "test-valueOf"
 PASS style.type: typeof IDL attribute
 PASS style.type: IDL get with DOM attribute unset

@@ -62,7 +62,8 @@ bool WindowNameCollection::elementMatches(const Element& element, const AtomStri
 
 static inline bool isObjectElementForDocumentNameCollection(const Element& element)
 {
-    return is<HTMLObjectElement>(element) && downcast<HTMLObjectElement>(element).isExposed();
+    auto* objectElement = dynamicDowncast<HTMLObjectElement>(element);
+    return objectElement && objectElement->isExposed();
 }
 
 bool DocumentNameCollection::elementMatchesIfIdAttributeMatch(const Element& element)

@@ -926,15 +926,6 @@ bool WKPreferencesGetShouldRespectImageOrientation(WKPreferencesRef preferencesR
     return toImpl(preferencesRef)->shouldRespectImageOrientation();
 }
 
-void WKPreferencesSetRequestAnimationFrameEnabled(WKPreferencesRef, bool)
-{
-}
-
-bool WKPreferencesGetRequestAnimationFrameEnabled(WKPreferencesRef)
-{
-    return true;
-}
-
 void WKPreferencesSetStorageBlockingPolicy(WKPreferencesRef preferencesRef, WKStorageBlockingPolicy policy)
 {
     toImpl(preferencesRef)->setStorageBlockingPolicy(static_cast<uint32_t>(toStorageBlockingPolicy(policy)));
@@ -1537,34 +1528,6 @@ bool WKPreferencesGetDownloadAttributeEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->downloadAttributeEnabled();
 }
 
-void WKPreferencesSetIntersectionObserverEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-}
-
-bool WKPreferencesGetIntersectionObserverEnabled(WKPreferencesRef preferencesRef)
-{
-    return true;
-}
-
-void WKPreferencesSetMenuItemElementEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-}
-
-bool WKPreferencesGetMenuItemElementEnabled(WKPreferencesRef preferencesRef)
-{
-    return false;
-}
-
-void WKPreferencesSetPaintTimingEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setPaintTimingEnabled(flag);
-}
-
-bool WKPreferencesGetPaintTimingEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->paintTimingEnabled();
-}
-
 void WKPreferencesSetWebRTCPlatformCodecsInGPUProcessEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setWebRTCPlatformCodecsInGPUProcessEnabled(flag);
@@ -1713,16 +1676,6 @@ bool WKPreferencesGetAllowMediaContentTypesRequiringHardwareSupportAsFallback(WK
 void WKPreferencesSetAllowMediaContentTypesRequiringHardwareSupportAsFallback(WKPreferencesRef preferencesRef, bool allow)
 {
     return toImpl(preferencesRef)->setAllowMediaContentTypesRequiringHardwareSupportAsFallback(allow);
-}
-
-void WKPreferencesSetSyntheticEditingCommandsEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setSyntheticEditingCommandsEnabled(flag);
-}
-
-bool WKPreferencesGetSyntheticEditingCommandsEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->syntheticEditingCommandsEnabled();
 }
 
 void WKPreferencesSetCSSOMViewScrollingAPIEnabled(WKPreferencesRef preferencesRef, bool flag)
@@ -1898,6 +1851,24 @@ bool WKPreferencesGetRequestVideoFrameCallbackEnabled(WKPreferencesRef preferenc
 
 // The following are all deprecated and do nothing. They should be removed when possible.
 
+void WKPreferencesSetPaintTimingEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+}
+
+bool WKPreferencesGetPaintTimingEnabled(WKPreferencesRef preferencesRef)
+{
+    return true;
+}
+
+void WKPreferencesSetRequestAnimationFrameEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetRequestAnimationFrameEnabled(WKPreferencesRef)
+{
+    return true;
+}
+
 void WKPreferencesSetAVFoundationNSURLSessionEnabled(WKPreferencesRef, bool)
 {
 }
@@ -1997,6 +1968,15 @@ bool WKPreferencesGetFetchAPIKeepAliveEnabled(WKPreferencesRef)
     return true;
 }
 
+void WKPreferencesSetIntersectionObserverEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+}
+
+bool WKPreferencesGetIntersectionObserverEnabled(WKPreferencesRef preferencesRef)
+{
+    return true;
+}
+
 void WKPreferencesSetIsSecureContextAttributeEnabled(WKPreferencesRef, bool)
 {
 }
@@ -2085,6 +2065,24 @@ void WKPreferencesSetLoadsSiteIconsIgnoringImageLoadingPreference(WKPreferencesR
 bool WKPreferencesGetLoadsSiteIconsIgnoringImageLoadingPreference(WKPreferencesRef)
 {
     return false;
+}
+
+void WKPreferencesSetMenuItemElementEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+}
+
+bool WKPreferencesGetMenuItemElementEnabled(WKPreferencesRef preferencesRef)
+{
+    return false;
+}
+
+void WKPreferencesSetSyntheticEditingCommandsEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+}
+
+bool WKPreferencesGetSyntheticEditingCommandsEnabled(WKPreferencesRef preferencesRef)
+{
+    return true;
 }
 
 void WKPreferencesSetReferrerPolicyAttributeEnabled(WKPreferencesRef preferencesRef, bool flag)

@@ -1542,11 +1542,11 @@ bool RenderBox::hitTestClipPath(const HitTestLocation& hitTestLocation, const La
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
         if (is<RenderSVGResourceClipper>(element.renderer())) {
             CheckedRef clipper = downcast<RenderSVGResourceClipper>(*element.renderer());
-            return clipper->hitTestClipContent( { borderBoxRect() }, hitTestLocationInLocalCoordinates);
+            return clipper->hitTestClipContent( FloatRect { borderBoxRect() }, hitTestLocationInLocalCoordinates);
         }
 #endif
         CheckedRef clipper = downcast<LegacyRenderSVGResourceClipper>(*element.renderer());
-        return clipper->hitTestClipContent( { borderBoxRect() }, FloatPoint { hitTestLocationInLocalCoordinates });
+        return clipper->hitTestClipContent( FloatRect { borderBoxRect() }, FloatPoint { hitTestLocationInLocalCoordinates });
     };
 
     switch (style().clipPath()->type()) {

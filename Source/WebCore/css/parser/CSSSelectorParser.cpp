@@ -48,34 +48,6 @@ namespace WebCore {
 static AtomString serializeANPlusB(const std::pair<int, int>&);
 static bool consumeANPlusB(CSSParserTokenRange&, std::pair<int, int>&);
 
-CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& context)
-    : mode(context.mode)
-    , cssNestingEnabled(context.cssNestingEnabled)
-    , focusVisibleEnabled(context.focusVisibleEnabled)
-    , hasPseudoClassEnabled(context.hasPseudoClassEnabled)
-    , popoverAttributeEnabled(context.popoverAttributeEnabled)
-{
-}
-
-CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
-    : mode(document.inQuirksMode() ? HTMLQuirksMode : HTMLStandardMode)
-    , cssNestingEnabled(document.settings().cssNestingEnabled())
-    , focusVisibleEnabled(document.settings().focusVisibleEnabled())
-    , hasPseudoClassEnabled(document.settings().hasPseudoClassEnabled())
-    , popoverAttributeEnabled(document.settings().popoverAttributeEnabled())
-{
-}
-
-void add(Hasher& hasher, const CSSSelectorParserContext& context)
-{
-    add(hasher,
-        context.mode,
-        context.cssNestingEnabled,
-        context.focusVisibleEnabled,
-        context.hasPseudoClassEnabled
-    );
-}
-
 std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::IsNestedContext isNestedContext, CSSParserEnum::IsForgiving isForgiving)
 {
     CSSSelectorParser parser(context, styleSheet, isNestedContext);
@@ -777,9 +749,13 @@ static bool isOnlyPseudoElementFunction(CSSSelector::PseudoElementType pseudoEle
 {
     // Note that we omit ::cue since it can be either an ident or a function.
     switch (pseudoElementType) {
+    case CSSSelector::PseudoElementHighlight:
     case CSSSelector::PseudoElementPart:
     case CSSSelector::PseudoElementSlotted:
-    case CSSSelector::PseudoElementHighlight:
+    case CSSSelector::PseudoElementViewTransitionGroup:
+    case CSSSelector::PseudoElementViewTransitionImagePair:
+    case CSSSelector::PseudoElementViewTransitionOld:
+    case CSSSelector::PseudoElementViewTransitionNew:
         return true;
     default:
         break;
@@ -823,7 +799,7 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
 #endif
         }
     } else {
-        selector = CSSParserSelector::parsePseudoElementSelector(token.value(), m_context.mode);
+        selector = CSSParserSelector::parsePseudoElementSelector(token.value(), m_context);
 #if ENABLE(VIDEO)
         // Treat the ident version of cue as PseudoElementWebkitCustom.
         if (token.type() == IdentToken && selector && selector->match() == CSSSelector::Match::PseudoElement && selector->pseudoElementType() == CSSSelector::PseudoElementCue)
@@ -962,6 +938,23 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             selector->setArgumentList({ { ident.value().toAtomString() } });
             return selector;
         }
+
+        case CSSSelector::PseudoElementViewTransitionGroup:
+        case CSSSelector::PseudoElementViewTransitionImagePair:
+        case CSSSelector::PseudoElementViewTransitionOld:
+        case CSSSelector::PseudoElementViewTransitionNew: {
+            auto& ident = block.consumeIncludingWhitespace();
+            if (!block.atEnd())
+                return nullptr;
+            if (ident.type() == IdentToken && isValidCustomIdentifier(ident.id()))
+                selector->setArgumentList({ { ident.value().toAtomString() } });
+            else if (ident.type() == DelimiterToken && ident.delimiter() == '*')
+                selector->setArgumentList({ { starAtom() } });
+            else
+                return nullptr;
+            return selector;
+        }
+
         case CSSSelector::PseudoElementPart: {
             Vector<PossiblyQuotedIdentifier> argumentList;
             do {

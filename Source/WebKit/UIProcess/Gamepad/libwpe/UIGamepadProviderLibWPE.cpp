@@ -31,7 +31,7 @@
 #include <WebCore/GamepadProviderLibWPE.h>
 
 #if PLATFORM(WPE)
-#include "WPEView.h"
+#include "WPEWebView.h"
 #endif
 
 using namespace WebCore;

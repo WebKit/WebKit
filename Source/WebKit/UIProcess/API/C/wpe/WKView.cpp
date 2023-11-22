@@ -31,7 +31,7 @@
 #include "APIViewClient.h"
 #include "PageClientImpl.h"
 #include "WKAPICast.h"
-#include "WPEView.h"
+#include "WPEWebView.h"
 
 using namespace WebKit;
 

@@ -21,7 +21,7 @@
 #include "WebKitPopupMenu.h"
 
 #include "APIViewClient.h"
-#include "WPEView.h"
+#include "WPEWebView.h"
 #include "WebKitOptionMenuPrivate.h"
 #include "WebKitWebViewClient.h"
 
