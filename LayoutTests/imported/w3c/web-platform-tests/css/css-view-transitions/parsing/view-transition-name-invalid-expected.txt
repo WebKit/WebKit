@@ -1,4 +1,5 @@
 
+PASS e.style['view-transition-name'] = "default" should not set the property value
 PASS e.style['view-transition-name'] = "none none" should not set the property value
 PASS e.style['view-transition-name'] = "\"none\"" should not set the property value
 PASS e.style['view-transition-name'] = "\"foo\"" should not set the property value

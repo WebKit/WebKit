@@ -50,9 +50,9 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePagePseudoSelector(St
     return selector;
 }
 
-std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector(StringView pseudoTypeString, CSSParserMode mode)
+std::unique_ptr<CSSParserSelector> CSSParserSelector::parsePseudoElementSelector(StringView pseudoTypeString, const CSSSelectorParserContext& context)
 {
-    auto pseudoType = CSSSelector::parsePseudoElementType(pseudoTypeString, mode);
+    auto pseudoType = CSSSelector::parsePseudoElementType(pseudoTypeString, context);
     if (pseudoType == CSSSelector::PseudoElementUnknown)
         return nullptr;
 

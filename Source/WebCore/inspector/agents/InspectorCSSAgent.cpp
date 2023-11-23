@@ -428,6 +428,16 @@ std::optional<Protocol::CSS::PseudoId> InspectorCSSAgent::protocolValueForPseudo
         return Protocol::CSS::PseudoId::ScrollbarCorner;
     case PseudoId::Resizer:
         return Protocol::CSS::PseudoId::Resizer;
+    case PseudoId::ViewTransition:
+        return Protocol::CSS::PseudoId::ViewTransition;
+    case PseudoId::ViewTransitionGroup:
+        return Protocol::CSS::PseudoId::ViewTransitionGroup;
+    case PseudoId::ViewTransitionImagePair:
+        return Protocol::CSS::PseudoId::ViewTransitionImagePair;
+    case PseudoId::ViewTransitionOld:
+        return Protocol::CSS::PseudoId::ViewTransitionOld;
+    case PseudoId::ViewTransitionNew:
+        return Protocol::CSS::PseudoId::ViewTransitionNew;
 
     default:
         ASSERT_NOT_REACHED();

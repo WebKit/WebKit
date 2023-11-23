@@ -38,6 +38,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& conte
     , focusVisibleEnabled(context.focusVisibleEnabled)
     , hasPseudoClassEnabled(context.hasPseudoClassEnabled)
     , popoverAttributeEnabled(context.popoverAttributeEnabled)
+    , viewTransitionsEnabled(context.propertySettings.viewTransitionsEnabled)
 {
 }
 
@@ -47,6 +48,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
     , focusVisibleEnabled(document.settings().focusVisibleEnabled())
     , hasPseudoClassEnabled(document.settings().hasPseudoClassEnabled())
     , popoverAttributeEnabled(document.settings().popoverAttributeEnabled())
+    , viewTransitionsEnabled(document.settings().popoverAttributeEnabled())
 {
 }
 
@@ -56,7 +58,9 @@ void add(Hasher& hasher, const CSSSelectorParserContext& context)
         context.mode,
         context.cssNestingEnabled,
         context.focusVisibleEnabled,
-        context.hasPseudoClassEnabled
+        context.hasPseudoClassEnabled,
+        context.popoverAttributeEnabled,
+        context.viewTransitionsEnabled
     );
 }
 

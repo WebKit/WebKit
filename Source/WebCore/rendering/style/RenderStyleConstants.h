@@ -94,6 +94,11 @@ enum class PseudoId : uint16_t {
     Selection,
     Backdrop,
     Scrollbar,
+    ViewTransition,
+    ViewTransitionGroup,
+    ViewTransitionImagePair,
+    ViewTransitionOld,
+    ViewTransitionNew,
 
     // Internal:
     ScrollbarThumb,
