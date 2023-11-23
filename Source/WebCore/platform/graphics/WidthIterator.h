@@ -48,7 +48,6 @@ public:
     WidthIterator(const FontCascade&, const TextRun&, WeakHashSet<const Font>* fallbackFonts = 0, bool accountForGlyphBounds = false, bool forTextEmphasis = false);
 
     void advance(unsigned to, GlyphBuffer&);
-    bool advanceOneCharacter(float& width, GlyphBuffer&);
     void finalize(GlyphBuffer&);
 
     float maxGlyphBoundingBoxY() const { ASSERT(m_accountForGlyphBounds); return m_maxGlyphBoundingBoxY; }
@@ -61,6 +60,7 @@ public:
     unsigned currentCharacterIndex() const { return m_currentCharacterIndex; }
 
     static bool characterCanUseSimplifiedTextMeasuring(UChar32, bool whitespaceIsCollapsed);
+    Vector<unsigned, 10> m_characterIndexOfGlyph;
 
 private:
     GlyphData glyphDataForCharacter(UChar32, bool mirror);

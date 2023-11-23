@@ -232,15 +232,23 @@ float FontCascade::widthOfTextRange(const TextRun& run, unsigned from, unsigned 
     } else {
         WidthIterator simpleIterator(*this, run, fallbackFonts);
         GlyphBuffer glyphBuffer;
-        simpleIterator.advance(from, glyphBuffer);
-        offsetBeforeRange = simpleIterator.runWidthSoFar();
-        simpleIterator.advance(to, glyphBuffer);
-        offsetAfterRange = simpleIterator.runWidthSoFar();
         simpleIterator.advance(run.length(), glyphBuffer);
+        if (run.rtl())
+            simpleIterator.finalize(glyphBuffer);
         totalWidth = simpleIterator.runWidthSoFar();
-        simpleIterator.finalize(glyphBuffer);
-        // FIXME: Finalizing the WidthIterator can affect the total width.
-        // We might need to adjust the various widths we've measured to account for that.
+
+        unsigned glyphPosition = 0;
+        for (; glyphPosition < glyphBuffer.size() && simpleIterator.m_characterIndexOfGlyph[glyphPosition] < from; ++glyphPosition)
+            offsetBeforeRange += WebCore::width(glyphBuffer.advanceAt(glyphPosition));
+        unsigned glyphPositionFrom = glyphPosition;
+
+        offsetAfterRange = totalWidth;
+        glyphPosition = glyphBuffer.size() - 1;
+        for (; glyphPosition >= glyphPositionFrom && simpleIterator.m_characterIndexOfGlyph[glyphPosition] >= to; --glyphPosition) {
+            offsetAfterRange -= WebCore::width(glyphBuffer.advanceAt(glyphPosition));
+            if (!glyphPosition)
+                break;
+        }
     }
 
     if (outWidthBeforeRange)
@@ -512,9 +520,10 @@ FontCascade::CodePath FontCascade::codePath(const TextRun& run, std::optional<un
     if (s_codePath != CodePath::Auto)
         return s_codePath;
 
-#if !USE(FREETYPE)
+// #if !USE(FREETYPE)
+#if 0
     // FIXME: Use the fast code path once it handles partial runs with kerning and ligatures. See http://webkit.org/b/100050
-    if ((enableKerning() || requiresShaping()) && (from.value_or(0) || to.value_or(run.length()) != run.length()))
+    if ((requiresShaping()) && (from.value_or(0) || to.value_or(run.length()) != run.length()))
         return CodePath::Complex;
 #else
     UNUSED_PARAM(from);
@@ -1272,38 +1281,48 @@ float FontCascade::floatEmphasisMarkHeight(const AtomString& mark) const
 
 GlyphBuffer FontCascade::layoutSimpleText(const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const
 {
+    GlyphBuffer resultGlyphBuffer;
     GlyphBuffer glyphBuffer;
 
     WidthIterator it(*this, run, 0, false, forTextEmphasis);
-    // FIXME: Using separate glyph buffers for the prefix and the suffix is incorrect when kerning or
-    // ligatures are enabled.
-    GlyphBuffer localGlyphBuffer;
-    it.advance(from, localGlyphBuffer);
-    float beforeWidth = it.runWidthSoFar();
-    it.advance(to, glyphBuffer);
-
+    it.advance(run.length(), glyphBuffer);
     if (glyphBuffer.isEmpty())
         return glyphBuffer;
+    if (run.rtl())
+        it.finalize(glyphBuffer);
 
-    float afterWidth = it.runWidthSoFar();
+    float totalWidth = it.runWidthSoFar();
+    float beforeWidth = 0;
+    unsigned glyphPosition = 0;
+    for (; glyphPosition < glyphBuffer.size() && it.m_characterIndexOfGlyph[glyphPosition] < from; ++glyphPosition)
+        beforeWidth += WebCore::width(glyphBuffer.advanceAt(glyphPosition));
+    unsigned glyphPositionFrom = glyphPosition;
+
+    float afterWidth = totalWidth;
+    glyphPosition = glyphBuffer.size() - 1;
+    for (; glyphPosition >= glyphPositionFrom && it.m_characterIndexOfGlyph[glyphPosition] >= to; --glyphPosition) {
+        afterWidth -= WebCore::width(glyphBuffer.advanceAt(glyphPosition));
+        if (!glyphPosition)
+            break;
+    }
+
+    unsigned glyphPositionTo = glyphPosition + 1;
+    resultGlyphBuffer.add(glyphBuffer, glyphPositionFrom, glyphPositionTo - glyphPositionFrom);
 
     float initialAdvance = 0;
     if (run.rtl()) {
-        it.advance(run.length(), localGlyphBuffer);
-        it.finalize(localGlyphBuffer);
-        initialAdvance = it.runWidthSoFar() - afterWidth;
+        initialAdvance = totalWidth - afterWidth;
     } else {
-        it.finalize(localGlyphBuffer);
         initialAdvance = beforeWidth;
     }
-    glyphBuffer.expandInitialAdvance(initialAdvance);
+    resultGlyphBuffer.expandInitialAdvance(initialAdvance);
 
     // The glyph buffer is currently in logical order,
     // but we need to return the results in visual order.
     if (run.rtl())
-        glyphBuffer.reverse(0, glyphBuffer.size());
+        resultGlyphBuffer.reverse(0, resultGlyphBuffer.size());
 
-    return glyphBuffer;
+    return resultGlyphBuffer;
 }
 
 GlyphBuffer FontCascade::layoutComplexText(const TextRun& run, unsigned from, unsigned to, ForTextEmphasisOrNot forTextEmphasis) const
@@ -1466,18 +1485,30 @@ void FontCascade::adjustSelectionRectForSimpleText(const TextRun& run, LayoutRec
 {
     GlyphBuffer glyphBuffer;
     WidthIterator it(*this, run);
-    it.advance(from, glyphBuffer);
-    float beforeWidth = it.runWidthSoFar();
-    it.advance(to, glyphBuffer);
-    float afterWidth = it.runWidthSoFar();
+    it.advance(run.length(), glyphBuffer);
+    if (glyphBuffer.isEmpty())
+        return;
+    if (run.rtl())
+        it.finalize(glyphBuffer);
+    float beforeWidth = 0;
+    float totalWidth = it.runWidthSoFar();
+    unsigned glyphPosition = 0;
+
+    for (; glyphPosition < glyphBuffer.size() && it.m_characterIndexOfGlyph[glyphPosition] < from; ++glyphPosition)
+        beforeWidth += WebCore::width(glyphBuffer.advanceAt(glyphPosition));
+    unsigned glyphPositionFrom = glyphPosition;
+
+    float afterWidth = totalWidth;
+    glyphPosition = glyphBuffer.size() - 1;
+    for (; glyphPosition >= glyphPositionFrom && it.m_characterIndexOfGlyph[glyphPosition] >= to; --glyphPosition) {
+        afterWidth -= WebCore::width(glyphBuffer.advanceAt(glyphPosition));
+        if (!glyphPosition)
+            break;
+    }
 
     if (run.rtl()) {
-        it.advance(run.length(), glyphBuffer);
-        it.finalize(glyphBuffer);
-        float totalWidth = it.runWidthSoFar();
         selectionRect.move(totalWidth - afterWidth, 0);
     } else {
-        it.finalize(glyphBuffer);
         selectionRect.move(beforeWidth, 0);
     }
     selectionRect.setWidth(LayoutUnit::fromFloatCeil(afterWidth - beforeWidth));
@@ -1500,46 +1531,53 @@ void FontCascade::adjustSelectionRectForComplexText(const TextRun& run, LayoutRe
 
 int FontCascade::offsetForPositionForSimpleText(const TextRun& run, float x, bool includePartialGlyphs) const
 {
-    float delta = x;
-
+    GlyphBuffer glyphBuffer;
     WidthIterator it(*this, run);
-    GlyphBuffer localGlyphBuffer;
-    unsigned offset;
+    it.advance(run.length(), glyphBuffer);
+    if (glyphBuffer.isEmpty())
+        return 0;
+    if (run.rtl())
+        it.finalize(glyphBuffer);
+
+    int characterOffset = 0;
     if (run.rtl()) {
-        delta -= floatWidthForSimpleText(run);
-        while (1) {
-            offset = it.currentCharacterIndex();
-            float w;
-            if (!it.advanceOneCharacter(w, localGlyphBuffer))
+        float currentX = it.runWidthSoFar();
+        for (unsigned glyphPosition = 0; glyphPosition <= glyphBuffer.size(); ++glyphPosition) {
+            if (glyphPosition == glyphBuffer.size()) {
+                characterOffset = run.length();
                 break;
-            delta += w;
+            }
+            characterOffset = it.m_characterIndexOfGlyph[glyphPosition];
+            float glyphWidth = WebCore::width(glyphBuffer.advanceAt(glyphPosition));
             if (includePartialGlyphs) {
-                if (delta - w / 2 >= 0)
+                if (currentX - glyphWidth / 2.0 <= x)
                     break;
             } else {
-                if (delta >= 0)
+                if (currentX - glyphWidth <= x)
                     break;
             }
+            currentX -= glyphWidth;
         }
     } else {
-        while (1) {
-            offset = it.currentCharacterIndex();
-            float w;
-            if (!it.advanceOneCharacter(w, localGlyphBuffer))
+        float currentX = 0;
+        for (unsigned glyphPosition = 0; glyphPosition <= glyphBuffer.size(); ++glyphPosition) {
+            if (glyphPosition == glyphBuffer.size()) {
+                characterOffset = run.length();
                 break;
-            delta -= w;
+            }
+            characterOffset = it.m_characterIndexOfGlyph[glyphPosition];
+            float glyphWidth = WebCore::width(glyphBuffer.advanceAt(glyphPosition));
             if (includePartialGlyphs) {
-                if (delta + w / 2 <= 0)
+                if (currentX + glyphWidth / 2.0 >= x)
                     break;
             } else {
-                if (delta <= 0)
+                if (currentX + glyphWidth >= x)
                     break;
             }
+            currentX += glyphWidth;
         }
     }
-
-    it.finalize(localGlyphBuffer);
-    return offset;
+    return characterOffset;
 }
 
 int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bool includePartialGlyphs) const

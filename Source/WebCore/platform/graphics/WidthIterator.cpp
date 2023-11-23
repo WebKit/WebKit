@@ -60,6 +60,7 @@ WidthIterator::WidthIterator(const FontCascade& font, const TextRun& run, WeakHa
         else
             m_expansionPerOpportunity = m_expansion / expansionOpportunityCount;
     }
+    m_characterIndexOfGlyph.reserveInitialCapacity(m_run->length());
 }
 
 struct OriginalAdvancesForCharacterTreatedAsSpace {
@@ -431,6 +432,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             commitCurrentFontRange(advanceInternalState);
 
             addToGlyphBuffer(advanceInternalState.glyphBuffer, deletedGlyph, primaryFont, 0, advanceInternalState.currentCharacterIndex, characterToWrite);
+            m_characterIndexOfGlyph.append(advanceInternalState.currentCharacterIndex);
 
             textIterator.advance(advanceLength);
             advanceInternalState.currentCharacterIndex = textIterator.currentIndex();
@@ -454,6 +456,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
             glyph = deletedGlyph;
 
         addToGlyphBuffer(glyphBuffer, glyph, *advanceInternalState.nextRangeFont, width, advanceInternalState.currentCharacterIndex, characterToWrite);
+        m_characterIndexOfGlyph.append(advanceInternalState.currentCharacterIndex);
 
         // Advance past the character we just dealt with.
         textIterator.advance(advanceLength);
@@ -813,17 +816,4 @@ void WidthIterator::advance(unsigned offset, GlyphBuffer& glyphBuffer)
 
     applyCSSVisibilityRules(glyphBuffer, glyphBufferStartIndex);
 }
-
-// FIXME: It's pretty much never right to advance just one character.
-bool WidthIterator::advanceOneCharacter(float& width, GlyphBuffer& glyphBuffer)
-{
-    unsigned oldSize = glyphBuffer.size();
-    advance(m_currentCharacterIndex + 1, glyphBuffer);
-    float w = 0;
-    for (unsigned i = oldSize; i < glyphBuffer.size(); ++i)
-        w += WebCore::width(glyphBuffer.advanceAt(i));
-    width = w;
-    return glyphBuffer.size() > oldSize;
-}
-
 } // namespace WebCore
