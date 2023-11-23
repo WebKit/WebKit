@@ -6902,6 +6902,9 @@ imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-on-synthet
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-without-intercept.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/no-args.html [ Pass ]
 
+# @scope is not yet fully implemented
+fast/css/scope-at-rule.html [ ImageOnlyFailure ]
+
 # View Transitions
 imported/w3c/web-platform-tests/css/css-view-transitions [ Skip ]
 imported/w3c/web-platform-tests/css/css-view-transitions/parsing [ Pass ]

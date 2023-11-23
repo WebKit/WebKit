@@ -1,0 +1,44 @@
+<style>
+@scope (.a) to (.b) {
+  .green-1 { color: green; }
+}
+@scope (.a) {
+  @scope (.b) {
+    .green-2 { color: green; }
+  }
+}
+div {
+  @scope (.a) {
+    .green-3 { color: green; }
+  }
+}
+video {
+  @scope (.a) {
+    .green-4 { color: green; }
+  }
+}
+</style>
+
+<div class="a">
+  <span class="green-1">should be green</span>
+  <div class="b">
+    <span class="green-1">should not be green</span>
+      <div class="j">
+        <span class="green-1">should not be green</span>
+      </div>
+  </div>
+</div>
+
+<div class="a">
+  <div class="b">
+    <span class="green-2">should be green</span>
+  </div>
+</div>
+
+<div class="a">
+  <span class="green-3">should not be green</span>
+</div>
+
+<div>
+  <span class="green-4">should not be green</span>
+</div>

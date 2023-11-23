@@ -111,6 +111,8 @@ std::unique_ptr<RenderStyle> SharingResolver::resolve(const Styleable& searchSty
     // FIXME: Do something smarter here, for example RuleSet based matching like with attribute/sibling selectors.
     if (Scope::forNode(element).usesHasPseudoClass())
         return nullptr;
+    if (m_ruleSets.hasScopeRules())
+        return nullptr;
 
     Context context {
         update,
