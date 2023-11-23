@@ -48,6 +48,7 @@ use File::stat;
 use List::Util;
 use POSIX;
 use Time::HiRes qw(usleep);
+use Text::ParseWords;
 use VCSUtils;
 use webkitperl::FeatureList qw(getFeatureOptionList);
 
@@ -2548,6 +2549,7 @@ sub shouldRemoveCMakeCache(@)
     # are probably arguments specifying build targets. Changing those should
     # not trigger a reconfiguration of the build.
     my (@buildArgs) = grep(/^-/, sort(@_, @originalArgv));
+    push @buildArgs, parse_line('\s+', 0, $ENV{'BUILD_WEBKIT_ARGS'}) if ($ENV{'BUILD_WEBKIT_ARGS'});
 
     # We check this first, because we always want to create this file for a fresh build.
     my $productDir = productDir();
