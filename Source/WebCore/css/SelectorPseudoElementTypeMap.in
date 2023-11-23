@@ -24,8 +24,3 @@ selection
 slotted
 thumb, PseudoElementWebKitCustom
 track, PseudoElementWebKitCustom
-view-transition
-view-transition-group
-view-transition-image-pair
-view-transition-old
-view-transition-new

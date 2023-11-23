@@ -1,6 +1,6 @@
 
-FAIL @keyframes is unaffected by @scope assert_equals: expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL @keyframes is unaffected by non-matching @scope assert_equals: expected "rgb(0, 128, 0)" but got "rgba(0, 0, 0, 0)"
-FAIL @property is unaffected by @scope assert_equals: expected "2px" but got ""
-FAIL @property is unaffected by non-matching @scope assert_equals: expected "2px" but got ""
+PASS @keyframes is unaffected by @scope
+PASS @keyframes is unaffected by non-matching @scope
+PASS @property is unaffected by @scope
+PASS @property is unaffected by non-matching @scope
 

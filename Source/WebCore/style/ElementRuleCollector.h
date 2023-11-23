@@ -46,18 +46,16 @@ public:
     {
     }
 
-    PseudoElementRequest(PseudoId pseudoId, const AtomString& nameIdentifier)
+    PseudoElementRequest(PseudoId pseudoId, const AtomString& highlightName)
         : pseudoId(pseudoId)
-        , nameIdentifier(nameIdentifier)
+        , highlightName(highlightName)
     {
-        ASSERT(pseudoId == PseudoId::Highlight || pseudoId == PseudoId::ViewTransitionGroup || pseudoId == PseudoId::ViewTransitionImagePair || pseudoId == PseudoId::ViewTransitionOld || pseudoId == PseudoId::ViewTransitionNew);
+        ASSERT(pseudoId == PseudoId::Highlight);
     }
 
     PseudoId pseudoId;
     std::optional<StyleScrollbarState> scrollbarState;
-
-    // highlight name for ::highlight or view transition name for view transition pseudo elements.
-    AtomString nameIdentifier;
+    AtomString highlightName;
 };
 
 struct MatchedRule {
@@ -120,6 +118,7 @@ private:
     void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&);
     bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal);
     bool containerQueriesMatch(const RuleData&, const MatchRequest&);
+    bool scopeRulesMatch(const RuleData&, const MatchRequest&);
 
     void sortMatchedRules();
 

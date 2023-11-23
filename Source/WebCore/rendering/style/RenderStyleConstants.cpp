@@ -853,11 +853,6 @@ TextStream& operator<<(TextStream& ts, PseudoId pseudoId)
     case PseudoId::ScrollbarTrack: ts << "scrollbar-track"; break;
     case PseudoId::ScrollbarTrackPiece: ts << "scrollbar-trackpiece"; break;
     case PseudoId::ScrollbarCorner: ts << "scrollbar-corner"; break;
-    case PseudoId::ViewTransition: ts << "view-transition"; break;
-    case PseudoId::ViewTransitionGroup: ts << "view-transition-group"; break;
-    case PseudoId::ViewTransitionImagePair: ts << "view-transition-image-pair"; break;
-    case PseudoId::ViewTransitionOld: ts << "view-transition-old"; break;
-    case PseudoId::ViewTransitionNew: ts << "view-transition-new"; break;
     case PseudoId::Resizer: ts << "resizer"; break;
     default:
         ts << "other";

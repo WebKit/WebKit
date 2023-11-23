@@ -29,7 +29,6 @@
 #include "CSSMarkup.h"
 #include "CSSParserSelector.h"
 #include "CSSSelectorList.h"
-#include "CSSSelectorParserContext.h"
 #include "CommonAtomStrings.h"
 #include "DeprecatedGlobalSettings.h"
 #include "HTMLNames.h"
@@ -268,16 +267,6 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
         return PseudoId::ScrollbarTrackPiece;
     case PseudoElementResizer:
         return PseudoId::Resizer;
-    case PseudoElementViewTransition:
-        return PseudoId::ViewTransition;
-    case PseudoElementViewTransitionGroup:
-        return PseudoId::ViewTransitionGroup;
-    case PseudoElementViewTransitionImagePair:
-        return PseudoId::ViewTransitionImagePair;
-    case PseudoElementViewTransitionOld:
-        return PseudoId::ViewTransitionOld;
-    case PseudoElementViewTransitionNew:
-        return PseudoId::ViewTransitionNew;
 #if ENABLE(VIDEO)
     case PseudoElementCue:
 #endif
@@ -293,37 +282,23 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
     return PseudoId::None;
 }
 
-CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView name, const CSSSelectorParserContext& context)
+CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView name, CSSParserMode mode)
 {
     if (name.isNull())
         return PseudoElementUnknown;
 
     auto type = parsePseudoElementString(name);
-    switch (type) {
-    case PseudoElementWebKitCustom:
-        if (context.mode != UASheetMode && (equalLettersIgnoringASCIICase(name, "thumb"_s) || equalLettersIgnoringASCIICase(name, "track"_s)))
-            return PseudoElementUnknown;
-        break;
-    case PseudoElementUnknown:
+    if (mode != UASheetMode && type == PseudoElementWebKitCustom
+        && (equalLettersIgnoringASCIICase(name, "thumb"_s) || equalLettersIgnoringASCIICase(name, "track"_s)))
+        return PseudoElementUnknown;
+
+    if (type == PseudoElementUnknown) {
         if (name.startsWith("-webkit-"_s) || name.startsWith("-apple-"_s))
-            return PseudoElementWebKitCustom;
-        break;
-    case PseudoElementHighlight:
-        // FIXME: Stop using DeprecatedGlobalSettings.
-        if (!DeprecatedGlobalSettings::highlightAPIEnabled())
-            return PseudoElementUnknown;
-        break;
-    case PseudoElementViewTransition:
-    case PseudoElementViewTransitionGroup:
-    case PseudoElementViewTransitionImagePair:
-    case PseudoElementViewTransitionOld:
-    case PseudoElementViewTransitionNew:
-        if (!context.viewTransitionsEnabled)
-            return PseudoElementUnknown;
-        break;
-    default:
-        break;
+            type = PseudoElementWebKitCustom;
     }
+
+    if (type == PseudoElementHighlight && !DeprecatedGlobalSettings::highlightAPIEnabled())
+        return PseudoElementUnknown;
 
     return type;
 }
@@ -756,22 +731,18 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
         } else if (cs->match() == Match::PseudoElement) {
             switch (cs->pseudoElementType()) {
             case CSSSelector::PseudoElementSlotted:
-                builder.append("::slotted("_s);
+                builder.append("::slotted(");
                 cs->selectorList()->buildSelectorsText(builder);
                 builder.append(')');
                 break;
-            case CSSSelector::PseudoElementHighlight:
-            case CSSSelector::PseudoElementViewTransitionGroup:
-            case CSSSelector::PseudoElementViewTransitionImagePair:
-            case CSSSelector::PseudoElementViewTransitionOld:
-            case CSSSelector::PseudoElementViewTransitionNew: {
-                builder.append("::"_s, cs->serializingValue(), '(');
-                serializeIdentifierOrStar(cs->argumentList()->first().identifier);
+            case CSSSelector::PseudoElementHighlight: {
+                builder.append("::highlight(");
+                serializeIdentifier(cs->argumentList()->first().identifier, builder);
                 builder.append(')');
                 break;
             }
             case CSSSelector::PseudoElementPart: {
-                builder.append("::part("_s);
+                builder.append("::part(");
                 bool isFirst = true;
                 for (auto& partName : *cs->argumentList()) {
                     if (!isFirst)
@@ -791,11 +762,11 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
 #if ENABLE(VIDEO)
             case CSSSelector::PseudoElementCue: {
                 if (auto* selectorList = cs->selectorList()) {
-                    builder.append("::cue("_s);
+                    builder.append("::cue(");
                     selectorList->buildSelectorsText(builder);
                     builder.append(')');
                 } else
-                    builder.append("::cue"_s);
+                    builder.append("::cue");
                 break;
             }
 #endif

@@ -42,6 +42,8 @@ public:
     // FIXME: Remove.
     static RenderTreeBuilder* current() { return s_current; }
 
+    static bool isRebuildRootForChildren(const RenderElement&);
+
     void attach(RenderElement& parent, RenderPtr<RenderObject>, RenderObject* beforeChild = nullptr);
 
     enum class CanCollapseAnonymousBlock : bool { No, Yes };
