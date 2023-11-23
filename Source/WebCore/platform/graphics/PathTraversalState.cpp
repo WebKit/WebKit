@@ -44,17 +44,17 @@ struct QuadraticBezier {
     }
 
     friend bool operator==(const QuadraticBezier&, const QuadraticBezier&) = default;
-    
+
     float approximateDistance() const
     {
         return distanceLine(start, control) + distanceLine(control, end);
     }
-    
+
     bool split(QuadraticBezier& left, QuadraticBezier& right) const
     {
         left.control = midPoint(start, control);
         right.control = midPoint(control, end);
-        
+
         FloatPoint leftControlToRightControl = midPoint(left.control, right.control);
         left.end = leftControlToRightControl;
         right.start = leftControlToRightControl;
@@ -64,7 +64,7 @@ struct QuadraticBezier {
 
         return !(left == *this) && !(right == *this);
     }
-    
+
     FloatPoint start;
     FloatPoint control;
     FloatPoint end;
@@ -86,26 +86,26 @@ struct CubicBezier {
     {
         return distanceLine(start, control1) + distanceLine(control1, control2) + distanceLine(control2, end);
     }
-        
+
     bool split(CubicBezier& left, CubicBezier& right) const
-    {    
+    {
         FloatPoint startToControl1 = midPoint(control1, control2);
-        
+
         left.start = start;
         left.control1 = midPoint(start, control1);
         left.control2 = midPoint(left.control1, startToControl1);
-        
+
         right.control2 = midPoint(control2, end);
         right.control1 = midPoint(right.control2, startToControl1);
         right.end = end;
-        
+
         FloatPoint leftControl2ToRightControl1 = midPoint(left.control2, right.control1);
         left.end = leftControl2ToRightControl1;
         right.start = leftControl2ToRightControl1;
 
         return !(left == *this) && !(right == *this);
     }
-    
+
     FloatPoint start;
     FloatPoint control1;
     FloatPoint control2;
@@ -226,42 +226,40 @@ bool PathTraversalState::finalizeAppendPathElement()
     return m_success;
 }
 
-bool PathTraversalState::appendPathElement(PathElement::Type type, const FloatPoint* points)
+bool PathTraversalState::appendPathElement(const PathElement& element)
 {
-    switch (type) {
-    case PathElement::Type::MoveToPoint:
-        moveTo(points[0]);
-        break;
-    case PathElement::Type::AddLineToPoint:
-        lineTo(points[0]);
-        break;
-    case PathElement::Type::AddQuadCurveToPoint:
-        quadraticBezierTo(points[0], points[1]);
-        break;
-    case PathElement::Type::AddCurveToPoint:
-        cubicBezierTo(points[0], points[1], points[2]);
-        break;
-    case PathElement::Type::CloseSubpath:
-        closeSubpath();
-        break;
-    }
-    
+    WTF::switchOn(element,
+        [&](const PathMoveTo& moveTo) {
+            this->moveTo(moveTo.point);
+        },
+        [&](const PathLineTo& lineTo) {
+            this->lineTo(lineTo.point);
+        },
+        [&](const PathQuadCurveTo& quadTo) {
+            quadraticBezierTo(quadTo.controlPoint, quadTo.endPoint);
+        },
+        [&](const PathBezierCurveTo& bezierTo) {
+            cubicBezierTo(bezierTo.controlPoint1, bezierTo.controlPoint2, bezierTo.endPoint);
+        },
+        [&](const PathCloseSubpath&) {
+            closeSubpath();
+        });
     return finalizeAppendPathElement();
 }
 
-bool PathTraversalState::processPathElement(PathElement::Type type, const FloatPoint* points)
+bool PathTraversalState::processPathElement(const PathElement& element)
 {
     if (m_success)
         return true;
 
     if (m_isZeroVector) {
         PathTraversalState traversalState(*this);
-        m_success = traversalState.appendPathElement(type, points);
+        m_success = traversalState.appendPathElement(element);
         m_normalAngle = traversalState.m_normalAngle;
         return m_success;
     }
 
-    return appendPathElement(type, points);
+    return appendPathElement(element);
 }
 
 }

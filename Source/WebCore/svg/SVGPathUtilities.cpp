@@ -57,25 +57,22 @@ String buildStringFromPath(const Path& path)
     StringBuilder builder;
 
     if (!path.isEmpty()) {
-        path.applyElements([&builder] (const PathElement& element) {
-            switch (element.type) {
-            case PathElement::Type::MoveToPoint:
-                builder.append('M', element.points[0].x(), ' ', element.points[0].y());
-                break;
-            case PathElement::Type::AddLineToPoint:
-                builder.append('L', element.points[0].x(), ' ', element.points[0].y());
-                break;
-            case PathElement::Type::AddQuadCurveToPoint:
-                builder.append('Q', element.points[0].x(), ' ', element.points[0].y(), ',', element.points[1].x(), ' ', element.points[1].y());
-                break;
-            case PathElement::Type::AddCurveToPoint:
-                builder.append('C', element.points[0].x(), ' ', element.points[0].y(), ',', element.points[1].x(), ' ', element.points[1].y(), ',', element.points[2].x(), ' ', element.points[2].y());
-                break;
-            case PathElement::Type::CloseSubpath:
+        path.applyElements(
+            [&](const PathMoveTo& moveTo) {
+                builder.append('M', moveTo.point.x(), ' ', moveTo.point.y());
+            },
+            [&](const PathLineTo& lineTo) {
+                builder.append('L', lineTo.point.x(), ' ', lineTo.point.y());
+            },
+            [&](const PathQuadCurveTo& quadTo) {
+                builder.append('Q', quadTo.controlPoint.x(), ' ', quadTo.controlPoint.y(), ',', quadTo.endPoint.x(), ' ', quadTo.endPoint.y());
+            },
+            [&](const PathBezierCurveTo& bezierTo) {
+                builder.append('C', bezierTo.controlPoint1.x(), ' ', bezierTo.controlPoint1.y(), ',', bezierTo.controlPoint2.x(), ' ', bezierTo.controlPoint2.y(), ',', bezierTo.endPoint.x(), ' ', bezierTo.endPoint.y());
+            },
+            [&](const PathCloseSubpath&) {
                 builder.append('Z');
-                break;
-            }
-        });
+            });
     }
 
     return builder.toString();

@@ -327,28 +327,23 @@ void PathCairo::addPath(const PathCairo& path, const AffineTransform& transform)
 
 void PathCairo::applySegments(const PathSegmentApplier& applier) const
 {
-    applyElements([&](const PathElement& pathElement) {
-        switch (pathElement.type) {
-        case PathElement::Type::MoveToPoint:
-            applier({ PathMoveTo { pathElement.points[0] } });
-            break;
-
-        case PathElement::Type::AddLineToPoint:
-            applier({ PathLineTo { pathElement.points[0] } });
-            break;
-
-        case PathElement::Type::AddQuadCurveToPoint:
-            applier({ PathQuadCurveTo { pathElement.points[0], pathElement.points[1] } });
-            break;
-
-        case PathElement::Type::AddCurveToPoint:
-            applier({ PathBezierCurveTo { pathElement.points[0], pathElement.points[1], pathElement.points[2] } });
-            break;
-
-        case PathElement::Type::CloseSubpath:
-            applier({ PathCloseSubpath { } });
-            break;
-        }
+    applyElements([&](const PathElement& element) {
+        WTF::switchOn(element,
+            [&](const PathMoveTo& moveTo) {
+                applier(PathSegment { moveTo });
+            },
+            [&](const PathLineTo& lineTo) {
+                applier(PathSegment { lineTo });
+            },
+            [&](const PathQuadCurveTo& quadTo) {
+                applier(PathSegment { quadTo });
+            },
+            [&](const PathBezierCurveTo& bezierTo) {
+                applier(PathSegment { bezierTo });
+            },
+            [&](const PathCloseSubpath& closeSubpath) {
+                applier(PathSegment { closeSubpath });
+            });
     });
 }
 
@@ -359,34 +354,24 @@ bool PathCairo::applyElements(const PathElementApplier& applier) const
 
     CairoUniquePtr<cairo_path_t> pathCopy(cairo_copy_path(platformPath()));
     cairo_path_data_t* data;
-    PathElement pathElement;
 
     for (int i = 0; i < pathCopy->num_data; i += pathCopy->data[i].header.length) {
         data = &pathCopy->data[i];
         switch (data->header.type) {
         case CAIRO_PATH_MOVE_TO:
-            pathElement.type = PathElement::Type::MoveToPoint;
-            pathElement.points[0] = FloatPoint(data[1].point.x, data[1].point.y);
-            applier(pathElement);
+            applier(PathMoveTo { FloatPoint(data[1].point.x, data[1].point.y) });
             break;
 
         case CAIRO_PATH_LINE_TO:
-            pathElement.type = PathElement::Type::AddLineToPoint;
-            pathElement.points[0] = FloatPoint(data[1].point.x, data[1].point.y);
-            applier(pathElement);
+            applier(PathLineTo { FloatPoint(data[1].point.x, data[1].point.y) });
             break;
 
         case CAIRO_PATH_CURVE_TO:
-            pathElement.type = PathElement::Type::AddCurveToPoint;
-            pathElement.points[0] = FloatPoint(data[1].point.x, data[1].point.y);
-            pathElement.points[1] = FloatPoint(data[2].point.x, data[2].point.y);
-            pathElement.points[2] = FloatPoint(data[3].point.x, data[3].point.y);
-            applier(pathElement);
+            applier(PathBezierCurveTo { FloatPoint(data[1].point.x, data[1].point.y), FloatPoint(data[2].point.x, data[2].point.y), FloatPoint(data[3].point.x, data[3].point.y) });
             break;
 
         case CAIRO_PATH_CLOSE_PATH:
-            pathElement.type = PathElement::Type::CloseSubpath;
-            applier(pathElement);
+            applier(PathCloseSubpath { });
             break;
         }
     }

@@ -94,7 +94,7 @@ bool PathImpl::isClosed() const
     // FIXME: find a more efficient way to implement this, that does not require iterating
     // through all PathElements.
     applyElements([&lastElementIsClosed](const PathElement& element) {
-        lastElementIsClosed = (element.type == PathElement::Type::CloseSubpath);
+        lastElementIsClosed = std::holds_alternative<PathCloseSubpath>(element);
     });
 
     return lastElementIsClosed;

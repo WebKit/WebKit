@@ -21,6 +21,7 @@
 
 #include "Path.h"
 #include <wtf/Forward.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -33,43 +34,42 @@ public:
 
     static void updateFromPathElement(SVGSubpathData& subpathFinder, const PathElement& element)
     {
-        switch (element.type) {
-        case PathElement::Type::MoveToPoint:
-            if (subpathFinder.m_pathIsZeroLength && !subpathFinder.m_haveSeenMoveOnly)
-                subpathFinder.m_zeroLengthSubpathLocations.append(subpathFinder.m_lastPoint);
-            subpathFinder.m_lastPoint = subpathFinder.m_movePoint = element.points[0];
-            subpathFinder.m_haveSeenMoveOnly = true;
-            subpathFinder.m_pathIsZeroLength = true;
-            break;
-        case PathElement::Type::AddLineToPoint:
-            if (subpathFinder.m_lastPoint != element.points[0]) {
-                subpathFinder.m_pathIsZeroLength = false;
-                subpathFinder.m_lastPoint = element.points[0];
-            }
-            subpathFinder.m_haveSeenMoveOnly = false;
-            break;
-        case PathElement::Type::AddQuadCurveToPoint:
-            if (subpathFinder.m_lastPoint != element.points[0] || element.points[0] != element.points[1]) {
-                subpathFinder.m_pathIsZeroLength = false;
-                subpathFinder.m_lastPoint = element.points[1];
-            }
-            subpathFinder.m_haveSeenMoveOnly = false;
-            break;
-        case PathElement::Type::AddCurveToPoint:
-            if (subpathFinder.m_lastPoint != element.points[0] || element.points[0] != element.points[1] || element.points[1] != element.points[2]) {
-                subpathFinder.m_pathIsZeroLength = false;
-                subpathFinder.m_lastPoint = element.points[2];
-            }
-            subpathFinder.m_haveSeenMoveOnly = false;
-            break;
-        case PathElement::Type::CloseSubpath:
-            if (subpathFinder.m_pathIsZeroLength)
-                subpathFinder.m_zeroLengthSubpathLocations.append(subpathFinder.m_lastPoint);
-            subpathFinder.m_haveSeenMoveOnly = true; // This is an implicit move for the next element
-            subpathFinder.m_pathIsZeroLength = true; // A new sub-path also starts here
-            subpathFinder.m_lastPoint = subpathFinder.m_movePoint;
-            break;
-        }
+        WTF::switchOn(element,
+            [&](const PathMoveTo& moveTo) {
+                if (subpathFinder.m_pathIsZeroLength && !subpathFinder.m_haveSeenMoveOnly)
+                    subpathFinder.m_zeroLengthSubpathLocations.append(subpathFinder.m_lastPoint);
+                subpathFinder.m_lastPoint = subpathFinder.m_movePoint = moveTo.point;
+                subpathFinder.m_haveSeenMoveOnly = true;
+                subpathFinder.m_pathIsZeroLength = true;
+            },
+            [&](const PathLineTo& lineTo) {
+                if (subpathFinder.m_lastPoint != lineTo.point) {
+                    subpathFinder.m_pathIsZeroLength = false;
+                    subpathFinder.m_lastPoint = lineTo.point;
+                }
+                subpathFinder.m_haveSeenMoveOnly = false;
+            },
+            [&](const PathQuadCurveTo& quadTo) {
+                if (subpathFinder.m_lastPoint != quadTo.controlPoint || quadTo.controlPoint != quadTo.endPoint) {
+                    subpathFinder.m_pathIsZeroLength = false;
+                    subpathFinder.m_lastPoint = quadTo.endPoint;
+                }
+                subpathFinder.m_haveSeenMoveOnly = false;
+            },
+            [&](const PathBezierCurveTo& bezierTo) {
+                if (subpathFinder.m_lastPoint != bezierTo.controlPoint1 || bezierTo.controlPoint1 != bezierTo.controlPoint2 || bezierTo.controlPoint2 != bezierTo.endPoint) {
+                    subpathFinder.m_pathIsZeroLength = false;
+                    subpathFinder.m_lastPoint = bezierTo.endPoint;
+                }
+                subpathFinder.m_haveSeenMoveOnly = false;
+            },
+            [&](const PathCloseSubpath&) {
+                if (subpathFinder.m_pathIsZeroLength)
+                    subpathFinder.m_zeroLengthSubpathLocations.append(subpathFinder.m_lastPoint);
+                subpathFinder.m_haveSeenMoveOnly = true; // This is an implicit move for the next element
+                subpathFinder.m_pathIsZeroLength = true; // A new sub-path also starts here
+                subpathFinder.m_lastPoint = subpathFinder.m_movePoint;
+            });
     }
 
     void pathIsDone()

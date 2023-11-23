@@ -36,93 +36,6 @@ class TextStream;
 
 namespace WebCore {
 
-struct PathMoveTo {
-    FloatPoint point;
-
-    static constexpr bool canApplyElements = true;
-    static constexpr bool canTransform = true;
-
-    bool operator==(const PathMoveTo&) const = default;
-
-    FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
-    std::optional<FloatPoint> tryGetEndPointWithoutContext() const;
-
-    void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-    void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-
-    void applyElements(const PathElementApplier&) const;
-
-    void transform(const AffineTransform&);
-};
-
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathMoveTo&);
-
-struct PathLineTo {
-    FloatPoint point;
-
-    static constexpr bool canApplyElements = true;
-    static constexpr bool canTransform = true;
-
-    bool operator==(const PathLineTo&) const = default;
-
-    FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
-    std::optional<FloatPoint> tryGetEndPointWithoutContext() const;
-
-    void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-    void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-
-    void applyElements(const PathElementApplier&) const;
-
-    void transform(const AffineTransform&);
-};
-
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathLineTo&);
-
-struct PathQuadCurveTo {
-    FloatPoint controlPoint;
-    FloatPoint endPoint;
-
-    static constexpr bool canApplyElements = true;
-    static constexpr bool canTransform = true;
-
-    bool operator==(const PathQuadCurveTo&) const = default;
-
-    FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
-    std::optional<FloatPoint> tryGetEndPointWithoutContext() const;
-
-    void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-    void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-
-    void applyElements(const PathElementApplier&) const;
-
-    void transform(const AffineTransform&);
-};
-
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathQuadCurveTo&);
-
-struct PathBezierCurveTo {
-    FloatPoint controlPoint1;
-    FloatPoint controlPoint2;
-    FloatPoint endPoint;
-
-    static constexpr bool canApplyElements = true;
-    static constexpr bool canTransform = true;
-
-    bool operator==(const PathBezierCurveTo&) const = default;
-
-    FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
-    std::optional<FloatPoint> tryGetEndPointWithoutContext() const;
-
-    void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-    void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-
-    void applyElements(const PathElementApplier&) const;
-
-    void transform(const AffineTransform&);
-};
-
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathBezierCurveTo&);
-
 struct PathArcTo {
     FloatPoint controlPoint1;
     FloatPoint controlPoint2;
@@ -138,7 +51,6 @@ struct PathArcTo {
 
     void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathArcTo&);
@@ -160,7 +72,6 @@ struct PathArc {
 
     void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathArc&);
@@ -184,7 +95,6 @@ struct PathEllipse {
 
     void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
     void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathEllipse&);
@@ -338,24 +248,5 @@ struct PathDataArc {
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathDataArc&);
-
-struct PathCloseSubpath {
-    static constexpr bool canApplyElements = true;
-    static constexpr bool canTransform = true;
-
-    bool operator==(const PathCloseSubpath&) const = default;
-
-    FloatPoint calculateEndPoint(const FloatPoint& currentPoint, FloatPoint& lastMoveToPoint) const;
-    std::optional<FloatPoint> tryGetEndPointWithoutContext() const;
-
-    void extendFastBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-    void extendBoundingRect(const FloatPoint& currentPoint, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const;
-
-    void applyElements(const PathElementApplier&) const;
-
-    void transform(const AffineTransform&);
-};
-
-WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const PathCloseSubpath&);
 
 } // namespace WebCore
