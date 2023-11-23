@@ -263,9 +263,12 @@ void StyleRule::setProperties(Ref<StyleProperties>&& properties)
 
 MutableStyleProperties& StyleRule::mutableProperties()
 {
-    if (!is<MutableStyleProperties>(m_properties))
-        m_properties = properties().mutableCopy();
-    return downcast<MutableStyleProperties>(m_properties.get());
+    if (auto* mutableProperties = dynamicDowncast<MutableStyleProperties>(m_properties.get()))
+        return *mutableProperties;
+    Ref mutableProperties = m_properties->mutableCopy();
+    auto& mutablePropertiesRef = mutableProperties.get();
+    m_properties = WTFMove(mutableProperties);
+    return mutablePropertiesRef;
 }
 
 Ref<StyleRule> StyleRule::createForSplitting(const Vector<const CSSSelector*>& selectors, Ref<StyleProperties>&& properties, bool hasDocumentSecurityOrigin)
@@ -372,9 +375,12 @@ Ref<StyleRulePage> StyleRulePage::create(Ref<StyleProperties>&& properties, CSSS
 
 MutableStyleProperties& StyleRulePage::mutableProperties()
 {
-    if (!is<MutableStyleProperties>(m_properties))
-        m_properties = m_properties->mutableCopy();
-    return downcast<MutableStyleProperties>(m_properties.get());
+    if (auto* mutableProperties = dynamicDowncast<MutableStyleProperties>(m_properties.get()))
+        return *mutableProperties;
+    Ref mutableProperties = m_properties->mutableCopy();
+    auto& mutablePropertiesRef = mutableProperties.get();
+    m_properties = WTFMove(mutableProperties);
+    return mutablePropertiesRef;
 }
 
 StyleRuleFontFace::StyleRuleFontFace(Ref<StyleProperties>&& properties)
@@ -393,9 +399,12 @@ StyleRuleFontFace::~StyleRuleFontFace() = default;
 
 MutableStyleProperties& StyleRuleFontFace::mutableProperties()
 {
-    if (!is<MutableStyleProperties>(m_properties))
-        m_properties = m_properties->mutableCopy();
-    return downcast<MutableStyleProperties>(m_properties.get());
+    if (auto* mutableProperties = dynamicDowncast<MutableStyleProperties>(m_properties.get()))
+        return *mutableProperties;
+    Ref mutableProperties = m_properties->mutableCopy();
+    auto& mutablePropertiesRef = mutableProperties.get();
+    m_properties = WTFMove(mutableProperties);
+    return mutablePropertiesRef;
 }
 
 StyleRuleFontFeatureValues::StyleRuleFontFeatureValues(const Vector<AtomString>& fontFamilies, Ref<FontFeatureValues>&& value)

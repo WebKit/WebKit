@@ -1,0 +1,3 @@
+
+FAIL transition skipped because callback has invalid syntax assert_implements: Missing document.startViewTransition undefined
+

@@ -1,0 +1,3 @@
+
+FAIL validates that view-transition-name: unset or initial are ignored assert_implements: Missing document.startViewTransition undefined
+

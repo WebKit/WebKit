@@ -1,0 +1,3 @@
+
+FAIL style inheritance of pseudo elements assert_implements: Missing document.startViewTransition undefined
+

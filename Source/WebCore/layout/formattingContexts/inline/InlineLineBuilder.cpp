@@ -234,7 +234,7 @@ LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, Horiz
 LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, const std::optional<PreviousLine>& previousLine)
 {
     auto previousLineEndsWithLineBreak = !previousLine || !previousLine->hasInlineContent ? std::nullopt : std::make_optional(previousLine->endsWithLineBreak);
-    initialize(lineInput.initialLogicalRect, initialConstraintsForLine(lineInput.initialLogicalRect, previousLineEndsWithLineBreak), lineInput.needsLayoutRange, previousLine);
+    initialize(lineInput.initialLogicalRect, lineInput.needsLayoutRange, previousLine, previousLineEndsWithLineBreak);
     auto lineContent = placeInlineAndFloatContent(lineInput.needsLayoutRange);
     auto result = m_line.close();
 
@@ -269,7 +269,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
     };
 }
 
-void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const UsedConstraints& lineConstraints, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>& previousLine)
+void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>& previousLine, std::optional<bool> previousLineEndsWithLineBreak)
 {
     ASSERT(!needsLayoutRange.isEmpty() || (previousLine && !previousLine->suspendedFloats.isEmpty()));
     reset();
@@ -320,15 +320,17 @@ void LineBuilder::initialize(const InlineRect& initialLineLogicalRect, const Use
     m_line.initialize(m_lineSpanningInlineBoxes, isFirstFormattedLine());
 
     m_lineInitialLogicalRect = initialLineLogicalRect;
-    m_lineMarginStart = lineConstraints.marginStart;
-    m_lineLogicalRect = lineConstraints.logicalRect;
+    m_lineMarginStart = formattingContext().formattingUtils().computedTextIndent(isInIntrinsicWidthMode() ? InlineFormattingUtils::IsIntrinsicWidthMode::Yes : InlineFormattingUtils::IsIntrinsicWidthMode::No, previousLineEndsWithLineBreak, initialLineLogicalRect.width());
+
+    auto constraints = floatAvoidingRect(initialLineLogicalRect, { });
+    m_lineLogicalRect = constraints.logicalRect;
+    m_lineIsConstrainedByFloat = constraints.constrainedSideSet;
     // This is by how much intrusive floats (coming from parent/sibling FCs) initially offset the line.
     m_initialIntrusiveFloatsWidth = m_lineLogicalRect.left() - initialLineLogicalRect.left();
     m_lineLogicalRect.moveHorizontally(m_lineMarginStart);
     // While negative margins normally don't expand the available space, preferred width computation gets confused by negative text-indent
     // (shrink the space needed for the content) which we have to balance it here.
     m_lineLogicalRect.expandHorizontally(-m_lineMarginStart);
-    m_lineIsConstrainedByFloat = lineConstraints.isConstrainedByFloat;
 
     auto initializeLeadingContentFromOverflow = [&] {
         if (!previousLine || !needsLayoutRange.start.offset)
@@ -524,14 +526,6 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
     handleLineEnding();
 
     return lineContent;
-}
-
-LineBuilder::UsedConstraints LineBuilder::initialConstraintsForLine(const InlineRect& initialLineLogicalRect, std::optional<bool> previousLineEndsWithLineBreak) const
-{
-    auto isIntrinsicWidthMode = isInIntrinsicWidthMode() ? InlineFormattingUtils::IsIntrinsicWidthMode::Yes : InlineFormattingUtils::IsIntrinsicWidthMode::No;
-    auto constraints = floatConstrainedRect(initialLineLogicalRect, { });
-    constraints.marginStart = formattingContext().formattingUtils().computedTextIndent(isIntrinsicWidthMode, previousLineEndsWithLineBreak, initialLineLogicalRect.width());
-    return constraints;
 }
 
 InlineLayoutUnit LineBuilder::leadingPunctuationWidthForLineCandiate(size_t firstInlineTextItemIndex, size_t candidateContentStartIndex) const
@@ -745,31 +739,31 @@ static inline InlineLayoutUnit availableWidth(const LineCandidate::InlineContent
     return std::isnan(availableWidth) ? maxInlineLayoutUnit() : (availableWidth + candidateContent.accumulatedClonedDecorationEnd());
 }
 
-LineBuilder::UsedConstraints LineBuilder::floatConstrainedRect(const InlineRect& logicalRect, InlineLayoutUnit marginStart) const
+LineBuilder::RectAndFloatConstraints LineBuilder::floatAvoidingRect(const InlineRect& logicalRect, InlineLayoutUnit lineMarginStart) const
 {
-    auto constraints = [&]() -> LineBuilder::UsedConstraints {
+    auto constraints = [&]() -> LineBuilder::RectAndFloatConstraints {
         if (isInIntrinsicWidthMode() || floatingContext().isEmpty())
-            return { logicalRect, marginStart, { } };
+            return { logicalRect, { } };
 
         auto constraints = formattingContext().formattingUtils().floatConstraintsForLine(logicalRect.top(), logicalRect.height(), floatingContext());
         if (!constraints.left && !constraints.right)
-            return { logicalRect, marginStart, { } };
+            return { logicalRect, { } };
 
-        auto isConstrainedByFloat = OptionSet<UsedFloat> { };
+        auto constrainedSideSet = OptionSet<UsedFloat> { };
         // text-indent acts as (start)margin on the line. When looking for intrusive floats we need to check against the line's _margin_ box.
-        auto marginBoxRect = InlineRect { logicalRect.top(), logicalRect.left() - marginStart, logicalRect.width() + marginStart, logicalRect.height() };
+        auto marginBoxRect = InlineRect { logicalRect.top(), logicalRect.left() - lineMarginStart, logicalRect.width() + lineMarginStart, logicalRect.height() };
 
         if (constraints.left && constraints.left->x > marginBoxRect.left()) {
             marginBoxRect.shiftLeftTo(constraints.left->x);
-            isConstrainedByFloat.add(UsedFloat::Left);
+            constrainedSideSet.add(UsedFloat::Left);
         }
         if (constraints.right && constraints.right->x < marginBoxRect.right()) {
             marginBoxRect.setRight(std::max<InlineLayoutUnit>(marginBoxRect.left(), constraints.right->x));
-            isConstrainedByFloat.add(UsedFloat::Right);
+            constrainedSideSet.add(UsedFloat::Right);
         }
 
-        auto lineLogicalRect = InlineRect { marginBoxRect.top(), marginBoxRect.left() + marginStart, marginBoxRect.width() - marginStart, marginBoxRect.height() };
-        return { lineLogicalRect, marginStart, isConstrainedByFloat };
+        auto lineLogicalRect = InlineRect { marginBoxRect.top(), marginBoxRect.left() + lineMarginStart, marginBoxRect.width() - lineMarginStart, marginBoxRect.height() };
+        return { lineLogicalRect, constrainedSideSet };
     }();
 
     if (auto adjustedRect = formattingContext().quirks().adjustedRectForLineGridLineAlign(constraints.logicalRect))
@@ -778,7 +772,7 @@ LineBuilder::UsedConstraints LineBuilder::floatConstrainedRect(const InlineRect&
     return constraints;
 }
 
-LineBuilder::UsedConstraints LineBuilder::adjustedLineRectWithCandidateInlineContent(const LineCandidate& lineCandidate) const
+LineBuilder::RectAndFloatConstraints LineBuilder::adjustedLineRectWithCandidateInlineContent(const LineCandidate& lineCandidate) const
 {
     // Check if the candidate content would stretch the line and whether additional floats are getting in the way.
     auto& inlineContent = lineCandidate.inlineContent;
@@ -798,7 +792,7 @@ LineBuilder::UsedConstraints LineBuilder::adjustedLineRectWithCandidateInlineCon
     if (candidateContentHeight <= m_lineLogicalRect.height())
         return { m_lineLogicalRect };
 
-    return floatConstrainedRect({ m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), candidateContentHeight }, m_lineMarginStart);
+    return floatAvoidingRect({ m_lineLogicalRect.topLeft(), m_lineLogicalRect.width(), candidateContentHeight }, m_lineMarginStart);
 }
 
 std::optional<LineBuilder::InitialLetterOffsets> LineBuilder::adjustLineRectForInitialLetterIfApplicable(const Box& floatBox)
@@ -971,9 +965,9 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
             // This float is placed outside the line box. No need to shrink the current line.
             return;
         }
-        auto usedConstraints = floatConstrainedRect(m_lineLogicalRect, m_lineMarginStart);
-        m_lineLogicalRect = usedConstraints.logicalRect;
-        m_lineIsConstrainedByFloat.add(usedConstraints.isConstrainedByFloat);
+        auto constraints = floatAvoidingRect(m_lineLogicalRect, m_lineMarginStart);
+        m_lineLogicalRect = constraints.logicalRect;
+        m_lineIsConstrainedByFloat.add(constraints.constrainedSideSet);
     };
     adjustLineRectIfNeeded();
 
@@ -992,13 +986,13 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         return result;
     }
 
-    auto usedConstraints = adjustedLineRectWithCandidateInlineContent(lineCandidate);
+    auto constraints = adjustedLineRectWithCandidateInlineContent(lineCandidate);
     auto availableWidthForCandidateContent = [&] {
         auto lineIndex = m_previousLine ? (m_previousLine->lineIndex + 1) : 0lu;
         // If width constraint overrides exist (e.g. text-wrap: balance), modify the available width accordingly.
         const auto& availableLineWidthOverride = layoutState().availableLineWidthOverride();
         auto widthOverride = availableLineWidthOverride.availableLineWidthOverrideForLine(lineIndex);
-        auto availableTotalWidthForContent = widthOverride ? InlineLayoutUnit { widthOverride.value() } - m_lineMarginStart : usedConstraints.logicalRect.width();
+        auto availableTotalWidthForContent = widthOverride ? InlineLayoutUnit { widthOverride.value() } - m_lineMarginStart : constraints.logicalRect.width();
         return availableWidth(inlineContent, m_line, availableTotalWidthForContent);
     }();
 
@@ -1006,7 +1000,7 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
     if (!inlineContent.isRuby()) {
         auto lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::No, { }, { } };
         if (continuousInlineContent.logicalWidth() > availableWidthForCandidateContent) {
-            auto lineIsConsideredContentful = m_line.hasContentOrListMarker() || isLineConstrainedByFloat() || !usedConstraints.isConstrainedByFloat.isEmpty();
+            auto lineIsConsideredContentful = m_line.hasContentOrListMarker() || isLineConstrainedByFloat() || !constraints.constrainedSideSet.isEmpty();
             auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidthForCandidateContent, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), lineIsConsideredContentful, !m_wrapOpportunityList.isEmpty() };
             lineBreakingResult = inlineContentBreaker().processInlineContent(continuousInlineContent, lineStatus);
             lineGainsNewContent = lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break;
@@ -1020,10 +1014,10 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
     if (lineGainsNewContent) {
         // Sometimes in order to put this content on the line, we have to avoid additional float boxes (when the new content is taller than any previous content and we have vertically stacked floats on this line)
         // which means we need to adjust the line rect to accommodate such new constraints.
-        m_lineLogicalRect = usedConstraints.logicalRect;
-        m_lineIsConstrainedByFloat.add(usedConstraints.isConstrainedByFloat);
+        m_lineLogicalRect = constraints.logicalRect;
+        m_lineIsConstrainedByFloat.add(constraints.constrainedSideSet);
     }
-    m_candidateContentMaximumHeight = usedConstraints.logicalRect.height();
+    m_candidateContentMaximumHeight = constraints.logicalRect.height();
     return result;
 }
 

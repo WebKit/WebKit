@@ -106,11 +106,12 @@ Length convertToFloatLength(const CSSPrimitiveValue* primitiveValue, const CSSTo
 
 std::optional<TransformOperations> transformsForValue(const CSSValue& value, const CSSToLengthConversionData& conversionData)
 {
-    if (!is<CSSTransformListValue>(value))
+    auto* valueList = dynamicDowncast<CSSTransformListValue>(value);
+    if (!valueList)
         return { };
 
     TransformOperations operations;
-    for (auto& currentValue : downcast<CSSTransformListValue>(value)) {
+    for (auto& currentValue : *valueList) {
         auto transform  = transformForValue(currentValue, conversionData);
         if (!transform)
             return { };
@@ -342,19 +343,19 @@ RefPtr<TransformOperation> transformForValue(const CSSValue& value, const CSSToL
 
 RefPtr<TranslateTransformOperation> translateForValue(const CSSValue& value, const CSSToLengthConversionData& conversionData)
 {
-    if (!is<CSSValueList>(value))
+    auto* valueList = dynamicDowncast<CSSValueList>(value);
+    if (!valueList)
         return nullptr;
 
-    auto& valueList = downcast<CSSValueList>(value);
-    if (!valueList.length())
+    if (!valueList->length())
         return nullptr;
 
     auto type = TransformOperation::Type::Translate;
     Length tx = Length(0, LengthType::Fixed);
     Length ty = Length(0, LengthType::Fixed);
     Length tz = Length(0, LengthType::Fixed);
-    for (unsigned i = 0; i < valueList.length(); ++i) {
-        auto* valueItem = dynamicDowncast<CSSPrimitiveValue>(valueList[i]);
+    for (unsigned i = 0; i < valueList->length(); ++i) {
+        auto* valueItem = dynamicDowncast<CSSPrimitiveValue>((*valueList)[i]);
         if (!valueItem)
             return nullptr;
         if (!i)
@@ -375,19 +376,19 @@ RefPtr<TranslateTransformOperation> translateForValue(const CSSValue& value, con
 
 RefPtr<ScaleTransformOperation> scaleForValue(const CSSValue& value)
 {
-    if (!is<CSSValueList>(value))
+    auto* valueList = dynamicDowncast<CSSValueList>(value);
+    if (!valueList)
         return nullptr;
 
-    auto& valueList = downcast<CSSValueList>(value);
-    if (!valueList.length())
+    if (!valueList->length())
         return nullptr;
 
     auto type = TransformOperation::Type::Scale;
     double sx = 1.0;
     double sy = 1.0;
     double sz = 1.0;
-    for (unsigned i = 0; i < valueList.length(); ++i) {
-        auto* valueItem = dynamicDowncast<CSSPrimitiveValue>(valueList[i]);
+    for (unsigned i = 0; i < valueList->length(); ++i) {
+        auto* valueItem = dynamicDowncast<CSSPrimitiveValue>((*valueList)[i]);
         if (!valueItem)
             return nullptr;
         if (!i) {
@@ -406,11 +407,11 @@ RefPtr<ScaleTransformOperation> scaleForValue(const CSSValue& value)
 
 RefPtr<RotateTransformOperation> rotateForValue(const CSSValue& value)
 {
-    if (!is<CSSValueList>(value))
+    auto* valueList = dynamicDowncast<CSSValueList>(value);
+    if (!valueList)
         return nullptr;
 
-    auto& valueList = downcast<CSSValueList>(value);
-    auto numberOfItems = valueList.length();
+    auto numberOfItems = valueList->length();
 
     // There are three scenarios here since the rotation axis is defined either as:
     //     - no value: implicit 2d rotation
@@ -420,10 +421,10 @@ RefPtr<RotateTransformOperation> rotateForValue(const CSSValue& value)
     if (numberOfItems != 1 && numberOfItems != 2 && numberOfItems != 4)
         return nullptr;
 
-    auto* lastValue = valueList.itemWithoutBoundsCheck(numberOfItems - 1);
-    if (!is<CSSPrimitiveValue>(lastValue))
+    auto* lastValue = dynamicDowncast<CSSPrimitiveValue>(valueList->itemWithoutBoundsCheck(numberOfItems - 1));
+    if (!lastValue)
         return nullptr;
-    auto angle = downcast<CSSPrimitiveValue>(*lastValue).computeDegrees();
+    auto angle = lastValue->computeDegrees();
 
     if (numberOfItems == 1)
         return RotateTransformOperation::create(angle, TransformOperation::Type::Rotate);
@@ -435,7 +436,7 @@ RefPtr<RotateTransformOperation> rotateForValue(const CSSValue& value)
 
     if (numberOfItems == 2) {
         // An axis identifier was specified.
-        auto axisIdentifier = valueList[0].valueID();
+        auto axisIdentifier = (*valueList)[0].valueID();
         if (axisIdentifier == CSSValueX) {
             type = TransformOperation::Type::RotateX;
             x = 1.0;
@@ -451,16 +452,16 @@ RefPtr<RotateTransformOperation> rotateForValue(const CSSValue& value)
         // The axis was specified using a vector.
         type = TransformOperation::Type::Rotate;
         for (unsigned i = 0; i < 3; ++i) {
-            auto* valueItem = valueList.itemWithoutBoundsCheck(i);
-            if (!is<CSSPrimitiveValue>(valueItem))
+            auto* valueItem = dynamicDowncast<CSSPrimitiveValue>(valueList->itemWithoutBoundsCheck(i));
+            if (!valueItem)
                 return nullptr;
             if (!i)
-                x = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+                x = valueItem->doubleValue();
             else if (i == 1)
-                y = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+                y = valueItem->doubleValue();
             else if (i == 2) {
                 type = TransformOperation::Type::Rotate3D;
-                z = downcast<CSSPrimitiveValue>(*valueItem).doubleValue();
+                z = valueItem->doubleValue();
             }
         }
     }

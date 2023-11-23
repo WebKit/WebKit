@@ -1,0 +1,8 @@
+
+FAIL :only-child should match because ::view-transition-new is not generated (root to none) assert_implements: Missing document.startViewTransition undefined
+FAIL :only-child should not match because ::view-transition-new is generated (root to root) assert_implements: Missing document.startViewTransition undefined
+FAIL :only-child should not match because ::view-transition-new is generated (root to element) assert_implements: Missing document.startViewTransition undefined
+FAIL :only-child should match because ::view-transition-new is not generated (element to none) assert_implements: Missing document.startViewTransition undefined
+FAIL :only-child should not match because ::view-transition-new is generated (element to root) assert_implements: Missing document.startViewTransition undefined
+FAIL :only-child should not match because ::view-transition-new is generated (element to element) assert_implements: Missing document.startViewTransition undefined
+

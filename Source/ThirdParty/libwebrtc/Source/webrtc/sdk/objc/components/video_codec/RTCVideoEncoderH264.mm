@@ -78,6 +78,8 @@ const OSType kNV12PixelFormat = kCVPixelFormatType_420YpCbCr8BiPlanarFullRange;
 const int kBelowFrameRateThreshold = 2;
 const int kBelowFrameRateBitRateDecrease = 3;
 
+const uint32_t kDefaultEncoderFrameRate = 30;
+
 // Struct that we pass to the encoder per frame to encode. We receive it again
 // in the encoder callback.
 struct RTCFrameEncodeParams {
@@ -341,8 +343,54 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
       return 0;
   }
 }
-}  // namespace
 
+// Table A-1 level limits of https://www.itu.int/rec/dologin_pub.asp?lang=e&id=T-REC-H.264-201610-S!!PDF-E&type=items.
+size_t GetMaxBitRateKBps(const webrtc::H264ProfileLevelId &profile_level_id) {
+  switch (profile_level_id.level) {
+    case webrtc::H264Level::kLevel1:
+      return 64;
+    case webrtc::H264Level::kLevel1_b:
+      return 128;
+    case webrtc::H264Level::kLevel1_1:
+      return 192;
+    case webrtc::H264Level::kLevel1_2:
+      return 384;
+    case webrtc::H264Level::kLevel1_3:
+      return 768;
+    case webrtc::H264Level::kLevel2:
+    case webrtc::H264Level::kLevel2_1:
+    case webrtc::H264Level::kLevel2_2:
+      return 4000;
+    case webrtc::H264Level::kLevel3:
+      return 10000;
+    case webrtc::H264Level::kLevel3_1:
+      return 14000;
+    case webrtc::H264Level::kLevel3_2:
+      return 20000;
+    case webrtc::H264Level::kLevel4:
+      return 20000;
+    case webrtc::H264Level::kLevel4_1:
+    case webrtc::H264Level::kLevel4_2:
+      return 50000;
+    case webrtc::H264Level::kLevel5:
+      return 135000;
+    case webrtc::H264Level::kLevel5_1:
+    case webrtc::H264Level::kLevel5_2:
+      return 240000;
+  }
+}
+
+size_t computeDefaultBitRateKbps(uint32_t proposedBitrateKbps, const webrtc::H264ProfileLevelId& profile_level_id)
+{
+  return proposedBitrateKbps ? proposedBitrateKbps : GetMaxBitRateKBps(profile_level_id);
+}
+
+uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramerate)
+{
+  return MIN(proposedFramerate ? proposedFramerate : kDefaultEncoderFrameRate, maxAllowedFramerate);
+}
+
+} // namespace
 @implementation RTCVideoEncoderH264 {
   RTCVideoCodecInfo *_codecInfo;
   std::unique_ptr<webrtc::BitrateAdjuster> _bitrateAdjuster;
@@ -437,11 +485,10 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
   uint32_t aligned_height = (((_height + 15) >> 4) << 4);
   _maxAllowedFrameRate = static_cast<uint32_t>(GetMaxSampleRate(*_profile_level_id) /
                                                (aligned_width * aligned_height));
-
   // We can only set average bitrate on the HW encoder.
-  _targetBitrateBps = settings.startBitrate * 1000;  // startBitrate is in kbps.
+  _targetBitrateBps = computeDefaultBitRateKbps(settings.startBitrate, *_profile_level_id) * 1000;
   _bitrateAdjuster->SetTargetBitrateBps(_targetBitrateBps);
-  _encoderFrameRate = MIN(settings.maxFramerate, _maxAllowedFrameRate);
+  _encoderFrameRate = computeFramerate(settings.maxFramerate, _maxAllowedFrameRate);
   if (settings.maxFramerate > _maxAllowedFrameRate && _maxAllowedFrameRate > 0) {
     RTC_LOG(LS_WARNING) << "Initial encoder frame rate setting " << settings.maxFramerate
                         << " is larger than the "
@@ -616,13 +663,13 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
 }
 
 - (int)setBitrate:(uint32_t)bitrateKbit framerate:(uint32_t)framerate {
-  _targetBitrateBps = 1000 * bitrateKbit;
+  _targetBitrateBps = computeDefaultBitRateKbps(bitrateKbit, *_profile_level_id) * 1000;
   _bitrateAdjuster->SetTargetBitrateBps(_targetBitrateBps);
   if (framerate > _maxAllowedFrameRate && _maxAllowedFrameRate > 0) {
     RTC_LOG(LS_WARNING) << "Encoder frame rate setting " << framerate << " is larger than the "
                         << "maximal allowed frame rate " << _maxAllowedFrameRate << ".";
   }
-  framerate = MIN(framerate, _maxAllowedFrameRate);
+  framerate = computeFramerate(framerate, _maxAllowedFrameRate);
   [self setBitrateBps:_bitrateAdjuster->GetAdjustedBitrateBps() frameRate:framerate];
   return WEBRTC_VIDEO_CODEC_OK;
 }
@@ -817,7 +864,9 @@ NSUInteger GetMaxSampleRate(const webrtc::H264ProfileLevelId &profile_level_id) 
 - (void)setEncoderBitrateBps:(uint32_t)bitrateBps frameRate:(uint32_t)frameRate {
   if ([self hasCompressionSession]) {
     auto actualTarget = _isBelowExpectedFrameRate ? bitrateBps / kBelowFrameRateBitRateDecrease : bitrateBps;
-    SetVTSessionProperty(_vtCompressionSession, kVTCompressionPropertyKey_AverageBitRate, actualTarget);
+    if (actualTarget) {
+      SetVTSessionProperty(_vtCompressionSession, kVTCompressionPropertyKey_AverageBitRate, actualTarget);
+    }
 
     // With zero |_maxAllowedFrameRate|, we fall back to automatic frame rate detection.
     if (_maxAllowedFrameRate > 0) {

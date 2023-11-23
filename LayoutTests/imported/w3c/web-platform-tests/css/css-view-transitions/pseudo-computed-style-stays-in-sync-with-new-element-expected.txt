@@ -1,0 +1,3 @@
+
+FAIL computed style on pseudo-element stays in sync with the DOM element assert_implements: Missing document.startViewTransition undefined
+

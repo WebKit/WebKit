@@ -46,16 +46,18 @@ public:
     {
     }
 
-    PseudoElementRequest(PseudoId pseudoId, const AtomString& highlightName)
+    PseudoElementRequest(PseudoId pseudoId, const AtomString& nameIdentifier)
         : pseudoId(pseudoId)
-        , highlightName(highlightName)
+        , nameIdentifier(nameIdentifier)
     {
-        ASSERT(pseudoId == PseudoId::Highlight);
+        ASSERT(pseudoId == PseudoId::Highlight || pseudoId == PseudoId::ViewTransitionGroup || pseudoId == PseudoId::ViewTransitionImagePair || pseudoId == PseudoId::ViewTransitionOld || pseudoId == PseudoId::ViewTransitionNew);
     }
 
     PseudoId pseudoId;
     std::optional<StyleScrollbarState> scrollbarState;
-    AtomString highlightName;
+
+    // highlight name for ::highlight or view transition name for view transition pseudo elements.
+    AtomString nameIdentifier;
 };
 
 struct MatchedRule {

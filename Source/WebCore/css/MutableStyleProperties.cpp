@@ -54,8 +54,8 @@ MutableStyleProperties::~MutableStyleProperties() = default;
 MutableStyleProperties::MutableStyleProperties(const StyleProperties& other)
     : StyleProperties(other.cssParserMode())
 {
-    if (is<MutableStyleProperties>(other))
-        m_propertyVector = downcast<MutableStyleProperties>(other).m_propertyVector;
+    if (auto* mutableProperties = dynamicDowncast<MutableStyleProperties>(other))
+        m_propertyVector = mutableProperties->m_propertyVector;
     else {
         m_propertyVector = WTF::map(downcast<ImmutableStyleProperties>(other), [](auto property) {
             return property.toCSSProperty();

@@ -273,7 +273,7 @@ class CustomPropertyRegistry;
 struct ScopedName;
 }
 
-constexpr auto PublicPseudoIDBits = 9;
+constexpr auto PublicPseudoIDBits = 14;
 constexpr auto TextDecorationLineBits = 4;
 constexpr auto TextTransformBits = 5;
 

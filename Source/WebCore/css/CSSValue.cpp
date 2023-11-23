@@ -294,10 +294,10 @@ bool CSSValue::equals(const CSSValue& other) const
             return typedThis.equals(downcast<ValueType>(other));
         });
     }
-    if (is<CSSValueList>(*this))
-        return downcast<CSSValueList>(*this).containsSingleEqualItem(other);
-    if (is<CSSValueList>(other))
-        return downcast<CSSValueList>(other).containsSingleEqualItem(*this);
+    if (auto* thisList = dynamicDowncast<CSSValueList>(*this))
+        return thisList->containsSingleEqualItem(other);
+    if (auto* otherList = dynamicDowncast<CSSValueList>(other))
+        return otherList->containsSingleEqualItem(*this);
     return false;
 }
 

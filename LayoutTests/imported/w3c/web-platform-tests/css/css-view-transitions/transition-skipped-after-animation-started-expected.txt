@@ -1,0 +1,3 @@
+
+FAIL skipTransition() after animations have started running should resolve finished promise assert_implements: Missing document.startViewTransition undefined
+

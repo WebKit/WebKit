@@ -490,7 +490,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     SelectorChecker::CheckingContext context(m_mode);
     context.pseudoId = m_pseudoElementRequest.pseudoId;
     context.scrollbarState = m_pseudoElementRequest.scrollbarState;
-    context.nameForHightlightPseudoElement = m_pseudoElementRequest.highlightName;
+    context.nameIdentifier = m_pseudoElementRequest.nameIdentifier;
     context.styleScopeOrdinal = styleScopeOrdinal;
     context.selectorMatchingState = m_selectorMatchingState;
     

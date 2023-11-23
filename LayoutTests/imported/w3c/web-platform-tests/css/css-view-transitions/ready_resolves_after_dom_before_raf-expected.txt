@@ -1,0 +1,3 @@
+
+FAIL updateCallbackDone resolves, then ready resolves with no rAF in between assert_implements: Missing document.startViewTransition undefined
+

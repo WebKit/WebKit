@@ -64,22 +64,26 @@ namespace WebCore {
 
 ALWAYS_INLINE bool isAutofilled(const Element& element)
 {
-    return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isAutoFilled();
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
+    return inputElement && inputElement->isAutoFilled();
 }
 
 ALWAYS_INLINE bool isAutofilledStrongPassword(const Element& element)
 {
-    return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isAutoFilled() && downcast<HTMLInputElement>(element).hasAutoFillStrongPasswordButton();
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
+    return inputElement && inputElement->isAutoFilled() && inputElement->hasAutoFillStrongPasswordButton();
 }
 
 ALWAYS_INLINE bool isAutofilledStrongPasswordViewable(const Element& element)
 {
-    return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isAutoFilledAndViewable();
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
+    return inputElement && inputElement->isAutoFilledAndViewable();
 }
 
 ALWAYS_INLINE bool isAutofilledAndObscured(const Element& element)
 {
-    return is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isAutoFilledAndObscured();
+    auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
+    return inputElement && inputElement->isAutoFilledAndObscured();
 }
 
 ALWAYS_INLINE bool matchesDefaultPseudoClass(const Element& element)
@@ -90,13 +94,15 @@ ALWAYS_INLINE bool matchesDefaultPseudoClass(const Element& element)
 // https://html.spec.whatwg.org/multipage/scripting.html#selector-disabled
 ALWAYS_INLINE bool matchesDisabledPseudoClass(const Element& element)
 {
-    return is<HTMLElement>(element) && downcast<HTMLElement>(element).isActuallyDisabled();
+    auto* htmlElement = dynamicDowncast<HTMLElement>(element);
+    return htmlElement && htmlElement->isActuallyDisabled();
 }
 
 // https://html.spec.whatwg.org/multipage/scripting.html#selector-enabled
 ALWAYS_INLINE bool matchesEnabledPseudoClass(const Element& element)
 {
-    return is<HTMLElement>(element) && downcast<HTMLElement>(element).canBeActuallyDisabled() && !downcast<HTMLElement>(element).isActuallyDisabled();
+    auto* htmlElement = dynamicDowncast<HTMLElement>(element);
+    return htmlElement && htmlElement->canBeActuallyDisabled() && !htmlElement->isActuallyDisabled();
 }
 
 // https://dom.spec.whatwg.org/#concept-element-defined
@@ -115,12 +121,10 @@ ALWAYS_INLINE bool isChecked(const Element& element)
     // Even though WinIE allows checked and indeterminate to co-exist, the CSS selector spec says that
     // you can't be both checked and indeterminate. We will behave like WinIE behind the scenes and just
     // obey the CSS spec here in the test for matching the pseudo.
-    if (is<HTMLInputElement>(element)) {
-        auto& inputElement = downcast<HTMLInputElement>(element);
-        return inputElement.shouldAppearChecked() && !inputElement.shouldAppearIndeterminate();
-    }
-    if (is<HTMLOptionElement>(element))
-        return const_cast<HTMLOptionElement&>(downcast<HTMLOptionElement>(element)).selected(AllowStyleInvalidation::No);
+    if (auto* inputElement = dynamicDowncast<HTMLInputElement>(element))
+        return inputElement->shouldAppearChecked() && !inputElement->shouldAppearIndeterminate();
+    if (auto* option = dynamicDowncast<HTMLOptionElement>(element))
+        return const_cast<HTMLOptionElement&>(*option).selected(AllowStyleInvalidation::No);
 
     return false;
 }
@@ -166,7 +170,8 @@ ALWAYS_INLINE bool isWindowInactive(const Element& element)
 #if ENABLE(ATTACHMENT_ELEMENT)
 ALWAYS_INLINE bool hasAttachment(const Element& element)
 {
-    return is<HTMLImageElement>(element) && downcast<HTMLImageElement>(element).attachmentElement();
+    auto* imageElement = dynamicDowncast<HTMLImageElement>(element);
+    return imageElement && imageElement->attachmentElement();
 }
 #endif
 
@@ -204,12 +209,12 @@ ALWAYS_INLINE bool matchesLangPseudoClass(const Element& element, const FixedVec
 {
     AtomString language;
 #if ENABLE(VIDEO)
-    if (is<WebVTTElement>(element))
-        language = downcast<WebVTTElement>(element).language();
-    else if (is<WebVTTRubyElement>(element))
-        language = downcast<WebVTTRubyElement>(element).language();
-    else if (is<WebVTTRubyTextElement>(element))
-        language = downcast<WebVTTRubyTextElement>(element).language();
+    if (auto* vttElement = dynamicDowncast<WebVTTElement>(element))
+        language = vttElement->language();
+    else if (auto* ruby = dynamicDowncast<WebVTTRubyElement>(element))
+        language = ruby->language();
+    else if (auto* rubyText = dynamicDowncast<WebVTTRubyTextElement>(element))
+        language = rubyText->language();
     else
 #endif
         language = element.effectiveLang();
@@ -481,48 +486,55 @@ ALWAYS_INLINE bool matchesFutureCuePseudoClass(const Element& element)
 
 ALWAYS_INLINE bool matchesPastCuePseudoClass(const Element& element)
 {
-    if (is<WebVTTElement>(element))
-        return downcast<WebVTTElement>(element).isPastNode();
-    if (is<WebVTTRubyElement>(element))
-        return downcast<WebVTTRubyElement>(element).isPastNode();
-    if (is<WebVTTRubyTextElement>(element))
-        return downcast<WebVTTRubyTextElement>(element).isPastNode();
+    if (auto* vttElement = dynamicDowncast<WebVTTElement>(element))
+        return vttElement->isPastNode();
+    if (auto* ruby = dynamicDowncast<WebVTTRubyElement>(element))
+        return ruby->isPastNode();
+    if (auto* rubyText = dynamicDowncast<WebVTTRubyTextElement>(element))
+        return rubyText->isPastNode();
     return false;
 }
 
 ALWAYS_INLINE bool matchesPlayingPseudoClass(const Element& element)
 {
-    return is<HTMLMediaElement>(element) && !downcast<HTMLMediaElement>(element).paused();
+    auto* mediaElement = dynamicDowncast<HTMLMediaElement>(element);
+    return mediaElement && !mediaElement->paused();
 }
 
 ALWAYS_INLINE bool matchesPausedPseudoClass(const Element& element)
 {
-    return is<HTMLMediaElement>(element) && downcast<HTMLMediaElement>(element).paused();
+    auto* mediaElement = dynamicDowncast<HTMLMediaElement>(element);
+    return mediaElement && mediaElement->paused();
 }
 
 ALWAYS_INLINE bool matchesSeekingPseudoClass(const Element& element)
 {
-    return is<HTMLMediaElement>(element) && downcast<HTMLMediaElement>(element).seeking();
+    auto* mediaElement = dynamicDowncast<HTMLMediaElement>(element);
+    return mediaElement && mediaElement->seeking();
 }
 
 ALWAYS_INLINE bool matchesBufferingPseudoClass(const Element& element)
 {
-    return is<HTMLMediaElement>(element) && downcast<HTMLMediaElement>(element).buffering();
+    auto* mediaElement = dynamicDowncast<HTMLMediaElement>(element);
+    return mediaElement && mediaElement->buffering();
 }
 
 ALWAYS_INLINE bool matchesStalledPseudoClass(const Element& element)
 {
-    return is<HTMLMediaElement>(element) && downcast<HTMLMediaElement>(element).stalled();
+    auto* mediaElement = dynamicDowncast<HTMLMediaElement>(element);
+    return mediaElement && mediaElement->stalled();
 }
 
 ALWAYS_INLINE bool matchesMutedPseudoClass(const Element& element)
 {
-    return is<HTMLMediaElement>(element) && downcast<HTMLMediaElement>(element).muted();
+    auto* mediaElement = dynamicDowncast<HTMLMediaElement>(element);
+    return mediaElement && mediaElement->muted();
 }
 
 ALWAYS_INLINE bool matchesVolumeLockedPseudoClass(const Element& element)
 {
-    return is<HTMLMediaElement>(element) && downcast<HTMLMediaElement>(element).volumeLocked();
+    auto* mediaElement = dynamicDowncast<HTMLMediaElement>(element);
+    return mediaElement && mediaElement->volumeLocked();
 }
 #endif
 
@@ -579,8 +591,8 @@ ALWAYS_INLINE bool matchesHtmlDocumentPseudoClass(const Element& element)
 
 ALWAYS_INLINE bool matchesModalPseudoClass(const Element& element)
 {
-    if (is<HTMLDialogElement>(element))
-        return downcast<HTMLDialogElement>(element).isModal();
+    if (auto* dialog = dynamicDowncast<HTMLDialogElement>(element))
+        return dialog->isModal();
 #if ENABLE(FULLSCREEN_API)
     return element.hasFullscreenFlag();
 #else
