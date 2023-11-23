@@ -83,10 +83,8 @@ RenderTreeUpdater::RenderTreeUpdater(Document& document, Style::PostResolutionCa
 
 RenderTreeUpdater::~RenderTreeUpdater() = default;
 
-static ContainerNode* findRenderingRoot(ContainerNode& node)
+static Element* findRenderingAncestor(ContainerNode& node)
 {
-    if (node.renderer())
-        return &node;
     for (auto& ancestor : composedTreeAncestors(node)) {
         if (ancestor.renderer())
             return &ancestor;
@@ -96,7 +94,14 @@ static ContainerNode* findRenderingRoot(ContainerNode& node)
     return nullptr;
 }
 
-void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
+static ContainerNode* findRenderingRoot(ContainerNode& node)
+{
+    if (node.renderer())
+        return &node;
+    return findRenderingAncestor(node);
+}
+
+void RenderTreeUpdater::commit(std::unique_ptr<Style::Update> styleUpdate)
 {
     ASSERT(&m_document == &styleUpdate->document());
 
@@ -106,6 +111,8 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
     TraceScope scope(RenderTreeBuildStart, RenderTreeBuildEnd);
 
     m_styleUpdate = WTFMove(styleUpdate);
+
+    updateRebuildRoots();
 
     updateRenderViewStyle();
 
@@ -124,6 +131,68 @@ void RenderTreeUpdater::commit(std::unique_ptr<const Style::Update> styleUpdate)
     m_builder.updateAfterDescendants(renderView());
 
     m_styleUpdate = nullptr;
+}
+
+void RenderTreeUpdater::updateRebuildRoots()
+{
+    auto findNewRebuildRoot = [&](auto& root) -> Element* {
+        auto* renderingAncestor = findRenderingAncestor(root);
+        if (!renderingAncestor)
+            return nullptr;
+        if (!RenderTreeBuilder::isRebuildRootForChildren(*renderingAncestor->renderer()))
+            return nullptr;
+        return renderingAncestor;
+    };
+
+    auto addForRebuild = [&](auto& element) {
+        auto* existingUpdate = m_styleUpdate->elementUpdate(element);
+        if (existingUpdate) {
+            if (existingUpdate->change == Style::Change::Renderer)
+                return false;
+            existingUpdate->change = Style::Change::Renderer;
+            return true;
+        }
+
+        if (!element.renderer())
+            return element.hasDisplayContents();
+
+        auto* parent = composedTreeAncestors(element).first();
+        m_styleUpdate->addElement(element, parent, Style::ElementUpdate {
+            RenderStyle::clonePtr(element.renderer()->style()),
+            Style::Change::Renderer
+        });
+        return true;
+    };
+
+    auto addSubtreeForRebuild = [&](auto& root) {
+        if (!addForRebuild(root))
+            return;
+        auto descendants = composedTreeDescendants(root);
+        auto it = descendants.begin();
+        auto end = descendants.end();
+        while (it != end) {
+            auto& descendant = *it;
+            if (!is<Element>(descendant)) {
+                it.traverseNext();
+                continue;
+            }
+            if (!addForRebuild(downcast<Element>(descendant))) {
+                it.traverseNextSkippingChildren();
+                continue;
+            }
+            it.traverseNext();
+        }
+    };
+
+    while (true) {
+        auto rebuildRoots = m_styleUpdate->takeRebuildRoots();
+        if (rebuildRoots.isEmpty())
+            break;
+        for (auto& rebuildRoot : rebuildRoots) {
+            if (auto* newRebuildRoot = findNewRebuildRoot(*rebuildRoot))
+                addSubtreeForRebuild(*newRebuildRoot);
+        }
+    }
 }
 
 static bool shouldCreateRenderer(const Element& element, const RenderElement& parentRenderer)

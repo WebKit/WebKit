@@ -2135,7 +2135,7 @@ bool Document::hasPendingFullStyleRebuild() const
     return hasPendingStyleRecalc() && m_needsFullStyleRebuild;
 }
 
-void Document::updateRenderTree(std::unique_ptr<const Style::Update> styleUpdate)
+void Document::updateRenderTree(std::unique_ptr<Style::Update> styleUpdate)
 {
     ASSERT(!inRenderTreeUpdate());
 
