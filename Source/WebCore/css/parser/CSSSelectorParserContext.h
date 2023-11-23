@@ -40,7 +40,6 @@ struct CSSSelectorParserContext {
     bool focusVisibleEnabled { false };
     bool hasPseudoClassEnabled { false };
     bool popoverAttributeEnabled { false };
-    bool viewTransitionsEnabled { false };
 
     bool isHashTableDeletedValue { false };
 

@@ -29,7 +29,6 @@
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyParser.h"
 #include "CSSSelector.h"
-#include "CSSSelectorParserContext.h"
 #include "CSSValuePool.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComputedStyleExtractor.h"
@@ -56,7 +55,7 @@ CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(Element& element, bool 
         name = name.substring(1);
     if (name.startsWith(':'))
         name = name.substring(1);
-    m_pseudoElementSpecifier = CSSSelector::pseudoId(CSSSelector::parsePseudoElementType(name, CSSSelectorParserContext { element.document() }));
+    m_pseudoElementSpecifier = CSSSelector::pseudoId(CSSSelector::parsePseudoElementType(name));
 }
 
 CSSComputedStyleDeclaration::~CSSComputedStyleDeclaration() = default;

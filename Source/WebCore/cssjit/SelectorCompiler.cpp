@@ -1492,7 +1492,6 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             case CSSSelector::PseudoElementScrollbarTrack:
             case CSSSelector::PseudoElementScrollbarTrackPiece:
             case CSSSelector::PseudoElementSelection:
-            case CSSSelector::PseudoElementViewTransition:
             case CSSSelector::PseudoElementWebKitCustom:
             case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:
                 ASSERT(!fragment->pseudoElementSelector);
@@ -1507,10 +1506,6 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             case CSSSelector::PseudoElementHighlight:
             case CSSSelector::PseudoElementPart:
             case CSSSelector::PseudoElementSlotted:
-            case CSSSelector::PseudoElementViewTransitionGroup:
-            case CSSSelector::PseudoElementViewTransitionImagePair:
-            case CSSSelector::PseudoElementViewTransitionOld:
-            case CSSSelector::PseudoElementViewTransitionNew:
                 return FunctionType::CannotCompile;
             }
 

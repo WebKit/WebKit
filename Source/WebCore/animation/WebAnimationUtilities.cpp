@@ -32,10 +32,8 @@
 #include "AnimationPlaybackEvent.h"
 #include "CSSAnimation.h"
 #include "CSSAnimationEvent.h"
-#include "CSSParserContext.h"
 #include "CSSPropertyNames.h"
 #include "CSSSelector.h"
-#include "CSSSelectorParser.h"
 #include "CSSTransition.h"
 #include "CSSTransitionEvent.h"
 #include "DeclarativeAnimation.h"
@@ -329,10 +327,7 @@ ExceptionOr<PseudoId> pseudoIdFromString(const String& pseudoElement)
     auto isLegacy = pseudoElement == ":before"_s || pseudoElement == ":after"_s || pseudoElement == ":first-letter"_s || pseudoElement == ":first-line"_s;
     if (!isLegacy && !pseudoElement.startsWith("::"_s))
         return Exception { ExceptionCode::SyntaxError };
-
-    // FIXME: This parserContext should include a document to get the proper settings.
-    CSSSelectorParserContext parserContext { CSSParserContext { HTMLStandardMode } };
-    auto pseudoType = CSSSelector::parsePseudoElementType(StringView(pseudoElement).substring(isLegacy ? 1 : 2), parserContext);
+    auto pseudoType = CSSSelector::parsePseudoElementType(StringView(pseudoElement).substring(isLegacy ? 1 : 2));
     if (pseudoType == CSSSelector::PseudoElementUnknown || pseudoType == CSSSelector::PseudoElementWebKitCustom)
         return Exception { ExceptionCode::SyntaxError };
     return CSSSelector::pseudoId(pseudoType);
