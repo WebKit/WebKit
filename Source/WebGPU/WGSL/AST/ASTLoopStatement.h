@@ -25,27 +25,35 @@
 
 #pragma once
 
-#include "ASTCompoundStatement.h"
 #include "ASTExpression.h"
 
 namespace WGSL::AST {
+
+struct Continuing {
+    Statement::List body;
+    Attribute::List attributes;
+    Expression::Ptr breakIf;
+};
 
 class LoopStatement final : public Statement {
     WGSL_AST_BUILDER_NODE(LoopStatement);
 public:
     NodeKind kind() const override;
-    CompoundStatement& body() { return m_body.get(); }
-    CompoundStatement& continuingBody() { return m_continuingBody.get(); }
+    Attribute::List& attributes() { return m_attributes; }
+    Statement::List& body() { return m_body; }
+    std::optional<Continuing>& continuing() { return m_continuing; }
 
 private:
-    LoopStatement(SourceSpan span, CompoundStatement::Ref&& body, CompoundStatement::Ref&& continuingBody)
+    LoopStatement(SourceSpan span, Attribute::List&& attributes, Statement::List&& body, std::optional<Continuing>&& continuing)
         : Statement(span)
+        , m_attributes(WTFMove(attributes))
         , m_body(WTFMove(body))
-        , m_continuingBody(WTFMove(continuingBody))
+        , m_continuing(WTFMove(continuing))
     { }
 
-    CompoundStatement::Ref m_body;
-    CompoundStatement::Ref m_continuingBody;
+    Attribute::List m_attributes;
+    Statement::List m_body;
+    std::optional<Continuing> m_continuing;
 };
 
 } // namespace WGSL::AST

@@ -85,6 +85,7 @@ public:
     void visit(AST::ReturnStatement&) override;
     void visit(AST::CompoundStatement&) override;
     void visit(AST::ForStatement&) override;
+    void visit(AST::LoopStatement&) override;
     void visit(AST::WhileStatement&) override;
     void visit(AST::SwitchStatement&) override;
 
@@ -110,6 +111,8 @@ public:
     void visit(AST::ArrayTypeExpression&) override;
     void visit(AST::ElaboratedTypeExpression&) override;
     void visit(AST::ReferenceTypeExpression&) override;
+
+    void visit(AST::Continuing&) override;
 
 private:
     enum class VariableKind : uint8_t {
@@ -687,6 +690,18 @@ void TypeChecker::visit(AST::ForStatement& statement)
         AST::Visitor::visit(*update);
 
     visit(statement.body());
+}
+
+void TypeChecker::visit(AST::LoopStatement& statement)
+{
+    ContextScope loopScope(this);
+    visitAttributes(statement.attributes());
+
+    for (auto& statement : statement.body())
+        AST::Visitor::visit(statement);
+
+    if (auto continuing = statement.continuing())
+        visit(*continuing);
 }
 
 void TypeChecker::visit(AST::WhileStatement& statement)
@@ -1274,6 +1289,23 @@ void TypeChecker::visit(AST::ElaboratedTypeExpression& type)
 void TypeChecker::visit(AST::ReferenceTypeExpression&)
 {
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+
+void TypeChecker::visit(AST::Continuing& continuing)
+{
+    ContextScope continuingScope(this);
+
+    visitAttributes(continuing.attributes);
+
+    for (auto& statement : continuing.body)
+        AST::Visitor::visit(statement);
+
+    if (auto* breakIf = continuing.breakIf) {
+        auto* type = infer(*breakIf);
+        if (!unify(m_types.boolType(), type))
+            typeError(breakIf->span(), "expected 'bool', found ", *type);
+    }
 }
 
 void TypeChecker::visitAttributes(AST::Attribute::List& attributes)

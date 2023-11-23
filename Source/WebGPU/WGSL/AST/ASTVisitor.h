@@ -120,6 +120,7 @@ public:
     virtual void visit(AST::VariableQualifier&);
 
     virtual void visit(AST::SwitchClause&);
+    virtual void visit(AST::Continuing&);
 
     bool hasError() const;
     Result<void> result();
