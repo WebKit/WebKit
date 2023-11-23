@@ -1,0 +1,3 @@
+
+FAIL finished promise should be resolved if skipTransition() is invoked before a synchronous updateCallbackDone callback is dispatched assert_implements: Missing document.startViewTransition undefined
+

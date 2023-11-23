@@ -1,0 +1,3 @@
+
+FAIL View transitions: Resizing viewport skips the transition assert_implements: Missing document.startViewTransition undefined
+

@@ -1,0 +1,5 @@
+
+FAIL view transition is not over if animations are paused promise_test: Unhandled rejection with value: object "TypeError: document.startViewTransition is not a function. (In 'document.startViewTransition(() => {
+      target.classList.replace("one", "two");
+    })', 'document.startViewTransition' is undefined)"
+

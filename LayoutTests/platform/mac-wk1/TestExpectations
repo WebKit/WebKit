@@ -1035,6 +1035,9 @@ webkit.org/b/251113 inspector/timeline/timeline-event-screenshots.html [ Skip ]
 imported/w3c/web-platform-tests/cookie-store [ Skip ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
 
+# View Transitions API is disabled in WK1.
+imported/w3c/web-platform-tests/css/css-view-transitions [ Skip ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End features not supported in WebKit1
 #//////////////////////////////////////////////////////////////////////////////////////////

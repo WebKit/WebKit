@@ -1,0 +1,4 @@
+
+FAIL position property of pseudo elements assert_implements: Missing document.startViewTransition undefined
+FAIL properties of pseudo elements outside of transition assert_implements: Missing document.startViewTransition undefined
+

@@ -1,0 +1,3 @@
+
+FAIL Two different elements with the same name in the old DOM should skip the transition assert_implements: Missing document.startViewTransition undefined
+
