@@ -715,6 +715,10 @@ TEST(WebKit2, CrashGPUProcessAfterApplyingConstraints)
     [webView stringByEvaluatingJavaScript:@"changeConstraints()"];
     TestWebKitAPI::Util::run(&done);
 
+    done = false;
+    [webView stringByEvaluatingJavaScript:@"applyBadConstraintsToAudio()"];
+    TestWebKitAPI::Util::run(&done);
+
     auto webViewPID = [webView _webProcessIdentifier];
 
     // The GPU process should get launched.

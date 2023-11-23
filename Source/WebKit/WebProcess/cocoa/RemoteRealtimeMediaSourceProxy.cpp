@@ -108,7 +108,7 @@ void RemoteRealtimeMediaSourceProxy::createRemoteCloneSource(WebCore::RealtimeMe
 
 void RemoteRealtimeMediaSourceProxy::applyConstraints(const MediaConstraints& constraints, RealtimeMediaSource::ApplyConstraintsHandler&& completionHandler)
 {
-    m_pendingApplyConstraintsCallbacks.append(WTFMove(completionHandler));
+    m_pendingApplyConstraintsRequests.append(std::make_pair(WTFMove(completionHandler), constraints));
     // FIXME: Use sendAsyncWithReply.
     m_connection->send(Messages::UserMediaCaptureManagerProxy::ApplyConstraints { m_identifier, constraints }, 0);
 }
@@ -140,21 +140,22 @@ Ref<WebCore::RealtimeMediaSource::PhotoSettingsNativePromise> RemoteRealtimeMedi
 
 void RemoteRealtimeMediaSourceProxy::applyConstraintsSucceeded()
 {
-    auto callback = m_pendingApplyConstraintsCallbacks.takeFirst();
-    callback({ });
+    auto request = m_pendingApplyConstraintsRequests.takeFirst();
+    m_constraints = WTFMove(request.second);
+    request.first({ });
 }
 
 void RemoteRealtimeMediaSourceProxy::applyConstraintsFailed(String&& failedConstraint, String&& errorMessage)
 {
-    auto callback = m_pendingApplyConstraintsCallbacks.takeFirst();
+    auto callback = m_pendingApplyConstraintsRequests.takeFirst().first;
     callback(RealtimeMediaSource::ApplyConstraintsError { WTFMove(failedConstraint), WTFMove(errorMessage) });
 }
 
 void RemoteRealtimeMediaSourceProxy::failApplyConstraintCallbacks(const String& errorMessage)
 {
-    auto callbacks = WTFMove(m_pendingApplyConstraintsCallbacks);
-    while (!callbacks.isEmpty())
-        callbacks.takeFirst()(RealtimeMediaSource::ApplyConstraintsError { { }, errorMessage });
+    auto requests = WTFMove(m_pendingApplyConstraintsRequests);
+    while (!requests.isEmpty())
+        requests.takeFirst().first(RealtimeMediaSource::ApplyConstraintsError { { }, errorMessage });
 }
 
 void RemoteRealtimeMediaSourceProxy::end()

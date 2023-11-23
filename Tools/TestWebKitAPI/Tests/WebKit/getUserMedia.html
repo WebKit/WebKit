@@ -222,6 +222,17 @@
                 });
             }
 
+            function applyBadConstraintsToAudio() {
+                async function doApplyBadConstraintsToAudio() {
+                    const audioTrack = stream.getAudioTracks()[0];
+                    await audioTrack.applyConstraints({ echoCancellation: false, sampleRate: { exact: 10 } });
+                }
+                doApplyBadConstraintsToAudio().then(() => {
+                    window.webkit.messageHandlers.gum.postMessage("FAIL applyBadConstraintsToAudio succeeded");
+                }, (e) => {
+                    window.webkit.messageHandlers.gum.postMessage("PASS");
+                });
+            }
 
             function captureOrientation() {
                 let settings = stream.getVideoTracks()[0].getSettings();
