@@ -169,6 +169,13 @@ void RemoteRealtimeMediaSourceProxy::whenReady(CompletionHandler<void(WebCore::C
     if (m_isReady)
         return callback(WebCore::CaptureSourceError(m_failureReason));
 
+    if (m_callback) {
+        callback = [previousCallbacks = std::exchange(m_callback, { }), newCallback = WTFMove(callback)] (auto&& error) mutable {
+            previousCallbacks(WebCore::CaptureSourceError { error });
+            newCallback(WTFMove(error));
+        };
+    }
+
     m_callback = WTFMove(callback);
 }
 
