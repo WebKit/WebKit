@@ -1938,9 +1938,6 @@ webrtc/datachannel/mdns-ice-candidates.html [ Skip ]
 http/tests/webrtc/filtering-ice-candidate-cross-origin-frame.html [ Skip ]
 http/wpt/webrtc/third-party-frame-ice-candidate-filtering.html [ Skip ]
 
-# Expected to pass/fail in GStreamer 1.22, and a bit slow for us, creating 256 end-points in a row.
-webkit.org/b/235885 webrtc/datachannel/multiple-connections.html [ Pass Failure Timeout ]
-
 # The GstWebRTC backend doesn't support transforms yet.
 webkit.org/b/235885 http/wpt/webrtc/no-webrtc-transform.html [ Skip ]
 webkit.org/b/235885 http/wpt/webrtc/audiovideo-script-transform.html [ Skip ]

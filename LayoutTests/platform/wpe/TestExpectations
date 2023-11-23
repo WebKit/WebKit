@@ -1026,6 +1026,15 @@ webkit.org/b/252878 webrtc/datachannel/bufferedAmountLowThreshold-default.html [
 
 webkit.org/b/187064 webkit.org/b/235885 webrtc/video-remote-mute.html [ Failure Pass Timeout ]
 
+webkit.org/b/265290 webrtc/datachannel/basic.html [ Pass Crash ]
+webkit.org/b/265290 webrtc/datachannel/binary.html [ Pass Crash ]
+webkit.org/b/265290 webrtc/datachannel/bufferedAmount-afterClose.html [ Pass Crash ]
+webkit.org/b/265290 webrtc/datachannel/bufferedAmountLowThreshold.html [ Pass Crash Failure ]
+webkit.org/b/265290 webrtc/datachannel/multi-channel.html [ Pass Crash ]
+
+# Expected to pass/fail in GStreamer 1.22, and a bit slow for us, creating 256 end-points in a row.
+webkit.org/b/265290 webrtc/datachannel/multiple-connections.html [ Pass Failure Timeout Crash ]
+
 # Flaky tests detected on May2023
 webkit.org/b/257624 accessibility/iframe-within-cell.html [ Crash Pass ]
 webkit.org/b/257624 animations/3d/full-rotation-animation.html [ ImageOnlyFailure Pass ]
@@ -1061,7 +1070,6 @@ webkit.org/b/257624 webgl/1.0.x/conformance/rendering/texture-switch-performance
 webkit.org/b/257624 webgl/2.0.y/conformance2/offscreencanvas/offscreencanvas-timer-query.html [ Pass Timeout ]
 webkit.org/b/257624 webgl/2.0.y/conformance/rendering/texture-switch-performance.html [ Failure Pass ]
 webkit.org/b/257624 webrtc/canvas-to-peer-connection-2d.html [ Failure Pass Timeout ]
-webkit.org/b/257624 webrtc/datachannel/bufferedAmountLowThreshold.html [ Failure Pass ]
 webkit.org/b/257624 webrtc/video-h264.html [ Crash Pass Timeout ]
 webkit.org/b/257624 webrtc/video-mute.html [ Pass Timeout ]
 webkit.org/b/257624 webrtc/video-mute-vp8.html [ Pass Timeout ]
