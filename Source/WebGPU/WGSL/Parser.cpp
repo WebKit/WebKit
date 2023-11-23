@@ -1091,6 +1091,10 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseStatement()
         // FIXME: Handle attributes attached to statement.
         return parseForStatement();
     }
+    case TokenType::KeywordLoop: {
+        // FIXME: Handle attributes attached to statement.
+        return parseLoopStatement();
+    }
     case TokenType::KeywordSwitch: {
         // FIXME: Handle attributes attached to statement.
         return parseSwitchStatement();
@@ -1236,6 +1240,63 @@ Result<AST::Statement::Ref> Parser<Lexer>::parseForStatement()
     PARSE(body, CompoundStatement);
 
     RETURN_ARENA_NODE(ForStatement, maybeInitializer, maybeTest, maybeUpdate, WTFMove(body));
+}
+
+template<typename Lexer>
+Result<AST::Statement::Ref> Parser<Lexer>::parseLoopStatement()
+{
+    START_PARSE();
+
+    CONSUME_TYPE(KeywordLoop);
+    PARSE(attributes, Attributes);
+
+    CONSUME_TYPE(BraceLeft);
+    AST::Statement::List bodyStatements;
+    std::optional<AST::Continuing> maybeContinuing;
+
+    while (current().type != TokenType::BraceRight) {
+        if (current().type != TokenType::KeywordContinuing) {
+            PARSE(statement, Statement);
+            bodyStatements.append(WTFMove(statement));
+            continue;
+        }
+
+
+        CONSUME_TYPE(KeywordContinuing);
+
+        AST::Statement::List continuingStatements;
+        AST::Expression* breakIf = nullptr;
+        PARSE(continuingAttributes, Attributes);
+
+        CONSUME_TYPE(BraceLeft);
+        while (current().type != TokenType::BraceRight) {
+            if (current().type != TokenType::KeywordBreak) {
+                PARSE(statement, Statement);
+                continuingStatements.append(statement);
+                continue;
+            }
+
+            CONSUME_TYPE(KeywordBreak);
+            if (current().type != TokenType::KeywordIf) {
+                CONSUME_TYPE(Semicolon);
+                continuingStatements.append(MAKE_ARENA_NODE(BreakStatement));
+                continue;
+            }
+
+            CONSUME_TYPE(KeywordIf);
+            PARSE(expression, Expression);
+            CONSUME_TYPE(Semicolon);
+
+            breakIf = &expression.get();
+            break;
+        }
+        CONSUME_TYPE(BraceRight);
+
+        maybeContinuing = { WTFMove(continuingStatements), WTFMove(continuingAttributes), breakIf };
+    }
+    CONSUME_TYPE(BraceRight);
+
+    RETURN_ARENA_NODE(LoopStatement, WTFMove(attributes), WTFMove(bodyStatements), WTFMove(maybeContinuing));
 }
 
 template<typename Lexer>

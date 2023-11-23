@@ -477,8 +477,21 @@ void Visitor::visit(AST::IfStatement& ifStatement)
 
 void Visitor::visit(AST::LoopStatement& loopStatement)
 {
-    checkErrorAndVisit(loopStatement.body());
-    checkErrorAndVisit(loopStatement.continuingBody());
+    for (auto& attribute : loopStatement.attributes())
+        checkErrorAndVisit(attribute);
+    for (auto& statement : loopStatement.body())
+        checkErrorAndVisit(statement);
+    if (auto continuing = loopStatement.continuing())
+        checkErrorAndVisit(*continuing);
+}
+
+void Visitor::visit(AST::Continuing& continuing)
+{
+    for (auto& statement : continuing.body)
+        checkErrorAndVisit(statement);
+    for (auto& attribute : continuing.attributes)
+        checkErrorAndVisit(attribute);
+    maybeCheckErrorAndVisit(continuing.breakIf);
 }
 
 void Visitor::visit(AST::PhonyAssignmentStatement& phonyAssignmentStatement)

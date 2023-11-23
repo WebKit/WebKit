@@ -97,7 +97,7 @@ private:
     bool m_shouldCaptureInGPUProcess { false };
 
     WebCore::MediaConstraints m_constraints;
-    Deque<WebCore::RealtimeMediaSource::ApplyConstraintsHandler> m_pendingApplyConstraintsCallbacks;
+    Deque<std::pair<WebCore::RealtimeMediaSource::ApplyConstraintsHandler, WebCore::MediaConstraints>> m_pendingApplyConstraintsRequests;
     bool m_isReady { false };
     CompletionHandler<void(WebCore::CaptureSourceError&&)> m_callback;
     WebCore::CaptureSourceError m_failureReason;

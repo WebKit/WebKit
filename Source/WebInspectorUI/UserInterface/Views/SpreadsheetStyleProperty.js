@@ -748,7 +748,9 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
                 && (token.type?.includes("atom") || token.type?.includes("keyword"))) {
                 // Color Function start
                 colorFunctionStartIndex = i;
-            } else if (isNaN(colorFunctionStartIndex) && token.type && (token.type.includes("atom") || token.type.includes("keyword"))) {
+            } else if (isNaN(colorFunctionStartIndex)
+                && tokens[i + 1]?.value !== "("
+                && (token.type?.includes("atom") || token.type?.includes("keyword"))) {
                 // Color keyword
                 pushPossibleColorToken(token.value, token);
             } else if (!isNaN(colorFunctionStartIndex)) {

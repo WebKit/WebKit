@@ -83,6 +83,7 @@ public:
     Result<AST::Statement::Ref> parseIfStatement();
     Result<AST::Statement::Ref> parseIfStatementWithAttributes(AST::Attribute::List&&, SourcePosition _startOfElementPosition);
     Result<AST::Statement::Ref> parseForStatement();
+    Result<AST::Statement::Ref> parseLoopStatement();
     Result<AST::Statement::Ref> parseSwitchStatement();
     Result<AST::Statement::Ref> parseWhileStatement();
     Result<AST::Statement::Ref> parseReturnStatement();

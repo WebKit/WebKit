@@ -921,4 +921,10 @@ else ()
         LIBRARY DESTINATION "${LIB_INSTALL_DIR}"
         RUNTIME DESTINATION "${LIBEXEC_INSTALL_DIR}"
     )
+    if (ENABLE_GPU_PROCESS)
+        install(TARGETS GPUProcess
+            LIBRARY DESTINATION "${LIB_INSTALL_DIR}"
+            RUNTIME DESTINATION "${LIBEXEC_INSTALL_DIR}"
+        )
+    endif ()
 endif ()

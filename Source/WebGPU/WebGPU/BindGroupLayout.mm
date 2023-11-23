@@ -153,7 +153,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
 
     Vector<WGPUBindGroupLayoutEntry> descriptorEntries(descriptor.entries, descriptor.entryCount);
     std::sort(descriptorEntries.begin(), descriptorEntries.end(), [](const WGPUBindGroupLayoutEntry& a, const WGPUBindGroupLayoutEntry& b) {
-        return a.binding < b.binding;
+        return a.metalBinding < b.metalBinding;
     });
 
     constexpr ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };

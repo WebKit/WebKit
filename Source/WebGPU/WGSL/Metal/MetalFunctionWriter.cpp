@@ -36,6 +36,7 @@
 #include "Types.h"
 #include "WGSLShaderModule.h"
 #include <wtf/HashSet.h>
+#include <wtf/SetForScope.h>
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -101,6 +102,8 @@ public:
     void visit(AST::PhonyAssignmentStatement&) override;
     void visit(AST::ReturnStatement&) override;
     void visit(AST::ForStatement&) override;
+    void visit(AST::LoopStatement&) override;
+    void visit(AST::Continuing&) override;
     void visit(AST::WhileStatement&) override;
     void visit(AST::SwitchStatement&) override;
     void visit(AST::BreakStatement&) override;
@@ -122,6 +125,7 @@ private:
     bool emitPackedVector(const Types::Vector&);
     void serializeConstant(const Type*, ConstantValue);
     void serializeBinaryExpression(AST::Expression&, AST::BinaryOperation, AST::Expression&);
+    void visitStatements(AST::Statement::List&);
 
     StringBuilder& m_stringBuilder;
     CallGraph& m_callGraph;
@@ -129,6 +133,7 @@ private:
     std::optional<AST::StructureRole> m_structRole;
     std::optional<ShaderStage> m_entryPointStage;
     unsigned m_functionConstantIndex { 0 };
+    std::optional<AST::Continuing> m_continuing;
     HashSet<AST::Function*> m_visitedFunctions;
 };
 
@@ -1885,29 +1890,34 @@ void FunctionDefinitionWriter::visit(AST::CompoundStatement& statement)
     m_stringBuilder.append("{\n");
     {
         IndentationScope scope(m_indent);
-        for (auto& statement : statement.statements()) {
-            m_stringBuilder.append(m_indent);
-            checkErrorAndVisit(statement);
-            switch (statement.kind()) {
-            case AST::NodeKind::AssignmentStatement:
-            case AST::NodeKind::BreakStatement:
-            case AST::NodeKind::CallStatement:
-            case AST::NodeKind::CompoundAssignmentStatement:
-            case AST::NodeKind::ContinueStatement:
-            case AST::NodeKind::DecrementIncrementStatement:
-            case AST::NodeKind::DiscardStatement:
-            case AST::NodeKind::PhonyAssignmentStatement:
-            case AST::NodeKind::ReturnStatement:
-            case AST::NodeKind::VariableStatement:
-                m_stringBuilder.append(';');
-                break;
-            default:
-                break;
-            }
-            m_stringBuilder.append('\n');
-        }
+        visitStatements(statement.statements());
     }
     m_stringBuilder.append(m_indent, "}");
+}
+
+void FunctionDefinitionWriter::visitStatements(AST::Statement::List& statements)
+{
+    for (auto& statement : statements) {
+        m_stringBuilder.append(m_indent);
+        checkErrorAndVisit(statement);
+        switch (statement.kind()) {
+        case AST::NodeKind::AssignmentStatement:
+        case AST::NodeKind::BreakStatement:
+        case AST::NodeKind::CallStatement:
+        case AST::NodeKind::CompoundAssignmentStatement:
+        case AST::NodeKind::ContinueStatement:
+        case AST::NodeKind::DecrementIncrementStatement:
+        case AST::NodeKind::DiscardStatement:
+        case AST::NodeKind::PhonyAssignmentStatement:
+        case AST::NodeKind::ReturnStatement:
+        case AST::NodeKind::VariableStatement:
+            m_stringBuilder.append(';');
+            break;
+        default:
+            break;
+        }
+        m_stringBuilder.append('\n');
+    }
 }
 
 void FunctionDefinitionWriter::visit(AST::DecrementIncrementStatement& statement)
@@ -1975,6 +1985,43 @@ void FunctionDefinitionWriter::visit(AST::ForStatement& statement)
     visit(statement.body());
 }
 
+void FunctionDefinitionWriter::visit(AST::LoopStatement& statement)
+{
+    m_stringBuilder.append("while (true) {\n");
+    {
+        auto& continuing = statement.continuing();
+        SetForScope continuingScope(m_continuing, continuing);
+
+        IndentationScope scope(m_indent);
+        visitStatements(statement.body());
+
+        if (continuing.has_value()) {
+            m_stringBuilder.append(m_indent);
+            visit(*continuing);
+        }
+    }
+    m_stringBuilder.append(m_indent, "}");
+}
+
+void FunctionDefinitionWriter::visit(AST::Continuing& continuing)
+{
+    m_stringBuilder.append("{\n");
+    {
+        IndentationScope scope(m_indent);
+        visitStatements(continuing.body);
+
+        if (auto* breakIf = continuing.breakIf) {
+            m_stringBuilder.append(m_indent, "if (");
+            visit(*breakIf);
+            m_stringBuilder.append(")\n");
+
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "break;\n");
+        }
+    }
+    m_stringBuilder.append(m_indent, "}\n");
+}
+
 void FunctionDefinitionWriter::visit(AST::WhileStatement& statement)
 {
     m_stringBuilder.append("while (");
@@ -2019,6 +2066,10 @@ void FunctionDefinitionWriter::visit(AST::BreakStatement&)
 
 void FunctionDefinitionWriter::visit(AST::ContinueStatement&)
 {
+    if (m_continuing.has_value()) {
+        visit(*m_continuing);
+        m_stringBuilder.append(m_indent);
+    }
     m_stringBuilder.append("continue");
 }
 

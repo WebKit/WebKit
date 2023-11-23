@@ -102,6 +102,7 @@ class VariableQualifier;
 
 struct SwitchClause;
 struct Diagnostic;
+struct Continuing;
 
 enum class BinaryOperation : uint8_t;
 enum class ParameterRole : uint8_t;

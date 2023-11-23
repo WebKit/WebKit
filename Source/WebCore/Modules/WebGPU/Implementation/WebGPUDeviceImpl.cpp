@@ -178,22 +178,27 @@ Ref<BindGroupLayout> DeviceImpl::createBindGroupLayout(const BindGroupLayoutDesc
 
     auto backingEntries = WTF::map(descriptor.entries, [&](auto& entry) {
         return WGPUBindGroupLayoutEntry {
-            nullptr,
-            entry.binding,
-            m_convertToBackingContext->convertShaderStageFlagsToBacking(entry.visibility), {
+            .nextInChain = nullptr,
+            .binding = entry.binding,
+            .metalBinding = entry.binding,
+            .visibility = m_convertToBackingContext->convertShaderStageFlagsToBacking(entry.visibility),
+            .buffer = {
                 nullptr,
                 entry.buffer ? m_convertToBackingContext->convertToBacking(entry.buffer->type) : WGPUBufferBindingType_Undefined,
                 entry.buffer ? entry.buffer->hasDynamicOffset : false,
                 entry.buffer ? entry.buffer->minBindingSize : 0,
-            }, {
+            },
+            .sampler = {
                 nullptr,
                 entry.sampler ? m_convertToBackingContext->convertToBacking(entry.sampler->type) : WGPUSamplerBindingType_Undefined,
-            }, {
+            },
+            .texture = {
                 nullptr,
                 entry.externalTexture ? static_cast<WGPUTextureSampleType>(WGPUTextureSampleType_ExternalTexture) : (entry.texture ? m_convertToBackingContext->convertToBacking(entry.texture->sampleType) : WGPUTextureSampleType_Undefined),
                 (!entry.externalTexture && entry.texture) ? m_convertToBackingContext->convertToBacking(entry.texture->viewDimension) : WGPUTextureViewDimension_Undefined,
                 (!entry.externalTexture && entry.texture) ? entry.texture->multisampled : false,
-            }, {
+            },
+            .storageTexture = {
                 nullptr,
                 entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->access) : WGPUStorageTextureAccess_Undefined,
                 entry.storageTexture ? m_convertToBackingContext->convertToBacking(entry.storageTexture->format) : WGPUTextureFormat_Undefined,

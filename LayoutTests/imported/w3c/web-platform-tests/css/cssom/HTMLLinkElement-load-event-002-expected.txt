@@ -1,0 +1,4 @@
+
+PASS Load event doesn't fire on removed link
+PASS Load event doesn't fire for removed sheet
+

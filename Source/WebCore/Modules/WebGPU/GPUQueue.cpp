@@ -350,8 +350,8 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
     case GPUTextureFormat::R16uint:
     case GPUTextureFormat::R16sint: {
         uint16_t* data = (uint16_t*)malloc(sizeInBytes / 2);
-        for (size_t i = 0; i < sizeInBytes; i += 4)
-            data[i] = rgbaBytes[i];
+        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, ++i0)
+            data[i0] = rgbaBytes[i];
 
         sizeInBytes = sizeInBytes / 2;
         return data;
@@ -359,8 +359,8 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
 
     case GPUTextureFormat::R16float: {
         __fp16* data = (__fp16*)malloc(sizeInBytes / 2);
-        for (size_t i = 0; i < sizeInBytes; i += 4)
-            data[i] = rgbaBytes[i];
+        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, ++i0)
+            data[i0] = rgbaBytes[i] / 255.f;
 
         sizeInBytes = sizeInBytes / 2;
         return data;
@@ -382,11 +382,43 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
 
     // 32-bit formats
     case GPUTextureFormat::R32uint:
-    case GPUTextureFormat::R32sint:
-    case GPUTextureFormat::R32float:
+    case GPUTextureFormat::R32sint: {
+        uint32_t* data = (uint32_t*)malloc(sizeInBytes);
+        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, ++i0)
+            data[i0] = rgbaBytes[i];
+
+        return data;
+    }
+
+    case GPUTextureFormat::R32float: {
+        float* data = (float*)malloc(sizeInBytes);
+        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, ++i0)
+            data[i0] = rgbaBytes[i] / 255.f;
+
+        return data;
+    }
+
     case GPUTextureFormat::Rg16uint:
-    case GPUTextureFormat::Rg16sint:
-    case GPUTextureFormat::Rg16float:
+    case GPUTextureFormat::Rg16sint: {
+        uint16_t* data = (uint16_t*)malloc(sizeInBytes);
+        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, i0 += 2) {
+            data[i0] = rgbaBytes[i];
+            data[i0 + 1] = rgbaBytes[i + 1];
+        }
+
+        return data;
+    }
+
+    case GPUTextureFormat::Rg16float: {
+        __fp16* data = (__fp16*)malloc(sizeInBytes);
+        for (size_t i = 0, i0 = 0; i < sizeInBytes; i += 4, i0 += 2) {
+            data[i0] = rgbaBytes[i] / 255.f;
+            data[i0 + 1] = rgbaBytes[i + 1] / 255.f;
+        }
+
+        return data;
+    }
+
     case GPUTextureFormat::Rgba8unorm:
     case GPUTextureFormat::Rgba8unormSRGB:
     case GPUTextureFormat::Rgba8snorm:
@@ -396,9 +428,12 @@ static void* copyToDestinationFormat(const uint8_t* rgbaBytes, GPUTextureFormat 
     case GPUTextureFormat::Bgra8unormSRGB:
     case GPUTextureFormat::Rgb9e5ufloat:
     case GPUTextureFormat::Rgb10a2uint:
-    case GPUTextureFormat::Rgb10a2unorm:
     case GPUTextureFormat::Rg11b10ufloat:
         return nullptr;
+    case GPUTextureFormat::Rgb10a2unorm: {
+        ASSERT_NOT_REACHED("Remapping to 10 bits per channel is not implemented");
+        return nullptr;
+    }
 
     // 64-bit formats
     case GPUTextureFormat::Rg32uint:

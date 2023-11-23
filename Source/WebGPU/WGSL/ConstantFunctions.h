@@ -783,9 +783,9 @@ CONSTANT_TRIGONOMETRIC(Cosh, cosh);
 CONSTANT_TRIGONOMETRIC(Sinh, sinh);
 CONSTANT_TRIGONOMETRIC(Tanh, tanh);
 
-UNARY_OPERATION(Abs, Number, [&](auto n) {
+UNARY_OPERATION(Abs, Number, [&]<typename T>(T n) -> T {
     if constexpr (std::is_same_v<decltype(n), uint32_t>)
-        return static_cast<uint32_t>(std::abs(static_cast<int32_t>(n)));
+        return n;
     else
         return std::abs(n);
 });

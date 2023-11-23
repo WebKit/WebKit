@@ -1,0 +1,8 @@
+Lorem ipsum dolor sit amet
+Lorem ipsum dolor sit amet
+
+FAIL OOF with left fixed right auto in relpos inline container assert_equals: expected "140px" but got "420px"
+PASS OOF with left auto right fixed in relpos inline container
+FAIL OOF with left fixed right auto in relpos inline container with mixed directions assert_equals: expected "140px" but got "420px"
+PASS OOF with left auto right fixed in relpos inline container with mixed directions
+
