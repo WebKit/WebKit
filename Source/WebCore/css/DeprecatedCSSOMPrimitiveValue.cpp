@@ -127,17 +127,16 @@ ExceptionOr<String> DeprecatedCSSOMPrimitiveValue::getStringValue() const
 
 ExceptionOr<Ref<DeprecatedCSSOMCounter>> DeprecatedCSSOMPrimitiveValue::getCounterValue() const
 {
-    if (!m_value->isCounter())
-        return Exception { ExceptionCode::InvalidAccessError };
-    auto& value = downcast<CSSCounterValue>(m_value.get());
-    return DeprecatedCSSOMCounter::create(value.identifier(), value.separator(), value.counterStyleCSSText());
+    if (auto* value = dynamicDowncast<CSSCounterValue>(m_value.get()))
+        return DeprecatedCSSOMCounter::create(value->identifier(), value->separator(), value->counterStyleCSSText());
+    return Exception { ExceptionCode::InvalidAccessError };
 }
     
 ExceptionOr<Ref<DeprecatedCSSOMRect>> DeprecatedCSSOMPrimitiveValue::getRectValue() const
 {
-    if (!m_value->isRect())
-        return Exception { ExceptionCode::InvalidAccessError };
-    return DeprecatedCSSOMRect::create(downcast<CSSRectValue>(m_value.get()).rect(), m_owner);
+    if (auto* rectValue = dynamicDowncast<CSSRectValue>(m_value.get()))
+        return DeprecatedCSSOMRect::create(rectValue->rect(), m_owner);
+    return Exception { ExceptionCode::InvalidAccessError };
 }
 
 ExceptionOr<Ref<DeprecatedCSSOMRGBColor>> DeprecatedCSSOMPrimitiveValue::getRGBColorValue() const

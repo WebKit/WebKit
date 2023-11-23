@@ -63,12 +63,11 @@ static constexpr int maxExpressionDepth = 100;
 RefPtr<CSSCalcExpressionNode> CSSCalcExpressionNodeParser::parseCalc(CSSParserTokenRange tokens, CSSValueID function, bool allowsNegativePercentage)
 {
     std::function<void(CSSCalcExpressionNode&)> setAllowsNegativePercentageReferenceIfNeeded = [&](CSSCalcExpressionNode& expression) {
-        if (is<CSSCalcOperationNode>(expression)) {
-            auto& operationNode = downcast<CSSCalcOperationNode>(expression);
-            if (operationNode.isMinOrMaxNode())
-                operationNode.setAllowsNegativePercentageReference();
+        if (auto* operationNode = dynamicDowncast<CSSCalcOperationNode>(expression)) {
+            if (operationNode->isMinOrMaxNode())
+                operationNode->setAllowsNegativePercentageReference();
 
-            for (auto& child : operationNode.children())
+            for (auto& child : operationNode->children())
                 setAllowsNegativePercentageReferenceIfNeeded(child);
         }
     };

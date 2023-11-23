@@ -247,10 +247,12 @@ static SelectorChecker::LocalContext localContextForParent(const SelectorChecker
     }
 
     // Move to the shadow host if matching :host and the parent is the shadow root.
-    if (context.selector->match() == CSSSelector::Match::PseudoClass && context.selector->pseudoClassType() == CSSSelector::PseudoClassType::Host && is<ShadowRoot>(context.element->parentNode())) {
-        updatedContext.element = downcast<ShadowRoot>(*context.element->parentNode()).host();
-        updatedContext.mustMatchHostPseudoClass = true;
-        return updatedContext;
+    if (context.selector->match() == CSSSelector::Match::PseudoClass && context.selector->pseudoClassType() == CSSSelector::PseudoClassType::Host) {
+        if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(context.element->parentNode())) {
+            updatedContext.element = shadowRoot->host();
+            updatedContext.mustMatchHostPseudoClass = true;
+            return updatedContext;
+        }
     }
 
     updatedContext.element = context.element->parentElement();
@@ -745,9 +747,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
                         result = false;
                         break;
                     }
-                    if (is<Text>(*node)) {
-                        Text& textNode = downcast<Text>(*node);
-                        if (!textNode.data().isEmpty()) {
+                    if (auto* textNode = dynamicDowncast<Text>(*node)) {
+                        if (!textNode->data().isEmpty()) {
                             result = false;
                             break;
                         }
@@ -760,9 +761,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         case CSSSelector::PseudoClassType::FirstChild: {
             // first-child matches the first child that is an element
             bool isFirstChild = isFirstChildElement(element);
-            auto* parent = element.parentNode();
-            if (is<Element>(parent))
-                addStyleRelation(checkingContext, downcast<Element>(*parent), Style::Relation::ChildrenAffectedByFirstChildRules);
+            if (auto* parentElement = dynamicDowncast<Element>(element.parentNode()))
+                addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByFirstChildRules);
             if (!isFirstChild)
                 break;
             addStyleRelation(checkingContext, element, Style::Relation::FirstChild);
@@ -770,22 +770,19 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         }
         case CSSSelector::PseudoClassType::FirstOfType: {
             // first-of-type matches the first element of its type
-            auto* parent = element.parentNode();
-            if (is<Element>(parent)) {
+            if (auto* parentElement = dynamicDowncast<Element>(element.parentNode())) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
-                addStyleRelation(checkingContext, downcast<Element>(*parent), relation);
+                addStyleRelation(checkingContext, *parentElement, relation);
             }
             return isFirstOfType(element, element.tagQName());
         }
         case CSSSelector::PseudoClassType::LastChild: {
             // last-child matches the last child that is an element
-            auto* parent = element.parentNode();
             bool isLastChild = isLastChildElement(element);
-            if (is<Element>(parent)) {
-                auto& parentElement = downcast<Element>(*parent);
-                if (!parentElement.isFinishedParsingChildren())
+            if (auto* parentElement = dynamicDowncast<Element>(element.parentNode())) {
+                if (!parentElement->isFinishedParsingChildren())
                     isLastChild = false;
-                addStyleRelation(checkingContext, parentElement, Style::Relation::ChildrenAffectedByLastChildRules);
+                addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByLastChildRules);
             }
             if (!isLastChild)
                 break;
@@ -794,25 +791,21 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         }
         case CSSSelector::PseudoClassType::LastOfType: {
             // last-of-type matches the last element of its type
-            auto* parent = element.parentNode();
-            if (is<Element>(parent)) {
-                auto& parentElement = downcast<Element>(*parent);
+            if (auto* parentElement = dynamicDowncast<Element>(element.parentNode())) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByBackwardPositionalRules : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
-                addStyleRelation(checkingContext, parentElement, relation);
-                if (!parentElement.isFinishedParsingChildren())
+                addStyleRelation(checkingContext, *parentElement, relation);
+                if (!parentElement->isFinishedParsingChildren())
                     return false;
             }
             return isLastOfType(element, element.tagQName());
         }
         case CSSSelector::PseudoClassType::OnlyChild: {
-            auto* parent = element.parentNode();
             bool firstChild = isFirstChildElement(element);
             bool onlyChild = firstChild && isLastChildElement(element);
-            if (is<Element>(parent)) {
-                auto& parentElement = downcast<Element>(*parent);
-                addStyleRelation(checkingContext, parentElement, Style::Relation::ChildrenAffectedByFirstChildRules);
-                addStyleRelation(checkingContext, parentElement, Style::Relation::ChildrenAffectedByLastChildRules);
-                if (!parentElement.isFinishedParsingChildren())
+            if (auto* parentElement = dynamicDowncast<Element>(element.parentNode())) {
+                addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByFirstChildRules);
+                addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByLastChildRules);
+                if (!parentElement->isFinishedParsingChildren())
                     onlyChild = false;
             }
             if (firstChild)
@@ -823,15 +816,13 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
         }
         case CSSSelector::PseudoClassType::OnlyOfType: {
             // FIXME: This selector is very slow.
-            auto* parent = element.parentNode();
-            if (is<Element>(parent)) {
-                auto& parentElement = downcast<Element>(*parent);
+            if (auto* parentElement = dynamicDowncast<Element>(element.parentNode())) {
                 auto forwardRelation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
-                addStyleRelation(checkingContext, parentElement, forwardRelation);
+                addStyleRelation(checkingContext, *parentElement, forwardRelation);
                 auto backwardRelation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByBackwardPositionalRules : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
-                addStyleRelation(checkingContext, parentElement, backwardRelation);
+                addStyleRelation(checkingContext, *parentElement, backwardRelation);
 
-                if (!parentElement.isFinishedParsingChildren())
+                if (!parentElement->isFinishedParsingChildren())
                     return false;
             }
             return isFirstOfType(element, element.tagQName()) && isLastOfType(element, element.tagQName());
@@ -877,16 +868,15 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return false;
         }
         case CSSSelector::PseudoClassType::PlaceholderShown:
-            if (is<HTMLTextFormControlElement>(element)) {
+            if (auto* formControl = dynamicDowncast<HTMLTextFormControlElement>(element)) {
                 addStyleRelation(checkingContext, element, Style::Relation::Unique);
-                return downcast<HTMLTextFormControlElement>(element).isPlaceholderVisible();
+                return formControl->isPlaceholderVisible();
             }
             return false;
         case CSSSelector::PseudoClassType::NthChild: {
-            auto* parent = element.parentNode();
-            if (is<Element>(parent)) {
+            if (auto* parentElement = dynamicDowncast<Element>(element.parentNode())) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
-                addStyleRelation(checkingContext, downcast<Element>(*parent), relation);
+                addStyleRelation(checkingContext, *parentElement, relation);
             }
 
             if (const CSSSelectorList* selectorList = selector.selectorList()) {
@@ -910,10 +900,9 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             break;
         }
         case CSSSelector::PseudoClassType::NthOfType: {
-            auto* parent = element.parentNode();
-            if (is<Element>(parent)) {
+            if (auto* parentElement = dynamicDowncast<Element>(element.parentNode())) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByForwardPositionalRules : Style::Relation::DescendantsAffectedByForwardPositionalRules;
-                addStyleRelation(checkingContext, downcast<Element>(*parent), relation);
+                addStyleRelation(checkingContext, *parentElement, relation);
             }
 
             int count = 1 + countElementsOfTypeBefore(element, element.tagQName());
@@ -922,19 +911,17 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             break;
         }
         case CSSSelector::PseudoClassType::NthLastChild: {
-            auto* parent = element.parentNode();
-            if (is<Element>(parent)) {
-                auto& parentElement = downcast<Element>(*parent);
+            if (auto* parentElement = dynamicDowncast<Element>(element.parentNode())) {
                 if (const CSSSelectorList* selectorList = selector.selectorList()) {
                     if (!matchSelectorList(checkingContext, context, element, *selectorList))
                         return false;
 
-                    addStyleRelation(checkingContext, parentElement, Style::Relation::ChildrenAffectedByBackwardPositionalRules);
+                    addStyleRelation(checkingContext, *parentElement, Style::Relation::ChildrenAffectedByBackwardPositionalRules);
                 } else {
                     auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByBackwardPositionalRules : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
-                    addStyleRelation(checkingContext, parentElement, relation);
+                    addStyleRelation(checkingContext, *parentElement, relation);
                 }
-                if (!parentElement.isFinishedParsingChildren())
+                if (!parentElement->isFinishedParsingChildren())
                     return false;
             }
 
@@ -950,13 +937,11 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             return selector.matchNth(count);
         }
         case CSSSelector::PseudoClassType::NthLastOfType: {
-            auto* parent = element.parentNode();
-            if (is<Element>(parent)) {
-                auto& parentElement = downcast<Element>(*parent);
+            if (auto* parentElement = dynamicDowncast<Element>(element.parentNode())) {
                 auto relation = context.isSubjectOrAdjacentElement ? Style::Relation::ChildrenAffectedByBackwardPositionalRules : Style::Relation::DescendantsAffectedByBackwardPositionalRules;
-                addStyleRelation(checkingContext, parentElement, relation);
+                addStyleRelation(checkingContext, *parentElement, relation);
 
-                if (!parentElement.isFinishedParsingChildren())
+                if (!parentElement->isFinishedParsingChildren())
                     return false;
             }
             int count = 1 + countElementsOfTypeAfter(element, element.tagQName());

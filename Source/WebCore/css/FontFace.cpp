@@ -72,7 +72,8 @@ Ref<FontFace> FontFace::create(ScriptExecutionContext& context, const String& fa
     auto fontAllowedTypes = context.settingsValues().downloadableBinaryFontAllowedTypes;
     auto sourceConversionResult = WTF::switchOn(source,
         [&] (String& string) -> ExceptionOr<void> {
-            auto value = CSSPropertyParserWorkerSafe::parseFontFaceSrc(string, is<Document>(context) ? CSSParserContext(downcast<Document>(context)) : HTMLStandardMode);
+            auto* document = dynamicDowncast<Document>(context);
+            auto value = CSSPropertyParserWorkerSafe::parseFontFaceSrc(string, document ? CSSParserContext(*document) : HTMLStandardMode);
             if (!value)
                 return Exception { ExceptionCode::SyntaxError };
             CSSFontFace::appendSources(result->backing(), *value, &context, false);

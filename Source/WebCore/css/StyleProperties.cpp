@@ -52,8 +52,8 @@ constexpr unsigned maxShorthandsForLonghand = 4; // FIXME: Generate this from CS
 
 Ref<ImmutableStyleProperties> StyleProperties::immutableCopyIfNeeded() const
 {
-    if (is<ImmutableStyleProperties>(*this))
-        return downcast<ImmutableStyleProperties>(const_cast<StyleProperties&>(*this));
+    if (auto* immutableProperties = dynamicDowncast<ImmutableStyleProperties>(*this))
+        return const_cast<ImmutableStyleProperties&>(*immutableProperties);
     return downcast<MutableStyleProperties>(*this).immutableCopy();
 }
 
@@ -67,8 +67,8 @@ String serializeLonghandValue(CSSPropertyID property, const CSSValue& value)
     case CSSPropertyStrokeOpacity:
         // FIXME: Handle this when creating the CSSValue for opacity, to be consistent with other CSS value serialization quirks.
         // Opacity percentage values serialize as a fraction in the range 0-1, not "%".
-        if (is<CSSPrimitiveValue>(value) && downcast<CSSPrimitiveValue>(value).isPercentage())
-            return makeString(downcast<CSSPrimitiveValue>(value).doubleValue() / 100);
+        if (auto* primitive = dynamicDowncast<CSSPrimitiveValue>(value); primitive && primitive->isPercentage())
+            return makeString(primitive->doubleValue() / 100);
         break;
     default:
         break;
@@ -282,10 +282,9 @@ StringBuilder StyleProperties::asTextInternal() const
         ASSERT(isLonghand(propertyID) || propertyID == CSSPropertyCustom);
         Vector<CSSPropertyID, maxShorthandsForLonghand> shorthands;
 
-        if (is<CSSPendingSubstitutionValue>(property.value())) {
-            auto& substitutionValue = downcast<CSSPendingSubstitutionValue>(*property.value());
-            shorthands.append(substitutionValue.shorthandPropertyId());
-        } else {
+        if (auto* substitutionValue = dynamicDowncast<CSSPendingSubstitutionValue>(property.value()))
+            shorthands.append(substitutionValue->shorthandPropertyId());
+        else {
             for (auto& shorthand : matchingShorthandsForLonghand(propertyID)) {
                 if (canUseShorthandForLonghand(shorthand.id(), propertyID))
                     shorthands.append(shorthand.id());
@@ -337,7 +336,8 @@ StringBuilder StyleProperties::asTextInternal() const
 
 bool StyleProperties::hasCSSOMWrapper() const
 {
-    return is<MutableStyleProperties>(*this) && downcast<MutableStyleProperties>(*this).m_cssomWrapper;
+    auto* mutableProperties = dynamicDowncast<MutableStyleProperties>(*this);
+    return mutableProperties && mutableProperties->m_cssomWrapper;
 }
 
 bool StyleProperties::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const

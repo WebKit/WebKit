@@ -723,11 +723,11 @@ static Ref<CSSValueList> borderRadiusShorthandValue(const RenderStyle& style, CS
 
 static LayoutRect sizingBox(RenderObject& renderer)
 {
-    if (!is<RenderBox>(renderer))
+    auto* box = dynamicDowncast<RenderBox>(renderer);
+    if (!box)
         return LayoutRect();
 
-    auto& box = downcast<RenderBox>(renderer);
-    return box.style().boxSizing() == BoxSizing::BorderBox ? box.borderBoxRect() : box.computedCSSContentBoxRect();
+    return box->style().boxSizing() == BoxSizing::BorderBox ? box->borderBoxRect() : box->computedCSSContentBoxRect();
 }
 
 static Ref<CSSFunctionValue> matrixTransformValue(const TransformationMatrix& transform, const RenderStyle& style)
@@ -973,10 +973,9 @@ Ref<CSSValue> ComputedStyleExtractor::valueForFilter(const RenderStyle& style, c
     for (auto& filterOperationPointer : filterOperations.operations()) {
         auto& filterOperation = *filterOperationPointer;
 
-        if (filterOperation.type() == FilterOperation::Type::Reference) {
-            ReferenceFilterOperation& referenceOperation = downcast<ReferenceFilterOperation>(filterOperation);
-            list.append(CSSPrimitiveValue::createURI(referenceOperation.url()));
-        } else {
+        if (auto* referenceOperation = dynamicDowncast<ReferenceFilterOperation>(filterOperation))
+            list.append(CSSPrimitiveValue::createURI(referenceOperation->url()));
+        else {
             RefPtr<CSSFunctionValue> filterValue;
             switch (filterOperation.type()) {
             case FilterOperation::Type::Grayscale:
@@ -1110,7 +1109,7 @@ static void populateSubgridLineNameList(CSSValueListBuilder& list, OrderedNamedL
 static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, RenderObject* renderer, const RenderStyle& style)
 {
     bool isRowAxis = direction == GridTrackSizingDirection::ForColumns;
-    bool isRenderGrid = is<RenderGrid>(renderer);
+    auto* renderGrid = dynamicDowncast<RenderGrid>(renderer);
     bool isSubgrid = isRowAxis ? style.gridSubgridColumns() : style.gridSubgridRows();
     bool isMasonry = (direction == GridTrackSizingDirection::ForRows) ? style.gridMasonryRows() : style.gridMasonryColumns();
     auto& trackSizes = isRowAxis ? style.gridColumnTrackSizes() : style.gridRowTrackSizes();
@@ -1118,11 +1117,10 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
 
     // Handle the 'none' case.
     bool trackListIsEmpty = trackSizes.isEmpty() && autoRepeatTrackSizes.isEmpty();
-    if (isRenderGrid && trackListIsEmpty) {
+    if (renderGrid && trackListIsEmpty) {
         // For grids we should consider every listed track, whether implicitly or explicitly
         // created. Empty grids have a sole grid line per axis.
-        auto& grid = downcast<RenderGrid>(*renderer);
-        auto& positions = isRowAxis ? grid.columnPositions() : grid.rowPositions();
+        auto& positions = isRowAxis ? renderGrid->columnPositions() : renderGrid->rowPositions();
         trackListIsEmpty = positions.size() == 1;
     }
 
@@ -1135,20 +1133,19 @@ static Ref<CSSValue> valueForGridTrackList(GridTrackSizingDirection direction, R
     // specifying track sizes in pixels and expanding the repeat() notation.
     // If subgrid was specified, but the element isn't a subgrid (due to not having
     // an appropriate grid parent), then we fall back to using the specified value.
-    if (isRenderGrid && (!isSubgrid || downcast<RenderGrid>(renderer)->isSubgrid(direction))) {
-        auto* grid = downcast<RenderGrid>(renderer);
+    if (renderGrid && (!isSubgrid || renderGrid->isSubgrid(direction))) {
         if (isSubgrid) {
             list.append(CSSPrimitiveValue::create(CSSValueSubgrid));
 
-            OrderedNamedLinesCollectorInSubgridLayout collector(style, isRowAxis, grid->numTracks(direction));
+            OrderedNamedLinesCollectorInSubgridLayout collector(style, isRowAxis, renderGrid->numTracks(direction));
             populateSubgridLineNameList(list, collector);
             return CSSValueList::createSpaceSeparated(WTFMove(list));
         }
-        OrderedNamedLinesCollectorInGridLayout collector(style, isRowAxis, grid->autoRepeatCountForDirection(direction), autoRepeatTrackSizes.size());
+        OrderedNamedLinesCollectorInGridLayout collector(style, isRowAxis, renderGrid->autoRepeatCountForDirection(direction), autoRepeatTrackSizes.size());
         // Named grid line indices are relative to the explicit grid, but we are including all tracks.
         // So we need to subtract the number of leading implicit tracks in order to get the proper line index.
-        int offset = -grid->explicitGridStartForDirection(direction);
-        populateGridTrackList(list, collector, grid->trackSizesForComputedStyle(direction), [&](const LayoutUnit& v) {
+        int offset = -renderGrid->explicitGridStartForDirection(direction);
+        populateGridTrackList(list, collector, renderGrid->trackSizesForComputedStyle(direction), [&](const LayoutUnit& v) {
             return zoomAdjustedPixelValue(v, style);
         }, offset);
         return CSSValueList::createSpaceSeparated(WTFMove(list));
@@ -1636,8 +1633,8 @@ static Element* styleElementForNode(Node* node)
 {
     if (!node)
         return nullptr;
-    if (is<Element>(*node))
-        return downcast<Element>(node);
+    if (auto* element = dynamicDowncast<Element>(*node))
+        return element;
     return composedTreeAncestors(*node).first();
 }
 
@@ -2075,12 +2072,12 @@ static Ref<CSSValueList> contentToCSSValue(const RenderStyle& style)
 {
     CSSValueListBuilder list;
     for (auto* contentData = style.contentData(); contentData; contentData = contentData->next()) {
-        if (is<CounterContentData>(*contentData))
-            list.append(CSSPrimitiveValue::createCounterName(downcast<CounterContentData>(*contentData).counter().identifier()));
-        else if (is<ImageContentData>(*contentData))
-            list.append(downcast<ImageContentData>(*contentData).image().computedStyleValue(style));
-        else if (is<TextContentData>(*contentData))
-            list.append(CSSPrimitiveValue::create(downcast<TextContentData>(*contentData).text()));
+        if (auto* counterContentData = dynamicDowncast<CounterContentData>(*contentData))
+            list.append(CSSPrimitiveValue::createCounterName(counterContentData->counter().identifier()));
+        else if (auto* imageContentData = dynamicDowncast<ImageContentData>(*contentData))
+            list.append(imageContentData->image().computedStyleValue(style));
+        else if (auto* textContentData = dynamicDowncast<TextContentData>(*contentData))
+            list.append(CSSPrimitiveValue::create(textContentData->text()));
     }
     if (list.isEmpty())
         list.append(CSSPrimitiveValue::create(style.hasEffectiveContentNone() ? CSSValueNone : CSSValueNormal));
@@ -2270,10 +2267,11 @@ typedef LayoutUnit (RenderBoxModelObject::*RenderBoxComputedCSSValueGetter)() co
 template<RenderStyleLengthGetter lengthGetter, RenderBoxComputedCSSValueGetter computedCSSValueGetter>
 static RefPtr<CSSValue> zoomAdjustedPaddingOrMarginPixelValue(const RenderStyle& style, RenderObject* renderer)
 {
-    Length unzoomzedLength = (style.*lengthGetter)();
-    if (!is<RenderBox>(renderer) || unzoomzedLength.isFixed())
-        return zoomAdjustedPixelValueForLength(unzoomzedLength, style);
-    return zoomAdjustedPixelValue((downcast<RenderBox>(*renderer).*computedCSSValueGetter)(), style);
+    Length unzoomedLength = (style.*lengthGetter)();
+    auto* renderBox = dynamicDowncast<RenderBox>(renderer);
+    if (!renderBox || unzoomedLength.isFixed())
+        return zoomAdjustedPixelValueForLength(unzoomedLength, style);
+    return zoomAdjustedPixelValue((renderBox->*computedCSSValueGetter)(), style);
 }
 
 template<RenderStyleLengthGetter lengthGetter>
@@ -2522,14 +2520,30 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
         if (auto* renderBox = dynamicDowncast<RenderBox>(renderer))
             return isLayoutDependent(toPaddingOrMarginPropertyID(FlowRelativeDirection::InlineEnd, *renderBox, PropertyType::Margin), style, renderBox);
         return false;
-    case CSSPropertyMarginTop:
-        return paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer) || (is<RenderBox>(renderer) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::BlockStart));
-    case CSSPropertyMarginRight:
-        return paddingOrMarginIsRendererDependent<&RenderStyle::marginRight>(style, renderer) || ((is<RenderBox>(renderer)) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::InlineEnd));
-    case CSSPropertyMarginBottom:
-        return paddingOrMarginIsRendererDependent<&RenderStyle::marginBottom>(style, renderer) ||  (is<RenderBox>(renderer) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::BlockEnd));
-    case CSSPropertyMarginLeft:
-        return paddingOrMarginIsRendererDependent<&RenderStyle::marginLeft>(style, renderer) || (is<RenderBox>(renderer) && rendererCanHaveTrimmedMargin(downcast<RenderBox>(*renderer), MarginTrimType::InlineStart));
+    case CSSPropertyMarginTop: {
+        if (paddingOrMarginIsRendererDependent<&RenderStyle::marginTop>(style, renderer))
+            return true;
+        auto* renderBox = dynamicDowncast<RenderBox>(renderer);
+        return renderBox && rendererCanHaveTrimmedMargin(*renderBox, MarginTrimType::BlockStart);
+    }
+    case CSSPropertyMarginRight: {
+        if (paddingOrMarginIsRendererDependent<&RenderStyle::marginRight>(style, renderer))
+            return true;
+        auto* renderBox = dynamicDowncast<RenderBox>(renderer);
+        return renderBox && rendererCanHaveTrimmedMargin(*renderBox, MarginTrimType::InlineEnd);
+    }
+    case CSSPropertyMarginBottom: {
+        if (paddingOrMarginIsRendererDependent<&RenderStyle::marginBottom>(style, renderer))
+            return true;
+        auto* renderBox = dynamicDowncast<RenderBox>(renderer);
+        return renderBox && rendererCanHaveTrimmedMargin(*renderBox, MarginTrimType::BlockEnd);
+    }
+    case CSSPropertyMarginLeft: {
+        if (paddingOrMarginIsRendererDependent<&RenderStyle::marginLeft>(style, renderer))
+            return true;
+        auto* renderBox = dynamicDowncast<RenderBox>(renderer);
+        return renderBox && rendererCanHaveTrimmedMargin(*renderBox, MarginTrimType::InlineStart);
+    }
     case CSSPropertyPadding:
         return isLayoutDependent(CSSPropertyPaddingBlock, style, renderer) || isLayoutDependent(CSSPropertyPaddingInline, style, renderer);
     case CSSPropertyPaddingBlock:
@@ -2814,10 +2828,8 @@ static Ref<CSSValue> paintOrder(PaintOrder paintOrder)
 
 static inline bool isFlexOrGridItem(RenderObject* renderer)
 {
-    if (!renderer || !renderer->isRenderBox())
-        return false;
-    auto& box = downcast<RenderBox>(*renderer);
-    return box.isFlexItem() || box.isGridItem();
+    auto* box = dynamicDowncast<RenderBox>(renderer);
+    return box && (box->isFlexItem() || box->isGridItem());
 }
 
 RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const AtomString& propertyName) const
@@ -2917,8 +2929,11 @@ RefPtr<CSSValue> ComputedStyleExtractor::propertyValue(CSSPropertyID propertyID,
         Document& document = m_element->document();
 
         updateStyleIfNeededForProperty(*styledElement, propertyID);
-        if (propertyID == CSSPropertyDisplay && !styledRenderer() && is<SVGElement>(*styledElement) && !downcast<SVGElement>(*styledElement).isValid())
-            return nullptr;
+        if (propertyID == CSSPropertyDisplay && !styledRenderer()) {
+            auto* svgElement = dynamicDowncast<SVGElement>(*styledElement);
+            if (svgElement && !svgElement->isValid())
+                return nullptr;
+        }
 
         style = computeRenderStyleForProperty(*styledElement, m_pseudoElementSpecifier, propertyID, ownedStyle, styledRenderer());
 
@@ -3491,21 +3506,21 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return zoomAdjustedPaddingOrMarginPixelValue<&RenderStyle::marginTop, &RenderBoxModelObject::marginTop>(style, renderer);
     }
     case CSSPropertyMarginRight: {
-        if (auto* box = dynamicDowncast<RenderBox>(renderer); box
-            && rendererCanHaveTrimmedMargin(*box, MarginTrimType::InlineEnd)
-            && box->hasTrimmedMargin(toMarginTrimType(*box, propertyID)))
+        CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
+        if (box && rendererCanHaveTrimmedMargin(*box, MarginTrimType::InlineEnd) && box->hasTrimmedMargin(toMarginTrimType(*box, propertyID)))
             return zoomAdjustedPixelValue(box->marginRight(), style);
+
         Length marginRight = style.marginRight();
-        if (marginRight.isFixed() || !is<RenderBox>(renderer))
+        if (marginRight.isFixed() || !box)
             return zoomAdjustedPixelValueForLength(marginRight, style);
         float value;
         if (marginRight.isPercentOrCalculated()) {
             // RenderBox gives a marginRight() that is the distance between the right-edge of the child box
             // and the right-edge of the containing box, when display == DisplayType::Block. Let's calculate the absolute
             // value of the specified margin-right % instead of relying on RenderBox's marginRight() value.
-            value = minimumValueForLength(marginRight, downcast<RenderBox>(*renderer).containingBlockLogicalWidthForContent());
+            value = minimumValueForLength(marginRight, box->containingBlockLogicalWidthForContent());
         } else
-            value = downcast<RenderBox>(*renderer).marginRight();
+            value = box->marginRight();
         return zoomAdjustedPixelValue(value, style);
     }
     case CSSPropertyMarginBottom:
@@ -4480,13 +4495,14 @@ bool ComputedStyleExtractor::propertyMatches(CSSPropertyID propertyID, const CSS
 {
     if (!m_element)
         return false;
-    if (propertyID == CSSPropertyFontSize && is<CSSPrimitiveValue>(*value)) {
-        m_element->document().updateLayoutIgnorePendingStylesheets();
-        if (auto* style = m_element->computedStyle(m_pseudoElementSpecifier)) {
-            if (CSSValueID sizeIdentifier = style->fontDescription().keywordSizeAsIdentifier()) {
-                auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
-                if (primitiveValue.isValueID() && primitiveValue.valueID() == sizeIdentifier)
-                    return true;
+    if (propertyID == CSSPropertyFontSize) {
+        if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*value)) {
+            m_element->document().updateLayoutIgnorePendingStylesheets();
+            if (auto* style = m_element->computedStyle(m_pseudoElementSpecifier)) {
+                if (CSSValueID sizeIdentifier = style->fontDescription().keywordSizeAsIdentifier()) {
+                    if (primitiveValue->isValueID() && primitiveValue->valueID() == sizeIdentifier)
+                        return true;
+                }
             }
         }
     }
