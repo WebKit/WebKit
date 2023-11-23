@@ -1,0 +1,3 @@
+
+PASS style elements fire load events properly
+

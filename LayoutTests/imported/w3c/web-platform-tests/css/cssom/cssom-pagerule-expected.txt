@@ -4,5 +4,11 @@ FAIL Page selector is initially the empty string assert_equals: expected "" but 
 FAIL Set selectorText to :left pseudo page assert_equals: expected ":left" but got "@page"
 FAIL Set selectorText to named page assert_equals: expected "named" but got "@page named"
 FAIL Set selectorText to named page with :first pseudo page assert_equals: expected "named:first" but got "@page named"
+FAIL Set selectorText to named page with case insensitive :first pseudo page assert_equals: expected "named:first" but got "@page named"
+FAIL Set selectorText to named page with two :first pseudo page assert_equals: expected "named:first:first" but got "@page named"
+FAIL Set selectorText to named page with pseudo pages of :first, :left, :right, :first in order. assert_equals: expected "named:first:left:right:first" but got "@page named"
+FAIL Cannot set selectorText to named page with pseudo, whitespace between assert_equals: expected "" but got "@page named"
+FAIL Cannot set selectorText to two pseudos, whitespace between assert_equals: expected "" but got "@page named"
+FAIL Cannot set selectorText to invalid pseudo page assert_equals: expected "" but got "@page named"
 PASS Set selectorText to named page after rule was removed
 
