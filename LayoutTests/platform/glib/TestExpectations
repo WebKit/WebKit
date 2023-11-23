@@ -1104,7 +1104,7 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-tra
 webkit.org/b/146720 media/accessiblity-describes-video.html [ Failure ]
 
 webkit.org/b/227934 media/media-source/media-webm-vorbis-partial.html [ Failure ]
-webkit.org/b/265016 media/media-webm-opus-error.html [ Failure ]
+webkit.org/b/265016 media/media-webm-opus-error.html [ Timeout Failure ]
 
 webkit.org/b/229973 media/track/in-band/track-in-band-srt-mkv-cues-added-once.html [ Failure Pass ]
 
@@ -1224,7 +1224,7 @@ webkit.org/b/264708 [ Debug ] imported/w3c/web-platform-tests/media-source/media
 webkit.org/b/264708 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec.html [ Pass Crash ]
 
 # webkit.org/b/228820 media/media-source/media-webm-opus-partial-abort.html [ Failure ]
-webkit.org/b/264708 [ Debug ] media/media-source/media-webm-opus-partial-abort.html [ Pass Crash ]
+webkit.org/b/264708 [ Debug ] media/media-source/media-webm-opus-partial-abort.html [ Pass Crash Failure ]
 
 webkit.org/b/264934 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-called-on-globalthis.https.html [ Pass Crash ]
 webkit.org/b/264934 http/wpt/webaudio/the-audio-api/the-audioworklet-interface/exposed-properties.https.html [ Pass Crash ]
@@ -1569,9 +1569,6 @@ webkit.org/b/263629 http/tests/multipart/win-boundary-crash.html [ Skip ] # Cras
 webkit.org/b/263867 http/tests/multipart/images.html [ ImageOnlyFailure ]
 webkit.org/b/263867 http/tests/multipart/multipart-async-image.html [ Failure ]
 
-webkit.org/b/264804 http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
-webkit.org/b/264804 http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
-webkit.org/b/264804 http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
 webkit.org/b/264804 http/tests/cookies/third-party-cookie-relaxing.html [ Failure ]
 webkit.org/b/264804 http/tests/resourceLoadStatistics/blocking-in-web-worker-script-import.html [ Failure ]
 webkit.org/b/264804 http/tests/resourceLoadStatistics/no-third-party-cookie-blocking-when-itp-is-off.html [ Failure ]

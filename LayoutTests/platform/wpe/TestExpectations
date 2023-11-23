@@ -149,6 +149,9 @@ imported/w3c/web-platform-tests/pointerevents/pointerup_after_pointerdown_target
 imported/w3c/web-platform-tests/pointerevents/predicted_events_attributes.html?touch [ Skip ]
 
 http/tests/cookies/same-site [ Pass ]
+webkit.org/b/264804 http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
+webkit.org/b/264804 http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
+webkit.org/b/264804 http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
 
 # Passing since added in r258661.
 webkit.org/b/209080 imported/w3c/web-platform-tests/css/css-writing-modes/background-position-vrl-022.xht [ ImageOnlyFailure ]
