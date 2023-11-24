@@ -5109,13 +5109,13 @@ PreferPageRenderingUpdatesNear60FPSEnabled:
   humanReadableDescription: "Prefer page rendering updates near 60 frames per second rather than using the display's refresh rate"
   defaultValue:
     WebKitLegacy:
-      "ENABLE(FULL_SPEED_ANIMATION_LOOP)": false
+      "PLATFORM(VISION)": false
       default: true
     WebKit:
-      "ENABLE(FULL_SPEED_ANIMATION_LOOP)": false
+      "PLATFORM(VISION)": false
       default: true
     WebCore:
-      "ENABLE(FULL_SPEED_ANIMATION_LOOP)": false
+      "PLATFORM(VISION)": false
       default: true
 
 PreferSandboxedMediaParsing:
