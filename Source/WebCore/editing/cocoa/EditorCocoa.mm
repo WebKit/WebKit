@@ -154,19 +154,27 @@ static RetainPtr<NSAttributedString> selectionAsAttributedString(const Document&
     return range ? attributedString(*range).nsAttributedString() : adoptNS([[NSAttributedString alloc] init]);
 }
 
+template<typename PasteboardContent>
+void populateRichTextDataIfNeeded(PasteboardContent& content, const Document& document)
+{
+    if (!document.settings().writeRichTextDataWhenCopyingOrDragging())
+        return;
+
+    auto string = selectionAsAttributedString(document);
+    content.dataInRTFDFormat = [string containsAttachments] ? Editor::dataInRTFDFormat(string.get()) : nullptr;
+    content.dataInRTFFormat = Editor::dataInRTFFormat(string.get());
+    content.dataInAttributedStringFormat = archivedDataForAttributedString(string.get());
+}
+
 void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 {
     Ref document = protectedDocument();
-    auto string = selectionAsAttributedString(document);
-
     PasteboardWebContent content;
     content.contentOrigin = document->originIdentifierForPasteboard();
     content.canSmartCopyOrDelete = canSmartCopyOrDelete();
     if (!pasteboard.isStatic()) {
         content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
-        content.dataInRTFDFormat = [string containsAttachments] ? dataInRTFDFormat(string.get()) : nullptr;
-        content.dataInRTFFormat = dataInRTFFormat(string.get());
-        content.dataInAttributedStringFormat = archivedDataForAttributedString(string.get());
+        populateRichTextDataIfNeeded(content, document);
         client()->getClientPasteboardData(selectedRange(), content.clientTypes, content.clientData);
     }
     content.dataInHTMLFormat = selectionInHTMLFormat();
@@ -178,15 +186,12 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
 void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
 {
     Ref document = protectedDocument();
-    auto string = selectionAsAttributedString(document);
 
     PasteboardWriterData::WebContent webContent;
     webContent.contentOrigin = document->originIdentifierForPasteboard();
     webContent.canSmartCopyOrDelete = canSmartCopyOrDelete();
     webContent.dataInWebArchiveFormat = selectionInWebArchiveFormat();
-    webContent.dataInRTFDFormat = [string containsAttachments] ? dataInRTFDFormat(string.get()) : nullptr;
-    webContent.dataInRTFFormat = dataInRTFFormat(string.get());
-    webContent.dataInAttributedStringFormat = archivedDataForAttributedString(string.get());
+    populateRichTextDataIfNeeded(webContent, document);
     webContent.dataInHTMLFormat = selectionInHTMLFormat();
     webContent.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
     client()->getClientPasteboardData(selectedRange(), webContent.clientTypes, webContent.clientData);

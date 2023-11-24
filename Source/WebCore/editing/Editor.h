@@ -551,6 +551,9 @@ public:
     WEBCORE_EXPORT void replaceSelectionWithAttributedString(NSAttributedString *, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
     WEBCORE_EXPORT void readSelectionFromPasteboard(const String& pasteboardName);
     WEBCORE_EXPORT void replaceNodeFromPasteboard(Node&, const String& pasteboardName, EditAction = EditAction::Paste);
+
+    static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
+    static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
 #endif
 
 #if PLATFORM(MAC)
@@ -644,8 +647,6 @@ private:
     String selectionInHTMLFormat();
     RefPtr<SharedBuffer> imageInWebArchiveFormat(Element&);
     static String userVisibleString(const URL&);
-    static RefPtr<SharedBuffer> dataInRTFDFormat(NSAttributedString *);
-    static RefPtr<SharedBuffer> dataInRTFFormat(NSAttributedString *);
 #endif
 
     void scheduleEditorUIUpdate();

@@ -7979,6 +7979,21 @@ WirelessPlaybackTargetAPIEnabled:
       "PLATFORM(VISION)" : false
       default: true
 
+WriteRichTextDataWhenCopyingOrDragging:
+  type: bool
+  status: internal
+  humanReadableName: "Write RTF on Copy"
+  humanReadableDescription: "Write RTF, RTFD and attributed strings to the pasteboard when copying or dragging"
+  condition: PLATFORM(COCOA)
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      "HAVE(PASTEBOARD_CONVERSION_FROM_HTML_TO_RTF)" : false
+      default: true
+    WebCore:
+      default: true
+
 ZoomOnDoubleTapWhenRoot:
   type: bool
   status: internal
