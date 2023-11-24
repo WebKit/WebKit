@@ -1486,6 +1486,8 @@ webkit.org/b/133057 fast/table/border-collapsing/collapsed-borders-adjoining-sec
 
 webkit.org/b/169075 editing/selection/extend-by-character-007.html [ Failure ]
 
+webkit.org/b/169359 http/tests/cache/disk-cache/disk-cache-remove-several-pending-writes.html [ Pass Failure ]
+
 # CSS Font Loading is not yet enabled on all platforms
 webkit.org/b/135390 fast/css/fontloader-download-error.html [ Skip ]
 webkit.org/b/135390 fast/css/fontloader-events.html [ Skip ]

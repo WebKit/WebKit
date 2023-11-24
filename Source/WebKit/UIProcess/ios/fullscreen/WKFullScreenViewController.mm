@@ -32,6 +32,7 @@
 #import "PlaybackSessionManagerProxy.h"
 #import "UIKitUtilities.h"
 #import "VideoPresentationManagerProxy.h"
+#import "WKExtrinsicButton.h"
 #import "WKFullscreenStackView.h"
 #import "WKWebViewIOS.h"
 #import "WebFullScreenManagerProxy.h"
@@ -94,47 +95,6 @@ private:
     RefPtr<WebCore::PlaybackSessionInterfaceAVKit> m_interface;
 };
 
-#pragma mark - _WKExtrinsicButton
-
-@class _WKExtrinsicButton;
-
-@protocol _WKExtrinsicButtonDelegate <NSObject>
-- (void)_wkExtrinsicButtonWillDisplayMenu:(_WKExtrinsicButton *)button;
-- (void)_wkExtrinsicButtonWillDismissMenu:(_WKExtrinsicButton *)button;
-@end
-
-@interface _WKExtrinsicButton : UIButton
-@property (nonatomic, assign) CGSize extrinsicContentSize;
-@property (nonatomic, weak) id<_WKExtrinsicButtonDelegate> delegate;
-@end
-
-@implementation _WKExtrinsicButton
-
-- (void)setExtrinsicContentSize:(CGSize)size
-{
-    _extrinsicContentSize = size;
-    [self invalidateIntrinsicContentSize];
-}
-
-- (CGSize)intrinsicContentSize
-{
-    return _extrinsicContentSize;
-}
-
-- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willDisplayMenuForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionAnimating>)animator
-{
-    [super contextMenuInteraction:interaction willDisplayMenuForConfiguration:configuration animator:animator];
-    [_delegate _wkExtrinsicButtonWillDisplayMenu:self];
-}
-
-- (void)contextMenuInteraction:(UIContextMenuInteraction *)interaction willEndForConfiguration:(UIContextMenuConfiguration *)configuration animator:(id<UIContextMenuInteractionAnimating>)animator
-{
-    [super contextMenuInteraction:interaction willEndForConfiguration:configuration animator:animator];
-    [_delegate _wkExtrinsicButtonWillDismissMenu:self];
-}
-
-@end
-
 #pragma mark - _WKInsetLabel
 
 @interface _WKInsetLabel : UILabel
@@ -158,7 +118,7 @@ private:
 
 #pragma mark - WKFullScreenViewController
 
-@interface WKFullScreenViewController () <UIGestureRecognizerDelegate, UIToolbarDelegate, _WKExtrinsicButtonDelegate>
+@interface WKFullScreenViewController () <UIGestureRecognizerDelegate, UIToolbarDelegate, WKExtrinsicButtonDelegate>
 @property (weak, nonatomic) WKWebView *_webView; // Cannot be retained, see <rdar://problem/14884666>.
 @property (readonly, nonatomic) WebKit::WebFullScreenManagerProxy* _manager;
 @property (readonly, nonatomic) WebCore::FloatBoxExtent _effectiveFullscreenInsets;
@@ -174,8 +134,8 @@ private:
     RetainPtr<UIStackView> _banner;
     RetainPtr<_WKInsetLabel> _bannerLabel;
 #endif
-    RetainPtr<_WKExtrinsicButton> _cancelButton;
-    RetainPtr<_WKExtrinsicButton> _pipButton;
+    RetainPtr<WKExtrinsicButton> _cancelButton;
+    RetainPtr<WKExtrinsicButton> _pipButton;
     RetainPtr<UIButton> _locationButton;
     RetainPtr<UILayoutGuide> _topGuide;
     RetainPtr<NSLayoutConstraint> _topConstraint;
@@ -186,7 +146,7 @@ private:
     std::optional<UIInterfaceOrientationMask> _supportedOrientations;
     BOOL _isShowingMenu;
 #if PLATFORM(VISION)
-    RetainPtr<_WKExtrinsicButton> _moreActionsButton;
+    RetainPtr<WKExtrinsicButton> _moreActionsButton;
     BOOL _shouldHideCustomControls;
     BOOL _isInteractingWithSystemChrome;
 #endif
@@ -835,9 +795,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self presentViewController:alert.get() animated:YES completion:nil];
 }
 
-- (_WKExtrinsicButton *)_createButtonWithExtrinsicContentSize:(CGSize)size
+- (WKExtrinsicButton *)_createButtonWithExtrinsicContentSize:(CGSize)size
 {
-    _WKExtrinsicButton *button = [_WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
+    WKExtrinsicButton *button = [WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
     [button setDelegate:self];
     [button setTranslatesAutoresizingMaskIntoConstraints:NO];
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
@@ -848,13 +808,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return button;
 }
 
-- (void)_wkExtrinsicButtonWillDisplayMenu:(_WKExtrinsicButton *)button
+- (void)wkExtrinsicButtonWillDisplayMenu:(WKExtrinsicButton *)button
 {
     _isShowingMenu = YES;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];
 }
 
-- (void)_wkExtrinsicButtonWillDismissMenu:(_WKExtrinsicButton *)button
+- (void)wkExtrinsicButtonWillDismissMenu:(WKExtrinsicButton *)button
 {
     _isShowingMenu = NO;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(hideUI) object:nil];

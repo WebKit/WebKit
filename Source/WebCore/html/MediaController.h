@@ -105,8 +105,6 @@ private:
     void addMediaElement(HTMLMediaElement&);
     void removeMediaElement(HTMLMediaElement&);
 
-    const String& mediaGroup() const { return m_mediaGroup; }
-
     bool supportsFullscreen(HTMLMediaElementEnums::VideoFullscreenMode) const final { return false; }
     bool isFullscreen() const final { return false; }
     void enterFullscreen() final { }
@@ -148,7 +146,6 @@ private:
     Vector<Ref<Event>> m_pendingEvents;
     Timer m_asyncEventTimer;
     mutable Timer m_clearPositionTimer;
-    String m_mediaGroup;
     bool m_closedCaptionsVisible;
     std::unique_ptr<PAL::Clock> m_clock;
     Timer m_timeupdateTimer;

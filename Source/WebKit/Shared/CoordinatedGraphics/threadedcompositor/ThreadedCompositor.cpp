@@ -50,7 +50,9 @@
 namespace WebKit {
 using namespace WebCore;
 
+#if !HAVE(DISPLAY_LINK)
 static constexpr unsigned c_defaultRefreshRate = 60000;
+#endif
 
 #if HAVE(DISPLAY_LINK)
 Ref<ThreadedCompositor> ThreadedCompositor::create(Client& client, PlatformDisplayID displayID, const IntSize& viewportSize, float scaleFactor, bool flipY)

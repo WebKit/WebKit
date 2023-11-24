@@ -28,6 +28,7 @@
 #include "RunLoopObserver.h"
 #include <JavaScriptCore/EdenGCActivityCallback.h>
 #include <JavaScriptCore/FullGCActivityCallback.h>
+#include <JavaScriptCore/MarkedSpace.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/RefCounted.h>

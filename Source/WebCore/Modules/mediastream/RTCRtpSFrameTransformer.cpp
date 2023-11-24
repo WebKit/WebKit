@@ -33,7 +33,9 @@
 
 namespace WebCore {
 
+#if ASSERT_ENABLED
 static constexpr unsigned AES_CM_128_HMAC_SHA256_NONCE_SIZE = 12;
+#endif
 
 static inline void writeUInt64(uint8_t* data, uint64_t value, uint8_t valueLength)
 {

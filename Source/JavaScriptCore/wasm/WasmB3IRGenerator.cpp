@@ -96,8 +96,10 @@ namespace WasmB3IRGeneratorInternal {
 static constexpr bool verbose = false;
 static constexpr bool verboseInlining = false;
 static constexpr bool traceExecution = false;
-static constexpr bool traceExecutionIncludesConstructionSite = false;
 static constexpr bool traceStackValues = false;
+#if ASSERT_ENABLED
+static constexpr bool traceExecutionIncludesConstructionSite = false;
+#endif
 }
 }
 
