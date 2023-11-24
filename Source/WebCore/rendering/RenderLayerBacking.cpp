@@ -1594,6 +1594,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     LayoutRect ancestorCompositedBounds = compositedAncestor ? compositedAncestor->backing()->compositedBounds() : LayoutRect();
     setRequiresOwnBackingStore(compositor().requiresOwnBackingStore(m_owningLayer, compositedAncestor,
         LayoutRect(toLayoutPoint(compositedBoundsOffset.fromParentGraphicsLayer()), compositedBounds().size()), ancestorCompositedBounds));
+    updateDrawsContent();
 #if ENABLE(FILTERS_LEVEL_2)
     updateBackdropFiltersGeometry();
 #endif

@@ -363,7 +363,6 @@ webkit.org/b/99026 css3/filters/effect-drop-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/99028 fast/autoresize [ Failure ]
 
 # Failures related with compositing tests.
-webkit.org/b/169918 compositing/clipping/border-radius-overflow-hidden-stacking-context.html [ Failure ]
 webkit.org/b/169918 compositing/contents-opaque/control-layer.html [ Failure ]
 webkit.org/b/169918 compositing/contents-scale/animating.html [ Failure ]
 webkit.org/b/169918 compositing/contents-scale/rounded-contents-scale.html [ Failure ]
@@ -424,7 +423,6 @@ webkit.org/b/169918 compositing/tiling/transform-origin-tiled.html [ Failure ]
 webkit.org/b/169918 compositing/video/video-object-position.html [ Failure ]
 webkit.org/b/169918 compositing/visibility/visibility-image-layers-dynamic.html [ Failure ]
 webkit.org/b/169918 compositing/geometry/clipped-out-perspective.html [ ImageOnlyFailure ]
-webkit.org/b/169918 compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/hidpi-subpixel-transform-origin.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/hidpi-transform-with-render-layer-on-fractional-pixel-value.html [ ImageOnlyFailure ]
 webkit.org/b/169918 compositing/layer-creation/deep-tree.html [ ImageOnlyFailure ]
@@ -2287,14 +2285,6 @@ webkit.org/b/208052 imported/w3c/web-platform-tests/intersection-observer/v2/cro
 webkit.org/b/191400 fast/block/basic/child-block-level-box-with-height-percent.html [ Failure ]
 webkit.org/b/191400 fast/block/basic/inline-content-with-floating-images2.html [ Failure ]
 webkit.org/b/191400 fast/block/basic/quirk-mode-percent-height.html [ Failure ]
-
-webkit.org/b/191688 compositing/backing/no-backing-for-clip-overlap.html [ Failure ]
-webkit.org/b/191688 compositing/backing/no-backing-for-clip.html [ Failure ]
-webkit.org/b/191688 compositing/backing/no-backing-for-perspective.html [ Failure ]
-webkit.org/b/191688 compositing/layer-creation/overlap-animation.html [ Failure ]
-webkit.org/b/191688 compositing/layer-creation/overlap-transforms.html [ Failure ]
-webkit.org/b/191688 compositing/overflow/clip-descendents.html [ Failure ]
-webkit.org/b/191688 compositing/repaint/absolute-painted-into-composited-ancestor.html [ Failure ]
 
 webkit.org/b/191882 fast/forms/auto-fill-button/input-credit-card-auto-fill-button.html [ Failure ]
 
