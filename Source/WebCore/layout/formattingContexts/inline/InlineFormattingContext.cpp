@@ -75,6 +75,12 @@ static std::optional<InlineItemRange> partialRangeForDamage(const InlineItemList
     return InlineItemRange { damageStartPosition, { inlineItemList.size(), 0 } };
 }
 
+static bool isEmptyInlineContent(const InlineItemList& inlineItemList)
+{
+    // Very common, pseudo before/after empty content.
+    return inlineItemList.size() == 1 && is<InlineTextItem>(inlineItemList[0]) && !downcast<InlineTextItem>(inlineItemList[0]).length();
+}
+
 InlineFormattingContext::InlineFormattingContext(const ElementBox& rootBlockContainer, LayoutState& layoutState, BlockLayoutState& parentBlockLayoutState)
     : m_rootBlockContainer(rootBlockContainer)
     , m_layoutState(layoutState)
@@ -162,8 +168,14 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const 
     if (needsInlineItemListUpdate)
         InlineItemsBuilder { inlineContentCache, root() }.build(needsLayoutStartPosition);
 
+    auto& inlineItemList = inlineContentCache.inlineItems().content();
+    if (!lineDamage && isEmptyInlineContent(inlineItemList)) {
+        inlineContentCache.setIntrinsicWidthConstraints({ });
+        return { };
+    }
+
     auto mayUseSimplifiedTextOnlyInlineLayout = TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache);
-    auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineContentCache.inlineItems().content(), mayUseSimplifiedTextOnlyInlineLayout };
+    auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineItemList, mayUseSimplifiedTextOnlyInlineLayout };
     auto intrinsicSizes = intrinsicWidthHandler.computedIntrinsicSizes();
     inlineContentCache.setIntrinsicWidthConstraints(intrinsicSizes);
     if (intrinsicWidthHandler.maximumIntrinsicWidthResult())
@@ -196,16 +208,21 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
 {
     ASSERT(!needsLayoutRange.isEmpty());
 
+    auto isPartialLayout = lineDamage && lineDamage->start();
+    if (!isPartialLayout) {
+        ASSERT(!previousLine);
+        auto layoutResult = InlineLayoutResult { { }, InlineLayoutResult::Range::Full };
+        if (createDisplayContentForLineFromCachedContent(constraints, layoutResult))
+            return layoutResult;
+        if (isEmptyInlineContent(inlineItemList)) {
+            createDisplayContentForEmptyInlineContent(constraints, layoutResult);
+            return layoutResult;
+        }
+    }
+
     auto layoutResult = InlineLayoutResult { };
     if (!needsLayoutRange.start)
         layoutResult.displayContent.boxes.reserveInitialCapacity(inlineItemList.size());
-
-    auto isPartialLayout = lineDamage && lineDamage->start();
-    if (!isPartialLayout && createDisplayContentForLineFromCachedContent(constraints, layoutResult)) {
-        ASSERT(!previousLine);
-        layoutResult.range = InlineLayoutResult::Range::Full;
-        return layoutResult;
-    }
 
     auto floatingContext = this->floatingContext();
     auto lineLogicalTop = InlineLayoutUnit { constraints.logicalTop() };
@@ -401,6 +418,14 @@ bool InlineFormattingContext::createDisplayContentForLineFromCachedContent(const
     auto lineBox = LineBoxBuilder { *this, lineBreakingResult }.build({ });
     createDisplayContentForInlineContent(lineBox, lineBreakingResult, constraints, layoutResult.displayContent);
     return true;
+}
+
+void InlineFormattingContext::createDisplayContentForEmptyInlineContent(const ConstraintsForInlineContent& constraints, InlineLayoutResult& layoutResult)
+{
+    auto emptyLineBreakingResult =  LineLayoutResult { };
+    emptyLineBreakingResult.lineGeometry = { { constraints.horizontal().logicalLeft, constraints.logicalTop() }, { constraints.horizontal().logicalWidth } };
+    auto lineBox = LineBoxBuilder { *this, emptyLineBreakingResult }.build({ });
+    createDisplayContentForInlineContent(lineBox, emptyLineBreakingResult, constraints, layoutResult.displayContent);
 }
 
 void InlineFormattingContext::initializeInlineLayoutState(const LayoutState& layoutState)
