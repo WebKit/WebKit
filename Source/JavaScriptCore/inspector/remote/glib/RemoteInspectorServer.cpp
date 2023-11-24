@@ -326,7 +326,9 @@ void RemoteInspectorServer::sendMessageToFrontend(SocketConnection& remoteInspec
 
     uint64_t connectionID = m_remoteInspectorConnectionToIDMap.get(&remoteInspectorConnection);
     auto connectionTargetPair = std::make_pair(connectionID, targetID);
-    ASSERT(m_automationTargets.contains(connectionTargetPair) || m_inspectionTargets.contains(connectionTargetPair));
+    if (!m_automationTargets.contains(connectionTargetPair) && !m_inspectionTargets.contains(connectionTargetPair))
+        return;
+
     SocketConnection* clientConnection = m_inspectionTargets.contains(connectionTargetPair) ? m_clientConnection : m_automationConnection;
     ASSERT(clientConnection);
     clientConnection->sendMessage("SendMessageToFrontend", g_variant_new("(tt&s)", connectionID, targetID, message));
