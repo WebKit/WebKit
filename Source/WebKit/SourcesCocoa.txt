@@ -490,6 +490,7 @@ UIProcess/ios/WKContentView.mm @no-unify
 UIProcess/ios/WKContentViewInteraction.mm @no-unify
 UIProcess/ios/WKDeferringGestureRecognizer.mm
 UIProcess/ios/WKExtendedTextInputTraits.mm
+UIProcess/ios/WKExtrinsicButton.mm
 UIProcess/ios/WKGeolocationProviderIOS.mm
 UIProcess/ios/WKHighlightLongPressGestureRecognizer.mm
 UIProcess/ios/WKImageAnalysisGestureRecognizer.mm
