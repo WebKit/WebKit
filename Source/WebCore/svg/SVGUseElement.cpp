@@ -319,6 +319,10 @@ static bool isDirectReference(const SVGElement& element)
 
 Path SVGUseElement::toClipPath()
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    RELEASE_ASSERT(!document().settings().layerBasedSVGEngineEnabled());
+#endif
+
     auto targetClone = this->targetClone();
     if (!is<SVGGraphicsElement>(targetClone))
         return { };
@@ -329,13 +333,20 @@ Path SVGUseElement::toClipPath()
         return { };
     }
 
-    // FIXME: [LBSE] Stop mutating the path here and stop calling animatedLocalTransform().
     Path path = downcast<SVGGraphicsElement>(*targetClone).toClipPath();
     SVGLengthContext lengthContext(this);
     // FIXME: Find a way to do this without manual resolution of x/y here. It's potentially incorrect.
     path.translate(FloatSize(x().value(lengthContext), y().value(lengthContext)));
     path.transform(animatedLocalTransform());
     return path;
+}
+
+RefPtr<SVGElement> SVGUseElement::clipChild() const
+{
+    auto targetClone = this->targetClone();
+    if (!targetClone || !isDirectReference(*targetClone))
+        return nullptr;
+    return targetClone;
 }
 
 RenderElement* SVGUseElement::rendererClipChild() const
