@@ -29,6 +29,7 @@
 #include "RenderSVGResourceClipper.h"
 #include "RenderSVGText.h"
 #include "RenderStyleInlines.h"
+#include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "StyleResolver.h"
 #include <wtf/IsoMallocInlines.h>

@@ -49,11 +49,11 @@
 
 namespace JSC { namespace B3 {
 
+#if ASSERT_ENABLED
 namespace B3ValueInternal {
 constexpr bool alwaysDumpConstructionSite = false;
 }
 
-#if ASSERT_ENABLED
 String Value::generateCompilerConstructionSite()
 {
     StringPrintStream s;
