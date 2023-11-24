@@ -1208,8 +1208,6 @@ fast/mediastream/play-newly-added-audio-track.html [ Pass Crash ]
 webkit.org/b/264663 media/media-source/media-source-webm-configuration-framerate.html [ Crash Pass ]
 
 webkit.org/b/264665 http/wpt/webcodecs/videoFrame-webglCanvasImageSource.html [ Failure ]
-webkit.org/b/264894 http/wpt/webcodecs/h264-encoder-default-config.https.any.html [ Failure ]
-webkit.org/b/264894 http/wpt/webcodecs/h264-encoder-default-config.https.any.worker.html [ Failure ]
 
 webkit.org/b/264666 imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https.html [ Failure ]
 

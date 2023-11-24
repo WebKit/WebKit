@@ -292,8 +292,8 @@ String GStreamerInternalVideoEncoder::initialize(const String& codecName, const 
     if (!videoEncoderSetFormat(WEBKIT_VIDEO_ENCODER(m_harness->element()), WTFMove(encoderCaps)))
         return "Unable to set encoder format"_s;
 
-    if (config.bitRate)
-        g_object_set(m_harness->element(), "bitrate", static_cast<uint32_t>(config.bitRate / 1024), nullptr);
+    if (config.bitRate > 1000)
+        g_object_set(m_harness->element(), "bitrate", static_cast<uint32_t>(config.bitRate / 1000), nullptr);
     m_isInitialized = true;
     return emptyString();
 }
