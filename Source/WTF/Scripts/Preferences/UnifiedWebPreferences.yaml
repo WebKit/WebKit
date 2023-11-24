@@ -4891,17 +4891,17 @@ PDFPluginHUDEnabled:
 
 PageAtRuleSupportEnabled:
   type: bool
-  status: unstable
+  status: stable
   category: css
   humanReadableName: "@page CSS at-rule support"
   humanReadableDescription: "Enable @page support"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 PageVisibilityBasedProcessSuppressionEnabled:
   type: bool
