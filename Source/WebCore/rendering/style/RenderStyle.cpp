@@ -2634,53 +2634,65 @@ const AtomString& RenderStyle::textEmphasisMarkString() const
 
 void RenderStyle::adjustAnimations()
 {
-    auto* animationList = m_nonInheritedData->miscData->animations.get();
+    auto* animationList = animations();
     if (!animationList)
         return;
 
-    // Get rid of empty animations and anything beyond them
-    for (size_t i = 0, size = animationList->size(); i < size; ++i) {
-        if (animationList->animation(i).isEmpty()) {
-            animationList->resize(i);
-            break;
+    // Get rid of empty transitions and anything beyond them
+    auto emptyIndex = [&]() -> std::optional<size_t> {
+        for (size_t i = 0, size = animationList->size(); i < size; ++i) {
+            if (animationList->animation(i).isEmpty())
+                return i;
         }
-    }
+        return { };
+    }();
 
-    if (animationList->isEmpty()) {
-        clearAnimations();
+    if (!emptyIndex)
+        return;
+
+    auto& mutableAnimationList = m_nonInheritedData.access().miscData.access().animationData.access().animations;
+    if (!*emptyIndex) {
+        mutableAnimationList = nullptr;
         return;
     }
 
+    mutableAnimationList->resize(*emptyIndex);
     // Repeat patterns into layers that don't have some properties set.
-    animationList->fillUnsetProperties();
+    mutableAnimationList->fillUnsetProperties();
 }
 
 void RenderStyle::adjustTransitions()
 {
-    auto* transitionList = m_nonInheritedData->miscData->transitions.get();
+    auto* transitionList = transitions();
     if (!transitionList)
         return;
 
     // Get rid of empty transitions and anything beyond them
-    for (size_t i = 0, size = transitionList->size(); i < size; ++i) {
-        if (transitionList->animation(i).isEmpty()) {
-            transitionList->resize(i);
-            break;
+    auto emptyIndex = [&]() -> std::optional<size_t> {
+        for (size_t i = 0, size = transitionList->size(); i < size; ++i) {
+            if (transitionList->animation(i).isEmpty())
+                return i;
         }
-    }
+        return { };
+    }();
 
-    if (transitionList->isEmpty()) {
-        clearTransitions();
+    if (!emptyIndex)
+        return;
+
+    auto& mutableTransitionList = m_nonInheritedData.access().miscData.access().animationData.access().transitions;
+    if (!*emptyIndex) {
+        mutableTransitionList = nullptr;
         return;
     }
 
+    mutableTransitionList->resize(*emptyIndex);
     // Repeat patterns into layers that don't have some properties set.
-    transitionList->fillUnsetProperties();
+    mutableTransitionList->fillUnsetProperties();
 }
 
 AnimationList& RenderStyle::ensureAnimations()
 {
-    auto& animations = m_nonInheritedData.access().miscData.access().animations;
+    auto& animations = m_nonInheritedData.access().miscData.access().animationData.access().animations;
     if (!animations)
         animations = AnimationList::create();
     return *animations;
@@ -2688,7 +2700,7 @@ AnimationList& RenderStyle::ensureAnimations()
 
 AnimationList& RenderStyle::ensureTransitions()
 {
-    auto& transitions = m_nonInheritedData.access().miscData.access().transitions;
+    auto& transitions = m_nonInheritedData.access().miscData.access().animationData.access().transitions;
     if (!transitions)
         transitions = AnimationList::create();
     return *transitions;

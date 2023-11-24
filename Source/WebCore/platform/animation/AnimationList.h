@@ -35,8 +35,7 @@ class AnimationList : public RefCounted<AnimationList> {
 public:
     static Ref<AnimationList> create() { return adoptRef(*new AnimationList); }
 
-    Ref<AnimationList> copy() const { return adoptRef(*new AnimationList(*this, CopyBehavior::Clone)); }
-    Ref<AnimationList> shallowCopy() const { return adoptRef(*new AnimationList(*this, CopyBehavior::Reference)); }
+    Ref<AnimationList> copy() const { return adoptRef(*new AnimationList(*this)); }
 
     void fillUnsetProperties();
     bool operator==(const AnimationList&) const;
@@ -61,12 +60,11 @@ public:
 private:
     AnimationList();
 
-    enum class CopyBehavior : uint8_t { Clone, Reference };
-    AnimationList(const AnimationList&, CopyBehavior);
+    AnimationList(const AnimationList&);
 
     AnimationList& operator=(const AnimationList&);
 
-    Vector<Ref<Animation>, 0, CrashOnOverflow, 0> m_animations;
+    Vector<Ref<Animation>, 1> m_animations;
 };    
 
 WTF::TextStream& operator<<(WTF::TextStream&, const AnimationList&);

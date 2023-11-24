@@ -49,10 +49,8 @@ namespace WebCore {
 template<typename T, typename U> inline bool compareEqual(const T& a, const U& b) { return a == b; }
 
 inline void RenderStyle::addToTextDecorationsInEffect(OptionSet<TextDecorationLine> value) { m_inheritedFlags.textDecorationLines |= static_cast<unsigned>(value.toRaw()); }
-inline void RenderStyle::clearAnimations() { m_nonInheritedData.access().miscData.access().animations = nullptr; }
 inline void RenderStyle::clearBackgroundLayers() { m_nonInheritedData.access().backgroundData.access().background = FillLayer::create(FillLayerType::Background); }
 inline void RenderStyle::clearMaskLayers() { m_nonInheritedData.access().miscData.access().mask = FillLayer::create(FillLayerType::Mask); }
-inline void RenderStyle::clearTransitions() { m_nonInheritedData.access().miscData.access().transitions = nullptr; }
 inline FillLayer& RenderStyle::ensureBackgroundLayers() { return m_nonInheritedData.access().backgroundData.access().background.access(); }
 inline FillLayer& RenderStyle::ensureMaskLayers() { return m_nonInheritedData.access().miscData.access().mask.access(); }
 inline void RenderStyle::inheritBackgroundLayers(const FillLayer& parent) { m_nonInheritedData.access().backgroundData.access().background = FillLayer::create(parent); }

@@ -35,15 +35,11 @@ if (i) { \
 
 AnimationList::AnimationList() = default;
 
-AnimationList::AnimationList(const AnimationList& other, CopyBehavior copyBehavior)
+AnimationList::AnimationList(const AnimationList& other)
 {
-    if (copyBehavior == CopyBehavior::Reference)
-        m_animations = other.m_animations;
-    else {
-        m_animations = other.m_animations.map([](auto& animation) {
-            return Animation::create(animation.get());
-        });
-    }
+    m_animations = other.m_animations.map([](auto& animation) {
+        return Animation::create(animation.get());
+    });
 }
 
 void AnimationList::fillUnsetProperties()

@@ -40,6 +40,7 @@ class AnimationList;
 class ContentData;
 class FillLayer;
 class ShadowData;
+class StyleAnimationData;
 class StyleDeprecatedFlexibleBoxData;
 class StyleFilterData;
 class StyleFlexibleBoxData;
@@ -73,9 +74,8 @@ public:
     DataRef<StyleTransformData> transform; // Transform properties (rotate, scale, skew, etc.)
     DataRef<FillLayer> mask;
     DataRef<StyleVisitedLinkColorData> visitedLinkColor;
+    DataRef<StyleAnimationData> animationData;
 
-    RefPtr<AnimationList> animations;
-    RefPtr<AnimationList> transitions;
     std::unique_ptr<ContentData> content;
     std::unique_ptr<ShadowData> boxShadow; // For box-shadow decorations.
     String altText;
