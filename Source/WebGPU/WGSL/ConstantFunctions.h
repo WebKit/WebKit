@@ -421,7 +421,7 @@ static ConstantValue constantMatrix(const Type* resultType, const FixedVector<Co
 #define CONSTANT_TRIGONOMETRIC(name, fn) UNARY_OPERATION(name, Float, WRAP_STD(fn))
 
 #define WRAP_STD(fn) \
-    [&]<typename... Args>(Args&&... args) { return std::fn(std::forward<Args>(args)...); }
+    [&]<typename T, typename... Args>(T arg, Args&&... args) -> T { return std::fn(arg, std::forward<Args>(args)...); }
 
 // Arithmetic operators
 
