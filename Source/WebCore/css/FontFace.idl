@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/css-font-loading/#fontface-interface
+
 typedef (ArrayBuffer or ArrayBufferView) BinaryData;
 
 enum FontFaceLoadStatus {
@@ -46,7 +48,7 @@ dictionary FontFaceDescriptors {
     ActiveDOMObject,
     Exposed=(Window,Worker)
 ] interface FontFace {
-    [CallWith=CurrentScriptExecutionContext] constructor(DOMString family, (DOMString or BinaryData) source, optional FontFaceDescriptors descriptors);
+    [CallWith=CurrentScriptExecutionContext] constructor(DOMString family, (DOMString or BinaryData) source, optional FontFaceDescriptors descriptors = {});
 
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString family;
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString style;

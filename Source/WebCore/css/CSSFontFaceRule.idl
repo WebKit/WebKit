@@ -18,6 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://drafts.csswg.org/css-fonts/#cssfontfacerule
+
 // Introduced in DOM Level 2:
 [
     JSGenerateToJSObject,

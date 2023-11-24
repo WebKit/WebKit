@@ -16,14 +16,16 @@
  *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA 02110-1301, USA.
  */
+
+// https://drafts.csswg.org/cssom-view/#the-mediaquerylist-interface
+
 [
     ActiveDOMObject,
     Exposed=Window
 ] interface MediaQueryList : EventTarget {
     readonly attribute DOMString media;
     readonly attribute boolean matches;
-
-    undefined addListener(EventListener? listener);
-    undefined removeListener(EventListener? listener);
+    undefined addListener(EventListener? callback);
+    undefined removeListener(EventListener? callback);
     attribute EventHandler onchange;
 };

@@ -18,6 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://drafts.csswg.org/cssom/#cssimportrule
+
 typedef USVString CSSOMString;
 
 [
@@ -25,7 +27,7 @@ typedef USVString CSSOMString;
 ] interface CSSImportRule : CSSRule {
     readonly attribute USVString href;
     [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
-    [SameObject] readonly attribute CSSStyleSheet styleSheet;
+    [SameObject] readonly attribute CSSStyleSheet? styleSheet;
     readonly attribute CSSOMString? layerName;
 };
 

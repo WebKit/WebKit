@@ -18,6 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://drafts.csswg.org/cssom/#the-cssstyledeclaration-interface
+
 typedef USVString CSSOMString;
 
 [

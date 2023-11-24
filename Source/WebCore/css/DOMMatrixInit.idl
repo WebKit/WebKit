@@ -23,6 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.fxtf.org/geometry/#dictdef-dommatrixinit
+
 dictionary DOMMatrixInit : DOMMatrix2DInit {
     unrestricted double m13 = 0;
     unrestricted double m14 = 0;

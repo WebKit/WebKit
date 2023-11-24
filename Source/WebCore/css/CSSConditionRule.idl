@@ -27,10 +27,14 @@
  * SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/css-conditional-3/#cssconditionrule
+
 typedef USVString CSSOMString;
 
 [
     Exposed=Window
 ] interface CSSConditionRule : CSSGroupingRule {
+    // FIXME: Remove 'readonly' to align with web specification.
+    // https://bugs.webkit.org/show_bug.cgi?id=265328
     readonly attribute CSSOMString conditionText;
 };

@@ -23,6 +23,8 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+// https://drafts.css-houdini.org/css-properties-values-api/#registering-custom-properties
+
 [
     JSGenerateToJSObject,
     EnabledBySetting=CSSCustomPropertiesAndValuesEnabled

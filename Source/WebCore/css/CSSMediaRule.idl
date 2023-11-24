@@ -18,6 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://drafts.csswg.org/css-conditional-3/#cssmediarule
+
 [
     Exposed=Window
 ] interface CSSMediaRule : CSSConditionRule {

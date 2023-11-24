@@ -26,13 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/css-animations/#csskeyframerule
+
 // Introduced in DOM Level ?:
 [
     Exposed=Window
 ] interface CSSKeyframeRule : CSSRule {
-
     attribute DOMString keyText;
-    [PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
+    [SameObject, PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 
 };
 

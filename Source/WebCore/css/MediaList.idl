@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://drafts.csswg.org/cssom/#the-medialist-interface
+
 [
     ExportToWrappedFunction,
     Exposed=Window,
@@ -31,9 +33,7 @@
 ] interface MediaList {
     stringifier attribute [LegacyNullToEmptyString] DOMString mediaText;
     readonly attribute unsigned long length;
-
     getter DOMString? item(unsigned long index);
-
-    undefined deleteMedium(DOMString oldMedium);
-    undefined appendMedium(DOMString newMedium);
+    undefined deleteMedium(DOMString medium);
+    undefined appendMedium(DOMString medium);
 };

@@ -17,6 +17,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://drafts.csswg.org/css-fonts/#cssfontpalettevaluesrule
+
 typedef USVString CSSOMString;
 
 [

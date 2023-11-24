@@ -28,6 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/css-conditional-3/#the-csssupportsrule-interface
+
 [
     Exposed=Window
 ] interface CSSSupportsRule : CSSConditionRule {

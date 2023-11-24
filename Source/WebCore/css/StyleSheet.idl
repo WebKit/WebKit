@@ -18,6 +18,8 @@
  * Boston, MA 02110-1301, USA.
  */
 
+// https://drafts.csswg.org/cssom/#the-stylesheet-interface
+
 [
     CustomToJSObject,
     ExportToWrappedFunction,
@@ -26,11 +28,12 @@
     JSCustomHeader,
     JSCustomMarkFunction,
 ] interface StyleSheet {
-    readonly attribute DOMString? type;
-    attribute boolean disabled;
-    readonly attribute Node ownerNode;
-    readonly attribute StyleSheet parentStyleSheet;
-    readonly attribute DOMString? href;
+    readonly attribute DOMString type;
+    readonly attribute USVString? href;
+    // FIXME: Update 'ownerNode' to have (Element or ProcessingInstruction)? as per web specification.
+    readonly attribute Node? ownerNode;
+    readonly attribute StyleSheet? parentStyleSheet;
     readonly attribute DOMString? title;
     [SameObject, PutForwards=mediaText] readonly attribute MediaList media;
+    attribute boolean disabled;
 };

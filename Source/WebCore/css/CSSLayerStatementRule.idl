@@ -27,6 +27,8 @@
  * SUCH DAMAGE.
  */
 
+// https://drafts.csswg.org/css-cascade-5/#csslayerstatementrule
+
 typedef USVString CSSOMString;
 
 [
