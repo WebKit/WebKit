@@ -58,6 +58,7 @@
 #include "RenderBox.h"
 #include "RenderStyleSetters.h"
 #include "SVGRenderStyle.h"
+#include "ScopedName.h"
 #include "ScrollbarGutter.h"
 #include "Settings.h"
 #include "StyleCachedImage.h"
@@ -3929,7 +3930,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new DiscreteSVGPropertyWrapper<const String&>(CSSPropertyMarkerMid, &SVGRenderStyle::markerMidResource, &SVGRenderStyle::setMarkerMidResource),
         new DiscreteSVGPropertyWrapper<const String&>(CSSPropertyMarkerStart, &SVGRenderStyle::markerStartResource, &SVGRenderStyle::setMarkerStartResource),
         new DiscretePropertyWrapper<const ScrollbarGutter>(CSSPropertyScrollbarGutter, &RenderStyle::scrollbarGutter, &RenderStyle::setScrollbarGutter),
-        new DiscretePropertyWrapper<ScrollbarWidth>(CSSPropertyScrollbarWidth, &RenderStyle::scrollbarWidth, &RenderStyle::setScrollbarWidth)
+        new DiscretePropertyWrapper<ScrollbarWidth>(CSSPropertyScrollbarWidth, &RenderStyle::scrollbarWidth, &RenderStyle::setScrollbarWidth),
+        new DiscretePropertyWrapper<std::optional<Style::ScopedName>>(CSSPropertyViewTransitionName, &RenderStyle::viewTransitionName, &RenderStyle::setViewTransitionName)
     };
     const unsigned animatableLonghandPropertiesCount = std::size(animatableLonghandPropertyWrappers);
 
@@ -4143,7 +4145,6 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         case CSSPropertyTransitionProperty:
         case CSSPropertyTransitionTimingFunction:
         case CSSPropertyUnicodeBidi:
-        case CSSPropertyViewTransitionName:
         case CSSPropertyWillChange:
 #if ENABLE(APPLE_PAY)
         case CSSPropertyApplePayButtonStyle:

@@ -1071,7 +1071,7 @@ public:
 
     inline MathStyle mathStyle() const;
 
-    inline const std::optional<Style::ScopedName>& viewTransitionName() const;
+    inline std::optional<Style::ScopedName> viewTransitionName() const;
 
     void setDisplay(DisplayType value)
     {

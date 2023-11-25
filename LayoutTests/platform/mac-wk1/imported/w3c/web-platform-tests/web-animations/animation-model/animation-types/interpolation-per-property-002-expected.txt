@@ -372,6 +372,10 @@ PASS vector-effect (type: discrete) has testInterpolation function
 PASS vector-effect uses discrete animation when animating between "none" and "non-scaling-stroke" with linear easing
 PASS vector-effect uses discrete animation when animating between "none" and "non-scaling-stroke" with effect easing
 PASS vector-effect uses discrete animation when animating between "none" and "non-scaling-stroke" with keyframe easing
+PASS view-transition-name (type: discrete) has testInterpolation function
+PASS view-transition-name uses discrete animation when animating between "none" and "header" with linear easing
+PASS view-transition-name uses discrete animation when animating between "none" and "header" with effect easing
+PASS view-transition-name uses discrete animation when animating between "none" and "header" with keyframe easing
 PASS visibility (type: visibility) has testInterpolation function
 PASS visibility uses visibility animation when animating from "visible" to "hidden"
 PASS visibility uses visibility animation when animating from "hidden" to "visible"

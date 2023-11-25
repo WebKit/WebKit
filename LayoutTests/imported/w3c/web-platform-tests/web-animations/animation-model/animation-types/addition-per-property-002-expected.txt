@@ -300,6 +300,9 @@ PASS scale
 PASS vector-effect (type: discrete) has testAddition function
 PASS vector-effect: "non-scaling-stroke" onto "none"
 PASS vector-effect: "none" onto "non-scaling-stroke"
+PASS view-transition-name (type: discrete) has testAddition function
+PASS view-transition-name: "header" onto "none"
+PASS view-transition-name: "none" onto "header"
 PASS visibility (type: visibility) has testAddition function
 PASS visibility: onto "visible"
 PASS visibility: onto "hidden"

@@ -1917,6 +1917,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyOverflowAnchor);
         if (first.hasClip != second.hasClip)
             changingProperties.m_properties.set(CSSPropertyClip);
+        if (first.viewTransitionName != second.viewTransitionName)
+            changingProperties.m_properties.set(CSSPropertyViewTransitionName);
 
         // Non animated styles are followings.
         // customProperties
