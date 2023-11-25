@@ -233,7 +233,7 @@ void RuleSetBuilder::addRulesFromSheetContents(const StyleSheetContents& sheet)
 void RuleSetBuilder::resolveSelectorListWithNesting(StyleRuleWithNesting& rule)
 {
     const CSSSelectorList* parentResolvedSelectorList = nullptr;
-    if (m_styleRuleStack.size()) 
+    if (m_styleRuleStack.size())
         parentResolvedSelectorList =  m_styleRuleStack.last();
 
     // If it's a top-level rule without a nesting parent selector, keep the selector list as is.
@@ -241,7 +241,7 @@ void RuleSetBuilder::resolveSelectorListWithNesting(StyleRuleWithNesting& rule)
         return;
 
     auto resolvedSelectorList = CSSSelectorParser::resolveNestingParent(rule.originalSelectorList(), parentResolvedSelectorList);
-    rule.wrapperAdoptSelectorList(WTFMove(resolvedSelectorList));    
+    rule.wrapperAdoptSelectorList(WTFMove(resolvedSelectorList));
 }
 
 void RuleSetBuilder::addStyleRuleWithSelectorList(const CSSSelectorList& selectorList, const StyleRule& rule)
@@ -264,7 +264,7 @@ void RuleSetBuilder::addStyleRule(StyleRuleWithNesting& rule)
 
     auto& selectorList = rule.selectorList();
     addStyleRuleWithSelectorList(selectorList, rule);
-    
+
     // Process nested rules
     m_styleRuleStack.append(&selectorList);
     for (auto& nestedRule : rule.nestedRules())

@@ -138,7 +138,8 @@ RubyFormattingContext::BaseLayoutResult RubyFormattingContext::layoutRubyBaseInl
     auto index = rubyBaseContentStartIndex;
     while (index < inlineItemList.size() && &inlineItemList[index].layoutBox() != &rubyBaseLayoutBox) {
         auto& rubyBaseContentItem = inlineItemList[index++];
-        line.append(rubyBaseContentItem, rubyBaseContentItem.style(), formattingUtils.inlineItemWidth(rubyBaseContentItem, line.contentLogicalRight(), { }));
+        auto logicalWidth = !rubyBaseContentItem.isOpaque() ? formattingUtils.inlineItemWidth(rubyBaseContentItem, line.contentLogicalRight(), { }) : InlineLayoutUnit();
+        line.append(rubyBaseContentItem, rubyBaseContentItem.style(), logicalWidth);
     }
     ASSERT(index < inlineItemList.size());
     auto logicalRightSpacing = InlineLayoutUnit { };
@@ -482,7 +483,7 @@ InlineLayoutUnit RubyFormattingContext::logicaWidthForRubyRange(WTF::Range<size_
                 auto logicalWidth = InlineLayoutUnit { };
                 for (; index < candidateRange.end(); ++index) {
                     auto& baseInlineItem = inlineItemList[index];
-                    logicalWidth += formattingUtils.inlineItemWidth(baseInlineItem, lineContentLogicalRight + logicalWidth, { });
+                    logicalWidth += !baseInlineItem.isOpaque() ? formattingUtils.inlineItemWidth(baseInlineItem, lineContentLogicalRight + logicalWidth, { }) : InlineLayoutUnit();
                     if (&baseInlineItem.layoutBox() == &rubyLayoutBox && baseInlineItem.isInlineBoxEnd()) {
                         // End of base.
                         ++index;

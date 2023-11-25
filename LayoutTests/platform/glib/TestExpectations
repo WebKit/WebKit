@@ -1170,11 +1170,8 @@ imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.worker.html?
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp3 [ Failure ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp3 [ Failure ]
 
-# Failing for unknown reasons, only in the SDK runtime. To be re-evaluated after updating to 23.08.
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?adts_aac [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp4_aac [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?adts_aac [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp4_aac [ Failure ]
+# A bit flaky on Debug bot.
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp4_aac [ Pass Failure ]
 
 imported/w3c/web-platform-tests/webcodecs/audio-data-serialization.any.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audio-data.any.html [ Pass ]

@@ -38,6 +38,7 @@
 #include "SVGPolylineElement.h"
 #include "SVGRectElement.h"
 #include "SVGRenderStyle.h"
+#include "SVGUseElement.h"
 #include <wtf/HashMap.h>
 
 namespace WebCore {
@@ -183,6 +184,25 @@ static Path pathFromRectElement(const SVGElement& element)
     return path;
 }
 
+static Path pathFromUseElement(const SVGElement& element)
+{
+    const auto& useElement = downcast<SVGUseElement>(element);
+
+    RefPtr clipChildElement = useElement.clipChild();
+    if (!clipChildElement)
+        return { };
+
+    SVGLengthContext lengthContext(&element);
+    auto x = useElement.x().value(lengthContext);
+    auto y = useElement.y().value(lengthContext);
+
+    auto path = pathFromGraphicsElement(*clipChildElement.get());
+    if (x || y)
+        path.translate(FloatSize(x, y));
+
+    return path;
+}
+
 Path pathFromGraphicsElement(const SVGElement& element)
 {
     switch (element.tagQName().nodeName()) {
@@ -200,6 +220,8 @@ Path pathFromGraphicsElement(const SVGElement& element)
         return pathFromPolylineElement(element);
     case ElementNames::SVG::rect:
         return pathFromRectElement(element);
+    case ElementNames::SVG::use:
+        return pathFromUseElement(element);
     default:
         break;
     }

@@ -31,6 +31,7 @@
 #include "RenderStyleInlines.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
+#include "SVGUseElement.h"
 #include "StyleResolver.h"
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/NeverDestroyed.h>
@@ -102,6 +103,17 @@ SVGGraphicsElement* SVGClipPathElement::shouldApplyPathClipping() const
     if (renderer() && renderer()->style().clipPath())
         return nullptr;
 
+    auto rendererRequiresMaskClipping = [](const RenderObject& renderer) -> bool {
+        // Only shapes or paths are supported for direct clipping. We need to fall back to masking for texts.
+        if (is<RenderSVGText>(renderer))
+            return true;
+        auto& style = renderer.style();
+        if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
+            return false;
+        // Current shape in clip-path gets clipped too. Fall back to masking.
+        return style.clipPath();
+    };
+
     SVGGraphicsElement* useGraphicsElement = nullptr;
 
     // If clip-path only contains one visible shape or path, we can use path-based clipping. Invisible
@@ -109,24 +121,26 @@ SVGGraphicsElement* SVGClipPathElement::shouldApplyPathClipping() const
     // visible shape, the additive clipping may not work, caused by the clipRule. EvenOdd
     // as well as NonZero can cause self-clipping of the elements.
     // See also http://www.w3.org/TR/SVG/painting.html#FillRuleProperty
-    for (Node* childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
-        auto* renderer = childNode->renderer();
+    for (auto* childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
+        auto* graphicsElement = dynamicDowncast<SVGGraphicsElement>(*childNode);
+        if (!graphicsElement)
+            continue;
+        auto* renderer = graphicsElement->renderer();
         if (!renderer)
             continue;
-        // Only shapes or paths are supported for direct clipping. We need to fall back to masking for texts.
-        if (is<RenderSVGText>(renderer))
-            return nullptr;
-        if (!is<SVGGraphicsElement>(*childNode))
-            continue;
-        auto& style = renderer->style();
-        if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
-            continue;
-        // Current shape in clip-path gets clipped too. Fall back to masking.
-        if (style.clipPath())
+        if (rendererRequiresMaskClipping(*renderer))
             return nullptr;
         // Fallback to masking, if there is more than one clipping path.
         if (useGraphicsElement)
             return nullptr;
+
+        // For <use> elements, delegate the decision whether to use mask clipping or not to the referenced element.
+        if (auto* useElement = dynamicDowncast<SVGUseElement>(graphicsElement)) {
+            auto* clipChildRenderer = useElement->rendererClipChild();
+            if (clipChildRenderer && rendererRequiresMaskClipping(*clipChildRenderer))
+                return nullptr;
+        }
+
         useGraphicsElement = downcast<SVGGraphicsElement>(childNode);
     }
 

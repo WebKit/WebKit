@@ -1,18 +1,18 @@
 
-FAIL e.style['scroll-timeline'] = "none block" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['scroll-timeline'] = "none inline" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['scroll-timeline'] = "--abc x" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['scroll-timeline'] = "--abc inline" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['scroll-timeline'] = "--aBc inline" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['scroll-timeline'] = "--inline inline" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['scroll-timeline'] = "--abc" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['scroll-timeline'] = "--inline block" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['scroll-timeline'] = "--block block" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['scroll-timeline'] = "--y block" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['scroll-timeline'] = "--x block" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['scroll-timeline'] = "--a, --b, --c" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['scroll-timeline'] = "--a inline, --b block, --c y" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['scroll-timeline'] = "--auto" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['scroll-timeline'] = "none block" should set the property value
+PASS e.style['scroll-timeline'] = "none inline" should set the property value
+PASS e.style['scroll-timeline'] = "--abc x" should set the property value
+PASS e.style['scroll-timeline'] = "--abc inline" should set the property value
+PASS e.style['scroll-timeline'] = "--aBc inline" should set the property value
+PASS e.style['scroll-timeline'] = "--inline inline" should set the property value
+PASS e.style['scroll-timeline'] = "--abc" should set the property value
+PASS e.style['scroll-timeline'] = "--inline block" should set the property value
+PASS e.style['scroll-timeline'] = "--block block" should set the property value
+PASS e.style['scroll-timeline'] = "--y block" should set the property value
+PASS e.style['scroll-timeline'] = "--x block" should set the property value
+PASS e.style['scroll-timeline'] = "--a, --b, --c" should set the property value
+PASS e.style['scroll-timeline'] = "--a inline, --b block, --c y" should set the property value
+PASS e.style['scroll-timeline'] = "--auto" should set the property value
 PASS e.style['scroll-timeline'] = "" should not set the property value
 PASS e.style['scroll-timeline'] = "--abc --abc" should not set the property value
 PASS e.style['scroll-timeline'] = "block none" should not set the property value
@@ -20,33 +20,33 @@ PASS e.style['scroll-timeline'] = "inline --abc" should not set the property val
 PASS e.style['scroll-timeline'] = "default" should not set the property value
 PASS e.style['scroll-timeline'] = "," should not set the property value
 PASS e.style['scroll-timeline'] = ",,block,," should not set the property value
-FAIL Property scroll-timeline value 'none block' assert_true: scroll-timeline doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-timeline value '--abc inline' assert_true: scroll-timeline doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-timeline value 'none y' assert_true: scroll-timeline doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-timeline value '--abc x' assert_true: scroll-timeline doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-timeline value '--y y' assert_true: scroll-timeline doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-timeline value '--abc' assert_true: scroll-timeline doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-timeline value '--inline block' assert_true: scroll-timeline doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-timeline value '--block block' assert_true: scroll-timeline doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-timeline value '--y block' assert_true: scroll-timeline doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-timeline value '--x block' assert_true: scroll-timeline doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-timeline value '--a, --b, --c' assert_true: scroll-timeline doesn't seem to be supported in the computed style expected true got false
-FAIL Property scroll-timeline value '--a inline, --b block, --c y' assert_true: scroll-timeline doesn't seem to be supported in the computed style expected true got false
-FAIL e.style['scroll-timeline'] = "--abc y" should set scroll-timeline-axis assert_equals: scroll-timeline-axis should be canonical expected (string) "y" but got (undefined) undefined
-FAIL e.style['scroll-timeline'] = "--abc y" should set scroll-timeline-name assert_equals: scroll-timeline-name should be canonical expected (string) "--abc" but got (undefined) undefined
-FAIL e.style['scroll-timeline'] = "--abc y" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['scroll-timeline'] = "--inline x" should set scroll-timeline-axis assert_equals: scroll-timeline-axis should be canonical expected (string) "x" but got (undefined) undefined
-FAIL e.style['scroll-timeline'] = "--inline x" should set scroll-timeline-name assert_equals: scroll-timeline-name should be canonical expected (string) "--inline" but got (undefined) undefined
-FAIL e.style['scroll-timeline'] = "--inline x" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['scroll-timeline'] = "--abc y, --def" should set scroll-timeline-axis assert_equals: scroll-timeline-axis should be canonical expected (string) "y, block" but got (undefined) undefined
-FAIL e.style['scroll-timeline'] = "--abc y, --def" should set scroll-timeline-name assert_equals: scroll-timeline-name should be canonical expected (string) "--abc, --def" but got (undefined) undefined
-FAIL e.style['scroll-timeline'] = "--abc y, --def" should not set unrelated longhands assert_true: expected true got false
-FAIL e.style['scroll-timeline'] = "--abc, --def" should set scroll-timeline-axis assert_equals: scroll-timeline-axis should be canonical expected (string) "block, block" but got (undefined) undefined
-FAIL e.style['scroll-timeline'] = "--abc, --def" should set scroll-timeline-name assert_equals: scroll-timeline-name should be canonical expected (string) "--abc, --def" but got (undefined) undefined
-FAIL e.style['scroll-timeline'] = "--abc, --def" should not set unrelated longhands assert_true: expected true got false
-FAIL Shorthand contraction of scroll-timeline-name:--abc:undefined;scroll-timeline-axis:inline:undefined assert_equals: Declared value expected "--abc inline" but got ""
-FAIL Shorthand contraction of scroll-timeline-name:--a, --b:undefined;scroll-timeline-axis:inline, block:undefined assert_equals: Declared value expected "--a inline, --b" but got ""
-FAIL Shorthand contraction of scroll-timeline-name:none, none:undefined;scroll-timeline-axis:block, block:undefined assert_equals: Declared value expected "none, none" but got ""
-PASS Shorthand contraction of scroll-timeline-name:--a, --b, --c:undefined;scroll-timeline-axis:inline, inline:undefined
-PASS Shorthand contraction of scroll-timeline-name:--a, --b:undefined;scroll-timeline-axis:inline, inline, inline:undefined
+PASS Property scroll-timeline value 'none block'
+PASS Property scroll-timeline value '--abc inline'
+PASS Property scroll-timeline value 'none y'
+PASS Property scroll-timeline value '--abc x'
+PASS Property scroll-timeline value '--y y'
+PASS Property scroll-timeline value '--abc'
+PASS Property scroll-timeline value '--inline block'
+PASS Property scroll-timeline value '--block block'
+PASS Property scroll-timeline value '--y block'
+PASS Property scroll-timeline value '--x block'
+PASS Property scroll-timeline value '--a, --b, --c'
+PASS Property scroll-timeline value '--a inline, --b block, --c y'
+PASS e.style['scroll-timeline'] = "--abc y" should set scroll-timeline-axis
+PASS e.style['scroll-timeline'] = "--abc y" should set scroll-timeline-name
+PASS e.style['scroll-timeline'] = "--abc y" should not set unrelated longhands
+PASS e.style['scroll-timeline'] = "--inline x" should set scroll-timeline-axis
+PASS e.style['scroll-timeline'] = "--inline x" should set scroll-timeline-name
+PASS e.style['scroll-timeline'] = "--inline x" should not set unrelated longhands
+PASS e.style['scroll-timeline'] = "--abc y, --def" should set scroll-timeline-axis
+PASS e.style['scroll-timeline'] = "--abc y, --def" should set scroll-timeline-name
+PASS e.style['scroll-timeline'] = "--abc y, --def" should not set unrelated longhands
+PASS e.style['scroll-timeline'] = "--abc, --def" should set scroll-timeline-axis
+PASS e.style['scroll-timeline'] = "--abc, --def" should set scroll-timeline-name
+PASS e.style['scroll-timeline'] = "--abc, --def" should not set unrelated longhands
+PASS Shorthand contraction of scroll-timeline-name:--abc:undefined;scroll-timeline-axis:inline:undefined
+PASS Shorthand contraction of scroll-timeline-name:--a, --b:undefined;scroll-timeline-axis:inline, block:undefined
+PASS Shorthand contraction of scroll-timeline-name:none, none:undefined;scroll-timeline-axis:block, block:undefined
+FAIL Shorthand contraction of scroll-timeline-name:--a, --b, --c:undefined;scroll-timeline-axis:inline, inline:undefined assert_equals: Declared value expected "" but got "--a inline, --b inline, --c"
+FAIL Shorthand contraction of scroll-timeline-name:--a, --b:undefined;scroll-timeline-axis:inline, inline, inline:undefined assert_equals: Declared value expected "" but got "--a inline, --b inline, none inline"
 

@@ -193,9 +193,9 @@ public:
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMediaStream; };
 
-    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
+    Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
     {
-        return makeUnique<MediaPlayerPrivateMediaStreamAVFObjC>(player);
+        return adoptRef(*new MediaPlayerPrivateMediaStreamAVFObjC(player));
     }
 
     void getSupportedTypes(HashSet<String>& types) const final

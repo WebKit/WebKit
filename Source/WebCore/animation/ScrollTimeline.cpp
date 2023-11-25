@@ -35,9 +35,20 @@ Ref<ScrollTimeline> ScrollTimeline::create(ScrollTimelineOptions&& options)
     return adoptRef(*new ScrollTimeline(WTFMove(options)));
 }
 
+Ref<ScrollTimeline> ScrollTimeline::create(const AtomString& name, ScrollAxis axis)
+{
+    return adoptRef(*new ScrollTimeline(name, axis));
+}
+
 ScrollTimeline::ScrollTimeline(ScrollTimelineOptions&& options)
     : m_source(WTFMove(options.source))
     , m_axis(options.axis)
+{
+}
+
+ScrollTimeline::ScrollTimeline(const AtomString& name, ScrollAxis axis)
+    : m_axis(axis)
+    , m_name(name)
 {
 }
 

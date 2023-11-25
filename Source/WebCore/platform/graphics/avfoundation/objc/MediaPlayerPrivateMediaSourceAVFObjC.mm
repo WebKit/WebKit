@@ -216,9 +216,9 @@ public:
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMSE; };
 
-    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
+    Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
     {
-        return makeUnique<MediaPlayerPrivateMediaSourceAVFObjC>(player);
+        return adoptRef(*new MediaPlayerPrivateMediaSourceAVFObjC(player));
     }
 
     void getSupportedTypes(HashSet<String>& types) const final
@@ -554,7 +554,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
     m_lastSeekTime = pendingSeek.time;
 
     m_seekState = Seeking;
-    m_mediaSourcePrivate->waitForTarget(pendingSeek)->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { this }] (auto&& result) {
+    m_mediaSourcePrivate->waitForTarget(pendingSeek)->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { *this }] (auto&& result) mutable {
         if (!weakThis)
             return;
         if (m_seekState != Seeking || !result) {
@@ -580,10 +580,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
         m_mediaSourcePrivate->willSeek();
         [m_synchronizer setRate:0 time:PAL::toCMTime(seekedTime)];
 
-        m_mediaSourcePrivate->seekToTime(seekedTime)->whenSettled(RunLoop::current(), [this, weakThis] {
-            if (!weakThis)
-                return;
-            maybeCompleteSeek();
+        m_mediaSourcePrivate->seekToTime(seekedTime)->whenSettled(RunLoop::current(), [this, weakThis = WTFMove(weakThis)]() mutable {
+            if (weakThis)
+                maybeCompleteSeek();
         });
     });
 }
@@ -1135,7 +1134,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::sizeWillChangeAtTime(const MediaTime&
 {
     auto weakThis = m_sizeChangeObserverWeakPtrFactory.createWeakPtr(*this);
     NSArray* times = @[[NSValue valueWithCMTime:PAL::toCMTime(time)]];
-    RetainPtr<id> observer = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[this, weakThis, size] {
+    RetainPtr<id> observer = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[this, weakThis = WTFMove(weakThis), size] {
         if (!weakThis)
             return;
 

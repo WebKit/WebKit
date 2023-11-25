@@ -71,12 +71,16 @@ class WebCoreDecompressionSession;
 
 class MediaPlayerPrivateWebM
     : public MediaPlayerPrivateInterface
+    , public RefCounted<MediaPlayerPrivateWebM>
     , public WebMResourceClientParent
     , private LoggerHelper {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     MediaPlayerPrivateWebM(MediaPlayer*);
     ~MediaPlayerPrivateWebM();
+
+    void ref() final { RefCounted::ref(); }
+    void deref() final { RefCounted::deref(); }
 
     static void registerMediaEngine(MediaEngineRegistrar);
 private:
@@ -209,6 +213,7 @@ private:
     using InitializationSegment = SourceBufferParserWebM::InitializationSegment;
     void didParseInitializationData(InitializationSegment&&);
     void didProvideMediaDataForTrackId(Ref<MediaSampleAVFObjC>&&, uint64_t trackId, const String& mediaType);
+    void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t);
 
     void append(SharedBuffer&);
 

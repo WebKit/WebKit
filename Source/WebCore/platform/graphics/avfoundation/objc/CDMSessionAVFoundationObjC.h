@@ -62,7 +62,7 @@ private:
     WTFLogChannel& logChannel() const;
 #endif
 
-    WeakPtr<MediaPlayerPrivateAVFoundationObjC> m_parent;
+    ThreadSafeWeakPtr<MediaPlayerPrivateAVFoundationObjC> m_parent;
     WeakPtr<LegacyCDMSessionClient> m_client;
     String m_sessionId;
     RetainPtr<AVAssetResourceLoadingRequest> m_request;

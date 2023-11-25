@@ -42,17 +42,25 @@
 
 #include <wtf/Deque.h>
 #include <wtf/Lock.h>
+#include <wtf/RefCounted.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/win/Win32Handle.h>
 
 namespace WebCore {
 
-class MediaPlayerPrivateMediaFoundation final : public MediaPlayerPrivateInterface, public CanMakeWeakPtr<MediaPlayerPrivateMediaFoundation> {
+class MediaPlayerPrivateMediaFoundation final
+    : public MediaPlayerPrivateInterface
+    , public CanMakeWeakPtr<MediaPlayerPrivateMediaFoundation>
+    , public RefCounted<MediaPlayerPrivateMediaFoundation> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     explicit MediaPlayerPrivateMediaFoundation(MediaPlayer*);
     ~MediaPlayerPrivateMediaFoundation();
+
+    void ref() final { RefCounted::ref(); }
+    void deref() final { RefCounted::deref(); }
+
     static void registerMediaEngine(MediaEngineRegistrar);
 
     static void getSupportedTypes(HashSet<String>& types);

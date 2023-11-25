@@ -73,7 +73,7 @@ public:
 
 private:
     RemoteMediaPlayerManager();
-    std::unique_ptr<WebCore::MediaPlayerPrivateInterface> createRemoteMediaPlayer(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
+    Ref<WebCore::MediaPlayerPrivateInterface> createRemoteMediaPlayer(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
 
     // GPUProcessConnection::Client
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;

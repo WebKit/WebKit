@@ -44,7 +44,7 @@ class MediaPlayerFactoryMediaSourceMock final : public MediaPlayerFactory {
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::MockMSE; };
 
-    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final { return makeUnique<MockMediaPlayerMediaSource>(player); }
+    Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final { return adoptRef(*new MockMediaPlayerMediaSource(player)); }
 
     void getSupportedTypes(HashSet<String>& types) const final
     {
@@ -121,10 +121,8 @@ void MockMediaPlayerMediaSource::cancelLoad()
 void MockMediaPlayerMediaSource::play()
 {
     m_playing = 1;
-    callOnMainThread([this, weakThis = WeakPtr { *this }] {
-        if (!weakThis)
-            return;
-        advanceCurrentTime();
+    callOnMainThread([protectedThis = Ref { *this }] {
+        protectedThis->advanceCurrentTime();
     });
 }
 
@@ -224,7 +222,8 @@ void MockMediaPlayerMediaSource::seekToTarget(const SeekTarget& target)
             return;
 
         m_mediaSourcePrivate->seekToTime(*result)->whenSettled(RunLoop::current(), [this, weakThis, seekTime = *result] {
-            if (!weakThis)
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
             m_seekCompleted = true;
             m_currentTime = seekTime;
@@ -235,9 +234,7 @@ void MockMediaPlayerMediaSource::seekToTarget(const SeekTarget& target)
             }
 
             if (m_playing) {
-                callOnMainThread([this, weakThis = WeakPtr { *this }] {
-                    if (!weakThis)
-                        return;
+                callOnMainThread([this, protectedThis = WTFMove(protectedThis)] {
                     advanceCurrentTime();
                 });
             }

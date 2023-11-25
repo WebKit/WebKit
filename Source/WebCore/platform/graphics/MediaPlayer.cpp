@@ -102,9 +102,12 @@ namespace WebCore {
 
 // a null player to make MediaPlayer logic simpler
 
-class NullMediaPlayerPrivate final : public MediaPlayerPrivateInterface {
+class NullMediaPlayerPrivate final : public MediaPlayerPrivateInterface, public RefCounted<NullMediaPlayerPrivate> {
 public:
-    explicit NullMediaPlayerPrivate(MediaPlayer*) { }
+    static Ref<NullMediaPlayerPrivate> create(MediaPlayer& player) { return adoptRef(*new NullMediaPlayerPrivate(player)); }
+
+    void ref() final { RefCounted<NullMediaPlayerPrivate>::ref(); }
+    void deref() final { RefCounted<NullMediaPlayerPrivate>::deref(); }
 
     void load(const String&) final { }
 #if ENABLE(MEDIA_SOURCE)
@@ -163,6 +166,8 @@ public:
 
     void paint(GraphicsContext&, const FloatRect&) final { }
     DestinationColorSpace colorSpace() final { return DestinationColorSpace::SRGB(); }
+private:
+    explicit NullMediaPlayerPrivate(MediaPlayer&) { }
 };
 
 #if !RELEASE_LOG_DISABLED
@@ -454,7 +459,7 @@ Ref<MediaPlayer> MediaPlayer::create(MediaPlayerClient& client, MediaPlayerEnums
 MediaPlayer::MediaPlayer(MediaPlayerClient& client)
     : m_client(client)
     , m_reloadTimer(*this, &MediaPlayer::reloadTimerFired)
-    , m_private(makeUnique<NullMediaPlayerPrivate>(this))
+    , m_private(NullMediaPlayerPrivate::create(*this))
     , m_preferredDynamicRangeMode(DynamicRangeMode::Standard)
 {
 }
@@ -462,7 +467,7 @@ MediaPlayer::MediaPlayer(MediaPlayerClient& client)
 MediaPlayer::MediaPlayer(MediaPlayerClient& client, MediaPlayerEnums::MediaEngineIdentifier mediaEngineIdentifier)
     : m_client(client)
     , m_reloadTimer(*this, &MediaPlayer::reloadTimerFired)
-    , m_private(makeUnique<NullMediaPlayerPrivate>(this))
+    , m_private(NullMediaPlayerPrivate::create(*this))
     , m_activeEngineIdentifier(mediaEngineIdentifier)
     , m_preferredDynamicRangeMode(DynamicRangeMode::Standard)
 {
@@ -651,7 +656,7 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
 #endif
         m_private->load(m_url, m_contentMIMETypeWasInferredFromExtension ? ContentType() : m_contentType, m_keySystem);
     } else {
-        m_private = makeUnique<NullMediaPlayerPrivate>(this);
+        m_private = NullMediaPlayerPrivate::create(*this);
         if (!m_activeEngineIdentifier
             && installedMediaEngines().size() > 1
             && (nextBestMediaEngine(m_currentMediaEngine) || nextMediaEngine(m_currentMediaEngine)))

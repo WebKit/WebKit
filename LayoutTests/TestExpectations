@@ -6856,13 +6856,9 @@ imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-s
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-sticky-inline.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-subject-size-changes.html [ Skip ]
 
-
-
-
 # webkit.org/b/229520 CSS @scope unimplemented
-imported/w3c/web-platform-tests/css/css-cascade/import-conditional-002.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-cascade/scope-visited.html [ Skip ]
-
+imported/w3c/web-platform-tests/css/css-cascade/import-conditional-002.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-cascade/scope-visited.html [ ImageOnlyFailure ]
 
 # other scroll-animations failures
 webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-none.html [ Failure ]
@@ -6903,9 +6899,6 @@ imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-on-synthetic-event.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-without-intercept.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/no-args.html [ Pass ]
-
-# @scope is not yet fully implemented
-fast/css/scope-at-rule.html [ ImageOnlyFailure ]
 
 # View Transitions
 imported/w3c/web-platform-tests/css/css-view-transitions/3d-transform-incoming.html [ ImageOnlyFailure ]

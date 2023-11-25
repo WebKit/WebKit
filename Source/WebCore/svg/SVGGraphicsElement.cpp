@@ -207,7 +207,10 @@ void SVGGraphicsElement::didAttachRenderers()
 
 Path SVGGraphicsElement::toClipPath()
 {
-    // FIXME: [LBSE] Stop mutating the path here and stop calling animatedLocalTransform().
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    RELEASE_ASSERT(!document().settings().layerBasedSVGEngineEnabled());
+#endif
+
     Path path = pathFromGraphicsElement(*this);
     // FIXME: How do we know the element has done a layout?
     path.transform(animatedLocalTransform());

@@ -1,5 +1,5 @@
 
-PASS Nesting-selector in <scope-end>
+FAIL Nesting-selector in <scope-end> assert_equals: expected "auto" but got "1"
 FAIL Implicit :scope in <scope-end> assert_equals: expected "1" but got "auto"
 FAIL Relative selectors in <scope-end> assert_equals: expected "1" but got "auto"
 FAIL Nesting-selector in the scope's <stylesheet> assert_equals: expected "1" but got "auto"

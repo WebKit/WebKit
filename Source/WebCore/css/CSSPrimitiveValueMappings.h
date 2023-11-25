@@ -41,6 +41,7 @@
 #include "ListStyleType.h"
 #include "RenderStyleConstants.h"
 #include "SVGRenderStyleDefs.h"
+#include "ScrollAxis.h"
 #include "ScrollTypes.h"
 #include "TextFlags.h"
 #include "ThemeTypes.h"
@@ -2489,6 +2490,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 
 #define TYPE ContentVisibility
 #define FOR_EACH(CASE) CASE(Visible) CASE(Hidden) CASE(Auto)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
+#define TYPE ScrollAxis
+#define FOR_EACH(CASE) CASE(Block) CASE(Inline) CASE(X) CASE(Y)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

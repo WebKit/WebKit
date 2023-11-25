@@ -431,7 +431,7 @@ void ElementRuleCollector::matchUARules()
 void ElementRuleCollector::matchUARules(const RuleSet& rules)
 {
     clearMatchedRules();
-    
+
     collectMatchingRules(MatchRequest(rules));
 
     sortAndTransferMatchedRules(DeclarationOrigin::UserAgent);
@@ -493,7 +493,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     context.nameIdentifier = m_pseudoElementRequest.nameIdentifier;
     context.styleScopeOrdinal = styleScopeOrdinal;
     context.selectorMatchingState = m_selectorMatchingState;
-    
+
     bool selectorMatches;
 #if ENABLE(CSS_SELECTOR_JIT)
     if (compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext) {
@@ -584,14 +584,59 @@ bool ElementRuleCollector::containerQueriesMatch(const RuleData& ruleData, const
 
 bool ElementRuleCollector::scopeRulesMatch(const RuleData& ruleData, const MatchRequest& matchRequest)
 {
-    auto queries = matchRequest.ruleSet.scopeRulesFor(ruleData);
+    auto scopeRules = matchRequest.ruleSet.scopeRulesFor(ruleData);
 
-    if (queries.isEmpty())
+    if (scopeRules.isEmpty())
         return true;
 
-    // FIXME: to implement
-    // https://bugs.webkit.org/show_bug.cgi?id=265241
-    return false;
+    SelectorChecker checker(element().rootElement()->document());
+    SelectorChecker::CheckingContext context(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
+
+    auto isWithinScope = [&](auto& rule) {
+        const Element* scopingRoot = nullptr;
+
+        auto ancestorsMatch = [&](const auto& selectorList) {
+            const auto* ancestor = element().parentElement();
+            while (ancestor) {
+                if (ancestor == scopingRoot) {
+                    // The end of the scope has to be a descendant of the start of the scope.
+                    return false;
+                }
+                for (const auto* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
+                    auto match = checker.match(*selector, *ancestor, context);
+                    if (match) {
+                        scopingRoot = ancestor;
+                        return true;
+                    }
+                }
+                ancestor = ancestor->parentElement();
+            }
+            return false;
+        };
+
+        const auto& scopeStart = rule->scopeStart();
+        if (!scopeStart.isEmpty()) {
+            if (!ancestorsMatch(scopeStart))
+                return false;
+        }
+
+        const auto& scopeEnd = rule->scopeEnd();
+        if (!scopeEnd.isEmpty()) {
+            if (ancestorsMatch(scopeEnd))
+                return false;
+        }
+
+        // element is in the @scope donut
+        return true;
+    };
+
+    // We need to respect each nested @scope to collect this rule
+    for (auto& rule : scopeRules) {
+        if (!isWithinScope(rule))
+            return false;
+    }
+
+    return true;
 }
 
 static inline bool compareRules(MatchedRule r1, MatchedRule r2)
@@ -638,7 +683,7 @@ void ElementRuleCollector::matchAllRules(bool matchAuthorAndUserStyles, bool inc
                 addMatchedProperties({ properties }, DeclarationOrigin::Author);
         }
     }
-    
+
     if (matchAuthorAndUserStyles) {
         clearMatchedRules();
 

@@ -34,6 +34,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RobinHoodHashMap.h>
 
 OBJC_CLASS AVSampleBufferDisplayLayer;
@@ -52,6 +53,7 @@ enum class VideoFrameRotation : uint16_t;
 
 class MediaPlayerPrivateMediaStreamAVFObjC final
     : public MediaPlayerPrivateInterface
+    , public RefCounted<MediaPlayerPrivateMediaStreamAVFObjC>
     , private MediaStreamPrivate::Observer
     , public MediaStreamTrackPrivate::Observer
     , public RealtimeMediaSource::VideoFrameObserver
@@ -61,6 +63,9 @@ class MediaPlayerPrivateMediaStreamAVFObjC final
 public:
     explicit MediaPlayerPrivateMediaStreamAVFObjC(MediaPlayer*);
     virtual ~MediaPlayerPrivateMediaStreamAVFObjC();
+
+    void ref() final { RefCounted::ref(); }
+    void deref() final { RefCounted::deref(); }
 
     static void registerMediaEngine(MediaEngineRegistrar);
 
