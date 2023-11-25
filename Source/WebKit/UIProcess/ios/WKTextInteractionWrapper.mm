@@ -40,6 +40,8 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
     RetainPtr<UIWKTextInteractionAssistant> _textInteractionAssistant;
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
     RetainPtr<UIAsyncTextInteraction> _asyncTextInteraction;
+    RetainPtr<NSTimer> _showEditMenuTimer;
+    BOOL _showEditMenuAfterNextSelectionChange;
 #endif
     BOOL _shouldRestoreEditMenuAfterOverflowScrolling;
 }
@@ -67,6 +69,7 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
 - (void)dealloc
 {
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    [self stopShowEditMenuTimer];
     if (_asyncTextInteraction)
         [_view removeInteraction:_asyncTextInteraction.get()];
 #endif
@@ -92,6 +95,8 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
     [_textInteractionAssistant deactivateSelection];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
     [_asyncTextInteraction textSelectionDisplayInteraction].activated = NO;
+    _showEditMenuAfterNextSelectionChange = NO;
+    [self stopShowEditMenuTimer];
 #endif
 }
 
@@ -100,6 +105,10 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
     [_textInteractionAssistant selectionChanged];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
     [_asyncTextInteraction selectionChanged];
+
+    [self stopShowEditMenuTimer];
+    if (std::exchange(_showEditMenuAfterNextSelectionChange, NO))
+        _showEditMenuTimer = [NSTimer scheduledTimerWithTimeInterval:0.2 target:self selector:@selector(showEditMenuTimerFired) userInfo:nil repeats:NO];
 #endif
 }
 
@@ -224,12 +233,33 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
 - (void)selectWord
 {
     [_textInteractionAssistant selectWord];
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    _showEditMenuAfterNextSelectionChange = YES;
+#endif
 }
 
 - (void)selectAll:(id)sender
 {
     [_textInteractionAssistant selectAll:sender];
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    _showEditMenuAfterNextSelectionChange = YES;
+#endif
 }
+
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+
+- (void)showEditMenuTimerFired
+{
+    [self stopShowEditMenuTimer];
+    [_asyncTextInteraction presentEditMenuForSelection];
+}
+
+- (void)stopShowEditMenuTimer
+{
+    [std::exchange(_showEditMenuTimer, nil) invalidate];
+}
+
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 #if USE(UICONTEXTMENU)
 
