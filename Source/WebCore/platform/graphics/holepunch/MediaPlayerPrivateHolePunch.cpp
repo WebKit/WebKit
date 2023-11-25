@@ -146,9 +146,9 @@ class MediaPlayerFactoryHolePunch final : public MediaPlayerFactory {
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::HolePunch; };
 
-    std::unique_ptr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
+    Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
     {
-        return makeUnique<MediaPlayerPrivateHolePunch>(player);
+        return adoptRef(*new MediaPlayerPrivateHolePunch(player));
     }
 
     void getSupportedTypes(HashSet<String>& types) const final

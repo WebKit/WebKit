@@ -831,7 +831,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeSelected(VideoTrackPrivate& track
         }
     }
 
-    if (auto* player = this->player())
+    if (RefPtr player = this->player())
         player->needsVideoLayerChanged();
 
     static_cast<MediaSourcePrivateAVFObjC*>(m_mediaSource.get())->hasSelectedVideoChanged(*this);
@@ -848,7 +848,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
         RetainPtr<AVSampleBufferAudioRenderer> renderer = m_audioRenderers.get(trackID);
 ALLOW_NEW_API_WITHOUT_GUARDS_END
         m_parser->setShouldProvideMediaDataForTrackID(false, trackID);
-        if (auto player = this->player())
+        if (RefPtr player = this->player())
             player->removeAudioRenderer(renderer.get());
     } else {
         m_parser->setShouldProvideMediaDataForTrackID(true, trackID);
@@ -862,7 +862,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 ERROR_LOG(LOGIDENTIFIER, "-[AVSampleBufferAudioRenderer init] returned nil! bailing!");
                 if (m_mediaSource)
                     static_cast<MediaSourcePrivateAVFObjC*>(m_mediaSource.get())->failedToCreateRenderer(MediaSourcePrivateAVFObjC::RendererType::Audio);
-                if (auto player = this->player())
+                if (RefPtr player = this->player())
                     player->setNetworkState(MediaPlayer::NetworkState::DecodeError);
                 return;
             }
@@ -882,7 +882,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         } else
             renderer = m_audioRenderers.get(trackID);
 
-        if (auto player = this->player())
+        if (RefPtr player = this->player())
             player->addAudioRenderer(renderer.get());
     }
 }
@@ -1138,7 +1138,7 @@ void SourceBufferPrivateAVFObjC::layerReadyForDisplayChanged(AVSampleBufferDispl
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (auto player = this->player())
+    if (RefPtr player = this->player())
         player->setHasAvailableVideoFrame(true);
 }
 
@@ -1168,7 +1168,7 @@ void SourceBufferPrivateAVFObjC::flushVideo()
 
     m_cachedSize = std::nullopt;
 
-    if (auto player = this->player()) {
+    if (RefPtr player = this->player()) {
         player->setHasAvailableVideoFrame(false);
         player->flushPendingSizeChanges();
     }
@@ -1180,7 +1180,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 {
     [renderer flush];
 
-    if (auto player = this->player())
+    if (RefPtr player = this->player())
         player->setHasAvailableAudioSample(renderer, false);
 }
 
@@ -1289,7 +1289,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
             return;
         }
 
-        auto player = this->player();
+        RefPtr player = this->player();
         FloatSize formatSize = FloatSize(PAL::CMVideoFormatDescriptionGetPresentationDimensions(formatDescription, true, true));
         if (!m_cachedSize || formatSize != m_cachedSize.value()) {
             DEBUG_LOG(logSiteIdentifier, "size changed to ", formatSize);
@@ -1323,7 +1323,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
 
         auto renderer = m_audioRenderers.get(trackID);
         [renderer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
-        if (auto player = this->player(); player && !sample->isNonDisplaying())
+        if (RefPtr player = this->player(); player && !sample->isNonDisplaying())
             player->setHasAvailableAudioSample(renderer.get(), true);
     }
 }
@@ -1338,7 +1338,7 @@ void SourceBufferPrivateAVFObjC::enqueueSampleBuffer(MediaSampleAVFObjC& sample)
         return;
 #endif
 
-    auto player = this->player();
+    RefPtr player = this->player();
     if (!player || player->hasAvailableVideoFrame() || sample.isNonDisplaying())
         return;
 
@@ -1554,7 +1554,7 @@ void SourceBufferPrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSes
     reenqueSamples(AtomString::number(m_enabledVideoTrackID));
 }
 
-MediaPlayerPrivateMediaSourceAVFObjC* SourceBufferPrivateAVFObjC::player() const
+RefPtr<MediaPlayerPrivateMediaSourceAVFObjC> SourceBufferPrivateAVFObjC::player() const
 {
     return m_mediaSource ? static_cast<MediaSourcePrivateAVFObjC*>(m_mediaSource.get())->player() : nullptr;
 }

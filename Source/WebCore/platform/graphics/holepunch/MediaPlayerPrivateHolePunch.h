@@ -24,6 +24,7 @@
 
 #include "MediaPlayerPrivate.h"
 #include "PlatformLayer.h"
+#include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 
@@ -37,7 +38,10 @@ namespace WebCore {
 
 class TextureMapperPlatformLayerProxy;
 
-class MediaPlayerPrivateHolePunch : public MediaPlayerPrivateInterface, public CanMakeWeakPtr<MediaPlayerPrivateHolePunch>
+class MediaPlayerPrivateHolePunch
+    : public MediaPlayerPrivateInterface
+    , public CanMakeWeakPtr<MediaPlayerPrivateHolePunch>
+    , public RefCounted<MediaPlayerPrivateHolePunch>
 #if USE(NICOSIA)
     , public Nicosia::ContentLayerTextureMapperImpl::Client
 #else
@@ -48,6 +52,9 @@ class MediaPlayerPrivateHolePunch : public MediaPlayerPrivateInterface, public C
 public:
     MediaPlayerPrivateHolePunch(MediaPlayer*);
     ~MediaPlayerPrivateHolePunch();
+
+    void ref() final { RefCounted::ref(); }
+    void deref() final { RefCounted::deref(); }
 
     static void registerMediaEngine(MediaEngineRegistrar);
 

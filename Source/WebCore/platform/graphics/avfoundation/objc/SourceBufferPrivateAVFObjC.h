@@ -192,7 +192,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     void flushAudio(AVSampleBufferAudioRenderer *);
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 
-    MediaPlayerPrivateMediaSourceAVFObjC* player() const;
+    RefPtr<MediaPlayerPrivateMediaSourceAVFObjC> player() const;
     bool canEnqueueSample(uint64_t trackID, const MediaSampleAVFObjC&);
     bool trackIsBlocked(uint64_t track) const;
 

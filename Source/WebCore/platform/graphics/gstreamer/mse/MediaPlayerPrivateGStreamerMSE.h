@@ -40,10 +40,9 @@ class TrackQueue;
 class MediaSourceTrackGStreamer;
 
 class MediaPlayerPrivateGStreamerMSE : public MediaPlayerPrivateGStreamer {
-    WTF_MAKE_NONCOPYABLE(MediaPlayerPrivateGStreamerMSE); WTF_MAKE_FAST_ALLOCATED;
 
 public:
-    explicit MediaPlayerPrivateGStreamerMSE(MediaPlayer*);
+    Ref<MediaPlayerPrivateGStreamerMSE> create(MediaPlayer* player) { return adoptRef(*new MediaPlayerPrivateGStreamerMSE(player)); }
     virtual ~MediaPlayerPrivateGStreamerMSE();
 
     static void registerMediaEngine(MediaEngineRegistrar);
@@ -91,6 +90,8 @@ public:
 #endif
 
 private:
+    explicit MediaPlayerPrivateGStreamerMSE(MediaPlayer*);
+
     friend class MediaPlayerFactoryGStreamerMSE;
     static void getSupportedTypes(HashSet<String>&);
     static MediaPlayer::SupportsType supportsType(const MediaEngineSupportParameters&);

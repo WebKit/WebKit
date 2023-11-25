@@ -46,6 +46,7 @@
 #include <wtf/Lock.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/OptionSet.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/AtomStringHash.h>
@@ -107,8 +108,10 @@ enum class TextureMapperFlags : uint16_t;
 void registerWebKitGStreamerElements();
 
 // Use eager initialization for the WeakPtrFactory since we construct WeakPtrs on another thread.
-class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface
+class MediaPlayerPrivateGStreamer
+    : public MediaPlayerPrivateInterface
     , public CanMakeWeakPtr<MediaPlayerPrivateGStreamer, WeakPtrFactoryInitialization::Eager>
+    , public RefCounted<MediaPlayerPrivateGStreamer>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
 #endif
@@ -124,6 +127,9 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateInterface
 public:
     MediaPlayerPrivateGStreamer(MediaPlayer*);
     virtual ~MediaPlayerPrivateGStreamer();
+
+    void ref() final { RefCounted::ref(); }
+    void deref() final { RefCounted::deref(); }
 
     static void registerMediaEngine(MediaEngineRegistrar);
     static bool supportsKeySystem(const String& keySystem, const String& mimeType);
