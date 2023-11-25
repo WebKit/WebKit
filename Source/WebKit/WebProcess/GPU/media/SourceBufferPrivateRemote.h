@@ -65,7 +65,7 @@ public:
     static Ref<SourceBufferPrivateRemote> create(GPUProcessConnection&, RemoteSourceBufferIdentifier, MediaSourcePrivateRemote&, const MediaPlayerPrivateRemote&);
     virtual ~SourceBufferPrivateRemote();
 
-    constexpr PlatformType platformType() const final { return PlatformType::Remote; }
+    constexpr WebCore::MediaPlatformType platformType() const final { return WebCore::MediaPlatformType::Remote; }
 
     void disconnect() { m_disconnected = true; }
 

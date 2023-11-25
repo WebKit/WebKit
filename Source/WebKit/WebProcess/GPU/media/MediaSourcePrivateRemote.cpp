@@ -56,11 +56,11 @@ Ref<MediaSourcePrivateRemote> MediaSourcePrivateRemote::create(GPUProcessConnect
 }
 
 MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerMIMETypeCache& mimeTypeCache, const MediaPlayerPrivateRemote& mediaPlayerPrivate, MediaSourcePrivateClient& client)
-    : m_gpuProcessConnection(gpuProcessConnection)
+    : MediaSourcePrivate(client)
+    , m_gpuProcessConnection(gpuProcessConnection)
     , m_identifier(identifier)
     , m_mimeTypeCache(mimeTypeCache)
     , m_mediaPlayerPrivate(mediaPlayerPrivate)
-    , m_client(client)
 #if !RELEASE_LOG_DISABLED
     , m_logger(m_mediaPlayerPrivate->mediaPlayerLogger())
     , m_logIdentifier(m_mediaPlayerPrivate->mediaPlayerLogIdentifier())
@@ -166,30 +166,20 @@ void MediaSourcePrivateRemote::setTimeFudgeFactor(const MediaTime& fudgeFactor)
     gpuProcessConnection->connection().send(Messages::RemoteMediaSourceProxy::SetTimeFudgeFactor(fudgeFactor), m_identifier);
 }
 
-Ref<MediaTimePromise> MediaSourcePrivateRemote::waitForTarget(const WebCore::SeekTarget& target)
-{
-    ASSERT_NOT_REACHED();
-    return MediaTimePromise::createAndReject(PlatformMediaError::LogicError);
-}
-
 void MediaSourcePrivateRemote::proxyWaitForTarget(const WebCore::SeekTarget& target, CompletionHandler<void(MediaTimePromise::Result&&)>&& completionHandler)
 {
-    if (!m_client)
-        return completionHandler(makeUnexpected(PlatformMediaError::ClientDisconnected));
-    m_client->waitForTarget(target)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
-}
-
-Ref<MediaPromise> MediaSourcePrivateRemote::seekToTime(const MediaTime& time)
-{
-    ASSERT_NOT_REACHED();
-    return MediaPromise::createAndReject(PlatformMediaError::LogicError);
+    if (RefPtr client = this->client())
+        client->waitForTarget(target)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
+    else
+        completionHandler(makeUnexpected(PlatformMediaError::ClientDisconnected));
 }
 
 void MediaSourcePrivateRemote::proxySeekToTime(const MediaTime& time, CompletionHandler<void(MediaPromise::Result&&)>&& completionHandler)
 {
-    if (!m_client)
-        return completionHandler(makeUnexpected(PlatformMediaError::SourceRemoved));
-    m_client->seekToTime(time)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
+    if (RefPtr client = this->client())
+        client->seekToTime(time)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
+    else
+        completionHandler(makeUnexpected(PlatformMediaError::SourceRemoved));
 }
 
 void MediaSourcePrivateRemote::mediaSourcePrivateShuttingDown(CompletionHandler<void()>&& completionHandler)

@@ -86,10 +86,11 @@ Ref<MediaPromise> SourceBufferPrivateRemote::append(Ref<SharedBuffer>&& data)
     if (!isGPURunning())
         return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
-    return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::Append(IPC::SharedBufferReference { WTFMove(data) }), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::current(), [weakThis = WeakPtr { *static_cast<SourceBufferPrivate*>(this) }, this](auto&& result) {
+    return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::Append(IPC::SharedBufferReference { WTFMove(data) }), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::current(), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&& result) {
         if (!result)
             return MediaPromise::createAndReject(PlatformMediaError::IPCError);
-        if (!weakThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return MediaPromise::createAndReject(PlatformMediaError::SourceRemoved);
 
         m_totalTrackBufferSizeInBytes = std::get<uint64_t>(*result);
@@ -152,7 +153,8 @@ MediaPlayer::ReadyState SourceBufferPrivateRemote::readyState() const
 
 void SourceBufferPrivateRemote::setReadyState(MediaPlayer::ReadyState state)
 {
-    if (!m_mediaSource)
+    auto mediaSource = m_mediaSource.get();
+    if (!mediaSource)
         return;
 
     if (m_mediaPlayerPrivate)
@@ -169,7 +171,8 @@ void SourceBufferPrivateRemote::setActive(bool active)
 {
     SourceBufferPrivate::setActive(active);
 
-    if (!m_mediaSource)
+    auto mediaSource = m_mediaSource.get();
+    if (!mediaSource)
         return;
 
     auto gpuProcessConnection = m_gpuProcessConnection.get();
@@ -421,7 +424,8 @@ Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivateRemote::enqueuedSamp
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&& segmentInfo, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&& completionHandler)
 {
-    if (!isAttached() || !m_mediaPlayerPrivate) {
+    RefPtr client = this->client();
+    if (!client || !m_mediaPlayerPrivate) {
         completionHandler(makeUnexpected(WebCore::PlatformMediaError::ClientDisconnected));
         return;
     }
@@ -457,19 +461,19 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
         return info;
     });
 
-    client().sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(RunLoop::current(), WTFMove(completionHandler));
+    client->sourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segment))->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime& timestamp)
 {
-    if (isAttached())
-        client().sourceBufferPrivateHighestPresentationTimestampChanged(timestamp);
+    if (RefPtr client = this->client())
+        client->sourceBufferPrivateHighestPresentationTimestampChanged(timestamp);
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDurationChanged(const MediaTime& duration, CompletionHandler<void()>&& completionHandler)
 {
-    if (isAttached())
-        client().sourceBufferPrivateDurationChanged(duration)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
+    if (RefPtr client = this->client())
+        client->sourceBufferPrivateDurationChanged(duration)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
     else
         completionHandler();
 }
@@ -486,26 +490,26 @@ void SourceBufferPrivateRemote::sourceBufferPrivateTrackBuffersChanged(Vector<We
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDidParseSample(double sampleDuration)
 {
-    if (isAttached())
-        client().sourceBufferPrivateDidParseSample(sampleDuration);
+    if (RefPtr client = this->client())
+        client->sourceBufferPrivateDidParseSample(sampleDuration);
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDidDropSample()
 {
-    if (isAttached())
-        client().sourceBufferPrivateDidDropSample();
+    if (RefPtr client = this->client())
+        client->sourceBufferPrivateDidDropSample();
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
 {
-    if (isAttached())
-        client().sourceBufferPrivateDidReceiveRenderingError(errorCode);
+    if (RefPtr client = this->client())
+        client->sourceBufferPrivateDidReceiveRenderingError(errorCode);
 }
 
 void SourceBufferPrivateRemote::sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory)
 {
-    if (isAttached())
-        client().sourceBufferPrivateReportExtraMemoryCost(extraMemory);
+    if (RefPtr client = this->client())
+        client->sourceBufferPrivateReportExtraMemoryCost(extraMemory);
 }
 
 uint64_t SourceBufferPrivateRemote::totalTrackBufferSizeInBytes() const

@@ -197,12 +197,15 @@ bool MediaPlayerPrivateGStreamerMSE::doSeek(const SeekTarget& target, float rate
     // Notify MediaSource and have new frames enqueued (when they're available).
     // Seek should only continue once the seekToTarget completionhandler has run.
     // This will also add support for fastSeek once done (see webkit.org/b/260607)
-    m_mediaSource->waitForTarget(target)->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { *this }](auto&& result) {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis || !result)
+    RefPtr mediaSource = m_mediaSource.get();
+    if (!mediaSource)
+        return false;
+    mediaSource->waitForTarget(target)->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { *this }](auto&& result) {
+        if (!weakThis || !result)
             return;
 
-        m_mediaSource->seekToTime(*result);
+        if (RefPtr mediaSource = m_mediaSource.get())
+            mediaSource->seekToTime(*result);
 
         auto player = m_player.get();
         if (player && !player->isVideoPlayer() && m_audioSink) {
@@ -300,7 +303,9 @@ void MediaPlayerPrivateGStreamerMSE::didPreroll()
 
 const PlatformTimeRanges& MediaPlayerPrivateGStreamerMSE::buffered() const
 {
-    return m_mediaSource ? m_mediaSource->buffered() : PlatformTimeRanges::emptyRanges();
+    if (RefPtr mediaSource = m_mediaSource.get())
+        return mediaSource->buffered();
+    return PlatformTimeRanges::emptyRanges();
 }
 
 void MediaPlayerPrivateGStreamerMSE::sourceSetup(GstElement* sourceElement)
@@ -333,7 +338,9 @@ void MediaPlayerPrivateGStreamerMSE::updateStates()
 
 bool MediaPlayerPrivateGStreamerMSE::isTimeBuffered(const MediaTime &time) const
 {
-    bool result = m_mediaSource && m_mediaSource->buffered().contain(time);
+
+    RefPtr mediaSource = m_mediaSource.get();
+    bool result = mediaSource && mediaSource->buffered().contain(time);
     GST_DEBUG("Time %s buffered? %s", toString(time).utf8().data(), boolForPrinting(result));
     return result;
 }
@@ -343,7 +350,8 @@ void MediaPlayerPrivateGStreamerMSE::durationChanged()
     ASSERT(isMainThread());
 
     MediaTime previousDuration = m_mediaTimeDuration;
-    m_mediaTimeDuration = m_mediaSource ? m_mediaSource->duration() : MediaTime::invalidTime();
+    RefPtr mediaSource = m_mediaSource.get();
+    m_mediaTimeDuration = mediaSource ? mediaSource->duration() : MediaTime::invalidTime();
 
     GST_TRACE("previous=%s, new=%s", toString(previousDuration).utf8().data(), toString(m_mediaTimeDuration).utf8().data());
 

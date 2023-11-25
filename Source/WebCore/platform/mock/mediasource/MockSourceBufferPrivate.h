@@ -44,10 +44,10 @@ public:
     static Ref<MockSourceBufferPrivate> create(MockMediaSourcePrivate&);
     virtual ~MockSourceBufferPrivate();
 
-    constexpr PlatformType platformType() const final { return PlatformType::Mock; }
+    constexpr MediaPlatformType platformType() const final { return MediaPlatformType::Mock; }
 private:
     explicit MockSourceBufferPrivate(MockMediaSourcePrivate&);
-    MockMediaSourcePrivate* mediaSourcePrivate() const;
+    RefPtr<MockMediaSourcePrivate> mediaSourcePrivate() const;
 
     // SourceBufferPrivate overrides
     Ref<MediaPromise> appendInternal(Ref<SharedBuffer>&&) final;
@@ -92,6 +92,6 @@ private:
 #endif
 };
 
-}
+} // namespace WebCore
 
 #endif // ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)

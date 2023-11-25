@@ -43,7 +43,7 @@ class MediaDescription;
 class PlatformTimeRanges;
 class VideoTrackPrivate;
 
-class SourceBufferPrivateClient : public CanMakeWeakPtr<SourceBufferPrivateClient> {
+class SourceBufferPrivateClient : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SourceBufferPrivateClient> {
 public:
     virtual ~SourceBufferPrivateClient() = default;
 

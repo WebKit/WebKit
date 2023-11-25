@@ -56,8 +56,7 @@ class SourceBufferPrivate;
 class TimeRanges;
 
 class MediaSource
-    : public RefCounted<MediaSource>
-    , public MediaSourcePrivateClient
+    : public MediaSourcePrivateClient
     , public ActiveDOMObject
     , public EventTarget
     , public URLRegistrable
@@ -116,8 +115,8 @@ public:
 
     void sourceBufferBufferedChanged();
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    using MediaSourcePrivateClient::ref;
+    using MediaSourcePrivateClient::deref;
 
     static const MediaTime& currentTimeFudgeFactor();
     static bool contentTypeShouldGenerateTimestamps(const ContentType&);

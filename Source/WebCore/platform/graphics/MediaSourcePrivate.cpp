@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "MediaSourcePrivateClient.h"
 #include "PlatformTimeRanges.h"
 #include "SourceBufferPrivate.h"
 
@@ -53,10 +54,48 @@ bool MediaSourcePrivate::hasFutureTime(const MediaTime& currentTime, const Media
     return localEnd - currentTime > timeFudgeFactor();
 }
 
+MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client)
+    : m_client(client)
+{
+}
+
 MediaSourcePrivate::~MediaSourcePrivate()
 {
     for (auto& sourceBuffer : m_sourceBuffers)
         sourceBuffer->clearMediaSource();
+}
+
+RefPtr<MediaSourcePrivateClient> MediaSourcePrivate::client() const
+{
+    return m_client.get();
+}
+
+MediaTime MediaSourcePrivate::duration() const
+{
+    if (RefPtr client = this->client())
+        return client->duration();
+    return MediaTime::invalidTime();
+}
+
+const PlatformTimeRanges& MediaSourcePrivate::buffered() const
+{
+    if (RefPtr client = this->client())
+        return client->buffered();
+    return PlatformTimeRanges::emptyRanges();
+}
+
+Ref<MediaTimePromise> MediaSourcePrivate::waitForTarget(const SeekTarget& target)
+{
+    if (RefPtr client = this->client())
+        return client->waitForTarget(target);
+    return MediaTimePromise::createAndReject(PlatformMediaError::ClientDisconnected);
+}
+
+Ref<MediaPromise> MediaSourcePrivate::seekToTime(const MediaTime& time)
+{
+    if (RefPtr client = this->client())
+        return client->seekToTime(time);
+    return MediaPromise::createAndReject(PlatformMediaError::ClientDisconnected);
 }
 
 void MediaSourcePrivate::removeSourceBuffer(SourceBufferPrivate& sourceBuffer)

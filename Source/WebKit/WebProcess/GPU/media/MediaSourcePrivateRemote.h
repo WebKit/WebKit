@@ -61,6 +61,7 @@ public:
     virtual ~MediaSourcePrivateRemote();
 
     // MediaSourcePrivate overrides
+    constexpr WebCore::MediaPlatformType platformType() const final { return WebCore::MediaPlatformType::Remote; }
     AddStatus addSourceBuffer(const WebCore::ContentType&, bool webMParserEnabled, RefPtr<WebCore::SourceBufferPrivate>&) final;
     void removeSourceBuffer(WebCore::SourceBufferPrivate&) final { }
     void notifyActiveSourceBuffersChanged() final { };
@@ -71,12 +72,8 @@ public:
     WebCore::MediaPlayer::ReadyState readyState() const final;
     void setReadyState(WebCore::MediaPlayer::ReadyState) final;
 
-    Ref<WebCore::MediaTimePromise> waitForTarget(const WebCore::SeekTarget&) final;
-    Ref<WebCore::MediaPromise> seekToTime(const MediaTime&) final;
-
     void setTimeFudgeFactor(const MediaTime&) final;
 
-    MediaTime duration() const final { return m_client ? m_client->duration() : MediaTime(); }
     MediaTime currentMediaTime() const final
     {
         ASSERT_NOT_REACHED();
@@ -103,7 +100,6 @@ private:
     RemoteMediaSourceIdentifier m_identifier;
     RemoteMediaPlayerMIMETypeCache& m_mimeTypeCache;
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
-    WeakPtr<WebCore::MediaSourcePrivateClient> m_client;
     Vector<RefPtr<SourceBufferPrivateRemote>> m_sourceBuffers;
     bool m_shutdown { false };
 

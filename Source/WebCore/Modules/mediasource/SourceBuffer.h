@@ -58,10 +58,9 @@ class VideoTrackList;
 class WebCoreOpaqueRoot;
 
 class SourceBuffer
-    : public RefCounted<SourceBuffer>
+    : public SourceBufferPrivateClient
     , public ActiveDOMObject
     , public EventTarget
-    , private SourceBufferPrivateClient
     , private AudioTrackClient
     , private VideoTrackClient
     , private TextTrackClient
@@ -118,8 +117,8 @@ public:
     // EventTarget
     ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    using SourceBufferPrivateClient::ref;
+    using SourceBufferPrivateClient::deref;
 
     Document& document() const;
     enum class AppendMode { Segments, Sequence };

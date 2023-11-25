@@ -132,12 +132,15 @@ void SourceBufferPrivateGStreamer::removedFromMediaSource()
 
 MediaPlayer::ReadyState SourceBufferPrivateGStreamer::readyState() const
 {
-    return m_mediaSource->readyState();
+    if (RefPtr mediaSource = m_mediaSource.get())
+        return mediaSource->readyState();
+    return MediaPlayer::ReadyState::HaveNothing;
 }
 
 void SourceBufferPrivateGStreamer::setReadyState(MediaPlayer::ReadyState state)
 {
-    m_mediaSource->setReadyState(state);
+    if (RefPtr mediaSource = m_mediaSource.get())
+        mediaSource->setReadyState(state);
 }
 
 void SourceBufferPrivateGStreamer::flush(const AtomString& trackId)
@@ -146,7 +149,11 @@ void SourceBufferPrivateGStreamer::flush(const AtomString& trackId)
 
     // This is only for on-the-fly reenqueues after appends. When seeking, the seek will do its own flush.
 
-    if (!static_cast<MediaSourcePrivateGStreamer*>(m_mediaSource.get())->hasAllTracks()) {
+    RefPtr mediaSource = m_mediaSource.get();
+    if (!mediaSource)
+        return;
+
+    if (!downcast<MediaSourcePrivateGStreamer>(mediaSource)->hasAllTracks()) {
         GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Source element has not emitted tracks yet, so we only need to clear the queue. trackId = '%s'", trackId.string().utf8().data());
         MediaSourceTrackGStreamer* track = m_tracks.get(trackId);
         track->clearQueue();
@@ -229,8 +236,8 @@ bool SourceBufferPrivateGStreamer::precheckInitialisationSegment(const Initializ
 
 void SourceBufferPrivateGStreamer::processInitialisationSegment(std::optional<InitializationSegment>&& segment)
 {
-    if (m_mediaSource && segment)
-        static_cast<MediaSourcePrivateGStreamer*>(m_mediaSource.get())->startPlaybackIfHasAllTracks();
+    if (RefPtr mediaSource = m_mediaSource.get(); mediaSource && segment)
+        static_cast<MediaSourcePrivateGStreamer*>(mediaSource.get())->startPlaybackIfHasAllTracks();
 }
 
 void SourceBufferPrivateGStreamer::didReceiveAllPendingSamples()
@@ -260,9 +267,6 @@ WTFLogChannel& SourceBufferPrivateGStreamer::logChannel() const
 size_t SourceBufferPrivateGStreamer::platformMaximumBufferSize() const
 {
 #if PLATFORM(WPE)
-    if (!isAttached())
-        return 0;
-
     static size_t maxBufferSizeVideo = 0;
     static size_t maxBufferSizeAudio = 0;
     static size_t maxBufferSizeText = 0;

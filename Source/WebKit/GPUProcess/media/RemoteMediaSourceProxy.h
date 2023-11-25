@@ -53,8 +53,7 @@ class GPUConnectionToWebProcess;
 class RemoteMediaPlayerProxy;
 
 class RemoteMediaSourceProxy final
-    : public RefCounted<RemoteMediaSourceProxy>
-    , public WebCore::MediaSourcePrivateClient
+    : public WebCore::MediaSourcePrivateClient
     , private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:

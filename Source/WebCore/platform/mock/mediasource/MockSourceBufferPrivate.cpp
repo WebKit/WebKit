@@ -134,10 +134,9 @@ MockSourceBufferPrivate::MockSourceBufferPrivate(MockMediaSourcePrivate& parent)
 
 MockSourceBufferPrivate::~MockSourceBufferPrivate() = default;
 
-MockMediaSourcePrivate* MockSourceBufferPrivate::mediaSourcePrivate() const
+RefPtr<MockMediaSourcePrivate> MockSourceBufferPrivate::mediaSourcePrivate() const
 {
-    RELEASE_ASSERT(m_mediaSource);
-    return static_cast<MockMediaSourcePrivate*>(m_mediaSource.get());
+    return dynamicDowncast<MockMediaSourcePrivate>(m_mediaSource.get());
 }
 
 Ref<MediaPromise> MockSourceBufferPrivate::appendInternal(Ref<SharedBuffer>&& data)
@@ -206,13 +205,15 @@ void MockSourceBufferPrivate::resetParserStateInternal()
 
 MediaPlayer::ReadyState MockSourceBufferPrivate::readyState() const
 {
-    return m_mediaSource ? mediaSourcePrivate()->player().readyState() : MediaPlayer::ReadyState::HaveNothing;
+    if (RefPtr mediaSource = mediaSourcePrivate())
+        return mediaSource->player().readyState();
+    return MediaPlayer::ReadyState::HaveNothing;
 }
 
 void MockSourceBufferPrivate::setReadyState(MediaPlayer::ReadyState readyState)
 {
-    if (m_mediaSource)
-        mediaSourcePrivate()->player().setReadyState(readyState);
+    if (RefPtr mediaSource = mediaSourcePrivate())
+        mediaSource->player().setReadyState(readyState);
 }
 
 Ref<SourceBufferPrivate::SamplesPromise> MockSourceBufferPrivate::enqueuedSamplesForTrackID(const AtomString&)
@@ -255,7 +256,8 @@ bool MockSourceBufferPrivate::canSwitchToType(const ContentType& contentType)
 
 void MockSourceBufferPrivate::enqueueSample(Ref<MediaSample>&& sample, const AtomString&)
 {
-    if (!m_mediaSource)
+    RefPtr mediaSource = mediaSourcePrivate();
+    if (!mediaSource)
         return;
 
     PlatformSample platformSample = sample->platformSample();
@@ -266,13 +268,13 @@ void MockSourceBufferPrivate::enqueueSample(Ref<MediaSample>&& sample, const Ato
     if (!box)
         return;
 
-    mediaSourcePrivate()->incrementTotalVideoFrames();
+    mediaSource->incrementTotalVideoFrames();
     if (box->isCorrupted())
-        mediaSourcePrivate()->incrementCorruptedFrames();
+        mediaSource->incrementCorruptedFrames();
     if (box->isDropped())
-        mediaSourcePrivate()->incrementDroppedFrames();
+        mediaSource->incrementDroppedFrames();
     if (box->isDelayed())
-        mediaSourcePrivate()->incrementTotalFrameDelayBy(MediaTime(1, 1));
+        mediaSource->incrementTotalFrameDelayBy(MediaTime(1, 1));
 
     m_enqueuedSamples.append(toString(sample.get()));
 }
