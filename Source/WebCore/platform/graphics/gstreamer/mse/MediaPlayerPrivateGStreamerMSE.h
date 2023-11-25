@@ -76,7 +76,6 @@ public:
 
     void setNetworkState(MediaPlayer::NetworkState);
     void setReadyState(MediaPlayer::ReadyState);
-    MediaSourcePrivateClient* mediaSourcePrivateClient() { return m_mediaSource.get(); }
 
     void setInitialVideoSize(const FloatSize&);
 
@@ -106,10 +105,11 @@ private:
     bool isTimeBuffered(const MediaTime&) const;
 
     bool isMediaSource() const override { return true; }
+    RefPtr<MediaSourcePrivateClient> mediaSourcePrivateClient() { return m_mediaSource.get(); }
 
     void propagateReadyStateToPlayer();
 
-    WeakPtr<MediaSourcePrivateClient> m_mediaSource;
+    ThreadSafeWeakPtr<MediaSourcePrivateClient> m_mediaSource;
     RefPtr<MediaSourcePrivateGStreamer> m_mediaSourcePrivate;
     MediaTime m_mediaTimeDuration { MediaTime::invalidTime() };
     bool m_isPipelinePlaying = true;

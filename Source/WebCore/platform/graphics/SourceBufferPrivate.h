@@ -50,8 +50,10 @@
 #include <wtf/NativePromise.h>
 #include <wtf/Ref.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
+#include <wtf/WorkQueue.h>
 #include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
@@ -74,8 +76,7 @@ enum class SourceBufferAppendMode : uint8_t {
 };
 
 class SourceBufferPrivate
-    : public RefCounted<SourceBufferPrivate>
-    , public CanMakeWeakPtr<SourceBufferPrivate>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<SourceBufferPrivate, WTF::DestructionThread::Main>
 #if !RELEASE_LOG_DISABLED
     , public LoggerHelper
 #endif
@@ -84,13 +85,7 @@ public:
     WEBCORE_EXPORT SourceBufferPrivate(MediaSourcePrivate&);
     WEBCORE_EXPORT virtual ~SourceBufferPrivate();
 
-    enum class PlatformType {
-        Mock,
-        AVFObjC,
-        GStreamer,
-        Remote
-    };
-    virtual constexpr PlatformType platformType() const = 0;
+    virtual constexpr MediaPlatformType platformType() const = 0;
 
     WEBCORE_EXPORT virtual void setActive(bool);
 
@@ -171,6 +166,7 @@ public:
     virtual void attemptToDecrypt() { }
 #endif
 
+    WorkQueue& queue() { return m_queue; }
 protected:
     WEBCORE_EXPORT Ref<MediaPromise> updateBufferedFromTrackBuffers(const Vector<PlatformTimeRanges>&);
 
@@ -211,10 +207,9 @@ protected:
     // Must be called once all samples have been processed.
     WEBCORE_EXPORT void appendCompleted(bool parsingSucceeded, Function<void()>&& = [] { });
 
-    WEBCORE_EXPORT bool isAttached() const;
-    WEBCORE_EXPORT SourceBufferPrivateClient& client() const;
+    WEBCORE_EXPORT RefPtr<SourceBufferPrivateClient> client() const;
 
-    WeakPtr<MediaSourcePrivate> m_mediaSource { nullptr };
+    ThreadSafeWeakPtr<MediaSourcePrivate> m_mediaSource { nullptr };
 
 private:
     void updateHighestPresentationTimestamp();
@@ -234,7 +229,7 @@ private:
     bool m_hasVideo { false };
     bool m_isActive { false };
 
-    WeakPtr<SourceBufferPrivateClient> m_client;
+    ThreadSafeWeakPtr<SourceBufferPrivateClient> m_client;
 
     MemoryCompactRobinHoodHashMap<AtomString, UniqueRef<TrackBuffer>> m_trackBufferMap;
 
@@ -249,7 +244,7 @@ private:
     size_t m_abortCount { 0 };
 
     void processPendingMediaSamples();
-    bool processMediaSample(Ref<MediaSample>&&);
+    bool processMediaSample(SourceBufferPrivateClient&, Ref<MediaSample>&&);
 
     using SamplesVector = Vector<Ref<MediaSample>>;
     SamplesVector m_pendingSamples;
@@ -265,6 +260,7 @@ private:
 
     bool m_isMediaSourceEnded { false };
     PlatformTimeRanges m_buffered;
+    Ref<WorkQueue> m_queue { WorkQueue::create("SerialBufferPrivate Queue") };
 };
 
 } // namespace WebCore

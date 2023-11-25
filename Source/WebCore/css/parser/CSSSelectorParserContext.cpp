@@ -48,7 +48,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
     , focusVisibleEnabled(document.settings().focusVisibleEnabled())
     , hasPseudoClassEnabled(document.settings().hasPseudoClassEnabled())
     , popoverAttributeEnabled(document.settings().popoverAttributeEnabled())
-    , viewTransitionsEnabled(document.settings().popoverAttributeEnabled())
+    , viewTransitionsEnabled(document.settings().viewTransitionsEnabled())
 {
 }
 

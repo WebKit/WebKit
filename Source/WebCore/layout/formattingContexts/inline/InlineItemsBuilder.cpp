@@ -601,15 +601,21 @@ void InlineItemsBuilder::breakAndComputeBidiLevels(InlineItemList& inlineItemLis
         inlineBoxContentFlagStack.reserveInitialCapacity(inlineItemList.size());
         for (auto index = inlineItemList.size(); index--;) {
             auto& inlineItem = inlineItemList[index];
+            auto& style = inlineItem.style();
+            auto initiatesControlCharacter = style.rtlOrdering() == Order::Logical && style.unicodeBidi() != UnicodeBidi::Normal;
+
             if (inlineItem.isInlineBoxStart()) {
                 ASSERT(!inlineBoxContentFlagStack.isEmpty());
-                if (inlineBoxContentFlagStack.takeLast() == InlineBoxHasContent::Yes)
-                    inlineItemList[index].setBidiLevel(InlineItem::opaqueBidiLevel);
+                if (inlineBoxContentFlagStack.takeLast() == InlineBoxHasContent::Yes) {
+                    if (!initiatesControlCharacter)
+                        inlineItemList[index].setBidiLevel(InlineItem::opaqueBidiLevel);
+                }
                 continue;
             }
             if (inlineItem.isInlineBoxEnd()) {
                 inlineBoxContentFlagStack.append(InlineBoxHasContent::No);
-                inlineItem.setBidiLevel(InlineItem::opaqueBidiLevel);
+                if (!initiatesControlCharacter)
+                    inlineItem.setBidiLevel(InlineItem::opaqueBidiLevel);
                 continue;
             }
             if (inlineItem.isWordBreakOpportunity()) {

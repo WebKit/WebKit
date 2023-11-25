@@ -888,7 +888,7 @@ static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyl
 static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle& style)
 {
     auto* translate = style.translate();
-    if (!translate || is<RenderInline>(renderer) || translate->isIdentity())
+    if (!translate || is<RenderInline>(renderer))
         return CSSPrimitiveValue::create(CSSValueNone);
 
     auto includeLength = [](const Length& length) {
@@ -909,7 +909,7 @@ static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle
 static Ref<CSSValue> computedScale(RenderObject* renderer, const RenderStyle& style)
 {
     auto* scale = style.scale();
-    if (!scale || is<RenderInline>(renderer) || scale->isIdentity())
+    if (!scale || is<RenderInline>(renderer))
         return CSSPrimitiveValue::create(CSSValueNone);
 
     auto value = [](double number) {
@@ -926,7 +926,7 @@ static Ref<CSSValue> computedScale(RenderObject* renderer, const RenderStyle& st
 static Ref<CSSValue> computedRotate(RenderObject* renderer, const RenderStyle& style)
 {
     auto* rotate = style.rotate();
-    if (!rotate || is<RenderInline>(renderer) || rotate->isIdentity())
+    if (!rotate || is<RenderInline>(renderer))
         return CSSPrimitiveValue::create(CSSValueNone);
 
     auto angle = CSSPrimitiveValue::create(rotate->angle(), CSSUnitType::CSS_DEG);

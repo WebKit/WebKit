@@ -56,6 +56,8 @@ public:
     static Ref<MediaSourcePrivateGStreamer> open(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
     virtual ~MediaSourcePrivateGStreamer();
 
+    constexpr MediaPlatformType platformType() const final { return MediaPlatformType::GStreamer; }
+
     AddStatus addSourceBuffer(const ContentType&, bool, RefPtr<SourceBufferPrivate>&) override;
 
     void durationChanged(const MediaTime&) override;
@@ -64,18 +66,12 @@ public:
     MediaPlayer::ReadyState readyState() const override;
     void setReadyState(MediaPlayer::ReadyState) override;
 
-    Ref<MediaTimePromise> waitForTarget(const SeekTarget&) final;
-    Ref<MediaPromise> seekToTime(const MediaTime&) final;
-
-    MediaTime duration() const final;
     MediaTime currentMediaTime() const final;
 
     void notifyActiveSourceBuffersChanged() final;
 
     void startPlaybackIfHasAllTracks();
     bool hasAllTracks() const { return m_hasAllTracks; }
-
-    const PlatformTimeRanges& buffered();
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
@@ -89,7 +85,6 @@ public:
 private:
     MediaSourcePrivateGStreamer(MediaSourcePrivateClient&, MediaPlayerPrivateGStreamerMSE&);
 
-    WeakPtr<MediaSourcePrivateClient> m_mediaSource;
     MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
     bool m_hasAllTracks { false };
 #if !RELEASE_LOG_DISABLED
@@ -99,6 +94,10 @@ private:
 #endif
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MediaSourcePrivateGStreamer)
+static bool isType(const WebCore::MediaSourcePrivate& mediaSource) { return mediaSource.platformType() == WebCore::MediaPlatformType::GStreamer; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

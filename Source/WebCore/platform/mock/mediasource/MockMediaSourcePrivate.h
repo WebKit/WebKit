@@ -46,14 +46,11 @@ public:
     static Ref<MockMediaSourcePrivate> create(MockMediaPlayerMediaSource&, MediaSourcePrivateClient&);
     virtual ~MockMediaSourcePrivate();
 
-    const PlatformTimeRanges& buffered();
+    constexpr MediaPlatformType platformType() const final { return MediaPlatformType::Mock; }
 
     MockMediaPlayerMediaSource& player() const { return m_player; }
 
-    Ref<MediaTimePromise> waitForTarget(const SeekTarget&) final;
-    Ref<MediaPromise> seekToTime(const MediaTime&) final;
     MediaTime currentMediaTime() const final;
-    MediaTime duration() const final;
 
     std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics();
 
@@ -87,7 +84,6 @@ private:
     friend class MockSourceBufferPrivate;
 
     MockMediaPlayerMediaSource& m_player;
-    WeakPtr<MediaSourcePrivateClient> m_client;
 
     unsigned m_totalVideoFrames { 0 };
     unsigned m_droppedVideoFrames { 0 };
@@ -100,6 +96,10 @@ private:
 #endif
 };
 
-}
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::MockMediaSourcePrivate)
+static bool isType(const WebCore::MediaSourcePrivate& mediaSource) { return mediaSource.platformType() == WebCore::MediaPlatformType::Mock; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(MEDIA_SOURCE)

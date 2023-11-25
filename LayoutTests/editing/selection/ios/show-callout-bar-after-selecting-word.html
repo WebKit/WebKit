@@ -56,8 +56,11 @@ addEventListener("load", async () => {
     await waitUntilMenuContains("Copy");
     testPassed("Callout bar contains 'Copy' action");
 
-    selectAllItemRect = await UIHelper.rectForMenuAction("Select All");
-    shouldBeNull("selectAllItemRect");
+    var selectAllItemRect;
+    do {
+        selectAllItemRect = await UIHelper.rectForMenuAction("Select All");
+    } while (selectAllItemRect);
+    testPassed("Callout bar no longer contains 'Select All'");
 
     editor.remove();
     finishJSTest();

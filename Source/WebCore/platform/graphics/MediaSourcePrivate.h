@@ -34,7 +34,7 @@
 
 #include "MediaPlayer.h"
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -46,14 +46,16 @@ class LegacyCDMSession;
 #endif
 
 class WEBCORE_EXPORT MediaSourcePrivate
-    : public RefCounted<MediaSourcePrivate>
-    , public CanMakeWeakPtr<MediaSourcePrivate> {
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaSourcePrivate> {
 public:
     typedef Vector<String> CodecsArray;
 
-    MediaSourcePrivate() = default;
+    MediaSourcePrivate(MediaSourcePrivateClient&);
     virtual ~MediaSourcePrivate();
 
+    RefPtr<MediaSourcePrivateClient> client() const;
+
+    virtual constexpr MediaPlatformType platformType() const = 0;
     enum class AddStatus : uint8_t {
         Ok,
         NotSupported,
@@ -74,13 +76,15 @@ public:
     virtual MediaPlayer::ReadyState readyState() const = 0;
     virtual void setReadyState(MediaPlayer::ReadyState) = 0;
     virtual MediaTime currentMediaTime() const = 0;
-    virtual MediaTime duration() const = 0;
 
-    virtual Ref<MediaTimePromise> waitForTarget(const SeekTarget&) = 0;
-    virtual Ref<MediaPromise> seekToTime(const MediaTime&) = 0;
+    Ref<MediaTimePromise> waitForTarget(const SeekTarget&);
+    Ref<MediaPromise> seekToTime(const MediaTime&);
 
     virtual void setTimeFudgeFactor(const MediaTime& fudgeFactor) { m_timeFudgeFactor = fudgeFactor; }
     MediaTime timeFudgeFactor() const { return m_timeFudgeFactor; }
+
+    MediaTime duration() const;
+    const PlatformTimeRanges& buffered() const;
 
     bool hasFutureTime(const MediaTime& currentTime, const MediaTime& duration, const PlatformTimeRanges&) const;
     bool hasAudio() const;
@@ -97,6 +101,7 @@ protected:
 
 private:
     MediaTime m_timeFudgeFactor;
+    ThreadSafeWeakPtr<MediaSourcePrivateClient> m_client;
 };
 
 String convertEnumerationToString(MediaSourcePrivate::AddStatus);

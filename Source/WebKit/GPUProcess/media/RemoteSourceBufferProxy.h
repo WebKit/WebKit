@@ -57,8 +57,7 @@ struct MediaDescriptionInfo;
 class RemoteMediaPlayerProxy;
 
 class RemoteSourceBufferProxy final
-    : public RefCounted<RemoteSourceBufferProxy>
-    , public WebCore::SourceBufferPrivateClient
+    : public WebCore::SourceBufferPrivateClient
     , private IPC::MessageReceiver {
     WTF_MAKE_FAST_ALLOCATED;
 public:
