@@ -75,7 +75,6 @@ my (
     $cssImageResolutionSupport,
     $cssPaintingAPISupport,
     $cssScrollSnapSupport,
-    $cssSelectorsLevel4Support,
     $cssTrailingWordSupport,
     $cssTypedOMSupport,
     $cursorVisibilitySupport,
@@ -247,9 +246,6 @@ my @features = (
 
     { option => "css-painting-api", desc => "Toggle CSS Painting API support",
       define => "ENABLE_CSS_PAINTING_API", value => \$cssPaintingAPISupport },
-
-    { option => "css-selectors-level4", desc => "Toggle CSS Selectors Level 4 support",
-      define => "ENABLE_CSS_SELECTORS_LEVEL4", value => \$cssSelectorsLevel4Support },
 
     { option => "css-typed-om", desc => "Toggle CSS Typed OM support",
       define => "ENABLE_CSS_TYPED_OM", value => \$cssTypedOMSupport },
