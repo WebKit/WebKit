@@ -28,7 +28,6 @@
 #if PLATFORM(MAC)
 
 #import "SwitchMacUtilities.h"
-#import "SwitchThumbPart.h"
 
 namespace WebCore {
 
@@ -41,7 +40,7 @@ SwitchThumbMac::SwitchThumbMac(SwitchThumbPart& part, ControlFactoryMac& control
 IntSize SwitchThumbMac::cellSize(NSControlSize controlSize, const ControlStyle&) const
 {
     // For now we need the track sizes to paint the thumb. As it happens the thumb is the square
-    // of the track's height. We (ab)use that fact later on.
+    // of the track's height. We (ab)use that fact with drawingThumbLength below.
     return SwitchMacUtilities::cellSize(controlSize);
 }
 
@@ -63,6 +62,7 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     bool isRTL = style.states.contains(ControlStyle::State::RightToLeft);
     bool isEnabled = style.states.contains(ControlStyle::State::Enabled);
     bool isPressed = style.states.contains(ControlStyle::State::Pressed);
+    auto progress = SwitchMacUtilities::easeInOut(owningPart().progress());
 
     auto borderRectRect = borderRect.rect();
     auto controlSize = controlSizeForSize(borderRectRect.size(), style);
@@ -76,9 +76,12 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 
     auto inflatedTrackRect = inflatedRect(trackRect, size, outsets, style);
 
+    auto drawingThumbLength = inflatedTrackRect.height();
     auto drawingThumbIsLeft = (!isRTL && !isOn) || (isRTL && isOn);
-    auto drawingThumbX = drawingThumbIsLeft ? 0 : inflatedTrackRect.width() - inflatedTrackRect.height();
-    auto drawingThumbRect = NSMakeRect(drawingThumbX, 0, inflatedTrackRect.height(), inflatedTrackRect.height());
+    auto drawingThumbXAxis = inflatedTrackRect.width() - drawingThumbLength;
+    auto drawingThumbXAxisProgress = drawingThumbXAxis * progress;
+    auto drawingThumbX = drawingThumbIsLeft ? drawingThumbXAxis - drawingThumbXAxisProgress : drawingThumbXAxisProgress;
+    auto drawingThumbRect = NSMakeRect(drawingThumbX, 0, drawingThumbLength, drawingThumbLength);
 
     auto trackBuffer = context.createImageBuffer(inflatedTrackRect.size(), deviceScaleFactor);
 

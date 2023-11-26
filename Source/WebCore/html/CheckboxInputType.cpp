@@ -36,7 +36,9 @@
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
+#include "Page.h"
 #include "RenderElement.h"
+#include "RenderTheme.h"
 #include "ScopedEventQueue.h"
 #include "ScriptDisallowedScope.h"
 #include "ShadowRoot.h"
@@ -97,7 +99,7 @@ void CheckboxInputType::willDispatchClick(InputElementClickState& state)
     if (state.indeterminate)
         element()->setIndeterminate(false);
 
-    element()->setChecked(!state.checked);
+    element()->setChecked(!state.checked, state.trusted ? WasSetByJavaScript::No : WasSetByJavaScript::Yes);
 }
 
 void CheckboxInputType::didDispatchClick(Event& event, const InputElementClickState& state)
@@ -122,6 +124,81 @@ bool CheckboxInputType::shouldAppearIndeterminate() const
 {
     ASSERT(element());
     return element()->indeterminate() && !isSwitch();
+}
+
+// FIXME: ideally CheckboxInputType would not be responsible for the timer specifics and instead
+// ask a more knowledgable system for a refresh callback (perhaps passing a desired FPS).
+static Seconds switchCheckedChangeAnimationUpdateInterval(HTMLInputElement* element)
+{
+    if (auto* page = element->document().page())
+        return page->preferredRenderingUpdateInterval();
+    return 0_s;
+}
+
+void CheckboxInputType::performSwitchCheckedChangeAnimation(WasSetByJavaScript wasCheckedByJavaScript)
+{
+    ASSERT(isSwitch());
+    ASSERT(element());
+    ASSERT(element()->renderer());
+    ASSERT(element()->renderer()->style().hasEffectiveAppearance());
+
+    if (wasCheckedByJavaScript == WasSetByJavaScript::Yes) {
+        m_switchCheckedChangeAnimationStartTime = 0_s;
+        return;
+    }
+
+    auto updateInterval = switchCheckedChangeAnimationUpdateInterval(element());
+    auto duration = RenderTheme::singleton().switchCheckedChangeAnimationDuration();
+
+    if (!m_switchCheckedChangeAnimationTimer) {
+        if (!(duration > 0_s && updateInterval > 0_s))
+            return;
+        m_switchCheckedChangeAnimationTimer = makeUnique<Timer>(*this, &CheckboxInputType::switchCheckedChangeAnimationTimerFired);
+    }
+    ASSERT(duration > 0_s);
+    ASSERT(updateInterval > 0_s);
+    ASSERT(m_switchCheckedChangeAnimationTimer);
+
+    auto isAnimating = m_switchCheckedChangeAnimationStartTime != 0_s;
+    auto currentTime = MonotonicTime::now().secondsSinceEpoch();
+    auto remainingTime = currentTime - m_switchCheckedChangeAnimationStartTime;
+    auto startTimeOffset = 0_s;
+    if (isAnimating && remainingTime < duration)
+        startTimeOffset = duration - remainingTime;
+
+    m_switchCheckedChangeAnimationStartTime = MonotonicTime::now().secondsSinceEpoch() - startTimeOffset;
+    m_switchCheckedChangeAnimationTimer->startOneShot(updateInterval);
+}
+
+float CheckboxInputType::switchCheckedChangeAnimationProgress() const
+{
+    ASSERT(isSwitch());
+
+    auto isAnimating = m_switchCheckedChangeAnimationStartTime != 0_s;
+    if (!isAnimating)
+        return 1.0f;
+    auto duration = RenderTheme::singleton().switchCheckedChangeAnimationDuration();
+    return std::min((float)((MonotonicTime::now().secondsSinceEpoch() - m_switchCheckedChangeAnimationStartTime) / duration), 1.0f);
+}
+
+void CheckboxInputType::switchCheckedChangeAnimationTimerFired()
+{
+    ASSERT(m_switchCheckedChangeAnimationTimer);
+    if (!isSwitch() || !element() || !element()->renderer())
+        return;
+
+    auto updateInterval = switchCheckedChangeAnimationUpdateInterval(element());
+    if (!(updateInterval > 0_s))
+        return;
+
+    auto currentTime = MonotonicTime::now().secondsSinceEpoch();
+    auto duration = RenderTheme::singleton().switchCheckedChangeAnimationDuration();
+    if (currentTime - m_switchCheckedChangeAnimationStartTime < duration)
+        m_switchCheckedChangeAnimationTimer->startOneShot(updateInterval);
+    else
+        m_switchCheckedChangeAnimationStartTime = 0_s;
+
+    element()->renderer()->repaint();
 }
 
 } // namespace WebCore

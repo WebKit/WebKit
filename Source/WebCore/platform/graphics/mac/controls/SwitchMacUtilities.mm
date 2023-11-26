@@ -77,6 +77,11 @@ static NSString *coreUISizeForControlSize(const NSControlSize controlSize)
     return (__bridge NSString *)kCUISizeRegular;
 }
 
+static float easeInOut(const float progress)
+{
+    return -2.0f * pow(progress, 3.0f) + 3.0f * pow(progress, 2.0f);
+}
+
 } // namespace WebCore::SwitchMacUtilities
 
 #endif // PLATFORM(MAC)

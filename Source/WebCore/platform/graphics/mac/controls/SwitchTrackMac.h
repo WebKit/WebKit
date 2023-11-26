@@ -27,16 +27,17 @@
 #if PLATFORM(MAC)
 
 #import "ControlMac.h"
+#import "SwitchTrackPart.h"
 
 namespace WebCore {
-
-class SwitchTrackMac;
 
 class SwitchTrackMac final : public ControlMac {
 public:
     SwitchTrackMac(SwitchTrackPart&, ControlFactoryMac&);
 
 private:
+    const SwitchTrackPart& owningPart() const { return downcast<SwitchTrackPart>(m_owningPart); }
+
     IntSize cellSize(NSControlSize, const ControlStyle&) const override;
     IntOutsets cellOutsets(NSControlSize, const ControlStyle&) const override;
     FloatRect rectForBounds(const FloatRect&, const ControlStyle&) const override;

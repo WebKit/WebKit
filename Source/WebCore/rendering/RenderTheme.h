@@ -265,6 +265,7 @@ public:
 #if USE(SYSTEM_PREVIEW)
     virtual void paintSystemPreviewBadge(Image&, const PaintInfo&, const FloatRect&);
 #endif
+    virtual Seconds switchCheckedChangeAnimationDuration() const { return 0_s; }
 
 protected:
     virtual bool canPaint(const PaintInfo&, const Settings&, StyleAppearance) const { return true; }

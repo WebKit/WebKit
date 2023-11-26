@@ -32,6 +32,7 @@ static IntSize cellSize(NSControlSize);
 static IntOutsets cellOutsets(NSControlSize);
 static FloatRect rectForBounds(const FloatRect&);
 static NSString *coreUISizeForControlSize(const NSControlSize);
+static float easeInOut(float);
 
 } // namespace WebCore::SwitchMacUtilities
 

@@ -3274,6 +3274,14 @@ enum class WebCore::ApplePayButtonStyle : uint8_t {
     Vector<double> tickRatios();
 }
 
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SwitchThumbPart {
+    [Validator='progress >= 0.0f && progress <= 1.0f'] float progress();
+};
+
+[RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SwitchTrackPart {
+    [Validator='progress >= 0.0f && progress <= 1.0f'] float progress();
+};
+
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DistantLightSource {
     float azimuth();
     float elevation();

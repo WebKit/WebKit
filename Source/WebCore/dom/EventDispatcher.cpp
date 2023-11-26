@@ -181,6 +181,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         return;
 
     InputElementClickState clickHandlingState;
+    clickHandlingState.trusted = event.isTrusted();
 
     RefPtr inputForLegacyPreActivationBehavior = dynamicDowncast<HTMLInputElement>(node);
     if (!inputForLegacyPreActivationBehavior && event.bubbles() && event.type() == eventNames().clickEvent)
