@@ -36,8 +36,6 @@
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
 #include "ScopedName.h"
-#include "ScrollAxis.h"
-#include "ScrollTimeline.h"
 #include "ScrollTypes.h"
 #include "ScrollbarGutter.h"
 #include "ShapeValue.h"
@@ -175,10 +173,6 @@ public:
     ScrollSnapType scrollSnapType;
     ScrollSnapAlign scrollSnapAlign;
     ScrollSnapStop scrollSnapStop { ScrollSnapStop::Normal };
-
-    Vector<Ref<ScrollTimeline>> scrollTimelines;
-    Vector<ScrollAxis> scrollTimelineAxes;
-    Vector<AtomString> scrollTimelineNames;
 
     ScrollbarGutter scrollbarGutter;
     ScrollbarWidth scrollbarWidth { ScrollbarWidth::Auto };

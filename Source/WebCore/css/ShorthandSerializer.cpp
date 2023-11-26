@@ -291,7 +291,6 @@ String ShorthandSerializer::serialize()
     case CSSPropertyBackgroundPosition:
     case CSSPropertyMask:
     case CSSPropertyMaskPosition:
-    case CSSPropertyScrollTimeline:
     case CSSPropertyTransition:
     case CSSPropertyWebkitMask:
     case CSSPropertyWebkitMaskPosition:
@@ -638,10 +637,6 @@ String ShorthandSerializer::serializeLayered() const
                         layerValues.skip(j) = false;
                 }
             }
-
-            // We never want to skip the scroll-timeline-name, even if it's the default "none".
-            if (longhand == CSSPropertyScrollTimelineName)
-                layerValues.skip(j) = false;
 
             if (layerValues.skip(j))
                 continue;

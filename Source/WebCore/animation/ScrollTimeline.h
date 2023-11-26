@@ -38,25 +38,17 @@ class Element;
 class ScrollTimeline final : public AnimationTimeline {
 public:
     static Ref<ScrollTimeline> create(ScrollTimelineOptions&& = { });
-    static Ref<ScrollTimeline> create(const AtomString&, ScrollAxis);
 
     Element* source() const { return m_source.get(); }
-
     ScrollAxis axis() const { return m_axis; }
-    void setAxis(ScrollAxis axis) { m_axis = axis; }
-
-    const AtomString& name() const { return m_name; }
-    void setName(const AtomString& name) { m_name = name; }
 
 private:
     explicit ScrollTimeline(ScrollTimelineOptions&& = { });
-    explicit ScrollTimeline(const AtomString&, ScrollAxis);
 
     bool isScrollTimeline() const final { return true; }
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_source;
-    ScrollAxis m_axis { ScrollAxis::Block };
-    AtomString m_name;
+    ScrollAxis m_axis;
 };
 
 } // namespace WebCore

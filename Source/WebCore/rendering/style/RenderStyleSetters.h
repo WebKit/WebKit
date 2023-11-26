@@ -270,8 +270,6 @@ inline void RenderStyle::setResize(Resize r) { SET_NESTED(m_nonInheritedData, mi
 inline void RenderStyle::setRight(Length&& length) { SET_NESTED(m_nonInheritedData, surroundData, offset.right(), WTFMove(length)); }
 inline void RenderStyle::setRowGap(GapLength&& gapLength) { SET_NESTED(m_nonInheritedData, rareData, rowGap, WTFMove(gapLength)); }
 inline void RenderStyle::setRubyPosition(RubyPosition position) { SET(m_rareInheritedData, rubyPosition, static_cast<unsigned>(position)); }
-inline void RenderStyle::setScrollTimelineAxes(const Vector<ScrollAxis>& axes) { SET_NESTED(m_nonInheritedData, rareData, scrollTimelineAxes, axes); }
-inline void RenderStyle::setScrollTimelineNames(const Vector<AtomString>& names) { SET_NESTED(m_nonInheritedData, rareData, scrollTimelineNames, names); }
 inline void RenderStyle::setScrollbarColor(const std::optional<ScrollbarColor>& color) { SET(m_rareInheritedData, scrollbarColor, color); }
 inline void RenderStyle::setScrollbarThumbColor(const StyleColor& color) { m_rareInheritedData.access().scrollbarColor->thumbColor = color; }
 inline void RenderStyle::setScrollbarTrackColor(const StyleColor& color) { m_rareInheritedData.access().scrollbarColor->trackColor = color; }

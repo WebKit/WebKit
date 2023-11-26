@@ -1,15 +1,15 @@
 
-PASS Property scroll-timeline-name value 'initial'
-PASS Property scroll-timeline-name value 'inherit'
-PASS Property scroll-timeline-name value 'unset'
-PASS Property scroll-timeline-name value 'revert'
-PASS Property scroll-timeline-name value 'none'
-PASS Property scroll-timeline-name value '--foo'
-PASS Property scroll-timeline-name value '--foo, --bar'
-PASS Property scroll-timeline-name value '--bar, --foo'
-PASS Property scroll-timeline-name value '--a, --b, --c, --D, --e'
-PASS Property scroll-timeline-name value 'none, none'
-PASS Property scroll-timeline-name value '--a, --b, --c, none, --d, --e'
-PASS The scroll-timeline-name property shows up in CSSStyleDeclaration enumeration
-PASS The scroll-timeline-name property shows up in CSSStyleDeclaration.cssText
+FAIL Property scroll-timeline-name value 'initial' assert_true: scroll-timeline-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-timeline-name value 'inherit' assert_true: scroll-timeline-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-timeline-name value 'unset' assert_true: scroll-timeline-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-timeline-name value 'revert' assert_true: scroll-timeline-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-timeline-name value 'none' assert_true: scroll-timeline-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-timeline-name value '--foo' assert_true: scroll-timeline-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-timeline-name value '--foo, --bar' assert_true: scroll-timeline-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-timeline-name value '--bar, --foo' assert_true: scroll-timeline-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-timeline-name value '--a, --b, --c, --D, --e' assert_true: scroll-timeline-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-timeline-name value 'none, none' assert_true: scroll-timeline-name doesn't seem to be supported in the computed style expected true got false
+FAIL Property scroll-timeline-name value '--a, --b, --c, none, --d, --e' assert_true: scroll-timeline-name doesn't seem to be supported in the computed style expected true got false
+FAIL The scroll-timeline-name property shows up in CSSStyleDeclaration enumeration assert_not_equals: got disallowed value -1
+FAIL The scroll-timeline-name property shows up in CSSStyleDeclaration.cssText assert_not_equals: got disallowed value -1
 
