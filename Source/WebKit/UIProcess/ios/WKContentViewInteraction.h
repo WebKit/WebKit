@@ -163,6 +163,7 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
 #if HAVE(UIFINDINTERACTION)
 #define FOR_EACH_FIND_WKCONTENTVIEW_ACTION(M) \
     M(useSelectionForFind) \
+    M(findSelected) \
     M(_findSelected)
 #else
 #define FOR_EACH_FIND_WKCONTENTVIEW_ACTION(M)
@@ -171,12 +172,18 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
 #define FOR_EACH_WKCONTENTVIEW_ACTION(M) \
     FOR_EACH_INSERT_TEXT_FROM_CAMERA_WKCONTENTVIEW_ACTION(M) \
     FOR_EACH_FIND_WKCONTENTVIEW_ACTION(M) \
+    M(addShortcut) \
     M(_addShortcut) \
+    M(define) \
     M(_define) \
     M(_lookup) \
+    M(translate) \
     M(_translate) \
+    M(promptForReplace) \
     M(_promptForReplace) \
+    M(share) \
     M(_share) \
+    M(transliterateChinese) \
     M(_transliterateChinese) \
     M(_nextAccessoryTab) \
     M(_previousAccessoryTab) \

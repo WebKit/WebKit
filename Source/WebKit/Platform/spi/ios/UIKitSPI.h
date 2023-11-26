@@ -1268,6 +1268,21 @@ typedef struct {
 
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
+@interface UIResponder (Staging_118307086)
+
+- (void)addShortcut:(id)sender;
+- (void)define:(id)sender;
+- (void)promptForReplace:(id)sender;
+- (void)share:(id)sender;
+- (void)translate:(id)sender;
+- (void)transliterateChinese:(id)sender;
+
+#if HAVE(UIFINDINTERACTION)
+- (void)findSelected:(id)sender;
+#endif
+
+@end
+
 WTF_EXTERN_C_BEGIN
 
 BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts(void);
