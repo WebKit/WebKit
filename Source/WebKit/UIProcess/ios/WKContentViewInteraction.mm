@@ -830,9 +830,7 @@ inline static NSString *textRelativeToSelectionStart(WKRelativeTextRange *range,
 
 - (void)invalidate
 {
-    id <UITextInputSuggestionDelegate> suggestionDelegate = (id <UITextInputSuggestionDelegate>)[_contentView inputDelegate];
-    [suggestionDelegate setSuggestions:nil];
-    _contentView = nil;
+    [std::exchange(_contentView, nil) _provideSuggestionsToInputDelegate:nil];
 }
 
 - (void)reloadFocusedElementContextView
@@ -8750,21 +8748,30 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 - (void)updateTextSuggestionsForInputDelegate
 {
     // Text suggestions vended from clients take precedence over text suggestions from a focused form control with a datalist.
-    id <UITextInputSuggestionDelegate> inputDelegate = (id <UITextInputSuggestionDelegate>)self.inputDelegate;
     NSArray<UITextSuggestion *> *formInputSessionSuggestions = [_formInputSession suggestions];
     if (formInputSessionSuggestions.count) {
-        [inputDelegate setSuggestions:formInputSessionSuggestions];
+        [self _provideSuggestionsToInputDelegate:formInputSessionSuggestions];
         return;
     }
 
 #if ENABLE(DATALIST_ELEMENT)
     if ([_dataListTextSuggestions count]) {
-        [inputDelegate setSuggestions:_dataListTextSuggestions.get()];
+        [self _provideSuggestionsToInputDelegate:_dataListTextSuggestions.get()];
         return;
     }
 #endif
 
-    [inputDelegate setSuggestions:nil];
+    [self _provideSuggestionsToInputDelegate:nil];
+}
+
+- (void)_provideSuggestionsToInputDelegate:(NSArray<UITextSuggestion *> *)suggestions
+{
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (self.shouldUseAsyncInteractions)
+        [_asyncSystemInputDelegate provideCandidateUISuggestions:suggestions];
+    else
+#endif
+        [(id<UITextInputSuggestionDelegate>)self.inputDelegate setSuggestions:suggestions];
 }
 
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const WebCore::IntRect&)elementRect routeSharingPolicy:(WebCore::RouteSharingPolicy)routeSharingPolicy routingContextUID:(NSString *)routingContextUID
