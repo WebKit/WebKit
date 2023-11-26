@@ -105,6 +105,7 @@ public:
         float endMax { 0 };
         bool beginWS { false };
         bool endWS { false };
+        bool endZeroSpace { false };
         bool hasBreakableChar { false };
         bool hasBreak { false };
         bool endsWithBreak { false };

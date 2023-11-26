@@ -4695,7 +4695,7 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
 
                 // This text object will not be rendered, but it may still provide a breaking opportunity.
                 if (!widths.hasBreak && !childMax) {
-                    if (autoWrap && (widths.beginWS || widths.endWS)) {
+                    if (autoWrap && (widths.beginWS || widths.endWS || widths.endZeroSpace)) {
                         minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);
                         inlineMin = 0;
                     }
@@ -4761,8 +4761,8 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
 
                     inlineMin = childMin;
 
-                    if (widths.endWS) {
-                        // We end in whitespace, which means we can end our current line.
+                    if (widths.endWS || widths.endZeroSpace) {
+                        // We end in breakable space, which means we can end our current line.
                         minLogicalWidth = preferredWidth(minLogicalWidth, inlineMin);
                         inlineMin = 0;
                         shouldBreakLineAfterText = false;
