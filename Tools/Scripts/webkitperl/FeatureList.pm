@@ -64,7 +64,6 @@ my (
     $avfCaptionsSupport,
     $bubblewrapSandboxSupport,
     $cachePartitioningSupport,
-    $channelMessagingSupport,
     $cloopSupport,
     $contentExtensionsSupport,
     $contentFilteringSupport,
@@ -227,9 +226,6 @@ my @features = (
 
     { option => "cache-partitioning", desc => "Toggle cache partitioning support",
       define => "ENABLE_CACHE_PARTITIONING", value => \$cachePartitioningSupport },
-
-    { option => "channel-messaging", desc => "Toggle Channel Messaging support",
-      define => "ENABLE_CHANNEL_MESSAGING", value => \$channelMessagingSupport },
 
     { option => "content-extensions", desc => "Toggle Content Extensions support",
       define => "ENABLE_CONTENT_EXTENSIONS", value => \$contentExtensionsSupport },
