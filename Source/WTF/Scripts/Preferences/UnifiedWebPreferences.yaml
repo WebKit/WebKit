@@ -1314,20 +1314,6 @@ CSSScrollbarWidthEnabled:
     WebCore:
       default: false
 
-CSSTextAlignLastEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS text-align-last property"
-  humanReadableDescription: "Enable the property text-align-last, defined in CSS Text 3"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 CSSTextBoxTrimEnabled:
   type: bool
   status: preview

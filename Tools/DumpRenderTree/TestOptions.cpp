@@ -142,7 +142,6 @@ const TestFeatures& TestOptions::defaults()
             { "CSSGradientPremultipliedAlphaInterpolationEnabled", true },
             { "CSSInputSecurityEnabled", true },
             { "CSSOMViewSmoothScrollingEnabled", false },
-            { "CSSTextAlignLastEnabled", true },
             { "CSSTextJustifyEnabled", true },
             { "CanvasColorSpaceEnabled", true },
             { "ColorFilterEnabled", false },

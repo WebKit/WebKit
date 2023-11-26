@@ -5773,7 +5773,6 @@
             ],
             "codegen-properties": {
                 "converter": "TextAlignLast",
-                "settings-flag": "cssTextAlignLastEnabled",
                 "parser-grammar": "<<values>>"
             },
             "specification": {
