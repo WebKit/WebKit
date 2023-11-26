@@ -38,6 +38,7 @@
 #include "LocalizedStrings.h"
 #include "Page.h"
 #include "RenderElement.h"
+#include "RenderStyleInlines.h"
 #include "RenderTheme.h"
 #include "ScopedEventQueue.h"
 #include "ScriptDisallowedScope.h"
