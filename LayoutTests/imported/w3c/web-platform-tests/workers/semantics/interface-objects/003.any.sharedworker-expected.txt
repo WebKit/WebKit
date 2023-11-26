@@ -1,7 +1,7 @@
 
 PASS The WorkerGlobalScope interface object should be exposed
 PASS The SharedWorkerGlobalScope interface object should be exposed
-FAIL The Worker interface object should be exposed assert_true: expected true got false
+PASS The Worker interface object should be exposed
 PASS The MessagePort interface object should be exposed
 PASS The MessageEvent interface object should be exposed
 PASS The WorkerNavigator interface object should be exposed

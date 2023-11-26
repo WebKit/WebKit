@@ -5,6 +5,6 @@ PASS importScripts() in a dedicated worker
 PASS Worker() in a dedicated worker
 FAIL SharedWorker() in a dedicated worker assert_equals: expected "%C3%A5" but got "ReferenceError: Can't find variable: SharedWorker"
 FAIL importScripts() in a shared worker assert_equals: expected "%C3%A5" but got "importScripts failed to run"
-FAIL Worker() in a shared worker assert_equals: expected "%C3%A5" but got "ReferenceError: Can't find variable: Worker"
+PASS Worker() in a shared worker
 FAIL SharedWorker() in a shared worker assert_equals: expected "%C3%A5" but got "ReferenceError: Can't find variable: SharedWorker"
 

@@ -24,16 +24,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// https://html.spec.whatwg.org/multipage/workers.html#dedicated-workers-and-the-worker-interface
+
 [
     ActiveDOMObject,
-    Exposed=(Window,DedicatedWorker)
+    Exposed=(Window,DedicatedWorker,SharedWorker)
 ] interface Worker : EventTarget {
-    [CallWith=CurrentScriptExecutionContext&RuntimeFlags] constructor(USVString scriptUrl, optional WorkerOptions options);
+    [CallWith=CurrentScriptExecutionContext&RuntimeFlags] constructor(USVString scriptUrl, optional WorkerOptions options = {});
 
     undefined terminate();
 
     [CallWith=CurrentGlobalObject] undefined postMessage(any message, sequence<object> transfer);
-    [CallWith=CurrentGlobalObject] undefined postMessage(any message, optional StructuredSerializeOptions options);
+    [CallWith=CurrentGlobalObject] undefined postMessage(any message, optional StructuredSerializeOptions options = {});
     attribute EventHandler onmessage;
     attribute EventHandler onmessageerror;
 };
