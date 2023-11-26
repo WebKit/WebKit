@@ -31,7 +31,6 @@
 #include "CSSSelectorList.h"
 #include "CSSSelectorParserContext.h"
 #include "CommonAtomStrings.h"
-#include "DeprecatedGlobalSettings.h"
 #include "HTMLNames.h"
 #include "SelectorPseudoTypeMap.h"
 #include <memory>
@@ -309,8 +308,7 @@ CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView na
             return PseudoElementWebKitCustom;
         break;
     case PseudoElementHighlight:
-        // FIXME: Stop using DeprecatedGlobalSettings.
-        if (!DeprecatedGlobalSettings::highlightAPIEnabled())
+        if (!context.highlightAPIEnabled)
             return PseudoElementUnknown;
         break;
     case PseudoElementViewTransition:

@@ -26,7 +26,6 @@
 #include "config.h"
 #include "MarkedText.h"
 
-#include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
@@ -110,7 +109,7 @@ Vector<MarkedText> MarkedText::collectForHighlights(const RenderText& renderer, 
 {
     Vector<MarkedText> markedTexts;
     RenderHighlight renderHighlight;
-    if (DeprecatedGlobalSettings::highlightAPIEnabled()) {
+    if (renderer.document().settings().highlightAPIEnabled()) {
         auto& parentRenderer = *renderer.parent();
         auto& parentStyle = parentRenderer.style();
         if (auto highlightRegistry = renderer.document().highlightRegistryIfExists()) {

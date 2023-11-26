@@ -3005,11 +3005,12 @@ HighlightAPIEnabled:
   category: css
   humanReadableName: "Highlight API"
   humanReadableDescription: "Highlight API support"
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 HyperlinkAuditingEnabled:

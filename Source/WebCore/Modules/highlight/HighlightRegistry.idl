@@ -24,7 +24,7 @@
  */
 
 [
-    EnabledByDeprecatedGlobalSetting=HighlightAPIEnabled,
+    EnabledBySetting=HighlightAPIEnabled,
     Exposed=Window
 ] interface HighlightRegistry {
     constructor();
