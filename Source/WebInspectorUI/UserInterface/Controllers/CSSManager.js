@@ -256,6 +256,16 @@ WI.CSSManager = class CSSManager extends WI.Object
             return WI.unlocalizedString("::scrollbar-corner");
         case CSSManager.PseudoSelectorNames.Resizer:
             return WI.unlocalizedString("::resizer");
+        case CSSManager.PseudoSelectorNames.ViewTransition:
+            return WI.unlocalizedString("::view-transition");
+        case CSSManager.PseudoSelectorNames.ViewTransitionGroup:
+            return WI.unlocalizedString("::view-transition-group");
+        case CSSManager.PseudoSelectorNames.ViewTransitionImagePair:
+            return WI.unlocalizedString("::view-transition-image-pair");
+        case CSSManager.PseudoSelectorNames.ViewTransitionNew:
+            return WI.unlocalizedString("::view-transition-new");
+        case CSSManager.PseudoSelectorNames.ViewTransitionOld:
+            return WI.unlocalizedString("::view-transition-old");
 
         default:
             console.error("Unknown pseudo id", pseudoId);
@@ -880,6 +890,11 @@ WI.CSSManager.PseudoSelectorNames = {
     ScrollbarTrack: "scrollbar-track",
     ScrollbarTrackPiece: "scrollbar-track-piece",
     Selection: "selection",
+    ViewTransition: "view-transition",
+    ViewTransitionGroup: "view-transition-group",
+    ViewTransitionImagePair: "view-transition-image-pair",
+    ViewTransitionNew: "view-transition-new",
+    ViewTransitionOld: "view-transition-old",
 };
 
 WI.CSSManager.LayoutContextTypeChangedMode = {

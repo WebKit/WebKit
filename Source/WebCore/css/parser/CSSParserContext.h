@@ -98,6 +98,7 @@ struct CSSParserContext {
     bool popoverAttributeEnabled : 1 { false };
     bool sidewaysWritingModesEnabled : 1 { false };
     bool cssTextWrapPrettyEnabled : 1 { false };
+    bool highlightAPIEnabled : 1 { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

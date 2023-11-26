@@ -39,6 +39,7 @@ struct CSSSelectorParserContext {
     bool cssNestingEnabled { false };
     bool focusVisibleEnabled { false };
     bool hasPseudoClassEnabled { false };
+    bool highlightAPIEnabled { false };
     bool popoverAttributeEnabled { false };
     bool viewTransitionsEnabled { false };
 

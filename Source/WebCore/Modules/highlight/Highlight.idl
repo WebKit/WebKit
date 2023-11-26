@@ -30,7 +30,7 @@ enum HighlightType {
 };
 
 [
-    EnabledByDeprecatedGlobalSetting=HighlightAPIEnabled,
+    EnabledBySetting=HighlightAPIEnabled,
     Exposed=Window
 ] interface Highlight {
     constructor(AbstractRange... initialRanges);

@@ -290,7 +290,12 @@ String pseudoIdAsString(PseudoId pseudoId)
     static NeverDestroyed<const String> highlight(MAKE_STATIC_STRING_IMPL("::highlight"));
     static NeverDestroyed<const String> marker(MAKE_STATIC_STRING_IMPL("::marker"));
     static NeverDestroyed<const String> selection(MAKE_STATIC_STRING_IMPL("::selection"));
-    static NeverDestroyed<const String> scrollbar(MAKE_STATIC_STRING_IMPL("::scrollbar"));
+    static NeverDestroyed<const String> scrollbar(MAKE_STATIC_STRING_IMPL("::-webkit-scrollbar"));
+    static NeverDestroyed<const String> viewTransition(MAKE_STATIC_STRING_IMPL("::view-transition"));
+    static NeverDestroyed<const String> viewTransitionGroup(MAKE_STATIC_STRING_IMPL("::view-transition-group"));
+    static NeverDestroyed<const String> viewTransitionImagePair(MAKE_STATIC_STRING_IMPL("::view-transition-image-pair"));
+    static NeverDestroyed<const String> viewTransitionOld(MAKE_STATIC_STRING_IMPL("::view-transition-old"));
+    static NeverDestroyed<const String> viewTransitionNew(MAKE_STATIC_STRING_IMPL("::view-transition-new"));
     switch (pseudoId) {
     case PseudoId::After:
         return after;
@@ -308,6 +313,16 @@ String pseudoIdAsString(PseudoId pseudoId)
         return selection;
     case PseudoId::Scrollbar:
         return scrollbar;
+    case PseudoId::ViewTransition:
+        return viewTransition;
+    case PseudoId::ViewTransitionGroup:
+        return viewTransitionGroup;
+    case PseudoId::ViewTransitionImagePair:
+        return viewTransitionImagePair;
+    case PseudoId::ViewTransitionOld:
+        return viewTransitionOld;
+    case PseudoId::ViewTransitionNew:
+        return viewTransitionNew;
     default:
         return emptyString();
     }

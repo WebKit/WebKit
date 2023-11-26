@@ -103,9 +103,6 @@ public:
     static void setWebSQLEnabled(bool isEnabled) { shared().m_webSQLEnabled = isEnabled; }
     static bool webSQLEnabled() { return shared().m_webSQLEnabled; }
 
-    static void setHighlightAPIEnabled(bool isEnabled) { shared().m_highlightAPIEnabled = isEnabled; }
-    static bool highlightAPIEnabled() { return shared().m_highlightAPIEnabled; }
-
 #if ENABLE(ATTACHMENT_ELEMENT)
     static void setAttachmentElementEnabled(bool areEnabled) { shared().m_isAttachmentElementEnabled = areEnabled; }
     static bool attachmentElementEnabled() { return shared().m_isAttachmentElementEnabled; }
@@ -209,7 +206,6 @@ private:
     bool m_isServerTimingEnabled { false };
     bool m_attrStyleEnabled { false };
     bool m_webSQLEnabled { false };
-    bool m_highlightAPIEnabled { false };
 
     bool m_inlineFormattingContextIntegrationEnabled { true };
 

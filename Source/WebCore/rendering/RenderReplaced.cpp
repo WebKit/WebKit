@@ -25,7 +25,6 @@
 #include "RenderReplaced.h"
 
 #include "BackgroundPainter.h"
-#include "DeprecatedGlobalSettings.h"
 #include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
 #include "ElementRuleCollector.h"
@@ -177,7 +176,7 @@ Color RenderReplaced::calculateHighlightColor() const
         }
     }
 #endif
-    if (DeprecatedGlobalSettings::highlightAPIEnabled()) {
+    if (document().settings().highlightAPIEnabled()) {
         if (auto highlightRegistry = document().highlightRegistryIfExists()) {
             for (auto& highlight : highlightRegistry->map()) {
                 for (auto& highlightRange : highlight.value->highlightRanges()) {
