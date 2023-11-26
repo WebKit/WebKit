@@ -1787,7 +1787,34 @@ imported/w3c/web-platform-tests/screen-wake-lock [ Skip ]
 imported/w3c/web-platform-tests/secure-contexts [ Skip ]
 imported/w3c/web-platform-tests/selection [ Skip ]
 imported/w3c/web-platform-tests/server-timing [ Skip ]
-imported/w3c/web-platform-tests/service-workers [ Skip ]
+imported/w3c/web-platform-tests/service-workers/cache-storage [ Skip ]
+
+imported/w3c/web-platform-tests/service-workers/service-worker/credentials.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image-cache.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-canvas-tainting-image.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-cors-xhr.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-event-within-sw.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-frame-resource.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-resources.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-response-taint.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/fetch-waits-for-activate.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/navigation-preload/broken-chunked-encoding.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect-resolution.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/navigation-redirect.https.html?client [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/navigation-timing.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/next-hop-protocol.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/opaque-script.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/redirected-response.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing-fetch-variants.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/resource-timing.sub.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/respond-with-body-accessed-response.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-fetch-event.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/update-after-navigation-redirect.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/update-recovery.https.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/service-workers/service-worker/windowclient-navigate.https.html [ Skip ] # Failure
+
 imported/w3c/web-platform-tests/shadow-dom [ Skip ]
 imported/w3c/web-platform-tests/speech-api [ Skip ]
 imported/w3c/web-platform-tests/storage [ Skip ]
@@ -2680,3 +2707,5 @@ webkit.org/b/226299 http/tests/performance/performance-resource-timing-resourcet
 webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slashes.html [ Pass Failure ]
 
 webkit.org/b/265213 fast/dom/Range/detach-range-during-deletecontents.html [ Skip ] # Timeout
+
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-name-is-backdrop-filter-root.html [ Pass ]
