@@ -832,8 +832,6 @@ static String styleValidityToToString(Style::Validity validity)
         return "InlineStyleChange"_s;
     case Style::Validity::SubtreeInvalid:
         return "FullStyleChange"_s;
-    case Style::Validity::SubtreeAndRenderersInvalid:
-        return "ReconstructRenderTree"_s;
     }
     ASSERT_NOT_REACHED();
     return emptyString();

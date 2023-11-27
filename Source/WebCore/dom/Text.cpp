@@ -199,7 +199,7 @@ void Text::updateRendererAfterContentChange(unsigned offsetOfReplacedData, unsig
     if (!isConnected())
         return;
 
-    if (styleValidity() >= Style::Validity::SubtreeAndRenderersInvalid)
+    if (hasInvalidRenderer())
         return;
 
     protectedDocument()->updateTextRenderer(*this, offsetOfReplacedData, lengthOfReplacedData);

@@ -650,8 +650,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
 
     auto change = oldStyle ? determineChange(*oldStyle, *newStyle) : Change::Renderer;
 
-    auto validity = element.styleValidity();
-    if (validity >= Validity::SubtreeAndRenderersInvalid || parentChange == Change::Renderer)
+    if (element.hasInvalidRenderer() || parentChange == Change::Renderer)
         change = Change::Renderer;
 
     bool shouldRecompositeLayer = animationImpact.contains(AnimationImpact::RequiresRecomposite) || element.styleResolutionShouldRecompositeLayer();
@@ -843,7 +842,7 @@ void TreeResolver::resolveComposedTree()
         if (is<Text>(node)) {
             auto& text = downcast<Text>(node);
             
-            if ((text.styleValidity() >= Validity::SubtreeAndRenderersInvalid && parent.change != Change::Renderer) || parent.style.display() == DisplayType::Contents) {
+            if ((text.hasInvalidRenderer() && parent.change != Change::Renderer) || parent.style.display() == DisplayType::Contents) {
                 TextUpdate textUpdate;
                 textUpdate.inheritedDisplayContentsStyle = createInheritedDisplayContentsStyleIfNeeded(parent.style, parentBoxStyle());
 

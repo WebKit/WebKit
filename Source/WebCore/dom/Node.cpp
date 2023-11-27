@@ -909,8 +909,18 @@ void Node::adjustStyleValidity(Style::Validity validity, Style::InvalidationMode
         bitfields.setStyleValidity(validity);
         setStyleBitfields(bitfields);
     }
-    if (mode == Style::InvalidationMode::RecompositeLayer)
+
+    switch (mode) {
+    case Style::InvalidationMode::Normal:
+        break;
+    case Style::InvalidationMode::RecompositeLayer:
         setStyleFlag(NodeStyleFlag::StyleResolutionShouldRecompositeLayer);
+        break;
+    case Style::InvalidationMode::RebuildRenderer:
+    case Style::InvalidationMode::InsertedIntoAncestor:
+        setStyleFlag(NodeStyleFlag::HasInvalidRenderer);
+        break;
+    };
 }
 
 void Node::updateAncestorsForStyleRecalc()
@@ -949,7 +959,6 @@ void Node::markAncestorsForInvalidatedStyle()
 
 void Node::invalidateStyle(Style::Validity validity, Style::InvalidationMode mode)
 {
-    ASSERT(validity != Style::Validity::Valid);
     if (!inRenderedDocument())
         return;
 
@@ -957,11 +966,9 @@ void Node::invalidateStyle(Style::Validity validity, Style::InvalidationMode mod
     if (document().inRenderTreeUpdate())
         return;
 
-    // FIXME: This should be set on all descendants in case of a subtree invalidation.
     setNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
 
-    // FIXME: Why the second condition?
-    bool markAncestors = styleValidity() == Style::Validity::Valid || validity == Style::Validity::SubtreeAndRenderersInvalid;
+    bool markAncestors = styleValidity() == Style::Validity::Valid || mode == Style::InvalidationMode::InsertedIntoAncestor;
 
     adjustStyleValidity(validity, mode);
 
@@ -1423,7 +1430,7 @@ Node::InsertedIntoAncestorResult Node::insertedIntoAncestor(InsertionType insert
     if (parentOfInsertedTree.isInShadowTree())
         setNodeFlag(NodeFlag::IsInShadowTree);
 
-    invalidateStyle(Style::Validity::SubtreeAndRenderersInvalid);
+    invalidateStyle(Style::Validity::SubtreeInvalid, Style::InvalidationMode::InsertedIntoAncestor);
 
     return InsertedIntoAncestorResult::Done;
 }
