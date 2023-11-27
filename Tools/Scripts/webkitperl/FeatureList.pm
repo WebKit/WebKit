@@ -79,6 +79,7 @@ my (
     $dfgJITSupport,
     $dragSupportSupport,
     $encryptedMediaSupport,
+    $exportCompileCommands,
     $fatalWarnings,
     $filtersLevel2Support,
     $ftlJITSupport,
@@ -255,6 +256,9 @@ my @features = (
 
     { option => "encrypted-media", desc => "Toggle EME V3 support",
       define => "ENABLE_ENCRYPTED_MEDIA", value => \$encryptedMediaSupport },
+
+    { option => "export-compile-commands", desc => "Toggle compile_commands.json generation (Apple platforms only)",
+      define => "ENABLE_EXPORT_COMPILE_COMMANDS", value => \$exportCompileCommands},
 
     { option => "filters-level-2", desc => "Toggle Filters Module Level 2",
       define => "ENABLE_FILTERS_LEVEL_2", value => \$filtersLevel2Support },

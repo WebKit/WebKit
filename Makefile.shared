@@ -21,8 +21,11 @@ BUILD_WEBKIT_OPTIONS += --no-use-workspace
 BUILD_GOAL = $(notdir $(CURDIR))
 endif
 
+ifneq (,$(EXPORT_COMPILE_COMMANDS))
+	BUILD_WEBKIT_OPTIONS += --export-compile-commands
+endif
 
-XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` $(ARGS)
+XCODE_OPTIONS = $(shell perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)) $(ARGS)
 XCODE_OPTIONS += $(if $(GCC_PREPROCESSOR_ADDITIONS),GCC_PREPROCESSOR_DEFINITIONS='$(GCC_PREPROCESSOR_ADDITIONS) $$(inherited)')
 ifeq (ON,$(ENABLE_LLVM_PROFILE_GENERATION))
 	XCODE_OPTIONS += ENABLE_LLVM_PROFILE_GENERATION=ENABLE_LLVM_PROFILE_GENERATION
@@ -60,13 +63,6 @@ ifeq (, $(findstring WK_USE_CCACHE, $(ARGS)))
 	ifneq (, $(shell which ccache))
 		XCODE_OPTIONS += WK_USE_CCACHE=YES
 	endif
-endif
-
-ifneq (,$(EXPORT_COMPILE_COMMANDS))
-		XCODE_OPTIONS += OTHER_CFLAGS='$$(inherited) -gen-cdb-fragment-path $$(BUILT_PRODUCTS_DIR)/compile_commands'
-		XCODE_OPTIONS += GCC_PRECOMPILE_PREFIX_HEADER=NO
-		XCODE_OPTIONS += CLANG_ENABLE_MODULE_DEBUGGING=NO
-		XCODE_OPTIONS += COMPILER_INDEX_STORE_ENABLE=NO
 endif
 
 endif # ifneq ($(MAKECMDGOALS),installsrc)
