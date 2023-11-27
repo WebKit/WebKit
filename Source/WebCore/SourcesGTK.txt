@@ -70,11 +70,8 @@ platform/graphics/PlatformDisplay.cpp @no-unify
 
 platform/graphics/angle/PlatformDisplayANGLE.cpp @no-unify
 
-platform/graphics/cairo/BackingStoreBackendCairoX11.cpp @no-unify
-
 platform/graphics/egl/GLContext.cpp @no-unify
 platform/graphics/egl/GLContextLibWPE.cpp @no-unify
-platform/graphics/egl/GLContextX11.cpp @no-unify
 platform/graphics/egl/PlatformDisplaySurfaceless.cpp @no-unify
 
 platform/graphics/gbm/GBMBufferSwapchain.cpp
@@ -95,7 +92,6 @@ platform/graphics/wayland/PlatformDisplayWayland.cpp
 
 platform/graphics/x11/PlatformDisplayX11.cpp @no-unify
 platform/graphics/x11/XErrorTrapper.cpp @no-unify
-platform/graphics/x11/XUniqueResource.cpp @no-unify
 
 platform/gtk/CursorGtk.cpp
 platform/gtk/DragDataGtk.cpp

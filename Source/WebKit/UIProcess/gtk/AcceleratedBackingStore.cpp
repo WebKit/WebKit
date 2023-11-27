@@ -36,10 +36,6 @@
 #include "AcceleratedBackingStoreWayland.h"
 #endif
 
-#if PLATFORM(X11)
-#include "AcceleratedBackingStoreX11.h"
-#endif
-
 #if PLATFORM(GTK) && USE(EGL)
 #include "AcceleratedBackingStoreDMABuf.h"
 #endif
@@ -80,10 +76,6 @@ bool AcceleratedBackingStore::checkRequirements()
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
         return AcceleratedBackingStoreWayland::checkRequirements() && gtkCanUseHardwareAcceleration();
 #endif
-#if PLATFORM(X11)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
-        return AcceleratedBackingStoreX11::checkRequirements();
-#endif
 
     return false;
 }
@@ -100,10 +92,6 @@ std::unique_ptr<AcceleratedBackingStore> AcceleratedBackingStore::create(WebPage
 #if PLATFORM(WAYLAND)
     if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
         return AcceleratedBackingStoreWayland::create(webPage);
-#endif
-#if PLATFORM(X11)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::X11)
-        return AcceleratedBackingStoreX11::create(webPage);
 #endif
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;

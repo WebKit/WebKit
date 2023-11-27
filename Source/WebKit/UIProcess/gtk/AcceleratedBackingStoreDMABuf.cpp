@@ -73,6 +73,10 @@ OptionSet<DMABufRendererBufferMode> AcceleratedBackingStoreDMABuf::rendererBuffe
 
         mode.add(DMABufRendererBufferMode::SharedMemory);
 
+        const char* forceSHM = getenv("WEBKIT_DMABUF_RENDERER_FORCE_SHM");
+        if (forceSHM && strcmp(forceSHM, "0"))
+            return;
+
         const auto& eglExtensions = WebCore::PlatformDisplay::sharedDisplay().eglExtensions();
         if (eglExtensions.KHR_image_base && eglExtensions.EXT_image_dma_buf_import)
             mode.add(DMABufRendererBufferMode::Hardware);

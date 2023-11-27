@@ -56,8 +56,6 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/x11/PlatformDisplayX11.h
     platform/graphics/x11/XErrorTrapper.h
-    platform/graphics/x11/XUniquePtr.h
-    platform/graphics/x11/XUniqueResource.h
 
     platform/gtk/GRefPtrGtk.h
     platform/gtk/GUniquePtrGtk.h
@@ -82,10 +80,6 @@ list(APPEND WebCore_LIBRARIES
     ${HYPHEN_LIBRARIES}
     ${UPOWERGLIB_LIBRARIES}
     ${X11_X11_LIB}
-    ${X11_Xcomposite_LIB}
-    ${X11_Xdamage_LIB}
-    ${X11_Xrender_LIB}
-    ${X11_Xt_LIB}
     GTK::GTK
 )
 
