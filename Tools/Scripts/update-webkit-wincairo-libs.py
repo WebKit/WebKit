@@ -36,6 +36,9 @@ file = 'WebKitRequirementsWin64.zip'
 output = os.getenv('WEBKIT_LIBRARIES', 'WebKitLibraries/win')
 options = [repo, file, '-o', output]
 
+if os.getenv('GITHUB_TOKEN'):
+    options += ['-t', os.getenv('GITHUB_TOKEN')]
+
 # Check if there's a specific version to request
 config_path = os.path.join(output, file) + '.config'
 if os.path.exists(config_path):
