@@ -8594,7 +8594,6 @@
         },
         "translate": {
             "codegen-properties": {
-                "settings-flag": "cssIndividualTransformPropertiesEnabled",
                 "converter": "Translate",
                 "parser-function": "consumeTranslate",
                 "parser-function-requires-context-mode": true,
@@ -8608,7 +8607,6 @@
         },
         "scale": {
             "codegen-properties": {
-                "settings-flag": "cssIndividualTransformPropertiesEnabled",
                 "converter": "Scale",
                 "parser-function": "consumeScale",
                 "parser-function-requires-context-mode": true,
@@ -8623,7 +8621,6 @@
         },
         "rotate": {
             "codegen-properties": {
-                "settings-flag": "cssIndividualTransformPropertiesEnabled",
                 "converter": "Rotate",
                 "parser-function": "consumeRotate",
                 "parser-function-requires-context-mode": true,

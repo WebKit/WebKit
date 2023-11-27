@@ -3058,12 +3058,11 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 - (BOOL)CSSIndividualTransformPropertiesEnabled
 {
-    return [self _boolValueForKey:WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey];
+    return YES;
 }
 
 - (void)setCSSIndividualTransformPropertiesEnabled:(BOOL)flag
 {
-    [self _setBoolValue:flag forKey:WebKitCSSIndividualTransformPropertiesEnabledPreferenceKey];
 }
 
 - (BOOL)_speechRecognitionEnabled

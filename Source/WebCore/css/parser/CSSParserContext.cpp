@@ -59,7 +59,6 @@ CSSParserContext::CSSParserContext(CSSParserMode mode, const URL& baseURL)
         focusVisibleEnabled = true;
         popoverAttributeEnabled = true;
         propertySettings.cssContainmentEnabled = true;
-        propertySettings.cssIndividualTransformPropertiesEnabled = true;
         propertySettings.cssInputSecurityEnabled = true;
         propertySettings.cssCounterStyleAtRulesEnabled = true;
         propertySettings.viewTransitionsEnabled = true;
