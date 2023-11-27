@@ -2711,3 +2711,9 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-s
 
 # webkit.org/b/263870 [scroll-animations] lots of scroll-animations WPT tests are timing out
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-snapshotting.html [ Skip ]
+
+# rdar://118836741 (REGRESSION ( 271130@main ): [ macOS wk1 ] 4 tests in http/tests/security/mixedContent are a consistent failure)
+http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image.html [ Pass Failure ]
+http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https.html [ Pass Failure ]
+http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html [ Pass Failure ]
+http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html [ Pass Failure ]
