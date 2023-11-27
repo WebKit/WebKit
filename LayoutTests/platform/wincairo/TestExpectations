@@ -234,9 +234,11 @@ fast/events/clipboard-dataTransferItemList.html [ Skip ]
 fast/events/drag-dataTransferItemList.html [ Skip ]
 fast/events/drag-dataTransferItemList-file-handling.html [ Skip ]
 
-# Drag and drop isn't supported yet
+# Drag and drop isn't supported yet, and GDI resource leaks <webkit.org/b/264999>
+editing/selection/drag-text-delay.html [ Skip ]
 editing/selection/drag-to-contenteditable-iframe.html [ Skip ]
 fast/events/before-input-events-prevent-drag-and-drop.html [ Skip ]
+fast/events/clear-drag-state.html [ Skip ]
 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Skip ]
 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html [ Skip ]
@@ -264,9 +266,20 @@ fast/events/dropzone-001.html [ Skip ]
 fast/events/dropzone-002.html [ Skip ]
 fast/events/dropzone-003.html [ Skip ]
 fast/events/input-events-drag-and-drop.html [ Skip ]
+fast/events/ondragenter.html [ Skip ]
 fast/events/ondrop-text-html.html [ Skip ]
+fast/events/remove-target-with-shadow-in-drag.html [ Skip ]
+fast/events/selectstart-by-drag.html [ Skip ]
 fast/events/standalone-image-drag-to-editable.html [ Skip ]
+fast/forms/drag-into-textarea.html [ Skip ]
+fast/forms/drag-out-of-textarea.html [ Skip ]
+fast/forms/input-text-drag-down.html [ Skip ]
 fast/forms/range/slider-delete-while-dragging-thumb.html [ Skip ]
+fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html [ Skip ]
+http/tests/local/drag-over-remote-content.html [ Skip ]
+http/tests/misc/bubble-drag-events.html [ Skip ]
+http/tests/security/drag-drop-same-unique-origin.html [ Skip ]
+http/tests/security/drag-over-remote-content-iframe.html [ Skip ]
 http/tests/security/resources/drag-drop-allowed.html [ Skip ]
 
 # eventSender.contextClick() needs to return a JS array of the context menu items.
@@ -556,6 +569,7 @@ crypto/subtle/ecdh-generate-export-key-raw-p384.html [ Failure Pass ]
 crypto/subtle/ecdh-generate-export-key-raw-p521.html [ Failure Pass ]
 
 webkit.org/b/264144 crypto/subtle/ecdsa-generate-export-key-pkcs8.html [ Failure Pass ]
+webkit.org/b/264144 crypto/subtle/ecdsa-generate-export-jwk-key.html [ Failure Pass ]
 
 # Tests explicitly enabled.
 crypto/subtle/derive-bits-malformed-parameters.html [ Pass ]
@@ -811,8 +825,6 @@ http/tests/security/credentials-main-resource.html [ Skip ] # Failure
 http/tests/security/cross-frame-access-put.html [ Skip ] # Failure
 http/tests/security/css-mask-image-credentials.html [ Skip ] # ImageOnlyFailure
 http/tests/security/dataTransfer-set-data-file-url.html [ Skip ] # Failure
-http/tests/security/drag-drop-same-unique-origin.html [ Skip ] # Failure
-http/tests/security/drag-over-remote-content-iframe.html [ Skip ] # Failure
 http/tests/security/frame-loading-via-document-write-async-delegates.html [ Skip ] # Failure
 http/tests/security/frame-loading-via-document-write.html [ Skip ] # Failure
 http/tests/security/inactive-document-with-empty-security-origin.html [ Skip ] # Timeout
@@ -928,10 +940,8 @@ http/tests/misc/ftp-eplf-directory.py [ Skip ]
 http/wpt/fetch/fetch-metadata-websocket.html [ Failure ]
 
 http/tests/is-logged-in/available-in-secure-contexts.https.html [ Failure ]
-http/tests/local/drag-over-remote-content.html [ Failure ]
 http/tests/local/link-stylesheet-load-order-preload.html [ Failure ]
 http/tests/local/link-stylesheet-load-order.html [ Failure ]
-http/tests/misc/bubble-drag-events.html [ Failure ]
 http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
 http/tests/misc/window-dot-stop.html [ Failure ]
 http/tests/ssl/upgrade-origin-usage.html [ Failure ]
@@ -1331,8 +1341,6 @@ fast/forms/control-clip-overflow.html [ Skip ]
 fast/forms/control-clip.html [ Skip ]
 fast/forms/control-restrict-line-height.html [ Skip ]
 fast/forms/disabled-select-change-index.html [ Skip ]
-fast/forms/drag-into-textarea.html [ Skip ]
-fast/forms/drag-out-of-textarea.html [ Skip ]
 fast/forms/encoding-test.html [ Skip ]
 fast/forms/fieldset-align.html [ Skip ]
 fast/forms/fieldset-legend-padding-unclipped-fieldset-border.html [ Skip ]
@@ -1388,7 +1396,6 @@ fast/forms/input-table.html [ Skip ]
 fast/forms/input-text-click-inside.html [ Skip ]
 fast/forms/input-text-click-outside.html [ Skip ]
 fast/forms/input-text-double-click.html [ Skip ]
-fast/forms/input-text-drag-down.html [ Skip ]
 fast/forms/input-text-max-length-emojis.html [ Skip ]
 fast/forms/input-text-option-delete.html [ Skip ]
 fast/forms/input-text-scroll-left-on-blur.html [ Skip ]
@@ -1470,7 +1477,6 @@ fast/forms/select-initial-position.html [ Skip ]
 fast/forms/select-item-background-clip.html [ Skip ]
 fast/forms/select-list-box-with-height.html [ Skip ]
 fast/forms/select-listbox-multiple-no-focusring.html [ Skip ]
-fast/forms/select-multiple-elements-with-mouse-drag-with-options-less-than-size.html [ Skip ]
 fast/forms/select-non-native-rendering-direction.html [ Skip ]
 fast/forms/select-overflow-scroll-inherited.html [ Skip ]
 fast/forms/select-overflow-scroll.html [ Skip ]
@@ -1938,7 +1944,6 @@ fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 fast/events/autoscroll-when-input-is-offscreen.html [ Skip ] # UIScript
 fast/events/autoscroll-with-software-keyboard.html [ Skip ] # UIScript
 fast/events/before-input-prevent-insert-replacement.html [ Skip ] # UIScript
-fast/events/clear-drag-state.html [ Failure ]
 fast/events/click-focus-control.html [ Failure ]
 fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
 fast/events/context-activated-by-key-event.html [ Failure ]
@@ -2474,7 +2479,6 @@ editing/editability/user-select-all-in-editable-view.html [ Failure ]
 editing/selection/4895428-1.html [ Failure ]
 editing/selection/4895428-4.html [ Failure ]
 editing/selection/after-line-break.html [ Failure ]
-editing/selection/drag-text-delay.html [ Failure ]
 editing/selection/select-out-of-editable.html [ Failure ]
 editing/selection/shift-click-includes-existing-selection.html [ Failure ]
 editing/selection/shift-click.html [ Failure ]
@@ -2499,8 +2503,6 @@ fast/events/mouse-cursor-change.html [ Failure ]
 fast/events/mouse-cursor-image-set.html [ Failure ]
 fast/events/mouse-cursor-no-mousemove.html [ Failure ]
 fast/events/mouse-cursor-udpate-during-raf.html [ Failure ]
-fast/events/ondragenter.html [ Failure ]
-fast/events/remove-target-with-shadow-in-drag.html [ Failure ]
 fast/events/selectstart-by-single-click-with-shift.html [ Failure ]
 fast/rendering/render-style-null-optgroup-crash.html [ Failure ]
 fast/text/font-download-font-face-src-list.html [ Failure ]
@@ -2580,9 +2582,6 @@ fonts/fantasy.html [ Failure Pass ]
 fast/text/atsui-multiple-renderers.html [ Failure Pass ]
 fast/text/international/thai-baht-space.html [ Failure Pass ]
 fast/text/international/thai-line-breaks.html [ Failure Pass ]
-
-# Failing on Buildbot, passing locally
-fast/events/selectstart-by-drag.html [ Failure Pass ]
 
 fast/css/counters/complex-before.html [ Failure ]
 fast/dom/Document/CaretRangeFromPoint/rtl.html [ Failure ]
