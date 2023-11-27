@@ -6937,21 +6937,31 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     _page->setShouldRevealCurrentSelectionAfterInsertion(true);
 }
 
+inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
+{
+    switch (flags) {
+    case UIKeyModifierAlphaShift:
+        return UIShiftKeyStateCapsLocked;
+    case UIKeyModifierShift:
+        return UIShiftKeyStateShifted;
+    case UIKeyModifierControl:
+    case UIKeyModifierAlternate:
+    case UIKeyModifierCommand:
+    case UIKeyModifierNumericPad:
+        return UIShiftKeyStateNone;
+    }
+    ASSERT_NOT_REACHED();
+    return UIShiftKeyStateNone;
+}
+
 - (void)modifierFlagsDidChangeFrom:(UIKeyModifierFlags)oldFlags to:(UIKeyModifierFlags)newFlags
 {
-    auto dispatchSyntheticFlagsChangedEvents = [&] (UIKeyModifierFlags flags, bool keyDown) {
-        if (flags & UIKeyModifierShift)
-            [self handleKeyWebEvent:adoptNS([[WKSyntheticFlagsChangedWebEvent alloc] initWithShiftState:keyDown]).get()];
-        if (flags & UIKeyModifierAlphaShift)
-            [self handleKeyWebEvent:adoptNS([[WKSyntheticFlagsChangedWebEvent alloc] initWithCapsLockState:keyDown]).get()];
-    };
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
 
-    UIKeyModifierFlags removedFlags = oldFlags & ~newFlags;
-    UIKeyModifierFlags addedFlags = newFlags & ~oldFlags;
-    if (removedFlags)
-        dispatchSyntheticFlagsChangedEvents(removedFlags, false);
-    if (addedFlags)
-        dispatchSyntheticFlagsChangedEvents(addedFlags, true);
+    auto oldState = shiftKeyState(oldFlags);
+    auto newState = shiftKeyState(newFlags);
+    if (oldState != newState)
+        [self shiftKeyStateChangedFrom:oldState to:newState];
 }
 
 - (BOOL)shouldSuppressUpdateCandidateView
@@ -12638,6 +12648,34 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 - (BOOL)shouldSuppressEditMenu
 {
     return !!_suppressSelectionAssistantReasons;
+}
+
+- (void)shiftKeyStateChangedFrom:(UIShiftKeyState)oldState to:(UIShiftKeyState)newState
+{
+    ASSERT(oldState != newState);
+    if (_isHandlingActivePressesEvent) {
+        // UIKit will call into us to handle the individual events, so there's no need to dispatch
+        // these synthetic modifier change key events.
+        return;
+    }
+
+    auto dispatchSyntheticFlagsChangedEvents = [&] (UIShiftKeyState state, bool keyDown) {
+        RetainPtr<WKSyntheticFlagsChangedWebEvent> syntheticEvent;
+        switch (state) {
+        case UIShiftKeyStateNone:
+            return;
+        case UIShiftKeyStateShifted:
+            syntheticEvent = adoptNS([[WKSyntheticFlagsChangedWebEvent alloc] initWithShiftState:keyDown]);
+            break;
+        case UIShiftKeyStateCapsLocked:
+            syntheticEvent = adoptNS([[WKSyntheticFlagsChangedWebEvent alloc] initWithCapsLockState:keyDown]);
+            break;
+        }
+        [self handleKeyWebEvent:syntheticEvent.get()];
+    };
+
+    dispatchSyntheticFlagsChangedEvents(oldState, false);
+    dispatchSyntheticFlagsChangedEvents(newState, true);
 }
 
 #pragma mark - UIAsyncTextInteractionDelegate
