@@ -70,7 +70,6 @@ my (
     $contextMenusSupport,
     $cssBoxDecorationBreakSupport,
     $cssCompositingSupport,
-    $cssConicGradientsSupport,
     $cssDeviceAdaptationSupport,
     $cssImageResolutionSupport,
     $cssPaintingAPISupport,
@@ -239,9 +238,6 @@ my @features = (
 
     { option => "css-compositing", desc => "Toggle CSS Compositing support",
       define => "ENABLE_CSS_COMPOSITING", value => \$cssCompositingSupport },
-
-    { option => "css-conic-gradients", desc => "Toggle CSS Conic Gradient support",
-      define => "ENABLE_CSS_CONIC_GRADIENTS", value => \$cssConicGradientsSupport },
 
     { option => "css-painting-api", desc => "Toggle CSS Painting API support",
       define => "ENABLE_CSS_PAINTING_API", value => \$cssPaintingAPISupport },
