@@ -4936,10 +4936,7 @@
             "values": [
                 "visible",
                 "hidden",
-                {
-                    "value": "clip",
-                    "settings-flag": "overflowClipEnabled"
-                },
+                "clip",
                 "scroll",
                 "auto",
                 {
@@ -4959,10 +4956,7 @@
             "values": [
                 "visible",
                 "hidden",
-                {
-                    "value": "clip",
-                    "settings-flag": "overflowClipEnabled"
-                },
+                "clip",
                 "scroll",
                 "auto",
                 {
