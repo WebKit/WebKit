@@ -63,6 +63,13 @@
 #import <UIKit/UIWindow_Private.h>
 #import <UIKit/_UINavigationInteractiveTransition.h>
 
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#import <UIKit/UIAsyncTextInput.h>
+#import <UIKit/UIAsyncTextInputClient.h>
+#import <UIKit/UIAsyncTextInteraction.h>
+#import <UIKit/UIKeyEventContext.h>
+#endif
+
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 #import <UIKit/UIWebBrowserView.h>
 #import <UIKit/UIWebScrollView.h>
@@ -616,5 +623,11 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 @interface UIApplication (IPI)
 - (UIPressInfo *)_pressInfoForPhysicalKeyboardEvent:(UIPhysicalKeyboardEvent *)physicalKeyboardEvent;
 @end
+
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+@protocol UIAsyncTextInput_Staging <UIAsyncTextInput>
+@property (nonatomic, readonly) CGRect selectionClipRect; // Added in <rdar://118189933>.
+@end
+#endif
 
 #endif // PLATFORM(IOS_FAMILY)

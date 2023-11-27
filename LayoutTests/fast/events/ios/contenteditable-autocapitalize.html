@@ -1,59 +1,38 @@
 <!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
-
 <html>
-
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
     <script>
-        let write = message => output.innerHTML += message + "<br>";
-        if (window.testRunner) {
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
-        }
-
-        let remainingInputEventCount = 0;
-        let resolveExpectedInputEvents = null;
-        function handleInput() {
-            remainingInputEventCount--;
-            if (resolveExpectedInputEvents && !remainingInputEventCount)
-                resolveExpectedInputEvents();
-        }
-
-        function runTestWithAutocapitalizeType(autocapitalizeType, inputEventCount)
-        {
-            editable.autocapitalize = autocapitalizeType;
-            remainingInputEventCount = inputEventCount;
-            resolveExpectedInputEvents = () => {
-                write(`With autocapitalize: ${editable.autocapitalize}, the output is: "${editable.textContent}"`);
-                editable.textContent = "";
-                editable.blur();
-            };
-
-            return new Promise(function(resolve) {
-                let rect = editable.getBoundingClientRect();
-                testRunner.runUIScript(`(function() {
-                    uiController.didShowKeyboardCallback = function() {
-                        uiController.typeCharacterUsingHardwareKeyboard("t", function() {
-                            uiController.typeCharacterUsingHardwareKeyboard("o", function() {});
-                        });
-                    }
-                    uiController.didHideKeyboardCallback = function() {
-                        uiController.uiScriptComplete();
-                    }
-                    uiController.singleTapAtPoint(${rect.left + rect.width / 2}, ${rect.top + rect.height / 2}, function() {});
-                })();`, resolve);
-            });
-        }
+        jsTestIsAsync = true;
+        description("To manually test, type 't' into the contenteditable. The 't' should not be autocapitalized.");
 
         async function runTest()
         {
             if (!window.testRunner || !testRunner.runUIScript)
                 return;
 
-            await runTestWithAutocapitalizeType("none", 2);
-            await runTestWithAutocapitalizeType("sentences", 2);
-            await runTestWithAutocapitalizeType("characters", 2);
-            testRunner.notifyDone();
+            for (const [autocapitalizeType, expectedTextContent] of [["none", "to"], ["sentences", "To"], ["characters", "TO"]]) {
+                editable.autocapitalize = autocapitalizeType;
+
+                await UIHelper.activateElementAndWaitForInputSession(editable);
+                await UIHelper.typeCharacter("t");
+                await UIHelper.ensurePresentationUpdate();
+                await UIHelper.typeCharacter("o");
+                await UIHelper.ensurePresentationUpdate();
+
+                if (expectedTextContent === editable.textContent)
+                    testPassed(`With autocapitalize: ${autocapitalizeType}, the output is: "${editable.textContent}"`);
+                else
+                    testFailed(`With autocapitalize: ${autocapitalizeType}, the output is: "${editable.textContent}" (expected "${expectedTextContent}")`);
+
+                editable.textContent = "";
+                editable.blur();
+            }
+
+            await UIHelper.waitForKeyboardToHide();
+            finishJSTest();
         }
     </script>
     <style>
@@ -68,8 +47,7 @@
 </head>
 
 <body onload=runTest()>
-    <div contenteditable id="editable" oninput=handleInput()></div>
-    <p>To manually test, type 't' into the contenteditable. The 't' should not be autocapitalized.</p>
+    <div contenteditable id="editable"></div>
     <div id="output"></div>
 </body>
 

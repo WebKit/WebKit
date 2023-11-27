@@ -835,6 +835,18 @@ void UIScriptControllerIOS::applyAutocorrection(JSStringRef newString, JSStringR
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (auto asyncInput = asyncTextInput()) {
+        [asyncInput replaceText:toWTFString(oldString) withText:toWTFString(newString) options:0 withCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID](NSArray<UITextSelectionRect *> *) {
+            dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
+                if (m_context)
+                    m_context->asyncTaskComplete(callbackID);
+            }).get());
+        }).get()];
+        return;
+    }
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+
     auto contentView = static_cast<id<UIWKInteractionViewProtocol>>(platformContentView());
     [contentView applyAutocorrection:toWTFString(newString) toString:toWTFString(oldString) shouldUnderline:NO withCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, callbackID](UIWKAutocorrectionRects *) {
         dispatch_async(dispatch_get_main_queue(), makeBlockPtr([this, protectedThis = Ref { *this }, callbackID] {
@@ -883,11 +895,20 @@ JSObjectRef UIScriptControllerIOS::contentVisibleRect() const
     return m_context->objectFromRect(rect);
 }
 
-static void clipSelectionViewRectToContentView(CGRect& rect, UIView *contentView)
+void UIScriptControllerIOS::clipSelectionViewRectToContentView(CGRect& rect) const
 {
+    auto contentView = platformContentView();
     rect = CGRectIntersection(contentView.bounds, rect);
-    // The content view (a WKContentView in WebKit) is expected to implement the optional text input method -_selectionClipRect.
-    ASSERT([contentView respondsToSelector:@selector(_selectionClipRect)]);
+
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (auto asyncInput = asyncTextInput()) {
+        auto selectionClipRect = asyncInput.selectionClipRect;
+        if (!CGRectIsNull(selectionClipRect))
+            rect = CGRectIntersection(selectionClipRect, rect);
+        return;
+    }
+#endif
+
     auto selectionClipRect = [(UIView <UITextInputInternal> *)contentView _selectionClipRect];
     if (!CGRectIsNull(selectionClipRect))
         rect = CGRectIntersection(selectionClipRect, rect);
@@ -906,7 +927,7 @@ JSObjectRef UIScriptControllerIOS::selectionStartGrabberViewRect() const
 #endif
 
     auto frameInContentViewCoordinates = [handleView convertRect:handleView.bounds toView:contentView];
-    clipSelectionViewRectToContentView(frameInContentViewCoordinates, contentView);
+    clipSelectionViewRectToContentView(frameInContentViewCoordinates);
     auto jsContext = m_context->jsContext();
     return JSValueToObject(jsContext, [JSValue valueWithObject:toNSDictionary(frameInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
 }
@@ -924,7 +945,7 @@ JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewRect() const
 #endif
 
     auto frameInContentViewCoordinates = [handleView convertRect:handleView.bounds toView:contentView];
-    clipSelectionViewRectToContentView(frameInContentViewCoordinates, contentView);
+    clipSelectionViewRectToContentView(frameInContentViewCoordinates);
     auto jsContext = m_context->jsContext();
     return JSValueToObject(jsContext, [JSValue valueWithObject:toNSDictionary(frameInContentViewCoordinates) inContext:[JSContext contextWithJSGlobalContextRef:jsContext]].JSValueRef, nullptr);
 }
@@ -936,9 +957,6 @@ JSObjectRef UIScriptControllerIOS::selectionEndGrabberViewShapePathDescription()
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (auto view = textSelectionDisplayInteraction().handleViews.lastObject; !isHiddenOrHasHiddenAncestor(view))
         handleView = view;
-#else
-    UIView *contentView = platformContentView();
-    handleView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView.endGrabber"];
 #endif
 
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary((CGPathRef)[handleView valueForKeyPath:@"stemView.shapeLayer.path"]).get() inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
@@ -952,12 +970,10 @@ JSObjectRef UIScriptControllerIOS::selectionCaretViewRect(id<UICoordinateSpace> 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (auto view = textSelectionDisplayInteraction().cursorView; !isHiddenOrHasHiddenAncestor(view))
         caretView = view;
-#else
-    caretView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.caretView"];
 #endif
 
     auto contentRect = CGRectIntersection([caretView convertRect:caretView.bounds toView:contentView], contentView.bounds);
-    clipSelectionViewRectToContentView(contentRect, contentView);
+    clipSelectionViewRectToContentView(contentRect);
     if (coordinateSpace != contentView)
         contentRect = [coordinateSpace convertRect:contentRect fromCoordinateSpace:contentView];
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:toNSDictionary(contentRect) inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
@@ -987,14 +1003,11 @@ JSObjectRef UIScriptControllerIOS::selectionRangeViewRects() const
             textRectInfoArray = view.selectionRects;
         }
     }
-#else
-    rangeView = [contentView valueForKeyPath:@"interactionAssistant.selectionView.rangeView"];
-    textRectInfoArray = [rangeView valueForKeyPath:@"rects"];
 #endif
 
     for (UITextSelectionRect *textRectInfo in textRectInfoArray) {
         auto rangeRectInContentViewCoordinates = [rangeView convertRect:textRectInfo.rect toView:contentView];
-        clipSelectionViewRectToContentView(rangeRectInContentViewCoordinates, contentView);
+        clipSelectionViewRectToContentView(rangeRectInContentViewCoordinates);
         [rectsAsDictionaries addObject:toNSDictionary(CGRectIntersection(rangeRectInContentViewCoordinates, contentView.bounds))];
     }
     return JSValueToObject(m_context->jsContext(), [JSValue valueWithObject:rectsAsDictionaries.get() inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]].JSValueRef, nullptr);
@@ -1378,9 +1391,6 @@ JSRetainPtr<JSStringRef> UIScriptControllerIOS::selectionCaretBackgroundColor() 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     if (auto view = textSelectionDisplayInteraction().cursorView; !isHiddenOrHasHiddenAncestor(view))
         backgroundColor = view.tintColor;
-#else
-    auto contentView = platformContentView();
-    backgroundColor = [contentView valueForKeyPath:@"textInteractionAssistant.selectionView.caretView.backgroundColor"];
 #endif
 
     if (!backgroundColor)
@@ -1528,6 +1538,19 @@ void UIScriptControllerIOS::resignFirstResponder()
 {
     [webView() resignFirstResponder];
 }
+
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+
+id<UIAsyncTextInput_Staging> UIScriptControllerIOS::asyncTextInput() const
+{
+    static BOOL conformsToAsyncTextInput = class_conformsToProtocol(NSClassFromString(@"WKContentView"), @protocol(UIAsyncTextInput));
+    if (!conformsToAsyncTextInput)
+        return nil;
+
+    return (id<UIAsyncTextInput_Staging>)platformContentView();
+}
+
+#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
 

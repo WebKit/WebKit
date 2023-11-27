@@ -1,6 +1,12 @@
 To manually test, type 't' into the contenteditable. The 't' should not be autocapitalized.
 
-With autocapitalize: none, the output is: "to"
-With autocapitalize: sentences, the output is: "To"
-With autocapitalize: characters, the output is: "TO"
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS With autocapitalize: none, the output is: "to"
+PASS With autocapitalize: sentences, the output is: "To"
+PASS With autocapitalize: characters, the output is: "TO"
+PASS successfullyParsed is true
+
+TEST COMPLETE
 

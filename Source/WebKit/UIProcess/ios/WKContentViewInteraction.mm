@@ -5178,7 +5178,7 @@ static void selectionChangedWithTouch(WKTextInteractionWrapper *interaction, con
 
 - (void)requestPreferredArrowDirectionForEditMenuWithCompletionHandler:(void(^)(UIEditMenuArrowDirection))completion
 {
-    if ([self _shouldSuppressSelectionCommands]) {
+    if (self.shouldSuppressEditMenu) {
         completion(UIEditMenuArrowDirectionAutomatic);
         return;
     }
@@ -8673,7 +8673,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         if (!strongSelf)
             return completionHandler(false, { });
 
-        if (shouldPresentMenu && ![strongSelf _shouldSuppressSelectionCommands])
+        if (shouldPresentMenu && ![strongSelf shouldSuppressEditMenu])
             [strongSelf->_textInteractionWrapper activateSelection];
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
