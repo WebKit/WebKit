@@ -355,7 +355,7 @@ public:
 #if ENABLE(REMOTE_INSPECTOR)
     void enableRemoteWebInspector();
 #endif
-    void unblockServicesRequiredByAccessibility(const Vector<SandboxExtension::Handle>&);
+    void unblockServicesRequiredByAccessibility(Vector<SandboxExtension::Handle>&&);
     static id accessibilityFocusedUIElement();
 #if ENABLE(CFPREFS_DIRECT_MODE)
     void notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue);

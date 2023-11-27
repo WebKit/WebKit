@@ -180,6 +180,12 @@
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 
+#if PLATFORM(IOS_FAMILY)
+@interface NSObject (UIAccessibilitySafeCategory)
+- (id)safeValueForKey:(NSString *)key;
+@end
+#endif
+
 #if HAVE(CATALYST_USER_INTERFACE_IDIOM_AND_SCALE_FACTOR)
 // FIXME: This is only for binary compatibility with versions of UIKit in macOS 11 that are missing the change in <rdar://problem/68524148>.
 SOFT_LINK_FRAMEWORK(UIKit)
@@ -677,6 +683,15 @@ static NSString *webProcessLoaderAccessibilityBundlePath()
 #endif
     return [path stringByAppendingPathComponent:@"System/Library/AccessibilityBundles/WebProcessLoader.axbundle"];
 }
+
+static NSString *webProcessAccessibilityBundlePath()
+{
+    NSString *path = (__bridge NSString *)GSSystemRootDirectory();
+#if PLATFORM(MACCATALYST)
+    path = [path stringByAppendingPathComponent:@"System/iOSSupport"];
+#endif
+    return [path stringByAppendingPathComponent:@"System/Library/AccessibilityBundles/WebProcess.axbundle"];
+}
 #endif
 
 static void registerWithAccessibility()
@@ -690,6 +705,16 @@ static void registerWithAccessibility()
     NSError *error = nil;
     if (![[NSBundle bundleWithPath:bundlePath] loadAndReturnError:&error])
         LOG_ERROR("Failed to load accessibility bundle at %@: %@", bundlePath, error);
+
+    // This code will eagerly start the in-process AX server.
+    // This enables us to revoke the Mach bootstrap sandbox extension.
+    NSString *webProcessAXBundlePath = webProcessAccessibilityBundlePath();
+    NSBundle *bundle = [NSBundle bundleWithPath:webProcessAXBundlePath];
+    error = nil;
+    if ([bundle loadAndReturnError:&error])
+        [[bundle principalClass] safeValueForKey:@"accessibilityInitializeBundle"];
+    else
+        LOG_ERROR("Failed to load accessibility bundle at %@: %@", webProcessAXBundlePath, error);
 #endif
 }
 
@@ -1427,13 +1452,18 @@ void WebProcess::updatePageScreenProperties()
 }
 #endif
 
-void WebProcess::unblockServicesRequiredByAccessibility(const Vector<SandboxExtension::Handle>& handleArray)
+void WebProcess::unblockServicesRequiredByAccessibility(Vector<SandboxExtension::Handle>&& handles)
 {
-#if PLATFORM(IOS_FAMILY)
-    bool consumed = SandboxExtension::consumePermanently(handleArray);
-    ASSERT_UNUSED(consumed, consumed);
-#endif
+    Vector<RefPtr<SandboxExtension>> extensions = WTF::map(WTFMove(handles), [](SandboxExtension::Handle&& handle) {
+        auto extension = SandboxExtension::create(WTFMove(handle));
+        extension->consume();
+        return extension;
+    });
+
     registerWithAccessibility();
+
+    for (auto& extension : extensions)
+        extension->revoke();
 }
 
 void WebProcess::powerSourceDidChange(bool hasAC)
