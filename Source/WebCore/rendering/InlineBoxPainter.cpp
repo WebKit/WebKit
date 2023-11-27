@@ -316,14 +316,12 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
         return;
     }
 
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
     if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone) {
         GraphicsContextStateSaver stateSaver(m_paintInfo.context());
         m_paintInfo.context().clip({ rect.location(), m_inlineBox.visualRectIgnoringBlockDirection().size() });
         backgroundPainter.paintFillLayer(color, fillLayer, rect, BackgroundBleedNone, m_inlineBox, { }, op);
         return;
     }
-#endif
 
     // We have a fill image that spans multiple lines.
     // We need to adjust tx and ty by the width of all previous lines.

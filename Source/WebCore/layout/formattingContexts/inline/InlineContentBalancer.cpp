@@ -95,10 +95,8 @@ static bool cannotBalanceInlineItem(const InlineItem& inlineItem)
         return true;
     if (containsPreservedTab(inlineItem))
         return true;
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
     if (inlineItem.style().boxDecorationBreak() == BoxDecorationBreak::Clone)
         return true;
-#endif
     return false;
 }
 

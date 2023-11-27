@@ -363,10 +363,8 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
         }
         if (run.isLineSpanningInlineBoxStart()) {
             auto marginStart = LayoutUnit { };
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
             if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
                 marginStart = formattingContext.geometryForBox(layoutBox).marginStart();
-#endif
             logicalLeft += std::max(0_lu, marginStart);
             auto logicalWidth = rootInlineBox.logicalRight() - logicalLeft;
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, logicalWidth, InlineLevelBox::LineSpanningInlineBox::Yes);

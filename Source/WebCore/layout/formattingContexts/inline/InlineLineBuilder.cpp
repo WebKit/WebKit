@@ -633,10 +633,8 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
 
     auto firstInlineTextItemIndex = std::optional<size_t> { };
     auto lastInlineTextItemIndex = std::optional<size_t> { };
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
     HashSet<const Box*> inlineBoxListWithClonedDecorationEnd;
     auto accumulatedDecorationEndWidth = InlineLayoutUnit { 0.f };
-#endif
     for (auto index = currentInlineItemIndex; index < softWrapOpportunityIndex; ++index) {
         auto& inlineItem = m_inlineItemList[index];
         auto& style = isFirstFormattedLine() ? inlineItem.firstLineStyle() : inlineItem.style();
@@ -659,7 +657,6 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         }
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
             auto logicalWidth = formattingContext().formattingUtils().inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLine());
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
             if (style.boxDecorationBreak() == BoxDecorationBreak::Clone) {
                 auto& layoutBox = inlineItem.layoutBox();
                 if (inlineItem.isInlineBoxStart())
@@ -667,7 +664,6 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
                 else if (inlineBoxListWithClonedDecorationEnd.contains(&layoutBox))
                     accumulatedDecorationEndWidth += logicalWidth;
             }
-#endif
             lineCandidate.inlineContent.appendInlineItem(inlineItem, style, logicalWidth);
             currentLogicalRight += logicalWidth;
             continue;
@@ -695,9 +691,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         }
         ASSERT_NOT_REACHED();
     }
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
     lineCandidate.inlineContent.setAccumulatedClonedDecorationEnd(accumulatedDecorationEndWidth);
-#endif
 
     auto setLeadingAndTrailingHangingPunctuation = [&] {
         auto hangingContentWidth = lineCandidate.inlineContent.continuousContent().hangingContentWidth();

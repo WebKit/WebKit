@@ -7014,7 +7014,6 @@
                 "slice"
             ],
             "codegen-properties": {
-                "enable-if": "ENABLE_CSS_BOX_DECORATION_BREAK",
                 "parser-grammar": "<<values>>"
             },
             "status": {

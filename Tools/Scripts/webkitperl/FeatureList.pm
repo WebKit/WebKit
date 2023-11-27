@@ -53,9 +53,6 @@ BEGIN {
 
 my (
     $accessibilityIsolatedTreeSupport,
-    $applePaySessionV3Support,
-    $applePaySessionV4Support,
-    $applePaySessionV9Support,
     $applePaySupport,
     $applicationManifestSupport,
     $asyncScrollingSupport,
@@ -68,14 +65,12 @@ my (
     $contentExtensionsSupport,
     $contentFilteringSupport,
     $contextMenusSupport,
-    $cssBoxDecorationBreakSupport,
     $cssCompositingSupport,
     $cssDeviceAdaptationSupport,
     $cssImageResolutionSupport,
     $cssPaintingAPISupport,
     $cssScrollSnapSupport,
     $cssTrailingWordSupport,
-    $cssTypedOMSupport,
     $cursorVisibilitySupport,
     $darkModeCSSSupport,
     $datacueValueSupport,
@@ -151,7 +146,6 @@ my (
     $smoothScrollingSupport,
     $speechSynthesisSupport,
     $spellcheckSupport,
-    $streamsAPISupport,
     $svgFontsSupport,
     $isoMallocSupport,
     $systemMallocSupport,
@@ -199,9 +193,6 @@ my @features = (
     { option => "apple-pay", desc => "Toggle Apply Pay support",
       define => "ENABLE_APPLE_PAY", value => \$applePaySupport },
 
-    { option => "apple-pay-session-v9", desc => "Toggle Apple Pay Session V9 support",
-      define => "ENABLE_APPLE_PAY_SESSION_V9", value => \$applePaySessionV9Support },
-
     { option => "application-manifest", desc => "Toggle Application Manifest support",
       define => "ENABLE_APPLICATION_MANIFEST", value => \$applicationManifestSupport },
 
@@ -232,17 +223,11 @@ my @features = (
     { option => "context-menus", desc => "Toggle Context Menu support",
       define => "ENABLE_CONTEXT_MENUS", value => \$contextMenusSupport },
 
-    { option => "css-box-decoration-break", desc => "Toggle CSS box-decoration-break support",
-      define => "ENABLE_CSS_BOX_DECORATION_BREAK", value => \$cssBoxDecorationBreakSupport },
-
     { option => "css-compositing", desc => "Toggle CSS Compositing support",
       define => "ENABLE_CSS_COMPOSITING", value => \$cssCompositingSupport },
 
     { option => "css-painting-api", desc => "Toggle CSS Painting API support",
       define => "ENABLE_CSS_PAINTING_API", value => \$cssPaintingAPISupport },
-
-    { option => "css-typed-om", desc => "Toggle CSS Typed OM support",
-      define => "ENABLE_CSS_TYPED_OM", value => \$cssTypedOMSupport },
 
     { option => "cursor-visibility", desc => "Toggle cursor visibility support",
       define => "ENABLE_CURSOR_VISIBILITY", value => \$cursorVisibilitySupport },

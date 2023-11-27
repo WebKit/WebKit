@@ -309,10 +309,8 @@ inline LayoutUnit inlineLogicalWidth(const RenderObject& renderer, bool checkSta
         // When deciding whether we're at the edge of an inline, adjacent collapsed whitespace is the same as no sibling at all.
         if (is<RenderText>(renderer) && !downcast<RenderText>(renderer).text().length())
             return true;
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
         if (is<RenderLineBreak>(renderer) && renderer.parent()->style().boxDecorationBreak() == BoxDecorationBreak::Clone)
             return true;
-#endif
         return false;
     };
 

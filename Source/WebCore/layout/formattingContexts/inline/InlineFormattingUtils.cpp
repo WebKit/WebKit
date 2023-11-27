@@ -326,11 +326,9 @@ InlineLayoutUnit InlineFormattingUtils::inlineItemWidth(const InlineItem& inline
 
     if (inlineItem.isInlineBoxStart()) {
         auto logicalWidth = boxGeometry.marginStart() + boxGeometry.borderStart() + boxGeometry.paddingStart().value_or(0);
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
         auto& style = useFirstLineStyle ? inlineItem.firstLineStyle() : inlineItem.style();
         if (style.boxDecorationBreak() == BoxDecorationBreak::Clone)
             logicalWidth += boxGeometry.borderEnd() + boxGeometry.paddingEnd().value_or(0_lu);
-#endif
         return logicalWidth;
     }
 

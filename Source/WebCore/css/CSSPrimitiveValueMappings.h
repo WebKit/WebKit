@@ -500,15 +500,11 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
 
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
-
 #define TYPE BoxDecorationBreak
 #define FOR_EACH(CASE) CASE(Slice) CASE(Clone)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH
-
-#endif
 
 #define TYPE Edge
 #define FOR_EACH(CASE) CASE(Top) CASE(Right) CASE(Bottom) CASE(Left)

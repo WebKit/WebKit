@@ -677,8 +677,8 @@ end
 //baseline
 
 // CSS_PROP_BOX_DECORATION_BREAK
-clone enable-if=ENABLE_CSS_BOX_DECORATION_BREAK
-slice enable-if=ENABLE_CSS_BOX_DECORATION_BREAK
+clone
+slice
 
 // CSS_PROP_BOX_DIRECTION
 // normal
