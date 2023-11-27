@@ -3008,12 +3008,22 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(numberOfTargets == std::numeric_limits<uint32_t>::max(), "br_table's number of targets is too big ", numberOfTargets);
 
         WASM_PARSER_FAIL_IF(!targets.tryReserveCapacity(numberOfTargets), "can't allocate memory for ", numberOfTargets, " br_table targets");
-        for (uint32_t i = 0; i < numberOfTargets; ++i) {
+        String errorMessage;
+        targets.appendUsingFunctor(numberOfTargets, [&](size_t i) -> ControlType* {
             uint32_t target;
-            WASM_PARSER_FAIL_IF(!parseVarUInt32(target), "can't get ", i, "th target for br_table");
-            WASM_PARSER_FAIL_IF(target >= m_controlStack.size(), "br_table's ", i, "th target ", target, " exceeds control stack size ", m_controlStack.size());
-            targets.unsafeAppendWithoutCapacityCheck(&m_controlStack[m_controlStack.size() - 1 - target].controlData);
-        }
+            if (UNLIKELY(!parseVarUInt32(target))) {
+                if (errorMessage.isNull())
+                    errorMessage = WTF::makeString("can't get ", i, "th target for br_table");
+                return nullptr;
+            }
+            if (UNLIKELY(target >= m_controlStack.size())) {
+                if (errorMessage.isNull())
+                    errorMessage = WTF::makeString("br_table's ", i, "th target ", target, " exceeds control stack size ", m_controlStack.size());
+                return nullptr;
+            }
+            return &m_controlStack[m_controlStack.size() - 1 - target].controlData;
+        });
+        WASM_PARSER_FAIL_IF(!errorMessage.isNull(), errorMessage);
 
         WASM_PARSER_FAIL_IF(!parseVarUInt32(defaultTargetIndex), "can't get default target for br_table");
         WASM_PARSER_FAIL_IF(defaultTargetIndex >= m_controlStack.size(), "br_table's default target ", defaultTargetIndex, " exceeds control stack size ", m_controlStack.size());
