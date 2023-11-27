@@ -2118,6 +2118,69 @@ def check_for_leaky_patterns(clean_lines, line_number, function_state, error):
               'memory leaks.' % matched_create_dc.group('function_name'))
 
 
+def check_foundation_refcounting(clean_lines, line_number, function_state, error):
+    """Check for common CF/NS refcounting errors.
+    Args:
+      clean_lines: A CleansedLines instance containing the file.
+      line_number: The number of the line to check.
+      function_state: Current function name and lines in body so far.
+      error: The function to call with any errors found.
+    """
+    lines = clean_lines.lines
+    line = lines[line_number]
+
+    def objc_args_return_released_object(arguments):
+        release_patterns = [' release]', ' autorelease]']
+        return any(pattern in arguments for pattern in release_patterns)
+
+    def objc_args_return_retained_object(arguments):
+        retain_patterns = [' alloc]', ' allocWithZone:', ' new]', ' retain]', ' copy]', ' copyWithZone:', ' mutableCopy]']
+        creates_reference = any(pattern in arguments for pattern in retain_patterns)
+
+        # handle C-style allocation functions: [PAL::allocThing() init] etc.
+        if (not creates_reference):
+            underscore_separated = _convert_to_lower_with_underscores(arguments)
+            underscore_separated = re.sub(r'[\[\]<>:.]', '_', underscore_separated)
+            words = set(underscore_separated.split('_'))
+            create_patterns = set(['alloc', 'new', 'create', 'copy'])
+            if (not words.intersection(create_patterns)):
+                return False
+
+        return not objc_args_return_released_object(arguments)
+
+    def c_style_args_return_retained_object(arguments):
+        # This covers ObjC using dot syntax.
+        cleaned_adopt_arguments = re.sub(r'[()<>:.]', ' ', arguments)
+        space_separated = _convert_to_lower_with_underscores(cleaned_adopt_arguments).replace('_', ' ')
+        words = set(space_separated.split(' '))
+        # 'alloc' is a bit odd to have here, but this handles cases like allocASCPublicKeyCredentialAssertionOptionsInstance().
+        # 'retain' is here for things like CMBufferQueueDequeueAndRetain()
+        required_words = set(['alloc', 'create', 'copy', 'retain'])
+        return words.intersection(required_words)
+
+    adopt_ns_search = search(r'\badoptNS\((.+)\)', line)
+    if (adopt_ns_search):
+        adopt_arguments = adopt_ns_search.group(1)
+
+        is_objc_allocation = re.search(r'\[.+\]', adopt_arguments)
+        if (is_objc_allocation):
+            if (not objc_args_return_retained_object(adopt_arguments)):
+                error(line_number, 'runtime/foundation_refcount_error', 1, 'adoptNS argument %s does not appear to be a retained value' % adopt_arguments)
+            return
+
+        if (not c_style_args_return_retained_object(adopt_arguments)):
+            error(line_number, 'runtime/foundation_refcount_error', 2, 'adoptNS arguments %s do not appear to create or copy a value' % adopt_arguments)
+        return
+
+    adopt_cf_search = search(r'\badoptCF\((.+)\)', line)
+    if (adopt_cf_search):
+        adopt_arguments = adopt_cf_search.group(1)
+        if (not c_style_args_return_retained_object(adopt_arguments)):
+            error(line_number, 'runtime/foundation_refcount_error', 3,
+                  'adoptCF arguments %s do not appear to create or copy a value' % adopt_arguments)
+        return
+
+
 def check_spacing(file_extension, clean_lines, line_number, file_state, error):
     """Checks for the correctness of various spacing issues in the code.
 
@@ -3430,7 +3493,7 @@ def check_objc_protocol(clean_lines, line_number, file_extension, error):
     if not using_space_with_protocol:
         return
 
-    error(line_number, 'spacing/objc-protocol', 2, "Protocol names shouldn't have a space before them.")
+    error(line_number, 'whitespace/objc-protocol', 2, "Protocol names shouldn't have a space before them.")
 
 
 def check_style(clean_lines, line_number, file_extension, class_state, file_state, enum_state, error):
@@ -4582,6 +4645,7 @@ def process_line(filename, file_extension,
     check_function_definition(filename, file_extension, clean_lines, line, class_state, function_state, error)
     check_function_body(filename, file_extension, clean_lines, line, class_state, function_state, error)
     check_for_leaky_patterns(clean_lines, line, function_state, error)
+    check_foundation_refcounting(clean_lines, line, function_state, error)
     check_for_multiline_comments_and_strings(clean_lines, line, error)
     check_style(clean_lines, line, file_extension, class_state, file_state, enum_state, error)
     check_language(filename, clean_lines, line, file_extension, include_state,
@@ -4715,6 +4779,7 @@ class CppChecker(object):
         'runtime/dispatch_set_target_queue',
         'runtime/enum_bitfields',
         'runtime/explicit',
+        'runtime/foundation_refcount_error',
         'runtime/init',
         'runtime/int',
         'runtime/invalid_increment',

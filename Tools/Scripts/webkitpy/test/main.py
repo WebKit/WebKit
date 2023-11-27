@@ -399,6 +399,8 @@ class Tester(object):
                           help='run integration tests as well as unit tests'),
         parser.add_option('-j', '--child-processes', action='store', type='int', default=(1 if sys.platform.startswith('win') else multiprocessing.cpu_count()),
                           help='number of tests to run in parallel (default=%default)')
+        parser.add_option('-l', '--list', action='store_true', default=False,
+                          help='print a list of tests and exit')
         parser.add_option('-p', '--pass-through', action='store_true', default=False,
                           help='be debugger friendly by passing captured output through to the system')
         parser.add_option('-q', '--quiet', action='store_true', default=False,
@@ -428,6 +430,10 @@ class Tester(object):
         if not names:
             _log.error('No tests to run')
             return False
+
+        if (self._options.list):
+            print(*names, sep='\n')
+            return True
 
         return self._run_tests(names)
 
