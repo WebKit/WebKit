@@ -1069,7 +1069,6 @@ webkit.org/b/89052 fast/css/image-orientation [ Skip ]
 
 # Requires CACHE_PARTITIONING or an alternative implementation
 webkit.org/b/168366 http/tests/security/credentials-iframes.html
-webkit.org/b/168366 http/tests/security/credentials-iframes-allowCrossOriginSubresourcesToAskForCredentials.html
 
 # We render the focus ring differently
 fast/images/image-map-outline-with-scale-transform.html [ ImageOnlyFailure ]

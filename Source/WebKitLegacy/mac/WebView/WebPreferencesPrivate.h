@@ -124,7 +124,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL allowUniversalAccessFromFileURLs;
 @property (nonatomic) BOOL allowFileAccessFromFileURLs;
 @property (nonatomic) BOOL allowTopNavigationToDataURLs;
-@property (nonatomic) BOOL allowCrossOriginSubresourcesToAskForCredentials;
 @property (nonatomic) BOOL needsStorageAccessFromFileURLsQuirk;
 @property (nonatomic) BOOL zoomsTextOnly;
 @property (nonatomic) BOOL javaScriptCanAccessClipboard;
@@ -331,6 +330,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 // be removed when it is considered safe to do so.
 
 @property (nonatomic) BOOL syntheticEditingCommandsEnabled;
+@property (nonatomic) BOOL allowCrossOriginSubresourcesToAskForCredentials;
 @property (nonatomic) BOOL aspectRatioOfImgFromWidthAndHeightEnabled;
 @property (nonatomic) BOOL resizeObserverEnabled;
 @property (nonatomic) BOOL subpixelCSSOMElementMetricsEnabled;

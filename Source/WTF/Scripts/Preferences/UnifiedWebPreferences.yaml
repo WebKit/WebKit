@@ -209,17 +209,6 @@ AllowContentSecurityPolicySourceStarToMatchAnyProtocol:
     WebCore:
       default: false
 
-AllowCrossOriginSubresourcesToAskForCredentials:
-  type: bool
-  status: embedder
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 AllowDisplayOfInsecureContent:
   type: bool
   status: embedder

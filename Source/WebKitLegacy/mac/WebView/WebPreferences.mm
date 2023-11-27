@@ -1288,16 +1288,6 @@ public:
     [self _setBoolValue: flag forKey: WebKitAllowTopNavigationToDataURLsPreferenceKey];
 }
 
-- (BOOL)allowCrossOriginSubresourcesToAskForCredentials
-{
-    return [self _boolValueForKey:WebKitAllowCrossOriginSubresourcesToAskForCredentialsKey];
-}
-
-- (void)setAllowCrossOriginSubresourcesToAskForCredentials:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitAllowCrossOriginSubresourcesToAskForCredentialsKey];
-}
-
 - (BOOL)needsStorageAccessFromFileURLsQuirk
 {
     return [self _boolValueForKey: WebKitNeedsStorageAccessFromFileURLsQuirkKey];
@@ -3109,6 +3099,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 }
 
 - (void)setSyntheticEditingCommandsEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)allowCrossOriginSubresourcesToAskForCredentials
+{
+    return NO;
+}
+
+- (void)setAllowCrossOriginSubresourcesToAskForCredentials:(BOOL)flag
 {
 }
 

@@ -122,7 +122,7 @@ SubresourceLoader::SubresourceLoader(LocalFrame& frame, CachedResource& resource
 #if ENABLE(CONTENT_EXTENSIONS)
     m_resourceType = ContentExtensions::toResourceType(resource.type(), resource.resourceRequest().requester());
 #endif
-    m_canCrossOriginRequestsAskUserForCredentials = resource.type() == CachedResource::Type::MainResource || frame.settings().allowCrossOriginSubresourcesToAskForCredentials();
+    m_canCrossOriginRequestsAskUserForCredentials = resource.type() == CachedResource::Type::MainResource;
     m_site = CachedResourceLoader::computeFetchMetadataSite(resource.resourceRequest(), resource.type(), options.mode, frame.document()->securityOrigin());
 }
 
