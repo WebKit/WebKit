@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<title>Selection gap custom background color</title>
+<meta name="assert" content="Selection gaps between blocks of different widths are colored with an ancestor's ::selection pseudo-element background color.">
+
+<body>
+
+<style>
+::selection {
+    background-color: red;
+}
+</style>
+
+This test passes if the gap to the right of this sentence ->
+<p>
+Is colored with the same background color as this text.
+</p>
+
+<script>
+window.addEventListener('load', async event => {
+	document.execCommand("SelectAll");
+});
+</script>
+
+</body>

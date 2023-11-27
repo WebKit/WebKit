@@ -1708,9 +1708,15 @@ Color RenderElement::selectionBackgroundColor() const
     if (frame().selection().shouldShowBlockCursor() && frame().selection().isCaret())
         return theme().transformSelectionBackgroundColor(style().visitedDependentColorWithColorFilter(CSSPropertyColor), styleColorOptions());
 
-    std::unique_ptr<RenderStyle> pseudoStyle = selectionPseudoStyle();
-    if (pseudoStyle && pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor).isValid())
-        return theme().transformSelectionBackgroundColor(pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor), styleColorOptions());
+    auto pseudoStyleCandidate = this;
+    if (pseudoStyleCandidate->isAnonymous())
+        pseudoStyleCandidate = pseudoStyleCandidate->firstNonAnonymousAncestor();
+
+    if (pseudoStyleCandidate) {
+        std::unique_ptr<RenderStyle> pseudoStyle = pseudoStyleCandidate->selectionPseudoStyle();
+        if (pseudoStyle && pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor).isValid())
+            return theme().transformSelectionBackgroundColor(pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor), styleColorOptions());
+    }
 
     if (frame().selection().isFocusedAndActive())
         return theme().activeSelectionBackgroundColor(styleColorOptions());
