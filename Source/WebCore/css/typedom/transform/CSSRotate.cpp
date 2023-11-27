@@ -80,9 +80,10 @@ ExceptionOr<Ref<CSSRotate>> CSSRotate::create(CSSFunctionValue& cssFunctionValue
             auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);
             if (valueOrException.hasException())
                 return valueOrException.releaseException();
-            if (!is<CSSNumericValue>(valueOrException.returnValue()))
+            RefPtr numericValue = dynamicDowncast<CSSNumericValue>(valueOrException.releaseReturnValue());
+            if (!numericValue)
                 return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
-            components.append(downcast<CSSNumericValue>(valueOrException.releaseReturnValue().ptr()));
+            components.append(WTFMove(numericValue));
         }
         if (components.size() != expectedNumberOfComponents) {
             ASSERT_NOT_REACHED();
@@ -180,10 +181,14 @@ void CSSRotate::serialize(StringBuilder& builder) const
 
 ExceptionOr<Ref<DOMMatrix>> CSSRotate::toMatrix()
 {
-    if (!is<CSSUnitValue>(m_angle) || !is<CSSUnitValue>(m_x) || !is<CSSUnitValue>(m_y) || !is<CSSUnitValue>(m_z))
+    RefPtr angleUnitValue = dynamicDowncast<CSSUnitValue>(m_angle);
+    RefPtr xUnitValue = dynamicDowncast<CSSUnitValue>(m_x);
+    RefPtr yUnitValue = dynamicDowncast<CSSUnitValue>(m_y);
+    RefPtr zUnitValue = dynamicDowncast<CSSUnitValue>(m_z);
+    if (!angleUnitValue || !xUnitValue || !yUnitValue || !zUnitValue)
         return Exception { ExceptionCode::TypeError };
 
-    auto angle = downcast<CSSUnitValue>(m_angle.get()).convertTo(CSSUnitType::CSS_DEG);
+    auto angle = angleUnitValue->convertTo(CSSUnitType::CSS_DEG);
     if (!angle)
         return Exception { ExceptionCode::TypeError };
 
@@ -192,9 +197,9 @@ ExceptionOr<Ref<DOMMatrix>> CSSRotate::toMatrix()
     if (is2D())
         matrix.rotate(angle->value());
     else {
-        auto x = downcast<CSSUnitValue>(m_x.get()).value();
-        auto y = downcast<CSSUnitValue>(m_y.get()).value();
-        auto z = downcast<CSSUnitValue>(m_z.get()).value();
+        auto x = xUnitValue->value();
+        auto y = yUnitValue->value();
+        auto z = zUnitValue->value();
 
         matrix.rotate3d(x, y, z, angle->value());
     }

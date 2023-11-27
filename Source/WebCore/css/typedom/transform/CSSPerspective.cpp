@@ -88,10 +88,10 @@ ExceptionOr<Ref<CSSPerspective>> CSSPerspective::create(CSSFunctionValue& cssFun
         return keywordOrNumeric.releaseException();
     auto& keywordOrNumericValue = keywordOrNumeric.returnValue().get();
     return [&]() -> ExceptionOr<Ref<CSSPerspective>> {
-        if (is<CSSKeywordValue>(keywordOrNumericValue))
-            return CSSPerspective::create(&downcast<CSSKeywordValue>(keywordOrNumericValue));
-        if (is<CSSNumericValue>(keywordOrNumericValue))
-            return CSSPerspective::create(&downcast<CSSNumericValue>(keywordOrNumericValue));
+        if (auto* keywordValue = dynamicDowncast<CSSKeywordValue>(keywordOrNumericValue))
+            return CSSPerspective::create(keywordValue);
+        if (auto* numericValue = dynamicDowncast<CSSNumericValue>(keywordOrNumericValue))
+            return CSSPerspective::create(numericValue);
         return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
     }();
 }
@@ -144,11 +144,11 @@ ExceptionOr<Ref<DOMMatrix>> CSSPerspective::toMatrix()
     if (!std::holds_alternative<RefPtr<CSSNumericValue>>(m_length))
         return { DOMMatrix::create({ }, DOMMatrixReadOnly::Is2D::Yes) };
 
-    auto length = std::get<RefPtr<CSSNumericValue>>(m_length);
-    if (!is<CSSUnitValue>(length))
+    RefPtr length = dynamicDowncast<CSSUnitValue>(std::get<RefPtr<CSSNumericValue>>(m_length));
+    if (!length)
         return Exception { ExceptionCode::TypeError };
 
-    auto valuePx = downcast<CSSUnitValue>(*length).convertTo(CSSUnitType::CSS_PX);
+    auto valuePx = length->convertTo(CSSUnitType::CSS_PX);
     if (!valuePx)
         return Exception { ExceptionCode::TypeError, "Length unit is not compatible with 'px'"_s };
 

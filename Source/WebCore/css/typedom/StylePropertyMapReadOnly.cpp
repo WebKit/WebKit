@@ -73,11 +73,11 @@ Vector<RefPtr<CSSStyleValue>> StylePropertyMapReadOnly::reifyValueToVector(RefPt
         }
     }
 
-    if (!is<CSSValueList>(*value) || (propertyID && !CSSProperty::isListValuedProperty(*propertyID)))
+    auto* valueList = dynamicDowncast<CSSValueList>(*value);
+    if (!valueList || (propertyID && !CSSProperty::isListValuedProperty(*propertyID)))
         return { StylePropertyMapReadOnly::reifyValue(WTFMove(value), propertyID, document) };
 
-    auto& valueList = downcast<CSSValueList>(*value);
-    return WTF::map(valueList, [&](auto& item) {
+    return WTF::map(*valueList, [&](auto& item) {
         return StylePropertyMapReadOnly::reifyValue(Ref { const_cast<CSSValue&>(item) }, propertyID, document);
     });
 }

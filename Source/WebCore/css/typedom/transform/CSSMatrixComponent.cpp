@@ -59,9 +59,10 @@ ExceptionOr<Ref<CSSTransformComponent>> CSSMatrixComponent::create(CSSFunctionVa
             auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);
             if (valueOrException.hasException())
                 return valueOrException.releaseException();
-            if (!is<CSSUnitValue>(valueOrException.returnValue()))
+            RefPtr unitValue = dynamicDowncast<CSSUnitValue>(valueOrException.releaseReturnValue());
+            if (!unitValue)
                 return Exception { ExceptionCode::TypeError, "Expected a CSSUnitValue."_s };
-            components.append(downcast<CSSUnitValue>(valueOrException.releaseReturnValue().get()).value());
+            components.append(unitValue->value());
         }
         if (components.size() != expectedNumberOfComponents) {
             ASSERT_NOT_REACHED();

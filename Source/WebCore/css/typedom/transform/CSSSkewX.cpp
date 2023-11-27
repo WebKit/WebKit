@@ -64,9 +64,10 @@ ExceptionOr<Ref<CSSSkewX>> CSSSkewX::create(CSSFunctionValue& cssFunctionValue)
     auto valueOrException = CSSStyleValueFactory::reifyValue(*cssFunctionValue.item(0), std::nullopt);
     if (valueOrException.hasException())
         return valueOrException.releaseException();
-    if (!is<CSSNumericValue>(valueOrException.returnValue()))
+    RefPtr numericValue = dynamicDowncast<CSSNumericValue>(valueOrException.releaseReturnValue());
+    if (!numericValue)
         return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
-    return CSSSkewX::create(downcast<CSSNumericValue>(valueOrException.releaseReturnValue().get()));
+    return CSSSkewX::create(numericValue.releaseNonNull());
 }
 
 CSSSkewX::CSSSkewX(Ref<CSSNumericValue> ax)
@@ -94,10 +95,11 @@ void CSSSkewX::serialize(StringBuilder& builder) const
 
 ExceptionOr<Ref<DOMMatrix>> CSSSkewX::toMatrix()
 {
-    if (!is<CSSUnitValue>(m_ax))
+    RefPtr ax = dynamicDowncast<CSSUnitValue>(m_ax);
+    if (!ax)
         return Exception { ExceptionCode::TypeError };
 
-    auto x = downcast<CSSUnitValue>(m_ax.get()).convertTo(CSSUnitType::CSS_DEG);
+    auto x = ax->convertTo(CSSUnitType::CSS_DEG);
     if (!x)
         return Exception { ExceptionCode::TypeError };
 
