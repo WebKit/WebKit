@@ -3758,21 +3758,6 @@ LegacyOverflowScrollingTouchEnabled:
     WebCore:
       default: true
 
-LineHeightUnitsEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "lh / rlh units"
-  humanReadableDescription: "Enable the lh and rlh units"
-  webcoreBinding: DeprecatedGlobalSettings
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 LinkModulePreloadEnabled:
   type: bool
   status: stable

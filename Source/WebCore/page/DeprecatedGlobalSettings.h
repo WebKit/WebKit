@@ -124,9 +124,6 @@ public:
     static void setReadableByteStreamAPIEnabled(bool isEnabled) { shared().m_isReadableByteStreamAPIEnabled = isEnabled; }
     static bool readableByteStreamAPIEnabled() { return shared().m_isReadableByteStreamAPIEnabled; }
 
-    static void setLineHeightUnitsEnabled(bool isEnabled) { shared().m_lineHeightUnitsEnabled = isEnabled; }
-    static bool lineHeightUnitsEnabled() { return shared().m_lineHeightUnitsEnabled; }
-
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     static void setIsAccessibilityIsolatedTreeEnabled(bool isEnabled) { shared().m_accessibilityIsolatedTree = isEnabled; }
     static bool isAccessibilityIsolatedTreeEnabled() { return shared().m_accessibilityIsolatedTree; }
@@ -222,8 +219,6 @@ private:
     bool m_isWebRTCAudioLatencyAdaptationEnabled { true };
 
     bool m_isReadableByteStreamAPIEnabled { false };
-
-    bool m_lineHeightUnitsEnabled { true };
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     bool m_accessibilityIsolatedTree { false };
