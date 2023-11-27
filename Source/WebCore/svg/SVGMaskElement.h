@@ -27,6 +27,8 @@
 
 namespace WebCore {
 
+enum class RepaintRectCalculation : bool;
+
 class SVGMaskElement final : public SVGElement, public SVGTests {
     WTF_MAKE_ISO_ALLOCATED(SVGMaskElement);
 public:
@@ -45,6 +47,8 @@ public:
     SVGAnimatedLength& heightAnimated() { return m_height; }
     SVGAnimatedEnumeration& maskUnitsAnimated() { return m_maskUnits; }
     SVGAnimatedEnumeration& maskContentUnitsAnimated() { return m_maskContentUnits; }
+
+    FloatRect calculateMaskContentRepaintRect(RepaintRectCalculation);
 
 private:
     SVGMaskElement(const QualifiedName&, Document&);

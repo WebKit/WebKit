@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-0.50,-0.50) size 1x1 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGResourceMasker {mask} at (-0.50,-0.50) size 0.11x0.11
+layer at (-0.50,-0.50) size 1x1 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGRect {rect} at (0,0) size 0.11x0.11 [fill={[type=SOLID] [color=#FFFFFF]}] [x=-0.50] [y=-0.50] [width=0.10] [height=0.10]
+layer at (20,20) size 100x100
+  RenderSVGRect {rect} at (20,20) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=20.00] [y=20.00] [width=100.00] [height=100.00]
+layer at (60,46) size 22x18
+  RenderSVGText {text} at (60,46) size 23x18 contains 1 chunk(s)
+    RenderSVGTSpan {tspan} at (0,0) size 23x18
+      RenderSVGInlineText {#text} at (0,0) size 23x18
+        chunk 1 text run 1 at (60.00,60.00) startOffset 0 endOffset 4 width 22.22: "test"

@@ -1,0 +1,30 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 250x250
+  RenderSVGRoot {svg} at (0,0) size 250x250
+layer at (0,0) size 250x250
+  RenderSVGViewportContainer at (0,0) size 250x250
+layer at (60,60) size 50x50
+  RenderSVGResourceMasker {mask} at (60,60) size 50x50
+layer at (60,60) size 50x50
+  RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [x=60.00] [y=60.00] [width=50.00] [height=50.00]
+layer at (0.50,0.50) size 126x1
+  RenderSVGResourceMasker {mask} at (0.50,0.50) size 125x0.50
+layer at (0.50,0.50) size 125x1
+  RenderSVGRect {rect} at (0,0) size 125x0.50 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [x=0.50] [y=0.50] [width=125.00] [height=0.50]
+layer at (60,170) size 50x50
+  RenderSVGResourceMasker {mask} at (60,170) size 50x50
+layer at (60,170) size 50x50
+  RenderSVGRect {rect} at (0,0) size 50x50 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [x=60.00] [y=170.00] [width=50.00] [height=50.00]
+layer at (0.50,0.50) size 1x1
+  RenderSVGResourceMasker {mask} at (0.50,0.50) size 0.50x0.50
+layer at (0.50,0.50) size 1x1
+  RenderSVGRect {rect} at (0,0) size 0.50x0.50 [fill={[type=SOLID] [color=#FFFFFF] [opacity=0.50]}] [x=0.50] [y=0.50] [width=0.50] [height=0.50]
+layer at (10,10) size 100x100
+  RenderSVGRect {rect} at (10,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
+layer at (120,10) size 100x100
+  RenderSVGRect {rect} at (120,10) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=120.00] [y=10.00] [width=100.00] [height=100.00]
+layer at (10,120) size 100x100
+  RenderSVGRect {rect} at (10,120) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=120.00] [width=100.00] [height=100.00]
+layer at (120,120) size 100x100
+  RenderSVGRect {rect} at (120,120) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=120.00] [y=120.00] [width=100.00] [height=100.00]

@@ -28,6 +28,7 @@
 
 #include "LegacyRenderSVGResourceMaskerInlines.h"
 #include "NodeName.h"
+#include "RenderSVGResourceMasker.h"
 #include "SVGElementInlines.h"
 #include "SVGNames.h"
 #include "SVGRenderSupport.h"
@@ -130,7 +131,26 @@ void SVGMaskElement::childrenChanged(const ChildChange& change)
 
 RenderPtr<RenderElement> SVGMaskElement::createElementRenderer(RenderStyle&& style, const RenderTreePosition&)
 {
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return createRenderer<RenderSVGResourceMasker>(*this, WTFMove(style));
+#endif
     return createRenderer<LegacyRenderSVGResourceMasker>(*this, WTFMove(style));
+}
+
+FloatRect SVGMaskElement::calculateMaskContentRepaintRect(RepaintRectCalculation repaintRectCalculation)
+{
+    FloatRect maskRepaintRect;
+    for (auto* childNode = firstChild(); childNode; childNode = childNode->nextSibling()) {
+        auto* renderer = childNode->renderer();
+        if (!childNode->isSVGElement() || !renderer)
+            continue;
+        const auto& style = renderer->style();
+        if (style.display() == DisplayType::None || style.visibility() != Visibility::Visible)
+            continue;
+        maskRepaintRect.unite(renderer->repaintRectInLocalCoordinates(repaintRectCalculation));
+    }
+    return maskRepaintRect;
 }
 
 }

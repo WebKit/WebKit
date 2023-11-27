@@ -38,12 +38,15 @@
 #include "RenderSVGBlock.h"
 #include "RenderSVGModelObject.h"
 #include "RenderSVGResourceClipper.h"
+#include "RenderSVGResourceMasker.h"
 #include "RenderSVGText.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "SVGClipPathElement.h"
 #include "SVGGraphicsElement.h"
+#include "SVGMaskElement.h"
 #include "SVGTextElement.h"
+#include "SVGURIReference.h"
 #include "Settings.h"
 #include "StyleScrollSnapPoints.h"
 #include "TransformOperationData.h"
@@ -488,6 +491,31 @@ RenderSVGResourceClipper* RenderLayerModelObject::svgClipperResourceFromStyle() 
 
     return nullptr;
 }
+
+RenderSVGResourceMasker* RenderLayerModelObject::svgMaskerResourceFromStyle() const
+{
+    if (!document().settings().layerBasedSVGEngineEnabled())
+        return nullptr;
+
+    auto* maskImage = style().maskImage();
+    auto reresolvedURL = maskImage ? maskImage->reresolvedURL(document()) : URL();
+    if (reresolvedURL.isEmpty())
+        return nullptr;
+
+    auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(reresolvedURL.string(), document());
+
+    if (RefPtr referencedMaskerElement = ReferencedSVGResources::referencedMaskElement(treeScopeForSVGReferences(), *maskImage)) {
+        if (auto* referencedMaskerRenderer = dynamicDowncast<RenderSVGResourceMasker>(referencedMaskerElement->renderer()))
+            return referencedMaskerRenderer;
+    }
+
+    if (auto* element = this->element()) {
+        ASSERT(is<SVGElement>(element));
+        document().addPendingSVGResource(resourceID, downcast<SVGElement>(*element));
+    }
+
+    return nullptr;
+}
 #endif // ENABLE(LAYER_BASED_SVG_ENGINE)
 
 CheckedPtr<RenderLayer> RenderLayerModelObject::checkedLayer() const
@@ -558,6 +586,31 @@ void RenderLayerModelObject::repaintOrRelayoutAfterSVGTransformChange()
     updateLayerTransform();
     repaintRendererOrClientsOfReferencedSVGResources();
 }
+
+void RenderLayerModelObject::paintSVGClippingMask(PaintInfo& paintInfo) const
+{
+    ASSERT(paintInfo.phase == PaintPhase::ClippingMask);
+    auto& context = paintInfo.context();
+    if (!paintInfo.shouldPaintWithinRoot(*this) || style().visibility() != Visibility::Visible || context.paintingDisabled())
+        return;
+
+    ASSERT(isSVGLayerAwareRenderer());
+    if (auto* referencedClipperRenderer = svgClipperResourceFromStyle())
+        referencedClipperRenderer->applyMaskClipping(paintInfo, *this, objectBoundingBox());
+}
+
+void RenderLayerModelObject::paintSVGMask(PaintInfo& paintInfo, const LayoutPoint& adjustedPaintOffset) const
+{
+    ASSERT(paintInfo.phase == PaintPhase::Mask);
+    auto& context = paintInfo.context();
+    if (!paintInfo.shouldPaintWithinRoot(*this) || context.paintingDisabled())
+        return;
+
+    ASSERT(isSVGLayerAwareRenderer());
+    if (auto* referencedMaskerRenderer = svgMaskerResourceFromStyle())
+        referencedMaskerRenderer->applyMask(paintInfo, *this, adjustedPaintOffset);
+}
+
 #endif
 
 bool rendererNeedsPixelSnapping(const RenderLayerModelObject& renderer)

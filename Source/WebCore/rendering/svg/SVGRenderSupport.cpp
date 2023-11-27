@@ -670,22 +670,4 @@ FloatRect SVGRenderSupport::calculateApproximateStrokeBoundingBox(const RenderEl
 #endif
 }
 
-#if ENABLE(LAYER_BASED_SVG_ENGINE)
-// FIXME: maybe in future RenderLayerModelObject is a better place for this.
-void SVGRenderSupport::paintSVGClippingMask(const RenderLayerModelObject& renderer, PaintInfo& paintInfo)
-{
-    ASSERT(paintInfo.phase == PaintPhase::ClippingMask);
-    auto& style = renderer.style();
-    auto& context = paintInfo.context();
-    if (!paintInfo.shouldPaintWithinRoot(renderer) || style.visibility() != Visibility::Visible || context.paintingDisabled())
-        return;
-
-    ASSERT(renderer.isSVGLayerAwareRenderer());
-
-    ASSERT(renderer.document().settings().layerBasedSVGEngineEnabled());
-    if (auto* referencedClipperRenderer = renderer.svgClipperResourceFromStyle())
-        referencedClipperRenderer->applyMaskClipping(paintInfo, renderer, renderer.objectBoundingBox());
-}
-#endif
-
 }

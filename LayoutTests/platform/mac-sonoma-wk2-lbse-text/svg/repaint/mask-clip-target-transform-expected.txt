@@ -4,8 +4,14 @@ layer at (0,0) size 800x600
   RenderSVGRoot {svg} at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
+layer at (-50,-50) size 200x200 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGHiddenContainer {defs} at (-50,-50) size 200x200
+layer at (50,-50) size 100x100 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGResourceMasker {mask} at (100,0) size 100x100
+layer at (50,-50) size 100x100 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
+  RenderSVGEllipse {circle} at (0,0) size 100x100 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=100.00] [cy=0.00] [r=50.00]
 layer at (-50,50) size 100x100 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
-  RenderSVGResourceClipper {clipPath} at (-50,50) size 100x100
+  RenderSVGResourceClipper {clipPath} at (0,100) size 100x100
 layer at (-50,50) size 100x100 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600
   RenderSVGEllipse {circle} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=100.00] [r=50.00]
 layer at (50,-50) size 100x100 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600

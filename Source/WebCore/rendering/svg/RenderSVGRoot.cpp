@@ -325,13 +325,12 @@ void RenderSVGRoot::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     auto adjustedPaintOffset = paintOffset + location();
     if (paintInfo.phase == PaintPhase::Mask && style().visibility() == Visibility::Visible) {
-        // FIXME: [LBSE] Upstream SVGRenderSupport changes
-        // SVGRenderSupport::paintSVGMask(*this, paintInfo, adjustedPaintOffset);
+        paintSVGMask(paintInfo, adjustedPaintOffset);
         return;
     }
 
     if (paintInfo.phase == PaintPhase::ClippingMask && style().visibility() == Visibility::Visible) {
-        SVGRenderSupport::paintSVGClippingMask(*this, paintInfo);
+        paintSVGClippingMask(paintInfo);
         return;
     }
 
