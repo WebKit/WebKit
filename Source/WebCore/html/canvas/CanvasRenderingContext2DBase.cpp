@@ -2222,7 +2222,14 @@ void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, Option
     if (m_dirtyRect.contains(dirtyRect))
         canvasBase().didDraw(std::nullopt, shouldApplyPostProcessing);
     else {
+#if USE(COORDINATED_GRAPHICS)
+        // In COORDINATED_GRAPHICS graphics layer is tiled and tiling logic handles dirty rects
+        // internally and thus no unification of rects is needed here because that causes
+        // unnecessary invalidation of tiles which are actually not dirty
+        m_dirtyRect = dirtyRect;
+#else
         m_dirtyRect.unite(dirtyRect);
+#endif
         canvasBase().didDraw(m_dirtyRect, shouldApplyPostProcessing);
     }
 }
