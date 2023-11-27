@@ -3170,12 +3170,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return positionOffsetValue(style, CSSPropertyBottom, renderer);
     case CSSPropertyWebkitBoxAlign:
         return createConvertingToCSSValueID(style.boxAlign());
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
     case CSSPropertyWebkitBoxDecorationBreak:
         if (style.boxDecorationBreak() == BoxDecorationBreak::Slice)
             return CSSPrimitiveValue::create(CSSValueSlice);
-    return CSSPrimitiveValue::create(CSSValueClone);
-#endif
+        return CSSPrimitiveValue::create(CSSValueClone);
     case CSSPropertyWebkitBoxDirection:
         return createConvertingToCSSValueID(style.boxDirection());
     case CSSPropertyWebkitBoxFlex:

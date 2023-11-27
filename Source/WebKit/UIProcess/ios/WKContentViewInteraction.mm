@@ -1242,21 +1242,25 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
     _touchActionLeftSwipeGestureRecognizer = adoptNS([[UISwipeGestureRecognizer alloc] initWithTarget:nil action:nil]);
     [_touchActionLeftSwipeGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionLeft];
     [_touchActionLeftSwipeGestureRecognizer setDelegate:self];
+    [_touchActionLeftSwipeGestureRecognizer setName:@"Touch action swipe left"];
     [self addGestureRecognizer:_touchActionLeftSwipeGestureRecognizer.get()];
 
     _touchActionRightSwipeGestureRecognizer = adoptNS([[UISwipeGestureRecognizer alloc] initWithTarget:nil action:nil]);
     [_touchActionRightSwipeGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionRight];
     [_touchActionRightSwipeGestureRecognizer setDelegate:self];
+    [_touchActionRightSwipeGestureRecognizer setName:@"Touch action swipe right"];
     [self addGestureRecognizer:_touchActionRightSwipeGestureRecognizer.get()];
 
     _touchActionUpSwipeGestureRecognizer = adoptNS([[UISwipeGestureRecognizer alloc] initWithTarget:nil action:nil]);
     [_touchActionUpSwipeGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionUp];
     [_touchActionUpSwipeGestureRecognizer setDelegate:self];
+    [_touchActionUpSwipeGestureRecognizer setName:@"Touch action swipe up"];
     [self addGestureRecognizer:_touchActionUpSwipeGestureRecognizer.get()];
 
     _touchActionDownSwipeGestureRecognizer = adoptNS([[UISwipeGestureRecognizer alloc] initWithTarget:nil action:nil]);
     [_touchActionDownSwipeGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionDown];
     [_touchActionDownSwipeGestureRecognizer setDelegate:self];
+    [_touchActionDownSwipeGestureRecognizer setName:@"Touch action swipe down"];
     [self addGestureRecognizer:_touchActionDownSwipeGestureRecognizer.get()];
 
     _touchStartDeferringGestureRecognizerForImmediatelyResettableGestures = adoptNS([[WKDeferringGestureRecognizer alloc] initWithDeferringGestureDelegate:self]);

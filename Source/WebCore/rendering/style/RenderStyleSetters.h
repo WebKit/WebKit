@@ -346,9 +346,7 @@ inline void RenderStyle::setApplePayButtonStyle(ApplePayButtonStyle style) { SET
 inline void RenderStyle::setApplePayButtonType(ApplePayButtonType type) { SET_NESTED(m_nonInheritedData, rareData, applePayButtonType, static_cast<unsigned>(type)); }
 #endif
 
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
 inline void RenderStyle::setBoxDecorationBreak(BoxDecorationBreak value) { SET_NESTED(m_nonInheritedData, boxData, m_boxDecorationBreak, static_cast<unsigned>(value)); }
-#endif
 
 #if ENABLE(DARK_MODE_CSS)
 inline void RenderStyle::setColorScheme(StyleColorScheme scheme) { SET(m_rareInheritedData, colorScheme, scheme); }

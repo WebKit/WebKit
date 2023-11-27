@@ -27,13 +27,20 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-#import "WKAxisLockingScrollView.h"
+#import <UIKit/UIKit.h>
 
-@interface WKVelocityTrackingScrollView : WKAxisLockingScrollView
+@class WKAxisLockingScrollView;
 
-- (void)updateInteractiveScrollVelocity;
+@protocol WKAxisLockingScrollViewDelegate <NSObject>
 
-@property (nonatomic, readonly) CGSize interactiveScrollVelocityInPointsPerSecond;
+- (UIAxis)axesToPreventScrollingForPanGestureInScrollView:(WKAxisLockingScrollView *)scrollView;
+
+@end
+
+@interface WKAxisLockingScrollView : UIScrollView
+
+@property (nonatomic, weak) id<WKAxisLockingScrollViewDelegate> scrollAxisLockingDelegate;
+@property (nonatomic, readonly) UIAxis axesToPreventMomentumScrolling;
 
 @end
 

@@ -26,6 +26,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
+#import "WKAxisLockingScrollView.h"
 #import <wtf/OptionSet.h>
 
 namespace WebCore {
@@ -68,7 +69,7 @@ class WebPageProxy;
 @interface WKUIRemoteView : _UIRemoteView <WKContentControlled>
 @end
 
-@interface WKChildScrollView : UIScrollView <WKContentControlled>
+@interface WKChildScrollView : WKAxisLockingScrollView <WKContentControlled>
 @end
 
 #if USE(APPLE_INTERNAL_SDK)

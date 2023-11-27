@@ -34,6 +34,7 @@
 #import "RemoteScrollingTree.h"
 #import "UIKitSPI.h"
 #import "UIKitUtilities.h"
+#import "WKAxisLockingScrollView.h"
 #import "WKScrollView.h"
 #import "WebPageProxy.h"
 #import <QuartzCore/QuartzCore.h>
@@ -46,6 +47,9 @@
 #import <WebCore/ScrollingTreeScrollingNode.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/SetForScope.h>
+
+@interface WKScrollingNodeScrollViewDelegate () <WKAxisLockingScrollViewDelegate>
+@end
 
 @implementation WKScrollingNodeScrollViewDelegate
 
@@ -84,9 +88,10 @@
         _scrollingTreeNodeDelegate->clearActiveTouchActions();
         
         if (touchActions && !touchActions.containsAny({ WebCore::TouchAction::Auto, WebCore::TouchAction::Manipulation })) {
-            if (!touchActions.contains(WebCore::TouchAction::PanX))
+            auto axesToPreventMomentumScrolling = dynamic_objc_cast<WKAxisLockingScrollView>(scrollView).axesToPreventMomentumScrolling;
+            if (!touchActions.contains(WebCore::TouchAction::PanX) || (axesToPreventMomentumScrolling & UIAxisHorizontal))
                 targetContentOffset->x = scrollView.contentOffset.x;
-            if (!touchActions.contains(WebCore::TouchAction::PanY))
+            if (!touchActions.contains(WebCore::TouchAction::PanY) || (axesToPreventMomentumScrolling & UIAxisVertical))
                 targetContentOffset->y = scrollView.contentOffset.y;
         }
     }
@@ -139,35 +144,6 @@
     _scrollingTreeNodeDelegate->scrollDidEnd();
 }
 
-- (CGPoint)_scrollView:(UIScrollView *)scrollView adjustedOffsetForOffset:(CGPoint)offset translation:(CGPoint)translation startPoint:(CGPoint)start locationInView:(CGPoint)locationInView horizontalVelocity:(inout double *)hv verticalVelocity:(inout double *)vv
-{
-    auto* panGestureRecognizer = scrollView.panGestureRecognizer;
-    _scrollingTreeNodeDelegate->computeActiveTouchActionsForGestureRecognizer(panGestureRecognizer);
-    auto touchActions = _scrollingTreeNodeDelegate->activeTouchActions();
-
-    if (!touchActions) {
-        [self cancelPointersForGestureRecognizer:panGestureRecognizer];
-        return offset;
-    }
-
-    if (touchActions.containsAny({ WebCore::TouchAction::Auto, WebCore::TouchAction::Manipulation }))
-        return offset;
-
-    CGPoint adjustedContentOffset = CGPointMake(offset.x, offset.y);
-
-    if (!touchActions.contains(WebCore::TouchAction::PanX))
-        adjustedContentOffset.x = start.x;
-    if (!touchActions.contains(WebCore::TouchAction::PanY))
-        adjustedContentOffset.y = start.y;
-
-    if ((touchActions.contains(WebCore::TouchAction::PanX) && adjustedContentOffset.x != start.x)
-        || (touchActions.contains(WebCore::TouchAction::PanY) && adjustedContentOffset.y != start.y)) {
-        [self cancelPointersForGestureRecognizer:scrollView.panGestureRecognizer];
-    }
-
-    return adjustedContentOffset;
-}
-
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 - (void)_scrollView:(UIScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion
 {
@@ -183,6 +159,36 @@
 - (void)cancelPointersForGestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
 {
     _scrollingTreeNodeDelegate->cancelPointersForGestureRecognizer(gestureRecognizer);
+}
+
+#pragma mark - WKAxisLockingScrollViewDelegate
+
+- (UIAxis)axesToPreventScrollingForPanGestureInScrollView:(WKAxisLockingScrollView *)scrollView
+{
+    auto panGestureRecognizer = scrollView.panGestureRecognizer;
+    _scrollingTreeNodeDelegate->computeActiveTouchActionsForGestureRecognizer(panGestureRecognizer);
+
+    auto touchActions = _scrollingTreeNodeDelegate->activeTouchActions();
+    if (!touchActions) {
+        [self cancelPointersForGestureRecognizer:panGestureRecognizer];
+        return UIAxisNeither;
+    }
+
+    if (touchActions.containsAny({ WebCore::TouchAction::Auto, WebCore::TouchAction::Manipulation }))
+        return UIAxisNeither;
+
+    UIAxis axesToPrevent = UIAxisNeither;
+    if (!touchActions.contains(WebCore::TouchAction::PanX))
+        axesToPrevent |= UIAxisHorizontal;
+    if (!touchActions.contains(WebCore::TouchAction::PanY))
+        axesToPrevent |= UIAxisVertical;
+
+    auto translation = [panGestureRecognizer translationInView:scrollView];
+    if ((touchActions.contains(WebCore::TouchAction::PanX) && std::abs(translation.x) > CGFLOAT_EPSILON)
+        || (touchActions.contains(WebCore::TouchAction::PanY) && std::abs(translation.y) > CGFLOAT_EPSILON))
+        [self cancelPointersForGestureRecognizer:panGestureRecognizer];
+
+    return axesToPrevent;
 }
 
 @end
@@ -255,6 +261,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
 
             scrollView.scrollsToTop = NO;
             scrollView.delegate = m_scrollViewDelegate.get();
+            dynamic_objc_cast<WKAxisLockingScrollView>(scrollView).scrollAxisLockingDelegate = m_scrollViewDelegate.get();
 
             if ([scrollView respondsToSelector:@selector(_setAvoidsJumpOnInterruptedBounce:)]) {
                 scrollView.tracksImmediatelyWhileDecelerating = NO;

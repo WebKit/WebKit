@@ -742,9 +742,7 @@ constexpr ApplePayButtonStyle RenderStyle::initialApplePayButtonStyle() { return
 constexpr ApplePayButtonType RenderStyle::initialApplePayButtonType() { return ApplePayButtonType::Plain; }
 #endif
 
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
 inline BoxDecorationBreak RenderStyle::boxDecorationBreak() const { return m_nonInheritedData->boxData->boxDecorationBreak(); }
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
 inline BlendMode RenderStyle::blendMode() const { return static_cast<BlendMode>(m_nonInheritedData->rareData->effectiveBlendMode); }

@@ -798,9 +798,7 @@ public:
     inline void getBoxShadowInlineDirectionExtent(LayoutUnit& logicalLeft, LayoutUnit& logicalRight) const;
     inline void getBoxShadowBlockDirectionExtent(LayoutUnit& logicalTop, LayoutUnit& logicalBottom) const;
 
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
     inline BoxDecorationBreak boxDecorationBreak() const;
-#endif
 
     inline StyleReflection* boxReflect() const;
     inline BoxSizing boxSizing() const;
@@ -1391,9 +1389,7 @@ public:
     inline void setJustifySelf(const StyleSelfAlignmentData&);
     inline void setJustifySelfPosition(ItemPosition);
 
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
     inline void setBoxDecorationBreak(BoxDecorationBreak);
-#endif
 
     inline void setGridColumnList(const GridTrackList&);
     inline void setGridRowList(const GridTrackList&);

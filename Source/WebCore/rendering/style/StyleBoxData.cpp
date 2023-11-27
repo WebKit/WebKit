@@ -47,9 +47,7 @@ StyleBoxData::StyleBoxData()
     , m_hasAutoSpecifiedZIndex(true)
     , m_hasAutoUsedZIndex(true)
     , m_boxSizing(static_cast<unsigned>(BoxSizing::ContentBox))
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
     , m_boxDecorationBreak(static_cast<unsigned>(BoxDecorationBreak::Slice))
-#endif
     , m_verticalAlign(static_cast<unsigned>(RenderStyle::initialVerticalAlign()))
 {
 }
@@ -68,9 +66,7 @@ inline StyleBoxData::StyleBoxData(const StyleBoxData& o)
     , m_hasAutoSpecifiedZIndex(o.m_hasAutoSpecifiedZIndex)
     , m_hasAutoUsedZIndex(o.m_hasAutoUsedZIndex)
     , m_boxSizing(o.m_boxSizing)
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
     , m_boxDecorationBreak(o.m_boxDecorationBreak)
-#endif
     , m_verticalAlign(o.m_verticalAlign)
 {
 }
@@ -94,9 +90,7 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
         && m_usedZIndex == o.m_usedZIndex
         && m_hasAutoUsedZIndex == o.m_hasAutoUsedZIndex
         && m_boxSizing == o.m_boxSizing
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
         && m_boxDecorationBreak == o.m_boxDecorationBreak
-#endif
         && m_verticalAlign == o.m_verticalAlign;
 }
 

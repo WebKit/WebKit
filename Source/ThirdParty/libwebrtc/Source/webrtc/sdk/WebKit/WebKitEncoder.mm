@@ -311,6 +311,34 @@ int32_t RemoteVideoEncoder::RegisterEncodeCompleteCallback(EncodedImageCallback*
     return videoEncoderCallbacks().registerEncodeCompleteCallback(m_internalEncoder, callback);
 }
 
+static inline VideoRotation fromEncoded(WebKitEncodedVideoRotation encoded)
+{
+    switch (encoded) {
+    case WebKitEncodedVideoRotation::kVideoRotation_0:
+        return VideoRotation::kVideoRotation_0;
+    case WebKitEncodedVideoRotation::kVideoRotation_90:
+        return VideoRotation::kVideoRotation_90;
+    case WebKitEncodedVideoRotation::kVideoRotation_180:
+        return VideoRotation::kVideoRotation_180;
+    case WebKitEncodedVideoRotation::kVideoRotation_270:
+        return VideoRotation::kVideoRotation_270;
+    }
+}
+
+static inline WebKitEncodedVideoRotation toEncoded(VideoRotation rotation)
+{
+    switch (rotation) {
+    case VideoRotation::kVideoRotation_0:
+        return WebKitEncodedVideoRotation::kVideoRotation_0;
+    case VideoRotation::kVideoRotation_90:
+        return WebKitEncodedVideoRotation::kVideoRotation_90;
+    case VideoRotation::kVideoRotation_180:
+        return WebKitEncodedVideoRotation::kVideoRotation_180;
+    case VideoRotation::kVideoRotation_270:
+        return WebKitEncodedVideoRotation::kVideoRotation_270;
+    }
+}
+
 void encoderVideoTaskComplete(void* callback, webrtc::VideoCodecType codecType, const uint8_t* buffer, size_t length, const WebKitEncodedFrameInfo& info)
 {
     webrtc::EncodedImage encodedImage;
@@ -323,7 +351,7 @@ void encoderVideoTaskComplete(void* callback, webrtc::VideoCodecType codecType, 
     encodedImage.ntp_time_ms_ = info.ntpTimeMS;
     encodedImage.timing_ = info.timing;
     encodedImage._frameType = info.frameType;
-    encodedImage.rotation_ = info.rotation;
+    encodedImage.rotation_ = fromEncoded(info.rotation);
     encodedImage.qp_ = info.qp;
     encodedImage.content_type_ = info.contentType;
 
@@ -357,7 +385,7 @@ void* createLocalEncoder(const webrtc::SdpVideoFormat& format, bool useAnnexB, w
         info.ntpTimeMS = encodedImage.ntp_time_ms_;
         info.captureTimeMS = encodedImage.capture_time_ms_;
         info.frameType = encodedImage._frameType;
-        info.rotation = encodedImage.rotation_;
+        info.rotation = toEncoded(encodedImage.rotation_);
         info.contentType = encodedImage.content_type_;
         info.qp = encodedImage.qp_;
         info.timing = encodedImage.timing_;

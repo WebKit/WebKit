@@ -58,9 +58,7 @@ public:
     bool hasAutoUsedZIndex() const { return m_hasAutoUsedZIndex; }
 
     BoxSizing boxSizing() const { return static_cast<BoxSizing>(m_boxSizing); }
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
     BoxDecorationBreak boxDecorationBreak() const { return static_cast<BoxDecorationBreak>(m_boxDecorationBreak); }
-#endif
     VerticalAlign verticalAlign() const { return static_cast<VerticalAlign>(m_verticalAlign); }
 
 private:
@@ -85,9 +83,7 @@ private:
     unsigned m_hasAutoSpecifiedZIndex : 1;
     unsigned m_hasAutoUsedZIndex : 1;
     unsigned m_boxSizing : 1; // BoxSizing
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
     unsigned m_boxDecorationBreak : 1; // BoxDecorationBreak
-#endif
     unsigned m_verticalAlign : 4; // VerticalAlign
 };
 

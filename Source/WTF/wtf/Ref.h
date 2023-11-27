@@ -292,31 +292,31 @@ inline bool is(const Ref<ArgType, PtrTraits>& source)
 }
 
 template<typename Target, typename Source, typename PtrTraits>
-inline Ref<Target> checkedDowncast(Ref<Source, PtrTraits> source)
+inline Ref<match_constness_t<Source, Target>> checkedDowncast(Ref<Source, PtrTraits> source)
 {
     static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
     static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
     RELEASE_ASSERT(is<Target>(source));
-    return static_reference_cast<Target>(WTFMove(source));
+    return static_reference_cast<match_constness_t<Source, Target>>(WTFMove(source));
 }
 
 template<typename Target, typename Source, typename PtrTraits>
-inline Ref<Target> downcast(Ref<Source, PtrTraits> source)
+inline Ref<match_constness_t<Source, Target>> downcast(Ref<Source, PtrTraits> source)
 {
     static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
     static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
     ASSERT_WITH_SECURITY_IMPLICATION(is<Target>(source));
-    return static_reference_cast<Target>(WTFMove(source));
+    return static_reference_cast<match_constness_t<Source, Target>>(WTFMove(source));
 }
 
 template<typename Target, typename Source, typename PtrTraits>
-inline RefPtr<Target> dynamicDowncast(Ref<Source, PtrTraits> source)
+inline RefPtr<match_constness_t<Source, Target>> dynamicDowncast(Ref<Source, PtrTraits> source)
 {
     static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
     static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
     if (!is<Target>(source))
         return nullptr;
-    return static_reference_cast<Target>(WTFMove(source));
+    return static_reference_cast<match_constness_t<Source, Target>>(WTFMove(source));
 }
 
 } // namespace WTF

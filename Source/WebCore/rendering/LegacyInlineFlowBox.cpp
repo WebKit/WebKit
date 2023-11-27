@@ -333,12 +333,9 @@ void LegacyInlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLog
         // we know the inline began on this line (unless we are a continuation).
         const auto& lineBoxList = inlineFlow.lineBoxes();
         if (!lineBoxList.firstLineBox()->isConstructed() && !inlineFlow.isContinuation()) {
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
             if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone)
                 includeLeftEdge = includeRightEdge = true;
-            else
-#endif
-            if (ltr && lineBoxList.firstLineBox() == this)
+            else if (ltr && lineBoxList.firstLineBox() == this)
                 includeLeftEdge = true;
             else if (!ltr && lineBoxList.lastLineBox() == this)
                 includeRightEdge = true;
@@ -351,13 +348,10 @@ void LegacyInlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, bool isLog
             // (1) The next line was not created, or it is constructed. We check the previous line for rtl.
             // (2) The logicallyLastRun is not a descendant of this renderer.
             // (3) The logicallyLastRun is a descendant of this renderer, but it is the last child of this renderer and it does not wrap to the next line.
-#if ENABLE(CSS_BOX_DECORATION_BREAK)
             // (4) The decoration break is set to clone therefore there will be borders on every sides.
             if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone)
                 includeLeftEdge = includeRightEdge = true;
-            else
-#endif
-            if (ltr) {
+            else if (ltr) {
                 if (!nextLineBox()
                     && ((lastLine || isLastObjectOnLine) && !inlineFlow.continuation()))
                     includeRightEdge = true;
