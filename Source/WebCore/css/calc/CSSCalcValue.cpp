@@ -74,8 +74,8 @@ static Vector<Ref<CSSCalcExpressionNode>> createCSS(const Vector<std::unique_ptr
 
 static RefPtr<CSSCalcExpressionNode> createCSSIgnoringZeroLength(const CalcExpressionNode& node, const RenderStyle& style)
 {
-    if (node.type() == CalcExpressionNodeType::Length) {
-        auto& length = downcast<CalcExpressionLength>(node).length();
+    if (auto* lengthNode = dynamicDowncast<CalcExpressionLength>(node)) {
+        auto& length = lengthNode->length();
         if (!length.isPercent() && length.isZero())
             return nullptr;
     }
