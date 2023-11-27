@@ -4262,17 +4262,29 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 #if PLATFORM(MACCATALYST)
     return [self _cascadeInteractionTintColor];
 #else
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (self.shouldUseAsyncInteractions)
+        return self.extendedTraitsDelegate.insertionPointColor;
+#endif
     return [self.textInputTraits insertionPointColor];
 #endif
 }
 
 - (UIColor *)selectionBarColor
 {
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (self.shouldUseAsyncInteractions)
+        return self.extendedTraitsDelegate.selectionBarColor;
+#endif
     return [self.textInputTraits selectionBarColor];
 }
 
 - (UIColor *)selectionHighlightColor
 {
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (self.shouldUseAsyncInteractions)
+        return self.extendedTraitsDelegate.selectionHighlightColor;
+#endif
     return [self.textInputTraits selectionHighlightColor];
 }
 
@@ -12768,6 +12780,10 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
         return [_presentedQuickboardController textInputContext].textContentType;
 #endif // HAVE(QUICKBOARD_CONTROLLER)
 #endif // HAVE(PEPPER_UI_CORE)
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (self.shouldUseAsyncInteractions)
+        return self.extendedTraitsDelegate.textContentType;
+#endif
     return self.textInputTraits.textContentType;
 }
 
