@@ -393,25 +393,23 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
 
     Ref element = *elementPtr;
 
-    if (is<HTMLInputElement>(element)) {
-        auto& input = downcast<HTMLInputElement>(element.get());
-
-        if (input.isTextButton() || input.isUploadButton())
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(element)) {
+        if (input->isTextButton() || input->isUploadButton())
             return StyleAppearance::Button;
 
-        if (input.isSwitch())
+        if (input->isSwitch())
             return StyleAppearance::Switch;
 
-        if (input.isCheckbox())
+        if (input->isCheckbox())
             return StyleAppearance::Checkbox;
 
-        if (input.isRadioButton())
+        if (input->isRadioButton())
             return StyleAppearance::Radio;
 
-        if (input.isSearchField())
+        if (input->isSearchField())
             return StyleAppearance::SearchField;
 
-        if (input.isDateField() || input.isDateTimeLocalField() || input.isMonthField() || input.isTimeField() || input.isWeekField()) {
+        if (input->isDateField() || input->isDateTimeLocalField() || input->isMonthField() || input->isTimeField() || input->isWeekField()) {
 #if PLATFORM(IOS_FAMILY)
             return StyleAppearance::MenulistButton;
 #else
@@ -420,14 +418,14 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
         }
 
 #if ENABLE(INPUT_TYPE_COLOR)
-        if (input.isColorControl())
+        if (input->isColorControl())
             return StyleAppearance::ColorWell;
 #endif
 
-        if (input.isRangeControl())
+        if (input->isRangeControl())
             return style.isHorizontalWritingMode() ? StyleAppearance::SliderHorizontal : StyleAppearance::SliderVertical;
 
-        if (input.isTextField())
+        if (input->isTextField())
             return StyleAppearance::TextField;
 
         // <input type=hidden|image|file>
@@ -443,12 +441,11 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
         return StyleAppearance::Button;
     }
 
-    if (is<HTMLSelectElement>(element)) {
+    if (RefPtr select = dynamicDowncast<HTMLSelectElement>(element)) {
 #if PLATFORM(IOS_FAMILY)
         return StyleAppearance::MenulistButton;
 #else
-        auto& select = downcast<HTMLSelectElement>(element.get());
-        return select.usesMenuList() ? StyleAppearance::Menulist : StyleAppearance::Listbox;
+        return select->usesMenuList() ? StyleAppearance::Menulist : StyleAppearance::Listbox;
 #endif
     }
 
@@ -480,8 +477,8 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
         if (pseudo == ShadowPseudoIds::webkitSearchCancelButton())
             return StyleAppearance::SearchFieldCancelButton;
 
-        if (is<SearchFieldResultsButtonElement>(element)) {
-            if (!downcast<SearchFieldResultsButtonElement>(element.get()).canAdjustStyleForAppearance())
+        if (RefPtr button = dynamicDowncast<SearchFieldResultsButtonElement>(element)) {
+            if (!button->canAdjustStyleForAppearance())
                 return StyleAppearance::None;
 
             if (pseudo == ShadowPseudoIds::webkitSearchDecoration())
@@ -813,10 +810,9 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderBox& box) c
         if (!input)
             input = box.element();
 
-        if (!is<RenderBox>(input->renderer()))
+        renderer = dynamicDowncast<RenderBox>(input->renderer());
+        if (!renderer)
             return { };
-
-        renderer = downcast<RenderBox>(input->renderer());
     }
 
     return {
@@ -1312,39 +1308,41 @@ bool RenderTheme::isWindowActive(const RenderObject& renderer) const
     return renderer.page().focusController().isActive();
 }
 
-bool RenderTheme::isChecked(const RenderObject& o) const
+bool RenderTheme::isChecked(const RenderObject& renderer) const
 {
-    if (!o.node())
+    if (!renderer.node())
         return false;
-    if (auto* element = dynamicDowncast<HTMLInputElement>(*o.node()))
+    if (RefPtr element = dynamicDowncast<HTMLInputElement>(*renderer.node()))
         return element->shouldAppearChecked();
-    if (auto* host = dynamicDowncast<HTMLInputElement>(o.node()->shadowHost()))
+    if (RefPtr host = dynamicDowncast<HTMLInputElement>(renderer.node()->shadowHost()))
         return host->shouldAppearChecked();
     return false;
 }
 
-bool RenderTheme::isIndeterminate(const RenderObject& o) const
+bool RenderTheme::isIndeterminate(const RenderObject& renderer) const
 {
-    return is<HTMLInputElement>(o.node()) && downcast<HTMLInputElement>(*o.node()).shouldAppearIndeterminate();
+    RefPtr input = dynamicDowncast<HTMLInputElement>(renderer.node());
+    return input && input->shouldAppearIndeterminate();
 }
 
 bool RenderTheme::isEnabled(const RenderObject& renderer) const
 {
-    if (auto* element = dynamicDowncast<Element>(renderer.node()))
+    if (RefPtr element = dynamicDowncast<Element>(renderer.node())) {
         return !(element->isDisabledFormControl()
             || (element->shadowHost() && element->shadowHost()->isDisabledFormControl()));
+    }
     return true;
 }
 
 bool RenderTheme::isFocused(const RenderObject& renderer) const
 {
-    auto element = dynamicDowncast<Element>(renderer.node());
+    RefPtr element = dynamicDowncast<Element>(renderer.node());
     if (!element)
         return false;
 
     RefPtr delegate = element;
-    if (is<SliderThumbElement>(element))
-        delegate = downcast<SliderThumbElement>(*element).hostInput();
+    if (RefPtr sliderThumb = dynamicDowncast<SliderThumbElement>(element))
+        delegate = sliderThumb->hostInput();
 
     Document& document = delegate->document();
     auto* frame = document.frame();
@@ -1389,9 +1387,10 @@ bool RenderTheme::isSpinUpButtonPartHovered(const RenderObject& renderer) const
     return false;
 }
 
-bool RenderTheme::isPresenting(const RenderObject& o) const
+bool RenderTheme::isPresenting(const RenderObject& renderer) const
 {
-    return is<HTMLInputElement>(o.node()) && downcast<HTMLInputElement>(*o.node()).isPresentingAttachedView();
+    RefPtr input = dynamicDowncast<HTMLInputElement>(renderer.node());
+    return input && input->isPresentingAttachedView();
 }
 
 bool RenderTheme::isDefault(const RenderObject& o) const
@@ -1406,23 +1405,14 @@ bool RenderTheme::isDefault(const RenderObject& o) const
 #if ENABLE(DATALIST_ELEMENT)
 bool RenderTheme::hasListButton(const RenderObject& renderer) const
 {
-    if (!is<HTMLInputElement>(renderer.generatingNode()))
-        return false;
-
-    const auto& input = downcast<HTMLInputElement>(*(renderer.generatingNode()));
-    return input.list();
+    RefPtr input = dynamicDowncast<HTMLInputElement>(renderer.generatingNode());
+    return input && input->list();
 }
 
 bool RenderTheme::hasListButtonPressed(const RenderObject& renderer) const
 {
-    const auto* input = downcast<HTMLInputElement>(renderer.generatingNode());
-    if (!input)
-        return false;
-
-    if (auto* buttonElement = input->dataListButtonElement())
-        return buttonElement->active();
-
-    return false;
+    RefPtr input = dynamicDowncast<HTMLInputElement>(renderer.generatingNode());
+    return input && input->dataListButtonElement() && input->dataListButtonElement()->active();
 }
 #endif
 
@@ -1500,29 +1490,26 @@ String RenderTheme::dataListStyleSheet() const
     return "datalist { display: none; }"_s;
 }
 
-void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paintInfo, const FloatRect& rect)
+void RenderTheme::paintSliderTicks(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    if (!is<HTMLInputElement>(o.node()))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(renderer.node());
+    if (!input || !input->isRangeControl())
         return;
 
-    auto& input = downcast<HTMLInputElement>(*o.node());
-    if (!input.isRangeControl())
-        return;
-
-    auto dataList = input.dataList();
+    auto dataList = input->dataList();
     if (!dataList)
         return;
 
-    double min = input.minimum();
-    double max = input.maximum();
-    auto appearance = o.style().effectiveAppearance();
+    double min = input->minimum();
+    double max = input->maximum();
+    auto appearance = renderer.style().effectiveAppearance();
     // We don't support ticks on alternate sliders like MediaVolumeSliders.
     if (appearance != StyleAppearance::SliderHorizontal && appearance != StyleAppearance::SliderVertical)
         return;
     bool isHorizontal = appearance == StyleAppearance::SliderHorizontal;
 
     IntSize thumbSize;
-    const RenderObject* thumbRenderer = input.sliderThumbElement()->renderer();
+    const RenderObject* thumbRenderer = input->sliderThumbElement()->renderer();
     if (thumbRenderer) {
         const RenderStyle& thumbStyle = thumbRenderer->style();
         int thumbWidth = thumbStyle.width().intValue();
@@ -1532,16 +1519,16 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
     }
 
     IntSize tickSize = sliderTickSize();
-    float zoomFactor = o.style().effectiveZoom();
+    float zoomFactor = renderer.style().effectiveZoom();
     FloatRect tickRect;
     int tickRegionSideMargin = 0;
     int tickRegionWidth = 0;
     IntRect trackBounds;
-    RenderObject* trackRenderer = input.sliderTrackElement()->renderer();
+    RenderObject* trackRenderer = input->sliderTrackElement()->renderer();
     // We can ignoring transforms because transform is handled by the graphics context.
     if (trackRenderer)
         trackBounds = trackRenderer->absoluteBoundingBoxRectIgnoringTransforms();
-    IntRect sliderBounds = o.absoluteBoundingBoxRectIgnoringTransforms();
+    IntRect sliderBounds = renderer.absoluteBoundingBoxRectIgnoringTransforms();
 
     // Make position relative to the transformed ancestor element.
     trackBounds.setX(trackBounds.x() - sliderBounds.x() + rect.x());
@@ -1561,10 +1548,10 @@ void RenderTheme::paintSliderTicks(const RenderObject& o, const PaintInfo& paint
         tickRegionWidth = trackBounds.height() - thumbSize.width();
     }
     GraphicsContextStateSaver stateSaver(paintInfo.context());
-    paintInfo.context().setFillColor(o.style().visitedDependentColorWithColorFilter(CSSPropertyColor));
-    bool isReversedInlineDirection = (!isHorizontal && o.style().isHorizontalWritingMode()) || !o.style().isLeftToRightDirection();
+    paintInfo.context().setFillColor(renderer.style().visitedDependentColorWithColorFilter(CSSPropertyColor));
+    bool isReversedInlineDirection = (!isHorizontal && renderer.style().isHorizontalWritingMode()) || !renderer.style().isLeftToRightDirection();
     for (auto& optionElement : dataList->suggestions()) {
-        if (auto optionValue = input.listOptionValueAsDouble(optionElement)) {
+        if (auto optionValue = input->listOptionValueAsDouble(optionElement)) {
             double tickFraction = (*optionValue - min) / (max - min);
             double tickRatio = isReversedInlineDirection ? 1.0 - tickFraction : tickFraction;
             double tickPosition = round(tickRegionSideMargin + tickRegionWidth * tickRatio);
