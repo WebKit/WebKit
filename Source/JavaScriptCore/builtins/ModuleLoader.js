@@ -104,7 +104,6 @@ function newRegistryEntry(key)
     };
 }
 
-@visibility=PrivateRecursive
 function ensureRegistered(key)
 {
     // https://whatwg.github.io/loader/#ensure-registered
@@ -147,7 +146,6 @@ function fulfillFetch(entry, source)
 
 // Loader.
 
-@visibility=PrivateRecursive
 function requestFetch(entry, parameters, fetcher)
 {
     // https://whatwg.github.io/loader/#request-fetch
@@ -185,7 +183,6 @@ function requestFetch(entry, parameters, fetcher)
     return fetchPromise;
 }
 
-@visibility=PrivateRecursive
 function requestInstantiate(entry, parameters, fetcher)
 {
     // https://whatwg.github.io/loader/#request-instantiate
@@ -317,7 +314,6 @@ function cacheSatisfyAndReturn(entry, depEntries, satisfyingEntries)
     return entry;
 }
 
-@visibility=PrivateRecursive
 function requestSatisfy(entry, parameters, fetcher, visited)
 {
     // If the root's requestSatisfyUtil is fulfilled, then all reachable entries by the root
@@ -415,7 +411,6 @@ function requestSatisfy(entry, parameters, fetcher, visited)
     });
 }
 
-@visibility=PrivateRecursive
 function requestSatisfyUtil(entry, parameters, fetcher, visited, satisfyingEntries)
 {
     // https://html.spec.whatwg.org/#internal-module-script-graph-fetching-procedure
@@ -500,7 +495,6 @@ function requestSatisfyUtil(entry, parameters, fetcher, visited, satisfyingEntri
 
 // Linking semantics.
 
-@visibility=PrivateRecursive
 function link(entry, fetcher)
 {
     // https://html.spec.whatwg.org/#fetch-the-descendants-of-and-instantiate-a-module-script
@@ -537,7 +531,6 @@ function link(entry, fetcher)
 
 // Module semantics.
 
-@visibility=PrivateRecursive
 function moduleEvaluation(entry, fetcher)
 {
     // http://www.ecma-international.org/ecma-262/6.0/#sec-moduleevaluation
@@ -563,7 +556,6 @@ function moduleEvaluation(entry, fetcher)
         return this.asyncModuleEvaluation(entry, fetcher, dependencies);
 }
 
-@visibility=PrivateRecursive
 async function asyncModuleEvaluation(entry, fetcher, dependencies)
 {
     "use strict";
@@ -589,7 +581,6 @@ async function asyncModuleEvaluation(entry, fetcher, dependencies)
 
 // APIs to control the module loader.
 
-@visibility=PrivateRecursive
 function provideFetch(key, value)
 {
     "use strict";
@@ -601,7 +592,6 @@ function provideFetch(key, value)
     @fulfillFetch(entry, value);
 }
 
-@visibility=PrivateRecursive
 async function loadModule(key, parameters, fetcher)
 {
     "use strict";
@@ -613,7 +603,6 @@ async function loadModule(key, parameters, fetcher)
     return entry.key;
 }
 
-@visibility=PrivateRecursive
 function linkAndEvaluateModule(key, fetcher)
 {
     "use strict";
@@ -623,7 +612,6 @@ function linkAndEvaluateModule(key, fetcher)
     return this.moduleEvaluation(entry, fetcher);
 }
 
-@visibility=PrivateRecursive
 async function loadAndEvaluateModule(moduleName, parameters, fetcher)
 {
     "use strict";
@@ -638,7 +626,6 @@ async function loadAndEvaluateModule(moduleName, parameters, fetcher)
     return await this.linkAndEvaluateModule(key, fetcher);
 }
 
-@visibility=PrivateRecursive
 async function requestImportModule(moduleName, referrer, parameters, fetcher)
 {
     "use strict";
@@ -654,7 +641,6 @@ async function requestImportModule(moduleName, referrer, parameters, fetcher)
     return this.getModuleNamespaceObject(entry.module);
 }
 
-@visibility=PrivateRecursive
 function dependencyKeysIfEvaluated(key)
 {
     "use strict";
