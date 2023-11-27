@@ -135,7 +135,7 @@ void TextureMapperPlatformLayerProxyGL::pushNextBuffer(std::unique_ptr<TextureMa
 std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerProxyGL::getAvailableBuffer(const IntSize& size, GLint internalFormat)
 {
     ASSERT(m_lock.isHeld());
-    ASSERT(m_compositorThread == &Thread::current());
+
     std::unique_ptr<TextureMapperPlatformLayerBuffer> availableBuffer;
 
     auto buffers = WTFMove(m_usedBuffers);
