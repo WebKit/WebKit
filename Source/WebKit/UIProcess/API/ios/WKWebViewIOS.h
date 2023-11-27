@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WKAxisLockingScrollView.h"
 #import "WKWebViewInternal.h"
 #import "_WKTapHandlingResult.h"
 
@@ -36,7 +37,7 @@ namespace WebKit {
 enum class TapHandlingResult : uint8_t;
 }
 
-@interface WKWebView (WKViewInternalIOS)
+@interface WKWebView (WKViewInternalIOS) <WKAxisLockingScrollViewDelegate>
 
 - (void)_setupScrollAndContentViews;
 - (void)_registerForNotifications;

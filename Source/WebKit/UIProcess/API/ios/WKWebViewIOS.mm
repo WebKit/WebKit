@@ -177,6 +177,7 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
     CGRect bounds = self.bounds;
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
     [_scrollView setInternalDelegate:self];
+    [_scrollView setScrollAxisLockingDelegate:self];
     [_scrollView setBouncesZoom:YES];
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
@@ -1903,9 +1904,10 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if ([scrollView isZooming])
         *targetContentOffset = [scrollView contentOffset];
     else {
-        if ([_contentView preventsPanningInXAxis])
+        auto axesToPreventMomentumScrolling = dynamic_objc_cast<WKAxisLockingScrollView>(scrollView).axesToPreventMomentumScrolling;
+        if ([_contentView preventsPanningInXAxis] || (axesToPreventMomentumScrolling & UIAxisHorizontal))
             targetContentOffset->x = scrollView.contentOffset.x;
-        if ([_contentView preventsPanningInYAxis])
+        if ([_contentView preventsPanningInYAxis] || (axesToPreventMomentumScrolling & UIAxisVertical))
             targetContentOffset->y = scrollView.contentOffset.y;
     }
 #if ENABLE(ASYNC_SCROLLING)
@@ -1943,27 +1945,6 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 - (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView
 {
     [self _didFinishScrolling:scrollView];
-}
-
-- (CGPoint)_scrollView:(UIScrollView *)scrollView adjustedOffsetForOffset:(CGPoint)offset translation:(CGPoint)translation startPoint:(CGPoint)start locationInView:(CGPoint)locationInView horizontalVelocity:(inout double *)hv verticalVelocity:(inout double *)vv
-{
-    if (![_contentView preventsPanningInXAxis] && ![_contentView preventsPanningInYAxis]) {
-        [_contentView cancelPointersForGestureRecognizer:scrollView.panGestureRecognizer];
-        return offset;
-    }
-
-    CGPoint adjustedContentOffset = CGPointMake(offset.x, offset.y);
-    if ([_contentView preventsPanningInXAxis])
-        adjustedContentOffset.x = start.x;
-    if ([_contentView preventsPanningInYAxis])
-        adjustedContentOffset.y = start.y;
-
-    if ((![_contentView preventsPanningInXAxis] && adjustedContentOffset.x != start.x)
-        || (![_contentView preventsPanningInYAxis] && adjustedContentOffset.y != start.y)) {
-        [_contentView cancelPointersForGestureRecognizer:scrollView.panGestureRecognizer];
-    }
-
-    return adjustedContentOffset;
 }
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
@@ -3462,6 +3443,31 @@ static bool isLockdownModeWarningNeeded()
     _obscuredInsets = { };
     [self _scheduleVisibleContentRectUpdate];
 }
+
+#pragma mark - WKAxisLockingScrollViewDelegate
+
+- (UIAxis)axesToPreventScrollingForPanGestureInScrollView:(WKAxisLockingScrollView *)scrollView
+{
+    auto panGestureRecognizer = scrollView.panGestureRecognizer;
+    if (![_contentView preventsPanningInXAxis] && ![_contentView preventsPanningInYAxis]) {
+        [_contentView cancelPointersForGestureRecognizer:panGestureRecognizer];
+        return UIAxisNeither;
+    }
+
+    UIAxis axesToPrevent = UIAxisNeither;
+    if ([_contentView preventsPanningInXAxis])
+        axesToPrevent |= UIAxisHorizontal;
+    if ([_contentView preventsPanningInYAxis])
+        axesToPrevent |= UIAxisVertical;
+
+    auto translation = [panGestureRecognizer translationInView:scrollView];
+    if ((![_contentView preventsPanningInXAxis] && std::abs(translation.x) > CGFLOAT_EPSILON)
+        || (![_contentView preventsPanningInYAxis] && std::abs(translation.y) > CGFLOAT_EPSILON))
+        [_contentView cancelPointersForGestureRecognizer:panGestureRecognizer];
+
+    return axesToPrevent;
+}
+
 @end
 
 @implementation WKWebView (WKPrivateIOS)
