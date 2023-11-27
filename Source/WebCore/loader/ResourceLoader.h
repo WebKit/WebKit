@@ -190,7 +190,6 @@ protected:
 #if USE(QUICK_LOOK)
     std::unique_ptr<LegacyPreviewLoader> m_previewLoader;
 #endif
-    bool m_canCrossOriginRequestsAskUserForCredentials { true };
 
 private:
     virtual void willCancel(const ResourceError&) = 0;
