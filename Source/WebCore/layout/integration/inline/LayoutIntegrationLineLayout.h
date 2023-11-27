@@ -32,6 +32,7 @@
 #include "InlineIteratorInlineBox.h"
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
+#include "LayoutIntegrationBoxGeometryUpdater.h"
 #include "LayoutIntegrationBoxTree.h"
 #include "LayoutPoint.h"
 #include "LayoutState.h"
@@ -47,10 +48,6 @@ class RenderBlockFlow;
 class RenderBox;
 class RenderBoxModelObject;
 class RenderInline;
-class RenderLineBreak;
-class RenderListItem;
-class RenderListMarker;
-class RenderTable;
 struct PaintInfo;
 
 namespace Layout {
@@ -139,22 +136,12 @@ public:
 #endif
 
 private:
-    void updateReplacedDimensions(const RenderBox&);
-    void updateInlineBlockDimensions(const RenderBlock&);
-    void updateLineBreakBoxDimensions(const RenderLineBreak&);
-    void updateInlineBoxDimensions(const RenderInline&);
-    void updateInlineTableDimensions(const RenderTable&);
-    void updateListItemDimensions(const RenderListItem&);
-    void updateListMarkerDimensions(const RenderListMarker&);
-
-    void prepareLayoutState();
     void preparePlacedFloats();
     FloatRect constructContent(const Layout::InlineLayoutState&, Layout::InlineLayoutResult&&);
     Vector<LineAdjustment> adjustContent(const Layout::BlockLayoutState&);
     void updateRenderTreePositions(const Vector<LineAdjustment>&);
 
     InlineContent& ensureInlineContent();
-    void updateLayoutBoxDimensions(const RenderBox&);
 
     Layout::LayoutState& layoutState() { return *m_layoutState; }
     const Layout::LayoutState& layoutState() const { return *m_layoutState; }
@@ -176,7 +163,7 @@ private:
     // FIXME: This should be part of LayoutState.
     std::unique_ptr<Layout::InlineDamage> m_lineDamage;
     std::unique_ptr<InlineContent> m_inlineContent;
-    HashMap<const Layout::ElementBox*, LayoutUnit> m_nestedListMarkerOffsets;
+    BoxGeometryUpdater m_boxGeometryUpdater;
 };
 
 }
