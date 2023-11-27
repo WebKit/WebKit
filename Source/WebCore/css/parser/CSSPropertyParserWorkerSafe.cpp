@@ -86,7 +86,8 @@ Color CSSPropertyParserWorkerSafe::parseColor(const String& string)
 
 static CSSParserMode parserMode(ScriptExecutionContext& context)
 {
-    return (is<Document>(context) && downcast<Document>(context).inQuirksMode()) ? HTMLQuirksMode : HTMLStandardMode;
+    auto* document = dynamicDowncast<Document>(context);
+    return (document && document->inQuirksMode()) ? HTMLQuirksMode : HTMLStandardMode;
 }
 
 RefPtr<CSSValueList> CSSPropertyParserWorkerSafe::parseFontFaceSrc(const String& string, const CSSParserContext& context)

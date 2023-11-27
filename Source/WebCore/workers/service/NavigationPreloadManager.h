@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "NavigationPreloadState.h"
 #include "ServiceWorkerRegistration.h"
 
@@ -60,5 +58,3 @@ inline NavigationPreloadManager::NavigationPreloadManager(ServiceWorkerRegistrat
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

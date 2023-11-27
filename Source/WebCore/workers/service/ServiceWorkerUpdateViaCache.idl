@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[Conditional=SERVICE_WORKER] enum ServiceWorkerUpdateViaCache {
+enum ServiceWorkerUpdateViaCache {
     "imports",
     "all",
     "none"

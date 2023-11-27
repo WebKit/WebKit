@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ServiceWorkerTypes.h"
 
 namespace WebCore {
@@ -44,5 +42,3 @@ struct ServiceWorkerJobDataIdentifier {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

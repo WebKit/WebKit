@@ -24,8 +24,6 @@
  */
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include <WebCore/BackgroundFetchStore.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/FastMalloc.h>
@@ -73,5 +71,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

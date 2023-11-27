@@ -147,7 +147,6 @@ my (
     $sandboxExtensionsSupport,
     $serverPreconnectSupport,
     $serviceControlsSupport,
-    $serviceWorkerSupport,
     $shareableResourceSupport,
     $smoothScrollingSupport,
     $speechSynthesisSupport,
@@ -448,9 +447,6 @@ my @features = (
 
     { option => "service-controls", desc => "Toggle service controls support",
       define => "ENABLE_SERVICE_CONTROLS", value => \$serviceControlsSupport },
-
-    { option => "service-worker", desc => "Toggle Service Worker support",
-      define => "ENABLE_SERVICE_WORKER", value => \$serviceWorkerSupport },
 
     { option => "shareable-resource", desc => "Toggle network shareable resources support",
       define => "ENABLE_SHAREABLE_RESOURCE", value => \$shareableResourceSupport },

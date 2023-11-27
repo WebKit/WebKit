@@ -294,7 +294,7 @@ protected:
     virtual bool supportsSelectionForegroundColors(OptionSet<StyleColorOptions>) const { return true; }
     virtual bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColorOptions>) const { return true; }
 
-#if !USE(NEW_THEME)
+#if PLATFORM(IOS_FAMILY)
     // Methods for each appearance value.
     virtual void adjustCheckboxStyle(RenderStyle&, const Element*) const;
     virtual bool paintCheckbox(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
@@ -309,7 +309,7 @@ protected:
     virtual void adjustColorWellStyle(RenderStyle&, const Element*) const;
     virtual bool paintColorWell(const RenderObject&, const PaintInfo&, const IntRect&);
 #endif
-#endif // !USE(NEW_THEME)
+#endif // PLATFORM(IOS_FAMILY)
 
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) { }

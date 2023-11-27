@@ -521,6 +521,8 @@ static inline WebEventFlags webEventModifierFlags(UIKeyModifierFlags flags)
         modifiers |= WebEventFlagMaskControlKey;
     if (flags & UIKeyModifierShift)
         modifiers |= WebEventFlagMaskShiftKey;
+    if (flags & UIKeyModifierAlphaShift)
+        modifiers |= WebEventFlagMaskLeftCapsLockKey;
     return modifiers;
 }
 

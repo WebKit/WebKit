@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "NavigationPreloadState.h"
 #include "SWServer.h"
 #include "ScriptExecutionContextIdentifier.h"
@@ -147,5 +145,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

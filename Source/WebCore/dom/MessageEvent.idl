@@ -26,11 +26,7 @@
  *
  */
 
-#if defined(ENABLE_SERVICE_WORKER) && ENABLE_SERVICE_WORKER
 typedef (WindowProxy or MessagePort or ServiceWorker) MessageEventSource;
-#else
-typedef (WindowProxy or MessagePort) MessageEventSource;
-#endif
 
 [
     Exposed=(Window,Worker,AudioWorklet),

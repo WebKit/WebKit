@@ -209,12 +209,10 @@ DocumentLoader::~DocumentLoader()
     m_cachedResourceLoader->clearDocumentLoader();
     clearMainResource();
 
-#if ENABLE(SERVICE_WORKER)
     if (m_resultingClientId) {
         ASSERT(scriptExecutionContextIdentifierToLoaderMap().contains(m_resultingClientId));
         scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
     }
-#endif
 }
 
 RefPtr<FragmentedSharedBuffer> DocumentLoader::mainResourceData() const
@@ -564,7 +562,6 @@ void DocumentLoader::handleSubstituteDataLoadNow()
     responseReceived(response, nullptr);
 }
 
-#if ENABLE(SERVICE_WORKER)
 bool DocumentLoader::setControllingServiceWorkerRegistration(ServiceWorkerRegistrationData&& data)
 {
     if (!m_loadingMainResource)
@@ -597,7 +594,6 @@ void DocumentLoader::matchRegistration(const URL& url, SWClientConnection::Regis
     auto& connection = ServiceWorkerProvider::singleton().serviceWorkerConnection();
     connection.matchRegistration(WTFMove(origin), url, WTFMove(callback));
 }
-#endif
 
 void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
@@ -607,7 +603,6 @@ void DocumentLoader::redirectReceived(CachedResource& resource, ResourceRequest&
 
 void DocumentLoader::redirectReceived(ResourceRequest&& request, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
-#if ENABLE(SERVICE_WORKER)
     if (m_serviceWorkerRegistrationData) {
         m_serviceWorkerRegistrationData = { };
         unregisterReservedServiceWorkerClient();
@@ -638,9 +633,6 @@ void DocumentLoader::redirectReceived(ResourceRequest&& request, const ResourceR
         }
         completionHandler(WTFMove(request));
     });
-#else
-    willSendRequest(WTFMove(request), redirectResponse, WTFMove(completionHandler));
-#endif
 }
 
 void DocumentLoader::willSendRequest(ResourceRequest&& newRequest, const ResourceResponse& redirectResponse, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
@@ -933,7 +925,6 @@ void DocumentLoader::responseReceived(CachedResource& resource, const ResourceRe
         }
     }
 
-#if ENABLE(SERVICE_WORKER)
     if (m_canUseServiceWorkers && response.source() == ResourceResponse::Source::MemoryCache) {
         matchRegistration(response.url(), [this, protectedThis = Ref { *this }, response, completionHandler = WTFMove(completionHandler)](auto&& registrationData) mutable {
             if (!m_mainDocumentError.isNull() || !m_frame) {
@@ -946,7 +937,6 @@ void DocumentLoader::responseReceived(CachedResource& resource, const ResourceRe
         });
         return;
     }
-#endif
     responseReceived(response, WTFMove(completionHandler));
 }
 
@@ -1259,13 +1249,11 @@ void DocumentLoader::stopLoadingForPolicyChange()
     cancelMainResourceLoad(interruptedForPolicyChangeError());
 }
 
-#if ENABLE(SERVICE_WORKER)
 // https://w3c.github.io/ServiceWorker/#control-and-use-window-client
 static inline bool shouldUseActiveServiceWorkerFromParent(const Document& document, const Document& parent)
 {
     return !document.url().protocolIsInHTTPFamily() && !document.securityOrigin().isOpaque() && parent.securityOrigin().isSameOriginDomain(document.securityOrigin());
 }
-#endif
 
 void DocumentLoader::commitData(const SharedBuffer& data)
 {
@@ -1297,7 +1285,6 @@ void DocumentLoader::commitData(const SharedBuffer& data)
         if (m_archive && m_archive->shouldOverrideBaseURL())
             document.setBaseURLOverride(m_archive->mainResource()->url());
 #endif
-#if ENABLE(SERVICE_WORKER)
         if (m_canUseServiceWorkers) {
             if (!document.securityOrigin().isOpaque()) {
                 if (m_serviceWorkerRegistrationData && m_serviceWorkerRegistrationData->activeWorker) {
@@ -1323,7 +1310,6 @@ void DocumentLoader::commitData(const SharedBuffer& data)
                 m_resultingClientId = { };
             }
         }
-#endif
         // Call receivedFirstData() exactly once per load. We should only reach this point multiple times
         // for multipart loads, and FrameLoader::isReplacing() will be true after the first time.
         if (!isMultipartReplacingLoad())
@@ -1422,13 +1408,11 @@ void DocumentLoader::setupForReplace()
     frameLoader()->setReplacing();
     m_gotFirstByte = false;
 
-#if ENABLE(SERVICE_WORKER)
     unregisterReservedServiceWorkerClient();
     if (m_resultingClientId) {
         scriptExecutionContextIdentifierToLoaderMap().remove(m_resultingClientId);
         m_resultingClientId = { };
     }
-#endif
 
     stopLoadingSubresources();
     stopLoadingPlugIns();
@@ -1867,9 +1851,7 @@ bool DocumentLoader::scheduleArchiveLoad(ResourceLoader& loader, const ResourceR
 
 void DocumentLoader::scheduleSubstituteResourceLoad(ResourceLoader& loader, SubstituteResource& resource)
 {
-#if ENABLE(SERVICE_WORKER)
     ASSERT(!loader.options().serviceWorkerRegistrationIdentifier);
-#endif
     m_pendingSubstituteResources.set(&loader, &resource);
     deliverSubstituteResourcesAfterDelay();
 }
@@ -2093,7 +2075,6 @@ void DocumentLoader::loadErrorDocument()
     m_writer.end();
 }
 
-#if ENABLE(SERVICE_WORKER)
 static bool canUseServiceWorkers(LocalFrame* frame)
 {
     if (!frame || !frame->settings().serviceWorkersEnabled())
@@ -2101,7 +2082,6 @@ static bool canUseServiceWorkers(LocalFrame* frame)
     auto* ownerElement = frame->ownerElement();
     return !ownerElement || !is<HTMLPlugInElement>(ownerElement);
 }
-#endif
 
 static bool shouldCancelLoadingAboutURL(const URL& url)
 {
@@ -2124,9 +2104,7 @@ static bool shouldCancelLoadingAboutURL(const URL& url)
 
 void DocumentLoader::startLoadingMainResource()
 {
-#if ENABLE(SERVICE_WORKER)
     m_canUseServiceWorkers = canUseServiceWorkers(m_frame.get());
-#endif
     m_mainDocumentError = ResourceError();
     timing().markStartTime();
     ASSERT(!m_mainResource);
@@ -2176,7 +2154,6 @@ void DocumentLoader::startLoadingMainResource()
 
         DOCUMENTLOADER_RELEASE_LOG("startLoadingMainResource: Starting load");
 
-#if ENABLE(SERVICE_WORKER)
         if (m_applicationCacheHost->canLoadMainResource(request) || m_substituteData.isValid()) {
             auto url = request.url();
             matchRegistration(url, [request = WTFMove(request), protectedThis = WTFMove(protectedThis), this] (auto&& registrationData) mutable {
@@ -2205,25 +2182,17 @@ void DocumentLoader::startLoadingMainResource()
             });
             return;
         }
-#else
-        if (tryLoadingRequestFromApplicationCache()) {
-            DOCUMENTLOADER_RELEASE_LOG("startLoadingMainResource: Loaded from Application Cache");
-            return;
-        }
-#endif
         loadMainResource(WTFMove(request));
     });
 }
 
 void DocumentLoader::unregisterReservedServiceWorkerClient()
 {
-#if ENABLE(SERVICE_WORKER)
     if (!m_resultingClientId)
         return;
 
     if (auto* serviceWorkerConnection = ServiceWorkerProvider::singleton().existingServiceWorkerConnection())
         serviceWorkerConnection->unregisterServiceWorkerClient(m_resultingClientId);
-#endif
 }
 
 void DocumentLoader::loadMainResource(ResourceRequest&& request)
@@ -2242,7 +2211,6 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         DefersLoadingPolicy::AllowDefersLoading,
         CachingPolicy::AllowCaching);
 
-#if ENABLE(SERVICE_WORKER)
     auto isSandboxingAllowingServiceWorkerFetchHandling = [](SandboxFlags flags) {
         return !(flags & SandboxOrigin) && !(flags & SandboxScripts);
     };
@@ -2258,7 +2226,6 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
         scriptExecutionContextIdentifierToLoaderMap().add(m_resultingClientId, this);
         mainResourceLoadOptions.resultingClientIdentifier = m_resultingClientId.object();
     }
-#endif
 
     CachedResourceRequest mainResourceRequest(WTFMove(request), mainResourceLoadOptions);
     if (!m_frame->isMainFrame() && m_frame->document()) {

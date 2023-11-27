@@ -22,7 +22,6 @@
 
 header: "BackgroundFetchState.h"
 
-#if ENABLE(SERVICE_WORKER)
 struct WebKit::BackgroundFetchState {
     WebCore::SecurityOriginData topOrigin;
     URL scope;
@@ -36,4 +35,3 @@ struct WebKit::BackgroundFetchState {
     WebCore::BackgroundFetchFailureReason failureReason;
     bool isPaused;
 };
-#endif

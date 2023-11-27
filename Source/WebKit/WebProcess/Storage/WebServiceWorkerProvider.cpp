@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebServiceWorkerProvider.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "NetworkProcessConnection.h"
 #include "WebProcess.h"
 #include "WebSWClientConnection.h"
@@ -83,5 +81,3 @@ void WebServiceWorkerProvider::terminateWorkerForTesting(WebCore::ServiceWorkerI
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

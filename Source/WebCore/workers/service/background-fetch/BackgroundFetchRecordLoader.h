@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include <span>
 #include <wtf/WeakPtr.h>
 
@@ -54,5 +52,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

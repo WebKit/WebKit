@@ -24,8 +24,6 @@
  */
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include <WebCore/BackgroundFetchStore.h>
 #include <WebCore/ClientOrigin.h>
 #include <wtf/CompletionHandler.h>
@@ -96,5 +94,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

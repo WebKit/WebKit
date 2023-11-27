@@ -28,8 +28,6 @@
 #include "MessageWithMessagePorts.h"
 #include "ServiceWorkerData.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 namespace WebCore {
 
 struct ServiceWorkerClientPendingMessage {
@@ -39,5 +37,3 @@ struct ServiceWorkerClientPendingMessage {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

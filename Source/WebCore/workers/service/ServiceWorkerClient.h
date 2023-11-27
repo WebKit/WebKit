@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ContextDestructionObserver.h"
 #include "ExceptionOr.h"
 #include "ScriptExecutionContextIdentifier.h"
@@ -75,5 +73,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

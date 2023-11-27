@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "SharedStringHashStore.h"
 #include <WebCore/SWOriginStore.h>
 #include <wtf/WeakHashSet.h>
@@ -59,5 +57,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

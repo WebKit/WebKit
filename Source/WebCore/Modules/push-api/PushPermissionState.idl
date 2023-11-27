@@ -25,9 +25,7 @@
 
 // https://www.w3.org/TR/push-api/#pushpermissionstate-enumeration
 
-[
-    Conditional=SERVICE_WORKER,
-] enum PushPermissionState {
+enum PushPermissionState {
     "denied",
     "granted",
     "prompt"

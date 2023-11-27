@@ -85,7 +85,6 @@ struct CSSParserContext {
     bool focusVisibleEnabled : 1 { false };
     bool hasPseudoClassEnabled : 1 { false };
     bool cascadeLayersEnabled : 1 { false };
-    bool overflowClipEnabled : 1 { false };
     bool gradientPremultipliedAlphaInterpolationEnabled : 1 { false };
     bool gradientInterpolationColorSpacesEnabled : 1 { false };
     bool subgridEnabled : 1 { false };

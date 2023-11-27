@@ -3428,9 +3428,9 @@ class GenerateStyleBuilderGenerated:
     def _generate_fill_layer_property_value_setter(self, to, property):
         to.write(f"auto* child = &builderState.style().{property.method_name_for_ensure_layers}();")
         to.write(f"FillLayer* previousChild = nullptr;")
-        to.write(f"if (is<CSSValueList>(value)) {{")
+        to.write(f"if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {{")
         to.write(f"    // Walk each value and put it into a layer, creating new layers as needed.")
-        to.write(f"    for (auto& item : downcast<CSSValueList>(value)) {{")
+        to.write(f"    for (auto& item : *valueList) {{")
         to.write(f"        if (!child) {{")
         to.write(f"            previousChild->setNext(FillLayer::create({property.enum_name_for_layers_type}));")
         to.write(f"            child = previousChild->next();")

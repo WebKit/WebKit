@@ -176,7 +176,6 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
     case Validity::ElementInvalid:
         return CheckDescendants::Yes;
     case Validity::SubtreeInvalid:
-    case Validity::SubtreeAndRenderersInvalid:
         return CheckDescendants::No;
     }
     ASSERT_NOT_REACHED();

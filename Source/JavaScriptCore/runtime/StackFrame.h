@@ -43,6 +43,7 @@ public:
     StackFrame(VM&, JSCell* owner, JSCell* callee);
     StackFrame(VM&, JSCell* owner, JSCell* callee, CodeBlock*, BytecodeIndex);
     StackFrame(Wasm::IndexOrName);
+    StackFrame() = default;
 
     bool hasLineAndColumnInfo() const { return !!m_codeBlock; }
     CodeBlock* codeBlock() const { return m_codeBlock.get(); }

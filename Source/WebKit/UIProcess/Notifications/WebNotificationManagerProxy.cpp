@@ -205,7 +205,6 @@ static void dispatchDidClickNotification(WebNotification* notification)
     if (!notification)
         return;
 
-#if ENABLE(SERVICE_WORKER)
     if (notification->isPersistentNotification()) {
         if (auto* dataStore = WebsiteDataStore::existingDataStoreForSessionID(notification->sessionID()))
             dataStore->networkProcess().processNotificationEvent(notification->data(), NotificationEventType::Click, [](bool) { });
@@ -213,7 +212,6 @@ static void dispatchDidClickNotification(WebNotification* notification)
             RELEASE_LOG_ERROR(Notifications, "WebsiteDataStore not found from sessionID %" PRIu64 ", dropping notification click", notification->sessionID().toUInt64());
         return;
     }
-#endif
 
     if (auto connection = notification->sourceConnection())
         connection->send(Messages::WebNotificationManager::DidClickNotification(notification->coreNotificationID()), 0);
@@ -268,7 +266,6 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
         if (!notification)
             continue;
 
-#if ENABLE(SERVICE_WORKER)
         if (notification->isPersistentNotification()) {
             if (auto* dataStore = WebsiteDataStore::existingDataStoreForSessionID(notification->sessionID()))
                 dataStore->networkProcess().processNotificationEvent(notification->data(), NotificationEventType::Close, [](bool) { });
@@ -276,7 +273,6 @@ void WebNotificationManagerProxy::providerDidCloseNotifications(API::Array* glob
                 RELEASE_LOG_ERROR(Notifications, "WebsiteDataStore not found from sessionID %" PRIu64 ", dropping notification close", notification->sessionID().toUInt64());
             return;
         }
-#endif
 
         m_globalNotificationMap.remove(notification->notificationID());
         closedNotifications.append(WTFMove(notification));

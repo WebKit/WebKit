@@ -1894,7 +1894,6 @@ void WebLocalFrameLoaderClient::broadcastMainFrameURLChangeToOtherProcesses(cons
     webPage->send(Messages::WebPageProxy::BroadcastMainFrameURLChangeToOtherProcesses(url));
 }
 
-#if ENABLE(SERVICE_WORKER)
 void WebLocalFrameLoaderClient::didFinishServiceWorkerPageRegistration(bool success)
 {
     RefPtr webPage = m_frame->page();
@@ -1903,7 +1902,6 @@ void WebLocalFrameLoaderClient::didFinishServiceWorkerPageRegistration(bool succ
 
     webPage->send(Messages::WebPageProxy::DidFinishServiceWorkerPageRegistration(success));
 }
-#endif
 
 #if ENABLE(APP_BOUND_DOMAINS)
 bool WebLocalFrameLoaderClient::shouldEnableInAppBrowserPrivacyProtections() const

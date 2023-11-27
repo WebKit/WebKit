@@ -1284,6 +1284,16 @@ typedef struct {
 
 @end
 
+#if !defined(UI_SHIFT_KEY_STATE_ENUM)
+
+typedef NS_ENUM(NSInteger, UIShiftKeyState) {
+    UIShiftKeyStateNone = 0,
+    UIShiftKeyStateShifted,
+    UIShiftKeyStateCapsLocked
+};
+
+#endif
+
 WTF_EXTERN_C_BEGIN
 
 BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts(void);

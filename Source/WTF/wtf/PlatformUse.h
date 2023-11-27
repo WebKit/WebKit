@@ -263,11 +263,6 @@
 #define USE_CFNETWORK_CONTENT_ENCODING_SNIFFING_OVERRIDE 1
 #endif
 
-#if PLATFORM(MAC) || USE(THEME_ADWAITA)
-/* FIXME: This really needs a descriptive name, this "new theme" was added in 2008. */
-#define USE_NEW_THEME 1
-#endif
-
 #if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
 #define USE_UICONTEXTMENU 1
 #endif

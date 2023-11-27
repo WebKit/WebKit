@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SWServerToContextConnection.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "SWServer.h"
 #include "SWServerWorker.h"
 #include <wtf/CompletionHandler.h>
@@ -155,5 +153,3 @@ void SWServerToContextConnection::terminateWhenPossible()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

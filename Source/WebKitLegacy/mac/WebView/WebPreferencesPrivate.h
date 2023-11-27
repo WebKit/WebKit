@@ -210,7 +210,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL cacheAPIEnabled;
 @property (nonatomic) BOOL downloadAttributeEnabled;
 @property (nonatomic) BOOL directoryUploadEnabled;
-@property (nonatomic) BOOL lineHeightUnitsEnabled;
 @property (nonatomic) BOOL layoutFormattingContextIntegrationEnabled;
 @property (nonatomic, getter=isInAppBrowserPrivacyEnabled) BOOL inAppBrowserPrivacyEnabled;
 @property (nonatomic) BOOL webSQLEnabled;
@@ -356,6 +355,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL loadsSiteIconsIgnoringImageLoadingPreference;
 @property (nonatomic) BOOL displayListDrawingEnabled;
 @property (nonatomic) BOOL transformStreamAPIEnabled;
+@property (nonatomic) BOOL lineHeightUnitsEnabled;
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;
 

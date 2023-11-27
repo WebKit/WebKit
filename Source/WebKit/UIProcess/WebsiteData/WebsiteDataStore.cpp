@@ -924,11 +924,7 @@ void WebsiteDataStore::resetServiceWorkerTimeoutForTesting()
 
 bool WebsiteDataStore::hasServiceWorkerBackgroundActivityForTesting() const
 {
-#if ENABLE(SERVICE_WORKER)
     return WTF::anyOf(WebProcessPool::allProcessPools(), [](auto& pool) { return pool->hasServiceWorkerBackgroundActivityForTesting(); });
-#else
-    return false;
-#endif
 }
 
 void WebsiteDataStore::setMaxStatisticsEntries(size_t maximumEntryCount, CompletionHandler<void()>&& completionHandler)
@@ -1882,12 +1878,10 @@ WebsiteDataStoreParameters WebsiteDataStore::parameters()
     networkSessionParameters.cacheStorageDirectory = resolvedCacheStorageDirectory();
     createHandleFromResolvedPathIfPossible(networkSessionParameters.cacheStorageDirectory, networkSessionParameters.cacheStorageDirectoryExtensionHandle);
 
-#if ENABLE(SERVICE_WORKER)
     networkSessionParameters.serviceWorkerRegistrationDirectory = resolvedServiceWorkerRegistrationDirectory();
     createHandleFromResolvedPathIfPossible(networkSessionParameters.serviceWorkerRegistrationDirectory, networkSessionParameters.serviceWorkerRegistrationDirectoryExtensionHandle);
     networkSessionParameters.serviceWorkerProcessTerminationDelayEnabled = m_configuration->serviceWorkerProcessTerminationDelayEnabled();
     networkSessionParameters.inspectionForServiceWorkersAllowed = m_inspectionForServiceWorkersAllowed;
-#endif
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     networkSessionParameters.isDeclarativeWebPushEnabled = m_configuration->isDeclarativeWebPushEnabled();
 #endif
@@ -2281,9 +2275,7 @@ void WebsiteDataStore::openWindowFromServiceWorker(const String& urlString, cons
             return;
         }
 
-#if ENABLE(SERVICE_WORKER)
         newPage->setServiceWorkerOpenWindowCompletionCallback(WTFMove(callback));
-#endif
     };
 
     m_client->openWindowFromServiceWorker(urlString, serviceWorkerOrigin, WTFMove(innerCallback));
@@ -2405,8 +2397,6 @@ void WebsiteDataStore::setOriginQuotaRatioEnabledForTesting(bool enabled, Comple
     networkProcess->sendWithAsyncReply(Messages::NetworkProcess::SetOriginQuotaRatioEnabledForTesting(m_sessionID, enabled), WTFMove(completionHandler));
 }
 
-#if ENABLE(SERVICE_WORKER)
-
 void WebsiteDataStore::updateServiceWorkerInspectability()
 {
     if (!m_pages.computeSize())
@@ -2430,27 +2420,20 @@ void WebsiteDataStore::updateServiceWorkerInspectability()
         networkProcess->send(Messages::NetworkProcess::SetInspectionForServiceWorkersAllowed(m_sessionID, m_inspectionForServiceWorkersAllowed), 0);
 }
 
-#endif // ENABLE(SERVICE_WORKER)
-
 void WebsiteDataStore::addPage(WebPageProxy& page)
 {
     m_pages.add(page);
 
-#if ENABLE(SERVICE_WORKER)
     updateServiceWorkerInspectability();
-#endif
 }
 
 void WebsiteDataStore::removePage(WebPageProxy& page)
 {
     m_pages.remove(page);
 
-#if ENABLE(SERVICE_WORKER)
     updateServiceWorkerInspectability();
-#endif
 }
 
-#if ENABLE(SERVICE_WORKER)
 void WebsiteDataStore::processPushMessage(WebPushMessage&& pushMessage, CompletionHandler<void(bool)>&& completionHandler)
 {
 #if ENABLE(DECLARATIVE_WEB_PUSH)
@@ -2486,5 +2469,5 @@ void WebsiteDataStore::processPushMessage(WebPushMessage&& pushMessage, Completi
     RELEASE_LOG(Push, "Sending push message to network process to handle");
     protectedNetworkProcess()->processPushMessage(sessionID(), WTFMove(pushMessage), WTFMove(innerHandler));
 }
-#endif // ENABLE(SERVICE_WORKER)
+
 } // namespace WebKit

@@ -77,7 +77,7 @@ public: // DOM
     float getCurrentTime() const;
     void setCurrentTime(float);
     
-    unsigned suspendRedraw(unsigned) { return 0; }
+    unsigned suspendRedraw(unsigned) { return 1; }
     void unsuspendRedraw(unsigned) { }
     void unsuspendRedrawAll() { }
     void forceRedraw() { }

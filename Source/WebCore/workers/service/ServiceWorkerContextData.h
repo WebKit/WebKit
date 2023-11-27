@@ -39,8 +39,6 @@
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/URLHash.h>
 
-#if ENABLE(SERVICE_WORKER)
-
 namespace WebCore {
 
 enum class LastNavigationWasAppInitiated : bool;
@@ -69,5 +67,3 @@ struct ServiceWorkerContextData {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

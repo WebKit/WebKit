@@ -82,9 +82,7 @@ public:
     Settings::Values settingsValues;
     WorkerThreadMode workerThreadMode { WorkerThreadMode::CreateNewThread };
     PAL::SessionID sessionID;
-#if ENABLE(SERVICE_WORKER)
     std::optional<ServiceWorkerData> serviceWorkerData;
-#endif
     ScriptExecutionContextIdentifier clientIdentifier;
     std::optional<uint64_t> noiseInjectionHashSalt;
 

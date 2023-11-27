@@ -530,10 +530,8 @@ void NetworkResourceLoader::convertToDownload(DownloadID downloadID, const Resou
 {
     LOADER_RELEASE_LOG("convertToDownload: (downloadID=%" PRIu64 ", hasNetworkLoad=%d, hasResponseCompletionHandler=%d)", downloadID.toUInt64(), !!m_networkLoad, !!m_responseCompletionHandler);
 
-#if ENABLE(SERVICE_WORKER)
     if (m_serviceWorkerFetchTask && m_serviceWorkerFetchTask->convertToDownload(m_connection->networkProcess().downloadManager(), downloadID, request, response))
         return;
-#endif
 
     // This can happen if the resource came from the disk cache.
     if (!m_networkLoad) {
@@ -558,12 +556,10 @@ void NetworkResourceLoader::abort()
         return;
     }
 
-#if ENABLE(SERVICE_WORKER)
     if (auto task = WTFMove(m_serviceWorkerFetchTask)) {
         LOADER_RELEASE_LOG("abort: Cancelling pending service worker fetch task (fetchIdentifier=%" PRIu64 ")", task->fetchIdentifier().toUInt64());
         task->cancelFromClient();
     }
-#endif
 
     if (m_networkLoad) {
         if (canUseCache(m_networkLoad->currentRequest())) {
@@ -606,7 +602,6 @@ void NetworkResourceLoader::transferToNewWebProcess(NetworkConnectionToWebProces
     m_parameters.options.clientIdentifier = parameters.options.clientIdentifier;
     m_parameters.options.resultingClientIdentifier = parameters.options.resultingClientIdentifier;
 
-#if ENABLE(SERVICE_WORKER)
     ASSERT(m_responseCompletionHandler || m_cacheEntryWaitingForContinueDidReceiveResponse || m_serviceWorkerFetchTask);
     if (m_serviceWorkerRegistration) {
         if (auto* swConnection = newConnection.swConnection())
@@ -614,9 +609,6 @@ void NetworkResourceLoader::transferToNewWebProcess(NetworkConnectionToWebProces
     }
     if (m_workerStart)
         send(Messages::WebResourceLoader::SetWorkerStart { m_workerStart }, coreIdentifier());
-#else
-    ASSERT(m_responseCompletionHandler || m_cacheEntryWaitingForContinueDidReceiveResponse);
-#endif
     bool willWaitForContinueDidReceiveResponse = true;
     send(Messages::WebResourceLoader::DidReceiveResponse { m_response, m_privateRelayed, willWaitForContinueDidReceiveResponse, computeResponseMetrics(m_response) });
 }
@@ -771,9 +763,7 @@ void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceRe
         typesToRemove.add(WebsiteDataType::Cookies);
     if (clearSiteDataValues.contains(ClearSiteDataValue::Storage)) {
         typesToRemove.add({ WebsiteDataType::LocalStorage, WebsiteDataType::SessionStorage, WebsiteDataType::IndexedDBDatabases, WebsiteDataType::DOMCache, WebsiteDataType::OfflineWebApplicationCache, WebsiteDataType::FileSystem, WebsiteDataType::WebSQLDatabases });
-#if ENABLE(SERVICE_WORKER)
         typesToRemove.add(WebsiteDataType::ServiceWorkerRegistrations);
-#endif
     }
 
     bool shouldReloadExecutionContexts = clearSiteDataValues.contains(ClearSiteDataValue::ExecutionContexts);
@@ -1090,9 +1080,7 @@ void NetworkResourceLoader::didFinishLoading(const NetworkLoadMetrics& networkLo
 void NetworkResourceLoader::didFailLoading(const ResourceError& error)
 {
     bool wasServiceWorkerLoad = false;
-#if ENABLE(SERVICE_WORKER)
     wasServiceWorkerLoad = !!m_serviceWorkerFetchTask;
-#endif
     LOADER_RELEASE_LOG_ERROR("didFailLoading: (wasServiceWorkerLoad=%d, isTimeout=%d, isCancellation=%d, isAccessControl=%d, errorCode=%d)", wasServiceWorkerLoad, error.isTimeout(), error.isCancellation(), error.isAccessControl(), error.errorCode());
     UNUSED_VARIABLE(wasServiceWorkerLoad);
 
@@ -1107,14 +1095,10 @@ void NetworkResourceLoader::didFailLoading(const ResourceError& error)
         m_synchronousLoadData->error = error;
         sendReplyToSynchronousRequest(*m_synchronousLoadData, nullptr, { });
     } else if (auto* connection = messageSenderConnection()) {
-#if ENABLE(SERVICE_WORKER)
         if (m_serviceWorkerFetchTask)
             connection->send(Messages::WebResourceLoader::DidFailServiceWorkerLoad(error), messageSenderDestinationID());
         else
             connection->send(Messages::WebResourceLoader::DidFailResourceLoad(error), messageSenderDestinationID());
-#else
-        connection->send(Messages::WebResourceLoader::DidFailResourceLoad(error), messageSenderDestinationID());
-#endif
     }
 
     if (m_parameters.pageHasResourceLoadClient)
@@ -1300,10 +1284,8 @@ void NetworkResourceLoader::didFinishWithRedirectResponse(WebCore::ResourceReque
     networkLoadMetrics.responseBodyBytesReceived = 0;
     networkLoadMetrics.responseBodyDecodedSize = 0;
 
-#if ENABLE(SERVICE_WORKER)
     if (m_serviceWorkerFetchTask)
         networkLoadMetrics.fetchStart = m_serviceWorkerFetchTask->startTime();
-#endif
     send(Messages::WebResourceLoader::DidFinishResourceLoad { networkLoadMetrics });
 
     cleanup(LoadResult::Success);
@@ -1339,14 +1321,12 @@ void NetworkResourceLoader::restartNetworkLoad(WebCore::ResourceRequest&& newReq
     startNetworkLoad(WTFMove(newRequest), FirstLoad::No);
 }
 
-#if ENABLE(SERVICE_WORKER)
 static bool shouldTryToMatchRegistrationOnRedirection(const FetchOptions& options, bool isServiceWorkerLoaded)
 {
     if (options.mode == FetchOptions::Mode::Navigate)
         return true;
     return isServiceWorkerLoaded && (options.destination == FetchOptions::Destination::Worker || options.destination == FetchOptions::Destination::Sharedworker);
 }
-#endif
 
 void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest, bool isAllowedToAskUserForCredentials)
 {
@@ -1361,7 +1341,6 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
         return;
     }
 
-#if ENABLE(SERVICE_WORKER)
     if (shouldTryToMatchRegistrationOnRedirection(parameters().options, !!m_serviceWorkerFetchTask)) {
         m_serviceWorkerRegistration = { };
         setWorkerStart({ });
@@ -1380,7 +1359,6 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
         m_serviceWorkerFetchTask->continueFetchTaskWith(WTFMove(newRequest));
         return;
     }
-#endif
 
     if (m_shouldRestartLoad) {
         m_shouldRestartLoad = false;
@@ -1435,13 +1413,11 @@ void NetworkResourceLoader::continueWillSendRequest(ResourceRequest&& newRequest
 void NetworkResourceLoader::continueDidReceiveResponse()
 {
     LOADER_RELEASE_LOG("continueDidReceiveResponse: (hasCacheEntryWaitingForContinueDidReceiveResponse=%d, hasResponseCompletionHandler=%d)", !!m_cacheEntryWaitingForContinueDidReceiveResponse, !!m_responseCompletionHandler);
-#if ENABLE(SERVICE_WORKER)
     if (m_serviceWorkerFetchTask) {
         LOADER_RELEASE_LOG("continueDidReceiveResponse: continuing with ServiceWorkerFetchTask (fetchIdentifier=%" PRIu64 ")", m_serviceWorkerFetchTask->fetchIdentifier().toUInt64());
         m_serviceWorkerFetchTask->continueDidReceiveFetchResponse();
         return;
     }
-#endif
 
     if (m_cacheEntryWaitingForContinueDidReceiveResponse) {
         sendResultForCacheEntry(WTFMove(m_cacheEntryWaitingForContinueDidReceiveResponse));
@@ -1928,7 +1904,6 @@ bool NetworkResourceLoader::isCrossOriginPrefetch() const
     return request.httpHeaderField(HTTPHeaderName::Purpose) == "prefetch"_s && !m_parameters.sourceOrigin->canRequest(request.url(), connectionToWebProcess().originAccessPatterns());
 }
 
-#if ENABLE(SERVICE_WORKER)
 void NetworkResourceLoader::setWorkerStart(MonotonicTime value)
 {
     m_workerStart = value;
@@ -1990,7 +1965,6 @@ void NetworkResourceLoader::serviceWorkerDidNotHandle(ServiceWorkerFetchTask* fe
     }
     start();
 }
-#endif
 
 bool NetworkResourceLoader::isAppInitiated()
 {

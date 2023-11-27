@@ -33,7 +33,6 @@
 #include "CSSMarkup.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
-#include "DeprecatedGlobalSettings.h"
 #include <limits.h>
 #include <wtf/HexNumber.h>
 #include <wtf/text/StringBuilder.h>
@@ -91,7 +90,7 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
             }
             break;
         case 'l':
-            if (toASCIILower(data[1]) == 'h' && DeprecatedGlobalSettings::lineHeightUnitsEnabled())
+            if (toASCIILower(data[1]) == 'h')
                 return CSSUnitType::CSS_LH;
             break;
         case 'm':
@@ -209,7 +208,7 @@ CSSUnitType cssPrimitiveValueUnitFromTrie(const CharacterType* data, unsigned le
                     return CSSUnitType::CSS_RIC;
                 break;
             case 'l':
-                if (toASCIILower(data[2]) == 'h' && DeprecatedGlobalSettings::lineHeightUnitsEnabled())
+                if (toASCIILower(data[2]) == 'h')
                     return CSSUnitType::CSS_RLH;
                 break;
             }

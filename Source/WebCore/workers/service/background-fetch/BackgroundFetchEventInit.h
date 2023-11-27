@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchRegistration.h"
 #include "ExtendableEventInit.h"
 
@@ -37,5 +35,3 @@ struct BackgroundFetchEventInit : ExtendableEventInit {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

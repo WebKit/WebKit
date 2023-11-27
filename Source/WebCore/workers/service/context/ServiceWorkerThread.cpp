@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerThread.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchManager.h"
 #include "BackgroundFetchUpdateUIEvent.h"
 #include "CacheStorageProvider.h"
@@ -599,5 +597,3 @@ void ServiceWorkerThread::finishedFiringPushSubscriptionChangeEvent()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

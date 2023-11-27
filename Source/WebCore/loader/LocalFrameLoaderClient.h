@@ -315,9 +315,7 @@ public:
 
     virtual void willInjectUserScript(DOMWrapperWorld&) { }
 
-#if ENABLE(SERVICE_WORKER)
     virtual void didFinishServiceWorkerPageRegistration(bool success) { UNUSED_PARAM(success); }
-#endif
 
 #if ENABLE(WEB_RTC)
     virtual void dispatchWillStartUsingPeerConnectionHandler(RTCPeerConnectionHandler*) { }

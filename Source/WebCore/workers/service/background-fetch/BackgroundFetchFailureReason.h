@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 namespace WebCore {
 
 enum class BackgroundFetchFailureReason : uint8_t {
@@ -39,5 +37,3 @@ enum class BackgroundFetchFailureReason : uint8_t {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

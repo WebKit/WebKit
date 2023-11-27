@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerGlobalScope.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Document.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -274,5 +272,3 @@ CookieStore& ServiceWorkerGlobalScope::cookieStore()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

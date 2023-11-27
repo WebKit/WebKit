@@ -405,7 +405,7 @@ public:
         , m_results(results)
         , m_framesToSkip(framesToSkip)
     {
-        m_results.reserveInitialCapacity(capacity);
+        m_results.grow(capacity);
     }
 
     IterationStatus operator()(StackVisitor& visitor) const
@@ -418,34 +418,34 @@ public:
         if (visitor->isImplementationVisibilityPrivate())
             return IterationStatus::Continue;
 
-        if (m_results.size() < m_results.capacity()) {
+        if (m_frameCountInResults < m_results.size()) {
             if (visitor->isNativeCalleeFrame()) {
                 auto* nativeCallee = visitor->callee().asNativeCallee();
                 switch (nativeCallee->category()) {
                 case NativeCallee::Category::Wasm: {
-                    m_results.unsafeAppendWithoutCapacityCheck(StackFrame(visitor->wasmFunctionIndexOrName()));
+                    m_results[m_frameCountInResults++] = StackFrame(visitor->wasmFunctionIndexOrName());
                     break;
                 }
                 case NativeCallee::Category::InlineCache: {
                     break;
                 }
                 }
-            } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction()) {
-                m_results.unsafeAppendWithoutCapacityCheck(
-                    StackFrame(m_vm, m_owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeIndex()));
-            } else {
-                m_results.unsafeAppendWithoutCapacityCheck(
-                    StackFrame(m_vm, m_owner, visitor->callee().asCell()));
-            }
+            } else if (!!visitor->codeBlock() && !visitor->codeBlock()->unlinkedCodeBlock()->isBuiltinFunction())
+                m_results[m_frameCountInResults++] = StackFrame(m_vm, m_owner, visitor->callee().asCell(), visitor->codeBlock(), visitor->bytecodeIndex());
+            else
+                m_results[m_frameCountInResults++] = StackFrame(m_vm, m_owner, visitor->callee().asCell());
             return IterationStatus::Continue;
         }
         return IterationStatus::Done;
     }
 
+    size_t frameCountInResults() const { return m_frameCountInResults; }
+
 private:
     VM& m_vm;
     JSCell* m_owner;
     Vector<StackFrame>& m_results;
+    mutable size_t m_frameCountInResults { 0 };
     mutable size_t m_framesToSkip;
 };
 
@@ -486,7 +486,7 @@ void Interpreter::getStackTrace(JSCell* owner, Vector<StackFrame>& results, size
 
     GetStackTraceFunctor functor(vm, owner, results, skippedFrames, visitedFrames);
     StackVisitor::visit(callFrame, vm, functor);
-    ASSERT(results.size() == results.capacity());
+    ASSERT(functor.frameCountInResults() == results.size());
 }
 
 String Interpreter::stackTraceAsString(VM& vm, const Vector<StackFrame>& stackTrace)

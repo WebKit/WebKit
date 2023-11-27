@@ -151,9 +151,7 @@ namespace WebCore {
         URL m_responseURL;
 
         ShouldLogError m_shouldLogError;
-#if ENABLE(SERVICE_WORKER)
         std::optional<ResourceRequest> m_bypassingPreflightForServiceWorkerRequest;
-#endif
     };
 
 } // namespace WebCore

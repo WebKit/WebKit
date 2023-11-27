@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ExtendableCookieChangeEvent.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "CookieListItem.h"
 #include "ExtendableCookieChangeEventInit.h"
 #include <wtf/IsoMallocInlines.h>
@@ -57,5 +55,3 @@ EventInterface ExtendableCookieChangeEvent::eventInterface() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

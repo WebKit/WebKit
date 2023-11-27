@@ -167,7 +167,7 @@
             "AppleSNBFBUserClient"))
 
     ;; QuartzCore
-    (deny IOKIT_OPEN_USER_CLIENT
+    (deny IOKIT_OPEN_USER_CLIENT (with no-report)
         (iokit-user-client-class "AGPMClient")
         (iokit-user-client-class "AppleGraphicsControlClient")
         (iokit-user-client-class "AppleGraphicsPolicyClient"))

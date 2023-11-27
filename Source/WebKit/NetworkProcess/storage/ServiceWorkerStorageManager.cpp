@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerStorageManager.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include <WebCore/SWRegistrationDatabase.h>
 #include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/ServiceWorkerRegistrationKey.h>
@@ -75,5 +73,3 @@ std::optional<Vector<WebCore::ServiceWorkerScripts>> ServiceWorkerStorageManager
 }
 
 } // namespace WebKit
-
-#endif

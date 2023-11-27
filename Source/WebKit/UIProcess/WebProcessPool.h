@@ -373,11 +373,9 @@ public:
 
     bool isServiceWorkerPageID(WebPageProxyIdentifier) const;
 
-#if ENABLE(SERVICE_WORKER)
     size_t serviceWorkerProxiesCount() const;
     bool hasServiceWorkerForegroundActivityForTesting() const;
     bool hasServiceWorkerBackgroundActivityForTesting() const;
-#endif
     void serviceWorkerProcessCrashed(WebProcessProxy&, ProcessTerminationReason);
 
     void updateRemoteWorkerUserAgent(const String& userAgent);

@@ -139,7 +139,6 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
     ASSERT(optionsCopy->options.initiatorContext == InitiatorContext::Document);
     optionsCopy->options.initiatorContext = InitiatorContext::Worker;
 
-#if ENABLE(SERVICE_WORKER)
     if (optionsCopy->options.serviceWorkersMode == ServiceWorkersMode::All) {
         if (is<ServiceWorkerGlobalScope>(globalScope))
             optionsCopy->options.serviceWorkersMode = ServiceWorkersMode::None;
@@ -151,7 +150,6 @@ WorkerThreadableLoader::MainThreadBridge::MainThreadBridge(ThreadableLoaderClien
         else
             optionsCopy->options.serviceWorkersMode = ServiceWorkersMode::All;
     }
-#endif
     if (!optionsCopy->options.clientIdentifier)
         optionsCopy->options.clientIdentifier = globalScope.identifier().object();
 

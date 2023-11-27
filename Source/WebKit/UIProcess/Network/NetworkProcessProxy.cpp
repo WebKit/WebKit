@@ -1500,8 +1500,6 @@ void NetworkProcessProxy::establishRemoteWorkerContextConnectionToNetworkProcess
     WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(workerType, WTFMove(registrableDomain), requestingProcessIdentifier, serviceWorkerPageIdentifier, sessionID, WTFMove(completionHandler));
 }
 
-#if ENABLE(SERVICE_WORKER)
-
 void NetworkProcessProxy::startServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier)
 {
     if (auto serviceWorkerProcess = WebProcessProxy::processForIdentifier(serviceWorkerProcessIdentifier))
@@ -1573,8 +1571,6 @@ void NetworkProcessProxy::notifyBackgroundFetchChange(PAL::SessionID sessionID, 
         return;
     store->client().notifyBackgroundFetchChange(backgroundFetchIdentifier, backgroundFetchChange);
 }
-
-#endif // ENABLE(SERVICE_WORKER)
 
 void NetworkProcessProxy::requestStorageSpace(PAL::SessionID sessionID, const WebCore::ClientOrigin& origin, uint64_t currentQuota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t> quota)>&& completionHandler)
 {
@@ -1808,7 +1804,6 @@ void NetworkProcessProxy::didExceedMemoryLimit()
 }
 #endif
 
-#if ENABLE(SERVICE_WORKER)
 void NetworkProcessProxy::getPendingPushMessages(PAL::SessionID sessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&& completionHandler)
 {
     sendWithAsyncReply(Messages::NetworkProcess::GetPendingPushMessages { sessionID }, WTFMove(completionHandler));
@@ -1865,7 +1860,6 @@ void NetworkProcessProxy::processNotificationEvent(const NotificationData& data,
 
     sendWithAsyncReply(Messages::NetworkProcess::ProcessNotificationEvent { data, eventType }, WTFMove(innerCallback));
 }
-#endif // ENABLE(SERVICE_WORKER)
 
 void NetworkProcessProxy::setPushAndNotificationsEnabledForOrigin(PAL::SessionID sessionID, const SecurityOriginData& origin, bool enabled, CompletionHandler<void()>&& callback)
 {

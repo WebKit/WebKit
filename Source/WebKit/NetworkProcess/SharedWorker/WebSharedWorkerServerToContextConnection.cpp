@@ -118,7 +118,6 @@ void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorke
     auto initializationData = sharedWorker.initializationData();
     if (auto contextIdentifier = initializationData.clientIdentifier) {
         initializationData.clientIdentifier = WebCore::ScriptExecutionContextIdentifier { contextIdentifier->object(), webProcessIdentifier() };
-#if ENABLE(SERVICE_WORKER)
         if (auto* serviceWorkerOldConnection = m_connection.networkProcess().webProcessConnection(contextIdentifier->processIdentifier())) {
             if (auto* swOldConnection = serviceWorkerOldConnection->swConnection()) {
                 if (auto clientData = swOldConnection->gatherClientData(*contextIdentifier)) {
@@ -130,7 +129,6 @@ void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorke
                 }
             }
         }
-#endif
     }
     send(Messages::WebSharedWorkerContextManagerConnection::LaunchSharedWorker { sharedWorker.origin(), sharedWorker.identifier(), sharedWorker.workerOptions(), sharedWorker.fetchResult(), initializationData });
     sharedWorker.forEachSharedWorkerObject([&](auto, auto& port) {

@@ -1187,10 +1187,8 @@ static OptionSet<WebsiteDataType> toWebsiteDataTypes(WebKitWebsiteDataTypes type
         returnValue.add(WebsiteDataType::DeviceIdHashSalt);
     if (types & WEBKIT_WEBSITE_DATA_ITP)
         returnValue.add(WebsiteDataType::ResourceLoadStatistics);
-#if ENABLE(SERVICE_WORKER)
     if (types & WEBKIT_WEBSITE_DATA_SERVICE_WORKER_REGISTRATIONS)
         returnValue.add(WebsiteDataType::ServiceWorkerRegistrations);
-#endif
     if (types & WEBKIT_WEBSITE_DATA_DOM_CACHE)
         returnValue.add(WebsiteDataType::DOMCache);
     return returnValue;

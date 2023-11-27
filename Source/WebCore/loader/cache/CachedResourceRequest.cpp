@@ -326,7 +326,6 @@ void CachedResourceRequest::setDestinationIfNotSet(FetchOptions::Destination des
     m_options.destination = destination;
 }
 
-#if ENABLE(SERVICE_WORKER)
 void CachedResourceRequest::setClientIdentifierIfNeeded(ScriptExecutionContextIdentifier clientIdentifier)
 {
     if (!m_options.clientIdentifier)
@@ -356,6 +355,5 @@ void CachedResourceRequest::setNavigationServiceWorkerRegistrationData(const std
     }
     m_options.serviceWorkerRegistrationIdentifier = data->identifier;
 }
-#endif
 
 } // namespace WebCore

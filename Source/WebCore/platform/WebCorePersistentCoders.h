@@ -69,16 +69,12 @@ DECLARE_CODER(WebCore::ContentSecurityPolicyResponseHeaders);
 DECLARE_CODER(WebCore::CrossOriginEmbedderPolicy);
 DECLARE_CODER(WebCore::FetchOptions);
 DECLARE_CODER(WebCore::HTTPHeaderMap);
-#if ENABLE(SERVICE_WORKER)
 DECLARE_CODER(WebCore::ImportedScriptAttributes);
 DECLARE_CODER(WebCore::ImageResource);
-#endif
 DECLARE_CODER(WebCore::ResourceResponse);
 DECLARE_CODER(WebCore::ResourceRequest);
 DECLARE_CODER(WebCore::SecurityOriginData);
-#if ENABLE(SERVICE_WORKER)
 DECLARE_CODER(WebCore::NavigationPreloadState);
-#endif
 #undef DECLARE_CODER
 
 }

@@ -8,6 +8,10 @@ layer at (0,0) size 300x150
   RenderSVGRoot {svg} at (0,0) size 300x150
 layer at (0,0) size 300x150
   RenderSVGViewportContainer at (0,0) size 300x150
+layer at (0,0) size 200x50
+  RenderSVGResourceMasker {mask} at (0,0) size 200x50
+layer at (0,0) size 200x50
+  RenderSVGRect {rect} at (0,0) size 200x50 [fill={[type=SOLID] [color=#FFFFFF]}] [x=0.00] [y=0.00] [width=200.00] [height=50.00]
 layer at (0,0) size 200x100
   RenderSVGForeignObject {foreignObject} at (0,0) size 200x100
     RenderBlock {DIV} at (0,0) size 200x50 [bgcolor=#008000]

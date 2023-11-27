@@ -113,10 +113,8 @@ static Ref<NetworkStorageManager> createNetworkStorageManager(NetworkProcess& ne
     if (auto* connection = networkProcess.parentProcessConnection())
         connectionID = connection->uniqueID();
     String serviceWorkerStorageDirectory;
-#if ENABLE(SERVICE_WORKER)
     serviceWorkerStorageDirectory = parameters.serviceWorkerRegistrationDirectory;
     SandboxExtension::consumePermanently(parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
-#endif
     return NetworkStorageManager::create(networkProcess, parameters.sessionID, parameters.dataStoreIdentifier, connectionID, parameters.generalStorageDirectory, parameters.localStorageDirectory, parameters.indexedDBDirectory, parameters.cacheStorageDirectory, serviceWorkerStorageDirectory, parameters.perOriginStorageQuota, parameters.originQuotaRatio, parameters.totalQuotaRatio, parameters.standardVolumeCapacity, parameters.volumeCapacityOverride, parameters.unifiedOriginStorageLevel);
 }
 
@@ -139,9 +137,7 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_allowsServerPreconnect(parameters.allowsServerPreconnect)
     , m_shouldRunServiceWorkersOnMainThreadForTesting(parameters.shouldRunServiceWorkersOnMainThreadForTesting)
     , m_overrideServiceWorkerRegistrationCountTestingValue(parameters.overrideServiceWorkerRegistrationCountTestingValue)
-#if ENABLE(SERVICE_WORKER)
     , m_inspectionForServiceWorkersAllowed(parameters.inspectionForServiceWorkersAllowed)
-#endif
     , m_storageManager(createNetworkStorageManager(networkProcess, parameters))
 #if ENABLE(BUILT_IN_NOTIFICATIONS)
     , m_notificationManager(*this, parameters.webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration { parameters.webPushDaemonConnectionConfiguration })
@@ -180,13 +176,11 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
 
     setBlobRegistryTopOriginPartitioningEnabled(parameters.isBlobRegistryTopOriginPartitioningEnabled);
 
-#if ENABLE(SERVICE_WORKER)
     SandboxExtension::consumePermanently(parameters.serviceWorkerRegistrationDirectoryExtensionHandle);
     m_serviceWorkerInfo = ServiceWorkerInfo {
         parameters.serviceWorkerRegistrationDirectory,
         parameters.serviceWorkerProcessTerminationDelayEnabled
     };
-#endif
 }
 
 NetworkSession::~NetworkSession()
@@ -612,14 +606,11 @@ void NetworkSession::lowMemoryHandler(Critical)
 {
     clearPrefetchCache();
 
-#if ENABLE(SERVICE_WORKER)
     if (m_swServer)
         m_swServer->handleLowMemoryWarning();
-#endif
     m_storageManager->handleLowMemoryWarning();
 }
 
-#if ENABLE(SERVICE_WORKER)
 void NetworkSession::addNavigationPreloaderTask(ServiceWorkerFetchTask& task)
 {
     m_navigationPreloaders.add(task.fetchIdentifier(), task);
@@ -677,7 +668,6 @@ void NetworkSession::requestBackgroundFetchPermission(const ClientOrigin& origin
 {
     m_networkProcess->requestBackgroundFetchPermission(m_sessionID, origin, WTFMove(callback));
 }
-#endif // ENABLE(SERVICE_WORKER)
 
 WebSharedWorkerServer& NetworkSession::ensureSharedWorkerServer()
 {
@@ -704,7 +694,6 @@ void NetworkSession::setEmulatedConditions(std::optional<int64_t>&& bytesPerSeco
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
-#if ENABLE(SERVICE_WORKER)
 void NetworkSession::softUpdate(ServiceWorkerJobData&& jobData, bool shouldRefreshCache, WebCore::ResourceRequest&& request, CompletionHandler<void(WebCore::WorkerFetchResult&&)>&& completionHandler)
 {
     m_softUpdateLoaders.add(makeUnique<ServiceWorkerSoftUpdateLoader>(*this, WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler)));
@@ -805,7 +794,5 @@ void NetworkSession::setInspectionForServiceWorkersAllowed(bool inspectable)
     if (m_swServer)
         m_swServer->setInspectable(inspectable ? ServiceWorkerIsInspectable::Yes : ServiceWorkerIsInspectable::No);
 }
-
-#endif // ENABLE(SERVICE_WORKER)
 
 } // namespace WebKit

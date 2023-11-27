@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA)
 
+#include "AV1UtilitiesCocoa.h"
 #include "HEVCUtilitiesCocoa.h"
 #include "MediaCapabilitiesDecodingInfo.h"
 #include "MediaDecodingConfiguration.h"
@@ -36,10 +37,6 @@
 #include <pal/avfoundation/OutputContext.h>
 #include <pal/avfoundation/OutputDevice.h>
 #include <wtf/Algorithms.h>
-
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MediaCapabilitiesAdditions.h>
-#endif
 
 #include "VideoToolboxSoftLink.h"
 
@@ -125,8 +122,15 @@ static std::optional<MediaCapabilitiesInfo> computeMediaCapabilitiesInfo(const M
                 return std::nullopt;
             info = *parsedInfo;
 #endif
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/MediaCapabilitiesAdditions.cpp>
+#if ENABLE(AV1)
+        } else if (codec.startsWith("av01"_s)) {
+            auto parameters = parseAV1CodecParameters(codec);
+            if (!parameters)
+                return std::nullopt;
+            auto parsedInfo = validateAV1Parameters(*parameters, videoConfiguration);
+            if (!parsedInfo)
+                return std::nullopt;
+            info = *parsedInfo;
 #endif
         } else if (videoCodecType) {
             if (alphaChannel || hdrSupported)

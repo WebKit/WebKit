@@ -27,7 +27,6 @@ typedef (FetchRequest or USVString) RequestInfo;
 
 [
     ActiveDOMObject,
-    Conditional=SERVICE_WORKER,
     EnabledBySetting=ServiceWorkersEnabled&BackgroundFetchAPIEnabled,
     Exposed=(Window,Worker)
 ] interface BackgroundFetchRegistration : EventTarget {

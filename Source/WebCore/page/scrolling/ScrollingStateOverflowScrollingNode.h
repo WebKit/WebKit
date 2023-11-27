@@ -68,7 +68,8 @@ private:
         bool mouseIsOverContentArea,
         MouseLocationState&&,
         ScrollbarHoverState&&,
-        ScrollbarEnabledState&&
+        ScrollbarEnabledState&&,
+        RequestedKeyboardScrollData&&
     );
     ScrollingStateOverflowScrollingNode(ScrollingStateTree&, ScrollingNodeID);
     ScrollingStateOverflowScrollingNode(const ScrollingStateOverflowScrollingNode&, ScrollingStateTree&);

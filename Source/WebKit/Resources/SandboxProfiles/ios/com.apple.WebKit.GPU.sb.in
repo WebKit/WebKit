@@ -342,6 +342,7 @@
 )
 
 (deny file-map-executable)
+(allow file-map-executable (executable-bundle))
 
 (deny file-write-mount file-write-unmount)
 

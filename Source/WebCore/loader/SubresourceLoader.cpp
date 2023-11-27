@@ -393,7 +393,6 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
             return;
     }
 #endif
-#if ENABLE(SERVICE_WORKER)
     // Implementing step 10 of https://fetch.spec.whatwg.org/#main-fetch for service worker responses.
     if (response.source() == ResourceResponse::Source::ServiceWorker && response.url() != request().url()) {
         Ref loader = protectedDocumentLoader()->cachedResourceLoader();
@@ -403,7 +402,6 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
             return;
         }
     }
-#endif
 
     if (auto error = validateRangeRequestedFlag(request(), response)) {
         SUBRESOURCELOADER_RELEASE_LOG("didReceiveResponse: canceling load because receiving a range requested response for a non-range request");
@@ -642,7 +640,6 @@ Expected<void, String> SubresourceLoader::checkResponseCrossOriginAccessControl(
     if (!m_resource->isCrossOrigin() || options().mode != FetchOptions::Mode::Cors)
         return { };
 
-#if ENABLE(SERVICE_WORKER)
     if (response.source() == ResourceResponse::Source::ServiceWorker) {
         if (response.tainting() == ResourceResponse::Tainting::Opaque) {
             // FIXME: This should have an error message.
@@ -650,7 +647,6 @@ Expected<void, String> SubresourceLoader::checkResponseCrossOriginAccessControl(
         }
         return { };
     }
-#endif
 
     ASSERT(m_origin);
 

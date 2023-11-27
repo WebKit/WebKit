@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PushMessageData.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Blob.h"
 #include "JSDOMGlobalObject.h"
 #include "TextResourceDecoder.h"
@@ -70,5 +68,3 @@ String PushMessageData::text()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchRecordIdentifier.h"
 #include "ExceptionOr.h"
 #include "NavigationPreloadState.h"
@@ -172,5 +170,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

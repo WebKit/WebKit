@@ -159,7 +159,6 @@ WebLockManager& NavigatorBase::locks()
     return *m_webLockManager;
 }
 
-#if ENABLE(SERVICE_WORKER)
 ServiceWorkerContainer& NavigatorBase::serviceWorker()
 {
     ASSERT(!scriptExecutionContext() || scriptExecutionContext()->settingsValues().serviceWorkersEnabled);
@@ -174,7 +173,6 @@ ExceptionOr<ServiceWorkerContainer&> NavigatorBase::serviceWorker(ScriptExecutio
         return Exception { ExceptionCode::SecurityError, "Service Worker is disabled because the context is sandboxed and lacks the 'allow-same-origin' flag"_s };
     return serviceWorker();
 }
-#endif
 
 int NavigatorBase::hardwareConcurrency()
 {

@@ -2001,9 +2001,7 @@ void Document::visibilityStateChanged()
         for (auto& callback : callbacks)
             callback();
     }
-#if ENABLE(SERVICE_WORKER)
     updateServiceWorkerClientData();
-#endif
 }
 
 VisibilityState Document::visibilityState() const
@@ -2798,10 +2796,8 @@ void Document::willBeRemovedFromFrame()
         rtcNetworkManager->unregisterMDNSNames();
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     setActiveServiceWorker(nullptr);
     setServiceWorkerConnection(nullptr);
-#endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
     clearTouchEventHandlersAndListeners();
@@ -6183,10 +6179,8 @@ void Document::suspend(ReasonForSuspension reason)
         rtcNetworkManager->unregisterMDNSNames();
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     if (settings().serviceWorkersEnabled() && reason == ReasonForSuspension::BackForwardCache)
         setServiceWorkerConnection(nullptr);
-#endif
 
     suspendScheduledTasks(reason);
 
@@ -6228,10 +6222,8 @@ void Document::resume(ReasonForSuspension reason)
 
     m_isSuspended = false;
 
-#if ENABLE(SERVICE_WORKER)
     if (settings().serviceWorkersEnabled() && reason == ReasonForSuspension::BackForwardCache)
         setServiceWorkerConnection(&ServiceWorkerProvider::singleton().serviceWorkerConnection());
-#endif
 }
 
 void Document::registerForDocumentSuspensionCallbacks(Element& element)
@@ -6692,13 +6684,11 @@ void Document::finishedParsing()
     // Parser should have picked up all speculative preloads by now
     m_cachedResourceLoader->clearPreloads(CachedResourceLoader::ClearPreloadsMode::ClearSpeculativePreloads);
 
-#if ENABLE(SERVICE_WORKER)
     if (settings().serviceWorkersEnabled()) {
         // Stop queuing service worker client messages now that the DOMContentLoaded event has been fired.
         if (RefPtr serviceWorkerContainer = this->serviceWorkerContainer())
             serviceWorkerContainer->startMessages();
     }
-#endif
 
 #if ENABLE(APP_HIGHLIGHTS)
     if (auto* appHighlightStorage = appHighlightStorageIfExists())
@@ -9269,7 +9259,6 @@ void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Ve
     });
 }
 
-#if ENABLE(SERVICE_WORKER)
 void Document::setServiceWorkerConnection(RefPtr<SWClientConnection>&& serviceWorkerConnection)
 {
     if (m_serviceWorkerConnection == serviceWorkerConnection || m_hasPreparedForDestruction || m_isSuspended)
@@ -9309,7 +9298,6 @@ void Document::navigateFromServiceWorker(const URL& url, CompletionHandler<void(
         });
     });
 }
-#endif
 
 const Style::CustomPropertyRegistry& Document::customPropertyRegistry() const
 {

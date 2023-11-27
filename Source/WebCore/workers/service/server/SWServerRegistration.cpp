@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SWServerRegistration.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "HTTPParsers.h"
 #include "Logging.h"
 #include "SWServer.h"
@@ -420,5 +418,3 @@ std::optional<ExceptionData> SWServerRegistration::setNavigationPreloadHeaderVal
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

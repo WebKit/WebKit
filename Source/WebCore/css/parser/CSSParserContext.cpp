@@ -90,7 +90,6 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , focusVisibleEnabled { document.settings().focusVisibleEnabled() }
     , hasPseudoClassEnabled { document.settings().hasPseudoClassEnabled() }
     , cascadeLayersEnabled { document.settings().cssCascadeLayersEnabled() }
-    , overflowClipEnabled { document.settings().overflowClipEnabled() }
     , gradientPremultipliedAlphaInterpolationEnabled { document.settings().cssGradientPremultipliedAlphaInterpolationEnabled() }
     , gradientInterpolationColorSpacesEnabled { document.settings().cssGradientInterpolationColorSpacesEnabled() }
     , subgridEnabled { document.settings().subgridEnabled() }
@@ -128,21 +127,20 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.focusVisibleEnabled                       << 11
         | context.hasPseudoClassEnabled                     << 12
         | context.cascadeLayersEnabled                      << 13
-        | context.overflowClipEnabled                       << 14
-        | context.gradientPremultipliedAlphaInterpolationEnabled << 15
-        | context.gradientInterpolationColorSpacesEnabled   << 16
-        | context.subgridEnabled                            << 17
-        | context.masonryEnabled                            << 18
-        | context.cssNestingEnabled                         << 19
-        | context.cssPaintingAPIEnabled                     << 20
-        | context.cssScopeAtRuleEnabled                     << 21
-        | context.cssTextUnderlinePositionLeftRightEnabled  << 22
-        | context.cssWordBreakAutoPhraseEnabled             << 23
-        | context.popoverAttributeEnabled                   << 24
-        | context.sidewaysWritingModesEnabled               << 25
-        | context.cssTextWrapPrettyEnabled                  << 26
-        | context.highlightAPIEnabled                       << 27
-        | (uint64_t)context.mode                            << 28; // This is multiple bits, so keep it last.
+        | context.gradientPremultipliedAlphaInterpolationEnabled << 14
+        | context.gradientInterpolationColorSpacesEnabled   << 15
+        | context.subgridEnabled                            << 16
+        | context.masonryEnabled                            << 17
+        | context.cssNestingEnabled                         << 18
+        | context.cssPaintingAPIEnabled                     << 19
+        | context.cssScopeAtRuleEnabled                     << 20
+        | context.cssTextUnderlinePositionLeftRightEnabled  << 21
+        | context.cssWordBreakAutoPhraseEnabled             << 22
+        | context.popoverAttributeEnabled                   << 23
+        | context.sidewaysWritingModesEnabled               << 24
+        | context.cssTextWrapPrettyEnabled                  << 25
+        | context.highlightAPIEnabled                       << 26
+        | (uint64_t)context.mode                            << 27; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

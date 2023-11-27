@@ -31,6 +31,7 @@ namespace WebCore {
 class KeyframeList;
 class RenderLayer;
 class RenderSVGResourceClipper;
+class RenderSVGResourceMasker;
 class SVGGraphicsElement;
 
 class RenderLayerModelObject : public RenderElement {
@@ -95,6 +96,9 @@ public:
 
     // TODO: [LBSE] Add more cases here, as soon as we add the corresponding resources.
     RenderSVGResourceClipper* svgClipperResourceFromStyle() const;
+    RenderSVGResourceMasker* svgMaskerResourceFromStyle() const;
+    void paintSVGClippingMask(PaintInfo&) const;
+    void paintSVGMask(PaintInfo&, const LayoutPoint& adjustedPaintOffset) const;
 #endif
 
     TransformationMatrix* layerTransform() const;

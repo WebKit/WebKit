@@ -64,11 +64,9 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
         return WebsiteDataProcessType::Network;
     case WebsiteDataType::Credentials:
         return WebsiteDataProcessType::Network;
-#if ENABLE(SERVICE_WORKER)
     case WebsiteDataType::ServiceWorkerRegistrations:
     case WebsiteDataType::BackgroundFetchStorage:
         return WebsiteDataProcessType::Network;
-#endif
     case WebsiteDataType::DOMCache:
         return WebsiteDataProcessType::Network;
     case WebsiteDataType::DeviceIdHashSalt:

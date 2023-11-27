@@ -307,15 +307,14 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setMathscripts(AXPropertyName::MathPostscripts, object);
     }
 
-    if (object.isScrollView() || object.isWebArea()) {
-        // For the ScrollView and WebArea objects, cache the AccessibilityText property eagerly to avoid hitting the main thread in getOrRetrievePropertyValue during the construction of the isolated tree.
-        Vector<AccessibilityText> texts;
-        object.accessibilityText(texts);
-        auto axTextValue = texts.map([] (const auto& text) -> AccessibilityText {
-            return { text.text.isolatedCopy(), text.textSource };
-        });
-        setProperty(AXPropertyName::AccessibilityText, axTextValue);
+    Vector<AccessibilityText> texts;
+    object.accessibilityText(texts);
+    auto axTextValue = texts.map([] (const auto& text) -> AccessibilityText {
+        return { text.text.isolatedCopy(), text.textSource };
+    });
+    setProperty(AXPropertyName::AccessibilityText, axTextValue);
 
+    if (object.isScrollView() || object.isWebArea()) {
         if (object.isScrollView()) {
             setObjectProperty(AXPropertyName::VerticalScrollBar, object.scrollBar(AccessibilityOrientation::Vertical));
             setObjectProperty(AXPropertyName::HorizontalScrollBar, object.scrollBar(AccessibilityOrientation::Horizontal));
@@ -564,7 +563,7 @@ AXIsolatedObject* AXIsolatedObject::cellForColumnAndRow(unsigned columnIndex, un
 
 void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
 {
-    texts = const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<Vector<AccessibilityText>>(AXPropertyName::AccessibilityText);
+    texts = vectorAttributeValue<AccessibilityText>(AXPropertyName::AccessibilityText);
 }
 
 void AXIsolatedObject::insertMathPairs(Vector<std::pair<AXID, AXID>>& isolatedPairs, AccessibilityMathMultiscriptPairs& pairs)

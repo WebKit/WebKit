@@ -74,7 +74,8 @@ private:
         bool mouseIsOverContentArea,
         MouseLocationState&&,
         ScrollbarHoverState&&,
-        ScrollbarEnabledState&&
+        ScrollbarEnabledState&&,
+        RequestedKeyboardScrollData&&
     );
 
     ScrollingStatePluginScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);

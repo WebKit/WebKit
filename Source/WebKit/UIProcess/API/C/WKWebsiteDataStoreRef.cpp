@@ -625,15 +625,10 @@ void WKWebsiteDataStoreRemoveLocalStorage(WKWebsiteDataStoreRef dataStoreRef, vo
 
 void WKWebsiteDataStoreRemoveAllServiceWorkerRegistrations(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreRemoveAllServiceWorkerRegistrationsCallback callback)
 {
-#if ENABLE(SERVICE_WORKER)
     OptionSet<WebKit::WebsiteDataType> dataTypes = WebKit::WebsiteDataType::ServiceWorkerRegistrations;
     WebKit::toImpl(dataStoreRef)->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
         callback(context);
     });
-#else
-    UNUSED_PARAM(dataStoreRef);
-    callback(context);
-#endif
 }
 
 void WKWebsiteDataStoreGetFetchCacheOrigins(WKWebsiteDataStoreRef dataStoreRef, void* context, WKWebsiteDataStoreGetFetchCacheOriginsFunction callback)
@@ -715,9 +710,7 @@ void WKWebsiteDataStoreClearStorage(WKWebsiteDataStoreRef dataStoreRef, void* co
         WebKit::WebsiteDataType::FileSystem,
         WebKit::WebsiteDataType::DOMCache,
         WebKit::WebsiteDataType::Credentials,
-#if ENABLE(SERVICE_WORKER)
         WebKit::WebsiteDataType::ServiceWorkerRegistrations
-#endif
     };
     WebKit::toImpl(dataStoreRef)->removeData(dataTypes, -WallTime::infinity(), [context, callback] {
         if (callback)

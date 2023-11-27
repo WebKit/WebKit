@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SWClientConnection.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchRegistration.h"
 #include "Document.h"
@@ -325,5 +323,3 @@ void SWClientConnection::registerServiceWorkerClients()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

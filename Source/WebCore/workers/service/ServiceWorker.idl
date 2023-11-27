@@ -30,7 +30,6 @@
     ActiveDOMObject,
     SecureContext,
     Exposed=(Window,Worker),
-    Conditional=SERVICE_WORKER,
     EnabledBySetting=ServiceWorkersEnabled,
     ExportMacro=WEBCORE_EXPORT
 ] interface ServiceWorker : EventTarget {

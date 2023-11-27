@@ -125,12 +125,10 @@ struct NetworkSessionCreationParameters {
     SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
     String generalStorageDirectory;
     SandboxExtension::Handle generalStorageDirectoryHandle;
-#if ENABLE(SERVICE_WORKER)
     String serviceWorkerRegistrationDirectory;
     SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
     bool serviceWorkerProcessTerminationDelayEnabled { true };
     bool inspectionForServiceWorkersAllowed { true };
-#endif
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     bool isDeclarativeWebPushEnabled { false };
 #endif

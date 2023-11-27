@@ -235,7 +235,8 @@ enum class ScrollingStateNodeProperty : uint64_t {
     ScrollbarHoverState                         = MouseActivityState << 1,
     ScrollbarEnabledState                       = ScrollbarHoverState << 1,
     // ScrollingStateFrameScrollingNode
-    FrameScaleFactor                            = ScrollbarEnabledState << 1,
+    KeyboardScrollData                          = ScrollbarEnabledState << 1,
+    FrameScaleFactor                            = KeyboardScrollData << 1,
     EventTrackingRegion                         = FrameScaleFactor << 1,
     RootContentsLayer                           = EventTrackingRegion << 1,
     CounterScrollingLayer                       = RootContentsLayer << 1,
@@ -257,7 +258,6 @@ enum class ScrollingStateNodeProperty : uint64_t {
     MaxLayoutViewportOrigin                     = MinLayoutViewportOrigin << 1,
     OverrideVisualViewportSize                  = MaxLayoutViewportOrigin << 1,
     OverlayScrollbarsEnabled                    = OverrideVisualViewportSize << 1,
-    KeyboardScrollData                          = OverlayScrollbarsEnabled << 1,
     // ScrollingStatePositionedNode
     RelatedOverflowScrollingNodes               = 1LLU << 1, // Same value as ScrollableAreaSize, ViewportConstraints and OverflowScrollingNode
     LayoutConstraintData                        = 1LLU << 2, // Same value as TotalContentsSize

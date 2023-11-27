@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebSWContextManagerConnection.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "DataReference.h"
 #include "FormDataReference.h"
 #include "Logging.h"
@@ -598,5 +596,3 @@ void WebSWContextManagerConnection::reportConsoleMessage(WebCore::ServiceWorkerI
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

@@ -73,6 +73,7 @@
 #include "TextAreaPart.h"
 #include "TextControlInnerElements.h"
 #include "TextFieldPart.h"
+#include "Theme.h"
 #include "ToggleButtonPart.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include <wtf/FileSystem.h>
@@ -87,10 +88,6 @@
 #if ENABLE(DATALIST_ELEMENT)
 #include "HTMLDataListElement.h"
 #include "HTMLOptionElement.h"
-#endif
-
-#if USE(NEW_THEME)
-#include "Theme.h"
 #endif
 
 namespace WebCore {
@@ -223,7 +220,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     if (!supportsBoxShadow(style))
         style.setBoxShadow(nullptr);
 
-#if USE(NEW_THEME)
+#if !PLATFORM(IOS_FAMILY)
     switch (appearance) {
     case StyleAppearance::Checkbox:
     case StyleAppearance::InnerSpinButton:
@@ -327,7 +324,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
 
     // Call the appropriate style adjustment method based off the appearance value.
     switch (appearance) {
-#if !USE(NEW_THEME)
+#if PLATFORM(IOS_FAMILY)
     case StyleAppearance::Checkbox:
         return adjustCheckboxStyle(style, element);
     case StyleAppearance::Radio:
@@ -880,7 +877,7 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     float deviceScaleFactor = box.document().deviceScaleFactor();
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
 
-#if USE(NEW_THEME)
+#if !PLATFORM(IOS_FAMILY)
     float pageScaleFactor = box.page().pageScaleFactor();
 
     switch (appearance) {
@@ -906,7 +903,7 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
 
     // Call the appropriate paint method based off the appearance value.
     switch (appearance) {
-#if !USE(NEW_THEME)
+#if PLATFORM(IOS_FAMILY)
     case StyleAppearance::Checkbox:
         return paintCheckbox(box, paintInfo, devicePixelSnappedRect);
     case StyleAppearance::Radio:
@@ -1199,7 +1196,7 @@ int RenderTheme::baselinePosition(const RenderBox& box) const
         return (box.width() / 2.0f) + box.marginBefore();
     }();
 
-#if USE(NEW_THEME)
+#if !PLATFORM(IOS_FAMILY)
     return baseline + Theme::singleton().baselinePositionAdjustment(box.style().effectiveAppearance(), box.isHorizontalWritingMode()) * box.style().effectiveZoom();
 #else
     return baseline;
@@ -1239,7 +1236,7 @@ bool RenderTheme::isControlStyled(const RenderStyle& style, const RenderStyle& u
 
 void RenderTheme::adjustRepaintRect(const RenderObject& renderer, FloatRect& rect)
 {
-#if USE(NEW_THEME)
+#if !PLATFORM(IOS_FAMILY)
     ControlStates states(extractControlStatesForRenderer(renderer));
     Theme::singleton().inflateControlPaintRect(renderer.style().effectiveAppearance(), states, rect, renderer.style().effectiveZoom());
 #else
@@ -1429,7 +1426,7 @@ bool RenderTheme::hasListButtonPressed(const RenderObject& renderer) const
 }
 #endif
 
-#if !USE(NEW_THEME)
+#if PLATFORM(IOS_FAMILY)
 
 void RenderTheme::adjustCheckboxStyle(RenderStyle& style, const Element*) const
 {
@@ -1459,7 +1456,7 @@ bool RenderTheme::paintColorWell(const RenderObject& box, const PaintInfo& paint
 
 #endif // ENABLE(INPUT_TYPE_COLOR)
 
-#endif // !USE(NEW_THEME)
+#endif // PLATFORM(IOS_FAMILY)
 
 void RenderTheme::adjustMenuListStyle(RenderStyle& style, const Element*) const
 {

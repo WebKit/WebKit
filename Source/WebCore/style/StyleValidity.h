@@ -33,12 +33,13 @@ enum class Validity : uint8_t {
     AnimationInvalid,
     ElementInvalid,
     SubtreeInvalid,
-    SubtreeAndRenderersInvalid
 };
 
 enum class InvalidationMode : uint8_t {
     Normal,
-    RecompositeLayer
+    RecompositeLayer,
+    RebuildRenderer,
+    InsertedIntoAncestor
 };
 
 enum class InvalidationScope : uint8_t {

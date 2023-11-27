@@ -598,9 +598,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
     GamepadProvider::singleton().setSharedProvider(WebGamepadProvider::singleton());
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     ServiceWorkerProvider::setSharedProvider(WebServiceWorkerProvider::singleton());
-#endif
     SharedWorkerProvider::setSharedProvider(WebSharedWorkerProvider::singleton());
 
 #if !RELEASE_LOG_DISABLED
@@ -926,14 +924,12 @@ void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& de
         return;
     }
 
-#if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWContextManagerConnection::messageReceiverName()) {
         ASSERT(SWContextManager::singleton().connection());
         if (auto* contextManagerConnection = SWContextManager::singleton().connection())
             static_cast<WebSWContextManagerConnection&>(*contextManagerConnection).didReceiveMessage(connection, decoder);
         return;
     }
-#endif
 
     if (decoder.messageReceiverName() == Messages::WebSharedWorkerContextManagerConnection::messageReceiverName()) {
         ASSERT(SharedWorkerContextManager::singleton().connection());
@@ -1194,10 +1190,8 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
         setNetworkProcessConnectionID(m_networkProcessConnection->connection().uniqueID());
         m_networkProcessConnection->connection().send(Messages::NetworkConnectionToWebProcess::RegisterURLSchemesAsCORSEnabled(WebCore::LegacySchemeRegistry::allURLSchemesRegisteredAsCORSEnabled()), 0);
 
-#if ENABLE(SERVICE_WORKER)
         if (!Document::allDocuments().isEmpty() || SharedWorkerThreadProxy::hasInstances())
             m_networkProcessConnection->serviceWorkerConnection().registerServiceWorkerClients();
-#endif
 
 #if HAVE(LSDATABASECONTEXT)
         // On Mac, this needs to be called before NSApplication is being initialized.
@@ -1262,10 +1256,8 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
         }
     }
 
-#if ENABLE(SERVICE_WORKER)
     if (SWContextManager::singleton().connection())
         SWContextManager::singleton().stopAllServiceWorkers();
-#endif
 
     m_networkProcessConnection = nullptr;
     setNetworkProcessConnectionID({ });
@@ -2005,10 +1997,8 @@ void WebProcess::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWo
     Ref ipcConnection = ensureNetworkProcessConnection().connection();
     switch (workerType) {
     case RemoteWorkerType::ServiceWorker:
-#if ENABLE(SERVICE_WORKER)
         SWContextManager::singleton().setConnection(WebSWContextManagerConnection::create(WTFMove(ipcConnection), WTFMove(registrableDomain), serviceWorkerPageIdentifier, pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
         SWContextManager::singleton().connection()->establishConnection(WTFMove(completionHandler));
-#endif
         break;
     case RemoteWorkerType::SharedWorker:
         SharedWorkerContextManager::singleton().setConnection(makeUnique<WebSharedWorkerContextManagerConnection>(WTFMove(ipcConnection), WTFMove(registrableDomain), pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
@@ -2017,7 +2007,6 @@ void WebProcess::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWo
     }
 }
 
-#if ENABLE(SERVICE_WORKER)
 void WebProcess::addServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier identifier)
 {
     m_swRegistrationCounts.add(identifier);
@@ -2028,7 +2017,6 @@ bool WebProcess::removeServiceWorkerRegistration(WebCore::ServiceWorkerRegistrat
     ASSERT(m_swRegistrationCounts.contains(identifier));
     return m_swRegistrationCounts.remove(identifier);
 }
-#endif
 
 #if ENABLE(MEDIA_STREAM)
 void WebProcess::addMockMediaDevice(const WebCore::MockMediaDevice& device)

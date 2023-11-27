@@ -29,6 +29,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -45,7 +46,7 @@ namespace LayoutIntegration {
 struct InlineContent;
 #endif
 
-class BoxTree {
+class BoxTree : public CanMakeWeakPtr<BoxTree> {
 public:
     BoxTree(RenderBlock&);
     ~BoxTree();

@@ -2735,16 +2735,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitMediaCapabilitiesEnabledPreferenceKey];
 }
 
-- (BOOL)lineHeightUnitsEnabled
-{
-    return [self _boolValueForKey:WebKitLineHeightUnitsEnabledPreferenceKey];
-}
-
-- (void)setLineHeightUnitsEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitLineHeightUnitsEnabledPreferenceKey];
-}
-
 - (BOOL)layoutFormattingContextIntegrationEnabled
 {
     return [self _boolValueForKey:WebKitLayoutFormattingContextIntegrationEnabledPreferenceKey];
@@ -3337,6 +3327,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 }
 
 - (void)setTransformStreamAPIEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)lineHeightUnitsEnabled
+{
+    return YES;
+}
+
+- (void)setLineHeightUnitsEnabled:(BOOL)flag
 {
 }
 

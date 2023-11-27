@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BackgroundFetchStoreManager.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Logging.h"
 #include <WebCore/ResourceError.h>
 #include <WebCore/SharedBuffer.h>
@@ -264,5 +262,3 @@ void BackgroundFetchStoreManager::retrieveResponseBody(const String& identifier,
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

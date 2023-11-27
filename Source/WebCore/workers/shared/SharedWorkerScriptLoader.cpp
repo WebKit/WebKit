@@ -68,9 +68,7 @@ void SharedWorkerScriptLoader::notifyFinished()
     if (fetchResult.referrerPolicy.isNull() && scriptExecutionContext)
         fetchResult.referrerPolicy = referrerPolicyToString(scriptExecutionContext->referrerPolicy());
     m_completionHandler(WTFMove(fetchResult), WorkerInitializationData {
-#if ENABLE(SERVICE_WORKER)
         m_loader->takeServiceWorkerData(),
-#endif
         m_loader->clientIdentifier(),
         m_loader->userAgentForSharedWorker()
     }); // deletes this.

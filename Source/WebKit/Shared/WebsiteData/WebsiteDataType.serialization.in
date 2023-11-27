@@ -36,9 +36,7 @@ headers: "WebsiteDataType.h"
     SearchFieldRecentSearches,
     ResourceLoadStatistics,
     Credentials,
-#if ENABLE(SERVICE_WORKER)
     ServiceWorkerRegistrations,
-#endif
     DOMCache,
     DeviceIdHashSalt,
     PrivateClickMeasurements,
@@ -46,7 +44,5 @@ headers: "WebsiteDataType.h"
     AlternativeServices,
 #endif
     FileSystem,
-#if ENABLE(SERVICE_WORKER)
     BackgroundFetchStorage,
-#endif
 };

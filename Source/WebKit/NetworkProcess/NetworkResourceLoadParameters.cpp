@@ -61,12 +61,10 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
     , WebCore::CrossOriginOpenerPolicy&& sourceCrossOriginOpenerPolicy
     , uint64_t navigationID
     , std::optional<WebCore::NavigationRequester>&& navigationRequester
-#if ENABLE(SERVICE_WORKER)
     , WebCore::ServiceWorkersMode serviceWorkersMode
     , std::optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier
     , OptionSet<WebCore::HTTPHeadersToKeepFromCleaning> httpHeadersToKeep
     , std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier
-#endif
 #if ENABLE(CONTENT_EXTENSIONS)
     , URL&& mainDocumentURL
     , std::optional<UserContentControllerIdentifier> userContentControllerIdentifier
@@ -98,12 +96,10 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(
         , sourceCrossOriginOpenerPolicy(WTFMove(sourceCrossOriginOpenerPolicy))
         , navigationID(navigationID)
         , navigationRequester(WTFMove(navigationRequester))
-#if ENABLE(SERVICE_WORKER)
         , serviceWorkersMode(serviceWorkersMode)
         , serviceWorkerRegistrationIdentifier(serviceWorkerRegistrationIdentifier)
         , httpHeadersToKeep(httpHeadersToKeep)
         , navigationPreloadIdentifier(navigationPreloadIdentifier)
-#endif
 #if ENABLE(CONTENT_EXTENSIONS)
         , mainDocumentURL(WTFMove(mainDocumentURL))
         , userContentControllerIdentifier(userContentControllerIdentifier)

@@ -155,10 +155,8 @@ void WorkerGlobalScope::prepareForDestruction()
 {
     WorkerOrWorkletGlobalScope::prepareForDestruction();
 
-#if ENABLE(SERVICE_WORKER)
     if (settingsValues().serviceWorkersEnabled)
         swClientConnection().unregisterServiceWorkerClient(identifier());
-#endif
 
     stopIndexedDatabase();
 
@@ -245,18 +243,14 @@ void WorkerGlobalScope::suspend()
     if (m_connectionProxy)
         m_connectionProxy->setContextSuspended(*this, true);
 
-#if ENABLE(SERVICE_WORKER)
     if (settingsValues().serviceWorkersEnabled)
         swClientConnection().unregisterServiceWorkerClient(identifier());
-#endif
 }
 
 void WorkerGlobalScope::resume()
 {
-#if ENABLE(SERVICE_WORKER)
     if (settingsValues().serviceWorkersEnabled)
         updateServiceWorkerClientData();
-#endif
 
     if (m_connectionProxy)
         m_connectionProxy->setContextSuspended(*this, false);
@@ -386,7 +380,6 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
 
     FetchOptions::Cache cachePolicy = FetchOptions::Cache::Default;
 
-#if ENABLE(SERVICE_WORKER)
     bool isServiceWorkerGlobalScope = is<ServiceWorkerGlobalScope>(*this);
     if (isServiceWorkerGlobalScope) {
         // FIXME: We need to add support for the 'imported scripts updated' flag as per:
@@ -396,7 +389,6 @@ ExceptionOr<void> WorkerGlobalScope::importScripts(const FixedVector<String>& ur
         if (registration.updateViaCache() == ServiceWorkerUpdateViaCache::None || registration.needsUpdate())
             cachePolicy = FetchOptions::Cache::NoCache;
     }
-#endif
 
     for (auto& url : completedURLs) {
         // FIXME: Convert this to check the isolated world's Content Security Policy once webkit.org/b/104520 is solved.
@@ -530,14 +522,12 @@ MessagePortChannelProvider& WorkerGlobalScope::messagePortChannelProvider()
     return *m_messagePortChannelProvider;
 }
 
-#if ENABLE(SERVICE_WORKER)
 WorkerSWClientConnection& WorkerGlobalScope::swClientConnection()
 {
     if (!m_swClientConnection)
         m_swClientConnection = WorkerSWClientConnection::create(*this);
     return *m_swClientConnection;
 }
-#endif
 
 void WorkerGlobalScope::createImageBitmap(ImageBitmap::Source&& source, ImageBitmapOptions&& options, ImageBitmap::Promise&& promise)
 {
@@ -681,7 +671,6 @@ void WorkerGlobalScope::updateSourceProviderBuffers(const ScriptBuffer& mainScri
     }
 }
 
-#if ENABLE(SERVICE_WORKER)
 void WorkerGlobalScope::updateServiceWorkerClientData()
 {
     if (!settingsValues().serviceWorkersEnabled)
@@ -691,7 +680,6 @@ void WorkerGlobalScope::updateServiceWorkerClientData()
     auto controllingServiceWorkerRegistrationIdentifier = activeServiceWorker() ? std::make_optional<ServiceWorkerRegistrationIdentifier>(activeServiceWorker()->registrationIdentifier()) : std::nullopt;
     swClientConnection().registerServiceWorkerClient(clientOrigin(), ServiceWorkerClientData::from(*this), controllingServiceWorkerRegistrationIdentifier, String { m_userAgent });
 }
-#endif
 
 void WorkerGlobalScope::notifyReportObservers(Ref<Report>&& reports)
 {

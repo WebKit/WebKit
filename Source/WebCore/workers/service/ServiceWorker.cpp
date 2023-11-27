@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorker.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Document.h"
 #include "EventNames.h"
 #include "Logging.h"
@@ -164,5 +162,3 @@ void ServiceWorker::updatePendingActivityForEventDispatch()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

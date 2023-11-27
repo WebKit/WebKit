@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BackgroundFetchManager.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchRequest.h"
 #include "ContentSecurityPolicy.h"
@@ -176,5 +174,3 @@ void BackgroundFetchManager::getIds(ScriptExecutionContext& context, DOMPromiseD
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

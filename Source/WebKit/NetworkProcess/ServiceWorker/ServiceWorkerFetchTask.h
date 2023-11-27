@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "DataReference.h"
 #include "DownloadID.h"
 #include <WebCore/FetchIdentifier.h>
@@ -139,5 +137,3 @@ private:
 };
 
 }
-
-#endif // ENABLE(SERVICE_WORKER)

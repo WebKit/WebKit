@@ -1158,10 +1158,8 @@ bool InspectorNetworkAgent::shouldInterceptRequest(const ResourceLoader& loader)
     if (!m_interceptionEnabled)
         return false;
 
-#if ENABLE(SERVICE_WORKER)
     if (loader.options().serviceWorkerRegistrationIdentifier)
         return false;
-#endif
 
     return shouldIntercept(loader.url(), Protocol::Network::NetworkStage::Request);
 }

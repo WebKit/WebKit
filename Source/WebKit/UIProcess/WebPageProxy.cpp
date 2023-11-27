@@ -2256,9 +2256,7 @@ void WebPageProxy::setInspectable(bool inspectable)
 
     m_inspectorDebuggable->setInspectable(inspectable);
 
-#if ENABLE(SERVICE_WORKER)
     protectedWebsiteDataStore()->updateServiceWorkerInspectability();
-#endif
 }
 
 String WebPageProxy::remoteInspectionNameOverride() const
@@ -5518,13 +5516,11 @@ void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
     Ref mainFrame = WebFrameProxy::create(*this, protectedProcess(), frameID);
     m_mainFrame = mainFrame.copyRef();
 
-#if ENABLE(SERVICE_WORKER)
     if (internals().serviceWorkerOpenWindowCompletionCallback) {
         mainFrame->setNavigationCallback([callback = WTFMove(internals().serviceWorkerOpenWindowCompletionCallback)](auto pageID, auto) mutable {
             callback(pageID);
         });
     }
-#endif
 }
 
 void WebPageProxy::didCreateSubframe(WebCore::FrameIdentifier parentID, WebCore::FrameIdentifier newFrameID, const String& frameName)
@@ -5908,8 +5904,6 @@ void WebPageProxy::didFailProvisionalLoadForFrameShared(Ref<WebProcessProxy>&& p
     }
 }
 
-#if ENABLE(SERVICE_WORKER)
-
 void WebPageProxy::didFinishServiceWorkerPageRegistration(bool success)
 {
     ASSERT(m_isServiceWorkerPage);
@@ -5925,17 +5919,13 @@ void WebPageProxy::setServiceWorkerOpenWindowCompletionCallback(CompletionHandle
     internals().serviceWorkerOpenWindowCompletionCallback = WTFMove(completionCallback);
 }
 
-#endif
-
 void WebPageProxy::callLoadCompletionHandlersIfNecessary(bool success)
 {
-#if ENABLE(SERVICE_WORKER)
     if (m_isServiceWorkerPage && internals().serviceWorkerLaunchCompletionHandler && !success)
         internals().serviceWorkerLaunchCompletionHandler(false);
 
     if (internals().serviceWorkerOpenWindowCompletionCallback)
         internals().serviceWorkerOpenWindowCompletionCallback(success ? webPageID() : std::optional<WebCore::PageIdentifier> { });
-#endif
 }
 
 static OptionSet<CrossSiteNavigationDataTransfer::Flag> checkIfNavigationContainsDataTransfer(const SecurityOriginData requesterOrigin, const ResourceRequest& currentRequest)
@@ -9433,9 +9423,7 @@ void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason termina
 
     m_hasRunningProcess = false;
     m_areActiveDOMObjectsAndAnimationsSuspended = false;
-#if ENABLE(SERVICE_WORKER)
     m_isServiceWorkerPage = false;
-#endif
 
     m_userScriptsNotified = false;
     m_hasActiveAnimatedScroll = false;
@@ -12437,7 +12425,6 @@ void WebPageProxy::setNeedsDOMWindowResizeEvent()
 
 void WebPageProxy::loadServiceWorker(const URL& url, bool usingModules, CompletionHandler<void(bool success)>&& completionHandler)
 {
-#if ENABLE(SERVICE_WORKER)
     if (m_isClosed)
         return completionHandler(false);
 
@@ -12456,10 +12443,6 @@ void WebPageProxy::loadServiceWorker(const URL& url, bool usingModules, Completi
         html = makeString("<script>navigator.serviceWorker.register('", url.string(), "');</script>").utf8();
 
     loadData({ reinterpret_cast<const uint8_t*>(html.data()), html.length() }, "text/html"_s, "UTF-8"_s, url.protocolHostAndPort());
-#else
-    UNUSED_PARAM(url);
-    completionHandler(false);
-#endif
 }
 
 #if !PLATFORM(COCOA)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PushManager.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "DocumentInlines.h"
 #include "EventLoop.h"
 #include "Exception.h"
@@ -199,5 +197,3 @@ void PushManager::permissionState(ScriptExecutionContext& context, std::optional
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

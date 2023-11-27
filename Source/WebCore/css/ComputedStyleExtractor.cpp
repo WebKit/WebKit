@@ -527,14 +527,14 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
     auto offset = getOffsetComputedLength(style, propertyID);
 
     // If the element is not displayed; return the "computed value".
-    if (!renderer || !renderer->isRenderBox())
+    CheckedPtr box = dynamicDowncast<RenderBox>(renderer);
+    if (!box)
         return zoomAdjustedPixelValueForLength(offset, style);
 
-    auto& box = downcast<RenderBox>(*renderer);
-    auto* containingBlock = box.containingBlock();
+    auto* containingBlock = box->containingBlock();
 
     // Resolve a "computed value" percentage if the element is positioned.
-    if (containingBlock && offset.isPercentOrCalculated() && box.isPositioned()) {
+    if (containingBlock && offset.isPercentOrCalculated() && box->isPositioned()) {
         bool isVerticalProperty;
         if (propertyID == CSSPropertyTop || propertyID == CSSPropertyBottom)
             isVerticalProperty = true;
@@ -543,21 +543,21 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
             isVerticalProperty = false;
         }
         LayoutUnit containingBlockSize;
-        if (box.isStickilyPositioned()) {
-            auto& enclosingClippingBox = box.enclosingClippingBoxForStickyPosition().first;
+        if (box->isStickilyPositioned()) {
+            auto& enclosingClippingBox = box->enclosingClippingBoxForStickyPosition().first;
             if (isVerticalProperty == enclosingClippingBox.isHorizontalWritingMode())
                 containingBlockSize = enclosingClippingBox.contentLogicalHeight();
             else
                 containingBlockSize = enclosingClippingBox.contentLogicalWidth();
         } else {
             if (isVerticalProperty == containingBlock->isHorizontalWritingMode()) {
-                containingBlockSize = box.isOutOfFlowPositioned()
-                    ? box.containingBlockLogicalHeightForPositioned(*containingBlock, false)
-                    : box.containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
+                containingBlockSize = box->isOutOfFlowPositioned()
+                    ? box->containingBlockLogicalHeightForPositioned(*containingBlock, false)
+                    : box->containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
             } else {
-                containingBlockSize = box.isOutOfFlowPositioned()
-                    ? box.containingBlockLogicalWidthForPositioned(*containingBlock, nullptr, false)
-                    : box.containingBlockLogicalWidthForContent();
+                containingBlockSize = box->isOutOfFlowPositioned()
+                    ? box->containingBlockLogicalWidthForPositioned(*containingBlock, nullptr, false)
+                    : box->containingBlockLogicalWidthForContent();
             }
         }
         return zoomAdjustedPixelValue(floatValueForLength(offset, containingBlockSize), style);
@@ -568,11 +568,11 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
         return zoomAdjustedPixelValueForLength(offset, style);
 
     // The property won't be overconstrained if its computed value is "auto", so the "used value" can be returned.
-    if (box.isRelativelyPositioned())
-        return zoomAdjustedPixelValue(getOffsetUsedStyleRelative(box, propertyID), style);
+    if (box->isRelativelyPositioned())
+        return zoomAdjustedPixelValue(getOffsetUsedStyleRelative(*box, propertyID), style);
 
-    if (containingBlock && box.isOutOfFlowPositioned())
-        return zoomAdjustedPixelValue(getOffsetUsedStyleOutOfFlowPositioned(*containingBlock, box, propertyID), style);
+    if (containingBlock && box->isOutOfFlowPositioned())
+        return zoomAdjustedPixelValue(getOffsetUsedStyleOutOfFlowPositioned(*containingBlock, *box, propertyID), style);
 
     return CSSPrimitiveValue::create(CSSValueAuto);
 }

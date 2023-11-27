@@ -33,6 +33,7 @@
 typedef struct CGRect CGRect;
 OBJC_CLASS UITextSelectionDisplayInteraction;
 
+@protocol UIAsyncTextInput_Staging;
 @protocol UICoordinateSpace;
 
 namespace WebCore {
@@ -192,6 +193,12 @@ private:
     void simulateRotation(DeviceOrientation, JSValueRef callback);
 
     int64_t pasteboardChangeCount() const final;
+
+    void clipSelectionViewRectToContentView(CGRect&) const;
+
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    id<UIAsyncTextInput_Staging> asyncTextInput() const;
+#endif
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
     UITextSelectionDisplayInteraction *textSelectionDisplayInteraction() const;

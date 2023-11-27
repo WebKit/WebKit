@@ -832,8 +832,6 @@ static String styleValidityToToString(Style::Validity validity)
         return "InlineStyleChange"_s;
     case Style::Validity::SubtreeInvalid:
         return "FullStyleChange"_s;
-    case Style::Validity::SubtreeAndRenderersInvalid:
-        return "ReconstructRenderTree"_s;
     }
     ASSERT_NOT_REACHED();
     return emptyString();
@@ -6042,7 +6040,6 @@ bool Internals::audioSessionActive() const
 
 void Internals::storeRegistrationsOnDisk(DOMPromiseDeferred<void>&& promise)
 {
-#if ENABLE(SERVICE_WORKER)
     if (!contextDocument())
         return;
 
@@ -6050,9 +6047,6 @@ void Internals::storeRegistrationsOnDisk(DOMPromiseDeferred<void>&& promise)
     connection.storeRegistrationsOnDiskForTesting([promise = WTFMove(promise)]() mutable {
         promise.resolve();
     });
-#else
-    promise.resolve();
-#endif
 }
 
 void Internals::sendH2Ping(String url, DOMPromiseDeferred<IDLDouble>&& promise)
@@ -6151,7 +6145,6 @@ const String& Internals::responseNetworkLoadMetricsProtocol(const FetchResponse&
     return response.networkLoadMetrics().protocol;
 }
 
-#if ENABLE(SERVICE_WORKER)
 void Internals::hasServiceWorkerRegistration(const String& clientURL, HasRegistrationPromise&& promise)
 {
     if (!contextDocument())
@@ -6177,7 +6170,6 @@ void Internals::whenServiceWorkerIsTerminated(ServiceWorker& worker, DOMPromiseD
         promise.resolve();
     });
 }
-#endif
 
 #if ENABLE(APPLE_PAY)
 MockPaymentCoordinator& Internals::mockPaymentCoordinator(Document& document)
@@ -6464,6 +6456,23 @@ String Internals::createDoViCodecParametersString(const DoViParameterSet& parame
 std::optional<VPCodecConfigurationRecord> Internals::parseVPCodecParameters(StringView string)
 {
     return WebCore::parseVPCodecParameters(string);
+}
+
+std::optional<AV1CodecConfigurationRecord> Internals::parseAV1CodecParameters(const String& parameters)
+{
+    return WebCore::parseAV1CodecParameters(parameters);
+}
+
+String Internals::createAV1CodecParametersString(const AV1CodecConfigurationRecord& configuration)
+{
+    return WebCore::createAV1CodecParametersString(configuration);
+}
+
+bool Internals::validateAV1PerLevelConstraints(const String& parameters, const VideoConfiguration& configuration)
+{
+    if (auto record = WebCore::parseAV1CodecParameters(parameters))
+        return WebCore::validateAV1PerLevelConstraints(*record, configuration);
+    return false;
 }
 
 auto Internals::getCookies() const -> Vector<CookieData>
@@ -7112,7 +7121,6 @@ void Internals::retainTextIteratorForDocumentContent()
     m_textIterator = makeUnique<TextIterator>(range);
 }
 
-#if ENABLE(SERVICE_WORKER)
 RefPtr<PushSubscription> Internals::createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth)
 {
     auto myEndpoint = endpoint;
@@ -7122,7 +7130,6 @@ RefPtr<PushSubscription> Internals::createPushSubscription(const String& endpoin
 
     return PushSubscription::create(PushSubscriptionData { { }, WTFMove(myEndpoint), expirationTime, WTFMove(myServerVAPIDPublicKey), WTFMove(myClientECDHPublicKey), WTFMove(myAuth) });
 }
-#endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 

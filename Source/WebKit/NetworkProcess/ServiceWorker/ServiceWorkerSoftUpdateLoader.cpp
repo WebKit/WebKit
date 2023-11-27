@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerSoftUpdateLoader.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Logging.h"
 #include "NetworkCache.h"
 #include "NetworkLoad.h"
@@ -209,5 +207,3 @@ void ServiceWorkerSoftUpdateLoader::didComplete()
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

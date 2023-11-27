@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerFetchTask.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Connection.h"
 #include "FormDataReference.h"
 #include "Logging.h"
@@ -572,5 +570,3 @@ RefPtr<NetworkResourceLoader> ServiceWorkerFetchTask::protectedLoader() const
 
 #undef SWFETCH_RELEASE_LOG
 #undef SWFETCH_RELEASE_LOG_ERROR
-
-#endif // ENABLE(SERVICE_WORKER)

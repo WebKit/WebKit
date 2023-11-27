@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BackgroundFetchEngine.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchRecordInformation.h"
 #include "ExceptionData.h"
@@ -363,5 +361,3 @@ WeakPtr<BackgroundFetch> BackgroundFetchEngine::backgroundFetch(const ServiceWor
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

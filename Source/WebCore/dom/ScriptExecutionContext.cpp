@@ -194,9 +194,7 @@ ScriptExecutionContext::~ScriptExecutionContext()
     for (auto& completionHandler : postMessageCompletionHandlers)
         completionHandler();
 
-#if ENABLE(SERVICE_WORKER)
     setActiveServiceWorker(nullptr);
-#endif
 
     while (auto* destructionObserver = m_destructionObservers.takeAny())
         destructionObserver->contextDestroyed();
@@ -666,8 +664,6 @@ bool ScriptExecutionContext::allowsMediaDevices() const
 #endif
 }
 
-#if ENABLE(SERVICE_WORKER)
-
 ServiceWorker* ScriptExecutionContext::activeServiceWorker() const
 {
     return m_activeServiceWorker.get();
@@ -712,8 +708,6 @@ ServiceWorkerContainer* ScriptExecutionContext::ensureServiceWorkerContainer()
         
     return navigator ? &navigator->serviceWorker() : nullptr;
 }
-
-#endif
 
 void ScriptExecutionContext::setCrossOriginMode(CrossOriginMode crossOriginMode)
 {

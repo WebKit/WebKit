@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerFetch.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "CrossOriginAccessControl.h"
 #include "EventNames.h"
 #include "FetchEvent.h"
@@ -240,5 +238,3 @@ void dispatchFetchEvent(Ref<Client>&& client, ServiceWorkerGlobalScope& globalSc
 } // namespace ServiceWorkerFetch
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

@@ -214,6 +214,7 @@ public:
         LegacySVGPath,
         LegacySVGRect,
         LegacySVGResourceClipper,
+        LegacySVGResourceMasker,
         LegacySVGRoot,
         LegacySVGTransformableContainer,
         LegacySVGViewportContainer
@@ -469,12 +470,14 @@ public:
     bool isLegacyRenderSVGForeignObject() const { return type() == Type::LegacySVGForeignObject; }
     bool isRenderSVGForeignObject() const { return type() == Type::SVGForeignObject; }
     virtual bool isLegacyRenderSVGResourceContainer() const { return false; }
-    bool isRenderSVGResourceContainer() const { return type() == Type::SVGResourceClipper; }
+    bool isRenderSVGResourceContainer() const { return type() == Type::SVGResourceClipper || type() == Type::SVGResourceMasker; }
     bool isRenderSVGResourceFilter() const { return type() == Type::SVGResourceFilter; }
-    bool isLegacyRenderSVGResourceMarker() const { return type() == Type::SVGResourceMarker; }
     bool isLegacyRenderSVGResourceClipper() const { return type() == Type::LegacySVGResourceClipper; }
+    bool isLegacyRenderSVGResourceMarker() const { return type() == Type::SVGResourceMarker; }
+    bool isLegacyRenderSVGResourceMasker() const { return type() == Type::LegacySVGResourceMasker; }
     bool isRenderSVGResourceClipper() const { return type() == Type::SVGResourceClipper; }
     bool isRenderSVGResourceFilterPrimitive() const { return type() == Type::SVGResourceFilterPrimitive; }
+    bool isRenderSVGResourceMasker() const { return type() == Type::SVGResourceMasker; }
     bool isRenderOrLegacyRenderSVGRoot() const { return isRenderSVGRoot() || isLegacyRenderSVGRoot(); }
     bool isRenderOrLegacyRenderSVGShape() const { return isRenderSVGShape() || isLegacyRenderSVGShape(); }
     bool isRenderOrLegacyRenderSVGPath() const { return isRenderSVGPath() || isLegacyRenderSVGPath(); }

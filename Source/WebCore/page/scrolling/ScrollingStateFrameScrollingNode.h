@@ -153,6 +153,7 @@ private:
         MouseLocationState&&,
         ScrollbarHoverState&&,
         ScrollbarEnabledState&&,
+        RequestedKeyboardScrollData&&,
         float frameScaleFactor,
         EventTrackingRegions&&,
         std::optional<PlatformLayerIdentifier> rootContentsLayer,
@@ -172,8 +173,7 @@ private:
         FloatPoint minLayoutViewportOrigin,
         FloatPoint maxLayoutViewportOrigin,
         std::optional<FloatSize> overrideVisualViewportSize,
-        bool overlayScrollbarsEnabled,
-        RequestedKeyboardScrollData&&
+        bool overlayScrollbarsEnabled
     );
 
     ScrollingStateFrameScrollingNode(ScrollingStateTree&, ScrollingNodeType, ScrollingNodeID);

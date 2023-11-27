@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "DownloadID.h"
 #include "NetworkCacheEntry.h"
 #include "NetworkLoadClient.h"
@@ -106,6 +104,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)
-

@@ -75,9 +75,7 @@ public:
     WebIDBConnectionToServer* existingIDBConnectionToServer() const { return m_webIDBConnection.get(); };
     WebIDBConnectionToServer& idbConnectionToServer();
 
-#if ENABLE(SERVICE_WORKER)
     WebSWClientConnection& serviceWorkerConnection();
-#endif
     WebSharedWorkerObjectConnection& sharedWorkerConnection();
 
 #if HAVE(AUDIT_TOKEN)
@@ -130,9 +128,7 @@ private:
 
     RefPtr<WebIDBConnectionToServer> m_webIDBConnection;
 
-#if ENABLE(SERVICE_WORKER)
     RefPtr<WebSWClientConnection> m_swConnection;
-#endif
     RefPtr<WebSharedWorkerObjectConnection> m_sharedWorkerConnection;
     WebCore::HTTPCookieAcceptPolicy m_cookieAcceptPolicy;
 };

@@ -438,10 +438,8 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 - (size_t)_webPageContentProcessCount
 {
     auto result = _processPool->processes().size();
-#if ENABLE(SERVICE_WORKER)
     if (_processPool->useSeparateServiceWorkerProcess())
         result -= _processPool->serviceWorkerProxiesCount();
-#endif
     return result;
 }
 
@@ -471,11 +469,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 
 - (size_t)_serviceWorkerProcessCount
 {
-#if ENABLE(SERVICE_WORKER)
     return _processPool->serviceWorkerProxiesCount();
-#else
-    return 0;
-#endif
 }
 
 + (void)_forceGameControllerFramework

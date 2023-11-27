@@ -2421,8 +2421,7 @@ void Element::invalidateStyleForSubtree()
 
 void Element::invalidateStyleAndRenderersForSubtree()
 {
-    Node::invalidateStyle(Style::Validity::SubtreeAndRenderersInvalid);
-    invalidateSiblingsIfNeeded(*this);
+    Node::invalidateStyle(Style::Validity::SubtreeInvalid, Style::InvalidationMode::RebuildRenderer);
 }
 
 void Element::invalidateStyleInternal()

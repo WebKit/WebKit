@@ -6,8 +6,8 @@ Event
 Events interfaceName=Event
 HTMLEvents interfaceName=Event
 AnimationPlaybackEvent
-BackgroundFetchEvent conditional=SERVICE_WORKER
-BackgroundFetchUpdateUIEvent conditional=SERVICE_WORKER
+BackgroundFetchEvent
+BackgroundFetchUpdateUIEvent
 BeforeLoadEvent interfaceName=Event
 BeforeUnloadEvent
 BufferedChangeEvent conditional=MANAGED_MEDIA_SOURCE
@@ -19,11 +19,11 @@ CSSAnimationEvent
 CSSTransitionEvent
 CustomEvent
 DragEvent
-ExtendableCookieChangeEvent conditional=SERVICE_WORKER
-ExtendableEvent conditional=SERVICE_WORKER
-ExtendableMessageEvent conditional=SERVICE_WORKER
+ExtendableCookieChangeEvent
+ExtendableEvent
+ExtendableMessageEvent
 ErrorEvent
-FetchEvent conditional=SERVICE_WORKER
+FetchEvent
 FocusEvent
 FormDataEvent
 HashChangeEvent
@@ -44,9 +44,9 @@ PageTransitionEvent
 PopStateEvent
 ProgressEvent
 PromiseRejectionEvent
-PushEvent conditional=SERVICE_WORKER
+PushEvent
 PushNotificationEvent conditional=DECLARATIVE_WEB_PUSH
-PushSubscriptionChangeEvent conditional=SERVICE_WORKER
+PushSubscriptionChangeEvent
 SubmitEvent
 ToggleEvent
 TextEvent

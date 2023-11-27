@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include <WebCore/SWRegistrationDatabase.h>
 #include <wtf/Forward.h>
 
@@ -50,5 +48,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif
