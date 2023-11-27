@@ -15,5 +15,11 @@
 	<string>${BUNDLE_VERSION}</string>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_BUNDLE_NAME}</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
+	<key>CanInheritApplicationStateFromOtherProcesses</key>
+	<true/>
 </dict>
 </plist>
