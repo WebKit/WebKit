@@ -2351,7 +2351,6 @@ DisallowSyncXHRDuringPageDismissalEnabled:
 DownloadAttributeEnabled:
   type: bool
   status: embedder
-  condition: ENABLE(DOWNLOAD_ATTRIBUTE)
   defaultValue:
     WebKitLegacy:
       default: false

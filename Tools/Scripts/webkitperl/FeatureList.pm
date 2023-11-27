@@ -83,7 +83,6 @@ my (
     $datalistElementSupport,
     $deviceOrientationSupport,
     $dfgJITSupport,
-    $downloadAttributeSupport,
     $dragSupportSupport,
     $encryptedMediaSupport,
     $fatalWarnings,
@@ -270,9 +269,6 @@ my @features = (
 
     { option => "dfg-jit", desc => "Toggle data flow graph JIT tier",
       define => "ENABLE_DFG_JIT", value => \$dfgJITSupport },
-
-    { option => "download-attribute", desc => "Toggle Download Attribute support",
-      define => "ENABLE_DOWNLOAD_ATTRIBUTE", value => \$downloadAttributeSupport },
 
     { option => "drag-support", desc => "Toggle support of drag actions (including selection of text with mouse)",
       define => "ENABLE_DRAG_SUPPORT", value => \$dragSupportSupport },
