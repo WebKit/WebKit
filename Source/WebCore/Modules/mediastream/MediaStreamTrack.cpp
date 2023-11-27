@@ -409,14 +409,16 @@ void MediaStreamTrack::applyConstraints(const std::optional<MediaTrackConstraint
         return;
     }
 
-    m_private->applyConstraints(createMediaConstraints(constraints), [protectedThis = Ref { *this }, constraints, promise = WTFMove(promise)](auto&& error) mutable {
-        if (error) {
-            promise.rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(WTFMove(error->badConstraint), WTFMove(error->message)));
-            return;
-        }
+    m_private->applyConstraints(createMediaConstraints(constraints), [this, protectedThis = Ref { *this }, constraints, promise = WTFMove(promise)](auto&& error) mutable {
+        queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [protectedThis = WTFMove(protectedThis), error = WTFMove(error), constraints, promise = WTFMove(promise)]() mutable {
+            if (error) {
+                promise.rejectType<IDLInterface<OverconstrainedError>>(OverconstrainedError::create(WTFMove(error->badConstraint), WTFMove(error->message)));
+                return;
+            }
 
-        protectedThis->m_constraints = valueOrDefault(constraints);
-        promise.resolve();
+            protectedThis->m_constraints = valueOrDefault(constraints);
+            promise.resolve();
+        });
     });
 }
 
@@ -613,7 +615,8 @@ void MediaStreamTrack::trackEnded(MediaStreamTrackPrivate&)
         scriptExecutionContext()->addConsoleMessage(MessageSource::JS, MessageLevel::Error, "A MediaStreamTrack ended due to a capture failure"_s);
 
     // http://w3c.github.io/mediacapture-main/#life-cycle
-    // When a MediaStreamTrack track ends for any reason other than the stop() method being invoked, the User Agent must queue a task that runs the following steps:
+    // When a MediaStreamTrack track ends for any reason other than the stop() method being invoked, the User Agent must
+    // queue a task that runs the following steps:
     queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, muted = m_private->muted()] {
         // 1. If the track's readyState attribute has the value ended already, then abort these steps.
         if (!isAllowedToRunScript() || m_readyState == State::Ended)

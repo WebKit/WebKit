@@ -114,7 +114,7 @@ private:
 
     class DrawingState {
     public:
-        DrawingState(float baseFontSize)
+        explicit DrawingState(float baseFontSize)
             : m_baseFontSize(baseFontSize)
             , m_bipBopFontSize(baseFontSize * 2.5)
             , m_statsFontSize(baseFontSize * .5)
