@@ -59,7 +59,8 @@ ScrollingStatePluginScrollingNode::ScrollingStatePluginScrollingNode(
     bool mouseIsOverContentArea,
     MouseLocationState&& mouseLocationState,
     ScrollbarHoverState&& scrollbarHoverState,
-    ScrollbarEnabledState&& scrollbarEnabledState
+    ScrollbarEnabledState&& scrollbarEnabledState,
+    RequestedKeyboardScrollData&& scrollData
 ) : ScrollingStateScrollingNode(
     ScrollingNodeType::PluginScrolling,
     scrollingNodeID,
@@ -88,7 +89,7 @@ ScrollingStatePluginScrollingNode::ScrollingStatePluginScrollingNode(
     WTFMove(mouseLocationState),
     WTFMove(scrollbarHoverState),
     WTFMove(scrollbarEnabledState),
-    RequestedKeyboardScrollData { } // FIXME: This probably needs to be refactored so that this is a member of ScrollingStateFrameScrollingNode instead of ScrollingStateScrollingNode.
+    WTFMove(scrollData)
 )
 {
     ASSERT(isPluginScrollingNode());

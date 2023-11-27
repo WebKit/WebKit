@@ -61,6 +61,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
     MouseLocationState&& mouseLocationState,
     ScrollbarHoverState&& scrollbarHoverState,
     ScrollbarEnabledState&& scrollbarEnabledState,
+    RequestedKeyboardScrollData&& keyboardScrollData,
     float frameScaleFactor,
     EventTrackingRegions&& eventTrackingRegions,
     std::optional<PlatformLayerIdentifier> rootContentsLayer,
@@ -80,8 +81,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
     FloatPoint minLayoutViewportOrigin,
     FloatPoint maxLayoutViewportOrigin,
     std::optional<FloatSize> overrideVisualViewportSize,
-    bool overlayScrollbarsEnabled,
-    RequestedKeyboardScrollData&& keyboardScrollData
+    bool overlayScrollbarsEnabled
 ) : ScrollingStateScrollingNode(
     isMainFrame ? ScrollingNodeType::MainFrame : ScrollingNodeType::Subframe,
     scrollingNodeID,
@@ -111,17 +111,17 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
     WTFMove(scrollbarHoverState),
     WTFMove(scrollbarEnabledState),
     WTFMove(keyboardScrollData))
-, m_rootContentsLayer(rootContentsLayer.value_or(PlatformLayerIdentifier()))
-, m_counterScrollingLayer(counterScrollingLayer.value_or(PlatformLayerIdentifier()))
-, m_insetClipLayer(insetClipLayer.value_or(PlatformLayerIdentifier()))
-, m_contentShadowLayer(contentShadowLayer.value_or(PlatformLayerIdentifier()))
-, m_eventTrackingRegions(WTFMove(eventTrackingRegions))
-, m_layoutViewport(layoutViewport)
-, m_minLayoutViewportOrigin(minLayoutViewportOrigin)
-, m_maxLayoutViewportOrigin(maxLayoutViewportOrigin)
-, m_overrideVisualViewportSize(overrideVisualViewportSize)
-, m_frameScaleFactor(frameScaleFactor)
-, m_topContentInset(topContentInset)
+    , m_rootContentsLayer(rootContentsLayer.value_or(PlatformLayerIdentifier()))
+    , m_counterScrollingLayer(counterScrollingLayer.value_or(PlatformLayerIdentifier()))
+    , m_insetClipLayer(insetClipLayer.value_or(PlatformLayerIdentifier()))
+    , m_contentShadowLayer(contentShadowLayer.value_or(PlatformLayerIdentifier()))
+    , m_eventTrackingRegions(WTFMove(eventTrackingRegions))
+    , m_layoutViewport(layoutViewport)
+    , m_minLayoutViewportOrigin(minLayoutViewportOrigin)
+    , m_maxLayoutViewportOrigin(maxLayoutViewportOrigin)
+    , m_overrideVisualViewportSize(overrideVisualViewportSize)
+    , m_frameScaleFactor(frameScaleFactor)
+    , m_topContentInset(topContentInset)
     , m_headerHeight(headerHeight)
     , m_footerHeight(footerHeight)
     , m_behaviorForFixed(WTFMove(scrollBehaviorForFixedElements))
