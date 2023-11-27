@@ -242,9 +242,26 @@ JSObject* addErrorInfo(VM& vm, JSObject* error, int line, const SourceCode& sour
     // ErrorInstance to materialize whatever it needs to. There's a chance that we get passed some
     // other kind of object, which also has materializable properties. But this code is heuristic-ey
     // enough that if we're wrong in such corner cases, it's not the end of the world.
-    if (ErrorInstance* errorInstance = jsDynamicCast<ErrorInstance*>(error))
+    if (ErrorInstance* errorInstance = jsDynamicCast<ErrorInstance*>(error)) {
+#if USE(BUN_JSC_ADDITIONS)
+
+        if (line != -1) {
+            errorInstance->setLine(line);
+            errorInstance->setColumn(0);
+        }
+
+        if (!sourceURL.isEmpty()) {
+            errorInstance->setSourceURL(sourceURL);
+        }
+#endif
+
         errorInstance->materializeErrorInfoIfNeeded(vm);
-    
+
+#if USE(BUN_JSC_ADDITIONS)
+        return errorInstance;
+#endif
+    }
+
     // FIXME: This does not modify the column property, which confusingly continues to reflect
     // the column at which the exception was thrown.
     // https://bugs.webkit.org/show_bug.cgi?id=176673

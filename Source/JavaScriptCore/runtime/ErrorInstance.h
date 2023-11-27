@@ -86,6 +86,17 @@ public:
     bool isCatchableFromWasm() const { return m_catchableFromWasm; }
 #endif
 
+#if USE(BUN_JSC_ADDITIONS)
+    const String& sourceURL() const { return m_sourceURL; }
+    void setSourceURL(String sourceURL) { m_sourceURL = sourceURL; } 
+
+    unsigned line() const { return m_line; }
+    void setLine(unsigned line) { m_line = line; }
+
+    unsigned column() const { return m_column; }
+    void setColumn(unsigned column) { m_column = column; }
+#endif
+
     JS_EXPORT_PRIVATE String sanitizedToString(JSGlobalObject*);
     JS_EXPORT_PRIVATE String sanitizedMessageString(JSGlobalObject*);
     JS_EXPORT_PRIVATE String sanitizedNameString(JSGlobalObject*);
