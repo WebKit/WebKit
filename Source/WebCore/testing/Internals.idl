@@ -220,6 +220,65 @@ enum HEVCParameterCodec {
     unsigned short generalLevelIDC;
 };
 
+enum AV1ConfigurationProfile {
+    "Main",
+    "High",
+    "Professional"
+};
+
+enum AV1ConfigurationLevel {
+    "Level_2_0",
+    "Level_2_1",
+    "Level_2_2",
+    "Level_2_3",
+    "Level_3_0",
+    "Level_3_1",
+    "Level_3_2",
+    "Level_3_3",
+    "Level_4_0",
+    "Level_4_1",
+    "Level_4_2",
+    "Level_4_3",
+    "Level_5_0",
+    "Level_5_1",
+    "Level_5_2",
+    "Level_5_3",
+    "Level_6_0",
+    "Level_6_1",
+    "Level_6_2",
+    "Level_6_3",
+    "Level_7_0",
+    "Level_7_1",
+    "Level_7_2",
+    "Level_7_3"
+};
+
+enum AV1ConfigurationTier {
+    "Main",
+    "High"
+};
+
+enum AV1ConfigurationRange {
+    "VideoRange",
+    "FullRange"
+};
+
+[
+    JSGenerateToJSObject,
+] dictionary AV1CodecConfigurationRecord {
+    DOMString codecName;
+    AV1ConfigurationProfile profile;
+    AV1ConfigurationLevel level;
+    AV1ConfigurationTier tier;
+    octet bitDepth;
+    octet monochrome;
+    octet chromaSubsampling;
+    octet colorPrimaries;
+    octet transferCharacteristics;
+    octet matrixCoefficients;
+    AV1ConfigurationRange videoFullRangeFlag;
+};
+
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
@@ -1125,6 +1184,9 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     DoViParameterSet? parseDoViCodecParameters(DOMString codecParameters);
     DOMString createDoViCodecParametersString(DoViParameterSet parameters);
     VPCodecConfigurationRecord? parseVPCodecParameters(DOMString codecParameters);
+    AV1CodecConfigurationRecord? parseAV1CodecParameters(DOMString codecParameters);
+    DOMString createAV1CodecParametersString(AV1CodecConfigurationRecord parameters);
+    boolean validateAV1PerLevelConstraints(DOMString codecParameters, VideoConfiguration configuration);
 
     sequence<CookieData> getCookies();
 

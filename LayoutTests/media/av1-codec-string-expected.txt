@@ -1,0 +1,5 @@
+EXPECTED (internals.createAV1CodecParametersString(makeAV1ParameterSet("av01", "Main", "Level_2_1", "Main", 8, 0, 110, 1, 1, 1, "VideoRange")) == 'av01.0.01M.08') OK
+EXPECTED (internals.createAV1CodecParametersString(makeAV1ParameterSet("av01", "Main", "Level_3_0", "Main", 10, 0, 112, 9, 16, 9, "VideoRange")); == 'av01.0.04M.10.0.112.09.16.09.0') OK
+EXPECTED (internals.createAV1CodecParametersString(makeAV1ParameterSet("av01", "Professional", "Level_7_3", "High", 12, 0, 0, 22, 18, 14, "FullRange")); == 'av01.2.23H.12.0.000.22.18.14.1') OK
+END OF TEST
+
