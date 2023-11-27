@@ -154,7 +154,6 @@ std::optional<WebCore::AppHighlightRangeData> Coder<WebCore::AppHighlightRangeDa
 }
 #endif // ENABLE(APP_HIGHLIGHTS)
 
-#if ENABLE(SERVICE_WORKER)
 void Coder<WebCore::ImportedScriptAttributes>::encodeForPersistence(Encoder& encoder, const WebCore::ImportedScriptAttributes& instance)
 {
     encoder << instance.responseURL << instance.mimeType;
@@ -212,7 +211,6 @@ std::optional<WebCore::ImageResource> Coder<WebCore::ImageResource>::decodeForPe
         WTFMove(*label)
     } };
 }
-#endif
 
 void Coder<WebCore::ResourceRequest>::encodeForPersistence(Encoder& encoder, const WebCore::ResourceRequest& instance)
 {
@@ -604,7 +602,6 @@ std::optional<WebCore::CertificateInfo> Coder<WebCore::CertificateInfo>::decodeF
 #endif
 
 // FIXME: Move persistent coder implementations here and generate IPC coders for these structures.
-#if ENABLE(SERVICE_WORKER)
 void Coder<WebCore::NavigationPreloadState>::encodeForPersistence(Encoder& encoder, const WebCore::NavigationPreloadState& instance)
 {
     encoder << instance.enabled;
@@ -624,7 +621,6 @@ std::optional<WebCore::NavigationPreloadState> Coder<WebCore::NavigationPreloadS
         return { };
     return { { *enabled, WTFMove(*headerValue) } };
 }
-#endif
 
 void Coder<WebCore::CrossOriginEmbedderPolicy>::encodeForPersistence(Encoder& encoder, const WebCore::CrossOriginEmbedderPolicy& instance)
 {

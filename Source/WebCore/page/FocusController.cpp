@@ -457,27 +457,23 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
         oldFrameView->stopKeyboardScrollAnimation();
         oldFrame->selection().setFocused(false);
         oldFrame->document()->dispatchWindowEvent(Event::create(eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No));
-#if ENABLE(SERVICE_WORKER)
         Frame* frame = oldFrame.get();
         do {
             if (auto* localFrame = dynamicDowncast<LocalFrame>(frame))
                 localFrame->document()->updateServiceWorkerClientData();
             frame = frame->tree().parent();
         } while (frame);
-#endif
     }
 
     if (newFrame && newFrame->view() && isFocused()) {
         newFrame->selection().setFocused(true);
         newFrame->document()->dispatchWindowEvent(Event::create(eventNames().focusEvent, Event::CanBubble::No, Event::IsCancelable::No));
-#if ENABLE(SERVICE_WORKER)
         Frame* frame = newFrame.get();
         do {
             if (auto* localFrame = dynamicDowncast<LocalFrame>(frame))
                 localFrame->document()->updateServiceWorkerClientData();
             frame = frame->tree().parent();
         } while (frame);
-#endif
     }
 
     if (broadcast == BroadcastFocusedFrame::Yes)

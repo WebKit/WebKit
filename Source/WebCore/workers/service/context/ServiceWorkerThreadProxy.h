@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "CacheStorageConnection.h"
 #include "Document.h"
 #include "FetchIdentifier.h"
@@ -140,5 +138,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

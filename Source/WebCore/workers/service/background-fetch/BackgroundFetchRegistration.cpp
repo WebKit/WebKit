@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BackgroundFetchRegistration.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchManager.h"
 #include "BackgroundFetchRecordInformation.h"
 #include "CacheQueryOptions.h"
@@ -249,7 +247,3 @@ bool BackgroundFetchRegistration::virtualHasPendingActivity() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)
-
-

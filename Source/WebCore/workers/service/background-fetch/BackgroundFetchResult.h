@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 namespace WebCore {
 
 enum class BackgroundFetchResult : uint8_t {
@@ -36,5 +34,3 @@ enum class BackgroundFetchResult : uint8_t {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

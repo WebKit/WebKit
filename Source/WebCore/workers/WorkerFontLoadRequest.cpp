@@ -66,10 +66,8 @@ void WorkerFontLoadRequest::load(WorkerGlobalScope& workerGlobalScope)
     options.loadedFromOpaqueSource = m_loadedFromOpaqueSource;
 
     options.serviceWorkersMode = ServiceWorkersMode::All;
-#if ENABLE(SERVICE_WORKER)
     if (auto* activeServiceWorker = workerGlobalScope.activeServiceWorker())
         options.serviceWorkerRegistrationIdentifier = activeServiceWorker->registrationIdentifier();
-#endif
 
     WorkerThreadableLoader::loadResourceSynchronously(workerGlobalScope, WTFMove(request), *this, options);
 }

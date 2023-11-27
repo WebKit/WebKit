@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "ServiceWorkerDownloadTask.h"
@@ -127,6 +125,3 @@ private:
 }; // class WebSWServerToContextConnection
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)
-

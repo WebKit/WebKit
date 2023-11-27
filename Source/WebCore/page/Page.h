@@ -647,11 +647,9 @@ public:
 
     WEBCORE_EXPORT static Page* serviceWorkerPage(ScriptExecutionContextIdentifier);
 
-#if ENABLE(SERVICE_WORKER)
     // Service worker pages have an associated ServiceWorkerGlobalScope on the main thread.
     void setServiceWorkerGlobalScope(ServiceWorkerGlobalScope&);
     WEBCORE_EXPORT JSC::JSGlobalObject* serviceWorkerGlobalObject(DOMWrapperWorld&);
-#endif
 
     // Notifications when the Page starts and stops being presented via a native window.
     WEBCORE_EXPORT void setActivityState(OptionSet<ActivityState>);
@@ -1304,10 +1302,7 @@ private:
     Ref<BroadcastChannelRegistry> m_broadcastChannelRegistry;
     RefPtr<WheelEventTestMonitor> m_wheelEventTestMonitor;
     WeakHashSet<ActivityStateChangeObserver> m_activityStateChangeObservers;
-
-#if ENABLE(SERVICE_WORKER)
     WeakPtr<ServiceWorkerGlobalScope, WeakPtrImplWithEventTargetData> m_serviceWorkerGlobalScope;
-#endif
 
 #if ENABLE(RESOURCE_USAGE)
     std::unique_ptr<ResourceUsageOverlay> m_resourceUsageOverlay;

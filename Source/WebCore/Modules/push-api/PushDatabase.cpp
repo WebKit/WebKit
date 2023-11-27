@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PushDatabase.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Logging.h"
 #include "SQLValue.h"
 #include "SQLiteFileSystem.h"
@@ -845,5 +843,3 @@ void PushDatabase::setPushesEnabledForOrigin(const PushSubscriptionSetIdentifier
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

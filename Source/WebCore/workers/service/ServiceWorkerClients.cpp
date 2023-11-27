@@ -24,8 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SERVICE_WORKER)
 #include "ServiceWorkerClients.h"
 
 #include "JSDOMPromiseDeferred.h"
@@ -180,5 +178,3 @@ WebCoreOpaqueRoot root(ServiceWorkerClients* clients)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

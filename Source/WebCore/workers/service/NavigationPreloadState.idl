@@ -24,7 +24,6 @@
 */
 
 [
-    Conditional=SERVICE_WORKER,
     JSGenerateToJSObject,
 ]
 dictionary NavigationPreloadState {

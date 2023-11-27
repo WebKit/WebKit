@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SWScriptStorage.h"
 
-#if ENABLE(SERVICE_WORKER)
 #include "Logging.h"
 #include "ScriptBuffer.h"
 #include "ServiceWorkerRegistrationKey.h"
@@ -141,5 +140,3 @@ void SWScriptStorage::clear(const ServiceWorkerRegistrationKey& registrationKey)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

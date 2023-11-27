@@ -118,14 +118,12 @@ public:
     void setBackupExclusionPeriodForTesting(Seconds, CompletionHandler<void()>&&);
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     void dispatchTaskToBackgroundFetchManager(const WebCore::ClientOrigin&, Function<void(BackgroundFetchStoreManager*)>&&);
     void notifyBackgroundFetchChange(const String&, BackgroundFetchChange);
     void closeServiceWorkerRegistrationFiles(CompletionHandler<void()>&&);
     void clearServiceWorkerRegistrations(CompletionHandler<void()>&&);
     void importServiceWorkerRegistrations(CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerContextData>>)>&&);
     void updateServiceWorkerRegistrations(Vector<WebCore::ServiceWorkerContextData>&&, Vector<WebCore::ServiceWorkerRegistrationKey>&&, CompletionHandler<void(std::optional<Vector<WebCore::ServiceWorkerScripts>>)>&&);
-#endif // ENABLE(SERVICE_WORKER)
 
 private:
     NetworkStorageManager(NetworkProcess&, PAL::SessionID, Markable<WTF::UUID>, IPC::Connection::UniqueID, const String& path, const String& customLocalStoragePath, const String& customIDBStoragePath, const String& customCacheStoragePath, const String& customServiceWorkerStoragePath, uint64_t defaultOriginQuota, std::optional<double> originQuotaRatio, std::optional<double> totalQuotaRatio, std::optional<uint64_t> standardVolumeCapacity, std::optional<uint64_t> volumeCapacityOverride, UnifiedOriginStorageLevel);
@@ -218,11 +216,9 @@ private:
     void cacheStorageClearMemoryRepresentation(const WebCore::ClientOrigin&, CompletionHandler<void(std::optional<WebCore::DOMCacheEngine::Error>&&)>&&);
     void cacheStorageRepresentation(CompletionHandler<void(String&&)>&&);
 
-#if ENABLE(SERVICE_WORKER)
     bool shouldManageServiceWorkerRegistrationsByOrigin();
     void migrateServiceWorkerRegistrationsToOrigins();
     Vector<WebCore::ServiceWorkerScripts> updateServiceWorkerRegistrationsByOrigin(Vector<WebCore::ServiceWorkerContextData>&&, Vector<WebCore::ServiceWorkerRegistrationKey>&&);
-#endif
 
     void spaceGrantedForOrigin(const WebCore::ClientOrigin&, uint64_t amount);
     void prepareForEviction();
@@ -281,9 +277,7 @@ private:
 #if PLATFORM(IOS_FAMILY)
     Seconds m_backupExclusionPeriod;
 #endif
-#if ENABLE(SERVICE_WORKER)
     std::unique_ptr<ServiceWorkerStorageManager> m_sharedServiceWorkerStorageManager WTF_GUARDED_BY_CAPABILITY(workQueue());
-#endif
     HashMap<WebCore::ClientOrigin, WallTime> m_lastModificationTimes WTF_GUARDED_BY_CAPABILITY(workQueue());
 };
 

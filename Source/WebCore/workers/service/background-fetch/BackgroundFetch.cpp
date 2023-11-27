@@ -26,8 +26,6 @@
 #include "config.h"
 #include "BackgroundFetch.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchRecordInformation.h"
 #include "CacheQueryOptions.h"
@@ -602,5 +600,3 @@ std::unique_ptr<BackgroundFetch> BackgroundFetch::createFromStore(std::span<cons
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

@@ -415,13 +415,11 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
     bool isMainFrameNavigation = resourceLoader.frame() && resourceLoader.frame()->isMainFrame() && resourceLoader.options().mode == FetchOptions::Mode::Navigate;
     addParametersShared(frame, loadParameters, isMainFrameNavigation);
 
-#if ENABLE(SERVICE_WORKER)
     loadParameters.serviceWorkersMode = resourceLoader.options().loadedFromOpaqueSource == LoadedFromOpaqueSource::No ? resourceLoader.options().serviceWorkersMode : ServiceWorkersMode::None;
     loadParameters.serviceWorkerRegistrationIdentifier = resourceLoader.options().serviceWorkerRegistrationIdentifier;
     loadParameters.httpHeadersToKeep = resourceLoader.options().httpHeadersToKeep;
     if (resourceLoader.options().navigationPreloadIdentifier)
         loadParameters.navigationPreloadIdentifier = resourceLoader.options().navigationPreloadIdentifier;
-#endif
 
     auto* document = frame ? frame->document() : nullptr;
     if (resourceLoader.options().cspResponseHeaders)

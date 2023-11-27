@@ -70,9 +70,7 @@ const OptionSet<WebsiteDataType>& WebResourceLoadStatisticsStore::monitoredDataT
         WebsiteDataType::OfflineWebApplicationCache,
         WebsiteDataType::SearchFieldRecentSearches,
         WebsiteDataType::SessionStorage,
-#if ENABLE(SERVICE_WORKER)
         WebsiteDataType::ServiceWorkerRegistrations,
-#endif
         WebsiteDataType::FileSystem,
     }));
 

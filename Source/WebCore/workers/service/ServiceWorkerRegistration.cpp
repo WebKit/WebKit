@@ -26,7 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerRegistration.h"
 
-#if ENABLE(SERVICE_WORKER)
 #include "CookieStoreManager.h"
 #include "Document.h"
 #include "Event.h"
@@ -362,5 +361,3 @@ CookieStoreManager& ServiceWorkerRegistration::cookies()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

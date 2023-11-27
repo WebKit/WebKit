@@ -220,9 +220,7 @@ void Worker::notifyFinished()
 
     m_didStartWorkerGlobalScope = true;
     WorkerInitializationData initializationData {
-#if ENABLE(SERVICE_WORKER)
         m_scriptLoader->takeServiceWorkerData(),
-#endif
         m_clientIdentifier,
         context->userAgent(m_scriptLoader->responseURL())
     };

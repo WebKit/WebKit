@@ -118,6 +118,7 @@ class MockPageOverlay;
 class MockPaymentCoordinator;
 class NodeList;
 class Page;
+class PushSubscription;
 class RTCPeerConnection;
 class ReadableStream;
 class Range;
@@ -125,6 +126,7 @@ class RenderedDocumentMarker;
 class SVGSVGElement;
 class ScrollableArea;
 class SerializedScriptValue;
+class ServiceWorker;
 class SharedBuffer;
 class SourceBuffer;
 class SpeechSynthesisUtterance;
@@ -150,11 +152,6 @@ class MediaKeySession;
 #if ENABLE(VIDEO)
 class TextTrackCueGeneric;
 class VTTCue;
-#endif
-
-#if ENABLE(SERVICE_WORKER)
-class PushSubscription;
-class ServiceWorker;
 #endif
 
 #if ENABLE(WEB_RTC)
@@ -1014,12 +1011,10 @@ public:
 
     void setConsoleMessageListener(RefPtr<StringCallback>&&);
 
-#if ENABLE(SERVICE_WORKER)
     using HasRegistrationPromise = DOMPromiseDeferred<IDLBoolean>;
     void hasServiceWorkerRegistration(const String& clientURL, HasRegistrationPromise&&);
     void terminateServiceWorker(ServiceWorker&, DOMPromiseDeferred<void>&&);
     void whenServiceWorkerIsTerminated(ServiceWorker&, DOMPromiseDeferred<void>&&);
-#endif
 
 #if ENABLE(APPLE_PAY)
     MockPaymentCoordinator& mockPaymentCoordinator(Document&);
@@ -1385,9 +1380,7 @@ public:
 
     void retainTextIteratorForDocumentContent();
 
-#if ENABLE(SERVICE_WORKER)
     RefPtr<PushSubscription> createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth);
-#endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
     using ModelInlinePreviewUUIDsPromise = DOMPromiseDeferred<IDLSequence<IDLDOMString>>;

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebSWServerToContextConnection.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "FormDataReference.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
@@ -391,5 +389,3 @@ void WebSWServerToContextConnection::setInspectable(ServiceWorkerIsInspectable i
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

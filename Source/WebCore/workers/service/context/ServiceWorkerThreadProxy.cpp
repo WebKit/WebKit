@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerThreadProxy.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BadgeClient.h"
 #include "CacheStorageProvider.h"
 #include "DocumentLoader.h"
@@ -503,5 +501,3 @@ void ServiceWorkerThreadProxy::setInspectable(bool inspectable)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

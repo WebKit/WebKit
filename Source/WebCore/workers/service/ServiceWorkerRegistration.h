@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ActiveDOMObject.h"
 #include "CookieStoreManager.h"
 #include "EventTarget.h"
@@ -138,5 +136,3 @@ private:
 WebCoreOpaqueRoot root(ServiceWorkerRegistration*);
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

@@ -792,16 +792,11 @@ JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
 
 JSGlobalContextRef WebFrame::jsContextForServiceWorkerWorld(DOMWrapperWorld& world)
 {
-#if ENABLE(SERVICE_WORKER)
     RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
     if (!localFrame || !localFrame->page())
         return nullptr;
 
     return toGlobalRef(localFrame->page()->serviceWorkerGlobalObject(world));
-#else
-    UNUSED_PARAM(world);
-    return nullptr;
-#endif
 }
 
 JSGlobalContextRef WebFrame::jsContextForServiceWorkerWorld(InjectedBundleScriptWorld* world)

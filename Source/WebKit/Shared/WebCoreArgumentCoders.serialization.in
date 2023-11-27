@@ -245,14 +245,12 @@ enum class WebCore::PermissionState : uint8_t {
     Prompt
 };
 
-#if ENABLE(SERVICE_WORKER)
 header: <WebCore/PushPermissionState.h>
 enum class WebCore::PushPermissionState : uint8_t {
     Denied,
     Granted,
     Prompt
 };
-#endif // ENABLE(SERVICE_WORKER)
 
 header: <WebCore/Autofill.h>
 enum class WebCore::AutofillFieldName : uint8_t {
@@ -1381,7 +1379,6 @@ struct WebCore::PermissionDescriptor {
     WebCore::PermissionName name;
 }
 
-#if ENABLE(SERVICE_WORKER)
 struct WebCore::PushSubscriptionData {
     WebCore::PushSubscriptionIdentifier identifier;
     String endpoint;
@@ -1390,7 +1387,6 @@ struct WebCore::PushSubscriptionData {
     Vector<uint8_t> clientECDHPublicKey;
     Vector<uint8_t> sharedAuthenticationSecret;
 };
-#endif
 
 [RefCounted] class WebCore::DeprecationReportBody {
     String id()
@@ -1636,12 +1632,10 @@ struct WebCore::VideoFrameMetadata {
 };
 #endif // ENABLE(VIDEO)
 
-#if ENABLE(SERVICE_WORKER)
 struct WebCore::NavigationPreloadState {
     bool enabled;
     String headerValue;
 };
-#endif // ENABLE(SERVICE_WORKER)
 
 enum class WebCore::RenderingMode : bool
 
@@ -3912,7 +3906,6 @@ header: <WebCore/TextManipulationController.h>
     WebCore::TextManipulationControllerManipulationFailure::Type type;
 };
 
-#if ENABLE(SERVICE_WORKER)
 struct WebCore::BackgroundFetchInformation {
     WebCore::ServiceWorkerRegistrationIdentifier registrationIdentifier;
     String identifier;
@@ -3924,9 +3917,7 @@ struct WebCore::BackgroundFetchInformation {
     WebCore::BackgroundFetchFailureReason failureReason;
     bool recordsAvailable;
 };
-#endif
 
-#if ENABLE(SERVICE_WORKER)
 struct WebCore::BackgroundFetchRequest {
     WebCore::ResourceRequest internalRequest;
     WebCore::FetchOptions options;
@@ -3935,9 +3926,7 @@ struct WebCore::BackgroundFetchRequest {
     String referrer;
     Markable<WebCore::ContentSecurityPolicyResponseHeaders, WebCore::ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
 };
-#endif
 
-#if ENABLE(SERVICE_WORKER)
 struct WebCore::BackgroundFetchRecordInformation {
     WebCore::BackgroundFetchRecordIdentifier identifier;
     WebCore::ResourceRequest internalRequest;
@@ -3946,25 +3935,19 @@ struct WebCore::BackgroundFetchRecordInformation {
     WebCore::HTTPHeaderMap httpHeaders;
     String referrer;
 };
-#endif
 
-#if ENABLE(SERVICE_WORKER)
 struct WebCore::BackgroundFetchOptions {
     Vector<WebCore::ImageResource> icons;
     String title;
     uint64_t downloadTotal;
 };
-#endif
 
-
-#if ENABLE(SERVICE_WORKER)
 struct WebCore::ImageResource {
     String src;
     String sizes;
     String type;
     String label;
 };
-#endif // ENABLE(SERVICE_WORKER)
 
 using WebCore::SharedStringHash = uint32_t
 
@@ -4640,8 +4623,6 @@ header: <WebCore/DragData.h>
     ShowCorrectionPanel,
 };
 
-#if ENABLE(SERVICE_WORKER)
-
 enum class WebCore::ServiceWorkerClientType : uint8_t {
     Window,
     Worker,
@@ -4739,8 +4720,6 @@ struct WebCore::ServiceWorkerJobData {
 
     [Validator='( type == WebCore::ServiceWorkerJobType::Register && registrationOptions->has_value()) || (type != WebCore::ServiceWorkerJobType::Register && !registrationOptions->has_value() )'] std::optional<WebCore::ServiceWorkerRegistrationOptions> registrationOptions;
 };
-
-#endif //ENABLE(SERVICE_WORKER)
 
 struct WebCore::EventInit {
     bool bubbles;
@@ -5383,9 +5362,7 @@ struct WebCore::WorkerOptions {
 };
 
 struct WebCore::WorkerInitializationData {
-#if ENABLE(SERVICE_WORKER)
     std::optional<WebCore::ServiceWorkerData> serviceWorkerData;
-#endif
     std::optional<WebCore::ScriptExecutionContextIdentifier> clientIdentifier;
     String userAgent;
 };
@@ -5405,8 +5382,6 @@ struct WebCore::SharedWorkerKey {
     URL url;
     String name;
 };
-
-#if ENABLE(SERVICE_WORKER)
 
 struct WebCore::ServiceWorkerRegistrationOptions {
     String scope;
@@ -5459,8 +5434,6 @@ struct WebCore::ServiceWorkerContextData {
     std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier;
     WebCore::NavigationPreloadState navigationPreloadState;
 };
-
-#endif
 
 #if HAVE(SCREEN_CAPTURE_KIT)
 header: <WebCore/DisplayCapturePromptType.h>
@@ -6643,7 +6616,6 @@ enum class WebCore::ExceptionCode : uint8_t {
     ExistingExceptionError,
 }
 
-#if ENABLE(SERVICE_WORKER)
 header: <WebCore/BackgroundFetchFailureReason.h>
 enum class WebCore::BackgroundFetchFailureReason : uint8_t {
     EmptyString,
@@ -6653,16 +6625,13 @@ enum class WebCore::BackgroundFetchFailureReason : uint8_t {
     QuotaExceeded,
     DownloadTotalExceeded
 };
-#endif
 
-#if ENABLE(SERVICE_WORKER)
 header: <WebCore/BackgroundFetchResult.h>
 enum class WebCore::BackgroundFetchResult : uint8_t {
     EmptyString,
     Success,
     Failure
 };
-#endif
 
 enum class WebCore::ResourceErrorBaseType : uint8_t {
      Null,

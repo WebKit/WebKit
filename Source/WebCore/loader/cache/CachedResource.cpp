@@ -480,12 +480,10 @@ void CachedResource::setResponse(const ResourceResponse& newResponse)
     mutableResponse() = newResponse;
     m_varyingHeaderValues = collectVaryingRequestHeaders(cookieJar(), m_resourceRequest, response());
 
-#if ENABLE(SERVICE_WORKER)
     if (response().source() == ResourceResponse::Source::ServiceWorker) {
         m_responseTainting = response().tainting();
         return;
     }
-#endif
     mutableResponse().setRedirected(m_redirectChainCacheStatus.status != RedirectChainCacheStatus::Status::NoRedirection);
     if ((response().tainting() == ResourceResponse::Tainting::Basic || response().tainting() == ResourceResponse::Tainting::Cors) && !response().url().protocolIsData())
         mutableResponse().setTainting(m_responseTainting);

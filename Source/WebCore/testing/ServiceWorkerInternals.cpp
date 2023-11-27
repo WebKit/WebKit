@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerInternals.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "FetchEvent.h"
 #include "FetchRequest.h"
 #include "JSDOMPromiseDeferred.h"
@@ -218,5 +216,3 @@ void ServiceWorkerInternals:: logReportedConsoleMessage(ScriptExecutionContext& 
 }
 
 } // namespace WebCore
-
-#endif

@@ -100,6 +100,7 @@ namespace WebCore {
 class ApplicationCacheStorage;
 class CPUMonitor;
 class PageGroup;
+class SecurityOriginData;
 class UserGestureToken;
 
 enum class EventMakesGamepadsVisible : bool;
@@ -111,11 +112,7 @@ struct MessagePortIdentifier;
 struct MessageWithMessagePorts;
 struct MockMediaDevice;
 struct PrewarmInformation;
-class SecurityOriginData;
-
-#if ENABLE(SERVICE_WORKER)
 struct ServiceWorkerContextData;
-#endif
 }
 
 namespace WebKit {
@@ -379,10 +376,8 @@ public:
 
     void messagesAvailableForPort(const WebCore::MessagePortIdentifier&);
 
-#if ENABLE(SERVICE_WORKER)
     void addServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier);
     bool removeServiceWorkerRegistration(WebCore::ServiceWorkerRegistrationIdentifier);
-#endif
 
     void grantAccessToAssetServices(Vector<WebKit::SandboxExtension::Handle>&& assetServicesHandles);
     void revokeAccessToAssetServices();
@@ -793,9 +788,7 @@ private:
     float m_backlightLevel { 0 };
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     HashCountedSet<WebCore::ServiceWorkerRegistrationIdentifier> m_swRegistrationCounts;
-#endif
 
     HashMap<StorageAreaMapIdentifier, WeakPtr<StorageAreaMap>> m_storageAreaMaps;
     

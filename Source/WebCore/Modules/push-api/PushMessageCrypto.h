@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "PushCrypto.h"
 #include <span>
 #include <wtf/Forward.h>
@@ -48,5 +46,3 @@ WEBCORE_EXPORT std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const Clie
 WEBCORE_EXPORT std::optional<Vector<uint8_t>> decryptAESGCMPayload(const ClientKeys&, std::span<const uint8_t> serverP256DHPublicKey, std::span<const uint8_t> salt, std::span<const uint8_t> payload);
 
 } // namespace WebCore::PushCrypto
-
-#endif // ENABLE(SERVICE_WORKER)

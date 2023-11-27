@@ -592,12 +592,10 @@ void WorkerOrWorkletScriptController::initScript()
         return;
     }
 
-#if ENABLE(SERVICE_WORKER)
     if (is<ServiceWorkerGlobalScope>(m_globalScope)) {
         initScriptWithSubclass<JSServiceWorkerGlobalScopePrototype, JSServiceWorkerGlobalScope, ServiceWorkerGlobalScope>();
         return;
     }
-#endif
 
 #if ENABLE(CSS_PAINTING_API)
     if (is<PaintWorkletGlobalScope>(m_globalScope)) {

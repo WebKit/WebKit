@@ -1,7 +1,6 @@
 {
     "domain": "ServiceWorker",
     "description": "Actions and events related to the inspected service worker.",
-    "condition": "defined(ENABLE_SERVICE_WORKER) && ENABLE_SERVICE_WORKER",
     "debuggableTypes": ["service-worker"],
     "targetTypes": ["service-worker"],
     "types": [

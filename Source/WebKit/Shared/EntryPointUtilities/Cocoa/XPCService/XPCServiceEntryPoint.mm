@@ -120,14 +120,12 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
     if (!inspectorProcess.isEmpty())
         extraInitializationData.add("inspector-process"_s, inspectorProcess);
 
-#if ENABLE(SERVICE_WORKER)
     auto serviceWorkerProcess = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "service-worker-process"));
     if (!serviceWorkerProcess.isEmpty())
         extraInitializationData.add("service-worker-process"_s, WTFMove(serviceWorkerProcess));
     auto registrableDomain = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "registrable-domain"));
     if (!registrableDomain.isEmpty())
         extraInitializationData.add("registrable-domain"_s, WTFMove(registrableDomain));
-#endif
 
     auto isPrewarmedProcess = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "is-prewarmed"));
     if (!isPrewarmedProcess.isEmpty())

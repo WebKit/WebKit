@@ -40,6 +40,7 @@
 #include "ModuleFetchParameters.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "ShadowRealmGlobalScope.h"
 #include "SubresourceIntegrity.h"
 #include "WebAssemblyScriptSourceCode.h"
@@ -61,10 +62,6 @@
 #include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/SourceProvider.h>
 #include <JavaScriptCore/Symbol.h>
-
-#if ENABLE(SERVICE_WORKER)
-#include "ServiceWorkerGlobalScope.h"
-#endif
 
 namespace WebCore {
 
@@ -299,17 +296,6 @@ static JSC::JSInternalPromise* rejectPromise(ScriptExecutionContext& context, JS
     return jsPromise;
 }
 
-static bool isWorkletOrServiceWorker(ScriptExecutionContext& context)
-{
-    if (is<WorkletGlobalScope>(context))
-        return true;
-#if ENABLE(SERVICE_WORKER)
-    if (is<ServiceWorkerGlobalScope>(context))
-        return true;
-#endif
-    return false;
-}
-
 JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* jsGlobalObject, JSC::JSModuleLoader*, JSC::JSString* moduleName, JSC::JSValue parametersValue, const JSC::SourceOrigin& sourceOrigin)
 {
     JSC::VM& vm = jsGlobalObject->vm();
@@ -321,7 +307,7 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
 
     // https://html.spec.whatwg.org/multipage/webappapis.html#hostimportmoduledynamically(referencingscriptormodule,-specifier,-promisecapability)
     // If settings object's global object implements WorkletGlobalScope or ServiceWorkerGlobalScope, then:
-    if (isWorkletOrServiceWorker(*m_context)) {
+    if (is<WorkletGlobalScope>(*m_context) || is<ServiceWorkerGlobalScope>(*m_context)) {
         scope.release();
         return rejectPromise(*m_context, globalObject, ExceptionCode::TypeError, "Dynamic-import is not available in Worklets or ServiceWorkers"_s);
     }
@@ -586,10 +572,8 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
                     static_cast<WorkerScriptFetcher&>(loader.scriptFetcher()).setReferrerPolicy(loader.referrerPolicy());
             }
             responseURL = canonicalizeAndRegisterResponseURL(responseURL, workerScriptLoader.isRedirected(), workerScriptLoader.responseSource());
-#if ENABLE(SERVICE_WORKER)
             if (is<ServiceWorkerGlobalScope>(*m_context))
                 downcast<ServiceWorkerGlobalScope>(*m_context).setScriptResource(sourceURL, ServiceWorkerContextData::ImportedScript { loader.script(), responseURL, loader.responseMIMEType() });
-#endif
         }
         m_requestURLToResponseURLMap.add(sourceURL.string(), responseURL);
 

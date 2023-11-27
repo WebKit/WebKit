@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerContainer.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ContentSecurityPolicy.h"
 #include "DOMPromiseProxy.h"
 #include "DedicatedWorkerGlobalScope.h"
@@ -748,5 +746,3 @@ void ServiceWorkerContainer::getNavigationPreloadState(ServiceWorkerRegistration
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

@@ -2124,11 +2124,7 @@ public:
     bool acceptsFirstMouse(int eventNumber, const WebMouseEvent&);
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     bool isServiceWorkerPage() const { return m_isServiceWorkerPage; }
-#else
-    bool isServiceWorkerPage() const { return false; }
-#endif
 
 #if PLATFORM(IOS_FAMILY)
     void dispatchWheelEventWithoutScrolling(const WebWheelEvent&, CompletionHandler<void(bool)>&&);
@@ -2212,9 +2208,7 @@ public:
 
     void requestCookieConsent(CompletionHandler<void(WebCore::CookieConsentDecisionResult)>&&);
 
-#if ENABLE(SERVICE_WORKER)
     void setServiceWorkerOpenWindowCompletionCallback(CompletionHandler<void(std::optional<WebCore::PageIdentifier>)>&&);
-#endif
 
 #if ENABLE(VIDEO)
     void beginTextRecognitionForVideoInElementFullScreen(WebCore::MediaPlayerIdentifier, WebCore::FloatRect videoBounds);
@@ -2797,9 +2791,7 @@ private:
     void resetSpeechSynthesizer();
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     void didFinishServiceWorkerPageRegistration(bool success);
-#endif
     void callLoadCompletionHandlersIfNecessary(bool success);
 
 #if PLATFORM(IOS_FAMILY)
@@ -3267,9 +3259,7 @@ private:
 
     bool m_needsFontAttributes { false };
     bool m_mayHaveUniversalFileReadSandboxExtension { false };
-#if ENABLE(SERVICE_WORKER)
     bool m_isServiceWorkerPage { false };
-#endif
 
     std::unique_ptr<ProvisionalPageProxy> m_provisionalPage;
     std::unique_ptr<SuspendedPageProxy> m_suspendedPageKeptToPreventFlashing;

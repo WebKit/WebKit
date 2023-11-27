@@ -6042,7 +6042,6 @@ bool Internals::audioSessionActive() const
 
 void Internals::storeRegistrationsOnDisk(DOMPromiseDeferred<void>&& promise)
 {
-#if ENABLE(SERVICE_WORKER)
     if (!contextDocument())
         return;
 
@@ -6050,9 +6049,6 @@ void Internals::storeRegistrationsOnDisk(DOMPromiseDeferred<void>&& promise)
     connection.storeRegistrationsOnDiskForTesting([promise = WTFMove(promise)]() mutable {
         promise.resolve();
     });
-#else
-    promise.resolve();
-#endif
 }
 
 void Internals::sendH2Ping(String url, DOMPromiseDeferred<IDLDouble>&& promise)
@@ -6151,7 +6147,6 @@ const String& Internals::responseNetworkLoadMetricsProtocol(const FetchResponse&
     return response.networkLoadMetrics().protocol;
 }
 
-#if ENABLE(SERVICE_WORKER)
 void Internals::hasServiceWorkerRegistration(const String& clientURL, HasRegistrationPromise&& promise)
 {
     if (!contextDocument())
@@ -6177,7 +6172,6 @@ void Internals::whenServiceWorkerIsTerminated(ServiceWorker& worker, DOMPromiseD
         promise.resolve();
     });
 }
-#endif
 
 #if ENABLE(APPLE_PAY)
 MockPaymentCoordinator& Internals::mockPaymentCoordinator(Document& document)
@@ -7112,7 +7106,6 @@ void Internals::retainTextIteratorForDocumentContent()
     m_textIterator = makeUnique<TextIterator>(range);
 }
 
-#if ENABLE(SERVICE_WORKER)
 RefPtr<PushSubscription> Internals::createPushSubscription(const String& endpoint, std::optional<EpochTimeStamp> expirationTime, const ArrayBuffer& serverVAPIDPublicKey, const ArrayBuffer& clientECDHPublicKey, const ArrayBuffer& auth)
 {
     auto myEndpoint = endpoint;
@@ -7122,7 +7115,6 @@ RefPtr<PushSubscription> Internals::createPushSubscription(const String& endpoin
 
     return PushSubscription::create(PushSubscriptionData { { }, WTFMove(myEndpoint), expirationTime, WTFMove(myServerVAPIDPublicKey), WTFMove(myClientECDHPublicKey), WTFMove(myAuth) });
 }
-#endif
 
 #if ENABLE(ARKIT_INLINE_PREVIEW_MAC)
 

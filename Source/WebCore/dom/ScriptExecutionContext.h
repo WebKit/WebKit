@@ -79,6 +79,8 @@ class PublicURLManager;
 class RejectedPromiseTracker;
 class RTCDataChannelRemoteHandlerConnection;
 class ResourceRequest;
+class ServiceWorker;
+class ServiceWorkerContainer;
 class SocketProvider;
 class WebCoreOpaqueRoot;
 enum class LoadedFromOpaqueSource : bool;
@@ -86,11 +88,6 @@ enum class TaskSource : uint8_t;
 
 #if ENABLE(NOTIFICATIONS)
 class NotificationClient;
-#endif
-
-#if ENABLE(SERVICE_WORKER)
-class ServiceWorker;
-class ServiceWorkerContainer;
 #endif
 
 namespace IDBClient {
@@ -293,7 +290,6 @@ public:
     void setDomainForCachePartition(String&& domain) { m_domainForCachePartition = WTFMove(domain); }
 
     bool allowsMediaDevices() const;
-#if ENABLE(SERVICE_WORKER)
     ServiceWorker* activeServiceWorker() const;
     void setActiveServiceWorker(RefPtr<ServiceWorker>&&);
 
@@ -304,7 +300,6 @@ public:
     ServiceWorkerContainer* serviceWorkerContainer();
     ServiceWorkerContainer* ensureServiceWorkerContainer();
     virtual void updateServiceWorkerClientData() { ASSERT_NOT_REACHED(); }
-#endif
     WEBCORE_EXPORT static bool postTaskTo(ScriptExecutionContextIdentifier, Task&&);
     WEBCORE_EXPORT static bool postTaskForModeToWorkerOrWorklet(ScriptExecutionContextIdentifier, Task&&, const String&);
     WEBCORE_EXPORT static bool ensureOnContextThread(ScriptExecutionContextIdentifier, Task&&);
@@ -407,10 +402,8 @@ private:
     bool m_inScriptExecutionContextDestructor { false };
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     RefPtr<ServiceWorker> m_activeServiceWorker;
     HashMap<ServiceWorkerIdentifier, ServiceWorker*> m_serviceWorkers;
-#endif
 
     String m_domainForCachePartition;
     mutable ScriptExecutionContextIdentifier m_identifier;

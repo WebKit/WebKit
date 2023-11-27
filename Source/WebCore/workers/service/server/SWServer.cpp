@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SWServer.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchEngine.h"
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchOptions.h"
@@ -1807,5 +1805,3 @@ void SWServer::Connection::retrieveRecordResponseBody(BackgroundFetchRecordIdent
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

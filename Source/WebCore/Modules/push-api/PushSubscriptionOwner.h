@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "JSDOMPromiseDeferredForward.h"
 #include "PushSubscription.h"
 
@@ -52,5 +50,3 @@ public:
 };
 
 }
-#endif // ENABLE(SERVICE_WORKER)
-

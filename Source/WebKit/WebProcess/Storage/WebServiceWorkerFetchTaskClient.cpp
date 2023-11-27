@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebServiceWorkerFetchTaskClient.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "FormDataReference.h"
 #include "Logging.h"
 #include "ServiceWorkerDownloadTaskMessages.h"
@@ -309,5 +307,3 @@ void WebServiceWorkerFetchTaskClient::cleanup()
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

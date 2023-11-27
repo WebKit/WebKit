@@ -705,7 +705,6 @@ BackgroundFetchAPIEnabled:
   humanReadableName: "Enable background-fetch API"
   humanReadableDescription: "Enable background-fetch API"
   exposed: [ WebKit ]
-  condition: ENABLE(SERVICE_WORKER)
   defaultValue:
     WebCore:
       default: false
@@ -1832,7 +1831,6 @@ CookieStoreAPIExtendedAttributesEnabled:
 CookieStoreAPIServiceWorkerEnabled:
   type: bool
   category: dom
-  condition: ENABLE(SERVICE_WORKER)
   status: testable
   humanReadableName: "Cookie Store API for Service Workers"
   humanReadableDescription: "Enable Cookie Store API for Service Workers"
@@ -5180,7 +5178,6 @@ PushAPIEnabled:
   type: bool
   status: embedder
   category: dom
-  condition: ENABLE(SERVICE_WORKER)
   humanReadableName: "Push API"
   humanReadableDescription: "Enable Push API"
   defaultValue:
@@ -5787,7 +5784,6 @@ ServiceWorkerEntitlementDisabledForTesting:
   status: embedder
   webcoreBinding: none
   exposed: [ WebKit ]
-  condition: ENABLE(SERVICE_WORKER)
   defaultValue:
     WebKit:
       default: false
@@ -5798,7 +5794,6 @@ ServiceWorkerNavigationPreloadEnabled:
   category: networking
   humanReadableName: "Service Worker Navigation Preload"
   humanReadableDescription: "Enable Service Worker Navigation Preload API"
-  condition: ENABLE(SERVICE_WORKER)
   defaultValue:
     WebCore:
       default: true
@@ -5813,7 +5808,6 @@ ServiceWorkersEnabled:
   category: dom
   humanReadableName: "Service Workers"
   humanReadableDescription: "Enable Service Workers"
-  condition: ENABLE(SERVICE_WORKER)
   exposed: [ WebKit ]
   defaultValue:
     WebKitLegacy:
@@ -5829,7 +5823,6 @@ ServiceWorkersUserGestureEnabled:
   category: dom
   humanReadableName: "Validate UserGesture requirements in Service Workers"
   humanReadableDescription: "Validate UserGesture requirements in Service Workers"
-  condition: ENABLE(SERVICE_WORKER)
   defaultValue:
     WebKitLegacy:
       default: false

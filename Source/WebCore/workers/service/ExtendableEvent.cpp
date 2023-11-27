@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ExtendableEvent.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "JSDOMGlobalObject.h"
 #include "JSDOMPromise.h"
 #include "ScriptExecutionContext.h"
@@ -130,5 +128,3 @@ void ExtendableEvent::whenAllExtendLifetimePromisesAreSettled(Function<void(Hash
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

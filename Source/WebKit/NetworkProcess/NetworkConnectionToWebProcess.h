@@ -198,11 +198,9 @@ public:
 
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
-#if ENABLE(SERVICE_WORKER)
     void serviceWorkerServerToContextConnectionNoLongerNeeded();
     WebSWServerConnection* swConnection();
     std::unique_ptr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&, const WebCore::ResourceRequest&);
-#endif
     void sharedWorkerServerToContextConnectionIsNoLongerNeeded();
 
     WebSharedWorkerServerConnection* sharedWorkerConnection();
@@ -230,9 +228,7 @@ public:
     NetworkMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     WeakPtr<WebSWServerToContextConnection> swContextConnection() { return m_swContextConnection.get(); }
-#endif
 
 private:
     NetworkConnectionToWebProcess(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier);
@@ -297,12 +293,10 @@ private:
     void establishSharedWorkerServerConnection();
     void unregisterSharedWorkerConnection();
 
-#if ENABLE(SERVICE_WORKER)
     void establishSWServerConnection();
     void establishSWContextConnection(WebPageProxyIdentifier, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&&);
     void closeSWContextConnection();
     void unregisterSWConnection();
-#endif
 
     void establishSharedWorkerContextConnection(WebPageProxyIdentifier, WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
     void closeSharedWorkerContextConnection();
@@ -451,10 +445,8 @@ private:
 
     bool m_captureExtraNetworkLoadMetricsEnabled { false };
 
-#if ENABLE(SERVICE_WORKER)
     WeakPtr<WebSWServerConnection> m_swConnection;
     std::unique_ptr<WebSWServerToContextConnection> m_swContextConnection;
-#endif
     WeakPtr<WebSharedWorkerServerConnection> m_sharedWorkerConnection;
     std::unique_ptr<WebSharedWorkerServerToContextConnection> m_sharedWorkerContextConnection;
 

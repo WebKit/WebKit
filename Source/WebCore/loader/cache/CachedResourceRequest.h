@@ -113,11 +113,9 @@ public:
     static String splitFragmentIdentifierFromRequestURL(ResourceRequest&);
     static String acceptHeaderValueFromType(CachedResource::Type);
 
-#if ENABLE(SERVICE_WORKER)
     void setClientIdentifierIfNeeded(ScriptExecutionContextIdentifier);
     void setSelectedServiceWorkerRegistrationIdentifierIfNeeded(ServiceWorkerRegistrationIdentifier);
     void setNavigationServiceWorkerRegistrationData(const std::optional<ServiceWorkerRegistrationData>&);
-#endif
 
 private:
     ResourceRequest m_resourceRequest;

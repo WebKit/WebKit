@@ -28,8 +28,6 @@
 #include "ScriptBuffer.h"
 #include <wtf/URLHash.h>
 
-#if ENABLE(SERVICE_WORKER)
-
 namespace WebCore {
 
 struct ServiceWorkerImportedScript {
@@ -41,5 +39,3 @@ struct ServiceWorkerImportedScript {
     ServiceWorkerImportedScript isolatedCopy() && { return { WTFMove(script).isolatedCopy(), WTFMove(responseURL).isolatedCopy(), WTFMove(mimeType).isolatedCopy() }; }
 };
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

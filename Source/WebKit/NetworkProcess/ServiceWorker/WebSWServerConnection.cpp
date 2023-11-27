@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebSWServerConnection.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "DataReference.h"
 #include "FormDataReference.h"
 #include "Logging.h"
@@ -763,5 +761,3 @@ void WebSWServerConnection::retrieveRecordResponseBody(WebCore::BackgroundFetchR
 #undef CONNECTION_MESSAGE_CHECK
 #undef SWSERVERCONNECTION_RELEASE_LOG
 #undef SWSERVERCONNECTION_RELEASE_LOG_ERROR
-
-#endif // ENABLE(SERVICE_WORKER)

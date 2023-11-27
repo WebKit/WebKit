@@ -68,6 +68,7 @@
 #include "ImageBuffer.h"
 #include "InspectorInstrumentation.h"
 #include "JSNode.h"
+#include "JSServiceWorkerGlobalScope.h"
 #include "JSWindowProxy.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrameLoaderClient.h"
@@ -92,6 +93,7 @@
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScrollingCoordinator.h"
+#include "ServiceWorkerGlobalScope.h"
 #include "Settings.h"
 #include "StyleProperties.h"
 #include "StyleScope.h"
@@ -115,11 +117,6 @@
 
 #if ENABLE(DATA_DETECTION)
 #include "DataDetectionResultsStorage.h"
-#endif
-
-#if ENABLE(SERVICE_WORKER)
-#include "JSServiceWorkerGlobalScope.h"
-#include "ServiceWorkerGlobalScope.h"
 #endif
 
 #define FRAME_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - Frame::" fmt, this, ##__VA_ARGS__)
@@ -1216,10 +1213,8 @@ LocalFrame* LocalFrame::fromJSContext(JSContextRef context)
     JSC::JSGlobalObject* globalObjectObj = toJS(context);
     if (auto* window = JSC::jsDynamicCast<JSLocalDOMWindow*>(globalObjectObj))
         return window->wrapped().frame();
-#if ENABLE(SERVICE_WORKER)
     if (auto* serviceWorkerGlobalScope = JSC::jsDynamicCast<JSServiceWorkerGlobalScope*>(globalObjectObj))
         return serviceWorkerGlobalScope->wrapped().serviceWorkerPage() ? dynamicDowncast<LocalFrame>(serviceWorkerGlobalScope->wrapped().serviceWorkerPage()->mainFrame()) : nullptr;
-#endif
     return nullptr;
 }
 

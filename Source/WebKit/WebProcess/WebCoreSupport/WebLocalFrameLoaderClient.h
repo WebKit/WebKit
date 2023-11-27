@@ -164,9 +164,7 @@ private:
     void didDisplayInsecureContent() final;
     void didRunInsecureContent(WebCore::SecurityOrigin&, const URL&) final;
 
-#if ENABLE(SERVICE_WORKER)
     void didFinishServiceWorkerPageRegistration(bool success) final;
-#endif
 
     WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) const final;
     WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const final;

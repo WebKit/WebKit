@@ -45,11 +45,9 @@ Ref<WorkerGlobalScope> SharedWorkerThread::createWorkerGlobalScope(const WorkerP
 {
     RELEASE_LOG(SharedWorker, "%p - SharedWorkerThread::createWorkerGlobalScope: m_identifier=%" PRIu64, this, m_identifier.toUInt64());
     auto scope = SharedWorkerGlobalScope::create(std::exchange(m_name, { }), parameters, WTFMove(origin), *this, WTFMove(topOrigin), idbConnectionProxy(), socketProvider(), WTFMove(m_workerClient));
-#if ENABLE(SERVICE_WORKER)
     if (parameters.serviceWorkerData)
         scope->setActiveServiceWorker(ServiceWorker::getOrCreate(scope.get(), ServiceWorkerData { *parameters.serviceWorkerData }));
     scope->updateServiceWorkerClientData();
-#endif
     return scope;
 }
 

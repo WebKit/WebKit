@@ -277,16 +277,12 @@ void WebResourceLoader::didFailServiceWorkerLoad(const ResourceError& error)
 
 void WebResourceLoader::serviceWorkerDidNotHandle()
 {
-#if ENABLE(SERVICE_WORKER)
     WEBRESOURCELOADER_RELEASE_LOG("serviceWorkerDidNotHandle:");
 
     ASSERT(m_coreLoader->options().serviceWorkersMode == ServiceWorkersMode::Only);
     auto error = internalError(m_coreLoader->request().url());
     error.setType(ResourceError::Type::Cancellation);
     m_coreLoader->didFail(error);
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 void WebResourceLoader::didFailResourceLoad(const ResourceError& error)

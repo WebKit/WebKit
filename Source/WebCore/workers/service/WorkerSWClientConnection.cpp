@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WorkerSWClientConnection.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchInformation.h"
 #include "BackgroundFetchOptions.h"
 #include "BackgroundFetchRecordInformation.h"
@@ -554,5 +552,3 @@ void WorkerSWClientConnection::retrieveRecordResponseBody(BackgroundFetchRecordI
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

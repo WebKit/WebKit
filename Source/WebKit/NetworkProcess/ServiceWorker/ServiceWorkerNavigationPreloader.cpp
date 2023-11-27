@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerNavigationPreloader.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "DownloadManager.h"
 #include "Logging.h"
 #include "NetworkCache.h"
@@ -255,5 +253,3 @@ bool ServiceWorkerNavigationPreloader::convertToDownload(DownloadManager& manage
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

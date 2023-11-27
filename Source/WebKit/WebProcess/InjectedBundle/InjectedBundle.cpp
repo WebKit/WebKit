@@ -125,9 +125,7 @@ void InjectedBundle::setClient(std::unique_ptr<API::InjectedBundle::Client>&& cl
 
 void InjectedBundle::setServiceWorkerProxyCreationCallback(void (*callback)(uint64_t))
 {
-#if ENABLE(SERVICE_WORKER)
     SWContextManager::singleton().setServiceWorkerCreationCallback(callback);
-#endif
 }
 
 void InjectedBundle::postMessage(const String& messageName, API::Object* messageBody)

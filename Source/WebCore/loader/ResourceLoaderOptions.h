@@ -214,9 +214,7 @@ struct ResourceLoaderOptions : public FetchOptions {
         this->mode = mode;
     }
 
-#if ENABLE(SERVICE_WORKER)
     Markable<ServiceWorkerRegistrationIdentifier, ServiceWorkerRegistrationIdentifier::MarkableTraits> serviceWorkerRegistrationIdentifier;
-#endif
     Markable<ContentSecurityPolicyResponseHeaders, ContentSecurityPolicyResponseHeaders::MarkableTraits> cspResponseHeaders;
     std::optional<CrossOriginEmbedderPolicy> crossOriginEmbedderPolicy;
 

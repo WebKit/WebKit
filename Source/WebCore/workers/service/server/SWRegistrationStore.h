@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include <optional>
 #include <wtf/Forward.h>
 
@@ -50,5 +48,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SWRegistrationDatabase.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "CrossOriginEmbedderPolicy.h"
 #include "Logging.h"
@@ -517,5 +515,3 @@ void SWRegistrationDatabase::clearAllRegistrations()
 }
 
 } // namespace WebCore
-
-#endif

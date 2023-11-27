@@ -42,7 +42,6 @@
 
 namespace WebKit::Daemon {
 
-#if ENABLE(SERVICE_WORKER)
 void Coder<WebCore::PushSubscriptionData>::encode(Encoder& encoder, const WebCore::PushSubscriptionData& instance)
 {
     encoder << instance.identifier;
@@ -94,7 +93,6 @@ std::optional<WebCore::PushSubscriptionData> Coder<WebCore::PushSubscriptionData
         WTFMove(*sharedAuthenticationSecret),
     } };
 }
-#endif
 
 void Coder<WTF::WallTime>::encode(Encoder& encoder, const WTF::WallTime& instance)
 {

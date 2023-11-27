@@ -166,9 +166,7 @@ NetworkConnectionToWebProcess::NetworkConnectionToWebProcess(NetworkProcess& net
     });
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     establishSWServerConnection();
-#endif
     establishSharedWorkerServerConnection();
 }
 
@@ -201,9 +199,7 @@ NetworkConnectionToWebProcess::~NetworkConnectionToWebProcess()
     unregisterToRTCDataChannelProxy();
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     unregisterSWConnection();
-#endif
     unregisterSharedWorkerConnection();
 }
 
@@ -294,7 +290,6 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
         return;
     }
     
-#if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
         if (m_swConnection)
             m_swConnection->didReceiveMessage(connection, decoder);
@@ -311,7 +306,6 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
             m_swContextConnection->didReceiveFetchTaskMessage(connection, decoder);
         return;
     }
-#endif
 
     if (decoder.messageReceiverName() == Messages::WebSharedWorkerServerConnection::messageReceiverName()) {
         if (m_sharedWorkerConnection)
@@ -399,13 +393,11 @@ bool NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
     if (decoder.messageReceiverName() == Messages::NetworkConnectionToWebProcess::messageReceiverName())
         return didReceiveSyncNetworkConnectionToWebProcessMessage(connection, decoder, reply);
 
-#if ENABLE(SERVICE_WORKER)
     if (decoder.messageReceiverName() == Messages::WebSWServerConnection::messageReceiverName()) {
         if (m_swConnection)
             return m_swConnection->didReceiveSyncMessage(connection, decoder, reply);
         return false;
     }
-#endif
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinatorProxy::messageReceiverName())
@@ -432,9 +424,7 @@ bool NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
 
 void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
-#if ENABLE(SERVICE_WORKER)
     m_swContextConnection = nullptr;
-#endif
     m_sharedWorkerContextConnection = nullptr;
 
     // Protect ourself as we might be otherwise be deleted during this function.
@@ -476,9 +466,7 @@ void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
     }
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     unregisterSWConnection();
-#endif
     unregisterSharedWorkerConnection();
 
 #if ENABLE(APPLE_PAY_REMOTE_UI)
@@ -542,7 +530,6 @@ Vector<RefPtr<WebCore::BlobDataFileReference>> NetworkConnectionToWebProcess::re
     return files;
 }
 
-#if ENABLE(SERVICE_WORKER)
 std::unique_ptr<ServiceWorkerFetchTask> NetworkConnectionToWebProcess::createFetchTask(NetworkResourceLoader& loader, const ResourceRequest& request)
 {
     auto* swConnection = this->swConnection();
@@ -550,7 +537,6 @@ std::unique_ptr<ServiceWorkerFetchTask> NetworkConnectionToWebProcess::createFet
         return nullptr;
     return swConnection->createFetchTask(loader, request);
 }
-#endif
 
 void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadParameters&& loadParameters, std::optional<NetworkResourceLoadIdentifier> existingLoaderToResume)
 {
@@ -558,7 +544,6 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
 
     CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", existingLoaderToResume=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID.toUInt64(), loadParameters.webPageID.toUInt64(), loadParameters.webFrameID.object().toUInt64(), loadParameters.identifier.toUInt64(), valueOrDefault(existingLoaderToResume).toUInt64());
 
-#if ENABLE(SERVICE_WORKER)
     if (auto* session = networkSession()) {
         if (auto& server = session->ensureSWServer(); !server.isImportCompleted()) {
             server.whenImportIsCompleted([this, protectedThis = Ref { *this }, loadParameters = WTFMove(loadParameters), existingLoaderToResume]() mutable {
@@ -573,7 +558,6 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
             return;
         }
     }
-#endif
 
     auto identifier = loadParameters.identifier;
     RELEASE_ASSERT(identifier);
@@ -595,11 +579,7 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
 
     auto& loader = m_networkResourceLoaders.add(identifier, NetworkResourceLoader::create(WTFMove(loadParameters), *this)).iterator->value;
 
-#if ENABLE(SERVICE_WORKER)
     loader->startWithServiceWorker();
-#else
-    loader->start();
-#endif
 }
 
 void NetworkConnectionToWebProcess::performSynchronousLoad(NetworkResourceLoadParameters&& loadParameters, CompletionHandler<void(const ResourceError&, const ResourceResponse, Vector<uint8_t>&&)>&& reply)
@@ -1296,7 +1276,6 @@ WebSharedWorkerServerConnection* NetworkConnectionToWebProcess::sharedWorkerConn
     return m_sharedWorkerConnection.get();
 }
     
-#if ENABLE(SERVICE_WORKER)
 void NetworkConnectionToWebProcess::unregisterSWConnection()
 {
     if (m_swConnection)
@@ -1346,7 +1325,6 @@ WebSWServerConnection* NetworkConnectionToWebProcess::swConnection()
         establishSWServerConnection();
     return m_swConnection.get();
 }
-#endif
 
 void NetworkConnectionToWebProcess::createNewMessagePortChannel(const MessagePortIdentifier& port1, const MessagePortIdentifier& port2)
 {

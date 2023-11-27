@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "Connection.h"
 #include "MessageReceiver.h"
 #include "MessageSender.h"
@@ -166,5 +164,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

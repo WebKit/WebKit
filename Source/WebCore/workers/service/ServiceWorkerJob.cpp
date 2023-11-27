@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ServiceWorkerJob.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "HTTPHeaderNames.h"
 #include "JSDOMPromiseDeferred.h"
 #include "MIMETypeRegistry.h"
@@ -197,5 +195,3 @@ bool ServiceWorkerJob::cancelPendingLoad()
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

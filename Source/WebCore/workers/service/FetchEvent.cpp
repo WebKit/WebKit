@@ -35,8 +35,6 @@
 #include "Logging.h"
 #include <wtf/IsoMallocInlines.h>
 
-#if ENABLE(SERVICE_WORKER)
-
 namespace WebCore {
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(FetchEvent);
@@ -206,5 +204,3 @@ void FetchEvent::navigationPreloadFailed(ResourceError&& error)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

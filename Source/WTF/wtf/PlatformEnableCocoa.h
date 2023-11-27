@@ -817,10 +817,6 @@
 #define ENABLE_SERVICE_CONTROLS 1
 #endif
 
-#if !defined(ENABLE_SERVICE_WORKER)
-#define ENABLE_SERVICE_WORKER 1
-#endif
-
 #if !defined(ENABLE_SEPARATED_WX_HEAP) && CPU(ARM64)
 #define ENABLE_SEPARATED_WX_HEAP 1
 #endif

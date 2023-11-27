@@ -1241,13 +1241,11 @@ void WebPage::updateThrottleState()
     else
         m_userActivity.start();
 
-#if ENABLE(SERVICE_WORKER)
     if (m_page && m_page->settings().serviceWorkersEnabled()) {
         RunLoop::main().dispatch([isThrottleable] {
             WebServiceWorkerProvider::singleton().updateThrottleState(isThrottleable);
         });
     }
-#endif
 }
 
 bool WebPage::isThrottleable() const
@@ -4429,9 +4427,7 @@ static void adjustSettingsForLockdownMode(Settings& settings, const WebPreferenc
 #if ENABLE(NOTIFICATIONS)
     settings.setNotificationsEnabled(false);
 #endif
-#if ENABLE(SERVICE_WORKER)
     settings.setPushAPIEnabled(false);
-#endif
 #if ENABLE(WEBXR)
     settings.setWebXREnabled(false);
     settings.setWebXRAugmentedRealityModuleEnabled(false);
@@ -4540,7 +4536,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
     setForceAlwaysUserScalable(m_forceAlwaysUserScalable || store.getBoolValueForKey(WebPreferencesKey::forceAlwaysUserScalableKey()));
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     if (store.getBoolValueForKey(WebPreferencesKey::serviceWorkerEntitlementDisabledForTestingKey()))
         disableServiceWorkerEntitlement();
 #if ENABLE(APP_BOUND_DOMAINS)
@@ -4554,7 +4549,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
         if (!parentProcessHasServiceWorkerEntitlement() && !shouldAllowServiceWorkersForAppBoundViews)
             settings.setServiceWorkersEnabled(false);
     }
-#endif
 
 #if ENABLE(APP_BOUND_DOMAINS)
     m_needsInAppBrowserPrivacyQuirks = store.getBoolValueForKey(WebPreferencesKey::needsInAppBrowserPrivacyQuirksKey());
@@ -6937,18 +6931,12 @@ void WebPage::canceledComposition()
 
 void WebPage::navigateServiceWorkerClient(ScriptExecutionContextIdentifier documentIdentifier, const URL& url, CompletionHandler<void(WebCore::ScheduleLocationChangeResult)>&& callback)
 {
-#if ENABLE(SERVICE_WORKER)
     RefPtr document = Document::allDocumentsMap().get(documentIdentifier);
     if (!document) {
         callback(WebCore::ScheduleLocationChangeResult::Stopped);
         return;
     }
     document->navigateFromServiceWorker(url, WTFMove(callback));
-#else
-    UNUSED_PARAM(documentIdentifier);
-    UNUSED_PARAM(url);
-    callback(ScheduleLocationChangeResult::Stopped);
-#endif
 }
 
 void WebPage::setAlwaysShowsHorizontalScroller(bool alwaysShowsHorizontalScroller)

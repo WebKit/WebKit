@@ -1560,14 +1560,12 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
         callbackAggregator->m_websiteData.hostNamesWithHSTSCache = hostNamesWithHSTSCache(sessionID);
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations) && session && session->hasServiceWorkerDatabasePath()) {
         session->ensureSWServer().getOriginsWithRegistrations([callbackAggregator](const HashSet<SecurityOriginData>& securityOrigins) mutable {
             for (auto& origin : securityOrigins)
                 callbackAggregator->m_websiteData.entries.append({ origin, WebsiteDataType::ServiceWorkerRegistrations, 0 });
         });
     }
-#endif
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && session) {
         if (auto* cache = session->cache()) {
             cache->fetchData(fetchOptions.contains(WebsiteDataFetchOption::ComputeSizes), [callbackAggregator](auto entries) mutable {
@@ -1627,7 +1625,6 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
             session->clearCredentials(modifiedSince);
     }
 
-#if ENABLE(SERVICE_WORKER)
     bool clearServiceWorkers = websiteDataTypes.contains(WebsiteDataType::DOMCache) || websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations);
     if (clearServiceWorkers && !sessionID.isEphemeral() && session) {
         session->ensureSWServer().clearAll([clearTasksHandler] { });
@@ -1636,7 +1633,6 @@ void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<Websi
         session->notificationManager().removeAllPushSubscriptions([clearTasksHandler](auto&&) { });
 #endif
     }
-#endif
 
     if (websiteDataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
         if (auto* resourceLoadStatistics = session ? session->resourceLoadStatistics() : nullptr) {
@@ -1704,11 +1700,9 @@ void NetworkProcess::deleteWebsiteDataForOrigin(PAL::SessionID sessionID, Option
     if (NetworkStorageManager::canHandleTypes(websiteDataTypes) && session)
         session->storageManager().deleteData(websiteDataTypes, origin, [clearTasksHandler] { });
 
-#if ENABLE(SERVICE_WORKER)
     bool clearServiceWorkers = websiteDataTypes.contains(WebsiteDataType::DOMCache) || websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations);
     if (clearServiceWorkers && !sessionID.isEphemeral() && session)
         session->ensureSWServer().clear(origin, [clearTasksHandler] { });
-#endif
 }
 
 void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, const Vector<SecurityOriginData>& originDatas, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostNames, const Vector<RegistrableDomain>& registrableDomains, CompletionHandler<void()>&& completionHandler)
@@ -1745,7 +1739,6 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
             session->clearPrivateClickMeasurementForRegistrableDomain(RegistrableDomain::uncheckedCreateFromHost(originData.host()), [clearTasksHandler] { });
     }
 
-#if ENABLE(SERVICE_WORKER)
     bool clearServiceWorkers = websiteDataTypes.contains(WebsiteDataType::DOMCache) || websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations);
     if (clearServiceWorkers && !sessionID.isEphemeral() && session) {
         auto& server = session->ensureSWServer();
@@ -1757,7 +1750,6 @@ void NetworkProcess::deleteWebsiteDataForOrigins(PAL::SessionID sessionID, Optio
 #endif
         }
     }
-#endif
 
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache))
         CrossOriginPreflightResultCache::singleton().clear();
@@ -1924,7 +1916,6 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
         }
     }
     
-#if ENABLE(SERVICE_WORKER)
     bool clearServiceWorkers = websiteDataTypes.contains(WebsiteDataType::DOMCache) || websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations);
     if (clearServiceWorkers && session && session->hasServiceWorkerDatabasePath()) {
         session->ensureSWServer().getOriginsWithRegistrations([domainsToDeleteAllScriptWrittenStorageFor, callbackAggregator, session = WeakPtr { *session }](const HashSet<SecurityOriginData>& securityOrigins) mutable {
@@ -1942,7 +1933,6 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
             }
         });
     }
-#endif
 
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && session) {
         if (auto cache = session->cache()) {
@@ -2049,14 +2039,12 @@ void NetworkProcess::registrableDomainsWithWebsiteData(PAL::SessionID sessionID,
         }
     }
     
-#if ENABLE(SERVICE_WORKER)
     if (websiteDataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations) && session && session->hasServiceWorkerDatabasePath()) {
         session->ensureSWServer().getOriginsWithRegistrations([callbackAggregator](const HashSet<SecurityOriginData>& securityOrigins) mutable {
             for (auto& securityOrigin : securityOrigins)
                 callbackAggregator->m_websiteData.entries.append({ securityOrigin, WebsiteDataType::ServiceWorkerRegistrations, 0 });
         });
     }
-#endif
     
     if (websiteDataTypes.contains(WebsiteDataType::DiskCache) && session) {
         if (auto cache = session->cache()) {
@@ -2215,10 +2203,8 @@ void NetworkProcess::terminateRemoteWorkerContextConnectionWhenPossible(RemoteWo
 
     switch (workerType) {
     case RemoteWorkerType::ServiceWorker:
-#if ENABLE(SERVICE_WORKER)
         if (auto* swServer = session->swServer())
             swServer->terminateContextConnectionWhenPossible(registrableDomain, processIdentifier);
-#endif
         break;
     case RemoteWorkerType::SharedWorker:
         if (auto* sharedWorkerServer = session->sharedWorkerServer())
@@ -2321,16 +2307,12 @@ void NetworkProcess::syncLocalStorage(CompletionHandler<void()>&& completionHand
 
 void NetworkProcess::storeServiceWorkerRegistrations(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
 {
-#if ENABLE(SERVICE_WORKER)
     auto* session = networkSession(sessionID);
     auto* server = session ? session->swServer() : nullptr;
     if (!server)
         return completionHandler();
 
     server->storeRegistrationsOnDisk(WTFMove(completionHandler));
-#else
-    completionHandler();
-#endif
 }
 
 void NetworkProcess::resetQuota(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
@@ -2394,7 +2376,6 @@ void NetworkProcess::websiteDataOriginDirectoryForTesting(PAL::SessionID session
     session->storageManager().getOriginDirectory(WTFMove(origin), *dataType.toSingleValue(), WTFMove(completionHandler));
 }
 
-#if ENABLE(SERVICE_WORKER)
 void NetworkProcess::processNotificationEvent(NotificationData&& data, NotificationEventType eventType, CompletionHandler<void(bool)>&& callback)
 {
     auto* session = networkSession(data.sourceSession);
@@ -2539,7 +2520,6 @@ void NetworkProcess::processPushMessage(PAL::SessionID, WebPushMessage&&, PushPe
 }
 
 #endif // ENABLE(BUILT_IN_NOTIFICATIONS)
-#endif // ENABLE(SERVICE_WORKER)
 
 void NetworkProcess::setPushAndNotificationsEnabledForOrigin(PAL::SessionID sessionID, const SecurityOriginData& origin, bool enabled, CompletionHandler<void()>&& callback)
 {
@@ -2947,12 +2927,10 @@ void NetworkProcess::countNonDefaultSessionSets(PAL::SessionID sessionID, Comple
     completionHandler(session ? session->countNonDefaultSessionSets() : 0);
 }
 
-#if ENABLE(SERVICE_WORKER)
 void NetworkProcess::requestBackgroundFetchPermission(PAL::SessionID sessionID, const ClientOrigin& origin, CompletionHandler<void(bool)>&& callback)
 {
     parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::RequestBackgroundFetchPermission(sessionID, origin), WTFMove(callback));
 }
-#endif
 
 #if USE(RUNNINGBOARD)
 void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
@@ -2976,14 +2954,10 @@ void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 }
 #endif
 
-#if ENABLE(SERVICE_WORKER)
-
 void NetworkProcess::setInspectionForServiceWorkersAllowed(PAL::SessionID sessionID, bool inspectable)
 {
     if (auto* session = networkSession(sessionID))
         session->setInspectionForServiceWorkersAllowed(inspectable);
 }
-
-#endif // ENABLE(SERVICE_WORKER)
 
 } // namespace WebKit

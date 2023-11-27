@@ -872,11 +872,9 @@ void CachedResourceLoader::prepareFetch(CachedResource::Type type, CachedResourc
     if (auto* document = this->document()) {
         if (!request.origin())
             request.setOrigin(document->securityOrigin());
-#if ENABLE(SERVICE_WORKER)
         request.setClientIdentifierIfNeeded(document->identifier());
         if (auto* activeServiceWorker = document->activeServiceWorker())
             request.setSelectedServiceWorkerRegistrationIdentifierIfNeeded(activeServiceWorker->registrationIdentifier());
-#endif
     }
 
     request.setAcceptHeaderIfNone(type);
@@ -1268,7 +1266,6 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
     return resource;
 }
 
-#if ENABLE(SERVICE_WORKER)
 static inline bool mustReloadFromServiceWorkerOptions(const ResourceLoaderOptions& options, const ResourceLoaderOptions& cachedOptions)
 {
     // FIXME: We should validate/specify this behavior.
@@ -1280,7 +1277,6 @@ static inline bool mustReloadFromServiceWorkerOptions(const ResourceLoaderOption
 
     return cachedOptions.mode == FetchOptions::Mode::Navigate || cachedOptions.destination == FetchOptions::Destination::Worker || cachedOptions.destination == FetchOptions::Destination::Sharedworker;
 }
-#endif
 
 CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalidationPolicy(CachedResource::Type type, CachedResourceRequest& cachedResourceRequest, CachedResource* existingResource, ForPreload forPreload, ImageLoading imageLoading) const
 {
@@ -1295,12 +1291,10 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     if (request.cachePolicy() == ResourceRequestCachePolicy::RefreshAnyCacheData)
         return Reload;
 
-#if ENABLE(SERVICE_WORKER)
     if (mustReloadFromServiceWorkerOptions(cachedResourceRequest.options(), existingResource->options())) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading because selected service worker may differ");
         return Reload;
     }
-#endif
 
     // We already have a preload going for this URL.
     if (forPreload == ForPreload::Yes && existingResource->isPreloaded())
@@ -1424,11 +1418,9 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     if (revalidationDecision != CachedResource::RevalidationDecision::No) {
         // See if the resource has usable ETag or Last-modified headers.
         if (existingResource->canUseCacheValidator()) {
-#if ENABLE(SERVICE_WORKER)
             // Revalidating will mean exposing headers to the service worker, let's reload given the service worker already handled it.
             if (cachedResourceRequest.options().serviceWorkerRegistrationIdentifier)
                 return Reload;
-#endif
             return Revalidate;
         }
         

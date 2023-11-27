@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PushSubscription.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "EventLoop.h"
 #include "Exception.h"
 #include "JSDOMPromiseDeferred.h"
@@ -132,5 +130,3 @@ PushSubscriptionJSON PushSubscription::toJSON() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

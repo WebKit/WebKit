@@ -24,8 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SERVICE_WORKER)
 #include "ServiceWorkerWindowClient.h"
 
 #include "JSDOMPromiseDeferred.h"
@@ -116,5 +114,3 @@ void ServiceWorkerWindowClient::navigate(ScriptExecutionContext& context, const 
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

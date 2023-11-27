@@ -79,9 +79,7 @@ static WorkerParameters generateWorkerParameters(const WorkerFetchResult& worker
         document.settingsValues(),
         WorkerThreadMode::CreateNewThread,
         *document.sessionID(),
-#if ENABLE(SERVICE_WORKER)
         WTFMove(initializationData.serviceWorkerData),
-#endif
         *initializationData.clientIdentifier,
         document.noiseInjectionHashSalt()
     };

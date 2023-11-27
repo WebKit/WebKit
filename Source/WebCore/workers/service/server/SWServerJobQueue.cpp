@@ -26,8 +26,6 @@
 #include "config.h"
 #include "SWServerJobQueue.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "ExceptionData.h"
 #include "Logging.h"
 #include "SWServer.h"
@@ -449,5 +447,3 @@ void SWServerJobQueue::cancelJobsFromServiceWorker(ServiceWorkerIdentifier servi
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

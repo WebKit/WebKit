@@ -26,7 +26,6 @@
 #include "config.h"
 #include "SWContextManager.h"
 
-#if ENABLE(SERVICE_WORKER)
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
 #include "MessageWithMessagePorts.h"
@@ -339,5 +338,3 @@ void SWContextManager::setRegistrationUpdateViaCache(ServiceWorkerRegistrationId
 }
 
 } // namespace WebCore
-
-#endif

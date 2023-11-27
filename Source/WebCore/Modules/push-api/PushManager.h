@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "JSDOMPromiseDeferredForward.h"
 #include "PushPermissionState.h"
 #include "PushSubscription.h"
@@ -60,5 +58,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

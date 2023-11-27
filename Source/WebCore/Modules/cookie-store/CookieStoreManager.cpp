@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CookieStoreManager.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "CookieStoreGetOptions.h"
 #include "JSDOMPromiseDeferred.h"
 #include <wtf/Ref.h>
@@ -60,5 +58,3 @@ void CookieStoreManager::unsubscribe(Vector<CookieStoreGetOptions>&&, Ref<Deferr
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

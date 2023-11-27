@@ -24,7 +24,6 @@
 */
 
 [
-    Conditional=SERVICE_WORKER,
     EnabledBySetting=ServiceWorkerNavigationPreloadEnabled,
     Exposed=(Window,Worker),
     SkipVTableValidation,

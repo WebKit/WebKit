@@ -26,8 +26,6 @@
 #include "config.h"
 #include "PushSubscriptionOptions.h"
 
-#if ENABLE(SERVICE_WORKER)
-
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {
@@ -63,5 +61,3 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> PushSubscriptionOptions::applicationServer
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

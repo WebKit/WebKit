@@ -1060,9 +1060,9 @@ typedef (FetchRequest or FetchResponse) FetchObject;
     double currentAudioBufferSize();
     boolean audioSessionActive();
 
-    [Conditional=SERVICE_WORKER] Promise<boolean> hasServiceWorkerRegistration(DOMString scopeURL);
-    [Conditional=SERVICE_WORKER] Promise<undefined> terminateServiceWorker(ServiceWorker worker);
-    [Conditional=SERVICE_WORKER] Promise<undefined> whenServiceWorkerIsTerminated(ServiceWorker worker);
+    Promise<boolean> hasServiceWorkerRegistration(DOMString scopeURL);
+    Promise<undefined> terminateServiceWorker(ServiceWorker worker);
+    Promise<undefined> whenServiceWorkerIsTerminated(ServiceWorker worker);
 
 #if defined(ENABLE_APPLE_PAY) && ENABLE_APPLE_PAY
     [CallWith=CurrentDocument, Conditional=APPLE_PAY] readonly attribute MockPaymentCoordinator mockPaymentCoordinator;
@@ -1219,7 +1219,7 @@ typedef (FetchRequest or FetchResponse) FetchObject;
 
     undefined retainTextIteratorForDocumentContent();
 
-    [Conditional=SERVICE_WORKER] PushSubscription createPushSubscription(USVString endpoint, EpochTimeStamp? expirationTime, ArrayBuffer serverVAPIDPublicKey, ArrayBuffer clientECDHPublicKey, ArrayBuffer auth);
+    PushSubscription createPushSubscription(USVString endpoint, EpochTimeStamp? expirationTime, ArrayBuffer serverVAPIDPublicKey, ArrayBuffer clientECDHPublicKey, ArrayBuffer auth);
 
     [Conditional=ARKIT_INLINE_PREVIEW_MAC] Promise<sequence<DOMString>> modelInlinePreviewUUIDs();
     [Conditional=ARKIT_INLINE_PREVIEW_MAC] DOMString modelInlinePreviewUUIDForModelElement(HTMLModelElement modelElement);

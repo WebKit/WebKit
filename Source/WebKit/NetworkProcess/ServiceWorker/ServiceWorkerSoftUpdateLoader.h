@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "NetworkCacheEntry.h"
 #include "NetworkLoadClient.h"
 #include <WebCore/ContentSecurityPolicyResponseHeaders.h>
@@ -88,6 +86,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)
-

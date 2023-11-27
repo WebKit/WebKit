@@ -24,8 +24,6 @@
  */
 
 #include "config.h"
-
-#if ENABLE(SERVICE_WORKER)
 #include "ServiceWorkerClient.h"
 
 #include "MessagePort.h"
@@ -101,5 +99,3 @@ ExceptionOr<void> ServiceWorkerClient::postMessage(JSC::JSGlobalObject& globalOb
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

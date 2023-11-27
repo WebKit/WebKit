@@ -2269,20 +2269,16 @@ void WebProcessProxy::establishRemoteWorkerContext(RemoteWorkerType workerType, 
 
 void WebProcessProxy::setRemoteWorkerUserAgent(const String& userAgent)
 {
-#if ENABLE(SERVICE_WORKER)
     if (m_serviceWorkerInformation)
         send(Messages::WebSWContextManagerConnection::SetUserAgent { userAgent }, 0);
-#endif
     if (m_sharedWorkerInformation)
         send(Messages::WebSharedWorkerContextManagerConnection::SetUserAgent { userAgent }, 0);
 }
 
 void WebProcessProxy::updateRemoteWorkerPreferencesStore(const WebPreferencesStore& store)
 {
-#if ENABLE(SERVICE_WORKER)
     if (m_serviceWorkerInformation)
         send(Messages::WebSWContextManagerConnection::UpdatePreferencesStore { store }, 0);
-#endif
     if (m_sharedWorkerInformation)
         send(Messages::WebSharedWorkerContextManagerConnection::UpdatePreferencesStore { store }, 0);
 }
@@ -2346,8 +2342,6 @@ void WebProcessProxy::unregisterRemoteWorkerClientProcess(RemoteWorkerType worke
     updateRemoteWorkerProcessAssertion(workerType);
 }
 
-#if ENABLE(SERVICE_WORKER)
-
 bool WebProcessProxy::hasServiceWorkerForegroundActivityForTesting() const
 {
     return m_serviceWorkerInformation ? ProcessThrottler::isValidForegroundActivity(m_serviceWorkerInformation->activity) : false;
@@ -2377,7 +2371,6 @@ void WebProcessProxy::endServiceWorkerBackgroundProcessing()
     m_hasServiceWorkerBackgroundProcessing = false;
     updateRemoteWorkerProcessAssertion(RemoteWorkerType::ServiceWorker);
 }
-#endif // ENABLE(SERVICE_WORKER)
 
 void WebProcessProxy::disableRemoteWorkers(OptionSet<RemoteWorkerType> workerTypes)
 {
@@ -2389,14 +2382,12 @@ void WebProcessProxy::disableRemoteWorkers(OptionSet<RemoteWorkerType> workerTyp
         didDisableWorkers = true;
     }
 
-#if ENABLE(SERVICE_WORKER)
     if (workerTypes.contains(RemoteWorkerType::ServiceWorker) && m_serviceWorkerInformation) {
         WEBPROCESSPROXY_RELEASE_LOG(Process, "disableWorkers: Disabling service workers");
         removeMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), m_serviceWorkerInformation->remoteWorkerPageID);
         m_serviceWorkerInformation = { };
         didDisableWorkers = true;
     }
-#endif
 
     if (!didDisableWorkers)
         return;
@@ -2409,10 +2400,8 @@ void WebProcessProxy::disableRemoteWorkers(OptionSet<RemoteWorkerType> workerTyp
     if (workerTypes.contains(RemoteWorkerType::SharedWorker))
         send(Messages::WebSharedWorkerContextManagerConnection::Close { }, 0);
 
-#if ENABLE(SERVICE_WORKER)
     if (workerTypes.contains(RemoteWorkerType::ServiceWorker))
         send(Messages::WebSWContextManagerConnection::Close { }, 0);
-#endif
 
     maybeShutDown();
 }
@@ -2454,10 +2443,8 @@ void WebProcessProxy::enableRemoteWorkers(RemoteWorkerType workerType, const Use
 
     protectedProcessPool()->addRemoteWorkerProcess(*this);
 
-#if ENABLE(SERVICE_WORKER)
     if (workerType == RemoteWorkerType::ServiceWorker)
         addMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), m_serviceWorkerInformation->remoteWorkerPageID, ServiceWorkerNotificationHandler::singleton());
-#endif
 
     updateBackgroundResponsivenessTimer();
 

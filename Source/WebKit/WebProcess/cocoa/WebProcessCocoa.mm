@@ -839,14 +839,12 @@ void WebProcess::platformInitializeProcess(const AuxiliaryProcessInitializationP
 
     if (parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("inspector-process"_s) == "1"_s)
         m_processType = ProcessType::Inspector;
-#if ENABLE(SERVICE_WORKER)
     else if (parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("service-worker-process"_s) == "1"_s) {
         m_processType = ProcessType::ServiceWorker;
 #if PLATFORM(MAC)
         m_registrableDomain = RegistrableDomain::uncheckedCreateFromRegistrableDomainString(parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("registrable-domain"_s));
 #endif
     }
-#endif
     else if (parameters.extraInitializationData.get<HashTranslatorASCIILiteral>("is-prewarmed"_s) == "1"_s)
         m_processType = ProcessType::PrewarmedWebContent;
     else

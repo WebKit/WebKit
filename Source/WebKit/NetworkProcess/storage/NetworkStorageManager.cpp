@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkStorageManager.h"
 
+#include "BackgroundFetchChange.h"
+#include "BackgroundFetchStoreManager.h"
 #include "CacheStorageCache.h"
 #include "CacheStorageManager.h"
 #include "CacheStorageRegistry.h"
@@ -41,6 +43,7 @@
 #include "NetworkStorageManagerMessages.h"
 #include "OriginQuotaManager.h"
 #include "OriginStorageManager.h"
+#include "ServiceWorkerStorageManager.h"
 #include "SessionStorageManager.h"
 #include "StorageAreaBase.h"
 #include "StorageAreaMapMessages.h"
@@ -48,19 +51,13 @@
 #include "UnifiedOriginStorageLevel.h"
 #include "WebsiteDataType.h"
 #include <WebCore/SecurityOriginData.h>
+#include <WebCore/ServiceWorkerContextData.h>
 #include <WebCore/StorageUtilities.h>
 #include <WebCore/UniqueIDBDatabaseConnection.h>
 #include <WebCore/UniqueIDBDatabaseTransaction.h>
 #include <pal/crypto/CryptoDigest.h>
 #include <wtf/SuspendableWorkQueue.h>
 #include <wtf/text/Base64.h>
-
-#if ENABLE(SERVICE_WORKER)
-#include "BackgroundFetchChange.h"
-#include "BackgroundFetchStoreManager.h"
-#include "ServiceWorkerStorageManager.h"
-#include <WebCore/ServiceWorkerContextData.h>
-#endif
 
 namespace WebKit {
 
@@ -203,12 +200,10 @@ NetworkStorageManager::NetworkStorageManager(NetworkProcess& process, PAL::Sessi
             auto saltPath = FileSystem::pathByAppendingComponent(m_path, "salt"_s);
             m_salt = valueOrDefault(FileSystem::readOrMakeSalt(saltPath));
         }
-#if ENABLE(SERVICE_WORKER)
         if (shouldManageServiceWorkerRegistrationsByOrigin())
             migrateServiceWorkerRegistrationsToOrigins();
         else
             m_sharedServiceWorkerStorageManager = makeUnique<ServiceWorkerStorageManager>(m_customServiceWorkerStoragePath);
-#endif
 #if PLATFORM(IOS_FAMILY)
         // Exclude LocalStorage directory to reduce backup traffic. See https://webkit.org/b/168388.
         if (m_unifiedOriginStorageLevel == UnifiedOriginStorageLevel::None  && !m_customLocalStoragePath.isEmpty()) {
@@ -240,9 +235,7 @@ OptionSet<WebsiteDataType> NetworkStorageManager::allManagedTypes()
         WebsiteDataType::FileSystem,
         WebsiteDataType::IndexedDBDatabases,
         WebsiteDataType::DOMCache,
-#if ENABLE(SERVICE_WORKER)
         WebsiteDataType::ServiceWorkerRegistrations
-#endif
     };
 }
 
@@ -263,9 +256,7 @@ void NetworkStorageManager::close(CompletionHandler<void()>&& completionHandler)
         m_fileSystemStorageHandleRegistry = nullptr;
         for (auto&& completionHandler : std::exchange(m_persistCompletionHandlers, { }))
             completionHandler.second(false);
-#if ENABLE(SERVICE_WORKER)
         m_sharedServiceWorkerStorageManager = nullptr;
-#endif
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             completionHandler();
@@ -1752,8 +1743,6 @@ void NetworkStorageManager::cacheStorageRepresentation(CompletionHandler<void(St
     callback(builder.toString());
 }
 
-#if ENABLE(SERVICE_WORKER)
-
 void NetworkStorageManager::dispatchTaskToBackgroundFetchManager(const WebCore::ClientOrigin& origin, Function<void(BackgroundFetchStoreManager*)>&& callback)
 {
     ASSERT(RunLoop::isMain());
@@ -1927,7 +1916,5 @@ bool NetworkStorageManager::shouldManageServiceWorkerRegistrationsByOrigin()
 
     return m_unifiedOriginStorageLevel >= UnifiedOriginStorageLevel::Standard;
 }
-
-#endif // ENABLE(SERVICE_WORKER)
 
 } // namespace WebKit

@@ -6,7 +6,7 @@ AbortSignal
 ApplePaySession conditional=APPLE_PAY
 AudioNode conditional=WEB_AUDIO
 AudioTrackList conditional=VIDEO
-BackgroundFetchRegistration conditional=SERVICE_WORKER
+BackgroundFetchRegistration
 BaseAudioContext conditional=WEB_AUDIO
 BroadcastChannel
 Clipboard
@@ -54,10 +54,10 @@ RTCPeerConnection conditional=WEB_RTC
 RTCRtpSFrameTransform conditional=WEB_RTC
 RTCRtpScriptTransform conditional=WEB_RTC
 RTCSctpTransport conditional=WEB_RTC
-ServiceWorker conditional=SERVICE_WORKER
-ServiceWorkerContainer conditional=SERVICE_WORKER
-ServiceWorkerGlobalScope conditional=SERVICE_WORKER
-ServiceWorkerRegistration conditional=SERVICE_WORKER
+ServiceWorker
+ServiceWorkerContainer
+ServiceWorkerGlobalScope
+ServiceWorkerRegistration
 SharedWorker
 SharedWorkerGlobalScope
 SourceBuffer conditional=MEDIA_SOURCE

@@ -1702,11 +1702,9 @@ public:
     const HashMap<String, Ref<HTMLAttachmentElement>>& attachmentElementsByIdentifier() const { return m_attachmentIdentifierToElementMap; }
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     void setServiceWorkerConnection(RefPtr<SWClientConnection>&&);
     void updateServiceWorkerClientData() final;
     WEBCORE_EXPORT void navigateFromServiceWorker(const URL&, CompletionHandler<void(ScheduleLocationChangeResult)>&&);
-#endif
 
 #if ENABLE(VIDEO)
     void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);
@@ -2250,9 +2248,7 @@ private:
     RefPtr<WindowEventLoop> m_eventLoop;
     std::unique_ptr<EventLoopTaskGroup> m_documentTaskGroup;
 
-#if ENABLE(SERVICE_WORKER)
     RefPtr<SWClientConnection> m_serviceWorkerConnection;
-#endif
 
     RegistrableDomain m_registrableDomainRequestedPageSpecificStorageAccessWithUserInteraction { };
     String m_referrerOverride;

@@ -92,12 +92,10 @@
     WebKit::SandboxExtension::Handle cacheStorageDirectoryExtensionHandle;
     String generalStorageDirectory;
     WebKit::SandboxExtension::Handle generalStorageDirectoryHandle;
-#if ENABLE(SERVICE_WORKER)
     String serviceWorkerRegistrationDirectory;
     WebKit::SandboxExtension::Handle serviceWorkerRegistrationDirectoryExtensionHandle;
     bool serviceWorkerProcessTerminationDelayEnabled;
     bool inspectionForServiceWorkersAllowed;
-#endif
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     bool isDeclarativeWebPushEnabled;
 #endif

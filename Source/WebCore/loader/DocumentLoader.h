@@ -461,10 +461,8 @@ public:
     void setIdempotentModeAutosizingOnlyHonorsPercentages(bool idempotentModeAutosizingOnlyHonorsPercentages) { m_idempotentModeAutosizingOnlyHonorsPercentages = idempotentModeAutosizingOnlyHonorsPercentages; }
     bool idempotentModeAutosizingOnlyHonorsPercentages() const { return m_idempotentModeAutosizingOnlyHonorsPercentages; }
 
-#if ENABLE(SERVICE_WORKER)
     WEBCORE_EXPORT bool setControllingServiceWorkerRegistration(ServiceWorkerRegistrationData&&);
     WEBCORE_EXPORT ScriptExecutionContextIdentifier resultingClientId() const;
-#endif
 
     bool lastNavigationWasAppInitiated() const { return m_lastNavigationWasAppInitiated; }
     void setLastNavigationWasAppInitiated(bool lastNavigationWasAppInitiated) { m_lastNavigationWasAppInitiated = lastNavigationWasAppInitiated; }
@@ -498,9 +496,7 @@ private:
 
     Document* document() const;
 
-#if ENABLE(SERVICE_WORKER)
     void matchRegistration(const URL&, CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)>&&);
-#endif
     void unregisterReservedServiceWorkerClient();
 
     std::optional<CrossOriginOpenerPolicyEnforcementResult> doCrossOriginOpenerHandlingOfResponse(const ResourceResponse&);
@@ -690,9 +686,7 @@ private:
 
     ScriptExecutionContextIdentifier m_resultingClientId;
 
-#if ENABLE(SERVICE_WORKER)
     std::unique_ptr<ServiceWorkerRegistrationData> m_serviceWorkerRegistrationData;
-#endif
 
 #if ENABLE(DEVICE_ORIENTATION)
     DeviceOrientationOrMotionPermissionState m_deviceOrientationAndMotionAccessState { DeviceOrientationOrMotionPermissionState::Prompt };
@@ -748,9 +742,7 @@ private:
     bool m_blockedByContentFilter { false };
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     bool m_canUseServiceWorkers { true };
-#endif
 
 #if ASSERT_ENABLED
     bool m_hasEverBeenAttached { false };

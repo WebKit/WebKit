@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include "BackgroundFetchInformation.h"
 #include "ExceptionOr.h"
 #include "PageIdentifier.h"
@@ -161,5 +159,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(SERVICE_WORKER)

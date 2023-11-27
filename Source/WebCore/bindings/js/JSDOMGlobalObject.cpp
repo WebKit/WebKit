@@ -719,11 +719,9 @@ String JSDOMGlobalObject::defaultAgentClusterID()
 
 String JSDOMGlobalObject::agentClusterID() const
 {
-#if ENABLE(SERVICE_WORKER)
     // Service workers may run in process but they need to be in a separate agent cluster.
     if (is<ServiceWorkerGlobalScope>(scriptExecutionContext()))
         return makeString(Process::identifier().toUInt64(), "-serviceworker");
-#endif
     if (is<SharedWorkerGlobalScope>(scriptExecutionContext()))
         return makeString(Process::identifier().toUInt64(), "-sharedworker");
     return defaultAgentClusterID();

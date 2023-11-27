@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(SERVICE_WORKER)
-
 #include <WebCore/ServiceWorkerProvider.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -58,5 +56,3 @@ private:
 }; // class WebServiceWorkerProvider
 
 } // namespace WebKit
-
-#endif // ENABLE(SERVICE_WORKER)

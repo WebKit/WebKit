@@ -230,7 +230,6 @@ void setMockGamepadButtonValue(unsigned gamepadIndex, unsigned buttonIndex, doub
 
 void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerIdentifier)
 {
-#if ENABLE(SERVICE_WORKER)
     auto identifier = AtomicObjectIdentifier<ServiceWorkerIdentifierType>(serviceWorkerIdentifier);
     SWContextManager::singleton().postTaskToServiceWorker(identifier, [identifier] (ServiceWorkerGlobalScope& globalScope) {
         auto* script = globalScope.script();
@@ -243,9 +242,6 @@ void setupNewlyCreatedServiceWorker(uint64_t serviceWorkerIdentifier)
         auto* contextWrapper = script->globalScopeWrapper();
         contextWrapper->putDirect(vm, Identifier::fromString(vm, Internals::internalsId), toJS(&globalObject, contextWrapper, ServiceWorkerInternals::create(globalScope, identifier)));
     });
-#else
-    UNUSED_PARAM(serviceWorkerIdentifier);
-#endif
 }
 
 #if PLATFORM(COCOA)

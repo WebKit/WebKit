@@ -31,8 +31,6 @@
 #include <iterator>
 #include <wtf/FileSystem.h>
 
-#if ENABLE(SERVICE_WORKER)
-
 using namespace WebCore;
 
 // Due to argument-dependent lookup, equality operators have to be in the WebCore namespace for gtest to find them.
@@ -806,6 +804,3 @@ TEST(PushDatabase, CanMigrateV2DatabaseToCurrentSchema)
 }
 
 } // namespace TestWebKitAPI
-
-#endif // ENABLE(SERVICE_WORKER)
-

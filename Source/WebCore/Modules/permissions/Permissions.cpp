@@ -95,10 +95,8 @@ std::optional<PermissionQuerySource> Permissions::sourceFromContext(const Script
         return PermissionQuerySource::DedicatedWorker;
     if (is<SharedWorkerGlobalScope>(context))
         return PermissionQuerySource::SharedWorker;
-#if ENABLE(SERVICE_WORKER)
     if (is<ServiceWorkerGlobalScope>(context))
         return PermissionQuerySource::ServiceWorker;
-#endif
     return std::nullopt;
 }
 

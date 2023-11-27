@@ -289,7 +289,6 @@ public:
     xpc_object_t xpcEndpointMessage() const { return m_endpointMessage.get(); }
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     void getPendingPushMessages(PAL::SessionID, CompletionHandler<void(const Vector<WebPushMessage>&)>&&);
     void processPushMessage(PAL::SessionID, const WebPushMessage&, CompletionHandler<void(bool wasProcessed, std::optional<WebCore::NotificationPayload>&&)>&&);
     void processNotificationEvent(const WebCore::NotificationData&, WebCore::NotificationEventType, CompletionHandler<void(bool wasProcessed)>&&);
@@ -300,7 +299,6 @@ public:
     void pauseBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
     void resumeBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
     void clickBackgroundFetch(PAL::SessionID, const String&, CompletionHandler<void()>&&);
-#endif
 
     void setPushAndNotificationsEnabledForOrigin(PAL::SessionID, const WebCore::SecurityOriginData&, bool, CompletionHandler<void()>&&);
     void deletePushAndNotificationRegistration(PAL::SessionID, const WebCore::SecurityOriginData&, CompletionHandler<void(const String&)>&&);
@@ -376,12 +374,10 @@ private:
     void wakeUpWebProcessForIPC(WebCore::ProcessIdentifier);
 #endif
 
-#if ENABLE(SERVICE_WORKER)
     void startServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier);
     void endServiceWorkerBackgroundProcessing(WebCore::ProcessIdentifier serviceWorkerProcessIdentifier);
     void requestBackgroundFetchPermission(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
     void notifyBackgroundFetchChange(PAL::SessionID, const String&, BackgroundFetchChange);
-#endif
     void remoteWorkerContextConnectionNoLongerNeeded(RemoteWorkerType, WebCore::ProcessIdentifier);
     void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::RegistrableDomain&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void(WebCore::ProcessIdentifier)>&&);
     void registerRemoteWorkerClientProcess(RemoteWorkerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier);

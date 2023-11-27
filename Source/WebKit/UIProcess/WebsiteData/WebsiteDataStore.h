@@ -451,9 +451,7 @@ public:
     void addPage(WebPageProxy&);
     void removePage(WebPageProxy&);
 
-#if ENABLE(SERVICE_WORKER)
     void updateServiceWorkerInspectability();
-#endif
 
     HashSet<RefPtr<WebProcessPool>> processPools(size_t limit = std::numeric_limits<size_t>::max()) const;
 
@@ -473,9 +471,7 @@ public:
 #endif
     void setCompletionHandlerForRemovalFromNetworkProcess(CompletionHandler<void(String&&)>&&);
 
-#if ENABLE(SERVICE_WORKER)
     void processPushMessage(WebPushMessage&&, CompletionHandler<void(bool)>&&);
-#endif
 
     void setOriginQuotaRatioEnabledForTesting(bool enabled, CompletionHandler<void()>&&);
 

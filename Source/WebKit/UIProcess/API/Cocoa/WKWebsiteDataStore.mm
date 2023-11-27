@@ -959,7 +959,6 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 {
     RELEASE_LOG(Push, "Getting pending push messages");
 
-#if ENABLE(SERVICE_WORKER)
     _websiteDataStore->networkProcess().getPendingPushMessages(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)] (const Vector<WebKit::WebPushMessage>& messages) {
         auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:messages.size()]);
         for (auto& message : messages)
@@ -968,12 +967,10 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         RELEASE_LOG(Push, "Giving application %zu pending push messages", messages.size());
         completionHandler(result.get());
     });
-#endif
 }
 
 -(void)_processPushMessage:(NSDictionary *)pushMessageDictionary completionHandler:(void(^)(bool wasProcessed))completionHandler
 {
-#if ENABLE(SERVICE_WORKER)
     auto pushMessage = WebKit::WebPushMessage::fromDictionary(pushMessageDictionary);
     if (!pushMessage) {
         RELEASE_LOG_ERROR(Push, "Asked to handle an invalid push message");
@@ -985,12 +982,10 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         RELEASE_LOG(Push, "Push message processing complete. Callback result: %d", wasProcessed);
         completionHandler(wasProcessed);
     });
-#endif
 }
 
 -(void)_processPersistentNotificationClick:(NSDictionary *)notificationDictionaryRepresentation completionHandler:(void(^)(bool))completionHandler
 {
-#if ENABLE(SERVICE_WORKER)
     auto notificationData = WebCore::NotificationData::fromDictionary(notificationDictionaryRepresentation);
     if (!notificationData) {
         RELEASE_LOG_ERROR(Push, "Asked to handle a persistent notification click with an invalid notification dictionary representation");
@@ -1015,12 +1010,10 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         RELEASE_LOG(Push, "Notification click event processing complete. Callback result: %d", wasProcessed);
         completionHandler(wasProcessed);
     });
-#endif
 }
 
 -(void)_processPersistentNotificationClose:(NSDictionary *)notificationDictionaryRepresentation completionHandler:(void(^)(bool))completionHandler
 {
-#if ENABLE(SERVICE_WORKER)
     auto notificationData = WebCore::NotificationData::fromDictionary(notificationDictionaryRepresentation);
     if (!notificationData) {
         RELEASE_LOG_ERROR(Push, "Asked to handle a persistent notification click with an invalid notification dictionary representation");
@@ -1034,32 +1027,23 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
         RELEASE_LOG(Push, "Notification close event processing complete. Callback result: %d", wasProcessed);
         completionHandler(wasProcessed);
     });
-#endif
 }
 
 -(void)_getAllBackgroundFetchIdentifiers:(void(^)(NSArray<NSString *> *identifiers))completionHandler
 {
-#if ENABLE(SERVICE_WORKER)
     _websiteDataStore->networkProcess().getAllBackgroundFetchIdentifiers(_websiteDataStore->sessionID(), [completionHandler = makeBlockPtr(completionHandler)] (auto identifiers) {
         auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:identifiers.size()]);
         for (auto identifier : identifiers)
             [result addObject:(NSString *)identifier];
         completionHandler(result.autorelease());
     });
-#else
-    completionHandler(nil);
-#endif
 }
 
 -(void)_getBackgroundFetchState:(NSString *) identifier completionHandler:(void(^)(NSDictionary *state))completionHandler
 {
-#if ENABLE(SERVICE_WORKER)
     _websiteDataStore->networkProcess().getBackgroundFetchState(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] (auto state) {
         completionHandler(state ? state->toDictionary() : nil);
     });
-#else
-    completionHandler(nil);
-#endif
 }
 
 -(void)_abortBackgroundFetch:(NSString *) identifier completionHandler:(void(^)(void))completionHandler
@@ -1067,26 +1051,18 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!completionHandler)
         completionHandler = [] { };
 
-#if ENABLE(SERVICE_WORKER)
     _websiteDataStore->networkProcess().abortBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
-#else
-    completionHandler();
-#endif
 }
 -(void)_pauseBackgroundFetch:(NSString *) identifier completionHandler:(void(^)(void))completionHandler
 {
     if (!completionHandler)
         completionHandler = [] { };
 
-#if ENABLE(SERVICE_WORKER)
     _websiteDataStore->networkProcess().pauseBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
-#else
-    completionHandler();
-#endif
 }
 
 -(void)_resumeBackgroundFetch:(NSString *) identifier completionHandler:(void(^)(void))completionHandler
@@ -1094,13 +1070,9 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!completionHandler)
         completionHandler = [] { };
 
-#if ENABLE(SERVICE_WORKER)
     _websiteDataStore->networkProcess().resumeBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
-#else
-    completionHandler();
-#endif
 }
 
 -(void)_clickBackgroundFetch:(NSString *) identifier completionHandler:(void(^)(void))completionHandler
@@ -1108,34 +1080,24 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     if (!completionHandler)
         completionHandler = [] { };
 
-#if ENABLE(SERVICE_WORKER)
     if (!completionHandler)
         completionHandler = [] { };
 
     _websiteDataStore->networkProcess().clickBackgroundFetch(_websiteDataStore->sessionID(), identifier, [completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
-#else
-    completionHandler();
-#endif
 }
 
 -(void)_storeServiceWorkerRegistrations:(void(^)(void))completionHandler
 {
-#if ENABLE(SERVICE_WORKER)
     _websiteDataStore->storeServiceWorkerRegistrations([completionHandler = makeBlockPtr(completionHandler)] {
         completionHandler();
     });
-#else
-    completionHandler();
-#endif
 }
 
 -(void)_setServiceWorkerOverridePreferences:(WKPreferences *)preferences
 {
-#if ENABLE(SERVICE_WORKER)
     _websiteDataStore->setServiceWorkerOverridePreferences(preferences ? preferences->_preferences.get() : nullptr);
-#endif
 }
 
 -(void)_scopeURL:(NSURL *)scopeURL hasPushSubscriptionForTesting:(void(^)(BOOL))completionHandler
