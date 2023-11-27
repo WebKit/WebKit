@@ -118,8 +118,11 @@ StructType::StructType(FieldType* payload, StructFieldCount fieldCount, const Fi
         const auto& fieldType = fieldTypes[fieldIndex];
         hasRecursiveReference |= isRefWithRecursiveReference(fieldType.type);
         getField(fieldIndex) = fieldType;
+
+        const auto& fieldStorageType = field(fieldIndex).type;
+        currentFieldOffset = WTF::roundUpToMultipleOf(typeAlignmentInBytes(fieldStorageType), currentFieldOffset);
         *offsetOfField(fieldIndex) = currentFieldOffset;
-        currentFieldOffset += typeSizeInBytes(field(fieldIndex).type);
+        currentFieldOffset += typeSizeInBytes(fieldStorageType);
     }
 
     m_instancePayloadSize = WTF::roundUpToMultipleOf<sizeof(uint64_t)>(currentFieldOffset);

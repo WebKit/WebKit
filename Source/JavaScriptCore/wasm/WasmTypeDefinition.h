@@ -484,6 +484,11 @@ inline size_t typeSizeInBytes(const StorageType& storageType)
     return typeKindSizeInBytes(storageType.as<Type>().kind);
 }
 
+inline size_t typeAlignmentInBytes(const StorageType& storageType)
+{
+    return typeSizeInBytes(storageType);
+}
+
 class FieldType {
 public:
     StorageType type;
