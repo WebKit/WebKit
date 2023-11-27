@@ -1053,10 +1053,10 @@ bool PageClientImpl::appUsesCustomAccentColor()
         NSDictionary *info = [bundleForAccentColor infoDictionary];
         NSString *accentColorName = info[@"NSAccentColorName"];
         if ([accentColorName length])
-            usesCustomAppAccentColor = !!adoptNS([NSColor colorNamed:accentColorName bundle:bundleForAccentColor]).get();
+            usesCustomAppAccentColor = !![NSColor colorNamed:accentColorName bundle:bundleForAccentColor];
 
         if (!usesCustomAppAccentColor && [(accentColorName = info[@"NSAppAccentColorName"]) length])
-            usesCustomAppAccentColor = !!adoptNS([NSColor colorNamed:accentColorName bundle:bundleForAccentColor]).get();
+            usesCustomAppAccentColor = !![NSColor colorNamed:accentColorName bundle:bundleForAccentColor];
     });
 
     return usesCustomAppAccentColor;
