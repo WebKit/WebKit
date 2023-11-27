@@ -55,6 +55,14 @@ using VideoEncoderSetRatesCallback = void(*)(WebKitVideoEncoder, const VideoEnco
 void setVideoEncoderCallbacks(VideoEncoderCreateCallback, VideoEncoderReleaseCallback, VideoEncoderInitializeCallback, VideoEncoderEncodeCallback, VideoEncoderRegisterEncodeCompleteCallback, VideoEncoderSetRatesCallback);
 
 using WebKitEncodedFrameTiming = EncodedImage::Timing;
+
+enum class WebKitEncodedVideoRotation : uint8_t {
+    kVideoRotation_0,
+    kVideoRotation_90,
+    kVideoRotation_180,
+    kVideoRotation_270
+};
+
 struct WebKitEncodedFrameInfo {
     uint32_t width { 0 };
     uint32_t height { 0 };
@@ -63,15 +71,12 @@ struct WebKitEncodedFrameInfo {
     int64_t ntpTimeMS { 0 };
     int64_t captureTimeMS { 0 };
     VideoFrameType frameType { VideoFrameType::kVideoFrameDelta };
-    VideoRotation rotation { kVideoRotation_0 };
+    WebKitEncodedVideoRotation rotation { WebKitEncodedVideoRotation::kVideoRotation_0 };
     VideoContentType contentType { VideoContentType::UNSPECIFIED };
     bool completeFrame = false;
     int qp { -1 };
     int temporalIndex { -1 };
     WebKitEncodedFrameTiming timing;
-
-    template<class Encoder> void encode(Encoder&) const;
-    template<class Decoder> static bool decode(Decoder&, WebKitEncodedFrameInfo&);
 };
 
 enum class LocalEncoderScalabilityMode : uint8_t { L1T1, L1T2 };
@@ -87,82 +92,5 @@ void setLocalEncoderRates(LocalEncoder, uint32_t bitRate, uint32_t frameRate);
 void setLocalEncoderLowLatency(LocalEncoder, bool isLowLatencyEnabled);
 void encoderVideoTaskComplete(void*, webrtc::VideoCodecType, const uint8_t* buffer, size_t length, const WebKitEncodedFrameInfo&);
 void flushLocalEncoder(LocalEncoder);
-
-template<class Decoder>
-bool WebKitEncodedFrameInfo::decode(Decoder& decoder, WebKitEncodedFrameInfo& info)
-{
-    if (!decoder.decode(info.width))
-        return false;
-    if (!decoder.decode(info.height))
-        return false;
-    if (!decoder.decode(info.timeStamp))
-        return false;
-    if (!decoder.decode(info.duration))
-        return false;
-    if (!decoder.decode(info.ntpTimeMS))
-        return false;
-    if (!decoder.decode(info.captureTimeMS))
-        return false;
-    if (!decoder.decode(info.frameType))
-        return false;
-    if (!decoder.decode(info.rotation))
-        return false;
-    if (!decoder.decode(info.contentType))
-        return false;
-    if (!decoder.decode(info.completeFrame))
-        return false;
-    if (!decoder.decode(info.qp))
-        return false;
-    if (!decoder.decode(info.temporalIndex))
-        return false;
-
-    if (!decoder.decode(info.timing.flags))
-        return false;
-    if (!decoder.decode(info.timing.encode_start_ms))
-        return false;
-    if (!decoder.decode(info.timing.encode_finish_ms))
-        return false;
-    if (!decoder.decode(info.timing.packetization_finish_ms))
-        return false;
-    if (!decoder.decode(info.timing.pacer_exit_ms))
-        return false;
-    if (!decoder.decode(info.timing.network_timestamp_ms))
-        return false;
-    if (!decoder.decode(info.timing.network2_timestamp_ms))
-        return false;
-    if (!decoder.decode(info.timing.receive_start_ms))
-        return false;
-    if (!decoder.decode(info.timing.receive_finish_ms))
-        return false;
-
-    return true;
-}
-
-template<class Encoder>
-void WebKitEncodedFrameInfo::encode(Encoder& encoder) const
-{
-    encoder << width;
-    encoder << height;
-    encoder << timeStamp;
-    encoder << duration;
-    encoder << ntpTimeMS;
-    encoder << captureTimeMS;
-    encoder << frameType;
-    encoder << rotation;
-    encoder << contentType;
-    encoder << completeFrame;
-    encoder << qp;
-    encoder << temporalIndex;
-
-    encoder << timing.flags;
-    encoder << timing.encode_start_ms;
-    encoder << timing.encode_finish_ms;
-    encoder << timing.packetization_finish_ms;
-    encoder << timing.pacer_exit_ms;
-    encoder << timing.network_timestamp_ms;
-    encoder << timing.network2_timestamp_ms;
-    encoder << timing.receive_start_ms;
-    encoder << timing.receive_finish_ms;
-}
 
 }
