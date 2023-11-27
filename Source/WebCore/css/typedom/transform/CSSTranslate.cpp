@@ -66,9 +66,10 @@ ExceptionOr<Ref<CSSTranslate>> CSSTranslate::create(CSSFunctionValue& cssFunctio
             auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);
             if (valueOrException.hasException())
                 return valueOrException.releaseException();
-            if (!is<CSSNumericValue>(valueOrException.returnValue()))
+            RefPtr numericValue = dynamicDowncast<CSSNumericValue>(valueOrException.releaseReturnValue());
+            if (!numericValue)
                 return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
-            components.append(downcast<CSSNumericValue>(valueOrException.releaseReturnValue().get()));
+            components.append(numericValue.releaseNonNull());
         }
         if (!maxNumberOfComponents)
             maxNumberOfComponents = minNumberOfComponents;
@@ -146,12 +147,15 @@ ExceptionOr<Ref<DOMMatrix>> CSSTranslate::toMatrix()
     // As the entries of such a matrix are defined relative to the px unit, if any <length>s
     // in this involved in generating the matrix are not compatible units with px (such as
     // relative lengths or percentages), throw a TypeError.
-    if (!is<CSSUnitValue>(m_x) || !is<CSSUnitValue>(m_y) || !is<CSSUnitValue>(m_z))
+    RefPtr xUnitValue = dynamicDowncast<CSSUnitValue>(m_x);
+    RefPtr yUnitValue = dynamicDowncast<CSSUnitValue>(m_y);
+    RefPtr zUnitValue = dynamicDowncast<CSSUnitValue>(m_z);
+    if (!xUnitValue || !yUnitValue || !zUnitValue)
         return Exception { ExceptionCode::TypeError };
 
-    auto xPx = downcast<CSSUnitValue>(m_x.get()).convertTo(CSSUnitType::CSS_PX);
-    auto yPx = downcast<CSSUnitValue>(m_y.get()).convertTo(CSSUnitType::CSS_PX);
-    auto zPx = downcast<CSSUnitValue>(m_z.get()).convertTo(CSSUnitType::CSS_PX);
+    auto xPx = xUnitValue->convertTo(CSSUnitType::CSS_PX);
+    auto yPx = yUnitValue->convertTo(CSSUnitType::CSS_PX);
+    auto zPx = zUnitValue->convertTo(CSSUnitType::CSS_PX);
 
     if (!xPx || !yPx || !zPx)
         return Exception { ExceptionCode::TypeError };

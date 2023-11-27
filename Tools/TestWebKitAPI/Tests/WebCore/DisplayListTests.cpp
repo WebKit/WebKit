@@ -29,11 +29,19 @@
 #include <WebCore/DisplayListItems.h>
 #include <WebCore/Filter.h>
 #include <WebCore/Gradient.h>
+#include <wtf/text/TextStream.h>
 
 namespace TestWebKitAPI {
 using namespace WebCore;
 using DisplayList::DisplayList;
 using namespace DisplayList;
+
+static String convertToString(const Path& path)
+{
+    TextStream stream(TextStream::LineMode::SingleLine);
+    stream << path;
+    return stream.release();
+}
 
 static Ref<Gradient> createGradient()
 {
@@ -81,7 +89,7 @@ TEST(DisplayListTests, AppendItems)
         [&](const SetInlineStroke& item) {
             EXPECT_EQ(item.thickness(), 1.5);
         }, [&](const FillPath& item) {
-            EXPECT_EQ(item.path(), path);
+            EXPECT_EQ(convertToString(item.path()), convertToString(path));
         }, [&](const FillRectWithGradient& item) {
             EXPECT_EQ(item.rect(), FloatRect(1., 1., 10., 10.));
             EXPECT_EQ(item.gradient().ptr(), gradient.ptr());

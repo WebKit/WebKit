@@ -481,10 +481,6 @@ WK_EXPORT void WKPreferencesSetShouldAllowUserInstalledFonts(WKPreferencesRef, b
 WK_EXPORT bool WKPreferencesGetShouldAllowUserInstalledFonts(WKPreferencesRef);
 
 // Defaults to false.
-WK_EXPORT void WKPreferencesSetAllowCrossOriginSubresourcesToAskForCredentials(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetAllowCrossOriginSubresourcesToAskForCredentials(WKPreferencesRef);
-
-// Defaults to false.
 WK_EXPORT void WKPreferencesSetServerTimingEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetServerTimingEnabled(WKPreferencesRef);
 
@@ -499,6 +495,8 @@ WK_EXPORT bool WKPreferencesGetPunchOutWhiteBackgroundsInDarkMode(WKPreferencesR
 
 // The following are all deprecated and do nothing. They should be removed when possible.
 
+WK_EXPORT void WKPreferencesSetAllowCrossOriginSubresourcesToAskForCredentials(WKPreferencesRef, bool flag) WK_C_API_DEPRECATED;
+WK_EXPORT bool WKPreferencesGetAllowCrossOriginSubresourcesToAskForCredentials(WKPreferencesRef) WK_C_API_DEPRECATED;
 WK_EXPORT void WKPreferencesSetPaintTimingEnabled(WKPreferencesRef, bool flag) WK_C_API_DEPRECATED;
 WK_EXPORT bool WKPreferencesGetPaintTimingEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
 WK_EXPORT void WKPreferencesSetRequestAnimationFrameEnabled(WKPreferencesRef, bool) WK_C_API_DEPRECATED;

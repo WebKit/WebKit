@@ -52,6 +52,7 @@ struct InputElementClickState {
     bool stateful { false };
     bool checked { false };
     bool indeterminate { false };
+    bool trusted { false };
     RefPtr<HTMLInputElement> checkedRadioButton;
 };
 
@@ -64,7 +65,7 @@ public:
     virtual ~HTMLInputElement();
 
     bool checked() const { return m_isChecked; }
-    WEBCORE_EXPORT void setChecked(bool);
+    WEBCORE_EXPORT void setChecked(bool, WasSetByJavaScript = WasSetByJavaScript::Yes);
     WEBCORE_EXPORT FileList* files();
     WEBCORE_EXPORT void setFiles(RefPtr<FileList>&&, WasSetByJavaScript = WasSetByJavaScript::No);
     FileList* filesForBindings() { return files(); }
@@ -340,6 +341,8 @@ public:
     void finishParsingChildren() final;
 
     bool hasEverBeenPasswordField() const { return m_hasEverBeenPasswordField; }
+
+    float switchCheckedChangeAnimationProgress() const;
 
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);

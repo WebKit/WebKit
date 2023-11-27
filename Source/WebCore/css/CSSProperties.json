@@ -5773,7 +5773,6 @@
             ],
             "codegen-properties": {
                 "converter": "TextAlignLast",
-                "settings-flag": "cssTextAlignLastEnabled",
                 "parser-grammar": "<<values>>"
             },
             "specification": {
@@ -8595,7 +8594,6 @@
         },
         "translate": {
             "codegen-properties": {
-                "settings-flag": "cssIndividualTransformPropertiesEnabled",
                 "converter": "Translate",
                 "parser-function": "consumeTranslate",
                 "parser-function-requires-context-mode": true,
@@ -8609,7 +8607,6 @@
         },
         "scale": {
             "codegen-properties": {
-                "settings-flag": "cssIndividualTransformPropertiesEnabled",
                 "converter": "Scale",
                 "parser-function": "consumeScale",
                 "parser-function-requires-context-mode": true,
@@ -8624,7 +8621,6 @@
         },
         "rotate": {
             "codegen-properties": {
-                "settings-flag": "cssIndividualTransformPropertiesEnabled",
                 "converter": "Rotate",
                 "parser-function": "consumeRotate",
                 "parser-function-requires-context-mode": true,
@@ -9056,45 +9052,6 @@
             "specification": {
                 "category": "css-scroll-snap",
                 "url": "https://drafts.csswg.org/css-scroll-snap-1/#propdef-scroll-snap-stop"
-            }
-        },
-        "scroll-timeline": {
-            "codegen-properties": {
-                "longhands": [
-                    "scroll-timeline-name",
-                    "scroll-timeline-axis"
-                ],
-                "settings-flag": "scrollDrivenAnimationsEnabled"
-            },
-            "specification": {
-                "category": "scroll-animations",
-                "url": "https://drafts.csswg.org/scroll-animations-1/#scroll-timeline-shorthand"
-            }
-        },
-        "scroll-timeline-axis": {
-            "codegen-properties": {
-                "converter": "ScrollTimelineAxis",
-                "name-for-methods": "ScrollTimelineAxes",
-                "parser-exported": true,
-                "parser-grammar": "<axis>#",
-                "settings-flag": "scrollDrivenAnimationsEnabled"
-            },
-            "specification": {
-                "category": "scroll-animations",
-                "url": "https://drafts.csswg.org/scroll-animations-1/#scroll-timeline-axis"
-            }
-        },
-        "scroll-timeline-name": {
-            "codegen-properties": {
-                "converter": "ScrollTimelineName",
-                "name-for-methods": "ScrollTimelineNames",
-                "parser-exported": true,
-                "parser-grammar": "<single-scroll-timeline-name>#",
-                "settings-flag": "scrollDrivenAnimationsEnabled"
-            },
-            "specification": {
-                "category": "scroll-animations",
-                "url": "https://drafts.csswg.org/scroll-animations-1/#scroll-timeline-name"
             }
         },
         "scrollbar-color": {
@@ -10072,11 +10029,6 @@
             "longname": "CSS Writing Modes Module",
             "url": "https://www.w3.org/TR/css-writing-modes-3/"
         },
-        "scroll-animations": {
-            "shortname": "Scroll-driven Animations",
-            "longname": "Scroll-driven Animations",
-            "url": "https://www.w3.org/TR/scroll-animations-1/"
-        },
         "svg": {
             "shortname": "SVG",
             "longname": "SVG",
@@ -11025,22 +10977,6 @@
         "<-webkit-display>": {
             "grammar": "-webkit-inline-flex | -webkit-box | -webkit-inline-box | -webkit-flex",
             "status": "non-standard"
-        },
-        "<axis>": {
-            "grammar": "block | inline | x | y",
-            "exported": true,
-            "specification": {
-                "category": "scroll-animations",
-                "url": "https://drafts.csswg.org/scroll-animations-1/#scroll-notation"
-            }
-        },
-        "<single-scroll-timeline-name>": {
-            "grammar": "none | <dashed-ident>",
-            "exported": true,
-            "specification": {
-                "category": "scroll-animations",
-                "url": "https://drafts.csswg.org/scroll-animations-1/#scroll-timeline-name"
-            }
         }
     }
 }

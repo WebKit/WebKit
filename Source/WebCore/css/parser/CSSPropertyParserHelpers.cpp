@@ -1514,12 +1514,10 @@ RefPtr<CSSPrimitiveValue> consumeResolution(CSSParserTokenRange& range)
     return consumeMetaConsumer<ResolutionConsumer>(range, { }, ValueRange::NonNegative, CSSParserMode::HTMLStandardMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Forbid);
 }
 
-#if ENABLE(CSS_CONIC_GRADIENTS)
 static RefPtr<CSSPrimitiveValue> consumeAngleOrPercent(CSSParserTokenRange& range, CSSParserMode parserMode)
 {
     return consumeMetaConsumer<AngleOrPercentConsumer>(range, { }, ValueRange::All, parserMode, UnitlessQuirk::Forbid, UnitlessZeroQuirk::Allow);
 }
-#endif
 
 static std::optional<LengthOrPercentRaw> consumeLengthOrPercentRaw(CSSParserTokenRange& range, CSSParserMode parserMode)
 {
@@ -3767,12 +3765,10 @@ static std::optional<CSSGradientColorStopList> consumeLengthColorStopList(CSSPar
     return consumeColorStopList(range, context, supportsColorHints, [&] { return consumeLengthOrPercent(range, context.mode, ValueRange::All); });
 }
 
-#if ENABLE(CSS_CONIC_GRADIENTS)
 static std::optional<CSSGradientColorStopList> consumeAngularColorStopList(CSSParserTokenRange& range, const CSSParserContext& context, SupportsColorHints supportsColorHints)
 {
     return consumeColorStopList(range, context, supportsColorHints, [&] { return consumeAngleOrPercent(range, context.mode); });
 }
-#endif
 
 static RefPtr<CSSValue> consumePrefixedRadialGradient(CSSParserTokenRange& range, const CSSParserContext& context, CSSGradientRepeat repeating)
 {
@@ -4251,7 +4247,6 @@ static RefPtr<CSSValue> consumeLinearGradient(CSSParserTokenRange& range, const 
 
 static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const CSSParserContext& context, CSSGradientRepeat repeating)
 {
-#if ENABLE(CSS_CONIC_GRADIENTS)
     // conic-gradient() = conic-gradient(
     //   [ [ from <angle> ]? [ at <position> ]? ] || <color-interpolation-method>,
     //   <angular-color-stop-list>
@@ -4310,12 +4305,6 @@ static RefPtr<CSSValue> consumeConicGradient(CSSParserTokenRange& range, const C
         computedColorInterpolationMethod,
         WTFMove(*stops)
     );
-#else
-    UNUSED_PARAM(range);
-    UNUSED_PARAM(context);
-    UNUSED_PARAM(repeating);
-    return nullptr;
-#endif
 }
 
 RefPtr<CSSValue> consumeImageOrNone(CSSParserTokenRange& range, const CSSParserContext& context)

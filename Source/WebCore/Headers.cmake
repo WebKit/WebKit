@@ -667,7 +667,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     animation/AcceleratedTimeline.h
     animation/AnimationFrameRatePreset.h
-    animation/AnimationTimeline.h
     animation/CSSPropertyBlendingClient.h
     animation/CustomAnimationOptions.h
     animation/CompositeOperation.h
@@ -681,9 +680,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     animation/KeyframeEffectOptions.h
     animation/KeyframeInterpolation.h
     animation/PlaybackDirection.h
-    animation/ScrollAxis.h
-    animation/ScrollTimeline.h
-    animation/ScrollTimelineOptions.h
     animation/WebAnimationTypes.h
 
     bindings/IDLTypes.h

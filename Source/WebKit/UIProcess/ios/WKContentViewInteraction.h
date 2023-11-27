@@ -163,6 +163,7 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
 #if HAVE(UIFINDINTERACTION)
 #define FOR_EACH_FIND_WKCONTENTVIEW_ACTION(M) \
     M(useSelectionForFind) \
+    M(findSelected) \
     M(_findSelected)
 #else
 #define FOR_EACH_FIND_WKCONTENTVIEW_ACTION(M)
@@ -171,12 +172,18 @@ typedef std::pair<WebKit::InteractionInformationRequest, InteractionInformationC
 #define FOR_EACH_WKCONTENTVIEW_ACTION(M) \
     FOR_EACH_INSERT_TEXT_FROM_CAMERA_WKCONTENTVIEW_ACTION(M) \
     FOR_EACH_FIND_WKCONTENTVIEW_ACTION(M) \
+    M(addShortcut) \
     M(_addShortcut) \
+    M(define) \
     M(_define) \
     M(_lookup) \
+    M(translate) \
     M(_translate) \
+    M(promptForReplace) \
     M(_promptForReplace) \
+    M(share) \
     M(_share) \
+    M(transliterateChinese) \
     M(_transliterateChinese) \
     M(_nextAccessoryTab) \
     M(_previousAccessoryTab) \
@@ -681,6 +688,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point;
 - (void)_didHandleTapAsHover;
 - (void)_didCompleteSyntheticClick;
+- (void)_provideSuggestionsToInputDelegate:(NSArray<UITextSuggestion *> *)suggestions;
 
 - (void)_didGetTapHighlightForRequest:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling;
 

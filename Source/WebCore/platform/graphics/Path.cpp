@@ -67,23 +67,6 @@ Path::Path(PathSegment&& segment)
     m_data = WTFMove(segment);
 }
 
-bool Path::operator==(const Path& other) const
-{
-    if (auto segment = asSingle()) {
-        if (auto otherSegment = other.asSingle())
-            return *segment == *otherSegment;
-        return false;
-    }
-
-    if (auto impl = asImpl()) {
-        if (auto otherImpl = other.asImpl())
-            return impl == otherImpl;
-        return false;
-    }
-
-    return true;
-}
-
 PathImpl& Path::setImpl(Ref<PathImpl>&& impl)
 {
     auto& platformPathImpl = impl.get();

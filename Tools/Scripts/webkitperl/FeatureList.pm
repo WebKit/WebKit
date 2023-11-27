@@ -64,19 +64,16 @@ my (
     $avfCaptionsSupport,
     $bubblewrapSandboxSupport,
     $cachePartitioningSupport,
-    $channelMessagingSupport,
     $cloopSupport,
     $contentExtensionsSupport,
     $contentFilteringSupport,
     $contextMenusSupport,
     $cssBoxDecorationBreakSupport,
     $cssCompositingSupport,
-    $cssConicGradientsSupport,
     $cssDeviceAdaptationSupport,
     $cssImageResolutionSupport,
     $cssPaintingAPISupport,
     $cssScrollSnapSupport,
-    $cssSelectorsLevel4Support,
     $cssTrailingWordSupport,
     $cssTypedOMSupport,
     $cursorVisibilitySupport,
@@ -85,7 +82,6 @@ my (
     $datalistElementSupport,
     $deviceOrientationSupport,
     $dfgJITSupport,
-    $downloadAttributeSupport,
     $dragSupportSupport,
     $encryptedMediaSupport,
     $fatalWarnings,
@@ -228,9 +224,6 @@ my @features = (
     { option => "cache-partitioning", desc => "Toggle cache partitioning support",
       define => "ENABLE_CACHE_PARTITIONING", value => \$cachePartitioningSupport },
 
-    { option => "channel-messaging", desc => "Toggle Channel Messaging support",
-      define => "ENABLE_CHANNEL_MESSAGING", value => \$channelMessagingSupport },
-
     { option => "content-extensions", desc => "Toggle Content Extensions support",
       define => "ENABLE_CONTENT_EXTENSIONS", value => \$contentExtensionsSupport },
 
@@ -246,14 +239,8 @@ my @features = (
     { option => "css-compositing", desc => "Toggle CSS Compositing support",
       define => "ENABLE_CSS_COMPOSITING", value => \$cssCompositingSupport },
 
-    { option => "css-conic-gradients", desc => "Toggle CSS Conic Gradient support",
-      define => "ENABLE_CSS_CONIC_GRADIENTS", value => \$cssConicGradientsSupport },
-
     { option => "css-painting-api", desc => "Toggle CSS Painting API support",
       define => "ENABLE_CSS_PAINTING_API", value => \$cssPaintingAPISupport },
-
-    { option => "css-selectors-level4", desc => "Toggle CSS Selectors Level 4 support",
-      define => "ENABLE_CSS_SELECTORS_LEVEL4", value => \$cssSelectorsLevel4Support },
 
     { option => "css-typed-om", desc => "Toggle CSS Typed OM support",
       define => "ENABLE_CSS_TYPED_OM", value => \$cssTypedOMSupport },
@@ -278,9 +265,6 @@ my @features = (
 
     { option => "dfg-jit", desc => "Toggle data flow graph JIT tier",
       define => "ENABLE_DFG_JIT", value => \$dfgJITSupport },
-
-    { option => "download-attribute", desc => "Toggle Download Attribute support",
-      define => "ENABLE_DOWNLOAD_ATTRIBUTE", value => \$downloadAttributeSupport },
 
     { option => "drag-support", desc => "Toggle support of drag actions (including selection of text with mouse)",
       define => "ENABLE_DRAG_SUPPORT", value => \$dragSupportSupport },

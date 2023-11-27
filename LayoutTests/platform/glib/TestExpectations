@@ -250,7 +250,6 @@ webkit.org/b/185859 imported/w3c/web-platform-tests/css/selectors/focus-visible-
 http/tests/media/media-document-referer.html [ Pass ]
 http/tests/media/media-document.html [ Pass ]
 http/tests/media/media-play-stream-chunked-icy.html [ Pass ]
-http/tests/media/video-auth-with-allowCrossOriginSubresourcesToAskForCredentials.html [ Pass ]
 http/tests/media/video-auth.html [ Pass ]
 http/tests/media/video-no-content-length-stall.html [ Pass ]
 http/tests/media/video-query-url.html [ Pass ]

@@ -291,10 +291,6 @@
 #define ENABLE_CSS_COMPOSITING 1
 #endif
 
-#if !defined(ENABLE_CSS_CONIC_GRADIENTS)
-#define ENABLE_CSS_CONIC_GRADIENTS 1
-#endif
-
 #if !defined(ENABLE_CSS_PAINTING_API)
 #define ENABLE_CSS_PAINTING_API 1
 #endif

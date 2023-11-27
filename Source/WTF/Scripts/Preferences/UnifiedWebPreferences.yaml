@@ -209,17 +209,6 @@ AllowContentSecurityPolicySourceStarToMatchAnyProtocol:
     WebCore:
       default: false
 
-AllowCrossOriginSubresourcesToAskForCredentials:
-  type: bool
-  status: embedder
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 AllowDisplayOfInsecureContent:
   type: bool
   status: embedder
@@ -1102,19 +1091,6 @@ CSSGradientPremultipliedAlphaInterpolationEnabled:
     WebCore:
       default: true
 
-CSSIndividualTransformPropertiesEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "CSS Individual Transform Properties"
-  humanReadableDescription: "Support for the translate, scale and rotate CSS properties"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 CSSInputSecurityEnabled:
   type: bool
   status: testable
@@ -1313,20 +1289,6 @@ CSSScrollbarWidthEnabled:
       default: false
     WebCore:
       default: false
-
-CSSTextAlignLastEnabled:
-  type: bool
-  status: stable
-  category: css
-  humanReadableName: "CSS text-align-last property"
-  humanReadableDescription: "Enable the property text-align-last, defined in CSS Text 3"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 CSSTextBoxTrimEnabled:
   type: bool
@@ -2376,7 +2338,6 @@ DisallowSyncXHRDuringPageDismissalEnabled:
 DownloadAttributeEnabled:
   type: bool
   status: embedder
-  condition: ENABLE(DOWNLOAD_ATTRIBUTE)
   defaultValue:
     WebKitLegacy:
       default: false

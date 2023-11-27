@@ -32,10 +32,6 @@
 
 typedef struct _XDisplay Display;
 
-// It's not possible to forward declare Visual, and including xlib in headers is problematic,
-// so we use void* for Visual and provide this macro to get the visual easily.
-#define WK_XVISUAL(platformDisplay) (static_cast<Visual*>(platformDisplay.visual()))
-
 namespace WebCore {
 
 class PlatformDisplayX11 final : public PlatformDisplay {
@@ -48,9 +44,6 @@ public:
     virtual ~PlatformDisplayX11();
 
     ::Display* native() const { return m_display; }
-    void* visual() const;
-    bool supportsXComposite() const;
-    bool supportsXDamage(std::optional<int>& damageEventBase, std::optional<int>& damageErrorBase) const;
 
 private:
     explicit PlatformDisplayX11(::Display*);
@@ -78,11 +71,6 @@ private:
 #endif
 
     ::Display* m_display { nullptr };
-    mutable std::optional<bool> m_supportsXComposite;
-    mutable std::optional<bool> m_supportsXDamage;
-    mutable std::optional<int> m_damageEventBase;
-    mutable std::optional<int> m_damageErrorBase;
-    mutable void* m_visual { nullptr };
 };
 
 } // namespace WebCore

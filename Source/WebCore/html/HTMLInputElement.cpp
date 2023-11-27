@@ -34,6 +34,7 @@
 #include "CSSGradientValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSValuePool.h"
+#include "CheckboxInputType.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "ColorInputType.h"
@@ -1029,7 +1030,7 @@ void HTMLInputElement::setDefaultCheckedState(bool isDefaultChecked)
     m_isDefaultChecked = isDefaultChecked;
 }
 
-void HTMLInputElement::setChecked(bool isChecked)
+void HTMLInputElement::setChecked(bool isChecked, WasSetByJavaScript wasCheckedByJavaScript)
 {
     m_dirtyCheckednessFlag = true;
     if (checked() == isChecked)
@@ -1043,8 +1044,11 @@ void HTMLInputElement::setChecked(bool isChecked)
 
     if (auto* buttons = radioButtonGroups())
         buttons->updateCheckedState(*this);
-    if (auto* renderer = this->renderer(); renderer && renderer->style().hasEffectiveAppearance())
+    if (auto* renderer = this->renderer(); renderer && renderer->style().hasEffectiveAppearance()) {
+        if (isSwitch())
+            downcast<CheckboxInputType>(*m_inputType).performSwitchCheckedChangeAnimation(wasCheckedByJavaScript);
         renderer->theme().stateChanged(*renderer, ControlStates::States::Checked);
+    }
     updateValidity();
 
     // Ideally we'd do this from the render tree (matching
@@ -2309,6 +2313,12 @@ String HTMLInputElement::placeholder() const
 bool HTMLInputElement::dirAutoUsesValue() const
 {
     return m_inputType->dirAutoUsesValue();
+}
+
+float HTMLInputElement::switchCheckedChangeAnimationProgress() const
+{
+    ASSERT(isSwitch());
+    return downcast<CheckboxInputType>(*m_inputType).switchCheckedChangeAnimationProgress();
 }
 
 } // namespace

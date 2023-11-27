@@ -94,6 +94,8 @@ public:
 
     WEBCORE_EXPORT static RetainPtr<NSImage> iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
 
+    Seconds switchCheckedChangeAnimationDuration() const final { return 300_ms; }
+
 private:
     RenderThemeMac();
 

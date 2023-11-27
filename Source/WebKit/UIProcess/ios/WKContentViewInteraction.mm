@@ -830,9 +830,7 @@ inline static NSString *textRelativeToSelectionStart(WKRelativeTextRange *range,
 
 - (void)invalidate
 {
-    id <UITextInputSuggestionDelegate> suggestionDelegate = (id <UITextInputSuggestionDelegate>)[_contentView inputDelegate];
-    [suggestionDelegate setSuggestions:nil];
-    _contentView = nil;
+    [std::exchange(_contentView, nil) _provideSuggestionsToInputDelegate:nil];
 }
 
 - (void)reloadFocusedElementContextView
@@ -3965,6 +3963,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 
 - (void)_lookupForWebView:(id)sender
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self defineForWebView:sender];
+}
+
+- (void)defineForWebView:(id)sender
+{
     _page->getSelectionContext([view = retainPtr(self)](const String& selectedText, const String& textBefore, const String& textAfter) {
         if (!selectedText)
             return;
@@ -3989,6 +3994,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 
 - (void)_shareForWebView:(id)sender
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self shareForWebView:sender];
+}
+
+- (void)shareForWebView:(id)sender
+{
     RetainPtr<WKContentView> view = self;
     _page->getSelectionOrContentsAsString([view](const String& string) {
         if (!view->_textInteractionWrapper || !string || !view->_page->editorState().hasVisualData())
@@ -4003,6 +4015,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 }
 
 - (void)_translateForWebView:(id)sender
+{
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self translateForWebView:sender];
+}
+
+- (void)translateForWebView:(id)sender
 {
     _page->getSelectionOrContentsAsString([weakSelf = WeakObjCPtr<WKContentView>(self)] (const String& string) {
         if (!weakSelf)
@@ -4023,6 +4042,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 }
 
 - (void)_addShortcutForWebView:(id)sender
+{
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self addShortcutForWebView:sender];
+}
+
+- (void)addShortcutForWebView:(id)sender
 {
     if (!_page->editorState().visualData)
         return;
@@ -4078,6 +4104,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 
 - (void)_promptForReplaceForWebView:(id)sender
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self promptForReplaceForWebView:sender];
+}
+
+- (void)promptForReplaceForWebView:(id)sender
+{
     if (!_page->editorState().postLayoutData)
         return;
     const auto& wordAtSelection = _page->editorState().postLayoutData->wordAtSelection;
@@ -4088,6 +4121,13 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 }
 
 - (void)_transliterateChineseForWebView:(id)sender
+{
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self transliterateChineseForWebView:sender];
+}
+
+- (void)transliterateChineseForWebView:(id)sender
 {
     if (!_page->editorState().postLayoutData)
         return;
@@ -4399,7 +4439,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return editorState.selectionIsRange;
     }
 
-    if (action == @selector(_define:)) {
+    if (action == @selector(_define:) || action == @selector(define:)) {
         if (editorState.isInPasswordField || !editorState.selectionIsRange)
             return NO;
 
@@ -4430,14 +4470,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return editorState.selectionIsRange;
     }
 
-    if (action == @selector(_share:)) {
+    if (action == @selector(_share:) || action == @selector(share:)) {
         if (editorState.isInPasswordField || !editorState.selectionIsRange)
             return NO;
 
         return editorState.postLayoutData && editorState.postLayoutData->selectedTextLength > 0;
     }
 
-    if (action == @selector(_addShortcut:)) {
+    if (action == @selector(_addShortcut:) || action == @selector(addShortcut:)) {
         if (editorState.isInPasswordField || !editorState.selectionIsRange)
             return NO;
 
@@ -4452,7 +4492,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return YES;
     }
 
-    if (action == @selector(_promptForReplace:)) {
+    if (action == @selector(_promptForReplace:) || action == @selector(promptForReplace:)) {
         if (!editorState.selectionIsRange || !editorState.postLayoutData || !editorState.postLayoutData->isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
             return NO;
         if ([[self selectedText] _containsCJScriptsOnly])
@@ -4460,14 +4500,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return YES;
     }
 
-    if (action == @selector(_transliterateChinese:)) {
+    if (action == @selector(_transliterateChinese:) || action == @selector(transliterateChinese:)) {
         if (!editorState.selectionIsRange || !editorState.postLayoutData || !editorState.postLayoutData->isReplaceAllowed || ![[UIKeyboardImpl activeInstance] autocorrectSpellingEnabled])
             return NO;
         return UIKeyboardEnabledInputModesAllowChineseTransliterationForText([self selectedText]);
     }
 
 #if HAVE(TRANSLATION_UI_SERVICES)
-    if (action == @selector(_translate:)) {
+    if (action == @selector(_translate:) || action == @selector(translate:)) {
         if (!PAL::isTranslationUIServicesFrameworkAvailable() || ![PAL::getLTUITranslationViewControllerClass() isAvailable])
             return NO;
         return !editorState.isInPasswordField && editorState.selectionIsRange;
@@ -4525,7 +4565,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #endif // ENABLE(IMAGE_ANALYSIS)
 
 #if HAVE(UIFINDINTERACTION)
-    if (action == @selector(useSelectionForFind:) || action == @selector(_findSelected:)) {
+    if (action == @selector(useSelectionForFind:) || action == @selector(findSelected:) || action == @selector(_findSelected:)) {
         if (!self.webView._findInteractionEnabled)
             return NO;
 
@@ -4659,7 +4699,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_defineForWebView:(id)sender
 {
-    [self _lookupForWebView:sender];
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self _defineForWebView:sender];
 }
 
 - (void)accessibilityRetrieveSpeakSelectionContent
@@ -8706,21 +8748,30 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 - (void)updateTextSuggestionsForInputDelegate
 {
     // Text suggestions vended from clients take precedence over text suggestions from a focused form control with a datalist.
-    id <UITextInputSuggestionDelegate> inputDelegate = (id <UITextInputSuggestionDelegate>)self.inputDelegate;
     NSArray<UITextSuggestion *> *formInputSessionSuggestions = [_formInputSession suggestions];
     if (formInputSessionSuggestions.count) {
-        [inputDelegate setSuggestions:formInputSessionSuggestions];
+        [self _provideSuggestionsToInputDelegate:formInputSessionSuggestions];
         return;
     }
 
 #if ENABLE(DATALIST_ELEMENT)
     if ([_dataListTextSuggestions count]) {
-        [inputDelegate setSuggestions:_dataListTextSuggestions.get()];
+        [self _provideSuggestionsToInputDelegate:_dataListTextSuggestions.get()];
         return;
     }
 #endif
 
-    [inputDelegate setSuggestions:nil];
+    [self _provideSuggestionsToInputDelegate:nil];
+}
+
+- (void)_provideSuggestionsToInputDelegate:(NSArray<UITextSuggestion *> *)suggestions
+{
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (self.shouldUseAsyncInteractions)
+        [_asyncSystemInputDelegate provideCandidateUISuggestions:suggestions];
+    else
+#endif
+        [(id<UITextInputSuggestionDelegate>)self.inputDelegate setSuggestions:suggestions];
 }
 
 - (void)_showPlaybackTargetPicker:(BOOL)hasVideo fromRect:(const WebCore::IntRect&)elementRect routeSharingPolicy:(WebCore::RouteSharingPolicy)routeSharingPolicy routingContextUID:(NSString *)routingContextUID
@@ -11458,6 +11509,13 @@ static RetainPtr<NSItemProvider> createItemProvider(const WebKit::WebPageProxy& 
 }
 
 - (void)_findSelectedForWebView:(id)sender
+{
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
+    [self findSelectedForWebView:sender];
+}
+
+- (void)findSelectedForWebView:(id)sender
 {
     [self useSelectionForFindForWebView:sender];
     [self.webView find:sender];

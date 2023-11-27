@@ -32,10 +32,6 @@
 #include <WebCore/GtkVersioning.h>
 #include <libintl.h>
 
-#if PLATFORM(X11)
-#include <X11/Xlib.h>
-#endif
-
 #if USE(GSTREAMER)
 #include <gst/gst.h>
 #endif
@@ -58,10 +54,6 @@ public:
 #if ENABLE(DEVELOPER_MODE)
         if (g_getenv("WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH"))
             g_usleep(30 * G_USEC_PER_SEC);
-#endif
-
-#if (USE(COORDINATED_GRAPHICS) || USE(GSTREAMER_GL)) && PLATFORM(X11)
-        XInitThreads();
 #endif
 
         gtk_init(nullptr, nullptr);

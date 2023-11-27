@@ -601,6 +601,22 @@ static void updateSliderTrackPartForRenderer(SliderTrackPart& sliderTrackPart, c
     sliderTrackPart.setTickRatios(WTFMove(tickRatios));
 }
 
+static void updateSwitchThumbPartForRenderer(SwitchThumbPart& switchThumbPart, const RenderObject& renderer)
+{
+    auto& input = checkedDowncast<HTMLInputElement>(*renderer.node()->shadowHost());
+    ASSERT(input.isSwitch());
+
+    switchThumbPart.setProgress(input.switchCheckedChangeAnimationProgress());
+}
+
+static void updateSwitchTrackPartForRenderer(SwitchTrackPart& switchTrackPart, const RenderObject& renderer)
+{
+    auto& input = checkedDowncast<HTMLInputElement>(*renderer.node()->shadowHost());
+    ASSERT(input.isSwitch());
+
+    switchTrackPart.setProgress(input.switchCheckedChangeAnimationProgress());
+}
+
 RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer) const
 {
     auto appearance = renderer.style().effectiveAppearance();
@@ -720,6 +736,16 @@ void RenderTheme::updateControlPartForRenderer(ControlPart& part, const RenderOb
 
     if (auto* sliderTrackPart = dynamicDowncast<SliderTrackPart>(part)) {
         updateSliderTrackPartForRenderer(*sliderTrackPart, renderer);
+        return;
+    }
+
+    if (auto* switchThumbPart = dynamicDowncast<SwitchThumbPart>(part)) {
+        updateSwitchThumbPartForRenderer(*switchThumbPart, renderer);
+        return;
+    }
+
+    if (auto* switchTrackPart = dynamicDowncast<SwitchTrackPart>(part)) {
+        updateSwitchTrackPartForRenderer(*switchTrackPart, renderer);
         return;
     }
 

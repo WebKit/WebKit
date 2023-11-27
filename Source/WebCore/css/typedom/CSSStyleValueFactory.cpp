@@ -281,15 +281,15 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
         default:
             break;
         }
-    } else if (is<CSSImageValue>(cssValue))
-        return Ref<CSSStyleValue> { CSSStyleImageValue::create(downcast<CSSImageValue>(const_cast<CSSValue&>(cssValue)), document) };
-    else if (is<CSSVariableReferenceValue>(cssValue)) {
-        return Ref<CSSStyleValue> { CSSUnparsedValue::create(downcast<CSSVariableReferenceValue>(cssValue).data().tokenRange()) };
-    } else if (is<CSSPendingSubstitutionValue>(cssValue)) {
-        return Ref<CSSStyleValue> { CSSUnparsedValue::create(downcast<CSSPendingSubstitutionValue>(cssValue).shorthandValue().data().tokenRange()) };
-    } else if (is<CSSCustomPropertyValue>(cssValue)) {
+    } else if (auto* imageValue = dynamicDowncast<CSSImageValue>(cssValue))
+        return Ref<CSSStyleValue> { CSSStyleImageValue::create(const_cast<CSSImageValue&>(*imageValue), document) };
+    else if (auto* referenceValue = dynamicDowncast<CSSVariableReferenceValue>(cssValue)) {
+        return Ref<CSSStyleValue> { CSSUnparsedValue::create(referenceValue->data().tokenRange()) };
+    } else if (auto* substitutionValue = dynamicDowncast<CSSPendingSubstitutionValue>(cssValue)) {
+        return Ref<CSSStyleValue> { CSSUnparsedValue::create(substitutionValue->shorthandValue().data().tokenRange()) };
+    } else if (auto* customPropertyValue = dynamicDowncast<CSSCustomPropertyValue>(cssValue)) {
         // FIXME: remove CSSStyleValue::create(WTFMove(cssValue)), add reification control flow
-        return WTF::switchOn(downcast<CSSCustomPropertyValue>(cssValue).value(), [&](const std::monostate&) {
+        return WTF::switchOn(customPropertyValue->value(), [&](const std::monostate&) {
             return ExceptionOr<Ref<CSSStyleValue>> { CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue))) };
         }, [&](const Ref<CSSVariableReferenceValue>& value) {
             return reifyValue(value, propertyID, document);
@@ -300,32 +300,30 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
         }, [&](const CSSCustomPropertyValue::SyntaxValue& syntaxValue) -> ExceptionOr<Ref<CSSStyleValue>> {
             if (auto styleValue = constructStyleValueForCustomPropertySyntaxValue(syntaxValue))
                 return { *styleValue };
-            CSSTokenizer tokenizer(downcast<CSSCustomPropertyValue>(cssValue).customCSSText());
+            CSSTokenizer tokenizer(customPropertyValue->customCSSText());
             return { CSSUnparsedValue::create(tokenizer.tokenRange()) };
         }, [&](const CSSCustomPropertyValue::SyntaxValueList& syntaxValueList) -> ExceptionOr<Ref<CSSStyleValue>> {
             if (auto styleValue = constructStyleValueForCustomPropertySyntaxValue(syntaxValueList.values[0]))
                 return { *styleValue };
-            CSSTokenizer tokenizer(downcast<CSSCustomPropertyValue>(cssValue).customCSSText());
+            CSSTokenizer tokenizer(customPropertyValue->customCSSText());
             return { CSSUnparsedValue::create(tokenizer.tokenRange()) };
         }, [&](auto&) {
-            CSSTokenizer tokenizer(downcast<CSSCustomPropertyValue>(cssValue).customCSSText());
+            CSSTokenizer tokenizer(customPropertyValue->customCSSText());
             return ExceptionOr<Ref<CSSStyleValue>> { CSSUnparsedValue::create(tokenizer.tokenRange()) };
         });
-    } else if (is<CSSTransformListValue>(cssValue)) {
-        auto& transformList = downcast<CSSTransformListValue>(cssValue);
-        auto transformValue = CSSTransformValue::create(transformList);
+    } else if (auto* transformList = dynamicDowncast<CSSTransformListValue>(cssValue)) {
+        auto transformValue = CSSTransformValue::create(*transformList);
         if (transformValue.hasException())
             return transformValue.releaseException();
         return Ref<CSSStyleValue> { transformValue.releaseReturnValue() };
-    } else if (is<CSSValueList>(cssValue)) {
+    } else if (auto* valueList = dynamicDowncast<CSSValueList>(cssValue)) {
         // Reifying the first value in value list.
         // FIXME: Verify this is the expected behavior.
         // Refer to LayoutTests/imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/inline/get.html
-        auto& valueList = downcast<CSSValueList>(cssValue);
-        if (!valueList.length())
+        if (!valueList->length())
             return Exception { ExceptionCode::TypeError, "The CSSValueList should not be empty."_s };
-        if ((valueList.length() == 1 && mayConvertCSSValueListToSingleValue(propertyID)) || (propertyID && CSSProperty::isListValuedProperty(*propertyID)))
-            return reifyValue(valueList[0], propertyID, document);
+        if ((valueList->length() == 1 && mayConvertCSSValueListToSingleValue(propertyID)) || (propertyID && CSSProperty::isListValuedProperty(*propertyID)))
+            return reifyValue((*valueList)[0], propertyID, document);
     }
     
     return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)));

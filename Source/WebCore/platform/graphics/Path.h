@@ -55,8 +55,6 @@ public:
     Path& operator=(const Path&) = default;
     Path& operator=(Path&&) = default;
 
-    WEBCORE_EXPORT bool operator==(const Path&) const;
-
     WEBCORE_EXPORT void moveTo(const FloatPoint&);
 
     WEBCORE_EXPORT void addLineTo(const FloatPoint&);

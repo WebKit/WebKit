@@ -129,7 +129,6 @@ const TestFeatures& TestOptions::defaults()
             // These are WebPreference values that must always be set as they may
             // differ from the default set in the WebPreferences*.yaml configuration.
             { "AcceleratedDrawingEnabled", false },
-            { "AllowCrossOriginSubresourcesToAskForCredentials", false },
             { "AllowFileAccessFromFileURLs", true },
             { "AllowTopNavigationToDataURLs", true },
             { "AllowUniversalAccessFromFileURLs", true },
@@ -142,7 +141,6 @@ const TestFeatures& TestOptions::defaults()
             { "CSSGradientPremultipliedAlphaInterpolationEnabled", true },
             { "CSSInputSecurityEnabled", true },
             { "CSSOMViewSmoothScrollingEnabled", false },
-            { "CSSTextAlignLastEnabled", true },
             { "CSSTextJustifyEnabled", true },
             { "CanvasColorSpaceEnabled", true },
             { "ColorFilterEnabled", false },

@@ -971,6 +971,8 @@ RenderText::Widths RenderText::trimmedPreferredWidths(float leadWidth, bool& str
     if (!length || (stripFrontSpaces && text().containsOnly<isASCIIWhitespace>()))
         return widths;
 
+    widths.endZeroSpace = text()[length - 1] == zeroWidthSpace;
+
     widths.min = m_minWidth.value_or(-1);
     widths.max = m_maxWidth.value_or(-1);
 
@@ -1260,7 +1262,7 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, WeakHashSet<cons
         bool hasBreak = breakAll || isBreakable(lineBreakIteratorFactory, i, nextBreakable, breakNBSP, canUseLineBreakShortcut, keepAllWords, breakAnywhere);
         bool betweenWords = true;
         unsigned j = i;
-        while (c != '\n' && !isSpaceAccordingToStyle(c, style) && c != '\t' && (c != softHyphen || style.hyphens() == Hyphens::None)) {
+        while (c != '\n' && !isSpaceAccordingToStyle(c, style) && c != '\t' && c != zeroWidthSpace && (c != softHyphen || style.hyphens() == Hyphens::None)) {
             UChar previousCharacter = c;
             j++;
             if (j == length)

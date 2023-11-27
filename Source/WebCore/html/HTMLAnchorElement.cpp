@@ -602,7 +602,6 @@ void HTMLAnchorElement::handleClick(Event& event)
 #endif
 
     AtomString downloadAttribute;
-#if ENABLE(DOWNLOAD_ATTRIBUTE)
     if (document().settings().downloadAttributeEnabled()) {
         // Ignore the download attribute completely if the href URL is cross origin.
         bool isSameOrigin = completedURL.protocolIsData() || document().securityOrigin().canRequest(completedURL, OriginAccessPatternsForWebProcess::singleton());
@@ -611,7 +610,6 @@ void HTMLAnchorElement::handleClick(Event& event)
         else if (hasAttributeWithoutSynchronization(downloadAttr))
             document().addConsoleMessage(MessageSource::Security, MessageLevel::Warning, "The download attribute on anchor was ignored because its href URL has a different security origin."_s);
     }
-#endif
 
     SystemPreviewInfo systemPreviewInfo;
 #if USE(SYSTEM_PREVIEW)

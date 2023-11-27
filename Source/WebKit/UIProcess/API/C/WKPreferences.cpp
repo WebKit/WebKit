@@ -1708,16 +1708,6 @@ bool WKPreferencesGetMediaCapabilitiesEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->mediaCapabilitiesEnabled();
 }
 
-void WKPreferencesSetAllowCrossOriginSubresourcesToAskForCredentials(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setAllowCrossOriginSubresourcesToAskForCredentials(flag);
-}
-
-bool WKPreferencesGetAllowCrossOriginSubresourcesToAskForCredentials(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->allowCrossOriginSubresourcesToAskForCredentials();
-}
-
 void WKPreferencesSetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setRestrictedHTTPResponseAccess(flag);
@@ -1850,6 +1840,15 @@ bool WKPreferencesGetRequestVideoFrameCallbackEnabled(WKPreferencesRef preferenc
 
 
 // The following are all deprecated and do nothing. They should be removed when possible.
+
+void WKPreferencesSetAllowCrossOriginSubresourcesToAskForCredentials(WKPreferencesRef preferencesRef, bool flag)
+{
+}
+
+bool WKPreferencesGetAllowCrossOriginSubresourcesToAskForCredentials(WKPreferencesRef preferencesRef)
+{
+    return false;
+}
 
 void WKPreferencesSetPaintTimingEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
