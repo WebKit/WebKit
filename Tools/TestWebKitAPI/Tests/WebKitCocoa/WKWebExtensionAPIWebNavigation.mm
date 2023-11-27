@@ -456,10 +456,10 @@ TEST(WKWebExtensionAPIWebNavigation, URLKeyTypeChecking)
     test(@{ }, @"The 'filters' value is invalid, because it is missing required keys: 'url'.");
     test(@{ @"a": @"b" }, @"The 'filters' value is invalid, because it is missing required keys: 'url'.");
     test(@{ @"a": @"b", @"url": @[ ] }, nil);
-    test(@{ @"url": [NSNull null] }, @"The 'filters' value is invalid, because 'url' is expected to be an array, but null was provided.");
+    test(@{ @"url": [NSNull null] }, @"The 'filters' value is invalid, because 'url' is expected to be an array of objects, but null was provided.");
     test(@{ @"url": @[ ] }, nil);
-    test(@{ @"url": @[ @"A" ] }, @"The 'filters' value is invalid, because 'url' is expected to be objects in an array, but a string was provided.");
-    test(@{ @"url": @[ @[ ] ] }, @"The 'filters' value is invalid, because 'url' is expected to be objects in an array, but an array with other values was provided.");
+    test(@{ @"url": @[ @"A" ] }, @"The 'filters' value is invalid, because 'url' is expected to be an array of objects, but a string was provided in the array.");
+    test(@{ @"url": @[ @[ ] ] }, @"The 'filters' value is invalid, because 'url' is expected to be an array of objects, but an array was provided in the array.");
     test(@{ @"url": @[ @{ } ] }, nil);
 }
 

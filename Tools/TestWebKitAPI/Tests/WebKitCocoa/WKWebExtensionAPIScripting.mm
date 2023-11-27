@@ -64,10 +64,10 @@ TEST(WKWebExtensionAPIScripting, Errors)
         @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, func: 'not a function' }), /is expected to be a value, but a string was provided./i)",
 
         @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }}), /it must specify either 'func' or 'files'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: ['args'], files: [0]}), /'files' is expected to be strings in an array, but a number was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, args: ['args'], files: [0]}), /'files' is expected to be an array of strings, but a number was provided./i)",
 
         @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0, allFrames: true, frameIds: [0] }, files: ['path/to/file']}), /it cannot specify both 'allFrames' and 'frameIds'./i)",
-        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0, frameIds: ['0'] }, files: ['path/to/file']}), /'frameIds' is expected to be numbers in an array, but a string was provided./i)",
+        @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0, frameIds: ['0'] }, files: ['path/to/file']}), /'frameIds' is expected to be an array of numbers, but a string was provided./i)",
         @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0, frameIds: [-1] }, files: ['path/to/file']}), /'-1' is not a frame identifier./i)",
 
         @"browser.test.assertThrows(() => browser.scripting.executeScript({'target': { 'tabId': 0 }, world: 'world', files: ['path/to/file']}), /it must specify either 'ISOLATED' or 'MAIN'./i)",
@@ -106,12 +106,12 @@ TEST(WKWebExtensionAPIScripting, Errors)
         @"browser.test.assertThrows(() => browser.scripting.updateContentScripts([{ id: '0', matches: [ '*://*/*' ], js: ['path/to/file'], world: 'invalid_world' }]), /it must specify either 'ISOLATED' or 'MAIN'/i)",
 
         @"browser.test.assertThrows(() => browser.scripting.getRegisteredContentScripts([]), /an object is expected/i)",
-        @"browser.test.assertThrows(() => browser.scripting.getRegisteredContentScripts({ ids: 0 }), /'ids' is expected to be an array, but a number was provided/i)",
-        @"browser.test.assertThrows(() => browser.scripting.getRegisteredContentScripts({ ids: [ 0 ] }), /'ids' is expected to be strings in an array, but a number was provided/i)",
+        @"browser.test.assertThrows(() => browser.scripting.getRegisteredContentScripts({ ids: 0 }), /'ids' is expected to be an array of strings, but a number was provided/i)",
+        @"browser.test.assertThrows(() => browser.scripting.getRegisteredContentScripts({ ids: [ 0 ] }), /'ids' is expected to be an array of strings, but a number was provided/i)",
 
         @"browser.test.assertThrows(() => browser.scripting.unregisterContentScripts([]), /an object is expected/i)",
-        @"browser.test.assertThrows(() => browser.scripting.unregisterContentScripts({ ids: 0 }), /'ids' is expected to be an array, but a number was provided/i)",
-        @"browser.test.assertThrows(() => browser.scripting.unregisterContentScripts({ ids: [ 0 ] }), /'ids' is expected to be strings in an array, but a number was provided/i)",
+        @"browser.test.assertThrows(() => browser.scripting.unregisterContentScripts({ ids: 0 }), /'ids' is expected to be an array of strings, but a number was provided/i)",
+        @"browser.test.assertThrows(() => browser.scripting.unregisterContentScripts({ ids: [ 0 ] }), /'ids' is expected to be an array of strings, but a number was provided/i)",
 
         @"browser.test.notifyPass()"
     ]);

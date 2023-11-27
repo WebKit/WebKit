@@ -104,7 +104,7 @@ TEST(WKWebExtensionAPITabs, Errors)
         @"browser.test.assertThrows(() => browser.tabs.get(-3), /'tabId' value is invalid, because it is not a tab identifier/i)",
         @"browser.test.assertThrows(() => browser.tabs.duplicate('bad'), /'tabId' value is invalid, because a number is expected/i)",
         @"browser.test.assertThrows(() => browser.tabs.remove('bad'), /'tabIDs' value is invalid, because a number or an array of numbers is expected, but a string was provided/i)",
-        @"browser.test.assertThrows(() => browser.tabs.remove(['bad']), /'tabIDs' value is invalid, because a number or an array of numbers is expected, but an array with other values was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.remove(['bad']), /'tabIDs' value is invalid, because a number or an array of numbers is expected, but an array of other values was provided/i)",
         @"browser.test.assertThrows(() => browser.tabs.reload('bad'), /an unknown argument was provided/i)",
         @"browser.test.assertThrows(() => browser.tabs.goBack('bad'), /'tabId' value is invalid, because a number is expected/i)",
         @"browser.test.assertThrows(() => browser.tabs.goForward('bad'), /'tabId' value is invalid, because a number is expected/i)",
@@ -126,7 +126,7 @@ TEST(WKWebExtensionAPITabs, Errors)
         @"browser.test.assertThrows(() => browser.tabs.query({ status: 'bad' }), /'status' value is invalid, because it must specify either 'loading' or 'complete'/i)",
 
         @"browser.test.assertThrows(() => browser.tabs.query({ url: 12345 }), /'info' value is invalid, because 'url' is expected to be a string or an array of strings, but a number was provided/i)",
-        @"browser.test.assertThrows(() => browser.tabs.query({ url: ['bad', 12345] }), /'url' is expected to be a string or an array of strings, but an array with other values was provided/i)",
+        @"browser.test.assertThrows(() => browser.tabs.query({ url: ['bad', 12345] }), /'url' is expected to be a string or an array of strings, but an array of other values was provided/i)",
 
         @"browser.test.assertThrows(() => browser.tabs.query({ windowId: 'bad' }), /'windowId' is expected to be a number, but a string was provided/i)",
         @"browser.test.assertThrows(() => browser.tabs.query({ windowId: -5 }), /'windowId' value is invalid, because '-5' is not a window identifier/i)",
