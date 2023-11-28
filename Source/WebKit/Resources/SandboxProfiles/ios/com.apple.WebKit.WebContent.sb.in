@@ -1256,7 +1256,7 @@
 
 (when (defined? 'socket-option-set)
     ;; setsockopt
-    (deny socket-option-set (with telemetry))
+    (deny socket-option-set)
 )
 
 (define-once (mach-bootstrap-message-numbers)
