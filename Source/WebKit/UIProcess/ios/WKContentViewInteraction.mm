@@ -2699,12 +2699,23 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
 {
     if ([_webView _isEditable] && !self._disableAutomaticKeyboardUI)
         return YES;
+
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (self.shouldUseAsyncInteractions)
+        return [super _requiresKeyboardWhenFirstResponder];
+#endif
+
     // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
     return [self _shouldShowAutomaticKeyboardUIIgnoringInputMode] || _seenHardwareKeyDownInNonEditableElement;
 }
 
 - (BOOL)_requiresKeyboardResetOnReload
 {
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (self.shouldUseAsyncInteractions)
+        return [super _requiresKeyboardResetOnReload];
+#endif
+
     return YES;
 }
 

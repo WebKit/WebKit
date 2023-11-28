@@ -1294,6 +1294,11 @@ typedef NS_ENUM(NSInteger, UIShiftKeyState) {
 
 #endif
 
+@interface UIResponder (Internal)
+- (BOOL)_requiresKeyboardWhenFirstResponder;
+- (BOOL)_requiresKeyboardResetOnReload;
+@end
+
 WTF_EXTERN_C_BEGIN
 
 BOOL UIKeyboardEnabledInputModesAllowOneToManyShortcuts(void);
