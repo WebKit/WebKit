@@ -19,7 +19,7 @@ var registeredAlgorithmNames = [
     "SHA-256",
     "SHA-384",
     "SHA-512",
-    "HKDF-CTR",
+    "HKDF",
     "PBKDF2",
     "Ed25519",
     "Ed448",
@@ -104,9 +104,6 @@ function assert_goodCryptoKey(key, algorithm, extractable, usages, kind) {
 
     assert_equals(key.constructor, CryptoKey, "Is a CryptoKey");
     assert_equals(key.type, kind, "Is a " + kind + " key");
-    if (key.type === "public") {
-        extractable = true; // public keys are always extractable
-    }
     assert_equals(key.extractable, extractable, "Extractability is correct");
 
     assert_equals(key.algorithm.name, registeredAlgorithmName, "Correct algorithm name");
@@ -164,6 +161,7 @@ function assert_goodCryptoKey(key, algorithm, extractable, usages, kind) {
         assert_in_array(usage, correctUsages, "Has " + usage + " usage");
     });
     assert_equals(key.usages.length, usageCount, "usages property is correct");
+    assert_equals(key[Symbol.toStringTag], 'CryptoKey', "has the expected Symbol.toStringTag");
 }
 
 
@@ -237,7 +235,7 @@ function allValidUsages(validUsages, emptyIsValid, mandatoryUsages) {
         }
     });
 
-    if (emptyIsValid) {
+    if (emptyIsValid && validUsages.length !== 0) {
         okaySubsets.push([]);
     }
 
