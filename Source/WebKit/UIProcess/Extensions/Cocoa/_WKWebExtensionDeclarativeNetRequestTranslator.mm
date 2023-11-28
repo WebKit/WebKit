@@ -83,8 +83,10 @@ using namespace WebKit;
     NSMutableArray<NSString *> *errors = [NSMutableArray array];
     for (NSData *jsonData in jsonDataArray) {
         NSError *error;
-        NSArray<NSDictionary *> *json = parseJSON(jsonData, { }, &error);
-        if (json)
+        NSArray<NSDictionary *> *json = parseJSON(jsonData, JSONOptions::FragmentsAllowed, &error);
+
+        // The top level of a declarativeNetRequest ruleset should be an array.
+        if (json && [json isKindOfClass:NSArray.class])
             [allJSONObjects addObject:json];
 
         if (error)

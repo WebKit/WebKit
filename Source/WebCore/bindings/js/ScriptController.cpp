@@ -858,7 +858,7 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
     //        http://bugs.webkit.org/show_bug.cgi?id=16782
     if (shouldReplaceDocumentIfJavaScriptURL == ReplaceDocumentIfJavaScriptURL) {
         // We're still in a frame, so there should be a DocumentLoader.
-        ASSERT(ownerDocument->loader());
+        ASSERT(m_frame.document()->loader());
 
         // Signal to FrameLoader to disable navigations within this frame while replacing it with the result of executing javascript
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=200523
@@ -868,7 +868,7 @@ void ScriptController::executeJavaScriptURL(const URL& url, RefPtr<SecurityOrigi
 
         // DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL can cause the DocumentLoader to get deref'ed and possible destroyed,
         // so protect it with a RefPtr.
-        if (RefPtr loader = ownerDocument->loader()) {
+        if (RefPtr loader = m_frame.document()->loader()) {
             loader->writer().replaceDocumentWithResultOfExecutingJavascriptURL(scriptResult, ownerDocument.get());
             didReplaceDocument = true;
         }

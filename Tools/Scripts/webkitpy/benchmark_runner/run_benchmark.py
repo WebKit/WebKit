@@ -69,6 +69,8 @@ def config_argument_parser():
 
     parser.add_argument('browser_args', nargs='*', help='Additional arguments to pass to the browser process. These are positional arguments and must follow all other arguments. If the pass through arguments begin with a dash, use `--` before the argument list begins.')
 
+    parser.add_argument('--http-server-type', default="twisted", choices=["twisted", "builtin"], help="Specify the http server to use for the webserver benchmark runner.")
+
     return parser
 
 
@@ -103,7 +105,7 @@ def run_benchmark_plan(args, plan):
                                     WEBKIT_PGO_DIR if args.generate_pgo_profiles else None,
                                     args.diagnose_dir if args.trace_type else None,
                                     args.trace_type, args.profiling_interval,
-                                    args.browser_args)
+                                    args.browser_args, args.http_server_type)
     runner.execute()
 
 

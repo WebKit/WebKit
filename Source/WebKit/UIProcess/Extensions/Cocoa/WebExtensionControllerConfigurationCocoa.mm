@@ -86,6 +86,25 @@ WKWebViewConfiguration *WebExtensionControllerConfiguration::webViewConfiguratio
     return m_webViewConfiguration.get();
 }
 
+String WebExtensionControllerConfiguration::declarativeNetRequestStoreDirectory()
+{
+    if (!m_declarativeNetRequestStoreDirectory.isEmpty())
+        return m_declarativeNetRequestStoreDirectory;
+
+    if (!storageIsPersistent()) {
+        m_declarativeNetRequestStoreDirectory = FileSystem::createTemporaryDirectory(@"DeclarativeNetRequest");
+        return m_declarativeNetRequestStoreDirectory;
+    }
+
+    m_declarativeNetRequestStoreDirectory = FileSystem::pathByAppendingComponent(m_storageDirectory, "DeclarativeNetRequest"_s);
+    if (!FileSystem::makeAllDirectories(m_declarativeNetRequestStoreDirectory)) {
+        m_declarativeNetRequestStoreDirectory = String();
+        return m_declarativeNetRequestStoreDirectory;
+    }
+
+    return m_declarativeNetRequestStoreDirectory;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
