@@ -29,7 +29,6 @@
 #include "JSDOMGlobalObject.h"
 #include "JSDOMWrapper.h"
 #include "ServiceWorkerGlobalScope.h"
-#include "WorkerGlobalScope.h"
 
 namespace WebCore {
 
