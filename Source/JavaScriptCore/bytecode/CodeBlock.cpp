@@ -813,12 +813,6 @@ CodeBlock::~CodeBlock()
 {
     VM& vm = *m_vm;
 
-    // We use unvalidatedGet because get() has a validation assertion that rejects access.
-    // This assertion is correct since destruction order of cells is not guaranteed, and member cells could already be destroyed.
-    // But for CodeBlock, we are ensuring the order: CodeBlock gets destroyed before UnlinkedCodeBlock gets destroyed.
-    // So, we can access member UnlinkedCodeBlock safely here. We bypass the assertion by using unvalidatedGet.
-    UnlinkedCodeBlock* unlinkedCodeBlock = m_unlinkedCode.unvalidatedGet();
-
     if (JITCode::isBaselineCode(jitType())) {
         if (m_metadata) {
             m_metadata->forEach<OpCatch>([&](auto& metadata) {
@@ -848,13 +842,16 @@ CodeBlock::~CodeBlock()
     if (JITCode::isOptimizingJIT(jitType()))
         jitCode()->dfgCommon()->clearWatchpoints();
 #endif
-    vm.heap.codeBlockSet().remove(this);
-    
+
     if (UNLIKELY(vm.m_perBytecodeProfiler))
         vm.m_perBytecodeProfiler->notifyDestruction(this);
 
-    if (!vm.heap.isShuttingDown() && unlinkedCodeBlock->didOptimize() == TriState::Indeterminate)
-        unlinkedCodeBlock->setDidOptimize(TriState::False);
+    if (LIKELY(!vm.heap.isShuttingDown())) {
+        if (m_metadata) {
+            if (m_metadata->unlinkedMetadata().didOptimize() == TriState::Indeterminate)
+                m_metadata->unlinkedMetadata().setDidOptimize(TriState::False);
+        }
+    }
 
 #if ENABLE(VERBOSE_VALUE_PROFILE)
     dumpValueProfiles();

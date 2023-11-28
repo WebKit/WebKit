@@ -61,7 +61,7 @@ public:
 
     void prepareForConservativeScan();
     
-    void deleteUnmarkedJettisonedStubRoutines();
+    void deleteUnmarkedJettisonedStubRoutines(VM&);
 
     template<typename Visitor> void traceMarkedStubRoutines(Visitor&);
     
@@ -90,7 +90,7 @@ public:
     void clearMarks() { }
     void mark(void*) { }
     void prepareForConservativeScan() { }
-    void deleteUnmarkedJettisonedStubRoutines() { }
+    void deleteUnmarkedJettisonedStubRoutines(VM&) { }
     template<typename Visitor> void traceMarkedStubRoutines(Visitor&) { }
 };
 

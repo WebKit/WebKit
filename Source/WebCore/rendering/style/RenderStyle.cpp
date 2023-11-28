@@ -46,6 +46,7 @@
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"
 #include "ScaleTransformOperation.h"
+#include "ScrollAxis.h"
 #include "ScrollbarGutter.h"
 #include "ShadowData.h"
 #include "StyleBuilderConverter.h"
@@ -842,10 +843,8 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
     }
 #endif
 
-#if ENABLE(FILTERS_LEVEL_2)
     if (first.hasBackdropFilters() != second.hasBackdropFilters())
         return true;
-#endif
 
     if (first.inputSecurity != second.inputSecurity)
         return true;
@@ -1137,14 +1136,10 @@ static bool rareDataChangeRequiresLayerRepaint(const StyleRareNonInheritedData& 
         return true;
 #endif
 
-#if ENABLE(FILTERS_LEVEL_2)
     if (first.backdropFilter != second.backdropFilter) {
         changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Filter);
         // Don't return true; keep looking for another change.
     }
-#else
-    UNUSED_PARAM(changedContextSensitiveProperties);
-#endif
 
     // FIXME: In SVG this needs to trigger a layout.
     if (first.maskBorder != second.maskBorder)
@@ -1813,10 +1808,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyPerspectiveOriginY);
         if (first.initialLetter != second.initialLetter)
             changingProperties.m_properties.set(CSSPropertyWebkitInitialLetter);
-#if ENABLE(FILTERS_LEVEL_2)
         if (first.backdropFilter != second.backdropFilter)
             changingProperties.m_properties.set(CSSPropertyWebkitBackdropFilter);
-#endif
         if (first.grid != second.grid) {
             changingProperties.m_properties.set(CSSPropertyGridAutoColumns);
             changingProperties.m_properties.set(CSSPropertyGridAutoFlow);
@@ -3870,6 +3863,24 @@ UserSelect RenderStyle::effectiveUserSelect() const
         return value == UserSelect::None ? UserSelect::Text : value;
 
     return value;
+}
+
+void RenderStyle::adjustScrollTimelines()
+{
+    auto& names = scrollTimelineNames();
+    if (!names.size() && !scrollTimelines().size())
+        return;
+
+    auto& timelines = m_nonInheritedData.access().rareData.access().scrollTimelines;
+    timelines.clear();
+
+    auto& axes = scrollTimelineAxes();
+    auto numberOfAxes = axes.size();
+
+    for (size_t i = 0; i < names.size(); ++i) {
+        auto axis = numberOfAxes ? axes[i % numberOfAxes] : ScrollAxis::Block;
+        timelines.append(ScrollTimeline::create(names[i], axis));
+    }
 }
 
 } // namespace WebCore

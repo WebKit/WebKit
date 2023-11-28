@@ -59,11 +59,9 @@ AcceleratedEffectValues::AcceleratedEffectValues(const AcceleratedEffectValues& 
         return operation.copyRef();
     }));
 
-#if ENABLE(FILTERS_LEVEL_2)
     backdropFilter.setOperations(src.backdropFilter.operations().map([](const auto& operation) {
         return operation.copyRef();
     }));
-#endif
 }
 
 AcceleratedEffectValues AcceleratedEffectValues::clone() const
@@ -99,11 +97,9 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
         return RefPtr { operation->clone() };
     }) };
 
-#if ENABLE(FILTERS_LEVEL_2)
     FilterOperations clonedBackdropFilter { backdropFilter.operations().map([](const auto& operation) {
         return RefPtr { operation->clone() };
     }) };
-#endif
 
     return {
         opacity,
@@ -118,9 +114,7 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
         WTFMove(clonedOffsetAnchor),
         WTFMove(clonedOffsetRotate),
         WTFMove(clonedFilter),
-#if ENABLE(FILTERS_LEVEL_2)
         WTFMove(clonedBackdropFilter)
-#endif
     };
 }
 
@@ -172,11 +166,9 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
         return operation.copyRef();
     }));
 
-#if ENABLE(FILTERS_LEVEL_2)
     backdropFilter.setOperations(style.backdropFilter().operations().map([](const auto& operation) {
         return operation.copyRef();
     }));
-#endif
 }
 
 } // namespace WebCore

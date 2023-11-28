@@ -48,6 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nonnull, retain, readonly) id<MTLSharedEvent> completionEvent;
 @property (nonatomic, nullable, retain, readonly) id<MTLTexture> colorTexture;
 @property (nonatomic, readonly) NSUInteger renderingFrameIndex;
+@property (atomic, readonly, getter=isSessionEndRequested) BOOL sessionEndRequested;
 
 - (NSUInteger)startFrame;
 - (void)present;

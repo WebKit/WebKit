@@ -48,6 +48,10 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #endif
 
+#if !PLATFORM(WPE)
+#include "BackingStore.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -70,7 +74,7 @@ DrawingAreaProxyCoordinatedGraphics::~DrawingAreaProxyCoordinatedGraphics()
 }
 
 #if !PLATFORM(WPE)
-void DrawingAreaProxyCoordinatedGraphics::paint(BackingStore::PlatformGraphicsContext context, const IntRect& rect, Region& unpaintedRegion)
+void DrawingAreaProxyCoordinatedGraphics::paint(cairo_t* cr, const IntRect& rect, Region& unpaintedRegion)
 {
     unpaintedRegion = rect;
 
@@ -80,7 +84,7 @@ void DrawingAreaProxyCoordinatedGraphics::paint(BackingStore::PlatformGraphicsCo
     if (!m_backingStore && !forceUpdateIfNeeded())
         return;
 
-    m_backingStore->paint(context, rect);
+    m_backingStore->paint(cr, rect);
     unpaintedRegion.subtract(IntRect(IntPoint(), m_backingStore->size()));
 
     discardBackingStoreSoon();
@@ -117,7 +121,7 @@ void DrawingAreaProxyCoordinatedGraphics::incorporateUpdate(UpdateInfo&& updateI
         return;
 
     if (!m_backingStore || m_backingStore->size() != updateInfo.viewSize || m_backingStore->deviceScaleFactor() != updateInfo.deviceScaleFactor)
-        m_backingStore = makeUnique<BackingStore>(updateInfo.viewSize, updateInfo.deviceScaleFactor, protectedWebPageProxy());
+        m_backingStore = makeUnique<BackingStore>(updateInfo.viewSize, updateInfo.deviceScaleFactor);
 
     if (m_inForceUpdate) {
         m_backingStore->incorporateUpdate(WTFMove(updateInfo));

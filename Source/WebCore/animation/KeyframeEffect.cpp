@@ -2502,10 +2502,8 @@ void KeyframeEffect::computeHasReferenceFilter()
         auto animatesFilterProperty = [&]() {
             if (m_blendingKeyframes.containsProperty(CSSPropertyFilter))
                 return true;
-#if ENABLE(FILTERS_LEVEL_2)
             if (m_blendingKeyframes.containsProperty(CSSPropertyWebkitBackdropFilter) || m_blendingKeyframes.containsProperty(CSSPropertyBackdropFilter))
                 return true;
-#endif
             return false;
         }();
 
@@ -2515,10 +2513,8 @@ void KeyframeEffect::computeHasReferenceFilter()
         auto styleContainsFilter = [](const RenderStyle& style) {
             if (style.filter().hasReferenceFilter())
                 return true;
-#if ENABLE(FILTERS_LEVEL_2)
             if (style.backdropFilter().hasReferenceFilter())
                 return true;
-#endif
             return false;
         };
 
@@ -2635,11 +2631,9 @@ static bool acceleratedPropertyDidChange(AnimatableCSSProperty property, const R
         return previousStyle.offsetRotate() != currentStyle.offsetRotate();
     case CSSPropertyFilter:
         return previousStyle.filter() != currentStyle.filter();
-#if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter:
         return previousStyle.backdropFilter() != currentStyle.backdropFilter();
-#endif
     default:
         ASSERT_NOT_REACHED();
         break;

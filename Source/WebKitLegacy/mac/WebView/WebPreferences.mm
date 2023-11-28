@@ -3046,15 +3046,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitMediaRecorderEnabledPreferenceKey];
 }
 
-- (BOOL)CSSIndividualTransformPropertiesEnabled
-{
-    return YES;
-}
-
-- (void)setCSSIndividualTransformPropertiesEnabled:(BOOL)flag
-{
-}
-
 - (BOOL)_speechRecognitionEnabled
 {
     return [self _boolValueForKey:WebKitSpeechRecognitionEnabledPreferenceKey];
@@ -3336,6 +3327,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 }
 
 - (void)setLineHeightUnitsEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)CSSIndividualTransformPropertiesEnabled
+{
+    return YES;
+}
+
+- (void)setCSSIndividualTransformPropertiesEnabled:(BOOL)flag
 {
 }
 

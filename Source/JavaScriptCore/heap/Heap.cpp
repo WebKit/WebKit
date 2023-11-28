@@ -1113,11 +1113,7 @@ void Heap::deleteAllUnlinkedCodeBlocks(DeleteAllCodeEffort effort)
 
 void Heap::deleteUnmarkedCompiledCode()
 {
-    forEachScriptExecutableSpace([] (auto& space) { space.space.sweep(); });
-    // Sweeping must occur before deleting stubs, otherwise the stubs might still think they're alive as they get deleted.
-    // And CodeBlock destructor is assuming that CodeBlock gets destroyed before UnlinkedCodeBlock gets destroyed.
-    forEachCodeBlockSpace([] (auto& space) { space.space.sweep(); });
-    m_jitStubRoutines->deleteUnmarkedJettisonedStubRoutines();
+    m_jitStubRoutines->deleteUnmarkedJettisonedStubRoutines(vm());
 }
 
 void Heap::addToRememberedSet(const JSCell* constCell)
@@ -1675,6 +1671,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         finalizeUnconditionalFinalizers(); // We rely on these unconditional finalizers running before clearCurrentlyExecuting since CodeBlock's finalizer relies on querying currently executing.
         removeDeadCompilerWorklistEntries();
     }
+    deleteUnmarkedCompiledCode();
 
     notifyIncrementalSweeper();
     
@@ -1682,8 +1679,8 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         [&] (CodeBlock* codeBlock) {
             writeBarrier(codeBlock);
         });
-    m_codeBlocks->clearCurrentlyExecuting();
-        
+    m_codeBlocks->clearCurrentlyExecutingAndRemoveDeadCodeBlocks(vm());
+
     m_objectSpace.prepareForAllocation();
     updateAllocationLimits();
 
@@ -2216,7 +2213,6 @@ void Heap::finalize()
     
     {
         SweepingScope sweepingScope(*this);
-        deleteUnmarkedCompiledCode();
         deleteSourceProviderCaches();
         sweepInFinalize();
     }

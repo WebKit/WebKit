@@ -317,7 +317,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL readableByteStreamAPIEnabled;
 @property (nonatomic) BOOL mediaRecorderEnabled;
 @property (nonatomic, setter=_setMediaRecorderEnabled:) BOOL _mediaRecorderEnabled;
-@property (nonatomic) BOOL CSSIndividualTransformPropertiesEnabled;
 @property (nonatomic) BOOL contactPickerAPIEnabled;
 @property (nonatomic, setter=_setSpeechRecognitionEnabled:) BOOL _speechRecognitionEnabled;
 @property (nonatomic, setter=_setPitchCorrectionAlgorithm:) WebKitPitchCorrectionAlgorithm _pitchCorrectionAlgorithm;
@@ -356,6 +355,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL displayListDrawingEnabled;
 @property (nonatomic) BOOL transformStreamAPIEnabled;
 @property (nonatomic) BOOL lineHeightUnitsEnabled;
+@property (nonatomic) BOOL CSSIndividualTransformPropertiesEnabled;
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;
 

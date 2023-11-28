@@ -81,9 +81,7 @@ static constexpr auto transformKeyPath = "transform"_s;
 static constexpr auto opacityKeyPath = "opacity"_s;
 static constexpr auto backgroundColorKeyPath = "backgroundColor"_s;
 static constexpr auto filterKeyPathPrefix = "filters.filter_"_s;
-#if ENABLE(FILTERS_LEVEL_2)
 static constexpr auto backdropFiltersKeyPath = "backdropFilters"_s;
-#endif
 
 String PlatformCAAnimation::makeGroupKeyPath()
 {
@@ -104,10 +102,8 @@ String PlatformCAAnimation::makeKeyPath(AnimatedProperty animatedProperty, Filte
         return backgroundColorKeyPath;
     case AnimatedProperty::Filter:
         return makeString(filterKeyPathPrefix, index, ".", PlatformCAFilters::animatedFilterPropertyName(filterOperationType));
-#if ENABLE(FILTERS_LEVEL_2)
     case AnimatedProperty::WebkitBackdropFilter:
         return backdropFiltersKeyPath;
-#endif
     case AnimatedProperty::Invalid:
         ASSERT_NOT_REACHED();
         return emptyString();
@@ -145,10 +141,8 @@ bool PlatformCAAnimation::isValidKeyPath(const String& keyPath, AnimationType ty
         || keyPath == backgroundColorKeyPath)
         return true;
 
-#if ENABLE(FILTERS_LEVEL_2)
     if (keyPath == backdropFiltersKeyPath)
         return true;
-#endif
 
     if (isValidFilterKeyPath(keyPath))
         return true;

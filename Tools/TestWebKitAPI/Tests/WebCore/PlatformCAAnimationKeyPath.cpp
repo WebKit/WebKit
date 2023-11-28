@@ -52,10 +52,8 @@ TEST(PlatformCAAnimation, makeKeyPath)
     auto filter = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Filter, WebCore::FilterOperation::Type::Grayscale, 2);
     EXPECT_STREQ(filter.ascii().data(), "filters.filter_2.inputAmount");
 
-#if ENABLE(FILTERS_LEVEL_2)
     auto backdropFilter = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::WebkitBackdropFilter);
     EXPECT_STREQ(backdropFilter.ascii().data(), "backdropFilters");
-#endif
 }
 
 static void validateGeneratedKeyPath(WebCore::AnimatedProperty animatedProperty, WebCore::FilterOperation::Type filterOperationType = WebCore::FilterOperation::Type::None, int index = 0)
@@ -71,9 +69,7 @@ TEST(PlatformCAAnimation, isValidKeyPath)
     validateGeneratedKeyPath(WebCore::AnimatedProperty::BackgroundColor);
     validateGeneratedKeyPath(WebCore::AnimatedProperty::Filter, WebCore::FilterOperation::Type::Grayscale, 2);
     validateGeneratedKeyPath(WebCore::AnimatedProperty::Filter, WebCore::FilterOperation::Type::Sepia, 22);
-#if ENABLE(FILTERS_LEVEL_2)
     validateGeneratedKeyPath(WebCore::AnimatedProperty::WebkitBackdropFilter);
-#endif
 
     EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_"_s));
     EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_0"_s));

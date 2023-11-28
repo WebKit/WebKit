@@ -614,10 +614,8 @@ bool RenderLayer::shouldBeCSSStackingContext() const
 
 bool RenderLayer::computeCanBeBackdropRoot() const
 {
-#if ENABLE(FILTERS_LEVEL_2)
     if (!renderer().settings().cssUnprefixedBackdropFilterEnabled())
         return false;
-#endif
 
     return renderer().isTransparent()
         || renderer().hasBackdropFilter()

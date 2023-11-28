@@ -108,7 +108,6 @@ Shared/soup/WebErrorsSoup.cpp
 
 Shared/unix/AuxiliaryProcessMain.cpp
 
-UIProcess/BackingStore.cpp
 UIProcess/DefaultUndoController.cpp
 UIProcess/LegacySessionStateCodingNone.cpp
 UIProcess/ViewGestureController.cpp
@@ -258,7 +257,7 @@ UIProcess/linux/MemoryPressureMonitor.cpp
 UIProcess/WebsiteData/glib/WebsiteDataStoreGLib.cpp
 UIProcess/WebsiteData/soup/WebsiteDataStoreSoup.cpp
 
-UIProcess/cairo/BackingStoreCairo.cpp @no-unify
+UIProcess/cairo/BackingStore.cpp
 
 UIProcess/glib/DisplayLinkGLib.cpp
 UIProcess/glib/DisplayVBlankMonitor.cpp

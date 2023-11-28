@@ -74,9 +74,9 @@ PASS nonNumericPolicy('window.moveBy(0, x)') is 'any type allowed (but not omitt
 PASS nonNumericPolicy('window.moveTo(x, 0)') is 'any type allowed'
 PASS nonNumericPolicy('window.moveTo(0, x)') is 'any type allowed (but not omitted)'
 PASS nonNumericPolicy('window.resizeBy(x, 0)') is 'any type allowed'
-PASS nonNumericPolicy('window.resizeBy(0, x)') is 'any type allowed'
+PASS nonNumericPolicy('window.resizeBy(0, x)') is 'any type allowed (but not omitted)'
 PASS nonNumericPolicy('window.resizeTo(x, 0)') is 'any type allowed'
-PASS nonNumericPolicy('window.resizeTo(0, x)') is 'any type allowed'
+PASS nonNumericPolicy('window.resizeTo(0, x)') is 'any type allowed (but not omitted)'
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -70,7 +70,7 @@ public:
     ALWAYS_INLINE void forEachValueProfile(const Functor& func)
     {
         // We could do a checked multiply here but if it overflows we'd just not look at any value profiles so it's probably not worth it.
-        int lastValueProfileOffset = -linkingData().unlinkedMetadata->m_numValueProfiles;
+        int lastValueProfileOffset = -unlinkedMetadata().m_numValueProfiles;
         for (int i = -1; i >= lastValueProfileOffset; --i)
             func(valueProfilesEnd()[i]);
     }
@@ -82,7 +82,7 @@ public:
 
     ValueProfile& valueProfileForOffset(unsigned profileOffset)
     {
-        ASSERT(profileOffset <= linkingData().unlinkedMetadata->m_numValueProfiles);
+        ASSERT(profileOffset <= unlinkedMetadata().m_numValueProfiles);
         return valueProfilesEnd()[-static_cast<ptrdiff_t>(profileOffset)];
     }
 
@@ -123,6 +123,8 @@ public:
 
     void validate() const;
 
+    UnlinkedMetadataTable& unlinkedMetadata() const { return linkingData().unlinkedMetadata.get(); }
+
 private:
     MetadataTable(UnlinkedMetadataTable&);
 
@@ -131,7 +133,7 @@ private:
 
     size_t totalSize() const
     {
-        return linkingData().unlinkedMetadata->m_numValueProfiles * sizeof(ValueProfile) + sizeof(UnlinkedMetadataTable::LinkingData) + getOffset(UnlinkedMetadataTable::s_offsetTableEntries - 1);
+        return unlinkedMetadata().m_numValueProfiles * sizeof(ValueProfile) + sizeof(UnlinkedMetadataTable::LinkingData) + getOffset(UnlinkedMetadataTable::s_offsetTableEntries - 1);
     }
 
     UnlinkedMetadataTable::LinkingData& linkingData() const

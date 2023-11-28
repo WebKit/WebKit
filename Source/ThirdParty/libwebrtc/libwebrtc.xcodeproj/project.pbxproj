@@ -19,8 +19,12 @@
 				449467BF2AE05CA800A9FED0 /* PBXTargetDependency */,
 				449CF1612ADEDE9B00F22CAF /* PBXTargetDependency */,
 				449CF1632ADEDE9D00F22CAF /* PBXTargetDependency */,
+				4460B8C92B155B9200392062 /* PBXTargetDependency */,
+				4460B8CB2B155B9200392062 /* PBXTargetDependency */,
 				446359E02AEA14F000551EEE /* PBXTargetDependency */,
 				449CF1652ADEDEA000F22CAF /* PBXTargetDependency */,
+				4460B8CD2B155B9200392062 /* PBXTargetDependency */,
+				4460B8CF2B155B9200392062 /* PBXTargetDependency */,
 				444A6F0C2AEAE064005FE121 /* PBXTargetDependency */,
 			);
 			name = "Fuzzers (libwebrtc)";
@@ -3155,6 +3159,18 @@
 		444A6F022AEADFC9005FE121 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44FD16852AEA37E6003636CB /* OpenGL.framework */; platformFilters = (macos, ); };
 		444A6F032AEADFC9005FE121 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
 		444A6F092AEADFD8005FE121 /* vp9_replay_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 444A6EEF2AEADFB6005FE121 /* vp9_replay_fuzzer.cc */; };
+		4460B8922B155AFD00392062 /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
+		4460B8942B155AFD00392062 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
+		4460B89A2B155B1100392062 /* vp8_depacketizer_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4460B8852B15572D00392062 /* vp8_depacketizer_fuzzer.cc */; };
+		4460B8A12B155B2E00392062 /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
+		4460B8A32B155B2E00392062 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
+		4460B8A92B155B3E00392062 /* vp9_depacketizer_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4460B8872B15572E00392062 /* vp9_depacketizer_fuzzer.cc */; };
+		4460B8B02B155B4E00392062 /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
+		4460B8B22B155B4E00392062 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
+		4460B8B82B155B5C00392062 /* vp8_qp_parser_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4460B8842B15572D00392062 /* vp8_qp_parser_fuzzer.cc */; };
+		4460B8BF2B155B6A00392062 /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
+		4460B8C12B155B6A00392062 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
+		4460B8C72B155B7700392062 /* vp9_qp_parser_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4460B8862B15572E00392062 /* vp9_qp_parser_fuzzer.cc */; };
 		446359C32AEA10C900551EEE /* vp8_replay_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 446359C22AEA10C900551EEE /* vp8_replay_fuzzer.cc */; };
 		446359C62AEA110100551EEE /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
 		446359C72AEA111E00551EEE /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
@@ -5263,6 +5279,62 @@
 			proxyType = 1;
 			remoteGlobalIDString = 444A6EF02AEADFC9005FE121;
 			remoteInfo = vp9_replay_fuzzer;
+		};
+		4460B88E2B155AFD00392062 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc;
+		};
+		4460B89D2B155B2E00392062 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc;
+		};
+		4460B8AC2B155B4E00392062 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc;
+		};
+		4460B8BB2B155B6A00392062 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc;
+		};
+		4460B8C82B155B9200392062 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4460B88C2B155AFD00392062;
+			remoteInfo = vp8_depacketizer_fuzzer;
+		};
+		4460B8CA2B155B9200392062 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4460B8AA2B155B4E00392062;
+			remoteInfo = vp8_qp_parser_fuzzer;
+		};
+		4460B8CC2B155B9200392062 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4460B89B2B155B2E00392062;
+			remoteInfo = vp9_depacketizer_fuzzer;
+		};
+		4460B8CE2B155B9200392062 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4460B8B92B155B6A00392062;
+			remoteInfo = vp9_qp_parser_fuzzer;
 		};
 		446359C42AEA10F400551EEE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -9119,6 +9191,18 @@
 		444A6EEF2AEADFB6005FE121 /* vp9_replay_fuzzer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = vp9_replay_fuzzer.cc; sourceTree = "<group>"; };
 		444A6F082AEADFC9005FE121 /* vp9_replay_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vp9_replay_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		444A6F0A2AEAE01D005FE121 /* vp9_replay_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp9_replay_fuzzer.xcconfig; sourceTree = "<group>"; };
+		4460B8842B15572D00392062 /* vp8_qp_parser_fuzzer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = vp8_qp_parser_fuzzer.cc; sourceTree = "<group>"; };
+		4460B8852B15572D00392062 /* vp8_depacketizer_fuzzer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = vp8_depacketizer_fuzzer.cc; sourceTree = "<group>"; };
+		4460B8862B15572E00392062 /* vp9_qp_parser_fuzzer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = vp9_qp_parser_fuzzer.cc; sourceTree = "<group>"; };
+		4460B8872B15572E00392062 /* vp9_depacketizer_fuzzer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = vp9_depacketizer_fuzzer.cc; sourceTree = "<group>"; };
+		4460B8882B155A8700392062 /* vp8_depacketizer_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp8_depacketizer_fuzzer.xcconfig; sourceTree = "<group>"; };
+		4460B8892B155A8700392062 /* vp8_qp_parser_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp8_qp_parser_fuzzer.xcconfig; sourceTree = "<group>"; };
+		4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp9_qp_parser_fuzzer.xcconfig; sourceTree = "<group>"; };
+		4460B88B2B155A8800392062 /* vp9_depacketizer_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp9_depacketizer_fuzzer.xcconfig; sourceTree = "<group>"; };
+		4460B8992B155AFD00392062 /* vp8_depacketizer_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vp8_depacketizer_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		4460B8A82B155B2E00392062 /* vp9_depacketizer_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vp9_depacketizer_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		4460B8B72B155B4E00392062 /* vp8_qp_parser_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vp8_qp_parser_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		4460B8C62B155B6A00392062 /* vp9_qp_parser_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vp9_qp_parser_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		446359C12AEA108C00551EEE /* vp8_replay_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vp8_replay_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		446359C22AEA10C900551EEE /* vp8_replay_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vp8_replay_fuzzer.cc; sourceTree = "<group>"; };
 		446359C92AEA11F400551EEE /* rtp_replayer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rtp_replayer.cc; sourceTree = "<group>"; };
@@ -10862,6 +10946,38 @@
 				444A6F012AEADFC9005FE121 /* AppKit.framework in Frameworks */,
 				444A6F032AEADFC9005FE121 /* libwebrtc.dylib in Frameworks */,
 				444A6F022AEADFC9005FE121 /* OpenGL.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4460B8932B155AFD00392062 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4460B8942B155AFD00392062 /* libwebrtc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4460B8A22B155B2E00392062 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4460B8A32B155B2E00392062 /* libwebrtc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4460B8B12B155B4E00392062 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4460B8B22B155B4E00392062 /* libwebrtc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4460B8C02B155B6A00392062 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4460B8C12B155B6A00392062 /* libwebrtc.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16122,7 +16238,11 @@
 				449467C02AE05D6B00A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer.cc */,
 				449467D02AE05DBF00A9FED0 /* rtp_packetizer_av1_fuzzer.cc */,
 				44ABBE872AC63EF3006B44DD /* sdp_integration_fuzzer.cc */,
+				4460B8852B15572D00392062 /* vp8_depacketizer_fuzzer.cc */,
+				4460B8842B15572D00392062 /* vp8_qp_parser_fuzzer.cc */,
 				446359C22AEA10C900551EEE /* vp8_replay_fuzzer.cc */,
+				4460B8872B15572E00392062 /* vp9_depacketizer_fuzzer.cc */,
+				4460B8862B15572E00392062 /* vp9_qp_parser_fuzzer.cc */,
 				444A6EEF2AEADFB6005FE121 /* vp9_replay_fuzzer.cc */,
 				44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */,
 			);
@@ -19390,8 +19510,12 @@
 				441380CA2AE069CB00C928CB /* rtp_packetizer_av1_fuzzer.xcconfig */,
 				44ABBE972AC641B4006B44DD /* sdp_integration_fuzzer.xcconfig */,
 				449187242AB380BE007266F2 /* vp8_dec_fuzzer.xcconfig */,
+				4460B8882B155A8700392062 /* vp8_depacketizer_fuzzer.xcconfig */,
+				4460B8892B155A8700392062 /* vp8_qp_parser_fuzzer.xcconfig */,
 				44FD166E2AEA16CC003636CB /* vp8_replay_fuzzer.xcconfig */,
 				449187252AB380BE007266F2 /* vp9_dec_fuzzer.xcconfig */,
+				4460B88B2B155A8800392062 /* vp9_depacketizer_fuzzer.xcconfig */,
+				4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */,
 				444A6F0A2AEAE01D005FE121 /* vp9_replay_fuzzer.xcconfig */,
 				41F77D1E215BE4AD00E72967 /* yasm.xcconfig */,
 			);
@@ -19890,6 +20014,10 @@
 				44C20E942AB39FA80046C6A8 /* vp9_dec_fuzzer */,
 				446359C12AEA108C00551EEE /* vp8_replay_fuzzer */,
 				444A6F082AEADFC9005FE121 /* vp9_replay_fuzzer */,
+				4460B8992B155AFD00392062 /* vp8_depacketizer_fuzzer */,
+				4460B8A82B155B2E00392062 /* vp9_depacketizer_fuzzer */,
+				4460B8B72B155B4E00392062 /* vp8_qp_parser_fuzzer */,
+				4460B8C62B155B6A00392062 /* vp9_qp_parser_fuzzer */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -20045,6 +20173,34 @@
 				41BAE3C1212E2C5B00E22482 /* vpx_thread.h in Headers */,
 				41BAE3C3212E2C5B00E22482 /* vpx_write_yuv_frame.h in Headers */,
 				4140361724AA294000BCE9B2 /* x86.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4460B88F2B155AFD00392062 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4460B89E2B155B2E00392062 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4460B8AD2B155B4E00392062 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4460B8BC2B155B6A00392062 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -22643,6 +22799,78 @@
 			productReference = 444A6F082AEADFC9005FE121 /* vp9_replay_fuzzer */;
 			productType = "com.apple.product-type.tool";
 		};
+		4460B88C2B155AFD00392062 /* vp8_depacketizer_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4460B8952B155AFD00392062 /* Build configuration list for PBXNativeTarget "vp8_depacketizer_fuzzer" */;
+			buildPhases = (
+				4460B88F2B155AFD00392062 /* Headers */,
+				4460B8902B155AFD00392062 /* Sources */,
+				4460B8932B155AFD00392062 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4460B88D2B155AFD00392062 /* PBXTargetDependency */,
+			);
+			name = vp8_depacketizer_fuzzer;
+			productName = vp8_depacketizer_fuzzer;
+			productReference = 4460B8992B155AFD00392062 /* vp8_depacketizer_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
+		4460B89B2B155B2E00392062 /* vp9_depacketizer_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4460B8A42B155B2E00392062 /* Build configuration list for PBXNativeTarget "vp9_depacketizer_fuzzer" */;
+			buildPhases = (
+				4460B89E2B155B2E00392062 /* Headers */,
+				4460B89F2B155B2E00392062 /* Sources */,
+				4460B8A22B155B2E00392062 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4460B89C2B155B2E00392062 /* PBXTargetDependency */,
+			);
+			name = vp9_depacketizer_fuzzer;
+			productName = vp9_depacketizer_fuzzer;
+			productReference = 4460B8A82B155B2E00392062 /* vp9_depacketizer_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
+		4460B8AA2B155B4E00392062 /* vp8_qp_parser_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4460B8B32B155B4E00392062 /* Build configuration list for PBXNativeTarget "vp8_qp_parser_fuzzer" */;
+			buildPhases = (
+				4460B8AD2B155B4E00392062 /* Headers */,
+				4460B8AE2B155B4E00392062 /* Sources */,
+				4460B8B12B155B4E00392062 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4460B8AB2B155B4E00392062 /* PBXTargetDependency */,
+			);
+			name = vp8_qp_parser_fuzzer;
+			productName = vp8_qp_parser_fuzzer;
+			productReference = 4460B8B72B155B4E00392062 /* vp8_qp_parser_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
+		4460B8B92B155B6A00392062 /* vp9_qp_parser_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4460B8C22B155B6A00392062 /* Build configuration list for PBXNativeTarget "vp9_qp_parser_fuzzer" */;
+			buildPhases = (
+				4460B8BC2B155B6A00392062 /* Headers */,
+				4460B8BD2B155B6A00392062 /* Sources */,
+				4460B8C02B155B6A00392062 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4460B8BA2B155B6A00392062 /* PBXTargetDependency */,
+			);
+			name = vp9_qp_parser_fuzzer;
+			productName = vp9_qp_parser_fuzzer;
+			productReference = 4460B8C62B155B6A00392062 /* vp9_qp_parser_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
 		446359B62AEA108C00551EEE /* vp8_replay_fuzzer */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 446359BD2AEA108C00551EEE /* Build configuration list for PBXNativeTarget "vp8_replay_fuzzer" */;
@@ -23013,8 +23241,12 @@
 				449467A22AE05C9600A9FED0 /* rtp_packetizer_av1_fuzzer */,
 				44ABBE882AC63F0C006B44DD /* sdp_integration_fuzzer */,
 				448D48332AB0BDB00065014C /* vp8_dec_fuzzer */,
+				4460B88C2B155AFD00392062 /* vp8_depacketizer_fuzzer */,
+				4460B8AA2B155B4E00392062 /* vp8_qp_parser_fuzzer */,
 				446359B62AEA108C00551EEE /* vp8_replay_fuzzer */,
 				44C20E892AB39FA80046C6A8 /* vp9_dec_fuzzer */,
+				4460B89B2B155B2E00392062 /* vp9_depacketizer_fuzzer */,
+				4460B8B92B155B6A00392062 /* vp9_qp_parser_fuzzer */,
 				444A6EF02AEADFC9005FE121 /* vp9_replay_fuzzer */,
 			);
 		};
@@ -23524,6 +23756,42 @@
 				444A6EF82AEADFC9005FE121 /* video_renderer_mac.mm in Sources */,
 				444A6F092AEADFD8005FE121 /* vp9_replay_fuzzer.cc in Sources */,
 				444A6EFE2AEADFC9005FE121 /* webrtc_fuzzer_main.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4460B8902B155AFD00392062 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4460B89A2B155B1100392062 /* vp8_depacketizer_fuzzer.cc in Sources */,
+				4460B8922B155AFD00392062 /* webrtc_fuzzer_main.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4460B89F2B155B2E00392062 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4460B8A92B155B3E00392062 /* vp9_depacketizer_fuzzer.cc in Sources */,
+				4460B8A12B155B2E00392062 /* webrtc_fuzzer_main.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4460B8AE2B155B4E00392062 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4460B8B82B155B5C00392062 /* vp8_qp_parser_fuzzer.cc in Sources */,
+				4460B8B02B155B4E00392062 /* webrtc_fuzzer_main.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4460B8BD2B155B6A00392062 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4460B8C72B155B7700392062 /* vp9_qp_parser_fuzzer.cc in Sources */,
+				4460B8BF2B155B6A00392062 /* webrtc_fuzzer_main.cc in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25645,6 +25913,46 @@
 			target = 444A6EF02AEADFC9005FE121 /* vp9_replay_fuzzer */;
 			targetProxy = 444A6F0B2AEAE064005FE121 /* PBXContainerItemProxy */;
 		};
+		4460B88D2B155AFD00392062 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			targetProxy = 4460B88E2B155AFD00392062 /* PBXContainerItemProxy */;
+		};
+		4460B89C2B155B2E00392062 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			targetProxy = 4460B89D2B155B2E00392062 /* PBXContainerItemProxy */;
+		};
+		4460B8AB2B155B4E00392062 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			targetProxy = 4460B8AC2B155B4E00392062 /* PBXContainerItemProxy */;
+		};
+		4460B8BA2B155B6A00392062 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			targetProxy = 4460B8BB2B155B6A00392062 /* PBXContainerItemProxy */;
+		};
+		4460B8C92B155B9200392062 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4460B88C2B155AFD00392062 /* vp8_depacketizer_fuzzer */;
+			targetProxy = 4460B8C82B155B9200392062 /* PBXContainerItemProxy */;
+		};
+		4460B8CB2B155B9200392062 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4460B8AA2B155B4E00392062 /* vp8_qp_parser_fuzzer */;
+			targetProxy = 4460B8CA2B155B9200392062 /* PBXContainerItemProxy */;
+		};
+		4460B8CD2B155B9200392062 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4460B89B2B155B2E00392062 /* vp9_depacketizer_fuzzer */;
+			targetProxy = 4460B8CC2B155B9200392062 /* PBXContainerItemProxy */;
+		};
+		4460B8CF2B155B9200392062 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4460B8B92B155B6A00392062 /* vp9_qp_parser_fuzzer */;
+			targetProxy = 4460B8CE2B155B9200392062 /* PBXContainerItemProxy */;
+		};
 		446359C52AEA10F400551EEE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
@@ -25823,6 +26131,102 @@
 		444A6F072AEADFC9005FE121 /* Production */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 444A6F0A2AEAE01D005FE121 /* vp9_replay_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		4460B8962B155AFD00392062 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4460B8882B155A8700392062 /* vp8_depacketizer_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4460B8972B155AFD00392062 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4460B8882B155A8700392062 /* vp8_depacketizer_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		4460B8982B155AFD00392062 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4460B8882B155A8700392062 /* vp8_depacketizer_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		4460B8A52B155B2E00392062 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4460B88B2B155A8800392062 /* vp9_depacketizer_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4460B8A62B155B2E00392062 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4460B88B2B155A8800392062 /* vp9_depacketizer_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		4460B8A72B155B2E00392062 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4460B88B2B155A8800392062 /* vp9_depacketizer_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		4460B8B42B155B4E00392062 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4460B8892B155A8700392062 /* vp8_qp_parser_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4460B8B52B155B4E00392062 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4460B8892B155A8700392062 /* vp8_qp_parser_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		4460B8B62B155B4E00392062 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4460B8892B155A8700392062 /* vp8_qp_parser_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		4460B8C32B155B6A00392062 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		4460B8C42B155B6A00392062 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		4460B8C52B155B6A00392062 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -26272,6 +26676,46 @@
 				444A6F052AEADFC9005FE121 /* Debug */,
 				444A6F062AEADFC9005FE121 /* Release */,
 				444A6F072AEADFC9005FE121 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		4460B8952B155AFD00392062 /* Build configuration list for PBXNativeTarget "vp8_depacketizer_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4460B8962B155AFD00392062 /* Debug */,
+				4460B8972B155AFD00392062 /* Release */,
+				4460B8982B155AFD00392062 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		4460B8A42B155B2E00392062 /* Build configuration list for PBXNativeTarget "vp9_depacketizer_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4460B8A52B155B2E00392062 /* Debug */,
+				4460B8A62B155B2E00392062 /* Release */,
+				4460B8A72B155B2E00392062 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		4460B8B32B155B4E00392062 /* Build configuration list for PBXNativeTarget "vp8_qp_parser_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4460B8B42B155B4E00392062 /* Debug */,
+				4460B8B52B155B4E00392062 /* Release */,
+				4460B8B62B155B4E00392062 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		4460B8C22B155B6A00392062 /* Build configuration list for PBXNativeTarget "vp9_qp_parser_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4460B8C32B155B6A00392062 /* Debug */,
+				4460B8C42B155B6A00392062 /* Release */,
+				4460B8C52B155B6A00392062 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

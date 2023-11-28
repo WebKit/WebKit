@@ -241,16 +241,9 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
     case LayerType::LayerTypeTransformLayer:
         layerClass = [CATransformLayer class];
         break;
-#if ENABLE(FILTERS_LEVEL_2)
     case LayerType::LayerTypeBackdropLayer:
         layerClass = [CABackdropLayer class];
         break;
-#else
-    case LayerType::LayerTypeBackdropLayer:
-        ASSERT_NOT_REACHED();
-        layerClass = [CALayer class];
-        break;
-#endif
     case LayerType::LayerTypeTiledBackingLayer:
     case LayerType::LayerTypePageTiledBackingLayer:
         layerClass = [WebTiledBackingLayer class];
@@ -278,7 +271,7 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
     if (layerClass)
         m_layer = adoptNS([(CALayer *)[layerClass alloc] init]);
 
-#if ENABLE(FILTERS_LEVEL_2) && PLATFORM(MAC)
+#if PLATFORM(MAC)
     if (layerType == LayerType::LayerTypeBackdropLayer)
         [(CABackdropLayer*)m_layer.get() setWindowServerAware:NO];
 #endif

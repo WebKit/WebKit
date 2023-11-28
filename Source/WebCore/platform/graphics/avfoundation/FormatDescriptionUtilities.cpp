@@ -26,6 +26,7 @@
 #include "config.h"
 #include "FormatDescriptionUtilities.h"
 
+#import "AV1Utilities.h"
 #import "FloatSize.h"
 #import "FourCC.h"
 #import "HEVCUtilities.h"
@@ -183,6 +184,22 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
         return "ec-3"_s;
     case 'dts ':
         return "dts"_s;
+#if ENABLE(AV1)
+    case kCMVideoCodecType_AV1:
+        {
+            auto sampleExtensionsDict = static_cast<CFDictionaryRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::get_CoreMedia_kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms()));
+            if (!sampleExtensionsDict)
+                return "av01"_s;
+            auto sampleExtensions = static_cast<CFDataRef>(CFDictionaryGetValue(sampleExtensionsDict, CFSTR("av1C")));
+            if (!sampleExtensions)
+                return "av01"_s;
+            auto configurationRecordBuffer = SharedBuffer::create(sampleExtensions);
+            auto parameters = parseAV1DecoderConfigurationRecord(configurationRecordBuffer);
+            if (!parameters)
+                return "av01"_s;
+            return createAV1CodecParametersString(*parameters);
+        }
+#endif
     }
 
     return emptyString();

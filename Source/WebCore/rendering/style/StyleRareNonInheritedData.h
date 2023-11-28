@@ -36,6 +36,8 @@
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
 #include "ScopedName.h"
+#include "ScrollAxis.h"
+#include "ScrollTimeline.h"
 #include "ScrollTypes.h"
 #include "ScrollbarGutter.h"
 #include "ShapeValue.h"
@@ -96,9 +98,7 @@ public:
 
     LengthPoint perspectiveOrigin() const { return { perspectiveOriginX, perspectiveOriginY }; }
 
-#if ENABLE(FILTERS_LEVEL_2)
     bool hasBackdropFilters() const;
-#endif
 
     OptionSet<Containment> effectiveContainment() const;
 
@@ -114,9 +114,7 @@ public:
 
     DataRef<StyleMarqueeData> marquee; // Marquee properties
 
-#if ENABLE(FILTERS_LEVEL_2)
     DataRef<StyleFilterData> backdropFilter; // Filter operations (url, sepia, blur, etc.)
-#endif
 
     DataRef<StyleGridData> grid;
     DataRef<StyleGridItemData> gridItem;
@@ -173,6 +171,10 @@ public:
     ScrollSnapType scrollSnapType;
     ScrollSnapAlign scrollSnapAlign;
     ScrollSnapStop scrollSnapStop { ScrollSnapStop::Normal };
+
+    Vector<Ref<ScrollTimeline>> scrollTimelines;
+    Vector<ScrollAxis> scrollTimelineAxes;
+    Vector<AtomString> scrollTimelineNames;
 
     ScrollbarGutter scrollbarGutter;
     ScrollbarWidth scrollbarWidth { ScrollbarWidth::Auto };

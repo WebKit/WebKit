@@ -40,7 +40,7 @@ class DrawingAreaProxyWC final : public DrawingAreaProxy {
 public:
     DrawingAreaProxyWC(WebPageProxy&);
 
-    void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
+    void paint(cairo_t*, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
 
 private:
     // DrawingAreaProxy

@@ -281,8 +281,8 @@ public:
     void moveBy(int x, int y) const;
     void moveTo(int x, int y) const;
 
-    void resizeBy(float x, float y) const;
-    void resizeTo(float width, float height) const;
+    void resizeBy(int x, int y) const;
+    void resizeTo(int width, int height) const;
 
     VisualViewport& visualViewport();
 

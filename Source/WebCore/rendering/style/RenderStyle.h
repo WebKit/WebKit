@@ -74,6 +74,7 @@ class RoundedRect;
 class SVGLengthValue;
 class SVGRenderStyle;
 class ScaleTransformOperation;
+class ScrollTimeline;
 class ShadowData;
 class ShapeValue;
 class StyleColor;
@@ -186,6 +187,7 @@ enum class QuoteType : uint8_t;
 enum class Resize : uint8_t;
 enum class RubyPosition : uint8_t;
 enum class SVGPaintType : uint8_t;
+enum class ScrollAxis : uint8_t;
 enum class ScrollSnapStop : bool;
 enum class ScrollbarWidth : uint8_t;
 enum class SpeakAs : uint8_t;
@@ -923,6 +925,13 @@ public:
 
     PointerEvents pointerEvents() const { return static_cast<PointerEvents>(m_inheritedFlags.pointerEvents); }
     inline PointerEvents effectivePointerEvents() const;
+
+    inline const Vector<Ref<ScrollTimeline>>& scrollTimelines() const;
+    inline const Vector<ScrollAxis>& scrollTimelineAxes() const;
+    inline const Vector<AtomString>& scrollTimelineNames() const;
+    inline void setScrollTimelineAxes(const Vector<ScrollAxis>&);
+    inline void setScrollTimelineNames(const Vector<AtomString>&);
+
     inline const AnimationList* animations() const;
     inline const AnimationList* transitions() const;
 
@@ -1036,13 +1045,9 @@ public:
     inline const FilterOperations& appleColorFilter() const;
     inline bool hasAppleColorFilter() const;
 
-#if ENABLE(FILTERS_LEVEL_2)
     inline FilterOperations& mutableBackdropFilter();
     inline const FilterOperations& backdropFilter() const;
     inline bool hasBackdropFilter() const;
-#else
-    bool hasBackdropFilter() const { return false; };
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     inline void setBlendMode(BlendMode);
@@ -1475,9 +1480,7 @@ public:
     inline void setFilter(const FilterOperations&);
     inline void setAppleColorFilter(const FilterOperations&);
 
-#if ENABLE(FILTERS_LEVEL_2)
     inline void setBackdropFilter(const FilterOperations&);
-#endif
 
     inline void setTabSize(const TabSize&);
 
@@ -1498,6 +1501,8 @@ public:
 
     void adjustAnimations();
     void adjustTransitions();
+
+    void adjustScrollTimelines();
 
     inline void setTransformStyle3D(TransformStyle3D);
     inline void setTransformStyleForcedToFlat(bool);
@@ -1977,6 +1982,9 @@ public:
     static ScrollSnapAlign initialScrollSnapAlign();
     static ScrollSnapStop initialScrollSnapStop();
 
+    static Vector<ScrollAxis> initialScrollTimelineAxes() { return { }; }
+    static Vector<AtomString> initialScrollTimelineNames() { return { }; }
+
     static inline std::optional<ScrollbarColor> initialScrollbarColor();
     static ScrollbarGutter initialScrollbarGutter();
     static ScrollbarWidth initialScrollbarWidth();
@@ -2041,9 +2049,7 @@ public:
     static inline FilterOperations initialFilter();
     static inline FilterOperations initialAppleColorFilter();
 
-#if ENABLE(FILTERS_LEVEL_2)
     static inline FilterOperations initialBackdropFilter();
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     static constexpr BlendMode initialBlendMode();

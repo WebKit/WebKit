@@ -60,10 +60,10 @@ void PolymorphicCallCase::dump(PrintStream& out) const
 }
 
 PolymorphicCallStubRoutine::PolymorphicCallStubRoutine(
-    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& codeRef, VM& vm, const JSCell* owner, CallFrame* callerFrame,
+    const MacroAssemblerCodeRef<JITStubRoutinePtrTag>& codeRef, VM& vm, JSCell* owner, CallFrame* callerFrame,
     CallLinkInfo& info, const Vector<PolymorphicCallCase>& cases,
     UniqueArray<uint32_t>&& fastCounts)
-    : GCAwareJITStubRoutine(Type::PolymorphicCallStubRoutineType, codeRef)
+    : GCAwareJITStubRoutine(Type::PolymorphicCallStubRoutineType, codeRef, owner)
     , m_variants(cases.size())
     , m_fastCounts(WTFMove(fastCounts))
 {

@@ -57,18 +57,14 @@ struct AcceleratedEffectValues {
     LengthPoint offsetAnchor { };
     OffsetRotation offsetRotate { };
     FilterOperations filter { };
-#if ENABLE(FILTERS_LEVEL_2)
     FilterOperations backdropFilter { };
-#endif
 
     AcceleratedEffectValues()
     {
     }
 
     AcceleratedEffectValues(float opacity, LengthPoint&& transformOrigin, TransformOperations&& transform, RefPtr<TransformOperation>&& translate, RefPtr<TransformOperation>&& scale, RefPtr<TransformOperation>&& rotate, RefPtr<PathOperation>&& offsetPath, Length&& offsetDistance, LengthPoint&& offsetPosition, LengthPoint&& offsetAnchor, OffsetRotation&& offsetRotate, FilterOperations&& filter
-#if ENABLE(FILTERS_LEVEL_2)
         , FilterOperations&& backdropFilter
-#endif
         )
         : opacity(opacity)
         , transformOrigin(WTFMove(transformOrigin))
@@ -82,9 +78,7 @@ struct AcceleratedEffectValues {
         , offsetAnchor(WTFMove(offsetAnchor))
         , offsetRotate(WTFMove(offsetRotate))
         , filter(WTFMove(filter))
-#if ENABLE(FILTERS_LEVEL_2)
         , backdropFilter(WTFMove(backdropFilter))
-#endif
     {
     }
 

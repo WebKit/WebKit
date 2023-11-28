@@ -554,9 +554,7 @@ void RenderLayerBacking::createPrimaryGraphicsLayer()
     updateOpacity(style);
     updateTransform(style);
     updateFilters(style);
-#if ENABLE(FILTERS_LEVEL_2)
     updateBackdropFilters(style);
-#endif
     updateBackdropRoot();
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
@@ -763,7 +761,6 @@ void RenderLayerBacking::updateFilters(const RenderStyle& style)
     m_canCompositeFilters = m_graphicsLayer->setFilters(style.filter());
 }
 
-#if ENABLE(FILTERS_LEVEL_2)
 void RenderLayerBacking::updateBackdropFilters(const RenderStyle& style)
 {
     m_canCompositeBackdropFilters = m_graphicsLayer->setBackdropFilters(style.backdropFilter());
@@ -794,7 +791,6 @@ void RenderLayerBacking::updateBackdropFiltersGeometry()
 
     m_graphicsLayer->setBackdropFiltersRect(backdropFiltersRect);
 }
-#endif
 
 bool RenderLayerBacking::updateBackdropRoot()
 {
@@ -1025,9 +1021,7 @@ void RenderLayerBacking::updateConfigurationAfterStyleChange()
     updateOpacity(style);
     updateFilters(style);
 
-#if ENABLE(FILTERS_LEVEL_2)
     updateBackdropFilters(style);
-#endif
     updateBackdropRoot();
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
@@ -1393,9 +1387,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     updateTransform(style);
     updateOpacity(style);
     updateFilters(style);
-#if ENABLE(FILTERS_LEVEL_2)
     updateBackdropFilters(style);
-#endif
     updateBackdropRoot();
 #if ENABLE(CSS_COMPOSITING)
     updateBlendMode(style);
@@ -1594,9 +1586,7 @@ void RenderLayerBacking::updateGeometry(const RenderLayer* compositedAncestor)
     LayoutRect ancestorCompositedBounds = compositedAncestor ? compositedAncestor->backing()->compositedBounds() : LayoutRect();
     setRequiresOwnBackingStore(compositor().requiresOwnBackingStore(m_owningLayer, compositedAncestor,
         LayoutRect(toLayoutPoint(compositedBoundsOffset.fromParentGraphicsLayer()), compositedBounds().size()), ancestorCompositedBounds));
-#if ENABLE(FILTERS_LEVEL_2)
     updateBackdropFiltersGeometry();
-#endif
     updateAfterWidgetResize();
 
     positionOverflowControlsLayers();
@@ -3978,9 +3968,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
     bool hasFilter = keyframes.containsProperty(CSSPropertyFilter);
 
     bool hasBackdropFilter = false;
-#if ENABLE(FILTERS_LEVEL_2)
     hasBackdropFilter = keyframes.containsProperty(CSSPropertyWebkitBackdropFilter) || keyframes.containsProperty(CSSPropertyBackdropFilter);
-#endif
 
     if (!hasOpacity && !hasRotate && !hasScale && !hasTranslate && !hasTransform && !hasFilter && !hasBackdropFilter)
         return false;
@@ -3991,9 +3979,7 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
     KeyframeValueList transformVector(AnimatedProperty::Transform);
     KeyframeValueList opacityVector(AnimatedProperty::Opacity);
     KeyframeValueList filterVector(AnimatedProperty::Filter);
-#if ENABLE(FILTERS_LEVEL_2)
     KeyframeValueList backdropFilterVector(AnimatedProperty::WebkitBackdropFilter);
-#endif
 
     for (auto& currentKeyframe : keyframes) {
         const RenderStyle* keyframeStyle = currentKeyframe.style();
@@ -4022,10 +4008,8 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
         if (currentKeyframe.animatesProperty(CSSPropertyFilter))
             filterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->filter(), tf));
 
-#if ENABLE(FILTERS_LEVEL_2)
         if (currentKeyframe.animatesProperty(CSSPropertyWebkitBackdropFilter) || currentKeyframe.animatesProperty(CSSPropertyBackdropFilter))
             backdropFilterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->backdropFilter(), tf));
-#endif
     }
 
     if (!renderer().settings().acceleratedCompositedAnimationsEnabled())
@@ -4055,10 +4039,8 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
     if (hasFilter && m_graphicsLayer->addAnimation(filterVector, IntSize { }, &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-#if ENABLE(FILTERS_LEVEL_2)
     if (hasBackdropFilter && m_graphicsLayer->addAnimation(backdropFilterVector, IntSize { }, &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
-#endif
 
     if (didAnimate) {
         m_owningLayer.setNeedsPostLayoutCompositingUpdate();
@@ -4212,11 +4194,9 @@ CSSPropertyID RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedProperty pr
     case AnimatedProperty::Filter:
         cssProperty = CSSPropertyFilter;
         break;
-#if ENABLE(FILTERS_LEVEL_2)
     case AnimatedProperty::WebkitBackdropFilter:
         cssProperty = CSSPropertyWebkitBackdropFilter;
         break;
-#endif
     case AnimatedProperty::Invalid:
         ASSERT_NOT_REACHED();
     }
@@ -4240,11 +4220,9 @@ AnimatedProperty RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID cs
         return AnimatedProperty::BackgroundColor;
     case CSSPropertyFilter:
         return AnimatedProperty::Filter;
-#if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter:
         return AnimatedProperty::WebkitBackdropFilter;
-#endif
     default:
         // It's fine if we see other css properties here; they are just not accelerated.
         break;

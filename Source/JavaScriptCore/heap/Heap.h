@@ -572,6 +572,8 @@ public:
         m_possiblyAccessedStringsFromConcurrentThreads.append(WTFMove(string));
     }
 
+    bool isInPhase(CollectorPhase phase) const { return m_currentPhase == phase; }
+
 private:
     friend class AllocatingScope;
     friend class CodeBlock;

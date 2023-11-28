@@ -4244,7 +4244,15 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         codeBlock, linkBuffer, JITStubRoutinePtrTag,
         "%s", toCString("Access stub for ", *codeBlock, " ", m_stubInfo->codeOrigin, "with start: ", m_stubInfo->startLocation, " with return point ", successLabel, ": ", listDump(cases)).data());
 
-    stub = createICJITStubRoutine(code, WTFMove(keys), WTFMove(weakStructures), vm(), codeBlock, doesCalls, cellsToMark, WTFMove(m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
+    CodeBlock* owner = codeBlock;
+    if (generatedMegamorphicCode && useHandlerIC()) {
+        ASSERT(codeBlock->useDataIC());
+        ASSERT(!doesCalls);
+        ASSERT(cellsToMark.isEmpty());
+        owner = nullptr;
+    }
+
+    stub = createICJITStubRoutine(code, WTFMove(keys), WTFMove(weakStructures), vm(), owner, doesCalls, cellsToMark, WTFMove(m_callLinkInfos), codeBlockThatOwnsExceptionHandlers, callSiteIndexForExceptionHandling);
 
     if (generatedMegamorphicCode && useHandlerIC()) {
         ASSERT(codeBlock->useDataIC());

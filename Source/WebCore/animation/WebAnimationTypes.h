@@ -85,9 +85,7 @@ enum class AcceleratedEffectProperty : uint16_t {
     OffsetAnchor = 1 << 9,
     OffsetRotate = 1 << 10,
     Filter = 1 << 11,
-#if ENABLE(FILTERS_LEVEL_2)
     BackdropFilter = 1 << 12
-#endif
 };
 
 struct CSSPropertiesBitSet {

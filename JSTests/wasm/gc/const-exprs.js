@@ -220,5 +220,76 @@ async function testInvalidConstExprs() {
   );
 }
 
+async function testConstExprGlobalOrdering() {
+  compile(`
+    (module
+      (global i32 (i32.const 0))
+      (global i32 (global.get 0)))
+  `);
+
+  compile(`
+    (module
+      (global i32 (i32.const 0))
+      (global i32 (i32.const 1))
+      (global i32 (i32.const 2))
+      (global i32 (global.get 1))
+      (global i32 (global.get 3)))
+  `);
+
+  {
+    let m = instantiate(`
+      (module
+        (global i32 (i32.add (i32.const 0) (i32.const 1)))
+        (global (export "g") i32 (i32.add (i32.const 1 (global.get 0)))))
+    `);
+
+    assert.eq(m.exports.g.value, 2);
+  }
+
+  compile(`
+    (module
+      (global (import "m" "g") externref)
+      (table 10 externref (global.get 0))
+      )
+  `);
+
+  compile(`
+    (module
+      (global i32 (i32.const 0))
+      (global i32 (i32.const 1))
+      (global i32 (i32.const 2))
+      (global i32 (global.get 1))
+      (global i32 (global.get 3)))
+  `);
+
+  compile(`
+    (module
+      (table (export "t") 64 funcref)
+      (global i32 (i32.const 5))
+      (elem (table 0) (offset (i32.add (global.get 0) (i32.const 42))) funcref (ref.null func)))
+  `);
+
+  assert.throws(
+    () => compile(`
+      (module
+        (global i32 (global.get 1))
+        (global i32 (i32.const 0)))
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't parse at byte 19: get_global's index 1 exceeds the number of globals 0"
+  );
+
+  assert.throws(
+    () => compile(`
+      (module
+        (table 10 externref (global.get 0))
+        (global externref (ref.null extern)))
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't parse at byte 22: get_global's index 0 exceeds the number of globals 0"
+  );
+}
+
 assert.asyncTest(testGCConstExprs());
 assert.asyncTest(testInvalidConstExprs());
+assert.asyncTest(testConstExprGlobalOrdering())

@@ -2138,7 +2138,6 @@ ALWAYS_INLINE UnlinkedCodeBlock::UnlinkedCodeBlock(Decoder& decoder, Structure* 
     , m_evalContextType(cachedCodeBlock.evalContextType())
     , m_codeType(cachedCodeBlock.codeType())
 
-    , m_didOptimize(static_cast<unsigned>(TriState::Indeterminate))
     , m_age(0)
     , m_hasCheckpoints(cachedCodeBlock.hasCheckpoints())
 

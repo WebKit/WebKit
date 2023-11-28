@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<!DOCTYPE html>
 <html>
 <head>
     <script src="../../../resources/js-test.js"></script>
@@ -39,14 +39,14 @@
     debug('');
 
     debug("Testing - resizeTo with 0 arguments");
-    window.resizeTo();
+    shouldThrow('window.resizeTo()');
     shouldBe('window.outerWidth', 'resetWidth');
     shouldBe('window.outerHeight', 'resetHeight');
     reset();
 
     debug("Testing - resizeTo with 1 argument");
-    window.resizeTo(x);
-    shouldBe('window.outerWidth', 'width');
+    shouldThrow('window.resizeTo(width)');
+    shouldBe('window.outerWidth', 'resetWidth');
     shouldBe('window.outerHeight', 'resetHeight');
     reset();
 
@@ -62,14 +62,14 @@
     debug('');
 
     debug("Testing - resizeBy with 0 arguments");
-    window.resizeBy();
+    shouldThrow('window.resizeBy()');
     shouldBe('window.outerWidth', 'resetWidth');
     shouldBe('window.outerHeight', 'resetHeight');
     reset();
 
     debug("Testing - resizeBy with 1 argument");
-    window.resizeBy(x);
-    shouldBe('window.outerWidth', 'resetWidth + x');
+    shouldThrow('window.resizeBy(x)');
+    shouldBe('window.outerWidth', 'resetWidth');
     shouldBe('window.outerHeight', 'resetHeight');
     reset();
 

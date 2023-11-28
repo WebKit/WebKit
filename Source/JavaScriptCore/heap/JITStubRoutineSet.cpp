@@ -40,8 +40,7 @@ JITStubRoutineSet::~JITStubRoutineSet()
         routine->m_mayBeExecuting = false;
         
         if (!routine->m_isJettisoned) {
-            // Inform the deref() routine that it should delete this guy as soon
-            // as the ref count reaches zero.
+            // Inform the deref() routine that it should delete this stub as soon as the ref count reaches zero.
             routine->m_isJettisoned = true;
             continue;
         }
@@ -114,17 +113,41 @@ void JITStubRoutineSet::markSlow(uintptr_t address)
     }
 }
 
-void JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines()
+void JITStubRoutineSet::deleteUnmarkedJettisonedStubRoutines(VM& vm)
 {
+    ASSERT(vm.heap.isInPhase(CollectorPhase::End));
     unsigned srcIndex = 0;
     unsigned dstIndex = srcIndex;
     while (srcIndex < m_routines.size()) {
         Routine routine = m_routines[srcIndex++];
-        if (!routine.routine->m_isJettisoned || routine.routine->m_mayBeExecuting) {
+        auto* stub = routine.routine;
+        if (!stub->m_ownerIsDead && stub->owner())
+            stub->m_ownerIsDead = !vm.heap.isMarked(stub->owner());
+
+        // If the stub is running right now, we should keep it alive regardless of whether owner CodeBlock gets dead.
+        // It is OK since we already marked all the related cells.
+        if (stub->m_mayBeExecuting) {
             m_routines[dstIndex++] = routine;
             continue;
         }
-        routine.routine->deleteFromGC();
+
+        // If the stub is already jettisoned, and if it is not executed right now, then we can safely destroy this right now
+        // since this is not reachable from dead CodeBlock (in CodeBlock's destructor), plus, this will not be executed later.
+        if (stub->m_isJettisoned) {
+            stub->deleteFromGC();
+            continue;
+        }
+
+        // If the owner is already dead, then this stub will not be executed. We should remove this from this set.
+        // But we should not call deleteFromGC here since unswept CodeBlock may still hold the reference to this stub.
+        if (stub->m_ownerIsDead) {
+            // Inform the deref() routine that it should delete this stub as soon as the ref count reaches zero.
+            stub->m_isJettisoned = true;
+            continue;
+        }
+
+        m_routines[dstIndex++] = routine;
+        continue;
     }
     m_routines.shrinkCapacity(dstIndex);
 }
