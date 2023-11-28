@@ -839,7 +839,7 @@ static void testCookieManagerLongExpires(CookieManagerTest* test, gconstpointer)
 
     GRefPtr<GDateTime> now = adoptGRef(g_date_time_new_now_utc());
     GRefPtr<GDateTime> expires = adoptGRef(g_date_time_add_years(now.get(), 35));
-    GUniquePtr<char> line(g_strdup_printf("#HttpOnly_localhost\tFALSE\t/\tFALSE\t%ld\tprov\t123\tNone", g_date_time_to_unix(expires.get())));
+    GUniquePtr<char> line(g_strdup_printf("#HttpOnly_localhost\tFALSE\t/\tFALSE\t%ld\tprov\t123", g_date_time_to_unix(expires.get())));
     test->m_cookiesTextFile.reset(g_build_filename(Test::dataDirectory(), "cookies.txt", nullptr));
     g_file_set_contents(test->m_cookiesTextFile.get(), line.get(), -1, nullptr);
     test->setPersistentStorage(WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT);
