@@ -311,6 +311,11 @@ void DisplayCaptureSourceCocoa::emitFrame()
     videoFrameAvailable(*videoFrame.get(), metadata);
 }
 
+double DisplayCaptureSourceCocoa::observedFrameRate() const
+{
+    return frameRate();
+}
+
 void DisplayCaptureSourceCocoa::capturerConfigurationChanged()
 {
     m_currentSettings = { };
