@@ -36,17 +36,19 @@ class Encoder;
 
 class SharedFileHandle {
 public:
-    static std::optional<SharedFileHandle> create(FileSystem::PlatformFileHandle&&);
+    static std::optional<SharedFileHandle> create(FileSystem::PlatformFileHandle);
+
+#if PLATFORM(COCOA)
+    explicit SharedFileHandle(MachSendRight&&);
+    MachSendRight toMachSendRight() const;
+#endif
 
     SharedFileHandle() = default;
     WebCore::FileHandle release() { return std::exchange(m_handle, { }); }
 
-    void encode(Encoder&) const;
-    static std::optional<SharedFileHandle> decode(Decoder&);
-    
 private:
-    explicit SharedFileHandle(FileSystem::PlatformFileHandle&& handle)
-        : m_handle(WTFMove(handle))
+    explicit SharedFileHandle(FileSystem::PlatformFileHandle handle)
+        : m_handle(handle)
     {
     }
 

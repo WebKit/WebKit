@@ -148,6 +148,7 @@ $(PROJECT_DIR)/NetworkProcess/webtransport/NetworkTransportSession.messages.in
 $(PROJECT_DIR)/Platform/IPC/FormDataReference.serialization.in
 $(PROJECT_DIR)/Platform/IPC/IPCSemaphore.serialization.in
 $(PROJECT_DIR)/Platform/IPC/SharedBufferReference.serialization.in
+$(PROJECT_DIR)/Platform/IPC/SharedFileHandle.serialization.in
 $(PROJECT_DIR)/Platform/IPC/StreamServerConnection.serialization.in
 $(PROJECT_DIR)/Platform/SharedMemory.serialization.in
 $(PROJECT_DIR)/PluginProcess/PluginControllerProxy.messages.in
