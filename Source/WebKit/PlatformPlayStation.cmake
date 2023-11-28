@@ -66,8 +66,6 @@ list(APPEND WebKit_SOURCES
 
     Shared/API/c/playstation/WKEventPlayStation.cpp
 
-    Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
-
     Shared/cairo/ShareableBitmapCairo.cpp
 
     Shared/curl/WebCoreArgumentCodersCurl.cpp

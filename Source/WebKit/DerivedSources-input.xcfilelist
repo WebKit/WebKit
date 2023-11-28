@@ -261,7 +261,6 @@ $(PROJECT_DIR)/Shared/Notifications/NotificationManagerProxy.messages.in
 $(PROJECT_DIR)/Shared/PALArgumentCoders.serialization.in
 $(PROJECT_DIR)/Shared/Pasteboard.serialization.in
 $(PROJECT_DIR)/Shared/PlatformPopupMenuData.serialization.in
-$(PROJECT_DIR)/Shared/Plugins/NPObjectMessageReceiver.messages.in
 $(PROJECT_DIR)/Shared/PolicyDecision.serialization.in
 $(PROJECT_DIR)/Shared/PrintInfo.serialization.in
 $(PROJECT_DIR)/Shared/PushMessageForTesting.serialization.in

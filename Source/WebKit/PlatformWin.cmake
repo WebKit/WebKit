@@ -49,8 +49,6 @@ list(APPEND WebKit_SOURCES
 
     Shared/API/c/curl/WKCertificateInfoCurl.cpp
 
-    Shared/Plugins/Netscape/NetscapePluginModuleNone.cpp
-
     Shared/cairo/ShareableBitmapCairo.cpp
 
     Shared/curl/WebCoreArgumentCodersCurl.cpp
@@ -143,7 +141,6 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/API/c/win"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics"
     "${WEBKIT_DIR}/Shared/CoordinatedGraphics/threadedcompositor"
-    "${WEBKIT_DIR}/Shared/Plugins/win"
     "${WEBKIT_DIR}/Shared/wc"
     "${WEBKIT_DIR}/Shared/win"
     "${WEBKIT_DIR}/UIProcess/API/C/cairo"

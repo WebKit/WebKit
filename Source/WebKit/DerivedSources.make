@@ -40,7 +40,6 @@ VPATH = \
     $(WebKit2)/NetworkProcess/storage \
     $(WebKit2)/Platform \
     $(WebKit2)/Resources/SandboxProfiles/ios \
-    $(WebKit2)/Shared/Plugins \
     $(WebKit2)/Shared \
     $(WebKit2)/Shared/API/Cocoa \
     $(WebKit2)/Shared/ApplePay \
