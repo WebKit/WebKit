@@ -47,6 +47,6 @@ PASS e.style['scroll-timeline'] = "--abc, --def" should not set unrelated longha
 PASS Shorthand contraction of scroll-timeline-name:--abc:undefined;scroll-timeline-axis:inline:undefined
 PASS Shorthand contraction of scroll-timeline-name:--a, --b:undefined;scroll-timeline-axis:inline, block:undefined
 PASS Shorthand contraction of scroll-timeline-name:none, none:undefined;scroll-timeline-axis:block, block:undefined
-FAIL Shorthand contraction of scroll-timeline-name:--a, --b, --c:undefined;scroll-timeline-axis:inline, inline:undefined assert_equals: Declared value expected "" but got "--a inline, --b inline, --c"
-FAIL Shorthand contraction of scroll-timeline-name:--a, --b:undefined;scroll-timeline-axis:inline, inline, inline:undefined assert_equals: Declared value expected "" but got "--a inline, --b inline, none inline"
+PASS Shorthand contraction of scroll-timeline-name:--a, --b, --c:undefined;scroll-timeline-axis:inline, inline:undefined
+PASS Shorthand contraction of scroll-timeline-name:--a, --b:undefined;scroll-timeline-axis:inline, inline, inline:undefined
 

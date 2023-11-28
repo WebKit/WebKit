@@ -108,6 +108,7 @@ private:
     String serializeQuad() const;
 
     String serializeLayered() const;
+    String serializeCoordinatingListPropertyGroup() const;
 
     String serializeBorder(unsigned sectionLength) const;
     String serializeBorderImage() const;
@@ -291,7 +292,6 @@ String ShorthandSerializer::serialize()
     case CSSPropertyBackgroundPosition:
     case CSSPropertyMask:
     case CSSPropertyMaskPosition:
-    case CSSPropertyScrollTimeline:
     case CSSPropertyTransition:
     case CSSPropertyWebkitMask:
     case CSSPropertyWebkitMaskPosition:
@@ -405,6 +405,8 @@ String ShorthandSerializer::serialize()
         return serializeColumnBreak();
     case CSSPropertyWhiteSpace:
         return serializeWhiteSpace();
+    case CSSPropertyScrollTimeline:
+        return serializeCoordinatingListPropertyGroup();
     default:
         ASSERT_NOT_REACHED();
         return String();
@@ -573,6 +575,45 @@ private:
     RefPtr<const CSSValue> m_values[maxShorthandLength];
 };
 
+String ShorthandSerializer::serializeCoordinatingListPropertyGroup() const
+{
+    ASSERT(length() > 1);
+
+    // https://drafts.csswg.org/css-values-4/#linked-properties
+
+    // First, figure out the number of items in the coordinating list base property,
+    // which we'll need to match for all coordinated longhands, thus possibly trimming
+    // or expanding.
+    unsigned numberOfItemsForCoordinatingListBaseProperty = 1;
+    if (auto* valueList = dynamicDowncast<CSSValueList>(longhandValue(0)))
+        numberOfItemsForCoordinatingListBaseProperty = std::max(valueList->length(), numberOfItemsForCoordinatingListBaseProperty);
+
+    // Now go through all longhands and ensure we repeat items earlier in the list
+    // should there not be a specified value.
+    StringBuilder result;
+    for (unsigned listItemIndex = 0; listItemIndex < numberOfItemsForCoordinatingListBaseProperty; ++listItemIndex) {
+        LayerValues layerValues { m_shorthand };
+        for (unsigned longhandIndex = 0; longhandIndex < length(); ++longhandIndex) {
+            auto& value = longhandValue(longhandIndex);
+            if (auto* valueList = dynamicDowncast<CSSValueList>(value)) {
+                auto* valueInList = [&]() -> const CSSValue* {
+                    if (auto* specifiedValue = valueList->item(listItemIndex))
+                        return specifiedValue;
+                    if (auto numberOfItemsInList = valueList->size())
+                        return valueList->item(listItemIndex % numberOfItemsInList);
+                    return nullptr;
+                }();
+                layerValues.set(longhandIndex, valueInList);
+            } else
+                layerValues.set(longhandIndex, &value);
+        }
+        // The coordinating list base property must never be skipped.
+        layerValues.skip(0) = false;
+        layerValues.serialize(result);
+    }
+    return result.toString();
+}
+
 String ShorthandSerializer::serializeLayered() const
 {
     unsigned numLayers = 1;
@@ -638,10 +679,6 @@ String ShorthandSerializer::serializeLayered() const
                         layerValues.skip(j) = false;
                 }
             }
-
-            // We never want to skip the scroll-timeline-name, even if it's the default "none".
-            if (longhand == CSSPropertyScrollTimelineName)
-                layerValues.skip(j) = false;
 
             if (layerValues.skip(j))
                 continue;
