@@ -1,4 +1,4 @@
-This is a link. This is a wiki-style link. This is a link with visible edges. border-bottom link This is a JavaScript link. This link does nothing.
+This is a link. This is a wiki-style link. This is a link with a background. This is a link with an outline. This is a link with borders on all sides. This is a link with border-radius explicitly set. This is a link with a box shadow. border-bottom link This is a JavaScript link. This link does nothing.
 (GraphicsLayer
   (anchor 0.00 0.00)
   (bounds 800.00 600.00)
@@ -20,9 +20,25 @@ This is a link. This is a wiki-style link. This is a link with visible edges. bo
         (borderRadius 0.00),
         (interaction (250,0) width=29 height=19)
         (borderRadius 0.00),
-        (interaction (456,-4) width=130 height=27)
+        (guard (464,-10) width=29 height=39)
+        (borderRadius 0.00),
+        (interaction (464,0) width=29 height=19)
+        (borderRadius 0.00),
+        (guard (657,-10) width=29 height=39)
+        (borderRadius 0.00),
+        (interaction (657,0) width=29 height=19)
+        (borderRadius 0.00),
+        (guard (131,10) width=30 height=39)
+        (borderRadius 0.00),
+        (interaction (131,20) width=30 height=19)
+        (borderRadius 0.00),
+        (guard (431,10) width=30 height=39)
+        (borderRadius 0.00),
+        (interaction (431,20) width=30 height=19)
+        (borderRadius 0.00),
+        (interaction (642,16) width=130 height=27)
         (borderRadius 8.00),
-        (interaction (581,-4) width=38 height=27)
+        (interaction (767,16) width=37 height=27)
         (borderRadius 8.00)])
       )
     )
