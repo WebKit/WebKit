@@ -1999,3 +1999,7 @@ webkit.org/b/264783 [ Monterey+ x86_64 ] http/wpt/mediarecorder/record-context-c
 webkit.org/b/265414 [ Monterey+ ] imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html [ Failure ]
 
 webkit.org/b/260225 [ Monterey+ x86_64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.https.html [ Pass Failure ]
+
+# rdar://118901410 (NEW TEST (271087@main): [ macOS x86_64 wk2 ] 2 tests in http/wpt/webcodecs are a constant failure)
+http/wpt/webcodecs/h264-encoder-default-config.https.any.html [ Failure ]
+http/wpt/webcodecs/h264-encoder-default-config.https.any.worker.html [ Failure ]
