@@ -32,9 +32,12 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "APIArray.h"
 #import "CocoaHelpers.h"
 #import "InjectUserScriptImmediately.h"
 #import "Logging.h"
+#import "WKContentRuleListInternal.h"
+#import "WKContentRuleListStoreInternal.h"
 #import "WKNavigationActionPrivate.h"
 #import "WKNavigationDelegatePrivate.h"
 #import "WKPreferencesPrivate.h"
@@ -49,10 +52,12 @@
 #import "WebExtensionURLSchemeHandler.h"
 #import "WebExtensionWindow.h"
 #import "WebPageProxy.h"
+#import "WebScriptMessageHandler.h"
 #import "WebUserContentControllerProxy.h"
 #import "_WKWebExtensionContextInternal.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionControllerInternal.h"
+#import "_WKWebExtensionDeclarativeNetRequestTranslator.h"
 #import "_WKWebExtensionLocalization.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionPermission.h"
@@ -247,6 +252,7 @@ bool WebExtensionContext::unload(NSError **outError)
 
     unloadBackgroundWebView();
     removeInjectedContent();
+    removeDeclarativeNetRequestRules();
 
     m_storageDirectory = nullString();
     m_extensionController = nil;
@@ -452,11 +458,14 @@ void WebExtensionContext::setHasAccessInPrivateBrowsing(bool hasAccess)
         return;
 
     if (m_hasAccessInPrivateBrowsing) {
+        addDeclarativeNetRequestRulesToPrivateUserContentControllers();
         for (auto& controller : extensionController()->allPrivateUserContentControllers())
             addInjectedContent(controller);
     } else {
-        for (auto& controller : extensionController()->allPrivateUserContentControllers())
+        for (auto& controller : extensionController()->allPrivateUserContentControllers()) {
             removeInjectedContent(controller);
+            controller.removeContentRuleList(uniqueIdentifier());
+        }
     }
 }
 
@@ -2637,9 +2646,67 @@ void WebExtensionContext::removeInjectedContent(WebUserContentControllerProxy& u
     }
 }
 
+WKContentRuleListStore *WebExtensionContext::declarativeNetRequestRuleStore()
+{
+    if (m_declarativeNetRequestRuleStore)
+        return m_declarativeNetRequestRuleStore;
+
+    String contentBlockerStorePath = m_extensionController->configuration().declarativeNetRequestStoreDirectory();
+    if (contentBlockerStorePath.isEmpty())
+        return nil;
+
+    m_declarativeNetRequestRuleStore = [WKContentRuleListStore storeWithURL:[NSURL fileURLWithPath:contentBlockerStorePath]];
+    return m_declarativeNetRequestRuleStore;
+}
+
+void WebExtensionContext::removeDeclarativeNetRequestRules()
+{
+    if (!isLoaded())
+        return;
+
+    // Use all user content controllers in case the extension was briefly allowed in private browsing
+    // and content was injected into any of those content controllers.
+    auto allUserContentControllers = extensionController()->allUserContentControllers();
+
+    for (auto& userContentController : allUserContentControllers)
+        userContentController.removeContentRuleList(uniqueIdentifier());
+}
+
+void WebExtensionContext::addDeclarativeNetRequestRulesToPrivateUserContentControllers()
+{
+    [declarativeNetRequestRuleStore() lookUpContentRuleListForIdentifier:uniqueIdentifier() completionHandler:^(WKContentRuleList *ruleList, NSError *error) {
+        if (!ruleList)
+            return;
+
+        for (auto& controller : extensionController()->allPrivateUserContentControllers())
+            controller.addContentRuleList(*ruleList->_contentRuleList, m_baseURL);
+    }];
+}
+
 void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData)
 {
-    // FIXME: rdar://114823294 - Implement this.
+    // FIXME: rdar://118839289 - Avoid converting/compiling the rules data every time if the rules haven't changed.
+
+    NSArray<NSString *> *jsonDeserializationErrorStrings;
+    auto *allJSONObjects = [_WKWebExtensionDeclarativeNetRequestTranslator jsonObjectsFromData:rulesData errorStrings:&jsonDeserializationErrorStrings];
+
+    NSArray<NSString *> *parsingErrorStrings;
+    auto *allConvertedRules = [_WKWebExtensionDeclarativeNetRequestTranslator translateRules:allJSONObjects errorStrings:&parsingErrorStrings];
+
+    auto *webKitRules = encodeJSONString(allConvertedRules, JSONOptions::FragmentsAllowed);
+    if (!webKitRules)
+        return;
+
+    [declarativeNetRequestRuleStore() compileContentRuleListForIdentifier:uniqueIdentifier() encodedContentRuleList:webKitRules completionHandler:^(WKContentRuleList *ruleList, NSError *error) {
+        if (error) {
+            RELEASE_LOG_ERROR(Extensions, "Error compiling declarativeNetRequest rules: %{public}@", privacyPreservingDescription(error));
+            return;
+        }
+
+        auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
+        for (auto& userContentController : userContentControllers)
+            userContentController.addContentRuleList(*ruleList->_contentRuleList, m_baseURL);
+    }];
 }
 
 void WebExtensionContext::loadDeclarativeNetRequestRules()
@@ -2665,7 +2732,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules()
     }
 
     if (!allJSONData.count) {
-        // FIXME: When dynamic/session rules are supported, we should remove the content blocker if there are no rules.
+        // FIXME: rdar://118476702 - When dynamic/session rules are supported, we should remove the content blocker if there are no rules.
         return;
     }
 

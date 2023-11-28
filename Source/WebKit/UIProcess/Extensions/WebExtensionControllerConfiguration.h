@@ -58,6 +58,8 @@ public:
     bool storageIsPersistent() const { return !m_storageDirectory.isEmpty(); }
     String storageDirectory() const { return m_storageDirectory; }
 
+    String declarativeNetRequestStoreDirectory();
+
     WKWebViewConfiguration *webViewConfiguration();
     void setWebViewConfiguration(WKWebViewConfiguration *configuration) { m_webViewConfiguration = configuration; }
 
@@ -72,6 +74,7 @@ private:
 
     Markable<WTF::UUID> m_identifier;
     String m_storageDirectory;
+    String m_declarativeNetRequestStoreDirectory;
     RetainPtr<WKWebViewConfiguration> m_webViewConfiguration;
 };
 

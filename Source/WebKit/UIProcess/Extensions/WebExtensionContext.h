@@ -72,6 +72,7 @@ OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS NSUUID;
+OBJC_CLASS WKContentRuleListStore;
 OBJC_CLASS WKNavigation;
 OBJC_CLASS WKNavigationAction;
 OBJC_CLASS WKWebView;
@@ -413,6 +414,9 @@ private:
 
     void loadDeclarativeNetRequestRules();
     void compileDeclarativeNetRequestRules(NSArray *);
+    void removeDeclarativeNetRequestRules();
+    void addDeclarativeNetRequestRulesToPrivateUserContentControllers();
+    WKContentRuleListStore *declarativeNetRequestRuleStore();
 
     // Action APIs
     void actionGetTitle(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::optional<String>, std::optional<String>)>&&);
@@ -618,6 +622,8 @@ private:
 
     CommandsVector m_commands;
     bool m_populatedCommands { false };
+
+    WKContentRuleListStore *m_declarativeNetRequestRuleStore;
 };
 
 template<typename T>

@@ -27,12 +27,124 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "TestNavigationDelegate.h"
 #import "WebExtensionUtilities.h"
-
 #import <WebKit/_WKWebExtensionDeclarativeNetRequestRule.h>
 #import <WebKit/_WKWebExtensionDeclarativeNetRequestTranslator.h>
 
 namespace TestWebKitAPI {
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, BlockedLoadTest)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='background-color: blue'></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Yield after the background page has loaded so we can load a tab.
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *declarativeNetRequestManifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"declarativeNetRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"declarative_net_request": @{
+            @"rule_resources": @[
+                @{
+                    @"id": @"blockFrame",
+                    @"enabled": @YES,
+                    @"path": @"rules.json"
+                }
+            ]
+        }
+    };
+    auto *rules = @"[ { \"id\" : 1, \"priority\": 1, \"action\" : { \"type\" : \"block\" }, \"condition\" : { \"urlFilter\" : \"frame\" } } ]";
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:declarativeNetRequestManifest resources:@{ @"background.js": backgroundScript, @"rules.json": rules  }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Grant the declarativeNetRequest permission.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionDeclarativeNetRequest];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    auto webView = manager.get().defaultTab.mainWebView;
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+
+    __block bool receivedActionNotification { false };
+    navigationDelegate.get().contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+        receivedActionNotification = true;
+    };
+
+    webView.navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:server.requestWithLocalhost()];
+
+    Util::run(&receivedActionNotification);
+}
+
+TEST(WKWebExtensionAPIDeclarativeNetRequest, BlockedLoadInPrivateBrowsingTest)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='background-color: blue'></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Yield after the background page has loaded so we can load a tab.
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *declarativeNetRequestManifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"declarativeNetRequest" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"declarative_net_request": @{
+            @"rule_resources": @[
+                @{
+                    @"id": @"blockFrame",
+                    @"enabled": @YES,
+                    @"path": @"rules.json"
+                }
+            ]
+        }
+    };
+    auto *rules = @"[ { \"id\" : 1, \"priority\": 1, \"action\" : { \"type\" : \"block\" }, \"condition\" : { \"urlFilter\" : \"frame\" } } ]";
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:declarativeNetRequestManifest resources:@{ @"background.js": backgroundScript, @"rules.json": rules  }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Grant the declarativeNetRequest permission.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionDeclarativeNetRequest];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    manager.get().context.hasAccessInPrivateBrowsing = YES;
+    [manager closeWindow:manager.get().defaultWindow];
+
+    auto privateWindow = [manager openNewWindowUsingPrivateBrowsing:YES];
+    auto privateTab = privateWindow.tabs.firstObject;
+    auto webView = privateTab.mainWebView;
+
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+
+    __block bool receivedActionNotification { false };
+    navigationDelegate.get().contentRuleListPerformedAction = ^(WKWebView *, NSString *identifier, _WKContentRuleListAction *action, NSURL *url) {
+        receivedActionNotification = true;
+    };
+
+    webView.navigationDelegate = navigationDelegate.get();
+
+    [webView loadRequest:server.requestWithLocalhost()];
+
+    Util::run(&receivedActionNotification);
+}
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RequiredAndOptionalKeys)
 {
