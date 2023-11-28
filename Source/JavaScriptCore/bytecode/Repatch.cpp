@@ -49,6 +49,7 @@
 #include "IntrinsicGetterAccessCase.h"
 #include "JIT.h"
 #include "JITInlines.h"
+#include "JITThunks.h"
 #include "JSCInlines.h"
 #include "JSModuleNamespaceObject.h"
 #include "JSWebAssembly.h"
@@ -103,13 +104,6 @@ static void linkSlowPathTo(VM&, CallLinkInfo& callLinkInfo, MacroAssemblerCodeRe
     callLinkInfo.setSlowPathCallDestination(codeRef.code().template retagged<JSEntryPtrTag>());
 }
 
-#if ENABLE(JIT)
-static void linkSlowPathTo(VM& vm, CallLinkInfo& callLinkInfo, ThunkGenerator generator)
-{
-    linkSlowPathTo(vm, callLinkInfo, vm.getCTIStub(generator).retagged<JITStubRoutinePtrTag>());
-}
-#endif
-
 static void linkSlowFor(VM& vm, CallLinkInfo& callLinkInfo)
 {
     MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunk = vm.getCTIVirtualCall(callLinkInfo.callMode());
@@ -140,7 +134,7 @@ void linkMonomorphicCall(
 
 #if ENABLE(JIT)
     if (callLinkInfo.specializationKind() == CodeForCall && callLinkInfo.allowStubs()) {
-        linkSlowPathTo(vm, callLinkInfo, linkPolymorphicCallThunkGenerator);
+        linkSlowPathTo(vm, callLinkInfo, vm.getCTIStub(CommonJITThunkID::LinkPolymorphicCall).retagged<JITStubRoutinePtrTag>());
         return;
     }
 #endif
@@ -2140,7 +2134,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
                 ASSERT(!JITCode::isOptimizingJIT(callerCodeBlock->jitType()));
 #endif
             if (callLinkInfo.isTailCall()) {
-                stubJit.move(CCallHelpers::TrustedImmPtr(vm.getCTIStub(JIT::returnFromBaselineGenerator).code().untaggedPtr()), GPRInfo::regT4);
+                stubJit.move(CCallHelpers::TrustedImmPtr(vm.getCTIStub(CommonJITThunkID::ReturnFromBaseline).code().untaggedPtr()), GPRInfo::regT4);
                 stubJit.restoreReturnAddressBeforeReturn(GPRInfo::regT4);
             }
             break;
@@ -2173,7 +2167,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
         ASSERT(!isDataIC);
         patchBuffer.link(done, callLinkInfo.doneLocation());
     }
-    patchBuffer.link(slow, CodeLocationLabel<JITThunkPtrTag>(vm.getCTIStub(linkPolymorphicCallThunkGenerator).code()));
+    patchBuffer.link(slow, CodeLocationLabel<JITThunkPtrTag>(vm.getCTIStub(CommonJITThunkID::LinkPolymorphicCall).code()));
     
     auto stubRoutine = adoptRef(*new PolymorphicCallStubRoutine(
         FINALIZE_CODE_FOR(

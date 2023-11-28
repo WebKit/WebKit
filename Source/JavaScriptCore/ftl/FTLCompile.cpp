@@ -38,6 +38,7 @@
 #include "CCallHelpers.h"
 #include "DFGGraphSafepoint.h"
 #include "FTLJITCode.h"
+#include "JITThunks.h"
 #include "LinkBuffer.h"
 #include "PCToCodeOriginMap.h"
 #include "ThunkGenerators.h"
@@ -138,7 +139,7 @@ void compile(State& state, Safepoint::Result& safepointResult)
     VM* vmPtr = &vm;
     jit.addLinkTask(
         [=] (LinkBuffer& linkBuffer) {
-            linkBuffer.link(handler, CodeLocationLabel(vmPtr->getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+            linkBuffer.link(handler, CodeLocationLabel(vmPtr->getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
         });
 
     state.finalizer->b3CodeLinkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, LinkBuffer::Profile::FTL, JITCompilationCanFail);
