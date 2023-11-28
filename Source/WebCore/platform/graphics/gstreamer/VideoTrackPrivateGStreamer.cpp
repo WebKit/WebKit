@@ -31,6 +31,8 @@
 
 #include "GStreamerCommon.h"
 #include "MediaPlayerPrivateGStreamer.h"
+#include "VP9Utilities.h"
+#include <gst/pbutils/pbutils.h>
 #include <wtf/Scope.h>
 
 namespace WebCore {
@@ -86,7 +88,7 @@ void VideoTrackPrivateGStreamer::capsChanged(const String& streamId, GRefPtr<Gst
     setConfiguration(WTFMove(configuration));
 }
 
-void VideoTrackPrivateGStreamer::updateConfigurationFromTags(const GRefPtr<GstTagList>&& tags)
+void VideoTrackPrivateGStreamer::updateConfigurationFromTags(GRefPtr<GstTagList>&& tags)
 {
     ASSERT(isMainThread());
     GST_DEBUG_OBJECT(objectForLogging(), "Updating video configuration from %" GST_PTR_FORMAT, tags.get());
@@ -103,7 +105,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromTags(const GRefPtr<GstTa
     setConfiguration(WTFMove(configuration));
 }
 
-void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(const GRefPtr<GstCaps>&& caps)
+void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& caps)
 {
     ASSERT(isMainThread());
     if (!caps || !gst_caps_is_fixed(caps.get()))
@@ -114,6 +116,24 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(const GRefPtr<GstCa
     auto scopeExit = makeScopeExit([&] {
         setConfiguration(WTFMove(configuration));
     });
+
+    GUniquePtr<char> mimeCodec(gst_codec_utils_caps_get_mime_codec(caps.get()));
+    if (mimeCodec) {
+        auto codec = makeString(mimeCodec.get());
+        if (!webkitGstCheckVersion(1, 22, 8)) {
+            // The gst_codec_utils_caps_get_mime_codec() function will return all the codec parameters,
+            // including the default ones, so to strip them away, re-parse the returned string, using
+            // WebCore VPx codec string parser.
+            // This workaround is needed only for GStreamer versions older than 1.22.8. Merge-request:
+            // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/5716
+            if (codec.startsWith("vp09"_s) && codec.endsWith(".01.01.01.01.00"_s)) {
+                auto parsedRecord = parseVPCodecParameters(codec);
+                ASSERT(parsedRecord);
+                codec = createVPCodecParametersString(*parsedRecord);
+            }
+        }
+        configuration.codec = WTFMove(codec);
+    }
 
     if (areEncryptedCaps(caps.get())) {
         if (auto videoResolution = getVideoResolutionFromCaps(caps.get())) {

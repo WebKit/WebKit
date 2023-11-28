@@ -61,9 +61,10 @@ public:
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
 
+    void updateConfigurationFromCaps(GRefPtr<GstCaps>&&) final;
+
 protected:
-    void updateConfigurationFromCaps(const GRefPtr<GstCaps>&&) override;
-    void updateConfigurationFromTags(const GRefPtr<GstTagList>&&) override;
+    void updateConfigurationFromTags(GRefPtr<GstTagList>&&) final;
 
     void tagsChanged(GRefPtr<GstTagList>&& tags) final { updateConfigurationFromTags(WTFMove(tags)); }
     void capsChanged(const String&, GRefPtr<GstCaps>&&) final;

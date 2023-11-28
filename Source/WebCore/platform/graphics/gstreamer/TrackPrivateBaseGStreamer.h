@@ -69,6 +69,8 @@ public:
 
     static String trackIdFromPadStreamStartOrUniqueID(TrackType, unsigned index, const GRefPtr<GstPad>&);
 
+    virtual void updateConfigurationFromCaps(GRefPtr<GstCaps>&&) { }
+
 protected:
     TrackPrivateBaseGStreamer(TrackType, TrackPrivateBase*, unsigned index, GRefPtr<GstPad>&&, bool shouldHandleStreamStartEvent);
     TrackPrivateBaseGStreamer(TrackType, TrackPrivateBase*, unsigned index, GstStream*);
@@ -81,8 +83,7 @@ protected:
     virtual void tagsChanged(GRefPtr<GstTagList>&&) { }
     virtual void capsChanged(const String&, GRefPtr<GstCaps>&&) { }
     void installUpdateConfigurationHandlers();
-    virtual void updateConfigurationFromCaps(const GRefPtr<GstCaps>&&) { }
-    virtual void updateConfigurationFromTags(const GRefPtr<GstTagList>&&) { }
+    virtual void updateConfigurationFromTags(GRefPtr<GstTagList>&&) { }
 
     static GRefPtr<GstTagList> getAllTags(const GRefPtr<GstPad>&);
 

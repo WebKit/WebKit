@@ -768,6 +768,10 @@ GRefPtr<GstElement> createOptionalParserForFormat(GstBin* bin, const AtomString&
         default:
             GST_WARNING_OBJECT(bin, "Unsupported audio mpeg caps: %" GST_PTR_FORMAT, caps);
         }
+    } else if (!g_strcmp0(mediaType, "video/x-vp9")) {
+        // Necessary for: metadata filling.
+        // Without this parser the codec string set on the corresponding video track will be incomplete.
+        elementClass = "vp9parse";
     }
 
     GST_DEBUG_OBJECT(bin, "Creating %s parser for stream with caps %" GST_PTR_FORMAT, elementClass, caps);
