@@ -149,8 +149,8 @@ def get_test_results(args, host=None):
 
 
 def parse_full_results(full_results_text):
-    json_to_eval = full_results_text.replace("ADD_RESULTS(", "").replace(");", "")
-    compressed_results = json.loads(json_to_eval)
+    assert not full_results_text.startswith("ADD_RESULTS(")
+    compressed_results = json.loads(full_results_text)
     return compressed_results
 
 
@@ -203,8 +203,8 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
 
         # Ensure the results were written out and displayed.
         full_results_text = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
-        json_to_eval = full_results_text.replace("ADD_RESULTS(", "").replace(");", "")
-        self.assertEqual(json.loads(json_to_eval), details.summarized_results)
+        parsed_json = parse_full_results(full_results_text)
+        self.assertEqual(parsed_json, details.summarized_results)
 
         self.assertEqual(host.user.opened_urls, [path.abspath_to_uri(MockHost().platform, '/tmp/layout-test-results/results.html')])
 
@@ -534,7 +534,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
                 },
             },
         }
-        actual_dictionary = json.loads(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')[len('ADD_RESULTS('):-2])
+        actual_dictionary = parse_full_results(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json'))
         self.assertEqual(
             sorted(list(expected_dictionary['tests']['failures']['expected'])),
             sorted(list(actual_dictionary['tests']['failures']['expected'])),
@@ -585,7 +585,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
     def test_crash_with_stderr(self):
         host = MockHost()
         _, regular_output, _ = logging_run(['failures/unexpected/crash-with-stderr.html'], tests_included=True, host=host)
-        actual_dictionary = json.loads(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')[len('ADD_RESULTS('):-2])
+        actual_dictionary = parse_full_results(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json'))
         expected_dictionary = {
             'version': 4,
             'fixable': 1,
@@ -622,7 +622,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
     def test_wpt_tests(self):
         host = MockHost()
         _, regular_output, _ = logging_run(['imported/w3c/web-platform-tests/'], tests_included=True, host=host)
-        actual_dictionary = json.loads(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')[len('ADD_RESULTS('):-2])
+        actual_dictionary = parse_full_results(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json'))
         expected_dictionary = {
             'tests': {
                 'imported': {
@@ -693,7 +693,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
             host.filesystem.write_text_file('/tmp/layout-test-results/WebKitTestRunner_2011-06-13-150719_quadzen.crash', mock_crash_report)
 
         details, regular_output, _ = logging_run(['imported/w3c/web-platform-tests/', '--reset-results'], tests_included=True, host=host, new_results=True)
-        actual_dictionary = json.loads(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')[len('ADD_RESULTS('):-2])
+        actual_dictionary = parse_full_results(host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json'))
         file_list = host.filesystem.written_files.keys()
         self.assertEqual(details.exit_code, 4)
         self.assertTrue(host.filesystem.read_text_file('/test.checkout/LayoutTests/imported/w3c/web-platform-tests/some/new-expected.txt'), 'ok')
@@ -991,7 +991,7 @@ class RunTest(unittest.TestCase, StreamTestingMixin):
         self.assertFalse(any(path.endswith('-pretty-diff.html') for path in written_files.keys()))
 
         full_results_text = host.filesystem.read_text_file('/tmp/layout-test-results/full_results.json')
-        full_results = json.loads(full_results_text.replace("ADD_RESULTS(", "").replace(");", ""))
+        full_results = parse_full_results(full_results_text)
         self.assertEqual(full_results['has_pretty_patch'], False)
 
     def test_unsupported_platform(self):

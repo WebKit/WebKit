@@ -62,11 +62,9 @@ def load_json(filesystem, file_path):
     return json.loads(content)
 
 
-def write_json(filesystem, json_object, file_path, callback=None):
+def write_json(filesystem, json_object, file_path):
     # Specify separators in order to get compact encoding.
     json_string = json.dumps(json_object, separators=(',', ':'))
-    if callback:
-        json_string = callback + "(" + json_string + ");"
     filesystem.write_text_file(file_path, json_string)
 
 
