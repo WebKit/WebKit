@@ -103,7 +103,7 @@
     if (m_h264Decoder)
         return [m_h264Decoder setAVCFormat:data size:size width:width height:height];
     if (m_h265Decoder)
-        return [m_h265Decoder setAVCFormat:data size:size width:width height:height];
+        return [m_h265Decoder setHVCCFormat:data size:size width:width height:height];
     return 0;
 }
 

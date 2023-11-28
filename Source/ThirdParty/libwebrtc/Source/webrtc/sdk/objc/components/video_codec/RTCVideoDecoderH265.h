@@ -16,7 +16,7 @@
 RTC_OBJC_EXPORT
 __attribute__((objc_runtime_name("WK_RTCVideoDecoderH265")))
 @interface RTCVideoDecoderH265 : NSObject <RTCVideoDecoder>
-- (NSInteger)setAVCFormat:(const uint8_t *)data size:(size_t)size width:(uint16_t)width height:(uint16_t)height;
+- (NSInteger)setHVCCFormat:(const uint8_t *)data size:(size_t)size width:(uint16_t)width height:(uint16_t)height;
 - (NSInteger)decodeData:(const uint8_t *)data
     size:(size_t)size
     timeStamp:(int64_t)timeStamp;

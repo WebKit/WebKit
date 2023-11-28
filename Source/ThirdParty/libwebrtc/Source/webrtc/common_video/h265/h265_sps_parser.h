@@ -52,6 +52,9 @@ class H265SpsParser {
     uint32_t pic_height_in_luma_samples = 0;
     uint32_t log2_max_pic_order_cnt_lsb_minus4 = 0;
     std::vector<uint32_t> sps_max_dec_pic_buffering_minus1;
+#if WEBRTC_WEBKIT_BUILD
+    std::vector<uint32_t> sps_max_num_reorder_pics;
+#endif
     uint32_t log2_min_luma_coding_block_size_minus3 = 0;
     uint32_t log2_diff_max_min_luma_coding_block_size = 0;
     uint32_t sample_adaptive_offset_enabled_flag = 0;
