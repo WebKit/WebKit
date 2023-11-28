@@ -1524,6 +1524,14 @@ fn testDeterminant()
     _ = determinant(mat2x2(1, 1, 1, 1));
     _ = determinant(mat3x3(1, 1, 1, 1, 1, 1, 1, 1, 1));
     _ = determinant(mat4x4(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
+
+    _ = determinant(mat2x2(1f, 1f, 1f, 1f));
+    _ = determinant(mat3x3(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f));
+    _ = determinant(mat4x4(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f));
+
+    _ = determinant(mat2x2(1h, 1h, 1h, 1h));
+    _ = determinant(mat3x3(1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h));
+    _ = determinant(mat4x4(1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h));
 }
 
 // 16.5.19

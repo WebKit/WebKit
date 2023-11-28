@@ -845,27 +845,27 @@ CONSTANT_FUNCTION(Determinant)
     ASSERT(arguments.size() == 1);
     auto& matrix = std::get<ConstantMatrix>(arguments[0]);
     auto columns = matrix.columns;
-    auto solve2 = [&](
-        auto a, auto b,
-        auto c, auto d
-    ) {
+    auto solve2 = [&]<typename T>(
+        T a, T b,
+        T c, T d
+    ) -> T {
         return a * d - b * c;
     };
 
-    auto solve3 = [&](
-        auto a, auto b, auto c,
-        auto d, auto e, auto f,
-        auto g, auto h, auto i
-    ) {
+    auto solve3 = [&]<typename T>(
+        T a, T b, T c,
+        T d, T e, T f,
+        T g, T h, T i
+    ) -> T {
         return a * e * i + b * f * g + c * d * h - c * e * g - b * d * i - a * f * h;
     };
 
-    auto solve4 = [&](
-        auto a, auto b, auto c, auto d,
-        auto e, auto f, auto g, auto h,
-        auto i, auto j, auto k, auto l,
-        auto m, auto n, auto o, auto p
-    ) {
+    auto solve4 = [&]<typename T>(
+        T a, T b, T c, T d,
+        T e, T f, T g, T h,
+        T i, T j, T k, T l,
+        T m, T n, T o, T p
+    ) -> T {
         return a * solve3(f, g, h, j, k, l, n, o, p) - b * solve3(e, g, h, i, k, l, m, o, p) + c * solve3(e, f, h, i, j, l, m, n, p) - d * solve3(e, f, g, i, j, k, m, n, o);
     };
 
