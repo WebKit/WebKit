@@ -94,7 +94,7 @@ void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSiz
 RefPtr<cairo_surface_t> copyCairoImageSurface(cairo_surface_t*);
 
 void copyRectFromCairoSurfaceToContext(cairo_surface_t* from, cairo_t* to, const IntSize& offset, const IntRect&);
-void copyRectFromOneSurfaceToAnother(cairo_surface_t* from, cairo_surface_t* to, const IntSize& offset, const IntRect&, const IntSize& = IntSize());
+WEBCORE_EXPORT void copyRectFromOneSurfaceToAnother(cairo_surface_t* from, cairo_surface_t* to, const IntSize& offset, const IntRect&, const IntSize& = IntSize());
 
 IntSize cairoSurfaceSize(cairo_surface_t*);
 void flipImageSurfaceVertically(cairo_surface_t*);

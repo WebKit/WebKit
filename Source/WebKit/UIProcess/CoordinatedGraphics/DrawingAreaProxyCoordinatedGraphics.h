@@ -27,10 +27,13 @@
 
 #pragma once
 
-#include "BackingStore.h"
 #include "DrawingAreaProxy.h"
 #include "LayerTreeContext.h"
 #include <wtf/RunLoop.h>
+
+#if !PLATFORM(WPE)
+typedef struct _cairo cairo_t;
+#endif
 
 namespace WebCore {
 class Region;
@@ -38,13 +41,15 @@ class Region;
 
 namespace WebKit {
 
+class BackingStore;
+
 class DrawingAreaProxyCoordinatedGraphics final : public DrawingAreaProxy {
 public:
     DrawingAreaProxyCoordinatedGraphics(WebPageProxy&);
     virtual ~DrawingAreaProxyCoordinatedGraphics();
 
 #if !PLATFORM(WPE)
-    void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
+    void paint(cairo_t*, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
 #endif
 
     bool isInAcceleratedCompositingMode() const { return !m_layerTreeContext.isEmpty(); }

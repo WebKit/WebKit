@@ -25,51 +25,44 @@
 
 #pragma once
 
-#include <WebCore/IntRect.h>
+#if USE(CAIRO)
+
+#include <WebCore/IntSize.h>
+#include <WebCore/RefPtrCairo.h>
+#include <pal/HysteresisActivity.h>
 #include <wtf/Noncopyable.h>
 
-#if USE(CAIRO)
-#include <WebCore/BackingStoreBackendCairo.h>
-#endif
+namespace WebCore {
+class IntRect;
+}
 
 namespace WebKit {
-
 class ShareableBitmap;
-class WebPageProxy;
 struct UpdateInfo;
 
 class BackingStore {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(BackingStore);
-
 public:
-    BackingStore(const WebCore::IntSize&, float deviceScaleFactor, WebPageProxy&);
+    BackingStore(const WebCore::IntSize&, float deviceScaleFactor);
     ~BackingStore();
 
     const WebCore::IntSize& size() const { return m_size; }
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
-#if USE(CAIRO)
-    typedef cairo_t* PlatformGraphicsContext;
-#endif
-
-    void paint(PlatformGraphicsContext, const WebCore::IntRect&);
+    void paint(cairo_t*, const WebCore::IntRect&);
     void incorporateUpdate(UpdateInfo&&);
 
 private:
-    void incorporateUpdate(ShareableBitmap*, UpdateInfo&&);
-    void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
-
-#if USE(CAIRO)
-    std::unique_ptr<WebCore::BackingStoreBackendCairo> createBackend();
-#endif
+    void scroll(const WebCore::IntRect&, const WebCore::IntSize&);
 
     WebCore::IntSize m_size;
-    float m_deviceScaleFactor;
-    WebPageProxy& m_webPageProxy;
-#if USE(CAIRO)
-    std::unique_ptr<WebCore::BackingStoreBackendCairo> m_backend;
-#endif
+    float m_deviceScaleFactor { 1 };
+    RefPtr<cairo_surface_t> m_surface;
+    RefPtr<cairo_surface_t> m_scrollSurface;
+    PAL::HysteresisActivity m_scrolledHysteresis;
 };
 
 } // namespace WebKit
+
+#endif // USE(CAIRO)
