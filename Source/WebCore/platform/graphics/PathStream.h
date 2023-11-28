@@ -42,20 +42,17 @@ public:
 
     Ref<PathImpl> copy() const final;
 
-    void moveTo(const FloatPoint&) final;
-
-    void addLineTo(const FloatPoint&) final;
-    void addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint) final;
-    void addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint) final;
-    void addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius) final;
-
-    void addArc(const FloatPoint&, float radius, float startAngle, float endAngle, RotationDirection) final;
-    void addEllipse(const FloatPoint&, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, RotationDirection) final;
-    void addEllipseInRect(const FloatRect&) final;
-    void addRect(const FloatRect&) final;
-    void addRoundedRect(const FloatRoundedRect&, PathRoundedRect::Strategy) final;
-
-    void closeSubpath() final;
+    void add(PathMoveTo) final;
+    void add(PathLineTo) final;
+    void add(PathQuadCurveTo) final;
+    void add(PathBezierCurveTo) final;
+    void add(PathArcTo) final;
+    void add(PathArc) final;
+    void add(PathEllipse) final;
+    void add(PathEllipseInRect) final;
+    void add(PathRect) final;
+    void add(PathRoundedRect) final;
+    void add(PathCloseSubpath) final;
 
     const Vector<PathSegment>& segments() const { return m_segments; }
 

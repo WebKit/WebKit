@@ -27,7 +27,6 @@
 #include "PathSegmentData.h"
 
 #include "AffineTransform.h"
-#include "PathImpl.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -50,11 +49,6 @@ void PathMoveTo::extendFastBoundingRect(const FloatPoint&, const FloatPoint&, Fl
 
 void PathMoveTo::extendBoundingRect(const FloatPoint&, const FloatPoint&, FloatRect&) const
 {
-}
-
-void PathMoveTo::addToImpl(PathImpl& impl) const
-{
-    impl.moveTo(point);
 }
 
 void PathMoveTo::applyElements(const PathElementApplier& applier) const
@@ -93,11 +87,6 @@ void PathLineTo::extendBoundingRect(const FloatPoint& currentPoint, const FloatP
 {
     boundingRect.extend(currentPoint);
     boundingRect.extend(point);
-}
-
-void PathLineTo::addToImpl(PathImpl& impl) const
-{
-    impl.addLineTo(point);
 }
 
 void PathLineTo::applyElements(const PathElementApplier& applier) const
@@ -174,11 +163,6 @@ void PathQuadCurveTo::extendBoundingRect(const FloatPoint& currentPoint, const F
     boundingRect.extend(currentPoint);
     boundingRect.extend(extremity);
     boundingRect.extend(endPoint);
-}
-
-void PathQuadCurveTo::addToImpl(PathImpl& impl) const
-{
-    impl.addQuadCurveTo(controlPoint, endPoint);
 }
 
 void PathQuadCurveTo::applyElements(const PathElementApplier& applier) const
@@ -295,11 +279,6 @@ void PathBezierCurveTo::extendBoundingRect(const FloatPoint& currentPoint, const
     boundingRect.extend(endPoint);
 }
 
-void PathBezierCurveTo::addToImpl(PathImpl& impl) const
-{
-    impl.addBezierCurveTo(controlPoint1, controlPoint2, endPoint);
-}
-
 void PathBezierCurveTo::applyElements(const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::AddCurveToPoint, { controlPoint1, controlPoint2, endPoint } });
@@ -363,11 +342,6 @@ void PathArcTo::extendBoundingRect(const FloatPoint& currentPoint, const FloatPo
     boundingRect.extend(currentPoint);
     boundingRect.extend(controlPoint1);
     boundingRect.extend(calculateArcToEndPoint(currentPoint, controlPoint1, controlPoint2, radius));
-}
-
-void PathArcTo::addToImpl(PathImpl& impl) const
-{
-    impl.addArcTo(controlPoint1, controlPoint2, radius);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathArcTo& data)
@@ -447,11 +421,6 @@ void PathArc::extendBoundingRect(const FloatPoint&, const FloatPoint&, FloatRect
     boundingRect.extend({ x2, y2 });
 }
 
-void PathArc::addToImpl(PathImpl& impl) const
-{
-    impl.addArc(center, radius, startAngle, endAngle, direction);
-}
-
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathArc& data)
 {
     ts << "add arc " << data.center << " " << data.radius  << " " << data.startAngle  << " " << data.endAngle  << " " << data.direction;
@@ -501,11 +470,6 @@ void PathEllipse::extendBoundingRect(const FloatPoint& currentPoint, const Float
     boundingRect.extend(currentPoint);
 }
 
-void PathEllipse::addToImpl(PathImpl& impl) const
-{
-    impl.addEllipse(center, radiusX, radiusY, rotation, startAngle, endAngle, direction);
-}
-
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathEllipse& data)
 {
     ts << "add ellipse " << data.center << " " << data.radiusX << " " << data.radiusY  << " " << data.rotation << " " << data.startAngle  << " " << data.endAngle  << " " << data.direction;
@@ -533,11 +497,6 @@ void PathEllipseInRect::extendBoundingRect(const FloatPoint&, const FloatPoint&,
 {
     boundingRect.extend(rect.minXMinYCorner());
     boundingRect.extend(rect.maxXMaxYCorner());
-}
-
-void PathEllipseInRect::addToImpl(PathImpl& impl) const
-{
-    impl.addEllipseInRect(rect);
 }
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathEllipseInRect& data)
@@ -569,11 +528,6 @@ void PathRect::extendBoundingRect(const FloatPoint&, const FloatPoint&, FloatRec
     boundingRect.extend(rect.maxXMaxYCorner());
 }
 
-void PathRect::addToImpl(PathImpl& impl) const
-{
-    impl.addRect(rect);
-}
-
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathRect& data)
 {
     ts << "add rect " << data.rect;
@@ -603,11 +557,6 @@ void PathRoundedRect::extendBoundingRect(const FloatPoint&, const FloatPoint&, F
     boundingRect.extend(roundedRect.rect().maxXMaxYCorner());
 }
 
-void PathRoundedRect::addToImpl(PathImpl& impl) const
-{
-    impl.addRoundedRect(roundedRect, strategy);
-}
-
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathRoundedRect& data)
 {
     ts << "add rounded rect " << data.roundedRect;
@@ -635,12 +584,6 @@ void PathDataLine::extendBoundingRect(const FloatPoint&, const FloatPoint&, Floa
 {
     boundingRect.extend(start);
     boundingRect.extend(end);
-}
-
-void PathDataLine::addToImpl(PathImpl& impl) const
-{
-    impl.moveTo(start);
-    impl.addLineTo(end);
 }
 
 void PathDataLine::applyElements(const PathElementApplier& applier) const
@@ -688,12 +631,6 @@ void PathDataQuadCurve::extendBoundingRect(const FloatPoint&, const FloatPoint&,
     boundingRect.extend(start);
     boundingRect.extend(extremity);
     boundingRect.extend(endPoint);
-}
-
-void PathDataQuadCurve::addToImpl(PathImpl& impl) const
-{
-    impl.moveTo(start);
-    impl.addQuadCurveTo(controlPoint, endPoint);
 }
 
 void PathDataQuadCurve::applyElements(const PathElementApplier& applier) const
@@ -746,12 +683,6 @@ void PathDataBezierCurve::extendBoundingRect(const FloatPoint&, const FloatPoint
     boundingRect.extend(endPoint);
 }
 
-void PathDataBezierCurve::addToImpl(PathImpl& impl) const
-{
-    impl.moveTo(start);
-    impl.addBezierCurveTo(controlPoint1, controlPoint2, endPoint);
-}
-
 void PathDataBezierCurve::applyElements(const PathElementApplier& applier) const
 {
     applier({ PathElement::Type::MoveToPoint, { start } });
@@ -800,12 +731,6 @@ void PathDataArc::extendBoundingRect(const FloatPoint&, const FloatPoint&, Float
     boundingRect.extend(calculateArcToEndPoint(start, controlPoint1, controlPoint2, radius));
 }
 
-void PathDataArc::addToImpl(PathImpl& impl) const
-{
-    impl.moveTo(start);
-    impl.addArcTo(controlPoint1, controlPoint2, radius);
-}
-
 WTF::TextStream& operator<<(WTF::TextStream& ts, const PathDataArc& data)
 {
     ts << "move to " << data.start;
@@ -832,11 +757,6 @@ void PathCloseSubpath::extendFastBoundingRect(const FloatPoint&, const FloatPoin
 void PathCloseSubpath::extendBoundingRect(const FloatPoint&, const FloatPoint& lastMoveToPoint, FloatRect& boundingRect) const
 {
     boundingRect.extend(lastMoveToPoint);
-}
-
-void PathCloseSubpath::addToImpl(PathImpl& impl) const
-{
-    impl.closeSubpath();
 }
 
 void PathCloseSubpath::applyElements(const PathElementApplier& applier) const
