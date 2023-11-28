@@ -2424,6 +2424,11 @@ void Element::invalidateStyleAndRenderersForSubtree()
     Node::invalidateStyle(Style::Validity::SubtreeInvalid, Style::InvalidationMode::RebuildRenderer);
 }
 
+void Element::invalidateRenderer()
+{
+    Node::invalidateStyle(Style::Validity::Valid, Style::InvalidationMode::RebuildRenderer);
+}
+
 void Element::invalidateStyleInternal()
 {
     Node::invalidateStyle(Style::Validity::ElementInvalid);

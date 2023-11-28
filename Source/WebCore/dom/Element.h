@@ -696,6 +696,7 @@ public:
     // custom (not style based) renderers. This is expensive and should be avoided.
     // Elements newly added to the tree are also in this state.
     void invalidateStyleAndRenderersForSubtree();
+    void invalidateRenderer();
 
     void invalidateStyleInternal();
     void invalidateStyleForAnimation();

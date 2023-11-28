@@ -83,7 +83,7 @@ RenderTreeUpdater::RenderTreeUpdater(Document& document, Style::PostResolutionCa
 
 RenderTreeUpdater::~RenderTreeUpdater() = default;
 
-static Element* findRenderingAncestor(ContainerNode& node)
+static Element* findRenderingAncestor(Node& node)
 {
     for (auto& ancestor : composedTreeAncestors(node)) {
         if (ancestor.renderer())
@@ -633,13 +633,27 @@ void RenderTreeUpdater::updateRenderViewStyle()
         m_document.renderView()->setStyle(RenderStyle::clone(*m_styleUpdate->initialContainingBlockUpdate()));
 }
 
+static void invalidateRebuildRootIfNeeded(Node& node)
+{
+    auto* ancestor = findRenderingAncestor(node);
+    if (!ancestor)
+        return;
+    if (!RenderTreeBuilder::isRebuildRootForChildren(*ancestor->renderer()))
+        return;
+    ancestor->invalidateRenderer();
+}
+
 void RenderTreeUpdater::tearDownRenderers(Element& root)
 {
+    if (!root.renderer() && !root.hasDisplayContents())
+        return;
     auto* view = root.document().renderView();
     if (!view)
         return;
+
     RenderTreeBuilder builder(*view);
     tearDownRenderers(root, TeardownType::Full, builder);
+    invalidateRebuildRootIfNeeded(root);
 }
 
 void RenderTreeUpdater::tearDownRenderersAfterSlotChange(Element& host)
@@ -650,8 +664,10 @@ void RenderTreeUpdater::tearDownRenderersAfterSlotChange(Element& host)
     auto* view = host.document().renderView();
     if (!view)
         return;
+
     RenderTreeBuilder builder(*view);
     tearDownRenderers(host, TeardownType::FullAfterSlotChange, builder);
+    invalidateRebuildRootIfNeeded(host);
 }
 
 void RenderTreeUpdater::tearDownRenderer(Text& text)
@@ -659,8 +675,10 @@ void RenderTreeUpdater::tearDownRenderer(Text& text)
     auto* view = text.document().renderView();
     if (!view)
         return;
+
     RenderTreeBuilder builder(*view);
     tearDownTextRenderer(text, builder);
+    invalidateRebuildRootIfNeeded(text);
 }
 
 void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType, RenderTreeBuilder& builder)
