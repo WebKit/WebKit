@@ -64,6 +64,7 @@ void WorkerFontLoadRequest::load(WorkerGlobalScope& workerGlobalScope)
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;
     options.contentSecurityPolicyEnforcement = m_context->shouldBypassMainWorldContentSecurityPolicy() ? ContentSecurityPolicyEnforcement::DoNotEnforce : ContentSecurityPolicyEnforcement::EnforceWorkerSrcDirective;
     options.loadedFromOpaqueSource = m_loadedFromOpaqueSource;
+    options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
 
     options.serviceWorkersMode = ServiceWorkersMode::All;
 #if ENABLE(SERVICE_WORKER)
@@ -138,6 +139,8 @@ void WorkerFontLoadRequest::didFinishLoading(ResourceLoaderIdentifier, const Net
 void WorkerFontLoadRequest::didFail(const ResourceError&)
 {
     m_errorOccurred = true;
+    if (m_fontLoadRequestClient)
+        m_fontLoadRequestClient->fontLoaded(*this);
 }
 
 } // namespace WebCore
