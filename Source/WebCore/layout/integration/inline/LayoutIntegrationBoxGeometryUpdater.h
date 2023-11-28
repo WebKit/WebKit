@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FormattingConstraints.h"
 #include "InlineFormattingConstraints.h"
 #include "LayoutIntegrationBoxTree.h"
 #include "LayoutState.h"
@@ -46,19 +47,21 @@ public:
     BoxGeometryUpdater(BoxTree&, Layout::LayoutState&);
 
     void setGeometriesForLayout();
+    void setGeometriesForIntrinsicWidth(Layout::IntrinsicWidthMode);
+
     Layout::ConstraintsForInlineContent updateInlineContentConstraints();
     HashMap<const Layout::ElementBox*, LayoutUnit> takeNestedListMarkerOffsets() { return WTFMove(m_nestedListMarkerOffsets); }
 
 private:
-    void updateLayoutBoxDimensions(const RenderBox&);
+    void updateLayoutBoxDimensions(const RenderBox&, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
 
     void updateReplacedDimensions(const RenderBox&);
     void updateInlineBlockDimensions(const RenderBlock&);
     void updateLineBreakBoxDimensions(const RenderLineBreak&);
-    void updateInlineBoxDimensions(const RenderInline&);
+    void updateInlineBoxDimensions(const RenderInline&, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
     void updateInlineTableDimensions(const RenderTable&);
     void updateListItemDimensions(const RenderListItem&);
-    void updateListMarkerDimensions(const RenderListMarker&);
+    void updateListMarkerDimensions(const RenderListMarker&, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
 
     BoxTree& boxTree() { return *m_boxTree; }
     const BoxTree& boxTree() const { return *m_boxTree; }
