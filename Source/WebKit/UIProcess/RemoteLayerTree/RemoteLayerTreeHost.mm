@@ -446,6 +446,13 @@ void RemoteLayerTreeHost::mapAllIOSurfaceBackingStore()
     recursivelyMapIOSurfaceBackingStore(rootLayer());
 }
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+Seconds RemoteLayerTreeHost::acceleratedTimelineTimeOrigin() const
+{
+    return m_drawingArea->acceleratedTimelineTimeOrigin();
+}
+#endif
+
 } // namespace WebKit
 
 #undef REMOTE_LAYER_TREE_HOST_RELEASE_LOG

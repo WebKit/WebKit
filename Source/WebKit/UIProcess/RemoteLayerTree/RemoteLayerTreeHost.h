@@ -85,6 +85,11 @@ public:
     const HashSet<WebCore::PlatformLayerIdentifier>& overlayRegionIDs() const { return m_overlayRegionIDs; }
     void updateOverlayRegionIDs(const HashSet<WebCore::PlatformLayerIdentifier> &overlayRegionNodes) { m_overlayRegionIDs = overlayRegionNodes; }
 #endif
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    Seconds acceleratedTimelineTimeOrigin() const;
+#endif
+
 private:
     void createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);
     std::unique_ptr<RemoteLayerTreeNode> makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties&);
