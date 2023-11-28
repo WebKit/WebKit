@@ -546,3 +546,17 @@ class Tracker(GenericTracker):
         if assign:
             result.assign(self.me())
         return result
+
+    # FIXME: This function is untested because it doesn't have a mock.
+    def search(self, query):
+        if not query or len(query) == 0:
+            raise ValueError('Query must be provided')
+
+        radars = self.client.find_radars(query, return_find_results_directly=True)
+        issues = []
+        for radar in radars:
+            if radar.id:
+                issue = Issue(id=radar.id, tracker=self)
+                issues.append(issue)
+
+        return issues
