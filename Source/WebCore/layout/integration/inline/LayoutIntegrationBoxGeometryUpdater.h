@@ -54,13 +54,8 @@ public:
 
 private:
     void updateLayoutBoxDimensions(const RenderBox&, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
-
-    void updateReplacedDimensions(const RenderBox&);
-    void updateInlineBlockDimensions(const RenderBlock&);
     void updateLineBreakBoxDimensions(const RenderLineBreak&);
     void updateInlineBoxDimensions(const RenderInline&, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
-    void updateInlineTableDimensions(const RenderTable&);
-    void updateListItemDimensions(const RenderListItem&);
     void updateListMarkerDimensions(const RenderListMarker&, std::optional<Layout::IntrinsicWidthMode> = std::nullopt);
 
     BoxTree& boxTree() { return *m_boxTree; }

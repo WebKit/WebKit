@@ -65,26 +65,6 @@ BoxGeometryUpdater::BoxGeometryUpdater(BoxTree& boxTree, Layout::LayoutState& la
 {
 }
 
-void BoxGeometryUpdater::updateReplacedDimensions(const RenderBox& replaced)
-{
-    updateLayoutBoxDimensions(replaced);
-}
-
-void BoxGeometryUpdater::updateInlineBlockDimensions(const RenderBlock& inlineBlock)
-{
-    updateLayoutBoxDimensions(inlineBlock);
-}
-
-void BoxGeometryUpdater::updateInlineTableDimensions(const RenderTable& inlineTable)
-{
-    updateLayoutBoxDimensions(inlineTable);
-}
-
-void BoxGeometryUpdater::updateListItemDimensions(const RenderListItem& listItem)
-{
-    updateLayoutBoxDimensions(listItem);
-}
-
 void BoxGeometryUpdater::updateListMarkerDimensions(const RenderListMarker& listMarker, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
 {
     updateLayoutBoxDimensions(listMarker, intrinsicWidthMode);
@@ -235,73 +215,73 @@ static inline LayoutSize scrollbarLogicalSize(const RenderBox& renderer)
     return { horizontalSpaceReservedForScrollbar, verticalSpaceReservedForScrollbar };
 }
 
-void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& replacedOrInlineBlock, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
+void BoxGeometryUpdater::updateLayoutBoxDimensions(const RenderBox& renderBox, std::optional<Layout::IntrinsicWidthMode> intrinsicWidthMode)
 {
-    auto& layoutBox = boxTree().layoutBoxForRenderer(replacedOrInlineBlock);
-    auto isLeftToRightInlineDirection = replacedOrInlineBlock.parent()->style().isLeftToRightDirection();
-    auto blockFlowDirection = writingModeToBlockFlowDirection(replacedOrInlineBlock.parent()->style().writingMode());
+    auto& layoutBox = boxTree().layoutBoxForRenderer(renderBox);
+    auto isLeftToRightInlineDirection = renderBox.parent()->style().isLeftToRightDirection();
+    auto blockFlowDirection = writingModeToBlockFlowDirection(renderBox.parent()->style().writingMode());
     auto isHorizontalWritingMode = blockFlowDirection == BlockFlowDirection::TopToBottom || blockFlowDirection == BlockFlowDirection::BottomToTop;
 
-    auto& replacedBoxGeometry = layoutState().ensureGeometryForBox(layoutBox);
-    auto inlineMargin = horizontalLogicalMargin(replacedOrInlineBlock, isLeftToRightInlineDirection, isHorizontalWritingMode, intrinsicWidthMode ? UseComputedValues::Yes : UseComputedValues::No);
-    auto border = logicalBorder(replacedOrInlineBlock, isLeftToRightInlineDirection, blockFlowDirection, intrinsicWidthMode ? UseComputedValues::Yes : UseComputedValues::No);
-    auto padding = logicalPadding(replacedOrInlineBlock, isLeftToRightInlineDirection, blockFlowDirection, intrinsicWidthMode ? UseComputedValues::Yes : UseComputedValues::No);
-    auto scrollbarSize = scrollbarLogicalSize(replacedOrInlineBlock);
+    auto& boxGeometry = layoutState().ensureGeometryForBox(layoutBox);
+    auto inlineMargin = horizontalLogicalMargin(renderBox, isLeftToRightInlineDirection, isHorizontalWritingMode, intrinsicWidthMode ? UseComputedValues::Yes : UseComputedValues::No);
+    auto border = logicalBorder(renderBox, isLeftToRightInlineDirection, blockFlowDirection, intrinsicWidthMode ? UseComputedValues::Yes : UseComputedValues::No);
+    auto padding = logicalPadding(renderBox, isLeftToRightInlineDirection, blockFlowDirection, intrinsicWidthMode ? UseComputedValues::Yes : UseComputedValues::No);
+    auto scrollbarSize = scrollbarLogicalSize(renderBox);
 
     if (intrinsicWidthMode) {
-        replacedBoxGeometry.setHorizontalSpaceForScrollbar(scrollbarSize.width());
-        replacedBoxGeometry.setContentBoxWidth(*intrinsicWidthMode == Layout::IntrinsicWidthMode::Minimum ? replacedOrInlineBlock.minPreferredLogicalWidth() : replacedOrInlineBlock.maxPreferredLogicalWidth());
-        replacedBoxGeometry.setHorizontalMargin(inlineMargin);
-        replacedBoxGeometry.setHorizontalBorder(border.horizontal);
-        replacedBoxGeometry.setHorizontalPadding(padding.horizontal);
+        boxGeometry.setHorizontalSpaceForScrollbar(scrollbarSize.width());
+        boxGeometry.setContentBoxWidth(*intrinsicWidthMode == Layout::IntrinsicWidthMode::Minimum ? renderBox.minPreferredLogicalWidth() : renderBox.maxPreferredLogicalWidth());
+        boxGeometry.setHorizontalMargin(inlineMargin);
+        boxGeometry.setHorizontalBorder(border.horizontal);
+        boxGeometry.setHorizontalPadding(padding.horizontal);
         return;
     }
 
-    replacedBoxGeometry.setHorizontalSpaceForScrollbar(scrollbarSize.width());
-    replacedBoxGeometry.setVerticalSpaceForScrollbar(scrollbarSize.height());
+    boxGeometry.setHorizontalSpaceForScrollbar(scrollbarSize.width());
+    boxGeometry.setVerticalSpaceForScrollbar(scrollbarSize.height());
 
-    replacedBoxGeometry.setContentBoxWidth(contentLogicalWidthForRenderer(replacedOrInlineBlock));
-    replacedBoxGeometry.setContentBoxHeight(contentLogicalHeightForRenderer(replacedOrInlineBlock));
+    boxGeometry.setContentBoxWidth(contentLogicalWidthForRenderer(renderBox));
+    boxGeometry.setContentBoxHeight(contentLogicalHeightForRenderer(renderBox));
 
-    replacedBoxGeometry.setVerticalMargin(verticalLogicalMargin(replacedOrInlineBlock, blockFlowDirection));
-    replacedBoxGeometry.setHorizontalMargin(inlineMargin);
-    replacedBoxGeometry.setBorder(border);
-    replacedBoxGeometry.setPadding(padding);
+    boxGeometry.setVerticalMargin(verticalLogicalMargin(renderBox, blockFlowDirection));
+    boxGeometry.setHorizontalMargin(inlineMargin);
+    boxGeometry.setBorder(border);
+    boxGeometry.setPadding(padding);
 
     auto hasNonSyntheticBaseline = [&] {
-        if (is<RenderListMarker>(replacedOrInlineBlock))
-            return !downcast<RenderListMarker>(replacedOrInlineBlock).isImage();
+        if (is<RenderListMarker>(renderBox))
+            return !downcast<RenderListMarker>(renderBox).isImage();
 
-        if ((is<RenderReplaced>(replacedOrInlineBlock) && replacedOrInlineBlock.style().display() == DisplayType::Inline)
-            || is<RenderListBox>(replacedOrInlineBlock)
-            || is<RenderSlider>(replacedOrInlineBlock)
-            || is<RenderTextControlMultiLine>(replacedOrInlineBlock)
-            || is<RenderTable>(replacedOrInlineBlock)
-            || is<RenderGrid>(replacedOrInlineBlock)
-            || is<RenderFlexibleBox>(replacedOrInlineBlock)
-            || is<RenderDeprecatedFlexibleBox>(replacedOrInlineBlock)
+        if ((is<RenderReplaced>(renderBox) && renderBox.style().display() == DisplayType::Inline)
+            || is<RenderListBox>(renderBox)
+            || is<RenderSlider>(renderBox)
+            || is<RenderTextControlMultiLine>(renderBox)
+            || is<RenderTable>(renderBox)
+            || is<RenderGrid>(renderBox)
+            || is<RenderFlexibleBox>(renderBox)
+            || is<RenderDeprecatedFlexibleBox>(renderBox)
 #if ENABLE(ATTACHMENT_ELEMENT)
-            || is<RenderAttachment>(replacedOrInlineBlock)
+            || is<RenderAttachment>(renderBox)
 #endif
 #if ENABLE(MATHML)
-            || is<RenderMathMLBlock>(replacedOrInlineBlock)
+            || is<RenderMathMLBlock>(renderBox)
 #endif
-            || is<RenderButton>(replacedOrInlineBlock)) {
+            || is<RenderButton>(renderBox)) {
             // These are special RenderBlock renderers that override the default baseline position behavior of the inline block box.
             return true;
         }
-        if (!is<RenderBlockFlow>(replacedOrInlineBlock))
+        if (!is<RenderBlockFlow>(renderBox))
             return false;
-        auto& blockFlow = downcast<RenderBlockFlow>(replacedOrInlineBlock);
+        auto& blockFlow = downcast<RenderBlockFlow>(renderBox);
         auto hasAppareance = blockFlow.style().hasEffectiveAppearance() && !blockFlow.theme().isControlContainer(blockFlow.style().effectiveAppearance());
         return hasAppareance || !blockFlow.childrenInline() || blockFlow.hasLines() || blockFlow.hasLineIfEmpty();
     }();
     if (hasNonSyntheticBaseline) {
-        auto baseline = replacedOrInlineBlock.baselinePosition(AlphabeticBaseline, false /* firstLine */, blockFlowDirection == BlockFlowDirection::TopToBottom || blockFlowDirection == BlockFlowDirection::BottomToTop ? HorizontalLine : VerticalLine, PositionOnContainingLine);
+        auto baseline = renderBox.baselinePosition(AlphabeticBaseline, false /* firstLine */, blockFlowDirection == BlockFlowDirection::TopToBottom || blockFlowDirection == BlockFlowDirection::BottomToTop ? HorizontalLine : VerticalLine, PositionOnContainingLine);
         layoutBox.setBaselineForIntegration(roundToInt(baseline));
     }
 
-    if (auto* shapeOutsideInfo = replacedOrInlineBlock.shapeOutsideInfo())
+    if (auto* shapeOutsideInfo = renderBox.shapeOutsideInfo())
         layoutBox.setShape(&shapeOutsideInfo->computedShape());
 }
 
@@ -353,24 +333,12 @@ void BoxGeometryUpdater::setGeometriesForLayout()
     for (auto walker = InlineWalker(downcast<RenderBlockFlow>(boxTree().rootRenderer())); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
 
-        if (is<RenderReplaced>(renderer)) {
-            updateReplacedDimensions(downcast<RenderReplaced>(renderer));
-            continue;
-        }
-        if (is<RenderTable>(renderer)) {
-            updateInlineTableDimensions(downcast<RenderTable>(renderer));
+        if (is<RenderReplaced>(renderer) || is<RenderTable>(renderer) || is<RenderListItem>(renderer) || is<RenderBlock>(renderer) || is<RenderFrameSet>(renderer)) {
+            updateLayoutBoxDimensions(downcast<RenderBox>(renderer));
             continue;
         }
         if (is<RenderListMarker>(renderer)) {
             updateListMarkerDimensions(downcast<RenderListMarker>(renderer));
-            continue;
-        }
-        if (is<RenderListItem>(renderer)) {
-            updateListItemDimensions(downcast<RenderListItem>(renderer));
-            continue;
-        }
-        if (is<RenderBlock>(renderer)) {
-            updateInlineBlockDimensions(downcast<RenderBlock>(renderer));
             continue;
         }
         if (is<RenderLineBreak>(renderer)) {
@@ -379,10 +347,6 @@ void BoxGeometryUpdater::setGeometriesForLayout()
         }
         if (is<RenderInline>(renderer)) {
             updateInlineBoxDimensions(downcast<RenderInline>(renderer));
-            continue;
-        }
-        if (is<RenderFrameSet>(renderer)) {
-            updateLayoutBoxDimensions(downcast<RenderBox>(renderer));
             continue;
         }
     }
