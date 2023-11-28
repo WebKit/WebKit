@@ -238,10 +238,8 @@ void JSCustomElementInterface::upgradeElement(Element& element)
         return;
     }
 
-    if (m_isFormAssociated) {
-        ASSERT(is<HTMLMaybeFormAssociatedCustomElement>(element));
+    if (m_isFormAssociated)
         downcast<HTMLMaybeFormAssociatedCustomElement>(element).willUpgradeFormAssociated();
-    }
 
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());

@@ -39,9 +39,10 @@ static JSC_DECLARE_CUSTOM_GETTER(pluginElementPropertyGetter);
 Instance* pluginInstance(HTMLElement& element)
 {
     // The plugin element holds an owning reference, so we don't have to.
-    if (!is<HTMLPlugInElement>(element))
+    auto* pluginElement = dynamicDowncast<HTMLPlugInElement>(element);
+    if (!pluginElement)
         return nullptr;
-    auto* instance = downcast<HTMLPlugInElement>(element).bindingsInstance();
+    auto* instance = pluginElement->bindingsInstance();
     if (!instance || !instance->rootObject())
         return nullptr;
     return instance;

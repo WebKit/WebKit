@@ -57,17 +57,16 @@ static bool jsDOMWindowPropertiesGetOwnPropertySlotNamedItemGetter(JSDOMWindowPr
 
     // Allow shortcuts like 'Image1' instead of document.images.Image1
     auto* document = window.document();
-    if (is<HTMLDocument>(document)) {
-        auto& htmlDocument = downcast<HTMLDocument>(*document);
+    if (auto* htmlDocument = dynamicDowncast<HTMLDocument>(document)) {
         AtomString atomPropertyName = propertyName.publicName();
-        if (!atomPropertyName.isEmpty() && htmlDocument.hasWindowNamedItem(atomPropertyName)) {
+        if (!atomPropertyName.isEmpty() && htmlDocument->hasWindowNamedItem(atomPropertyName)) {
             JSValue namedItem;
-            if (UNLIKELY(htmlDocument.windowNamedItemContainsMultipleElements(atomPropertyName))) {
+            if (UNLIKELY(htmlDocument->windowNamedItemContainsMultipleElements(atomPropertyName))) {
                 Ref<HTMLCollection> collection = document->windowNamedItems(atomPropertyName);
                 ASSERT(collection->length() > 1);
                 namedItem = toJS(lexicalGlobalObject, thisObject->globalObject(), collection);
             } else
-                namedItem = toJS(lexicalGlobalObject, thisObject->globalObject(), htmlDocument.windowNamedItem(atomPropertyName).get());
+                namedItem = toJS(lexicalGlobalObject, thisObject->globalObject(), htmlDocument->windowNamedItem(atomPropertyName).get());
             slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontEnum), namedItem);
             return true;
         }

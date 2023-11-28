@@ -345,8 +345,9 @@ JSC::JSInternalPromise* ScriptModuleLoader::importModule(JSC::JSGlobalObject* js
         parameters = ModuleFetchParameters::create(type, emptyString(), /* isTopLevelModule */ true);
 
         if (m_ownerType == OwnerType::Document) {
-            baseURL = downcast<Document>(*m_context).baseURL();
-            scriptFetcher = CachedScriptFetcher::create(downcast<Document>(*m_context).charset());
+            auto& document = downcast<Document>(*m_context);
+            baseURL = document.baseURL();
+            scriptFetcher = CachedScriptFetcher::create(document.charset());
         } else {
             // https://html.spec.whatwg.org/multipage/webappapis.html#default-classic-script-fetch-options
             baseURL = m_context->url();
@@ -571,8 +572,8 @@ void ScriptModuleLoader::notifyFinished(ModuleScriptLoader& moduleScriptLoader, 
                     static_cast<WorkerScriptFetcher&>(loader.scriptFetcher()).setReferrerPolicy(loader.referrerPolicy());
             }
             responseURL = canonicalizeAndRegisterResponseURL(responseURL, workerScriptLoader.isRedirected(), workerScriptLoader.responseSource());
-            if (is<ServiceWorkerGlobalScope>(*m_context))
-                downcast<ServiceWorkerGlobalScope>(*m_context).setScriptResource(sourceURL, ServiceWorkerContextData::ImportedScript { loader.script(), responseURL, loader.responseMIMEType() });
+            if (auto* globalScope = dynamicDowncast<ServiceWorkerGlobalScope>(*m_context))
+                globalScope->setScriptResource(sourceURL, ServiceWorkerContextData::ImportedScript { loader.script(), responseURL, loader.responseMIMEType() });
         }
         m_requestURLToResponseURLMap.add(sourceURL.string(), responseURL);
 
