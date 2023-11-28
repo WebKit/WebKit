@@ -7,10 +7,12 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 window.resizeTo Tests
 
 Testing - resizeTo with 0 arguments
+PASS window.resizeTo() threw exception TypeError: Not enough arguments.
 PASS window.outerWidth is resetWidth
 PASS window.outerHeight is resetHeight
 Testing - resizeTo with 1 argument
-PASS window.outerWidth is width
+PASS window.resizeTo(width) threw exception TypeError: Not enough arguments.
+PASS window.outerWidth is resetWidth
 PASS window.outerHeight is resetHeight
 Testing - resizeTo with more than 2 arguments
 PASS window.outerWidth is width
@@ -19,10 +21,12 @@ PASS window.outerHeight is height
 window.resizeBy Tests
 
 Testing - resizeBy with 0 arguments
+PASS window.resizeBy() threw exception TypeError: Not enough arguments.
 PASS window.outerWidth is resetWidth
 PASS window.outerHeight is resetHeight
 Testing - resizeBy with 1 argument
-PASS window.outerWidth is resetWidth + x
+PASS window.resizeBy(x) threw exception TypeError: Not enough arguments.
+PASS window.outerWidth is resetWidth
 PASS window.outerHeight is resetHeight
 Testing - resizeBy with more than 2 arguments
 PASS window.outerWidth is resetWidth + x

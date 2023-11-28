@@ -1862,27 +1862,27 @@ void LocalDOMWindow::moveTo(int x, int y) const
     page->chrome().setWindowRect(adjustWindowRect(*page, update));
 }
 
-void LocalDOMWindow::resizeBy(float x, float y) const
+void LocalDOMWindow::resizeBy(int x, int y) const
 {
     if (!allowedToChangeWindowGeometry())
         return;
 
     CheckedPtr page = frame()->page();
-    FloatRect fr = page->chrome().windowRect();
-    FloatSize dest = fr.size() + FloatSize(x, y);
-    FloatRect update(fr.location(), dest);
+    auto fr = page->chrome().windowRect();
+    auto dest = fr.size() + LayoutSize(x, y);
+    LayoutRect update(fr.location(), dest);
     page->chrome().setWindowRect(adjustWindowRect(*page, update));
 }
 
-void LocalDOMWindow::resizeTo(float width, float height) const
+void LocalDOMWindow::resizeTo(int width, int height) const
 {
     if (!allowedToChangeWindowGeometry())
         return;
 
     CheckedPtr page = frame()->page();
-    FloatRect fr = page->chrome().windowRect();
-    FloatSize dest = FloatSize(width, height);
-    FloatRect update(fr.location(), dest);
+    auto fr = page->chrome().windowRect();
+    auto dest = LayoutSize(width, height);
+    LayoutRect update(fr.location(), dest);
     page->chrome().setWindowRect(adjustWindowRect(*page, update));
 }
 
