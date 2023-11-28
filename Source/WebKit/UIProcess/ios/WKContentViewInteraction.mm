@@ -6959,6 +6959,7 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
         return UIShiftKeyStateCapsLocked;
     case UIKeyModifierShift:
         return UIShiftKeyStateShifted;
+    case 0:
     case UIKeyModifierControl:
     case UIKeyModifierAlternate:
     case UIKeyModifierCommand:
