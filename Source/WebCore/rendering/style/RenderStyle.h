@@ -1045,13 +1045,9 @@ public:
     inline const FilterOperations& appleColorFilter() const;
     inline bool hasAppleColorFilter() const;
 
-#if ENABLE(FILTERS_LEVEL_2)
     inline FilterOperations& mutableBackdropFilter();
     inline const FilterOperations& backdropFilter() const;
     inline bool hasBackdropFilter() const;
-#else
-    bool hasBackdropFilter() const { return false; };
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     inline void setBlendMode(BlendMode);
@@ -1484,9 +1480,7 @@ public:
     inline void setFilter(const FilterOperations&);
     inline void setAppleColorFilter(const FilterOperations&);
 
-#if ENABLE(FILTERS_LEVEL_2)
     inline void setBackdropFilter(const FilterOperations&);
-#endif
 
     inline void setTabSize(const TabSize&);
 
@@ -2055,9 +2049,7 @@ public:
     static inline FilterOperations initialFilter();
     static inline FilterOperations initialAppleColorFilter();
 
-#if ENABLE(FILTERS_LEVEL_2)
     static inline FilterOperations initialBackdropFilter();
-#endif
 
 #if ENABLE(CSS_COMPOSITING)
     static constexpr BlendMode initialBlendMode();

@@ -768,11 +768,9 @@ constexpr StyleColorScheme RenderStyle::initialColorScheme() { return { }; }
 inline bool RenderStyle::hasExplicitlySetColorScheme() const { return m_nonInheritedData->miscData->hasExplicitlySetColorScheme; }
 #endif
 
-#if ENABLE(FILTERS_LEVEL_2)
 inline const FilterOperations& RenderStyle::backdropFilter() const { return m_nonInheritedData->rareData->backdropFilter->operations; }
 inline bool RenderStyle::hasBackdropFilter() const { return !backdropFilter().operations().isEmpty(); }
 inline FilterOperations RenderStyle::initialBackdropFilter() { return { }; }
-#endif
 
 inline bool RenderStyle::hasExplicitlySetDirection() const { return m_nonInheritedData->miscData->hasExplicitlySetDirection; }
 inline bool RenderStyle::hasExplicitlySetWritingMode() const { return m_nonInheritedData->miscData->hasExplicitlySetWritingMode; }

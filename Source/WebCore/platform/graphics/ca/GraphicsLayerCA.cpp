@@ -1104,12 +1104,10 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Flo
         if (supportsAcceleratedFilterAnimations())
             createdAnimations = createFilterAnimationsFromKeyframes(valueList, anim, animationName, Seconds { timeOffset }, keyframesShouldUseAnimationWideTimingFunction);
     }
-#if ENABLE(FILTERS_LEVEL_2)
     else if (valueList.property() == AnimatedProperty::WebkitBackdropFilter) {
         if (supportsAcceleratedFilterAnimations())
             createdAnimations = createFilterAnimationsFromKeyframes(valueList, anim, animationName, Seconds { timeOffset }, keyframesShouldUseAnimationWideTimingFunction);
     }
-#endif
     else
         createdAnimations = createAnimationFromKeyframes(valueList, anim, animationName, Seconds { timeOffset }, keyframesShouldUseAnimationWideTimingFunction);
 
@@ -3273,9 +3271,7 @@ void GraphicsLayerCA::updateAnimations()
         case AnimatedProperty::Opacity:
         case AnimatedProperty::BackgroundColor:
         case AnimatedProperty::Filter:
-#if ENABLE(FILTERS_LEVEL_2)
         case AnimatedProperty::WebkitBackdropFilter:
-#endif
             addLeafAnimation(animation);
             break;
         case AnimatedProperty::Invalid:
@@ -3630,11 +3626,7 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
 
 bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-#if ENABLE(FILTERS_LEVEL_2)
     ASSERT(valueList.property() == AnimatedProperty::Filter || valueList.property() == AnimatedProperty::WebkitBackdropFilter);
-#else
-    ASSERT(valueList.property() == AnimatedProperty::Filter);
-#endif
 
     int listIndex = validateFilterOperations(valueList);
     if (listIndex < 0)
@@ -4040,11 +4032,9 @@ PlatformCALayer* GraphicsLayerCA::animatedLayer(AnimatedProperty property) const
     switch (property) {
     case AnimatedProperty::BackgroundColor:
         return m_contentsLayer.get();
-#if ENABLE(FILTERS_LEVEL_2)
     case AnimatedProperty::WebkitBackdropFilter:
         // FIXME: Should be just m_backdropLayer.get(). Also, add an ASSERT(m_backdropLayer) here when https://bugs.webkit.org/show_bug.cgi?id=145322 is fixed.
         return m_backdropLayer ? m_backdropLayer.get() : primaryLayer();
-#endif
     default:
         return primaryLayer();
     }
@@ -4304,9 +4294,7 @@ static TextStream& operator<<(TextStream& textStream, AnimatedProperty propertyI
     case AnimatedProperty::Opacity: textStream << "opacity"; break;
     case AnimatedProperty::BackgroundColor: textStream << "background-color"; break;
     case AnimatedProperty::Filter: textStream << "filter"; break;
-#if ENABLE(FILTERS_LEVEL_2)
     case AnimatedProperty::WebkitBackdropFilter: textStream << "backdrop-filter"; break;
-#endif
     }
     return textStream;
 }
@@ -4954,10 +4942,8 @@ static String animatedPropertyIDAsString(AnimatedProperty property)
         return "background-color"_s;
     case AnimatedProperty::Filter:
         return "filter"_s;
-#if ENABLE(FILTERS_LEVEL_2)
     case AnimatedProperty::WebkitBackdropFilter:
         return "backdrop-filter"_s;
-#endif
     case AnimatedProperty::Invalid:
         return "invalid"_s;
     }
@@ -4991,10 +4977,8 @@ static String acceleratedEffectPropertyIDAsString(AcceleratedEffectProperty prop
         return "offset-rotate"_s;
     case AcceleratedEffectProperty::Filter:
         return "filter"_s;
-#if ENABLE(FILTERS_LEVEL_2)
     case AcceleratedEffectProperty::BackdropFilter:
         return "backdrop-filter"_s;
-#endif
     default:
         ASSERT_NOT_REACHED();
         return "invalid"_s;

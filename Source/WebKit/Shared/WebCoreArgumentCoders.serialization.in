@@ -5674,9 +5674,7 @@ class WebCore::OffsetRotation {
     OffsetAnchor,
     OffsetRotate,
     Filter,
-#if ENABLE(FILTERS_LEVEL_2)
     BackdropFilter
-#endif
 };
 
 header: <WebCore/WebAnimationTypes.h>
@@ -5720,9 +5718,7 @@ struct WebCore::AcceleratedEffectValues {
     WebCore::LengthPoint offsetAnchor;
     WebCore::OffsetRotation offsetRotate;
     WebCore::FilterOperations filter;
-#if ENABLE(FILTERS_LEVEL_2)
     WebCore::FilterOperations backdropFilter;
-#endif
 }
 
 struct WebCore::AnimationEffectTiming {

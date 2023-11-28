@@ -355,10 +355,8 @@ inline void RenderStyle::setColorScheme(StyleColorScheme scheme) { SET(m_rareInh
 inline void RenderStyle::setHasExplicitlySetColorScheme() { SET_NESTED(m_nonInheritedData, miscData, hasExplicitlySetColorScheme, true); }
 #endif
 
-#if ENABLE(FILTERS_LEVEL_2)
 inline FilterOperations& RenderStyle::mutableBackdropFilter() { return m_nonInheritedData.access().rareData.access().backdropFilter.access().operations; }
 inline void RenderStyle::setBackdropFilter(const FilterOperations& ops) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, backdropFilter, operations, ops); }
-#endif
 
 #if PLATFORM(IOS_FAMILY)
 inline void RenderStyle::setTouchCalloutEnabled(bool value) { SET(m_rareInheritedData, touchCalloutEnabled, value); }

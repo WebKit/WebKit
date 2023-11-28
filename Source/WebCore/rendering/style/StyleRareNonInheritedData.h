@@ -98,9 +98,7 @@ public:
 
     LengthPoint perspectiveOrigin() const { return { perspectiveOriginX, perspectiveOriginY }; }
 
-#if ENABLE(FILTERS_LEVEL_2)
     bool hasBackdropFilters() const;
-#endif
 
     OptionSet<Containment> effectiveContainment() const;
 
@@ -116,9 +114,7 @@ public:
 
     DataRef<StyleMarqueeData> marquee; // Marquee properties
 
-#if ENABLE(FILTERS_LEVEL_2)
     DataRef<StyleFilterData> backdropFilter; // Filter operations (url, sepia, blur, etc.)
-#endif
 
     DataRef<StyleGridData> grid;
     DataRef<StyleGridItemData> gridItem;

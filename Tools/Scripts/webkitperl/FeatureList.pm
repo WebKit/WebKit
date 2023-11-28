@@ -80,7 +80,6 @@ my (
     $dragSupportSupport,
     $encryptedMediaSupport,
     $fatalWarnings,
-    $filtersLevel2Support,
     $ftlJITSupport,
     $ftpDirSupport,
     $fullscreenAPISupport,
@@ -255,9 +254,6 @@ my @features = (
 
     { option => "encrypted-media", desc => "Toggle EME V3 support",
       define => "ENABLE_ENCRYPTED_MEDIA", value => \$encryptedMediaSupport },
-
-    { option => "filters-level-2", desc => "Toggle Filters Module Level 2",
-      define => "ENABLE_FILTERS_LEVEL_2", value => \$filtersLevel2Support },
 
     { option => "ftl-jit", desc => "Toggle FTL JIT support",
       define => "ENABLE_FTL_JIT", value => \$ftlJITSupport },

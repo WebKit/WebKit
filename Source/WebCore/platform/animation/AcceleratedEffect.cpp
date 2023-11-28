@@ -118,11 +118,9 @@ static AcceleratedEffectProperty acceleratedPropertyFromCSSProperty(AnimatableCS
         return AcceleratedEffectProperty::OffsetRotate;
     case CSSPropertyFilter:
         return AcceleratedEffectProperty::Filter;
-#if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter:
         return AcceleratedEffectProperty::BackdropFilter;
-#endif
     default:
         ASSERT_NOT_REACHED();
         return AcceleratedEffectProperty::Invalid;
@@ -154,10 +152,8 @@ static CSSPropertyID cssPropertyFromAcceleratedProperty(AcceleratedEffectPropert
         return CSSPropertyOffsetRotate;
     case AcceleratedEffectProperty::Filter:
         return CSSPropertyFilter;
-#if ENABLE(FILTERS_LEVEL_2)
     case AcceleratedEffectProperty::BackdropFilter:
         return CSSPropertyWebkitBackdropFilter;
-#endif
     default:
         ASSERT_NOT_REACHED();
         return CSSPropertyInvalid;

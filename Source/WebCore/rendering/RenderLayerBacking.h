@@ -276,9 +276,7 @@ public:
     void adjustOverflowControlsPositionRelativeToAncestor(const RenderLayer&);
 
     bool canCompositeFilters() const { return m_canCompositeFilters; }
-#if ENABLE(FILTERS_LEVEL_2)
     bool canCompositeBackdropFilters() const { return m_canCompositeBackdropFilters; }
-#endif
 
     // Return an estimate of the backing store area (in pixels) allocated by this object's GraphicsLayers.
     WEBCORE_EXPORT double backingStoreMemoryEstimate() const;
@@ -348,10 +346,8 @@ private:
     void updateTransform(const RenderStyle&);
     void updateChildrenTransformAndAnchorPoint(const LayoutRect& primaryGraphicsLayerRect, LayoutSize offsetFromParentGraphicsLayer);
     void updateFilters(const RenderStyle&);
-#if ENABLE(FILTERS_LEVEL_2)
     void updateBackdropFilters(const RenderStyle&);
     void updateBackdropFiltersGeometry();
-#endif
     bool updateBackdropRoot();
 #if ENABLE(CSS_COMPOSITING)
     void updateBlendMode(const RenderStyle&);
@@ -451,9 +447,7 @@ private:
     bool m_isFrameLayerWithTiledBacking { false };
     bool m_requiresOwnBackingStore { true };
     bool m_canCompositeFilters { false };
-#if ENABLE(FILTERS_LEVEL_2)
     bool m_canCompositeBackdropFilters { false };
-#endif
     bool m_backgroundLayerPaintsFixedRootBackground { false };
     bool m_requiresBackgroundLayer { false };
     bool m_hasSubpixelRounding { false };

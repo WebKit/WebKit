@@ -161,11 +161,9 @@ typedef struct _CARenderContext CARenderContext;
 @property BOOL toneMapToStandardDynamicRange;
 @end
 
-#if ENABLE(FILTERS_LEVEL_2)
 @interface CABackdropLayer : CALayer
 @property BOOL windowServerAware;
 @end
-#endif
 
 struct CAColorMatrix {
     float m11, m12, m13, m14, m15;

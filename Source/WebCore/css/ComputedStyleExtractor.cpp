@@ -2494,10 +2494,8 @@ static bool isLayoutDependent(CSSPropertyID propertyID, const RenderStyle* style
     case CSSPropertyTransformOrigin:
     case CSSPropertyTransform:
     case CSSPropertyFilter: // Why are filters layout-dependent?
-#if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter: // Ditto for backdrop-filter.
-#endif
         return true;
     case CSSPropertyMargin:
         return isLayoutDependent(CSSPropertyMarginBlock, style, renderer) || isLayoutDependent(CSSPropertyMarginInline, style, renderer);
@@ -4168,11 +4166,9 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return valueForFilter(style, style.filter());
     case CSSPropertyAppleColorFilter:
         return valueForFilter(style, style.appleColorFilter());
-#if ENABLE(FILTERS_LEVEL_2)
     case CSSPropertyWebkitBackdropFilter:
     case CSSPropertyBackdropFilter:
         return valueForFilter(style, style.backdropFilter());
-#endif
     case CSSPropertyMathStyle:
         return createConvertingToCSSValueID(style.mathStyle());
 #if ENABLE(CSS_COMPOSITING)

@@ -43,9 +43,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , lineClamp(RenderStyle::initialLineClamp())
     , initialLetter(RenderStyle::initialInitialLetter())
     , marquee(StyleMarqueeData::create())
-#if ENABLE(FILTERS_LEVEL_2)
     , backdropFilter(StyleFilterData::create())
-#endif
     , grid(StyleGridData::create())
     , gridItem(StyleGridItemData::create())
     // clip
@@ -131,9 +129,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , lineClamp(o.lineClamp)
     , initialLetter(o.initialLetter)
     , marquee(o.marquee)
-#if ENABLE(FILTERS_LEVEL_2)
     , backdropFilter(o.backdropFilter)
-#endif
     , grid(o.grid)
     , gridItem(o.gridItem)
     , clip(o.clip)
@@ -226,9 +222,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && lineClamp == o.lineClamp
         && initialLetter == o.initialLetter
         && marquee == o.marquee
-#if ENABLE(FILTERS_LEVEL_2)
         && backdropFilter == o.backdropFilter
-#endif
         && grid == o.grid
         && gridItem == o.gridItem
         && clip == o.clip
@@ -322,13 +316,9 @@ OptionSet<Containment> StyleRareNonInheritedData::effectiveContainment() const
     return containment;
 }
 
-#if ENABLE(FILTERS_LEVEL_2)
-
 bool StyleRareNonInheritedData::hasBackdropFilters() const
 {
     return !backdropFilter->operations.isEmpty();
 }
-
-#endif
 
 } // namespace WebCore

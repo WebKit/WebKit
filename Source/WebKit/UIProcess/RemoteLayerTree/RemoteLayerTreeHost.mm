@@ -396,12 +396,7 @@ std::unique_ptr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteL
         return makeWithLayer(adoptNS([[CATransformLayer alloc] init]));
 
     case PlatformCALayer::LayerType::LayerTypeBackdropLayer:
-#if ENABLE(FILTERS_LEVEL_2)
         return makeWithLayer(adoptNS([[CABackdropLayer alloc] init]));
-#else
-        ASSERT_NOT_REACHED();
-        return RemoteLayerTreeNode::createWithPlainLayer(properties.layerID);
-#endif
     case PlatformCALayer::LayerType::LayerTypeCustom:
     case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer:
         if (m_isDebugLayerTreeHost)

@@ -246,10 +246,6 @@
 #define ENABLE_FILE_SHARE 1
 #endif
 
-#if !defined(ENABLE_FILTERS_LEVEL_2)
-#define ENABLE_FILTERS_LEVEL_2 0
-#endif
-
 #if !defined(ENABLE_FTPDIR)
 #define ENABLE_FTPDIR 1
 #endif

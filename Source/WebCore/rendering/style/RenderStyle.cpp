@@ -843,10 +843,8 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
     }
 #endif
 
-#if ENABLE(FILTERS_LEVEL_2)
     if (first.hasBackdropFilters() != second.hasBackdropFilters())
         return true;
-#endif
 
     if (first.inputSecurity != second.inputSecurity)
         return true;
@@ -1138,14 +1136,10 @@ static bool rareDataChangeRequiresLayerRepaint(const StyleRareNonInheritedData& 
         return true;
 #endif
 
-#if ENABLE(FILTERS_LEVEL_2)
     if (first.backdropFilter != second.backdropFilter) {
         changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Filter);
         // Don't return true; keep looking for another change.
     }
-#else
-    UNUSED_PARAM(changedContextSensitiveProperties);
-#endif
 
     // FIXME: In SVG this needs to trigger a layout.
     if (first.maskBorder != second.maskBorder)
@@ -1814,10 +1808,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyPerspectiveOriginY);
         if (first.initialLetter != second.initialLetter)
             changingProperties.m_properties.set(CSSPropertyWebkitInitialLetter);
-#if ENABLE(FILTERS_LEVEL_2)
         if (first.backdropFilter != second.backdropFilter)
             changingProperties.m_properties.set(CSSPropertyWebkitBackdropFilter);
-#endif
         if (first.grid != second.grid) {
             changingProperties.m_properties.set(CSSPropertyGridAutoColumns);
             changingProperties.m_properties.set(CSSPropertyGridAutoFlow);

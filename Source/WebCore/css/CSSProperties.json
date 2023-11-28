@@ -7345,7 +7345,6 @@
             "codegen-properties": {
                 "related-property": "backdrop-filter",
                 "conditional-converter": "FilterOperations",
-                "enable-if": "ENABLE_FILTERS_LEVEL_2",
                 "parser-function": "consumeFilter",
                 "parser-function-requires-context": true,
                 "parser-function-requires-additional-parameters": ["AllowedFilterFunctions::PixelFilters"],
@@ -7364,7 +7363,6 @@
             "codegen-properties": {
                 "related-property": "-webkit-backdrop-filter",
                 "conditional-converter": "FilterOperations",
-                "enable-if": "ENABLE_FILTERS_LEVEL_2",
                 "parser-function": "consumeFilter",
                 "parser-function-requires-context": true,
                 "parser-function-requires-additional-parameters": ["AllowedFilterFunctions::PixelFilters"],
