@@ -240,7 +240,13 @@ bool RtpPacketizerH264::PacketizeSingleNalu(size_t fragment_index) {
                       << limits_.max_payload_len;
     return false;
   }
+#ifdef WEBRTC_WEBKIT_BUILD
+  if (fragment.size() == 0u) {
+    return false;
+  }
+#else
   RTC_CHECK_GT(fragment.size(), 0u);
+#endif
   packets_.push(PacketUnit(fragment, true /* first */, true /* last */,
                            false /* aggregated */, fragment[0]));
   ++num_packets_left_;
