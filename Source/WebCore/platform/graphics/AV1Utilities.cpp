@@ -342,4 +342,89 @@ bool validateAV1PerLevelConstraints(const AV1CodecConfigurationRecord& record, c
         && configuration.bitrate <= maxBitrate;
 }
 
+std::optional<AV1CodecConfigurationRecord> parseAV1DecoderConfigurationRecord(const SharedBuffer& buffer)
+    {
+    // Ref: https://aomediacodec.github.io/av1-isobmff/
+    // Section 2.3: AV1 Codec Configuration Box
+
+    // AV1CodecConfigurationRecord is at least 4 bytes long
+    if (buffer.size() < 4)
+        return std::nullopt;
+
+    AV1CodecConfigurationRecord record;
+
+    // aligned(8) class AV1CodecConfigurationRecord
+    // {
+    //   unsigned int(1) marker = 1;
+    //   unsigned int(7) version = 1;
+    //   unsigned int(3) seq_profile;
+    //   unsigned int(5) seq_level_idx_0;
+    //   unsigned int(1) seq_tier_0;
+    //   unsigned int(1) high_bitdepth;
+    //   unsigned int(1) twelve_bit;
+    //   unsigned int(1) monochrome;
+    //   unsigned int(1) chroma_subsampling_x;
+    //   unsigned int(1) chroma_subsampling_y;
+    //   unsigned int(2) chroma_sample_position;
+    //   unsigned int(3) reserved = 0;
+    //
+    //   unsigned int(1) initial_presentation_delay_present;
+    //   if(initial_presentation_delay_present) {
+    //     unsigned int(4) initial_presentation_delay_minus_one;
+    //   } else {
+    //     unsigned int(4) reserved = 0;
+    //   }
+    //
+    //   unsigned int(8) configOBUs[];
+    // }
+
+    auto arrayBuffer = buffer.tryCreateArrayBuffer();
+    if (!arrayBuffer)
+        return std::nullopt;
+
+    bool status = true;
+    auto view = JSC::DataView::create(WTFMove(arrayBuffer), 0, buffer.size());
+
+    auto profileLevel = view->get<uint8_t>(1, false, &status);
+    if (!status)
+        return std::nullopt;
+
+    if (!isValidEnum<AV1ConfigurationProfile>((profileLevel & 0b11100000) >> 5))
+        return std::nullopt;
+    record.profile = static_cast<AV1ConfigurationProfile>((profileLevel & 0b11100000) >> 5);
+
+    if (!isValidEnum<AV1ConfigurationLevel>(profileLevel & 0b00011111))
+        return std::nullopt;
+    record.level = static_cast<AV1ConfigurationLevel>(profileLevel & 0b00011111);
+
+
+    auto tierBitdepthAndColorFlags = view->get<uint8_t>(2, false, &status);
+    if (!status)
+        return std::nullopt;
+
+    record.tier = tierBitdepthAndColorFlags & 0b10000000 ? AV1ConfigurationTier::High : AV1ConfigurationTier::Main;
+    bool highBitDepth = tierBitdepthAndColorFlags & 0b01000000;
+    bool twelveBit = tierBitdepthAndColorFlags & 0b00100000;
+    if (!highBitDepth && twelveBit)
+        return std::nullopt;
+
+    if (highBitDepth && twelveBit)
+        record.bitDepth = 12;
+    else if (highBitDepth)
+        record.bitDepth = 10;
+    else
+        record.bitDepth = 8;
+
+    record.monochrome = tierBitdepthAndColorFlags & 0b00010000;
+    uint8_t chromaSubsamplingValue = 0;
+    if (tierBitdepthAndColorFlags & 0b00001000)
+        chromaSubsamplingValue += 100;
+    if (tierBitdepthAndColorFlags & 0b00000100)
+        chromaSubsamplingValue += 10;
+    chromaSubsamplingValue += tierBitdepthAndColorFlags & 0b00000010;
+    record.chromaSubsampling = chromaSubsamplingValue;
+
+    return record;
+}
+
 }
