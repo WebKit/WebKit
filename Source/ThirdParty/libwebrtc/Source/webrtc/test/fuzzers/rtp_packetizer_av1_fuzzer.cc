@@ -14,6 +14,9 @@
 #include "modules/rtp_rtcp/source/rtp_format.h"
 #include "modules/rtp_rtcp/source/rtp_packet_to_send.h"
 #include "modules/rtp_rtcp/source/rtp_packetizer_av1.h"
+#ifdef WEBRTC_WEBKIT_BUILD
+#include "modules/rtp_rtcp/source/video_rtp_depacketizer_av1.h"
+#endif
 #include "rtc_base/checks.h"
 #include "test/fuzzers/fuzz_data_helper.h"
 
@@ -45,27 +48,42 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
   // When packetization was successful, validate NextPacket function too.
   // While at it, check that packets respect the payload size limits.
   RtpPacketToSend rtp_packet(nullptr);
+#ifdef WEBRTC_WEBKIT_BUILD
+  VideoRtpDepacketizerAv1 depacketizer;
+#endif
   // Single packet.
   if (num_packets == 1) {
     RTC_CHECK(packetizer.NextPacket(&rtp_packet));
     RTC_CHECK_LE(rtp_packet.payload_size(),
                  limits.max_payload_len - limits.single_packet_reduction_len);
+#ifdef WEBRTC_WEBKIT_BUILD
+    depacketizer.Parse(rtp_packet.PayloadBuffer());
+#endif
     return;
   }
   // First packet.
   RTC_CHECK(packetizer.NextPacket(&rtp_packet));
   RTC_CHECK_LE(rtp_packet.payload_size(),
                limits.max_payload_len - limits.first_packet_reduction_len);
+#ifdef WEBRTC_WEBKIT_BUILD
+  depacketizer.Parse(rtp_packet.PayloadBuffer());
+#endif
   // Middle packets.
   for (size_t i = 1; i < num_packets - 1; ++i) {
     RTC_CHECK(packetizer.NextPacket(&rtp_packet))
         << "Failed to get packet#" << i;
     RTC_CHECK_LE(rtp_packet.payload_size(), limits.max_payload_len)
         << "Packet #" << i << " exceeds it's limit";
+#ifdef WEBRTC_WEBKIT_BUILD
+    depacketizer.Parse(rtp_packet.PayloadBuffer());
+#endif
   }
   // Last packet.
   RTC_CHECK(packetizer.NextPacket(&rtp_packet));
   RTC_CHECK_LE(rtp_packet.payload_size(),
                limits.max_payload_len - limits.last_packet_reduction_len);
+#ifdef WEBRTC_WEBKIT_BUILD
+  depacketizer.Parse(rtp_packet.PayloadBuffer());
+#endif
 }
 }  // namespace webrtc
