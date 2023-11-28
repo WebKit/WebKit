@@ -40,6 +40,13 @@
 
 namespace WebKit {
 
+struct ARKitCoordinator::RenderState {
+    RetainPtr<id<WKARPresentationSession>> presentationSession;
+    PlatformXR::Device::RequestFrameCallback onFrameUpdate;
+    BinarySemaphore presentFrame;
+    std::atomic<bool> terminateRequested;
+};
+
 static std::tuple<MachSendRight, bool> makeMachSendRight(id<MTLTexture> texture)
 {
     RetainPtr<MTLSharedTextureHandle> sharedTextureHandle = adoptNS([texture newSharedTextureHandle]);
@@ -119,23 +126,25 @@ void ARKitCoordinator::startSession(WebPageProxy& page, WeakPtr<SessionEventClie
 
             auto presentationSession = adoptNS(createPresesentationSession(m_session.get(), presentationSessionDesc.get()));
 
+            auto renderState = Box<RenderState>::create();
+            renderState->presentationSession = WTFMove(presentationSession);
+            renderState->terminateRequested = false;
+
             m_state = Active {
-                .pageIdentifier = page.webPageID(),
                 .sessionEventClient = WTFMove(sessionEventClient),
-                .presentationSession = WTFMove(presentationSession),
-                .renderThread = Thread::create("ARKitCoordinator session renderer", [this] { renderLoop(); }),
-                .renderSemaphore = Box<BinarySemaphore>::create(),
+                .pageIdentifier = page.webPageID(),
+                .renderState = renderState,
+                .renderThread = Thread::create("ARKitCoordinator session renderer", [this, renderState] { renderLoop(renderState); }),
             };
         },
         [&](Active&) {
             RELEASE_LOG_ERROR(XR, "ARKitCoordinator: an existing immersive session is active");
             if (sessionEventClient)
                 sessionEventClient->sessionDidEnd(m_deviceIdentifier);
-        },
-        [&](Terminating&) { });
+        });
 }
 
-void ARKitCoordinator::endSessionIfExists(WebPageProxy& page)
+void ARKitCoordinator::endSessionIfExists(std::optional<WebCore::PageIdentifier> pageIdentifier)
 {
     RELEASE_LOG(XR, "ARKitCoordinator::endSessionIfExists");
     ASSERT(RunLoop::isMain());
@@ -143,19 +152,35 @@ void ARKitCoordinator::endSessionIfExists(WebPageProxy& page)
     WTF::switchOn(m_state,
         [&](Idle&) { },
         [&](Active& active) {
-            if (active.pageIdentifier != page.webPageID()) {
+            if (pageIdentifier && active.pageIdentifier != *pageIdentifier) {
                 RELEASE_LOG(XR, "ARKitCoordinator: trying to end an immersive session owned by another page");
                 return;
             }
 
-            if (active.onFrameUpdate)
-                active.onFrameUpdate({ });
+            if (active.renderState->terminateRequested)
+                return;
 
-            active.renderSemaphore->signal();
+            active.renderState->terminateRequested = true;
+            active.renderState->presentFrame.signal();
+            active.renderThread->waitForCompletion();
 
-            m_state = Terminating { WTFMove(active.sessionEventClient) };
-        },
-        [&](Terminating&) { });
+            if (active.renderState->onFrameUpdate)
+                active.renderState->onFrameUpdate({ });
+
+            auto& sessionEventClient = active.sessionEventClient;
+            if (sessionEventClient) {
+                RELEASE_LOG(XR, "... immersive session end sent");
+                sessionEventClient->sessionDidEnd(m_deviceIdentifier);
+            }
+
+            m_state = Idle { };
+        });
+}
+
+
+void ARKitCoordinator::endSessionIfExists(WebPageProxy& page)
+{
+    endSessionIfExists(page.webPageID());
 }
 
 void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy& page, PlatformXR::Device::RequestFrameCallback&& onFrameUpdateCallback)
@@ -172,11 +197,12 @@ void ARKitCoordinator::scheduleAnimationFrame(WebPageProxy& page, PlatformXR::De
                 return;
             }
 
-            active.onFrameUpdate = WTFMove(onFrameUpdateCallback);
-        },
-        [&](Terminating&) {
-            RELEASE_LOG(XR, "ARKitCoordinator: trying to schedule frame for terminating session");
-            onFrameUpdateCallback({ });
+            if (active.renderState->terminateRequested) {
+                RELEASE_LOG(XR, "ARKitCoordinator: trying to schedule frame for terminating session");
+                onFrameUpdateCallback({ });
+            }
+
+            active.renderState->onFrameUpdate = WTFMove(onFrameUpdateCallback);
         });
 }
 
@@ -194,13 +220,15 @@ void ARKitCoordinator::submitFrame(WebPageProxy& page)
                 return;
             }
 
+            if (WTF::atomicLoad(&active.renderState->terminateRequested)) {
+                RELEASE_LOG(XR, "ARKitCoordinator: trying to submit frame update for a terminating session");
+                return;
+            }
+
             // FIXME: rdar://118492973 (Re-enable MTLSharedEvent completion sync)
             // Replace frame presentation to depend on
             // active.presentationSession.completionEvent
-            active.renderSemaphore->signal();
-        },
-        [&](Terminating&) {
-            RELEASE_LOG(XR, "ARKitCoordinator: trying to submit frame update for a terminating session");
+            active.renderState->presentFrame.signal();
         });
 }
 
@@ -215,36 +243,27 @@ void ARKitCoordinator::createSessionIfNeeded()
     m_session = adoptNS([WebKit::allocARSessionInstance() init]);
 }
 
-void ARKitCoordinator::currentSessionHasEnded()
-{
-    ASSERT(RunLoop::isMain());
-    RELEASE_LOG(XR, "ARKitCoordinator::currentSessionHasEnded");
-
-    if (auto* terminating = std::get_if<Terminating>(&m_state)) {
-        auto& sessionEventClient = terminating->sessionEventClient;
-        if (sessionEventClient)
-            sessionEventClient->sessionDidEnd(m_deviceIdentifier);
-    }
-
-    RELEASE_LOG(XR, "... immersive session ended");
-    m_state = Idle { };
-}
-
-void ARKitCoordinator::renderLoop()
+void ARKitCoordinator::renderLoop(Box<RenderState> active)
 {
     for (;;) {
-        auto* maybeActive = std::get_if<Active>(&m_state);
-        if (!maybeActive)
+        if (active->terminateRequested)
             break;
 
-        auto& active = *maybeActive;
-        if (!active.onFrameUpdate)
+        if ([active->presentationSession isSessionEndRequested]) {
+            callOnMainRunLoop([this]() {
+                endSessionIfExists(std::nullopt);
+            });
+            break;
+        }
+
+        if (!active->onFrameUpdate)
             continue;
 
         @autoreleasepool {
-            [active.presentationSession startFrame];
+            id<WKARPresentationSession> presentationSession = active->presentationSession.get();
+            [presentationSession startFrame];
 
-            ARFrame* frame = [active.presentationSession currentFrame];
+            ARFrame* frame = presentationSession.currentFrame;
             ARCamera* camera = frame.camera;
 
             PlatformXR::Device::FrameData frameData = { };
@@ -261,10 +280,10 @@ void ARKitCoordinator::renderLoop()
                     PlatformXRPose(frame.camera.projectionMatrix).toColumnMajorFloatArray()
                 },
             });
-            auto colorTexture = makeMachSendRight([active.presentationSession colorTexture]);
-            auto renderingFrameIndex = [active.presentationSession renderingFrameIndex];
+            auto colorTexture = makeMachSendRight(presentationSession.colorTexture);
+            auto renderingFrameIndex = presentationSession.renderingFrameIndex;
             // FIXME: Send this event once at setup time, not every frame.
-            id<MTLSharedEvent> completionEvent = [active.presentationSession completionEvent];
+            id<MTLSharedEvent> completionEvent = presentationSession.completionEvent;
             RetainPtr<MTLSharedEventHandle> completionHandle = adoptNS([completionEvent newSharedEventHandle]);
             auto completionPort = MachSendRight::create([completionHandle.get() eventPort]);
 
@@ -275,19 +294,17 @@ void ARKitCoordinator::renderLoop()
             });
             frameData.shouldRender = true;
 
-            callOnMainRunLoop([callback = WTFMove(active.onFrameUpdate), frameData = WTFMove(frameData)]() mutable {
+            callOnMainRunLoop([callback = WTFMove(active->onFrameUpdate), frameData = WTFMove(frameData)]() mutable {
                 callback(WTFMove(frameData));
             });
 
-            active.renderSemaphore->wait();
+            active->presentFrame.wait();
 
-            [active.presentationSession present];
+            [presentationSession present];
         }
     }
 
-    callOnMainRunLoop([this]() {
-        currentSessionHasEnded();
-    });
+    RELEASE_LOG(XR, "ARKitCoordinator::renderLoop exiting...");
 }
 
 } // namespace WebKit

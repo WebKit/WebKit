@@ -29,6 +29,7 @@
 #if ENABLE(WEBXR) && USE(ARKITXR_IOS)
 
 #import "Logging.h"
+#import "WKExtrinsicButton.h"
 
 #import <Metal/Metal.h>
 #import <wtf/RunLoop.h>
@@ -83,6 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface _WKARPresentationSession : UIViewController <WKARPresentationSession>
+@property (atomic, readwrite, getter=isSessionEndRequested) BOOL sessionEndRequested;
 - (nullable instancetype)initWithSession:(ARSession *)session descriptor:(WKARPresentationSessionDescriptor *)descriptor;
 @end
 
@@ -96,6 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
     RetainPtr<UIView> _view;
     WeakObjCPtr<CALayer> _cameraLayer;
     WeakObjCPtr<CAMetalLayer> _metalLayer;
+    RetainPtr<WKExtrinsicButton> _cancelButton;
 
     // CAMetalLayer state
     RetainPtr<id<CAMetalDrawable>> _currentDrawable;
@@ -109,6 +112,7 @@ NS_ASSUME_NONNULL_BEGIN
     RetainPtr<CVPixelBufferRef> _capturedImage;
 }
 @synthesize renderingFrameIndex = _renderingFrameIndex;
+@synthesize sessionEndRequested = _sessionEndRequested;
 
 - (nullable instancetype)initWithSession:(ARSession *)session descriptor:(WKARPresentationSessionDescriptor *)descriptor
 {
@@ -117,6 +121,7 @@ NS_ASSUME_NONNULL_BEGIN
         _session = session;
         _sessionDescriptor = adoptNS([descriptor copy]);
         _device = adoptNS(MTLCreateSystemDefaultDevice());
+        self.sessionEndRequested = NO;
 
         [self _loadMetal];
         [self _enterFullscreen];
@@ -206,6 +211,23 @@ NS_ASSUME_NONNULL_BEGIN
     [_metalLayer setPresentsWithTransaction:YES];
     [_metalLayer setFrame:[_cameraLayer bounds]];
     [_metalLayer setAffineTransform:CGAffineTransformMakeScale(1, -1)];
+
+    // Controls
+    NSBundle *bundle = [NSBundle bundleForClass:self.class];
+    UIImage *doneImage = [UIImage imageNamed:@"Done" inBundle:bundle compatibleWithTraitCollection:nil];
+
+    auto buttonSize = CGSizeMake(60.0, 47.0);
+    _cancelButton = [WKExtrinsicButton buttonWithType:UIButtonTypeSystem];
+    [_cancelButton setTranslatesAutoresizingMaskIntoConstraints:NO];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    [_cancelButton setAdjustsImageWhenHighlighted:NO];
+ALLOW_DEPRECATED_DECLARATIONS_END
+    [_cancelButton setExtrinsicContentSize:buttonSize];
+    [_cancelButton setTintColor:[UIColor whiteColor]];
+    [_cancelButton setImage:[doneImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate] forState:UIControlStateNormal];
+    [_cancelButton sizeToFit];
+    [_cancelButton addTarget:self action:@selector(_cancelAction:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_cancelButton.get()];
 }
 
 #if !PLATFORM(VISION)
@@ -233,14 +255,32 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Private
 
+- (void)_cancelAction:(id)sender
+{
+    self.sessionEndRequested = YES;
+    [self _exitFullscreen];
+}
+
 - (void)_enterFullscreen
 {
     ASSERT(RunLoop::isMain());
     RELEASE_LOG(XR, "%s", __FUNCTION__);
 
     UIViewController* presentingViewController = [_sessionDescriptor presentingViewController];
+    self.modalPresentationStyle = UIModalPresentationFullScreen;
     [presentingViewController presentViewController:self animated:NO completion:^(void) {
         RELEASE_LOG(XR, "%s: presentViewController complete", __FUNCTION__);
+    }];
+}
+
+- (void)_exitFullscreen
+{
+    ASSERT(RunLoop::isMain());
+    RELEASE_LOG(XR, "%s", __FUNCTION__);
+
+    UIViewController* presentingViewController = [_sessionDescriptor presentingViewController];
+    [presentingViewController dismissViewControllerAnimated:NO completion:^(void) {
+        RELEASE_LOG(XR, "%s: dismissViewController complete", __FUNCTION__);
     }];
 }
 

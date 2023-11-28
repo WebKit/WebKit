@@ -41,6 +41,7 @@ namespace WebKit {
 
 class ARKitCoordinator final : public PlatformXRCoordinator {
     WTF_MAKE_FAST_ALLOCATED;
+    struct RenderState;
 public:
     ARKitCoordinator();
     virtual ~ARKitCoordinator() = default;
@@ -56,8 +57,8 @@ public:
 
 protected:
     void createSessionIfNeeded();
-    void currentSessionHasEnded();
-    void renderLoop();
+    void endSessionIfExists(std::optional<WebCore::PageIdentifier>);
+    void renderLoop(Box<RenderState>);
 
 private:
     XRDeviceIdentifier m_deviceIdentifier = XRDeviceIdentifier::generate();
@@ -66,18 +67,13 @@ private:
     struct Idle {
     };
     struct Active {
+        WeakPtr<PlatformXRCoordinator::SessionEventClient> sessionEventClient;
         WebCore::PageIdentifier pageIdentifier;
-        WeakPtr<PlatformXRCoordinator::SessionEventClient> sessionEventClient;
-        PlatformXR::Device::RequestFrameCallback onFrameUpdate;
-        RetainPtr<id<WKARPresentationSession>> presentationSession;
+        Box<RenderState> renderState;
         RefPtr<Thread> renderThread;
-        Box<BinarySemaphore> renderSemaphore;
-    };
-    struct Terminating {
-        WeakPtr<PlatformXRCoordinator::SessionEventClient> sessionEventClient;
     };
 
-    using State = std::variant<Idle, Active, Terminating>;
+    using State = std::variant<Idle, Active>;
     State m_state;
 };
 
