@@ -1997,3 +1997,5 @@ webkit.org/b/264362 [ Sonoma+ ] fast/rendering/render-style-null-optgroup-crash.
 webkit.org/b/264783 [ Monterey+ x86_64 ] http/wpt/mediarecorder/record-context-created-late.html [ Failure ]
 
 webkit.org/b/265414 [ Monterey+ ] imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html [ Failure ]
+
+webkit.org/b/260225 [ Monterey+ x86_64 ] imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-GC.https.html [ Pass Failure ]
