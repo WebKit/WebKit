@@ -117,7 +117,6 @@ my (
     $mhtmlSupport,
     $mouseCursorScaleSupport,
     $navigatorStandaloneSupport,
-    $netscapePluginAPISupport,
     $networkCacheSpeculativeRevalidationSupport,
     $networkCacheStaleWhileRevalidateSupport,
     $notificationsSupport,
@@ -359,9 +358,6 @@ my @features = (
 
     { option => "navigator-standalone", desc => "Toogle standalone navigator support",
       define => "ENABLE_NAVIGATOR_STANDALONE", value => \$navigatorStandaloneSupport },
-
-    { option => "netscape-plugin-api", desc => "Toggle Netscape Plugin API support",
-      define => "ENABLE_NETSCAPE_PLUGIN_API", value => \$netscapePluginAPISupport },
 
     { option => "network-cache-speculative-revalidation", desc => "Toogle network cache speculative revalidation support",
       define => "ENABLE_NETWORK_CACHE_SPECULATIVE_REVALIDATION", value => \$networkCacheSpeculativeRevalidationSupport },

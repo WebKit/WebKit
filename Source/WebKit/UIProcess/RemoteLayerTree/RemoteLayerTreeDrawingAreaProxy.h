@@ -51,7 +51,7 @@ public:
 
     const RemoteLayerTreeHost& remoteLayerTreeHost() const { return *m_remoteLayerTreeHost; }
     std::unique_ptr<RemoteLayerTreeHost> detachRemoteLayerTreeHost();
-    
+
     virtual std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const = 0;
 
     void acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier, const String& key, MonotonicTime startTime);
@@ -63,7 +63,7 @@ public:
 
     virtual void didRefreshDisplay();
     virtual void setDisplayLinkWantsFullSpeedUpdates(bool) { }
-    
+
     bool hasDebugIndicator() const { return !!m_debugIndicatorLayerTreeHost; }
 
     CALayer *layerWithIDForTesting(WebCore::PlatformLayerIdentifier) const;
@@ -71,9 +71,13 @@ public:
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     void updateOverlayRegionIDs(const HashSet<WebCore::PlatformLayerIdentifier> &overlayRegionIDs) { m_remoteLayerTreeHost->updateOverlayRegionIDs(overlayRegionIDs); }
 #endif
-    
+
     void viewWillStartLiveResize() final;
     void viewWillEndLiveResize() final;
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    Seconds acceleratedTimelineTimeOrigin() const { return m_acceleratedTimelineTimeOrigin; }
+#endif
 
     // For testing.
     unsigned countOfTransactionsWithNonEmptyLayerChanges() const { return m_countOfTransactionsWithNonEmptyLayerChanges; }
@@ -107,7 +111,7 @@ private:
     bool hasVisibleContent() const final;
 
     void prepareForAppSuspension() final;
-    
+
     WebCore::FloatPoint indicatorLocation() const;
 
     void addRemotePageDrawingAreaProxy(RemotePageDrawingAreaProxy&) final;
@@ -175,6 +179,10 @@ private:
     IPC::AsyncReplyID m_replyForUnhidingContent;
 
     unsigned m_countOfTransactionsWithNonEmptyLayerChanges { 0 };
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    Seconds m_acceleratedTimelineTimeOrigin;
+#endif
 };
 
 } // namespace WebKit

@@ -43,7 +43,7 @@ public:
     FileHandle& operator=(FileHandle&& other);
     FileHandle(const FileHandle&) = delete;
     FileHandle& operator=(const FileHandle&) = delete;
-    explicit FileHandle(FileSystem::PlatformFileHandle&&);
+    explicit FileHandle(FileSystem::PlatformFileHandle);
 
     explicit operator bool() const;
 

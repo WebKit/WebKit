@@ -149,8 +149,6 @@ void CryptoAlgorithmX25519::importKey(CryptoKeyFormat format, KeyData&& data, co
             exceptionCallback(ExceptionCode::SyntaxError);
             return;
         }
-        if (!extractable)
-            usages = CryptoKeyUsageDeriveBits;
         result = CryptoKeyOKP::importRaw(CryptoAlgorithmIdentifier::X25519, CryptoKeyOKP::NamedCurve::X25519, WTFMove(std::get<Vector<uint8_t>>(data)), extractable, usages);
         break;
     case CryptoKeyFormat::Spki:

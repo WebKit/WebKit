@@ -2699,12 +2699,23 @@ static inline WebCore::FloatSize tapHighlightBorderRadius(WebCore::FloatSize bor
 {
     if ([_webView _isEditable] && !self._disableAutomaticKeyboardUI)
         return YES;
+
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (self.shouldUseAsyncInteractions)
+        return [super _requiresKeyboardWhenFirstResponder];
+#endif
+
     // FIXME: We should add the logic to handle keyboard visibility during focus redirects.
     return [self _shouldShowAutomaticKeyboardUIIgnoringInputMode] || _seenHardwareKeyDownInNonEditableElement;
 }
 
 - (BOOL)_requiresKeyboardResetOnReload
 {
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    if (self.shouldUseAsyncInteractions)
+        return [super _requiresKeyboardResetOnReload];
+#endif
+
     return YES;
 }
 
@@ -4142,7 +4153,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(FORWARD_ACTION_TO_WKWEBVIEW)
 {
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
     if (self.shouldUseAsyncInteractions)
-        [_asyncSystemInputDelegate replaceText:sender];
+        [_asyncSystemInputDelegate deferReplaceTextActionToSystem:sender];
     else
 #endif
         [[UIKeyboardImpl sharedInstance] replaceText:sender];
@@ -5899,7 +5910,7 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
     [self _updateInternalStateBeforeSelectionChange];
 
 #if HAVE(UI_ASYNC_TEXT_INPUT_DELEGATE)
-    if (_asyncSystemInputDelegate)
+    if (self.shouldUseAsyncInteractions)
         [_asyncSystemInputDelegate selectionWillChange:self];
     else
 #endif
@@ -5922,7 +5933,7 @@ static void logTextInteractionAssistantSelectionChange(const char* methodName, U
 - (void)_internalEndSelectionChange
 {
 #if HAVE(UI_ASYNC_TEXT_INPUT_DELEGATE)
-    if (_asyncSystemInputDelegate)
+    if (self.shouldUseAsyncInteractions)
         [_asyncSystemInputDelegate selectionDidChange:self];
     else
 #endif
@@ -7122,7 +7133,11 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
         return YES;
 
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    if (auto systemDelegate = retainPtr(_asyncSystemInputDelegate)) {
+    if (self.shouldUseAsyncInteractions) {
+        RetainPtr systemDelegate = _asyncSystemInputDelegate;
+        if (!systemDelegate)
+            return NO;
+
         auto context = adoptNS([allocUIKeyEventContextInstance() initWithKeyEvent:event.originalUIKeyEvent]);
         [context setDocumentIsEditable:_page->editorState().isContentEditable];
         [context setShouldInsertChar:isCharEvent];

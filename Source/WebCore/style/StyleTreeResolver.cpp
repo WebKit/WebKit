@@ -232,6 +232,13 @@ auto TreeResolver::resolveElement(Element& element, const RenderStyle* existingS
     if (!element.rendererIsEverNeeded() && !element.hasDisplayContents())
         return { };
 
+    if (resolutionType == ResolutionType::RebuildUsingExisting) {
+        return {
+            ElementUpdate { RenderStyle::clonePtr(*existingStyle), Change::Renderer },
+            DescendantsToResolve::RebuildAllUsingExisting
+        };
+    }
+
     auto resolutionContext = makeResolutionContext();
 
     Styleable styleable { element, PseudoId::None };
@@ -743,15 +750,21 @@ auto TreeResolver::determineResolutionType(const Element& element, const RenderS
         return validity;
     }();
 
-    if (combinedValidity == Validity::AnimationInvalid && parentDescendantsToResolve == DescendantsToResolve::None)
-        return ResolutionType::AnimationOnly;
+    if (parentDescendantsToResolve == DescendantsToResolve::None) {
+        if (combinedValidity == Validity::AnimationInvalid)
+            return ResolutionType::AnimationOnly;
+        if (combinedValidity == Validity::Valid && element.hasInvalidRenderer())
+            return existingStyle ? ResolutionType::RebuildUsingExisting : ResolutionType::Full;
+    }
 
-    if (combinedValidity != Validity::Valid)
+    if (combinedValidity > Validity::Valid)
         return ResolutionType::Full;
 
     switch (parentDescendantsToResolve) {
     case DescendantsToResolve::None:
         return { };
+    case DescendantsToResolve::RebuildAllUsingExisting:
+        return existingStyle ? ResolutionType::RebuildUsingExisting : ResolutionType::Full;
     case DescendantsToResolve::Children:
         if (parentChange == Change::FastPathInherited) {
             if (existingStyle && !existingStyle->disallowsFastPathInheritance())
@@ -809,6 +822,7 @@ void TreeResolver::resetDescendantStyleRelations(Element& element, DescendantsTo
 {
     switch (descendantsToResolve) {
     case DescendantsToResolve::None:
+    case DescendantsToResolve::RebuildAllUsingExisting:
     case DescendantsToResolve::ChildrenWithExplicitInherit:
         break;
     case DescendantsToResolve::Children:

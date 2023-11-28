@@ -52,8 +52,8 @@ FileHandle::FileHandle(const String& path, FileSystem::FileOpenMode mode, Option
 {
 }
 
-FileHandle::FileHandle(FileSystem::PlatformFileHandle&& handle)
-    : m_fileHandle(WTFMove(handle))
+FileHandle::FileHandle(FileSystem::PlatformFileHandle handle)
+    : m_fileHandle(handle)
 {
 }
 

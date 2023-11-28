@@ -130,8 +130,8 @@ public:
 
     using TakePhotoPromise = NativePromise<std::pair<Vector<uint8_t>, String>, Exception>;
     Ref<TakePhotoPromise> takePhoto(PhotoSettings&&);
-    void getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCapabilities>>&&) const;
-    void getPhotoSettings(DOMPromiseDeferred<IDLDictionary<PhotoSettings>>&&) const;
+    void getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCapabilities>>&&);
+    void getPhotoSettings(DOMPromiseDeferred<IDLDictionary<PhotoSettings>>&&);
 
     const MediaTrackConstraints& getConstraints() const { return m_constraints; }
     void setConstraints(MediaTrackConstraints&& constraints) { m_constraints = WTFMove(constraints); }

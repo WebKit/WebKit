@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(SCROLLING_THREAD)
+#if ENABLE(SCROLLING_THREAD) || ENABLE(THREADED_ANIMATION_RESOLUTION)
 
 #include <functional>
 #include <wtf/Condition.h>
@@ -64,4 +64,4 @@ private:
 
 } // namespace WebCore
 
-#endif // ENABLE(SCROLLING_THREAD)
+#endif // ENABLE(SCROLLING_THREAD) || ENABLE(THREADED_ANIMATION_RESOLUTION)

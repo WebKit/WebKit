@@ -8,7 +8,7 @@ COMBINE_HIDPI_IMAGES = NO;
 ENABLE_STRICT_OBJC_MSGSEND = YES;
 
 HEADER_SEARCH_PATHS[arch=x86_64] = Source/third_party/libvpx/source/config/mac/x64 Source/third_party/libvpx/source/libvpx Source/third_party/libvpx/source/config;
-HEADER_SEARCH_PATHS[arch=arm64*] = Source/third_party/libvpx/source/config/ios/arm64 Source/third_party/libvpx/source/libvpx Source/third_party/libvpx/source/config;
+HEADER_SEARCH_PATHS[arch=arm64*] = Source/third_party/libvpx/source/config/linux/arm64-highbd Source/third_party/libvpx/source/libvpx Source/third_party/libvpx/source/config;
 
 GCC_PREPROCESSOR_DEFINITIONS[sdk=iphonesimulator*] = $(inherited) WEBRTC_WEBKIT_DISABLE_HARDWARE_ACCELERATION;
 GCC_PREPROCESSOR_DEFINITIONS[sdk=macosx*] = $(inherited) $(GCC_PREPROCESSOR_DEFINITIONS_$(WK_IS_CATALYST))

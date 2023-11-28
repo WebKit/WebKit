@@ -44,18 +44,15 @@ Ref<PathCG> PathCG::create()
 Ref<PathCG> PathCG::create(const PathSegment& segment)
 {
     auto pathCG = PathCG::create();
-    pathCG->appendSegment(segment);
+    pathCG->addSegment(segment);
     return pathCG;
 }
 
 Ref<PathCG> PathCG::create(const PathStream& stream)
 {
     auto pathCG = PathCG::create();
-
-    stream.applySegments([&](const PathSegment& segment) {
-        pathCG->appendSegment(segment);
-    });
-
+    for (auto& segment : stream.segments())
+        pathCG->addSegment(segment);
     return pathCG;
 }
 
@@ -92,55 +89,55 @@ PlatformPathPtr PathCG::ensureMutablePlatformPath()
     return m_platformPath.get();
 }
 
-void PathCG::moveTo(const FloatPoint& point)
+void PathCG::add(PathMoveTo moveTo)
 {
-    CGPathMoveToPoint(ensureMutablePlatformPath(), nullptr, point.x(), point.y());
+    CGPathMoveToPoint(ensureMutablePlatformPath(), nullptr, moveTo.point.x(), moveTo.point.y());
 }
 
-void PathCG::addLineTo(const FloatPoint& point)
+void PathCG::add(PathLineTo lineTo)
 {
-    CGPathAddLineToPoint(ensureMutablePlatformPath(), nullptr, point.x(), point.y());
+    CGPathAddLineToPoint(ensureMutablePlatformPath(), nullptr, lineTo.point.x(), lineTo.point.y());
 }
 
-void PathCG::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint)
+void PathCG::add(PathQuadCurveTo quadTo)
 {
-    CGPathAddQuadCurveToPoint(ensureMutablePlatformPath(), nullptr, controlPoint.x(), controlPoint.y(), endPoint.x(), endPoint.y());
+    CGPathAddQuadCurveToPoint(ensureMutablePlatformPath(), nullptr, quadTo.controlPoint.x(), quadTo.controlPoint.y(), quadTo.endPoint.x(), quadTo.endPoint.y());
 }
 
-void PathCG::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint)
+void PathCG::add(PathBezierCurveTo bezierTo)
 {
-    CGPathAddCurveToPoint(ensureMutablePlatformPath(), nullptr, controlPoint1.x(), controlPoint1.y(), controlPoint2.x(), controlPoint2.y(), endPoint.x(), endPoint.y());
+    CGPathAddCurveToPoint(ensureMutablePlatformPath(), nullptr, bezierTo.controlPoint1.x(), bezierTo.controlPoint1.y(), bezierTo.controlPoint2.x(), bezierTo.controlPoint2.y(), bezierTo.endPoint.x(), bezierTo.endPoint.y());
 }
 
-void PathCG::addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius)
+void PathCG::add(PathArcTo arcTo)
 {
-    CGPathAddArcToPoint(ensureMutablePlatformPath(), nullptr, point1.x(), point1.y(), point2.x(), point2.y(), radius);
+    CGPathAddArcToPoint(ensureMutablePlatformPath(), nullptr, arcTo.controlPoint1.x(), arcTo.controlPoint1.y(), arcTo.controlPoint2.x(), arcTo.controlPoint2.y(), arcTo.radius);
 }
 
-void PathCG::addArc(const FloatPoint& center, float radius, float startAngle, float endAngle, RotationDirection direction)
+void PathCG::add(PathArc arc)
 {
     // CG's coordinate system increases the angle in the anticlockwise direction.
-    CGPathAddArc(ensureMutablePlatformPath(), nullptr, center.x(), center.y(), radius, startAngle, endAngle, direction == RotationDirection::Counterclockwise);
+    CGPathAddArc(ensureMutablePlatformPath(), nullptr, arc.center.x(), arc.center.y(), arc.radius, arc.startAngle, arc.endAngle, arc.direction == RotationDirection::Counterclockwise);
 }
 
-void PathCG::addEllipse(const FloatPoint& center, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, RotationDirection direction)
+void PathCG::add(PathEllipse ellipse)
 {
     AffineTransform transform;
-    transform.translate(center.x(), center.y()).rotateRadians(rotation).scale(radiusX, radiusY);
+    transform.translate(ellipse.center.x(), ellipse.center.y()).rotateRadians(ellipse.rotation).scale(ellipse.radiusX, ellipse.radiusY);
 
     CGAffineTransform cgTransform = transform;
     // CG coordinates system increases the angle in the anticlockwise direction.
-    CGPathAddArc(ensureMutablePlatformPath(), &cgTransform, 0, 0, 1, startAngle, endAngle, direction == RotationDirection::Counterclockwise);
+    CGPathAddArc(ensureMutablePlatformPath(), &cgTransform, 0, 0, 1, ellipse.startAngle, ellipse.endAngle, ellipse.direction == RotationDirection::Counterclockwise);
 }
 
-void PathCG::addEllipseInRect(const FloatRect& rect)
+void PathCG::add(PathEllipseInRect ellipseInRect)
 {
-    CGPathAddEllipseInRect(ensureMutablePlatformPath(), nullptr, rect);
+    CGPathAddEllipseInRect(ensureMutablePlatformPath(), nullptr, ellipseInRect.rect);
 }
 
-void PathCG::addRect(const FloatRect& rect)
+void PathCG::add(PathRect rect)
 {
-    CGPathAddRect(ensureMutablePlatformPath(), nullptr, rect);
+    CGPathAddRect(ensureMutablePlatformPath(), nullptr, rect.rect);
 }
 
 static void addEvenCornersRoundedRect(PlatformPathPtr platformPath, const FloatRect& rect, const FloatSize& radius)
@@ -190,26 +187,26 @@ static void addUnevenCornersRoundedRect(PlatformPathPtr platformPath, const Floa
 }
 #endif
 
-void PathCG::addRoundedRect(const FloatRoundedRect& roundedRect, PathRoundedRect::Strategy strategy)
+void PathCG::add(PathRoundedRect roundedRect)
 {
-    if (strategy == PathRoundedRect::Strategy::PreferNative) {
-        const auto& radii = roundedRect.radii();
+    if (roundedRect.strategy == PathRoundedRect::Strategy::PreferNative) {
+        const auto& radii = roundedRect.roundedRect.radii();
 
         if (radii.hasEvenCorners()) {
-            addEvenCornersRoundedRect(ensureMutablePlatformPath(), roundedRect.rect(), radii.topLeft());
+            addEvenCornersRoundedRect(ensureMutablePlatformPath(), roundedRect.roundedRect.rect(), radii.topLeft());
             return;
         }
 
 #if HAVE(CG_PATH_UNEVEN_CORNERS_ROUNDEDRECT)
-        addUnevenCornersRoundedRect(ensureMutablePlatformPath(), roundedRect);
+        addUnevenCornersRoundedRect(ensureMutablePlatformPath(), roundedRect.roundedRect);
         return;
 #endif
     }
 
-    addBeziersForRoundedRect(roundedRect);
+    addBeziersForRoundedRect(roundedRect.roundedRect);
 }
 
-void PathCG::closeSubpath()
+void PathCG::add(PathCloseSubpath)
 {
     CGPathCloseSubpath(ensureMutablePlatformPath());
 }

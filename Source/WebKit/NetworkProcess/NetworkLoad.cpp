@@ -30,6 +30,7 @@
 #include "AuthenticationManager.h"
 #include "MessageSenderInlines.h"
 #include "NetworkDataTaskBlob.h"
+#include "NetworkLoadClient.h"
 #include "NetworkLoadScheduler.h"
 #include "NetworkProcess.h"
 #include "NetworkProcessProxyMessages.h"
@@ -84,8 +85,6 @@ NetworkLoad::~NetworkLoad()
     ASSERT(RunLoop::isMain());
     if (m_scheduler)
         m_scheduler->unschedule(*this);
-    if (m_redirectCompletionHandler)
-        m_redirectCompletionHandler({ });
     if (m_task)
         m_task->clearClient();
 }
@@ -117,24 +116,6 @@ void NetworkLoad::reprioritizeRequest(ResourceLoadPriority priority)
     m_currentRequest.setPriority(priority);
     if (m_task)
         m_task->setPriority(priority);
-}
-
-void NetworkLoad::continueWillSendRequest(WebCore::ResourceRequest&& newRequest)
-{
-    updateRequest(m_currentRequest, newRequest);
-
-    auto redirectCompletionHandler = std::exchange(m_redirectCompletionHandler, nullptr);
-    ASSERT(redirectCompletionHandler);
-    if (m_currentRequest.isNull()) {
-        NetworkLoadMetrics emptyMetrics;
-        didCompleteWithError(cancelledError(m_currentRequest), emptyMetrics);
-        if (redirectCompletionHandler)
-            redirectCompletionHandler({ });
-        return;
-    }
-
-    if (redirectCompletionHandler)
-        redirectCompletionHandler(ResourceRequest(m_currentRequest));
 }
 
 bool NetworkLoad::shouldCaptureExtraNetworkLoadMetrics() const
@@ -187,7 +168,6 @@ void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse
 {
     ASSERT(!redirectResponse.isNull());
     ASSERT(RunLoop::isMain());
-    ASSERT(!m_redirectCompletionHandler);
 
     if (!m_networkProcess->ftpEnabled() && request.url().protocolIsInFTPFamily()) {
         m_task->clearClient();
@@ -201,13 +181,23 @@ void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse
     }
     
     redirectResponse.setSource(ResourceResponse::Source::Network);
-    m_redirectCompletionHandler = WTFMove(completionHandler);
 
     auto oldRequest = WTFMove(m_currentRequest);
     request.setRequester(oldRequest.requester());
 
     m_currentRequest = request;
-    m_client.get().willSendRedirectedRequest(WTFMove(oldRequest), WTFMove(request), WTFMove(redirectResponse));
+    m_client.get().willSendRedirectedRequest(WTFMove(oldRequest), WTFMove(request), WTFMove(redirectResponse), [this, weakThis = WeakPtr<NetworkDataTaskClient> { *this }, completionHandler = WTFMove(completionHandler)] (ResourceRequest&& newRequest) mutable {
+        if (!weakThis)
+            return completionHandler({ });
+        updateRequest(m_currentRequest, newRequest);
+        if (m_currentRequest.isNull()) {
+            NetworkLoadMetrics emptyMetrics;
+            didCompleteWithError(cancelledError(m_currentRequest), emptyMetrics);
+            completionHandler({ });
+            return;
+        }
+        completionHandler(ResourceRequest(m_currentRequest));
+    });
 }
 
 void NetworkLoad::didReceiveChallenge(AuthenticationChallenge&& challenge, NegotiatedLegacyTLS negotiatedLegacyTLS, ChallengeCompletionHandler&& completionHandler)

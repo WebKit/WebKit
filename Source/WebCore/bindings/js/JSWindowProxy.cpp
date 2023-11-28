@@ -92,30 +92,29 @@ void JSWindowProxy::setWindow(DOMWindow& domWindow)
     // so we'd better never try to.
     ASSERT(!window() || &domWindow != &wrapped());
 
-    bool isRemoteDOMWindow = is<RemoteDOMWindow>(domWindow);
+    auto* localWindow = dynamicDowncast<LocalDOMWindow>(domWindow);
 
     VM& vm = commonVM();
-    auto& prototypeStructure = isRemoteDOMWindow ? *JSRemoteDOMWindowPrototype::createStructure(vm, nullptr, jsNull()) : *JSLocalDOMWindowPrototype::createStructure(vm, nullptr, jsNull());
+    auto& prototypeStructure = localWindow ? *JSLocalDOMWindowPrototype::createStructure(vm, nullptr, jsNull()) : *JSRemoteDOMWindowPrototype::createStructure(vm, nullptr, jsNull());
 
     // Explicitly protect the prototype so it isn't collected when we allocate the global object.
     // (Once the global object is fully constructed, it will mark its own prototype.)
-    JSNonFinalObject* prototype = isRemoteDOMWindow ? static_cast<JSNonFinalObject*>(JSRemoteDOMWindowPrototype::create(vm, nullptr, &prototypeStructure)) : static_cast<JSNonFinalObject*>(JSLocalDOMWindowPrototype::create(vm, nullptr, &prototypeStructure));
+    JSNonFinalObject* prototype = localWindow ? static_cast<JSNonFinalObject*>(JSLocalDOMWindowPrototype::create(vm, nullptr, &prototypeStructure)) : static_cast<JSNonFinalObject*>(JSRemoteDOMWindowPrototype::create(vm, nullptr, &prototypeStructure));
     JSC::EnsureStillAliveScope protectedPrototype(prototype);
 
     JSDOMGlobalObject* window = nullptr;
-    if (isRemoteDOMWindow) {
-        auto& windowStructure = *JSRemoteDOMWindow::createStructure(vm, nullptr, prototype);
-        window = JSRemoteDOMWindow::create(vm, &windowStructure, downcast<RemoteDOMWindow>(domWindow), this);
-    } else {
-        auto& localWindow = downcast<LocalDOMWindow>(domWindow);
+    if (localWindow) {
         auto& windowStructure = *JSLocalDOMWindow::createStructure(vm, nullptr, prototype);
-        window = JSLocalDOMWindow::create(vm, &windowStructure, localWindow, this);
+        window = JSLocalDOMWindow::create(vm, &windowStructure, *localWindow, this);
         bool linkedWithNewSDK = true;
 #if PLATFORM(COCOA)
         linkedWithNewSDK = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DOMWindowReuseRestriction);
 #endif
-        if (!localWindow.document()->haveInitializedSecurityOrigin() && linkedWithNewSDK)
-            localWindow.setAsWrappedWithoutInitializedSecurityOrigin();
+        if (!localWindow->document()->haveInitializedSecurityOrigin() && linkedWithNewSDK)
+            localWindow->setAsWrappedWithoutInitializedSecurityOrigin();
+    } else {
+        auto& windowStructure = *JSRemoteDOMWindow::createStructure(vm, nullptr, prototype);
+        window = JSRemoteDOMWindow::create(vm, &windowStructure, downcast<RemoteDOMWindow>(domWindow), this);
     }
 
     prototype->structure()->setGlobalObject(vm, window);

@@ -51,7 +51,7 @@ public:
     virtual bool isAllowedToAskUserForCredentials() const = 0;
 
     virtual void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent) = 0;
-    virtual void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse) = 0;
+    virtual void willSendRedirectedRequest(WebCore::ResourceRequest&&, WebCore::ResourceRequest&& redirectRequest, WebCore::ResourceResponse&& redirectResponse, CompletionHandler<void(WebCore::ResourceRequest&&)>&&) = 0;
     virtual void didReceiveInformationalResponse(WebCore::ResourceResponse&&) { };
     virtual void didReceiveResponse(WebCore::ResourceResponse&&, PrivateRelayed, ResponseCompletionHandler&&) = 0;
     virtual void didReceiveBuffer(const WebCore::FragmentedSharedBuffer&, uint64_t reportedEncodedDataLength) = 0;

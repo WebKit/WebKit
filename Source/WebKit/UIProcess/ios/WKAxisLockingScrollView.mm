@@ -28,6 +28,8 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#include <wtf/RetainPtr.h>
+
 @interface UIScrollView (GestureRecognizerDelegate) <UIGestureRecognizerDelegate>
 @end
 

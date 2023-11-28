@@ -669,7 +669,7 @@ JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::JSGlo
 
     auto domGlobalObject = jsCast<JSDOMGlobalObject*>(globalObject);
     auto context = domGlobalObject->scriptExecutionContext();
-    if (is<Document>(context)) {
+    if (auto* document = dynamicDowncast<Document>(context)) {
         // Same-origin iframes present a difficult circumstance because the
         // shadow realm global object cannot retain the incubating realm's
         // global object (that would be a refcount loop); but, same-origin
@@ -681,7 +681,6 @@ JSC::JSGlobalObject* JSDOMGlobalObject::deriveShadowRealmGlobalObject(JSC::JSGlo
         // origin while avoiding any lifetime issues (since the topmost document
         // with a given wrapper world should outlive other objects in that
         // world)
-        auto document = &downcast<Document>(*context);
         const auto& originalOrigin = document->securityOrigin();
         auto& originalWorld = domGlobalObject->world();
 
@@ -729,11 +728,11 @@ String JSDOMGlobalObject::agentClusterID() const
 
 JSDOMGlobalObject* toJSDOMGlobalObject(ScriptExecutionContext& context, DOMWrapperWorld& world)
 {
-    if (is<Document>(context))
-        return toJSLocalDOMWindow(downcast<Document>(context).frame(), world);
+    if (auto* document = dynamicDowncast<Document>(context))
+        return toJSLocalDOMWindow(document->frame(), world);
 
-    if (is<WorkerOrWorkletGlobalScope>(context))
-        return downcast<WorkerOrWorkletGlobalScope>(context).script()->globalScopeWrapper();
+    if (auto* globalScope = dynamicDowncast<WorkerOrWorkletGlobalScope>(context))
+        return globalScope->script()->globalScopeWrapper();
 
     ASSERT_NOT_REACHED();
     return nullptr;

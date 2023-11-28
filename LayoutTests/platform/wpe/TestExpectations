@@ -1533,8 +1533,6 @@ webkit.org/b/236926 webrtc/vp8-then-h264-gpu-process-crash.html [ Timeout Pass ]
 
 ############ end of test failures related to GPU Process on by default
 
-webkit.org/b/256543 media/media-source/media-source-webm-configuration-change.html [ Failure ]
-webkit.org/b/256543 media/media-source/media-source-webm-configuration-vp9-header-color.html [ Failure ]
 media/media-source/media-source-rendering-update-count.html [ Skip ]
 
 #////////////////////////////////////////////////////////////////////////////////////////

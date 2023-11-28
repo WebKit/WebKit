@@ -2481,6 +2481,10 @@ http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-me
 http/tests/security/mixedContent/websocket/insecure-websocket-in-iframe.html [ Pass Failure ]
 http/tests/security/contentSecurityPolicy/script-src-parsing-implicit-and-explicit-port-number.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/webmessaging/broadcastchannel/cross-partition.https.tentative.html [ DumpJSConsoleLogInStdErr ]
+http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image.html [ DumpJSConsoleLogInStdErr ]
+http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https.html [ DumpJSConsoleLogInStdErr ]
+http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html [ DumpJSConsoleLogInStdErr ]
+http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html [ DumpJSConsoleLogInStdErr ]
 
 # These tests have been flaky on WK1 since their import.
 imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Pass Failure ]
@@ -2711,9 +2715,3 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-s
 
 # webkit.org/b/263870 [scroll-animations] lots of scroll-animations WPT tests are timing out
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-snapshotting.html [ Skip ]
-
-# rdar://118836741 (REGRESSION ( 271130@main ): [ macOS wk1 ] 4 tests in http/tests/security/mixedContent are a consistent failure)
-http/tests/security/mixedContent/insecure-image-redirects-to-basic-auth-secure-image.html [ Pass Failure ]
-http/tests/security/mixedContent/secure-redirect-to-insecure-redirect-to-basic-auth-secure-image.https.html [ Pass Failure ]
-http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-insecure-image.https.html [ Pass Failure ]
-http/tests/security/mixedContent/secure-redirect-to-secure-redirect-to-basic-auth-secure-image.https.html [ Pass Failure ]

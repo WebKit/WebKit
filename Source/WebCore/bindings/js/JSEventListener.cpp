@@ -227,8 +227,8 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
     InspectorInstrumentation::didCallFunction(&scriptExecutionContext);
 
     auto handleExceptionIfNeeded = [&] (JSC::Exception* exception) -> bool {
-        if (is<WorkerGlobalScope>(scriptExecutionContext)) {
-            auto* scriptController = downcast<WorkerGlobalScope>(scriptExecutionContext).script();
+        if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(scriptExecutionContext)) {
+            auto* scriptController = globalScope->script();
             bool terminatorCausedException = (exception && vm.isTerminationException(exception));
             if (terminatorCausedException || (scriptController && scriptController->isTerminatingExecution()))
                 scriptController->forbidExecution();
@@ -254,13 +254,13 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
     if (event.type() == eventNames().beforeunloadEvent) {
         // This is a OnBeforeUnloadEventHandler, and therefore the return value must be coerced into a String.
-        if (is<BeforeUnloadEvent>(event)) {
+        if (auto* beforeUnloadEvent = dynamicDowncast<BeforeUnloadEvent>(event)) {
             String resultStr = convert<IDLNullable<IDLDOMString>>(*lexicalGlobalObject, retval);
             if (UNLIKELY(scope.exception())) {
                 if (handleExceptionIfNeeded(scope.exception()))
                     return;
             }
-            handleBeforeUnloadEventReturnValue(downcast<BeforeUnloadEvent>(event), resultStr);
+            handleBeforeUnloadEventReturnValue(*beforeUnloadEvent, resultStr);
         }
         return;
     }
@@ -271,10 +271,8 @@ void JSEventListener::handleEvent(ScriptExecutionContext& scriptExecutionContext
 
 bool JSEventListener::operator==(const EventListener& listener) const
 {
-    if (!is<JSEventListener>(listener))
-        return false;
-    auto& other = downcast<JSEventListener>(listener);
-    return m_jsFunction == other.m_jsFunction && m_isAttribute == other.m_isAttribute;
+    auto* other = dynamicDowncast<JSEventListener>(listener);
+    return other && m_jsFunction == other->m_jsFunction && m_isAttribute == other->m_isAttribute;
 }
 
 String JSEventListener::functionName() const

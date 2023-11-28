@@ -111,19 +111,19 @@ void MediaSourcePrivateGStreamer::markEndOfStream(EndOfStreamStatus endOfStreamS
 #ifndef GST_DISABLE_GST_DEBUG
     const char* statusString = nullptr;
     switch (endOfStreamStatus) {
-    case EndOfStreamStatus::EosNoError:
+    case EndOfStreamStatus::NoError:
         statusString = "no-error";
         break;
-    case EndOfStreamStatus::EosDecodeError:
+    case EndOfStreamStatus::DecodeError:
         statusString = "decode-error";
         break;
-    case EndOfStreamStatus::EosNetworkError:
+    case EndOfStreamStatus::NetworkError:
         statusString = "network-error";
         break;
     }
     GST_DEBUG_OBJECT(m_playerPrivate.pipeline(), "Marking EOS, status is %s", statusString);
 #endif
-    if (endOfStreamStatus == EosNoError)
+    if (endOfStreamStatus == EndOfStreamStatus::NoError)
         m_playerPrivate.setNetworkState(MediaPlayer::NetworkState::Loaded);
     MediaSourcePrivate::markEndOfStream(endOfStreamStatus);
 }

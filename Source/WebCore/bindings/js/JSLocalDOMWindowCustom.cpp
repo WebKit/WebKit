@@ -157,8 +157,8 @@ bool jsLocalDOMWindowGetOwnPropertySlotRestrictedAccess(JSDOMGlobalObject* thisO
     // the Moz way.
     // FIXME: Add support to named attributes on RemoteFrames.
     auto* frame = window.frame();
-    if (frame && is<LocalFrame>(*frame)) {
-        if (auto* scopedChild = dynamicDowncast<LocalFrame>(downcast<LocalFrame>(*frame).tree().scopedChildBySpecifiedName(propertyNameToAtomString(propertyName)))) {
+    if (auto* localFrame = dynamicDowncast<LocalFrame>(frame)) {
+        if (auto* scopedChild = dynamicDowncast<LocalFrame>(localFrame->tree().scopedChildBySpecifiedName(propertyNameToAtomString(propertyName)))) {
             slot.setValue(thisObject, PropertyAttribute::ReadOnly | PropertyAttribute::DontEnum, toJS(&lexicalGlobalObject, scopedChild->document()->domWindow()));
             return true;
         }

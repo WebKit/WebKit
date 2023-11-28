@@ -50,20 +50,18 @@ public:
 
     virtual Ref<PathImpl> copy() const = 0;
 
-    virtual void moveTo(const FloatPoint&) = 0;
-
-    virtual void addLineTo(const FloatPoint&) = 0;
-    virtual void addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint) = 0;
-    virtual void addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint) = 0;
-    virtual void addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius) = 0;
-
-    virtual void addArc(const FloatPoint&, float radius, float startAngle, float endAngle, RotationDirection) = 0;
-    virtual void addEllipse(const FloatPoint&, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, RotationDirection) = 0;
-    virtual void addEllipseInRect(const FloatRect&) = 0;
-    virtual void addRect(const FloatRect&) = 0;
-    virtual void addRoundedRect(const FloatRoundedRect&, PathRoundedRect::Strategy) = 0;
-
-    virtual void closeSubpath() = 0;
+    void addSegment(PathSegment);
+    virtual void add(PathMoveTo) = 0;
+    virtual void add(PathLineTo) = 0;
+    virtual void add(PathQuadCurveTo) = 0;
+    virtual void add(PathBezierCurveTo) = 0;
+    virtual void add(PathArcTo) = 0;
+    virtual void add(PathArc) = 0;
+    virtual void add(PathEllipse) = 0;
+    virtual void add(PathEllipseInRect) = 0;
+    virtual void add(PathRect) = 0;
+    virtual void add(PathRoundedRect) = 0;
+    virtual void add(PathCloseSubpath) = 0;
 
     void addLinesForRect(const FloatRect&);
     void addBeziersForRoundedRect(const FloatRoundedRect&);
@@ -92,8 +90,30 @@ public:
 
 protected:
     PathImpl() = default;
-
-    void appendSegment(const PathSegment&);
 };
+
+inline void PathImpl::addSegment(PathSegment segment)
+{
+    WTF::switchOn(WTFMove(segment).data(),
+        [&](auto&& segment) {
+            add(WTFMove(segment));
+        },
+        [&](PathDataLine segment) {
+            add(PathMoveTo { segment.start });
+            add(PathLineTo { segment.end });
+        },
+        [&](PathDataQuadCurve segment) {
+            add(PathMoveTo { segment.start });
+            add(PathQuadCurveTo { segment.controlPoint, segment.endPoint });
+        },
+        [&](PathDataBezierCurve segment) {
+            add(PathMoveTo { segment.start });
+            add(PathBezierCurveTo { segment.controlPoint1, segment.controlPoint2, segment.endPoint });
+        },
+        [&](PathDataArc segment) {
+            add(PathMoveTo { segment.start });
+            add(PathArcTo { segment.controlPoint1, segment.controlPoint2, segment.radius });
+        });
+}
 
 } // namespace WebCore

@@ -45,9 +45,6 @@ set(WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/FileAPI"
     "${WEBKIT_DIR}/Shared/Gamepad"
     "${WEBKIT_DIR}/Shared/Notifications"
-    "${WEBKIT_DIR}/Shared/Plugins"
-    "${WEBKIT_DIR}/Shared/Plugins/Netscape"
-    "${WEBKIT_DIR}/Shared/Plugins/Netscape/x11"
     "${WEBKIT_DIR}/Shared/RemoteLayerTree"
     "${WEBKIT_DIR}/Shared/WebGPU"
     "${WEBKIT_DIR}/Shared/WebsiteData"
@@ -377,6 +374,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Platform/IPC/FormDataReference.serialization.in
     Platform/IPC/IPCSemaphore.serialization.in
     Platform/IPC/SharedBufferReference.serialization.in
+    Platform/IPC/SharedFileHandle.serialization.in
     Platform/IPC/StreamServerConnection.serialization.in
 
     Platform/SharedMemory.serialization.in

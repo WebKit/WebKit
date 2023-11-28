@@ -966,7 +966,8 @@ void Node::invalidateStyle(Style::Validity validity, Style::InvalidationMode mod
     if (document().inRenderTreeUpdate())
         return;
 
-    setNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
+    if (validity != Style::Validity::Valid)
+        setNodeFlag(NodeFlag::IsComputedStyleInvalidFlag);
 
     bool markAncestors = styleValidity() == Style::Validity::Valid || mode == Style::InvalidationMode::InsertedIntoAncestor;
 

@@ -1,0 +1,137 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_common.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_common.cc
+index 6dc8a79ae35d..9307a5087d3b 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_common.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_common.cc
+@@ -17,6 +17,7 @@ namespace H265 {
+ 
+ const uint8_t kNaluTypeMask = 0x7E;
+ 
++#ifndef WEBRTC_WEBKIT_BUILD
+ std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
+                                        size_t buffer_size) {
+   std::vector<H264::NaluIndex> indices =
+@@ -28,6 +29,7 @@ std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
+   }
+   return results;
+ }
++#endif
+ 
+ NaluType ParseNaluType(uint8_t data) {
+   return static_cast<NaluType>((data & kNaluTypeMask) >> 1);
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_common.h b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_common.h
+index a829195a1007..459ee5b33b3e 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_common.h
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/common_video/h265/h265_common.h
+@@ -14,6 +14,9 @@
+ #include <memory>
+ #include <vector>
+ 
++#ifdef WEBRTC_WEBKIT_BUILD
++#include "common_video/h264/h264_common.h"
++#endif
+ #include "rtc_base/buffer.h"
+ 
+ namespace webrtc {
+@@ -58,6 +61,9 @@ enum NaluType : uint8_t {
+ 
+ enum SliceType : uint8_t { kB = 0, kP = 1, kI = 2 };
+ 
++#ifdef WEBRTC_WEBKIT_BUILD
++using NaluIndex = H264::NaluIndex;
++#else
+ struct NaluIndex {
+   // Start index of NALU, including start sequence.
+   size_t start_offset;
+@@ -66,10 +72,18 @@ struct NaluIndex {
+   // Length of NALU payload, in bytes, counting from payload_start_offset.
+   size_t payload_size;
+ };
++#endif
+ 
+ // Returns a vector of the NALU indices in the given buffer.
++#ifdef WEBRTC_WEBKIT_BUILD
++inline std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
++                                              size_t buffer_size) {
++  return H264::FindNaluIndices(buffer, buffer_size);
++}
++#else
+ std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
+                                        size_t buffer_size);
++#endif
+ 
+ // Get the NAL type from the header byte immediately following start sequence.
+ NaluType ParseNaluType(uint8_t data);
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h265.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h265.cc
+index 9865d7cb8244..122eb98d4b38 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h265.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_h265.cc
+@@ -8,7 +8,9 @@
+ 
+ #include "absl/types/optional.h"
+ #include "absl/types/variant.h"
++#ifndef WEBRTC_WEBKIT_BUILD
+ #include "common_video/h264/h264_common.h"
++#endif
+ #include "common_video/h265/h265_common.h"
+ #include "common_video/h265/h265_pps_parser.h"
+ #include "common_video/h265/h265_sps_parser.h"
+@@ -84,11 +86,19 @@ RtpPacketizerH265::RtpPacketizerH265(rtc::ArrayView<const uint8_t> payload,
+   RTC_CHECK(packetization_mode == H265PacketizationMode::NonInterleaved ||
+             packetization_mode == H265PacketizationMode::SingleNalUnit);
+ 
++#ifdef WEBRTC_WEBKIT_BUILD
++  for (const auto& nalu :
++       H265::FindNaluIndices(payload.data(), payload.size())) {
++    input_fragments_.push_back(
++        payload.subview(nalu.payload_start_offset, nalu.payload_size));
++  }
++#else
+   for (const auto& nalu :
+        H264::FindNaluIndices(payload.data(), payload.size())) {
+     input_fragments_.push_back(
+         payload.subview(nalu.payload_start_offset, nalu.payload_size));
+   }
++#endif
+ 
+   if (!GeneratePackets(packetization_mode)) {
+     // If failed to generate all the packets, discard already generated
+@@ -124,10 +134,22 @@ bool RtpPacketizerH265::GeneratePackets(
+       single_packet_capacity -= limits_.last_packet_reduction_len;
+     }
+     if (fragment_len > single_packet_capacity) {
++#ifdef WEBRTC_WEBKIT_BUILD
++      if (!PacketizeFu(i)) {
++        return false;
++      }
++#else
+       PacketizeFu(i);
++#endif
+       ++i;
+     } else {
++#ifdef WEBRTC_WEBKIT_BUILD
++      if (!PacketizeSingleNalu(i)) {
++        return false;
++      }
++#else
+       PacketizeSingleNalu(i);
++#endif
+       ++i;
+     }
+   }
+@@ -201,7 +223,13 @@ bool RtpPacketizerH265::PacketizeSingleNalu(size_t fragment_index) {
+                       << limits_.max_payload_len;
+     return false;
+   }
++#ifdef WEBRTC_WEBKIT_BUILD
++  if (fragment.size() == 0u) {
++    return false;
++  }
++#else
+   RTC_CHECK_GT(fragment.size(), 0u);
++#endif
+   packets_.push(PacketUnit(fragment, true /* first */, true /* last */,
+                            false /* aggregated */, fragment[0]));
+   ++num_packets_left_;
+-- 
+2.39.3 (Apple Git-145)
+

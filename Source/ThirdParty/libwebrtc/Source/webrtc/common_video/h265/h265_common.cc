@@ -17,6 +17,7 @@ namespace H265 {
 
 const uint8_t kNaluTypeMask = 0x7E;
 
+#ifndef WEBRTC_WEBKIT_BUILD
 std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
                                        size_t buffer_size) {
   std::vector<H264::NaluIndex> indices =
@@ -28,6 +29,7 @@ std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
   }
   return results;
 }
+#endif
 
 NaluType ParseNaluType(uint8_t data) {
   return static_cast<NaluType>((data & kNaluTypeMask) >> 1);

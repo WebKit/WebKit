@@ -1485,6 +1485,11 @@ static void emitAtomicMin(FunctionDefinitionWriter* writer, AST::CallExpression&
     atomicFunction("atomic_fetch_min_explicit", writer, call);
 }
 
+static void emitAtomicAnd(FunctionDefinitionWriter* writer, AST::CallExpression& call)
+{
+    atomicFunction("atomic_fetch_and_explicit", writer, call);
+}
+
 static void emitAtomicOr(FunctionDefinitionWriter* writer, AST::CallExpression& call)
 {
     atomicFunction("atomic_fetch_or_explicit", writer, call);
@@ -1588,6 +1593,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "__dynamicOffset", emitDynamicOffset },
             { "arrayLength", emitArrayLength },
             { "atomicAdd", emitAtomicAdd },
+            { "atomicAnd", emitAtomicAnd },
             { "atomicExchange", emitAtomicExchange },
             { "atomicLoad", emitAtomicLoad },
             { "atomicMax", emitAtomicMax },

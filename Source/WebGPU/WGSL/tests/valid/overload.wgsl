@@ -2,83 +2,119 @@
 
 // 8.6. Logical Expressions (https://gpuweb.github.io/gpuweb/wgsl/#logical-expr)
 
+// RUN: %metal-compile testLogicalNegation
+@compute @workgroup_size(1)
 fn testLogicalNegation()
 {
+    var t = true;
+
     // [].(Bool) => Bool,
-    _ = !true;
-    _ = !false;
+    { const x: bool = !true; }
+    { const x : bool = !false; }
+    { let x : bool = !t; }
 
     // [N].(Vector[Bool, N]) => Vector[Bool, N],
-    _ = !vec2(true);
-    _ = !vec3(true);
-    _ = !vec4(true);
-    _ = !vec2(false);
-    _ = !vec3(false);
-    _ = !vec4(false);
+    { const x: vec2<bool> = !vec2(true); }
+    { const x: vec3<bool> = !vec3(true); }
+    { const x: vec4<bool> = !vec4(true); }
+
+    { const x: vec2<bool> = !vec2(false); }
+    { const x: vec3<bool> = !vec3(false); }
+    { const x: vec4<bool> = !vec4(false); }
+
+    { let x: vec2<bool> = !vec2(t); }
+    { let x: vec3<bool> = !vec3(t); }
+    { let x: vec4<bool> = !vec4(t); }
 }
 
+// RUN: %metal-compile testShortCircuitingOr
+@compute @workgroup_size(1)
 fn testShortCircuitingOr()
 {
+    var t = true;
     // [].(Bool, Bool) => Bool,
-    _ = false || false;
-    _ = true || false;
-    _ = false || true;
-    _ = true || true;
+    { const x: bool = false || false; }
+    { const x: bool = true || false; }
+    { const x: bool = false || true; }
+    { const x: bool = true || true; }
+    { let x: bool = t || t; }
 }
 
+// RUN: %metal-compile testShortCircuitingAnd
+@compute @workgroup_size(1)
 fn testShortCircuitingAnd()
 {
+    var t = true;
     // [].(Bool, Bool) => Bool,
-    _ = false && false;
-    _ = true && false;
-    _ = false && true;
-    _ = true && true;
+    { const x: bool = false && false; }
+    { const x: bool = true && false; }
+    { const x: bool = false && true; }
+    { const x: bool = true && true; }
+    { let x: bool = t && t; }
 }
 
+// RUN: %metal-compile testLogicalOr
+@compute @workgroup_size(1)
 fn testLogicalOr()
 {
+    var t = true;
+
     // [].(Bool, Bool) => Bool,
-    _ = false | false;
-    _ = true | false;
-    _ = false | true;
-    _ = true | true;
+    { const x: bool = false | false; }
+    { const x: bool = true | false; }
+    { const x: bool = false | true; }
+    { const x: bool = true | true; }
+    { let x: bool = t | t; }
 
     // [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
-    _ = vec2(false) | vec2(false);
-    _ = vec2( true) | vec2(false);
-    _ = vec2(false) | vec2( true);
-    _ = vec2( true) | vec2( true);
-    _ = vec3(false) | vec3(false);
-    _ = vec3( true) | vec3(false);
-    _ = vec3(false) | vec3( true);
-    _ = vec3( true) | vec3( true);
-    _ = vec4(false) | vec4(false);
-    _ = vec4( true) | vec4(false);
-    _ = vec4(false) | vec4( true);
-    _ = vec4( true) | vec4( true);
+    { const x: vec2<bool> = vec2(false) | vec2(false); }
+    { const x: vec2<bool> = vec2( true) | vec2(false); }
+    { const x: vec2<bool> = vec2(false) | vec2( true); }
+    { const x: vec2<bool> = vec2( true) | vec2( true); }
+    { const x: vec3<bool> = vec3(false) | vec3(false); }
+    { const x: vec3<bool> = vec3( true) | vec3(false); }
+    { const x: vec3<bool> = vec3(false) | vec3( true); }
+    { const x: vec3<bool> = vec3( true) | vec3( true); }
+    { const x: vec4<bool> = vec4(false) | vec4(false); }
+    { const x: vec4<bool> = vec4( true) | vec4(false); }
+    { const x: vec4<bool> = vec4(false) | vec4( true); }
+    { const x: vec4<bool> = vec4( true) | vec4( true); }
+
+    { let x: vec2<bool> = vec2(t) | vec2(t); }
+    { let x: vec3<bool> = vec3(t) | vec3(t); }
+    { let x: vec4<bool> = vec4(t) | vec4(t); }
 }
 
+// RUN: %metal-compile testLogicalAnd
+@compute @workgroup_size(1)
 fn testLogicalAnd()
 {
+    var t = true;
+
     // [].(Bool, Bool) => Bool,
-    _ = false & false;
-    _ = true & false;
-    _ = false & true;
-    _ = true & true;
+    { const x: bool = false & false; }
+    { const x: bool = true & false; }
+    { const x: bool = false & true; }
+    { const x: bool = true & true; }
+    { let x: bool = t & t; }
 
     // [N].(Vector[Bool, N], Vector[Bool, N]) => Vector[Bool, N],
-    _ = vec2(false) & vec2(false);
-    _ = vec2( true) & vec2(false);
-    _ = vec2(false) & vec2( true);
-    _ = vec2( true) & vec2( true);
-    _ = vec3(false) & vec3(false);
-    _ = vec3( true) & vec3(false);
-    _ = vec3(false) & vec3( true);
-    _ = vec3( true) & vec3( true);
-    _ = vec4(false) & vec4(false);
-    _ = vec4( true) & vec4(false);
-    _ = vec4(false) & vec4( true);
-    _ = vec4( true) & vec4( true);
+    { const x: vec2<bool> = vec2(false) & vec2(false); }
+    { const x: vec2<bool> = vec2( true) & vec2(false); }
+    { const x: vec2<bool> = vec2(false) & vec2( true); }
+    { const x: vec2<bool> = vec2( true) & vec2( true); }
+    { const x: vec3<bool> = vec3(false) & vec3(false); }
+    { const x: vec3<bool> = vec3( true) & vec3(false); }
+    { const x: vec3<bool> = vec3(false) & vec3( true); }
+    { const x: vec3<bool> = vec3( true) & vec3( true); }
+    { const x: vec4<bool> = vec4(false) & vec4(false); }
+    { const x: vec4<bool> = vec4( true) & vec4(false); }
+    { const x: vec4<bool> = vec4(false) & vec4( true); }
+    { const x: vec4<bool> = vec4( true) & vec4( true); }
+
+    { let x: vec2<bool> = vec2(t) & vec2(t); }
+    { let x: vec3<bool> = vec3(t) & vec3(t); }
+    { let x: vec4<bool> = vec4(t) & vec4(t); }
 }
 
 // 8.7. Arithmetic Expressions (https://www.w3.org/TR/WGSL/#arithmetic-expr)
@@ -1448,6 +1484,10 @@ fn testCross()
     _ = cross(vec3(1, 1, 1), vec3(1f, 2f, 3f));
     _ = cross(vec3(1.0, 1.0, 1.0), vec3(1f, 2f, 3f));
     _ = cross(vec3(1f, 1f, 1f), vec3(1f, 2f, 3f));
+
+    _ = cross(vec3(1, 1, 1), vec3(1h, 2h, 3h));
+    _ = cross(vec3(1.0, 1.0, 1.0), vec3(1h, 2h, 3h));
+    _ = cross(vec3(1h, 1h, 1h), vec3(1h, 2h, 3h));
 }
 
 // 16.5.17
@@ -1484,6 +1524,14 @@ fn testDeterminant()
     _ = determinant(mat2x2(1, 1, 1, 1));
     _ = determinant(mat3x3(1, 1, 1, 1, 1, 1, 1, 1, 1));
     _ = determinant(mat4x4(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1));
+
+    _ = determinant(mat2x2(1f, 1f, 1f, 1f));
+    _ = determinant(mat3x3(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f));
+    _ = determinant(mat4x4(1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f, 1f));
+
+    _ = determinant(mat2x2(1h, 1h, 1h, 1h));
+    _ = determinant(mat3x3(1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h));
+    _ = determinant(mat4x4(1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h, 1h));
 }
 
 // 16.5.19
@@ -3419,6 +3467,7 @@ fn testAtomicReadWriteModify()
     _ = atomicSub(&x, 42);
     _ = atomicMax(&x, 42);
     _ = atomicMin(&x, 42);
+    _ = atomicAnd(&x, 42);
     _ = atomicOr(&x, 42);
     _ = atomicXor(&x, 42);
     _ = atomicExchange(&x, 42);

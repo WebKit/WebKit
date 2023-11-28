@@ -81,13 +81,13 @@ String convertEnumerationToString(MediaSourcePrivate::AddStatus enumerationValue
 String convertEnumerationToString(MediaSourcePrivate::EndOfStreamStatus enumerationValue)
 {
     static const NeverDestroyed<String> values[] = {
-        MAKE_STATIC_STRING_IMPL("EosNoError"),
-        MAKE_STATIC_STRING_IMPL("EosNetworkError"),
-        MAKE_STATIC_STRING_IMPL("EosDecodeError"),
+        MAKE_STATIC_STRING_IMPL("NoError"),
+        MAKE_STATIC_STRING_IMPL("NetworkError"),
+        MAKE_STATIC_STRING_IMPL("DecodeError"),
     };
-    static_assert(static_cast<size_t>(MediaSourcePrivate::EndOfStreamStatus::EosNoError) == 0, "MediaSourcePrivate::EndOfStreamStatus::EosNoError is not 0 as expected");
-    static_assert(static_cast<size_t>(MediaSourcePrivate::EndOfStreamStatus::EosNetworkError) == 1, "MediaSourcePrivate::EndOfStreamStatus::EosNetworkError is not 1 as expected");
-    static_assert(static_cast<size_t>(MediaSourcePrivate::EndOfStreamStatus::EosDecodeError) == 2, "MediaSourcePrivate::EndOfStreamStatus::EosDecodeError is not 2 as expected");
+    static_assert(static_cast<size_t>(MediaSourcePrivate::EndOfStreamStatus::NoError) == 0, "MediaSourcePrivate::EndOfStreamStatus::NoError is not 0 as expected");
+    static_assert(static_cast<size_t>(MediaSourcePrivate::EndOfStreamStatus::NetworkError) == 1, "MediaSourcePrivate::EndOfStreamStatus::NetworkError is not 1 as expected");
+    static_assert(static_cast<size_t>(MediaSourcePrivate::EndOfStreamStatus::DecodeError) == 2, "MediaSourcePrivate::EndOfStreamStatus::DecodeError is not 2 as expected");
     ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
@@ -606,9 +606,9 @@ void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
         setDurationInternal(maxEndTime);
 
         // 2. Notify the media element that it now has all of the media data.
-        m_private->markEndOfStream(MediaSourcePrivate::EosNoError);
+        m_private->markEndOfStream(MediaSourcePrivate::EndOfStreamStatus::NoError);
     } else if (error == EndOfStreamError::Network) {
-        m_private->markEndOfStream(MediaSourcePrivate::EosNetworkError);
+        m_private->markEndOfStream(MediaSourcePrivate::EndOfStreamStatus::NetworkError);
         // ↳ If error is set to "network"
         ASSERT(m_mediaElement);
         if (m_mediaElement->readyState() == HTMLMediaElement::HAVE_NOTHING) {
@@ -627,7 +627,7 @@ void MediaSource::streamEndedWithError(std::optional<EndOfStreamError> error)
     } else {
         // ↳ If error is set to "decode"
         ASSERT(error == EndOfStreamError::Decode);
-        m_private->markEndOfStream(MediaSourcePrivate::EosDecodeError);
+        m_private->markEndOfStream(MediaSourcePrivate::EndOfStreamStatus::DecodeError);
 
         ASSERT(m_mediaElement);
         if (m_mediaElement->readyState() == HTMLMediaElement::HAVE_NOTHING) {

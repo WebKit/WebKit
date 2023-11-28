@@ -14,6 +14,9 @@
 #include <memory>
 #include <vector>
 
+#ifdef WEBRTC_WEBKIT_BUILD
+#include "common_video/h264/h264_common.h"
+#endif
 #include "rtc_base/buffer.h"
 
 namespace webrtc {
@@ -58,6 +61,9 @@ enum NaluType : uint8_t {
 
 enum SliceType : uint8_t { kB = 0, kP = 1, kI = 2 };
 
+#ifdef WEBRTC_WEBKIT_BUILD
+using NaluIndex = H264::NaluIndex;
+#else
 struct NaluIndex {
   // Start index of NALU, including start sequence.
   size_t start_offset;
@@ -66,10 +72,18 @@ struct NaluIndex {
   // Length of NALU payload, in bytes, counting from payload_start_offset.
   size_t payload_size;
 };
+#endif
 
 // Returns a vector of the NALU indices in the given buffer.
+#ifdef WEBRTC_WEBKIT_BUILD
+inline std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
+                                              size_t buffer_size) {
+  return H264::FindNaluIndices(buffer, buffer_size);
+}
+#else
 std::vector<NaluIndex> FindNaluIndices(const uint8_t* buffer,
                                        size_t buffer_size);
+#endif
 
 // Get the NAL type from the header byte immediately following start sequence.
 NaluType ParseNaluType(uint8_t data);

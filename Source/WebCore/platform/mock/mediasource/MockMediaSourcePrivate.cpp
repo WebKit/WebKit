@@ -79,7 +79,7 @@ void MockMediaSourcePrivate::durationChanged(const MediaTime& duration)
 
 void MockMediaSourcePrivate::markEndOfStream(EndOfStreamStatus status)
 {
-    if (status == EosNoError)
+    if (status == EndOfStreamStatus::NoError)
         m_player.setNetworkState(MediaPlayer::NetworkState::Loaded);
     MediaSourcePrivate::markEndOfStream(status);
 }

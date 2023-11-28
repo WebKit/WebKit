@@ -38,7 +38,6 @@
 #include "RenderLayerModelObject.h"
 #include "RenderStyleConstants.h"
 #include "Styleable.h"
-#include "WebAnimation.h"
 #include <wtf/MonotonicTime.h>
 
 namespace WebCore {

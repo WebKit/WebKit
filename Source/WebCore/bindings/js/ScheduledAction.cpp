@@ -86,8 +86,8 @@ auto ScheduledAction::type() const -> Type
 
 void ScheduledAction::execute(ScriptExecutionContext& context)
 {
-    if (is<Document>(context))
-        execute(downcast<Document>(context));
+    if (auto* document = dynamicDowncast<Document>(context))
+        execute(*document);
     else
         execute(downcast<WorkerGlobalScope>(context));
 }

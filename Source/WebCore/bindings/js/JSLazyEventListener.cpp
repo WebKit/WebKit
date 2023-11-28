@@ -114,8 +114,6 @@ JSLazyEventListener::~JSLazyEventListener()
 
 JSObject* JSLazyEventListener::initializeJSFunction(ScriptExecutionContext& executionContext) const
 {
-    ASSERT(is<Document>(executionContext));
-
     Ref executionContextDocument = downcast<Document>(executionContext);
 
     // As per the HTML specification [1], if this is an element's event handler, then document should be the

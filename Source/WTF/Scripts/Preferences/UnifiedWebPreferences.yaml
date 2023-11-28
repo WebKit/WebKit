@@ -7165,20 +7165,6 @@ WebAnimationsCustomFrameRateEnabled:
     WebCore:
       default: false
 
-WebAnimationsIterationCompositeEnabled:
-  type: bool
-  status: stable
-  category: animation
-  humanReadableName: "Web Animations iteration composite"
-  humanReadableDescription: "Support for the KeyframeEffect.iterationComposite property"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 WebArchiveDebugModeEnabled:
   type: bool
   status: embedder
