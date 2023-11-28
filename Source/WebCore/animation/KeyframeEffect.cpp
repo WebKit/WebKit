@@ -556,9 +556,7 @@ ExceptionOr<Ref<KeyframeEffect>> KeyframeEffect::create(JSGlobalObject& lexicalG
             };
 
             keyframeEffect->setComposite(keyframeEffectOptions.composite);
-
-            if (document.settings().webAnimationsIterationCompositeEnabled())
-                keyframeEffect->setIterationComposite(keyframeEffectOptions.iterationComposite);
+            keyframeEffect->setIterationComposite(keyframeEffectOptions.iterationComposite);
         }
         auto updateTimingResult = keyframeEffect->updateTiming(timing);
         if (updateTimingResult.hasException())
