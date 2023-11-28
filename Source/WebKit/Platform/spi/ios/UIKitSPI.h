@@ -1263,7 +1263,7 @@ typedef struct {
 
 @protocol UIAsyncTextInputDelegate_Staging<UIAsyncTextInputDelegate>
 - (void)invalidateTextEntryContext; // Added in rdar://118536368.
-- (void)replaceText:(id)sender; // Added in rdar://118307558.
+- (void)deferReplaceTextActionToSystem:(id)sender; // Added in rdar://118307558.
 - (void)provideCandidateUISuggestions:(NSArray<UITextSuggestion*> *)suggestions; // Added in rdar://117914235.
 @end
 
