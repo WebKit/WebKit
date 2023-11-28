@@ -225,7 +225,10 @@ public:
 
     PartialResult WARN_UNUSED_RETURN getGlobal(uint32_t index, ExpressionType& result)
     {
-        WASM_COMPILE_FAIL_IF(index >= m_info.firstInternalGlobal, "get_global import kind index ", index, " exceeds the first internal global ", m_info.firstInternalGlobal);
+        // Note that this check works for table initializers too, because no globals are registered when the table section is read and the count is 0.
+        WASM_COMPILE_FAIL_IF(index >= m_info.globals.size(), "get_global's index ", index, " exceeds the number of globals ", m_info.globals.size());
+        if (!Options::useWebAssemblyGC())
+            WASM_COMPILE_FAIL_IF(index >= m_info.firstInternalGlobal, "get_global import kind index ", index, " exceeds the first internal global ", m_info.firstInternalGlobal);
         WASM_COMPILE_FAIL_IF(m_info.globals[index].mutability != Mutability::Immutable, "get_global import kind index ", index, " is mutable ");
 
         if (m_mode == Mode::Evaluate)
