@@ -1998,6 +1998,13 @@ Reviewed by NOBODY (OOPS!).
                 issue=dict(href='https://{}/issues/1'.format(result.api_remote)),
             ), draft=False,
         )]
+
+        result.statuses['95507e3a1a4a'] = PullRequest.Status.Encoder().default([
+            PullRequest.Status(name='test-webkitpy', status='pending', description='Running...'),
+            PullRequest.Status(name='test-webkitcorepy', status='success', description='Finished!'),
+            PullRequest.Status(name='test-webkitscmpy', status='failure', description='Failed webkitscmpy.test.pull_request_unittest.TestNetworkPullRequestGitHub.test_status'),
+        ])
+
         return result
 
     def test_find(self):
@@ -2087,6 +2094,17 @@ Reviewed by NOBODY (OOPS!).
             self.assertEqual(pr.comments[-1].content, 'Looks good!')
             self.assertEqual(len(pr.approvers), 2)
 
+    def test_status(self):
+        with self.webserver():
+            repo = remote.GitHub(self.remote)
+            pr = repo.pull_requests.get(1)
+            self.assertEqual(len(pr.statuses), 3)
+            self.assertEqual(
+                [pr.status for pr in pr.statuses],
+                ['pending', 'success', 'failure'],
+            )
+
+
 
 class TestNetworkPullRequestBitBucket(unittest.TestCase):
     remote = 'https://bitbucket.example.com/projects/WEBKIT/repos/webkit'
@@ -2138,6 +2156,13 @@ Reviewed by NOBODY (OOPS!).
                 ),
             ],
         )]
+
+        result.statuses['95507e3a1a4a'] = PullRequest.Status.Encoder().default([
+            PullRequest.Status(name='test-webkitpy', status='pending', description='Running...'),
+            PullRequest.Status(name='test-webkitcorepy', status='success', description='Finished!'),
+            PullRequest.Status(name='test-webkitscmpy', status='failure', description='Failed webkitscmpy.test.pull_request_unittest.TestNetworkPullRequestGitHub.test_status'),
+        ])
+
         return result
 
     def test_find(self):
@@ -2223,3 +2248,13 @@ Reviewed by NOBODY (OOPS!).
 
             self.assertEqual(pr.comments[-1].content, 'Looks good!')
             self.assertEqual(len(pr.approvers), 2)
+
+    def test_status(self):
+        with self.webserver():
+            repo = remote.BitBucket(self.remote)
+            pr = repo.pull_requests.get(1)
+            self.assertEqual(len(pr.statuses), 3)
+            self.assertEqual(
+                [pr.status for pr in pr.statuses],
+                ['pending', 'success', 'failure'],
+            )

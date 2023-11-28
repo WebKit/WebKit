@@ -57,6 +57,9 @@ class Scm(ScmBase):
         def review(self, pull_request, comment=None, approve=None):
             raise NotImplementedError()
 
+        def statuses(self, pull_request):
+            raise NotImplementedError()
+
 
     @classmethod
     def from_url(cls, url, contributors=None, classifier=None):

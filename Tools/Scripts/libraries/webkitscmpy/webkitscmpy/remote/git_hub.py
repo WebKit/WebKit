@@ -356,6 +356,20 @@ class GitHub(Scm):
 
             return pull_request
 
+        def statuses(self, pull_request):
+            statuses = self.repository.request(
+                'commits/{ref}/statuses'.format(
+                    ref=pull_request.hash,
+                )
+            )
+            for status in statuses or []:
+                yield PullRequest.Status(
+                    name=status.get('context'),
+                    url=status.get('target_url'),
+                    status=status.get('state', 'error'),
+                    description=status.get('description'),
+                )
+
 
     @classmethod
     def is_webserver(cls, url):

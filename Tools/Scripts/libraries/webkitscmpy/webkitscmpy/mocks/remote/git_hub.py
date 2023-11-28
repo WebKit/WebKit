@@ -37,7 +37,7 @@ class GitHub(bmocks.GitHub):
         self, remote='github.example.com/WebKit/WebKit', datafile=None,
         default_branch='main', git_svn=False, environment=None,
         releases=None, issues=None, projects=None, labels=None,
-        private=False,
+        private=False, statuses=None,
     ):
         if not scmremote.GitHub.is_webserver('https://{}'.format(remote)):
             raise ValueError('"{}" is not a valid GitHub remote'.format(remote))
@@ -71,6 +71,7 @@ class GitHub(bmocks.GitHub):
         self.tags = {}
         self.pull_requests = []
         self.releases = releases or dict()
+        self.statuses = statuses or {}
 
     def resolve_all_commits(self, branch):
         all_commits = self.commits[branch][:]
@@ -197,6 +198,21 @@ class GitHub(bmocks.GitHub):
     def _commit_response(self, url, ref):
         from datetime import datetime, timedelta
 
+        path = None
+        split = ref.split('/', 1)
+        if len(split) > 1:
+            ref, path = split
+
+        if path == 'statuses':
+            return mocks.Response.fromJson([dict(
+                context=status['name'],
+                url=status.get('url'),
+                state=status.get('status') or 'pending',
+                description=status.get('description'),
+            ) for status in self.statuses.get(ref[:Commit.HASH_LABEL_SIZE], [])], url=url)
+        elif path:
+            return mocks.Response.create404(url)
+
         commit = self.commit(ref)
         if not commit:
             return mocks.Response.fromJson(
@@ -204,6 +220,7 @@ class GitHub(bmocks.GitHub):
                 url=url,
                 status_code=404,
             )
+
         return mocks.Response.fromJson({
             'sha': commit.hash,
             'commit': {
@@ -378,7 +395,7 @@ class GitHub(bmocks.GitHub):
 
         # Extract single commit
         if stripped_url.startswith('{}/commits/'.format(self.api_remote)):
-            return self._commit_response(url=url, ref=stripped_url.split('/')[-1])
+            return self._commit_response(url=url, ref=stripped_url.split('/', 5)[-1])
 
         # Compare two commits
         if stripped_url.startswith('{}/compare/'.format(self.api_remote)):
