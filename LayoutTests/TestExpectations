@@ -6690,3 +6690,5 @@ imported/w3c/web-platform-tests/dom/events/scrolling/overscroll-deltas.html [ Sk
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-fired-to-document.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-on-no-scroll.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/input-text-scroll-event-when-using-arrow-keys.html [ Skip ]
+
+webkit.org/b/264830 [ Debug ] fast/rendering/render-list-marker-select.html [ Skip ]
