@@ -554,7 +554,10 @@ Error Surface::bindTexImage(gl::Context *context, gl::Texture *texture, EGLint b
 {
     ASSERT(!mTexture);
     ANGLE_TRY(mImplementation->bindTexImage(context, texture, buffer));
-
+    if (auto *previousSurface = texture->getBoundSurface())
+    {
+        ANGLE_TRY(previousSurface->releaseTexImage(context, buffer));
+    }
     if (texture->bindTexImageFromSurface(context, this) == angle::Result::Stop)
     {
         return Error(EGL_BAD_SURFACE);
