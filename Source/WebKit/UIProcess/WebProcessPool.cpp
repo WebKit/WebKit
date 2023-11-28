@@ -1105,6 +1105,11 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         pageConfiguration->setWebsiteDataStore(WebKit::WebsiteDataStore::defaultDataStore());
     }
 
+#if USE(EXTENSIONKIT)
+    auto manageWebKitProcessesAsExtensions = pageConfiguration->preferences()->store().getBoolValueForKey(WebPreferencesKey::manageWebKitProcessesAsExtensionsKey());
+    AuxiliaryProcessProxy::setManageProcessesAsExtensions(manageWebKitProcessesAsExtensions);
+#endif
+
     RefPtr<WebProcessProxy> process;
     auto lockdownMode = pageConfiguration->lockdownModeEnabled() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled;
     RefPtr relatedPage = pageConfiguration->relatedPage();
