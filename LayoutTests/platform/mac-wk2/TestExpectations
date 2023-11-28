@@ -1995,3 +1995,5 @@ webkit.org/b/264306 [ Sonoma+ ] fast/scrolling/mac/scrollbars/very-wide-overlay-
 webkit.org/b/264362 [ Sonoma+ ] fast/rendering/render-style-null-optgroup-crash.html [ Pass Failure ]
 
 webkit.org/b/264783 [ Monterey+ x86_64 ] http/wpt/mediarecorder/record-context-created-late.html [ Failure ]
+
+webkit.org/b/265414 [ Monterey+ ] imported/w3c/web-platform-tests/accname/name/comp_host_language_label.html [ Failure ]
