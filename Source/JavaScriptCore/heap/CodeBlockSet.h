@@ -51,7 +51,7 @@ public:
 
     void mark(const AbstractLocker&, CodeBlock* candidateCodeBlock);
     
-    void clearCurrentlyExecuting();
+    void clearCurrentlyExecutingAndRemoveDeadCodeBlocks(VM&);
 
     bool contains(const AbstractLocker&, void* candidateCodeBlock);
     Lock& getLock() WTF_RETURNS_LOCK(m_lock) { return m_lock; }
