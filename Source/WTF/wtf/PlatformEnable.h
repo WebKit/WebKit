@@ -242,10 +242,6 @@
 #define ENABLE_FILE_REPLACEMENT 0
 #endif
 
-#if !defined(ENABLE_FILE_SHARE)
-#define ENABLE_FILE_SHARE 1
-#endif
-
 #if !defined(ENABLE_FTPDIR)
 #define ENABLE_FTPDIR 1
 #endif
