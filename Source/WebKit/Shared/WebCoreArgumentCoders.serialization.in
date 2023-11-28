@@ -6785,3 +6785,27 @@ enum class WebCore::InspectorClientDeveloperPreference : uint8_t {
     ITPDebugModeEnabled,
     MockCaptureDevicesEnabled,
 };
+
+#if ENABLE(MEDIA_SOURCE)
+
+header: <WebCore/MediaSourcePrivate.h>
+enum class WebCore::MediaSourcePrivateAddStatus : uint8_t {
+    Ok,
+    NotSupported,
+    ReachedIdLimit
+};
+
+header: <WebCore/MediaSourcePrivate.h>
+enum class WebCore::MediaSourcePrivateEndOfStreamStatus : uint8_t {
+    NoError,
+    NetworkError,
+    DecodeError
+};
+
+header: <WebCore/SourceBufferPrivate.h>
+enum class WebCore::SourceBufferAppendMode : uint8_t {
+    Segments,
+    Sequence
+};
+
+#endif

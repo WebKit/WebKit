@@ -122,7 +122,7 @@ void MediaSourcePrivateAVFObjC::durationChanged(const MediaTime&)
 
 void MediaSourcePrivateAVFObjC::markEndOfStream(EndOfStreamStatus status)
 {
-    if (auto* player = this->player(); status == EosNoError && player)
+    if (auto* player = this->player(); status == EndOfStreamStatus::NoError && player)
         player->setNetworkState(MediaPlayer::NetworkState::Loaded);
     MediaSourcePrivate::markEndOfStream(status);
 }
