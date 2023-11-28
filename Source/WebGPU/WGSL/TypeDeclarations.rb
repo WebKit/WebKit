@@ -1361,6 +1361,7 @@ function :atomicStore, {
     :atomicSub,
     :atomicMax,
     :atomicMin,
+    :atomicAnd,
     :atomicOr,
     :atomicXor,
     :atomicExchange,

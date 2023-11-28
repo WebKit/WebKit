@@ -3459,6 +3459,7 @@ fn testAtomicReadWriteModify()
     _ = atomicSub(&x, 42);
     _ = atomicMax(&x, 42);
     _ = atomicMin(&x, 42);
+    _ = atomicAnd(&x, 42);
     _ = atomicOr(&x, 42);
     _ = atomicXor(&x, 42);
     _ = atomicExchange(&x, 42);
