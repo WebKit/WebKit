@@ -132,10 +132,6 @@
 #define ENABLE_ALTERNATE_WEBM_PLAYER 0
 #endif
 
-#if !defined(ENABLE_APNG)
-#define ENABLE_APNG 1
-#endif
-
 #if !defined(ENABLE_APP_HIGHLIGHTS)
 #define ENABLE_APP_HIGHLIGHTS 0
 #endif

@@ -26,9 +26,7 @@
 #pragma once
 
 #include "ScalableImageDecoder.h"
-#if ENABLE(APNG)
 #include <png.h>
-#endif
 
 #if USE(LCMS)
 #include "LCMSUniquePtr.h"
@@ -50,10 +48,8 @@ namespace WebCore {
 
         // ScalableImageDecoder
         String filenameExtension() const override { return "png"_s; }
-#if ENABLE(APNG)
         size_t frameCount() const override { return m_frameCount; }
         RepetitionCount repetitionCount() const override;
-#endif
         ScalableImageDecoderFrame* frameBufferAtIndex(size_t index) override;
         // CAUTION: setFailed() deletes |m_reader|.  Be careful to avoid
         // accessing deleted memory, especially when calling this from inside
@@ -64,13 +60,11 @@ namespace WebCore {
         void headerAvailable();
         void rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, int interlacePass);
         void pngComplete();
-#if ENABLE(APNG)
         void readChunks(png_unknown_chunkp);
         void frameHeader();
 
         void init();
         void clearFrameBufferCache(size_t clearBeforeFrame) override;
-#endif
 
         bool isComplete() const
         {
@@ -98,20 +92,17 @@ namespace WebCore {
         // calculating the image size.  If decoding fails but there is no more
         // data coming, sets the "decode failure" flag.
         void decode(bool onlySize, unsigned haltAtFrame, bool allDataReceived);
-#if ENABLE(APNG)
         void initFrameBuffer(size_t frameIndex);
         void frameComplete();
         int processingStart(png_unknown_chunkp);
         int processingFinish();
         void fallbackNotAnimated();
-#endif
 
         void clear();
 
         std::unique_ptr<PNGImageReader> m_reader;
         bool m_doNothingOnFailure;
         unsigned m_currentFrame;
-#if ENABLE(APNG)
         png_structp m_png;
         png_infop m_info;
         bool m_isAnimated;
@@ -136,7 +127,6 @@ namespace WebCore {
         png_byte m_dataIHDR[12 + 13];
         png_byte m_dataPLTE[12 + 256 * 3];
         png_byte m_datatRNS[12 + 256];
-#endif
 #if USE(LCMS)
     LCMSTransformPtr m_iccTransform;
 #endif
