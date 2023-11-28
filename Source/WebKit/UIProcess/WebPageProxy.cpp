@@ -13235,8 +13235,7 @@ void WebPageProxy::sendToWebPage(std::optional<FrameIdentifier> frameID, F&& sen
                 sendFunction(*remotePageProxy);
                 return;
             }
-        } else
-            ASSERT_NOT_REACHED();
+        }
     }
     sendFunction(*this);
 }
