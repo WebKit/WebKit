@@ -822,9 +822,9 @@ CONSTANT_FUNCTION(Cross)
         auto v2 = std::get<T>(rhs.elements[2]);
 
         ConstantVector result(3);
-        result.elements[0] = u1 * v2 - u2 * v1;
-        result.elements[1] = u2 * v0 - u0 * v2;
-        result.elements[2] = u0 * v1 - u1 * v0;
+        result.elements[0] = static_cast<T>(u1 * v2 - u2 * v1);
+        result.elements[1] = static_cast<T>(u2 * v0 - u0 * v2);
+        result.elements[2] = static_cast<T>(u0 * v1 - u1 * v0);
         return { { result } };
     };
 

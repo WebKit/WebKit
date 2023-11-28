@@ -1484,6 +1484,10 @@ fn testCross()
     _ = cross(vec3(1, 1, 1), vec3(1f, 2f, 3f));
     _ = cross(vec3(1.0, 1.0, 1.0), vec3(1f, 2f, 3f));
     _ = cross(vec3(1f, 1f, 1f), vec3(1f, 2f, 3f));
+
+    _ = cross(vec3(1, 1, 1), vec3(1h, 2h, 3h));
+    _ = cross(vec3(1.0, 1.0, 1.0), vec3(1h, 2h, 3h));
+    _ = cross(vec3(1h, 1h, 1h), vec3(1h, 2h, 3h));
 }
 
 // 16.5.17
