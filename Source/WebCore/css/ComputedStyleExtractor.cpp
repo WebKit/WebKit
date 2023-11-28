@@ -72,6 +72,7 @@
 #include "SVGElement.h"
 #include "SVGRenderStyle.h"
 #include "ScaleTransformOperation.h"
+#include "ScrollTimeline.h"
 #include "SkewTransformOperation.h"
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
@@ -2832,6 +2833,53 @@ static inline bool isFlexOrGridItem(RenderObject* renderer)
     return box && (box->isFlexItem() || box->isGridItem());
 }
 
+static Ref<CSSValue> valueForScrollTimelineAxis(const Vector<ScrollAxis>& axes)
+{
+    if (axes.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueBlock);
+
+    CSSValueListBuilder list;
+    for (auto axis : axes)
+        list.append(createConvertingToCSSValueID(axis));
+    return CSSValueList::createCommaSeparated(WTFMove(list));
+}
+
+static Ref<CSSValue> valueForScrollTimelineName(const Vector<AtomString>& names)
+{
+    if (names.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueNone);
+
+    CSSValueListBuilder list;
+    for (auto& name : names) {
+        if (name.isNull())
+            list.append(CSSPrimitiveValue::create(CSSValueNone));
+        else
+            list.append(CSSPrimitiveValue::createCustomIdent(name));
+    }
+    return CSSValueList::createCommaSeparated(WTFMove(list));
+}
+
+static Ref<CSSValue> scrollTimelineShorthandValue(const Vector<Ref<ScrollTimeline>>& timelines)
+{
+    if (timelines.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueNone);
+
+    CSSValueListBuilder list;
+    for (auto& timeline : timelines) {
+        auto& name = timeline->name();
+        auto axis = timeline->axis();
+
+        ASSERT(!name.isNull());
+        auto nameCSSValue = CSSPrimitiveValue::createCustomIdent(name);
+
+        if (axis == ScrollAxis::Block)
+            list.append(WTFMove(nameCSSValue));
+        else
+            list.append(CSSValuePair::createNoncoalescing(nameCSSValue, createConvertingToCSSValueID(axis)));
+    }
+    return CSSValueList::createCommaSeparated(WTFMove(list));
+}
+
 RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const AtomString& propertyName) const
 {
     Element* styledElement = m_element.get();
@@ -4264,6 +4312,12 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return createConvertingToCSSValueID(style.scrollSnapStop());
     case CSSPropertyScrollSnapType:
         return valueForScrollSnapType(style.scrollSnapType());
+    case CSSPropertyScrollTimelineAxis:
+        return valueForScrollTimelineAxis(style.scrollTimelineAxes());
+    case CSSPropertyScrollTimelineName:
+        return valueForScrollTimelineName(style.scrollTimelineNames());
+    case CSSPropertyScrollTimeline:
+        return scrollTimelineShorthandValue(style.scrollTimelines());
     case CSSPropertyScrollbarColor:
         if (!style.scrollbarColor())
             return CSSPrimitiveValue::create(CSSValueAuto);

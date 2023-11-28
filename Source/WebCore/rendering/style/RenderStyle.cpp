@@ -46,6 +46,7 @@
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"
 #include "ScaleTransformOperation.h"
+#include "ScrollAxis.h"
 #include "ScrollbarGutter.h"
 #include "ShadowData.h"
 #include "StyleBuilderConverter.h"
@@ -3870,6 +3871,24 @@ UserSelect RenderStyle::effectiveUserSelect() const
         return value == UserSelect::None ? UserSelect::Text : value;
 
     return value;
+}
+
+void RenderStyle::adjustScrollTimelines()
+{
+    auto& names = scrollTimelineNames();
+    if (!names.size() && !scrollTimelines().size())
+        return;
+
+    auto& timelines = m_nonInheritedData.access().rareData.access().scrollTimelines;
+    timelines.clear();
+
+    auto& axes = scrollTimelineAxes();
+    auto numberOfAxes = axes.size();
+
+    for (size_t i = 0; i < names.size(); ++i) {
+        auto axis = numberOfAxes ? axes[i % numberOfAxes] : ScrollAxis::Block;
+        timelines.append(ScrollTimeline::create(names[i], axis));
+    }
 }
 
 } // namespace WebCore

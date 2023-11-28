@@ -83,6 +83,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     // scrollSnapType
     // scrollSnapAlign
     // scrollSnapStop
+    // scrollTimelines
+    // scrollTimelineAxes
+    // scrollTimelineNames
     // scrollbarGutter
     , scrollbarWidth(RenderStyle::initialScrollbarWidth())
     , zoom(RenderStyle::initialZoom())
@@ -168,6 +171,9 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , scrollSnapType(o.scrollSnapType)
     , scrollSnapAlign(o.scrollSnapAlign)
     , scrollSnapStop(o.scrollSnapStop)
+    , scrollTimelines(o.scrollTimelines)
+    , scrollTimelineAxes(o.scrollTimelineAxes)
+    , scrollTimelineNames(o.scrollTimelineNames)
     , scrollbarGutter(o.scrollbarGutter)
     , scrollbarWidth(o.scrollbarWidth)
     , zoom(o.zoom)
@@ -259,6 +265,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && scrollSnapType == o.scrollSnapType
         && scrollSnapAlign == o.scrollSnapAlign
         && scrollSnapStop == o.scrollSnapStop
+        && scrollTimelines == o.scrollTimelines
+        && scrollTimelineAxes == o.scrollTimelineAxes
+        && scrollTimelineNames == o.scrollTimelineNames
         && scrollbarGutter == o.scrollbarGutter
         && scrollbarWidth == o.scrollbarWidth
         && zoom == o.zoom

@@ -74,6 +74,7 @@ class RoundedRect;
 class SVGLengthValue;
 class SVGRenderStyle;
 class ScaleTransformOperation;
+class ScrollTimeline;
 class ShadowData;
 class ShapeValue;
 class StyleColor;
@@ -186,6 +187,7 @@ enum class QuoteType : uint8_t;
 enum class Resize : uint8_t;
 enum class RubyPosition : uint8_t;
 enum class SVGPaintType : uint8_t;
+enum class ScrollAxis : uint8_t;
 enum class ScrollSnapStop : bool;
 enum class ScrollbarWidth : uint8_t;
 enum class SpeakAs : uint8_t;
@@ -923,6 +925,13 @@ public:
 
     PointerEvents pointerEvents() const { return static_cast<PointerEvents>(m_inheritedFlags.pointerEvents); }
     inline PointerEvents effectivePointerEvents() const;
+
+    inline const Vector<Ref<ScrollTimeline>>& scrollTimelines() const;
+    inline const Vector<ScrollAxis>& scrollTimelineAxes() const;
+    inline const Vector<AtomString>& scrollTimelineNames() const;
+    inline void setScrollTimelineAxes(const Vector<ScrollAxis>&);
+    inline void setScrollTimelineNames(const Vector<AtomString>&);
+
     inline const AnimationList* animations() const;
     inline const AnimationList* transitions() const;
 
@@ -1499,6 +1508,8 @@ public:
     void adjustAnimations();
     void adjustTransitions();
 
+    void adjustScrollTimelines();
+
     inline void setTransformStyle3D(TransformStyle3D);
     inline void setTransformStyleForcedToFlat(bool);
     inline void setBackfaceVisibility(BackfaceVisibility);
@@ -1976,6 +1987,9 @@ public:
     static ScrollSnapType initialScrollSnapType();
     static ScrollSnapAlign initialScrollSnapAlign();
     static ScrollSnapStop initialScrollSnapStop();
+
+    static Vector<ScrollAxis> initialScrollTimelineAxes() { return { }; }
+    static Vector<AtomString> initialScrollTimelineNames() { return { }; }
 
     static inline std::optional<ScrollbarColor> initialScrollbarColor();
     static ScrollbarGutter initialScrollbarGutter();
