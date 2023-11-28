@@ -309,14 +309,10 @@ String URL::fileSystemPath() const
 #if OS(WINDOWS)
     // UNC paths look like '\\server\share\etc', but in a URL they look like 'file://server/share/etc'.
     auto unc_host = host();
-    if (UNLIKELY(unc_host)) {
+    if (UNLIKELY(unc_host.length() > 0)) {
         return makeString("\\\\"_s, unc_host, "\\"_s, decodeEscapeSequencesFromParsedURLForWindowsPath(path()));
     }
-    // It should be impossible to construct a file:// url without a host and not start with a slash.
-    // Doing `new URL("file://C:/hello")` parses to have path() = "/C:/hello"
-    // UNC paths will take advantage of this for the output, while regular paths will 
-    ASSERT(path().startsWith('/'));
-    return decodeEscapeSequencesFromParsedURLForWindowsPath(path().substring(1));
+    return decodeEscapeSequencesFromParsedURLForWindowsPath(path());
 #else
     return decodeEscapeSequencesFromParsedURL(path());
 #endif
@@ -1137,12 +1133,23 @@ URL URL::fakeURLWithRelativePart(StringView relativePart)
     return URL(makeString("webkit-fake-url://"_s, UUID::createVersion4(), '/', relativePart));
 }
 
+#if OS(WINDOWS)
+template <typename CharacterType>
+ALWAYS_INLINE bool isUNCLikePathImpl(CharacterType data) {
+    return (data[0] == '\\' || data[0] == '/') && (data[1] == '\\' || data[1] == '/');
+}
+ALWAYS_INLINE bool isUNCLikePath(StringView path)
+{
+    return path.length() > 2 && (path.is8Bit() ? isUNCLikePathImpl(path.characters8()) : isUNCLikePathImpl(path.characters16()));
+}
+#endif // OS(WINDOWS)
+
 URL URL::fileURLWithFileSystemPath(StringView path)
 {
 #if OS(WINDOWS)
     // Handle UNC paths on Windows. should result in file://server/share
-    if (path.startsWith("//"_s)) {
-        return URL(makeString("file://"_s, path.substring(2)));
+    if (isUNCLikePath(path)) {
+        return URL(makeString("file://"_s, escapePathWithoutCopying(path.substring(2))));
     }
 #endif
     return URL(makeString(
