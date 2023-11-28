@@ -42,6 +42,7 @@ extern "C" {
     M(ActivityState) \
     M(AdvancedPrivacyProtections) \
     M(AppSSO) \
+    M(Animations) \
     M(Automation) \
     M(AutomationInteractions) \
     M(BackForward) \
