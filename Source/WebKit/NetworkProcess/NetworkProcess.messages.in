@@ -59,8 +59,6 @@ messages -> NetworkProcess LegacyReceiver {
     ApplicationDidEnterBackground()
     ApplicationWillEnterForeground()
 
-    ContinueWillSendRequest(WebKit::DownloadID downloadID, WebCore::ResourceRequest request)
-
     FlushCookies(PAL::SessionID sessionID) -> ()
 
 #if !PLATFORM(COCOA)
