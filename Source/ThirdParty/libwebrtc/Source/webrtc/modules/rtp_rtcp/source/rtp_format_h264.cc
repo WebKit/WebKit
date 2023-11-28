@@ -94,7 +94,15 @@ bool RtpPacketizerH264::GeneratePackets(
             return false;
           ++i;
         } else {
+#ifdef WEBRTC_WEBKIT_BUILD
+          auto newFragmentIndex = PacketizeStapA(i);
+          if (!newFragmentIndex) {
+            return false;
+          }
+          i = *newFragmentIndex;
+#else
           i = PacketizeStapA(i);
+#endif
         }
         break;
     }
@@ -150,7 +158,12 @@ bool RtpPacketizerH264::PacketizeFuA(size_t fragment_index) {
   return true;
 }
 
-size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index) {
+#ifdef WEBRTC_WEBKIT_BUILD
+std::optional<size_t> RtpPacketizerH264::PacketizeStapA(size_t fragment_index)
+#else
+size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index)
+#endif
+{
   // Aggregate fragments into one packet (STAP-A).
   size_t payload_size_left = limits_.max_payload_len;
   if (input_fragments_.size() == 1)
@@ -178,7 +191,13 @@ size_t RtpPacketizerH264::PacketizeStapA(size_t fragment_index) {
   };
 
   while (payload_size_left >= payload_size_needed()) {
+#ifdef WEBRTC_WEBKIT_BUILD
+    if (fragment.size() == 0) {
+      return std::nullopt;
+    }
+#else
     RTC_CHECK_GT(fragment.size(), 0);
+#endif
     packets_.push(PacketUnit(fragment, aggregated_fragments == 0, false, true,
                              fragment[0]));
     payload_size_left -= fragment.size();
