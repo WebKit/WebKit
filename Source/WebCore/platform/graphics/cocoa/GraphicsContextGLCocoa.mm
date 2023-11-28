@@ -565,6 +565,8 @@ bool GraphicsContextGLCocoa::reshapeDrawingBuffer()
 
 void GraphicsContextGLCocoa::setDrawingBufferColorSpace(const DestinationColorSpace& colorSpace)
 {
+    if (!makeContextCurrent())
+        return;
     if (m_drawingBufferColorSpace == colorSpace)
         return;
     m_drawingBufferColorSpace = colorSpace;
