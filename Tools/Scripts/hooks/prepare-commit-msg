@@ -76,7 +76,6 @@ def set_env_variables_from_branch_config():
             if error.returncode != 1:
                 sys.stderr.write(error.stderr)
 
-
 def get_bugs_string():
     """Determines what bug URLs to fill or suggest in a WebKit commit message."""
     need_the_bug_url = 'Need the bug URL (OOPS!).'
@@ -136,7 +135,15 @@ def message(source=None, sha=None):
 
     bugs_string = get_bugs_string()
 
-    return '''{title}
+    revert_msg = os.environ.get('COMMIT_MESSAGE_REVERT', '')
+    if revert_msg:
+        return '''{title}\n{revert}\n{bugs}\n'''.format(
+            title=os.environ.get('COMMIT_MESSAGE_TITLE', ''),
+            revert=revert_msg,
+            bugs=bugs_string,
+        )
+    else:
+        return '''{title}
 {bugs}
 
 Reviewed by NOBODY (OOPS!).
@@ -149,7 +156,6 @@ Explanation of why this fixes the bug (OOPS!).
         bugs=bugs_string,
         content='\n'.join(commit_message) + os.environ.get('COMMIT_MESSAGE_CONTENT', ''),
     )
-
 
 def source_branches():
     proc = None
@@ -180,7 +186,6 @@ def source_branches():
             proc.kill()
 
     return []
-
 
 def cherry_pick(content):
     cherry_picked = os.environ.get('GIT_WEBKIT_CHERRY_PICKED')
@@ -305,7 +310,6 @@ def cherry_pick(content):
             result.append(line)
     return '\n'.join(result)
 
-
 def main(file_name=None, source=None, sha=None):
     with open(file_name, 'r') as commit_message_file:
         content = commit_message_file.read()
@@ -314,7 +318,7 @@ def main(file_name=None, source=None, sha=None):
         return 0
 
     if os.environ.get('COMMIT_MESSAGE_TITLE', '').startswith('Unreviewed, reverting'):
-        pass  # TODO: Implement more useful revert commit message
+        pass
     elif source == 'merge' and content.startswith('Revert'):
         return 0
     else:
