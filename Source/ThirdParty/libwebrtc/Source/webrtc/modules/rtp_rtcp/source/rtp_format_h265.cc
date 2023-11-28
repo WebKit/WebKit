@@ -8,7 +8,9 @@
 
 #include "absl/types/optional.h"
 #include "absl/types/variant.h"
+#ifndef WEBRTC_WEBKIT_BUILD
 #include "common_video/h264/h264_common.h"
+#endif
 #include "common_video/h265/h265_common.h"
 #include "common_video/h265/h265_pps_parser.h"
 #include "common_video/h265/h265_sps_parser.h"
@@ -84,11 +86,19 @@ RtpPacketizerH265::RtpPacketizerH265(rtc::ArrayView<const uint8_t> payload,
   RTC_CHECK(packetization_mode == H265PacketizationMode::NonInterleaved ||
             packetization_mode == H265PacketizationMode::SingleNalUnit);
 
+#ifdef WEBRTC_WEBKIT_BUILD
+  for (const auto& nalu :
+       H265::FindNaluIndices(payload.data(), payload.size())) {
+    input_fragments_.push_back(
+        payload.subview(nalu.payload_start_offset, nalu.payload_size));
+  }
+#else
   for (const auto& nalu :
        H264::FindNaluIndices(payload.data(), payload.size())) {
     input_fragments_.push_back(
         payload.subview(nalu.payload_start_offset, nalu.payload_size));
   }
+#endif
 
   if (!GeneratePackets(packetization_mode)) {
     // If failed to generate all the packets, discard already generated
@@ -124,10 +134,22 @@ bool RtpPacketizerH265::GeneratePackets(
       single_packet_capacity -= limits_.last_packet_reduction_len;
     }
     if (fragment_len > single_packet_capacity) {
+#ifdef WEBRTC_WEBKIT_BUILD
+      if (!PacketizeFu(i)) {
+        return false;
+      }
+#else
       PacketizeFu(i);
+#endif
       ++i;
     } else {
+#ifdef WEBRTC_WEBKIT_BUILD
+      if (!PacketizeSingleNalu(i)) {
+        return false;
+      }
+#else
       PacketizeSingleNalu(i);
+#endif
       ++i;
     }
   }
@@ -201,7 +223,13 @@ bool RtpPacketizerH265::PacketizeSingleNalu(size_t fragment_index) {
                       << limits_.max_payload_len;
     return false;
   }
+#ifdef WEBRTC_WEBKIT_BUILD
+  if (fragment.size() == 0u) {
+    return false;
+  }
+#else
   RTC_CHECK_GT(fragment.size(), 0u);
+#endif
   packets_.push(PacketUnit(fragment, true /* first */, true /* last */,
                            false /* aggregated */, fragment[0]));
   ++num_packets_left_;
