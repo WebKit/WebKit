@@ -1342,6 +1342,7 @@ webkit.org/b/223900 [ Debug ] compositing/video/video-update-rendering.html [ Pa
 webkit.org/b/223969 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/processing-after-resume.https.html [ Pass Failure ]
 
 webkit.org/b/219214 inspector/canvas/console-record-2d.html [ Pass Timeout ]
+webkit.org/b/219214 inspector/canvas/console-record-offscreen-canvas-2d.html [ Pass Timeout ]
 
 webkit.org/b/224032 [ arm64 ] tiled-drawing/top-content-inset-fixed-attachment-cover-local.html [ Pass ImageOnlyFailure ]
 
@@ -1431,9 +1432,13 @@ webkit.org/b/228252 [ BigSur Release arm64 ] fast/css-grid-layout/floating-empty
 webkit.org/b/228256 [ Debug ] inspector/canvas/create-context-webgl.html [ Pass Failure ]
 
 webkit.org/b/229043 inspector/canvas/recording-webgl-snapshots.html [ Pass Failure ]
+webkit.org/b/229043 inspector/canvas/recording-offscreen-webgl-snapshots.html [ Pass Failure ]
 webkit.org/b/229043 inspector/canvas/recording-bitmaprenderer-frameCount.html [ Pass Failure ]
+webkit.org/b/229043 inspector/canvas/recording-offscreen-bitmaprenderer-frameCount.html [ Pass Failure ]
 webkit.org/b/229043 inspector/canvas/recording-2d-full.html [ Pass Crash ]
+webkit.org/b/229043 inspector/canvas/recording-offscreen-canvas-2d-full.html [ Pass Crash ]
 webkit.org/b/229237 inspector/canvas/recording-2d-memoryLimit.html [ Pass Crash ]
+webkit.org/b/229237 inspector/canvas/recording-offscreen-canvas-2d-memoryLimit.html [ Pass Crash ]
 
 webkit.org/b/228210 [ Debug ] inspector/model/remote-object/iterator-large.html [ Pass Timeout ]
 

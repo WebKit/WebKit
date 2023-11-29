@@ -381,7 +381,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
         const selectedByUser = false;
         canvasTreeElement.revealAndSelect(omitFocus, selectedByUser);
 
-        if (this._canvas.contextType === WI.Canvas.ContextType.Canvas2D || this._canvas.contextType === WI.Canvas.ContextType.OffscreenCanvas2D || this._canvas.contextType === WI.Canvas.ContextType.WebGL || this._canvas.contextType === WI.Canvas.ContextType.WebGL2)
+        if (this._canvas.supportsRecording)
             this._recordButtonNavigationItem.enabled = true;
 
         this.recording = null;
@@ -480,7 +480,7 @@ WI.CanvasSidebarPanel = class CanvasSidebarPanel extends WI.NavigationSidebarPan
 
     _updateRecordNavigationItem()
     {
-        if (!this._canvas || !(this._canvas.contextType === WI.Canvas.ContextType.Canvas2D || this._canvas.contextType === WI.Canvas.ContextType.OffscreenCanvas2D || this._canvas.contextType === WI.Canvas.ContextType.WebGL || this._canvas.contextType === WI.Canvas.ContextType.WebGL2)) {
+        if (!this._canvas?.supportsRecording) {
             this._recordButtonNavigationItem.enabled = false;
             return;
         }

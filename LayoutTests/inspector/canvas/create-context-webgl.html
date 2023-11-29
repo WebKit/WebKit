@@ -23,7 +23,7 @@ function test() {
     InspectorTest.CreateContextUtilities.addSimpleTestCase({
         name: "Offscreen",
         expression: `createOffscreenCanvas("webgl")`,
-        contextType: WI.Canvas.ContextType.WebGL,
+        contextType: WI.Canvas.ContextType.OffscreenWebGL,
     });
 
     InspectorTest.CreateContextUtilities.addCSSCanvasTestCase(WI.Canvas.ContextType.WebGL);

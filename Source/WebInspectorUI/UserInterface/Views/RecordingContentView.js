@@ -31,26 +31,21 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
         super(representedObject);
 
-        let isCanvas2D = this.representedObject.is2D();
-        let isCanvasBitmapRenderer = this.representedObject.type === WI.Recording.Type.CanvasBitmapRenderer;
-        let isCanvasWebGL = this.representedObject.type === WI.Recording.Type.CanvasWebGL;
-        let isCanvasWebGL2 = this.representedObject.type === WI.Recording.Type.CanvasWebGL2;
-
         this._index = NaN;
         this._action = null;
         this._snapshots = [];
         this._initialContent = null;
         this._generateContentThrottler = new Throttler(() => {
-            if (isCanvas2D)
+            if (this.representedObject.isCanvas2D)
                 this._generateContentCanvas2D(this._index);
-            else if (isCanvasBitmapRenderer || isCanvasWebGL || isCanvasWebGL2)
+            else if (this.representedObject.isCanvasBitmapRenderer || this.representedObject.isCanvasWebGL || this.representedObject.isCanvasWebGL2)
                 this._generateContentFromSnapshot(this._index);
         }, 200);
 
         this.element.classList.add("recording", this.representedObject.type);
 
-        if (isCanvas2D || isCanvasBitmapRenderer || isCanvasWebGL || isCanvasWebGL2) {
-            if (isCanvas2D) {
+        if (this.representedObject.isCanvas) {
+            if (this.representedObject.isCanvas2D) {
                 this._pathContext = null;
 
                 this._showPathButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-path", WI.UIString("Show Path"), WI.UIString("Hide Path"), "Images/Path.svg", 16, 16);
@@ -64,7 +59,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             this._showGridButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._showGridButtonClicked, this);
             this._showGridButtonNavigationItem.activated = !!WI.settings.showImageGrid.value;
 
-            if (isCanvas2D && WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.FileVariants))
+            if (this.representedObject.isCanvas2D && WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.FileVariants))
                 this._saveMode = WI.FileUtilities.SaveMode.FileVariants;
             else if (WI.FileUtilities.canSave(WI.FileUtilities.SaveMode.SingleFile))
                 this._saveMode = WI.FileUtilities.SaveMode.SingleFile;
@@ -84,15 +79,11 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     get navigationItems()
     {
-        let isCanvas2D = this.representedObject.is2D();
-        let isCanvasBitmapRenderer = this.representedObject.type === WI.Recording.Type.CanvasBitmapRenderer;
-        let isCanvasWebGL = this.representedObject.type === WI.Recording.Type.CanvasWebGL;
-        let isCanvasWebGL2 = this.representedObject.type === WI.Recording.Type.CanvasWebGL2;
-        if (!isCanvas2D && !isCanvasBitmapRenderer && !isCanvasWebGL && !isCanvasWebGL2)
+        if (!this.representedObject.isCanvas)
             return [];
 
         let navigationItems = [this._exportButtonNavigationItem, new WI.DividerNavigationItem];
-        if (isCanvas2D)
+        if (this.representedObject.isCanvas2D)
             navigationItems.push(this._showPathButtonNavigationItem);
 
         navigationItems.push(this._showGridButtonNavigationItem);
@@ -132,12 +123,8 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
     {
         super.attached();
 
-        let isCanvas2D = this.representedObject.is2D();
-        let isCanvasBitmapRenderer = this.representedObject.type === WI.Recording.Type.CanvasBitmapRenderer;
-        let isCanvasWebGL = this.representedObject.type === WI.Recording.Type.CanvasWebGL;
-        let isCanvasWebGL2 = this.representedObject.type === WI.Recording.Type.CanvasWebGL2;
-        if (isCanvas2D || isCanvasBitmapRenderer || isCanvasWebGL || isCanvasWebGL2) {
-            if (isCanvas2D)
+        if (this.representedObject.isCanvas) {
+            if (this.representedObject.isCanvas2D)
                 this._updateCanvasPath();
             this._updateImageGrid();
         }
@@ -216,7 +203,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
             content: JSON.stringify(this.representedObject.toJSON()),
             suggestedName: filename + ".recording",
         });
-        if (this.representedObject.is2D() && this.representedObject.ready) {
+        if (this.representedObject.isCanvas2D && this.representedObject.ready) {
             data.push({
                 displayType: WI.UIString("Reduction"),
                 content: this.representedObject.toHTML(),
@@ -489,7 +476,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
         if (this._saveMode !== WI.FileUtilities.SaveMode.SingleFile)
             return;
 
-        if (this.representedObject.is2D() && this.representedObject.ready)
+        if (this.representedObject.isCanvas2D && this.representedObject.ready)
             this._exportButtonNavigationItem.tooltip = WI.UIString("Export recording (%s)\nShift-click to export a HTML reduction").format(WI.saveKeyboardShortcut.displayName);
         else
             this._exportButtonNavigationItem.tooltip = WI.UIString("Export recording (%s)").format(WI.saveKeyboardShortcut.displayName);
@@ -547,7 +534,7 @@ WI.RecordingContentView = class RecordingContentView extends WI.ContentView
 
     _handleExportNavigationItemClicked(event)
     {
-        if (this._saveMode === WI.FileUtilities.SaveMode.SingleFile && this.representedObject.is2D() && this.representedObject.ready && event.data.nativeEvent.shiftKey) {
+        if (this._saveMode === WI.FileUtilities.SaveMode.SingleFile && this.representedObject.isCanvas2D && this.representedObject.ready && event.data.nativeEvent.shiftKey) {
             this._exportReduction();
             return;
         }

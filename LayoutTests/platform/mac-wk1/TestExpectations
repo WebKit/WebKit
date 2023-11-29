@@ -1850,6 +1850,7 @@ webkit.org/b/199632 http/wpt/prefetch/load-events-dynamic.html [ Skip ]
 webkit.org/b/198177 pointerevents/mouse/compatibility-mouse-events-prevention-mouse-pressed.html [ Skip ]
 imported/w3c/web-platform-tests/pointerevents/compat/pointerevent_compat-mouse-events-when-removing-nodes.html [ Skip ]
 
+webkit.org/b/198459 [ Debug ] inspector/canvas/recording-offscreen-webgl-full.html [ Slow ]
 webkit.org/b/198459 [ Debug ] inspector/canvas/recording-webgl-full.html [ Slow ]
 
 webkit.org/b/196508 compositing/repaint/scroller-with-foreground-layer-repaints.html [ Pass Failure ]

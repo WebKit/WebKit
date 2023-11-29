@@ -6,10 +6,10 @@
 <script src="resources/recording-2d.js"></script>
 <script>
 function test() {
-    let suite = InspectorTest.createAsyncSuite("Canvas.recording2D");
+    let suite = InspectorTest.createAsyncSuite("Canvas.recordingOffscreen2D");
 
     suite.addTestCase({
-        name: "Canvas.recording2D.Console.OffscreenCanvas2D",
+        name: "Canvas.recordingOffscreen2D.Console",
         description: "Check that a recording can be triggered by console.record().",
         test(resolve, reject) {
             consoleRecord(WI.Canvas.ContextType.OffscreenCanvas2D, resolve, reject);

@@ -59,6 +59,7 @@
 #include "LocalFrame.h"
 #include "MouseEvent.h"
 #include "Node.h"
+#include "OffscreenCanvasRenderingContext2D.h"
 #include "Page.h"
 #include "PagePasteboardContext.h"
 #include "Pasteboard.h"
@@ -860,5 +861,29 @@ void InspectorFrontendHost::setPath(CanvasRenderingContext2D& context, Path2D& p
 {
     context.setPath(path);
 }
+
+#if ENABLE(OFFSCREEN_CANVAS)
+
+float InspectorFrontendHost::getCurrentX(const OffscreenCanvasRenderingContext2D& context) const
+{
+    return context.currentX();
+}
+
+float InspectorFrontendHost::getCurrentY(const OffscreenCanvasRenderingContext2D& context) const
+{
+    return context.currentY();
+}
+
+Ref<Path2D> InspectorFrontendHost::getPath(const OffscreenCanvasRenderingContext2D& context) const
+{
+    return context.getPath();
+}
+
+void InspectorFrontendHost::setPath(OffscreenCanvasRenderingContext2D& context, Path2D& path) const
+{
+    context.setPath(path);
+}
+
+#endif // ENABLE(OFFSCREEN_CANVAS)
 
 } // namespace WebCore

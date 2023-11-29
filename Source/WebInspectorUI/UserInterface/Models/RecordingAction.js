@@ -217,14 +217,17 @@ WI.RecordingAction = class RecordingAction extends WI.Object
                 return OffscreenCanvasRenderingContext2D.prototype;
             break;
         case WI.Recording.Type.CanvasBitmapRenderer:
+        case WI.Recording.Type.OffscreenCanvasBitmapRenderer:
             if (window.ImageBitmapRenderingContext)
                 return ImageBitmapRenderingContext.prototype;
             break;
         case WI.Recording.Type.CanvasWebGL:
+        case WI.Recording.Type.OffscreenCanvasWebGL:
             if (window.WebGLRenderingContext)
                 return WebGLRenderingContext.prototype;
             break;
         case WI.Recording.Type.CanvasWebGL2:
+        case WI.Recording.Type.OffscreenCanvasWebGL2:
             if (window.WebGL2RenderingContext)
                 return WebGL2RenderingContext.prototype;
             break;
@@ -273,7 +276,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         }
 
         function getContent() {
-            if (context instanceof CanvasRenderingContext2D)
+            if (context instanceof CanvasRenderingContext2D || (window.OffscreenCanvasRenderingContext2D && context instanceof OffscreenCanvasRenderingContext2D))
                 return context.getImageData(0, 0, context.canvas.width, context.canvas.height).data;
 
             if ((window.WebGLRenderingContext && context instanceof WebGLRenderingContext) || (window.WebGL2RenderingContext && context instanceof WebGL2RenderingContext)) {
@@ -302,8 +305,8 @@ WI.RecordingAction = class RecordingAction extends WI.Object
                 this._warning = WI.UIString("This action causes no visual change");
         }
 
-        if (WI.Recording.is2D(recording.type)) {
-            let currentState = WI.RecordingState.fromContext(recording.type, context, {source: this});
+        if (recording.isCanvas2D) {
+            let currentState = WI.RecordingState.fromCanvasContext2D(context, {source: this});
             console.assert(currentState);
 
             if (this.name === "save")
@@ -372,7 +375,7 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         if (this._payloadSnapshot >= 0)
             this._snapshot = snapshot;
 
-        if (WI.Recording.is2D(recording.type) || recording.type === WI.Recording.Type.CanvasBitmapRenderer || recording.type === WI.Recording.Type.CanvasWebGL || recording.type === WI.Recording.Type.CanvasWebGL2) {
+        if (recording.isCanvas) {
             if (this._name === "width" || this._name === "height") {
                 this._contextReplacer = "canvas";
                 this._isFunction = false;
@@ -697,6 +700,8 @@ WI.RecordingAction._constantIndexes = {
         "vertexAttribPointer": [2],
     },
 };
+WI.RecordingAction._constantIndexes[WI.Recording.Type.OffscreenCanvasWebGL] = WI.RecordingAction._constantIndexes[WI.Recording.Type.CanvasWebGL];
+WI.RecordingAction._constantIndexes[WI.Recording.Type.OffscreenCanvasWebGL2] = WI.RecordingAction._constantIndexes[WI.Recording.Type.CanvasWebGL2];
 
 WI.RecordingAction._visualNames = {
     [WI.Recording.Type.Canvas2D]: new Set([
@@ -738,6 +743,9 @@ WI.RecordingAction._visualNames = {
         "drawElementsInstanced",
     ]),
 };
+WI.RecordingAction._visualNames[WI.Recording.Type.OffscreenCanvasBitmapRenderer] = WI.RecordingAction._visualNames[WI.Recording.Type.CanvasBitmapRenderer];
+WI.RecordingAction._visualNames[WI.Recording.Type.OffscreenCanvasWebGL] = WI.RecordingAction._visualNames[WI.Recording.Type.CanvasWebGL];
+WI.RecordingAction._visualNames[WI.Recording.Type.OffscreenCanvasWebGL2] = WI.RecordingAction._visualNames[WI.Recording.Type.CanvasWebGL2];
 
 WI.RecordingAction._stateModifiers = {
     [WI.Recording.Type.Canvas2D]: {
