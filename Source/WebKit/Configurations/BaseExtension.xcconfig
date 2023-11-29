@@ -28,7 +28,6 @@ CLANG_ENABLE_MODULES = YES;
 CLANG_INSTRUMENT_FOR_OPTIMIZATION_PROFILING = NO;
 INSTALL_PATH = $(WEBKIT_FRAMEWORKS_DIR)/WebKit.framework/$(WK_FRAMEWORK_VERSION_PREFIX)Extensions;
 SWIFT_OBJC_BRIDGING_HEADER[sdk=iphoneos17.4.internal] = Shared/AuxiliaryProcessExtensions/AuxiliaryProcessExtensionBridge.h;
-SWIFT_OBJC_BRIDGING_HEADER[sdk=iphonesimulator17.4.internal] = Shared/AuxiliaryProcessExtensions/AuxiliaryProcessExtensionBridge.h;
 SWIFT_VERSION = 5.0;
 SWIFT_OPTIMIZATION_LEVEL = -O;
 SWIFT_OPTIMIZATION_LEVEL[config=Debug] = -Onone;
@@ -38,7 +37,6 @@ SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 TARGETED_DEVICE_FAMILY = 1,2,7;
 EXCLUDED_SOURCE_FILE_NAMES = *;
 EXCLUDED_SOURCE_FILE_NAMES[sdk=iphoneos17.4.internal] = ;
-EXCLUDED_SOURCE_FILE_NAMES[sdk=iphonesimulator17.4.internal] = ;
 CODE_SIGN_ENTITLEMENTS[sdk=*simulator] = Shared/AuxiliaryProcessExtensions/AuxiliaryProcessExtension.entitlements;
 CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 WK_PROCESSED_XCENT_FILE=$(TEMP_FILE_DIR)/$(FULL_PRODUCT_NAME).entitlements
