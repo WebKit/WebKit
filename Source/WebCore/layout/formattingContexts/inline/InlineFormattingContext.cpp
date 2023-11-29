@@ -176,7 +176,7 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const 
 
     auto mayUseSimplifiedTextOnlyInlineLayout = TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache);
     auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineItemList, mayUseSimplifiedTextOnlyInlineLayout };
-    auto intrinsicSizes = intrinsicWidthHandler.computedIntrinsicSizes();
+    auto intrinsicSizes = IntrinsicWidthConstraints { intrinsicWidthHandler.minimumContentSize(), intrinsicWidthHandler.maximumContentSize() };
     inlineContentCache.setIntrinsicWidthConstraints(intrinsicSizes);
     if (intrinsicWidthHandler.maximumIntrinsicWidthResult())
         inlineContentCache.setMaximumIntrinsicWidthLayoutResult(WTFMove(*intrinsicWidthHandler.maximumIntrinsicWidthResult()));
