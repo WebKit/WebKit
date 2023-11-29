@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<style>
+    body { margin: 0; }
+
+    .interaction {
+        height: 10px;
+        background-color: green;
+
+        cursor: pointer;
+    }
+</style>
+<body>
+<div class="interaction" style="width: 100px" onclick="click()"></div>
+<div class="interaction" style="width: 50px" onclick="click()"></div>
+
+<br />
+
+<div class="interaction" style="height: 25px; width: 100px" onclick="click()"></div>
+<div class="interaction" style="width: 10px" onclick="click()"></div>
+
+<pre id="results"></pre>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+window.onload = function () {
+    if (window.internals)
+       results.textContent = internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_EVENT_REGION | internals.LAYER_TREE_INCLUDES_ROOT_LAYER_PROPERTIES);
+};
+</script>
+</body>
+</html>

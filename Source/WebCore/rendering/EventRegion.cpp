@@ -139,15 +139,6 @@ void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObj
             
             discoveredRegion.unite(tempRegion);
             m_discoveredRegionsByElement.set(interactionRegion->elementIdentifier, discoveredRegion);
-            
-            auto occlusionRect = guardRectForRegionBounds(tempRegion.bounds());
-            if (occlusionRect) {
-                m_interactionRegions.append({
-                    InteractionRegion::Type::Guard,
-                    interactionRegion->elementIdentifier,
-                    occlusionRect.value()
-                });
-            }
 
             for (auto rect : tempRegion.rects()) {
                 m_interactionRegions.append({
@@ -159,17 +150,19 @@ void EventRegionContext::uniteInteractionRegions(const Region& region, RenderObj
                 });
             }
             return;
-        } else
-            m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, interactionRegion->rectInLayerCoordinates);
+        }
+
+        m_discoveredRegionsByElement.add(interactionRegion->elementIdentifier, interactionRegion->rectInLayerCoordinates);
     
-        auto occlusionRect = guardRectForRegionBounds(interactionRegion->rectInLayerCoordinates);
-        if (occlusionRect) {
+        auto guardRect = guardRectForRegionBounds(interactionRegion->rectInLayerCoordinates);
+        if (guardRect) {
             m_interactionRegions.append({
                 InteractionRegion::Type::Guard,
                 interactionRegion->elementIdentifier,
-                occlusionRect.value()
+                guardRect.value()
             });
         }
+
         m_interactionRegions.append(*interactionRegion);
     }
 }
@@ -298,12 +291,45 @@ void EventRegionContext::shrinkWrapInteractionRegions()
     }
 }
 
-void EventRegionContext::copyInteractionRegionsToEventRegion()
+void EventRegionContext::removeSuperfluousInteractionRegions()
 {
     m_interactionRegions.removeAllMatching([&] (auto& region) {
+        if (region.type == InteractionRegion::Type::Guard) {
+            for (auto& entry : m_discoveredRegionsByElement) {
+                // This is the element being guarded.
+                if (entry.key == region.elementIdentifier)
+                    continue;
+
+                auto guardRect = region.rectInLayerCoordinates;
+                auto interactionRegion = entry.value;
+
+                auto intersection = interactionRegion;
+                intersection.intersect(guardRect);
+                if (intersection.isEmpty())
+                    continue;
+
+                // This is an interactive container of the guarded region.
+                if (intersection.contains(guardRect))
+                    continue;
+
+                auto originalBounds = interactionRegion.bounds();
+                auto intersectionBounds = intersection.bounds();
+                bool tooMuchOverlap = originalBounds.width() / 2 < intersectionBounds.width()
+                    || originalBounds.height() / 2 < intersectionBounds.height();
+
+                if (tooMuchOverlap)
+                    return true;
+            }
+            return false;
+        }
+
         return m_containersToRemove.contains(region.elementIdentifier);
     });
+}
 
+void EventRegionContext::copyInteractionRegionsToEventRegion()
+{
+    removeSuperfluousInteractionRegions();
     shrinkWrapInteractionRegions();
     m_eventRegion.appendInteractionRegions(m_interactionRegions);
 }
