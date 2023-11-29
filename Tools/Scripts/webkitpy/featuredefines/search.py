@@ -51,6 +51,16 @@ class FeatureDefinesSearch(object):
         """ Retrieves any references to the define found. """
         return self._defines[define]
 
+    def definitions_count(self):
+        definitions = {}
+        for k, v in self._defines.items():
+            if k not in definitions:
+                definitions[k] = len(v)
+            
+            definitions[k] = definitions[k] + len(v)
+
+        return definitions
+
     @abstractmethod
     def search(self, root, macro):
         """ Search for feature defines within the root """
@@ -71,8 +81,8 @@ class FeatureDefinesSearch(object):
     def _search_directory(self, matcher, path, patterns):
         for root, __, files in os.walk(path):
             for file in files:
-                for patten in patterns:
-                    if fnmatch.fnmatch(file, patten):
+                for pattern in patterns:
+                    if fnmatch.fnmatch(file, pattern):
                         self._search_file(matcher, os.path.join(root, file))
 
     @classmethod
