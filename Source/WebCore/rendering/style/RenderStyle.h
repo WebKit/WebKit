@@ -2250,8 +2250,6 @@ private:
     static constexpr bool isDisplayListItemType(DisplayType);
     static constexpr bool isDisplayTableOrTablePart(DisplayType);
 
-    static LayoutBoxExtent shadowExtent(const ShadowData*);
-    static LayoutBoxExtent shadowInsetExtent(const ShadowData*);
     static void getShadowHorizontalExtent(const ShadowData*, LayoutUnit& left, LayoutUnit& right);
     static void getShadowVerticalExtent(const ShadowData*, LayoutUnit& top, LayoutUnit& bottom);
 

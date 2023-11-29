@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .box {
+            width: 300px;
+            height: 300px;
+            margin: 100px;
+            border: 2px solid black;
+            outline: 20px solid rgba(0, 128, 0, 0.5);
+            box-shadow: 30px 32px 10px 20px black;
+        }
+        
+        body.changed .box {
+            height: 200px;
+        }
+    </style>
+    <script src="resources/text-based-repaint.js"></script>
+    <script>
+        function repaintTest()
+        {
+            document.body.classList.add('changed');
+        }
+
+        window.addEventListener('load', runRepaintTest, false);
+    </script>
+</head>
+<body>
+    <div class="box"></div>
+</body>
+</html>

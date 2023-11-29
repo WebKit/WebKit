@@ -2951,48 +2951,6 @@ void RenderStyle::setFontPalette(FontPalette value)
     fontCascade().update(selector);
 }
 
-LayoutBoxExtent RenderStyle::shadowExtent(const ShadowData* shadow)
-{
-    LayoutUnit top;
-    LayoutUnit right;
-    LayoutUnit bottom;
-    LayoutUnit left;
-
-    for ( ; shadow; shadow = shadow->next()) {
-        if (shadow->style() == ShadowStyle::Inset)
-            continue;
-
-        auto extentAndSpread = shadow->paintingExtent() + LayoutUnit(shadow->spread().value());
-        top = std::min<LayoutUnit>(top, LayoutUnit(shadow->y().value()) - extentAndSpread);
-        right = std::max<LayoutUnit>(right, LayoutUnit(shadow->x().value()) + extentAndSpread);
-        bottom = std::max<LayoutUnit>(bottom, LayoutUnit(shadow->y().value()) + extentAndSpread);
-        left = std::min<LayoutUnit>(left, LayoutUnit(shadow->x().value()) - extentAndSpread);
-    }
-    
-    return { top, right, bottom, left };
-}
-
-LayoutBoxExtent RenderStyle::shadowInsetExtent(const ShadowData* shadow)
-{
-    LayoutUnit top;
-    LayoutUnit right;
-    LayoutUnit bottom;
-    LayoutUnit left;
-
-    for ( ; shadow; shadow = shadow->next()) {
-        if (shadow->style() == ShadowStyle::Normal)
-            continue;
-
-        auto extentAndSpread = shadow->paintingExtent() + LayoutUnit(shadow->spread().value());
-        top = std::max<LayoutUnit>(top, LayoutUnit(shadow->y().value()) + extentAndSpread);
-        right = std::min<LayoutUnit>(right, LayoutUnit(shadow->x().value()) - extentAndSpread);
-        bottom = std::min<LayoutUnit>(bottom, LayoutUnit(shadow->y().value()) - extentAndSpread);
-        left = std::max<LayoutUnit>(left, LayoutUnit(shadow->x().value()) + extentAndSpread);
-    }
-
-    return { top, right, bottom, left };
-}
-
 void RenderStyle::getShadowHorizontalExtent(const ShadowData* shadow, LayoutUnit &left, LayoutUnit &right)
 {
     left = 0;

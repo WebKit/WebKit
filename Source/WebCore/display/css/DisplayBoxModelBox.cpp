@@ -122,7 +122,7 @@ UnadjustedAbsoluteFloatRect BoxModelBox::absolutePaintingExtent() const
     auto paintingExtent = absoluteBorderBoxRect();
 
     if (auto* shadow = style().boxShadow())
-        shadow->adjustRectForShadow(paintingExtent, 0);
+        shadow->adjustRectForShadow(paintingExtent);
 
     return paintingExtent;
 }
