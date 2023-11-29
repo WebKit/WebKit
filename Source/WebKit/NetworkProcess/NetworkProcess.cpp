@@ -399,6 +399,11 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
 
     connection->setOnLineState(NetworkStateNotifier::singleton().onLine());
 
+#if ENABLE(IPC_TESTING_API)
+    if (parameters.ignoreInvalidMessageForTesting)
+        connection->connection().setIgnoreInvalidMessageForTesting();
+#endif
+
     if (auto* session = networkSession(sessionID))
         session->storageManager().startReceivingMessageFromConnection(Ref { connection->connection() });
 }

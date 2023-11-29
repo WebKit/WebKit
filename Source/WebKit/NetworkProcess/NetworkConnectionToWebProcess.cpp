@@ -405,10 +405,8 @@ bool NetworkConnectionToWebProcess::didReceiveSyncMessage(IPC::Connection& conne
 #endif
 
 #if ENABLE(IPC_TESTING_API)
-    if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName()) {
-        m_ipcTester.didReceiveSyncMessage(connection, decoder, reply);
-        return true;
-    }
+    if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName())
+        return m_ipcTester.didReceiveSyncMessage(connection, decoder, reply);
 #endif
 
     // Add new receiver name tests above this.
