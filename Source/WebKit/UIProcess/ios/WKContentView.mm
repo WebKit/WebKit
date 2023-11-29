@@ -722,9 +722,9 @@ static void storeAccessibilityRemoteConnectionInformation(id element, pid_t pid,
 
 #pragma mark PageClientImpl methods
 
-- (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy
+- (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy:(WebKit::WebProcessProxy&)webProcessProxy
 {
-    return makeUnique<WebKit::RemoteLayerTreeDrawingAreaProxyIOS>(*_page);
+    return makeUnique<WebKit::RemoteLayerTreeDrawingAreaProxyIOS>(*_page, webProcessProxy);
 }
 
 - (void)_processDidExit

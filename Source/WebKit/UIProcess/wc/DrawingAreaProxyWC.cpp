@@ -40,8 +40,8 @@
 
 namespace WebKit {
 
-DrawingAreaProxyWC::DrawingAreaProxyWC(WebPageProxy& webPageProxy)
-    : DrawingAreaProxy(DrawingAreaType::WC, webPageProxy)
+DrawingAreaProxyWC::DrawingAreaProxyWC(WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
+    : DrawingAreaProxy(DrawingAreaType::WC, webPageProxy, webProcessProxy)
 {
 }
 
@@ -59,14 +59,14 @@ void DrawingAreaProxyWC::sizeDidChange()
 {
     discardBackingStore();
     m_currentBackingStoreStateID++;
-    protectedWebPageProxy()->send(Messages::DrawingArea::UpdateGeometryWC(m_currentBackingStoreStateID, m_size), m_identifier);
+    send(Messages::DrawingArea::UpdateGeometryWC(m_currentBackingStoreStateID, m_size));
 }
 
 void DrawingAreaProxyWC::update(uint64_t backingStoreStateID, UpdateInfo&& updateInfo)
 {
     if (backingStoreStateID == m_currentBackingStoreStateID)
         incorporateUpdate(WTFMove(updateInfo));
-    protectedWebPageProxy()->send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
+    send(Messages::DrawingArea::DisplayDidRefresh());
 }
 
 void DrawingAreaProxyWC::enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&)

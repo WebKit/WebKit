@@ -120,9 +120,9 @@ void PageClientImpl::setImpl(WebViewImpl& impl)
     m_impl = impl;
 }
 
-std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
+std::unique_ptr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy(WebProcessProxy& webProcessProxy)
 {
-    return m_impl->createDrawingAreaProxy();
+    return m_impl->createDrawingAreaProxy(webProcessProxy);
 }
 
 void PageClientImpl::setViewNeedsDisplay(const WebCore::Region&)

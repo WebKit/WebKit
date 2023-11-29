@@ -95,7 +95,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (WKWebView *)webView;
 - (UIView *)rootContentView;
 
-- (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy;
+- (std::unique_ptr<WebKit::DrawingAreaProxy>)_createDrawingAreaProxy:(WebKit::WebProcessProxy&)webProcessProxy;
 - (void)_processDidExit;
 #if ENABLE(GPU_PROCESS)
 - (void)_gpuProcessDidExit;

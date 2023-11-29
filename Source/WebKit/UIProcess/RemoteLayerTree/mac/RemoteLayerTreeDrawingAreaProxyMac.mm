@@ -82,8 +82,8 @@ void RemoteLayerTreeDisplayLinkClient::displayLinkFired(WebCore::PlatformDisplay
     });
 }
 
-RemoteLayerTreeDrawingAreaProxyMac::RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy& pageProxy)
-    : RemoteLayerTreeDrawingAreaProxy(pageProxy)
+RemoteLayerTreeDrawingAreaProxyMac::RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy& pageProxy, WebProcessProxy& webProcessProxy)
+    : RemoteLayerTreeDrawingAreaProxy(pageProxy, webProcessProxy)
     , m_displayLinkClient(makeUnique<RemoteLayerTreeDisplayLinkClient>(pageProxy.identifier()))
 {
 }
@@ -259,7 +259,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom(double scale, Float
     applyTransientZoomToLayer();
     
     // FIXME: Only send these messages as fast as the web process is responding to them.
-    protectedWebPageProxy()->send(Messages::DrawingArea::AdjustTransientZoom(scale, origin), m_identifier);
+    send(Messages::DrawingArea::AdjustTransientZoom(scale, origin));
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, FloatPoint origin)
@@ -291,7 +291,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
     if (transientZoomScale == scale && roundedIntPoint(*transientZoomOrigin) == roundedIntPoint(constrainedOrigin)) {
         // We're already at the right scale and position, so we don't need to animate.
         m_transactionIDAfterEndingTransientZoom = nextLayerTreeTransactionID();
-        protectedWebPageProxy()->send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_identifier);
+        send(Messages::DrawingArea::CommitTransientZoom(scale, origin));
         return;
     }
     TransformationMatrix transform;
@@ -424,14 +424,11 @@ void RemoteLayerTreeDrawingAreaProxyMac::didChangeViewExposedRect()
 
 void RemoteLayerTreeDrawingAreaProxyMac::colorSpaceDidChange()
 {
-    protectedWebPageProxy()->send(Messages::DrawingArea::SetColorSpace(m_webPageProxy->colorSpace()), m_identifier);
+    send(Messages::DrawingArea::SetColorSpace(m_webPageProxy->colorSpace()));
 }
 
 MachSendRight RemoteLayerTreeDrawingAreaProxyMac::createFence()
 {
-    if (!m_webPageProxy->hasRunningProcess())
-        return MachSendRight();
-
     RetainPtr<CAContext> rootLayerContext = [m_webPageProxy->acceleratedCompositingRootLayer() context];
     if (!rootLayerContext)
         return MachSendRight();
@@ -440,26 +437,25 @@ MachSendRight RemoteLayerTreeDrawingAreaProxyMac::createFence()
     // will likely get dropped on the floor (if the Web process is terminated)
     // or queued up until process launch completes, and there's nothing useful
     // to synchronize in these cases.
-    if (!m_webPageProxy->process().connection())
+    if (!m_webProcessProxy->hasConnection())
         return MachSendRight();
+
+    RefPtr connection = m_webProcessProxy->connection();
 
     // Don't fence if we have incoming synchronous messages, because we may not
     // be able to reply to the message until the fence times out.
-    if (m_webPageProxy->process().connection()->hasIncomingSyncMessage())
+    if (connection->hasIncomingSyncMessage())
         return MachSendRight();
 
     MachSendRight fencePort = MachSendRight::adopt([rootLayerContext createFencePort]);
 
     // Invalidate the fence if a synchronous message arrives while it's installed,
     // because we won't be able to reply during the fence-wait.
-    uint64_t callbackID = m_webPageProxy->process().connection()->installIncomingSyncMessageCallback([rootLayerContext] {
+    uint64_t callbackID = connection->installIncomingSyncMessageCallback([rootLayerContext] {
         [rootLayerContext invalidateFences];
     });
-    [CATransaction addCommitHandler:[callbackID, protectedPage = protectedWebPageProxy()] {
-        if (!protectedPage->hasRunningProcess())
-            return;
-        if (auto* connection = protectedPage->process().connection())
-            connection->uninstallIncomingSyncMessageCallback(callbackID);
+    [CATransaction addCommitHandler:[callbackID, connection = WTFMove(connection)] () mutable {
+        connection->uninstallIncomingSyncMessageCallback(callbackID);
     } forPhase:kCATransactionPhasePostCommit];
 
     return fencePort;

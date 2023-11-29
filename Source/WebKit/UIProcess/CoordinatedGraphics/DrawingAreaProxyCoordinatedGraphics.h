@@ -45,7 +45,7 @@ class BackingStore;
 
 class DrawingAreaProxyCoordinatedGraphics final : public DrawingAreaProxy {
 public:
-    DrawingAreaProxyCoordinatedGraphics(WebPageProxy&);
+    DrawingAreaProxyCoordinatedGraphics(WebPageProxy&, WebProcessProxy&);
     virtual ~DrawingAreaProxyCoordinatedGraphics();
 
 #if !PLATFORM(WPE)
