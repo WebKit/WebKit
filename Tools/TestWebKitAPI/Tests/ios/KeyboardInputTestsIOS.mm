@@ -37,10 +37,12 @@
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
 #import "UserInterfaceSwizzler.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
+#import <WebKit/WKWebViewPrivateForTestingIOS.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 #import <WebKitLegacy/WebEvent.h>
 #import <cmath>
@@ -1116,6 +1118,84 @@ TEST(KeyboardInputTests, MarkedTextSegmentsWithUnderlines)
     }
     EXPECT_GT(numberOfDifferentPixels, 0U);
 }
+
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+TEST(KeyboardInputTests, AutocorrectionIndicatorColorNotAffectedByAuthorDefinedAncestorColorProperty)
+{
+    auto frame = CGRectMake(0, 0, 320, 568);
+    auto window = adoptNS([[UIWindow alloc] initWithFrame:frame]);
+
+    auto createSnapshotForHTMLString = ^(NSString *HTMLString) {
+        auto configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
+
+        auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:frame configuration:configuration addToWindow:NO]);
+
+        [window addSubview:webView.get()];
+
+        auto inputDelegate = adoptNS([[TestInputDelegate alloc] init]);
+        [inputDelegate setFocusStartsInputSessionPolicyHandler:[] (WKWebView *, id<_WKFocusedElementInfo>) -> _WKFocusStartsInputSessionPolicy {
+            return _WKFocusStartsInputSessionPolicyAllow;
+        }];
+
+        [webView _setInputDelegate:inputDelegate.get()];
+        [webView synchronouslyLoadHTMLString:HTMLString];
+
+        [webView waitForNextPresentationUpdate];
+
+        [webView stringByEvaluatingJavaScript:@"document.getElementById('input').focus();"];
+
+        [webView waitForNextPresentationUpdate];
+
+        auto *contentView = [webView textInputContentView];
+        [contentView insertText:@"Is it diferent"];
+
+        [webView waitForNextPresentationUpdate];
+
+        NSString *hasCorrectionIndicatorMarkerJavaScript = @"internals.hasCorrectionIndicatorMarker(6, 9);";
+
+        __block bool done = false;
+
+        [[webView textInputContentView] applyAutocorrection:@"different" toString:@"diferent" shouldUnderline:YES withCompletionHandler:^(UIWKAutocorrectionRects *) {
+            NSString *hasCorrectionIndicatorMarker = [webView stringByEvaluatingJavaScript:hasCorrectionIndicatorMarkerJavaScript];
+            EXPECT_WK_STREQ("1", hasCorrectionIndicatorMarker);
+            done = true;
+        }];
+
+        TestWebKitAPI::Util::run(&done);
+
+        [webView waitForNextPresentationUpdate];
+
+        auto snapshotConfiguration = adoptNS([[WKSnapshotConfiguration alloc] init]);
+        [snapshotConfiguration setAfterScreenUpdates:YES];
+
+        __block RetainPtr<CGImage> result;
+        done = false;
+        [webView takeSnapshotWithConfiguration:snapshotConfiguration.get() completionHandler:^(UIImage *snapshot, NSError *error) {
+            EXPECT_NULL(error);
+            result = snapshot.CGImage;
+            done = true;
+        }];
+
+        Util::run(&done);
+
+        [webView removeFromSuperview];
+
+        return result;
+    };
+
+    auto expected = createSnapshotForHTMLString(@"<body><div id='input' contenteditable/></body>");
+
+    auto actual = createSnapshotForHTMLString(@"<body style='color: black'><div id='input' contenteditable/></body>");
+
+    CGImagePixelReader snapshotReaderExpected { expected.get() };
+    CGImagePixelReader snapshotReaderActual { actual.get() };
+
+    for (int x = 0; x < frame.size.width * 3; ++x) {
+        for (int y = 0; y < frame.size.height * 3; ++y)
+            EXPECT_EQ(snapshotReaderExpected.at(x, y), snapshotReaderActual.at(x, y));
+    }
+}
+#endif
 
 #endif // HAVE(REDESIGNED_TEXT_CURSOR)
 
