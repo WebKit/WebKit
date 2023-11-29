@@ -593,12 +593,6 @@ set(NetworkProcess_LIBRARIES WebKit)
 set(GPUProcess_LIBRARIES WebKit)
 set(PluginProcess_LIBRARIES WebKit)
 
-if (ENABLE_ENCRYPTED_MEDIA AND ENABLE_OPENCDM)
-  list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-      ${OPENCDM_INCLUDE_DIRS}
-  )
-endif ()
-
 # For platforms that want to use system-provided OpenGL (ES) / EGL headers,
 # these include directories, libraries or definitions need to be
 # added before the ANGLE directories.
