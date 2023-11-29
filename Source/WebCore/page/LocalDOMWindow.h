@@ -269,7 +269,7 @@ public:
     {
         return postMessage(globalObject, incumbentWindow, message, WindowPostMessageOptions { WTFMove(targetOrigin), WTFMove(transfer) });
     }
-    WEBCORE_EXPORT void postMessageFromRemoteFrame(JSC::JSGlobalObject&, std::optional<WebCore::SecurityOriginData> target, const WebCore::MessageWithMessagePorts&);
+    WEBCORE_EXPORT void postMessageFromRemoteFrame(JSC::JSGlobalObject&, const String& sourceOrigin, std::optional<WebCore::SecurityOriginData> target, const WebCore::MessageWithMessagePorts&);
 
     void languagesChanged();
 
@@ -443,7 +443,7 @@ private:
     void decrementGamepadEventListenerCount();
 #endif
 
-    void processPostMessage(JSC::JSGlobalObject&, RefPtr<Document>&&, const MessageWithMessagePorts&, RefPtr<WindowProxy>&&, RefPtr<SecurityOrigin>&&);
+    void processPostMessage(JSC::JSGlobalObject&, const String& origin, const MessageWithMessagePorts&, RefPtr<WindowProxy>&&, RefPtr<SecurityOrigin>&&);
     bool m_shouldPrintWhenFinishedLoading { false };
     bool m_suspendedForDocumentSuspension { false };
     bool m_isSuspendingObservers { false };

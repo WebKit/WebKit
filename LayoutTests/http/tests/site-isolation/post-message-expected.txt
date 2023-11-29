@@ -5,6 +5,6 @@ PASS posting a non-serializable message threw an exception: DataCloneError: The 
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS received 'iframe received hello'
-PASS received 'iframe received world'
+PASS received 'iframe received hello' from http://localhost:8000
+PASS received 'iframe received world' from http://localhost:8000
 
