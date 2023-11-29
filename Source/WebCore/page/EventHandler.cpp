@@ -3080,7 +3080,7 @@ bool EventHandler::completeWidgetWheelEvent(const PlatformWheelEvent& event, con
     return platformCompletePlatformWidgetWheelEvent(event, *widget.get(), scrollableArea);
 }
 
-bool EventHandler::handleWheelEvent(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps)
+HandleUserInputEventResult EventHandler::handleWheelEvent(const PlatformWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps)
 {
     Ref frame = m_frame.get();
 #if ENABLE(KINETIC_SCROLLING)
@@ -3089,13 +3089,13 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& wheelEvent, Option
 #endif
 
     OptionSet<EventHandling> handling;
-    bool handled = handleWheelEventInternal(wheelEvent, processingSteps, handling);
+    auto handleWheelEventResult = handleWheelEventInternal(wheelEvent, processingSteps, handling);
     // wheelEventWasProcessedByMainThread() may have already been called via performDefaultWheelEventHandling(), but this ensures that it's always called if that code path doesn't run.
     wheelEventWasProcessedByMainThread(wheelEvent, handling);
-    return handled;
+    return handleWheelEventResult;
 }
 
-bool EventHandler::handleWheelEventInternal(const PlatformWheelEvent& event, OptionSet<WheelEventProcessingSteps> processingSteps, OptionSet<EventHandling>& handling)
+HandleUserInputEventResult EventHandler::handleWheelEventInternal(const PlatformWheelEvent& event, OptionSet<WheelEventProcessingSteps> processingSteps, OptionSet<EventHandling>& handling)
 {
     Ref frame = m_frame.get();
     RefPtr document = frame->document();
@@ -3152,7 +3152,10 @@ bool EventHandler::handleWheelEventInternal(const PlatformWheelEvent& event, Opt
 
     if (element) {
         if (isOverWidget) {
-            if (WeakPtr<Widget> widget = widgetForElement(*element)) {
+            if (RefPtr remoteSubframe = dynamicDowncast<RemoteFrame>(subframeForTargetNode(result.targetNode()))) {
+                if (auto wheelEventDataForRemoteFrame = userInputEventDataForRemoteFrame(remoteSubframe.get(), result.roundedPointInInnerNodeFrame()))
+                    return *wheelEventDataForRemoteFrame;
+            } else if (WeakPtr<Widget> widget = widgetForElement(*element)) {
                 if (passWheelEventToWidget(event, *widget.get(), processingSteps))
                     return completeWidgetWheelEvent(event, widget, scrollableArea);
             }
@@ -5139,7 +5142,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& event, Widge
     if (!frameView)
         return false;
 
-    return frameView->frame().eventHandler().handleWheelEvent(event, processingSteps);
+    return frameView->frame().eventHandler().handleWheelEvent(event, processingSteps).wasHandled();
 }
 
 bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const

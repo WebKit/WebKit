@@ -36,6 +36,7 @@
 #include "WebTouchEvent.h"
 #include "WebWheelEvent.h"
 #include <WebCore/DisplayUpdate.h>
+#include <WebCore/HandleUserInputEventResult.h>
 #include <WebCore/Page.h>
 #include <WebCore/WheelEventTestMonitor.h>
 #include <wtf/MainThread.h>
@@ -273,7 +274,7 @@ void EventDispatcher::dispatchWheelEvent(PageIdentifier pageID, const WebWheelEv
 
     bool handled = false;
     if (webPage->mainFrame())
-        handled = webPage->wheelEvent(webPage->mainFrame()->frameID(), wheelEvent, processingSteps, wheelEventOrigin);
+        handled = webPage->wheelEvent(webPage->mainFrame()->frameID(), wheelEvent, processingSteps, wheelEventOrigin).wasHandled();
 
     if (processingSteps.contains(WheelEventProcessingSteps::SynchronousScrolling) && wheelEventOrigin == EventDispatcher::WheelEventOrigin::UIProcess)
         sendDidReceiveEvent(pageID, wheelEvent.type(), handled);
