@@ -217,7 +217,7 @@ LocalFrameView::LocalFrameView(LocalFrame& frame)
     ScrollableArea::setVerticalScrollElasticity(verticalElasticity);
     ScrollableArea::setHorizontalScrollElasticity(horizontalElasticity);
 #endif
-    if (m_frame->settings().cssScrollAnchoringEnabled())
+    if (m_frame->document() && m_frame->document()->settings().cssScrollAnchoringEnabled())
         m_scrollAnchoringController = WTF::makeUnique<ScrollAnchoringController>(*this);
 }
 
