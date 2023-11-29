@@ -841,6 +841,7 @@ TextStream& operator<<(TextStream& ts, PseudoId pseudoId)
     case PseudoId::None: ts << "none"; break;
     case PseudoId::FirstLine: ts << "first-line"; break;
     case PseudoId::FirstLetter: ts << "first-letter"; break;
+    case PseudoId::GrammarError: ts << "grammar-error"; break;
     case PseudoId::Highlight: ts << "highlight"; break;
     case PseudoId::Marker: ts << "marker"; break;
     case PseudoId::Backdrop: ts << "backdrop"; break;
@@ -853,6 +854,7 @@ TextStream& operator<<(TextStream& ts, PseudoId pseudoId)
     case PseudoId::ScrollbarTrack: ts << "scrollbar-track"; break;
     case PseudoId::ScrollbarTrackPiece: ts << "scrollbar-trackpiece"; break;
     case PseudoId::ScrollbarCorner: ts << "scrollbar-corner"; break;
+    case PseudoId::SpellingError: ts << "spelling-error"; break;
     case PseudoId::ViewTransition: ts << "view-transition"; break;
     case PseudoId::ViewTransitionGroup: ts << "view-transition-group"; break;
     case PseudoId::ViewTransitionImagePair: ts << "view-transition-image-pair"; break;

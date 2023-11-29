@@ -880,8 +880,13 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
     // If no size is specified, ensure the height of the button matches ControlBaseHeight scaled
     // with the font size. min-height is used rather than height to avoid clipping the contents of
     // the button in cases where the button contains more than one line of text.
-    if (style.logicalWidth().isIntrinsicOrAuto() || style.logicalHeight().isAuto())
-        style.setLogicalMinHeight(Length(ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize(), LengthType::Fixed));
+    if (style.logicalWidth().isIntrinsicOrAuto() || style.logicalHeight().isAuto()) {
+        auto minimumHeight = ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize();
+        if (style.logicalMinHeight().isFixed())
+            minimumHeight = std::max(minimumHeight, style.logicalMinHeight().value());
+        // FIXME: This may need to be a layout time adjustment to support various values like fit-content etc.
+        style.setLogicalMinHeight(Length(minimumHeight, LengthType::Fixed));
+    }
 
 #if ENABLE(INPUT_TYPE_COLOR)
     if (style.effectiveAppearance() == StyleAppearance::ColorWell)

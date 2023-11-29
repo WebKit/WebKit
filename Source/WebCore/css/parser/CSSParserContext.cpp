@@ -105,6 +105,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , sidewaysWritingModesEnabled { document.settings().sidewaysWritingModesEnabled() }
     , cssTextWrapPrettyEnabled { document.settings().cssTextWrapPrettyEnabled() }
     , highlightAPIEnabled { document.settings().highlightAPIEnabled() }
+    , grammarAndSpellingPseudoElementsEnabled { document.settings().grammarAndSpellingPseudoElementsEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
 }
@@ -140,7 +141,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.sidewaysWritingModesEnabled               << 24
         | context.cssTextWrapPrettyEnabled                  << 25
         | context.highlightAPIEnabled                       << 26
-        | (uint64_t)context.mode                            << 27; // This is multiple bits, so keep it last.
+        | context.grammarAndSpellingPseudoElementsEnabled   << 27
+        | (uint64_t)context.mode                            << 28; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

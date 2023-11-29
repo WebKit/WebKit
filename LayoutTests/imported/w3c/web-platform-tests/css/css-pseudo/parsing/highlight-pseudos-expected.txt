@@ -19,20 +19,20 @@ PASS "::target-text div" should be an invalid selector
 PASS "::target-text::after" should be an invalid selector
 PASS "::target-text:hover" should be an invalid selector
 PASS ":not(::target-text)" should be an invalid selector
-FAIL "::spelling-error" should be a valid selector '::spelling-error' is not a valid selector.
-FAIL ".a::spelling-error" should be a valid selector '.a::spelling-error' is not a valid selector.
-FAIL "div ::spelling-error" should be a valid selector 'div ::spelling-error' is not a valid selector.
-FAIL "::part(my-part)::spelling-error" should be a valid selector '::part(my-part)::spelling-error' is not a valid selector.
+PASS "::spelling-error" should be a valid selector
+PASS ".a::spelling-error" should be a valid selector
+PASS "div ::spelling-error" should be a valid selector
+PASS "::part(my-part)::spelling-error" should be a valid selector
 PASS "::before::spelling-error" should be an invalid selector
 PASS "::spelling-error.a" should be an invalid selector
 PASS "::spelling-error div" should be an invalid selector
 PASS "::spelling-error::after" should be an invalid selector
 PASS "::spelling-error:hover" should be an invalid selector
 PASS ":not(::spelling-error)" should be an invalid selector
-FAIL "::grammar-error" should be a valid selector '::grammar-error' is not a valid selector.
-FAIL ".a::grammar-error" should be a valid selector '.a::grammar-error' is not a valid selector.
-FAIL "div ::grammar-error" should be a valid selector 'div ::grammar-error' is not a valid selector.
-FAIL "::part(my-part)::grammar-error" should be a valid selector '::part(my-part)::grammar-error' is not a valid selector.
+PASS "::grammar-error" should be a valid selector
+PASS ".a::grammar-error" should be a valid selector
+PASS "div ::grammar-error" should be a valid selector
+PASS "::part(my-part)::grammar-error" should be a valid selector
 PASS "::before::grammar-error" should be an invalid selector
 PASS "::grammar-error.a" should be an invalid selector
 PASS "::grammar-error div" should be an invalid selector

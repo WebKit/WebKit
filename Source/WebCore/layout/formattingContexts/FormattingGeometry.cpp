@@ -139,20 +139,20 @@ std::optional<LayoutUnit> FormattingGeometry::computedWidthValue(const Box& layo
         return computedValue;
 
     if (width.isMinContent() || width.isMaxContent() || width.isFitContent()) {
-        if (!is<ElementBox>(layoutBox))
+        auto* elementBox = dynamicDowncast<ElementBox>(layoutBox);
+        if (!elementBox)
             return { };
-        auto& elementBox = downcast<ElementBox>(layoutBox);
         // FIXME: Consider splitting up computedIntrinsicWidthConstraints so that we could computed the min and max values separately.
         auto intrinsicWidthConstraints = [&] {
-            if (!elementBox.hasInFlowOrFloatingChild())
+            if (!elementBox->hasInFlowOrFloatingChild())
                 return IntrinsicWidthConstraints { 0_lu, containingBlockWidth };
-            ASSERT(elementBox.establishesFormattingContext());
+            ASSERT(elementBox->establishesFormattingContext());
             auto& layoutState = this->layoutState();
-            if (layoutState.hasFormattingState(elementBox)) {
-                if (auto intrinsicWidthConstraints = layoutState.formattingStateForFormattingContext(elementBox).intrinsicWidthConstraints())
+            if (layoutState.hasFormattingState(*elementBox)) {
+                if (auto intrinsicWidthConstraints = layoutState.formattingStateForFormattingContext(*elementBox).intrinsicWidthConstraints())
                     return *intrinsicWidthConstraints;
             }
-            return LayoutContext::createFormattingContext(elementBox, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
+            return LayoutContext::createFormattingContext(*elementBox, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
         }();
         if (width.isMinContent())
             return intrinsicWidthConstraints.minimum;
@@ -302,7 +302,8 @@ LayoutUnit FormattingGeometry::shrinkToFitWidth(const Box& formattingContextRoot
     // 'padding-left', 'padding-right', 'border-right-width', 'margin-right', and the widths of any relevant scroll bars.
 
     // Then the shrink-to-fit width is: min(max(preferred minimum width, available width), preferred width).
-    auto hasContent = is<ElementBox>(formattingContextRoot) && downcast<ElementBox>(formattingContextRoot).hasInFlowOrFloatingChild();
+    auto* root = dynamicDowncast<ElementBox>(formattingContextRoot);
+    auto hasContent = root && root->hasInFlowOrFloatingChild();
     // The used width of the containment box is determined as if performing a normal layout of the box, except that it is treated as having no content.
     auto shouldIgnoreContent = formattingContextRoot.isSizeContainmentBox();
     if (!hasContent || shouldIgnoreContent)
@@ -310,12 +311,11 @@ LayoutUnit FormattingGeometry::shrinkToFitWidth(const Box& formattingContextRoot
 
     auto computedIntrinsicWidthConstraints = [&] {
         auto& layoutState = this->layoutState();
-        auto& root = downcast<ElementBox>(formattingContextRoot);
-        if (layoutState.hasFormattingState(root)) {
-            if (auto intrinsicWidthConstraints = layoutState.formattingStateForFormattingContext(root).intrinsicWidthConstraints())
+        if (layoutState.hasFormattingState(*root)) {
+            if (auto intrinsicWidthConstraints = layoutState.formattingStateForFormattingContext(*root).intrinsicWidthConstraints())
                 return *intrinsicWidthConstraints;
         }
-        return LayoutContext::createFormattingContext(root, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
+        return LayoutContext::createFormattingContext(*root, const_cast<LayoutState&>(layoutState))->computedIntrinsicWidthConstraints();
     }();
     return std::min(std::max(computedIntrinsicWidthConstraints.minimum, availableWidth), computedIntrinsicWidthConstraints.maximum);
 }
@@ -788,15 +788,15 @@ ContentHeightAndMargin FormattingGeometry::complicatedCases(const Box& layoutBox
     // #2
     if (!height) {
         ASSERT(isHeightAuto(layoutBox));
-        if (!is<ElementBox>(layoutBox) || !downcast<ElementBox>(layoutBox).hasInFlowOrFloatingChild())
+        auto* elementBox = dynamicDowncast<ElementBox>(layoutBox);
+        if (!elementBox || !elementBox->hasInFlowOrFloatingChild())
             height = 0_lu;
         else if (layoutBox.isDocumentBox() && !layoutBox.establishesFormattingContext()) {
-            auto& documentBox = downcast<ElementBox>(layoutBox);
-            auto top = BoxGeometry::marginBoxRect(formattingContext().geometryForBox(*documentBox.firstInFlowChild())).top();
-            auto bottom = BoxGeometry::marginBoxRect(formattingContext().geometryForBox(*documentBox.lastInFlowChild())).bottom();
+            auto top = BoxGeometry::marginBoxRect(formattingContext().geometryForBox(*elementBox->firstInFlowChild())).top();
+            auto bottom = BoxGeometry::marginBoxRect(formattingContext().geometryForBox(*elementBox->lastInFlowChild())).bottom();
             // This is a special (quirk?) behavior since the document box is not a formatting context root and
             // all the float boxes end up at the ICB level.
-            auto& initialContainingBlock = FormattingContext::initialContainingBlock(documentBox);
+            auto& initialContainingBlock = FormattingContext::initialContainingBlock(*elementBox);
             auto floatingContext = FloatingContext { formattingContext().root(), layoutState(), downcast<BlockFormattingState>(layoutState().formattingStateForFormattingContext(initialContainingBlock)).placedFloats() };
             if (auto floatBottom = floatingContext.bottom()) {
                 bottom = std::max<LayoutUnit>(*floatBottom, bottom);

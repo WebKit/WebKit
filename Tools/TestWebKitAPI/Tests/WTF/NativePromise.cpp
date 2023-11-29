@@ -629,7 +629,7 @@ TEST(NativePromise, InvokeAsync)
 }
 
 // A chained promise (that is promise->whenSettled([] { return GenericPromise }) is itself a promise
-static Ref<GenericPromise> myMethodReturningThenCommand()
+static Ref<GenericPromise> myMethodReturningThenCommandWithPromise()
 {
     assertIsCurrent(RunLoop::main());
     // You would normally do some work here.
@@ -639,14 +639,30 @@ static Ref<GenericPromise> myMethodReturningThenCommand()
         });
 }
 
+static Ref<GenericPromise> myMethodReturningThenCommandWithVoid()
+{
+    assertIsCurrent(RunLoop::main());
+    // You would normally do some work here.
+    return GenericPromise::createAndReject()->whenSettled(RunLoop::main(),
+        [](GenericPromise::Result result) {
+            EXPECT_FALSE(result.has_value());
+        });
+}
+
 TEST(NativePromise, InvokeAsyncAutoConversion)
 {
     // Ensure that there's no need to cast NativePromise::then() result
     bool done = false;
     AutoWorkQueue awq;
     auto queue = awq.queue();
+    queue->dispatch([queue] {
+        invokeAsync(RunLoop::main(), &myMethodReturningThenCommandWithPromise)->whenSettled(queue,
+            [](GenericPromise::Result result) {
+                EXPECT_TRUE(result.has_value());
+            });
+    });
     queue->dispatch([queue, &done] {
-        invokeAsync(RunLoop::main(), &myMethodReturningThenCommand)->whenSettled(queue,
+        invokeAsync(RunLoop::main(), &myMethodReturningThenCommandWithVoid)->whenSettled(queue,
             [queue, &done](GenericPromise::Result result) {
                 EXPECT_TRUE(result.has_value());
                 queue->beginShutdown();
@@ -1331,16 +1347,17 @@ TEST(NativePromise, RunLoop)
 
 TEST(NativePromise, ImplicitConversionWithForwardPreviousReturn)
 {
-    runInCurrentRunLoop([](auto& runLoop) {
+    runInCurrentRunLoopUntilDone([](auto& runLoop, bool& done) {
         TestPromise::Producer producer;
         Ref<TestPromise> promise = producer;
         promise = promise->whenSettled(runLoop,
             [](const TestPromise::Result& result) {
                 return TestPromise::createAndSettle(result);
             });
-        promise->whenSettled(runLoop, [promise](const TestPromise::Result& result) {
-            EXPECT_TRUE(!result.has_value());
-            EXPECT_FALSE(promise->isResolved());
+        promise->whenSettled(runLoop, [promise, &done](const TestPromise::Result& result) {
+            EXPECT_TRUE(result.has_value());
+            EXPECT_TRUE(promise->isResolved());
+            done = true;
         });
         producer.resolve(1);
         Ref<TestPromise> originalPromise = producer;

@@ -33,12 +33,8 @@ Line
         (borderRadius 0 8 0 0),
         (interaction (6,109) width=107 height=12)
         (borderRadius 0 0 8 0),
-        (guard (6,111) width=71 height=32)
-        (borderRadius 0.00),
         (interaction (6,121) width=71 height=12)
         (borderRadius 0 0 8 0),
-        (guard (6,123) width=38 height=32)
-        (borderRadius 0.00),
         (interaction (6,133) width=38 height=12)
         (borderRadius 0 0 8 8)])
       )

@@ -1622,7 +1622,7 @@ void CodeBlock::finalizeUnconditionally(VM& vm, CollectionScope)
         if (!VM::useUnlinkedCodeBlockJettisoning())
             return;
         JITCode* jitCode = m_jitCode.get();
-        double count = 0;
+        float count = 0;
         bool alwaysActive = false;
         switch (JITCode::jitTypeFor(jitCode)) {
         case JITType::None:

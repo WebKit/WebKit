@@ -1483,6 +1483,7 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             case CSSSelector::PseudoElementBefore:
             case CSSSelector::PseudoElementFirstLetter:
             case CSSSelector::PseudoElementFirstLine:
+            case CSSSelector::PseudoElementGrammarError:
             case CSSSelector::PseudoElementMarker:
             case CSSSelector::PseudoElementResizer:
             case CSSSelector::PseudoElementScrollbar:
@@ -1492,6 +1493,7 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             case CSSSelector::PseudoElementScrollbarTrack:
             case CSSSelector::PseudoElementScrollbarTrackPiece:
             case CSSSelector::PseudoElementSelection:
+            case CSSSelector::PseudoElementSpellingError:
             case CSSSelector::PseudoElementViewTransition:
             case CSSSelector::PseudoElementWebKitCustom:
             case CSSSelector::PseudoElementWebKitCustomLegacyPrefixed:

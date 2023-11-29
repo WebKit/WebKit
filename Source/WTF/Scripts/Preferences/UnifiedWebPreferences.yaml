@@ -2872,6 +2872,20 @@ GoogleAntiFlickerOptimizationQuirkEnabled:
     WebCore:
       default: true
 
+GrammarAndSpellingPseudoElementsEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "::grammar-error and ::spelling-error pseudo-elements"
+  humanReadableDescription: "Enable the ::grammar-error and ::spelling-error CSS pseudo-elements"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 GraphicsContextFiltersEnabled:
    type: bool
    status: stable

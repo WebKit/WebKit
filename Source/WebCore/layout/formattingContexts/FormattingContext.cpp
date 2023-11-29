@@ -160,8 +160,8 @@ const BoxGeometry& FormattingContext::geometryForBox(const Box& layoutBox, std::
 
 const InitialContainingBlock& FormattingContext::initialContainingBlock(const Box& layoutBox)
 {
-    if (is<InitialContainingBlock>(layoutBox))
-        return downcast<InitialContainingBlock>(layoutBox);
+    if (auto* initialContainingBlock = dynamicDowncast<InitialContainingBlock>(layoutBox))
+        return *initialContainingBlock;
 
     auto* ancestor = &layoutBox.parent();
     for (; !is<InitialContainingBlock>(*ancestor); ancestor = &ancestor->parent()) { }

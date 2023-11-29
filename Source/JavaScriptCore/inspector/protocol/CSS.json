@@ -38,6 +38,7 @@
             "enum": [
                 "first-line",
                 "first-letter",
+                "grammar-error",
                 "highlight",
                 "marker",
                 "before",
@@ -50,6 +51,7 @@
                 "scrollbar-track",
                 "scrollbar-track-piece",
                 "scrollbar-corner",
+                "spelling-error",
                 "resizer",
                 "view-transition",
                 "view-transition-group",

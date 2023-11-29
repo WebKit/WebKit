@@ -189,13 +189,12 @@ void BlockFormattingContext::layoutOutOfFlowContent(const ConstraintsForOutOfFlo
         computeBorderAndPadding(outOfFlowBox, horizontalConstraintsForBorderAndPadding);
 
         computeOutOfFlowHorizontalGeometry(outOfFlowBox, containingBlockConstraints);
-        auto outOfFlowBoxHasContent = is<ElementBox>(outOfFlowBox.get()) && downcast<ElementBox>(outOfFlowBox.get()).hasChild();
-        if (outOfFlowBoxHasContent) {
-            auto& elementBox = downcast<ElementBox>(outOfFlowBox.get());
-            auto formattingContext = LayoutContext::createFormattingContext(elementBox, layoutState());
-            if (elementBox.hasInFlowOrFloatingChild())
-                formattingContext->layoutInFlowContent(formattingGeometry().constraintsForInFlowContent(elementBox));
-            computeOutOfFlowVerticalGeometry(elementBox, containingBlockConstraints);
+        auto* elementBox = dynamicDowncast<ElementBox>(outOfFlowBox.get());
+        if (elementBox && elementBox->hasChild()) {
+            auto formattingContext = LayoutContext::createFormattingContext(*elementBox, layoutState());
+            if (elementBox->hasInFlowOrFloatingChild())
+                formattingContext->layoutInFlowContent(formattingGeometry().constraintsForInFlowContent(*elementBox));
+            computeOutOfFlowVerticalGeometry(*elementBox, containingBlockConstraints);
         } else
             computeOutOfFlowVerticalGeometry(outOfFlowBox, containingBlockConstraints);
     }

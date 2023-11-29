@@ -58,6 +58,7 @@ public:
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     void uniteInteractionRegions(const Region&, RenderObject&);
     bool shouldConsolidateInteractionRegion(IntRect, RenderObject&);
+    void removeSuperfluousInteractionRegions();
     void shrinkWrapInteractionRegions();
     void copyInteractionRegionsToEventRegion();
 #endif

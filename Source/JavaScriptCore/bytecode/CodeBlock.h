@@ -953,6 +953,8 @@ private:
 
     const void* const m_instructionsRawPointer { nullptr };
     SentinelLinkedList<CallLinkInfoBase, PackedRawSentinelNode<CallLinkInfoBase>> m_incomingCalls;
+    uint16_t m_optimizationDelayCounter { 0 };
+    uint16_t m_reoptimizationRetryCounter { 0 };
     StructureWatchpointMap m_llintGetByIdWatchpointMap;
     RefPtr<JITCode> m_jitCode;
 #if ENABLE(JIT)
@@ -980,11 +982,9 @@ private:
 
     BaselineExecutionCounter m_jitExecuteCounter;
 
-    uint16_t m_optimizationDelayCounter { 0 };
-    uint16_t m_reoptimizationRetryCounter { 0 };
+    float m_previousCounter { 0 };
 
     ApproximateTime m_creationTime;
-    double m_previousCounter { 0 };
 
     std::unique_ptr<RareData> m_rareData;
 
@@ -995,7 +995,7 @@ private:
 };
 /* This check is for normal Release builds; ASSERT_ENABLED changes the size. */
 #if defined(NDEBUG) && !defined(ASSERT_ENABLED) && COMPILER(GCC_COMPATIBLE)
-static_assert(sizeof(CodeBlock) <= 240, "Keep it small for memory saving");
+static_assert(sizeof(CodeBlock) <= 224, "Keep it small for memory saving");
 #endif
 
 template <typename ExecutableType>

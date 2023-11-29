@@ -98,8 +98,6 @@ public:
     // Other methods will be called on the main thread, but only once appendData has returned.
     virtual Expected<void, PlatformMediaError> appendData(Segment&&, AppendFlags = AppendFlags::None) = 0;
     virtual void flushPendingMediaData() = 0;
-    virtual void setShouldProvideMediaDataForTrackID(bool, uint64_t) = 0;
-    virtual bool shouldProvideMediadataForTrackID(uint64_t) = 0;
     virtual void resetParserState() = 0;
     virtual void invalidate() = 0;
     virtual void setMinimumAudioSampleDuration(float);

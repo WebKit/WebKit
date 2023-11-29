@@ -60,8 +60,6 @@ public:
     Type type() const { return Type::AVFObjC; }
     Expected<void, PlatformMediaError> appendData(Segment&&, AppendFlags = AppendFlags::None) final;
     void flushPendingMediaData() final;
-    void setShouldProvideMediaDataForTrackID(bool, uint64_t) final;
-    bool shouldProvideMediadataForTrackID(uint64_t) final;
     void resetParserState() final;
     void invalidate() final;
 #if !RELEASE_LOG_DISABLED

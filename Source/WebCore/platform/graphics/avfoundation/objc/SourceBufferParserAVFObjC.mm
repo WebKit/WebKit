@@ -267,20 +267,6 @@ void SourceBufferParserAVFObjC::flushPendingMediaData()
     [m_parser providePendingMediaData];
 }
 
-void SourceBufferParserAVFObjC::setShouldProvideMediaDataForTrackID(bool should, uint64_t trackID)
-{
-    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "should = ", should, ", trackID = ", trackID);
-    BEGIN_BLOCK_OBJC_EXCEPTIONS
-    [m_parser setShouldProvideMediaData:should forTrackID:trackID];
-    END_BLOCK_OBJC_EXCEPTIONS
-}
-
-bool SourceBufferParserAVFObjC::shouldProvideMediadataForTrackID(uint64_t trackID)
-{
-    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "trackID = ", trackID);
-    return [m_parser shouldProvideMediaDataForTrackID:trackID];
-}
-
 void SourceBufferParserAVFObjC::resetParserState()
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);

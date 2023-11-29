@@ -619,7 +619,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
 
         auto animationImpact = styleable.applyKeyframeEffects(*animatedStyle, animatedProperties, previousLastStyleChangeEventStyle.get(), resolutionContext);
 
-        if (*resolvedStyle.style == *animatedStyle && animationImpact.isEmpty())
+        if (*resolvedStyle.style == *animatedStyle && animationImpact.isEmpty() && previousLastStyleChangeEventStyle)
             return { WTFMove(resolvedStyle.style), animationImpact };
 
         if (resolvedStyle.matchResult) {
