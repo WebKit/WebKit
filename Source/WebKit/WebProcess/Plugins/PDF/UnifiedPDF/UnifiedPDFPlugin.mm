@@ -258,14 +258,10 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
         bufferContext.clip(destinationRect);
         bufferContext.fillRect(destinationRect, Color::white);
 
-        // Translate the context to the bottom of pageBounds and flip, so that CGPDFPageGetDrawingTransform operates
+        // Translate the context to the bottom of pageBounds and flip, so that PDFKit operates
         // from this page's drawing origin.
         bufferContext.translate(destinationRect.minXMaxYCorner());
         bufferContext.scale({ 1, -1 });
-
-        destinationRect.setLocation({ });
-        auto transform = [page transformForBox:kPDFDisplayBoxCropBox];
-        bufferContext.concatCTM(transform);
 
         [page drawWithBox:kPDFDisplayBoxCropBox toContext:imageBuffer->context().platformContext()];
     }
