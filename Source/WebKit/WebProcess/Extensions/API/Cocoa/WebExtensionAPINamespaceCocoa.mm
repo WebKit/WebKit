@@ -96,6 +96,14 @@ WebExtensionAPICommands& WebExtensionAPINamespace::commands()
     return *m_commands;
 }
 
+WebExtensionAPIDeclarativeNetRequest& WebExtensionAPINamespace::declarativeNetRequest()
+{
+    if (!m_declarativeNetRequest)
+        m_declarativeNetRequest = WebExtensionAPIDeclarativeNetRequest::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_declarativeNetRequest;
+}
+
 WebExtensionAPIExtension& WebExtensionAPINamespace::extension()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/extension

@@ -38,6 +38,8 @@
 
     [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIMenus contextMenus;
 
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIDeclarativeNetRequest declarativeNetRequest;
+
     readonly attribute WebExtensionAPIExtension extension;
 
     readonly attribute WebExtensionAPILocalization i18n;

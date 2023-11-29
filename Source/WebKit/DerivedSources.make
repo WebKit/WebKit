@@ -767,6 +767,7 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIAction \
     WebExtensionAPIAlarms \
     WebExtensionAPICommands \
+    WebExtensionAPIDeclarativeNetRequest \
     WebExtensionAPIEvent \
     WebExtensionAPIExtension \
     WebExtensionAPILocalization \
