@@ -23,6 +23,7 @@
 
 #include <mutex>
 #include <wtf/Assertions.h>
+#include <wtf/Compiler.h>
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -77,6 +78,7 @@ void Fuzzilli::waitForCommand()
     RELEASE_ASSERT_WITH_MESSAGE(action == 'cexe', "[REPRL] Unknown action: %u", action);
 }
 
+SUPPRESS_COVERAGE
 void Fuzzilli::initializeCoverage(uint32_t* start, uint32_t* stop)
 {
     RELEASE_ASSERT_WITH_MESSAGE(!edgesStart && !edgesStop, "Coverage instrumentation is only supported for a single module");
