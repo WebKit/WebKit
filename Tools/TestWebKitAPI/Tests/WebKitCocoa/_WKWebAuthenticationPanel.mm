@@ -1586,11 +1586,11 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum1)
     auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
     [options setTimeout:@120];
 
-    auto usb = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportUSB]);
-    auto nfc = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportNFC]);
-    auto internal = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportInternal]);
-    auto hybrid = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportHybrid]);
-    auto credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    RetainPtr usb = [NSNumber numberWithInt:_WKWebAuthenticationTransportUSB];
+    RetainPtr nfc = [NSNumber numberWithInt:_WKWebAuthenticationTransportNFC];
+    RetainPtr internal = [NSNumber numberWithInt:_WKWebAuthenticationTransportInternal];
+    RetainPtr hybrid = [NSNumber numberWithInt:_WKWebAuthenticationTransportHybrid];
+    RetainPtr credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
     [credential setTransports:@[ usb.get(), nfc.get(), internal.get(), hybrid.get() ]];
     [options setExcludeCredentials:@[ credential.get(), credential.get() ]];
 
@@ -1658,10 +1658,10 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialCreationOptionsMaximum2)
     auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
     [options setTimeout:@120];
 
-    auto usb = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportUSB]);
-    auto nfc = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportNFC]);
-    auto internal = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportInternal]);
-    auto credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    RetainPtr usb = [NSNumber numberWithInt:_WKWebAuthenticationTransportUSB];
+    RetainPtr nfc = [NSNumber numberWithInt:_WKWebAuthenticationTransportNFC];
+    RetainPtr internal = [NSNumber numberWithInt:_WKWebAuthenticationTransportInternal];
+    RetainPtr credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
     [credential setTransports:@[ usb.get(), nfc.get(), internal.get() ]];
     [options setExcludeCredentials:@[ credential.get(), credential.get() ]];
 
@@ -1893,16 +1893,16 @@ TEST(WebAuthenticationPanel, PublicKeyCredentialRequestOptionsMaximum)
     auto options = adoptNS([[_WKPublicKeyCredentialRequestOptions alloc] init]);
     [options setTimeout:@120];
 
-    auto usb = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportUSB]);
-    auto nfc = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportNFC]);
-    auto internal = adoptNS([NSNumber numberWithInt:_WKWebAuthenticationTransportInternal]);
-    auto credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
+    RetainPtr usb = [NSNumber numberWithInt:_WKWebAuthenticationTransportUSB];
+    RetainPtr nfc = [NSNumber numberWithInt:_WKWebAuthenticationTransportNFC];
+    RetainPtr internal = [NSNumber numberWithInt:_WKWebAuthenticationTransportInternal];
+    RetainPtr credential = adoptNS([[_WKPublicKeyCredentialDescriptor alloc] initWithIdentifier:nsIdentifier]);
     [credential setTransports:@[ usb.get(), nfc.get(), internal.get() ]];
     [options setAllowCredentials:@[ credential.get(), credential.get() ]];
 
     [options setUserVerification:_WKUserVerificationRequirementRequired];
 
-    auto extensions = adoptNS([[_WKAuthenticationExtensionsClientInputs alloc] init]);
+    RetainPtr extensions = adoptNS([[_WKAuthenticationExtensionsClientInputs alloc] init]);
     [extensions setAppid:@"https//www.example.com/fido"];
     [options setExtensions:extensions.get()];
 

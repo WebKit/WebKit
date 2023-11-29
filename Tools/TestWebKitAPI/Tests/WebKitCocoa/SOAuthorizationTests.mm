@@ -1363,7 +1363,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSAML)
     resetState();
     SWIZZLE_SOAUTH(PAL::getSOAuthorizationClass());
 
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
+    RetainPtr testURL = [[NSBundle mainBundle] URLForResource:@"simple" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"SAML"]]);
@@ -1374,7 +1374,7 @@ TEST(SOAuthorizationRedirect, InterceptionSucceedSAML)
     configureSOAuthorizationWebView(webView.get(), delegate.get(), OpenExternalSchemesPolicy::Allow);
 
     // Add a http body to the request to mimic a SAML request.
-    auto request = adoptNS([NSMutableURLRequest requestWithURL:testURL.get()]);
+    RetainPtr request = [NSMutableURLRequest requestWithURL:testURL.get()];
     [request setHTTPBody:adoptNS([[NSData alloc] init]).get()];
     haveHttpBody = true;
 
@@ -2382,7 +2382,7 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedSuppressActiveSession)
 
     navigationCompleted = false;
     [webView evaluateJavaScript: @"newWindow" completionHandler:^(id result, NSError *) {
-        EXPECT_TRUE(result == adoptNS([NSNull null]).get());
+        EXPECT_TRUE(result == [NSNull null]);
         navigationCompleted = true;
     }];
     Util::run(&navigationCompleted);
