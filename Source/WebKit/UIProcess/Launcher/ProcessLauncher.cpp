@@ -45,6 +45,12 @@ ProcessLauncher::ProcessLauncher(Client* client, LaunchOptions&& launchOptions)
     launchProcess();
 }
 
+#if !PLATFORM(COCOA)
+ProcessLauncher::~ProcessLauncher()
+{
+}
+#endif
+
 void ProcessLauncher::didFinishLaunchingProcess(ProcessID processIdentifier, IPC::Connection::Identifier identifier)
 {
     tracePoint(ProcessLaunchEnd);

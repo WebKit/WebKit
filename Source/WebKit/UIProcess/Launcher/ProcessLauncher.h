@@ -112,6 +112,8 @@ public:
         return adoptRef(*new ProcessLauncher(client, WTFMove(launchOptions)));
     }
 
+    virtual ~ProcessLauncher();
+
     bool isLaunching() const { return m_isLaunching; }
     ProcessID processID() const { return m_processID; }
 
