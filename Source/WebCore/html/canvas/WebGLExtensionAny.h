@@ -27,124 +27,14 @@
 
 #if ENABLE(WEBGL)
 
-#include <variant>
 #include <wtf/Ref.h>
 
 namespace WebCore {
 
-class ANGLEInstancedArrays;
-class EXTBlendFuncExtended;
-class EXTBlendMinMax;
-class EXTClipControl;
-class EXTColorBufferFloat;
-class EXTColorBufferHalfFloat;
-class EXTConservativeDepth;
-class EXTDepthClamp;
-class EXTDisjointTimerQuery;
-class EXTDisjointTimerQueryWebGL2;
-class EXTFloatBlend;
-class EXTFragDepth;
-class EXTPolygonOffsetClamp;
-class EXTRenderSnorm;
-class EXTShaderTextureLOD;
-class EXTTextureCompressionBPTC;
-class EXTTextureCompressionRGTC;
-class EXTTextureFilterAnisotropic;
-class EXTTextureMirrorClampToEdge;
-class EXTTextureNorm16;
-class EXTsRGB;
-class KHRParallelShaderCompile;
-class NVShaderNoperspectiveInterpolation;
-class OESDrawBuffersIndexed;
-class OESElementIndexUint;
-class OESFBORenderMipmap;
-class OESSampleVariables;
-class OESShaderMultisampleInterpolation;
-class OESStandardDerivatives;
-class OESTextureFloat;
-class OESTextureFloatLinear;
-class OESTextureHalfFloat;
-class OESTextureHalfFloatLinear;
-class OESVertexArrayObject;
-class WebGLClipCullDistance;
-class WebGLColorBufferFloat;
-class WebGLCompressedTextureASTC;
-class WebGLCompressedTextureETC;
-class WebGLCompressedTextureETC1;
-class WebGLCompressedTexturePVRTC;
-class WebGLCompressedTextureS3TC;
-class WebGLCompressedTextureS3TCsRGB;
-class WebGLDebugRendererInfo;
-class WebGLDebugShaders;
-class WebGLDepthTexture;
-class WebGLDrawBuffers;
-class WebGLDrawInstancedBaseVertexBaseInstance;
-class WebGLLoseContext;
-class WebGLMultiDraw;
-class WebGLMultiDrawInstancedBaseVertexBaseInstance;
-class WebGLPolygonMode;
-class WebGLProvokingVertex;
-class WebGLRenderSharedExponent;
-class WebGLStencilTexturing;
+class WebGLExtensionBase;
 
-// Variant reprenting any WebGL extension.
-// Remember to #include "WebGLExtensionAnyInlines.h" at any instantiation compilation unit.
-using WebGLExtensionAny = std::variant<
-    Ref<ANGLEInstancedArrays>,
-    Ref<EXTBlendFuncExtended>,
-    Ref<EXTBlendMinMax>,
-    Ref<EXTClipControl>,
-    Ref<EXTColorBufferFloat>,
-    Ref<EXTColorBufferHalfFloat>,
-    Ref<EXTConservativeDepth>,
-    Ref<EXTDepthClamp>,
-    Ref<EXTDisjointTimerQuery>,
-    Ref<EXTDisjointTimerQueryWebGL2>,
-    Ref<EXTFloatBlend>,
-    Ref<EXTFragDepth>,
-    Ref<EXTPolygonOffsetClamp>,
-    Ref<EXTRenderSnorm>,
-    Ref<EXTShaderTextureLOD>,
-    Ref<EXTTextureCompressionBPTC>,
-    Ref<EXTTextureCompressionRGTC>,
-    Ref<EXTTextureFilterAnisotropic>,
-    Ref<EXTTextureMirrorClampToEdge>,
-    Ref<EXTTextureNorm16>,
-    Ref<EXTsRGB>,
-    Ref<KHRParallelShaderCompile>,
-    Ref<NVShaderNoperspectiveInterpolation>,
-    Ref<OESDrawBuffersIndexed>,
-    Ref<OESElementIndexUint>,
-    Ref<OESFBORenderMipmap>,
-    Ref<OESSampleVariables>,
-    Ref<OESShaderMultisampleInterpolation>,
-    Ref<OESStandardDerivatives>,
-    Ref<OESTextureFloat>,
-    Ref<OESTextureFloatLinear>,
-    Ref<OESTextureHalfFloat>,
-    Ref<OESTextureHalfFloatLinear>,
-    Ref<OESVertexArrayObject>,
-    Ref<WebGLClipCullDistance>,
-    Ref<WebGLColorBufferFloat>,
-    Ref<WebGLCompressedTextureASTC>,
-    Ref<WebGLCompressedTextureETC>,
-    Ref<WebGLCompressedTextureETC1>,
-    Ref<WebGLCompressedTexturePVRTC>,
-    Ref<WebGLCompressedTextureS3TC>,
-    Ref<WebGLCompressedTextureS3TCsRGB>,
-    Ref<WebGLDebugRendererInfo>,
-    Ref<WebGLDebugShaders>,
-    Ref<WebGLDepthTexture>,
-    Ref<WebGLDrawBuffers>,
-    Ref<WebGLDrawInstancedBaseVertexBaseInstance>,
-    Ref<WebGLLoseContext>,
-    Ref<WebGLMultiDraw>,
-    Ref<WebGLMultiDrawInstancedBaseVertexBaseInstance>,
-    Ref<WebGLPolygonMode>,
-    Ref<WebGLProvokingVertex>,
-    Ref<WebGLRenderSharedExponent>,
-    Ref<WebGLStencilTexturing>
-    >;
+using WebGLExtensionAny = Ref<WebGLExtensionBase>;
+
 }
 
 #endif

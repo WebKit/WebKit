@@ -29,7 +29,6 @@
 #include "WebGLMultiDrawInstancedBaseVertexBaseInstance.h"
 
 #include "InspectorInstrumentation.h"
-#include "WebGLExtensionAnyInlines.h"
 #include "WebGLUtilities.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -38,7 +37,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLMultiDrawInstancedBaseVertexBaseInstance);
 
 WebGLMultiDrawInstancedBaseVertexBaseInstance::WebGLMultiDrawInstancedBaseVertexBaseInstance(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::WebGLMultiDrawInstancedBaseVertexBaseInstance)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_base_vertex_base_instance"_s);
 

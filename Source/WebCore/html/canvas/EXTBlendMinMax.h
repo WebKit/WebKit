@@ -29,11 +29,10 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class EXTBlendMinMax final : public RefCounted<EXTBlendMinMax>, public WebGLExtension<WebGLRenderingContextBase> {
+class EXTBlendMinMax final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTBlendMinMax);
     WTF_MAKE_NONCOPYABLE(EXTBlendMinMax);
 public:

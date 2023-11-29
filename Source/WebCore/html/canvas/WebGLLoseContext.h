@@ -29,11 +29,10 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLLoseContext final : public RefCounted<WebGLLoseContext>, public WebGLExtension<WebGLRenderingContextBase> {
+class WebGLLoseContext final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLLoseContext);
 public:
     explicit WebGLLoseContext(WebGLRenderingContextBase&);

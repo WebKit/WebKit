@@ -29,7 +29,6 @@
 
 #include "IDLTypes.h"
 #include "JSDOMConvertBase.h"
-#include "WebGLExtensionAnyInlines.h"
 
 namespace WebCore {
 

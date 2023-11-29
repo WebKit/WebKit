@@ -42,7 +42,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTDisjointTimerQuery);
 
 EXTDisjointTimerQuery::EXTDisjointTimerQuery(WebGLRenderingContext& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::EXTDisjointTimerQuery)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_disjoint_timer_query"_s);
 }

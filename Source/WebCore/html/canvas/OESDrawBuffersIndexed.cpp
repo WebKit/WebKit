@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(OESDrawBuffersIndexed);
 
 OESDrawBuffersIndexed::OESDrawBuffersIndexed(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::OESDrawBuffersIndexed)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_OES_draw_buffers_indexed"_s);
 }
