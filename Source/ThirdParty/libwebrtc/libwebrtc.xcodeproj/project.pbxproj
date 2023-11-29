@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -2295,7 +2295,6 @@
 		419241EF21275AFA00634FCF /* simulcast_utility.cc in Sources */ = {isa = PBXBuildFile; fileRef = 419241EB21275AFA00634FCF /* simulcast_utility.cc */; };
 		419241F021275AFA00634FCF /* simulcast_rate_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 419241EC21275AFA00634FCF /* simulcast_rate_allocator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		419BA9AD2B15EEF600E0D825 /* vpx_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BA9A62B15EEF400E0D825 /* vpx_config.h */; };
-		419BA9AE2B15EEF600E0D825 /* vpx_config.c in Sources */ = {isa = PBXBuildFile; fileRef = 419BA9A72B15EEF500E0D825 /* vpx_config.c */; };
 		419BA9AF2B15EEF600E0D825 /* vp8_rtcd.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BA9A82B15EEF500E0D825 /* vp8_rtcd.h */; };
 		419BA9B02B15EEF600E0D825 /* vpx_dsp_rtcd.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BA9A92B15EEF500E0D825 /* vpx_dsp_rtcd.h */; };
 		419BA9B12B15EEF600E0D825 /* vp9_rtcd.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BA9AA2B15EEF600E0D825 /* vp9_rtcd.h */; };
@@ -25936,7 +25935,6 @@
 				414035FD24AA1F5500BCE9B2 /* vp9_frame_buffer_pool.cc in Sources */,
 				41323A6B26652B1600B38623 /* vp9_profile.cc in Sources */,
 				412FFA66254B4DAB001DF036 /* vp9_uncompressed_header_parser.cc in Sources */,
-				419BA9AE2B15EEF600E0D825 /* vpx_config.c in Sources */,
 				5C4B4C801E431F9C002651C8 /* wav_file.cc in Sources */,
 				5C4B4C831E431F9C002651C8 /* wav_header.cc in Sources */,
 				4131C0F9234B89E20028A615 /* weak_ptr.cc in Sources */,
