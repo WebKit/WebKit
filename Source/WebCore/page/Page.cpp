@@ -200,8 +200,6 @@
 #include "ServicesOverlayController.h"
 #endif
 
-#include "DisplayView.h"
-
 #if ENABLE(MEDIA_SESSION_COORDINATOR)
 #include "MediaSessionCoordinator.h"
 #include "NavigatorMediaSession.h"
@@ -1915,13 +1913,6 @@ void Page::doAfterUpdateRendering()
 {
     // Code here should do once-per-frame work that needs to be done before painting, and requires
     // layout to be up-to-date. It should not run script, trigger layout, or dirty layout.
-
-    if (settings().layoutFormattingContextEnabled()) {
-        forEachDocument([] (Document& document) {
-            if (auto* frameView = document.view())
-                frameView->displayView().prepareForDisplay();
-        });
-    }
 
     auto runProcessingStep = [&](RenderingUpdateStep step, const Function<void(Document&)>& perDocumentFunction) {
         m_renderingUpdateRemainingSteps.last().remove(step);

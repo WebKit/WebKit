@@ -3657,20 +3657,6 @@ LayoutFallbackWidth:
     WebCore:
       default: 980
 
-LayoutFormattingContextEnabled:
-  type: bool
-  status: unstable
-  category: dom
-  humanReadableName: "Full next-generation layout (LFC)"
-  humanReadableDescription: "Enable full next-generation layout (LFC)"
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 LayoutViewportHeightExpansionFactor:
   type: double
   status: embedder

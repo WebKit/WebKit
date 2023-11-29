@@ -83,10 +83,6 @@ enum class NullGraphicsContextPaintInvalidationReasons : uint8_t;
 enum class StyleColorOptions : uint8_t;
 enum class TiledBackingScrollability : uint8_t;
 
-namespace Display {
-class View;
-}
-
 Pagination::Mode paginationModeForRenderStyle(const RenderStyle&);
 
 enum class LayoutViewportConstraint : bool { Unconstrained, ConstrainedToDocumentRect };
@@ -104,7 +100,7 @@ public:
     virtual ~LocalFrameView();
 
     HostWindow* hostWindow() const final;
-    
+
     WEBCORE_EXPORT void invalidateRect(const IntRect&) final;
     void setFrameRect(const IntRect&) final;
     Type viewType() const final { return Type::Local; }
@@ -114,9 +110,6 @@ public:
     Ref<LocalFrame> protectedFrame() const;
 
     WEBCORE_EXPORT RenderView* renderView() const;
-
-    Display::View* existingDisplayView() const;
-    Display::View& displayView();
 
     int mapFromLayoutToCSSUnits(LayoutUnit) const;
     LayoutUnit mapFromCSSToLayoutUnits(int) const;
@@ -949,8 +942,6 @@ private:
 
     const Ref<LocalFrame> m_frame;
     LocalFrameViewLayoutContext m_layoutContext;
-
-    std::unique_ptr<Display::View> m_displayView;
 
     HashSet<CheckedPtr<Widget>> m_widgetsInRenderTree;
     std::unique_ptr<ListHashSet<CheckedPtr<RenderEmbeddedObject>>> m_embeddedObjectsToUpdate;

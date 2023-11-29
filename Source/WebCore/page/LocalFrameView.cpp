@@ -141,7 +141,6 @@
 #include "LegacyTileCache.h"
 #endif
 
-#include "DisplayView.h"
 #include "LayoutContext.h"
 
 #define PAGE_ID valueOrDefault(m_frame->pageID()).toUInt64()
@@ -986,12 +985,6 @@ void LocalFrameView::updateScrollingCoordinatorScrollSnapProperties() const
 
 bool LocalFrameView::flushCompositingStateForThisFrame(const LocalFrame& rootFrameForFlush)
 {
-    if (m_frame->settings().layoutFormattingContextEnabled()) {
-        if (auto* view = existingDisplayView())
-            view->flushLayers();
-        return true;
-    }
-
     RenderView* renderView = this->renderView();
     if (!renderView)
         return true; // We don't want to keep trying to update layers if we have no renderer.
@@ -1251,9 +1244,6 @@ void LocalFrameView::setIsInWindow(bool isInWindow)
 {
     if (RenderView* renderView = this->renderView())
         renderView->setIsInWindow(isInWindow);
-
-    if (auto* view = existingDisplayView())
-        view->setIsInWindow(isInWindow);
 }
 
 void LocalFrameView::forceLayoutParentViewIfNeeded()
@@ -6054,19 +6044,6 @@ Ref<LocalFrame> LocalFrameView::protectedFrame() const
 RenderView* LocalFrameView::renderView() const
 {
     return m_frame->contentRenderer();
-}
-
-Display::View* LocalFrameView::existingDisplayView() const
-{
-    return m_displayView.get();
-}
-
-Display::View& LocalFrameView::displayView()
-{
-    ASSERT(m_frame->settings().layoutFormattingContextEnabled());
-    if (!m_displayView)
-        m_displayView = makeUnique<Display::View>(*this);
-    return *m_displayView;
 }
 
 int LocalFrameView::mapFromLayoutToCSSUnits(LayoutUnit value) const

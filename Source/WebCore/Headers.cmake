@@ -886,19 +886,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     cssjit/CompiledSelector.h
 
-    display/DisplayTree.h
-    display/DisplayTreeBuilder.h
-    display/DisplayView.h
-
-    display/compositing/DisplayLayerController.h
-
-    display/css/DisplayBox.h
-    display/css/DisplayCSSPainter.h
-    display/css/DisplayContainerBox.h
-    display/css/DisplayImageBox.h
-    display/css/DisplayReplacedBox.h
-    display/css/DisplayStyle.h
-
     dom/AbortSignal.h
     dom/AbstractRange.h
     dom/ActiveDOMCallback.h
