@@ -25,18 +25,41 @@
 
 import ServiceExtensions
 @_spi(Private) import ServiceExtensions
-@_spi(Private) import WebKit
 
-@main
-class NetworkingProcessExtension : WKNetworkingProcessExtension {
-    required init() {
-        super.init()
+@objc
+@_spi(Private)
+open class Grant: NSObject {
+    let inner : _Capabilities.Grant
+
+    init(inner: _Capabilities.Grant) {
+        self.inner = inner
+    }
+
+    @objc(invalidateWithError:)
+    open func invalidate() throws {
+        try self.inner.invalidate()
     }
 }
 
-extension NetworkingProcessExtension {
+@_spi(Private)
+@objc(WKNetworkingProcessExtension)
+open class WKNetworkingProcessExtension : NSObject {
+    @objc(sharedInstance)
+    static public var sharedInstance: WKNetworkingProcessExtension? = nil
+    required public override init() {
+        super.init()
+        WKNetworkingProcessExtension.sharedInstance = self
+    }
+}
+
+extension WKNetworkingProcessExtension: NetworkingServiceExtension {
     @objc(handle:)
-    override open func handle(xpcConnection: xpc_connection_t) {
-        handleNewConnection(xpcConnection)
+    open func handle(xpcConnection: xpc_connection_t) {
+    }
+
+    @objc(grant:name:error:)
+    open func grant(domain: String, name: String) throws -> Any {
+        let grant = try self._request(capabilities: _Capabilities.assertion(domain, name))
+        return Grant(inner: grant)
     }
 }
