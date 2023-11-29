@@ -19,7 +19,7 @@ exports:
                 _kCAGravityCenter, _kCAGravityResizeAspect, _kCAGravityTopLeft, _kCAMediaTimingFunctionEaseInEaseOut, _kCAMediaTimingFunctionLinear,
                 _kCAValueFunctionRotateX, _kCAValueFunctionRotateY, _kCAValueFunctionRotateZ, _kCAValueFunctionScale, _kCAValueFunctionScaleX,
                 _kCAValueFunctionScaleY, _kCAValueFunctionScaleZ, _kCAValueFunctionTranslate, _kCAValueFunctionTranslateX,
-                _kCAValueFunctionTranslateY, _kCAValueFunctionTranslateZ]
+                _kCAValueFunctionTranslateY, _kCAValueFunctionTranslateZ, _kCACornerCurveCircular]
         objc-classes: [CAAnimationGroup, CABackdropLayer, CABasicAnimation, CAContext, CADisplayLink, CAEAGLLayer, CAFilter,
                 CAKeyframeAnimation, CALayer, CALayerHost, CAMediaTimingFunction, CAMetalLayer, CAPropertyAnimation, CAShapeLayer,
                 CASpringAnimation, CATiledLayer, CATransaction, CATransformLayer, CAValueFunction]

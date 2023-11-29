@@ -204,8 +204,11 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     if (properties.changedProperties & LayerChange::ContentsRectChanged)
         layer.contentsRect = properties.contentsRect;
 
-    if (properties.changedProperties & LayerChange::CornerRadiusChanged)
+    if (properties.changedProperties & LayerChange::CornerRadiusChanged) {
         layer.cornerRadius = properties.cornerRadius;
+        if (properties.cornerRadius)
+            layer.cornerCurve = kCACornerCurveCircular;
+    }
 
     if (properties.changedProperties & LayerChange::ShapeRoundedRectChanged) {
         Path path;

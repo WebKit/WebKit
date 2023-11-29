@@ -142,7 +142,6 @@ typedef struct _CARenderContext CARenderContext;
 - (CGSize)size;
 - (void *)regionBeingDrawn;
 - (void)reloadValueForKeyPath:(NSString *)keyPath;
-- (void)setCornerRadius:(CGFloat)cornerRadius;
 - (void)addPresentationModifier:(CAPresentationModifier *)modifier;
 - (void)removePresentationModifier:(CAPresentationModifier *)modifier;
 @property BOOL allowsGroupBlending;

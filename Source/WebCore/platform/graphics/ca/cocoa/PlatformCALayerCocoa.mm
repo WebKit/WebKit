@@ -956,6 +956,8 @@ void PlatformCALayerCocoa::setCornerRadius(float value)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [m_layer setCornerRadius:value];
+    if (value)
+        [m_layer setCornerCurve:kCACornerCurveCircular];
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
