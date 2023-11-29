@@ -283,7 +283,7 @@ StackingItem* TreeBuilder::insertIntoTree(std::unique_ptr<Box>&& box, InsertionP
 
         auto* stackingItemPtr = stackingItem.get();
         currentState().currentStackingContextItem.addChildStackingItem(WTFMove(stackingItem));
-        
+
         if (willTraverseDescendants == WillTraverseDescendants::No)
             didAppendNonContainerStackingItem(*stackingItemPtr);
 
@@ -342,23 +342,22 @@ void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutSta
 
     Box& currentBox = *displayBox;
 
-    auto willTraverseDescendants = (is<Layout::ElementBox>(layoutBox) && downcast<Layout::ElementBox>(layoutBox).hasChild()) ? WillTraverseDescendants::Yes : WillTraverseDescendants::No;
+    auto* layoutContainerBox = dynamicDowncast<Layout::ElementBox>(layoutBox);
+    auto willTraverseDescendants = (layoutContainerBox && layoutContainerBox->hasChild()) ? WillTraverseDescendants::Yes : WillTraverseDescendants::No;
     auto* stackingItem = insertIntoTree(WTFMove(displayBox), insertionPosition, willTraverseDescendants);
     if (willTraverseDescendants == WillTraverseDescendants::No)
         return;
 
-    auto& layoutContainerBox = downcast<Layout::ElementBox>(layoutBox);
-
     ContainerBox& currentContainerBox = downcast<ContainerBox>(currentBox);
-    pushStateForBoxDescendants(layoutContainerBox, geometry, currentContainerBox, stackingItem);
+    pushStateForBoxDescendants(*layoutContainerBox, geometry, currentContainerBox, stackingItem);
 
     auto insertionPositionForChildren = InsertionPosition { currentContainerBox };
 
     enum class DescendantBoxInclusion { AllBoxes, OutOfFlowOnly };
     auto boxInclusion = DescendantBoxInclusion::AllBoxes;
 
-    if (layoutContainerBox.establishesInlineFormattingContext()) {
-        buildInlineDisplayTree(layoutState, downcast<Layout::ElementBox>(layoutContainerBox), insertionPositionForChildren);
+    if (layoutContainerBox->establishesInlineFormattingContext()) {
+        buildInlineDisplayTree(layoutState, *layoutContainerBox, insertionPositionForChildren);
         boxInclusion = DescendantBoxInclusion::OutOfFlowOnly;
     }
 
@@ -370,7 +369,7 @@ void TreeBuilder::recursiveBuildDisplayTree(const Layout::LayoutState& layoutSta
         return false;
     };
 
-    for (auto& child : Layout::childrenOfType<Layout::Box>(layoutContainerBox)) {
+    for (auto& child : Layout::childrenOfType<Layout::Box>(*layoutContainerBox)) {
         if (includeBox(boxInclusion, child) && layoutState.hasBoxGeometry(child))
             recursiveBuildDisplayTree(layoutState, child, insertionPositionForChildren);
     }
@@ -393,9 +392,9 @@ static void outputDisplayTree(TextStream& stream, const Box& displayBox, bool wr
 {
     outputDisplayBox(stream, displayBox, writeFirstItemIndent);
 
-    if (is<ContainerBox>(displayBox)) {
+    if (auto* containerBox = dynamicDowncast<ContainerBox>(displayBox)) {
         TextStream::IndentScope indent(stream);
-        for (auto child = downcast<ContainerBox>(displayBox).firstChild(); child; child = child->nextSibling())
+        for (auto child = containerBox->firstChild(); child; child = child->nextSibling())
             outputDisplayTree(stream, *child);
     }
 }

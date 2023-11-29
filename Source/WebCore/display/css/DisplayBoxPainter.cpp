@@ -53,11 +53,9 @@ void BoxPainter::paintBoxDecorations(const BoxModelBox& box, PaintingContext& pa
 
 void BoxPainter::paintBoxContent(const Box& box, PaintingContext& paintingContext)
 {
-    if (is<ImageBox>(box)) {
-        auto& imageBox = downcast<ImageBox>(box);
-        
-        auto* image = imageBox.image();
-        auto imageRect = imageBox.replacedContentRect();
+    if (auto* imageBox = dynamicDowncast<ImageBox>(box)) {
+        auto* image = imageBox->image();
+        auto imageRect = imageBox->replacedContentRect();
 
         if (image)
             paintingContext.context.drawImage(*image, imageRect);
@@ -65,9 +63,7 @@ void BoxPainter::paintBoxContent(const Box& box, PaintingContext& paintingContex
         return;
     }
     
-    if (is<TextBox>(box)) {
-        auto& textBox = downcast<TextBox>(box);
-
+    if (auto* textBox = dynamicDowncast<TextBox>(box)) {
         auto& style = box.style();
         auto textRect = box.absoluteBoxRect();
 
@@ -76,9 +72,9 @@ void BoxPainter::paintBoxContent(const Box& box, PaintingContext& paintingContex
 
         // FIXME: Add non-baseline align painting
         auto baseline = textRect.y() + style.metricsOfPrimaryFont().ascent();
-        auto expansion = textBox.expansion();
+        auto expansion = textBox->expansion();
 
-        auto textRun = TextRun { textBox.text().originalContent(), textRect.x(), expansion.horizontalExpansion, expansion.behavior };
+        auto textRun = TextRun { textBox->text().originalContent(), textRect.x(), expansion.horizontalExpansion, expansion.behavior };
         textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
         paintingContext.context.drawText(style.fontCascade(), textRun, { textRect.x(), baseline });
         return;
@@ -92,8 +88,8 @@ void BoxPainter::paintBox(const Box& box, PaintingContext& paintingContext, cons
     if (!dirtyRect.intersects(enclosingIntRect(absoluteRect)))
         return;
 
-    if (is<BoxModelBox>(box))
-        paintBoxDecorations(downcast<BoxModelBox>(box), paintingContext);
+    if (auto* boxModelBox = dynamicDowncast<BoxModelBox>(box))
+        paintBoxDecorations(*boxModelBox, paintingContext);
 
     paintBoxContent(box, paintingContext);
 }

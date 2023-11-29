@@ -45,9 +45,9 @@ namespace Display {
 
 static void applyClipIfNecessary(const Box& box, PaintingContext& paintingContext, GraphicsContextStateSaver& stateSaver)
 {
-    if (is<BoxModelBox>(box) && box.style().hasClippedOverflow()) {
+    if (auto* boxModelBox = dynamicDowncast<BoxModelBox>(box); boxModelBox && box.style().hasClippedOverflow()) {
         stateSaver.save();
-        auto roundedInnerBorder = downcast<BoxModelBox>(box).innerBorderRoundedRect();
+        auto roundedInnerBorder = boxModelBox->innerBorderRoundedRect();
         paintingContext.context.clipRoundedRect(roundedInnerBorder);
     }
 }
@@ -87,19 +87,23 @@ void CSSPainter::recursivePaintDescendantsForPhase(const ContainerBox& container
 
         switch (paintPhase) {
         case PaintPhase::BlockBackgrounds:
-            if (!box.style().isFloating() && !box.style().isPositioned() && is<BoxModelBox>(box))
-                BoxPainter::paintBoxDecorations(downcast<BoxModelBox>(box), paintingContext);
+            if (!box.style().isFloating() && !box.style().isPositioned()) {
+                if (auto* boxModelBox = dynamicDowncast<BoxModelBox>(box))
+                    BoxPainter::paintBoxDecorations(*boxModelBox, paintingContext);
+            }
             break;
         case PaintPhase::Floats:
-            if (box.style().isFloating() && !box.style().isPositioned() && is<BoxModelBox>(box))
-                BoxPainter::paintBoxDecorations(downcast<BoxModelBox>(box), paintingContext);
+            if (box.style().isFloating() && !box.style().isPositioned()) {
+                if (auto* boxModelBox = dynamicDowncast<BoxModelBox>(box))
+                    BoxPainter::paintBoxDecorations(*boxModelBox, paintingContext);
+            }
             break;
         case PaintPhase::BlockForegrounds:
             if (!box.style().isFloating() && !box.style().isPositioned())
                 BoxPainter::paintBoxContent(box, paintingContext);
         };
-        if (is<ContainerBox>(box))
-            recursivePaintDescendantsForPhase(downcast<ContainerBox>(box), paintingContext, paintPhase);
+        if (auto* containerBox = dynamicDowncast<ContainerBox>(box))
+            recursivePaintDescendantsForPhase(*containerBox, paintingContext, paintPhase);
     }
 }
 
@@ -131,20 +135,21 @@ void CSSPainter::paintAtomicallyPaintedBox(const StackingItem& stackingItem, Pai
     auto& box = stackingItem.box();
 
     auto needToSaveState = [](const Box& box) {
-        if (!is<BoxModelBox>(box))
+        auto* boxModelBox = dynamicDowncast<BoxModelBox>(box);
+        if (!boxModelBox)
             return false;
         
-        auto& boxModelBox = downcast<BoxModelBox>(box);
-        return boxModelBox.hasAncestorClip() || boxModelBox.hasTransform() || boxModelBox.style().opacity() < 1;
+        return boxModelBox->hasAncestorClip() || boxModelBox->hasTransform() || boxModelBox->style().opacity() < 1;
     };
 
     auto stateSaver = GraphicsContextStateSaver { paintingContext.context, needToSaveState(box) };
 
-    if (is<BoxModelBox>(box))
-        applyAncestorClip(downcast<BoxModelBox>(box), paintingContext);
+    auto* boxModelBox = dynamicDowncast<BoxModelBox>(box);
+    if (boxModelBox)
+        applyAncestorClip(*boxModelBox, paintingContext);
 
-    if (is<BoxModelBox>(box) && box.hasTransform()) {
-        auto transformationMatrix = downcast<BoxModelBox>(box).rareGeometry()->transform();
+    if (boxModelBox && box.hasTransform()) {
+        auto transformationMatrix = boxModelBox->rareGeometry()->transform();
         auto absoluteBorderBox = box.absoluteBoxRect();
 
         // Equivalent to adjusting the CTM so that the origin is in the top left of the border box.
@@ -168,7 +173,8 @@ void CSSPainter::paintAtomicallyPaintedBox(const StackingItem& stackingItem, Pai
 #endif
 
     BoxPainter::paintBox(box, paintingContext, dirtyRect);
-    if (!is<ContainerBox>(box))
+    auto* containerBox = dynamicDowncast<ContainerBox>(box);
+    if (!containerBox)
         return;
 
     if (includeStackingContextDescendants == IncludeStackingContextDescendants::Yes) {
@@ -177,8 +183,7 @@ void CSSPainter::paintAtomicallyPaintedBox(const StackingItem& stackingItem, Pai
             paintStackingContext(*stackingItem, paintingContext, dirtyRect);
     }
 
-    auto& containerBox = downcast<ContainerBox>(box);
-    recursivePaintDescendants(containerBox, paintingContext);
+    recursivePaintDescendants(*containerBox, paintingContext);
 
     if (includeStackingContextDescendants == IncludeStackingContextDescendants::Yes) {
         // All positioned descendants with 'z-index: auto' or 'z-index: 0', in tree order. For those with 'z-index: auto', treat the element

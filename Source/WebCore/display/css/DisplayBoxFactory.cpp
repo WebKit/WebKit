@@ -122,9 +122,9 @@ std::unique_ptr<Box> BoxFactory::displayBoxForLayoutBox(const Layout::Box& layou
 
     // FIXME: Handle isAnonymous()
     
-    if (is<Layout::ElementBox>(layoutBox) && downcast<Layout::ElementBox>(layoutBox).cachedImage()) {
+    if (auto* layoutElementBox = dynamicDowncast<Layout::ElementBox>(layoutBox); layoutElementBox && layoutElementBox->cachedImage()) {
         // FIXME: Don't assume it's an image.
-        CachedResourceHandle<CachedImage> cachedImageHandle = downcast<Layout::ElementBox>(layoutBox).cachedImage();
+        CachedResourceHandle<CachedImage> cachedImageHandle = layoutElementBox->cachedImage();
         auto imageBox = makeUnique<ImageBox>(m_treeBuilder.tree(), pixelSnappedBorderBoxRect, WTFMove(style), WTFMove(cachedImageHandle));
         setupBoxModelBox(*imageBox, layoutBox, geometry, containingBlockContext, styleForBackground);
         return imageBox;
@@ -170,13 +170,12 @@ void BoxFactory::setupBoxGeometry(BoxModelBox& box, const Layout::Box&, const La
     contentBoxRect.moveBy(borderBoxRect.location());
     box.setAbsoluteContentBoxRect(UnadjustedAbsoluteFloatRect { snapRectToDevicePixels(contentBoxRect, m_pixelSnappingFactor) });
 
-    if (is<ReplacedBox>(box)) {
-        auto& replacedBox = downcast<ReplacedBox>(box);
+    if (auto* replacedBox = dynamicDowncast<ReplacedBox>(box)) {
         // FIXME: Need to get the correct rect taking object-fit etc into account.
         auto replacedContentRect = LayoutRect { layoutGeometry.contentBoxLeft(), layoutGeometry.contentBoxTop(), layoutGeometry.contentBoxWidth(), layoutGeometry.contentBoxHeight() };
         replacedContentRect.moveBy(borderBoxRect.location());
         auto pixelSnappedReplacedContentRect = UnadjustedAbsoluteFloatRect { snapRectToDevicePixels(replacedContentRect, m_pixelSnappingFactor) };
-        replacedBox.setReplacedContentRect(pixelSnappedReplacedContentRect);
+        replacedBox->setReplacedContentRect(pixelSnappedReplacedContentRect);
     }
 }
 
@@ -285,19 +284,23 @@ void BoxFactory::setupBoxModelBox(BoxModelBox& box, const Layout::Box& layoutBox
 const Layout::ElementBox* BoxFactory::documentElementBoxFromRootBox(const Layout::ElementBox& rootLayoutBox)
 {
     auto* documentBox = rootLayoutBox.firstChild();
-    if (!documentBox || !documentBox->isDocumentBox() || !is<Layout::ElementBox>(documentBox))
+    if (!documentBox || !documentBox->isDocumentBox())
         return nullptr;
 
-    return downcast<Layout::ElementBox>(documentBox);
+    return dynamicDowncast<Layout::ElementBox>(*documentBox);
 }
 
 const Layout::Box* BoxFactory::bodyBoxFromRootBox(const Layout::ElementBox& rootLayoutBox)
 {
     auto* documentBox = rootLayoutBox.firstChild();
-    if (!documentBox || !documentBox->isDocumentBox() || !is<Layout::ElementBox>(documentBox))
+    if (!documentBox || !documentBox->isDocumentBox())
         return nullptr;
 
-    auto* bodyBox = downcast<Layout::ElementBox>(documentBox)->firstChild();
+    auto* documentElementBox = dynamicDowncast<Layout::ElementBox>(*documentBox);
+    if (!documentElementBox)
+        return nullptr;
+
+    auto* bodyBox = documentElementBox->firstChild();
     if (!bodyBox || !bodyBox->isBodyBox())
         return nullptr;
 
