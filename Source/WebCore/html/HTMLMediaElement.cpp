@@ -5411,7 +5411,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged()
             m_sentEndEvent = false;
             // then seek to the earliest possible position of the media resource and abort these steps when the direction of
             // playback is forwards,
-            if (now >= dur) {
+            if (now >= dur && (now + dur) > MediaTime::zeroTime()) {
                 ALWAYS_LOG(LOGIDENTIFIER, "current time (", now, ") is greater then duration (", dur, "), looping");
                 seekInternal(MediaTime::zeroTime());
             }
