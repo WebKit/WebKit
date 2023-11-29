@@ -44,24 +44,26 @@ class CSSSelectorList;
 class StyleSheetContents;
 class StyleRule;
 
+using CSSParserSelectorList = Vector<std::unique_ptr<CSSParserSelector>>;
+
 class CSSSelectorParser {
 public:
     CSSSelectorParser(const CSSSelectorParserContext&, StyleSheetContents*, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No);
 
-    CSSSelectorList consumeComplexSelectorList(CSSParserTokenRange&);
-    CSSSelectorList consumeNestedSelectorList(CSSParserTokenRange&);
-    CSSSelectorList consumeComplexForgivingSelectorList(CSSParserTokenRange&);
-    CSSSelectorList consumeNestedComplexForgivingSelectorList(CSSParserTokenRange&);
+    CSSParserSelectorList consumeComplexSelectorList(CSSParserTokenRange&);
+    CSSParserSelectorList consumeNestedSelectorList(CSSParserTokenRange&);
+    CSSParserSelectorList consumeComplexForgivingSelectorList(CSSParserTokenRange&);
+    CSSParserSelectorList consumeNestedComplexForgivingSelectorList(CSSParserTokenRange&);
 
     static bool supportsComplexSelector(CSSParserTokenRange, const CSSSelectorParserContext&, CSSParserEnum::IsNestedContext);
     static CSSSelectorList resolveNestingParent(const CSSSelectorList& nestedSelectorList, const CSSSelectorList* parentResolvedSelectorList);
 
 private:
-    template<typename ConsumeSelector> CSSSelectorList consumeSelectorList(CSSParserTokenRange&, ConsumeSelector&&);
-    template<typename ConsumeSelector> CSSSelectorList consumeForgivingSelectorList(CSSParserTokenRange&, ConsumeSelector&&);
+    template<typename ConsumeSelector> CSSParserSelectorList consumeSelectorList(CSSParserTokenRange&, ConsumeSelector&&);
+    template<typename ConsumeSelector> CSSParserSelectorList consumeForgivingSelectorList(CSSParserTokenRange&, ConsumeSelector&&);
 
-    CSSSelectorList consumeCompoundSelectorList(CSSParserTokenRange&);
-    CSSSelectorList consumeRelativeSelectorList(CSSParserTokenRange&);
+    CSSParserSelectorList consumeCompoundSelectorList(CSSParserTokenRange&);
+    CSSParserSelectorList consumeRelativeSelectorList(CSSParserTokenRange&);
 
     std::unique_ptr<CSSParserSelector> consumeComplexSelector(CSSParserTokenRange&);
     std::unique_ptr<CSSParserSelector> consumeNestedComplexSelector(CSSParserTokenRange&);
@@ -109,5 +111,6 @@ private:
 };
 
 std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange, const CSSSelectorParserContext&, StyleSheetContents* = nullptr, CSSParserEnum::IsNestedContext = CSSParserEnum::IsNestedContext::No, CSSParserEnum::IsForgiving = CSSParserEnum::IsForgiving::No);
+CSSParserSelectorList parseCSSParserSelectorList(CSSParserTokenRange&, const CSSSelectorParserContext&, StyleSheetContents*, CSSParserEnum::IsNestedContext, CSSParserEnum::IsForgiving);
 
 } // namespace WebCore

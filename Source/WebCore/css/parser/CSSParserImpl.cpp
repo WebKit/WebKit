@@ -42,6 +42,7 @@
 #include "CSSParserObserverWrapper.h"
 #include "CSSParserSelector.h"
 #include "CSSPropertyParser.h"
+#include "CSSSelectorList.h"
 #include "CSSSelectorParser.h"
 #include "CSSStyleSheet.h"
 #include "CSSSupportsParser.h"
@@ -1206,13 +1207,17 @@ static void observeSelectors(CSSParserObserverWrapper& wrapper, CSSParserTokenRa
 
 RefPtr<StyleRuleBase> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block)
 {
-    auto selectorList = parseCSSSelectorList(prelude, m_context, m_styleSheet.get(), isNestedContext() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No);
+    auto preludeCopyForInspector = prelude;
+    auto parserSelectorList = parseCSSParserSelectorList(prelude, m_context, m_styleSheet.get(), isNestedContext() ? CSSParserEnum::IsNestedContext::Yes : CSSParserEnum::IsNestedContext::No, CSSParserEnum::IsForgiving::No);
 
-    if (!selectorList)
+    if (parserSelectorList.isEmpty())
         return nullptr; // Parse error, invalid selector list
 
+    auto selectorList = CSSSelectorList { WTFMove(parserSelectorList) };
+    ASSERT(!selectorList.isEmpty());
+
     if (m_observerWrapper)
-        observeSelectors(*m_observerWrapper, prelude);
+        observeSelectors(*m_observerWrapper, preludeCopyForInspector);
 
     RefPtr<StyleRuleBase> styleRule;
 
@@ -1226,10 +1231,10 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelud
         auto properties = createStyleProperties(topContext().m_parsedProperties, m_context.mode);
 
         // We save memory by creating a simple StyleRule instead of a heavier StyleRuleWithNesting when we don't need the CSS Nesting features.
-        if (nestedRules.isEmpty() && !selectorList->hasExplicitNestingParent() && !isNestedContext())
-            styleRule = StyleRule::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, WTFMove(*selectorList));
+        if (nestedRules.isEmpty() && !selectorList.hasExplicitNestingParent() && !isNestedContext())
+            styleRule = StyleRule::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, WTFMove(selectorList));
         else {
-            styleRule = StyleRuleWithNesting::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, WTFMove(*selectorList), WTFMove(nestedRules));
+            styleRule = StyleRuleWithNesting::create(WTFMove(properties), m_context.hasDocumentSecurityOrigin, WTFMove(selectorList), WTFMove(nestedRules));
             m_styleSheet->setHasNestingRules();
         }
     });
