@@ -1300,6 +1300,9 @@ static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityCh
 
 - (id)associatedPluginParent
 {
+    if (!self.axBackingObject || !self.axBackingObject->hasApplePDFAnnotationAttribute())
+        return nil;
+
     return Accessibility::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
         auto* backingObject = protectedSelf.get().axBackingObject;
         if (!backingObject || !backingObject->hasApplePDFAnnotationAttribute())
