@@ -42,6 +42,8 @@
                 return;
             }
 
+            await UIHelper.renderingUpdate();
+
             const scroller = document.querySelector('.scroller');
             const scrollerBounds = scroller.getBoundingClientRect();
             const x = scrollerBounds.left + 90;
@@ -62,7 +64,7 @@
                 return expanded;
             });
 
-			// Flush out scroll events from gesture
+            // Flush out scroll events from gesture
             await UIHelper.renderingUpdate();
 
             scroller.addEventListener("scroll", async () => {
@@ -70,7 +72,7 @@
             	finishJSTest();
             });
 			
-			// Now try and click and drag the scrollbar
+            // Now try and click and drag the scrollbar
             debug('Attempting to drag the scrollbar');
             eventSender.mouseMoveTo(x, y);
             eventSender.mouseDown();

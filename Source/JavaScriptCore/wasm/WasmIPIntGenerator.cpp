@@ -139,15 +139,15 @@ struct IPIntControlType {
     {
         ASSERT(i < branchTargetArity());
         if (blockType() == BlockType::Loop)
-            return m_signature->as<FunctionSignature>()->argumentType(i);
-        return m_signature->as<FunctionSignature>()->returnType(i);
+            return m_signature->argumentType(i);
+        return m_signature->returnType(i);
     }
 
     unsigned branchTargetArity() const
     {
         return isLoop(*this)
-            ? m_signature->as<FunctionSignature>()->argumentCount()
-            : m_signature->as<FunctionSignature>()->returnCount();
+            ? m_signature->argumentCount()
+            : m_signature->returnCount();
     }
 
 private:
@@ -1096,7 +1096,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addIf(ExpressionType, BlockSign
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addElse(ControlType& block, Stack& stack)
 {
-    const FunctionSignature& signature = *block.signature()->as<FunctionSignature>();
+    const FunctionSignature& signature = *block.signature();
     stack.clear();
     for (unsigned i = 0; i < signature.argumentCount(); i ++)
         stack.constructAndAppend(signature.argumentType(i), Value { });
@@ -1329,7 +1329,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::endBlock(ControlEntry& entry, S
 
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addEndToUnreachable(ControlEntry& entry, Stack&)
 {
-    const FunctionSignature& signature = *entry.controlData.signature()->as<FunctionSignature>();
+    const FunctionSignature& signature = *entry.controlData.signature();
     for (unsigned i = 0; i < signature.returnCount(); i ++)
         entry.enclosedExpressionStack.constructAndAppend(signature.returnType(i), Value { });
     auto block = entry.controlData;
@@ -1401,7 +1401,7 @@ auto IPIntGenerator::endTopLevel(BlockSignature signature, const Stack& expressi
 {
     if (m_usesSIMD)
         m_info.markUsesSIMD(m_metadata->functionIndex());
-    RELEASE_ASSERT(expressionStack.size() == signature->as<FunctionSignature>()->returnCount());
+    RELEASE_ASSERT(expressionStack.size() == signature->returnCount());
     m_info.doneSeeingFunction(m_metadata->m_functionIndex);
     return { };
 }

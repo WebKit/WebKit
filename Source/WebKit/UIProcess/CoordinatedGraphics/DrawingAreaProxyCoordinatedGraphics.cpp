@@ -55,8 +55,8 @@
 namespace WebKit {
 using namespace WebCore;
 
-DrawingAreaProxyCoordinatedGraphics::DrawingAreaProxyCoordinatedGraphics(WebPageProxy& webPageProxy)
-    : DrawingAreaProxy(DrawingAreaType::CoordinatedGraphics, webPageProxy)
+DrawingAreaProxyCoordinatedGraphics::DrawingAreaProxyCoordinatedGraphics(WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
+    : DrawingAreaProxy(DrawingAreaType::CoordinatedGraphics, webPageProxy, webProcessProxy)
 #if !PLATFORM(WPE)
     , m_discardBackingStoreTimer(RunLoop::current(), this, &DrawingAreaProxyCoordinatedGraphics::discardBackingStore)
 #endif
@@ -94,22 +94,21 @@ bool DrawingAreaProxyCoordinatedGraphics::forceUpdateIfNeeded()
 {
     ASSERT(!isInAcceleratedCompositingMode());
 
-    auto webPageProxy = protectedWebPageProxy();
-    if (!webPageProxy->hasRunningProcess())
+    if (!m_webProcessProxy->hasConnection())
         return false;
 
-    if (webPageProxy->process().state() == WebProcessProxy::State::Launching)
+    if (m_webProcessProxy->state() == WebProcessProxy::State::Launching)
         return false;
 
     if (m_isWaitingForDidUpdateGeometry)
         return false;
 
-    if (!webPageProxy->isViewVisible())
+    if (!protectedWebPageProxy()->isViewVisible())
         return false;
 
     SetForScope inForceUpdate(m_inForceUpdate, true);
-    webPageProxy->send(Messages::DrawingArea::ForceUpdate(), m_identifier);
-    webPageProxy->process().connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::Update>(m_identifier, Seconds::fromMilliseconds(500));
+    send(Messages::DrawingArea::ForceUpdate());
+    m_webProcessProxy->connection()->waitForAndDispatchImmediately<Messages::DrawingAreaProxy::Update>(m_identifier, 500_ms);
     return !!m_backingStore;
 }
 
@@ -162,7 +161,7 @@ void DrawingAreaProxyCoordinatedGraphics::sizeDidChange()
 
 void DrawingAreaProxyCoordinatedGraphics::deviceScaleFactorDidChange()
 {
-    protectedWebPageProxy()->send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy->deviceScaleFactor()), m_identifier);
+    send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy->deviceScaleFactor()));
 }
 
 void DrawingAreaProxyCoordinatedGraphics::setBackingStoreIsDiscardable(bool isBackingStoreDiscardable)
@@ -182,19 +181,19 @@ void DrawingAreaProxyCoordinatedGraphics::setBackingStoreIsDiscardable(bool isBa
 #if PLATFORM(GTK)
 void DrawingAreaProxyCoordinatedGraphics::adjustTransientZoom(double scale, FloatPoint origin)
 {
-    protectedWebPageProxy()->send(Messages::DrawingArea::AdjustTransientZoom(scale, origin), m_identifier);
+    send(Messages::DrawingArea::AdjustTransientZoom(scale, origin));
 }
 
 void DrawingAreaProxyCoordinatedGraphics::commitTransientZoom(double scale, FloatPoint origin)
 {
-    protectedWebPageProxy()->send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_identifier);
+    send(Messages::DrawingArea::CommitTransientZoom(scale, origin));
 }
 #endif
 
 void DrawingAreaProxyCoordinatedGraphics::update(uint64_t, UpdateInfo&& updateInfo)
 {
     if (m_isWaitingForDidUpdateGeometry && updateInfo.viewSize != m_lastSentSize) {
-        protectedWebPageProxy()->send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
+        send(Messages::DrawingArea::DisplayDidRefresh());
         return;
     }
 
@@ -205,7 +204,7 @@ void DrawingAreaProxyCoordinatedGraphics::update(uint64_t, UpdateInfo&& updateIn
 #endif
 
     if (!m_isWaitingForDidUpdateGeometry)
-        protectedWebPageProxy()->send(Messages::DrawingArea::DisplayDidRefresh(), m_identifier);
+        send(Messages::DrawingArea::DisplayDidRefresh());
 }
 
 void DrawingAreaProxyCoordinatedGraphics::enterAcceleratedCompositingMode(uint64_t, const LayerTreeContext& layerTreeContext)
@@ -263,11 +262,11 @@ void DrawingAreaProxyCoordinatedGraphics::sendUpdateGeometry()
     m_lastSentSize = m_size;
     m_isWaitingForDidUpdateGeometry = true;
 
-    protectedWebPageProxy()->sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(m_size), [weakThis = WeakPtr { *this }] {
+    sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(m_size), [weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->didUpdateGeometry();
-    }, m_identifier);
+    });
 }
 
 void DrawingAreaProxyCoordinatedGraphics::didUpdateGeometry()
@@ -301,7 +300,7 @@ void DrawingAreaProxyCoordinatedGraphics::discardBackingStore()
         return;
 
     m_backingStore = nullptr;
-    protectedWebPageProxy()->send(Messages::DrawingArea::DidDiscardBackingStore(), m_identifier);
+    send(Messages::DrawingArea::DidDiscardBackingStore());
 }
 #endif
 

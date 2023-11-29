@@ -29,11 +29,10 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class OESShaderMultisampleInterpolation final : public RefCounted<OESShaderMultisampleInterpolation>, public WebGLExtension<WebGLRenderingContextBase> {
+class OESShaderMultisampleInterpolation final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(OESShaderMultisampleInterpolation);
 public:
     explicit OESShaderMultisampleInterpolation(WebGLRenderingContextBase&);

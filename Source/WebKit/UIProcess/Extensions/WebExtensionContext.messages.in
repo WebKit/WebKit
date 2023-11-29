@@ -55,6 +55,12 @@ messages -> WebExtensionContext {
     // Extensions APIs
     ExtensionIsAllowedIncognitoAccess() -> (bool result);
 
+    // Menus APIs
+    MenusCreate(struct WebKit::WebExtensionMenuItemParameters parameters) -> (std::optional<String> error);
+    MenusUpdate(String identifier, struct WebKit::WebExtensionMenuItemParameters parameters) -> (std::optional<String> error);
+    MenusRemove(String identifier) -> (std::optional<String> error);
+    MenusRemoveAll() -> (std::optional<String> error);
+
     // Permissions APIs
     PermissionsGetAll() -> (Vector<String> permissions, Vector<String> origins);
     PermissionsContains(HashSet<String> permissions, HashSet<String> origins) -> (bool containsPermissions);

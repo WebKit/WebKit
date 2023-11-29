@@ -175,8 +175,8 @@ namespace WebKit {
 using namespace IPC;
 using namespace WebCore;
 
-RemoteLayerTreeDrawingAreaProxyIOS::RemoteLayerTreeDrawingAreaProxyIOS(WebPageProxy& pageProxy)
-    : RemoteLayerTreeDrawingAreaProxy(pageProxy)
+RemoteLayerTreeDrawingAreaProxyIOS::RemoteLayerTreeDrawingAreaProxyIOS(WebPageProxy& pageProxy, WebProcessProxy& webProcessProxy)
+    : RemoteLayerTreeDrawingAreaProxy(pageProxy, webProcessProxy)
 {
 }
 

@@ -29,13 +29,12 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class WebGLShader;
 
-class WebGLDebugShaders final : public RefCounted<WebGLDebugShaders>, public WebGLExtension<WebGLRenderingContextBase> {
+class WebGLDebugShaders final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLDebugShaders);
 public:
     explicit WebGLDebugShaders(WebGLRenderingContextBase&);

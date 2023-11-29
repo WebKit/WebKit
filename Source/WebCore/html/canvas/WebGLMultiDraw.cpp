@@ -29,7 +29,6 @@
 #include "WebGLMultiDraw.h"
 
 #include "InspectorInstrumentation.h"
-#include "WebGLExtensionAnyInlines.h"
 #include "WebGLUtilities.h"
 #include <wtf/IsoMallocInlines.h>
 
@@ -38,7 +37,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLMultiDraw);
 
 WebGLMultiDraw::WebGLMultiDraw(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::WebGLMultiDraw)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_multi_draw"_s);
 

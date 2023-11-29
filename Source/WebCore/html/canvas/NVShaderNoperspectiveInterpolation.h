@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class NVShaderNoperspectiveInterpolation final : public RefCounted<NVShaderNoperspectiveInterpolation>, public WebGLExtension<WebGLRenderingContextBase> {
+class NVShaderNoperspectiveInterpolation final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(NVShaderNoperspectiveInterpolation);
 public:
     explicit NVShaderNoperspectiveInterpolation(WebGLRenderingContextBase&);

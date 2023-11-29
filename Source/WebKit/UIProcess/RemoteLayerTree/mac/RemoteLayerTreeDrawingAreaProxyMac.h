@@ -43,7 +43,7 @@ class RemoteScrollingCoordinatorTransaction;
 class RemoteLayerTreeDrawingAreaProxyMac final : public RemoteLayerTreeDrawingAreaProxy {
 friend class RemoteScrollingCoordinatorProxyMac;
 public:
-    RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&);
+    RemoteLayerTreeDrawingAreaProxyMac(WebPageProxy&, WebProcessProxy&);
     ~RemoteLayerTreeDrawingAreaProxyMac();
 
     void didRefreshDisplay() override;

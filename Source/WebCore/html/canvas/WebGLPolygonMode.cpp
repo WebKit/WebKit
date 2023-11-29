@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLPolygonMode);
 
 WebGLPolygonMode::WebGLPolygonMode(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::WebGLPolygonMode)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_ANGLE_polygon_mode"_s);
     context.printToConsole(MessageLevel::Warning, "WebGL: non-portable extension enabled: WEBGL_polygon_mode"_s);

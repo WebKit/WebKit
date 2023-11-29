@@ -29,11 +29,10 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class WebGLRenderSharedExponent final : public RefCounted<WebGLRenderSharedExponent>, public WebGLExtension<WebGLRenderingContextBase> {
+class WebGLRenderSharedExponent final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(WebGLRenderSharedExponent);
     WTF_MAKE_NONCOPYABLE(WebGLRenderSharedExponent);
 public:

@@ -905,9 +905,6 @@ static void setWebPreferencesForTestOptions(WebPreferences *preferences, const W
 
         for (const auto& [key, value] : options.stringWebPreferenceFeatures())
             [preferences _setStringPreferenceForTestingWithValue:toNS(value).get() forKey:toNS(WTR::TestOptions::toWebKitLegacyPreferenceKey(key)).get()];
-
-        // FIXME: Tests currently expect this to always be false in WebKitLegacy testing - https://bugs.webkit.org/show_bug.cgi?id=222864.
-        [preferences _setBoolPreferenceForTestingWithValue:NO forKey:@"WebKitLayoutFormattingContextEnabled"];
     }];
 
     [WebPreferences _clearNetworkLoaderSession:^{ }];

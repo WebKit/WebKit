@@ -40,6 +40,9 @@
 #import "WKWebViewInternal.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionContextProxyMessages.h"
+#import "WebExtensionMenuItem.h"
+#import "WebExtensionMenuItemContextParameters.h"
+#import "WebExtensionMenuItemParameters.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 #import "_WKWebExtensionActionInternal.h"
@@ -439,6 +442,18 @@ void WebExtensionAction::setEnabled(std::optional<bool> enabled)
     m_customEnabled = enabled;
 
     propertiesDidChange();
+}
+
+NSArray *WebExtensionAction::platformMenuItems() const
+{
+    if (!extensionContext())
+        return @[ ];
+
+    WebExtensionMenuItemContextParameters contextParameters;
+    contextParameters.types = WebExtensionMenuItemContextType::Action;
+    contextParameters.tabIdentifier = m_tab ? std::optional { m_tab->identifier() } : std::nullopt;
+
+    return WebExtensionMenuItem::matchingPlatformMenuItems(extensionContext()->mainMenuItems(), contextParameters, webExtensionActionMenuItemTopLevelLimit);
 }
 
 } // namespace WebKit

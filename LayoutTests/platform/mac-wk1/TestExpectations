@@ -2715,3 +2715,5 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-s
 
 # webkit.org/b/263870 [scroll-animations] lots of scroll-animations WPT tests are timing out
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-snapshotting.html [ Skip ]
+
+fast/css/transform-function-perspective-crash.html [ Failure ]

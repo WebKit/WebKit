@@ -240,7 +240,7 @@ bool isValidJSONObject(id object, JSONOptionSet options)
 
 id parseJSON(NSData *json, JSONOptionSet options, NSError **error)
 {
-    if (!json)
+    if (!json.length)
         return nil;
 
     id result = [NSJSONSerialization JSONObjectWithData:json options:toReadingImpl(options) error:error];
@@ -252,6 +252,9 @@ id parseJSON(NSData *json, JSONOptionSet options, NSError **error)
 
 id parseJSON(NSString *json, JSONOptionSet options, NSError **error)
 {
+    if (!json.length)
+        return nil;
+
     return parseJSON([json dataUsingEncoding:NSUTF8StringEncoding], options, error);
 }
 

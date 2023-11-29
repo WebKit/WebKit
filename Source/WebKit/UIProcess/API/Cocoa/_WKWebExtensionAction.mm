@@ -42,6 +42,12 @@ NSNotificationName const _WKWebExtensionActionPropertiesDidChangeNotification = 
 NSNotificationName const _WKWebExtensionActionPopupWebViewContentSizeDidChangeNotification = @"_WKWebExtensionActionPopupWebViewContentSizeDidChange";
 NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification = @"_WKWebExtensionActionPopupWebViewDidClose";
 
+#if USE(APPKIT)
+using CocoaMenuItem = NSMenuItem;
+#else
+using CocoaMenuItem = UIMenuElement;
+#endif
+
 @implementation _WKWebExtensionAction
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -98,6 +104,11 @@ NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification =
 - (BOOL)isEnabled
 {
     return _webExtensionAction->isEnabled();
+}
+
+- (NSArray<CocoaMenuItem *> *)menuItems
+{
+    return _webExtensionAction->platformMenuItems();
 }
 
 - (BOOL)presentsPopup
@@ -157,6 +168,11 @@ NSNotificationName const _WKWebExtensionActionPopupWebViewDidCloseNotification =
 - (BOOL)isEnabled
 {
     return NO;
+}
+
+- (NSArray<CocoaMenuItem *> *)menuItems
+{
+    return nil;
 }
 
 - (BOOL)presentsPopup

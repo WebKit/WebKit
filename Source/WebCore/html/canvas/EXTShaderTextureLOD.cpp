@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTShaderTextureLOD);
 
 EXTShaderTextureLOD::EXTShaderTextureLOD(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::EXTShaderTextureLOD)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_shader_texture_lod"_s);
 }

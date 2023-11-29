@@ -126,14 +126,14 @@ public:
         {
             ASSERT(type != BlockType::Try && type != BlockType::Catch);
             if (type != BlockType::TopLevel)
-                m_stackSize -= signature->as<FunctionSignature>()->argumentCount();
+                m_stackSize -= signature->argumentCount();
 
             if (type == BlockType::Loop) {
-                for (unsigned i = 0; i < signature->as<FunctionSignature>()->argumentCount(); ++i)
-                    phis.append(proc.add<Value>(Phi, toB3Type(signature->as<FunctionSignature>()->argumentType(i)), origin));
+                for (unsigned i = 0; i < signature->argumentCount(); ++i)
+                    phis.append(proc.add<Value>(Phi, toB3Type(signature->argumentType(i)), origin));
             } else {
-                for (unsigned i = 0; i < signature->as<FunctionSignature>()->returnCount(); ++i)
-                    phis.append(proc.add<Value>(Phi, toB3Type(signature->as<FunctionSignature>()->returnType(i)), origin));
+                for (unsigned i = 0; i < signature->returnCount(); ++i)
+                    phis.append(proc.add<Value>(Phi, toB3Type(signature->returnType(i)), origin));
             }
         }
 
@@ -147,9 +147,9 @@ public:
             , m_tryCatchDepth(tryDepth)
         {
             ASSERT(type == BlockType::Try);
-            m_stackSize -= signature->as<FunctionSignature>()->argumentCount();
-            for (unsigned i = 0; i < signature->as<FunctionSignature>()->returnCount(); ++i)
-                phis.append(proc.add<Value>(Phi, toB3Type(signature->as<FunctionSignature>()->returnType(i)), origin));
+            m_stackSize -= signature->argumentCount();
+            for (unsigned i = 0; i < signature->returnCount(); ++i)
+                phis.append(proc.add<Value>(Phi, toB3Type(signature->returnType(i)), origin));
         }
 
         ControlData()
@@ -202,7 +202,7 @@ public:
 
         BlockSignature signature() const { return m_signature; }
 
-        bool hasNonVoidresult() const { return m_signature->as<FunctionSignature>()->returnsVoid(); }
+        bool hasNonVoidresult() const { return m_signature->returnsVoid(); }
 
         BasicBlock* targetBlockForBranch()
         {
@@ -239,16 +239,16 @@ public:
         FunctionArgCount branchTargetArity() const
         {
             if (blockType() == BlockType::Loop)
-                return m_signature->as<FunctionSignature>()->argumentCount();
-            return m_signature->as<FunctionSignature>()->returnCount();
+                return m_signature->argumentCount();
+            return m_signature->returnCount();
         }
 
         Type branchTargetType(unsigned i) const
         {
             ASSERT(i < branchTargetArity());
             if (blockType() == BlockType::Loop)
-                return m_signature->as<FunctionSignature>()->argumentType(i);
-            return m_signature->as<FunctionSignature>()->returnType(i);
+                return m_signature->argumentType(i);
+            return m_signature->returnType(i);
         }
 
         unsigned tryStart() const
@@ -715,7 +715,7 @@ public:
     void insertEntrySwitch();
     void insertConstants();
 
-    B3::Type toB3ResultType(BlockSignature);
+    B3::Type toB3ResultType(const TypeDefinition*);
 
     void addStackMap(unsigned callSiteIndex, StackMap&& stackmap)
     {
@@ -921,7 +921,7 @@ private:
     Vector<UnlinkedWasmToWasmCall>& m_unlinkedWasmToWasmCalls; // List each call site and the function index whose address it should be patched with.
     unsigned* m_osrEntryScratchBufferSize;
     HashMap<ValueKey, Value*> m_constantPool;
-    HashMap<BlockSignature, B3::Type> m_tupleMap;
+    HashMap<const TypeDefinition*, B3::Type> m_tupleMap;
     InsertionSet m_constantInsertionValues;
     Value* m_framePointer { nullptr };
     bool m_makesCalls { false };
@@ -1309,7 +1309,7 @@ void B3IRGenerator::insertConstants()
     m_constantInsertionValues.execute(block);
 }
 
-B3::Type B3IRGenerator::toB3ResultType(BlockSignature returnType)
+B3::Type B3IRGenerator::toB3ResultType(const TypeDefinition* returnType)
 {
     if (returnType->as<FunctionSignature>()->returnsVoid())
         return B3::Void;
@@ -4023,8 +4023,8 @@ auto B3IRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Con
 
     block = ControlData(m_proc, origin(), signature, BlockType::Loop, m_stackSize, continuation, body);
 
-    unsigned offset = enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount();
-    for (unsigned i = 0; i < signature->as<FunctionSignature>()->argumentCount(); ++i) {
+    unsigned offset = enclosingStack.size() - signature->argumentCount();
+    for (unsigned i = 0; i < signature->argumentCount(); ++i) {
         TypedExpression value = enclosingStack.at(offset + i);
         Value* phi = block.phis[i];
         m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), get(value), phi);
@@ -4126,7 +4126,7 @@ auto B3IRGenerator::addElse(ControlData& data, const Stack& currentStack) -> Par
 auto B3IRGenerator::addElseToUnreachable(ControlData& data) -> PartialResult
 {
     ASSERT(data.blockType() == BlockType::If);
-    m_stackSize = data.stackSize() + data.m_signature->as<FunctionSignature>()->argumentCount();
+    m_stackSize = data.stackSize() + data.m_signature->argumentCount();
     m_currentBlock = data.special;
     data.convertIfToBlock();
     TRACE_CF("ELSE");
@@ -4441,7 +4441,7 @@ auto B3IRGenerator::endBlock(ControlEntry& entry, Stack& expressionStack) -> Par
 {
     ControlData& data = entry.controlData;
 
-    ASSERT(expressionStack.size() == data.signature()->as<FunctionSignature>()->returnCount());
+    ASSERT(expressionStack.size() == data.signature()->returnCount());
     if (data.blockType() != BlockType::Loop)
         unifyValuesWithBlock(expressionStack, data);
 
@@ -4464,19 +4464,19 @@ auto B3IRGenerator::addEndToUnreachable(ControlEntry& entry, const Stack& expres
         --m_tryCatchDepth;
 
     if (data.blockType() != BlockType::Loop) {
-        for (unsigned i = 0; i < data.signature()->as<FunctionSignature>()->returnCount(); ++i) {
+        for (unsigned i = 0; i < data.signature()->returnCount(); ++i) {
             Value* result = data.phis[i];
             m_currentBlock->append(result);
-            entry.enclosedExpressionStack.constructAndAppend(data.signature()->as<FunctionSignature>()->returnType(i), push(result));
+            entry.enclosedExpressionStack.constructAndAppend(data.signature()->returnType(i), push(result));
         }
     } else {
         m_outerLoops.removeLast();
-        for (unsigned i = 0; i < data.signature()->as<FunctionSignature>()->returnCount(); ++i) {
+        for (unsigned i = 0; i < data.signature()->returnCount(); ++i) {
             if (i < expressionStack.size()) {
                 ++m_stackSize;
                 entry.enclosedExpressionStack.append(expressionStack[i]);
             } else {
-                Type returnType = data.signature()->as<FunctionSignature>()->returnType(i);
+                Type returnType = data.signature()->returnType(i);
                 entry.enclosedExpressionStack.constructAndAppend(returnType, push(constant(toB3Type(returnType), 0xbbadbeef)));
             }
         }

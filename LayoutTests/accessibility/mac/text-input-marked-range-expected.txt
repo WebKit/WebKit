@@ -1,12 +1,9 @@
 This test ensures that the input method marked range is available to accessibility clients.
 
-On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+PASS: element.textInputMarkedRange === '{0, 4}'
+PASS: !element.textInputMarkedRange === true
+PASS: element.textInputMarkedRange === '{1, 5}'
 
-
-PASS !element.textInputMarkedRange is true
-PASS element.textInputMarkedRange is '{0, 4}'
-PASS !element.textInputMarkedRange is true
-PASS element.textInputMarkedRange is '{1, 5}'
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1085,7 +1085,7 @@ void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOpti
     Ref document = this->document();
     document->updateContentRelevancyForScrollIfNeeded(*this);
 
-    document->updateLayoutIgnorePendingStylesheets();
+    document->updateLayoutIgnorePendingStylesheets(LayoutOptions::UpdateCompositingLayers);
 
     CheckedPtr<RenderElement> renderer;
     bool insideFixed = false;
@@ -1132,7 +1132,7 @@ void Element::scrollIntoView(std::optional<std::variant<bool, ScrollIntoViewOpti
 
 void Element::scrollIntoView(bool alignToTop) 
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protectedDocument()->updateLayoutIgnorePendingStylesheets(LayoutOptions::UpdateCompositingLayers);
 
     CheckedPtr renderer = this->renderer();
     if (!renderer)
@@ -1154,7 +1154,7 @@ void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
     Ref document = this->document();
     document->updateContentRelevancyForScrollIfNeeded(*this);
 
-    document->updateLayoutIgnorePendingStylesheets();
+    document->updateLayoutIgnorePendingStylesheets(LayoutOptions::UpdateCompositingLayers);
 
     CheckedPtr renderer = this->renderer();
     if (!renderer)
@@ -1172,8 +1172,8 @@ void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
 
 void Element::scrollIntoViewIfNotVisible(bool centerIfNotVisible)
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets();
-    
+    protectedDocument()->updateLayoutIgnorePendingStylesheets(LayoutOptions::UpdateCompositingLayers);
+
     CheckedPtr renderer = this->renderer();
     if (!renderer)
         return;
@@ -1213,7 +1213,7 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
     if (RefPtr view = document->view())
         view->cancelScheduledScrolls();
 
-    document->updateLayoutIgnorePendingStylesheets();
+    document->updateLayoutIgnorePendingStylesheets(LayoutOptions::UpdateCompositingLayers);
 
     if (document->scrollingElement() == this) {
         // If the element is the scrolling element and is not potentially scrollable,
@@ -1254,7 +1254,7 @@ void Element::scrollTo(double x, double y)
 
 void Element::scrollByUnits(int units, ScrollGranularity granularity)
 {
-    protectedDocument()->updateLayoutIgnorePendingStylesheets();
+    protectedDocument()->updateLayoutIgnorePendingStylesheets(LayoutOptions::UpdateCompositingLayers);
 
     CheckedPtr renderer = this->renderer();
     if (!renderer)

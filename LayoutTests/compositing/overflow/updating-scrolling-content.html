@@ -6,6 +6,7 @@ https://bugs.webkit.org/show_bug.cgi?id=100524.
 -->
 <html>
 <head>
+  <script src="../../resources/ui-helper.js"></script>
   <style type="text/css">
     #scroller {
         overflow: scroll;
@@ -24,18 +25,23 @@ https://bugs.webkit.org/show_bug.cgi?id=100524.
     }
   </style>
   <script type="text/javascript">
-      window.addEventListener('load', function() {
+      window.addEventListener('load', async function() {
           if (!window.testRunner || !window.internals) {
               alert('This test requires testRunner to run!');
               return;
           }
           testRunner.dumpAsText(false);
+          testRunner.waitUntilDone();
+
+          await UIHelper.renderingUpdate();
 
           var scroller = document.getElementById('scroller');
           var indicator = document.getElementById('indicator');
 
           // Make sure the scrolling content is painted before we start.
           scroller.offsetTop;
+
+          await UIHelper.renderingUpdate();
 
           // Scroll all the way to the bottom and change the color of the
           // indicator (which is now outside the overflow clip).
@@ -49,6 +55,7 @@ https://bugs.webkit.org/show_bug.cgi?id=100524.
           layerTree.innerText =
               window.internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_REPAINT_RECTS);
           window.internals.stopTrackingRepaints();
+          testRunner.notifyDone();
       });
   </script>
 </head>

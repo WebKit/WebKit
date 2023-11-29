@@ -465,6 +465,8 @@ def types_that_cannot_be_forward_declared():
         'WebKit::WebExtensionContentWorldType',
         'WebKit::WebExtensionEventListenerType',
         'WebKit::WebExtensionFrameParameters',
+        'WebKit::WebExtensionMenuItemContextParameters',
+        'WebKit::WebExtensionMenuItemParameters',
         'WebKit::WebExtensionRegisteredScriptParameters',
         'WebKit::WebExtensionScriptInjectionParameters',
         'WebKit::WebExtensionScriptInjectionResultParameters',

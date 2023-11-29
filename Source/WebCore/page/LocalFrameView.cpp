@@ -141,7 +141,6 @@
 #include "LegacyTileCache.h"
 #endif
 
-#include "DisplayView.h"
 #include "LayoutContext.h"
 
 #define PAGE_ID valueOrDefault(m_frame->pageID()).toUInt64()
@@ -817,6 +816,17 @@ void LocalFrameView::updateCompositingLayersAfterLayout()
         return;
 
     renderView->compositor().updateCompositingLayers(CompositingUpdateType::AfterLayout);
+    m_updateCompositingLayersIsPending = false;
+}
+
+bool LocalFrameView::updateCompositingLayersAfterLayoutIfNeeded()
+{
+    if (m_updateCompositingLayersIsPending) {
+        updateCompositingLayersAfterLayout();
+        return true;
+    }
+
+    return false;
 }
 
 void LocalFrameView::invalidateScrollbarsForAllScrollableAreas()
@@ -975,12 +985,6 @@ void LocalFrameView::updateScrollingCoordinatorScrollSnapProperties() const
 
 bool LocalFrameView::flushCompositingStateForThisFrame(const LocalFrame& rootFrameForFlush)
 {
-    if (m_frame->settings().layoutFormattingContextEnabled()) {
-        if (auto* view = existingDisplayView())
-            view->flushLayers();
-        return true;
-    }
-
     RenderView* renderView = this->renderView();
     if (!renderView)
         return true; // We don't want to keep trying to update layers if we have no renderer.
@@ -1240,9 +1244,6 @@ void LocalFrameView::setIsInWindow(bool isInWindow)
 {
     if (RenderView* renderView = this->renderView())
         renderView->setIsInWindow(isInWindow);
-
-    if (auto* view = existingDisplayView())
-        view->setIsInWindow(isInWindow);
 }
 
 void LocalFrameView::forceLayoutParentViewIfNeeded()
@@ -1355,7 +1356,7 @@ void LocalFrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
     auto* layoutRootEnclosingLayer = layoutRoot->enclosingLayer();
     layoutRootEnclosingLayer->updateLayerPositionsAfterLayout(!is<RenderView>(*layoutRoot), layoutContext().needsFullRepaint());
 
-    updateCompositingLayersAfterLayout();
+    m_updateCompositingLayersIsPending = true;
 
     Ref document = *m_frame->document();
 
@@ -4990,7 +4991,7 @@ void LocalFrameView::paintOverhangAreas(GraphicsContext& context, const IntRect&
     ScrollView::paintOverhangAreas(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);
 }
 
-void LocalFrameView::updateLayoutAndStyleIfNeededRecursive()
+void LocalFrameView::updateLayoutAndStyleIfNeededRecursive(OptionSet<LayoutOptions> layoutOptions)
 {
     // Style updating, render tree creation, and layout needs to be done multiple times
     // for more than one reason. But one reason is that when an <object> element determines
@@ -5031,12 +5032,8 @@ void LocalFrameView::updateLayoutAndStyleIfNeededRecursive()
         bool didWork = false;
         DescendantsDeque deque;
         while (auto view = nextRenderedDescendant(deque)) {
-            if (view->m_frame->document()->updateStyleIfNeeded())
+            if (view->m_frame->document()->updateLayout(layoutOptions | LayoutOptions::DoNotLayoutAncestorDocuments) == Document::UpdateLayoutResult::ChangesDone)
                 didWork = true;
-            if (view->needsLayout()) {
-                view->layoutContext().layout();
-                didWork = true;
-            }
         }
         if (!didWork)
             break;
@@ -5641,7 +5638,7 @@ void LocalFrameView::setTracksRepaints(bool trackRepaints)
     // Force layout to flush out any pending repaints.
     if (trackRepaints) {
         if (m_frame->document())
-            m_frame->document()->updateLayout();
+            m_frame->document()->updateLayout(LayoutOptions::UpdateCompositingLayers);
     }
 
     for (Frame* frame = &m_frame->tree().top(); frame; frame = frame->tree().traverseNext()) {
@@ -6047,19 +6044,6 @@ Ref<LocalFrame> LocalFrameView::protectedFrame() const
 RenderView* LocalFrameView::renderView() const
 {
     return m_frame->contentRenderer();
-}
-
-Display::View* LocalFrameView::existingDisplayView() const
-{
-    return m_displayView.get();
-}
-
-Display::View& LocalFrameView::displayView()
-{
-    ASSERT(m_frame->settings().layoutFormattingContextEnabled());
-    if (!m_displayView)
-        m_displayView = makeUnique<Display::View>(*this);
-    return *m_displayView;
 }
 
 int LocalFrameView::mapFromLayoutToCSSUnits(LayoutUnit value) const

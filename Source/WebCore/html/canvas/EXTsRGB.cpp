@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTsRGB);
 
 EXTsRGB::EXTsRGB(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::EXTsRGB)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_sRGB"_s);
 }

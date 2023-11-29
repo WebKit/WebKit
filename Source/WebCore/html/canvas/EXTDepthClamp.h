@@ -29,11 +29,10 @@
 #include "WebGLRenderingContextBase.h"
 #include <wtf/IsoMalloc.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class EXTDepthClamp final : public RefCounted<EXTDepthClamp>, public WebGLExtension<WebGLRenderingContextBase> {
+class EXTDepthClamp final : public WebGLExtension<WebGLRenderingContextBase> {
     WTF_MAKE_ISO_ALLOCATED(EXTDepthClamp);
     WTF_MAKE_NONCOPYABLE(EXTDepthClamp);
 public:

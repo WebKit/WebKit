@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGLDebugRendererInfo);
 
 WebGLDebugRendererInfo::WebGLDebugRendererInfo(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::WebGLDebugRendererInfo)
 {
 }
 

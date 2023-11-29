@@ -71,13 +71,27 @@ const RenderObject* LegacyRenderSVGModelObject::pushMappingToContainer(const Ren
     return SVGRenderSupport::pushMappingToContainer(*this, ancestorToStopAt, geometryMap);
 }
 
+static void adjustRectForOutlineAndShadow(const RenderObject& renderer, LayoutRect& rect)
+{
+    auto shadowRect = rect;
+    if (auto* boxShadow = renderer.style().boxShadow())
+        boxShadow->adjustRectForShadow(shadowRect);
+
+    auto outlineRect = rect;
+    auto outlineSize = LayoutUnit { renderer.outlineStyleForRepaint().outlineSize() };
+    if (outlineSize)
+        outlineRect.inflate(outlineSize);
+
+    rect = unionRect(shadowRect, outlineRect);
+}
+
 // Copied from RenderBox, this method likely requires further refactoring to work easily for both SVG and CSS Box Model content.
 // FIXME: This may also need to move into SVGRenderSupport as the RenderBox version depends
 // on borderBoundingBox() which SVG RenderBox subclases (like SVGRenderBlock) do not implement.
 LayoutRect LegacyRenderSVGModelObject::outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap*) const
 {
     LayoutRect box = enclosingLayoutRect(repaintRectInLocalCoordinates());
-    adjustRectForOutlineAndShadow(box);
+    adjustRectForOutlineAndShadow(*this, box);
 
     FloatQuad containerRelativeQuad = localToContainerQuad(FloatRect(box), repaintContainer);
     return LayoutRect(snapRectToDevicePixels(LayoutRect(containerRelativeQuad.boundingBox()), document().deviceScaleFactor()));

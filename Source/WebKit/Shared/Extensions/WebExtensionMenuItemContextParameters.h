@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,57 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DisplayBox.h"
+#pragma once
 
-#include "DisplayTree.h"
-#include "FillLayer.h"
-#include "ShadowData.h"
-#include <wtf/IsoMallocInlines.h>
-#include <wtf/text/TextStream.h>
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-namespace WebCore {
-namespace Display {
+#include "WebExtensionFrameIdentifier.h"
+#include "WebExtensionMenuItemContextType.h"
+#include "WebExtensionTabIdentifier.h"
+#include <wtf/Forward.h>
 
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Box);
+namespace WebKit {
 
-Box::Box(Tree& tree, UnadjustedAbsoluteFloatRect absoluteRect, Style&& displayStyle, OptionSet<TypeFlags> flags)
-    : m_tree(tree)
-    , m_absoluteBoxRect(absoluteRect)
-    , m_style(WTFMove(displayStyle))
-    , m_typeFlags(flags)
-{
-}
+enum class WebExtensionMenuItemMediaType : uint8_t {
+    Audio,
+    Image,
+    Video,
+};
 
-Box::~Box() = default;
+struct WebExtensionMenuItemContextParameters {
+    OptionSet<WebExtensionMenuItemContextType> types;
 
-void Box::setNextSibling(std::unique_ptr<Box>&& box)
-{
-    m_nextSibling = WTFMove(box);
-}
+    std::optional<WebExtensionTabIdentifier> tabIdentifier;
+    std::optional<WebExtensionFrameIdentifier> frameIdentifier;
+    URL frameURL;
 
-bool Box::participatesInZOrderSorting() const
-{
-    return !isLineBreakBox() && style().participatesInZOrderSorting();
-}
+    String linkText;
+    URL linkURL;
 
-void Box::setNeedsDisplay(std::optional<UnadjustedAbsoluteFloatRect> subrect)
-{
-    m_tree.setBoxNeedsDisplay(*this, subrect);
-}
+    std::optional<WebExtensionMenuItemMediaType> mediaType;
+    URL sourceURL;
 
-const char* Box::boxName() const
-{
-    return "box";
-}
+    String selectionString;
+    bool editable { false };
+};
 
-String Box::debugDescription() const
-{
-    TextStream stream;
-    stream << boxName() << " " << absoluteBoxRect() << " (" << this << ")";
-    return stream.release();
-}
+} // namespace WebKit
 
-} // namespace Display
-} // namespace WebCore
-
+#endif // ENABLE(WK_WEB_EXTENSIONS)

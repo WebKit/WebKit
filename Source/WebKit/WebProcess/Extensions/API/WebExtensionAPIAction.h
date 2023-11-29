@@ -61,7 +61,11 @@ public:
     void openPopup(WebPage*, NSDictionary *details, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
     WebExtensionAPIEvent& onClicked();
+
 private:
+    friend class WebExtensionAPIMenus;
+
+    static bool isValidDimensionKey(NSString *);
     static bool parseActionDetails(NSDictionary *, std::optional<WebExtensionWindowIdentifier>&, std::optional<WebExtensionTabIdentifier>&, NSString **outExceptionString);
 
     RefPtr<WebExtensionAPIEvent> m_onClicked;

@@ -33,6 +33,7 @@
 #include "WebExtensionAPICommands.h"
 #include "WebExtensionAPIExtension.h"
 #include "WebExtensionAPILocalization.h"
+#include "WebExtensionAPIMenus.h"
 #include "WebExtensionAPINotifications.h"
 #include "WebExtensionAPIObject.h"
 #include "WebExtensionAPIPermissions.h"
@@ -59,8 +60,10 @@ public:
     WebExtensionAPIAlarms& alarms();
     WebExtensionAPIAction& browserAction() { return action(); }
     WebExtensionAPICommands& commands();
+    WebExtensionAPIMenus& contextMenus() { return menus(); }
     WebExtensionAPIExtension& extension();
     WebExtensionAPILocalization& i18n();
+    WebExtensionAPIMenus& menus();
     WebExtensionAPINotifications& notifications();
     WebExtensionAPIAction& pageAction() { return action(); }
     WebExtensionAPIPermissions& permissions();
@@ -78,6 +81,7 @@ private:
     RefPtr<WebExtensionAPICommands> m_commands;
     RefPtr<WebExtensionAPIExtension> m_extension;
     RefPtr<WebExtensionAPILocalization> m_i18n;
+    RefPtr<WebExtensionAPIMenus> m_menus;
     RefPtr<WebExtensionAPINotifications> m_notifications;
     RefPtr<WebExtensionAPIPermissions> m_permissions;
     RefPtr<WebExtensionAPIRuntime> m_runtime;

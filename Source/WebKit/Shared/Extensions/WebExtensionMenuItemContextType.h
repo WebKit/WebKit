@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +25,39 @@
 
 #pragma once
 
-#include "DisplayBoxModelBox.h"
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-namespace WebCore {
-namespace Display {
+namespace WebKit {
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ReplacedBox);
-
-class ReplacedBox : public BoxModelBox {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(ReplacedBox);
-    friend class BoxFactory;
-public:
-    ReplacedBox(Tree&, UnadjustedAbsoluteFloatRect borderBox, Style&&, OptionSet<TypeFlags>);
-    
-    UnadjustedAbsoluteFloatRect replacedContentRect() const { return m_replacedContentRect; }
-
-private:
-    const char* boxName() const override;
-
-    void setReplacedContentRect(const UnadjustedAbsoluteFloatRect& box) { m_replacedContentRect = box; }
-
-    UnadjustedAbsoluteFloatRect m_replacedContentRect;
+enum class WebExtensionMenuItemContextType : uint16_t {
+    Action    =  1 << 0,
+    Audio     =  1 << 1,
+    Editable  =  1 << 2,
+    Frame     =  1 << 3,
+    Image     =  1 << 4,
+    Link      =  1 << 5,
+    Page      =  1 << 6,
+    Selection =  1 << 7,
+    Tab       =  1 << 8,
+    Video     =  1 << 9,
 };
 
-} // namespace Display
-} // namespace WebCore
+static constexpr OptionSet<WebExtensionMenuItemContextType> allWebExtensionMenuItemContextTypes()
+{
+    return {
+        WebExtensionMenuItemContextType::Action,
+        WebExtensionMenuItemContextType::Audio,
+        WebExtensionMenuItemContextType::Editable,
+        WebExtensionMenuItemContextType::Frame,
+        WebExtensionMenuItemContextType::Image,
+        WebExtensionMenuItemContextType::Link,
+        WebExtensionMenuItemContextType::Page,
+        WebExtensionMenuItemContextType::Selection,
+        WebExtensionMenuItemContextType::Tab,
+        WebExtensionMenuItemContextType::Video
+    };
+}
 
-SPECIALIZE_TYPE_TRAITS_DISPLAY_BOX(ReplacedBox, isReplacedBox())
+} // namespace WebKit
 
+#endif // ENABLE(WK_WEB_EXTENSIONS)

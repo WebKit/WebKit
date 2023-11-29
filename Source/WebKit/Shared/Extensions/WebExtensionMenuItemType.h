@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,18 +25,22 @@
 
 #pragma once
 
-namespace WebCore {
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-class GraphicsContext;
+namespace WebKit {
 
-namespace Display {
-
-struct PaintingContext {
-    GraphicsContext& context;
-    float deviceScaleFactor { 1 };
+enum class WebExtensionMenuItemType : uint8_t {
+    Normal,
+    Checkbox,
+    Radio,
+    Separator,
 };
 
-} // namespace Display
-} // namespace WebCore
+static constexpr bool isCheckedType(WebExtensionMenuItemType type)
+{
+    return type == WebExtensionMenuItemType::Checkbox || type == WebExtensionMenuItemType::Radio;
+}
 
+} // namespace WebKit
 
+#endif // ENABLE(WK_WEB_EXTENSIONS)

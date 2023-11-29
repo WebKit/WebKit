@@ -35,7 +35,7 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(EXTConservativeDepth);
 
 EXTConservativeDepth::EXTConservativeDepth(WebGLRenderingContextBase& context)
-    : WebGLExtension(context)
+    : WebGLExtension(context, WebGLExtensionName::EXTConservativeDepth)
 {
     context.graphicsContextGL()->ensureExtensionEnabled("GL_EXT_conservative_depth"_s);
 }

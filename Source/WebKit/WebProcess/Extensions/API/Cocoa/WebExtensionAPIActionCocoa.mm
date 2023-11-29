@@ -367,7 +367,7 @@ static NSString *dataURLFromImageData(JSValue *imageData, size_t *outWidth, NSSt
     return [NSString stringWithFormat:@"data:image/png;base64,%@", base64String];
 }
 
-static bool isValidDimensionKey(NSString *dimension)
+bool WebExtensionAPIAction::isValidDimensionKey(NSString *dimension)
 {
     double value = dimension.doubleValue;
     if (!value)

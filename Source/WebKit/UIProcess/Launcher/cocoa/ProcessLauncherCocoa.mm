@@ -139,6 +139,13 @@ static const char* serviceName(const ProcessLauncher::LaunchOptions& launchOptio
     }
 }
 
+ProcessLauncher::~ProcessLauncher()
+{
+#if USE(EXTENSIONKIT)
+    [m_process invalidate];
+#endif
+}
+
 void ProcessLauncher::launchProcess()
 {
     ASSERT(!m_xpcConnection);

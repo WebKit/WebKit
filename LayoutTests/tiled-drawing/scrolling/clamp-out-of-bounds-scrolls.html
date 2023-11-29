@@ -2,6 +2,7 @@
 
 <html>
 <head>
+    <script src="../../resources/ui-helper.js"></script>
     <style>
         body {
             width: 5000px;
@@ -9,8 +10,10 @@
         }
     </style>
     <script>
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
 
         function logScrollAttempt(x, y)
         {
@@ -20,17 +23,30 @@
                 document.getElementById('scrollingTree').innerText += "Attempted scroll to " + x + ", " + y + "\n" + window.internals.scrollingStateTreeAsText() + "\n";
         }
 
-        function doTest()
+        async function doTest()
         {
+            await UIHelper.renderingUpdate();
+
             // These scrolls should clamp to 0, 0.
             logScrollAttempt(-5000, 0);
             logScrollAttempt(0, -5000);
             logScrollAttempt(-5000, -5000);
 
+            await UIHelper.renderingUpdate();
+
             // These scrolls should clamp to the bottom/right edges.
             logScrollAttempt(10000, 0);
+
+            await UIHelper.renderingUpdate();
+
             logScrollAttempt(0, 10000);
+
+            await UIHelper.renderingUpdate();
+
             logScrollAttempt(10000, 10000);
+
+            if (window.testRunner)
+                testRunner.notifyDone();
         }
         window.addEventListener('load', doTest, false);
     </script>

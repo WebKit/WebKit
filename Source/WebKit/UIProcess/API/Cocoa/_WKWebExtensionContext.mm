@@ -60,6 +60,12 @@ NSNotificationName const _WKWebExtensionContextDeniedPermissionMatchPatternsWere
 _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotificationUserInfoKeyPermissions = @"permissions";
 _WKWebExtensionContextNotificationUserInfoKey const _WKWebExtensionContextNotificationUserInfoKeyMatchPatterns = @"matchPatterns";
 
+#if USE(APPKIT)
+using CocoaMenuItem = NSMenuItem;
+#else
+using CocoaMenuItem = UIMenuElement;
+#endif
+
 @implementation _WKWebExtensionContext
 
 #if ENABLE(WK_WEB_EXTENSIONS)
@@ -537,6 +543,13 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     NSParameterAssert([command isKindOfClass:_WKWebExtensionCommand.class]);
 
     _webExtensionContext->performCommand(command._webExtensionCommand, WebKit::WebExtensionContext::UserTriggered::Yes);
+}
+
+- (NSArray<CocoaMenuItem *> *)menuItemsForTab:(id<_WKWebExtensionTab>)tab
+{
+    NSParameterAssert([tab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
+
+    return _webExtensionContext->platformMenuItems(toImpl(tab, *_webExtensionContext));
 }
 
 - (void)userGesturePerformedInTab:(id<_WKWebExtensionTab>)tab
@@ -1036,6 +1049,11 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 
 - (void)performCommand:(_WKWebExtensionCommand *)command
 {
+}
+
+- (NSArray<CocoaMenuItem *> *)menuItemsForTab:(id<_WKWebExtensionTab>)tab
+{
+    return nil;
 }
 
 - (void)userGesturePerformedInTab:(id<_WKWebExtensionTab>)tab

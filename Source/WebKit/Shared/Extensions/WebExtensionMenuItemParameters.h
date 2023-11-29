@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,54 +25,37 @@
 
 #pragma once
 
-#include "DisplayLayerController.h"
-#include "LayoutUnits.h"
-#include <wtf/IsoMalloc.h>
+#if ENABLE(WK_WEB_EXTENSIONS)
 
-namespace WebCore {
+#include "WebExtensionMenuItemContextType.h"
+#include "WebExtensionMenuItemType.h"
+#include <wtf/Forward.h>
 
-class LocalFrame;
-class LocalFrameView;
-class Page;
+namespace WebKit {
 
-namespace Layout {
-class LayoutState;
-class LayoutTree;
-}
+static constexpr size_t webExtensionActionMenuItemTopLevelLimit = 6;
 
-namespace Display {
+struct WebExtensionMenuItemParameters {
+    String identifier;
+    std::optional<String> parentIdentifier;
 
-// The root object which renders a display tree for a single document.
-class View {
-    WTF_MAKE_ISO_ALLOCATED(View);
-public:
-    explicit View(LocalFrameView&);
-    ~View();
+    std::optional<WebExtensionMenuItemType> type;
 
-    const Tree* tree() const { return m_displayTree.get(); }
+    String title;
+    String command;
 
-    void prepareForDisplay();
-    void flushLayers();
-    
-    void setIsInWindow(bool);
+    String iconDictionaryJSON;
 
-    Page* page() const;
-    LocalFrameView& frameView() const { return m_frameView; }
-    LocalFrame& frame() const;
+    std::optional<bool> checked;
+    std::optional<bool> enabled;
+    std::optional<bool> visible;
 
-    // FIXME: Temporary.
-    void setNeedsDisplay();
+    std::optional<Vector<String>> documentURLPatterns;
+    std::optional<Vector<String>> targetURLPatterns;
 
-    float deviceScaleFactor() const;
-
-private:
-    const Layout::LayoutState* layoutState() const;
-
-    LocalFrameView& m_frameView;
-    LayerController m_layerController;
-    std::unique_ptr<Display::Tree> m_displayTree;
+    std::optional<OptionSet<WebExtensionMenuItemContextType>> contexts;
 };
 
-} // namespace Display
-} // namespace WebCore
+} // namespace WebKit
 
+#endif // ENABLE(WK_WEB_EXTENSIONS)
