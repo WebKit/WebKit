@@ -36,6 +36,8 @@
 #import "WKContentRuleListInternal.h"
 #import "WebExtensionUtilities.h"
 
+// If any changes are made to the rule translation logic here, make sure to increment currentDeclarativeNetRequestRuleTranslatorVersion in WebExtensionContextCocoa.
+
 // Keys in the top level rule dictionary.
 static NSString * const declarativeNetRequestRuleIDKey = @"id";
 static NSString * const declarativeNetRequestRulePriorityKey = @"priority";

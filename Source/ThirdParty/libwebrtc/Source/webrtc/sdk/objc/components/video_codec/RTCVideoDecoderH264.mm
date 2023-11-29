@@ -13,6 +13,7 @@
 
 #import <VideoToolbox/VideoToolbox.h>
 
+#import "RTCVideoFrameReorderQueue.h"
 #import "base/RTCVideoFrame.h"
 #import "base/RTCVideoFrameBuffer.h"
 #import "components/video_frame_buffer/RTCCVPixelBuffer.h"
@@ -34,8 +35,7 @@
 // Struct that we pass to the decoder per frame to decode. We receive it again
 // in the decoder callback.
 struct RTCFrameDecodeParams {
-  RTCFrameDecodeParams(RTCVideoDecoderCallback callback, int64_t timestamp, uint64_t reorderSize) : callback(callback), timestamp(timestamp), reorderSize(reorderSize) {}
-  RTCVideoDecoderCallback callback;
+  RTCFrameDecodeParams(int64_t timestamp, uint64_t reorderSize) : timestamp(timestamp), reorderSize(reorderSize) {}
   int64_t timestamp;
   uint64_t reorderSize { 0 };
 };
@@ -53,32 +53,6 @@ static void overrideColorSpaceAttachments(CVImageBufferRef imageBuffer) {
   CVBufferSetAttachment(imageBuffer, (CFStringRef)@"ColorInfoGuessedBy", (CFStringRef)@"RTCVideoDecoderH264", kCVAttachmentMode_ShouldPropagate);
 }
 
-struct RTCVideoFrameWithOrder {
-    RTCVideoFrameWithOrder(RTCVideoFrame* frame, uint64_t reorderSize)
-        : frame((__bridge_retained void*)frame)
-        , timeStamp(frame.timeStamp)
-        , reorderSize(reorderSize)
-    {
-    }
-
-    ~RTCVideoFrameWithOrder()
-    {
-      if (frame)
-        take();
-    }
-
-    RTCVideoFrame* take()
-    {
-        auto* rtcFrame = (__bridge_transfer RTCVideoFrame *)frame;
-        frame = nullptr;
-        return rtcFrame;
-    }
-
-    void* frame;
-    uint64_t timeStamp;
-    uint64_t reorderSize;
-};
-
 // This is the callback function that VideoToolbox calls when decode is
 // complete.
 void decompressionOutputCallback(void *decoderRef,
@@ -93,7 +67,7 @@ void decompressionOutputCallback(void *decoderRef,
   if (status != noErr || !imageBuffer) {
     [decoder setError:status != noErr ? status : 1];
     RTC_LOG(LS_ERROR) << "Failed to decode frame. Status: " << status;
-    decodeParams->callback(nil);
+    [decoder processFrame:nil reorderSize:decodeParams->reorderSize];
     return;
   }
 
@@ -117,9 +91,7 @@ void decompressionOutputCallback(void *decoderRef,
   RTCVideoDecoderCallback _callback;
   OSStatus _error;
   bool _useAVC;
-  std::deque<std::unique_ptr<RTCVideoFrameWithOrder>> _reorderQueue;
-  uint8_t _reorderSize;
-  webrtc::Mutex _reorderQueueLock;
+  webrtc::RTCVideoFrameReorderQueue _reorderQueue;
 }
 
 - (instancetype)init {
@@ -127,7 +99,6 @@ void decompressionOutputCallback(void *decoderRef,
   if (self) {
     _memoryPool = CMMemoryPoolCreate(nil);
     _useAVC = false;
-    _reorderSize = 0;
   }
   return self;
 }
@@ -190,7 +161,7 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
   rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat =
       rtc::ScopedCF(webrtc::CreateVideoFormatDescription(data, size));
   if (inputFormat) {
-    _reorderSize = webrtc::ComputeH264ReorderSizeFromAnnexB(data, size);
+    _reorderQueue.setReorderSize(webrtc::ComputeH264ReorderSizeFromAnnexB(data, size));
     // Check if the video format has changed, and reinitialize decoder if
      // needed.
     if (!CMFormatDescriptionEqual(inputFormat.get(), _videoFormat)) {
@@ -227,7 +198,7 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
   RTC_DCHECK(sampleBuffer);
   VTDecodeFrameFlags decodeFlags = kVTDecodeFrame_EnableAsynchronousDecompression;
   std::unique_ptr<RTCFrameDecodeParams> frameDecodeParams;
-  frameDecodeParams.reset(new RTCFrameDecodeParams(_callback, timeStamp, _reorderSize));
+  frameDecodeParams.reset(new RTCFrameDecodeParams(timeStamp, _reorderQueue.reorderSize()));
   OSStatus status = VTDecompressionSessionDecodeFrame(
       _decompressionSession, sampleBuffer, decodeFlags, frameDecodeParams.release(), nullptr);
 #if defined(WEBRTC_IOS)
@@ -237,7 +208,7 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
       [self resetDecompressionSession] == WEBRTC_VIDEO_CODEC_OK) {
     RTC_LOG(LS_INFO) << "Failed to decode frame with code: " << status
                      << " retrying decode after decompression session reset";
-    frameDecodeParams.reset(new RTCFrameDecodeParams(_callback, timeStamp, _reorderSize));
+    frameDecodeParams.reset(new RTCFrameDecodeParams(timeStamp, _reorderQueue.reorderSize()));
     status = VTDecompressionSessionDecodeFrame(
         _decompressionSession, sampleBuffer, decodeFlags, frameDecodeParams.release(), nullptr);
   }
@@ -279,7 +250,7 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
 
   rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat = rtc::ScopedCF(videoFormatDescription);
   if (inputFormat) {
-    _reorderSize = webrtc::ComputeH264ReorderSizeFromAVC(data, size);
+    _reorderQueue.setReorderSize(webrtc::ComputeH264ReorderSizeFromAVC(data, size));
 
     // Check if the video format has changed, and reinitialize decoder if
     // needed.
@@ -397,10 +368,8 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
   if (_decompressionSession)
     VTDecompressionSessionWaitForAsynchronousFrames(_decompressionSession);
 
-  webrtc::MutexLock lock(&_reorderQueueLock);
-  while (!_reorderQueue.empty()) {
-    _callback(_reorderQueue.front()->take());
-    _reorderQueue.pop_front();
+  while (auto *frame = _reorderQueue.takeIfAny()) {
+    _callback(frame);
   }
 }
 
@@ -423,16 +392,10 @@ CMSampleBufferRef H264BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
 
 - (void)processFrame:(RTCVideoFrame*)decodedFrame reorderSize:(uint64_t)reorderSize {
   // FIXME: In case of IDR, we could push out all queued frames.
-  if (!_reorderQueue.empty() || reorderSize) {
-    webrtc::MutexLock lock(&_reorderQueueLock);
-    _reorderQueue.push_back(std::make_unique<RTCVideoFrameWithOrder>(decodedFrame, reorderSize));
-    std::sort(_reorderQueue.begin(), _reorderQueue.end(), [](auto& a, auto& b) {
-      return a->timeStamp < b->timeStamp;
-    });
-    while (_reorderQueue.size() > _reorderQueue.front()->reorderSize) {
-      auto *frame = _reorderQueue.front()->take();
+  if (!_reorderQueue.isEmpty() || reorderSize) {
+    _reorderQueue.append(decodedFrame, reorderSize);
+    while (auto *frame = _reorderQueue.takeIfAvailable()) {
       _callback(frame);
-      _reorderQueue.pop_front();
     }
     return;
   }

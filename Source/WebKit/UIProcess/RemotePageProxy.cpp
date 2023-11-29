@@ -98,16 +98,6 @@ RemotePageProxy::~RemotePageProxy()
 
 void RemotePageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-#if HAVE(VISIBILITY_PROPAGATION_VIEW)
-    // FIXME: This needs to be handled correctly in a way that doesn't cause assertions or crashes. <rdar://116202187>
-    if (decoder.messageName() == Messages::WebPageProxy::DidCreateContextInWebProcessForVisibilityPropagation::name())
-        return;
-#endif
-
-    // FIXME: Removing this will be necessary to getting layout tests to work with site isolation. <rdar://116202187>
-    if (decoder.messageName() == Messages::WebPageProxy::HandleMessage::name())
-        return;
-
     if (decoder.messageName() == Messages::WebPageProxy::DecidePolicyForResponse::name()) {
         IPC::handleMessageAsync<Messages::WebPageProxy::DecidePolicyForResponse>(connection, decoder, this, &RemotePageProxy::decidePolicyForResponse);
         return;
@@ -133,8 +123,20 @@ void RemotePageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Decode
         return;
     }
 
+    if (decoder.messageName() == Messages::WebPageProxy::HandleMessage::name()) {
+        IPC::handleMessage<Messages::WebPageProxy::HandleMessage>(connection, decoder, this, &RemotePageProxy::handleMessage);
+        return;
+    }
+
     if (m_page)
         m_page->didReceiveMessage(connection, decoder);
+}
+
+void RemotePageProxy::handleMessage(const String& messageName, const WebKit::UserData& messageBody)
+{
+    if (!m_page)
+        return;
+    m_page->handleMessageShared(m_process, messageName, messageBody);
 }
 
 void RemotePageProxy::decidePolicyForResponse(FrameInfoData&& frameInfo, uint64_t navigationID, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& request, bool canShowMIMEType, const String& downloadAttribute, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)
@@ -148,8 +150,9 @@ void RemotePageProxy::didCommitLoadForFrame(WebCore::FrameIdentifier frameID, Fr
 {
     m_process->didCommitProvisionalLoad();
     RefPtr frame = WebFrameProxy::webFrame(frameID);
-    if (frame)
-        frame->commitProvisionalFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData); // Will delete |this|.
+    if (!frame)
+        return;
+    frame->commitProvisionalFrame(frameID, WTFMove(frameInfo), WTFMove(request), navigationID, mimeType, frameHasCustomContentProvider, frameLoadType, certificateInfo, usedLegacyTLS, privateRelayed, containsPluginDocument, hasInsecureContent, mouseEventPolicy, userData); // Will delete |this|.
 }
 
 void RemotePageProxy::decidePolicyForNavigationActionAsync(FrameInfoData&& frameInfo, uint64_t navigationID, NavigationActionData&& navigationActionData, FrameInfoData&& originatingFrameInfo, std::optional<WebPageProxyIdentifier> originatingPageID, const WebCore::ResourceRequest& originalRequest, WebCore::ResourceRequest&& request, IPC::FormDataReference&& requestBody, CompletionHandler<void(PolicyDecision&&)>&& completionHandler)

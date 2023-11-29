@@ -38,6 +38,7 @@
 #include "HandlerInfo.h"
 #include "JITCode.h"
 #include "JITInlineCacheGenerator.h"
+#include "JITThunks.h"
 #include "LinkBuffer.h"
 #include "MacroAssembler.h"
 #include "PCToCodeOriginMap.h"

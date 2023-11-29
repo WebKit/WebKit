@@ -492,10 +492,6 @@
 #define ENABLE_RESOURCE_USAGE 0
 #endif
 
-#if !defined(ENABLE_RUBBER_BANDING)
-#define ENABLE_RUBBER_BANDING 0
-#endif
-
 #if !defined(ENABLE_SCROLLING_THREAD)
 #define ENABLE_SCROLLING_THREAD 0
 #endif

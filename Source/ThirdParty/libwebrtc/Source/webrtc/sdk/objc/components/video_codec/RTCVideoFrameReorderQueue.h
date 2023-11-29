@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,53 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "base/RTCVideoFrame.h"
+#include <deque>
+#include "rtc_base/synchronization/mutex.h"
 
-#if ENABLE(WEB_CODECS) && USE(LIBWEBRTC)
+namespace webrtc {
 
-#include "VideoDecoder.h"
-#include <wtf/FastMalloc.h>
-#include <wtf/UniqueRef.h>
-
-namespace WebCore {
-
-class LibWebRTCVPXInternalVideoDecoder;
-
-class LibWebRTCVPXVideoDecoder : public VideoDecoder {
-    WTF_MAKE_FAST_ALLOCATED;
+class RTCVideoFrameReorderQueue {
 public:
-    enum class Type {
-        VP8,
-        VP9,
-        VP9_P2,
-        AV1
-    };
-    static void create(Type, CreateCallback&&, OutputCallback&&, PostTaskCallback&&);
+    RTCVideoFrameReorderQueue() = default;
 
-    LibWebRTCVPXVideoDecoder(Type, OutputCallback&&, PostTaskCallback&&);
-    ~LibWebRTCVPXVideoDecoder();
+    struct RTCVideoFrameWithOrder {
+        RTCVideoFrameWithOrder(RTCVideoFrame* frame, uint64_t reorderSize)
+            : frame((__bridge_retained void*)frame)
+            , timeStamp(frame.timeStamp)
+            , reorderSize(reorderSize)
+        {
+        }
+
+        ~RTCVideoFrameWithOrder()
+        {
+            if (frame)
+                take();
+        }
+
+        RTCVideoFrame* take()
+        {
+            auto* rtcFrame = (__bridge_transfer RTCVideoFrame *)frame;
+            frame = nullptr;
+            return rtcFrame;
+        }
+
+        void* frame;
+        uint64_t timeStamp;
+        uint64_t reorderSize;
+    };
+
+    bool isEmpty();
+    uint8_t reorderSize() const;
+    void setReorderSize(uint8_t);
+    void append(RTCVideoFrame*, uint8_t);
+    RTCVideoFrame *takeIfAvailable();
+    RTCVideoFrame *takeIfAny();
 
 private:
-    void decode(EncodedFrame&&, DecodeCallback&&) final;
-    void flush(Function<void()>&&) final;
-    void reset() final;
-    void close() final;
-
-    Ref<LibWebRTCVPXInternalVideoDecoder> m_internalDecoder;
+    std::deque<std::unique_ptr<RTCVideoFrameWithOrder>> _reorderQueue;
+    uint8_t _reorderSize { 0 };
+    mutable webrtc::Mutex _reorderQueueLock;
 };
 
 }
-
-#endif // ENABLE(WEB_CODECS) && USE(LIBWEBRTC)

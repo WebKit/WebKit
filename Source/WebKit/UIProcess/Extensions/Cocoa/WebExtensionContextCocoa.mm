@@ -78,9 +78,13 @@ static NSString * const backgroundContentEventListenersKey = @"BackgroundContent
 static NSString * const backgroundContentEventListenersVersionKey = @"BackgroundContentEventListenersVersion";
 static NSString * const lastSeenBaseURLStateKey = @"LastSeenBaseURL";
 static NSString * const lastSeenVersionStateKey = @"LastSeenVersion";
+static NSString * const lastLoadedDNRHashStateKey = @"LastLoadedDNRHash";
 
 // Update this value when any changes are made to the WebExtensionEventListenerType enum.
 static constexpr NSInteger currentBackgroundContentListenerStateVersion = 2;
+
+// Update this value when any changes are made to the rule translation logic in _WKWebExtensionDeclarativeNetRequestRule.
+static constexpr NSInteger currentDeclarativeNetRequestRuleTranslatorVersion = 1;
 
 @interface _WKWebExtensionContextDelegate : NSObject <WKNavigationDelegate, WKUIDelegate> {
     WeakPtr<WebKit::WebExtensionContext> _webExtensionContext;
@@ -2649,14 +2653,14 @@ void WebExtensionContext::removeInjectedContent(WebUserContentControllerProxy& u
 WKContentRuleListStore *WebExtensionContext::declarativeNetRequestRuleStore()
 {
     if (m_declarativeNetRequestRuleStore)
-        return m_declarativeNetRequestRuleStore;
+        return m_declarativeNetRequestRuleStore.get();
 
     String contentBlockerStorePath = m_extensionController->configuration().declarativeNetRequestStoreDirectory();
     if (contentBlockerStorePath.isEmpty())
         return nil;
 
     m_declarativeNetRequestRuleStore = [WKContentRuleListStore storeWithURL:[NSURL fileURLWithPath:contentBlockerStorePath]];
-    return m_declarativeNetRequestRuleStore;
+    return m_declarativeNetRequestRuleStore.get();
 }
 
 void WebExtensionContext::removeDeclarativeNetRequestRules()
@@ -2683,10 +2687,21 @@ void WebExtensionContext::addDeclarativeNetRequestRulesToPrivateUserContentContr
     }];
 }
 
+static NSString *computeStringHashForContentBlockerRules(NSString *rules)
+{
+    SHA1 sha1;
+    sha1.addBytes(String(rules).span8());
+
+    SHA1::Digest digest;
+    sha1.computeHash(digest);
+
+    auto hashAsCString = SHA1::hexDigest(digest);
+    auto hashAsString = String::fromUTF8(hashAsCString);
+    return [hashAsString stringByAppendingString:[NSString stringWithFormat:@"-%zu", currentDeclarativeNetRequestRuleTranslatorVersion]];
+}
+
 void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData)
 {
-    // FIXME: rdar://118839289 - Avoid converting/compiling the rules data every time if the rules haven't changed.
-
     NSArray<NSString *> *jsonDeserializationErrorStrings;
     auto *allJSONObjects = [_WKWebExtensionDeclarativeNetRequestTranslator jsonObjectsFromData:rulesData errorStrings:&jsonDeserializationErrorStrings];
 
@@ -2697,15 +2712,33 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData)
     if (!webKitRules)
         return;
 
-    [declarativeNetRequestRuleStore() compileContentRuleListForIdentifier:uniqueIdentifier() encodedContentRuleList:webKitRules completionHandler:^(WKContentRuleList *ruleList, NSError *error) {
-        if (error) {
-            RELEASE_LOG_ERROR(Extensions, "Error compiling declarativeNetRequest rules: %{public}@", privacyPreservingDescription(error));
-            return;
+    auto *previouslyLoadedHash = objectForKey<NSString>(m_state, lastLoadedDNRHashStateKey);
+    auto *hashOfWebKitRules = computeStringHashForContentBlockerRules(webKitRules);
+
+    [declarativeNetRequestRuleStore() lookUpContentRuleListForIdentifier:uniqueIdentifier() completionHandler:^(WKContentRuleList *foundRuleList, NSError *) {
+        if (foundRuleList) {
+            if ([previouslyLoadedHash isEqualToString:hashOfWebKitRules]) {
+                auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
+                for (auto& userContentController : userContentControllers)
+                    userContentController.addContentRuleList(*foundRuleList->_contentRuleList, m_baseURL);
+
+                return;
+            }
         }
 
-        auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
-        for (auto& userContentController : userContentControllers)
-            userContentController.addContentRuleList(*ruleList->_contentRuleList, m_baseURL);
+        [declarativeNetRequestRuleStore() compileContentRuleListForIdentifier:uniqueIdentifier() encodedContentRuleList:webKitRules completionHandler:^(WKContentRuleList *ruleList, NSError *error) {
+            if (error) {
+                RELEASE_LOG_ERROR(Extensions, "Error compiling declarativeNetRequest rules: %{public}@", privacyPreservingDescription(error));
+                return;
+            }
+
+            [m_state setObject:hashOfWebKitRules forKey:lastLoadedDNRHashStateKey];
+            writeStateToStorage();
+
+            auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
+            for (auto& userContentController : userContentControllers)
+                userContentController.addContentRuleList(*ruleList->_contentRuleList, m_baseURL);
+        }];
     }];
 }
 

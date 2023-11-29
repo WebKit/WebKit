@@ -106,6 +106,7 @@ class BuiltinExecutables;
 class BytecodeIntrinsicRegistry;
 class CallFrame;
 enum class CallMode;
+enum class CommonJITThunkID : uint8_t;
 struct CheckpointOSRExitSideState;
 class CodeBlock;
 class CodeCache;
@@ -675,6 +676,7 @@ public:
 #if ENABLE(JIT)
     std::unique_ptr<JITThunks> jitStubs;
     MacroAssemblerCodeRef<JITThunkPtrTag> getCTIStub(ThunkGenerator);
+    MacroAssemblerCodeRef<JITThunkPtrTag> getCTIStub(CommonJITThunkID);
     std::unique_ptr<SharedJITStubSet> m_sharedJITStubs;
 #endif
 #if ENABLE(FTL_JIT)

@@ -172,7 +172,7 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
             return;
         }
 
-        if (!(InjectedScriptHost.internalConstructorName(promiseObject) === "Promise")) {
+        if (!@isPromise(promiseObject)) {
             callback("Object with given id is not a Promise");
             return;
         }
@@ -238,7 +238,7 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
                 return;
             }
             let result = func.@apply(object, resolvedArgs);
-            if (awaitPromise && isDefined(result) && InjectedScriptHost.internalConstructorName(result) === "Promise") {
+            if (awaitPromise && isDefined(result) && @isPromise(result)) {
                 result.then((value) => {
                     callback(@createObjectWithoutPrototype(
                         "wasThrown", false,
@@ -752,7 +752,7 @@ let InjectedScript = class InjectedScript extends PrototypelessObjectBase
                 if (symbol)
                     fakeDescriptor.symbol = symbol;
                 // Silence any possible unhandledrejection exceptions created from accessing a native accessor with a wrong this object.
-                if (InjectedScriptHost.internalConstructorName(fakeDescriptor.value) === "Promise" && InjectedScriptHost.isPromiseRejectedWithNativeGetterTypeError(fakeDescriptor.value))
+                if (@isPromise(fakeDescriptor.value) && InjectedScriptHost.isPromiseRejectedWithNativeGetterTypeError(fakeDescriptor.value))
                     fakeDescriptor.value.@catch(function(){});
                 return fakeDescriptor;
             } catch (e) {

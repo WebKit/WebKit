@@ -48,3 +48,11 @@ PASS: Should throw the JSON object.
 PASS: Should throw an error.
 {"preview":{"type":"object","description":"Object","lossless":true,"properties":[{"name":"a","type":"number","value":"2023"}]}}
 
+-- Running test case: AwaitCustomPromise
+PASS: Should not throw an error.
+{"preview":{"type":"object","description":"Promise","lossless":false,"properties":[]}}
+
+-- Running test case: AwaitThenable
+PASS: Should not throw an error.
+{"preview":{"type":"object","description":"Thenable","lossless":false,"properties":[]}}
+

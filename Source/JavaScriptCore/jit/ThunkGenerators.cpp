@@ -87,7 +87,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> popThunkStackPreservesAndHandleExceptionGe
     CCallHelpers::Jump continuation = jit.jump();
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    auto handler = vm.getCTIStub(handleExceptionGenerator);
+    auto handler = vm.getCTIStub(CommonJITThunkID::HandleException);
     patchBuffer.link(continuation, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "popThunkStackPreservesAndHandleException");
 }
@@ -108,9 +108,11 @@ MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm)
         jit.emitCTIThunkEpilogue();
     jit.ret();
 
-    auto handlerGenerator = Options::useExceptionFuzz() ? popThunkStackPreservesAndHandleExceptionGenerator : handleExceptionGenerator;
+    auto jumpTarget = CodeLocationLabel { vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>() };
+    if (UNLIKELY(Options::useExceptionFuzz()))
+        jumpTarget = CodeLocationLabel { vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator).retaggedCode<NoPtrTag>() };
 #if CPU(X86_64)
-    if (!Options::useExceptionFuzz()) {
+    if (LIKELY(!Options::useExceptionFuzz())) {
         handleException.link(&jit);
         jit.addPtr(CCallHelpers::TrustedImm32(sizeof(CPURegister)), X86Registers::esp); // pop return address.
         handleException = jit.jump();
@@ -118,7 +120,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> checkExceptionGenerator(VM& vm)
 #endif
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(handlerGenerator).retaggedCode<NoPtrTag>()));
+    patchBuffer.link(handleException, jumpTarget);
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "CheckException");
 }
 
@@ -340,35 +342,19 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkFor(VM& vm, CallMode mo
         mode == CallMode::Regular ? "call" : mode == CallMode::Tail ? "tail call" : "construct");
 }
 
-static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForRegularCall(VM& vm)
 {
     return virtualThunkFor(vm, CallMode::Regular, CodeForCall);
 }
 
-static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailCall(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForTailCall(VM& vm)
 {
     return virtualThunkFor(vm, CallMode::Tail, CodeForCall);
 }
 
-static MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstructConstruct(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> virtualThunkForConstruct(VM& vm)
 {
     return virtualThunkFor(vm, CallMode::Construct, CodeForConstruct);
-}
-
-MacroAssemblerCodeRef<JITStubRoutinePtrTag> virtualThunkFor(VM& vm, CallMode callMode)
-{
-    auto generator = [&] () -> ThunkGenerator {
-        switch (callMode) {
-        case CallMode::Regular:
-            return virtualThunkForRegularCall;
-        case CallMode::Tail:
-            return virtualThunkForTailCall;
-        case CallMode::Construct:
-            return virtualThunkForConstructConstruct;
-        }
-        RELEASE_ASSERT_NOT_REACHED();
-    };
-    return vm.getCTIStub(generator()).retagged<JITStubRoutinePtrTag>();
 }
 
 enum ThunkEntryType { EnterViaCall, EnterViaJumpWithSavedTags, EnterViaJumpWithoutSavedTags };
@@ -1704,6 +1690,19 @@ MacroAssemblerCodeRef<JITThunkPtrTag> remoteFunctionCallGenerator(VM& vm)
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::RemoteFunctionThunk);
     linkBuffer.link(noCode, CodeLocationLabel<JITThunkPtrTag>(vm.jitStubs->ctiNativeTailCallWithoutSavedTags(vm)));
     return FINALIZE_THUNK(linkBuffer, JITThunkPtrTag, "Specialized thunk for remote function calls");
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> returnFromBaselineGenerator(VM&)
+{
+    CCallHelpers jit;
+
+    jit.checkStackPointerAlignment();
+    jit.emitRestoreCalleeSavesFor(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());
+    jit.emitFunctionEpilogue();
+    jit.ret();
+
+    LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
+    return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: op_ret_handler");
 }
 
 } // namespace JSC

@@ -32,6 +32,7 @@
 #include "CodeBlockWithJITType.h"
 #include "FTLJITCode.h"
 #include "JITOperations.h"
+#include "JITThunks.h"
 #include "LinkBuffer.h"
 #include "ProfilerCompilation.h"
 #include "ThunkGenerators.h"
@@ -105,8 +106,8 @@ void link(State& state)
                 return;
             }
             linkBuffer->link<OperationPtrTag>(throwStackOverflow, operationThrowStackOverflowError);
-            linkBuffer->link(jumpToExceptionHandler, CodeLocationLabel(vm.getCTIStub(handleExceptionWithCallFrameRollbackGenerator).retaggedCode<NoPtrTag>()));
-            linkBuffer->link(callArityFixup, vm.getCTIStub(arityFixupGenerator).code());
+            linkBuffer->link(jumpToExceptionHandler, CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleExceptionWithCallFrameRollback).retaggedCode<NoPtrTag>()));
+            linkBuffer->link(callArityFixup, vm.getCTIStub(CommonJITThunkID::ArityFixup).code());
             linkBuffer->link(mainPathJumps, state.generatedFunction);
         }
 

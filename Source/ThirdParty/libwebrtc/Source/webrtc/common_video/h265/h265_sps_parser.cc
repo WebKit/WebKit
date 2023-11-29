@@ -207,6 +207,9 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
   sps_max_sub_layers_minus1 = reader.ReadBits(3);
   sps.sps_max_sub_layers_minus1 = sps_max_sub_layers_minus1;
   sps.sps_max_dec_pic_buffering_minus1.resize(sps_max_sub_layers_minus1 + 1, 0);
+#if WEBRTC_WEBKIT_BUILD
+  sps.sps_max_num_reorder_pics.resize(sps_max_sub_layers_minus1 + 1, 0);
+#endif
   // sps_temporal_id_nesting_flag: u(1)
   reader.ConsumeBits(1);
   // profile_tier_level(1, sps_max_sub_layers_minus1). We are acutally not
@@ -323,7 +326,9 @@ absl::optional<H265SpsParser::SpsState> H265SpsParser::ParseSpsInternal(
     // sps_max_dec_pic_buffering_minus1: ue(v)
     sps.sps_max_dec_pic_buffering_minus1[i] = reader.ReadExponentialGolomb();
     // sps_max_num_reorder_pics: ue(v)
-    reader.ReadExponentialGolomb();
+#if WEBRTC_WEBKIT_BUILD
+    sps.sps_max_num_reorder_pics[i] = reader.ReadExponentialGolomb();
+#endif
     // sps_max_latency_increase_plus1: ue(v)
     reader.ReadExponentialGolomb();
   }

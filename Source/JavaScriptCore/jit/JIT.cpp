@@ -36,6 +36,7 @@
 #include "JITInlines.h"
 #include "JITOperations.h"
 #include "JITSizeStatistics.h"
+#include "JITThunks.h"
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ModuleProgramCodeBlock.h"
@@ -864,7 +865,7 @@ std::tuple<std::unique_ptr<LinkBuffer>, RefPtr<BaselineJITCode>> JIT::compileAnd
         getArityPadding(*m_vm, numberOfParameters, regT1, regT0, regT2, regT3, stackOverflow);
 
         move(regT0, GPRInfo::argumentGPR0);
-        emitNakedNearCall(m_vm->getCTIStub(arityFixupGenerator).retaggedCode<NoPtrTag>());
+        emitNakedNearCall(m_vm->getCTIStub(CommonJITThunkID::ArityFixup).retaggedCode<NoPtrTag>());
 
 #if ASSERT_ENABLED
         m_bytecodeIndex = BytecodeIndex(); // Reset this, in order to guard its use with ASSERTs.
@@ -934,9 +935,9 @@ RefPtr<BaselineJITCode> JIT::link(LinkBuffer& patchBuffer)
     }
 
     if (!m_exceptionChecks.empty())
-        patchBuffer.link(m_exceptionChecks, CodeLocationLabel(vm().getCTIStub(handleExceptionGenerator).retaggedCode<NoPtrTag>()));
+        patchBuffer.link(m_exceptionChecks, CodeLocationLabel(vm().getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
     if (!m_exceptionChecksWithCallFrameRollback.empty())
-        patchBuffer.link(m_exceptionChecksWithCallFrameRollback, CodeLocationLabel(vm().getCTIStub(handleExceptionWithCallFrameRollbackGenerator).retaggedCode<NoPtrTag>()));
+        patchBuffer.link(m_exceptionChecksWithCallFrameRollback, CodeLocationLabel(vm().getCTIStub(CommonJITThunkID::HandleExceptionWithCallFrameRollback).retaggedCode<NoPtrTag>()));
 
     for (auto& record : m_nearJumps) {
         if (record.target)

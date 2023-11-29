@@ -262,7 +262,7 @@ void SpeculativeJIT::compileFunction()
     linkOSREntries(*linkBuffer);
 
     if (requiresArityFixup)
-        linkBuffer->link(callArityFixup, vm().getCTIStub(arityFixupGenerator).code());
+        linkBuffer->link(callArityFixup, vm().getCTIStub(CommonJITThunkID::ArityFixup).code());
 
     disassemble(*linkBuffer);
 

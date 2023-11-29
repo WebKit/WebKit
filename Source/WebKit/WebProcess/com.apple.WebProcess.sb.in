@@ -1617,8 +1617,10 @@
         SYS_munlock
         SYS_openat_nocancel
         SYS_proc_rlimit_control
+#if !PLATFORM(MAC) || __MAC_OS_X_VERSION_MIN_REQUIRED < 130000
         ;; FIXME: SYS_setsockopt can be removed when contentfiltering has moved to the Network process
         SYS_setsockopt ;; <rdar://90249455>
+#endif
         SYS_shm_open
         SYS_sigaction
         SYS_unlink))

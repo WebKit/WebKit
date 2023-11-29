@@ -135,7 +135,6 @@ my (
     $remoteInspectorSupport,
     $resolutionMediaQuerySupport,
     $resourceUsageSupport,
-    $rubberBandingSupport,
     $samplingProfilerSupport,
     $sandboxExtensionsSupport,
     $serverPreconnectSupport,
@@ -409,9 +408,6 @@ my @features = (
 
     { option => "resource-usage", desc => "Toggle resource usage support",
       define => "ENABLE_RESOURCE_USAGE", value => \$resourceUsageSupport },
-
-    { option => "rubber-banding", desc => "Toggle rubber banding support",
-      define => "ENABLE_RUBBER_BANDING", value => \$rubberBandingSupport },
 
     { option => "sampling-profiler", desc => "Toggle sampling profiler support",
       define => "ENABLE_SAMPLING_PROFILER", value => \$samplingProfilerSupport },

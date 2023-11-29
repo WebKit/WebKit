@@ -50,6 +50,36 @@ class Signature;
 class VM;
 class NativeExecutable;
 
+// List up super common stubs so that we initialize them eagerly.
+#define JSC_FOR_EACH_COMMON_THUNK(macro) \
+    macro(HandleException, handleExceptionGenerator) \
+    macro(HandleExceptionWithCallFrameRollback, handleExceptionWithCallFrameRollbackGenerator) \
+    macro(CheckException, checkExceptionGenerator) \
+    macro(NativeCall, nativeCallGenerator) \
+    macro(NativeConstruct, nativeConstructGenerator) \
+    macro(NativeTailCall, nativeTailCallGenerator) \
+    macro(NativeTailCallWithoutSavedTags, nativeTailCallWithoutSavedTagsGenerator) \
+    macro(InternalFunctionCall, internalFunctionCallGenerator) \
+    macro(InternalFunctionConstruct, internalFunctionConstructGenerator) \
+    macro(LinkCall, linkCallThunkGenerator) \
+    macro(LinkPolymorphicCall, linkPolymorphicCallThunkGenerator) \
+    macro(ThrowExceptionFromCallSlowPath, throwExceptionFromCallSlowPathGenerator) \
+    macro(VirtualThunkForRegularCall, virtualThunkForRegularCall) \
+    macro(VirtualThunkForTailCall, virtualThunkForTailCall) \
+    macro(VirtualThunkForConstruct, virtualThunkForConstruct) \
+    macro(ReturnFromBaseline, returnFromBaselineGenerator) \
+    macro(ArityFixup, arityFixupGenerator) \
+
+enum class CommonJITThunkID : uint8_t {
+#define JSC_DEFINE_COMMON_JIT_THUNK_ID(name, func) name,
+JSC_FOR_EACH_COMMON_THUNK(JSC_DEFINE_COMMON_JIT_THUNK_ID)
+#undef JSC_DEFINE_COMMON_JIT_THUNK_ID
+};
+
+#define JSC_COUNT_COMMON_JIT_THUNK_ID(name, func) + 1
+static constexpr unsigned numberOfCommonThunkIDs = 0 JSC_FOR_EACH_COMMON_THUNK(JSC_COUNT_COMMON_JIT_THUNK_ID);
+#undef JSC_COUNT_COMMON_JIT_THUNK_ID
+
 class JITThunks final : private WeakHandleOwner {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -65,12 +95,15 @@ public:
     CodePtr<JITThunkPtrTag> ctiInternalFunctionCall(VM&);
     CodePtr<JITThunkPtrTag> ctiInternalFunctionConstruct(VM&);
 
+    MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(CommonJITThunkID);
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiStub(VM&, ThunkGenerator);
     MacroAssemblerCodeRef<JITThunkPtrTag> ctiSlowPathFunctionStub(VM&, SlowPathFunction);
 
     NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ImplementationVisibility, const String& name);
     NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, TaggedNativeFunction constructor, ThunkGenerator, ImplementationVisibility, Intrinsic, const DOMJIT::Signature*, const String& name);
     NativeExecutable* hostFunctionStub(VM&, TaggedNativeFunction, ThunkGenerator, ImplementationVisibility, Intrinsic, const String& name);
+
+    void initialize(VM&);
 
 private:
     template <typename GenerateThunk>
@@ -83,7 +116,6 @@ private:
         bool needsCrossModifyingCodeFence;
     };
     using CTIStubMap = HashMap<ThunkGenerator, Entry>;
-    CTIStubMap m_ctiStubMap;
 
     using HostFunctionKey = std::tuple<TaggedNativeFunction, TaggedNativeFunction, ImplementationVisibility, String>;
 
@@ -117,8 +149,10 @@ private:
     struct NativeExecutableTranslator;
 
     using WeakNativeExecutableSet = HashSet<Weak<NativeExecutable>, WeakNativeExecutableHash>;
-    WeakNativeExecutableSet m_nativeExecutableSet;
 
+    MacroAssemblerCodeRef<JITThunkPtrTag> m_commonThunks[numberOfCommonThunkIDs] { };
+    CTIStubMap m_ctiStubMap;
+    WeakNativeExecutableSet m_nativeExecutableSet;
     WTF::RecursiveLock m_lock;
 };
 

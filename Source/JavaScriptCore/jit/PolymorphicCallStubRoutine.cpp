@@ -40,13 +40,16 @@ namespace JSC {
 
 void PolymorphicCallNode::unlinkImpl(VM& vm)
 {
+    // We first remove itself from the linked-list before unlinking m_callLinkInfo.
+    // The reason is that m_callLinkInfo can potentially link PolymorphicCallNode's stub itself, and it may destroy |this| (the other CallLinkInfo
+    // does not do it since it is not chained in PolymorphicCallStubRoutine).
+    if (isOnList())
+        remove();
+
     if (m_callLinkInfo) {
         dataLogLnIf(Options::dumpDisassembly(), "Unlinking polymorphic call at ", m_callLinkInfo->doneLocation(), ", bc#", m_callLinkInfo->codeOrigin().bytecodeIndex());
         m_callLinkInfo->unlink(vm);
     }
-
-    if (isOnList())
-        remove();
 }
 
 void PolymorphicCallNode::clearCallLinkInfo()

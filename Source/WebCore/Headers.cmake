@@ -2622,7 +2622,3 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/WebKitFontFamilyNames.h
     ${WebCore_DERIVED_SOURCES_DIR}/WritableStreamInternalsBuiltins.h
 )
-
-if (ENABLE_OPENCDM)
-    list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS platform/encryptedmedia/CDMOpenCDMTypes.h)
-endif ()
