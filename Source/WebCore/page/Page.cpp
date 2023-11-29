@@ -564,7 +564,8 @@ String Page::scrollingStateTreeAsText()
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
     if (Document* document = localMainFrame ? localMainFrame->document() : nullptr) {
-        document->updateLayout();
+        if (RefPtr frameView = document->view())
+            frameView->updateLayoutAndStyleIfNeededRecursive(LayoutOptions::UpdateCompositingLayers);
 #if ENABLE(IOS_TOUCH_EVENTS)
         document->updateTouchEventRegions();
 #endif
@@ -1332,7 +1333,7 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
 
     if (scale == m_pageScaleFactor) {
         if (view && view->scrollPosition() != origin && !delegatesScaling())
-            document->updateLayoutIgnorePendingStylesheets();
+            document->updateLayoutIgnorePendingStylesheets({ WebCore::LayoutOptions::UpdateCompositingLayers });
     } else {
         m_pageScaleFactor = scale;
 
@@ -1352,8 +1353,10 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
         if (view && view->fixedElementsLayoutRelativeToFrame())
             view->setViewportConstrainedObjectsNeedLayout();
 
-        if (view && view->scrollPosition() != origin && !delegatesScaling() && document->renderView() && document->renderView()->needsLayout() && view->didFirstLayout())
+        if (view && view->scrollPosition() != origin && !delegatesScaling() && document->renderView() && document->renderView()->needsLayout() && view->didFirstLayout()) {
             view->layoutContext().layout();
+            view->updateCompositingLayersAfterLayoutIfNeeded();
+        }
     }
 
     if (view && view->scrollPosition() != origin) {
@@ -1693,11 +1696,11 @@ void Page::removeActivityStateChangeObserver(ActivityStateChangeObserver& observ
     m_activityStateChangeObservers.remove(observer);
 }
 
-void Page::layoutIfNeeded()
+void Page::layoutIfNeeded(OptionSet<LayoutOptions> layoutOptions)
 {
     auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
     if (auto* view = localMainFrame ? localMainFrame->view() : nullptr)
-        view->updateLayoutAndStyleIfNeededRecursive();
+        view->updateLayoutAndStyleIfNeededRecursive(layoutOptions);
 }
 
 void Page::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedSteps)
@@ -1772,7 +1775,7 @@ void Page::updateRendering()
     // This function is not reentrant, e.g. a rAF callback may trigger a forces repaint in testing.
     // This is why we track m_renderingUpdateRemainingSteps as a stack.
     if (m_renderingUpdateRemainingSteps.size() > 1) {
-        layoutIfNeeded();
+        layoutIfNeeded(LayoutOptions::UpdateCompositingLayers);
         m_renderingUpdateRemainingSteps.last().remove(updateRenderingSteps);
         return;
     }
@@ -1894,7 +1897,7 @@ void Page::updateRendering()
     if (m_isTrackingRenderingUpdates)
         ++m_renderingUpdateCount;
 
-    layoutIfNeeded();
+    layoutIfNeeded(LayoutOptions::UpdateCompositingLayers);
     doAfterUpdateRendering();
 
     if (!isSVGImagePage)
@@ -1975,7 +1978,7 @@ void Page::doAfterUpdateRendering()
 
     m_renderingUpdateRemainingSteps.last().remove(RenderingUpdateStep::EventRegionUpdate);
 
-auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
 #if ENABLE(IOS_TOUCH_EVENTS)
     // updateTouchEventRegions() needs to be called only on the top document.
     if (RefPtr<Document> document = localMainFrame ? localMainFrame->document() : nullptr)

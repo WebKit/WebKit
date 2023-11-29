@@ -26,6 +26,7 @@
 
 #include "AdjustViewSizeOrNot.h"
 #include "Color.h"
+#include "Document.h"
 #include "FrameView.h"
 #include "LayoutMilestone.h"
 #include "LayoutRect.h"
@@ -167,6 +168,9 @@ public:
     void styleAndRenderTreeDidChange() override;
     bool updateCompositingLayersAfterStyleChange();
     void updateCompositingLayersAfterLayout();
+
+    // Returns true if a pending compositing layer update was done.
+    bool updateCompositingLayersAfterLayoutIfNeeded();
 
     // Called when changes to the GraphicsLayer hierarchy have to be synchronized with
     // content rendered via the normal painting path.
@@ -448,8 +452,8 @@ public:
     WEBCORE_EXPORT Color documentBackgroundColor() const;
 
     static MonotonicTime currentPaintTimeStamp() { return sCurrentPaintTimeStamp; } // returns 0 if not painting
-    
-    WEBCORE_EXPORT void updateLayoutAndStyleIfNeededRecursive();
+
+    WEBCORE_EXPORT void updateLayoutAndStyleIfNeededRecursive(OptionSet<LayoutOptions> = { });
 
     void incrementVisuallyNonEmptyCharacterCount(const String&);
     void incrementVisuallyNonEmptyPixelCount(const IntSize&);
@@ -1079,6 +1083,7 @@ private:
     bool m_didRunAutosize { false };
     bool m_inUpdateEmbeddedObjects { false };
     bool m_scheduledToScrollToAnchor { false };
+    bool m_updateCompositingLayersIsPending { false };
 };
 
 inline void LocalFrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)

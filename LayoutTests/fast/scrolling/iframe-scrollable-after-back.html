@@ -70,6 +70,7 @@
         async function pageShowed()
         {
             if (++showCount == 2) {
+                await UIHelper.renderingUpdate();
                 await testScrollability();
                 testRunner.notifyDone();
             }

@@ -2345,13 +2345,13 @@ bool Document::updateStyleIfNeeded()
     return true;
 }
 
-void Document::updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> layoutOptions, const Element* context)
+auto Document::updateLayoutIgnorePendingStylesheets(OptionSet<LayoutOptions> layoutOptions, const Element* context) -> UpdateLayoutResult
 {
     layoutOptions.add(LayoutOptions::IgnorePendingStylesheets);
-    updateLayout(layoutOptions, context);
+    return updateLayout(layoutOptions, context);
 }
 
-void Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Element* context)
+auto Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Element* context) -> UpdateLayoutResult
 {
     bool oldIgnore = m_ignorePendingStylesheets;
 
@@ -2371,17 +2371,22 @@ void Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
     if (frameView && frameView->layoutContext().isInRenderTreeLayout()) {
         // View layout should not be re-entrant.
         ASSERT_NOT_REACHED();
-        return;
+        return UpdateLayoutResult::NoChange;
     }
+
+    UpdateLayoutResult result = UpdateLayoutResult::NoChange;
 
     {
         RenderView::RepaintRegionAccumulator repaintRegionAccumulator(renderView());
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-        if (RefPtr owner = ownerElement())
-            owner->protectedDocument()->updateLayout(layoutOptions, context);
+        if (!layoutOptions.contains(LayoutOptions::DoNotLayoutAncestorDocuments)) {
+            if (ownerElement() && ownerElement()->protectedDocument()->updateLayout(layoutOptions, context) == UpdateLayoutResult::ChangesDone)
+                result = UpdateLayoutResult::ChangesDone;
+        }
 
-        updateStyleIfNeeded();
+        if (updateStyleIfNeeded())
+            result = UpdateLayoutResult::ChangesDone;
 
         StackStats::LayoutCheckPoint layoutCheckPoint;
 
@@ -2395,7 +2400,11 @@ void Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
             if (frameView->layoutContext().isLayoutPending() || renderView()->needsLayout()) {
                 ContentVisibilityForceLayoutScope scope(*renderView(), context);
                 frameView->layoutContext().layout();
+                result = UpdateLayoutResult::ChangesDone;
             }
+
+            if (layoutOptions.contains(LayoutOptions::UpdateCompositingLayers) && frameView->updateCompositingLayersAfterLayoutIfNeeded())
+                result = UpdateLayoutResult::ChangesDone;
         }
     }
 
@@ -2408,6 +2417,7 @@ void Document::updateLayout(OptionSet<LayoutOptions> layoutOptions, const Elemen
     }
 
     m_ignorePendingStylesheets = oldIgnore;
+    return result;
 }
 
 std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets(Element& element, const RenderStyle* parentStyle, PseudoId pseudoElementSpecifier)
@@ -3455,8 +3465,10 @@ void Document::implicitClose()
         updateStyleIfNeeded();
 
         // Always do a layout after loading if needed.
-        if (view() && renderView() && (!renderView()->firstChild() || renderView()->needsLayout()))
+        if (view() && renderView() && (!renderView()->firstChild() || renderView()->needsLayout())) {
             protectedView()->layoutContext().layout();
+            protectedView()->updateCompositingLayersAfterLayoutIfNeeded();
+        }
     }
 
     m_processingLoadEvent = false;

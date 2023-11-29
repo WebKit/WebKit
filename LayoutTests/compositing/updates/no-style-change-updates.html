@@ -22,38 +22,39 @@
         
     </style>
     <script src="../../resources/js-test-pre.js"></script>
+    <script src="../../resources/ui-helper.js"></script>
     <script>
         description('Test that compositing updates do not happen for style changes that do not need them.');
         window.jsTestIsAsync = true;
 
         var updateCount;
         
-        function zeroUpdateCount()
+        async function zeroUpdateCount()
         {
             if (window.internals) {
-                internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+                await UIHelper.renderingUpdate();
                 internals.startTrackingCompositingUpdates();
             }
         }
 
-        function updateLayoutAndCompositingCount()
+        async function updateLayoutAndCompositingCount()
         {
             if (window.internals) {
-                internals.updateLayoutIgnorePendingStylesheetsAndRunPostLayoutTasks();
+                await UIHelper.renderingUpdate();
                 updateCount = internals.compositingUpdateCount();
             }
         }
         
-        function testForCompositingUpdate(callback)
+        async function testForCompositingUpdate(callback)
         {
-            zeroUpdateCount();
+            await zeroUpdateCount();
             callback();
-            updateLayoutAndCompositingCount();
+            await updateLayoutAndCompositingCount();
         }
         
-        function runTest()
+        async function runTest()
         {
-            updateLayoutAndCompositingCount();
+            await updateLayoutAndCompositingCount();
 
             if (window.internals) {
                 internals.startTrackingCompositingUpdates();
@@ -62,19 +63,19 @@
 
             shouldBe('updateCount', '0');
             
-            testForCompositingUpdate(function() {
+            await testForCompositingUpdate(function() {
                 document.getElementById('box').classList.add('colorchange');
             });
             
             shouldBe('updateCount', '1');
 
-            testForCompositingUpdate(function() {
+            await testForCompositingUpdate(function() {
                 document.getElementById('box').classList.add('dummy');
             });
 
             shouldBe('updateCount', '0');
             
-            testForCompositingUpdate(function() {
+            await testForCompositingUpdate(function() {
                 var div = document.createElement('div');
                 div.className = 'box';
                 document.body.appendChild(div);
@@ -82,7 +83,7 @@
             
             shouldBe('updateCount', '1');
             
-            testForCompositingUpdate(function() {
+            await testForCompositingUpdate(function() {
                 var stylesheet = document.createElement('style');
                 stylesheet.type = 'text/css';
                 stylesheet.rel = 'stylesheet';

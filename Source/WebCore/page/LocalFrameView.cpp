@@ -817,6 +817,17 @@ void LocalFrameView::updateCompositingLayersAfterLayout()
         return;
 
     renderView->compositor().updateCompositingLayers(CompositingUpdateType::AfterLayout);
+    m_updateCompositingLayersIsPending = false;
+}
+
+bool LocalFrameView::updateCompositingLayersAfterLayoutIfNeeded()
+{
+    if (m_updateCompositingLayersIsPending) {
+        updateCompositingLayersAfterLayout();
+        return true;
+    }
+
+    return false;
 }
 
 void LocalFrameView::invalidateScrollbarsForAllScrollableAreas()
@@ -1355,7 +1366,7 @@ void LocalFrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
     auto* layoutRootEnclosingLayer = layoutRoot->enclosingLayer();
     layoutRootEnclosingLayer->updateLayerPositionsAfterLayout(!is<RenderView>(*layoutRoot), layoutContext().needsFullRepaint());
 
-    updateCompositingLayersAfterLayout();
+    m_updateCompositingLayersIsPending = true;
 
     Ref document = *m_frame->document();
 
@@ -4990,7 +5001,7 @@ void LocalFrameView::paintOverhangAreas(GraphicsContext& context, const IntRect&
     ScrollView::paintOverhangAreas(context, horizontalOverhangArea, verticalOverhangArea, dirtyRect);
 }
 
-void LocalFrameView::updateLayoutAndStyleIfNeededRecursive()
+void LocalFrameView::updateLayoutAndStyleIfNeededRecursive(OptionSet<LayoutOptions> layoutOptions)
 {
     // Style updating, render tree creation, and layout needs to be done multiple times
     // for more than one reason. But one reason is that when an <object> element determines
@@ -5031,12 +5042,8 @@ void LocalFrameView::updateLayoutAndStyleIfNeededRecursive()
         bool didWork = false;
         DescendantsDeque deque;
         while (auto view = nextRenderedDescendant(deque)) {
-            if (view->m_frame->document()->updateStyleIfNeeded())
+            if (view->m_frame->document()->updateLayout(layoutOptions | LayoutOptions::DoNotLayoutAncestorDocuments) == Document::UpdateLayoutResult::ChangesDone)
                 didWork = true;
-            if (view->needsLayout()) {
-                view->layoutContext().layout();
-                didWork = true;
-            }
         }
         if (!didWork)
             break;
@@ -5641,7 +5648,7 @@ void LocalFrameView::setTracksRepaints(bool trackRepaints)
     // Force layout to flush out any pending repaints.
     if (trackRepaints) {
         if (m_frame->document())
-            m_frame->document()->updateLayout();
+            m_frame->document()->updateLayout(LayoutOptions::UpdateCompositingLayers);
     }
 
     for (Frame* frame = &m_frame->tree().top(); frame; frame = frame->tree().traverseNext()) {

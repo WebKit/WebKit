@@ -926,26 +926,13 @@ static String externalRepresentation(RenderBox& renderer, OptionSet<RenderAsText
     return ts.release();
 }
 
-static void updateLayoutIgnoringPendingStylesheetsIncludingSubframes(Document& document)
-{
-    document.updateLayoutIgnorePendingStylesheets();
-    auto* frame = document.frame();
-    for (Frame* subframe = frame; subframe; subframe = subframe->tree().traverseNext(frame)) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(subframe);
-        if (!localFrame)
-            continue;
-        if (auto* document = localFrame->document())
-            document->updateLayoutIgnorePendingStylesheets();
-    }
-}
-
 String externalRepresentation(LocalFrame* frame, OptionSet<RenderAsTextFlag> behavior)
 {
     ASSERT(frame);
     ASSERT(frame->document());
 
-    if (!(behavior.contains(RenderAsTextFlag::DontUpdateLayout)))
-        updateLayoutIgnoringPendingStylesheetsIncludingSubframes(*frame->document());
+    if (!(behavior.contains(RenderAsTextFlag::DontUpdateLayout)) && frame->view())
+        frame->view()->updateLayoutAndStyleIfNeededRecursive({ LayoutOptions::IgnorePendingStylesheets, LayoutOptions::UpdateCompositingLayers });
 
     auto* renderer = frame->contentRenderer();
     if (!renderer)
@@ -975,8 +962,8 @@ String externalRepresentation(Element* element, OptionSet<RenderAsTextFlag> beha
     // This function doesn't support printing mode.
     ASSERT(!(behavior.contains(RenderAsTextFlag::PrintingMode)));
 
-    if (!(behavior.contains(RenderAsTextFlag::DontUpdateLayout)))
-        updateLayoutIgnoringPendingStylesheetsIncludingSubframes(element->document());
+    if (!(behavior.contains(RenderAsTextFlag::DontUpdateLayout)) && element->document().view())
+        element->document().view()->updateLayoutAndStyleIfNeededRecursive({ LayoutOptions::IgnorePendingStylesheets, LayoutOptions::UpdateCompositingLayers });
 
     auto* renderer = element->renderer();
     if (!is<RenderBox>(renderer))

@@ -117,14 +117,6 @@ static inline void setStateScrollingNodeSnapOffsetsAsFloat(ScrollingStateScrolli
     node.setSnapOffsetsInfo(offsetInfo->convertUnits<FloatScrollSnapOffsetsInfo>(deviceScaleFactor));
 }
 
-void AsyncScrollingCoordinator::setEventTrackingRegionsDirty()
-{
-    m_eventTrackingRegionsDirty = true;
-    // We have to schedule a commit, but the computed non-fast region may not have actually changed.
-    // FIXME: This needs to disambiguate between event regions in the scrolling tree, and those in GraphicsLayers.
-    scheduleTreeStateCommit();
-}
-
 void AsyncScrollingCoordinator::willCommitTree()
 {
     updateEventTrackingRegions();
@@ -147,11 +139,15 @@ void AsyncScrollingCoordinator::frameViewLayoutUpdated(LocalFrameView& frameView
     ASSERT(isMainThread());
     ASSERT(m_page);
 
+    m_eventTrackingRegionsDirty = true;
+
     // If there isn't a root node yet, don't do anything. We'll be called again after creating one.
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
-    setEventTrackingRegionsDirty();
+    // We have to schedule a commit, but the computed non-fast region may not have actually changed.
+    // FIXME: This needs to disambiguate between event regions in the scrolling tree, and those in GraphicsLayers.
+    scheduleTreeStateCommit();
 
 #if PLATFORM(COCOA)
     if (!coordinatesScrollingForFrameView(frameView))
@@ -224,10 +220,14 @@ void AsyncScrollingCoordinator::updateIsMonitoringWheelEventsForFrameView(const 
 
 void AsyncScrollingCoordinator::frameViewEventTrackingRegionsChanged(LocalFrameView& frameView)
 {
+    m_eventTrackingRegionsDirty = true;
     if (!m_scrollingStateTree->rootStateNode())
         return;
 
-    setEventTrackingRegionsDirty();
+    // We have to schedule a commit, but the computed non-fast region may not have actually changed.
+    // FIXME: This needs to disambiguate between event regions in the scrolling tree, and those in GraphicsLayers.
+    scheduleTreeStateCommit();
+
     DebugPageOverlays::didChangeEventHandlers(frameView.frame());
 }
 

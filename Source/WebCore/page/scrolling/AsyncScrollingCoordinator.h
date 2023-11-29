@@ -161,7 +161,6 @@ private:
 
     void ensureRootStateNodeForFrameView(LocalFrameView&);
 
-    void setEventTrackingRegionsDirty();
     void updateEventTrackingRegions();
     
     void applyScrollPositionUpdate(ScrollUpdate&&, ScrollType);

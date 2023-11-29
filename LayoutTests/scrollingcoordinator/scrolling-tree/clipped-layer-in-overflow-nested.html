@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Tests clipped layer in overflow in clipped in overflow</title>
+    <script src="../../resources/ui-helper.js"></script>
     <style>
         #scroller {
             height: 300px;
@@ -54,14 +55,20 @@
         }
     </style>
     <script>
-        if (window.testRunner)
+        if (window.testRunner) {
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+        }
 
-        window.addEventListener('load', () => {
+        window.addEventListener('load', async () => {
+            await UIHelper.renderingUpdate();
+
             scroller.scrollTo(0, 50);
             scroller2.scrollTo(0, 150);
             if (window.internals)
                 document.getElementById('scrollingTree').innerText = window.internals.scrollingStateTreeAsText() + "\n";
+            if (window.testRunner)
+                testRunner.notifyDone();
         }, false);
     </script>
 </head>
