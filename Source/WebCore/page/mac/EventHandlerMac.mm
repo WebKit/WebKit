@@ -156,7 +156,7 @@ bool EventHandler::wheelEvent(NSEvent *event)
         if (m_frame->settings().wheelEventGesturesBecomeNonBlocking() && m_wheelScrollGestureState.value_or(WheelScrollGestureState::Blocking) == WheelScrollGestureState::NonBlocking)
             processingSteps = { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch };
     }
-    return handleWheelEvent(wheelEvent, processingSteps);
+    return handleWheelEvent(wheelEvent, processingSteps).wasHandled();
 }
 
 bool EventHandler::keyEvent(NSEvent *event)
@@ -487,7 +487,7 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, 
         auto* frameView = dynamicDowncast<LocalFrameView>(widget);
         if (!frameView)
             return false;
-        return frameView->frame().eventHandler().handleWheelEvent(wheelEvent, processingSteps);
+        return frameView->frame().eventHandler().handleWheelEvent(wheelEvent, processingSteps).wasHandled();
     }
 
     if ([currentNSEvent() type] != NSEventTypeScrollWheel || m_sendingEventToSubview)

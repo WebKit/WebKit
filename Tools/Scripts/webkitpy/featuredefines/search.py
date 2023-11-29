@@ -58,9 +58,7 @@ class FeatureDefinesSearch(object):
     def _search_file(self, matcher, path):
         with open(path, encoding="latin-1") as contents:
             for line in contents:
-                value = matcher(line)
-
-                if value:
+                for value in matcher(line):
                     flag = value.flag
 
                     if flag not in self._defines:
@@ -71,8 +69,8 @@ class FeatureDefinesSearch(object):
     def _search_directory(self, matcher, path, patterns):
         for root, __, files in os.walk(path):
             for file in files:
-                for patten in patterns:
-                    if fnmatch.fnmatch(file, patten):
+                for pattern in patterns:
+                    if fnmatch.fnmatch(file, pattern):
                         self._search_file(matcher, os.path.join(root, file))
 
     @classmethod

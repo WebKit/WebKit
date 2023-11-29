@@ -1,0 +1,23 @@
+Test that CanvasManager is able to record actions made to offscreen WebGL2 canvas contexts.
+
+
+== Running test suite: Canvas.recordingOffscreenWebGL2
+-- Running test case: Canvas.recordingOffscreenWebGL2.singleFrame
+initialState:
+  attributes:
+    width: 2
+    height: 2
+  parameters:
+    0: {"alpha":true,"depth":true,"stencil":false,"antialias":true,"premultipliedAlpha":true,"preserveDrawingBuffer":false,"powerPreference":"default","failIfMajorPerformanceCaveat":false}
+  content: <filtered>
+frames:
+  0: (duration)
+    0: activeTexture(1)
+      swizzleTypes: [Number]
+      trace:
+        0: activeTexture
+        1: (anonymous function)
+        2: executeFrameFunction
+        3: performActions
+        4: Global Code
+

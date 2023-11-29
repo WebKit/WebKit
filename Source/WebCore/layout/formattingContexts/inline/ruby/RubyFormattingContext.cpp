@@ -433,7 +433,7 @@ InlineLayoutRect RubyFormattingContext::visualRectIncludingBlockDirection(const 
 std::optional<bool> RubyFormattingContext::annotationOverlapCheck(const InlineDisplay::Box& adjacentDisplayBox, const InlineLayoutRect& overhangingRect) const
 {
     // We are in the middle of a line, should not see any line breaks or ellipsis boxes here.
-    ASSERT(adjacentDisplayBox.isText() || adjacentDisplayBox.isAtomicInlineLevelBox() || adjacentDisplayBox.isInlineBox() || adjacentDisplayBox.isGenericInlineLevelBox() || adjacentDisplayBox.isWordSeparator());
+    ASSERT(!adjacentDisplayBox.isEllipsis() && !adjacentDisplayBox.isRootInlineBox());
     // Skip empty content like <span></span>
     if (adjacentDisplayBox.visualRectIgnoringBlockDirection().isEmpty())
         return { };

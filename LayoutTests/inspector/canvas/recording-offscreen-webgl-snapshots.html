@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="resources/recording-utilities.js"></script>
+<script src="resources/shaderProgram-utilities-webgl.js"></script>
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec3 position;
+    uniform vec4 testUniform;
+    void main(void) {
+        gl_Position = vec4(position, 1.0);
+    }
+</script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    void main(void) {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+</script>
+<script>
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+let vertexBuffer = null;
+let indexBuffer = null;
+let position = null;
+
+function load() {
+    createProgram("webgl", {offscreen: true});
+    linkProgram("vertex-shader", "fragment-shader");
+    context.useProgram(program);
+
+    vertexBuffer = context.createBuffer();
+    context.bindBuffer(context.ARRAY_BUFFER, vertexBuffer);
+
+    indexBuffer = context.createBuffer();
+    context.bindBuffer(context.ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+    position = context.getUniformLocation(program, "position");
+    context.vertexAttribPointer(position, 3, context.FLOAT, false, 0, 0); 
+    context.enableVertexAttribArray(position);
+
+    runTest();
+}
+
+function cancelActions() {
+    // This function is expected by "resources/recording-utilities.js".
+}
+
+function performActions() {
+    context.useProgram(program);
+
+    function clearContext() {
+        context.clearColor(0.0, 0.0, 0.0, 1.0);
+        context.clear(context.COLOR_BUFFER_BIT);
+    }
+
+    function drawArrays() {
+        let vertexes = [
+            -0.5,  0.5,  0.0,
+            -0.5, -0.5,  0.0,
+             0.5, -0.5,  0.0,
+        ];
+        context.bufferData(context.ARRAY_BUFFER, new Float32Array(vertexes), context.STATIC_DRAW);
+
+        context.drawArrays(context.TRIANGLES, 0, 3);
+    }
+
+    function drawElements() {
+        let vertexes = [
+             0.5,  0.5,  0.0,
+            -0.5, -0.5,  0.0,
+             0.5, -0.5,  0.0,
+        ];
+        context.bufferData(context.ARRAY_BUFFER, new Float32Array(vertexes), context.STATIC_DRAW);
+
+        let indexes = [0, 1, 2];
+        context.bufferData(context.ELEMENT_ARRAY_BUFFER, new Uint16Array(indexes), context.STATIC_DRAW);
+
+        context.drawElements(context.TRIANGLES, indexes.length, context.UNSIGNED_SHORT, 0);
+    }
+
+    clearContext();
+    drawArrays();
+    clearContext();
+    drawElements();
+    clearContext();
+
+    setTimeout(() => {
+        TestPage.dispatchEventToFrontend("LastFrame");
+    }, 0);
+}
+
+function test() {
+    let suite = InspectorTest.createAsyncSuite("Canvas.recordingOffscreenWebGL");
+
+    suite.addTestCase({
+        name: "Canvas.recordingOffscreenWebGL.snapshots",
+        description: "Check that the snapshot taken after each visual action is different.",
+        test(resolve, reject) {
+            startRecording(WI.Canvas.ContextType.OffscreenWebGL, resolve, reject, {frameCount: 1, checkForContentChange: true});
+        },
+        timeout: -1,
+    });
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="load()">
+    <p>Test that CanvasManager is able to record actions made to offscreen WebGL canvas contexts.</p>
+</body>
+</html>

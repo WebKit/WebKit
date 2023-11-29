@@ -64,6 +64,7 @@ public:
 #endif
 
     const WebCore::IntPoint position() const { return m_position; }
+    void setPosition(WebCore::IntPoint position) { m_position = position; }
     const WebCore::IntPoint globalPosition() const { return m_globalPosition; }
     const WebCore::FloatSize delta() const { return m_delta; }
     const WebCore::FloatSize wheelTicks() const { return m_wheelTicks; }

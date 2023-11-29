@@ -46,6 +46,8 @@ class TestFeatureDefineMatcher(unittest.TestCase):
         self._is_a_match(matcher, 'ENABLE(FOO)', 'ENABLE_FOO')
         self._is_a_match(matcher, 'ENABLE(BAR)', 'ENABLE_BAR')
 
+        self._multiple_matches(matcher, 'ENABLE(FOO) || ENABLE(BAR)', ['ENABLE_FOO', 'ENABLE_BAR'])
+
         # Test with different prefix
         matcher = usage_matcher('USE')
 
@@ -87,6 +89,8 @@ class TestFeatureDefineMatcher(unittest.TestCase):
 
         self._is_a_match(matcher, 'ENABLE_FOO', 'ENABLE_FOO')
         self._is_a_match(matcher, 'ENABLE_BAR', 'ENABLE_BAR')
+
+        self._multiple_matches(matcher, 'ENABLE_FOO OR ENABLE_BAR', ['ENABLE_FOO', 'ENABLE_BAR'])
 
         # Still would match these
         self._is_a_match(matcher, '#define ENABLE_FOO 1', 'ENABLE_FOO')
@@ -140,15 +144,31 @@ class TestFeatureDefineMatcher(unittest.TestCase):
         self._is_a_match(matcher, 'WEBKIT_OPTION_DEFINE(USE_BAR "Mesg" PRIVATE OFF)', 'USE_BAR', value=False, description='Mesg')
 
     def _not_a_match(self, matcher, line):
-        self.assertIsNone(matcher(line))
+        self.assertFalse(matcher(line))
 
     def _is_a_match(self, matcher, line, flag, value=False, description=""):
-        match = matcher(line)
+        matches = matcher(line)
 
-        self.assertIsNotNone(match)
-        self.assertEqual(match.flag, flag)
-        self.assertEqual(match.value, value)
-        self.assertEqual(match.description, description)
+        self.assertTrue(matches)
+        self.assertEqual(len(matches), 1)
+        self.assertEqual(matches[0].flag, flag)
+        self.assertEqual(matches[0].value, value)
+        self.assertEqual(matches[0].description, description)
+
+    def _multiple_matches(self, matcher, line, flags):
+        matches = matcher(line)
+
+        self.assertTrue(matches)
+        self.assertEqual(len(matches), len(flags))
+
+        for flag in flags:
+            found = False
+
+            for match in matches:
+                if match.flag == flag:
+                    found = True
+
+            self.assertTrue(found)
 
 
 if __name__ == '__main__':

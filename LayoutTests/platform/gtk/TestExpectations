@@ -204,9 +204,22 @@ webkit.org/b/263720 http/tests/security/redirect-BLOCKED-to-localURL.html [ Cras
 # WebInspector.
 webkit.org/b/217966 [ Release ] inspector/console/queryHolders.html [ Failure Timeout ]
 webkit.org/b/218367 inspector/page/setScreenSizeOverride.html [ Failure Pass Timeout ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-bitmaprenderer-frameCount.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-bitmaprenderer-full.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-bitmaprenderer-memoryLimit.html [ Failure ]
 webkit.org/b/254733 inspector/canvas/recording-offscreen-canvas-2d-frameCount.html [ Failure ]
 webkit.org/b/254733 inspector/canvas/recording-offscreen-canvas-2d-full.html [ Failure ]
 webkit.org/b/254733 inspector/canvas/recording-offscreen-canvas-2d-memoryLimit.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl-frameCount.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl-full.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl-memoryLimit.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl-snapshots.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl2-frameCount.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl2-full.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl2-memoryLimit.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/recording-offscreen-webgl2-snapshots.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/shaderProgram-add-remove-webgl.html [ Failure ]
+webkit.org/b/254733 inspector/canvas/shaderProgram-add-remove-webgl2.html [ Failure ]
 
 # WebXR is not yet supported in GTK
 webkit.org/b/208988 http/wpt/webxr [ Skip ]

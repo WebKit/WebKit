@@ -47,6 +47,7 @@ class Event;
 class File;
 class FrontendMenuProvider;
 class HTMLIFrameElement;
+class OffscreenCanvasRenderingContext2D;
 class Page;
 class Path2D;
 
@@ -171,6 +172,13 @@ public:
     float getCurrentY(const CanvasRenderingContext2D&) const;
     Ref<Path2D> getPath(const CanvasRenderingContext2D&) const;
     void setPath(CanvasRenderingContext2D&, Path2D&) const;
+
+#if ENABLE(OFFSCREEN_CANVAS)
+    float getCurrentX(const OffscreenCanvasRenderingContext2D&) const;
+    float getCurrentY(const OffscreenCanvasRenderingContext2D&) const;
+    Ref<Path2D> getPath(const OffscreenCanvasRenderingContext2D&) const;
+    void setPath(OffscreenCanvasRenderingContext2D&, Path2D&) const;
+#endif
 
 private:
 #if ENABLE(CONTEXT_MENUS)

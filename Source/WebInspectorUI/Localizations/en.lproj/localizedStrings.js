@@ -106,7 +106,10 @@ localizedStrings["0 Console errors"] = "0 Console errors";
 localizedStrings["0 Console warnings"] = "0 Console warnings";
 localizedStrings["1 match"] = "1 match";
 localizedStrings["1080p"] = "1080p";
-localizedStrings["2D"] = "2D";
+/* 2D is a type of rendering context associated with a <canvas> element. */
+localizedStrings["2D @ Canvas Context Type"] = "2D";
+/* 2D is a type of rendering context associated with a OffscreenCanvas. */
+localizedStrings["2D @ Offscreen Canvas Context Type"] = "Offscreen2D";
 /* Label indicating that network activity is being simulated with 3G connectivity. */
 localizedStrings["3G"] = "3G";
 localizedStrings["720p"] = "720p";
@@ -246,6 +249,10 @@ localizedStrings["Beacon"] = "Beacon";
 localizedStrings["Beacons"] = "Beacons";
 localizedStrings["Binary Frame"] = "Binary Frame";
 localizedStrings["Binding"] = "Binding";
+/* Bitmap Renderer is a type of rendering context associated with a <canvas> element. */
+localizedStrings["Bitmap Renderer @ Canvas Context Type"] = "Bitmap Renderer";
+/* Bitmap Renderer is a type of rendering context associated with a OffscreenCanvas. */
+localizedStrings["Bitmap Renderer @ Offscreen Canvas Context Type"] = "Bitmap Renderer (Offscreen)";
 localizedStrings["Blackbox"] = "Blackbox";
 localizedStrings["Blackbox Script"] = "Blackbox Script";
 localizedStrings["Blackbox script to ignore it when debugging"] = "Blackbox script to ignore it when debugging";
@@ -302,8 +309,6 @@ localizedStrings["Cancellation @ Local Override Type"] = "Cancellation";
 localizedStrings["Canvas"] = "Canvas";
 localizedStrings["Canvas %d"] = "Canvas %d";
 localizedStrings["Canvas %s"] = "Canvas %s";
-/* Bitmap Renderer is a type of rendering context associated with a <canvas> element */
-localizedStrings["Canvas Context Type Bitmap Renderer"] = "Bitmap Renderer";
 localizedStrings["Canvas Element"] = "Canvas Element";
 localizedStrings["Canvases"] = "Canvases";
 /* Property title for `font-variant-caps`. */
@@ -569,6 +574,8 @@ localizedStrings["Disk Cache"] = "Disk Cache";
 localizedStrings["Dismiss"] = "Dismiss";
 /* Tooltip for the dismiss button in banner views. */
 localizedStrings["Dismiss @ Banner View"] = "Dismiss";
+/* Label for a canvas that uses the Display P3 color space. */
+localizedStrings["Display P3 @ Color Space"] = "Display P3";
 localizedStrings["Displayed Columns"] = "Displayed Columns";
 localizedStrings["Do not fade unexecuted code"] = "Do not fade unexecuted code";
 localizedStrings["Dock to bottom of window"] = "Dock to bottom of window";
@@ -1157,7 +1164,6 @@ localizedStrings["Observers:"] = "Observers:";
 localizedStrings["Off"] = "Off";
 /* Label for a preference that is turned off. */
 localizedStrings["Off @ User Preferences Overrides"] = "Off";
-localizedStrings["Offscreen2D"] = "Offscreen2D";
 /* Input label for the x-axis of the offset of a CSS box shadow */
 localizedStrings["Offset X @ Box Shadow Editor"] = "Offset X";
 /* Input label for the y-axis of the offset of a CSS box shadow */
@@ -1307,8 +1313,22 @@ localizedStrings["Recording %d"] = "Recording %d";
 localizedStrings["Recording Error: %s"] = "Recording Error: %s";
 /* Message for progress of a timeline recording. */
 localizedStrings["Recording Timeline Data @ Timeline Recording Progress"] = "Recording Timeline Data";
-/* A type of canvas recording in the Graphics Tab */
+/* A type of canvas recording in the Graphics Tab. */
+localizedStrings["Recording Type Canvas 2D"] = "2D";
+/* A type of canvas recording in the Graphics Tab. */
 localizedStrings["Recording Type Canvas Bitmap Renderer"] = "Bitmap Renderer";
+/* A type of canvas recording in the Graphics Tab. */
+localizedStrings["Recording Type Canvas WebGL"] = "WebGL";
+/* A type of canvas recording in the Graphics Tab. */
+localizedStrings["Recording Type Canvas WebGL2"] = "WebGL2";
+/* A type of canvas recording in the Graphics Tab. */
+localizedStrings["Recording Type Offscreen Canvas 2D"] = "Offscreen2D";
+/* A type of canvas recording in the Graphics Tab. */
+localizedStrings["Recording Type Offscreen Canvas Bitmap Renderer"] = "Bitmap Renderer (Offscreen)";
+/* A type of canvas recording in the Graphics Tab. */
+localizedStrings["Recording Type Offscreen Canvas WebGL"] = "WebGL (Offscreen)";
+/* A type of canvas recording in the Graphics Tab. */
+localizedStrings["Recording Type Offscreen Canvas WebGL2"] = "WebGL2 (Offscreen)";
 localizedStrings["Recording Warning: %s"] = "Recording Warning: %s";
 localizedStrings["Recordings"] = "Recordings";
 localizedStrings["Redirect"] = "Redirect";
@@ -1887,7 +1907,19 @@ localizedStrings["Web Animations"] = "Web Animations";
 localizedStrings["Web Inspector"] = "Web Inspector";
 localizedStrings["Web Inspector Reference"] = "Web Inspector Reference";
 localizedStrings["Web Page"] = "Web Page";
+/* WebGL is a type of rendering context associated with a <canvas> element. */
+localizedStrings["WebGL @ Canvas Context Type"] = "WebGL";
+/* WebGL is a type of rendering context associated with a OffscreenCanvas. */
+localizedStrings["WebGL @ Offscreen Canvas Context Type"] = "WebGL (Offscreen)";
+/* WebGL2 is a type of rendering context associated with a <canvas> element. */
+localizedStrings["WebGL2 @ Canvas Context Type"] = "WebGL2";
+/* WebGL2 is a type of rendering context associated with a OffscreenCanvas. */
+localizedStrings["WebGL2 @ Offscreen Canvas Context Type"] = "WebGL2 (Offscreen)";
+/* WebGPU is a type of rendering context associated with a <canvas> element. */
+localizedStrings["WebGPU @ Canvas Context Type"] = "WebGPU";
 localizedStrings["WebKit Threads"] = "WebKit Threads";
+/* WebMetal is a type of rendering context associated with a <canvas> element. */
+localizedStrings["WebMetal @ Canvas Context Type"] = "WebMetal";
 localizedStrings["WebP"] = "WebP";
 localizedStrings["WebRTC"] = "WebRTC";
 localizedStrings["WebRTC Logging:"] = "WebRTC Logging:";
@@ -1980,6 +2012,8 @@ localizedStrings["ping @ Network Tab Resource Type Column Value"] = "ping";
 localizedStrings["popup"] = "popup";
 localizedStrings["popup, toggle"] = "popup, toggle";
 localizedStrings["requestAnimationFrame Fired"] = "requestAnimationFrame Fired";
+/* Label for a canvas that uses the sRGB color space. */
+localizedStrings["sRGB @ Color Space"] = "sRGB";
 localizedStrings["setInterval Fired"] = "setInterval Fired";
 localizedStrings["setTimeout Fired"] = "setTimeout Fired";
 /* Shown in the 'Type' column of the Network Table for WebSocket resources. */

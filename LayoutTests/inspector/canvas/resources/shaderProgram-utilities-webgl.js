@@ -1,8 +1,11 @@
 let context;
 let program;
 
-function createProgram(contextType) {
-    if (!context)
+function createProgram(contextType, {offscreen} = {}) {
+    if (offscreen) {
+        if (window.OffscreenCanvas)
+            context = (new OffscreenCanvas(300, 150)).getContext(contextType);
+    } else
         context = document.createElement("canvas").getContext(contextType);
 
     program = context.createProgram();

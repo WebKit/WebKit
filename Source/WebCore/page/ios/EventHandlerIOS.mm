@@ -121,7 +121,7 @@ bool EventHandler::wheelEvent(WebEvent *event)
             processingSteps = { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch };
     }
 
-    bool eventWasHandled = handleWheelEvent(wheelEvent, processingSteps);
+    bool eventWasHandled = handleWheelEvent(wheelEvent, processingSteps).wasHandled();
     event.wasHandled = eventWasHandled;
     return eventWasHandled;
 }
