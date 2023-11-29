@@ -623,7 +623,7 @@ private:
     CommandsVector m_commands;
     bool m_populatedCommands { false };
 
-    WKContentRuleListStore *m_declarativeNetRequestRuleStore;
+    RetainPtr<WKContentRuleListStore> m_declarativeNetRequestRuleStore;
 };
 
 template<typename T>
