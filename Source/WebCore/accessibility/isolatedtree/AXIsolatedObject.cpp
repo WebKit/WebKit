@@ -343,8 +343,13 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     if (descriptor.length())
         setProperty(AXPropertyName::ExtendedDescription, descriptor.isolatedCopy());
 
-    if (object.isTextControl())
+    if (object.isTextControl()) {
         setProperty(AXPropertyName::SelectedTextRange, object.selectedTextRange());
+
+        auto range = object.textInputMarkedTextMarkerRange();
+        if (auto characterRange = range.characterRange(); range && characterRange)
+            setProperty(AXPropertyName::TextInputMarkedTextMarkerRange, std::pair<AXID, CharacterRange>(range.start().objectID(), *characterRange));
+    }
 
     // These properties are only needed on the AXCoreObject interface due to their use in ATSPI,
     // so only cache them for ATSPI.
