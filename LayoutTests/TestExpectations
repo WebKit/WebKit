@@ -2996,7 +2996,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-shaping-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-016.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-044.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-full-size-kana-008.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-upperlower-106.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-auto-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/text-transform/math/text-transform-math-auto-002.html [ ImageOnlyFailure ]

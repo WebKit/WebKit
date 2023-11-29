@@ -1481,7 +1481,7 @@ UChar RenderText::previousCharacter() const
 static String convertToFullSizeKana(const String& string)
 {
     // https://www.w3.org/TR/css-text-3/#small-kana
-    static constexpr std::pair<UChar, UChar> kanasMap[] = {
+    static constexpr std::pair<UChar32, UChar> kanasMap[] = {
         { 0x3041, 0x3042 },
         { 0x3043, 0x3044 },
         { 0x3045, 0x3046 },
@@ -1530,19 +1530,35 @@ static String convertToFullSizeKana(const String& string)
         { 0xFF6C, 0xFF94 },
         { 0xFF6D, 0xFF95 },
         { 0xFF6E, 0xFF96 },
-        { 0xFF6F, 0xFF82 }
+        { 0xFF6F, 0xFF82 },
+        { 0x1B132, 0x3053 },
+        { 0x1B150, 0x3090 },
+        { 0x1B151, 0x3091 },
+        { 0x1B152, 0x3092 },
+        { 0x1B155, 0x30B3 },
+        { 0x1B164, 0x30F0 },
+        { 0x1B165, 0x30F1 },
+        { 0x1B166, 0x30F2 },
+        { 0x1B167, 0x30F3 }
     };
-    static constexpr auto sortedMap = SortedArrayMap { kanasMap };
+
+    static constexpr SortedArrayMap sortedMap { kanasMap };
 
     StringBuilder result;
-    auto codeUnits = StringView { string }.codeUnits();
-    for (const auto character : codeUnits) {
-        if (auto found = sortedMap.tryGet(character))
+    auto codePoints = StringView { string }.codePoints();
+    bool hasChanged = false;
+    for (auto character : codePoints) {
+        if (auto found = sortedMap.tryGet(character)) {
             result.append(*found);
-        else
-            result.append(character);
+            hasChanged = true;
+        } else
+            result.appendCharacter(character);
     }
-    return result == string ? string : result.toString();
+
+    if (hasChanged)
+        return result.toString();
+
+    return string;
 }
 
 String applyTextTransform(const RenderStyle& style, const String& text, UChar previousCharacter)
