@@ -147,11 +147,13 @@ bool ContentVisibilityDocumentState::checkRelevancyOfContentVisibilityElement(El
     auto isSkippedContent = target.isRelevantToUser() ? IsSkippedContent::No : IsSkippedContent::Yes;
     target.invalidateStyle();
     updateAnimations(target, wasSkippedContent, isSkippedContent);
-    if (target.isConnected()) {
-        ContentVisibilityAutoStateChangeEvent::Init init;
-        init.skipped = isSkippedContent == IsSkippedContent::Yes;
-        target.queueTaskToDispatchEvent(TaskSource::DOMManipulation, ContentVisibilityAutoStateChangeEvent::create(eventNames().contentvisibilityautostatechangeEvent, init));
-    }
+    target.queueTaskKeepingThisNodeAlive(TaskSource::DOMManipulation, [&, isSkippedContent] {
+        if (target.isConnected()) {
+            ContentVisibilityAutoStateChangeEvent::Init init;
+            init.skipped = isSkippedContent == IsSkippedContent::Yes;
+            target.dispatchEvent(ContentVisibilityAutoStateChangeEvent::create(eventNames().contentvisibilityautostatechangeEvent, init));
+        }
+    });
     return true;
 }
 
