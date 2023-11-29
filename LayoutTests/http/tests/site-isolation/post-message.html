@@ -8,7 +8,7 @@ if (window.testRunner) {
 
 let messageCount = 0;
 addEventListener("message", (event) => {
-    testPassed("received '" + event.data + "'");
+    testPassed("received '" + event.data + "' from " + event.origin);
     messageCount = messageCount + 1;
     if (messageCount == 2) { testRunner.notifyDone() }
 });

@@ -31,11 +31,6 @@ typedef EGLNativeWindowType GLNativeWindowType;
 typedef uint64_t GLNativeWindowType;
 #endif
 
-#if PLATFORM(WAYLAND)
-#include "WlUniquePtr.h"
-struct wl_egl_window;
-#endif
-
 #if USE(WPE_RENDERER)
 struct wpe_renderer_backend_egl_offscreen_target;
 #endif
@@ -63,9 +58,6 @@ public:
 
     enum EGLSurfaceType { PbufferSurface, WindowSurface, PixmapSurface, Surfaceless };
     GLContext(PlatformDisplay&, EGLContext, EGLSurface, EGLConfig, EGLSurfaceType);
-#if PLATFORM(WAYLAND)
-    GLContext(PlatformDisplay&, EGLContext, EGLSurface, EGLConfig, WlUniquePtr<struct wl_surface>&&, struct wl_egl_window*);
-#endif
 #if USE(WPE_RENDERER)
     GLContext(PlatformDisplay&, EGLContext, EGLSurface, EGLConfig, struct wpe_renderer_backend_egl_offscreen_target*);
 #endif
@@ -123,11 +115,6 @@ private:
     static std::unique_ptr<GLContext> createWindowContext(GLNativeWindowType, PlatformDisplay&, EGLContext sharingContext = nullptr);
     static std::unique_ptr<GLContext> createPbufferContext(PlatformDisplay&, EGLContext sharingContext = nullptr);
     static std::unique_ptr<GLContext> createSurfacelessContext(PlatformDisplay&, EGLContext sharingContext = nullptr);
-#if PLATFORM(WAYLAND)
-    static std::unique_ptr<GLContext> createWaylandContext(PlatformDisplay&, EGLContext sharingContext = nullptr);
-    static EGLSurface createWindowSurfaceWayland(EGLDisplay, EGLConfig, GLNativeWindowType);
-    void destroyWaylandWindow();
-#endif
 #if USE(WPE_RENDERER)
     static std::unique_ptr<GLContext> createWPEContext(PlatformDisplay&, EGLContext sharingContext = nullptr);
     static EGLSurface createWindowSurfaceWPE(EGLDisplay, EGLConfig, GLNativeWindowType);
@@ -142,10 +129,6 @@ private:
     EGLSurface m_surface { nullptr };
     EGLConfig m_config { nullptr };
     EGLSurfaceType m_type;
-#if PLATFORM(WAYLAND)
-    WlUniquePtr<struct wl_surface> m_wlSurface;
-    struct wl_egl_window* m_wlWindow { nullptr };
-#endif
 #if USE(WPE_RENDERER)
     struct wpe_renderer_backend_egl_offscreen_target* m_wpeTarget { nullptr };
 #endif

@@ -71,10 +71,6 @@
 #include <WebCore/PlatformDisplay.h>
 #endif
 
-#if PLATFORM(WAYLAND)
-#include <WebCore/PlatformDisplayLibWPE.h>
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 #include "ViewUpdateDispatcher.h"
 #endif
@@ -495,7 +491,7 @@ private:
     void platformSetCacheModel(CacheModel);
 
     void setEnhancedAccessibility(bool);
-    void remotePostMessage(WebCore::FrameIdentifier, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&);
+    void remotePostMessage(WebCore::FrameIdentifier, const String& sourceOrigin, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&);
 
     void renderTreeAsText(WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String&&)>&&);
 

@@ -1386,10 +1386,10 @@ void WebProcessProxy::didDestroyUserGestureToken(uint64_t identifier)
         m_userInitiatedActionByAuthorizationTokenMap.remove(*removed->authorizationToken());
 }
 
-void WebProcessProxy::postMessageToRemote(WebCore::FrameIdentifier identifier, std::optional<WebCore::SecurityOriginData> target, const WebCore::MessageWithMessagePorts& message)
+void WebProcessProxy::postMessageToRemote(WebCore::FrameIdentifier identifier, const String& sourceOrigin, std::optional<WebCore::SecurityOriginData> target, const WebCore::MessageWithMessagePorts& message)
 {
     if (RefPtr destinationFrame = WebFrameProxy::webFrame(identifier))
-        destinationFrame->protectedProcess()->send(Messages::WebProcess::RemotePostMessage(identifier, target, message), 0);
+        destinationFrame->protectedProcess()->send(Messages::WebProcess::RemotePostMessage(identifier, sourceOrigin, target, message), 0);
 }
 
 void WebProcessProxy::closeRemoteFrame(WebCore::FrameIdentifier frameID)

@@ -540,7 +540,7 @@ private:
     void updateBackForwardItem(const BackForwardListItemState&);
     void didDestroyFrame(WebCore::FrameIdentifier, WebPageProxyIdentifier);
     void didDestroyUserGestureToken(uint64_t);
-    void postMessageToRemote(WebCore::FrameIdentifier, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&);
+    void postMessageToRemote(WebCore::FrameIdentifier, const String& sourceOrigin, std::optional<WebCore::SecurityOriginData>, const WebCore::MessageWithMessagePorts&);
     void closeRemoteFrame(WebCore::FrameIdentifier);
     void focusRemoteFrame(WebCore::FrameIdentifier);
     void renderTreeAsText(WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String&&)>&&);

@@ -44,10 +44,6 @@
 #include <WebCore/GStreamerCommon.h>
 #endif
 
-#if PLATFORM(WAYLAND)
-#include "AcceleratedBackingStoreWayland.h"
-#endif
-
 #if USE(WPE_RENDERER)
 #include <wpe/wpe.h>
 #endif
@@ -93,16 +89,6 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if PLATFORM(GTK) && USE(EGL)
     parameters.dmaBufRendererBufferMode = AcceleratedBackingStoreDMABuf::rendererBufferMode();
-#endif
-
-#if PLATFORM(WAYLAND)
-    if (WebCore::PlatformDisplay::sharedDisplay().type() == WebCore::PlatformDisplay::Type::Wayland && parameters.dmaBufRendererBufferMode.isEmpty()) {
-        wpe_loader_init("libWPEBackend-fdo-1.0.so.1");
-        if (AcceleratedBackingStoreWayland::checkRequirements()) {
-            parameters.hostClientFileDescriptor = UnixFileDescriptor { wpe_renderer_host_create_client(), UnixFileDescriptor::Adopt };
-            parameters.implementationLibraryName = FileSystem::fileSystemRepresentation(String::fromLatin1(wpe_loader_get_loaded_implementation_library_name()));
-        }
-    }
 #endif
 
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || LegacyGlobalSettings::singleton().cacheModel() == CacheModel::DocumentViewer;

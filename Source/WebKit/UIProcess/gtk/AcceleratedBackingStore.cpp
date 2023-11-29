@@ -32,10 +32,6 @@
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
-#if PLATFORM(WAYLAND)
-#include "AcceleratedBackingStoreWayland.h"
-#endif
-
 #if PLATFORM(GTK) && USE(EGL)
 #include "AcceleratedBackingStoreDMABuf.h"
 #endif
@@ -72,10 +68,6 @@ bool AcceleratedBackingStore::checkRequirements()
     if (AcceleratedBackingStoreDMABuf::checkRequirements())
         return gtkCanUseHardwareAcceleration();
 #endif
-#if PLATFORM(WAYLAND)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
-        return AcceleratedBackingStoreWayland::checkRequirements() && gtkCanUseHardwareAcceleration();
-#endif
 
     return false;
 }
@@ -88,10 +80,6 @@ std::unique_ptr<AcceleratedBackingStore> AcceleratedBackingStore::create(WebPage
 #if PLATFORM(GTK) && USE(EGL)
     if (AcceleratedBackingStoreDMABuf::checkRequirements())
         return AcceleratedBackingStoreDMABuf::create(webPage);
-#endif
-#if PLATFORM(WAYLAND)
-    if (PlatformDisplay::sharedDisplay().type() == PlatformDisplay::Type::Wayland)
-        return AcceleratedBackingStoreWayland::create(webPage);
 #endif
     RELEASE_ASSERT_NOT_REACHED();
     return nullptr;

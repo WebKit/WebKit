@@ -3053,15 +3053,6 @@ void webkitWebViewBaseShowEmojiChooser(WebKitWebViewBase* webkitWebViewBase, con
 #endif
 }
 
-#if USE(WPE_RENDERER)
-int webkitWebViewBaseRenderHostFileDescriptor(WebKitWebViewBase* webkitWebViewBase)
-{
-    if (!webkitWebViewBase->priv->acceleratedBackingStore)
-        return -1;
-    return webkitWebViewBase->priv->acceleratedBackingStore->renderHostFileDescriptor();
-}
-#endif
-
 #if ENABLE(POINTER_LOCK)
 void webkitWebViewBaseRequestPointerLock(WebKitWebViewBase* webViewBase)
 {

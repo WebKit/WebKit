@@ -1364,7 +1364,7 @@ void WebProcess::setEnhancedAccessibility(bool flag)
     WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility(flag);
 }
 
-void WebProcess::remotePostMessage(WebCore::FrameIdentifier identifier, std::optional<WebCore::SecurityOriginData> target, const WebCore::MessageWithMessagePorts& message)
+void WebProcess::remotePostMessage(WebCore::FrameIdentifier identifier, const String& sourceOrigin, std::optional<WebCore::SecurityOriginData> target, const WebCore::MessageWithMessagePorts& message)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(identifier);
     if (!webFrame)
@@ -1386,7 +1386,7 @@ void WebProcess::remotePostMessage(WebCore::FrameIdentifier identifier, std::opt
     if (!globalObject)
         return;
 
-    domWindow->postMessageFromRemoteFrame(*globalObject, target, message);
+    domWindow->postMessageFromRemoteFrame(*globalObject, sourceOrigin, target, message);
 }
 
 void WebProcess::renderTreeAsText(WebCore::FrameIdentifier frameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior, CompletionHandler<void(String&&)>&& completionHandler)
