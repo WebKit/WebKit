@@ -30,34 +30,6 @@
 
 #import <wtf/RetainPtr.h>
 
-namespace WebKit {
-
-static constexpr auto selectionHighlightAlphaComponent = 0.2;
-
-static UIColor *defaultInsertionPointColor()
-{
-#if PLATFORM(MACCATALYST)
-    return UIColor.systemBlueColor;
-#else
-    static NeverDestroyed<RetainPtr<UIColor>> color = [UIColor colorWithRed:0.26 green:0.42 blue:0.95 alpha:1];
-    return color->get();
-#endif
-}
-
-static UIColor *defaultSelectionGrabberColor()
-{
-    static NeverDestroyed<RetainPtr<UIColor>> color = [UIColor colorWithRed:0.078 green:0.435 blue:0.882 alpha:1];
-    return color->get();
-}
-
-static UIColor *defaultSelectionHighlightColor()
-{
-    static NeverDestroyed<RetainPtr<UIColor>> color = [UIColor colorWithRed:0.33 green:0.65 blue:0.2 alpha:1];
-    return color->get();
-}
-
-} // namespace WebKit
-
 @implementation WKExtendedTextInputTraits {
     RetainPtr<UITextContentType> _textContentType;
     RetainPtr<UIColor> _insertionPointColor;
@@ -107,10 +79,11 @@ static UIColor *defaultSelectionHighlightColor()
 
 - (void)setSelectionColorsToMatchTintColor:(UIColor *)tintColor
 {
+    static constexpr auto selectionHighlightAlphaComponent = 0.2;
     BOOL shouldUseTintColor = tintColor && tintColor != UIColor.systemBlueColor;
-    self.insertionPointColor = shouldUseTintColor ? tintColor : WebKit::defaultInsertionPointColor();
-    self.selectionBarColor = shouldUseTintColor ? tintColor : WebKit::defaultSelectionGrabberColor();
-    self.selectionHighlightColor = shouldUseTintColor ? [tintColor colorWithAlphaComponent:WebKit::selectionHighlightAlphaComponent] : WebKit::defaultSelectionHighlightColor();
+    self.insertionPointColor = shouldUseTintColor ? tintColor : nil;
+    self.selectionBarColor = shouldUseTintColor ? tintColor : nil;
+    self.selectionHighlightColor = shouldUseTintColor ? [tintColor colorWithAlphaComponent:selectionHighlightAlphaComponent] : nil;
 }
 
 @end
