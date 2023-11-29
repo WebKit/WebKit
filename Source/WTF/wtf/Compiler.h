@@ -170,6 +170,16 @@
 #define SUPPRESS_TSAN
 #endif
 
+/* COVERAGE_ENABLED and SUPPRESS_COVERAGE */
+
+#define COVERAGE_ENABLED COMPILER_HAS_CLANG_FEATURE(coverage_sanitizer)
+
+#if COVERAGE_ENABLED
+#define SUPPRESS_COVERAGE __attribute__((no_sanitize("coverage")))
+#else
+#define SUPPRESS_COVERAGE
+#endif
+
 /* ==== Compiler-independent macros for various compiler features, in alphabetical order ==== */
 
 /* ALWAYS_INLINE */
