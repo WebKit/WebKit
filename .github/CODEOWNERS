@@ -167,6 +167,11 @@
 /Source/cmake/WebKitFeatures.cmake @mcatanzaro
 
 # ================================================================================
+# Xcode
+
+*.xcconfig @emw-apple
+
+# ================================================================================
 # Linux graphics
 
 CoordinatedGraphics/ @magomez @zdobersek
