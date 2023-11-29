@@ -2717,3 +2717,5 @@ imported/w3c/web-platform-tests/css/css-backgrounds/background-size/background-s
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-snapshotting.html [ Skip ]
 
 fast/css/transform-function-perspective-crash.html [ Failure ]
+
+webkit.org/b/265535 inspector/layers/layers-for-node.html [ Pass Timeout ]
