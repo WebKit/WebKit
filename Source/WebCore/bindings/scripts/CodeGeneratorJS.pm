@@ -2435,8 +2435,15 @@ sub GetEnumerationClassName
 
 sub GetEnumerationValueName
 {
-    my ($name) = @_;
+    my ($value) = @_;
 
+    assert("Not an enum value") if ref($value) ne "IDLEnumValue";
+
+    if ($value->extendedAttributes->{ImplementedAs}) {
+        return $value->extendedAttributes->{ImplementedAs};
+    }
+
+    my $name = $value->name;
     return "EmptyString" if $name eq "";
     return "WebRTC" if $name eq "webrtc";
     $name = join("", map { $codeGenerator->WK_ucfirst($_) } split("-", $name));
@@ -2496,10 +2503,11 @@ sub GenerateEnumerationImplementationContent
     AddToImplIncludes("<wtf/NeverDestroyed.h>");
     $result .= "    static const NeverDestroyed<String> values[] = {\n";
     foreach my $value (@{$enumeration->values}) {
-        if ($value eq "") {
+        my $name = $value->name;
+        if ($name eq "") {
             $result .= "        emptyString(),\n";
         } else {
-            $result .= "        MAKE_STATIC_STRING_IMPL(\"$value\"),\n";
+            $result .= "        MAKE_STATIC_STRING_IMPL(\"$name\"),\n";
         }
     }
     $result .= "    };\n";
@@ -2523,8 +2531,8 @@ sub GenerateEnumerationImplementationContent
     # FIXME: Consider finding a more efficient way to match against all the strings quickly.
     $result .= "template<> std::optional<$className> parseEnumerationFromString<${className}>(const String& stringValue)\n";
     $result .= "{\n";
-    my @sortedEnumerationValues = sort @{$enumeration->values};
-    if ($sortedEnumerationValues[0] eq "") {
+    my @sortedEnumerationValues = sort { $a->name cmp $b->name } @{$enumeration->values};
+    if ($sortedEnumerationValues[0]->name eq "") {
         $result .= "    if (stringValue.isEmpty())\n";
         my $enumerationValueName = GetEnumerationValueName(shift(@sortedEnumerationValues));
         $result .= "        return ${className}::$enumerationValueName;\n";
@@ -2532,7 +2540,8 @@ sub GenerateEnumerationImplementationContent
     $result .= "    static constexpr std::pair<ComparableASCIILiteral, $className> mappings[] = {\n";
     for my $value (@sortedEnumerationValues) {
         my $enumerationValueName = GetEnumerationValueName($value);
-        $result .= "        { \"$value\", ${className}::$enumerationValueName },\n";
+        my $name = $value->name;
+        $result .= "        { \"$name\", ${className}::$enumerationValueName },\n";
     }
     $result .= "    };\n";
     $result .= "    static constexpr SortedArrayMap enumerationMapping { mappings };\n";
@@ -2548,7 +2557,7 @@ sub GenerateEnumerationImplementationContent
 
     $result .= "template<> const char* expectedEnumerationValues<$className>()\n";
     $result .= "{\n";
-    $result .= "    return \"\\\"" . join ("\\\", \\\"", @{$enumeration->values}) . "\\\"\";\n";
+    $result .= "    return \"\\\"" . join ("\\\", \\\"", map { $_->name } @{$enumeration->values}) . "\\\"\";\n";
     $result .= "}\n\n";
 
     $result .= "#endif\n\n" if $conditionalString;
@@ -2672,9 +2681,19 @@ sub GenerateDefaultValue
             }
         }
 
-        if ($codeGenerator->IsEnumType($type)) {
+        my $enumeration = $codeGenerator->GetEnumByType($type);
+        if (defined($enumeration)) {
             my $className = GetEnumerationClassName($type, $typeScope);
-            my $enumerationValueName = GetEnumerationValueName(substr($defaultValue, 1, -1));
+            my $enumValue = IDLEnumValue->new();
+            $enumValue->name(substr($defaultValue, 1, -1));
+            # Look up the value definition, replacing the default if found
+            foreach my $value (@{$enumeration->values}) {
+                if ($value->name eq $enumValue->name) {
+                    $enumValue = $value;
+                    last;
+                }
+            }
+            my $enumerationValueName = GetEnumerationValueName($enumValue);
             return $className . "::" . $enumerationValueName;
         }
     }

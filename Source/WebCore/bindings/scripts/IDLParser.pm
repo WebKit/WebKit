@@ -156,7 +156,12 @@ struct( IDLConstant => {
 struct( IDLEnum => {
     name => '$',
     type => 'IDLType',
-    values => '@',
+    values => '@', # List of 'IDLEnumValue'
+    extendedAttributes => '%',
+});
+
+struct( IDLEnumValue => {
+    name => '$',
     extendedAttributes => '%',
 });
 
@@ -1507,11 +1512,19 @@ sub parseEnumValueList
 {
     my $self = shift;
     my @values = ();
+
+    my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
+
     my $next = $self->nextToken();
     if ($next->type() == StringToken) {
+        my $enumValue = IDLEnumValue->new();
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "enum-value");
+        $enumValue->extendedAttributes($extendedAttributeList);
+
         my $enumValueToken = $self->getToken();
         $self->assertTokenType($enumValueToken, StringToken);
-        my $enumValue = $self->unquoteString($enumValueToken->value());
+        $enumValue->name($self->unquoteString($enumValueToken->value()));
         push(@values, $enumValue);
         push(@values, @{$self->parseEnumValues()});
         return \@values;
@@ -1528,11 +1541,19 @@ sub parseEnumValues
     if ($next->value() eq ",") {
         $self->assertTokenValue($self->getToken(), ",", __LINE__);
     }
+
+    my $extendedAttributeList = $self->parseExtendedAttributeListAllowEmpty();
+
     $next = $self->nextToken();
     if ($next->type() == StringToken) {
+        my $enumValue = IDLEnumValue->new();
+
+        $self->assertExtendedAttributesValidForContext($extendedAttributeList, "enum-value");
+        $enumValue->extendedAttributes($extendedAttributeList);
+
         my $enumValueToken = $self->getToken();
         $self->assertTokenType($enumValueToken, StringToken);
-        my $enumValue = $self->unquoteString($enumValueToken->value());
+        $enumValue->name($self->unquoteString($enumValueToken->value()));
         push(@values, $enumValue);
         push(@values, @{$self->parseEnumValues()});
         return \@values;
