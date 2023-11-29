@@ -1608,17 +1608,6 @@ void SourceBufferParserWebM::flushPendingMediaData()
 {
 }
 
-void SourceBufferParserWebM::setShouldProvideMediaDataForTrackID(bool, uint64_t)
-{
-    notImplemented();
-}
-
-bool SourceBufferParserWebM::shouldProvideMediadataForTrackID(uint64_t)
-{
-    notImplemented();
-    return false;
-}
-
 void SourceBufferParserWebM::invalidate()
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER);

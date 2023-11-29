@@ -112,11 +112,13 @@ public:
     uint64_t protectedTrackID() const { return m_protectedTrackID; }
     bool needsVideoLayer() const;
 
-    AVStreamDataParser* streamDataParser() const;
+#if (ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)) || ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    AVStreamDataParser* streamDataParser() const { return m_streamDataParser.get(); }
     void setCDMSession(LegacyCDMSession*) final;
     void setCDMInstance(CDMInstance*) final;
     void attemptToDecrypt() final;
     bool waitingForKey() const final { return m_waitingForKey; }
+#endif
 
     void flush();
     void flushIfNeeded();
@@ -205,7 +207,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     HashMap<AtomString, RefPtr<AudioTrackPrivate>> m_audioTracks;
     Vector<SourceBufferPrivateAVFObjCErrorClient*> m_errorClients;
 
-    Ref<SourceBufferParser> m_parser;
+    const Ref<SourceBufferParser> m_parser;
     Vector<Function<void()>> m_pendingTrackChangeTasks;
     Deque<std::pair<uint64_t, Ref<MediaSampleAVFObjC>>> m_blockedSamples;
 
@@ -253,7 +255,9 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     uint64_t m_enabledVideoTrackID { notFound };
     uint64_t m_protectedTrackID { notFound };
     uint64_t m_mapID;
-    uint32_t m_abortCalled { 0 };
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    RetainPtr<AVStreamDataParser> m_streamDataParser;
+#endif
 
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
