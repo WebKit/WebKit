@@ -69,15 +69,24 @@ public:
     void clearMaximumIntrinsicWidthLayoutResult() { m_maximumIntrinsicWidthLayoutResult = { }; }
     std::optional<IntrinsicWidthHandler::LineBreakingResult>& maximumIntrinsicWidthLayoutResult() { return m_maximumIntrinsicWidthLayoutResult; }
 
-    void setIntrinsicWidthConstraints(IntrinsicWidthConstraints intrinsicWidthConstraints) { m_intrinsicWidthConstraints = intrinsicWidthConstraints; }
-    void resetIntrinsicWidthConstraints() { m_intrinsicWidthConstraints = { }; }
-    std::optional<IntrinsicWidthConstraints> intrinsicWidthConstraints() const { return m_intrinsicWidthConstraints; }
+    void setMinimumContentSize(InlineLayoutUnit minimumContentSize) { m_minimumContentSize = minimumContentSize; }
+    void setMaximumContentSize(InlineLayoutUnit maximumContentSize) { m_maximumContentSize = maximumContentSize; }
+    std::optional<InlineLayoutUnit> minimumContentSize() const { return m_minimumContentSize; }
+    std::optional<InlineLayoutUnit> maximumContentSize() const { return m_maximumContentSize; }
+    void resetMinimumMaximumContentSizes();
 
 private:
     InlineItems m_inlineItems;
     std::optional<IntrinsicWidthHandler::LineBreakingResult> m_maximumIntrinsicWidthLayoutResult { };
-    std::optional<IntrinsicWidthConstraints> m_intrinsicWidthConstraints { };
+    std::optional<InlineLayoutUnit> m_minimumContentSize { };
+    std::optional<InlineLayoutUnit> m_maximumContentSize { };
 };
+
+inline void InlineContentCache::resetMinimumMaximumContentSizes()
+{
+    m_minimumContentSize = { };
+    m_maximumContentSize = { };
+}
 
 }
 }

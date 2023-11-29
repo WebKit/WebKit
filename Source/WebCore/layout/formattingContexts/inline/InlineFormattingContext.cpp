@@ -158,10 +158,10 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const 
 {
     auto& inlineContentCache = this->inlineContentCache();
     if (lineDamage)
-        inlineContentCache.resetIntrinsicWidthConstraints();
+        inlineContentCache.resetMinimumMaximumContentSizes();
 
-    if (auto intrinsicSizes = inlineContentCache.intrinsicWidthConstraints())
-        return *intrinsicSizes;
+    if (inlineContentCache.minimumContentSize() && inlineContentCache.maximumContentSize())
+        return { LayoutUnit { *inlineContentCache.minimumContentSize() }, LayoutUnit { *inlineContentCache.maximumContentSize() } };
 
     auto needsLayoutStartPosition = !lineDamage || !lineDamage->start() ? InlineItemPosition() : lineDamage->start()->inlineItemPosition;
     auto needsInlineItemListUpdate = inlineContentCache.inlineItems().isEmpty() || lineDamage;
@@ -170,24 +170,30 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const 
 
     auto& inlineItemList = inlineContentCache.inlineItems().content();
     if (!lineDamage && isEmptyInlineContent(inlineItemList)) {
-        inlineContentCache.setIntrinsicWidthConstraints({ });
+        inlineContentCache.setMinimumContentSize({ });
+        inlineContentCache.setMaximumContentSize({ });
         return { };
     }
 
     auto mayUseSimplifiedTextOnlyInlineLayout = TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache);
     auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineItemList, mayUseSimplifiedTextOnlyInlineLayout };
-    auto intrinsicSizes = IntrinsicWidthConstraints { intrinsicWidthHandler.minimumContentSize(), intrinsicWidthHandler.maximumContentSize() };
-    inlineContentCache.setIntrinsicWidthConstraints(intrinsicSizes);
-    if (intrinsicWidthHandler.maximumIntrinsicWidthResult())
-        inlineContentCache.setMaximumIntrinsicWidthLayoutResult(WTFMove(*intrinsicWidthHandler.maximumIntrinsicWidthResult()));
-    return intrinsicSizes;
+    if (!inlineContentCache.minimumContentSize())
+        inlineContentCache.setMinimumContentSize(intrinsicWidthHandler.minimumContentSize());
+
+    if (!inlineContentCache.maximumContentSize()) {
+        inlineContentCache.setMaximumContentSize(intrinsicWidthHandler.maximumContentSize());
+        if (intrinsicWidthHandler.maximumIntrinsicWidthResult())
+            inlineContentCache.setMaximumIntrinsicWidthLayoutResult(WTFMove(*intrinsicWidthHandler.maximumIntrinsicWidthResult()));
+    }
+
+    return { LayoutUnit { *inlineContentCache.minimumContentSize() }, LayoutUnit { *inlineContentCache.maximumContentSize() } };
 }
 
 LayoutUnit InlineFormattingContext::maximumContentSize()
 {
     auto& inlineContentCache = this->inlineContentCache();
-    if (auto intrinsicWidthConstraints = inlineContentCache.intrinsicWidthConstraints())
-        return intrinsicWidthConstraints->maximum;
+    if (auto maximumContentSize = inlineContentCache.maximumContentSize())
+        return LayoutUnit { *maximumContentSize };
 
     auto mayUseSimplifiedTextOnlyInlineLayout = TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache);
     return IntrinsicWidthHandler { *this, inlineContentCache.inlineItems().content(), mayUseSimplifiedTextOnlyInlineLayout }.maximumContentSize();
