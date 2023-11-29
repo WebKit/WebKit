@@ -98,22 +98,22 @@ public:
 
         static ControlType loop(BlockSignature signature, unsigned stackSize, Ref<Label>&& body, RefPtr<Label>&& continuation)
         {
-            return ControlType(signature, stackSize - signature->as<FunctionSignature>()->argumentCount(), WTFMove(continuation), ControlLoop { WTFMove(body) });
+            return ControlType(signature, stackSize - signature->argumentCount(), WTFMove(continuation), ControlLoop { WTFMove(body) });
         }
 
         static ControlType block(BlockSignature signature, unsigned stackSize, RefPtr<Label>&& continuation)
         {
-            return ControlType(signature, stackSize - signature->as<FunctionSignature>()->argumentCount(), WTFMove(continuation), ControlBlock { });
+            return ControlType(signature, stackSize - signature->argumentCount(), WTFMove(continuation), ControlBlock { });
         }
 
         static ControlType if_(BlockSignature signature, unsigned stackSize, Ref<Label>&& alternate, RefPtr<Label>&& continuation)
         {
-            return ControlType(signature, stackSize - signature->as<FunctionSignature>()->argumentCount(), WTFMove(continuation), ControlIf { WTFMove(alternate) });
+            return ControlType(signature, stackSize - signature->argumentCount(), WTFMove(continuation), ControlIf { WTFMove(alternate) });
         }
 
         static ControlType createTry(BlockSignature signature, unsigned stackSize, Ref<Label>&& tryLabel, RefPtr<Label>&& continuation, unsigned tryDepth)
         {
-            return ControlType(signature, stackSize - signature->as<FunctionSignature>()->argumentCount(), WTFMove(continuation), ControlTry { WTFMove(tryLabel), tryDepth });
+            return ControlType(signature, stackSize - signature->argumentCount(), WTFMove(continuation), ControlTry { WTFMove(tryLabel), tryDepth });
         }
 
         static bool isLoop(const ControlType& control) { return std::holds_alternative<ControlLoop>(control); }
@@ -150,16 +150,16 @@ public:
         FunctionArgCount branchTargetArity() const
         {
             if (isLoop(*this))
-                return m_signature->as<FunctionSignature>()->argumentCount();
-            return m_signature->as<FunctionSignature>()->returnCount();
+                return m_signature->argumentCount();
+            return m_signature->returnCount();
         }
 
         Type branchTargetType(unsigned i) const
         {
             ASSERT(i < branchTargetArity());
             if (isLoop(*this))
-                return m_signature->as<FunctionSignature>()->argumentType(i);
-            return m_signature->as<FunctionSignature>()->returnType(i);
+                return m_signature->argumentType(i);
+            return m_signature->returnType(i);
         }
 
         void dump(PrintStream& out) const
@@ -1125,7 +1125,7 @@ auto LLIntGenerator::addElse(ControlType& data, Stack& expressionStack) -> Parti
 
 auto LLIntGenerator::addElseToUnreachable(ControlType& data) -> PartialResult
 {
-    m_stackSize = data.stackSize() + data.m_signature->as<FunctionSignature>()->argumentCount();
+    m_stackSize = data.stackSize() + data.m_signature->argumentCount();
 
     ControlIf& control = std::get<ControlIf>(data);
     emitLabel(control.m_alternate.get());
@@ -1280,7 +1280,7 @@ auto LLIntGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
 
 auto LLIntGenerator::addReturn(const ControlType& data, Stack& returnValues) -> PartialResult
 {
-    if (!data.m_signature->as<FunctionSignature>()->returnCount()) {
+    if (!data.m_signature->returnCount()) {
         WasmRetVoid::emit(this);
         return { };
     }
@@ -1291,7 +1291,7 @@ auto LLIntGenerator::addReturn(const ControlType& data, Stack& returnValues) -> 
         materializeConstantsAndLocals(returnValues);
 
     // no need to drop keep here, since we have to move anyway
-    unifyValuesWithBlock(callInformationForCallee(*data.m_signature->as<FunctionSignature>()), returnValues);
+    unifyValuesWithBlock(callInformationForCallee(*data.m_signature), returnValues);
     WasmRet::emit(this);
 
     return { };
@@ -1369,14 +1369,14 @@ auto LLIntGenerator::addEndToUnreachable(ControlEntry& entry, Stack& expressionS
     unsigned stackSize = data.stackSize();
     if (ControlType::isAnyCatch(entry.controlData))
         ++stackSize; // Account for the caught exception
-    RELEASE_ASSERT(unreachable || m_stackSize ==  stackSize + data.m_signature->as<FunctionSignature>()->returnCount());
+    RELEASE_ASSERT(unreachable || m_stackSize ==  stackSize + data.m_signature->returnCount());
 
     m_stackSize = data.stackSize();
 
     if (ControlType::isTry(data) || ControlType::isAnyCatch(data))
         --m_tryDepth;
 
-    for (unsigned i = 0; i < data.m_signature->as<FunctionSignature>()->returnCount(); ++i) {
+    for (unsigned i = 0; i < data.m_signature->returnCount(); ++i) {
         // We don't want to do a consistency check here because we just reset the stack size
         // are pushing new values, while we already have the same values in the stack.
         // The only reason we do things this way is so that it also works for unreachable blocks,
@@ -1385,7 +1385,7 @@ auto LLIntGenerator::addEndToUnreachable(ControlEntry& entry, Stack& expressionS
         auto tmp = push(NoConsistencyCheck);
         ASSERT(unreachable || tmp == expressionStack[i].value());
         if (unreachable)
-            entry.enclosedExpressionStack.constructAndAppend(data.m_signature->as<FunctionSignature>()->returnType(i), tmp);
+            entry.enclosedExpressionStack.constructAndAppend(data.m_signature->returnType(i), tmp);
         else
             entry.enclosedExpressionStack.append(expressionStack[i]);
     }
@@ -1402,7 +1402,7 @@ auto LLIntGenerator::addEndToUnreachable(ControlEntry& entry, Stack& expressionS
 
 auto LLIntGenerator::endTopLevel(BlockSignature signature, const Stack& expressionStack) -> PartialResult
 {
-    RELEASE_ASSERT(expressionStack.size() == signature->as<FunctionSignature>()->returnCount());
+    RELEASE_ASSERT(expressionStack.size() == signature->returnCount());
     if (m_usesSIMD)
         m_info.markUsesSIMD(m_functionIndex);
     if (m_usesExceptions)
@@ -1411,13 +1411,13 @@ auto LLIntGenerator::endTopLevel(BlockSignature signature, const Stack& expressi
         m_info.markUsesAtomics(m_functionIndex);
     m_info.doneSeeingFunction(m_functionIndex);
 
-    if (!signature->as<FunctionSignature>()->returnCount()) {
+    if (!signature->returnCount()) {
         WasmRetVoid::emit(this);
         return { };
     }
 
     checkConsistency();
-    unifyValuesWithBlock(callInformationForCallee(*signature->as<FunctionSignature>()), expressionStack);
+    unifyValuesWithBlock(callInformationForCallee(*signature), expressionStack);
     WasmRet::emit(this);
 
     return { };

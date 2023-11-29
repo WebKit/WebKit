@@ -888,7 +888,7 @@ public:
     static RefPtr<TypeDefinition> typeDefinitionForRecursionGroup(const Vector<TypeIndex>& types);
     static RefPtr<TypeDefinition> typeDefinitionForProjection(TypeIndex, ProjectionIndex);
     static RefPtr<TypeDefinition> typeDefinitionForSubtype(const Vector<TypeIndex>&, TypeIndex, bool);
-    ALWAYS_INLINE const TypeDefinition* thunkFor(Type type) const { return thunkTypes[linearizeType(type.kind)]; }
+    ALWAYS_INLINE const FunctionSignature* thunkFor(Type type) const { return thunkTypes[linearizeType(type.kind)]; }
 
     static void addCachedUnrolling(TypeIndex, TypeIndex);
     static std::optional<TypeIndex> tryGetCachedUnrolling(TypeIndex);
@@ -912,7 +912,7 @@ private:
     HashSet<Wasm::TypeHash> m_typeSet;
     HashMap<TypeIndex, TypeIndex> m_unrollingCache;
     HashMap<TypeIndex, RefPtr<RTT>> m_rttMap;
-    const TypeDefinition* thunkTypes[numTypes];
+    const FunctionSignature* thunkTypes[numTypes];
     RefPtr<TypeDefinition> m_I64_Void;
     RefPtr<TypeDefinition> m_Void_I32;
     RefPtr<TypeDefinition> m_Void_I32I32I32;

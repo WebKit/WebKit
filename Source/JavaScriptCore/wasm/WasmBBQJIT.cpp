@@ -809,9 +809,9 @@ public:
             if (blockType == BlockType::TopLevel) {
                 // Abide by calling convention instead.
                 CallInformation wasmCallInfo = wasmCallingConvention().callInformationFor(*signature, CallRole::Callee);
-                for (unsigned i = 0; i < signature->as<FunctionSignature>()->argumentCount(); ++i)
+                for (unsigned i = 0; i < signature->argumentCount(); ++i)
                     m_argumentLocations.append(Location::fromArgumentLocation(wasmCallInfo.params[i]));
-                for (unsigned i = 0; i < signature->as<FunctionSignature>()->returnCount(); ++i)
+                for (unsigned i = 0; i < signature->returnCount(); ++i)
                     m_resultLocations.append(Location::fromArgumentLocation(wasmCallInfo.results[i]));
                 return;
             }
@@ -837,20 +837,19 @@ public:
                 }
             };
 
-            const auto& functionSignature = signature->as<FunctionSignature>();
             if (!isAnyCatch(*this)) {
                 auto gprSetCopy = generator.m_validGPRs;
                 auto fprSetCopy = generator.m_validFPRs;
                 // We intentionally exclude GPRInfo::nonPreservedNonArgumentGPR1 from argument locations. See explanation in addIf and emitIndirectCall.
                 gprSetCopy.remove(GPRInfo::nonPreservedNonArgumentGPR1);
-                for (unsigned i = 0; i < functionSignature->argumentCount(); ++i)
-                    m_argumentLocations.append(allocateArgumentOrResult(generator, functionSignature->argumentType(i).kind, i, gprSetCopy, fprSetCopy));
+                for (unsigned i = 0; i < signature->argumentCount(); ++i)
+                    m_argumentLocations.append(allocateArgumentOrResult(generator, signature->argumentType(i).kind, i, gprSetCopy, fprSetCopy));
             }
 
             auto gprSetCopy = generator.m_validGPRs;
             auto fprSetCopy = generator.m_validFPRs;
-            for (unsigned i = 0; i < functionSignature->returnCount(); ++i)
-                m_resultLocations.append(allocateArgumentOrResult(generator, functionSignature->returnType(i).kind, i, gprSetCopy, fprSetCopy));
+            for (unsigned i = 0; i < signature->returnCount(); ++i)
+                m_resultLocations.append(allocateArgumentOrResult(generator, signature->returnType(i).kind, i, gprSetCopy, fprSetCopy));
         }
 
         template<typename Stack>
@@ -1059,22 +1058,22 @@ public:
         FunctionArgCount branchTargetArity() const
         {
             if (blockType() == BlockType::Loop)
-                return m_signature->as<FunctionSignature>()->argumentCount();
-            return m_signature->as<FunctionSignature>()->returnCount();
+                return m_signature->argumentCount();
+            return m_signature->returnCount();
         }
 
         Type branchTargetType(unsigned i) const
         {
             ASSERT(i < branchTargetArity());
             if (m_blockType == BlockType::Loop)
-                return m_signature->as<FunctionSignature>()->argumentType(i);
-            return m_signature->as<FunctionSignature>()->returnType(i);
+                return m_signature->argumentType(i);
+            return m_signature->returnType(i);
         }
 
         Type argumentType(unsigned i) const
         {
-            ASSERT(i < m_signature->as<FunctionSignature>()->argumentCount());
-            return m_signature->as<FunctionSignature>()->argumentType(i);
+            ASSERT(i < m_signature->argumentCount());
+            return m_signature->argumentType(i);
         }
 
         CatchKind catchKind() const
@@ -6907,7 +6906,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addBlock(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack)
     {
-        result = ControlData(*this, BlockType::Block, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount());
+        result = ControlData(*this, BlockType::Block, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount());
         currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
 
         LOG_INSTRUCTION("Block", *signature);
@@ -7052,7 +7051,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addLoop(BlockSignature signature, Stack& enclosingStack, ControlType& result, Stack& newStack, uint32_t loopIndex)
     {
-        result = ControlData(*this, BlockType::Loop, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount());
+        result = ControlData(*this, BlockType::Loop, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount());
         currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
 
         LOG_INSTRUCTION("Loop", *signature);
@@ -7079,7 +7078,7 @@ public:
             emitMove(condition, conditionLocation);
         consume(condition);
 
-        result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount());
+        result = ControlData(*this, BlockType::If, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount());
 
         // Despite being conditional, if doesn't need to worry about diverging expression stacks at block boundaries, so it doesn't need multiple exits.
         currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
@@ -7110,8 +7109,8 @@ public:
         // We don't care at this point about the values live at the end of the previous control block,
         // we just need the right number of temps for our arguments on the top of the stack.
         expressionStack.clear();
-        while (expressionStack.size() < data.signature()->as<FunctionSignature>()->argumentCount()) {
-            Type type = data.signature()->as<FunctionSignature>()->argumentType(expressionStack.size());
+        while (expressionStack.size() < data.signature()->argumentCount()) {
+            Type type = data.signature()->argumentType(expressionStack.size());
             expressionStack.constructAndAppend(type, Value::fromTemp(type.kind, dataElse.enclosedHeight() + dataElse.implicitSlots() + expressionStack.size()));
         }
 
@@ -7137,7 +7136,7 @@ public:
         // We don't have easy access to the original expression stack we had entering the if block,
         // so we construct a local stack just to set up temp bindings as we enter the else.
         Stack expressionStack;
-        auto functionSignature = dataElse.signature()->as<FunctionSignature>();
+        auto functionSignature = dataElse.signature();
         for (unsigned i = 0; i < functionSignature->argumentCount(); i ++)
             expressionStack.constructAndAppend(functionSignature->argumentType(i), Value::fromTemp(functionSignature->argumentType(i).kind, dataElse.enclosedHeight() + dataElse.implicitSlots() + i));
         dataElse.startBlock(*this, expressionStack);
@@ -7150,7 +7149,7 @@ public:
         m_usesExceptions = true;
         ++m_tryCatchDepth;
         ++m_callSiteIndex;
-        result = ControlData(*this, BlockType::Try, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->as<FunctionSignature>()->argumentCount());
+        result = ControlData(*this, BlockType::Try, signature, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + enclosingStack.size() - signature->argumentCount());
         result.setTryInfo(m_callSiteIndex, m_callSiteIndex, m_tryCatchDepth);
         currentControlData().flushAndSingleExit(*this, result, enclosingStack, true, false);
 
@@ -7561,10 +7560,10 @@ public:
     {
         ControlData& entryData = entry.controlData;
 
-        unsigned returnCount = entryData.signature()->as<FunctionSignature>()->returnCount();
+        unsigned returnCount = entryData.signature()->returnCount();
         if (unreachable) {
             for (unsigned i = 0; i < returnCount; ++i) {
-                Type type = entryData.signature()->as<FunctionSignature>()->returnType(i);
+                Type type = entryData.signature()->returnType(i);
                 entry.enclosedExpressionStack.constructAndAppend(type, Value::fromTemp(type.kind, entryData.enclosedHeight() + entryData.implicitSlots() + i));
             }
             for (const auto& binding : m_gprBindings) {
