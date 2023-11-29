@@ -111,7 +111,9 @@ public:
     ScrollingTreeScrollingNode& node() const { return m_scrollingNode; }
     
     bool mouseInContentArea() const { return m_mouseInContentArea; }
-
+    void shouldHideScrollbars(bool flag);
+    bool shouldHideScrollbars() { return m_shouldHideScrollbars; }
+    std::pair<bool,bool> oldScrollbarState() { return m_scrollbarEnabledState; }
 private:
     ScrollerPairMac(ScrollingTreeScrollingNode&);
 
@@ -135,6 +137,8 @@ private:
     std::atomic<ScrollbarStyle> m_scrollbarStyle { ScrollbarStyle::AlwaysVisible };
     bool m_inLiveResize { false };
     bool m_mouseInContentArea { false };
+    std::pair<bool,bool> m_scrollbarEnabledState { false, false };
+    bool m_shouldHideScrollbars { false };
 };
 
 }

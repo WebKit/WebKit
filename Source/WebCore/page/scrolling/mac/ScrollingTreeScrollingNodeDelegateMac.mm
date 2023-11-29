@@ -353,6 +353,12 @@ String ScrollingTreeScrollingNodeDelegateMac::scrollbarStateForOrientation(Scrol
     return m_scrollerPair->scrollbarStateForOrientation(orientation);
 }
 
+void ScrollingTreeScrollingNodeDelegateMac::shouldHideScrollbars(bool flag)
+{
+    m_scrollerPair->shouldHideScrollbars(flag);
+}
+
+
 } // namespace WebCore
 
 #endif // PLATFORM(MAC) && ENABLE(ASYNC_SCROLLING)

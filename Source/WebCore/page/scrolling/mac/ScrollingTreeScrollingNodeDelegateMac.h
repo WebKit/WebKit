@@ -66,6 +66,7 @@ public:
     void viewSizeDidChange() final;
     void initScrollbars() final;
     String scrollbarStateForOrientation(ScrollbarOrientation) const final;
+    void shouldHideScrollbars(bool) final;
 
 private:
     void updateFromStateNode(const ScrollingStateScrollingNode&) final;

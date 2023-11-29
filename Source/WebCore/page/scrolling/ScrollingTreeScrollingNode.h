@@ -88,7 +88,7 @@ public:
     virtual void serviceScrollAnimation(MonotonicTime);
 
     // These are imperative; they adjust the scrolling layers.
-    void scrollTo(const FloatPoint&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped);
+    void scrollTo(const FloatPoint&, ScrollType = ScrollType::User, ScrollClamping = ScrollClamping::Clamped, bool hideScrollbars = false);
     void scrollBy(const FloatSize&, ScrollClamping = ScrollClamping::Clamped);
 
     void handleScrollPositionRequest(const RequestedScrollData&);

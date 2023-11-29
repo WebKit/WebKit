@@ -73,7 +73,7 @@ public:
     void updateMinimumKnobLength(int);
     void detach();
     void setEnabled(bool flag) { m_isEnabled = flag; }
-
+    bool enabled() { return m_isEnabled; }
 private:
     int m_minimumKnobLength { 0 };
 

@@ -313,7 +313,7 @@ void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScro
     if (scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), requestedScrollData))
         return;
 
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest() with data " << requestedScrollData);
+    ALWAYS_LOG_WITH_STREAM(stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest() with data " << requestedScrollData);
 
     if (requestedScrollData.requestedDataBeforeAnimatedScroll) {
         auto& [requestType, positionOrDeltaBeforeAnimatedScroll, scrollType, clamping] = *requestedScrollData.requestedDataBeforeAnimatedScroll;
@@ -337,7 +337,7 @@ void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScro
         return;
     }
 
-    scrollTo(destinationPosition, requestedScrollData.scrollType, requestedScrollData.clamping);
+    scrollTo(destinationPosition, requestedScrollData.scrollType, requestedScrollData.clamping, requestedScrollData.shouldHideScrollbars);
 }
 
 FloatPoint ScrollingTreeScrollingNode::adjustedScrollPosition(const FloatPoint& scrollPosition, ScrollClamping clamping) const
@@ -354,10 +354,13 @@ void ScrollingTreeScrollingNode::scrollBy(const FloatSize& delta, ScrollClamping
     scrollTo(currentScrollPosition() + delta, ScrollType::User, clamp);
 }
 
-void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType scrollType, ScrollClamping clamp)
+void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType scrollType, ScrollClamping clamp, bool hideScrollbars)
 {
     if (position == m_currentScrollPosition)
         return;
+
+    if (m_delegate)
+        m_delegate->shouldHideScrollbars(hideScrollbars);
 
     scrollingTree().setIsHandlingProgrammaticScroll(scrollType == ScrollType::Programmatic);
 
@@ -374,6 +377,8 @@ void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType
     currentScrollPositionChanged(scrollType);
 
     scrollingTree().setIsHandlingProgrammaticScroll(false);
+    if (m_delegate && hideScrollbars)
+        m_delegate->shouldHideScrollbars(false);
 }
 
 void ScrollingTreeScrollingNode::currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction action)
