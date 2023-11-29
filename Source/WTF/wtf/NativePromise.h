@@ -768,10 +768,7 @@ private:
     template<bool IsChaining, typename ReturnPromiseType_>
     class ThenCallback : public ThenCallbackBase {
     public:
-        static constexpr bool SupportChaining = IsChaining;
-        // We could have the method return void if SupportChaining is false, it would however make it difficult to identify usage errors.
-        // Returning a NativePromise by default allows to have a more user friendly static_assert instead.
-        using ReturnPromiseType = std::conditional_t<IsChaining, ReturnPromiseType_, NativePromise>;
+        using ReturnPromiseType = std::conditional_t<IsChaining, ReturnPromiseType_, GenericPromise>;
         using CallBackType = std::conditional_t<IsChaining, Function<Ref<ReturnPromiseType_>(ResultParam)>, Function<void(ResultParam)>>;
 
         ThenCallback(ManagedSerialFunctionDispatcher&& targetQueue, CallBackType&& function, const Logger::LogSiteIdentifier& callSite)
@@ -792,42 +789,39 @@ private:
             if (ThenCallbackBase::m_targetQueue)
                 assertIsCurrent(*ThenCallbackBase::m_targetQueue);
             ASSERT(m_settleFunction);
+            auto completionProducer = [this] {
+                Locker lock { m_lock };
+                return std::exchange(m_completionProducer, { });
+            }();
             if constexpr (IsChaining) {
                 auto p = m_settleFunction(maybeMove(result));
-                std::unique_ptr<typename ReturnPromiseType::Producer> completionProducer;
-                {
-                    Locker lock { m_lock };
-                    completionProducer = std::exchange(m_completionProducer, { });
-                }
                 if (completionProducer)
                     p->chainTo(WTFMove(*completionProducer), { "<chained completion promise>", nullptr });
-            } else
+            } else {
                 m_settleFunction(maybeMove(result));
+                if (completionProducer)
+                    completionProducer->resolve({ "<chained completion promise>", nullptr });
+            }
 
             m_settleFunction = nullptr;
         }
 
         void setCompletionPromise(std::unique_ptr<typename ReturnPromiseType::Producer>&& completionProducer)
         {
-            if constexpr (IsChaining) {
-                Locker lock { m_lock };
-                m_completionProducer = WTFMove(completionProducer);
-            }
+            Locker lock { m_lock };
+            m_completionProducer = WTFMove(completionProducer);
         }
 
 #if ASSERT_ENABLED
         RefPtr<NativePromiseBase> completionPromise() override
         {
-            if constexpr (IsChaining) {
-                Locker lock { m_lock };
-                return m_completionProducer ? m_completionProducer->promise().ptr() : nullptr;
-            }
-            return nullptr;
+            Locker lock { m_lock };
+            return m_completionProducer ? m_completionProducer->promise().ptr() : nullptr;
         }
 #endif
 
-        NO_UNIQUE_ADDRESS std::conditional_t<IsChaining, Lock, detail::VoidPlaceholder> m_lock;
-        NO_UNIQUE_ADDRESS std::conditional_t<IsChaining, std::unique_ptr<typename ReturnPromiseType::Producer>, detail::VoidPlaceholder> m_completionProducer WTF_GUARDED_BY_LOCK(m_lock);
+        Lock m_lock;
+        std::unique_ptr<typename ReturnPromiseType::Producer> m_completionProducer WTF_GUARDED_BY_LOCK(m_lock);
     private:
         CallBackType m_settleFunction;
     };
@@ -887,7 +881,6 @@ private:
         // p->then(thread2, ...);
         operator Ref<PromiseType>()
         {
-            static_assert(ThenCallbackType::SupportChaining, "The resolve/reject callback needs to return a Ref<NativePromise> in order to do promise chaining.");
             return completionPromise();
         }
 
