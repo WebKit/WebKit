@@ -148,6 +148,7 @@ struct ObjCHolderForTesting {
         RetainPtr<NSDictionary>,
         RetainPtr<WebCore::CocoaFont>,
         RetainPtr<NSError>,
+        RetainPtr<NSLocale>,
 #if ENABLE(DATA_DETECTION)
         RetainPtr<DDScannerResult>,
 #endif
@@ -516,6 +517,10 @@ TEST(IPCSerialization, Basic)
     RetainPtr<id> error12 = filteredError11.toID();
     EXPECT_EQ([[[error12.get() userInfo] objectForKey:@"NSErrorPeerCertificateChainKey"] count], (NSUInteger)1);
     runTestNS({ (NSError *)error12.get() });
+
+    // NSLocale
+    for (NSString* identifier : [NSLocale availableLocaleIdentifiers])
+        runTestNS({ [NSLocale localeWithLocaleIdentifier: identifier] });
 
     auto runValueTest = [&](NSValue *value) {
         ObjCHolderForTesting::ValueType valueVariant;

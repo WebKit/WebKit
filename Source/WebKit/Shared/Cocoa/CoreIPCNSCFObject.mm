@@ -56,6 +56,8 @@ static ObjectValue valueFromID(id object)
         return CoreIPCDictionary((NSDictionary *)object);
     case IPC::NSType::Error:
         return CoreIPCError((NSError *)object);
+    case IPC::NSType::Locale:
+        return CoreIPCLocale((NSLocale *)object);
     case IPC::NSType::Font:
         return CoreIPCFont((WebCore::CocoaFont *)object);
     case IPC::NSType::NSValue:

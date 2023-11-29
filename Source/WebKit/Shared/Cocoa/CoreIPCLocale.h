@@ -25,18 +25,35 @@
 
 #pragma once
 
-#import "CoreIPCArray.h"
-#import "CoreIPCCFType.h"
-#import "CoreIPCColor.h"
-#import "CoreIPCDDScannerResult.h"
-#import "CoreIPCData.h"
-#import "CoreIPCDate.h"
-#import "CoreIPCDictionary.h"
-#import "CoreIPCError.h"
-#import "CoreIPCFont.h"
-#import "CoreIPCLocale.h"
-#import "CoreIPCNSValue.h"
-#import "CoreIPCNumber.h"
-#import "CoreIPCSecureCoding.h"
-#import "CoreIPCString.h"
-#import "CoreIPCURL.h"
+#if PLATFORM(COCOA)
+
+#import <Foundation/Foundation.h>
+#import <wtf/text/WTFString.h>
+
+OBJC_CLASS NSLocale;
+
+namespace WebKit {
+
+class CoreIPCLocale {
+public:
+    static bool isValidIdentifier(const String&);
+
+    CoreIPCLocale(NSLocale *);
+    CoreIPCLocale(String&&);
+
+    RetainPtr<id> toID() const;
+
+    String identfier() const
+    {
+        return m_identifier;
+    }
+
+private:
+    static std::optional<String> canonicalLocaleStringReplacement(const String& identifier);
+
+    String m_identifier;
+};
+
+}
+
+#endif // PLATFORM(COCOA)

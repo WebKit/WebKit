@@ -289,6 +289,8 @@ NSType typeFromObject(id object)
         return NSType::Dictionary;
     if ([object isKindOfClass:[CocoaFont class]])
         return NSType::Font;
+    if ([object isKindOfClass:[NSLocale class]])
+        return NSType::Locale;
     if ([object isKindOfClass:[NSNumber class]])
         return NSType::Number;
     if ([object isKindOfClass:[NSValue class]])
