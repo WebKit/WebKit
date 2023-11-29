@@ -27,11 +27,14 @@
 #include "FilterOperation.h"
 #include "IntRect.h"
 #include "IntSize.h"
-#include "TextureMapperGLHeaders.h"
 #include "TransformationMatrix.h"
 #include <array>
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
+
+typedef float GLfloat;
+typedef unsigned GLenum;
+typedef unsigned GLuint;
 
 // TextureMapper is a mechanism that enables hardware acceleration of CSS animations (accelerated compositing) without
 // a need for a platform specific scene-graph library like CoreAnimation.

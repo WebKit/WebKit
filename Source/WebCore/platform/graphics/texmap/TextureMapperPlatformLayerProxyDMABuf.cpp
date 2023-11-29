@@ -30,7 +30,6 @@
 #if USE(COORDINATED_GRAPHICS) && USE(TEXTURE_MAPPER_DMABUF)
 
 #include "PlatformDisplay.h"
-#include "TextureMapperGLHeaders.h"
 #include "TextureMapperLayer.h"
 #include <fcntl.h>
 #include <initializer_list>

@@ -35,7 +35,6 @@ typedef uint64_t GLNativeWindowType;
 struct wpe_renderer_backend_egl_offscreen_target;
 #endif
 
-typedef void* GCGLContext;
 typedef void* EGLConfig;
 typedef void* EGLContext;
 typedef void* EGLDisplay;
@@ -70,7 +69,7 @@ public:
     WEBCORE_EXPORT bool makeContextCurrent();
     bool unmakeContextCurrent();
     WEBCORE_EXPORT void swapBuffers();
-    GCGLContext platformContext() const;
+    EGLContext platformContext() const;
 
     struct GLExtensions {
         bool OES_texture_npot { false };

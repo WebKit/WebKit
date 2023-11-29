@@ -31,6 +31,13 @@
 #include "FloatRect.h"
 #include "NotImplemented.h"
 
+#if USE(LIBEPOXY)
+#include <epoxy/gl.h>
+#else
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#endif
+
 namespace WebCore {
 
 TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(RefPtr<BitmapTexture>&& texture, OptionSet<TextureMapperFlags> flags)
@@ -41,12 +48,12 @@ TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(RefPtr<Bitmap
 {
 }
 
-TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(GLuint textureID, const IntSize& size, OptionSet<TextureMapperFlags> flags, GLint internalFormat)
+TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(GLuint textureID, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::optional<GLint> internalFormat)
     : TextureMapperPlatformLayerBuffer({ RGBTexture { textureID } }, size, flags, internalFormat)
 {
 }
 
-TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(TextureVariant&& variant, const IntSize& size, OptionSet<TextureMapperFlags> flags, GLint internalFormat)
+TextureMapperPlatformLayerBuffer::TextureMapperPlatformLayerBuffer(TextureVariant&& variant, const IntSize& size, OptionSet<TextureMapperFlags> flags, std::optional<GLint> internalFormat)
     : m_variant(WTFMove(variant))
     , m_size(size)
     , m_internalFormat(internalFormat)
@@ -59,9 +66,9 @@ TextureMapperPlatformLayerBuffer::~TextureMapperPlatformLayerBuffer()
 {
 }
 
-bool TextureMapperPlatformLayerBuffer::canReuseWithoutReset(const IntSize& size, GLint internalFormat)
+bool TextureMapperPlatformLayerBuffer::canReuseWithoutReset(const IntSize& size)
 {
-    return m_texture && (m_texture->size() == size) && (m_texture->internalFormat() == internalFormat || internalFormat == GL_DONT_CARE);
+    return m_texture && m_texture->size() == size;
 }
 
 std::unique_ptr<TextureMapperPlatformLayerBuffer> TextureMapperPlatformLayerBuffer::clone()

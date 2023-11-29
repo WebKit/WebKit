@@ -20,7 +20,6 @@
 #include "GLContext.h"
 
 #if USE(EGL)
-#include "GraphicsContextGL.h"
 #include "Logging.h"
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Vector.h>
@@ -466,7 +465,7 @@ void GLContext::swapBuffers()
     eglSwapBuffers(m_display.eglDisplay(), m_surface);
 }
 
-GCGLContext GLContext::platformContext() const
+EGLContext GLContext::platformContext() const
 {
     return m_context;
 }

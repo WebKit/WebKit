@@ -135,7 +135,7 @@ std::unique_ptr<TextureMapperPlatformLayerBuffer> GstVideoFrameHolder::platformL
 
 #if USE(GSTREAMER_GL)
     if (m_textureTarget == GST_GL_TEXTURE_TARGET_EXTERNAL_OES)
-        return makeUnique<Buffer>(Buffer::TextureVariant { Buffer::ExternalOESTexture { m_textureID } }, m_size, m_flags, GL_DONT_CARE);
+        return makeUnique<Buffer>(Buffer::TextureVariant { Buffer::ExternalOESTexture { m_textureID } }, m_size, m_flags, std::nullopt);
 #endif
 
     if ((GST_VIDEO_INFO_IS_RGB(&m_videoFrame.info) && GST_VIDEO_INFO_N_PLANES(&m_videoFrame.info) == 1))

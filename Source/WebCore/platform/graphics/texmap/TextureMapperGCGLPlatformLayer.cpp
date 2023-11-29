@@ -27,7 +27,6 @@
 #include "BitmapTexture.h"
 #include "GLContext.h"
 #include "TextureMapperFlags.h"
-#include "TextureMapperGLHeaders.h"
 #include "TextureMapperPlatformLayerBuffer.h"
 #include "TextureMapperPlatformLayerProxy.h"
 
