@@ -136,6 +136,10 @@ ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGloba
     if (!sourceDocument)
         return { };
 
+    RefPtr sourceFrame = incumbentWindow.frame();
+    if (!sourceFrame)
+        return { };
+
     auto targetSecurityOrigin = createTargetOriginForPostMessage(options.targetOrigin, *sourceDocument);
     if (targetSecurityOrigin.hasException())
         return targetSecurityOrigin.releaseException();
@@ -159,7 +163,7 @@ ExceptionOr<void> RemoteDOMWindow::postMessage(JSC::JSGlobalObject& lexicalGloba
 
     MessageWithMessagePorts messageWithPorts { messageData.releaseReturnValue(), disentangledPorts.releaseReturnValue() };
     if (auto* remoteFrame = frame())
-        remoteFrame->client().postMessageToRemote(remoteFrame->frameID(), sourceOrigin, target, messageWithPorts);
+        remoteFrame->client().postMessageToRemote(sourceFrame->frameID(), sourceOrigin, remoteFrame->frameID(), target, messageWithPorts);
     return { };
 }
 

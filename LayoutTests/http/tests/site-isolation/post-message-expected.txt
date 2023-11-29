@@ -7,4 +7,5 @@ PASS successfullyParsed is true
 TEST COMPLETE
 PASS received 'iframe received hello' from http://localhost:8000
 PASS received 'iframe received world' from http://localhost:8000
+PASS received 'iframe received sending to event source' from http://localhost:8000
 

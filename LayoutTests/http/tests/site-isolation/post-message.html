@@ -10,7 +10,8 @@ let messageCount = 0;
 addEventListener("message", (event) => {
     testPassed("received '" + event.data + "' from " + event.origin);
     messageCount = messageCount + 1;
-    if (messageCount == 2) { testRunner.notifyDone() }
+    if (messageCount == 2) { event.source.postMessage("sending to event source", "*") }
+    if (messageCount == 3) { testRunner.notifyDone() }
 });
 
 onload = ()=>{

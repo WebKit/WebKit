@@ -1364,29 +1364,32 @@ void WebProcess::setEnhancedAccessibility(bool flag)
     WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility(flag);
 }
 
-void WebProcess::remotePostMessage(WebCore::FrameIdentifier identifier, const String& sourceOrigin, std::optional<WebCore::SecurityOriginData> target, const WebCore::MessageWithMessagePorts& message)
+void WebProcess::remotePostMessage(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts& message)
 {
-    RefPtr webFrame = WebProcess::singleton().webFrame(identifier);
-    if (!webFrame)
+    RefPtr targetFrame = WebProcess::singleton().webFrame(target);
+    if (!targetFrame)
         return;
 
-    if (!webFrame->coreLocalFrame())
+    if (!targetFrame->coreLocalFrame())
         return;
 
-    RefPtr domWindow = webFrame->coreLocalFrame()->window();
-    if (!domWindow)
+    RefPtr targetWindow = targetFrame->coreLocalFrame()->window();
+    if (!targetWindow)
         return;
 
-    RefPtr frame = domWindow->frame();
-    if (!frame)
+    RefPtr targetCoreFrame = targetWindow->frame();
+    if (!targetCoreFrame)
         return;
 
-    auto& script = frame->script();
+    RefPtr sourceFrame = WebProcess::singleton().webFrame(source);
+    RefPtr sourceWindow = sourceFrame && sourceFrame->coreFrame() ? &sourceFrame->coreFrame()->windowProxy() : nullptr;
+
+    auto& script = targetCoreFrame->script();
     auto globalObject = script.globalObject(WebCore::mainThreadNormalWorld());
     if (!globalObject)
         return;
 
-    domWindow->postMessageFromRemoteFrame(*globalObject, sourceOrigin, target, message);
+    targetWindow->postMessageFromRemoteFrame(*globalObject, WTFMove(sourceWindow), sourceOrigin, WTFMove(targetOrigin), message);
 }
 
 void WebProcess::renderTreeAsText(WebCore::FrameIdentifier frameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior, CompletionHandler<void(String&&)>&& completionHandler)
