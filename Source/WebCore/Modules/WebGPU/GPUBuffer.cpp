@@ -145,6 +145,9 @@ void GPUBuffer::internalUnmap(ScriptExecutionContext& scriptExecutionContext)
 
 void GPUBuffer::destroy(ScriptExecutionContext& scriptExecutionContext)
 {
+    if (!m_bufferSize)
+        return;
+
     internalUnmap(scriptExecutionContext);
     m_bufferSize = 0;
     m_backing->destroy();
