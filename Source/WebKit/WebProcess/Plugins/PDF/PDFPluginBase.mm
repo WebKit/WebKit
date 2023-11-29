@@ -244,7 +244,7 @@ void PDFPluginBase::visibilityDidChange(bool visible)
     if (!m_frame || !hudEnabled())
         return;
     if (visible)
-        m_frame->page()->createPDFHUD(*this, frameForHUD());
+        m_frame->page()->createPDFHUD(*this, frameForHUDInRootViewCoordinates());
     else
         m_frame->page()->removePDFHUD(*this);
 #endif
@@ -263,39 +263,19 @@ IntPoint PDFPluginBase::convertFromRootViewToPlugin(const IntPoint& point) const
     return m_rootViewToPluginTransform.mapPoint(point);
 }
 
-IntPoint PDFPluginBase::convertFromPluginToPDFView(const IntPoint& point) const
+IntRect PDFPluginBase::convertFromRootViewToPlugin(const IntRect& rect) const
 {
-    return IntPoint(point.x(), size().height() - point.y());
+    return m_rootViewToPluginTransform.mapRect(rect);
 }
 
-IntPoint PDFPluginBase::convertFromPDFViewToRootView(const IntPoint& point) const
+IntPoint PDFPluginBase::convertFromPluginToRootView(const IntPoint& point) const
 {
-    IntPoint pointInPluginCoordinates(point.x(), size().height() - point.y());
-    return valueOrDefault(m_rootViewToPluginTransform.inverse()).mapPoint(pointInPluginCoordinates);
+    return m_rootViewToPluginTransform.inverse()->mapPoint(point);
 }
 
-IntRect PDFPluginBase::convertFromPDFViewToRootView(const IntRect& rect) const
+IntRect PDFPluginBase::convertFromPluginToRootView(const IntRect& rect) const
 {
-    IntRect rectInPluginCoordinates(rect.x(), rect.y(), rect.width(), rect.height());
-    return valueOrDefault(m_rootViewToPluginTransform.inverse()).mapRect(rectInPluginCoordinates);
-}
-
-IntPoint PDFPluginBase::convertFromRootViewToPDFView(const IntPoint& point) const
-{
-    IntPoint pointInPluginCoordinates = m_rootViewToPluginTransform.mapPoint(point);
-    return IntPoint(pointInPluginCoordinates.x(), size().height() - pointInPluginCoordinates.y());
-}
-
-FloatRect PDFPluginBase::convertFromPDFViewToScreen(const FloatRect& rect) const
-{
-    return WebCore::Accessibility::retrieveValueFromMainThread<WebCore::FloatRect>([&] () -> WebCore::FloatRect {
-        FloatRect updatedRect = rect;
-        updatedRect.setLocation(convertFromPDFViewToRootView(IntPoint(updatedRect.location())));
-        CheckedPtr page = this->page();
-        if (!page)
-            return { };
-        return page->chrome().rootViewToScreen(enclosingIntRect(updatedRect));
-    });
+    return m_rootViewToPluginTransform.inverse()->mapRect(rect);
 }
 
 IntRect PDFPluginBase::boundsOnScreen() const
@@ -545,12 +525,12 @@ void PDFPluginBase::updatePDFHUDLocation()
 {
     if (isLocked() || !m_frame || !m_frame->page())
         return;
-    m_frame->protectedPage()->updatePDFHUDLocation(*this, frameForHUD());
+    m_frame->protectedPage()->updatePDFHUDLocation(*this, frameForHUDInRootViewCoordinates());
 }
 
-IntRect PDFPluginBase::frameForHUD() const
+IntRect PDFPluginBase::frameForHUDInRootViewCoordinates() const
 {
-    return convertFromPDFViewToRootView(IntRect(IntPoint(), size()));
+    return convertFromPluginToRootView(IntRect(IntPoint(), size()));
 }
 
 bool PDFPluginBase::hudEnabled() const

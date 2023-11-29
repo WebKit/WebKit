@@ -145,13 +145,10 @@ public:
     void streamDidFinishLoading();
     void streamDidFail();
 
-    // FIXME: Rationalize these (both names and behavior).
     WebCore::IntPoint convertFromRootViewToPlugin(const WebCore::IntPoint&) const;
-    WebCore::IntPoint convertFromPluginToPDFView(const WebCore::IntPoint&) const;
-    WebCore::IntPoint convertFromPDFViewToRootView(const WebCore::IntPoint&) const;
-    WebCore::IntRect convertFromPDFViewToRootView(const WebCore::IntRect&) const;
-    WebCore::IntPoint convertFromRootViewToPDFView(const WebCore::IntPoint&) const;
-    WebCore::FloatRect convertFromPDFViewToScreen(const WebCore::FloatRect&) const;
+    WebCore::IntRect convertFromRootViewToPlugin(const WebCore::IntRect&) const;
+    WebCore::IntPoint convertFromPluginToRootView(const WebCore::IntPoint&) const;
+    WebCore::IntRect convertFromPluginToRootView(const WebCore::IntRect&) const;
     WebCore::IntRect boundsOnScreen() const;
 
     WebCore::ScrollPosition scrollPositionForTesting() const { return scrollPosition(); }
@@ -227,7 +224,7 @@ protected:
     // HUD.
 #if ENABLE(PDF_HUD)
     void updatePDFHUDLocation();
-    WebCore::IntRect frameForHUD() const;
+    WebCore::IntRect frameForHUDInRootViewCoordinates() const;
     bool hudEnabled() const;
 #endif
 
