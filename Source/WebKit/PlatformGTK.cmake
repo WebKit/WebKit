@@ -324,15 +324,6 @@ list(APPEND WebKit_INTERFACE_INCLUDE_DIRECTORIES
     ${WebKitGTK_FRAMEWORK_HEADERS_DIR}/webkitgtk-web-process-extension
 )
 
-if (USE_WPE_RENDERER)
-    list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
-        "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
-    )
-    list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES
-        ${WPEBACKEND_FDO_INCLUDE_DIRS}
-    )
-endif ()
-
 set(WebKitCommonIncludeDirectories ${WebKit_PRIVATE_INCLUDE_DIRECTORIES})
 set(WebKitCommonSystemIncludeDirectories ${WebKit_SYSTEM_INCLUDE_DIRECTORIES})
 
@@ -347,13 +338,6 @@ list(APPEND NetworkProcess_SOURCES
 list(APPEND GPUProcess_SOURCES
     GPUProcess/EntryPoint/unix/GPUProcessMain.cpp
 )
-
-if (USE_WPE_RENDERER)
-    list(APPEND WebKit_LIBRARIES
-      WPE::libwpe
-      ${WPEBACKEND_FDO_LIBRARIES}
-    )
-endif ()
 
 if (USE_LIBDRM)
     list(APPEND WebKit_SYSTEM_INCLUDE_DIRECTORIES

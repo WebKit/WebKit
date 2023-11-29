@@ -602,13 +602,6 @@ bool PageClientImpl::effectiveAppearanceIsDark() const
     return false;
 }
 
-#if USE(WPE_RENDERER)
-UnixFileDescriptor PageClientImpl::hostFileDescriptor()
-{
-    return { webkitWebViewBaseRenderHostFileDescriptor(WEBKIT_WEB_VIEW_BASE(m_viewWidget)), UnixFileDescriptor::Adopt };
-}
-#endif
-
 void PageClientImpl::didChangeWebPageID() const
 {
     if (WEBKIT_IS_WEB_VIEW(m_viewWidget))

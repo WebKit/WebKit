@@ -71,10 +71,6 @@
 #include <WebCore/PlatformDisplay.h>
 #endif
 
-#if PLATFORM(WAYLAND)
-#include <WebCore/PlatformDisplayLibWPE.h>
-#endif
-
 #if PLATFORM(IOS_FAMILY)
 #include "ViewUpdateDispatcher.h"
 #endif

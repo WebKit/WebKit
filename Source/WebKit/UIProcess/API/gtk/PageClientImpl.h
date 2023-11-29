@@ -168,10 +168,6 @@ private:
 
     bool effectiveAppearanceIsDark() const override;
 
-#if USE(WPE_RENDERER)
-    UnixFileDescriptor hostFileDescriptor() override;
-#endif
-
     void didChangeWebPageID() const override;
 
     void makeViewBlank(bool) override;

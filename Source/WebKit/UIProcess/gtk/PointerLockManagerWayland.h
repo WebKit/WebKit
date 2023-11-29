@@ -30,7 +30,6 @@
 #if PLATFORM(WAYLAND)
 
 #include "relative-pointer-unstable-v1-client-protocol.h"
-#include <WebCore/WlUniquePtr.h>
 #include <wayland-client.h>
 
 struct zwp_locked_pointer_v1;
@@ -53,7 +52,7 @@ private:
     bool lock() override;
     bool unlock() override;
 
-    WebCore::WlUniquePtr<struct wl_registry> m_registry;
+    struct wl_registry* m_registry { nullptr };
     struct zwp_pointer_constraints_v1* m_pointerConstraints { nullptr };
     struct zwp_locked_pointer_v1* m_lockedPointer { nullptr };
     struct zwp_relative_pointer_manager_v1* m_relativePointerManager { nullptr };

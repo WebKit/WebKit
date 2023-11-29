@@ -27,9 +27,6 @@
 #define __GBM__ 1
 #include "EpoxyEGL.h"
 #else
-#if PLATFORM(WAYLAND)
-#include <wayland-egl.h>
-#endif
 #include <EGL/egl.h>
 #endif
 

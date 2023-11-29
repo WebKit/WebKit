@@ -71,7 +71,6 @@ platform/graphics/PlatformDisplay.cpp @no-unify
 platform/graphics/angle/PlatformDisplayANGLE.cpp @no-unify
 
 platform/graphics/egl/GLContext.cpp @no-unify
-platform/graphics/egl/GLContextLibWPE.cpp @no-unify
 platform/graphics/egl/PlatformDisplaySurfaceless.cpp @no-unify
 
 platform/graphics/gbm/GBMBufferSwapchain.cpp
@@ -83,8 +82,6 @@ platform/graphics/gtk/ColorGtk.cpp
 platform/graphics/gtk/GdkCairoUtilities.cpp
 platform/graphics/gtk/ImageGtk.cpp
 platform/graphics/gtk/SystemFontDatabaseGTK.cpp
-
-platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 
 platform/graphics/opentype/OpenTypeVerticalData.cpp
 

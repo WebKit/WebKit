@@ -30,7 +30,6 @@
       <dep package="openjpeg"/>
       <dep package="pango"/>
       <dep package="shared-mime-info"/>
-      <dep package="wpebackend-fdo"/>
       <dep package="webkit-gstreamer-testing-dependencies"/>
       <dep package="libsoup"/>
       <if condition-set="linux">
@@ -84,8 +83,6 @@
       href="http://webkitgtk.org/jhbuild_mirror/"/>
   <repository type="tarball" name="gnupg.org"
       href="https://www.gnupg.org/ftp/gcrypt/"/>
-  <repository type="tarball" name="wpewebkit"
-      href="https://wpewebkit.org/releases/"/>
   <repository type="tarball" name="downloads.videolan.org"
       href="https://downloads.videolan.org"/>
 
@@ -485,24 +482,6 @@
             version="2.3.0"
             hash="sha256:3dc787c1bb6023ba846c2a0d9b1f6e179f1cd255172bde9eb75b01f1e6c7d71a"/>
   </cmake>
-
-  <cmake id="libwpe">
-    <branch repo="github-tarball"
-            module="WebPlatformForEmbedded/libwpe/releases/download/${version}/libwpe-${version}.tar.xz"
-            version="1.14.1"
-            hash="sha256:b1d0cdcf0f8dbb494e65b0f7913e357106da9a0d57f4fbb7b9d1238a6dbe9ade"/>
-  </cmake>
-
-  <meson id="wpebackend-fdo">
-    <dependencies>
-      <dep package="libwpe"/>
-    </dependencies>
-    <branch repo="github-tarball"
-            module="Igalia/WPEBackend-fdo/releases/download/${version}/wpebackend-fdo-${version}.tar.xz"
-            version="1.14.2"
-            hash="sha256:93c9766ae9864eeaeaee2b0a74f22cbca08df42c1a1bdb55b086f2528e380d38">
-    </branch>
-  </meson>
 
   <!-- Dependencies listed below this point are not thought to affect test results, and are only
        included because they themselves depend on other dependencies built by jhbuild. -->

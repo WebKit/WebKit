@@ -341,20 +341,6 @@ if (USE_OPENGL_OR_ES)
     SET_AND_EXPOSE_TO_BUILD(USE_NICOSIA ON)
     SET_AND_EXPOSE_TO_BUILD(USE_ANGLE ${ENABLE_WEBGL})
 
-    if (ENABLE_WAYLAND_TARGET)
-        find_package(WPE 1.3.0)
-        if (NOT WPE_FOUND)
-            message(FATAL_ERROR "libwpe is required for ENABLE_WAYLAND_TARGET")
-        endif ()
-
-        find_package(WPEBackend_fdo 1.6.0)
-        if (NOT WPEBACKEND_FDO_FOUND)
-            message(FATAL_ERROR "WPEBackend-fdo is required for ENABLE_WAYLAND_TARGET")
-        endif ()
-
-        SET_AND_EXPOSE_TO_BUILD(USE_WPE_RENDERER ON)
-    endif ()
-
     if (USE_GBM)
         find_package(GBM)
         if (NOT GBM_FOUND)
@@ -473,7 +459,6 @@ endif ()
 
 # Using DERIVED_SOURCES_DIR is deprecated
 set(DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources")
-set(DERIVED_SOURCES_WPETOOLINGBACKENDS_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WPEToolingBackends")
 
 # Using FORWARDING_HEADERS_DIR is deprecated
 set(FORWARDING_HEADERS_DIR ${DERIVED_SOURCES_DIR}/ForwardingHeaders)
