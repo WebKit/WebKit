@@ -236,6 +236,53 @@ function test()
         },
     });
 
+
+    suite.addTestCase({
+        name: "AwaitCustomPromise",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: `function() {
+    class Promise {
+        then() { TestPage.log("FAIL: Should not invoke custom promise then."); }
+        catch() { TestPage.log("FAIL: Should not invoke custom promise catch."); }
+    }
+    if (Promise === globalThis.Promise)
+        TestPage.log("FAIL: Using the wrong promise.");
+    return new Promise;
+}`,
+                awaitPromise: true,
+                returnByValue: false,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectFalse(result.wasThrown, "Should not throw an error.");
+            let preview = await RuntimeAgent.getPreview.invoke({objectId: result.result.objectId});
+            InspectorTest.log(preview);
+        },
+    });
+
+    suite.addTestCase({
+        name: "AwaitThenable",
+        async test() {
+            let thisObject = await RuntimeAgent.evaluate.invoke({expression: "myObject"});
+            let result = await RuntimeAgent.callFunctionOn.invoke({
+                functionDeclaration: `function() {
+    class Thenable {
+        then() { TestPage.log("FAIL: Should not invoke thenable then."); }
+        catch() { TestPage.log("FAIL: Should not invoke thenable catch."); }
+    }
+    return new Thenable;
+}`,
+                awaitPromise: true,
+                returnByValue: false,
+                objectId: thisObject.result.objectId,
+            });
+            InspectorTest.expectFalse(result.wasThrown, "Should not throw an error.");
+            let preview = await RuntimeAgent.getPreview.invoke({objectId: result.result.objectId});
+            InspectorTest.log(preview);
+        },
+    });
+
     suite.runTestCasesAndFinish();
 }
 </script>
