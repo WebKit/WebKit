@@ -231,6 +231,7 @@ $(PROJECT_DIR)/Shared/Extensions/WebExtensionControllerParameters.serialization.
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionDynamicScripts.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionEventListenerType.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionFrameParameters.serialization.in
+$(PROJECT_DIR)/Shared/Extensions/WebExtensionMenuItem.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionMessageSenderParameters.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTab.serialization.in
 $(PROJECT_DIR)/Shared/Extensions/WebExtensionTabParameters.serialization.in
@@ -455,6 +456,7 @@ $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPICommands.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIEvent.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIExtension.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPILocalization.idl
+$(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIMenus.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPINamespace.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPINotifications.idl
 $(PROJECT_DIR)/WebProcess/Extensions/Interfaces/WebExtensionAPIPermissions.idl

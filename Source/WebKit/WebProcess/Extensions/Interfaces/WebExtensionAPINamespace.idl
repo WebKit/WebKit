@@ -36,11 +36,15 @@
 
     [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPICommands commands;
 
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIMenus contextMenus;
+
     readonly attribute WebExtensionAPIExtension extension;
 
     readonly attribute WebExtensionAPILocalization i18n;
 
     readonly attribute WebExtensionAPIRuntime runtime;
+
+    [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPIMenus menus;
 
     [MainWorldOnly, Dynamic] readonly attribute WebExtensionAPINotifications notifications;
 

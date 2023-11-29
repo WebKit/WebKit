@@ -40,6 +40,16 @@
 
 namespace WebKit {
 
+WebExtensionCallbackHandler::WebExtensionCallbackHandler(JSValue *callbackFunction)
+    : m_callbackFunction(JSValueToObject(callbackFunction.context.JSGlobalContextRef, callbackFunction.JSValueRef, nullptr))
+    , m_globalContext(callbackFunction.context.JSGlobalContextRef)
+{
+    ASSERT(callbackFunction);
+    ASSERT(callbackFunction._isFunction);
+
+    JSValueProtect(m_globalContext.get(), m_callbackFunction);
+}
+
 WebExtensionCallbackHandler::WebExtensionCallbackHandler(JSContextRef context, JSObjectRef callbackFunction, WebExtensionAPIRuntimeBase& runtime)
     : m_callbackFunction(callbackFunction)
     , m_globalContext(JSContextGetGlobalContext(context))

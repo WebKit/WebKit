@@ -132,6 +132,9 @@ private:
     void addPopupPageIdentifier(WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>);
     void addTabPageIdentifier(WebCore::PageIdentifier, WebExtensionTabIdentifier, std::optional<WebExtensionWindowIdentifier>);
 
+    // Menus
+    void dispatchMenusClickedEvent(const WebExtensionMenuItemParameters&, bool wasChecked, const WebExtensionMenuItemContextParameters&, const std::optional<WebExtensionTabParameters>&);
+
     // Permissions
     void dispatchPermissionsEvent(WebExtensionEventListenerType, HashSet<String> permissions, HashSet<String> origins);
 

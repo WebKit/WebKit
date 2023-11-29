@@ -48,6 +48,7 @@
 #import "WKWebsiteDataStorePrivate.h"
 #import "WebExtensionAction.h"
 #import "WebExtensionContextProxyMessages.h"
+#import "WebExtensionMenuItemContextParameters.h"
 #import "WebExtensionTab.h"
 #import "WebExtensionURLSchemeHandler.h"
 #import "WebExtensionWindow.h"
@@ -81,7 +82,7 @@ static NSString * const lastSeenVersionStateKey = @"LastSeenVersion";
 static NSString * const lastLoadedDNRHashStateKey = @"LastLoadedDNRHash";
 
 // Update this value when any changes are made to the WebExtensionEventListenerType enum.
-static constexpr NSInteger currentBackgroundContentListenerStateVersion = 2;
+static constexpr NSInteger currentBackgroundContentListenerStateVersion = 3;
 
 // Update this value when any changes are made to the rule translation logic in _WKWebExtensionDeclarativeNetRequestRule.
 static constexpr NSInteger currentDeclarativeNetRequestRuleTranslatorVersion = 1;
@@ -1865,6 +1866,19 @@ const WebExtensionContext::CommandsVector& WebExtensionContext::commands()
     return m_commands;
 }
 
+WebExtensionCommand* WebExtensionContext::command(const String& commandIdentifier)
+{
+    if (commandIdentifier.isEmpty())
+        return nullptr;
+
+    for (auto& command : commands()) {
+        if (command->identifier() == commandIdentifier)
+            return command.ptr();
+    }
+
+    return nullptr;
+}
+
 void WebExtensionContext::performCommand(WebExtensionCommand& command, UserTriggered userTriggered)
 {
     ASSERT(isLoaded());
@@ -1883,6 +1897,43 @@ void WebExtensionContext::performCommand(WebExtensionCommand& command, UserTrigg
         userGesturePerformed(*activeTab);
 
     fireCommandEventIfNeeded(command, activeTab.get());
+}
+
+NSArray *WebExtensionContext::platformMenuItems(const WebExtensionTab& tab) const
+{
+    WebExtensionMenuItemContextParameters contextParameters;
+    contextParameters.types = WebExtensionMenuItemContextType::Tab;
+    contextParameters.tabIdentifier = tab.identifier();
+
+    return WebExtensionMenuItem::matchingPlatformMenuItems(mainMenuItems(), contextParameters);
+}
+
+WebExtensionMenuItem* WebExtensionContext::menuItem(const String& identifier) const
+{
+    if (identifier.isEmpty())
+        return nullptr;
+    return m_menuItems.get(identifier);
+}
+
+void WebExtensionContext::performMenuItem(WebExtensionMenuItem& menuItem, const WebExtensionMenuItemContextParameters& contextParameters, UserTriggered userTriggered)
+{
+    ASSERT(isLoaded());
+    if (!isLoaded())
+        return;
+
+    if (contextParameters.tabIdentifier) {
+        RefPtr activeTab = getTab(contextParameters.tabIdentifier.value());
+        if (activeTab && userTriggered == UserTriggered::Yes)
+            userGesturePerformed(*activeTab);
+    }
+
+    if (RefPtr command = menuItem.command()) {
+        performCommand(*command);
+        return;
+    }
+
+    bool wasChecked = menuItem.toggleCheckedIfNeeded(contextParameters);
+    fireMenusClickedEventIfNeeded(menuItem, wasChecked, contextParameters);
 }
 
 void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)

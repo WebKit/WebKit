@@ -116,6 +116,16 @@ WebExtensionAPILocalization& WebExtensionAPINamespace::i18n()
     return *m_i18n;
 }
 
+WebExtensionAPIMenus& WebExtensionAPINamespace::menus()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/menus
+
+    if (!m_menus)
+        m_menus = WebExtensionAPIMenus::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_menus;
+}
+
 WebExtensionAPINotifications& WebExtensionAPINamespace::notifications()
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/notifications

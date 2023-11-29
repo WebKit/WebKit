@@ -115,7 +115,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 
 /*!
  @abstract The active errors for the extension.
- @discussion This property returns an array of NSError objects if there are any errors, or an empty array if there are no errors.
+ @discussion This property holds an array of error objects if there are any errors, or an empty array if there are no errors.
  */
 @property (nonatomic, readonly, copy) NSArray<NSError *> *errors;
 

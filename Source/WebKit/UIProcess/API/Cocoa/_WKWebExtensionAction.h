@@ -33,8 +33,10 @@
 
 #if TARGET_OS_IPHONE
 @class UIImage;
+@class UIMenuElement;
 #else
 @class NSImage;
+@class NSMenuItem;
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -92,6 +94,19 @@ NS_SWIFT_NAME(_WKWebExtension.Action)
 
 /*! @abstract A Boolean value indicating whether the action is enabled. */
 @property (nonatomic, readonly, getter=isEnabled) BOOL enabled;
+
+/*!
+ @abstract An array of menu items provided by the extension for this action.
+ @discussion This property holds an array of menu items supplied by the extension, allowing the user to perform extension-defined actions.
+ The app is responsible for displaying these menu items, typically in a context menu or a long-press menu on the action in action sheets or toolbars.
+ @note The properties of the menu items, including the items themselves, can change dynamically. Therefore, the app should fetch the menu items
+ on demand immediately before showing them, to ensure that the most current and relevant items are presented.
+ */
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly, copy) NSArray<UIMenuElement *> *menuItems;
+#else
+@property (nonatomic, readonly, copy) NSArray<NSMenuItem *> *menuItems;
+#endif
 
 /*!
  @abstract A Boolean value indicating whether the action has a popup.

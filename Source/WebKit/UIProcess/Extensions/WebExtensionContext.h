@@ -42,6 +42,7 @@
 #include "WebExtensionFrameIdentifier.h"
 #include "WebExtensionFrameParameters.h"
 #include "WebExtensionMatchPattern.h"
+#include "WebExtensionMenuItem.h"
 #include "WebExtensionMessagePort.h"
 #include "WebExtensionPortChannelIdentifier.h"
 #include "WebExtensionTab.h"
@@ -87,6 +88,7 @@ namespace WebKit {
 class WebExtension;
 class WebUserContentControllerProxy;
 struct WebExtensionContextParameters;
+struct WebExtensionMenuItemContextParameters;
 
 enum class WebExtensionContextInstallReason : uint8_t {
     None,
@@ -148,6 +150,9 @@ public:
     using PageIdentifierTuple = std::tuple<WebCore::PageIdentifier, std::optional<WebExtensionTabIdentifier>, std::optional<WebExtensionWindowIdentifier>>;
 
     using CommandsVector = Vector<Ref<WebExtensionCommand>>;
+
+    using MenuItemVector = Vector<Ref<WebExtensionMenuItem>>;
+    using MenuItemMap = HashMap<String, Ref<WebExtensionMenuItem>>;
 
     enum class EqualityOnly : bool { No, Yes };
     enum class WindowIsClosing : bool { No, Yes };
@@ -314,7 +319,14 @@ public:
     void performAction(WebExtensionTab*, UserTriggered = UserTriggered::No);
 
     const CommandsVector& commands();
+    WebExtensionCommand* command(const String& identifier);
     void performCommand(WebExtensionCommand&, UserTriggered = UserTriggered::No);
+
+    NSArray *platformMenuItems(const WebExtensionTab&) const;
+
+    const MenuItemVector& mainMenuItems() const { return m_mainMenuItems; }
+    WebExtensionMenuItem* menuItem(const String& identifier) const;
+    void performMenuItem(WebExtensionMenuItem&, const WebExtensionMenuItemContextParameters&, UserTriggered = UserTriggered::No);
 
     void userGesturePerformed(WebExtensionTab&);
     bool hasActiveUserGesture(WebExtensionTab&) const;
@@ -441,8 +453,8 @@ private:
 
     // Commands APIs
     void commandsGetAll(CompletionHandler<void(Vector<WebExtensionCommandParameters>)>&&);
-    void fireCommandEventIfNeeded(WebExtensionCommand&, WebExtensionTab*);
-    void fireCommandChangedEventIfNeeded(WebExtensionCommand&, const String& oldShortcut);
+    void fireCommandEventIfNeeded(const WebExtensionCommand&, WebExtensionTab*);
+    void fireCommandChangedEventIfNeeded(const WebExtensionCommand&, const String& oldShortcut);
 
     // Event APIs
     void addListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType);
@@ -450,6 +462,13 @@ private:
 
     // Extension APIs
     void extensionIsAllowedIncognitoAccess(CompletionHandler<void(bool)>&&);
+
+    // Menus APIs
+    void menusCreate(const WebExtensionMenuItemParameters&, CompletionHandler<void(std::optional<String>)>&&);
+    void menusUpdate(const String& identifier, const WebExtensionMenuItemParameters&, CompletionHandler<void(std::optional<String>)>&&);
+    void menusRemove(const String& identifier, CompletionHandler<void(std::optional<String>)>&&);
+    void menusRemoveAll(CompletionHandler<void(std::optional<String>)>&&);
+    void fireMenusClickedEventIfNeeded(const WebExtensionMenuItem&, bool wasChecked, const WebExtensionMenuItemContextParameters&);
 
     // Permissions APIs
     void permissionsGetAll(CompletionHandler<void(Vector<String> permissions, Vector<String> origins)>&&);
@@ -624,6 +643,9 @@ private:
     bool m_populatedCommands { false };
 
     RetainPtr<WKContentRuleListStore> m_declarativeNetRequestRuleStore;
+
+    MenuItemMap m_menuItems;
+    MenuItemVector m_mainMenuItems;
 };
 
 template<typename T>

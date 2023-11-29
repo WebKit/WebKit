@@ -37,6 +37,12 @@
 @class _WKWebExtensionCommand;
 @class _WKWebExtensionController;
 
+#if TARGET_OS_IPHONE
+@class UIMenuElement;
+#else
+@class NSMenuItem;
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 /*! @abstract Indicates a @link WKWebExtensionContext @/link error. */
@@ -512,7 +518,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 
 /*!
  @abstract An array of commands associated with the extension context.
- @discussion This property returns an array of all the commands currently available within the extension context. It allows for inspection of the
+ @discussion This property holds an array of all the commands currently available within the extension context. It allows for inspection of the
  commands that have been registered and their current configuration.
  @seealso performCommand:
  */
@@ -524,6 +530,20 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @discussion This method performs the given command as if it was triggered by a user gesture within the context of the focused window and active tab.
  */
 - (void)performCommand:(_WKWebExtensionCommand *)command;
+
+/*!
+ @abstract Retrieves an array of menu items for a given tab.
+ @param tab The tab for which to retrieve the menu items.
+ @discussion This method returns an array of menu items provided by the extension, allowing the user to perform extension-defined actions on the tab.
+ The app is responsible for displaying these menu items, typically in a context menu or a long-press menu on the tab.
+ @note The properties of the menu items, including the items themselves, can change dynamically. Therefore, the app should fetch the menu items immediately
+ before showing them, to ensure that the most current and relevant items are presented.
+ */
+#if TARGET_OS_IPHONE
+- (NSArray<UIMenuElement *> *)menuItemsForTab:(id <_WKWebExtensionTab>)tab;
+#else
+- (NSArray<NSMenuItem *> *)menuItemsForTab:(id <_WKWebExtensionTab>)tab;
+#endif
 
 /*!
  @abstract Should be called by the app when a user gesture is performed in a specific tab.

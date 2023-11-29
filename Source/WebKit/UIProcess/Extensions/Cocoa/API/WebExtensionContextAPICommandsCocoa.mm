@@ -50,7 +50,7 @@ void WebExtensionContext::commandsGetAll(CompletionHandler<void(Vector<WebExtens
     completionHandler(WTFMove(results));
 }
 
-void WebExtensionContext::fireCommandEventIfNeeded(WebExtensionCommand& command, WebExtensionTab* tab)
+void WebExtensionContext::fireCommandEventIfNeeded(const WebExtensionCommand& command, WebExtensionTab* tab)
 {
     constexpr auto type = WebExtensionEventListenerType::CommandsOnCommand;
     wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {
@@ -58,7 +58,7 @@ void WebExtensionContext::fireCommandEventIfNeeded(WebExtensionCommand& command,
     });
 }
 
-void WebExtensionContext::fireCommandChangedEventIfNeeded(WebExtensionCommand& command, const String& oldShortcut)
+void WebExtensionContext::fireCommandChangedEventIfNeeded(const WebExtensionCommand& command, const String& oldShortcut)
 {
     constexpr auto type = WebExtensionEventListenerType::CommandsOnChanged;
     wakeUpBackgroundContentIfNecessaryToFireEvents({ type }, [&] {

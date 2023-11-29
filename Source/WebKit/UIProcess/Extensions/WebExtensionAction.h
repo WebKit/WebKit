@@ -98,6 +98,8 @@ public:
     void popupDidClose();
     void closePopupWebView();
 
+    NSArray *platformMenuItems() const;
+
 #ifdef __OBJC__
     _WKWebExtensionAction *wrapper() const { return (_WKWebExtensionAction *)API::ObjectImpl<API::Object::Type::WebExtensionAction>::wrapper(); }
 #endif
