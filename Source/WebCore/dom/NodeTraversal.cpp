@@ -174,14 +174,5 @@ Node* previousPostOrder(const Node& current, const Node* stayWithin)
     return previousAncestorSiblingPostOrder(current, stayWithin);
 }
 
-Node* previousSkippingChildrenPostOrder(const Node& current, const Node* stayWithin)
-{
-    if (&current == stayWithin)
-        return nullptr;
-    if (current.previousSibling())
-        return current.previousSibling();
-    return previousAncestorSiblingPostOrder(current, stayWithin);
-}
-
 }
 }

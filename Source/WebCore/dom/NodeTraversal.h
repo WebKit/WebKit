@@ -55,9 +55,8 @@ Node* previousSkippingChildren(const Node&, const Node* stayWithin = nullptr);
 // Like next, but visits parents after their children.
 Node* nextPostOrder(const Node&, const Node* stayWithin = nullptr);
 
-// Like previous/previousSkippingChildren, but visits parents before their children.
+// Like previous, but visits parents before their children.
 Node* previousPostOrder(const Node&, const Node* stayWithin = nullptr);
-Node* previousSkippingChildrenPostOrder(const Node&, const Node* stayWithin = nullptr);
 
 // Pre-order traversal including the pseudo-elements.
 Node* previousIncludingPseudo(const Node&, const Node* = nullptr);
