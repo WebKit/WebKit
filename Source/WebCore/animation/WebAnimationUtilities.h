@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-enum class PseudoId : uint16_t;
+enum class PseudoId : uint32_t;
 
 class AnimationEventBase;
 class Element;

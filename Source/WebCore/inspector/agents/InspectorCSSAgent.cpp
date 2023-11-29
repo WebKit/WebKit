@@ -402,6 +402,8 @@ std::optional<Protocol::CSS::PseudoId> InspectorCSSAgent::protocolValueForPseudo
         return Protocol::CSS::PseudoId::FirstLine;
     case PseudoId::FirstLetter:
         return Protocol::CSS::PseudoId::FirstLetter;
+    case PseudoId::GrammarError:
+        return Protocol::CSS::PseudoId::GrammarError;
     case PseudoId::Marker:
         return Protocol::CSS::PseudoId::Marker;
     case PseudoId::Backdrop:
@@ -426,6 +428,8 @@ std::optional<Protocol::CSS::PseudoId> InspectorCSSAgent::protocolValueForPseudo
         return Protocol::CSS::PseudoId::ScrollbarTrackPiece;
     case PseudoId::ScrollbarCorner:
         return Protocol::CSS::PseudoId::ScrollbarCorner;
+    case PseudoId::SpellingError:
+        return Protocol::CSS::PseudoId::SpellingError;
     case PseudoId::Resizer:
         return Protocol::CSS::PseudoId::Resizer;
     case PseudoId::ViewTransition:

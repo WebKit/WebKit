@@ -182,7 +182,7 @@ enum class PaintType : uint8_t;
 enum class PointerEvents : uint8_t;
 enum class PositionType : uint8_t;
 enum class PrintColorAdjust : bool;
-enum class PseudoId : uint16_t;
+enum class PseudoId : uint32_t;
 enum class QuoteType : uint8_t;
 enum class Resize : uint8_t;
 enum class RubyPosition : uint8_t;
@@ -275,7 +275,7 @@ class CustomPropertyRegistry;
 struct ScopedName;
 }
 
-constexpr auto PublicPseudoIDBits = 14;
+constexpr auto PublicPseudoIDBits = 16;
 constexpr auto TextDecorationLineBits = 4;
 constexpr auto TextTransformBits = 5;
 
@@ -2171,14 +2171,14 @@ private:
         unsigned unicodeBidi : 3; // UnicodeBidi
         unsigned floating : 3; // Float
         unsigned tableLayout : 1; // TableLayoutType
-        unsigned textDecorationLine : TextDecorationLineBits; // Text decorations defined *only* by this element.
 
         unsigned usesViewportUnits : 1;
         unsigned usesContainerUnits : 1;
+        unsigned isUnique : 1; // Style cannot be shared.
+        unsigned textDecorationLine : TextDecorationLineBits; // Text decorations defined *only* by this element.
         unsigned hasExplicitlyInheritedProperties : 1; // Explicitly inherits a non-inherited property.
         unsigned disallowsFastPathInheritance : 1;
         unsigned hasContentNone : 1;
-        unsigned isUnique : 1; // Style cannot be shared.
 
         // Non-property related state bits.
         unsigned emptyState : 1;

@@ -61,7 +61,7 @@ static bool compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder
     //     - any other pseudo-elements not mentioned specifically in this list, sorted in ascending order by the Unicode codepoints that make up each selector
     //     - ::after
     //     - element children
-    enum SortingIndex : uint8_t { NotPseudo, Marker, Before, FirstLetter, FirstLine, Highlight, Scrollbar, Selection, After, Other };
+    enum SortingIndex : uint8_t { NotPseudo, Marker, Before, FirstLetter, FirstLine, GrammarError, Highlight, Scrollbar, Selection, SpellingError, After, Other };
     auto sortingIndex = [](PseudoId pseudoId) -> SortingIndex {
         switch (pseudoId) {
         case PseudoId::None:
@@ -74,12 +74,16 @@ static bool compareDeclarativeAnimationOwningElementPositionsInDocumentTreeOrder
             return FirstLetter;
         case PseudoId::FirstLine:
             return FirstLine;
+        case PseudoId::GrammarError:
+            return GrammarError;
         case PseudoId::Highlight:
             return Highlight;
         case PseudoId::Scrollbar:
             return Scrollbar;
         case PseudoId::Selection:
             return Selection;
+        case PseudoId::SpellingError:
+            return SpellingError;
         case PseudoId::After:
             return After;
         default:
@@ -287,10 +291,12 @@ String pseudoIdAsString(PseudoId pseudoId)
     static NeverDestroyed<const String> before(MAKE_STATIC_STRING_IMPL("::before"));
     static NeverDestroyed<const String> firstLetter(MAKE_STATIC_STRING_IMPL("::first-letter"));
     static NeverDestroyed<const String> firstLine(MAKE_STATIC_STRING_IMPL("::first-line"));
+    static NeverDestroyed<const String> grammarError(MAKE_STATIC_STRING_IMPL("::grammar-error"));
     static NeverDestroyed<const String> highlight(MAKE_STATIC_STRING_IMPL("::highlight"));
     static NeverDestroyed<const String> marker(MAKE_STATIC_STRING_IMPL("::marker"));
     static NeverDestroyed<const String> selection(MAKE_STATIC_STRING_IMPL("::selection"));
     static NeverDestroyed<const String> scrollbar(MAKE_STATIC_STRING_IMPL("::-webkit-scrollbar"));
+    static NeverDestroyed<const String> spellingError(MAKE_STATIC_STRING_IMPL("::spelling-error"));
     static NeverDestroyed<const String> viewTransition(MAKE_STATIC_STRING_IMPL("::view-transition"));
     static NeverDestroyed<const String> viewTransitionGroup(MAKE_STATIC_STRING_IMPL("::view-transition-group"));
     static NeverDestroyed<const String> viewTransitionImagePair(MAKE_STATIC_STRING_IMPL("::view-transition-image-pair"));
@@ -305,6 +311,8 @@ String pseudoIdAsString(PseudoId pseudoId)
         return firstLetter;
     case PseudoId::FirstLine:
         return firstLine;
+    case PseudoId::GrammarError:
+        return grammarError;
     case PseudoId::Highlight:
         return highlight;
     case PseudoId::Marker:
@@ -313,6 +321,8 @@ String pseudoIdAsString(PseudoId pseudoId)
         return selection;
     case PseudoId::Scrollbar:
         return scrollbar;
+    case PseudoId::SpellingError:
+        return spellingError;
     case PseudoId::ViewTransition:
         return viewTransition;
     case PseudoId::ViewTransitionGroup:

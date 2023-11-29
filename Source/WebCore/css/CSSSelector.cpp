@@ -241,6 +241,10 @@ PseudoId CSSSelector::pseudoId(PseudoElementType type)
         return PseudoId::FirstLine;
     case PseudoElementFirstLetter:
         return PseudoId::FirstLetter;
+    case PseudoElementGrammarError:
+        return PseudoId::GrammarError;
+    case PseudoElementSpellingError:
+        return PseudoId::SpellingError;
     case PseudoElementSelection:
         return PseudoId::Selection;
     case PseudoElementHighlight:
@@ -309,6 +313,11 @@ CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView na
         break;
     case PseudoElementHighlight:
         if (!context.highlightAPIEnabled)
+            return PseudoElementUnknown;
+        break;
+    case PseudoElementGrammarError:
+    case PseudoElementSpellingError:
+        if (!context.grammarAndSpellingPseudoElementsEnabled)
             return PseudoElementUnknown;
         break;
     case PseudoElementViewTransition:

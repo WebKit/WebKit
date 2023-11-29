@@ -210,6 +210,7 @@ struct PossiblyQuotedIdentifier {
 #endif
             PseudoElementFirstLetter,
             PseudoElementFirstLine,
+            PseudoElementGrammarError,
             PseudoElementHighlight,
             PseudoElementMarker,
             PseudoElementPart,
@@ -222,6 +223,7 @@ struct PossiblyQuotedIdentifier {
             PseudoElementScrollbarTrackPiece,
             PseudoElementSelection,
             PseudoElementSlotted,
+            PseudoElementSpellingError,
             PseudoElementViewTransition,
             PseudoElementViewTransitionGroup,
             PseudoElementViewTransitionImagePair,

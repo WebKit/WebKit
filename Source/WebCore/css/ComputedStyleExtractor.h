@@ -46,7 +46,7 @@ struct PropertyValue;
 enum CSSPropertyID : uint16_t;
 enum CSSValueID : uint16_t;
 
-enum class PseudoId : uint16_t;
+enum class PseudoId : uint32_t;
 enum class SVGPaintType : uint8_t;
 
 using CSSValueListBuilder = Vector<Ref<CSSValue>, 4>;
