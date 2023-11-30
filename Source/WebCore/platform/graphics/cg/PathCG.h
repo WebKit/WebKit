@@ -32,6 +32,8 @@
 #include "WindRule.h"
 #include <wtf/Function.h>
 
+typedef struct CGContext* CGContextRef;
+
 namespace WebCore {
 
 class GraphicsContext;
@@ -87,6 +89,8 @@ private:
 
     RetainPtr<CGMutablePathRef> m_platformPath;
 };
+
+void addToCGContextPath(CGContextRef, const Path&);
 
 } // namespace WebCore
 
