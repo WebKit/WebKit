@@ -217,6 +217,11 @@ public:
     {
         completionHandler(true);
     }
+
+    virtual void requestWebAuthenticationConditonalMediationRegistration(WTF::String&&, CompletionHandler<void(bool)>&& completionHandler)
+    {
+        completionHandler(false);
+    }
 #endif
 
     virtual void didAttachLocalInspector(WebKit::WebPageProxy&, WebKit::WebInspectorUIProxy&) { }

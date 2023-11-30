@@ -243,6 +243,7 @@ typedef NS_ENUM(NSInteger, ASPublicKeyCredentialResidentKeyPreference) {
 typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
     ASCredentialRequestStyleModal,
     ASCredentialRequestStyleAutoFill,
+    ASCredentialRequestStyleSilent,
 };
 
 @class ASGlobalFrameIdentifier;
@@ -367,6 +368,8 @@ typedef NS_ENUM(NSInteger, ASCredentialRequestStyle) {
 
 - (void)performAutoFillAuthorizationRequestsForContext:(ASCCredentialRequestContext *)context withCompletionHandler:(void (^)(id <ASCCredentialProtocol> _Nullable credential, NSError * _Nullable error))completionHandler;
 #endif
+
+- (void)performSilentAuthorizationRequestsForContext:(ASCCredentialRequestContext *)context withCompletionHandler:(void (^)(id <ASCCredentialProtocol> _Nullable credential, NSError * _Nullable error))completionHandler;
 
 - (void)cancelCurrentRequest;
 

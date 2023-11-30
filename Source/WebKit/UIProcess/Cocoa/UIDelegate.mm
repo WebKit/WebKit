@@ -204,6 +204,7 @@ void UIDelegate::setDelegate(id <WKUIDelegate> delegate)
 #if ENABLE(WEB_AUTHN)
     m_delegateMethods.webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler = [delegate respondsToSelector:@selector(_webView:runWebAuthenticationPanel:initiatedByFrame:completionHandler:)];
     m_delegateMethods.webViewRequestWebAuthenticationNoGestureForOriginCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestWebAuthenticationNoGestureForOrigin:completionHandler:)];
+    m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserCompletionHandler = [delegate respondsToSelector:@selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:completionHandler:)];
 #endif
     
     m_delegateMethods.webViewDidEnableInspectorBrowserDomain = [delegate respondsToSelector:@selector(_webViewDidEnableInspectorBrowserDomain:)];
@@ -1769,6 +1770,26 @@ void UIDelegate::UIClient::requestWebAuthenticationNoGesture(API::SecurityOrigin
     }).get()];
 }
 
+void UIDelegate::UIClient::requestWebAuthenticationConditonalMediationRegistration(WTF::String&& username, CompletionHandler<void(bool)>&& completionHandler)
+{
+    if (!m_uiDelegate)
+        return completionHandler(false);
+
+    if (!m_uiDelegate->m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserCompletionHandler)
+        return completionHandler(false);
+
+    auto delegate = m_uiDelegate->m_delegate.get();
+    if (!delegate)
+        return completionHandler(false);
+
+    auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:completionHandler:));
+    [(id<WKUIDelegatePrivate>)delegate _webView:m_uiDelegate->m_webView.get().get() requestWebAuthenticationConditionalMediationRegistrationForUser:username completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (BOOL result) mutable {
+        if (checker->completionHandlerHasBeenCalled())
+            return;
+        checker->didCallCompletionHandler();
+        completionHandler(result);
+    }).get()];
+}
 #endif // ENABLE(WEB_AUTHN)
 
 void UIDelegate::UIClient::hasVideoInPictureInPictureDidChange(WebPageProxy*, bool hasVideoInPictureInPicture)

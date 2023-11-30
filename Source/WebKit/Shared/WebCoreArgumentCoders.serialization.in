@@ -6673,13 +6673,14 @@ enum class WebCore::RepaintRectCalculation : bool;
 }
 
 #if ENABLE(WEB_AUTHN)
-header: <WebCore/CredentialRequestOptions.h>
+header: <WebCore/MediationRequirement.h>
 enum class WebCore::MediationRequirement : uint8_t {
     Silent,
     Optional,
     Required,
     Conditional,
 };
+#endif
 
 #if ENABLE(VIDEO)
 header: <WebCore/VTTCue.h>
