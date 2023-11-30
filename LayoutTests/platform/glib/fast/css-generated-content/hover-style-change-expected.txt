@@ -31,7 +31,7 @@ layer at (8,209) size 784x174 clip at (9,210) size 782x172
       RenderInline {i} at (0,0) size 781x35
         RenderInline {a} at (0,0) size 349x17 [color=#0000EE]
           RenderText {#text} at (51,0) size 349x17
-            text run at (51,0) width 349: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6431"
+            text run at (51,0) width 349: "https://bugs.webkit.org/show_bug.cgi?id=6431"
         RenderText {#text} at (399,0) size 781x35
           text run at (399,0) width 5: " "
           text run at (403,0) width 378: "REGRESSION: style change where :hover changes only an"

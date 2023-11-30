@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 653x17
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (52,0) size 348x17
-              text run at (52,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7761"
+              text run at (52,0) width 348: "https://bugs.webkit.org/show_bug.cgi?id=7761"
           RenderText {#text} at (400,0) size 305x17
             text run at (400,0) width 305: " Tabs in class attribute not treated as whitespace"
         RenderText {#text} at (705,0) size 4x17

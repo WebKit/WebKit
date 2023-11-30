@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 764x36
           RenderInline {A} at (0,0) size 352x18 [color=#0000EE]
             RenderText {#text} at (107,0) size 352x18
-              text run at (107,0) width 352: "http://bugzilla.opendarwin.org/show_bug.cgi?id=8118"
+              text run at (107,0) width 352: "https://bugs.webkit.org/show_bug.cgi?id=8118"
           RenderText {#text} at (458,0) size 764x36
             text run at (458,0) width 306: " REGRESSION (r13595): Inline block's clipped"
             text run at (0,18) width 228: "overflow increases table row height"

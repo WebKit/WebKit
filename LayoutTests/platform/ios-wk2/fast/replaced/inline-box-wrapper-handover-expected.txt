@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 756x39
           RenderInline {A} at (0,0) size 353x19 [color=#0000EE]
             RenderText {#text} at (259,0) size 353x19
-              text run at (259,0) width 353: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6276"
+              text run at (259,0) width 353: "https://bugs.webkit.org/show_bug.cgi?id=6276"
           RenderText {#text} at (611,0) size 756x39
             text run at (611,0) width 5: " "
             text run at (615,0) width 141: "Image thumbnails are"

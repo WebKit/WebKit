@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 767x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (212,0) size 348x17
-              text run at (212,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6673"
+              text run at (212,0) width 348: "https://bugs.webkit.org/show_bug.cgi?id=6673"
           RenderText {#text} at (559,0) size 767x35
             text run at (559,0) width 5: " "
             text run at (563,0) width 204: "Selection highlight doesn't scroll"

@@ -14,7 +14,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 546x17
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (52,0) size 348x17
-              text run at (52,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7218"
+              text run at (52,0) width 348: "https://bugs.webkit.org/show_bug.cgi?id=7218"
           RenderText {#text} at (400,0) size 198x17
             text run at (400,0) width 198: " Text underlined on mouse over"
         RenderText {#text} at (598,0) size 98x17

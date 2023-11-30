@@ -9,7 +9,7 @@ layer at (0,0) size 800x372
         RenderInline {I} at (0,0) size 772x36
           RenderInline {A} at (0,0) size 354x18 [color=#0000EE]
             RenderText {#text} at (178,0) size 354x18
-              text run at (178,0) width 354: "http://bugzilla.opendarwin.org/show_bug.cgi?id=3922"
+              text run at (178,0) width 354: "https://bugs.webkit.org/show_bug.cgi?id=3922"
           RenderText {#text} at (531,0) size 772x36
             text run at (531,0) width 241: " Variable word/letter spacing and full"
             text run at (0,18) width 327: "justification not supported for ATSUI-rendered text"

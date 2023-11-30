@@ -8,7 +8,7 @@ layer at (0,0) size 800x443
           text run at (0,0) width 139: "This is a test case for "
         RenderInline {I} at (0,0) size 773x36
           RenderText {#text} at (138,0) size 773x36
-            text run at (138,0) width 635: "http://bugzilla.opendarwin.org/show_bug.cgi?id=5826 Blocks with direction:rtl and overflow:auto"
+            text run at (138,0) width 635: "https://bugs.webkit.org/show_bug.cgi?id=5826 Blocks with direction:rtl and overflow:auto"
             text run at (0,18) width 219: "or scroll have incorrect scrollbars"
         RenderText {#text} at (218,18) size 5x18
           text run at (218,18) width 5: "."

@@ -10,7 +10,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 669x18
           RenderInline {A} at (0,0) size 348x18 [color=#0000EE]
             RenderText {#text} at (53,0) size 348x18
-              text run at (53,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9547"
+              text run at (53,0) width 348: "https://bugs.webkit.org/show_bug.cgi?id=9547"
           RenderText {#text} at (401,0) size 321x18
             text run at (401,0) width 4: " "
             text run at (405,0) width 317: "Resize corner does not track the mouse accurately"

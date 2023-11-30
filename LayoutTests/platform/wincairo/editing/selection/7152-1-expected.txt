@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 131: "This is a testcase for "
         RenderInline {A} at (0,0) size 343x17 [color=#0000EE]
           RenderText {#text} at (131,0) size 343x17
-            text run at (131,0) width 343: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7152"
+            text run at (131,0) width 343: "https://bugs.webkit.org/show_bug.cgi?id=7152"
         RenderText {#text} at (474,0) size 783x53
           text run at (474,0) width 8: ". "
           text run at (482,0) width 301: "Adding visible candidates after tables, at [table, "

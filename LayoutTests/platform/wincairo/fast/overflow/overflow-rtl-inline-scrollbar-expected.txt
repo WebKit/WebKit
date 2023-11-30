@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 710x39
           RenderInline {A} at (0,0) size 350x19 [color=#0000EE]
             RenderText {#text} at (202,0) size 350x19
-              text run at (202,0) width 350: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6618"
+              text run at (202,0) width 350: "https://bugs.webkit.org/show_bug.cgi?id=6618"
           RenderText {#text} at (552,0) size 710x39
             text run at (552,0) width 4: " "
             text run at (556,0) width 154: "Inline in RTL block with"

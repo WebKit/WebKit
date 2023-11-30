@@ -9,7 +9,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 716x17
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (52,0) size 348x17
-              text run at (52,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9341"
+              text run at (52,0) width 348: "https://bugs.webkit.org/show_bug.cgi?id=9341"
           RenderText {#text} at (400,0) size 368x17
             text run at (400,0) width 4: " "
             text run at (404,0) width 364: "REGRESSION: Repro crash caused by style=\"font:bold\""

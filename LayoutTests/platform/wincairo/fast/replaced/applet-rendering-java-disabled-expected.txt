@@ -8,7 +8,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 51: "Test for "
         RenderInline {A} at (0,0) size 323x19 [color=#0000EE]
           RenderText {#text} at (51,0) size 323x19
-            text run at (51,0) width 323: "http://bugzilla.opendarwin.org/show_bug.cgi?id=7281"
+            text run at (51,0) width 323: "https://bugs.webkit.org/show_bug.cgi?id=7281"
       RenderBlock {P} at (0,36) size 784x40
         RenderText {#text} at (0,0) size 779x39
           text run at (0,0) width 779: "This tests rendering of an applet element with Java disabled. If Java is disabled and Safari shows the content in the applet tag, then"

@@ -15,7 +15,7 @@ layer at (0,0) size 800x222
         RenderInline {I} at (0,0) size 770x39
           RenderInline {A} at (0,0) size 353x19 [color=#0000EE]
             RenderText {#text} at (53,0) size 353x19
-              text run at (53,0) width 353: "http://bugzilla.opendarwin.org/show_bug.cgi?id=6431"
+              text run at (53,0) width 353: "https://bugs.webkit.org/show_bug.cgi?id=6431"
           RenderText {#text} at (405,0) size 770x39
             text run at (405,0) width 5: " "
             text run at (409,0) width 361: "REGRESSION: style change where :hover changes only"

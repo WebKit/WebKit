@@ -13,7 +13,7 @@ layer at (0,0) size 800x600
         RenderInline {I} at (0,0) size 776x35
           RenderInline {A} at (0,0) size 348x17 [color=#0000EE]
             RenderText {#text} at (104,0) size 348x17
-              text run at (104,0) width 348: "http://bugzilla.opendarwin.org/show_bug.cgi?id=9978"
+              text run at (104,0) width 348: "https://bugs.webkit.org/show_bug.cgi?id=9978"
           RenderText {#text} at (452,0) size 776x35
             text run at (452,0) width 4: " "
             text run at (456,0) width 320: "REGRESSION (r12949-r12988): Clicking the first"
