@@ -1726,7 +1726,7 @@ static JSArray* availableCollations(JSGlobalObject* globalObject)
             return WTF::codePointCompare(a, b) < 0;
         });
     auto end = std::unique(elements.begin(), elements.end());
-    elements.resize(elements.size() - (elements.end() - end));
+    elements.shrink(elements.size() - (elements.end() - end));
 
     RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
 }
@@ -1782,7 +1782,7 @@ static JSArray* availableCurrencies(JSGlobalObject* globalObject)
             return WTF::codePointCompare(a, b) < 0;
         });
     auto end = std::unique(elements.begin(), elements.end());
-    elements.resize(elements.size() - (elements.end() - end));
+    elements.shrink(elements.size() - (elements.end() - end));
 
     RELEASE_AND_RETURN(scope, createArrayFromStringVector(globalObject, WTFMove(elements)));
 }

@@ -1311,7 +1311,7 @@ String formatTimeZoneOffsetString(int64_t offset)
             }
         }
         if (validLength)
-            fraction.resize(validLength.value());
+            fraction.shrink(validLength.value());
         else
             fraction.clear();
         return makeString(negative ? '-' : '+', pad('0', 2, hours), ':', pad('0', 2, minutes), ':', pad('0', 2, seconds), '.', pad('0', paddingLength, emptyString()), fraction);
@@ -1346,7 +1346,7 @@ String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned>
             }
         }
         if (validLength)
-            fraction.resize(validLength.value());
+            fraction.shrink(validLength.value());
         else
             fraction.clear();
         return makeString(pad('0', 2, plainTime.hour()), ':', pad('0', 2, plainTime.minute()), ':', pad('0', 2, plainTime.second()), '.', pad('0', paddingLength, emptyString()), fraction);

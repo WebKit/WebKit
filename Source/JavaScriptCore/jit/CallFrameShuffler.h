@@ -110,7 +110,7 @@ public:
         data.numPassedArgs = m_numPassedArgs;
         data.numParameters = m_numParameters;
         data.callee = getNew(VirtualRegister { CallFrameSlot::callee })->recovery();
-        data.args.resize(argCount());
+        data.args.grow(argCount());
         for (size_t i = 0; i < argCount(); ++i)
             data.args[i] = getNew(virtualRegisterForArgumentIncludingThis(i))->recovery();
         for (Reg reg = Reg::first(); reg <= Reg::last(); reg = reg.next()) {

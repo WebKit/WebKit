@@ -373,8 +373,7 @@ void RegExp::deleteCode()
 void RegExp::matchCompareWithInterpreter(const String& s, int startOffset, int* offsetVector, int jitResult)
 {
     int offsetVectorSize = (m_numSubpatterns + 1) * 2;
-    Vector<int> interpreterOvector;
-    interpreterOvector.resize(offsetVectorSize);
+    Vector<int> interpreterOvector(offsetVectorSize);
     int* interpreterOffsetVector = interpreterOvector.data();
     int interpreterResult = 0;
     int differences = 0;

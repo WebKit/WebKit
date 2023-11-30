@@ -75,8 +75,8 @@ public:
             dataLogLn("]");
         }
 
-        m_adjacencyList.resize(tmpArraySize);
-        m_moveList.resize(tmpArraySize);
+        m_adjacencyList.grow(tmpArraySize);
+        m_moveList.grow(tmpArraySize);
         m_isOnSelectStack.ensureSize(tmpArraySize);
         m_spillWorklist.ensureSize(tmpArraySize);
     }

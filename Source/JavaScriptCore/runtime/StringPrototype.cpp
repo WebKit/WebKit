@@ -1275,7 +1275,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
     }
 
     auto& result = vm.stringSplitIndice;
-    result.resize(0);
+    result.shrink(0);
 
     auto cacheAndCreateArray = [&]() -> JSArray* {
         if (result.isEmpty())
