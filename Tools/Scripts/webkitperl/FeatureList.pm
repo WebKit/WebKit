@@ -99,11 +99,9 @@ my (
     $iosTouchEventsSupport,
     $jitSupport,
     $layerBasedSVGEngineSupport,
-    $layoutFormattingContextSupport,
     $llvmProfileGenerationSupport,
     $legacyCustomProtocolManagerSupport,
     $legacyEncryptedMediaSupport,
-    $letterpressSupport,
     $macGestureEventsSupport,
     $managedMediaSourceSupport,
     $mathmlSupport,
@@ -133,7 +131,6 @@ my (
     $publicSuffixListSupport,
     $quotaSupport,
     $remoteInspectorSupport,
-    $resolutionMediaQuerySupport,
     $resourceUsageSupport,
     $samplingProfilerSupport,
     $sandboxExtensionsSupport,
@@ -160,7 +157,6 @@ my (
     $videoUsesElementFullscreenSupport,
     $webAPIStatisticsSupport,
     $webAssemblySupport,
-    $webAssemblyB3JITSupport,
     $webAudioSupport,
     $webAuthNSupport,
     $webCodecsSupport,
@@ -307,9 +303,6 @@ my @features = (
     { option => "layer-based-svg-engine", desc => "Toggle Layer Based SVG Engine support",
       define => "ENABLE_LAYER_BASED_SVG_ENGINE", value => \$layerBasedSVGEngineSupport },
 
-    { option => "layout-formatting-context", desc => "Toggle Layout Formatting Context support",
-      define => "ENABLE_LAYOUT_FORMATTING_CONTEXT", value => \$layoutFormattingContextSupport },
-
     { option => "llvm-profile-generation", desc => "Include LLVM's instrumentation to generate profiles for PGO",
       define => "ENABLE_LLVM_PROFILE_GENERATION", value => \$llvmProfileGenerationSupport },
 
@@ -318,9 +311,6 @@ my @features = (
 
     { option => "legacy-encrypted-media", desc => "Toggle Legacy EME V2 support",
       define => "ENABLE_LEGACY_ENCRYPTED_MEDIA", value => \$legacyEncryptedMediaSupport },
-
-    { option => "letterpress", desc => "Toggle letterpress support",
-      define => "ENABLE_LETTERPRESS", value => \$letterpressSupport },
 
     { option => "mac-gesture-events", desc => "Toggle Mac gesture events support",
       define => "ENABLE_MAC_GESTURE_EVENTS", value => \$macGestureEventsSupport },
@@ -403,9 +393,6 @@ my @features = (
     { option => "remote-inspector", desc => "Toggle remote inspector support",
       define => "ENABLE_REMOTE_INSPECTOR", value => \$remoteInspectorSupport },
 
-    { option => "resolution-media-query", desc => "Toggle resolution media query support",
-      define => "ENABLE_RESOLUTION_MEDIA_QUERY", value => \$resolutionMediaQuerySupport },
-
     { option => "resource-usage", desc => "Toggle resource usage support",
       define => "ENABLE_RESOURCE_USAGE", value => \$resourceUsageSupport },
 
@@ -462,9 +449,6 @@ my @features = (
 
     { option => "webassembly", desc => "Toggle WebAssembly support",
       define => "ENABLE_WEBASSEMBLY", value => \$webAssemblySupport },
-
-    { option => "webassembly-b3jit", desc => "Toggle WebAssembly B3 JIT support",
-      define => "ENABLE_WEBASSEMBLY_B3JIT", value => \$webAssemblyB3JITSupport },
 
     { option => "webdriver", desc => "Toggle WebDriver service process",
       define => "ENABLE_WEBDRIVER", value => \$webdriverSupport },
