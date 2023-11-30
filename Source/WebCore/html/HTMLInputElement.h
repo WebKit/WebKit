@@ -482,7 +482,7 @@ private:
     bool m_valueAttributeWasUpdatedAfterParsing : 1 { false };
     bool m_wasModifiedByUser : 1 { false };
     bool m_canReceiveDroppedFiles : 1 { false };
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     bool m_hasTouchEventHandler : 1 { false };
 #endif
     bool m_isSpellcheckDisabledExceptTextReplacement : 1 { false };

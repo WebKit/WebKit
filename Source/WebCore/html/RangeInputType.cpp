@@ -160,7 +160,7 @@ void RangeInputType::handleTouchEvent(TouchEvent& event)
     if (!hasCreatedShadowSubtree())
         return;
 
-#if PLATFORM(IOS_FAMILY)
+#if ENABLE(IOS_TOUCH_EVENTS)
     typedSliderThumbElement().handleTouchEvent(event);
 #else
 
@@ -177,15 +177,8 @@ void RangeInputType::handleTouchEvent(TouchEvent& event)
         typedSliderThumbElement().setPositionFromPoint(touches->item(0)->absoluteLocation());
         event.setDefaultHandled();
     }
-#endif
+#endif // ENABLE(IOS_TOUCH_EVENTS)
 }
-
-#if !PLATFORM(IOS_FAMILY)
-bool RangeInputType::hasTouchEventHandler() const
-{
-    return true;
-}
-#endif
 #endif // ENABLE(TOUCH_EVENTS)
 
 void RangeInputType::disabledStateChanged()
