@@ -72,11 +72,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
     if (dataDetectorResultElementsWithHighlights == dataDetectorResultElements)
         return;
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame)
-        return;
-
-    RefPtr mainFrameView = localMainFrame->view();
+    RefPtr mainFrameView = m_page->mainFrame().virtualView();
     if (!mainFrameView)
         return;
 
@@ -101,11 +97,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
 
 bool ImageOverlayController::platformHandleMouseEvent(const PlatformMouseEvent& event)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame)
-        return false;
-
-    RefPtr mainFrameView = localMainFrame->view();
+    RefPtr mainFrameView = m_page->mainFrame().virtualView();
     if (!mainFrameView)
         return false;
 

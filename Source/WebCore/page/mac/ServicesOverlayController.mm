@@ -398,14 +398,10 @@ void ServicesOverlayController::buildSelectionHighlight()
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return;
 
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
-        return;
-
     HashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
 
     if (auto selectionRange = m_page.selection().firstRange()) {
-        RefPtr mainFrameView = localMainFrame->view();
+        RefPtr mainFrameView = m_page.mainFrame().virtualView();
         if (!mainFrameView)
             return;
 
@@ -578,11 +574,7 @@ void ServicesOverlayController::determineActiveHighlight(bool& mouseIsOverActive
 
 bool ServicesOverlayController::mouseEvent(PageOverlay&, const PlatformMouseEvent& event)
 {
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
-        return false;
-
-    m_mousePosition = localMainFrame->view()->windowToContents(event.position());
+    m_mousePosition = m_page.mainFrame().virtualView()->windowToContents(event.position());
 
     bool mouseIsOverActiveHighlightButton = false;
     determineActiveHighlight(mouseIsOverActiveHighlightButton);
@@ -645,11 +637,7 @@ void ServicesOverlayController::didScrollFrame(PageOverlay&, LocalFrame& frame)
 
 void ServicesOverlayController::handleClick(const IntPoint& clickPoint, DataDetectorHighlight& highlight)
 {
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
-        return;
-
-    RefPtr frameView = localMainFrame->view();
+    RefPtr frameView = m_page.mainFrame().virtualView();
     if (!frameView)
         return;
 

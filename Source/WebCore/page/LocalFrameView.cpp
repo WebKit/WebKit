@@ -3007,11 +3007,7 @@ bool LocalFrameView::shouldUpdateCompositingLayersAfterScrolling() const
     if (!page)
         return true;
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
-    if (!localMainFrame)
-        return true;
-
-    if (localMainFrame != m_frame.ptr())
+    if (page->mainFrame() != m_frame)
         return true;
 
     auto scrollingCoordinator = this->scrollingCoordinator();

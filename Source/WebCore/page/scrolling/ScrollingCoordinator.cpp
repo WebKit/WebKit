@@ -359,11 +359,7 @@ void ScrollingCoordinator::setForceSynchronousScrollLayerPositionUpdates(bool fo
 
 bool ScrollingCoordinator::shouldUpdateScrollLayerPositionSynchronously(const LocalFrameView& frameView) const
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame)
-        return false;
-
-    if (&frameView == localMainFrame->view())
+    if (&frameView == m_page->mainFrame().virtualView())
         return !synchronousScrollingReasons(frameView.scrollingNodeID()).isEmpty();
     
     return true;

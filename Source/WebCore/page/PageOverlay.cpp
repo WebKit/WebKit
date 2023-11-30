@@ -81,12 +81,7 @@ IntRect PageOverlay::bounds() const
     if (!m_overrideFrame.isEmpty())
         return { { }, m_overrideFrame.size() };
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame)
-        return IntRect();
-
-    auto* frameView = localMainFrame->view();
-
+    RefPtr frameView = m_page->mainFrame().virtualView();
     if (!frameView)
         return IntRect();
 
@@ -189,8 +184,7 @@ void PageOverlay::drawRect(GraphicsContext& graphicsContext, const IntRect& dirt
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
     if (m_overlayType == PageOverlay::OverlayType::Document) {
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-        if (auto* frameView = localMainFrame ? localMainFrame->view() : nullptr) {
+        if (auto* frameView = m_page->mainFrame().virtualView()) {
             auto offset = frameView->scrollOrigin();
             graphicsContext.translate(toFloatSize(offset));
             paintRect.moveBy(-offset);
