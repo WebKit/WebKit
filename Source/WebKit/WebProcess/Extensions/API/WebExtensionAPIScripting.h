@@ -36,6 +36,10 @@ OBJC_CLASS NSString;
 
 namespace WebKit {
 
+using FirstTimeRegistration = WebExtensionDynamicScripts::WebExtensionRegisteredScript::FirstTimeRegistration;
+
+class WebExtension;
+
 class WebExtensionAPIScripting : public WebExtensionAPIObject, public JSWebExtensionWrappable {
     WEB_EXTENSION_DECLARE_JS_WRAPPER_CLASS(WebExtensionAPIScripting, scripting);
 
@@ -57,18 +61,20 @@ private:
     bool validateTarget(NSDictionary *, NSString **outExceptionString);
     bool validateCSS(NSDictionary *, NSString **outExceptionString);
 
-    bool validateRegisteredScripts(NSArray *, bool isRegisteringScript, NSString **outExceptionString);
+    bool validateRegisteredScripts(NSArray *, FirstTimeRegistration, NSString **outExceptionString);
     bool validateFilter(NSDictionary *filter, NSString **outExceptionString);
 
     void parseCSSInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&);
     void parseTargetInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&, NSString **outExceptionString);
     void parseScriptInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&);
-    void parseRegisteredContentScripts(NSArray *, Vector<WebExtensionRegisteredScriptParameters>&);
+    void parseRegisteredContentScripts(NSArray *, FirstTimeRegistration, Vector<WebExtensionRegisteredScriptParameters>&);
 
 #endif
 };
 
 NSArray *toWebAPI(const Vector<WebExtensionScriptInjectionResultParameters>&, bool returnExecutionResultOnly);
+NSArray *toWebAPI(const Vector<WebExtensionRegisteredScriptParameters>&);
+NSString *toWebAPI(WebExtension::InjectionTime);
 
 } // namespace WebKit
 

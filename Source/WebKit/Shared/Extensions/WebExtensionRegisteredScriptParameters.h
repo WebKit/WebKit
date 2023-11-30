@@ -37,15 +37,15 @@ struct WebExtensionRegisteredScriptParameters {
     std::optional<Vector<String>> js;
 
     String identifier;
-    WebExtension::InjectionTime injectionTime { WebExtension::InjectionTime::DocumentIdle };
+    std::optional<WebExtension::InjectionTime> injectionTime;
 
-    std::optional<Vector<String>> excludedMatchPatterns;
+    std::optional<Vector<String>> excludeMatchPatterns;
     std::optional<Vector<String>> matchPatterns;
 
-    bool allFrames { false };
-    bool persistAcrossSessions { true };
+    std::optional<bool> allFrames;
+    std::optional<bool> persistent;
 
-    WebExtensionContentWorldType world { WebExtensionContentWorldType::ContentScript };
+    std::optional<WebExtensionContentWorldType> world;
 };
 
 } // namespace WebKit

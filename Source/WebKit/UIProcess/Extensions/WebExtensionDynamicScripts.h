@@ -28,9 +28,14 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "APIContentWorld.h"
+#include "APIUserScript.h"
+#include "APIUserStyleSheet.h"
+#include "WebExtension.h"
 #include "WebExtensionFrameIdentifier.h"
+#include "WebExtensionRegisteredScriptParameters.h"
 #include "WebExtensionScriptInjectionResultParameters.h"
 #include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 OBJC_CLASS WKWebView;
 OBJC_CLASS WKFrameInfo;
@@ -38,7 +43,6 @@ OBJC_CLASS _WKFrameTreeNode;
 
 namespace WebKit {
 
-class WebExtension;
 class WebExtensionContext;
 class WebExtensionTab;
 
@@ -49,6 +53,11 @@ using Error = std::optional<String>;
 
 using SourcePair = std::pair<String, std::optional<URL>>;
 using SourcePairs = Vector<std::optional<SourcePair>>;
+
+using InjectionTime = WebExtension::InjectionTime;
+
+using UserScriptVector = Vector<Ref<API::UserScript>>;
+using UserStyleSheetVector = Vector<Ref<API::UserStyleSheet>>;
 
 class InjectionResultHolder : public RefCounted<InjectionResultHolder> {
     WTF_MAKE_NONCOPYABLE(InjectionResultHolder);
@@ -64,6 +73,43 @@ public:
     InjectionResultHolder() { };
 
     InjectionResults results;
+};
+
+class WebExtensionRegisteredScript : public RefCounted<WebExtensionRegisteredScript> {
+    WTF_MAKE_NONCOPYABLE(WebExtensionRegisteredScript);
+    WTF_MAKE_FAST_ALLOCATED;
+
+public:
+    template<typename... Args>
+    static Ref<WebExtensionRegisteredScript> create(Args&&... args)
+    {
+        return adoptRef(*new WebExtensionRegisteredScript(std::forward<Args>(args)...));
+    }
+
+    enum class FirstTimeRegistration { No, Yes };
+
+    void updateParameters(const WebExtensionRegisteredScriptParameters&);
+
+    void merge(WebExtensionRegisteredScriptParameters&);
+
+    void addUserScript(const String& identifier, API::UserScript&);
+    void addUserStyleSheet(const String& identifier, API::UserStyleSheet&);
+
+    void removeUserScriptsAndStyleSheets(const String& identifier);
+
+    WebExtensionRegisteredScriptParameters parameters() const { return m_parameters; };
+
+private:
+    explicit WebExtensionRegisteredScript(WebExtensionContext&, const WebExtensionRegisteredScriptParameters&);
+
+    WeakPtr<WebExtensionContext> m_extensionContext;
+    WebExtensionRegisteredScriptParameters m_parameters;
+
+    HashMap<String, UserScriptVector> m_userScriptsMap;
+    HashMap<String, UserStyleSheetVector> m_userStyleSheetsMap;
+
+    void removeUserStyleSheets(const String& identifier);
+    void removeUserScripts(const String& identifier);
 };
 
 std::optional<SourcePair> sourcePairForResource(String path, RefPtr<WebExtension>);

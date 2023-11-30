@@ -1850,7 +1850,19 @@ void WebExtension::populateContentScriptPropertiesIfNeeded()
         else
             recordError(createError(Error::InvalidContentScripts, WEB_UI_STRING("Manifest `content_scripts` entry has unknown `run_at` value.", "WKWebExtensionErrorInvalidContentScripts description for unknown 'run_at' value")));
 
-        m_staticInjectedContents.append({ WTFMove(includeMatchPatterns), WTFMove(excludeMatchPatterns), injectionTime, matchesAboutBlank, injectsIntoAllFrames, false, scriptPaths, styleSheetPaths, includeGlobPatternStrings, excludeGlobPatternStrings });
+        InjectedContentData injectedContentData;
+        injectedContentData.includeMatchPatterns = WTFMove(includeMatchPatterns);
+        injectedContentData.excludeMatchPatterns = WTFMove(excludeMatchPatterns);
+        injectedContentData.injectionTime = injectionTime;
+        injectedContentData.matchesAboutBlank = matchesAboutBlank;
+        injectedContentData.injectsIntoAllFrames = injectsIntoAllFrames;
+        injectedContentData.forMainWorld = false;
+        injectedContentData.scriptPaths = scriptPaths;
+        injectedContentData.styleSheetPaths = styleSheetPaths;
+        injectedContentData.includeGlobPatternStrings = includeGlobPatternStrings;
+        injectedContentData.excludeGlobPatternStrings = excludeGlobPatternStrings;
+
+        m_staticInjectedContents.append(WTFMove(injectedContentData));
     };
 
     for (NSDictionary<NSString *, id> *contentScriptsManifestEntry in contentScriptsManifestArray)
