@@ -62,8 +62,8 @@ void webkitWebViewRestoreWindow(WebKitWebView*, CompletionHandler<void()>&& comp
 
 /**
  * webkit_web_view_new:
- * @backend: (transfer full) (not nullable): wrapped WPE view backend which
- *    will determine the behaviour of the new [class@WebView].
+ * @backend: (transfer full) (nullable): wrapped WPE view backend which
+ *    will determine the behaviour of the new [class@WebView], or %NULL to use the WPE platform API.
  *
  * Creates a new web view with a default configuration.
  *
@@ -78,7 +78,7 @@ void webkitWebViewRestoreWindow(WebKitWebView*, CompletionHandler<void()>&& comp
  */
 WebKitWebView* webkit_web_view_new(WebKitWebViewBackend* backend)
 {
-    g_return_val_if_fail(backend, nullptr);
+    g_return_val_if_fail(!backend || !g_type_class_peek(WPE_TYPE_DISPLAY), nullptr);
 
     return WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "backend", backend,

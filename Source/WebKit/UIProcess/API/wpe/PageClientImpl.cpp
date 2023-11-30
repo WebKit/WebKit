@@ -37,6 +37,7 @@
 #include "WebContextMenuProxyWPE.h"
 #include "WebKitPopupMenu.h"
 #include <WebCore/ActivityState.h>
+#include <WebCore/Cursor.h>
 #include <WebCore/DOMPasteAccess.h>
 #include <WebCore/NotImplemented.h>
 
@@ -58,8 +59,15 @@ struct wpe_view_backend* PageClientImpl::viewBackend()
     return m_view.backend();
 }
 
+WPEView* PageClientImpl::wpeView() const
+{
+    return m_view.wpeView();
+}
+
 UnixFileDescriptor PageClientImpl::hostFileDescriptor()
 {
+    if (!m_view.backend())
+        return { };
     return UnixFileDescriptor { wpe_view_backend_get_renderer_host_fd(m_view.backend()), UnixFileDescriptor::Adopt };
 }
 
@@ -134,12 +142,15 @@ void PageClientImpl::didChangeContentSize(const WebCore::IntSize&)
 {
 }
 
-void PageClientImpl::setCursor(const WebCore::Cursor&)
+void PageClientImpl::setCursor(const WebCore::Cursor& cursor)
 {
+    m_view.setCursor(cursor);
 }
 
-void PageClientImpl::setCursorHiddenUntilMouseMoves(bool)
+void PageClientImpl::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
 {
+    if (hiddenUntilMouseMoves)
+        setCursor(WebCore::noneCursor());
 }
 
 void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttributes&)
@@ -259,16 +270,19 @@ Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& pa
 }
 #endif
 
-void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext&)
+void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& context)
 {
+    m_view.updateAcceleratedSurface(context.contextID);
 }
 
 void PageClientImpl::exitAcceleratedCompositingMode()
 {
+    m_view.updateAcceleratedSurface(0);
 }
 
-void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext&)
+void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& context)
 {
+    m_view.updateAcceleratedSurface(context.contextID);
 }
 
 void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String&, const IPC::DataReference&)
@@ -362,9 +376,14 @@ void PageClientImpl::enterFullScreen()
     if (isFullScreen())
         return;
 
+    m_view.willEnterFullScreen();
+    if (m_view.wpeView()) {
+        m_view.enterFullScreen();
+        return;
+    }
+
     WebFullScreenManagerProxy* fullScreenManagerProxy = m_view.page().fullScreenManager();
     if (fullScreenManagerProxy) {
-        fullScreenManagerProxy->willEnterFullScreen();
         if (!m_view.setFullScreen(true))
             fullScreenManagerProxy->didExitFullScreen();
     }
@@ -375,9 +394,14 @@ void PageClientImpl::exitFullScreen()
     if (!isFullScreen())
         return;
 
+    m_view.willExitFullScreen();
+    if (m_view.wpeView()) {
+        m_view.exitFullScreen();
+        return;
+    }
+
     WebFullScreenManagerProxy* fullScreenManagerProxy = m_view.page().fullScreenManager();
     if (fullScreenManagerProxy) {
-        fullScreenManagerProxy->willExitFullScreen();
         if (!m_view.setFullScreen(false))
             fullScreenManagerProxy->didEnterFullScreen();
     }

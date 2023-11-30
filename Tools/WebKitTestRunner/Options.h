@@ -51,6 +51,9 @@ struct Options {
     bool allowAnyHTTPSCertificateForAllowedHosts { false };
     bool enableAllExperimentalFeatures { true };
     bool lockdownModeEnabled { false };
+#if PLATFORM(WPE)
+    bool useWPEPlatformAPI { false };
+#endif
     std::vector<std::string> paths;
     std::set<std::string> allowedHosts;
     std::set<std::string> localhostAliases;

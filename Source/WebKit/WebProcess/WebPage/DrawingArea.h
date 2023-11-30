@@ -164,6 +164,10 @@ public:
     virtual bool enterAcceleratedCompositingModeIfNeeded() = 0;
 #endif
 
+#if PLATFORM(WPE) && USE(GBM)
+    virtual void preferredBufferFormatsDidChange() { }
+#endif
+
     virtual void adoptLayersFromDrawingArea(DrawingArea&) { }
     virtual void adoptDisplayRefreshMonitorsFromDrawingArea(DrawingArea&) { }
 

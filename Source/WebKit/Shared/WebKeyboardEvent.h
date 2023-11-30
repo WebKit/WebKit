@@ -78,6 +78,14 @@ public:
 
     static bool isKeyboardEventType(WebEventType);
 
+#if PLATFORM(WPE)
+    static String keyValueStringForWPEKeyval(unsigned);
+    static String keyCodeStringForWPEKeycode(unsigned);
+    static String keyIdentifierForWPEKeyval(unsigned);
+    static int32_t windowsKeyCodeForWPEKeyval(unsigned);
+    static String singleCharacterStringForWPEKeyval(unsigned);
+#endif
+
 private:
     String m_text;
     String m_unmodifiedText;

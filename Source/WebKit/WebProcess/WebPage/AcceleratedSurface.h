@@ -63,6 +63,10 @@ public:
     virtual void didCreateCompositingRunLoop(WTF::RunLoop&) { }
     virtual void willDestroyCompositingRunLoop() { }
 
+#if PLATFORM(WPE) && USE(GBM)
+    virtual void preferredBufferFormatsDidChange() { }
+#endif
+
 protected:
     AcceleratedSurface(WebPage&, Client&);
 

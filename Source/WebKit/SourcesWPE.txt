@@ -104,6 +104,14 @@ Shared/soup/WebErrorsSoup.cpp
 
 Shared/unix/AuxiliaryProcessMain.cpp
 
+Shared/wpe/GRefPtrWPE.cpp @no-unify
+Shared/wpe/NativeWebKeyboardEventWPE.cpp
+Shared/wpe/NativeWebMouseEventWPE.cpp
+Shared/wpe/NativeWebTouchEventWPE.cpp
+Shared/wpe/NativeWebWheelEventWPE.cpp
+Shared/wpe/WebEventFactoryWPE.cpp
+Shared/wpe/WebKeyboardEventWPE.cpp
+
 UIProcess/DefaultUndoController.cpp
 UIProcess/LegacySessionStateCodingNone.cpp
 UIProcess/WebGrammarDetail.cpp
@@ -251,6 +259,7 @@ UIProcess/linux/MemoryPressureMonitor.cpp
 
 UIProcess/soup/WebProcessPoolSoup.cpp
 
+UIProcess/wpe/AcceleratedBackingStoreDMABuf.cpp
 UIProcess/wpe/WebPageProxyWPE.cpp
 
 WebProcess/GPU/graphics/gbm/RemoteGraphicsContextGLProxyGBM.cpp
@@ -280,6 +289,8 @@ WebProcess/WebPage/AcceleratedSurface.cpp
 WebProcess/WebPage/CoordinatedGraphics/CompositingCoordinator.cpp
 WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
 WebProcess/WebPage/CoordinatedGraphics/LayerTreeHost.cpp
+
+WebProcess/WebPage/dmabuf/AcceleratedSurfaceDMABuf.cpp @no-unify
 
 WebProcess/WebPage/glib/WebPageGLib.cpp
 

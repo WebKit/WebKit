@@ -57,11 +57,11 @@
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
+#include "DMABufRendererBufferMode.h"
 #include <wtf/MemoryPressureHandler.h>
 #endif
 
 #if PLATFORM(GTK)
-#include "DMABufRendererBufferMode.h"
 #include "GtkSettingsState.h"
 #endif
 
@@ -230,8 +230,11 @@ struct WebProcessCreationParameters {
     String renderDeviceFile;
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     OptionSet<DMABufRendererBufferMode> dmaBufRendererBufferMode;
+#endif
+
+#if PLATFORM(GTK)
     bool useSystemAppearanceForScrollbars { false };
     GtkSettingsState gtkSettings;
 #endif

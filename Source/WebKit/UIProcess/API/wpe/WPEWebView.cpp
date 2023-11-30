@@ -28,6 +28,7 @@
 
 #include "APIPageConfiguration.h"
 #include "APIViewClient.h"
+#include "AcceleratedBackingStoreDMABuf.h"
 #include "DrawingAreaProxy.h"
 #include "EditingRange.h"
 #include "EditorState.h"
@@ -39,9 +40,13 @@
 #include "WebPageGroup.h"
 #include "WebProcessPool.h"
 #include <WebCore/CompositionUnderline.h>
+#include <WebCore/Cursor.h>
 #if ENABLE(GAMEPAD)
 #include <WebCore/GamepadProviderLibWPE.h>
 #endif
+#include <WebCore/RefPtrCairo.h>
+#include <cairo.h>
+#include <wpe/wpe-platform.h>
 #include <wpe/wpe.h>
 #include <wtf/NeverDestroyed.h>
 
@@ -55,7 +60,7 @@ static Vector<View*>& viewsVector()
     return vector;
 }
 
-View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseConfiguration)
+View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::PageConfiguration& baseConfiguration)
     : m_client(makeUnique<API::ViewClient>())
 #if ENABLE(TOUCH_EVENTS)
     , m_touchGestureController(makeUnique<TouchGestureController>())
@@ -65,7 +70,7 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
     , m_viewStateFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow }
     , m_backend(backend)
 {
-    ASSERT(m_backend);
+    ASSERT(m_backend || display);
 
     auto configuration = baseConfiguration.copy();
     auto* preferences = configuration->preferences();
@@ -86,6 +91,138 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         configuration->setProcessPool(pool);
     }
     m_pageProxy = pool->createWebPage(*m_pageClient, WTFMove(configuration));
+    if (display) {
+        m_wpeView = adoptGRef(wpe_view_new(display));
+        m_size.setWidth(wpe_view_get_width(m_wpeView.get()));
+        m_size.setHeight(wpe_view_get_height(m_wpeView.get()));
+        g_signal_connect(m_wpeView.get(), "resized", G_CALLBACK(+[](WPEView* view, gpointer userData) {
+            auto& webView = *reinterpret_cast<View*>(userData);
+            webView.setSize(WebCore::IntSize(wpe_view_get_width(view), wpe_view_get_height(view)));
+        }), this);
+        page().setIntrinsicDeviceScaleFactor(wpe_view_get_scale(m_wpeView.get()));
+        g_signal_connect(m_wpeView.get(), "notify::scale", G_CALLBACK(+[](WPEView* view, GParamSpec*, gpointer userData) {
+            auto& webView = *reinterpret_cast<View*>(userData);
+            webView.page().setIntrinsicDeviceScaleFactor(wpe_view_get_scale(view));
+        }), this);
+        g_signal_connect_after(m_wpeView.get(), "event", G_CALLBACK(+[](WPEView* view, WPEEvent* event, gpointer userData) -> gboolean {
+            auto& webView = *reinterpret_cast<View*>(userData);
+            switch (wpe_event_get_event_type(event)) {
+            case WPE_EVENT_NONE:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            case WPE_EVENT_POINTER_DOWN:
+                webView.m_inputMethodFilter.cancelComposition();
+                FALLTHROUGH;
+            case WPE_EVENT_POINTER_UP:
+            case WPE_EVENT_POINTER_MOVE:
+            case WPE_EVENT_POINTER_ENTER:
+            case WPE_EVENT_POINTER_LEAVE:
+                webView.page().handleMouseEvent(WebKit::NativeWebMouseEvent(event));
+                return TRUE;
+            case WPE_EVENT_SCROLL:
+                webView.page().handleNativeWheelEvent(WebKit::NativeWebWheelEvent(event));
+                return TRUE;
+            case WPE_EVENT_KEYBOARD_KEY_DOWN: {
+                auto modifiers = wpe_event_get_modifiers(event);
+                auto keyval = wpe_event_keyboard_get_keyval(event);
+                if (modifiers & WPE_MODIFIER_KEYBOARD_CONTROL && modifiers & WPE_MODIFIER_KEYBOARD_SHIFT && keyval == WPE_KEY_G) {
+                    auto& preferences = webView.page().preferences();
+                    preferences.setResourceUsageOverlayVisible(!preferences.resourceUsageOverlayVisible());
+                    return TRUE;
+                }
+                // FIXME: input methods
+                webView.page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, String(), webView.m_keyAutoRepeatHandler.keyPress(wpe_event_keyboard_get_keycode(event))));
+                return TRUE;
+            }
+            case WPE_EVENT_KEYBOARD_KEY_UP:
+                // FIXME: input methods
+                webView.m_keyAutoRepeatHandler.keyRelease();
+                webView.page().handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, String(), false));
+                return TRUE;
+            case WPE_EVENT_TOUCH_DOWN:
+                // FIXME: gestures
+#if ENABLE(TOUCH_EVENTS)
+                webView.m_touchEvents.add(wpe_event_touch_get_sequence_id(event), event);
+                webView.page().handleTouchEvent(NativeWebTouchEvent(event, webView.touchPointsForEvent(event)));
+#endif
+                return TRUE;
+            case WPE_EVENT_TOUCH_UP:
+            case WPE_EVENT_TOUCH_CANCEL: {
+                // FIXME: gestures
+#if ENABLE(TOUCH_EVENTS)
+                auto points = webView.touchPointsForEvent(event);
+                webView.m_touchEvents.remove(wpe_event_touch_get_sequence_id(event));
+                webView.page().handleTouchEvent(NativeWebTouchEvent(event, WTFMove(points)));
+#endif
+                return TRUE;
+            }
+            case WPE_EVENT_TOUCH_MOVE:
+                // FIXME: gestures
+#if ENABLE(TOUCH_EVENTS)
+                webView.m_touchEvents.set(wpe_event_touch_get_sequence_id(event), event);
+                webView.page().handleTouchEvent(NativeWebTouchEvent(event, webView.touchPointsForEvent(event)));
+#endif
+                return TRUE;
+            };
+            return FALSE;
+        }), this);
+        g_signal_connect(m_wpeView.get(), "focus-in", G_CALLBACK(+[](WPEView* view, gpointer userData) {
+            auto& webView = *reinterpret_cast<View*>(userData);
+            if (webView.m_viewStateFlags.contains(WebCore::ActivityState::IsFocused))
+                return;
+
+            OptionSet<WebCore::ActivityState> flagsToUpdate { WebCore::ActivityState::IsFocused };
+            webView.m_viewStateFlags.add(WebCore::ActivityState::IsFocused);
+            if (!webView.m_viewStateFlags.contains(WebCore::ActivityState::WindowIsActive)) {
+                flagsToUpdate.add(WebCore::ActivityState::WindowIsActive);
+                webView.m_viewStateFlags.add(WebCore::ActivityState::WindowIsActive);
+            }
+            webView.m_inputMethodFilter.notifyFocusedIn();
+            webView.page().activityStateDidChange(flagsToUpdate);
+        }), this);
+        g_signal_connect(m_wpeView.get(), "focus-out", G_CALLBACK(+[](WPEView* view, gpointer userData) {
+            auto& webView = *reinterpret_cast<View*>(userData);
+            if (!webView.m_viewStateFlags.contains(WebCore::ActivityState::IsFocused))
+                return;
+
+            OptionSet<WebCore::ActivityState> flagsToUpdate { WebCore::ActivityState::IsFocused };
+            webView.m_viewStateFlags.remove(WebCore::ActivityState::IsFocused);
+            if (webView.m_viewStateFlags.contains(WebCore::ActivityState::WindowIsActive)) {
+                flagsToUpdate.add(WebCore::ActivityState::WindowIsActive);
+                webView.m_viewStateFlags.remove(WebCore::ActivityState::WindowIsActive);
+            }
+            webView.m_inputMethodFilter.notifyFocusedOut();
+            webView.page().activityStateDidChange(flagsToUpdate);
+        }), this);
+        g_signal_connect(m_wpeView.get(), "state-changed", G_CALLBACK(+[](WPEView* view, WPEViewState previousState, gpointer userData) {
+            auto& webView = *reinterpret_cast<View*>(userData);
+            auto state = wpe_view_get_state(view);
+            uint32_t changedMask = state ^ previousState;
+            if (changedMask & WPE_VIEW_STATE_FULLSCREEN) {
+                switch (webView.m_fullscreenState) {
+                case WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen:
+                    if (state & WPE_VIEW_STATE_FULLSCREEN)
+                        webView.didEnterFullScreen();
+                    break;
+                case WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen:
+                    if (!(state & WPE_VIEW_STATE_FULLSCREEN))
+                        webView.didExitFullScreen();
+                    break;
+                case WebFullScreenManagerProxy::FullscreenState::InFullscreen:
+                    if (!(state & WPE_VIEW_STATE_FULLSCREEN) && webView.isFullScreen())
+                        webView.requestExitFullScreen();
+                    break;
+                case WebFullScreenManagerProxy::FullscreenState::NotInFullscreen:
+                    break;
+                }
+            }
+        }), this);
+        g_signal_connect(m_wpeView.get(), "preferred-dma-buf-formats-changed", G_CALLBACK(+[](WPEView*, gpointer userData) {
+            auto& webView = *reinterpret_cast<View*>(userData);
+            webView.page().preferredBufferFormatsDidChange();
+        }), this);
+        m_backingStore = AcceleratedBackingStoreDMABuf::create(*m_pageProxy, m_wpeView.get());
+    }
 
 #if ENABLE(MEMORY_SAMPLER)
     if (getenv("WEBKIT_SAMPLE_MEMORY"))
@@ -152,7 +289,8 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         nullptr
 #endif // WPE_CHECK_VERSION(1, 3, 0)
     };
-    wpe_view_backend_set_backend_client(m_backend, &s_backendClient, this);
+    if (m_backend)
+        wpe_view_backend_set_backend_client(m_backend, &s_backendClient, this);
 
     static struct wpe_view_backend_input_client s_inputClient = {
         // handle_keyboard_event
@@ -274,7 +412,8 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         nullptr,
         nullptr
     };
-    wpe_view_backend_set_input_client(m_backend, &s_inputClient, this);
+    if (m_backend)
+        wpe_view_backend_set_input_client(m_backend, &s_inputClient, this);
 
 #if ENABLE(FULLSCREEN_API) && WPE_CHECK_VERSION(1, 11, 1)
     static struct wpe_view_backend_fullscreen_client s_fullscreenClient = {
@@ -307,10 +446,12 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
         nullptr,
         nullptr
     };
-    wpe_view_backend_set_fullscreen_client(m_backend, &s_fullscreenClient, this);
+    if (m_backend)
+        wpe_view_backend_set_fullscreen_client(m_backend, &s_fullscreenClient, this);
 #endif
 
-    wpe_view_backend_initialize(m_backend);
+    if (m_backend)
+        wpe_view_backend_initialize(m_backend);
 
     m_pageProxy->initializeWebPage();
 
@@ -319,15 +460,20 @@ View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseC
 
 View::~View()
 {
-    wpe_view_backend_set_backend_client(m_backend, nullptr, nullptr);
-    wpe_view_backend_set_input_client(m_backend, nullptr, nullptr);
-    // Although the fullscreen client is used for libwpe 1.11.1 and newer, we cannot
-    // unregister it prior to 1.15.2 (see https://github.com/WebPlatformForEmbedded/libwpe/pull/129).
+    if (m_backend) {
+        wpe_view_backend_set_backend_client(m_backend, nullptr, nullptr);
+        wpe_view_backend_set_input_client(m_backend, nullptr, nullptr);
+        // Although the fullscreen client is used for libwpe 1.11.1 and newer, we cannot
+        // unregister it prior to 1.15.2 (see https://github.com/WebPlatformForEmbedded/libwpe/pull/129).
 #if ENABLE(FULLSCREEN_API) && WPE_CHECK_VERSION(1, 15, 2)
-    wpe_view_backend_set_fullscreen_client(m_backend, nullptr, nullptr);
+        wpe_view_backend_set_fullscreen_client(m_backend, nullptr, nullptr);
 #endif
+    }
 
     viewsVector().removeAll(this);
+    if (m_wpeView)
+        g_signal_handlers_disconnect_by_data(m_wpeView.get(), this);
+    m_backingStore = nullptr;
 #if ENABLE(ACCESSIBILITY)
     if (m_accessible)
         webkitWebViewAccessibleSetWebView(m_accessible.get(), nullptr);
@@ -453,17 +599,105 @@ void View::close()
 }
 
 #if ENABLE(FULLSCREEN_API)
+bool View::isFullScreen() const
+{
+    return m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen || m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::InFullscreen;
+}
+
+void View::willEnterFullScreen()
+{
+    ASSERT(m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::NotInFullscreen);
+    if (auto* fullScreenManagerProxy = page().fullScreenManager())
+        fullScreenManagerProxy->willEnterFullScreen();
+    m_fullscreenState = WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen;
+}
+
+void View::enterFullScreen()
+{
+    ASSERT(m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen);
+    ASSERT(m_wpeView);
+
+    if (m_client->enterFullScreen(*this))
+        return;
+
+    if (wpe_view_get_state(m_wpeView.get()) & WPE_VIEW_STATE_FULLSCREEN) {
+        m_viewWasAlreadyInFullScreen = true;
+        didEnterFullScreen();
+        return;
+    }
+
+    m_viewWasAlreadyInFullScreen = false;
+    wpe_view_fullscreen(m_wpeView.get());
+}
+
+void View::didEnterFullScreen()
+{
+    ASSERT(m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen);
+    ASSERT(m_wpeView);
+
+    if (auto* fullScreenManagerProxy = page().fullScreenManager())
+        fullScreenManagerProxy->didEnterFullScreen();
+    m_fullscreenState = WebFullScreenManagerProxy::FullscreenState::InFullscreen;
+}
+
+void View::willExitFullScreen()
+{
+    ASSERT(m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen || m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::InFullscreen);
+
+    if (auto* fullScreenManagerProxy = page().fullScreenManager())
+        fullScreenManagerProxy->willExitFullScreen();
+    m_fullscreenState = WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen;
+}
+
+void View::exitFullScreen()
+{
+    ASSERT(m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen);
+    ASSERT(m_wpeView);
+
+    if (m_client->exitFullScreen(*this))
+        return;
+
+    if (!(wpe_view_get_state(m_wpeView.get()) & WPE_VIEW_STATE_FULLSCREEN) || m_viewWasAlreadyInFullScreen) {
+        didExitFullScreen();
+        return;
+    }
+
+    wpe_view_unfullscreen(m_wpeView.get());
+}
+
+void View::didExitFullScreen()
+{
+    ASSERT(m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen);
+    ASSERT(m_wpeView);
+
+    if (auto* fullScreenManagerProxy = page().fullScreenManager())
+        fullScreenManagerProxy->didExitFullScreen();
+    m_fullscreenState = WebFullScreenManagerProxy::FullscreenState::NotInFullscreen;
+}
+
+void View::requestExitFullScreen()
+{
+    ASSERT(m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen || m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::InFullscreen);
+    ASSERT(m_wpeView);
+
+    if (auto* fullScreenManagerProxy = page().fullScreenManager())
+        fullScreenManagerProxy->requestExitFullScreen();
+}
+
 bool View::setFullScreen(bool fullScreenState)
 {
+    ASSERT(!m_wpeView);
 #if WPE_CHECK_VERSION(1, 11, 1)
-    if (!wpe_view_backend_platform_set_fullscreen(m_backend, fullScreenState))
+    if (m_backend && !wpe_view_backend_platform_set_fullscreen(m_backend, fullScreenState))
         return false;
 #endif
-    m_fullScreenModeActive = fullScreenState;
-    if (m_fullScreenModeActive)
+    if (fullScreenState) {
+        m_fullscreenState = WebFullScreenManagerProxy::FullscreenState::InFullscreen;
         m_client->enterFullScreen(*this);
-    else
+    } else {
+        m_fullscreenState = WebFullScreenManagerProxy::FullscreenState::NotInFullscreen;
         m_client->exitFullScreen(*this);
+    }
     return true;
 };
 #endif
@@ -507,5 +741,166 @@ WebKit::WebPageProxy* View::platformWebPageProxyForGamepadInput()
     return nullptr;
 }
 #endif
+
+void View::updateAcceleratedSurface(uint64_t surfaceID)
+{
+    if (m_backingStore)
+        m_backingStore->updateSurfaceID(surfaceID);
+}
+
+#if ENABLE(TOUCH_EVENTS)
+Vector<WebKit::WebPlatformTouchPoint> View::touchPointsForEvent(WPEEvent* event)
+{
+    auto stateForEvent = [](uint32_t id, WPEEvent* event) -> WebPlatformTouchPoint::State {
+        if (wpe_event_touch_get_sequence_id(event) != id)
+            return WebPlatformTouchPoint::State::Stationary;
+
+        switch (wpe_event_get_event_type(event)) {
+        case WPE_EVENT_TOUCH_DOWN:
+            return WebPlatformTouchPoint::State::Pressed;
+        case WPE_EVENT_TOUCH_UP:
+            return WebPlatformTouchPoint::State::Released;
+        case WPE_EVENT_TOUCH_MOVE:
+            return WebPlatformTouchPoint::State::Moved;
+        case WPE_EVENT_TOUCH_CANCEL:
+            return WebPlatformTouchPoint::State::Cancelled;
+        default:
+            break;
+        }
+
+        RELEASE_ASSERT_NOT_REACHED();
+    };
+
+    Vector<WebPlatformTouchPoint> points;
+    points.reserveInitialCapacity(m_touchEvents.size());
+    for (const auto& it : m_touchEvents) {
+        auto* currentEvent = it.value.get();
+        double x, y;
+        wpe_event_get_position(currentEvent, &x, &y);
+        WebCore::IntPoint position(x, y);
+        points.append(WebPlatformTouchPoint(it.key, stateForEvent(it.key, currentEvent), position, position));
+    }
+    return points;
+}
+#endif
+
+void View::setCursor(const WebCore::Cursor& cursor)
+{
+    if (!m_wpeView)
+        return;
+
+    if (cursor.type() == WebCore::Cursor::Type::Invalid)
+        return;
+
+    auto cursorName = [](const WebCore::Cursor& cursor) -> const char* {
+        switch (cursor.type()) {
+        case WebCore::Cursor::Type::Pointer:
+            return "default";
+        case WebCore::Cursor::Type::Cross:
+            return "crosshair";
+        case WebCore::Cursor::Type::Hand:
+            return "pointer";
+        case WebCore::Cursor::Type::IBeam:
+            return "text";
+        case WebCore::Cursor::Type::Wait:
+            return "wait";
+        case WebCore::Cursor::Type::Help:
+            return "help";
+        case WebCore::Cursor::Type::Move:
+        case WebCore::Cursor::Type::MiddlePanning:
+            return "move";
+        case WebCore::Cursor::Type::EastResize:
+        case WebCore::Cursor::Type::EastPanning:
+            return "e-resize";
+        case WebCore::Cursor::Type::NorthResize:
+        case WebCore::Cursor::Type::NorthPanning:
+            return "n-resize";
+        case WebCore::Cursor::Type::NorthEastResize:
+        case WebCore::Cursor::Type::NorthEastPanning:
+            return "ne-resize";
+        case WebCore::Cursor::Type::NorthWestResize:
+        case WebCore::Cursor::Type::NorthWestPanning:
+            return "nw-resize";
+        case WebCore::Cursor::Type::SouthResize:
+        case WebCore::Cursor::Type::SouthPanning:
+            return "s-resize";
+        case WebCore::Cursor::Type::SouthEastResize:
+        case WebCore::Cursor::Type::SouthEastPanning:
+            return "se-resize";
+        case WebCore::Cursor::Type::SouthWestResize:
+        case WebCore::Cursor::Type::SouthWestPanning:
+            return "sw-resize";
+        case WebCore::Cursor::Type::WestResize:
+        case WebCore::Cursor::Type::WestPanning:
+            return "w-resize";
+        case WebCore::Cursor::Type::NorthSouthResize:
+            return "ns-resize";
+        case WebCore::Cursor::Type::EastWestResize:
+            return "ew-resize";
+        case WebCore::Cursor::Type::NorthEastSouthWestResize:
+            return "nesw-resize";
+        case WebCore::Cursor::Type::NorthWestSouthEastResize:
+            return "nwse-resize";
+        case WebCore::Cursor::Type::ColumnResize:
+            return "col-resize";
+        case WebCore::Cursor::Type::RowResize:
+            return "row-resize";
+        case WebCore::Cursor::Type::VerticalText:
+            return "vertical-text";
+        case WebCore::Cursor::Type::Cell:
+            return "cell";
+        case WebCore::Cursor::Type::ContextMenu:
+            return "context-menu";
+        case WebCore::Cursor::Type::Alias:
+            return "alias";
+        case WebCore::Cursor::Type::Progress:
+            return "progress";
+        case WebCore::Cursor::Type::NoDrop:
+            return "no-drop";
+        case WebCore::Cursor::Type::NotAllowed:
+            return "not-allowed";
+        case WebCore::Cursor::Type::Copy:
+            return "copy";
+        case WebCore::Cursor::Type::None:
+            return "none";
+        case WebCore::Cursor::Type::ZoomIn:
+            return "zoom-in";
+        case WebCore::Cursor::Type::ZoomOut:
+            return "zoom-out";
+        case WebCore::Cursor::Type::Grab:
+            return "grab";
+        case WebCore::Cursor::Type::Grabbing:
+            return "grabbing";
+        case WebCore::Cursor::Type::Custom:
+            return nullptr;
+        case WebCore::Cursor::Type::Invalid:
+            break;
+        }
+        RELEASE_ASSERT_NOT_REACHED();
+    };
+
+    if (const char* name = cursorName(cursor)) {
+        wpe_view_set_cursor_from_name(m_wpeView.get(), name);
+        return;
+    }
+
+    ASSERT(cursor.type() == WebCore::Cursor::Type::Custom);
+    auto image = cursor.image();
+    auto nativeImage = image->nativeImageForCurrentFrame();
+    if (!nativeImage)
+        return;
+
+    auto surface = nativeImage->platformImage();
+    auto width = cairo_image_surface_get_width(surface.get());
+    auto height = cairo_image_surface_get_height(surface.get());
+    auto stride = cairo_image_surface_get_stride(surface.get());
+    auto* data = cairo_image_surface_get_data(surface.get());
+    GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_with_free_func(data, height * stride, [](gpointer data) {
+        cairo_surface_destroy(static_cast<cairo_surface_t*>(data));
+    }, surface.leakRef()));
+
+    WebCore::IntPoint hotspot = WebCore::determineHotSpot(image.get(), cursor.hotSpot());
+    wpe_view_set_cursor_from_bytes(m_wpeView.get(), bytes.get(), width, height, hotspot.x(), hotspot.y());
+}
 
 } // namespace WKWPE

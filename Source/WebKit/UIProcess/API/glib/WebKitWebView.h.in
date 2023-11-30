@@ -71,6 +71,7 @@
 #include <wpe/WebKitColor.h>
 #include <wpe/WebKitRectangle.h>
 #include <wpe/WebKitWebViewBackend.h>
+#include <wpe/wpe-platform.h>
 #endif
 
 G_BEGIN_DECLS
@@ -468,6 +469,12 @@ webkit_web_view_new_with_user_content_manager        (WebKitWebViewBackend      
 
 WEBKIT_API WebKitWebViewBackend *
 webkit_web_view_get_backend                          (WebKitWebView             *web_view);
+
+WEBKIT_API WPEDisplay *
+webkit_web_view_get_display                          (WebKitWebView             *web_view);
+
+WEBKIT_API WPEView *
+webkit_web_view_get_wpe_view                         (WebKitWebView             *web_view);
 #endif
 
 #if !ENABLE(2022_GLIB_API)

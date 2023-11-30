@@ -127,7 +127,8 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if PLATFORM(WPE)
-    if (!parameters.isServiceWorkerProcess) {
+    m_dmaBufRendererBufferMode = parameters.dmaBufRendererBufferMode;
+    if (!parameters.isServiceWorkerProcess && m_dmaBufRendererBufferMode.isEmpty()) {
         auto& implementationLibraryName = parameters.implementationLibraryName;
         if (!implementationLibraryName.isNull() && implementationLibraryName.data()[0] != '\0')
             wpe_loader_init(parameters.implementationLibraryName.data());
@@ -139,6 +140,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
 #if USE(GBM)
     WebCore::GBMDevice::singleton().initialize(parameters.renderDeviceFile);
+#endif
+
+#if PLATFORM(WPE)
+    if (!parameters.isServiceWorkerProcess && !m_dmaBufRendererBufferMode.isEmpty())
+        WebCore::PlatformDisplay::setUseDMABufForRendering(true);
 #endif
 
 #if PLATFORM(GTK) && USE(EGL)

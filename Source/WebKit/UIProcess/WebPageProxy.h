@@ -315,6 +315,10 @@ OBJC_CLASS _WKRemoteObjectRegistry;
 struct WKPageInjectedBundleClientBase;
 struct wpe_view_backend;
 
+#if PLATFORM(WPE)
+typedef struct _WPEView WPEView;
+#endif
+
 namespace WebKit {
 
 class AudioSessionRoutingArbitratorProxy;
@@ -455,6 +459,9 @@ struct WebPopupItem;
 struct WebPreferencesStore;
 struct WebSpeechSynthesisVoice;
 struct WebsitePoliciesData;
+#if PLATFORM(WPE) && USE(GBM)
+struct DMABufRendererBufferFormat;
+#endif
 
 enum class ContentAsStringIncludesChildFrames : bool;
 enum class DragControllerAction : uint8_t;
@@ -1099,6 +1106,10 @@ public:
 
 #if PLATFORM(GTK) && HAVE(APP_ACCENT_COLORS)
     void accentColorDidChange();
+#endif
+
+#if PLATFORM(WPE)
+    WPEView* wpeView() const;
 #endif
 
     const std::optional<WebCore::Color>& backgroundColor() const;
@@ -2279,6 +2290,10 @@ public:
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtectionsPolicies() const { return m_advancedPrivacyProtectionsPolicies; }
 #endif
 
+#if PLATFORM(WPE) && USE(GBM)
+    void preferredBufferFormatsDidChange();
+#endif
+
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration();
 
 #if HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)
@@ -2537,11 +2552,15 @@ private:
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     void bindAccessibilityTree(const String&);
+    OptionSet<WebCore::PlatformEventModifier> currentStateOfModifierKeys();
 #endif
 
 #if PLATFORM(GTK)
     void showEmojiPicker(const WebCore::IntRect&, CompletionHandler<void(String)>&&);
-    OptionSet<WebCore::PlatformEventModifier> currentStateOfModifierKeys();
+#endif
+
+#if PLATFORM(WPE) && USE(GBM)
+    Vector<DMABufRendererBufferFormat> preferredBufferFormats() const;
 #endif
 
     // Popup Menu.

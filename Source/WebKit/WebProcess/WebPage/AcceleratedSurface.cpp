@@ -33,7 +33,7 @@
 #include "AcceleratedSurfaceLibWPE.h"
 #endif
 
-#if PLATFORM(GTK) && USE(EGL)
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(EGL)
 #include "AcceleratedSurfaceDMABuf.h"
 #endif
 
@@ -42,7 +42,7 @@ using namespace WebCore;
 
 std::unique_ptr<AcceleratedSurface> AcceleratedSurface::create(WebPage& webPage, Client& client)
 {
-#if PLATFORM(GTK) && USE(EGL)
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(EGL)
 #if USE(GBM)
     if (PlatformDisplay::sharedDisplayForCompositing().type() == PlatformDisplay::Type::GBM)
         return AcceleratedSurfaceDMABuf::create(webPage, client);

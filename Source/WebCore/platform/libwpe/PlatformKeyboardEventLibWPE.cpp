@@ -1348,7 +1348,9 @@ void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool backwardsCo
 
 OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifierKeys()
 {
-    return { }; // FIXME: Implement.
+    if (s_currentModifiers)
+        return *s_currentModifiers;
+    return { };
 }
 
 } // namespace WebCore

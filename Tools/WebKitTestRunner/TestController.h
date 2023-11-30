@@ -427,6 +427,10 @@ public:
     bool shouldUseFakeMachineReadableCodeResultsForImageAnalysis() const;
 #endif
 
+#if PLATFORM(WPE)
+    bool useWPEPlatformAPI() const { return m_useWPEPlatformAPI; }
+#endif
+
 private:
     WKRetainPtr<WKPageConfigurationRef> generatePageConfiguration(const TestOptions&);
     WKRetainPtr<WKContextConfigurationRef> generateContextConfiguration(const TestOptions&) const;
@@ -766,6 +770,10 @@ private:
     size_t m_downloadIndex { 0 };
     bool m_shouldDownloadContentDispositionAttachments { true };
     bool m_dumpPolicyDelegateCallbacks { false };
+
+#if PLATFORM(WPE)
+    bool m_useWPEPlatformAPI { false };
+#endif
 };
 
 } // namespace WTR

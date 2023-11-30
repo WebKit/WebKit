@@ -207,6 +207,8 @@ if (PORT STREQUAL "WPE" AND ENABLE_WPE_QT_API)
         ${Qt5Test_INCLUDE_DIRS}
         ${Qt5_INCLUDE_DIRS}
         ${TOOLS_DIR}/TestWebKitAPI
+        ${WEBKIT_DIR}/WPEPlatform
+        ${WPEPlatform_DERIVED_SOURCES_DIR}
     )
     set(WPEQtAPITest_LIBRARIES
          ${WebKitAPITest_LIBRARIES}

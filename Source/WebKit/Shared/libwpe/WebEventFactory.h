@@ -40,6 +40,10 @@ struct wpe_input_pointer_event;
 struct wpe_input_touch_event;
 #endif
 
+#if PLATFORM(WPE)
+typedef struct _WPEEvent WPEEvent;
+#endif
+
 namespace WebKit {
 
 class WebEventFactory {
@@ -49,6 +53,15 @@ public:
     static WebWheelEvent createWebWheelEvent(struct wpe_input_axis_event*, float deviceScaleFactor, WebWheelEvent::Phase, WebWheelEvent::Phase momentumPhase);
 #if ENABLE(TOUCH_EVENTS)
     static WebTouchEvent createWebTouchEvent(struct wpe_input_touch_event*, float deviceScaleFactor);
+#endif
+
+#if PLATFORM(WPE)
+    static WebMouseEvent createWebMouseEvent(WPEEvent*);
+    static WebWheelEvent createWebWheelEvent(WPEEvent*);
+    static WebKeyboardEvent createWebKeyboardEvent(WPEEvent*, const String&, bool isAutoRepeat);
+#if ENABLE(TOUCH_EVENTS)
+    static WebTouchEvent createWebTouchEvent(WPEEvent*, Vector<WebPlatformTouchPoint>&&);
+#endif
 #endif
 };
 

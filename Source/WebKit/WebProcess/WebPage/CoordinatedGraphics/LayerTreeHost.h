@@ -112,6 +112,10 @@ public:
     void adjustTransientZoom(double, WebCore::FloatPoint);
     void commitTransientZoom(double, WebCore::FloatPoint);
 #endif
+
+#if PLATFORM(WPE) && USE(GBM)
+    void preferredBufferFormatsDidChange();
+#endif
 private:
 #if USE(COORDINATED_GRAPHICS)
     void layerFlushTimerFired();

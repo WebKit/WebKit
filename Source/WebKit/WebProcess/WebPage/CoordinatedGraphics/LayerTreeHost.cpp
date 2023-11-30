@@ -561,6 +561,13 @@ void LayerTreeHost::commitTransientZoom(double scale, FloatPoint origin)
 }
 #endif
 
+#if PLATFORM(WPE) && USE(GBM)
+void LayerTreeHost::preferredBufferFormatsDidChange()
+{
+    m_surface->preferredBufferFormatsDidChange();
+}
+#endif
+
 } // namespace WebKit
 
 #endif // USE(COORDINATED_GRAPHICS)
