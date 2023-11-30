@@ -78,7 +78,7 @@ private:
     const RealtimeMediaSourceCapabilities& capabilities() final;
     const RealtimeMediaSourceSettings& settings() final;
     Ref<TakePhotoNativePromise> takePhotoInternal(PhotoSettings&&) final;
-    void getPhotoCapabilities(PhotoCapabilitiesHandler&&) final;
+    Ref<PhotoCapabilitiesNativePromise> getPhotoCapabilities() final;
     Ref<PhotoSettingsNativePromise> getPhotoSettings() final;
 
     void startProducingData() override;

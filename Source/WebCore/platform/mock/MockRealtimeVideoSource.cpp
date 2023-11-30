@@ -257,12 +257,10 @@ auto MockRealtimeVideoSource::takePhotoInternal(PhotoSettings&&) -> Ref<TakePhot
     });
 }
 
-void MockRealtimeVideoSource::getPhotoCapabilities(PhotoCapabilitiesHandler&& completion)
+auto MockRealtimeVideoSource::getPhotoCapabilities() -> Ref<PhotoCapabilitiesNativePromise>
 {
-    if (m_photoCapabilities) {
-        completion({ *m_photoCapabilities });
-        return;
-    }
+    if (m_photoCapabilities)
+        return PhotoCapabilitiesNativePromise::createAndResolve(*m_photoCapabilities);
 
     auto capabilities = this->capabilities();
     PhotoCapabilities photoCapabilities;
@@ -275,7 +273,7 @@ void MockRealtimeVideoSource::getPhotoCapabilities(PhotoCapabilitiesHandler&& co
 
     m_photoCapabilities = WTFMove(photoCapabilities);
 
-    completion({ *m_photoCapabilities });
+    return PhotoCapabilitiesNativePromise::createAndResolve(*m_photoCapabilities);
 }
 
 auto MockRealtimeVideoSource::getPhotoSettings() -> Ref<PhotoSettingsNativePromise>

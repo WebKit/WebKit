@@ -1461,9 +1461,9 @@ auto RealtimeMediaSource::takePhoto(PhotoSettings&&) -> Ref<TakePhotoNativePromi
     return TakePhotoNativePromise::createAndReject("Not supported"_s);
 }
 
-void RealtimeMediaSource::getPhotoCapabilities(PhotoCapabilitiesHandler&& completion)
+auto RealtimeMediaSource::getPhotoCapabilities() -> Ref<PhotoCapabilitiesNativePromise>
 {
-    completion(PhotoCapabilitiesOrError("Not supported"_s));
+    return PhotoCapabilitiesNativePromise::createAndReject("Not supported"_s);
 }
 
 auto RealtimeMediaSource::getPhotoSettings() -> Ref<PhotoSettingsNativePromise>

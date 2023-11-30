@@ -324,84 +324,69 @@ auto MediaStreamTrack::takePhoto(PhotoSettings&& settings) -> Ref<TakePhotoPromi
     if (m_ended)
         return TakePhotoPromise::createAndReject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
 
-    TakePhotoPromise::Producer producer;
-    Ref<TakePhotoPromise> promise = producer;
-
-    m_private->takePhoto(WTFMove(settings))->whenSettled(RunLoop::main(),
-        [protectedThis = Ref { *this }, producer = WTFMove(producer)] (auto&& result) mutable {
+    return m_private->takePhoto(WTFMove(settings))->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
 
         // https://w3c.github.io/mediacapture-image/#dom-imagecapture-takephoto
         // If the operation cannot be completed for any reason (for example, upon
         // invocation of multiple takePhoto() method calls in rapid succession),
         // then reject p with a new DOMException whose name is UnknownError, and
         // abort these steps.
-        if (!result) {
-            producer.reject(Exception { ExceptionCode::UnknownError, WTFMove(result.error()) });
-            return;
-        }
+        if (!result)
+            return TakePhotoPromise::createAndReject(Exception { ExceptionCode::UnknownError, WTFMove(result.error()) });
 
-        if (RefPtr context = protectedThis->scriptExecutionContext(); !context || context->activeDOMObjectsAreStopped() || protectedThis->m_ended) {
-            producer.reject(Exception { ExceptionCode::OperationError, "Track has ended"_s });
-            return;
-        }
+        RefPtr context = protectedThis->scriptExecutionContext();
+        if (!context || context->activeDOMObjectsAreStopped() || protectedThis->m_ended)
+            return TakePhotoPromise::createAndReject(Exception { ExceptionCode::OperationError, "Track has ended"_s });
 
-        producer.resolve(WTFMove(result.value()));
-    });
-
-    return promise;
-}
-
-void MediaStreamTrack::getPhotoCapabilities(DOMPromiseDeferred<IDLDictionary<PhotoCapabilities>>&& promise)
-{
-    auto identifier = LOGIDENTIFIER;
-
-    m_private->getPhotoCapabilities([this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)](auto&& result) mutable {
-        queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [this, promise = WTFMove(promise), result = WTFMove(result), identifier = WTFMove(identifier)] () mutable {
-            if (!result) {
-                // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotocapabilities②
-                // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
-                // asynchronously), then reject p with a new DOMException whose name is OperationError, and
-                // abort these steps.
-                ERROR_LOG(identifier, "rejecting promise: ", result.errorMessage);
-                promise.reject(Exception { ExceptionCode::OperationError, WTFMove(result.errorMessage) });
-                return;
-            }
-            if (m_readyState != State::Live) {
-                ERROR_LOG(identifier, "rejecting promise, track has ended");
-                promise.reject(Exception { ExceptionCode::OperationError, "Track has ended"_s });
-                return;
-            }
-
-            ALWAYS_LOG(identifier, "resolving promise");
-            promise.resolve(WTFMove(*result.capabilities));
-        });
+        return TakePhotoPromise::createAndResolve(WTFMove(result.value()));
     });
 }
 
-void MediaStreamTrack::getPhotoSettings(DOMPromiseDeferred<IDLDictionary<PhotoSettings>>&& promise)
+auto MediaStreamTrack::getPhotoCapabilities() -> Ref<PhotoCapabilitiesPromise>
 {
-    auto identifier = LOGIDENTIFIER;
+    // https://w3c.github.io/mediacapture-image/#dom-imagecapture-getphotocapabilities
+    // If the readyState of track provided in the constructor is not live, return
+    // a promise rejected with a new DOMException whose name is InvalidStateError,
+    // and abort these steps.
+    if (m_ended)
+        return PhotoCapabilitiesPromise::createAndReject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
 
-    m_private->getPhotoSettings()->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }, promise = WTFMove(promise), identifier = WTFMove(identifier)] (auto&& result) mutable {
-        queueTaskKeepingObjectAlive(*this, TaskSource::ImageCapture, [this, promise = WTFMove(promise), result = WTFMove(result), identifier = WTFMove(identifier)] () mutable {
-            // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotosettings②
-            // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
-            // asynchronously), then reject p with a new DOMException whose name is OperationError, and
-            // abort these steps.
-            if (!result) {
-                ERROR_LOG(identifier, "rejecting promise: ", result.error());
-                promise.reject(Exception { ExceptionCode::OperationError, WTFMove(result.error()) });
-                return;
-            }
-            if (m_readyState != State::Live) {
-                ERROR_LOG(identifier, "rejecting promise, track has ended");
-                promise.reject(Exception { ExceptionCode::OperationError, "Track has ended"_s });
-                return;
-            }
+    return m_private->getPhotoCapabilities()->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
 
-            ALWAYS_LOG(identifier, "resolving promise");
-            promise.resolve(WTFMove(result.value()));
-        });
+        // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotocapabilities②
+        // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
+        // asynchronously), then reject p with a new DOMException whose name is OperationError, and
+        // abort these steps.
+        if (!result)
+            return PhotoCapabilitiesPromise::createAndReject(Exception { ExceptionCode::UnknownError, WTFMove(result.error()) });
+
+        RefPtr context = protectedThis->scriptExecutionContext();
+        if (!context || context->activeDOMObjectsAreStopped() || protectedThis->m_ended)
+            return PhotoCapabilitiesPromise::createAndReject(Exception { ExceptionCode::OperationError, "Track has ended"_s });
+
+        return PhotoCapabilitiesPromise::createAndResolve(WTFMove(result.value()));
+    });
+}
+
+auto MediaStreamTrack::getPhotoSettings() -> Ref<PhotoSettingsPromise>
+{
+    if (m_ended)
+        return PhotoSettingsPromise::createAndReject(Exception { ExceptionCode::InvalidStateError, "Track has ended"_s });
+
+    return m_private->getPhotoSettings()->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
+
+        // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotosettings②
+        // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
+        // asynchronously), then reject p with a new DOMException whose name is OperationError, and
+        // abort these steps.
+        if (!result)
+            return PhotoSettingsPromise::createAndReject(Exception { ExceptionCode::UnknownError, WTFMove(result.error()) });
+
+        RefPtr context = protectedThis->scriptExecutionContext();
+        if (!context || context->activeDOMObjectsAreStopped() || protectedThis->m_ended)
+            return PhotoSettingsPromise::createAndReject(Exception { ExceptionCode::OperationError, "Track has ended"_s });
+
+        return PhotoSettingsPromise::createAndResolve(WTFMove(result.value()));
     });
 }
 

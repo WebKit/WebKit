@@ -85,9 +85,9 @@ Ref<RealtimeMediaSource::TakePhotoNativePromise> RemoteRealtimeMediaSource::take
     return m_proxy.takePhoto(WTFMove(settings));
 }
 
-void RemoteRealtimeMediaSource::getPhotoCapabilities(PhotoCapabilitiesHandler&& callback)
+Ref<RealtimeMediaSource::PhotoCapabilitiesNativePromise> RemoteRealtimeMediaSource::getPhotoCapabilities()
 {
-    m_proxy.getPhotoCapabilities(WTFMove(callback));
+    return m_proxy.getPhotoCapabilities();
 }
 
 Ref<RealtimeMediaSource::PhotoSettingsNativePromise> RemoteRealtimeMediaSource::getPhotoSettings()

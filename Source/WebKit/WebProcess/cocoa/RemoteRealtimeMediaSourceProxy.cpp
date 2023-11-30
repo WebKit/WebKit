@@ -123,9 +123,15 @@ Ref<WebCore::RealtimeMediaSource::TakePhotoNativePromise> RemoteRealtimeMediaSou
     });
 }
 
-void RemoteRealtimeMediaSourceProxy::getPhotoCapabilities(WebCore::RealtimeMediaSource::PhotoCapabilitiesHandler&& handler)
+Ref<WebCore::RealtimeMediaSource::PhotoCapabilitiesNativePromise> RemoteRealtimeMediaSourceProxy::getPhotoCapabilities()
 {
-    m_connection->sendWithAsyncReply(Messages::UserMediaCaptureManagerProxy::GetPhotoCapabilities(identifier()), WTFMove(handler));
+    return m_connection->sendWithPromisedReply(Messages::UserMediaCaptureManagerProxy::GetPhotoCapabilities(identifier()))
+    ->whenSettled(RunLoop::current(), [](Messages::UserMediaCaptureManagerProxy::GetPhotoCapabilities::Promise::Result&& result) {
+        if (result)
+            return WebCore::RealtimeMediaSource::PhotoCapabilitiesNativePromise::createAndSettle(WTFMove(result.value()));
+
+        return WebCore::RealtimeMediaSource::PhotoCapabilitiesNativePromise::createAndReject(String("IPC Connection closed"_s));
+    });
 }
 
 Ref<WebCore::RealtimeMediaSource::PhotoSettingsNativePromise> RemoteRealtimeMediaSourceProxy::getPhotoSettings()
