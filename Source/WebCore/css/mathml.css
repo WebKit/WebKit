@@ -155,6 +155,11 @@ ms, mtext, mi, mn, mo, annotation, mtd {
     white-space: nowrap !important;
 }
 
+/* Fractions */
+mfrac {
+    padding-inline: 1px;
+}
+
 mfrac > * {
     math-style: compact;
 }
