@@ -2008,3 +2008,5 @@ webkit.org/b/260225 [ Monterey+ x86_64 ] imported/w3c/web-platform-tests/webrtc/
 # rdar://118901410 (NEW TEST (271087@main): [ macOS x86_64 wk2 ] 2 tests in http/wpt/webcodecs are a constant failure)
 http/wpt/webcodecs/h264-encoder-default-config.https.any.html [ Failure ]
 http/wpt/webcodecs/h264-encoder-default-config.https.any.worker.html [ Failure ]
+
+webkit.org/b/265599 [ Sonoma+ Debug x86_64 ] imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-noreferrer.html [ Pass Crash ]
