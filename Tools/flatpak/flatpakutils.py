@@ -15,8 +15,10 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
 # Boston, MA 02110-1301, USA.
+
 import argparse
 import atexit
+import copy
 import logging
 try:
     import configparser
@@ -954,7 +956,9 @@ class WebkitFlatpak:
             if building:
                 # Spawn the sccache server in background, and avoid recursing here, using a bool keyword.
                 _log.debug("Pre-starting the SCCache dist server")
-                self.run_in_sandbox("sccache", "--start-server", env=sccache_environment, building_local_deps=building_local_deps,
+                sccache_server_environment = copy.deepcopy(sccache_environment)
+                sccache_server_environment.update({"SCCACHE_START_SERVER": "1"})
+                self.run_in_sandbox("sccache", env=sccache_server_environment, building_local_deps=building_local_deps,
                                     extra_flatpak_args=[share_network_option], start_sccache=False)
 
             # Forward sccache server env vars to sccache clients.
@@ -1050,6 +1054,9 @@ class WebkitFlatpak:
 
         if gather_output:
             return run_sanitized(command, gather_output=True, ignore_stderr=False, env=flatpak_env)
+
+        if command[0] != 'sccache' and 'SCCACHE_START_SERVER' in flatpak_env:
+            del flatpak_env['SCCACHE_START_SERVER']
 
         try:
             return self.execute_command(command, stdout=stdout, env=flatpak_env, keep_signals=keep_signals)
