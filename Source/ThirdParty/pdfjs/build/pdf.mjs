@@ -1095,7 +1095,9 @@ class TextWidgetAnnotationElement extends WidgetAnnotationElement {
           }
           elementData.lastCommittedValue = target.value;
           elementData.commitKey = 1;
-          elementData.focused = true;
+          if (!this.data.actions?.Focus) {
+            elementData.focused = true;
+          }
         });
         element.addEventListener("updatefromsandbox", jsEvent => {
           this.showElementAndHideCanvas(jsEvent.target);
@@ -1199,7 +1201,9 @@ class TextWidgetAnnotationElement extends WidgetAnnotationElement {
           if (!elementData.focused || !event.relatedTarget) {
             return;
           }
-          elementData.focused = false;
+          if (!this.data.actions?.Blur) {
+            elementData.focused = false;
+          }
           const {
             value
           } = event.target;
@@ -1404,6 +1408,13 @@ class RadioButtonWidgetAnnotationElement extends WidgetAnnotationElement {
       storage.setValue(id, {
         value
       });
+    }
+    if (value) {
+      for (const radio of this._getElementsByName(data.fieldName, id)) {
+        storage.setValue(radio.id, {
+          value: false
+        });
+      }
     }
     const element = document.createElement("input");
     GetElementsByNameSet.add(element);
@@ -2500,7 +2511,7 @@ class AnnotationLayer {
 /* harmony export */   SerializableEmpty: () => (/* binding */ SerializableEmpty)
 /* harmony export */ });
 /* harmony import */ var _shared_util_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(266);
-/* harmony import */ var _editor_editor_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(682);
+/* harmony import */ var _editor_editor_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(796);
 /* harmony import */ var _shared_murmurhash3_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(825);
 
 
@@ -2790,7 +2801,7 @@ function getDocument(src) {
   }
   const fetchDocParams = {
     docId,
-    apiVersion: '4.0.189',
+    apiVersion: '4.0.269',
     data,
     password,
     disableAutoFetch,
@@ -3577,7 +3588,9 @@ const PDFWorkerUtil = {
   };
   PDFWorkerUtil.createCDNWrapper = function (url) {
     const wrapper = `await import("${url}");`;
-    return URL.createObjectURL(new Blob([wrapper]));
+    return URL.createObjectURL(new Blob([wrapper], {
+      type: "text/javascript"
+    }));
   };
 }
 class PDFWorker {
@@ -4517,8 +4530,8 @@ class InternalRenderTask {
     }
   }
 }
-const version = '4.0.189';
-const build = '50f52b43a';
+const version = '4.0.269';
+const build = 'f4b396f6c';
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -7464,6 +7477,7 @@ for (const op in util.OPS) {
 /* harmony export */   PixelsPerInch: () => (/* binding */ PixelsPerInch),
 /* harmony export */   RenderingCancelledException: () => (/* binding */ RenderingCancelledException),
 /* harmony export */   StatTimer: () => (/* binding */ StatTimer),
+/* harmony export */   fetchData: () => (/* binding */ fetchData),
 /* harmony export */   getColorValues: () => (/* binding */ getColorValues),
 /* harmony export */   getCurrentTransform: () => (/* binding */ getCurrentTransform),
 /* harmony export */   getCurrentTransformInverse: () => (/* binding */ getCurrentTransformInverse),
@@ -7723,30 +7737,41 @@ class DOMCanvasFactory extends _base_factory_js__WEBPACK_IMPORTED_MODULE_0__.Bas
     return canvas;
   }
 }
-async function fetchData(url, asTypedArray = false) {
+async function fetchData(url, type = "text") {
   if (isValidFetchUrl(url, document.baseURI)) {
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(response.statusText);
     }
-    return asTypedArray ? new Uint8Array(await response.arrayBuffer()) : (0,_shared_util_js__WEBPACK_IMPORTED_MODULE_1__.stringToBytes)(await response.text());
+    switch (type) {
+      case "arraybuffer":
+        return response.arrayBuffer();
+      case "blob":
+        return response.blob();
+      case "json":
+        return response.json();
+    }
+    return response.text();
   }
   return new Promise((resolve, reject) => {
     const request = new XMLHttpRequest();
     request.open("GET", url, true);
-    if (asTypedArray) {
-      request.responseType = "arraybuffer";
-    }
+    request.responseType = type;
     request.onreadystatechange = () => {
       if (request.readyState !== XMLHttpRequest.DONE) {
         return;
       }
       if (request.status === 200 || request.status === 0) {
         let data;
-        if (asTypedArray && request.response) {
-          data = new Uint8Array(request.response);
-        } else if (!asTypedArray && request.responseText) {
-          data = (0,_shared_util_js__WEBPACK_IMPORTED_MODULE_1__.stringToBytes)(request.responseText);
+        switch (type) {
+          case "arraybuffer":
+          case "blob":
+          case "json":
+            data = request.response;
+            break;
+          default:
+            data = request.responseText;
+            break;
         }
         if (data) {
           resolve(data);
@@ -7760,9 +7785,9 @@ async function fetchData(url, asTypedArray = false) {
 }
 class DOMCMapReaderFactory extends _base_factory_js__WEBPACK_IMPORTED_MODULE_0__.BaseCMapReaderFactory {
   _fetchData(url, compressionType) {
-    return fetchData(url, this.isCompressed).then(data => {
+    return fetchData(url, this.isCompressed ? "arraybuffer" : "text").then(data => {
       return {
-        cMapData: data,
+        cMapData: data instanceof ArrayBuffer ? new Uint8Array(data) : (0,_shared_util_js__WEBPACK_IMPORTED_MODULE_1__.stringToBytes)(data),
         compressionType
       };
     });
@@ -7770,7 +7795,9 @@ class DOMCMapReaderFactory extends _base_factory_js__WEBPACK_IMPORTED_MODULE_0__
 }
 class DOMStandardFontDataFactory extends _base_factory_js__WEBPACK_IMPORTED_MODULE_0__.BaseStandardFontDataFactory {
   _fetchData(url) {
-    return fetchData(url, true);
+    return fetchData(url, "arraybuffer").then(data => {
+      return new Uint8Array(data);
+    });
   }
 }
 class DOMSVGFactory extends _base_factory_js__WEBPACK_IMPORTED_MODULE_0__.BaseSVGFactory {
@@ -8115,6 +8142,176 @@ function setLayerDimensions(div, viewport, mustFlip = false, mustRotate = true) 
 
 /***/ }),
 
+/***/ 423:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DrawLayer: () => (/* binding */ DrawLayer)
+/* harmony export */ });
+/* harmony import */ var _display_utils_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(473);
+/* harmony import */ var _shared_util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(266);
+
+
+class DrawLayer {
+  #parent = null;
+  #id = 0;
+  #mapping = new Map();
+  constructor({
+    pageIndex
+  }) {
+    this.pageIndex = pageIndex;
+  }
+  setParent(parent) {
+    if (!this.#parent) {
+      this.#parent = parent;
+      return;
+    }
+    if (this.#parent !== parent) {
+      if (this.#mapping.size > 0) {
+        for (const root of this.#mapping.values()) {
+          root.remove();
+          parent.append(root);
+        }
+      }
+      this.#parent = parent;
+    }
+  }
+  static get _svgFactory() {
+    return (0,_shared_util_js__WEBPACK_IMPORTED_MODULE_1__.shadow)(this, "_svgFactory", new _display_utils_js__WEBPACK_IMPORTED_MODULE_0__.DOMSVGFactory());
+  }
+  static #setBox(element, {
+    x,
+    y,
+    width,
+    height
+  }) {
+    const {
+      style
+    } = element;
+    style.top = `${100 * y}%`;
+    style.left = `${100 * x}%`;
+    style.width = `${100 * width}%`;
+    style.height = `${100 * height}%`;
+  }
+  #createSVG(box) {
+    const svg = DrawLayer._svgFactory.create(1, 1, true);
+    this.#parent.append(svg);
+    DrawLayer.#setBox(svg, box);
+    return svg;
+  }
+  highlight({
+    outlines,
+    box
+  }, color, opacity) {
+    const id = this.#id++;
+    const root = this.#createSVG(box);
+    root.classList.add("highlight");
+    const defs = DrawLayer._svgFactory.createElement("defs");
+    root.append(defs);
+    const path = DrawLayer._svgFactory.createElement("path");
+    defs.append(path);
+    const pathId = `path_p${this.pageIndex}_${id}`;
+    path.setAttribute("id", pathId);
+    path.setAttribute("d", DrawLayer.#extractPathFromHighlightOutlines(outlines));
+    const clipPath = DrawLayer._svgFactory.createElement("clipPath");
+    defs.append(clipPath);
+    const clipPathId = `clip_${pathId}`;
+    clipPath.setAttribute("id", clipPathId);
+    clipPath.setAttribute("clipPathUnits", "objectBoundingBox");
+    const clipPathUse = DrawLayer._svgFactory.createElement("use");
+    clipPath.append(clipPathUse);
+    clipPathUse.setAttribute("href", `#${pathId}`);
+    clipPathUse.classList.add("clip");
+    const use = DrawLayer._svgFactory.createElement("use");
+    root.append(use);
+    root.setAttribute("fill", color);
+    root.setAttribute("fill-opacity", opacity);
+    use.setAttribute("href", `#${pathId}`);
+    this.#mapping.set(id, root);
+    return {
+      id,
+      clipPathId: `url(#${clipPathId})`
+    };
+  }
+  highlightOutline({
+    outlines,
+    box
+  }) {
+    const id = this.#id++;
+    const root = this.#createSVG(box);
+    root.classList.add("highlightOutline");
+    const defs = DrawLayer._svgFactory.createElement("defs");
+    root.append(defs);
+    const path = DrawLayer._svgFactory.createElement("path");
+    defs.append(path);
+    const pathId = `path_p${this.pageIndex}_${id}`;
+    path.setAttribute("id", pathId);
+    path.setAttribute("d", DrawLayer.#extractPathFromHighlightOutlines(outlines));
+    path.setAttribute("vector-effect", "non-scaling-stroke");
+    const use1 = DrawLayer._svgFactory.createElement("use");
+    root.append(use1);
+    use1.setAttribute("href", `#${pathId}`);
+    const use2 = use1.cloneNode();
+    root.append(use2);
+    use1.classList.add("mainOutline");
+    use2.classList.add("secondaryOutline");
+    this.#mapping.set(id, root);
+    return id;
+  }
+  static #extractPathFromHighlightOutlines(polygons) {
+    const buffer = [];
+    for (const polygon of polygons) {
+      let [prevX, prevY] = polygon;
+      buffer.push(`M${prevX} ${prevY}`);
+      for (let i = 2; i < polygon.length; i += 2) {
+        const x = polygon[i];
+        const y = polygon[i + 1];
+        if (x === prevX) {
+          buffer.push(`V${y}`);
+          prevY = y;
+        } else if (y === prevY) {
+          buffer.push(`H${x}`);
+          prevX = x;
+        }
+      }
+      buffer.push("Z");
+    }
+    return buffer.join(" ");
+  }
+  updateBox(id, box) {
+    DrawLayer.#setBox(this.#mapping.get(id), box);
+  }
+  rotate(id, angle) {
+    this.#mapping.get(id).setAttribute("data-main-rotation", angle);
+  }
+  changeColor(id, color) {
+    this.#mapping.get(id).setAttribute("fill", color);
+  }
+  changeOpacity(id, opacity) {
+    this.#mapping.get(id).setAttribute("fill-opacity", opacity);
+  }
+  addClass(id, className) {
+    this.#mapping.get(id).classList.add(className);
+  }
+  removeClass(id, className) {
+    this.#mapping.get(id).classList.remove(className);
+  }
+  remove(id) {
+    this.#mapping.get(id).remove();
+    this.#mapping.delete(id);
+  }
+  destroy() {
+    this.#parent = null;
+    for (const root of this.#mapping.values()) {
+      root.remove();
+    }
+    this.#mapping.clear();
+  }
+}
+
+
+/***/ }),
+
 /***/ 331:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
@@ -8126,8 +8323,8 @@ __webpack_require__.d(__webpack_exports__, {
 
 // EXTERNAL MODULE: ./src/shared/util.js
 var util = __webpack_require__(266);
-// EXTERNAL MODULE: ./src/display/editor/editor.js
-var editor_editor = __webpack_require__(682);
+// EXTERNAL MODULE: ./src/display/editor/editor.js + 1 modules
+var editor_editor = __webpack_require__(796);
 // EXTERNAL MODULE: ./src/display/editor/tools.js
 var tools = __webpack_require__(812);
 // EXTERNAL MODULE: ./src/display/annotation_layer.js + 1 modules
@@ -9060,7 +9257,7 @@ class InkEditor extends editor_editor.AnnotationEditor {
     this.#disableEditing = true;
     this.div.classList.add("disabled");
     this.#fitToContent(true);
-    this.makeResizable();
+    this.select();
     this.parent.addInkEditorIfNeeded(true);
     this.moveInDOM();
     this.div.focus({
@@ -9080,8 +9277,10 @@ class InkEditor extends editor_editor.AnnotationEditor {
     }
     this.setInForeground();
     event.preventDefault();
-    if (event.type !== "mouse") {
-      this.div.focus();
+    if (event.pointerType !== "mouse" && !this.div.contains(document.activeElement)) {
+      this.div.focus({
+        preventScroll: true
+      });
     }
     this.#startDrawing(event.offsetX, event.offsetY);
   }
@@ -10298,15 +10497,87 @@ class AnnotationEditorLayer {
 
 /***/ }),
 
-/***/ 682:
+/***/ 796:
 /***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
 
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   AnnotationEditor: () => (/* binding */ AnnotationEditor)
-/* harmony export */ });
-/* harmony import */ var _tools_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(812);
-/* harmony import */ var _shared_util_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(266);
-/* harmony import */ var _display_utils_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(473);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, {
+  AnnotationEditor: () => (/* binding */ AnnotationEditor)
+});
+
+// EXTERNAL MODULE: ./src/display/editor/tools.js
+var tools = __webpack_require__(812);
+// EXTERNAL MODULE: ./src/shared/util.js
+var util = __webpack_require__(266);
+// EXTERNAL MODULE: ./src/display/display_utils.js
+var display_utils = __webpack_require__(473);
+;// CONCATENATED MODULE: ./src/display/editor/toolbar.js
+
+class EditorToolbar {
+  #toolbar = null;
+  #editor;
+  #buttons = null;
+  constructor(editor) {
+    this.#editor = editor;
+  }
+  render() {
+    const editToolbar = this.#toolbar = document.createElement("div");
+    editToolbar.className = "editToolbar";
+    editToolbar.addEventListener("contextmenu", display_utils.noContextMenu);
+    editToolbar.addEventListener("pointerdown", EditorToolbar.#pointerDown);
+    const buttons = this.#buttons = document.createElement("div");
+    buttons.className = "buttons";
+    editToolbar.append(buttons);
+    this.#addDeleteButton();
+    return editToolbar;
+  }
+  static #pointerDown(e) {
+    e.stopPropagation();
+  }
+  #focusIn(e) {
+    this.#editor._focusEventsAllowed = false;
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  #focusOut(e) {
+    this.#editor._focusEventsAllowed = true;
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  #addListenersToElement(element) {
+    element.addEventListener("focusin", this.#focusIn.bind(this), {
+      capture: true
+    });
+    element.addEventListener("focusout", this.#focusOut.bind(this), {
+      capture: true
+    });
+    element.addEventListener("contextmenu", display_utils.noContextMenu);
+  }
+  hide() {
+    this.#toolbar.classList.add("hidden");
+  }
+  show() {
+    this.#toolbar.classList.remove("hidden");
+  }
+  #addDeleteButton() {
+    const button = document.createElement("button");
+    button.className = "delete";
+    button.tabIndex = 0;
+    button.setAttribute("data-l10n-id", "pdfjs-editor-remove-button");
+    this.#addListenersToElement(button);
+    button.addEventListener("click", e => {
+      this.#editor._uiManager.delete();
+    });
+    this.#buttons.append(button);
+  }
+  remove() {
+    this.#toolbar.remove();
+  }
+}
+
+;// CONCATENATED MODULE: ./src/display/editor/editor.js
+
 
 
 
@@ -10323,6 +10594,7 @@ class AnnotationEditor {
   #savedDimensions = null;
   #boundFocusin = this.focusin.bind(this);
   #boundFocusout = this.focusout.bind(this);
+  #editToolbar = null;
   #focusedResizerName = "";
   #hasBeenClicked = false;
   #isEditing = false;
@@ -10336,14 +10608,14 @@ class AnnotationEditor {
   #isDraggable = false;
   #zIndex = AnnotationEditor._zIndex++;
   static _borderLineWidth = -1;
-  static _colorManager = new _tools_js__WEBPACK_IMPORTED_MODULE_0__.ColorManager();
+  static _colorManager = new tools.ColorManager();
   static _zIndex = 1;
   static SMALL_EDITOR_SIZE = 0;
   static get _resizerKeyboardManager() {
     const resize = AnnotationEditor.prototype._resizeWithKeyboard;
-    const small = _tools_js__WEBPACK_IMPORTED_MODULE_0__.AnnotationEditorUIManager.TRANSLATE_SMALL;
-    const big = _tools_js__WEBPACK_IMPORTED_MODULE_0__.AnnotationEditorUIManager.TRANSLATE_BIG;
-    return (0,_shared_util_js__WEBPACK_IMPORTED_MODULE_1__.shadow)(this, "_resizerKeyboardManager", new _tools_js__WEBPACK_IMPORTED_MODULE_0__.KeyboardManager([[["ArrowLeft", "mac+ArrowLeft"], resize, {
+    const small = tools.AnnotationEditorUIManager.TRANSLATE_SMALL;
+    const big = tools.AnnotationEditorUIManager.TRANSLATE_BIG;
+    return (0,util.shadow)(this, "_resizerKeyboardManager", new tools.KeyboardManager([[["ArrowLeft", "mac+ArrowLeft"], resize, {
       args: [-small, 0]
     }], [["ctrl+ArrowLeft", "mac+shift+ArrowLeft"], resize, {
       args: [-big, 0]
@@ -10363,7 +10635,7 @@ class AnnotationEditor {
   }
   constructor(parameters) {
     if (this.constructor === AnnotationEditor) {
-      (0,_shared_util_js__WEBPACK_IMPORTED_MODULE_1__.unreachable)("Cannot initialize AnnotationEditor.");
+      (0,util.unreachable)("Cannot initialize AnnotationEditor.");
     }
     this.parent = parameters.parent;
     this.id = parameters.id;
@@ -10399,7 +10671,7 @@ class AnnotationEditor {
     return Object.getPrototypeOf(this).constructor._type;
   }
   static get _defaultLineColor() {
-    return (0,_shared_util_js__WEBPACK_IMPORTED_MODULE_1__.shadow)(this, "_defaultLineColor", this._colorManager.getHexCode("CanvasText"));
+    return (0,util.shadow)(this, "_defaultLineColor", this._colorManager.getHexCode("CanvasText"));
   }
   static deleteAnnotationElement(editor) {
     const fakeEditor = new FakeEditor({
@@ -10432,7 +10704,7 @@ class AnnotationEditor {
     return false;
   }
   static paste(item, parent) {
-    (0,_shared_util_js__WEBPACK_IMPORTED_MODULE_1__.unreachable)("Not implemented");
+    (0,util.unreachable)("Not implemented");
   }
   get propertiesToUpdate() {
     return [];
@@ -10687,7 +10959,7 @@ class AnnotationEditor {
     } = this;
     const scaledWidth = pageWidth * parentScale;
     const scaledHeight = pageHeight * parentScale;
-    return _shared_util_js__WEBPACK_IMPORTED_MODULE_1__.FeatureTest.isCSSRoundSupported ? [Math.round(scaledWidth), Math.round(scaledHeight)] : [scaledWidth, scaledHeight];
+    return util.FeatureTest.isCSSRoundSupported ? [Math.round(scaledWidth), Math.round(scaledHeight)] : [scaledWidth, scaledHeight];
   }
   setDims(width, height) {
     const [parentWidth, parentHeight] = this.parentDimensions;
@@ -10734,7 +11006,7 @@ class AnnotationEditor {
       div.classList.add("resizer", name);
       div.setAttribute("data-resizer-name", name);
       div.addEventListener("pointerdown", this.#resizerPointerdown.bind(this, name));
-      div.addEventListener("contextmenu", _display_utils_js__WEBPACK_IMPORTED_MODULE_2__.noContextMenu);
+      div.addEventListener("contextmenu", display_utils.noContextMenu);
       div.tabIndex = -1;
     }
     this.div.prepend(this.#resizersDiv);
@@ -10743,7 +11015,7 @@ class AnnotationEditor {
     event.preventDefault();
     const {
       isMac
-    } = _shared_util_js__WEBPACK_IMPORTED_MODULE_1__.FeatureTest.platform;
+    } = util.FeatureTest.platform;
     if (event.button !== 0 || event.ctrlKey && isMac) {
       return;
     }
@@ -10904,7 +11176,7 @@ class AnnotationEditor {
     altText.textContent = msg;
     altText.setAttribute("aria-label", msg);
     altText.tabIndex = "0";
-    altText.addEventListener("contextmenu", _display_utils_js__WEBPACK_IMPORTED_MODULE_2__.noContextMenu);
+    altText.addEventListener("contextmenu", display_utils.noContextMenu);
     altText.addEventListener("pointerdown", event => event.stopPropagation());
     const onClick = event => {
       this.#altTextButton.hidden = true;
@@ -11000,6 +11272,20 @@ class AnnotationEditor {
     });
     this.#altTextWasFromKeyBoard = false;
   }
+  addEditToolbar() {
+    if (this.#editToolbar || this.#isInEditMode) {
+      return;
+    }
+    this.#editToolbar = new EditorToolbar(this);
+    this.div.append(this.#editToolbar.render());
+  }
+  removeEditToolbar() {
+    if (!this.#editToolbar) {
+      return;
+    }
+    this.#editToolbar.remove();
+    this.#editToolbar = null;
+  }
   getClientDimensions() {
     return this.div.getBoundingClientRect();
   }
@@ -11036,13 +11322,13 @@ class AnnotationEditor {
     }
     const [tx, ty] = this.getInitialTranslation();
     this.translate(tx, ty);
-    (0,_tools_js__WEBPACK_IMPORTED_MODULE_0__.bindEvents)(this, this.div, ["pointerdown"]);
+    (0,tools.bindEvents)(this, this.div, ["pointerdown"]);
     return this.div;
   }
   pointerdown(event) {
     const {
       isMac
-    } = _shared_util_js__WEBPACK_IMPORTED_MODULE_1__.FeatureTest.platform;
+    } = util.FeatureTest.platform;
     if (event.button !== 0 || event.ctrlKey && isMac) {
       event.preventDefault();
       return;
@@ -11078,7 +11364,7 @@ class AnnotationEditor {
       if (!this._uiManager.endDragSession()) {
         const {
           isMac
-        } = _shared_util_js__WEBPACK_IMPORTED_MODULE_1__.FeatureTest.platform;
+        } = util.FeatureTest.platform;
         if (event.ctrlKey && !isMac || event.shiftKey || event.metaKey && isMac) {
           this.parent.toggleSelected(this);
         } else {
@@ -11168,7 +11454,7 @@ class AnnotationEditor {
     this.div?.addEventListener("focusout", this.#boundFocusout);
   }
   serialize(isForCopying = false, context = null) {
-    (0,_shared_util_js__WEBPACK_IMPORTED_MODULE_1__.unreachable)("An editor must be serializable");
+    (0,util.unreachable)("An editor must be serializable");
   }
   static deserialize(data, parent, uiManager) {
     const editor = new this.prototype.constructor({
@@ -11204,6 +11490,7 @@ class AnnotationEditor {
       this.#moveInDOMTimeout = null;
     }
     this.#stopResizing();
+    this.removeEditToolbar();
   }
   get isResizable() {
     return false;
@@ -11212,7 +11499,7 @@ class AnnotationEditor {
     if (this.isResizable) {
       this.#createResizers();
       this.#resizersDiv.classList.remove("hidden");
-      (0,_tools_js__WEBPACK_IMPORTED_MODULE_0__.bindEvents)(this, this.div, ["keydown"]);
+      (0,tools.bindEvents)(this, this.div, ["keydown"]);
     }
   }
   keydown(event) {
@@ -11323,6 +11610,8 @@ class AnnotationEditor {
   select() {
     this.makeResizable();
     this.div?.classList.add("selectedEditor");
+    this.addEditToolbar();
+    this.#editToolbar?.show();
   }
   unselect() {
     this.#resizersDiv?.classList.add("hidden");
@@ -11330,6 +11619,7 @@ class AnnotationEditor {
     if (this.div?.contains(document.activeElement)) {
       this._uiManager.currentLayer.div.focus();
     }
+    this.#editToolbar?.hide();
   }
   updateParams(type, value) {}
   disableEditing() {
@@ -11389,6 +11679,207 @@ class FakeEditor extends AnnotationEditor {
       deleted: true,
       pageIndex: this.pageIndex
     };
+  }
+}
+
+
+/***/ }),
+
+/***/ 405:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   Outliner: () => (/* binding */ Outliner)
+/* harmony export */ });
+class Outliner {
+  #box;
+  #verticalEdges = [];
+  #intervals = [];
+  constructor(boxes, borderWidth = 0, innerMargin = 0, isLTR = true) {
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+    const NUMBER_OF_DIGITS = 4;
+    const EPSILON = 10 ** -NUMBER_OF_DIGITS;
+    for (const {
+      x,
+      y,
+      width,
+      height
+    } of boxes) {
+      const x1 = Math.floor((x - borderWidth) / EPSILON) * EPSILON;
+      const x2 = Math.ceil((x + width + borderWidth) / EPSILON) * EPSILON;
+      const y1 = Math.floor((y - borderWidth) / EPSILON) * EPSILON;
+      const y2 = Math.ceil((y + height + borderWidth) / EPSILON) * EPSILON;
+      const left = [x1, y1, y2, true];
+      const right = [x2, y1, y2, false];
+      this.#verticalEdges.push(left, right);
+      minX = Math.min(minX, x1);
+      maxX = Math.max(maxX, x2);
+      minY = Math.min(minY, y1);
+      maxY = Math.max(maxY, y2);
+    }
+    const bboxWidth = maxX - minX + 2 * innerMargin;
+    const bboxHeight = maxY - minY + 2 * innerMargin;
+    const shiftedMinX = minX - innerMargin;
+    const shiftedMinY = minY - innerMargin;
+    const lastEdge = this.#verticalEdges.at(isLTR ? -1 : -2);
+    const lastPoint = [lastEdge[0], lastEdge[2]];
+    for (const edge of this.#verticalEdges) {
+      const [x, y1, y2] = edge;
+      edge[0] = (x - shiftedMinX) / bboxWidth;
+      edge[1] = (y1 - shiftedMinY) / bboxHeight;
+      edge[2] = (y2 - shiftedMinY) / bboxHeight;
+    }
+    this.#box = {
+      x: shiftedMinX,
+      y: shiftedMinY,
+      width: bboxWidth,
+      height: bboxHeight,
+      lastPoint
+    };
+  }
+  getOutlines() {
+    this.#verticalEdges.sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]);
+    const outlineVerticalEdges = [];
+    for (const edge of this.#verticalEdges) {
+      if (edge[3]) {
+        outlineVerticalEdges.push(...this.#breakEdge(edge));
+        this.#insert(edge);
+      } else {
+        this.#remove(edge);
+        outlineVerticalEdges.push(...this.#breakEdge(edge));
+      }
+    }
+    return this.#getOutlines(outlineVerticalEdges);
+  }
+  #getOutlines(outlineVerticalEdges) {
+    const edges = [];
+    const allEdges = new Set();
+    for (const edge of outlineVerticalEdges) {
+      const [x, y1, y2] = edge;
+      edges.push([x, y1, edge], [x, y2, edge]);
+    }
+    edges.sort((a, b) => a[1] - b[1] || a[0] - b[0]);
+    for (let i = 0, ii = edges.length; i < ii; i += 2) {
+      const edge1 = edges[i][2];
+      const edge2 = edges[i + 1][2];
+      edge1.push(edge2);
+      edge2.push(edge1);
+      allEdges.add(edge1);
+      allEdges.add(edge2);
+    }
+    const outlines = [];
+    let outline;
+    while (allEdges.size > 0) {
+      const edge = allEdges.values().next().value;
+      let [x, y1, y2, edge1, edge2] = edge;
+      allEdges.delete(edge);
+      let lastPointX = x;
+      let lastPointY = y1;
+      outline = [x, y2];
+      outlines.push(outline);
+      while (true) {
+        let e;
+        if (allEdges.has(edge1)) {
+          e = edge1;
+        } else if (allEdges.has(edge2)) {
+          e = edge2;
+        } else {
+          break;
+        }
+        allEdges.delete(e);
+        [x, y1, y2, edge1, edge2] = e;
+        if (lastPointX !== x) {
+          outline.push(lastPointX, lastPointY, x, lastPointY === y1 ? y1 : y2);
+          lastPointX = x;
+        }
+        lastPointY = lastPointY === y1 ? y2 : y1;
+      }
+      outline.push(lastPointX, lastPointY);
+    }
+    return {
+      outlines,
+      box: this.#box
+    };
+  }
+  #binarySearch(y) {
+    const array = this.#intervals;
+    let start = 0;
+    let end = array.length - 1;
+    while (start <= end) {
+      const middle = start + end >> 1;
+      const y1 = array[middle][0];
+      if (y1 === y) {
+        return middle;
+      }
+      if (y1 < y) {
+        start = middle + 1;
+      } else {
+        end = middle - 1;
+      }
+    }
+    return end + 1;
+  }
+  #insert([, y1, y2]) {
+    const index = this.#binarySearch(y1);
+    this.#intervals.splice(index, 0, [y1, y2]);
+  }
+  #remove([, y1, y2]) {
+    const index = this.#binarySearch(y1);
+    for (let i = index; i < this.#intervals.length; i++) {
+      const [start, end] = this.#intervals[i];
+      if (start !== y1) {
+        break;
+      }
+      if (start === y1 && end === y2) {
+        this.#intervals.splice(i, 1);
+        return;
+      }
+    }
+    for (let i = index - 1; i >= 0; i--) {
+      const [start, end] = this.#intervals[i];
+      if (start !== y1) {
+        break;
+      }
+      if (start === y1 && end === y2) {
+        this.#intervals.splice(i, 1);
+        return;
+      }
+    }
+  }
+  #breakEdge(edge) {
+    const [x, y1, y2] = edge;
+    const results = [[x, y1, y2]];
+    const index = this.#binarySearch(y2);
+    for (let i = 0; i < index; i++) {
+      const [start, end] = this.#intervals[i];
+      for (let j = 0, jj = results.length; j < jj; j++) {
+        const [, y3, y4] = results[j];
+        if (end <= y3 || y4 <= start) {
+          continue;
+        }
+        if (y3 >= start) {
+          if (y4 > end) {
+            results[j][1] = end;
+          } else {
+            if (jj === 1) {
+              return [];
+            }
+            results.splice(j, 1);
+            j--;
+            jj--;
+          }
+          continue;
+        }
+        results[j][2] = start;
+        if (y4 > end) {
+          results.push([x, end, y4]);
+        }
+      }
+    }
+    return results;
   }
 }
 
@@ -11460,11 +11951,7 @@ class ImageManager {
       let image;
       if (typeof rawData === "string") {
         data.url = rawData;
-        const response = await fetch(rawData);
-        if (!response.ok) {
-          throw new Error(response.statusText);
-        }
-        image = await response.blob();
+        image = await (0,_display_utils_js__WEBPACK_IMPORTED_MODULE_1__.fetchData)(rawData, "blob");
       } else {
         image = data.file = rawData;
       }
@@ -11799,7 +12286,9 @@ class AnnotationEditorUIManager {
     }], [["Backspace", "alt+Backspace", "ctrl+Backspace", "shift+Backspace", "mac+Backspace", "mac+alt+Backspace", "mac+ctrl+Backspace", "Delete", "ctrl+Delete", "shift+Delete", "mac+Delete"], proto.delete, {
       checker: textInputChecker
     }], [["Enter", "mac+Enter"], proto.addNewEditorFromKeyboard, {
-      checker: self => self.#container.contains(document.activeElement) && !self.isEnterHandled
+      checker: (self, {
+        target: el
+      }) => !(el instanceof HTMLButtonElement) && self.#container.contains(el) && !self.isEnterHandled
     }], [[" ", "mac+ "], proto.addNewEditorFromKeyboard, {
       checker: self => self.#container.contains(document.activeElement)
     }], [["Escape", "mac+Escape"], proto.unselectAll], [["ArrowLeft", "mac+ArrowLeft"], proto.translateSelectedEditors, {
@@ -15346,12 +15835,14 @@ __webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependen
 /* harmony export */   AnnotationMode: () => (/* reexport safe */ _shared_util_js__WEBPACK_IMPORTED_MODULE_0__.AnnotationMode),
 /* harmony export */   CMapCompressionType: () => (/* reexport safe */ _shared_util_js__WEBPACK_IMPORTED_MODULE_0__.CMapCompressionType),
 /* harmony export */   DOMSVGFactory: () => (/* reexport safe */ _display_display_utils_js__WEBPACK_IMPORTED_MODULE_2__.DOMSVGFactory),
+/* harmony export */   DrawLayer: () => (/* reexport safe */ _display_draw_layer_js__WEBPACK_IMPORTED_MODULE_7__.DrawLayer),
 /* harmony export */   FeatureTest: () => (/* reexport safe */ _shared_util_js__WEBPACK_IMPORTED_MODULE_0__.FeatureTest),
-/* harmony export */   GlobalWorkerOptions: () => (/* reexport safe */ _display_worker_options_js__WEBPACK_IMPORTED_MODULE_7__.GlobalWorkerOptions),
+/* harmony export */   GlobalWorkerOptions: () => (/* reexport safe */ _display_worker_options_js__WEBPACK_IMPORTED_MODULE_8__.GlobalWorkerOptions),
 /* harmony export */   ImageKind: () => (/* reexport safe */ _shared_util_js__WEBPACK_IMPORTED_MODULE_0__.ImageKind),
 /* harmony export */   InvalidPDFException: () => (/* reexport safe */ _shared_util_js__WEBPACK_IMPORTED_MODULE_0__.InvalidPDFException),
 /* harmony export */   MissingPDFException: () => (/* reexport safe */ _shared_util_js__WEBPACK_IMPORTED_MODULE_0__.MissingPDFException),
 /* harmony export */   OPS: () => (/* reexport safe */ _shared_util_js__WEBPACK_IMPORTED_MODULE_0__.OPS),
+/* harmony export */   Outliner: () => (/* reexport safe */ _display_editor_outliner_js__WEBPACK_IMPORTED_MODULE_9__.Outliner),
 /* harmony export */   PDFDataRangeTransport: () => (/* reexport safe */ _display_api_js__WEBPACK_IMPORTED_MODULE_1__.PDFDataRangeTransport),
 /* harmony export */   PDFDateString: () => (/* reexport safe */ _display_display_utils_js__WEBPACK_IMPORTED_MODULE_2__.PDFDateString),
 /* harmony export */   PDFWorker: () => (/* reexport safe */ _display_api_js__WEBPACK_IMPORTED_MODULE_1__.PDFWorker),
@@ -15363,9 +15854,10 @@ __webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependen
 /* harmony export */   UnexpectedResponseException: () => (/* reexport safe */ _shared_util_js__WEBPACK_IMPORTED_MODULE_0__.UnexpectedResponseException),
 /* harmony export */   Util: () => (/* reexport safe */ _shared_util_js__WEBPACK_IMPORTED_MODULE_0__.Util),
 /* harmony export */   VerbosityLevel: () => (/* reexport safe */ _shared_util_js__WEBPACK_IMPORTED_MODULE_0__.VerbosityLevel),
-/* harmony export */   XfaLayer: () => (/* reexport safe */ _display_xfa_layer_js__WEBPACK_IMPORTED_MODULE_8__.XfaLayer),
+/* harmony export */   XfaLayer: () => (/* reexport safe */ _display_xfa_layer_js__WEBPACK_IMPORTED_MODULE_10__.XfaLayer),
 /* harmony export */   build: () => (/* reexport safe */ _display_api_js__WEBPACK_IMPORTED_MODULE_1__.build),
 /* harmony export */   createValidAbsoluteUrl: () => (/* reexport safe */ _shared_util_js__WEBPACK_IMPORTED_MODULE_0__.createValidAbsoluteUrl),
+/* harmony export */   fetchData: () => (/* reexport safe */ _display_display_utils_js__WEBPACK_IMPORTED_MODULE_2__.fetchData),
 /* harmony export */   getDocument: () => (/* reexport safe */ _display_api_js__WEBPACK_IMPORTED_MODULE_1__.getDocument),
 /* harmony export */   getFilenameFromUrl: () => (/* reexport safe */ _display_display_utils_js__WEBPACK_IMPORTED_MODULE_2__.getFilenameFromUrl),
 /* harmony export */   getPdfFilenameFromUrl: () => (/* reexport safe */ _display_display_utils_js__WEBPACK_IMPORTED_MODULE_2__.getPdfFilenameFromUrl),
@@ -15387,8 +15879,10 @@ __webpack_require__.a(__webpack_module__, async (__webpack_handle_async_dependen
 /* harmony import */ var _display_editor_annotation_editor_layer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(331);
 /* harmony import */ var _display_editor_tools_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(812);
 /* harmony import */ var _display_annotation_layer_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(640);
-/* harmony import */ var _display_worker_options_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(368);
-/* harmony import */ var _display_xfa_layer_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(160);
+/* harmony import */ var _display_draw_layer_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(423);
+/* harmony import */ var _display_worker_options_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(368);
+/* harmony import */ var _display_editor_outliner_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(405);
+/* harmony import */ var _display_xfa_layer_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(160);
 var __webpack_async_dependencies__ = __webpack_handle_async_dependencies__([_display_api_js__WEBPACK_IMPORTED_MODULE_1__]);
 _display_api_js__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.then ? (await __webpack_async_dependencies__)() : __webpack_async_dependencies__)[0];
 
@@ -15400,8 +15894,10 @@ _display_api_js__WEBPACK_IMPORTED_MODULE_1__ = (__webpack_async_dependencies__.t
 
 
 
-const pdfjsVersion = '4.0.189';
-const pdfjsBuild = '50f52b43a';
+
+
+const pdfjsVersion = '4.0.269';
+const pdfjsBuild = 'f4b396f6c';
 
 __webpack_async_result__();
 } catch(e) { __webpack_async_result__(e); } });
@@ -16003,6 +16499,7 @@ const AnnotationEditorType = {
   DISABLE: -1,
   NONE: 0,
   FREETEXT: 3,
+  HIGHLIGHT: 9,
   STAMP: 13,
   INK: 15
 };
@@ -16619,8 +17116,14 @@ function stringToPDFString(str) {
     let encoding;
     if (str[0] === "\xFE" && str[1] === "\xFF") {
       encoding = "utf-16be";
+      if (str.length % 2 === 1) {
+        str = str.slice(0, -1);
+      }
     } else if (str[0] === "\xFF" && str[1] === "\xFE") {
       encoding = "utf-16le";
+      if (str.length % 2 === 1) {
+        str = str.slice(0, -1);
+      }
     } else if (str[0] === "\xEF" && str[1] === "\xBB" && str[2] === "\xBF") {
       encoding = "utf-8";
     }
@@ -16630,7 +17133,11 @@ function stringToPDFString(str) {
           fatal: true
         });
         const buffer = stringToBytes(str);
-        return decoder.decode(buffer);
+        const decoded = decoder.decode(buffer);
+        if (!decoded.includes("\x1b")) {
+          return decoded;
+        }
+        return decoded.replaceAll(/\x1b[^\x1b]*(?:\x1b|$)/g, "");
       } catch (ex) {
         warn(`stringToPDFString: "${ex}".`);
       }
@@ -16638,7 +17145,12 @@ function stringToPDFString(str) {
   }
   const strBuf = [];
   for (let i = 0, ii = str.length; i < ii; i++) {
-    const code = PDFStringTranslateTable[str.charCodeAt(i)];
+    const charCode = str.charCodeAt(i);
+    if (charCode === 0x1b) {
+      while (++i < ii && str.charCodeAt(i) !== 0x1b) {}
+      continue;
+    }
+    const code = PDFStringTranslateTable[charCode];
     strBuf.push(code ? String.fromCharCode(code) : str.charAt(i));
   }
   return strBuf.join("");
@@ -16834,7 +17346,7 @@ const AnnotationPrefix = "pdfjs_internal_id_";
 /******/ // Load entry module and return exports
 /******/ // This entry module used 'module' so it can't be inlined
 /******/ var __webpack_exports__ = __webpack_require__(907);
-/******/ __webpack_exports__ = globalThis.pdfjsLib = await __webpack_exports__;
+/******/ __webpack_exports__ = globalThis.pdfjsLib = await (globalThis.pdfjsLibPromise = __webpack_exports__);
 /******/ var __webpack_exports__AbortException = __webpack_exports__.AbortException;
 /******/ var __webpack_exports__AnnotationEditorLayer = __webpack_exports__.AnnotationEditorLayer;
 /******/ var __webpack_exports__AnnotationEditorParamsType = __webpack_exports__.AnnotationEditorParamsType;
@@ -16844,12 +17356,14 @@ const AnnotationPrefix = "pdfjs_internal_id_";
 /******/ var __webpack_exports__AnnotationMode = __webpack_exports__.AnnotationMode;
 /******/ var __webpack_exports__CMapCompressionType = __webpack_exports__.CMapCompressionType;
 /******/ var __webpack_exports__DOMSVGFactory = __webpack_exports__.DOMSVGFactory;
+/******/ var __webpack_exports__DrawLayer = __webpack_exports__.DrawLayer;
 /******/ var __webpack_exports__FeatureTest = __webpack_exports__.FeatureTest;
 /******/ var __webpack_exports__GlobalWorkerOptions = __webpack_exports__.GlobalWorkerOptions;
 /******/ var __webpack_exports__ImageKind = __webpack_exports__.ImageKind;
 /******/ var __webpack_exports__InvalidPDFException = __webpack_exports__.InvalidPDFException;
 /******/ var __webpack_exports__MissingPDFException = __webpack_exports__.MissingPDFException;
 /******/ var __webpack_exports__OPS = __webpack_exports__.OPS;
+/******/ var __webpack_exports__Outliner = __webpack_exports__.Outliner;
 /******/ var __webpack_exports__PDFDataRangeTransport = __webpack_exports__.PDFDataRangeTransport;
 /******/ var __webpack_exports__PDFDateString = __webpack_exports__.PDFDateString;
 /******/ var __webpack_exports__PDFWorker = __webpack_exports__.PDFWorker;
@@ -16864,6 +17378,7 @@ const AnnotationPrefix = "pdfjs_internal_id_";
 /******/ var __webpack_exports__XfaLayer = __webpack_exports__.XfaLayer;
 /******/ var __webpack_exports__build = __webpack_exports__.build;
 /******/ var __webpack_exports__createValidAbsoluteUrl = __webpack_exports__.createValidAbsoluteUrl;
+/******/ var __webpack_exports__fetchData = __webpack_exports__.fetchData;
 /******/ var __webpack_exports__getDocument = __webpack_exports__.getDocument;
 /******/ var __webpack_exports__getFilenameFromUrl = __webpack_exports__.getFilenameFromUrl;
 /******/ var __webpack_exports__getPdfFilenameFromUrl = __webpack_exports__.getPdfFilenameFromUrl;
@@ -16877,7 +17392,7 @@ const AnnotationPrefix = "pdfjs_internal_id_";
 /******/ var __webpack_exports__shadow = __webpack_exports__.shadow;
 /******/ var __webpack_exports__updateTextLayer = __webpack_exports__.updateTextLayer;
 /******/ var __webpack_exports__version = __webpack_exports__.version;
-/******/ export { __webpack_exports__AbortException as AbortException, __webpack_exports__AnnotationEditorLayer as AnnotationEditorLayer, __webpack_exports__AnnotationEditorParamsType as AnnotationEditorParamsType, __webpack_exports__AnnotationEditorType as AnnotationEditorType, __webpack_exports__AnnotationEditorUIManager as AnnotationEditorUIManager, __webpack_exports__AnnotationLayer as AnnotationLayer, __webpack_exports__AnnotationMode as AnnotationMode, __webpack_exports__CMapCompressionType as CMapCompressionType, __webpack_exports__DOMSVGFactory as DOMSVGFactory, __webpack_exports__FeatureTest as FeatureTest, __webpack_exports__GlobalWorkerOptions as GlobalWorkerOptions, __webpack_exports__ImageKind as ImageKind, __webpack_exports__InvalidPDFException as InvalidPDFException, __webpack_exports__MissingPDFException as MissingPDFException, __webpack_exports__OPS as OPS, __webpack_exports__PDFDataRangeTransport as PDFDataRangeTransport, __webpack_exports__PDFDateString as PDFDateString, __webpack_exports__PDFWorker as PDFWorker, __webpack_exports__PasswordResponses as PasswordResponses, __webpack_exports__PermissionFlag as PermissionFlag, __webpack_exports__PixelsPerInch as PixelsPerInch, __webpack_exports__PromiseCapability as PromiseCapability, __webpack_exports__RenderingCancelledException as RenderingCancelledException, __webpack_exports__UnexpectedResponseException as UnexpectedResponseException, __webpack_exports__Util as Util, __webpack_exports__VerbosityLevel as VerbosityLevel, __webpack_exports__XfaLayer as XfaLayer, __webpack_exports__build as build, __webpack_exports__createValidAbsoluteUrl as createValidAbsoluteUrl, __webpack_exports__getDocument as getDocument, __webpack_exports__getFilenameFromUrl as getFilenameFromUrl, __webpack_exports__getPdfFilenameFromUrl as getPdfFilenameFromUrl, __webpack_exports__getXfaPageViewport as getXfaPageViewport, __webpack_exports__isDataScheme as isDataScheme, __webpack_exports__isPdfFile as isPdfFile, __webpack_exports__noContextMenu as noContextMenu, __webpack_exports__normalizeUnicode as normalizeUnicode, __webpack_exports__renderTextLayer as renderTextLayer, __webpack_exports__setLayerDimensions as setLayerDimensions, __webpack_exports__shadow as shadow, __webpack_exports__updateTextLayer as updateTextLayer, __webpack_exports__version as version };
+/******/ export { __webpack_exports__AbortException as AbortException, __webpack_exports__AnnotationEditorLayer as AnnotationEditorLayer, __webpack_exports__AnnotationEditorParamsType as AnnotationEditorParamsType, __webpack_exports__AnnotationEditorType as AnnotationEditorType, __webpack_exports__AnnotationEditorUIManager as AnnotationEditorUIManager, __webpack_exports__AnnotationLayer as AnnotationLayer, __webpack_exports__AnnotationMode as AnnotationMode, __webpack_exports__CMapCompressionType as CMapCompressionType, __webpack_exports__DOMSVGFactory as DOMSVGFactory, __webpack_exports__DrawLayer as DrawLayer, __webpack_exports__FeatureTest as FeatureTest, __webpack_exports__GlobalWorkerOptions as GlobalWorkerOptions, __webpack_exports__ImageKind as ImageKind, __webpack_exports__InvalidPDFException as InvalidPDFException, __webpack_exports__MissingPDFException as MissingPDFException, __webpack_exports__OPS as OPS, __webpack_exports__Outliner as Outliner, __webpack_exports__PDFDataRangeTransport as PDFDataRangeTransport, __webpack_exports__PDFDateString as PDFDateString, __webpack_exports__PDFWorker as PDFWorker, __webpack_exports__PasswordResponses as PasswordResponses, __webpack_exports__PermissionFlag as PermissionFlag, __webpack_exports__PixelsPerInch as PixelsPerInch, __webpack_exports__PromiseCapability as PromiseCapability, __webpack_exports__RenderingCancelledException as RenderingCancelledException, __webpack_exports__UnexpectedResponseException as UnexpectedResponseException, __webpack_exports__Util as Util, __webpack_exports__VerbosityLevel as VerbosityLevel, __webpack_exports__XfaLayer as XfaLayer, __webpack_exports__build as build, __webpack_exports__createValidAbsoluteUrl as createValidAbsoluteUrl, __webpack_exports__fetchData as fetchData, __webpack_exports__getDocument as getDocument, __webpack_exports__getFilenameFromUrl as getFilenameFromUrl, __webpack_exports__getPdfFilenameFromUrl as getPdfFilenameFromUrl, __webpack_exports__getXfaPageViewport as getXfaPageViewport, __webpack_exports__isDataScheme as isDataScheme, __webpack_exports__isPdfFile as isPdfFile, __webpack_exports__noContextMenu as noContextMenu, __webpack_exports__normalizeUnicode as normalizeUnicode, __webpack_exports__renderTextLayer as renderTextLayer, __webpack_exports__setLayerDimensions as setLayerDimensions, __webpack_exports__shadow as shadow, __webpack_exports__updateTextLayer as updateTextLayer, __webpack_exports__version as version };
 /******/ 
 
 //# sourceMappingURL=pdf.mjs.map
