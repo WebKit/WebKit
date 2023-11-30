@@ -28,6 +28,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import <pal/spi/cocoa/FeatureFlagsSPI.h>
 #import <pal/spi/ios/ManagedConfigurationSPI.h>
 #import <pal/system/ios/Device.h>
 #import <pal/system/ios/UserInterfaceIdiom.h>
@@ -73,6 +74,18 @@ bool defaultMediaSourceEnabled()
 }
 
 #endif
+
+bool defaultUseAsyncUIKitInteractions()
+{
+    static bool enabled = false;
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        enabled = os_feature_enabled(UIKit, async_text_input);
+    });
+#endif
+    return enabled;
+}
 
 } // namespace WebKit
 

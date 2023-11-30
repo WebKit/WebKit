@@ -6660,7 +6660,7 @@ UseAsyncUIKitInteractions:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: WebKit::defaultUseAsyncUIKitInteractions()
     WebCore:
       default: false
 

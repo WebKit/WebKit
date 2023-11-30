@@ -41,6 +41,7 @@ bool defaultCSSOMViewScrollingAPIEnabled();
 bool defaultShouldPrintBackgrounds();
 bool defaultAlternateFormControlDesignEnabled();
 bool defaultVideoFullscreenRequiresElementFullscreen();
+bool defaultUseAsyncUIKitInteractions();
 #if ENABLE(TEXT_AUTOSIZING)
 bool defaultTextAutosizingUsesIdempotentMode();
 #endif
