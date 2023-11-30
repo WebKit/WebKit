@@ -13591,6 +13591,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             ASSERT_IMPLIES(strongSelf->_isDisplayingContextMenuWithAnimation, [strongSelf->_contextMenuHintContainerView window]);
             strongSelf->_isDisplayingContextMenuWithAnimation = NO;
             [strongSelf->_webView _didShowContextMenu];
+#if ENABLE(IMAGE_ANALYSIS)
             switch (strongSelf->_dynamicImageAnalysisContextMenuState) {
             case WebKit::DynamicImageAnalysisContextMenuState::NotWaiting:
             case WebKit::DynamicImageAnalysisContextMenuState::WaitingForImageAnalysis:
@@ -13599,6 +13600,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 [strongSelf _insertDynamicImageAnalysisContextMenuItemsIfPossible];
                 break;
             }
+#endif // ENABLE(IMAGE_ANALYSIS)
         }
     }];
 
