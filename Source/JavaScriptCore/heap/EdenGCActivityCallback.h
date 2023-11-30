@@ -31,14 +31,14 @@ namespace JSC {
 
 class EdenGCActivityCallback : public GCActivityCallback {
 public:
-    static RefPtr<EdenGCActivityCallback> tryCreate(Heap& heap)
+    static RefPtr<EdenGCActivityCallback> tryCreate(Heap& heap, Synchronousness synchronousness = Synchronousness::Async)
     {
-        return s_shouldCreateGCTimer ? adoptRef(new EdenGCActivityCallback(heap)) : nullptr;
+        return s_shouldCreateGCTimer ? adoptRef(new EdenGCActivityCallback(heap, synchronousness)) : nullptr;
     }
 
     JS_EXPORT_PRIVATE void doCollection(VM&) override;
 
-    JS_EXPORT_PRIVATE EdenGCActivityCallback(Heap&);
+    JS_EXPORT_PRIVATE EdenGCActivityCallback(Heap&, Synchronousness);
     JS_EXPORT_PRIVATE ~EdenGCActivityCallback();
 
 private:

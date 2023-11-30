@@ -31,8 +31,8 @@
 
 namespace JSC {
 
-FullGCActivityCallback::FullGCActivityCallback(Heap& heap)
-    : GCActivityCallback(heap)
+FullGCActivityCallback::FullGCActivityCallback(Heap& heap, Synchronousness synchronousness)
+    : GCActivityCallback(heap, synchronousness)
 {
 }
 
@@ -52,7 +52,7 @@ void FullGCActivityCallback::doCollection(VM& vm)
     }
 #endif
 
-    heap.collectAsync(CollectionScope::Full);
+    heap.collect(m_synchronousness, CollectionScope::Full);
 }
 
 Seconds FullGCActivityCallback::lastGCLength(Heap& heap)
