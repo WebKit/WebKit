@@ -4,4 +4,8 @@ PASS Property letter-spacing value '0px'
 PASS Property letter-spacing value '10px'
 PASS Property letter-spacing value '-20px'
 PASS Property letter-spacing value 'calc(10px - 0.5em)'
+PASS Property letter-spacing value '110%'
+PASS Property letter-spacing value '-5%'
+PASS Property letter-spacing value 'calc(10% - 20%)'
+PASS Property letter-spacing value 'calc(10px - (5% + 10%)'
 

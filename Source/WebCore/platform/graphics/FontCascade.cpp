@@ -58,10 +58,19 @@ FontCascade::FontCascade()
 {
 }
 
-FontCascade::FontCascade(FontCascadeDescription&& fd, float letterSpacing, float wordSpacing)
-    : m_fontDescription(WTFMove(fd))
-    , m_letterSpacing(letterSpacing)
-    , m_wordSpacing(wordSpacing)
+FontCascade::FontCascade(FontCascadeDescription&& description)
+    : m_fontDescription(WTFMove(description))
+    , m_generation(++lastFontCascadeGeneration)
+    , m_useBackslashAsYenSymbol(FontCache::forCurrentThread().useBackslashAsYenSignForFamily(m_fontDescription.firstFamily()))
+    , m_enableKerning(computeEnableKerning())
+    , m_requiresShaping(computeRequiresShaping())
+{
+    m_fontDescription.setShouldDisableLigaturesForSpacing(false);
+}
+
+FontCascade::FontCascade(FontCascadeDescription&& description, const FontCascade& other)
+    : m_fontDescription(WTFMove(description))
+    , m_spacing(other.m_spacing)
     , m_generation(++lastFontCascadeGeneration)
     , m_useBackslashAsYenSymbol(FontCache::forCurrentThread().useBackslashAsYenSignForFamily(m_fontDescription.firstFamily()))
     , m_enableKerning(computeEnableKerning())
@@ -73,9 +82,8 @@ FontCascade::FontCascade(const FontCascade& other)
     : CanMakeWeakPtr<FontCascade>()
     , CanMakeCheckedPtr()
     , m_fontDescription(other.m_fontDescription)
+    , m_spacing(other.m_spacing)
     , m_fonts(other.m_fonts)
-    , m_letterSpacing(other.m_letterSpacing)
-    , m_wordSpacing(other.m_wordSpacing)
     , m_generation(other.m_generation)
     , m_useBackslashAsYenSymbol(other.m_useBackslashAsYenSymbol)
     , m_enableKerning(computeEnableKerning())
@@ -87,8 +95,7 @@ FontCascade& FontCascade::operator=(const FontCascade& other)
 {
     m_fontDescription = other.m_fontDescription;
     m_fonts = other.m_fonts;
-    m_letterSpacing = other.m_letterSpacing;
-    m_wordSpacing = other.m_wordSpacing;
+    m_spacing = other.m_spacing;
     m_generation = other.m_generation;
     m_useBackslashAsYenSymbol = other.m_useBackslashAsYenSymbol;
     m_enableKerning = other.m_enableKerning;
@@ -101,7 +108,7 @@ bool FontCascade::operator==(const FontCascade& other) const
     if (isLoadingCustomFonts() || other.isLoadingCustomFonts())
         return false;
 
-    if (m_fontDescription != other.m_fontDescription || m_letterSpacing != other.m_letterSpacing || m_wordSpacing != other.m_wordSpacing)
+    if (m_fontDescription != other.m_fontDescription || m_spacing != other.m_spacing)
         return false;
     if (m_fonts == other.m_fonts)
         return true;
@@ -146,6 +153,36 @@ GlyphBuffer FontCascade::layoutText(CodePath codePathToUse, const TextRun& run, 
         return layoutSimpleText(run, from, to, forTextEmphasis);
 
     return layoutComplexText(run, from, to, forTextEmphasis);
+}
+
+float FontCascade::letterSpacing() const
+{
+    switch (m_spacing.letter.type()) {
+    case LengthType::Fixed:
+        return m_spacing.letter.value();
+    case LengthType::Percent:
+        return m_spacing.letter.percent() / 100 * size();
+    case LengthType::Calculated:
+        return m_spacing.letter.nonNanCalculatedValue(size());
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
+float FontCascade::wordSpacing() const
+{
+    switch (m_spacing.word.type()) {
+    case LengthType::Fixed:
+        return m_spacing.word.value();
+    case LengthType::Percent:
+        return m_spacing.word.percent() / 100 * size();
+    case LengthType::Calculated:
+        return m_spacing.word.nonNanCalculatedValue(size());
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
 }
 
 FloatSize FontCascade::drawText(GraphicsContext& context, const TextRun& run, const FloatPoint& point, unsigned from, std::optional<unsigned> to, CustomFontNotReadyAction customFontNotReadyAction) const

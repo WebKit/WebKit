@@ -996,7 +996,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         fontDescription.setOneFamily(AtomString { m_page.settings().sansSerifFontFamily() });
         fontDescription.setComputedSize(10);
 
-        FontCascade font(WTFMove(fontDescription), 0, 0);
+        FontCascade font(WTFMove(fontDescription));
         font.update(nullptr);
 
         GraphicsContextStateSaver lineStateSaver(context);
@@ -1086,7 +1086,7 @@ void InspectorOverlay::drawRulers(GraphicsContext& context, const InspectorOverl
         fontDescription.setOneFamily(AtomString { m_page.settings().sansSerifFontFamily() });
         fontDescription.setComputedSize(12);
 
-        FontCascade font(WTFMove(fontDescription), 0, 0);
+        FontCascade font(WTFMove(fontDescription));
         font.update(nullptr);
 
         auto viewportRect = pageView->visualViewportRect();

@@ -63,7 +63,7 @@ static FontCascade systemFont()
     fontDescription.setWeight(FontSelectionValue(500));
     fontDescription.setComputedSize(12);
 
-    FontCascade font(WTFMove(fontDescription), 0, 0);
+    FontCascade font(WTFMove(fontDescription));
     font.update(nullptr);
     return font;
 }

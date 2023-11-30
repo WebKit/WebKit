@@ -138,6 +138,9 @@ public:
     static void applyInheritBaselineShift(BuilderState&);
     static void applyValueBaselineShift(BuilderState&, CSSValue&);
 
+    // Custom handling of inherit setting only.
+    static void applyInheritWordSpacing(BuilderState&);
+
     // Custom handling of value setting only.
     static void applyValueDirection(BuilderState&, CSSValue&);
     static void applyValueWebkitLocale(BuilderState&, CSSValue&);
@@ -564,28 +567,19 @@ DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Repeat)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Slice)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Width)
 
-static inline void applyLetterSpacing(BuilderState& builderState, float letterSpacing)
+inline void BuilderCustom::applyInheritWordSpacing(BuilderState& builderState)
 {
-    // Setting the letter-spacing from a positive value to another positive value shouldn't require fonts to get updated.
-
-    bool shouldDisableLigaturesForSpacing = letterSpacing;
-    if (shouldDisableLigaturesForSpacing != builderState.fontDescription().shouldDisableLigaturesForSpacing()) {
-        auto fontDescription = builderState.fontDescription();
-        fontDescription.setShouldDisableLigaturesForSpacing(letterSpacing);
-        builderState.setFontDescription(WTFMove(fontDescription));
-    }
-
-    builderState.style().setLetterSpacingWithoutUpdatingFontDescription(letterSpacing);
+    builderState.style().setWordSpacing(Length { builderState.parentStyle().computedWordSpacing() });
 }
 
 inline void BuilderCustom::applyInheritLetterSpacing(BuilderState& builderState)
 {
-    applyLetterSpacing(builderState, builderState.parentStyle().letterSpacing());
+    builderState.style().setLetterSpacing(Length { builderState.parentStyle().computedLetterSpacing() });
 }
 
 inline void BuilderCustom::applyInitialLetterSpacing(BuilderState& builderState)
 {
-    applyLetterSpacing(builderState, RenderStyle::initialLetterSpacing());
+    builderState.style().setLetterSpacing(RenderStyle::initialLetterSpacing());
 }
 
 void maybeUpdateFontForLetterSpacing(BuilderState& builderState, CSSValue& value)
@@ -619,7 +613,7 @@ void maybeUpdateFontForLetterSpacing(BuilderState& builderState, CSSValue& value
 inline void BuilderCustom::applyValueLetterSpacing(BuilderState& builderState, CSSValue& value)
 {
     maybeUpdateFontForLetterSpacing(builderState, value);
-    applyLetterSpacing(builderState, BuilderConverter::convertSpacing(builderState, value));
+    builderState.style().setLetterSpacing(BuilderConverter::convertTextLengthOrNormal(builderState, value));
 }
 
 #if ENABLE(TEXT_AUTOSIZING)

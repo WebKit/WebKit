@@ -3514,10 +3514,15 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return createConvertingToCSSValueID(style.inputSecurity());
     case CSSPropertyLeft:
         return positionOffsetValue(style, CSSPropertyLeft, renderer);
-    case CSSPropertyLetterSpacing:
-        if (!style.letterSpacing())
-            return CSSPrimitiveValue::create(CSSValueNormal);
-        return zoomAdjustedPixelValue(style.letterSpacing(), style);
+    case CSSPropertyLetterSpacing: {
+        const Length& spacing = style.computedLetterSpacing();
+        if (spacing.isFixed()) {
+            if (spacing.isZero())
+                return CSSPrimitiveValue::create(CSSValueNormal);
+            return zoomAdjustedPixelValue(spacing.value(), style);
+        }
+        return CSSPrimitiveValue::create(spacing, style);
+    }
     case CSSPropertyWebkitLineClamp:
         if (style.lineClamp().isNone())
             return CSSPrimitiveValue::create(CSSValueNone);
@@ -3854,10 +3859,10 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyWordBreak:
         return createConvertingToCSSValueID(style.wordBreak());
     case CSSPropertyWordSpacing: {
-        auto& wordSpacingLength = style.wordSpacing();
-        if (wordSpacingLength.isFixed() || wordSpacingLength.isAuto())
-            return zoomAdjustedPixelValue(style.fontCascade().wordSpacing(), style);
-        return CSSPrimitiveValue::create(wordSpacingLength, style);
+        const Length& spacing = style.computedWordSpacing();
+        if (spacing.isFixed())
+            return zoomAdjustedPixelValue(spacing.value(), style);
+        return CSSPrimitiveValue::create(spacing, style);
     }
     case CSSPropertyLineBreak:
         return createConvertingToCSSValueID(style.lineBreak());

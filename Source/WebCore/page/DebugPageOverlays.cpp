@@ -210,7 +210,7 @@ void NonFastScrollableRegionOverlay::drawRect(PageOverlay& pageOverlay, Graphics
     fontDescription.setSpecifiedSize(12);
     fontDescription.setComputedSize(12);
     fontDescription.setWeight(FontSelectionValue(500));
-    FontCascade font(WTFMove(fontDescription), 0, 0);
+    FontCascade font(WTFMove(fontDescription));
     font.update(nullptr);
 
     auto drawLegend = [&] (const Color& color, ASCIILiteral text) {
@@ -485,7 +485,7 @@ void InteractionRegionOverlay::drawSettings(GraphicsContext& context)
     fontDescription.setSpecifiedSize(12);
     fontDescription.setComputedSize(12);
     fontDescription.setWeight(FontSelectionValue(500));
-    FontCascade font(WTFMove(fontDescription), 0, 0);
+    FontCascade font(WTFMove(fontDescription));
     font.update(nullptr);
 
     for (unsigned i = 0; i < m_settings.size(); i++) {

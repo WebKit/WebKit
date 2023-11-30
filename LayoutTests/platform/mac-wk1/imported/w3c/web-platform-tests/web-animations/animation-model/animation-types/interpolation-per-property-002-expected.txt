@@ -400,6 +400,6 @@ PASS word-spacing supports animating as a percentage
 PASS word-spacing supports animating as combination units "px" and "%"
 PASS word-spacing supports animating as combination units "%" and "em"
 PASS word-spacing supports animating as combination units "em" and "rem"
-FAIL word-spacing supports animating as combination units "px" and "calc" assert_equals: The value should be calc(10% + 10px) at 500ms expected "calc(10% + 10px)" but got "0px"
-FAIL word-spacing supports animating as a calc assert_equals: The value should be calc(15% + 15px) at 500ms expected "calc(15% + 15px)" but got "0px"
+PASS word-spacing supports animating as combination units "px" and "calc"
+PASS word-spacing supports animating as a calc
 

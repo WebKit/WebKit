@@ -118,7 +118,7 @@ void RenderCombineText::combineTextIfNeeded()
 
     description.setOrientation(FontOrientation::Horizontal); // We are going to draw combined text horizontally.
 
-    FontCascade horizontalFont(FontCascadeDescription { description }, style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
+    FontCascade horizontalFont(FontCascadeDescription { description }, style().fontCascade());
     horizontalFont.update(fontSelector);
     
     GlyphOverflow glyphOverflow;
@@ -138,7 +138,7 @@ void RenderCombineText::combineTextIfNeeded()
         for (auto widthVariant : widthVariants) {
             description.setWidthVariant(widthVariant); // When modifying this, make sure to keep it in sync with FontPlatformData::isForTextCombine()!
 
-            FontCascade compressedFont(FontCascadeDescription { description }, style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
+            FontCascade compressedFont(FontCascadeDescription { description }, style().fontCascade());
             compressedFont.update(fontSelector);
             
             glyphOverflow.left = glyphOverflow.top = glyphOverflow.right = glyphOverflow.bottom = 0;
@@ -168,7 +168,7 @@ void RenderCombineText::combineTextIfNeeded()
             bestFitDescription.setComputedSize(computedSize);
             shouldUpdateFont = m_combineFontStyle->setFontDescription(FontCascadeDescription { bestFitDescription });
         
-            FontCascade compressedFont(FontCascadeDescription(bestFitDescription), style().fontCascade().letterSpacing(), style().fontCascade().wordSpacing());
+            FontCascade compressedFont(FontCascadeDescription { bestFitDescription }, style().fontCascade());
             compressedFont.update(fontSelector);
             
             glyphOverflow.left = glyphOverflow.top = glyphOverflow.right = glyphOverflow.bottom = 0;

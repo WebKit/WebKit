@@ -109,7 +109,8 @@ public:
 class FontCascade : public CanMakeWeakPtr<FontCascade>, public CanMakeCheckedPtr {
 public:
     WEBCORE_EXPORT FontCascade();
-    WEBCORE_EXPORT FontCascade(FontCascadeDescription&&, float letterSpacing = 0, float wordSpacing = 0);
+    WEBCORE_EXPORT FontCascade(FontCascadeDescription&&);
+    WEBCORE_EXPORT FontCascade(FontCascadeDescription&&, const FontCascade&);
     // This constructor is only used if the platform wants to start with a native font.
     WEBCORE_EXPORT FontCascade(const FontPlatformData&, FontSmoothingMode = FontSmoothingMode::AutoSmoothing);
 
@@ -151,12 +152,14 @@ public:
 
     bool isSmallCaps() const { return m_fontDescription.variantCaps() == FontVariantCaps::Small; }
 
-    float wordSpacing() const { return m_wordSpacing; }
-    float letterSpacing() const { return m_letterSpacing; }
+    float letterSpacing() const;
+    float wordSpacing() const;
+    const Length& computedLetterSpacing() const { return m_spacing.letter; }
+    const Length& computedWordSpacing() const { return m_spacing.word; }
+    void setLetterSpacing(const Length& spacing) { m_spacing.letter = spacing; }
+    void setWordSpacing(const Length& spacing) { m_spacing.word = spacing; }
     TextSpacingTrim textSpacingTrim() const { return m_fontDescription.textSpacingTrim(); }
     TextAutospace textAutospace() const { return m_fontDescription.textAutospace(); }
-    void setWordSpacing(float s) { m_wordSpacing = s; }
-    void setLetterSpacing(float s) { m_letterSpacing = s; }
     bool isFixedPitch() const;
     
     bool enableKerning() const { return m_enableKerning; }
@@ -250,8 +253,7 @@ public:
     bool equalForTextAutoSizing(const FontCascade& other) const
     {
         return m_fontDescription.equalForTextAutoSizing(other.m_fontDescription)
-            && m_letterSpacing == other.m_letterSpacing
-            && m_wordSpacing == other.m_wordSpacing;
+            && m_spacing == other.m_spacing;
     }
 #endif
 
@@ -320,10 +322,16 @@ private:
         return advancedTextRenderingMode();
     }
 
+    struct Spacing {
+        Length letter;
+        Length word;
+        Spacing() : letter(LengthType::Fixed) , word(LengthType::Fixed) { };
+        bool operator==(const Spacing& other) const = default;
+    };
+
     mutable FontCascadeDescription m_fontDescription;
+    Spacing m_spacing;
     mutable RefPtr<FontCascadeFonts> m_fonts;
-    float m_letterSpacing { 0 };
-    float m_wordSpacing { 0 };
     mutable unsigned m_generation { 0 };
     bool m_useBackslashAsYenSymbol { false };
     bool m_enableKerning { false }; // Computed from m_fontDescription.

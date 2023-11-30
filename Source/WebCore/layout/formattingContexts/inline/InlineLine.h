@@ -28,6 +28,7 @@
 #include "InlineDisplayBox.h"
 #include "InlineItem.h"
 #include "InlineTextItem.h"
+#include "RenderStyleInlines.h"
 #include <unicode/ubidi.h>
 #include <wtf/Range.h>
 

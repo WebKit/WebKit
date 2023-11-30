@@ -3773,12 +3773,12 @@
                 "font-property": true,
                 "high-priority": true,
                 "sink-priority": true,
-                "converter": "Spacing",
-                "parser-grammar": "normal | <length unitless-allowed>"
+                "converter": "TextLengthOrNormal",
+                "parser-grammar": "normal | <length-percentage unitless-allowed>"
             },
             "specification": {
                 "category": "css-text",
-                "url": "https://www.w3.org/TR/css-text-3/#letter-spacing-property"
+                "url": "https://www.w3.org/TR/css-text/#letter-spacing-property"
             }
         },
         "lighting-color": {
@@ -6237,13 +6237,14 @@
                 "normal"
             ],
             "codegen-properties": {
-                "conditional-converter": "WordSpacing",
-                "parser-grammar": "normal | <length-percentage unitless-allowed>",
-                "parser-grammar-comment": "The current specification has a <length>, not a <length-percentage>"
+                "custom": "Inherit",
+                "sink-priority": true,
+                "converter": "TextLengthOrNormal",
+                "parser-grammar": "normal | <length-percentage unitless-allowed>"
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/text.html#propdef-word-spacing"
+                "category": "css-text",
+                "url": "https://www.w3.org/TR/css-text/#word-spacing-property"
             }
         },
         "x": {

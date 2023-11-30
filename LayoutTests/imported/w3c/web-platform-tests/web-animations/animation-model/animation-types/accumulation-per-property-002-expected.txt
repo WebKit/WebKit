@@ -329,6 +329,6 @@ PASS word-spacing: units "rem" onto "%"
 PASS word-spacing: units "%" onto "rem"
 PASS word-spacing: units "rem" onto "em"
 PASS word-spacing: units "em" onto "rem"
-FAIL word-spacing: units "calc" onto "px" assert_equals: The value should be calc(20% + 30px) at 0ms expected "calc(20% + 30px)" but got "20px"
-FAIL word-spacing: calc assert_equals: The value should be calc(30% + 30px) at 0ms expected "calc(30% + 30px)" but got "0px"
+PASS word-spacing: units "calc" onto "px"
+PASS word-spacing: calc
 
