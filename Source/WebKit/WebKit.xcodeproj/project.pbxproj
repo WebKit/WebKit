@@ -2223,8 +2223,12 @@
 		DDA0A41E27E94644005E086E /* WebKitLegacy.h in Headers */ = {isa = PBXBuildFile; fileRef = DDA0A41D27E94644005E086E /* WebKitLegacy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DDAB377628234B3900890546 /* AuthenticationServicesCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDAB377528234B2100890546 /* AuthenticationServicesCore.framework */; };
 		DDB04F3F278E55F1008D3678 /* JavaScriptCore.framework in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */; };
+		DDCED3A429F82D7900512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */; };
+		DDCED3A629F82DB100512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */; };
 		DDCED3A729F82DB200512877 /* WebContentProcessExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB929DB847E00D5117B /* WebContentProcessExtension.swift */; };
+		DDCED3A829F82DB200512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */; };
 		DDCED3AB29F82DB400512877 /* WebContentProcessExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB929DB847E00D5117B /* WebContentProcessExtension.swift */; };
+		DDCED3AC29F82DB400512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */; };
 		DDDFE827284699EC006F1EE5 /* SafariServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DDDFE826284699E6006F1EE5 /* SafariServicesSPI.h */; };
 		DDE992F6278D071F00F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE992F4278D06D900F60D26 /* libWebKitAdditions.a */; };
 		DF0C5F28252ECB8E00D921DB /* WKDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = DF0C5F24252ECB8D00D921DB /* WKDownload.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2271,12 +2275,6 @@
 		E3866B092399A2D500F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3866B042399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp */; };
 		E3866B0A2399A2D900F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E3866B072399979D00F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h */; };
 		E3866B0B2399A2DD00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3866B062399979C00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp */; };
-		E39408FF2B111BC700563AE8 /* WebKitProcessExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E39408D52B1115B800563AE8 /* WebKitProcessExtension.swift */; };
-		E39409002B11280600563AE8 /* AuxiliaryProcessExtensionBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */; };
-		E39409012B112D1F00563AE8 /* AuxiliaryProcessExtensionBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */; };
-		E39409022B112D1F00563AE8 /* AuxiliaryProcessExtensionBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */; };
-		E39409032B112D2000563AE8 /* AuxiliaryProcessExtensionBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */; };
-		E39409042B112D2100563AE8 /* AuxiliaryProcessExtensionBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5C139DB829DB847E00D5117B /* AuxiliaryProcessExtensionBridge.mm */; };
 		E39628DD23960CC600658ECD /* WebDeviceOrientationUpdateProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = E39628DB23960CC500658ECD /* WebDeviceOrientationUpdateProvider.h */; };
 		E39628DE23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E39628DC23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp */; };
 		E3B9B5D52AB65795008568FE /* NetworkingProcessExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B9B5D42AB65795008568FE /* NetworkingProcessExtension.swift */; };
@@ -7507,7 +7505,6 @@
 		E3866B052399979C00F88FE9 /* WebDeviceOrientationUpdateProviderProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationUpdateProviderProxyMessages.h; sourceTree = "<group>"; };
 		E3866B062399979C00F88FE9 /* WebDeviceOrientationUpdateProviderMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDeviceOrientationUpdateProviderMessageReceiver.cpp; sourceTree = "<group>"; };
 		E3866B072399979D00F88FE9 /* WebDeviceOrientationUpdateProviderMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationUpdateProviderMessages.h; sourceTree = "<group>"; };
-		E39408D52B1115B800563AE8 /* WebKitProcessExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebKitProcessExtension.swift; sourceTree = "<group>"; };
 		E39628DB23960CC500658ECD /* WebDeviceOrientationUpdateProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebDeviceOrientationUpdateProvider.h; sourceTree = "<group>"; };
 		E39628DC23960CC600658ECD /* WebDeviceOrientationUpdateProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebDeviceOrientationUpdateProvider.cpp; sourceTree = "<group>"; };
 		E39628E423971F3400658ECD /* WebDeviceOrientationUpdateProvider.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebDeviceOrientationUpdateProvider.messages.in; sourceTree = "<group>"; };
@@ -11934,7 +11931,6 @@
 				5C139DB029DB847C00D5117B /* WebContentExtension-CaptivePortal-Info.plist */,
 				5C139DB129DB847D00D5117B /* WebContentExtension-Info.plist */,
 				5C139DB929DB847E00D5117B /* WebContentProcessExtension.swift */,
-				E39408D52B1115B800563AE8 /* WebKitProcessExtension.swift */,
 			);
 			path = AuxiliaryProcessExtensions;
 			sourceTree = "<group>";
@@ -17105,7 +17101,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names WK _WK _T || exit $?\nfi\n";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names WK _WK || exit $?\nfi\n";
 		};
 		3AB34B6228D4F01C009DAAB6 /* Update Info.plist for RunningBoard management */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -17903,7 +17899,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E39409042B112D2100563AE8 /* AuxiliaryProcessExtensionBridge.mm in Sources */,
+				DDCED3AC29F82DB400512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */,
 				DDCED3AB29F82DB400512877 /* WebContentProcessExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17920,7 +17916,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E39409032B112D2000563AE8 /* AuxiliaryProcessExtensionBridge.mm in Sources */,
+				DDCED3A829F82DB200512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */,
 				DDCED3A729F82DB200512877 /* WebContentProcessExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17937,7 +17933,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E39409012B112D1F00563AE8 /* AuxiliaryProcessExtensionBridge.mm in Sources */,
+				DDCED3A429F82D7900512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */,
 				E3B9B5D52AB65795008568FE /* NetworkingProcessExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17946,7 +17942,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E39409022B112D1F00563AE8 /* AuxiliaryProcessExtensionBridge.mm in Sources */,
+				DDCED3A629F82DB100512877 /* AuxiliaryProcessExtensionBridge.mm in Sources */,
 				E3B9B5D72AB65822008568FE /* GPUProcessExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17973,6 +17969,7 @@
 				5187BDEE2B005E16008A6EE5 /* CoreIPCDictionary.mm in Sources */,
 				F4ABDB662B01C68F00C5471A /* CoreIPCError.mm in Sources */,
 				5187BDF02B007445008A6EE5 /* CoreIPCFont.mm in Sources */,
+				F4A30A6D2B08255B004E1F24 /* CoreIPCLocale.mm in Sources */,
 				5197FAF22AFD33FF009180C5 /* CoreIPCNSCFObject.mm in Sources */,
 				51ACFFE02B048829001331A2 /* CoreIPCNSValue.mm in Sources */,
 				5197FAED2AFD33FF009180C5 /* CoreIPCSecureCoding.mm in Sources */,
@@ -17980,7 +17977,6 @@
 				7B9FC5D128A53014007570E7 /* PlatformUnifiedSource1-mm.mm in Sources */,
 				7B9FC5A828A38D1E007570E7 /* PlatformUnifiedSource1.cpp in Sources */,
 				7B9FC5D028A5300D007570E7 /* PlatformUnifiedSource2-mm.mm in Sources */,
-				F4A30A6D2B08255B004E1F24 /* CoreIPCLocale.mm in Sources */,
 				7B9FC5D428A53023007570E7 /* PlatformUnifiedSource2.cpp in Sources */,
 				7B9FC5DE28A53CCD007570E7 /* PlatformUnifiedSource3-mm.mm in Sources */,
 				7B9FC5D328A5301D007570E7 /* PlatformUnifiedSource3.cpp in Sources */,
@@ -18039,7 +18035,6 @@
 				9955A6F41C7986DC00EB6A93 /* AutomationBackendDispatchers.cpp in Sources */,
 				99249AD51F1F1E5600B62FBB /* AutomationFrontendDispatchers.cpp in Sources */,
 				9955A6F61C7986E300EB6A93 /* AutomationProtocolObjects.cpp in Sources */,
-				E39409002B11280600563AE8 /* AuxiliaryProcessExtensionBridge.mm in Sources */,
 				51FAEC3B1B0657680009C4E7 /* AuxiliaryProcessMessageReceiver.cpp in Sources */,
 				E326E357284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm in Sources */,
 				413E5C9229B0CF7C002F4987 /* BackgroundFetchStateCocoa.mm in Sources */,
@@ -18469,7 +18464,6 @@
 				1CA8B945127C882A00576C2B /* WebInspectorUIProxyMessageReceiver.cpp in Sources */,
 				1A6280F31919982A006AD9F9 /* WebKit.m in Sources */,
 				A181A79821ACC74B0059A316 /* WebKitAdditions.mm in Sources */,
-				E39408FF2B111BC700563AE8 /* WebKitProcessExtension.swift in Sources */,
 				CDF1B91B267025550007EC10 /* WebKitSwiftSoftLink.mm in Sources */,
 				E3816B3D27E2463A005EAFC0 /* WebMockContentFilterManager.cpp in Sources */,
 				31BA924D148831260062EDB5 /* WebNotificationManagerMessageReceiver.cpp in Sources */,

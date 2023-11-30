@@ -25,18 +25,14 @@
 
 import ServiceExtensions
 @_spi(Private) import ServiceExtensions
-@_spi(Private) import WebKit
 
 @main
-class NetworkingProcessExtension : WKNetworkingProcessExtension {
-    required init() {
-        super.init()
-    }
+class NetworkingProcessExtension {
+    required init() {}
 }
 
-extension NetworkingProcessExtension {
-    @objc(handle:)
-    override open func handle(xpcConnection: xpc_connection_t) {
+extension NetworkingProcessExtension: NetworkingServiceExtension {
+    func handle(xpcConnection: xpc_connection_t) {
         handleNewConnection(xpcConnection)
     }
 }
