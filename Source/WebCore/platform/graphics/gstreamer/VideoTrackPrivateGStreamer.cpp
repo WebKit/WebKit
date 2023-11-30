@@ -117,6 +117,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
         setConfiguration(WTFMove(configuration));
     });
 
+#if GST_CHECK_VERSION(1, 20, 0)
     GUniquePtr<char> mimeCodec(gst_codec_utils_caps_get_mime_codec(caps.get()));
     if (mimeCodec) {
         auto codec = makeString(mimeCodec.get());
@@ -134,6 +135,7 @@ void VideoTrackPrivateGStreamer::updateConfigurationFromCaps(GRefPtr<GstCaps>&& 
         }
         configuration.codec = WTFMove(codec);
     }
+#endif
 
     if (areEncryptedCaps(caps.get())) {
         if (auto videoResolution = getVideoResolutionFromCaps(caps.get())) {
