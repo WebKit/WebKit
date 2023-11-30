@@ -1548,7 +1548,23 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
     auto rowPositions = renderGrid.rowPositions();
     if (!columnPositions.size() || !rowPositions.size())
         return { };
-    
+
+    LayoutUnit masonryContentSize = renderGrid.masonryContentSize();
+
+    // There are no actual rows or columns in the masonry axis of a masonry layout.
+    // But we can borrow the concept to draw the two lines at the start and end of the masonry axis.
+    if (renderGrid.areMasonryRows()) {
+        auto firstRowPosition = rowPositions[0];
+        auto lastRowPosition = rowPositions[0] + masonryContentSize;
+        rowPositions = Vector<LayoutUnit> { firstRowPosition, lastRowPosition };
+    }
+
+    if (renderGrid.areMasonryColumns()) {
+        auto firstColumnPosition = columnPositions[0];
+        auto lastColumnPosition = columnPositions[0] + masonryContentSize;
+        columnPositions = Vector<LayoutUnit> { firstColumnPosition, lastColumnPosition };
+    }
+
     float gridStartX = columnPositions[0];
     float gridEndX = columnPositions[columnPositions.size() - 1];
     float gridStartY = rowPositions[0];
@@ -1669,6 +1685,10 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
         } else {
             gridHighlightOverlay.gridLines.append(columnStartLine);
         }
+
+        // Draw only the bounding lines of the masonry axis.
+        if (renderGrid.areMasonryColumns())
+            continue;
         
         FloatLine gapLabelLine = columnStartLine;
         if (i) {
@@ -1755,6 +1775,10 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
             gridHighlightOverlay.gridLines.append(rowStartLine);
         }
 
+        // Draw only the bounding lines of the masonry axis.
+        if (renderGrid.areMasonryRows())
+            continue;
+
         FloatPoint gapLabelPosition = rowStartLine.start();
         if (i) {
             FloatLine lineBetweenRowStarts = { rowStartLine.start(), previousRowEndLine.start() };
@@ -1814,7 +1838,7 @@ std::optional<InspectorOverlay::Highlight::GridHighlightOverlay> InspectorOverla
         }
     }
 
-    if (gridOverlay.config.showAreaNames) {
+    if (gridOverlay.config.showAreaNames && !renderGrid.isMasonry()) {
         for (auto& gridArea : node->renderStyle()->namedGridArea().map) {
             auto& name = gridArea.key;
             auto& area = gridArea.value;
