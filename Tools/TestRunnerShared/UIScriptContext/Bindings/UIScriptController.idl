@@ -396,4 +396,5 @@ interface UIScriptController {
     readonly attribute unsigned long countOfUpdatesWithLayerChanges;
 
     readonly attribute unsigned long long currentImageAnalysisRequestID;
+    undefined installFakeMachineReadableCodeResultsForImageAnalysis();
 };

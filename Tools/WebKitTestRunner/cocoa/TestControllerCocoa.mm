@@ -68,11 +68,59 @@
 
 #if ENABLE(IMAGE_ANALYSIS)
 
+#if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+
+static const UIMenuIdentifier fakeMachineReadableCodeActionIdentifier = @"org.webkit.FakeMachineReadableCodeMenuAction";
+static UIMenu *fakeMachineReadableCodeMenuForTesting()
+{
+    static NeverDestroyed<RetainPtr<UIMenu>> menu;
+    static std::once_flag s_onceFlag;
+    std::call_once(s_onceFlag, [&] {
+        RetainPtr action = [UIAction actionWithTitle:@"QR Code Action" image:nil identifier:fakeMachineReadableCodeActionIdentifier handler:^(UIAction *) {
+        }];
+        menu.get() = [UIMenu menuWithTitle:@"QR Code" image:nil identifier:nil options:UIMenuOptionsDisplayInline children:@[ action.get() ]];
+    });
+    return menu->get();
+}
+
+@interface FakeMachineReadableCodeImageAnalysis : NSObject
+@property (nonatomic, readonly) UIMenu *mrcMenu;
+@property (nonatomic, weak) UIViewController *presentingViewControllerForMrcAction;
+@end
+
+@implementation FakeMachineReadableCodeImageAnalysis
+
+- (NSArray<VKWKLineInfo *> *)allLines
+{
+    return @[ ];
+}
+
+- (BOOL)hasResultsForAnalysisTypes:(VKAnalysisTypes)analysisTypes
+{
+    return analysisTypes == VKAnalysisTypeMachineReadableCode;
+}
+
+- (UIMenu *)mrcMenu
+{
+    return fakeMachineReadableCodeMenuForTesting();
+}
+
+@end
+
+#endif // HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+
 static VKImageAnalysisRequestID gCurrentImageAnalysisRequestID = 0;
 
 VKImageAnalysisRequestID swizzledProcessImageAnalysisRequest(id, SEL, VKCImageAnalyzerRequest *, void (^progressHandler)(double), void (^completionHandler)(VKCImageAnalysis *, NSError *))
 {
     RunLoop::main().dispatchAfter(25_ms, [completionHandler = makeBlockPtr(completionHandler)] {
+#if HAVE(VK_IMAGE_ANALYSIS_FOR_MACHINE_READABLE_CODES)
+        if (WTR::TestController::singleton().shouldUseFakeMachineReadableCodeResultsForImageAnalysis()) {
+            auto result = adoptNS([FakeMachineReadableCodeImageAnalysis new]);
+            completionHandler(static_cast<VKCImageAnalysis *>(result.get()), nil);
+            return;
+        }
+#endif
         completionHandler(nil, [NSError errorWithDomain:NSCocoaErrorDomain code:404 userInfo:nil]);
     });
     return ++gCurrentImageAnalysisRequestID;
@@ -162,7 +210,17 @@ uint64_t TestController::currentImageAnalysisRequestID()
     return static_cast<uint64_t>(gCurrentImageAnalysisRequestID);
 }
 
-#endif
+void TestController::installFakeMachineReadableCodeResultsForImageAnalysis()
+{
+    m_useFakeMachineReadableCodeResultsForImageAnalysis = true;
+}
+
+bool TestController::shouldUseFakeMachineReadableCodeResultsForImageAnalysis() const
+{
+    return m_useFakeMachineReadableCodeResultsForImageAnalysis;
+}
+
+#endif // ENABLE(IMAGE_ANALYSIS)
 
 WKContextRef TestController::platformContext()
 {
@@ -352,6 +410,9 @@ void TestController::clearApplicationBundleIdentifierTestingOverride()
 
 void TestController::cocoaResetStateToConsistentValues(const TestOptions& options)
 {
+#if ENABLE(IMAGE_ANALYSIS)
+    m_useFakeMachineReadableCodeResultsForImageAnalysis = false;
+#endif
     m_calendarSwizzler = nullptr;
     m_overriddenCalendarAndLocaleIdentifiers = { nil, nil };
     
