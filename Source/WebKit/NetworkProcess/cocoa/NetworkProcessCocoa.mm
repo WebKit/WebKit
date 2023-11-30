@@ -54,6 +54,11 @@
 #import <pal/spi/cocoa/NEFilterSourceSPI.h>
 #endif
 
+#if USE(EXTENSIONKIT)
+#import "ExtensionKitSPI.h"
+#import <WebKit-Swift.h>
+#endif
+
 namespace WebKit {
 
 static void initializeNetworkSettings()
@@ -250,5 +255,35 @@ void NetworkProcess::setProxyConfigData(PAL::SessionID sessionID, Vector<std::pa
     session->setProxyConfigData(WTFMove(proxyConfigurations));
 }
 #endif // HAVE(NW_PROXY_CONFIG)
+
+#if USE(RUNNINGBOARD) && USE(EXTENSIONKIT)
+bool NetworkProcess::aqcuireLockedFileGrant()
+{
+    NSError* error = nil;
+    m_holdingLockedFileGrant = [WKNetworkingProcessExtension.sharedInstance grant:@"com.apple.common" name:@"FinishTaskInterruptable" error:&error];
+    if (m_holdingLockedFileGrant)
+        RELEASE_LOG(Process, "Successfully took assertion on Network process for locked file");
+    else
+        RELEASE_LOG_ERROR(Process, "Unable to take assertion on Network process for locked file, error = %@", error);
+    return !!m_holdingLockedFileGrant;
+}
+
+void NetworkProcess::invalidateGrant()
+{
+    if (!hasAcquiredGrant())
+        return;
+
+    NSError* error = nil;
+    [m_holdingLockedFileGrant invalidateWithError:&error];
+    if (error)
+        RELEASE_LOG_ERROR(Process, "Unable to invalidate grant, error = %@", error);
+    m_holdingLockedFileGrant = nil;
+}
+
+bool NetworkProcess::hasAcquiredGrant() const
+{
+    return !!m_holdingLockedFileGrant;
+}
+#endif
 
 } // namespace WebKit
