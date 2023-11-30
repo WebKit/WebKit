@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import ServiceExtensions
-@_spi(Private) import ServiceExtensions
+#include "config.h"
+#include "NativeWebWheelEvent.h"
 
-@objc
-@_spi(Private)
-open class Grant: NSObject {
-    let inner : _Capabilities.Grant
+#include "WebEventFactory.h"
 
-    init(inner: _Capabilities.Grant) {
-        self.inner = inner
-    }
+namespace WebKit {
 
-    @objc(invalidateWithError:)
-    open func invalidate() throws {
-        try self.inner.invalidate()
-    }
+NativeWebWheelEvent::NativeWebWheelEvent(WPEEvent* event)
+    : WebWheelEvent(WebEventFactory::createWebWheelEvent(event))
+{
 }
 
-@_spi(Private)
-@objc(WKNetworkingProcessExtension)
-open class WKNetworkingProcessExtension : NSObject {
-    @objc(sharedInstance)
-    static public var sharedInstance: WKNetworkingProcessExtension? = nil
-    required public override init() {
-        super.init()
-        WKNetworkingProcessExtension.sharedInstance = self
-    }
-}
-
-extension WKNetworkingProcessExtension: NetworkingServiceExtension {
-    @objc(handle:)
-    open func handle(xpcConnection: xpc_connection_t) {
-    }
-
-    @objc(grant:name:error:)
-    open func grant(domain: String, name: String) throws -> Any {
-        let grant = try self._request(capabilities: _Capabilities.assertion(domain, name))
-        return Grant(inner: grant)
-    }
-}
+} // namespace WebKit

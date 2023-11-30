@@ -53,6 +53,7 @@
 #import <WebCore/CredentialRequestOptions.h>
 #import <WebCore/DeviceRequestConverter.h>
 #import <WebCore/FidoConstants.h>
+#import <WebCore/MediationRequirement.h>
 #import <WebCore/MockWebAuthenticationConfiguration.h>
 #import <WebCore/PublicKeyCredentialCreationOptions.h>
 #import <WebCore/PublicKeyCredentialRequestOptions.h>
@@ -897,20 +898,20 @@ static WebCore::AuthenticationExtensionsClientInputs authenticationExtensionsCli
     return result;
 }
 
-static WebCore::CredentialRequestOptions::MediationRequirement toWebCore(_WKWebAuthenticationMediationRequirement mediation)
+static WebCore::MediationRequirement toWebCore(_WKWebAuthenticationMediationRequirement mediation)
 {
     switch (mediation) {
     case _WKWebAuthenticationMediationRequirementSilent:
-        return WebCore::CredentialRequestOptions::MediationRequirement::Silent;
+        return WebCore::MediationRequirement::Silent;
     case _WKWebAuthenticationMediationRequirementOptional:
-        return WebCore::CredentialRequestOptions::MediationRequirement::Optional;
+        return WebCore::MediationRequirement::Optional;
     case _WKWebAuthenticationMediationRequirementRequired:
-        return WebCore::CredentialRequestOptions::MediationRequirement::Required;
+        return WebCore::MediationRequirement::Required;
     case _WKWebAuthenticationMediationRequirementConditional:
-        return WebCore::CredentialRequestOptions::MediationRequirement::Conditional;
+        return WebCore::MediationRequirement::Conditional;
     default:
         ASSERT_NOT_REACHED();
-        return WebCore::CredentialRequestOptions::MediationRequirement::Optional;
+        return WebCore::MediationRequirement::Optional;
     }
 }
 #endif

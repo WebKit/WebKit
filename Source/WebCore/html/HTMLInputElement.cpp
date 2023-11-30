@@ -145,7 +145,7 @@ HTMLInputElement::~HTMLInputElement()
     if (m_inputType && isRadioButton())
         treeScope().radioButtonGroups().removeButton(*this);
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     if (m_hasTouchEventHandler)
         document().didRemoveEventTargetNode(*this);
 #endif
@@ -604,7 +604,7 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
 inline void HTMLInputElement::runPostTypeUpdateTasks()
 {
     ASSERT(m_inputType);
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     bool hasTouchEventHandler = m_inputType->hasTouchEventHandler();
     if (hasTouchEventHandler != m_hasTouchEventHandler) {
         if (hasTouchEventHandler)
@@ -1732,7 +1732,7 @@ void HTMLInputElement::didMoveToNewDocument(Document& oldDocument, Document& new
         newDocument.registerForDocumentSuspensionCallbacks(*this);
     }
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
     if (m_hasTouchEventHandler) {
         oldDocument.didRemoveEventTargetNode(*this);
         newDocument.didAddTouchEventHandler(*this);

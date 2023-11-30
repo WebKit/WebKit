@@ -2679,7 +2679,7 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
     case CSSPropertyColumns:
         return consumeColumns(important);
     case CSSPropertyAnimation:
-        return consumeAnimationShorthand(animationShorthandForParsing(), important);
+        return consumeAnimationShorthand(animationShorthand(), important);
     case CSSPropertyTransition:
         return consumeAnimationShorthand(transitionShorthandForParsing(), important);
     case CSSPropertyTextDecoration: {

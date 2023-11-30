@@ -70,7 +70,7 @@
 #include "WebExtensionControllerParameters.h"
 #endif
 
-#if PLATFORM(GTK) && USE(GBM)
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
 #include "DMABufRendererBufferFormat.h"
 #endif
 
@@ -313,7 +313,7 @@ struct WebPageCreationParameters {
     SandboxExtension::Handle machBootstrapHandle;
 #endif
 
-#if PLATFORM(GTK) && USE(GBM)
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
     Vector<DMABufRendererBufferFormat> preferredBufferFormats;
 #endif
 };

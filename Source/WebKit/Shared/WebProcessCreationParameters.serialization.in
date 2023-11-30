@@ -178,8 +178,11 @@
     String renderDeviceFile;
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(WPE)
     OptionSet<WebKit::DMABufRendererBufferMode> dmaBufRendererBufferMode;
+#endif
+
+#if PLATFORM(GTK)
     bool useSystemAppearanceForScrollbars;
     WebKit::GtkSettingsState gtkSettings;
 #endif

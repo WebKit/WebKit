@@ -70,7 +70,7 @@ PlatformWebView::~PlatformWebView()
 void PlatformWebView::initialize(WKPageConfigurationRef configuration)
 {
     m_window = new WPEToolingBackends::HeadlessViewBackend(800, 600);
-    m_view = WKViewCreate(m_window->backend(), configuration);
+    m_view = WKViewCreateDeprecated(m_window->backend(), configuration);
 }
 
 WKPageRef PlatformWebView::page() const

@@ -247,7 +247,7 @@ headers: "ArgumentCoders.h"
     WebKit::SandboxExtension::Handle machBootstrapHandle;
 #endif
 
-#if PLATFORM(GTK) && USE(GBM)
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
     Vector<WebKit::DMABufRendererBufferFormat> preferredBufferFormats;
 #endif
 }

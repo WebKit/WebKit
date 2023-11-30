@@ -45,6 +45,10 @@
 #include <gtk/gtk.h>
 #endif
 
+#if PLATFORM(WPE)
+#include <wpe/wpe-platform.h>
+#endif
+
 namespace WebKit {
 
 #if PLATFORM(GTK)
@@ -162,7 +166,15 @@ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd)
 
 std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDisplayID displayID)
 {
+#if PLATFORM(WPE)
+    String filename;
+    if (g_type_class_peek(WPE_TYPE_DISPLAY))
+        filename = String::fromUTF8(wpe_render_device());
+    else
+        filename = WebCore::PlatformDisplay::sharedDisplay().drmDeviceFile();
+#else
     auto filename = WebCore::PlatformDisplay::sharedDisplay().drmDeviceFile();
+#endif
     if (filename.isEmpty()) {
         RELEASE_LOG_FAULT(DisplayLink, "Could not create a vblank monitor for display %u: no DRM device found", displayID);
         return nullptr;

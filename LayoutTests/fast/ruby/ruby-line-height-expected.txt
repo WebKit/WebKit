@@ -8,7 +8,7 @@ PASS getLineHeight('p') is "48px"
 PASS [object HTMLElement] is non-null.
 PASS getLineHeight('r') is "48px"
 PASS [object HTMLElement] is non-null.
-PASS getLineHeight('t') is "normal"
+PASS getLineHeight('t') is "8px"
 PASS successfullyParsed is true
 
 TEST COMPLETE

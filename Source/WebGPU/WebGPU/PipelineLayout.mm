@@ -53,7 +53,7 @@ static void addInitialOffset(uint32_t initialOffset, uint32_t offset, uint32_t g
 {
     if (initialOffset != offset) {
         offsets.add(groupIndex, Vector<uint32_t>((offset - initialOffset) / sizeof(uint32_t)));
-        dynamicOffets.add(groupIndex, initialOffset);
+        dynamicOffets.add(groupIndex, initialOffset / sizeof(uint32_t));
     }
 }
 

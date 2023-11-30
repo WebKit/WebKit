@@ -3348,6 +3348,7 @@ JSCookieStoreGetOptions.cpp
 JSCookieStoreManager.cpp
 JSCountQueuingStrategy.cpp
 JSCredentialCreationOptions.cpp
+JSCredentialMediationRequirement.cpp
 JSCredentialRequestOptions.cpp
 JSCredentialsContainer.cpp
 JSCrypto.cpp

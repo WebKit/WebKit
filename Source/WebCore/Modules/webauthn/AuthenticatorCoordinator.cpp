@@ -37,6 +37,7 @@
 #include "FeaturePolicy.h"
 #include "FrameDestructionObserverInlines.h"
 #include "JSBasicCredential.h"
+#include "JSCredentialCreationOptions.h"
 #include "JSCredentialRequestOptions.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PublicKeyCredential.h"
@@ -97,12 +98,13 @@ void AuthenticatorCoordinator::setClient(std::unique_ptr<AuthenticatorCoordinato
     m_client = WTFMove(client);
 }
 
-void AuthenticatorCoordinator::create(const Document& document, const PublicKeyCredentialCreationOptions& options, WebAuthn::Scope scope, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise)
+void AuthenticatorCoordinator::create(const Document& document, CredentialCreationOptions&& createOptions, WebAuthn::Scope scope, RefPtr<AbortSignal>&& abortSignal, CredentialPromise&& promise)
 {
     using namespace AuthenticatorCoordinatorInternal;
 
     const auto& callerOrigin = document.securityOrigin();
-    RefPtr frame = document.frame();
+    auto* frame = document.frame();
+    const auto& options = createOptions.publicKey.value();
     ASSERT(frame);
     // The following implements https://www.w3.org/TR/webauthn-2/#createCredential as of 28 June 2022.
     // Step 1, 3, 16 are handled by the caller.
@@ -192,7 +194,7 @@ void AuthenticatorCoordinator::create(const Document& document, const PublicKeyC
         promise.reject(exception.toException());
     };
     // Async operations are dispatched and handled in the messenger.
-    m_client->makeCredential(*frame, callerOrigin, clientDataJsonHash, options, WTFMove(callback));
+    m_client->makeCredential(*frame, callerOrigin, clientDataJsonHash, options, createOptions.mediation, WTFMove(callback));
 }
 
 void AuthenticatorCoordinator::discoverFromExternalSource(const Document& document, CredentialRequestOptions&& requestOptions, const ScopeAndCrossOriginParent& scopeAndCrossOriginParent, CredentialPromise&& promise)

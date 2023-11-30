@@ -300,39 +300,13 @@ static bool isDescendantCombinator(CSSSelector::RelationType relation)
 
 std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumeNestedComplexSelector(CSSParserTokenRange& range)
 {
-    auto appendNestingSelector = [] (auto& parserSelector) {
-        // https://drafts.csswg.org/css-nesting/#cssom
-        // Relative selector should be absolutized (only when not "nest-containing" for the descendant one),
-        // with the implied nesting selector inserted.
-
-        auto lastSelector = parserSelector->leftmostSimpleSelector()->selector();
-        ASSERT(lastSelector);
-
-        // Relation is Descendant by default.
-        auto relation = lastSelector->relation();
-        if (relation == CSSSelector::RelationType::Subselector)
-            relation = CSSSelector::RelationType::DescendantSpace;
-
-        auto nestingSelector = makeUnique<CSSParserSelector>();
-        nestingSelector->setMatch(CSSSelector::Match::NestingParent);
-        // We add the implicit parent selector at the beginning of the selector.
-        parserSelector->appendTagHistory(relation, WTFMove(nestingSelector));
-    };
-
     auto selector = consumeComplexSelector(range);
-    if (selector) {
-        if (selector->hasExplicitNestingParent())
-            return selector;
-
-        appendNestingSelector(selector);
+    if (selector)
         return selector;
-    }
 
     selector = consumeRelativeNestedSelector(range);
-    if (selector) {
-        appendNestingSelector(selector);
+    if (selector)
         return selector;
-    }
 
     return nullptr;
 }
@@ -1280,7 +1254,7 @@ CSSSelectorList CSSSelectorParser::resolveNestingParent(const CSSSelectorList& n
             // FIXME: We should build a new CSSParserSelector from this selector and resolve it
             const_cast<CSSSelector*>(selector)->resolveNestingParentSelectors(*parentResolvedSelectorList);
         } else {
-            // It's top-level, the nesting parent selector should be replace by :scope
+            // It's top-level, the nesting parent selector should be replaced by :scope
             const_cast<CSSSelector*>(selector)->replaceNestingParentByPseudoClassScope();
         }
         auto parserSelector = makeUnique<CSSParserSelector>(*selector);

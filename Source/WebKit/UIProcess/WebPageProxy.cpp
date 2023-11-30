@@ -9801,8 +9801,13 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
         parameters.machBootstrapHandle = SandboxExtension::createHandleForMachBootstrapExtension();
 #endif
 
-#if PLATFORM(GTK) && USE(GBM)
+#if USE(GBM)
+#if PLATFORM(GTK)
     parameters.preferredBufferFormats = AcceleratedBackingStoreDMABuf::preferredBufferFormats();
+#endif
+#if PLATFORM(WPE)
+    parameters.preferredBufferFormats = preferredBufferFormats();
+#endif
 #endif
     return parameters;
 }
@@ -12052,10 +12057,10 @@ void WebPageProxy::getIsViewVisible(bool& result)
 
 void WebPageProxy::updateCurrentModifierState()
 {
-#if PLATFORM(COCOA) || PLATFORM(GTK)
+#if PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WPE)
 #if PLATFORM(COCOA)
     auto modifiers = PlatformKeyboardEvent::currentStateOfModifierKeys();
-#elif PLATFORM(GTK)
+#elif PLATFORM(GTK) || PLATFORM(WPE)
     auto modifiers = currentStateOfModifierKeys();
 #endif
     send(Messages::WebPage::UpdateCurrentModifierState(modifiers));

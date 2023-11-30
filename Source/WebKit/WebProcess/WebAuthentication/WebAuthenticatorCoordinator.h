@@ -40,7 +40,7 @@ public:
 
 private:
     // WebCore::AuthenticatorCoordinatorClient
-    void makeCredential(const WebCore::LocalFrame&, const WebCore::SecurityOrigin&, const Vector<uint8_t>&, const WebCore::PublicKeyCredentialCreationOptions&, WebCore::RequestCompletionHandler&&) final;
+    void makeCredential(const WebCore::LocalFrame&, const WebCore::SecurityOrigin&, const Vector<uint8_t>&, const WebCore::PublicKeyCredentialCreationOptions&, WebCore::MediationRequirement, WebCore::RequestCompletionHandler&&) final;
     void getAssertion(const WebCore::LocalFrame&, const WebCore::SecurityOrigin&, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, WebCore::MediationRequirement, const std::pair<WebAuthn::Scope, std::optional<WebCore::SecurityOriginData>>&, WebCore::RequestCompletionHandler&&) final;
     void isConditionalMediationAvailable(const WebCore::SecurityOrigin&, WebCore::QueryCompletionHandler&&) final;
     void isUserVerifyingPlatformAuthenticatorAvailable(const WebCore::SecurityOrigin&, WebCore::QueryCompletionHandler&&) final;

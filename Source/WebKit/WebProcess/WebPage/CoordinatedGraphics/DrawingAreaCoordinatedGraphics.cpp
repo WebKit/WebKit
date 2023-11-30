@@ -787,4 +787,12 @@ void DrawingAreaCoordinatedGraphics::didDiscardBackingStore()
     m_dirtyRegion = m_webPage->bounds();
 }
 
+#if PLATFORM(WPE) && USE(GBM)
+void DrawingAreaCoordinatedGraphics::preferredBufferFormatsDidChange()
+{
+    if (m_layerTreeHost)
+        m_layerTreeHost->preferredBufferFormatsDidChange();
+}
+#endif
+
 } // namespace WebKit

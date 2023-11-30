@@ -32,10 +32,6 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Vector.h>
 
-#if USE(LIBWPE)
-#include <wpe/wpe.h>
-#endif
-
 #if PLATFORM(COCOA)
 OBJC_CLASS NSEvent;
 #endif
@@ -44,6 +40,9 @@ namespace WTR {
 
 class TestController;
 
+#if USE(LIBWPE)
+class EventSenderProxyClient;
+#endif
 class EventSenderProxy {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -130,12 +129,6 @@ private:
     RetainPtr<NSEvent> pressureChangeEvent(int stage, float pressure, PressureChangeDirection);
 #endif
 
-#if ENABLE(TOUCH_EVENTS) && USE(LIBWPE)
-    Vector<struct wpe_input_touch_event_raw> getUpdatedTouchEvents();
-    void removeUpdatedTouchEvents();
-    void prepareAndDispatchTouchEvent(enum wpe_input_touch_event_type);
-#endif
-
 #if PLATFORM(WIN)
     LRESULT dispatchMessage(UINT message, WPARAM, LPARAM);
     POINT positionInPoint() const { return { static_cast<LONG>(m_position.x), static_cast<LONG>(m_position.y) }; }
@@ -156,11 +149,8 @@ private:
     bool m_hasPreciseDeltas { false };
 #endif
 #if USE(LIBWPE)
+    std::unique_ptr<EventSenderProxyClient> m_client;
     uint32_t m_buttonState { 0 };
-#if ENABLE(TOUCH_EVENTS)
-    Vector<struct wpe_input_touch_event_raw> m_touchEvents;
-    HashSet<unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> m_updatedTouchEvents;
-#endif
 #endif
 };
 

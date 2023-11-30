@@ -430,6 +430,7 @@ $(PROJECT_DIR)/Modules/cookie-store/ExtendableCookieChangeEventInit.idl
 $(PROJECT_DIR)/Modules/cookie-store/LocalDOMWindow+CookieStore.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/BasicCredential.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialCreationOptions.idl
+$(PROJECT_DIR)/Modules/credentialmanagement/CredentialMediationRequirement.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/CredentialsContainer.idl
 $(PROJECT_DIR)/Modules/credentialmanagement/Navigator+Credentials.idl

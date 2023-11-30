@@ -35,6 +35,8 @@
 
 #if USE(GBM)
 #include "DMABufRendererBufferFormat.h"
+#include <atomic>
+#include <wtf/Lock.h>
 typedef void *EGLImage;
 struct gbm_bo;
 #endif
@@ -55,7 +57,7 @@ public:
     void clientResize(const WebCore::IntSize&) override;
     bool shouldPaintMirrored() const override
     {
-#if PLATFORM(GTK) && USE(GTK4)
+#if PLATFORM(WPE) || (PLATFORM(GTK) && USE(GTK4))
         return false;
 #else
         return true;
@@ -68,6 +70,10 @@ public:
 
     void didCreateCompositingRunLoop(WTF::RunLoop&) override;
     void willDestroyCompositingRunLoop() override;
+
+#if PLATFORM(WPE) && USE(GBM)
+    void preferredBufferFormatsDidChange() override;
+#endif
 
 private:
     AcceleratedSurfaceDMABuf(WebPage&, Client&);
@@ -173,7 +179,9 @@ private:
         Vector<std::unique_ptr<RenderTarget>, s_maximumBuffers> m_freeTargets;
         Vector<std::unique_ptr<RenderTarget>, s_maximumBuffers> m_lockedTargets;
 #if USE(GBM)
-        DMABufRendererBufferFormat m_dmabufFormat;
+        Lock m_dmabufFormatLock;
+        DMABufRendererBufferFormat m_dmabufFormat WTF_GUARDED_BY_LOCK(m_dmabufFormatLock);
+        bool m_dmabufFormatChanged WTF_GUARDED_BY_LOCK(m_dmabufFormatLock) { false };
 #endif
     };
 

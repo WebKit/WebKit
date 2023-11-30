@@ -64,6 +64,7 @@ if (ENABLE_COG)
         BUILD_IN_SOURCE FALSE
         CONFIGURE_COMMAND
             meson setup <BINARY_DIR> <SOURCE_DIR>
+            --wipe
             --buildtype ${COG_MESON_BUILDTYPE}
             --pkg-config-path ${WPE_COG_PKG_CONFIG_PATH}
             -Dwpe_api=${WPE_API_VERSION}

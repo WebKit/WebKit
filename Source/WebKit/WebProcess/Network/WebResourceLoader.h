@@ -116,6 +116,9 @@ private:
     bool m_isProcessingNetworkResponse { false };
 #endif
 
+    Seconds timeSinceLoadStart() const { return MonotonicTime::now() - m_loadStart; }
+
+    MonotonicTime m_loadStart;
     MonotonicTime m_workerStart;
 };
 

@@ -244,6 +244,11 @@ static bool laContextRequested = false;
     completionHandler(webAuthenticationPanelRequestNoGesture);
 }
 
+- (void)_webView:(WKWebView *)webView requestWebAuthenticationConditionalMediationRegistrationForUser:(NSString *)user completionHandler:(void (^)(BOOL))completionHandler
+{
+    completionHandler(false);
+}
+
 - (void)_webView:(WKWebView *)webView runWebAuthenticationPanel:(_WKWebAuthenticationPanel *)panel initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(_WKWebAuthenticationPanelResult))completionHandler
 {
     webAuthenticationPanelRan = true;

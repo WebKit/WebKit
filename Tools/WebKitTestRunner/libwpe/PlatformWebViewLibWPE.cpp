@@ -26,7 +26,9 @@
 #include "config.h"
 #include "PlatformWebView.h"
 
-#include <WPEToolingBackends/HeadlessViewBackend.h>
+#include "PlatformWebViewClientLibWPE.h"
+#include "PlatformWebViewClientWPE.h"
+#include "TestController.h"
 #include <cstdio>
 #include <wtf/RunLoop.h>
 #include <wtf/text/WTFString.h>
@@ -37,12 +39,16 @@ PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const Tes
     : m_windowIsKey(true)
     , m_options(options)
 {
-    m_window = new WPEToolingBackends::HeadlessViewBackend(800, 600);
-#if USE(WPE_BACKEND_PLAYSTATION)
-    m_view = WKViewCreateWPE(m_window->backend(), configuration);
+#if PLATFORM(WPE)
+    if (TestController::singleton().useWPEPlatformAPI())
+        m_window = new PlatformWebViewClientWPE(configuration);
+    else
+        m_window = new PlatformWebViewClientLibWPE(configuration);
 #else
-    m_view = WKViewCreate(m_window->backend(), configuration);
+    m_window = new PlatformWebViewClientLibWPE(configuration);
 #endif
+
+    m_view = m_window->view();
 }
 
 PlatformWebView::~PlatformWebView()
@@ -99,12 +105,12 @@ String PlatformWebView::getSelectedTextInChromeInputField()
 
 void PlatformWebView::addToWindow()
 {
-    m_window->addActivityState(wpe_view_activity_state_in_window);
+    m_window->addToWindow();
 }
 
 void PlatformWebView::removeFromWindow()
 {
-    m_window->removeActivityState(wpe_view_activity_state_in_window);
+    m_window->removeFromWindow();
 }
 
 void PlatformWebView::setWindowIsKey(bool windowIsKey)
@@ -118,21 +124,6 @@ void PlatformWebView::makeWebViewFirstResponder()
 
 PlatformImage PlatformWebView::windowSnapshotImage()
 {
-    {
-        struct TimeoutTimer {
-            TimeoutTimer()
-                : timer(RunLoop::main(), this, &TimeoutTimer::fired)
-            {
-                timer.startOneShot(1_s / 60);
-            }
-
-            void fired() { RunLoop::main().stop(); }
-            RunLoop::Timer timer;
-        } timeoutTimer;
-
-        RunLoop::main().run();
-    }
-
     return m_window->snapshot();
 }
 

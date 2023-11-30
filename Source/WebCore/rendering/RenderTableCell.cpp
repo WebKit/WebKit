@@ -418,9 +418,11 @@ std::optional<LayoutRect> RenderTableCell::computeVisibleRectInContainer(const L
 {
     if (container == this)
         return rect;
-    LayoutRect adjustedRect = rect;
+
+    auto adjustedRect = rect;
     if ((!view().frameView().layoutContext().isPaintOffsetCacheEnabled() || container || context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection)) && parent())
         adjustedRect.moveBy(-parentBox()->location()); // Rows are in the same coordinate space, so don't add their offset in.
+
     return RenderBlockFlow::computeVisibleRectInContainer(adjustedRect, container, context);
 }
 

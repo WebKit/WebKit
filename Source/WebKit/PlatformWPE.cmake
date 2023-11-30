@@ -1,3 +1,5 @@
+add_subdirectory(${WEBKIT_DIR}/WPEPlatform)
+
 include(GNUInstallDirs)
 include(GLibMacros)
 include(InspectorGResources.cmake)
@@ -89,11 +91,20 @@ list(APPEND WebKit_UNIFIED_SOURCE_LIST_FILES
     "SourcesWPE.txt"
 )
 
+list(APPEND WebKit_SERIALIZATION_IN_FILES Shared/glib/DMABufRendererBufferFormat.serialization.in)
+
 list(APPEND WebCore_SERIALIZATION_IN_FILES SoupNetworkProxySettings.serialization.in)
 
 list(APPEND WebKit_SERIALIZATION_IN_FILES
+    Shared/glib/DMABufRendererBufferMode.serialization.in
     Shared/glib/InputMethodState.serialization.in
     Shared/glib/UserMessage.serialization.in
+)
+
+list(APPEND WebKit_MESSAGES_IN_FILES
+    UIProcess/dmabuf/AcceleratedBackingStoreDMABuf
+
+    WebProcess/WebPage/dmabuf/AcceleratedSurfaceDMABuf
 )
 
 list(APPEND WebKit_DERIVED_SOURCES
@@ -349,6 +360,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${DERIVED_SOURCES_WPE_API_DIR}"
     "${FORWARDING_HEADERS_WPE_DIR}"
     "${FORWARDING_HEADERS_WPE_EXTENSION_DIR}"
+    "${WPEPlatform_DERIVED_SOURCES_DIR}"
     "${WEBKIT_DIR}/NetworkProcess/glib"
     "${WEBKIT_DIR}/NetworkProcess/soup"
     "${WEBKIT_DIR}/Platform/IPC/glib"
@@ -363,6 +375,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/Shared/glib"
     "${WEBKIT_DIR}/Shared/libwpe"
     "${WEBKIT_DIR}/Shared/soup"
+    "${WEBKIT_DIR}/Shared/wpe"
     "${WEBKIT_DIR}/UIProcess/API/C/cairo"
     "${WEBKIT_DIR}/UIProcess/API/C/glib"
     "${WEBKIT_DIR}/UIProcess/API/C/wpe"
@@ -380,10 +393,13 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/UIProcess/linux"
     "${WEBKIT_DIR}/UIProcess/soup"
     "${WEBKIT_DIR}/UIProcess/wpe"
+    "${WEBKIT_DIR}/WPEPlatform"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib"
     "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/wpe"
     "${WEBKIT_DIR}/WebProcess/WebCoreSupport/soup"
     "${WEBKIT_DIR}/WebProcess/WebPage/CoordinatedGraphics"
+    "${WEBKIT_DIR}/WebProcess/WebPage/dmabuf"
+    "${WEBKIT_DIR}/WebProcess/WebPage/glib"
     "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
     "${WEBKIT_DIR}/WebProcess/WebPage/wpe"
     "${WEBKIT_DIR}/WebProcess/glib"
@@ -448,6 +464,10 @@ if (USE_LIBDRM)
         ${LIBDRM_LIBRARIES}
     )
 endif ()
+
+list(APPEND WebKit_PRIVATE_LIBRARIES
+    WPEPlatform-${WPE_API_VERSION}
+)
 
 list(APPEND WebKit_INTERFACE_INCLUDE_DIRECTORIES
     ${FORWARDING_HEADERS_WPE_DIR}
@@ -629,10 +649,13 @@ GI_INTROSPECT(WPEWebKit ${WPE_API_VERSION} wpe/webkit.h
     SYMBOL_PREFIX webkit
     DEPENDENCIES
         WPEJavaScriptCore
+        WPEPlatform
         Soup-${SOUP_API_VERSION}:libsoup-${SOUP_API_VERSION}
     OPTIONS
         -I${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
         -I${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
+        -I${WPEPlatform_DERIVED_SOURCES_DIR}
+        -I${WEBKIT_DIR}/WPEPlatform
     SOURCES
         ${WPE_API_INSTALLED_HEADERS}
         Shared/API/glib

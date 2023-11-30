@@ -2941,21 +2941,11 @@ void NetworkProcess::setIsHoldingLockedFiles(bool isHoldingLockedFiles)
 #else
     if (!isHoldingLockedFiles) {
         m_holdingLockedFileAssertion = nullptr;
-#if USE(EXTENSIONKIT)
-        invalidateGrant();
-#endif
         return;
     }
 
     if (m_holdingLockedFileAssertion && m_holdingLockedFileAssertion->isValid())
         return;
-
-#if USE(EXTENSIONKIT)
-    if (hasAcquiredGrant())
-        return;
-    if (aqcuireLockedFileGrant())
-        return;
-#endif
 
     // We synchronously take a process assertion when beginning a SQLite transaction so that we don't get suspended
     // while holding a locked file. We would get killed if suspended while holding locked files.

@@ -338,7 +338,7 @@ std::optional<LayoutRect> RenderLayerModelObject::computeVisibleRectInSVGContain
 
     ASSERT_UNUSED(containerIsSkipped, !containerIsSkipped);
 
-    LayoutRect adjustedRect = rect;
+    auto adjustedRect = rect;
 
     LayoutSize locationOffset;
     if (is<RenderSVGModelObject>(this))
@@ -346,20 +346,14 @@ std::optional<LayoutRect> RenderLayerModelObject::computeVisibleRectInSVGContain
     else if (is<RenderSVGBlock>(this))
         locationOffset = downcast<RenderSVGBlock>(*this).locationOffset();
 
-    LayoutPoint topLeft = adjustedRect.location();
-    topLeft.move(locationOffset);
 
     // We are now in our parent container's coordinate space. Apply our transform to obtain a bounding box
     // in the parent's coordinate space that encloses us.
-    if (hasLayer() && layer()->transform()) {
+    if (hasLayer() && layer()->transform())
         adjustedRect = layer()->transform()->mapRect(adjustedRect);
-        topLeft = adjustedRect.location();
-        topLeft.move(locationOffset);
-    }
 
-    // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
-    // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
-    adjustedRect.setLocation(topLeft);
+    adjustedRect.move(locationOffset);
+
     if (localContainer->hasNonVisibleOverflow()) {
         bool isEmpty = !downcast<RenderLayerModelObject>(*localContainer).applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {

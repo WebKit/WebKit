@@ -56,6 +56,9 @@
 #include "ScreenManager.h"
 #endif
 
+#if PLATFORM(WPE)
+#include <wpe/wpe-platform.h>
+#endif
 
 namespace WebKit {
 
@@ -75,20 +78,39 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization)
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
 #if PLATFORM(WPE)
-    parameters.isServiceWorkerProcess = process.isRunningServiceWorkers();
-
-    if (!parameters.isServiceWorkerProcess) {
-        parameters.hostClientFileDescriptor = UnixFileDescriptor { wpe_renderer_host_create_client(), UnixFileDescriptor::Adopt };
-        parameters.implementationLibraryName = FileSystem::fileSystemRepresentation(String::fromLatin1(wpe_loader_get_loaded_implementation_library_name()));
-    }
+    bool usingWPEPlatformAPI = !!g_type_class_peek(WPE_TYPE_DISPLAY);
 #endif
 
 #if USE(GBM)
+#if PLATFORM(WPE)
+    if (usingWPEPlatformAPI)
+        parameters.renderDeviceFile = String::fromUTF8(wpe_render_node_device());
+    else
+        parameters.renderDeviceFile = WebCore::PlatformDisplay::sharedDisplay().drmRenderNodeFile();
+#else
     parameters.renderDeviceFile = WebCore::PlatformDisplay::sharedDisplay().drmRenderNodeFile();
+#endif
 #endif
 
 #if PLATFORM(GTK) && USE(EGL)
     parameters.dmaBufRendererBufferMode = AcceleratedBackingStoreDMABuf::rendererBufferMode();
+#elif PLATFORM(WPE)
+    if (usingWPEPlatformAPI) {
+#if USE(GBM)
+        if (!parameters.renderDeviceFile.isEmpty())
+            parameters.dmaBufRendererBufferMode.add(DMABufRendererBufferMode::Hardware);
+#endif
+        parameters.dmaBufRendererBufferMode.add(DMABufRendererBufferMode::SharedMemory);
+    }
+#endif
+
+#if PLATFORM(WPE)
+    parameters.isServiceWorkerProcess = process.isRunningServiceWorkers();
+
+    if (!parameters.isServiceWorkerProcess && parameters.dmaBufRendererBufferMode.isEmpty()) {
+        parameters.hostClientFileDescriptor = UnixFileDescriptor { wpe_renderer_host_create_client(), UnixFileDescriptor::Adopt };
+        parameters.implementationLibraryName = FileSystem::fileSystemRepresentation(String::fromLatin1(wpe_loader_get_loaded_implementation_library_name()));
+    }
 #endif
 
     parameters.memoryCacheDisabled = m_memoryCacheDisabled || LegacyGlobalSettings::singleton().cacheModel() == CacheModel::DocumentViewer;

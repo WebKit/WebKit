@@ -3986,6 +3986,7 @@ ManageCaptureStatusBarInGPUProcessEnabled:
 ManageWebKitProcessesAsExtensions:
   type: bool
   status: internal
+  defaultsOverridable: true
   humanReadableName: "Manage WebKit processes as extensions"
   humanReadableDescription: "Manage WebKit processes as extensions"
   condition: USE(EXTENSIONKIT)

@@ -72,11 +72,13 @@ platform/graphics/wpe/SystemFontDatabaseWPE.cpp
 
 platform/graphics/egl/GLContext.cpp @no-unify
 platform/graphics/egl/GLContextLibWPE.cpp @no-unify
+platform/graphics/egl/PlatformDisplaySurfaceless.cpp @no-unify
 
 platform/graphics/gbm/GBMBufferSwapchain.cpp
 platform/graphics/gbm/GBMDevice.cpp
 platform/graphics/gbm/GraphicsContextGLGBM.cpp @no-unify
 platform/graphics/gbm/GraphicsContextGLGBMTextureMapper.cpp @no-unify
+platform/graphics/gbm/PlatformDisplayGBM.cpp @no-unify
 
 platform/graphics/libwpe/PlatformDisplayLibWPE.cpp
 

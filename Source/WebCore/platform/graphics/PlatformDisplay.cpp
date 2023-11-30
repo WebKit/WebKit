@@ -46,6 +46,11 @@
 #include "PlatformDisplayLibWPE.h"
 #endif
 
+#if PLATFORM(WPE)
+#include "PlatformDisplayGBM.h"
+#include "PlatformDisplaySurfaceless.h"
+#endif
+
 #if PLATFORM(GTK)
 #include "GtkVersioning.h"
 #endif
@@ -71,7 +76,7 @@
 
 #if USE(EGL)
 #if USE(LIBEPOXY)
-#include "EpoxyEGL.h"
+#include <epoxy/egl.h>
 #else
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
@@ -118,6 +123,10 @@ typedef EGLBoolean (*PFNEGLDESTROYIMAGEKHRPROC) (EGLDisplay, EGLImageKHR);
 
 namespace WebCore {
 
+#if PLATFORM(WPE)
+bool PlatformDisplay::s_useDMABufForRendering = false;
+#endif
+
 std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
 {
 #if PLATFORM(GTK)
@@ -150,6 +159,16 @@ std::unique_ptr<PlatformDisplay> PlatformDisplay::createPlatformDisplay()
     return PlatformDisplayWayland::create(nullptr);
 #elif PLATFORM(X11)
     return PlatformDisplayX11::create(nullptr);
+#endif
+
+#if PLATFORM(WPE)
+    if (s_useDMABufForRendering) {
+        if (GBMDevice::singleton().isInitialized()) {
+            if (auto* device = GBMDevice::singleton().device())
+                return PlatformDisplayGBM::create(device);
+        }
+        return PlatformDisplaySurfaceless::create();
+    }
 #endif
 
 #if USE(WPE_RENDERER)

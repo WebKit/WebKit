@@ -304,6 +304,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/cookie-store/LocalDOMWindow+CookieStore.idl \
     $(WebCore)/Modules/credentialmanagement/BasicCredential.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialCreationOptions.idl \
+    $(WebCore)/Modules/credentialmanagement/CredentialMediationRequirement.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialRequestOptions.idl \
     $(WebCore)/Modules/credentialmanagement/CredentialsContainer.idl \
     $(WebCore)/Modules/credentialmanagement/Navigator+Credentials.idl \

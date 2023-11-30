@@ -151,6 +151,10 @@ public:
     const String& accessibilityBusAddress() const;
 #endif
 
+#if PLATFORM(WPE)
+    static void setUseDMABufForRendering(bool useDMABufForRendering) { s_useDMABufForRendering = useDMABufForRendering; }
+#endif
+
 protected:
     PlatformDisplay();
 #if PLATFORM(GTK)
@@ -222,6 +226,10 @@ private:
 #if ENABLE(VIDEO) && USE(GSTREAMER_GL)
     mutable GRefPtr<GstGLDisplay> m_gstGLDisplay;
     mutable GRefPtr<GstGLContext> m_gstGLContext;
+#endif
+
+#if PLATFORM(WPE)
+    static bool s_useDMABufForRendering;
 #endif
 };
 

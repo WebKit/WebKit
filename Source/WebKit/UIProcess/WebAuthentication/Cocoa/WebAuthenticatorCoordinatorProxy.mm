@@ -214,7 +214,7 @@ static inline ASPublicKeyCredentialResidentKeyPreference toASCResidentKeyPrefere
     return ASPublicKeyCredentialResidentKeyPreferenceNotPresent;
 }
 
-static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContext(const PublicKeyCredentialCreationOptions& options, const Vector<uint8_t>& hash, std::optional<WebCore::GlobalFrameIdentifier> globalFrameID)
+static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContext(const PublicKeyCredentialCreationOptions& options, const Vector<uint8_t>& hash, std::optional<WebCore::GlobalFrameIdentifier> globalFrameID, std::optional<WebCore::MediationRequirement> mediation)
 {
     ASCCredentialRequestTypes requestTypes = ASCCredentialRequestTypePlatformPublicKeyRegistration | ASCCredentialRequestTypeSecurityKeyPublicKeyRegistration;
 
@@ -290,6 +290,9 @@ static RetainPtr<ASCCredentialRequestContext> configureRegistrationRequestContex
 
     if (requestTypes & ASCCredentialRequestTypeSecurityKeyPublicKeyRegistration)
         [requestContext setSecurityKeyCredentialCreationOptions:credentialCreationOptions.get()];
+
+    if (mediation == MediationRequirement::Conditional)
+        requestContext.get().requestStyle = ASCredentialRequestStyleSilent;
 
     return requestContext;
 }
@@ -394,7 +397,7 @@ RetainPtr<ASCCredentialRequestContext> WebAuthenticatorCoordinatorProxy::context
 {
     RetainPtr<ASCCredentialRequestContext> result;
     WTF::switchOn(requestData.options, [&](const PublicKeyCredentialCreationOptions& options) {
-        result = configureRegistrationRequestContext(options, requestData.hash, requestData.globalFrameID);
+        result = configureRegistrationRequestContext(options, requestData.hash, requestData.globalFrameID, requestData.mediation);
     }, [&](const PublicKeyCredentialRequestOptions& options) {
         result = configurationAssertionRequestContext(options, requestData.hash, requestData.mediation, requestData.globalFrameID, requestData.parentOrigin);
     });
@@ -489,6 +492,24 @@ void WebAuthenticatorCoordinatorProxy::performRequest(RetainPtr<ASCCredentialReq
         return;
     }
     m_proxy = adoptNS([allocASCAgentProxyInstance() init]);
+
+    if (requestContext.get().requestStyle == ASCredentialRequestStyleSilent) {
+        [m_proxy performSilentAuthorizationRequestsForContext:requestContext.get() withCompletionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, handler = WTFMove(handler)](id<ASCCredentialProtocol> credential, NSError *error) mutable {
+            ensureOnMainRunLoop([weakThis, handler = WTFMove(handler), credential = retainPtr(credential), error = retainPtr(error)] () mutable {
+                if (!weakThis) {
+                    handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotAllowedError, "Operation failed."_s });
+                    RELEASE_LOG_ERROR(WebAuthn, "Request cancelled after WebAuthenticatorCoordinatorProxy invalid after starting request.");
+                    return;
+                }
+
+                continueAfterRequest(credential, error, WTFMove(handler));
+                if (weakThis->m_proxy)
+                    weakThis->m_proxy.clear();
+            });
+        }).get()];
+        return;
+    }
+
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if ([requestContext respondsToSelector:@selector(requestStyle)] && requestContext.get().requestStyle == ASCredentialRequestStyleAutoFill) {
         [m_proxy performAutoFillAuthorizationRequestsForContext:requestContext.get() withCompletionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, handler = WTFMove(handler)](id<ASCCredentialProtocol> credential, NSError *error) mutable {

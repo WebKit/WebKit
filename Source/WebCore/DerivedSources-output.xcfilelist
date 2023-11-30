@@ -639,6 +639,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCountQueuingStrategy.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCountQueuingStrategy.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCredentialCreationOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCredentialCreationOptions.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCredentialMediationRequirement.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCredentialMediationRequirement.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCredentialRequestOptions.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCredentialRequestOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCredentialsContainer.cpp

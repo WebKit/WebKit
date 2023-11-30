@@ -157,7 +157,7 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const 
         inlineContentCache.resetMinimumMaximumContentSizes();
 
     if (inlineContentCache.minimumContentSize() && inlineContentCache.maximumContentSize())
-        return { LayoutUnit { *inlineContentCache.minimumContentSize() }, LayoutUnit { *inlineContentCache.maximumContentSize() } };
+        return { ceiledLayoutUnit(*inlineContentCache.minimumContentSize()), ceiledLayoutUnit(*inlineContentCache.maximumContentSize()) };
 
     rebuildInlineItemListIfNeeded(lineDamage);
     auto& inlineItemList = inlineContentCache.inlineItems().content();
@@ -178,17 +178,17 @@ IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const 
             inlineContentCache.setMaximumIntrinsicWidthLayoutResult(WTFMove(*intrinsicWidthHandler.maximumIntrinsicWidthResult()));
     }
 
-    return { LayoutUnit { *inlineContentCache.minimumContentSize() }, LayoutUnit { *inlineContentCache.maximumContentSize() } };
+    return { ceiledLayoutUnit(*inlineContentCache.minimumContentSize()), ceiledLayoutUnit(*inlineContentCache.maximumContentSize()) };
 }
 
 LayoutUnit InlineFormattingContext::maximumContentSize()
 {
     auto& inlineContentCache = this->inlineContentCache();
     if (auto maximumContentSize = inlineContentCache.maximumContentSize())
-        return LayoutUnit { *maximumContentSize };
+        return ceiledLayoutUnit(*maximumContentSize);
 
     auto mayUseSimplifiedTextOnlyInlineLayout = TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache);
-    return IntrinsicWidthHandler { *this, inlineContentCache.inlineItems().content(), mayUseSimplifiedTextOnlyInlineLayout }.maximumContentSize();
+    return ceiledLayoutUnit(IntrinsicWidthHandler { *this, inlineContentCache.inlineItems().content(), mayUseSimplifiedTextOnlyInlineLayout }.maximumContentSize());
 }
 
 static bool mayExitFromPartialLayout(const InlineDamage& lineDamage, size_t lineIndex, const InlineDisplay::Boxes& newContent)

@@ -1664,7 +1664,7 @@ public:
     const Logger& logger() const;
     const void* logIdentifier() const;
 
-#if PLATFORM(GTK) && USE(GBM)
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
     const Vector<DMABufRendererBufferFormat>& preferredBufferFormats() const { return m_preferredBufferFormats; }
 #endif
 
@@ -2128,6 +2128,10 @@ private:
     void sendMessageToWebProcessExtensionWithReply(UserMessage&&, CompletionHandler<void(UserMessage&&)>&&);
 #endif
 
+#if PLATFORM(WPE) && USE(GBM)
+    void preferredBufferFormatsDidChange(Vector<DMABufRendererBufferFormat>&&);
+#endif
+
     void platformDidScalePage();
 
     Vector<Ref<SandboxExtension>> consumeSandboxExtensions(Vector<SandboxExtension::Handle>&&);
@@ -2574,9 +2578,10 @@ private:
 
 #if PLATFORM(GTK)
     WebCore::Color m_accentColor;
-#if USE(GBM)
-    Vector<DMABufRendererBufferFormat> m_preferredBufferFormats;
 #endif
+
+#if (PLATFORM(GTK) || PLATFORM(WPE)) && USE(GBM)
+    Vector<DMABufRendererBufferFormat> m_preferredBufferFormats;
 #endif
 
 #if ENABLE(APP_BOUND_DOMAINS)

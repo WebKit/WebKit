@@ -177,6 +177,7 @@ private:
 #if ENABLE(WEB_AUTHN)
         void runWebAuthenticationPanel(WebPageProxy&, API::WebAuthenticationPanel&, WebFrameProxy&, FrameInfoData&&, CompletionHandler<void(WebAuthenticationPanelResult)>&&) final;
         void requestWebAuthenticationNoGesture(API::SecurityOrigin&, CompletionHandler<void(bool)>&&) final;
+        void requestWebAuthenticationConditonalMediationRegistration(WTF::String&&, CompletionHandler<void(bool)>&&) final;
 #endif
         void queryPermission(const String&, API::SecurityOrigin&, CompletionHandler<void(std::optional<WebCore::PermissionState>)>&&) final;
         void didEnableInspectorBrowserDomain(WebPageProxy&) final;
@@ -287,6 +288,7 @@ private:
 #if ENABLE(WEB_AUTHN)
         bool webViewRunWebAuthenticationPanelInitiatedByFrameCompletionHandler : 1;
         bool webViewRequestWebAuthenticationNoGestureForOriginCompletionHandler : 1;
+        bool webViewRequestWebAuthenticationConditionalMediationRegistrationForUserCompletionHandler : 1;
 #endif
         bool webViewDidEnableInspectorBrowserDomain : 1;
         bool webViewDidDisableInspectorBrowserDomain : 1;

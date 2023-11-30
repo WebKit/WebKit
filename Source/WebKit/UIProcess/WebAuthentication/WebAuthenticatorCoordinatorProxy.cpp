@@ -60,9 +60,9 @@ WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
     m_webPageProxy.process().removeMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageID());
 }
 
-void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialCreationOptions&& options, bool processingUserGesture, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialCreationOptions&& options, MediationRequirement mediation, bool processingUserGesture, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), processingUserGesture, String(), nullptr, std::nullopt, std::nullopt }, WTFMove(handler));
+    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), processingUserGesture, String(), nullptr, mediation, std::nullopt }, WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, std::optional<WebCore::SecurityOriginData> parentOrigin, bool processingUserGesture, RequestCompletionHandler&& handler)
@@ -73,6 +73,12 @@ void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, Fra
 void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)
 {
     auto origin = API::SecurityOrigin::create(data.frameInfo.securityOrigin.protocol(), data.frameInfo.securityOrigin.host(), data.frameInfo.securityOrigin.port());
+
+    bool shouldRequestConditionalRegistration = std::holds_alternative<PublicKeyCredentialCreationOptions>(data.options) && data.mediation == MediationRequirement::Conditional;
+
+    String username;
+    if (shouldRequestConditionalRegistration)
+        username = std::get<PublicKeyCredentialCreationOptions>(data.options).user.name;
 
     CompletionHandler<void(bool)> afterConsent = [this, data = WTFMove(data), handler = WTFMove(handler)] (bool result) mutable {
         auto& authenticatorManager = m_webPageProxy.websiteDataStore().authenticatorManager();
@@ -117,10 +123,17 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
         }
     };
     
-    if (!data.processingUserGesture && data.mediation != MediationRequirement::Conditional && !m_webPageProxy.websiteDataStore().authenticatorManager().isVirtual())
+    if (!data.processingUserGesture && data.mediation != MediationRequirement::Conditional && !m_webPageProxy.websiteDataStore().authenticatorManager().isVirtual()) {
         m_webPageProxy.uiClient().requestWebAuthenticationNoGesture(origin, WTFMove(afterConsent));
-    else
-        afterConsent(true);
+        return;
+    }
+
+    if (shouldRequestConditionalRegistration) {
+        m_webPageProxy.uiClient().requestWebAuthenticationConditonalMediationRegistration(WTFMove(username), WTFMove(afterConsent));
+        return;
+    }
+
+    afterConsent(true);
 }
 
 #if !HAVE(UNIFIED_ASC_AUTH_UI)

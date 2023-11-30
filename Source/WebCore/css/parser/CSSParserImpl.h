@@ -180,14 +180,29 @@ private:
         ASSERT(!m_nestingContextStack.isEmpty());
         return m_nestingContextStack.last();
     }
-    bool isNestedContext()
+
+    bool isStyleNestedContext()
     {
         return (m_isAlwaysNestedContext == CSSParserEnum::IsNestedContext::Yes || m_styleRuleNestingLevel) && context().cssNestingEnabled;
     }
 
+    bool isNestedContext()
+    {
+        return m_scopeRuleNestingLevel || isStyleNestedContext();
+    }
+
     CSSParserEnum::IsNestedContext m_isAlwaysNestedContext { CSSParserEnum::IsNestedContext::No }; // Do we directly start in a nested context (for CSSOM)
+
+    // FIXME: we could unify all those into a single stack data structure.
+    // https://bugs.webkit.org/show_bug.cgi?id=265566
     unsigned m_styleRuleNestingLevel { 0 };
+    unsigned m_scopeRuleNestingLevel { 0 };
     unsigned m_ruleListNestingLevel { 0 };
+    enum class AncestorRuleType : bool {
+        Style,
+        Scope,
+    };
+    Vector<AncestorRuleType, 16> m_ancestorRuleTypeStack;
 
     Vector<NestingContext> m_nestingContextStack { NestingContext { } };
     const CSSParserContext& m_context;

@@ -1102,4 +1102,16 @@ bool CSSSelector::hasExplicitNestingParent() const
     return visitAllSimpleSelectors(checkForExplicitParent);
 }
 
+bool CSSSelector::hasExplicitPseudoClassScope() const
+{
+    auto check = [] (const CSSSelector& selector) {
+        if (selector.match() == Match::PseudoClass && selector.pseudoClassType() == PseudoClassType::Scope)
+            return true;
+
+        return false;
+    };
+
+    return visitAllSimpleSelectors(check);
+}
+
 } // namespace WebCore

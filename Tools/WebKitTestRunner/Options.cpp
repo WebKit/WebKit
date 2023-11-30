@@ -174,6 +174,14 @@ static bool handleOptionLockdownMode(Options& options, const char*, const char*)
     return true;
 }
 
+#if PLATFORM(WPE)
+static bool handleOptionWPEPlatformAPI(Options& options, const char*, const char*)
+{
+    options.useWPEPlatformAPI = true;
+    return true;
+}
+#endif
+
 static bool handleOptionUnmatched(Options& options, const char* option, const char*)
 {
     if (option[0] && option[1] && option[0] == '-' && option[1] == '-')
@@ -210,6 +218,9 @@ OptionsHandler::OptionsHandler(Options& o)
     optionList.append(Option("--webcore-logging", "Enable WebCore log channels", handleOptionWebCoreLogging, true));
     optionList.append(Option("--webkit-logging", "Enable WebKit log channels", handleOptionWebKitLogging, true));
     optionList.append(Option("--lockdown-mode", "Enable Lockdown Mode", handleOptionLockdownMode));
+#if PLATFORM(WPE)
+    optionList.append(Option("--wpe-platform-api", "Use the WPE platform API", handleOptionWPEPlatformAPI));
+#endif
 
     optionList.append(Option(0, 0, handleOptionUnmatched));
 }

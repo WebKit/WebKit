@@ -68,7 +68,7 @@ public:
     bool isPageRule() const { return type() == StyleRuleType::Page; }
     bool isStyleRule() const { return type() == StyleRuleType::Style || type() == StyleRuleType::StyleWithNesting; }
     bool isStyleRuleWithNesting() const { return type() == StyleRuleType::StyleWithNesting; }
-    bool isGroupRule() const { return type() == StyleRuleType::Media || type() == StyleRuleType::Supports || type() == StyleRuleType::LayerBlock || type() == StyleRuleType::Container; }
+    bool isGroupRule() const { return type() == StyleRuleType::Media || type() == StyleRuleType::Supports || type() == StyleRuleType::LayerBlock || type() == StyleRuleType::Container || type() == StyleRuleType::Scope; }
     bool isSupportsRule() const { return type() == StyleRuleType::Supports; }
     bool isImportRule() const { return type() == StyleRuleType::Import; }
     bool isLayerRule() const { return type() == StyleRuleType::LayerBlock || type() == StyleRuleType::LayerStatement; }

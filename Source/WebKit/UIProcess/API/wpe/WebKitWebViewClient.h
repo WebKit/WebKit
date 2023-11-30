@@ -56,8 +56,8 @@ private:
     WebKit::WebKitWebResourceLoadManager* webResourceLoadManager() override;
 
 #if ENABLE(FULLSCREEN_API)
-    void enterFullScreen(WKWPE::View&) override;
-    void exitFullScreen(WKWPE::View&) override;
+    bool enterFullScreen(WKWPE::View&) override;
+    bool exitFullScreen(WKWPE::View&) override;
 #endif
 
     WebKitWebView* m_webView;

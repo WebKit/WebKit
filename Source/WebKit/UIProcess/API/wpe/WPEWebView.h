@@ -26,22 +26,26 @@
 #pragma once
 
 #include "APIObject.h"
+#include "GRefPtrWPE.h"
 #include "InputMethodFilter.h"
 #include "KeyAutoRepeatHandler.h"
 #include "PageClientImpl.h"
+#include "WebFullScreenManagerProxy.h"
 #include "WebPageProxy.h"
 #include <WebCore/ActivityState.h>
 #include <memory>
 #include <wtf/OptionSet.h>
 #include <wtf/RefPtr.h>
+#include <wtf/glib/GRefPtr.h>
 
 #if ENABLE(ACCESSIBILITY)
 #include "WebKitWebViewAccessible.h"
-#include <wtf/glib/GRefPtr.h>
 #endif
 
 typedef struct OpaqueJSContext* JSGlobalContextRef;
 typedef struct _WebKitInputMethodContext WebKitInputMethodContext;
+typedef struct _WPEDisplay WPEDisplay;
+typedef struct _WPEView WPEView;
 struct wpe_input_keyboard_event;
 struct wpe_view_backend;
 
@@ -50,13 +54,16 @@ class ViewClient;
 }
 
 namespace WebCore {
+class Cursor;
 struct CompositionUnderline;
 }
 
 namespace WebKit {
+class AcceleratedBackingStoreDMABuf;
 class TouchGestureController;
 class WebKitWebResourceLoadManager;
 class WebPageGroup;
+class WebPlatformTouchPoint;
 class WebProcessPool;
 struct EditingRange;
 struct UserMessage;
@@ -66,9 +73,9 @@ namespace WKWPE {
 
 class View : public API::ObjectImpl<API::Object::Type::View> {
 public:
-    static View* create(struct wpe_view_backend* backend, const API::PageConfiguration& configuration)
+    static View* create(struct wpe_view_backend* backend, WPEDisplay* display, const API::PageConfiguration& configuration)
     {
-        return new View(backend, configuration);
+        return new View(backend, display, configuration);
     }
 
     ~View();
@@ -92,6 +99,7 @@ public:
 
     API::ViewClient& client() const { return *m_client; }
     struct wpe_view_backend* backend() { return m_backend; }
+    WPEView* wpeView() const { return m_wpeView.get(); }
 
     const WebCore::IntSize& size() const { return m_size; }
 
@@ -100,7 +108,14 @@ public:
     void close();
 
 #if ENABLE(FULLSCREEN_API)
-    bool isFullScreen() { return m_fullScreenModeActive; };
+    bool isFullScreen() const;
+    void willEnterFullScreen();
+    void enterFullScreen();
+    void didEnterFullScreen();
+    void willExitFullScreen();
+    void exitFullScreen();
+    void didExitFullScreen();
+    void requestExitFullScreen();
     bool setFullScreen(bool);
 #endif
 
@@ -115,27 +130,39 @@ public:
     static WebKit::WebPageProxy* platformWebPageProxyForGamepadInput();
 #endif
 
+    void updateAcceleratedSurface(uint64_t);
+
+    void setCursor(const WebCore::Cursor&);
+
 private:
-    View(struct wpe_view_backend*, const API::PageConfiguration&);
+    View(struct wpe_view_backend*, WPEDisplay*, const API::PageConfiguration&);
 
     void setSize(const WebCore::IntSize&);
     void setViewState(OptionSet<WebCore::ActivityState>);
     void handleKeyboardEvent(struct wpe_input_keyboard_event*);
 
+#if ENABLE(TOUCH_EVENTS)
+    Vector<WebKit::WebPlatformTouchPoint> touchPointsForEvent(WPEEvent*);
+#endif
+
     std::unique_ptr<API::ViewClient> m_client;
 
 #if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<WebKit::TouchGestureController> m_touchGestureController;
+    HashMap<uint32_t, GRefPtr<WPEEvent>> m_touchEvents;
 #endif
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
     RefPtr<WebKit::WebPageProxy> m_pageProxy;
     WebCore::IntSize m_size;
     OptionSet<WebCore::ActivityState> m_viewStateFlags;
+    std::unique_ptr<WebKit::AcceleratedBackingStoreDMABuf> m_backingStore;
 
     struct wpe_view_backend* m_backend;
+    GRefPtr<WPEView> m_wpeView;
 
 #if ENABLE(FULLSCREEN_API)
-    bool m_fullScreenModeActive { false };
+    WebKit::WebFullScreenManagerProxy::FullscreenState m_fullscreenState { WebKit::WebFullScreenManagerProxy::FullscreenState::NotInFullscreen };
+    bool m_viewWasAlreadyInFullScreen { false };
 #endif
 
 #if ENABLE(ACCESSIBILITY)

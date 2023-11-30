@@ -164,6 +164,18 @@ bool CSSParserSelector::hasExplicitNestingParent() const
     return false;
 }
 
+bool CSSParserSelector::hasExplicitPseudoClassScope() const
+{
+    auto selector = this;
+    while (selector) {
+        if (selector->selector()->hasExplicitPseudoClassScope())
+            return true;
+
+        selector = selector->tagHistory();
+    }
+    return false;
+}
+
 static bool selectorListMatchesPseudoElement(const CSSSelectorList* selectorList)
 {
     if (!selectorList)
@@ -204,6 +216,19 @@ void CSSParserSelector::appendTagHistory(CSSSelector::RelationType relation, std
 
     end->setRelation(relation);
     end->setTagHistory(WTFMove(selector));
+}
+
+void CSSParserSelector::appendTagHistoryAsRelative(std::unique_ptr<CSSParserSelector> selector)
+{
+    auto lastSelector = leftmostSimpleSelector()->selector();
+    ASSERT(lastSelector);
+
+    // Relation is Descendant by default.
+    auto relation = lastSelector->relation();
+    if (relation == CSSSelector::RelationType::Subselector)
+        relation = CSSSelector::RelationType::DescendantSpace;
+
+    appendTagHistory(relation, WTFMove(selector));
 }
 
 void CSSParserSelector::appendTagHistory(CSSParserSelectorCombinator relation, std::unique_ptr<CSSParserSelector> selector)

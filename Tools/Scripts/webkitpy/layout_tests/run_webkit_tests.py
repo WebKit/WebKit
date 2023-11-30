@@ -125,6 +125,8 @@ def parse_args(args):
             help="Use the remote layer tree drawing model (OS X WebKit2 only)"),
         optparse.make_option("--no-remote-layer-tree", action="store_true", default=False,
             help="Disable the remote layer tree drawing model (OS X WebKit2 only)"),
+        optparse.make_option("--wpe-platform-api", action="store_true", default=False,
+            help="Use the WPE platform API (WPE only)"),
         optparse.make_option("--internal-feature", type="string", action="append", default=[],
             help="Enable (disable) an internal feature (--internal-feature FeatureName[=true|false])"),
         optparse.make_option("--experimental-feature", type="string", action="append", default=[],
