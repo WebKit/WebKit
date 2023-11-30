@@ -9,7 +9,7 @@ function addCompositedLayer()
     element.className = "composited";
     element.id = "last-element";
     document.body.appendChild(element);
-    return new Promise(resolve => requestAnimationFrame(resolve));
+    return new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 0)));
 };
 
 function test()
@@ -17,14 +17,17 @@ function test()
     let documentNode;
     let initialLayers;
 
-    step({
-        name: "Enable the LayerTree agent",
-        command: "LayerTree.enable",
-        parameters: {},
-        callback: () => {}
-    });
+    requestAnimationFrame(() => setTimeout(enableLayerTreeAgent, 0));
 
-    InspectorProtocol.awaitEvent({event: "LayerTree.layerTreeDidChange"}).then(getDocument);
+    function enableLayerTreeAgent(result)
+    {
+	step({
+	    name: "Enable the LayerTree agent",
+	    command: "LayerTree.enable",
+	    parameters: {},
+	    callback: getDocument
+	});
+    };
 
     function getDocument()
     {

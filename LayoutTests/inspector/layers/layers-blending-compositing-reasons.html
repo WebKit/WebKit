@@ -10,7 +10,7 @@ function test()
  
     InspectorProtocol.eventHandler["DOM.setChildNodes"] = setChildNodes;
 
-    enableLayerTreeAgent();
+    requestAnimationFrame(() => setTimeout(enableLayerTreeAgent, 0));
     
     function enableLayerTreeAgent(result)
     {
