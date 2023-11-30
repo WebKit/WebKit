@@ -220,8 +220,8 @@
   </autotools>
 
   <autotools id="libepoxy" autogen-sh="configure">
-    <branch module="anholt/libepoxy/releases/download/1.4.3/libepoxy-1.4.3.tar.xz"
-            version="1.4.3" repo="github-tarball"/>
+    <branch module="anholt/libepoxy/releases/download/1.5.4/libepoxy-1.5.4.tar.xz"
+            version="1.5.4" repo="github-tarball"/>
   </autotools>
 
   <autotools id="wayland-protocols" autogen-sh="configure">

@@ -37,7 +37,7 @@
 #include <unistd.h>
 
 #if USE(LIBEPOXY)
-#include "EpoxyEGL.h"
+#include <epoxy/egl.h>
 #else
 #include <EGL/egl.h>
 #include <EGL/eglext.h>

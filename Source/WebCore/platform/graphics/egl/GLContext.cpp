@@ -27,15 +27,11 @@
 #include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(LIBEPOXY)
-#include "EpoxyEGL.h"
+#include <epoxy/egl.h>
+#include <epoxy/gl.h>
 #else
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
-#endif
-
-#if USE(LIBEPOXY)
-#include <epoxy/gl.h>
-#else
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #endif
