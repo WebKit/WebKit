@@ -136,9 +136,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 - (void)invalidate
 {
     ASSERT(isMainThread());
-    auto protectedParent = _parent.get();
-    if (!protectedParent && !_layers.size() && !_renderers.size())
-        return;
+
+    _parent = nullptr;
 
     for (auto& layer : _layers) {
         [layer removeObserver:self forKeyPath:errorKeyPath];
@@ -151,8 +150,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     _renderers.clear();
 
     [NSNotificationCenter.defaultCenter removeObserver:self];
-
-    _parent = nullptr;
 }
 
 - (void)beginObservingLayer:(AVSampleBufferDisplayLayer *)layer
