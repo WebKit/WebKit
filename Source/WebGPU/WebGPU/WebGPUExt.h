@@ -29,6 +29,12 @@
 #include <CoreVideo/CoreVideo.h>
 #include <IOSurface/IOSurfaceRef.h>
 
+#ifdef NDEBUG
+#define WGPU_FUZZER_ASSERT_NOT_REACHED(...) (WTFLogAlways(__VA_ARGS__), ASSERT_WITH_SECURITY_IMPLICATION(0))
+#else
+#define WGPU_FUZZER_ASSERT_NOT_REACHED(...) WTFLogAlways(__VA_ARGS__)
+#endif
+
 #ifdef __cplusplus
 #include <optional>
 #include <wtf/Vector.h>
