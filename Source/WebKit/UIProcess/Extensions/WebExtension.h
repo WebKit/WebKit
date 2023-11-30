@@ -151,6 +151,8 @@ public:
 
         InjectionTime injectionTime = InjectionTime::DocumentIdle;
 
+        String identifier { ""_s };
+
         bool matchesAboutBlank { false };
         bool injectsIntoAllFrames { false };
         bool forMainWorld { false };

@@ -55,7 +55,8 @@ using namespace WebExtensionDynamicScripts;
 
 void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(std::optional<InjectionResults>, WebExtensionDynamicScripts::Error)>&& completionHandler)
 {
-    NSString *apiName = @"scripting.executeScript()";
+    static NSString * const apiName= @"scripting.executeScript()";
+
     auto tab = getTab(parameters.tabIdentifier.value());
     if (!tab) {
         completionHandler(std::nullopt, toErrorString(apiName, nil, @"tab not found"));
@@ -81,7 +82,8 @@ void WebExtensionContext::scriptingExecuteScript(const WebExtensionScriptInjecti
 
 void WebExtensionContext::scriptingInsertCSS(const WebExtensionScriptInjectionParameters& parameters, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&& completionHandler)
 {
-    NSString *apiName = @"scripting.insertCSS()";
+    static NSString * const apiName= @"scripting.insertCSS()";
+
     auto tab = getTab(parameters.tabIdentifier.value());
     if (!tab) {
         completionHandler(toErrorString(apiName, nil, @"tab not found"));
@@ -115,7 +117,8 @@ void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionPa
         return;
     }
 
-    NSString *apiName = @"scripting.removeCSS()";
+    static NSString * const apiName= @"scripting.removeCSS()";
+
     auto tab = getTab(parameters.tabIdentifier.value());
     if (!tab) {
         completionHandler(toErrorString(apiName, nil, @"tab not found"));
@@ -142,32 +145,212 @@ void WebExtensionContext::scriptingRemoveCSS(const WebExtensionScriptInjectionPa
     completionHandler(std::nullopt);
 }
 
-void WebExtensionContext::scriptingRegisterScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&& completionHandler)
+void WebExtensionContext::scriptingRegisterContentScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&& completionHandler)
 {
-    // FIXME: <https://webkit.org/b/261769> Implement this.
+    static NSString * const apiName= @"scripting.registerContentScripts()";
+
+    InjectedContentVector injectedContents;
+    NSString *errorMessage;
+    if (!parseRegisteredContentScripts(scripts, WebExtensionRegisteredScript::FirstTimeRegistration::Yes, injectedContents, apiName, &errorMessage)) {
+        completionHandler(errorMessage);
+        return;
+    }
+
+    for (auto& parameters : scripts)
+        m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters));
+
+    // FIXME: <https://webkit.org/b/264892> Add persistent scripts to storage.
+
+    addInjectedContent(injectedContents);
 
     completionHandler(std::nullopt);
 }
 
 void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&& completionHandler)
 {
-    // FIXME: <https://webkit.org/b/261769> Implement this.
+    static NSString * const apiName= @"scripting.updateContentScripts()";
+
+    Vector<WebExtensionRegisteredScriptParameters> updatedParameters;
+
+    for (auto parameters : scripts) {
+        auto scriptID = parameters.identifier;
+        RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
+        if (!registeredScript) {
+            completionHandler(toErrorString(apiName, nil, @"no existing script with ID '%@'", (NSString *)scriptID));
+            return;
+        }
+
+        registeredScript->merge(parameters);
+        updatedParameters.append(parameters);
+    }
+
+    NSString *errorMessage;
+    InjectedContentVector injectedContents;
+    if (!parseRegisteredContentScripts(updatedParameters, WebExtensionRegisteredScript::FirstTimeRegistration::No, injectedContents, apiName, &errorMessage)) {
+        completionHandler(errorMessage);
+        return;
+    }
+
+    for (auto& parameters : updatedParameters) {
+        auto scriptID = parameters.identifier;
+        RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
+        ASSERT(registeredScript);
+
+        if (!registeredScript)
+            continue;
+
+        registeredScript->updateParameters(parameters);
+        registeredScript->removeUserScriptsAndStyleSheets(scriptID);
+    }
+
+    // FIXME: <https://webkit.org/b/264892> Add persistent scripts to storage.
+
+    addInjectedContent(injectedContents);
 
     completionHandler(std::nullopt);
 }
 
-void WebExtensionContext::scriptingGetRegisteredScripts(const Vector<String>& scriptIDs, CompletionHandler<void(std::optional<Vector<WebExtensionRegisteredScriptParameters>> scripts, WebExtensionDynamicScripts::Error)>&& completionHandler)
+void WebExtensionContext::scriptingGetRegisteredScripts(const Vector<String>& scriptIDs, CompletionHandler<void(Vector<WebExtensionRegisteredScriptParameters> scripts)>&& completionHandler)
 {
-    // FIXME: <https://webkit.org/b/261769> Implement this.
+    Vector<WebExtensionRegisteredScriptParameters> results;
 
-    completionHandler({ }, std::nullopt);
+    if (scriptIDs.isEmpty()) {
+        // Returns all registered scripts if no filter is specififed.
+        for (auto& entry : m_registeredScriptsMap)
+            results.append(entry.value.get().parameters());
+    } else {
+        for (auto& scriptID : scriptIDs) {
+            RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
+            if (!registeredScript)
+                continue;
+
+            results.append(registeredScript->parameters());
+        }
+    }
+
+    completionHandler(results);
 }
 
-void WebExtensionContext::scriptingUnregisterScripts(const Vector<String>& scriptIDs, CompletionHandler<void(std::optional<Vector<WebExtensionRegisteredScriptParameters>> scripts, WebExtensionDynamicScripts::Error)>&& completionHandler)
+void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>& scriptIDs, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&& completionHandler)
 {
-    // FIXME: <https://webkit.org/b/261769> Implement this.
+    auto removeUserScriptsAndStyleSheets = ^(String scriptID) {
+        RefPtr registeredScript = m_registeredScriptsMap.take(scriptID);
+        registeredScript->removeUserScriptsAndStyleSheets(scriptID);
+    };
 
-    completionHandler({ }, std::nullopt);
+    if (scriptIDs.isEmpty()) {
+        // Removes all registered scripts if no filter is specififed.
+        for (auto& scriptID : copyToVector(m_registeredScriptsMap.keys()))
+            removeUserScriptsAndStyleSheets(scriptID);
+
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    for (auto& scriptID : scriptIDs) {
+        if (!m_registeredScriptsMap.contains(scriptID)) {
+            completionHandler(toErrorString(@"scripting.unregisterContentScripts()", nil, @"no script with ID '%@'", (NSString *)scriptID));
+            return;
+        }
+    }
+
+    for (auto& scriptID : scriptIDs)
+        removeUserScriptsAndStyleSheets(scriptID);
+
+    // FIXME: <https://webkit.org/b/264892> Remove persistent scripts from storage.
+
+    completionHandler(std::nullopt);
+}
+
+bool WebExtensionContext::parseRegisteredContentScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, WebExtensionRegisteredScript::FirstTimeRegistration firstTimeRegistration, InjectedContentVector& injectedConents, NSString *callingAPIName, NSString **errorMessage)
+{
+    Vector<String> idsToAdd;
+
+    for (auto& parameters : scripts) {
+        auto scriptID = parameters.identifier;
+
+        if (firstTimeRegistration == WebExtensionRegisteredScript::FirstTimeRegistration::Yes && (m_registeredScriptsMap.contains(scriptID) || idsToAdd.contains(scriptID))) {
+            *errorMessage = toErrorString(callingAPIName, nil, @"duplicate ID '%@'", (NSString *)scriptID);
+            return false;
+        }
+
+        idsToAdd.append(scriptID);
+
+        HashSet<Ref<WebExtensionMatchPattern>> includeMatchPatterns;
+        HashSet<Ref<WebExtensionMatchPattern>> excludeMatchPatterns;
+
+        // Optional. The list of JavaScript files to be injected into matching pages. These are injected in the order they appear in this array.
+        auto *scriptPaths = parameters.js ? createNSArray(parameters.js.value()).get() : @[ ];
+        scriptPaths = filterObjects(scriptPaths, ^(id key, NSString *string) {
+            return !!string.length;
+        });
+
+        for (NSString *scriptPath in scriptPaths) {
+            if (!extension().resourceStringForPath(scriptPath, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)) {
+                *errorMessage = toErrorString(callingAPIName, nil, @"invalid resource '%@'", scriptPath);
+                return false;
+            }
+        }
+
+        // Optional. The list of CSS files to be injected into matching pages. These are injected in the order they appear in this array, before any DOM is constructed or displayed for the page.
+        auto *styleSheetPaths = parameters.css ? createNSArray(parameters.css.value()).get() : @[ ];
+        styleSheetPaths = filterObjects(styleSheetPaths, ^(id key, NSString *string) {
+            return !!string.length;
+        });
+
+        for (NSString *styleSheetPath in styleSheetPaths) {
+            if (!extension().resourceStringForPath(styleSheetPath, WebExtension::CacheResult::No, WebExtension::SuppressNotFoundErrors::Yes)) {
+                *errorMessage = toErrorString(callingAPIName, nil, @"invalid resource '%@'", styleSheetPath);
+                return false;
+            }
+        }
+
+        // Required for first time registration. Specifies which pages the specified scripts and stylesheets will be injected into.
+        auto *matchesArray = parameters.matchPatterns ? createNSArray(parameters.matchPatterns.value()).get() : @[ ];
+        for (NSString *matchPatternString in matchesArray) {
+            if (!matchPatternString.length) {
+                *errorMessage = toErrorString(callingAPIName, nil, @"script with ID '%@' contains an empty match pattern", (NSString *)scriptID);
+                return false;
+            }
+
+            RefPtr matchPattern = WebExtensionMatchPattern::getOrCreate(matchPatternString);
+            if (!matchPattern || !matchPattern->isSupported()) {
+                *errorMessage = toErrorString(callingAPIName, nil, @"script with ID '%@' has an invalid match pattern '%@'", (NSString *)scriptID, matchPatternString);
+                return false;
+            }
+
+            includeMatchPatterns.add(matchPattern.releaseNonNull());
+        }
+
+        // Optional. Excludes pages that this content script would otherwise be injected into.
+        auto *excludeMatchesArray = parameters.excludeMatchPatterns ? createNSArray(parameters.excludeMatchPatterns.value()).get() : @[ ];
+        for (NSString *matchPatternString in excludeMatchesArray) {
+            if (!matchPatternString.length) {
+                *errorMessage = toErrorString(callingAPIName, nil, @"script with ID '%@' contains an empty exclude match pattern", (NSString *)scriptID);
+                return false;
+            }
+
+            RefPtr matchPattern = WebExtensionMatchPattern::getOrCreate(matchPatternString);
+            if (!matchPattern || !matchPattern->isSupported()) {
+                *errorMessage = toErrorString(callingAPIName, nil, @"script with ID '%@' has an invalid exclude match pattern '%@'", (NSString *)scriptID, matchPatternString);
+                return false;
+            }
+        }
+
+        InjectedContentData injectedContentData;
+        injectedContentData.identifier = parameters.identifier;
+        injectedContentData.includeMatchPatterns = WTFMove(includeMatchPatterns);
+        injectedContentData.excludeMatchPatterns = WTFMove(excludeMatchPatterns);
+        injectedContentData.injectionTime = parameters.injectionTime.value();
+        injectedContentData.injectsIntoAllFrames = parameters.allFrames.value();
+        injectedContentData.forMainWorld = parameters.world.value() == WebExtensionContentWorldType::Main ? true : false;
+        injectedContentData.scriptPaths = scriptPaths;
+        injectedContentData.styleSheetPaths = styleSheetPaths;
+
+        injectedConents.append(WTFMove(injectedContentData));
+    }
+
+    return true;
 }
 
 } // namespace WebKit

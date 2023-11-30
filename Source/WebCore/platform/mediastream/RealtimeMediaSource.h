@@ -82,7 +82,6 @@ enum class VideoFrameRotation : uint16_t;
 
 struct CaptureSourceError;
 struct CaptureSourceOrError;
-struct PhotoCapabilitiesOrError;
 struct VideoFrameAdaptor;
 
 class WEBCORE_EXPORT RealtimeMediaSource
@@ -215,8 +214,8 @@ public:
     using TakePhotoNativePromise = NativePromise<std::pair<Vector<uint8_t>, String>, String>;
     virtual Ref<TakePhotoNativePromise> takePhoto(PhotoSettings&&);
 
-    using PhotoCapabilitiesHandler = CompletionHandler<void(PhotoCapabilitiesOrError&&)>;
-    virtual void getPhotoCapabilities(PhotoCapabilitiesHandler&&);
+    using PhotoCapabilitiesNativePromise = NativePromise<PhotoCapabilities, String>;
+    virtual Ref<PhotoCapabilitiesNativePromise> getPhotoCapabilities();
 
     using PhotoSettingsNativePromise = NativePromise<PhotoSettings, String>;
     virtual Ref<PhotoSettingsNativePromise> getPhotoSettings();
@@ -404,25 +403,6 @@ struct CaptureSourceOrError {
 
     RefPtr<RealtimeMediaSource> captureSource;
     CaptureSourceError error;
-};
-
-struct PhotoCapabilitiesOrError {
-    PhotoCapabilitiesOrError() = default;
-    PhotoCapabilitiesOrError(std::optional<PhotoCapabilities>&& capabilities, String&& errorMessage)
-        : capabilities(WTFMove(capabilities))
-        , errorMessage(WTFMove(errorMessage))
-    { }
-    PhotoCapabilitiesOrError(PhotoCapabilities& capabilities)
-        : capabilities({ capabilities })
-    { }
-    explicit PhotoCapabilitiesOrError(String&& errorMessage)
-        : errorMessage(WTFMove(errorMessage))
-    { }
-
-    operator bool() const { return capabilities.has_value(); }
-
-    std::optional<PhotoCapabilities> capabilities;
-    String errorMessage;
 };
 
 String convertEnumerationToString(RealtimeMediaSource::Type);

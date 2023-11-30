@@ -672,12 +672,10 @@ auto AVVideoCaptureSource::takePhotoInternal(PhotoSettings&& photoSettings) -> R
     return promise.releaseNonNull();
 }
 
-void AVVideoCaptureSource::getPhotoCapabilities(PhotoCapabilitiesHandler&& completion)
+auto AVVideoCaptureSource::getPhotoCapabilities() -> Ref<PhotoCapabilitiesNativePromise>
 {
-    if (m_photoCapabilities) {
-        completion({ *m_photoCapabilities });
-        return;
-    }
+    if (m_photoCapabilities)
+        return PhotoCapabilitiesNativePromise::createAndResolve(*m_photoCapabilities);
 
     auto capabilities = this->capabilities();
     PhotoCapabilities photoCapabilities;
@@ -690,7 +688,7 @@ void AVVideoCaptureSource::getPhotoCapabilities(PhotoCapabilitiesHandler&& compl
 
     m_photoCapabilities = WTFMove(photoCapabilities);
 
-    completion({ *m_photoCapabilities });
+    return PhotoCapabilitiesNativePromise::createAndResolve(*m_photoCapabilities);
 }
 
 auto AVVideoCaptureSource::getPhotoSettings() -> Ref<PhotoSettingsNativePromise>

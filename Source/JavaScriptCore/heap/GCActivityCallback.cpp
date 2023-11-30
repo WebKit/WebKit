@@ -38,13 +38,14 @@ bool GCActivityCallback::s_shouldCreateGCTimer = true;
 
 const double timerSlop = 2.0; // Fudge factor to avoid performance cost of resetting timer.
 
-GCActivityCallback::GCActivityCallback(Heap& heap)
-    : GCActivityCallback(heap.vm())
+GCActivityCallback::GCActivityCallback(Heap& heap, Synchronousness synchronousness)
+    : GCActivityCallback(heap.vm(), synchronousness)
 {
 }
 
-GCActivityCallback::GCActivityCallback(VM& vm)
+GCActivityCallback::GCActivityCallback(VM& vm, Synchronousness synchronousness)
     : Base(vm)
+    , m_synchronousness(synchronousness)
 {
 }
 

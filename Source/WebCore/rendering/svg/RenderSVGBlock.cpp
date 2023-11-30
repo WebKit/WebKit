@@ -146,13 +146,8 @@ void RenderSVGBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool recompu
 LayoutRect RenderSVGBlock::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
-    if (document().settings().layerBasedSVGEngineEnabled()) {
-        if (isInsideEntirelyHiddenLayer())
-            return { };
-
-        ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
-        return computeRect(visualOverflowRect(), repaintContainer, context);
-    }
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return RenderBlockFlow::clippedOverflowRect(repaintContainer, context);
 #else
     UNUSED_PARAM(context);
 #endif

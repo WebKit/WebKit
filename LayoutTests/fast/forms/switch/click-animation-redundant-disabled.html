@@ -1,0 +1,15 @@
+<!doctype html>
+<html class="reftest-wait">
+<input type=checkbox switch onclick=end()>
+<script>
+window.onload = () => {
+    window.eventSender.mouseMoveTo(10, 10);
+    window.eventSender.scheduleAsynchronousClick();
+}
+function end() {
+    setTimeout(() => {
+        document.querySelector("input").disabled = false;
+        document.documentElement.removeAttribute("class");
+    }, 50);
+}
+</script>

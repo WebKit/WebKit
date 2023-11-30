@@ -209,7 +209,6 @@ RefPtr<AXCoreObject> AXTextMarker::object() const
     return tree ? tree->objectForID(objectID()) : nullptr;
 }
 
-#if ENABLE(TREE_DEBUGGING)
 String AXTextMarker::debugDescription() const
 {
     auto separator = ", ";
@@ -218,17 +217,16 @@ String AXTextMarker::debugDescription() const
         "treeID ", treeID().loggingString()
         , separator, "objectID ", objectID().loggingString()
         , separator, "role ", object ? accessibilityRoleToString(object->roleValue()) : String("no object"_s)
-        , separator, isMainThread() ? node()->debugDescription()
+        , isIgnored() ? makeString(separator, "ignored") : ""_s
+        , separator, isMainThread() && node() ? node()->debugDescription()
             : makeString("node 0x", hex(reinterpret_cast<uintptr_t>(m_data.node)))
+        , separator, "anchor ", m_data.anchorType
+        , separator, "affinity ", m_data.affinity
         , separator, "offset ", m_data.offset
-        , separator, "AnchorType ", m_data.anchorType
-        , separator, "Affinity ", m_data.affinity
         , separator, "characterStart ", m_data.characterStart
         , separator, "characterOffset ", m_data.characterOffset
-        , separator, "isIgnored ", isIgnored()
     );
 }
-#endif
 
 AXTextMarkerRange::AXTextMarkerRange(const VisiblePositionRange& range)
     : m_start(range.start)
@@ -299,6 +297,11 @@ std::optional<CharacterRange> AXTextMarkerRange::characterRange() const
         return std::nullopt;
     }
     return { { m_start.m_data.characterOffset, m_end.m_data.characterOffset - m_start.m_data.characterOffset } };
+}
+
+String AXTextMarkerRange::debugDescription() const
+{
+    return makeString("start: {", m_start.debugDescription(), "}\nend: {", m_end.debugDescription(), "}");
 }
 
 std::partial_ordering partialOrder(const AXTextMarker& marker1, const AXTextMarker& marker2)

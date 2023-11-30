@@ -6013,12 +6013,6 @@ header: <WebCore/PhotoSettings.h>
     std::optional<double> imageWidth;
     std::optional<bool> redEyeReduction;
 };
-
-header: <WebCore/RealtimeMediaSource.h>
-[CustomHeader] struct WebCore::PhotoCapabilitiesOrError {
-    std::optional<WebCore::PhotoCapabilities> capabilities;
-    String errorMessage;
-};
 #endif
 
 header: <WebCore/WebGPUTextureAspect.h>

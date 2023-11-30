@@ -127,6 +127,11 @@ bool CheckboxInputType::shouldAppearIndeterminate() const
     return element()->indeterminate() && !isSwitch();
 }
 
+void CheckboxInputType::disabledStateChanged()
+{
+    stopSwitchCheckedChangeAnimation();
+}
+
 // FIXME: ideally CheckboxInputType would not be responsible for the timer specifics and instead
 // ask a more knowledgable system for a refresh callback (perhaps passing a desired FPS).
 static Seconds switchCheckedChangeAnimationUpdateInterval(HTMLInputElement* element)
@@ -144,7 +149,7 @@ void CheckboxInputType::performSwitchCheckedChangeAnimation(WasSetByJavaScript w
     ASSERT(element()->renderer()->style().hasEffectiveAppearance());
 
     if (wasCheckedByJavaScript == WasSetByJavaScript::Yes) {
-        m_switchCheckedChangeAnimationStartTime = 0_s;
+        stopSwitchCheckedChangeAnimation();
         return;
     }
 
@@ -169,6 +174,11 @@ void CheckboxInputType::performSwitchCheckedChangeAnimation(WasSetByJavaScript w
 
     m_switchCheckedChangeAnimationStartTime = MonotonicTime::now().secondsSinceEpoch() - startTimeOffset;
     m_switchCheckedChangeAnimationTimer->startOneShot(updateInterval);
+}
+
+void CheckboxInputType::stopSwitchCheckedChangeAnimation()
+{
+    m_switchCheckedChangeAnimationStartTime = 0_s;
 }
 
 float CheckboxInputType::switchCheckedChangeAnimationProgress() const
@@ -197,7 +207,7 @@ void CheckboxInputType::switchCheckedChangeAnimationTimerFired()
     if (currentTime - m_switchCheckedChangeAnimationStartTime < duration)
         m_switchCheckedChangeAnimationTimer->startOneShot(updateInterval);
     else
-        m_switchCheckedChangeAnimationStartTime = 0_s;
+        stopSwitchCheckedChangeAnimation();
 
     element()->renderer()->repaint();
 }

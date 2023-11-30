@@ -48,6 +48,7 @@
 #import "WKWebsiteDataStorePrivate.h"
 #import "WebExtensionAction.h"
 #import "WebExtensionContextProxyMessages.h"
+#import "WebExtensionDynamicScripts.h"
 #import "WebExtensionMenuItemContextParameters.h"
 #import "WebExtensionTab.h"
 #import "WebExtensionURLSchemeHandler.h"
@@ -147,6 +148,8 @@ static constexpr NSInteger currentDeclarativeNetRequestRuleTranslatorVersion = 1
 @end
 
 namespace WebKit {
+
+using namespace WebExtensionDynamicScripts;
 
 WebExtensionContext::WebExtensionContext(Ref<WebExtension>&& extension)
     : WebExtensionContext()
@@ -2586,6 +2589,9 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
         auto waitForNotification = WebCore::WaitForNotificationBeforeInjecting::No;
         Ref executionWorld = injectedContentData.forMainWorld ? API::ContentWorld::pageContentWorld() : *m_contentScriptWorld;
 
+        auto scriptID = injectedContentData.identifier;
+        bool isRegisteredScript = !scriptID.isEmpty();
+
         for (NSString *scriptPath in injectedContentData.scriptPaths.get()) {
             NSString *scriptString = m_extension->resourceStringForPath(scriptPath, WebExtension::CacheResult::Yes);
             if (!scriptString)
@@ -2596,6 +2602,15 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
 
             for (auto& userContentController : userContentControllers)
                 userContentController.addUserScript(userScript, InjectUserScriptImmediately::Yes);
+
+            if (isRegisteredScript) {
+                RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
+                ASSERT(registeredScript);
+                if (!registeredScript)
+                    continue;
+
+                registeredScript->addUserScript(scriptID, userScript);
+            }
         }
 
         for (NSString *styleSheetPath in injectedContentData.styleSheetPaths.get()) {
@@ -2608,6 +2623,15 @@ void WebExtensionContext::addInjectedContent(const InjectedContentVector& inject
 
             for (auto& userContentController : userContentControllers)
                 userContentController.addUserStyleSheet(userStyleSheet);
+
+            if (isRegisteredScript) {
+                RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
+                ASSERT(registeredScript);
+                if (!registeredScript)
+                    continue;
+
+                registeredScript->addUserStyleSheet(scriptID, userStyleSheet);
+            }
         }
     }
 }

@@ -1079,6 +1079,15 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static contextMenuItems()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript(`(() => {
+                uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('contextMenu')))
+            })()`, result => resolve(result ? JSON.parse(result).contextMenu : null));
+        });
+    }
+
     static setSelectedColorForColorPicker(red, green, blue)
     {
         const selectColorScript = `uiController.setSelectedColorForColorPicker(${red}, ${green}, ${blue})`;
@@ -1927,6 +1936,16 @@ window.UIHelper = class UIHelper {
 
         return new Promise(resolve => {
             testRunner.runUIScript("uiController.uiScriptComplete(uiController.currentImageAnalysisRequestID)", result => resolve(result));
+        });
+    }
+
+    static installFakeMachineReadableCodeResultsForImageAnalysis()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => {
+            testRunner.runUIScript("uiController.installFakeMachineReadableCodeResultsForImageAnalysis()", resolve);
         });
     }
 

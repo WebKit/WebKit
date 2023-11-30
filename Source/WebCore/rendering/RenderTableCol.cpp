@@ -139,9 +139,10 @@ LayoutRect RenderTableCol::clippedOverflowRect(const RenderLayerModelObject* rep
     // might have propagated a background color or borders into.
     // FIXME: check for repaintContainer each time here?
 
-    RenderTable* parentTable = table();
+    auto* parentTable = table();
     if (!parentTable)
-        return LayoutRect();
+        return { };
+
     return parentTable->clippedOverflowRect(repaintContainer, context);
 }
 

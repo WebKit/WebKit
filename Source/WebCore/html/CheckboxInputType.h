@@ -44,7 +44,6 @@ public:
     }
 
     bool valueMissing(const String&) const final;
-
     void performSwitchCheckedChangeAnimation(WasSetByJavaScript);
     float switchCheckedChangeAnimationProgress() const;
 
@@ -62,7 +61,8 @@ private:
     void didDispatchClick(Event&, const InputElementClickState&) final;
     bool matchesIndeterminatePseudoClass() const final;
     bool shouldAppearIndeterminate() const final;
-
+    void disabledStateChanged() final;
+    void stopSwitchCheckedChangeAnimation();
     void switchCheckedChangeAnimationTimerFired();
 
     Seconds m_switchCheckedChangeAnimationStartTime { 0_s };

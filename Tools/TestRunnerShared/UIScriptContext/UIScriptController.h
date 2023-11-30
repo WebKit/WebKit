@@ -392,6 +392,7 @@ public:
     // Image Analysis
 
     virtual uint64_t currentImageAnalysisRequestID() const { return 0; }
+    virtual void installFakeMachineReadableCodeResultsForImageAnalysis() { }
 
 protected:
     explicit UIScriptController(UIScriptContext&);

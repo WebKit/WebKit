@@ -1,0 +1,17 @@
+<!doctype html>
+<html class="reftest-wait">
+<input type=checkbox switch onclick=each()>
+<script>
+window.onload = () => {
+    window.eventSender.mouseMoveTo(10, 10);
+    window.eventSender.scheduleAsynchronousClick();
+}
+let count = 0;
+function each() {
+    if (count === 0) {
+        setTimeout(() => window.eventSender.scheduleAsynchronousClick(), 25);
+        count += 1;
+    } else if (count === 1)
+        setTimeout(() => document.documentElement.removeAttribute("class"), 50);
+}
+</script>

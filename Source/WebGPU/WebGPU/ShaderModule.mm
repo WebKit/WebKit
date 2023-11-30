@@ -76,6 +76,7 @@ id<MTLLibrary> ShaderModule::createLibrary(id<MTLDevice> device, const String& m
     if (error) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250442
         WTFLogAlways("MSL compilation error: %@", error);
+        WGPU_FUZZER_ASSERT_NOT_REACHED("Failed metal compilation");
     }
     library.label = label;
     return library;

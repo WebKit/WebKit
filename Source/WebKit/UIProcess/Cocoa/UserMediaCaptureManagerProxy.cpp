@@ -257,9 +257,9 @@ public:
         return takePhotoPromise;
     }
 
-    void getPhotoCapabilities(GetPhotoCapabilitiesCallback&& handler)
+    Ref<RealtimeMediaSource::PhotoCapabilitiesNativePromise> getPhotoCapabilities()
     {
-        m_source->getPhotoCapabilities(WTFMove(handler));
+        return m_source->getPhotoCapabilities();
     }
 
     Ref<RealtimeMediaSource::PhotoSettingsNativePromise> getPhotoSettings()
@@ -647,12 +647,13 @@ void UserMediaCaptureManagerProxy::takePhoto(RealtimeMediaSourceIdentifier sourc
 
 void UserMediaCaptureManagerProxy::getPhotoCapabilities(RealtimeMediaSourceIdentifier sourceID, GetPhotoCapabilitiesCallback&& handler)
 {
-    if (auto* proxy = m_proxies.get(sourceID)) {
-        proxy->getPhotoCapabilities(WTFMove(handler));
+    auto* proxy = m_proxies.get(sourceID);
+    if (!proxy) {
+        handler(Unexpected<String>("Device not available"_s));
         return;
     }
 
-    handler(PhotoCapabilitiesOrError("Device not available"_s));
+    proxy->getPhotoCapabilities()->whenSettled(RunLoop::main(), WTFMove(handler));
 }
 
 void UserMediaCaptureManagerProxy::getPhotoSettings(RealtimeMediaSourceIdentifier sourceID, GetPhotoSettingsCallback&& handler)

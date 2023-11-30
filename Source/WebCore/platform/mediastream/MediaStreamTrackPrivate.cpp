@@ -189,9 +189,9 @@ const RealtimeMediaSourceCapabilities& MediaStreamTrackPrivate::capabilities() c
     return m_source->capabilities();
 }
 
-void MediaStreamTrackPrivate::getPhotoCapabilities(RealtimeMediaSource::PhotoCapabilitiesHandler&& completion)
+Ref<RealtimeMediaSource::PhotoCapabilitiesNativePromise> MediaStreamTrackPrivate::getPhotoCapabilities()
 {
-    m_source->getPhotoCapabilities(WTFMove(completion));
+    return m_source->getPhotoCapabilities();
 }
 
 Ref<RealtimeMediaSource::PhotoSettingsNativePromise> MediaStreamTrackPrivate::getPhotoSettings()

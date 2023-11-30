@@ -30,6 +30,13 @@
 #import "config.h"
 #import "WebExtensionAPIDeclarativeNetRequest.h"
 
+#import "JSWebExtensionWrapper.h"
+#import "MessageSenderInlines.h"
+#import "WebExtensionContext.h"
+#import "WebExtensionContextMessages.h"
+#import "WebProcess.h"
+#import <wtf/cocoa/VectorCocoa.h>
+
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 namespace WebKit {
@@ -39,9 +46,11 @@ void WebExtensionAPIDeclarativeNetRequest::updateEnabledRulesets(NSDictionary *o
     // FIXME: rdar://118940027 - Support toggling static rulesets
 }
 
-void WebExtensionAPIDeclarativeNetRequest::getEnabledRulesets(Ref<WebExtensionCallbackHandler>&&)
+void WebExtensionAPIDeclarativeNetRequest::getEnabledRulesets(Ref<WebExtensionCallbackHandler>&& callback)
 {
-    // FIXME: rdar://118940027 - Support toggling static rulesets
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DeclarativeNetRequestGetEnabledRulesets(), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Vector<String> enabledRulesets) {
+        callback->call(createNSArray(enabledRulesets).get());
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIDeclarativeNetRequest::updateDynamicRules(NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString)

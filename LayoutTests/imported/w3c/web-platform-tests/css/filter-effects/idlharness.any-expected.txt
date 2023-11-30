@@ -437,8 +437,8 @@ PASS SVGFESpecularLightingElement interface: attribute in1
 PASS SVGFESpecularLightingElement interface: attribute surfaceScale
 PASS SVGFESpecularLightingElement interface: attribute specularConstant
 PASS SVGFESpecularLightingElement interface: attribute specularExponent
-FAIL SVGFESpecularLightingElement interface: attribute kernelUnitLengthX assert_true: The prototype object must have a property "kernelUnitLengthX" expected true got false
-FAIL SVGFESpecularLightingElement interface: attribute kernelUnitLengthY assert_true: The prototype object must have a property "kernelUnitLengthY" expected true got false
+PASS SVGFESpecularLightingElement interface: attribute kernelUnitLengthX
+PASS SVGFESpecularLightingElement interface: attribute kernelUnitLengthY
 PASS SVGFESpecularLightingElement interface: attribute x
 PASS SVGFESpecularLightingElement interface: attribute y
 PASS SVGFESpecularLightingElement interface: attribute width

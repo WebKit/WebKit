@@ -112,7 +112,7 @@ public:
     const RealtimeMediaSourceCapabilities& capabilities() const;
 
     Ref<RealtimeMediaSource::TakePhotoNativePromise> takePhoto(PhotoSettings&&);
-    void getPhotoCapabilities(RealtimeMediaSource::PhotoCapabilitiesHandler&&);
+    Ref<RealtimeMediaSource::PhotoCapabilitiesNativePromise> getPhotoCapabilities();
     Ref<RealtimeMediaSource::PhotoSettingsNativePromise> getPhotoSettings();
 
     void applyConstraints(const MediaConstraints&, RealtimeMediaSource::ApplyConstraintsHandler&&);

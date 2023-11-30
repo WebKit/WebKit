@@ -272,6 +272,12 @@ struct RemoveBackgroundData {
 
 enum class ProceedWithTextSelectionInImage : bool { No, Yes };
 
+enum class DynamicImageAnalysisContextMenuState : uint8_t {
+    NotWaiting,
+    WaitingForImageAnalysis,
+    WaitingForVisibleMenu,
+};
+
 enum class ImageAnalysisRequestIdentifierType { };
 using ImageAnalysisRequestIdentifier = ObjectIdentifier<ImageAnalysisRequestIdentifierType>;
 
@@ -565,7 +571,7 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<NSString> _visualSearchPreviewTitle;
     CGRect _visualSearchPreviewImageBounds;
 #endif // USE(QUICK_LOOK)
-    BOOL _waitingForDynamicImageAnalysisContextMenuActions;
+    WebKit::DynamicImageAnalysisContextMenuState _dynamicImageAnalysisContextMenuState;
     std::optional<WebKit::ImageAnalysisContextMenuActionData> _imageAnalysisContextMenuActionData;
 #endif // ENABLE(IMAGE_ANALYSIS)
     uint32_t _fullscreenVideoImageAnalysisRequestIdentifier;

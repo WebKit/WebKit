@@ -50,15 +50,15 @@ struct WebKit::WebExtensionRegisteredScriptParameters {
     std::optional<Vector<String>> js;
 
     String identifier;
-    WebKit::WebExtension::InjectionTime injectionTime;
+    std::optional<WebKit::WebExtension::InjectionTime> injectionTime;
 
-    std::optional<Vector<String>> excludedMatchPatterns;
+    std::optional<Vector<String>> excludeMatchPatterns;
     std::optional<Vector<String>> matchPatterns;
 
-    bool allFrames;
-    bool persistAcrossSessions;
+    std::optional<bool> allFrames;
+    std::optional<bool> persistent;
 
-    WebKit::WebExtensionContentWorldType world;
+    std::optional<WebKit::WebExtensionContentWorldType> world;
 }
 
 [Nested] enum class WebKit::WebExtension::InjectionTime : uint8_t {

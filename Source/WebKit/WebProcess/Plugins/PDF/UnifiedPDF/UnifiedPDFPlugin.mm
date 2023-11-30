@@ -29,6 +29,8 @@
 #if ENABLE(UNIFIED_PDF)
 
 #include "PluginView.h"
+#include "WebEventType.h"
+#include "WebMouseEvent.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/AffineTransform.h>
 #include <WebCore/Chrome.h>
@@ -359,9 +361,43 @@ void UnifiedPDFPlugin::updateScrollingExtents()
     m_scrollContainerLayer->setEventRegion(WTFMove(eventRegion));
 }
 
-bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent&)
+enum class AltKeyIsActive : bool { No, Yes };
+
+static WebCore::Cursor::Type toWebCoreCursorType(UnifiedPDFPlugin::PDFElementTypes pdfElementTypes, AltKeyIsActive altKeyIsActive = AltKeyIsActive::No)
 {
-    return false;
+    if (pdfElementTypes.containsAny({ UnifiedPDFPlugin::PDFElementType::Link, UnifiedPDFPlugin::PDFElementType::Control, UnifiedPDFPlugin::PDFElementType::Icon }) || altKeyIsActive == AltKeyIsActive::Yes)
+        return WebCore::Cursor::Type::Hand;
+
+    if (pdfElementTypes.containsAny({ UnifiedPDFPlugin::PDFElementType::Text, UnifiedPDFPlugin::PDFElementType::TextField }))
+        return WebCore::Cursor::Type::IBeam;
+
+    return WebCore::Cursor::Type::Pointer;
+}
+
+auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint&) const -> PDFElementTypes
+{
+    return { };
+}
+
+bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
+{
+    switch (event.type()) {
+    case WebEventType::MouseMove:
+        mouseMovedInContentArea();
+        switch (event.button()) {
+        case WebMouseEventButton::None: {
+            auto altKeyIsActive = event.altKey() ? AltKeyIsActive::Yes : AltKeyIsActive::No;
+            auto mousePositionInPluginCoordinates = convertFromRootViewToPlugin(event.position());
+            auto pdfElementTypes = pdfElementTypesForPluginPoint(mousePositionInPluginCoordinates);
+            notifyCursorChanged(toWebCoreCursorType(pdfElementTypes, altKeyIsActive));
+            return true;
+        }
+        default:
+            return false;
+        }
+    default:
+        return false;
+    }
 }
 
 bool UnifiedPDFPlugin::handleMouseEnterEvent(const WebMouseEvent&)

@@ -354,6 +354,7 @@ static Atspi::Role atspiRole(AccessibilityRole role)
     case AccessibilityRole::Details:
     case AccessibilityRole::Ignored:
     case AccessibilityRole::Incrementor:
+    case AccessibilityRole::LineBreak:
     case AccessibilityRole::Model:
     case AccessibilityRole::Presentational:
     case AccessibilityRole::RowGroup:

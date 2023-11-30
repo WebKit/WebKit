@@ -82,6 +82,8 @@ static NSString * const documentStart = @"document_start";
 
 namespace WebKit {
 
+using namespace WebExtensionDynamicScripts;
+
 NSArray *toWebAPI(const Vector<WebExtensionScriptInjectionResultParameters>& parametersVector, bool returnExecutionResultOnly)
 {
     auto *results = [NSMutableArray arrayWithCapacity:parametersVector.size()];
@@ -119,6 +121,57 @@ NSArray *toWebAPI(const Vector<WebExtensionScriptInjectionResultParameters>& par
     return [results copy];
 }
 
+NSArray *toWebAPI(const Vector<WebExtensionRegisteredScriptParameters>& parametersVector)
+{
+    NSMutableArray *results = [NSMutableArray arrayWithCapacity:parametersVector.size()];
+
+    for (auto& parameters : parametersVector) {
+        NSMutableDictionary *result = [NSMutableDictionary dictionary];
+
+        ASSERT(parameters.allFrames);
+        ASSERT(parameters.matchPatterns);
+        ASSERT(parameters.persistent);
+        ASSERT(parameters.injectionTime);
+        ASSERT(parameters.world);
+
+        result[allFramesKey] = parameters.allFrames.value() ? @YES : @NO;
+        result[idKey] = parameters.identifier;
+        result[matchesKey] = createNSArray(parameters.matchPatterns.value()).get();
+        result[persistAcrossSessionsKey] = parameters.persistent.value() ? @YES : @NO;
+        result[runAtKey] = toWebAPI(parameters.injectionTime.value());
+        result[worldKey] = parameters.world.value() == WebExtensionContentWorldType::Main ? mainWorld : isolatedWorld;
+
+        if (parameters.css)
+            result[cssKey] = createNSArray(parameters.css.value()).get();
+
+        if (parameters.js)
+            result[jsKey] = createNSArray(parameters.js.value()).get();
+
+        if (parameters.excludeMatchPatterns)
+            result[excludeMatchesKey] = createNSArray(parameters.excludeMatchPatterns.value()).get();
+
+        [results addObject:result];
+    }
+
+    return [results copy];
+}
+
+NSString *toWebAPI(WebExtension::InjectionTime injectionTime)
+{
+    switch (injectionTime) {
+    case WebExtension::InjectionTime::DocumentEnd:
+        return documentEnd;
+    case WebExtension::InjectionTime::DocumentIdle:
+        return documentIdle;
+    case WebExtension::InjectionTime::DocumentStart:
+        return documentStart;
+
+    default:
+        ASSERT_NOT_REACHED();
+        return documentIdle;
+    }
+}
+
 void WebExtensionAPIScripting::executeScript(NSDictionary *script, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/scripting/executeScript
@@ -136,7 +189,7 @@ void WebExtensionAPIScripting::executeScript(NSDictionary *script, Ref<WebExtens
     parseTargetInjectionOptions(script[targetKey], parameters, outExceptionString);
     parseScriptInjectionOptions(script, parameters);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingExecuteScript(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Vector<WebKit::WebExtensionScriptInjectionResultParameters>> results, WebExtensionDynamicScripts::Error error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingExecuteScript(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Vector<WebKit::WebExtensionScriptInjectionResultParameters>> results, Error error) {
         if (error)
             callback->reportError(error.value());
         else
@@ -155,7 +208,7 @@ void WebExtensionAPIScripting::insertCSS(NSDictionary *cssInfo, Ref<WebExtension
     parseTargetInjectionOptions(cssInfo[targetKey], parameters, outExceptionString);
     parseCSSInjectionOptions(cssInfo, parameters);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingInsertCSS(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionDynamicScripts::Error error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingInsertCSS(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Error error) {
         if (error)
             callback->reportError(error.value());
         else
@@ -174,7 +227,7 @@ void WebExtensionAPIScripting::removeCSS(NSDictionary *cssInfo, Ref<WebExtension
     parseTargetInjectionOptions(cssInfo[targetKey], parameters, outExceptionString);
     parseCSSInjectionOptions(cssInfo, parameters);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRemoveCSS(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionDynamicScripts::Error error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRemoveCSS(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Error error) {
         if (error)
             callback->reportError(error.value());
         else
@@ -188,13 +241,13 @@ void WebExtensionAPIScripting::registerContentScripts(NSObject *details, Ref<Web
 
     NSArray<NSDictionary<NSString *, id> *> *scripts = dynamic_objc_cast<NSArray>(details);
 
-    if (!validateRegisteredScripts(scripts, true, outExceptionString))
+    if (!validateRegisteredScripts(scripts, FirstTimeRegistration::Yes, outExceptionString))
         return;
 
     Vector<WebExtensionRegisteredScriptParameters> parameters;
-    parseRegisteredContentScripts(scripts, parameters);
+    parseRegisteredContentScripts(scripts, FirstTimeRegistration::Yes, parameters);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRegisterScripts(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionDynamicScripts::Error error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingRegisterContentScripts(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Error error) {
         if (error)
             callback->reportError(error.value());
         else
@@ -211,11 +264,8 @@ void WebExtensionAPIScripting::getRegisteredContentScripts(NSDictionary *filter,
 
     Vector<String> scriptIDs = makeVector<String>(filter[idsKey]);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUnregisterScripts(WTFMove(scriptIDs)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Vector<WebExtensionRegisteredScriptParameters>> scripts, WebExtensionDynamicScripts::Error error) {
-        if (error)
-            callback->reportError(error.value());
-        else
-            callback->call();
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingGetRegisteredScripts(WTFMove(scriptIDs)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](const Vector<WebExtensionRegisteredScriptParameters>& scripts) {
+        callback->call(toWebAPI(scripts));
     }, extensionContext().identifier().toUInt64());
 }
 void WebExtensionAPIScripting::updateContentScripts(NSObject *details, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
@@ -224,13 +274,13 @@ void WebExtensionAPIScripting::updateContentScripts(NSObject *details, Ref<WebEx
 
     NSArray<NSDictionary<NSString *, id> *> *scripts = dynamic_objc_cast<NSArray>(details);
 
-    if (!validateRegisteredScripts(scripts, false, outExceptionString))
+    if (!validateRegisteredScripts(scripts, FirstTimeRegistration::No, outExceptionString))
         return;
 
     Vector<WebExtensionRegisteredScriptParameters> parameters;
-    parseRegisteredContentScripts(scripts, parameters);
+    parseRegisteredContentScripts(scripts, FirstTimeRegistration::No, parameters);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUpdateRegisteredScripts(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](WebExtensionDynamicScripts::Error error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUpdateRegisteredScripts(WTFMove(parameters)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Error error) {
         if (error)
             callback->reportError(error.value());
         else
@@ -246,7 +296,7 @@ void WebExtensionAPIScripting::unregisterContentScripts(NSDictionary *filter, Re
 
     Vector<String> scriptIDs = makeVector<String>(filter[idsKey]);
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUnregisterScripts(WTFMove(scriptIDs)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Vector<WebExtensionRegisteredScriptParameters>> scripts, WebExtensionDynamicScripts::Error error) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::ScriptingUnregisterContentScripts(WTFMove(scriptIDs)), [protectedThis = Ref { *this }, callback = WTFMove(callback)](Error error) {
         if (error)
             callback->reportError(error.value());
         else
@@ -378,7 +428,7 @@ bool WebExtensionAPIScripting::validateCSS(NSDictionary *cssInfo, NSString **out
     return true;
 }
 
-bool WebExtensionAPIScripting::validateRegisteredScripts(NSArray *scripts, bool isRegisteringScript, NSString **outExceptionString)
+bool WebExtensionAPIScripting::validateRegisteredScripts(NSArray *scripts, FirstTimeRegistration firstTimeRegistration, NSString **outExceptionString)
 {
     static NSArray<NSString *> *requiredKeys = @[
         idKey,
@@ -417,7 +467,7 @@ bool WebExtensionAPIScripting::validateRegisteredScripts(NSArray *scripts, bool 
         }
 
         NSArray *matchPatterns = script[matchesKey];
-        if (isRegisteringScript && !matchPatterns.count) {
+        if (firstTimeRegistration == FirstTimeRegistration::Yes && !matchPatterns.count) {
             *outExceptionString = toErrorString(nil, matchesKey, @"it must specify at least one match pattern for script with ID '%@'", script[idKey]);
             return false;
         }
@@ -429,13 +479,13 @@ bool WebExtensionAPIScripting::validateRegisteredScripts(NSArray *scripts, bool 
 
         NSArray *jsFiles = script[jsKey];
         NSArray *cssFiles = script[cssKey];
-        if (isRegisteringScript && !jsFiles.count && !cssFiles.count) {
+        if (firstTimeRegistration == FirstTimeRegistration::Yes && !jsFiles.count && !cssFiles.count) {
             *outExceptionString = toErrorString(nil, @"details", @"it must specify at least one 'css' or 'js' file");
             return false;
         }
 
         if (NSString *injectionTime = script[runAtKey]) {
-            if (![injectionTime isEqualToString:documentIdle] || ![injectionTime isEqualToString:documentStart] || ![injectionTime isEqualToString:documentEnd]) {
+            if (![injectionTime isEqualToString:documentIdle] && ![injectionTime isEqualToString:documentStart] && ![injectionTime isEqualToString:documentEnd]) {
                 *outExceptionString = toErrorString(nil, runAtKey, @"it must be one of the following: 'document_end', 'document_idle', or 'document_start'");
                 return false;
             }
@@ -514,15 +564,12 @@ void WebExtensionAPIScripting::parseCSSInjectionOptions(NSDictionary *cssInfo, W
         parameters.files = makeVector<String>(files);
 }
 
-void WebExtensionAPIScripting::parseRegisteredContentScripts(NSArray *scripts, Vector<WebExtensionRegisteredScriptParameters>& parametersVector)
+void WebExtensionAPIScripting::parseRegisteredContentScripts(NSArray *scripts, FirstTimeRegistration firstTimeRegistration, Vector<WebExtensionRegisteredScriptParameters>& parametersVector)
 {
     for (NSDictionary *script in scripts) {
         WebExtensionRegisteredScriptParameters parameters;
 
         parameters.identifier = script[idKey];
-
-        parameters.allFrames = boolForKey(script, allFramesKey, false);
-        parameters.persistAcrossSessions = boolForKey(script, persistAcrossSessionsKey, true);
 
         if (NSArray *cssFiles = script[cssKey])
             parameters.css = makeVector<String>(cssFiles);
@@ -533,11 +580,19 @@ void WebExtensionAPIScripting::parseRegisteredContentScripts(NSArray *scripts, V
         if (NSArray *matchPatterns = script[matchesKey])
             parameters.matchPatterns = makeVector<String>(matchPatterns);
 
-        if (NSArray *excludedMatchPatterns = script[excludeMatchesKey])
-            parameters.excludedMatchPatterns = makeVector<String>(excludedMatchPatterns);
+        if (NSArray *excludeMatchPatterns = script[excludeMatchesKey])
+            parameters.excludeMatchPatterns = makeVector<String>(excludeMatchPatterns);
 
-        if ([script[worldKey] isEqualToString:mainWorld])
-            parameters.world = WebExtensionContentWorldType::Main;
+        if (firstTimeRegistration == FirstTimeRegistration::Yes || script[allFramesKey])
+            parameters.allFrames = boolForKey(script, allFramesKey, false);
+
+        if (firstTimeRegistration == FirstTimeRegistration::Yes || script[persistAcrossSessionsKey])
+            parameters.persistent = boolForKey(script, persistAcrossSessionsKey, true);
+
+        if (NSString *world = script[worldKey])
+            parameters.world = [world isEqualToString:mainWorld] ? WebExtensionContentWorldType::Main : WebExtensionContentWorldType::ContentScript;
+        else if (firstTimeRegistration == FirstTimeRegistration::Yes)
+            parameters.world = WebExtensionContentWorldType::ContentScript;
 
         if (NSString *injectionTime = script[runAtKey]) {
             if ([injectionTime isEqualToString:documentEnd])
@@ -546,7 +601,10 @@ void WebExtensionAPIScripting::parseRegisteredContentScripts(NSArray *scripts, V
                 parameters.injectionTime = WebExtension::InjectionTime::DocumentIdle;
             else
                 parameters.injectionTime = WebExtension::InjectionTime::DocumentStart;
-        }
+        } else if (firstTimeRegistration == FirstTimeRegistration::Yes)
+            parameters.injectionTime = WebExtension::InjectionTime::DocumentIdle;
+
+        parametersVector.append(parameters);
     }
 }
 

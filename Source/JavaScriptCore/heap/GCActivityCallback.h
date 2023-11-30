@@ -29,6 +29,7 @@
 #pragma once
 
 #include "JSRunLoopTimer.h"
+#include "Synchronousness.h"
 #include <wtf/RefPtr.h>
 
 namespace JSC {
@@ -40,7 +41,7 @@ class GCActivityCallback : public JSRunLoopTimer {
 public:
     using Base = JSRunLoopTimer;
 
-    JS_EXPORT_PRIVATE GCActivityCallback(Heap&);
+    JS_EXPORT_PRIVATE GCActivityCallback(Heap&, Synchronousness);
     JS_EXPORT_PRIVATE ~GCActivityCallback();
 
     JS_EXPORT_PRIVATE void doWork(VM&) override;
@@ -63,8 +64,9 @@ protected:
     virtual double deathRate(Heap&) = 0;
     JS_EXPORT_PRIVATE void scheduleTimer(Seconds);
 
-    GCActivityCallback(VM&);
+    GCActivityCallback(VM&, Synchronousness);
 
+    Synchronousness m_synchronousness { Synchronousness::Async };
     bool m_enabled { true };
     bool m_didGCRecently { false };
     Seconds m_delay { s_decade };

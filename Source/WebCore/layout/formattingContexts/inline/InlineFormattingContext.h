@@ -87,6 +87,7 @@ private:
     bool createDisplayContentForLineFromCachedContent(const ConstraintsForInlineContent&, InlineLayoutResult&);
     void createDisplayContentForEmptyInlineContent(const ConstraintsForInlineContent&, InlineLayoutResult&);
     void initializeInlineLayoutState(const LayoutState&);
+    bool rebuildInlineItemListIfNeeded(const InlineDamage*);
 
     InlineContentCache& inlineContentCache() { return m_inlineContentCache; }
 

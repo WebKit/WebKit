@@ -311,6 +311,11 @@ uint64_t UIScriptControllerCocoa::currentImageAnalysisRequestID() const
     return TestController::currentImageAnalysisRequestID();
 }
 
+void UIScriptControllerCocoa::installFakeMachineReadableCodeResultsForImageAnalysis()
+{
+    TestController::singleton().installFakeMachineReadableCodeResultsForImageAnalysis();
+}
+
 #endif // ENABLE(IMAGE_ANALYSIS)
 
 void UIScriptControllerCocoa::setSpellCheckerResults(JSValueRef results)
