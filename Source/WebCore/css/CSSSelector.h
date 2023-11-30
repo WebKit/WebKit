@@ -66,6 +66,7 @@ struct PossiblyQuotedIdentifier {
         bool visitAllSimpleSelectors(auto& apply) const;
 
         bool hasExplicitNestingParent() const;
+        bool hasExplicitPseudoClassScope() const;
         void resolveNestingParentSelectors(const CSSSelectorList& parent);
         void replaceNestingParentByPseudoClassScope();
 

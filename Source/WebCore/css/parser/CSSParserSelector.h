@@ -85,6 +85,7 @@ public:
     bool isHostPseudoSelector() const;
 
     bool hasExplicitNestingParent() const;
+    bool hasExplicitPseudoClassScope() const;
 
     // FIXME-NEWPARSER: "slotted" was removed here for now, since it leads to a combinator
     // connection of ShadowDescendant, and the current shadow DOM code doesn't expect this. When
@@ -99,6 +100,7 @@ public:
     void insertTagHistory(CSSSelector::RelationType before, std::unique_ptr<CSSParserSelector>, CSSSelector::RelationType after);
     void appendTagHistory(CSSSelector::RelationType, std::unique_ptr<CSSParserSelector>);
     void appendTagHistory(CSSParserSelectorCombinator, std::unique_ptr<CSSParserSelector>);
+    void appendTagHistoryAsRelative(std::unique_ptr<CSSParserSelector>);
     void prependTagSelector(const QualifiedName&, bool tagIsForNamespaceRule = false);
     std::unique_ptr<CSSParserSelector> releaseTagHistory();
 
