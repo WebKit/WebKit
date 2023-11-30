@@ -456,6 +456,9 @@ private:
     void fireCommandEventIfNeeded(const WebExtensionCommand&, WebExtensionTab*);
     void fireCommandChangedEventIfNeeded(const WebExtensionCommand&, const String& oldShortcut);
 
+    // DeclarativeNetRequest APIs
+    void declarativeNetRequestGetEnabledRulesets(CompletionHandler<void(const Vector<String>&)>&&);
+
     // Event APIs
     void addListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType);
     void removeListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType, size_t removedCount);

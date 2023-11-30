@@ -48,6 +48,9 @@ messages -> WebExtensionContext {
     // Commands
     CommandsGetAll() -> (Vector<WebKit::WebExtensionCommandParameters> commands);
 
+    // DeclarativeNetRequest
+    DeclarativeNetRequestGetEnabledRulesets() -> (Vector<String> rulesetIdentifiers);
+
     // Event APIs
     AddListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType);
     RemoveListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType, size_t removedCount);
