@@ -178,8 +178,8 @@ LayoutRect RenderTableRow::clippedOverflowRect(const RenderLayerModelObject* rep
     // Rows and cells are in the same coordinate space. We need to both compute our overflow rect (which
     // will accommodate a row outline and any visual effects on the row itself), but we also need to add in
     // the repaint rects of cells.
-    LayoutRect result = RenderBox::clippedOverflowRect(repaintContainer, context);
-    for (RenderTableCell* cell = firstCell(); cell; cell = cell->nextCell()) {
+    auto result = RenderBox::clippedOverflowRect(repaintContainer, context);
+    for (auto* cell = firstCell(); cell; cell = cell->nextCell()) {
         // Even if a cell is a repaint container, it's the row that paints the background behind it.
         // So we don't care if a cell is a repaintContainer here.
         result.uniteIfNonZero(cell->clippedOverflowRect(repaintContainer, context));

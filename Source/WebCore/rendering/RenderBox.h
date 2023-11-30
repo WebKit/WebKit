@@ -371,7 +371,7 @@ public:
     void setInlineBoxWrapper(LegacyInlineElementBox*);
     void deleteLineBoxWrapper();
 
-    LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
+    LayoutRect localRectForRepaint() const override;
     std::optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* container, VisibleRectContext) const override;
     void repaintDuringLayoutIfMoved(const LayoutRect&);
     virtual void repaintOverhangingFloats(bool paintAllDescendants);

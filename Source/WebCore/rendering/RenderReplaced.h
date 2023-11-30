@@ -85,7 +85,7 @@ private:
     void computePreferredLogicalWidths() final;
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) { }
 
-    LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
+    LayoutRect localRectForRepaint() const override;
 
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) final;
     
