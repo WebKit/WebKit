@@ -51,8 +51,7 @@ private:
     CSSPropertyID m_shorthandID { CSSPropertyInvalid };
 };
 
-// Custom StylePropertyShorthand functions.
-StylePropertyShorthand animationShorthandForParsing();
+// Custom StylePropertyShorthand function.
 StylePropertyShorthand transitionShorthandForParsing();
 
 // Returns empty value if the property is not a shorthand.
