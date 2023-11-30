@@ -34,6 +34,7 @@
 #import "CoreIPCDictionary.h"
 #import "CoreIPCError.h"
 #import "CoreIPCFont.h"
+#import "CoreIPCLocale.h"
 #import "CoreIPCNSValue.h"
 #import "CoreIPCNumber.h"
 #import "CoreIPCSecureCoding.h"

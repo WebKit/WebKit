@@ -44,6 +44,7 @@ class CoreIPCDate;
 class CoreIPCDictionary;
 class CoreIPCError;
 class CoreIPCFont;
+class CoreIPCLocale;
 class CoreIPCNSValue;
 class CoreIPCNumber;
 class CoreIPCSecureCoding;
@@ -63,6 +64,7 @@ using ObjectValue = std::variant<
     CoreIPCDictionary,
     CoreIPCError,
     CoreIPCFont,
+    CoreIPCLocale,
     CoreIPCNSValue,
     CoreIPCNumber,
     CoreIPCSecureCoding,

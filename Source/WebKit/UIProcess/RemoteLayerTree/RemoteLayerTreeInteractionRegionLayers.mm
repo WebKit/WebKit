@@ -276,6 +276,9 @@ void updateLayersForInteractionRegions(RemoteLayerTreeNode& node)
 
         if (region.type == InteractionRegion::Type::Interaction) {
             [regionLayer setCornerRadius:region.borderRadius];
+            if (region.borderRadius)
+                [regionLayer setCornerCurve:kCACornerCurveCircular];
+
             constexpr CACornerMask allCorners = kCALayerMinXMinYCorner | kCALayerMaxXMinYCorner | kCALayerMinXMaxYCorner | kCALayerMaxXMaxYCorner;
             if (region.maskedCorners.isEmpty())
                 [regionLayer setMaskedCorners:allCorners];

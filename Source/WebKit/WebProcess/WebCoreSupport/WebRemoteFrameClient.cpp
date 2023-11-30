@@ -65,9 +65,9 @@ void WebRemoteFrameClient::sizeDidChange(WebCore::IntSize size)
     m_frame->updateRemoteFrameSize(size);
 }
 
-void WebRemoteFrameClient::postMessageToRemote(WebCore::FrameIdentifier identifier, const String& sourceOrigin, std::optional<WebCore::SecurityOriginData> target, const WebCore::MessageWithMessagePorts& message)
+void WebRemoteFrameClient::postMessageToRemote(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts& message)
 {
-    WebProcess::singleton().send(Messages::WebProcessProxy::PostMessageToRemote(identifier, sourceOrigin, target, message), 0);
+    WebProcess::singleton().send(Messages::WebProcessProxy::PostMessageToRemote(source, sourceOrigin, target, targetOrigin, message), 0);
 }
 
 void WebRemoteFrameClient::changeLocation(WebCore::FrameLoadRequest&& request)

@@ -72,6 +72,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_backgroundView.get().layer setContinuousCorners:YES];
 ALLOW_DEPRECATED_DECLARATIONS_END
     [_backgroundView.get().layer setCornerRadius:16];
+    [_backgroundView.get().layer setCornerCurve:kCACornerCurveCircular];
 #endif
     [self addSubview:_backgroundView.get()];
     return self;

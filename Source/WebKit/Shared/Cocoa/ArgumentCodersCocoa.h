@@ -69,6 +69,7 @@ enum class NSType : uint8_t {
     Error,
     Dictionary,
     Font,
+    Locale,
     Number,
     SecureCoding,
     String,

@@ -20,9 +20,12 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-struct WebKit::NetworkProcessConnectionParameters {
-    bool allowTestOnlyIPC;
-#if ENABLE(IPC_TESTING_API)
-    bool ignoreInvalidMessageForTesting;
-#endif
-};
+#if PLATFORM(COCOA)
+
+webkit_platform_headers: "CoreIPCLocale.h"
+
+[WebKitPlatform] class WebKit::CoreIPCLocale {
+    [Validator='WebKit::CoreIPCLocale::isValidIdentifier(*identfier)'] WTF::String identfier()
+}
+
+#endif // PLATFORM(COCOA)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,30 +25,35 @@
 
 #pragma once
 
-#include <wtf/FastMalloc.h>
+#if PLATFORM(COCOA)
 
-namespace WebCore {
+#import <Foundation/Foundation.h>
+#import <wtf/text/WTFString.h>
 
-class FrameLoadRequest;
-class IntSize;
-class SecurityOriginData;
+OBJC_CLASS NSLocale;
 
-enum class RenderAsTextFlag : uint16_t;
+namespace WebKit {
 
-struct MessageWithMessagePorts;
-
-class RemoteFrameClient {
-    WTF_MAKE_FAST_ALLOCATED;
+class CoreIPCLocale {
 public:
-    virtual void frameDetached() = 0;
-    virtual void sizeDidChange(IntSize) = 0;
-    virtual void postMessageToRemote(FrameIdentifier source, const String& sourceOrigin, FrameIdentifier target, std::optional<SecurityOriginData> targetOrigin, const MessageWithMessagePorts&) = 0;
-    virtual void changeLocation(FrameLoadRequest&&) = 0;
-    virtual String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>) = 0;
-    virtual void broadcastFrameRemovalToOtherProcesses() = 0;
-    virtual void close() = 0;
-    virtual void focus() = 0;
-    virtual ~RemoteFrameClient() { }
+    static bool isValidIdentifier(const String&);
+
+    CoreIPCLocale(NSLocale *);
+    CoreIPCLocale(String&&);
+
+    RetainPtr<id> toID() const;
+
+    String identfier() const
+    {
+        return m_identifier;
+    }
+
+private:
+    static std::optional<String> canonicalLocaleStringReplacement(const String& identifier);
+
+    String m_identifier;
 };
 
 }
+
+#endif // PLATFORM(COCOA)
