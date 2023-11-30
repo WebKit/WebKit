@@ -129,13 +129,8 @@ static const OpcodeGroupInitializer opcodeGroupList[] = {
     OPCODE_GROUP_ENTRY(0x1e, A64DOpcodeFloatingPointIntegerConversions),
 };
 
-bool A64DOpcode::s_initialized = false;
-
 void A64DOpcode::init()
 {
-    if (s_initialized)
-        return;
-
     OpcodeGroup* lastGroups[32];
 
     for (unsigned i = 0; i < 32; i++) {
@@ -153,8 +148,6 @@ void A64DOpcode::init()
             lastGroups[opcodeGroupNumber]->setNext(newOpcodeGroup);
         lastGroups[opcodeGroupNumber] = newOpcodeGroup;
     }
-
-    s_initialized = true;
 }
 
 void A64DOpcode::setPCAndOpcode(uint32_t* newPC, uint32_t newOpcode)
