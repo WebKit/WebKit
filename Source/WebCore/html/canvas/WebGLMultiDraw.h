@@ -40,7 +40,7 @@ public:
     using Int32List = WebGLRenderingContextBase::TypedList<Int32Array, int32_t>;
 
     explicit WebGLMultiDraw(WebGLRenderingContextBase&);
-    virtual ~WebGLMultiDraw();
+    ~WebGLMultiDraw();
 
     static bool supported(GraphicsContextGL&);
 
