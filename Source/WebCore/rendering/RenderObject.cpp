@@ -1124,7 +1124,7 @@ std::optional<LayoutRect> RenderObject::computeVisibleRectInContainer(const Layo
     if (!parent)
         return rect;
 
-    LayoutRect adjustedRect = rect;
+    auto adjustedRect = rect;
     if (parent->hasNonVisibleOverflow()) {
         bool isEmpty = !downcast<RenderLayerModelObject>(*parent).applyCachedClipAndScrollPosition(adjustedRect, container, context);
         if (isEmpty) {

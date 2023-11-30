@@ -721,20 +721,16 @@ std::optional<LayoutRect> RenderInline::computeVisibleRectInContainer(const Layo
     if (!localContainer)
         return rect;
 
-    LayoutRect adjustedRect = rect;
-    LayoutPoint topLeft = adjustedRect.location();
-
+    auto adjustedRect = rect;
     if (style().hasInFlowPosition() && layer()) {
         // Apply the in-flow position offset when invalidating a rectangle. The layer
         // is translated, but the render box isn't, so we need to do this to get the
         // right dirty rect. Since this is called from RenderObject::setStyle, the relative or sticky position
         // flag on the RenderObject has been cleared, so use the one on the style().
-        topLeft += layer()->offsetForInFlowPosition();
+        auto offsetForInFlowPosition = layer()->offsetForInFlowPosition();
+        adjustedRect.move(offsetForInFlowPosition);
     }
-    
-    // FIXME: We ignore the lightweight clipping rect that controls use, since if |o| is in mid-layout,
-    // its controlClipRect will be wrong. For overflow clip we use the values cached by the layer.
-    adjustedRect.setLocation(topLeft);
+
     if (localContainer->hasNonVisibleOverflow()) {
         // FIXME: Respect the value of context.options.
         SetForScope change(context.options, context.options | VisibleRectContextOption::ApplyCompositedContainerScrolls);
@@ -748,10 +744,11 @@ std::optional<LayoutRect> RenderInline::computeVisibleRectInContainer(const Layo
 
     if (containerSkipped) {
         // If the repaintContainer is below o, then we need to map the rect into repaintContainer's coordinates.
-        LayoutSize containerOffset = container->offsetFromAncestorContainer(*localContainer);
+        auto containerOffset = container->offsetFromAncestorContainer(*localContainer);
         adjustedRect.move(-containerOffset);
         return adjustedRect;
     }
+
     return localContainer->computeVisibleRectInContainer(adjustedRect, container, context);
 }
 

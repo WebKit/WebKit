@@ -587,7 +587,7 @@ std::optional<LayoutRect> RenderView::computeVisibleRectInContainer(const Layout
     if (printing())
         return rect;
     
-    LayoutRect adjustedRect = rect;
+    auto adjustedRect = rect;
     if (style().isFlippedBlocksWritingMode()) {
         // We have to flip by hand since the view's logical height has not been determined.  We
         // can use the viewport width and height.
@@ -603,6 +603,7 @@ std::optional<LayoutRect> RenderView::computeVisibleRectInContainer(const Layout
     // Apply our transform if we have one (because of full page zooming).
     if (!container && layer() && layer()->transform())
         adjustedRect = LayoutRect(layer()->transform()->mapRect(snapRectToDevicePixels(adjustedRect, document().deviceScaleFactor())));
+
     return adjustedRect;
 }
 
