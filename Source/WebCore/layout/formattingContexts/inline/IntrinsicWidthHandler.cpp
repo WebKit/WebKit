@@ -74,7 +74,7 @@ IntrinsicWidthHandler::IntrinsicWidthHandler(InlineFormattingContext& inlineForm
 {
 }
 
-LayoutUnit IntrinsicWidthHandler::minimumContentSize()
+InlineLayoutUnit IntrinsicWidthHandler::minimumContentSize()
 {
     auto minimumContentSize = InlineLayoutUnit { };
 
@@ -88,10 +88,10 @@ LayoutUnit IntrinsicWidthHandler::minimumContentSize()
         minimumContentSize = computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Minimum, lineBuilder, MayCacheLayoutResult::No);
     }
 
-    return ceiledLayoutUnit(minimumContentSize);
+    return minimumContentSize;
 }
 
-LayoutUnit IntrinsicWidthHandler::maximumContentSize()
+InlineLayoutUnit IntrinsicWidthHandler::maximumContentSize()
 {
     auto mayCacheLayoutResult = m_mayUseSimplifiedTextOnlyInlineLayout ? MayCacheLayoutResult::Yes : MayCacheLayoutResult::No;
     auto maximumContentSize = InlineLayoutUnit { };
@@ -106,7 +106,7 @@ LayoutUnit IntrinsicWidthHandler::maximumContentSize()
         maximumContentSize = computedIntrinsicWidthForConstraint(IntrinsicWidthMode::Maximum, lineBuilder, mayCacheLayoutResult);
     }
 
-    return ceiledLayoutUnit(maximumContentSize);
+    return maximumContentSize;
 }
 
 InlineLayoutUnit IntrinsicWidthHandler::computedIntrinsicWidthForConstraint(IntrinsicWidthMode intrinsicWidthMode, AbstractLineBuilder& lineBuilder, MayCacheLayoutResult mayCacheLayoutResult)
