@@ -1,0 +1,11 @@
+Tests calling setAttributeNode() twice with different nodes containing the same attribute name that is uppercase.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pic.setAttributeNode(attr1) is null
+PASS pic.setAttributeNode(attr2) is attr1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

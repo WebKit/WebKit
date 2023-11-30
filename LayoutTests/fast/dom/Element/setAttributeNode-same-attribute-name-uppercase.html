@@ -1,0 +1,18 @@
+<html>
+<body>
+<script src="../../../resources/js-test.js"></script>
+<script>
+description("Tests calling setAttributeNode() twice with different nodes containing the same attribute name that is uppercase.");
+
+let pic = document.createElement("picture");
+pic.id = "picItem";
+document.body.append(pic);
+
+pic.setAttribute("aria-rowcount","0");
+let attr1 = document.createAttributeNS("http://www.w3.org/1999/xhtml","FOOBAR");
+shouldBeNull("pic.setAttributeNode(attr1)");
+let attr2 = document.createAttributeNS("http://www.w3.org/1999/xhtml","FOOBAR");
+shouldBe("pic.setAttributeNode(attr2)", "attr1");
+</script>
+</body>
+</html>

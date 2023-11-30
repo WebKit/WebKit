@@ -210,10 +210,17 @@ static Attr* findAttrNodeInList(Vector<RefPtr<Attr>>& attrNodeList, const Qualif
 
 static Attr* findAttrNodeInList(Vector<RefPtr<Attr>>& attrNodeList, const AtomString& localName, bool shouldIgnoreAttributeCase)
 {
-    const AtomString& caseAdjustedName = shouldIgnoreAttributeCase ? localName.convertToASCIILowercase() : localName;
-    for (auto& node : attrNodeList) {
-        if (node->qualifiedName().localName() == caseAdjustedName)
-            return node.get();
+    if (shouldIgnoreAttributeCase) {
+        auto caseAdjustedName = localName.convertToASCIILowercase();
+        for (auto& node : attrNodeList) {
+            if (node->qualifiedName().localNameLowercase() == caseAdjustedName)
+                return node.get();
+        }
+    } else {
+        for (auto& node : attrNodeList) {
+            if (node->qualifiedName().localName() == localName)
+                return node.get();
+        }
     }
     return nullptr;
 }
