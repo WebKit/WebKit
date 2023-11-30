@@ -442,10 +442,6 @@ public:
     void lockdownModeStateChanged();
 #endif
 
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-    static bool shouldCrashWhenCreatingWebProcess() { return s_shouldCrashWhenCreatingWebProcess; }
-#endif
-
     ForegroundWebProcessToken foregroundWebProcessToken() const { return ForegroundWebProcessToken(m_foregroundWebProcessCounter.count()); }
     BackgroundWebProcessToken backgroundWebProcessToken() const { return BackgroundWebProcessToken(m_backgroundWebProcessCounter.count()); }
     bool hasForegroundWebProcesses() const { return m_foregroundWebProcessCounter.value(); }
@@ -571,10 +567,6 @@ private:
 
     void registerNotificationObservers();
     void unregisterNotificationObservers();
-
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-    static void initializeShouldCrashWhenCreatingWebProcess();
-#endif
 #endif
 
     void setApplicationIsActive(bool);
@@ -755,10 +747,6 @@ private:
 
 #if PLATFORM(COCOA)
     bool m_cookieStoragePartitioningEnabled { false };
-#endif
-
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-    static bool s_shouldCrashWhenCreatingWebProcess;
 #endif
 
     struct Paths {

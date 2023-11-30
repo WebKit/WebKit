@@ -132,32 +132,6 @@
 #include <WebCore/MediaAccessibilitySoftLink.h>
 #endif
 
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-#if __has_include(<WebKitAdditions/InternalBuildAdditions.h>)
-#include <WebKitAdditions/InternalBuildAdditions.h>
-#else
-static bool isInternalBuild()
-{
-    return false;
-}
-#endif
-
-#if __has_include(<WebKitAdditions/InternalCanaryState.h>)
-#include <WebKitAdditions/InternalCanaryState.h>
-#else
-static bool canaryInBaseState()
-{
-    return true;
-}
-#endif
-
-#include <OSAnalytics/OSASystemConfiguration_Public.h>
-
-SOFT_LINK_FRAMEWORK_OPTIONAL(OSAnalytics)
-
-SOFT_LINK_CLASS(OSAnalytics, OSASystemConfiguration)
-#endif
-
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 
@@ -299,26 +273,6 @@ static void logProcessPoolState(const WebProcessPool& pool)
     }
 }
 
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-void WebProcessPool::initializeShouldCrashWhenCreatingWebProcess()
-{
-    // Do the check on a background queue to avoid an app launch time regression. Note that this means we're racing with the
-    // construction of the first WebProcess. However, the race is OK, we just want to make sure a WebProcess will crash in
-    // the future, it doesn't have to be the very first one.
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        if (!isInternalBuild())
-            return;
-
-        auto resultAutomatedDeviceGroup = [getOSASystemConfigurationClass() automatedDeviceGroup];
-        RELEASE_LOG(Process, "initializeShouldCrashWhenCreatingWebProcess: automatedDeviceGroup default: %s , canaryInBaseState: %s", resultAutomatedDeviceGroup ? [resultAutomatedDeviceGroup UTF8String] : "[nil]", canaryInBaseState() ? "true" : "false");
-        bool shouldCrashWhenCreatingWebProcess = ![resultAutomatedDeviceGroup isEqualToString:@"CanaryExperimentOptOut"] && !canaryInBaseState();
-        dispatch_async(dispatch_get_main_queue(), ^{
-            s_shouldCrashWhenCreatingWebProcess = shouldCrashWhenCreatingWebProcess;
-        });
-    });
-}
-#endif
-
 void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization needsGlobalStaticInitialization)
 {
     registerNotificationObservers();
@@ -350,16 +304,6 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization needsGlo
         for (const auto& pool : WebProcessPool::allProcessPools())
             logProcessPoolState(pool.get());
     });
-
-#if ENABLE(WEBCONTENT_CRASH_TESTING)
-#if PLATFORM(IOS_FAMILY)
-    bool isSafari = WebCore::IOSApplication::isMobileSafari();
-#elif PLATFORM(MAC)
-    bool isSafari = WebCore::MacApplication::isSafari();
-#endif
-    if (isSafari)
-        initializeShouldCrashWhenCreatingWebProcess();
-#endif
 }
 
 void WebProcessPool::platformResolvePathsForSandboxExtensions()
