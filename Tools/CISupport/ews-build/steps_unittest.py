@@ -2033,6 +2033,25 @@ ts","version":4,"num_passes":42158,"pixel_tests_enabled":false,"date":"11:28AM o
         self.assertEqual(self.getProperty(self.property_failures), ['fast/scrolling/ios/reconcile-layer-position-recursive.html'])
         return rc
 
+    def test_parse_results_invalid_json(self):
+        self.configureStep()
+        self.setProperty('fullPlatform', 'ios-simulator')
+        self.setProperty('configuration', 'release')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logfiles={'json': self.jsonFileName},
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/run-webkit-tests', '--no-build', '--no-show-results', '--no-new-test-results', '--clobber-old-results', '--release', '--results-directory', 'layout-test-results', '--debug-rwt-logging', '--exit-after-n-failures', '60', '--skip-failing-tests'],
+                        )
+            + 2
+            + ExpectShell.log('json', stdout=self.results_json_with_newlines + " non-JSON nonsense"),
+        )
+        self.expectOutcome(result=FAILURE, state_string='layout-tests (failure)')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty(self.property_exceed_failure_limit), None)
+        self.assertEqual(self.getProperty(self.property_failures), None)
+        return rc
+
     def test_parse_results_json_with_missing_results(self):
         self.configureStep()
         self.setProperty('fullPlatform', 'ios-simulator')
