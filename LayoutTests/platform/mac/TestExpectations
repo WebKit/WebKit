@@ -63,6 +63,8 @@ fast/forms/search/search-padding-cancel-results-buttons.html [ Pass ]
 fast/forms/search/search-results-hidden-crash.html [ Pass ]
 fast/forms/search/search-recent-searches.html [ Pass ]
 
+fast/forms/switch/ [ Pass ]
+
 fast/url/user-visible [ Pass ]
 fast/images/eps-as-image.html [ Skip ]
 

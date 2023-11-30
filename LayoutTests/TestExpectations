@@ -4966,6 +4966,9 @@ media/media-session/mock-coordinator.html [ Skip ]
 media/track/track-description-cue.html [ Skip ]
 media/track/track-extended-descriptions.html [ Skip ]
 
+# Soon Cocoa-only (currently only macOS)
+fast/forms/switch/ [ Skip ]
+
 # These tests rely on webkit-test-runner flags that aren't implemented for DumpRenderTree, so they will fail under legacy WebKit.
 
 # These tests are for iOS port.
