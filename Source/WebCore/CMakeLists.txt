@@ -43,6 +43,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/indexeddb/client"
     "${WEBCORE_DIR}/Modules/indexeddb/server"
     "${WEBCORE_DIR}/Modules/indexeddb/shared"
+    "${WEBCORE_DIR}/Modules/keyboard-lock"
     "${WEBCORE_DIR}/Modules/mediacapabilities"
     "${WEBCORE_DIR}/Modules/mediacontrols"
     "${WEBCORE_DIR}/Modules/mediarecorder"
@@ -224,6 +225,7 @@ set(WebCore_IDL_INCLUDES
     Modules/geolocation
     Modules/highlight
     Modules/indexeddb
+    Modules/keyboard-lock
     Modules/mediacapabilities
     Modules/mediarecorder
     Modules/mediastream
@@ -383,6 +385,9 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/indexeddb/IDBTransactionMode.idl
     Modules/indexeddb/IDBVersionChangeEvent.idl
     Modules/indexeddb/WindowOrWorkerGlobalScope+IndexedDatabase.idl
+
+    Modules/keyboard-lock/Keyboard.idl
+    Modules/keyboard-lock/Navigator+Keyboard.idl
 
     Modules/mediacapabilities/AudioConfiguration.idl
     Modules/mediacapabilities/ColorGamut.idl
