@@ -491,9 +491,11 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearchWithCache(VM& vm, JSGloba
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
+    replacements.grow(items);
 
     CachedCall cachedCall(globalObject, replaceFunction, argCount);
     RETURN_IF_EXCEPTION(scope, nullptr);
+    size_t replacementIndex = 0;
     for (unsigned cursor = 0; cursor < length; cursor += cachedCount) {
         cachedCall.clearArguments();
         for (unsigned i = 0; i < cachedCount; ++i)
@@ -515,10 +517,11 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearchWithCache(VM& vm, JSGloba
         RETURN_IF_EXCEPTION(scope, nullptr);
         auto string = jsResult.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, nullptr);
-        replacements.unsafeAppendWithoutCapacityCheck(WTFMove(string));
+        replacements[replacementIndex++] = WTFMove(string);
 
         lastIndex = end;
     }
+    ASSERT(replacementIndex == replacements.size());
 
     if (static_cast<unsigned>(lastIndex) < sourceLen)
         sourceRanges.constructAndAppend(lastIndex, sourceLen);
