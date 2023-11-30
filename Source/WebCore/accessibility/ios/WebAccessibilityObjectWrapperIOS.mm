@@ -1117,6 +1117,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
             && [self accessibilityElementCount] == 0
             && self.axBackingObject->descriptionAttributeValue().find(deprecatedIsNotSpaceOrNewline) != notFound;
     case AccessibilityRole::Ignored:
+    case AccessibilityRole::LineBreak:
     case AccessibilityRole::Presentational:
     case AccessibilityRole::Unknown:
         return false;

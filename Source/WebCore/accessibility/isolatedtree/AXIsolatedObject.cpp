@@ -345,6 +345,9 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 
     if (object.isTextControl()) {
         setProperty(AXPropertyName::SelectedTextRange, object.selectedTextRange());
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    setProperty(AXPropertyName::TextRuns, object.textRuns());
+#endif
 
         auto range = object.textInputMarkedTextMarkerRange();
         if (auto characterRange = range.characterRange(); range && characterRange)

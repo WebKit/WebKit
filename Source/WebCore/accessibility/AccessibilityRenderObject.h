@@ -99,6 +99,9 @@ public:
     String helpText() const override;
     String textUnderElement(AccessibilityTextUnderElementMode = AccessibilityTextUnderElementMode()) const override;
     String selectedText() const override;
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    Vector<AXTextRun> textRuns() final;
+#endif
 
     bool isWidget() const override;
     Widget* widget() const override;

@@ -1098,13 +1098,33 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (!m_renderer)
         return true;
 
-    if (m_renderer->isBR())
+    if (m_renderer->isBR()) {
+#if ENABLE(AX_THREAD_TEXT_APIS)
+        // We need to preserve BRs within editable contexts (e.g. inside contenteditable) for serving
+        // text APIs off the main-thread because this allows them to be part of the AX tree, which is
+        // traversed to compute text markers.
+        auto* node = this->node();
+        return !node || !node->hasEditableStyle();
+#else
         return true;
+#endif
+    }
 
     if (WeakPtr renderText = dynamicDowncast<RenderText>(m_renderer.get())) {
         // Text elements with no rendered text, or only whitespace should not be part of the AX tree.
-        if (!renderText->hasRenderedText() || renderText->text().containsOnly<isASCIIWhitespace>())
+        if (!renderText->hasRenderedText())
             return true;
+
+        if (renderText->text().containsOnly<isASCIIWhitespace>()) {
+#if ENABLE(AX_THREAD_TEXT_APIS)
+            // Preserve whitespace-only text within editable contexts because ignoring it would cause
+            // accessibility's representation of text to be different than what is actually rendered.
+            auto* node = this->node();
+            return !node || !node->hasEditableStyle();
+#else
+            return true;
+#endif
+        }
 
         if (renderText->parent()->isFirstLetter())
             return true;
@@ -1363,6 +1383,14 @@ CharacterRange AccessibilityRenderObject::selectedTextRange() const
 
     return documentBasedSelectedTextRange();
 }
+
+#if ENABLE(AX_THREAD_TEXT_APIS)
+Vector<AXTextRun> AccessibilityRenderObject::textRuns()
+{
+    // FIXME: Implement this.
+    return { };
+}
+#endif
 
 int AccessibilityRenderObject::insertionPointLineNumber() const
 {
@@ -2022,6 +2050,10 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return AccessibilityRole::ListMarker;
     if (m_renderer->isRenderText())
         return AccessibilityRole::StaticText;
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    if (m_renderer->isBR())
+        return AccessibilityRole::LineBreak;
+#endif
     if (is<HTMLImageElement>(node) && downcast<HTMLImageElement>(*node).hasAttributeWithoutSynchronization(usemapAttr))
         return AccessibilityRole::ImageMap;
     if (m_renderer->isImage()) {
