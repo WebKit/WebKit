@@ -26,6 +26,9 @@
 #include "config.h"
 #include "NotificationPayload.h"
 
+#include "NotificationData.h"
+#include "NotificationJSONParser.h"
+
 #if ENABLE(DECLARATIVE_WEB_PUSH)
 
 #include "Logging.h"

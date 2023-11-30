@@ -27,6 +27,7 @@
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
 
+#include "JSDOMConvertEnumeration.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/text/StringParsingBuffer.h>
 

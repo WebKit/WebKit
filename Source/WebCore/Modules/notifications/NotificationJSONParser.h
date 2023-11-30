@@ -30,6 +30,7 @@
 #include "ExceptionOr.h"
 #include "NotificationOptionsPayload.h"
 #include "NotificationPayload.h"
+#include <wtf/JSONValues.h>
 #include <wtf/URL.h>
 #include <wtf/text/WTFString.h>
 
