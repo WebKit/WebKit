@@ -45,6 +45,8 @@ _CHOICES = [
     "native-code",
     "cmake-code",
     "idl-code",
+    "preferences",
+    "sandbox",
 ]
 
 
@@ -56,6 +58,8 @@ def _search_with(choice):
         "native-code": search.FeatureDefinesUsageNativeCode,
         "cmake-code": search.FeatureDefinesUsageCMakeCode,
         "idl-code": search.FeatureDefinesUsageIdlCode,
+        "preferences": search.FeatureDefinesUsagePreferences,
+        "sandbox": search.FeatureDefinesUsageSandbox,
     }
 
     return mapping[choice]()
@@ -80,7 +84,7 @@ def _choice_set(choices):
     if "all-code" in choices_set:
         choices_set.remove("all-code")
 
-        choices_set.update(["native-code", "cmake-code", "idl-code"])
+        choices_set.update(["native-code", "cmake-code", "idl-code", "preferences", "sandbox"])
 
     return choices_set
 

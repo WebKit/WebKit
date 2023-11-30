@@ -120,13 +120,35 @@ class FeatureDefinesPerl(FeatureDefinesSearch):
         self._search_file(matcher, path)
 
 
+class FeatureDefinesUsagePreferences(FeatureDefinesSearch):
+    """ Find feature defines in UnifiedWebPreferences.yaml. """
+
+    def search(self, root, macro='ENABLE'):
+        matcher = usage_matcher(macro)
+        path = os.path.join(root, "Source", "WTF", "Scripts", "Preferences", "UnifiedWebPreferences.yaml")
+
+        self._search_file(matcher, path)
+
+
+class FeatureDefinesUsageSandbox(FeatureDefinesSearch):
+    """ Find feature defines in sandbox files. """
+
+    def search(self, root, macro='ENABLE'):
+        matcher = usage_matcher(macro)
+        directories = FeatureDefinesSearch._source_directories(root)
+        patterns = ['*.sb.in']
+
+        for directory in directories:
+            self._search_directory(matcher, directory, patterns)
+
+
 class FeatureDefinesUsageNativeCode(FeatureDefinesSearch):
     """ Find feature defines in native source code. """
 
     def search(self, root, macro='ENABLE'):
         matcher = usage_matcher(macro)
         directories = FeatureDefinesSearch._source_directories(root)
-        patterns = ['*.h', '*.c', '*.cpp', '*.mm', '*.messages.in']
+        patterns = ['*.h', '*.c', '*.cpp', '*.mm', '*.messages.in', '*.serialization.in']
 
         for directory in directories:
             self._search_directory(matcher, directory, patterns)
