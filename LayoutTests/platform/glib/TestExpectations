@@ -1179,9 +1179,12 @@ imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audio-decoder.https.any.worker.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.html [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audio-decoder.crossOriginIsolated.https.any.worker.html [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?adts_aac [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?opus [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_alaw [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_mulaw [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?adts_aac [ Pass ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp4_aac [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?opus [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_alaw [ Pass ]
 imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_mulaw [ Pass ]
@@ -1216,12 +1219,11 @@ webkit.org/b/155196 security/contentSecurityPolicy/video-with-file-url-allowed-b
 
 webkit.org/b/254207 media/media-source/media-source-monitor-playing-event.html [ Pass Timeout ]
 
-webkit.org/b/264708 [ Debug ] media/media-source/media-source-error-crash.html [ Pass Crash ]
+webkit.org/b/264708 media/media-source/media-source-error-crash.html [ Pass Crash ]
 webkit.org/b/264708 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-errors.html [ Pass Crash ]
 webkit.org/b/264708 [ Debug ] imported/w3c/web-platform-tests/media-source/mediasource-invalid-codec.html [ Pass Crash ]
 
-# webkit.org/b/228820 media/media-source/media-webm-opus-partial-abort.html [ Failure ]
-webkit.org/b/264708 [ Debug ] media/media-source/media-webm-opus-partial-abort.html [ Pass Crash Failure ]
+webkit.org/b/264708 media/media-source/media-webm-opus-partial-abort.html [ Pass Crash Failure ]
 
 webkit.org/b/264934 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-registerprocessor-called-on-globalthis.https.html [ Pass Crash ]
 webkit.org/b/264934 http/wpt/webaudio/the-audio-api/the-audioworklet-interface/exposed-properties.https.html [ Pass Crash ]
@@ -3714,7 +3716,7 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restri
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/restrict-properties/iframe-popup.https.html?3-4 [ Slow ]
 
 # Flakily crashing on GTK and WPE bots
-webkit.org/b/262949 media/media-garbage-collection.html [ Pass Crash Timeout ]
+webkit.org/b/262949 media/media-garbage-collection.html [ Pass Crash Timeout Failure ]
 
 # webkit.org/b/263473 [ GLib ] Implement wheel WPT actions in WebKit's test vendor JS without UIScriptController.sendEventStream
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive [ Skip ]
