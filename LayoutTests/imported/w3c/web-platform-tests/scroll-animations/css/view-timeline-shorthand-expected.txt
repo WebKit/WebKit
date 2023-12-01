@@ -79,7 +79,7 @@ FAIL Shorthand contraction of view-timeline-name:--abc:undefined;view-timeline-a
 FAIL Shorthand contraction of view-timeline-name:--a, --b:undefined;view-timeline-axis:inline, block:undefined;view-timeline-inset:auto, auto:undefined assert_equals: Declared value expected "--a inline, --b" but got ""
 FAIL Shorthand contraction of view-timeline-name:--a, --b:undefined;view-timeline-axis:inline, block:undefined;view-timeline-inset:1px 2px, 3px 3px:undefined assert_equals: Declared value expected "--a inline 1px 2px, --b 3px" but got ""
 FAIL Shorthand contraction of view-timeline-name:none, none:undefined;view-timeline-axis:block, block:undefined;view-timeline-inset:auto auto, auto:undefined assert_equals: Declared value expected "none, none" but got ""
-PASS Shorthand contraction of view-timeline-name:--a, --b, --c:undefined;view-timeline-axis:inline, inline:undefined;view-timeline-inset:auto, auto:undefined
-PASS Shorthand contraction of view-timeline-name:--a, --b:undefined;view-timeline-axis:inline, inline, inline:undefined;view-timeline-inset:auto, auto, auto:undefined
-PASS Shorthand contraction of view-timeline-name:--a, --b:undefined;view-timeline-axis:inline, inline:undefined;view-timeline-inset:auto, auto, auto:undefined
+FAIL Shorthand contraction of view-timeline-name:--a, --b, --c:undefined;view-timeline-axis:inline, inline:undefined;view-timeline-inset:auto, auto:undefined assert_equals: Declared value expected "--a inline, --b inline, --c inline" but got ""
+FAIL Shorthand contraction of view-timeline-name:--a, --b:undefined;view-timeline-axis:inline, inline, inline:undefined;view-timeline-inset:auto, auto, auto:undefined assert_equals: Declared value expected "--a inline, --b inline" but got ""
+FAIL Shorthand contraction of view-timeline-name:--a, --b:undefined;view-timeline-axis:inline, inline:undefined;view-timeline-inset:auto, auto, auto:undefined assert_equals: Declared value expected "--a inline, --b inline" but got ""
 
