@@ -35,7 +35,7 @@ namespace WebCore {
 
 class Element;
 
-class ScrollTimeline final : public AnimationTimeline {
+class ScrollTimeline : public AnimationTimeline {
 public:
     static Ref<ScrollTimeline> create(ScrollTimelineOptions&& = { });
     static Ref<ScrollTimeline> create(const AtomString&, ScrollAxis);
@@ -48,9 +48,11 @@ public:
     const AtomString& name() const { return m_name; }
     void setName(const AtomString& name) { m_name = name; }
 
+protected:
+    explicit ScrollTimeline(const AtomString&, ScrollAxis);
+
 private:
     explicit ScrollTimeline(ScrollTimelineOptions&& = { });
-    explicit ScrollTimeline(const AtomString&, ScrollAxis);
 
     bool isScrollTimeline() const final { return true; }
 

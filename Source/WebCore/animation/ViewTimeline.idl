@@ -27,7 +27,7 @@
     EnabledBySetting=ScrollDrivenAnimationsEnabled,
     Exposed=Window,
     JSGenerateToJSObject
-] interface ViewTimeline : AnimationTimeline {
+] interface ViewTimeline : ScrollTimeline {
     constructor(optional ViewTimelineOptions options = {});
     readonly attribute Element subject;
     readonly attribute CSSNumericValue startOffset;

@@ -38,8 +38,8 @@ Ref<ViewTimeline> ViewTimeline::create(ViewTimelineOptions&& options)
 
 // FIXME: compute offset values from options.
 ViewTimeline::ViewTimeline(ViewTimelineOptions&& options)
-    : m_subject(WTFMove(options.subject))
-    , m_axis(options.axis)
+    : ScrollTimeline(nullAtom(), options.axis)
+    , m_subject(WTFMove(options.subject))
     , m_startOffset(CSSNumericFactory::px(0))
     , m_endOffset(CSSNumericFactory::px(0))
 {

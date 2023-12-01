@@ -25,8 +25,8 @@
 
 #pragma once
 
-#include "AnimationTimeline.h"
 #include "CSSNumericValue.h"
+#include "ScrollTimeline.h"
 #include "ViewTimelineOptions.h"
 #include <wtf/Ref.h>
 #include <wtf/WeakPtr.h>
@@ -35,12 +35,11 @@ namespace WebCore {
 
 class Element;
 
-class ViewTimeline final : public AnimationTimeline {
+class ViewTimeline final : public ScrollTimeline {
 public:
     static Ref<ViewTimeline> create(ViewTimelineOptions&& = { });
 
     Element* subject() const { return m_subject.get(); }
-    ScrollAxis axis() const { return m_axis; }
     const CSSNumericValue& startOffset() const { return m_startOffset.get(); }
     const CSSNumericValue& endOffset() const { return m_endOffset.get(); }
 
@@ -50,7 +49,6 @@ private:
     bool isViewTimeline() const final { return true; }
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_subject;
-    ScrollAxis m_axis;
     Ref<CSSNumericValue> m_startOffset;
     Ref<CSSNumericValue> m_endOffset;
 };
