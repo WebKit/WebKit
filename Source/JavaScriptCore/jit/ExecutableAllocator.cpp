@@ -1196,22 +1196,6 @@ void* ExecutableAllocator::getJumpIslandToConcurrently(void* from, void* newDest
 }
 #endif
 
-void* startOfFixedExecutableMemoryPoolImpl()
-{
-    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
-    if (!allocator)
-        return nullptr;
-    return allocator->memoryStart();
-}
-
-void* endOfFixedExecutableMemoryPoolImpl()
-{
-    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
-    if (!allocator)
-        return nullptr;
-    return allocator->memoryEnd();
-}
-
 void dumpJITMemory(const void* dst, const void* src, size_t size)
 {
     RELEASE_ASSERT(Options::dumpJITMemoryPath());
@@ -1335,12 +1319,6 @@ void ExecutableAllocator::initialize()
         return;
     g_jscConfig.executableAllocator = new ExecutableAllocator;
     globalExecutableAllocatorToWorkAroundLeaks = g_jscConfig.executableAllocator;
-}
-
-ExecutableAllocator& ExecutableAllocator::singleton()
-{
-    ASSERT(g_jscConfig.executableAllocator);
-    return *g_jscConfig.executableAllocator;
 }
 
 } // namespace JSC

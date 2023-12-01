@@ -260,7 +260,7 @@ public:
     {
     }
     
-    AssemblerBuffer& buffer() { return m_buffer; }
+    ALWAYS_INLINE AssemblerBuffer& buffer() { return m_buffer; }
 
     // (HS, LO, HI, LS) -> (AE, B, A, BE)
     // (VS, VC) -> (O, NO)
@@ -391,8 +391,8 @@ public:
             data.copyTypes = other.data.copyTypes;
             return *this;
         }
-        intptr_t from() const { return data.realTypes.m_from; }
-        void setFrom(const ARM64Assembler* assembler, intptr_t from)
+        ALWAYS_INLINE intptr_t from() const { return data.realTypes.m_from; }
+        ALWAYS_INLINE void setFrom(const ARM64Assembler* assembler, intptr_t from)
         {
 #if CPU(ARM64E)
             data.realTypes.m_to = tagInt(to(assembler), static_cast<PtrTag>(from ^ bitwise_cast<intptr_t>(assembler)));
@@ -401,7 +401,7 @@ public:
 #endif
             data.realTypes.m_from = from;
         }
-        intptr_t to(const ARM64Assembler* assembler) const
+        ALWAYS_INLINE intptr_t to(const ARM64Assembler* assembler) const
         {
 #if CPU(ARM64E)
             return untagInt(data.realTypes.m_to, static_cast<PtrTag>(data.realTypes.m_from ^ bitwise_cast<intptr_t>(assembler)));
@@ -410,13 +410,13 @@ public:
             return data.realTypes.m_to;
 #endif
         }
-        JumpType type() const { return data.realTypes.m_type; }
-        JumpLinkType linkType() const { return data.realTypes.m_linkType; }
-        void setLinkType(JumpLinkType linkType) { ASSERT(data.realTypes.m_linkType == LinkInvalid); data.realTypes.m_linkType = linkType; }
-        Condition condition() const { return data.realTypes.m_condition; }
-        bool is64Bit() const { return data.realTypes.m_is64Bit; }
-        unsigned bitNumber() const { return data.realTypes.m_bitNumber; }
-        RegisterID compareRegister() const { return data.realTypes.m_compareRegister; }
+        ALWAYS_INLINE JumpType type() const { return data.realTypes.m_type; }
+        ALWAYS_INLINE JumpLinkType linkType() const { return data.realTypes.m_linkType; }
+        ALWAYS_INLINE void setLinkType(JumpLinkType linkType) { ASSERT(data.realTypes.m_linkType == LinkInvalid); data.realTypes.m_linkType = linkType; }
+        ALWAYS_INLINE Condition condition() const { return data.realTypes.m_condition; }
+        ALWAYS_INLINE bool is64Bit() const { return data.realTypes.m_is64Bit; }
+        ALWAYS_INLINE unsigned bitNumber() const { return data.realTypes.m_bitNumber; }
+        ALWAYS_INLINE RegisterID compareRegister() const { return data.realTypes.m_compareRegister; }
 
     private:
         union {
@@ -3762,7 +3762,7 @@ protected:
             && rd == _rd;
     }
 
-    static void linkPointer(int* address, void* valuePtr, bool flush = false)
+    ALWAYS_INLINE static void linkPointer(int* address, void* valuePtr, bool flush = false)
     {
         Datasize sf;
         MoveWideOp opc;
@@ -3781,7 +3781,7 @@ protected:
     }
 
     template<BranchType type, CopyFunction copy = performJITMemcpy>
-    static void linkJumpOrCall(int* from, const int* fromInstruction, void* to)
+    ALWAYS_INLINE static void linkJumpOrCall(int* from, const int* fromInstruction, void* to)
     {
         static_assert(type == BranchType_JMP || type == BranchType_CALL);
 
@@ -3813,7 +3813,7 @@ protected:
     }
 
     template<BranchTargetType type, CopyFunction copy = performJITMemcpy>
-    static void linkCompareAndBranch(Condition condition, bool is64Bit, RegisterID rt, int* from, const int* fromInstruction, void* to)
+    ALWAYS_INLINE static void linkCompareAndBranch(Condition condition, bool is64Bit, RegisterID rt, int* from, const int* fromInstruction, void* to)
     {
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
@@ -3839,7 +3839,7 @@ protected:
     }
 
     template<BranchTargetType type, CopyFunction copy = performJITMemcpy>
-    static void linkConditionalBranch(Condition condition, int* from, const int* fromInstruction, void* to)
+    ALWAYS_INLINE static void linkConditionalBranch(Condition condition, int* from, const int* fromInstruction, void* to)
     {
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
@@ -3865,7 +3865,7 @@ protected:
     }
 
     template<BranchTargetType type, CopyFunction copy = performJITMemcpy>
-    static void linkTestAndBranch(Condition condition, unsigned bitNumber, RegisterID rt, int* from, const int* fromInstruction, void* to)
+    ALWAYS_INLINE static void linkTestAndBranch(Condition condition, unsigned bitNumber, RegisterID rt, int* from, const int* fromInstruction, void* to)
     {
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
         ASSERT(!(reinterpret_cast<intptr_t>(from) & 3));
@@ -3892,7 +3892,7 @@ protected:
     }
 
     template<BranchType type>
-    static void relinkJumpOrCall(int* from, const int* fromInstruction, void* to)
+    ALWAYS_INLINE static void relinkJumpOrCall(int* from, const int* fromInstruction, void* to)
     {
         static_assert(type == BranchType_JMP || type == BranchType_CALL);
         if ((type == BranchType_JMP) && disassembleNop(from)) {
@@ -3941,7 +3941,7 @@ protected:
         linkJumpOrCall<type>(from, fromInstruction, to);
     }
 
-    static int* addressOf(void* code, AssemblerLabel label)
+    ALWAYS_INLINE static int* addressOf(void* code, AssemblerLabel label)
     {
         return reinterpret_cast<int*>(static_cast<char*>(code) + label.offset());
     }
@@ -4023,7 +4023,7 @@ protected:
         
     }
 
-    static bool disassembleUnconditionalBranchImmediate(void* address, bool& op, int& imm26)
+    ALWAYS_INLINE static bool disassembleUnconditionalBranchImmediate(void* address, bool& op, int& imm26)
     {
         int insn = *static_cast<int*>(address);
         op = (insn >> 31) & 1;

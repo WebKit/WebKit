@@ -369,7 +369,7 @@ namespace JSC {
 
         unsigned debugOffset() { return m_index; }
 
-        AssemblerData&& releaseAssemblerData()
+        ALWAYS_INLINE AssemblerData&& releaseAssemblerData()
         {
             return WTFMove(m_storage);
         }

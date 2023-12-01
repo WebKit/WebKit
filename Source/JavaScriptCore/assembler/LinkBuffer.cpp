@@ -214,15 +214,15 @@ private:
 
 static ALWAYS_INLINE void recordLinkOffsets(AssemblerData& assemblerData, int32_t regionStart, int32_t regionEnd, int32_t offset)
 {
-#if OS(DARWIN)
-    memset_pattern4(bitwise_cast<uint8_t*>(assemblerData.buffer()) + regionStart, &offset, regionEnd - regionStart);
-#else
+// #if OS(DARWIN)
+    // memset_pattern4(bitwise_cast<uint8_t*>(assemblerData.buffer()) + regionStart, &offset, regionEnd - regionStart);
+// #else
     int32_t ptr = regionStart / sizeof(int32_t);
     const int32_t end = regionEnd / sizeof(int32_t);
     int32_t* offsets = reinterpret_cast_ptr<int32_t*>(assemblerData.buffer());
     while (ptr < end)
         offsets[ptr++] = offset;
-#endif
+// #endif
 }
 
 // We use this to prevent compile errors on some platforms that are unhappy
@@ -236,19 +236,10 @@ template <typename InstructionType>
 void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompilationEffort effort)
 {
     allocate(macroAssembler, effort);
-    const size_t initialSize = macroAssembler.m_assembler.codeSize();
     if (didFailToAllocate())
         return;
 
     Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink = macroAssembler.jumpsToLink();
-    m_assemblerStorage = macroAssembler.m_assembler.buffer().releaseAssemblerData();
-    uint8_t* inData = bitwise_cast<uint8_t*>(m_assemblerStorage.buffer());
-#if CPU(ARM64E)
-    ARM64EHash<ShouldSign::No> verifyUncompactedHash;
-    m_assemblerHashesStorage = macroAssembler.m_assembler.buffer().releaseAssemblerHashes();
-    uint32_t* inHashes = bitwise_cast<uint32_t*>(m_assemblerHashesStorage.buffer());
-#endif
-
     uint8_t* codeOutData = m_code.dataLocation<uint8_t*>();
 
     BranchCompactionLinkBuffer outBuffer(m_size, g_jscConfig.useFastJITPermissions ? codeOutData : 0);
@@ -259,130 +250,161 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     RELEASE_ASSERT(roundUpToMultipleOf<sizeof(unsigned)>(codeOutData) == codeOutData);
 #endif
 
-    int readPtr = 0;
-    int writePtr = 0;
-    unsigned jumpCount = jumpsToLink.size();
-
-    auto read = [&](const InstructionType* ptr) -> InstructionType {
-        InstructionType value = *ptr;
 #if CPU(ARM64E)
-        unsigned index = (bitwise_cast<uint8_t*>(ptr) - inData) / 4;
-        uint32_t hash = verifyUncompactedHash.update(value, index);
-        RELEASE_ASSERT(inHashes[index] == hash);
+    ARM64EHash<ShouldSign::No> verifyUncompactedHash;
 #endif
-        return value;
-    };
 
+    WTF::compilerFence();
     if (g_jscConfig.useFastJITPermissions)
-        threadSelfRestrictRWXToRW();
+            threadSelfRestrictRWXToRW();
 
-    if (m_shouldPerformBranchCompaction) {
-        for (unsigned i = 0; i < jumpCount; ++i) {
-            int offset = readPtr - writePtr;
-            ASSERT(!(offset & 1));
-                
-            // Copy the instructions from the last jump to the current one.
-            size_t regionSize = jumpsToLink[i].from() - readPtr;
-            InstructionType* copySource = reinterpret_cast_ptr<InstructionType*>(inData + readPtr);
-            InstructionType* copyEnd = reinterpret_cast_ptr<InstructionType*>(inData + readPtr + regionSize);
-            InstructionType* copyDst = reinterpret_cast_ptr<InstructionType*>(outData + writePtr);
-            ASSERT(!(regionSize % 2));
-            ASSERT(!(readPtr % 2));
-            ASSERT(!(writePtr % 2));
-            while (copySource != copyEnd) {
-                InstructionType insn = read(copySource++);
-                *copyDst++ = insn;
-            }
-            recordLinkOffsets(m_assemblerStorage, readPtr, jumpsToLink[i].from(), offset);
-            readPtr += regionSize;
-            writePtr += regionSize;
-                
-            // Calculate absolute address of the jump target, in the case of backwards
-            // branches we need to be precise, forward branches we are pessimistic
-            const uint8_t* target;
-#if CPU(ARM64)
-            const intptr_t to = jumpsToLink[i].to(&macroAssembler.m_assembler);
-#else
-            const intptr_t to = jumpsToLink[i].to();
+    ([](LinkBuffer* thiz, MacroAssembler& macroAssembler,
+        uint8_t* outData, uint8_t* codeOutData, Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink
+#if CPU(ARM64E)
+        , ARM64EHash<ShouldSign::No>& verifyUncompactedHash
 #endif
-            if (to >= jumpsToLink[i].from())
-                target = codeOutData + to - offset; // Compensate for what we have collapsed so far
-            else
-                target = codeOutData + to - executableOffsetFor(to);
+        ) __attribute__((noinline)) /*__attribute__((nospill))*/ {
+        __asm__ volatile ("brk 42\n");
+        const size_t initialSize = macroAssembler.m_assembler.codeSize();
 
-            JumpLinkType jumpLinkType = MacroAssembler::computeJumpType(jumpsToLink[i], codeOutData + writePtr, target);
-            // Compact branch if we can...
-            if (MacroAssembler::canCompact(jumpsToLink[i].type())) {
-                // Step back in the write stream
-                int32_t delta = MacroAssembler::jumpSizeDelta(jumpsToLink[i].type(), jumpLinkType);
-                if (delta) {
-                    writePtr -= delta;
-                    recordLinkOffsets(m_assemblerStorage, jumpsToLink[i].from() - delta, readPtr, readPtr - writePtr);
+        thiz->m_assemblerStorage = macroAssembler.m_assembler.buffer().releaseAssemblerData();
+        uint8_t* inData = bitwise_cast<uint8_t*>(thiz->m_assemblerStorage.buffer());
+    #if CPU(ARM64E)
+        thiz->m_assemblerHashesStorage = macroAssembler.m_assembler.buffer().releaseAssemblerHashes();
+        uint32_t* inHashes = bitwise_cast<uint32_t*>(thiz->m_assemblerHashesStorage.buffer());
+    #endif
+
+        int readPtr = 0;
+        int writePtr = 0;
+        unsigned jumpCount = jumpsToLink.size();
+
+        auto read = [&](const InstructionType* ptr) ALWAYS_INLINE_LAMBDA -> InstructionType {
+            InstructionType value = *ptr;
+    #if CPU(ARM64E)
+            unsigned index = (bitwise_cast<uint8_t*>(ptr) - inData) / 4;
+            uint32_t hash = verifyUncompactedHash.update(value, index);
+            RELEASE_ASSERT(inHashes[index] == hash);
+    #endif
+            return value;
+        };
+
+        if (thiz->m_shouldPerformBranchCompaction) {
+            for (unsigned i = 0; i < jumpCount; ++i) {
+                int offset = readPtr - writePtr;
+                ASSERT(!(offset & 1));
+
+                // Copy the instructions from the last jump to the current one.
+                size_t regionSize = jumpsToLink[i].from() - readPtr;
+                InstructionType* copySource = reinterpret_cast_ptr<InstructionType*>(inData + readPtr);
+                InstructionType* copyEnd = reinterpret_cast_ptr<InstructionType*>(inData + readPtr + regionSize);
+                InstructionType* copyDst = reinterpret_cast_ptr<InstructionType*>(outData + writePtr);
+                ASSERT(!(regionSize % 2));
+                ASSERT(!(readPtr % 2));
+                ASSERT(!(writePtr % 2));
+                while (copySource != copyEnd) {
+                    InstructionType insn = read(copySource++);
+                    *copyDst++ = insn;
                 }
+                recordLinkOffsets(thiz->m_assemblerStorage, readPtr, jumpsToLink[i].from(), offset);
+                readPtr += regionSize;
+                writePtr += regionSize;
+
+                // Calculate absolute address of the jump target, in the case of backwards
+                // branches we need to be precise, forward branches we are pessimistic
+                const uint8_t* target;
+    #if CPU(ARM64)
+                const intptr_t to = jumpsToLink[i].to(&macroAssembler.m_assembler);
+    #else
+                const intptr_t to = jumpsToLink[i].to();
+    #endif
+                if (to >= jumpsToLink[i].from())
+                    target = codeOutData + to - offset; // Compensate for what we have collapsed so far
+                else
+                    target = codeOutData + to - thiz->executableOffsetFor(to);
+
+                JumpLinkType jumpLinkType = MacroAssembler::computeJumpType(jumpsToLink[i], codeOutData + writePtr, target);
+                // Compact branch if we can...
+                if (MacroAssembler::canCompact(jumpsToLink[i].type())) {
+                    // Step back in the write stream
+                    int32_t delta = MacroAssembler::jumpSizeDelta(jumpsToLink[i].type(), jumpLinkType);
+                    if (delta) {
+                        writePtr -= delta;
+                        recordLinkOffsets(thiz->m_assemblerStorage, jumpsToLink[i].from() - delta, readPtr, readPtr - writePtr);
+                    }
+                }
+    #if CPU(ARM64)
+                jumpsToLink[i].setFrom(&macroAssembler.m_assembler, writePtr);
+    #else
+                jumpsToLink[i].setFrom(writePtr);
+    #endif
             }
-#if CPU(ARM64)
-            jumpsToLink[i].setFrom(&macroAssembler.m_assembler, writePtr);
-#else
-            jumpsToLink[i].setFrom(writePtr);
+        } else {
+            if (ASSERT_ENABLED) {
+                for (unsigned i = 0; i < jumpCount; ++i)
+                    ASSERT(!MacroAssembler::canCompact(jumpsToLink[i].type()));
+            }
+        }
+
+        // Copy everything after the last jump
+        {
+            InstructionType* dst = bitwise_cast<InstructionType*>(outData + writePtr);
+            InstructionType* src = bitwise_cast<InstructionType*>(inData + readPtr);
+            size_t bytes = initialSize - readPtr;
+
+            RELEASE_ASSERT(bitwise_cast<uintptr_t>(dst) % sizeof(InstructionType) == 0);
+            RELEASE_ASSERT(bitwise_cast<uintptr_t>(src) % sizeof(InstructionType) == 0);
+            RELEASE_ASSERT(bytes % sizeof(InstructionType) == 0);
+
+            for (size_t i = 0; i < bytes; i += sizeof(InstructionType)) {
+                InstructionType insn = read(src++);
+                *dst++ = insn;
+            }
+        }
+
+
+        recordLinkOffsets(thiz->m_assemblerStorage, readPtr, initialSize, readPtr - writePtr);
+
+        for (unsigned i = 0; i < jumpCount; ++i) {
+            uint8_t* location = codeOutData + jumpsToLink[i].from();
+    #if CPU(ARM64)
+            const intptr_t to = jumpsToLink[i].to(&macroAssembler.m_assembler);
+    #else
+            const intptr_t to = jumpsToLink[i].to();
+    #endif
+            uint8_t* target = codeOutData + to - thiz->executableOffsetFor(to);
+            if (g_jscConfig.useFastJITPermissions)
+                MacroAssembler::link<memcpyWrapper>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target);
+            // else
+                // MacroAssembler::link<performJITMemcpy>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target);
+        }
+
+        size_t compactSize = writePtr + initialSize - readPtr;
+        if (!thiz->m_executableMemory) {
+            size_t nopSizeInBytes = initialSize - compactSize;
+
+            if (g_jscConfig.useFastJITPermissions)
+                Assembler::fillNops<memcpyWrapper>(outData + compactSize, nopSizeInBytes);
+            // else
+                // Assembler::fillNops<performJITMemcpy>(outData + compactSize, nopSizeInBytes);
+        }
+
+        // todo fine to move this above toggle?
+        if (thiz->m_executableMemory)
+            thiz->m_size = compactSize; // we shrink below
+
+    })(this, macroAssembler,
+        outData, codeOutData, jumpsToLink
+#if CPU(ARM64E)
+        , verifyUncompactedHash
 #endif
-        }
-    } else {
-        if (ASSERT_ENABLED) {
-            for (unsigned i = 0; i < jumpCount; ++i)
-                ASSERT(!MacroAssembler::canCompact(jumpsToLink[i].type()));
-        }
-    }
-
-    // Copy everything after the last jump
-    {
-        InstructionType* dst = bitwise_cast<InstructionType*>(outData + writePtr);
-        InstructionType* src = bitwise_cast<InstructionType*>(inData + readPtr);
-        size_t bytes = initialSize - readPtr;
-
-        RELEASE_ASSERT(bitwise_cast<uintptr_t>(dst) % sizeof(InstructionType) == 0);
-        RELEASE_ASSERT(bitwise_cast<uintptr_t>(src) % sizeof(InstructionType) == 0);
-        RELEASE_ASSERT(bytes % sizeof(InstructionType) == 0);
-
-        for (size_t i = 0; i < bytes; i += sizeof(InstructionType)) {
-            InstructionType insn = read(src++);
-            *dst++ = insn;
-        }
-    }
-
-
-    recordLinkOffsets(m_assemblerStorage, readPtr, initialSize, readPtr - writePtr);
-        
-    for (unsigned i = 0; i < jumpCount; ++i) {
-        uint8_t* location = codeOutData + jumpsToLink[i].from();
-#if CPU(ARM64)
-        const intptr_t to = jumpsToLink[i].to(&macroAssembler.m_assembler);
-#else
-        const intptr_t to = jumpsToLink[i].to();
-#endif
-        uint8_t* target = codeOutData + to - executableOffsetFor(to);
-        if (g_jscConfig.useFastJITPermissions)
-            MacroAssembler::link<memcpyWrapper>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target);
-        else
-            MacroAssembler::link<performJITMemcpy>(jumpsToLink[i], outData + jumpsToLink[i].from(), location, target);
-    }
-
-    size_t compactSize = writePtr + initialSize - readPtr;
-    if (!m_executableMemory) {
-        size_t nopSizeInBytes = initialSize - compactSize;
-
-        if (g_jscConfig.useFastJITPermissions)
-            Assembler::fillNops<memcpyWrapper>(outData + compactSize, nopSizeInBytes);
-        else
-            Assembler::fillNops<performJITMemcpy>(outData + compactSize, nopSizeInBytes);
-    }
+    );
+    WTF::compilerFence();
 
     if (g_jscConfig.useFastJITPermissions)
-        threadSelfRestrictRWXToRX();
+            threadSelfRestrictRWXToRX();
 
-    if (m_executableMemory) {
-        m_size = compactSize;
+    if (m_executableMemory)
         m_executableMemory->shrink(m_size);
-    }
 
 #if ENABLE(JIT)
     if (g_jscConfig.useFastJITPermissions) {

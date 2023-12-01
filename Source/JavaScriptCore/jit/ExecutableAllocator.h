@@ -90,8 +90,21 @@ private:
 
 #if ENABLE(JIT)
 
-JS_EXPORT_PRIVATE void* startOfFixedExecutableMemoryPoolImpl();
-JS_EXPORT_PRIVATE void* endOfFixedExecutableMemoryPoolImpl();
+JS_EXPORT_PRIVATE ALWAYS_INLINE void* startOfFixedExecutableMemoryPoolImpl()
+{
+    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    if (!allocator)
+        return nullptr;
+    return g_jscConfig.startExecutableMemory;
+}
+
+JS_EXPORT_PRIVATE ALWAYS_INLINE void* endOfFixedExecutableMemoryPoolImpl()
+{
+    auto* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    if (!allocator)
+        return nullptr;
+    return g_jscConfig.endExecutableMemory;
+}
 
 template<typename T = void*>
 T startOfFixedExecutableMemoryPool()
@@ -153,7 +166,12 @@ class ExecutableAllocator : private ExecutableAllocatorBase {
 public:
     using Base = ExecutableAllocatorBase;
 
-    JS_EXPORT_PRIVATE static ExecutableAllocator& singleton();
+    JS_EXPORT_PRIVATE ALWAYS_INLINE static ExecutableAllocator& singleton()
+    {
+        ASSERT(g_jscConfig.executableAllocator);
+        return *g_jscConfig.executableAllocator;
+    }
+
     static void initialize();
     static void initializeUnderlyingAllocator();
 
@@ -180,7 +198,7 @@ public:
     Lock& getLock() const;
 
 #if ENABLE(JUMP_ISLANDS)
-    JS_EXPORT_PRIVATE void* getJumpIslandTo(void* from, void* newDestination);
+    JS_EXPORT_PRIVATE __attribute__((preserve_most)) void* getJumpIslandTo(void* from, void* newDestination);
     JS_EXPORT_PRIVATE void* getJumpIslandToConcurrently(void* from, void* newDestination);
 #endif
 

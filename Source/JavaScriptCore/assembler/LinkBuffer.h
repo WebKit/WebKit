@@ -348,7 +348,7 @@ private:
     JS_EXPORT_PRIVATE CodeRef<LinkBufferPtrTag> finalizeCodeWithDisassemblyImpl(bool dumpDisassembly, const char* format, ...) WTF_ATTRIBUTE_PRINTF(3, 4);
 
 #if ENABLE(BRANCH_COMPACTION)
-    int executableOffsetFor(int location)
+    ALWAYS_INLINE int executableOffsetFor(int location)
     {
         // Returning 0 in this case works because at location <
         // sizeof(int32_t), no compaction could have happened before this
