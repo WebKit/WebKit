@@ -1374,53 +1374,6 @@ void WebProcessProxy::didDestroyUserGestureToken(uint64_t identifier)
         m_userInitiatedActionByAuthorizationTokenMap.remove(*removed->authorizationToken());
 }
 
-void WebProcessProxy::postMessageToRemote(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts& message)
-{
-    if (RefPtr targetFrame = WebFrameProxy::webFrame(target))
-        targetFrame->protectedProcess()->send(Messages::WebProcess::RemotePostMessage(source, sourceOrigin, target, targetOrigin, message), 0);
-}
-
-void WebProcessProxy::closeRemoteFrame(WebCore::FrameIdentifier frameID)
-{
-    // FIXME: <rdar://117383252> This, postMessageToRemote, renderTreeAsText, etc. should be messages to the WebPageProxy instead of the process.
-    // They are more the page doing things than the process.
-    RefPtr destinationFrame = WebFrameProxy::webFrame(frameID);
-    if (!destinationFrame || !destinationFrame->isMainFrame())
-        return;
-    if (RefPtr page = destinationFrame->page())
-        page->closePage();
-}
-
-void WebProcessProxy::focusRemoteFrame(WebCore::FrameIdentifier frameID)
-{
-    // FIXME: <rdar://117383252> This, postMessageToRemote, renderTreeAsText, etc. should be messages to the WebPageProxy instead of the process.
-    // They are more the page doing things than the process.
-    RefPtr destinationFrame = WebFrameProxy::webFrame(frameID);
-    if (!destinationFrame || !destinationFrame->isMainFrame())
-        return;
-
-    RefPtr page = destinationFrame->page();
-    if (!page)
-        return;
-
-    page->broadcastFocusedFrameToOtherProcesses(*connection(), frameID);
-    page->setFocus(true);
-}
-
-void WebProcessProxy::renderTreeAsText(WebCore::FrameIdentifier frameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior, CompletionHandler<void(String&&)>&& completionHandler)
-{
-    RefPtr frame = WebFrameProxy::webFrame(frameIdentifier);
-    if (!frame)
-        return completionHandler("Test Error - frame missing in UI process"_s);
-
-    auto sendResult = frame->process().sendSync(Messages::WebProcess::RenderTreeAsText(frameIdentifier, baseIndent, behavior), 0);
-    if (!sendResult.succeeded())
-        return completionHandler("Test Error - sending WebProcess::RenderTreeAsText failed"_s);
-
-    auto [result] = sendResult.takeReply();
-    completionHandler(WTFMove(result));
-}
-
 bool WebProcessProxy::canBeAddedToWebProcessCache() const
 {
 #if PLATFORM(IOS_FAMILY)

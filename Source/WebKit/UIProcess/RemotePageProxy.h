@@ -37,6 +37,7 @@ namespace IPC {
 class Connection;
 class Decoder;
 class Encoder;
+template<typename> struct ConnectionSendSyncResult;
 }
 
 namespace WebCore {
@@ -72,6 +73,7 @@ public:
     RefPtr<WebPageProxy> protectedPage() const;
 
     template<typename M> void send(M&&);
+    template<typename M> IPC::ConnectionSendSyncResult<M> sendSync(M&& message);
     template<typename M, typename C> void sendWithAsyncReply(M&&, C&&);
     template<typename M, typename C> void sendWithAsyncReply(M&&, C&&, const ObjectIdentifierGenericBase&);
 
@@ -108,6 +110,12 @@ private:
 template<typename M> void RemotePageProxy::send(M&& message)
 {
     m_process->send(std::forward<M>(message), m_webPageID, { });
+}
+
+template<typename M>
+IPC::ConnectionSendSyncResult<M> RemotePageProxy::sendSync(M&& message)
+{
+    return m_process->sendSync(std::forward<M>(message), m_webPageID);
 }
 
 template<typename M, typename C> void RemotePageProxy::sendWithAsyncReply(M&& message, C&& completionHandler)
