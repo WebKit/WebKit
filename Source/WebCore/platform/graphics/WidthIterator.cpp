@@ -191,7 +191,7 @@ static void resetGlyphBuffer(GlyphBuffer& glyphBuffer, GlyphBufferStringOffset i
     glyphBuffer.shrink(index);
 }
 
-static void addToGlyphBuffer(GlyphBuffer& glyphBuffer, Glyph glyph, const Font& font, float width, GlyphBufferStringOffset currentCharacterIndex, UChar32 character)
+static void addToGlyphBuffer(GlyphBuffer& glyphBuffer, Glyph glyph, const Font& font, float width, GlyphBufferStringOffset currentCharacterIndex, char32_t character)
 {
     glyphBuffer.add(glyph, font, width, currentCharacterIndex);
 
@@ -350,7 +350,7 @@ static bool resetFontRangeIfNeeded(AdvanceInternalState& advanceInternalState, S
     return false;
 }
 
-static void updateCharacterAndSmallCapsIfNeeded(SmallCapsState& smallCapsState, std::optional<UChar32> capitalizedCharacter, UChar32& characterToWrite)
+static void updateCharacterAndSmallCapsIfNeeded(SmallCapsState& smallCapsState, std::optional<char32_t> capitalizedCharacter, char32_t& characterToWrite)
 {
     if (smallCapsState.skipSmallCapsProcessing())
         return;
@@ -374,7 +374,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
     AdvanceInternalState advanceInternalState(glyphBuffer, primaryFont, textIterator.currentIndex());
     SmallCapsState smallCapsState(fontDescription);
 
-    UChar32 character = 0;
+    char32_t character = 0;
     float width = 0;
     unsigned clusterLength = 0;
     // We are iterating in string order, not glyph order. Compare this to ComplexTextController::adjustGlyphsAndAdvances()
@@ -400,7 +400,7 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         bool characterMustDrawSomething = !isDefaultIgnorableCodePoint(character);
 
         capitalizedCharacter = capitalized(character);
-        UChar32 characterToWrite = character;
+        char32_t characterToWrite = character;
 
 #if USE(FREETYPE)
         // Freetype based ports only override the characters with Default_Ignorable unicode property when the font
@@ -636,7 +636,7 @@ void WidthIterator::applyExtraSpacingAfterShaping(GlyphBuffer& glyphBuffer, unsi
     }
 }
 
-bool WidthIterator::characterCanUseSimplifiedTextMeasuring(UChar32 codePoint, bool whitespaceIsCollapsed)
+bool WidthIterator::characterCanUseSimplifiedTextMeasuring(char32_t codePoint, bool whitespaceIsCollapsed)
 {
     // This function needs to be kept in sync with applyCSSVisibilityRules().
 

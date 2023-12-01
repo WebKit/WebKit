@@ -243,7 +243,7 @@ template<typename CharacterType> constexpr bool isASCIIAlphaCaselessEqual(Charac
     //   - a control character such as "\n"
     // FIXME: Would be nice to make both the function name and expectedASCIILowercaseLetter argument name clearer.
     ASSERT(toASCIILowerUnchecked(expectedASCIILowercaseLetter) == expectedASCIILowercaseLetter);
-    return LIKELY(toASCIILowerUnchecked(inputCharacter) == expectedASCIILowercaseLetter);
+    return LIKELY(toASCIILowerUnchecked(inputCharacter) == static_cast<CharacterType>(expectedASCIILowercaseLetter));
 }
 
 template<typename CharacterType> constexpr bool isASCIIDigitOrPunctuation(CharacterType character)

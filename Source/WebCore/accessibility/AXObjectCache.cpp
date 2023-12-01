@@ -3368,12 +3368,12 @@ std::optional<SimpleRange> AXObjectCache::rightWordRange(const CharacterOffset& 
     return rangeForUnorderedCharacterOffsets(start, end);
 }
 
-static UChar32 characterForCharacterOffset(const CharacterOffset& characterOffset)
+static char32_t characterForCharacterOffset(const CharacterOffset& characterOffset)
 {
     if (characterOffset.isNull() || !characterOffset.node->isTextNode())
         return 0;
     
-    UChar32 ch = 0;
+    char32_t ch = 0;
     unsigned offset = characterOffset.startIndex + characterOffset.offset;
     if (offset < characterOffset.node->textContent().length()) {
 // FIXME: Remove IGNORE_CLANG_WARNINGS macros once one of <rdar://problem/58615489&58615391> is fixed.
@@ -3384,12 +3384,12 @@ IGNORE_CLANG_WARNINGS_END
     return ch;
 }
 
-UChar32 AXObjectCache::characterAfter(const CharacterOffset& characterOffset)
+char32_t AXObjectCache::characterAfter(const CharacterOffset& characterOffset)
 {
     return characterForCharacterOffset(nextCharacterOffset(characterOffset));
 }
 
-UChar32 AXObjectCache::characterBefore(const CharacterOffset& characterOffset)
+char32_t AXObjectCache::characterBefore(const CharacterOffset& characterOffset)
 {
     return characterForCharacterOffset(characterOffset);
 }

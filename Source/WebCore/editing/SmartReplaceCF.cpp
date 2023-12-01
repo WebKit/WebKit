@@ -64,7 +64,7 @@ static CFMutableCharacterSetRef getSmartSet(bool isPreviousCharacter)
     return smartSet.get();
 }
 
-bool isCharacterSmartReplaceExempt(UChar32 c, bool isPreviousCharacter)
+bool isCharacterSmartReplaceExempt(char32_t c, bool isPreviousCharacter)
 {
     return CFCharacterSetIsLongCharacterMember(getSmartSet(isPreviousCharacter), c);
 }

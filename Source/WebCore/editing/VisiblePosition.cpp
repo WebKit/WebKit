@@ -604,7 +604,7 @@ Position VisiblePosition::canonicalPosition(const Position& passedPosition)
     return next;
 }
 
-UChar32 VisiblePosition::characterAfter() const
+char32_t VisiblePosition::characterAfter() const
 {
     // We canonicalize to the first of two equivalent candidates, but the second of the two candidates
     // is the one that will be inside the text node containing the character after this visible position.
@@ -626,7 +626,7 @@ UChar32 VisiblePosition::characterAfter() const
     if (offset >= length)
         return 0;
 
-    UChar32 ch;
+    char32_t ch;
     U16_NEXT(textNode->data(), offset, length, ch);
     return ch;
 }

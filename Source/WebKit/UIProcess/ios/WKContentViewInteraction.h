@@ -522,7 +522,7 @@ struct ImageAnalysisContextMenuActionData {
 
     RetainPtr<NSDictionary> _additionalContextForStrongPasswordAssistance;
 
-    std::optional<UChar32> _lastInsertedCharacterToOverrideCharacterBeforeSelection;
+    std::optional<char32_t> _lastInsertedCharacterToOverrideCharacterBeforeSelection;
     unsigned _selectionChangeNestingLevel;
 
 #if ENABLE(DRAG_SUPPORT)

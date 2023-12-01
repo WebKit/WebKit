@@ -170,10 +170,10 @@ public:
     Glyph zeroWidthSpaceGlyph() const { return m_zeroWidthSpaceGlyph; }
     bool isZeroWidthSpaceGlyph(Glyph glyph) const { return glyph == m_zeroWidthSpaceGlyph && glyph; }
 
-    GlyphData glyphDataForCharacter(UChar32) const;
-    Glyph glyphForCharacter(UChar32) const;
-    bool supportsCodePoint(UChar32) const;
-    bool platformSupportsCodePoint(UChar32, std::optional<UChar32> variation = std::nullopt) const;
+    GlyphData glyphDataForCharacter(char32_t) const;
+    Glyph glyphForCharacter(char32_t) const;
+    bool supportsCodePoint(char32_t) const;
+    bool platformSupportsCodePoint(char32_t, std::optional<char32_t> variation = std::nullopt) const;
 
     RefPtr<Font> systemFallbackFontForCharacterCluster(StringView, const FontDescription&, ResolvedEmojiPolicy, IsForPlatformFont) const;
 

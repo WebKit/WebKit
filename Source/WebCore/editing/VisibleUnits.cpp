@@ -1837,10 +1837,10 @@ std::ptrdiff_t distanceBetweenPositions(const VisiblePosition& a, const VisibleP
     return a < b ? -characterCount(*makeSimpleRange(a, b)) : characterCount(*makeSimpleRange(b, a));
 }
 
-void charactersAroundPosition(const VisiblePosition& position, UChar32& oneAfter, UChar32& oneBefore, UChar32& twoBefore)
+void charactersAroundPosition(const VisiblePosition& position, char32_t& oneAfter, char32_t& oneBefore, char32_t& twoBefore)
 {
     const int maxCharacters = 3;
-    UChar32 characters[maxCharacters] = { 0 };
+    char32_t characters[maxCharacters] = { 0 };
 
     if (position.isNull() || isStartOfDocument(position))
         return;

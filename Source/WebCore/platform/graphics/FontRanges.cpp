@@ -79,7 +79,7 @@ FontRanges::FontRanges(RefPtr<Font>&& font)
 
 FontRanges::~FontRanges() = default;
 
-GlyphData FontRanges::glyphDataForCharacter(UChar32 character, ExternalResourceDownloadPolicy policy) const
+GlyphData FontRanges::glyphDataForCharacter(char32_t character, ExternalResourceDownloadPolicy policy) const
 {
     const Font* resultFont = nullptr;
     if (isGeneric() && isPrivateUseAreaCharacter(character))
@@ -116,7 +116,7 @@ GlyphData FontRanges::glyphDataForCharacter(UChar32 character, ExternalResourceD
     return GlyphData();
 }
 
-const Font* FontRanges::fontForCharacter(UChar32 character) const
+const Font* FontRanges::fontForCharacter(char32_t character) const
 {
     return glyphDataForCharacter(character, ExternalResourceDownloadPolicy::Allow).font.get();
 }

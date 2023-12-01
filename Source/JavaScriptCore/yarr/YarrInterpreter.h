@@ -43,10 +43,10 @@ struct ByteTerm {
     union {
         struct {
             union {
-                UChar32 patternCharacter;
+                char32_t patternCharacter;
                 struct {
-                    UChar32 lo;
-                    UChar32 hi;
+                    char32_t lo;
+                    char32_t hi;
                 } casedCharacter;
                 CharacterClass* characterClass;
                 struct {
@@ -120,7 +120,7 @@ struct ByteTerm {
     MatchDirection m_matchDirection : 1;
     unsigned inputPosition { 0 };
 
-    ByteTerm(UChar32 ch, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
+    ByteTerm(char32_t ch, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
         : frameLocation(frameLocation)
         , m_capture(false)
         , m_invert(false)
@@ -147,7 +147,7 @@ struct ByteTerm {
         }
     }
 
-    ByteTerm(UChar32 lo, UChar32 hi, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
+    ByteTerm(char32_t lo, char32_t hi, unsigned inputPos, unsigned frameLocation, Checked<unsigned> quantityCount, QuantifierType quantityType)
         : frameLocation(frameLocation)
         , m_capture(false)
         , m_invert(false)

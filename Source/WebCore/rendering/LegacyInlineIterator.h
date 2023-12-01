@@ -275,7 +275,7 @@ inline void LegacyInlineIterator::incrementByCodePointInTextNode()
         ++m_pos;
         return;
     }
-    UChar32 character;
+    char32_t character;
     U16_NEXT(text.characters16(), m_pos, text.length(), character);
 }
 

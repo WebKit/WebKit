@@ -893,7 +893,7 @@ class StringView::CodePoints::Iterator {
 public:
     Iterator(StringView, unsigned index);
 
-    UChar32 operator*() const;
+    char32_t operator*() const;
     Iterator& operator++();
 
     bool operator==(const Iterator&) const;
@@ -991,7 +991,7 @@ inline auto StringView::CodePoints::Iterator::operator++() -> Iterator&
     return *this;
 }
 
-inline UChar32 StringView::CodePoints::Iterator::operator*() const
+inline char32_t StringView::CodePoints::Iterator::operator*() const
 {
 #if CHECK_STRINGVIEW_LIFETIME
     ASSERT(m_stringView.underlyingStringIsValid());
@@ -999,7 +999,7 @@ inline UChar32 StringView::CodePoints::Iterator::operator*() const
     ASSERT(m_current < m_end);
     if (m_is8Bit)
         return *static_cast<const LChar*>(m_current);
-    UChar32 codePoint;
+    char32_t codePoint;
     size_t length = static_cast<const UChar*>(m_end) - static_cast<const UChar*>(m_current);
     U16_GET(static_cast<const UChar*>(m_current), 0, 0, length, codePoint);
     return codePoint;

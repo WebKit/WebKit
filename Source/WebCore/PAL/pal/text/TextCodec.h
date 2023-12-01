@@ -53,10 +53,10 @@ public:
     // Fills a null-terminated string representation of the given
     // unencodable character into the given replacement buffer.
     // The length of the string (not including the null) will be returned.
-    static int getUnencodableReplacement(UChar32, UnencodableHandling, UnencodableReplacementArray&);
+    static int getUnencodableReplacement(char32_t, UnencodableHandling, UnencodableReplacementArray&);
 };
 
-Function<void(UChar32, Vector<uint8_t>&)> unencodableHandler(UnencodableHandling);
+Function<void(char32_t, Vector<uint8_t>&)> unencodableHandler(UnencodableHandling);
 
 using EncodingNameRegistrar = void (*)(ASCIILiteral alias, ASCIILiteral name);
 

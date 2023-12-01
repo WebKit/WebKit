@@ -79,7 +79,8 @@ String TextCodecUTF16::decode(const char* bytes, size_t length, bool flush, bool
         if (m_leadSurrogate) {
             auto leadSurrogate = *std::exchange(m_leadSurrogate, std::nullopt);
             if (U16_IS_TRAIL(codeUnit)) {
-                result.appendCharacter(U16_GET_SUPPLEMENTARY(leadSurrogate, codeUnit));
+                char32_t codePoint = U16_GET_SUPPLEMENTARY(leadSurrogate, codeUnit);
+                result.append(codePoint);
                 return;
             }
             sawError = true;

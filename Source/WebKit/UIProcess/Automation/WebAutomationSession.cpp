@@ -2115,7 +2115,7 @@ static VirtualKey normalizedVirtualKey(VirtualKey key)
 }
 
 #if !ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
-static std::optional<UChar32> pressedCharKey(const String& pressedCharKeyString)
+static std::optional<char32_t> pressedCharKey(const String& pressedCharKeyString)
 {
     switch (pressedCharKeyString.length()) {
     case 1:

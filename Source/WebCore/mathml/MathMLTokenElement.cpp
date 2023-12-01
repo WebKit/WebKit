@@ -80,13 +80,13 @@ bool MathMLTokenElement::childShouldCreateRenderer(const Node& child) const
     return StyledElement::childShouldCreateRenderer(child);
 }
 
-std::optional<UChar32> MathMLTokenElement::convertToSingleCodePoint(StringView string)
+std::optional<char32_t> MathMLTokenElement::convertToSingleCodePoint(StringView string)
 {
     auto codePoints = string.trim(isASCIIWhitespaceWithoutFF<UChar>).codePoints();
     auto iterator = codePoints.begin();
     if (iterator == codePoints.end())
         return std::nullopt;
-    std::optional<UChar32> character = *iterator;
+    std::optional<char32_t> character = *iterator;
     ++iterator;
     return iterator == codePoints.end() ? character : std::nullopt;
 }

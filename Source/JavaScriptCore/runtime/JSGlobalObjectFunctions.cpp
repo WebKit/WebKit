@@ -98,7 +98,7 @@ static JSValue encode(JSGlobalObject* globalObject, const WTF::BitSet<256>& doNo
 
         // 4-d-ii. If the code unit value of C is less than 0xD800 or greater than 0xDBFF, then
         // 4-d-ii-1. Let V be the code unit value of C.
-        UChar32 codePoint;
+        char32_t codePoint;
         if (!U16_IS_LEAD(character))
             codePoint = character;
         else {
@@ -186,10 +186,10 @@ static JSValue decode(JSGlobalObject* globalObject, const CharType* characters, 
                         }
                     }
                     if (charLen != 0) {
-                        UChar32 character;
+                        char32_t character;
                         int32_t offset = 0;
                         U8_NEXT(sequence, offset, sequenceLen, character);
-                        if (character < 0)
+                        if (character == static_cast<char32_t>(U_SENTINEL))
                             charLen = 0;
                         else if (!U_IS_BMP(character)) {
                             // Convert to surrogate pair.

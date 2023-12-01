@@ -361,11 +361,11 @@ float FontCascade::widthForSimpleText(StringView text, TextDirection textDirecti
     return width;
 }
 
-GlyphData FontCascade::glyphDataForCharacter(UChar32 c, bool mirror, FontVariant variant) const
+GlyphData FontCascade::glyphDataForCharacter(char32_t c, bool mirror, FontVariant variant) const
 {
     if (variant == AutoVariant) {
         if (m_fontDescription.variantCaps() == FontVariantCaps::Small) {
-            UChar32 upperC = u_toupper(c);
+            char32_t upperC = u_toupper(c);
             if (upperC != c) {
                 c = upperC;
                 variant = SmallCapsVariant;
@@ -713,7 +713,7 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
             if (!U16_IS_TRAIL(next))
                 continue;
 
-            UChar32 supplementaryCharacter = U16_GET_SUPPLEMENTARY(c, next);
+            char32_t supplementaryCharacter = U16_GET_SUPPLEMENTARY(c, next);
 
             if (supplementaryCharacter < 0x10A00)
                 continue;
@@ -811,7 +811,7 @@ FontCascade::CodePath FontCascade::characterRangeCodePath(const UChar* character
     return result;
 }
 
-bool FontCascade::isCJKIdeograph(UChar32 c)
+bool FontCascade::isCJKIdeograph(char32_t c)
 {
     // The basic CJK Unified Ideographs block.
     if (c >= 0x4E00 && c <= 0x9FFF)
@@ -856,7 +856,7 @@ bool FontCascade::isCJKIdeograph(UChar32 c)
     return false;
 }
 
-bool FontCascade::isCJKIdeographOrSymbol(UChar32 c)
+bool FontCascade::isCJKIdeographOrSymbol(char32_t c)
 {
     // 0x2C7 Caron, Mandarin Chinese 3rd Tone
     // 0x2CA Modifier Letter Acute Accent, Mandarin Chinese 2nd Tone
@@ -1061,7 +1061,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const U
     }
     if (direction == TextDirection::LTR) {
         for (unsigned i = 0; i < length; ++i) {
-            UChar32 character = characters[i];
+            char32_t character = characters[i];
             if (treatAsSpace(character)) {
                 count++;
                 isAfterExpansion = true;
@@ -1082,7 +1082,7 @@ std::pair<unsigned, bool> FontCascade::expansionOpportunityCountInternal(const U
         }
     } else {
         for (unsigned i = length; i > 0; --i) {
-            UChar32 character = characters[i - 1];
+            char32_t character = characters[i - 1];
             if (treatAsSpace(character)) {
                 count++;
                 isAfterExpansion = true;
@@ -1129,7 +1129,7 @@ bool FontCascade::leftExpansionOpportunity(StringView stringView, TextDirection 
     if (!stringView.length())
         return false;
 
-    UChar32 initialCharacter;
+    char32_t initialCharacter;
     if (direction == TextDirection::LTR) {
         initialCharacter = stringView[0];
         if (U16_IS_LEAD(initialCharacter) && stringView.length() > 1 && U16_IS_TRAIL(stringView[1]))
@@ -1148,7 +1148,7 @@ bool FontCascade::rightExpansionOpportunity(StringView stringView, TextDirection
     if (!stringView.length())
         return false;
 
-    UChar32 finalCharacter;
+    char32_t finalCharacter;
     if (direction == TextDirection::LTR) {
         finalCharacter = stringView[stringView.length() - 1];
         if (U16_IS_TRAIL(finalCharacter) && stringView.length() > 1 && U16_IS_LEAD(stringView[stringView.length() - 2]))
@@ -1162,7 +1162,7 @@ bool FontCascade::rightExpansionOpportunity(StringView stringView, TextDirection
     return treatAsSpace(finalCharacter) || (canExpandAroundIdeographsInComplexText() && isCJKIdeographOrSymbol(finalCharacter));
 }
 
-bool FontCascade::canReceiveTextEmphasis(UChar32 c)
+bool FontCascade::canReceiveTextEmphasis(char32_t c)
 {
     if (U_GET_GC_MASK(c) & (U_GC_Z_MASK | U_GC_CN_MASK | U_GC_CC_MASK | U_GC_CF_MASK))
         return false;
@@ -1191,7 +1191,7 @@ static GlyphUnderlineType computeUnderlineType(const TextRun& textRun, const Gly
     // In general, we want to skip descenders. However, skipping descenders on CJK characters leads to undesirable renderings,
     // so we want to draw through CJK characters (on a character-by-character basis).
     // FIXME: The CSS spec says this should instead be done by the user-agent stylesheet using the lang= attribute.
-    UChar32 baseCharacter;
+    char32_t baseCharacter;
     auto offsetInString = glyphBuffer.checkedStringOffsetAt(index, textRun.length());
     if (!offsetInString)
         return GlyphUnderlineType::SkipDescenders;
@@ -1243,7 +1243,7 @@ std::optional<GlyphData> FontCascade::getEmphasisMarkGlyphData(const AtomString&
     if (mark.isEmpty())
         return std::nullopt;
 
-    UChar32 character;
+    char32_t character;
     if (!mark.is8Bit()) {
         size_t i = 0;
         U16_NEXT(mark.characters16(), i, mark.length(), character);
@@ -1590,7 +1590,7 @@ int FontCascade::offsetForPositionForComplexText(const TextRun& run, float x, bo
 const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
 {
     ASSERT(stringView.length() > 0);
-    UChar32 baseCharacter = *stringView.codePoints().begin();
+    char32_t baseCharacter = *stringView.codePoints().begin();
     GlyphData baseCharacterGlyphData = glyphDataForCharacter(baseCharacter, false, NormalVariant);
 
     if (!baseCharacterGlyphData.isValid())
@@ -1764,7 +1764,7 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
     return result;
 }
 
-bool shouldSynthesizeSmallCaps(bool dontSynthesizeSmallCaps, const Font* nextFont, UChar32 baseCharacter, std::optional<UChar32> capitalizedBase, FontVariantCaps fontVariantCaps, bool engageAllSmallCapsProcessing)
+bool shouldSynthesizeSmallCaps(bool dontSynthesizeSmallCaps, const Font* nextFont, char32_t baseCharacter, std::optional<char32_t> capitalizedBase, FontVariantCaps fontVariantCaps, bool engageAllSmallCapsProcessing)
 {
     if (fontVariantCaps == FontVariantCaps::Normal)
         return false;
@@ -1781,12 +1781,12 @@ bool shouldSynthesizeSmallCaps(bool dontSynthesizeSmallCaps, const Font* nextFon
 }
 
 // FIXME: Capitalization is language-dependent and context-dependent and should operate on grapheme clusters instead of codepoints.
-std::optional<UChar32> capitalized(UChar32 baseCharacter)
+std::optional<char32_t> capitalized(char32_t baseCharacter)
 {
     if (U_GET_GC_MASK(baseCharacter) & U_GC_M_MASK)
         return std::nullopt;
 
-    UChar32 uppercaseCharacter = u_toupper(baseCharacter);
+    char32_t uppercaseCharacter = u_toupper(baseCharacter);
     ASSERT(uppercaseCharacter == baseCharacter || (U_IS_BMP(baseCharacter) == U_IS_BMP(uppercaseCharacter)));
     if (uppercaseCharacter != baseCharacter)
         return uppercaseCharacter;

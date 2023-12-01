@@ -35,7 +35,6 @@
 #include "RefPtrCairo.h"
 #include "RefPtrFontconfig.h"
 #include "StyleFontSizeFunctions.h"
-#include "UTF16UChar32Iterator.h"
 #include <cairo-ft.h>
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>

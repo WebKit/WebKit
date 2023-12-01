@@ -4007,7 +4007,7 @@ void Editor::editorUIUpdateTimerFired()
             // If this bug gets fixed, this PLATFORM(IOS_FAMILY) code could be removed:
             // <rdar://problem/7259611> Word boundary code on iPhone gives different results than desktop
             WordSide startWordSide = WordSide::LeftWordIfOnBoundary;
-            UChar32 c = newStart.characterBefore();
+            char32_t c = newStart.characterBefore();
             // FIXME: VisiblePosition::characterAfter() and characterBefore() do not emit newlines the same
             // way as TextIterator, so we do an isStartOfParagraph check here.
             if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace || isStartOfParagraph(newStart)) {
@@ -4156,7 +4156,7 @@ static bool candidateWouldReplaceText(const VisibleSelection& selection)
 {
     // If the character behind the caret in the current selection is anything but a space or a newline then we should
     // replace the whole current word with the candidate.
-    UChar32 characterAfterSelection, characterBeforeSelection, twoCharacterBeforeSelection = 0;
+    char32_t characterAfterSelection, characterBeforeSelection, twoCharacterBeforeSelection = 0;
     charactersAroundPosition(selection.visibleStart(), characterAfterSelection, characterBeforeSelection, twoCharacterBeforeSelection);
     return !(characterBeforeSelection == '\0' || characterBeforeSelection == '\n' || characterBeforeSelection == ' ');
 }

@@ -43,7 +43,7 @@ public:
     {
     }
 
-    bool consume(UChar32& character, unsigned& clusterLength)
+    bool consume(char32_t& character, unsigned& clusterLength)
     {
         if (m_currentIndex >= m_lastIndex)
             return false;

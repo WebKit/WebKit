@@ -75,10 +75,10 @@ struct MathVariantMapping {
     uint32_t key;
     uint32_t replacement;
 };
-static inline UChar32 ExtractKey(const MathVariantMapping* entry) { return entry->key; }
-static UChar32 MathVariantMappingSearch(uint32_t key, const MathVariantMapping* table, size_t tableLength)
+static inline char32_t ExtractKey(const MathVariantMapping* entry) { return entry->key; }
+static char32_t MathVariantMappingSearch(uint32_t key, const MathVariantMapping* table, size_t tableLength)
 {
-    if (const auto* entry = tryBinarySearch<const MathVariantMapping, UChar32>(table, tableLength, key, ExtractKey))
+    if (const auto* entry = tryBinarySearch<const MathVariantMapping, char32_t>(table, tableLength, key, ExtractKey))
         return entry->replacement;
 
     return 0;
@@ -241,49 +241,49 @@ static const MathVariantMapping latinExceptionMapTable[] = {
     { 0x1D551, 0x2124 }
 };
 
-const UChar32 greekUpperTheta = 0x03F4;
-const UChar32 holeGreekUpperTheta = 0x03A2;
-const UChar32 nabla = 0x2207;
-const UChar32 partialDifferential = 0x2202;
-const UChar32 greekUpperAlpha = 0x0391;
-const UChar32 greekUpperOmega = 0x03A9;
-const UChar32 greekLowerAlpha = 0x03B1;
-const UChar32 greekLowerOmega = 0x03C9;
-const UChar32 greekLunateEpsilonSymbol = 0x03F5;
-const UChar32 greekThetaSymbol = 0x03D1;
-const UChar32 greekKappaSymbol = 0x03F0;
-const UChar32 greekPhiSymbol = 0x03D5;
-const UChar32 greekRhoSymbol = 0x03F1;
-const UChar32 greekPiSymbol = 0x03D6;
-const UChar32 greekLetterDigamma = 0x03DC;
-const UChar32 greekSmallLetterDigamma = 0x03DD;
-const UChar32 mathBoldCapitalDigamma = 0x1D7CA;
-const UChar32 mathBoldSmallDigamma = 0x1D7CB;
+constexpr char16_t greekUpperTheta = 0x03F4;
+constexpr char16_t holeGreekUpperTheta = 0x03A2;
+constexpr char16_t nabla = 0x2207;
+constexpr char16_t partialDifferential = 0x2202;
+constexpr char16_t greekUpperAlpha = 0x0391;
+constexpr char16_t greekUpperOmega = 0x03A9;
+constexpr char16_t greekLowerAlpha = 0x03B1;
+constexpr char16_t greekLowerOmega = 0x03C9;
+constexpr char16_t greekLunateEpsilonSymbol = 0x03F5;
+constexpr char16_t greekThetaSymbol = 0x03D1;
+constexpr char16_t greekKappaSymbol = 0x03F0;
+constexpr char16_t greekPhiSymbol = 0x03D5;
+constexpr char16_t greekRhoSymbol = 0x03F1;
+constexpr char16_t greekPiSymbol = 0x03D6;
+constexpr char16_t greekLetterDigamma = 0x03DC;
+constexpr char32_t greekSmallLetterDigamma = 0x03DD;
+constexpr char32_t mathBoldCapitalDigamma = 0x1D7CA;
+constexpr char32_t mathBoldSmallDigamma = 0x1D7CB;
 
-const UChar32 latinSmallLetterDotlessI = 0x0131;
-const UChar32 latinSmallLetterDotlessJ = 0x0237;
+constexpr char16_t latinSmallLetterDotlessI = 0x0131;
+constexpr char16_t latinSmallLetterDotlessJ = 0x0237;
 
-const UChar32 mathItalicSmallDotlessI = 0x1D6A4;
-const UChar32 mathItalicSmallDotlessJ = 0x1D6A5;
+constexpr char32_t mathItalicSmallDotlessI = 0x1D6A4;
+constexpr char32_t mathItalicSmallDotlessJ = 0x1D6A5;
 
-const UChar32 mathBoldUpperA = 0x1D400;
-const UChar32 mathItalicUpperA = 0x1D434;
-const UChar32 mathBoldSmallA = 0x1D41A;
-const UChar32 mathBoldUpperAlpha = 0x1D6A8;
-const UChar32 mathBoldSmallAlpha = 0x1D6C2;
-const UChar32 mathItalicUpperAlpha = 0x1D6E2;
-const UChar32 mathBoldDigitZero = 0x1D7CE;
-const UChar32 mathDoubleStruckZero = 0x1D7D8;
+constexpr char32_t mathBoldUpperA = 0x1D400;
+constexpr char32_t mathItalicUpperA = 0x1D434;
+constexpr char32_t mathBoldSmallA = 0x1D41A;
+constexpr char32_t mathBoldUpperAlpha = 0x1D6A8;
+constexpr char32_t mathBoldSmallAlpha = 0x1D6C2;
+constexpr char32_t mathItalicUpperAlpha = 0x1D6E2;
+constexpr char32_t mathBoldDigitZero = 0x1D7CE;
+constexpr char32_t mathDoubleStruckZero = 0x1D7D8;
 
-const UChar32 mathBoldUpperTheta = 0x1D6B9;
-const UChar32 mathBoldNabla = 0x1D6C1;
-const UChar32 mathBoldPartialDifferential = 0x1D6DB;
-const UChar32 mathBoldEpsilonSymbol = 0x1D6DC;
-const UChar32 mathBoldThetaSymbol = 0x1D6DD;
-const UChar32 mathBoldKappaSymbol = 0x1D6DE;
-const UChar32 mathBoldPhiSymbol = 0x1D6DF;
-const UChar32 mathBoldRhoSymbol = 0x1D6E0;
-const UChar32 mathBoldPiSymbol = 0x1D6E1;
+constexpr char32_t mathBoldUpperTheta = 0x1D6B9;
+constexpr char32_t mathBoldNabla = 0x1D6C1;
+constexpr char32_t mathBoldPartialDifferential = 0x1D6DB;
+constexpr char32_t mathBoldEpsilonSymbol = 0x1D6DC;
+constexpr char32_t mathBoldThetaSymbol = 0x1D6DD;
+constexpr char32_t mathBoldKappaSymbol = 0x1D6DE;
+constexpr char32_t mathBoldPhiSymbol = 0x1D6DF;
+constexpr char32_t mathBoldRhoSymbol = 0x1D6E0;
+constexpr char32_t mathBoldPiSymbol = 0x1D6E1;
 
 // Performs the character mapping needed to implement MathML's mathvariant attribute.
 // It takes a unicode character and maps it to its appropriate mathvariant counterpart specified by mathvariant.
@@ -295,7 +295,7 @@ const UChar32 mathBoldPiSymbol = 0x1D6E1;
 // The transformable characters can be found at:
 // http://lists.w3.org/Archives/Public/www-math/2013Sep/0012.html and
 // https://en.wikipedia.org/wiki/Mathematical_Alphanumeric_Symbols
-static UChar32 mathVariant(UChar32 codePoint, MathMLElement::MathVariant mathvariant)
+static char32_t mathVariant(char32_t codePoint, MathMLElement::MathVariant mathvariant)
 {
     ASSERT(mathvariant >= MathMLElement::MathVariant::Normal && mathvariant <= MathMLElement::MathVariant::Stretched);
 
@@ -328,7 +328,7 @@ static UChar32 mathVariant(UChar32 codePoint, MathMLElement::MathVariant mathvar
 
     // The Unicode mathematical blocks are divided into four segments: Latin, Greek, numbers and Arabic.
     // In the case of the first three baseChar represents the relative order in which the characters are encoded in the Unicode mathematical block, normalised to the first character of that sequence.
-    UChar32 baseChar = 0;
+    char32_t baseChar = 0;
     enum CharacterType {
         Latin,
         Greekish,
@@ -449,8 +449,8 @@ static UChar32 mathVariant(UChar32 codePoint, MathMLElement::MathVariant mathvar
         return baseChar + mathBoldUpperAlpha + multiplier * (mathItalicUpperAlpha - mathBoldUpperAlpha);
     }
 
-    UChar32 tempChar = 0;
-    UChar32 newChar;
+    char32_t tempChar = 0;
+    char32_t newChar;
     if (varType == Arabic) {
         // The Arabic mathematical block is not continuous, nor does it have a monotonic mapping to the unencoded characters, requiring the use of a lookup table.
         const MathVariantMapping* mapTable;
@@ -537,7 +537,7 @@ void RenderMathMLToken::updateMathVariantGlyph()
         MathMLElement::MathVariant mathvariant = mathMLStyle().mathVariant();
         if (mathvariant == MathMLElement::MathVariant::None)
             mathvariant = tokenElement.hasTagName(MathMLNames::miTag) ? MathMLElement::MathVariant::Italic : MathMLElement::MathVariant::Normal;
-        UChar32 transformedCodePoint = mathVariant(codePoint.value(), mathvariant);
+        char32_t transformedCodePoint = mathVariant(codePoint.value(), mathvariant);
         if (transformedCodePoint != codePoint.value()) {
             m_mathVariantCodePoint = mathVariant(codePoint.value(), mathvariant);
             m_mathVariantIsMirrored = !style().isLeftToRightDirection();

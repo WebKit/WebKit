@@ -406,7 +406,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
     auto codePointsIterator = codePoints.begin();
 
     ASSERT(!stringView.isEmpty());
-    UChar32 baseCharacter = *codePointsIterator;
+    char32_t baseCharacter = *codePointsIterator;
     ++codePointsIterator;
     bool isOnlySingleCodePoint = codePointsIterator == codePoints.end();
 
@@ -461,7 +461,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
     return Font::systemFallback();
 }
 
-ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariantEmoji, UChar32 character)
+ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariantEmoji, char32_t character)
 {
     // You may think that this function should be different between macOS and iOS. And you may even be right!
     //

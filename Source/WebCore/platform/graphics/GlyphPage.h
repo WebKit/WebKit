@@ -78,17 +78,17 @@ public:
     static const unsigned size = 16;
 
     static unsigned sizeForPageNumber(unsigned) { return 16; }
-    static unsigned indexForCodePoint(UChar32 c) { return c % size; }
-    static unsigned pageNumberForCodePoint(UChar32 c) { return c / size; }
-    static UChar32 startingCodePointInPageNumber(unsigned pageNumber) { return pageNumber * size; }
+    static unsigned indexForCodePoint(char32_t c) { return c % size; }
+    static unsigned pageNumberForCodePoint(char32_t c) { return c / size; }
+    static char32_t startingCodePointInPageNumber(unsigned pageNumber) { return pageNumber * size; }
     static bool pageNumberIsUsedForArabic(unsigned pageNumber) { return startingCodePointInPageNumber(pageNumber) >= 0x600 && startingCodePointInPageNumber(pageNumber) + sizeForPageNumber(pageNumber) < 0x700; }
 
-    GlyphData glyphDataForCharacter(UChar32 c) const
+    GlyphData glyphDataForCharacter(char32_t c) const
     {
         return glyphDataForIndex(indexForCodePoint(c));
     }
 
-    Glyph glyphForCharacter(UChar32 c) const
+    Glyph glyphForCharacter(char32_t c) const
     {
         return glyphForIndex(indexForCodePoint(c));
     }

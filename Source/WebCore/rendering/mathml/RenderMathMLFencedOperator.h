@@ -41,7 +41,7 @@ public:
 
 private:
     bool isVertical() const final { return m_operatorChar.isVertical; }
-    UChar32 textContent() const final { return m_operatorChar.character; }
+    char32_t textContent() const final { return m_operatorChar.character; }
     LayoutUnit leadingSpace() const final;
     LayoutUnit trailingSpace() const final;
 

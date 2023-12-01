@@ -45,16 +45,16 @@ bool FontCascade::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
-static bool characterSequenceIsEmoji(SurrogatePairAwareTextIterator& iterator, UChar32 firstCharacter, unsigned firstClusterLength)
+static bool characterSequenceIsEmoji(SurrogatePairAwareTextIterator& iterator, char32_t firstCharacter, unsigned firstClusterLength)
 {
-    UChar32 character = firstCharacter;
+    char32_t character = firstCharacter;
     unsigned clusterLength = firstClusterLength;
     if (!iterator.consume(character, clusterLength))
         return false;
 
     if (isEmojiKeycapBase(character)) {
         iterator.advance(clusterLength);
-        UChar32 nextCharacter;
+        char32_t nextCharacter;
         if (!iterator.consume(nextCharacter, clusterLength))
             return false;
 
@@ -77,7 +77,7 @@ static bool characterSequenceIsEmoji(SurrogatePairAwareTextIterator& iterator, U
     // Regional indicator.
     if (isEmojiRegionalIndicator(character)) {
         iterator.advance(clusterLength);
-        UChar32 nextCharacter;
+        char32_t nextCharacter;
         if (!iterator.consume(nextCharacter, clusterLength))
             return false;
 
@@ -108,7 +108,7 @@ const Font* FontCascade::fontForCombiningCharacterSequence(StringView stringView
     auto characters = normalizedString.view.characters16();
     auto length = normalizedString.view.length();
 
-    UChar32 character;
+    char32_t character;
     unsigned clusterLength = 0;
     SurrogatePairAwareTextIterator iterator(characters, 0, length, length);
     if (!iterator.consume(character, clusterLength))

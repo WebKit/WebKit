@@ -477,7 +477,7 @@ void TypingCommand::markMisspellingsAfterTyping(Type commandType)
         // If this bug gets fixed, this PLATFORM(IOS_FAMILY) code could be removed:
         // <rdar://problem/7259611> Word boundary code on iPhone gives different results than desktop
         WordSide startWordSide = WordSide::LeftWordIfOnBoundary;
-        UChar32 c = previous.characterAfter();
+        char32_t c = previous.characterAfter();
         // FIXME: VisiblePosition::characterAfter() and characterBefore() do not emit newlines the same
         // way as TextIterator, so we do an isEndOfParagraph check here.
         if (deprecatedIsSpaceOrNewline(c) || c == noBreakSpace || isEndOfParagraph(previous)) {

@@ -751,7 +751,7 @@ Path Font::platformPathForGlyph(Glyph glyph) const
     return { PathCG::create(adoptCF(CGPathCreateMutableCopy(result.get()))) };
 }
 
-bool Font::platformSupportsCodePoint(UChar32 character, std::optional<UChar32> variation) const
+bool Font::platformSupportsCodePoint(char32_t character, std::optional<char32_t> variation) const
 {
     if (variation)
         return false;

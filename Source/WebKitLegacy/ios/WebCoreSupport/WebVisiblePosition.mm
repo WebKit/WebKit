@@ -311,7 +311,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
     VisiblePosition pos = [self _visiblePosition];
     VisiblePosition originalPos(pos);
     
-    UChar32 ch = pos.characterAfter();
+    char32_t ch = pos.characterAfter();
     bool isComplex = requiresContextForWordBoundary(ch);
     if (isComplex) {
         // for complex layout, find word around insertion point
@@ -328,7 +328,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
             pos = wordEnd;
         }
     } else {
-        UChar32 c = pos.characterAfter();
+        char32_t c = pos.characterAfter();
         CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetWhitespaceAndNewline);
         if (c == 0 || CFCharacterSetIsLongCharacterMember(set, c)) {
             // search backward for a non-space
@@ -389,8 +389,8 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
 {
     static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetAlphaNumeric);
     VisiblePosition pos = [self _visiblePosition];
-    UChar32 charBefore = pos.characterBefore();
-    UChar32 charAfter = pos.characterAfter();
+    char32_t charBefore = pos.characterBefore();
+    char32_t charAfter = pos.characterAfter();
     bool before = CFCharacterSetIsCharacterMember(set, charBefore);
     bool after = CFCharacterSetIsCharacterMember(set, charAfter);
     return [self directionIsDownstream:direction] ? (before && !after) : (!before && after);

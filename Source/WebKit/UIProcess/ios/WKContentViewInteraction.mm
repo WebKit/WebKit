@@ -576,7 +576,7 @@ inline static std::pair<OptionSet<WebKit::TextPositionAnchor>, NSInteger> anchor
     return { { }, 0 };
 }
 
-inline static NSString *textRelativeToSelectionStart(WKRelativeTextRange *range, const WebKit::EditorState::PostLayoutData& data, std::optional<UChar32> lastInsertedCharacterOverride)
+inline static NSString *textRelativeToSelectionStart(WKRelativeTextRange *range, const WebKit::EditorState::PostLayoutData& data, std::optional<char32_t> lastInsertedCharacterOverride)
 {
     auto start = range.start;
     auto end = range.end;
@@ -595,7 +595,7 @@ inline static NSString *textRelativeToSelectionStart(WKRelativeTextRange *range,
     string.reserveCapacity(endOffset - startOffset);
     auto appendIfNonZero = [&string](auto character) {
         if (character)
-            string.appendCharacter(character);
+            string.append(character);
     };
     for (auto offset = startOffset; offset < endOffset; ++offset) {
         switch (offset) {

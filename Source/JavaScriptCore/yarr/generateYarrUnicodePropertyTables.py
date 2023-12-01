@@ -569,7 +569,7 @@ class PropertyData:
                 output += codePoint
             else:
                 output += "\\x{:x}".format(ord(codePoint))
-        file.write("{{ reinterpret_cast<UChar32*>(const_cast<char32_t*>(U\"{}\")), {}}}".format(output, len(utf32String)))
+        file.write("{{ const_cast<char32_t*>(U\"{}\"), {}}}".format(output, len(utf32String)))
 
     def dump(self, file, commaAfter):
         file.write("static std::unique_ptr<CharacterClass> {}()\n{{\n".format(self.getCreateFuncName()))
@@ -581,16 +581,16 @@ class PropertyData:
         file.write("\n")
         file.write("    auto characterClass = makeUnique<CharacterClass>(\n")
         if self.hasStrings:
-            file.write("        std::initializer_list<Vector<UChar32>>(")
+            file.write("        std::initializer_list<Vector<char32_t>>(")
             self.dumpMatchData(file, 1, self.matchStrings, self.convertStringToCppFormat)
             file.write("),\n")
-        file.write("        std::initializer_list<UChar32>(")
+        file.write("        std::initializer_list<char32_t>(")
         self.dumpMatchData(file, 8, self.matches, lambda file, match: (file.write("{0:0=#4x}".format(match))))
         file.write("),\n")
         file.write("        std::initializer_list<CharacterRange>(")
         self.dumpMatchData(file, 4, self.ranges, lambda file, range: (file.write("{{{0:0=#4x}, {1:0=#4x}}}".format(range[0], range[1]))))
         file.write("),\n")
-        file.write("        std::initializer_list<UChar32>(")
+        file.write("        std::initializer_list<char32_t>(")
         self.dumpMatchData(file, 8, self.unicodeMatches, lambda file, match: (file.write("{0:0=#6x}".format(match))))
         file.write("),\n")
         file.write("        std::initializer_list<CharacterRange>(")

@@ -432,7 +432,7 @@ static void CallbackForContainIntrinsicSize(const Vector<Ref<ResizeObserverEntry
 
 // https://www.w3.org/TR/xml/#NT-NameStartChar
 // NameStartChar       ::=       ":" | [A-Z] | "_" | [a-z] | [#xC0-#xD6] | [#xD8-#xF6] | [#xF8-#x2FF] | [#x370-#x37D] | [#x37F-#x1FFF] | [#x200C-#x200D] | [#x2070-#x218F] | [#x2C00-#x2FEF] | [#x3001-#xD7FF] | [#xF900-#xFDCF] | [#xFDF0-#xFFFD] | [#x10000-#xEFFFF]
-static inline bool isValidNameStart(UChar32 c)
+static inline bool isValidNameStart(char32_t c)
 {
     return c == ':' || (c >= 'A' && c <= 'Z') || c == '_' || (c >= 'a' && c <= 'z') || (c >= 0x00C0 && c <= 0x00D6)
         || (c >= 0x00D8 && c <= 0x00F6) || (c >= 0x00F8 && c <= 0x02FF) || (c >= 0x0370 && c <= 0x037D) || (c >= 0x037F && c <= 0x1FFF)
@@ -442,7 +442,7 @@ static inline bool isValidNameStart(UChar32 c)
 
 // https://www.w3.org/TR/xml/#NT-NameChar
 // NameChar       ::=       NameStartChar | "-" | "." | [0-9] | #xB7 | [#x0300-#x036F] | [#x203F-#x2040]
-static inline bool isValidNamePart(UChar32 c)
+static inline bool isValidNamePart(char32_t c)
 {
     return isValidNameStart(c) || c == '-' || c == '.' || (c >= '0' && c <= '9') || c == 0x00B7
         || (c >= 0x0300 && c <= 0x036F) || (c >= 0x203F && c <= 0x2040);
@@ -1313,8 +1313,8 @@ Ref<Element> Document::createElement(const QualifiedName& name, bool createdByPa
 // https://html.spec.whatwg.org/#valid-custom-element-name
 
 struct UnicodeCodePointRange {
-    UChar32 minimum;
-    UChar32 maximum;
+    char32_t minimum;
+    char32_t maximum;
 };
 
 #if ASSERT_ENABLED
@@ -1328,19 +1328,19 @@ static inline bool operator<(const UnicodeCodePointRange& a, const UnicodeCodePo
 
 #endif // ASSERT_ENABLED
 
-static inline bool operator<(const UnicodeCodePointRange& a, UChar32 b)
+static inline bool operator<(const UnicodeCodePointRange& a, char32_t b)
 {
     ASSERT(a.minimum <= a.maximum);
     return a.maximum < b;
 }
 
-static inline bool operator<(UChar32 a, const UnicodeCodePointRange& b)
+static inline bool operator<(char32_t a, const UnicodeCodePointRange& b)
 {
     ASSERT(b.minimum <= b.maximum);
     return a < b.minimum;
 }
 
-static inline bool isPotentialCustomElementNameCharacter(UChar32 character)
+static inline bool isPotentialCustomElementNameCharacter(char32_t character)
 {
     static const UnicodeCodePointRange ranges[] = {
         { '-', '.' },
@@ -5922,7 +5922,7 @@ static bool isValidNameNonASCII(const UChar* characters, unsigned length)
 {
     for (unsigned i = 0; i < length;) {
         bool first = !i;
-        UChar32 c;
+        char32_t c;
         U16_NEXT(characters, i, length, c); // Increments i.
         if (first ? !isValidNameStart(c) : !isValidNamePart(c))
             return false;
@@ -6001,7 +6001,7 @@ ExceptionOr<std::pair<AtomString, AtomString>> Document::parseQualifiedName(cons
         return std::pair<AtomString, AtomString> { { }, { qualifiedName } };
 
     for (unsigned i = 0; i < length; ) {
-        UChar32 c;
+        char32_t c;
         U16_NEXT(qualifiedName, i, length, c);
         if (c == ':') {
             if (sawColon)

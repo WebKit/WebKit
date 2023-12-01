@@ -97,12 +97,12 @@ static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& first
 // CSS 2.1 http://www.w3.org/TR/CSS21/selector.html#first-letter
 // "Punctuation (i.e, characters defined in Unicode [UNICODE] in the "open" (Ps), "close" (Pe),
 // "initial" (Pi). "final" (Pf) and "other" (Po) punctuation classes), that precedes or follows the first letter should be included"
-static inline bool isPunctuationForFirstLetter(UChar32 c)
+static inline bool isPunctuationForFirstLetter(char32_t c)
 {
     return U_GET_GC_MASK(c) & (U_GC_PS_MASK | U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK | U_GC_PO_MASK);
 }
 
-static inline bool shouldSkipForFirstLetter(UChar32 c)
+static inline bool shouldSkipForFirstLetter(char32_t c)
 {
     return deprecatedIsSpaceOrNewline(c) || c == noBreakSpace || isPunctuationForFirstLetter(c);
 }
@@ -257,7 +257,7 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
         // accumulating just whitespace into the :first-letter.
         unsigned numCodeUnits = 0;
         for (unsigned scanLength = length; scanLength < oldText.length(); scanLength += numCodeUnits) {
-            UChar32 c = oldText.characterStartingAt(scanLength);
+            char32_t c = oldText.characterStartingAt(scanLength);
 
             if (!shouldSkipForFirstLetter(c))
                 break;

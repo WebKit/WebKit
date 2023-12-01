@@ -149,6 +149,12 @@ void printInternal(PrintStream& out, char16_t value)
     out.printf("%lc", value);
 }
 
+void printInternal(PrintStream& out, char32_t value)
+{
+    // Print each char32_t as an integer.
+    out.printf("%u", static_cast<unsigned>(value));
+}
+
 void printInternal(PrintStream& out, short value)
 {
     out.printf("%d", static_cast<int>(value));

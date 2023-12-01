@@ -61,7 +61,7 @@ static inline float advanceWidthForGlyph(const GlyphData& data)
 
 // FIXME: This hardcoded data can be removed when OpenType MATH font are widely available (http://wkbug/156837).
 struct StretchyCharacter {
-    UChar32 character;
+    char32_t character;
     UChar topChar;
     UChar extensionChar;
     UChar bottomChar;
@@ -90,7 +90,7 @@ MathOperator::MathOperator()
     m_variantGlyph = 0;
 }
 
-void MathOperator::setOperator(const RenderStyle& style, UChar32 baseCharacter, Type operatorType)
+void MathOperator::setOperator(const RenderStyle& style, char32_t baseCharacter, Type operatorType)
 {
     m_baseCharacter = baseCharacter;
     m_operatorType = operatorType;
@@ -126,7 +126,7 @@ LayoutUnit MathOperator::stretchSize() const
     return m_operatorType == Type::VerticalOperator ? m_ascent + m_descent : m_width;
 }
 
-bool MathOperator::getGlyph(const RenderStyle& style, UChar32 character, GlyphData& glyph) const
+bool MathOperator::getGlyph(const RenderStyle& style, char32_t character, GlyphData& glyph) const
 {
     glyph = style.fontCascade().glyphDataForCharacter(character, !style.isLeftToRightDirection());
     return glyph.font && glyph.font == &style.fontCascade().primaryFont();
@@ -142,7 +142,7 @@ void MathOperator::setSizeVariant(const GlyphData& sizeVariant)
     getAscentAndDescentForGlyph(sizeVariant, m_ascent, m_descent);
 }
 
-static GlyphData glyphDataForCodePointOrFallbackGlyph(const RenderStyle& style, UChar32 codePoint, Glyph fallbackGlyph)
+static GlyphData glyphDataForCodePointOrFallbackGlyph(const RenderStyle& style, char32_t codePoint, Glyph fallbackGlyph)
 {
     if (codePoint)
         return style.fontCascade().glyphDataForCharacter(codePoint, false);
@@ -197,7 +197,7 @@ void MathOperator::setGlyphAssembly(const RenderStyle& style, const GlyphAssembl
 // See https://www.w3.org/TR/MathML/chapter7.html#chars.comb-chars
 // However, many math fonts do not provide constructions for the non-combining equivalent.
 const unsigned maxFallbackPerCharacter = 3;
-static const UChar32 characterFallback[][maxFallbackPerCharacter] = {
+static const char32_t characterFallback[][maxFallbackPerCharacter] = {
     { 0x005E, 0x0302, 0 }, // CIRCUMFLEX ACCENT
     { 0x005F, 0x0332, 0 }, // LOW LINE
     { 0x007E, 0x0303, 0 }, // TILDE

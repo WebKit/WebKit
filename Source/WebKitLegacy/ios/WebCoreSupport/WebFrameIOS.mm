@@ -624,7 +624,7 @@ using namespace WebCore;
     frameSelection.setSelection(frameSelection.selection(), { }, { }, { }, wcGranularity);
 }
 
-static inline bool isAlphaNumericCharacter(UChar32 c)
+static inline bool isAlphaNumericCharacter(char32_t c)
 {
     static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetAlphaNumeric);
     return CFCharacterSetIsCharacterMember(set, c);
@@ -642,8 +642,8 @@ static VisiblePosition SimpleSmartExtendStart(const VisiblePosition& start, cons
         return pos;
     }
 
-    UChar32 charBefore = pos.characterBefore();
-    UChar32 charAfter = pos.characterAfter();
+    char32_t charBefore = pos.characterBefore();
+    char32_t charAfter = pos.characterAfter();
     if (isAlphaNumericCharacter(charAfter) && !isAlphaNumericCharacter(charBefore)) {
         // This is a word start. Leave selection where it is.
         return pos;
@@ -671,7 +671,7 @@ static VisiblePosition SimpleSmartExtendStart(const VisiblePosition& start, cons
     VisiblePosition wordEnd(endOfWord(pos));
     pos = wordEnd;
     while (pos.isNotNull() && !isStartOfLine(pos) && !isEndOfLine(pos) && pos != end) {
-        UChar32 c = pos.characterAfter();
+        char32_t c = pos.characterAfter();
         if (isAlphaNumericCharacter(c))
             break;
         pos = pos.next();
@@ -697,8 +697,8 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
         return pos;
     }
     
-    UChar32 charBefore = pos.characterBefore();
-    UChar32 charAfter = pos.characterAfter();
+    char32_t charBefore = pos.characterBefore();
+    char32_t charAfter = pos.characterAfter();
     if (isAlphaNumericCharacter(charBefore) && !isAlphaNumericCharacter(charAfter)) {
         // This is a word end. Leave selection where it is.
         return pos;
@@ -724,7 +724,7 @@ static VisiblePosition SimpleSmartExtendEnd(const VisiblePosition& start, const 
     VisiblePosition wordStart(startOfWord(pos));
     pos = wordStart;
     while (pos.isNotNull() && !isStartOfLine(pos) && !isEndOfLine(pos) && pos != start) {
-        UChar32 c = pos.characterBefore();
+        char32_t c = pos.characterBefore();
         if (isAlphaNumericCharacter(c))
             break;
         pos = pos.previous();

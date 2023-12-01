@@ -107,7 +107,7 @@ private:
     template<typename CharacterType> bool isSingleDotPathSegment(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool isDoubleDotPathSegment(CodePointIterator<CharacterType>);
     template<typename CharacterType> bool shouldCopyFileURL(CodePointIterator<CharacterType>);
-    template<typename CharacterType> bool checkLocalhostCodePoint(CodePointIterator<CharacterType>&, UChar32);
+    template<typename CharacterType> bool checkLocalhostCodePoint(CodePointIterator<CharacterType>&, char32_t);
     template<typename CharacterType> bool isAtLocalhost(CodePointIterator<CharacterType>);
     bool isLocalhost(StringView);
     template<typename CharacterType> void consumeSingleDotPathSegment(CodePointIterator<CharacterType>&);
@@ -115,14 +115,14 @@ private:
     template<typename CharacterType> void appendWindowsDriveLetter(CodePointIterator<CharacterType>&);
     template<typename CharacterType> size_t currentPosition(const CodePointIterator<CharacterType>&);
     template<typename UnsignedIntegerType> void appendNumberToASCIIBuffer(UnsignedIntegerType);
-    template<bool(*isInCodeSet)(UChar32), typename CharacterType> void utf8PercentEncode(const CodePointIterator<CharacterType>&);
+    template<bool(*isInCodeSet)(char32_t), typename CharacterType> void utf8PercentEncode(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> void utf8QueryEncode(const CodePointIterator<CharacterType>&);
     template<typename CharacterType> std::optional<LCharBuffer> domainToASCII(StringImpl&, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
     template<typename CharacterType> LCharBuffer percentDecode(const LChar*, size_t, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition);
     static LCharBuffer percentDecode(const LChar*, size_t);
     bool hasForbiddenHostCodePoint(const LCharBuffer&);
     void percentEncodeByte(uint8_t);
-    void appendToASCIIBuffer(UChar32);
+    void appendToASCIIBuffer(char32_t);
     void appendToASCIIBuffer(const char*, size_t);
     void appendToASCIIBuffer(const LChar* characters, size_t size) { appendToASCIIBuffer(reinterpret_cast<const char*>(characters), size); }
     template<typename CharacterType> void encodeNonUTF8Query(const Vector<UChar>& source, const URLTextEncoding&, CodePointIterator<CharacterType>);

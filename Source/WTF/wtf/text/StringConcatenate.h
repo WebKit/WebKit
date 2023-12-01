@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,6 +79,36 @@ public:
 
 private:
     UChar m_character;
+};
+
+template<> class StringTypeAdapter<char32_t, void> {
+public:
+    StringTypeAdapter(char32_t character)
+        : m_character { character }
+    {
+    }
+
+    unsigned length() const { return U16_LENGTH(m_character); }
+    bool is8Bit() const { return isLatin1(m_character); }
+
+    void writeTo(LChar* destination) const
+    {
+        ASSERT(is8Bit());
+        *destination = m_character;
+    }
+
+    void writeTo(UChar* destination) const
+    {
+        if (U_IS_BMP(m_character)) {
+            *destination = m_character;
+            return;
+        }
+        destination[0] = U16_LEAD(m_character);
+        destination[1] = U16_TRAIL(m_character);
+    }
+
+private:
+    char32_t m_character;
 };
 
 template<> class StringTypeAdapter<const LChar*, void> {
@@ -250,6 +280,44 @@ public:
     }
 };
 
+struct FromUTF8 {
+    const char* characters;
+    unsigned lengthUTF8 { 0 };
+    unsigned lengthUTF16 { 0 };
+    bool is8Bit { true };
+    bool conversionFailed { true };
+
+    FromUTF8(const char* characters, size_t length)
+        : characters { characters }
+    {
+        auto result = Unicode::computeUTFLengths(characters, characters + length);
+        if (result.result == Unicode::ConversionResult::SourceIllegal)
+            return;
+        if (result.lengthUTF16 > String::MaxLength)
+            return;
+        lengthUTF8 = result.lengthUTF8;
+        lengthUTF16 = result.lengthUTF16;
+        is8Bit = result.isAllASCII;
+        conversionFailed = false;
+    }
+};
+
+template<> class StringTypeAdapter<FromUTF8, void> {
+public:
+    StringTypeAdapter(FromUTF8 characters)
+        : m_characters { characters }
+    {
+    }
+
+    unsigned length() const { return m_characters.lengthUTF16; }
+    bool is8Bit() const { return m_characters.is8Bit; }
+    void writeTo(LChar* destination) const { memcpy(destination, m_characters.characters, m_characters.lengthUTF16); }
+    void writeTo(UChar* destination) const { Unicode::convertUTF8ToUTF16(m_characters.characters, m_characters.characters + m_characters.lengthUTF8, &destination, destination + m_characters.lengthUTF16); }
+
+private:
+    FromUTF8 m_characters;
+};
+
 template<typename... StringTypes> class StringTypeAdapter<std::tuple<StringTypes...>, void> {
 public:
     StringTypeAdapter(const std::tuple<StringTypes...>& tuple)
@@ -325,8 +393,7 @@ private:
     StringTypeAdapter<UnderlyingElementType> m_underlyingAdapter;
 };
 
-template<unsigned N>
-struct Indentation {
+template<unsigned N> struct Indentation {
     unsigned operator++() { return ++value; }
     unsigned operator++(int) { return value++; }
     unsigned operator--() { return --value; }
@@ -334,7 +401,6 @@ struct Indentation {
 
     unsigned value { 0 };
 };
-
 
 template<unsigned N>
 struct IndentationScope {
@@ -543,6 +609,7 @@ inline String WARN_UNUSED_RETURN makeStringByInserting(StringView originalString
 
 } // namespace WTF
 
+using WTF::FromUTF8;
 using WTF::Indentation;
 using WTF::IndentationScope;
 using WTF::makeAtomString;

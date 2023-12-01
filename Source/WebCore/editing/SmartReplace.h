@@ -32,6 +32,6 @@
 
 namespace WebCore {
 
-WEBCORE_EXPORT bool isCharacterSmartReplaceExempt(UChar32 c, bool isPreviousCharacter);
+WEBCORE_EXPORT bool isCharacterSmartReplaceExempt(char32_t, bool isPreviousCharacter);
 
 } // namespace WebCore

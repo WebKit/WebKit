@@ -34,7 +34,7 @@
 
 namespace PAL {
 
-int TextCodec::getUnencodableReplacement(UChar32 codePoint, UnencodableHandling handling, UnencodableReplacementArray& replacement)
+int TextCodec::getUnencodableReplacement(char32_t codePoint, UnencodableHandling handling, UnencodableReplacementArray& replacement)
 {
     ASSERT(!(codePoint > UCHAR_MAX_VALUE));
 

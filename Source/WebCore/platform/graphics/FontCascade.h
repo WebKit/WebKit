@@ -188,12 +188,12 @@ public:
 
     const Font& primaryFont() const;
     const FontRanges& fallbackRangesAt(unsigned) const;
-    GlyphData glyphDataForCharacter(UChar32, bool mirror, FontVariant = AutoVariant) const;
+    GlyphData glyphDataForCharacter(char32_t, bool mirror, FontVariant = AutoVariant) const;
 
     const Font* fontForCombiningCharacterSequence(StringView) const;
 
-    static bool isCJKIdeograph(UChar32);
-    static bool isCJKIdeographOrSymbol(UChar32);
+    static bool isCJKIdeograph(char32_t);
+    static bool isCJKIdeographOrSymbol(char32_t);
 
     // Returns (the number of opportunities, whether the last expansion is a trailing expansion)
     // If there are no opportunities, the bool will be true iff we are forbidding leading expansions.
@@ -263,17 +263,17 @@ public:
     static CodePath s_codePath;
 
     FontSelector* fontSelector() const;
-    static bool treatAsSpace(UChar32 c) { return c == space || c == tabCharacter || c == newlineCharacter || c == noBreakSpace; }
-    static bool isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(UChar32 character)
+    static bool treatAsSpace(char32_t c) { return c == space || c == tabCharacter || c == newlineCharacter || c == noBreakSpace; }
+    static bool isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(char32_t character)
     {
         // https://drafts.csswg.org/css-text-3/#white-space-processing
         // "Unsupported Default_ignorable characters must be ignored for text rendering."
         return isControlCharacter(character) || isDefaultIgnorableCodePoint(character);
     }
     // FIXME: Callers of treatAsZeroWidthSpace() and treatAsZeroWidthSpaceInComplexScript() should probably be calling isCharacterWhoseGlyphsShouldBeDeletedForTextRendering() instead.
-    static bool treatAsZeroWidthSpace(UChar32 c) { return treatAsZeroWidthSpaceInComplexScript(c) || c == zeroWidthNonJoiner || c == zeroWidthJoiner; }
-    static bool treatAsZeroWidthSpaceInComplexScript(UChar32 c) { return c < space || (c >= deleteCharacter && c < noBreakSpace) || c == softHyphen || c == zeroWidthSpace || (c >= leftToRightMark && c <= rightToLeftMark) || (c >= leftToRightEmbed && c <= rightToLeftOverride) || c == zeroWidthNoBreakSpace; }
-    static bool canReceiveTextEmphasis(UChar32);
+    static bool treatAsZeroWidthSpace(char32_t c) { return treatAsZeroWidthSpaceInComplexScript(c) || c == zeroWidthNonJoiner || c == zeroWidthJoiner; }
+    static bool treatAsZeroWidthSpaceInComplexScript(char32_t c) { return c < space || (c >= deleteCharacter && c < noBreakSpace) || c == softHyphen || c == zeroWidthSpace || (c >= leftToRightMark && c <= rightToLeftMark) || (c >= leftToRightEmbed && c <= rightToLeftOverride) || c == zeroWidthNoBreakSpace; }
+    static bool canReceiveTextEmphasis(char32_t);
 
     static inline UChar normalizeSpaces(UChar character)
     {
@@ -294,7 +294,7 @@ public:
     FontCascadeFonts* fonts() const { return m_fonts.get(); }
     bool isLoadingCustomFonts() const;
 
-    static ResolvedEmojiPolicy resolveEmojiPolicy(FontVariantEmoji, UChar32);
+    static ResolvedEmojiPolicy resolveEmojiPolicy(FontVariantEmoji, char32_t);
 
 private:
 
@@ -378,7 +378,7 @@ inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, flo
     return result - (syntheticBoldInclusion == Font::SyntheticBoldInclusion::Exclude ? font.syntheticBoldOffset() : 0);
 }
 
-bool shouldSynthesizeSmallCaps(bool, const Font*, UChar32, std::optional<UChar32>, FontVariantCaps, bool);
-std::optional<UChar32> capitalized(UChar32);
+bool shouldSynthesizeSmallCaps(bool, const Font*, char32_t, std::optional<char32_t>, FontVariantCaps, bool);
+std::optional<char32_t> capitalized(char32_t);
 
 } // namespace WebCore

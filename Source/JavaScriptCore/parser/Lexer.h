@@ -132,11 +132,12 @@ private:
     void append8(const T*, size_t);
     void record16(int);
     void record16(T);
-    void recordUnicodeCodePoint(UChar32);
+    void recordUnicodeCodePoint(char32_t);
     void append16(const LChar*, size_t);
     void append16(const UChar* characters, size_t length) { m_buffer16.append(characters, length); }
 
-    UChar32 currentCodePoint() const;
+    static constexpr char32_t errorCodePoint = 0xFFFFFFFFu;
+    char32_t currentCodePoint() const;
     ALWAYS_INLINE void shift();
     ALWAYS_INLINE bool atEnd() const;
     ALWAYS_INLINE T peek(int offset) const;

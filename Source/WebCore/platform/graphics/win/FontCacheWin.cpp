@@ -189,7 +189,7 @@ static bool currentFontContainsCharacterNonBMP(HDC hdc, StringView stringView)
 
 static bool currentFontContainsCharacter(HDC hdc, StringView stringView)
 {
-    UChar32 utf32Character = *stringView.codePoints().begin();
+    char32_t utf32Character = *stringView.codePoints().begin();
     if (U_IS_SUPPLEMENTARY(utf32Character))
         return currentFontContainsCharacterNonBMP(hdc, stringView);
     UChar character = utf32Character;

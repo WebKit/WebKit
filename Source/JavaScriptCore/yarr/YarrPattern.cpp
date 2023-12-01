@@ -96,11 +96,11 @@ public:
 
     void appendInverted(const CharacterClass* other)
     {
-        auto addSortedInverted = [&](UChar32 min, UChar32 max,
-            const Vector<UChar32>& srcMatches, const Vector<CharacterRange>& srcRanges,
-            Vector<UChar32>& destMatches, Vector<CharacterRange>& destRanges) {
+        auto addSortedInverted = [&](char32_t min, char32_t max,
+            const Vector<char32_t>& srcMatches, const Vector<CharacterRange>& srcRanges,
+            Vector<char32_t>& destMatches, Vector<CharacterRange>& destRanges) {
 
-            auto addSortedMatchOrRange = [&](UChar32 lo, UChar32 hiPlusOne) {
+            auto addSortedMatchOrRange = [&](char32_t lo, char32_t hiPlusOne) {
                 if (lo < hiPlusOne) {
                     if (lo + 1 == hiPlusOne)
                         addSorted(destMatches, lo);
@@ -109,7 +109,7 @@ public:
                 }
             };
 
-            UChar32 lo = min;
+            char32_t lo = min;
             size_t matchesIndex = 0;
             size_t rangesIndex = 0;
             bool matchesRemaining = matchesIndex < srcMatches.size();
@@ -121,8 +121,8 @@ public:
             }
 
             while (matchesRemaining || rangesRemaining) {
-                UChar32 hiPlusOne;
-                UChar32 nextLo;
+                char32_t hiPlusOne;
+                char32_t nextLo;
 
                 if (matchesRemaining
                     && (!rangesRemaining || srcMatches[matchesIndex] < srcRanges[rangesIndex].begin)) {
@@ -154,7 +154,7 @@ public:
         addSortedInverted(0x80, UCHAR_MAX_VALUE, other->m_matchesUnicode, other->m_rangesUnicode, m_matchesUnicode, m_rangesUnicode);
     }
 
-    void putChar(UChar32 ch)
+    void putChar(char32_t ch)
     {
         if (!isUnionSetOp())
             return putCharNonUnion(ch);
@@ -182,16 +182,16 @@ public:
             putUnicodeIgnoreCase(ch, info);
     }
 
-    void putCharNonUnion(UChar32 ch)
+    void putCharNonUnion(char32_t ch)
     {
-        Vector<UChar32> asciiMatches;
-        Vector<UChar32> unicodeMatches;
+        Vector<char32_t> asciiMatches;
+        Vector<char32_t> unicodeMatches;
         Vector<CharacterRange> emptyRanges;
 
         if (m_setOp == CharacterClassSetOp::Intersection)
             m_strings.clear();
 
-        auto addChar = [&] (UChar32 ch) {
+        auto addChar = [&] (char32_t ch) {
             if (isASCII(ch))
                 asciiMatches.append(ch);
             else
@@ -225,7 +225,7 @@ public:
             addChar(ch);
         else {
             if (info->type == CanonicalizeSet) {
-                for (const UChar32* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
+                for (auto* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
                     addChar(ch);
             } else {
                 addChar(ch);
@@ -236,13 +236,13 @@ public:
         performOp();
     }
 
-    void putUnicodeIgnoreCase(UChar32 ch, const CanonicalizationRange* info)
+    void putUnicodeIgnoreCase(char32_t ch, const CanonicalizationRange* info)
     {
         ASSERT(m_isCaseInsensitive);
         ASSERT(ch >= info->begin && ch <= info->end);
         ASSERT(info->type != CanonicalizeUnique);
         if (info->type == CanonicalizeSet) {
-            for (const UChar32* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
+            for (auto* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
                 addSorted(ch);
         } else {
             addSorted(ch);
@@ -250,13 +250,13 @@ public:
         }
     }
 
-    void putRange(UChar32 lo, UChar32 hi)
+    void putRange(char32_t lo, char32_t hi)
     {
         if (isASCII(lo)) {
             char asciiLo = lo;
-            char asciiHi = std::min(hi, (UChar32)0x7f);
+            char asciiHi = std::min<char32_t>(hi, 0x7f);
             addSortedRange(m_ranges, lo, asciiHi);
-            
+
             if (m_isCaseInsensitive) {
                 if ((asciiLo <= 'Z') && (asciiHi >= 'A'))
                     addSortedRange(m_ranges, std::max(asciiLo, 'A')+('a'-'A'), std::min(asciiHi, 'Z')+('a'-'A'));
@@ -267,7 +267,7 @@ public:
         if (isASCII(hi))
             return;
 
-        lo = std::max(lo, (UChar32)0x80);
+        lo = std::max<char32_t>(lo, 0x80);
         addSortedRange(m_rangesUnicode, lo, hi);
         
         if (!m_isCaseInsensitive)
@@ -276,7 +276,7 @@ public:
         const CanonicalizationRange* info = canonicalRangeInfoFor(lo, m_canonicalMode);
         while (true) {
             // Handle the range [lo .. end]
-            UChar32 end = std::min<UChar32>(info->end, hi);
+            char32_t end = std::min<char32_t>(info->end, hi);
 
             switch (info->type) {
             case CanonicalizeUnique:
@@ -284,7 +284,7 @@ public:
                 break;
             case CanonicalizeSet: {
                 UChar ch;
-                for (const UChar32* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
+                for (auto* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
                     addSorted(m_matchesUnicode, ch);
                 break;
             }
@@ -318,16 +318,16 @@ public:
         }
     }
 
-    void atomClassStringDisjunction(Vector<Vector<UChar32>>& disjunctionStrings)
+    void atomClassStringDisjunction(Vector<Vector<char32_t>>& disjunctionStrings)
     {
-        Vector<Vector<UChar32>> utf32Strings;
-        Vector<UChar32> matches;
-        Vector<UChar32> matchesUnicode;
+        Vector<Vector<char32_t>> utf32Strings;
+        Vector<char32_t> matches;
+        Vector<char32_t> matchesUnicode;
         Vector<CharacterRange> emptyRanges;
 
         sort(disjunctionStrings);
 
-        auto addCh = [&](UChar32 ch) {
+        auto addCh = [&](char32_t ch) {
             if (isASCII(ch))
                 matches.append(ch);
             else
@@ -336,7 +336,7 @@ public:
 
         for (auto string : disjunctionStrings) {
             if (string.size() == 1) {
-                UChar32 ch = string[0];
+                char32_t ch = string[0];
                 if (!m_isCaseInsensitive) {
                     addCh(ch);
                     continue;
@@ -348,7 +348,7 @@ public:
                     addCh(ch);
                 else {
                     if (info->type == CanonicalizeSet) {
-                        for (const UChar32* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
+                        for (auto* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
                             addCh(ch);
                     } else {
                         addCh(ch);
@@ -377,7 +377,7 @@ public:
         performSetOpWithMatches(rhs->m_matches, rhs->m_ranges, rhs->m_matchesUnicode, rhs->m_rangesUnicode);
     }
 
-    void performSetOpWithStrings(const Vector<Vector<UChar32>>& utf32Strings)
+    void performSetOpWithStrings(const Vector<Vector<char32_t>>& utf32Strings)
     {
         if (m_compileMode != CompileMode::UnicodeSets)
             return;
@@ -398,7 +398,7 @@ public:
         }
     }
 
-    void performSetOpWithMatches(const Vector<UChar32>& rhsMatches, const Vector<CharacterRange>& rhsRanges, const Vector<UChar32>& rhsMatchesUnicode, const Vector<CharacterRange>& rhsRangesUnicode)
+    void performSetOpWithMatches(const Vector<char32_t>& rhsMatches, const Vector<CharacterRange>& rhsRanges, const Vector<char32_t>& rhsMatchesUnicode, const Vector<CharacterRange>& rhsRangesUnicode)
     {
         if (m_compileMode != CompileMode::UnicodeSets)
             return;
@@ -412,7 +412,7 @@ public:
         return m_invertedStrings;
     }
 
-    static ALWAYS_INLINE int compareUTF32Strings(const Vector<UChar32>& a, const Vector<UChar32>& b)
+    static ALWAYS_INLINE int compareUTF32Strings(const Vector<char32_t>& a, const Vector<char32_t>& b)
     {
         // Longer strings before shorter.
         if (a.size() > b.size())
@@ -430,9 +430,9 @@ public:
         return 0;
     }
 
-    static void sort(Vector<Vector<UChar32>>& utf32Strings)
+    static void sort(Vector<Vector<char32_t>>& utf32Strings)
     {
-        std::sort(utf32Strings.begin(), utf32Strings.end(), [](const Vector<UChar32>& a, const Vector<UChar32>& b)
+        std::sort(utf32Strings.begin(), utf32Strings.end(), [](const Vector<char32_t>& a, const Vector<char32_t>& b)
             {
                 return compareUTF32Strings(a, b) < 0;
             });
@@ -462,12 +462,12 @@ public:
     }
 
 private:
-    void addSorted(UChar32 ch)
+    void addSorted(char32_t ch)
     {
         addSorted(isASCII(ch) ? m_matches : m_matchesUnicode, ch);
     }
 
-    void addSorted(Vector<UChar32>& matches, UChar32 ch)
+    void addSorted(Vector<char32_t>& matches, char32_t ch)
     {
         unsigned pos = 0;
         unsigned range = matches.size();
@@ -483,8 +483,8 @@ private:
                 return;
             else if (val > 0) {
                 if (val == 1) {
-                    UChar32 lo = ch;
-                    UChar32 hi = ch + 1;
+                    char32_t lo = ch;
+                    char32_t hi = ch + 1;
                     matches.remove(pos + index);
                     if (pos + index > 0 && matches[pos + index - 1] == ch - 1) {
                         lo = ch - 1;
@@ -496,8 +496,8 @@ private:
                 range = index;
             } else {
                 if (val == -1) {
-                    UChar32 lo = ch - 1;
-                    UChar32 hi = ch;
+                    char32_t lo = ch - 1;
+                    char32_t hi = ch;
                     matches.remove(pos + index);
                     if (pos + index + 1 < matches.size() && matches[pos + index + 1] == ch + 1) {
                         hi = ch + 1;
@@ -517,7 +517,7 @@ private:
             matches.insert(pos, ch);
     }
 
-    void addSortedRange(Vector<CharacterRange>& ranges, UChar32 lo, UChar32 hi)
+    void addSortedRange(Vector<CharacterRange>& ranges, char32_t lo, char32_t hi)
     {
         size_t end = ranges.size();
 
@@ -571,10 +571,10 @@ private:
         }
     }
 
-    void unionStrings(const Vector<Vector<UChar32>>& rhsStrings)
+    void unionStrings(const Vector<Vector<char32_t>>& rhsStrings)
     {
         // result should include strings in either the LHS or RHS
-        Vector<Vector<UChar32>> result;
+        Vector<Vector<char32_t>> result;
         size_t lhsIndex = 0;
         size_t rhsIndex = 0;
 
@@ -605,10 +605,10 @@ private:
         m_mayContainStrings = !m_strings.isEmpty();
     }
 
-    void intersectionStrings(const Vector<Vector<UChar32>>& rhsStrings)
+    void intersectionStrings(const Vector<Vector<char32_t>>& rhsStrings)
     {
         // result should include strings that are in both the LHS and RHS.
-        Vector<Vector<UChar32>> result;
+        Vector<Vector<char32_t>> result;
         size_t lhsIndex = 0;
         size_t rhsIndex = 0;
 
@@ -631,10 +631,10 @@ private:
         m_mayContainStrings = !m_strings.isEmpty();
     }
 
-    void subtractionStrings(const Vector<Vector<UChar32>>& rhsStrings)
+    void subtractionStrings(const Vector<Vector<char32_t>>& rhsStrings)
     {
         // result should include strings in LHS that are not in RHS.
-        Vector<Vector<UChar32>> result;
+        Vector<Vector<char32_t>> result;
         size_t lhsIndex = 0;
         size_t rhsIndex = 0;
 
@@ -661,9 +661,9 @@ private:
         m_mayContainStrings = !m_strings.isEmpty();
     }
 
-    void asciiOpSorted(const Vector<UChar32>& rhsMatches, const Vector<CharacterRange>& rhsRanges)
+    void asciiOpSorted(const Vector<char32_t>& rhsMatches, const Vector<CharacterRange>& rhsRanges)
     {
-        Vector<UChar32> resultMatches;
+        Vector<char32_t> resultMatches;
         Vector<CharacterRange> resultRanges;
         WTF::BitSet<0x80> lhsASCIIBitSet;
         WTF::BitSet<0x80> rhsASCIIBitSet;
@@ -672,7 +672,7 @@ private:
             lhsASCIIBitSet.set(match);
 
         for (auto range : m_ranges) {
-            for (UChar32 ch = range.begin; ch <= range.end; ch++)
+            for (char32_t ch = range.begin; ch <= range.end; ch++)
                 lhsASCIIBitSet.set(ch);
         }
 
@@ -680,7 +680,7 @@ private:
             rhsASCIIBitSet.set(match);
 
         for (auto range : rhsRanges) {
-            for (UChar32 ch = range.begin; ch <= range.end; ch++)
+            for (char32_t ch = range.begin; ch <= range.end; ch++)
                 rhsASCIIBitSet.set(ch);
         }
 
@@ -700,8 +700,8 @@ private:
         }
 
         bool firstCharUnset = true;
-        UChar32 lo = 0;
-        UChar32 hi = 0;
+        char32_t lo = 0;
+        char32_t hi = 0;
 
         auto addCharToResults = [&]() {
             if (lo == hi)
@@ -711,7 +711,7 @@ private:
         };
 
         for (auto setVal : lhsASCIIBitSet) {
-            UChar32 ch = static_cast<UChar32>(setVal);
+            char32_t ch = setVal;
             if (firstCharUnset) {
                 lo = hi = ch;
                 firstCharUnset = false;
@@ -732,16 +732,16 @@ private:
         m_ranges.swap(resultRanges);
     }
 
-    void unicodeOpSorted(const Vector<UChar32>& rhsMatchesUnicode, const Vector<CharacterRange>& rhsRangesUnicode)
+    void unicodeOpSorted(const Vector<char32_t>& rhsMatchesUnicode, const Vector<CharacterRange>& rhsRangesUnicode)
     {
-        Vector<UChar32> resultMatches;
+        Vector<char32_t> resultMatches;
         Vector<CharacterRange> resultRanges;
 
         constexpr size_t chunkSize = 2048;
         WTF::BitSet<chunkSize> lhsChunkBitSet;
         WTF::BitSet<chunkSize> rhsChunkBitSet;
 
-        UChar32 chunkLo = INT_MAX, chunkHi;
+        char32_t chunkLo = INT_MAX, chunkHi;
 
         size_t lhsMatchIndex = 0;
         size_t lhsRangeIndex = 0;
@@ -773,7 +773,7 @@ private:
             chunkHi = chunkLo + chunkSize - 1;
 
             for (; lhsMatchIndex < m_matchesUnicode.size(); ++lhsMatchIndex) {
-                UChar32 ch = m_matchesUnicode[lhsMatchIndex];
+                char32_t ch = m_matchesUnicode[lhsMatchIndex];
                 if (ch > chunkHi)
                     break;
 
@@ -788,7 +788,7 @@ private:
                 auto begin = std::max(chunkLo, range.begin);
                 auto end = std::min(range.end, chunkHi);
 
-                for (UChar32 ch = begin; ch <= end; ch++)
+                for (char32_t ch = begin; ch <= end; ch++)
                     lhsChunkBitSet.set(ch - chunkLo);
 
                 if (range.end > chunkHi)
@@ -796,7 +796,7 @@ private:
             }
 
             for (; rhsMatchIndex < rhsMatchesUnicode.size(); ++rhsMatchIndex) {
-                UChar32 ch = rhsMatchesUnicode[rhsMatchIndex];
+                char32_t ch = rhsMatchesUnicode[rhsMatchIndex];
                 if (ch > chunkHi)
                     break;
 
@@ -811,7 +811,7 @@ private:
                 auto begin = std::max(chunkLo, range.begin);
                 auto end = std::min(range.end, chunkHi);
 
-                for (UChar32 ch = begin; ch <= end; ch++)
+                for (char32_t ch = begin; ch <= end; ch++)
                     rhsChunkBitSet.set(ch - chunkLo);
 
                 if (range.end > chunkHi)
@@ -834,8 +834,8 @@ private:
             }
 
             bool firstCharUnset = true;
-            UChar32 lo = 0;
-            UChar32 hi = 0;
+            char32_t lo = 0;
+            char32_t hi = 0;
 
             auto addCharToResults = [&]() {
                 if (lo == hi)
@@ -845,7 +845,7 @@ private:
             };
 
             for (auto setVal : lhsChunkBitSet) {
-                UChar32 ch = static_cast<UChar32>(setVal) + chunkLo;
+                char32_t ch = static_cast<char32_t>(setVal) + chunkLo;
                 if (firstCharUnset) {
                     lo = hi = ch;
                     firstCharUnset = false;
@@ -873,7 +873,7 @@ private:
 
     void coalesceTables()
     {
-        auto coalesceMatchesAndRanges = [&](Vector<UChar32>& matches, Vector<CharacterRange>& ranges) {
+        auto coalesceMatchesAndRanges = [&](Vector<char32_t>& matches, Vector<CharacterRange>& ranges) {
 
             size_t matchesIndex = 0;
             size_t rangesIndex = 0;
@@ -940,10 +940,10 @@ private:
     
     CanonicalMode m_canonicalMode;
 
-    Vector<Vector<UChar32>> m_strings;
-    Vector<UChar32> m_matches;
+    Vector<Vector<char32_t>> m_strings;
+    Vector<char32_t> m_matches;
     Vector<CharacterRange> m_ranges;
-    Vector<UChar32> m_matchesUnicode;
+    Vector<char32_t> m_matchesUnicode;
     Vector<CharacterRange> m_rangesUnicode;
 };
 
@@ -1087,7 +1087,7 @@ public:
         m_alternative->m_terms.append(PatternTerm::WordBoundary(invert));
     }
 
-    void atomPatternCharacter(UChar32 ch)
+    void atomPatternCharacter(char32_t ch)
     {
         // We handle case-insensitive checking of unicode characters which do have both
         // cases by handling them as if they were defined using a CharacterClass.
@@ -1172,12 +1172,12 @@ public:
         m_invertCharacterClass = invert;
     }
 
-    void atomCharacterClassAtom(UChar32 ch)
+    void atomCharacterClassAtom(char32_t ch)
     {
         m_currentCharacterClassConstructor->putChar(ch);
     }
 
-    void atomCharacterClassRange(UChar32 begin, UChar32 end)
+    void atomCharacterClassRange(char32_t begin, char32_t end)
     {
         m_currentCharacterClassConstructor->putRange(begin, end);
     }
@@ -1210,7 +1210,7 @@ public:
         }
     }
 
-    void atomClassStringDisjunction(Vector<Vector<UChar32>>& utf32Strings)
+    void atomClassStringDisjunction(Vector<Vector<char32_t>>& utf32Strings)
     {
         m_currentCharacterClassConstructor->atomClassStringDisjunction(utf32Strings);
     }
@@ -2117,7 +2117,7 @@ void indentForNestingLevel(PrintStream& out, unsigned nestingDepth)
         out.print("  ");
 }
 
-void dumpUChar32(PrintStream& out, UChar32 c)
+void dumpUChar32(PrintStream& out, char32_t c)
 {
     if (c >= ' '&& c <= 0xff)
         out.printf("'%c'", static_cast<char>(c));
@@ -2172,7 +2172,7 @@ void dumpCharacterClass(PrintStream& out, YarrPattern* pattern, CharacterClass* 
 
     bool needMatchesRangesSeparator = false;
 
-    auto dumpMatches = [&] (const char* prefix, Vector<UChar32> matches) {
+    auto dumpMatches = [&] (const char* prefix, Vector<char32_t> matches) {
         size_t matchesSize = matches.size();
         if (matchesSize) {
             if (needMatchesRangesSeparator)

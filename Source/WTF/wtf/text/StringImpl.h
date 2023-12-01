@@ -439,7 +439,7 @@ public:
 
     UChar at(unsigned) const;
     UChar operator[](unsigned i) const { return at(i); }
-    WTF_EXPORT_PRIVATE UChar32 characterStartingAt(unsigned);
+    WTF_EXPORT_PRIVATE char32_t characterStartingAt(unsigned);
 
     // FIXME: Like the strict functions above, these give false for "ok" when there is trailing garbage.
     // Like the non-strict functions above, these return the value when there is trailing garbage.

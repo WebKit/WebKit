@@ -79,7 +79,7 @@ private:
 
     bool consumeIfNext(UChar);
     StringView consumeName();
-    UChar32 consumeEscape();
+    char32_t consumeEscape();
 
     bool nextTwoCharsAreValidEscape();
     bool nextCharsAreNumber(UChar);
