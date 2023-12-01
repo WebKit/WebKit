@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TableGrid.h"
 
+#include "LayoutBoxInlines.h"
 #include <wtf/IsoMallocInlines.h>
 
 namespace WebCore {

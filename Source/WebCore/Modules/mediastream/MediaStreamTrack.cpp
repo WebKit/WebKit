@@ -31,6 +31,7 @@
 #if ENABLE(MEDIA_STREAM)
 
 #include "CommonAtomStrings.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -740,6 +741,11 @@ bool MediaStreamTrack::wantsToCaptureAudio() const
 {
     ASSERT(isCaptureTrack() && m_private->isAudio());
     return !ended() && (!muted() || m_private->interrupted());
+}
+
+ScriptExecutionContext* MediaStreamTrack::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 #if !RELEASE_LOG_DISABLED

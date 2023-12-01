@@ -20,6 +20,7 @@
 #pragma once
 
 #include "Document.h"
+#include "LayoutBox.h"
 #include "RenderObject.h"
 #include "RenderStyleInlines.h"
 
@@ -30,5 +31,7 @@ inline bool RenderObject::isAtomicInlineLevelBox() const { return style().isDisp
 inline bool RenderObject::isTransformed() const { return hasTransformRelatedProperty() && (style().affectsTransform() || hasSVGTransform()); }
 inline bool RenderObject::preservesNewline() const { return !isRenderSVGInlineText() && style().preserveNewline(); }
 inline Ref<Document> RenderObject::protectedDocument() const { return document(); }
+inline Layout::Box* RenderObject::layoutBox() { return m_layoutBox.get(); }
+inline const Layout::Box* RenderObject::layoutBox() const { return m_layoutBox.get(); }
 
 } // namespace WebCore

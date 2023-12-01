@@ -67,7 +67,7 @@ public:
 
     // EventTarget interface
     EventTargetInterface eventTargetInterface() const final { return SourceBufferListEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
 
     using RefCounted<SourceBufferList>::ref;
     using RefCounted<SourceBufferList>::deref;

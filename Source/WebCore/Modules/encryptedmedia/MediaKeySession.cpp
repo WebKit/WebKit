@@ -34,6 +34,7 @@
 #include "CDM.h"
 #include "CDMInstance.h"
 #include "CDMKeyGroupingStrategy.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DOMPromiseProxy.h"
 #include "Document.h"
 #include "EventLoop.h"
@@ -835,6 +836,11 @@ void MediaKeySession::stop()
         ALWAYS_LOG(logIdentifier, "::lambda, closed");
         sessionClosed();
     });
+}
+
+ScriptExecutionContext* MediaKeySession::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -66,8 +66,10 @@ public:
     virtual ~ShadowRoot();
 
     // Resolve ambiguity for CanMakeCheckedPtr.
+    using DocumentFragment::s_supportsCheckedPtrZombieMode;
     void incrementPtrCount() const { static_cast<const DocumentFragment*>(this)->incrementPtrCount(); }
     void decrementPtrCount() const { static_cast<const DocumentFragment*>(this)->decrementPtrCount(); }
+    bool isZombie() const { return static_cast<const DocumentFragment*>(this)->isZombie(); }
 #if CHECKED_POINTER_DEBUG
     void registerCheckedPtr(const void* pointer) const { static_cast<const DocumentFragment*>(this)->registerCheckedPtr(pointer); }
     void copyCheckedPtr(const void* source, const void* destination) const { static_cast<const DocumentFragment*>(this)->copyCheckedPtr(source, destination); }

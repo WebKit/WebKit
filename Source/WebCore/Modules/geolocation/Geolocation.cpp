@@ -30,6 +30,7 @@
 
 #if ENABLE(GEOLOCATION)
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "EventLoop.h"
 #include "FeaturePolicy.h"
@@ -756,6 +757,11 @@ Navigator* Geolocation::navigator()
 LocalFrame* Geolocation::frame() const
 {
     return m_navigator ? m_navigator->frame() : nullptr;
+}
+
+Document* Geolocation::document() const
+{
+    return downcast<Document>(scriptExecutionContext());
 }
 
 } // namespace WebCore

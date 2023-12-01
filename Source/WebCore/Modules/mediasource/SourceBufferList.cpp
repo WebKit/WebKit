@@ -33,6 +33,7 @@
 
 #if ENABLE(MEDIA_SOURCE)
 
+#include "ContextDestructionObserverInlines.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "SourceBuffer.h"
@@ -107,6 +108,11 @@ void SourceBufferList::scheduleEvent(const AtomString& eventName)
 const char* SourceBufferList::activeDOMObjectName() const
 {
     return "SourceBufferList";
+}
+
+ScriptExecutionContext* SourceBufferList::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
 }
 
 WebCoreOpaqueRoot root(SourceBufferList* list)

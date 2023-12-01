@@ -113,6 +113,11 @@ bool DrawingAreaProxy::setSize(const IntSize& size, const IntSize& scrollDelta)
     return true;
 }
 
+WebPageProxy& DrawingAreaProxy::page() const
+{
+    return m_webPageProxy;
+}
+
 #if PLATFORM(COCOA)
 MachSendRight DrawingAreaProxy::createFence()
 {

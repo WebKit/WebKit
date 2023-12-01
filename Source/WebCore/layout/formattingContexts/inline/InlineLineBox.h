@@ -95,11 +95,11 @@ private:
 
     InlineLevelBox& rootInlineBox() { return m_rootInlineBox; }
 
-    const InlineLevelBox& parentInlineBox(const InlineLevelBox& inlineLevelBox) const { return const_cast<LineBox&>(*this).parentInlineBox(inlineLevelBox); }
-    InlineLevelBox& parentInlineBox(const InlineLevelBox&);
+    inline const InlineLevelBox& parentInlineBox(const InlineLevelBox&) const; // Defined in InlineLineBoxInlines.h.
+    inline InlineLevelBox& parentInlineBox(const InlineLevelBox&); // Defined in InlineLineBoxInlines.h.
 
-    const InlineLevelBox& parentInlineBox(const Line::Run& lineRun) const { return const_cast<LineBox&>(*this).parentInlineBox(lineRun); }
-    InlineLevelBox& parentInlineBox(const Line::Run&);
+    inline const InlineLevelBox& parentInlineBox(const Line::Run&) const; // Defined in InlineLineBoxInlines.h.
+    inline InlineLevelBox& parentInlineBox(const Line::Run&); // Defined in InlineLineBoxInlines.h.
 
     InlineLevelBox& inlineLevelBoxFor(const Line::Run&);
     InlineLevelBox* inlineLevelBoxFor(const Box& layoutBox);
@@ -133,16 +133,6 @@ inline InlineLevelBox* LineBox::inlineLevelBoxFor(const Box& layoutBox)
     if (entry == m_nonRootInlineLevelBoxMap.end())
         return nullptr;
     return &m_nonRootInlineLevelBoxList[entry->value];
-}
-
-inline InlineLevelBox& LineBox::parentInlineBox(const InlineLevelBox& inlineLevelBox)
-{
-    return *inlineLevelBoxFor(inlineLevelBox.layoutBox().parent());
-}
-
-inline InlineLevelBox& LineBox::parentInlineBox(const Line::Run& lineRun)
-{
-    return *inlineLevelBoxFor(lineRun.layoutBox().parent());
 }
 
 inline InlineLevelBox& LineBox::inlineLevelBoxFor(const Line::Run& lineRun)

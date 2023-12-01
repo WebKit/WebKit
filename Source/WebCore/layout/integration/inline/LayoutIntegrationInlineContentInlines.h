@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+/*
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,15 @@
 
 #pragma once
 
-#include "LayoutBox.h"
+#include "LayoutIntegrationInlineContent.h"
 
 namespace WebCore {
+namespace LayoutIntegration {
 
-namespace Layout {
-
-inline bool Box::isContainingBlockForFixedPosition() const
+inline const LineLayout& InlineContent::lineLayout() const
 {
-    return isInitialContainingBlock() || isLayoutContainmentBox() || style().hasTransform();
+    return *m_lineLayout;
 }
 
-inline bool Box::isContainingBlockForOutOfFlowPosition() const
-{
-    return isInitialContainingBlock() || isPositioned() || isLayoutContainmentBox() || style().hasTransform();
-}
-
-inline const ElementBox& Box::parent() const
-{
-    return *m_parent;
-}
-
-}
-
-}
+} // namespace LayoutIntegration
+} // namespace WebCore

@@ -29,6 +29,7 @@
 
 #include "EXTDisjointTimerQuery.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "EventLoop.h"
 #include "ScriptExecutionContext.h"
 #include "WebGLRenderingContext.h"

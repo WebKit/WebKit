@@ -129,7 +129,7 @@ public:
     virtual void setNodeValue(const String&);
     virtual NodeType nodeType() const = 0;
     virtual size_t approximateMemoryCost() const { return sizeof(*this); }
-    ContainerNode* parentNode() const;
+    inline ContainerNode* parentNode() const; // Defined in ContainerNode.h.
     inline RefPtr<ContainerNode> protectedParentNode() const; // Defined in ContainerNode.h.
     static ptrdiff_t parentNodeMemoryOffset() { return OBJECT_OFFSETOF(Node, m_parentNode); }
     inline Element* parentElement() const;
@@ -296,7 +296,7 @@ public:
     void queueTaskToDispatchEvent(TaskSource, Ref<Event>&&);
 
     // Use when it's guaranteed to that shadowHost is null.
-    ContainerNode* parentNodeGuaranteedHostFree() const;
+    inline ContainerNode* parentNodeGuaranteedHostFree() const; // Defined in ContainerNode.h.
     // Returns the parent node, but null if the parent node is a ShadowRoot.
     ContainerNode* nonShadowBoundaryParentNode() const;
 
@@ -845,18 +845,6 @@ inline void addSubresourceURL(ListHashSet<URL>& urls, const URL& url)
 {
     if (!url.isNull())
         urls.add(url);
-}
-
-inline ContainerNode* Node::parentNode() const
-{
-    ASSERT(isMainThreadOrGCThread());
-    return m_parentNode.get();
-}
-
-inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
-{
-    ASSERT(!isShadowRoot());
-    return parentNode();
 }
 
 ALWAYS_INLINE void Node::setStyleFlag(NodeStyleFlag flag)

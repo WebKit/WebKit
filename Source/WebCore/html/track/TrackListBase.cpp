@@ -29,6 +29,7 @@
 
 #include "TrackListBase.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "ScriptExecutionContext.h"
 #include "TrackEvent.h"
@@ -161,6 +162,11 @@ bool TrackListBase::isAnyTrackEnabled() const
             return true;
     }
     return false;
+}
+
+ScriptExecutionContext* TrackListBase::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
 }
 
 } // namespace WebCore

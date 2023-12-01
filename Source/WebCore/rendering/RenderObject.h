@@ -226,8 +226,8 @@ public:
     virtual ~RenderObject();
 
     Type type() const { return m_type; }
-    Layout::Box* layoutBox() { return m_layoutBox.get(); }
-    const Layout::Box* layoutBox() const { return m_layoutBox.get(); }
+    inline Layout::Box* layoutBox(); // Defined in RenderObjectInlines.h.
+    inline const Layout::Box* layoutBox() const; // Defined in RenderObjectInlines.h.
     void setLayoutBox(Layout::Box&);
     void clearLayoutBox();
 

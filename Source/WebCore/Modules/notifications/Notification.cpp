@@ -35,6 +35,7 @@
 
 #include "Notification.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "DedicatedWorkerGlobalScope.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -488,6 +489,11 @@ void Notification::ensureOnNotificationThread(ScriptExecutionContextIdentifier c
 void Notification::ensureOnNotificationThread(const NotificationData& notification, Function<void(Notification*)>&& task)
 {
     ensureOnNotificationThread(notification.contextIdentifier, notification.notificationID, WTFMove(task));
+}
+
+ScriptExecutionContext* Notification::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 } // namespace WebCore

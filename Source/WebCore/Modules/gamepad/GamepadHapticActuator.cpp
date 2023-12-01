@@ -28,6 +28,7 @@
 #if ENABLE(GAMEPAD)
 #include "GamepadHapticActuator.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "EventLoop.h"
 #include "Gamepad.h"

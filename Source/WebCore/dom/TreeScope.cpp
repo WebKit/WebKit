@@ -105,6 +105,13 @@ void TreeScope::decrementPtrCount() const
         checkedDowncast<ShadowRoot>(m_rootNode).decrementPtrCount();
 }
 
+bool TreeScope::isZombie() const
+{
+    if (auto* document = dynamicDowncast<Document>(m_rootNode))
+        return document->isZombie();
+    return checkedDowncast<ShadowRoot>(m_rootNode).isZombie();
+}
+
 #if CHECKED_POINTER_DEBUG
 void TreeScope::registerCheckedPtr(const void* pointer) const
 {

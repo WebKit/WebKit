@@ -27,6 +27,7 @@
 #include "LayoutIntegrationInlineContent.h"
 
 #include "InlineIteratorBox.h"
+#include "LayoutIntegrationInlineContentInlines.h"
 #include "LayoutIntegrationLineLayout.h"
 #include "RenderStyleInlines.h"
 #include "TextPainter.h"

@@ -307,11 +307,7 @@ public:
     WEBCORE_EXPORT void setLayer(const LayerRepresentation&);
 
     bool isAttachedToScrollingStateTree() const { return !!m_scrollingStateTree; }
-    ScrollingStateTree& scrollingStateTree() const
-    {
-        ASSERT(m_scrollingStateTree);
-        return *m_scrollingStateTree;
-    }
+    inline ScrollingStateTree& scrollingStateTree() const; // Defined in ScrollingStateTree.h.
     void attachAfterDeserialization(ScrollingStateTree&);
 
     ScrollingNodeID scrollingNodeID() const { return m_nodeID; }

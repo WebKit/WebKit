@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+/*
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,19 @@
 
 #pragma once
 
-#include "LayoutBox.h"
+#include "ContextDestructionObserver.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-namespace Layout {
-
-inline bool Box::isContainingBlockForFixedPosition() const
+inline ScriptExecutionContext* ContextDestructionObserver::scriptExecutionContext() const
 {
-    return isInitialContainingBlock() || isLayoutContainmentBox() || style().hasTransform();
+    return m_scriptExecutionContext.get();
 }
 
-inline bool Box::isContainingBlockForOutOfFlowPosition() const
+inline RefPtr<ScriptExecutionContext> ContextDestructionObserver::protectedScriptExecutionContext() const
 {
-    return isInitialContainingBlock() || isPositioned() || isLayoutContainmentBox() || style().hasTransform();
+    return m_scriptExecutionContext.get();
 }
 
-inline const ElementBox& Box::parent() const
-{
-    return *m_parent;
-}
-
-}
-
-}
+} // namespace WebCore

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScreenOrientation.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "Element.h"
@@ -282,6 +283,11 @@ bool ScreenOrientation::virtualHasPendingActivity() const
 void ScreenOrientation::eventListenersDidChange()
 {
     m_hasChangeEventListener = hasEventListeners(eventNames().changeEvent);
+}
+
+ScriptExecutionContext* ScreenOrientation::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 } // namespace WebCore

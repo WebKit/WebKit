@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SpeechSynthesisUtterance.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "SpeechSynthesisErrorEvent.h"
 #include "SpeechSynthesisEvent.h"
@@ -125,6 +126,10 @@ bool SpeechSynthesisUtterance::virtualHasPendingActivity() const
     return m_activityCountForEventDispatch && hasEventListeners();
 }
 
+ScriptExecutionContext* SpeechSynthesisUtterance::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
+}
 
 } // namespace WebCore
 

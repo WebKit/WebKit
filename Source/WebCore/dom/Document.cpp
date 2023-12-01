@@ -846,8 +846,21 @@ void Document::removedLastRef()
         decrementReferencingNodeCount();
     } else {
         commonTeardown();
+
 #if ASSERT_ENABLED
         m_inRemovedLastRefFunction = false;
+#endif
+
+        if (UNLIKELY(ptrCount())) {
+            // There is a CheckedPtr / CheckedRef still pointing to this Node. Instead of destroying
+            // the Node and crashing in its destructor, we mark ourselves as a zombie. Any action on
+            // those CheckedPtr / CheckedRef will crash. Crashing when using the checked pointer
+            // generates a lot more useful crash traces.
+            markAsZombie();
+            return;
+        }
+
+#if ASSERT_ENABLED
         m_deletionHasBegun = true;
 #endif
         delete this;

@@ -25,6 +25,7 @@
 #include "config.h"
 #include "WebLockManager.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "ExceptionCode.h"
 #include "ExceptionOr.h"

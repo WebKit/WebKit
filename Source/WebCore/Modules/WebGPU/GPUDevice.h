@@ -142,7 +142,7 @@ private:
 
     // EventTarget.
     EventTargetInterface eventTargetInterface() const final { return GPUDeviceEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { ref(); }
     void derefEventTarget() final { deref(); }
 

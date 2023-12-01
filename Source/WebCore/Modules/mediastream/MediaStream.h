@@ -94,7 +94,7 @@ public:
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return MediaStreamEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
+    ScriptExecutionContext* scriptExecutionContext() const final;
 
     using RefCounted<MediaStream>::ref;
     using RefCounted<MediaStream>::deref;

@@ -29,6 +29,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "Blob.h"
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
@@ -340,6 +341,11 @@ Ref<RTCDataChannel> RTCDataChannel::create(ScriptExecutionContext& context, RTCD
     }
 
     return channel;
+}
+
+ScriptExecutionContext* RTCDataChannel::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 } // namespace WebCore

@@ -123,6 +123,12 @@ private:
     bool m_hasNewRootStateNode { false };
 };
 
+inline ScrollingStateTree& ScrollingStateNode::scrollingStateTree() const
+{
+    ASSERT(m_scrollingStateTree);
+    return *m_scrollingStateTree;
+}
+
 } // namespace WebCore
 
 #ifndef NDEBUG

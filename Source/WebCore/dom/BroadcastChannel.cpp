@@ -27,6 +27,7 @@
 #include "BroadcastChannel.h"
 
 #include "BroadcastChannelRegistry.h"
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "MessageEvent.h"
 #include "Page.h"
@@ -293,6 +294,11 @@ bool BroadcastChannel::isEligibleForMessaging() const
         return document->isFullyActive();
 
     return !downcast<WorkerGlobalScope>(*context).isClosing();
+}
+
+ScriptExecutionContext* BroadcastChannel::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 } // namespace WebCore

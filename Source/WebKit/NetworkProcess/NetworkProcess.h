@@ -146,6 +146,7 @@ public:
 
     using CanMakeThreadSafeCheckedPtr::incrementPtrCount;
     using CanMakeThreadSafeCheckedPtr::decrementPtrCount;
+    using CanMakeThreadSafeCheckedPtr::s_supportsCheckedPtrZombieMode;
 #if CHECKED_POINTER_DEBUG
     using CanMakeThreadSafeCheckedPtr::registerCheckedPtr;
     using CanMakeThreadSafeCheckedPtr::copyCheckedPtr;

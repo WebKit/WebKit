@@ -29,6 +29,7 @@
 #if ENABLE(WEB_RTC)
 
 #include "Blob.h"
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "Logging.h"
 #include "NotImplemented.h"
@@ -98,6 +99,11 @@ void RTCDtlsTransport::onStateChanged(RTCDtlsTransportState state, Vector<Ref<JS
 void RTCDtlsTransport::onError()
 {
     onStateChanged(RTCDtlsTransportState::Failed, { });
+}
+
+ScriptExecutionContext* RTCDtlsTransport::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 } // namespace WebCore

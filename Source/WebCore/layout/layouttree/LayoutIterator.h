@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "LayoutBoxInlines.h"
 #include "LayoutInitialContainingBlock.h"
 
 namespace WebCore {

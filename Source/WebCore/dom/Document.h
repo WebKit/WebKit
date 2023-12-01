@@ -404,6 +404,10 @@ public:
     // Resolve ambiguity for CanMakeCheckedPtr.
     void incrementPtrCount() const { static_cast<const ContainerNode*>(this)->incrementPtrCount(); }
     void decrementPtrCount() const { static_cast<const ContainerNode*>(this)->decrementPtrCount(); }
+    uint32_t ptrCount() const { return static_cast<const ContainerNode*>(this)->ptrCount(); }
+    void markAsZombie() const { static_cast<const ContainerNode*>(this)->markAsZombie(); }
+    bool isZombie() const { return static_cast<const ContainerNode*>(this)->isZombie(); }
+    using ContainerNode::s_supportsCheckedPtrZombieMode;
 #if CHECKED_POINTER_DEBUG
     void registerCheckedPtr(const void* pointer) const { static_cast<const ContainerNode*>(this)->registerCheckedPtr(pointer); }
     void copyCheckedPtr(const void* source, const void* destination) const { static_cast<const ContainerNode*>(this)->copyCheckedPtr(source, destination); }

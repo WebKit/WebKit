@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "ContextDestructionObserverInlines.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/Threading.h>
 

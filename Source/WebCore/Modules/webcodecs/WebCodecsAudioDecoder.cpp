@@ -29,6 +29,7 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "ContextDestructionObserverInlines.h"
 #include "DOMException.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -323,6 +324,11 @@ const char* WebCodecsAudioDecoder::activeDOMObjectName() const
 bool WebCodecsAudioDecoder::virtualHasPendingActivity() const
 {
     return m_state == WebCodecsCodecState::Configured && (m_decodeQueueSize || m_beingDecodedQueueSize || m_isFlushing);
+}
+
+ScriptExecutionContext* WebCodecsAudioDecoder::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 } // namespace WebCore

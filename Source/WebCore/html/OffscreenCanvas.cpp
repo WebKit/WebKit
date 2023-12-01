@@ -32,6 +32,7 @@
 #include "CSSValuePool.h"
 #include "CanvasRenderingContext.h"
 #include "Chrome.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "EventDispatcher.h"
 #include "GPU.h"
@@ -620,6 +621,16 @@ void OffscreenCanvas::queueTaskKeepingObjectAlive(TaskSource source, Function<vo
 void OffscreenCanvas::dispatchEvent(Event& event)
 {
     EventDispatcher::dispatchEvent({ this }, event);
+}
+
+ScriptExecutionContext* OffscreenCanvas::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
+}
+
+ScriptExecutionContext* OffscreenCanvas::canvasBaseScriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
 }
 
 }

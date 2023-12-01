@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
+/*
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,31 @@
 
 #pragma once
 
+#include "InlineLineBox.h"
 #include "LayoutBox.h"
 
 namespace WebCore {
-
 namespace Layout {
 
-inline bool Box::isContainingBlockForFixedPosition() const
+inline const InlineLevelBox& LineBox::parentInlineBox(const InlineLevelBox& inlineLevelBox) const
 {
-    return isInitialContainingBlock() || isLayoutContainmentBox() || style().hasTransform();
+    return const_cast<LineBox&>(*this).parentInlineBox(inlineLevelBox);
 }
 
-inline bool Box::isContainingBlockForOutOfFlowPosition() const
+inline InlineLevelBox& LineBox::parentInlineBox(const InlineLevelBox& inlineLevelBox)
 {
-    return isInitialContainingBlock() || isPositioned() || isLayoutContainmentBox() || style().hasTransform();
+    return *inlineLevelBoxFor(inlineLevelBox.layoutBox().parent());
 }
 
-inline const ElementBox& Box::parent() const
+inline const InlineLevelBox& LineBox::parentInlineBox(const Line::Run& lineRun) const
 {
-    return *m_parent;
+    return const_cast<LineBox&>(*this).parentInlineBox(lineRun);
 }
 
+inline InlineLevelBox& LineBox::parentInlineBox(const Line::Run& lineRun)
+{
+    return *inlineLevelBoxFor(lineRun.layoutBox().parent());
 }
 
-}
+} // namespace Layout
+} // namespace WebCore

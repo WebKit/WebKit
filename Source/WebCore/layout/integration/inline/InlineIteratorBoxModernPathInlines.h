@@ -27,6 +27,7 @@
 
 #include "InlineDisplayBoxInlines.h"
 #include "InlineIteratorBoxModernPath.h"
+#include "LayoutBoxInlines.h"
 
 namespace WebCore {
 namespace InlineIterator {
@@ -46,6 +47,67 @@ inline TextRun BoxModernPath::textRun(TextRunMode mode) const
     auto textRun = TextRun { mode == TextRunMode::Editing ? originalText() : box().text().renderedContent(), logicalLeft(), expansion.horizontalExpansion, expansion.behavior, direction(), style.rtlOrdering() == Order::Visual, characterScanForCodePath };
     textRun.setTabSize(!style.collapseWhiteSpace(), style.tabSize());
     return textRun;
+}
+
+inline BoxModernPath BoxModernPath::parentInlineBox() const
+{
+    ASSERT(!atEnd());
+
+    auto candidate = *this;
+
+    if (isRootInlineBox()) {
+        candidate.setAtEnd();
+        return candidate;
+    }
+
+    auto& parentLayoutBox = box().layoutBox().parent();
+    do {
+        candidate.traversePreviousBox();
+    } while (!candidate.atEnd() && &candidate.box().layoutBox() != &parentLayoutBox);
+
+    ASSERT(candidate.atEnd() || candidate.box().isInlineBox());
+
+    return candidate;
+}
+
+inline bool BoxModernPath::isWithinInlineBox(const Layout::Box& inlineBox)
+{
+    auto* layoutBox = &box().layoutBox().parent();
+    for (; layoutBox->isInlineBox(); layoutBox = &layoutBox->parent()) {
+        if (layoutBox == &inlineBox)
+            return true;
+    }
+    return false;
+}
+
+inline BoxModernPath BoxModernPath::firstLeafBoxForInlineBox() const
+{
+    ASSERT(box().isInlineBox());
+
+    auto& inlineBox = box().layoutBox();
+
+    // The next box is the first descendant of this box;
+    auto first = *this;
+    first.traverseNextOnLine();
+
+    if (!first.atEnd() && !first.isWithinInlineBox(inlineBox))
+        first.setAtEnd();
+
+    return first;
+}
+
+inline BoxModernPath BoxModernPath::lastLeafBoxForInlineBox() const
+{
+    ASSERT(box().isInlineBox());
+
+    auto& inlineBox = box().layoutBox();
+
+    // FIXME: Get the last box index directly from the display box.
+    auto last = firstLeafBoxForInlineBox();
+    for (auto box = last; !box.atEnd() && box.isWithinInlineBox(inlineBox); box.traverseNextOnLine())
+        last = box;
+
+    return last;
 }
 
 }

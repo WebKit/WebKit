@@ -28,6 +28,7 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "FrameDestructionObserverInlines.h"
@@ -352,6 +353,11 @@ bool SpeechSynthesis::virtualHasPendingActivity() const
 void SpeechSynthesis::eventListenersDidChange()
 {
     m_hasEventListener = hasEventListeners(eventNames().voiceschangedEvent);
+}
+
+ScriptExecutionContext* SpeechSynthesis::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 } // namespace WebCore

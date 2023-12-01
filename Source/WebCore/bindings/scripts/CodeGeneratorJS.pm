@@ -6712,6 +6712,7 @@ sub GenerateCallbackImplementationContent
     my $visibleName = $codeGenerator->GetVisibleInterfaceName($interfaceOrCallback);
     my $className = "JS${name}";
 
+    $includesRef->{"ContextDestructionObserverInlines.h"} = 1;
     $includesRef->{"ScriptExecutionContext.h"} = 1;
 
     # Constructor

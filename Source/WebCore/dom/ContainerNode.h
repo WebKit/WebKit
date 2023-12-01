@@ -290,8 +290,20 @@ inline void Node::setParentNode(ContainerNode* parent)
     m_refCountAndParentBit = (m_refCountAndParentBit & s_refCountMask) | !!parent;
 }
 
+inline ContainerNode* Node::parentNode() const
+{
+    ASSERT(isMainThreadOrGCThread());
+    return m_parentNode.get();
+}
+
 inline RefPtr<ContainerNode> Node::protectedParentNode() const
 {
+    return parentNode();
+}
+
+inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
+{
+    ASSERT(!isShadowRoot());
     return parentNode();
 }
 

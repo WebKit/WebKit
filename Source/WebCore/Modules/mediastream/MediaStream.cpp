@@ -30,6 +30,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -378,6 +379,11 @@ const char* MediaStream::activeDOMObjectName() const
 bool MediaStream::virtualHasPendingActivity() const
 {
     return m_isActive;
+}
+
+ScriptExecutionContext* MediaStream::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
 }
 
 #if !RELEASE_LOG_DISABLED

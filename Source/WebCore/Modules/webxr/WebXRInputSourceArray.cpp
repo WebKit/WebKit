@@ -28,6 +28,7 @@
 #include "WebXRInputSourceArray.h"
 
 #if ENABLE(WEBXR)
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "WebXRInputSource.h"
 #include "WebXRSession.h"

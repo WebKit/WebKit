@@ -27,6 +27,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "ContextDestructionObserverInlines.h"
 #include "EventNames.h"
 #include "Logging.h"
 #include "RTCDtlsTransport.h"
@@ -84,6 +85,11 @@ void RTCSctpTransport::onStateChanged(RTCSctpTransportState state, std::optional
             dispatchEvent(Event::create(eventNames().statechangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
         }
     });
+}
+
+ScriptExecutionContext* RTCSctpTransport::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 } // namespace WebCore

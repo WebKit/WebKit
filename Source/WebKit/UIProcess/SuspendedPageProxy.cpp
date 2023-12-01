@@ -310,6 +310,11 @@ bool SuspendedPageProxy::sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&& enc
     return m_process->sendMessage(WTFMove(encoder), sendOptions, WTFMove(handler));
 }
 
+WebPageProxy& SuspendedPageProxy::page() const
+{
+    return m_page.get();
+}
+
 #if !LOG_DISABLED
 
 const char* SuspendedPageProxy::loggingString() const

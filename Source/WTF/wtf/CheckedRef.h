@@ -125,12 +125,18 @@ public:
     const T* ptrAllowingHashTableEmptyValue() const { ASSERT(m_ptr || isHashTableEmptyValue()); return PtrTraits::unwrap(m_ptr); }
     T* ptrAllowingHashTableEmptyValue() { ASSERT(m_ptr || isHashTableEmptyValue()); return PtrTraits::unwrap(m_ptr); }
 
-    ALWAYS_INLINE T* ptr() const { return PtrTraits::unwrap(m_ptr); }
+    ALWAYS_INLINE T* ptr() const { assertIsNotZombie(); return PtrTraits::unwrap(m_ptr); }
     ALWAYS_INLINE T& get() const { ASSERT(ptr()); return *ptr(); }
     ALWAYS_INLINE T* operator->() const { return ptr(); }
 
     ALWAYS_INLINE operator T&() const { return get(); }
     ALWAYS_INLINE explicit operator bool() const { return get(); }
+
+    ALWAYS_INLINE void assertIsNotZombie() const
+    {
+        if constexpr (T::s_supportsCheckedPtrZombieMode)
+            RELEASE_ASSERT(!PtrTraits::unwrap(m_ptr)->isZombie());
+    }
 
     CheckedRef& operator=(T& reference)
     {
@@ -304,10 +310,16 @@ template<typename P> struct PtrHash<CheckedRef<P>> : PtrHashBase<CheckedRef<P>, 
 
 template<typename P> struct DefaultHash<CheckedRef<P>> : PtrHash<CheckedRef<P>> { };
 
-template <typename StorageType, typename PtrCounterType> class CanMakeCheckedPtrBase {
+enum class SupportsZombieMode : bool { No, Yes };
+
+template <typename StorageType, typename PtrCounterType, SupportsZombieMode supportsZombieMode>
+class CanMakeCheckedPtrBase {
 public:
+    static constexpr bool s_supportsCheckedPtrZombieMode = supportsZombieMode == SupportsZombieMode::Yes;
+
     CanMakeCheckedPtrBase() = default;
     CanMakeCheckedPtrBase(CanMakeCheckedPtrBase&&) { }
+
     CanMakeCheckedPtrBase& operator=(CanMakeCheckedPtrBase&&) { return *this; }
     CanMakeCheckedPtrBase(const CanMakeCheckedPtrBase&) { }
     CanMakeCheckedPtrBase& operator=(const CanMakeCheckedPtrBase&) { return *this; }
@@ -315,19 +327,21 @@ public:
     ~CanMakeCheckedPtrBase()
     {
 #if CHECKED_POINTER_DEBUG
-        if (m_count) {
+        if (m_countAndZombieFlag) {
             for (auto& stackTrace : m_checkedPtrs.values())
                 WTFLogAlways("%s", stackTrace->toString().utf8().data());
         }
 #endif
-        // If you hit this assertion, you can turn on CHECKED_POINTER_DEBUG to help identify
-        // which CheckedPtr / CheckedRef outlived the object.
-        RELEASE_ASSERT(!m_count);
+        // If you hit this assertion, you can turn on CHECKED_POINTER_DEBUG to hevoid incrementPtrCount() const;he object.
+        RELEASE_ASSERT(!m_countAndZombieFlag);
     }
 
-    PtrCounterType ptrCount() const { return m_count; }
-    void incrementPtrCount() const { ++m_count; }
-    void decrementPtrCount() const { ASSERT(m_count); --m_count; }
+    inline PtrCounterType ptrCount() const;
+    inline void incrementPtrCount() const;
+    inline void decrementPtrCount() const;
+
+    inline bool isZombie() const;
+    inline void markAsZombie() const;
 
     friend bool operator==(const CanMakeCheckedPtrBase&, const CanMakeCheckedPtrBase&) { return true; }
 
@@ -395,16 +409,54 @@ private:
     };
 #endif
 
-    mutable StorageType m_count { 0 };
+    static constexpr uint32_t s_countIncrement = 2;
+    static constexpr uint32_t s_countIsZombie = 0x1;
+
+    mutable StorageType m_countAndZombieFlag { 0 };
 #if CHECKED_POINTER_DEBUG
     mutable Lock m_checkedPtrsLock;
     mutable HashMap<const void* /* CheckedPtr or CheckedRef */, RefPtr<SharedStackTrace>> m_checkedPtrs;
 #endif
 };
 
+template<typename StorageType, typename PtrCounterType, SupportsZombieMode supportsZombieMode>
+PtrCounterType CanMakeCheckedPtrBase<StorageType, PtrCounterType, supportsZombieMode>::ptrCount() const
+{
+    return m_countAndZombieFlag / s_countIncrement;
+}
+
+template<typename StorageType, typename PtrCounterType, SupportsZombieMode supportsZombieMode>
+inline void CanMakeCheckedPtrBase<StorageType, PtrCounterType, supportsZombieMode>::incrementPtrCount() const
+{
+    m_countAndZombieFlag += s_countIncrement;
+}
+
+template<typename StorageType, typename PtrCounterType, SupportsZombieMode supportsZombieMode>
+inline void CanMakeCheckedPtrBase<StorageType, PtrCounterType, supportsZombieMode>::decrementPtrCount() const
+{
+    ASSERT(m_countAndZombieFlag >= s_countIncrement);
+    if constexpr (s_supportsCheckedPtrZombieMode)
+        RELEASE_ASSERT(!isZombie());
+    m_countAndZombieFlag -= s_countIncrement;
+}
+
+template<typename StorageType, typename PtrCounterType, SupportsZombieMode supportsZombieMode>
+bool CanMakeCheckedPtrBase<StorageType, PtrCounterType, supportsZombieMode>::isZombie() const
+{
+    static_assert(s_supportsCheckedPtrZombieMode);
+    return m_countAndZombieFlag & s_countIsZombie;
+}
+
+template<typename StorageType, typename PtrCounterType, SupportsZombieMode supportsZombieMode>
+void CanMakeCheckedPtrBase<StorageType, PtrCounterType, supportsZombieMode>::markAsZombie() const
+{
+    static_assert(s_supportsCheckedPtrZombieMode);
+    m_countAndZombieFlag |= s_countIsZombie;
+}
+
 #if CHECKED_POINTER_DEBUG
-template <typename StorageType, typename PtrCounterType>
-void CanMakeCheckedPtrBase<StorageType, PtrCounterType>::registerCheckedPtr(const void* pointer) const
+template <typename StorageType, typename PtrCounterType, SupportsZombieMode supportsZombieMode>
+void CanMakeCheckedPtrBase<StorageType, PtrCounterType, supportsZombieMode>::registerCheckedPtr(const void* pointer) const
 {
     if constexpr (std::is_same_v<StorageType, std::atomic<uint32_t>>) {
         Locker locker { m_checkedPtrsLock };
@@ -421,12 +473,13 @@ public:
 
     operator IntegralType() const;
     explicit operator bool() const;
-    SingleThreadIntegralWrapper& operator++();
-    SingleThreadIntegralWrapper& operator--();
+    SingleThreadIntegralWrapper& operator|=(IntegralType);
+    SingleThreadIntegralWrapper& operator+=(IntegralType);
+    SingleThreadIntegralWrapper& operator-=(IntegralType);
 
 private:
 #if ASSERT_ENABLED && !USE(WEB_THREAD)
-    void assertThread() const { ASSERT(m_thread.ptr() == &Thread::current()); }
+    void assertThread() const { ASSERT(m_thread.ptr() == &Thread::current() || Thread::mayBeGCThread()); }
 #else
     constexpr void assertThread() const { }
 #endif
@@ -460,26 +513,38 @@ inline SingleThreadIntegralWrapper<IntegralType>::operator bool() const
 }
 
 template <typename IntegralType>
-inline SingleThreadIntegralWrapper<IntegralType>& SingleThreadIntegralWrapper<IntegralType>::operator++()
+inline SingleThreadIntegralWrapper<IntegralType>& SingleThreadIntegralWrapper<IntegralType>::operator|=(IntegralType mask)
 {
     assertThread();
-    m_value++;
+    m_value |= mask;
     return *this;
 }
 
 template <typename IntegralType>
-inline SingleThreadIntegralWrapper<IntegralType>& SingleThreadIntegralWrapper<IntegralType>::operator--()
+inline SingleThreadIntegralWrapper<IntegralType>& SingleThreadIntegralWrapper<IntegralType>::operator+=(IntegralType increment)
 {
     assertThread();
-    m_value--;
+    m_value += increment;
     return *this;
 }
 
-using CanMakeCheckedPtr = CanMakeCheckedPtrBase<SingleThreadIntegralWrapper<uint32_t>, uint32_t>;
-using CanMakeThreadSafeCheckedPtr = CanMakeCheckedPtrBase<std::atomic<uint32_t>, uint32_t>;
+template <typename IntegralType>
+inline SingleThreadIntegralWrapper<IntegralType>& SingleThreadIntegralWrapper<IntegralType>::operator-=(IntegralType decrement)
+{
+    assertThread();
+    m_value -= decrement;
+    return *this;
+}
+
+using CanMakeCheckedPtr = CanMakeCheckedPtrBase<SingleThreadIntegralWrapper<uint32_t>, uint32_t, SupportsZombieMode::No>;
+using CanMakeCheckedPtrWithZombieMode = CanMakeCheckedPtrBase<SingleThreadIntegralWrapper<uint32_t>, uint32_t, SupportsZombieMode::Yes>;
+using CanMakeThreadSafeCheckedPtr = CanMakeCheckedPtrBase<std::atomic<uint32_t>, uint32_t, SupportsZombieMode::No>;
+using CanMakeThreadSafeCheckedPtrWithZombieMode = CanMakeCheckedPtrBase<std::atomic<uint32_t>, uint32_t, SupportsZombieMode::Yes>;
 
 } // namespace WTF
 
 using WTF::CanMakeCheckedPtr;
+using WTF::CanMakeCheckedPtrWithZombieMode;
 using WTF::CanMakeThreadSafeCheckedPtr;
+using WTF::CanMakeThreadSafeCheckedPtrWithZombieMode;
 using WTF::CheckedRef;

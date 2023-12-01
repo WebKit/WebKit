@@ -27,7 +27,9 @@
 #include "InlineLineBox.h"
 
 #include "InlineLevelBoxInlines.h"
+#include "InlineLineBoxInlines.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutBoxInlines.h"
 #include "LayoutElementBox.h"
 #include "RenderStyleInlines.h"
 

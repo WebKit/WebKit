@@ -26,6 +26,7 @@
 #include "config.h"
 #include "GPUDevice.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "DOMPromiseProxy.h"
 #include "GPUBindGroup.h"
 #include "GPUBindGroupDescriptor.h"
@@ -295,6 +296,11 @@ void GPUDevice::popErrorScope(ErrorScopePromise&& errorScopePromise)
             promise.resolve(error);
         });
     });
+}
+
+ScriptExecutionContext* GPUDevice::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 }

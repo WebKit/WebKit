@@ -73,7 +73,7 @@ private:
 
     // EventTarget
     EventTargetInterface eventTargetInterface() const final { return BroadcastChannelEventTargetInterfaceType; }
-    ScriptExecutionContext* scriptExecutionContext() const final { return ActiveDOMObject::scriptExecutionContext(); }
+    WEBCORE_EXPORT ScriptExecutionContext* scriptExecutionContext() const final;
     void refEventTarget() final { RefCounted<BroadcastChannel>::ref(); }
     void derefEventTarget() final { RefCounted<BroadcastChannel>::deref(); }
     void eventListenersDidChange() final;

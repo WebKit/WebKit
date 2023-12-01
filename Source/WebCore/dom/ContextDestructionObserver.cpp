@@ -61,9 +61,4 @@ void ContextDestructionObserver::contextDestroyed()
     m_scriptExecutionContext = nullptr;
 }
 
-RefPtr<ScriptExecutionContext> ContextDestructionObserver::protectedScriptExecutionContext() const
-{
-    return m_scriptExecutionContext.get();
-}
-
 } // namespace WebCore

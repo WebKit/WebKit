@@ -174,56 +174,9 @@ public:
         ASSERT(box().isInlineBox());
     }
 
-    BoxModernPath firstLeafBoxForInlineBox() const
-    {
-        ASSERT(box().isInlineBox());
-
-        auto& inlineBox = box().layoutBox();
-
-        // The next box is the first descendant of this box;
-        auto first = *this;
-        first.traverseNextOnLine();
-
-        if (!first.atEnd() && !first.isWithinInlineBox(inlineBox))
-            first.setAtEnd();
-
-        return first;
-    }
-
-    BoxModernPath lastLeafBoxForInlineBox() const
-    {
-        ASSERT(box().isInlineBox());
-
-        auto& inlineBox = box().layoutBox();
-
-        // FIXME: Get the last box index directly from the display box.
-        auto last = firstLeafBoxForInlineBox();
-        for (auto box = last; !box.atEnd() && box.isWithinInlineBox(inlineBox); box.traverseNextOnLine())
-            last = box;
-
-        return last;
-    }
-
-    BoxModernPath parentInlineBox() const
-    {
-        ASSERT(!atEnd());
-
-        auto candidate = *this;
-
-        if (isRootInlineBox()) {
-            candidate.setAtEnd();
-            return candidate;
-        }
-
-        auto& parentLayoutBox = box().layoutBox().parent();
-        do {
-            candidate.traversePreviousBox();
-        } while (!candidate.atEnd() && &candidate.box().layoutBox() != &parentLayoutBox);
-
-        ASSERT(candidate.atEnd() || candidate.box().isInlineBox());
-
-        return candidate;
-    }
+    inline BoxModernPath firstLeafBoxForInlineBox() const; // Defined in InlineIteratorBoxModernPathInlines.h.
+    inline BoxModernPath lastLeafBoxForInlineBox() const; // Defined in InlineIteratorBoxModernPathInlines.h.
+    inline BoxModernPath parentInlineBox() const; // Defined in InlineIteratorBoxModernPathInlines.h.
 
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
     bool isFirstLine() const { return !box().lineIndex(); }
@@ -235,15 +188,7 @@ public:
     auto& inlineContent() const { return *m_inlineContent; }
 
 private:
-    bool isWithinInlineBox(const Layout::Box& inlineBox)
-    {
-        auto* layoutBox = &box().layoutBox().parent();
-        for (; layoutBox->isInlineBox(); layoutBox = &layoutBox->parent()) {
-            if (layoutBox == &inlineBox)
-                return true;
-        }
-        return false;
-    }
+    inline bool isWithinInlineBox(const Layout::Box&); // Defined in InlineIteratorBoxModernPathInlines.h.
 
     void traverseNextBox()
     {

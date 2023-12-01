@@ -30,6 +30,7 @@
 #include "Hyphenation.h"
 #include "InlineItem.h"
 #include "InlineTextItem.h"
+#include "LayoutBoxInlines.h"
 #include "LayoutElementBox.h"
 #include "RenderStyleInlines.h"
 #include "TextUtil.h"

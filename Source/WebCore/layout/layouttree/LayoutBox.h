@@ -148,7 +148,7 @@ public:
     bool isInlineIntegrationRoot() const { return m_isInlineIntegrationRoot; }
     bool isFirstChildForIntegration() const { return m_isFirstChildForIntegration; }
 
-    const ElementBox& parent() const { return *m_parent; }
+    inline const ElementBox& parent() const; // Defined in LayoutBoxInlines.h.
     const Box* nextSibling() const { return m_nextSibling.get(); }
     const Box* nextInFlowSibling() const;
     const Box* nextInFlowOrFloatingSibling() const;

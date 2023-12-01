@@ -27,6 +27,7 @@
 #include "NetworkSendQueue.h"
 
 #include "BlobLoader.h"
+#include "ContextDestructionObserverInlines.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {

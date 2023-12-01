@@ -28,6 +28,7 @@
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "EventLoop.h"
 #include "EventNames.h"
@@ -249,6 +250,11 @@ void WebKitMediaKeySession::stop()
 const char* WebKitMediaKeySession::activeDOMObjectName() const
 {
     return "WebKitMediaKeySession";
+}
+
+ScriptExecutionContext* WebKitMediaKeySession::scriptExecutionContext() const
+{
+    return ActiveDOMObject::scriptExecutionContext();
 }
 
 #if !RELEASE_LOG_DISABLED

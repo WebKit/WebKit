@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_CRYPTO)
 
+#include "ContextDestructionObserverInlines.h"
 #include "CryptoAlgorithm.h"
 #include "CryptoAlgorithmRegistry.h"
 #include "CryptoAlgorithmX25519Params.h"

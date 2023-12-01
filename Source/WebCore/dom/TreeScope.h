@@ -68,8 +68,10 @@ public:
     void setParentTreeScope(TreeScope&);
 
     // For CheckedPtr / CheckedRef use.
+    static constexpr bool s_supportsCheckedPtrZombieMode = true;
     void incrementPtrCount() const;
     void decrementPtrCount() const;
+    WEBCORE_EXPORT bool isZombie() const;
 #if CHECKED_POINTER_DEBUG
     void registerCheckedPtr(const void*) const;
     void copyCheckedPtr(const void* source, const void* destination) const;

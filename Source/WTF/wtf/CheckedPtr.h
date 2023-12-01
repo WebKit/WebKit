@@ -140,9 +140,16 @@ public:
 
     ALWAYS_INLINE explicit operator bool() const { return PtrTraits::unwrap(m_ptr); }
 
-    ALWAYS_INLINE T* get() const { return PtrTraits::unwrap(m_ptr); }
+    ALWAYS_INLINE T* get() const { assertIsNotZombie(); return PtrTraits::unwrap(m_ptr); }
+    ALWAYS_INLINE T* getAllowingHashTableDeletedValue() const { return PtrTraits::unwrap(m_ptr); }
     ALWAYS_INLINE T& operator*() const { ASSERT(m_ptr); return *get(); }
     ALWAYS_INLINE T* operator->() const { return get(); }
+
+    ALWAYS_INLINE void assertIsNotZombie() const
+    {
+        if constexpr (T::s_supportsCheckedPtrZombieMode)
+            RELEASE_ASSERT(!m_ptr || !PtrTraits::unwrap(m_ptr)->isZombie());
+    }
 
     CheckedRef<T> releaseNonNull()
     {
@@ -300,7 +307,12 @@ template<typename P> struct HashTraits<CheckedPtr<P>> : SimpleClassHashTraits<Ch
     }
 };
 
-template<typename P> struct DefaultHash<CheckedPtr<P>> : PtrHash<CheckedPtr<P>> { };
+template<typename P> struct DefaultHash<CheckedPtr<P>> : PtrHash<CheckedPtr<P>> {
+    static bool equal(const CheckedPtr<P>& a, const CheckedPtr<P>& b) { return a.getAllowingHashTableDeletedValue() == b.getAllowingHashTableDeletedValue(); }
+    static bool equal(P* a, P* b) { return a == b; }
+    static bool equal(P* a, const CheckedPtr<P>& b) { return a == b.getAllowingHashTableDeletedValue(); }
+    static bool equal(const CheckedPtr<P>& a, P* b) { return a.getAllowingHashTableDeletedValue() == b; }
+};
 
 template<typename> struct PackedPtrTraits;
 template<typename T> using PackedCheckedPtr = CheckedPtr<T, PackedPtrTraits<T>>;

@@ -28,6 +28,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "ContextDestructionObserverInlines.h"
 #include "CryptoKeyRaw.h"
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMPromiseDeferred.h"
@@ -285,6 +286,11 @@ ExceptionOr<RefPtr<WritableStream>> RTCRtpSFrameTransform::writable()
 bool RTCRtpSFrameTransform::virtualHasPendingActivity() const
 {
     return (m_isAttached || m_hasWritable) && hasEventListeners();
+}
+
+ScriptExecutionContext* RTCRtpSFrameTransform::scriptExecutionContext() const
+{
+    return ContextDestructionObserver::scriptExecutionContext();
 }
 
 } // namespace WebCore
