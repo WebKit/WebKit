@@ -59,11 +59,7 @@ MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client)
 {
 }
 
-MediaSourcePrivate::~MediaSourcePrivate()
-{
-    for (auto& sourceBuffer : m_sourceBuffers)
-        sourceBuffer->clearMediaSource();
-}
+MediaSourcePrivate::~MediaSourcePrivate() = default;
 
 RefPtr<MediaSourcePrivateClient> MediaSourcePrivate::client() const
 {

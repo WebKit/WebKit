@@ -161,6 +161,7 @@ private:
     Ref<MediaPromise> appendInternal(Ref<SharedBuffer>&&) final;
     void abort() final;
     void resetParserStateInternal() final;
+    void removedFromMediaSource() final;
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
     void flush(const AtomString& trackID) final;

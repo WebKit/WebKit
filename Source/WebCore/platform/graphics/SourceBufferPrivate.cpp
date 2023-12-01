@@ -70,13 +70,10 @@ void SourceBufferPrivate::removedFromMediaSource()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    Ref<SourceBufferPrivate> protectedThis { *this };
-
-    // m_mediaSource may hold the last reference to ourselves.
-    if (RefPtr mediaSource = m_mediaSource.get())
+    // The SourceBufferClient holds a strong reference to SourceBufferPrivate at this stage
+    // and can be safely removed from the MediaSourcePrivate which also holds a strong reference.
+    if (RefPtr mediaSource = std::exchange(m_mediaSource, nullptr).get())
         mediaSource->removeSourceBuffer(*this);
-
-    clearMediaSource();
 }
 
 MediaTime SourceBufferPrivate::currentMediaTime() const
