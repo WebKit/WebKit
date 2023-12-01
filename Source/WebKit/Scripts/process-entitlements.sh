@@ -21,6 +21,7 @@ function mac_process_webcontent_entitlements()
         plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
         if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
         then
+            plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
             plistbuddy Add :com.apple.developer.videotoolbox.client-sandboxed-decoder bool YES
             plistbuddy Add :com.apple.pac.shared_region_id string WebContent
             plistbuddy Add :com.apple.private.pac.exception bool YES
@@ -237,6 +238,7 @@ function maccatalyst_process_webcontent_entitlements()
 
     if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 110000 ))
     then
+        plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
         plistbuddy Add :com.apple.pac.shared_region_id string WebContent
         plistbuddy Add :com.apple.private.pac.exception bool YES
         plistbuddy Add :com.apple.private.security.message-filter bool YES
@@ -373,6 +375,7 @@ function ios_family_process_webcontent_entitlements()
         plistbuddy Add :com.apple.private.verified-jit bool YES
         plistbuddy Add :dynamic-codesigning bool YES
     fi
+    plistbuddy Add :com.apple.developer.kernel.extended-virtual-addressing bool YES
 
     ios_family_process_webcontent_shared_entitlements
 }

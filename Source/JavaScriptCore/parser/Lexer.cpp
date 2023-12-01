@@ -902,7 +902,6 @@ inline void Lexer<T>::record16(int c)
     
 template<typename CharacterType> inline void Lexer<CharacterType>::recordUnicodeCodePoint(char32_t codePoint)
 {
-    ASSERT(codePoint >= 0);
     ASSERT(codePoint <= UCHAR_MAX_VALUE);
     if (U_IS_BMP(codePoint))
         record16(static_cast<UChar>(codePoint));

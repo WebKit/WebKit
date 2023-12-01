@@ -29,11 +29,14 @@ set(WPEPlatformDRM_SYSTEM_INCLUDE_DIRECTORIES
 )
 
 set(WPEPlatformDRM_LIBRARIES
-    Journald::Journald
     LibInput::LibInput
     Udev::Udev
     ${GIO_UNIX_LIBRARIES}
 )
+
+if (ENABLE_JOURNALD_LOG)
+    list(APPEND WPEPlatformDRM_LIBRARIES Journald::Journald)
+endif ()
 
 set(WPEPlatformDRM_SOURCES_FOR_INTROSPECTION
     ${WPEPlatformDRM_INSTALLED_HEADERS}

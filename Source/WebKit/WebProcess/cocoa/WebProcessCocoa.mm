@@ -706,6 +706,7 @@ static void registerWithAccessibility()
     if (![[NSBundle bundleWithPath:bundlePath] loadAndReturnError:&error])
         LOG_ERROR("Failed to load accessibility bundle at %@: %@", bundlePath, error);
 
+#if !PLATFORM(MACCATALYST)
     // This code will eagerly start the in-process AX server.
     // This enables us to revoke the Mach bootstrap sandbox extension.
     NSString *webProcessAXBundlePath = webProcessAccessibilityBundlePath();
@@ -715,6 +716,7 @@ static void registerWithAccessibility()
         [[bundle principalClass] safeValueForKey:@"accessibilityInitializeBundle"];
     else
         LOG_ERROR("Failed to load accessibility bundle at %@: %@", webProcessAXBundlePath, error);
+#endif // !PLATFORM(MACCATALYST)
 #endif
 }
 
