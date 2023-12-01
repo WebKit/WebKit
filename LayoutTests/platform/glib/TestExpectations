@@ -1205,8 +1205,6 @@ http/tests/webcodecs/hevc-reordering.html [ Failure ]
 # expected to pass again once we update to GStreamer 1.24.
 fast/mediastream/play-newly-added-audio-track.html [ Pass Crash ]
 
-webkit.org/b/264663 media/media-source/media-source-webm-configuration-framerate.html [ Crash Pass ]
-
 webkit.org/b/264665 http/wpt/webcodecs/videoFrame-webglCanvasImageSource.html [ Failure ]
 
 webkit.org/b/264666 imported/w3c/web-platform-tests/encrypted-media/clearkey-generate-request-disallowed-input.https.html [ Failure ]

@@ -1554,6 +1554,9 @@ void MediaPlayerPrivateGStreamer::handleStreamCollectionMessage(GstMessage* mess
     if (m_isLegacyPlaybin)
         return;
 
+    if (!m_source)
+        return;
+
     // GStreamer workaround: Unfortunately, when we have a stream-collection aware source (like
     // WebKitMediaSrc) parsebin and decodebin3 emit their own stream-collection messages, but late,
     // and sometimes with duplicated streams. Let's only listen for stream-collection messages from
