@@ -82,9 +82,9 @@ void LaunchServicesDatabaseManager::waitForDatabaseUpdate()
 {
     auto startTime = MonotonicTime::now();
 #ifdef NDEBUG
-    auto waitTime = 5_s;
+    constexpr auto waitTime = 5_s;
 #else
-    auto waitTime = 10_s;
+    constexpr auto waitTime = 10_s;
 #endif
     bool databaseUpdated = waitForDatabaseUpdate(waitTime);
     auto elapsedTime = MonotonicTime::now() - startTime;
