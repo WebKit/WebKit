@@ -30,6 +30,7 @@
 #import "config.h"
 #import "WebExtensionAPITest.h"
 
+#import "CocoaHelpers.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionAPINamespace.h"
 #import "WebExtensionContextMessages.h"
@@ -74,10 +75,17 @@ void WebExtensionAPITest::yield(JSContextRef context, NSString *message)
     WebProcess::singleton().send(Messages::WebExtensionContext::TestYielded(message, location.first, location.second), extensionContext().identifier());
 }
 
-void WebExtensionAPITest::log(JSContextRef context, NSString *message)
+inline NSString *debugString(JSValue *value)
+{
+    if (value._isRegularExpression || value._isFunction)
+        return value.toString;
+    return value._toSortedJSONString ?: @"undefined";
+}
+
+void WebExtensionAPITest::log(JSContextRef context, JSValue *value)
 {
     auto location = scriptLocation(context);
-    WebProcess::singleton().send(Messages::WebExtensionContext::TestMessage(message, location.first, location.second), extensionContext().identifier());
+    WebProcess::singleton().send(Messages::WebExtensionContext::TestMessage(debugString(value), location.first, location.second), extensionContext().identifier());
 }
 
 void WebExtensionAPITest::fail(JSContextRef context, NSString *message)
@@ -99,13 +107,6 @@ void WebExtensionAPITest::assertTrue(JSContextRef context, bool actualValue, NSS
 void WebExtensionAPITest::assertFalse(JSContextRef context, bool actualValue, NSString *message)
 {
     assertTrue(context, !actualValue, message);
-}
-
-inline NSString *debugString(JSValue *value)
-{
-    if (value._isRegularExpression)
-        return value.toString;
-    return value._toSortedJSONString ?: @"undefined";
 }
 
 void WebExtensionAPITest::assertDeepEq(JSContextRef context, JSValue *actualValue, JSValue *expectedValue, NSString *message)

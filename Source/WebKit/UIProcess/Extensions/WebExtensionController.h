@@ -43,6 +43,7 @@
 #include <wtf/WeakHashSet.h>
 
 OBJC_CLASS NSError;
+OBJC_CLASS NSMenu;
 OBJC_PROTOCOL(_WKWebExtensionControllerDelegatePrivate);
 
 #ifdef __OBJC__
@@ -51,6 +52,7 @@ OBJC_PROTOCOL(_WKWebExtensionControllerDelegatePrivate);
 
 namespace WebKit {
 
+class ContextMenuContextData;
 class WebExtensionContext;
 class WebPageProxy;
 class WebProcessPool;
@@ -116,6 +118,10 @@ public:
 
     template<typename T>
     void sendToAllProcesses(const T& message, const ObjectIdentifierGenericBase& destinationID);
+
+#if PLATFORM(MAC)
+    void addItemsToContextMenu(WebPageProxy&, const ContextMenuContextData&, NSMenu *);
+#endif
 
 #ifdef __OBJC__
     _WKWebExtensionController *wrapper() const { return (_WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }

@@ -38,7 +38,7 @@
     [NeedsScriptContext] void yield([Optional] DOMString message);
 
     // Logs a message during testing.
-    [NeedsScriptContext] void log(DOMString message);
+    [NeedsScriptContext] void log([ValuesAllowed] any message);
 
     // Alias for `assertTrue(false, message)`.
     [NeedsScriptContext] void fail([Optional] DOMString message);

@@ -40,7 +40,11 @@
 namespace WebCore {
 
     class IntSize;
-    
+
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT String truncatedStringForMenuItem(const String&);
+#endif
+
     String inputElementAltText();
     String resetButtonDefaultLabel();
     String searchableIndexIntroduction();

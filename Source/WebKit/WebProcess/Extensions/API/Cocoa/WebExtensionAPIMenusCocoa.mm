@@ -476,30 +476,22 @@ void WebExtensionContextProxy::dispatchMenusClickedEvent(const WebExtensionMenuI
     if (!contextParameters.selectionString.isNull())
         info[selectionTextKey] = contextParameters.selectionString;
 
-    if (!contextParameters.sourceURL.isNull())
+    if (!contextParameters.sourceURL.isNull()) {
         info[srcURLKey] = contextParameters.sourceURL.string();
+
+        if (contextParameters.types.contains(WebExtensionMenuItemContextType::Audio))
+            info[mediaTypeKey] = audioKey;
+        else if (contextParameters.types.contains(WebExtensionMenuItemContextType::Image))
+            info[mediaTypeKey] = imageKey;
+        else if (contextParameters.types.contains(WebExtensionMenuItemContextType::Video))
+            info[mediaTypeKey] = videoKey;
+    }
 
     if (!contextParameters.linkURL.isNull())
         info[linkURLKey] = contextParameters.linkURL.string();
 
     if (!contextParameters.linkText.isNull())
         info[linkTextKey] = contextParameters.linkText;
-
-    if (contextParameters.mediaType) {
-        switch (contextParameters.mediaType.value()) {
-        case WebExtensionMenuItemMediaType::Audio:
-            info[mediaTypeKey] = audioKey;
-            break;
-
-        case WebExtensionMenuItemMediaType::Image:
-            info[mediaTypeKey] = imageKey;
-            break;
-
-        case WebExtensionMenuItemMediaType::Video:
-            info[mediaTypeKey] = videoKey;
-            break;
-        }
-    }
 
     if (contextParameters.frameIdentifier && !contextParameters.frameURL.isNull()) {
         info[editableKey] = @(contextParameters.editable);

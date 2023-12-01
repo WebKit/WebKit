@@ -33,6 +33,7 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "CocoaHelpers.h"
+#import "ContextMenuContextData.h"
 #import "Logging.h"
 #import "SandboxUtilities.h"
 #import "WebExtensionContext.h"
@@ -258,6 +259,16 @@ WebExtensionController::WebExtensionSet WebExtensionController::extensions() con
         extensions.addVoid(extensionContext->extension());
     return extensions;
 }
+
+#if PLATFORM(MAC)
+void WebExtensionController::addItemsToContextMenu(WebPageProxy& page, const ContextMenuContextData& contextData, NSMenu *menu)
+{
+    [menu addItem:NSMenuItem.separatorItem];
+
+    for (auto& context : m_extensionContexts)
+        context->addItemsToContextMenu(page, contextData, menu);
+}
+#endif
 
 void WebExtensionController::didStartProvisionalLoadForFrame(WebPageProxyIdentifier pageID, WebExtensionFrameIdentifier frameID, WebExtensionFrameIdentifier parentFrameID, const URL& targetURL, WallTime timestamp)
 {

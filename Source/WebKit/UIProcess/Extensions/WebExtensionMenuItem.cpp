@@ -103,6 +103,9 @@ bool WebExtensionMenuItem::matches(const WebExtensionMenuItemContextParameters& 
     }
 
     auto matchesPattern = [&](const auto& patterns, const URL& url) {
+        if (patterns.isEmpty())
+            return true;
+
         for (const auto& pattern : patterns) {
             if (pattern->matchesURL(url))
                 return true;
@@ -111,27 +114,9 @@ bool WebExtensionMenuItem::matches(const WebExtensionMenuItemContextParameters& 
         return false;
     };
 
-    if (matchesType(ContextType::Page)) {
-        ASSERT(contextParameters.frameIdentifier);
-        ASSERT(!contextParameters.frameURL.isNull());
-
-        if (!isMainFrame(contextParameters.frameIdentifier))
-            return false;
-
-        if (!matchesPattern(documentPatterns(), contextParameters.frameURL))
-            return false;
-    }
-
-    if (matchesType(ContextType::Frame)) {
-        ASSERT(contextParameters.frameIdentifier);
-        ASSERT(!contextParameters.frameURL.isNull());
-
-        if (isMainFrame(contextParameters.frameIdentifier))
-            return false;
-
-        if (!matchesPattern(documentPatterns(), contextParameters.frameURL))
-            return false;
-    }
+    // Document patterns match for any context type.
+    if (!matchesPattern(documentPatterns(), contextParameters.frameURL))
+        return false;
 
     if (matchesType(ContextType::Link)) {
         ASSERT(!contextParameters.linkURL.isNull());

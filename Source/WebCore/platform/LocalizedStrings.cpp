@@ -136,9 +136,9 @@ String localizedString(const char* key)
 }
 #endif
 
-#if ENABLE(CONTEXT_MENUS) && PLATFORM(COCOA)
+#if PLATFORM(COCOA)
 
-static String truncatedStringForMenuItem(const String& original)
+String truncatedStringForMenuItem(const String& original)
 {
     // Truncate the string if it's too long. This number is roughly the same as the one used by AppKit.
     unsigned maxNumberOfGraphemeClustersInLookupMenuItem = 24;

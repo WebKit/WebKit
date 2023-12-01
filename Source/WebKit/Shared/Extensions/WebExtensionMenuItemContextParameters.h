@@ -34,12 +34,6 @@
 
 namespace WebKit {
 
-enum class WebExtensionMenuItemMediaType : uint8_t {
-    Audio,
-    Image,
-    Video,
-};
-
 struct WebExtensionMenuItemContextParameters {
     OptionSet<WebExtensionMenuItemContextType> types;
 
@@ -50,7 +44,6 @@ struct WebExtensionMenuItemContextParameters {
     String linkText;
     URL linkURL;
 
-    std::optional<WebExtensionMenuItemMediaType> mediaType;
     URL sourceURL;
 
     String selectionString;

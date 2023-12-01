@@ -34,6 +34,7 @@
 
 #import "APIArray.h"
 #import "CocoaHelpers.h"
+#import "ContextMenuContextData.h"
 #import "InjectUserScriptImmediately.h"
 #import "Logging.h"
 #import "WKContentRuleListInternal.h"
@@ -1938,6 +1939,98 @@ void WebExtensionContext::performMenuItem(WebExtensionMenuItem& menuItem, const 
     bool wasChecked = menuItem.toggleCheckedIfNeeded(contextParameters);
     fireMenusClickedEventIfNeeded(menuItem, wasChecked, contextParameters);
 }
+
+#if PLATFORM(MAC)
+void WebExtensionContext::addItemsToContextMenu(WebPageProxy& page, const ContextMenuContextData& contextData, NSMenu *menu)
+{
+    WebExtensionMenuItemContextParameters contextParameters;
+
+    ASSERT(contextData.webHitTestResultData());
+    auto& hitTestData = contextData.webHitTestResultData().value();
+
+    if (!hitTestData.frameInfo)
+        return;
+
+    auto& frameInfo = hitTestData.frameInfo.value();
+    contextParameters.frameIdentifier = toWebExtensionFrameIdentifier(frameInfo);
+    contextParameters.frameURL = frameInfo.request.url();
+
+    RefPtr tab = getTab(page.identifier());
+    if (tab)
+        contextParameters.tabIdentifier = tab->identifier();
+
+    // Don't show context menu items unless the extension has permission, or can be granted permission
+    // with an activeTab user gesture if the user interacts with one of the menu items.
+    if (!hasPermission(frameInfo.request.url(), tab.get()) && (!tab || !frameInfo.isMainFrame || !hasPermission(_WKWebExtensionPermissionActiveTab)))
+        return;
+
+    if (!hitTestData.absoluteImageURL.isEmpty()) {
+        contextParameters.types.add(WebExtensionMenuItemContextType::Image);
+        contextParameters.sourceURL = URL { hitTestData.absoluteImageURL };
+    }
+
+    if (!hitTestData.absoluteMediaURL.isEmpty() && hitTestData.elementType != WebHitTestResultData::ElementType::None) {
+        contextParameters.sourceURL = URL { hitTestData.absoluteMediaURL };
+
+        switch (hitTestData.elementType) {
+        case WebHitTestResultData::ElementType::None:
+            ASSERT_NOT_REACHED();
+            break;
+
+        case WebHitTestResultData::ElementType::Audio:
+            contextParameters.types.add(WebExtensionMenuItemContextType::Audio);
+            break;
+
+        case WebHitTestResultData::ElementType::Video:
+            contextParameters.types.add(WebExtensionMenuItemContextType::Video);
+            break;
+        }
+    }
+
+    if (hitTestData.isContentEditable) {
+        contextParameters.types.add(WebExtensionMenuItemContextType::Editable);
+        contextParameters.editable = true;
+    }
+
+    if (hitTestData.isSelected && !contextData.selectedText().isEmpty()) {
+        contextParameters.types.add(WebExtensionMenuItemContextType::Selection);
+        contextParameters.selectionString = contextData.selectedText();
+    }
+
+    if (!hitTestData.absoluteLinkURL.isEmpty()) {
+        // Links are selected when showing the context menu, so remove the Selection type since Link is more specific.
+        // This matches how built-in context menus work, e.g. hiding Lookup and Translate when on a link.
+        contextParameters.types.remove(WebExtensionMenuItemContextType::Selection);
+
+        contextParameters.types.add(WebExtensionMenuItemContextType::Link);
+        contextParameters.linkURL = URL { hitTestData.absoluteLinkURL };
+        contextParameters.linkText = hitTestData.linkLabel;
+    }
+
+    // The Page and Frame contexts only apply if there are no other contexts.
+    if (contextParameters.types.isEmpty())
+        contextParameters.types.add(frameInfo.isMainFrame ? WebExtensionMenuItemContextType::Page : WebExtensionMenuItemContextType::Frame);
+
+    auto *menuItems = WebExtensionMenuItem::matchingPlatformMenuItems(mainMenuItems(), contextParameters);
+    if (!menuItems.count)
+        return;
+
+    if (menuItems.count == 1) {
+        // Don't allow images for the top-level items, it isn't typical on macOS for context menus.
+        dynamic_objc_cast<NSMenuItem>(menuItems.firstObject).image = nil;
+
+        [menu addItem:menuItems.firstObject];
+        return;
+    }
+
+    auto *extensionItem = [[NSMenuItem alloc] initWithTitle:extension().displayShortName() action:nullptr keyEquivalent:@""];
+    auto *extensionSubmenu = [[NSMenu alloc] init];
+    extensionSubmenu.itemArray = menuItems;
+    extensionItem.submenu = extensionSubmenu;
+
+    [menu addItem:extensionItem];
+}
+#endif
 
 void WebExtensionContext::userGesturePerformed(WebExtensionTab& tab)
 {

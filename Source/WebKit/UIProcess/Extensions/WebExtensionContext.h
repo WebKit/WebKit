@@ -69,6 +69,7 @@
 OBJC_CLASS NSArray;
 OBJC_CLASS NSDate;
 OBJC_CLASS NSDictionary;
+OBJC_CLASS NSMenu;
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
@@ -85,6 +86,7 @@ OBJC_PROTOCOL(_WKWebExtensionWindow);
 
 namespace WebKit {
 
+class ContextMenuContextData;
 class WebExtension;
 class WebUserContentControllerProxy;
 struct WebExtensionContextParameters;
@@ -327,6 +329,10 @@ public:
     const MenuItemVector& mainMenuItems() const { return m_mainMenuItems; }
     WebExtensionMenuItem* menuItem(const String& identifier) const;
     void performMenuItem(WebExtensionMenuItem&, const WebExtensionMenuItemContextParameters&, UserTriggered = UserTriggered::No);
+
+#if PLATFORM(MAC)
+    void addItemsToContextMenu(WebPageProxy&, const ContextMenuContextData&, NSMenu *);
+#endif
 
     void userGesturePerformed(WebExtensionTab&);
     bool hasActiveUserGesture(WebExtensionTab&) const;
