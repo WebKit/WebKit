@@ -2710,3 +2710,7 @@ webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slas
 webkit.org/b/265213 fast/dom/Range/detach-range-during-deletecontents.html [ Skip ] # Timeout
 
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-name-is-backdrop-filter-root.html [ Pass ]
+
+webkit.org/b/265537 compositing/geometry/fixed-position-composited-page-scale-scroll.html [ Skip ] # Crash
+webkit.org/b/265537 fast/visual-viewport/zoomed-scroll-into-view-fixed.html [ Skip ] # Crash
+webkit.org/b/265537 fast/visual-viewport/zoomed-scroll-to-anchor-in-position-fixed.html [ Skip ] # Crash
