@@ -76,8 +76,8 @@ void GridMasonryLayout::collectMasonryItems()
 {
     ASSERT(m_gridAxisTracksCount);
     m_firstTrackItems.clear();
-    m_itemsWithDefiniteGridAxisPosition.resize(0);
-    m_itemsWithIndefiniteGridAxisPosition.resize(0);
+    m_itemsWithDefiniteGridAxisPosition.shrink(0);
+    m_itemsWithIndefiniteGridAxisPosition.shrink(0);
 
     auto& grid = m_renderGrid.currentGrid();
     for (auto* child = grid.orderIterator().first(); child; child = grid.orderIterator().next()) {

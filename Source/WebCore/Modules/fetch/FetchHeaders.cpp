@@ -287,7 +287,7 @@ std::optional<KeyValuePair<String, String>> FetchHeaders::Iterator::next()
 {
     if (m_keys.isEmpty() || m_updateCounter != m_headers->m_updateCounter) {
         bool hasSetCookie = !m_headers->m_setCookieValues.isEmpty();
-        m_keys.resize(0);
+        m_keys.shrink(0);
         m_keys.reserveCapacity(m_headers->m_headers.size() + (hasSetCookie ? 1 : 0));
         m_keys.appendContainerWithMapping(m_headers->m_headers, [](auto& header) {
             ASSERT(!header.key.isNull());

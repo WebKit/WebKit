@@ -56,7 +56,7 @@ WebGLTransformFeedback::~WebGLTransformFeedback()
 WebGLTransformFeedback::WebGLTransformFeedback(WebGL2RenderingContext& context, PlatformGLObject object)
     : WebGLObject(context, object)
 {
-    m_boundIndexedTransformFeedbackBuffers.resize(context.maxTransformFeedbackSeparateAttribs());
+    m_boundIndexedTransformFeedbackBuffers.grow(context.maxTransformFeedbackSeparateAttribs());
 }
 
 void WebGLTransformFeedback::deleteObjectImpl(const AbstractLocker&, GraphicsContextGL* context3d, PlatformGLObject object)

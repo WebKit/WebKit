@@ -626,7 +626,7 @@ std::unique_ptr<FunctionCodeBlockGenerator> LLIntGenerator::finalize()
     Buffer usedBuffer;
     m_codeBlock->setInstructions(m_writer.finalize(usedBuffer));
     size_t oldCapacity = usedBuffer.capacity();
-    usedBuffer.resize(0);
+    usedBuffer.shrink(0);
     RELEASE_ASSERT(usedBuffer.capacity() == oldCapacity);
     *threadSpecific = WTFMove(usedBuffer);
 

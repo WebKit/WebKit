@@ -39,7 +39,7 @@ WebGLVertexArrayObjectBase::WebGLVertexArrayObjectBase(WebGLRenderingContextBase
     : WebGLObject(context, object)
     , m_type(type)
 {
-    m_vertexAttribState.resize(context.maxVertexAttribs());
+    m_vertexAttribState.grow(context.maxVertexAttribs());
 }
 
 void WebGLVertexArrayObjectBase::setElementArrayBuffer(const AbstractLocker& locker, WebGLBuffer* buffer)

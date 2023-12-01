@@ -86,11 +86,10 @@ static unsigned findNextEdgeVertexIndex(const FloatPolygon& polygon, unsigned ve
 FloatPolygon::FloatPolygon(Vector<FloatPoint>&& vertices, WindRule fillRule)
     : m_vertices(WTFMove(vertices))
     , m_fillRule(fillRule)
+    , m_empty(m_vertices.size() < 3)
+    , m_edges(m_vertices.size())
 {
     unsigned nVertices = numberOfVertices();
-    m_edges.resize(nVertices);
-    m_empty = nVertices < 3;
-
     if (nVertices)
         m_boundingBox.setLocation(vertexAt(0));
 
@@ -129,7 +128,7 @@ FloatPolygon::FloatPolygon(Vector<FloatPoint>&& vertices, WindRule fillRule)
         }
     }
 
-    m_edges.resize(edgeIndex);
+    m_edges.shrink(edgeIndex);
     m_empty = m_edges.size() < 3;
 
     if (m_empty)

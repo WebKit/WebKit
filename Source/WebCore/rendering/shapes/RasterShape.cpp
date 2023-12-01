@@ -48,11 +48,11 @@ private:
 };
 
 MarginIntervalGenerator::MarginIntervalGenerator(unsigned radius)
-    : m_y(0)
+    : m_xIntercepts(radius + 1)
+    , m_y(0)
     , m_x1(0)
     , m_x2(0)
 {
-    m_xIntercepts.resize(radius + 1);
     unsigned radiusSquared = radius * radius;
     for (unsigned y = 0; y <= radius; y++)
         m_xIntercepts[y] = sqrt(static_cast<double>(radiusSquared - y * y));

@@ -213,7 +213,7 @@ void ShadowChicken::update(VM& vm, CallFrame* callFrame)
             }
             break;
         }
-        m_stack.resize(shadowIndex);
+        m_stack.shrink(shadowIndex);
         
         if (ShadowChickenInternal::verbose)
             dataLog("    Revised stack: ", listDump(m_stack), "\n");

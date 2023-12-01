@@ -164,8 +164,8 @@ struct nameTable {
 #pragma pack()
 
 EOTHeader::EOTHeader()
+    : m_buffer(sizeof(EOTPrefix))
 {
-    m_buffer.resize(sizeof(EOTPrefix));
 }
 
 void EOTHeader::updateEOTSize(size_t fontDataSize)
@@ -176,7 +176,7 @@ void EOTHeader::updateEOTSize(size_t fontDataSize)
 void EOTHeader::appendBigEndianString(const BigEndianUShort* string, unsigned short length)
 {
     size_t oldSize = m_buffer.size();
-    m_buffer.resize(oldSize + length + 2 * sizeof(unsigned short));
+    m_buffer.grow(oldSize + length + 2 * sizeof(unsigned short));
     UChar* dst = reinterpret_cast<UChar*>(m_buffer.data() + oldSize);
     unsigned i = 0;
     dst[i++] = length;

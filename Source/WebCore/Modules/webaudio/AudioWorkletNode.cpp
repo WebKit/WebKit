@@ -127,6 +127,8 @@ AudioWorkletNode::AudioWorkletNode(BaseAudioContext& context, const String& name
     , m_name(name)
     , m_parameters(AudioParamMap::create())
     , m_port(WTFMove(port))
+    , m_inputs(options.numberOfInputs)
+    , m_outputs(options.numberOfOutputs)
     , m_wasOutputChannelCountGiven(!!options.outputChannelCount)
 {
     ASSERT(isMainThread());
@@ -134,9 +136,6 @@ AudioWorkletNode::AudioWorkletNode(BaseAudioContext& context, const String& name
         addInput();
     for (unsigned i = 0; i < options.numberOfOutputs; ++i)
         addOutput(options.outputChannelCount ? options.outputChannelCount->at(i): 1);
-
-    m_inputs.resize(options.numberOfInputs);
-    m_outputs.resize(options.numberOfOutputs);
 
     initialize();
 }

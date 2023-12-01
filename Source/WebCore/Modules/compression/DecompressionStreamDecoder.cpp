@@ -135,7 +135,7 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib
     }
 
     while (shouldDecompress) {
-        auto output = Vector<uint8_t>();
+        Vector<uint8_t> output;
         if (!output.tryReserveInitialCapacity(allocateSize)) {
             allocateSize /= 4;
 
@@ -145,7 +145,7 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib
             continue;
         }
 
-        output.resize(allocateSize);
+        output.grow(allocateSize);
 
         m_zstream.next_out = output.data();
         m_zstream.avail_out = output.size();
@@ -160,7 +160,7 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressZlib
 
         if (didInflateFinish(result)) {
             shouldDecompress = false;
-            output.resize(allocateSize - m_zstream.avail_out);
+            output.shrink(allocateSize - m_zstream.avail_out);
         } else {
             if (allocateSize < maxAllocationSize)
                 allocateSize *= 2;
@@ -206,7 +206,7 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppl
     m_stream.src_size = inputLength;
     
     while (shouldDecompress) {
-        auto output = Vector<uint8_t>();
+        Vector<uint8_t> output;
         if (!output.tryReserveInitialCapacity(allocateSize)) {
             allocateSize /= 4;
 
@@ -216,7 +216,7 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppl
             continue;
         }
 
-        output.resize(allocateSize);
+        output.grow(allocateSize);
 
         m_stream.dst_ptr = output.data();
         m_stream.dst_size = output.size();
@@ -232,7 +232,7 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppl
 
         if (!m_stream.src_size) {
             shouldDecompress = false;
-            output.resize(allocateSize - m_stream.dst_size);
+            output.shrink(allocateSize - m_stream.dst_size);
         } else {
             if (allocateSize < maxAllocationSize)
                 allocateSize *= 2;

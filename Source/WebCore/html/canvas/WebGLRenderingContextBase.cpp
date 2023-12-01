@@ -548,11 +548,11 @@ void WebGLRenderingContextBase::initializeContextState()
 
     GCGLint numCombinedTextureImageUnits = m_context->getInteger(GraphicsContextGL::MAX_COMBINED_TEXTURE_IMAGE_UNITS);
     m_textureUnits.clear();
-    m_textureUnits.resize(numCombinedTextureImageUnits);
+    m_textureUnits.grow(numCombinedTextureImageUnits);
 
     GCGLint numVertexAttribs = m_context->getInteger(GraphicsContextGL::MAX_VERTEX_ATTRIBS);
     m_vertexAttribValue.clear();
-    m_vertexAttribValue.resize(numVertexAttribs);
+    m_vertexAttribValue.grow(numVertexAttribs);
 
     m_maxTextureSize = m_context->getInteger(GraphicsContextGL::MAX_TEXTURE_SIZE);
     m_maxTextureLevel = WebGLTexture::computeLevelCount(m_maxTextureSize, m_maxTextureSize);

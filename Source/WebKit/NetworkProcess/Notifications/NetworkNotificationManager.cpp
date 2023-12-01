@@ -47,8 +47,7 @@ NetworkNotificationManager::NetworkNotificationManager(NetworkSession& networkSe
 #if PLATFORM(COCOA)
         auto token = m_networkSession.networkProcess().parentProcessConnection()->getAuditToken();
         if (token) {
-            Vector<uint8_t> auditTokenData;
-            auditTokenData.resize(sizeof(*token));
+            Vector<uint8_t> auditTokenData(sizeof(*token));
             memcpy(auditTokenData.data(), &(*token), sizeof(*token));
             configuration.hostAppAuditTokenData = WTFMove(auditTokenData);
         }

@@ -359,11 +359,11 @@ public:
                 Vector<uint8_t> buffer;
                 if (!buffer.tryReserveInitialCapacity(numToRead))
                     return Status(Status::kNotEnoughMemory);
-                buffer.resize(numToRead);
+                buffer.grow(numToRead);
                 auto readResult = currentSegment.read(m_positionWithinSegment, numToRead, buffer.data());
                 if (!readResult.has_value())
                     return segmentReadErrorToWebmStatus(readResult.error());
-                buffer.resize(readResult.value());
+                buffer.shrink(readResult.value());
                 rawBlockBuffer = SharedBuffer::create(WTFMove(buffer));
             } else
                 rawBlockBuffer = sharedBuffer->getContiguousData(m_positionWithinSegment, numToRead);

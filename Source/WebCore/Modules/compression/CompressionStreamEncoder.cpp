@@ -130,7 +130,7 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(const u
     }
 
     while (shouldCompress) {
-        auto output = Vector<uint8_t>();
+        Vector<uint8_t> output;
         if (!output.tryReserveInitialCapacity(allocateSize)) {
             allocateSize /= 4;
 
@@ -140,7 +140,7 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(const u
             continue;
         }
 
-        output.resize(allocateSize);
+        output.grow(allocateSize);
 
         m_zstream.next_out = output.data();
         m_zstream.avail_out = output.size();
@@ -152,7 +152,7 @@ ExceptionOr<RefPtr<JSC::ArrayBuffer>> CompressionStreamEncoder::compress(const u
 
         if (didDeflateFinish(result)) {
             shouldCompress = false;
-            output.resize(allocateSize - m_zstream.avail_out);
+            output.shrink(allocateSize - m_zstream.avail_out);
         }
         else {
             if (allocateSize < maxAllocationSize)

@@ -3099,7 +3099,7 @@ private:
         cloneValue(m_value);
 
         // Remove the values from the predecessor.
-        predecessor->values().resize(startIndex);
+        predecessor->values().shrink(startIndex);
         
         predecessor->appendNew<Value>(m_proc, Branch, source->origin(), predicate);
         predecessor->setSuccessors(FrequentedBlock(cases[0]), FrequentedBlock(cases[1]));

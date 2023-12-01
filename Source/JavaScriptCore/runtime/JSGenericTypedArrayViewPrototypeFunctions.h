@@ -779,10 +779,8 @@ static ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSortImpl(VM& v
 
     auto* originalArray = thisObject->typedVector();
 
-    Vector<typename ViewClass::ElementType, 16> src;
-    Vector<typename ViewClass::ElementType, 16> dst;
-    src.resize(length);
-    dst.resize(length);
+    Vector<typename ViewClass::ElementType, 16> src(length);
+    Vector<typename ViewClass::ElementType, 16> dst(length);
     WTF::copyElements(src.data(), originalArray, length);
 
     typename ViewClass::ElementType* result = nullptr;
