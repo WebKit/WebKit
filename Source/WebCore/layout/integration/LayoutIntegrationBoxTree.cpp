@@ -159,6 +159,8 @@ void BoxTree::adjustStyleIfNeeded(const RenderElement& renderer, RenderStyle& st
                 styleToAdjust.resetBorderRight();
                 styleToAdjust.setPaddingRight(RenderStyle::initialPadding());
             }
+            if ((styleToAdjust.display() == DisplayType::RubyBase || styleToAdjust.display() == DisplayType::RubyAnnotation) && renderInline.parent()->style().display() != DisplayType::Ruby)
+                styleToAdjust.setDisplay(DisplayType::Inline);
             return;
         }
         if (renderer.isRenderLineBreak()) {
