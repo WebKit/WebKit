@@ -217,8 +217,13 @@ void LineLayout::updateOverflow()
 std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
 {
     auto parentBlockLayoutState = Layout::BlockLayoutState { m_blockFormattingState.placedFloats() };
-    auto constraints = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState }.computedIntrinsicSizes(m_lineDamage.get());
-    return { constraints.minimum, constraints.maximum };
+    auto inlineFormattingContext = Layout::InlineFormattingContext { rootLayoutBox(), layoutState(), parentBlockLayoutState };
+    if (m_lineDamage)
+        m_inlineContentCache.resetMinimumMaximumContentSizes();
+    // FIXME: This is where we need to switch between minimum and maximum box geometries.
+    auto minimumContentSize = inlineFormattingContext.minimumContentSize(m_lineDamage.get());
+    auto maximumContentSize = inlineFormattingContext.maximumContentSize();
+    return { minimumContentSize, maximumContentSize };
 }
 
 static inline std::optional<Layout::BlockLayoutState::LineClamp> lineClamp(const RenderBlockFlow& rootRenderer)
