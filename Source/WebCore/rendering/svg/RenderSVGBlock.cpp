@@ -155,16 +155,18 @@ LayoutRect RenderSVGBlock::clippedOverflowRect(const RenderLayerModelObject* rep
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer, context);
 }
 
-std::optional<LayoutRect> RenderSVGBlock::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+auto RenderSVGBlock::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
-        return computeVisibleRectInSVGContainer(rect, container, context);
+        return computeVisibleRectsInSVGContainer(rects, container, context);
 #endif
 
-    std::optional<FloatRect> adjustedRect = computeFloatVisibleRectInContainer(rect, container, context);
+    // FIXME: computeFloatVisibleRectInContainer() needs to be merged with computeVisibleRectsInContainer().
+    auto adjustedRect = computeFloatVisibleRectInContainer(rects.clippedOverflowRect, container, context);
     if (adjustedRect)
-        return enclosingLayoutRect(*adjustedRect);
+        return RepaintRects { enclosingLayoutRect(*adjustedRect) };
+
     return std::nullopt;
 }
 

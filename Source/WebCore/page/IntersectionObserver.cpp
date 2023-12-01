@@ -293,12 +293,21 @@ static void expandRootBoundsWithRootMargin(FloatRect& rootBounds, const LengthBo
 
 static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const LayoutRect& rect, const RenderElement* renderer)
 {
-    OptionSet<RenderObject::VisibleRectContextOption> visibleRectOptions = { RenderObject::VisibleRectContextOption::UseEdgeInclusiveIntersection, RenderObject::VisibleRectContextOption::ApplyCompositedClips, RenderObject::VisibleRectContextOption::ApplyCompositedContainerScrolls };
-    std::optional<LayoutRect> rectInFrameAbsoluteSpace = renderer->computeVisibleRectInContainer(rect, &renderer->view(), { false /* hasPositionFixedDescendant */, false /* dirtyRectIsFlipped */, visibleRectOptions });
-    if (!rectInFrameAbsoluteSpace || renderer->frame().isMainFrame())
-        return rectInFrameAbsoluteSpace;
+    auto visibleRectOptions = OptionSet {
+        RenderObject::VisibleRectContextOption::UseEdgeInclusiveIntersection,
+        RenderObject::VisibleRectContextOption::ApplyCompositedClips,
+        RenderObject::VisibleRectContextOption::ApplyCompositedContainerScrolls
+    };
 
-    bool intersects = rectInFrameAbsoluteSpace->edgeInclusiveIntersect(renderer->view().frameView().layoutViewportRect());
+    auto absoluteRects = renderer->computeVisibleRectsInContainer({ rect }, &renderer->view(), { false /* hasPositionFixedDescendant */, false /* dirtyRectIsFlipped */, visibleRectOptions });
+    if (!absoluteRects)
+        return std::nullopt;
+
+    auto absoluteClippedRect = absoluteRects->clippedOverflowRect;
+    if (renderer->frame().isMainFrame())
+        return absoluteClippedRect;
+
+    bool intersects = absoluteClippedRect.edgeInclusiveIntersect(renderer->view().frameView().layoutViewportRect());
     if (!intersects)
         return std::nullopt;
 
@@ -306,7 +315,7 @@ static std::optional<LayoutRect> computeClippedRectInRootContentsSpace(const Lay
     if (!ownerRenderer)
         return std::nullopt;
 
-    LayoutRect rectInFrameViewSpace { renderer->view().frameView().contentsToView(*rectInFrameAbsoluteSpace) };
+    LayoutRect rectInFrameViewSpace { renderer->view().frameView().contentsToView(absoluteClippedRect) };
 
     rectInFrameViewSpace.moveBy(ownerRenderer->contentBoxLocation());
     return computeClippedRectInRootContentsSpace(rectInFrameViewSpace, ownerRenderer);
@@ -392,7 +401,10 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
                 RenderObject::VisibleRectContextOption::UseEdgeInclusiveIntersection,
                 RenderObject::VisibleRectContextOption::ApplyCompositedClips,
                 RenderObject::VisibleRectContextOption::ApplyCompositedContainerScrolls };
-            return targetRenderer->computeVisibleRectInContainer(localTargetBounds, rootRenderer, { false /* hasPositionFixedDescendant */, false /* dirtyRectIsFlipped */, visibleRectOptions });
+            auto result = targetRenderer->computeVisibleRectsInContainer({ localTargetBounds }, rootRenderer, { false /* hasPositionFixedDescendant */, false /* dirtyRectIsFlipped */, visibleRectOptions });
+            if (!result)
+                return std::nullopt;
+            return result->clippedOverflowRect;
         }
 
         return computeClippedRectInRootContentsSpace(localTargetBounds, targetRenderer);

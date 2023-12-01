@@ -86,9 +86,9 @@ LayoutRect RenderSVGModelObject::localRectForRepaint() const
     return visualOverflowRectEquivalent();
 }
 
-std::optional<LayoutRect> RenderSVGModelObject::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+auto RenderSVGModelObject::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
 {
-    return computeVisibleRectInSVGContainer(rect, container, context);
+    return computeVisibleRectsInSVGContainer(rects, container, context);
 }
 
 const RenderObject* RenderSVGModelObject::pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap& geometryMap) const
@@ -251,7 +251,7 @@ LayoutSize RenderSVGModelObject::cachedSizeForOverflowClip() const
     return layer()->size();
 }
 
-bool RenderSVGModelObject::applyCachedClipAndScrollPosition(LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+bool RenderSVGModelObject::applyCachedClipAndScrollPosition(RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
     // Based on RenderBox::applyCachedClipAndScrollPosition -- unused options removed.
     if (!context.options.contains(VisibleRectContextOption::ApplyContainerClip) && this == container)
@@ -264,10 +264,10 @@ bool RenderSVGModelObject::applyCachedClipAndScrollPosition(LayoutRect& rect, co
         clipRect.expandToInfiniteY();
     bool intersects;
     if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
-        intersects = rect.edgeInclusiveIntersect(clipRect);
+        intersects = rects.clippedOverflowRect.edgeInclusiveIntersect(clipRect);
     else {
-        rect.intersect(clipRect);
-        intersects = !rect.isEmpty();
+        rects.clippedOverflowRect.intersect(clipRect);
+        intersects = !rects.clippedOverflowRect.isEmpty();
     }
     return intersects;
 }

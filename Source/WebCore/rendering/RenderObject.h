@@ -824,6 +824,47 @@ public:
         OptionSet<VisibleRectContextOption> options;
     };
 
+    struct RepaintRects {
+        LayoutRect clippedOverflowRect;
+        bool operator==(const RepaintRects&) const = default;
+
+        void move(LayoutSize size)
+        {
+            clippedOverflowRect.move(size);
+        }
+
+        void moveBy(LayoutPoint size)
+        {
+            clippedOverflowRect.moveBy(size);
+        }
+
+        void expand(const LayoutSize& size)
+        {
+            clippedOverflowRect.expand(size);
+        }
+
+        void encloseToIntRects()
+        {
+            clippedOverflowRect = enclosingIntRect(clippedOverflowRect);
+        }
+
+        void unite(const RepaintRects& other)
+        {
+            clippedOverflowRect.unite(other.clippedOverflowRect);
+        }
+
+        void flipForWritingMode(LayoutSize containerSize, bool isHorizontalWritingMode)
+        {
+            if (isHorizontalWritingMode)
+                clippedOverflowRect.setY(containerSize.height() - clippedOverflowRect.maxY());
+            else
+                clippedOverflowRect.setX(containerSize.width() - clippedOverflowRect.maxX());
+        }
+
+        void transform(TransformationMatrix&);
+        void transform(TransformationMatrix&, float deviceScaleFactor);
+    };
+
     // Returns the rect that should be repainted whenever this object changes. The rect is in the view's
     // coordinate space. This method deals with outlines and overflow.
     LayoutRect absoluteClippedOverflowRectForRepaint() const { return clippedOverflowRect(nullptr, visibleRectContextForRepaint()); }
@@ -835,19 +876,16 @@ public:
     virtual LayoutRect rectWithOutlineForRepaint(const RenderLayerModelObject* repaintContainer, LayoutUnit outlineWidth) const;
     virtual LayoutRect outlineBoundsForRepaint(const RenderLayerModelObject* /*repaintContainer*/, const RenderGeometryMap* = nullptr) const { return LayoutRect(); }
 
-    // Given a rect in the object's coordinate space, compute a rect suitable for repainting
-    // that rect in view coordinates.
-    LayoutRect computeAbsoluteRepaintRect(const LayoutRect& rect) const { return computeRect(rect, nullptr, visibleRectContextForRepaint()); }
     // Given a rect in the object's coordinate space, compute a rect  in the coordinate space
     // of repaintContainer suitable for the given VisibleRectContext.
-    LayoutRect computeRect(const LayoutRect&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
-    virtual LayoutRect computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer) const { return computeRect(rect, repaintContainer, visibleRectContextForRepaint()); }
+    RepaintRects computeRects(const RepaintRects&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
+    virtual LayoutRect computeRectForRepaint(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer) const { return computeRects({ rect }, repaintContainer, visibleRectContextForRepaint()).clippedOverflowRect; }
     FloatRect computeFloatRectForRepaint(const FloatRect&, const RenderLayerModelObject* repaintContainer) const;
 
     // Given a rect in the object's coordinate space, compute the location in container space where this rect is visible,
     // when clipping and scrolling as specified by the context. When using edge-inclusive intersection, return std::nullopt
     // rather than an empty rect if the rect is completely clipped out in container space.
-    virtual std::optional<LayoutRect> computeVisibleRectInContainer(const LayoutRect&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
+    virtual std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
     virtual std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
 
     WEBCORE_EXPORT bool hasNonEmptyVisibleRectRespectingParentFrames() const;
