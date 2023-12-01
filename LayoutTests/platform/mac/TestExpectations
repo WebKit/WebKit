@@ -2612,3 +2612,5 @@ webkit.org/b/264607 [ Sonoma+ ] css1/box_properties/acid_test.html [ Pass Timeou
 # webkit.org/b/265536 ([ macOS ] 2 tests in inspector/layers are flaky failures)
 inspector/layers/layers-compositing-reasons.html [ Pass Failure ]
 inspector/layers/layers-blending-compositing-reasons.html [ Pass Failure ]
+
+webkit.org/b/265685 [ Sonoma+ ] http/wpt/webcodecs/encoder-task-failing.html [ Failure ]
