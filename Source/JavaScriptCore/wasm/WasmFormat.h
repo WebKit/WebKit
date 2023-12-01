@@ -169,7 +169,7 @@ inline bool isNullexternref(Type type)
 
 inline bool isInternalref(Type type)
 {
-    if (!Options::useWebAssemblyGC() || !isRefType(type) || !typeIndexIsType(type.index))
+    if (!Options::useWebAssemblyGC() || !isRefType(type))
         return false;
     if (typeIndexIsType(type.index)) {
         switch (static_cast<TypeKind>(type.index)) {
