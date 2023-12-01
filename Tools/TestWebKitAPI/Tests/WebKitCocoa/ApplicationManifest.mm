@@ -42,7 +42,7 @@ namespace TestWebKitAPI {
 
 TEST(ApplicationManifest, Coding)
 {
-    auto jsonString = @"{ \"name\": \"TestName\", \"short_name\": \"TestShortName\", \"description\": \"TestDescription\", \"scope\": \"https://test.com/app\", \"start_url\": \"https://test.com/app/index.html\", \"display\": \"minimal-ui\", \"theme_color\": \"red\" }";
+    auto jsonString = @"{ \"name\": \"TestName\", \"short_name\": \"TestShortName\", \"description\": \"TestDescription\", \"scope\": \"https://test.com/app\", \"start_url\": \"https://test.com/app/index.html\", \"display\": \"minimal-ui\", \"theme_color\": \"red\", \"protocol_handlers\": [{ \"protocol\": \"mailto\", \"url\": \"/app/mail?id=%s\" }] }";
     RetainPtr<_WKApplicationManifest> manifest { [_WKApplicationManifest applicationManifestFromJSON:jsonString manifestURL:[NSURL URLWithString:@"https://test.com/manifest.json"] documentURL:[NSURL URLWithString:@"https://test.com/"]] };
 
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:manifest.get() requiringSecureCoding:YES error:nullptr];
@@ -55,6 +55,11 @@ TEST(ApplicationManifest, Coding)
     EXPECT_STREQ("https://test.com/app", manifest.get().scope.absoluteString.UTF8String);
     EXPECT_STREQ("https://test.com/app/index.html", manifest.get().startURL.absoluteString.UTF8String);
     EXPECT_EQ(_WKApplicationManifestDisplayModeMinimalUI,  manifest.get().displayMode);
+    EXPECT_EQ(1llu, manifest.get().protocolHandlers.count);
+    for (_WKApplicationManifestProtocolHandler *protocolHandler in manifest.get().protocolHandlers) {
+        EXPECT_WK_STREQ(@"mailto", protocolHandler.protocol);
+        EXPECT_WK_STREQ(@"https://test.com/app/mail?id=%s", protocolHandler.url);
+    }
 
     auto sRGBColorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     auto redColor = adoptCF(CGColorCreate(sRGBColorSpace.get(), redColorComponents));

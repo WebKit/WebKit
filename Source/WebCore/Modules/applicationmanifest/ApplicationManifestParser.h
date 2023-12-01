@@ -56,6 +56,7 @@ private:
     Vector<ApplicationManifest::Icon> parseIcons(const JSON::Object&);
     Vector<ApplicationManifest::Shortcut> parseShortcuts(const JSON::Object&);
     URL parseId(const JSON::Object&, const URL&);
+    Vector<ApplicationManifest::ProtocolHandler> parseProtocolHandlers(const JSON::Object&, const URL&);
 
     Color parseColor(const JSON::Object&, const String& propertyName);
     String parseGenericString(const JSON::Object&, const String&);

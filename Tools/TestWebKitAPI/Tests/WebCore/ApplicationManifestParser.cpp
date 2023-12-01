@@ -329,6 +329,20 @@ public:
         EXPECT_STREQ(expectedValue.utf8().data(), value.string().utf8().data());
     }
 
+    void testProtocolHandlers(const String& rawJSON, const Vector<ApplicationManifest::ProtocolHandler>& expectedProtocolHandlers, const String& scope = { })
+    {
+        String manifestContent = "{ \"protocol_handlers\" : [" + rawJSON + "] }";
+        if (!scope.isEmpty())
+            manifestContent = "{ \"protocol_handlers\" : [" + rawJSON + "], \"scope\" : \"" + scope + "\", \"start_url\" : \"" + scope + "\" }";
+
+        auto manifest = parseString(manifestContent);
+        auto protocolHandlers = manifest.protocolHandlers;
+        EXPECT_EQ(protocolHandlers.size(), expectedProtocolHandlers.size());
+        for (unsigned index = 0; index < expectedProtocolHandlers.size() && index < protocolHandlers.size(); ++index) {
+            EXPECT_STREQ(protocolHandlers[index].protocol.utf8().data(), expectedProtocolHandlers[index].protocol.utf8().data());
+            EXPECT_STREQ(protocolHandlers[index].url.string().utf8().data(), expectedProtocolHandlers[index].url.string().utf8().data());
+        }
+    }
 };
 
 static void assertManifestHasDefaultValues(const URL& manifestURL, const URL& documentURL, const ApplicationManifest& manifest)
@@ -661,6 +675,26 @@ TEST_F(ApplicationManifestParserTest, Shortcuts)
     testShortcutsName("\"Example\""_s, "Example"_s);
     testShortcutsName("\" \""_s, ""_s);
     testShortcutsName("\"\""_s, ""_s);
+}
+
+TEST_F(ApplicationManifestParserTest, ProtocolHandlers)
+{
+    Vector<ApplicationManifest::ProtocolHandler> result1 { ApplicationManifest::ProtocolHandler { "mailto"_s, URL("https://example.com/mail?id=%s"_s) } };
+    testProtocolHandlers("{ \"protocol\": \"mailto\", \"url\": \"/mail?id=%s\" }"_s, result1);
+    testProtocolHandlers("{ \"protocol\": \"mailto\", \"url\": \"https://example.com/mail?id=%s\" }"_s, result1);
+    testProtocolHandlers("{ \"protocol\": \"mailto\", \"url\": \"/mail?id=%s\" }, { \"protocol\": \"mailto\", \"url\": \"/mail2?id=%s\" }"_s, result1);
+
+    Vector<ApplicationManifest::ProtocolHandler> result2 { ApplicationManifest::ProtocolHandler { "mailto"_s, URL("https://example.com/example_scope/mail?id=%s"_s) } };
+    testProtocolHandlers("{ \"protocol\": \"mailto\", \"url\": \"/example_scope/mail?id=%s\" }"_s, result2, "/example_scope/"_s);
+
+    Vector<ApplicationManifest::ProtocolHandler> emptyResult;
+    testProtocolHandlers("{ \"protocol\": \"mailto\" }"_s, emptyResult);
+    testProtocolHandlers("{ \"url\": \"/mail?id=%s\" }"_s, emptyResult);
+    testProtocolHandlers("{ \"protocol\": \"https\", \"url\": \"/mail?id=%s\" }"_s, emptyResult);
+    testProtocolHandlers("{ \"protocol\": \"example\", \"url\": \"/mail?id=%s\" }"_s, emptyResult);
+    testProtocolHandlers("{ \"protocol\": \"mailto\", \"url\": \"https://example1.com/mail?id=%s\" }"_s, emptyResult);
+    testProtocolHandlers("{ \"protocol\": \"mailto\", \"url\": \"http://example.com/mail?id=%s\" }"_s, emptyResult);
+    testProtocolHandlers("{ \"protocol\": \"mailto\", \"url\": \"/mail?id=%s\" }"_s, emptyResult, "/example_scope/"_s);
 }
 
 #endif

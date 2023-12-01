@@ -88,6 +88,19 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     };
 }
 
+static std::optional<WebCore::ApplicationManifest::ProtocolHandler> makeVectorElement(const WebCore::ApplicationManifest::ProtocolHandler*, id arrayElement)
+{
+    auto protocolHandler = dynamic_objc_cast<_WKApplicationManifestProtocolHandler>(arrayElement);
+    if (!protocolHandler)
+        return std::nullopt;
+
+    String urlString { protocolHandler.url };
+    return WebCore::ApplicationManifest::ProtocolHandler {
+        protocolHandler.protocol,
+        URL { urlString }
+    };
+}
+
 @implementation _WKApplicationManifestIcon {
     RetainPtr<NSURL> _src;
     RetainPtr<NSArray<NSString *>> _sizes;
@@ -239,6 +252,66 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
 
 @end
 
+@implementation _WKApplicationManifestProtocolHandler {
+    RetainPtr<NSString> _protocol;
+    RetainPtr<NSString> _url;
+}
+
++ (BOOL)supportsSecureCoding
+{
+    return YES;
+}
+
+- (instancetype)initWithCoder:(NSCoder *)coder
+{
+    if (!(self = [self init]))
+        return nil;
+
+    _protocol = adoptNS([[coder decodeObjectOfClass:[NSString class] forKey:@"protocol"] copy]);
+    _url = adoptNS([[coder decodeObjectOfClass:[NSURL class] forKey:@"url"] copy]);
+
+    return self;
+}
+
+- (NSString *)protocol
+{
+    return _protocol.get();
+}
+
+- (NSString *)url
+{
+    return _url.get();
+}
+
+- (instancetype)initWithCoreProtocolHandler:(const WebCore::ApplicationManifest::ProtocolHandler *)protocolHandler
+{
+    if (!(self = [[_WKApplicationManifestProtocolHandler alloc] init]))
+        return nil;
+
+    if (protocolHandler) {
+        _protocol = adoptNS([protocolHandler->protocol copy]);
+        _url = adoptNS([protocolHandler->url.string() copy]);
+    }
+
+    return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+    [coder encodeObject:_protocol.get() forKey:@"protocol"];
+    [coder encodeObject:_url.get() forKey:@"url"];
+}
+
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKApplicationManifestProtocolHandler.class, self))
+        return;
+
+    [super dealloc];
+}
+
+@end
+
 @implementation _WKApplicationManifest
 
 #if ENABLE(APPLICATION_MANIFEST)
@@ -268,7 +341,8 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     WebCore::CocoaColor *themeColor = [aDecoder decodeObjectOfClass:[WebCore::CocoaColor class] forKey:@"theme_color"];
     NSArray<NSString *> *categories = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [NSString class]]] forKey:@"categories"];
     NSArray<_WKApplicationManifestIcon *> *icons = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestIcon class]]] forKey:@"icons"];
-    NSArray<_WKApplicationManifestIcon *> *shortcuts = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestShortcut class], [_WKApplicationManifestIcon class]]] forKey:@"shortcuts"];
+    NSArray<_WKApplicationManifestShortcut *> *shortcuts = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestShortcut class], [_WKApplicationManifestIcon class]]] forKey:@"shortcuts"];
+    NSArray<_WKApplicationManifestProtocolHandler *> *protocolHandlers = [aDecoder decodeObjectOfClasses:[NSSet setWithArray:@[[NSArray class], [_WKApplicationManifestProtocolHandler class]]] forKey:@"protocol_handlers"];
 
     WebCore::ApplicationManifest coreApplicationManifest {
         WTFMove(rawJSON),
@@ -287,6 +361,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
         makeVector<String>(categories),
         makeVector<WebCore::ApplicationManifest::Icon>(icons),
         makeVector<WebCore::ApplicationManifest::Shortcut>(shortcuts),
+        makeVector<WebCore::ApplicationManifest::ProtocolHandler>(protocolHandlers),
     };
 
     API::Object::constructInWrapper<API::ApplicationManifest>(self, WTFMove(coreApplicationManifest));
@@ -325,6 +400,7 @@ static std::optional<WebCore::ApplicationManifest::Shortcut> makeVectorElement(c
     [aCoder encodeObject:self.categories forKey:@"categories"];
     [aCoder encodeObject:self.icons forKey:@"icons"];
     [aCoder encodeObject:self.shortcuts forKey:@"shortcuts"];
+    [aCoder encodeObject:self.protocolHandlers forKey:@"protocol_handlers"];
 }
 
 + (_WKApplicationManifest *)applicationManifestFromJSON:(NSString *)json manifestURL:(NSURL *)manifestURL documentURL:(NSURL *)documentURL
@@ -455,6 +531,13 @@ static NSString *nullableNSString(const WTF::String& string)
 {
     return createNSArray(_applicationManifest->applicationManifest().shortcuts, [] (auto& coreShortcut) {
         return adoptNS([[_WKApplicationManifestShortcut alloc] initWithCoreShortcut:&coreShortcut]);
+    }).autorelease();
+}
+
+- (NSArray<_WKApplicationManifestProtocolHandler *> *)protocolHandlers
+{
+    return createNSArray(_applicationManifest->applicationManifest().protocolHandlers, [] (auto& coreProtocolHandler) {
+        return adoptNS([[_WKApplicationManifestProtocolHandler alloc] initWithCoreProtocolHandler:&coreProtocolHandler]);
     }).autorelease();
 }
 

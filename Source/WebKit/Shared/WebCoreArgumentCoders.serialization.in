@@ -1251,6 +1251,11 @@ enum class WebCore::ScreenOrientationLockType : uint8_t {
     Vector<WebCore::ApplicationManifest::Icon> icons
 }
 
+[Nested] struct WebCore::ApplicationManifest::ProtocolHandler {
+     String protocol
+     URL url
+ }
+
 struct WebCore::ApplicationManifest {
     String rawJSON
     String name
@@ -1268,6 +1273,7 @@ struct WebCore::ApplicationManifest {
     Vector<String> categories
     Vector<WebCore::ApplicationManifest::Icon> icons
     Vector<WebCore::ApplicationManifest::Shortcut> shortcuts
+    Vector<WebCore::ApplicationManifest::ProtocolHandler> protocolHandlers
 }
 #endif // ENABLE(APPLICATION_MANIFEST)
 

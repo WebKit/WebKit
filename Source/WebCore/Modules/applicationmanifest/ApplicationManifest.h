@@ -63,6 +63,11 @@ struct ApplicationManifest {
         Vector<Icon> icons;
     };
 
+    struct ProtocolHandler {
+        String protocol;
+        URL url;
+    };
+
     String rawJSON;
     String name;
     String shortName;
@@ -79,6 +84,7 @@ struct ApplicationManifest {
     Vector<String> categories;
     Vector<Icon> icons;
     Vector<Shortcut> shortcuts;
+    Vector<ProtocolHandler> protocolHandlers;
 };
 
 } // namespace WebCore

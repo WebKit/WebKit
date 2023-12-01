@@ -38,6 +38,61 @@
 
 namespace WebCore {
 
+static HashSet<String>& supportedSchemes()
+{
+    static MainThreadNeverDestroyed<HashSet<String>> schemes = std::initializer_list<String> { "mailto"_s };
+    return schemes;
+}
+
+static std::optional<ApplicationManifest::ProtocolHandler> normalizedParametersAndCreateProtocolHandler(const URL& baseURL, const String& protocol, const String& url)
+{
+    auto scheme = protocol.convertToASCIILowercase();
+    if (!scheme)
+        return std::nullopt;
+
+    if (!supportedSchemes().contains(scheme))
+        return std::nullopt;
+
+    if (!url.contains("%"_s))
+        return std::nullopt;
+
+    URL parsedURL(baseURL, url);
+    if (parsedURL.isNull())
+        return std::nullopt;
+
+    if (!parsedURL.protocolIs("https"_s) || !protocolHostAndPortAreEqual(baseURL, parsedURL))
+        return std::nullopt;
+
+    auto origin = SecurityOrigin::create(parsedURL);
+    ASSERT_UNUSED(origin, origin->isPotentiallyTrustworthy());
+
+    return ApplicationManifest::ProtocolHandler { scheme, parsedURL };
+}
+
+static bool isInScope(const URL& scopeURL, const URL& targetURL)
+{
+    // 1. If scopeURL is undefined (i.e., it is unbounded because of an error or it was not declared in the manifest), return true.
+    if (scopeURL.isNull() || scopeURL.isEmpty())
+        return true;
+
+    // 2. Let target be a new URL using targetURL as input. If target is failure, return false.
+    if (!targetURL.isValid())
+        return false;
+
+    // 3. Let scopePath be the elements of scopes's path, separated by U+002F (/).
+    auto scopePath = scopeURL.path();
+
+    // 4. Let targetPath be the elements of target's path, separated by U+002F (/).
+    auto targetPath = targetURL.path();
+
+    // 5. If target is same origin as scope and targetPath starts with scopePath, return true.
+    if (protocolHostAndPortAreEqual(scopeURL, targetURL) && targetPath.startsWith(scopePath))
+        return true;
+
+    // 6. Otherwise, return false.
+    return false;
+}
+
 ApplicationManifest ApplicationManifestParser::parse(Document& document, const String& source, const URL& manifestURL, const URL& documentURL)
 {
     ApplicationManifestParser parser { &document };
@@ -93,6 +148,7 @@ ApplicationManifest ApplicationManifestParser::parseManifest(const String& text,
     parsedManifest.shortcuts = parseShortcuts(*manifest);
     parsedManifest.id = parseId(*manifest, parsedManifest.startURL);
     parsedManifest.orientation = parseOrientation(*manifest);
+    parsedManifest.protocolHandlers = parseProtocolHandlers(*manifest, parsedManifest.scope);
 
     if (m_document)
         m_document->processApplicationManifest(parsedManifest);
@@ -372,28 +428,61 @@ Vector<ApplicationManifest::Shortcut> ApplicationManifestParser::parseShortcuts(
     return shortcutResources;
 }
 
-static bool isInScope(const URL& scopeURL, const URL& targetURL)
+Vector<ApplicationManifest::ProtocolHandler> ApplicationManifestParser::parseProtocolHandlers(const JSON::Object& manifest, const URL& scopeURL)
 {
-    // 1. If scopeURL is undefined (i.e., it is unbounded because of an error or it was not declared in the manifest), return true.
-    if (scopeURL.isNull() || scopeURL.isEmpty())
-        return true;
+    auto manifestProtocolHandlers = manifest.getValue("protocol_handlers"_s);
+    Vector<ApplicationManifest::ProtocolHandler> protocolHandlers;
+    HashSet<String> protocols;
+    if (!manifestProtocolHandlers)
+        return protocolHandlers;
 
-    // 2. Let target be a new URL using targetURL as input. If target is failure, return false.
-    if (!targetURL.isValid())
-        return false;
+    auto manifestProtocolHandlersArray = manifestProtocolHandlers->asArray();
+    if (!manifestProtocolHandlersArray) {
+        logDeveloperWarning("The value of protocol_handlers is not a valid array."_s);
+        return protocolHandlers;
+    }
 
-    // 3. Let scopePath be the elements of scopes's path, separated by U+002F (/).
-    auto scopePath = scopeURL.path();
+    for (const auto& item : *manifestProtocolHandlersArray) {
+        auto manifestProtocolHandlerObject = item->asObject();
+        if (!manifestProtocolHandlerObject)
+            continue;
 
-    // 4. Let targetPath be the elements of target's path, separated by U+002F (/).
-    auto targetPath = targetURL.path();
+        auto manifestProtocolHandlerProtocol = manifestProtocolHandlerObject->getValue("protocol"_s);
+        if (!manifestProtocolHandlerProtocol)
+            continue;
 
-    // 5. If target is same origin as scope and targetPath starts with scopePath, return true.
-    if (protocolHostAndPortAreEqual(scopeURL, targetURL) && targetPath.startsWith(scopePath))
-        return true;
+        auto manifestProtocolHandlerProtocolString = manifestProtocolHandlerProtocol->asString();
+        if (!manifestProtocolHandlerProtocolString) {
+            logManifestPropertyNotAString("protocol"_s);
+            continue;
+        }
 
-    // 6. Otherwise, return false.
-    return false;
+        auto manifestProtocolHandlerURL = manifestProtocolHandlerObject->getValue("url"_s);
+        if (!manifestProtocolHandlerURL)
+            continue;
+
+        auto manifestProtocolHandlerURLString = manifestProtocolHandlerURL->asString();
+        if (!manifestProtocolHandlerURLString) {
+            logManifestPropertyNotAString("url"_s);
+            continue;
+        }
+
+        auto protocolHandler = normalizedParametersAndCreateProtocolHandler(m_manifestURL, manifestProtocolHandlerProtocolString, manifestProtocolHandlerURLString);
+        if (!protocolHandler)
+            continue;
+
+        if (!isInScope(scopeURL, protocolHandler->url)) {
+            logDeveloperWarning("The protocol handler URL is not within scope of the provided scope URL."_s);
+            continue;
+        }
+
+        if (!protocols.add(protocolHandler->protocol).isNewEntry)
+            continue;
+
+        protocolHandlers.append(WTFMove(*protocolHandler));
+    }
+
+    return protocolHandlers;
 }
 
 URL ApplicationManifestParser::parseId(const JSON::Object& manifest, const URL& startURL)
