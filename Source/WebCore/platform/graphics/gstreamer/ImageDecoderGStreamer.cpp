@@ -72,13 +72,13 @@ private:
 
 static ImageDecoderGStreamerSample* toSample(const PresentationOrderSampleMap::value_type& pair)
 {
-    return (ImageDecoderGStreamerSample*)pair.second.get();
+    return (ImageDecoderGStreamerSample*)pair.second.ptr();
 }
 
 template <typename Iterator>
 ImageDecoderGStreamerSample* toSample(Iterator iter)
 {
-    return (ImageDecoderGStreamerSample*)iter->second.get();
+    return (ImageDecoderGStreamerSample*)iter->second.ptr();
 }
 
 RefPtr<ImageDecoderGStreamer> ImageDecoderGStreamer::create(FragmentedSharedBuffer& data, const String& mimeType, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)

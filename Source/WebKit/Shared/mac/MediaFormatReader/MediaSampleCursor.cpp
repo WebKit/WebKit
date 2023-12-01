@@ -49,7 +49,7 @@ using namespace WebCore;
 
 static MediaTime assumedDecodeTime(const MediaTime& presentationTime, DecodeOrderSampleMap& map)
 {
-    MediaSample& firstSample = *map.begin()->second;
+    MediaSample& firstSample = map.begin()->second;
     return firstSample.decodeTime() == firstSample.presentationTime() ? presentationTime : MediaTime::invalidTime();
 }
 
@@ -84,16 +84,16 @@ static int64_t stepIterator(int64_t stepsRemaining, typename OrderedMap::iterato
     ASSERT(iterator != samples.end());
     if (stepsRemaining < 0) {
         for (; stepsRemaining && iterator != samples.begin(); ++stepsRemaining) {
-            if (innerIterator == static_cast<MediaSampleByteRange*>(iterator->second.get())->begin()) {
+            if (innerIterator == static_cast<MediaSampleByteRange*>(iterator->second.ptr())->begin()) {
                 --iterator;
-                innerIterator = static_cast<MediaSampleByteRange*>(iterator->second.get())->end();
+                innerIterator = static_cast<MediaSampleByteRange*>(iterator->second.ptr())->end();
             }
             --innerIterator;
         }
         return stepsRemaining;
     }
     while (stepsRemaining) {
-        auto lastInner = static_cast<MediaSampleByteRange*>(iterator->second.get())->end();
+        auto lastInner = static_cast<MediaSampleByteRange*>(iterator->second.ptr())->end();
         for (auto nextInner = std::next(innerIterator); stepsRemaining && nextInner != lastInner; --stepsRemaining, innerIterator = nextInner++) { }
         if (!stepsRemaining)
             break;
@@ -101,7 +101,7 @@ static int64_t stepIterator(int64_t stepsRemaining, typename OrderedMap::iterato
         if (next == samples.end())
             break;
         iterator = next;
-        innerIterator = static_cast<MediaSampleByteRange*>(iterator->second.get())->begin();
+        innerIterator = static_cast<MediaSampleByteRange*>(iterator->second.ptr())->begin();
         --stepsRemaining;
     }
     return stepsRemaining;
@@ -111,7 +111,7 @@ template<typename OrderedMap>
 static bool stepTime(const MediaTime& delta, MediaTime& time, OrderedMap& samples, bool hasAllSamples, const MediaTime& trackDuration)
 {
     time += delta;
-    MediaSample& lastSample = *samples.rbegin()->second;
+    MediaSample& lastSample = samples.rbegin()->second;
     auto firstTime = samples.begin()->second->presentationTime();
     auto lastTime = hasAllSamples ? lastSample.presentationTime() + lastSample.duration() : trackDuration;
     return time < firstTime || time >= lastTime;
@@ -196,7 +196,7 @@ void MediaSampleCursor::setLocator(Locator&& locator) const
         }, [&](const auto& locator) {
             assertIsHeld(m_locatorLock);
             RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(locator->second->platformSample().type == PlatformSample::ByteRangeSampleType);
-            m_currentEntry = static_cast<const MediaSampleByteRange*>(locator->second.get())->begin();
+            m_currentEntry = static_cast<const MediaSampleByteRange*>(locator->second.ptr())->begin();
         }
     );
 }
@@ -215,7 +215,7 @@ MediaSampleCursor::SampleType MediaSampleCursor::locateMediaSample(SampleMap& sa
         [&](const auto& iterator) {
             assertIsHeld(m_locatorLock);
             ASSERT(m_currentEntry.has_value());
-            return SampleType { std::in_place, iterator->second.get(), m_currentEntry.value() };
+            return SampleType { std::in_place, iterator->second.ptr(), m_currentEntry.value() };
         }
     );
 }
@@ -426,7 +426,7 @@ OSStatus MediaSampleCursor::getPlayableHorizon(CMTime* playableHorizon) const
 {
     return getSampleMap([&](SampleMap& samples, bool hasAllSamples) {
         assertIsHeld(m_locatorLock);
-        MediaSample& lastSample = *samples.decodeOrder().rbegin()->second;
+        const MediaSample& lastSample = samples.decodeOrder().rbegin()->second;
         auto timing = locateTiming(samples, hasAllSamples);
         *playableHorizon = PAL::toCMTime(lastSample.presentationTime() + lastSample.duration() - timing.presentationTime);
         return noErr;
