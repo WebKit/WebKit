@@ -1,0 +1,8 @@
+
+// https://wicg.github.io/keyboard-lock/#navigator-interface
+
+[
+    ImplementedBy=NavigatorKeyboard
+] partial interface Navigator {
+    [SecureContext, SameObject] readonly attribute Keyboard keyboard;
+};

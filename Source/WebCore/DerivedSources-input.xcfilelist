@@ -515,6 +515,8 @@ $(PROJECT_DIR)/Modules/indexeddb/IDBTransactionDurability.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBTransactionMode.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBVersionChangeEvent.idl
 $(PROJECT_DIR)/Modules/indexeddb/WindowOrWorkerGlobalScope+IndexedDatabase.idl
+$(PROJECT_DIR)/Modules/keyboard-lock/Keyboard.idl
+$(PROJECT_DIR)/Modules/keyboard-lock/Navigator+Keyboard.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/AudioConfiguration.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/ColorGamut.idl
 $(PROJECT_DIR)/Modules/mediacapabilities/HdrMetadataType.idl

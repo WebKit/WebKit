@@ -1017,3 +1017,7 @@
     || PLATFORM(VISION))
 #define ENABLE_AV1 1
 #endif
+
+#if !defined(ENABLE_KEYBOARD_LOCK)
+#define ENABLE_KEYBOARD_LOCK 1
+#endif
