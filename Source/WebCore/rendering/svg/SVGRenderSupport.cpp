@@ -61,8 +61,8 @@ namespace WebCore {
 LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderElement& renderer, const RenderLayerModelObject* repaintContainer, RenderObject::VisibleRectContext context)
 {
     // Return early for any cases where we don't actually paint
-    if (renderer.style().visibility() != Visibility::Visible && !renderer.enclosingLayer()->hasVisibleContent())
-        return LayoutRect();
+    if (renderer.isInsideEntirelyHiddenLayer())
+        return { };
 
     // Pass our local paint rect to computeFloatVisibleRectInContainer() which will
     // map to parent coords and recurse up the parent chain.
