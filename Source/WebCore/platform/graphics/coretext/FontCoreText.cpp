@@ -202,10 +202,10 @@ void Font::platformInit()
 #if PLATFORM(IOS_FAMILY)
     CGFloat adjustment = shouldUseAdjustment(m_platformData.font()) ? ceil((ascent + descent) * kLineHeightAdjustment) : 0;
 
-    lineGap = ceilf(lineGap);
-    float lineSpacing = std::ceil(ascent) + adjustment + std::ceil(descent) + lineGap;
     ascent = ceilf(ascent + adjustment);
     descent = ceilf(descent);
+    lineGap = ceilf(lineGap);
+    float lineSpacing = ascent + descent + lineGap;
 
     m_shouldNotBeUsedForArabic = fontFamilyShouldNotBeUsedForArabic(familyName.get());
 #endif
