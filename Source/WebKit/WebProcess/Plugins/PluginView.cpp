@@ -879,7 +879,7 @@ bool PluginView::shouldCreateTransientPaintingSnapshot() const
         }
     }
 
-    return true;
+    return m_plugin->shouldCreateTransientPaintingSnapshot();
 }
 
 bool PluginView::isBeingDestroyed() const
