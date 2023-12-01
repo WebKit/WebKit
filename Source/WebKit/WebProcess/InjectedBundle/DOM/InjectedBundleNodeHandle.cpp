@@ -426,7 +426,7 @@ RefPtr<WebFrame> InjectedBundleNodeHandle::htmlIFrameElementContentFrame()
     if (!iframeElement)
         return nullptr;
 
-    auto* frame = dynamicDowncast<LocalFrame>(iframeElement->contentFrame());
+    auto* frame = iframeElement->contentFrame();
     if (!frame)
         return nullptr;
 

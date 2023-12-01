@@ -37,7 +37,7 @@ class MathMLOperatorElement final : public MathMLTokenElement {
 public:
     static Ref<MathMLOperatorElement> create(const QualifiedName& tagName, Document&);
     struct OperatorChar {
-        UChar32 character { 0 };
+        char32_t character { 0 };
         bool isVertical { true };
     };
     static OperatorChar parseOperatorChar(const String&);

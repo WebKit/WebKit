@@ -159,19 +159,19 @@ class Canonicalize:
             cur_set = characterSets[i]
             for ch in cur_set:
                 characters = characters + "0x{character:04x}, ".format(character=ch)
-            file.write("const UChar32 unicodeCharacterSet{index:d}[] = {{ {characters}0 }};\n".format(index=i, characters=characters))
+            file.write("constexpr char32_t unicodeCharacterSet{index:d}[] = {{ {characters}0 }};\n".format(index=i, characters=characters))
 
         file.write("\n")
-        file.write("static constexpr size_t UNICODE_CANONICALIZATION_SETS = {setCount:d};\n".format(setCount=len(characterSets)))
-        file.write("const UChar32* const unicodeCharacterSetInfo[UNICODE_CANONICALIZATION_SETS] = {\n")
+        file.write("constexpr size_t UNICODE_CANONICALIZATION_SETS = {setCount:d};\n".format(setCount=len(characterSets)))
+        file.write("constexpr const char32_t* unicodeCharacterSetInfo[UNICODE_CANONICALIZATION_SETS] = {\n")
 
         for i in range(len(characterSets)):
             file.write("    unicodeCharacterSet{setNumber:d},\n".format(setNumber=i))
 
         file.write("};\n")
         file.write("\n")
-        file.write("const size_t UNICODE_CANONICALIZATION_RANGES = {rangeCount:d};\n".format(rangeCount=len(rangeInfo)))
-        file.write("const CanonicalizationRange unicodeRangeInfo[UNICODE_CANONICALIZATION_RANGES] = {\n")
+        file.write("constexpr size_t UNICODE_CANONICALIZATION_RANGES = {rangeCount:d};\n".format(rangeCount=len(rangeInfo)))
+        file.write("constexpr CanonicalizationRange unicodeRangeInfo[UNICODE_CANONICALIZATION_RANGES] = {\n")
 
         for info in rangeInfo:
             typeAndValue = info["type"].split(":")

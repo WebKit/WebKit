@@ -38,12 +38,11 @@ UIGamepad::UIGamepad(WebCore::PlatformGamepad& platformGamepad)
     : m_index(platformGamepad.index())
     , m_id(platformGamepad.id())
     , m_mapping(platformGamepad.mapping())
+    , m_axisValues(platformGamepad.axisValues().size())
+    , m_buttonValues(platformGamepad.buttonValues().size())
     , m_lastUpdateTime(platformGamepad.lastUpdateTime())
     , m_supportedEffectTypes(platformGamepad.supportedEffectTypes())
 {
-    m_axisValues.resize(platformGamepad.axisValues().size());
-    m_buttonValues.resize(platformGamepad.buttonValues().size());
-
     updateFromPlatformGamepad(platformGamepad);
 }
 

@@ -51,21 +51,18 @@ constexpr int kBufferSize = 1024;
 #endif
 
 Biquad::Biquad()
-{
-#if USE(ACCELERATE)
-    // Allocate two samples more for filter history
-    m_inputBuffer.resize(kBufferSize + 2);
-    m_outputBuffer.resize(kBufferSize + 2);
-#endif
-
     // Allocate enough space for the a-rate filter coefficients to handle a
     // rendering quantum of 128 frames.
-    m_b0.resize(AudioUtilities::renderQuantumSize);
-    m_b1.resize(AudioUtilities::renderQuantumSize);
-    m_b2.resize(AudioUtilities::renderQuantumSize);
-    m_a1.resize(AudioUtilities::renderQuantumSize);
-    m_a2.resize(AudioUtilities::renderQuantumSize);
-
+    : m_b0(AudioUtilities::renderQuantumSize)
+    , m_b1(AudioUtilities::renderQuantumSize)
+    , m_b2(AudioUtilities::renderQuantumSize)
+    , m_a1(AudioUtilities::renderQuantumSize)
+    , m_a2(AudioUtilities::renderQuantumSize)
+#if USE(ACCELERATE)
+    , m_inputBuffer(kBufferSize + 2) // Allocate two samples more for filter history
+    , m_outputBuffer(kBufferSize + 2) // Allocate two samples more for filter history
+#endif
+{
     // Initialize as pass-thru (straight-wire, no filter effect)
     setNormalizedCoefficients(0, 1, 0, 0, 1, 0, 0);
 

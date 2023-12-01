@@ -1098,12 +1098,12 @@ LayoutRect RenderObject::clippedOverflowRect(const RenderLayerModelObject* repai
     if (repaintRect.isEmpty())
         return { };
 
-    return computeRect(repaintRect, repaintContainer, context);
+    return computeRects({ repaintRect }, repaintContainer, context).clippedOverflowRect;
 }
 
-LayoutRect RenderObject::computeRect(const LayoutRect& rect, const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+auto RenderObject::computeRects(const RepaintRects& rects, const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const -> RepaintRects
 {
-    auto result = computeVisibleRectInContainer(rect, repaintContainer, context);
+    auto result = computeVisibleRectsInContainer(rects, repaintContainer, context);
     RELEASE_ASSERT(result);
     return *result;
 }
@@ -1115,25 +1115,25 @@ FloatRect RenderObject::computeFloatRectForRepaint(const FloatRect& rect, const 
     return *result;
 }
 
-std::optional<LayoutRect> RenderObject::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+auto RenderObject::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
 {
     if (container == this)
-        return rect;
+        return rects;
 
     CheckedPtr parent = this->parent();
     if (!parent)
-        return rect;
+        return rects;
 
-    auto adjustedRect = rect;
+    auto adjustedRects = rects;
     if (parent->hasNonVisibleOverflow()) {
-        bool isEmpty = !downcast<RenderLayerModelObject>(*parent).applyCachedClipAndScrollPosition(adjustedRect, container, context);
+        bool isEmpty = !downcast<RenderLayerModelObject>(*parent).applyCachedClipAndScrollPosition(adjustedRects, container, context);
         if (isEmpty) {
             if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
                 return std::nullopt;
-            return adjustedRect;
+            return adjustedRects;
         }
     }
-    return parent->computeVisibleRectInContainer(adjustedRect, container, context);
+    return parent->computeVisibleRectsInContainer(adjustedRects, container, context);
 }
 
 std::optional<FloatRect> RenderObject::computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject*, VisibleRectContext) const
@@ -2193,8 +2193,8 @@ bool RenderObject::hasNonEmptyVisibleRectRespectingParentFrames() const
     auto hasEmptyVisibleRect = [] (const RenderObject& renderer) {
         VisibleRectContext context { false, false, { VisibleRectContextOption::UseEdgeInclusiveIntersection, VisibleRectContextOption::ApplyCompositedClips }};
         CheckedRef box = renderer.enclosingBoxModelObject();
-        auto clippedBounds = box->computeVisibleRectInContainer(box->borderBoundingBox(), &box->view(), context);
-        return !clippedBounds || clippedBounds->isEmpty();
+        auto clippedBounds = box->computeVisibleRectsInContainer({ box->borderBoundingBox() }, &box->view(), context);
+        return !clippedBounds || clippedBounds->clippedOverflowRect.isEmpty();
     };
 
     for (CheckedPtr renderer = this; renderer; renderer = enclosingFrameRenderer(*renderer)) {
@@ -2305,10 +2305,10 @@ static Vector<FloatRect> borderAndTextRects(const SimpleRange& range, Coordinate
             if (CheckedPtr renderer = downcast<Element>(node.get()).renderBoxModelObject()) {
                 if (useVisibleBounds) {
                     auto localBounds = renderer->borderBoundingBox();
-                    auto rootClippedBounds = renderer->computeVisibleRectInContainer(localBounds, renderer->checkedView().ptr(), { false, false, visibleRectOptions });
+                    auto rootClippedBounds = renderer->computeVisibleRectsInContainer({ localBounds }, renderer->checkedView().ptr(), { false, false, visibleRectOptions });
                     if (!rootClippedBounds)
                         continue;
-                    auto snappedBounds = snapRectToDevicePixels(*rootClippedBounds, node->document().deviceScaleFactor());
+                    auto snappedBounds = snapRectToDevicePixels(rootClippedBounds->clippedOverflowRect, node->document().deviceScaleFactor());
                     if (space == CoordinateSpace::Client)
                         node->protectedDocument()->convertAbsoluteToClientRect(snappedBounds, renderer->style());
                     rects.append(snappedBounds);
@@ -2364,6 +2364,16 @@ ScrollAnchoringController* RenderObject::findScrollAnchoringControllerForRendere
         }
     }
     return renderer.view().frameView().scrollAnchoringController();
+}
+
+void RenderObject::RepaintRects::transform(TransformationMatrix& matrix)
+{
+    clippedOverflowRect = matrix.mapRect(clippedOverflowRect);
+}
+
+void RenderObject::RepaintRects::transform(TransformationMatrix& matrix, float deviceScaleFactor)
+{
+    clippedOverflowRect = LayoutRect(encloseRectToDevicePixels(matrix.mapRect(clippedOverflowRect), deviceScaleFactor));
 }
 
 #if PLATFORM(IOS_FAMILY)

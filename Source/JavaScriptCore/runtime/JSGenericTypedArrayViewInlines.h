@@ -870,7 +870,7 @@ template<typename Adaptor> inline bool JSGenericTypedArrayView<Adaptor>::sort()
     ElementType* originalArray = typedVector();
     ElementType* array = originalArray;
     if (isShared()) {
-        forShared.resize(length);
+        forShared.grow(length);
         WTF::copyElements(forShared.data(), originalArray, length);
         array = forShared.data();
     }

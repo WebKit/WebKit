@@ -551,8 +551,8 @@ public:
     VisiblePosition visiblePositionFromCharacterOffset(const CharacterOffset&);
 protected:
     CharacterOffset characterOffsetFromVisiblePosition(const VisiblePosition&);
-    UChar32 characterAfter(const CharacterOffset&);
-    UChar32 characterBefore(const CharacterOffset&);
+    char32_t characterAfter(const CharacterOffset&);
+    char32_t characterBefore(const CharacterOffset&);
     CharacterOffset characterOffsetForNodeAndOffset(Node&, int, TraverseOption = TraverseOptionDefault);
 
     enum class NeedsContextAtParagraphStart : bool { No, Yes };

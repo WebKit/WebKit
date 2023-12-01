@@ -24,7 +24,6 @@
 #include "CairoUtilities.h"
 #include "CharacterProperties.h"
 #include "FontCache.h"
-#include "UTF16UChar32Iterator.h"
 
 namespace WebCore {
 
@@ -73,7 +72,7 @@ RefPtr<FcPattern> FontSetCache::bestForCharacters(const FontDescription& fontDes
 
     FcUniquePtr<FcCharSet> fontConfigCharSet(FcCharSetCreate());
     bool hasNonIgnorableCharacters = false;
-    for (UChar32 character : stringView.codePoints()) {
+    for (char32_t character : stringView.codePoints()) {
         if (!isDefaultIgnorableCodePoint(character)) {
             FcCharSetAddChar(fontConfigCharSet.get(), character);
             hasNonIgnorableCharacters = true;

@@ -126,12 +126,12 @@ static void fallbackFontsForRunWithIterator(WeakHashSet<const Font>& fallbackFon
     auto isSmallCaps = fontCascade.isSmallCaps();
     auto& primaryFont = fontCascade.primaryFont();
 
-    UChar32 currentCharacter = 0;
+    char32_t currentCharacter = 0;
     unsigned clusterLength = 0;
     while (textIterator.consume(currentCharacter, clusterLength)) {
 
         auto addFallbackFontForCharacterIfApplicable = [&](auto character) {
-            if (isSmallCaps && character != u_toupper(character))
+            if (isSmallCaps)
                 character = u_toupper(character);
 
             auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);
@@ -184,12 +184,12 @@ static TextUtil::EnclosingAscentDescent enclosingGlyphBoundsForRunWithIterator(c
     auto isSmallCaps = fontCascade.isSmallCaps();
     auto& primaryFont = fontCascade.primaryFont();
 
-    UChar32 currentCharacter = 0;
+    char32_t currentCharacter = 0;
     unsigned clusterLength = 0;
     while (textIterator.consume(currentCharacter, clusterLength)) {
 
         auto computeTopAndBottomForCharacter = [&](auto character) {
-            if (isSmallCaps && character != u_toupper(character))
+            if (isSmallCaps)
                 character = u_toupper(character);
 
             auto glyphData = fontCascade.glyphDataForCharacter(character, isRTL);
@@ -424,7 +424,7 @@ TextBreakIterator::ContentAnalysis TextUtil::contentAnalysis(WordBreak wordBreak
     return TextBreakIterator::ContentAnalysis::Mechanical;
 }
 
-bool TextUtil::isStrongDirectionalityCharacter(UChar32 character)
+bool TextUtil::isStrongDirectionalityCharacter(char32_t character)
 {
     auto bidiCategory = u_charDirection(character);
     return bidiCategory == U_RIGHT_TO_LEFT
@@ -443,7 +443,7 @@ bool TextUtil::containsStrongDirectionalityText(StringView text)
 
     auto length = text.length();
     for (size_t position = 0; position < length;) {
-        UChar32 character;
+        char32_t character;
         U16_NEXT(text.characters16(), position, length, character);
         if (isStrongDirectionalityCharacter(character))
             return true;
@@ -460,7 +460,7 @@ size_t TextUtil::firstUserPerceivedCharacterLength(const InlineTextBox& inlineTe
     if (textContent.is8Bit())
         return 1;
     if (inlineTextBox.canUseSimpleFontCodePath()) {
-        UChar32 character;
+        char32_t character;
         size_t endOfCodePoint = startPosition;
         U16_NEXT(textContent.characters16(), endOfCodePoint, textContent.length(), character);
         ASSERT(endOfCodePoint > startPosition);
@@ -599,7 +599,7 @@ bool TextUtil::canUseSimplifiedTextMeasuring(StringView textContent, const Rende
 
 bool TextUtil::hasPositionDependentContentWidth(StringView textContent)
 {
-    for (UChar32 character : StringView(textContent).codePoints()) {
+    for (char32_t character : StringView(textContent).codePoints()) {
         if (character == tabCharacter)
             return true;
     }

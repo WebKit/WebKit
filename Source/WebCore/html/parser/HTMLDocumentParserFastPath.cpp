@@ -498,7 +498,7 @@ private:
     // separate buffer.
     String scanEscapedText()
     {
-        m_ucharBuffer.resize(0);
+        m_ucharBuffer.shrink(0);
         while (m_parsingBuffer.hasCharactersRemaining() && *m_parsingBuffer != '<') {
             if (*m_parsingBuffer == '&') {
                 scanHTMLCharacterReference(m_ucharBuffer);
@@ -528,7 +528,7 @@ private:
 
         if (m_parsingBuffer.atEnd() || !isCharAfterTagNameOrAttribute(*m_parsingBuffer)) {
             // Try parsing a case-insensitive tagName.
-            m_charBuffer.resize(0);
+            m_charBuffer.shrink(0);
             m_parsingBuffer.setPosition(start);
             while (m_parsingBuffer.hasCharactersRemaining()) {
                 auto c = *m_parsingBuffer;
@@ -564,7 +564,7 @@ private:
             // At this point name does not contain lowercase. It may contain upper-case,
             // which requires mapping. Assume it does.
             m_parsingBuffer.setPosition(start);
-            m_charBuffer.resize(0);
+            m_charBuffer.shrink(0);
             // isValidAttributeNameChar() returns false if end of input is reached.
             do {
                 auto c = m_parsingBuffer.consume();
@@ -623,7 +623,7 @@ private:
     AtomString scanEscapedAttributeValue()
     {
         skipWhile<isASCIIWhitespace>(m_parsingBuffer);
-        m_ucharBuffer.resize(0);
+        m_ucharBuffer.shrink(0);
         if (UNLIKELY(!m_parsingBuffer.hasCharactersRemaining() || !isQuoteCharacter(*m_parsingBuffer)))
             return didFail(HTMLFastPathResult::FailedParsingUnquotedEscapedAttributeValue, emptyAtom());
 
@@ -710,8 +710,8 @@ private:
 
     void parseAttributes(HTMLElement& parent)
     {
-        m_attributeBuffer.resize(0);
-        m_attributeNames.resize(0);
+        m_attributeBuffer.shrink(0);
+        m_attributeNames.shrink(0);
 
         bool hasDuplicateAttributes = false;
         while (true) {

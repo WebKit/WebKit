@@ -108,7 +108,7 @@ bool UserMediaProcessManager::willCreateMediaStream(UserMediaPermissionRequestMa
         SandboxExtension::Handle machBootstrapExtension;
 
         if (!proxy.page().preferences().mockCaptureDevicesEnabled()) {
-            handles.resize(extensionCount);
+            handles.grow(extensionCount);
             ids.reserveInitialCapacity(extensionCount);
 
             if (needsAudioSandboxExtension) {

@@ -113,7 +113,7 @@ static FontCascade dragLabelFont(int size, bool bold)
     description.setOneFamily(metrics.lfSmCaptionFont.lfFaceName);
     description.setSpecifiedSize((float)size);
     description.setComputedSize((float)size);
-    result = FontCascade(WTFMove(description), 0, 0);
+    result = FontCascade(WTFMove(description));
     result.update();
     return result;
 }

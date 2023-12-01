@@ -3682,7 +3682,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         if (isGenerated)
             poly.m_list[dstIndex++] = WTFMove(someCase);
     }
-    poly.m_list.resize(dstIndex);
+    poly.m_list.shrink(dstIndex);
 
     bool generatedMegamorphicCode = false;
 

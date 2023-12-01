@@ -504,10 +504,8 @@ void FocusController::setFocusedInternal(bool focused)
     if (!isFocused())
         focusedOrMainFrame().eventHandler().stopAutoscrollTimer();
 
-    if (!focusedFrame()) {
-        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame()))
-            setFocusedFrame(localMainFrame);
-    }
+    if (!focusedFrame())
+        setFocusedFrame(&m_page.mainFrame());
 
     auto* focusedFrame = focusedLocalFrame();
     if (focusedFrame && focusedFrame->view()) {
@@ -632,7 +630,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
             return false;
 
         document->setFocusedElement(nullptr);
-        setFocusedFrame(dynamicDowncast<LocalFrame>(owner.contentFrame()));
+        setFocusedFrame(owner.contentFrame());
         return true;
     }
     
@@ -1029,17 +1027,13 @@ static void contentAreaDidShowOrHide(ScrollableArea* scrollableArea, bool didSho
 
 void FocusController::setIsVisibleAndActiveInternal(bool contentIsVisible)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
-        return;
-
-    auto* view = localMainFrame->view();
+    auto* view = m_page.mainFrame().virtualView();
     if (!view)
         return;
 
     contentAreaDidShowOrHide(view, contentIsVisible);
 
-    for (Frame* frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
+    for (auto* frame = &m_page.mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;

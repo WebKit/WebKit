@@ -9,10 +9,10 @@ PASS Can set 'letter-spacing' to a length: 0px
 PASS Can set 'letter-spacing' to a length: -3.14em
 PASS Can set 'letter-spacing' to a length: 3.14cm
 PASS Can set 'letter-spacing' to a length: calc(0px + 0em)
-PASS Setting 'letter-spacing' to a percent: 0% throws TypeError
-PASS Setting 'letter-spacing' to a percent: -3.14% throws TypeError
-PASS Setting 'letter-spacing' to a percent: 3.14% throws TypeError
-PASS Setting 'letter-spacing' to a percent: calc(0% + 0%) throws TypeError
+PASS Can set 'letter-spacing' to a percent: 0%
+PASS Can set 'letter-spacing' to a percent: -3.14%
+PASS Can set 'letter-spacing' to a percent: 3.14%
+PASS Can set 'letter-spacing' to a percent: calc(0% + 0%)
 PASS Setting 'letter-spacing' to a time: 0s throws TypeError
 PASS Setting 'letter-spacing' to a time: -3.14ms throws TypeError
 PASS Setting 'letter-spacing' to a time: 3.14s throws TypeError

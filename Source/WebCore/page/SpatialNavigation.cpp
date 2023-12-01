@@ -506,14 +506,11 @@ static LayoutRect rectToAbsoluteCoordinates(LocalFrame* initialFrame, const Layo
 {
     LayoutRect rect = initialRect;
     for (Frame* frame = initialFrame; frame; frame = frame->tree().parent()) {
-        auto* localFrame = dynamicDowncast<LocalFrame>(frame);
-        if (!localFrame)
-            continue;
-        if (Element* element = localFrame->ownerElement()) {
+        if (Element* element = frame->ownerElement()) {
             do {
                 rect.move(LayoutUnit(element->offsetLeft()), LayoutUnit(element->offsetTop()));
             } while ((element = element->offsetParent()));
-            rect.moveBy((-localFrame->view()->scrollPosition()));
+            rect.moveBy((-frame->virtualView()->scrollPosition()));
         }
     }
     return rect;

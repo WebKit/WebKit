@@ -944,7 +944,7 @@ void MediaPlayerPrivateWebM::provideMediaData(TrackBuffer& trackBuffer, uint64_t
             break;
         }
 
-        auto sample = trackBuffer.decodeQueue().begin()->second;
+        Ref sample = trackBuffer.decodeQueue().begin()->second;
 
         if (sample->decodeTime() > trackBuffer.enqueueDiscontinuityBoundary()) {
             DEBUG_LOG(LOGIDENTIFIER, "bailing early because of unbuffered gap, new sample: ", sample->decodeTime(), " >= the current discontinuity boundary: ", trackBuffer.enqueueDiscontinuityBoundary());
@@ -961,7 +961,7 @@ void MediaPlayerPrivateWebM::provideMediaData(TrackBuffer& trackBuffer, uint64_t
         trackBuffer.setLastEnqueuedDecodeKey({ sample->decodeTime(), sample->presentationTime() });
         trackBuffer.setEnqueueDiscontinuityBoundary(sample->decodeTime() + sample->duration() + discontinuityTolerance);
 
-        enqueueSample(sample.releaseNonNull(), trackId);
+        enqueueSample(WTFMove(sample), trackId);
         ++enqueuedSamples;
     }
 
@@ -1105,7 +1105,7 @@ void MediaPlayerPrivateWebM::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObj
     if (!trackBuffer)
         return;
 
-    auto sample = WTFMove(originalSample);
+    Ref sample = WTFMove(originalSample);
 
     MediaTime microsecond(1, 1000000);
     if (!trackBuffer->roundedTimestampOffset().isValid())
@@ -1115,7 +1115,7 @@ void MediaPlayerPrivateWebM::didProvideMediaDataForTrackId(Ref<MediaSampleAVFObj
     trackBuffer->samples().addSample(sample);
 
     DecodeOrderSampleMap::KeyType decodeKey(sample->decodeTime(), sample->presentationTime());
-    trackBuffer->decodeQueue().insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, &sample.get()));
+    trackBuffer->decodeQueue().insert(DecodeOrderSampleMap::MapType::value_type(decodeKey, sample));
 
     trackBuffer->setLastDecodeTimestamp(sample->decodeTime());
     trackBuffer->setLastFrameDuration(sample->duration());

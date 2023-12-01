@@ -402,8 +402,8 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<UIPreviewItemController> _previewItemController;
 #endif
 
-    RetainPtr<UIGestureRecognizer> _textInteractionLoupeGestureRecognizer;
-    RetainPtr<UIGestureRecognizer> _textInteractionTapGestureRecognizer;
+    __weak UIGestureRecognizer *_cachedTextInteractionLoupeGestureRecognizer;
+    __weak UIGestureRecognizer *_cachedTextInteractionTapGestureRecognizer;
 
     RefPtr<WebCore::TextIndicator> _textIndicator;
     RetainPtr<WebTextIndicatorLayer> _textIndicatorLayer;
@@ -522,7 +522,7 @@ struct ImageAnalysisContextMenuActionData {
 
     RetainPtr<NSDictionary> _additionalContextForStrongPasswordAssistance;
 
-    std::optional<UChar32> _lastInsertedCharacterToOverrideCharacterBeforeSelection;
+    std::optional<char32_t> _lastInsertedCharacterToOverrideCharacterBeforeSelection;
     unsigned _selectionChangeNestingLevel;
 
 #if ENABLE(DRAG_SUPPORT)

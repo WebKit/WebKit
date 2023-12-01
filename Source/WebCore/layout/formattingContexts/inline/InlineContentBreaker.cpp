@@ -311,7 +311,7 @@ static bool isBreakableRun(const InlineContentBreaker::ContinuousContent::Run& r
     return TextUtil::isWrappingAllowed(run.style);
 }
 
-static inline bool canBreakBefore(UChar32 character, LineBreak lineBreak)
+static inline bool canBreakBefore(char32_t character, LineBreak lineBreak)
 {
     // FIXME: This should include all the cases from https://unicode.org/reports/tr14
     // Use a breaking matrix similar to lineBreakTable in BreakLines.cpp

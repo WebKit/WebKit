@@ -150,45 +150,39 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
     return lineLayout(lineBuilder, inlineItemList, needsLayoutRange, previousLine(), constraints, lineDamage);
 }
 
-IntrinsicWidthConstraints InlineFormattingContext::computedIntrinsicSizes(const InlineDamage* lineDamage)
+LayoutUnit InlineFormattingContext::minimumContentSize(const InlineDamage* lineDamage)
 {
     auto& inlineContentCache = this->inlineContentCache();
-    if (lineDamage)
-        inlineContentCache.resetMinimumMaximumContentSizes();
-
-    if (inlineContentCache.minimumContentSize() && inlineContentCache.maximumContentSize())
-        return { ceiledLayoutUnit(*inlineContentCache.minimumContentSize()), ceiledLayoutUnit(*inlineContentCache.maximumContentSize()) };
+    if (inlineContentCache.minimumContentSize())
+        return ceiledLayoutUnit(*inlineContentCache.minimumContentSize());
 
     rebuildInlineItemListIfNeeded(lineDamage);
     auto& inlineItemList = inlineContentCache.inlineItems().content();
-    if (!lineDamage && isEmptyInlineContent(inlineItemList)) {
-        inlineContentCache.setMinimumContentSize({ });
-        inlineContentCache.setMaximumContentSize({ });
-        return { };
-    }
+    auto minimumContentSize = InlineLayoutUnit { };
+    if (!isEmptyInlineContent(inlineItemList))
+        minimumContentSize = IntrinsicWidthHandler { *this, inlineItemList, TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache) }.minimumContentSize();
+    inlineContentCache.setMinimumContentSize(minimumContentSize);
+    return ceiledLayoutUnit(minimumContentSize);
+}
 
-    auto mayUseSimplifiedTextOnlyInlineLayout = TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache);
-    auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineItemList, mayUseSimplifiedTextOnlyInlineLayout };
-    if (!inlineContentCache.minimumContentSize())
-        inlineContentCache.setMinimumContentSize(intrinsicWidthHandler.minimumContentSize());
+LayoutUnit InlineFormattingContext::maximumContentSize(const InlineDamage* lineDamage)
+{
+    auto& inlineContentCache = this->inlineContentCache();
+    if (inlineContentCache.maximumContentSize())
+        return ceiledLayoutUnit(*inlineContentCache.maximumContentSize());
 
-    if (!inlineContentCache.maximumContentSize()) {
-        inlineContentCache.setMaximumContentSize(intrinsicWidthHandler.maximumContentSize());
+    rebuildInlineItemListIfNeeded(lineDamage);
+    auto& inlineItemList = inlineContentCache.inlineItems().content();
+    auto maximumContentSize = InlineLayoutUnit { };
+    if (!isEmptyInlineContent(inlineItemList)) {
+        auto intrinsicWidthHandler = IntrinsicWidthHandler { *this, inlineItemList, TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache) };
+
+        maximumContentSize = intrinsicWidthHandler.maximumContentSize();
         if (intrinsicWidthHandler.maximumIntrinsicWidthResult())
             inlineContentCache.setMaximumIntrinsicWidthLayoutResult(WTFMove(*intrinsicWidthHandler.maximumIntrinsicWidthResult()));
     }
-
-    return { ceiledLayoutUnit(*inlineContentCache.minimumContentSize()), ceiledLayoutUnit(*inlineContentCache.maximumContentSize()) };
-}
-
-LayoutUnit InlineFormattingContext::maximumContentSize()
-{
-    auto& inlineContentCache = this->inlineContentCache();
-    if (auto maximumContentSize = inlineContentCache.maximumContentSize())
-        return ceiledLayoutUnit(*maximumContentSize);
-
-    auto mayUseSimplifiedTextOnlyInlineLayout = TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayout(root(), inlineContentCache);
-    return ceiledLayoutUnit(IntrinsicWidthHandler { *this, inlineContentCache.inlineItems().content(), mayUseSimplifiedTextOnlyInlineLayout }.maximumContentSize());
+    inlineContentCache.setMaximumContentSize(maximumContentSize);
+    return ceiledLayoutUnit(maximumContentSize);
 }
 
 static bool mayExitFromPartialLayout(const InlineDamage& lineDamage, size_t lineIndex, const InlineDisplay::Boxes& newContent)

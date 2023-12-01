@@ -27,11 +27,14 @@
 #include "config.h"
 #include <wtf/unicode/UTF8Conversion.h>
 
+#include <unicode/uchar.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/StringHasherInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WTF::Unicode {
+
+static constexpr char32_t sentinelCodePoint = U_SENTINEL;
 
 bool convertLatin1ToUTF8(const LChar** sourceStart, const LChar* sourceEnd, char** targetStart, const char* targetEnd)
 {
@@ -42,8 +45,8 @@ bool convertLatin1ToUTF8(const LChar** sourceStart, const LChar* sourceEnd, char
         UBool sawError = false;
         // Work around bug in either Windows compiler or old version of ICU, where passing a uint8_t to
         // U8_APPEND warns, by converting from uint8_t to a wider type.
-        UChar32 character = *source;
-        U8_APPEND(reinterpret_cast<uint8_t*>(target), i, targetEnd - *targetStart, character, sawError);
+        char32_t character = *source;
+        U8_APPEND(target, i, targetEnd - *targetStart, character, sawError);
         ASSERT_WITH_MESSAGE(!sawError, "UTF8 destination buffer was not big enough");
         if (sawError)
             return false;
@@ -61,7 +64,7 @@ ConversionResult convertUTF16ToUTF8(const UChar** sourceStart, const UChar* sour
     UBool sawError = false;
     int32_t i = 0;
     while (source < sourceEnd) {
-        UChar32 ch;
+        char32_t ch;
         int j = 0;
         U16_NEXT(source, j, sourceEnd - source, ch);
         if (U_IS_SURROGATE(ch)) {
@@ -94,17 +97,17 @@ bool convertUTF8ToUTF16Impl(const char* source, const char* sourceEnd, UChar** t
     UBool error = false;
     UChar* target = *targetStart;
     RELEASE_ASSERT(targetEnd - target <= std::numeric_limits<int>::max());
-    UChar32 orAllData = 0;
+    char32_t orAllData = 0;
     int targetOffset = 0;
     for (int sourceOffset = 0; sourceOffset < sourceEnd - source; ) {
-        UChar32 character;
+        char32_t character;
         if constexpr (replaceInvalidSequences) {
-            U8_NEXT_OR_FFFD(reinterpret_cast<const uint8_t*>(source), sourceOffset, sourceEnd - source, character);
+            U8_NEXT_OR_FFFD(source, sourceOffset, sourceEnd - source, character);
         } else {
-            U8_NEXT(reinterpret_cast<const uint8_t*>(source), sourceOffset, sourceEnd - source, character);
+            U8_NEXT(source, sourceOffset, sourceEnd - source, character);
+            if (character == sentinelCodePoint)
+                return false;
         }
-        if (character < 0)
-            return false;
         U16_APPEND(target, targetOffset, targetEnd - target, character, error);
         if (error)
             return false;
@@ -127,19 +130,39 @@ bool convertUTF8ToUTF16ReplacingInvalidSequences(const char* source, const char*
     return convertUTF8ToUTF16Impl<true>(source, sourceEnd, targetStart, targetEnd, sourceAllASCII);
 }
 
+ComputeUTFLengthsResult computeUTFLengths(const char* sourceStart, const char* sourceEnd)
+{
+    size_t lengthUTF8 = sourceEnd - sourceStart;
+    size_t lengthUTF16 = 0;
+    char32_t orAllData = 0;
+    ConversionResult result = ConversionResult::Success;
+    size_t sourceOffset = 0;
+    while (sourceOffset < lengthUTF8) {
+        char32_t character;
+        size_t nextSourceOffset = sourceOffset;
+        U8_NEXT(sourceStart, nextSourceOffset, lengthUTF8, character);
+        if (character == sentinelCodePoint) {
+            result = nextSourceOffset == lengthUTF8 ? ConversionResult::SourceExhausted : ConversionResult::SourceIllegal;
+            break;
+        }
+        sourceOffset = nextSourceOffset;
+        lengthUTF16 += U16_LENGTH(character);
+        orAllData |= character;
+    }
+    return { result, sourceOffset, lengthUTF16, isASCII(orAllData) };
+}
+
 unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(const char* data, const char* dataEnd, unsigned& dataLength, unsigned& utf16Length)
 {
     StringHasher stringHasher;
     utf16Length = 0;
-
-    int inputOffset = 0;
-    int inputLength = dataEnd - data;
+    size_t inputOffset = 0;
+    size_t inputLength = dataEnd - data;
     while (inputOffset < inputLength) {
-        UChar32 character;
-        U8_NEXT(reinterpret_cast<const uint8_t*>(data), inputOffset, inputLength, character);
-        if (character < 0)
+        char32_t character;
+        U8_NEXT(data, inputOffset, inputLength, character);
+        if (character == sentinelCodePoint)
             return 0;
-
         if (U_IS_BMP(character)) {
             ASSERT(!U_IS_SURROGATE(character));
             stringHasher.addCharacter(character);
@@ -151,60 +174,40 @@ unsigned calculateStringHashAndLengthFromUTF8MaskingTop8Bits(const char* data, c
             utf16Length += 2;
         }
     }
-
     dataLength = inputOffset;
     return stringHasher.hashWithTop8BitsMasked();
 }
 
 bool equalUTF16WithUTF8(const UChar* a, const char* b, const char* bEnd)
 {
-    while (b < bEnd) {
-        int offset = 0;
-        UChar32 character;
-        U8_NEXT(reinterpret_cast<const uint8_t*>(b), offset, bEnd - b, character);
-        if (character < 0)
+    // It is the caller's responsibility to ensure a is long enough, which is why it is safe to use U16_NEXT_UNSAFE here.
+    size_t offsetA = 0;
+    size_t offsetB = 0;
+    size_t lengthB = bEnd - b;
+    while (offsetB < lengthB) {
+        char32_t characterB;
+        U8_NEXT(b, offsetB, lengthB, characterB);
+        if (characterB == sentinelCodePoint)
             return false;
-        b += offset;
-
-        if (U_IS_BMP(character)) {
-            ASSERT(!U_IS_SURROGATE(character));
-            if (*a++ != character)
-                return false;
-        } else {
-            ASSERT(U_IS_SUPPLEMENTARY(character));
-            if (*a++ != U16_LEAD(character))
-                return false;
-            if (*a++ != U16_TRAIL(character))
-                return false;
-        }
+        char16_t characterA;
+        U16_NEXT_UNSAFE(a, offsetA, characterA);
+        if (characterB != characterA)
+            return false;
     }
-
     return true;
 }
 
 bool equalLatin1WithUTF8(const LChar* a, const char* b, const char* bEnd)
 {
-    while (b < bEnd) {
-        if (isASCII(*a) || isASCII(*b)) {
-            if (*a++ != *b++)
-                return false;
-            continue;
-        }
-
-        if (b + 1 == bEnd)
-            return false;
-
-        if ((b[0] & 0xE0) != 0xC0 || (b[1] & 0xC0) != 0x80)
-            return false;
-
-        LChar character = ((b[0] & 0x1F) << 6) | (b[1] & 0x3F);
-
-        b += 2;
-
-        if (*a++ != character)
+    // It is the caller's responsibility to ensure a is long enough, which is why it is safe to use *a++ here.
+    size_t offsetB = 0;
+    size_t lengthB = bEnd - b;
+    while (offsetB < lengthB) {
+        char32_t characterB;
+        U8_NEXT(b, offsetB, lengthB, characterB);
+        if (*a++ != characterB)
             return false;
     }
-
     return true;
 }
 

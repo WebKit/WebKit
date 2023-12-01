@@ -206,7 +206,7 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
 
     auto destinationBufferSize = computeBufferSizeForAudioFormat(m_destinationFormat, m_maxOutputPacketSize, LOW_WATER_TIME_IN_SECONDS);
     if (m_destinationBuffer.size() < destinationBufferSize)
-        m_destinationBuffer.resize(destinationBufferSize);
+        m_destinationBuffer.grow(destinationBufferSize);
     if (!m_destinationFormat.mBytesPerPacket)
         m_destinationPacketDescriptions.resize(m_destinationBuffer.capacity() / m_maxOutputPacketSize);
 
@@ -284,7 +284,7 @@ RetainPtr<CMSampleBufferRef> AudioSampleBufferCompressor::sampleBufferWithNumPac
 
         auto error = PAL::AudioConverterGetPropertyInfo(m_converter, kAudioConverterCompressionMagicCookie, &cookieSize, NULL);
         if ((error == noErr) && !!cookieSize) {
-            cookie.resize(cookieSize);
+            cookie.grow(cookieSize);
 
             if (auto error = PAL::AudioConverterGetProperty(m_converter, kAudioConverterCompressionMagicCookie, &cookieSize, cookie.data())) {
                 RELEASE_LOG_ERROR(MediaStream, "AudioSampleBufferCompressor getting kAudioConverterCompressionMagicCookie failed with %d", error);
@@ -349,7 +349,7 @@ OSStatus AudioSampleBufferCompressor::provideSourceDataNumOutputPackets(UInt32* 
         size_t currentOffsetInSourceBuffer = 0;
 
         if (m_sourceBuffer.size() < numBytesToCopy)
-            m_sourceBuffer.resize(numBytesToCopy);
+            m_sourceBuffer.grow(numBytesToCopy);
 
         while (numBytesToCopy) {
             if (m_sampleBlockBufferSize <= m_currentOffsetInSampleBlockBuffer) {
@@ -398,7 +398,7 @@ OSStatus AudioSampleBufferCompressor::provideSourceDataNumOutputPackets(UInt32* 
     ASSERT(m_sourceFormat.mFormatFlags & kAudioFormatFlagIsNonInterleaved);
 
     if (m_sourceBuffer.size() < 2 * numBytesToCopy)
-        m_sourceBuffer.resize(2 * numBytesToCopy);
+        m_sourceBuffer.grow(2 * numBytesToCopy);
     auto* firstChannel = m_sourceBuffer.data();
     auto* secondChannel = m_sourceBuffer.data() + numBytesToCopy;
 

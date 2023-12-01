@@ -67,6 +67,8 @@ public:
     virtual void preferredBufferFormatsDidChange() { }
 #endif
 
+    virtual void visibilityDidChange(bool) { }
+
 protected:
     AcceleratedSurface(WebPage&, Client&);
 

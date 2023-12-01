@@ -208,16 +208,6 @@ static Attr* findAttrNodeInList(Vector<RefPtr<Attr>>& attrNodeList, const Qualif
     return nullptr;
 }
 
-static Attr* findAttrNodeInList(Vector<RefPtr<Attr>>& attrNodeList, const AtomString& localName, bool shouldIgnoreAttributeCase)
-{
-    const AtomString& caseAdjustedName = shouldIgnoreAttributeCase ? localName.convertToASCIILowercase() : localName;
-    for (auto& node : attrNodeList) {
-        if (node->qualifiedName().localName() == caseAdjustedName)
-            return node.get();
-    }
-    return nullptr;
-}
-
 static bool shouldAutofocus(const Element& element)
 {
     if (!element.hasAttributeWithoutSynchronization(HTMLNames::autofocusAttr))
@@ -3238,7 +3228,7 @@ void Element::attachAttributeNodeIfNeeded(Attr& attrNode)
 
 ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
 {
-    RefPtr oldAttrNode = attrIfExists(attrNode.localName(), shouldIgnoreAttributeCase(*this));
+    RefPtr oldAttrNode = attrIfExists(attrNode.qualifiedName());
     if (oldAttrNode.get() == &attrNode)
         return oldAttrNode;
 
@@ -3254,7 +3244,7 @@ ExceptionOr<RefPtr<Attr>> Element::setAttributeNode(Attr& attrNode)
 
     auto& elementData = ensureUniqueElementData();
 
-    auto existingAttributeIndex = elementData.findAttributeIndexByName(attrNode.localName(), shouldIgnoreAttributeCase(*this));
+    auto existingAttributeIndex = elementData.findAttributeIndexByName(attrNode.qualifiedName());
 
     // Attr::value() will return its 'm_standaloneValue' member any time its Element is set to nullptr. We need to cache this value
     // before making changes to attrNode's Element connections.
@@ -4924,13 +4914,6 @@ void Element::setSavedLayerScrollPositionSlow(const IntPoint& position)
 {
     ASSERT(!position.isZero() || hasRareData());
     ensureElementRareData().setSavedLayerScrollPosition(position);
-}
-
-RefPtr<Attr> Element::attrIfExists(const AtomString& localName, bool shouldIgnoreAttributeCase)
-{
-    if (auto* attrNodeList = attrNodeListForElement(*this))
-        return findAttrNodeInList(*attrNodeList, localName, shouldIgnoreAttributeCase);
-    return nullptr;
 }
 
 RefPtr<Attr> Element::attrIfExists(const QualifiedName& name)

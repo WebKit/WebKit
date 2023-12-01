@@ -70,11 +70,6 @@ public:
     // FIXME: Add a StringTypeAdapter so we can append one string builder to another with variadic append.
     void append(const StringBuilder&);
 
-    void appendCharacter(UChar) = delete;
-    void appendCharacter(LChar) = delete;
-    void appendCharacter(char) = delete;
-    void appendCharacter(UChar32);
-
     void appendSubstring(const String&, unsigned offset, unsigned length = String::MaxLength);
     WTF_EXPORT_PRIVATE void appendQuotedJSONString(const String&);
 
@@ -236,16 +231,6 @@ inline void StringBuilder::appendSubstring(const String& string, unsigned offset
 inline void StringBuilder::append(const char* characters)
 {
     append(StringView::fromLatin1(characters));
-}
-
-inline void StringBuilder::appendCharacter(UChar32 c)
-{
-    if (U_IS_BMP(c)) {
-        append(static_cast<UChar>(c));
-        return;
-    }
-    append(U16_LEAD(c));
-    append(U16_TRAIL(c));
 }
 
 inline String StringBuilder::toString()

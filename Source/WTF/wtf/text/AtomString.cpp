@@ -147,7 +147,7 @@ static inline StringBuilder replaceUnpairedSurrogatesWithReplacementCharacterInt
         if (U_IS_SURROGATE(codePoint))
             result.append(replacementCharacter);
         else
-            result.appendCharacter(codePoint);
+            result.append(codePoint);
     }
     return result;
 }

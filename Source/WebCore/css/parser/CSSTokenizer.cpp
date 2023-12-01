@@ -642,7 +642,7 @@ CSSParserToken CSSTokenizer::consumeStringTokenUntil(UChar endingCodePoint)
             if (isNewLine(m_input.peek(0)))
                 consumeSingleWhitespaceIfNext(); // This handles \r\n for us
             else
-                output.appendCharacter(consumeEscape());
+                output.append(consumeEscape());
         } else
             output.append(cc);
     }
@@ -689,7 +689,7 @@ CSSParserToken CSSTokenizer::consumeURLToken()
 
         if (cc == '\\') {
             if (twoCharsAreValidEscape(cc, m_input.peek(0))) {
-                result.appendCharacter(consumeEscape());
+                result.append(consumeEscape());
                 continue;
             }
             break;
@@ -781,7 +781,7 @@ StringView CSSTokenizer::consumeName()
             continue;
         }
         if (twoCharsAreValidEscape(cc, m_input.peek(0))) {
-            result.appendCharacter(consumeEscape());
+            result.append(consumeEscape());
             continue;
         }
         reconsume(cc);
@@ -790,7 +790,7 @@ StringView CSSTokenizer::consumeName()
 }
 
 // http://dev.w3.org/csswg/css-syntax/#consume-an-escaped-code-point
-UChar32 CSSTokenizer::consumeEscape()
+char32_t CSSTokenizer::consumeEscape()
 {
     UChar cc = consume();
     ASSERT(!isNewLine(cc));

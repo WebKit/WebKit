@@ -1,0 +1,12 @@
+PASS targetContainsCaretSelection() became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+I want to celebrate
+This test verifies that you can change an editable selection with a tap gesture after accepting an inline prediction. This test accepts an inline completion, taps the red box below, and verifies that the selection is correctly set. Requires WebKitTestRunner.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+

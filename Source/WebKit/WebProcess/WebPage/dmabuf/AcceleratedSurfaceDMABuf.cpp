@@ -44,6 +44,10 @@
 #include <drm_fourcc.h>
 #endif
 
+#if USE(GLIB_EVENT_LOOP)
+#include <wtf/glib/RunLoopSourcePriority.h>
+#endif
+
 namespace WebKit {
 
 static uint64_t generateID()
@@ -61,6 +65,7 @@ AcceleratedSurfaceDMABuf::AcceleratedSurfaceDMABuf(WebPage& webPage, Client& cli
     : AcceleratedSurface(webPage, client)
     , m_id(generateID())
     , m_swapChain(m_id)
+    , m_isVisible(webPage.activityState().contains(WebCore::ActivityState::IsVisible))
 {
 #if USE(GBM)
     if (m_swapChain.type() == SwapChain::Type::EGLImage)
@@ -449,6 +454,11 @@ void AcceleratedSurfaceDMABuf::SwapChain::reset()
     m_freeTargets.clear();
 }
 
+void AcceleratedSurfaceDMABuf::SwapChain::releaseUnusedBuffers()
+{
+    m_freeTargets.clear();
+}
+
 #if PLATFORM(WPE) && USE(GBM)
 void AcceleratedSurfaceDMABuf::preferredBufferFormatsDidChange()
 {
@@ -459,13 +469,40 @@ void AcceleratedSurfaceDMABuf::preferredBufferFormatsDidChange()
 }
 #endif
 
+void AcceleratedSurfaceDMABuf::visibilityDidChange(bool isVisible)
+{
+    if (m_isVisible == isVisible)
+        return;
+
+    m_isVisible = isVisible;
+    if (!m_releaseUnusedBuffersTimer)
+        return;
+
+    if (m_isVisible)
+        m_releaseUnusedBuffersTimer->stop();
+    else {
+        static const Seconds releaseUnusedBuffersDelay = 10_s;
+        m_releaseUnusedBuffersTimer->startOneShot(releaseUnusedBuffersDelay);
+    }
+}
+
+void AcceleratedSurfaceDMABuf::releaseUnusedBuffersTimerFired()
+{
+    m_swapChain.releaseUnusedBuffers();
+}
+
 void AcceleratedSurfaceDMABuf::didCreateCompositingRunLoop(RunLoop& runLoop)
 {
+    m_releaseUnusedBuffersTimer = makeUnique<RunLoop::Timer>(runLoop, this, &AcceleratedSurfaceDMABuf::releaseUnusedBuffersTimerFired);
+#if USE(GLIB_EVENT_LOOP)
+    m_releaseUnusedBuffersTimer->setPriority(RunLoopSourcePriority::ReleaseUnusedResourcesTimer);
+#endif
     WebProcess::singleton().parentProcessConnection()->addMessageReceiver(runLoop, *this, Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_id);
 }
 
 void AcceleratedSurfaceDMABuf::willDestroyCompositingRunLoop()
 {
+    m_releaseUnusedBuffersTimer = nullptr;
     WebProcess::singleton().parentProcessConnection()->removeMessageReceiver(Messages::AcceleratedSurfaceDMABuf::messageReceiverName(), m_id);
 }
 

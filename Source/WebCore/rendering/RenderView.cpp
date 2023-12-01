@@ -578,33 +578,30 @@ void RenderView::repaintViewAndCompositedLayers()
         compositor.repaintCompositedLayers();
 }
 
-std::optional<LayoutRect> RenderView::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+auto RenderView::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
 {
     // If a container was specified, and was not nullptr or the RenderView,
     // then we should have found it by now.
     ASSERT_ARG(container, !container || container == this);
 
     if (printing())
-        return rect;
-    
-    auto adjustedRect = rect;
+        return rects;
+
+    auto adjustedRects = rects;
     if (style().isFlippedBlocksWritingMode()) {
         // We have to flip by hand since the view's logical height has not been determined.  We
         // can use the viewport width and height.
-        if (style().isHorizontalWritingMode())
-            adjustedRect.setY(viewHeight() - adjustedRect.maxY());
-        else
-            adjustedRect.setX(viewWidth() - adjustedRect.maxX());
+        adjustedRects.flipForWritingMode(LayoutSize(viewWidth(), viewHeight()), style().isHorizontalWritingMode());
     }
 
     if (context.hasPositionFixedDescendant)
-        adjustedRect.moveBy(frameView().scrollPositionRespectingCustomFixedPosition());
-    
-    // Apply our transform if we have one (because of full page zooming).
-    if (!container && layer() && layer()->transform())
-        adjustedRect = LayoutRect(layer()->transform()->mapRect(snapRectToDevicePixels(adjustedRect, document().deviceScaleFactor())));
+        adjustedRects.moveBy(frameView().scrollPositionRespectingCustomFixedPosition());
 
-    return adjustedRect;
+    // Apply our transform if we have one (because of full page zooming).
+    if (!container && hasLayer() && layer()->transform())
+        adjustedRects.transform(*layer()->transform(), document().deviceScaleFactor());
+
+    return adjustedRects;
 }
 
 bool RenderView::isScrollableOrRubberbandableBox() const

@@ -405,7 +405,7 @@ RefPtr<CSSValueList> CSSFontFace::families() const
     return m_families;
 }
 
-bool CSSFontFace::rangesMatchCodePoint(UChar32 character) const
+bool CSSFontFace::rangesMatchCodePoint(char32_t character) const
 {
     if (m_ranges.isEmpty())
         return true;

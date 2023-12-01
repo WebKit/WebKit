@@ -625,11 +625,10 @@ String WebFrame::selectionAsString() const
 
 IntSize WebFrame::size() const
 {
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-    if (!localFrame)
+    if (!m_coreFrame)
         return IntSize();
 
-    RefPtr frameView = localFrame->view();
+    RefPtr frameView = m_coreFrame->virtualView();
     if (!frameView)
         return IntSize();
 
@@ -792,11 +791,10 @@ JSGlobalContextRef WebFrame::jsContextForWorld(InjectedBundleScriptWorld* world)
 
 JSGlobalContextRef WebFrame::jsContextForServiceWorkerWorld(DOMWrapperWorld& world)
 {
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-    if (!localFrame || !localFrame->page())
+    if (!m_coreFrame || !m_coreFrame->page())
         return nullptr;
 
-    return toGlobalRef(localFrame->page()->serviceWorkerGlobalObject(world));
+    return toGlobalRef(m_coreFrame->page()->serviceWorkerGlobalObject(world));
 }
 
 JSGlobalContextRef WebFrame::jsContextForServiceWorkerWorld(InjectedBundleScriptWorld* world)
@@ -826,11 +824,10 @@ void WebFrame::setAccessibleName(const AtomString& accessibleName)
 
 IntRect WebFrame::contentBounds() const
 {
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-    if (!localFrame)
+    if (!m_coreFrame)
         return IntRect();
     
-    RefPtr view = localFrame->view();
+    RefPtr view = m_coreFrame->virtualView();
     if (!view)
         return IntRect();
     
@@ -839,11 +836,10 @@ IntRect WebFrame::contentBounds() const
 
 IntRect WebFrame::visibleContentBounds() const
 {
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-    if (!localFrame)
+    if (!m_coreFrame)
         return IntRect();
     
-    RefPtr view = localFrame->view();
+    RefPtr view = m_coreFrame->virtualView();
     if (!view)
         return IntRect();
     
@@ -867,11 +863,10 @@ IntRect WebFrame::visibleContentBoundsExcludingScrollbars() const
 
 IntSize WebFrame::scrollOffset() const
 {
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-    if (!localFrame)
+    if (!m_coreFrame)
         return IntSize();
     
-    RefPtr view = localFrame->view();
+    RefPtr view = m_coreFrame->virtualView();
     if (!view)
         return IntSize();
 
@@ -893,11 +888,10 @@ bool WebFrame::hasHorizontalScrollbar() const
 
 bool WebFrame::hasVerticalScrollbar() const
 {
-    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_coreFrame.get());
-    if (!localFrame)
+    if (!m_coreFrame)
         return false;
 
-    RefPtr view = localFrame->view();
+    RefPtr view = m_coreFrame->virtualView();
     if (!view)
         return false;
 

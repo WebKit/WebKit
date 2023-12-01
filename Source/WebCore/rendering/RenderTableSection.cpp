@@ -1374,7 +1374,7 @@ void RenderTableSection::removeRedundantColumns()
     for (auto& rowItem : m_grid) {
         if (rowItem.row.size() <= maximumNumberOfColumns)
             continue;
-        rowItem.row.resize(maximumNumberOfColumns);
+        rowItem.row.shrink(maximumNumberOfColumns);
     }
 }
 

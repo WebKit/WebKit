@@ -1706,7 +1706,7 @@ bool WebPage::isEditingCommandEnabled(const String& commandName)
     
 void WebPage::clearMainFrameName()
 {
-    if (auto* frame = dynamicDowncast<LocalFrame>(mainFrame()))
+    if (auto* frame = mainFrame())
         frame->tree().clearName();
 }
 
@@ -2192,8 +2192,7 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
         return;
 
     m_viewSize = viewSize;
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    RefPtr view = localMainFrame ? localMainFrame->view() : nullptr;
+    RefPtr view = m_page->mainFrame().virtualView();
     if (!view) {
         ASSERT_NOT_REACHED();
         return;
@@ -2546,8 +2545,7 @@ void WebPage::scaleView(double scale)
     float pageScale = pageScaleFactor();
 
     IntPoint scrollPositionAtNewScale;
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (RefPtr mainFrameView = localMainFrame ? localMainFrame->view() : nullptr) {
+    if (RefPtr mainFrameView = m_page->mainFrame().virtualView()) {
         double scaleRatio = scale / viewScaleFactor();
         scrollPositionAtNewScale = mainFrameView->scrollPosition();
         scrollPositionAtNewScale.scale(scaleRatio);
@@ -3009,10 +3007,8 @@ void WebPage::paintSnapshotAtSize(const IntRect& rect, const IntSize& bitmapSize
 static DestinationColorSpace snapshotColorSpace(SnapshotOptions options, WebPage& page)
 {
 #if USE(CG)
-    if (options & SnapshotOptionsUseScreenColorSpace) {
-        if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page.corePage()->mainFrame()))
-            return screenColorSpace(localMainFrame->view());
-    }
+    if (options & SnapshotOptionsUseScreenColorSpace)
+        return screenColorSpace(page.corePage()->mainFrame().virtualView());
 #endif
     return DestinationColorSpace::SRGB();
 }

@@ -80,7 +80,7 @@ public:
     static bool isWrappingAllowed(const RenderStyle&);
     static bool shouldTrailingWhitespaceHang(const RenderStyle&);
 
-    static bool isStrongDirectionalityCharacter(UChar32);
+    static bool isStrongDirectionalityCharacter(char32_t);
     static bool containsStrongDirectionalityText(StringView);
 
     static TextRun ellipsisTextRun(bool isHorizontal = true);

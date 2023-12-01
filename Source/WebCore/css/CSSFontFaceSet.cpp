@@ -361,14 +361,14 @@ static FontSelectionRequest computeFontSelectionRequest(CSSPropertyParserHelpers
     return { weightSelectionValue, *stretchSelectionValue, styleSelectionValue };
 }
 
-using CodePointsMap = HashSet<UChar32, DefaultHash<UChar32>, WTF::UnsignedWithZeroKeyHashTraits<UChar32>>;
+using CodePointsMap = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
 static CodePointsMap codePointsFromString(StringView stringView)
 {
     CodePointsMap result;
     auto graphemeClusters = stringView.graphemeClusters();
     for (auto cluster : graphemeClusters) {
         ASSERT(cluster.length() > 0);
-        UChar32 character = 0;
+        char32_t character = 0;
         if (cluster.is8Bit())
             character = cluster[0];
         else

@@ -59,10 +59,11 @@ using VirtualKeyMap = HashMap<VirtualKey, VirtualKey, WTF::IntHash<VirtualKey>, 
 #if ENABLE(WEBDRIVER_KEYBOARD_GRAPHEME_CLUSTERS)
 // A CharKey must only ever represent a single unicode codepoint or a single grapheme cluster.
 using CharKey = String;
+using CharKeySet = ListHashSet<String>;
 #else
-using CharKey = UChar32;
+using CharKey = char32_t;
+using CharKeySet = ListHashSet<uint32_t>;
 #endif
-using CharKeySet = ListHashSet<CharKey>;
 using MouseButton = Inspector::Protocol::Automation::MouseButton;
 using MouseInteraction = Inspector::Protocol::Automation::MouseInteraction;
 using MouseMoveOrigin = Inspector::Protocol::Automation::MouseMoveOrigin;

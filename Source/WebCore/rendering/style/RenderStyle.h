@@ -559,8 +559,10 @@ public:
 
     inline OptionSet<MarginTrimType> marginTrim() const;
 
-    const Length& wordSpacing() const;
-    float letterSpacing() const;
+    const Length& computedLetterSpacing() const;
+    const Length& computedWordSpacing() const;
+    inline float letterSpacing() const;
+    inline float wordSpacing() const;
     TextSpacingTrim textSpacingTrim() const;
     TextAutospace textAutospace() const;
 
@@ -1253,11 +1255,9 @@ public:
     void setTextWrapMode(TextWrapMode v) { m_inheritedFlags.textWrapMode = static_cast<unsigned>(v); }
     void setTextWrapStyle(TextWrapStyle v) { m_inheritedFlags.textWrapStyle = static_cast<unsigned>(v); }
 
-    void setWordSpacing(Length&&);
-
     // If letter-spacing is nonzero, we disable ligatures, which means this property affects font preparation.
-    void setLetterSpacing(float);
-    void setLetterSpacingWithoutUpdatingFontDescription(float);
+    void setLetterSpacing(Length&&);
+    void setWordSpacing(Length&&);
 
     inline void clearBackgroundLayers();
     inline void inheritBackgroundLayers(const FillLayer& parent);
@@ -1823,7 +1823,7 @@ public:
     static float initialBorderWidth() { return 3; }
     static unsigned short initialColumnRuleWidth() { return 3; }
     static float initialOutlineWidth() { return 3; }
-    static float initialLetterSpacing() { return 0; }
+    static inline Length initialLetterSpacing();
     static inline Length initialWordSpacing();
     static inline Length initialSize();
     static inline Length initialMinSize();

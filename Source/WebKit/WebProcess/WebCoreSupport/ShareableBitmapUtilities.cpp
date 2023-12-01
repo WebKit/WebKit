@@ -45,11 +45,7 @@ using namespace WebCore;
 RefPtr<ShareableBitmap> createShareableBitmap(RenderImage& renderImage, CreateShareableBitmapFromImageOptions&& options)
 {
     Ref frame = renderImage.frame();
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(frame->mainFrame());
-    if (!localMainFrame)
-        return { };
-
-    auto colorSpaceForBitmap = screenColorSpace(localMainFrame->view());
+    auto colorSpaceForBitmap = screenColorSpace(frame->mainFrame().virtualView());
     if (!renderImage.isRenderMedia() && !renderImage.opacity() && options.useSnapshotForTransparentImages == UseSnapshotForTransparentImages::Yes) {
         auto snapshotRect = renderImage.absoluteBoundingBoxRect();
         if (snapshotRect.isEmpty())

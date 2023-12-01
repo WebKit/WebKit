@@ -93,12 +93,14 @@ private:
     void createEncoder(VideoEncoderIdentifier, VideoCodecType, const String& codecString, const Vector<std::pair<String, String>>&, bool useLowLatency, bool useAnnexB, WebCore::VideoEncoderScalabilityMode, CompletionHandler<void(bool)>&&);
     void releaseEncoder(VideoEncoderIdentifier);
     void initializeEncoder(VideoEncoderIdentifier, uint16_t width, uint16_t height, unsigned startBitrate, unsigned maxBitrate, unsigned minBitrate, uint32_t maxFramerate);
-    void encodeFrame(VideoEncoderIdentifier, SharedVideoFrame&&, int64_t timeStamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame);
-    void flushEncoder(VideoEncoderIdentifier);
+    void encodeFrame(VideoEncoderIdentifier, SharedVideoFrame&&, int64_t timeStamp, std::optional<uint64_t> duration, bool shouldEncodeAsKeyFrame, CompletionHandler<void(bool)>&&);
+    void flushEncoder(VideoEncoderIdentifier, CompletionHandler<void()>&&);
     void setEncodeRates(VideoEncoderIdentifier, uint32_t bitRate, uint32_t frameRate);
     void setSharedVideoFrameSemaphore(VideoEncoderIdentifier, IPC::Semaphore&&);
     void setSharedVideoFrameMemory(VideoEncoderIdentifier, SharedMemory::Handle&&);
     void setRTCLoggingLevel(WTFLogLevel);
+
+    void notifyEncoderResult(VideoEncoderIdentifier, bool);
 
     struct Decoder {
         std::unique_ptr<WebCore::WebRTCVideoDecoder> webrtcDecoder;
@@ -109,6 +111,7 @@ private:
     struct Encoder {
         webrtc::LocalEncoder webrtcEncoder { nullptr };
         std::unique_ptr<SharedVideoFrameReader> frameReader;
+        Deque<CompletionHandler<void(bool)>> encodingCallbacks;
     };
     Encoder* findEncoder(VideoEncoderIdentifier) WTF_REQUIRES_CAPABILITY(workQueue());
 

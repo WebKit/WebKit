@@ -1544,7 +1544,7 @@ bool ReplaceSelectionCommand::shouldPerformSmartParagraphReplace() const
     return true;
 }
 
-static bool isCharacterSmartReplaceExemptConsideringNonBreakingSpace(UChar32 character, bool previousCharacter)
+static bool isCharacterSmartReplaceExemptConsideringNonBreakingSpace(char32_t character, bool previousCharacter)
 {
     return isCharacterSmartReplaceExempt(character == noBreakSpace ? ' ' : character, previousCharacter);
 }

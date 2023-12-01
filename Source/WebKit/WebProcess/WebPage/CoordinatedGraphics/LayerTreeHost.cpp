@@ -266,12 +266,14 @@ void LayerTreeHost::sizeDidChange(const IntSize& size)
 void LayerTreeHost::pauseRendering()
 {
     m_isSuspended = true;
+    m_surface->visibilityDidChange(false);
     m_compositor->suspend();
 }
 
 void LayerTreeHost::resumeRendering()
 {
     m_isSuspended = false;
+    m_surface->visibilityDidChange(true);
     m_compositor->resume();
     scheduleLayerFlush();
 }

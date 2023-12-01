@@ -1963,14 +1963,14 @@ static void normalizeCharacters(const UChar* characters, unsigned length, Vector
     ASSERT(U_SUCCESS(status));
 }
 
-static bool isNonLatin1Separator(UChar32 character)
+static bool isNonLatin1Separator(char32_t character)
 {
     ASSERT_ARG(character, !isLatin1(character));
 
     return U_GET_GC_MASK(character) & (U_GC_S_MASK | U_GC_P_MASK | U_GC_Z_MASK | U_GC_CF_MASK);
 }
 
-static inline bool isSeparator(UChar32 character)
+static inline bool isSeparator(char32_t character)
 {
     static constexpr bool latin1SeparatorTable[256] = {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -2013,7 +2013,7 @@ inline SearchBuffer::SearchBuffer(const String& target, FindOptions options)
     m_overlap = m_buffer.capacity() / 4;
 
     if (m_options.contains(AtWordStarts) && targetLength) {
-        UChar32 targetFirstCharacter;
+        char32_t targetFirstCharacter;
         U16_GET(m_target, 0, 0u, targetLength, targetFirstCharacter);
         // Characters in the separator category never really occur at the beginning of a word,
         // so if the target begins with such a character, we just ignore the AtWordStart option.
@@ -2213,11 +2213,11 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
 
     int size = m_buffer.size();
     int offset = start;
-    UChar32 firstCharacter;
+    char32_t firstCharacter;
     U16_GET(m_buffer.data(), 0, offset, size, firstCharacter);
 
     if (m_options.contains(TreatMedialCapitalAsWordStart)) {
-        UChar32 previousCharacter;
+        char32_t previousCharacter;
         U16_PREV(m_buffer.data(), 0, offset, previousCharacter);
 
         if (isSeparator(firstCharacter)) {
@@ -2232,7 +2232,7 @@ inline bool SearchBuffer::isWordStartMatch(size_t start, size_t length) const
             // is a word start ("Request" in "XMLHTTPRequest").
             offset = start;
             U16_FWD_1(m_buffer.data(), offset, size);
-            UChar32 nextCharacter = 0;
+            char32_t nextCharacter = 0;
             if (offset < size)
                 U16_GET(m_buffer.data(), 0, offset, size, nextCharacter);
             if (!isASCIIUpper(nextCharacter) && !isASCIIDigit(nextCharacter) && !isSeparator(nextCharacter))

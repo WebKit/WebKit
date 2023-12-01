@@ -546,7 +546,7 @@ private:
         {
             ASSERT(dependentPromisesCount);
             if constexpr (!std::is_void_v<ResolveValueT>)
-                m_resolveValues.resize(dependentPromisesCount);
+                m_resolveValues.grow(dependentPromisesCount);
         }
 
         template<typename ResolveValueType_>
@@ -609,7 +609,7 @@ private:
             , m_outstandingPromises(dependentPromisesCount)
         {
             ASSERT(dependentPromisesCount);
-            m_results.resize(dependentPromisesCount);
+            m_results.grow(dependentPromisesCount);
         }
 
         void settle(size_t index, ResultParam result)

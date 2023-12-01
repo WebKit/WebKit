@@ -429,12 +429,9 @@ String WebKeyboardEvent::keyValueStringForWPEKeyval(unsigned keyval)
         break;
     }
 
-    UChar32 unicodeCharacter = wpe_keyval_to_unicode(keyval);
-    if (unicodeCharacter && U_IS_UNICODE_CHAR(unicodeCharacter)) {
-        StringBuilder builder;
-        builder.appendCharacter(unicodeCharacter);
-        return builder.toString();
-    }
+    char32_t unicodeCharacter = wpe_keyval_to_unicode(keyval);
+    if (unicodeCharacter && U_IS_UNICODE_CHAR(unicodeCharacter))
+        return makeString(unicodeCharacter);
 
     return "Unidentified"_s;
 }
@@ -1320,12 +1317,9 @@ String WebKeyboardEvent::singleCharacterStringForWPEKeyval(unsigned keyval)
         break;
     }
 
-    UChar32 unicodeCharacter = wpe_keyval_to_unicode(keyval);
-    if (unicodeCharacter && U_IS_UNICODE_CHAR(unicodeCharacter)) {
-        StringBuilder builder;
-        builder.appendCharacter(unicodeCharacter);
-        return builder.toString();
-    }
+    char32_t unicodeCharacter = wpe_keyval_to_unicode(keyval);
+    if (unicodeCharacter && U_IS_UNICODE_CHAR(unicodeCharacter))
+        return makeString(unicodeCharacter);
 
     return { };
 }

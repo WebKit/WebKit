@@ -189,8 +189,11 @@ String capitalize(const String& string, UChar previousCharacter)
     int32_t startOfWord = ubrk_first(breakIterator);
     int32_t endOfWord;
     for (endOfWord = ubrk_next(breakIterator); endOfWord != UBRK_DONE; startOfWord = endOfWord, endOfWord = ubrk_next(breakIterator)) {
-        if (startOfWord) // Do not append the first character, since it's the previous character, not from this string.
-            result.appendCharacter(u_totitle(stringImpl[startOfWord - 1]));
+        // Do not append the first character, since it's the previous character, not from this string.
+        if (startOfWord) {
+            char32_t lastCharacter = u_totitle(stringImpl[startOfWord - 1]);
+            result.append(lastCharacter);
+        }
         for (int i = startOfWord + 1; i < endOfWord; i++)
             result.append(stringImpl[i - 1]);
     }
@@ -329,7 +332,7 @@ void RenderText::initiateFontLoadingByAccessingGlyphDataAndComputeCanUseSimplifi
     auto mayHaveStrongDirectionalityContent = !textContent.is8Bit();
     // FIXME: Pre-warm glyph loading in FontCascade with the most common range.
     std::bitset<256> hasSeen;
-    for (UChar32 character : StringView(textContent).codePoints()) {
+    for (char32_t character : StringView(textContent).codePoints()) {
         if (character < 256) {
             if (hasSeen[character])
                 continue;
@@ -1481,7 +1484,7 @@ UChar RenderText::previousCharacter() const
 static String convertToFullSizeKana(const String& string)
 {
     // https://www.w3.org/TR/css-text-3/#small-kana
-    static constexpr std::pair<UChar32, UChar> kanasMap[] = {
+    static constexpr std::pair<char32_t, UChar> kanasMap[] = {
         { 0x3041, 0x3042 },
         { 0x3043, 0x3044 },
         { 0x3045, 0x3046 },
@@ -1544,21 +1547,26 @@ static String convertToFullSizeKana(const String& string)
 
     static constexpr SortedArrayMap sortedMap { kanasMap };
 
-    StringBuilder result;
     auto codePoints = StringView { string }.codePoints();
-    bool hasChanged = false;
+
+    bool needsConversion = false;
     for (auto character : codePoints) {
-        if (auto found = sortedMap.tryGet(character)) {
-            result.append(*found);
-            hasChanged = true;
-        } else
-            result.appendCharacter(character);
+        if (sortedMap.contains(character)) {
+            needsConversion = true;
+            break;
+        }
     }
+    if (!needsConversion)
+        return string;
 
-    if (hasChanged)
-        return result.toString();
-
-    return string;
+    StringBuilder result;
+    for (auto character : codePoints) {
+        if (auto found = sortedMap.tryGet(character))
+            result.append(*found);
+        else
+            result.append(character);
+    }
+    return result.toString();
 }
 
 String applyTextTransform(const RenderStyle& style, const String& text, UChar previousCharacter)

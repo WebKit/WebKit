@@ -137,7 +137,7 @@ public:
             m_characters.shrink(length);
     }
 
-    void set(unsigned index, UChar32 character)
+    void set(unsigned index, char32_t character)
     {
         m_characters[index].add(m_charSize, character);
     }
@@ -147,7 +147,7 @@ public:
         m_characters[index].setAll();
     }
 
-    void addCharacters(unsigned index, const Vector<UChar32>& characters)
+    void addCharacters(unsigned index, const Vector<char32_t>& characters)
     {
         m_characters[index].addCharacters(m_charSize, characters);
     }
@@ -488,13 +488,13 @@ class YarrGenerator final : public YarrJITInfo {
         }
     }
 
-    void matchCharacterClassRange(MacroAssembler::RegisterID character, MacroAssembler::JumpList& failures, MacroAssembler::JumpList& matchDest, const CharacterRange* ranges, unsigned count, unsigned* matchIndex, const UChar32* matches, unsigned matchCount)
+    void matchCharacterClassRange(MacroAssembler::RegisterID character, MacroAssembler::JumpList& failures, MacroAssembler::JumpList& matchDest, const CharacterRange* ranges, unsigned count, unsigned* matchIndex, const char32_t* matches, unsigned matchCount)
     {
         do {
             // pick which range we're going to generate
             int which = count >> 1;
-            char lo = ranges[which].begin;
-            char hi = ranges[which].end;
+            char8_t lo = ranges[which].begin;
+            char8_t hi = ranges[which].end;
 
             // check if there are any ranges or matches below lo.  If not, just jl to failure -
             // if there is anything else to check, check that first, if it falls through jmp to failure.
@@ -551,15 +551,15 @@ class YarrGenerator final : public YarrJITInfo {
 
             if (charClass->m_matchesUnicode.size()) {
                 for (unsigned i = 0; i < charClass->m_matchesUnicode.size(); ++i) {
-                    UChar32 ch = charClass->m_matchesUnicode[i];
+                    char32_t ch = charClass->m_matchesUnicode[i];
                     matchDest.append(m_jit.branch32(MacroAssembler::Equal, character, MacroAssembler::Imm32(ch)));
                 }
             }
 
             if (charClass->m_rangesUnicode.size()) {
                 for (unsigned i = 0; i < charClass->m_rangesUnicode.size(); ++i) {
-                    UChar32 lo = charClass->m_rangesUnicode[i].begin;
-                    UChar32 hi = charClass->m_rangesUnicode[i].end;
+                    char32_t lo = charClass->m_rangesUnicode[i].begin;
+                    char32_t hi = charClass->m_rangesUnicode[i].end;
 
                     MacroAssembler::Jump below = m_jit.branch32(MacroAssembler::LessThan, character, MacroAssembler::Imm32(lo));
                     matchDest.append(m_jit.branch32(MacroAssembler::LessThanOrEqual, character, MacroAssembler::Imm32(hi)));
@@ -756,7 +756,7 @@ class YarrGenerator final : public YarrJITInfo {
             m_jit.load16Unaligned(address, resultReg);
     }
 
-    MacroAssembler::Jump jumpIfCharNotEquals(UChar32 ch, Checked<unsigned> negativeCharacterOffset, MacroAssembler::RegisterID character)
+    MacroAssembler::Jump jumpIfCharNotEquals(char32_t ch, Checked<unsigned> negativeCharacterOffset, MacroAssembler::RegisterID character)
     {
         readCharacter(negativeCharacterOffset, character);
 
@@ -1592,7 +1592,7 @@ class YarrGenerator final : public YarrJITInfo {
         YarrOp* nextOp = &m_ops[opIndex + 1];
 
         PatternTerm* term = op.m_term;
-        UChar32 ch = term->patternCharacter;
+        char32_t ch = term->patternCharacter;
 
         if (!isLatin1(ch) && (m_charSize == CharSize::Char8)) {
             // Have a 16 bit pattern character and an 8 bit string - short circuit
@@ -1647,7 +1647,7 @@ class YarrGenerator final : public YarrJITInfo {
             int shiftAmount = (m_charSize == CharSize::Char8 ? 8 : 16) * numberCharacters;
 #endif
 
-            UChar32 currentCharacter = nextTerm->patternCharacter;
+            char32_t currentCharacter = nextTerm->patternCharacter;
 
             if (!isLatin1(currentCharacter) && (m_charSize == CharSize::Char8)) {
                 // Have a 16 bit pattern character and an 8 bit string - short circuit
@@ -1669,7 +1669,7 @@ class YarrGenerator final : public YarrJITInfo {
             op.m_jumps.append(jumpIfNoAvailableInput());
 
         if (m_charSize == CharSize::Char8) {
-            auto check1 = [&] (Checked<unsigned> offset, UChar32 characters) {
+            auto check1 = [&] (Checked<unsigned> offset, char32_t characters) {
                 op.m_jumps.append(jumpIfCharNotEquals(characters, offset, character));
             };
 
@@ -1742,7 +1742,7 @@ class YarrGenerator final : public YarrJITInfo {
 #endif
             }
         } else {
-            auto check1 = [&] (Checked<unsigned> offset, UChar32 characters) {
+            auto check1 = [&] (Checked<unsigned> offset, char32_t characters) {
                 op.m_jumps.append(jumpIfCharNotEquals(characters, offset, character));
             };
 
@@ -1795,7 +1795,7 @@ class YarrGenerator final : public YarrJITInfo {
     {
         YarrOp& op = m_ops[opIndex];
         PatternTerm* term = op.m_term;
-        UChar32 ch = term->patternCharacter;
+        char32_t ch = term->patternCharacter;
 
         const MacroAssembler::RegisterID character = m_regs.regT0;
         const MacroAssembler::RegisterID countRegister = m_regs.regT1;
@@ -1835,7 +1835,7 @@ class YarrGenerator final : public YarrJITInfo {
     {
         YarrOp& op = m_ops[opIndex];
         PatternTerm* term = op.m_term;
-        UChar32 ch = term->patternCharacter;
+        char32_t ch = term->patternCharacter;
 
         const MacroAssembler::RegisterID character = m_regs.regT0;
         const MacroAssembler::RegisterID countRegister = m_regs.regT1;
@@ -1906,7 +1906,7 @@ class YarrGenerator final : public YarrJITInfo {
     {
         YarrOp& op = m_ops[opIndex];
         PatternTerm* term = op.m_term;
-        UChar32 ch = term->patternCharacter;
+        char32_t ch = term->patternCharacter;
 
         const MacroAssembler::RegisterID character = m_regs.regT0;
         const MacroAssembler::RegisterID countRegister = m_regs.regT1;

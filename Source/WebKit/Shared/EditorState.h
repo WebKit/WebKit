@@ -99,9 +99,9 @@ struct EditorState {
 #if PLATFORM(IOS_FAMILY)
         String markedText;
         String wordAtSelection;
-        UChar32 characterAfterSelection { 0 };
-        UChar32 characterBeforeSelection { 0 };
-        UChar32 twoCharacterBeforeSelection { 0 };
+        char32_t characterAfterSelection { 0 };
+        char32_t characterBeforeSelection { 0 };
+        char32_t twoCharacterBeforeSelection { 0 };
 #if USE(DICTATION_ALTERNATIVES)
         Vector<WebCore::DictationContext> dictationContextsForSelection;
 #endif

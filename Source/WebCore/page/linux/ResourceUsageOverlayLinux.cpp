@@ -81,7 +81,7 @@ public:
         fontDescription.setOneFamily(systemFontDatabase.systemFontShorthandFamily(messageBox));
         fontDescription.setWeight(systemFontDatabase.systemFontShorthandWeight(messageBox));
         fontDescription.setComputedSize(gFontSize);
-        m_textFont = FontCascade(WTFMove(fontDescription), 0, 0);
+        m_textFont = FontCascade(WTFMove(fontDescription));
         m_textFont.update(nullptr);
     }
 

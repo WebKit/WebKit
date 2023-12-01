@@ -109,7 +109,8 @@ public:
 class FontCascade : public CanMakeWeakPtr<FontCascade>, public CanMakeCheckedPtr {
 public:
     WEBCORE_EXPORT FontCascade();
-    WEBCORE_EXPORT FontCascade(FontCascadeDescription&&, float letterSpacing = 0, float wordSpacing = 0);
+    WEBCORE_EXPORT FontCascade(FontCascadeDescription&&);
+    WEBCORE_EXPORT FontCascade(FontCascadeDescription&&, const FontCascade&);
     // This constructor is only used if the platform wants to start with a native font.
     WEBCORE_EXPORT FontCascade(const FontPlatformData&, FontSmoothingMode = FontSmoothingMode::AutoSmoothing);
 
@@ -151,12 +152,14 @@ public:
 
     bool isSmallCaps() const { return m_fontDescription.variantCaps() == FontVariantCaps::Small; }
 
-    float wordSpacing() const { return m_wordSpacing; }
-    float letterSpacing() const { return m_letterSpacing; }
+    float letterSpacing() const;
+    float wordSpacing() const;
+    const Length& computedLetterSpacing() const { return m_spacing.letter; }
+    const Length& computedWordSpacing() const { return m_spacing.word; }
+    void setLetterSpacing(const Length& spacing) { m_spacing.letter = spacing; }
+    void setWordSpacing(const Length& spacing) { m_spacing.word = spacing; }
     TextSpacingTrim textSpacingTrim() const { return m_fontDescription.textSpacingTrim(); }
     TextAutospace textAutospace() const { return m_fontDescription.textAutospace(); }
-    void setWordSpacing(float s) { m_wordSpacing = s; }
-    void setLetterSpacing(float s) { m_letterSpacing = s; }
     bool isFixedPitch() const;
     
     bool enableKerning() const { return m_enableKerning; }
@@ -185,12 +188,12 @@ public:
 
     const Font& primaryFont() const;
     const FontRanges& fallbackRangesAt(unsigned) const;
-    GlyphData glyphDataForCharacter(UChar32, bool mirror, FontVariant = AutoVariant) const;
+    GlyphData glyphDataForCharacter(char32_t, bool mirror, FontVariant = AutoVariant) const;
 
     const Font* fontForCombiningCharacterSequence(StringView) const;
 
-    static bool isCJKIdeograph(UChar32);
-    static bool isCJKIdeographOrSymbol(UChar32);
+    static bool isCJKIdeograph(char32_t);
+    static bool isCJKIdeographOrSymbol(char32_t);
 
     // Returns (the number of opportunities, whether the last expansion is a trailing expansion)
     // If there are no opportunities, the bool will be true iff we are forbidding leading expansions.
@@ -250,8 +253,7 @@ public:
     bool equalForTextAutoSizing(const FontCascade& other) const
     {
         return m_fontDescription.equalForTextAutoSizing(other.m_fontDescription)
-            && m_letterSpacing == other.m_letterSpacing
-            && m_wordSpacing == other.m_wordSpacing;
+            && m_spacing == other.m_spacing;
     }
 #endif
 
@@ -261,17 +263,17 @@ public:
     static CodePath s_codePath;
 
     FontSelector* fontSelector() const;
-    static bool treatAsSpace(UChar32 c) { return c == space || c == tabCharacter || c == newlineCharacter || c == noBreakSpace; }
-    static bool isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(UChar32 character)
+    static bool treatAsSpace(char32_t c) { return c == space || c == tabCharacter || c == newlineCharacter || c == noBreakSpace; }
+    static bool isCharacterWhoseGlyphsShouldBeDeletedForTextRendering(char32_t character)
     {
         // https://drafts.csswg.org/css-text-3/#white-space-processing
         // "Unsupported Default_ignorable characters must be ignored for text rendering."
         return isControlCharacter(character) || isDefaultIgnorableCodePoint(character);
     }
     // FIXME: Callers of treatAsZeroWidthSpace() and treatAsZeroWidthSpaceInComplexScript() should probably be calling isCharacterWhoseGlyphsShouldBeDeletedForTextRendering() instead.
-    static bool treatAsZeroWidthSpace(UChar32 c) { return treatAsZeroWidthSpaceInComplexScript(c) || c == zeroWidthNonJoiner || c == zeroWidthJoiner; }
-    static bool treatAsZeroWidthSpaceInComplexScript(UChar32 c) { return c < space || (c >= deleteCharacter && c < noBreakSpace) || c == softHyphen || c == zeroWidthSpace || (c >= leftToRightMark && c <= rightToLeftMark) || (c >= leftToRightEmbed && c <= rightToLeftOverride) || c == zeroWidthNoBreakSpace; }
-    static bool canReceiveTextEmphasis(UChar32);
+    static bool treatAsZeroWidthSpace(char32_t c) { return treatAsZeroWidthSpaceInComplexScript(c) || c == zeroWidthNonJoiner || c == zeroWidthJoiner; }
+    static bool treatAsZeroWidthSpaceInComplexScript(char32_t c) { return c < space || (c >= deleteCharacter && c < noBreakSpace) || c == softHyphen || c == zeroWidthSpace || (c >= leftToRightMark && c <= rightToLeftMark) || (c >= leftToRightEmbed && c <= rightToLeftOverride) || c == zeroWidthNoBreakSpace; }
+    static bool canReceiveTextEmphasis(char32_t);
 
     static inline UChar normalizeSpaces(UChar character)
     {
@@ -292,7 +294,7 @@ public:
     FontCascadeFonts* fonts() const { return m_fonts.get(); }
     bool isLoadingCustomFonts() const;
 
-    static ResolvedEmojiPolicy resolveEmojiPolicy(FontVariantEmoji, UChar32);
+    static ResolvedEmojiPolicy resolveEmojiPolicy(FontVariantEmoji, char32_t);
 
 private:
 
@@ -320,10 +322,16 @@ private:
         return advancedTextRenderingMode();
     }
 
+    struct Spacing {
+        Length letter;
+        Length word;
+        Spacing() : letter(LengthType::Fixed) , word(LengthType::Fixed) { };
+        bool operator==(const Spacing& other) const = default;
+    };
+
     mutable FontCascadeDescription m_fontDescription;
+    Spacing m_spacing;
     mutable RefPtr<FontCascadeFonts> m_fonts;
-    float m_letterSpacing { 0 };
-    float m_wordSpacing { 0 };
     mutable unsigned m_generation { 0 };
     bool m_useBackslashAsYenSymbol { false };
     bool m_enableKerning { false }; // Computed from m_fontDescription.
@@ -370,7 +378,7 @@ inline float FontCascade::tabWidth(const Font& font, const TabSize& tabSize, flo
     return result - (syntheticBoldInclusion == Font::SyntheticBoldInclusion::Exclude ? font.syntheticBoldOffset() : 0);
 }
 
-bool shouldSynthesizeSmallCaps(bool, const Font*, UChar32, std::optional<UChar32>, FontVariantCaps, bool);
-std::optional<UChar32> capitalized(UChar32);
+bool shouldSynthesizeSmallCaps(bool, const Font*, char32_t, std::optional<char32_t>, FontVariantCaps, bool);
+std::optional<char32_t> capitalized(char32_t);
 
 } // namespace WebCore

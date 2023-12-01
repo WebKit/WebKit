@@ -1352,6 +1352,9 @@ http/wpt/service-workers/push-console-messages-showNotification-sync.https.html 
 
 http/tests/media/fairplay [ Skip ]
 
+# Requires specifc encoder behavior.
+http/wpt/webcodecs/encoder-task-failing.html [ Failure ]
+
 #//////////////////////////////////////////////////////////////////////////////////////////
 # End platform-specific tests.
 #//////////////////////////////////////////////////////////////////////////////////////////

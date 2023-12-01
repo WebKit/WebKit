@@ -326,7 +326,7 @@ Ref<StringImpl> StringImpl::substring(unsigned start, unsigned length)
     return create(m_data16 + start, length);
 }
 
-UChar32 StringImpl::characterStartingAt(unsigned i)
+char32_t StringImpl::characterStartingAt(unsigned i)
 {
     if (is8Bit())
         return m_data8[i];

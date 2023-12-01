@@ -32,28 +32,28 @@ namespace WebCore {
 
 class CSSUnicodeRangeValue final : public CSSValue {
 public:
-    static Ref<CSSUnicodeRangeValue> create(UChar32 from, UChar32 to)
+    static Ref<CSSUnicodeRangeValue> create(char32_t from, char32_t to)
     {
         return adoptRef(*new CSSUnicodeRangeValue(from, to));
     }
 
-    UChar32 from() const { return m_from; }
-    UChar32 to() const { return m_to; }
+    char32_t from() const { return m_from; }
+    char32_t to() const { return m_to; }
 
     String customCSSText() const;
 
     bool equals(const CSSUnicodeRangeValue&) const;
 
 private:
-    CSSUnicodeRangeValue(UChar32 from, UChar32 to)
+    CSSUnicodeRangeValue(char32_t from, char32_t to)
         : CSSValue(UnicodeRangeClass)
         , m_from(from)
         , m_to(to)
     {
     }
 
-    UChar32 m_from;
-    UChar32 m_to;
+    char32_t m_from;
+    char32_t m_to;
 };
 
 } // namespace WebCore

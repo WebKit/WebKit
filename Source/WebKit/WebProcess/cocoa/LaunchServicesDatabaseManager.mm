@@ -81,7 +81,12 @@ bool LaunchServicesDatabaseManager::waitForDatabaseUpdate(Seconds timeout)
 void LaunchServicesDatabaseManager::waitForDatabaseUpdate()
 {
     auto startTime = MonotonicTime::now();
-    bool databaseUpdated = waitForDatabaseUpdate(5_s);
+#ifdef NDEBUG
+    auto waitTime = 5_s;
+#else
+    auto waitTime = 10_s;
+#endif
+    bool databaseUpdated = waitForDatabaseUpdate(waitTime);
     auto elapsedTime = MonotonicTime::now() - startTime;
     if (elapsedTime > 0.5_s)
         RELEASE_LOG_ERROR(Loading, "Waiting for Launch Services database update took %f seconds", elapsedTime.value());

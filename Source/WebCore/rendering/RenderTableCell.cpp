@@ -414,16 +414,16 @@ LayoutRect RenderTableCell::localRectForRepaint() const
     return r;
 }
 
-std::optional<LayoutRect> RenderTableCell::computeVisibleRectInContainer(const LayoutRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
+auto RenderTableCell::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
 {
     if (container == this)
-        return rect;
+        return rects;
 
-    auto adjustedRect = rect;
+    auto adjustedRects = rects;
     if ((!view().frameView().layoutContext().isPaintOffsetCacheEnabled() || container || context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection)) && parent())
-        adjustedRect.moveBy(-parentBox()->location()); // Rows are in the same coordinate space, so don't add their offset in.
+        adjustedRects.moveBy(-parentBox()->location()); // Rows are in the same coordinate space, so don't add their offset in.
 
-    return RenderBlockFlow::computeVisibleRectInContainer(adjustedRect, container, context);
+    return RenderBlockFlow::computeVisibleRectsInContainer(adjustedRects, container, context);
 }
 
 LayoutUnit RenderTableCell::cellBaselinePosition() const

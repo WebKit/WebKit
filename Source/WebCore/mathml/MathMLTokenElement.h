@@ -38,7 +38,7 @@ class MathMLTokenElement : public MathMLPresentationElement {
 public:
     static Ref<MathMLTokenElement> create(const QualifiedName& tagName, Document&);
 
-    static std::optional<UChar32> convertToSingleCodePoint(StringView);
+    static std::optional<char32_t> convertToSingleCodePoint(StringView);
 
 protected:
     static constexpr auto CreateMathMLTokenElement = CreateMathMLPresentationElement | NodeFlag::HasCustomStyleResolveCallbacks;

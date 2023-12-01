@@ -49,6 +49,8 @@ enum class CharacterClassSetOp : uint8_t {
 template<class Delegate, typename CharType>
 class Parser {
 private:
+    static constexpr char32_t errorCodePoint = 0xFFFFFFFFu;
+
     template<class FriendDelegate>
     friend ErrorCode parse(FriendDelegate&, StringView pattern, CompileMode, unsigned backReferenceLimit, bool isNamedForwardReferenceAllowed);
 
@@ -162,7 +164,7 @@ private:
          * mode we will allow a hypen to be treated as indicating a range (i.e. /[a-z]/
          * is different to /[a\-z]/).
          */
-        void atomPatternCharacter(UChar32 ch, bool hyphenIsRange = false)
+        void atomPatternCharacter(char32_t ch, bool hyphenIsRange = false)
         {
             switch (m_state) {
             case CharacterClassConstructionState::AfterCharacterClass:
@@ -294,7 +296,7 @@ private:
             AfterCharacterClassHyphen,
         };
         CharacterClassConstructionState m_state;
-        UChar32 m_character;
+        char32_t m_character;
     };
 
     /*
@@ -498,7 +500,7 @@ private:
          * mode we will allow a hypen to be treated as indicating a range (i.e. /[a-z]/
          * is different to /[a\-z]/).
          */
-        void atomPatternCharacter(UChar32 ch)
+        void atomPatternCharacter(char32_t ch)
         {
             bool unionOpActive = m_setOp == CharacterClassSetOp::Default || m_setOp == CharacterClassSetOp::Union;
             bool processingEscape = m_processingEscape;
@@ -709,7 +711,7 @@ private:
         bool m_mayContainStrings;
         bool m_inverted;
         bool m_processingEscape;
-        UChar32 m_character;
+        char32_t m_character;
         Vector<NestingState> nestedParseState;
     };
 
@@ -729,7 +731,7 @@ private:
         {
         }
 
-        void atomPatternCharacter(UChar32 ch, bool = false)
+        void atomPatternCharacter(char32_t ch, bool = false)
         {
             m_stringInProgress.append(ch);
             if (m_stringInProgress.size() > 1)
@@ -766,8 +768,8 @@ private:
         Delegate& m_delegate;
         bool m_mayContainStrings;
         ErrorCode& m_errorCode;
-        Vector<UChar32> m_stringInProgress;
-        Vector<Vector<UChar32>> m_strings;
+        Vector<char32_t> m_stringInProgress;
+        Vector<Vector<char32_t>> m_strings;
     };
 
     Parser(Delegate& delegate, StringView pattern, CompileMode compileMode, unsigned backReferenceLimit, bool isNamedForwardReferenceAllowed)
@@ -786,7 +788,7 @@ private:
     // and ClassSetReservedPunctionation, which is any of &-!#%,:;<=>@`~
     // For non-unicode patterns, most any character can be escaped.
     template<ParseEscapeMode parseEscapeMode>
-    bool isIdentityEscapeAnError(int ch)
+    bool isIdentityEscapeAnError(char32_t ch)
     {
         if (isEitherUnicodeCompilation()
             && ((isASCII(ch) && !strchr((parseEscapeMode == ParseEscapeMode::ClassSet || parseEscapeMode == ParseEscapeMode::ClassStringDisjunction) ? "^$\\.*+?()[]{}|/&-!#%,:;<=>@`~" : "^$\\.*+?()[]{}|/", ch)) || !ch)) {
@@ -816,7 +818,7 @@ private:
      * following methods:
      *
      *   Required methods:
-     *    void atomPatternCharacter(UChar32 ch);
+     *    void atomPatternCharacter(char32_t ch);
      *
      *   Optional methods based on parseEscapeMode:
      *    void assertionWordBoundary(bool invert);
@@ -993,7 +995,7 @@ private:
             ParseState state = saveState();
             consume();
             if (!atEndOfPattern()) {
-                int control = consume();
+                char32_t control = consume();
 
                 if (WTF::isASCIIAlpha(control)) {
                     delegate.atomPatternCharacter(control & 0x1f);
@@ -1025,8 +1027,8 @@ private:
         // HexEscape
         case 'x': {
             consume();
-            int x = tryConsumeHex(2);
-            if (x == -1) {
+            char32_t x = tryConsumeHex(2);
+            if (x == errorCodePoint) {
                 if (isIdentityEscapeAnError<parseEscapeMode>('x'))
                     break;
 
@@ -1070,7 +1072,7 @@ private:
         // Unicode property escapes
         case 'p':
         case 'P': {
-            int escapeChar = consume();
+            char32_t escapeChar = consume();
 
             if (isLegacyCompilation() || parseEscapeMode == ParseEscapeMode::ClassStringDisjunction) {
                 if (isIdentityEscapeAnError<parseEscapeMode>(escapeChar))
@@ -1100,7 +1102,7 @@ private:
 
         // Class String Disjunction
         case 'q': {
-            int escapeChar = consume();
+            char32_t escapeChar = consume();
 
             if (parseEscapeMode == ParseEscapeMode::ClassSet) {
                 if (!atEndOfPattern() && peek() == '{') {
@@ -1122,17 +1124,17 @@ private:
 
         // UnicodeEscape
         case 'u': {
-            int codePoint = tryConsumeUnicodeEscape<UnicodeParseContext::PatternCodePoint>();
+            char32_t codePoint = tryConsumeUnicodeEscape<UnicodeParseContext::PatternCodePoint>();
             if (hasError(m_errorCode))
                 break;
 
-            delegate.atomPatternCharacter(codePoint == -1 ? 'u' : codePoint);
+            delegate.atomPatternCharacter(codePoint == errorCodePoint ? 'u' : codePoint);
             break;
         }
 
         // IdentityEscape
         default:
-            int ch = peek();
+            char32_t ch = peek();
 
             if (ch == '-' && isEitherUnicodeCompilation() && parseEscapeMode != ParseEscapeMode::Normal) {
                 // \- is allowed for ClassEscape with unicode flag.
@@ -1150,15 +1152,15 @@ private:
     }
 
     template<UnicodeParseContext context>
-    UChar32 consumePossibleSurrogatePair()
+    char32_t consumePossibleSurrogatePair()
     {
         bool unicodePatternOrGroupName = isEitherUnicodeCompilation() || context == UnicodeParseContext::GroupName;
 
-        UChar32 ch = consume();
+        char32_t ch = consume();
         if (U16_IS_LEAD(ch) && unicodePatternOrGroupName && !atEndOfPattern()) {
             ParseState state = saveState();
 
-            UChar32 surrogate2 = consume();
+            char32_t surrogate2 = consume();
             if (U16_IS_TRAIL(surrogate2))
                 ch = U16_GET_SUPPLEMENTARY(ch, surrogate2);
             else
@@ -1168,13 +1170,13 @@ private:
         return ch;
     }
 
-    inline UChar32 consumeAndCheckIfValidClassSetCharacter()
+    inline char32_t consumeAndCheckIfValidClassSetCharacter()
     {
-        UChar32 ch = consumePossibleSurrogatePair<UnicodeParseContext::PatternCodePoint>();
+        char32_t ch = consumePossibleSurrogatePair<UnicodeParseContext::PatternCodePoint>();
 
         if (!ch) {
             m_errorCode = ErrorCode::InvalidClassSetCharacter;
-            return -1;
+            return errorCodePoint;
         }
 
         if (isASCII(ch)) {
@@ -1182,15 +1184,15 @@ private:
             // We leave handling of - and \ to the caller.
             if (strchr("()[]{}/|)", ch)) {
                 m_errorCode = ErrorCode::InvalidClassSetCharacter;
-                return -1;
+                return errorCodePoint;
             }
 
             // Check if the current character and the next are part of ClassSetReservedDoublePunctuator.
             if (!atEndOfPattern()) {
-                UChar32 nextCh = peek();
+                char32_t nextCh = peek();
                 if (ch == nextCh && strchr("&!#$%*+,.:;<=>?@^`~", ch)) {
                     m_errorCode = ErrorCode::InvalidClassSetOperation;
-                    return -1;
+                    return errorCodePoint;
                 }
             }
         }
@@ -1280,11 +1282,11 @@ private:
         classSetConstructor.begin(tryConsume('^'));
 
         auto processCharacterNormally = [&] () {
-            UChar32 ch = consumeAndCheckIfValidClassSetCharacter();
-            if (ch == -1)
+            char32_t ch = consumeAndCheckIfValidClassSetCharacter();
+            if (ch == errorCodePoint)
                 return;
 
-            classSetConstructor.atomPatternCharacter(ch);
+            classSetConstructor.atomPatternCharacter(static_cast<char32_t>(ch));
         };
 
         while (!atEndOfPattern()) {
@@ -1411,12 +1413,12 @@ private:
                 return;
 
             default: {
-                UChar32 ch = consumeAndCheckIfValidClassSetCharacter();
+                char32_t ch = consumeAndCheckIfValidClassSetCharacter();
 
-                if (ch == -1)
+                if (ch == errorCodePoint)
                     return;
 
-                stringDisjunctionDelegate.atomPatternCharacter(ch);
+                stringDisjunctionDelegate.atomPatternCharacter(static_cast<char32_t>(ch));
             }
             }
 
@@ -1814,7 +1816,7 @@ private:
         return m_size - m_index;
     }
 
-    int peek()
+    char32_t peek()
     {
         ASSERT(m_index < m_size);
         return m_data[m_index];
@@ -1832,7 +1834,7 @@ private:
     }
 
     template<UnicodeParseContext context>
-    int tryConsumeUnicodeEscape()
+    char32_t tryConsumeUnicodeEscape()
     {
         ASSERT(!hasError(m_errorCode));
 
@@ -1841,38 +1843,38 @@ private:
         if (!tryConsume('u') || atEndOfPattern()) {
             if (unicodePatternOrGroupName)
                 m_errorCode = ErrorCode::InvalidUnicodeEscape;
-            return -1;
+            return errorCodePoint;
         }
 
         if (unicodePatternOrGroupName && tryConsume('{')) {
-            int codePoint = 0;
+            char32_t codePoint = 0;
             do {
                 if (atEndOfPattern() || !isASCIIHexDigit(peek())) {
                     m_errorCode = ErrorCode::InvalidUnicodeCodePointEscape;
-                    return -1;
+                    return errorCodePoint;
                 }
 
                 codePoint = (codePoint << 4) | toASCIIHexValue(consume());
 
                 if (codePoint > UCHAR_MAX_VALUE) {
                     m_errorCode = ErrorCode::InvalidUnicodeCodePointEscape;
-                    return -1;
+                    return errorCodePoint;
                 }
             } while (!atEndOfPattern() && peek() != '}');
 
             if (!tryConsume('}')) {
                 m_errorCode = ErrorCode::InvalidUnicodeCodePointEscape; 
-                return -1;
+                return errorCodePoint;
             }
 
             return codePoint;
         }
 
-        int codeUnit = tryConsumeHex(4);
-        if (codeUnit == -1) {
+        char32_t codeUnit = tryConsumeHex(4);
+        if (codeUnit == errorCodePoint) {
             if (unicodePatternOrGroupName)
                 m_errorCode = ErrorCode::InvalidUnicodeEscape;
-            return -1;
+            return errorCodePoint;
         }
 
         // If we have the first of a surrogate pair, look for the second.
@@ -1881,7 +1883,7 @@ private:
             consume();
 
             if (tryConsume('u')) {
-                int surrogate2 = tryConsumeHex(4);
+                char32_t surrogate2 = tryConsumeHex(4);
                 if (U16_IS_TRAIL(surrogate2))
                     return U16_GET_SUPPLEMENTARY(codeUnit, surrogate2);
             }
@@ -1892,7 +1894,7 @@ private:
         return codeUnit;
     }
 
-    int tryConsumeIdentifierCharacter()
+    char32_t tryConsumeIdentifierCharacter()
     {
         if (tryConsume('\\'))
             return tryConsumeUnicodeEscape<UnicodeParseContext::GroupName>();
@@ -1900,22 +1902,22 @@ private:
         return consumePossibleSurrogatePair<UnicodeParseContext::GroupName>();
     }
 
-    bool isIdentifierStart(int ch)
+    bool isIdentifierStart(char32_t ch)
     {
         return (WTF::isASCII(ch) && (WTF::isASCIIAlpha(ch) || ch == '_' || ch == '$')) || (U_GET_GC_MASK(ch) & U_GC_L_MASK);
     }
 
-    bool isIdentifierPart(int ch)
+    bool isIdentifierPart(char32_t ch)
     {
         return (WTF::isASCII(ch) && (WTF::isASCIIAlpha(ch) || ch == '_' || ch == '$')) || (U_GET_GC_MASK(ch) & (U_GC_L_MASK | U_GC_MN_MASK | U_GC_MC_MASK | U_GC_ND_MASK | U_GC_PC_MASK)) || ch == 0x200C || ch == 0x200D;
     }
 
-    bool isUnicodePropertyValueExpressionChar(int ch)
+    bool isUnicodePropertyValueExpressionChar(char32_t ch)
     {
         return WTF::isASCIIAlphanumeric(ch) || ch == '_' || ch == '=';
     }
 
-    int consume()
+    char32_t consume()
     {
         ASSERT(m_index < m_size);
         return m_data[m_index++];
@@ -1952,15 +1954,15 @@ private:
         return true;
     }
 
-    int tryConsumeHex(int count)
+    char32_t tryConsumeHex(char32_t count)
     {
         ParseState state = saveState();
 
-        int n = 0;
+        char32_t n = 0;
         while (count--) {
             if (atEndOfPattern() || !WTF::isASCIIHexDigit(peek())) {
                 restoreState(state);
-                return -1;
+                return errorCodePoint;
             }
             n = (n << 4) | WTF::toASCIIHexValue(consume());
         }
@@ -1974,21 +1976,21 @@ private:
 
         ParseState state = saveState();
         
-        int ch = tryConsumeIdentifierCharacter();
+        char32_t ch = tryConsumeIdentifierCharacter();
 
         if (isIdentifierStart(ch)) {
             StringBuilder identifierBuilder;
-            identifierBuilder.appendCharacter(ch);
+            identifierBuilder.append(ch);
 
             while (!atEndOfPattern()) {
                 ch = tryConsumeIdentifierCharacter();
                 if (ch == '>')
-                    return std::optional<String>(identifierBuilder.toString());
+                    return identifierBuilder.toString();
 
                 if (!isIdentifierPart(ch))
                     break;
 
-                identifierBuilder.appendCharacter(ch);
+                identifierBuilder.append(ch);
             }
         }
 
@@ -2009,10 +2011,10 @@ private:
         bool foundEquals = false;
         unsigned errors = 0;
 
-        expressionBuilder.appendCharacter(consume());
+        expressionBuilder.append(consume());
 
         while (!atEndOfPattern()) {
-            int ch = peek();
+            char32_t ch = peek();
             if (ch == '}') {
                 consume();
                 if (errors) {
@@ -2044,7 +2046,7 @@ private:
             } else if (!isUnicodePropertyValueExpressionChar(ch))
                 errors++;
             else
-                expressionBuilder.appendCharacter(ch);
+                expressionBuilder.append(ch);
         }
 
         m_errorCode = ErrorCode::InvalidUnicodePropertyExpression;
@@ -2091,13 +2093,13 @@ private:
  *    void assertionEOL();
  *    void assertionWordBoundary(bool invert);
  *
- *    void atomPatternCharacter(UChar32 ch);
+ *    void atomPatternCharacter(char32_t ch);
  *    void atomBuiltInCharacterClass(BuiltInCharacterClassID classID, bool invert);
  *    void atomCharacterClassBegin(bool invert)
- *    void atomCharacterClassAtom(UChar32 ch)
- *    void atomCharacterClassRange(UChar32 begin, UChar32 end)
+ *    void atomCharacterClassAtom(char32_t ch)
+ *    void atomCharacterClassRange(char32_t begin, char32_t end)
  *    void atomCharacterClassBuiltIn(BuiltInCharacterClassID classID, bool invert)
- *    void atomClassStringDisjunction(Vector<Vector<UChar32>>&)
+ *    void atomClassStringDisjunction(Vector<Vector<char32_t>>&)
  *    void atomCharacterClassSetOp(CharacterClassSetOp setOp)
  *    void atomCharacterClassPushNested()
  *    void atomCharacterClassPopNested()

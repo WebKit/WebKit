@@ -397,4 +397,7 @@ interface UIScriptController {
 
     readonly attribute unsigned long long currentImageAnalysisRequestID;
     undefined installFakeMachineReadableCodeResultsForImageAnalysis();
+
+    undefined setInlinePrediction(DOMString completion);
+    undefined acceptInlinePrediction();
 };

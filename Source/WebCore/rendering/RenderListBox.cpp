@@ -115,7 +115,7 @@ static FontCascade bolder(Document& document, const FontCascade& font)
 {
     auto description = font.fontDescription();
     description.setWeight(description.bolderWeight());
-    auto result = FontCascade { WTFMove(description), font.letterSpacing(), font.wordSpacing() };
+    FontCascade result(WTFMove(description), font);
     result.update(&document.fontSelector());
     return result;
 }
@@ -531,7 +531,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     if (is<HTMLOptGroupElement>(*listItemElement)) {
         auto description = itemFont.fontDescription();
         description.setWeight(description.bolderWeight());
-        itemFont = FontCascade(WTFMove(description), itemFont.letterSpacing(), itemFont.wordSpacing());
+        itemFont = FontCascade(WTFMove(description), itemFont);
         itemFont.update(&document().fontSelector());
     }
 

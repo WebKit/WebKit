@@ -413,8 +413,7 @@ void WebFullScreenManager::close()
 
 void WebFullScreenManager::saveScrollPosition()
 {
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->corePage()->mainFrame()))
-        m_scrollPosition = localMainFrame->view()->scrollPosition();
+    m_scrollPosition = m_page->corePage()->mainFrame().virtualView()->scrollPosition();
 }
 
 void WebFullScreenManager::restoreScrollPosition()

@@ -1265,10 +1265,8 @@ void FrameLoader::completed()
 {
     Ref frame = m_frame.get();
 
-    for (RefPtr descendant = frame->tree().traverseNext(m_frame.ptr()); descendant; descendant = descendant->tree().traverseNext(m_frame.ptr())) {
-        if (RefPtr localDescendant = dynamicDowncast<LocalFrame>(*descendant))
-            localDescendant->navigationScheduler().startTimer();
-    }
+    for (RefPtr descendant = frame->tree().traverseNext(m_frame.ptr()); descendant; descendant = descendant->tree().traverseNext(m_frame.ptr()))
+        descendant->navigationScheduler().startTimer();
 
     if (RefPtr parent = m_frame->tree().parent()) {
         if (RefPtr localParent = dynamicDowncast<LocalFrame>(parent.releaseNonNull()))

@@ -93,7 +93,7 @@ CallFrameShuffleData CallFrameShuffleData::createForBaselineOrLLIntTailCall(cons
     shuffleData.numberTagRegister = GPRInfo::numberTagRegister;
 #endif
     shuffleData.numLocals = bytecode.m_argv - sizeof(CallerFrameAndPC) / sizeof(Register);
-    shuffleData.args.resize(bytecode.m_argc);
+    shuffleData.args.grow(bytecode.m_argc);
     for (unsigned i = 0; i < bytecode.m_argc; ++i) {
         shuffleData.args[i] =
             ValueRecovery::displacedInJSStack(

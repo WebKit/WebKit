@@ -36,6 +36,14 @@
 #include <limits.h>
 #include <wtf/Vector.h>
 
+#if CPU(X86_SSE2)
+#include <immintrin.h>
+#endif
+
+#if HAVE(ARM_NEON_INTRINSICS)
+#include <arm_neon.h>
+#endif
+
 namespace WebCore {
 
 static bool hasConstantValue(float* values, int framesToProcess)
@@ -49,7 +57,7 @@ static bool hasConstantValue(float* values, int framesToProcess)
     // during the loop execution.
     int processedFrames = 1;
 
-#if defined(__SSE2__)
+#if CPU(X86_SSE2)
     // Process 4 floats at a time using SIMD.
     __m128 valueVec = _mm_set1_ps(value);
     // Start at 0 for byte alignment
@@ -62,7 +70,7 @@ static bool hasConstantValue(float* values, int framesToProcess)
         if (_mm_movemask_ps(cmpVec))
             return false;
     }
-#elif defined(__ARM_NEON__)
+#elif HAVE(ARM_NEON_INTRINSICS)
     // Process 4 floats at a time using SIMD.
     float32x4_t valueVec = vdupq_n_f32(value);
     // Start at 0 for byte alignment.

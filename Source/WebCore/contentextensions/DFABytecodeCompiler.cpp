@@ -510,7 +510,6 @@ void DFABytecodeCompiler::compile()
     // Populate m_maxNodeStartOffsets with a worst-case index of where the node would be with no branch compaction.
     // Compacting the branches using 1-4 byte signed jump distances should only make nodes closer together than this.
     ASSERT(m_maxNodeStartOffsets.isEmpty());
-    m_maxNodeStartOffsets.clear();
     m_maxNodeStartOffsets.resize(m_dfa.nodes.size());
     unsigned rootActionsSize = 0;
     for (uint64_t action : m_dfa.nodes[m_dfa.root].actions(m_dfa))

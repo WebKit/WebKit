@@ -67,7 +67,7 @@ int codePointCompare(const String& a, const String& b)
     return codePointCompare(a.impl(), b.impl());
 }
 
-UChar32 String::characterStartingAt(unsigned i) const
+char32_t String::characterStartingAt(unsigned i) const
 {
     if (!m_impl || i >= m_impl->length())
         return 0;
@@ -540,7 +540,7 @@ String String::fromUTF8WithLatin1Fallback(const LChar* string, size_t size)
     return utf8;
 }
 
-String String::fromCodePoint(UChar32 codePoint)
+String String::fromCodePoint(char32_t codePoint)
 {
     UChar buffer[2];
     uint8_t length = 0;

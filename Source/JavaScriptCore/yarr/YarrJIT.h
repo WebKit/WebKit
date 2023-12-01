@@ -70,7 +70,7 @@ class BoyerMooreFastCandidates {
     WTF_MAKE_FAST_ALLOCATED(BoyerMooreFastCandidates);
 public:
     static constexpr unsigned maxSize = 2;
-    using CharacterVector = Vector<UChar32, maxSize>;
+    using CharacterVector = Vector<char32_t, maxSize>;
 
     BoyerMooreFastCandidates() = default;
 
@@ -83,9 +83,9 @@ public:
 
     bool isEmpty() const { return m_characters.isEmpty(); }
     unsigned size() const { return m_characters.size(); }
-    UChar32 at(unsigned index) const { return m_characters.at(index); }
+    char32_t at(unsigned index) const { return m_characters.at(index); }
 
-    void add(UChar32 character)
+    void add(char32_t character)
     {
         if (!isValid())
             return;
@@ -130,7 +130,7 @@ public:
     const Map& map() const { return m_map; }
     const BoyerMooreFastCandidates& charactersFastPath() const { return m_charactersFastPath; }
 
-    bool add(CharSize charSize, UChar32 character)
+    bool add(CharSize charSize, char32_t character)
     {
         if (isAllSet())
             return false;
@@ -145,12 +145,12 @@ public:
         return !isAllSet();
     }
 
-    void addCharacters(CharSize charSize, const Vector<UChar32>& characters)
+    void addCharacters(CharSize charSize, const Vector<char32_t>& characters)
     {
         if (isAllSet())
             return;
         ASSERT(std::is_sorted(characters.begin(), characters.end()));
-        for (UChar32 character : characters) {
+        for (auto character : characters) {
             // Early return since characters are sorted.
             if (charSize == CharSize::Char8 && character > 0xff)
                 return;
@@ -180,7 +180,7 @@ public:
                 setAll();
                 return;
             }
-            for (UChar32 character = begin; character <= end; ++character) {
+            for (auto character = begin; character <= end; ++character) {
                 if (!add(charSize, character))
                     return;
             }

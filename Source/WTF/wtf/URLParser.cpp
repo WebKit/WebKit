@@ -41,7 +41,7 @@ namespace WTF {
 #define URL_PARSER_LOG(...)
 #endif
 
-ALWAYS_INLINE static void appendCodePoint(Vector<UChar>& destination, UChar32 codePoint)
+ALWAYS_INLINE static void appendCodePoint(Vector<UChar>& destination, char32_t codePoint)
 {
     if (U_IS_BMP(codePoint)) {
         destination.append(static_cast<UChar>(codePoint));
@@ -396,7 +396,7 @@ ALWAYS_INLINE bool URLParser::isWindowsDriveLetter(CodePointIterator<CharacterTy
     return iterator.atEnd() || *iterator == '/' || *iterator == '\\' || *iterator == '?' || *iterator == '#';
 }
 
-ALWAYS_INLINE void URLParser::appendToASCIIBuffer(UChar32 codePoint)
+ALWAYS_INLINE void URLParser::appendToASCIIBuffer(char32_t codePoint)
 {
     ASSERT(isASCII(codePoint));
     if (UNLIKELY(m_didSeeSyntaxViolation))
@@ -486,11 +486,11 @@ void URLParser::percentEncodeByte(uint8_t byte)
 const char replacementCharacterUTF8PercentEncoded[10] = "%EF%BF%BD";
 const size_t replacementCharacterUTF8PercentEncodedLength = sizeof(replacementCharacterUTF8PercentEncoded) - 1;
 
-template<bool(*isInCodeSet)(UChar32), typename CharacterType>
+template<bool(*isInCodeSet)(char32_t), typename CharacterType>
 ALWAYS_INLINE void URLParser::utf8PercentEncode(const CodePointIterator<CharacterType>& iterator)
 {
     ASSERT(!iterator.atEnd());
-    UChar32 codePoint = *iterator;
+    char32_t codePoint = *iterator;
     if (LIKELY(isASCII(codePoint))) {
         if (UNLIKELY(isInCodeSet(codePoint))) {
             syntaxViolation(iterator);
@@ -518,7 +518,7 @@ template<typename CharacterType>
 ALWAYS_INLINE void URLParser::utf8QueryEncode(const CodePointIterator<CharacterType>& iterator)
 {
     ASSERT(!iterator.atEnd());
-    UChar32 codePoint = *iterator;
+    char32_t codePoint = *iterator;
     if (LIKELY(isASCII(codePoint))) {
         if (UNLIKELY(shouldPercentEncodeQueryByte(codePoint, m_urlIsSpecial))) {
             syntaxViolation(iterator);
@@ -865,7 +865,7 @@ void URLParser::copyURLPartsUntil(const URL& base, URLPart part, const CodePoint
     ASSERT_NOT_REACHED();
 }
 
-static const char dotASCIICode[2] = {'2', 'e'};
+constexpr uint8_t dotASCIICode[2] = { '2', 'e' };
 
 template<typename CharacterType>
 ALWAYS_INLINE bool URLParser::isSingleDotPathSegment(CodePointIterator<CharacterType> c)
@@ -884,7 +884,7 @@ ALWAYS_INLINE bool URLParser::isSingleDotPathSegment(CodePointIterator<Character
     advance<CharacterType, ReportSyntaxViolation::No>(c);
     if (c.atEnd())
         return false;
-    if (toASCIILower(*c) == dotASCIICode[1]) {
+    if (isASCIIAlphaCaselessEqual(*c, dotASCIICode[1])) {
         advance<CharacterType, ReportSyntaxViolation::No>(c);
         return c.atEnd() || isSlashQuestionOrHash(*c);
     }
@@ -908,7 +908,7 @@ ALWAYS_INLINE bool URLParser::isDoubleDotPathSegment(CodePointIterator<Character
     advance<CharacterType, ReportSyntaxViolation::No>(c);
     if (c.atEnd())
         return false;
-    if (toASCIILower(*c) == dotASCIICode[1]) {
+    if (isASCIIAlphaCaselessEqual(*c, dotASCIICode[1])) {
         advance<CharacterType, ReportSyntaxViolation::No>(c);
         return isSingleDotPathSegment(c);
     }
@@ -932,7 +932,7 @@ void URLParser::consumeSingleDotPathSegment(CodePointIterator<CharacterType>& c)
         advance(c);
         ASSERT(*c == dotASCIICode[0]);
         advance(c);
-        ASSERT(toASCIILower(*c) == dotASCIICode[1]);
+        ASSERT(isASCIIAlphaCaselessEqual(*c, dotASCIICode[1]));
         advance(c);
         if (!c.atEnd()) {
             if (*c == '/' || *c == '\\')
@@ -954,7 +954,7 @@ void URLParser::consumeDoubleDotPathSegment(CodePointIterator<CharacterType>& c)
         advance(c);
         ASSERT(*c == dotASCIICode[0]);
         advance(c);
-        ASSERT(toASCIILower(*c) == dotASCIICode[1]);
+        ASSERT(isASCIIAlphaCaselessEqual(*c, dotASCIICode[1]));
         advance(c);
     }
     consumeSingleDotPathSegment(c);
@@ -1012,7 +1012,7 @@ void URLParser::failure()
 }
 
 template<typename CharacterType>
-bool URLParser::checkLocalhostCodePoint(CodePointIterator<CharacterType>& iterator, UChar32 codePoint)
+bool URLParser::checkLocalhostCodePoint(CodePointIterator<CharacterType>& iterator, char32_t codePoint)
 {
     if (iterator.atEnd() || toASCIILower(*iterator) != codePoint)
         return false;

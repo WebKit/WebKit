@@ -24,7 +24,7 @@
 #include "ParsingUtilities.h"
 #include <wtf/Forward.h>
 
-typedef std::pair<UChar32, UChar32> UnicodeRange;
+typedef std::pair<char32_t, char32_t> UnicodeRange;
 typedef Vector<UnicodeRange> UnicodeRanges;
 
 namespace WebCore {

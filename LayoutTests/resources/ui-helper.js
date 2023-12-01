@@ -602,6 +602,22 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static async setInlinePrediction(text)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => testRunner.runUIScript(`uiController.setInlinePrediction(\`${text}\`)`, resolve));
+    }
+
+    static async acceptInlinePrediction()
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => testRunner.runUIScript(`uiController.acceptInlinePrediction()`, resolve));
+    }
+
     static async activateAndWaitForInputSessionAt(x, y)
     {
         if (!this.isWebKit2() || !this.isIOSFamily())

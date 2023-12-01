@@ -31,12 +31,12 @@ namespace WTF::Unicode {
 
 // Names here are taken from the Unicode standard.
 
-// Most of these are UChar constants, not UChar32, which makes them
+// Most of these are UChar constants, not char32_t, which makes them
 // more convenient for WebCore code that mostly uses UTF-16.
 
 constexpr UChar HiraganaLetterSmallA = 0x3041;
-constexpr UChar32 aegeanWordSeparatorDot = 0x10101;
-constexpr UChar32 aegeanWordSeparatorLine = 0x10100;
+constexpr char32_t aegeanWordSeparatorDot = 0x10101;
+constexpr char32_t aegeanWordSeparatorLine = 0x10100;
 constexpr UChar apostrophe = 0x0027;
 constexpr UChar blackCircle = 0x25CF;
 constexpr UChar blackLeftPointingSmallTriangle = 0x25C2;
@@ -124,7 +124,7 @@ constexpr UChar textVariationSelector = 0xFE0E; // Technical name is "VARIATION 
 constexpr UChar thinSpace = 0x2009;
 constexpr UChar tibetanMarkDelimiterTshegBstar = 0x0F0C;
 constexpr UChar tibetanMarkIntersyllabicTsheg = 0x0F0B;
-constexpr UChar32 ugariticWordDivider = 0x1039F;
+constexpr char32_t ugariticWordDivider = 0x1039F;
 constexpr UChar upArrowhead = 0x2303;
 constexpr UChar verticalEllipsis = 0x22EE;
 constexpr UChar verticalTabulation = 0x000b;

@@ -45,6 +45,7 @@ namespace WebCore {
 ReverbConvolverStage::ReverbConvolverStage(const float* impulseResponse, size_t, size_t reverbTotalLatency, size_t stageOffset, size_t stageLength,
     size_t fftSize, size_t renderPhase, size_t renderSliceSize, ReverbAccumulationBuffer* accumulationBuffer, float scale, bool directMode)
     : m_accumulationBuffer(accumulationBuffer)
+    , m_temporaryBuffer(renderSliceSize)
     , m_directMode(directMode)
 {
     ASSERT(impulseResponse);
@@ -71,7 +72,6 @@ ReverbConvolverStage::ReverbConvolverStage(const float* impulseResponse, size_t,
             VectorMath::multiplyByScalar(m_directKernel->data(), scale, m_directKernel->data(), stageLength);
         m_directConvolver = makeUnique<DirectConvolver>(renderSliceSize);
     }
-    m_temporaryBuffer.resize(renderSliceSize);
 
     // The convolution stage at offset stageOffset needs to have a corresponding delay to cancel out the offset.
     size_t totalDelay = stageOffset + reverbTotalLatency;

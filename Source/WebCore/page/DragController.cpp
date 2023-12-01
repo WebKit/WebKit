@@ -1367,12 +1367,9 @@ void DragController::beginDrag(DragItem dragItem, LocalFrame& frame, const IntPo
     m_didInitiateDrag = true;
     m_dragInitiator = frame.document();
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
-    if (!localMainFrame)
-        return;
     // Protect this frame and view, as a load may occur mid drag and attempt to unload this frame
-    Ref protectedLocalMainFrame(*localMainFrame);
-    RefPtr viewProtector = protectedLocalMainFrame->view();
+    Ref protectedLocalMainFrame(m_page.mainFrame());
+    RefPtr viewProtector = protectedLocalMainFrame->virtualView();
 
     auto mouseDownPointInRootViewCoordinates = viewProtector->rootViewToContents(frame.view()->contentsToRootView(mouseDownPoint));
     auto mouseDraggedPointInRootViewCoordinates = viewProtector->rootViewToContents(frame.view()->contentsToRootView(mouseDraggedPoint));

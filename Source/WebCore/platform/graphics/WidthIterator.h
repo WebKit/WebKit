@@ -60,10 +60,10 @@ public:
     float runWidthSoFar() const { return m_runWidthSoFar; }
     unsigned currentCharacterIndex() const { return m_currentCharacterIndex; }
 
-    static bool characterCanUseSimplifiedTextMeasuring(UChar32, bool whitespaceIsCollapsed);
+    static bool characterCanUseSimplifiedTextMeasuring(char32_t, bool whitespaceIsCollapsed);
 
 private:
-    GlyphData glyphDataForCharacter(UChar32, bool mirror);
+    GlyphData glyphDataForCharacter(char32_t, bool mirror);
     template <typename TextIterator>
     inline void advanceInternal(TextIterator&, GlyphBuffer&);
 

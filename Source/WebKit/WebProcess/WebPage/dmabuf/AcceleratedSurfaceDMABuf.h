@@ -31,6 +31,7 @@
 
 #include "MessageReceiver.h"
 #include <wtf/Noncopyable.h>
+#include <wtf/RunLoop.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 #if USE(GBM)
@@ -52,6 +53,7 @@ public:
     static std::unique_ptr<AcceleratedSurfaceDMABuf> create(WebPage&, Client&);
     ~AcceleratedSurfaceDMABuf();
 
+private:
     uint64_t window() const override { return 0; }
     uint64_t surfaceID() const override;
     void clientResize(const WebCore::IntSize&) override;
@@ -75,7 +77,8 @@ public:
     void preferredBufferFormatsDidChange() override;
 #endif
 
-private:
+    void visibilityDidChange(bool);
+
     AcceleratedSurfaceDMABuf(WebPage&, Client&);
 
     // IPC::MessageReceiver.
@@ -83,6 +86,7 @@ private:
 
     void releaseBuffer(uint64_t);
     void frameDone();
+    void releaseUnusedBuffersTimerFired();
 
     class RenderTarget {
         WTF_MAKE_FAST_ALLOCATED;
@@ -161,6 +165,7 @@ private:
         RenderTarget* nextTarget();
         void releaseTarget(uint64_t);
         void reset();
+        void releaseUnusedBuffers();
 
         unsigned size() const { return m_freeTargets.size() + m_lockedTargets.size(); }
 
@@ -189,6 +194,8 @@ private:
     unsigned m_fbo { 0 };
     SwapChain m_swapChain;
     RenderTarget* m_target { nullptr };
+    bool m_isVisible { false };
+    std::unique_ptr<RunLoop::Timer> m_releaseUnusedBuffersTimer;
 };
 
 } // namespace WebKit

@@ -2712,14 +2712,14 @@ float RenderStyle::computedFontSize() const
     return fontDescription().computedSize();
 }
 
-const Length& RenderStyle::wordSpacing() const
+const Length& RenderStyle::computedLetterSpacing() const
 {
-    return m_rareInheritedData->wordSpacing;
+    return fontCascade().computedLetterSpacing();
 }
 
-float RenderStyle::letterSpacing() const
+const Length& RenderStyle::computedWordSpacing() const
 {
-    return m_inheritedData->fontCascade.letterSpacing();
+    return fontCascade().computedWordSpacing();
 }
 
 TextSpacingTrim RenderStyle::textSpacingTrim() const
@@ -2734,10 +2734,10 @@ TextAutospace RenderStyle::textAutospace() const
 
 bool RenderStyle::setFontDescription(FontCascadeDescription&& description)
 {
-    if (m_inheritedData->fontCascade.fontDescription() == description)
+    if (fontDescription() == description)
         return false;
     auto& cascade = m_inheritedData.access().fontCascade;
-    cascade = { WTFMove(description), cascade.letterSpacing(), cascade.wordSpacing() };
+    cascade = { WTFMove(description), cascade };
     return true;
 }
 
@@ -2810,40 +2810,32 @@ WhiteSpace RenderStyle::whiteSpace() const
     return WhiteSpace::Normal;
 }
 
-void RenderStyle::setWordSpacing(Length&& value)
+void RenderStyle::setLetterSpacing(Length&& spacing)
 {
-    float fontWordSpacing;
-    switch (value.type()) {
-    case LengthType::Auto:
-        fontWordSpacing = 0;
-        break;
-    case LengthType::Percent:
-        fontWordSpacing = value.percent() * fontCascade().widthOfSpaceString() / 100;
-        break;
-    case LengthType::Fixed:
-        fontWordSpacing = value.value();
-        break;
-    case LengthType::Calculated:
-        fontWordSpacing = value.nonNanCalculatedValue(static_cast<float>(maxValueForCssLength));
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-        fontWordSpacing = 0;
-        break;
+    if (fontCascade().computedLetterSpacing() == spacing)
+        return;
+
+    bool oldShouldDisableLigatures = fontDescription().shouldDisableLigaturesForSpacing();
+    m_inheritedData.access().fontCascade.setLetterSpacing(WTFMove(spacing));
+
+    // Switching letter-spacing between zero and non-zero requires updating fonts (to enable/disable ligatures)
+    bool shouldDisableLigatures = fontCascade().letterSpacing();
+    if (oldShouldDisableLigatures != shouldDisableLigatures) {
+        auto* selector = fontCascade().fontSelector();
+        auto description = fontDescription();
+        description.setShouldDisableLigaturesForSpacing(fontCascade().letterSpacing());
+        setFontDescription(WTFMove(description));
+        fontCascade().update(selector);
     }
-    m_inheritedData.access().fontCascade.setWordSpacing(fontWordSpacing);
-    m_rareInheritedData.access().wordSpacing = WTFMove(value);
 }
 
-void RenderStyle::setLetterSpacing(float letterSpacing)
+void RenderStyle::setWordSpacing(Length&& spacing)
 {
-    auto selector = fontCascade().fontSelector();
-    auto description = fontDescription();
-    description.setShouldDisableLigaturesForSpacing(letterSpacing);
-    setFontDescription(WTFMove(description));
-    fontCascade().update(selector);
+    ASSERT(LengthType::Normal != spacing); // should have converted to 0 already
+    if (fontCascade().computedWordSpacing() == spacing)
+        return;
 
-    setLetterSpacingWithoutUpdatingFontDescription(letterSpacing);
+    m_inheritedData.access().fontCascade.setWordSpacing(WTFMove(spacing));
 }
 
 void RenderStyle::setTextSpacingTrim(TextSpacingTrim value)
@@ -2864,11 +2856,6 @@ void RenderStyle::setTextAutospace(TextAutospace value)
 
     setFontDescription(WTFMove(description));
     fontCascade().update(selector);
-}
-
-void RenderStyle::setLetterSpacingWithoutUpdatingFontDescription(float letterSpacing)
-{
-    m_inheritedData.access().fontCascade.setLetterSpacing(letterSpacing);
 }
 
 void RenderStyle::setFontSize(float size)

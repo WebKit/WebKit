@@ -250,9 +250,7 @@ const FeatureSchema& color()
     static MainThreadNeverDestroyed<IntegerSchema> schema {
         "color"_s,
         [](auto& context) {
-            if (auto* localFrame = dynamicDowncast<LocalFrame>(context.document.frame()->mainFrame()))
-                return screenDepthPerComponent(localFrame->view()); 
-            return 8;
+            return screenDepthPerComponent(context.document.frame()->mainFrame().virtualView());
         }
     };
     return schema;
@@ -351,9 +349,7 @@ const FeatureSchema& dynamicRange()
                     return true;
                 if (frame.settings().forcedSupportsHighDynamicRangeValue() == ForcedAccessibilityValue::Off)
                     return false;
-                if (auto* localFrame = dynamicDowncast<LocalFrame>(frame.mainFrame()))
-                    return screenSupportsHighDynamicRange(localFrame->view());
-                return false;
+                return screenSupportsHighDynamicRange(frame.mainFrame().virtualView());
             }();
 
             MatchingIdentifiers identifiers { CSSValueStandard };

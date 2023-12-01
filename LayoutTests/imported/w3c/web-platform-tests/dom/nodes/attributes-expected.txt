@@ -50,7 +50,9 @@ PASS Attribute loses its owner when removed
 PASS Basic functionality of getAttributeNode/getAttributeNodeNS
 PASS Basic functionality of setAttributeNode
 PASS setAttributeNode should distinguish attributes with same local name and different namespaces
-PASS setAttributeNode doesn't have case-insensitivity even with an HTMLElement
+PASS setAttributeNode doesn't have case-insensitivity even with an HTMLElement 1
+PASS setAttributeNode doesn't have case-insensitivity even with an HTMLElement 2
+PASS setAttributeNode doesn't have case-insensitivity even with an HTMLElement 3
 PASS Basic functionality of setAttributeNodeNS
 PASS If attr’s element is neither null nor element, throw an InUseAttributeError.
 PASS Replacing an attr by itself

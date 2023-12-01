@@ -480,15 +480,17 @@ bool BMPImageReader::processColorTable()
     // Read color table.
     if ((m_decodedOffset > m_data->size()) || ((m_data->size() - m_decodedOffset) < tableSizeInBytes))
         return false;
-    m_colorTable.resize(m_infoHeader.biClrUsed);
-    for (size_t i = 0; i < m_infoHeader.biClrUsed; ++i) {
-        m_colorTable[i].rgbBlue = m_data->data()[m_decodedOffset++];
-        m_colorTable[i].rgbGreen = m_data->data()[m_decodedOffset++];
-        m_colorTable[i].rgbRed = m_data->data()[m_decodedOffset++];
+    m_colorTable = Vector<RGBTriple>(m_infoHeader.biClrUsed, [&](size_t) {
+        RGBTriple triple {
+            .rgbBlue = m_data->data()[m_decodedOffset++],
+            .rgbGreen = m_data->data()[m_decodedOffset++],
+            .rgbRed = m_data->data()[m_decodedOffset++]
+        };
         // Skip padding byte (not present on OS/2 1.x).
         if (!m_isOS21x)
             ++m_decodedOffset;
-    }
+        return triple;
+    });
 
     // We've now decoded all the non-image data we care about.  Skip anything
     // else before the actual raster data.

@@ -161,8 +161,8 @@ void HTMLFrameElementBase::didFinishInsertingNode()
 void HTMLFrameElementBase::didAttachRenderers()
 {
     if (RenderWidget* part = renderWidget()) {
-        if (RefPtr frame = dynamicDowncast<LocalFrame>(contentFrame()))
-            part->setWidget(frame->view());
+        if (RefPtr frame = contentFrame())
+            part->setWidget(frame->virtualView());
     }
 }
 

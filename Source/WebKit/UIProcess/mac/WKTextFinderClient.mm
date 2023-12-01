@@ -87,7 +87,7 @@ private:
             // filling in the actual rects for the one that we received.
             // The rest will remain empty, but it's important to NSTextFinder
             // that they at least exist.
-            allMatches.resize(matchCount);
+            allMatches.grow(matchCount);
             // FIXME: Clean this up and figure out why we are getting a -1 index
             if (matchIndex >= 0 && static_cast<uint32_t>(matchIndex) < matchCount)
                 allMatches[matchIndex].appendVector(matchRects);

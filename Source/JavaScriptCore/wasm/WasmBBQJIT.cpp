@@ -9884,7 +9884,7 @@ private:
             m_locals[value.asLocal()] = loc;
         else if (value.isTemp()) {
             if (m_temps.size() <= value.asTemp())
-                m_temps.resize(value.asTemp() + 1);
+                m_temps.grow(value.asTemp() + 1);
             m_temps[value.asTemp()] = loc;
         }
 
