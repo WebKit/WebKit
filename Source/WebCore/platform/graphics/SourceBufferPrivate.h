@@ -95,7 +95,6 @@ public:
     // Overrides must call the base class.
     virtual void resetParserState();
     virtual void removedFromMediaSource();
-    void clearMediaSource() { m_mediaSource = nullptr; }
 
     virtual MediaPlayer::ReadyState readyState() const = 0;
     virtual void setReadyState(MediaPlayer::ReadyState) = 0;

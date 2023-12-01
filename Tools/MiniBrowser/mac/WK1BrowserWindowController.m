@@ -150,6 +150,8 @@ static BOOL areEssentiallyEqual(double a, double b)
 
     if (action == @selector(saveAsPDF:))
         return NO;
+    if (action == @selector(saveAsImage:))
+        return NO;
     if (action == @selector(saveAsWebArchive:))
         return NO;
 

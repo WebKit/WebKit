@@ -754,6 +754,16 @@ void SourceBufferPrivateAVFObjC::clearTracks()
     m_audioTracks.clear();
 }
 
+void SourceBufferPrivateAVFObjC::removedFromMediaSource()
+{
+    ALWAYS_LOG(LOGIDENTIFIER);
+
+    destroyStreamDataParser();
+    destroyRenderers();
+
+    SourceBufferPrivate::removedFromMediaSource();
+}
+
 MediaPlayer::ReadyState SourceBufferPrivateAVFObjC::readyState() const
 {
     if (auto player = this->player())

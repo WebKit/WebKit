@@ -112,6 +112,11 @@
     [self doesNotRecognizeSelector:_cmd];
 }
 
+- (IBAction)saveAsImage:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
 - (IBAction)saveAsWebArchive:(id)sender
 {
     [self doesNotRecognizeSelector:_cmd];

@@ -26,7 +26,7 @@
 #ifndef WPEDisplayDRM_h
 #define WPEDisplayDRM_h
 
-#if !defined(__WPE_WAYLAND_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#if !defined(__WPE_DRM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error "Only <wpe/drm/wpe-drm.h> can be included directly."
 #endif
 

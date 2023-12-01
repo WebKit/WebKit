@@ -29,6 +29,6 @@
     EnabledBySetting=WebRTCEncodedTransformEnabled,
     Exposed=Window,
     JSGenerateToNativeObject,
-] interface RTCRtpScriptTransform : EventTarget {
-    [CallWith=CurrentGlobalObject] constructor(Worker worker, any options, optional sequence<object> transfer);
+] interface RTCRtpScriptTransform {
+    [CallWith=CurrentGlobalObject] constructor(Worker worker, optional any options, optional sequence<object> transfer);
 };

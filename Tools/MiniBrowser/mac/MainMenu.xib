@@ -139,6 +139,12 @@
                                     <action selector="saveAsPDF:" target="-1" id="25T-Id-334"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Save As Image…" keyEquivalent="S" id="gmS-3Q-oLt">
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES" option="YES" command="YES"/>
+                                <connections>
+                                    <action selector="saveAsImage:" target="-1" id="25T-Id-335"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Save As WebArchive..." id="112">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>

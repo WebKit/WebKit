@@ -48,6 +48,7 @@
 - (IBAction)openLocation:(id)sender;
 
 - (IBAction)saveAsPDF:(id)sender;
+- (IBAction)saveAsImage:(id)sender;
 - (IBAction)saveAsWebArchive:(id)sender;
 
 - (IBAction)fetch:(id)sender;
