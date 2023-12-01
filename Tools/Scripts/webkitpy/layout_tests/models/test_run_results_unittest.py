@@ -183,3 +183,16 @@ class SummarizedResultsTest(unittest.TestCase):
         self.port._options.builder_name = 'dummy builder'
         summary = summarized_results(self.port, expected=False, passing=True, flaky=False, include_passes=True)
         self.assertEqual(summary['tests']['failures']['expected']['leak.html']['expected'], 'PASS')
+
+    def test_summarized_run_metadata(self):
+        self.port._options.builder_name = 'dummy builder'
+        summary = summarized_results(self.port, expected=False, passing=True, flaky=False, include_passes=True)
+        self.assertEqual(summary['port_name'], 'test-mac-leopard')
+        self.assertEqual(
+            summary['test_configuration'],
+            {'version': 'leopard', 'architecture': 'x86', 'build_type': 'release'},
+        )
+        self.assertEqual(
+            summary['baseline_search_path'],
+            ['platform/test-mac-leopard', 'platform/test-mac-snowleopard'],
+        )

@@ -32,9 +32,7 @@ import logging
 import signal
 
 from webkitpy.common.iteration_compatibility import iteritems
-from webkitpy.layout_tests.models import test_expectations
-from webkitpy.layout_tests.models import test_failures
-
+from webkitpy.layout_tests.models import test_expectations, test_failures
 
 _log = logging.getLogger(__name__)
 
@@ -390,6 +388,12 @@ def summarize_results(port_obj, expectations_by_type, initial_results, retry_res
     results['pixel_tests_enabled'] = port_obj.get_option('pixel_tests')
     results['other_crashes'] = other_crashes_dict
     results['date'] = datetime.datetime.now().strftime("%I:%M%p on %B %d, %Y")
+    results['port_name'] = port_obj.name()
+    results['test_configuration'] = dict(port_obj.test_configuration().items())
+    results['baseline_search_path'] = [
+        port_obj.host.filesystem.relpath(p, port_obj.layout_tests_dir())
+        for p in port_obj.baseline_search_path()
+    ]
 
     try:
         # We only use the svn revision for using trac links in the results.html file,
