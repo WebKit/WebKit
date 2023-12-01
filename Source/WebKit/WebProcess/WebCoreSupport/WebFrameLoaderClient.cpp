@@ -142,6 +142,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         navigationAction.openedByDOMWithOpener(),
         coreFrame && !!coreFrame->loader().opener(), /* hasOpener */
         requester.securityOrigin->data(),
+        requester.topOrigin->data(),
         navigationAction.targetBackForwardItemIdentifier(),
         navigationAction.sourceBackForwardItemIdentifier(),
         navigationAction.lockHistory(),
