@@ -95,12 +95,6 @@
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #endif
 
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/NavigationStateAdditions.mm>)
-#import <WebKitAdditions/NavigationStateAdditions.mm>
-#else
-#define NAVIGATION_STATE_DECIDE_POLICY_FOR_NAVIGATION_ACTION_ADDITIONS
-#endif
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -465,8 +459,6 @@ static bool isUnsupportedWebExtensionNavigation(API::NavigationAction& navigatio
 
 void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageProxy& webPageProxy, Ref<API::NavigationAction>&& navigationAction, Ref<WebFramePolicyListenerProxy>&& listener)
 {
-    NAVIGATION_STATE_DECIDE_POLICY_FOR_NAVIGATION_ACTION_ADDITIONS
-
     bool subframeNavigation = navigationAction->targetFrame() && !navigationAction->targetFrame()->isMainFrame();
 
     RefPtr<API::WebsitePolicies> defaultWebsitePolicies;

@@ -37,7 +37,6 @@ struct WebKit::NavigationActionData {
     bool openedByDOMWithOpener;
     bool hasOpener;
     WebCore::SecurityOriginData requesterOrigin;
-    WebCore::SecurityOriginData requesterTopOrigin;
     std::optional<WebCore::BackForwardItemIdentifier> targetBackForwardItemIdentifier;
     std::optional<WebCore::BackForwardItemIdentifier> sourceBackForwardItemIdentifier;
     WebCore::LockHistory lockHistory;
