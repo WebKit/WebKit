@@ -1,0 +1,3 @@
+
+FAIL Test that contentHint is recognized by VideoEncoder assert_equals: expected (string) "text" but got (undefined) undefined
+

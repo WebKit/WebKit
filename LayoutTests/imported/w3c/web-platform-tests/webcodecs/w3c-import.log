@@ -74,11 +74,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx.adts
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/sfx.mp3
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/temporal-svc-encoding.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/transfering.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/utils.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-decoder.crossOriginIsolated.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-decoder.crossOriginIsolated.https.any.js.headers
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-decoder.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder-config.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder-content-hint.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder-flush.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder-h264.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/webcodecs/video-encoder-utils.js

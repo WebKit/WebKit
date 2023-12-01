@@ -1,4 +1,5 @@
 
 PASS Encoding and decoding cycle
+PASS Encoding and decoding cycle with realtime latency mode
 PASS Encoding and decoding cycle w/ stripped color space
 
