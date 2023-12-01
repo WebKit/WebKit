@@ -1297,6 +1297,7 @@ typedef NS_ENUM(NSInteger, UIShiftKeyState) {
 @interface UIResponder (Internal)
 - (BOOL)_requiresKeyboardWhenFirstResponder;
 - (BOOL)_requiresKeyboardResetOnReload;
+- (UTF32Char)_characterInRelationToCaretSelection:(int)amount;
 @end
 
 WTF_EXTERN_C_BEGIN

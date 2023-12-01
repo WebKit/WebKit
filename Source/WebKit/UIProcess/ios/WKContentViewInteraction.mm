@@ -5502,6 +5502,30 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
     });
 }
 
+- (UTF32Char)_characterInRelationToCaretSelection:(int)amount
+{
+    if (self.shouldUseAsyncInteractions)
+        return [super _characterInRelationToCaretSelection:amount];
+
+    if (amount == -1 && _lastInsertedCharacterToOverrideCharacterBeforeSelection)
+        return *_lastInsertedCharacterToOverrideCharacterBeforeSelection;
+
+    auto& state = _page->editorState();
+    if (!state.isContentEditable || state.selectionIsNone || state.selectionIsRange || !state.postLayoutData)
+        return 0;
+
+    switch (amount) {
+    case 0:
+        return state.postLayoutData->characterAfterSelection;
+    case -1:
+        return state.postLayoutData->characterBeforeSelection;
+    case -2:
+        return state.postLayoutData->twoCharacterBeforeSelection;
+    default:
+        return 0;
+    }
+}
+
 - (BOOL)_selectionAtDocumentStart
 {
     RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
@@ -6303,6 +6327,9 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 
 - (UITextRange *)textRangeFromPosition:(UITextPosition *)fromPosition toPosition:(UITextPosition *)toPosition
 {
+    if (!self.shouldUseAsyncInteractions)
+        return nil;
+
     if (![self _isAnchoredToCurrentSelection:fromPosition] || ![self _isAnchoredToCurrentSelection:toPosition])
         return nil;
 
@@ -6311,6 +6338,9 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 
 - (UITextPosition *)positionFromPosition:(UITextPosition *)position offset:(NSInteger)offset
 {
+    if (!self.shouldUseAsyncInteractions)
+        return nil;
+
     if (![self _isAnchoredToCurrentSelection:position])
         return nil;
 
