@@ -263,14 +263,17 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     int writePtr = 0;
     unsigned jumpCount = jumpsToLink.size();
 
-    auto read = [&](const InstructionType* ptr) -> InstructionType {
-        InstructionType value = *ptr;
+    auto verifyAndCopy = [&](InstructionType* copyDst, InstructionType* copySource, InstructionType* copyEnd) {
 #if CPU(ARM64E)
-        unsigned index = (bitwise_cast<uint8_t*>(ptr) - inData) / 4;
-        uint32_t hash = verifyUncompactedHash.update(value, index);
-        RELEASE_ASSERT(inHashes[index] == hash);
+        static_assert(sizeof(InstructionType) == 4);
+        auto* cursor = copySource;
+        unsigned index = (bitwise_cast<uint8_t*>(cursor) - inData) / sizeof(InstructionType);
+        for (; cursor != copyEnd; ++cursor, ++index) {
+            uint32_t hash = verifyUncompactedHash.update(*cursor, index);
+            RELEASE_ASSERT(inHashes[index] == hash);
+        }
 #endif
-        return value;
+        memcpy(copyDst, copySource, (copyEnd - copySource) * sizeof(InstructionType));
     };
 
     if (g_jscConfig.useFastJITPermissions)
@@ -289,10 +292,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
             ASSERT(!(regionSize % 2));
             ASSERT(!(readPtr % 2));
             ASSERT(!(writePtr % 2));
-            while (copySource != copyEnd) {
-                InstructionType insn = read(copySource++);
-                *copyDst++ = insn;
-            }
+            verifyAndCopy(copyDst, copySource, copyEnd);
             recordLinkOffsets(m_assemblerStorage, readPtr, jumpsToLink[i].from(), offset);
             readPtr += regionSize;
             writePtr += regionSize;
@@ -342,11 +342,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
         RELEASE_ASSERT(bitwise_cast<uintptr_t>(dst) % sizeof(InstructionType) == 0);
         RELEASE_ASSERT(bitwise_cast<uintptr_t>(src) % sizeof(InstructionType) == 0);
         RELEASE_ASSERT(bytes % sizeof(InstructionType) == 0);
-
-        for (size_t i = 0; i < bytes; i += sizeof(InstructionType)) {
-            InstructionType insn = read(src++);
-            *dst++ = insn;
-        }
+        verifyAndCopy(dst, src, src + (bytes / sizeof(InstructionType)));
     }
 
 
