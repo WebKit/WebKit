@@ -459,6 +459,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlType&, const Stack&);
     PartialResult WARN_UNUSED_RETURN addBranch(ControlType&, ExpressionType, const Stack&);
+    PartialResult WARN_UNUSED_RETURN addBranchNull(ControlType&, ExpressionType, Stack&, bool, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType, const Vector<ControlType*>&, ControlType&, const Stack&);
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, Stack&);
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, Stack&);
@@ -1295,6 +1296,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBranch(ControlType& block, E
     WRITE_TO_METADATA(m_metadata->m_metadata.data() + size + 12, getCurrentInstructionLength(), uint8_t);
     return { };
 }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBranchNull(ControlType&, ExpressionType, Stack&, bool, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSwitch(ExpressionType, const Vector<ControlType*>& jumps, ControlType& defaultJump, const Stack& stack)
 {
     auto size = m_metadata->m_metadata.size();

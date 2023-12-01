@@ -582,6 +582,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addRethrow(unsigned, ControlType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlData&, const Stack&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addBranch(ControlData&, ExpressionType, Stack&) CONST_EXPR_STUB
+    PartialResult WARN_UNUSED_RETURN addBranchNull(ControlType&, ExpressionType, Stack&, bool, ExpressionType&) CONST_EXPR_STUB
     PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType, const Vector<ControlData*>&, ControlData&, Stack&) CONST_EXPR_STUB
 
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry& entry, Stack& expressionStack)

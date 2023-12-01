@@ -1566,7 +1566,7 @@ auto FunctionParser<Context>::checkBranchTarget(const ControlType& target) -> Pa
 
     unsigned offset = m_expressionStack.size() - target.branchTargetArity();
     for (unsigned i = 0; i < target.branchTargetArity(); ++i)
-        WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), target.branchTargetType(i)), "branch's stack type is not a block's type branch target type. Stack value has type ", m_expressionStack[offset + i].type(), " but branch target expects a value of ", target.branchTargetType(i), " at index ", i);
+        WASM_VALIDATOR_FAIL_IF(!isSubtype(m_expressionStack[offset + i].type(), target.branchTargetType(i)), "branch's stack type is not a subtype of block's type branch target type. Stack value has type ", m_expressionStack[offset + i].type(), " but branch target expects a value of ", target.branchTargetType(i), " at index ", i);
 
     return { };
 }
@@ -2540,6 +2540,50 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_TRY_ADD_TO_CONTEXT(addRefAsNonNull(ref, result));
 
         m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, result);
+        return { };
+    }
+
+    case BrOnNull: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTypedFunctionReferences(), "function references are not enabled");
+        uint32_t target;
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+
+        TypedExpression ref;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(ref, "br_on_null");
+        WASM_VALIDATOR_FAIL_IF(!isRefType(ref.type()), "br_on_null ref to type ", ref.type(), " expected a reference type");
+
+        ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+
+        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data));
+
+        ExpressionType result;
+        WASM_TRY_ADD_TO_CONTEXT(addBranchNull(data, ref, m_expressionStack, false, result));
+        m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, result);
+
+        return { };
+    }
+
+    case BrOnNonNull: {
+        WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTypedFunctionReferences(), "function references are not enabled");
+        uint32_t target;
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
+
+        TypedExpression ref;
+        // Pop the stack manually to avoid changing the stack size, because the branch needs the value with a different type.
+        WASM_PARSER_FAIL_IF(m_expressionStack.isEmpty(), "can't pop empty stack in br_on_non_null");
+        ref = m_expressionStack.takeLast();
+        m_expressionStack.constructAndAppend(Type { TypeKind::Ref, ref.type().index }, ref.value());
+        WASM_VALIDATOR_FAIL_IF(!isRefType(ref.type()), "br_on_non_null ref to type ", ref.type(), " expected a reference type");
+
+        ControlType& data = m_controlStack[m_controlStack.size() - 1 - target].controlData;
+        WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(data));
+
+        ExpressionType unused;
+        WASM_TRY_ADD_TO_CONTEXT(addBranchNull(data, ref, m_expressionStack, true, unused));
+
+        // On a non-taken branch, the value is null so it's not needed on the stack.
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(ref, "br_on_non_null");
+
         return { };
     }
 
@@ -3524,6 +3568,13 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 
     case RefAsNonNull:
     case RefEq: {
+        return { };
+    }
+
+    case BrOnNull:
+    case BrOnNonNull: {
+        uint32_t target;
+        WASM_FAIL_IF_HELPER_FAILS(parseBranchTarget(target));
         return { };
     }
 
