@@ -1,0 +1,83 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/abspos-in-monolithic.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/abspos-in-monolithic.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/abspos-uncontained-text-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/abspos-uncontained-text-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/abspos-uncontained-text.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/abspos-uncontained.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/abspos-uncontained.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/abspos.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/abspos.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/background-001.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/background-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/balanced-inner-multicol-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/balanced-inner-multicol-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/balanced-inner-multicol.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/block-in-inline.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/block-in-inline.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/border-spacing-taller-than-fragmentainer-001-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/border-spacing-taller-than-fragmentainer-002-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/border-spacing-taller-than-fragmentainer-003-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/break-avoidance-in-bottom-caption.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/break-avoidance-in-bottom-caption.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/captions.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/captions.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/fixedpos-in-footer-forced-break-print-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/fixedpos-in-footer-forced-break-print-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/fixedpos-in-footer-forced-break-print.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/footer.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/footer.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/header-after-break.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/header-after-break.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/header-footer.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/header-footer.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/header.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/header.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/hit-test-relative-in-transform.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/hit-test-relative.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/hit-test.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/image.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/image.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/inline-block.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/inline-block.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/multicol.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/multicol.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/multiple-row-groups.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/multiple-row-groups.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/nested-repeated-header-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/repeated-header-border-spacing.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/repeated-header-border-spacing.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/repeated-section-in-clipped-overflow-001.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/repeated-section-in-clipped-overflow-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/repeated-section-in-clipped-overflow-002.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/repeated-section-in-clipped-overflow-002.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/repeated-section-in-clipped-overflow-003.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/repeated-section-in-clipped-overflow-003.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/special-elements-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/tall-monolithic-after-repeated-header.tentative-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/tall-monolithic-after-repeated-header.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/variable-fragmentainer-size-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/variable-fragmentainer-size-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/variable-fragmentainer-size-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/variable-fragmentainer-size-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/variable-fragmentainer-size-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/variable-fragmentainer-size-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/variable-fragmentainer-size-003-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/variable-fragmentainer-size-004-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/variable-fragmentainer-size-005-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-break/table/repeated-section/variable-fragmentainer-size-006-crash.html
