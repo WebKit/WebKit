@@ -115,7 +115,8 @@ void PresentationContextIOSurface::configure(Device& device, const WGPUSwapChain
         id<MTLTexture> texture = [device.device() newTextureWithDescriptor:textureDescriptor iosurface:bridge_cast(iosurface) plane:0];
         texture.label = fromAPI(descriptor.label);
         auto viewFormats = Vector<WGPUTextureFormat> { Texture::pixelFormat(descriptor.format) };
-        m_renderBuffers.append({ Texture::create(texture, wgpuTextureDescriptor, WTFMove(viewFormats), device), TextureView::create(texture, wgpuTextureViewDescriptor, { { descriptor.width, descriptor.height, 1 } }, device) });
+        auto parentTexture = Texture::create(texture, wgpuTextureDescriptor, WTFMove(viewFormats), device);
+        m_renderBuffers.append({ parentTexture, TextureView::create(texture, wgpuTextureViewDescriptor, { { descriptor.width, descriptor.height, 1 } }, parentTexture, device) });
     }
     ASSERT(m_ioSurfaces.count == m_renderBuffers.size());
 }

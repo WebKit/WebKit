@@ -494,9 +494,6 @@ private:
     void platformSetCacheModel(CacheModel);
 
     void setEnhancedAccessibility(bool);
-    void remotePostMessage(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts&);
-
-    void renderTreeAsText(WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String&&)>&&);
 
     void startMemorySampler(SandboxExtension::Handle&&, const String&, const double);
     void stopMemorySampler();
@@ -592,7 +589,6 @@ private:
     void didClose(IPC::Connection&) final;
 
     // Implemented in generated WebProcessMessageReceiver.cpp
-    bool didReceiveSyncWebProcessMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&);
     void didReceiveWebProcessMessage(IPC::Connection&, IPC::Decoder&);
 
 #if PLATFORM(MAC)

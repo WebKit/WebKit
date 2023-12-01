@@ -225,7 +225,7 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
     setBackend(WTFMove(backend));
 }
 
-ImageBufferBackend* RemoteImageBufferProxy::ensureBackendCreated() const
+ImageBufferBackend* RemoteImageBufferProxy::ensureBackend() const
 {
     if (!m_backend && m_remoteRenderingBackendProxy) {
         auto error = streamConnection().waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidCreateBackend>(m_renderingResourceIdentifier, RemoteRenderingBackendProxy::defaultTimeout);
@@ -426,7 +426,7 @@ void RemoteImageBufferProxy::prepareForBackingStoreChange()
     // process, we need to prepare for the backing store change before we let the change happen.
     if (!canMapBackingStore())
         return;
-    if (auto* backend = ensureBackendCreated())
+    if (auto* backend = ensureBackend())
         backend->ensureNativeImagesHaveCopiedBackingStore();
 }
 
@@ -442,7 +442,7 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
 
     prepareForBackingStoreChange();
 
-    if (!ensureBackendCreated())
+    if (!ensureBackend())
         return nullptr;
 
     m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);

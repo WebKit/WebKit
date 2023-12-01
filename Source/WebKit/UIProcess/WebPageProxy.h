@@ -74,6 +74,7 @@ namespace IPC {
 class Decoder;
 class FormDataReference;
 class SharedBufferReference;
+template<typename> struct ConnectionSendSyncResult;
 using DataReference = std::span<const uint8_t>;
 }
 
@@ -177,6 +178,7 @@ enum class PlatformEventModifier : uint8_t;
 enum class PolicyAction : uint8_t;
 enum class ReasonForDismissingAlternativeText : uint8_t;
 enum class ReloadOption : uint8_t;
+enum class RenderAsTextFlag : uint16_t;
 enum class RouteSharingPolicy : uint8_t;
 enum class ScreenOrientationType : uint8_t;
 enum class ScrollGranularity : uint8_t;
@@ -237,6 +239,7 @@ struct MediaPlayerIdentifierType;
 struct MediaSessionIdentifierType;
 struct MediaStreamRequest;
 struct MediaUsageInfo;
+struct MessageWithMessagePorts;
 struct MockWebAuthenticationConfiguration;
 struct NotificationData;
 struct PageIdentifierType;
@@ -2300,8 +2303,6 @@ public:
     bool shouldAllowAutoFillForCellularIdentifiers() const;
 #endif
 
-    void broadcastFocusedFrameToOtherProcesses(IPC::Connection&, const WebCore::FrameIdentifier&);
-
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2857,12 +2858,20 @@ private:
 
     void dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier);
 
-    template<typename F> void sendToWebPage(std::optional<WebCore::FrameIdentifier>, F&&);
+    template<typename F> decltype(auto) sendToWebPage(std::optional<WebCore::FrameIdentifier>, F&&);
     template<typename M, typename C> void sendToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&, C&&);
     template<typename M> void sendToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&);
+    template<typename M> IPC::ConnectionSendSyncResult<M> sendSyncToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&);
 
     void sendPreventableTouchEvent(WebCore::FrameIdentifier, const NativeWebTouchEvent&);
     void sendUnpreventableTouchEvent(WebCore::FrameIdentifier, const NativeWebTouchEvent&);
+
+    void broadcastFocusedFrameToOtherProcesses(IPC::Connection&, const WebCore::FrameIdentifier&);
+
+    void closeRemoteFrame(WebCore::FrameIdentifier);
+    void focusRemoteFrame(IPC::Connection&, WebCore::FrameIdentifier);
+    void postMessageToRemote(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts&);
+    void renderTreeAsText(WebCore::FrameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag>, CompletionHandler<void(String&&)>&&);
 
     struct Internals;
     Internals& internals() { return m_internals; }

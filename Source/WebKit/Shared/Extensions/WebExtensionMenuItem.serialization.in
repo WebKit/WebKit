@@ -63,12 +63,6 @@ enum class WebKit::WebExtensionMenuItemType : uint8_t {
     Video,
 };
 
-enum class WebKit::WebExtensionMenuItemMediaType : uint8_t {
-    Audio,
-    Image,
-    Video,
-}
-
 struct WebKit::WebExtensionMenuItemContextParameters {
     OptionSet<WebKit::WebExtensionMenuItemContextType> types;
 
@@ -79,7 +73,6 @@ struct WebKit::WebExtensionMenuItemContextParameters {
     String linkText;
     URL linkURL;
 
-    std::optional<WebKit::WebExtensionMenuItemMediaType> mediaType;
     URL sourceURL;
 
     String selectionString;

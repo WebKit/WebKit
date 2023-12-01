@@ -27,8 +27,11 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
+#import "TestUIDelegate.h"
+#import "TestWKWebView.h"
 #import "TestWebExtensionsDelegate.h"
 #import "WebExtensionUtilities.h"
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 
 namespace TestWebKitAPI {
 
@@ -39,7 +42,7 @@ static auto *menusManifest = @{
     @"description": @"Menus Test",
     @"version": @"1",
 
-    @"permissions": @[ @"menus", @"contextMenus" ],
+    @"permissions": @[ @"menus", @"contextMenus", @"activeTab" ],
 
     @"background": @{
         @"scripts": @[ @"background.js" ],
@@ -215,10 +218,7 @@ TEST(WKWebExtensionAPIMenus, ActionMenus)
         @"browser.test.yield('Menus Created')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:menusManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-
-    [manager loadAndRun];
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
@@ -280,10 +280,7 @@ TEST(WKWebExtensionAPIMenus, ActionSubmenus)
         @"browser.test.yield('Menus Created')",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:menusManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-
-    [manager loadAndRun];
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
@@ -385,10 +382,7 @@ TEST(WKWebExtensionAPIMenus, ActionSubmenusUpdate)
         @"browser.test.yield('Menus Created')",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:menusManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-
-    [manager loadAndRun];
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
@@ -463,10 +457,7 @@ TEST(WKWebExtensionAPIMenus, TabMenus)
         @"browser.test.yield('Menus Created')",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:menusManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-
-    [manager loadAndRun];
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
@@ -524,10 +515,7 @@ TEST(WKWebExtensionAPIMenus, MenuItemProperties)
         @"icon-20.png": largerIcon,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:menusManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-
-    [manager loadAndRun];
+    auto manager = Util::loadAndRunExtension(menusManifest, resources);
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
@@ -608,10 +596,7 @@ TEST(WKWebExtensionAPIMenus, MenuItemPropertiesUpdate)
         @"icon-20.png": largerIcon,
     };
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:menusManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-
-    [manager loadAndRun];
+    auto manager = Util::loadAndRunExtension(menusManifest, resources);
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
@@ -679,10 +664,7 @@ TEST(WKWebExtensionAPIMenus, ToggleCheckboxMenuItems)
         @"browser.test.yield('Menus Created')",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:menusManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-
-    [manager loadAndRun];
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
@@ -777,10 +759,7 @@ TEST(WKWebExtensionAPIMenus, RadioItemGrouping)
         @"browser.test.yield('Menus Created')",
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:menusManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-
-    [manager loadAndRun];
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
@@ -844,10 +823,7 @@ TEST(WKWebExtensionAPIMenus, OnClick)
         @"}, () => browser.test.yield('Menu Item Created'))"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:menusManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-
-    [manager loadAndRun];
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menu Item Created");
 
@@ -884,10 +860,7 @@ TEST(WKWebExtensionAPIMenus, OnClickAfterUpdate)
         @"browser.test.yield('Menu Item Created')"
     ]);
 
-    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:menusManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
-
-    [manager loadAndRun];
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menu Item Created");
 
@@ -900,7 +873,7 @@ TEST(WKWebExtensionAPIMenus, OnClickAfterUpdate)
     [manager run];
 }
 
-TEST(WKWebExtensionAPIMenus, ContextMenus)
+TEST(WKWebExtensionAPIMenus, ContextMenusNamespace)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"browser.test.assertEq(typeof browser.contextMenus, 'object')",
@@ -910,6 +883,877 @@ TEST(WKWebExtensionAPIMenus, ContextMenus)
 
     Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
 }
+
+#if PLATFORM(MAC)
+
+TEST(WKWebExtensionAPIMenus, MacContextMenuItems)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.menus.create({",
+        @"  id: 'context-menu-1',",
+        @"  title: 'Context Menu 1'",
+        @"})",
+
+        @"browser.menus.create({",
+        @"  id: 'context-menu-2',",
+        @"  title: 'Context Menu 2'",
+        @"})",
+
+        @"browser.menus.onClicked.addListener((info, tab) => {",
+        @"  browser.test.assertEq(typeof info, 'object')",
+        @"  browser.test.assertEq(typeof tab, 'object')",
+
+        @"  browser.test.assertEq(info.menuId, 'context-menu-1')",
+        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.selectionText, undefined)",
+        @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
+        @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
+        @"  browser.test.assertEq(info.frameId, 0)",
+        @"  browser.test.assertEq(info.editable, false)",
+
+        @"  browser.test.assertEq(typeof tab.id, 'number')",
+        @"  browser.test.assertEq(typeof tab.windowId, 'number')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Menus Created')",
+    ]);
+
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotContextMenu = false;
+    delegate.get().getContextMenuFromProposedMenu = ^(NSMenu *menu, _WKContextMenuElementInfo *elementInfo, id<NSSecureCoding>, void (^completionHandler)(NSMenu *)) {
+        gotContextMenu = true;
+
+        NSMenuItem *extensionSubmenuItem = nil;
+        for (NSMenuItem *menuItem in menu.itemArray) {
+            if ([menuItem.title isEqualToString:@"Menus Test"]) {
+                extensionSubmenuItem = menuItem;
+                break;
+            }
+        }
+
+        EXPECT_NOT_NULL(extensionSubmenuItem);
+
+        NSArray *expectedTitles = @[ @"Context Menu 1", @"Context Menu 2" ];
+        NSMenu *extensionMenu = extensionSubmenuItem.submenu;
+        EXPECT_EQ(extensionMenu.itemArray.count, expectedTitles.count);
+
+        [extensionMenu.itemArray enumerateObjectsUsingBlock:^(NSMenuItem *menuItem, NSUInteger index, BOOL *stop) {
+            EXPECT_TRUE([menuItem isKindOfClass:[NSMenuItem class]]);
+            EXPECT_NS_EQUAL(menuItem.title, expectedTitles[index]);
+        }];
+
+        performMenuItemAction(extensionMenu.itemArray.firstObject);
+
+        completionHandler(nil);
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    EXPECT_FALSE([manager.get().context hasActiveUserGestureInTab:manager.get().defaultTab]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._webExtensionController = manager.get().controller;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    webView.get().UIDelegate = delegate.get();
+
+    manager.get().defaultTab.mainWebView = webView.get();
+
+    [webView synchronouslyLoadRequest:urlRequest];
+    [webView waitForNextPresentationUpdate];
+
+    [webView.get().window makeFirstResponder:webView.get()];
+
+    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(200, 200) withFlags:0 eventType:NSEventTypeRightMouseUp];
+
+    Util::run(&gotContextMenu);
+
+    [manager run];
+
+    EXPECT_TRUE([manager.get().context hasActiveUserGestureInTab:manager.get().defaultTab]);
+}
+
+TEST(WKWebExtensionAPIMenus, MacActiveTabContextMenuItems)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.menus.create({",
+        @"  id: 'context-menu',",
+        @"  title: 'Context Menu Item'",
+        @"})",
+
+        @"browser.menus.onClicked.addListener((info, tab) => {",
+        @"  browser.test.assertEq(typeof info, 'object')",
+        @"  browser.test.assertEq(typeof tab, 'object')",
+
+        @"  browser.test.assertEq(info.menuId, 'context-menu')",
+        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.selectionText, undefined)",
+        @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
+        @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
+        @"  browser.test.assertEq(info.frameId, 0)",
+        @"  browser.test.assertEq(info.editable, false)",
+
+        @"  browser.test.assertEq(typeof tab.id, 'number')",
+        @"  browser.test.assertEq(typeof tab.windowId, 'number')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Menus Created')",
+    ]);
+
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotContextMenu = false;
+    delegate.get().getContextMenuFromProposedMenu = ^(NSMenu *menu, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completionHandler)(NSMenu *)) {
+        gotContextMenu = true;
+
+        NSMenuItem *selectionMenuItem = nil;
+        for (NSMenuItem *menuItem in menu.itemArray) {
+            if ([menuItem.title isEqualToString:@"Context Menu Item"]) {
+                selectionMenuItem = menuItem;
+                break;
+            }
+        }
+
+        EXPECT_NOT_NULL(selectionMenuItem);
+
+        performMenuItemAction(selectionMenuItem);
+
+        completionHandler(nil);
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionActiveTab];
+
+    EXPECT_FALSE([manager.get().context hasActiveUserGestureInTab:manager.get().defaultTab]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._webExtensionController = manager.get().controller;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    webView.get().UIDelegate = delegate.get();
+
+    manager.get().defaultTab.mainWebView = webView.get();
+
+    [webView synchronouslyLoadRequest:server.requestWithLocalhost()];
+    [webView waitForNextPresentationUpdate];
+
+    [webView.get().window makeFirstResponder:webView.get()];
+
+    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(200, 200) withFlags:0 eventType:NSEventTypeRightMouseUp];
+
+    Util::run(&gotContextMenu);
+
+    [manager run];
+
+    EXPECT_TRUE([manager.get().context hasActiveUserGestureInTab:manager.get().defaultTab]);
+}
+
+TEST(WKWebExtensionAPIMenus, MacURLPatternContextMenuItems)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.menus.create({",
+        @"  id: 'url-pattern-menu-item',",
+        @"  title: 'URL Pattern Item',",
+        @"  contexts: ['link'],",
+        @"  targetUrlPatterns: ['*://*.example.com/*'],",
+        @"  documentUrlPatterns: ['*://localhost/*']",
+        @"})",
+
+        @"browser.menus.create({",
+        @"  id: 'non-matching-menu-item',",
+        @"  title: 'Non-Matching Item',",
+        @"  contexts: ['link'],",
+        @"  targetUrlPatterns: ['*://*.other.com/*'],",
+        @"  documentUrlPatterns: ['*://*.apple.com/*']",
+        @"})",
+
+        @"browser.menus.onClicked.addListener((info, tab) => {",
+        @"  browser.test.assertEq(typeof info, 'object')",
+        @"  browser.test.assertEq(typeof tab, 'object')",
+
+        @"  browser.test.assertEq(info.menuId, 'url-pattern-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.selectionText, 'Large Example Link')",
+        @"  browser.test.assertEq(info.linkText, 'Large Example Link')",
+        @"  browser.test.assertEq(info.linkUrl, 'http://example.com/test')",
+        @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
+        @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
+        @"  browser.test.assertEq(info.frameId, 0)",
+        @"  browser.test.assertEq(info.editable, false)",
+
+        @"  browser.test.assertEq(typeof tab.id, 'number')",
+        @"  browser.test.assertEq(typeof tab.windowId, 'number')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Menus Created')",
+    ]);
+
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotContextMenu = false;
+    delegate.get().getContextMenuFromProposedMenu = ^(NSMenu *menu, _WKContextMenuElementInfo *elementInfo, id<NSSecureCoding>, void (^completionHandler)(NSMenu *)) {
+        gotContextMenu = true;
+
+        NSMenuItem *urlPatternMenuItem = nil;
+        NSMenuItem *nonMatchingMenuItem = nil;
+        for (NSMenuItem *menuItem in menu.itemArray) {
+            if ([menuItem.title isEqualToString:@"URL Pattern Item"])
+                urlPatternMenuItem = menuItem;
+            else if ([menuItem.title isEqualToString:@"Non-Matching Item"])
+                nonMatchingMenuItem = menuItem;
+        }
+
+        EXPECT_NOT_NULL(urlPatternMenuItem);
+        EXPECT_NULL(nonMatchingMenuItem);
+
+        performMenuItemAction(urlPatternMenuItem);
+
+        completionHandler(nil);
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<a href='http://example.com/test' style='font-size: 100px'>Large Example Link</p>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._webExtensionController = manager.get().controller;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    webView.get().UIDelegate = delegate.get();
+
+    manager.get().defaultTab.mainWebView = webView.get();
+
+    [webView synchronouslyLoadRequest:urlRequest];
+    [webView waitForNextPresentationUpdate];
+
+    [webView.get().window makeFirstResponder:webView.get()];
+
+    [webView mouseDownAtPoint:NSMakePoint(50, 50) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(50, 50) withFlags:0 eventType:NSEventTypeRightMouseUp];
+
+    Util::run(&gotContextMenu);
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIMenus, MacSelectionContextMenuItems)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.menus.create({",
+        @"  id: 'selection-menu-item',",
+        @"  title: 'Selected: %s',",
+        @"  contexts: [ 'selection' ]",
+        @"})",
+
+        @"browser.menus.onClicked.addListener((info, tab) => {",
+        @"  browser.test.assertEq(typeof info, 'object')",
+        @"  browser.test.assertEq(typeof tab, 'object')",
+
+        @"  browser.test.assertEq(info.menuId, 'selection-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.selectionText, 'Example ')",
+        @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
+        @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
+        @"  browser.test.assertEq(info.frameId, 0)",
+        @"  browser.test.assertEq(info.editable, false)",
+
+        @"  browser.test.assertEq(typeof tab.id, 'number')",
+        @"  browser.test.assertEq(typeof tab.windowId, 'number')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Menus Created')",
+    ]);
+
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotContextMenu = false;
+    delegate.get().getContextMenuFromProposedMenu = ^(NSMenu *menu, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completionHandler)(NSMenu *)) {
+        gotContextMenu = true;
+
+        NSMenuItem *selectionMenuItem = nil;
+        for (NSMenuItem *menuItem in menu.itemArray) {
+            if ([menuItem.title hasPrefix:@"Selected: "]) {
+                selectionMenuItem = menuItem;
+                break;
+            }
+        }
+
+        EXPECT_NOT_NULL(selectionMenuItem);
+        EXPECT_NS_EQUAL(selectionMenuItem.title, @"Selected: Example");
+
+        performMenuItemAction(selectionMenuItem);
+
+        completionHandler(nil);
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<p style='font-size: 100px'>Selection Example Text</p>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._webExtensionController = manager.get().controller;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    webView.get().UIDelegate = delegate.get();
+
+    manager.get().defaultTab.mainWebView = webView.get();
+
+    [webView synchronouslyLoadRequest:urlRequest];
+    [webView waitForNextPresentationUpdate];
+
+    [webView.get().window makeFirstResponder:webView.get()];
+
+    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(200, 200) withFlags:0 eventType:NSEventTypeRightMouseUp];
+
+    Util::run(&gotContextMenu);
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIMenus, MacLinkContextMenuItems)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.menus.create({",
+        @"  id: 'link-menu-item',",
+        @"  title: 'Link Item',",
+        @"  contexts: [ 'link' ]",
+        @"})",
+
+        @"browser.menus.onClicked.addListener((info, tab) => {",
+        @"  browser.test.assertEq(typeof info, 'object')",
+        @"  browser.test.assertEq(typeof tab, 'object')",
+
+        @"  browser.test.assertEq(info.menuId, 'link-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.selectionText, 'Large Example Link')",
+        @"  browser.test.assertEq(info.linkText, 'Large Example Link')",
+        @"  browser.test.assertEq(info.linkUrl, 'http://example.com/test')",
+        @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
+        @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
+        @"  browser.test.assertEq(info.frameId, 0)",
+        @"  browser.test.assertEq(info.editable, false)",
+
+        @"  browser.test.assertEq(typeof tab.id, 'number')",
+        @"  browser.test.assertEq(typeof tab.windowId, 'number')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Menus Created')",
+    ]);
+
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotContextMenu = false;
+    delegate.get().getContextMenuFromProposedMenu = ^(NSMenu *menu, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completionHandler)(NSMenu *)) {
+        gotContextMenu = true;
+
+        NSMenuItem *linkMenuItem = nil;
+        for (NSMenuItem *menuItem in menu.itemArray) {
+            if ([menuItem.title isEqualToString:@"Link Item"]) {
+                linkMenuItem = menuItem;
+                break;
+            }
+        }
+
+        EXPECT_NOT_NULL(linkMenuItem);
+
+        performMenuItemAction(linkMenuItem);
+
+        completionHandler(nil);
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<a href='http://example.com/test' style='font-size: 100px'>Large Example Link</p>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._webExtensionController = manager.get().controller;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    webView.get().UIDelegate = delegate.get();
+
+    manager.get().defaultTab.mainWebView = webView.get();
+
+    [webView synchronouslyLoadRequest:urlRequest];
+    [webView waitForNextPresentationUpdate];
+
+    [webView.get().window makeFirstResponder:webView.get()];
+
+    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(200, 200) withFlags:0 eventType:NSEventTypeRightMouseUp];
+
+    Util::run(&gotContextMenu);
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIMenus, MacImageContextMenuItems)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.menus.create({",
+        @"  id: 'image-menu-item',",
+        @"  title: 'Image Item',",
+        @"  contexts: [ 'image' ]",
+        @"})",
+
+        @"browser.menus.onClicked.addListener((info, tab) => {",
+        @"  browser.test.assertEq(typeof info, 'object')",
+        @"  browser.test.assertEq(typeof tab, 'object')",
+
+        @"  browser.test.assertEq(info.menuId, 'image-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.mediaType, 'image')",
+        @"  browser.test.assertEq(info.srcUrl, 'http://example.com/example.png')",
+        @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
+        @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
+        @"  browser.test.assertEq(info.frameId, 0)",
+        @"  browser.test.assertEq(info.editable, false)",
+
+        @"  browser.test.assertEq(typeof tab.id, 'number')",
+        @"  browser.test.assertEq(typeof tab.windowId, 'number')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Menus Created')",
+    ]);
+
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotContextMenu = false;
+    delegate.get().getContextMenuFromProposedMenu = ^(NSMenu *menu, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completionHandler)(NSMenu *)) {
+        gotContextMenu = true;
+
+        NSMenuItem *imageMenuItem = nil;
+        for (NSMenuItem *menuItem in menu.itemArray) {
+            if ([menuItem.title isEqualToString:@"Image Item"]) {
+                imageMenuItem = menuItem;
+                break;
+            }
+        }
+
+        EXPECT_NOT_NULL(imageMenuItem);
+
+        performMenuItemAction(imageMenuItem);
+
+        completionHandler(nil);
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<img src='http://example.com/example.png' style='width: 400px; height: 400px'>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._webExtensionController = manager.get().controller;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    webView.get().UIDelegate = delegate.get();
+
+    manager.get().defaultTab.mainWebView = webView.get();
+
+    [webView synchronouslyLoadRequest:urlRequest];
+    [webView waitForNextPresentationUpdate];
+
+    [webView.get().window makeFirstResponder:webView.get()];
+
+    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(200, 200) withFlags:0 eventType:NSEventTypeRightMouseUp];
+
+    Util::run(&gotContextMenu);
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIMenus, MacVideoContextMenuItems)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.menus.create({",
+        @"  id: 'video-menu-item',",
+        @"  title: 'Video Item',",
+        @"  contexts: [ 'video' ]",
+        @"})",
+
+        @"browser.menus.onClicked.addListener((info, tab) => {",
+        @"  browser.test.assertEq(typeof info, 'object')",
+        @"  browser.test.assertEq(typeof tab, 'object')",
+
+        @"  browser.test.assertEq(info.menuId, 'video-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.mediaType, 'video')",
+        @"  browser.test.assertEq(info.srcUrl, 'http://example.com/example.mp4')",
+        @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
+        @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
+        @"  browser.test.assertEq(info.frameId, 0)",
+        @"  browser.test.assertEq(info.editable, false)",
+
+        @"  browser.test.assertEq(typeof tab.id, 'number')",
+        @"  browser.test.assertEq(typeof tab.windowId, 'number')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Menus Created')",
+    ]);
+
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotContextMenu = false;
+    delegate.get().getContextMenuFromProposedMenu = ^(NSMenu *menu, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completionHandler)(NSMenu *)) {
+        gotContextMenu = true;
+
+        NSMenuItem *videoMenuItem = nil;
+        for (NSMenuItem *menuItem in menu.itemArray) {
+            if ([menuItem.title isEqualToString:@"Video Item"]) {
+                videoMenuItem = menuItem;
+                break;
+            }
+        }
+
+        EXPECT_NOT_NULL(videoMenuItem);
+
+        performMenuItemAction(videoMenuItem);
+
+        completionHandler(nil);
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<video src='http://example.com/example.mp4' style='width: 400px; height: 400px' controls></video>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._webExtensionController = manager.get().controller;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    webView.get().UIDelegate = delegate.get();
+
+    manager.get().defaultTab.mainWebView = webView.get();
+
+    [webView synchronouslyLoadRequest:urlRequest];
+    [webView waitForNextPresentationUpdate];
+
+    [webView.get().window makeFirstResponder:webView.get()];
+
+    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(200, 200) withFlags:0 eventType:NSEventTypeRightMouseUp];
+
+    Util::run(&gotContextMenu);
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIMenus, MacAudioContextMenuItems)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.menus.create({",
+        @"  id: 'audio-menu-item',",
+        @"  title: 'Audio Item',",
+        @"  contexts: [ 'audio' ]",
+        @"})",
+
+        @"browser.menus.onClicked.addListener((info, tab) => {",
+        @"  browser.test.assertEq(typeof info, 'object')",
+        @"  browser.test.assertEq(typeof tab, 'object')",
+
+        @"  browser.test.assertEq(info.menuId, 'audio-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.mediaType, 'audio')",
+        @"  browser.test.assertEq(info.srcUrl, 'http://example.com/example.mp3')",
+        @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
+        @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
+        @"  browser.test.assertEq(info.frameId, 0)",
+        @"  browser.test.assertEq(info.editable, false)",
+
+        @"  browser.test.assertEq(typeof tab.id, 'number')",
+        @"  browser.test.assertEq(typeof tab.windowId, 'number')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Menus Created')",
+    ]);
+
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotContextMenu = false;
+    delegate.get().getContextMenuFromProposedMenu = ^(NSMenu *menu, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completionHandler)(NSMenu *)) {
+        gotContextMenu = true;
+
+        NSMenuItem *audioMenuItem = nil;
+        for (NSMenuItem *menuItem in menu.itemArray) {
+            if ([menuItem.title isEqualToString:@"Audio Item"]) {
+                audioMenuItem = menuItem;
+                break;
+            }
+        }
+
+        EXPECT_NOT_NULL(audioMenuItem);
+
+        performMenuItemAction(audioMenuItem);
+
+        completionHandler(nil);
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<audio src='http://example.com/example.mp3' style='width: 400px; height: 400px' controls></audio>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._webExtensionController = manager.get().controller;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    webView.get().UIDelegate = delegate.get();
+
+    manager.get().defaultTab.mainWebView = webView.get();
+
+    [webView synchronouslyLoadRequest:urlRequest];
+    [webView waitForNextPresentationUpdate];
+
+    [webView.get().window makeFirstResponder:webView.get()];
+
+    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(200, 200) withFlags:0 eventType:NSEventTypeRightMouseUp];
+
+    Util::run(&gotContextMenu);
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIMenus, MacEditableContextMenuItems)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.menus.create({",
+        @"  id: 'editable-menu-item',",
+        @"  title: 'Editable Item',",
+        @"  contexts: [ 'editable' ]",
+        @"})",
+
+        @"browser.menus.onClicked.addListener((info, tab) => {",
+        @"  browser.test.assertEq(typeof info, 'object')",
+        @"  browser.test.assertEq(typeof tab, 'object')",
+
+        @"  browser.test.assertEq(info.menuId, 'editable-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.selectionText, 'Area')",
+        @"  browser.test.assertEq(info.editable, true)",
+
+        @"  browser.test.assertEq(typeof tab.id, 'number')",
+        @"  browser.test.assertEq(typeof tab.windowId, 'number')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Menus Created')",
+    ]);
+
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotContextMenu = false;
+    delegate.get().getContextMenuFromProposedMenu = ^(NSMenu *menu, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completionHandler)(NSMenu *)) {
+        gotContextMenu = true;
+
+        NSMenuItem *editableMenuItem = nil;
+        for (NSMenuItem *menuItem in menu.itemArray) {
+            if ([menuItem.title isEqualToString:@"Editable Item"]) {
+                editableMenuItem = menuItem;
+                break;
+            }
+        }
+
+        EXPECT_NOT_NULL(editableMenuItem);
+
+        performMenuItemAction(editableMenuItem);
+
+        completionHandler(nil);
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<textarea style='font-size: 100px; width: 400px; height: 400px'>Editable Text Area</textarea>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._webExtensionController = manager.get().controller;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    webView.get().UIDelegate = delegate.get();
+
+    manager.get().defaultTab.mainWebView = webView.get();
+
+    [webView synchronouslyLoadRequest:urlRequest];
+    [webView waitForNextPresentationUpdate];
+
+    [webView.get().window makeFirstResponder:webView.get()];
+
+    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(200, 200) withFlags:0 eventType:NSEventTypeRightMouseUp];
+
+    Util::run(&gotContextMenu);
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIMenus, MacFrameContextMenuItems)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.menus.create({",
+        @"  id: 'frame-menu-item',",
+        @"  title: 'Frame Item',",
+        @"  contexts: [ 'page', 'frame' ]",
+        @"})",
+
+        @"browser.menus.onClicked.addListener((info, tab) => {",
+        @"  browser.test.assertEq(typeof info, 'object')",
+        @"  browser.test.assertEq(typeof tab, 'object')",
+
+        @"  browser.test.assertEq(info.menuId, 'frame-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.selectionText, undefined)",
+        @"  browser.test.assertEq(typeof info.frameUrl, 'string')",
+        @"  browser.test.assertTrue(info.frameUrl.endsWith('frame.html'))",
+        @"  browser.test.assertTrue(info.frameId !== 0)",
+
+        @"  browser.test.assertEq(typeof tab.id, 'number')",
+        @"  browser.test.assertEq(typeof tab.windowId, 'number')",
+
+        @"  browser.test.notifyPass()",
+        @"})",
+
+        @"browser.test.yield('Menus Created')",
+    ]);
+
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotContextMenu = false;
+    delegate.get().getContextMenuFromProposedMenu = ^(NSMenu *menu, _WKContextMenuElementInfo *, id<NSSecureCoding>, void (^completionHandler)(NSMenu *)) {
+        gotContextMenu = true;
+
+        NSMenuItem *frameMenuItem = nil;
+        for (NSMenuItem *menuItem in menu.itemArray) {
+            if ([menuItem.title isEqualToString:@"Frame Item"]) {
+                frameMenuItem = menuItem;
+                break;
+            }
+        }
+
+        EXPECT_NOT_NULL(frameMenuItem);
+
+        performMenuItemAction(frameMenuItem);
+
+        completionHandler(nil);
+    };
+
+    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='frame.html' style='width: 400px; height: 400px'>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.requestWithLocalhost("/frame.html"_s).URL];
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    configuration.get()._webExtensionController = manager.get().controller;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400) configuration:configuration.get()]);
+    webView.get().UIDelegate = delegate.get();
+
+    manager.get().defaultTab.mainWebView = webView.get();
+
+    [webView synchronouslyLoadRequest:urlRequest];
+    [webView waitForNextPresentationUpdate];
+
+    [webView.get().window makeFirstResponder:webView.get()];
+
+    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(200, 200) withFlags:0 eventType:NSEventTypeRightMouseUp];
+
+    Util::run(&gotContextMenu);
+
+    [manager run];
+}
+
+#endif // PLATFORM(MAC)
 
 } // namespace TestWebKitAPI
 

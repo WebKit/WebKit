@@ -107,13 +107,9 @@ RefPtr<NativeImage> WebImage::copyNativeImage(BackingStoreCopy copyBehavior) con
 
 RefPtr<ShareableBitmap> WebImage::bitmap() const
 {
-    auto* backend = m_buffer->ensureBackendCreated();
-    if (!backend)
-        return nullptr;
-
     const_cast<ImageBuffer&>(*m_buffer.ptr()).flushDrawingContext();
 
-    auto* sharing = backend->toBackendSharing();
+    auto* sharing = m_buffer->toBackendSharing();
     if (!is<ImageBufferBackendHandleSharing>(sharing))
         return nullptr;
 
@@ -129,13 +125,9 @@ RefPtr<cairo_surface_t> WebImage::createCairoSurface()
 
 std::optional<ShareableBitmap::Handle> WebImage::createHandle(SharedMemory::Protection protection) const
 {
-    auto* backend = m_buffer->ensureBackendCreated();
-    if (!backend)
-        return std::nullopt;
-
     const_cast<ImageBuffer&>(*m_buffer.ptr()).flushDrawingContext();
 
-    auto* sharing = backend->toBackendSharing();
+    auto* sharing = m_buffer->toBackendSharing();
     if (!is<ImageBufferBackendHandleSharing>(sharing))
         return std::nullopt;
 

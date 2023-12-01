@@ -330,11 +330,9 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
         if (!buffer)
             return;
 
-        if (auto* backend = buffer->ensureBackendCreated()) {
-            auto* sharing = backend->toBackendSharing();
-            if (is<ImageBufferBackendHandleSharing>(sharing))
-                downcast<ImageBufferBackendHandleSharing>(*sharing).clearBackendHandle();
-        }
+        auto* sharing = buffer->toBackendSharing();
+        if (is<ImageBufferBackendHandleSharing>(sharing))
+            downcast<ImageBufferBackendHandleSharing>(*sharing).clearBackendHandle();
     };
 
     auto inputData = WTF::map(prepareBuffersInput, [&](auto& perLayerData) {
@@ -382,11 +380,9 @@ auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPre
             return nullptr;
 
         if (handle) {
-            if (auto* backend = buffer->ensureBackendCreated()) {
-                auto* sharing = backend->toBackendSharing();
-                if (is<ImageBufferBackendHandleSharing>(sharing))
-                    downcast<ImageBufferBackendHandleSharing>(*sharing).setBackendHandle(WTFMove(*handle));
-            }
+            auto* sharing = buffer->toBackendSharing();
+            if (is<ImageBufferBackendHandleSharing>(sharing))
+                downcast<ImageBufferBackendHandleSharing>(*sharing).setBackendHandle(WTFMove(*handle));
         }
 
         if (isFrontBuffer) {

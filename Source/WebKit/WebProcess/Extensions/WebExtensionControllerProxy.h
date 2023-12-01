@@ -63,7 +63,6 @@ public:
     void globalObjectIsAvailableForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&);
     void serviceWorkerGlobalObjectIsAvailableForFrame(WebPage&, WebFrame&, WebCore::DOMWrapperWorld&);
 
-    // Web Navigation
     void didStartProvisionalLoadForFrame(WebPage&, WebFrame&, const URL&);
     void didCommitLoadForFrame(WebPage&, WebFrame&, const URL&);
     void didFinishLoadForFrame(WebPage&, WebFrame&, const URL&);

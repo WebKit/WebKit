@@ -621,4 +621,9 @@ messages -> WebPageProxy {
     BroadcastMainFrameURLChangeToOtherProcesses(URL newURL)
 
     DispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
+
+    CloseRemoteFrame(WebCore::FrameIdentifier frameID)
+    FocusRemoteFrame(WebCore::FrameIdentifier frameID)
+    PostMessageToRemote(WebCore::FrameIdentifier source, String sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, struct WebCore::MessageWithMessagePorts message)
+    RenderTreeAsText(WebCore::FrameIdentifier identifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior) -> (String renderTreeDump) Synchronous
 }

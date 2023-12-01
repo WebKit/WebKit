@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FrameInfoData.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include <WebCore/Frame.h>
@@ -106,6 +107,16 @@ inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const WebFrame&
         return WebExtensionFrameConstants::MainFrameIdentifier;
 
     WebExtensionFrameIdentifier result { frame.frameID().object().toUInt64() };
+    ASSERT(result.isValid());
+    return result;
+}
+
+inline WebExtensionFrameIdentifier toWebExtensionFrameIdentifier(const FrameInfoData& frameInfoData)
+{
+    if (frameInfoData.isMainFrame)
+        return WebExtensionFrameConstants::MainFrameIdentifier;
+
+    WebExtensionFrameIdentifier result { frameInfoData.frameID.object().toUInt64() };
     ASSERT(result.isValid());
     return result;
 }

@@ -27,28 +27,11 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "WebExtensionFrameIdentifier.h"
-#include "WebExtensionMenuItemContextType.h"
-#include "WebExtensionTabIdentifier.h"
-#include <wtf/Forward.h>
-
 namespace WebKit {
 
-struct WebExtensionMenuItemContextParameters {
-    OptionSet<WebExtensionMenuItemContextType> types;
-
-    std::optional<WebExtensionTabIdentifier> tabIdentifier;
-    std::optional<WebExtensionFrameIdentifier> frameIdentifier;
-    URL frameURL;
-
-    String linkText;
-    URL linkURL;
-
-    URL sourceURL;
-
-    String selectionString;
-    bool editable { false };
-};
+static constexpr size_t webExtensionDeclarativeNetRequestMaximumNumberOfStaticRulesets = 100;
+static constexpr size_t webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets = 50;
+static constexpr size_t webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules = 5000;
 
 } // namespace WebKit
 

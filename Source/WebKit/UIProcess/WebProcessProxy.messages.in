@@ -87,10 +87,4 @@ messages -> WebProcessProxy LegacyReceiver {
     GetNotifications(URL registrationURL, String tag) -> (Vector<WebCore::NotificationData> result)
     SetAppBadge(std::optional<WebKit::WebPageProxyIdentifier> pageIdentifier, WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
     SetClientBadge(WebKit::WebPageProxyIdentifier pageIdentifier, WebCore::SecurityOriginData origin, std::optional<uint64_t> badge)
-
-    PostMessageToRemote(WebCore::FrameIdentifier source, String sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, struct WebCore::MessageWithMessagePorts message)
-    CloseRemoteFrame(WebCore::FrameIdentifier identifier)
-    FocusRemoteFrame(WebCore::FrameIdentifier identifier)
-
-    RenderTreeAsText(WebCore::FrameIdentifier identifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior) -> (String renderTreeDump) Synchronous
 }

@@ -906,7 +906,7 @@ bool WebProcess::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder
 {
     if (messageReceiverMap().dispatchSyncMessage(connection, decoder, replyEncoder))
         return true;
-    return didReceiveSyncWebProcessMessage(connection, decoder, replyEncoder);
+    return false;
 }
 
 void WebProcess::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
@@ -1364,60 +1364,6 @@ void WebProcess::setEnhancedAccessibility(bool flag)
     WebCore::AXObjectCache::setEnhancedUserInterfaceAccessibility(flag);
 }
 
-void WebProcess::remotePostMessage(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts& message)
-{
-    RefPtr targetFrame = WebProcess::singleton().webFrame(target);
-    if (!targetFrame)
-        return;
-
-    if (!targetFrame->coreLocalFrame())
-        return;
-
-    RefPtr targetWindow = targetFrame->coreLocalFrame()->window();
-    if (!targetWindow)
-        return;
-
-    RefPtr targetCoreFrame = targetWindow->frame();
-    if (!targetCoreFrame)
-        return;
-
-    RefPtr sourceFrame = WebProcess::singleton().webFrame(source);
-    RefPtr sourceWindow = sourceFrame && sourceFrame->coreFrame() ? &sourceFrame->coreFrame()->windowProxy() : nullptr;
-
-    auto& script = targetCoreFrame->script();
-    auto globalObject = script.globalObject(WebCore::mainThreadNormalWorld());
-    if (!globalObject)
-        return;
-
-    targetWindow->postMessageFromRemoteFrame(*globalObject, WTFMove(sourceWindow), sourceOrigin, WTFMove(targetOrigin), message);
-}
-
-void WebProcess::renderTreeAsText(WebCore::FrameIdentifier frameIdentifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior, CompletionHandler<void(String&&)>&& completionHandler)
-{
-    RefPtr webFrame = WebProcess::singleton().webFrame(frameIdentifier);
-    if (!webFrame) {
-        ASSERT_NOT_REACHED();
-        return completionHandler("Test Error - WebFrame missing in web process"_s);
-    }
-
-    RefPtr coreLocalFrame = webFrame->coreLocalFrame();
-    if (!coreLocalFrame) {
-        ASSERT_NOT_REACHED();
-        return completionHandler("Test Error - WebFrame missing LocalFrame in web process"_s);
-    }
-
-    auto* renderer = coreLocalFrame->contentRenderer();
-    if (!renderer) {
-        ASSERT_NOT_REACHED();
-        return completionHandler("Test Error - WebFrame missing RenderView in web process"_s);
-    }
-
-    auto ts = WebCore::createTextStream(*renderer);
-    ts.setIndent(baseIndent);
-    WebCore::externalRepresentationForLocalFrame(ts, *coreLocalFrame, behavior);
-    completionHandler(ts.release());
-}
-    
 void WebProcess::startMemorySampler(SandboxExtension::Handle&& sampleLogFileHandle, const String& sampleLogFilePath, const double interval)
 {
 #if ENABLE(MEMORY_SAMPLER)    

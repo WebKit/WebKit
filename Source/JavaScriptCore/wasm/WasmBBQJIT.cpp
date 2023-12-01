@@ -7474,6 +7474,32 @@ public:
         return { };
     }
 
+    PartialResult WARN_UNUSED_RETURN addBranchNull(ControlData& data, ExpressionType reference, Stack& returnValues, bool shouldNegate, ExpressionType& result)
+    {
+        Value condition;
+        if (reference.isConst())
+            condition = Value::fromI32(reference.asRef() == JSValue::encode(jsNull()));
+        else {
+            // Don't consume the reference since we either need to branch with it or keep it on stack.
+            Location referenceLocation = loadIfNecessary(reference);
+            ASSERT(referenceLocation.isGPR());
+            // The branch will try to move to the scratch anyway so this is fine.
+            condition = Value::pinned(TypeKind::Ref, Location::fromGPR(wasmScratchGPR));
+            Location conditionLocation = locationOf(condition);
+            ASSERT(JSValue::encode(jsNull()) >= 0 && JSValue::encode(jsNull()) <= INT32_MAX);
+            m_jit.compare64(shouldNegate ? RelationalCondition::NotEqual : RelationalCondition::Equal, referenceLocation.asGPR(), TrustedImm32(static_cast<int32_t>(JSValue::encode(jsNull()))), conditionLocation.asGPR());
+        }
+
+        WASM_FAIL_IF_HELPER_FAILS(addBranch(data, condition, returnValues));
+
+        LOG_INSTRUCTION("BrOnNull/NonNull", reference);
+
+        if (!shouldNegate)
+            result = reference;
+
+        return { };
+    }
+
     PartialResult WARN_UNUSED_RETURN addSwitch(Value condition, const Vector<ControlData*>& targets, ControlData& defaultTarget, Stack& results)
     {
         ASSERT(condition.type() == TypeKind::I32);

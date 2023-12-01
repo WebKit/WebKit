@@ -219,6 +219,17 @@ void UnifiedPDFPlugin::didChangeIsInWindow()
     m_contentsLayer->tiledBacking()->setIsInWindow(page->isInWindow());
 }
 
+void UnifiedPDFPlugin::paint(WebCore::GraphicsContext& context, const WebCore::IntRect&)
+{
+    // Only called for snapshotting.
+
+    if (size().isEmpty())
+        return;
+
+    context.translate(-m_scrollOffset.width(), -m_scrollOffset.height());
+    paintContents(m_contentsLayer.get(), context, { FloatPoint(m_scrollOffset), size() }, { });
+}
+
 void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext& context, const FloatRect& clipRect, OptionSet<GraphicsLayerPaintBehavior>)
 {
     if (layer != m_contentsLayer.get())
@@ -463,11 +474,6 @@ bool UnifiedPDFPlugin::performDictionaryLookupAtLocation(const FloatPoint&)
 std::tuple<String, PDFSelection *, NSDictionary *> UnifiedPDFPlugin::lookupTextAtLocation(const FloatPoint&, WebHitTestResultData&) const
 {
     return { };
-}
-
-RefPtr<ShareableBitmap> UnifiedPDFPlugin::snapshot()
-{
-    return nullptr;
 }
 
 id UnifiedPDFPlugin::accessibilityHitTest(const IntPoint&) const

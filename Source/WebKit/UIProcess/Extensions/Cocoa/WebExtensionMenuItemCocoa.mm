@@ -38,6 +38,7 @@
 #import "WebExtensionMenuItemContextParameters.h"
 #import "WebExtensionMenuItemParameters.h"
 #import "_WKWebExtensionContextPrivate.h"
+#import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -107,6 +108,20 @@ WebExtensionMenuItem::WebExtensionMenuItem(WebExtensionContext& extensionContext
 
     if (!parameters.iconDictionaryJSON.isEmpty())
         m_icons = parseJSON(parameters.iconDictionaryJSON);
+
+    if (parameters.documentURLPatterns) {
+        for (auto& patternString : parameters.documentURLPatterns.value()) {
+            if (RefPtr pattern = WebExtensionMatchPattern::getOrCreate(patternString))
+                m_documentPatterns.add(pattern.releaseNonNull());
+        }
+    }
+
+    if (parameters.targetURLPatterns) {
+        for (auto& patternString : parameters.targetURLPatterns.value()) {
+            if (RefPtr pattern = WebExtensionMatchPattern::getOrCreate(patternString))
+                m_targetPatterns.add(pattern.releaseNonNull());
+        }
+    }
 }
 
 WebExtensionMenuItemParameters WebExtensionMenuItem::minimalParameters() const
@@ -179,6 +194,24 @@ void WebExtensionMenuItem::update(const WebExtensionMenuItemParameters& paramete
         else
             m_contexts = WebExtensionMenuItemContextType::Page;
     }
+
+    if (parameters.documentURLPatterns) {
+        m_documentPatterns.clear();
+
+        for (auto& patternString : parameters.documentURLPatterns.value()) {
+            if (RefPtr pattern = WebExtensionMatchPattern::getOrCreate(patternString))
+                m_documentPatterns.add(pattern.releaseNonNull());
+        }
+    }
+
+    if (parameters.targetURLPatterns) {
+        m_targetPatterns.clear();
+
+        for (auto& patternString : parameters.targetURLPatterns.value()) {
+            if (RefPtr pattern = WebExtensionMatchPattern::getOrCreate(patternString))
+                m_targetPatterns.add(pattern.releaseNonNull());
+        }
+    }
 }
 
 NSArray *WebExtensionMenuItem::matchingPlatformMenuItems(const MenuItemVector& menuItems, const WebExtensionMenuItemContextParameters& contextParameters, size_t limit)
@@ -227,13 +260,7 @@ CocoaMenuItem *WebExtensionMenuItem::platformMenuItem(const WebExtensionMenuItem
     ASSERT(extensionContext());
     ASSERT(matches(contextParameters));
 
-    constexpr UChar ellipsis = 0x2026;
-    constexpr auto maximumSelectionLength = 30;
-
-    auto selectionString = !contextParameters.selectionString.isNull() ? contextParameters.selectionString : emptyString();
-    if (selectionString.length() > maximumSelectionLength)
-        selectionString = makeString(selectionString.substringSharingImpl(0, maximumSelectionLength), ellipsis);
-
+    auto selectionString = !contextParameters.selectionString.isNull() ? WebCore::truncatedStringForMenuItem(contextParameters.selectionString) : emptyString();
     auto processedTitle = makeStringByReplacingAll(title(), "%s"_s, selectionString);
     auto *submenuItemArray = matchingPlatformMenuItems(submenuItems(), contextParameters);
 

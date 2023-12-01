@@ -50,6 +50,7 @@ messages -> WebExtensionContext {
 
     // DeclarativeNetRequest
     DeclarativeNetRequestGetEnabledRulesets() -> (Vector<String> rulesetIdentifiers);
+    DeclarativeNetRequestUpdateEnabledRulesets(Vector<String> rulesetIdentifiersToEnable, Vector<String> rulesetIdentifiersToDisable) -> (std::optional<String> error);
 
     // Event APIs
     AddListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType);

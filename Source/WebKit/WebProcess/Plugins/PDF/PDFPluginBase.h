@@ -92,6 +92,8 @@ public:
 
     virtual bool isComposited() const { return false; }
 
+    virtual bool shouldCreateTransientPaintingSnapshot() const { return false; }
+    virtual RefPtr<ShareableBitmap> snapshot() { return nullptr; }
     virtual void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) { }
 
     virtual CGFloat scaleFactor() const = 0;
@@ -128,8 +130,6 @@ public:
 
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
     virtual std::tuple<String, PDFSelection *, NSDictionary *> lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const = 0;
-
-    virtual RefPtr<ShareableBitmap> snapshot() = 0;
 
     virtual id accessibilityHitTest(const WebCore::IntPoint&) const = 0;
     virtual id accessibilityObject() const = 0;

@@ -55,6 +55,10 @@
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #endif
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+#import "WebExtensionController.h"
+#endif
+
 @interface WKUserDataWrapper : NSObject {
     RefPtr<API::Object> _webUserData;
 }
@@ -884,9 +888,15 @@ void WebContextMenuProxyMac::useContextMenuItems(Vector<Ref<WebContextMenuItem>>
             menuFromProposedMenu(menu);
             return;
         }
-        
+
         ASSERT(m_context.webHitTestResultData());
         Ref page = *this->page();
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+        if (RefPtr webExtensionController = page->webExtensionController())
+            webExtensionController->addItemsToContextMenu(page, m_context, menu);
+#endif
+
         page->contextMenuClient().menuFromProposedMenu(page, menu, m_context, m_userData.protectedObject().get(), WTFMove(menuFromProposedMenu));
     });
 }

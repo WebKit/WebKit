@@ -1,0 +1,10 @@
+This test verifies that typing three '.' characters results in the '...' being replaced with a single ellipsis character ('…'). To test manually, focus the red box below and type '...'
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS editor.textContent became '…'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+…

@@ -5815,7 +5815,7 @@ void WebPage::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decod
 }
 
 bool WebPage::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)
-{   
+{
     return didReceiveSyncWebPageMessage(connection, decoder, replyEncoder);
 }
 
@@ -8994,6 +8994,60 @@ void WebPage::frameWasFocusedInAnotherProcess(WebCore::FrameIdentifier frameID)
     if (!frame)
         return;
     m_page->focusController().setFocusedFrame(frame->coreFrame(), FocusController::BroadcastFocusedFrame::No);
+}
+
+void WebPage::remotePostMessage(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData>&& targetOrigin, const WebCore::MessageWithMessagePorts& message)
+{
+    RefPtr targetFrame = WebProcess::singleton().webFrame(target);
+    if (!targetFrame)
+        return;
+
+    if (!targetFrame->coreLocalFrame())
+        return;
+
+    RefPtr targetWindow = targetFrame->coreLocalFrame()->window();
+    if (!targetWindow)
+        return;
+
+    RefPtr targetCoreFrame = targetWindow->frame();
+    if (!targetCoreFrame)
+        return;
+
+    RefPtr sourceFrame = WebProcess::singleton().webFrame(source);
+    RefPtr sourceWindow = sourceFrame && sourceFrame->coreFrame() ? &sourceFrame->coreFrame()->windowProxy() : nullptr;
+
+    auto& script = targetCoreFrame->script();
+    auto globalObject = script.globalObject(WebCore::mainThreadNormalWorld());
+    if (!globalObject)
+        return;
+
+    targetWindow->postMessageFromRemoteFrame(*globalObject, WTFMove(sourceWindow), sourceOrigin, WTFMove(targetOrigin), message);
+}
+
+void WebPage::renderTreeAsText(WebCore::FrameIdentifier frameID, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior, CompletionHandler<void(String&&)>&& completionHandler)
+{
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    if (!webFrame) {
+        ASSERT_NOT_REACHED();
+        return completionHandler("Test Error - WebFrame missing in web process"_s);
+    }
+
+    RefPtr coreLocalFrame = webFrame->coreLocalFrame();
+    if (!coreLocalFrame) {
+        ASSERT_NOT_REACHED();
+        return completionHandler("Test Error - WebFrame missing LocalFrame in web process"_s);
+    }
+
+    auto* renderer = coreLocalFrame->contentRenderer();
+    if (!renderer) {
+        ASSERT_NOT_REACHED();
+        return completionHandler("Test Error - WebFrame missing RenderView in web process"_s);
+    }
+
+    auto ts = WebCore::createTextStream(*renderer);
+    ts.setIndent(baseIndent);
+    WebCore::externalRepresentationForLocalFrame(ts, *coreLocalFrame, behavior);
+    completionHandler(ts.release());
 }
 
 } // namespace WebKit

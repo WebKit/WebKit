@@ -254,7 +254,7 @@ public:
     const CommandsVector& commands();
     bool hasCommands();
 
-    const DeclarativeNetRequestRulesetVector& declarativeNetRequestRulesets();
+    DeclarativeNetRequestRulesetVector& declarativeNetRequestRulesets();
     bool hasContentModificationRules() { return !declarativeNetRequestRulesets().isEmpty(); }
 
     const InjectedContentVector& staticInjectedContents();

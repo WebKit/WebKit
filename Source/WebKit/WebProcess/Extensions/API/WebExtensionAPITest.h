@@ -48,7 +48,7 @@ public:
 
     void yield(JSContextRef, NSString *message);
 
-    void log(JSContextRef, NSString *message);
+    void log(JSContextRef, JSValue *);
 
     void fail(JSContextRef, NSString *message);
     void succeed(JSContextRef, NSString *message);

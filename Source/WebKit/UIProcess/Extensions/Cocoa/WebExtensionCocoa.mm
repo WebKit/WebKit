@@ -36,6 +36,7 @@
 #import "CocoaHelpers.h"
 #import "FoundationSPI.h"
 #import "Logging.h"
+#import "WebExtensionDeclarativeNetRequestConstants.h"
 #import "WebExtensionUtilities.h"
 #import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionLocalization.h"
@@ -140,9 +141,6 @@ static NSString * const declarativeNetRequestRuleEnabledManifestKey = @"enabled"
 static NSString * const declarativeNetRequestRulePathManifestKey = @"path";
 
 static const size_t maximumNumberOfShortcutCommands = 4;
-
-static const size_t maximumNumberOfDeclarativeNetRequestStaticRulesets = 100;
-static const size_t maximumNumberOfDeclarativeNetRequestEnabledStaticRulesets = 50;
 
 WebExtension::WebExtension(NSBundle *appExtensionBundle, NSError **outError)
     : m_bundle(appExtensionBundle)
@@ -1686,7 +1684,7 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
         return;
     }
 
-    if (declarativeNetRequestRulesets.count > maximumNumberOfDeclarativeNetRequestStaticRulesets)
+    if (declarativeNetRequestRulesets.count > webExtensionDeclarativeNetRequestMaximumNumberOfStaticRulesets)
         recordError(createError(Error::InvalidDeclarativeNetRequest, WEB_UI_STRING("Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets.", "_WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many rulesets")));
 
     NSUInteger rulesetCount = 0;
@@ -1694,7 +1692,7 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
     bool recordedTooManyRulesetsManifestError = false;
     HashSet<String> seenRulesetIDs;
     for (NSDictionary *rulesetDictionary in declarativeNetRequestRulesets) {
-        if (rulesetCount >= maximumNumberOfDeclarativeNetRequestStaticRulesets)
+        if (rulesetCount >= webExtensionDeclarativeNetRequestMaximumNumberOfStaticRulesets)
             continue;
 
         NSError *error;
@@ -1710,8 +1708,8 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
             continue;
         }
 
-        if (ruleset.enabled && ++enabledRulesetCount > maximumNumberOfDeclarativeNetRequestEnabledStaticRulesets && !recordedTooManyRulesetsManifestError) {
-            recordError(createError(Error::InvalidDeclarativeNetRequest, WEB_UI_FORMAT_STRING("Exceeded maxmimum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored.", "_WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many enabled static rulesets", maximumNumberOfDeclarativeNetRequestEnabledStaticRulesets)));
+        if (ruleset.enabled && ++enabledRulesetCount > webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets && !recordedTooManyRulesetsManifestError) {
+            recordError(createError(Error::InvalidDeclarativeNetRequest, WEB_UI_FORMAT_STRING("Exceeded maxmimum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored.", "_WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many enabled static rulesets", webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets)));
             recordedTooManyRulesetsManifestError = true;
             continue;
         }
@@ -1723,7 +1721,7 @@ void WebExtension::populateDeclarativeNetRequestPropertiesIfNeeded()
     }
 }
 
-const WebExtension::DeclarativeNetRequestRulesetVector& WebExtension::declarativeNetRequestRulesets()
+WebExtension::DeclarativeNetRequestRulesetVector& WebExtension::declarativeNetRequestRulesets()
 {
     populateDeclarativeNetRequestPropertiesIfNeeded();
     return m_declarativeNetRequestRulesets;

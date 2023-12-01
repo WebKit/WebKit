@@ -64,6 +64,7 @@
 #include "AuthenticationManager.h"
 #include "AuthenticatorManager.h"
 #include "BrowsingContextGroup.h"
+#include "Connection.h"
 #include "DownloadManager.h"
 #include "DownloadProxy.h"
 #include "DragControllerAction.h"
@@ -13243,17 +13244,15 @@ Ref<WebBackForwardList> WebPageProxy::protectedBackForwardList() const
 }
 
 template<typename F>
-void WebPageProxy::sendToWebPage(std::optional<FrameIdentifier> frameID, F&& sendFunction)
+decltype(auto) WebPageProxy::sendToWebPage(std::optional<FrameIdentifier> frameID, F&& sendFunction)
 {
     if (frameID) {
         if (RefPtr frame = WebFrameProxy::webFrame(*frameID)) {
-            if (RefPtr remotePageProxy = frame->remotePageProxy()) {
-                sendFunction(*remotePageProxy);
-                return;
-            }
+            if (RefPtr remotePageProxy = frame->remotePageProxy())
+                return sendFunction(*remotePageProxy);
         }
     }
-    sendFunction(*this);
+    return sendFunction(*this);
 }
 
 template<typename M, typename C>
@@ -13274,6 +13273,54 @@ void WebPageProxy::sendToProcessContainingFrame(std::optional<FrameIdentifier> f
             targetPage.send(std::forward<M>(message));
         }
     );
+}
+
+template<typename M>
+IPC::ConnectionSendSyncResult<M> WebPageProxy::sendSyncToProcessContainingFrame(std::optional<FrameIdentifier> frameID, M&& message)
+{
+    return sendToWebPage(frameID,
+        [&message] (auto& targetPage) {
+            return targetPage.sendSync(std::forward<M>(message));
+        }
+    );
+}
+
+void WebPageProxy::closeRemoteFrame(WebCore::FrameIdentifier frameID)
+{
+    RefPtr destinationFrame = WebFrameProxy::webFrame(frameID);
+    if (!destinationFrame || !destinationFrame->isMainFrame())
+        return;
+
+    ASSERT(destinationFrame->page() == this);
+
+    closePage();
+}
+
+void WebPageProxy::focusRemoteFrame(IPC::Connection& connection, WebCore::FrameIdentifier frameID)
+{
+    RefPtr destinationFrame = WebFrameProxy::webFrame(frameID);
+    if (!destinationFrame || !destinationFrame->isMainFrame())
+        return;
+
+    ASSERT(destinationFrame->page() == this);
+
+    broadcastFocusedFrameToOtherProcesses(connection, frameID);
+    setFocus(true);
+}
+
+void WebPageProxy::postMessageToRemote(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts& message)
+{
+    sendToProcessContainingFrame(target, Messages::WebPage::RemotePostMessage(source, sourceOrigin, target, targetOrigin, message));
+}
+
+void WebPageProxy::renderTreeAsText(WebCore::FrameIdentifier frameID, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior, CompletionHandler<void(String&&)>&& completionHandler)
+{
+    auto sendResult = sendSyncToProcessContainingFrame(frameID, Messages::WebPage::RenderTreeAsText(frameID, baseIndent, behavior));
+    if (!sendResult.succeeded())
+        return completionHandler("Test Error - sending WebPage::RenderTreeAsText failed"_s);
+
+    auto [result] = sendResult.takeReply();
+    completionHandler(WTFMove(result));
 }
 
 } // namespace WebKit

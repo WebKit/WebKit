@@ -55,6 +55,46 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
             m_pendingTimestampWrites.append({ fromAPI(timestampWrite.querySet), timestampWrite.endOfPassWriteIndex });
         }
     }
+
+    m_attachmentsToClear = [NSMutableDictionary dictionary];
+    m_allColorAttachments = [NSMutableDictionary dictionary];
+    for (uint32_t i = 0; i < descriptor.colorAttachmentCount; ++i) {
+        const auto& attachment = descriptor.colorAttachments[i];
+        if (!attachment.view)
+            continue;
+
+        auto& texture = fromAPI(attachment.view);
+        texture.setPreviouslyCleared();
+        m_renderTargetWidth = texture.width();
+        m_renderTargetHeight = texture.height();
+
+        id<MTLTexture> textureToClear = texture.texture();
+        TextureAndClearColor *textureWithResolve = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
+        if (attachment.storeOp != WGPUStoreOp_Discard) {
+            auto& c = attachment.clearValue;
+            textureWithResolve.clearColor = MTLClearColorMake(c.r, c.g, c.b, c.a);
+        } else
+            [m_attachmentsToClear setObject:textureWithResolve forKey:@(i)];
+
+        [m_allColorAttachments setObject:textureWithResolve forKey:@(i)];
+    }
+
+    if (const auto* attachment = descriptor.depthStencilAttachment) {
+        m_depthClearValue = attachment->depthStoreOp == WGPUStoreOp_Discard ? 0 : attachment->depthClearValue;
+        auto& textureView = fromAPI(attachment->view);
+        textureView.setPreviouslyCleared();
+        id<MTLTexture> depthTexture = textureView.texture();
+        if (!Device::isStencilOnlyFormat(depthTexture.pixelFormat)) {
+            m_clearDepthAttachment = attachment->depthStoreOp == WGPUStoreOp_Discard;
+            m_depthStencilAttachmentToClear = depthTexture;
+        }
+
+        m_stencilClearValue = attachment->stencilStoreOp == WGPUStoreOp_Discard ? 0 : attachment->stencilClearValue;
+        if (Texture::stencilOnlyAspectMetalFormat(textureView.descriptor().format)) {
+            m_clearStencilAttachment = attachment->stencilStoreOp == WGPUStoreOp_Discard;
+            m_depthStencilAttachmentToClear = textureView.texture();
+        }
+    }
 }
 
 RenderPassEncoder::RenderPassEncoder(Device& device)
@@ -94,6 +134,7 @@ void RenderPassEncoder::executePreDrawCommands()
     if (!m_pipeline)
         return;
 
+    m_issuedDrawCall = true;
     m_queryBufferIndicesToClear.remove(m_visibilityResultBufferOffset);
 
     for (auto& kvp : m_bindGroupDynamicOffsets) {
@@ -189,6 +230,15 @@ void RenderPassEncoder::endPass()
 
     m_parentEncoder->lock(false);
 
+    if (m_attachmentsToClear.count || (m_depthStencilAttachmentToClear && (m_clearDepthAttachment || m_clearStencilAttachment))) {
+        if (m_depthStencilAttachmentToClear && !m_issuedDrawCall) {
+            auto pixelFormat = m_depthStencilAttachmentToClear.pixelFormat;
+            m_clearDepthAttachment = !Device::isStencilOnlyFormat(pixelFormat);
+            m_clearStencilAttachment = pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || pixelFormat == MTLPixelFormatStencil8 || pixelFormat == MTLPixelFormatX32_Stencil8;
+        }
+        m_parentEncoder->runClearEncoder(m_issuedDrawCall ? m_attachmentsToClear : m_allColorAttachments, m_depthStencilAttachmentToClear, m_clearDepthAttachment, m_clearStencilAttachment, m_depthClearValue, m_stencilClearValue);
+    }
+
     if (m_queryBufferIndicesToClear.size()) {
         id<MTLBlitCommandEncoder> blitCommandEncoder = m_parentEncoder->ensureBlitCommandEncoder();
         for (auto& offset : m_queryBufferIndicesToClear)
@@ -222,6 +272,7 @@ void RenderPassEncoder::executeBundles(Vector<std::reference_wrapper<RenderBundl
             }
 
             id<MTLIndirectCommandBuffer> indirectCommandBuffer = icb.indirectCommandBuffer;
+            m_issuedDrawCall = true;
             [m_renderCommandEncoder executeCommandsInBuffer:indirectCommandBuffer withRange:NSMakeRange(0, indirectCommandBuffer.size)];
         }
 
@@ -343,7 +394,7 @@ void RenderPassEncoder::setPipeline(const RenderPipeline& pipeline)
 void RenderPassEncoder::setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 {
     // FIXME: Validate according to https://www.w3.org/TR/webgpu/#dom-gpurenderpassencoder-setscissorrect
-    [m_renderCommandEncoder setScissorRect: { x, y, width, height } ];
+    [m_renderCommandEncoder setScissorRect: { x, y, std::min(width, m_renderTargetWidth), std::min(height, m_renderTargetHeight) } ];
 }
 
 void RenderPassEncoder::setStencilReference(uint32_t reference)

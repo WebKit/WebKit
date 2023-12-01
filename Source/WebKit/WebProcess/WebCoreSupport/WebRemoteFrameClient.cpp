@@ -28,8 +28,7 @@
 
 #include "MessageSenderInlines.h"
 #include "WebPage.h"
-#include "WebProcess.h"
-#include "WebProcessProxyMessages.h"
+#include "WebPageProxyMessages.h"
 #include <WebCore/FrameLoadRequest.h>
 #include <WebCore/FrameTree.h>
 #include <WebCore/PolicyChecker.h>
@@ -67,7 +66,8 @@ void WebRemoteFrameClient::sizeDidChange(WebCore::IntSize size)
 
 void WebRemoteFrameClient::postMessageToRemote(WebCore::FrameIdentifier source, const String& sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, const WebCore::MessageWithMessagePorts& message)
 {
-    WebProcess::singleton().send(Messages::WebProcessProxy::PostMessageToRemote(source, sourceOrigin, target, targetOrigin, message), 0);
+    if (auto* page = m_frame->page())
+        page->send(Messages::WebPageProxy::PostMessageToRemote(source, sourceOrigin, target, targetOrigin, message));
 }
 
 void WebRemoteFrameClient::changeLocation(WebCore::FrameLoadRequest&& request)
@@ -86,9 +86,12 @@ void WebRemoteFrameClient::changeLocation(WebCore::FrameLoadRequest&& request)
 
 String WebRemoteFrameClient::renderTreeAsText(size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior)
 {
-    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebProcessProxy::RenderTreeAsText(m_frame->frameID(), baseIndent, behavior), 0);
+    RefPtr page = m_frame->page();
+    if (!page)
+        return "Test Error - Missing page"_s;
+    auto sendResult = page->sendSync(Messages::WebPageProxy::RenderTreeAsText(m_frame->frameID(), baseIndent, behavior));
     if (!sendResult.succeeded())
-        return "Test Error - sending WebProcessProxy::RenderTreeAsText failed"_s;
+        return "Test Error - sending WebPageProxy::RenderTreeAsText failed"_s;
     auto [result] = sendResult.takeReply();
     return result;
 }
@@ -101,12 +104,14 @@ void WebRemoteFrameClient::broadcastFrameRemovalToOtherProcesses()
 void WebRemoteFrameClient::close()
 {
     // FIXME: <rdar://117381050> Consider if this needs the same logic as WebChromeClient::closeWindow, or refactor to share code.
-    WebProcess::singleton().send(Messages::WebProcessProxy::CloseRemoteFrame(m_frame->frameID()), 0);
+    if (auto* page = m_frame->page())
+        page->send(Messages::WebPageProxy::CloseRemoteFrame(m_frame->frameID()));
 }
 
 void WebRemoteFrameClient::focus()
 {
-    WebProcess::singleton().send(Messages::WebProcessProxy::FocusRemoteFrame(m_frame->frameID()), 0);
+    if (auto* page = m_frame->page())
+        page->send(Messages::WebPageProxy::FocusRemoteFrame(m_frame->frameID()));
 }
 
 }

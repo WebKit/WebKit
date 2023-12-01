@@ -127,13 +127,10 @@ public:
         auto clone = buffer.clone();
         if (!clone)
             return false;
-        auto* backend = clone->ensureBackendCreated();
-        if (!backend)
-            return false;
 
         clone->flushDrawingContext();
 
-        auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(backend->toBackendSharing());
+        auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(clone->toBackendSharing());
         if (!sharing)
             return false;
 

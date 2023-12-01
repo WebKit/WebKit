@@ -104,8 +104,6 @@ void WebExtensionControllerProxy::serviceWorkerGlobalObjectIsAvailableForFrame(W
     JSObjectSetProperty(context, globalObject, toJSString("chrome").get(), namespaceObject, kJSPropertyAttributeNone, nullptr);
 }
 
-// MARK: Web Navigation
-
 void WebExtensionControllerProxy::didStartProvisionalLoadForFrame(WebPage& page, WebFrame& frame, const URL& url)
 {
     WebExtensionFrameIdentifier parentFrameID = frame.isMainFrame() ? WebExtensionFrameConstants::NoneIdentifier : toWebExtensionFrameIdentifier(*frame.parentFrame());

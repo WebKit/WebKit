@@ -364,6 +364,7 @@ public:
 
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlType&, Stack& returnValues);
     PartialResult WARN_UNUSED_RETURN addBranch(ControlType&, ExpressionType condition, Stack& returnValues);
+    PartialResult WARN_UNUSED_RETURN addBranchNull(ControlType&, ExpressionType, Stack&, bool, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlType*>& targets, ControlType& defaultTargets, Stack& expressionStack);
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, Stack& expressionStack);
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, Stack& expressionStack, bool unreachable = true);
@@ -1314,6 +1315,28 @@ auto LLIntGenerator::addBranch(ControlType& data, ExpressionType condition, Stac
 
     if (skip)
         emitLabel(*skip);
+
+    return { };
+}
+
+auto LLIntGenerator::addBranchNull(ControlType& data, ExpressionType reference, Stack& returnValues, bool shouldNegate, ExpressionType& result) -> PartialResult
+{
+    auto condition = push();
+    WasmRefIsNull::emit(this, condition, reference);
+
+    if (shouldNegate)
+        WasmI32Eqz::emit(this, condition, condition);
+
+    // Pop temporary condition variable.
+    --m_stackSize;
+
+    WASM_FAIL_IF_HELPER_FAILS(addBranch(data, condition, returnValues));
+
+    if (!shouldNegate) {
+        result = push();
+        if (reference != result)
+            WasmMov::emit(this, result, reference);
+    }
 
     return { };
 }

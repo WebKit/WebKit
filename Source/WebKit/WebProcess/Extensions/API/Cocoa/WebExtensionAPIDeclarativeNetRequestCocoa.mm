@@ -30,10 +30,12 @@
 #import "config.h"
 #import "WebExtensionAPIDeclarativeNetRequest.h"
 
+#import "CocoaHelpers.h"
 #import "JSWebExtensionWrapper.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionContextMessages.h"
+#import "WebExtensionUtilities.h"
 #import "WebProcess.h"
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -41,9 +43,30 @@
 
 namespace WebKit {
 
-void WebExtensionAPIDeclarativeNetRequest::updateEnabledRulesets(NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString)
+static NSString * const disableRulesetsKey = @"disableRulesetIds";
+static NSString * const enableRulesetsKey = @"enableRulesetIds";
+
+void WebExtensionAPIDeclarativeNetRequest::updateEnabledRulesets(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    // FIXME: rdar://118940027 - Support toggling static rulesets
+    static NSDictionary<NSString *, id> *types = @{
+        disableRulesetsKey: @[ NSString.class ],
+        enableRulesetsKey: @[ NSString.class ],
+    };
+
+    if (!validateDictionary(options, @"options", nil, types, outExceptionString))
+        return;
+
+    Vector<String> rulesetsToEnable =  makeVector<String>(objectForKey<NSArray>(options, enableRulesetsKey, true, NSString.class));
+    Vector<String> rulesetsToDisable = makeVector<String>(objectForKey<NSArray>(options, disableRulesetsKey, true, NSString.class));
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DeclarativeNetRequestUpdateEnabledRulesets(rulesetsToEnable, rulesetsToDisable), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
 }
 
 void WebExtensionAPIDeclarativeNetRequest::getEnabledRulesets(Ref<WebExtensionCallbackHandler>&& callback)

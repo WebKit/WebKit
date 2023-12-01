@@ -97,11 +97,11 @@ private:
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;
     std::tuple<String, PDFSelection *, NSDictionary *> lookupTextAtLocation(const WebCore::FloatPoint&, WebHitTestResultData&) const override;
 
-    RefPtr<ShareableBitmap> snapshot() override;
-
     id accessibilityHitTest(const WebCore::IntPoint&) const override;
     id accessibilityObject() const override;
     id accessibilityAssociatedPluginParentForElement(WebCore::Element*) const override;
+
+    void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) override;
 
     // GraphicsLayerClient
     void notifyFlushRequired(const GraphicsLayer*) override;
