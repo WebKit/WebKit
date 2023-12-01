@@ -406,15 +406,12 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
 {
     ASSERT(!m_websiteDataStore);
     WEBPROCESSPROXY_RELEASE_LOG(Process, "setWebsiteDataStore() dataStore=%p, sessionID=%" PRIu64, &dataStore, dataStore.sessionID().toUInt64());
+#if PLATFORM(COCOA)
+    if (!m_websiteDataStore)
+        dataStore.protectedNetworkProcess()->sendXPCEndpointToProcess(*this);
+#endif
     m_websiteDataStore = &dataStore;
     logger().setEnabled(this, dataStore.sessionID().isAlwaysOnLoggingAllowed());
-#if PLATFORM(COCOA)
-    if (m_networkProcessToKeepAliveUntilDataStoreIsCreated) {
-        Ref networkProcess = m_websiteDataStore->networkProcess(); // Transfer ownership of the NetworkProcessProxy to the WebsiteDataStore.
-        ASSERT_UNUSED(networkProcess, m_networkProcessToKeepAliveUntilDataStoreIsCreated == networkProcess.ptr());
-        m_networkProcessToKeepAliveUntilDataStoreIsCreated = nullptr;
-    }
-#endif
     updateRegistrationWithDataStore();
     send(Messages::WebProcess::SetWebsiteDataStoreParameters(processPool().webProcessDataStoreParameters(*this, dataStore)), 0);
 
@@ -1255,15 +1252,6 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
 #if PLATFORM(COCOA)
     if (m_websiteDataStore)
         m_websiteDataStore->protectedNetworkProcess()->sendXPCEndpointToProcess(*this);
-    else {
-        // Prewarmed web processes don't have a data store but still need a network process to launch properly
-        // because the network process needs to send it the launch services database. Since the data store
-        // normally keeps the network process alive, we stash it in m_networkProcessToKeepAliveUntilDataStoreIsCreated
-        // until the prewarmed web process gets assigned a data store.
-        Ref networkProcess = NetworkProcessProxy::ensureDefaultNetworkProcess();
-        m_networkProcessToKeepAliveUntilDataStoreIsCreated = networkProcess.copyRef();
-        networkProcess->sendXPCEndpointToProcess(*this);
-    }
 #endif
 
     RELEASE_ASSERT(!m_webConnection);
