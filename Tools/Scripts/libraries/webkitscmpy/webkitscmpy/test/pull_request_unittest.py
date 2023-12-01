@@ -52,6 +52,21 @@ Reviewed by Tim Contributor.
 </pre>''',
         )
 
+    def test_create_body_single_linked_punctuation(self):
+        self.assertEqual(
+            PullRequest.create_body(None, [Commit(
+                hash='11aa76f9fc380e9fe06157154f32b304e8dc4749',
+                message='[scoping] Bug to fix\nhttps://bugs.webkit.org/1234\n(rdar://1234)\n\nReviewed by Tim Contributor.\n',
+            )]), '''#### 11aa76f9fc380e9fe06157154f32b304e8dc4749
+<pre>
+[scoping] Bug to fix
+<a href="https://bugs.webkit.org/1234">https://bugs.webkit.org/1234</a>
+(<a href="https://rdar.apple.com/1234">rdar://1234</a>)
+
+Reviewed by Tim Contributor.
+</pre>''',
+        )
+
     def test_create_body_single_no_link(self):
         self.assertEqual(
             PullRequest.create_body(None, [Commit(
