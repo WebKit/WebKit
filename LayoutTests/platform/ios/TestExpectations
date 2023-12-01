@@ -4575,6 +4575,7 @@ webkit.org/b/257904 http/tests/site-isolation/basic-iframe.html [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/double-iframe.html [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/draw-after-navigation.html [ Skip ]
 webkit.org/b/257904 http/tests/site-isolation/selection-focus.html [ Skip ]
+webkit.org/b/257904 http/tests/site-isolation/basic-iframe-render-output.html [ Failure Timeout Pass ]
 
 # This test can't be enabled on iOS until EventSenderProxyIOS::keyDown() is implemented.
 http/tests/site-isolation/key-events.html [ Skip ]
