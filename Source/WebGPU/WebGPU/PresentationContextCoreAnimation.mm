@@ -119,7 +119,7 @@ auto PresentationContextCoreAnimation::Configuration::generateCurrentFrameState(
         WGPUTextureAspect_All,
     };
 
-    auto textureView = TextureView::create(backingTexture, textureViewDescriptor, { { width, height, 1 } }, device);
+    auto textureView = TextureView::create(backingTexture, textureViewDescriptor, { { width, height, 1 } }, texture, device);
     return { currentDrawable, texture.ptr(), textureView.ptr() };
 }
 

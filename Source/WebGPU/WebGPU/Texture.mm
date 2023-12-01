@@ -2306,7 +2306,7 @@ static MTLPixelFormat resolvedPixelFormat(MTLPixelFormat viewPixelFormat, MTLPix
 Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescriptor)
 {
     if (inputDescriptor.nextInChain)
-        return TextureView::createInvalid(m_device);
+        return TextureView::createInvalid(*this, m_device);
 
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-createview
 
@@ -2314,7 +2314,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
 
     if (!descriptor || !validateCreateView(*descriptor)) {
         m_device->generateAValidationError("Validation failure."_s);
-        return TextureView::createInvalid(m_device);
+        return TextureView::createInvalid(*this, m_device);
     }
 
     auto pixelFormat = Texture::pixelFormat(descriptor->format);
@@ -2324,7 +2324,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     switch (descriptor->dimension) {
     case WGPUTextureViewDimension_Undefined:
         ASSERT_NOT_REACHED();
-        return TextureView::createInvalid(m_device);
+        return TextureView::createInvalid(*this, m_device);
     case WGPUTextureViewDimension_1D:
         if (descriptor->arrayLayerCount == 1)
             textureType = MTLTextureType1D;
@@ -2340,7 +2340,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     case WGPUTextureViewDimension_2DArray:
         if (m_sampleCount > 1) {
 #if PLATFORM(WATCHOS) || PLATFORM(APPLETV)
-            return TextureView::createInvalid(m_device);
+            return TextureView::createInvalid(*this, m_device);
 #else
             textureType = MTLTextureType2DMultisampleArray;
 #endif
@@ -2358,7 +2358,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
         break;
     case WGPUTextureViewDimension_Force32:
         ASSERT_NOT_REACHED();
-        return TextureView::createInvalid(m_device);
+        return TextureView::createInvalid(*this, m_device);
     }
 
     auto levels = NSMakeRange(descriptor->baseMipLevel, descriptor->mipLevelCount);
@@ -2367,7 +2367,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
 
     id<MTLTexture> texture = [m_texture newTextureViewWithPixelFormat:resolvedPixelFormat(pixelFormat, m_texture.pixelFormat) textureType:textureType levels:levels slices:slices];
     if (!texture)
-        return TextureView::createInvalid(m_device);
+        return TextureView::createInvalid(*this, m_device);
 
     texture.label = fromAPI(descriptor->label);
     if (!texture.label.length)
@@ -2377,7 +2377,7 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
     if (m_usage & WGPUTextureUsage_RenderAttachment)
         renderExtent = computeRenderExtent({ m_width, m_height, m_depthOrArrayLayers }, descriptor->baseMipLevel);
 
-    return TextureView::create(texture, *descriptor, renderExtent, m_device);
+    return TextureView::create(texture, *descriptor, renderExtent, *this, m_device);
 }
 
 void Texture::destroy()
@@ -2827,6 +2827,26 @@ bool Texture::validateLinearTextureData(const WGPUTextureDataLayout& layout, uin
         return false;
 
     return true;
+}
+
+bool Texture::previouslyCleared(uint32_t mipLevel, uint32_t slice) const
+{
+    if (auto it = m_clearedToZero.find(mipLevel); it != m_clearedToZero.end())
+        return it->value.contains(slice);
+
+    return false;
+}
+
+void Texture::setPreviouslyCleared(uint32_t mipLevel, uint32_t slice)
+{
+    if (auto it = m_clearedToZero.find(mipLevel); it != m_clearedToZero.end()) {
+        it->value.add(slice);
+        return;
+    }
+
+    ClearedToZeroInnerContainer set;
+    set.add(slice);
+    m_clearedToZero.add(mipLevel, set);
 }
 
 } // namespace WebGPU

@@ -74,6 +74,7 @@ public:
 
     const Device& device() const { return m_device; }
     void waitUntilIdle();
+    void clearTexture(const WGPUImageCopyTexture&, NSUInteger);
 
 private:
     Queue(id<MTLCommandQueue>, Device&);

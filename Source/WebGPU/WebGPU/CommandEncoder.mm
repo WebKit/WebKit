@@ -37,6 +37,19 @@
 #import "Texture.h"
 #import <wtf/CheckedArithmetic.h>
 
+@implementation TextureAndClearColor
+- (instancetype)initWithTexture:(id<MTLTexture>)texture
+{
+    if (!(self = [super init]))
+        return nil;
+
+    _texture = texture;
+    _clearColor = MTLClearColorMake(0, 0, 0, 0);
+
+    return self;
+}
+@end
+
 namespace WebGPU {
 
 static MTLLoadAction loadAction(WGPULoadOp loadOp)
@@ -233,6 +246,115 @@ bool Device::isStencilOnlyFormat(MTLPixelFormat format)
     }
 }
 
+static std::pair<id<MTLRenderPipelineState>, id<MTLDepthStencilState>> createSimplePso(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, id<MTLDevice> device)
+{
+    MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
+    MTLCompileOptions* options = [MTLCompileOptions new];
+    options.fastMathEnabled = YES;
+
+    NSUInteger sampleCount = 0;
+    MTLDepthStencilDescriptor *depthStencilDescriptor = nil;
+    for (NSNumber *key in attachmentsToClear) {
+        int i = key.intValue;
+        TextureAndClearColor *textureAndClearColor = [attachmentsToClear objectForKey:key];
+        id<MTLTexture> t = textureAndClearColor.texture;
+        sampleCount = t.sampleCount;
+
+        const auto& mtlColorAttachment = mtlRenderPipelineDescriptor.colorAttachments[i];
+        mtlColorAttachment.pixelFormat = t.pixelFormat;
+        mtlColorAttachment.blendingEnabled = NO;
+    }
+
+    if (depthStencilAttachmentToClear) {
+        depthStencilDescriptor = [MTLDepthStencilDescriptor new];
+        id<MTLTexture> t = depthStencilAttachmentToClear;
+        sampleCount = t.sampleCount;
+        bool isStencilOnlyFormat = Device::isStencilOnlyFormat(t.pixelFormat);
+        mtlRenderPipelineDescriptor.depthAttachmentPixelFormat = isStencilOnlyFormat ? MTLPixelFormatInvalid : t.pixelFormat;
+        depthStencilDescriptor.depthWriteEnabled = NO;
+
+        if (t.pixelFormat == MTLPixelFormatDepth32Float_Stencil8 || t.pixelFormat == MTLPixelFormatStencil8 || t.pixelFormat == MTLPixelFormatX32_Stencil8)
+            mtlRenderPipelineDescriptor.stencilAttachmentPixelFormat = t.pixelFormat;
+    }
+
+    static id<MTLFunction> function = nil;
+    NSError *error = nil;
+    if (!function) {
+        id<MTLLibrary> library = [device newLibraryWithSource:@"[[vertex]] float4 vs() { return (float4)0; }" options:options error:&error];
+        ASSERT_UNUSED(error, !error);
+        function = [library newFunctionWithName:@"vs"];
+    }
+
+    mtlRenderPipelineDescriptor.vertexFunction = function;
+    mtlRenderPipelineDescriptor.fragmentFunction = nil;
+
+    RELEASE_ASSERT(sampleCount);
+    mtlRenderPipelineDescriptor.rasterSampleCount = sampleCount;
+    mtlRenderPipelineDescriptor.inputPrimitiveTopology = MTLPrimitiveTopologyClassPoint;
+
+    id<MTLRenderPipelineState> pso = [device newRenderPipelineStateWithDescriptor:mtlRenderPipelineDescriptor error:&error];
+    id<MTLDepthStencilState> depthStencil = depthStencilDescriptor ? [device newDepthStencilStateWithDescriptor:depthStencilDescriptor] : nil;
+    RELEASE_ASSERT(!error);
+    ASSERT_UNUSED(error, !error);
+
+    return std::make_pair(pso, depthStencil);
+}
+
+void CommandEncoder::runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, float depthClearValue, uint32_t stencilClearValue)
+{
+    if (!attachmentsToClear.count && !depthAttachmentToClear && !stencilAttachmentToClear)
+        return;
+
+    if (!stencilAttachmentToClear && !depthAttachmentToClear)
+        depthStencilAttachmentToClear = nil;
+
+    id<MTLDevice> device = m_device->device();
+    MTLRenderPassDescriptor* clearDescriptor = [MTLRenderPassDescriptor new];
+    if (depthAttachmentToClear) {
+        clearDescriptor.depthAttachment.loadAction = MTLLoadActionClear;
+        clearDescriptor.depthAttachment.storeAction = MTLStoreActionStore;
+        clearDescriptor.depthAttachment.clearDepth = depthClearValue;
+        clearDescriptor.depthAttachment.texture = depthStencilAttachmentToClear;
+    }
+
+    if (stencilAttachmentToClear) {
+        clearDescriptor.stencilAttachment.loadAction = MTLLoadActionClear;
+        clearDescriptor.stencilAttachment.storeAction = MTLStoreActionStore;
+        clearDescriptor.stencilAttachment.clearStencil = stencilClearValue;
+        clearDescriptor.stencilAttachment.texture = depthStencilAttachmentToClear;
+    }
+
+    if (!attachmentsToClear.count) {
+        RELEASE_ASSERT(depthStencilAttachmentToClear);
+        clearDescriptor.defaultRasterSampleCount = depthStencilAttachmentToClear.sampleCount;
+        clearDescriptor.renderTargetWidth = depthStencilAttachmentToClear.width;
+        clearDescriptor.renderTargetHeight = depthStencilAttachmentToClear.height;
+    }
+
+    for (NSNumber *key in attachmentsToClear) {
+        int i = key.intValue;
+        TextureAndClearColor *textureAndClearColor = [attachmentsToClear objectForKey:key];
+        id<MTLTexture> t = textureAndClearColor.texture;
+        const auto& mtlAttachment = clearDescriptor.colorAttachments[i];
+        mtlAttachment.loadAction = MTLLoadActionClear;
+        mtlAttachment.storeAction = MTLStoreActionStore;
+        mtlAttachment.clearColor = textureAndClearColor.clearColor;
+        mtlAttachment.texture = t;
+        mtlAttachment.level = 0;
+        mtlAttachment.slice = 0;
+        mtlAttachment.depthPlane = 0;
+    }
+
+    id<MTLRenderCommandEncoder> clearRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:clearDescriptor];
+    auto [pso, depthStencil] = createSimplePso(attachmentsToClear, depthStencilAttachmentToClear, device);
+    [clearRenderCommandEncoder setRenderPipelineState:pso];
+    if (depthStencil)
+        [clearRenderCommandEncoder setDepthStencilState:depthStencil];
+    [clearRenderCommandEncoder setCullMode:MTLCullModeNone];
+    [clearRenderCommandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:1 instanceCount:1 baseInstance:0];
+    [clearRenderCommandEncoder endEncoding];
+}
+
 Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescriptor& descriptor)
 {
     if (descriptor.nextInChain)
@@ -248,6 +370,8 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
 
     finalizeBlitCommandEncoder();
 
+    NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear = [NSMutableDictionary dictionary];
+    bool zeroColorTargets = true;
     for (uint32_t i = 0; i < descriptor.colorAttachmentCount; ++i) {
         const auto& attachment = descriptor.colorAttachments[i];
         if (!attachment.view)
@@ -260,23 +384,43 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
             attachment.clearValue.b,
             attachment.clearValue.a);
 
-        mtlAttachment.texture = fromAPI(attachment.view).texture();
+        auto& texture = fromAPI(attachment.view);
+        mtlAttachment.texture = texture.texture();
+        if (!mtlAttachment.texture)
+            continue;
         mtlAttachment.level = 0;
         mtlAttachment.slice = 0;
         mtlAttachment.depthPlane = 0;
         mtlAttachment.loadAction = loadAction(attachment.loadOp);
         mtlAttachment.storeAction = attachment.resolveTarget ? MTLStoreActionStoreAndMultisampleResolve : storeAction(attachment.storeOp);
 
+        zeroColorTargets = false;
+        id<MTLTexture> textureToClear = nil;
+        if (mtlAttachment.loadAction == MTLLoadActionLoad && !texture.previouslyCleared())
+            textureToClear = mtlAttachment.texture;
+
         if (attachment.resolveTarget) {
-            mtlDescriptor.colorAttachments[i].resolveTexture = fromAPI(attachment.resolveTarget).texture();
+            mtlAttachment.resolveTexture = fromAPI(attachment.resolveTarget).texture();
             mtlAttachment.resolveLevel = 0;
             mtlAttachment.resolveSlice = 0;
             mtlAttachment.resolveDepthPlane = 0;
+            if (mtlAttachment.resolveTexture.width != mtlAttachment.texture.width || mtlAttachment.resolveTexture.height != mtlAttachment.texture.height)
+                return RenderPassEncoder::createInvalid(m_device);
+        }
+        if (textureToClear) {
+            TextureAndClearColor *textureWithResolve = [[TextureAndClearColor alloc] initWithTexture:textureToClear];
+            [attachmentsToClear setObject:textureWithResolve forKey:@(i)];
+            if (textureToClear)
+                texture.setPreviouslyCleared();
+            if (attachment.resolveTarget)
+                fromAPI(attachment.resolveTarget).setPreviouslyCleared();
         }
     }
 
     bool depthReadOnly = false, stencilReadOnly = false;
     bool hasStencilComponent = false;
+    id<MTLTexture> depthStencilAttachmentToClear = nil;
+    bool depthAttachmentToClear = false;
     if (const auto* attachment = descriptor.depthStencilAttachment) {
         auto& textureView = fromAPI(attachment->view);
         id<MTLTexture> metalDepthStencilTexture = textureView.texture();
@@ -288,18 +432,39 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
             mtlAttachment.texture = metalDepthStencilTexture;
             mtlAttachment.loadAction = loadAction(attachment->depthLoadOp);
             mtlAttachment.storeAction = storeAction(attachment->depthStoreOp);
+
+            if (mtlAttachment.loadAction == MTLLoadActionLoad && mtlAttachment.storeAction == MTLStoreActionDontCare && !textureView.previouslyCleared()) {
+                depthStencilAttachmentToClear = mtlAttachment.texture;
+                depthAttachmentToClear = true;
+            }
+        }
+
+        if (zeroColorTargets) {
+            mtlDescriptor.defaultRasterSampleCount = metalDepthStencilTexture.sampleCount;
+            mtlDescriptor.renderTargetWidth = metalDepthStencilTexture.width;
+            mtlDescriptor.renderTargetHeight = metalDepthStencilTexture.height;
         }
     }
 
+    bool stencilAttachmentToClear = false;
     if (const auto* attachment = descriptor.depthStencilAttachment) {
         const auto& mtlAttachment = mtlDescriptor.stencilAttachment;
         stencilReadOnly = attachment->stencilReadOnly;
+        auto& textureView = fromAPI(attachment->view);
         if (hasStencilComponent)
-            mtlAttachment.texture = fromAPI(attachment->view).texture();
+            mtlAttachment.texture = textureView.texture();
         mtlAttachment.clearStencil = attachment->stencilClearValue;
         mtlAttachment.loadAction = loadAction(attachment->stencilLoadOp);
         mtlAttachment.storeAction = storeAction(attachment->stencilStoreOp);
+
+        if (mtlAttachment.loadAction == MTLLoadActionLoad && mtlAttachment.storeAction == MTLStoreActionDontCare && !textureView.previouslyCleared()) {
+            depthStencilAttachmentToClear = mtlAttachment.texture;
+            stencilAttachmentToClear = true;
+        }
     }
+
+    if (zeroColorTargets && !mtlDescriptor.renderTargetWidth)
+        return RenderPassEncoder::createInvalid(m_device);
 
     size_t visibilityResultBufferSize = 0;
     id<MTLBuffer> visibilityResultBuffer = nil;
@@ -341,6 +506,13 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
 
         auto& timestampWrite = *descriptor.timestampWrites;
         fromAPI(timestampWrite.querySet).setOverrideLocation(dummyQuerySet, timestampWrite.beginningOfPassWriteIndex, timestampWrite.endOfPassWriteIndex);
+    }
+
+    if (attachmentsToClear.count || depthStencilAttachmentToClear) {
+        if (const auto* attachment = descriptor.depthStencilAttachment; depthStencilAttachmentToClear)
+            fromAPI(attachment->view).setPreviouslyCleared();
+
+        runClearEncoder(attachmentsToClear, depthStencilAttachmentToClear, depthAttachmentToClear, stencilAttachmentToClear);
     }
 
     auto mtlRenderCommandEncoder = [m_commandBuffer renderCommandEncoderWithDescriptor:mtlDescriptor];
@@ -497,7 +669,7 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
     if (!prepareTheEncoderState())
         return;
 
-    const auto& destinationTexture = fromAPI(destination.texture);
+    auto& destinationTexture = fromAPI(destination.texture);
     if (!validateCopyBufferToTexture(source, destination, copySize)) {
         m_device->generateAValidationError("Validation failure."_s);
         return;
@@ -542,6 +714,16 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
     NSUInteger sourceBytesPerImage = rowsPerImage * sourceBytesPerRow;
 
     id<MTLTexture> mtlDestinationTexture = fromAPI(destination.texture).texture();
+
+    uint32_t sliceCount = destinationTexture.dimension() == WGPUTextureDimension_3D ? 1 : copySize.depthOrArrayLayers;
+    for (uint32_t layer = 0; layer < sliceCount; ++layer) {
+        NSUInteger destinationSlice = destinationTexture.dimension() == WGPUTextureDimension_3D ? 0 : (destination.origin.z + layer);
+        RELEASE_ASSERT(mtlDestinationTexture.parentTexture == nil);
+        if (copySize.width == logicalSize.width && copySize.height == logicalSize.height)
+            destinationTexture.setPreviouslyCleared(destination.mipLevel, destinationSlice);
+        else if (!destinationTexture.previouslyCleared(destination.mipLevel, destinationSlice))
+            clearTexture(destination, destinationSlice);
+    }
 
     switch (destinationTexture.dimension()) {
     case WGPUTextureDimension_1D: {
@@ -672,6 +854,77 @@ static bool validateCopyTextureToBuffer(const WGPUImageCopyTexture& source, cons
     return true;
 }
 
+void CommandEncoder::clearTexture(const WGPUImageCopyTexture& destination, NSUInteger slice)
+{
+    ensureBlitCommandEncoder();
+    clearTexture(destination, slice, m_device->device(), m_blitCommandEncoder);
+}
+
+void CommandEncoder::clearTexture(const WGPUImageCopyTexture& destination, NSUInteger slice, id<MTLDevice> device, id<MTLBlitCommandEncoder> blitCommandEncoder)
+{
+    auto& texture = fromAPI(destination.texture);
+
+    auto logicalSize = texture.logicalMiplevelSpecificTextureExtent(destination.mipLevel);
+
+    auto depth = texture.dimension() == WGPUTextureDimension_3D ? logicalSize.depthOrArrayLayers : 1;
+    NSUInteger sourceBytesPerRow = 16 * logicalSize.width;
+    NSUInteger sourceBytesPerImage = sourceBytesPerRow * logicalSize.height;
+    Vector<uint8_t> zeroData(sourceBytesPerImage * depth, 0);
+    id<MTLBuffer> temporaryBuffer = [device newBufferWithBytes:zeroData.data() length:zeroData.size() options:MTLResourceStorageModeShared];
+    MTLSize sourceSize;
+    switch (texture.dimension()) {
+    case WGPUTextureDimension_1D:
+        sourceSize = MTLSizeMake(logicalSize.width, 1, 1);
+        break;
+    case WGPUTextureDimension_2D:
+        sourceSize = MTLSizeMake(logicalSize.width, logicalSize.height, 1);
+        break;
+    case WGPUTextureDimension_3D:
+        sourceSize = MTLSizeMake(logicalSize.width, logicalSize.height, logicalSize.depthOrArrayLayers);
+        break;
+    default:
+    case WGPUTextureDimension_Force32:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+
+    id<MTLTexture> mtlTexture = texture.texture();
+    MTLBlitOption options = MTLBlitOptionNone;
+    if (mtlTexture.pixelFormat == MTLPixelFormatDepth32Float_Stencil8)
+        options = MTLBlitOptionDepthFromDepthStencil;
+
+    auto& destinationTexture = fromAPI(destination.texture);
+    if (destinationTexture.dimension() == WGPUTextureDimension_3D)
+        slice = 0;
+
+    [blitCommandEncoder
+        copyFromBuffer:temporaryBuffer
+        sourceOffset:0
+        sourceBytesPerRow:sourceBytesPerRow
+        sourceBytesPerImage:sourceBytesPerImage
+        sourceSize:sourceSize
+        toTexture:mtlTexture
+        destinationSlice:slice
+        destinationLevel:destination.mipLevel
+        destinationOrigin:MTLOriginMake(0, 0, 0)
+        options:options];
+
+    if (options != MTLBlitOptionNone) {
+        [blitCommandEncoder
+            copyFromBuffer:temporaryBuffer
+            sourceOffset:0
+            sourceBytesPerRow:sourceBytesPerRow
+            sourceBytesPerImage:sourceBytesPerImage
+            sourceSize:sourceSize
+            toTexture:mtlTexture
+            destinationSlice:slice
+            destinationLevel:destination.mipLevel
+            destinationOrigin:MTLOriginMake(0, 0, 0)
+            options:MTLBlitOptionStencilFromDepthStencil];
+    }
+
+    texture.setPreviouslyCleared(destination.mipLevel, slice);
+}
+
 void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize)
 {
     if (source.nextInChain || destination.nextInChain || destination.layout.nextInChain)
@@ -682,13 +935,11 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
     if (!prepareTheEncoderState())
         return;
 
-    const auto& sourceTexture = fromAPI(source.texture);
+    auto& sourceTexture = fromAPI(source.texture);
     if (!validateCopyTextureToBuffer(source, destination, copySize)) {
         m_device->generateAValidationError("Validation failure."_s);
         return;
     }
-
-    ensureBlitCommandEncoder();
 
     MTLBlitOption options = MTLBlitOptionNone;
     switch (source.aspect) {
@@ -720,6 +971,8 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
     if (rowsPerImage == WGPU_COPY_STRIDE_UNDEFINED)
         rowsPerImage = heightForMetal ?: 1;
     NSUInteger destinationBytesPerImage = rowsPerImage * destinationBytesPerRow;
+
+    ensureBlitCommandEncoder();
 
     switch (sourceTexture.dimension()) {
     case WGPUTextureDimension_1D: {
@@ -889,6 +1142,17 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
 
     auto& sourceTexture = fromAPI(source.texture);
 
+    auto& destinationTexture = fromAPI(destination.texture);
+    uint32_t sliceCount = destinationTexture.dimension() == WGPUTextureDimension_3D ? 1 : copySize.depthOrArrayLayers;
+    for (uint32_t layer = 0; layer < sliceCount; ++layer) {
+        NSUInteger destinationSlice = destinationTexture.dimension() == WGPUTextureDimension_3D ? 0 : (destination.origin.z + layer);
+        auto logicalSize = destinationTexture.logicalMiplevelSpecificTextureExtent(destination.mipLevel);
+        if (copySize.width == logicalSize.width && copySize.height == logicalSize.height)
+            destinationTexture.setPreviouslyCleared(destination.mipLevel, destinationSlice);
+        else if (!destinationTexture.previouslyCleared(destination.mipLevel, destinationSlice))
+            clearTexture(destination, destinationSlice);
+    }
+
     // FIXME(PERFORMANCE): Is it actually faster to use the -[MTLBlitCommandEncoder copyFromTexture:...toTexture:...levelCount:]
     // variant, where possible, rather than calling the other variant in a loop?
     switch (sourceTexture.dimension()) {
@@ -911,7 +1175,7 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
                 sourceLevel:source.mipLevel
                 sourceOrigin:sourceOrigin
                 sourceSize:sourceSize
-                toTexture:fromAPI(destination.texture).texture()
+                toTexture:destinationTexture.texture()
                 destinationSlice:destinationSlice
                 destinationLevel:destination.mipLevel
                 destinationOrigin:destinationOrigin];
@@ -937,7 +1201,7 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
                 sourceLevel:source.mipLevel
                 sourceOrigin:sourceOrigin
                 sourceSize:sourceSize
-                toTexture:fromAPI(destination.texture).texture()
+                toTexture:destinationTexture.texture()
                 destinationSlice:destinationSlice
                 destinationLevel:destination.mipLevel
                 destinationOrigin:destinationOrigin];
@@ -958,7 +1222,7 @@ void CommandEncoder::copyTextureToTexture(const WGPUImageCopyTexture& source, co
             sourceLevel:source.mipLevel
             sourceOrigin:sourceOrigin
             sourceSize:sourceSize
-            toTexture:fromAPI(destination.texture).texture()
+            toTexture:destinationTexture.texture()
             destinationSlice:0
             destinationLevel:destination.mipLevel
             destinationOrigin:destinationOrigin];

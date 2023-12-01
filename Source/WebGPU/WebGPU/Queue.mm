@@ -29,6 +29,7 @@
 #import "APIConversions.h"
 #import "Buffer.h"
 #import "CommandBuffer.h"
+#import "CommandEncoder.h"
 #import "Device.h"
 #import "IsValidToUseWith.h"
 #import "Texture.h"
@@ -330,6 +331,12 @@ static bool validateWriteTexture(const WGPUImageCopyTexture& destination, const 
     return true;
 }
 
+void Queue::clearTexture(const WGPUImageCopyTexture& destination, NSUInteger slice)
+{
+    ensureBlitCommandEncoder();
+    CommandEncoder::clearTexture(destination, slice, m_device.device(), m_blitCommandEncoder);
+}
+
 void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* data, size_t dataSize, const WGPUTextureDataLayout& dataLayout, const WGPUExtent3D& size)
 {
     if (destination.nextInChain || dataLayout.nextInChain)
@@ -387,6 +394,18 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, const void* da
 
     id<MTLTexture> mtlTexture = texture.texture();
     auto textureDimension = texture.dimension();
+    uint32_t sliceCount = textureDimension == WGPUTextureDimension_3D ? 1 : size.depthOrArrayLayers;
+    for (uint32_t layer = 0; layer < sliceCount; ++layer) {
+        NSUInteger destinationSlice = textureDimension == WGPUTextureDimension_3D ? 0 : (destination.origin.z + layer);
+        if (!texture.previouslyCleared(destination.mipLevel, destinationSlice)) {
+            if (widthForMetal == logicalSize.width && heightForMetal == logicalSize.height)
+                texture.setPreviouslyCleared(destination.mipLevel, destinationSlice);
+            else if (!texture.previouslyCleared(destination.mipLevel, destinationSlice))
+                clearTexture(destination, destinationSlice);
+        }
+        texture.setPreviouslyCleared(destination.mipLevel, destinationSlice);
+    }
+
     NSUInteger maxRowBytes = textureDimension == WGPUTextureDimension_3D ? (2048 * blockSize) : bytesPerRow;
     bool isCompressed = Texture::isCompressedFormat(textureFormat);
     auto blockHeight = Texture::texelBlockHeight(textureFormat);

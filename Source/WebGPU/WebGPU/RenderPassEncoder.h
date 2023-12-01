@@ -34,6 +34,8 @@
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
 
+@class TextureAndClearColor;
+
 struct WGPURenderPassEncoderImpl {
 };
 
@@ -123,6 +125,16 @@ private:
     float m_maxDepth { 1.f };
     HashSet<uint64_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_queryBufferIndicesToClear;
     id<MTLBuffer> m_visibilityResultBuffer { nil };
+    uint32_t m_renderTargetWidth { 0 };
+    uint32_t m_renderTargetHeight { 0 };
+    NSMutableDictionary<NSNumber*, TextureAndClearColor*> *m_attachmentsToClear { nil };
+    NSMutableDictionary<NSNumber*, TextureAndClearColor*> *m_allColorAttachments { nil };
+    id<MTLTexture> m_depthStencilAttachmentToClear { nil };
+    float m_depthClearValue { 0 };
+    uint32_t m_stencilClearValue { 0 };
+    bool m_clearDepthAttachment { false };
+    bool m_clearStencilAttachment { false };
+    bool m_issuedDrawCall { false };
 };
 
 } // namespace WebGPU

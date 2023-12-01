@@ -31,6 +31,13 @@
 #import <wtf/RefCounted.h>
 #import <wtf/Vector.h>
 
+@interface TextureAndClearColor : NSObject
+- (instancetype)initWithTexture:(id<MTLTexture>)texture NS_DESIGNATED_INITIALIZER;
+- (instancetype)init NS_UNAVAILABLE;
+@property (nonatomic) id<MTLTexture> texture;
+@property (nonatomic) MTLClearColor clearColor;
+@end
+
 struct WGPUCommandEncoderImpl {
 };
 
@@ -42,6 +49,7 @@ class ComputePassEncoder;
 class Device;
 class QuerySet;
 class RenderPassEncoder;
+class Texture;
 
 // https://gpuweb.github.io/gpuweb/#gpucommandencoder
 class CommandEncoder : public WGPUCommandEncoderImpl, public RefCounted<CommandEncoder>, public CommandsMixin {
@@ -81,6 +89,9 @@ public:
     id<MTLBlitCommandEncoder> ensureBlitCommandEncoder();
     void finalizeBlitCommandEncoder();
 
+    void runClearEncoder(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, float depthClearValue = 0, uint32_t stencilClearValue = 0);
+    static void clearTexture(const WGPUImageCopyTexture&, NSUInteger, id<MTLDevice>, id<MTLBlitCommandEncoder>);
+
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);
     CommandEncoder(Device&);
@@ -93,6 +104,7 @@ private:
     bool validateRenderPassDescriptor(const WGPURenderPassDescriptor&) const;
 
     void makeInvalid() { m_commandBuffer = nil; }
+    void clearTexture(const WGPUImageCopyTexture&, NSUInteger);
 
     id<MTLCommandBuffer> m_commandBuffer { nil };
     id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
