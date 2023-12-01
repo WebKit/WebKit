@@ -26,7 +26,7 @@
 #ifndef WPEViewDRM_h
 #define WPEViewDRM_h
 
-#if !defined(__WPE_WAYLAND_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#if !defined(__WPE_DRM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error "Only <wpe/drm/wpe-drm.h> can be included directly."
 #endif
 
@@ -43,4 +43,4 @@ WPE_API WPEView *wpe_view_drm_new (WPEDisplayDRM *display);
 
 G_END_DECLS
 
-#endif /* WPEView_h */
+#endif /* WPEViewDRM_h */

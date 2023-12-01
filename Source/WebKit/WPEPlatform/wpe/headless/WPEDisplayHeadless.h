@@ -26,7 +26,7 @@
 #ifndef WPEDisplayHeadless_h
 #define WPEDisplayHeadless_h
 
-#if !defined(__WPE_WAYLAND_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#if !defined(__WPE_HEADLESS_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error "Only <wpe/headless/wpe-headless.h> can be included directly."
 #endif
 

@@ -26,7 +26,7 @@
 #ifndef WPEViewHeadless_h
 #define WPEViewHeadless_h
 
-#if !defined(__WPE_WAYLAND_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#if !defined(__WPE_HEADLESS_H_INSIDE__) && !defined(BUILDING_WEBKIT)
 #error "Only <wpe/headless/wpe-headless.h> can be included directly."
 #endif
 
@@ -43,4 +43,4 @@ WPE_API WPEView *wpe_view_headless_new (WPEDisplayHeadless *display);
 
 G_END_DECLS
 
-#endif /* WPEView_h */
+#endif /* WPEViewHeadless_h */
