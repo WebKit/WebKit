@@ -178,7 +178,7 @@ void RemoteRenderingBackend::didFailCreateImageBuffer(RenderingResourceIdentifie
 void RemoteRenderingBackend::didCreateImageBuffer(Ref<ImageBuffer> imageBuffer)
 {
     auto imageBufferIdentifier = imageBuffer->renderingResourceIdentifier();
-    auto* sharing = imageBuffer->backend()->toBackendSharing();
+    auto* sharing = imageBuffer->toBackendSharing();
     auto handle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
     m_remoteDisplayLists.add(imageBufferIdentifier, RemoteDisplayListRecorder::create(imageBuffer.get(), imageBufferIdentifier, *this));
     m_remoteImageBuffers.add(imageBufferIdentifier, RemoteImageBuffer::create(WTFMove(imageBuffer), *this));
@@ -215,7 +215,7 @@ void RemoteRenderingBackend::moveToImageBuffer(RenderingResourceIdentifier image
     creationContext.surfacePool = &ioSurfacePool();
 #endif
     creationContext.resourceOwner = m_resourceOwner;
-    imageBuffer->backend()->transferToNewContext(creationContext);
+    imageBuffer->transferToNewContext(creationContext);
     didCreateImageBuffer(imageBuffer.releaseNonNull());
 }
 
@@ -340,11 +340,7 @@ void RemoteRenderingBackend::releaseRenderingResource(RenderingResourceIdentifie
 #if PLATFORM(COCOA)
 static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buffer)
 {
-    auto* backend = buffer.ensureBackendCreated();
-    if (!backend)
-        return std::nullopt;
-
-    auto* sharing = backend->toBackendSharing();
+    auto* sharing = buffer.toBackendSharing();
     if (is<ImageBufferBackendHandleSharing>(sharing))
         return downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
 

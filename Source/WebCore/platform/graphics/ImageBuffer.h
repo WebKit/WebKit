@@ -131,11 +131,12 @@ public:
     WEBCORE_EXPORT virtual void flushDrawingContext();
     WEBCORE_EXPORT virtual bool flushDrawingContextAsync();
 
-    WEBCORE_EXPORT std::unique_ptr<ImageBufferBackend> takeBackend();
     WEBCORE_EXPORT IntSize backendSize() const;
 
-    ImageBufferBackend* backend() const { return m_backend.get(); }
-    virtual ImageBufferBackend* ensureBackendCreated() const { return m_backend.get(); }
+    virtual void ensureBackendCreated() const { ensureBackend(); }
+    bool hasBackend() { return !!backend(); }
+
+    WEBCORE_EXPORT void transferToNewContext(const ImageBufferCreationContext&);
 
     RenderingResourceIdentifier renderingResourceIdentifier() const { return m_renderingResourceIdentifier; }
 
@@ -205,6 +206,9 @@ public:
 
     WEBCORE_EXPORT virtual String debugDescription() const;
 
+    // FIXME: This should just be "ImageBufferSharing".
+    WEBCORE_EXPORT virtual ImageBufferBackendSharing* toBackendSharing();
+
 protected:
     WEBCORE_EXPORT ImageBuffer(ImageBufferParameters, const ImageBufferBackend::Info&, std::unique_ptr<ImageBufferBackend>&& = nullptr, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 
@@ -213,6 +217,8 @@ protected:
     WEBCORE_EXPORT virtual std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer();
 
     WEBCORE_EXPORT void setBackend(std::unique_ptr<ImageBufferBackend>&&);
+    ImageBufferBackend* backend() const { return m_backend.get(); }
+    virtual ImageBufferBackend* ensureBackend() const { return m_backend.get(); }
 
     Parameters m_parameters;
     ImageBufferBackend::Info m_backendInfo;

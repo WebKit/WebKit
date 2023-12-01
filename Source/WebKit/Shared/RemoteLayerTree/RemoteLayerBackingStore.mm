@@ -165,11 +165,7 @@ static bool hasValue(const ImageBufferBackendHandle& backendHandle)
 void RemoteLayerBackingStore::encode(IPC::Encoder& encoder) const
 {
     auto handleFromBuffer = [](ImageBuffer& buffer) -> std::optional<ImageBufferBackendHandle> {
-        auto* backend = buffer.ensureBackendCreated();
-        if (!backend)
-            return std::nullopt;
-
-        auto* sharing = backend->toBackendSharing();
+        auto* sharing = buffer.toBackendSharing();
         if (is<ImageBufferBackendHandleSharing>(sharing))
             return downcast<ImageBufferBackendHandleSharing>(*sharing).takeBackendHandle();
 

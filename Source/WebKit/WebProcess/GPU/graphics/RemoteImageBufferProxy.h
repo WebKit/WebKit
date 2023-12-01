@@ -57,7 +57,7 @@ public:
 
     ~RemoteImageBufferProxy();
 
-    WebCore::ImageBufferBackend* ensureBackendCreated() const final;
+    WebCore::ImageBufferBackend* ensureBackend() const final;
 
     void clearBackend();
     void backingStoreWillChange();
