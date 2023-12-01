@@ -23,10 +23,16 @@ set(WPEPlatformDRM_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WPEPlatform/wpe/drm"
 )
 
+set(WPEPlatformDRM_SYSTEM_INCLUDE_DIRECTORIES
+    ${GIO_UNIX_INCLUDE_DIRS}
+    ${WPEPlatform_SYSTEM_INCLUDE_DIRECTORIES}
+)
+
 set(WPEPlatformDRM_LIBRARIES
     Journald::Journald
     LibInput::LibInput
     Udev::Udev
+    ${GIO_UNIX_LIBRARIES}
 )
 
 set(WPEPlatformDRM_SOURCES_FOR_INTROSPECTION
@@ -37,7 +43,7 @@ set(WPEPlatformDRM_SOURCES_FOR_INTROSPECTION
 add_library(WPEPlatformDRM OBJECT ${WPEPlatformDRM_SOURCES})
 add_dependencies(WPEPlatformDRM WPEPlatformGeneratedEnumTypesHeader)
 target_include_directories(WPEPlatformDRM PRIVATE ${WPEPlatformDRM_PRIVATE_INCLUDE_DIRECTORIES})
-target_include_directories(WPEPlatformDRM SYSTEM PRIVATE ${WPEPlatform_SYSTEM_INCLUDE_DIRECTORIES})
+target_include_directories(WPEPlatformDRM SYSTEM PRIVATE ${WPEPlatformDRM_SYSTEM_INCLUDE_DIRECTORIES})
 target_link_libraries(WPEPlatformDRM ${WPEPlatform_LIBRARIES} ${WPEPlatformDRM_LIBRARIES})
 
 set_target_properties(WPEPlatformDRM PROPERTIES
