@@ -267,6 +267,8 @@ static BOOL areEssentiallyEqual(double a, double b)
 
     if (action == @selector(saveAsPDF:))
         return YES;
+    if (action == @selector(saveAsImage:))
+        return YES;
     if (action == @selector(saveAsWebArchive:))
         return YES;
 
@@ -975,11 +977,25 @@ static BOOL isJavaScriptURL(NSURL *url)
     panel.allowedContentTypes = @[ UTTypePDF ];
 
     [panel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
-        if (result == NSModalResponseOK) {
-            [self->_webView createPDFWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
-                [pdfSnapshotData writeToURL:[panel URL] options:0 error:nil];
-            }];
-        }
+        if (result != NSModalResponseOK)
+            return;
+        [self->_webView createPDFWithConfiguration:nil completionHandler:^(NSData *pdfSnapshotData, NSError *error) {
+            [pdfSnapshotData writeToURL:[panel URL] options:0 error:nil];
+        }];
+    }];
+}
+
+- (IBAction)saveAsImage:(id)sender
+{
+    NSSavePanel *panel = [NSSavePanel savePanel];
+    panel.allowedContentTypes = @[ UTTypeTIFF ];
+
+    [panel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
+        if (result != NSModalResponseOK)
+            return;
+        [self->_webView takeSnapshotWithConfiguration:nil completionHandler:^(NSImage *snapshot, NSError *error) {
+            [snapshot.TIFFRepresentation writeToURL:[panel URL] options:0 error:nil];
+        }];
     }];
 }
 
@@ -989,11 +1005,11 @@ static BOOL isJavaScriptURL(NSURL *url)
     panel.allowedContentTypes = @[ UTTypeWebArchive ];
 
     [panel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
-        if (result == NSModalResponseOK) {
-            [self->_webView createWebArchiveDataWithCompletionHandler:^(NSData *archiveData, NSError *error) {
-                [archiveData writeToURL:[panel URL] options:0 error:nil];
-            }];
-        }
+        if (result != NSModalResponseOK)
+            return;
+        [self->_webView createWebArchiveDataWithCompletionHandler:^(NSData *archiveData, NSError *error) {
+            [archiveData writeToURL:[panel URL] options:0 error:nil];
+        }];
     }];
 }
 
