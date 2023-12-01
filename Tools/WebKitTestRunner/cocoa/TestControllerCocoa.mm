@@ -669,6 +669,9 @@ void TestController::configureWebpagePreferences(WKWebViewConfiguration *configu
     [webpagePreferences setPreferredContentMode:contentMode(options)];
 #endif
     configuration.defaultWebpagePreferences = webpagePreferences.get();
+#if HAVE(INLINE_PREDICTIONS)
+    configuration.allowsInlinePredictions = options.allowsInlinePredictions();
+#endif
 }
 
 WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()

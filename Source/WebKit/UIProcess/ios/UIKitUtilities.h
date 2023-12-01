@@ -45,6 +45,11 @@
 - (CGPoint)_wk_clampToScrollExtents:(CGPoint)contentOffset;
 @end
 
+@interface UIGestureRecognizer (WebKitInternal)
+@property (nonatomic, readonly) BOOL _wk_isTextInteractionLoupeGesture;
+@property (nonatomic, readonly) BOOL _wk_isTextInteractionTapGesture;
+@end
+
 @interface UIView (WebKitInternal)
 @property (nonatomic, readonly) UIViewController *_wk_viewControllerForFullScreenPresentation;
 @end

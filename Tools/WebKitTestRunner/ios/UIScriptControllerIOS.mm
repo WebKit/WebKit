@@ -1529,6 +1529,26 @@ bool UIScriptControllerIOS::isWebContentFirstResponder() const
     return [webView() _contentViewIsFirstResponder];
 }
 
+void UIScriptControllerIOS::setInlinePrediction(JSStringRef text)
+{
+    NSString *plainText = text->string();
+    auto attributedText = adoptNS([[NSAttributedString alloc] initWithString:plainText attributes:@{
+        NSBackgroundColorAttributeName : UIColor.clearColor,
+        NSForegroundColorAttributeName : UIColor.grayColor,
+    }]);
+    [UIKeyboardImpl.activeInstance setInlineCompletionAsMarkedText:attributedText.get() selectedRange:NSMakeRange(0, 0) inputString:plainText searchString:@""];
+}
+
+void UIScriptControllerIOS::acceptInlinePrediction()
+{
+    if (!UIKeyboardImpl.activeInstance.hasInlineCompletionAsMarkedText)
+        return;
+
+    [(id<UITextInput>)platformContentView() unmarkText];
+    auto emptyText = adoptNS([[NSAttributedString alloc] initWithString:@""]);
+    [UIKeyboardImpl.activeInstance setInlineCompletionAsMarkedText:emptyText.get() selectedRange:NSMakeRange(0, 0) inputString:@"" searchString:@""];
+}
+
 void UIScriptControllerIOS::becomeFirstResponder()
 {
     [webView() becomeFirstResponder];

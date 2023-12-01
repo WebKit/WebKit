@@ -198,6 +198,20 @@ static constexpr auto epsilonForComputingScrollability = 0.0001;
 
 @end
 
+@implementation UIGestureRecognizer (WebKitInternal)
+
+- (BOOL)_wk_isTextInteractionLoupeGesture
+{
+    return [self.name isEqualToString:@"UITextInteractionNameInteractiveRefinement"];
+}
+
+- (BOOL)_wk_isTextInteractionTapGesture
+{
+    return [self.name isEqualToString:@"UITextInteractionNameSingleTap"];
+}
+
+@end
+
 namespace WebKit {
 
 RetainPtr<UIAlertController> createUIAlertController(NSString *title, NSString *message)

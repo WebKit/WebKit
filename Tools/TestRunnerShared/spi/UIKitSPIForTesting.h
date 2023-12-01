@@ -516,6 +516,8 @@ typedef enum {
 - (void)prepareKeyboardInputModeFromPreferences:(UIKeyboardInputMode *)lastUsedMode;
 - (BOOL)_shouldSuppressSoftwareKeyboard;
 - (void)syncInputManagerToAcceptedAutocorrection:(TIKeyboardCandidate *)autocorrection forInput:(TIKeyboardInput *)inputEvent;
+- (void)setInlineCompletionAsMarkedText:(NSAttributedString *)inlineCompletion selectedRange:(NSRange)selectedRange inputString:(NSString *)inputString searchString:(NSString *)searchString;
+@property (nonatomic, readonly) BOOL hasInlineCompletionAsMarkedText;
 @property (nonatomic, readonly) UIKeyboardInputMode *currentInputModeInPreference;
 @end
 

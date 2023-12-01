@@ -402,8 +402,8 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<UIPreviewItemController> _previewItemController;
 #endif
 
-    RetainPtr<UIGestureRecognizer> _textInteractionLoupeGestureRecognizer;
-    RetainPtr<UIGestureRecognizer> _textInteractionTapGestureRecognizer;
+    __weak UIGestureRecognizer *_cachedTextInteractionLoupeGestureRecognizer;
+    __weak UIGestureRecognizer *_cachedTextInteractionTapGestureRecognizer;
 
     RefPtr<WebCore::TextIndicator> _textIndicator;
     RetainPtr<WebTextIndicatorLayer> _textIndicatorLayer;

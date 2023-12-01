@@ -190,6 +190,9 @@ private:
     void becomeFirstResponder() override;
     void resignFirstResponder() override;
 
+    void setInlinePrediction(JSStringRef) final;
+    void acceptInlinePrediction() final;
+
     void simulateRotation(DeviceOrientation, JSValueRef callback);
 
     int64_t pasteboardChangeCount() const final;
