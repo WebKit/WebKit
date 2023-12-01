@@ -29,6 +29,7 @@
 
 #include "JSWebExtensionAPIDeclarativeNetRequest.h"
 #include "WebExtensionAPIObject.h"
+#include "WebExtensionDeclarativeNetRequestConstants.h"
 
 namespace WebKit {
 
@@ -53,10 +54,9 @@ public:
     void isRegexSupported(NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
     void setExtensionActionOptions(NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
-    // FIXME: Put these in constants so they can be shared when they are used.
-    double maxNumberOfStaticRulesets() const { return 100; }
-    double maxNumberOfEnabledRulesets() const { return 50; }
-    double maxNumberOfDynamicAndSessionRules() const { return 5000; }
+    double maxNumberOfStaticRulesets() const { return webExtensionDeclarativeNetRequestMaximumNumberOfStaticRulesets; }
+    double maxNumberOfEnabledRulesets() const { return webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets; }
+    double maxNumberOfDynamicAndSessionRules() const { return webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules; }
 #endif
 };
 

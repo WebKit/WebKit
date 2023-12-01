@@ -237,7 +237,8 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
 
         // FIXME: <https://webkit.org/b/248429> Support dynamic content scripts by loading them from storage here.
 
-        loadDeclarativeNetRequestRules();
+        loadDeclarativeNetRequestRulesetStateFromStorage();
+        loadDeclarativeNetRequestRules([](bool) { });
 
         addInjectedContent();
     });
@@ -2344,11 +2345,10 @@ void WebExtensionContext::queueStartupAndInstallEventsForExtensionIfNecessary()
     bool extensionVersionDidChange = !m_previousVersion.isEmpty() && m_previousVersion != currentVersion;
 
     if (extensionVersionDidChange) {
-        // FIXME: Remove declarative net request modified rulesets.
-
         [m_state setObject:(NSString *)currentVersion forKey:lastSeenVersionStateKey];
         [m_state removeObjectForKey:backgroundContentEventListenersKey];
         [m_state removeObjectForKey:backgroundContentEventListenersVersionKey];
+        clearDeclarativeNetRequestRulesetState();
 
         writeStateToStorage();
 
@@ -2868,7 +2868,7 @@ static NSString *computeStringHashForContentBlockerRules(NSString *rules)
     return [hashAsString stringByAppendingString:[NSString stringWithFormat:@"-%zu", currentDeclarativeNetRequestRuleTranslatorVersion]];
 }
 
-void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData)
+void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData, CompletionHandler<void(bool)>&& completionHandler)
 {
     NSArray<NSString *> *jsonDeserializationErrorStrings;
     auto *allJSONObjects = [_WKWebExtensionDeclarativeNetRequestTranslator jsonObjectsFromData:rulesData errorStrings:&jsonDeserializationErrorStrings];
@@ -2877,26 +2877,30 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData)
     auto *allConvertedRules = [_WKWebExtensionDeclarativeNetRequestTranslator translateRules:allJSONObjects errorStrings:&parsingErrorStrings];
 
     auto *webKitRules = encodeJSONString(allConvertedRules, JSONOptions::FragmentsAllowed);
-    if (!webKitRules)
+    if (!webKitRules) {
+        completionHandler(false);
         return;
+    }
 
     auto *previouslyLoadedHash = objectForKey<NSString>(m_state, lastLoadedDNRHashStateKey);
     auto *hashOfWebKitRules = computeStringHashForContentBlockerRules(webKitRules);
 
-    [declarativeNetRequestRuleStore() lookUpContentRuleListForIdentifier:uniqueIdentifier() completionHandler:^(WKContentRuleList *foundRuleList, NSError *) {
+    [declarativeNetRequestRuleStore() lookUpContentRuleListForIdentifier:uniqueIdentifier() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), previouslyLoadedHash = String { previouslyLoadedHash }, hashOfWebKitRules = String { hashOfWebKitRules }, webKitRules = String { webKitRules }](WKContentRuleList *foundRuleList, NSError *) mutable {
         if (foundRuleList) {
             if ([previouslyLoadedHash isEqualToString:hashOfWebKitRules]) {
                 auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
                 for (auto& userContentController : userContentControllers)
                     userContentController.addContentRuleList(*foundRuleList->_contentRuleList, m_baseURL);
 
+                completionHandler(true);
                 return;
             }
         }
 
-        [declarativeNetRequestRuleStore() compileContentRuleListForIdentifier:uniqueIdentifier() encodedContentRuleList:webKitRules completionHandler:^(WKContentRuleList *ruleList, NSError *error) {
+        [declarativeNetRequestRuleStore() compileContentRuleListForIdentifier:uniqueIdentifier() encodedContentRuleList:webKitRules completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), hashOfWebKitRules = String { hashOfWebKitRules }](WKContentRuleList *ruleList, NSError *error) mutable {
             if (error) {
                 RELEASE_LOG_ERROR(Extensions, "Error compiling declarativeNetRequest rules: %{public}@", privacyPreservingDescription(error));
+                completionHandler(false);
                 return;
             }
 
@@ -2906,18 +2910,22 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData)
             auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
             for (auto& userContentController : userContentControllers)
                 userContentController.addContentRuleList(*ruleList->_contentRuleList, m_baseURL);
-        }];
-    }];
+
+            completionHandler(true);
+        }).get()];
+    }).get()];
 }
 
-void WebExtensionContext::loadDeclarativeNetRequestRules()
+void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>&& completionHandler)
 {
     // FIXME: rdar://118476702 - Load dynamic rules here.
     // FIXME: rdar://118476774 - Load session rules here.
     // FIXME: rdar://118476776 - Set state if the extension should show the blocked resource count as its badge text.
 
-    if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequest) && !hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess))
+    if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequest) && !hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess)) {
+        completionHandler(false);
         return;
+    }
 
     auto *allJSONData = [NSMutableArray array];
 
@@ -2933,11 +2941,13 @@ void WebExtensionContext::loadDeclarativeNetRequestRules()
     }
 
     if (!allJSONData.count) {
-        // FIXME: rdar://118476702 - When dynamic/session rules are supported, we should remove the content blocker if there are no rules.
+        removeDeclarativeNetRequestRules();
+        [declarativeNetRequestRuleStore() removeContentRuleListForIdentifier:uniqueIdentifier() completionHandler:^(NSError *) { }];
+        completionHandler(true);
         return;
     }
 
-    compileDeclarativeNetRequestRules(allJSONData);
+    compileDeclarativeNetRequestRules(allJSONData, WTFMove(completionHandler));
 }
 
 } // namespace WebKit

@@ -156,6 +156,8 @@ public:
     using MenuItemVector = Vector<Ref<WebExtensionMenuItem>>;
     using MenuItemMap = HashMap<String, Ref<WebExtensionMenuItem>>;
 
+    using DeclarativeNetRequestValidatedRulesets = std::pair<std::optional<WebExtension::DeclarativeNetRequestRulesetVector>, std::optional<String>>;
+
     enum class EqualityOnly : bool { No, Yes };
     enum class WindowIsClosing : bool { No, Yes };
     enum class ReloadFromOrigin : bool { No, Yes };
@@ -430,11 +432,14 @@ private:
     void removeInjectedContent(MatchPatternSet&);
     void removeInjectedContent(WebExtensionMatchPattern&);
 
-    void loadDeclarativeNetRequestRules();
-    void compileDeclarativeNetRequestRules(NSArray *);
+    void loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>&&);
+    void compileDeclarativeNetRequestRules(NSArray *, CompletionHandler<void(bool)>&&);
     void removeDeclarativeNetRequestRules();
     void addDeclarativeNetRequestRulesToPrivateUserContentControllers();
     WKContentRuleListStore *declarativeNetRequestRuleStore();
+    void saveDeclarativeNetRequestRulesetStateToStorage(NSDictionary *rulesetState);
+    void loadDeclarativeNetRequestRulesetStateFromStorage();
+    void clearDeclarativeNetRequestRulesetState();
 
     // Action APIs
     void actionGetTitle(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::optional<String>, std::optional<String>)>&&);
@@ -464,6 +469,10 @@ private:
 
     // DeclarativeNetRequest APIs
     void declarativeNetRequestGetEnabledRulesets(CompletionHandler<void(const Vector<String>&)>&&);
+    void declarativeNetRequestUpdateEnabledRulesets(const Vector<String>& rulesetIdentifiersToEnable, const Vector<String>& rulesetIdentifiersToDisable, CompletionHandler<void(std::optional<String>)>&&);
+    DeclarativeNetRequestValidatedRulesets declarativeNetRequestValidateRulesetIdentifiers(const Vector<String>&);
+    size_t declarativeNetRequestEnabledRulesetCount();
+    void declarativeNetRequestToggleRulesets(const Vector<String>& rulesetIdentifiers, bool newValue, NSMutableDictionary *rulesetIdentifiersToEnabledState);
 
     // Event APIs
     void addListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType);
