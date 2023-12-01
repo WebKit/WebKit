@@ -83,9 +83,8 @@ public:
     void notifyEncodedChunk(Vector<uint8_t>&&, bool isKeyFrame, int64_t timestamp, std::optional<uint64_t> duration, std::optional<unsigned> temporalIndex);
     void notifyEncoderDescription(WebCore::VideoEncoderActiveConfiguration&&);
 
-    // Must be called on the VideoDecoder thread, or within postTaskCallback.
+    // Must be called on the VideoEncoder thread, or within postTaskCallback.
     void close() { m_isClosed = true; }
-    void addDuration(int64_t timestamp, uint64_t duration) { m_timestampToDuration.insert_or_assign(timestamp, duration); }
 
 private:
     RemoteVideoEncoderCallbacks(VideoEncoder::DescriptionCallback&&, VideoEncoder::OutputCallback&&, VideoEncoder::PostTaskCallback&&);
@@ -94,7 +93,6 @@ private:
     VideoEncoder::OutputCallback m_outputCallback;
     VideoEncoder::PostTaskCallback m_postTaskCallback;
     bool m_isClosed { false };
-    StdUnorderedMap<int64_t, uint64_t> m_timestampToDuration;
 };
 
 class RemoteVideoEncoder : public WebCore::VideoEncoder {
@@ -287,8 +285,11 @@ RemoteVideoEncoder::~RemoteVideoEncoder()
 
 void RemoteVideoEncoder::encode(RawFrame&& rawFrame, bool shouldGenerateKeyFrame, EncodeCallback&& callback)
 {
-    WebProcess::singleton().libWebRTCCodecs().encodeFrame(m_internalEncoder, rawFrame.frame.get(), rawFrame.timestamp, rawFrame.duration, shouldGenerateKeyFrame);
-    callback({ });
+    WebProcess::singleton().libWebRTCCodecs().encodeFrame(m_internalEncoder, rawFrame.frame.get(), rawFrame.timestamp, rawFrame.duration, shouldGenerateKeyFrame, [callback = WTFMove(callback), callbacks = m_callbacks] (bool result) mutable {
+        callbacks->postTask([callback = WTFMove(callback), result]() mutable {
+            callback(result ? String { } : "Encoding task failed"_s);
+        });
+    });
 }
 
 void RemoteVideoEncoder::flush(Function<void()>&& callback)
@@ -323,10 +324,6 @@ void RemoteVideoEncoderCallbacks::notifyEncodedChunk(Vector<uint8_t>&& data, boo
         if (protectedThis->m_isClosed)
             return;
 
-        // FIXME: Remove from the map.
-        auto iterator = protectedThis->m_timestampToDuration.find(timestamp);
-        if (iterator != protectedThis->m_timestampToDuration.end())
-            duration = iterator->second;
         protectedThis->m_outputCallback({ WTFMove(data), isKeyFrame, timestamp, duration, temporalIndex });
     });
 }

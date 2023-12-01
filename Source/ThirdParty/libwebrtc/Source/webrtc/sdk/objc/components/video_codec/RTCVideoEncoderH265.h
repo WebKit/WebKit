@@ -22,5 +22,6 @@ __attribute__((objc_runtime_name("WK_RTCVideoEncoderH265")))
 - (void)setLowLatency:(bool)enabled;
 - (void)setUseAnnexB:(bool)useAnnexB;
 - (void)setDescriptionCallback:(RTCVideoEncoderDescriptionCallback)callback;
+- (void)setErrorCallback:(RTCVideoEncoderErrorCallback)callback;
 - (void)flush;
 @end

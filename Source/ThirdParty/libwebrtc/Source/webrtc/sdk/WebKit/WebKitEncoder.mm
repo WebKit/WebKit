@@ -50,6 +50,7 @@
 - (void)setLowLatency:(bool)lowLatencyEnabled;
 - (void)setUseAnnexB:(bool)useAnnexB;
 - (void)setDescriptionCallback:(RTCVideoEncoderDescriptionCallback)callback;
+- (void)setErrorCallback:(RTCVideoEncoderErrorCallback)callback;
 - (void)flush;
 @end
 
@@ -129,6 +130,14 @@
         return;
     }
     [m_h265Encoder setDescriptionCallback:callback];
+}
+
+- (void)setErrorCallback:(RTCVideoEncoderErrorCallback)callback {
+    if (m_h264Encoder) {
+        [m_h264Encoder setErrorCallback:callback];
+        return;
+    }
+    [m_h265Encoder setErrorCallback:callback];
 }
 
 - (void)flush {
@@ -365,7 +374,7 @@ void encoderVideoTaskComplete(void* callback, webrtc::VideoCodecType codecType, 
     static_cast<EncodedImageCallback*>(callback)->OnEncodedImage(encodedImage, &codecSpecificInfo);
 }
 
-void* createLocalEncoder(const webrtc::SdpVideoFormat& format, bool useAnnexB, webrtc::LocalEncoderScalabilityMode scalabilityMode, LocalEncoderCallback frameCallback, LocalEncoderDescriptionCallback descriptionCallback)
+void* createLocalEncoder(const webrtc::SdpVideoFormat& format, bool useAnnexB, webrtc::LocalEncoderScalabilityMode scalabilityMode, LocalEncoderCallback frameCallback, LocalEncoderDescriptionCallback descriptionCallback, LocalEncoderErrorCallback errorCallback)
 {
     auto *codecInfo = [[RTCVideoCodecInfo alloc] initWithNativeSdpVideoFormat: format];
     auto *encoder = [[WK_RTCLocalVideoH264H265Encoder alloc] initWithCodecInfo:codecInfo scalabilityMode:scalabilityMode];
@@ -397,6 +406,9 @@ void* createLocalEncoder(const webrtc::SdpVideoFormat& format, bool useAnnexB, w
 
     [encoder setUseAnnexB:useAnnexB];
     [encoder setDescriptionCallback:descriptionCallback];
+    [encoder setErrorCallback:^(OSStatus result) {
+        errorCallback(result == noErr);
+    }];
 
     return (__bridge_retained void*)encoder;
 }

@@ -50,6 +50,7 @@ VT_EXPORT const CFStringRef kVTVideoEncoderSpecification_RequiredLowLatency;
 VT_EXPORT const CFStringRef kVTVideoEncoderSpecification_Usage;
 VT_EXPORT const CFStringRef kVTCompressionPropertyKey_Usage;
 
+static constexpr int ErrorCallbackDefaultValue = -1;
 @interface RTCVideoEncoderH264 ()
 
 - (void)frameWasEncoded:(OSStatus)status
@@ -421,6 +422,7 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
   bool _useAnnexB;
   bool _needsToSendDescription;
   RTCVideoEncoderDescriptionCallback _descriptionCallback;
+  RTCVideoEncoderErrorCallback _errorCallback;
 }
 
 // .5 is set as a mininum to prevent overcompensating for large temporary
@@ -511,6 +513,11 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
     _descriptionCallback = callback;
 }
 
+- (void)setErrorCallback:(RTCVideoEncoderErrorCallback)callback
+{
+    _errorCallback = callback;
+}
+
 - (bool)hasCompressionSession
 {
     return _vtCompressionSession;
@@ -520,6 +527,9 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
     codecSpecificInfo:(nullable id<RTCCodecSpecificInfo>)codecSpecificInfo
            frameTypes:(NSArray<NSNumber *> *)frameTypes {
   if (!_callback || ![self hasCompressionSession]) {
+    if (_errorCallback) {
+      _errorCallback(ErrorCallbackDefaultValue);
+    }
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
   }
   BOOL isKeyframeRequired = _isKeyFrameRequired;
@@ -531,6 +541,9 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
   }
 
   if (_disableEncoding) {
+    if (_errorCallback) {
+      _errorCallback(ErrorCallbackDefaultValue);
+    }
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
   if (_isUsingSoftwareEncoder) {
@@ -552,6 +565,9 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
       // Cropping required, we need to crop and scale to a new pixel buffer.
       pixelBuffer = CreatePixelBuffer(_vtCompressionSession);
       if (!pixelBuffer) {
+        if (_errorCallback) {
+          _errorCallback(ErrorCallbackDefaultValue);
+        }
         return WEBRTC_VIDEO_CODEC_ERROR;
       }
       int dstWidth = CVPixelBufferGetWidth(pixelBuffer);
@@ -566,6 +582,9 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
       _frameScaleBuffer.shrink_to_fit();
       if (![rtcPixelBuffer cropAndScaleTo:pixelBuffer withTempBuffer:_frameScaleBuffer.data()]) {
         CVBufferRelease(pixelBuffer);
+        if (_errorCallback) {
+          _errorCallback(ErrorCallbackDefaultValue);
+        }
         return WEBRTC_VIDEO_CODEC_ERROR;
       }
     }
@@ -575,12 +594,18 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
     // We did not have a native frame buffer
     pixelBuffer = CreatePixelBuffer(_vtCompressionSession);
     if (!pixelBuffer) {
+      if (_errorCallback) {
+        _errorCallback(ErrorCallbackDefaultValue);
+      }
       return WEBRTC_VIDEO_CODEC_ERROR;
     }
     RTC_DCHECK(pixelBuffer);
     if (!CopyVideoFrameToNV12PixelBuffer([frame.buffer toI420], pixelBuffer)) {
       RTC_LOG(LS_ERROR) << "Failed to copy frame data.";
       CVBufferRelease(pixelBuffer);
+      if (_errorCallback) {
+        _errorCallback(ErrorCallbackDefaultValue);
+      }
       return WEBRTC_VIDEO_CODEC_ERROR;
     }
   }
@@ -921,11 +946,15 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
     RTC_LOG(LS_ERROR) << "H264 encode failed with code: " << status;
     if (isKeyFrameRequired)
       _isKeyFrameRequired = true;
+    if (_errorCallback)
+      _errorCallback(status);
     return;
   }
   if (infoFlags & kVTEncodeInfo_FrameDropped) {
     if (isKeyFrameRequired)
       _isKeyFrameRequired = true;
+    if (_errorCallback)
+      _errorCallback(noErr);
     RTC_LOG(LS_INFO) << "H264 encode dropped frame.";
     RTC_DCHECK(_isH264LowLatencyEncoderEnabled);
     return;
@@ -953,6 +982,8 @@ uint32_t computeFramerate(uint32_t proposedFramerate, uint32_t maxAllowedFramera
   if (_useAnnexB) {
     if (!webrtc::H264CMSampleBufferToAnnexBBuffer(sampleBuffer, isKeyframe, buffer.get())) {
       RTC_LOG(LS_WARNING) << "Unable to parse H264 encoded buffer";
+      if (_errorCallback)
+        _errorCallback(ErrorCallbackDefaultValue);
       return;
     }
     if (_descriptionCallback && _needsToSendDescription) {
