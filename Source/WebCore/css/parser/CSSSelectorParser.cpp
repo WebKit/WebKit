@@ -466,6 +466,7 @@ static bool isTreeAbidingPseudoElement(CSSSelector::PseudoElementType pseudoElem
     case CSSSelector::PseudoElementBefore:
     case CSSSelector::PseudoElementAfter:
     case CSSSelector::PseudoElementMarker:
+    case CSSSelector::PseudoElementBackdrop:
         return true;
     default:
         return false;

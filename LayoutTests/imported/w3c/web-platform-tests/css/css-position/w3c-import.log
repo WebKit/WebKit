@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-position/backdrop-tree-abiding-slotted.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/fixed-z-index-blend.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-position/hypothetical-box-scroll-parent-expected.html
