@@ -39,7 +39,7 @@ struct GenericCueData {
     enum class Status : uint8_t { Uninitialized, Partial, Complete };
 
     GenericCueData() = default;
-    GenericCueData(InbandGenericCueIdentifier uniqueId, const MediaTime& startTime, const MediaTime& endTime, const AtomString& id, const String& content, const String& fontName, double line, double position, double size, double baseFontSize, double relativeFontSize, const Color& foregroundColor, const Color& backgroundColor, const Color& highlightColor, GenericCueData::Alignment align, GenericCueData::Status status)
+    GenericCueData(InbandGenericCueIdentifier uniqueId, const MediaTime& startTime, const MediaTime& endTime, const AtomString& id, const String& content, const String& fontName, double line, double position, double size, double baseFontSize, double relativeFontSize, const Color& foregroundColor, const Color& backgroundColor, const Color& highlightColor, GenericCueData::Alignment positionAlign, GenericCueData::Alignment align, GenericCueData::Status status)
         : m_uniqueId(uniqueId)
         , m_startTime(startTime)
         , m_endTime(endTime)
@@ -54,6 +54,7 @@ struct GenericCueData {
         , m_foregroundColor(foregroundColor)
         , m_backgroundColor(backgroundColor)
         , m_highlightColor(highlightColor)
+        , m_positionAlign(positionAlign)
         , m_align(align)
         , m_status(status)
     {
@@ -77,6 +78,7 @@ struct GenericCueData {
     Color m_foregroundColor;
     Color m_backgroundColor;
     Color m_highlightColor;
+    Alignment m_positionAlign { Alignment::None };
     Alignment m_align { Alignment::None };
     Status m_status { Status::Uninitialized };
 };
@@ -105,6 +107,9 @@ public:
 
     double position() const { return m_cueData.m_position; }
     void setPosition(double position) { m_cueData.m_position = position; }
+
+    GenericCueData::Alignment positionAlign() const { return m_cueData.m_positionAlign; }
+    void setPositionAlign(GenericCueData::Alignment align) { m_cueData.m_positionAlign = align; }
 
     double size() const { return m_cueData.m_size; }
     void setSize(double size) { m_cueData.m_size = size; }
