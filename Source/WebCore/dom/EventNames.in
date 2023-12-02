@@ -29,6 +29,7 @@ FormDataEvent
 HashChangeEvent
 InputEvent
 InputEvents interfaceName=InputEvent
+InvokeEvent
 KeyboardEvent
 KeyboardEvents interfaceName=KeyboardEvent
 MediaQueryListEvent

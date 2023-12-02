@@ -1685,6 +1685,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIntersectionObserverCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIntersectionObserverCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIntersectionObserverEntry.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIntersectionObserverEntry.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInvokeEvent.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSInvokeEvent.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIterationCompositeOperation.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSIterationCompositeOperation.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSJsonWebKey.cpp

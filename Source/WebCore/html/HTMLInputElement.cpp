@@ -1286,7 +1286,10 @@ void HTMLInputElement::defaultEventHandler(Event& event)
     // must dispatch a DOMActivate event - a click event will not do the job.
     if (event.type() == eventNames().DOMActivateEvent) {
         m_inputType->handleDOMActivateEvent(event);
-        handlePopoverTargetAction();
+        if (invokeTargetElement())
+            handleInvokeAction();
+        else
+            handlePopoverTargetAction();
         if (event.defaultHandled())
             return;
     }

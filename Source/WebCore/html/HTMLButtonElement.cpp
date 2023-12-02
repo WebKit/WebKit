@@ -155,6 +155,8 @@ void HTMLButtonElement::defaultEventHandler(Event& event)
 
             if (m_type == SUBMIT || m_type == RESET)
                 event.setDefaultHandled();
+        } else if (invokeTargetElement()) {
+            handleInvokeAction();
         } else
             handlePopoverTargetAction();
     }

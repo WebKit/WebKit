@@ -102,6 +102,10 @@ public:
     const AtomString& popoverTargetAction() const;
     void setPopoverTargetAction(const AtomString& value);
 
+    RefPtr<HTMLElement> invokeTargetElement() const;
+    const AtomString& invokeAction() const;
+    void setInvokeAction(const AtomString& value);
+
     using Node::ref;
     using Node::deref;
 
@@ -128,6 +132,8 @@ protected:
     void dispatchBlurEvent(RefPtr<Element>&& newFocusedElement) override;
 
     void handlePopoverTargetAction() const;
+
+    void handleInvokeAction();
 
 private:
     void refFormAssociatedElement() const final { ref(); }
