@@ -174,6 +174,9 @@ namespace WebCore {
 #if HAVE(TRANSLATION_UI_SERVICES)
     String contextMenuItemTagTranslate(const String& selectedString);
 #endif
+#if ENABLE(UNIFIED_PDF)
+    WEBCORE_EXPORT String contextMenuItemPDFOpenWithPreview();
+#endif
 #if ENABLE(PDFJS)
     String contextMenuItemPDFAutoSize();
     String contextMenuItemPDFZoomIn();

@@ -503,6 +503,13 @@ String contextMenuItemTagTranslate(const String& selectedString)
 }
 #endif
 
+#if ENABLE(UNIFIED_PDF)
+String contextMenuItemPDFOpenWithPreview()
+{
+    return WEB_UI_STRING("Open with Preview", "Open with Preview context menu item");
+}
+#endif
+
 #if ENABLE(PDFJS)
 String contextMenuItemPDFAutoSize()
 {

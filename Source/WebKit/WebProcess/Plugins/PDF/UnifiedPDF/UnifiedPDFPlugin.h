@@ -33,6 +33,8 @@
 #include <wtf/OptionSet.h>
 
 namespace WebKit {
+
+struct PDFContextMenu;
 class WebFrame;
 class WebMouseEvent;
 
@@ -88,6 +90,13 @@ private:
     bool handleKeyboardEvent(const WebKeyboardEvent&) override;
     bool handleEditingCommand(StringView commandName) override;
     bool isEditingCommandEnabled(StringView commandName) override;
+
+    enum class ContextMenuItemTag : uint8_t {
+        OpenWithPreview
+    };
+
+    PDFContextMenu createContextMenu(const WebCore::IntPoint& contextMenuPoint) const;
+    void performContextMenuAction(ContextMenuItemTag) const;
 
     String getSelectionString() const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;
