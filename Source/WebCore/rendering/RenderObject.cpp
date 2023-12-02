@@ -2366,14 +2366,21 @@ ScrollAnchoringController* RenderObject::findScrollAnchoringControllerForRendere
     return renderer.view().frameView().scrollAnchoringController();
 }
 
-void RenderObject::RepaintRects::transform(TransformationMatrix& matrix)
+void RenderObject::RepaintRects::transform(const TransformationMatrix& matrix)
 {
     clippedOverflowRect = matrix.mapRect(clippedOverflowRect);
+    if (outlineBoundsRect)
+        *outlineBoundsRect = matrix.mapRect(*outlineBoundsRect);
 }
 
-void RenderObject::RepaintRects::transform(TransformationMatrix& matrix, float deviceScaleFactor)
+void RenderObject::RepaintRects::transform(const TransformationMatrix& matrix, float deviceScaleFactor)
 {
+    bool identicalRects = outlineBoundsRect && *outlineBoundsRect == clippedOverflowRect;
     clippedOverflowRect = LayoutRect(encloseRectToDevicePixels(matrix.mapRect(clippedOverflowRect), deviceScaleFactor));
+    if (identicalRects)
+        *outlineBoundsRect = clippedOverflowRect;
+    else if (outlineBoundsRect)
+        *outlineBoundsRect = LayoutRect(encloseRectToDevicePixels(matrix.mapRect(*outlineBoundsRect), deviceScaleFactor));
 }
 
 #if PLATFORM(IOS_FAMILY)

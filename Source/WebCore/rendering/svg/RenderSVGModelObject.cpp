@@ -262,13 +262,13 @@ bool RenderSVGModelObject::applyCachedClipAndScrollPosition(RepaintRects& rects,
         clipRect.expandToInfiniteX();
     if (effectiveOverflowY() == Overflow::Visible)
         clipRect.expandToInfiniteY();
+
     bool intersects;
     if (context.options.contains(VisibleRectContextOption::UseEdgeInclusiveIntersection))
-        intersects = rects.clippedOverflowRect.edgeInclusiveIntersect(clipRect);
-    else {
-        rects.clippedOverflowRect.intersect(clipRect);
-        intersects = !rects.clippedOverflowRect.isEmpty();
-    }
+        intersects = rects.edgeInclusiveIntersect(clipRect);
+    else
+        intersects = rects.intersect(clipRect);
+
     return intersects;
 }
 
