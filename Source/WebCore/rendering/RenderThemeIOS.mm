@@ -65,7 +65,6 @@
 #import "LocalFrameView.h"
 #import "LocalizedDateCache.h"
 #import "NodeRenderStyle.h"
-#import "Page.h"
 #import "PaintInfo.h"
 #import "PathUtilities.h"
 #import "PlatformLocale.h"
@@ -75,7 +74,6 @@
 #import "RenderMenuList.h"
 #import "RenderMeter.h"
 #import "RenderObject.h"
-#import "RenderProgress.h"
 #import "RenderSlider.h"
 #import "RenderStyleSetters.h"
 #import "RenderView.h"
@@ -1601,13 +1599,6 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
     }
 
     return false;
-}
-
-constexpr Seconds progressAnimationRepeatInterval = 16_ms;
-
-Seconds RenderThemeIOS::animationRepeatIntervalForProgressBar(const RenderProgress&) const
-{
-    return progressAnimationRepeatInterval;
 }
 
 bool RenderThemeIOS::supportsMeter(StyleAppearance appearance) const

@@ -34,6 +34,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "MediaControlTextTrackContainerElement.h"
+#include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
@@ -73,8 +74,7 @@ static const int menuListButtonFocusOffset = -2;
 static const unsigned menuListButtonPadding = 5;
 static const int menuListButtonBorderSize = 1; // Keep in sync with buttonBorderSize in ThemeAdwaita.
 static const unsigned progressActivityBlocks = 5;
-static const unsigned progressAnimationFrameCount = 75;
-static const Seconds progressAnimationFrameRate = 33_ms; // 30fps.
+static const Seconds progressAnimationDuration = 2475_ms;
 static const unsigned progressBarSize = 6;
 static constexpr auto progressBarBackgroundColorLight = SRGBA<uint8_t> { 0, 0, 0, 40 };
 static constexpr auto progressBarBackgroundColorDark = SRGBA<uint8_t> { 255, 255, 255, 30 };
@@ -440,14 +440,14 @@ void RenderThemeAdwaita::paintMenuListButtonDecorations(const RenderBox& renderO
     paintMenuList(renderObject, paintInfo, rect);
 }
 
-Seconds RenderThemeAdwaita::animationRepeatIntervalForProgressBar(const RenderProgress&) const
+Seconds RenderThemeAdwaita::animationRepeatIntervalForProgressBar(const RenderProgress& renderer) const
 {
-    return progressAnimationFrameRate;
+    return renderer.page().preferredRenderingUpdateInterval();
 }
 
-Seconds RenderThemeAdwaita::animationDurationForProgressBar(const RenderProgress&) const
+Seconds RenderThemeAdwaita::animationDurationForProgressBar() const
 {
-    return progressAnimationFrameRate * progressAnimationFrameCount;
+    return progressAnimationDuration;
 }
 
 IntRect RenderThemeAdwaita::progressBarRectForBounds(const RenderProgress&, const IntRect& bounds) const

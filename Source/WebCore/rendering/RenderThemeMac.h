@@ -28,7 +28,6 @@ OBJC_CLASS WebCoreRenderThemeNotificationObserver;
 
 namespace WebCore {
 
-class RenderProgress;
 class RenderStyle;
 
 struct AttachmentLayout;
@@ -83,8 +82,6 @@ public:
     FloatSize meterSizeForBounds(const RenderMeter&, const FloatRect&) const final;
     bool supportsMeter(StyleAppearance) const final;
 
-    // Returns the repeat interval of the animation for the progress bar.
-    Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
     IntRect progressBarRectForBounds(const RenderProgress&, const IntRect&) const final;
 
     // Controls color values returned from platformFocusRingColor(). systemColor() will be used when false.

@@ -1568,21 +1568,6 @@ void RenderTheme::paintSliderTicks(const RenderObject& renderer, const PaintInfo
 
 #endif // ENABLE(DATALIST_ELEMENT)
 
-Seconds RenderTheme::animationRepeatIntervalForProgressBar(const RenderProgress&) const
-{
-    return 0_s;
-}
-
-Seconds RenderTheme::animationDurationForProgressBar(const RenderProgress&) const
-{
-    return 0_s;
-}
-
-IntRect RenderTheme::progressBarRectForBounds(const RenderProgress&, const IntRect& bounds) const
-{
-    return bounds;
-}
-
 bool RenderTheme::shouldHaveSpinButton(const HTMLInputElement& inputElement) const
 {
     return inputElement.isSteppable() && !inputElement.isRangeControl();
