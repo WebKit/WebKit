@@ -1199,6 +1199,7 @@ dom/UIEventWithKeyState.cpp
 dom/UserActionElementSet.cpp
 dom/UserGestureIndicator.cpp
 dom/UserTypingGestureIndicator.cpp
+dom/ViewTransition.cpp
 dom/ViewportArguments.cpp
 dom/VisitedLinkState.cpp
 dom/WheelEvent.cpp
@@ -4403,6 +4404,8 @@ JSVideoTrackList.cpp
 JSVideoTransferCharacteristics.cpp
 JSViewTimeline.cpp
 JSViewTimelineOptions.cpp
+JSViewTransition.cpp
+JSViewTransitionUpdateCallback.cpp
 JSVisibilityState.cpp
 JSVisualViewport.cpp
 JSVoidCallback.cpp

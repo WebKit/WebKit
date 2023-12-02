@@ -91,7 +91,7 @@ void RemoteVideoTrackProxy::selectedChanged(bool selected)
     updateConfiguration();
 }
 
-void RemoteVideoTrackProxy::idChanged(const AtomString&)
+void RemoteVideoTrackProxy::idChanged(TrackID)
 {
     updateConfiguration();
 }

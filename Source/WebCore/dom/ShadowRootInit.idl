@@ -26,6 +26,6 @@
 dictionary ShadowRootInit {
     required ShadowRootMode mode;
     boolean delegatesFocus = false;
-    [EnabledBySetting=DeclarativeShadowDOMEnabled] boolean cloneable = false;
+    [EnabledBySetting=DeclarativeShadowRootsEnabled] boolean cloneable = false;
     [EnabledBySetting=ImperativeSlotAPIEnabled] SlotAssignmentMode slotAssignment = "named";
 };

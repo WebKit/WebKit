@@ -216,10 +216,10 @@ private:
 
     friend class Internals;
     using SamplesPromise = NativePromise<Vector<String>, int>;
-    WEBCORE_EXPORT Ref<SamplesPromise> bufferedSamplesForTrackId(const AtomString&);
-    WEBCORE_EXPORT Ref<SamplesPromise> enqueuedSamplesForTrackID(const AtomString&);
-    WEBCORE_EXPORT MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&);
-    WEBCORE_EXPORT void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t);
+    WEBCORE_EXPORT Ref<SamplesPromise> bufferedSamplesForTrackId(TrackID);
+    WEBCORE_EXPORT Ref<SamplesPromise> enqueuedSamplesForTrackID(TrackID);
+    WEBCORE_EXPORT MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID);
+    WEBCORE_EXPORT void setMaximumQueueDepthForTrackID(TrackID, uint64_t);
 
     Ref<SourceBufferPrivate> m_private;
     MediaSource* m_source;

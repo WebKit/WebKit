@@ -87,21 +87,42 @@ TextTrack& TextTrack::captionMenuAutomaticItem()
     return automatic;
 }
 
-TextTrack::TextTrack(ScriptExecutionContext* context, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language, TextTrackType type)
-    : TrackBase(context, TrackBase::TextTrack, id, label, language)
-    , ActiveDOMObject(context)
-    , m_trackType(type)
+TextTrack::Kind TextTrack::convertKind(const AtomString& kind)
 {
     if (kind == captionsAtom())
-        m_kind = Kind::Captions;
-    else if (kind == chaptersKeyword())
-        m_kind = Kind::Chapters;
-    else if (kind == descriptionsKeyword())
-        m_kind = Kind::Descriptions;
-    else if (kind == forcedKeyword())
-        m_kind = Kind::Forced;
-    else if (kind == metadataKeyword())
-        m_kind = Kind::Metadata;
+        return Kind::Captions;
+    if (kind == chaptersKeyword())
+        return Kind::Chapters;
+    if (kind == descriptionsKeyword())
+        return Kind::Descriptions;
+    if (kind == forcedKeyword())
+        return Kind::Forced;
+    if (kind == metadataKeyword())
+        return Kind::Metadata;
+    return Kind::Subtitles;
+}
+
+TextTrack::TextTrack(ScriptExecutionContext* context, const AtomString& kind, TrackID id, const AtomString& label, const AtomString& language, TextTrackType type)
+    : TrackBase(context, TrackBase::TextTrack, std::nullopt, id, label, language)
+    , ActiveDOMObject(context)
+    , m_kind(convertKind(kind))
+    , m_trackType(type)
+{
+}
+
+TextTrack::TextTrack(ScriptExecutionContext* context, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language, TextTrackType type)
+    : TrackBase(context, TrackBase::TextTrack, id, 0, label, language)
+    , ActiveDOMObject(context)
+    , m_kind(convertKind(kind))
+    , m_trackType(type)
+{
+}
+
+Ref<TextTrack> TextTrack::create(Document* document, const AtomString& kind, TrackID id, const AtomString& label, const AtomString& language)
+{
+    auto textTrack = adoptRef(*new TextTrack(document, kind, id, label, language, AddTrack));
+    textTrack->suspendIfNeeded();
+    return textTrack;
 }
 
 Ref<TextTrack> TextTrack::create(Document* document, const AtomString& kind, const AtomString& id, const AtomString& label, const AtomString& language)
@@ -593,7 +614,7 @@ void TextTrack::setLanguage(const AtomString& language)
     });
 }
 
-void TextTrack::setId(const AtomString& id)
+void TextTrack::setId(TrackID id)
 {
     TrackBase::setId(id);
     m_clients.forEach([this] (auto& client) {

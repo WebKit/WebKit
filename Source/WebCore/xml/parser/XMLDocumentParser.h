@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "FragmentScriptingPermission.h"
+#include "ParserContentPolicy.h"
 #include "PendingScriptClient.h"
 #include "ScriptableDocumentParser.h"
 #include "SegmentedString.h"

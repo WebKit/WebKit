@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: Skipping view transition because skipTransition() was called.
 
-FAIL finished promise should be resolved if skipTransition() is invoked before a synchronous updateCallbackDone callback is dispatched assert_implements: Missing document.startViewTransition undefined
+Harness Error (FAIL), message = Unhandled rejection: Skipping view transition because skipTransition() was called.
+
+PASS finished promise should be resolved if skipTransition() is invoked before a synchronous updateCallbackDone callback is dispatched
 

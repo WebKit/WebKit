@@ -825,44 +825,81 @@ public:
     };
 
     struct RepaintRects {
-        LayoutRect clippedOverflowRect;
+        LayoutRect clippedOverflowRect; // Some rect (normally the visual overflow rect) mapped up to the repaint container, respecting clipping.
+        std::optional<LayoutRect> outlineBoundsRect; // A rect repsenting the extent of outlines and shadows, mapped to the repaint container, but not clipped.
+
+        RepaintRects(LayoutRect rect, const std::optional<LayoutRect>& outlineBounds = { })
+            : clippedOverflowRect(rect)
+            , outlineBoundsRect(outlineBounds)
+        { }
+
         bool operator==(const RepaintRects&) const = default;
 
         void move(LayoutSize size)
         {
             clippedOverflowRect.move(size);
+            if (outlineBoundsRect)
+                outlineBoundsRect->move(size);
         }
 
         void moveBy(LayoutPoint size)
         {
             clippedOverflowRect.moveBy(size);
+            if (outlineBoundsRect)
+                outlineBoundsRect->moveBy(size);
         }
 
-        void expand(const LayoutSize& size)
+        void expand(LayoutSize size)
         {
             clippedOverflowRect.expand(size);
+            if (outlineBoundsRect)
+                outlineBoundsRect->expand(size);
         }
 
         void encloseToIntRects()
         {
             clippedOverflowRect = enclosingIntRect(clippedOverflowRect);
+            if (outlineBoundsRect)
+                *outlineBoundsRect = enclosingIntRect(*outlineBoundsRect);
         }
 
         void unite(const RepaintRects& other)
         {
             clippedOverflowRect.unite(other.clippedOverflowRect);
+            if (outlineBoundsRect && other.outlineBoundsRect)
+                outlineBoundsRect->unite(*other.outlineBoundsRect);
         }
 
         void flipForWritingMode(LayoutSize containerSize, bool isHorizontalWritingMode)
         {
-            if (isHorizontalWritingMode)
+            if (isHorizontalWritingMode) {
                 clippedOverflowRect.setY(containerSize.height() - clippedOverflowRect.maxY());
-            else
+                if (outlineBoundsRect)
+                    outlineBoundsRect->setY(containerSize.height() - outlineBoundsRect->maxY());
+            } else {
                 clippedOverflowRect.setX(containerSize.width() - clippedOverflowRect.maxX());
+                if (outlineBoundsRect)
+                    outlineBoundsRect->setX(containerSize.width() - outlineBoundsRect->maxX());
+            }
         }
 
-        void transform(TransformationMatrix&);
-        void transform(TransformationMatrix&, float deviceScaleFactor);
+        // Returns true if intersecting (clippedOverflowRect remains non-empty).
+        bool intersect(LayoutRect clipRect)
+        {
+            // Note the we only intersect clippedOverflowRect.
+            clippedOverflowRect.intersect(clipRect);
+            return !clippedOverflowRect.isEmpty();
+        }
+
+        // Returns true if intersecting (clippedOverflowRect remains non-empty).
+        bool edgeInclusiveIntersect(LayoutRect clipRect)
+        {
+            // Note the we only intersect clippedOverflowRect.
+            return clippedOverflowRect.edgeInclusiveIntersect(clipRect);
+        }
+
+        void transform(const TransformationMatrix&);
+        void transform(const TransformationMatrix&, float deviceScaleFactor);
     };
 
     // Returns the rect that should be repainted whenever this object changes. The rect is in the view's

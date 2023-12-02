@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: ReferenceError: Can't find variable: bar
 
-FAIL transition skipped because callback has invalid syntax assert_implements: Missing document.startViewTransition undefined
+Harness Error (FAIL), message = ReferenceError: Can't find variable: bar
+
+PASS transition skipped because callback has invalid syntax
 

@@ -227,6 +227,8 @@ class TreeWalker;
 class UndoManager;
 class ValidationMessage;
 class VisibilityChangeClient;
+class ViewTransition;
+class ViewTransitionUpdateCallback;
 class VisitedLinkState;
 class WakeLockManager;
 class WebAnimation;
@@ -453,6 +455,9 @@ public:
 
     bool shouldNotFireMutationEvents() const { return m_shouldNotFireMutationEvents; }
     void setShouldNotFireMutationEvents(bool fire) { m_shouldNotFireMutationEvents = fire; }
+
+    void parseMarkupUnsafe(const String&, OptionSet<ParserContentPolicy>);
+    static Ref<Document> parseHTMLUnsafe(Document&, const String&);
 
     Element* elementForAccessKey(const String& key);
     void invalidateAccessKeyCache();
@@ -1609,6 +1614,15 @@ public:
     void unobserveForContainIntrinsicSize(Element&);
     void resetObservationSizeForContainIntrinsicSize(Element&);
 
+    Ref<ViewTransition> startViewTransition(RefPtr<ViewTransitionUpdateCallback>&& = nullptr);
+    ViewTransition* activeViewTransition() const;
+    void setActiveViewTransition(RefPtr<ViewTransition>&&);
+
+    bool hasViewTransitionPseudoElementTree() const;
+    void setHasViewTransitionPseudoElementTree(bool);
+
+    void performPendingViewTransitions();
+
 #if ENABLE(MEDIA_STREAM)
     void setHasCaptureMediaStreamTrack() { m_hasHadCaptureMediaStreamTrack = true; }
     bool hasHadCaptureMediaStreamTrack() const { return m_hasHadCaptureMediaStreamTrack; }
@@ -2150,6 +2164,9 @@ private:
 
     Vector<WeakPtr<ResizeObserver>> m_resizeObservers;
 
+    RefPtr<ViewTransition> m_activeViewTransition;
+    bool m_hasViewTransitionPseudoElementTree;
+
     Timer m_loadEventDelayTimer;
 
     ViewportArguments m_viewportArguments;
@@ -2484,6 +2501,7 @@ private:
     static bool hasEverCreatedAnAXObjectCache;
 
     RefPtr<ResizeObserver> m_resizeObserverForContainIntrinsicSize;
+
     const std::optional<FrameIdentifier> m_frameIdentifier;
 };
 

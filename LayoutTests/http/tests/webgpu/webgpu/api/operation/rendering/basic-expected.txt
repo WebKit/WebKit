@@ -1,1 +1,8 @@
-(Populate me when we're ready to investigate this test)
+
+PASS :clear:
+PASS :fullscreen_quad:
+PASS :large_draw:indexed=true;indirect=true
+PASS :large_draw:indexed=true;indirect=false
+PASS :large_draw:indexed=false;indirect=true
+PASS :large_draw:indexed=false;indirect=false
+

@@ -61,16 +61,9 @@ MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample)
     commonInit();
 }
 
-MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, AtomString trackID)
+MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, TrackID trackID)
     : m_sample(sample)
     , m_id(trackID)
-{
-    commonInit();
-}
-
-MediaSampleAVFObjC::MediaSampleAVFObjC(CMSampleBufferRef sample, uint64_t trackID)
-    : m_sample(sample)
-    , m_id(AtomString::number(trackID))
 {
     commonInit();
 }

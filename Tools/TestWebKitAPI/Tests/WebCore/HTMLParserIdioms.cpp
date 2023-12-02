@@ -27,7 +27,6 @@
 
 #include "Test.h"
 #include <WebCore/DocumentFragment.h>
-#include <WebCore/FragmentScriptingPermission.h>
 #include <WebCore/HTMLBodyElement.h>
 #include <WebCore/HTMLDivElement.h>
 #include <WebCore/HTMLDocument.h>
@@ -35,6 +34,7 @@
 #include <WebCore/HTMLHtmlElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLParserIdioms.h>
+#include <WebCore/ParserContentPolicy.h>
 #include <WebCore/ProcessWarming.h>
 #include <WebCore/Settings.h>
 #include <WebCore/Text.h>

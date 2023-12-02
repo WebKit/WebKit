@@ -1,3 +1,10 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: incorrect viewbox undefined expected (string) "none" but got (undefined) undefined
 
-FAIL computed style on pseudo-element stays in sync with the DOM element assert_implements: Missing document.startViewTransition undefined
+Harness Error (FAIL), message = Unhandled rejection: assert_equals: incorrect viewbox undefined expected (string) "none" but got (undefined) undefined
+
+TIMEOUT computed style on pseudo-element stays in sync with the DOM element Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: assert_equals: incorrect viewbox undefined expected (string) "none" but got (undefined) undefined
+
+TIMEOUT computed style on pseudo-element stays in sync with the DOM element Test timed out
 

@@ -96,7 +96,7 @@ void RemoteAudioTrackProxy::configurationChanged(const PlatformAudioTrackConfigu
     configurationChanged();
 }
 
-void RemoteAudioTrackProxy::idChanged(const AtomString&)
+void RemoteAudioTrackProxy::idChanged(TrackID)
 {
     configurationChanged();
 }

@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class TrackPrivateBase;
+using TrackID = uint64_t;
 
 class TrackPrivateBaseGStreamer {
 public:
@@ -49,8 +50,6 @@ public:
         Unknown
     };
 
-    WEBCORE_EXPORT static AtomString generateUniquePlaybin2StreamID(TrackType, unsigned index);
-
     GstPad* pad() const { return m_pad.get(); }
     void setPad(GRefPtr<GstPad>&&);
 
@@ -58,6 +57,7 @@ public:
 
     virtual void setActive(bool) { }
 
+    unsigned index() { return m_index; };
     void setIndex(unsigned index) { m_index =  index; }
 
     GstStream* stream() const { return m_stream.get(); }
@@ -68,6 +68,7 @@ public:
     const GRefPtr<GstCaps>& initialCaps() { return m_initialCaps; }
 
     static String trackIdFromPadStreamStartOrUniqueID(TrackType, unsigned index, const GRefPtr<GstPad>&);
+    const AtomString& stringId() const { return m_stringId; };
 
     virtual void updateConfigurationFromCaps(GRefPtr<GstCaps>&&) { }
 
@@ -97,7 +98,8 @@ protected:
     unsigned m_index;
     AtomString m_label;
     AtomString m_language;
-    AtomString m_id;
+    AtomString m_stringId;
+    TrackID m_id;
     GRefPtr<GstPad> m_pad;
     GRefPtr<GstPad> m_bestUpstreamPad;
     GRefPtr<GstStream> m_stream;
@@ -107,7 +109,9 @@ protected:
 
 private:
     bool getLanguageCode(GstTagList* tags, AtomString& value);
-
+    static AtomString generateUniquePlaybin2StreamID(TrackType, unsigned index);
+    static TrackID trackIdFromStringIdOrIndex(TrackType, const AtomString&, unsigned);
+    static char prefixForType(TrackType);
     template<class StringType>
     bool getTag(GstTagList* tags, const gchar* tagName, StringType& value);
 

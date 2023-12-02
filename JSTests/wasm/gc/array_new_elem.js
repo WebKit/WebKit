@@ -80,7 +80,7 @@ function testBadTypeIndex() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array.new_elem type index 1 does not reference an array definition, in function at index 1");
+    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array.new_elem index 1 does not reference an array definition, in function at index 1");
 }
 
 function testNonArrayType() {
@@ -97,7 +97,7 @@ function testNonArrayType() {
           (i32.const 0)
           (array.get 0)))`);
 
-    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array.new_elem type index 1 does not reference an array definition, in function at index 1");
+    assert.throws(f, WebAssembly.CompileError, "WebAssembly.Module doesn't validate: array.new_elem index 1 does not reference an array definition, in function at index 1");
 }
 
 function testImmutableArrayType() {
@@ -831,6 +831,23 @@ function testJSFunctions() {
     assert.eq(retVal, 47.5);
 }
 
+function testRecGroup() {
+    instantiate(`
+        (module
+          (func $f)
+          (func $g)
+          (rec (type (array (mut funcref)))
+               (type (struct)))
+          (elem (ref func) (ref.func $f) (item ref.func $f) (ref.func $g) (ref.func $g))
+          (func (export "f") (result funcref)
+            (i32.const 0)
+            (i32.const 4)
+            (array.new_elem 0 0)
+            (i32.const 2)
+            (array.get 0)))
+    `);
+}
+
 // FIXME: uncomment these tests once https://bugs.webkit.org/show_bug.cgi?id=251874 is fixed
 // testRefCallNullary();
 // testRefCall();
@@ -855,3 +872,4 @@ testZeroLengthArray();
 testNullFunctionIndex();
 testImportFunctions();
 testJSFunctions();
+testRecGroup();

@@ -32,7 +32,7 @@
 namespace WebKit {
 
 struct TrackPrivateRemoteConfiguration {
-    AtomString trackId;
+    uint64_t trackId;
     AtomString label;
     AtomString language;
     MediaTime startTimeVariance { MediaTime::zeroTime() };

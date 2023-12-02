@@ -2081,12 +2081,26 @@ DateTimeInputsEditableComponentsEnabled:
     WebCore:
       default: false
 
-DeclarativeShadowDOMEnabled:
+DeclarativeShadowRootsEnabled:
   type: bool
   status: stable
   category: dom
-  humanReadableName: "Declarative Shadow DOM"
-  humanReadableDescription: "Enable Declarative Shadow DOM"
+  humanReadableName: "Declarative Shadow Roots"
+  humanReadableDescription: "Enable Declarative Shadow Roots"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
+DeclarativeShadowRootsParserAPIsEnabled:
+  type: bool
+  status: stable
+  category: dom
+  humanReadableName: "Declarative Shadow Roots Parser APIs"
+  humanReadableDescription: "Declarative Shadow Roots Parser APIs (element.setHTMLUnsafe() and Document.parseHTMLUnsafe())"
   defaultValue:
     WebKitLegacy:
       default: true

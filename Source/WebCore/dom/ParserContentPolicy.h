@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// FIXME: Move this file to ParserContentPolicy.h.
-
 #pragma once
 
 #include <wtf/OptionSet.h>
@@ -35,10 +33,11 @@ enum class ParserContentPolicy : uint8_t {
     AllowScriptingContent = 1 << 0,
     AllowPluginContent = 1 << 1,
     DoNotMarkAlreadyStarted = 1 << 2,
-    AllowDeclarativeShadowDOM = 1 << 3,
+    AllowDeclarativeShadowRoots = 1 << 3,
+    AlwaysParseAsHTML = 1 << 4
 };
 
-constexpr OptionSet<ParserContentPolicy> DefaultParserContentPolicy = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent, ParserContentPolicy::AllowDeclarativeShadowDOM };
+constexpr OptionSet<ParserContentPolicy> DefaultParserContentPolicy = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent, ParserContentPolicy::AllowDeclarativeShadowRoots };
 
 static inline bool scriptingContentIsAllowed(OptionSet<ParserContentPolicy> parserContentPolicy) 
 {

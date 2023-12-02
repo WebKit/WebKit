@@ -54,18 +54,18 @@ private:
     void resetParserStateInternal() final;
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
-    bool canSetMinimumUpcomingPresentationTime(const AtomString&) const final;
-    void setMinimumUpcomingPresentationTime(const AtomString&, const MediaTime&) final;
-    void clearMinimumUpcomingPresentationTime(const AtomString&) final;
+    bool canSetMinimumUpcomingPresentationTime(TrackID) const final;
+    void setMinimumUpcomingPresentationTime(TrackID, const MediaTime&) final;
+    void clearMinimumUpcomingPresentationTime(TrackID) final;
     bool canSwitchToType(const ContentType&) final;
 
-    void flush(const AtomString&) final { m_enqueuedSamples.clear(); m_minimumUpcomingPresentationTime = MediaTime::invalidTime(); }
-    void enqueueSample(Ref<MediaSample>&&, const AtomString&) final;
-    bool isReadyForMoreSamples(const AtomString&) final { return !m_maxQueueDepth || m_enqueuedSamples.size() < m_maxQueueDepth.value(); }
+    void flush(TrackID) final { m_enqueuedSamples.clear(); m_minimumUpcomingPresentationTime = MediaTime::invalidTime(); }
+    void enqueueSample(Ref<MediaSample>&&, TrackID) final;
+    bool isReadyForMoreSamples(TrackID) final { return !m_maxQueueDepth || m_enqueuedSamples.size() < m_maxQueueDepth.value(); }
 
-    Ref<SamplesPromise> enqueuedSamplesForTrackID(const AtomString&) final;
-    MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) final;
-    void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t) final;
+    Ref<SamplesPromise> enqueuedSamplesForTrackID(TrackID) final;
+    MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID) final;
+    void setMaximumQueueDepthForTrackID(TrackID, uint64_t) final;
 
     void didReceiveInitializationSegment(const MockInitializationBox&);
     void didReceiveSample(const MockSampleBox&);

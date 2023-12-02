@@ -41,8 +41,6 @@ namespace WebCore {
 AudioTrackPrivateMediaStream::AudioTrackPrivateMediaStream(MediaStreamTrackPrivate& track)
     : m_streamTrack(track)
     , m_audioSource(track.source())
-    , m_id(track.id())
-    , m_label(track.label())
     , m_renderer(createRenderer(*this))
 {
     track.addObserver(*this);

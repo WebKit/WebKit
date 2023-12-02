@@ -241,14 +241,14 @@ void SourceBufferPrivateRemote::evictCodedFrames(uint64_t newDataSize, uint64_t 
     }
 }
 
-void SourceBufferPrivateRemote::addTrackBuffer(const AtomString& trackId, RefPtr<MediaDescription>&&)
+void SourceBufferPrivateRemote::addTrackBuffer(TrackID trackId, RefPtr<MediaDescription>&&)
 {
     ASSERT(m_trackIdentifierMap.contains(trackId));
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!isGPURunning())
         return;
 
-    gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::AddTrackBuffer(m_trackIdentifierMap.get(trackId)), m_remoteSourceBufferIdentifier);
+    gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::AddTrackBuffer(m_trackIdentifierMap.find(trackId)->second), m_remoteSourceBufferIdentifier);
 }
 
 void SourceBufferPrivateRemote::resetTrackBuffers()
@@ -381,7 +381,7 @@ void SourceBufferPrivateRemote::seekToTime(const MediaTime& time)
     gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::SeekToTime(time), m_remoteSourceBufferIdentifier);
 }
 
-void SourceBufferPrivateRemote::updateTrackIds(Vector<std::pair<AtomString, AtomString>>&& trackIdPairs)
+void SourceBufferPrivateRemote::updateTrackIds(Vector<std::pair<TrackID, TrackID>>&& trackIdPairs)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!isGPURunning())
@@ -390,32 +390,34 @@ void SourceBufferPrivateRemote::updateTrackIds(Vector<std::pair<AtomString, Atom
     auto identifierPairs = trackIdPairs.map([this](auto& trackIdPair) {
         ASSERT(m_prevTrackIdentifierMap.contains(trackIdPair.first));
         ASSERT(m_trackIdentifierMap.contains(trackIdPair.second));
-        return std::pair { m_prevTrackIdentifierMap.take(trackIdPair.first), m_trackIdentifierMap.get(trackIdPair.second) };
+        return std::pair { m_prevTrackIdentifierMap.extract(trackIdPair.first).mapped(), m_trackIdentifierMap.find(trackIdPair.second)->second };
     });
 
     gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::UpdateTrackIds(identifierPairs), m_remoteSourceBufferIdentifier);
 }
 
-Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivateRemote::bufferedSamplesForTrackId(const AtomString& trackId)
+Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivateRemote::bufferedSamplesForTrackId(TrackID trackId)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!isGPURunning())
         return SamplesPromise::createAndResolve(Vector<String> { });
 
-    return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::BufferedSamplesForTrackId(m_trackIdentifierMap.get(trackId)), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::current(), [](auto&& result) {
+    auto& trackIdIdentifier = m_trackIdentifierMap.find(trackId)->second;
+    return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::BufferedSamplesForTrackId(trackIdIdentifier), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::current(), [](auto&& result) {
         if (!result)
             return SamplesPromise::createAndResolve(Vector<String> { });
         return SamplesPromise::createAndSettle(WTFMove(*result));
     });
 }
 
-Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivateRemote::enqueuedSamplesForTrackID(const AtomString& trackId)
+Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivateRemote::enqueuedSamplesForTrackID(TrackID trackId)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!isGPURunning())
         return SamplesPromise::createAndResolve(Vector<String> { });
 
-    return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::EnqueuedSamplesForTrackID(m_trackIdentifierMap.get(trackId)), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::current(), [](auto&& result) {
+    auto& trackIdIdentifier = m_trackIdentifierMap.find(trackId)->second;
+    return gpuProcessConnection->connection().sendWithPromisedReply(Messages::RemoteSourceBufferProxy::EnqueuedSamplesForTrackID(trackIdIdentifier), m_remoteSourceBufferIdentifier)->whenSettled(RunLoop::current(), [](auto&& result) {
         if (!result)
             return SamplesPromise::createAndResolve(Vector<String> { });
         return SamplesPromise::createAndSettle(WTFMove(*result));
@@ -439,7 +441,7 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
             RemoteMediaDescription::create(audioTrack.description),
             m_mediaPlayerPrivate->audioTrackPrivateRemote(audioTrack.identifier)
         };
-        m_trackIdentifierMap.add(info.track->id(), audioTrack.identifier);
+        m_trackIdentifierMap.try_emplace(info.track->id(), audioTrack.identifier);
         return info;
     });
 
@@ -448,7 +450,7 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
             RemoteMediaDescription::create(videoTrack.description),
             m_mediaPlayerPrivate->videoTrackPrivateRemote(videoTrack.identifier)
         };
-        m_trackIdentifierMap.add(info.track->id(), videoTrack.identifier);
+        m_trackIdentifierMap.try_emplace(info.track->id(), videoTrack.identifier);
         return info;
     });
 
@@ -457,7 +459,7 @@ void SourceBufferPrivateRemote::sourceBufferPrivateDidReceiveInitializationSegme
             RemoteMediaDescription::create(textTrack.description),
             m_mediaPlayerPrivate->textTrackPrivateRemote(textTrack.identifier)
         };
-        m_trackIdentifierMap.add(info.track->id(), textTrack.identifier);
+        m_trackIdentifierMap.try_emplace(info.track->id(), textTrack.identifier);
         return info;
     });
 
@@ -531,7 +533,7 @@ void SourceBufferPrivateRemote::memoryPressure(uint64_t maximumBufferSize, const
         m_remoteSourceBufferIdentifier);
 }
 
-MediaTime SourceBufferPrivateRemote::minimumUpcomingPresentationTimeForTrackID(const AtomString& trackID)
+MediaTime SourceBufferPrivateRemote::minimumUpcomingPresentationTimeForTrackID(TrackID trackID)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!isGPURunning())
@@ -541,7 +543,7 @@ MediaTime SourceBufferPrivateRemote::minimumUpcomingPresentationTimeForTrackID(c
     return std::get<0>(sendResult.takeReplyOr(MediaTime::invalidTime()));
 }
 
-void SourceBufferPrivateRemote::setMaximumQueueDepthForTrackID(const AtomString& trackID, uint64_t depth)
+void SourceBufferPrivateRemote::setMaximumQueueDepthForTrackID(TrackID trackID, uint64_t depth)
 {
     auto gpuProcessConnection = m_gpuProcessConnection.get();
     if (!isGPURunning())

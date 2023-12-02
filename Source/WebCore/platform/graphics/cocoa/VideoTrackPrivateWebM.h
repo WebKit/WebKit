@@ -39,11 +39,10 @@ public:
     static Ref<VideoTrackPrivateWebM> create(webm::TrackEntry&&);
     virtual ~VideoTrackPrivateWebM() = default;
 
-    AtomString id() const final;
+    TrackID id() const final;
     AtomString label() const final;
     AtomString language() const final;
     int trackIndex() const final;
-    std::optional<uint64_t> trackUID() const final;
     std::optional<bool> defaultEnabled() const final;
 
 private:
@@ -59,7 +58,6 @@ private:
     void updateConfiguration();
 
     webm::TrackEntry m_track;
-    mutable AtomString m_trackID;
     mutable AtomString m_label;
     mutable AtomString m_language;
     RefPtr<VideoInfo> m_formatDescription;

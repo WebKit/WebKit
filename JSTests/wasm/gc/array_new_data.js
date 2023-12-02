@@ -354,7 +354,7 @@ function testSingletonArray() {
 }
 
 function testTypeErrors() {
-    let notArray = "WebAssembly.Module doesn't validate: array.new_data type index 0 does not reference an array definition, in function at index 0";
+    let notArray = "WebAssembly.Module doesn't validate: array.new_data index 0 does not reference an array definition, in function at index 0";
     let refType = "WebAssembly.Module doesn't validate: array.new_data expected numeric, packed, or vector type; found RefNull";
     let erroneousCase = (ty, msg) => {
         assert.throws(() => compile (`
@@ -424,6 +424,22 @@ function testBadOperands() {
                   "WebAssembly.Module doesn't parse at byte 5: can't pop empty stack in array.new_data, in function at index 0");
 }
 
+function testRecGroup() {
+    instantiate(`
+        (module
+          (memory (export "memory") 1)
+          (data "snails")
+          (rec (type (struct))
+               (type $arr (array (mut i8))))
+          (func (export "f") (result i32)
+            (i32.const 0)
+            (i32.const 1)
+            (array.new_data $arr 0)
+            (i32.const 0)
+            (array.get_u $arr)))
+    `);
+}
+
 testArrayNewCanonData();
 testBadDataSegment();
 testOtherDataSegments();
@@ -435,3 +451,4 @@ testZeroLengthArray();
 testSingletonArray();
 testTypeErrors();
 testBadOperands();
+testRecGroup();

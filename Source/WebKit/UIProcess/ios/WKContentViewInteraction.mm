@@ -3554,6 +3554,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (NSArray *)webSelectionRects
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     if (!_page->editorState().hasPostLayoutAndVisualData() || _page->editorState().selectionIsNone)
         return nil;
     const auto& selectionGeometries = _page->editorState().visualData->selectionGeometries;
@@ -3835,6 +3837,8 @@ static void cancelPotentialTapIfNecessary(WKContentView* contentView)
 
 - (void)clearSelection
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     [self _elementDidBlur];
     _page->clearSelection();
 }
@@ -5929,6 +5933,8 @@ static void logTextInteraction(const char* methodName, UIGestureRecognizer *loup
 
 - (BOOL)_allowAnimatedUpdateSelectionRectViews
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     return NO;
 }
 
@@ -6858,6 +6864,8 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 // (i.e. selectionRange) has shipped as API.
 - (NSRange)selectionRange
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     return NSMakeRange(NSNotFound, 0);
 }
 
@@ -6884,6 +6892,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
 // Modify text without starting a new undo grouping.
 - (void)replaceRangeWithTextWithoutClosingTyping:(UITextRange *)range replacementText:(NSString *)text
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
 }
 
 // Caret rect support.  Shouldn't be necessary, but firstRectForRange doesn't offer precisely
@@ -7091,6 +7100,8 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
 
 - (void)handleKeyWebEvent:(::WebEvent *)theEvent
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent, WebKit::NativeWebKeyboardEvent::HandledByInputMethod::No));
 }
 
@@ -7470,10 +7481,13 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
 // Sets a buffer to make room for autocorrection views
 - (void)setBottomBufferHeight:(CGFloat)bottomBuffer
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
 }
 
 - (UIView *)automaticallySelectedOverlay
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     return [self unscaledView];
 }
 
@@ -7486,6 +7500,8 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
 // alternative selection counts using the keys defined at the top of this header.
 - (NSArray *)metadataDictionariesForDictationResults
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     return nil;
 }
 
@@ -7519,12 +7535,15 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
 
 - (BOOL)hasContent
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     auto& editorState = _page->editorState();
     return !editorState.selectionIsNone && editorState.postLayoutData && editorState.postLayoutData->hasContent;
 }
 
 - (void)selectAll
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
 }
 
 - (UIColor *)textColorForCaretSelection
@@ -7541,6 +7560,8 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
 
 - (BOOL)hasSelection
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     return NO;
 }
 
@@ -7577,6 +7598,8 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
 
 - (void)takeTraitsFrom:(UITextInputTraits *)traits
 {
+    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+
     [[self textInputTraits] takeTraitsFrom:traits];
 }
 

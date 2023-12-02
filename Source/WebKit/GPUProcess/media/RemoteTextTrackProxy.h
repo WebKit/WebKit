@@ -81,7 +81,7 @@ private:
     virtual void parseWebVTTCueData(WebCore::ISOWebVTTCue&&);
 
     // TrackPrivateBaseClient
-    void idChanged(const AtomString&) final;
+    void idChanged(WebCore::TrackID) final;
     void labelChanged(const AtomString&) final;
     void languageChanged(const AtomString&) final;
     void willRemove() final;

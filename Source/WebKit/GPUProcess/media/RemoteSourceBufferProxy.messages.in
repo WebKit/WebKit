@@ -56,8 +56,8 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     BufferedSamplesForTrackId(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier) -> (WebCore::SourceBufferPrivate::SamplesPromise::Result samples)
     EnqueuedSamplesForTrackID(WebKit::TrackPrivateRemoteIdentifier remoteIdentifier) -> (WebCore::SourceBufferPrivate::SamplesPromise::Result samples)
     MemoryPressure(uint64_t maximumBufferSize, MediaTime currentTime) -> (WebCore::PlatformTimeRanges buffered, uint64_t totalTrackBufferSizeInBytes)
-    SetMaximumQueueDepthForTrackID(AtomString trackID, uint64_t depth)
-    MinimumUpcomingPresentationTimeForTrackID(AtomString trackID) -> (MediaTime time) Synchronous
+    SetMaximumQueueDepthForTrackID(uint64_t trackID, uint64_t depth)
+    MinimumUpcomingPresentationTimeForTrackID(uint64_t trackID) -> (MediaTime time) Synchronous
 }
 
 #endif
