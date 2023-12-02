@@ -33,6 +33,7 @@
 #import "CocoaHelpers.h"
 #import "JSWebExtensionWrapper.h"
 #import "MessageSenderInlines.h"
+#import "WKContentRuleListPrivate.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionContextMessages.h"
 #import "WebExtensionUtilities.h"
@@ -45,6 +46,10 @@ namespace WebKit {
 
 static NSString * const disableRulesetsKey = @"disableRulesetIds";
 static NSString * const enableRulesetsKey = @"enableRulesetIds";
+
+static NSString * const regexKey = @"regex";
+static NSString * const regexIsCaseSensitiveKey = @"isCaseSensitive";
+static NSString * const regexRequireCapturingKey = @"requireCapturing";
 
 void WebExtensionAPIDeclarativeNetRequest::updateEnabledRulesets(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
@@ -101,9 +106,22 @@ void WebExtensionAPIDeclarativeNetRequest::getMatchedRules(NSDictionary *filter,
     // FIXME: rdar://118940129 - Support getMatchedRules
 }
 
-void WebExtensionAPIDeclarativeNetRequest::isRegexSupported(NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString)
+void WebExtensionAPIDeclarativeNetRequest::isRegexSupported(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    // FIXME: rdar://118940110 - Support isRegexSupported
+    static NSDictionary<NSString *, Class> *types = @{
+        regexKey: NSString.class,
+        regexIsCaseSensitiveKey: @YES.class,
+        regexRequireCapturingKey: @YES.class,
+    };
+
+    if (!validateDictionary(options, @"regexOptions", @[ regexKey ], types, outExceptionString))
+        return;
+
+    NSString *regexString = objectForKey<NSString>(options, regexKey);
+    if (![WKContentRuleList _supportsRegularExpression:regexString])
+        callback->call(@{ @"isSupported": @NO, @"reason": @"syntaxError" });
+    else
+        callback->call(@{ @"isSupported": @YES });
 }
 
 void WebExtensionAPIDeclarativeNetRequest::setExtensionActionOptions(NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString)
