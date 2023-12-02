@@ -2471,6 +2471,7 @@ media/video-does-not-loop.html [ WontFix Timeout Crash ]
 # No support for MPEG-4 caption support
 webkit.org/b/131546 media/track/track-forced-subtitles-in-band.html [ Timeout Failure Crash ]
 media/track/track-in-band-chapters.html [ Timeout Failure ]
+media/track/track-in-band-layout.html [ Skip ]
 
 # ENABLE(WEBVTT_REGIONS) is disabled
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]

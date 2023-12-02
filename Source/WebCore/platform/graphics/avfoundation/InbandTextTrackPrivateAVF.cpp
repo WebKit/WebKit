@@ -341,10 +341,9 @@ void InbandTextTrackPrivateAVF::processAttributedStrings(CFArrayRef attributedSt
             cueData->setStartTime(time);
             cueData->setEndTime(MediaTime::positiveInfiniteTime());
 
-            // AVFoundation cue "position" is to the center of the text so adjust relative to the edge because we will use it to
-            // set CSS "left".
-            if (cueData->position() >= 0 && cueData->size() > 0)
-                cueData->setPosition(cueData->position() - cueData->size() / 2);
+            // AVFoundation cue "position" is to the center of the text so set "positionAlign" to "middle"
+            // to indicate to VTTCue that this cue should be positioned relative to its center
+            cueData->setPositionAlign(GenericCueData::Alignment::Middle);
 
             cueData->setStatus(GenericCueData::Status::Partial);
 

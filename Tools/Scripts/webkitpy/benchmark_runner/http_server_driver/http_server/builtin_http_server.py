@@ -5,6 +5,7 @@ import argparse
 import logging
 import sys
 import threading
+import socket
 
 
 _log = logging.getLogger(__name__)
@@ -56,16 +57,24 @@ class Handler(SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='python py3_builtin_http_server.py web_root')
+        description='python builtin_http_server.py web_root')
     parser.add_argument('web_root')
     parser.add_argument('--port', type=int, default=0)
     parser.add_argument('--interface', default='')
     parser.add_argument('--log-path', default='/tmp/run-benchmark-http.log')
     args = parser.parse_args()
+    try:
+        addr_info = socket.getaddrinfo(args.interface, args.port)
+    except socket.gaierror as e:
+        _log.error(f'Error getting address info from given interface ({args.interface}) and port ({args.port}): {e}')
+        sys.exit(1)
+    addr_pair = addr_info[0][4]
+    family_type = addr_info[0][0]
+
 
     logging.basicConfig(datefmt='%Y-%m-%d %H:%M:%S',
                         format='%(asctime)s [%(levelname)s]: %(message)s', filename=args.log_path, level=logging.INFO)
-    port = args.port
     Handler.web_root = args.web_root
-    httpd = HTTPServer((args.interface, port), Handler)
+    HTTPServer.address_family = family_type
+    httpd = HTTPServer(addr_pair, Handler)
     httpd.serve_forever()

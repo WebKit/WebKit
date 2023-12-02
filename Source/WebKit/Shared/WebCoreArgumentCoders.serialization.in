@@ -4461,6 +4461,7 @@ header: <WebCore/InbandGenericCue.h>
     WebCore::Color m_foregroundColor;
     WebCore::Color m_backgroundColor;
     WebCore::Color m_highlightColor;
+    WebCore::GenericCueData::Alignment m_positionAlign;
     WebCore::GenericCueData::Alignment m_align;
     WebCore::GenericCueData::Status m_status;
 };
