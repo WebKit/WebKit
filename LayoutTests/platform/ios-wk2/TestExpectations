@@ -2458,3 +2458,6 @@ webkit.org/b/263052 fast/events/ios/keydown-keyup-keypress-keys-in-non-editable-
 webkit.org/b/263662 fast/forms/listbox-bidi-align.html [ Failure ]
 
 webkit.org/b/260640 [ Release arm64 ] editing/execCommand/apply-inline-style-to-element-with-no-renderer-crash.html [ Pass Failure ]
+
+# This test relies on mouse input.
+imported/w3c/web-platform-tests/css/css-view-transitions/input-targets-root-while-render-blocked.html [ Skip ]

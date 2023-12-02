@@ -1356,6 +1356,7 @@ $(PROJECT_DIR)/dom/Document+Selection.idl
 $(PROJECT_DIR)/dom/Document+StorageAccess.idl
 $(PROJECT_DIR)/dom/Document+Touch.idl
 $(PROJECT_DIR)/dom/Document+UndoMananger.idl
+$(PROJECT_DIR)/dom/Document+ViewTransition.idl
 $(PROJECT_DIR)/dom/Document.idl
 $(PROJECT_DIR)/dom/DocumentAndElementEventHandlers.idl
 $(PROJECT_DIR)/dom/DocumentFragment.idl
@@ -1453,6 +1454,8 @@ $(PROJECT_DIR)/dom/TreeWalker.idl
 $(PROJECT_DIR)/dom/UIEvent.idl
 $(PROJECT_DIR)/dom/UIEventInit.idl
 $(PROJECT_DIR)/dom/ValidityStateFlags.idl
+$(PROJECT_DIR)/dom/ViewTransition.idl
+$(PROJECT_DIR)/dom/ViewTransitionUpdateCallback.idl
 $(PROJECT_DIR)/dom/VisibilityState.idl
 $(PROJECT_DIR)/dom/WheelEvent.idl
 $(PROJECT_DIR)/dom/XMLDocument.idl

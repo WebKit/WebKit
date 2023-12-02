@@ -1044,6 +1044,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/UserGestureIndicator.h
     dom/UserTypingGestureIndicator.h
     dom/ValidityStateFlags.h
+    dom/ViewTransition.h
+    dom/ViewTransitionUpdateCallback.h
     dom/ViewportArguments.h
     dom/VisibilityChangeClient.h
     dom/VisibilityState.h

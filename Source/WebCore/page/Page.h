@@ -219,26 +219,27 @@ enum class RenderingUpdateStep : uint32_t {
     Fullscreen                      = 1 << 4,
     AnimationFrameCallbacks         = 1 << 5,
     UpdateContentRelevancy          = 1 << 6,
-    IntersectionObservations        = 1 << 7,
-    ResizeObservations              = 1 << 8,
-    Images                          = 1 << 9,
-    WheelEventMonitorCallbacks      = 1 << 10,
-    CursorUpdate                    = 1 << 11,
-    EventRegionUpdate               = 1 << 12,
-    LayerFlush                      = 1 << 13,
+    PerformPendingViewTransitions   = 1 << 7,
+    IntersectionObservations        = 1 << 8,
+    ResizeObservations              = 1 << 9,
+    Images                          = 1 << 10,
+    WheelEventMonitorCallbacks      = 1 << 11,
+    CursorUpdate                    = 1 << 12,
+    EventRegionUpdate               = 1 << 13,
+    LayerFlush                      = 1 << 14,
 #if ENABLE(ASYNC_SCROLLING)
-    ScrollingTreeUpdate             = 1 << 14,
+    ScrollingTreeUpdate             = 1 << 15,
 #endif
-    FlushAutofocusCandidates        = 1 << 15,
-    VideoFrameCallbacks             = 1 << 16,
-    PrepareCanvasesForDisplay       = 1 << 17,
-    CaretAnimation                  = 1 << 18,
-    FocusFixup                      = 1 << 19,
-    UpdateValidationMessagePositions= 1 << 20,
+    FlushAutofocusCandidates        = 1 << 16,
+    VideoFrameCallbacks             = 1 << 17,
+    PrepareCanvasesForDisplay       = 1 << 18,
+    CaretAnimation                  = 1 << 19,
+    FocusFixup                      = 1 << 20,
+    UpdateValidationMessagePositions= 1 << 21,
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    AccessibilityRegionUpdate       = 1 << 21,
+    AccessibilityRegionUpdate       = 1 << 22,
 #endif
-    RestoreScrollPositionAndViewState = 1 << 22,
+    RestoreScrollPositionAndViewState = 1 << 23,
 };
 
 enum class LinkDecorationFilteringTrigger : uint8_t {
@@ -268,6 +269,7 @@ constexpr OptionSet<RenderingUpdateStep> updateRenderingSteps = {
     RenderingUpdateStep::PrepareCanvasesForDisplay,
     RenderingUpdateStep::CaretAnimation,
     RenderingUpdateStep::UpdateContentRelevancy,
+    RenderingUpdateStep::PerformPendingViewTransitions,
 };
 
 constexpr auto allRenderingUpdateSteps = updateRenderingSteps | OptionSet<RenderingUpdateStep> {

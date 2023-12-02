@@ -1,3 +1,6 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: Error: assert_equals: group expected "rgb(255, 0, 0)" but got "rgba(0, 0, 0, 0)"
 
-FAIL style inheritance of pseudo elements assert_implements: Missing document.startViewTransition undefined
+Harness Error (FAIL), message = Unhandled rejection: assert_equals: group expected "rgb(255, 0, 0)" but got "rgba(0, 0, 0, 0)"
+
+PASS style inheritance of pseudo elements
 
