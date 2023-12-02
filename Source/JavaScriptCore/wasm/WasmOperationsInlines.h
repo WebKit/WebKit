@@ -213,8 +213,9 @@ inline EncodedJSValue arrayNewData(Instance* instance, uint32_t typeIndex, uint3
 
     // Check that the type index is within bounds
     ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
-    Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex];
+    const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
+
     // Get the array element type
     Wasm::FieldType fieldType = arraySignature.as<ArrayType>()->elementType();
 
@@ -260,7 +261,7 @@ inline EncodedJSValue arrayNewElem(Instance* instance, uint32_t typeIndex, uint3
     ASSERT(typeIndex < instance->module().moduleInformation().typeCount());
 
 #if ASSERT_ENABLED
-    Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex];
+    const Wasm::TypeDefinition& arraySignature = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
     ASSERT(arraySignature.is<ArrayType>());
 #else
     UNUSED_PARAM(typeIndex);
