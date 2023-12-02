@@ -77,7 +77,7 @@ private:
     void preferredBufferFormatsDidChange() override;
 #endif
 
-    void visibilityDidChange(bool);
+    void visibilityDidChange(bool) override;
 
     AcceleratedSurfaceDMABuf(WebPage&, Client&);
 
