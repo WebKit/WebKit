@@ -118,14 +118,10 @@ ALWAYS_INLINE bool isMediaDocument(const Element& element)
 
 ALWAYS_INLINE bool isChecked(const Element& element)
 {
-    // Even though WinIE allows checked and indeterminate to co-exist, the CSS selector spec says that
-    // you can't be both checked and indeterminate. We will behave like WinIE behind the scenes and just
-    // obey the CSS spec here in the test for matching the pseudo.
     if (auto* inputElement = dynamicDowncast<HTMLInputElement>(element))
-        return inputElement->shouldAppearChecked() && !inputElement->shouldAppearIndeterminate();
+        return inputElement->matchesCheckedPseudoClass();
     if (auto* option = dynamicDowncast<HTMLOptionElement>(element))
         return const_cast<HTMLOptionElement&>(*option).selected(AllowStyleInvalidation::No);
-
     return false;
 }
 

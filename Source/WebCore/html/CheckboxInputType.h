@@ -60,7 +60,6 @@ private:
     void willDispatchClick(InputElementClickState&) final;
     void didDispatchClick(Event&, const InputElementClickState&) final;
     bool matchesIndeterminatePseudoClass() const final;
-    bool shouldAppearIndeterminate() const final;
     void disabledStateChanged() final;
     void stopSwitchCheckedChangeAnimation();
     void switchCheckedChangeAnimationTimerFired();

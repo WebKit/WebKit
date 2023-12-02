@@ -159,7 +159,7 @@ void HTMLProgressElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     inner->appendChild(bar);
 }
 
-bool HTMLProgressElement::shouldAppearIndeterminate() const
+bool HTMLProgressElement::matchesIndeterminatePseudoClass() const
 {
     return !isDeterminate();
 }

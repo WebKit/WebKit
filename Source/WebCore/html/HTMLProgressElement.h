@@ -48,7 +48,7 @@ private:
     HTMLProgressElement(const QualifiedName&, Document&);
     virtual ~HTMLProgressElement();
 
-    bool shouldAppearIndeterminate() const final;
+    bool matchesIndeterminatePseudoClass() const final;
     bool isLabelable() const final { return true; }
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;

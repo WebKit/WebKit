@@ -7052,6 +7052,7 @@
         "web-platform-tests/html/semantics/scripting-1/the-script-element/support/script-onload-insertion-point-helper.html",
         "web-platform-tests/html/semantics/scripting-1/the-template-element/additions-to-the-css-user-agent-style-sheet/css-user-agent-style-sheet-test-001-ref.html",
         "web-platform-tests/html/semantics/selectors/pseudo-classes/focus-iframe.html",
+        "web-platform-tests/html/semantics/selectors/pseudo-classes/indeterminate-radio-group-ref.html",
         "web-platform-tests/html/semantics/text-level-semantics/the-b-element/b-usage-notref.html",
         "web-platform-tests/html/semantics/text-level-semantics/the-bdi-element/bdi-auto-dir-default-ref.html",
         "web-platform-tests/html/semantics/text-level-semantics/the-bdi-element/bdi-neutral-missing-pdf-ref.html",

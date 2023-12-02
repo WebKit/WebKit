@@ -190,10 +190,8 @@ public:
     WEBCORE_EXPORT HTMLElement* dataListButtonElement() const;
 #endif
 
-    // shouldAppearChecked is used by the rendering tree/CSS while checked() is used by JS to determine checked state
-    bool shouldAppearChecked() const;
+    bool matchesCheckedPseudoClass() const;
     bool matchesIndeterminatePseudoClass() const final;
-    bool shouldAppearIndeterminate() const final;
     void setDefaultCheckedState(bool);
 
     bool sizeShouldIncludeDecoration(int& preferredSize) const;
