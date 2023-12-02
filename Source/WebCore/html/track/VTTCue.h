@@ -90,18 +90,13 @@ public:
 
     void applyCSSProperties() override;
 
-    void setFontSizeFromCaptionUserPrefs(int fontSize) { m_fontSizeFromCaptionUserPrefs = fontSize; }
-
 protected:
     VTTCueBox(Document&, VTTCue&);
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
 
-    int fontSizeFromCaptionUserPrefs() const { return m_fontSizeFromCaptionUserPrefs; }
-
 private:
     WeakPtr<VTTCue> m_cue;
-    int m_fontSizeFromCaptionUserPrefs;
 };
 
 // ----------------------------
