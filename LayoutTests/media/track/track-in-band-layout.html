@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>track-in-band-layout</title>
+    <script src="../video-test.js"></script>
+    <script>
+    function firstCueElement() {
+        return internals.shadowRoot(video).querySelector('[pseudo="cue"]');
+    }
+
+    async function runTest() {
+        findMediaElement();
+
+        run('video.src = "../content/test-inband-captions.mp4"');
+        await waitFor(video.textTracks, 'addtrack');
+        run('video.textTracks[0].mode = "showing"');
+
+        run('video.play()');
+        await testExpectedEventually('video.textTracks[0].cues.length', 0, '>');
+
+        run('video.pause()');
+
+        run('video.currentTime = video.textTracks[0].cues[0].startTime + 0.1');
+        await waitFor(video, 'seeked');
+
+        testExpected('video.textTracks[0].activeCues.length', 1);
+        testExpected('video.textTracks[0].activeCues[0].text', 'Align Top Left');
+
+        consoleWrite('')
+        consoleWrite('Ensure the cue does not wrap:');
+        await testExpectedEventually('firstCueElement().getClientRects().length', 1);
+        await testExpectedEventually('firstCueElement().getClientRects()[0].height', 22, '<');
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    })
+    </script>
+</head>
+<body>
+    <video controls muted preload="auto">
+</body>
+</html>
