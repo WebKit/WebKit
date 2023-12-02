@@ -24,7 +24,7 @@
 #pragma once
 
 #include "ContainerNode.h"
-#include "FragmentScriptingPermission.h"
+#include "ParserContentPolicy.h"
 
 namespace WebCore {
 

@@ -1,0 +1,4 @@
+
+PASS setHTMLUnsafe should still parse HTML even in XML documents.
+PASS setHTMLUnsafe should still parse HTML even in SVG documents.
+

@@ -106,6 +106,7 @@
 #include "HTMLConstructionSite.h"
 #include "HTMLDialogElement.h"
 #include "HTMLDocument.h"
+#include "HTMLDocumentParserFastPath.h"
 #include "HTMLElementFactory.h"
 #include "HTMLFormControlElement.h"
 #include "HTMLFrameElement.h"
@@ -904,6 +905,33 @@ void Document::commonTeardown()
     if (RefPtr rtcNetworkManager = std::exchange(m_rtcNetworkManager, nullptr))
         rtcNetworkManager->close();
 #endif
+}
+
+void Document::parseMarkupUnsafe(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
+{
+    auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent } | parserContentPolicy;
+    setParserContentPolicy(policy);
+    bool usedFastPath = false;
+    if (this->contentType() == "text/html"_s) {
+        auto body = HTMLBodyElement::create(*this);
+        usedFastPath = tryFastParsingHTMLFragment(StringView { markup }.substring(markup.find(isNotASCIIWhitespace<UChar>)), *this, body, body, policy);
+        if (LIKELY(usedFastPath)) {
+            auto html = HTMLHtmlElement::create(*this);
+            auto head = HTMLHeadElement::create(*this);
+            html->appendChild(head);
+            html->appendChild(body);
+            appendChild(html);
+        }
+    }
+    if (!usedFastPath)
+        setContent(markup);
+}
+
+Ref<Document> Document::parseHTMLUnsafe(Document& context, const String& html)
+{
+    Ref document = HTMLDocument::create(nullptr, context.protectedSettings(), URL { });
+    document->parseMarkupUnsafe(html, { ParserContentPolicy::AllowDeclarativeShadowRoots });
+    return document;
 }
 
 Element* Document::elementForAccessKey(const String& key)

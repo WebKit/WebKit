@@ -263,7 +263,6 @@ HTMLConstructionSite::HTMLConstructionSite(Document& document, OptionSet<ParserC
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
     , m_inQuirksMode(document.inQuirksMode())
 {
-    ASSERT(document.isHTMLDocument() || document.isXHTMLDocument());
 }
 
 HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, OptionSet<ParserContentPolicy> parserContentPolicy, unsigned maximumDOMTreeDepth)
@@ -275,7 +274,6 @@ HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, OptionSet
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
     , m_inQuirksMode(fragment.document().inQuirksMode())
 {
-    ASSERT(document().isHTMLDocument() || document().isXHTMLDocument());
 }
 
 HTMLConstructionSite::~HTMLConstructionSite() = default;
@@ -542,7 +540,7 @@ void HTMLConstructionSite::insertHTMLElement(AtomHTMLToken&& token)
 
 void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
 {
-    if (document().settings().declarativeShadowDOMEnabled() && m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowDOM)) {
+    if (document().settings().declarativeShadowRootsEnabled() && m_parserContentPolicy.contains(ParserContentPolicy::AllowDeclarativeShadowRoots)) {
         std::optional<ShadowRootMode> mode;
         bool delegatesFocus = false;
         for (auto& attribute : token.attributes()) {
@@ -554,7 +552,7 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
             } else if (attribute.name() == HTMLNames::shadowrootdelegatesfocusAttr)
                 delegatesFocus = true;
         }
-        if (mode) {
+        if (mode && is<Element>(currentNode())) {
             auto exceptionOrShadowRoot = currentElement().attachDeclarativeShadow(*mode, delegatesFocus);
             if (!exceptionOrShadowRoot.hasException()) {
                 Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();

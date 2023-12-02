@@ -27,9 +27,9 @@
 #pragma once
 
 #include "Document.h"
-#include "FragmentScriptingPermission.h"
 #include "HTMLElementStack.h"
 #include "HTMLFormattingElementList.h"
+#include "ParserContentPolicy.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/FixedVector.h>
 #include <wtf/Noncopyable.h>

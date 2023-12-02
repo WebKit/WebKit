@@ -3750,6 +3750,36 @@ void Element::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventIn
     });
 }
 
+ExceptionOr<void> Element::replaceChildrenWithMarkup(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
+{
+    auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent } | parserContentPolicy;
+
+    Ref container = [this]() -> Ref<ContainerNode> {
+        if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(*this))
+            return templateElement->content();
+        return *this;
+    }();
+
+    // Parsing empty string creates additional elements only inside <html> container
+    // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inhtml
+    if (markup.isEmpty() && !is<HTMLHtmlElement>(container)) {
+        ChildListMutationScope mutation(container);
+        container->removeChildren();
+        return { };
+    }
+
+    auto fragment = createFragmentForInnerOuterHTML(*this, markup, policy);
+    if (fragment.hasException())
+        return fragment.releaseException();
+
+    return replaceChildrenWithFragment(container, fragment.releaseReturnValue());
+}
+
+ExceptionOr<void> Element::setHTMLUnsafe(const String& html)
+{
+    return replaceChildrenWithMarkup(html, { ParserContentPolicy::AllowDeclarativeShadowRoots, ParserContentPolicy::AlwaysParseAsHTML });
+}
+
 ExceptionOr<void> Element::mergeWithNextTextNode(Text& node)
 {
     RefPtr textNext = dynamicDowncast<Text>(node.nextSibling());
@@ -3805,27 +3835,9 @@ ExceptionOr<void> Element::setOuterHTML(const String& html)
     return { };
 }
 
-ExceptionOr<void> Element::setInnerHTML(const String& html)
+ExceptionOr<void> Element::setInnerHTML(const String& markup)
 {
-    Ref container = [this]() -> Ref<ContainerNode> {
-        if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(*this))
-            return templateElement->content();
-        return *this;
-    }();
-
-    // Parsing empty string creates additional elements only inside <html> container
-    // https://html.spec.whatwg.org/multipage/parsing.html#parsing-main-inhtml
-    if (html.isEmpty() && !is<HTMLHtmlElement>(container)) {
-        ChildListMutationScope mutation(container);
-        container->removeChildren();
-        return { };
-    }
-
-    auto fragment = createFragmentForInnerOuterHTML(*this, html, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
-    if (fragment.hasException())
-        return fragment.releaseException();
-
-    return replaceChildrenWithFragment(container, fragment.releaseReturnValue());
+    return replaceChildrenWithMarkup(markup, { });
 }
 
 String Element::innerText()

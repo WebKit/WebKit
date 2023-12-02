@@ -1348,13 +1348,13 @@ String urlToMarkup(const URL& url, const String& title)
     return markup.toString();
 }
 
-enum class DocumentFragmentMode { New, ReuseForInnerOuterHTML };
+enum class DocumentFragmentMode : bool { New, ReuseForInnerOuterHTML };
 static ALWAYS_INLINE ExceptionOr<Ref<DocumentFragment>> createFragmentForMarkup(Element& contextElement, const String& markup, DocumentFragmentMode mode, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     Ref document = contextElement.hasTagName(templateTag) ? contextElement.document().ensureTemplateDocument() : contextElement.document();
     auto fragment = mode == DocumentFragmentMode::New ? DocumentFragment::create(document.get()) : document->documentFragmentForInnerOuterHTML();
     ASSERT(!fragment->hasChildNodes());
-    if (document->isHTMLDocument()) {
+    if (document->isHTMLDocument() || parserContentPolicy.contains(ParserContentPolicy::AlwaysParseAsHTML)) {
         fragment->parseHTML(markup, contextElement, parserContentPolicy);
         return fragment;
     }

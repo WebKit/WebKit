@@ -964,7 +964,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/FocusOptions.h
     dom/FragmentDirectiveParser.h
     dom/FragmentDirectiveRangeFinder.h
-    dom/FragmentScriptingPermission.h
     dom/FullscreenManager.h
     dom/GCReachableRef.h
     dom/ImageOverlay.h
@@ -993,6 +992,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     dom/NodeRenderStyle.h
     dom/NodeTraversal.h
     dom/OverflowEvent.h
+    dom/ParserContentPolicy.h
     dom/PointerEvent.h
     dom/PointerEventTypeNames.h
     dom/PopoverData.h

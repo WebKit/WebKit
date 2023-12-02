@@ -3,31 +3,11 @@ PASS Declarative Shadow DOM: Basic test
 PASS Declarative Shadow DOM: Feature detection
 PASS Shadowrootmode reflection
 PASS Shadowrootmode reflection, setter
-FAIL Declarative Shadow DOM: Fragment parser basic test undefined is not a function (near '...div.setHTMLUnsafe...')
-FAIL Declarative Shadow DOM: Invalid shadow root attribute div.setHTMLUnsafe is not a function. (In 'div.setHTMLUnsafe(`
-    <div id="host">
-      <template shadowrootmode="invalid">
-      </template>
-    </div>
-    `)', 'div.setHTMLUnsafe' is undefined)
-FAIL Declarative Shadow DOM: Closed shadow root attribute div.setHTMLUnsafe is not a function. (In 'div.setHTMLUnsafe(`
-    <div id="host">
-      <template shadowrootmode="closed">
-      </template>
-    </div>
-    `)', 'div.setHTMLUnsafe' is undefined)
-FAIL Declarative Shadow DOM: Missing closing tag div.setHTMLUnsafe is not a function. (In 'div.setHTMLUnsafe(`
-    <div id="host">
-      <template shadowrootmode="open">
-        <slot id="s1" name="slot1"></slot>
-    </div>
-    `)', 'div.setHTMLUnsafe' is undefined)
-FAIL Declarative Shadow DOM: delegates focus attribute div.setHTMLUnsafe is not a function. (In 'div.setHTMLUnsafe(`
-    <div id="host">
-      <template shadowrootmode="open" shadowrootdelegatesfocus>
-      </template>
-    </div>
-    `)', 'div.setHTMLUnsafe' is undefined)
+PASS Declarative Shadow DOM: Fragment parser basic test
+PASS Declarative Shadow DOM: Invalid shadow root attribute
+PASS Declarative Shadow DOM: Closed shadow root attribute
+PASS Declarative Shadow DOM: Missing closing tag
+PASS Declarative Shadow DOM: delegates focus attribute
 PASS Declarative Shadow DOM: Multiple roots
 PASS Declarative Shadow DOM: template containing declarative shadow root
 PASS Declarative Shadow DOM: template containing (deeply nested) declarative shadow root

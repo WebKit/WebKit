@@ -89,6 +89,7 @@ enum class EventHandling : uint8_t;
 enum class EventProcessing : uint8_t;
 enum class FullscreenNavigationUI : uint8_t;
 enum class IsSyntheticClick : bool { No, Yes };
+enum class ParserContentPolicy : uint8_t;
 enum class ResolveURLs : uint8_t { No, NoExcludingURLsForPrivacy, Yes, YesExcludingURLsForPrivacy };
 enum class SelectionRestorationMode : uint8_t;
 
@@ -483,6 +484,8 @@ public:
     virtual void blur();
     virtual void runFocusingStepsForAutofocus();
 
+    ExceptionOr<void> setHTMLUnsafe(const String&);
+
     WEBCORE_EXPORT String innerHTML() const;
     WEBCORE_EXPORT String outerHTML() const;
     WEBCORE_EXPORT ExceptionOr<void> setInnerHTML(const String&);
@@ -769,6 +772,8 @@ protected:
     void partAttributeChanged(const AtomString& newValue);
 
     void addShadowRoot(Ref<ShadowRoot>&&);
+
+    ExceptionOr<void> replaceChildrenWithMarkup(const String&, OptionSet<ParserContentPolicy>);
 
     static ExceptionOr<void> mergeWithNextTextNode(Text&);
 

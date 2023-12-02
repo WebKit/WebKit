@@ -29,9 +29,9 @@
 #include "Element.h"
 #include "ExceptionOr.h"
 #include "FloatSize.h"
-#include "FragmentScriptingPermission.h"
 #include "HTMLInterchange.h"
 #include "MarkupExclusionRule.h"
+#include "ParserContentPolicy.h"
 #include <wtf/Forward.h>
 #include <wtf/Function.h>
 #include <wtf/HashMap.h>

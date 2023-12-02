@@ -454,6 +454,9 @@ public:
     bool shouldNotFireMutationEvents() const { return m_shouldNotFireMutationEvents; }
     void setShouldNotFireMutationEvents(bool fire) { m_shouldNotFireMutationEvents = fire; }
 
+    void parseMarkupUnsafe(const String&, OptionSet<ParserContentPolicy>);
+    static Ref<Document> parseHTMLUnsafe(Document&, const String&);
+
     Element* elementForAccessKey(const String& key);
     void invalidateAccessKeyCache();
 
