@@ -59,9 +59,8 @@ void AudioTrackPrivateRemote::setEnabled(bool enabled)
 void AudioTrackPrivateRemote::updateConfiguration(AudioTrackPrivateRemoteConfiguration&& configuration)
 {
     if (configuration.trackId != m_id) {
-        auto changed = !m_id.isEmpty();
         m_id = configuration.trackId;
-        if (changed && client())
+        if (client())
             client()->idChanged(m_id);
     }
 

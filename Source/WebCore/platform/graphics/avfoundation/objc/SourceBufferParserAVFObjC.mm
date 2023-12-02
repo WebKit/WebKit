@@ -336,7 +336,7 @@ void SourceBufferParserAVFObjC::didFailToParseStreamDataWithError(NSError* error
     m_lastErrorCode.emplace([error code]);
 }
 
-void SourceBufferParserAVFObjC::didProvideMediaDataForTrackID(uint64_t trackID, CMSampleBufferRef sampleBuffer, const String& mediaType, unsigned flags)
+void SourceBufferParserAVFObjC::didProvideMediaDataForTrackID(TrackID trackID, CMSampleBufferRef sampleBuffer, const String& mediaType, unsigned flags)
 {
     INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, "trackID = ", trackID, ", mediaType = ", mediaType);
     UNUSED_PARAM(flags);

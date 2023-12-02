@@ -75,8 +75,8 @@ private:
 
     // AudioTrackPrivate
     Kind kind() const final { return Kind::Main; }
-    AtomString id() const final { return m_id; }
-    AtomString label() const final { return m_label; }
+    std::optional<AtomString> trackUID() const { return AtomString { m_streamTrack->id() }; }
+    AtomString label() const final { return AtomString { m_streamTrack->label() }; }
     int trackIndex() const final { return m_index; }
     bool isBackedByMediaStreamTrack() const final { return true; }
 
@@ -102,8 +102,6 @@ private:
 
     Ref<MediaStreamTrackPrivate> m_streamTrack;
     Ref<RealtimeMediaSource> m_audioSource;
-    AtomString m_id;
-    AtomString m_label;
     int m_index { 0 };
 
     // Audio thread members

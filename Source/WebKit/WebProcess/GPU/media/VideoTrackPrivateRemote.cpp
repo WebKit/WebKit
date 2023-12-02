@@ -59,9 +59,8 @@ void VideoTrackPrivateRemote::setSelected(bool selected)
 void VideoTrackPrivateRemote::updateConfiguration(VideoTrackPrivateRemoteConfiguration&& configuration)
 {
     if (configuration.trackId != m_id) {
-        auto changed = !m_id.isEmpty();
         m_id = configuration.trackId;
-        if (changed && client())
+        if (client())
             client()->idChanged(m_id);
     }
 

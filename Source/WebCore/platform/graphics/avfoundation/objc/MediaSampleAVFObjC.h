@@ -41,14 +41,13 @@ class VideoFrameCV;
 
 class MediaSampleAVFObjC : public MediaSample {
 public:
-    static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, uint64_t trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
-    static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, AtomString trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
+    static Ref<MediaSampleAVFObjC> create(CMSampleBufferRef sample, TrackID trackID) { return adoptRef(*new MediaSampleAVFObjC(sample, trackID)); }
 
     MediaTime presentationTime() const override;
     MediaTime decodeTime() const override;
     MediaTime duration() const override;
 
-    AtomString trackID() const override { return m_id; }
+    TrackID trackID() const override { return m_id; }
 
     size_t sizeInBytes() const override;
     FloatSize presentationSize() const override;
@@ -77,14 +76,13 @@ public:
 protected:
     WEBCORE_EXPORT MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&&);
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef);
-    WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, AtomString trackID);
-    WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, uint64_t trackID);
+    WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef, TrackID);
     WEBCORE_EXPORT virtual ~MediaSampleAVFObjC();
     
     void commonInit();
 
     RetainPtr<CMSampleBufferRef> m_sample;
-    AtomString m_id;
+    TrackID m_id;
     
     MediaTime m_presentationTime;
     MediaTime m_decodeTime;

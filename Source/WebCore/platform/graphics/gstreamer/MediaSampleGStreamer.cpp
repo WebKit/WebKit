@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, const AtomString& trackId)
+MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const FloatSize& presentationSize, TrackID trackId)
     : m_pts(MediaTime::zeroTime())
     , m_dts(MediaTime::zeroTime())
     , m_duration(MediaTime::zeroTime())
@@ -72,7 +72,7 @@ MediaSampleGStreamer::MediaSampleGStreamer(GRefPtr<GstSample>&& sample, const Fl
         m_flags = static_cast<MediaSample::SampleFlags>(m_flags | MediaSample::IsNonDisplaying);
 }
 
-MediaSampleGStreamer::MediaSampleGStreamer(const FloatSize& presentationSize, const AtomString& trackId)
+MediaSampleGStreamer::MediaSampleGStreamer(const FloatSize& presentationSize, TrackID trackId)
     : m_pts(MediaTime::zeroTime())
     , m_dts(MediaTime::zeroTime())
     , m_duration(MediaTime::zeroTime())
@@ -81,7 +81,7 @@ MediaSampleGStreamer::MediaSampleGStreamer(const FloatSize& presentationSize, co
 {
 }
 
-Ref<MediaSampleGStreamer> MediaSampleGStreamer::createFakeSample(GstCaps*, const MediaTime& pts, const MediaTime& dts, const MediaTime& duration, const FloatSize& presentationSize, const AtomString& trackId)
+Ref<MediaSampleGStreamer> MediaSampleGStreamer::createFakeSample(GstCaps*, const MediaTime& pts, const MediaTime& dts, const MediaTime& duration, const FloatSize& presentationSize, TrackID trackId)
 {
     MediaSampleGStreamer* gstreamerMediaSample = new MediaSampleGStreamer(presentationSize, trackId);
     gstreamerMediaSample->m_pts = pts;
@@ -166,7 +166,7 @@ void MediaSampleGStreamer::dump(PrintStream& out) const
     if (flags() & ~(MediaSample::IsSync | MediaSample::IsNonDisplaying | MediaSample::HasAlpha))
         appendFlag("unknown-flag");
 
-    out.print("), trackId(", trackID().string(), "), presentationSize(", presentationSize().width(), "x", presentationSize().height(), ")}");
+    out.print("), trackId(", trackID(), "), presentationSize(", presentationSize().width(), "x", presentationSize().height(), ")}");
 }
 
 } // namespace WebCore.

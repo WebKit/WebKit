@@ -75,6 +75,16 @@ VideoTrack* VideoTrackList::getTrackById(const AtomString& id) const
     return nullptr;
 }
 
+VideoTrack* VideoTrackList::getTrackById(TrackID id) const
+{
+    for (auto& inbandTracks : m_inbandTracks) {
+        auto& track = downcast<VideoTrack>(*inbandTracks);
+        if (track.trackId() == id)
+            return &track;
+    }
+    return nullptr;
+}
+
 int VideoTrackList::selectedIndex() const
 {
     // 4.8.10.10.1 AudioTrackList and VideoTrackList objects

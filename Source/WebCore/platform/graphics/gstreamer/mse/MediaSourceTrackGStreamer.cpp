@@ -39,11 +39,12 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
 
 namespace WebCore {
 
-MediaSourceTrackGStreamer::MediaSourceTrackGStreamer(TrackPrivateBaseGStreamer::TrackType type, AtomString trackId, GRefPtr<GstCaps>&& initialCaps)
+MediaSourceTrackGStreamer::MediaSourceTrackGStreamer(TrackPrivateBaseGStreamer::TrackType type, TrackID trackId, const AtomString& trackStringId, GRefPtr<GstCaps>&& initialCaps)
     : m_type(type)
-    , m_trackId(trackId)
+    , m_id(trackId)
+    , m_stringId(trackStringId)
     , m_initialCaps(WTFMove(initialCaps))
-    , m_queueDataMutex(trackId)
+    , m_queueDataMutex(trackStringId)
 { }
 
 MediaSourceTrackGStreamer::~MediaSourceTrackGStreamer()
@@ -51,9 +52,9 @@ MediaSourceTrackGStreamer::~MediaSourceTrackGStreamer()
     ASSERT(m_isRemoved);
 }
 
-Ref<MediaSourceTrackGStreamer> MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType type, AtomString trackId, GRefPtr<GstCaps>&& initialCaps)
+Ref<MediaSourceTrackGStreamer> MediaSourceTrackGStreamer::create(TrackPrivateBaseGStreamer::TrackType type, TrackID trackId, const AtomString& trackStringId, GRefPtr<GstCaps>&& initialCaps)
 {
-    return adoptRef(*new MediaSourceTrackGStreamer(type, trackId, WTFMove(initialCaps)));
+    return adoptRef(*new MediaSourceTrackGStreamer(type, trackId, trackStringId, WTFMove(initialCaps)));
 }
 
 bool MediaSourceTrackGStreamer::isReadyForMoreSamples()

@@ -701,14 +701,14 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
             return MediaPromise::createAndReject(PlatformMediaError::AppendError);
         }
 
-        Vector<std::pair<AtomString, AtomString>> trackIdPairs;
+        Vector<std::pair<TrackID, TrackID>> trackIdPairs;
 
         // 3.2 Add the appropriate track descriptions from this initialization segment to each of the track buffers.
         ASSERT(segment.audioTracks.size() == audioTracks().length());
         for (auto& audioTrackInfo : segment.audioTracks) {
             if (audioTracks().length() == 1) {
                 RefPtr track = audioTracks().item(0);
-                auto oldId = track->id();
+                auto oldId = track->trackId();
                 auto newId = audioTrackInfo.track->id();
                 track->setPrivate(*audioTrackInfo.track);
                 if (newId != oldId)
@@ -725,7 +725,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
         for (auto& videoTrackInfo : segment.videoTracks) {
             if (videoTracks().length() == 1) {
                 RefPtr track = videoTracks().item(0);
-                auto oldId = track->id();
+                auto oldId = track->trackId();
                 auto newId = videoTrackInfo.track->id();
                 track->setPrivate(*videoTrackInfo.track);
                 if (newId != oldId)
@@ -742,7 +742,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
         for (auto& textTrackInfo : segment.textTracks) {
             if (textTracks().length() == 1) {
                 RefPtr track = downcast<InbandTextTrack>(textTracks().item(0));
-                auto oldId = track->id();
+                auto oldId = track->trackId();
                 auto newId = textTrackInfo.track->id();
                 track->setPrivate(*textTrackInfo.track);
                 if (newId != oldId)
@@ -820,7 +820,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
             m_audioCodecs.append(audioTrackInfo.description->codec());
 
             // 5.2.8 Create a new track buffer to store coded frames for this track.
-            m_private->addTrackBuffer(newAudioTrack->id(), WTFMove(audioTrackInfo.description));
+            m_private->addTrackBuffer(audioTrackInfo.track->id(), WTFMove(audioTrackInfo.description));
         }
 
         // 5.3 For each video track in the initialization segment, run following steps:
@@ -856,7 +856,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
             m_videoCodecs.append(videoTrackInfo.description->codec());
 
             // 5.3.8 Create a new track buffer to store coded frames for this track.
-            m_private->addTrackBuffer(newVideoTrack->id(), WTFMove(videoTrackInfo.description));
+            m_private->addTrackBuffer(videoTrackInfo.track->id(), WTFMove(videoTrackInfo.description));
         }
 
         // 5.4 For each text track in the initialization segment, run following steps:
@@ -889,7 +889,7 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
             m_textCodecs.append(textTrackInfo.description->codec());
 
             // 5.4.7 Create a new track buffer to store coded frames for this track.
-            m_private->addTrackBuffer(newTextTrack->id(), WTFMove(textTrackInfo.description));
+            m_private->addTrackBuffer(textTrackPrivate.id(), WTFMove(textTrackInfo.description));
         }
 
         // 5.5 If active track flag equals true, then run the following steps:
@@ -1232,22 +1232,22 @@ void SourceBuffer::reportExtraMemoryAllocated(uint64_t extraMemory)
     scriptExecutionContext()->vm().heap.deprecatedReportExtraMemory(extraMemoryCostDelta);
 }
 
-Ref<SourceBuffer::SamplesPromise> SourceBuffer::bufferedSamplesForTrackId(const AtomString& trackID)
+Ref<SourceBuffer::SamplesPromise> SourceBuffer::bufferedSamplesForTrackId(TrackID trackID)
 {
     return m_private->bufferedSamplesForTrackId(trackID);
 }
 
-Ref<SourceBuffer::SamplesPromise> SourceBuffer::enqueuedSamplesForTrackID(const AtomString& trackID)
+Ref<SourceBuffer::SamplesPromise> SourceBuffer::enqueuedSamplesForTrackID(TrackID trackID)
 {
     return m_private->enqueuedSamplesForTrackID(trackID);
 }
 
-MediaTime SourceBuffer::minimumUpcomingPresentationTimeForTrackID(const AtomString& trackID)
+MediaTime SourceBuffer::minimumUpcomingPresentationTimeForTrackID(TrackID trackID)
 {
     return m_private->minimumUpcomingPresentationTimeForTrackID(trackID);
 }
 
-void SourceBuffer::setMaximumQueueDepthForTrackID(const AtomString& trackID, uint64_t maxQueueDepth)
+void SourceBuffer::setMaximumQueueDepthForTrackID(TrackID trackID, uint64_t maxQueueDepth)
 {
     m_private->setMaximumQueueDepthForTrackID(trackID, maxQueueDepth);
 }

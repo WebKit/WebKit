@@ -46,7 +46,7 @@ public:
         return adoptRef(*new AudioTrackPrivateRemote(gpuProcessConnection, playerIdentifier, identifier, WTFMove(configuration)));
     }
 
-    AtomString id() const final { return m_id; }
+    WebCore::TrackID id() const final { return m_id; }
     void updateConfiguration(AudioTrackPrivateRemoteConfiguration&&);
 
 private:
@@ -62,7 +62,7 @@ private:
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     AudioTrackKind m_kind { None };
-    AtomString m_id;
+    WebCore::TrackID m_id;
     AtomString m_label;
     AtomString m_language;
     int m_trackIndex { -1 };

@@ -23,7 +23,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
 struct WebKit::TextTrackPrivateRemoteConfiguration {
-    AtomString trackId;
+    uint64_t trackId;
     AtomString label;
     AtomString language;
     AtomString inBandMetadataTrackDispatchType;

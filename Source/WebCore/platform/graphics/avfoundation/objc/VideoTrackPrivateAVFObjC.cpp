@@ -63,7 +63,7 @@ void VideoTrackPrivateAVFObjC::resetPropertiesFromTrack()
     // AVPlayerItemTrack
     VideoTrackPrivateAVF::setSelected(m_impl->enabled());
 
-    setTrackIndex(m_impl->trackID());
+    setTrackIndex(m_impl->id());
     setKind(m_impl->videoKind());
     setId(m_impl->id());
     setLabel(m_impl->label());

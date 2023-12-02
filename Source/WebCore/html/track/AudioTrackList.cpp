@@ -84,6 +84,16 @@ AudioTrack* AudioTrackList::getTrackById(const AtomString& id) const
     return nullptr;
 }
 
+AudioTrack* AudioTrackList::getTrackById(TrackID id) const
+{
+    for (auto& inbandTrack : m_inbandTracks) {
+        auto& track = downcast<AudioTrack>(*inbandTrack);
+        if (track.trackId() == id)
+            return &track;
+    }
+    return nullptr;
+}
+
 EventTargetInterface AudioTrackList::eventTargetInterface() const
 {
     return AudioTrackListEventTargetInterfaceType;

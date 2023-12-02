@@ -34,7 +34,7 @@
 namespace WebKit {
 
 struct TextTrackPrivateRemoteConfiguration {
-    AtomString trackId;
+    WebCore::TrackID trackId;
     AtomString label;
     AtomString language;
     AtomString inBandMetadataTrackDispatchType;

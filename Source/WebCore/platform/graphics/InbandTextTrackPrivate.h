@@ -74,7 +74,7 @@ public:
     virtual bool isDefault() const { return false; }
     AtomString label() const override { return emptyAtom(); }
     AtomString language() const override { return emptyAtom(); }
-    AtomString id() const override { return emptyAtom(); }
+    std::optional<AtomString> trackUID() const override { return emptyAtom(); }
     virtual AtomString inBandMetadataTrackDispatchType() const { return emptyAtom(); }
 
     CueFormat cueFormat() const { return m_format; }

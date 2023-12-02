@@ -66,7 +66,7 @@ protected:
 
 private:
     bool isInband() const final { return true; }
-    void idChanged(const AtomString&) override;
+    void idChanged(TrackID) override;
     void labelChanged(const AtomString&) override;
     void languageChanged(const AtomString&) override;
     void willRemove() override;

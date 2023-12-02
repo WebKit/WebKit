@@ -143,6 +143,8 @@ enum class MediaPlatformType {
     Remote
 };
 
+using TrackID = uint64_t;
+
 class MediaPlayerClient : public CanMakeWeakPtr<MediaPlayerClient> {
 public:
     virtual ~MediaPlayerClient() = default;
@@ -825,6 +827,8 @@ inline bool MediaPlayer::hasMediaEngine() const
 }
 
 } // namespace WebCore
+
+using WebCore::TrackID;
 
 namespace WTF {
 

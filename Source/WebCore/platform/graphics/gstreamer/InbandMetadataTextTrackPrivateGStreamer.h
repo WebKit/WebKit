@@ -41,7 +41,7 @@ public:
     ~InbandMetadataTextTrackPrivateGStreamer() = default;
 
     Kind kind() const override { return m_kind; }
-    AtomString id() const override { return m_id; }
+    std::optional<AtomString> trackUID() const override { return m_stringId; }
     AtomString inBandMetadataTrackDispatchType() const override { return m_inBandMetadataTrackDispatchType; }
     void setInBandMetadataTrackDispatchType(const AtomString& value) { m_inBandMetadataTrackDispatchType = value; }
 
@@ -61,13 +61,13 @@ private:
     InbandMetadataTextTrackPrivateGStreamer(Kind kind, CueFormat cueFormat, const AtomString& id)
         : InbandTextTrackPrivate(cueFormat)
         , m_kind(kind)
-        , m_id(id)
+        , m_stringId(id)
     {
 
     }
 
     Kind m_kind;
-    AtomString m_id;
+    AtomString m_stringId;
     AtomString m_inBandMetadataTrackDispatchType;
 };
 

@@ -37,7 +37,6 @@
 #include <WebCore/SourceBufferPrivate.h>
 #include <WebCore/SourceBufferPrivateClient.h>
 #include <wtf/Ref.h>
-#include <wtf/text/AtomString.h>
 
 namespace IPC {
 class Connection;
@@ -114,15 +113,15 @@ private:
     void bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&&);
     void enqueuedSamplesForTrackID(TrackPrivateRemoteIdentifier, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&&);
     void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&&);
-    void minimumUpcomingPresentationTimeForTrackID(const AtomString&, CompletionHandler<void(MediaTime)>&&);
-    void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t);
+    void minimumUpcomingPresentationTimeForTrackID(TrackID, CompletionHandler<void(MediaTime)>&&);
+    void setMaximumQueueDepthForTrackID(TrackID, uint64_t);
 
     WeakPtr<GPUConnectionToWebProcess> m_connectionToWebProcess;
     RemoteSourceBufferIdentifier m_identifier;
     Ref<WebCore::SourceBufferPrivate> m_sourceBufferPrivate;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
 
-    HashMap<TrackPrivateRemoteIdentifier, AtomString> m_trackIds;
+    HashMap<TrackPrivateRemoteIdentifier, TrackID> m_trackIds;
     HashMap<TrackPrivateRemoteIdentifier, Ref<WebCore::MediaDescription>> m_mediaDescriptions;
 };
 

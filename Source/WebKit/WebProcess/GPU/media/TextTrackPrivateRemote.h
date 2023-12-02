@@ -74,7 +74,7 @@ public:
 
     void updateConfiguration(TextTrackPrivateRemoteConfiguration&&);
 
-    AtomString id() const final { return m_id; }
+    WebCore::TrackID id() const final { return m_id; }
     AtomString label() const final { return m_label; }
     AtomString language() const final { return m_language; }
     int trackIndex() const final { return m_trackIndex; }
@@ -98,7 +98,7 @@ private:
     TextTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, TextTrackPrivateRemoteConfiguration&&);
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
-    AtomString m_id;
+    WebCore::TrackID m_id;
     AtomString m_label;
     AtomString m_language;
     int m_trackIndex { -1 };

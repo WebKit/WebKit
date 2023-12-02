@@ -274,7 +274,7 @@ bool CDMSessionAVContentKeySession::update(Uint8Array* key, RefPtr<Uint8Array>& 
         // data.
         RefPtr<SourceBufferPrivateAVFObjC> protectedSourceBuffer;
         for (auto& sourceBuffer : m_sourceBuffers) {
-            if (sourceBuffer->protectedTrackID() != notFound) {
+            if (sourceBuffer->protectedTrackID()) {
                 protectedSourceBuffer = sourceBuffer;
                 break;
             }

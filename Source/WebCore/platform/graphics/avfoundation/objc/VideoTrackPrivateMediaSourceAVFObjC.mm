@@ -36,15 +36,12 @@ namespace WebCore {
 
 VideoTrackPrivateMediaSourceAVFObjC::VideoTrackPrivateMediaSourceAVFObjC(AVAssetTrack* track)
     : m_impl(makeUnique<AVTrackPrivateAVFObjCImpl>(track))
-    , m_trackID(-1)
 {
     resetPropertiesFromTrack();
 }
 
 void VideoTrackPrivateMediaSourceAVFObjC::resetPropertiesFromTrack()
 {
-    m_trackID = m_impl->trackID();
-
     setTrackIndex(m_impl->index());
     setKind(m_impl->videoKind());
     setId(m_impl->id());

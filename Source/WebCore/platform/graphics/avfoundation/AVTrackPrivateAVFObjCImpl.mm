@@ -184,14 +184,14 @@ int AVTrackPrivateAVFObjCImpl::index() const
     return 0;
 }
 
-AtomString AVTrackPrivateAVFObjCImpl::id() const
+TrackID AVTrackPrivateAVFObjCImpl::id() const
 {
     if (m_assetTrack)
-        return AtomString::number([m_assetTrack trackID]);
+        return [m_assetTrack trackID];
     if (m_mediaSelectionOption)
-        return [[m_mediaSelectionOption->avMediaSelectionOption() optionID] stringValue];
+        return [[m_mediaSelectionOption->avMediaSelectionOption() optionID] unsignedLongLongValue];
     ASSERT_NOT_REACHED();
-    return emptyAtom();
+    return 0;
 }
 
 AtomString AVTrackPrivateAVFObjCImpl::label() const
@@ -280,16 +280,6 @@ PlatformAudioTrackConfiguration AVTrackPrivateAVFObjCImpl::audioTrackConfigurati
         numberOfChannels(),
         bitrate(),
     };
-}
-
-int AVTrackPrivateAVFObjCImpl::trackID() const
-{
-    if (m_assetTrack)
-        return [m_assetTrack trackID];
-    if (m_mediaSelectionOption)
-        return [[m_mediaSelectionOption->avMediaSelectionOption() optionID] intValue];
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 static AVAssetTrack* assetTrackFor(const AVTrackPrivateAVFObjCImpl& impl)

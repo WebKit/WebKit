@@ -43,6 +43,7 @@
 #include "TrackPrivateBaseGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
 #include <optional>
+#include <ranges>
 #include <wtf/LoggerHelper.h>
 
 namespace WebCore {
@@ -65,10 +66,10 @@ public:
     MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState) final;
 
-    void flush(const AtomString&) final;
-    void enqueueSample(Ref<MediaSample>&&, const AtomString&) final;
-    void allSamplesInTrackEnqueued(const AtomString&) final;
-    bool isReadyForMoreSamples(const AtomString&) final;
+    void flush(TrackID) final;
+    void enqueueSample(Ref<MediaSample>&&, TrackID) final;
+    void allSamplesInTrackEnqueued(TrackID) final;
+    bool isReadyForMoreSamples(TrackID) final;
 
     bool precheckInitialisationSegment(const InitializationSegment&) final;
     void processInitialisationSegment(std::optional<InitializationSegment>&&) final;
@@ -76,7 +77,7 @@ public:
     void didReceiveAllPendingSamples();
     void appendParsingFailed();
 
-    HashMap<AtomString, RefPtr<MediaSourceTrackGStreamer>>::ValuesIteratorRange tracks() { return m_tracks.values(); }
+    auto tracks() { return std::views::values(m_tracks); }
 
     ContentType type() const { return m_type; }
 
@@ -97,14 +98,13 @@ private:
 
     SourceBufferPrivateGStreamer(MediaSourcePrivateGStreamer&, const ContentType&, MediaPlayerPrivateGStreamerMSE&);
 
-    void notifyClientWhenReadyForMoreSamples(const AtomString&) override;
+    void notifyClientWhenReadyForMoreSamples(TrackID) override;
 
     bool m_hasBeenRemovedFromMediaSource { false };
     ContentType m_type;
     MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
     UniqueRef<AppendPipeline> m_appendPipeline;
-    AtomString m_trackId;
-    HashMap<AtomString, RefPtr<MediaSourceTrackGStreamer>> m_tracks;
+    StdUnorderedMap<TrackID, RefPtr<MediaSourceTrackGStreamer>> m_tracks;
     std::optional<MediaPromise::Producer> m_appendPromise;
 
 #if !RELEASE_LOG_DISABLED

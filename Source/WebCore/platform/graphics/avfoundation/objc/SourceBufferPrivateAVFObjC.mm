@@ -63,9 +63,7 @@
 #import <wtf/WTFSemaphore.h>
 #import <wtf/WeakPtr.h>
 #import <wtf/WorkQueue.h>
-#import <wtf/text/AtomString.h>
 #import <wtf/text/CString.h>
-#import <wtf/text/StringToIntegerConversion.h>
 
 #pragma mark - Soft Linking
 
@@ -474,21 +472,21 @@ bool SourceBufferPrivateAVFObjC::isMediaSampleAllowed(const MediaSample& sample)
 {
     // FIXME(125161): We don't handle text tracks, and passing this sample up to SourceBuffer
     // will just confuse its state. Drop this sample until we can handle text tracks properly.
-    auto trackId = parseIntegerAllowingTrailingJunk<uint64_t>(sample.trackID()).value_or(0);
-    return trackId == m_enabledVideoTrackID || m_audioRenderers.contains(trackId);
+    auto trackID = sample.trackID();
+    return isEnabledVideoTrackID(trackID) || m_audioRenderers.contains(trackID);
 }
 
-void SourceBufferPrivateAVFObjC::processFormatDescriptionForTrackId(Ref<TrackInfo>&& formatDescription, uint64_t trackId)
+void SourceBufferPrivateAVFObjC::processFormatDescriptionForTrackId(Ref<TrackInfo>&& formatDescription, TrackID trackId)
 {
     if (auto videoDescription = dynamicDowncast<VideoInfo>(formatDescription)) {
-        auto result = m_videoTracks.find(AtomString::number(trackId));
+        auto result = m_videoTracks.find(trackId);
         if (result != m_videoTracks.end())
             result->value->setFormatDescription(videoDescription.releaseNonNull());
         return;
     }
 
     if (auto audioDescription = dynamicDowncast<AudioInfo>(formatDescription)) {
-        auto result = m_audioTracks.find(AtomString::number(trackId));
+        auto result = m_audioTracks.find(trackId);
         if (result != m_audioTracks.end())
             result->value->setFormatDescription(audioDescription.releaseNonNull());
     }
@@ -561,10 +559,10 @@ void SourceBufferPrivateAVFObjC::didProvideContentKeyRequestInitializationDataFo
 
 bool SourceBufferPrivateAVFObjC::needsVideoLayer() const
 {
-    if (m_protectedTrackID == notFound)
+    if (!m_protectedTrackID)
         return false;
 
-    if (m_enabledVideoTrackID != m_protectedTrackID)
+    if (!isEnabledVideoTrackID(*m_protectedTrackID))
         return false;
 
     // When video content is protected and keys are assigned through
@@ -781,17 +779,17 @@ void SourceBufferPrivateAVFObjC::setReadyState(MediaPlayer::ReadyState readyStat
 
 bool SourceBufferPrivateAVFObjC::hasSelectedVideo() const
 {
-    return m_enabledVideoTrackID != notFound;
+    return !!m_enabledVideoTrackID;
 }
 
 void SourceBufferPrivateAVFObjC::trackDidChangeSelected(VideoTrackPrivate& track, bool selected)
 {
-    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(track.id()).value_or(0);
+    auto trackID = track.id();
 
     ALWAYS_LOG(LOGIDENTIFIER, "video trackID = ", trackID, ", selected = ", selected);
 
-    if (!selected && m_enabledVideoTrackID == trackID) {
-        m_enabledVideoTrackID = -1;
+    if (!selected && isEnabledVideoTrackID(trackID)) {
+        m_enabledVideoTrackID.reset();
         if (m_decompressionSession)
             m_decompressionSession->stopRequestingMediaData();
     } else if (selected) {
@@ -813,7 +811,7 @@ void SourceBufferPrivateAVFObjC::trackDidChangeSelected(VideoTrackPrivate& track
 
 void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track, bool enabled)
 {
-    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(track.id()).value_or(0);
+    auto trackID = track.id();
 
     ALWAYS_LOG(LOGIDENTIFIER, "audio trackID = ", trackID, ", enabled = ", enabled);
 
@@ -991,7 +989,8 @@ void SourceBufferPrivateAVFObjC::flushIfNeeded()
         m_decompressionSession->stopRequestingMediaData();
     [m_displayLayer stopRequestingMediaData];
 
-    reenqueSamples(AtomString::number(m_enabledVideoTrackID));
+    if (m_enabledVideoTrackID)
+        reenqueSamples(*m_enabledVideoTrackID);
 }
 
 void SourceBufferPrivateAVFObjC::registerForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient* client)
@@ -1037,18 +1036,18 @@ void SourceBufferPrivateAVFObjC::rendererWasAutomaticallyFlushed(AVSampleBufferA
 {
     auto mediaTime = PAL::toMediaTime(time);
     ERROR_LOG(LOGIDENTIFIER, mediaTime);
-    AtomString trackId;
+    std::optional<TrackID> trackId;
     for (auto& pair : m_audioRenderers) {
         if (pair.value.get() == renderer) {
-            trackId = AtomString::number(pair.key);
+            trackId = pair.key;
             break;
         }
     }
-    if (trackId.isEmpty()) {
+    if (!trackId) {
         ERROR_LOG(LOGIDENTIFIER, "Couldn't find track attached to Audio Renderer.");
         return;
     }
-    reenqueSamples(trackId);
+    reenqueSamples(*trackId);
 }
 
 void SourceBufferPrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectionChanged(bool obscured)
@@ -1107,12 +1106,11 @@ void SourceBufferPrivateAVFObjC::layerReadyForDisplayChanged(AVSampleBufferDispl
         player->setHasAvailableVideoFrame(true);
 }
 
-void SourceBufferPrivateAVFObjC::flush(const AtomString& trackIDString)
+void SourceBufferPrivateAVFObjC::flush(TrackID trackID)
 {
-    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0);
     DEBUG_LOG(LOGIDENTIFIER, trackID);
 
-    if (trackID == m_enabledVideoTrackID) {
+    if (isEnabledVideoTrackID(trackID)) {
         flushVideo();
     } else if (m_audioRenderers.contains(trackID))
         flushAudio(m_audioRenderers.get(trackID).get());
@@ -1192,7 +1190,7 @@ bool SourceBufferPrivateAVFObjC::canEnqueueSample(uint64_t trackID, const MediaS
         return false;
 
     // DecompressionSessions doesn't support encrypted media.
-    if (trackID == m_enabledVideoTrackID && !m_displayLayer)
+    if (isEnabledVideoTrackID(trackID) && !m_displayLayer)
         return false;
 
     // if sample is encrypted, and keyIDs match the current set of keyIDs: enqueue sample.
@@ -1212,10 +1210,9 @@ bool SourceBufferPrivateAVFObjC::canEnqueueSample(uint64_t trackID, const MediaS
 #endif
 }
 
-void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, const AtomString& trackIDString)
+void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSample>&& sample, TrackID trackID)
 {
-    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0);
-    if (trackID != m_enabledVideoTrackID && !m_audioRenderers.contains(trackID))
+    if (!isEnabledVideoTrackID(trackID) && !m_audioRenderers.contains(trackID))
         return;
 
     ASSERT(is<MediaSampleAVFObjC>(sample));
@@ -1244,7 +1241,7 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
     }
     auto mediaType = PAL::CMFormatDescriptionGetMediaType(formatDescription);
 
-    if (trackID == m_enabledVideoTrackID) {
+    if (isEnabledVideoTrackID(trackID)) {
         // AVSampleBufferDisplayLayer will throw an un-documented exception if passed a sample
         // whose media type is not kCMMediaType_Video. This condition is exceptional; we should
         // never enqueue a non-video sample in a AVSampleBufferDisplayLayer.
@@ -1325,10 +1322,9 @@ void SourceBufferPrivateAVFObjC::enqueueSampleBuffer(MediaSampleAVFObjC& sample)
     }];
 }
 
-bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(const AtomString& trackIDString)
+bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(TrackID trackID)
 {
-    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0);
-    if (trackID == m_enabledVideoTrackID) {
+    if (isEnabledVideoTrackID(trackID)) {
         if (requiresFlush())
             return false;
 
@@ -1378,7 +1374,7 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(uint64_t trackID)
 {
     INFO_LOG(LOGIDENTIFIER, trackID);
 
-    if (trackID == m_enabledVideoTrackID) {
+    if (isEnabledVideoTrackID(trackID)) {
         if (m_decompressionSession)
             m_decompressionSession->stopRequestingMediaData();
         [m_displayLayer stopRequestingMediaData];
@@ -1390,13 +1386,12 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(uint64_t trackID)
     if (trackIsBlocked(trackID))
         return;
 
-    provideMediaData(AtomString::number(trackID));
+    provideMediaData(trackID);
 }
 
-void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const AtomString& trackIDString)
+void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(TrackID trackID)
 {
-    auto trackID = parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0);
-    if (trackID == m_enabledVideoTrackID) {
+    if (isEnabledVideoTrackID(trackID)) {
         if (m_decompressionSession) {
             m_decompressionSession->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }, trackID] {
                 if (RefPtr protectedThis = weakThis.get())
@@ -1419,23 +1414,22 @@ void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(const AtomS
     }
 }
 
-bool SourceBufferPrivateAVFObjC::canSetMinimumUpcomingPresentationTime(const AtomString& trackIDString) const
+bool SourceBufferPrivateAVFObjC::canSetMinimumUpcomingPresentationTime(TrackID trackID) const
 {
-    return parseIntegerAllowingTrailingJunk<uint64_t>(trackIDString).value_or(0) == m_enabledVideoTrackID
-        && [PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(expectMinimumUpcomingSampleBufferPresentationTime:)];
+    return isEnabledVideoTrackID(trackID) && [PAL::getAVSampleBufferDisplayLayerClass() instancesRespondToSelector:@selector(expectMinimumUpcomingSampleBufferPresentationTime:)];
 }
 
-void SourceBufferPrivateAVFObjC::setMinimumUpcomingPresentationTime(const AtomString& trackIDString, const MediaTime& presentationTime)
+void SourceBufferPrivateAVFObjC::setMinimumUpcomingPresentationTime(TrackID trackID, const MediaTime& presentationTime)
 {
-    ASSERT(canSetMinimumUpcomingPresentationTime(trackIDString));
-    if (canSetMinimumUpcomingPresentationTime(trackIDString))
+    ASSERT(canSetMinimumUpcomingPresentationTime(trackID));
+    if (canSetMinimumUpcomingPresentationTime(trackID))
         [m_displayLayer expectMinimumUpcomingSampleBufferPresentationTime:PAL::toCMTime(presentationTime)];
 }
 
-void SourceBufferPrivateAVFObjC::clearMinimumUpcomingPresentationTime(const AtomString& trackIDString)
+void SourceBufferPrivateAVFObjC::clearMinimumUpcomingPresentationTime(TrackID trackID)
 {
-    ASSERT(canSetMinimumUpcomingPresentationTime(trackIDString));
-    if (canSetMinimumUpcomingPresentationTime(trackIDString))
+    ASSERT(canSetMinimumUpcomingPresentationTime(trackID));
+    if (canSetMinimumUpcomingPresentationTime(trackID))
         [m_displayLayer resetUpcomingSampleBufferPresentationTimeExpectations];
 }
 
@@ -1483,11 +1477,12 @@ void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer
 
         ThreadSafeWeakPtr weakThis { *this };
         [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
-            if (RefPtr protectedThis = weakThis.get())
-                protectedThis->didBecomeReadyForMoreSamples(m_enabledVideoTrackID);
+            if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_enabledVideoTrackID)
+                protectedThis->didBecomeReadyForMoreSamples(*protectedThis->m_enabledVideoTrackID);
         }];
         [m_listener beginObservingLayer:m_displayLayer.get()];
-        reenqueSamples(AtomString::number(m_enabledVideoTrackID));
+        if (m_enabledVideoTrackID)
+            reenqueSamples(*m_enabledVideoTrackID);
     }
 }
 
@@ -1509,8 +1504,8 @@ void SourceBufferPrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSes
         return;
 
     m_decompressionSession->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }] {
-        if (RefPtr protectedThis = weakThis.get())
-            protectedThis->didBecomeReadyForMoreSamples(protectedThis->m_enabledVideoTrackID);
+        if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_enabledVideoTrackID)
+            protectedThis->didBecomeReadyForMoreSamples(*protectedThis->m_enabledVideoTrackID);
     });
     m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = ThreadSafeWeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get()) {
@@ -1518,7 +1513,8 @@ void SourceBufferPrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSes
                 player->setHasAvailableVideoFrame(true);
         }
     });
-    reenqueSamples(AtomString::number(m_enabledVideoTrackID));
+    if (m_enabledVideoTrackID)
+        reenqueSamples(*m_enabledVideoTrackID);
 }
 
 RefPtr<MediaPlayerPrivateMediaSourceAVFObjC> SourceBufferPrivateAVFObjC::player() const
@@ -1526,6 +1522,11 @@ RefPtr<MediaPlayerPrivateMediaSourceAVFObjC> SourceBufferPrivateAVFObjC::player(
     if (RefPtr mediaSource = downcast<MediaSourcePrivateAVFObjC>(m_mediaSource.get()))
         return mediaSource->player();
     return nullptr;
+}
+
+bool SourceBufferPrivateAVFObjC::isEnabledVideoTrackID(TrackID trackID) const
+{
+    return m_enabledVideoTrackID && *m_enabledVideoTrackID == trackID;
 }
 
 #if !RELEASE_LOG_DISABLED

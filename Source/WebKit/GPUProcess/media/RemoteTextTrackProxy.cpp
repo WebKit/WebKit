@@ -94,7 +94,7 @@ void RemoteTextTrackProxy::willRemove()
     ASSERT_NOT_REACHED();
 }
 
-void RemoteTextTrackProxy::idChanged(const AtomString&)
+void RemoteTextTrackProxy::idChanged(TrackID)
 {
     configurationChanged();
 }

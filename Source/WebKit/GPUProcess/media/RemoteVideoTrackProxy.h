@@ -72,7 +72,7 @@ private:
     void configurationChanged(const WebCore::PlatformVideoTrackConfiguration&) final { updateConfiguration(); }
 
     // TrackPrivateBaseClient
-    void idChanged(const AtomString&) final;
+    void idChanged(WebCore::TrackID) final;
     void labelChanged(const AtomString&) final;
     void languageChanged(const AtomString&) final;
     void willRemove() final;

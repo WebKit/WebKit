@@ -195,9 +195,9 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(const ui
     parser->setLogger(m_logger, m_logIdentifier);
     parser->setDidParseInitializationDataCallback([&](SourceBufferParserWebM::InitializationSegment&& init) {
         for (auto& audioTrack : init.audioTracks) {
-            if (audioTrack.track && audioTrack.track->trackUID()) {
+            if (audioTrack.track) {
                 duration = init.duration;
-                audioTrackId = audioTrack.track->trackUID();
+                audioTrackId = audioTrack.track->id();
                 track = static_pointer_cast<AudioTrackPrivateWebM>(audioTrack.track);
                 return;
             }

@@ -397,8 +397,8 @@ void AppendPipeline::appsinkNewSample(const Track& track, GRefPtr<GstSample>&& s
 
     auto mediaSample = MediaSampleGStreamer::create(WTFMove(sample), track.presentationSize, track.trackId);
 
-    GST_TRACE_OBJECT(pipeline(), "append: trackId=%s PTS=%s DTS=%s DUR=%s presentationSize=%.0fx%.0f",
-        mediaSample->trackID().string().utf8().data(),
+    GST_TRACE_OBJECT(pipeline(), "append: trackId=%" PRIu64 " PTS=%s DTS=%s DUR=%s presentationSize=%.0fx%.0f",
+        mediaSample->trackID(),
         mediaSample->presentationTime().toString().utf8().data(),
         mediaSample->decodeTime().toString().utf8().data(),
         mediaSample->duration().toString().utf8().data(),
@@ -528,7 +528,7 @@ void AppendPipeline::didReceiveInitializationSegment()
     }
 
     for (std::unique_ptr<Track>& track : m_tracks) {
-        GST_DEBUG_OBJECT(pipeline(), "Adding track to initialization with segment type %s, id %s.", streamTypeToString(track->streamType), track->trackId.string().utf8().data());
+        GST_DEBUG_OBJECT(pipeline(), "Adding track to initialization with segment type %s, id %s.", streamTypeToString(track->streamType), track->trackSringId.string().utf8().data());
         switch (track->streamType) {
         case Audio: {
             ASSERT(track->webKitTrack);
@@ -556,7 +556,7 @@ void AppendPipeline::didReceiveInitializationSegment()
         for (std::unique_ptr<Track>& track : m_tracks) {
             if (track->streamType == StreamType::Video) {
                 GST_DEBUG_OBJECT(pipeline(), "Setting initial video size to that of track with id '%s', %gx%g.",
-                    track->trackId.string().utf8().data(), static_cast<double>(track->presentationSize.width()), static_cast<double>(track->presentationSize.height()));
+                    track->trackSringId.string().utf8().data(), static_cast<double>(track->presentationSize.width()), static_cast<double>(track->presentationSize.height()));
                 m_playerPrivate->setInitialVideoSize(track->presentationSize);
                 break;
             }
@@ -698,7 +698,7 @@ void AppendPipeline::handleAppsinkNewSampleFromStreamingThread(GstElement*)
     }
 }
 
-GRefPtr<GstElement> createOptionalParserForFormat(GstBin* bin, const AtomString& trackId, const GstCaps* caps)
+GRefPtr<GstElement> createOptionalParserForFormat(GstBin* bin, const AtomString& trackSringId, const GstCaps* caps)
 {
     // Parser elements have either or both of two functions:
     //
@@ -718,7 +718,7 @@ GRefPtr<GstElement> createOptionalParserForFormat(GstBin* bin, const AtomString&
 
     GstStructure* structure = gst_caps_get_structure(caps, 0);
     const char* mediaType = gst_structure_get_name(structure);
-    auto parserName = makeString(trackId, "_parser"_s);
+    auto parserName = makeString(trackSringId, "_parser"_s);
     // Since parsers are not needed in every case, we can use an identity element as pass-through
     // parser for cases where a parser is not needed, making the management of elements and pads
     // more orthogonal.
@@ -823,11 +823,11 @@ std::pair<AppendPipeline::CreateTrackResult, AppendPipeline::Track*> AppendPipel
         gst_pad_add_probe(demuxerSrcPad, GST_PAD_PROBE_TYPE_BUFFER, reinterpret_cast<GstPadProbeCallback>(appendPipelineDemuxerBlackHolePadProbe), nullptr, nullptr);
         return { CreateTrackResult::TrackIgnored, nullptr };
     }
-    AtomString trackId = generateTrackId(streamType, trackIndex);
+    AtomString trackSringId = generateTrackId(streamType, trackIndex);
 
-    GST_DEBUG_OBJECT(pipeline(), "Creating new AppendPipeline::Track with id '%s'", trackId.string().utf8().data());
+    GST_DEBUG_OBJECT(pipeline(), "Creating new AppendPipeline::Track with id '%s'", trackSringId.string().utf8().data());
     size_t newTrackIndex = m_tracks.size();
-    m_tracks.append(makeUnique<Track>(trackId, streamType, parsedCaps, presentationSize));
+    m_tracks.append(makeUnique<Track>(trackIndex, trackSringId, streamType, parsedCaps, presentationSize));
     Track& track = *m_tracks.at(newTrackIndex);
     track.initializeElements(this, GST_BIN(m_pipeline.get()));
     track.webKitTrack = makeWebKitTrack(newTrackIndex);
@@ -851,7 +851,8 @@ bool AppendPipeline::recycleTrackForPad(GstPad* demuxerSrcPad)
         if (track->streamType != streamType)
             continue;
         matchingTrack = &*track;
-        if (track->trackId == trackId)
+        // FIXME: This test will never match, comparing track ID from demuxerSrcPad name
+        if (track->trackSringId == trackId)
             break;
     }
 
@@ -881,7 +882,7 @@ bool AppendPipeline::recycleTrackForPad(GstPad* demuxerSrcPad)
         auto peer = adoptGRef(gst_pad_get_peer(matchingTrack->entryPad.get()));
         if (peer.get() != demuxerSrcPad) {
             if (peer) {
-                GST_DEBUG_OBJECT(peer.get(), "Unlinking from track %s", matchingTrack->trackId.string().ascii().data());
+                GST_DEBUG_OBJECT(peer.get(), "Unlinking from track %s", matchingTrack->trackSringId.string().ascii().data());
                 gst_pad_unlink(peer.get(), matchingTrack->entryPad.get());
             }
 
@@ -894,7 +895,7 @@ bool AppendPipeline::recycleTrackForPad(GstPad* demuxerSrcPad)
             matchingTrack->caps = WTFMove(parsedCaps);
             matchingTrack->presentationSize = presentationSize;
         } else
-            GST_DEBUG_OBJECT(pipeline(), "%s track pads match, nothing to re-link", matchingTrack->trackId.string().ascii().data());
+            GST_DEBUG_OBJECT(pipeline(), "%s track pads match, nothing to re-link", matchingTrack->trackSringId.string().ascii().data());
 
     }
 
@@ -907,7 +908,7 @@ bool AppendPipeline::recycleTrackForPad(GstPad* demuxerSrcPad)
 
 void AppendPipeline::linkPadWithTrack(GstPad* demuxerSrcPad, Track& track)
 {
-    GST_DEBUG_OBJECT(demuxerSrcPad, "Linking to track %s", track.trackId.string().ascii().data());
+    GST_DEBUG_OBJECT(demuxerSrcPad, "Linking to track %s", track.trackSringId.string().ascii().data());
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(m_pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, "append-pipeline-before-link");
     ASSERT(!GST_PAD_IS_LINKED(track.entryPad.get()));
     gst_pad_link(demuxerSrcPad, track.entryPad.get());
@@ -972,7 +973,7 @@ void AppendPipeline::Track::emplaceOptionalParserForFormat(GstBin* bin, const GR
         gst_bin_remove(bin, parser.get());
     }
 
-    parser = createOptionalParserForFormat(bin, trackId, newCaps.get());
+    parser = createOptionalParserForFormat(bin, trackSringId, newCaps.get());
     gst_bin_add(bin, parser.get());
     gst_element_sync_state_with_parent(parser.get());
     gst_element_link(parser.get(), appsink.get());

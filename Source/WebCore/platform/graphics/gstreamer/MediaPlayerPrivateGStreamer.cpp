@@ -1063,6 +1063,8 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
         if (i < tracks.size()) {
             RefPtr<TrackPrivateType> existingTrack = tracks.get(streamId);
             if (existingTrack) {
+                ASSERT(existingTrack->index() == i);
+                // TODO: Position of index should remain the same on replay.
                 existingTrack->setIndex(i);
                 // If the video has been played twice, the track is still there, but we need
                 // to update the pad pointer.
@@ -1073,8 +1075,8 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
         }
 
         auto track = TrackPrivateType::create(*this, i, GRefPtr(pad));
-        ASSERT(track->id() == streamId);
-        validStreams.append(track->id());
+        ASSERT(track->stringId() == streamId);
+        validStreams.append(track->stringId());
         if (!track->trackIndex() && (type == TrackType::Audio || type == TrackType::Video))
             track->setActive(true);
 
@@ -1090,7 +1092,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
             player->addTextTrack(*std::get<InbandTextTrackPrivate*>(variantTrack));
             break;
         }
-        tracks.add(track->id(), WTFMove(track));
+        tracks.add(track->stringId(), WTFMove(track));
         changed = true;
     }
 
@@ -1137,7 +1139,7 @@ void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
 void MediaPlayerPrivateGStreamer::handleTextSample(GstSample* sample, const char* streamId)
 {
     for (auto& track : m_textTracks.values()) {
-        if (!strcmp(track->id().string().utf8().data(), streamId)) {
+        if (!strcmp(track->stringId().string().utf8().data(), streamId)) {
             track->handleSample(sample);
             return;
         }
@@ -1384,7 +1386,7 @@ void MediaPlayerPrivateGStreamer::updateEnabledVideoTrack()
         GST_DEBUG_OBJECT(m_pipeline.get(), "Setting playbin2 current-video=%d", wantedTrack->trackIndex());
         g_object_set(m_pipeline.get(), "current-video", wantedTrack->trackIndex(), nullptr);
     } else {
-        m_wantedVideoStreamId = wantedTrack->id();
+        m_wantedVideoStreamId = wantedTrack->stringId();
         playbin3SendSelectStreamsIfAppropriate();
     }
 }
@@ -1408,7 +1410,7 @@ void MediaPlayerPrivateGStreamer::updateEnabledAudioTrack()
         GST_DEBUG_OBJECT(m_pipeline.get(), "Setting playbin2 current-audio=%d", wantedTrack->trackIndex());
         g_object_set(m_pipeline.get(), "current-audio", wantedTrack->trackIndex(), nullptr);
     } else {
-        m_wantedAudioStreamId = wantedTrack->id();
+        m_wantedAudioStreamId = wantedTrack->stringId();
         playbin3SendSelectStreamsIfAppropriate();
     }
 }
@@ -1512,7 +1514,7 @@ void MediaPlayerPrivateGStreamer::updateTracks(const GRefPtr<GstObject>& collect
         auto track = m_##type##Tracks.get(streamId);                    \
         if (isTrackCached)                                              \
             track->updateConfigurationFromCaps(WTFMove(caps));          \
-        auto trackId = track->id();                                     \
+        auto trackId = track->stringId();                               \
         if (!type##TrackIndex) { \
             m_wanted##Type##StreamId = trackId;                         \
             m_requested##Type##StreamId = trackId;                      \

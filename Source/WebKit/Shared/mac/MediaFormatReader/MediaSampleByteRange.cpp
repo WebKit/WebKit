@@ -41,9 +41,9 @@ MediaSampleByteRange::MediaSampleByteRange(MediaSamplesBlock&& sample, MTPluginB
     ASSERT(std::holds_alternative<MediaSample::ByteRange>(m_block.last().data));
 }
 
-AtomString MediaSampleByteRange::trackID() const
+TrackID MediaSampleByteRange::trackID() const
 {
-    return AtomString::number(m_block.info()->trackID);
+    return m_block.info()->trackID;
 }
 
 PlatformSample MediaSampleByteRange::platformSample() const

@@ -35,12 +35,12 @@
 #include <WebCore/MediaSample.h>
 #include <WebCore/SourceBufferPrivate.h>
 #include <WebCore/SourceBufferPrivateClient.h>
+#include <wtf/HashMap.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/Ref.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
-#include <wtf/text/AtomString.h>
 
 namespace IPC {
 class Connection;
@@ -86,7 +86,7 @@ private:
     void setMediaSourceEnded(bool) final;
     void setMode(WebCore::SourceBufferAppendMode) final;
     void reenqueueMediaIfNeeded(const MediaTime& currentMediaTime) final;
-    void addTrackBuffer(const AtomString& trackId, RefPtr<WebCore::MediaDescription>&&) final;
+    void addTrackBuffer(TrackID, RefPtr<WebCore::MediaDescription>&&) final;
     void resetTrackBuffers() final;
     void clearTrackBuffers(bool) final;
     void setAllTrackBuffersNeedRandomAccess() final;
@@ -105,14 +105,14 @@ private:
     Ref<ComputeSeekPromise> computeSeekTime(const WebCore::SeekTarget&) final;
     void seekToTime(const MediaTime&) final;
 
-    void updateTrackIds(Vector<std::pair<AtomString, AtomString>>&&) final;
+    void updateTrackIds(Vector<std::pair<TrackID, TrackID>>&&) final;
     uint64_t totalTrackBufferSizeInBytes() const final;
 
     void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime) final;
 
     // Internals Utility methods
-    Ref<SamplesPromise> bufferedSamplesForTrackId(const AtomString&) final;
-    Ref<SamplesPromise> enqueuedSamplesForTrackID(const AtomString&) final;
+    Ref<SamplesPromise> bufferedSamplesForTrackId(TrackID) final;
+    Ref<SamplesPromise> enqueuedSamplesForTrackID(TrackID) final;
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&&);
@@ -125,15 +125,15 @@ private:
     void sourceBufferPrivateDidDropSample();
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode);
     void sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory);
-    MediaTime minimumUpcomingPresentationTimeForTrackID(const AtomString&) override;
-    void setMaximumQueueDepthForTrackID(const AtomString&, uint64_t) override;
+    MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID) override;
+    void setMaximumQueueDepthForTrackID(TrackID, uint64_t) override;
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteSourceBufferIdentifier m_remoteSourceBufferIdentifier;
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
 
-    HashMap<AtomString, TrackPrivateRemoteIdentifier> m_trackIdentifierMap;
-    HashMap<AtomString, TrackPrivateRemoteIdentifier> m_prevTrackIdentifierMap;
+    StdUnorderedMap<TrackID, TrackPrivateRemoteIdentifier> m_trackIdentifierMap;
+    StdUnorderedMap<TrackID, TrackPrivateRemoteIdentifier> m_prevTrackIdentifierMap;
     Vector<WebCore::PlatformTimeRanges> m_trackBufferRanges;
 
     uint64_t m_totalTrackBufferSizeInBytes = { 0 };
