@@ -1,0 +1,24 @@
+<script>
+ function f1()
+ {
+     pic = document.getElementById("picItem");
+     pic.setAttribute("aria-rowcount","0");
+     att = document.createAttributeNS("http://www.w3.org/1999/xhtml","FOOBAR");
+     pic.setAttributeNode(att);
+     att = document.createAttributeNS("http://www.w3.org/1999/xhtml","FOOBAR");
+     pic.setAttributeNode(att);
+
+     // Make sure that the attributes are collectable.
+     body.innerHTML = "This test passes if it doesn't crash";
+     pic = att = "nothing";
+
+     GCController.collect();
+ }
+
+ if (window.testRunner)
+     testRunner.dumpAsText();
+
+</script>
+<body id="body" onload="f1()">
+    <picture id="picItem">
+</body>
