@@ -406,6 +406,7 @@ String ShorthandSerializer::serialize()
     case CSSPropertyWhiteSpace:
         return serializeWhiteSpace();
     case CSSPropertyScrollTimeline:
+    case CSSPropertyViewTimeline:
         return serializeCoordinatingListPropertyGroup();
     default:
         ASSERT_NOT_REACHED();

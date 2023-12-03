@@ -75,6 +75,7 @@
 #include "TextSpacing.h"
 #include "TouchAction.h"
 #include "TransformFunctions.h"
+#include "ViewTimeline.h"
 #include "WillChangeData.h"
 
 namespace WebCore {
@@ -214,6 +215,7 @@ public:
     
     static Vector<AtomString> convertScrollTimelineName(BuilderState&, const CSSValue&);
     static Vector<ScrollAxis> convertScrollTimelineAxis(BuilderState&, const CSSValue&);
+    static Vector<ViewTimelineInsets> convertViewTimelineInset(BuilderState&, const CSSValue&);
 
 private:
     friend class BuilderCustom;
@@ -2093,6 +2095,22 @@ inline Vector<ScrollAxis> BuilderConverter::convertScrollTimelineAxis(BuilderSta
     ASSERT(is<CSSValueList>(value));
     return WTF::map(downcast<CSSValueList>(value), [&](auto& item) {
         return fromCSSValueID<ScrollAxis>(item.valueID());
+    });
+}
+
+inline Vector<ViewTimelineInsets> BuilderConverter::convertViewTimelineInset(BuilderState& state, const CSSValue& value)
+{
+    // While parsing, consumeViewTimelineInset() and consumeViewTimelineShorthand() yield a CSSValueList exclusively.
+    if (!is<CSSValueList>(value))
+        return { };
+
+    return WTF::map(downcast<CSSValueList>(value), [&](auto& item) -> ViewTimelineInsets {
+        // Each item is either a single value or a CSSValuePair.
+        if (auto* pair = dynamicDowncast<CSSValuePair>(item))
+            return { convertLengthOrAuto(state, pair->first()), convertLengthOrAuto(state, pair->second()) };
+        if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(item))
+            return { convertLengthOrAuto(state, *primitiveValue), std::nullopt };
+        return { };
     });
 }
 

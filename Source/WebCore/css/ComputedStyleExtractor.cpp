@@ -82,6 +82,7 @@
 #include "Styleable.h"
 #include "TransformOperationData.h"
 #include "TranslateTransformOperation.h"
+#include "ViewTimeline.h"
 #include "WebAnimationUtilities.h"
 
 namespace WebCore {
@@ -2878,6 +2879,65 @@ static Ref<CSSValue> scrollTimelineShorthandValue(const Vector<Ref<ScrollTimelin
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
+static Ref<CSSValue> valueForSingleViewTimelineInset(const ViewTimelineInsets& insets, const RenderStyle& style)
+{
+    ASSERT(insets.start);
+    if (insets.end && insets.start != insets.end)
+        return CSSValuePair::createNoncoalescing(CSSPrimitiveValue::create(*insets.start, style), CSSPrimitiveValue::create(*insets.end, style));
+    return CSSPrimitiveValue::create(*insets.start, style);
+}
+
+static Ref<CSSValue> valueForViewTimelineInset(const Vector<ViewTimelineInsets>& insets, const RenderStyle& style)
+{
+    if (insets.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueAuto);
+
+    CSSValueListBuilder list;
+    for (auto& singleInsets : insets)
+        list.append(valueForSingleViewTimelineInset(singleInsets, style));
+    return CSSValueList::createCommaSeparated(WTFMove(list));
+}
+
+static Ref<CSSValue> viewTimelineShorthandValue(const Vector<Ref<ViewTimeline>>& timelines, const RenderStyle& style)
+{
+    if (timelines.isEmpty())
+        return CSSPrimitiveValue::create(CSSValueNone);
+
+    CSSValueListBuilder list;
+    for (auto& timeline : timelines) {
+        auto& name = timeline->name();
+        auto axis = timeline->axis();
+        auto& insets = timeline->insets();
+
+        auto hasDefaultAxis = axis == ScrollAxis::Block;
+        auto hasDefaultInsets = [insets]() {
+            if (!insets.start && !insets.end)
+                return true;
+            if (insets.start->isAuto())
+                return true;
+            return false;
+        }();
+
+        ASSERT(!name.isNull());
+        auto nameCSSValue = CSSPrimitiveValue::createCustomIdent(name);
+
+        if (hasDefaultAxis && hasDefaultInsets)
+            list.append(WTFMove(nameCSSValue));
+        else if (hasDefaultAxis)
+            list.append(CSSValuePair::createNoncoalescing(nameCSSValue, valueForSingleViewTimelineInset(insets, style)));
+        else if (hasDefaultInsets)
+            list.append(CSSValuePair::createNoncoalescing(nameCSSValue, createConvertingToCSSValueID(axis)));
+        else {
+            list.append(CSSValueList::createSpaceSeparated(
+                WTFMove(nameCSSValue),
+                createConvertingToCSSValueID(axis),
+                valueForSingleViewTimelineInset(insets, style)
+            ));
+        }
+    }
+    return CSSValueList::createCommaSeparated(WTFMove(list));
+}
+
 RefPtr<CSSValue> ComputedStyleExtractor::customPropertyValue(const AtomString& propertyName) const
 {
     Element* styledElement = m_element.get();
@@ -4319,6 +4379,14 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return valueForScrollTimelineName(style.scrollTimelineNames());
     case CSSPropertyScrollTimeline:
         return scrollTimelineShorthandValue(style.scrollTimelines());
+    case CSSPropertyViewTimelineAxis:
+        return valueForScrollTimelineAxis(style.viewTimelineAxes());
+    case CSSPropertyViewTimelineInset:
+        return valueForViewTimelineInset(style.viewTimelineInsets(), style);
+    case CSSPropertyViewTimelineName:
+        return valueForScrollTimelineName(style.viewTimelineNames());
+    case CSSPropertyViewTimeline:
+        return viewTimelineShorthandValue(style.viewTimelines(), style);
     case CSSPropertyScrollbarColor:
         if (!style.scrollbarColor())
             return CSSPrimitiveValue::create(CSSValueAuto);

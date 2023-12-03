@@ -337,6 +337,9 @@ PASS translate
 PASS unicode-bidi
 PASS vector-effect
 PASS vertical-align
+PASS view-timeline-axis
+PASS view-timeline-inset
+PASS view-timeline-name
 PASS view-transition-name
 PASS visibility
 PASS white-space-collapse

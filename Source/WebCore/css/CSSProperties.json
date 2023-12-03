@@ -9172,6 +9172,61 @@
                 "url": "https://www.w3.org/TR/css-shapes/#propdef-shape-image-threshold"
             }
         },
+        "view-timeline": {
+            "codegen-properties": {
+                "longhands": [
+                    "view-timeline-name",
+                    "view-timeline-axis",
+                    "view-timeline-inset"
+                ],
+                "settings-flag": "scrollDrivenAnimationsEnabled"
+            },
+            "specification": {
+                "category": "scroll-animations",
+                "url": "https://drafts.csswg.org/scroll-animations-1/#view-timeline-shorthand"
+            }
+        },
+        "view-timeline-axis": {
+            "codegen-properties": {
+                "converter": "ScrollTimelineAxis",
+                "name-for-methods": "ViewTimelineAxes",
+                "parser-exported": true,
+                "parser-grammar": "<axis>#",
+                "settings-flag": "scrollDrivenAnimationsEnabled"
+            },
+            "specification": {
+                "category": "scroll-animations",
+                "url": "https://drafts.csswg.org/scroll-animations-1/#view-timeline-axis"
+            }
+        },
+        "view-timeline-inset": {
+            "codegen-properties": {
+                "converter": "ViewTimelineInset",
+                "name-for-methods": "ViewTimelineInsets",
+                "parser-function": "consumeViewTimelineInset",
+                "parser-function-requires-context": true,
+                "parser-grammar-unused": "[ <single-view-timeline-inset>{1,2} ]#",
+                "parser-grammar-unused-reason": "Needs support for {1,2} combined with #.",
+                "settings-flag": "scrollDrivenAnimationsEnabled"
+            },
+            "specification": {
+                "category": "scroll-animations",
+                "url": "https://drafts.csswg.org/scroll-animations-1/#view-timeline-inset"
+            }
+        },
+        "view-timeline-name": {
+            "codegen-properties": {
+                "converter": "ScrollTimelineName",
+                "name-for-methods": "ViewTimelineNames",
+                "parser-exported": true,
+                "parser-grammar": "<single-scroll-timeline-name>#",
+                "settings-flag": "scrollDrivenAnimationsEnabled"
+            },
+            "specification": {
+                "category": "scroll-animations",
+                "url": "https://drafts.csswg.org/scroll-animations-1/#view-timeline-name"
+            }
+        },
         "view-transition-name": {
             "codegen-properties": {
                 "converter": "ViewTransitionName",
@@ -11028,6 +11083,14 @@
             "specification": {
                 "category": "scroll-animations",
                 "url": "https://drafts.csswg.org/scroll-animations-1/#scroll-timeline-name"
+            }
+        },
+        "<single-view-timeline-inset>": {
+            "grammar": "auto | <length-percentage>",
+            "exported": true,
+            "specification": {
+                "category": "scroll-animations",
+                "url": "https://drafts.csswg.org/scroll-animations-1/#propdef-view-timeline-inset"
             }
         }
     }

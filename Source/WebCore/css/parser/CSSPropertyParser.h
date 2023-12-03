@@ -143,6 +143,7 @@ private:
     bool consumeContainIntrinsicSizeShorthand(bool important);
 
     bool consumeScrollTimelineShorthand(bool important);
+    bool consumeViewTimelineShorthand(bool important);
 
     bool consumeTextWrapShorthand(bool important);
     bool consumeWhiteSpaceShorthand(bool important);

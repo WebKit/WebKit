@@ -8694,5 +8694,26 @@ RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange& range)
     return nullptr;
 }
 
+RefPtr<CSSValue> consumeViewTimelineInsetListItem(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    auto startInset = CSSPropertyParsing::consumeSingleViewTimelineInset(range, context);
+    if (!startInset)
+        return nullptr;
+
+    if (auto endInset = CSSPropertyParsing::consumeSingleViewTimelineInset(range, context)) {
+        if (endInset != startInset)
+            return CSSValuePair::createNoncoalescing(startInset.releaseNonNull(), endInset.releaseNonNull());
+    }
+
+    return startInset;
+}
+
+RefPtr<CSSValue> consumeViewTimelineInset(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    return consumeCommaSeparatedListWithoutSingleValueOptimization(range, [context](CSSParserTokenRange& range) {
+        return consumeViewTimelineInsetListItem(range, context);
+    });
+}
+
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

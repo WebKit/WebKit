@@ -684,6 +684,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     animation/ScrollAxis.h
     animation/ScrollTimeline.h
     animation/ScrollTimelineOptions.h
+    animation/ViewTimeline.h
+    animation/ViewTimelineOptions.h
     animation/WebAnimationTypes.h
 
     bindings/IDLTypes.h
@@ -883,6 +885,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     css/query/GenericMediaQueryTypes.h
     css/query/MediaQuery.h
+
+    css/typedom/CSSKeywordValue.h
+    css/typedom/CSSNumericValue.h
+    css/typedom/CSSStyleValue.h
+
+    css/typedom/numeric/CSSNumericBaseType.h
+    css/typedom/numeric/CSSNumericType.h
 
     cssjit/CompiledSelector.h
 

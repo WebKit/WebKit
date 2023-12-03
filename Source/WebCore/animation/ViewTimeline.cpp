@@ -36,12 +36,25 @@ Ref<ViewTimeline> ViewTimeline::create(ViewTimelineOptions&& options)
     return adoptRef(*new ViewTimeline(WTFMove(options)));
 }
 
+Ref<ViewTimeline> ViewTimeline::create(const AtomString& name, ScrollAxis axis, ViewTimelineInsets&& insets)
+{
+    return adoptRef(*new ViewTimeline(name, axis, WTFMove(insets)));
+}
+
 // FIXME: compute offset values from options.
 ViewTimeline::ViewTimeline(ViewTimelineOptions&& options)
     : ScrollTimeline(nullAtom(), options.axis)
     , m_subject(WTFMove(options.subject))
     , m_startOffset(CSSNumericFactory::px(0))
     , m_endOffset(CSSNumericFactory::px(0))
+{
+}
+
+ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, ViewTimelineInsets&& insets)
+    : ScrollTimeline(name, axis)
+    , m_startOffset(CSSNumericFactory::px(0))
+    , m_endOffset(CSSNumericFactory::px(0))
+    , m_insets(WTFMove(insets))
 {
 }
 

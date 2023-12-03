@@ -94,6 +94,7 @@ class TextUnderlineOffset;
 class TransformOperations;
 class TransformationMatrix;
 class TranslateTransformOperation;
+class ViewTimeline;
 class WillChangeData;
 
 enum CSSPropertyID : uint16_t;
@@ -255,6 +256,7 @@ struct ScrollSnapAlign;
 struct ScrollSnapType;
 struct ScrollbarGutter;
 struct ScrollbarColor;
+struct ViewTimelineInsets;
 
 struct TabSize;
 struct TextAutospace;
@@ -935,6 +937,14 @@ public:
     inline void setScrollTimelineAxes(const Vector<ScrollAxis>&);
     inline void setScrollTimelineNames(const Vector<AtomString>&);
 
+    inline const Vector<Ref<ViewTimeline>>& viewTimelines() const;
+    inline const Vector<ScrollAxis>& viewTimelineAxes() const;
+    inline const Vector<ViewTimelineInsets>& viewTimelineInsets() const;
+    inline const Vector<AtomString>& viewTimelineNames() const;
+    inline void setViewTimelineAxes(const Vector<ScrollAxis>&);
+    inline void setViewTimelineInsets(const Vector<ViewTimelineInsets>&);
+    inline void setViewTimelineNames(const Vector<AtomString>&);
+
     inline const AnimationList* animations() const;
     inline const AnimationList* transitions() const;
 
@@ -1504,6 +1514,7 @@ public:
     void adjustTransitions();
 
     void adjustScrollTimelines();
+    void adjustViewTimelines();
 
     inline void setTransformStyle3D(TransformStyle3D);
     inline void setTransformStyleForcedToFlat(bool);
@@ -1985,6 +1996,10 @@ public:
 
     static Vector<ScrollAxis> initialScrollTimelineAxes() { return { }; }
     static Vector<AtomString> initialScrollTimelineNames() { return { }; }
+
+    static Vector<ScrollAxis> initialViewTimelineAxes() { return { }; }
+    static Vector<ViewTimelineInsets> initialViewTimelineInsets();
+    static Vector<AtomString> initialViewTimelineNames() { return { }; }
 
     static inline std::optional<ScrollbarColor> initialScrollbarColor();
     static ScrollbarGutter initialScrollbarGutter();

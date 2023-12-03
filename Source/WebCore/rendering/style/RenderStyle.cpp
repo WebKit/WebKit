@@ -3830,6 +3830,28 @@ void RenderStyle::adjustScrollTimelines()
     }
 }
 
+void RenderStyle::adjustViewTimelines()
+{
+    auto& names = viewTimelineNames();
+    if (!names.size() && !viewTimelines().size())
+        return;
+
+    auto& timelines = m_nonInheritedData.access().rareData.access().viewTimelines;
+    timelines.clear();
+
+    auto& axes = viewTimelineAxes();
+    auto numberOfAxes = axes.size();
+
+    auto& insets = viewTimelineInsets();
+    auto numberOfInsets = insets.size();
+
+    for (size_t i = 0; i < names.size(); ++i) {
+        auto axis = numberOfAxes ? axes[i % numberOfAxes] : ScrollAxis::Block;
+        auto inset = numberOfInsets ? insets[i % numberOfInsets] : ViewTimelineInsets();
+        timelines.append(ViewTimeline::create(names[i], axis, WTFMove(inset)));
+    }
+}
+
 } // namespace WebCore
 
 #undef SET_VAR

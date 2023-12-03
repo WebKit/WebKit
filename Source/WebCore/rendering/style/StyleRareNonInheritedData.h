@@ -48,6 +48,7 @@
 #include "TextDecorationThickness.h"
 #include "TouchAction.h"
 #include "TranslateTransformOperation.h"
+#include "ViewTimeline.h"
 #include "WillChangeData.h"
 #include <memory>
 #include <wtf/DataRef.h>
@@ -175,6 +176,11 @@ public:
     Vector<Ref<ScrollTimeline>> scrollTimelines;
     Vector<ScrollAxis> scrollTimelineAxes;
     Vector<AtomString> scrollTimelineNames;
+
+    Vector<Ref<ViewTimeline>> viewTimelines;
+    Vector<ScrollAxis> viewTimelineAxes;
+    Vector<ViewTimelineInsets> viewTimelineInsets;
+    Vector<AtomString> viewTimelineNames;
 
     ScrollbarGutter scrollbarGutter;
     ScrollbarWidth scrollbarWidth { ScrollbarWidth::Auto };

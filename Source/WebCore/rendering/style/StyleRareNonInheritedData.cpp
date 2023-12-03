@@ -84,6 +84,10 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     // scrollTimelines
     // scrollTimelineAxes
     // scrollTimelineNames
+    // viewTimelines
+    // viewTimelineAxes
+    // viewTimelineInsets
+    // viewTimelineNames
     // scrollbarGutter
     , scrollbarWidth(RenderStyle::initialScrollbarWidth())
     , zoom(RenderStyle::initialZoom())
@@ -170,6 +174,10 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , scrollTimelines(o.scrollTimelines)
     , scrollTimelineAxes(o.scrollTimelineAxes)
     , scrollTimelineNames(o.scrollTimelineNames)
+    , viewTimelines(o.viewTimelines)
+    , viewTimelineAxes(o.viewTimelineAxes)
+    , viewTimelineInsets(o.viewTimelineInsets)
+    , viewTimelineNames(o.viewTimelineNames)
     , scrollbarGutter(o.scrollbarGutter)
     , scrollbarWidth(o.scrollbarWidth)
     , zoom(o.zoom)
@@ -262,6 +270,10 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && scrollTimelines == o.scrollTimelines
         && scrollTimelineAxes == o.scrollTimelineAxes
         && scrollTimelineNames == o.scrollTimelineNames
+        && viewTimelines == o.viewTimelines
+        && viewTimelineAxes == o.viewTimelineAxes
+        && viewTimelineInsets == o.viewTimelineInsets
+        && viewTimelineNames == o.viewTimelineNames
         && scrollbarGutter == o.scrollbarGutter
         && scrollbarWidth == o.scrollbarWidth
         && zoom == o.zoom

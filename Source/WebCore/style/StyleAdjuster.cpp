@@ -610,8 +610,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     style.adjustAnimations();
     style.adjustTransitions();
 
-    // Do the same for scroll-timeline longhands.
+    // Do the same for scroll-timeline and view-timeline longhands.
     style.adjustScrollTimelines();
+    style.adjustViewTimelines();
 
 #if PLATFORM(COCOA)
     if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::DoesNotAddIntrinsicMarginsToFormControls)) {
