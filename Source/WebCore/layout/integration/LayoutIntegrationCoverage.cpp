@@ -26,7 +26,6 @@
 #include "config.h"
 #include "LayoutIntegrationCoverage.h"
 
-#include "DeprecatedGlobalSettings.h"
 #include "GapLength.h"
 #include "HTMLTextFormControlElement.h"
 #include "InlineWalker.h"
@@ -97,7 +96,7 @@ static std::optional<AvoidanceReason> canUseForChild(const RenderObject& child)
 
 static std::optional<AvoidanceReason> canUseForLineLayoutWithReason(const RenderBlockFlow& flow)
 {
-    if (!DeprecatedGlobalSettings::inlineFormattingContextIntegrationEnabled())
+    if (!flow.document().settings().inlineFormattingContextIntegrationEnabled())
         return AvoidanceReason::FeatureIsDisabled;
     if (!flow.firstChild()) {
         // Non-SVG code does not call into layoutInlineChildren with no children anymore.

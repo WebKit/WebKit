@@ -112,6 +112,8 @@ static_assert(!(static_cast<unsigned>(maxTextDecorationLineValue) >> TextDecorat
 
 static_assert(!(static_cast<unsigned>(maxTextTransformValue) >> TextTransformBits));
 
+static_assert(!((static_cast<unsigned>(PseudoId::AfterLastInternalPseudoId) - 1) >> StyleTypeBits));
+
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PseudoStyleCache);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderStyle);
 
@@ -3825,6 +3827,28 @@ void RenderStyle::adjustScrollTimelines()
     for (size_t i = 0; i < names.size(); ++i) {
         auto axis = numberOfAxes ? axes[i % numberOfAxes] : ScrollAxis::Block;
         timelines.append(ScrollTimeline::create(names[i], axis));
+    }
+}
+
+void RenderStyle::adjustViewTimelines()
+{
+    auto& names = viewTimelineNames();
+    if (!names.size() && !viewTimelines().size())
+        return;
+
+    auto& timelines = m_nonInheritedData.access().rareData.access().viewTimelines;
+    timelines.clear();
+
+    auto& axes = viewTimelineAxes();
+    auto numberOfAxes = axes.size();
+
+    auto& insets = viewTimelineInsets();
+    auto numberOfInsets = insets.size();
+
+    for (size_t i = 0; i < names.size(); ++i) {
+        auto axis = numberOfAxes ? axes[i % numberOfAxes] : ScrollAxis::Block;
+        auto inset = numberOfInsets ? insets[i % numberOfInsets] : ViewTimelineInsets();
+        timelines.append(ViewTimeline::create(names[i], axis, WTFMove(inset)));
     }
 }
 

@@ -33,11 +33,6 @@ namespace WebCore {
 
 class DeprecatedGlobalSettings {
 public:
-#if PLATFORM(WIN)
-    WEBCORE_EXPORT static void setShouldUseHighResolutionTimers(bool);
-    static bool shouldUseHighResolutionTimers() { return shared().m_shouldUseHighResolutionTimers; }
-#endif
-
 #if USE(AVFOUNDATION)
     WEBCORE_EXPORT static void setAVFoundationEnabled(bool);
     static bool isAVFoundationEnabled() { return shared().m_AVFoundationEnabled; }
@@ -96,9 +91,6 @@ public:
 
     static void setAttrStyleEnabled(bool isEnabled) { shared().m_attrStyleEnabled = isEnabled; }
     static bool attrStyleEnabled() { return shared().m_attrStyleEnabled; }
-
-    static void setInlineFormattingContextIntegrationEnabled(bool isEnabled) { shared().m_inlineFormattingContextIntegrationEnabled = isEnabled; }
-    static bool inlineFormattingContextIntegrationEnabled() { return shared().m_inlineFormattingContextIntegrationEnabled; }
 
     static void setWebSQLEnabled(bool isEnabled) { shared().m_webSQLEnabled = isEnabled; }
     static bool webSQLEnabled() { return shared().m_webSQLEnabled; }
@@ -184,9 +176,6 @@ private:
     bool m_mockScrollbarsEnabled { false };
     bool m_usesOverlayScrollbars { false };
 
-#if PLATFORM(WIN)
-    bool m_shouldUseHighResolutionTimers { true };
-#endif
 #if PLATFORM(IOS_FAMILY)
     bool m_networkDataUsageTrackingEnabled { false };
     String m_networkInterfaceName;
@@ -203,8 +192,6 @@ private:
     bool m_isServerTimingEnabled { false };
     bool m_attrStyleEnabled { false };
     bool m_webSQLEnabled { false };
-
-    bool m_inlineFormattingContextIntegrationEnabled { true };
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     bool m_isAttachmentElementEnabled { false };

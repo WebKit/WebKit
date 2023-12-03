@@ -1,19 +1,19 @@
 
-FAIL Property view-timeline-inset value 'initial' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-inset value 'inherit' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-inset value 'unset' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-inset value 'revert' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-inset value '1px' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-inset value '1%' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-inset value 'calc(1% + 1px)' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-inset value '1px 2px' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-inset value '1px 2em' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-inset value 'calc(1px + 1em) 2px' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-inset value '1px 2px, 3px 4px' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-inset value '1px auto, auto 4px' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-inset value '1px, 2px, 3px' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-inset value '1px 1px, 2px 3px' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-inset value 'auto auto, auto auto' assert_true: view-timeline-inset doesn't seem to be supported in the computed style expected true got false
-FAIL The view-timeline-inset property shows up in CSSStyleDeclaration enumeration assert_not_equals: got disallowed value -1
-FAIL The view-timeline-inset property shows up in CSSStyleDeclaration.cssText assert_not_equals: got disallowed value -1
+PASS Property view-timeline-inset value 'initial'
+PASS Property view-timeline-inset value 'inherit'
+PASS Property view-timeline-inset value 'unset'
+PASS Property view-timeline-inset value 'revert'
+PASS Property view-timeline-inset value '1px'
+PASS Property view-timeline-inset value '1%'
+PASS Property view-timeline-inset value 'calc(1% + 1px)'
+PASS Property view-timeline-inset value '1px 2px'
+PASS Property view-timeline-inset value '1px 2em'
+PASS Property view-timeline-inset value 'calc(1px + 1em) 2px'
+PASS Property view-timeline-inset value '1px 2px, 3px 4px'
+PASS Property view-timeline-inset value '1px auto, auto 4px'
+PASS Property view-timeline-inset value '1px, 2px, 3px'
+PASS Property view-timeline-inset value '1px 1px, 2px 3px'
+PASS Property view-timeline-inset value 'auto auto, auto auto'
+PASS The view-timeline-inset property shows up in CSSStyleDeclaration enumeration
+PASS The view-timeline-inset property shows up in CSSStyleDeclaration.cssText
 

@@ -1275,6 +1275,9 @@ bool RenderElement::repaintAfterLayoutIfNeeded(const RenderLayerModelObject* rep
         if (oldClippedOverflowRect.isEmpty() || newClippedOverflowRect.isEmpty())
             return true;
 
+        if (!oldClippedOverflowRect.intersects(newClippedOverflowRect))
+            return true;
+
         bool clippedOverflowRectChanged = oldClippedOverflowRect != newClippedOverflowRect;
 
         if (clippedOverflowRectChanged && style().hasBorderRadius()) {

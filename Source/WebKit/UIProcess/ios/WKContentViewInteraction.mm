@@ -7496,15 +7496,6 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
     return UITextGranularityCharacter;
 }
 
-// Should return an array of NSDictionary objects that key/value paries for the final text, correction identifier and
-// alternative selection counts using the keys defined at the top of this header.
-- (NSArray *)metadataDictionariesForDictationResults
-{
-    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
-
-    return nil;
-}
-
 // The can all be (and have been) trivially implemented in terms of UITextInput.  Deprecate and remove.
 - (void)moveBackward:(unsigned)count
 {

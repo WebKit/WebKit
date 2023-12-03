@@ -1,15 +1,15 @@
 
-FAIL Property view-timeline-name value 'initial' assert_true: view-timeline-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-name value 'inherit' assert_true: view-timeline-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-name value 'unset' assert_true: view-timeline-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-name value 'revert' assert_true: view-timeline-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-name value 'none' assert_true: view-timeline-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-name value '--foo' assert_true: view-timeline-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-name value '--foo, --bar' assert_true: view-timeline-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-name value '--bar, --foo' assert_true: view-timeline-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-name value '--a, --b, --c, --D, --e' assert_true: view-timeline-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-name value 'none, none' assert_true: view-timeline-name doesn't seem to be supported in the computed style expected true got false
-FAIL Property view-timeline-name value '--a, --b, --c, none, --d, --e' assert_true: view-timeline-name doesn't seem to be supported in the computed style expected true got false
-FAIL The view-timeline-name property shows up in CSSStyleDeclaration enumeration assert_not_equals: got disallowed value -1
-FAIL The view-timeline-name property shows up in CSSStyleDeclaration.cssText assert_not_equals: got disallowed value -1
+PASS Property view-timeline-name value 'initial'
+PASS Property view-timeline-name value 'inherit'
+PASS Property view-timeline-name value 'unset'
+PASS Property view-timeline-name value 'revert'
+PASS Property view-timeline-name value 'none'
+PASS Property view-timeline-name value '--foo'
+PASS Property view-timeline-name value '--foo, --bar'
+PASS Property view-timeline-name value '--bar, --foo'
+PASS Property view-timeline-name value '--a, --b, --c, --D, --e'
+PASS Property view-timeline-name value 'none, none'
+PASS Property view-timeline-name value '--a, --b, --c, none, --d, --e'
+PASS The view-timeline-name property shows up in CSSStyleDeclaration enumeration
+PASS The view-timeline-name property shows up in CSSStyleDeclaration.cssText
 
