@@ -3,25 +3,29 @@
     .columns {
         width: 400px;
         height: 200px;
-        -webkit-column-width: 200px;
-        -webkit-column-gap: 0;
         border: 5px solid blue;
         margin-bottom: 1em;
         line-height: 20px;
     }
+    .column {
+        float: left;
+        width: 200px;
+    }
 </style>
 <div class="columns">
-    First column<br>
-    First column<br>
-    First column<br>
-    First column<br>
-    First column<br>
-    First column<br>
-    First column<br>
-    First column<br>
-    First column<br>
-    First column<br>
-    <div style="-webkit-column-break-before: always">
+    <div class="column">
+        First column<br>
+        First column<br>
+        First column<br>
+        First column<br>
+        First column<br>
+        First column<br>
+        First column<br>
+        First column<br>
+        First column<br>
+        First column<br>
+    </div>
+    <div class="column">
         Second column<br>
         Second column<br>
         Second column<br>
@@ -29,11 +33,13 @@
     </div>
 </div>
 <div class="columns">
-    First column<br>
-    First column<br>
-    First column<br>
-    First column<br>
-    <div style="-webkit-column-break-before: always">
+    <div class="column">
+        First column<br>
+        First column<br>
+        First column<br>
+        First column<br>
+    </div>
+    <div class="column">
         Second column<br>
         Second column<br>
         Second column<br>
