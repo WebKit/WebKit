@@ -1,9 +1,7 @@
 (repaint rects
   (rect 0 0 1 1)
   (rect 50 50 100 100)
-  (rect 0 0 50 1)
-  (rect 1 50 149 100)
-  (rect 0 0 1 50)
-  (rect 50 1 100 149)
+  (rect 0 0 1 1)
+  (rect 50 50 100 100)
 )
 
