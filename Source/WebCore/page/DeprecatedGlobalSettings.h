@@ -33,11 +33,6 @@ namespace WebCore {
 
 class DeprecatedGlobalSettings {
 public:
-#if PLATFORM(WIN)
-    WEBCORE_EXPORT static void setShouldUseHighResolutionTimers(bool);
-    static bool shouldUseHighResolutionTimers() { return shared().m_shouldUseHighResolutionTimers; }
-#endif
-
 #if USE(AVFOUNDATION)
     WEBCORE_EXPORT static void setAVFoundationEnabled(bool);
     static bool isAVFoundationEnabled() { return shared().m_AVFoundationEnabled; }
@@ -184,9 +179,6 @@ private:
     bool m_mockScrollbarsEnabled { false };
     bool m_usesOverlayScrollbars { false };
 
-#if PLATFORM(WIN)
-    bool m_shouldUseHighResolutionTimers { true };
-#endif
 #if PLATFORM(IOS_FAMILY)
     bool m_networkDataUsageTrackingEnabled { false };
     String m_networkInterfaceName;
