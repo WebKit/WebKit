@@ -278,6 +278,7 @@ struct ScopedName;
 constexpr auto PublicPseudoIDBits = 16;
 constexpr auto TextDecorationLineBits = 4;
 constexpr auto TextTransformBits = 5;
+constexpr auto StyleTypeBits = 5;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PseudoStyleCache);
 struct PseudoStyleCache {
@@ -2185,7 +2186,7 @@ private:
         unsigned firstChildState : 1;
         unsigned lastChildState : 1;
         unsigned isLink : 1;
-        unsigned styleType : 4; // PseudoId
+        unsigned styleType : StyleTypeBits; // PseudoId
         unsigned pseudoBits : PublicPseudoIDBits;
 
         // If you add more style bits here, you will also need to update RenderStyle::NonInheritedFlags::copyNonInheritedFrom().

@@ -112,6 +112,8 @@ static_assert(!(static_cast<unsigned>(maxTextDecorationLineValue) >> TextDecorat
 
 static_assert(!(static_cast<unsigned>(maxTextTransformValue) >> TextTransformBits));
 
+static_assert(!((static_cast<unsigned>(PseudoId::AfterLastInternalPseudoId) - 1) >> StyleTypeBits));
+
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PseudoStyleCache);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderStyle);
 
