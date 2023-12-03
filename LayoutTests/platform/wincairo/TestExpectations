@@ -2714,3 +2714,8 @@ imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-name-is
 webkit.org/b/265537 compositing/geometry/fixed-position-composited-page-scale-scroll.html [ Skip ] # Crash
 webkit.org/b/265537 fast/visual-viewport/zoomed-scroll-into-view-fixed.html [ Skip ] # Crash
 webkit.org/b/265537 fast/visual-viewport/zoomed-scroll-to-anchor-in-position-fixed.html [ Skip ] # Crash
+
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-partially-onscreen-new.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-partially-onscreen-old.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen-new.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-viewport-partially-onscreen-old.html [ ImageOnlyFailure ]
