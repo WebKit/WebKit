@@ -50,7 +50,6 @@ private:
 
     double m_position;
     MonotonicTime m_animationStartTime;
-    Seconds m_animationDuration { 0_s };
     bool m_animating { false };
     Timer m_animationTimer;
 };
