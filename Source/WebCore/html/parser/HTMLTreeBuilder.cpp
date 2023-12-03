@@ -785,9 +785,6 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomHTMLToken&& token)
     case TagName::applet:
     case TagName::embed:
     case TagName::object:
-        if (!pluginContentIsAllowed(m_tree.parserContentPolicy()))
-            return;
-        FALLTHROUGH;
     case TagName::marquee:
         m_tree.reconstructTheActiveFormattingElements();
         if (token.tagName() == TagName::embed) {

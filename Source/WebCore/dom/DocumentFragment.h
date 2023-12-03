@@ -33,8 +33,8 @@ class DocumentFragment : public ContainerNode {
 public:
     WEBCORE_EXPORT static Ref<DocumentFragment> create(Document&);
 
-    void parseHTML(const String&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
-    bool parseXML(const String&, Element* contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
+    void parseHTML(const String&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent });
+    bool parseXML(const String&, Element* contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent });
 
     bool canContainRangeEndPoint() const final { return true; }
     virtual bool isTemplateContent() const { return false; }
