@@ -518,7 +518,6 @@ typedef enum {
 @protocol UITextInputPrivate <UITextInput, UITextInputTokenizer, UITextInputTraits_Private>
 @optional
 - (BOOL)requiresKeyEvents;
-- (NSArray *)metadataDictionariesForDictationResults;
 - (UIColor *)textColorForCaretSelection;
 - (UIFont *)fontForCaretSelection;
 - (UIView *)automaticallySelectedOverlay;
