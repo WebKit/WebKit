@@ -42,7 +42,7 @@ using namespace WebCore;
 
 static RegistrableDomain registrableDomainForPage(WebPage& page)
 {
-    auto* document = page.corePage() && dynamicDowncast<LocalFrame>(page.corePage()->mainFrame()) ? dynamicDowncast<LocalFrame>(page.corePage()->mainFrame())->document() : nullptr;
+    RefPtr document = page.corePage() && dynamicDowncast<LocalFrame>(page.corePage()->mainFrame()) ? dynamicDowncast<LocalFrame>(page.corePage()->mainFrame())->document() : nullptr;
     if (!document)
         return { };
     return RegistrableDomain { document->url() };
