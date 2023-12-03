@@ -911,7 +911,7 @@ void Document::commonTeardown()
 
 void Document::parseMarkupUnsafe(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
-    auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent } | parserContentPolicy;
+    auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent } | parserContentPolicy;
     setParserContentPolicy(policy);
     bool usedFastPath = false;
     if (this->contentType() == "text/html"_s) {

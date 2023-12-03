@@ -31,13 +31,12 @@ namespace WebCore {
 
 enum class ParserContentPolicy : uint8_t {
     AllowScriptingContent = 1 << 0,
-    AllowPluginContent = 1 << 1,
-    DoNotMarkAlreadyStarted = 1 << 2,
-    AllowDeclarativeShadowRoots = 1 << 3,
-    AlwaysParseAsHTML = 1 << 4
+    DoNotMarkAlreadyStarted = 1 << 1,
+    AllowDeclarativeShadowRoots = 1 << 2,
+    AlwaysParseAsHTML = 1 << 3
 };
 
-constexpr OptionSet<ParserContentPolicy> DefaultParserContentPolicy = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent, ParserContentPolicy::AllowDeclarativeShadowRoots };
+constexpr OptionSet<ParserContentPolicy> DefaultParserContentPolicy = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowDeclarativeShadowRoots };
 
 static inline bool scriptingContentIsAllowed(OptionSet<ParserContentPolicy> parserContentPolicy) 
 {
@@ -47,17 +46,6 @@ static inline bool scriptingContentIsAllowed(OptionSet<ParserContentPolicy> pars
 static inline OptionSet<ParserContentPolicy> disallowScriptingContent(OptionSet<ParserContentPolicy> parserContentPolicy)
 {
     parserContentPolicy.remove(ParserContentPolicy::AllowScriptingContent);
-    return parserContentPolicy;
-}
-
-static inline bool pluginContentIsAllowed(OptionSet<ParserContentPolicy> parserContentPolicy)
-{
-    return parserContentPolicy.contains(ParserContentPolicy::AllowPluginContent);
-}
-
-static inline OptionSet<ParserContentPolicy> allowPluginContent(OptionSet<ParserContentPolicy> parserContentPolicy)
-{
-    parserContentPolicy.add(ParserContentPolicy::AllowPluginContent);
     return parserContentPolicy;
 }
 

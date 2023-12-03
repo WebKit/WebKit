@@ -3753,7 +3753,7 @@ void Element::enqueueSecurityPolicyViolationEvent(SecurityPolicyViolationEventIn
 
 ExceptionOr<void> Element::replaceChildrenWithMarkup(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
-    auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent } | parserContentPolicy;
+    auto policy = OptionSet<ParserContentPolicy> { ParserContentPolicy::AllowScriptingContent } | parserContentPolicy;
 
     Ref container = [this]() -> Ref<ContainerNode> {
         if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(*this))
@@ -3814,7 +3814,7 @@ ExceptionOr<void> Element::setOuterHTML(const String& html)
     RefPtr previous = previousSibling();
     RefPtr next = nextSibling();
 
-    auto fragment = createFragmentForInnerOuterHTML(*parent, html, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
+    auto fragment = createFragmentForInnerOuterHTML(*parent, html, { ParserContentPolicy::AllowScriptingContent });
     if (fragment.hasException())
         return fragment.releaseException();
 
@@ -5266,7 +5266,7 @@ ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String&
     if (contextElement.hasException())
         return contextElement.releaseException();
     // Step 3.
-    auto fragment = createFragmentForInnerOuterHTML(contextElement.releaseReturnValue(), markup, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
+    auto fragment = createFragmentForInnerOuterHTML(contextElement.releaseReturnValue(), markup, { ParserContentPolicy::AllowScriptingContent });
     if (fragment.hasException())
         return fragment.releaseException();
 

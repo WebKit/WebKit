@@ -870,7 +870,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!document)
         return nil;
 
-    return kit(createFragmentFromMarkup(*document, markupString, baseURLString, { WebCore::ParserContentPolicy::AllowPluginContent }).ptr());
+    return kit(createFragmentFromMarkup(*document, markupString, baseURLString, { }).ptr());
 }
 
 - (DOMDocumentFragment *)_documentFragmentWithNodesAsParagraphs:(NSArray *)nodes

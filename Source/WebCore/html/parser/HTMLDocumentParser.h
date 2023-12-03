@@ -51,7 +51,7 @@ public:
     static Ref<HTMLDocumentParser> create(HTMLDocument&, OptionSet<ParserContentPolicy> = DefaultParserContentPolicy);
     virtual ~HTMLDocumentParser();
 
-    static void parseDocumentFragment(const String&, DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
+    static void parseDocumentFragment(const String&, DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent });
 
     // For HTMLParserScheduler.
     void resumeParsingAfterYield();

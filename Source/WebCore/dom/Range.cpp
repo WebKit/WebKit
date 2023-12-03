@@ -756,7 +756,7 @@ ExceptionOr<Ref<DocumentFragment>> Range::createContextualFragment(const String&
         element = node.parentElement();
     if (!element || (element->document().isHTMLDocument() && is<HTMLHtmlElement>(*element)))
         element = HTMLBodyElement::create(node.protectedDocument());
-    return WebCore::createContextualFragment(*element, markup, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent, ParserContentPolicy::DoNotMarkAlreadyStarted });
+    return WebCore::createContextualFragment(*element, markup, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::DoNotMarkAlreadyStarted });
 }
 
 ExceptionOr<RefPtr<Node>> Range::checkNodeOffsetPair(Node& node, unsigned offset)

@@ -216,7 +216,7 @@ TEST(WebCoreHTMLParser, FastPathComplexHTMLEntityParsing)
 
     auto testFastParser = [&](const String& input) -> String {
         auto fragment = DocumentFragment::create(document);
-        bool result = tryFastParsingHTMLFragment(input, document, fragment, div, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
+        bool result = tryFastParsingHTMLFragment(input, document, fragment, div, { ParserContentPolicy::AllowScriptingContent });
         EXPECT_TRUE(result);
         auto textChild = dynamicDowncast<Text>(fragment->firstChild());
         EXPECT_TRUE(textChild);
@@ -246,7 +246,7 @@ TEST(WebCoreHTMLParser, FastPathHandlesLi)
     document->body()->appendChild(div);
 
     auto fragment = DocumentFragment::create(document);
-    bool result = tryFastParsingHTMLFragment("<div><li></li></div>"_s, document, fragment, div, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
+    bool result = tryFastParsingHTMLFragment("<div><li></li></div>"_s, document, fragment, div, { ParserContentPolicy::AllowScriptingContent });
     EXPECT_TRUE(result);
     EXPECT_STREQ("DIV", fragment->firstChild()->nodeName().utf8().data());
     EXPECT_STREQ("LI", fragment->firstChild()->firstChild()->nodeName().utf8().data());
@@ -267,7 +267,7 @@ TEST(WebCoreHTMLParser, FastPathFailsWithNestedLi)
     document->body()->appendChild(div);
 
     auto fragment = DocumentFragment::create(document);
-    bool result = tryFastParsingHTMLFragment("<li><li></li></li>"_s, document, fragment, div, { ParserContentPolicy::AllowScriptingContent, ParserContentPolicy::AllowPluginContent });
+    bool result = tryFastParsingHTMLFragment("<li><li></li></li>"_s, document, fragment, div, { ParserContentPolicy::AllowScriptingContent });
     EXPECT_FALSE(result);
 }
 
