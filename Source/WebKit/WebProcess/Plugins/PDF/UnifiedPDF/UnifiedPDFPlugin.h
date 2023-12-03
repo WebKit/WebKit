@@ -95,8 +95,10 @@ private:
         OpenWithPreview
     };
 
+#if PLATFORM(MAC)
     PDFContextMenu createContextMenu(const WebCore::IntPoint& contextMenuPoint) const;
     void performContextMenuAction(ContextMenuItemTag) const;
+#endif
 
     String getSelectionString() const override;
     bool existingSelectionContainsPoint(const WebCore::FloatPoint&) const override;

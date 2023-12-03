@@ -423,6 +423,7 @@ bool UnifiedPDFPlugin::handleMouseLeaveEvent(const WebMouseEvent&)
     return false;
 }
 
+#if PLATFORM(MAC)
 PDFContextMenu UnifiedPDFPlugin::createContextMenu(const IntPoint& contextMenuPoint) const
 {
     Vector<PDFContextMenuItem> menuItems;
@@ -433,8 +434,18 @@ PDFContextMenu UnifiedPDFPlugin::createContextMenu(const IntPoint& contextMenuPo
     return { contextMenuPoint, WTFMove(menuItems), { } };
 }
 
+void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag) const
+{
+    switch (tag) {
+    // The OpenWithPreviewAction is handled in the UI Process
+    case ContextMenuItemTag::OpenWithPreview: return;
+    }
+}
+#endif
+
 bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 {
+#if PLATFORM(MAC)
     if (!m_frame || !m_frame->coreLocalFrame())
         return false;
     RefPtr webPage = m_frame->page();
@@ -452,14 +463,9 @@ bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     if (selectedItemTag >= 0)
         performContextMenuAction(static_cast<ContextMenuItemTag>(selectedItemTag.value()));
     return true;
-}
-
-void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag) const
-{
-    switch (tag) {
-    // The OpenWithPreviewAction is handled in the UI Process
-    case ContextMenuItemTag::OpenWithPreview: return;
-    }
+#else
+    return false;
+#endif
 }
 
 bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent&)
