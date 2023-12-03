@@ -81,27 +81,28 @@ bool RenderProgress::isDeterminate() const
 
 void RenderProgress::animationTimerFired()
 {
-    // FIXME: Progress bar animation should be performed as part of the rendering update
-    // lifecycle, to match the display's refresh rate.
+    // FIXME: Ideally obtaining the repeat interval from Page is not RenderTheme-specific, but it
+    // currently is as it also determines whether we animate at all.
+    auto repeatInterval = theme().animationRepeatIntervalForProgressBar(*this);
 
     repaint();
     if (!m_animationTimer.isActive() && m_animating)
-        m_animationTimer.startOneShot(m_animationRepeatInterval);
+        m_animationTimer.startOneShot(repeatInterval);
 }
 
 void RenderProgress::updateAnimationState()
 {
-    m_animationDuration = theme().animationDurationForProgressBar(*this);
-    m_animationRepeatInterval = theme().animationRepeatIntervalForProgressBar(*this);
+    m_animationDuration = theme().animationDurationForProgressBar();
+    auto repeatInterval = theme().animationRepeatIntervalForProgressBar(*this);
 
-    bool animating = style().hasEffectiveAppearance() && m_animationRepeatInterval > 0_s && !isDeterminate();
+    bool animating = style().hasEffectiveAppearance() && repeatInterval > 0_s && !isDeterminate();
     if (animating == m_animating)
         return;
 
     m_animating = animating;
     if (m_animating) {
         m_animationStartTime = MonotonicTime::now();
-        m_animationTimer.startOneShot(m_animationRepeatInterval);
+        m_animationTimer.startOneShot(repeatInterval);
     } else
         m_animationTimer.stop();
 }

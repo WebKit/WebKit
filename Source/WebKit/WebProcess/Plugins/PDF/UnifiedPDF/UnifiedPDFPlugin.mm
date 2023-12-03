@@ -28,9 +28,11 @@
 
 #if ENABLE(UNIFIED_PDF)
 
+#include "PDFContextMenu.h"
 #include "PluginView.h"
 #include "WebEventType.h"
 #include "WebMouseEvent.h"
+#include "WebPageProxyMessages.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <WebCore/AffineTransform.h>
 #include <WebCore/Chrome.h>
@@ -421,9 +423,49 @@ bool UnifiedPDFPlugin::handleMouseLeaveEvent(const WebMouseEvent&)
     return false;
 }
 
-bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent&)
+#if PLATFORM(MAC)
+PDFContextMenu UnifiedPDFPlugin::createContextMenu(const IntPoint& contextMenuPoint) const
 {
+    Vector<PDFContextMenuItem> menuItems;
+
+    // FIXME: We should also set the openInPreviewIndex when UnifiedPdfPlugin::openWithPreview is implemented
+    menuItems.append({ WebCore::contextMenuItemPDFOpenWithPreview(), true, false, 0, true, static_cast<uint8_t>(ContextMenuItemTag::OpenWithPreview) });
+
+    return { contextMenuPoint, WTFMove(menuItems), { } };
+}
+
+void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag) const
+{
+    switch (tag) {
+    // The OpenWithPreviewAction is handled in the UI Process
+    case ContextMenuItemTag::OpenWithPreview: return;
+    }
+}
+#endif
+
+bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
+{
+#if PLATFORM(MAC)
+    if (!m_frame || !m_frame->coreLocalFrame())
+        return false;
+    RefPtr webPage = m_frame->page();
+    if (!webPage)
+        return false;
+    RefPtr frameView = m_frame->coreLocalFrame()->view();
+    if (!frameView)
+        return false;
+
+    auto contextMenu = createContextMenu(frameView->contentsToScreen(IntRect(frameView->windowToContents(event.position()), IntSize())).location());
+
+    auto sendResult = webPage->sendSync(Messages::WebPageProxy::ShowPDFContextMenu(contextMenu, m_identifier));
+    auto [selectedItemTag] = sendResult.takeReplyOr(-1);
+
+    if (selectedItemTag >= 0)
+        performContextMenuAction(static_cast<ContextMenuItemTag>(selectedItemTag.value()));
+    return true;
+#else
     return false;
+#endif
 }
 
 bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent&)

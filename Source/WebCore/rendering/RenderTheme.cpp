@@ -1313,16 +1313,18 @@ bool RenderTheme::isChecked(const RenderObject& renderer) const
     if (!renderer.node())
         return false;
     if (RefPtr element = dynamicDowncast<HTMLInputElement>(*renderer.node()))
-        return element->shouldAppearChecked();
+        return element->matchesCheckedPseudoClass();
     if (RefPtr host = dynamicDowncast<HTMLInputElement>(renderer.node()->shadowHost()))
-        return host->shouldAppearChecked();
+        return host->matchesCheckedPseudoClass();
     return false;
 }
 
 bool RenderTheme::isIndeterminate(const RenderObject& renderer) const
 {
+    // This does not currently support multiple elements and therefore radio buttons are excluded.
+    // FIXME: However, what about <progress>?
     RefPtr input = dynamicDowncast<HTMLInputElement>(renderer.node());
-    return input && input->shouldAppearIndeterminate();
+    return input && input->isCheckbox() && input->matchesIndeterminatePseudoClass();
 }
 
 bool RenderTheme::isEnabled(const RenderObject& renderer) const
@@ -1565,21 +1567,6 @@ void RenderTheme::paintSliderTicks(const RenderObject& renderer, const PaintInfo
 }
 
 #endif // ENABLE(DATALIST_ELEMENT)
-
-Seconds RenderTheme::animationRepeatIntervalForProgressBar(const RenderProgress&) const
-{
-    return 0_s;
-}
-
-Seconds RenderTheme::animationDurationForProgressBar(const RenderProgress&) const
-{
-    return 0_s;
-}
-
-IntRect RenderTheme::progressBarRectForBounds(const RenderProgress&, const IntRect& bounds) const
-{
-    return bounds;
-}
 
 bool RenderTheme::shouldHaveSpinButton(const HTMLInputElement& inputElement) const
 {

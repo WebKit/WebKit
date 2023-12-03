@@ -86,7 +86,7 @@ private:
     void paintMenuListButtonDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) final;
 
     Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
-    Seconds animationDurationForProgressBar(const RenderProgress&) const final;
+    Seconds animationDurationForProgressBar() const final;
     IntRect progressBarRectForBounds(const RenderProgress&, const IntRect&) const final;
     bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) final;
 

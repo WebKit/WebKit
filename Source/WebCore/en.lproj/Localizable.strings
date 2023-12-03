@@ -1114,6 +1114,9 @@
 /* Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
 "Show in blocked plug-in" = "Show in blocked plug-in";
 
+/* Open with Preview context menu item */
+"Open with Preview" = "Open with Preview";
+
 /* Single Page context menu item */
 "Single Page" = "Single Page";
 

@@ -128,7 +128,6 @@ public:
     bool supportsFormat(uint32_t, uint64_t) const;
 
 private:
-    Type m_type;
     uint32_t m_id { 0 };
     uint32_t m_possibleCrtcs { 0 };
     Vector<Format> m_formats;

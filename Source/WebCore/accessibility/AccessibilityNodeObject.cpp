@@ -841,7 +841,7 @@ bool AccessibilityNodeObject::isChecked() const
 
     // First test for native checkedness semantics
     if (is<HTMLInputElement>(*node))
-        return downcast<HTMLInputElement>(*node).shouldAppearChecked();
+        return downcast<HTMLInputElement>(*node).matchesCheckedPseudoClass();
 
     // Else, if this is an ARIA checkbox or radio, respect the aria-checked attribute
     bool validRole = false;

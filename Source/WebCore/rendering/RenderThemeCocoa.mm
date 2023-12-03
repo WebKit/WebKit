@@ -34,6 +34,8 @@
 #import "GraphicsContextCG.h"
 #import "HTMLInputElement.h"
 #import "ImageBuffer.h"
+#import "Page.h"
+#import "RenderProgress.h"
 #import "RenderText.h"
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
@@ -145,6 +147,11 @@ void RenderThemeCocoa::paintFileUploadIconDecorations(const RenderObject&, const
     // Foreground picture frame and icon.
     paintInfo.context().fillRoundedRect(FloatRoundedRect(thumbnailPictureFrameRect, cornerSize, cornerSize, cornerSize, cornerSize), pictureFrameColor);
     icon->paint(paintInfo.context(), thumbnailRect);
+}
+
+Seconds RenderThemeCocoa::animationRepeatIntervalForProgressBar(const RenderProgress& renderer) const
+{
+    return renderer.page().preferredRenderingUpdateInterval();
 }
 
 #if ENABLE(APPLE_PAY)

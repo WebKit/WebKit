@@ -2051,7 +2051,8 @@ static inline AtomString makeIdForStyleResolution(const AtomString& value, bool 
 bool Element::isElementReflectionAttribute(const Settings& settings, const QualifiedName& name)
 {
     return (settings.ariaReflectionForElementReferencesEnabled() && name == HTMLNames::aria_activedescendantAttr)
-        || (settings.popoverAttributeEnabled() && name == HTMLNames::popovertargetAttr);
+        || (settings.popoverAttributeEnabled() && name == HTMLNames::popovertargetAttr)
+        || (settings.invokerAttributesEnabled() && name == HTMLNames::invoketargetAttr);
 }
 
 bool Element::isElementsArrayReflectionAttribute(const Settings& settings, const QualifiedName& name)
@@ -4312,7 +4313,7 @@ bool Element::matchesReadWritePseudoClass() const
 
 bool Element::matchesIndeterminatePseudoClass() const
 {
-    return shouldAppearIndeterminate();
+    return false;
 }
 
 bool Element::matchesDefaultPseudoClass() const
@@ -4334,11 +4335,6 @@ ExceptionOr<Element*> Element::closest(const String& selector)
     if (query.hasException())
         return query.releaseException();
     return query.releaseReturnValue().closest(*this);
-}
-
-bool Element::shouldAppearIndeterminate() const
-{
-    return false;
 }
 
 bool Element::mayCauseRepaintInsideViewport(const IntRect* visibleRect) const

@@ -1,8 +1,8 @@
 
 
-FAIL event dispatches on click promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: InvokeEvent"
-FAIL event action is set to invokeAction promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: InvokeEvent"
-FAIL event action is set to invokeaction attribute promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: InvokeEvent"
+PASS event dispatches on click
+PASS event action is set to invokeAction
+PASS event action is set to invokeaction attribute
 PASS event does not dispatch if click:preventDefault is called
 PASS event does not dispatch if invoker is disabled
 

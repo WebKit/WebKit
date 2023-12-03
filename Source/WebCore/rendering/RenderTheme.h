@@ -215,11 +215,9 @@ public:
 
     virtual ScrollbarWidth scrollbarWidthStyleForPart(StyleAppearance) { return ScrollbarWidth::Auto; }
 
-    // Returns the repeat interval of the animation for the progress bar.
-    virtual Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const;
-    // Returns the duration of the animation for the progress bar.
-    virtual Seconds animationDurationForProgressBar(const RenderProgress&) const;
-    virtual IntRect progressBarRectForBounds(const RenderProgress&, const IntRect&) const;
+    virtual Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const { return 0_s; }
+    virtual Seconds animationDurationForProgressBar() const { return 0_s; }
+    virtual IntRect progressBarRectForBounds(const RenderProgress&, const IntRect& bounds) const { return bounds; }
 
     virtual FloatSize meterSizeForBounds(const RenderMeter&, const FloatRect&) const;
     virtual bool supportsMeter(StyleAppearance) const { return false; }

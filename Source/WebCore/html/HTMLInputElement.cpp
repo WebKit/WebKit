@@ -1286,7 +1286,10 @@ void HTMLInputElement::defaultEventHandler(Event& event)
     // must dispatch a DOMActivate event - a click event will not do the job.
     if (event.type() == eventNames().DOMActivateEvent) {
         m_inputType->handleDOMActivateEvent(event);
-        handlePopoverTargetAction();
+        if (invokeTargetElement())
+            handleInvokeAction();
+        else
+            handlePopoverTargetAction();
         if (event.defaultHandled())
             return;
     }
@@ -1967,7 +1970,7 @@ bool HTMLInputElement::isLabelable() const
     return m_inputType->isLabelable();
 }
 
-bool HTMLInputElement::shouldAppearChecked() const
+bool HTMLInputElement::matchesCheckedPseudoClass() const
 {
     return checked() && m_inputType->isCheckable();
 }
@@ -2022,19 +2025,7 @@ String HTMLInputElement::defaultToolTip() const
 
 bool HTMLInputElement::matchesIndeterminatePseudoClass() const
 {
-    // For input elements, matchesIndeterminatePseudoClass()
-    // is not equivalent to shouldAppearIndeterminate() because of radio button.
-    //
-    // A group of radio button without any checked button is indeterminate
-    // for the :indeterminate selector. On the other hand, RenderTheme
-    // currently only supports single element being indeterminate.
-    // Because of this, radio is indetermindate for CSS but not for render theme.
     return m_inputType->matchesIndeterminatePseudoClass();
-}
-
-bool HTMLInputElement::shouldAppearIndeterminate() const 
-{
-    return m_inputType->shouldAppearIndeterminate();
 }
 
 #if ENABLE(MEDIA_CAPTURE)

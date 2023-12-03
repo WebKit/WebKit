@@ -359,7 +359,6 @@ public:
     virtual void updateAutoFillButton();
     virtual String defaultToolTip() const;
     virtual bool matchesIndeterminatePseudoClass() const;
-    virtual bool shouldAppearIndeterminate() const;
     virtual bool isPresentingAttachedView() const;
     virtual bool supportsSelectionAPI() const;
     virtual bool dirAutoUsesValue() const;

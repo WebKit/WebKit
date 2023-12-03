@@ -1,17 +1,15 @@
 
 
-FAIL invokeTargetElement reflects invokee HTML element assert_equals: expected (object) Element node <div id="invokee"></div> but got (undefined) undefined
-FAIL invokeTargetElement reflects set value assert_equals: expected "" but got "invokee"
-FAIL invokeTargetElement reflects set value across shadow root into light dom assert_equals: expected "" but got "invokee"
-FAIL invokeTargetElement does not reflect set value inside shadowroot assert_equals: expected null but got Element node <div></div>
-FAIL invokeTargetElement throws error on assignment of non Element assert_throws_js: invokeTargetElement attribute must be an instance of Element function "function () {
-        invoker.invokeTargetElement = {};
-      }" did not throw
-FAIL invokeAction reflects 'auto' when attribute not present assert_equals: expected (string) "auto" but got (undefined) undefined
-FAIL invokeAction reflects 'auto' when attribute empty assert_equals: expected (string) "auto" but got (undefined) undefined
-FAIL invokeAction reflects same casing assert_equals: expected "fooBarBaz" but got ""
-FAIL invokeAction reflects 'auto' when attribute empty 2 assert_equals: expected "auto" but got ""
-FAIL invokeAction reflects tostring value assert_equals: expected "1,2,3" but got ""
-FAIL invokeAction reflects 'auto' when attribute set to [] assert_equals: expected (string) "auto" but got (object) []
-FAIL invokeAction reflects tostring value 2 assert_equals: expected (string) "[object Object]" but got (object) object "[object Object]"
+PASS invokeTargetElement reflects invokee HTML element
+PASS invokeTargetElement reflects set value
+PASS invokeTargetElement reflects set value across shadow root into light dom
+PASS invokeTargetElement does not reflect set value inside shadowroot
+PASS invokeTargetElement throws error on assignment of non Element
+PASS invokeAction reflects 'auto' when attribute not present
+PASS invokeAction reflects 'auto' when attribute empty
+PASS invokeAction reflects same casing
+PASS invokeAction reflects 'auto' when attribute empty 2
+PASS invokeAction reflects tostring value
+PASS invokeAction reflects 'auto' when attribute set to []
+PASS invokeAction reflects tostring value 2
 

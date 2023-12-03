@@ -119,8 +119,6 @@ private:
 
     void paintCheckboxRadioInnerShadow(const PaintInfo&, const FloatRoundedRect&, OptionSet<ControlStates::States>);
 
-    Seconds animationRepeatIntervalForProgressBar(const RenderProgress&) const final;
-
     bool supportsMeter(StyleAppearance) const final;
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) final;
 

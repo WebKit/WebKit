@@ -167,6 +167,7 @@ namespace WebCore {
     macro(inputsourceschange) \
     macro(install) \
     macro(invalid) \
+    macro(invoke) \
     macro(keydown) \
     macro(keypress) \
     macro(keystatuseschange) \

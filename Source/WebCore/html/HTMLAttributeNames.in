@@ -163,6 +163,8 @@ inert
 inputmode
 integrity
 interactive
+invokeaction
+invoketarget
 is
 ismap
 keytype

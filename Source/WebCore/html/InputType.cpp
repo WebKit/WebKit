@@ -980,11 +980,6 @@ bool InputType::matchesIndeterminatePseudoClass() const
     return false;
 }
 
-bool InputType::shouldAppearIndeterminate() const
-{
-    return false;
-}
-
 bool InputType::isPresentingAttachedView() const
 {
     return false;

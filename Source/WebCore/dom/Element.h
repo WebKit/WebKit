@@ -527,7 +527,6 @@ public:
     virtual bool matchesDefaultPseudoClass() const;
     WEBCORE_EXPORT ExceptionOr<bool> matches(const String& selectors);
     WEBCORE_EXPORT ExceptionOr<Element*> closest(const String& selectors);
-    virtual bool shouldAppearIndeterminate() const;
 
     WEBCORE_EXPORT DOMTokenList& classList();
 
