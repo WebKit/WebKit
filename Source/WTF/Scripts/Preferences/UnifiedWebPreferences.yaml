@@ -3195,11 +3195,12 @@ InlineFormattingContextIntegrationEnabled:
   category: css
   humanReadableName: "Next-generation inline layout (IFC)"
   humanReadableDescription: "Enable next-generation inline layout (IFC)"
-  webcoreBinding: DeprecatedGlobalSettings
   defaultValue:
     WebKitLegacy:
       default: true
     WebKit:
+      default: true
+    WebCore:
       default: true
 
 InlineMediaPlaybackRequiresPlaysInlineAttribute:

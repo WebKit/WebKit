@@ -28,7 +28,6 @@
 
 #include "BlockFormattingState.h"
 #include "BlockLayoutState.h"
-#include "DeprecatedGlobalSettings.h"
 #include "EventRegion.h"
 #include "HitTestLocation.h"
 #include "HitTestRequest.h"
@@ -146,14 +145,14 @@ const LineLayout* LineLayout::containing(const RenderObject& renderer)
     return containing(const_cast<RenderObject&>(renderer));
 }
 
-bool LineLayout::isEnabled()
+bool LineLayout::isEnabled(const Document& document)
 {
-    return DeprecatedGlobalSettings::inlineFormattingContextIntegrationEnabled();
+    return document.settings().inlineFormattingContextIntegrationEnabled();
 }
 
 bool LineLayout::canUseFor(const RenderBlockFlow& flow)
 {
-    if (!isEnabled())
+    if (!isEnabled(flow.document()))
         return false;
 
     return canUseForLineLayout(flow);
@@ -161,19 +160,19 @@ bool LineLayout::canUseFor(const RenderBlockFlow& flow)
 
 bool LineLayout::canUseForPreferredWidthComputation(const RenderBlockFlow& flow)
 {
-    ASSERT(isEnabled());
+    ASSERT(isEnabled(flow.document()));
     return LayoutIntegration::canUseForPreferredWidthComputation(flow);
 }
 
 bool LineLayout::shouldInvalidateLineLayoutPathAfterContentChange(const RenderBlockFlow& parent, const RenderObject& rendererWithNewContent, const LineLayout& lineLayout)
 {
-    ASSERT(isEnabled());
+    ASSERT(isEnabled(parent.document()));
     return shouldInvalidateLineLayoutPathAfterChangeFor(parent, rendererWithNewContent, lineLayout, TypeOfChangeForInvalidation::NodeMutation);
 }
 
 bool LineLayout::shouldInvalidateLineLayoutPathAfterTreeMutation(const RenderBlockFlow& parent, const RenderObject& renderer, const LineLayout& lineLayout, bool isRemoval)
 {
-    ASSERT(isEnabled());
+    ASSERT(isEnabled(parent.document()));
     return shouldInvalidateLineLayoutPathAfterChangeFor(parent, renderer, lineLayout, isRemoval ? TypeOfChangeForInvalidation::NodeRemoval : TypeOfChangeForInvalidation::NodeInsertion);
 }
 
@@ -1031,7 +1030,7 @@ void LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset
 
 void LineLayout::releaseCaches(RenderView& view)
 {
-    if (!isEnabled())
+    if (!isEnabled(view.document()))
         return;
 
     for (auto& renderer : descendantsOfType<RenderBlockFlow>(view)) {
