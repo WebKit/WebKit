@@ -353,7 +353,7 @@ class PullRequest(Command):
                 if response == 'No':
                     sys.stderr.write('Pre-PR check {} failed\n'.format(name))
                     return False
-                if response == 'Continue':
+                if response == 'Yes':
                     log.info('    {} failed, continuing PR upload anyway'.format(name))
                     break
 
