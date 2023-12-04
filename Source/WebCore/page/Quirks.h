@@ -131,7 +131,7 @@ public:
     enum StorageAccessResult : bool { ShouldNotCancelEvent, ShouldCancelEvent };
     enum ShouldDispatchClick : bool { No, Yes };
 
-    void triggerOptionalStorageAccessIframeQuirk(const SecurityOrigin& topOrigin, const URL& frameURL, CompletionHandler<void()>&&) const;
+    void triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, CompletionHandler<void()>&&) const;
     StorageAccessResult triggerOptionalStorageAccessQuirk(Element&, const PlatformMouseEvent&, const AtomString& eventType, int, Element*, bool isParentProcessAFullWebBrowser, IsSyntheticClick) const;
     void setStorageAccessQuirksForSite(Vector<RegistrableDomain>&& domains) { m_subFrameDomainsForStorageAccessQuirk = WTFMove(domains); }
     const Vector<RegistrableDomain>& subFrameDomainsForStorageAccessQuirk() const { return m_subFrameDomainsForStorageAccessQuirk; }

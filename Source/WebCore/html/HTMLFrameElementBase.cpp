@@ -111,7 +111,7 @@ void HTMLFrameElementBase::openURL(LockHistory lockHistory, LockBackForwardList 
         parentFrame->loader().subframeLoader().requestFrame(*this, m_frameURL, frameName, lockHistory, lockBackForwardList);
     };
 
-    document().quirks().triggerOptionalStorageAccessIframeQuirk(document().topOrigin(), completeURL, WTFMove(finishOpeningURL));
+    document().quirks().triggerOptionalStorageAccessIframeQuirk(completeURL, WTFMove(finishOpeningURL));
 }
 
 void HTMLFrameElementBase::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)

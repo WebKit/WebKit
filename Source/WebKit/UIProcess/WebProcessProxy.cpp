@@ -316,10 +316,12 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
 
     platformInitialize();
 
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     m_userAgentStringQuirksDataUpdateObserver = UserAgentStringQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->sendUserAgentStringQuirksData();
     });
+#endif
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -2415,15 +2417,14 @@ void WebProcessProxy::systemBeep()
 
 void WebProcessProxy::sendUserAgentStringQuirksData()
 {
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     if (!m_didSendUserAgentStringQuirks)
         m_didSendUserAgentStringQuirks = true;
-#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     if (UserAgentStringQuirkController::shared().cachedQuirks().isEmpty())
         return;
 
     // FIXME Filter by process's site when site isolation is enabled
     send(Messages::WebProcess::SetUserAgentStringQuirks(UserAgentStringQuirkController::shared().cachedQuirks()), 0);
-
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 }
 

@@ -1162,12 +1162,15 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
     return Quirks::StorageAccessResult::ShouldCancelEvent;
 }
 
-void Quirks::triggerOptionalStorageAccessIframeQuirk(const SecurityOrigin& topOrigin, const URL& frameURL, CompletionHandler<void()>&& completionHandler) const
+void Quirks::triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, CompletionHandler<void()>&& completionHandler) const
 {
     if (m_document) {
-        if (m_document->frame() && !m_document->frame()->isMainFrame()) {
-            m_document->topDocument().quirks().triggerOptionalStorageAccessIframeQuirk(topOrigin, frameURL, WTFMove(completionHandler));
-            return;
+        if (m_document->frame() && !m_document->frame()->isMainFrame() && m_document->frame()->mainFrame().opener()) {
+            auto& opener = m_document->frame()->mainFrame();
+            if (auto* localFrame = dynamicDowncast<LocalFrame>(opener); localFrame->document()) {
+                localFrame->document()->quirks().triggerOptionalStorageAccessIframeQuirk(frameURL, WTFMove(completionHandler));
+                return;
+            }
         }
         if (subFrameDomainsForStorageAccessQuirk().contains(RegistrableDomain { frameURL })) {
             return DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, RegistrableDomain { frameURL }, [completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted) mutable {
