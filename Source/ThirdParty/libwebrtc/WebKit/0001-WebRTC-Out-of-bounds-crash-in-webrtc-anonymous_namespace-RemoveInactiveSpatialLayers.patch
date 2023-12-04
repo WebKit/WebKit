@@ -1,0 +1,15 @@
+diff --git a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_vp9.cc b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_vp9.cc
+index 15e059e85c89..bddb39f70c3e 100644
+--- a/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_vp9.cc
++++ b/Source/ThirdParty/libwebrtc/Source/webrtc/modules/rtp_rtcp/source/rtp_format_vp9.cc
+@@ -291,6 +291,10 @@ RTPVideoHeaderVP9 RemoveInactiveSpatialLayers(
+   RTPVideoHeaderVP9 hdr(original_header);
+   if (original_header.first_active_layer == 0)
+     return hdr;
++#ifdef WEBRTC_WEBKIT_BUILD
++  if (hdr.num_spatial_layers < 1 || hdr.num_spatial_layers > kMaxVp9NumberOfSpatialLayers)
++    return hdr;
++#endif
+   for (size_t i = hdr.first_active_layer; i < hdr.num_spatial_layers; ++i) {
+     hdr.width[i - hdr.first_active_layer] = hdr.width[i];
+     hdr.height[i - hdr.first_active_layer] = hdr.height[i];

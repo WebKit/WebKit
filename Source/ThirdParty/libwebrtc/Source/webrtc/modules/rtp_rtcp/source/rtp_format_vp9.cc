@@ -296,6 +296,10 @@ RTPVideoHeaderVP9 RemoveInactiveSpatialLayers(
   RTPVideoHeaderVP9 hdr(original_header);
   if (original_header.first_active_layer == 0)
     return hdr;
+#ifdef WEBRTC_WEBKIT_BUILD
+  if (hdr.num_spatial_layers < 1 || hdr.num_spatial_layers > kMaxVp9NumberOfSpatialLayers)
+    return hdr;
+#endif
   for (size_t i = hdr.first_active_layer; i < hdr.num_spatial_layers; ++i) {
     hdr.width[i - hdr.first_active_layer] = hdr.width[i];
     hdr.height[i - hdr.first_active_layer] = hdr.height[i];
