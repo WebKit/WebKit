@@ -366,14 +366,22 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
             wgslEntry.bindingMember = convertBindingLayout(entry.value.bindingLayout);
             wgslEntry.vertexArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::ShaderStage::Vertex];
             wgslEntry.vertexArgumentBufferSizeIndex = entry.value.bufferSizeArgumentBufferIndices[WebGPU::ShaderStage::Vertex];
-            wgslEntry.vertexBufferDynamicOffset = entry.value.vertexDynamicOffset;
+            if (entry.value.vertexDynamicOffset) {
+                RELEASE_ASSERT(!(entry.value.vertexDynamicOffset.value() % sizeof(uint32_t)));
+                wgslEntry.vertexBufferDynamicOffset = *entry.value.vertexDynamicOffset / sizeof(uint32_t);
+            }
             wgslEntry.fragmentArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::ShaderStage::Fragment];
             wgslEntry.fragmentArgumentBufferSizeIndex = entry.value.bufferSizeArgumentBufferIndices[WebGPU::ShaderStage::Fragment];
-            if (entry.value.fragmentDynamicOffset)
-                wgslEntry.fragmentBufferDynamicOffset = *entry.value.fragmentDynamicOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets;
+            if (entry.value.fragmentDynamicOffset) {
+                RELEASE_ASSERT(!(entry.value.fragmentDynamicOffset.value() % sizeof(uint32_t)));
+                wgslEntry.fragmentBufferDynamicOffset = *entry.value.fragmentDynamicOffset / sizeof(uint32_t) + RenderBundleEncoder::startIndexForFragmentDynamicOffsets;
+            }
             wgslEntry.computeArgumentBufferIndex = entry.value.argumentBufferIndices[WebGPU::ShaderStage::Compute];
             wgslEntry.computeArgumentBufferSizeIndex = entry.value.bufferSizeArgumentBufferIndices[WebGPU::ShaderStage::Compute];
-            wgslEntry.computeBufferDynamicOffset = entry.value.computeDynamicOffset;
+            if (entry.value.computeDynamicOffset) {
+                RELEASE_ASSERT(!(entry.value.computeDynamicOffset.value() % sizeof(uint32_t)));
+                wgslEntry.computeBufferDynamicOffset = *entry.value.computeDynamicOffset / sizeof(uint32_t);
+            }
             wgslBindGroupLayout.entries.append(wgslEntry);
         }
 
