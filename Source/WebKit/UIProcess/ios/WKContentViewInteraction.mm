@@ -4255,13 +4255,16 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 
 - (NSDictionary *)textStylingAtPosition:(UITextPosition *)position inDirection:(UITextStorageDirection)direction
 {
-    if (!position || !_page->editorState().isContentRichlyEditable)
-        return nil;
-
     NSMutableDictionary* result = [NSMutableDictionary dictionary];
+    [result setObject:[UIColor blackColor] forKey:NSForegroundColorAttributeName];
+    if (!position || !_page->editorState().isContentRichlyEditable)
+        return result;
 
     if (!_page->editorState().postLayoutData)
-        return nil;
+        return result;
+
+    [result setObject:[UIColor blackColor] forKey:NSForegroundColorAttributeName];
+
     auto typingAttributes = _page->editorState().postLayoutData->typingAttributes;
     CTFontSymbolicTraits symbolicTraits = 0;
     if (typingAttributes.contains(WebKit::TypingAttribute::Bold))
@@ -7543,11 +7546,6 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
 - (void)selectAll
 {
     RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
-}
-
-- (UIColor *)textColorForCaretSelection
-{
-    return [UIColor blackColor];
 }
 
 - (UIFont *)fontForCaretSelection
