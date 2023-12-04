@@ -93,11 +93,11 @@ MediaSourcePrivateGStreamer::AddStatus MediaSourcePrivateGStreamer::addSourceBuf
     return MediaSourcePrivateGStreamer::AddStatus::Ok;
 }
 
-void MediaSourcePrivateGStreamer::durationChanged(const MediaTime&)
+void MediaSourcePrivateGStreamer::durationChanged(const MediaTime& duration)
 {
     ASSERT(isMainThread());
 
-    MediaTime duration = this->duration();
+    MediaSourcePrivate::durationChanged(duration);
     GST_TRACE_OBJECT(m_playerPrivate.pipeline(), "Duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(toGstClockTime(duration)));
     if (!duration.isValid() || duration.isNegativeInfinite())
         return;

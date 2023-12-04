@@ -200,7 +200,7 @@ MediaTime MockMediaPlayerMediaSource::currentMediaTime() const
 
 bool MockMediaPlayerMediaSource::currentMediaTimeMayProgress() const
 {
-    return m_mediaSourcePrivate && m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), buffered());
+    return m_mediaSourcePrivate && m_mediaSourcePrivate->hasFutureTime(currentMediaTime());
 }
 
 void MockMediaPlayerMediaSource::notifyActiveSourceBuffersChanged()

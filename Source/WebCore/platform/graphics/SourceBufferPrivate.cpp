@@ -83,11 +83,9 @@ MediaTime SourceBufferPrivate::currentMediaTime() const
     return { };
 }
 
-MediaTime SourceBufferPrivate::duration() const
+MediaTime SourceBufferPrivate::mediaSourceDuration() const
 {
-    if (RefPtr mediaSource = m_mediaSource.get())
-        return mediaSource->duration();
-    return { };
+    return m_mediaSourceDuration;
 }
 
 void SourceBufferPrivate::resetTimestampOffsetInTrackBuffers()
@@ -718,7 +716,7 @@ Ref<MediaPromise> SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
 
         Vector<Ref<MediaPromise>> promises;
         promises.append(updateBufferedFromTrackBuffers(trackBuffers));
-        if (m_groupEndTimestamp > duration()) {
+        if (m_groupEndTimestamp > mediaSourceDuration()) {
             // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-processing
             // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
             // duration set to the maximum of the current duration and the group end timestamp.

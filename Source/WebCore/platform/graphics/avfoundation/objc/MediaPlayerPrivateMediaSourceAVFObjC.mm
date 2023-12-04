@@ -477,7 +477,7 @@ MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTime() const
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::currentMediaTimeMayProgress() const
 {
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->hasFutureTime(currentMediaTime(), durationMediaTime(), buffered()) : false;
+    return m_mediaSourcePrivate ? m_mediaSourcePrivate->hasFutureTime(currentMediaTime()) : false;
 }
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::clampTimeToLastSeekTime(const MediaTime& time) const

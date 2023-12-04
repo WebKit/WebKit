@@ -105,11 +105,9 @@ private:
     bool isTimeBuffered(const MediaTime&) const;
 
     bool isMediaSource() const override { return true; }
-    RefPtr<MediaSourcePrivateClient> mediaSourcePrivateClient() { return m_mediaSource.get(); }
 
     void propagateReadyStateToPlayer();
 
-    ThreadSafeWeakPtr<MediaSourcePrivateClient> m_mediaSource;
     RefPtr<MediaSourcePrivateGStreamer> m_mediaSourcePrivate;
     MediaTime m_mediaTimeDuration { MediaTime::invalidTime() };
     bool m_isPipelinePlaying = true;

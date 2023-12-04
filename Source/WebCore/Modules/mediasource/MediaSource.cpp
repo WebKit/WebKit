@@ -111,7 +111,6 @@ MediaSource::MediaSource(ScriptExecutionContext& context)
     : ActiveDOMObject(&context)
     , m_sourceBuffers(SourceBufferList::create(scriptExecutionContext()))
     , m_activeSourceBuffers(SourceBufferList::create(scriptExecutionContext()))
-    , m_duration(MediaTime::invalidTime())
 #if !RELEASE_LOG_DISABLED
     , m_logger(downcast<Document>(context).logger())
 #endif
@@ -388,10 +387,7 @@ bool MediaSource::hasFutureTime()
     if (isClosed())
         return false;
 
-    MediaTime currentTime = this->currentTime();
-    MediaTime duration = this->duration();
-
-    return m_private->hasFutureTime(currentTime, duration, m_buffered);
+    return m_private->hasFutureTime(currentTime());
 }
 
 void MediaSource::monitorSourceBuffers()
@@ -500,12 +496,10 @@ ExceptionOr<void> MediaSource::setDuration(double duration)
     return setDurationInternal(MediaTime::createWithDouble(duration));
 }
 
-ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& duration)
+ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& newDuration)
 {
     // 2.4.6 Duration Change
     // https://www.w3.org/TR/2016/REC-media-source-20161117/#duration-change-algorithm
-
-    MediaTime newDuration = duration;
 
     // 1. If the current value of duration is equal to new duration, then return.
     if (newDuration == m_duration)
@@ -527,15 +521,12 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& duration)
 
     // 4. If new duration is less than highest end time, then
     // 4.1. Update new duration to equal highest end time.
-    if (highestEndTime.isValid() && newDuration < highestEndTime)
-        newDuration = highestEndTime;
-
     // 5. Update duration to new duration.
-    m_duration = newDuration;
-    ALWAYS_LOG(LOGIDENTIFIER, newDuration);
+    m_duration =  highestEndTime.isValid() && newDuration < highestEndTime ? highestEndTime : newDuration;
+    ALWAYS_LOG(LOGIDENTIFIER, m_duration);
 
     // 6. Update the media duration to new duration and run the HTMLMediaElement duration change algorithm.
-    m_private->durationChanged(newDuration);
+    m_private->durationChanged(m_duration);
 
     // Changing the duration affects the buffered range.
     monitorSourceBuffers();

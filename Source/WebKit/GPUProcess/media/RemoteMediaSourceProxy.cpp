@@ -73,11 +73,6 @@ void RemoteMediaSourceProxy::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSo
     m_private = WTFMove(mediaSourcePrivate);
 }
 
-MediaTime RemoteMediaSourceProxy::duration() const
-{
-    return m_duration;
-}
-
 const PlatformTimeRanges& RemoteMediaSourceProxy::buffered() const
 {
     return m_buffered;
@@ -141,10 +136,6 @@ void RemoteMediaSourceProxy::addSourceBuffer(const WebCore::ContentType& content
 
 void RemoteMediaSourceProxy::durationChanged(const MediaTime& duration)
 {
-    if (m_duration == duration)
-        return;
-
-    m_duration = duration;
     if (m_private)
         m_private->durationChanged(duration);
 }
