@@ -8694,6 +8694,22 @@ RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange& range)
     return nullptr;
 }
 
+RefPtr<CSSValue> consumeAnimationTimeline(CSSParserTokenRange& range)
+{
+    return consumeCommaSeparatedListWithSingleValueOptimization(range, [](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
+        return consumeSingleAnimationTimeline(range);
+    });
+}
+
+RefPtr<CSSValue> consumeSingleAnimationTimeline(CSSParserTokenRange& range)
+{
+    // <single-animation-timeline> = auto | none | <dashed-ident> | <scroll()> | <view()>
+    auto id = range.peek().id();
+    if (id == CSSValueAuto || id == CSSValueNone)
+        return consumeIdent(range);
+    return consumeDashedIdent(range);
+}
+
 RefPtr<CSSValue> consumeViewTimelineInsetListItem(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     auto startInset = CSSPropertyParsing::consumeSingleViewTimelineInset(range, context);

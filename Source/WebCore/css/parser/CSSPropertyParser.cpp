@@ -984,6 +984,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return InitialNumericValue { 0, CSSUnitType::CSS_S };
     case CSSPropertyAnimationFillMode:
     case CSSPropertyAnimationName:
+    case CSSPropertyAnimationTimeline:
     case CSSPropertyAppearance:
     case CSSPropertyBackgroundImage:
     case CSSPropertyBorderBlockEndStyle:
@@ -1716,6 +1717,8 @@ static RefPtr<CSSValue> consumeAnimationValueForShorthand(CSSPropertyID property
         return CSSPropertyParsing::consumeSingleAnimationComposition(range);
     case CSSPropertyTransitionProperty:
         return consumeSingleTransitionPropertyOrNone(range);
+    case CSSPropertyAnimationTimeline:
+        return consumeAnimationTimeline(range);
     case CSSPropertyAnimationTimingFunction:
     case CSSPropertyTransitionTimingFunction:
         return consumeTimingFunction(range, context);

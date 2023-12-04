@@ -1,4 +1,3 @@
 
-Harness Error (FAIL), message = Error: assert_implements: animation-timeline not supported undefined
-
+FAIL getAnimations includes inactive scroll-linked animations that have not been canceled assert_true: Animation associated with a scroll timeline expected true got false
 

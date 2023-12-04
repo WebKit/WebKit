@@ -48,6 +48,7 @@ public:
     bool isNameSet() const { return m_nameSet; }
     bool isPlayStateSet() const { return m_playStateSet; }
     bool isPropertySet() const { return m_propertySet; }
+    bool isTimelineSet() const { return m_timelineSet; }
     bool isTimingFunctionSet() const { return m_timingFunctionSet; }
     bool isCompositeOperationSet() const { return m_compositeOperationSet; }
 
@@ -63,7 +64,7 @@ public:
         return !m_directionSet && !m_durationSet && !m_fillModeSet
             && !m_nameSet && !m_playStateSet && !m_iterationCountSet
             && !m_delaySet && !m_timingFunctionSet && !m_propertySet
-            && !m_isNone && !m_compositeOperationSet;
+            && !m_isNone && !m_compositeOperationSet && !m_timelineSet;
     }
 
     bool isEmptyOrZeroDuration() const
@@ -79,6 +80,7 @@ public:
     void clearName() { m_nameSet = false; }
     void clearPlayState() { m_playStateSet = false; m_playStateFilled = false; }
     void clearProperty() { m_propertySet = false; m_propertyFilled = false; }
+    void clearTimeline() { m_timelineSet = false; m_timelineFilled = false; }
     void clearTimingFunction() { m_timingFunctionSet = false; m_timingFunctionFilled = false; }
     void clearCompositeOperation() { m_compositeOperationSet = false; m_compositeOperationFilled = false; }
 
@@ -92,6 +94,7 @@ public:
         clearName();
         clearPlayState();
         clearProperty();
+        clearTimeline();
         clearTimingFunction();
         clearCompositeOperation();
     }
@@ -117,6 +120,9 @@ public:
         AlternateReverse
     };
 
+    enum class TimelineKeyword : bool { None, Auto };
+    using Timeline = std::variant<TimelineKeyword, AtomString>;
+
     Direction direction() const { return static_cast<Direction>(m_direction); }
     bool directionIsForwards() const { return direction() == Direction::Normal || direction() == Direction::Alternate; }
 
@@ -130,6 +136,7 @@ public:
     const Style::ScopedName& name() const { return m_name; }
     AnimationPlayState playState() const { return static_cast<AnimationPlayState>(m_playState); }
     TransitionProperty property() const { return m_property; }
+    const Timeline& timeline() const { return m_timeline; }
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
     TimingFunction* defaultTimingFunctionForKeyframes() const { return m_defaultTimingFunctionForKeyframes.get(); }
 
@@ -146,6 +153,7 @@ public:
     }
     void setPlayState(AnimationPlayState d) { m_playState = static_cast<unsigned>(d); m_playStateSet = true; }
     void setProperty(TransitionProperty t) { m_property = t; m_propertySet = true; }
+    void setTimeline(Timeline timeline) { m_timeline = timeline; m_timelineSet = true; }
     void setTimingFunction(RefPtr<TimingFunction>&& function) { m_timingFunction = WTFMove(function); m_timingFunctionSet = true; }
     void setDefaultTimingFunctionForKeyframes(RefPtr<TimingFunction>&& function) { m_defaultTimingFunctionForKeyframes = WTFMove(function); }
 
@@ -158,6 +166,7 @@ public:
     void fillIterationCount(double iterationCount) { setIterationCount(iterationCount); m_iterationCountFilled = true; }
     void fillPlayState(AnimationPlayState playState) { setPlayState(playState); m_playStateFilled = true; }
     void fillProperty(TransitionProperty property) { setProperty(property); m_propertyFilled = true; }
+    void fillTimeline(Timeline timeline) { setTimeline(timeline); m_timelineFilled = true; }
     void fillTimingFunction(RefPtr<TimingFunction>&& timingFunction) { setTimingFunction(WTFMove(timingFunction)); m_timingFunctionFilled = true; }
     void fillCompositeOperation(CompositeOperation compositeOperation) { setCompositeOperation(compositeOperation); m_compositeOperationFilled = true; }
 
@@ -168,6 +177,7 @@ public:
     bool isIterationCountFilled() const { return m_iterationCountFilled; }
     bool isPlayStateFilled() const { return m_playStateFilled; }
     bool isPropertyFilled() const { return m_propertyFilled; }
+    bool isTimelineFilled() const { return m_timelineFilled; }
     bool isTimingFunctionFilled() const { return m_timingFunctionFilled; }
     bool isCompositeOperationFilled() const { return m_compositeOperationFilled; }
 
@@ -195,6 +205,7 @@ private:
     double m_delay;
     double m_duration;
     double m_playbackRate { 1 };
+    Timeline m_timeline;
     RefPtr<TimingFunction> m_timingFunction;
     RefPtr<TimingFunction> m_defaultTimingFunctionForKeyframes;
 
@@ -211,6 +222,7 @@ private:
     bool m_nameSet : 1;
     bool m_playStateSet : 1;
     bool m_propertySet : 1;
+    bool m_timelineSet : 1;
     bool m_timingFunctionSet : 1;
     bool m_compositeOperationSet : 1;
 
@@ -223,6 +235,7 @@ private:
     bool m_iterationCountFilled : 1;
     bool m_playStateFilled : 1;
     bool m_propertyFilled : 1;
+    bool m_timelineFilled : 1;
     bool m_timingFunctionFilled : 1;
     bool m_compositeOperationFilled : 1;
 
@@ -236,12 +249,14 @@ public:
     static AnimationPlayState initialPlayState() { return AnimationPlayState::Playing; }
     static CompositeOperation initialCompositeOperation() { return CompositeOperation::Replace; }
     static TransitionProperty initialProperty() { return { TransitionMode::All, CSSPropertyInvalid }; }
+    static Timeline initialTimeline() { return TimelineKeyword::Auto; }
     static Ref<TimingFunction> initialTimingFunction() { return CubicBezierTimingFunction::create(); }
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, AnimationPlayState);
 WTF::TextStream& operator<<(WTF::TextStream&, Animation::TransitionProperty);
 WTF::TextStream& operator<<(WTF::TextStream&, Animation::Direction);
+WTF::TextStream& operator<<(WTF::TextStream&, const Animation::Timeline&);
 WTF::TextStream& operator<<(WTF::TextStream&, const Animation&);
 
 } // namespace WebCore

@@ -1518,6 +1518,25 @@
                 "url": "https://www.w3.org/TR/css3-animations/#animation-play-state-property"
             }
         },
+        "animation-timeline": {
+            "values": [
+                "auto",
+                "none"
+            ],
+            "animatable": true,
+            "codegen-properties": {
+                "converter": "AnimationTimeline",
+                "name-for-methods": "Timeline",
+                "settings-flag": "scrollDrivenAnimationsEnabled",
+                "parser-function": "consumeAnimationTimeline",
+                "parser-grammar-unused": "auto | none | <dashed-ident> | <scroll()> | <view()>",
+                "parser-grammar-unused-reason": "Needs support for function notation."
+            },
+            "specification": {
+                "category": "css-animations",
+                "url": "https://drafts.csswg.org/css-animations-2/#animation-timeline"
+            }
+        },
         "animation-timing-function": {
             "animatable": true,
             "codegen-properties": {

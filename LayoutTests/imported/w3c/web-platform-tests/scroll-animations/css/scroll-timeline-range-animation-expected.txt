@@ -1,4 +1,10 @@
 
-Harness Error (FAIL), message = Error: assert_implements: animation-timeline not supported undefined
-
+FAIL Animation with ranges [initial, initial] assert_equals: expected "0" but got "-1"
+FAIL Animation with ranges [0%, 100%] assert_equals: expected "0" but got "-1"
+FAIL Animation with ranges [10%, 100%] assert_equals: expected "0" but got "-1"
+FAIL Animation with ranges [0%, 50%] assert_equals: expected "0" but got "-1"
+FAIL Animation with ranges [10%, 50%] assert_equals: expected "0" but got "-1"
+FAIL Animation with ranges [150px, 75em] assert_equals: expected "0" but got "-1"
+FAIL Animation with ranges [calc(1% + 135px), calc(70em + 50px)] assert_equals: expected "0" but got "-1"
+FAIL Animation with ranges [calc(1% + 135px), calc(70em + 50px)] (scoped) assert_equals: expected "0" but got "-1"
 

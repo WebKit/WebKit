@@ -1,4 +1,3 @@
 
-Harness Error (FAIL), message = Error: assert_implements: animation-timeline not supported undefined
-
+FAIL Ensure that animation is updated on a style change assert_equals: expected "0" but got "-1"
 
