@@ -1871,6 +1871,11 @@ LayoutRect RenderText::clippedOverflowRect(const RenderLayerModelObject* repaint
     return rendererToRepaint->clippedOverflowRect(repaintContainer, context);
 }
 
+auto RenderText::rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const -> RepaintRects
+{
+    return { clippedOverflowRect(repaintContainer, visibleRectContextForRepaint()) };
+}
+
 LayoutRect RenderText::collectSelectionGeometriesForLineBoxes(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent, Vector<FloatQuad>* quads)
 {
     ASSERT(!needsLayout());

@@ -849,10 +849,16 @@ FloatQuad RenderBox::absoluteContentQuad() const
     return localToAbsoluteQuad(FloatRect(rect));
 }
 
-LayoutRect RenderBox::outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* geometryMap) const
+LayoutRect RenderBox::localOutlineBoundsRepaintRect() const
 {
     auto box = borderBoundingBox();
     applyVisualEffectOverflow(box);
+    return box;
+}
+
+LayoutRect RenderBox::outlineBoundsForRepaint(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* geometryMap) const
+{
+    auto box = localOutlineBoundsRepaintRect();
 
     if (repaintContainer != this) {
         FloatQuad containerRelativeQuad;
@@ -2526,7 +2532,7 @@ void RenderBox::deleteLineBoxWrapper()
     m_inlineBoxWrapper = nullptr;
 }
 
-LayoutRect RenderBox::localRectForRepaint() const
+auto RenderBox::localRectsForRepaint(RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects
 {
     if (isInsideEntirelyHiddenLayer())
         return { };
@@ -2535,7 +2541,12 @@ LayoutRect RenderBox::localRectForRepaint() const
     // FIXME: layoutDelta needs to be applied in parts before/after transforms and
     // repaint containers. https://bugs.webkit.org/show_bug.cgi?id=23308
     overflowRect.move(view().frameView().layoutContext().layoutDelta());
-    return overflowRect;
+
+    auto rects = RepaintRects { overflowRect };
+    if (repaintOutlineBounds == RepaintOutlineBounds::Yes)
+        rects.outlineBoundsRect = localOutlineBoundsRepaintRect();
+
+    return rects;
 }
 
 auto RenderBox::computeVisibleRectsUsingPaintOffset(const RepaintRects& rects) const -> RepaintRects

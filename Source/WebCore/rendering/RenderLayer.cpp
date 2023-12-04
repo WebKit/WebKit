@@ -1044,9 +1044,9 @@ void RenderLayer::recursiveUpdateLayerPositions(RenderGeometryMap* geometryMap, 
         auto newRects = repaintRects();
 
         if (checkForRepaint && shouldRepaintAfterLayout() && newRects) {
-            auto needsFullRepaint = m_repaintStatus == RepaintStatus::NeedsFullRepaint ? RenderElement::RequiresFullRepaint::Yes : RenderElement::RequiresFullRepaint::No;
+            auto needsFullRepaint = m_repaintStatus == RepaintStatus::NeedsFullRepaint ? RequiresFullRepaint::Yes : RequiresFullRepaint::No;
             auto resolvedOldRects = valueOrDefault(oldRects);
-            renderer().repaintAfterLayoutIfNeeded(repaintContainer.get(), needsFullRepaint, resolvedOldRects.clippedOverflowRect, resolvedOldRects.outlineBoundsRect, &newRects->clippedOverflowRect, &newRects->outlineBoundsRect);
+            renderer().repaintAfterLayoutIfNeeded(repaintContainer.get(), needsFullRepaint, resolvedOldRects, *newRects);
         }
     };
 
@@ -1171,18 +1171,14 @@ std::optional<LayoutRect> RenderLayer::cachedClippedOverflowRect() const
     return m_repaintRects.clippedOverflowRect;
 }
 
-void RenderLayer::computeRepaintRects(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap* geometryMap)
+void RenderLayer::computeRepaintRects(const RenderLayerModelObject* repaintContainer, const RenderGeometryMap*)
 {
     ASSERT(!m_visibleContentStatusDirty);
 
     if (!isSelfPaintingLayer())
         clearRepaintRects();
-    else {
-        setRepaintRects({
-            renderer().clippedOverflowRectForRepaint(repaintContainer),
-            renderer().outlineBoundsForRepaint(repaintContainer, geometryMap)
-        });
-    }
+    else
+        setRepaintRects(renderer().rectsForRepaintingAfterLayout(repaintContainer, RepaintOutlineBounds::Yes));
 }
 
 void RenderLayer::computeRepaintRectsIncludingDescendants()
@@ -1196,7 +1192,7 @@ void RenderLayer::computeRepaintRectsIncludingDescendants()
         layer->computeRepaintRectsIncludingDescendants();
 }
 
-void RenderLayer::setRepaintRects(const RepaintRects& rects)
+void RenderLayer::setRepaintRects(const RenderObject::RepaintRects& rects)
 {
     m_repaintRects = rects;
     m_repaintRectsValid = true;
@@ -1266,17 +1262,13 @@ void RenderLayer::recursiveUpdateLayerPositionsAfterScroll(RenderGeometryMap* ge
         // When scrolling, we don't compute repaint rects for visually non-empty layers.
         if (isVisuallyEmpty)
             clearRepaintRects();
-        else // FIXME: We could track the repaint container as we walk down the tree.
+        else {
+            // FIXME: We could track the repaint container as we walk down the tree.
             computeRepaintRects(renderer().containerForRepaint().renderer.get(), geometryMap);
-    } else if (!renderer().view().frameView().platformWidget()) {
-        // When ScrollView's m_paintsEntireContents flag flips due to layer backing changes, the repaint area transitions from
-        // visual to layout overflow. When this happens the cached repaint rects become invalid and they need to be recomputed (see webkit.org/b/188121).
-        // Check that our cached rects are correct.
-        ASSERT_IMPLIES(m_repaintRectsValid, m_repaintRects.clippedOverflowRect == renderer().clippedOverflowRectForRepaint(renderer().containerForRepaint().renderer.get()));
-        ASSERT_IMPLIES(m_repaintRectsValid, m_repaintRects.outlineBoundsRect == renderer().outlineBoundsForRepaint(renderer().containerForRepaint().renderer.get()));
+        }
     }
-    
-    for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
+
+    for (auto* child = firstChild(); child; child = child->nextSibling())
         child->recursiveUpdateLayerPositionsAfterScroll(geometryMap, flags);
 
     // We don't update our reflection as scrolling is a translation which does not change the size()

@@ -85,7 +85,7 @@ private:
     void computePreferredLogicalWidths() final;
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) { }
 
-    LayoutRect localRectForRepaint() const override;
+    RepaintRects localRectsForRepaint(RepaintOutlineBounds) const override;
 
     VisiblePosition positionForPoint(const LayoutPoint&, const RenderFragmentContainer*) final;
     

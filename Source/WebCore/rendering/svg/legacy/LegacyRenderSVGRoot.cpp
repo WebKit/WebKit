@@ -357,20 +357,37 @@ const AffineTransform& LegacyRenderSVGRoot::localToParentTransform() const
     return m_localToParentTransform;
 }
 
-LayoutRect LegacyRenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+LayoutRect LegacyRenderSVGRoot::localClippedOverflowRect(RepaintRectCalculation repaintRectCalculation) const
 {
-    if (isInsideEntirelyHiddenLayer())
-        return { };
-
-    auto contentRepaintRect = m_localToBorderBoxTransform.mapRect(repaintRectInLocalCoordinates(context.repaintRectCalculation()));
+    auto contentRepaintRect = m_localToBorderBoxTransform.mapRect(repaintRectInLocalCoordinates(repaintRectCalculation));
     contentRepaintRect.intersect(snappedIntRect(borderBoxRect()));
 
     LayoutRect repaintRect = enclosingLayoutRect(contentRepaintRect);
     if (m_hasBoxDecorations || hasRenderOverflow())
         repaintRect.unite(unionRect(localSelectionRect(false), visualOverflowRect()));
 
-    auto rects = RepaintRects { LayoutRect(enclosingIntRect(repaintRect)) };
+    return enclosingIntRect(repaintRect);
+}
+
+LayoutRect LegacyRenderSVGRoot::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+{
+    if (isInsideEntirelyHiddenLayer())
+        return { };
+
+    auto rects = RepaintRects { localClippedOverflowRect(context.repaintRectCalculation()) };
     return RenderReplaced::computeRects(rects, repaintContainer, context).clippedOverflowRect;
+}
+
+auto LegacyRenderSVGRoot::rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects
+{
+    if (isInsideEntirelyHiddenLayer())
+        return { };
+
+    auto rects = RepaintRects { localClippedOverflowRect(RepaintRectCalculation::Fast) };
+    if (repaintOutlineBounds == RepaintOutlineBounds::Yes)
+        rects.outlineBoundsRect = localOutlineBoundsRepaintRect();
+
+    return RenderReplaced::computeRects(rects, repaintContainer, visibleRectContextForRepaint());
 }
 
 std::optional<FloatRect> LegacyRenderSVGRoot::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const

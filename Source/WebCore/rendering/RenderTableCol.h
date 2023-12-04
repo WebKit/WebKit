@@ -77,6 +77,8 @@ private:
     bool requiresLayer() const override { return false; }
 
     LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const override;
+    RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const override;
+
     void imageChanged(WrappedImagePtr, const IntRect* = 0) override;
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;

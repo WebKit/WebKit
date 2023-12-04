@@ -1086,19 +1086,32 @@ LayoutRect RenderObject::rectWithOutlineForRepaint(const RenderLayerModelObject*
     return r;
 }
 
-LayoutRect RenderObject::localRectForRepaint() const
+auto RenderObject::localRectsForRepaint(RepaintOutlineBounds) const -> RepaintRects
 {
     ASSERT_NOT_REACHED();
     return { };
 }
 
-LayoutRect RenderObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+auto RenderObject::rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects
 {
-    auto repaintRect = localRectForRepaint();
-    if (repaintRect.isEmpty())
+    auto localRects = localRectsForRepaint(repaintOutlineBounds);
+    if (localRects.clippedOverflowRect.isEmpty())
         return { };
 
-    return computeRects({ repaintRect }, repaintContainer, context).clippedOverflowRect;
+    auto result = computeRects(localRects, repaintContainer, visibleRectContextForRepaint());
+    if (result.outlineBoundsRect)
+        result.outlineBoundsRect = LayoutRect(snapRectToDevicePixels(*result.outlineBoundsRect, document().deviceScaleFactor()));
+
+    return result;
+}
+
+LayoutRect RenderObject::clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const
+{
+    auto repaintRects = localRectsForRepaint(RepaintOutlineBounds::No);
+    if (repaintRects.clippedOverflowRect.isEmpty())
+        return { };
+
+    return computeRects(repaintRects, repaintContainer, context).clippedOverflowRect;
 }
 
 auto RenderObject::computeRects(const RepaintRects& rects, const RenderLayerModelObject* repaintContainer, VisibleRectContext context) const -> RepaintRects
