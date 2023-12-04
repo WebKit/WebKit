@@ -47,6 +47,8 @@ enum class ViewTransitionPhase : uint8_t {
 };
 
 struct CapturedElement {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
     // FIXME: Add the following:
     // old image (2d bitmap)
     // old width / height
@@ -55,7 +57,7 @@ struct CapturedElement {
     // old direction
     // old text-orientation
     // old mix-blend-mode
-    RefPtr<Element> newElement;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> newElement;
 
     // FIXME: Also handle these:
     // group keyframes
@@ -63,6 +65,42 @@ struct CapturedElement {
     // group styles rule
     // image pair isolation rule
     // image animation name rule
+};
+
+struct OrderedNamedElementsMap {
+public:
+    bool contains(const AtomString& key) const
+    {
+        return m_keys.contains(key);
+    }
+
+    void add(const AtomString& key, CapturedElement& value)
+    {
+        m_keys.add(key);
+        m_map.set(key, makeUniqueRef<CapturedElement>(value));
+    }
+
+    void remove(const AtomString& key)
+    {
+        m_map.remove(key);
+        m_keys.remove(key);
+    }
+
+    auto& keys() const
+    {
+        return m_keys;
+    }
+
+    CapturedElement* find(const AtomString& key)
+    {
+        if (auto it = m_map.find(key); it != m_map.end())
+            return &it->value;
+        return nullptr;
+    }
+
+private:
+    ListHashSet<AtomString> m_keys;
+    HashMap<AtomString, UniqueRef<CapturedElement>> m_map;
 };
 
 class ViewTransition : public RefCounted<ViewTransition>, public CanMakeWeakPtr<ViewTransition> {
@@ -75,8 +113,8 @@ public:
     void callUpdateCallback();
 
     void setupViewTransition();
-    void captureOldState();
-    void captureNewState();
+    ExceptionOr<void> captureOldState();
+    ExceptionOr<void> captureNewState();
     void setupTransitionPseudoElements();
     void activateViewTransition();
     void handleTransitionFrame();
@@ -87,7 +125,7 @@ public:
     DOMPromise& finished();
 
     ViewTransitionPhase phase() const { return m_phase; }
-    const HashMap<AtomString, CapturedElement>& namedElements() const { return m_namedElements; };
+    const OrderedNamedElementsMap& namedElements() const { return m_namedElements; };
 
     RefPtr<Document> protectedDocument() const { return m_document.get(); }
 
@@ -96,7 +134,7 @@ private:
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 
-    HashMap<AtomString, CapturedElement> m_namedElements;
+    OrderedNamedElementsMap m_namedElements;
     ViewTransitionPhase m_phase { ViewTransitionPhase::PendingCapture };
 
     RefPtr<ViewTransitionUpdateCallback> m_updateCallback;
