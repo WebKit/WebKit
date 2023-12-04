@@ -267,30 +267,59 @@ static ConstantResult constantTernaryOperation(const FixedVector<ConstantValue>&
 }
 
 template<typename DestinationType>
+static ConstantValue convertValue(ConstantValue value)
+{
+    if (auto* boolean = std::get_if<bool>(&value))
+        return static_cast<DestinationType>(*boolean);
+    if (auto* i32 = std::get_if<int32_t>(&value))
+        return static_cast<DestinationType>(*i32);
+    if (auto* u32 = std::get_if<uint32_t>(&value))
+        return static_cast<DestinationType>(*u32);
+    if (auto* abstractInt = std::get_if<int64_t>(&value))
+        return static_cast<DestinationType>(*abstractInt);
+    if (auto* f32 = std::get_if<float>(&value))
+        return static_cast<DestinationType>(*f32);
+    if (auto* f16 = std::get_if<half>(&value))
+        return static_cast<DestinationType>(*f16);
+    if (auto* abstractFloat = std::get_if<double>(&value))
+        return static_cast<DestinationType>(*abstractFloat);
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
+static ConstantValue convertValue(const Type* targetType, ConstantValue value)
+{
+    ASSERT(std::holds_alternative<Types::Primitive>(*targetType));
+    auto& primitive = std::get<Types::Primitive>(*targetType);
+    switch (primitive.kind)  {
+    case Types::Primitive::AbstractInt:
+        return convertValue<int64_t>(value);
+    case Types::Primitive::I32:
+        return convertValue<int32_t>(value);
+    case Types::Primitive::U32:
+        return convertValue<uint32_t>(value);
+    case Types::Primitive::AbstractFloat:
+        return convertValue<double>(value);
+    case Types::Primitive::F32:
+        return convertValue<float>(value);
+    case Types::Primitive::F16:
+        return convertValue<half>(value);
+    case Types::Primitive::Bool:
+        return convertValue<bool>(value);
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+template<typename DestinationType>
 static ConstantValue constantConstructor(const Type* resultType, const FixedVector<ConstantValue>& arguments)
 {
     if (arguments.isEmpty())
         return zeroValue(resultType);
 
     ASSERT(arguments.size() == 1);
-    const auto& arg = arguments[0];
-
-    if (auto* boolean = std::get_if<bool>(&arg))
-        return static_cast<DestinationType>(*boolean);
-    if (auto* i32 = std::get_if<int32_t>(&arg))
-        return static_cast<DestinationType>(*i32);
-    if (auto* u32 = std::get_if<uint32_t>(&arg))
-        return static_cast<DestinationType>(*u32);
-    if (auto* abstractInt = std::get_if<int64_t>(&arg))
-        return static_cast<DestinationType>(*abstractInt);
-    if (auto* f32 = std::get_if<float>(&arg))
-        return static_cast<DestinationType>(*f32);
-    if (auto* f16 = std::get_if<half>(&arg))
-        return static_cast<DestinationType>(*f16);
-    if (auto* abstractFloat = std::get_if<double>(&arg))
-        return static_cast<DestinationType>(*abstractFloat);
-    RELEASE_ASSERT_NOT_REACHED();
+    return convertValue<DestinationType>(arguments[0]);
 }
+
 
 template<typename Functor, typename... Arguments>
 static ConstantResult scalarOrVector(const Functor& functor, Arguments&&... unpackedArguments)
@@ -330,14 +359,23 @@ static ConstantValue constantVector(const Type* resultType, const FixedVector<Co
     ConstantVector result(size);
     auto argumentCount = arguments.size();
 
+    ASSERT(std::holds_alternative<Types::Vector>(*resultType));
     if (!argumentCount) {
-        ASSERT(std::holds_alternative<Types::Vector>(*resultType));
         return zeroValue(resultType);
     }
 
-    if (argumentCount == 1 && !std::holds_alternative<ConstantVector>(arguments[0])) {
-        for (unsigned i = 0; i < size; ++i)
-            result.elements[i] = arguments[0];
+    if (argumentCount == 1) {
+        auto& vectorType = std::get<Types::Vector>(*resultType);
+        auto* elementType = vectorType.element;
+        if (auto* vector = std::get_if<ConstantVector>(&arguments[0])) {
+            ASSERT(vector->elements.size() == vectorType.size);
+            unsigned i = 0;
+            for (auto element : vector->elements)
+                result.elements[i++] = convertValue(elementType, element);
+        } else {
+            for (unsigned i = 0; i < size; ++i)
+                result.elements[i] = convertValue(elementType, arguments[0]);
+        }
         return result;
     }
 
@@ -362,10 +400,15 @@ static ConstantValue constantMatrix(const Type* resultType, const FixedVector<Co
 
 
     if (arguments.size() == 1) {
-        auto& arg = arguments[0];
-        ASSERT(arg.isMatrix());
-        // FIXME: we might need to convert the type of the result when we support f16
-        return arg;
+        auto& matrixType = std::get<Types::Matrix>(*resultType);
+        auto* elementType = matrixType.element;
+        auto& matrix = std::get<ConstantMatrix>(arguments[0]);
+        ASSERT(matrix.elements.size() == matrixType.rows * matrixType.columns);
+        ConstantMatrix result(columns, rows);
+        unsigned i = 0;
+        for (auto& element : matrix.elements)
+            result.elements[i++] = convertValue(elementType, element);
+        return result;
     }
 
     if (arguments.size() == columns * rows)
