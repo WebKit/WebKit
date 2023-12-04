@@ -189,7 +189,7 @@ RemoteAudioDestinationProxy::~RemoteAudioDestinationProxy()
 
 void RemoteAudioDestinationProxy::startRendering(CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto* connection = this->connection();
+    RefPtr connection = this->connection();
     if (!connection) {
         RunLoop::current().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
             protectedThis->setIsPlaying(false);

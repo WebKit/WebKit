@@ -586,6 +586,9 @@ void RenderCounter::rendererStyleChangedSlowCase(RenderElement& renderer, const 
                 RenderCounter::destroyCounterNodes(renderer);
         }
     } else {
+        if (renderer.hasCounterNodeMap())
+            RenderCounter::destroyCounterNodes(renderer);
+
         for (auto& key : newStyle.counterDirectives().map.keys()) {
             // We must create this node here, because the added node may be a node with no display such as
             // as those created by the increment or reset directives and the re-layout that will happen will

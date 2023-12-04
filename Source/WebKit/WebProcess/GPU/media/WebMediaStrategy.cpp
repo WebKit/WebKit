@@ -75,8 +75,8 @@ std::unique_ptr<WebCore::NowPlayingManager> WebMediaStrategy::createNowPlayingMa
 
             void setNowPlayingInfoPrivate(const WebCore::NowPlayingInfo& nowPlayingInfo) final
             {
-                auto& connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
-                connection.send(Messages::GPUConnectionToWebProcess::SetNowPlayingInfo { nowPlayingInfo }, 0);
+                Ref connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+                connection->send(Messages::GPUConnectionToWebProcess::SetNowPlayingInfo { nowPlayingInfo }, 0);
             }
         };
         return makeUnique<NowPlayingInfoForGPUManager>();
@@ -97,8 +97,8 @@ void WebMediaStrategy::enableMockMediaSource()
     m_mockMediaSourceEnabled = true;
 #if ENABLE(GPU_PROCESS)
     if (m_useGPUProcess) {
-        auto& connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
-        connection.send(Messages::GPUConnectionToWebProcess::EnableMockMediaSource { }, 0);
+        Ref connection = WebProcess::singleton().ensureGPUProcessConnection().connection();
+        connection->send(Messages::GPUConnectionToWebProcess::EnableMockMediaSource { }, 0);
         return;
     }
 #endif

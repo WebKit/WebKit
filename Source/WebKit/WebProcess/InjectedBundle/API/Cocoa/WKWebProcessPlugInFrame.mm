@@ -157,7 +157,7 @@ static RetainPtr<NSArray> collectIcons(WebCore::LocalFrame* frame, OptionSet<Web
 {
     if (!frame)
         return @[];
-    auto document = frame->document();
+    RefPtr document = frame->document();
     if (!document)
         return @[];
     return createNSArray(WebCore::LinkIconCollector(*document).iconsOfTypes(iconTypes), [] (auto&& icon) -> NSURL * {
