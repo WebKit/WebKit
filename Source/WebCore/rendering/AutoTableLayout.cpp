@@ -343,10 +343,10 @@ float AutoTableLayout::calcEffectiveLogicalWidth()
                     // legacy behaviour anyway. mozilla doesn't do this so I decided we don't neither.
                     break;
                 }
-                FALLTHROUGH;
+                [[fallthrough]];
             case LengthType::Auto:
                 haveAuto = true;
-                FALLTHROUGH;
+                [[fallthrough]];
             default:
                 // If the column is a percentage width, do not let the spanning cell overwrite the
                 // width value.  This caused a mis-rendering on amazon.com.

@@ -1111,7 +1111,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     switch (policy) {
     case Reload:
         memoryCache.remove(*resource);
-        FALLTHROUGH;
+        [[fallthrough]];
     case Load:
         if (resource)
             memoryCache.remove(*resource);

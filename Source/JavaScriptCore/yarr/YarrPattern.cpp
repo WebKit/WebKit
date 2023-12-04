@@ -2310,7 +2310,7 @@ void PatternTerm::dump(PrintStream& out, YarrPattern* thisPattern, unsigned nest
         else
             out.print("non-captured ");
 
-        FALLTHROUGH;
+        [[fallthrough]];
     case Type::ParentheticalAssertion:
         if (m_matchDirection) {
             if (type == Type::ParenthesesSubpattern)

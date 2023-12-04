@@ -120,7 +120,7 @@ static NSURLSessionResponseDisposition toNSURLSessionResponseDisposition(WebCore
     case WebCore::PolicyAction::LoadWillContinueInAnotherProcess:
         ASSERT_NOT_REACHED();
 #if !ASSERT_ENABLED
-        FALLTHROUGH;
+        [[fallthrough]];
 #endif
     case WebCore::PolicyAction::Ignore:
         return NSURLSessionResponseCancel;

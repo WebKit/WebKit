@@ -182,7 +182,7 @@ private:
                     return;
                 }
                 // Otherwise just fall through - cached character so treat this as CharacterClassConstructionState::Empty.
-                FALLTHROUGH;
+                [[fallthrough]];
 
             case CharacterClassConstructionState::Empty:
                 m_character = ch;
@@ -231,7 +231,7 @@ private:
             case CharacterClassConstructionState::CachedCharacter:
                 // Flush the currently cached character, then fall through.
                 m_delegate.atomCharacterClassAtom(m_character);
-                FALLTHROUGH;
+                [[fallthrough]];
             case CharacterClassConstructionState::Empty:
             case CharacterClassConstructionState::AfterCharacterClass:
                 m_delegate.atomCharacterClassBuiltIn(classID, invert);
@@ -249,7 +249,7 @@ private:
             case CharacterClassConstructionState::CachedCharacterHyphen:
                 m_delegate.atomCharacterClassAtom(m_character);
                 m_delegate.atomCharacterClassAtom('-');
-                FALLTHROUGH;
+                [[fallthrough]];
             case CharacterClassConstructionState::AfterCharacterClassHyphen:
                 if (m_isUnicode) {
                     m_errorCode = ErrorCode::CharacterClassRangeInvalid;
@@ -528,13 +528,13 @@ private:
                     return;
                 }
                 // Otherwise just fall through - cached character so treat this as ClassSetConstructionState::Empty.
-                FALLTHROUGH;
+                [[fallthrough]];
 
             case ClassSetConstructionState::AfterSetRange:
                 switchFromDefaultOpToUnionOpIfNeeded();
 
                 // Continue processing the current character.
-                FALLTHROUGH;
+                [[fallthrough]];
 
             case ClassSetConstructionState::Empty:
             case ClassSetConstructionState::AfterSetOperator:
@@ -622,13 +622,13 @@ private:
 
                 // Yes, we really want to fall through to the AfterSetRange case to switch from Default to Union op
                 // and then handle the built in class by falling through again.
-                FALLTHROUGH;
+                [[fallthrough]];
 
             case ClassSetConstructionState::AfterSetRange:
                 switchFromDefaultOpToUnionOpIfNeeded();
 
                 // Continue processing the current character.
-                FALLTHROUGH;
+                [[fallthrough]];
 
             case ClassSetConstructionState::Empty:
             case ClassSetConstructionState::AfterCharacterClass:
@@ -647,7 +647,7 @@ private:
             case ClassSetConstructionState::CachedCharacterHyphen:
                 m_delegate.atomCharacterClassAtom(m_character);
                 m_delegate.atomCharacterClassAtom('-');
-                FALLTHROUGH;
+                [[fallthrough]];
             case ClassSetConstructionState::AfterCharacterClassHyphen:
                 m_errorCode = ErrorCode::CharacterClassRangeInvalid;
                 return;
@@ -1685,7 +1685,7 @@ private:
 
                 restoreState(state);
                 // if we did not find a complete quantifer, fall through to the default case.
-                FALLTHROUGH;
+                [[fallthrough]];
             }
 
             default:

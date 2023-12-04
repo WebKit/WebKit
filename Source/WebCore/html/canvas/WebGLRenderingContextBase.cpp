@@ -1941,7 +1941,7 @@ WebGLAny WebGLRenderingContextBase::getParameter(GCGLenum pname)
     case GraphicsContextGL::GREEN_BITS:
         return getIntParameter(pname);
     case GraphicsContextGL::IMPLEMENTATION_COLOR_READ_FORMAT:
-        FALLTHROUGH;
+        [[fallthrough]];
     case GraphicsContextGL::IMPLEMENTATION_COLOR_READ_TYPE: {
         int value = getIntParameter(pname);
         if (!value) {
@@ -2275,7 +2275,7 @@ WebGLAny WebGLRenderingContextBase::getRenderbufferParameter(GCGLenum target, GC
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "getRenderbufferParameter", "invalid parameter name");
             return nullptr;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     case GraphicsContextGL::RENDERBUFFER_WIDTH:
     case GraphicsContextGL::RENDERBUFFER_HEIGHT:
     case GraphicsContextGL::RENDERBUFFER_RED_SIZE:
@@ -3858,7 +3858,7 @@ bool WebGLRenderingContextBase::validateTypeAndArrayBufferType(const char* funct
             break;
         }
         ASSERT(functionType == ArrayBufferViewFunctionType::ReadPixels);
-        FALLTHROUGH;
+        [[fallthrough]];
     default:
         synthesizeGLError(GraphicsContextGL::INVALID_ENUM, functionName, "invalid type");
         return false;
@@ -4273,7 +4273,7 @@ void WebGLRenderingContextBase::texParameter(GCGLenum target, GCGLenum pname, GC
             synthesizeGLError(GraphicsContextGL::INVALID_ENUM, "texParameter", "invalid parameter name");
             return;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     case GraphicsContextGL::TEXTURE_WRAP_S:
     case GraphicsContextGL::TEXTURE_WRAP_T:
         if ((paramf == GraphicsContextGL::MIRROR_CLAMP_TO_EDGE_EXT) || (parami == GraphicsContextGL::MIRROR_CLAMP_TO_EDGE_EXT)) {

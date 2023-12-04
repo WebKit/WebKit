@@ -1169,7 +1169,7 @@ public:
             return true;
         case QuantifierType::NonGreedy:
             ASSERT(backTrack->begin != notFound);
-            FALLTHROUGH;
+            [[fallthrough]];
         case QuantifierType::FixedCount:
             break;
         }
@@ -1190,7 +1190,7 @@ public:
                 context->term -= term.atom.parenthesesWidth;
                 return false;
             }
-            FALLTHROUGH;
+            [[fallthrough]];
         case QuantifierType::NonGreedy:
             if (backTrack->begin == notFound) {
                 backTrack->begin = input.getPos();
@@ -1207,7 +1207,7 @@ public:
                 context->term -= term.atom.parenthesesWidth;
                 return true;
             }
-            FALLTHROUGH;
+            [[fallthrough]];
         case QuantifierType::FixedCount:
             break;
         }

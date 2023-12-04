@@ -72,7 +72,7 @@ TouchGestureController::EventVariant TouchGestureController::handleEvent(const s
 
             // Over threshold, bump the gestured event and directly fall through to handling it.
             m_gesturedEvent = GesturedEvent::Axis;
-            FALLTHROUGH;
+            [[fallthrough]];
         }
         case GesturedEvent::ContextMenu:
             break;
@@ -141,7 +141,7 @@ TouchGestureController::EventVariant TouchGestureController::handleEvent(const s
                 return generatedEvent;
             }
 
-            FALLTHROUGH;
+            [[fallthrough]];
         }
         case GesturedEvent::ContextMenu:
         {

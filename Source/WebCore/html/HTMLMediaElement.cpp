@@ -829,7 +829,7 @@ void HTMLMediaElement::attributeChanged(const QualifiedName& name, const AtomStr
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     case AttributeNames::webkitwirelessvideoplaybackdisabledAttr:
         mediaSession().setWirelessVideoPlaybackDisabled(newValue != nullAtom());
-        FALLTHROUGH;
+        [[fallthrough]];
     case AttributeNames::disableremoteplaybackAttr:
 #if ENABLE(MEDIA_SOURCE)
     case AttributeNames::webkitairplayAttr:

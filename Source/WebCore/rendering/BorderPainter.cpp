@@ -1323,7 +1323,7 @@ void BorderPainter::drawLineForBoxSide(GraphicsContext& graphicsContext, const D
     case BorderStyle::Inset:
     case BorderStyle::Outset:
         color = calculateBorderStyleColor(borderStyle, side, color);
-        FALLTHROUGH;
+        [[fallthrough]];
     case BorderStyle::Solid: {
         StrokeStyle oldStrokeStyle = graphicsContext.strokeStyle();
         ASSERT(x2 >= x1);

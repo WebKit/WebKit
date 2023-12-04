@@ -623,7 +623,7 @@ private:
     case ProcessAccessType::Launch:
         networkProcess();
         ASSERT(m_networkProcess);
-        FALLTHROUGH;
+        [[fallthrough]];
     case ProcessAccessType::OnlyIfLaunched:
         if (RefPtr networkProcess = m_networkProcess) {
             networkProcess->fetchWebsiteData(m_sessionID, dataTypes, fetchOptions, [callbackAggregator](WebsiteData websiteData) {
@@ -750,7 +750,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
     case ProcessAccessType::Launch:
         networkProcess();
         ASSERT(m_networkProcess);
-        FALLTHROUGH;
+        [[fallthrough]];
     case ProcessAccessType::OnlyIfLaunched:
         if (RefPtr networkProcess = m_networkProcess) {
             networkProcess->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] { });

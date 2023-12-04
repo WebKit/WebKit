@@ -127,7 +127,7 @@ static GtkStateFlags scrollbarPartStateFlags(Scrollbar& scrollbar, ScrollbarPart
             stateFlags |= GTK_STATE_FLAG_INSENSITIVE;
             break;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     default:
         if (scrollbar.hoveredPart() == part)
             stateFlags |= GTK_STATE_FLAG_PRELIGHT;

@@ -2682,7 +2682,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case TailCall:
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTailCalls(), "wasm tail calls are not enabled");
-        FALLTHROUGH;
+        [[fallthrough]];
     case Call: {
         uint32_t functionIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseFunctionIndex(functionIndex));
@@ -2744,7 +2744,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
     case TailCallIndirect:
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTailCalls(), "wasm tail calls are not enabled");
-        FALLTHROUGH;
+        [[fallthrough]];
     case CallIndirect: {
         uint32_t signatureIndex;
         uint32_t tableIndex;
@@ -3376,7 +3376,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 
     case TailCallIndirect:
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTailCalls(), "wasm tail calls are not enabled");
-        FALLTHROUGH;
+        [[fallthrough]];
     case CallIndirect: {
         uint32_t unused;
         uint32_t unused2;
@@ -3436,7 +3436,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 
     case TailCall:
         WASM_PARSER_FAIL_IF(!Options::useWebAssemblyTailCalls(), "wasm tail calls are not enabled");
-        FALLTHROUGH;
+        [[fallthrough]];
     case Call: {
         uint32_t functionIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseFunctionIndex(functionIndex));
@@ -3545,7 +3545,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case TableSet: {
         unsigned tableIndex;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(tableIndex), "can't parse table index");
-        FALLTHROUGH;
+        [[fallthrough]];
     }
     case RefIsNull:
     case RefNull: {

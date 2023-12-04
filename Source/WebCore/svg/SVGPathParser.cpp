@@ -323,28 +323,28 @@ bool SVGPathParser::parsePathData(bool checkForInitialMoveTo)
         switch (command) {
         case SVGPathSegType::MoveToRel:
             m_mode = RelativeCoordinates;
-            FALLTHROUGH;
+            [[fallthrough]];
         case SVGPathSegType::MoveToAbs:
             if (!parseMoveToSegment())
                 return false;
             break;
         case SVGPathSegType::LineToRel:
             m_mode = RelativeCoordinates;
-            FALLTHROUGH;
+            [[fallthrough]];
         case SVGPathSegType::LineToAbs:
             if (!parseLineToSegment())
                 return false;
             break;
         case SVGPathSegType::LineToHorizontalRel:
             m_mode = RelativeCoordinates;
-            FALLTHROUGH;
+            [[fallthrough]];
         case SVGPathSegType::LineToHorizontalAbs:
             if (!parseLineToHorizontalSegment())
                 return false;
             break;
         case SVGPathSegType::LineToVerticalRel:
             m_mode = RelativeCoordinates;
-            FALLTHROUGH;
+            [[fallthrough]];
         case SVGPathSegType::LineToVerticalAbs:
             if (!parseLineToVerticalSegment())
                 return false;
@@ -354,35 +354,35 @@ bool SVGPathParser::parsePathData(bool checkForInitialMoveTo)
             break;
         case SVGPathSegType::CurveToCubicRel:
             m_mode = RelativeCoordinates;
-            FALLTHROUGH;
+            [[fallthrough]];
         case SVGPathSegType::CurveToCubicAbs:
             if (!parseCurveToCubicSegment())
                 return false;
             break;
         case SVGPathSegType::CurveToCubicSmoothRel:
             m_mode = RelativeCoordinates;
-            FALLTHROUGH;
+            [[fallthrough]];
         case SVGPathSegType::CurveToCubicSmoothAbs:
             if (!parseCurveToCubicSmoothSegment())
                 return false;
             break;
         case SVGPathSegType::CurveToQuadraticRel:
             m_mode = RelativeCoordinates;
-            FALLTHROUGH;
+            [[fallthrough]];
         case SVGPathSegType::CurveToQuadraticAbs:
             if (!parseCurveToQuadraticSegment())
                 return false;
             break;
         case SVGPathSegType::CurveToQuadraticSmoothRel:
             m_mode = RelativeCoordinates;
-            FALLTHROUGH;
+            [[fallthrough]];
         case SVGPathSegType::CurveToQuadraticSmoothAbs:
             if (!parseCurveToQuadraticSmoothSegment())
                 return false;
             break;
         case SVGPathSegType::ArcRel:
             m_mode = RelativeCoordinates;
-            FALLTHROUGH;
+            [[fallthrough]];
         case SVGPathSegType::ArcAbs:
             if (!parseArcToSegment())
                 return false;

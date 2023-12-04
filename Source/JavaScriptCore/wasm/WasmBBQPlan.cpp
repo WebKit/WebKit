@@ -114,7 +114,7 @@ void BBQPlan::work(CompilationEffort effort)
                 complete();
                 break;
             }
-            FALLTHROUGH;
+            [[fallthrough]];
         case State::Validated:
             prepare();
             break;

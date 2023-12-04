@@ -444,7 +444,7 @@ static Ref<DataTransfer> createDataTransferForClipboardEvent(Document& document,
             pasteboard->writeString(plainTextType, plainText);
             return DataTransfer::createForCopyAndPaste(document, DataTransfer::StoreMode::Readonly, WTFMove(pasteboard));
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     case ClipboardEventKind::Paste:
     case ClipboardEventKind::PasteAsQuotation:
     case ClipboardEventKind::PasteFont:

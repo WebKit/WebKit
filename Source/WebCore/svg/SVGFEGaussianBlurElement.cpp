@@ -98,7 +98,7 @@ void SVGFEGaussianBlurElement::svgAttributeChanged(const QualifiedName& attrName
             markFilterEffectForRebuild();
             return;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     }
     case AttributeNames::edgeModeAttr: {
         InstanceInvalidationGuard guard(*this);

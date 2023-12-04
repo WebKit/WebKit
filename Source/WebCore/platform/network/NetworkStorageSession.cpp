@@ -163,7 +163,7 @@ bool NetworkStorageSession::shouldBlockCookies(const URL& firstPartyForCookies, 
     case ThirdPartyCookieBlockingMode::AllOnSitesWithoutUserInteraction:
         if (!hasHadUserInteractionAsFirstParty(firstPartyDomain))
             return true;
-        FALLTHROUGH;
+        [[fallthrough]];
     case ThirdPartyCookieBlockingMode::OnlyAccordingToPerDomainPolicy:
         return shouldBlockThirdPartyCookies(resourceDomain);
     }

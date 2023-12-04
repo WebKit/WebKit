@@ -43,16 +43,6 @@
 #include <gst/gst.h>
 #endif
 
-#if !defined(FALLTHROUGH) && defined(__GNUC__) && defined(__has_attribute)
-#if __has_attribute(fallthrough)
-#define FALLTHROUGH __attribute__ ((fallthrough))
-#endif
-#endif
-
-#if !defined(FALLTHROUGH)
-#define FALLTHROUGH
-#endif
-
 #define MINI_BROWSER_ERROR (miniBrowserErrorQuark())
 
 static const gchar **uriArguments = NULL;
@@ -295,10 +285,10 @@ static gboolean parseFeaturesOptionCallback(const gchar *option, const gchar *va
         case '!':
         case '-':
             enabled = FALSE;
-            FALLTHROUGH;
+            [[fallthrough]];
         case '+':
             item++;
-            FALLTHROUGH;
+            [[fallthrough]];
         default:
             break;
         }

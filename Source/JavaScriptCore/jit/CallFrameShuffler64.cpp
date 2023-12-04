@@ -49,7 +49,7 @@ DataFormat CallFrameShuffler::emitStore(
     case UnboxedInt52InGPR:
         m_jit.rshift64(MacroAssembler::TrustedImm32(JSValue::int52ShiftAmount),
             cachedRecovery.recovery().gpr());
-        FALLTHROUGH;
+        [[fallthrough]];
     case UnboxedStrictInt52InGPR:
         m_jit.storePtr(cachedRecovery.recovery().gpr(), address);
         return DataFormatStrictInt52;
@@ -110,7 +110,7 @@ void CallFrameShuffler::emitBox(CachedRecovery& cachedRecovery)
                 ValueRecovery::inGPR(cachedRecovery.recovery().gpr(), DataFormatStrictInt52));
             if (verbose)
                 dataLog(" into ", cachedRecovery.recovery(), "\n");
-            FALLTHROUGH;
+            [[fallthrough]];
         case DataFormatStrictInt52: {
             if (verbose)
                 dataLog("   * Boxing ", cachedRecovery.recovery());

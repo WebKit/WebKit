@@ -323,7 +323,7 @@ void EventSource::parseEventStream()
                 break;
             case '\r':
                 m_discardTrailingNewline = true;
-                FALLTHROUGH;
+                [[fallthrough]];
             case '\n':
                 lineLength = i - position;
                 break;

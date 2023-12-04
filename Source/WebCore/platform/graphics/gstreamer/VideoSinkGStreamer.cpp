@@ -266,7 +266,7 @@ static gboolean webkitVideoSinkEvent(GstBaseSink* baseSink, GstEvent* event)
 
         GST_DEBUG_OBJECT(sink, "Flush-start, releasing m_sample");
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     default:
         return GST_CALL_PARENT_WITH_DEFAULT(GST_BASE_SINK_CLASS, event, (baseSink, event), TRUE);
     }

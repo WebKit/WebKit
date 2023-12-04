@@ -54,7 +54,7 @@ void marshallJSResult(CCallHelpers& jit, const TypeDefinition& typeDefinition, c
             break;
         case TypeKind::F32:
             jit.convertFloatToDouble(src.fpr(), src.fpr());
-            FALLTHROUGH;
+            [[fallthrough]];
         case TypeKind::F64: {
             jit.moveTrustedValue(jsNumber(pureNaN()), dst);
             auto isNaN = jit.branchIfNaN(src.fpr());

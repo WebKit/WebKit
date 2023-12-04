@@ -72,7 +72,7 @@ inline bool doesOverflow(Arith::Mode mode)
     case Arith::NotSet:
         ASSERT_NOT_REACHED();
 #if !ASSERT_ENABLED
-        FALLTHROUGH;
+        [[fallthrough]];
 #endif
     case Arith::Unchecked:
     case Arith::CheckOverflow:

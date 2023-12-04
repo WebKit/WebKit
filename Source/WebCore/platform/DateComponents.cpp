@@ -748,7 +748,7 @@ String DateComponents::toStringForTime(SecondFormat format) const
     default:
         ASSERT_NOT_REACHED();
 #if !ASSERT_ENABLED
-        FALLTHROUGH; // To None.
+        [[fallthrough]]; // To None.
 #endif
     case SecondFormat::None:
         return makeString(pad('0', 2, m_hour), ':', pad('0', 2, m_minute));

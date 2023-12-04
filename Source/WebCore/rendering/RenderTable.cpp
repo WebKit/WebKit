@@ -193,7 +193,7 @@ void RenderTable::willInsertTableSection(RenderTableSection& child, RenderObject
             m_foot = child;
             break;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     case DisplayType::TableRowGroup:
         resetSectionPointerIfNotBefore(m_firstBody, beforeChild);
         if (!m_firstBody)

@@ -1004,7 +1004,7 @@ bool JSObject::putByIndex(JSCell* cell, JSGlobalObject* globalObject, unsigned p
             thisObject->convertInt32ForValue(vm, value);
             return putByIndex(cell, globalObject, propertyName, value, shouldThrow);
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     }
         
     case ALL_CONTIGUOUS_INDEXING_TYPES: {
@@ -2290,7 +2290,7 @@ bool JSObject::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject,
         if (i >= butterfly->vectorLength())
             return true;
         thisObject->convertFromCopyOnWrite(vm);
-        FALLTHROUGH;
+        [[fallthrough]];
     }
 
     case ALL_WRITABLE_INT32_INDEXING_TYPES:
@@ -2307,7 +2307,7 @@ bool JSObject::deletePropertyByIndex(JSCell* cell, JSGlobalObject* globalObject,
         if (i >= butterfly->vectorLength())
             return true;
         thisObject->convertFromCopyOnWrite(vm);
-        FALLTHROUGH;
+        [[fallthrough]];
     }
 
     case ALL_WRITABLE_DOUBLE_INDEXING_TYPES: {
@@ -3254,7 +3254,7 @@ bool JSObject::putByIndexBeyondVectorLength(JSGlobalObject* globalObject, unsign
             if (result)
                 return putResult;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     }
 
     case NonArrayWithArrayStorage:

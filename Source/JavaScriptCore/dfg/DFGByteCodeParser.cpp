@@ -2565,7 +2565,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
 
             addToGraph(CheckArray, OpInfo(mode.asWord()), get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
             addToGraph(CheckDetached, get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
-            FALLTHROUGH;
+            [[fallthrough]];
         }
 
         case ArrayEntriesIntrinsic:
@@ -3743,21 +3743,21 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             switch (intrinsic) {
             case DataViewGetInt8:
                 isSigned = true;
-                FALLTHROUGH;
+                [[fallthrough]];
             case DataViewGetUint8:
                 byteSize = 1;
                 break;
 
             case DataViewGetInt16:
                 isSigned = true;
-                FALLTHROUGH;
+                [[fallthrough]];
             case DataViewGetUint16:
                 byteSize = 2;
                 break;
 
             case DataViewGetInt32:
                 isSigned = true;
-                FALLTHROUGH;
+                [[fallthrough]];
             case DataViewGetUint32:
                 byteSize = 4;
                 break;
@@ -3835,21 +3835,21 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             switch (intrinsic) {
             case DataViewSetInt8:
                 isSigned = true;
-                FALLTHROUGH;
+                [[fallthrough]];
             case DataViewSetUint8:
                 byteSize = 1;
                 break;
 
             case DataViewSetInt16:
                 isSigned = true;
-                FALLTHROUGH;
+                [[fallthrough]];
             case DataViewSetUint16:
                 byteSize = 2;
                 break;
 
             case DataViewSetInt32:
                 isSigned = true;
-                FALLTHROUGH;
+                [[fallthrough]];
             case DataViewSetUint32:
                 byteSize = 4;
                 break;

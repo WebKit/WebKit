@@ -102,7 +102,7 @@ private:
             case Property:
                 ASSERT(willChangeProperty != CSSPropertyInvalid);
                 m_cssPropertyID = willChangeProperty;
-                FALLTHROUGH;
+                [[fallthrough]];
             case ScrollPosition:
             case Contents:
                 m_feature = static_cast<unsigned>(willChange);

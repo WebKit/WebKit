@@ -75,24 +75,6 @@
 #endif
 #endif
 
-/* BFALLTHROUGH */
-
-#if !defined(BFALLTHROUGH) && defined(__cplusplus) && defined(__has_cpp_attribute)
-
-#if __has_cpp_attribute(fallthrough)
-#define BFALLTHROUGH [[fallthrough]]
-#elif __has_cpp_attribute(clang::fallthrough)
-#define BFALLTHROUGH [[clang::fallthrough]]
-#elif __has_cpp_attribute(gnu::fallthrough)
-#define BFALLTHROUGH [[gnu::fallthrough]]
-#endif
-
-#endif // !defined(BFALLTHROUGH) && defined(__cplusplus) && defined(__has_cpp_attribute)
-
-#if !defined(BFALLTHROUGH)
-#define BFALLTHROUGH
-#endif
-
 /* BLIKELY */
 
 #if !defined(BLIKELY) && BCOMPILER(GCC_COMPATIBLE)

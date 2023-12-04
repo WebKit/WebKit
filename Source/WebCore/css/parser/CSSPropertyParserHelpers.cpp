@@ -547,7 +547,7 @@ struct LengthRawKnownTokenTypeDimensionConsumer {
         case CSSUnitType::CSS_QUIRKY_EM:
             if (parserMode != UASheetMode)
                 return std::nullopt;
-            FALLTHROUGH;
+            [[fallthrough]];
         case CSSUnitType::CSS_EM:
         case CSSUnitType::CSS_REM:
         case CSSUnitType::CSS_LH:

@@ -40,7 +40,7 @@ PointerEventsHitRules::PointerEventsHitRules(HitTestingTargetType hitTestingTarg
             case PointerEvents::Auto: // "auto" is like "visiblePainted" when in SVG content
                 requireFill = true;
                 requireStroke = true;
-                FALLTHROUGH;
+                [[fallthrough]];
             case PointerEvents::Visible:
                 requireVisible = true;
                 canHitFill = true;
@@ -57,7 +57,7 @@ PointerEventsHitRules::PointerEventsHitRules(HitTestingTargetType hitTestingTarg
             case PointerEvents::Painted:
                 requireFill = true;
                 requireStroke = true;
-                FALLTHROUGH;
+                [[fallthrough]];
             case PointerEvents::All:
                 canHitFill = true;
                 canHitStroke = true;

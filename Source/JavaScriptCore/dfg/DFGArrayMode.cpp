@@ -393,7 +393,7 @@ Structure* ArrayMode::originalArrayStructure(Graph& graph, const CodeOrigin& cod
                 return nullptr;
             }
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     }
 
     case Array::OriginalArray: {

@@ -440,7 +440,7 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, const GlobalFrameI
             UNUSED_PARAM(allowPrivacyProxy);
             UNUSED_PARAM(advancedPrivacyProtections);
 #endif
-            FALLTHROUGH;
+            [[fallthrough]];
         }
         case UseDecision::Use:
             break;

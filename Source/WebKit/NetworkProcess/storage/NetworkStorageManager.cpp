@@ -425,13 +425,13 @@ WallTime NetworkStorageManager::lastModificationTimeForOrigin(const WebCore::Cli
         auto idbStoragePath = IDBStorageManager::idbStorageOriginDirectory(m_customIDBStoragePath, origin);
         auto idbStorageModificationTime = valueOrDefault(FileSystem::fileModificationTime(idbStoragePath));
         lastModificationTime = std::max(idbStorageModificationTime, lastModificationTime);
-        FALLTHROUGH;
+        [[fallthrough]];
     }
     case UnifiedOriginStorageLevel::Basic: {
         auto cacheStoragePath = CacheStorageManager::cacheStorageOriginDirectory(m_customCacheStoragePath, origin);
         auto cacheStorageModificationTime = valueOrDefault(FileSystem::fileModificationTime(cacheStoragePath));
         lastModificationTime = std::max(cacheStorageModificationTime, lastModificationTime);
-        FALLTHROUGH;
+        [[fallthrough]];
     }
     case UnifiedOriginStorageLevel::Standard: {
         auto originFile = originFilePath(manager.path());

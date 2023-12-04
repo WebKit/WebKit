@@ -315,7 +315,7 @@ GtkWidget* webkitScriptDialogImplNew(WebKitScriptDialog* scriptDialog, const cha
         gtk_entry_set_activates_default(GTK_ENTRY(dialog->priv->entry), TRUE);
         gtk_widget_show(dialog->priv->entry);
 
-        FALLTHROUGH;
+        [[fallthrough]];
     case WEBKIT_SCRIPT_DIALOG_CONFIRM: {
         gtk_label_set_text(GTK_LABEL(dialog->priv->title), title);
 

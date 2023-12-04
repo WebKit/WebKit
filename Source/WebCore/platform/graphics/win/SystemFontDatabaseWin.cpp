@@ -71,7 +71,7 @@ auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand fontShort
     case FontShorthand::WebkitMiniControl: // Just map to small.
     case FontShorthand::WebkitControl: // Just map to small.
         shouldUseDefaultControlFontPixelSize = true;
-        FALLTHROUGH;
+        [[fallthrough]];
     default: { // Everything else uses the stock GUI font.
         HGDIOBJ hGDI = ::GetStockObject(DEFAULT_GUI_FONT);
         if (!hGDI)

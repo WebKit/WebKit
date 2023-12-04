@@ -125,7 +125,7 @@ private:
             break;
         case PathElement::Type::MoveToPoint:
             m_subpathStart = points[0];
-            FALLTHROUGH;
+            [[fallthrough]];
         case PathElement::Type::AddLineToPoint:
             updateInslope(points[0]);
             m_origin = points[0];

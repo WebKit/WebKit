@@ -1953,7 +1953,7 @@ void AccessibilityNodeObject::visibleText(Vector<AccessibilityText>& textOrder) 
         // Native popup buttons should not use their button children's text as a title. That value is retrieved through stringValue().
         if (node->hasTagName(selectTag))
             break;
-        FALLTHROUGH;
+        [[fallthrough]];
     case AccessibilityRole::Summary:
         // The text node for a <summary> element should be included in its visible text, unless a title attribute is present.
         if (!hasAttribute(titleAttr))

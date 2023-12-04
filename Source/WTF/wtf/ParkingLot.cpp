@@ -153,7 +153,7 @@ public:
                 break;
             case DequeueResult::RemoveAndStop:
                 shouldContinue = false;
-                FALLTHROUGH;
+                [[fallthrough]];
             case DequeueResult::RemoveAndContinue:
                 if (verbose)
                     dataLog(toString(Thread::current(), ": dequeueing ", RawPointer(current), " from ", RawPointer(this), "\n"));

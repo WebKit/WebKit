@@ -72,7 +72,7 @@ OptionSet<ResourceType> toResourceType(CachedResource::Type type, ResourceReques
         if (requester == ResourceRequestRequester::XHR
             || requester == ResourceRequestRequester::Fetch)
             return { ResourceType::Fetch };
-        FALLTHROUGH;
+        [[fallthrough]];
     case CachedResource::Type::Beacon:
     case CachedResource::Type::Ping:
     case CachedResource::Type::Icon:

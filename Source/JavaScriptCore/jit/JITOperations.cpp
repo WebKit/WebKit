@@ -1355,7 +1355,7 @@ static void directPutByVal(JSGlobalObject* globalObject, JSObject* baseObject, J
         case ALL_ARRAY_STORAGE_INDEXING_TYPES:
             if (index < baseObject->butterfly()->vectorLength())
                 break;
-            FALLTHROUGH;
+            [[fallthrough]];
         default:
             if (arrayProfile)
                 arrayProfile->setOutOfBounds();

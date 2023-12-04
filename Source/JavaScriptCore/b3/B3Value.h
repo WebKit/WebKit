@@ -624,10 +624,10 @@ private:
             break;
         case Three:
             bitwise_cast<Value**>(bitwise_cast<char*>(this) + offset)[2] = valueToClone.childrenArray()[2];
-            FALLTHROUGH;
+            [[fallthrough]];
         case Two:
             bitwise_cast<Value**>(bitwise_cast<char*>(this) + offset)[1] = valueToClone.childrenArray()[1];
-            FALLTHROUGH;
+            [[fallthrough]];
         case One:
             bitwise_cast<Value**>(bitwise_cast<char*>(this) + offset)[0] = valueToClone.childrenArray()[0];
             break;

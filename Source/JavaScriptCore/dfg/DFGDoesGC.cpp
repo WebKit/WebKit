@@ -602,7 +602,7 @@ bool doesGC(Graph& graph, Node* node)
         switch (node->switchData()->kind) {
         case SwitchCell:
             ASSERT(graph.m_plan.isFTL());
-            FALLTHROUGH;
+            [[fallthrough]];
         case SwitchImm:
             return false;
         case SwitchChar:

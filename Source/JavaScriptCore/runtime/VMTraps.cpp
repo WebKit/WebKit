@@ -402,7 +402,7 @@ void VMTraps::handleTraps(VMTraps::BitField mask)
             if (LIKELY(!vm.watchdog()->isActive() || !vm.watchdog()->shouldTerminate(vm.entryScope->globalObject())))
                 continue;
             vm.setHasTerminationRequest();
-            FALLTHROUGH;
+            [[fallthrough]];
 
         case NeedTermination:
             ASSERT(vm.hasTerminationRequest());

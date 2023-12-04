@@ -378,7 +378,7 @@ inline FloatRect clipPathReferenceBox(const RenderElement& renderer, CSSBoxType 
                 referenceBox.setSize(*viewportSize);
             break;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     case CSSBoxType::ContentBox:
     case CSSBoxType::FillBox:
     case CSSBoxType::PaddingBox:

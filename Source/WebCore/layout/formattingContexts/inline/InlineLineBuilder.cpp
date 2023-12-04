@@ -837,7 +837,7 @@ bool LineBuilder::shouldTryToPlaceFloatBox(const Box& floatBox, LayoutUnit float
         ASSERT(m_suspendedFloats.isEmpty());
         if (!isLineConstrainedByFloat())
             return true;
-        FALLTHROUGH;
+        [[fallthrough]];
     case MayOverConstrainLine::No: {
         auto lineIsConsideredEmpty = !m_line.hasContent() && !isLineConstrainedByFloat();
         if (lineIsConsideredEmpty)

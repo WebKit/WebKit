@@ -447,7 +447,7 @@ void LocaleWin::initializeLocaleData()
         negativeSuffix = " " + negativeSign;
         break;
     case NegativeFormatSignPrefix:
-        FALLTHROUGH;
+        [[fallthrough]];
     default:
         negativePrefix = negativeSign;
         break;

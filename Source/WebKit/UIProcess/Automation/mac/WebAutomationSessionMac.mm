@@ -569,7 +569,7 @@ static unsigned short keyCodeForVirtualKey(VirtualKey key)
     case VirtualKey::NumberPadSeparator:
         // The 'Separator' key is only present on a few international keyboards.
         // It is usually mapped to the same character as Decimal ('.' or ',').
-        FALLTHROUGH;
+        [[fallthrough]];
     case VirtualKey::NumberPadDecimal:
         return kVK_ANSI_KeypadDecimal;
         // FIXME: this might be locale-dependent. See the above comment.

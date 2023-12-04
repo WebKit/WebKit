@@ -210,7 +210,7 @@ static std::unique_ptr<LinkPreloadResourceClient> createLinkPreloadResourceClien
         return makeUnique<LinkPreloadDefaultResourceClient>(loader, downcast<CachedTextTrack>(resource));
     case CachedResource::Type::MediaResource:
         ASSERT_UNUSED(document, document.settings().mediaPreloadingEnabled());
-        FALLTHROUGH;
+        [[fallthrough]];
     case CachedResource::Type::RawResource:
         return makeUnique<LinkPreloadRawResourceClient>(loader, downcast<CachedRawResource>(resource));
     case CachedResource::Type::MainResource:

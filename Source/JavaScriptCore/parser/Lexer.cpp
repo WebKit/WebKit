@@ -2419,7 +2419,7 @@ start:
                 token = tokenTypeForIntegerLikeToken(tokenData->doubleValue);
             }
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     case CharacterNumber:
         if (LIKELY(token != INTEGER && token != DOUBLE)) {
             auto parseNumberResult = parseDecimal();
@@ -2495,7 +2495,7 @@ start:
             U16_GET(m_code, 0, 0, m_codeEnd - m_code, codePoint);
             ASSERT(isIdentStart(codePoint));
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     }
     case CharacterBackSlash:
         parseIdent:

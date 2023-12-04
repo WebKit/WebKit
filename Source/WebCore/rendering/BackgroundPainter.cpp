@@ -760,7 +760,7 @@ LayoutSize BackgroundPainter::calculateFillTileSize(const RenderBoxModelObject& 
         // If the image has neither an intrinsic width nor an intrinsic height, its size is determined as for ‘contain’.
         type = FillSizeType::Contain;
     }
-    FALLTHROUGH;
+    [[fallthrough]];
     case FillSizeType::Contain:
     case FillSizeType::Cover: {
         // Scale computation needs higher precision than what LayoutUnit can offer.

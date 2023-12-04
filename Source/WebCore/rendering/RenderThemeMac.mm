@@ -733,7 +733,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         case CSSValueBackground:
             // Use platform-independent value returned by base class.
-            FALLTHROUGH;
+            [[fallthrough]];
 
         default:
             return RenderTheme::systemColor(cssValueID, options);

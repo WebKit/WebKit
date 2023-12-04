@@ -466,7 +466,7 @@ OptionSet<EntityMask> MarkupAccumulator::entityMaskForText(const Text& text) con
         case HTML::noscript:
             if (!isScriptEnabled(*element))
                 break;
-            FALLTHROUGH;
+            [[fallthrough]];
         case HTML::iframe:
         case HTML::noembed:
         case HTML::noframes:

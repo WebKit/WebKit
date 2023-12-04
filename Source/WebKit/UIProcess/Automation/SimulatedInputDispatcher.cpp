@@ -50,7 +50,7 @@ SimulatedInputSourceState SimulatedInputSourceState::emptyStateForSourceType(Sim
         break;
     case SimulatedInputSourceType::Wheel:
         result.scrollDelta = WebCore::IntSize();
-        FALLTHROUGH;
+        [[fallthrough]];
     case SimulatedInputSourceType::Mouse:
     case SimulatedInputSourceType::Touch:
     case SimulatedInputSourceType::Pen:

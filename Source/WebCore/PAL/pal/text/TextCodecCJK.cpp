@@ -479,7 +479,7 @@ String TextCodecCJK::iso2022JPDecode(const uint8_t* bytes, size_t length, bool f
             break;
         case ISO2022JPDecoderState::TrailByte:
             m_iso2022JPDecoderState = ISO2022JPDecoderState::LeadByte;
-            FALLTHROUGH;
+            [[fallthrough]];
         case ISO2022JPDecoderState::EscapeStart:
             sawError = true;
             result.append(replacementCharacter);

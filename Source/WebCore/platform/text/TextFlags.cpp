@@ -208,13 +208,13 @@ FeaturesMap computeFeatureSettingsFromVariants(const FontVariantSettings& varian
         break;
     case FontVariantCaps::AllSmall:
         features.set(fontFeatureTag("c2sc"), 1);
-        FALLTHROUGH;
+        [[fallthrough]];
     case FontVariantCaps::Small:
         features.set(fontFeatureTag("smcp"), 1);
         break;
     case FontVariantCaps::AllPetite:
         features.set(fontFeatureTag("c2pc"), 1);
-        FALLTHROUGH;
+        [[fallthrough]];
     case FontVariantCaps::Petite:
         features.set(fontFeatureTag("pcap"), 1);
         break;

@@ -1010,7 +1010,7 @@ CSSSelector::Match CSSSelectorParser::consumeAttributeMatch(CSSParserTokenRange&
     case DelimiterToken:
         if (token.delimiter() == '=')
             return CSSSelector::Match::Exact;
-        FALLTHROUGH;
+        [[fallthrough]];
     default:
         m_failedParsing = true;
         return CSSSelector::Match::Exact;

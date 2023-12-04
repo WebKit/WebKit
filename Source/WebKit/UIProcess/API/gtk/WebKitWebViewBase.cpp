@@ -1305,7 +1305,7 @@ static void webkitWebViewBaseHandleMouseEvent(WebKitWebViewBase* webViewBase, Gd
 
         clickCount = priv->clickCounter.currentClickCountForGdkButtonEvent(event);
     }
-        FALLTHROUGH;
+        [[fallthrough]];
     case GDK_BUTTON_RELEASE:
         gtk_widget_grab_focus(GTK_WIDGET(webViewBase));
         break;
@@ -1870,7 +1870,7 @@ static gboolean webkitWebViewBaseTouchEvent(GtkWidget* widget, GdkEventTouch* ev
         break;
     }
     case GDK_TOUCH_CANCEL:
-        FALLTHROUGH;
+        [[fallthrough]];
     case GDK_TOUCH_END:
         ASSERT(priv->touchEvents.contains(sequence));
         priv->touchEvents.remove(sequence);

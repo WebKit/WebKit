@@ -811,7 +811,7 @@ ScriptExecutionContext::HasResourceAccess ScriptExecutionContext::canAccessResou
     case ResourceType::StorageManager:
         if (isOriginEquivalentToLocal(*origin))
             return HasResourceAccess::No;
-        FALLTHROUGH;
+        [[fallthrough]];
     case ResourceType::SessionStorage:
         if (m_storageBlockingPolicy == StorageBlockingPolicy::BlockAll)
             return HasResourceAccess::No;

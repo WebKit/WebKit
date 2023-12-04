@@ -662,7 +662,7 @@ void LegacyLineLayout::updateLogicalWidthForAlignment(RenderBlockFlow& flow, con
             }
             break;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     case TextAlignMode::Start:
         if (direction == TextDirection::LTR)
             updateLogicalWidthForLeftAlignedBlock(isLeftToRightDirection, trailingSpaceRun, logicalLeft, totalLogicalWidth, availableLogicalWidth);

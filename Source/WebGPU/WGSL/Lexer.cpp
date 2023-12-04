@@ -46,7 +46,7 @@ Vector<Token> Lexer<T>::lex()
         switch (token.type) {
         case TokenType::GtGtEq:
             tokens.append(makeToken(TokenType::Placeholder));
-            FALLTHROUGH;
+            [[fallthrough]];
         case TokenType::GtGt:
         case TokenType::GtEq:
             tokens.append(makeToken(TokenType::Placeholder));

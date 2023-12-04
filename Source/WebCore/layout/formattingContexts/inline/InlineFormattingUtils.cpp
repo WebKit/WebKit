@@ -260,14 +260,14 @@ InlineLayoutUnit InlineFormattingUtils::horizontalAlignmentOffset(const RenderSt
     case TextAlignMode::WebKitLeft:
         if (!isLeftToRightDirection)
             return horizontalAvailableSpace;
-        FALLTHROUGH;
+        [[fallthrough]];
     case TextAlignMode::Start:
         return { };
     case TextAlignMode::Right:
     case TextAlignMode::WebKitRight:
         if (!isLeftToRightDirection)
             return { };
-        FALLTHROUGH;
+        [[fallthrough]];
     case TextAlignMode::End:
         return horizontalAvailableSpace;
     case TextAlignMode::Center:

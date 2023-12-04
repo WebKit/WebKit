@@ -871,7 +871,7 @@ static JSValueRef jsObjectCall(JSGlobalContextRef jsContext, JSObjectRef functio
         return JSObjectCallAsConstructor(jsContext, function, arguments.size(), arguments.data(), exception);
     case JSC::JSCCallbackFunction::Type::Method:
         ASSERT(thisObject);
-        FALLTHROUGH;
+        [[fallthrough]];
     case JSC::JSCCallbackFunction::Type::Function:
         return JSObjectCallAsFunction(jsContext, function, thisObject, arguments.size(), arguments.data(), exception);
     }

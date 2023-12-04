@@ -515,7 +515,7 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, OutputType
     case CompiledSingleWithRootFilter:
         CompiledSingleWithRootFilterCase:
         searchRootNode = &filterRootById(*searchRootNode, *m_selectors.first().selector);
-        FALLTHROUGH;
+        [[fallthrough]];
     case CompiledSingle:
         {
         CompiledSingleCase:
@@ -537,14 +537,14 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, OutputType
     case CompiledSingle:
         ASSERT_NOT_REACHED();
 #if !ASSERT_ENABLED
-        FALLTHROUGH;
+        [[fallthrough]];
 #endif
 #endif // ENABLE(CSS_SELECTOR_JIT)
 
     case SingleSelectorWithRootFilter:
         SingleSelectorWithRootFilterCase:
         searchRootNode = &filterRootById(*searchRootNode, *m_selectors.first().selector);
-        FALLTHROUGH;
+        [[fallthrough]];
     case SingleSelector:
         SingleSelectorCase:
         executeSingleSelectorData(rootNode, *searchRootNode, m_selectors.first(), output);
@@ -569,7 +569,7 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, OutputType
         goto CompiledMultipleSelectorMatch;
         }
 #else
-        FALLTHROUGH;
+        [[fallthrough]];
 #endif // ENABLE(CSS_SELECTOR_JIT)
     case CompiledMultipleSelectorMatch:
 #if ENABLE(CSS_SELECTOR_JIT)
@@ -577,7 +577,7 @@ ALWAYS_INLINE void SelectorDataList::execute(ContainerNode& rootNode, OutputType
         executeCompiledSingleMultiSelectorData(*searchRootNode, output);
         break;
 #else
-        FALLTHROUGH;
+        [[fallthrough]];
 #endif // ENABLE(CSS_SELECTOR_JIT)
     case MultipleSelectorMatch:
 #if ENABLE(CSS_SELECTOR_JIT)

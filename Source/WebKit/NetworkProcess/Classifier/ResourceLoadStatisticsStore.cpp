@@ -2757,7 +2757,7 @@ bool ResourceLoadStatisticsStore::shouldRemoveAllButCookiesFor(const DomainData&
     OperatingDatesWindow window { };
     switch (firstPartyWebsiteDataRemovalMode()) {
     case FirstPartyWebsiteDataRemovalMode::AllButCookies:
-        FALLTHROUGH;
+        [[fallthrough]];
     case FirstPartyWebsiteDataRemovalMode::None:
         window = OperatingDatesWindow::Short;
         break;

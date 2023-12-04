@@ -1970,7 +1970,7 @@ static Ref<CSSValue> valueForTextEmphasisStyle(const RenderStyle& style)
     case TextEmphasisMark::Auto:
         ASSERT_NOT_REACHED();
 #if !ASSERT_ENABLED
-        FALLTHROUGH;
+        [[fallthrough]];
 #endif
     case TextEmphasisMark::Dot:
     case TextEmphasisMark::Circle:

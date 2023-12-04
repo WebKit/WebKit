@@ -4688,7 +4688,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         case Array::ArrayStorage: {
             if (mode.isInBounds())
                 break;
-            FALLTHROUGH;
+            [[fallthrough]];
         }
         default: {
             clobberWorld();
@@ -4721,7 +4721,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             case Array::ArrayStorage: {
                 if (arrayMode.isInBounds())
                     break;
-                FALLTHROUGH;
+                [[fallthrough]];
             }
             default: {
                 clobberWorld();

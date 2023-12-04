@@ -1028,7 +1028,7 @@ Ref<TextResourceDecoder> XMLHttpRequest::createDecoder() const
             decoder->useLenientXMLDecoding();
             return decoder;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     case ResponseType::Text:
     case ResponseType::Json: {
         auto decoder = TextResourceDecoder::create("text/plain"_s, "UTF-8");

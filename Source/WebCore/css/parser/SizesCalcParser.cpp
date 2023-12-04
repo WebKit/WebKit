@@ -133,7 +133,7 @@ bool SizesCalcParser::calcToReversePolishNotation(CSSParserTokenRange range)
             if (!equalLettersIgnoringASCIICase(token.value(), "calc"_s))
                 return false;
             // "calc(" is the same as "("
-            FALLTHROUGH;
+            [[fallthrough]];
         case LeftParenthesisToken:
             // If the token is a left parenthesis, then push it onto the stack.
             stack.append(token);

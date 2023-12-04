@@ -5079,7 +5079,7 @@ void FunctionNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)
         }
 
         generator.emitLabel(generatorBodyLabel.get());
-        FALLTHROUGH;
+        [[fallthrough]];
     }
 
     case SourceParseMode::AsyncArrowFunctionBodyMode:

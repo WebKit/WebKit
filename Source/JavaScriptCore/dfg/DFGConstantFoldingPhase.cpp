@@ -168,7 +168,7 @@ private:
                     break;
                 node->convertCheckStructureOrEmptyToCheckStructure();
                 changed = true;
-                FALLTHROUGH;
+                [[fallthrough]];
             }
             case CheckStructure:
             case ArrayifyToStructure: {
@@ -307,7 +307,7 @@ private:
                 // CheckArrayOrEmpty can be removed when arrayMode meets the requirement. In that case, CellUse's
                 // check just remains, and it works as CheckArrayOrEmpty without ArrayMode checking.
                 ASSERT(typeFilterFor(node->child1().useKind()) & SpecEmpty);
-                FALLTHROUGH;
+                [[fallthrough]];
             }
 
             case CheckArray:
@@ -1118,7 +1118,7 @@ private:
                         edge.setUseKind(KnownStringUse);
                     });
                 changed = true;
-                FALLTHROUGH;
+                [[fallthrough]];
             }
 
             case MakeRope:

@@ -334,7 +334,7 @@ bool CSSParserImpl::consumeRuleList(CSSParserTokenRange range, RuleListType rule
                 range.consume();
                 continue;
             }
-            FALLTHROUGH;
+            [[fallthrough]];
         default:
             rule = consumeQualifiedRule(range, allowedRules);
             break;

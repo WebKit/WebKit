@@ -59,7 +59,7 @@ static void loadPendingImage(Document& document, const StyleImage* styleImage, c
         switch (loadPolicy) {
         case LoadPolicy::Anonymous:
             options.storedCredentialsPolicy = StoredCredentialsPolicy::DoNotUse;
-            FALLTHROUGH;
+            [[fallthrough]];
         case LoadPolicy::CORS:
             options.mode = FetchOptions::Mode::Cors;
             options.credentials = FetchOptions::Credentials::SameOrigin;

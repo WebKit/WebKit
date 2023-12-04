@@ -298,7 +298,7 @@ std::optional<FloatRect> InlineDisplayLineBuilder::trailingEllipsisVisualRectAft
         case LineEndingEllipsisPolicy::WhenContentOverflowsInBlockDirection:
             if (isLastLineWithInlineContent)
                 return false;
-            FALLTHROUGH;
+            [[fallthrough]];
         case LineEndingEllipsisPolicy::Always:
             return true;
         default:

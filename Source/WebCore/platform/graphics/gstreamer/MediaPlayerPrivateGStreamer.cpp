@@ -833,7 +833,7 @@ unsigned long long MediaPlayerPrivateGStreamer::totalBytes() const
             gst_iterator_resync(iter);
             break;
         case GST_ITERATOR_ERROR:
-            FALLTHROUGH;
+            [[fallthrough]];
         case GST_ITERATOR_DONE:
             done = true;
             break;
@@ -2500,7 +2500,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
             m_networkState = MediaPlayer::NetworkState::Empty;
             break;
         case GST_STATE_PAUSED:
-            FALLTHROUGH;
+            [[fallthrough]];
         case GST_STATE_PLAYING:
             if (m_isBuffering) {
                 GRefPtr<GstQuery> query = adoptGRef(gst_query_new_buffering(GST_FORMAT_PERCENT));

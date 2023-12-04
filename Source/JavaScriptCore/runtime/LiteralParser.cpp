@@ -1356,7 +1356,7 @@ JSValue LiteralParser<CharType>::parse(VM& vm, ParserState initialState)
             m_objectStack.appendWithCrashOnOverflow(array);
         }
         doParseArrayStartExpression:
-        FALLTHROUGH;
+        [[fallthrough]];
         case DoParseArrayStartExpression: {
             TokenType lastToken = m_lexer.currentToken()->type;
             if (m_lexer.next() == TokRBracket) {

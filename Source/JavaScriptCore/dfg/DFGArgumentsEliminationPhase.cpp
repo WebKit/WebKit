@@ -483,7 +483,7 @@ private:
                 case GetByOffset:
                     if (node->child2()->op() == CreateClonedArguments && node->storageAccessData().offset == clonedArgumentsLengthPropertyOffset)
                         break;
-                    FALLTHROUGH;
+                    [[fallthrough]];
                 default:
                     m_graph.doToChildren(node, [&] (Edge edge) { return escape(edge, node); });
                     break;

@@ -619,7 +619,7 @@ static std::optional<std::variant<Vector<LChar>, int64_t>> parseTimeZoneBrackete
                 }
             }
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     }
     default: {
         // TZLeadingChar :

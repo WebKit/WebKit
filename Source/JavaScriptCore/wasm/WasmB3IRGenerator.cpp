@@ -2268,7 +2268,7 @@ inline void B3IRGenerator::emitStoreOp(StoreOpType op, Value* pointer, Value* va
     switch (op) {
     case StoreOpType::I64Store8:
         value = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), value);
-        FALLTHROUGH;
+        [[fallthrough]];
 
     case StoreOpType::I32Store8:
         m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store8), origin(), value, pointer, offset);
@@ -2276,7 +2276,7 @@ inline void B3IRGenerator::emitStoreOp(StoreOpType op, Value* pointer, Value* va
 
     case StoreOpType::I64Store16:
         value = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), value);
-        FALLTHROUGH;
+        [[fallthrough]];
 
     case StoreOpType::I32Store16:
         m_currentBlock->appendNew<MemoryValue>(m_proc, memoryKind(Store16), origin(), value, pointer, offset);
@@ -2284,7 +2284,7 @@ inline void B3IRGenerator::emitStoreOp(StoreOpType op, Value* pointer, Value* va
 
     case StoreOpType::I64Store32:
         value = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), value);
-        FALLTHROUGH;
+        [[fallthrough]];
 
     case StoreOpType::I64Store:
     case StoreOpType::I32Store:

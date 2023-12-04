@@ -231,33 +231,6 @@
 #define WTF_EXTERN_C_END
 #endif
 
-/* FALLTHROUGH */
-
-#if !defined(FALLTHROUGH) && defined(__cplusplus) && defined(__has_cpp_attribute)
-
-#if __has_cpp_attribute(fallthrough)
-#define FALLTHROUGH [[fallthrough]]
-#elif __has_cpp_attribute(clang::fallthrough)
-#define FALLTHROUGH [[clang::fallthrough]]
-#elif __has_cpp_attribute(gnu::fallthrough)
-#define FALLTHROUGH [[gnu::fallthrough]]
-#endif
-
-#elif !defined(FALLTHROUGH) && !defined(__cplusplus)
-
-#if COMPILER(GCC_COMPATIBLE) && defined(__has_attribute)
-// Break out this #if to satisy some versions Windows compilers.
-#if __has_attribute(fallthrough)
-#define FALLTHROUGH __attribute__ ((fallthrough))
-#endif
-#endif
-
-#endif // !defined(FALLTHROUGH) && defined(__cplusplus) && defined(__has_cpp_attribute)
-
-#if !defined(FALLTHROUGH)
-#define FALLTHROUGH
-#endif
-
 /* LIKELY */
 
 #if !defined(LIKELY) && COMPILER(GCC_COMPATIBLE)

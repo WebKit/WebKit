@@ -1173,7 +1173,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         // Fill as JSValue, and fall through.
         info.fillJSValue(m_stream, gpr, DataFormatJSInt32);
         m_gprs.unlock(gpr);
-        FALLTHROUGH;
+        [[fallthrough]];
     }
 
     case DataFormatJS: {
@@ -1191,7 +1191,7 @@ GPRReg SpeculativeJIT::fillSpeculateInt32Internal(Edge edge, DataFormat& returnF
         }
         // else fall through & handle as DataFormatJSInt32.
         m_gprs.unlock(gpr);
-        FALLTHROUGH;
+        [[fallthrough]];
     }
 
     case DataFormatJSInt32: {
@@ -1634,7 +1634,7 @@ GPRReg SpeculativeJIT::fillSpeculateBigInt32(Edge edge)
 
         info.fillJSValue(m_stream, gpr, DataFormatJS);
         m_gprs.unlock(gpr);
-        FALLTHROUGH;
+        [[fallthrough]];
     }
 
     case DataFormatJS: {

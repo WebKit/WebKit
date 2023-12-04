@@ -2805,7 +2805,7 @@ WebGLAny WebGL2RenderingContext::getFramebufferAttachmentParameter(GCGLenum targ
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_TEXTURE_LAYER:
         if (!isTexture)
             break;
-        FALLTHROUGH;
+        [[fallthrough]];
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_RED_SIZE:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_GREEN_SIZE:
     case GraphicsContextGL::FRAMEBUFFER_ATTACHMENT_BLUE_SIZE:
@@ -2905,7 +2905,7 @@ void WebGL2RenderingContext::renderbufferStorageImpl(GCGLenum target, GCGLsizei 
             synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, "for integer formats, samples > 0 is not allowed");
             return;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     case GraphicsContextGL::R8:
     case GraphicsContextGL::RG8:
     case GraphicsContextGL::RGB8:

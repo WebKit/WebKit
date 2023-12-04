@@ -302,7 +302,7 @@ static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocati
                 encodeToObjectStream(encoder, @(value.height));
                 break;
             }
-            FALLTHROUGH;
+            [[fallthrough]];
 
         default:
             [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%s'", type];
@@ -977,7 +977,7 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
                 [invocation setArgument:&value atIndex:i];
                 break;
             }
-            FALLTHROUGH;
+            [[fallthrough]];
 
         default:
             [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%s' for argument %zu", type, (unsigned long)i];

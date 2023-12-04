@@ -492,7 +492,7 @@ public:
                 convertInt32ToDoubleOrContiguousWhilePerformingSetIndex(vm, i, v);
                 return true;
             }
-            FALLTHROUGH;
+            [[fallthrough]];
         }
         case ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES: {
             if (i >= butterfly->vectorLength())
@@ -549,7 +549,7 @@ public:
                 convertInt32ToDoubleOrContiguousWhilePerformingSetIndex(vm, i, v);
                 return;
             }
-            FALLTHROUGH;
+            [[fallthrough]];
         }
         case ALL_CONTIGUOUS_INDEXING_TYPES: {
             ASSERT(i < butterfly->vectorLength());
@@ -609,7 +609,7 @@ public:
                 convertInt32ToDoubleOrContiguousWhilePerformingSetIndex(vm, i, v);
                 break;
             }
-            FALLTHROUGH;
+            [[fallthrough]];
         }
         case ALL_CONTIGUOUS_INDEXING_TYPES: {
             ASSERT(i < butterfly->publicLength());
@@ -663,7 +663,7 @@ public:
             ASSERT(i < butterfly->publicLength());
             ASSERT(i < butterfly->vectorLength());
             RELEASE_ASSERT(v.isInt32());
-            FALLTHROUGH;
+            [[fallthrough]];
         }
         case ALL_CONTIGUOUS_INDEXING_TYPES: {
             ASSERT(i < butterfly->publicLength());

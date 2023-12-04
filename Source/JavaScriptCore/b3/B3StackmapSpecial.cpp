@@ -99,7 +99,7 @@ void StackmapSpecial::forEachArgImpl(
                 role = Arg::LateColdUse;
                 break;
             }
-            FALLTHROUGH;
+            [[fallthrough]];
         case SameAsRep:
             switch (child.rep().kind()) {
             case ValueRep::WarmAny:
@@ -290,7 +290,7 @@ ValueRep StackmapSpecial::repForArg(Air::Code& code, const Arg& arg)
         break;
     case Arg::ExtendedOffsetAddr:
         ASSERT(arg.base() == Tmp(GPRInfo::callFrameRegister));
-        FALLTHROUGH;
+        [[fallthrough]];
     case Arg::Addr:
         if (arg.base() == Tmp(GPRInfo::callFrameRegister))
             return ValueRep::stack(arg.offset());

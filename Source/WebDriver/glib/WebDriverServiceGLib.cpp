@@ -42,14 +42,14 @@ static bool parseVersion(const String& version, uint64_t& major, uint64_t& minor
             return false;
         micro = *parsedMicro;
     }
-        FALLTHROUGH;
+        [[fallthrough]];
     case 2: {
         auto parsedMinor = parseIntegerAllowingTrailingJunk<uint64_t>(tokens[1]);
         if (!parsedMinor)
             return false;
         minor = *parsedMinor;
     }
-        FALLTHROUGH;
+        [[fallthrough]];
     case 1: {
         auto parsedMajor = parseIntegerAllowingTrailingJunk<uint64_t>(tokens[0]);
         if (!parsedMajor)

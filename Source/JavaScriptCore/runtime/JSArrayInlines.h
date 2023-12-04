@@ -157,7 +157,7 @@ ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue val
     switch (indexingMode()) {
     case ArrayClass: {
         createInitialUndecided(vm, 0);
-        FALLTHROUGH;
+        [[fallthrough]];
     }
 
     case ArrayWithUndecided: {
@@ -265,7 +265,7 @@ ALWAYS_INLINE void JSArray::pushInline(JSGlobalObject* globalObject, JSValue val
             }
             return;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     }
 
     case ArrayWithArrayStorage: {

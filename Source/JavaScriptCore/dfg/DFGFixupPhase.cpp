@@ -1047,7 +1047,7 @@ private:
             fixEdge<KnownInt32Use>(m_graph.varArgChild(node, 3));
             fixEdge<KnownInt32Use>(m_graph.varArgChild(node, 4));
             fixEdge<KnownCellUse>(m_graph.varArgChild(node, 5));
-            FALLTHROUGH;
+            [[fallthrough]];
         }
 
         case GetByVal:

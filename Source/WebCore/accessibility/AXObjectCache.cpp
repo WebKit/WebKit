@@ -4292,7 +4292,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<RefPtr<Accessibili
         case AXLanguageChanged:
         case AXRowCountChanged:
             updateNode(notification.first);
-            FALLTHROUGH;
+            [[fallthrough]];
         case AXRowCollapsed:
         case AXRowExpanded: {
             auto updatedFields = updatedObjects.get(notification.first->objectID());

@@ -1525,13 +1525,13 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
         case CSSSelector::Match::List:
             if (selector->value().find(isASCIIWhitespace<UChar>) != notFound)
                 return FunctionType::CannotMatchAnything;
-            FALLTHROUGH;
+            [[fallthrough]];
         case CSSSelector::Match::Begin:
         case CSSSelector::Match::End:
         case CSSSelector::Match::Contain:
             if (selector->value().isEmpty())
                 return FunctionType::CannotMatchAnything;
-            FALLTHROUGH;
+            [[fallthrough]];
         case CSSSelector::Match::Exact:
         case CSSSelector::Match::Hyphen:
             fragment->onlyMatchesLinksInQuirksMode = false;

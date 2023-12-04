@@ -118,7 +118,7 @@ bool CurlMultipartHandle::processContent()
 {
     switch (m_state) {
     case State::FindBoundaryStart:
-        FALLTHROUGH;
+        [[fallthrough]];
     case State::InBody: {
         auto result = findBoundary();
         if (result.isSyntaxError) {

@@ -53,7 +53,7 @@ inline void tryCachePutToScopeGlobal(
             metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode(), metadata.m_getPutInfo.ecmaMode());
             break;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     }
     case GlobalProperty:
     case GlobalPropertyWithVarInjectionChecks: {
@@ -115,7 +115,7 @@ inline void tryCacheGetFromScopeGlobal(
             metadata.m_getPutInfo = GetPutInfo(metadata.m_getPutInfo.resolveMode(), newResolveType, metadata.m_getPutInfo.initializationMode(), metadata.m_getPutInfo.ecmaMode());
             break;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     }
     case GlobalProperty:
     case GlobalPropertyWithVarInjectionChecks: {
@@ -217,7 +217,7 @@ inline void opEnumeratorPutByVal(JSGlobalObject* globalObject, JSValue baseValue
         }
         if (enumeratorMetadata)
             *enumeratorMetadata |= static_cast<uint8_t>(JSPropertyNameEnumerator::HasSeenOwnStructureModeStructureMismatch);
-        FALLTHROUGH;
+        [[fallthrough]];
     }
 
     case JSPropertyNameEnumerator::GenericMode: {

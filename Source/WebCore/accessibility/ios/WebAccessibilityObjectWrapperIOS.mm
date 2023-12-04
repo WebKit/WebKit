@@ -1011,7 +1011,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::Group:
         if ([self isSVGGroupElement])
             return true;
-        FALLTHROUGH;
+        [[fallthrough]];
     case AccessibilityRole::Application:
     case AccessibilityRole::ApplicationAlert:
     case AccessibilityRole::ApplicationAlertDialog:

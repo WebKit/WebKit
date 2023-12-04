@@ -175,7 +175,7 @@ Element* editableRootForPosition(const Position& position, EditableType editable
     case HasEditableAXRole:
         if (auto* cache = node->document().existingAXObjectCache())
             return const_cast<Element*>(cache->rootAXEditableElement(node.get()));
-        FALLTHROUGH;
+        [[fallthrough]];
     case ContentIsEditable:
         return node->rootEditableElement();
     }

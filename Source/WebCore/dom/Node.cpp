@@ -1689,7 +1689,7 @@ static void appendTextContent(const Node* node, bool convertBRsToNewlines, bool&
             content.append('\n');
             break;
         }
-        FALLTHROUGH;
+        [[fallthrough]];
     case Node::DOCUMENT_FRAGMENT_NODE:
         isNullString = false;
         for (RefPtr child = node->firstChild(); child; child = child->nextSibling()) {

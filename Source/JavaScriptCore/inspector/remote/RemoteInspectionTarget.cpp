@@ -53,7 +53,7 @@ bool RemoteInspectionTarget::allowsInspectionByPolicy() const
         static bool allowInternalSecurityPolicies = os_variant_allows_internal_security_policies("com.apple.WebInspector");
         if (allowInternalSecurityPolicies && !RemoteInspector::singleton().isSimulatingCustomerInstall())
             return true;
-        FALLTHROUGH;
+        [[fallthrough]];
 #endif
     case Inspectable::NoIgnoringInternalPolicies:
         return false;

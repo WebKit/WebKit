@@ -7500,7 +7500,7 @@ IGNORE_CLANG_WARNINGS_END
             case Array::Contiguous:
                 // We have to keep base alive since that keeps content of storage alive.
                 ensureStillAliveHere(base);
-                FALLTHROUGH;
+                [[fallthrough]];
             case Array::Int32:
                 setInt32(m_out.castToInt32(vmCall(Int64, operationArrayIndexOfValueInt32OrContiguous, weakPointer(globalObject), storage, lowJSValue(searchElementEdge), startIndex)));
                 return;

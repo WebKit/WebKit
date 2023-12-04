@@ -161,7 +161,7 @@ JSString* JSPropertyNameEnumerator::computeNext(JSGlobalObject* globalObject, JS
     case InitMode: {
         mode = IndexedMode;
         index = 0;
-        FALLTHROUGH;
+        [[fallthrough]];
     }
 
     case JSPropertyNameEnumerator::IndexedMode: {
@@ -179,7 +179,7 @@ JSString* JSPropertyNameEnumerator::computeNext(JSGlobalObject* globalObject, JS
 
         mode = OwnStructureMode;
         index = 0;
-        FALLTHROUGH;
+        [[fallthrough]];
     }
 
     case JSPropertyNameEnumerator::OwnStructureMode:

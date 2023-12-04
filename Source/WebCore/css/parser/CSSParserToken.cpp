@@ -553,7 +553,7 @@ bool CSSParserToken::operator==(const CSSParserToken& other) const
     case HashToken:
         if (m_hashTokenType != other.m_hashTokenType)
             return false;
-        FALLTHROUGH;
+        [[fallthrough]];
     case IdentToken:
     case FunctionToken:
     case StringToken:
@@ -562,7 +562,7 @@ bool CSSParserToken::operator==(const CSSParserToken& other) const
     case DimensionToken:
         if (unitString() != other.unitString())
             return false;
-        FALLTHROUGH;
+        [[fallthrough]];
     case NumberToken:
     case PercentageToken:
         return m_numericSign == other.m_numericSign && m_numericValue == other.m_numericValue && m_numericValueType == other.m_numericValueType;

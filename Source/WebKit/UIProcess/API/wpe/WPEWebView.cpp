@@ -112,7 +112,7 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
                 break;
             case WPE_EVENT_POINTER_DOWN:
                 webView.m_inputMethodFilter.cancelComposition();
-                FALLTHROUGH;
+                [[fallthrough]];
             case WPE_EVENT_POINTER_UP:
             case WPE_EVENT_POINTER_MOVE:
             case WPE_EVENT_POINTER_ENTER:
