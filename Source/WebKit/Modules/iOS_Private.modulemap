@@ -1644,6 +1644,11 @@ framework module WebKit_Private [system] {
     export *
   }
 
+  explicit module WKProcessExtension {
+    header "WKProcessExtension.h"
+    export *
+  }
+
   explicit module WKProcessGroup {
     header "WKProcessGroup.h"
     export *

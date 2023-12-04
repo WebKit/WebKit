@@ -641,24 +641,13 @@ static WebCore::FloatPoint farthestPointInDirection(WebCore::FloatPoint a, WebCo
     return [_delegate keyboardScrollViewAnimator:self distanceForIncrement:increment inDirection:direction];
 }
 
-static UIAxis axesForDelta(WebCore::FloatSize delta)
-{
-    UIAxis axes = UIAxisNeither;
-    if (delta.width())
-        axes = static_cast<UIAxis>(axes | UIAxisHorizontal);
-    if (delta.height())
-        axes = static_cast<UIAxis>(axes | UIAxisVertical);
-    return axes;
-}
-
 - (void)scrollToContentOffset:(WebCore::FloatPoint)contentOffset animated:(BOOL)animated
 {
     if (!_scrollView)
         return;
     if (_delegateRespondsToWillScroll)
         [_delegate keyboardScrollViewAnimatorWillScroll:self];
-    [_scrollView setContentOffset:contentOffset animated:animated];
-    [_scrollView _flashScrollIndicatorsForAxes:axesForDelta(WebCore::FloatPoint(_scrollView.contentOffset) - contentOffset) persistingPreviousFlashes:YES];
+    [_scrollView _wk_setContentOffsetAndShowScrollIndicators:contentOffset animated:animated];
 }
 
 - (void)willBeginScrollingToExtentWithAnimationInTrackingView:(UIView *)view

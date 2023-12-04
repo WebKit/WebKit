@@ -124,6 +124,7 @@ public:
     bool isRect() const { return m_classType == RectClass; }
     bool isRectShape() const { return m_classType == RectShapeClass; }
     bool isReflectValue() const { return m_classType == ReflectClass; }
+    bool isScrollValue() const { return m_classType == ScrollClass; }
     bool isShadowValue() const { return m_classType == ShadowClass; }
     bool isSpringTimingFunctionValue() const { return m_classType == SpringTimingFunctionClass; }
     bool isStepsTimingFunctionValue() const { return m_classType == StepsTimingFunctionClass; }
@@ -194,7 +195,7 @@ public:
     void customClearReplacementURLForSubresources() { }
 
 protected:
-    static const size_t ClassTypeBits = 6;
+    static const size_t ClassTypeBits = 7;
 
     // FIXME: Use an enum class here so we don't have to repeat "Class" in every name.
     enum ClassType {
@@ -259,6 +260,7 @@ protected:
         RectClass,
         RectShapeClass,
         ReflectClass,
+        ScrollClass,
         ShadowClass,
         UnicodeRangeClass,
         ValuePairClass,

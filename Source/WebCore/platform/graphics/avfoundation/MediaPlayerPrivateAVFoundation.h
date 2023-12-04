@@ -389,15 +389,6 @@ namespace WTF {
 template<typename Type>
 struct LogArgument;
 
-template<> struct EnumTraits<WebCore::MediaPlayerPrivateAVFoundation::MediaRenderingMode> {
-using values = EnumValues<
-    WebCore::MediaPlayerPrivateAVFoundation::MediaRenderingMode,
-    WebCore::MediaPlayerPrivateAVFoundation::MediaRenderingMode::MediaRenderingNone,
-    WebCore::MediaPlayerPrivateAVFoundation::MediaRenderingMode::MediaRenderingToContext,
-    WebCore::MediaPlayerPrivateAVFoundation::MediaRenderingMode::MediaRenderingToLayer
-    >;
-};
-
 }; // namespace WTF
 
 #endif // ENABLE(VIDEO) && USE(AVFOUNDATION)

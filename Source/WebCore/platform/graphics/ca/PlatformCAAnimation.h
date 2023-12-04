@@ -42,11 +42,40 @@ namespace WebCore {
 class FloatRect;
 class TimingFunction;
 
+enum class PlatformCAAnimationType : uint8_t {
+    Basic,
+    Group,
+    Keyframe,
+    Spring
+};
+
+enum class PlatformCAAnimationFillModeType : uint8_t {
+    NoFillMode,
+    Forwards,
+    Backwards,
+    Both
+};
+
+enum class PlatformCAAnimationValueFunctionType : uint8_t {
+    NoValueFunction,
+    RotateX,
+    RotateY,
+    RotateZ,
+    ScaleX,
+    ScaleY,
+    ScaleZ,
+    Scale,
+    TranslateX,
+    TranslateY,
+    TranslateZ,
+    Translate
+};
+
 class PlatformCAAnimation : public RefCounted<PlatformCAAnimation> {
 public:
-    enum AnimationType { Basic, Group, Keyframe, Spring };
-    enum FillModeType { NoFillMode, Forwards, Backwards, Both };
-    enum ValueFunctionType { NoValueFunction, RotateX, RotateY, RotateZ, ScaleX, ScaleY, ScaleZ, Scale, TranslateX, TranslateY, TranslateZ, Translate };
+    using AnimationType = PlatformCAAnimationType;
+    using FillModeType = PlatformCAAnimationFillModeType;
+    using ValueFunctionType = PlatformCAAnimationValueFunctionType;
 
     virtual ~PlatformCAAnimation() = default;
 
@@ -138,7 +167,7 @@ public:
     WEBCORE_EXPORT static bool isValidKeyPath(const String&, AnimationType = AnimationType::Basic);
 
 protected:
-    PlatformCAAnimation(AnimationType type = Basic)
+    PlatformCAAnimation(AnimationType type = AnimationType::Basic)
         : m_type(type)
     {
     }
@@ -159,45 +188,3 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformCAAnimation
 SPECIALIZE_TYPE_TRAITS_BEGIN(ToValueTypeName) \
     static bool isType(const WebCore::PlatformCAAnimation& animation) { return animation.predicate; } \
 SPECIALIZE_TYPE_TRAITS_END()
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::PlatformCAAnimation::AnimationType> {
-    using values = EnumValues<
-        WebCore::PlatformCAAnimation::AnimationType,
-        WebCore::PlatformCAAnimation::AnimationType::Basic,
-        WebCore::PlatformCAAnimation::AnimationType::Group,
-        WebCore::PlatformCAAnimation::AnimationType::Keyframe,
-        WebCore::PlatformCAAnimation::AnimationType::Spring
-    >;
-};
-
-template<> struct EnumTraits<WebCore::PlatformCAAnimation::FillModeType> {
-    using values = EnumValues<
-        WebCore::PlatformCAAnimation::FillModeType,
-        WebCore::PlatformCAAnimation::FillModeType::NoFillMode,
-        WebCore::PlatformCAAnimation::FillModeType::Forwards,
-        WebCore::PlatformCAAnimation::FillModeType::Backwards,
-        WebCore::PlatformCAAnimation::FillModeType::Both
-    >;
-};
-
-template<> struct EnumTraits<WebCore::PlatformCAAnimation::ValueFunctionType> {
-    using values = EnumValues<
-        WebCore::PlatformCAAnimation::ValueFunctionType,
-        WebCore::PlatformCAAnimation::ValueFunctionType::NoValueFunction,
-        WebCore::PlatformCAAnimation::ValueFunctionType::RotateX,
-        WebCore::PlatformCAAnimation::ValueFunctionType::RotateY,
-        WebCore::PlatformCAAnimation::ValueFunctionType::RotateZ,
-        WebCore::PlatformCAAnimation::ValueFunctionType::ScaleX,
-        WebCore::PlatformCAAnimation::ValueFunctionType::ScaleY,
-        WebCore::PlatformCAAnimation::ValueFunctionType::ScaleZ,
-        WebCore::PlatformCAAnimation::ValueFunctionType::Scale,
-        WebCore::PlatformCAAnimation::ValueFunctionType::TranslateX,
-        WebCore::PlatformCAAnimation::ValueFunctionType::TranslateY,
-        WebCore::PlatformCAAnimation::ValueFunctionType::TranslateZ,
-        WebCore::PlatformCAAnimation::ValueFunctionType::Translate
-    >;
-};
-
-} // namespace WTF

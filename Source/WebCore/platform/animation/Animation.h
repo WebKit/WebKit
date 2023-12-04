@@ -28,6 +28,7 @@
 #include "CompositeOperation.h"
 #include "RenderStyleConstants.h"
 #include "ScopedName.h"
+#include "ScrollTimeline.h"
 #include "TimingFunction.h"
 #include "WebAnimationTypes.h"
 
@@ -121,7 +122,7 @@ public:
     };
 
     enum class TimelineKeyword : bool { None, Auto };
-    using Timeline = std::variant<TimelineKeyword, AtomString>;
+    using Timeline = std::variant<TimelineKeyword, AtomString, Ref<ScrollTimeline>>;
 
     Direction direction() const { return static_cast<Direction>(m_direction); }
     bool directionIsForwards() const { return direction() == Direction::Normal || direction() == Direction::Alternate; }

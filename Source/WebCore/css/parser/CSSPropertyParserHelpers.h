@@ -319,6 +319,7 @@ RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeAnimationTimeline(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeSingleAnimationTimeline(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeViewTimelineInsetListItem(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeViewTimelineInset(CSSParserTokenRange&, const CSSParserContext&);
 

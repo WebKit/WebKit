@@ -39,10 +39,12 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParser.h"
 #include "CSSQuadValue.h"
+#include "CSSScrollValue.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueKeywords.h"
 #include "CompositeOperation.h"
 #include "FillLayer.h"
+#include "ScrollTimeline.h"
 #include "StyleBuilderConverter.h"
 #include "StyleResolver.h"
 
@@ -448,6 +450,8 @@ void CSSToStyleMap::mapAnimationTimeline(Animation& animation, const CSSValue& v
 {
     if (treatAsInitialValue(value, CSSPropertyAnimationTimeline))
         animation.setTimeline(Animation::initialTimeline());
+    else if (auto* scrollValue = dynamicDowncast<CSSScrollValue>(value))
+        animation.setTimeline(ScrollTimeline::createFromCSSValue(*scrollValue));
     else if (value.isCustomIdent())
         animation.setTimeline(AtomString(value.customIdent()));
     else {

@@ -73,6 +73,7 @@
 #include "CSSRectValue.h"
 #include "CSSReflectValue.h"
 #include "CSSResolvedColorMix.h"
+#include "CSSScrollValue.h"
 #include "CSSSubgridValue.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSTransformListValue.h"
@@ -8707,7 +8708,38 @@ RefPtr<CSSValue> consumeSingleAnimationTimeline(CSSParserTokenRange& range)
     auto id = range.peek().id();
     if (id == CSSValueAuto || id == CSSValueNone)
         return consumeIdent(range);
-    return consumeDashedIdent(range);
+    if (auto name = consumeDashedIdent(range))
+        return name;
+    return consumeAnimationTimelineScroll(range);
+}
+
+RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange& range)
+{
+    // https://drafts.csswg.org/scroll-animations-1/#scroll-notation
+    // <scroll()> = scroll( [ <scroller> || <axis> ]? )
+    // <scroller> = root | nearest | self
+    // <axis> = block | inline | x | y
+
+    if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueScroll)
+        return nullptr;
+
+    auto args = consumeFunction(range);
+
+    if (!args.size())
+        return CSSScrollValue::create(nullptr, nullptr);
+
+    auto scroller = CSSPropertyParsing::consumeScroller(args);
+    auto axis = CSSPropertyParsing::consumeAxis(args);
+
+    // Try <scroller> again since the order of <scroller> and <axis> is not guaranteed.
+    if (!scroller)
+        scroller = CSSPropertyParsing::consumeScroller(args);
+
+    // If there are values left to consume, these are not valid <scroller> or <axis> and the function is invalid.
+    if (args.size())
+        return nullptr;
+
+    return CSSScrollValue::create(WTFMove(scroller), WTFMove(axis));
 }
 
 RefPtr<CSSValue> consumeViewTimelineInsetListItem(CSSParserTokenRange& range, const CSSParserContext& context)

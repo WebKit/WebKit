@@ -29,6 +29,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
+#import <WebCore/FloatPoint.h>
 
 #if HAVE(UI_SCROLL_VIEW_TRANSFERS_SCROLLING_TO_PARENT)
 
@@ -48,6 +49,10 @@
 @end
 
 #endif // HAVE(UI_SCROLL_VIEW_APIS_ADDED_IN_RADAR_112474145)
+
+@interface UIScrollView (Staging_116693098)
+- (void)showScrollIndicatorsForContentOffsetChanges:(void (NS_NOESCAPE ^)(void))changes;
+@end
 
 @implementation UIScrollView (WebKitInternal)
 
@@ -183,6 +188,33 @@ static constexpr auto epsilonForComputingScrollability = 0.0001;
     self._allowsParentToBeginVertically = value;
     ALLOW_DEPRECATED_DECLARATIONS_END
 }
+
+static UIAxis axesForDelta(WebCore::FloatSize delta)
+{
+    UIAxis axes = UIAxisNeither;
+    if (delta.width())
+        axes |= UIAxisHorizontal;
+    if (delta.height())
+        axes |= UIAxisVertical;
+    return axes;
+}
+
+- (void)_wk_setContentOffsetAndShowScrollIndicators:(CGPoint)offset animated:(BOOL)animated
+{
+    static bool hasAPI = [UIScrollView instancesRespondToSelector:@selector(showScrollIndicatorsForContentOffsetChanges:)];
+    if (hasAPI) {
+        [self showScrollIndicatorsForContentOffsetChanges:[animated, offset, self] {
+            [self setContentOffset:offset animated:animated];
+        }];
+        return;
+    }
+
+    [self setContentOffset:offset animated:animated];
+
+    auto axes = axesForDelta(WebCore::FloatPoint(self.contentOffset) - WebCore::FloatPoint(offset));
+    [self _flashScrollIndicatorsForAxes:axes persistingPreviousFlashes:YES];
+}
+
 @end
 
 @implementation UIView (WebKitInternal)

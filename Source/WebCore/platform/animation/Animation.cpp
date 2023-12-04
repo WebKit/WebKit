@@ -173,6 +173,8 @@ TextStream& operator<<(TextStream& ts, const Animation::Timeline& timeline)
             }
         }, [&] (const AtomString& customIdent) {
             ts << customIdent;
+        }, [&] (const Ref<ScrollTimeline>& scrollTimeline) {
+            ts << scrollTimeline->toCSSValue()->cssText();
         }
     );
     return ts;

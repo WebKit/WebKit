@@ -32,7 +32,7 @@ namespace WebKit {
 
 struct PlatformCAAnimationRemoteProperties {
     String keyPath;
-    WebCore::PlatformCAAnimation::AnimationType animationType { WebCore::PlatformCAAnimation::Basic };
+    WebCore::PlatformCAAnimation::AnimationType animationType { WebCore::PlatformCAAnimation::AnimationType::Basic };
 
     CFTimeInterval beginTime { 0 };
     double duration { 0 };
@@ -40,8 +40,8 @@ struct PlatformCAAnimationRemoteProperties {
     float repeatCount { 1 };
     float speed { 1 };
 
-    WebCore::PlatformCAAnimation::FillModeType fillMode { WebCore::PlatformCAAnimation::NoFillMode };
-    WebCore::PlatformCAAnimation::ValueFunctionType valueFunction { WebCore::PlatformCAAnimation::NoValueFunction };
+    WebCore::PlatformCAAnimation::FillModeType fillMode { WebCore::PlatformCAAnimation::FillModeType::NoFillMode };
+    WebCore::PlatformCAAnimation::ValueFunctionType valueFunction { WebCore::PlatformCAAnimation::ValueFunctionType::NoValueFunction };
     RefPtr<WebCore::TimingFunction> timingFunction;
 
     bool autoReverses { false };

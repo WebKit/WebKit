@@ -115,15 +115,3 @@ private:
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const SelectionGeometry&);
 
 } // namespace WebCore
-
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::SelectionRenderingBehavior> {
-    using values = EnumValues<
-        WebCore::SelectionRenderingBehavior,
-        WebCore::SelectionRenderingBehavior::CoalesceBoundingRects,
-        WebCore::SelectionRenderingBehavior::UseIndividualQuads
-    >;
-};
-
-} // namespace WTF

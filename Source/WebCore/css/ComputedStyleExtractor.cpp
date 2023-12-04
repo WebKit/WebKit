@@ -46,6 +46,7 @@
 #include "CSSRectValue.h"
 #include "CSSReflectValue.h"
 #include "CSSRegisteredCustomProperty.h"
+#include "CSSScrollValue.h"
 #include "CSSShadowValue.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSTransformListValue.h"
@@ -1517,6 +1518,8 @@ static Ref<CSSValue> valueForAnimationTimeline(const Animation::Timeline& timeli
             return CSSPrimitiveValue::create(keyword == Animation::TimelineKeyword::None ? CSSValueNone : CSSValueAuto);
         }, [&] (const AtomString& customIdent) -> Ref<CSSValue> {
             return CSSPrimitiveValue::createCustomIdent(customIdent);
+        }, [&] (const Ref<ScrollTimeline>& scrollTimeline) -> Ref<CSSValue> {
+            return scrollTimeline->toCSSValue();
         }
     );
 }
