@@ -1,4 +1,17 @@
 ================
+WebKitGTK 2.43.2
+================
+
+What's new in WebKitGTK 2.43.2?
+
+  - Remove the X11 and WPE renderers.
+  - Release unused buffers when the view is hidden.
+  - Fix flickering while playing videos with DMA-BUF sink.
+  - Do not special case the "sans" font family name.
+  - Fix webkit_web_context_allow_tls_certificate_for_host() for IPv6 URIs produced by SoupURI.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.43.1
 ================
 
