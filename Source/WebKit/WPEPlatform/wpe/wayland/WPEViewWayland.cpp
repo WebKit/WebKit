@@ -216,10 +216,6 @@ static const struct wl_surface_listener surfaceListener = {
     {
     },
 #endif
-    // axis_relative_direction
-    [](void*, struct wl_surface*, uint32_t /* direction */)
-    {
-    },
 };
 
 static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackListener = {

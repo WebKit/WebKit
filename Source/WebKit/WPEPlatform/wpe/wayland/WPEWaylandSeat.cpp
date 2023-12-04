@@ -262,7 +262,13 @@ const struct wl_pointer_listener WaylandSeat::s_pointerListener = {
             seat.m_pointer.frame.valueY = -value / 120;
             break;
         }
-    }
+    },
+#endif
+#ifdef WL_POINTER_AXIS_RELATIVE_DIRECTION_SINCE_VERSION
+    // axis_relative_direction
+    [](void*, struct wl_pointer*, uint32_t, uint32_t)
+    {
+    },
 #endif
 };
 
