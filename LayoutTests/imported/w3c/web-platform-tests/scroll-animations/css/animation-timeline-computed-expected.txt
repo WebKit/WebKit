@@ -14,20 +14,20 @@ PASS Property animation-timeline value '--test1, --test2'
 PASS Property animation-timeline value '--test1, --test2, none, --test3, auto'
 PASS The animation-timeline property shows up in CSSStyleDeclaration enumeration
 PASS The animation-timeline property shows up in CSSStyleDeclaration.cssText
-FAIL Property animation-timeline value 'scroll()' assert_true: 'scroll()' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'scroll(block)' assert_true: 'scroll(block)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'scroll(inline)' assert_true: 'scroll(inline)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'scroll(x)' assert_true: 'scroll(x)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'scroll(y)' assert_true: 'scroll(y)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'scroll(root)' assert_true: 'scroll(root)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'scroll(nearest)' assert_true: 'scroll(nearest)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'scroll(self)' assert_true: 'scroll(self)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'scroll(self), scroll(nearest)' assert_true: 'scroll(self), scroll(nearest)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'scroll(inline nearest)' assert_true: 'scroll(inline nearest)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'scroll(nearest inline)' assert_true: 'scroll(nearest inline)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'scroll(block self)' assert_true: 'scroll(block self)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'scroll(self block)' assert_true: 'scroll(self block)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'scroll(y root)' assert_true: 'scroll(y root)' is a supported value for animation-timeline. expected true got false
+PASS Property animation-timeline value 'scroll()'
+PASS Property animation-timeline value 'scroll(block)'
+PASS Property animation-timeline value 'scroll(inline)'
+PASS Property animation-timeline value 'scroll(x)'
+PASS Property animation-timeline value 'scroll(y)'
+PASS Property animation-timeline value 'scroll(root)'
+PASS Property animation-timeline value 'scroll(nearest)'
+PASS Property animation-timeline value 'scroll(self)'
+PASS Property animation-timeline value 'scroll(self), scroll(nearest)'
+PASS Property animation-timeline value 'scroll(inline nearest)'
+PASS Property animation-timeline value 'scroll(nearest inline)'
+PASS Property animation-timeline value 'scroll(block self)'
+PASS Property animation-timeline value 'scroll(self block)'
+PASS Property animation-timeline value 'scroll(y root)'
 FAIL Property animation-timeline value 'view()' assert_true: 'view()' is a supported value for animation-timeline. expected true got false
 FAIL Property animation-timeline value 'view(block)' assert_true: 'view(block)' is a supported value for animation-timeline. expected true got false
 FAIL Property animation-timeline value 'view(inline)' assert_true: 'view(inline)' is a supported value for animation-timeline. expected true got false

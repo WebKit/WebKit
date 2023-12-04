@@ -11096,6 +11096,14 @@
                 "url": "https://drafts.csswg.org/scroll-animations-1/#scroll-notation"
             }
         },
+        "<scroller>": {
+            "grammar": "root | nearest | self",
+            "exported": true,
+            "specification": {
+                "category": "scroll-animations",
+                "url": "https://drafts.csswg.org/scroll-animations-1/#scroll-notation"
+            }
+        },
         "<single-scroll-timeline-name>": {
             "grammar": "none | <dashed-ident>",
             "exported": true,

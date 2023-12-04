@@ -70,6 +70,7 @@
 #include "CSSRayValue.h"
 #include "CSSRectValue.h"
 #include "CSSReflectValue.h"
+#include "CSSScrollValue.h"
 #include "CSSShadowValue.h"
 #include "CSSSubgridValue.h"
 #include "CSSTimingFunctionValue.h"
@@ -203,6 +204,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSRectShapeValue>(*this));
     case ReflectClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSReflectValue>(*this));
+    case ScrollClass:
+        return std::invoke(std::forward<Visitor>(visitor), downcast<CSSScrollValue>(*this));
     case ShadowClass:
         return std::invoke(std::forward<Visitor>(visitor), downcast<CSSShadowValue>(*this));
     case SubgridClass:

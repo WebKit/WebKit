@@ -1055,6 +1055,17 @@ accumulate
 replace
 
 //
+// animation-timeline
+//
+// auto
+// none
+// scroll
+nearest
+root
+self
+view
+
+//
 // CSS_PROP_ZOOM
 //
 document
@@ -1459,7 +1470,7 @@ sign
 mod
 rem
 to-zero
-nearest
+// nearest
 infinity
 -infinity id=NegativeInfinity
 NaN

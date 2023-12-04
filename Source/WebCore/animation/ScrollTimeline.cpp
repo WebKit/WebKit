@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ScrollTimeline.h"
 
+#include "CSSPrimitiveValueMappings.h"
+#include "CSSScrollValue.h"
 #include "Element.h"
 
 namespace WebCore {
@@ -40,6 +42,32 @@ Ref<ScrollTimeline> ScrollTimeline::create(const AtomString& name, ScrollAxis ax
     return adoptRef(*new ScrollTimeline(name, axis));
 }
 
+Ref<ScrollTimeline> ScrollTimeline::createFromCSSValue(const CSSScrollValue& cssScrollValue)
+{
+    auto scroller = [&]() {
+        auto scrollerValue = cssScrollValue.scroller();
+        if (!scrollerValue)
+            return Scroller::Nearest;
+
+        switch (scrollerValue->valueID()) {
+        case CSSValueNearest:
+            return Scroller::Nearest;
+        case CSSValueRoot:
+            return Scroller::Root;
+        case CSSValueSelf:
+            return Scroller::Self;
+        default:
+            ASSERT_NOT_REACHED();
+            return Scroller::Nearest;
+        }
+    }();
+
+    auto axisValue = cssScrollValue.axis();
+    auto axis = axisValue ? fromCSSValueID<ScrollAxis>(axisValue->valueID()) : ScrollAxis::Block;
+
+    return adoptRef(*new ScrollTimeline(scroller, axis));
+}
+
 ScrollTimeline::ScrollTimeline(ScrollTimelineOptions&& options)
     : m_source(WTFMove(options.source))
     , m_axis(options.axis)
@@ -50,6 +78,31 @@ ScrollTimeline::ScrollTimeline(const AtomString& name, ScrollAxis axis)
     : m_axis(axis)
     , m_name(name)
 {
+}
+
+ScrollTimeline::ScrollTimeline(Scroller scroller, ScrollAxis axis)
+    : m_axis(axis)
+    , m_scroller(scroller)
+{
+}
+
+Ref<CSSValue> ScrollTimeline::toCSSValue() const
+{
+    auto scroller = [&]() {
+        switch (m_scroller) {
+        case Scroller::Nearest:
+            return CSSValueNearest;
+        case Scroller::Root:
+            return CSSValueRoot;
+        case Scroller::Self:
+            return CSSValueSelf;
+        default:
+            ASSERT_NOT_REACHED();
+            return CSSValueNearest;
+        }
+    }();
+
+    return CSSScrollValue::create(CSSPrimitiveValue::create(scroller), CSSPrimitiveValue::create(toCSSValueID(m_axis)));
 }
 
 } // namespace WebCore
