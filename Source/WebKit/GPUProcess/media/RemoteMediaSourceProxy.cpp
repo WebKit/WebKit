@@ -98,11 +98,6 @@ Ref<MediaPromise> RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
     });
 }
 
-void RemoteMediaSourceProxy::monitorSourceBuffers()
-{
-    notImplemented();
-}
-
 #if !RELEASE_LOG_DISABLED
 void RemoteMediaSourceProxy::setLogIdentifier(const void*)
 {

@@ -65,7 +65,6 @@ public:
     const WebCore::PlatformTimeRanges& buffered() const final;
     Ref<WebCore::MediaTimePromise> waitForTarget(const WebCore::SeekTarget&) final;
     Ref<WebCore::MediaPromise> seekToTime(const MediaTime&) final;
-    void monitorSourceBuffers() final;
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(const void*) final;
