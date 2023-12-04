@@ -61,11 +61,14 @@
     return self;
 }
 
-- (UIScrollView *)_actingParentScrollViewForScrollView:(UIScrollView *)scrollView
+#if !HAVE(UI_SCROLL_VIEW_ACTING_PARENT_FOR_SCROLL_VIEW)
+
+- (UIScrollView *)_actingParentScrollViewForScrollView:(WKBaseScrollView *)scrollView
 {
-    // An "acting parent" is a non-ancestor scrolling parent. We tell this to UIKit so it can propagate scrolls correctly.
-    return _scrollingTreeNodeDelegate->findActingScrollParent(scrollView);
+    return [self actingParentScrollViewForScrollView:scrollView];
 }
+
+#endif // !HAVE(UI_SCROLL_VIEW_ACTING_PARENT_FOR_SCROLL_VIEW)
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
@@ -182,6 +185,12 @@
         [self cancelPointersForGestureRecognizer:panGestureRecognizer];
 
     return axesToPrevent;
+}
+
+- (UIScrollView *)actingParentScrollViewForScrollView:(WKBaseScrollView *)scrollView
+{
+    // An "acting parent" is a non-ancestor scrolling parent. We tell this to UIKit so it can propagate scrolls correctly.
+    return _scrollingTreeNodeDelegate->findActingScrollParent(scrollView);
 }
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
