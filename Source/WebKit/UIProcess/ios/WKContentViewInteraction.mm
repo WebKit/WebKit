@@ -4266,22 +4266,14 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     [result setObject:[UIColor blackColor] forKey:NSForegroundColorAttributeName];
 
     auto typingAttributes = _page->editorState().postLayoutData->typingAttributes;
-    CTFontSymbolicTraits symbolicTraits = 0;
-    if (typingAttributes.contains(WebKit::TypingAttribute::Bold))
-        symbolicTraits |= kCTFontBoldTrait;
-    if (typingAttributes.contains(WebKit::TypingAttribute::Italics))
-        symbolicTraits |= kCTFontTraitItalic;
-
-    // We chose a random font family and size.
-    // What matters are the traits but the caller expects a font object
-    // in the dictionary for NSFontAttributeName.
-    RetainPtr<CTFontDescriptorRef> fontDescriptor = adoptCF(CTFontDescriptorCreateWithNameAndSize(CFSTR("Helvetica"), 10));
-    if (symbolicTraits)
-        fontDescriptor = adoptCF(CTFontDescriptorCreateCopyWithSymbolicTraits(fontDescriptor.get(), symbolicTraits, symbolicTraits));
     
-    RetainPtr<CTFontRef> font = adoptCF(CTFontCreateWithFontDescriptor(fontDescriptor.get(), 10, nullptr));
+    UIFont *font = _autocorrectionData.font.get();
+    double zoomScale = self._contentZoomScale;
+    if (std::abs(zoomScale - 1) > FLT_EPSILON)
+        font = [font fontWithSize:font.pointSize * zoomScale];
+
     if (font)
-        [result setObject:(id)font.get() forKey:NSFontAttributeName];
+        [result setObject:font forKey:NSFontAttributeName];
     
     if (typingAttributes.contains(WebKit::TypingAttribute::Underline))
         [result setObject:@(NSUnderlineStyleSingle) forKey:NSUnderlineStyleAttributeName];
@@ -7546,13 +7538,6 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
 - (void)selectAll
 {
     RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
-}
-
-- (UIFont *)fontForCaretSelection
-{
-    UIFont *font = _autocorrectionData.font.get();
-    double zoomScale = self._contentZoomScale;
-    return std::abs(zoomScale - 1) > FLT_EPSILON ? [font fontWithSize:font.pointSize * zoomScale] : font;
 }
 
 - (BOOL)hasSelection
