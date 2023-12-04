@@ -68,6 +68,11 @@ private:
 
     CGFloat scaleFactor() const override;
 
+    void didBeginMagnificationGesture() override;
+    void didEndMagnificationGesture() override;
+    void setPageScaleFactor(double scale, std::optional<WebCore::IntPoint> origin) final;
+
+    WebCore::IntSize documentSize() const;
     WebCore::IntSize contentsSize() const override;
     unsigned firstPageHeight() const override;
 
@@ -118,6 +123,7 @@ private:
     void notifyFlushRequired(const GraphicsLayer*) override;
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect&, OptionSet<WebCore::GraphicsLayerPaintBehavior>) override;
     float deviceScaleFactor() const override;
+    float pageScaleFactor() const override;
 
     void updateLayerHierarchy();
 
@@ -153,6 +159,9 @@ private:
     RefPtr<WebCore::GraphicsLayer> m_contentsLayer;
 
     WebCore::ScrollingNodeID m_scrollingNodeID { 0 };
+
+    float m_scaleFactor { 1 };
+    bool m_inMagnificationGesture { false };
 };
 
 } // namespace WebKit

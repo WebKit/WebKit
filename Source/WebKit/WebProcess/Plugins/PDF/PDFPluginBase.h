@@ -105,7 +105,12 @@ public:
 
     virtual void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::AffineTransform& pluginToRootViewTransform);
     virtual void visibilityDidChange(bool);
-    virtual void contentsScaleFactorChanged(float) { }
+    virtual void deviceScaleFactorChanged(float) { }
+
+    bool handlesPageScaleFactor() const;
+    virtual void didBeginMagnificationGesture() { }
+    virtual void didEndMagnificationGesture() { }
+    virtual void setPageScaleFactor(double, std::optional<WebCore::IntPoint> origin) = 0;
 
     void updateControlTints(WebCore::GraphicsContext&);
 

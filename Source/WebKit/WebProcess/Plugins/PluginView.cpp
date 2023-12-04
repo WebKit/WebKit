@@ -309,22 +309,37 @@ void PluginView::manualLoadDidFail()
     m_plugin->streamDidFail();
 }
 
-void PluginView::pageScaleFactorDidChange()
-{
-    viewGeometryDidChange();
-}
-
 void PluginView::topContentInsetDidChange()
 {
     viewGeometryDidChange();
 }
 
-void PluginView::setPageScaleFactor(double scaleFactor)
+void PluginView::didBeginMagnificationGesture()
+{
+    if (!m_isInitialized)
+        return;
+
+    m_plugin->didBeginMagnificationGesture();
+}
+
+void PluginView::didEndMagnificationGesture()
+{
+    if (!m_isInitialized)
+        return;
+
+    m_plugin->didEndMagnificationGesture();
+}
+
+void PluginView::setPageScaleFactor(double scaleFactor, std::optional<IntPoint> origin)
 {
     m_pageScaleFactor = scaleFactor;
     m_webPage->send(Messages::WebPageProxy::PluginScaleFactorDidChange(scaleFactor));
     m_webPage->send(Messages::WebPageProxy::PluginZoomFactorDidChange(scaleFactor));
-    pageScaleFactorDidChange();
+
+    if (!m_isInitialized)
+        return;
+
+    m_plugin->setPageScaleFactor(scaleFactor, origin);
 }
 
 double PluginView::pageScaleFactor() const
@@ -344,7 +359,7 @@ void PluginView::setDeviceScaleFactor(float scaleFactor)
     if (!m_isInitialized)
         return;
 
-    m_plugin->contentsScaleFactorChanged(scaleFactor);
+    m_plugin->deviceScaleFactorChanged(scaleFactor);
 }
 
 id PluginView::accessibilityAssociatedPluginParentForElement(Element* element) const

@@ -1733,6 +1733,7 @@ public:
     void setHeaderBannerHeight(int);
     void setFooterBannerHeight(int);
 
+    void didBeginMagnificationGesture();
     void didEndMagnificationGesture();
 #endif
 

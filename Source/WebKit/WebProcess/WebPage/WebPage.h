@@ -753,6 +753,7 @@ public:
     void setUseFormSemanticContext(bool);
     void semanticContextDidChange(bool);
 
+    void didBeginMagnificationGesture();
     void didEndMagnificationGesture();
 #endif
 

@@ -139,6 +139,8 @@ void UnifiedPDFPlugin::updateLayerHierarchy()
     if (!m_rootLayer) {
         m_rootLayer = createGraphicsLayer("UnifiedPDFPlugin root"_s, GraphicsLayer::Type::Normal);
         m_rootLayer->setAnchorPoint({ });
+        if (handlesPageScaleFactor())
+            m_rootLayer->setAppliesPageScale();
     }
 
     if (!m_scrollContainerLayer) {
@@ -237,10 +239,10 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
     if (layer != m_contentsLayer.get())
         return;
 
-    if (m_size.isEmpty() || contentsSize().isEmpty())
+    if (m_size.isEmpty() || documentSize().isEmpty())
         return;
 
-    auto drawingRect = IntRect { { }, contentsSize() };
+    auto drawingRect = IntRect { { }, documentSize() };
     drawingRect.intersect(enclosingIntRect(clipRect));
 
     auto imageBuffer = ImageBuffer::create(drawingRect.size(), RenderingPurpose::Unspecified, context.scaleFactor().width(), DestinationColorSpace::SRGB(), PixelFormat::BGRA8);
@@ -295,6 +297,67 @@ float UnifiedPDFPlugin::deviceScaleFactor() const
     return PDFPluginBase::deviceScaleFactor();
 }
 
+float UnifiedPDFPlugin::pageScaleFactor() const
+{
+    if (CheckedPtr page = this->page())
+        return m_view->pageScaleFactor();
+    return 1;
+}
+
+void UnifiedPDFPlugin::didBeginMagnificationGesture()
+{
+    m_inMagnificationGesture = true;
+}
+
+void UnifiedPDFPlugin::didEndMagnificationGesture()
+{
+    m_inMagnificationGesture = false;
+    m_rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
+}
+
+void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::IntPoint> origin)
+{
+    if (!handlesPageScaleFactor()) {
+        m_rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
+        return;
+    }
+
+    CheckedPtr page = this->page();
+    if (!page)
+        return;
+
+    auto oldScrollPosition = this->scrollPosition();
+    auto oldScale = std::exchange(m_scaleFactor, scale);
+
+    updateScrollbars();
+    updateScrollingExtents();
+
+    if (!m_inMagnificationGesture)
+        m_rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
+
+    TransformationMatrix transform;
+    transform.scale(m_scaleFactor);
+    m_contentsLayer->setTransform(transform);
+
+    if (!origin)
+        origin = IntRect({ }, size()).center();
+
+    auto gestureOriginInContentsCoordinates = convertFromRootViewToPlugin(*origin);
+    gestureOriginInContentsCoordinates.moveBy(oldScrollPosition);
+
+    auto gestureOriginInNewContentsCoordinates = gestureOriginInContentsCoordinates;
+    gestureOriginInNewContentsCoordinates.scale(m_scaleFactor / oldScale);
+
+    auto delta = gestureOriginInNewContentsCoordinates - gestureOriginInContentsCoordinates;
+    auto newPosition = oldScrollPosition + delta;
+
+    auto options = ScrollPositionChangeOptions::createUser();
+    options.originalScrollDelta = delta;
+    page->protectedScrollingCoordinator()->requestScrollToPosition(*this, newPosition, options);
+
+    scheduleRenderingUpdate();
+}
+
 void UnifiedPDFPlugin::geometryDidChange(const IntSize& pluginSize, const AffineTransform& pluginToRootViewTransform)
 {
     if (size() == pluginSize)
@@ -313,11 +376,21 @@ void UnifiedPDFPlugin::updateLayout()
     updateScrollingExtents();
 }
 
+IntSize UnifiedPDFPlugin::documentSize() const
+{
+    if (isLocked())
+        return { 0, 0 };
+    auto size = m_documentLayout.scaledContentsSize();
+    return expandedIntSize(size);
+}
+
 IntSize UnifiedPDFPlugin::contentsSize() const
 {
     if (isLocked())
         return { 0, 0 };
-    return expandedIntSize(m_documentLayout.scaledContentsSize());
+    auto size = m_documentLayout.scaledContentsSize();
+    size.scale(m_scaleFactor);
+    return expandedIntSize(size);
 }
 
 unsigned UnifiedPDFPlugin::firstPageHeight() const
