@@ -397,7 +397,7 @@ bool HTMLCanvasElement::isWebGLType(const String& type)
         || type == "webkit-3d"_s;
 }
 
-GraphicsContextGLWebGLVersion HTMLCanvasElement::toWebGLVersion(const String& type)
+WebGLVersion HTMLCanvasElement::toWebGLVersion(const String& type)
 {
     ASSERT(isWebGLType(type));
     if (type == "webgl2"_s)

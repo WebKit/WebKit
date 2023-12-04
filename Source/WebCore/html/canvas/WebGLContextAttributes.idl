@@ -37,6 +37,7 @@ enum WebGLPowerPreference {
     "None",
     "IPCBufferOOM",
     "CreationTimeout"
+    "FailPlatformContextCreation"
 };
 
 [
@@ -52,7 +53,6 @@ enum WebGLPowerPreference {
     WebGLPowerPreference powerPreference = "default";
     GLboolean failIfMajorPerformanceCaveat = false;
     [Conditional=WEBXR, EnabledBySetting=WebXREnabled] boolean xrCompatible = false;
-    [EnabledBySetting=DOMTestingAPIsEnabled] GLboolean failPlatformContextCreationForTesting = false;
     [EnabledBySetting=DOMTestingAPIsEnabled] WebGLContextSimulatedCreationFailure failContextCreationForTesting = "None";
 
 };

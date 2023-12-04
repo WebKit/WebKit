@@ -160,12 +160,12 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
         displayAttributes.append(EGL_PLATFORM_ANGLE_TYPE_METAL_ANGLE);
         // These properties are defined for EGL_ANGLE_power_preference as EGLContext attributes,
         // but Metal backend uses EGLDisplay attributes.
-        auto powerPreference = attrs.effectivePowerPreference();
-        if (powerPreference == GraphicsContextGLAttributes::PowerPreference::HighPerformance) {
+        auto powerPreference = attrs.powerPreference;
+        if (powerPreference == GraphicsContextGLPowerPreference::HighPerformance) {
             displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
             displayAttributes.append(EGL_HIGH_POWER_ANGLE);
         } else {
-            if (powerPreference == GraphicsContextGLAttributes::PowerPreference::LowPower) {
+            if (powerPreference == GraphicsContextGLPowerPreference::LowPower) {
                 displayAttributes.append(EGL_POWER_PREFERENCE_ANGLE);
                 displayAttributes.append(EGL_LOW_POWER_ANGLE);
             }
@@ -265,24 +265,11 @@ std::tuple<GCGLenum, GCGLenum> GraphicsContextGLCocoa::externalImageTextureBindi
 bool GraphicsContextGLCocoa::platformInitializeContext()
 {
     GraphicsContextGLAttributes attributes = contextAttributes();
-    m_isForWebGL2 = attributes.webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
+    m_isForWebGL2 = attributes.isWebGL2;
     if (attributes.useMetal && !platformSupportsMetal()) {
         attributes.useMetal = false;
         setContextAttributes(attributes);
     }
-
-#if ENABLE(WEBXR)
-    if (attributes.xrCompatible) {
-        // FIXME: It's almost certain that any connected headset will require the high-power GPU,
-        // which is the same GPU we need this context to use. However, this is not guaranteed, and
-        // there is also the chance that there are multiple GPUs. Given that you can request the
-        // GraphicsContextGL before initializing the WebXR session, we'll need some way to
-        // migrate the context to the appropriate GPU when the code here does not work.
-        LOG(WebGL, "WebXR compatible context requested. This will also trigger a request for the high-power GPU.");
-        attributes.forceRequestForHighPerformanceGPU = true;
-        setContextAttributes(attributes);
-    }
-#endif
 
     m_displayObj = initializeEGLDisplay(attributes);
     if (!m_displayObj)
@@ -297,10 +284,8 @@ bool GraphicsContextGLCocoa::platformInitializeContext()
         const char *displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
         bool supportsPowerPreference = strstr(displayExtensions, "EGL_ANGLE_power_preference");
         if (!supportsPowerPreference) {
-            attributes.forceRequestForHighPerformanceGPU = false;
-            if (attributes.powerPreference == GraphicsContextGLPowerPreference::HighPerformance) {
+            if (attributes.powerPreference == GraphicsContextGLPowerPreference::HighPerformance)
                 attributes.powerPreference = GraphicsContextGLPowerPreference::Default;
-            }
             setContextAttributes(attributes);
         }
     }
@@ -417,7 +402,7 @@ bool GraphicsContextGLCocoa::platformInitialize()
 {
 #if PLATFORM(MAC)
     auto attributes = contextAttributes();
-    if (!attributes.useMetal && attributes.effectivePowerPreference() == GraphicsContextGLPowerPreference::HighPerformance)
+    if (!attributes.useMetal && attributes.powerPreference == GraphicsContextGLPowerPreference::HighPerformance)
         m_switchesGPUOnDisplayReconfiguration = true;
 #endif
     return true;

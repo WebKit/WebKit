@@ -169,7 +169,7 @@ RefPtr<VideoFrame> GraphicsContextGLTextureMapperANGLE::surfaceBufferToVideoFram
 
 bool GraphicsContextGLTextureMapperANGLE::platformInitializeContext()
 {
-    m_isForWebGL2 = contextAttributes().webGLVersion == GraphicsContextGLWebGLVersion::WebGL2;
+    m_isForWebGL2 = contextAttributes().isWebGL2;
 
     auto& sharedDisplay = PlatformDisplay::sharedDisplayForCompositing();
     m_displayObj = sharedDisplay.angleEGLDisplay();

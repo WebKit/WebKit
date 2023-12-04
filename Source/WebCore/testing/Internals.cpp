@@ -5761,22 +5761,17 @@ void Internals::simulateEventForWebGLContext(SimulatedWebGLContextEvent event, W
 
 Internals::RequestedGPU Internals::requestedGPU(WebGLRenderingContext& context)
 {
-    UNUSED_PARAM(context);
-    if (auto optionalAttributes = context.getContextAttributes()) {
-        auto attributes = *optionalAttributes;
-        if (attributes.forceRequestForHighPerformanceGPU)
-            return RequestedGPU::HighPerformance;
-        switch (attributes.powerPreference) {
-        case GraphicsContextGLPowerPreference::Default:
-            return RequestedGPU::Default;
-        case GraphicsContextGLPowerPreference::LowPower:
-            return RequestedGPU::LowPower;
-        case GraphicsContextGLPowerPreference::HighPerformance:
-            return RequestedGPU::HighPerformance;
-        }
+    switch (context.creationAttributes().powerPreference) {
+    case WebGLPowerPreference::Default:
+        return RequestedGPU::Default;
+    case WebGLPowerPreference::LowPower:
+        return RequestedGPU::LowPower;
+    case WebGLPowerPreference::HighPerformance:
+        return RequestedGPU::HighPerformance;
     }
-
+    ASSERT_NOT_REACHED();
     return RequestedGPU::Default;
+
 }
 #endif
 

@@ -81,7 +81,7 @@ GraphicsContextGLANGLE::GraphicsContextGLANGLE(GraphicsContextGLAttributes attri
 
 bool GraphicsContextGLANGLE::initialize()
 {
-    if (contextAttributes().failPlatformContextCreationForTesting)
+    if (contextAttributes().failContextCreationForTesting == GraphicsContextGLAttributes::SimulatedCreationFailure::FailPlatformContextCreation)
         return false;
     if (!platformInitializeContext())
         return false;

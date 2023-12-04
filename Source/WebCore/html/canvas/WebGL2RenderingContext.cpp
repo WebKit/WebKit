@@ -111,9 +111,9 @@ const GCGLuint64 MaxClientWaitTimeout = 0u;
 
 WTF_MAKE_ISO_ALLOCATED_IMPL(WebGL2RenderingContext);
 
-std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBase& canvas, GraphicsContextGLAttributes attributes)
+std::unique_ptr<WebGL2RenderingContext> WebGL2RenderingContext::create(CanvasBase& canvas, WebGLContextAttributes&& attributes)
 {
-    return std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, attributes));
+    return std::unique_ptr<WebGL2RenderingContext>(new WebGL2RenderingContext(canvas, WTFMove(attributes)));
 }
 
 WebGL2RenderingContext::~WebGL2RenderingContext()

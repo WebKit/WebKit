@@ -84,7 +84,6 @@ public:
     CanvasRenderingContext2D* getContext2d(const String&, CanvasRenderingContext2DSettings&&);
 
 #if ENABLE(WEBGL)
-    using WebGLVersion = GraphicsContextGLWebGLVersion;
     static bool isWebGLType(const String&);
     static WebGLVersion toWebGLVersion(const String&);
     WebGLRenderingContextBase* createContextWebGL(WebGLVersion type, WebGLContextAttributes&& = { });

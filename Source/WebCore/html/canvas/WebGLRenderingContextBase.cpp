@@ -302,11 +302,6 @@ static const GCGLenum supportedTypesOESTextureHalfFloat[] = {
 #define ADD_VALUES_TO_SET(set, arr) \
     set.add(arr, arr + std::size(arr))
 
-static bool isHighPerformanceContext(const RefPtr<GraphicsContextGL>& context)
-{
-    return context->contextAttributes().powerPreference == WebGLPowerPreference::HighPerformance;
-}
-
 // Counter for determining which context has the earliest active ordinal number.
 static std::atomic<uint64_t> s_lastActiveOrdinal;
 
@@ -403,50 +398,56 @@ static GraphicsContextGL::SurfaceBuffer toGCGLSurfaceBuffer(CanvasRenderingConte
 {
     return buffer == CanvasRenderingContext::SurfaceBuffer::DrawingBuffer ? GraphicsContextGL::SurfaceBuffer::DrawingBuffer : GraphicsContextGL::SurfaceBuffer::DisplayBuffer;
 }
-std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes& attributes, WebGLVersion type)
+
+static GraphicsContextGLAttributes resolveGraphicsContextGLAttributes(const WebGLContextAttributes& attributes, bool isWebGL2, ScriptExecutionContext& scriptExecutionContext, HTMLCanvasElement* canvasElement)
+{
+    UNUSED_PARAM(scriptExecutionContext);
+    GraphicsContextGLAttributes glAttributes;
+    glAttributes.alpha = attributes.alpha;
+    glAttributes.depth = attributes.depth;
+    glAttributes.stencil = attributes.stencil;
+    glAttributes.antialias = attributes.antialias;
+    glAttributes.premultipliedAlpha = attributes.premultipliedAlpha;
+    glAttributes.preserveDrawingBuffer = attributes.preserveDrawingBuffer;
+    glAttributes.powerPreference = attributes.powerPreference;
+    if (canvasElement)
+        glAttributes.devicePixelRatio = canvasElement->document().deviceScaleFactor();
+    glAttributes.isWebGL2 = isWebGL2;
+#if PLATFORM(MAC)
+    GraphicsClient* graphicsClient = scriptExecutionContext.graphicsClient();
+    if (graphicsClient)
+        glAttributes.windowGPUID = gpuIDForDisplay(graphicsClient->displayID());
+#endif
+#if PLATFORM(COCOA)
+    glAttributes.useMetal = scriptExecutionContext.settingsValues().webGLUsingMetal;
+#endif
+#if ENABLE(WEBXR)
+    glAttributes.xrCompatible = attributes.xrCompatible;
+#endif
+    glAttributes.failContextCreationForTesting = attributes.failContextCreationForTesting;
+    return glAttributes;
+}
+
+std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(CanvasBase& canvas, WebGLContextAttributes attributes, WebGLVersion type)
 {
     auto scriptExecutionContext = canvas.scriptExecutionContext();
     if (!scriptExecutionContext)
         return nullptr;
 
     GraphicsClient* graphicsClient = scriptExecutionContext->graphicsClient();
-
     auto* canvasElement = dynamicDowncast<HTMLCanvasElement>(canvas);
 
-    if (scriptExecutionContext->settingsValues().forceWebGLUsesLowPower) {
-        if (attributes.powerPreference == GraphicsContextGLPowerPreference::HighPerformance)
-            LOG(WebGL, "Overriding powerPreference from high-performance to low-power.");
+#if ENABLE(WEBXR)
+    if (attributes.xrCompatible)
+        attributes.powerPreference = GraphicsContextGLPowerPreference::HighPerformance;
+#endif
+    if (scriptExecutionContext->settingsValues().forceWebGLUsesLowPower)
         attributes.powerPreference = GraphicsContextGLPowerPreference::LowPower;
-    }
 
-    if (canvasElement) {
-        Document& document = canvasElement->document();
-        RefPtr frame = document.frame();
-        if (!frame)
-            return nullptr;
-
-        Document& topDocument = document.topDocument();
-        Page* page = topDocument.page();
-        if (page)
-            attributes.devicePixelRatio = page->deviceScaleFactor();
-    }
-
-    // FIXME: Should we try get the devicePixelRatio for workers for the page that created
-    // the worker? What if it's a shared worker, and there's multiple answers?
-    attributes.initialPowerPreference = attributes.powerPreference;
-    attributes.webGLVersion = type;
-#if PLATFORM(MAC)
-    // FIXME: Add MACCATALYST support for gpuIDForDisplay.
-    if (graphicsClient)
-        attributes.windowGPUID = gpuIDForDisplay(graphicsClient->displayID());
-#endif
-#if PLATFORM(COCOA)
-    attributes.useMetal = scriptExecutionContext->settingsValues().webGLUsingMetal;
-#endif
-
+    const bool isWebGL2 = type == WebGLVersion::WebGL2;
     RefPtr<GraphicsContextGL> context;
     if (graphicsClient)
-        context = graphicsClient->createGraphicsContextGL(attributes);
+        context = graphicsClient->createGraphicsContextGL(resolveGraphicsContextGLAttributes(attributes, isWebGL2, *scriptExecutionContext, canvasElement));
     if (!context) {
         if (canvasElement) {
             canvasElement->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent,
@@ -456,10 +457,10 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     }
 
     std::unique_ptr<WebGLRenderingContextBase> renderingContext;
-    if (type == WebGLVersion::WebGL2)
-        renderingContext = WebGL2RenderingContext::create(canvas, attributes);
+    if (isWebGL2)
+        renderingContext = WebGL2RenderingContext::create(canvas, WTFMove(attributes));
     else
-        renderingContext = WebGLRenderingContext::create(canvas, attributes);
+        renderingContext = WebGLRenderingContext::create(canvas, WTFMove(attributes));
     renderingContext->initializeNewContext(context.releaseNonNull());
     renderingContext->suspendIfNeeded();
     InspectorInstrumentation::didCreateCanvasRenderingContext(*renderingContext);
@@ -468,14 +469,12 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     return renderingContext;
 }
 
-WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLContextAttributes attributes)
+WebGLRenderingContextBase::WebGLRenderingContextBase(CanvasBase& canvas, WebGLContextAttributes&& attributes)
     : GPUBasedCanvasRenderingContext(canvas)
     , m_generatedImageCache(4)
-    , m_attributes(attributes)
+    , m_attributes(WTFMove(attributes))
+    , m_creationAttributes(attributes)
     , m_numGLErrorsToConsoleAllowed(canvas.scriptExecutionContext()->settingsValues().webGLErrorsToConsoleEnabled ? maxGLErrorsAllowedToConsole : 0)
-#if ENABLE(WEBXR)
-    , m_isXRCompatible(attributes.xrCompatible)
-#endif
 {
 }
 
@@ -562,10 +561,20 @@ void WebGLRenderingContextBase::initializeContextState()
     m_maxViewportDims = { 0, 0 };
     m_context->getIntegerv(GraphicsContextGL::MAX_VIEWPORT_DIMS, m_maxViewportDims);
     m_isDepthStencilSupported = m_context->isExtensionEnabled("GL_OES_packed_depth_stencil"_s) || m_context->isExtensionEnabled("GL_ANGLE_depth_texture"_s);
+    auto glAttributes = m_context->contextAttributes();
+    m_attributes.powerPreference = glAttributes.powerPreference;
+    if (!isWebGL2()) {
+        // On WebGL1, the requests are not mandatory.
+        if (m_attributes.antialias)
+            m_attributes.antialias = glAttributes.antialias;
+        if (m_attributes.depth)
+            m_attributes.depth = glAttributes.depth;
+        if (m_attributes.stencil)
+            m_attributes.depth = glAttributes.depth;
+    }
     // WebXR might use multisampling in WebGL2 context. Multisample extensions are also enabled in WebGL 1 case context
     // is antialiased.
-    auto attributes = m_context->contextAttributes();
-    m_maxSamples = (isWebGL2() || attributes.antialias) ? m_context->getInteger(GraphicsContextGL::MAX_SAMPLES) : 0;
+    m_maxSamples = (isWebGL2() || m_attributes.antialias) ? m_context->getInteger(GraphicsContextGL::MAX_SAMPLES) : 0;
 
     // These two values from EXT_draw_buffers are lazily queried.
     m_maxDrawBuffers = 0;
@@ -608,7 +617,7 @@ void WebGLRenderingContextBase::addActivityStateChangeObserverIfNecessary()
 {
     // We are only interested in visibility changes for contexts
     // that are using the high-performance GPU.
-    if (!isHighPerformanceContext(m_context))
+    if (m_attributes.powerPreference != WebGLPowerPreference::HighPerformance)
         return;
 
     auto* canvas = htmlCanvas();
@@ -1826,20 +1835,7 @@ std::optional<WebGLContextAttributes> WebGLRenderingContextBase::getContextAttri
 {
     if (isContextLost())
         return std::nullopt;
-
-    // Also, we need to enforce requested values of "false" for depth
-    // and stencil, regardless of the properties of the underlying
-    // GraphicsContextGLOpenGL.
-
-    auto attributes = m_context->contextAttributes();
-    if (!m_attributes.depth)
-        attributes.depth = false;
-    if (!m_attributes.stencil)
-        attributes.stencil = false;
-#if ENABLE(WEBXR)
-    attributes.xrCompatible = m_isXRCompatible;
-#endif
-    return attributes;
+    return m_attributes;
 }
 
 bool WebGLRenderingContextBase::updateErrors()
@@ -2874,14 +2870,14 @@ void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promi
     // Returning an exception in these two checks is not part of the spec.
     auto* canvas = htmlCanvas();
     if (!canvas) {
-        m_isXRCompatible = false;
+        m_attributes.xrCompatible = false;
         promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
 
     auto* window = canvas->document().domWindow();
     if (!window) {
-        m_isXRCompatible = false;
+        m_attributes.xrCompatible = false;
         promise.reject(Exception { ExceptionCode::InvalidStateError });
         return;
     }
@@ -2892,7 +2888,7 @@ void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promi
     auto& xrSystem = NavigatorWebXR::xr(window->navigator());
     xrSystem.ensureImmersiveXRDeviceIsSelected([this, protectedThis = Ref { *this }, promise = WTFMove(promise), protectedXrSystem = Ref { xrSystem }]() mutable {
         auto rejectPromiseWithInvalidStateError = makeScopeExit([&]() {
-            m_isXRCompatible = false;
+            m_attributes.xrCompatible = false;
             promise.reject(Exception { ExceptionCode::InvalidStateError });
         });
 
@@ -2912,13 +2908,11 @@ void WebGLRenderingContextBase::makeXRCompatible(MakeXRCompatiblePromise&& promi
         //  Set context’s XR compatible boolean to true and resolve promise.
         // Otherwise: Queue a task on the WebGL task source to perform the following steps:
         // FIXME: add a way to verify that we're using a compatible graphics adapter.
-        m_isXRCompatible = true;
-
 #if PLATFORM(COCOA)
         if (!m_context->enableRequiredWebXRExtensions())
             return;
 #endif
-
+        m_attributes.xrCompatible = true;
         promise.resolve();
         rejectPromiseWithInvalidStateError.release();
     });
@@ -5371,7 +5365,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     if (!graphicsClient)
         return;
 
-    if (auto context = graphicsClient->createGraphicsContextGL(m_attributes)) {
+    if (auto context = graphicsClient->createGraphicsContextGL(resolveGraphicsContextGLAttributes(m_creationAttributes, isWebGL2(), *scriptExecutionContext, htmlCanvas()))) {
         initializeNewContext(context.releaseNonNull());
         if (!m_context->isContextLost()) {
             // Context lost state is reset only here: context creation succeeded
