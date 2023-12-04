@@ -48,6 +48,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     platform/graphics/gbm/GBMVersioning.h
 
+    platform/graphics/libwpe/PlatformDisplayLibWPE.h
+
     platform/graphics/wayland/PlatformDisplayWayland.h
 )
 
