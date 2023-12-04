@@ -584,6 +584,12 @@ static void overrideDefaults()
         Options::thresholdForOMGOptimizeAfterWarmUp() = 1500;
         Options::thresholdForOMGOptimizeSoon() = 100;
     }
+
+#if ASAN_ENABLED
+    // This is a heuristic because ASAN builds are memory hogs in terms of stack frame usage.
+    // So, we need a much larger ReservedZoneSize to allow stack overflow handlers to execute.
+    Options::reservedZoneSize() = 3 * Options::reservedZoneSize();
+#endif
 }
 
 bool Options::setAllJITCodeValidations(const char* valueStr)
