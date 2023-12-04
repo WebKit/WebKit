@@ -2322,6 +2322,7 @@
 		EB36B16927A7B4500050E00D /* PushService.mm in Sources */ = {isa = PBXBuildFile; fileRef = EB36B16727A7B4500050E00D /* PushService.mm */; };
 		EB450E0F2996C7B6009724B1 /* WKWebsiteDataStoreRefPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = EB450E0D2996C7A1009724B1 /* WKWebsiteDataStoreRefPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EB579C3729AEBD0800894C1C /* EarlyHintsResourceLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = EB579C3629AEBCF100894C1C /* EarlyHintsResourceLoader.h */; };
+		EB7169D32B05D8B2005F305D /* WKApplicationUtilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB7169D22B05D8B2005F305D /* WKApplicationUtilities.swift */; };
 		EB7D252B27B31B77009CB586 /* com.apple.WebKit.webpushd.mac.sb in Resources */ = {isa = PBXBuildFile; fileRef = EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.mac.sb */; };
 		EBA8D3AB27A5E31300CB7900 /* ApplePushServiceSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = EBA8D3AA27A5E31300CB7900 /* ApplePushServiceSPI.h */; };
 		EBA8D3B227A5E33F00CB7900 /* ApplePushServiceConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = EBA8D3AC27A5E33E00CB7900 /* ApplePushServiceConnection.mm */; };
@@ -2384,7 +2385,7 @@
 		F4DBC0BE276AA6A70001D169 /* _WKModalContainerInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F4DBC0BC276AA6A70001D169 /* _WKModalContainerInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F4DBC0C1276AA6CA0001D169 /* _WKModalContainerInfoInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F4DBC0C0276AA6CA0001D169 /* _WKModalContainerInfoInternal.h */; };
 		F4DF71E82B069AC6009A4522 /* WKExtendedTextInputTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = F4DF71D72B0689A5009A4522 /* WKExtendedTextInputTraits.h */; };
-		F4DF72122B0C3A8C009A4522 /* WKAxisLockingScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = F4DF72102B0C324F009A4522 /* WKAxisLockingScrollView.h */; };
+		F4DF72122B0C3A8C009A4522 /* WKBaseScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = F4DF72102B0C324F009A4522 /* WKBaseScrollView.h */; };
 		F4E727232A547F0400CE34FD /* WKTouchEventsGestureRecognizerTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = F4E727222A547E2100CE34FD /* WKTouchEventsGestureRecognizerTypes.h */; };
 		F4EB4AFD269CD7F300D297AE /* OSStateSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F4EB4AFC269CD23600D297AE /* OSStateSPI.h */; };
 		F4EC94E32356CC57000BB614 /* ApplicationServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 29D04E2821F7C73D0076741D /* ApplicationServicesSPI.h */; };
@@ -2785,6 +2786,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = WebKit;
+		};
+		EB4E56612B16547200CDB9C6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C0CE72851247E66800BC0EC4;
+			remoteInfo = "Derived Sources";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -7591,6 +7599,7 @@
 		EB450E0E2996C7A1009724B1 /* WKWebsiteDataStoreRefPrivateMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKWebsiteDataStoreRefPrivateMac.mm; path = mac/WKWebsiteDataStoreRefPrivateMac.mm; sourceTree = "<group>"; };
 		EB579C3529AEBCF100894C1C /* EarlyHintsResourceLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EarlyHintsResourceLoader.cpp; sourceTree = "<group>"; };
 		EB579C3629AEBCF100894C1C /* EarlyHintsResourceLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EarlyHintsResourceLoader.h; sourceTree = "<group>"; };
+		EB7169D22B05D8B2005F305D /* WKApplicationUtilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKApplicationUtilities.swift; sourceTree = "<group>"; };
 		EB7D252927B316A6009CB586 /* com.apple.WebKit.webpushd.mac.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.webpushd.mac.sb.in; sourceTree = "<group>"; };
 		EB7D252A27B31B3F009CB586 /* com.apple.WebKit.webpushd.mac.sb */ = {isa = PBXFileReference; lastKnownFileType = file; path = com.apple.WebKit.webpushd.mac.sb; sourceTree = "<group>"; };
 		EBA8D3AA27A5E31300CB7900 /* ApplePushServiceSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplePushServiceSPI.h; sourceTree = "<group>"; };
@@ -7704,8 +7713,8 @@
 		F4DD79EF2AD59BA6000C6821 /* WKVelocityTrackingScrollView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKVelocityTrackingScrollView.mm; path = ios/WKVelocityTrackingScrollView.mm; sourceTree = "<group>"; };
 		F4DF71D72B0689A5009A4522 /* WKExtendedTextInputTraits.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKExtendedTextInputTraits.h; path = ios/WKExtendedTextInputTraits.h; sourceTree = "<group>"; };
 		F4DF71D82B0689A5009A4522 /* WKExtendedTextInputTraits.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKExtendedTextInputTraits.mm; path = ios/WKExtendedTextInputTraits.mm; sourceTree = "<group>"; };
-		F4DF72102B0C324F009A4522 /* WKAxisLockingScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKAxisLockingScrollView.h; path = ios/WKAxisLockingScrollView.h; sourceTree = "<group>"; };
-		F4DF72112B0C324F009A4522 /* WKAxisLockingScrollView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKAxisLockingScrollView.mm; path = ios/WKAxisLockingScrollView.mm; sourceTree = "<group>"; };
+		F4DF72102B0C324F009A4522 /* WKBaseScrollView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKBaseScrollView.h; path = ios/WKBaseScrollView.h; sourceTree = "<group>"; };
+		F4DF72112B0C324F009A4522 /* WKBaseScrollView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKBaseScrollView.mm; path = ios/WKBaseScrollView.mm; sourceTree = "<group>"; };
 		F4E2B44A268FDE1A00327ABC /* TapHandlingResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TapHandlingResult.h; path = ios/TapHandlingResult.h; sourceTree = "<group>"; };
 		F4E47BB527B5AE5B00813B38 /* CocoaImage.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CocoaImage.mm; sourceTree = "<group>"; };
 		F4E727222A547E2100CE34FD /* WKTouchEventsGestureRecognizerTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKTouchEventsGestureRecognizerTypes.h; path = ios/WKTouchEventsGestureRecognizerTypes.h; sourceTree = "<group>"; };
@@ -10268,8 +10277,8 @@
 				0FCB4E3B18BBE044000FCFC9 /* WKActionSheetAssistant.mm */,
 				A13DC680207AA6B20066EF72 /* WKApplicationStateTrackingView.h */,
 				A13DC681207AA6B20066EF72 /* WKApplicationStateTrackingView.mm */,
-				F4DF72102B0C324F009A4522 /* WKAxisLockingScrollView.h */,
-				F4DF72112B0C324F009A4522 /* WKAxisLockingScrollView.mm */,
+				F4DF72102B0C324F009A4522 /* WKBaseScrollView.h */,
+				F4DF72112B0C324F009A4522 /* WKBaseScrollView.mm */,
 				0FCB4E3C18BBE044000FCFC9 /* WKContentView.h */,
 				0FCB4E3D18BBE044000FCFC9 /* WKContentView.mm */,
 				0FCB4E6A18BBF26A000FCFC9 /* WKContentViewInteraction.h */,
@@ -14377,6 +14386,7 @@
 				1AAF08B619269E6D00B6390C /* WebUserContentControllerMessages.h */,
 				7C361D76192803BD0036A59D /* WebUserContentControllerProxyMessageReceiver.cpp */,
 				7C361D77192803BD0036A59D /* WebUserContentControllerProxyMessages.h */,
+				EB7169D22B05D8B2005F305D /* WKApplicationUtilities.swift */,
 			);
 			name = "Derived Sources";
 			path = DerivedSources/WebKit;
@@ -16011,7 +16021,6 @@
 				577739952580388F0059348B /* WKASCAuthorizationPresenterDelegate.h in Headers */,
 				512F58F612A88A5400629530 /* WKAuthenticationChallenge.h in Headers */,
 				512F58F812A88A5400629530 /* WKAuthenticationDecisionListener.h in Headers */,
-				F4DF72122B0C3A8C009A4522 /* WKAxisLockingScrollView.h in Headers */,
 				37C4C08D1814AC5C003688B9 /* WKBackForwardList.h in Headers */,
 				37C4C0951814B9E6003688B9 /* WKBackForwardListInternal.h in Headers */,
 				37C4C08718149C5B003688B9 /* WKBackForwardListItem.h in Headers */,
@@ -16022,6 +16031,7 @@
 				BC646C1B11DD399F006455B0 /* WKBackForwardListRef.h in Headers */,
 				BCDDB317124EBD130048D13C /* WKBase.h in Headers */,
 				7CD5EBBB1746A83E000C1C45 /* WKBaseMac.h in Headers */,
+				F4DF72122B0C3A8C009A4522 /* WKBaseScrollView.h in Headers */,
 				BCBAAC73144E619E0053F82F /* WKBrowsingContextController.h in Headers */,
 				BCBAAC74144E61A50053F82F /* WKBrowsingContextControllerInternal.h in Headers */,
 				3788A05C14743C90006319E5 /* WKBrowsingContextControllerPrivate.h in Headers */,
@@ -16809,6 +16819,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				EB4E56622B16547200CDB9C6 /* PBXTargetDependency */,
 			);
 			name = WebKitSwift;
 			productName = WebKitSwift;
@@ -18560,6 +18571,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EB7169D32B05D8B2005F305D /* WKApplicationUtilities.swift in Sources */,
 				CDF1B915266F396A0007EC10 /* WKGroupSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -18807,6 +18819,11 @@
 			isa = PBXTargetDependency;
 			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
 			targetProxy = E3B746A62A9E586C0024BFAE /* PBXContainerItemProxy */;
+		};
+		EB4E56622B16547200CDB9C6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C0CE72851247E66800BC0EC4 /* Derived Sources */;
+			targetProxy = EB4E56612B16547200CDB9C6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

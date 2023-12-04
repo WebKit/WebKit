@@ -56,7 +56,7 @@ ScrollingTreeScrollingNodeDelegateIOS& ScrollingTreePluginScrollingNodeIOS::dele
     return *static_cast<ScrollingTreeScrollingNodeDelegateIOS*>(m_delegate.get());
 }
 
-UIScrollView* ScrollingTreePluginScrollingNodeIOS::scrollView() const
+WKBaseScrollView *ScrollingTreePluginScrollingNodeIOS::scrollView() const
 {
     return delegate().scrollView();
 }

@@ -619,7 +619,7 @@ void TextUtil::computedExpansions(const Line::RunList& runs, WTF::Range<size_t> 
     expansionInfo.behaviorList.resizeToFit(rangeSize);
     auto lastExpansionIndexWithContent = std::optional<size_t> { };
 
-    // Line start behaves as if we had an expansion here (i.e. fist runs should not start with allowing left expansion).
+    // Line start behaves as if we had an expansion here (i.e. first runs should not start with allowing left expansion).
     auto runIsAfterExpansion = true;
     auto lastTextRunIndexForTrimming = [&]() -> std::optional<size_t> {
         if (!hangingTrailingWhitespaceLength)

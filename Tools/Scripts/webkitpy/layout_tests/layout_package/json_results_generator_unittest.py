@@ -48,10 +48,10 @@ class JSONGeneratorTest(unittest.TestCase):
         self._FAILS_count = 0
         self._fixable_count = 0
 
-    def test_strip_json_wrapper(self):
-        json = "['contents']"
-        self.assertEqual(json_results_generator.strip_json_wrapper(json_results_generator._JSON_PREFIX + json + json_results_generator._JSON_SUFFIX), json)
-        self.assertEqual(json_results_generator.strip_json_wrapper(json), json)
+    def test_load_jsons(self):
+        json = '["contents"]'
+        self.assertEqual(json_results_generator.load_jsons(json_results_generator._JSON_PREFIX + json + json_results_generator._JSON_SUFFIX), ["contents"])
+        self.assertEqual(json_results_generator.load_jsons(json), ["contents"])
 
     def test_perf_metrics_for_test(self):
         individual_test_timings = []

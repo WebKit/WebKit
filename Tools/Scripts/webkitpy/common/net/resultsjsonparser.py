@@ -145,11 +145,7 @@ class JSONTestResult(object):
 
 class ParsedJSONResults(object):
     def __init__(self, json_string):
-        if not json_results_generator.has_json_wrapper(json_string):
-            return None
-
-        content_string = json_results_generator.strip_json_wrapper(json_string)
-        json_dict = json.loads(content_string)
+        json_dict = json_results_generator.load_jsons(json_string)
 
         json_results = []
         for_each_test(json_dict['tests'], lambda test, result: json_results.append(JSONTestResult(test, result)))

@@ -2946,16 +2946,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:enabled forKey:WebKitMaskWebGLStringsEnabledPreferenceKey];
 }
 
-- (BOOL)serverTimingEnabled
-{
-    return [self _boolValueForKey:WebKitServerTimingEnabledPreferenceKey];
-}
-
-- (void)setServerTimingEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitServerTimingEnabledPreferenceKey];
-}
-
 - (BOOL)CSSCustomPropertiesAndValuesEnabled
 {
     return [self _boolValueForKey:WebKitCSSCustomPropertiesAndValuesEnabledPreferenceKey];
@@ -3336,6 +3326,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 }
 
 - (void)setCSSIndividualTransformPropertiesEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)serverTimingEnabled
+{
+    return YES;
+}
+
+- (void)setServerTimingEnabled:(BOOL)flag
 {
 }
 

@@ -150,6 +150,11 @@ bool PDFPluginBase::isFullFramePlugin() const
     return downcast<PluginDocument>(*document).pluginWidget() == m_view;
 }
 
+bool PDFPluginBase::handlesPageScaleFactor() const
+{
+    return m_frame && m_frame->isMainFrame() && isFullFramePlugin();
+}
+
 bool PDFPluginBase::isLocked() const
 {
     return [m_pdfDocument isLocked];

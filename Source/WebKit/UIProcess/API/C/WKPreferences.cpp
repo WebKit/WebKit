@@ -1718,16 +1718,6 @@ bool WKPreferencesGetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRe
     return toImpl(preferencesRef)->restrictedHTTPResponseAccess();
 }
 
-void WKPreferencesSetServerTimingEnabled(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setServerTimingEnabled(flag);
-}
-
-bool WKPreferencesGetServerTimingEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->serverTimingEnabled();
-}
-
 void WKPreferencesSetColorFilterEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setColorFilterEnabled(flag);
@@ -2089,6 +2079,15 @@ void WKPreferencesSetReferrerPolicyAttributeEnabled(WKPreferencesRef preferences
 }
 
 bool WKPreferencesGetReferrerPolicyAttributeEnabled(WKPreferencesRef preferencesRef)
+{
+    return true;
+}
+
+void WKPreferencesSetServerTimingEnabled(WKPreferencesRef preferencesRef, bool flag)
+{
+}
+
+bool WKPreferencesGetServerTimingEnabled(WKPreferencesRef preferencesRef)
 {
     return true;
 }

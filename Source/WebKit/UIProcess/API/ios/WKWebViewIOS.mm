@@ -177,14 +177,8 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
     CGRect bounds = self.bounds;
     _scrollView = adoptNS([[WKScrollView alloc] initWithFrame:bounds]);
     [_scrollView setInternalDelegate:self];
-    [_scrollView setScrollAxisLockingDelegate:self];
+    [_scrollView setBaseScrollViewDelegate:self];
     [_scrollView setBouncesZoom:YES];
-
-#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    [_scrollView _setAllowsAsyncScrollEvent:YES];
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
 
     if ([_scrollView respondsToSelector:@selector(_setAvoidsJumpOnInterruptedBounce:)]) {
         [_scrollView setTracksImmediatelyWhileDecelerating:NO];
@@ -1906,7 +1900,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if ([scrollView isZooming])
         *targetContentOffset = [scrollView contentOffset];
     else {
-        auto axesToPreventMomentumScrolling = dynamic_objc_cast<WKAxisLockingScrollView>(scrollView).axesToPreventMomentumScrolling;
+        auto axesToPreventMomentumScrolling = dynamic_objc_cast<WKBaseScrollView>(scrollView).axesToPreventMomentumScrolling;
         if ([_contentView preventsPanningInXAxis] || (axesToPreventMomentumScrolling & UIAxisHorizontal))
             targetContentOffset->x = scrollView.contentOffset.x;
         if ([_contentView preventsPanningInYAxis] || (axesToPreventMomentumScrolling & UIAxisVertical))
@@ -1950,7 +1944,17 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
 }
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-- (void)_scrollView:(UIScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion
+
+#if !HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_SUBCLASS_HOOKS)
+
+- (void)_scrollView:(WKScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion
+{
+    [self scrollView:scrollView handleScrollEvent:scrollEvent completion:completion];
+}
+
+#endif // !HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_SUBCLASS_HOOKS)
+
+- (void)scrollView:(WKBaseScrollView *)scrollView handleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void(^)(BOOL handled))completion
 {
     BOOL isHandledByDefault = !scrollView.scrollEnabled;
 
@@ -2018,6 +2022,7 @@ static WebCore::FloatPoint constrainContentOffset(WebCore::FloatPoint contentOff
     if (!isCancelable)
         completion(isHandledByDefault);
 }
+
 #endif // HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
@@ -3446,9 +3451,9 @@ static bool isLockdownModeWarningNeeded()
     [self _scheduleVisibleContentRectUpdate];
 }
 
-#pragma mark - WKAxisLockingScrollViewDelegate
+#pragma mark - WKBaseScrollViewDelegate
 
-- (UIAxis)axesToPreventScrollingForPanGestureInScrollView:(WKAxisLockingScrollView *)scrollView
+- (UIAxis)axesToPreventScrollingForPanGestureInScrollView:(WKBaseScrollView *)scrollView
 {
     auto panGestureRecognizer = scrollView.panGestureRecognizer;
     if (![_contentView preventsPanningInXAxis] && ![_contentView preventsPanningInYAxis]) {

@@ -40,24 +40,29 @@ _JSON_PREFIX_B = b"ADD_RESULTS("
 _JSON_SUFFIX_B = b");"
 
 
-def has_json_wrapper(string):
+def _has_json_wrapper(string):
     if isinstance(string, bytes):
         return string.startswith(_JSON_PREFIX_B) and string.endswith(_JSON_SUFFIX_B)
     else:
         return string.startswith(_JSON_PREFIX) and string.endswith(_JSON_SUFFIX)
 
 
-def strip_json_wrapper(json_content):
+def _strip_json_wrapper(json_content):
     # FIXME: Kill this code once the server returns json instead of jsonp.
-    if has_json_wrapper(json_content):
+    if _has_json_wrapper(json_content):
         return json_content[len(_JSON_PREFIX):len(json_content) - len(_JSON_SUFFIX)]
     return json_content
 
 
 def load_json(filesystem, file_path):
     content = filesystem.read_text_file(file_path)
-    content = strip_json_wrapper(content)
+    content = _strip_json_wrapper(content)
     return json.loads(content)
+
+
+def load_jsons(s):
+    s = _strip_json_wrapper(s)
+    return json.loads(s)
 
 
 def write_json(filesystem, json_object, file_path, callback=None):

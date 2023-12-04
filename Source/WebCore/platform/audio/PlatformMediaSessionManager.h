@@ -37,6 +37,7 @@
 namespace WebCore {
 
 class PlatformMediaSession;
+struct MediaConfiguration;
 
 class PlatformMediaSessionManager
 #if !RELEASE_LOG_DISABLED
@@ -152,6 +153,9 @@ public:
     WEBCORE_EXPORT void setIsPlayingToAutomotiveHeadUnit(bool);
     bool isPlayingToAutomotiveHeadUnit() const { return m_isPlayingToAutomotiveHeadUnit; }
 
+    WEBCORE_EXPORT void setSupportsSpatialAudioPlayback(bool);
+    virtual std::optional<bool> supportsSpatialAudioPlaybackForConfiguration(const MediaConfiguration&);
+
     void forEachMatchingSession(const Function<bool(const PlatformMediaSession&)>& predicate, const Function<void(PlatformMediaSession&)>& matchingCallback);
 
     bool processIsSuspended() const { return m_processIsSuspended; }
@@ -203,6 +207,8 @@ protected:
 
     bool computeSupportsSeeking() const;
 
+    std::optional<bool> supportsSpatialAudioPlayback() { return m_supportsSpatialAudioPlayback; }
+
 private:
     friend class Internals;
 
@@ -219,6 +225,7 @@ private:
     bool m_willIgnoreSystemInterruptions { false };
     bool m_processIsSuspended { false };
     bool m_isPlayingToAutomotiveHeadUnit { false };
+    std::optional<bool> m_supportsSpatialAudioPlayback;
 
     bool m_alreadyScheduledSessionStatedUpdate { false };
 #if USE(AUDIO_SESSION)

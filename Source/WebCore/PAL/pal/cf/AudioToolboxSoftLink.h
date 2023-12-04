@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -76,6 +76,9 @@ typedef UInt32 AudioUnitPropertyID;
 typedef UInt32 AudioUnitScope;
 typedef UInt32 AudioUnitElement;
 
+enum SpatialContentTypeID : UInt32;
+struct SpatialAudioPreferences;
+
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, AudioToolbox)
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, AudioToolboxCore)
 
@@ -110,6 +113,9 @@ SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, AudioToolboxCore, AudioComponentFetc
 #define AudioComponentFetchServerRegistrations softLinkAudioToolboxCoreAudioComponentFetchServerRegistrations
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, AudioToolboxCore, AudioComponentApplyServerRegistrations, OSStatus, (CFDataRef inBundleRegistrations), (inBundleRegistrations))
 #define AudioComponentApplyServerRegistrations softLinkAudioToolboxCoreAudioComponentApplyServerRegistrations
+
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, AudioToolbox, AudioGetDeviceSpatialPreferencesForContentType, OSStatus, (CFStringRef inDeviceUID, SpatialContentTypeID contentType, SpatialAudioPreferences *outPreferences), (inDeviceUID, contentType, outPreferences))
+#define AudioGetDeviceSpatialPreferencesForContentType softLinkAudioToolboxAudioGetDeviceSpatialPreferencesForContentType
 
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioFileClose, OSStatus, (AudioFileID inAudioFile), (inAudioFile))
 #define AudioFileClose softLink_AudioToolbox_AudioFileClose

@@ -567,6 +567,7 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     SetHeaderBannerHeight(int height)
     SetFooterBannerHeight(int height)
 
+    DidBeginMagnificationGesture()
     DidEndMagnificationGesture()
 #endif
 

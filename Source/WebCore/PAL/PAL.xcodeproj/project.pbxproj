@@ -285,6 +285,7 @@
 		F43E89382AEDB8C800097D2D /* CoreTelephonySoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F43E89352AEDB8C800097D2D /* CoreTelephonySoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44291641FA52670002CC93E /* FileSizeFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F44291621FA52670002CC93E /* FileSizeFormatter.cpp */; };
 		F44291681FA52705002CC93E /* FileSizeFormatterCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44291661FA52705002CC93E /* FileSizeFormatterCocoa.mm */; };
+		F449AE2D2B1AC62C00294F34 /* NSTextTableSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F449AE2C2B1AC62C00294F34 /* NSTextTableSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44C007B29A06B1C00211F33 /* TranslationUIServicesSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F44C007929A06B1C00211F33 /* TranslationUIServicesSoftLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F44C007C29A06B1C00211F33 /* TranslationUIServicesSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = F44C007A29A06B1C00211F33 /* TranslationUIServicesSoftLink.mm */; };
 		F44C007E29A06BC200211F33 /* TranslationUIServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = F44C007D29A06BC200211F33 /* TranslationUIServicesSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -673,6 +674,7 @@
 		F442915F1FA5261E002CC93E /* FileSizeFormatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileSizeFormatter.h; sourceTree = "<group>"; };
 		F44291621FA52670002CC93E /* FileSizeFormatter.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FileSizeFormatter.cpp; sourceTree = "<group>"; };
 		F44291661FA52705002CC93E /* FileSizeFormatterCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = FileSizeFormatterCocoa.mm; sourceTree = "<group>"; };
+		F449AE2C2B1AC62C00294F34 /* NSTextTableSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NSTextTableSPI.h; sourceTree = "<group>"; };
 		F44C007929A06B1C00211F33 /* TranslationUIServicesSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TranslationUIServicesSoftLink.h; sourceTree = "<group>"; };
 		F44C007A29A06B1C00211F33 /* TranslationUIServicesSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TranslationUIServicesSoftLink.mm; sourceTree = "<group>"; };
 		F44C007D29A06BC200211F33 /* TranslationUIServicesSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TranslationUIServicesSPI.h; sourceTree = "<group>"; };
@@ -893,6 +895,7 @@
 				72BA2A872951462500678507 /* NSTextFieldCellSPI.h */,
 				0C7785821F45130F00F4EBB6 /* NSTextFinderSPI.h */,
 				93DB7D3624626BCC004BD8A3 /* NSTextInputContextSPI.h */,
+				F449AE2C2B1AC62C00294F34 /* NSTextTableSPI.h */,
 				93DB7D3924626F86004BD8A3 /* NSUndoManagerSPI.h */,
 				0C7785831F45130F00F4EBB6 /* NSViewSPI.h */,
 				0C7785841F45130F00F4EBB6 /* NSWindowSPI.h */,
@@ -1393,6 +1396,7 @@
 				DD20DDFB27BC90D70093D175 /* NSStringSPI.h in Headers */,
 				DD20DE3927BC90D80093D175 /* NSTextFinderSPI.h in Headers */,
 				DD20DE3A27BC90D80093D175 /* NSTextInputContextSPI.h in Headers */,
+				F449AE2D2B1AC62C00294F34 /* NSTextTableSPI.h in Headers */,
 				DD20DDFC27BC90D70093D175 /* NSTouchBarSPI.h in Headers */,
 				DD20DE3B27BC90D80093D175 /* NSUndoManagerSPI.h in Headers */,
 				DD20DDFD27BC90D70093D175 /* NSURLConnectionSPI.h in Headers */,

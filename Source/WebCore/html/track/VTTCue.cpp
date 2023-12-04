@@ -298,6 +298,9 @@ VTTCue::VTTCue(Document& document, const MediaTime& start, const MediaTime& end,
     , m_snapToLines(true)
     , m_displayTreeShouldChange(true)
     , m_notifyRegion(true)
+#if !RELEASE_LOG_DISABLED
+    , m_logger(&document.logger())
+#endif
 {
 }
 
@@ -562,7 +565,6 @@ void VTTCue::setIsActive(bool active)
 
 void VTTCue::setTrack(TextTrack* track)
 {
-    LOG(Media, "VTTCue::setTrack");
     TextTrackCue::setTrack(track);
     if (!m_parsedRegionId.isEmpty()) {
         if (track != nullptr) {
@@ -572,6 +574,7 @@ void VTTCue::setTrack(TextTrack* track)
             }
         }
     }
+    INFO_LOG(LOGIDENTIFIER);
 }
 
 void VTTCue::setRegion(VTTRegion* region)
@@ -1191,7 +1194,7 @@ void VTTCue::setCueSettings(const String& inputString)
                 m_writingDirection = DirectionSetting::VerticalGrowingRight;
 
             else
-                LOG(Media, "VTTCue::setCueSettings, invalid Vertical");
+                ERROR_LOG(LOGIDENTIFIER, "Invalid vertical");
             break;
         }
         case Line: {
@@ -1219,7 +1222,7 @@ void VTTCue::setCueSettings(const String& inputString)
                     else if (input.scan(endKeyword().characters8(), endKeyword().length()))
                         alignment = LineAlignSetting::End;
                     else {
-                        LOG(Media, "VTTCue::setCueSettings, invalid line setting alignment");
+                        ERROR_LOG(LOGIDENTIFIER, "Invalid line setting alignment");
                         break;
                     }
                 }
@@ -1261,7 +1264,7 @@ void VTTCue::setCueSettings(const String& inputString)
             } while (0);
 
             if (!isValid)
-                LOG(Media, "VTTCue::setCueSettings, invalid Line");
+                ERROR_LOG(LOGIDENTIFIER, "Invalid line");
 
             break;
         }
@@ -1269,10 +1272,10 @@ void VTTCue::setCueSettings(const String& inputString)
             float position;
             PositionAlignSetting alignment { PositionAlignSetting::Auto };
 
-            auto parsePosition = [] (VTTScanner& input, auto end, float& position, auto& alignment) -> bool {
+            auto parsePosition = [&] (VTTScanner& input, auto end, float& position, auto& alignment) -> bool {
                 // 1. a position value consisting of: a WebVTT percentage.
                 if (!WebVTTParser::parseFloatPercentageValue(input, position)) {
-                    LOG(Media, "VTTCue::setCueSettings, invalid Position percentage");
+                    ERROR_LOG(LOGIDENTIFIER, "Invalid position percentage");
                     return false;
                 }
 
@@ -1292,7 +1295,7 @@ void VTTCue::setCueSettings(const String& inputString)
                 else if (input.scan(lineRightKeyword().characters8(), lineRightKeyword().length()))
                     alignment = PositionAlignSetting::LineRight;
                 else {
-                    LOG(Media, "VTTCue::setCueSettings, invalid Position setting alignment");
+                    ERROR_LOG(LOGIDENTIFIER, "Invalid position setting alignment");
                     return false;
                 }
 
@@ -1311,7 +1314,7 @@ void VTTCue::setCueSettings(const String& inputString)
             if (WebVTTParser::parseFloatPercentageValue(input, cueSize) && input.isAt(valueRun.end()))
                 m_cueSize = cueSize;
             else
-                LOG(Media, "VTTCue::setCueSettings, invalid Size");
+                ERROR_LOG(LOGIDENTIFIER, "Invalid size");
             break;
         }
         case Align: {
@@ -1336,7 +1339,7 @@ void VTTCue::setCueSettings(const String& inputString)
                 m_cueAlignment = AlignSetting::Right;
 
             else
-                LOG(Media, "VTTCue::setCueSettings, invalid Align");
+                ERROR_LOG(LOGIDENTIFIER, "Invalid align");
 
             break;
         }
@@ -1463,6 +1466,20 @@ void VTTCue::prepareToSpeak(SpeechSynthesis& speechSynthesis, double rate, doubl
     UNUSED_PARAM(completion);
 #endif
 }
+
+#if !RELEASE_LOG_DISABLED
+const void* VTTCue::logIdentifier() const
+{
+    if (!m_logIdentifier && track())
+        m_logIdentifier = childLogIdentifier(track()->logIdentifier(), cryptographicallyRandomNumber<uint64_t>());
+    return m_logIdentifier;
+}
+
+WTFLogChannel& VTTCue::logChannel() const
+{
+    return LogMedia;
+}
+#endif // !RELEASE_LOG_DISABLED
 
 void VTTCue::beginSpeaking()
 {

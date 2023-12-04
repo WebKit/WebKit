@@ -77,13 +77,19 @@ LayoutRect RenderSVGModelObject::overflowClipRect(const LayoutPoint&, RenderFrag
     return LayoutRect();
 }
 
-LayoutRect RenderSVGModelObject::localRectForRepaint() const
+auto RenderSVGModelObject::localRectsForRepaint(RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects
 {
     if (isInsideEntirelyHiddenLayer())
         return { };
 
     ASSERT(!view().frameView().layoutContext().isPaintOffsetCacheEnabled());
-    return visualOverflowRectEquivalent();
+
+    auto visualOverflowRect = visualOverflowRectEquivalent();
+    auto rects = RepaintRects { visualOverflowRect };
+    if (repaintOutlineBounds == RepaintOutlineBounds::Yes)
+        rects.outlineBoundsRect = visualOverflowRect;
+
+    return rects;
 }
 
 auto RenderSVGModelObject::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>

@@ -85,6 +85,22 @@ LayoutRect RenderSVGInline::clippedOverflowRect(const RenderLayerModelObject* re
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer, context);
 }
 
+auto RenderSVGInline::rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects
+{
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return RenderInline::rectsForRepaintingAfterLayout(repaintContainer, repaintOutlineBounds);
+#else
+    UNUSED_PARAM(context);
+#endif
+
+    auto rects = RepaintRects { SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer, visibleRectContextForRepaint()) };
+    if (repaintOutlineBounds == RepaintOutlineBounds::Yes)
+        rects.outlineBoundsRect = outlineBoundsForRepaint(repaintContainer);
+
+    return rects;
+}
+
 std::optional<FloatRect> RenderSVGInline::computeFloatVisibleRectInContainer(const FloatRect& rect, const RenderLayerModelObject* container, VisibleRectContext context) const
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)

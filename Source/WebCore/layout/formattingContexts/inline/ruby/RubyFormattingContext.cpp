@@ -117,6 +117,32 @@ std::optional<InlineLayoutUnit> RubyFormattingContext::annotationBoxLogicalWidth
     return { };
 }
 
+InlineLayoutUnit RubyFormattingContext::baseLogicalWidthFromRubyBaseEnd(const InlineItem& rubyBaseEnd, const Line::RunList& lineRuns, const InlineContentBreaker::ContinuousContent::RunList& candidateRuns)
+{
+    ASSERT(rubyBaseEnd.isInlineBoxEnd() && rubyBaseEnd.layoutBox().isRubyBase());
+    // Canidate content is supposed to hold the base content and in case of soft wrap opportunities, line may have some base content too.
+    auto& rubyBaseLayoutBox = rubyBaseEnd.layoutBox();
+    auto baseLogicalWidth = InlineLayoutUnit { 0.f };
+    auto hasSeenRubyBaseStart = false;
+    for (auto& candidateRun : makeReversedRange(candidateRuns)) {
+        auto& inlineItem = candidateRun.inlineItem;
+        if (inlineItem.isInlineBoxStart() && &inlineItem.layoutBox() == &rubyBaseLayoutBox) {
+            hasSeenRubyBaseStart = true;
+            break;
+        }
+        baseLogicalWidth += candidateRun.logicalWidth;
+    }
+    if (hasSeenRubyBaseStart)
+        return baseLogicalWidth;
+    // Let's check the line for the rest of the base content.
+    for (auto& lineRun : makeReversedRange(lineRuns)) {
+        if ((lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart()) && &lineRun.layoutBox() == &rubyBaseLayoutBox)
+            break;
+        baseLogicalWidth += lineRun.logicalWidth();
+    }
+    return baseLogicalWidth;
+}
+
 RubyFormattingContext::InlineLayoutResult RubyFormattingContext::layoutInlineAxis(const InlineItemRange& rubyRange, const InlineItemList& inlineItemList, Line& line, InlineLayoutUnit availableWidth)
 {
     ASSERT(!rubyRange.isEmpty());

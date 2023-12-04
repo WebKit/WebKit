@@ -800,3 +800,14 @@ module.private.modulemap : $(WK_MODULEMAP_PRIVATE_FILE)
 	unifdef $(addprefix -D, $(FEATURE_AND_PLATFORM_DEFINES)) $(addprefix -U, $(FEATURE_AND_PLATFORM_UNDEFINES)) -o $@ $< || [ $$? -eq 1 ]
 
 all : module.private.modulemap
+
+ifeq ($(USE_INTERNAL_SDK),YES)
+WEBKIT_ADDITIONS_SWIFT_FILES = \
+	WKApplicationUtilities.swift \
+#
+
+$(WEBKIT_ADDITIONS_SWIFT_FILES): %.swift : %.swift.in
+	cp -f $< $@
+
+all : $(WEBKIT_ADDITIONS_SWIFT_FILES)
+endif

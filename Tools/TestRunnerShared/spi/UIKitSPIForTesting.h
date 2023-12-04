@@ -319,10 +319,6 @@ typedef NS_ENUM(NSUInteger, UIScrollPhase) {
 @interface UIScrollEvent : UIEvent
 @end
 
-@interface NSObject (UIScrollViewDelegate_ForWebKitOnly)
-- (void)_scrollView:(UIScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion;
-@end
-
 @interface UITextInteractionAssistant : NSObject <UIResponderStandardEditActions>
 @end
 
@@ -555,7 +551,15 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 - (void)removeEmojiAlternatives;
 @end
 
+typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
+    NSTextBlockPadding  = -1,
+    NSTextBlockBorder   =  0,
+    NSTextBlockMargin   =  1
+};
+
 @interface NSTextBlock : NSObject
+- (CGFloat)widthForLayer:(NSTextBlockLayer)layer edge:(CGRectEdge)edge;
+@property (nonatomic, copy) UIColor *backgroundColor;
 @end
 
 @interface NSTextTable : NSTextBlock

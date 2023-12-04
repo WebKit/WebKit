@@ -1007,11 +1007,6 @@ unsigned AccessibilityNodeObject::headingLevel() const
     if (node->hasTagName(h6Tag))
         return 6;
 
-    // The implicit value of aria-level is 2 for the heading role.
-    // https://www.w3.org/TR/wai-aria-1.1/#heading
-    if (ariaRoleAttribute() == AccessibilityRole::Heading)
-        return 2;
-
     return 0;
 }
 

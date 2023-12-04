@@ -155,6 +155,20 @@ LayoutRect RenderSVGBlock::clippedOverflowRect(const RenderLayerModelObject* rep
     return SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer, context);
 }
 
+auto RenderSVGBlock::rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds repaintOutlineBounds) const -> RepaintRects
+{
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document().settings().layerBasedSVGEngineEnabled())
+        return RenderBlockFlow::rectsForRepaintingAfterLayout(repaintContainer, repaintOutlineBounds);
+#endif
+
+    auto rects = RepaintRects { SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer, visibleRectContextForRepaint()) };
+    if (repaintOutlineBounds == RepaintOutlineBounds::Yes)
+        rects.outlineBoundsRect = outlineBoundsForRepaint(repaintContainer);
+
+    return rects;
+}
+
 auto RenderSVGBlock::computeVisibleRectsInContainer(const RepaintRects& rects, const RenderLayerModelObject* container, VisibleRectContext context) const -> std::optional<RepaintRects>
 {
 #if ENABLE(LAYER_BASED_SVG_ENGINE)

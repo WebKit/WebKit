@@ -133,7 +133,7 @@ static bool hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIndex, size
         return true;
     }
     if (trailingInlineItem.isInlineBoxStart()) {
-        // This is a special case when the inline box's fist child is a float box.
+        // This is a special case when the inline box's first child is a float box.
         return false;
     }
     if (trailingInlineItem.isOpaque()) {
@@ -480,7 +480,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
                 // soft wrap opportunity, any overflowing out-of-flow content would pile up as trailing content.
                 // Alternatively we could initiate a two pass layout first with out-of-flow content treated as true inflow and a second without them.
                 ASSERT(!lineContent.range.end.offset);
-                if (auto* lastRemovedTrailingBox = m_line.removeOverflowingOurOfFlowContent()) {
+                if (auto* lastRemovedTrailingBox = m_line.removeOverflowingOutOfFlowContent()) {
                     auto lineEndIndex = [&] {
                         for (auto index = lineContent.range.start.index; index < lineContent.range.end.index; ++index) {
                             if (&m_inlineItemList[index].layoutBox() == lastRemovedTrailingBox)
@@ -640,13 +640,22 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         }
         if (inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd()) {
             auto& layoutBox = inlineItem.layoutBox();
-            if (inlineItem.isInlineBoxStart() && layoutBox.isRubyBase()) {
-                // There should only be one ruby base per/annotation candidate content as we allow line breaking between bases.
-                ASSERT(!lineCandidate.inlineContent.continuousContent().minimumRequiredWidth());
-                if (auto minimumRequiredWidth = RubyFormattingContext::annotationBoxLogicalWidth(layoutBox, formattingContext()))
-                    lineCandidate.inlineContent.setMinimumRequiredWidth(*minimumRequiredWidth);
-            }
             auto logicalWidth = formattingContext().formattingUtils().inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLine());
+            if (layoutBox.isRubyBase()) {
+                if (auto annotationBoxLogicalWidth = RubyFormattingContext::annotationBoxLogicalWidth(layoutBox, formattingContext())) {
+                    if (inlineItem.isInlineBoxStart()) {
+                        // There should only be one ruby base per/annotation candidate content as we allow line breaking between bases.
+                        ASSERT(!lineCandidate.inlineContent.continuousContent().minimumRequiredWidth());
+                        lineCandidate.inlineContent.setMinimumRequiredWidth(*annotationBoxLogicalWidth);
+                    } else {
+                        // Base is supposed be at least as wide as the annotation is.
+                        // Let's adjust the inline box end width to accomodate such overflowing liner annotation.
+                        auto rubyBaseContentWidth = RubyFormattingContext::baseLogicalWidthFromRubyBaseEnd(inlineItem, m_line.runs(), lineCandidate.inlineContent.continuousContent().runs());
+                        ASSERT(rubyBaseContentWidth >= 0);
+                        logicalWidth += std::max(0.f, *annotationBoxLogicalWidth - rubyBaseContentWidth);
+                    }
+                }
+            }
             if (style.boxDecorationBreak() == BoxDecorationBreak::Clone) {
                 if (inlineItem.isInlineBoxStart())
                     inlineBoxListWithClonedDecorationEnd.add(&layoutBox);

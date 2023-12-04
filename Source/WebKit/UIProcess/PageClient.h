@@ -76,6 +76,7 @@ OBJC_CLASS NSTextAlternatives;
 OBJC_CLASS UIGestureRecognizer;
 OBJC_CLASS UIScrollEvent;
 OBJC_CLASS UIScrollView;
+OBJC_CLASS WKBaseScrollView;
 OBJC_CLASS _WKRemoteObjectRegistry;
 
 #if USE(APPKIT)
@@ -517,7 +518,7 @@ public:
     virtual void handleAutocorrectionContext(const WebAutocorrectionContext&) = 0;
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-    virtual void handleAsynchronousCancelableScrollEvent(UIScrollView *, UIScrollEvent *, void (^completion)(BOOL handled)) = 0;
+    virtual void handleAsynchronousCancelableScrollEvent(WKBaseScrollView *, UIScrollEvent *, void (^completion)(BOOL handled)) = 0;
 #endif
 
     virtual WebCore::Color contentViewBackgroundColor() = 0;

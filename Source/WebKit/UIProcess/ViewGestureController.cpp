@@ -679,6 +679,10 @@ void ViewGestureController::didCollectGeometryForMagnificationGesture(FloatRect 
     m_visibleContentRect = visibleContentRect;
     m_visibleContentRectIsValid = true;
     m_frameHandlesMagnificationGesture = frameHandlesMagnificationGesture;
+
+#if PLATFORM(MAC)
+    m_webPageProxy.didBeginMagnificationGesture();
+#endif
 }
 
 void ViewGestureController::prepareMagnificationGesture(FloatPoint origin)

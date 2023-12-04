@@ -435,6 +435,20 @@ void PlatformMediaSessionManager::setIsPlayingToAutomotiveHeadUnit(bool isPlayin
     m_isPlayingToAutomotiveHeadUnit = isPlayingToAutomotiveHeadUnit;
 }
 
+void PlatformMediaSessionManager::setSupportsSpatialAudioPlayback(bool supportsSpatialAudioPlayback)
+{
+    if (supportsSpatialAudioPlayback == m_supportsSpatialAudioPlayback)
+        return;
+
+    ALWAYS_LOG(LOGIDENTIFIER, supportsSpatialAudioPlayback);
+    m_supportsSpatialAudioPlayback = supportsSpatialAudioPlayback;
+}
+
+std::optional<bool> PlatformMediaSessionManager::supportsSpatialAudioPlaybackForConfiguration(const MediaConfiguration&)
+{
+    return m_supportsSpatialAudioPlayback;
+}
+
 void PlatformMediaSessionManager::sessionIsPlayingToWirelessPlaybackTargetChanged(PlatformMediaSession& session)
 {
     if (!m_isApplicationInBackground || !(restrictions(session.mediaType()) & BackgroundProcessPlaybackRestricted))

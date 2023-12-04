@@ -146,6 +146,12 @@ LayoutRect RenderTableCol::clippedOverflowRect(const RenderLayerModelObject* rep
     return parentTable->clippedOverflowRect(repaintContainer, context);
 }
 
+auto RenderTableCol::rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const -> RepaintRects
+{
+    // Ignore RepaintOutlineBounds because it doesn't make sense to use the table's outline bounds to repaint a column.
+    return { clippedOverflowRect(repaintContainer, visibleRectContextForRepaint()) };
+}
+
 void RenderTableCol::imageChanged(WrappedImagePtr, const IntRect*)
 {
     // FIXME: Repaint only the rect the image paints in.

@@ -385,6 +385,8 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVURLAssetExtendedMIME
 #if HAVE(AVAUDIOSESSION)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionPortCarAudio, NSString *)
 #define AVAudioSessionPortCarAudio PAL::get_AVFoundation_AVAudioSessionPortCarAudio()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVAudioSessionSpatialPlaybackCapabilitiesChangedNotification, NSString *)
+#define AVAudioSessionSpatialPlaybackCapabilitiesChangedNotification PAL::get_AVFoundation_AVAudioSessionSpatialPlaybackCapabilitiesChangedNotification()
 #endif // HAVE(AVAUDIOSESSION)
 
 #if HAVE(AVSPEECHSYNTHESIS_VOICES_CHANGE_NOTIFICATION)

@@ -400,7 +400,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:heading, level:2, tag:div, xml-roles:heading
+AXPlatformAttributes: computed-role:heading, tag:div, xml-roles:heading
 ------------
 AXRole: AXImage
 AXParent: AXWebArea
@@ -1698,7 +1698,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:heading, level:2, tag:div, xml-roles:doc-subtitle
+AXPlatformAttributes: computed-role:heading, tag:div, xml-roles:doc-subtitle
 ------------
 AXRole: AXComment
 AXParent: AXWebArea

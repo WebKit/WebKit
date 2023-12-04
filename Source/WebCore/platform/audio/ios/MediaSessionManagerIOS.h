@@ -85,6 +85,7 @@ private:
     void activeAudioRouteDidChange(ShouldPause) final;
     void activeVideoRouteDidChange(SupportsAirPlayVideo, Ref<MediaPlaybackTarget>&&) final;
     void isPlayingToAutomotiveHeadUnitDidChange(PlayingToAutomotiveHeadUnit) final;
+    void activeAudioRouteSupportsSpatialPlaybackDidChange(SupportsSpatialAudioPlayback) final;
 #if !RELEASE_LOG_DISABLED
     const char* logClassName() const final { return "MediaSessionManageriOS"; }
 #endif

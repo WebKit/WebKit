@@ -2324,7 +2324,7 @@ void WebPage::setTextZoomFactor(double zoomFactor)
 {
 #if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn()) {
-        pluginView->setPageScaleFactor(zoomFactor);
+        pluginView->setPageScaleFactor(zoomFactor, std::nullopt);
         return;
     }
 #endif
@@ -2352,7 +2352,7 @@ void WebPage::setPageZoomFactor(double zoomFactor)
 {
 #if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn()) {
-        pluginView->setPageScaleFactor(zoomFactor);
+        pluginView->setPageScaleFactor(zoomFactor, std::nullopt);
         return;
     }
 #endif
@@ -2428,7 +2428,8 @@ void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFa
 {
 #if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn()) {
-        pluginView->setPageScaleFactor(pageZoomFactor);
+        // FIXME: Shouldn't this multiply the two scales, given we send both as "page scale" above?
+        pluginView->setPageScaleFactor(pageZoomFactor, std::nullopt);
         return;
     }
 #endif
@@ -2465,12 +2466,9 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
     if (auto* pluginView = mainFramePlugIn()) {
         // Since the main-frame PDF plug-in handles the page scale factor, make sure to reset WebCore's page scale.
         // Otherwise, we can end up with an immutable but non-1 page scale applied by WebCore on top of whatever the plugin does.
-        if (m_page->pageScaleFactor() != 1) {
+        if (m_page->pageScaleFactor() != 1)
             m_page->setPageScaleFactor(1, origin);
-            for (auto& pluginView : m_pluginViews)
-                pluginView.pageScaleFactorDidChange();
-        }
-        pluginView->setPageScaleFactor(totalScale);
+        pluginView->setPageScaleFactor(totalScale, { origin });
         return;
     }
 #endif
@@ -2483,7 +2481,7 @@ void WebPage::scalePage(double scale, const IntPoint& origin)
 
 #if ENABLE(PDF_PLUGIN)
     for (auto& pluginView : m_pluginViews)
-        pluginView.pageScaleFactorDidChange();
+        pluginView.setPageScaleFactor(totalScale, { origin });
 #endif
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)

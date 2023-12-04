@@ -32,6 +32,7 @@
 #import "TestResourceLoadDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
+#import <WebCore/ColorCocoa.h>
 #import <WebKit/NSAttributedStringPrivate.h>
 #import <WebKit/_WKResourceLoadInfo.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
@@ -273,17 +274,27 @@ TEST(WKWebView, AttributedStringFromTable)
 {
     auto webView = adoptNS([TestWKWebView new]);
     [webView synchronouslyLoadHTMLString:@"<html>"
+        "  <head>"
+        "  <style>"
+        "  .background {"
+        "      background-color: red;"
+        "  }"
+        "  .border {"
+        "      border: 2px solid red;"
+        "  }"
+        "  </style>"
+        "  </head>"
         "  <body>"
         "    <table>"
         "      <tbody>"
-        "        <tr><td>One</td><td>Two</td></tr>"
-        "        <tr><td>Three</td><td>Four</td></tr>"
+        "        <tr><td class='background'>One</td><td class='background'>Two</td></tr>"
+        "        <tr><td class='background'>Three</td><td class='background'>Four</td></tr>"
         "      </tbody>"
         "    </table>"
         "    <table>"
         "      <tbody>"
-        "        <tr><td>Five</td><td>Six</td></tr>"
-        "        <tr><td>Seven</td><td>Eight</td></tr>"
+        "        <tr><td class='border'>Five</td><td class='border'>Six</td></tr>"
+        "        <tr><td class='border'>Seven</td><td class='border'>Eight</td></tr>"
         "      </tbody>"
         "    </table>"
         "  </body>"
@@ -299,7 +310,8 @@ TEST(WKWebView, AttributedStringFromTable)
         allTableCells.append({ trimmedSubstring, static_cast<NSTextTableBlock *>(textBlocks[0]) });
     }];
 
-    auto checkCellAtIndex = ^(size_t index, NSString *expectedText, NSInteger expectedColumn, NSInteger expectedRow, NSTextTable *expectedTable) {
+    auto checkCellAtIndex = ^(size_t index, NSString *expectedText, NSInteger expectedColumn, NSInteger expectedRow, NSTextTable *expectedTable,
+        CGFloat expectedBorderWidth, WebCore::CocoaColor *expectedBackgroundColor) {
         auto [text, cell] = allTableCells[index];
         EXPECT_WK_STREQ(expectedText, text);
         EXPECT_EQ(cell.startingColumn, expectedColumn);
@@ -307,20 +319,27 @@ TEST(WKWebView, AttributedStringFromTable)
         EXPECT_EQ(cell.columnSpan, static_cast<NSInteger>(1));
         EXPECT_EQ(cell.rowSpan, static_cast<NSInteger>(1));
         EXPECT_EQ(cell.table, expectedTable);
+#if PLATFORM(IOS_FAMILY)
+        auto leftEdge = CGRectMinXEdge;
+#else
+        auto leftEdge = NSRectEdgeMinX;
+#endif
+        EXPECT_EQ([cell widthForLayer:NSTextBlockBorder edge:leftEdge], expectedBorderWidth);
+        EXPECT_TRUE([cell backgroundColor] == expectedBackgroundColor || [[cell backgroundColor] isEqual:expectedBackgroundColor]);
     };
 
     EXPECT_EQ(allTableCells.size(), 8U);
     auto firstTable = allTableCells.first().second.table;
     auto secondTable = allTableCells.last().second.table;
 
-    checkCellAtIndex(0, @"One", 0, 0, firstTable);
-    checkCellAtIndex(1, @"Two", 1, 0, firstTable);
-    checkCellAtIndex(2, @"Three", 0, 1, firstTable);
-    checkCellAtIndex(3, @"Four", 1, 1, firstTable);
-    checkCellAtIndex(4, @"Five", 0, 0, secondTable);
-    checkCellAtIndex(5, @"Six", 1, 0, secondTable);
-    checkCellAtIndex(6, @"Seven", 0, 1, secondTable);
-    checkCellAtIndex(7, @"Eight", 1, 1, secondTable);
+    checkCellAtIndex(0, @"One", 0, 0, firstTable, 0, [WebCore::CocoaColor redColor]);
+    checkCellAtIndex(1, @"Two", 1, 0, firstTable, 0, [WebCore::CocoaColor redColor]);
+    checkCellAtIndex(2, @"Three", 0, 1, firstTable, 0, [WebCore::CocoaColor redColor]);
+    checkCellAtIndex(3, @"Four", 1, 1, firstTable, 0, [WebCore::CocoaColor redColor]);
+    checkCellAtIndex(4, @"Five", 0, 0, secondTable, 2., nil);
+    checkCellAtIndex(5, @"Six", 1, 0, secondTable, 2., nil);
+    checkCellAtIndex(6, @"Seven", 0, 1, secondTable, 2., nil);
+    checkCellAtIndex(7, @"Eight", 1, 1, secondTable, 2., nil);
 }
 
 TEST(WKWebView, AttributedStringWithLinksInTableCell)

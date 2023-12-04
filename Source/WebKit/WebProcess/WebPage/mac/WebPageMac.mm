@@ -1062,11 +1062,25 @@ void WebPage::playbackTargetPickerWasDismissed(PlaybackTargetClientContextIdenti
 }
 #endif
 
+void WebPage::didBeginMagnificationGesture()
+{
+#if ENABLE(PDF_PLUGIN)
+    if (auto* pluginView = mainFramePlugIn()) {
+        pluginView->didBeginMagnificationGesture();
+        return;
+    }
+#endif
+}
+
 void WebPage::didEndMagnificationGesture()
 {
 #if ENABLE(MAC_GESTURE_EVENTS)
     if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
         localMainFrame->eventHandler().didEndMagnificationGesture();
+#endif
+#if ENABLE(PDF_PLUGIN)
+    if (auto* pluginView = mainFramePlugIn())
+        pluginView->didEndMagnificationGesture();
 #endif
 }
 

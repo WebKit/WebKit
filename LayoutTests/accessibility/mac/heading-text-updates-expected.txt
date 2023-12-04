@@ -13,7 +13,7 @@ h3
 AXValue: 3
 AXValue: original text
 divheading
-AXValue: 2
+AXValue: 0
 AXValue: original text
 h1
 AXValue: 1
@@ -25,7 +25,7 @@ h3
 AXValue: 3
 AXValue: innerHTML
 divheading
-AXValue: 2
+AXValue: 0
 AXValue: innerHTML
 h1
 AXValue: 1
@@ -37,7 +37,7 @@ h3
 AXValue: 3
 AXValue: innerText
 divheading
-AXValue: 2
+AXValue: 0
 AXValue: innerText
 h1
 AXValue: 1
@@ -49,7 +49,7 @@ h3
 AXValue: 3
 AXValue: textContent
 divheading
-AXValue: 2
+AXValue: 0
 AXValue: textContent
 h1
 AXValue: 1
@@ -61,7 +61,7 @@ h3
 AXValue: 3
 AXValue: firstChild.data
 divheading
-AXValue: 2
+AXValue: 0
 AXValue: firstChild.data
 PASS successfullyParsed is true
 

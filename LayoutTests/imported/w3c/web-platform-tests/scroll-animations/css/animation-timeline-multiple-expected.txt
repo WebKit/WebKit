@@ -1,3 +1,3 @@
 
-FAIL animation-timeline works with multiple timelines promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline works with multiple timelines assert_equals: expected "120px" but got "100.050003px"
 

@@ -384,6 +384,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/VisitedLinkStoreMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/VisitedLinkStoreMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/VisitedLinkTableControllerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/VisitedLinkTableControllerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WKApplicationUtilities.swift
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebAuthenticatorCoordinatorMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebAuthenticatorCoordinatorMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebAuthenticatorCoordinatorProxyMessageReceiver.cpp

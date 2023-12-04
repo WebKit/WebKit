@@ -11346,8 +11346,17 @@ void WebPageProxy::setFooterBannerHeight(int height)
     send(Messages::WebPage::SetFooterBannerHeight(height));
 }
 
+void WebPageProxy::didBeginMagnificationGesture()
+{
+    if (!hasRunningProcess())
+        return;
+    send(Messages::WebPage::DidBeginMagnificationGesture());
+}
+
 void WebPageProxy::didEndMagnificationGesture()
 {
+    if (!hasRunningProcess())
+        return;
     send(Messages::WebPage::DidEndMagnificationGesture());
 }
 

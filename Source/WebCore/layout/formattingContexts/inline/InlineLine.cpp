@@ -243,7 +243,7 @@ void Line::handleOverflowingNonBreakingSpace(TrailingContentAction trailingConte
     m_contentLogicalWidth -= removedOrCollapsedContentWidth;
 }
 
-const Box* Line::removeOverflowingOurOfFlowContent()
+const Box* Line::removeOverflowingOutOfFlowContent()
 {
     auto lastTrailingOpaqueItemIndex = std::optional<size_t> { };
     for (size_t index = m_runs.size(); index--;) {

@@ -1,4 +1,4 @@
-# Copyright (C) 2020 Apple Inc. All rights reserved.
+# Copyright (C) 2020-2023 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -32,6 +32,7 @@ messages -> RemoteMediaSessionHelper NotRefCounted {
     IsPlayingToAutomotiveHeadUnitDidChange(enum:bool WebKit::RemoteMediaSessionHelper::PlayingToAutomotiveHeadUnit isPlayingToAutomotiveHeadUnit)
     ActiveAudioRouteDidChange(enum:bool WebKit::RemoteMediaSessionHelper::ShouldPause shouldPause)
     ActiveVideoRouteDidChange(enum:bool WebKit::RemoteMediaSessionHelper::SupportsAirPlayVideo supportsAirPlayVideo, WebCore::MediaPlaybackTargetContext target)
+    ActiveAudioRouteSupportsSpatialPlaybackDidChange(enum:bool WebKit::RemoteMediaSessionHelper::SupportsSpatialAudioPlayback supportsSpatialPlayback)
 }
 
 #endif

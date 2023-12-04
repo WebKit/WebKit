@@ -33,6 +33,7 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #if PLATFORM(MAC)
 #import <AppKit/AppKit.h>
+#import <pal/spi/mac/NSTextTableSPI.h>
 #else
 #import <pal/ios/UIKitSoftLink.h>
 #import "UIFoundationSoftLink.h"
@@ -119,6 +120,7 @@ inline static RetainPtr<NSParagraphStyle> reconstructStyle(const AttributedStrin
             replacementBlock = tableBlock;
         else if (!ensureTableResult.isNewEntry) {
             replacementBlock = adoptNS([[PlatformNSTextTableBlock alloc] initWithTable:table startingRow:tableBlock.startingRow rowSpan:tableBlock.rowSpan startingColumn:tableBlock.startingColumn columnSpan:tableBlock.columnSpan]);
+            [replacementBlock _takeValuesFromTextBlock:tableBlock];
             tableBlocks.set(tableBlockID, replacementBlock.get());
         }
 

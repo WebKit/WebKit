@@ -61,9 +61,10 @@ private:
     void appendInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool lineHasContent, InlineDisplay::Boxes&);
     void appendSpanningInlineBoxDisplayBox(const Line::Run&, const InlineLevelBox&, const InlineRect&, bool lineHasContent, InlineDisplay::Boxes&);
     void appendInlineDisplayBoxAtBidiBoundary(const Box&, InlineDisplay::Boxes&);
-    void appendRubyAnnotationBox(const Box& rubyBaseLayoutBox, InlineDisplay::Boxes&);
-    void handleInlineBoxEnd(const Line::Run&, const InlineDisplay::Boxes&);
-    void applyRubyOverhang(InlineDisplay::Boxes&);
+    void insertRubyAnnotationBox(const Box& rubyBaseLayoutBox, size_t insertionPosition, InlineDisplay::Boxes&);
+
+    void processRubyContent(InlineDisplay::Boxes&);
+    void applyRubyOverhang(InlineDisplay::Boxes&, const Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList);
 
     void setInlineBoxGeometry(const Box&, const InlineRect&, bool isFirstInlineBoxFragment);
     void adjustVisualGeometryForDisplayBox(size_t displayBoxNodeIndex, InlineLayoutUnit& accumulatedOffset, InlineLayoutUnit lineBoxLogicalTop, const DisplayBoxTree&, InlineDisplay::Boxes&, const LineBox&, const HashMap<const Box*, IsFirstLastIndex>&);
@@ -95,7 +96,7 @@ private:
     // FIXME: This should take DisplayLine::isTruncatedInBlockDirection() for non-prefixed line-clamp.
     bool m_lineIsFullyTruncatedInBlockDirection { false };
     bool m_contentHasInkOverflow { false };
-    Vector<WTF::Range<size_t>> m_interlinearRubyColumnRangeList;
+    bool m_hasSeenRubyBase { false };
 };
 
 }

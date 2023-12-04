@@ -175,7 +175,9 @@ private:
     WebCore::FloatSize pdfDocumentSizeForPrinting() const override;
 
     void geometryDidChange(const WebCore::IntSize& pluginSize, const WebCore::AffineTransform& pluginToRootViewTransform) override;
-    void contentsScaleFactorChanged(float) override;
+    void deviceScaleFactorChanged(float) override;
+
+    void setPageScaleFactor(double, std::optional<WebCore::IntPoint> origin) override;
 
     WebCore::IntSize contentsSize() const override;
     unsigned firstPageHeight() const override;
@@ -217,7 +219,6 @@ private:
 
     bool supportsForms();
 
-    bool handlesPageScaleFactor() const;
     void updatePageAndDeviceScaleFactors();
 
     void createPasswordEntryForm();

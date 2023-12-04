@@ -30,6 +30,7 @@
 #include "NavigationScheduler.h"
 #include "Page.h"
 #include "RemoteFrame.h"
+#include "RenderElement.h"
 #include "WindowProxy.h"
 
 namespace WebCore {
@@ -120,6 +121,21 @@ Ref<WindowProxy> Frame::protectedWindowProxy() const
 CheckedRef<NavigationScheduler> Frame::checkedNavigationScheduler() const
 {
     return m_navigationScheduler.get();
+}
+
+RenderWidget* Frame::ownerRenderer() const
+{
+    RefPtr ownerElement = this->ownerElement();
+    if (!ownerElement)
+        return nullptr;
+    auto* object = ownerElement->renderer();
+    // FIXME: If <object> is ever fixed to disassociate itself from frames
+    // that it has started but canceled, then this can turn into an ASSERT
+    // since ownerElement would be nullptr when the load is canceled.
+    // https://bugs.webkit.org/show_bug.cgi?id=18585
+    if (!is<RenderWidget>(object))
+        return nullptr;
+    return downcast<RenderWidget>(object);
 }
 
 } // namespace WebCore
