@@ -58,6 +58,7 @@ public:
 
     static bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& current);
     static std::optional<InlineLayoutUnit> annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, const InlineFormattingContext&);
+    static InlineLayoutUnit baseLogicalWidthFromRubyBaseEnd(const InlineItem& rubyBaseEnd, const Line::RunList&, const InlineContentBreaker::ContinuousContent::RunList&);
 
 private:
     struct BaseLayoutResult {
