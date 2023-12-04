@@ -322,6 +322,13 @@ void ScrollAnchoringController::adjustScrollPositionForAnchoring()
 
     FloatSize adjustment = computeOffsetFromOwningScroller(*renderer) - m_lastOffsetForAnchorElement;
     if (!adjustment.isZero()) {
+#if PLATFORM(IOS_FAMILY)
+        if (m_owningScrollableArea.isUserScrollInProgress()) {
+            invalidateAnchorElement();
+            updateAnchorElement();
+            return;
+        }
+#endif
         auto newScrollPosition = m_owningScrollableArea.scrollPosition() + IntPoint(adjustment.width(), adjustment.height());
         LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::updateScrollPosition() for frame: " << frameView() << " for scroller: " << m_owningScrollableArea << " adjusting from: " << m_owningScrollableArea.scrollPosition() << " to: " << newScrollPosition);
         auto options = ScrollPositionChangeOptions::createProgrammatic();

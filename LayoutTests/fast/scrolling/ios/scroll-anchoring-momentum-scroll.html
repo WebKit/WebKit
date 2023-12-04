@@ -1,0 +1,45 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true AsyncFrameScrollingEnabled=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body { height: 4000px; }
+
+#block1 {
+    height: 100px;
+    background-color: green;
+}
+
+#block2 {
+    height: 600px;
+    background-color: blue;
+}
+</style>
+
+<body onload="runTest()">
+    <div id="block1">abc</div>
+    <div id="block2">def</div>
+</body>
+
+<script>
+jsTestIsAsync = true;
+
+async function runTest()
+{
+    description("Verifies that a scroll anchoring adjustment does not cancel a momentum scroll.");
+
+    if (!window.testRunner)
+        return;
+    
+    document.scrollingElement.scrollTop = 350;
+
+    await UIHelper.dragFromPointToPoint(150, 420, 150, 400, 0.01);
+    document.querySelector("#block1").style.height = "200px";
+    await UIHelper.waitForTargetScrollAnimationToSettle(document.scrollingElement);
+    shouldBeGreaterThan("document.scrollingElement.scrollTop", "900");
+   finishJSTest();
+}
+</script>
+</html>
