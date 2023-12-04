@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,8 +62,13 @@ String errorDescriptionForValue(JSGlobalObject* globalObject, JSValue v)
         return tryMakeString('"', string, '"');
     }
 
-    if (v.isSymbol())
-        return asSymbol(v)->descriptiveString();
+    if (v.isSymbol()) {
+        auto expectedDescription = asSymbol(v)->tryGetDescriptiveString();
+        if (expectedDescription)
+            return expectedDescription.value();
+        ASSERT(expectedDescription.error() == ErrorTypeWithExtension::OutOfMemoryError);
+        return String("Symbol"_s);
+    }
     if (v.isObject()) {
         VM& vm = globalObject->vm();
         JSObject* object = asObject(v);
