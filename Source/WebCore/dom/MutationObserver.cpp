@@ -67,7 +67,7 @@ MutationObserver::MutationObserver(Ref<MutationCallback>&& callback)
 
 MutationObserver::~MutationObserver()
 {
-    ASSERT(m_registrations.isEmptyIgnoringNullReferences());
+    ASSERT(m_registrations.isEmpty());
 }
 
 bool MutationObserver::validateOptions(MutationObserverOptions options)

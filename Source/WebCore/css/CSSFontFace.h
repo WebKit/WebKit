@@ -191,7 +191,7 @@ private:
     float m_sizeAdjust { 1.0 };
 
     Vector<std::unique_ptr<CSSFontFaceSource>, 0, CrashOnOverflow, 0> m_sources;
-    WeakHashSet<Client> m_clients;
+    WeakHashSetAssumingNoNullReferences<Client> m_clients;
     WeakPtr<FontFace> m_wrapper;
     FontSelectionSpecifiedCapabilities m_fontSelectionCapabilities;
     

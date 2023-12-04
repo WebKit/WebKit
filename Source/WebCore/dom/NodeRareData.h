@@ -216,7 +216,7 @@ class NodeMutationObserverData {
     WTF_MAKE_NONCOPYABLE(NodeMutationObserverData); WTF_MAKE_FAST_ALLOCATED;
 public:
     Vector<std::unique_ptr<MutationObserverRegistration>> registry;
-    WeakHashSet<MutationObserverRegistration> transientRegistry;
+    WeakHashSetAssumingNoNullReferences<MutationObserverRegistration> transientRegistry;
 
     NodeMutationObserverData() { }
 };

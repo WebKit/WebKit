@@ -95,7 +95,7 @@ struct SameSizeAsRenderBlock : public RenderBox {
 static_assert(sizeof(RenderBlock) == sizeof(SameSizeAsRenderBlock), "RenderBlock should stay small");
 
 using TrackedDescendantsMap = WeakHashMap<const RenderBlock, std::unique_ptr<TrackedRendererListHashSet>>;
-using TrackedContainerMap = WeakHashMap<const RenderBox, WeakHashSet<const RenderBlock>>;
+using TrackedContainerMap = WeakHashMap<const RenderBox, WeakHashSetAssumingNoNullReferences<const RenderBlock>>;
 
 static TrackedDescendantsMap* percentHeightDescendantsMap;
 static TrackedContainerMap* percentHeightContainerMap;
@@ -121,7 +121,7 @@ static void insertIntoTrackedRendererMaps(const RenderBlock& container, RenderBo
         return;
     }
     
-    auto& containerSet = percentHeightContainerMap->add(descendant, WeakHashSet<const RenderBlock>()).iterator->value;
+    auto& containerSet = percentHeightContainerMap->add(descendant, WeakHashSetAssumingNoNullReferences<const RenderBlock>()).iterator->value;
     ASSERT(!containerSet.contains(container));
     containerSet.add(container);
 }
@@ -332,7 +332,7 @@ static void removeBlockFromPercentageDescendantAndContainerMaps(RenderBlock& blo
         auto& containerSet = it->value;
         ASSERT(containerSet.contains(block));
         containerSet.remove(block);
-        if (containerSet.isEmptyIgnoringNullReferences())
+        if (containerSet.isEmpty())
             percentHeightContainerMap->remove(it);
     }
 }

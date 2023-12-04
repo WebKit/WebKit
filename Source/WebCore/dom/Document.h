@@ -2047,7 +2047,7 @@ private:
 
     mutable String m_uniqueIdentifier;
 
-    WeakHashSet<NodeIterator> m_nodeIterators;
+    WeakHashSetAssumingNoNullReferences<NodeIterator> m_nodeIterators;
     HashSet<CheckedRef<Range>> m_ranges;
 
     UniqueRef<Style::Scope> m_styleScope;
@@ -2121,25 +2121,25 @@ private:
     // Collection of canvas objects that need to do work after they've
     // rendered but before compositing, for the next frame. The set is
     // cleared after they've been called.
-    WeakHashSet<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_canvasesNeedingDisplayPreparation;
+    WeakHashSetAssumingNoNullReferences<HTMLCanvasElement, WeakPtrImplWithEventTargetData> m_canvasesNeedingDisplayPreparation;
 
     HashMap<String, RefPtr<HTMLCanvasElement>> m_cssCanvasElements;
 
-    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_documentSuspensionCallbackElements;
+    WeakHashSetAssumingNoNullReferences<Element, WeakPtrImplWithEventTargetData> m_documentSuspensionCallbackElements;
 
 #if ENABLE(VIDEO)
-    WeakHashSet<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElements;
+    WeakHashSetAssumingNoNullReferences<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElements;
 #endif
 
 #if ENABLE(VIDEO)
-    WeakHashSet<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_captionPreferencesChangedElements;
+    WeakHashSetAssumingNoNullReferences<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_captionPreferencesChangedElements;
     WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElementShowingTextTrack;
 #endif
 
     CheckedPtr<Element> m_mainArticleElement;
     HashSet<CheckedPtr<Element>> m_articleElements;
 
-    WeakHashSet<VisibilityChangeClient> m_visibilityStateCallbackClients;
+    WeakHashSetAssumingNoNullReferences<VisibilityChangeClient> m_visibilityStateCallbackClients;
 
     std::unique_ptr<HashMap<String, WeakPtr<Element, WeakPtrImplWithEventTargetData>, ASCIICaseInsensitiveHash>> m_accessKeyCache;
 
@@ -2148,14 +2148,14 @@ private:
     RenderPtr<RenderView> m_renderView;
     std::unique_ptr<RenderStyle> m_initialContainingBlockStyle;
 
-    WeakHashSet<MediaCanStartListener> m_mediaCanStartListeners;
+    WeakHashSetAssumingNoNullReferences<MediaCanStartListener> m_mediaCanStartListeners;
     WeakHashSet<DisplayChangedObserver> m_displayChangedObservers;
 
 #if ENABLE(FULLSCREEN_API)
     UniqueRef<FullscreenManager> m_fullscreenManager;
 #endif
 
-    WeakHashSet<HTMLImageElement, WeakPtrImplWithEventTargetData> m_dynamicMediaQueryDependentImages;
+    WeakHashSetAssumingNoNullReferences<HTMLImageElement, WeakPtrImplWithEventTargetData> m_dynamicMediaQueryDependentImages;
 
     Vector<WeakPtr<IntersectionObserver>> m_intersectionObservers;
     Timer m_intersectionObserversInitialUpdateTimer;
@@ -2232,7 +2232,7 @@ private:
     Ref<CSSFontSelector> m_fontSelector;
     UniqueRef<DocumentFontLoader> m_fontLoader;
 
-    WeakHashSet<MediaProducer> m_audioProducers;
+    WeakHashSetAssumingNoNullReferences<MediaProducer> m_audioProducers;
     WeakPtr<SpeechRecognition> m_activeSpeechRecognition;
 
     WeakListHashSet<ShadowRoot, WeakPtrImplWithEventTargetData> m_inDocumentShadowRoots;
@@ -2311,7 +2311,7 @@ private:
 
     Vector<Function<void()>> m_whenIsVisibleHandlers;
 
-    WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_elementsWithPendingUserAgentShadowTreeUpdates;
+    WeakHashSetAssumingNoNullReferences<Element, WeakPtrImplWithEventTargetData> m_elementsWithPendingUserAgentShadowTreeUpdates;
 
     Ref<ReportingScope> m_reportingScope;
 

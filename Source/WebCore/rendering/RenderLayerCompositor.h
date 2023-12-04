@@ -136,8 +136,8 @@ private:
 
     ChromeClient& m_chromeClient;
 
-    WeakHashSet<RenderLayer> m_scrollingLayers;
-    WeakHashSet<RenderLayer> m_viewportConstrainedLayers;
+    WeakHashSetAssumingNoNullReferences<RenderLayer> m_scrollingLayers;
+    WeakHashSetAssumingNoNullReferences<RenderLayer> m_viewportConstrainedLayers;
 
     const bool m_coordinateViewportConstrainedLayers;
 };

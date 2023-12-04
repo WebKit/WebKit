@@ -35,10 +35,13 @@
 namespace WTF {
 
 enum class EnableWeakPtrThreadingAssertions : bool { No, Yes };
+enum class AssumeNoNullReferences : bool { No, Yes };
 template<typename, typename> class WeakPtrFactory;
 
 template<typename, typename, typename = DefaultWeakPtrImpl> class WeakHashMap;
-template<typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes> class WeakHashSet;
+template<typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes, AssumeNoNullReferences = AssumeNoNullReferences::No> class WeakHashSet;
+template<typename T, typename WeakPtrImpl = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes>
+using WeakHashSetAssumingNoNullReferences = WeakHashSet<T, WeakPtrImpl, enableWeakPtrThreadingAssertions, AssumeNoNullReferences::Yes>;
 template <typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes> class WeakListHashSet;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(WeakPtrImplBase);
@@ -149,7 +152,7 @@ public:
 
 private:
     template<typename, typename, typename> friend class WeakHashMap;
-    template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
+    template<typename, typename, EnableWeakPtrThreadingAssertions, AssumeNoNullReferences> friend class WeakHashSet;
     template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakListHashSet;
     template<typename, typename> friend class WeakPtr;
     template<typename, typename> friend class WeakPtrFactory;
@@ -258,7 +261,7 @@ public:
     void setBitfield(uint16_t value) const { return m_impl.setType(value); }
 
 private:
-    template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
+    template<typename, typename, EnableWeakPtrThreadingAssertions, AssumeNoNullReferences> friend class WeakHashSet;
     template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakListHashSet;
     template<typename, typename, typename> friend class WeakHashMap;
     template<typename, typename> friend class WeakPtr;
@@ -397,10 +400,12 @@ WeakPtr(const RefPtr<T>& value, EnableWeakPtrThreadingAssertions = EnableWeakPtr
 
 } // namespace WTF
 
+using WTF::AssumeNoNullReferences;
 using WTF::CanMakeWeakPtr;
 using WTF::EnableWeakPtrThreadingAssertions;
 using WTF::WeakHashMap;
 using WTF::WeakHashSet;
+using WTF::WeakHashSetAssumingNoNullReferences;
 using WTF::WeakListHashSet;
 using WTF::WeakPtr;
 using WTF::WeakPtrFactory;

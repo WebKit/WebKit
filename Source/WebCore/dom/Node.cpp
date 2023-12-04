@@ -483,7 +483,7 @@ void Node::materializeRareData()
 void Node::clearRareData()
 {
     ASSERT(hasRareData());
-    ASSERT(!transientMutationObserverRegistry() || transientMutationObserverRegistry()->isEmptyIgnoringNullReferences());
+    ASSERT(!transientMutationObserverRegistry() || transientMutationObserverRegistry()->isEmpty());
 
     m_rareDataWithBitfields.setPointer(nullptr);
 }
@@ -2364,7 +2364,7 @@ Vector<std::unique_ptr<MutationObserverRegistration>>* Node::mutationObserverReg
     return &data->registry;
 }
 
-WeakHashSet<MutationObserverRegistration>* Node::transientMutationObserverRegistry()
+WeakHashSetAssumingNoNullReferences<MutationObserverRegistration>* Node::transientMutationObserverRegistry()
 {
     if (!hasRareData())
         return nullptr;

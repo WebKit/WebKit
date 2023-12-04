@@ -52,7 +52,7 @@ namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSFontFace);
 
-template<typename T> void iterateClients(WeakHashSet<CSSFontFace::Client>& clients, T callback)
+template<typename T> void iterateClients(WeakHashSetAssumingNoNullReferences<CSSFontFace::Client>& clients, T callback)
 {
     for (auto& client : copyToVectorOf<Ref<CSSFontFace::Client>>(clients))
         callback(client);

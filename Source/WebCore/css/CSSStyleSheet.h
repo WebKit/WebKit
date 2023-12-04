@@ -184,7 +184,7 @@ private:
     MQ::MediaQueryList m_mediaQueries;
     WeakPtr<Style::Scope> m_styleScope;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_constructorDocument;
-    WeakHashSet<ContainerNode, WeakPtrImplWithEventTargetData> m_adoptingTreeScopes;
+    WeakHashSetAssumingNoNullReferences<ContainerNode, WeakPtrImplWithEventTargetData> m_adoptingTreeScopes;
 
     CheckedPtr<Node> m_ownerNode;
     WeakPtr<CSSImportRule> m_ownerRule;

@@ -751,7 +751,7 @@ private:
     void materializeRareData();
 
     Vector<std::unique_ptr<MutationObserverRegistration>>* mutationObserverRegistry();
-    WeakHashSet<MutationObserverRegistration>* transientMutationObserverRegistry();
+    WeakHashSetAssumingNoNullReferences<MutationObserverRegistration>* transientMutationObserverRegistry();
 
     void adjustStyleValidity(Style::Validity, Style::InvalidationMode);
 

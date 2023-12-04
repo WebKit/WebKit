@@ -2064,7 +2064,6 @@ void Document::unregisterMediaElement(HTMLMediaElement& element)
 
 void Document::forEachMediaElement(const Function<void(HTMLMediaElement&)>& function)
 {
-    ASSERT(!m_mediaElements.hasNullReferences());
     m_mediaElements.forEach([&](auto& element) {
         function(Ref { element });
     });
@@ -4842,7 +4841,6 @@ void Document::noteUserInteractionWithMediaElement()
 
 void Document::updateIsPlayingMedia()
 {
-    ASSERT(!m_audioProducers.hasNullReferences());
     MediaProducerMediaStateFlags state;
     for (auto& audioProducer : m_audioProducers)
         state.add(audioProducer.mediaState());
@@ -6348,7 +6346,6 @@ void Document::unregisterForCaptionPreferencesChangedCallbacks(HTMLMediaElement&
 
 void Document::captionPreferencesChanged()
 {
-    ASSERT(!m_captionPreferencesChangedElements.hasNullReferences());
     m_captionPreferencesChangedElements.forEach([](HTMLMediaElement& element) {
         Ref { element }->captionPreferencesChanged();
     });
@@ -7387,7 +7384,7 @@ void Document::removeMediaCanStartListener(MediaCanStartListener& listener)
 
 MediaCanStartListener* Document::takeAnyMediaCanStartListener()
 {
-    if (m_mediaCanStartListeners.isEmptyIgnoringNullReferences())
+    if (m_mediaCanStartListeners.isEmpty())
         return nullptr;
 
     MediaCanStartListener* listener = m_mediaCanStartListeners.begin().get();

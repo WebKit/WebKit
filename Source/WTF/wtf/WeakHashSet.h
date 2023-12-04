@@ -31,7 +31,7 @@
 
 namespace WTF {
 
-template<typename T, typename WeakPtrImpl, EnableWeakPtrThreadingAssertions assertionsPolicy>
+template<typename T, typename WeakPtrImpl, EnableWeakPtrThreadingAssertions assertionsPolicy, AssumeNoNullReferences assumeNoNullReferences>
 class WeakHashSet final {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -52,7 +52,8 @@ public:
             , m_position(position)
             , m_endPosition(set.m_set.end())
         {
-            skipEmptyBuckets();
+            if constexpr (assumeNoNullReferences == AssumeNoNullReferences::No)
+                skipEmptyBuckets();
         }
 
     public:
@@ -64,13 +65,16 @@ public:
         {
             ASSERT(m_position != m_endPosition);
             ++m_position;
-            skipEmptyBuckets();
-            m_set.increaseOperationCountSinceLastCleanup();
+            if constexpr (assumeNoNullReferences == AssumeNoNullReferences::No) {
+                skipEmptyBuckets();
+                m_set.increaseOperationCountSinceLastCleanup();
+            }
             return *this;
         }
 
         void skipEmptyBuckets()
         {
+            static_assert(assumeNoNullReferences == AssumeNoNullReferences::No);
             while (m_position != m_endPosition && !get())
                 ++m_position;
         }
@@ -81,7 +85,7 @@ public:
         }
 
     private:
-        template <typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakHashSet;
+        template <typename, typename, EnableWeakPtrThreadingAssertions, AssumeNoNullReferences> friend class WeakHashSet;
 
         const WeakHashSet& m_set;
         typename WeakPtrImplSet::const_iterator m_position;
@@ -97,7 +101,8 @@ public:
     template <typename U>
     const_iterator find(const U& value) const
     {
-        increaseOperationCountSinceLastCleanup();
+        if constexpr (assumeNoNullReferences == AssumeNoNullReferences::No)
+            increaseOperationCountSinceLastCleanup();
         if (auto* pointer = value.weakPtrFactory().m_impl.pointer(); pointer && *pointer)
             return WeakHashSetConstIterator(*this, m_set.find(pointer));
         return end();
@@ -106,7 +111,8 @@ public:
     template <typename U>
     AddResult add(const U& value)
     {
-        amortizedCleanupIfNeeded();
+        if constexpr (assumeNoNullReferences == AssumeNoNullReferences::No)
+            amortizedCleanupIfNeeded();
         return m_set.add(*static_cast<const T&>(value).weakPtrFactory().template createWeakPtr<T>(const_cast<U&>(value), assertionsPolicy).m_impl);
     }
 
@@ -121,7 +127,8 @@ public:
     template <typename U>
     bool remove(const U& value)
     {
-        amortizedCleanupIfNeeded();
+        if constexpr (assumeNoNullReferences == AssumeNoNullReferences::No)
+            amortizedCleanupIfNeeded();
         if (auto* pointer = value.weakPtrFactory().m_impl.pointer(); pointer && *pointer)
             return m_set.remove(*pointer);
         return false;
@@ -130,20 +137,23 @@ public:
     bool remove(const_iterator iterator)
     {
         bool removed = m_set.remove(iterator.m_position);
-        amortizedCleanupIfNeeded();
+        if constexpr (assumeNoNullReferences == AssumeNoNullReferences::No)
+            amortizedCleanupIfNeeded();
         return removed;
     }
 
     void clear()
     {
         m_set.clear();
-        cleanupHappened();
+        if constexpr (assumeNoNullReferences == AssumeNoNullReferences::No)
+            cleanupHappened();
     }
 
     template <typename U>
     bool contains(const U& value) const
     {
-        increaseOperationCountSinceLastCleanup();
+        if constexpr (assumeNoNullReferences == AssumeNoNullReferences::No)
+            increaseOperationCountSinceLastCleanup();
         if (auto* pointer = value.weakPtrFactory().m_impl.pointer(); pointer && *pointer)
             return m_set.contains(*pointer);
         return false;
@@ -151,8 +161,15 @@ public:
 
     unsigned capacity() const { return m_set.capacity(); }
 
+    bool isEmpty() const
+    {
+        static_assert(assumeNoNullReferences == AssumeNoNullReferences::Yes);
+        return m_set.isEmpty();
+    }
+
     bool isEmptyIgnoringNullReferences() const
     {
+        static_assert(assumeNoNullReferences == AssumeNoNullReferences::No);
         if (m_set.isEmpty())
             return true;
         return begin() == end();
@@ -160,6 +177,7 @@ public:
 
     bool hasNullReferences() const
     {
+        static_assert(assumeNoNullReferences == AssumeNoNullReferences::No);
         unsigned count = 0;
         auto result = WTF::anyOf(m_set, [&](auto& value) {
             ++count;
@@ -172,8 +190,15 @@ public:
         return result;
     }
 
+    unsigned size() const
+    {
+        static_assert(assumeNoNullReferences == AssumeNoNullReferences::Yes);
+        return m_set.size();
+    }
+
     unsigned computeSize() const
     {
+        static_assert(assumeNoNullReferences == AssumeNoNullReferences::No);
         const_cast<WeakHashSet&>(*this).removeNullReferences();
         return m_set.size();
     }
@@ -201,12 +226,14 @@ public:
 private:
     ALWAYS_INLINE void cleanupHappened() const
     {
+        static_assert(assumeNoNullReferences == AssumeNoNullReferences::No);
         m_operationCountSinceLastCleanup = 0;
         m_maxOperationCountWithoutCleanup = std::min(std::numeric_limits<unsigned>::max() / 2, m_set.size()) * 2;
     }
 
     ALWAYS_INLINE bool removeNullReferences()
     {
+        static_assert(assumeNoNullReferences == AssumeNoNullReferences::No);
         bool didRemove = m_set.removeIf([] (auto& value) { return !value.get(); });
         cleanupHappened();
         return didRemove;
@@ -214,12 +241,14 @@ private:
 
     ALWAYS_INLINE unsigned increaseOperationCountSinceLastCleanup(unsigned count = 1) const
     {
+        static_assert(assumeNoNullReferences == AssumeNoNullReferences::No);
         unsigned currentCount = m_operationCountSinceLastCleanup += count;
         return currentCount;
     }
 
     ALWAYS_INLINE void amortizedCleanupIfNeeded() const
     {
+        static_assert(assumeNoNullReferences == AssumeNoNullReferences::No);
         unsigned currentCount = increaseOperationCountSinceLastCleanup();
         if (currentCount > m_maxOperationCountWithoutCleanup)
             const_cast<WeakHashSet&>(*this).removeNullReferences();
@@ -230,16 +259,22 @@ private:
     mutable unsigned m_maxOperationCountWithoutCleanup { 0 };
 };
 
-template<typename T, typename WeakMapImpl>
-size_t containerSize(const WeakHashSet<T, WeakMapImpl>& container) { return container.computeSize(); }
-
-template<typename T, typename WeakMapImpl>
-inline auto copyToVector(const WeakHashSet<T, WeakMapImpl>& collection) -> Vector<WeakPtr<T, WeakMapImpl>>
+template<typename T, typename WeakMapImpl, EnableWeakPtrThreadingAssertions assertionsPolicy, AssumeNoNullReferences assumeNoNullReferences>
+size_t containerSize(const WeakHashSet<T, WeakMapImpl, assertionsPolicy, assumeNoNullReferences>& container)
 {
-    return WTF::map(collection, [](auto& v) -> WeakPtr<T, WeakMapImpl> { return WeakPtr<T, WeakMapImpl> { v }; });
+    if constexpr (assumeNoNullReferences == AssumeNoNullReferences::Yes)
+        return container.size();
+    else
+        return container.computeSize();
 }
 
+template<typename T, typename WeakMapImpl, EnableWeakPtrThreadingAssertions assertionsPolicy, AssumeNoNullReferences assumeNoNullReferences>
+inline auto copyToVector(const WeakHashSet<T, WeakMapImpl, assertionsPolicy, assumeNoNullReferences>& collection) -> Vector<WeakPtr<T, WeakMapImpl>>
+{
+    return WTF::map(collection, [](auto& v) -> WeakPtr<T, WeakMapImpl> { return WeakPtr<T, WeakMapImpl> { v, assertionsPolicy }; });
+}
 
 } // namespace WTF
 
 using WTF::WeakHashSet;
+using WTF::WeakHashSetAssumingNoNullReferences;

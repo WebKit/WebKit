@@ -144,11 +144,11 @@ private:
 
     // Use a global queue instead of multiple task queues since HTML5 spec allows UA to pick arbitrary queue.
     Vector<std::unique_ptr<EventLoopTask>> m_tasks;
-    WeakHashSet<EventLoopTimer> m_scheduledTasks;
-    WeakHashSet<EventLoopTimer> m_repeatingTasks;
-    WeakHashSet<EventLoopTaskGroup> m_associatedGroups;
+    WeakHashSetAssumingNoNullReferences<EventLoopTimer> m_scheduledTasks;
+    WeakHashSetAssumingNoNullReferences<EventLoopTimer> m_repeatingTasks;
+    WeakHashSetAssumingNoNullReferences<EventLoopTaskGroup> m_associatedGroups;
     WeakHashSet<EventLoopTaskGroup> m_groupsWithSuspendedTasks;
-    WeakHashSet<ScriptExecutionContext> m_associatedContexts;
+    WeakHashSetAssumingNoNullReferences<ScriptExecutionContext> m_associatedContexts;
     bool m_isScheduledToRun { false };
     mutable Markable<MonotonicTime> m_nextTimerFireTimeCache;
 };
