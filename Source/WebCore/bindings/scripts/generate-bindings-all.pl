@@ -188,7 +188,7 @@ sub buildDirectoryCache
     while (<$fh>) {
         chomp $_;
         my $name = fileparse($_);
-        $directoryCache{$_} = $name;
+        $directoryCache{$name} = $_;
     }
     close $fh;
 }
