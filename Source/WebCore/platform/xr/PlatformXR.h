@@ -57,7 +57,7 @@ inline bool isImmersive(SessionMode mode)
     return mode == ImmersiveAr || mode == ImmersiveVr;
 }
 
-enum class ReferenceSpaceType {
+enum class ReferenceSpaceType : uint8_t {
     Viewer,
     Local,
     LocalFloor,
@@ -71,7 +71,7 @@ enum class Eye {
     Right,
 };
 
-enum class VisibilityState {
+enum class VisibilityState : uint8_t {
     Visible,
     VisibleBlurred,
     Hidden
@@ -83,14 +83,14 @@ using LayerHandle = int;
 using InputSourceHandle = int;
 
 // https://immersive-web.github.io/webxr/#enumdef-xrhandedness
-enum class XRHandedness {
+enum class XRHandedness : uint8_t {
     None,
     Left,
     Right,
 };
 
 // https://immersive-web.github.io/webxr/#enumdef-xrtargetraymode
-enum class XRTargetRayMode {
+enum class XRTargetRayMode : uint8_t {
     Gaze,
     TrackedPointer,
     Screen,
@@ -786,73 +786,3 @@ inline Device::FrameData Device::FrameData::copy() const
 #endif // ENABLE(WEBXR)
 
 } // namespace PlatformXR
-
-#if ENABLE(WEBXR)
-
-namespace WTF {
-
-template<> struct EnumTraits<PlatformXR::SessionMode> {
-    using values = EnumValues<
-        PlatformXR::SessionMode,
-        PlatformXR::SessionMode::Inline,
-        PlatformXR::SessionMode::ImmersiveVr,
-        PlatformXR::SessionMode::ImmersiveAr
-    >;
-};
-
-template<> struct EnumTraits<PlatformXR::ReferenceSpaceType> {
-    using values = EnumValues<
-        PlatformXR::ReferenceSpaceType,
-        PlatformXR::ReferenceSpaceType::Viewer,
-        PlatformXR::ReferenceSpaceType::Local,
-        PlatformXR::ReferenceSpaceType::LocalFloor,
-        PlatformXR::ReferenceSpaceType::BoundedFloor,
-        PlatformXR::ReferenceSpaceType::Unbounded
-    >;
-};
-
-template<> struct EnumTraits<PlatformXR::VisibilityState> {
-    using values = EnumValues<
-        PlatformXR::VisibilityState,
-        PlatformXR::VisibilityState::Visible,
-        PlatformXR::VisibilityState::VisibleBlurred,
-        PlatformXR::VisibilityState::Hidden
-    >;
-};
-
-template<> struct EnumTraits<PlatformXR::XRHandedness> {
-    using values = EnumValues<
-        PlatformXR::XRHandedness,
-        PlatformXR::XRHandedness::None,
-        PlatformXR::XRHandedness::Left,
-        PlatformXR::XRHandedness::Right
-    >;
-};
-
-template<> struct EnumTraits<PlatformXR::XRTargetRayMode> {
-    using values = EnumValues<
-        PlatformXR::XRTargetRayMode,
-        PlatformXR::XRTargetRayMode::Gaze,
-        PlatformXR::XRTargetRayMode::TrackedPointer,
-        PlatformXR::XRTargetRayMode::Screen,
-        PlatformXR::XRTargetRayMode::TransientPointer
-    >;
-};
-
-template<> struct EnumTraits<PlatformXR::SessionFeature> {
-    using values = EnumValues<
-        PlatformXR::SessionFeature,
-        PlatformXR::SessionFeature::ReferenceSpaceTypeViewer,
-        PlatformXR::SessionFeature::ReferenceSpaceTypeLocal,
-        PlatformXR::SessionFeature::ReferenceSpaceTypeLocalFloor,
-        PlatformXR::SessionFeature::ReferenceSpaceTypeBoundedFloor,
-        PlatformXR::SessionFeature::ReferenceSpaceTypeUnbounded
-#if ENABLE(WEBXR_HANDS)
-        , PlatformXR::SessionFeature::HandTracking
-#endif
-    >;
-};
-
-}
-
-#endif
