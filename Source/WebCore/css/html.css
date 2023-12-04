@@ -301,6 +301,7 @@ tfoot {
 }
 
 /* for tables without table section elements (can happen with XHTML or dynamically created tables) */
+/* https://html.spec.whatwg.org/#tables-2 */
 table > tr {
     vertical-align: middle;
 }
@@ -317,6 +318,12 @@ tr {
     display: table-row;
     vertical-align: inherit;
     border-color: inherit;
+}
+
+/* When the td/th are inside a table (the normal case), the padding is taken
+   care of by HTMLTableCellElement::additionalPresentationalHintStyle() */
+td:not(table td), th:not(table th) {
+    padding: 1px;
 }
 
 td, th {
