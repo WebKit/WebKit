@@ -29,17 +29,22 @@
 
 #import <UIKit/UIKit.h>
 
-@class WKAxisLockingScrollView;
+@class UIScrollEvent;
+@class WKBaseScrollView;
 
-@protocol WKAxisLockingScrollViewDelegate <NSObject>
+@protocol WKBaseScrollViewDelegate <NSObject>
 
-- (UIAxis)axesToPreventScrollingForPanGestureInScrollView:(WKAxisLockingScrollView *)scrollView;
+- (UIAxis)axesToPreventScrollingForPanGestureInScrollView:(WKBaseScrollView *)scrollView;
+
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
+- (void)scrollView:(WKBaseScrollView *)scrollView handleScrollEvent:(UIScrollEvent *)event completion:(void(^)(BOOL handled))completion;
+#endif
 
 @end
 
-@interface WKAxisLockingScrollView : UIScrollView
+@interface WKBaseScrollView : UIScrollView
 
-@property (nonatomic, weak) id<WKAxisLockingScrollViewDelegate> scrollAxisLockingDelegate;
+@property (nonatomic, weak) id<WKBaseScrollViewDelegate> baseScrollViewDelegate;
 @property (nonatomic, readonly) UIAxis axesToPreventMomentumScrolling;
 
 @end

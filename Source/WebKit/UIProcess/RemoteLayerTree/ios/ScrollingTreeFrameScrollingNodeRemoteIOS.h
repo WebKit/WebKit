@@ -27,7 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING) && PLATFORM(IOS_FAMILY)
 
-OBJC_CLASS UIScrollView;
+OBJC_CLASS WKBaseScrollView;
 
 #include <WebCore/ScrollingTreeFrameScrollingNode.h>
 
@@ -40,7 +40,7 @@ public:
     static Ref<ScrollingTreeFrameScrollingNodeRemoteIOS> create(WebCore::ScrollingTree&, WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);
     virtual ~ScrollingTreeFrameScrollingNodeRemoteIOS();
 
-    UIScrollView *scrollView() const;
+    WKBaseScrollView *scrollView() const;
 
 private:
     ScrollingTreeFrameScrollingNodeRemoteIOS(WebCore::ScrollingTree&, WebCore::ScrollingNodeType, WebCore::ScrollingNodeID);

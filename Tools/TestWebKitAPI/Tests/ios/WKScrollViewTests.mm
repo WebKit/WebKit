@@ -43,6 +43,12 @@ constexpr CGFloat whiteColorComponents[4] = { 1, 1, 1, 1 };
 
 @end
 
+@interface WKWebView (WKBaseScrollViewDelegate)
+
+- (void)scrollView:(UIScrollView *)scrollView handleScrollEvent:(UIScrollEvent *)event completion:(void(^)(BOOL handled))completion;
+
+@end
+
 @implementation WKUIScrollEvent {
     UIScrollPhase _phase;
     CGPoint _location;
@@ -142,7 +148,7 @@ TEST(WKScrollViewTests, AsynchronousWheelEventHandling)
     auto synchronouslyHandleScrollEvent = ^(UIScrollPhase phase, CGPoint location, CGVector delta) {
         done = false;
         auto event = adoptNS([[WKUIScrollEvent alloc] initWithPhase:phase location:location delta:delta]);
-        [webView _scrollView:[webView scrollView] asynchronouslyHandleScrollEvent:event.get() completion:^(BOOL handled) {
+        [webView scrollView:[webView scrollView] handleScrollEvent:event.get() completion:^(BOOL handled) {
             wasHandled = handled;
             done = true;
         }];

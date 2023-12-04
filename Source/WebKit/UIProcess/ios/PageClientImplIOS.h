@@ -301,7 +301,7 @@ private:
     void showDictationAlternativeUI(const WebCore::FloatRect&, WebCore::DictationContext) final;
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-    void handleAsynchronousCancelableScrollEvent(UIScrollView *, UIScrollEvent *, void (^completion)(BOOL handled)) final;
+    void handleAsynchronousCancelableScrollEvent(WKBaseScrollView *, UIScrollEvent *, void (^completion)(BOOL handled)) final;
 #endif
 
     WebCore::Color contentViewBackgroundColor() final;

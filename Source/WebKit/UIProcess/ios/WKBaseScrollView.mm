@@ -24,16 +24,17 @@
  */
 
 #import "config.h"
-#import "WKAxisLockingScrollView.h"
+#import "WKBaseScrollView.h"
 
 #if PLATFORM(IOS_FAMILY)
 
-#include <wtf/RetainPtr.h>
+#import "UIKitSPI.h"
+#import <wtf/RetainPtr.h>
 
 @interface UIScrollView (GestureRecognizerDelegate) <UIGestureRecognizerDelegate>
 @end
 
-@implementation WKAxisLockingScrollView {
+@implementation WKBaseScrollView {
     RetainPtr<UIPanGestureRecognizer> _axisLockingPanGestureRecognizer;
     UIAxis _axesToPreventMomentumScrolling;
 }
@@ -42,6 +43,10 @@
 {
     if (!(self = [super initWithFrame:frame]))
         return nil;
+
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING) && !HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_SUBCLASS_HOOKS)
+    self._allowsAsyncScrollEvent = YES;
+#endif
 
     _axesToPreventMomentumScrolling = UIAxisNeither;
     [self.panGestureRecognizer addTarget:self action:@selector(_updatePanGestureToPreventScrolling)];
@@ -110,9 +115,27 @@
 
 - (UIAxis)_axesToPreventScrollingFromDelegate
 {
-    auto delegate = self.scrollAxisLockingDelegate;
-    return delegate ? [delegate axesToPreventScrollingForPanGestureInScrollView:self] : UIAxisBoth;
+    auto delegate = self.baseScrollViewDelegate;
+    return delegate ? [delegate axesToPreventScrollingForPanGestureInScrollView:self] : UIAxisNeither;
 }
+
+#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_SUBCLASS_HOOKS)
+
+- (BOOL)_subclassHandlesAsyncScrollEvent
+{
+    return YES;
+}
+
+- (void)_asynchronouslyHandleScrollEvent:(UIScrollEvent *)event completion:(void (^)(BOOL handled))completion
+{
+    auto delegate = retainPtr(self.baseScrollViewDelegate);
+    if (!delegate)
+        return completion(NO);
+
+    [delegate scrollView:self handleScrollEvent:event completion:completion];
+}
+
+#endif // HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_SUBCLASS_HOOKS)
 
 #pragma mark - UIGestureRecognizerDelegate
 

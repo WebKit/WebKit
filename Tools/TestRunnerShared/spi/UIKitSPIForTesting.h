@@ -319,10 +319,6 @@ typedef NS_ENUM(NSUInteger, UIScrollPhase) {
 @interface UIScrollEvent : UIEvent
 @end
 
-@interface NSObject (UIScrollViewDelegate_ForWebKitOnly)
-- (void)_scrollView:(UIScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion;
-@end
-
 @interface UITextInteractionAssistant : NSObject <UIResponderStandardEditActions>
 @end
 

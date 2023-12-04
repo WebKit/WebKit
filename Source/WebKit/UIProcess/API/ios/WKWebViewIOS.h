@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKAxisLockingScrollView.h"
+#import "WKBaseScrollView.h"
 #import "WKWebViewInternal.h"
 #import "_WKTapHandlingResult.h"
 
@@ -37,7 +37,7 @@ namespace WebKit {
 enum class TapHandlingResult : uint8_t;
 }
 
-@interface WKWebView (WKViewInternalIOS) <WKAxisLockingScrollViewDelegate>
+@interface WKWebView (WKViewInternalIOS) <WKBaseScrollViewDelegate>
 
 - (void)_setupScrollAndContentViews;
 - (void)_registerForNotifications;
@@ -172,10 +172,6 @@ enum class TapHandlingResult : uint8_t;
 
 #if ENABLE(LOCKDOWN_MODE_API)
 + (void)_clearLockdownModeWarningNeeded;
-#endif
-
-#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-- (void)_scrollView:(UIScrollView *)scrollView asynchronouslyHandleScrollEvent:(UIScrollEvent *)scrollEvent completion:(void (^)(BOOL handled))completion;
 #endif
 
 - (UIColor *)_insertionPointColor;
