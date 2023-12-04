@@ -241,6 +241,10 @@ typedef NS_ENUM(NSUInteger, NSTextTabType) {
 - (void)setVerticalAlignment:(NSTextBlockVerticalAlignment)alignment;
 @end
 
+@interface NSTextBlock (Internal)
+- (void)_takeValuesFromTextBlock:(NSTextBlock *)other;
+@end
+
 @interface NSTextTable : NSTextBlock
 - (void)setNumberOfColumns:(NSUInteger)numCols;
 - (void)setCollapsesBorders:(BOOL)flag;

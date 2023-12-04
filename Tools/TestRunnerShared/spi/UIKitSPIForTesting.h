@@ -555,7 +555,15 @@ typedef NS_ENUM(NSUInteger, _UIClickInteractionEvent) {
 - (void)removeEmojiAlternatives;
 @end
 
+typedef NS_ENUM(NSInteger, NSTextBlockLayer) {
+    NSTextBlockPadding  = -1,
+    NSTextBlockBorder   =  0,
+    NSTextBlockMargin   =  1
+};
+
 @interface NSTextBlock : NSObject
+- (CGFloat)widthForLayer:(NSTextBlockLayer)layer edge:(CGRectEdge)edge;
+@property (nonatomic, copy) UIColor *backgroundColor;
 @end
 
 @interface NSTextTable : NSTextBlock
