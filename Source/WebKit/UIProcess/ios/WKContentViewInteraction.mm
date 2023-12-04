@@ -1467,6 +1467,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _treatAsContentEditableUntilNextEditorStateUpdate = NO;
     _isHandlingActiveKeyEvent = NO;
     _isHandlingActivePressesEvent = NO;
+    _isDeferringKeyEventsToInputMethod = NO;
 
     if (_interactionViewsContainerView) {
         [self.layer removeObserver:self forKeyPath:@"transform" context:WKContentViewKVOTransformContext];
@@ -4557,7 +4558,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (action == @selector(select:)) {
         // Disable select in password fields so that you can't see word boundaries.
-        return !editorState.isInPasswordField && !editorState.selectionIsRange && self.hasContent;
+        return !editorState.isInPasswordField && !editorState.selectionIsRange && self._hasContent;
     }
 
     auto isPreparingEditMenu = [&] {
@@ -4567,7 +4568,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (action == @selector(selectAll:)) {
         if (isPreparingEditMenu()) {
             // By platform convention we don't show Select All in the edit menu for a range selection.
-            return !editorState.selectionIsRange && self.hasContent;
+            return !editorState.selectionIsRange && self._hasContent;
         }
         return YES;
     }
@@ -6305,13 +6306,14 @@ static Vector<WebCore::CompositionHighlight> compositionHighlights(NSAttributedS
 - (void)_setMarkedText:(NSString *)markedText underlines:(const Vector<WebCore::CompositionUnderline>&)underlines highlights:(const Vector<WebCore::CompositionHighlight>&)highlights selectedRange:(NSRange)selectedRange
 {
     _autocorrectionContextNeedsUpdate = YES;
-    _candidateViewNeedsUpdate = !self.hasMarkedText;
+    _candidateViewNeedsUpdate = !self.hasMarkedText && _isDeferringKeyEventsToInputMethod;
     _markedText = markedText;
     _page->setCompositionAsync(markedText, underlines, highlights, { }, selectedRange, { });
 }
 
 - (void)unmarkText
 {
+    _isDeferringKeyEventsToInputMethod = NO;
     _markedText = nil;
     _page->confirmCompositionAsync();
 }
@@ -7150,6 +7152,7 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
     using HandledByInputMethod = WebKit::NativeWebKeyboardEvent::HandledByInputMethod;
     if ([self _deferKeyEventToInputMethodEditing:event]) {
         completionHandler(event, YES);
+        _isDeferringKeyEventsToInputMethod = YES;
         _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(event, HandledByInputMethod::Yes));
         return;
     }
@@ -7528,6 +7531,11 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
 {
     RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
 
+    return self._hasContent;
+}
+
+- (BOOL)_hasContent
+{
     auto& editorState = _page->editorState();
     return !editorState.selectionIsNone && editorState.postLayoutData && editorState.postLayoutData->hasContent;
 }
@@ -8691,6 +8699,8 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         // FIXME: We need to figure out what to do if the selection is changed by Javascript.
         if (_textInteractionWrapper) {
             _markedText = editorState.hasComposition ? postLayoutData.markedText : String { };
+            if (![_markedText length])
+                _isDeferringKeyEventsToInputMethod = NO;
             [_textInteractionWrapper selectionChanged];
         }
 
