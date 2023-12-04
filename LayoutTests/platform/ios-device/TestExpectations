@@ -76,8 +76,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-eleme
 imported/w3c/web-platform-tests/html/semantics/embedded-content/the-canvas-element/toDataURL.zerosize.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/attributes-common-to-form-controls/disabled-elements-01.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-option-element/option-text-spaces.html [ Skip ]
-imported/w3c/web-platform-tests/html/syntax/parsing/template/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-body-context.html [ Skip ]
-imported/w3c/web-platform-tests/html/syntax/parsing/template/clearing-the-stack-back-to-a-given-context/clearing-stack-back-to-a-table-row-context.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/events/event-handler-processing-algorithm.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/events/onerroreventhandler.html [ Skip ]
 imported/w3c/web-platform-tests/html/webappapis/scripting/processing-model-2/compile-error-data-url.html [ Skip ]
