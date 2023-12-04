@@ -35,6 +35,7 @@
 #include "CallFrameShuffler.h"
 #include "CodeBlock.h"
 #include "JITInlines.h"
+#include "JITThunks.h"
 #include "ScratchRegisterAllocator.h"
 #include "SetupVarargsFrame.h"
 #include "SlowPathCall.h"

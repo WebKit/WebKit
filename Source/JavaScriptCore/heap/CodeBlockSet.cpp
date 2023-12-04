@@ -27,6 +27,7 @@
 #include "CodeBlockSet.h"
 
 #include "CodeBlock.h"
+#include "HeapInlines.h"
 #include <wtf/CommaPrinter.h>
 
 namespace JSC {
