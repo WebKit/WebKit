@@ -6864,12 +6864,21 @@ imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-s
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-sticky-inline.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-subject-size-changes.html [ Skip ]
 
+# scroll-animations flaky failures
+webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-multiple.html [ Pass Failure ]
+webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-named-scroll-progress-timeline.tentative.html [ Pass Failure ]
+webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-none.html [ Pass Failure ]
+webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-scroll-functional-notation.tentative.html [ Failure ]
+webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-view-functional-notation.tentative.html [ Failure ]
+webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/progress-based-animation-animation-longhand-properties.tentative.html [ Pass Failure ]
+webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/progress-based-animation-timeline.html [ Pass Failure ]
+webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-axis-writing-mode.html [ Pass Failure ]
+webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-sampling.html [ Pass Failure ]
+webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-dynamic.html [ Pass Failure ]
+
 # other scroll-animations failures
-webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-none.html [ Failure ]
 webkit.org/b/263872 imported/w3c/web-platform-tests/scroll-animations/css/printing/animation-timeline-none-with-progress-print.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/263873 imported/w3c/web-platform-tests/scroll-animations/css/printing/scroll-timeline-default-iframe-print.html [ ImageOnlyFailure ]
-webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/progress-based-animation-timeline.html [ Pass Failure ]
-webkit.org/b/263871 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-dynamic.html [ Pass Failure ]
 
 # webkit.org/b/229520 CSS @scope unimplemented
 imported/w3c/web-platform-tests/css/css-cascade/import-conditional-002.html [ ImageOnlyFailure ]

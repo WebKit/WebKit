@@ -1,9 +1,9 @@
 
-FAIL animation-timeline: scroll(nearest) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
-FAIL animation-timeline: scroll(root) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
-FAIL animation-timeline: scroll(self) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
-FAIL animation-timeline: scroll(self), on non-scroller promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
-FAIL animation-timeline: scroll(inline) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
-FAIL animation-timeline: scroll(x) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
-FAIL animation-timeline: scroll(y) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: scroll(nearest) assert_equals: expected "50px" but got "50.130001px"
+FAIL animation-timeline: scroll(root) assert_equals: expected "50px" but got "50.080002px"
+FAIL animation-timeline: scroll(self) assert_equals: expected "100px" but got "50.169998px"
+FAIL animation-timeline: scroll(self), on non-scroller assert_equals: expected "none" but got "50.169998px"
+FAIL animation-timeline: scroll(inline) assert_equals: expected "100px" but got "50.169998px"
+FAIL animation-timeline: scroll(x) assert_equals: expected "100px" but got "50.169998px"
+FAIL animation-timeline: scroll(y) assert_equals: expected "100px" but got "50.169998px"
 
