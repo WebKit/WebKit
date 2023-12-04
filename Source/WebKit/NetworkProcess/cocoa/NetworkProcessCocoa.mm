@@ -54,11 +54,6 @@
 #import <pal/spi/cocoa/NEFilterSourceSPI.h>
 #endif
 
-#if USE(EXTENSIONKIT)
-#import "ExtensionKitSPI.h"
-#import "WKProcessExtension.h"
-#endif
-
 namespace WebKit {
 
 static void initializeNetworkSettings()
@@ -255,30 +250,5 @@ void NetworkProcess::setProxyConfigData(PAL::SessionID sessionID, Vector<std::pa
     session->setProxyConfigData(WTFMove(proxyConfigurations));
 }
 #endif // HAVE(NW_PROXY_CONFIG)
-
-#if USE(RUNNINGBOARD) && USE(EXTENSIONKIT)
-bool NetworkProcess::aqcuireLockedFileGrant()
-{
-    m_holdingLockedFileGrant = [WKProcessExtension.sharedInstance grant:@"com.apple.common" name:@"FinishTaskInterruptable"];
-    if (m_holdingLockedFileGrant)
-        RELEASE_LOG(Process, "Successfully took assertion on Network process for locked file.");
-    else
-        RELEASE_LOG_ERROR(Process, "Unable to take assertion on Network process for locked file.");
-    return !!m_holdingLockedFileGrant;
-}
-
-void NetworkProcess::invalidateGrant()
-{
-    if (!hasAcquiredGrant())
-        return;
-
-    m_holdingLockedFileGrant = nil;
-}
-
-bool NetworkProcess::hasAcquiredGrant() const
-{
-    return !!m_holdingLockedFileGrant;
-}
-#endif
 
 } // namespace WebKit

@@ -71,10 +71,6 @@
 typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 #endif
 
-#if USE(EXTENSIONKIT)
-OBJC_CLASS WKGrant;
-#endif
-
 namespace IPC {
 class FormDataReference;
 }
@@ -527,11 +523,6 @@ private:
 
 #if USE(RUNNINGBOARD)
     void setIsHoldingLockedFiles(bool);
-#if USE(EXTENSIONKIT)
-    bool aqcuireLockedFileGrant();
-    void invalidateGrant();
-    bool hasAcquiredGrant() const;
-#endif
 #endif
     void stopRunLoopIfNecessary();
 
@@ -568,9 +559,6 @@ private:
 
 #if USE(RUNNINGBOARD)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
-#if USE(EXTENSIONKIT)
-    RetainPtr<WKGrant> m_holdingLockedFileGrant;
-#endif
     RefPtr<ProcessAssertion> m_holdingLockedFileAssertion;
 #endif
     

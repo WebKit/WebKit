@@ -26,47 +26,13 @@
 import ServiceExtensions
 @_spi(Private) import ServiceExtensions
 
-@objc
-@_spi(Private)
-open class Grant: WKGrant {
-    let inner : _Capabilities.Grant
-
-    init(inner: _Capabilities.Grant) {
-        self.inner = inner
-    }
-
-    deinit {
-        do {
-            try invalidate()
-        } catch {
-            NSLog("Failed to invalidate grant")
-        }
-    }
-
-    open func invalidate() throws {
-        try self.inner.invalidate()
-    }
-}
-
 @main
-class NetworkingProcessExtension : WKProcessExtension {
-    override required init() {
-        super.init()
-        setSharedInstance(self)
-    }
+class NetworkingProcessExtension {
+    required init() {}
 }
 
-extension NetworkingProcessExtension : NetworkingServiceExtension {
+extension NetworkingProcessExtension: NetworkingServiceExtension {
     func handle(xpcConnection: xpc_connection_t) {
         handleNewConnection(xpcConnection)
-    }
-
-    override func grant(_ domain: String, name: String) -> Any {
-        do {
-            let grant = try self._request(capabilities: _Capabilities.assertion(domain, name))
-            return Grant(inner: grant)
-        } catch {
-            return WKGrant()
-        }
     }
 }
