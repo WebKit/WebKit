@@ -2199,9 +2199,6 @@ webkit.org/b/223944 [ BigSur Debug ] imported/w3c/web-platform-tests/xhr/event-u
 
 webkit.org/b/223816 [ arm64 ] platform/mac/fast/objc/webScriptObject-hasWebScriptKey.html [ Failure ]
 
-# rdar://80343074 ([ Mac wk1 ] http/tests/websocket/tests/hybi/client-close-2.html [ Failure ])
-http/tests/websocket/tests/hybi/client-close-2.html [ Pass Failure ]
-
 # webkit.org/b/221300 Updating tests expectations for 3 tests
 [ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Skip ]
 [ Monterey+ ] imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Skip ]
