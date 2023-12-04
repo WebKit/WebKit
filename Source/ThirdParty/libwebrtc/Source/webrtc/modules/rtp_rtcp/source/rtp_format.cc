@@ -77,7 +77,12 @@ std::unique_ptr<RtpPacketizer> RtpPacketizer::Create(
 std::vector<int> RtpPacketizer::SplitAboutEqually(
     int payload_len,
     const PayloadSizeLimits& limits) {
+#ifdef WEBRTC_WEBKIT_BUILD
+  if (payload_len == 0)
+    return { };
+#else
   RTC_DCHECK_GT(payload_len, 0);
+#endif
   // First or last packet larger than normal are unsupported.
   RTC_DCHECK_GE(limits.first_packet_reduction_len, 0);
   RTC_DCHECK_GE(limits.last_packet_reduction_len, 0);
