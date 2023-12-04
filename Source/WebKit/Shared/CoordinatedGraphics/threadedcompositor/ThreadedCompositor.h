@@ -115,6 +115,7 @@ private:
 
     uintptr_t m_nativeSurfaceHandle;
     bool m_flipY { false };
+    bool m_eglSupportsDamage { false };
     unsigned m_suspendedCount { 0 };
 
     std::unique_ptr<CompositingRunLoop> m_compositingRunLoop;

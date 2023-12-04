@@ -144,6 +144,7 @@ private:
     unsigned m_viewTexture { 0 };
     struct wpe_fdo_egl_exported_image* m_committedImage { nullptr };
     bool m_is_fullscreen { false };
+    bool m_canUseDamage { true };
 #if WPE_CHECK_VERSION(1, 11, 1)
     bool m_waiting_fullscreen_notify { false };
 #endif

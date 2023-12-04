@@ -113,6 +113,7 @@ if (USE_NICOSIA)
         platform/graphics/nicosia/NicosiaAnimation.h
         platform/graphics/nicosia/NicosiaBackingStore.h
         platform/graphics/nicosia/NicosiaBuffer.h
+        platform/graphics/nicosia/NicosiaBufferDamage.h
         platform/graphics/nicosia/NicosiaCompositionLayer.h
         platform/graphics/nicosia/NicosiaContentLayer.h
         platform/graphics/nicosia/NicosiaImageBacking.h

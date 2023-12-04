@@ -381,6 +381,12 @@ GLContext::GLContext(PlatformDisplay& display, EGLContext context, EGLSurface su
     ASSERT(type == Surfaceless || surface != EGL_NO_SURFACE);
     RELEASE_ASSERT(m_display.eglDisplay() != EGL_NO_DISPLAY);
     RELEASE_ASSERT(context != EGL_NO_CONTEXT);
+
+    const char* extensions = eglQueryString(display.eglDisplay(), EGL_EXTENSIONS);
+    if (GLContext::isExtensionSupported(extensions, "EGL_KHR_swap_buffers_with_damage"))
+        m_eglSwapBuffersWithDamage = eglSwapBuffersWithDamageKHR;
+    else if (GLContext::isExtensionSupported(extensions, "EGL_EXT_swap_buffers_with_damage"))
+        m_eglSwapBuffersWithDamage = eglSwapBuffersWithDamageEXT;
 }
 
 GLContext::~GLContext()
@@ -482,6 +488,36 @@ void GLContext::swapBuffers()
     ASSERT(m_surface);
     eglSwapBuffers(m_display.eglDisplay(), m_surface);
 }
+
+void GLContext::swapBuffersWithDamage(const Vector<IntRect>& rects)
+{
+    if (m_type == Surfaceless)
+        return;
+
+    // EGL's swap_buffers_with_damage falls back to full surface damage if not rects are given
+    if (!rects.size() || !m_eglSwapBuffersWithDamage) {
+        swapBuffers();
+        return;
+    }
+
+    auto rectsPtr = WTF::makeUniqueArray<int>(4* rects.size());
+
+    for (size_t i = 0; i < rects.size(); i++) {
+        auto& rect = rects[i];
+        rectsPtr[i*4] = rect.x();
+        rectsPtr[i*4 + 1] = rect.y();
+        rectsPtr[i*4 + 2] = rect.width();
+        rectsPtr[i*4 + 3] = rect.height();
+    }
+
+    ASSERT(m_surface);
+    if (m_eglSwapBuffersWithDamage(m_display.eglDisplay(), m_surface, rectsPtr.get(), rects.size()) == EGL_TRUE)
+        return;
+
+    // XXX: Maybe check for errors when using the fallback as well?
+    eglSwapBuffers(m_display.eglDisplay(), m_surface);
+}
+
 
 GCGLContext GLContext::platformContext() const
 {

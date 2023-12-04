@@ -50,6 +50,7 @@ extern "C" {
     M(CacheStorage) \
     M(ContentObservation) \
     M(ContextMenu) \
+    M(CoordinatedGraphics) \
     M(DisplayLink) \
     M(DiskPersistency) \
     M(DragAndDrop) \

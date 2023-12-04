@@ -29,6 +29,8 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "CompositingRunLoop.h"
+#include "Logging.h"
+#include <WebCore/NicosiaBufferDamage.h>
 #include <WebCore/PlatformDisplay.h>
 #include <WebCore/TransformationMatrix.h>
 #include <wtf/SetForScope.h>
@@ -42,8 +44,10 @@
 #endif
 
 #if USE(LIBEPOXY)
+#include <epoxy/egl.h>
 #include <epoxy/gl.h>
 #else
+#include <EGL/egl.h>
 #include <GLES2/gl2.h>
 #endif
 
@@ -130,8 +134,12 @@ void ThreadedCompositor::createGLContext()
     static_assert(sizeof(GLNativeWindowType) <= sizeof(uint64_t), "GLNativeWindowType must not be longer than 64 bits.");
     auto windowType = (GLNativeWindowType) m_nativeSurfaceHandle;
     m_context = GLContext::create(windowType, PlatformDisplay::sharedDisplayForCompositing());
+    m_eglSupportsDamage = false;
     if (m_context) {
         m_context->makeContextCurrent();
+        const char* extensions = eglQueryString(m_context->display().eglDisplay(), EGL_EXTENSIONS);
+        m_eglSupportsDamage = GLContext::isExtensionSupported(extensions, "EGL_KHR_swap_buffers_with_damage")
+            || GLContext::isExtensionSupported(extensions, "EGL_EXT_swap_buffers_with_damage");
         m_client.didCreateGLContext();
     }
 }
@@ -275,7 +283,21 @@ void ThreadedCompositor::renderLayerTree()
     m_scene->applyStateChanges(states);
     m_scene->paintToCurrentGLContext(viewportTransform, FloatRect { FloatPoint { }, viewportSize }, m_flipY);
 
-    m_context->swapBuffers();
+    if (m_eglSupportsDamage && !m_scene->lastDamagedRects().isEmpty()) {
+        // The damage rect originally has its coordinates origin in the top left corner, as used by CSS, Wayland, etc.
+        // We need to translate to a bottom-left origin, as expected by Mesa/EGL, which already re-translates the y coordinate
+        // internally back to top-left origin for Wayland before sending the damage rectangle.
+
+        // Work on a copy to only pass rects bottom-left as coordinate origin to EGL
+        Vector damagedRects { m_scene->lastDamagedRects() };
+        for (auto& damagedRect : damagedRects) {
+            damagedRect.setY(viewportSize.height() - damagedRect.y() - damagedRect.height());
+        }
+        m_context->swapBuffersWithDamage(damagedRects);
+    } else {
+        m_context->swapBuffers();
+    }
+
 
     if (m_scene->isActive())
         m_client.didRenderFrame();
