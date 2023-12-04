@@ -449,7 +449,6 @@ Total elements to be tested: 123.
     role: heading
     childNodeIds.length: 1
     parentNodeId: exists
-    headingLevel: 2
 
 <div role="doc-qna">doc-qna</div>
     exists: true

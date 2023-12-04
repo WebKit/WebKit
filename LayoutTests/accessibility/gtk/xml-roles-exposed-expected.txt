@@ -419,7 +419,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:heading, xml-roles:heading, level:2, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:heading, xml-roles:heading, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXImage
 AXParent: AXWebArea
@@ -1716,7 +1716,7 @@ AXEnabled: 1
 AXExpanded: 0
 AXRequired: 0
 AXChecked: 0
-AXPlatformAttributes: computed-role:heading, xml-roles:doc-subtitle, level:2, tag:div, toolkit:WebKitGtk
+AXPlatformAttributes: computed-role:heading, xml-roles:doc-subtitle, tag:div, toolkit:WebKitGtk
 ------------
 AXRole: AXComment
 AXParent: AXWebArea
