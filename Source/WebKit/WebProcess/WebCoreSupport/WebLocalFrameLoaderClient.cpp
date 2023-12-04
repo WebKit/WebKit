@@ -90,6 +90,7 @@
 #include <WebCore/PluginDocument.h>
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/ProgressTracker.h>
+#include <WebCore/Quirks.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
@@ -741,6 +742,17 @@ void WebLocalFrameLoaderClient::dispatchDidFinishLoad()
         loadListener->didFinishLoad(m_frame.ptr());
 
     webPage->didFinishLoad(m_frame);
+
+    if (!m_frame->coreLocalFrame() || !m_frame->coreLocalFrame()->isMainFrame() || !m_frame->coreLocalFrame()->document())
+        return;
+    auto* document = m_frame->coreLocalFrame()->document();
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::StorageAccessQuirkForSite(RegistrableDomain { document->url() }), [document, weakDocument = WeakPtr { *document }](Vector<RegistrableDomain> domains) {
+        if (!domains.size())
+            return;
+        if (!weakDocument)
+            return;
+        document->quirks().setStorageAccessQuirksForSite(WTFMove(domains));
+    });
 }
 
 void WebLocalFrameLoaderClient::completePageTransitionIfNeeded()

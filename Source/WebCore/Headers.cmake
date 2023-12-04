@@ -2223,6 +2223,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/NetworkStateNotifier.h
     platform/network/NetworkStorageSession.h
     platform/network/NetworkingContext.h
+    platform/network/OrganizationStorageAccessQuirk.h
     platform/network/ParsedContentRange.h
     platform/network/ParsedContentType.h
     platform/network/ParsedRequestRange.h
@@ -2243,6 +2244,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/network/StoredCredentialsPolicy.h
     platform/network/SynchronousLoaderClient.h
     platform/network/TimingAllowOrigin.h
+    platform/network/UserAgentStringQuirk.h
 
     platform/sql/SQLValue.h
     platform/sql/SQLiteDatabase.h

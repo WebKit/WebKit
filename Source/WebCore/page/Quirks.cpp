@@ -28,6 +28,8 @@
 
 #include "AllowedFonts.h"
 #include "Attr.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "DOMTokenList.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
@@ -47,6 +49,7 @@
 #include "LocalDOMWindow.h"
 #include "NamedNodeMap.h"
 #include "NetworkStorageSession.h"
+#include "OrganizationStorageAccessQuirk.h"
 #include "PlatformMouseEvent.h"
 #include "RegistrableDomain.h"
 #include "ResourceLoadObserver.h"
@@ -59,6 +62,7 @@
 #include "Settings.h"
 #include "SpaceSplitString.h"
 #include "UserAgent.h"
+#include "UserAgentStringQuirk.h"
 #include "UserContentTypes.h"
 #include "UserScript.h"
 #include "UserScriptTypes.h"
@@ -357,6 +361,35 @@ bool Quirks::shouldAvoidUsingIOS17UserAgentForFacebook() const
 #else
     return false;
 #endif
+}
+
+HashMap<RegistrableDomain, UserAgentStringQuirk>& Quirks::mutableDynamicUserAgentStringQuirks()
+{
+    static NeverDestroyed<HashMap<RegistrableDomain, UserAgentStringQuirk>> map;
+    return map.get();
+}
+
+const HashMap<RegistrableDomain, UserAgentStringQuirk>& Quirks::dynamicUserAgentStringQuirks()
+{
+    return mutableDynamicUserAgentStringQuirks();
+}
+
+void Quirks::setUserAgentStringQuirks(Vector<UserAgentStringQuirk>&& userAgentStringQuirks)
+{
+    auto& quirks = mutableDynamicUserAgentStringQuirks();
+    quirks.clear();
+    for (auto&& quirk : userAgentStringQuirks)
+        quirks.set(quirk.site, quirk);
+}
+
+String Quirks::userAgentStringQuirkForDomain(const URL& url)
+{
+    auto& quirks = dynamicUserAgentStringQuirks();
+    RegistrableDomain site { url };
+    auto quirk = quirks.find(site);
+    if (quirk == quirks.end())
+        return { };
+    return quirk->value.userAgentString;
 }
 
 bool Quirks::shouldDisableElementFullscreenQuirk() const
@@ -1127,6 +1160,22 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
         });
     });
     return Quirks::StorageAccessResult::ShouldCancelEvent;
+}
+
+void Quirks::triggerOptionalStorageAccessIframeQuirk(const SecurityOrigin& topOrigin, const URL& frameURL, CompletionHandler<void()>&& completionHandler) const
+{
+    if (m_document) {
+        if (m_document->frame() && !m_document->frame()->isMainFrame()) {
+            m_document->topDocument().quirks().triggerOptionalStorageAccessIframeQuirk(topOrigin, frameURL, WTFMove(completionHandler));
+            return;
+        }
+        if (subFrameDomainsForStorageAccessQuirk().contains(RegistrableDomain { frameURL })) {
+            return DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, RegistrableDomain { frameURL }, [completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted) mutable {
+                completionHandler();
+            });
+        }
+    }
+    completionHandler();
 }
 
 // rdar://64549429

@@ -100,6 +100,7 @@ class PageClient;
 class ProvisionalPageProxy;
 class RemotePageProxy;
 class SuspendedPageProxy;
+class UserAgentStringQuirkObserver;
 class UserMediaCaptureManagerProxy;
 class VisitedLinkStore;
 class WebBackForwardListItem;
@@ -597,6 +598,8 @@ private:
     void destroySpeechRecognitionServer(SpeechRecognitionServerIdentifier);
 
     void systemBeep();
+
+    void sendUserAgentStringQuirksData();
     
 #if PLATFORM(MAC)
     void isAXAuthenticated(audit_token_t, CompletionHandler<void(bool)>&&);
@@ -754,6 +757,10 @@ private:
     mutable String m_environmentIdentifier;
 #if ENABLE(GPU_PROCESS)
     mutable std::optional<GPUProcessPreferencesForWebProcess> m_preferencesForGPUProcess;
+#endif
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    RefPtr<UserAgentStringQuirkObserver> m_userAgentStringQuirksDataUpdateObserver;
+    bool m_didSendUserAgentStringQuirks { false };
 #endif
 };
 

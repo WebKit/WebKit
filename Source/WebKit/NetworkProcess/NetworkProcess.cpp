@@ -856,6 +856,12 @@ void NetworkProcess::setResourceLoadStatisticsTimeAdvanceForTesting(PAL::Session
     completionHandler();
 }
 
+void NetworkProcess::setStorageAccessQuirkForTesting(PAL::SessionID sessionID, String topSite, Vector<String> subSites, CompletionHandler<void()>&& completionHandler)
+{
+    NetworkStorageSession::addStorageAccessQuirks(WTFMove(topSite), WTFMove(subSites));
+    completionHandler();
+}
+
 void NetworkProcess::setIsRunningResourceLoadStatisticsTest(PAL::SessionID sessionID, bool value, CompletionHandler<void()>&& completionHandler)
 {
     if (auto* session = networkSession(sessionID)) {
@@ -1215,6 +1221,11 @@ void NetworkProcess::setTrackingPreventionEnabled(PAL::SessionID sessionID, bool
 {
     if (auto* session = networkSession(sessionID))
         session->setTrackingPreventionEnabled(enabled);
+}
+
+void NetworkProcess::setStorageAccessQuirks(Vector<WebCore::OrganizationStorageAccessQuirk>&& organizationStorageAccessQuirk)
+{
+    NetworkStorageSession::addStorageAccessQuirks(WTFMove(organizationStorageAccessQuirk));
 }
 
 void NetworkProcess::setResourceLoadStatisticsLogTestingEvent(bool enabled)

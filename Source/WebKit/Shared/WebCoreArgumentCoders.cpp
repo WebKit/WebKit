@@ -106,6 +106,7 @@
 #include <WebCore/MenuListPart.h>
 #include <WebCore/MeterPart.h>
 #include <WebCore/NotificationResources.h>
+#include <WebCore/OrganizationStorageAccessQuirk.h>
 #include <WebCore/Pasteboard.h>
 #include <WebCore/Path.h>
 #include <WebCore/PerspectiveTransformOperation.h>
@@ -155,6 +156,7 @@
 #include <WebCore/TransformOperation.h>
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/TranslateTransformOperation.h>
+#include <WebCore/UserAgentStringQuirk.h>
 #include <WebCore/UserStyleSheet.h>
 #include <WebCore/VelocityData.h>
 #include <WebCore/ViewportArguments.h>
@@ -727,6 +729,48 @@ bool ArgumentCoder<ResourceError>::decode(Decoder& decoder, ResourceError& resou
         resourceError.setAsSanitized();
 
     return true;
+}
+
+void ArgumentCoder<OrganizationStorageAccessQuirk>::encode(Encoder& encoder, const OrganizationStorageAccessQuirk& organizationStorageAccessQuirk)
+{
+    encoder << organizationStorageAccessQuirk.organizationName;
+    encoder << organizationStorageAccessQuirk.domainPairings;
+}
+
+std::optional<OrganizationStorageAccessQuirk> ArgumentCoder<OrganizationStorageAccessQuirk>::decode(Decoder& decoder)
+{
+    std::optional<String> organizationName;
+    decoder >> organizationName;
+    if (!organizationName)
+        return std::nullopt;
+
+    std::optional<HashMap<RegistrableDomain, Vector<RegistrableDomain>>> domainPairings;
+    decoder >> domainPairings;
+    if (!domainPairings)
+        return std::nullopt;
+
+    return std::optional<OrganizationStorageAccessQuirk>(OrganizationStorageAccessQuirk { WTFMove(*organizationName), WTFMove(*domainPairings) });
+}
+
+void ArgumentCoder<UserAgentStringQuirk>::encode(Encoder& encoder, const UserAgentStringQuirk& userAgentStringQuirk)
+{
+    encoder << userAgentStringQuirk.site;
+    encoder << userAgentStringQuirk.userAgentString;
+}
+
+std::optional<UserAgentStringQuirk> ArgumentCoder<UserAgentStringQuirk>::decode(Decoder& decoder)
+{
+    std::optional<WebCore::RegistrableDomain> site;
+    decoder >> site;
+    if (!site)
+        return std::nullopt;
+
+    std::optional<String> userAgentString;
+    decoder >> userAgentString;
+    if (!userAgentString)
+        return std::nullopt;
+
+    return std::optional<UserAgentStringQuirk>(UserAgentStringQuirk { WTFMove(*site), WTFMove(*userAgentString) });
 }
 
 #if !USE(COORDINATED_GRAPHICS)

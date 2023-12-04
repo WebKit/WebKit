@@ -254,7 +254,6 @@
 #include <WebCore/PrintContext.h>
 #include <WebCore/ProcessCapabilities.h>
 #include <WebCore/PromisedAttachmentInfo.h>
-#include <WebCore/Quirks.h>
 #include <WebCore/Range.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/RemoteDOMWindow.h>
@@ -7857,6 +7856,11 @@ void WebPage::requestStorageAccess(RegistrableDomain&& subFrameDomain, Registrab
         }
         completionHandler(result);
     });
+}
+
+void WebPage::shouldRequestStorageAccessForQuirkSite(RegistrableDomain&& topFrameDomain, RegistrableDomain&& subFrameDomain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::ShouldRequestStorageAccessForQuirkSite(WTFMove(topFrameDomain), WTFMove(subFrameDomain)), WTFMove(completionHandler));
 }
 
 void WebPage::addDomainWithPageLevelStorageAccess(const RegistrableDomain& topLevelDomain, const RegistrableDomain& resourceDomain)

@@ -40,6 +40,7 @@
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/KeyedCoding.h>
 #include <WebCore/NetworkStorageSession.h>
+#include <WebCore/OrganizationStorageAccessQuirk.h>
 #include <WebCore/ResourceLoadStatistics.h>
 #include <WebCore/SQLiteDatabase.h>
 #include <WebCore/SQLiteStatement.h>
@@ -1764,21 +1765,32 @@ void ResourceLoadStatisticsStore::grantStorageAccess(SubFrameDomain&& subFrameDo
 
     auto transactionScope = beginTransactionIfNecessary();
 
-    if (promptWasShown == StorageAccessPromptWasShown::Yes) {
-        auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
-        if (!subFrameStatus.second) {
-            ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::grantStorageAccess was not completed due to failed insert attempt", this);
-            return completionHandler(StorageAccessWasGranted::No);
-        }
-        ASSERT(subFrameStatus.first == AddedRecord::No);
+    auto addGrant = [&] (SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler) mutable {
+        if (promptWasShown == StorageAccessPromptWasShown::Yes) {
+            auto subFrameStatus = ensureResourceStatisticsForRegistrableDomain(subFrameDomain);
+            if (!subFrameStatus.second) {
+                ITP_RELEASE_LOG_ERROR(m_sessionID, "%p - ResourceLoadStatisticsStore::grantStorageAccess was not completed due to failed insert attempt", this);
+                return completionHandler(StorageAccessWasGranted::No);
+            }
+            ASSERT(subFrameStatus.first == AddedRecord::No);
 #if ASSERT_ENABLED
-        if (!NetworkStorageSession::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain))
-            ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
+            if (!NetworkStorageSession::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(subFrameDomain, topFrameDomain))
+                ASSERT(hasHadUserInteraction(subFrameDomain, OperatingDatesWindow::Long));
 #endif
-        insertDomainRelationshipList(storageAccessUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *subFrameStatus.second);
-    }
+            insertDomainRelationshipList(storageAccessUnderTopFrameDomainsQuery, HashSet<RegistrableDomain>({ topFrameDomain }), *subFrameStatus.second);
+        }
 
-    grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, scope, WTFMove(completionHandler));
+        grantStorageAccessInternal(WTFMove(subFrameDomain), WTFMove(topFrameDomain), frameID, pageID, promptWasShown, scope, WTFMove(completionHandler));
+    };
+
+    if (auto additionalDomainGrants = NetworkStorageSession::storageAccessQuirkForDomainPair(subFrameDomain, topFrameDomain)) {
+        for (auto&& [topDomain, subDomain] : additionalDomainGrants->domainPairings) {
+            if (topDomain == topFrameDomain && subDomain.contains(subFrameDomain))
+                continue;
+            addGrant(SubFrameDomain { subFrameDomain }, TopFrameDomain { topDomain }, [] (StorageAccessWasGranted wasGranted) { });
+        }
+    }
+    addGrant(WTFMove(subFrameDomain), WTFMove(topFrameDomain), WTFMove(completionHandler));
 }
 
 void ResourceLoadStatisticsStore::grantStorageAccessInternal(SubFrameDomain&& subFrameDomain, TopFrameDomain&& topFrameDomain, std::optional<FrameIdentifier> frameID, PageIdentifier pageID, StorageAccessPromptWasShown promptWasShownNowOrEarlier, StorageAccessScope scope, CompletionHandler<void(StorageAccessWasGranted)>&& completionHandler)

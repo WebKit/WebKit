@@ -1101,6 +1101,16 @@ void NetworkConnectionToWebProcess::requestStorageAccess(RegistrableDomain&& sub
     completionHandler({ WebCore::StorageAccessWasGranted::Yes, WebCore::StorageAccessPromptWasShown::No, scope, topFrameDomain, subFrameDomain });
 }
 
+void NetworkConnectionToWebProcess::shouldRequestStorageAccessForQuirkSite(RegistrableDomain&& topFrameDomain, RegistrableDomain&& subFrameDomain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    completionHandler(!!NetworkStorageSession::storageAccessQuirkForDomainPair(topFrameDomain, subFrameDomain));
+}
+
+void NetworkConnectionToWebProcess::storageAccessQuirkForSite(WebCore::RegistrableDomain&& topFrameDomain, CompletionHandler<void(Vector<RegistrableDomain>)>&& completionHandler)
+{
+    completionHandler(NetworkStorageSession::storageAccessQuirkForTopFrameDomain(topFrameDomain));
+}
+
 void NetworkConnectionToWebProcess::requestStorageAccessUnderOpener(WebCore::RegistrableDomain&& domainInNeedOfStorageAccess, PageIdentifier openerPageID, WebCore::RegistrableDomain&& openerDomain)
 {
     if (auto* networkSession = this->networkSession()) {

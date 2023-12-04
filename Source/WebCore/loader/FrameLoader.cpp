@@ -105,6 +105,7 @@
 #include "PluginDocument.h"
 #include "PolicyChecker.h"
 #include "ProgressTracker.h"
+#include "Quirks.h"
 #include "ReportingScope.h"
 #include "ResourceLoadInfo.h"
 #include "ResourceLoadObserver.h"
@@ -2937,7 +2938,10 @@ int FrameLoader::numPendingOrLoadingRequests(bool recurse) const
 String FrameLoader::userAgent(const URL& url) const
 {
     String userAgent;
-    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_frame->mainFrame())) {
+    if (auto quirk = Quirks::userAgentStringQuirkForDomain(url); !quirk.isEmpty())
+        userAgent = quirk;
+
+    if (RefPtr localFrame = dynamicDowncast<LocalFrame>(m_frame->mainFrame()); userAgent.isEmpty() && localFrame) {
         if (RefPtr documentLoader = localFrame->loader().activeDocumentLoader()) {
             if (m_frame->settings().needsSiteSpecificQuirks())
                 userAgent = documentLoader->customUserAgentAsSiteSpecificQuirks();

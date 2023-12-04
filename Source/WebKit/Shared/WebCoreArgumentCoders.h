@@ -133,7 +133,9 @@ struct CompositionUnderline;
 struct DataDetectorElementInfo;
 struct Length;
 struct SoupNetworkProxySettings;
+struct OrganizationStorageAccessQuirk;
 struct TextRecognitionDataDetector;
+struct UserAgentStringQuirk;
 struct ViewportArguments;
 
 template <class>
@@ -208,6 +210,16 @@ template<> struct ArgumentCoder<WebCore::ResourceError> {
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::ResourceError&);
     static void encodePlatformData(Encoder&, const WebCore::ResourceError&);
     static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::ResourceError&);
+};
+
+template<> struct ArgumentCoder<WebCore::OrganizationStorageAccessQuirk> {
+    static void encode(Encoder&, const WebCore::OrganizationStorageAccessQuirk&);
+    static std::optional<WebCore::OrganizationStorageAccessQuirk> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<WebCore::UserAgentStringQuirk> {
+    static void encode(Encoder&, const WebCore::UserAgentStringQuirk&);
+    static std::optional<WebCore::UserAgentStringQuirk> decode(Decoder&);
 };
 
 #if USE(APPKIT)

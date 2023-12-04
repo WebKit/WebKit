@@ -95,7 +95,9 @@ enum class StorageAccessWasGranted : bool;
 struct ClientOrigin;
 struct MessageWithMessagePorts;
 class SecurityOriginData;
+struct OrganizationStorageAccessQuirk;
 struct SoupNetworkProxySettings;
+struct UserAgentStringQuirk;
 }
 
 namespace WebKit {
@@ -257,8 +259,10 @@ public:
     void setMinimumTimeBetweenDataRecordsRemoval(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
     void setNotifyPagesWhenDataRecordsWereScanned(PAL::SessionID, bool value, CompletionHandler<void()>&&);
     void setResourceLoadStatisticsTimeAdvanceForTesting(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
+    void setStorageAccessQuirkForTesting(PAL::SessionID, String topSite, Vector<String> subSites, CompletionHandler<void()>&&);
     void setIsRunningResourceLoadStatisticsTest(PAL::SessionID, bool value, CompletionHandler<void()>&&);
     void setTrackingPreventionEnabled(PAL::SessionID, bool);
+    void setStorageAccessQuirks(Vector<WebCore::OrganizationStorageAccessQuirk>&&);
     void setResourceLoadStatisticsLogTestingEvent(bool);
     void setResourceLoadStatisticsDebugMode(PAL::SessionID, bool debugMode, CompletionHandler<void()>&&d);
     void isResourceLoadStatisticsEphemeral(PAL::SessionID, CompletionHandler<void(bool)>&&) const;

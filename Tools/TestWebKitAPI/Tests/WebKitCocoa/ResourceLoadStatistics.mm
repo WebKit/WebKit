@@ -1415,3 +1415,41 @@ TEST(ResourceLoadStatistics, UserGestureLogsUserInteraction)
     }];
     TestWebKitAPI::Util::run(&done);
 }
+
+TEST(ResourceLoadStatistics, StorageAccessAPISiteWithQuirk)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+    [dataStore _setResourceLoadStatisticsEnabled:YES];
+
+    __block bool done = false;
+    [dataStore _setStorageAccessQuirkForTesting:@"webkit.org" withSubSites:[NSArray arrayWithObject:@"webkit1.org"] completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    [webView _test_waitForDidFinishNavigation];
+
+    __block bool navigationDelegateDone = false;
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate setDidPromptForStorageAccess:^(WKWebView *, NSString *topFrameDomain, NSString *subFrameDomain, BOOL hasQuirk) {
+        EXPECT_TRUE(hasQuirk);
+        navigationDelegateDone = true;
+    }];
+
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    [webView setUIDelegate:uiDelegate.get()];
+
+    [webView evaluateJavaScript:@"let iframe = document.createElement(\"iframe\"); iframe.src = \"https://www.webkit1.org\"; document.body.appendChild(iframe);" completionHandler:^(id value, NSError *error) {
+        done = true;
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+    TestWebKitAPI::Util::run(&navigationDelegateDone);
+}

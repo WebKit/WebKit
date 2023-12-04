@@ -43,6 +43,8 @@ class RegistrableDomain;
 class SecurityOriginData;
 class WeakPtrImplWithEventTargetData;
 
+struct UserAgentStringQuirk;
+
 enum class IsSyntheticClick : bool;
 enum class StorageAccessWasGranted : bool;
 
@@ -98,6 +100,11 @@ public:
     WEBCORE_EXPORT bool shouldAvoidUsingIOS13ForGmail() const;
     WEBCORE_EXPORT bool shouldAvoidUsingIOS17UserAgentForFacebook() const;
 
+    static HashMap<RegistrableDomain, UserAgentStringQuirk>& mutableDynamicUserAgentStringQuirks();
+    WEBCORE_EXPORT static const HashMap<RegistrableDomain, UserAgentStringQuirk>& dynamicUserAgentStringQuirks();
+    WEBCORE_EXPORT static void setUserAgentStringQuirks(Vector<UserAgentStringQuirk>&&);
+    WEBCORE_EXPORT static String userAgentStringQuirkForDomain(const URL&);
+
     bool needsGMailOverflowScrollQuirk() const;
     bool needsYouTubeOverflowScrollQuirk() const;
     bool needsFullscreenDisplayNoneQuirk() const;
@@ -123,7 +130,11 @@ public:
 
     enum StorageAccessResult : bool { ShouldNotCancelEvent, ShouldCancelEvent };
     enum ShouldDispatchClick : bool { No, Yes };
+
+    void triggerOptionalStorageAccessIframeQuirk(const SecurityOrigin& topOrigin, const URL& frameURL, CompletionHandler<void()>&&) const;
     StorageAccessResult triggerOptionalStorageAccessQuirk(Element&, const PlatformMouseEvent&, const AtomString& eventType, int, Element*, bool isParentProcessAFullWebBrowser, IsSyntheticClick) const;
+    void setStorageAccessQuirksForSite(Vector<RegistrableDomain>&& domains) { m_subFrameDomainsForStorageAccessQuirk = WTFMove(domains); }
+    const Vector<RegistrableDomain>& subFrameDomainsForStorageAccessQuirk() const { return m_subFrameDomainsForStorageAccessQuirk; }
 
     bool needsVP9FullRangeFlagQuirk() const;
 
@@ -240,6 +251,8 @@ private:
     mutable std::optional<bool> m_needsDisableDOMPasteAccessQuirk;
     mutable std::optional<bool> m_shouldAvoidUsingIOS17UserAgentForFacebook;
     mutable std::optional<bool> m_shouldDisableElementFullscreen;
+
+    Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;
 };
 
 } // namespace WebCore

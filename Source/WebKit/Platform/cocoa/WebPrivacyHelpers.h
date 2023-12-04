@@ -35,6 +35,8 @@
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 #import <WebCore/LinkDecorationFilteringData.h>
+#import <WebCore/OrganizationStorageAccessQuirk.h>
+#import <WebCore/UserAgentStringQuirk.h>
 #endif
 
 OBJC_CLASS WKWebPrivacyNotificationListener;
@@ -85,6 +87,86 @@ private:
     RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
     Vector<WebCore::LinkDecorationFilteringData> m_cachedStrings;
     WeakHashSet<LinkDecorationFilteringDataObserver> m_observers;
+};
+
+class StorageAccessQuirkObserver : public RefCounted<StorageAccessQuirkObserver>, public CanMakeWeakPtr<StorageAccessQuirkObserver> {
+public:
+    ~StorageAccessQuirkObserver() = default;
+
+private:
+    friend class StorageAccessQuirkController;
+
+    StorageAccessQuirkObserver(Function<void()>&& callback)
+        : m_callback { WTFMove(callback) }
+    {
+    }
+
+    static Ref<StorageAccessQuirkObserver> create(Function<void()>&& callback)
+    {
+        return adoptRef(*new StorageAccessQuirkObserver(WTFMove(callback)));
+    }
+
+    void invokeCallback() { m_callback(); }
+
+    Function<void()> m_callback;
+};
+
+class StorageAccessQuirkController {
+public:
+    static StorageAccessQuirkController& shared();
+
+    const Vector<WebCore::OrganizationStorageAccessQuirk>& cachedQuirks() const { return m_cachedQuirks; }
+    void updateQuirks(CompletionHandler<void()>&&);
+
+    Ref<StorageAccessQuirkObserver> observeUpdates(Function<void()>&&);
+
+private:
+    StorageAccessQuirkController() = default;
+    void setCachedQuirks(Vector<WebCore::OrganizationStorageAccessQuirk>&&);
+
+    RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
+    Vector<WebCore::OrganizationStorageAccessQuirk> m_cachedQuirks;
+    WeakHashSet<StorageAccessQuirkObserver> m_observers;
+};
+
+class UserAgentStringQuirkObserver : public RefCounted<UserAgentStringQuirkObserver>, public CanMakeWeakPtr<UserAgentStringQuirkObserver> {
+public:
+    ~UserAgentStringQuirkObserver() = default;
+
+private:
+    friend class UserAgentStringQuirkController;
+
+    UserAgentStringQuirkObserver(Function<void()>&& callback)
+        : m_callback { WTFMove(callback) }
+    {
+    }
+
+    static Ref<UserAgentStringQuirkObserver> create(Function<void()>&& callback)
+    {
+        return adoptRef(*new UserAgentStringQuirkObserver(WTFMove(callback)));
+    }
+
+    void invokeCallback() { m_callback(); }
+
+    Function<void()> m_callback;
+};
+
+class UserAgentStringQuirkController {
+public:
+    static UserAgentStringQuirkController& shared();
+
+    const Vector<WebCore::UserAgentStringQuirk>& cachedQuirks() const { return m_cachedQuirks; }
+    void updateQuirks(CompletionHandler<void()>&&);
+
+    Ref<UserAgentStringQuirkObserver> observeUpdates(Function<void()>&&);
+
+private:
+    UserAgentStringQuirkController() = default;
+    void setCachedQuirks(Vector<WebCore::UserAgentStringQuirk>&&);
+
+    RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
+    Vector<WebCore::UserAgentStringQuirk> m_cachedQuirks;
+    WeakHashSet<UserAgentStringQuirkObserver> m_observers;
 };
 
 void configureForAdvancedPrivacyProtections(NSURLSession *);

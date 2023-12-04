@@ -27,7 +27,7 @@
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
-#if HAVE(WEB_PRIVACY_FRAMEWORK)
+#if HAVE(WEB_PRIVACY_FRAMEWORK) && 0
 #import <WebPrivacy/WebPrivacy.h>
 #else
 
@@ -39,6 +39,8 @@ typedef NS_ENUM(NSInteger, WPResourceType) {
     WPResourceTypeTrackerDomains,
     WPResourceTypeTrackerNetworkAddresses,
     WPResourceTypeAllowedLinkFilteringData,
+    WPResourceTypeStorageAccessQuirksData,
+    WPResourceTypeUserAgentStringQuirksData,
 };
 
 typedef NS_ENUM(NSInteger, WPNetworkAddressVersion) {
@@ -67,6 +69,24 @@ typedef NS_ENUM(NSInteger, WPNetworkAddressVersion) {
 @property (nonatomic, readonly) NSArray<WPLinkFilteringRule *> *rules;
 @end
 
+@interface WPStorageAccessQuirk : NSObject
+@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly) NSDictionary<NSString *, NSArray<NSString *> *> *domainPairings;
+@end
+
+@interface WPStorageAccessQuirksData : NSObject
+@property (nonatomic, readonly) NSArray<WPStorageAccessQuirk *> *quirks;
+@end
+
+@interface WPUserAgentStringQuirk : NSObject
+@property (nonatomic, readonly) NSString *domain;
+@property (nonatomic, readonly) NSString *userAgentString;
+@end
+
+@interface WPUserAgentStringQuirksData : NSObject
+@property (nonatomic, readonly) NSArray<WPUserAgentStringQuirk *> *quirks;
+@end
+
 @interface WPTrackingDomain  : NSObject
 @property (nonatomic, readonly) NSString *host;
 @property (nonatomic, readonly) NSString *owner;
@@ -75,6 +95,8 @@ typedef NS_ENUM(NSInteger, WPNetworkAddressVersion) {
 
 typedef void (^WPNetworkAddressesCompletionHandler)(NSArray<WPNetworkAddressRange *> *, NSError *);
 typedef void (^WPLinkFilteringDataCompletionHandler)(WPLinkFilteringData *, NSError *);
+typedef void (^WPStorageAccessQuirksDataCompletionHandler)(WPStorageAccessQuirksData *, NSError *);
+typedef void (^WPUserAgentStringQuirksDataCompletionHandler)(WPUserAgentStringQuirksData *, NSError *);
 typedef void (^WPTrackingDomainsCompletionHandler)(NSArray<WPTrackingDomain *> *, NSError *);
 
 @interface WPResources : NSObject
@@ -84,6 +106,8 @@ typedef void (^WPTrackingDomainsCompletionHandler)(NSArray<WPTrackingDomain *> *
 - (void)requestTrackerNetworkAddresses:(WPResourceRequestOptions *)options completionHandler:(WPNetworkAddressesCompletionHandler)completion;
 - (void)requestLinkFilteringData:(WPResourceRequestOptions *)options completionHandler:(WPLinkFilteringDataCompletionHandler)completion;
 - (void)requestAllowedLinkFilteringData:(WPResourceRequestOptions *)options completionHandler:(WPLinkFilteringDataCompletionHandler)completion;
+- (void)requestStorageAccessQuirksData:(WPResourceRequestOptions *)options completionHandler:(WPStorageAccessQuirksDataCompletionHandler)completion;
+- (void)requestUserAgentStringQuirksData:(WPResourceRequestOptions *)options completionHandler:(WPUserAgentStringQuirksDataCompletionHandler)completion;
 - (void)requestTrackerDomainNamesData:(WPResourceRequestOptions *)options completionHandler:(WPTrackingDomainsCompletionHandler)completion;
 
 @end

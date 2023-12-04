@@ -1630,6 +1630,11 @@ void WebChromeClient::requestStorageAccess(RegistrableDomain&& subFrameDomain, R
     protectedPage()->requestStorageAccess(WTFMove(subFrameDomain), WTFMove(topFrameDomain), *webFrame, scope, WTFMove(completionHandler));
 }
 
+void WebChromeClient::shouldRequestStorageAccessForQuirkSite(RegistrableDomain&& topFrameDomain, RegistrableDomain&& subFrameDomain, CompletionHandler<void(bool)>&& completionHandler)
+{
+    protectedPage()->shouldRequestStorageAccessForQuirkSite(WTFMove(topFrameDomain), WTFMove(subFrameDomain), WTFMove(completionHandler));
+}
+
 bool WebChromeClient::hasPageLevelStorageAccess(const WebCore::RegistrableDomain& topLevelDomain, const WebCore::RegistrableDomain& resourceDomain) const
 {
     return protectedPage()->hasPageLevelStorageAccess(topLevelDomain, resourceDomain);

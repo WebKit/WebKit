@@ -104,6 +104,7 @@
 #if PLATFORM(COCOA)
 #include "ObjCObjectGraph.h"
 #include "UserMediaCaptureManagerProxy.h"
+#include "WebPrivacyHelpers.h"
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
@@ -314,6 +315,11 @@ WebProcessProxy::WebProcessProxy(WebProcessPool& processPool, WebsiteDataStore* 
     WebPasteboardProxy::singleton().addWebProcessProxy(*this);
 
     platformInitialize();
+
+    m_userAgentStringQuirksDataUpdateObserver = UserAgentStringQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->sendUserAgentStringQuirksData();
+    });
 }
 
 #if !PLATFORM(IOS_FAMILY)
@@ -540,6 +546,9 @@ void WebProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& l
 
 bool WebProcessProxy::shouldSendPendingMessage(const PendingMessage& message)
 {
+    // Send the quirk before handling any load requests.
+    sendUserAgentStringQuirksData();
+
     if (message.encoder->messageName() == IPC::MessageName::WebPage_LoadRequestWaitingForProcessLaunch) {
         auto buffer = message.encoder->buffer();
         auto bufferSize = message.encoder->bufferSize();
@@ -1284,6 +1293,8 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, IPC::Connect
     enableRemoteInspectorIfNeeded();
 #endif
 #endif
+
+    sendUserAgentStringQuirksData();
 
     beginResponsivenessChecks();
 }
@@ -2400,6 +2411,20 @@ void WebProcessProxy::markProcessAsRecentlyUsed()
 void WebProcessProxy::systemBeep()
 {
     PAL::systemBeep();
+}
+
+void WebProcessProxy::sendUserAgentStringQuirksData()
+{
+    if (!m_didSendUserAgentStringQuirks)
+        m_didSendUserAgentStringQuirks = true;
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    if (UserAgentStringQuirkController::shared().cachedQuirks().isEmpty())
+        return;
+
+    // FIXME Filter by process's site when site isolation is enabled
+    send(Messages::WebProcess::SetUserAgentStringQuirks(UserAgentStringQuirkController::shared().cachedQuirks()), 0);
+
+#endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 }
 
 RefPtr<WebsiteDataStore> WebProcessProxy::protectedWebsiteDataStore() const

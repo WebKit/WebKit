@@ -642,6 +642,17 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->setStatisticsTestingCallback(nullptr);
 }
 
+- (void)_setStorageAccessQuirkForTesting:(NSString *)topSite withSubSites:(NSArray<NSString *> *)subSites completionHandler:(void(^)(void))completionHandler
+{
+    if (!_websiteDataStore->isPersistent())
+        return;
+
+    Vector<String> vectorSubSites;
+    for (NSString *subSite : subSites)
+        vectorSubSites.append({ subSite });
+    _websiteDataStore->setStorageAccessQuirkForTesting(topSite, vectorSubSites, makeBlockPtr(completionHandler));
+}
+
 - (void)_setResourceLoadStatisticsTimeAdvanceForTesting:(NSTimeInterval)time completionHandler:(void(^)(void))completionHandler
 {
     _websiteDataStore->setResourceLoadStatisticsTimeAdvanceForTesting(Seconds(time), makeBlockPtr(completionHandler));

@@ -1276,6 +1276,11 @@ void WebsiteDataStore::setResourceLoadStatisticsTimeAdvanceForTesting(Seconds ti
     protectedNetworkProcess()->setResourceLoadStatisticsTimeAdvanceForTesting(m_sessionID, time, WTFMove(completionHandler));
 }
 
+void WebsiteDataStore::setStorageAccessQuirkForTesting(String topSite, Vector<String> subSites, CompletionHandler<void()>&& completionHandler)
+{
+    protectedNetworkProcess()->setStorageAccessQuirkForTesting(m_sessionID, topSite, subSites, WTFMove(completionHandler));
+}
+
 void WebsiteDataStore::setIsRunningResourceLoadStatisticsTest(bool value, CompletionHandler<void()>&& completionHandler)
 {
     useExplicitTrackingPreventionState();

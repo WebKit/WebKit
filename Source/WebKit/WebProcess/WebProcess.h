@@ -111,6 +111,8 @@ struct MessagePortIdentifier;
 struct MessageWithMessagePorts;
 struct MockMediaDevice;
 struct PrewarmInformation;
+struct UserAgentStringQuirk;
+
 struct ServiceWorkerContextData;
 }
 
@@ -220,6 +222,10 @@ public:
 #if HAVE(STYLUS_DEVICE_OBSERVATION)
     bool hasStylusDevice() const { return m_hasStylusDevice; }
     void setHasStylusDevice(bool);
+#endif
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    void setUserAgentStringQuirks(Vector<WebCore::UserAgentStringQuirk>&&);
 #endif
 
     WebFrame* webFrame(WebCore::FrameIdentifier) const;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -428,10 +428,46 @@ const HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& NetworkStorageSess
     return map.get();
 }
 
+HashSet<OrganizationStorageAccessQuirk>& NetworkStorageSession::mutableDynamicStorageAccessQuirks()
+{
+    static NeverDestroyed<HashSet<OrganizationStorageAccessQuirk>> set;
+    return set.get();
+}
+
+const HashSet<OrganizationStorageAccessQuirk>& NetworkStorageSession::dynamicStorageAccessQuirks()
+{
+    return mutableDynamicStorageAccessQuirks();
+}
+
+void NetworkStorageSession::addStorageAccessQuirks(Vector<OrganizationStorageAccessQuirk>&& organizationStorageAccessQuirks)
+{
+    auto& quirks = mutableDynamicStorageAccessQuirks();
+    quirks.clear();
+    for (auto&& quirk : organizationStorageAccessQuirks)
+        quirks.add(quirk);
+}
+
+void NetworkStorageSession::addStorageAccessQuirks(String&& topSite, Vector<String>&& subSites)
+{
+    auto& quirks = mutableDynamicStorageAccessQuirks();
+    auto registrableTopSite = RegistrableDomain::fromRawString(WTFMove(topSite));
+    auto registrableTopSiteString = registrableTopSite.string();
+    quirks.add(
+        OrganizationStorageAccessQuirk {
+            registrableTopSiteString
+            , HashMap<RegistrableDomain, Vector<RegistrableDomain>> { {
+                KeyValuePair { WTFMove(registrableTopSite),
+                    subSites.map([](auto& site) { return RegistrableDomain::fromRawString(String { site }); })
+                },
+            } }
+        }
+    );
+}
+
 bool NetworkStorageSession::loginDomainMatchesRequestingDomain(const TopFrameDomain& topFrameDomain, const SubResourceDomain& resourceDomain)
 {
     auto loginDomains = WebCore::NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(topFrameDomain);
-    return loginDomains && loginDomains.value().contains(resourceDomain);
+    return (loginDomains && loginDomains.value().contains(resourceDomain)) || !!storageAccessQuirkForDomainPair(topFrameDomain, resourceDomain);
 }
 
 bool NetworkStorageSession::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(const SubResourceDomain& resourceDomain, const TopFrameDomain& topFrameDomain)
@@ -455,6 +491,34 @@ std::optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomai
     if (subDomain.string() == "sonyentertainmentnetwork.com"_s && topDomain.string() == "playstation.com"_s)
         return RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s);
 
+    return std::nullopt;
+}
+
+Vector<RegistrableDomain> NetworkStorageSession::storageAccessQuirkForTopFrameDomain(const TopFrameDomain& topDomain)
+{
+    auto& quirks = dynamicStorageAccessQuirks();
+    for (auto&& quirk : quirks) {
+        auto& domainPairings = quirk.domainPairings;
+        auto entry = domainPairings.find(topDomain);
+        if (entry == domainPairings.end())
+            continue;
+        return entry->value;
+    }
+    return { };
+}
+
+std::optional<OrganizationStorageAccessQuirk> NetworkStorageSession::storageAccessQuirkForDomainPair(const TopFrameDomain& topDomain, const SubResourceDomain& subDomain)
+{
+    auto& quirks = dynamicStorageAccessQuirks();
+    for (auto&& quirk : quirks) {
+        auto& domainPairings = quirk.domainPairings;
+        auto entry = domainPairings.find(topDomain);
+        if (entry == domainPairings.end())
+            continue;
+        if (!WTF::anyOf(entry->value, [&subDomain](auto&& entry) { return entry == subDomain; }))
+            break;
+        return quirk;
+    }
     return std::nullopt;
 }
 

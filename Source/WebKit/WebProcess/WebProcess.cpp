@@ -125,6 +125,7 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/ProcessWarming.h>
+#include <WebCore/Quirks.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/RemoteCommandListener.h>
 #include <WebCore/RenderTreeAsText.h>
@@ -825,6 +826,13 @@ WebPage* WebProcess::focusedWebPage() const
     }
     return 0;
 }
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+void WebProcess::setUserAgentStringQuirks(Vector<UserAgentStringQuirk>&& userAgentStringQuirk)
+{
+    Quirks::setUserAgentStringQuirks(WTFMove(userAgentStringQuirk));
+}
+#endif
     
 WebPage* WebProcess::webPage(PageIdentifier pageID) const
 {
