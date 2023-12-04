@@ -23,19 +23,33 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
+#import "config.h"
 #import "WKProcessExtension.h"
 
-// FIXME: forward declare xpc_connection_t to build with public SDK.
-#import <xpc/xpc.h>
+#import <wtf/RetainPtr.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void handleNewConnection(xpc_connection_t);
-
-#ifdef __cplusplus
+static RetainPtr<WKProcessExtension>& sharedInstance()
+{
+    static NeverDestroyed<RetainPtr<WKProcessExtension>> instance;
+    return instance.get();
 }
-#endif
+
+@implementation WKGrant
+@end
+
+@implementation WKProcessExtension
++ (WKProcessExtension*) sharedInstance
+{
+    return sharedInstance().get();
+}
+
+- (void)setSharedInstance:(WKProcessExtension*)instance
+{
+    sharedInstance() = instance;
+}
+
+- (id)grant:(NSString*)domain name:(NSString*)name
+{
+    return nil;
+}
+@end

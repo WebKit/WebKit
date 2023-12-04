@@ -25,17 +25,13 @@
 
 #pragma once
 
-#import "WKProcessExtension.h"
+OBJC_EXPORT
+@interface WKGrant : NSObject
+@end
 
-// FIXME: forward declare xpc_connection_t to build with public SDK.
-#import <xpc/xpc.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void handleNewConnection(xpc_connection_t);
-
-#ifdef __cplusplus
-}
-#endif
+OBJC_EXPORT
+@interface WKProcessExtension : NSObject
++ (WKProcessExtension*) sharedInstance;
+- (void)setSharedInstance:(WKProcessExtension*)instance;
+- (id)grant:(NSString*)domain name:(NSString*)name;
+@end
