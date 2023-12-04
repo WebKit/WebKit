@@ -785,6 +785,8 @@ static void prewarmLogs()
     }
 }
 
+using UniqueMessageBuffer = std::unique_ptr<char, decltype(std::free) *>;
+
 static void registerLogHook()
 {
     if (os_trace_get_mode() != OS_TRACE_MODE_DISABLE && os_trace_get_mode() != OS_TRACE_MODE_OFF)
@@ -803,7 +805,21 @@ static void registerLogHook()
         if (type == OS_LOG_TYPE_DEBUG)
             return;
 
-        CString logFormat(msg->format);
+        os_log_message_s msgStr;
+        memset(&msgStr, 0, sizeof(msgStr));
+
+        msgStr.format = msg->format;
+        msgStr.buffer = msg->buffer;
+        msgStr.buffer_sz = msg->buffer_sz;
+        msgStr.privdata = msg->privdata;
+        msgStr.privdata_sz = msg->privdata_sz;
+        msgStr.subsystem = msg->subsystem;
+        msgStr.category = msg->category;
+
+        UniqueMessageBuffer messageString { os_log_copy_message_string(&msgStr), std::free };
+        if (!messageString)
+            return;
+
         CString logChannel(msg->subsystem);
         CString logCategory(msg->category);
 
@@ -815,31 +831,15 @@ static void registerLogHook()
             qos = Thread::QOS::UserInteractive;
         }
 
-        Vector<uint8_t> buffer(msg->buffer, msg->buffer_sz);
-        Vector<uint8_t> privdata(msg->privdata, msg->privdata_sz);
-
         static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("Log Queue", WorkQueue::QOS::Background));
 
-        queue.get()->dispatchWithQOS([logFormat = WTFMove(logFormat), logChannel = WTFMove(logChannel), logCategory = WTFMove(logCategory), type = type, buffer = WTFMove(buffer), privdata = WTFMove(privdata), qos] {
-            os_log_message_s msg;
-            memset(&msg, 0, sizeof(msg));
-
-            msg.format = logFormat.data();
-            msg.buffer = buffer.data();
-            msg.buffer_sz = buffer.size();
-            msg.privdata = privdata.data();
-            msg.privdata_sz = privdata.size();
-
-            char* messageString = os_log_copy_message_string(&msg);
-            if (!messageString)
-                return;
-            IPC::DataReference logString(reinterpret_cast<uint8_t*>(messageString), strlen(messageString) + 1);
+        queue.get()->dispatchWithQOS([logChannel = WTFMove(logChannel), logCategory = WTFMove(logCategory), messageString = WTFMove(messageString), type, qos] {
 
             auto connectionID = WebProcess::singleton().networkProcessConnectionID();
-            if (connectionID)
+            if (connectionID) {
+                IPC::DataReference logString(reinterpret_cast<uint8_t*>(messageString.get()), strlen(messageString.get()) + 1);
                 IPC::Connection::send(connectionID, Messages::NetworkConnectionToWebProcess::LogOnBehalfOfWebContent(logChannel.bytesInludingNullTerminator(), logCategory.bytesInludingNullTerminator(), logString, type, getpid()), 0, { }, qos);
-
-            free(messageString);
+            }
         }, qos);
     });
 
