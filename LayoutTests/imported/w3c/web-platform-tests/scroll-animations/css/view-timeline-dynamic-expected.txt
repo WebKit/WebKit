@@ -1,4 +1,6 @@
 
-Harness Error (FAIL), message = Error: assert_implements: animation-timeline not supported undefined
-
+FAIL Dynamically changing view-timeline attachment assert_equals: div75 expected "75" but got "1"
+FAIL Dynamically changing view-timeline-axis assert_equals: vertical expected "25" but got "1"
+FAIL Dynamically changing view-timeline-inset assert_equals: without inset expected "25" but got "0"
+FAIL Element with scoped view-timeline becoming display:none assert_equals: display:block expected "25" but got "0"
 

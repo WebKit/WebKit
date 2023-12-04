@@ -1078,7 +1078,7 @@ GLuint Context::createShaderProgramv(ShaderType type, GLsizei count, const GLcha
                 // As per Khronos issue 2261:
                 // https://gitlab.khronos.org/Tracker/vk-gl-cts/issues/2261
                 // We must wait to mark the program separable until it's successfully compiled.
-                programObject->setSeparable(true);
+                programObject->setSeparable(this, true);
 
                 programObject->attachShader(this, shaderObject);
 
@@ -2938,7 +2938,7 @@ void Context::bindUniformLocation(ShaderProgramID program,
     Program *programObject = getProgramResolveLink(program);
     ASSERT(programObject);
 
-    programObject->bindUniformLocation(location, name);
+    programObject->bindUniformLocation(this, location, name);
 }
 
 GLuint Context::getProgramResourceIndex(ShaderProgramID program,
@@ -3340,7 +3340,7 @@ void Context::getSamplerParameterfvRobust(SamplerID sampler,
 void Context::programParameteri(ShaderProgramID program, GLenum pname, GLint value)
 {
     gl::Program *programObject = getProgramResolveLink(program);
-    SetProgramParameteri(programObject, pname, value);
+    SetProgramParameteri(this, programObject, pname, value);
 }
 
 void Context::initRendererString()
@@ -6123,7 +6123,7 @@ void Context::bindAttribLocation(ShaderProgramID program, GLuint index, const GL
     // Ideally we could share the program query with the validation layer if possible.
     Program *programObject = getProgramResolveLink(program);
     ASSERT(programObject);
-    programObject->bindAttributeLocation(index, name);
+    programObject->bindAttributeLocation(this, index, name);
 }
 
 void Context::bindBufferBase(BufferBinding target, GLuint index, BufferID buffer)
@@ -7220,8 +7220,8 @@ void Context::bindFragDataLocationIndexed(ShaderProgramID program,
                                           const char *name)
 {
     Program *programObject = getProgramNoResolveLink(program);
-    programObject->bindFragmentOutputLocation(colorNumber, name);
-    programObject->bindFragmentOutputIndex(index, name);
+    programObject->bindFragmentOutputLocation(this, colorNumber, name);
+    programObject->bindFragmentOutputIndex(this, index, name);
 }
 
 void Context::bindFragDataLocation(ShaderProgramID program, GLuint colorNumber, const char *name)
@@ -7670,7 +7670,7 @@ void Context::transformFeedbackVaryings(ShaderProgramID program,
 {
     Program *programObject = getProgramResolveLink(program);
     ASSERT(programObject);
-    programObject->setTransformFeedbackVaryings(count, varyings, bufferMode);
+    programObject->setTransformFeedbackVaryings(this, count, varyings, bufferMode);
 }
 
 void Context::getTransformFeedbackVarying(ShaderProgramID program,
@@ -9249,6 +9249,13 @@ std::shared_ptr<angle::WorkerThreadPool> Context::getShaderCompileThreadPool() c
         return mDisplay->getMultiThreadPool();
     }
     return mDisplay->getSingleThreadPool();
+}
+
+std::shared_ptr<angle::WorkerThreadPool> Context::getLinkSubTaskThreadPool() const
+{
+    return getFrontendFeatures().alwaysRunLinkSubJobsThreaded.enabled
+               ? getWorkerThreadPool()
+               : getShaderCompileThreadPool();
 }
 
 std::shared_ptr<angle::WaitableEvent> Context::postCompileLinkTask(

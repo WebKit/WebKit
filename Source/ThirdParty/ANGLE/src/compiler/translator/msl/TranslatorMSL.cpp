@@ -20,6 +20,7 @@
 #include "compiler/translator/msl/UtilsMSL.h"
 #include "compiler/translator/tree_ops/InitializeVariables.h"
 #include "compiler/translator/tree_ops/MonomorphizeUnsupportedFunctions.h"
+#include "compiler/translator/tree_ops/PreTransformTextureCubeGradDerivatives.h"
 #include "compiler/translator/tree_ops/RemoveAtomicCounterBuiltins.h"
 #include "compiler/translator/tree_ops/RemoveInactiveInterfaceVariables.h"
 #include "compiler/translator/tree_ops/RewriteArrayOfArrayOfOpaqueUniforms.h"
@@ -1034,6 +1035,19 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
                                              getShaderType() == GL_FRAGMENT_SHADER))
         {
             return false;
+        }
+    }
+
+    if (getShaderVersion() >= 300 ||
+        IsExtensionEnabled(getExtensionBehavior(), TExtension::EXT_shader_texture_lod))
+    {
+        if (compileOptions.preTransformTextureCubeGradDerivatives)
+        {
+            if (!PreTransformTextureCubeGradDerivatives(this, root, &symbolTable,
+                                                        getShaderVersion()))
+            {
+                return false;
+            }
         }
     }
 

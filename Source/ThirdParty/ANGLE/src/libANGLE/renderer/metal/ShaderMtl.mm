@@ -99,6 +99,9 @@ std::shared_ptr<ShaderTranslateTask> ShaderMtl::compile(const gl::Context *conte
         options->pls = displayMtl->getNativePixelLocalStorageOptions();
     }
 
+    options->preTransformTextureCubeGradDerivatives =
+        displayMtl->getFeatures().preTransformTextureCubeGradDerivatives.enabled;
+
     options->rescopeGlobalVariables = displayMtl->getFeatures().rescopeGlobalVariables.enabled;
 
     return std::shared_ptr<ShaderTranslateTask>(new ShaderTranslateTaskMtl(mCompiledState));

@@ -45,7 +45,7 @@ class WebGLVertexArrayObject;
 class WebGL2RenderingContext final : public WebGLRenderingContextBase {
     WTF_MAKE_ISO_ALLOCATED(WebGL2RenderingContext);
 public:
-    static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, GraphicsContextGLAttributes);
+    static std::unique_ptr<WebGL2RenderingContext> create(CanvasBase&, WebGLContextAttributes&&);
 
     ~WebGL2RenderingContext();
 

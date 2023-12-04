@@ -444,6 +444,27 @@ void CSSToStyleMap::mapAnimationProperty(Animation& animation, const CSSValue& v
     animation.setProperty({ Animation::TransitionMode::SingleProperty, primitiveValue->propertyID() });
 }
 
+void CSSToStyleMap::mapAnimationTimeline(Animation& animation, const CSSValue& value)
+{
+    if (treatAsInitialValue(value, CSSPropertyAnimationTimeline))
+        animation.setTimeline(Animation::initialTimeline());
+    else if (value.isCustomIdent())
+        animation.setTimeline(AtomString(value.customIdent()));
+    else {
+        switch (value.valueID()) {
+        case CSSValueNone:
+            animation.setTimeline(Animation::TimelineKeyword::None);
+            break;
+        case CSSValueAuto:
+            animation.setTimeline(Animation::TimelineKeyword::Auto);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
+    }
+}
+
 void CSSToStyleMap::mapAnimationTimingFunction(Animation& animation, const CSSValue& value)
 {
     if (treatAsInitialValue(value, CSSPropertyAnimationTimingFunction))

@@ -1,4 +1,20 @@
 
-Harness Error (FAIL), message = Error: assert_implements: animation-timeline not supported undefined
-
+FAIL animation-timeline: view() without timeline range name promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(50px) without timeline range name promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(auto 50px) without timeline range name promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(inline) without timeline range name promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(x) without timeline range name promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(y) without timeline range name promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(x 50px) without timeline range name promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(50px), view(inline 50px) without timeline range name promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(inline) changes to view(inline 50px), withouttimeline range name promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view() promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(50px) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(auto 50px) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(inline) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(x) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(y) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(x 50px) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(), view(inline) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: view(inline) changes to view(inline 50px) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
 

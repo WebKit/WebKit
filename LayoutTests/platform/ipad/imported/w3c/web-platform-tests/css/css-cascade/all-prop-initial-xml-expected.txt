@@ -16,6 +16,7 @@ PASS animation-fill-mode
 PASS animation-iteration-count
 PASS animation-name
 PASS animation-play-state
+PASS animation-timeline
 PASS animation-timing-function
 PASS appearance
 PASS aspect-ratio

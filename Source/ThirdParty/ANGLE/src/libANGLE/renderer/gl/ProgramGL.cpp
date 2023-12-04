@@ -107,9 +107,9 @@ class ProgramGL::LinkTaskGL final : public LinkTask
     {}
     ~LinkTaskGL() override = default;
 
-    std::vector<std::shared_ptr<LinkSubTask>> link(
-        const gl::ProgramLinkedResources &resources,
-        const gl::ProgramMergedVaryings &mergedVaryings) override
+    std::vector<std::shared_ptr<LinkSubTask>> link(const gl::ProgramLinkedResources &resources,
+                                                   const gl::ProgramMergedVaryings &mergedVaryings,
+                                                   bool *areSubTasksOptionalOut) override
     {
         mProgram->linkJobImpl(mExtensions);
 

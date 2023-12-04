@@ -206,6 +206,13 @@ struct FeaturesMtl : FeatureSetBase
         &members,
     };
 
+    FeatureInfo preTransformTextureCubeGradDerivatives = {
+        "preTransformTextureCubeGradDerivatives",
+        FeatureCategory::MetalWorkarounds,
+        "Apply a vendor-specific transformation to explicit cubemap derivatives",
+        &members,
+    };
+
     FeatureInfo multisampleColorFormatShaderReadWorkaround = {
         "multisampleColorFormatShaderReadWorkaround",
         FeatureCategory::MetalWorkarounds,

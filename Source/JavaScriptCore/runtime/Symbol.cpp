@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2015-2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -86,6 +86,14 @@ void Symbol::destroy(JSCell* cell)
 String Symbol::descriptiveString() const
 {
     return makeString("Symbol("_s, StringView(m_privateName.uid()), ')');
+}
+
+Expected<String, ErrorTypeWithExtension> Symbol::tryGetDescriptiveString() const
+{
+    String description = tryMakeString("Symbol("_s, StringView(m_privateName.uid()), ')');
+    if (!description)
+        return makeUnexpected(ErrorTypeWithExtension::OutOfMemoryError);
+    return description;
 }
 
 String Symbol::description() const

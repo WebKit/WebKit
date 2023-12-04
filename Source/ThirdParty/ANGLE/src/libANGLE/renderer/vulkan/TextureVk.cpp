@@ -3222,8 +3222,10 @@ angle::Result TextureVk::syncState(const gl::Context *context,
          dirtyBits.test(gl::Texture::DIRTY_BIT_MAG_FILTER)))
     {
         const gl::SamplerState &samplerState = mState.getSamplerState();
-        ASSERT(samplerState.getMinFilter() == samplerState.getMagFilter());
-        if (mImage->updateChromaFilter(renderer, gl_vk::GetFilter(samplerState.getMinFilter())))
+        VkFilter chromaFilter = samplerState.getMinFilter() == samplerState.getMagFilter()
+                                    ? gl_vk::GetFilter(samplerState.getMinFilter())
+                                    : vk::kDefaultYCbCrChromaFilter;
+        if (mImage->updateChromaFilter(renderer, chromaFilter))
         {
             resetSampler();
             ANGLE_TRY(refreshImageViews(contextVk));

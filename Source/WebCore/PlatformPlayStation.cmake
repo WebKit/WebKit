@@ -76,6 +76,10 @@ list(APPEND WebCore_LIBRARIES
     WebKitRequirements::WebKitResources
 )
 
+list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+    platform/graphics/libwpe/PlatformDisplayLibWPE.h
+)
+
 if (ENABLE_GAMEPAD)
     list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
         "${WEBCORE_DIR}/platform/gamepad/libwpe"

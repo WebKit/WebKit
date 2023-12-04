@@ -343,6 +343,49 @@ TEST_P(OcclusionQueriesTestES3, UnresolveNotCounted)
     EXPECT_GL_FALSE(result);
 }
 
+// Test that reusing a query should reset its value to zero if no draw calls are emitted in the
+// second pass.
+TEST_P(OcclusionQueriesTest, RewriteDrawNoDrawToZero)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
+                       !IsGLExtensionEnabled("GL_EXT_occlusion_query_boolean"));
+
+    GLQueryEXT query;
+    glDepthMask(GL_TRUE);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // draw a quad at depth 0.3
+    glEnable(GL_DEPTH_TEST);
+    glUseProgram(mProgram);
+    glBeginQueryEXT(GL_ANY_SAMPLES_PASSED_EXT, query);
+    drawQuad(mProgram, essl1_shaders::PositionAttrib(), 0.3f);
+    glEndQueryEXT(GL_ANY_SAMPLES_PASSED_EXT);
+    glUseProgram(0);
+
+    EXPECT_GL_NO_ERROR();
+
+    glBeginQueryEXT(GL_ANY_SAMPLES_PASSED_EXT, query);
+    glEndQueryEXT(GL_ANY_SAMPLES_PASSED_EXT);
+
+    EXPECT_GL_NO_ERROR();
+
+    swapBuffers();
+
+    GLuint ready = GL_FALSE;
+    while (ready == GL_FALSE)
+    {
+        angle::Sleep(0);
+        glGetQueryObjectuivEXT(query, GL_QUERY_RESULT_AVAILABLE_EXT, &ready);
+    }
+
+    GLuint result = GL_TRUE;
+    glGetQueryObjectuivEXT(query, GL_QUERY_RESULT_EXT, &result);
+
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_GL_FALSE(result);
+}
+
 // Test that changing framebuffers work
 TEST_P(OcclusionQueriesTest, FramebufferBindingChange)
 {

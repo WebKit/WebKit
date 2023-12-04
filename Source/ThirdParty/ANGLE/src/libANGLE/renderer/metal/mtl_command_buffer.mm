@@ -482,6 +482,17 @@ inline void CheckPrimitiveType(MTLPrimitiveType primitiveType)
 
 }  // namespace
 
+// AtomicSerial implementation
+void AtomicSerial::storeMaxValue(uint64_t value)
+{
+    uint64_t prevValue = load();
+    while (prevValue < value &&
+           !mValue.compare_exchange_weak(prevValue, value, std::memory_order_release,
+                                         std::memory_order_consume))
+    {
+    }
+}
+
 // CommandQueue implementation
 void CommandQueue::reset()
 {
@@ -549,8 +560,7 @@ bool CommandQueue::isResourceBeingUsedByGPU(const Resource *resource) const
         return false;
     }
 
-    return mCompletedBufferSerial.load(std::memory_order_relaxed) <
-           resource->getCommandBufferQueueSerial();
+    return mCompletedBufferSerial.load() < resource->getCommandBufferQueueSerial();
 }
 
 bool CommandQueue::resourceHasPendingWorks(const Resource *resource) const
@@ -560,8 +570,7 @@ bool CommandQueue::resourceHasPendingWorks(const Resource *resource) const
         return false;
     }
 
-    return mCommittedBufferSerial.load(std::memory_order_relaxed) <
-           resource->getCommandBufferQueueSerial();
+    return mCommittedBufferSerial.load() < resource->getCommandBufferQueueSerial();
 }
 
 AutoObjCPtr<id<MTLCommandBuffer>> CommandQueue::makeMetalCommandBuffer(uint64_t *queueSerialOut)
@@ -598,13 +607,9 @@ AutoObjCPtr<id<MTLCommandBuffer>> CommandQueue::makeMetalCommandBuffer(uint64_t 
 
 void CommandQueue::onCommandBufferCommitted(id<MTLCommandBuffer> buf, uint64_t serial)
 {
-    std::lock_guard<std::mutex> lg(mLock);
-
     ANGLE_MTL_LOG("Committed MTLCommandBuffer %llu:%p", serial, buf);
 
-    mCommittedBufferSerial.store(
-        std::max(mCommittedBufferSerial.load(std::memory_order_relaxed), serial),
-        std::memory_order_relaxed);
+    mCommittedBufferSerial.storeMaxValue(serial);
 }
 
 void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
@@ -635,7 +640,7 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
         recordCommandBufferTimeElapsed(lg, timeElapsedEntry, [buf GPUEndTime] - [buf GPUStartTime]);
     }
 
-    if (mCompletedBufferSerial >= serial)
+    if (mCompletedBufferSerial.load() >= serial)
     {
         // Already handled.
         return;
@@ -651,9 +656,7 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
         mMetalCmdBuffers.pop_front();
     }
 
-    mCompletedBufferSerial.store(
-        std::max(mCompletedBufferSerial.load(std::memory_order_relaxed), serial),
-        std::memory_order_relaxed);
+    mCompletedBufferSerial.storeMaxValue(serial);
 }
 
 uint64_t CommandQueue::getNextRenderEncoderSerial()

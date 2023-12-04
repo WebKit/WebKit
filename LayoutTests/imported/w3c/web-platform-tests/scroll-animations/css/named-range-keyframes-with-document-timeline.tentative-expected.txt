@@ -1,4 +1,3 @@
 
-Harness Error (FAIL), message = Error: assert_implements: animation-timeline not supported undefined
-
+PASS Named range keyframe offset when you have a document timeline
 

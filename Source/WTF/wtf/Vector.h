@@ -847,7 +847,8 @@ public:
     template<typename U> bool appendIfNotContains(const U&);
 
     void shrink(size_t size);
-    void grow(size_t size);
+    ALWAYS_INLINE void grow(size_t size) { growImpl<FailureAction::Crash>(size); }
+    ALWAYS_INLINE bool tryGrow(size_t size) { return growImpl<FailureAction::Report>(size); }
     void resize(size_t size);
     void resizeToFit(size_t size);
     ALWAYS_INLINE void reserveCapacity(size_t newCapacity) { reserveCapacity<FailureAction::Crash>(newCapacity); }
@@ -943,6 +944,7 @@ public:
     template<typename U> bool unsafeAppendWithoutCapacityCheck(const U*, size_t);
 
 private:
+    template<FailureAction> bool growImpl(size_t);
     template<FailureAction> bool reserveCapacity(size_t newCapacity);
     template<FailureAction> bool reserveInitialCapacity(size_t initialCapacity);
     template<FailureAction> bool growCapacityBy(size_t increment);
@@ -1280,15 +1282,22 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::shrink(siz
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::grow(size_t size)
+template<FailureAction failureAction>
+bool Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::growImpl(size_t size)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(size >= m_size);
-    if (size > capacity())
-        expandCapacity<FailureAction::Crash>(size);
+    if (size > capacity()) {
+        bool success = expandCapacity<failureAction>(size);
+        if constexpr (failureAction == FailureAction::Report) {
+            if (UNLIKELY(!success))
+                return false;
+        }
+    }
     asanBufferSizeWillChangeTo(size);
     if (begin())
         TypeOperations::initializeIfNonPOD(end(), begin() + size);
     m_size = size;
+    return true;
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>

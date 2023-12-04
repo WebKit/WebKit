@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2015-2016 Yusuke Suzuki <utatane.tea@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,8 +26,10 @@
 
 #pragma once
 
+#include "ErrorType.h"
 #include "JSString.h"
 #include "PrivateName.h"
+#include <wtf/Expected.h>
 
 namespace JSC {
 
@@ -56,6 +58,7 @@ public:
     PrivateName privateName() const { return m_privateName; }
     String descriptiveString() const;
     String description() const;
+    Expected<String, ErrorTypeWithExtension> tryGetDescriptiveString() const;
 
     JSValue toPrimitive(JSGlobalObject*, PreferredPrimitiveType) const;
     JSObject* toObject(JSGlobalObject*) const;

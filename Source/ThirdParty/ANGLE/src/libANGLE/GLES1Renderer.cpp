@@ -680,7 +680,7 @@ angle::Result GLES1Renderer::linkProgram(Context *context,
     {
         GLint index             = it.first;
         const std::string &name = it.second;
-        programObject->bindAttributeLocation(index, name.c_str());
+        programObject->bindAttributeLocation(context, index, name.c_str());
     }
 
     ANGLE_TRY(programObject->link(context, angle::JobResultExpectancy::Immediate));

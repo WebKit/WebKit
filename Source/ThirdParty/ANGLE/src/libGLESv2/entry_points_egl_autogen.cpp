@@ -586,7 +586,10 @@ EGLBoolean EGLAPIENTRY EGL_QuerySurface(EGLDisplay dpy,
                                         EGLint attribute,
                                         EGLint *value)
 {
-
+    if (attribute == EGL_BUFFER_AGE_EXT)
+    {
+        ANGLE_EGLBOOLEAN_TRY(EGL_PrepareSwapBuffersANGLE(dpy, surface));
+    }
     Thread *thread = egl::GetCurrentThread();
     EGLBoolean returnValue;
     {

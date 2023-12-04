@@ -1,4 +1,9 @@
 
-Harness Error (FAIL), message = Error: assert_implements: animation-timeline not supported undefined
-
+FAIL animation-timeline: scroll(nearest) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: scroll(root) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: scroll(self) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: scroll(self), on non-scroller promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: scroll(inline) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: scroll(x) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
+FAIL animation-timeline: scroll(y) promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: runAndWaitForFrameUpdate"
 

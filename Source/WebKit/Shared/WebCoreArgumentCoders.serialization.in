@@ -2706,9 +2706,11 @@ header: <WebCore/GraphicsContextGLAttributes.h>
 };
 
 header: <WebCore/GraphicsContextGLAttributes.h>
-[CustomHeader] enum class WebCore::GraphicsContextGLWebGLVersion : uint8_t {
-    WebGL1,
-    WebGL2
+[CustomHeader] enum class WebCore::GraphicsContextGLSimulatedCreationFailure : uint8_t {
+    None,
+    IPCBufferOOM,
+    CreationTimeout,
+    FailPlatformContextCreation
 };
 
 struct WebCore::GraphicsContextGLAttributes {
@@ -2718,12 +2720,9 @@ struct WebCore::GraphicsContextGLAttributes {
     bool antialias;
     bool premultipliedAlpha;
     bool preserveDrawingBuffer;
-    bool failIfMajorPerformanceCaveat;
     WebCore::GraphicsContextGLPowerPreference powerPreference;
     float devicePixelRatio;
-    WebCore::GraphicsContextGLPowerPreference initialPowerPreference;
-    WebCore::GraphicsContextGLWebGLVersion webGLVersion;
-    bool forceRequestForHighPerformanceGPU;
+    bool isWebGL2;
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     uint64_t windowGPUID;
 #endif
@@ -2733,8 +2732,7 @@ struct WebCore::GraphicsContextGLAttributes {
 #if ENABLE(WEBXR)
     bool xrCompatible;
 #endif
-    bool failPlatformContextCreationForTesting;
-    [NotSerialized] WebCore::GraphicsContextGLSimulatedCreationFailure failContextCreationForTesting;
+    WebCore::GraphicsContextGLSimulatedCreationFailure failContextCreationForTesting;
 };
 #endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 

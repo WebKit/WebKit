@@ -181,7 +181,9 @@ static WebCore::IntDegrees deviceOrientationForUIInterfaceOrientation(UIInterfac
     [_scrollView setBouncesZoom:YES];
 
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_scrollView _setAllowsAsyncScrollEvent:YES];
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
     if ([_scrollView respondsToSelector:@selector(_setAvoidsJumpOnInterruptedBounce:)]) {

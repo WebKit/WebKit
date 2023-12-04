@@ -268,7 +268,7 @@ void CanvasRenderingContext2DBase::reset()
 
     m_path.clear();
     m_unrealizedSaveCount = 0;
-    m_cachedImageData = std::nullopt;
+    m_cachedContents.emplace<CachedContentsTransparent>();
 
     clearAccumulatedDirtyRect();
     resetTransform();
@@ -2187,8 +2187,8 @@ void CanvasRenderingContext2DBase::didDrawEntireCanvas(OptionSet<DidDrawOption> 
 
 void CanvasRenderingContext2DBase::didDraw(std::optional<FloatRect> rect, OptionSet<DidDrawOption> options)
 {
-    if (!options.contains(DidDrawOption::PreserveCachedImageData))
-        m_cachedImageData = std::nullopt;
+    if (!options.contains(DidDrawOption::PreserveCachedContents))
+        m_cachedContents.emplace<CachedContentsUnknown>();
 
     if (!drawingContext())
         return;
@@ -2317,11 +2317,10 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(int sw
 
 void CanvasRenderingContext2DBase::evictCachedImageData()
 {
-    if (m_cachedImageData)
-        m_cachedImageData = std::nullopt;
+    m_cachedContents.emplace<CachedContentsUnknown>();
 }
 
-CanvasRenderingContext2DBase::CachedImageData::CachedImageData(CanvasRenderingContext2DBase& context, Ref<ByteArrayPixelBuffer> imageData)
+CanvasRenderingContext2DBase::CachedContentsImageData::CachedContentsImageData(CanvasRenderingContext2DBase& context, Ref<ByteArrayPixelBuffer> imageData)
     : imageData(WTFMove(imageData))
     , evictionTimer(context, &CanvasRenderingContext2DBase::evictCachedImageData, 5_s)
 {
@@ -2366,27 +2365,34 @@ RefPtr<ByteArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossi
         .rows = cachedBuffer->data().data(),
     };
     convertImagePixels(source, destination, size);
-
-    m_cachedImageData.emplace(*this, *cachedBuffer);
+    m_cachedContents.emplace<CachedContentsImageData>(*this, *cachedBuffer);
     return cachedBuffer;
 }
 
-RefPtr<ImageData> CanvasRenderingContext2DBase::takeCachedImageDataIfPossible(const IntRect& sourceRect, PredefinedColorSpace colorSpace) const
+RefPtr<ImageData> CanvasRenderingContext2DBase::makeImageDataIfContentsCached(const IntRect& sourceRect, PredefinedColorSpace colorSpace) const
 {
-    if (!m_cachedImageData)
+    if (std::holds_alternative<CachedContentsTransparent>(m_cachedContents)) {
+        auto imageData = ImageData::create(sourceRect.size(), colorSpace);
+        if (imageData)
+            imageData->data().zeroFill();
+        return imageData;
+    }
+    if (std::holds_alternative<CachedContentsUnknown>(m_cachedContents))
         return nullptr;
+    static_assert(std::variant_size_v<decltype(m_cachedContents)> == 3); // Written this way to avoid dangling references during visit.
+    // Always consume the cached image data.
+    Ref pixelBuffer = WTFMove(std::get<CachedContentsImageData>(m_cachedContents).imageData);
+    m_cachedContents.emplace<CachedContentsUnknown>();
 
     if (sourceRect != IntRect { { }, canvasBase().size() })
         return nullptr;
 
-    if (canvasBase().size() != m_cachedImageData->imageData->size())
+    if (canvasBase().size() != pixelBuffer->size())
         return nullptr;
 
     if (colorSpace != m_settings.colorSpace)
         return nullptr;
 
-    Ref pixelBuffer = WTFMove(m_cachedImageData->imageData);
-    m_cachedImageData = std::nullopt;
     auto size = pixelBuffer->size();
     auto data = pixelBuffer->takeData();
     unsigned bytesPerRow = static_cast<unsigned>(size.width()) * 4u;
@@ -2428,10 +2434,8 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
 
     auto computedColorSpace = ImageData::computeColorSpace(settings, m_settings.colorSpace);
 
-    if (auto imageData = takeCachedImageDataIfPossible({ sx, sy, sw, sh }, computedColorSpace))
+    if (auto imageData = makeImageDataIfContentsCached(imageDataRect, computedColorSpace))
         return imageData.releaseNonNull();
-    if (m_cachedImageData)
-        m_cachedImageData = std::nullopt;
 
     canvasBase().makeRenderingResultsAvailable();
     RefPtr buffer = canvasBase().buffer();
@@ -2487,11 +2491,12 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
     if (!sourceRect.isEmpty()) {
         auto pixelBuffer = cacheImageDataIfPossible(data, sourceRect, destOffset);
         if (pixelBuffer)
-            options.add(DidDrawOption::PreserveCachedImageData);
+            options.add(DidDrawOption::PreserveCachedContents);
         else
             pixelBuffer = data.pixelBuffer();
         buffer->putPixelBuffer(*pixelBuffer, sourceRect, destOffset);
     }
+
     didDraw(FloatRect { destRect }, options);
 }
 
@@ -2736,6 +2741,7 @@ void CanvasRenderingContext2DBase::drawTextUnchecked(const TextRun& textRun, dou
         c->clipToImageBuffer(*maskImage, maskRect);
         drawStyle.applyFillColor(*c);
         c->fillRect(maskRect);
+        didDraw(false, FloatRect { maskRect });
         return;
     }
 #endif

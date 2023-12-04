@@ -1,4 +1,5 @@
 
-Harness Error (FAIL), message = Error: assert_implements: animation-timeline not supported undefined
-
+FAIL Default view-timeline assert_equals: expected "-1" but got "0"
+FAIL Horizontal view-timeline assert_equals: expected "-1" but got "0"
+FAIL Multiple view-timelines on the same element assert_equals: expected "-1" but got "0"
 

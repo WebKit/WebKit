@@ -1510,6 +1510,17 @@ static Ref<CSSPrimitiveValue> valueForScopedName(const Style::ScopedName& scoped
     return CSSPrimitiveValue::create(scopedName.name);
 }
 
+static Ref<CSSValue> valueForAnimationTimeline(const Animation::Timeline& timeline)
+{
+    return WTF::switchOn(timeline,
+        [&] (Animation::TimelineKeyword keyword) -> Ref<CSSValue> {
+            return CSSPrimitiveValue::create(keyword == Animation::TimelineKeyword::None ? CSSValueNone : CSSValueAuto);
+        }, [&] (const AtomString& customIdent) -> Ref<CSSValue> {
+            return CSSPrimitiveValue::createCustomIdent(customIdent);
+        }
+    );
+}
+
 static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timingFunction)
 {
     switch (timingFunction.type()) {
@@ -1580,6 +1591,9 @@ void ComputedStyleExtractor::addValueForAnimationPropertyToList(CSSValueListBuil
     else if (property == CSSPropertyAnimationComposition) {
         if (!animation || !animation->isCompositeOperationFilled())
             list.append(valueForAnimationComposition(animation ? animation->compositeOperation() : Animation::initialCompositeOperation()));
+    } else if (property == CSSPropertyAnimationTimeline) {
+        if (!animation || !animation->isTimelineFilled())
+            list.append(valueForAnimationTimeline(animation ? animation->timeline() : Animation::initialTimeline()));
     } else if (property == CSSPropertyTransitionProperty) {
         if (animation) {
             if (!animation->isPropertyFilled())
@@ -3968,6 +3982,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyAnimationIterationCount:
     case CSSPropertyAnimationName:
     case CSSPropertyAnimationPlayState:
+    case CSSPropertyAnimationTimeline:
     case CSSPropertyAnimationTimingFunction:
         return valueListForAnimationOrTransitionProperty(propertyID, style.animations());
     case CSSPropertyAppearance:

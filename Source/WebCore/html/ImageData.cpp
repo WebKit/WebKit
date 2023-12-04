@@ -38,10 +38,7 @@ namespace WebCore {
 
 static CheckedUint32 computeDataSize(const IntSize& size)
 {
-    CheckedUint32 checkedDataSize = 4;
-    checkedDataSize *= static_cast<unsigned>(size.width());
-    checkedDataSize *= static_cast<unsigned>(size.height());
-    return checkedDataSize;
+    return PixelBuffer::computeBufferSize(PixelFormat::RGBA8, size);
 }
 
 PredefinedColorSpace ImageData::computeColorSpace(std::optional<ImageDataSettings> settings, PredefinedColorSpace defaultColorSpace)
@@ -64,7 +61,7 @@ RefPtr<ImageData> ImageData::create(RefPtr<ByteArrayPixelBuffer>&& pixelBuffer)
     return create(pixelBuffer.releaseNonNull());
 }
 
-RefPtr<ImageData> ImageData::create(const IntSize& size)
+RefPtr<ImageData> ImageData::create(const IntSize& size, PredefinedColorSpace colorSpace)
 {
     auto dataSize = computeDataSize(size);
     if (dataSize.hasOverflowed())
@@ -72,7 +69,7 @@ RefPtr<ImageData> ImageData::create(const IntSize& size)
     auto byteArray = Uint8ClampedArray::tryCreateUninitialized(dataSize);
     if (!byteArray)
         return nullptr;
-    return adoptRef(*new ImageData(size, byteArray.releaseNonNull(), PredefinedColorSpace::SRGB));
+    return adoptRef(*new ImageData(size, byteArray.releaseNonNull(), colorSpace));
 }
 
 RefPtr<ImageData> ImageData::create(const IntSize& size, Ref<Uint8ClampedArray>&& byteArray, PredefinedColorSpace colorSpace)

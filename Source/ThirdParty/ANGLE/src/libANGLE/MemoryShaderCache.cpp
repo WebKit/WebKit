@@ -39,8 +39,6 @@ MemoryShaderCache::~MemoryShaderCache() {}
 
 bool MemoryShaderCache::getShader(const Context *context,
                                   Shader *shader,
-                                  const ShCompileOptions &compileOptions,
-                                  const ShCompilerInstance &compilerInstance,
                                   const egl::BlobCache::Key &shaderHash)
 {
     // If caching is effectively disabled, don't bother calculating the hash.

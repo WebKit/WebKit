@@ -1,4 +1,3 @@
 
-Harness Error (FAIL), message = Error: assert_implements: animation-timeline not supported undefined
-
+FAIL Timeline offset in Animation Keyframes assert_equals: Effect at entry 0% expected "0" but got "1"
 

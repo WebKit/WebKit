@@ -2442,8 +2442,15 @@ GLuint ProgramExecutable::getUniformIndex(const std::string &name) const
 
 bool ProgramExecutable::shouldIgnoreUniform(UniformLocation location) const
 {
-    if (location.value < 0 || static_cast<size_t>(location.value) > mUniformLocations.size())
+    if (location.value < 0)
     {
+        return true;
+    }
+
+    if (static_cast<size_t>(location.value) >= mUniformLocations.size())
+    {
+        ERR() << "Invalid uniform location " << location.value << ", expected [0, "
+              << mUniformLocations.size() << ")";
         return true;
     }
 

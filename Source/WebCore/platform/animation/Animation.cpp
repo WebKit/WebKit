@@ -34,6 +34,7 @@ Animation::Animation()
     , m_iterationCount(initialIterationCount())
     , m_delay(initialDelay())
     , m_duration(initialDuration())
+    , m_timeline(initialTimeline())
     , m_timingFunction(initialTimingFunction())
     , m_direction(static_cast<unsigned>(initialDirection()))
     , m_fillMode(static_cast<unsigned>(initialFillMode()))
@@ -47,6 +48,7 @@ Animation::Animation()
     , m_nameSet(false)
     , m_playStateSet(false)
     , m_propertySet(false)
+    , m_timelineSet(false)
     , m_timingFunctionSet(false)
     , m_compositeOperationSet(false)
     , m_isNone(false)
@@ -57,6 +59,7 @@ Animation::Animation()
     , m_iterationCountFilled(false)
     , m_playStateFilled(false)
     , m_propertyFilled(false)
+    , m_timelineFilled(false)
     , m_timingFunctionFilled(false)
     , m_compositeOperationFilled(false)
 {
@@ -69,6 +72,7 @@ Animation::Animation(const Animation& o)
     , m_iterationCount(o.m_iterationCount)
     , m_delay(o.m_delay)
     , m_duration(o.m_duration)
+    , m_timeline(o.m_timeline)
     , m_timingFunction(o.m_timingFunction)
     , m_direction(o.m_direction)
     , m_fillMode(o.m_fillMode)
@@ -82,6 +86,7 @@ Animation::Animation(const Animation& o)
     , m_nameSet(o.m_nameSet)
     , m_playStateSet(o.m_playStateSet)
     , m_propertySet(o.m_propertySet)
+    , m_timelineSet(o.m_timelineSet)
     , m_timingFunctionSet(o.m_timingFunctionSet)
     , m_compositeOperationSet(o.m_compositeOperationSet)
     , m_isNone(o.m_isNone)
@@ -92,6 +97,7 @@ Animation::Animation(const Animation& o)
     , m_iterationCountFilled(o.m_iterationCountFilled)
     , m_playStateFilled(o.m_playStateFilled)
     , m_propertyFilled(o.m_propertyFilled)
+    , m_timelineFilled(o.m_timelineFilled)
     , m_timingFunctionFilled(o.m_timingFunctionFilled)
     , m_compositeOperationFilled(o.m_compositeOperationFilled)
 {
@@ -108,6 +114,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
         && m_iterationCount == other.m_iterationCount
         && m_delay == other.m_delay
         && m_duration == other.m_duration
+        && m_timeline == other.m_timeline
         && *(m_timingFunction.get()) == *(other.m_timingFunction.get())
         && m_direction == other.m_direction
         && m_fillMode == other.m_fillMode
@@ -117,6 +124,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
         && m_fillModeSet == other.m_fillModeSet
         && m_iterationCountSet == other.m_iterationCountSet
         && m_nameSet == other.m_nameSet
+        && m_timelineSet == other.m_timelineSet
         && m_timingFunctionSet == other.m_timingFunctionSet
         && m_compositeOperationSet == other.m_compositeOperationSet
         && m_isNone == other.m_isNone;
@@ -155,6 +163,21 @@ TextStream& operator<<(TextStream& ts, Animation::Direction direction)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, const Animation::Timeline& timeline)
+{
+    WTF::switchOn(timeline,
+        [&] (Animation::TimelineKeyword keyword) {
+            switch (keyword) {
+            case Animation::TimelineKeyword::Auto: ts << "auto"; break;
+            case Animation::TimelineKeyword::None: ts << "none"; break;
+            }
+        }, [&] (const AtomString& customIdent) {
+            ts << customIdent;
+        }
+    );
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, const Animation& animation)
 {
     ts.dumpProperty("property", animation.property());
@@ -162,6 +185,7 @@ TextStream& operator<<(TextStream& ts, const Animation& animation)
     ts.dumpProperty("iteration count", animation.iterationCount());
     ts.dumpProperty("delay", animation.iterationCount());
     ts.dumpProperty("duration", animation.duration());
+    ts.dumpProperty("timeline", animation.timeline());
     if (animation.timingFunction())
         ts.dumpProperty("timing function", *animation.timingFunction());
     ts.dumpProperty("direction", animation.direction());

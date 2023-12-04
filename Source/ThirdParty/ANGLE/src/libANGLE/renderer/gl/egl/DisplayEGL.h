@@ -34,7 +34,7 @@ class DisplayEGL : public DisplayGL
                            EGLenum target,
                            const egl::AttributeMap &attribs) override;
 
-    EGLSyncImpl *createSync(const egl::AttributeMap &attribs) override;
+    EGLSyncImpl *createSync() override;
 
     void setBlobCacheFuncs(EGLSetBlobFuncANDROID set, EGLGetBlobFuncANDROID get) override;
 

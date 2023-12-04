@@ -166,7 +166,7 @@ void MemoryProgramCache::remove(const egl::BlobCache::Key &programHash)
 
 angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programHash,
                                              const Context *context,
-                                             const Program *program)
+                                             Program *program)
 {
     // If caching is effectively disabled, don't bother serializing the program.
     if (!mBlobCache.isCachingEnabled())
@@ -200,7 +200,7 @@ angle::Result MemoryProgramCache::putProgram(const egl::BlobCache::Key &programH
     return angle::Result::Continue;
 }
 
-angle::Result MemoryProgramCache::updateProgram(const Context *context, const Program *program)
+angle::Result MemoryProgramCache::updateProgram(const Context *context, Program *program)
 {
     egl::BlobCache::Key programHash;
     ComputeHash(context, program, &programHash);

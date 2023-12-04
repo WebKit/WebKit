@@ -175,6 +175,13 @@ struct FrontendFeatures : FeatureSetBase
         &members, "http://anglebug.com/8297"
     };
 
+    FeatureInfo alwaysRunLinkSubJobsThreaded = {
+        "alwaysRunLinkSubJobsThreaded",
+        FeatureCategory::FrontendFeatures,
+        "If true, sub tasks of the link job are always threaded, regardless of GL_KHR_parallel_shader_compile",
+        &members, "http://anglebug.com/8417"
+    };
+
     FeatureInfo uncurrentEglSurfaceUponSurfaceDestroy = {
         "uncurrentEglSurfaceUponSurfaceDestroy",
         FeatureCategory::FrontendWorkarounds,

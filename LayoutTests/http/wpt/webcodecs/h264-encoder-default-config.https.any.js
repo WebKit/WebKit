@@ -1,7 +1,7 @@
 async function encoderTest(testConfig)
 {
     const width = 200;
-    const height = 100;
+    const height = 200;
     const img = new ImageData(width, height);
 
     for (let r = 0; r < height; r++) {

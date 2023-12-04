@@ -699,6 +699,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     // GL_KHR_parallel_shader_compile
     std::shared_ptr<angle::WorkerThreadPool> getShaderCompileThreadPool() const;
+    std::shared_ptr<angle::WorkerThreadPool> getLinkSubTaskThreadPool() const;
     std::shared_ptr<angle::WaitableEvent> postCompileLinkTask(
         const std::shared_ptr<angle::Closure> &task,
         angle::JobThreadSafety safety,

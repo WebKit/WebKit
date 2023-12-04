@@ -2120,8 +2120,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/iso/ISOTrackEncryptionBox.h
     platform/graphics/iso/ISOVTTCue.h
 
-    platform/graphics/libwpe/PlatformDisplayLibWPE.h
-
     platform/graphics/opentype/OpenTypeMathData.h
     platform/graphics/opentype/OpenTypeVerticalData.h
 

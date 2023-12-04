@@ -4990,7 +4990,7 @@ angle::Result BufferHelper::initializeNonZeroMemory(Context *context,
         // Queue a DMA copy.
         VkBufferCopy copyRegion = {};
         copyRegion.srcOffset    = 0;
-        copyRegion.dstOffset    = 0;
+        copyRegion.dstOffset    = getOffset();
         copyRegion.size         = size;
 
         commandBuffer.copyBuffer(stagingBuffer.getBuffer(), getBuffer(), 1, &copyRegion);

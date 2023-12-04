@@ -32,6 +32,39 @@ enum class PlatformXR::SessionFeature : uint8_t {
 #endif
 };
 
+enum class PlatformXR::SessionMode : uint8_t {
+    Inline,
+    ImmersiveVr,
+    ImmersiveAr,
+};
+
+[Nested] enum class PlatformXR::ReferenceSpaceType : uint8_t {
+    Viewer,
+    Local,
+    LocalFloor,
+    BoundedFloor,
+    Unbounded
+};
+
+enum class PlatformXR::VisibilityState : uint8_t {
+    Visible,
+    VisibleBlurred,
+    Hidden
+};
+
+enum class PlatformXR::XRHandedness : uint8_t {
+    None,
+    Left,
+    Right,
+};
+
+enum class PlatformXR::XRTargetRayMode : uint8_t {
+    Gaze,
+    TrackedPointer,
+    Screen,
+    TransientPointer,
+};
+
 struct WebKit::XRDeviceInfo {
     WebKit::XRDeviceIdentifier identifier;
     bool supportsOrientationTracking;

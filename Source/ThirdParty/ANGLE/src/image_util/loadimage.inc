@@ -66,11 +66,18 @@ inline void LoadToNative(const ImageLoadContext &context, size_t width, size_t h
     }
 }
 
-template <typename type, uint32_t fourthComponentBits>
-inline void LoadToNative3To4(const ImageLoadContext &context, size_t width, size_t height,
-                             size_t depth, const uint8_t *input, size_t inputRowPitch,
-                             size_t inputDepthPitch, uint8_t *output, size_t outputRowPitch,
-                             size_t outputDepthPitch)
+template <typename type>
+inline void LoadToNative3To4Impl(const ImageLoadContext &context,
+                                 const uint32_t fourthComponentBits,
+                                 size_t width,
+                                 size_t height,
+                                 size_t depth,
+                                 const uint8_t *input,
+                                 size_t inputRowPitch,
+                                 size_t inputDepthPitch,
+                                 uint8_t *output,
+                                 size_t outputRowPitch,
+                                 size_t outputDepthPitch)
 {
     const type fourthValue = gl::bitCast<type>(fourthComponentBits);
 
@@ -78,8 +85,10 @@ inline void LoadToNative3To4(const ImageLoadContext &context, size_t width, size
     {
         for (size_t y = 0; y < height; y++)
         {
-            const type *source = priv::OffsetDataPointer<type>(input, y, z, inputRowPitch, inputDepthPitch);
-            type *dest = priv::OffsetDataPointer<type>(output, y, z, outputRowPitch, outputDepthPitch);
+            const type *source =
+                priv::OffsetDataPointer<type>(input, y, z, inputRowPitch, inputDepthPitch);
+            type *dest =
+                priv::OffsetDataPointer<type>(output, y, z, outputRowPitch, outputDepthPitch);
             for (size_t x = 0; x < width; x++)
             {
                 memcpy(&dest[x * 4], &source[x * 3], sizeof(type) * 3);
@@ -87,6 +96,156 @@ inline void LoadToNative3To4(const ImageLoadContext &context, size_t width, size
             }
         }
     }
+}
+
+template <typename type, uint32_t fourthComponentBits>
+inline void LoadToNative3To4(const ImageLoadContext &context,
+                             size_t width,
+                             size_t height,
+                             size_t depth,
+                             const uint8_t *input,
+                             size_t inputRowPitch,
+                             size_t inputDepthPitch,
+                             uint8_t *output,
+                             size_t outputRowPitch,
+                             size_t outputDepthPitch)
+{
+    LoadToNative3To4Impl<type>(context, fourthComponentBits, width, height, depth, input,
+                               inputRowPitch, inputDepthPitch, output, outputRowPitch,
+                               outputDepthPitch);
+}
+
+inline void LoadToNativeUbyte3To4Impl(const ImageLoadContext &context,
+                                      const uint8_t fourthValue,
+                                      size_t width,
+                                      size_t height,
+                                      size_t depth,
+                                      const uint8_t *input,
+                                      size_t inputRowPitch,
+                                      size_t inputDepthPitch,
+                                      uint8_t *output,
+                                      size_t outputRowPitch,
+                                      size_t outputDepthPitch)
+{
+    ASSERT(IsLittleEndian());
+    uint32_t fourthValue32 = static_cast<uint32_t>(fourthValue) << 24;
+
+    // To prevent undefined behavior, if the output address is not aligned by 4, the copy would be
+    // done using the default function instead.
+    if (reinterpret_cast<uintptr_t>(output) % 4 != 0)
+    {
+        LoadToNative3To4Impl<uint8_t>(context, fourthValue, width, height, depth, input,
+                                      inputRowPitch, inputDepthPitch, output, outputRowPitch,
+                                      outputDepthPitch);
+        return;
+    }
+
+    for (size_t z = 0; z < depth; z++)
+    {
+        for (size_t y = 0; y < height; y++)
+        {
+            const uint8_t *source8 =
+                priv::OffsetDataPointer<uint8_t>(input, y, z, inputRowPitch, inputDepthPitch);
+            uint8_t *dest8 =
+                priv::OffsetDataPointer<uint8_t>(output, y, z, outputRowPitch, outputDepthPitch);
+
+            // If the uint8_t addresses are not aligned to 4 bytes, there may be undefined behavior
+            // if they are used to copy 32-bit data. In that case, pixels are copied to the output
+            // one at a time until 4-byte alignment has been achieved for the source.
+            size_t pixelIndexStart = 0;
+            size_t srcIndexStart   = 0;
+            size_t destIndexStart  = 0;
+
+            uint32_t source4Mod = reinterpret_cast<uintptr_t>(source8) % 4;
+            while (source4Mod != 0 && pixelIndexStart < width)
+            {
+                dest8[destIndexStart]     = source8[srcIndexStart];
+                dest8[destIndexStart + 1] = source8[srcIndexStart + 1];
+                dest8[destIndexStart + 2] = source8[srcIndexStart + 2];
+                dest8[destIndexStart + 3] = fourthValue;
+
+                srcIndexStart += 3;
+                source4Mod = (source4Mod + 3) % 4;
+                destIndexStart += 4;
+                pixelIndexStart++;
+            }
+
+            // In the following loop, 4 RGB pixels will be read in each iteration. If the remaining
+            // pixels are not a multiple of 4, the rest at the end of the row will be copied one at
+            // a time.
+            const uint32_t *source32 = reinterpret_cast<const uint32_t *>(source8 + srcIndexStart);
+            uint32_t *dest32         = reinterpret_cast<uint32_t *>(dest8 + destIndexStart);
+
+            size_t remainingWidth = width - pixelIndexStart;
+            size_t pixelPackIndex = 0;
+            if (remainingWidth >= 4)
+            {
+                const uint32_t *source32Index = source32;
+
+                size_t fourByteCopyThreshold = remainingWidth - 4;
+                for (; pixelPackIndex <= fourByteCopyThreshold; pixelPackIndex += 4)
+                {
+                    // Three 32-bit values from the input contain 4 RGB pixels in total. This
+                    // translates to four 32-bits on the output.
+                    // (RGBR GBRG BRGB -> RGBA RGBA RGBA RGBA)
+                    uint32_t newPixelData0 = source32Index[0];
+                    uint32_t newPixelData1 = source32Index[1];
+                    uint32_t newPixelData2 = source32Index[2];
+
+                    uint32_t rgbaPixel0 = (newPixelData0 & 0x00FFFFFF) | fourthValue32;
+                    uint32_t rgbaPixel1 =
+                        (newPixelData0 >> 24) | ((newPixelData1 & 0x0000FFFF) << 8) | fourthValue32;
+                    uint32_t rgbaPixel2 = (newPixelData1 >> 16) |
+                                          ((newPixelData2 & 0x000000FF) << 16) | fourthValue32;
+                    uint32_t rgbaPixel3 = (newPixelData2 >> 8) | fourthValue32;
+
+                    dest32[pixelPackIndex]     = rgbaPixel0;
+                    dest32[pixelPackIndex + 1] = rgbaPixel1;
+                    dest32[pixelPackIndex + 2] = rgbaPixel2;
+                    dest32[pixelPackIndex + 3] = rgbaPixel3;
+
+                    source32Index += 3;
+                }
+            }
+
+            // We should copy the remaining pixels at the end one by one.
+            size_t pixelIndexEnd = pixelPackIndex + pixelIndexStart;
+            if (pixelIndexEnd == width)
+            {
+                continue;
+            }
+            ASSERT(pixelIndexEnd < width);
+
+            size_t srcIndexEnd  = pixelIndexEnd * 3;
+            size_t destIndexEnd = pixelIndexEnd * 4;
+            for (; pixelIndexEnd < width; pixelIndexEnd++)
+            {
+                dest8[destIndexEnd]     = source8[srcIndexEnd];
+                dest8[destIndexEnd + 1] = source8[srcIndexEnd + 1];
+                dest8[destIndexEnd + 2] = source8[srcIndexEnd + 2];
+                dest8[destIndexEnd + 3] = fourthValue;
+
+                srcIndexEnd += 3;
+                destIndexEnd += 4;
+            }
+        }
+    }
+}
+
+template <>
+inline void LoadToNative3To4<uint8_t, 0xFF>(const ImageLoadContext &context,
+                                            size_t width,
+                                            size_t height,
+                                            size_t depth,
+                                            const uint8_t *input,
+                                            size_t inputRowPitch,
+                                            size_t inputDepthPitch,
+                                            uint8_t *output,
+                                            size_t outputRowPitch,
+                                            size_t outputDepthPitch)
+{
+    LoadToNativeUbyte3To4Impl(context, 0xFF, width, height, depth, input, inputRowPitch,
+                              inputDepthPitch, output, outputRowPitch, outputDepthPitch);
 }
 
 template <size_t componentCount>

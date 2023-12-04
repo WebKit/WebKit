@@ -175,14 +175,15 @@ class SyncVk final : public SyncImpl
 class EGLSyncVk final : public EGLSyncImpl
 {
   public:
-    EGLSyncVk(const egl::AttributeMap &attribs);
+    EGLSyncVk();
     ~EGLSyncVk() override;
 
     void onDestroy(const egl::Display *display) override;
 
     egl::Error initialize(const egl::Display *display,
                           const gl::Context *context,
-                          EGLenum type) override;
+                          EGLenum type,
+                          const egl::AttributeMap &attribs) override;
     egl::Error clientWait(const egl::Display *display,
                           const gl::Context *context,
                           EGLint flags,
@@ -196,10 +197,8 @@ class EGLSyncVk final : public EGLSyncImpl
     egl::Error dupNativeFenceFD(const egl::Display *display, EGLint *fdOut) const override;
 
   private:
-    EGLenum mType;
     // SyncHelper or SyncHelperNativeFence decided at run-time.
     vk::SyncHelperInterface *mSyncHelper;
-    EGLint mNativeFenceFD;
 };
 }  // namespace rx
 

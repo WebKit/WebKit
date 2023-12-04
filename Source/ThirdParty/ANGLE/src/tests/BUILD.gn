@@ -1123,6 +1123,14 @@ if (build_angle_deqp_tests && !is_fuchsia) {
         "-Wno-unused-result",  # ignoring return value of function declared with
                                # 'nodiscard' attribute
       ]
+      if (!is_win) {
+        # Not supported by clang-cl
+        cflags_cc += [
+          "-fwrapv",  # Treat signed integer overflow as two's complement
+                      # https://gitlab.khronos.org/Tracker/vk-gl-cts/-/issues/37
+                      # https://android.googlesource.com/platform/external/deqp/+/ae6c306e39080de59a8535cf1797b27951dcaa6c%5E%21/
+        ]
+      }
     }
 
     # Ask the system headers to expose all the regular function otherwise

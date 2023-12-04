@@ -32,7 +32,7 @@ namespace egl
 class Sync final : public angle::RefCountObject<Display, angle::Result>, public LabeledObject
 {
   public:
-    Sync(rx::EGLImplFactory *factory, const SyncID &id, EGLenum type, const AttributeMap &attribs);
+    Sync(rx::EGLImplFactory *factory, const SyncID &id, EGLenum type);
     ~Sync() override;
 
     void setLabel(EGLLabelKHR label) override;
@@ -42,7 +42,9 @@ class Sync final : public angle::RefCountObject<Display, angle::Result>, public 
 
     void onDestroy(const Display *display) override;
 
-    Error initialize(const Display *display, const gl::Context *context);
+    Error initialize(const Display *display,
+                     const gl::Context *context,
+                     const AttributeMap &attribs);
     Error clientWait(const Display *display,
                      const gl::Context *context,
                      EGLint flags,
