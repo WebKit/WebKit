@@ -99,9 +99,6 @@ public:
 
     virtual ~LocalFrameView();
 
-    HostWindow* hostWindow() const final;
-
-    WEBCORE_EXPORT void invalidateRect(const IntRect&) final;
     void setFrameRect(const IntRect&) final;
     Type viewType() const final { return Type::Local; }
     void writeRenderTreeAsText(TextStream&, OptionSet<RenderAsTextFlag>) override;
@@ -269,8 +266,6 @@ public:
 
     IntRect windowClipRect() const final;
     WEBCORE_EXPORT IntRect windowClipRectForFrameOwner(const HTMLFrameOwnerElement*, bool clipToLayerContents) const;
-
-    float visibleContentScaleFactor() const final;
 
 #if USE(COORDINATED_GRAPHICS)
     WEBCORE_EXPORT void setFixedVisibleContentRect(const IntRect&) final;
@@ -515,22 +510,6 @@ public:
     //    Similar to client coordinates, but affected by page zoom (but not page scale).
     //
 
-    // Methods to convert points and rects between the coordinate space of the renderer, and this view.
-    WEBCORE_EXPORT IntRect convertFromRendererToContainingView(const RenderElement*, const IntRect&) const;
-    WEBCORE_EXPORT IntRect convertFromContainingViewToRenderer(const RenderElement*, const IntRect&) const;
-    WEBCORE_EXPORT FloatRect convertFromContainingViewToRenderer(const RenderElement*, const FloatRect&) const;
-    WEBCORE_EXPORT IntPoint convertFromRendererToContainingView(const RenderElement*, const IntPoint&) const;
-    WEBCORE_EXPORT FloatPoint convertFromRendererToContainingView(const RenderElement*, const FloatPoint&) const;
-    WEBCORE_EXPORT IntPoint convertFromContainingViewToRenderer(const RenderElement*, const IntPoint&) const;
-
-    // Override ScrollView methods to do point conversion via renderers, in order to take transforms into account.
-    IntRect convertToContainingView(const IntRect&) const final;
-    IntRect convertFromContainingView(const IntRect&) const final;
-    FloatRect convertFromContainingView(const FloatRect&) const final;
-    IntPoint convertToContainingView(const IntPoint&) const final;
-    FloatPoint convertToContainingView(const FloatPoint&) const final;
-    IntPoint convertFromContainingView(const IntPoint&) const final;
-
     float documentToAbsoluteScaleFactor(std::optional<float> effectiveZoom = std::nullopt) const;
     float absoluteToDocumentScaleFactor(std::optional<float> effectiveZoom = std::nullopt) const;
 
@@ -582,7 +561,6 @@ public:
     void flushAnyPendingPostLayoutTasks();
 
     bool shouldSuspendScrollAnimations() const final;
-    void scrollbarStyleChanged(ScrollbarStyle, bool forceUpdate) override;
 
     RenderBox* embeddedContentBox() const;
     
@@ -623,9 +601,6 @@ public:
     const Pagination& pagination() const;
     void setPagination(const Pagination&);
 
-    bool isActive() const final;
-    bool forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const final;
-
 #if HAVE(RUBBER_BANDING)
     WEBCORE_EXPORT GraphicsLayer* setWantsLayerForTopOverHangArea(bool) const;
     WEBCORE_EXPORT GraphicsLayer* setWantsLayerForBottomOverHangArea(bool) const;
@@ -637,10 +612,6 @@ public:
 
     LayoutPoint scrollPositionRespectingCustomFixedPosition() const;
 
-    WEBCORE_EXPORT int headerHeight() const final;
-    WEBCORE_EXPORT int footerHeight() const final;
-
-    WEBCORE_EXPORT float topContentInset(TopContentInsetType = TopContentInsetType::WebCoreContentInset) const final;
     void topContentInsetDidChange(float newTopContentInset);
 
     void topContentDirectionDidChange();
@@ -829,9 +800,6 @@ private:
     void invalidateScrollbarRect(Scrollbar&, const IntRect&) final;
     void scrollTo(const ScrollPosition&) final;
     void setVisibleScrollerThumbRect(const IntRect&) final;
-    ScrollableArea* enclosingScrollableArea() const final;
-    IntRect scrollableAreaBoundingBox(bool* = nullptr) const final;
-    bool scrollAnimatorEnabled() const final;
     GraphicsLayer* layerForScrollCorner() const final;
 #if HAVE(RUBBER_BANDING)
     GraphicsLayer* layerForOverhangAreas() const final;

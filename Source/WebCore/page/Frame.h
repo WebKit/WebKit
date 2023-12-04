@@ -42,6 +42,7 @@ class FrameLoadRequest;
 class HTMLFrameOwnerElement;
 class NavigationScheduler;
 class Page;
+class RenderWidget;
 class Settings;
 class WeakPtrImplWithEventTargetData;
 class WindowProxy;
@@ -89,6 +90,8 @@ public:
     virtual void setOpener(Frame*) = 0;
     virtual const Frame* opener() const = 0;
     virtual Frame* opener() = 0;
+
+    WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
 
 protected:
     Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent);

@@ -194,14 +194,10 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     if (bounds.isEmpty())
         return std::nullopt;
 
-    auto* localFrame = dynamicDowncast<LocalFrame>(regionRenderer.document().frame()->mainFrame());
-    if (!localFrame)
-        return std::nullopt;
+    Ref mainFrameView = *regionRenderer.document().frame()->mainFrame().virtualView();
 
-    auto& mainFrameView = *localFrame->view();
-
-    FloatSize frameViewSize = mainFrameView.size();
-    auto scale = 1 / mainFrameView.visibleContentScaleFactor();
+    FloatSize frameViewSize = mainFrameView->size();
+    auto scale = 1 / mainFrameView->visibleContentScaleFactor();
     frameViewSize.scale(scale, scale);
     auto frameViewArea = frameViewSize.area();
 

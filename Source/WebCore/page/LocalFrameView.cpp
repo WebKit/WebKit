@@ -442,23 +442,6 @@ bool LocalFrameView::didFirstLayout() const
     return layoutContext().didFirstLayout();
 }
 
-void LocalFrameView::invalidateRect(const IntRect& rect)
-{
-    if (!parent()) {
-        if (auto* page = m_frame->page())
-            page->chrome().invalidateContentsAndRootView(rect);
-        return;
-    }
-
-    auto* renderer = m_frame->ownerRenderer();
-    if (!renderer)
-        return;
-
-    IntRect repaintRect = rect;
-    repaintRect.moveBy(roundedIntPoint(renderer->contentBoxLocation()));
-    renderer->repaintRectangle(repaintRect);
-}
-
 void LocalFrameView::setFrameRect(const IntRect& newRect)
 {
     Ref<LocalFrameView> protectedThis(*this);
@@ -1120,34 +1103,6 @@ LayoutPoint LocalFrameView::scrollPositionRespectingCustomFixedPosition() const
     return scrollPositionForFixedPosition();
 }
 
-int LocalFrameView::headerHeight() const
-{
-    if (!m_frame->isMainFrame())
-        return 0;
-    Page* page = m_frame->page();
-    return page ? page->headerHeight() : 0;
-}
-
-int LocalFrameView::footerHeight() const
-{
-    if (!m_frame->isMainFrame())
-        return 0;
-    Page* page = m_frame->page();
-    return page ? page->footerHeight() : 0;
-}
-
-float LocalFrameView::topContentInset(TopContentInsetType contentInsetTypeToReturn) const
-{
-    if (platformWidget() && contentInsetTypeToReturn == TopContentInsetType::WebCoreOrPlatformContentInset)
-        return platformTopContentInset();
-
-    if (!m_frame->isMainFrame())
-        return 0;
-    
-    Page* page = m_frame->page();
-    return page ? page->topContentInset() : 0;
-}
-    
 void LocalFrameView::topContentInsetDidChange(float newTopContentInset)
 {
     RenderView* renderView = this->renderView();
@@ -3124,14 +3079,6 @@ void LocalFrameView::stopAsyncAnimatedScroll()
 #endif
 }
 
-HostWindow* LocalFrameView::hostWindow() const
-{
-    auto* page = m_frame->page();
-    if (!page)
-        return nullptr;
-    return &page->chrome();
-}
-
 void LocalFrameView::addTrackedRepaintRect(const FloatRect& r)
 {
     if (!m_isTrackingRepaints || r.isEmpty())
@@ -4296,18 +4243,6 @@ IntRect LocalFrameView::windowClipRectForFrameOwner(const HTMLFrameOwnerElement*
     return intersection(clipRect, windowClipRect());
 }
 
-bool LocalFrameView::isActive() const
-{
-    Page* page = m_frame->page();
-    return page && page->focusController().isActive();
-}
-
-bool LocalFrameView::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
-{
-    Page* page = m_frame->page();
-    return page && page->settings().scrollingPerformanceTestingEnabled();
-}
-
 void LocalFrameView::scrollTo(const ScrollPosition& newPosition)
 {
     IntPoint oldPosition = scrollPosition();
@@ -4362,20 +4297,6 @@ void LocalFrameView::invalidateScrollbarRect(Scrollbar& scrollbar, const IntRect
     invalidateRect(dirtyRect);
 }
 
-float LocalFrameView::visibleContentScaleFactor() const
-{
-    if (!m_frame->isMainFrame())
-        return 1;
-
-    Page* page = m_frame->page();
-    // FIXME: This !delegatesScaling() is confusing, and the opposite behavior to Frame::frameScaleFactor().
-    // This function should probably be renamed to delegatedPageScaleFactor().
-    if (!page || !page->delegatesScaling())
-        return 1;
-
-    return page->pageScaleFactor();
-}
-
 void LocalFrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
 {
     if (!m_frame->isMainFrame())
@@ -4383,39 +4304,6 @@ void LocalFrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
 
     if (Page* page = m_frame->page())
         page->chrome().client().notifyScrollerThumbIsVisibleInRect(scrollerThumb);
-}
-
-ScrollableArea* LocalFrameView::enclosingScrollableArea() const
-{
-    if (m_frame->isMainFrame())
-        return nullptr;
-
-    auto* ownerElement = m_frame->ownerElement();
-    if (!ownerElement)
-        return nullptr;
-
-    auto* ownerRenderer = ownerElement->renderer();
-    if (!ownerRenderer)
-        return nullptr;
-
-    auto* layer = ownerRenderer->enclosingLayer();
-    if (!layer)
-        return nullptr;
-
-    auto* enclosingScrollableLayer = layer->enclosingScrollableLayer(IncludeSelfOrNot::IncludeSelf, CrossFrameBoundaries::No);
-    if (!enclosingScrollableLayer)
-        return nullptr;
-
-    return enclosingScrollableLayer->scrollableArea();
-}
-
-IntRect LocalFrameView::scrollableAreaBoundingBox(bool*) const
-{
-    RenderWidget* ownerRenderer = m_frame->ownerRenderer();
-    if (!ownerRenderer)
-        return frameRect();
-
-    return ownerRenderer->absoluteContentQuad().enclosingBoundingBox();
 }
 
 bool LocalFrameView::isScrollable(Scrollability definitionOfScrollable)
@@ -4497,17 +4385,6 @@ bool LocalFrameView::shouldSuspendScrollAnimations() const
     return m_frame->loader().state() != FrameState::Complete;
 }
 
-void LocalFrameView::scrollbarStyleChanged(ScrollbarStyle newStyle, bool forceUpdate)
-{
-    if (!m_frame->isMainFrame())
-        return;
-
-    if (Page* page = m_frame->page())
-        page->chrome().client().recommendedScrollbarStyleDidChange(newStyle);
-
-    ScrollView::scrollbarStyleChanged(newStyle, forceUpdate);
-}
-
 void LocalFrameView::notifyAllFramesThatContentAreaWillPaint() const
 {
     notifyScrollableAreasThatContentAreaWillPaint();
@@ -4538,14 +4415,6 @@ void LocalFrameView::notifyScrollableAreasThatContentAreaWillPaint() const
         if (!is<ScrollView>(scrollableArea))
             scrollableArea->contentAreaWillPaint();
     }
-}
-
-bool LocalFrameView::scrollAnimatorEnabled() const
-{
-    if (auto* page = m_frame->page())
-        return page->settings().scrollAnimatorEnabled();
-
-    return false;
 }
 
 void LocalFrameView::updateScrollCorner()
@@ -5342,184 +5211,6 @@ void LocalFrameView::adjustPageHeightDeprecated(float *newBottom, float oldTop, 
     if (!*newBottom)
         *newBottom = oldBottom;
     renderView->setPrintRect(IntRect());
-}
-
-IntRect LocalFrameView::convertFromRendererToContainingView(const RenderElement* renderer, const IntRect& rendererRect) const
-{
-    IntRect rect = snappedIntRect(enclosingLayoutRect(renderer->localToAbsoluteQuad(FloatRect(rendererRect)).boundingBox()));
-
-    return contentsToView(rect);
-}
-
-IntRect LocalFrameView::convertFromContainingViewToRenderer(const RenderElement* renderer, const IntRect& viewRect) const
-{
-    IntRect rect = viewToContents(viewRect);
-
-    // FIXME: we don't have a way to map an absolute rect down to a local quad, so just
-    // move the rect for now.
-    rect.setLocation(roundedIntPoint(renderer->absoluteToLocal(rect.location(), UseTransforms)));
-    return rect;
-}
-
-FloatRect LocalFrameView::convertFromContainingViewToRenderer(const RenderElement* renderer, const FloatRect& viewRect) const
-{
-    FloatRect rect = viewToContents(viewRect);
-
-    return (renderer->absoluteToLocalQuad(rect)).boundingBox();
-}
-
-IntPoint LocalFrameView::convertFromRendererToContainingView(const RenderElement* renderer, const IntPoint& rendererPoint) const
-{
-    IntPoint point = roundedIntPoint(renderer->localToAbsolute(rendererPoint, UseTransforms));
-
-    return contentsToView(point);
-}
-
-FloatPoint LocalFrameView::convertFromRendererToContainingView(const RenderElement* renderer, const FloatPoint& rendererPoint) const
-{
-    return contentsToView(renderer->localToAbsolute(rendererPoint, UseTransforms));
-}
-
-IntPoint LocalFrameView::convertFromContainingViewToRenderer(const RenderElement* renderer, const IntPoint& viewPoint) const
-{
-    IntPoint point = viewPoint;
-
-    // Convert from LocalFrameView coords into page ("absolute") coordinates.
-    if (!delegatesScrollingToNativeView())
-        point = viewToContents(point);
-
-    return roundedIntPoint(renderer->absoluteToLocal(point, UseTransforms));
-}
-
-IntRect LocalFrameView::convertToContainingView(const IntRect& localRect) const
-{
-    if (const ScrollView* parentScrollView = parent()) {
-        if (is<LocalFrameView>(*parentScrollView)) {
-            const LocalFrameView& parentView = downcast<LocalFrameView>(*parentScrollView);
-            // Get our renderer in the parent view
-            RenderWidget* renderer = m_frame->ownerRenderer();
-            if (!renderer)
-                return localRect;
-                
-            auto rect = localRect;
-            rect.moveBy(roundedIntPoint(renderer->contentBoxLocation()));
-            return parentView.convertFromRendererToContainingView(renderer, rect);
-        }
-        
-        return Widget::convertToContainingView(localRect);
-    }
-    
-    return localRect;
-}
-
-IntRect LocalFrameView::convertFromContainingView(const IntRect& parentRect) const
-{
-    if (const ScrollView* parentScrollView = parent()) {
-        if (is<LocalFrameView>(*parentScrollView)) {
-            const LocalFrameView& parentView = downcast<LocalFrameView>(*parentScrollView);
-
-            // Get our renderer in the parent view
-            RenderWidget* renderer = m_frame->ownerRenderer();
-            if (!renderer)
-                return parentRect;
-
-            auto rect = parentView.convertFromContainingViewToRenderer(renderer, parentRect);
-            rect.moveBy(-roundedIntPoint(renderer->contentBoxLocation()));
-            return rect;
-        }
-        
-        return Widget::convertFromContainingView(parentRect);
-    }
-    
-    return parentRect;
-}
-
-FloatRect LocalFrameView::convertFromContainingView(const FloatRect& parentRect) const
-{
-    if (const ScrollView* parentScrollView = parent()) {
-        if (is<LocalFrameView>(*parentScrollView)) {
-            const LocalFrameView& parentView = downcast<LocalFrameView>(*parentScrollView);
-
-            // Get our renderer in the parent view
-            RenderWidget* renderer = m_frame->ownerRenderer();
-            if (!renderer)
-                return parentRect;
-
-            auto rect = parentView.convertFromContainingViewToRenderer(renderer, parentRect);
-            rect.moveBy(-renderer->contentBoxLocation());
-            return rect;
-        }
-
-        return Widget::convertFromContainingView(parentRect);
-    }
-
-    return parentRect;
-}
-
-IntPoint LocalFrameView::convertToContainingView(const IntPoint& localPoint) const
-{
-    if (const ScrollView* parentScrollView = parent()) {
-        if (is<LocalFrameView>(*parentScrollView)) {
-            const LocalFrameView& parentView = downcast<LocalFrameView>(*parentScrollView);
-
-            // Get our renderer in the parent view
-            RenderWidget* renderer = m_frame->ownerRenderer();
-            if (!renderer)
-                return localPoint;
-                
-            auto point = localPoint;
-            point.moveBy(roundedIntPoint(renderer->contentBoxLocation()));
-            return parentView.convertFromRendererToContainingView(renderer, point);
-        }
-        
-        return Widget::convertToContainingView(localPoint);
-    }
-    
-    return localPoint;
-}
-
-FloatPoint LocalFrameView::convertToContainingView(const FloatPoint& localPoint) const
-{
-    if (const ScrollView* parentScrollView = parent()) {
-        if (is<LocalFrameView>(*parentScrollView)) {
-            const LocalFrameView& parentView = downcast<LocalFrameView>(*parentScrollView);
-
-            // Get our renderer in the parent view
-            RenderWidget* renderer = m_frame->ownerRenderer();
-            if (!renderer)
-                return localPoint;
-
-            auto point = localPoint;
-            point.moveBy(renderer->contentBoxLocation());
-            return parentView.convertFromRendererToContainingView(renderer, point);
-        }
-
-        return Widget::convertToContainingView(localPoint);
-    }
-
-    return localPoint;
-}
-
-IntPoint LocalFrameView::convertFromContainingView(const IntPoint& parentPoint) const
-{
-    if (const ScrollView* parentScrollView = parent()) {
-        if (is<LocalFrameView>(*parentScrollView)) {
-            const LocalFrameView& parentView = downcast<LocalFrameView>(*parentScrollView);
-
-            // Get our renderer in the parent view
-            RenderWidget* renderer = m_frame->ownerRenderer();
-            if (!renderer)
-                return parentPoint;
-
-            auto point = parentView.convertFromContainingViewToRenderer(renderer, parentPoint);
-            point.moveBy(-roundedIntPoint(renderer->contentBoxLocation()));
-            return point;
-        }
-        
-        return Widget::convertFromContainingView(parentPoint);
-    }
-    
-    return parentPoint;
 }
 
 float LocalFrameView::documentToAbsoluteScaleFactor(std::optional<float> effectiveZoom) const
