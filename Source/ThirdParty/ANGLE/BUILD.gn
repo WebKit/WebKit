@@ -74,7 +74,8 @@ declare_args() {
     angle_use_android_tls_slot = !build_with_chromium
   }
 
-  angle_enable_global_mutex_recursion = is_android && angle_enable_vulkan
+  angle_enable_global_mutex_recursion =
+      is_android && angle_enable_vulkan && !build_with_chromium
 
   # Potentially can be enabled for other platforms, but limiting to Android platform for now.
   # Chromium may have problems (requires verification), disabled for safety.

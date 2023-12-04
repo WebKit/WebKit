@@ -205,10 +205,6 @@ VkColorSpaceKHR MapEglColorSpaceToVkColorSpace(RendererVk *renderer, EGLenum EGL
     switch (EGLColorspace)
     {
         case EGL_NONE:
-            if (renderer->getFeatures().mapUnspecifiedColorSpaceToPassThrough.enabled)
-            {
-                return VK_COLOR_SPACE_PASS_THROUGH_EXT;
-            }
             return VK_COLOR_SPACE_SRGB_NONLINEAR_KHR;
         case EGL_GL_COLORSPACE_LINEAR:
         case EGL_GL_COLORSPACE_SRGB_KHR:
@@ -986,6 +982,7 @@ WindowSurfaceVk::WindowSurfaceVk(const egl::SurfaceState &surfaceState, EGLNativ
       mPreTransform(VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR),
       mEmulatedPreTransform(VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR),
       mCompositeAlpha(VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR),
+      mSurfaceColorSpace(VK_COLOR_SPACE_SRGB_NONLINEAR_KHR),
       mCurrentSwapchainImageIndex(0),
       mDepthStencilImageBinding(this, kAnySurfaceImageSubjectIndex),
       mColorImageMSBinding(this, kAnySurfaceImageSubjectIndex),
@@ -1122,6 +1119,54 @@ egl::Error WindowSurfaceVk::unMakeCurrent(const gl::Context *context)
     mUse.merge(contextVk->getSubmittedResourceUse());
 
     return angle::ToEGL(result, EGL_BAD_CURRENT_SURFACE);
+}
+
+angle::FormatID WindowSurfaceVk::getIntendedFormatID(RendererVk *renderer)
+{
+    // Ensure that the format and colorspace pair is supported.
+    const vk::Format &format = renderer->getFormat(mState.config->renderTargetFormat);
+    return format.getIntendedFormatID();
+}
+
+angle::FormatID WindowSurfaceVk::getActualFormatID(RendererVk *renderer)
+{
+    // Ensure that the format and colorspace pair is supported.
+    const vk::Format &format = renderer->getFormat(mState.config->renderTargetFormat);
+
+    angle::FormatID actualFormatID   = format.getActualRenderableImageFormatID();
+    angle::FormatID intendedFormatID = format.getIntendedFormatID();
+
+    // For devices that don't support creating swapchain images with RGB8, emulate with RGBA8.
+    if (renderer->getFeatures().overrideSurfaceFormatRGB8ToRGBA8.enabled &&
+        intendedFormatID == angle::FormatID::R8G8B8_UNORM)
+    {
+        actualFormatID = angle::FormatID::R8G8B8A8_UNORM;
+    }
+    return actualFormatID;
+}
+
+bool WindowSurfaceVk::updateColorSpace(DisplayVk *displayVk)
+{
+    RendererVk *renderer = displayVk->getRenderer();
+
+    VkFormat vkFormat = vk::GetVkFormatFromFormatID(getActualFormatID(renderer));
+
+    EGLenum eglColorSpaceEnum =
+        static_cast<EGLenum>(mState.attributes.get(EGL_GL_COLORSPACE, EGL_NONE));
+
+    // If EGL did not specify color space, we will use VK_COLOR_SPACE_PASS_THROUGH_EXT if supported.
+    if (eglColorSpaceEnum == EGL_NONE &&
+        renderer->getFeatures().mapUnspecifiedColorSpaceToPassThrough.enabled &&
+        displayVk->isSurfaceFormatColorspacePairSupported(mSurface, vkFormat,
+                                                          VK_COLOR_SPACE_PASS_THROUGH_EXT))
+    {
+        mSurfaceColorSpace = VK_COLOR_SPACE_PASS_THROUGH_EXT;
+        return true;
+    }
+
+    mSurfaceColorSpace = MapEglColorSpaceToVkColorSpace(renderer, eglColorSpaceEnum);
+    return displayVk->isSurfaceFormatColorspacePairSupported(mSurface, vkFormat,
+                                                             mSurfaceColorSpace);
 }
 
 angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk, bool *anyMatchesOut)
@@ -1303,18 +1348,7 @@ angle::Result WindowSurfaceVk::initializeImpl(DisplayVk *displayVk, bool *anyMat
     // will get clamped to the min/max values specified at display creation time.
     setSwapInterval(mState.getPreferredSwapInterval());
 
-    // Ensure that the format and colorspace pair is supported.
-    const vk::Format &format = renderer->getFormat(mState.config->renderTargetFormat);
-    VkFormat nativeFormat    = format.getActualRenderableImageVkFormat();
-    // For devices that don't support creating swapchain images with RGB8, emulate with RGBA8.
-    if (renderer->getFeatures().overrideSurfaceFormatRGB8ToRGBA8.enabled &&
-        nativeFormat == VK_FORMAT_R8G8B8_UNORM)
-    {
-        nativeFormat = VK_FORMAT_R8G8B8A8_UNORM;
-    }
-    VkColorSpaceKHR colorSpace = MapEglColorSpaceToVkColorSpace(
-        renderer, static_cast<EGLenum>(mState.attributes.get(EGL_GL_COLORSPACE, EGL_NONE)));
-    if (!displayVk->isSurfaceFormatColorspacePairSupported(mSurface, nativeFormat, colorSpace))
+    if (!updateColorSpace(displayVk))
     {
         return angle::Result::Continue;
     }
@@ -1518,16 +1552,7 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
     RendererVk *renderer = context->getRenderer();
     VkDevice device      = renderer->getDevice();
 
-    const vk::Format &format         = renderer->getFormat(mState.config->renderTargetFormat);
-    angle::FormatID actualFormatID   = format.getActualRenderableImageFormatID();
-    angle::FormatID intendedFormatID = format.getIntendedFormatID();
-
-    // For devices that don't support creating swapchain images with RGB8, emulate with RGBA8.
-    if (renderer->getFeatures().overrideSurfaceFormatRGB8ToRGBA8.enabled &&
-        intendedFormatID == angle::FormatID::R8G8B8_UNORM)
-    {
-        actualFormatID = angle::FormatID::R8G8B8A8_UNORM;
-    }
+    const vk::Format &format = renderer->getFormat(mState.config->renderTargetFormat);
 
     gl::Extents rotatedExtents = extents;
     if (Is90DegreeRotation(getPreTransform()))
@@ -1556,9 +1581,8 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
     swapchainInfo.flags = mState.hasProtectedContent() ? VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR : 0;
     swapchainInfo.surface         = mSurface;
     swapchainInfo.minImageCount   = mMinImageCount;
-    swapchainInfo.imageFormat     = vk::GetVkFormatFromFormatID(actualFormatID);
-    swapchainInfo.imageColorSpace = MapEglColorSpaceToVkColorSpace(
-        renderer, static_cast<EGLenum>(mState.attributes.get(EGL_GL_COLORSPACE, EGL_NONE)));
+    swapchainInfo.imageFormat     = vk::GetVkFormatFromFormatID(getActualFormatID(renderer));
+    swapchainInfo.imageColorSpace = mSurfaceColorSpace;
     // Note: Vulkan doesn't allow 0-width/height swapchains.
     swapchainInfo.imageExtent.width     = std::max(rotatedExtents.width, 1);
     swapchainInfo.imageExtent.height    = std::max(rotatedExtents.height, 1);
@@ -1729,9 +1753,9 @@ angle::Result WindowSurfaceVk::createSwapChain(vk::Context *context,
         SwapchainImage &member = mSwapchainImages[imageIndex];
 
         ASSERT(member.image);
-        member.image->init2DWeakReference(context, swapchainImages[imageIndex], extents,
-                                          Is90DegreeRotation(getPreTransform()), intendedFormatID,
-                                          actualFormatID, 0, 1, robustInit);
+        member.image->init2DWeakReference(
+            context, swapchainImages[imageIndex], extents, Is90DegreeRotation(getPreTransform()),
+            getIntendedFormatID(renderer), getActualFormatID(renderer), 0, 1, robustInit);
         member.imageViews.init(renderer);
         member.frameNumber = 0;
     }
@@ -1967,7 +1991,7 @@ egl::Error WindowSurfaceVk::prepareSwap(const gl::Context *context)
     }
     if (swapchainRecreated || isSharedPresentMode())
     {
-        // If swapchain is recreated or it is a shred present mode, acquire the image right away;
+        // If swapchain is recreated or it is in shared present mode, acquire the image right away;
         // it's not going to block.
         result = doDeferredAcquireNextImageWithUsableSwapchain(context);
         return angle::ToEGL(result, EGL_BAD_SURFACE);
@@ -2550,8 +2574,8 @@ angle::Result WindowSurfaceVk::doDeferredAcquireNextImageWithUsableSwapchain(
         // Note: TRACE_EVENT0 is put here instead of inside the function to workaround this issue:
         // http://anglebug.com/2927
         ANGLE_TRACE_EVENT0("gpu.angle", "acquireNextSwapchainImage");
-        // Get the next available swapchain image.
 
+        // Get the next available swapchain image.
         VkResult result = acquireNextSwapchainImage(contextVk);
 
         ASSERT(result != VK_SUBOPTIMAL_KHR);

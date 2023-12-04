@@ -77,7 +77,7 @@ class EGLImplFactory : angle::NonCopyable
                                                                  EGLClientBuffer buffer,
                                                                  const egl::AttributeMap &attribs);
 
-    virtual EGLSyncImpl *createSync(const egl::AttributeMap &attribs);
+    virtual EGLSyncImpl *createSync();
 
     virtual ShareGroupImpl *createShareGroup(const egl::ShareGroupState &state) = 0;
 };
@@ -92,7 +92,7 @@ inline ExternalImageSiblingImpl *EGLImplFactory::createExternalImageSibling(
     return nullptr;
 }
 
-inline EGLSyncImpl *EGLImplFactory::createSync(const egl::AttributeMap &attribs)
+inline EGLSyncImpl *EGLImplFactory::createSync()
 {
     UNREACHABLE();
     return nullptr;

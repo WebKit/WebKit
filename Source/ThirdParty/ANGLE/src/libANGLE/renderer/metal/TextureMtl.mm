@@ -349,6 +349,26 @@ angle::Result CopyCompressedTextureContentsToStagingBuffer(ContextMtl *contextMt
     return angle::Result::Continue;
 }
 
+angle::Result SaturateDepth(ContextMtl *contextMtl,
+                            mtl::BufferRef srcBuffer,
+                            mtl::BufferRef dstBuffer,
+                            uint32_t srcBufferOffset,
+                            uint32_t srcPitch,
+                            MTLSize size)
+{
+    static_assert(gl::IMPLEMENTATION_MAX_2D_TEXTURE_SIZE <= UINT_MAX);
+    mtl::DepthSaturationParams params;
+    params.srcBuffer       = srcBuffer;
+    params.dstBuffer       = dstBuffer;
+    params.srcBufferOffset = srcBufferOffset;
+    params.dstWidth        = static_cast<uint32_t>(size.width);
+    params.dstHeight       = static_cast<uint32_t>(size.height);
+    params.srcPitch        = srcPitch;
+    ANGLE_TRY(contextMtl->getDisplay()->getUtils().saturateDepth(contextMtl, params));
+
+    return angle::Result::Continue;
+}
+
 angle::Result UploadDepthStencilTextureContentsWithStagingBuffer(
     ContextMtl *contextMtl,
     const angle::Format &textureAngleFormat,
@@ -366,8 +386,9 @@ angle::Result UploadDepthStencilTextureContentsWithStagingBuffer(
 
     ASSERT(!textureAngleFormat.depthBits || !textureAngleFormat.stencilBits);
 
-    // Compressed texture is not supporte atm
-    ASSERT(!textureAngleFormat.isBlock);
+    // Depth and stencil textures cannot be of 3D type;
+    // arrays and cube maps must be uploaded per-slice.
+    ASSERT(region.size.depth == 1);
 
     // Copy data to staging buffer
     size_t stagingBufferRowPitch;
@@ -377,6 +398,12 @@ angle::Result UploadDepthStencilTextureContentsWithStagingBuffer(
         contextMtl, textureAngleFormat, textureAngleFormat, textureAngleFormat.pixelWriteFunction,
         region.size, data, bytesPerRow, bytesPer2DImage, &stagingBufferRowPitch,
         &stagingBuffer2DImageSize, &stagingBuffer));
+
+    if (textureAngleFormat.id == angle::FormatID::D32_FLOAT)
+    {
+        ANGLE_TRY(SaturateDepth(contextMtl, stagingBuffer, stagingBuffer, 0,
+                                static_cast<uint32_t>(region.size.width), region.size));
+    }
 
     // Copy staging buffer to texture.
     mtl::BlitCommandEncoder *encoder = contextMtl->getBlitCommandEncoder();
@@ -404,6 +431,10 @@ angle::Result UploadPackedDepthStencilTextureContentsWithStagingBuffer(
     ASSERT(!texture->isCPUAccessible());
 
     ASSERT(textureAngleFormat.depthBits && textureAngleFormat.stencilBits);
+
+    // Depth and stencil textures cannot be of 3D type;
+    // arrays and cube maps must be uploaded per-slice.
+    ASSERT(region.size.depth == 1);
 
     // We have to split the depth & stencil data into 2 buffers.
     angle::FormatID stagingDepthBufferFormatId;
@@ -435,13 +466,13 @@ angle::Result UploadPackedDepthStencilTextureContentsWithStagingBuffer(
 
     size_t stagingDepthBufferRowPitch, stagingStencilBufferRowPitch;
     size_t stagingDepthBuffer2DImageSize, stagingStencilBuffer2DImageSize;
-    mtl::BufferRef stagingDepthbuffer, stagingStencilBuffer;
+    mtl::BufferRef stagingDepthBuffer, stagingStencilBuffer;
 
     // Copy depth data to staging depth buffer
     ANGLE_TRY(CopyDepthStencilTextureContentsToStagingBuffer(
         contextMtl, textureAngleFormat, angleStagingDepthFormat,
         stagingDepthBufferWriteFunctionOverride, region.size, data, bytesPerRow, bytesPer2DImage,
-        &stagingDepthBufferRowPitch, &stagingDepthBuffer2DImageSize, &stagingDepthbuffer));
+        &stagingDepthBufferRowPitch, &stagingDepthBuffer2DImageSize, &stagingDepthBuffer));
 
     // Copy stencil data to staging stencil buffer
     ANGLE_TRY(CopyDepthStencilTextureContentsToStagingBuffer(
@@ -449,9 +480,15 @@ angle::Result UploadPackedDepthStencilTextureContentsWithStagingBuffer(
         bytesPerRow, bytesPer2DImage, &stagingStencilBufferRowPitch,
         &stagingStencilBuffer2DImageSize, &stagingStencilBuffer));
 
+    if (angleStagingDepthFormat.id == angle::FormatID::D32_FLOAT)
+    {
+        ANGLE_TRY(SaturateDepth(contextMtl, stagingDepthBuffer, stagingDepthBuffer, 0,
+                                static_cast<uint32_t>(region.size.width), region.size));
+    }
+
     mtl::BlitCommandEncoder *encoder = contextMtl->getBlitCommandEncoder();
 
-    encoder->copyBufferToTexture(stagingDepthbuffer, 0, stagingDepthBufferRowPitch,
+    encoder->copyBufferToTexture(stagingDepthBuffer, 0, stagingDepthBufferRowPitch,
                                  stagingDepthBuffer2DImageSize, region.size, texture, slice,
                                  mipmapLevel, region.origin, MTLBlitOptionDepthFromDepthStencil);
     encoder->copyBufferToTexture(stagingStencilBuffer, 0, stagingStencilBufferRowPitch,
@@ -1944,6 +1981,24 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
                 params.blocksWide = std::max(params.blocksWide, 2u);
 
                 ANGLE_TRY(contextMtl->getDisplay()->getUtils().linearizeBlocks(contextMtl, params));
+
+                sourceBuffer = stagingBuffer;
+                offset       = 0;
+            }
+            else if (pixelsAngleFormat.id == angle::FormatID::D32_FLOAT)
+            {
+                // Current command buffer implementation does not support 64-bit offsets.
+                ANGLE_MTL_CHECK(contextMtl, offset <= std::numeric_limits<uint32_t>::max(),
+                                GL_INVALID_OPERATION);
+
+                mtl::BufferRef stagingBuffer;
+                ANGLE_TRY(
+                    mtl::Buffer::MakeBuffer(contextMtl, pixelsDepthPitch, nullptr, &stagingBuffer));
+
+                ASSERT(pixelsAngleFormat.pixelBytes == 4 && offset % 4 == 0);
+                ANGLE_TRY(SaturateDepth(contextMtl, sourceBuffer, stagingBuffer,
+                                        static_cast<uint32_t>(offset),
+                                        static_cast<uint32_t>(pixelsRowPitch) / 4, mtlArea.size));
 
                 sourceBuffer = stagingBuffer;
                 offset       = 0;

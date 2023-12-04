@@ -37,11 +37,7 @@ class MemoryShaderCache final : angle::NonCopyable
 
     // Check the cache, and deserialize and load the shader if found. Evict existing hash if load
     // fails.  Returns true on success.
-    bool getShader(const Context *context,
-                   Shader *shader,
-                   const ShCompileOptions &compileOptions,
-                   const ShCompilerInstance &compilerInstance,
-                   const egl::BlobCache::Key &shaderHash);
+    bool getShader(const Context *context, Shader *shader, const egl::BlobCache::Key &shaderHash);
 
     // Empty the cache.
     void clear();

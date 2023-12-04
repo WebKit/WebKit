@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 343
+#define ANGLE_SH_VERSION 344
 
 enum ShShaderSpec
 {
@@ -434,6 +434,9 @@ struct ShCompileOptions
 
     // Rescope globals that are only used in one function to be function-local.
     uint64_t rescopeGlobalVariables : 1;
+
+    // Pre-transform explicit cubemap derivatives for Apple GPUs.
+    uint64_t preTransformTextureCubeGradDerivatives : 1;
 
     ShCompileOptionsMetal metal;
     ShPixelLocalStorageOptions pls;

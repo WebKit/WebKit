@@ -3031,7 +3031,10 @@ def get_context_lock(api, cmd_name):
 
 def get_prepare_swap_buffers_call(api, cmd_name, params):
     if cmd_name not in [
-            "eglSwapBuffers", "eglSwapBuffersWithDamageKHR", "eglSwapBuffersWithFrameTokenANGLE"
+            "eglSwapBuffers",
+            "eglSwapBuffersWithDamageKHR",
+            "eglSwapBuffersWithFrameTokenANGLE",
+            "eglQuerySurface",
     ]:
         return ""
 
@@ -3044,8 +3047,14 @@ def get_prepare_swap_buffers_call(api, cmd_name, params):
         if param_type == "EGLSurface":
             passed_params[1] = param
 
-    return "ANGLE_EGLBOOLEAN_TRY(EGL_PrepareSwapBuffersANGLE(%s));" % (", ".join(
+    prepareCall = "ANGLE_EGLBOOLEAN_TRY(EGL_PrepareSwapBuffersANGLE(%s));" % (", ".join(
         [just_the_name(param) for param in passed_params]))
+
+    # For eglQuerySurface, the prepare call is only needed for EGL_BUFFER_AGE
+    if cmd_name == "eglQuerySurface":
+        prepareCall = "if (attribute == EGL_BUFFER_AGE_EXT) {" + prepareCall + "}"
+
+    return prepareCall
 
 
 def get_preamble(api, cmd_name, params):

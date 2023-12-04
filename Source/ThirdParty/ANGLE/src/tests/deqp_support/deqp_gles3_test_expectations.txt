@@ -548,9 +548,8 @@
 5232 MAC METAL AMD : dEQP-GLES3.functional.shaders.builtin_functions.pack_unpack.unpacksnorm2x16_fragment = FAIL
 5232 MAC METAL AMD : dEQP-GLES3.functional.shaders.builtin_functions.pack_unpack.unpackunorm2x16_fragment = FAIL
 
-// Texture swizzle is not always available on host machine
-// Depth sampling requires texture swizzle to correctly return (red, 0, 0, 1) per GLES3 spec
-5243 MAC METAL : dEQP-GLES3.*texture.specification*depth* = FAIL
+8425 MAC METAL AMD : dEQP-GLES3.functional.texture.specification.*.depth24_stencil8* = FAIL
+8425 MAC METAL AMD : dEQP-GLES3.functional.texture.specification.*.depth32f_stencil8* = FAIL
 
 // FBO with distinct attachment's sizes is not supported yet
 6467 MAC METAL : dEQP-GLES3.functional.fbo.completeness.size.distinct = FAIL
@@ -706,14 +705,6 @@
 8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.mix.mediump_fragment.scalar = FAIL
 8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.mix.mediump_vertex.scalar = FAIL
 8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.refract.lowp_vertex.scalar = FAIL
-8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_fragment.scalar = FAIL
-8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_fragment.vec2 = FAIL
-8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_fragment.vec3 = FAIL
-8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_fragment.vec4 = FAIL
-8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_vertex.scalar = FAIL
-8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_vertex.vec2 = FAIL
-8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_vertex.vec3 = FAIL
-8287 MAC METAL : dEQP-GLES3.functional.shaders.builtin_functions.precision.tanh.highp_vertex.vec4 = FAIL
 8287 MAC METAL : dEQP-GLES3.functional.shaders.invariance.lowp.loop_2 = FAIL
 
 
@@ -832,12 +823,3 @@
 4140 VULKAN : dEQP-GLES3.functional.transform_feedback.array_element.interleaved.* = FAIL
 4140 VULKAN : dEQP-GLES3.functional.transform_feedback.array_element.separate.* = FAIL
 4140 VULKAN : dEQP-GLES3.functional.transform_feedback.random.* = FAIL
-
-// Undefined behavior in dEQP framework due to NaN
-b/307584642 ANDROID : dEQP-GLES3.functional.shaders.random.texture.vertex.1 = SKIP
-b/307584642 ANDROID : dEQP-GLES3.functional.shaders.random.texture.vertex.6 = SKIP
-b/307584642 ANDROID : dEQP-GLES3.functional.shaders.random.texture.vertex.18 = SKIP
-b/307584642 ANDROID : dEQP-GLES3.functional.shaders.random.texture.vertex.19 = SKIP
-b/307584642 ANDROID : dEQP-GLES3.functional.shaders.random.texture.vertex.23 = SKIP
-b/307584642 ANDROID : dEQP-GLES3.functional.shaders.random.texture.vertex.29 = SKIP
-b/307584642 ANDROID : dEQP-GLES3.functional.shaders.random.texture.vertex.34 = SKIP

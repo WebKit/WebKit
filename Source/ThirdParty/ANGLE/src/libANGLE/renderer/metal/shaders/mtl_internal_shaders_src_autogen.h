@@ -153,7 +153,7 @@ static inline vec<T, 4> resolveTextureMS(texture2d_ms<T> srcTexture, uint2 coord
 static inline float4 sRGBtoLinear(float4 color)
 {
     float3 linear1 = color.rgb / 12.92;
-    float3 linear2 = pow((color.rgb + float3(0.055)) / 1.055, 2.4);
+    float3 linear2 = powr((color.rgb + float3(0.055)) / 1.055, 2.4);
     float3 factor = float3(color.rgb <= float3(0.04045));
     float4 linear = float4(factor * linear1 + float3(1.0 - factor) * linear2, color.a);
 
@@ -164,12 +164,11 @@ static inline float linearToSRGB(float color)
 {
     if (color <= 0.0f)
         return 0.0f;
-    else if (color < 0.0031308f)
+    if (color < 0.0031308f)
         return 12.92f * color;
-    else if (color < 1.0f)
-        return 1.055f * pow(color, 0.41666f) - 0.055f;
-    else
-        return 1.0f;
+    if (color < 1.0f)
+        return 1.055f * powr(color, 0.41666f) - 0.055f;
+    return 1.0f;
 }
 
 static inline float4 linearToSRGB(float4 color)
@@ -3145,6 +3144,21 @@ kernel void linearizeBlocks(ushort2 position [[thread_position_in_grid]],
     t = (t | (t << 2)) & 0x33333333;
     t = (t | (t << 1)) & 0x55555555;
     dstBuffer[position.y * (*dimensions).x + position.x] = srcBuffer[(t.x << 1) | t.y];
+}
+
+
+kernel void saturateDepth(uint2 position [[thread_position_in_grid]],
+                          constant uint3 *dimensions [[buffer(0)]],
+                          device float *srcBuffer [[buffer(1)]],
+                          device float *dstBuffer [[buffer(2)]])
+{
+    if (any(position >= (*dimensions).xy))
+    {
+        return;
+    }
+    const uint srcOffset = position.y * (*dimensions).z + position.x;
+    const uint dstOffset = position.y * (*dimensions).x + position.x;
+    dstBuffer[dstOffset] = saturate(srcBuffer[srcOffset]);
 }
 # 6 "temp_master_source.metal" 2
 # 1 "./visibility.metal" 1

@@ -478,7 +478,8 @@ static const char *GetOperatorString(TOperator op,
         case TOperator::EOpCosh:
             return "metal::cosh";
         case TOperator::EOpTanh:
-            return "metal::tanh";
+            return resultType.getPrecision() == TPrecision::EbpHigh ? "metal::precise::tanh"
+                                                                    : "metal::tanh";
         case TOperator::EOpAsinh:
             return "metal::asinh";
         case TOperator::EOpAcosh:

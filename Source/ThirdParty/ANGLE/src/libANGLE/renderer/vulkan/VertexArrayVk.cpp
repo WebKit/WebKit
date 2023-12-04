@@ -933,7 +933,7 @@ gl::AttributesMask VertexArrayVk::mergeClientAttribsRange(
     const std::vector<gl::VertexAttribute> &attribs = mState.getVertexAttributes();
     const std::vector<gl::VertexBinding> &bindings  = mState.getVertexBindings();
     gl::AttributesMask attributeMaskCanCombine;
-    std::vector<size_t> combinedIndexes;
+    angle::FixedVector<size_t, gl::MAX_VERTEX_ATTRIBS> combinedIndexes;
     for (size_t attribIndex : activeStreamedAttribs)
     {
         const gl::VertexAttribute &attrib = attribs[attribIndex];

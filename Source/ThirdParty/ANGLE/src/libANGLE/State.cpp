@@ -3788,6 +3788,12 @@ angle::Result State::installProgramExecutable(const Context *context)
 
     mDirtyBits.set(state::DIRTY_BIT_PROGRAM_EXECUTABLE);
 
+    // Make sure the program is synced before draw, if needed
+    if (mProgram->needsSync())
+    {
+        mDirtyObjects.set(state::DIRTY_OBJECT_PROGRAM);
+    }
+
     // The bound Program always overrides the ProgramPipeline, so install the executable regardless
     // of whether a program pipeline is bound.
     InstallExecutable(context, mProgram->getSharedExecutable(), &mExecutable);

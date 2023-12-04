@@ -217,7 +217,7 @@ template <TBasicType basicType,
           TQualifier qualifier,
           uint8_t primarySize   = 1,
           uint8_t secondarySize = 1>
-const TType *GetQualified()
+constexpr const TType *GetQualified()
 {
     return Get<basicType, precision, qualifier, primarySize, secondarySize>();
 }

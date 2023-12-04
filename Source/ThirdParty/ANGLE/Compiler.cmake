@@ -150,6 +150,8 @@ set(angle_translator_sources
     "src/compiler/translator/tree_ops/InitializeVariables.h"
     "src/compiler/translator/tree_ops/MonomorphizeUnsupportedFunctions.cpp"
     "src/compiler/translator/tree_ops/MonomorphizeUnsupportedFunctions.h"
+    "src/compiler/translator/tree_ops/PreTransformTextureCubeGradDerivatives.cpp"
+    "src/compiler/translator/tree_ops/PreTransformTextureCubeGradDerivatives.h"
     "src/compiler/translator/tree_ops/PruneEmptyCases.cpp"
     "src/compiler/translator/tree_ops/PruneEmptyCases.h"
     "src/compiler/translator/tree_ops/PruneNoOps.cpp"

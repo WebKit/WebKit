@@ -1057,6 +1057,12 @@ angle::Result RenderUtils::linearizeBlocks(ContextMtl *contextMtl,
     return mBlockLinearizationUtils.linearizeBlocks(contextMtl, params);
 }
 
+angle::Result RenderUtils::saturateDepth(ContextMtl *contextMtl,
+                                         const DepthSaturationParams &params)
+{
+    return mDepthSaturationUtils.saturateDepth(contextMtl, params);
+}
+
 // ClearUtils implementation
 ClearUtils::ClearUtils(const std::string &fragmentShaderName)
     : mFragmentShaderName(fragmentShaderName)
@@ -2982,6 +2988,44 @@ angle::Result BlockLinearizationUtils::getBlockLinearizationComputePipeline(
                                              &mLinearizeBlocksComputeShader));
     return contextMtl->getPipelineCache().getComputePipeline(
         contextMtl, mLinearizeBlocksComputeShader, outPipelineState);
+}
+
+angle::Result DepthSaturationUtils::saturateDepth(ContextMtl *contextMtl,
+                                                  const DepthSaturationParams &params)
+{
+    ComputeCommandEncoder *cmdEncoder = contextMtl->getComputeCommandEncoder();
+    ASSERT(cmdEncoder);
+
+    AutoObjCPtr<id<MTLComputePipelineState>> pipeline;
+    ANGLE_TRY(getDepthSaturationComputePipeline(contextMtl, &pipeline));
+    cmdEncoder->setComputePipelineState(pipeline);
+
+    // Image layout
+    ASSERT(params.dstWidth > 0 && params.dstHeight > 0);
+    ASSERT(params.srcPitch >= params.dstWidth);
+    const uint32_t dimensions[4] = {params.dstWidth, params.dstHeight, params.srcPitch, 0};
+    cmdEncoder->setData(dimensions, 0);
+
+    cmdEncoder->setBuffer(params.srcBuffer, params.srcBufferOffset, 1);
+    cmdEncoder->setBuffer(params.dstBuffer, 0, 2);
+
+    NSUInteger w                  = pipeline.get().threadExecutionWidth;
+    NSUInteger h                  = pipeline.get().maxTotalThreadsPerThreadgroup / w;
+    MTLSize threadsPerThreadgroup = MTLSizeMake(w, h, 1);
+    MTLSize threads               = MTLSizeMake(params.dstWidth, params.dstHeight, 1);
+    DispatchCompute(contextMtl, cmdEncoder,
+                    /** allowNonUniform */ true, threads, threadsPerThreadgroup);
+    return angle::Result::Continue;
+}
+
+angle::Result DepthSaturationUtils::getDepthSaturationComputePipeline(
+    ContextMtl *contextMtl,
+    AutoObjCPtr<id<MTLComputePipelineState>> *outPipelineState)
+{
+    ANGLE_TRY(
+        EnsureComputeShaderInitialized(contextMtl, @"saturateDepth", &mSaturateDepthComputeShader));
+    return contextMtl->getPipelineCache().getComputePipeline(
+        contextMtl, mSaturateDepthComputeShader, outPipelineState);
 }
 
 }  // namespace mtl

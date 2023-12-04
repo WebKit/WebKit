@@ -1,3 +1,74 @@
+diff --git a/commit-message.txt b/commit-message.txt
+new file mode 100644
+index 0000000000000000000000000000000000000000..e9dfcf79e9174372bc552fac5eeee99c4acd9ae8
+--- /dev/null
++++ b/commit-message.txt
+@@ -0,0 +1,65 @@
++Update ANGLE to 2023-12-01 (ab992c3efe0f574e5547d0ca472a15d52ec9b8dd)
++Need the bug URL (OOPS!).
++Include a Radar link (OOPS!).
++
++Reviewed by NOBODY (OOPS!)
++
++Contains upstream commits:
++git log --oneline 33c77262b47a49e7cf1a44d625e2c4cff8c986d8..ab992c3efe0f574e5547d0ca472a15d52ec9b8dd --pretty=%h %s
++ab992c3efe Clarify which link failed in link program perf test
++b46cf6989f Vulkan: Fix Android deadlock with querying buffer age
++edcfab40c5 Metal: Implement textureCubeGrad transformation for AGX
++eef898706a Trace tests: skip mini_world on win intel native
++c40f1a0427 aosp: remove gclient flag --delete_unversioned_trees
++7f1d9e054a Roll vulkan-deps from 9bc701361bf9 to f4204cd3fb57 (8 revisions)
++3fe678c9b2 Avoid malloc in VertexArrayVk::mergeClientAttribsRange
++3680a5dc34 Vulkan: Let program warmup continue passed link
++d842f3dbca Vulkan: add a disableSeparateShaderObjects feature
++58a32acce6 Roll SwiftShader from 35b1a501141a to 4befa3ada54c (1 revision)
++c10dea226c Roll vulkan-deps from c41e80cec06c to 9bc701361bf9 (11 revisions)
++9a5058be82 Roll Chromium from a2a7acf06e25 to 996514892366 (702 revisions)
++6f4f5e3992 Fix checking result of link sub tasks
++b746dc3b92 Vulkan: Fix assertion when texture's min/mag filter disagree
++820e0d7a0d Compute the shader hash without copying objects.
++2a6336edc8 Don't construct a compiler instance on shader cache hits.
++058a2fd672 Clear active queries before Begin
++f7eb7efb14 Vulkan: Fix camera panorama hang
++05e9ec1135 Metal: Saturate floating-point depth textures on upload
++d696b40fad Metal: Use precise tanh for highp result types
++aaafecee56 Roll vulkan-deps from 47125179fa7d to c41e80cec06c (9 revisions)
++55814099cc Roll Chromium from b8706c636bf7 to a2a7acf06e25 (698 revisions)
++989b11435d Trace perf: logcat output captured line-buffered
++ee4b7a27f7 Add --memory to restricted_trace_perf.py
++068a0ee8ab Tests: Add Retro Bowl trace
++333e3a9cbe Re-add VUID-vkDestroySemaphore-semaphore-01137 temporarily
++233b667573 Roll vulkan-deps from e892a337898c to 47125179fa7d (24 revisions)
++f2aee23fc3 Roll SwiftShader from 50dbfc35468c to 35b1a501141a (1 revision)
++1b8775f98e Roll Chromium from 3c5e99605653 to b8706c636bf7 (594 revisions)
++716c5d00b8 Vulkan: Add RGB8-to-RGBA8 ubyte loading function
++1ff6a6f2e0 Pass the attribute map to egl::Sync::initialize.
++99b077b710 Vulkan: fix data clobbering with AllocateNonZeroMemory
++3e6176155c Metal: Update depth texture dEQP expectations
++1db20bf405 Roll VK-GL-CTS from fdb23dfe8f79 to faf4fbbc8f8e (2 revisions)
++3de9237e67 Disable recursive global lock with Chromium
++b7a31b7f4b dEQP: Treat signed integer overflow as two's complement
++ea8238935e Roll Chromium from 89adc6a8e802 to 3c5e99605653 (503 revisions)
++9a70fc9046 Roll VK-GL-CTS from 005862913ee9 to fdb23dfe8f79 (10 revisions)
++1bdb403899 [riscv] Add riscv support
++baf4a9ca66 Roll vulkan-deps from fe7ac4762e47 to e892a337898c (7 revisions)
++bb7ac18258 Roll Chromium from d2936bfdb0ac to 89adc6a8e802 (325 revisions)
++aa3bebf94d GL: Fix parallel link query of in-progress link
++c8f707f839 Metal: Simplify MSL sRGB conversions
++a5e8f86ab0 Roll Chromium from 36830a1d917b to d2936bfdb0ac (525 revisions)
++fba482b710 Fix off-by-one bounds check on uniform location.
++95f842d61d Roll vulkan-deps from 856d90fb41aa to fe7ac4762e47 (8 revisions)
++b5e311a95e Roll Chromium from 27466d6e992e to 36830a1d917b (565 revisions)
++20eff9db7d Roll vulkan-deps from 63bb05a5e0ad to 856d90fb41aa (9 revisions)
++c69e482534 Roll Chromium from 0ddb38eda131 to 27466d6e992e (574 revisions)
++1169f6b4ae Add bad app behavior to parallel link perf test
++cb28076f89 Roll vulkan-deps from b5f778a99583 to 63bb05a5e0ad (16 revisions)
++c8a544dddb Roll VK-GL-CTS from 55b64f6ad410 to 005862913ee9 (1 revision)
++7c3233d7ba Roll Chromium from db5279ea46cd to 0ddb38eda131 (743 revisions)
++98d79260fa Metal: use release-consume order for queue's serials.
++88f7a65d59 Roll VK-GL-CTS from ff0a874a4e15 to 55b64f6ad410 (8 revisions)
++170ba8c910 Vulkan: Workaround depth bias constant factor on RADV
++6d50433c43 Roll vulkan-deps from 8fa1b1b67aa7 to b5f778a99583 (12 revisions)
 diff --git a/src/common/utilities.cpp b/src/common/utilities.cpp
 index 34826b47554d0d89e8b9619d46828177b2c1b873..2e03a110de26a7cb888d8e9a5997deaf3745c12c 100644
 --- a/src/common/utilities.cpp
@@ -68,7 +139,7 @@ index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b391270790498186
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
-index 0ae7f46d2c75b0d6363a63ffb124b4f53ee455a1..92a7db6bc90d16e52e8c27cf2333a7f5f50a24e5 100644
+index 9f1b74a2d8af8a5c88a333d597f8648cd6cec87a..0093057975af0f373ef1c16a8b1199b6deaebc51 100644
 --- a/src/libANGLE/State.cpp
 +++ b/src/libANGLE/State.cpp
 @@ -6,6 +6,9 @@
@@ -168,7 +239,7 @@ index 3ef4364a885736ae921d8e148160a4abfb9822e4..9073131849b74cbdce871fcad5e53e2f
      return angle::Result::Continue;
  }
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index a860b6bbc28db080dd65108a830968b8fd97751c..641f9ad7ffb11ffb6a5d6e9b7caed3bd1b9c8ee4 100644
+index b5ebb35289dd2f6535bf183d329c04e7d38e8a3b..f1257da6edee0accddc96778c29f5d4c9fb12bc5 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
 @@ -184,12 +184,22 @@ void DisplayMtl::terminate()
@@ -194,7 +265,7 @@ index a860b6bbc28db080dd65108a830968b8fd97751c..641f9ad7ffb11ffb6a5d6e9b7caed3bd
  }
  
  std::string DisplayMtl::getRendererDescription()
-@@ -1433,8 +1443,7 @@ bool DisplayMtl::supportsMetal2_2() const
+@@ -1437,8 +1447,7 @@ bool DisplayMtl::supportsMetal2_2() const
  bool DisplayMtl::supports32BitFloatFiltering() const
  {
  #if (defined(__MAC_11_0) && __MAC_OS_X_VERSION_MIN_REQUIRED >= __MAC_11_0) || \
@@ -268,10 +339,10 @@ index 03ac18a2525b489a458effd79f9ab1f3e3b1a8d9..9289b2b4203af7d46189245c549984a6
      params.srcDefaultAlphaData  = convertedFormat.defaultAlpha;
  
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.h b/src/libANGLE/renderer/metal/mtl_command_buffer.h
-index 2b0ef5ddfe906ba09ad818dadeb41dd444c55f07..5a6d64e0d58fa4e976e16d1fd03b98be9033603f 100644
+index cf8d6013a25c5e2ae757768ce7c32fdc9cd1161e..ea3fa7f419c6fe61f9bce6796f6b4e988bac6683 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.h
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.h
-@@ -87,6 +87,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
+@@ -98,6 +98,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
      bool isTimeElapsedEntryComplete(uint64_t id);
      double getTimeElapsedEntryInSeconds(uint64_t id);
  
@@ -280,7 +351,7 @@ index 2b0ef5ddfe906ba09ad818dadeb41dd444c55f07..5a6d64e0d58fa4e976e16d1fd03b98be
    private:
      void onCommandBufferCompleted(id<MTLCommandBuffer> buf,
                                    uint64_t serial,
-@@ -128,6 +130,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
+@@ -139,6 +141,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
      void recordCommandBufferTimeElapsed(std::lock_guard<std::mutex> &lg,
                                          uint64_t id,
                                          double seconds);
@@ -289,7 +360,7 @@ index 2b0ef5ddfe906ba09ad818dadeb41dd444c55f07..5a6d64e0d58fa4e976e16d1fd03b98be
  };
  
  class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::NonCopyable
-@@ -538,6 +542,7 @@ class RenderCommandEncoder final : public CommandEncoder
+@@ -549,6 +553,7 @@ class RenderCommandEncoder final : public CommandEncoder
  
      const RenderPassDesc &renderPassDesc() const { return mRenderPassDesc; }
      bool hasDrawCalls() const { return mHasDrawCalls; }
@@ -298,7 +369,7 @@ index 2b0ef5ddfe906ba09ad818dadeb41dd444c55f07..5a6d64e0d58fa4e976e16d1fd03b98be
      uint64_t getSerial() const { return mSerial; }
  
 diff --git a/src/libANGLE/renderer/metal/mtl_command_buffer.mm b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
-index 145400aec715ddfadcf33dc941201e1064d33ca0..106cdcbb6fcc2ec5fd24e86026a419cb7a84d8c2 100644
+index c5b9b6a46772a1050b4fdc9f9edfcf6abaa232f8..a0dba45a9a8393957a73bfee52559556fd74378a 100644
 --- a/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 +++ b/src/libANGLE/renderer/metal/mtl_command_buffer.mm
 @@ -373,12 +373,20 @@ inline void SetVisibilityResultModeCmd(id<MTLRenderCommandEncoder> encoder,
@@ -330,7 +401,7 @@ index 145400aec715ddfadcf33dc941201e1064d33ca0..106cdcbb6fcc2ec5fd24e86026a419cb
      [resource ANGLE_MTL_RELEASE];
  }
  
-@@ -606,6 +615,20 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
+@@ -611,6 +620,20 @@ void CommandQueue::onCommandBufferCompleted(id<MTLCommandBuffer> buf,
  
      ANGLE_MTL_LOG("Completed MTLCommandBuffer %llu:%p", serial, buf);
  
@@ -352,7 +423,7 @@ index 145400aec715ddfadcf33dc941201e1064d33ca0..106cdcbb6fcc2ec5fd24e86026a419cb
      {
          // Record this command buffer's elapsed time.
 diff --git a/src/libANGLE/renderer/metal/mtl_render_utils.mm b/src/libANGLE/renderer/metal/mtl_render_utils.mm
-index e3f4da4f69bfd3060355d697354979db06505f62..5a2a9f4ec3bdd4b54ea6916ff1af73939899a236 100644
+index 9c60b84d60ddba3c7096b46e77a224b69fd4b75d..12467e7c09301b21f17c3a52d6c322eceba6cfa6 100644
 --- a/src/libANGLE/renderer/metal/mtl_render_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_render_utils.mm
 @@ -601,7 +601,8 @@ void DispatchCompute(ContextMtl *contextMtl,

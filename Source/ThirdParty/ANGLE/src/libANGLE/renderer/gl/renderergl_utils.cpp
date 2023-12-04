@@ -2646,6 +2646,9 @@ void InitializeFeatures(const FunctionsGL *functions, angle::FeaturesGL *feature
 
     // http://crbug.com/1456243
     ANGLE_FEATURE_CONDITION(features, ensureNonEmptyBufferIsBoundForDraw, IsApple() || IsAndroid());
+
+    // https://anglebug.com/8433
+    ANGLE_FEATURE_CONDITION(features, preTransformTextureCubeGradDerivatives, isApple);
 }
 
 void InitializeFrontendFeatures(const FunctionsGL *functions, angle::FrontendFeatures *features)

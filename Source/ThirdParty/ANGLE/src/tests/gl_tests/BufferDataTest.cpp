@@ -1524,9 +1524,78 @@ TEST_P(BufferStorageTestES3, BufferDataStorageBuffer)
     glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * data.size(), data.data(), GL_STATIC_DRAW);
     ASSERT_GL_NO_ERROR();
 
-    // Verify that calling glBufferStorageEXT again produces an error.
+    // Verify that calling glBufferStorageEXT produces no error
     glBufferStorageEXT(GL_ARRAY_BUFFER, sizeof(GLfloat) * data.size(), data.data(), 0);
     ASSERT_GL_NO_ERROR();
+}
+
+// Verify that consecutive BufferStorage calls don't clobber data
+// This is a regression test for an AllocateNonZeroMemory bug, where the offset
+// of the suballocation wasn't being used properly
+TEST_P(BufferStorageTestES3, BufferStorageClobber)
+{
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 ||
+                       !IsGLExtensionEnabled("GL_EXT_buffer_storage"));
+
+    constexpr size_t largeSizes[] = {101, 103, 107, 109, 113, 127, 131, 137, 139};
+    constexpr size_t smallSizes[] = {7, 11, 13, 17, 19, 23, 29, 31, 37, 41};
+    constexpr size_t readBackSize = 16;
+
+    for (size_t largeSize : largeSizes)
+    {
+        std::vector<GLubyte> data0(largeSize * 1024, 0x1E);
+
+        // Check for a test author error, we can't read back more than the size of data0.
+        ASSERT(readBackSize <= data0.size());
+
+        // Do a large write first, ensure this is a device-local buffer only (no storage flags)
+        GLBuffer buffer0;
+        glBindBuffer(GL_ARRAY_BUFFER, buffer0);
+        glBufferStorageEXT(GL_ARRAY_BUFFER, sizeof(GLubyte) * data0.size(), data0.data(), 0);
+        ASSERT_GL_NO_ERROR();
+
+        // Do a bunch of smaller writes next, creating/deleting buffers as
+        // we go (we just want to try to fuzz it so we might write to the
+        // same suballocation as the above)
+        for (size_t smallSize : smallSizes)
+        {
+            std::vector<GLubyte> data1(smallSize, 0x4A);
+            GLBuffer buffer1;
+            glBindBuffer(GL_ARRAY_BUFFER, buffer1);
+            glBufferStorageEXT(GL_ARRAY_BUFFER, sizeof(GLubyte) * data1.size(), data1.data(), 0);
+            ASSERT_GL_NO_ERROR();
+
+            // Force the buffer write (and other buffer creation setup work) to
+            // flush
+            glFinish();
+        }
+
+        // Create a staging area to read back the buffer
+        GLBuffer mappable;
+        glBindBuffer(GL_ARRAY_BUFFER, mappable);
+        glBufferStorageEXT(GL_ARRAY_BUFFER, sizeof(GLubyte) * readBackSize, nullptr,
+                           GL_MAP_READ_BIT);
+        ASSERT_GL_NO_ERROR();
+
+        glBindBuffer(GL_COPY_READ_BUFFER, buffer0);
+        glBindBuffer(GL_COPY_WRITE_BUFFER, mappable);
+        glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0,
+                            sizeof(GLubyte) * readBackSize);
+        ASSERT_GL_NO_ERROR();
+        glBindBuffer(GL_COPY_READ_BUFFER, 0);
+        glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+
+        GLubyte *mapped = reinterpret_cast<GLubyte *>(
+            glMapBufferRange(GL_ARRAY_BUFFER, 0, sizeof(GLubyte) * readBackSize, GL_MAP_READ_BIT));
+        ASSERT_NE(mapped, nullptr);
+        ASSERT_GL_NO_ERROR();
+        for (size_t i = 0; i < readBackSize; i++)
+        {
+            EXPECT_EQ(mapped[i], data0[i])
+                << "Expected " << static_cast<int>(data0[i]) << " at index " << i << ", got "
+                << static_cast<int>(mapped[i]);
+        }
+    }
 }
 
 // Verify that we can perform subdata updates to a buffer marked with GL_DYNAMIC_STORAGE_BIT_EXT
@@ -2280,7 +2349,8 @@ ANGLE_INSTANTIATE_TEST_ES3_AND(BufferDataTestES3,
                                ES3_METAL().enable(Feature::ForceBufferGPUStorage));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(BufferStorageTestES3);
-ANGLE_INSTANTIATE_TEST_ES3(BufferStorageTestES3);
+ANGLE_INSTANTIATE_TEST_ES3_AND(BufferStorageTestES3,
+                               ES3_VULKAN().enable(Feature::AllocateNonZeroMemory));
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(IndexedBufferCopyTest);
 ANGLE_INSTANTIATE_TEST_ES3(IndexedBufferCopyTest);

@@ -1198,6 +1198,14 @@
             "issue": "https://anglebug.com/7369"
         },
         {
+            "name": "disable_pipeline_cache_load_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Disable loading the pipeline cache from the blob cache for testing"
+            ],
+            "issue": "https://anglebug.com/8417"
+        },
+        {
             "name": "sync_monolithic_pipelines_to_blob_cache",
             "category": "Workarounds",
             "description": [
@@ -1421,6 +1429,14 @@
                 "Force AHB's layerCount to 1"
             ],
             "issue": "http://b/239181279"
+        },
+        {
+            "name": "disable_separate_shader_objects",
+            "category": "AppWorkarounds",
+            "description": [
+                "Disable GL_EXT_separate_shader_objects and cap core ES version to 3.0"
+            ],
+            "issue": "https://issuetracker.google.com/309028728"
         }
     ]
 }

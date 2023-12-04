@@ -6,6 +6,9 @@
 
 // For now we only log Vulkan test expectations. More back-ends can follow as we need them.
 
+// Pipeline cache failure with older drivers
+8431 VULKAN NVIDIA : KHR-GLES32.core.tessellation_shader.single.primitive_coverage = FAIL
+
 // Geometry shader support (conditioned to windows as that's our only bot capable of running these
 // tests)
 // API validation bugs

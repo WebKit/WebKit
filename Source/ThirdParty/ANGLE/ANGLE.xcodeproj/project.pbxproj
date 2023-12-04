@@ -476,6 +476,8 @@
 		7B76083F289832BD000012A1 /* TransformFeedbackImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B76083A289832BD000012A1 /* TransformFeedbackImpl.cpp */; };
 		7B81955B28CF63D800C7ABCD /* MemoryShaderCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */; };
 		7B81955C28CF63D800C7ABCD /* MemoryShaderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */; };
+		7BB2CF222B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BB2CF202B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h */; };
+		7BB2CF232B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB2CF212B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.cpp */; };
 		7BB62F522AA2008600C1DDA8 /* RescopeGlobalVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BB62F502AA2008600C1DDA8 /* RescopeGlobalVariables.h */; };
 		7BB62F552AA200A500C1DDA8 /* RescopeGlobalVariables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BB62F512AA2008600C1DDA8 /* RescopeGlobalVariables.cpp */; };
 		7BB62F582AA202FD00C1DDA8 /* ProgramExecutableGL.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BB62F562AA202FD00C1DDA8 /* ProgramExecutableGL.h */; };
@@ -1561,6 +1563,8 @@
 		7B76083A289832BD000012A1 /* TransformFeedbackImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFeedbackImpl.cpp; sourceTree = "<group>"; };
 		7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryShaderCache.cpp; sourceTree = "<group>"; };
 		7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryShaderCache.h; sourceTree = "<group>"; };
+		7BB2CF202B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreTransformTextureCubeGradDerivatives.h; sourceTree = "<group>"; };
+		7BB2CF212B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreTransformTextureCubeGradDerivatives.cpp; sourceTree = "<group>"; };
 		7BB62F502AA2008600C1DDA8 /* RescopeGlobalVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RescopeGlobalVariables.h; sourceTree = "<group>"; };
 		7BB62F512AA2008600C1DDA8 /* RescopeGlobalVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RescopeGlobalVariables.cpp; sourceTree = "<group>"; };
 		7BB62F562AA202FD00C1DDA8 /* ProgramExecutableGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgramExecutableGL.h; sourceTree = "<group>"; };
@@ -2612,6 +2616,8 @@
 				5C55D61F22826B9400B5BA2C /* InitializeVariables.h */,
 				FF194FDC27432CC3006A97A3 /* MonomorphizeUnsupportedFunctions.cpp */,
 				FF194FDA27432CC2006A97A3 /* MonomorphizeUnsupportedFunctions.h */,
+				7BB2CF212B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.cpp */,
+				7BB2CF202B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h */,
 				5C55D64A22826B9E00B5BA2C /* PruneEmptyCases.cpp */,
 				5C55D61B22826B9300B5BA2C /* PruneEmptyCases.h */,
 				5C55D61222826B9100B5BA2C /* PruneNoOps.cpp */,
@@ -3517,6 +3523,7 @@
 				31CDFFF8249184A700486F27 /* PoolAlloc.h in Headers */,
 				31CDFFCD249184A700486F27 /* Pragma.h in Headers */,
 				31CDFF712491849200486F27 /* Preprocessor.h in Headers */,
+				7BB2CF222B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h in Headers */,
 				FFD002B42746E5B2002BE3BC /* proc_table_egl.h in Headers */,
 				31CD006F249184FC00486F27 /* Program.h in Headers */,
 				31CD0058249184FC00486F27 /* ProgramExecutable.h in Headers */,
@@ -4028,6 +4035,7 @@
 				DF83E2322639FCB0000825EF /* Preprocessor.cpp in Sources */,
 				DF83E22C2639FCB0000825EF /* preprocessor_lex_autogen.cpp in Sources */,
 				DF83E2332639FCB0000825EF /* preprocessor_tab_autogen.cpp in Sources */,
+				7BB2CF232B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.cpp in Sources */,
 				FFD002B32746E5B2002BE3BC /* proc_table_egl_autogen.cpp in Sources */,
 				7BD5BEE929F139F2003F2E53 /* process.cpp in Sources */,
 				DF83E3052639FE17000825EF /* Program.cpp in Sources */,

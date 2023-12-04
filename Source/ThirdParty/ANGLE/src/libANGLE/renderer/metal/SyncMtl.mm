@@ -254,27 +254,7 @@ angle::Result SyncMtl::getStatus(const gl::Context *context, GLint *outResult)
 }
 
 // EGLSyncMtl implementation
-EGLSyncMtl::EGLSyncMtl(const egl::AttributeMap &attribs) : EGLSyncImpl()
-{
-    mSharedEvent = (__bridge id<MTLSharedEvent>)reinterpret_cast<void *>(
-        attribs.get(EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE, 0));
-
-    if (attribs.contains(EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE) ||
-        attribs.contains(EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE))
-    {
-        mSignalValue =
-            mtl::makeSignalValue(attribs.get(EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE, 0),
-                                 attribs.get(EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE, 0));
-    }
-
-    // Translate conditions that aren't EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE to
-    // GL_SYNC_GPU_COMMANDS_COMPLETE. This is to translate EGL_SYNC_PRIOR_COMMANDS_COMPLETE, from
-    // the EGLSync layer, to the GL equivalent used in mtl::Sync.
-    mCondition =
-        attribs.getAsInt(EGL_SYNC_CONDITION, 0) == EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE
-            ? EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE
-            : GL_SYNC_GPU_COMMANDS_COMPLETE;
-}
+EGLSyncMtl::EGLSyncMtl() : EGLSyncImpl() {}
 
 EGLSyncMtl::~EGLSyncMtl() {}
 
@@ -285,17 +265,37 @@ void EGLSyncMtl::onDestroy(const egl::Display *display)
 
 egl::Error EGLSyncMtl::initialize(const egl::Display *display,
                                   const gl::Context *context,
-                                  EGLenum type)
+                                  EGLenum type,
+                                  const egl::AttributeMap &attribs)
 {
     ASSERT(context != nullptr);
-    mType = type;
+
+    id<MTLSharedEvent> sharedEvent = (__bridge id<MTLSharedEvent>)reinterpret_cast<void *>(
+        attribs.get(EGL_SYNC_METAL_SHARED_EVENT_OBJECT_ANGLE, 0));
+
+    Optional<uint64_t> signalValue;
+    if (attribs.contains(EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE) ||
+        attribs.contains(EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE))
+    {
+        signalValue =
+            mtl::makeSignalValue(attribs.get(EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_HI_ANGLE, 0),
+                                 attribs.get(EGL_SYNC_METAL_SHARED_EVENT_SIGNAL_VALUE_LO_ANGLE, 0));
+    }
+
+    // Translate conditions that aren't EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE to
+    // GL_SYNC_GPU_COMMANDS_COMPLETE. This is to translate EGL_SYNC_PRIOR_COMMANDS_COMPLETE, from
+    // the EGLSync layer, to the GL equivalent used in mtl::Sync.
+    EGLenum condition =
+        attribs.getAsInt(EGL_SYNC_CONDITION, 0) == EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE
+            ? EGL_SYNC_METAL_SHARED_EVENT_SIGNALED_ANGLE
+            : GL_SYNC_GPU_COMMANDS_COMPLETE;
 
     ContextMtl *contextMtl = mtl::GetImpl(context);
     switch (type)
     {
         case EGL_SYNC_FENCE_KHR:
-            ASSERT(mSharedEvent == nil);
-            ASSERT(!mSignalValue.valid());
+            ASSERT(sharedEvent == nil);
+            ASSERT(!signalValue.valid());
             break;
         case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
             break;
@@ -304,7 +304,7 @@ egl::Error EGLSyncMtl::initialize(const egl::Display *display,
             return egl::Error(EGL_BAD_ALLOC);
     }
 
-    if (IsError(mSync.set(contextMtl, mCondition, 0, mSharedEvent, mSignalValue)))
+    if (IsError(mSync.set(contextMtl, condition, 0, sharedEvent, signalValue)))
     {
         return egl::Error(EGL_BAD_ALLOC, "eglCreateSyncKHR failed to create sync object");
     }
@@ -377,15 +377,8 @@ egl::Error EGLSyncMtl::getStatus(const egl::Display *display, EGLint *outStatus)
 
 egl::Error EGLSyncMtl::copyMetalSharedEventANGLE(const egl::Display *display, void **result) const
 {
-    switch (mType)
-    {
-        case EGL_SYNC_METAL_SHARED_EVENT_ANGLE:
-            *result = mSync.copySharedEvent();
-            return egl::NoError();
-
-        default:
-            return egl::EglBadDisplay();
-    }
+    *result = mSync.copySharedEvent();
+    return egl::NoError();
 }
 
 egl::Error EGLSyncMtl::dupNativeFenceFD(const egl::Display *display, EGLint *result) const

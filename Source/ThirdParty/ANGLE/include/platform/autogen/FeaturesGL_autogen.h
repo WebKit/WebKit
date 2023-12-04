@@ -217,6 +217,13 @@ struct FeaturesGL : FeatureSetBase
         &members,
     };
 
+    FeatureInfo preTransformTextureCubeGradDerivatives = {
+        "preTransformTextureCubeGradDerivatives",
+        FeatureCategory::OpenGLWorkarounds,
+        "Apply a vendor-specific transformation to explicit cubemap derivatives",
+        &members,
+    };
+
     FeatureInfo disableBlendFuncExtended = {
         "disableBlendFuncExtended",
         FeatureCategory::OpenGLWorkarounds,

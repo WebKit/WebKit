@@ -30,6 +30,7 @@ angle_unittests_sources = [
   "../gpu_info_util/SystemInfo_unittest.cpp",
   "../image_util/AstcDecompressorTestUtils.h",
   "../image_util/AstcDecompressor_unittest.cpp",
+  "../image_util/LoadToNative_unittest.cpp",
   "../libANGLE/BlendStateExt_unittest.cpp",
   "../libANGLE/BlobCache_unittest.cpp",
   "../libANGLE/Config_unittest.cpp",

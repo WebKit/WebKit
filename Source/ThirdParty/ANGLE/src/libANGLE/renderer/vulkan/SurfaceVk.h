@@ -484,6 +484,11 @@ class WindowSurfaceVk : public SurfaceVk
 
     bool supportsPresentMode(vk::PresentMode presentMode) const;
 
+    bool updateColorSpace(DisplayVk *displayVk);
+
+    angle::FormatID getIntendedFormatID(RendererVk *renderer);
+    angle::FormatID getActualFormatID(RendererVk *renderer);
+
     std::vector<vk::PresentMode> mPresentModes;
 
     VkSwapchainKHR mSwapchain;
@@ -495,6 +500,7 @@ class WindowSurfaceVk : public SurfaceVk
     VkSurfaceTransformFlagBitsKHR mPreTransform;
     VkSurfaceTransformFlagBitsKHR mEmulatedPreTransform;
     VkCompositeAlphaFlagBitsKHR mCompositeAlpha;
+    VkColorSpaceKHR mSurfaceColorSpace;
 
     // Present modes that are compatible with the current mode.  If mDesiredSwapchainPresentMode is
     // in this list, mode switch can happen without the need to recreate the swapchain.  Fast

@@ -24,14 +24,15 @@ class FunctionsEGL;
 class SyncEGL final : public EGLSyncImpl
 {
   public:
-    SyncEGL(const egl::AttributeMap &attribs, const FunctionsEGL *egl);
+    SyncEGL(const FunctionsEGL *egl);
     ~SyncEGL() override;
 
     void onDestroy(const egl::Display *display) override;
 
     egl::Error initialize(const egl::Display *display,
                           const gl::Context *context,
-                          EGLenum type) override;
+                          EGLenum type,
+                          const egl::AttributeMap &attribs) override;
     egl::Error clientWait(const egl::Display *display,
                           const gl::Context *context,
                           EGLint flags,
@@ -46,7 +47,6 @@ class SyncEGL final : public EGLSyncImpl
 
   private:
     const FunctionsEGL *mEGL;
-    EGLint mNativeFenceFD;
 
     EGLSync mSync;
 };

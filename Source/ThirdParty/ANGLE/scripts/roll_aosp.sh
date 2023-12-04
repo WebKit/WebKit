@@ -148,7 +148,7 @@ done
 
 # Sync all of ANGLE's deps so that 'gn gen' works
 python scripts/bootstrap.py
-gclient sync --reset --force --delete_unversioned_trees
+gclient sync --reset --force
 
 # Delete outdir to ensure a clean gn run.
 rm -rf ${GN_OUTPUT_DIRECTORY}

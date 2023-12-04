@@ -101,12 +101,18 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
                                                       &contextVk->getDescriptorSetLayoutCache(),
                                                       &contextVk->getMetaDescriptorPools()));
 
-    vk::RenderPass temporaryCompatibleRenderPass;
-    angle::Result result = executableVk->warmUpPipelineCache(
-        contextVk, contextVk->pipelineRobustness(), contextVk->pipelineProtectedAccess(),
-        &temporaryCompatibleRenderPass);
+    angle::Result result = angle::Result::Continue;
 
-    temporaryCompatibleRenderPass.destroy(contextVk->getDevice());
+    if (contextVk->getFeatures().warmUpPipelineCacheAtLink.enabled)
+    {
+        vk::RenderPass temporaryCompatibleRenderPass;
+        result = executableVk->warmUpPipelineCache(contextVk, contextVk->pipelineRobustness(),
+                                                   contextVk->pipelineProtectedAccess(),
+                                                   &temporaryCompatibleRenderPass);
+
+        temporaryCompatibleRenderPass.destroy(contextVk->getDevice());
+    }
+
     return result;
 }  // namespace rx
 
