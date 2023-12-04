@@ -221,31 +221,31 @@ static PlatformCAAnimation::ValueFunctionType getValueFunctionNameForTransformOp
     // Use literal strings to avoid link-time dependency on those symbols.
     switch (transformType) {
     case TransformOperation::Type::RotateX:
-        return PlatformCAAnimation::RotateX;
+        return PlatformCAAnimation::ValueFunctionType::RotateX;
     case TransformOperation::Type::RotateY:
-        return PlatformCAAnimation::RotateY;
+        return PlatformCAAnimation::ValueFunctionType::RotateY;
     case TransformOperation::Type::Rotate:
-        return PlatformCAAnimation::RotateZ;
+        return PlatformCAAnimation::ValueFunctionType::RotateZ;
     case TransformOperation::Type::ScaleX:
-        return PlatformCAAnimation::ScaleX;
+        return PlatformCAAnimation::ValueFunctionType::ScaleX;
     case TransformOperation::Type::ScaleY:
-        return PlatformCAAnimation::ScaleY;
+        return PlatformCAAnimation::ValueFunctionType::ScaleY;
     case TransformOperation::Type::ScaleZ:
-        return PlatformCAAnimation::ScaleZ;
+        return PlatformCAAnimation::ValueFunctionType::ScaleZ;
     case TransformOperation::Type::TranslateX:
-        return PlatformCAAnimation::TranslateX;
+        return PlatformCAAnimation::ValueFunctionType::TranslateX;
     case TransformOperation::Type::TranslateY:
-        return PlatformCAAnimation::TranslateY;
+        return PlatformCAAnimation::ValueFunctionType::TranslateY;
     case TransformOperation::Type::TranslateZ:
-        return PlatformCAAnimation::TranslateZ;
+        return PlatformCAAnimation::ValueFunctionType::TranslateZ;
     case TransformOperation::Type::Scale:
     case TransformOperation::Type::Scale3D:
-        return PlatformCAAnimation::Scale;
+        return PlatformCAAnimation::ValueFunctionType::Scale;
     case TransformOperation::Type::Translate:
     case TransformOperation::Type::Translate3D:
-        return PlatformCAAnimation::Translate;
+        return PlatformCAAnimation::ValueFunctionType::Translate;
     default:
-        return PlatformCAAnimation::NoValueFunction;
+        return PlatformCAAnimation::ValueFunctionType::NoValueFunction;
     }
 }
 
@@ -3145,7 +3145,7 @@ void GraphicsLayerCA::updateAnimations()
     auto currentTime = Seconds(CACurrentMediaTime());
 
     auto addAnimationGroup = [&](AnimatedProperty property, const Vector<RefPtr<PlatformCAAnimation>>& animations) {
-        auto caAnimationGroup = createPlatformCAAnimation(PlatformCAAnimation::Group, PlatformCAAnimation::makeGroupKeyPath());
+        auto caAnimationGroup = createPlatformCAAnimation(PlatformCAAnimation::AnimationType::Group, PlatformCAAnimation::makeGroupKeyPath());
         caAnimationGroup->setDuration(infiniteDuration);
         caAnimationGroup->setAnimations(animations);
 
@@ -3192,7 +3192,7 @@ void GraphicsLayerCA::updateAnimations()
         // A base value transform animation needs to last forever and use the same value for its from and to values,
         // unless we're just filling until an animation for this property starts, in which case it must last for duration
         // of the delay until that animation.
-        auto caAnimation = createPlatformCAAnimation(PlatformCAAnimation::Basic, PlatformCAAnimation::makeKeyPath(property));
+        auto caAnimation = createPlatformCAAnimation(PlatformCAAnimation::AnimationType::Basic, PlatformCAAnimation::makeKeyPath(property));
         caAnimation->setDuration(delay ? delay.seconds() : infiniteDuration);
         caAnimation->setFromValue(matrix);
         caAnimation->setToValue(matrix);
@@ -3318,7 +3318,7 @@ void GraphicsLayerCA::updateAnimations()
             // until that animation begins.
             if (earliestAnimation) {
                 auto fillMode = earliestAnimation->m_animation->fillMode();
-                if (fillMode != PlatformCAAnimation::Backwards && fillMode != PlatformCAAnimation::Both) {
+                if (fillMode != PlatformCAAnimation::FillModeType::Backwards && fillMode != PlatformCAAnimation::FillModeType::Both) {
                     Seconds earliestBeginTime = *earliestAnimation->computedBeginTime() + animationGroupBeginTime;
                     if (earliestBeginTime > currentTime) {
                         if (auto* baseValueTransformAnimation = makeBaseValueTransformAnimation(property, TransformationMatrixSource::AskClient, earliestBeginTime)) {
@@ -3657,21 +3657,21 @@ bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueLis
 
 Ref<PlatformCAAnimation> GraphicsLayerCA::createBasicAnimation(const Animation* anim, const String& keyPath, bool additive, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    auto basicAnim = createPlatformCAAnimation(PlatformCAAnimation::Basic, keyPath);
+    auto basicAnim = createPlatformCAAnimation(PlatformCAAnimation::AnimationType::Basic, keyPath);
     setupAnimation(basicAnim.ptr(), anim, additive, keyframesShouldUseAnimationWideTimingFunction);
     return basicAnim;
 }
 
 Ref<PlatformCAAnimation> GraphicsLayerCA::createKeyframeAnimation(const Animation* anim, const String& keyPath, bool additive, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    auto keyframeAnim = createPlatformCAAnimation(PlatformCAAnimation::Keyframe, keyPath);
+    auto keyframeAnim = createPlatformCAAnimation(PlatformCAAnimation::AnimationType::Keyframe, keyPath);
     setupAnimation(keyframeAnim.ptr(), anim, additive, keyframesShouldUseAnimationWideTimingFunction);
     return keyframeAnim;
 }
 
 Ref<PlatformCAAnimation> GraphicsLayerCA::createSpringAnimation(const Animation* anim, const String& keyPath, bool additive, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    auto basicAnim = createPlatformCAAnimation(PlatformCAAnimation::Spring, keyPath);
+    auto basicAnim = createPlatformCAAnimation(PlatformCAAnimation::AnimationType::Spring, keyPath);
     setupAnimation(basicAnim.ptr(), anim, additive, keyframesShouldUseAnimationWideTimingFunction);
     return basicAnim;
 }
@@ -3688,19 +3688,19 @@ void GraphicsLayerCA::setupAnimation(PlatformCAAnimation* propertyAnim, const An
     else if (anim->direction() == Animation::Direction::Alternate || anim->direction() == Animation::Direction::AlternateReverse)
         repeatCount /= 2;
 
-    PlatformCAAnimation::FillModeType fillMode = PlatformCAAnimation::NoFillMode;
+    PlatformCAAnimation::FillModeType fillMode = PlatformCAAnimation::FillModeType::NoFillMode;
     switch (anim->fillMode()) {
     case AnimationFillMode::None:
-        fillMode = PlatformCAAnimation::Forwards; // Use "forwards" rather than "removed" because the style system will remove the animation when it is finished. This avoids a flash.
+        fillMode = PlatformCAAnimation::FillModeType::Forwards; // Use "forwards" rather than "removed" because the style system will remove the animation when it is finished. This avoids a flash.
         break;
     case AnimationFillMode::Backwards:
-        fillMode = PlatformCAAnimation::Both; // Use "both" rather than "backwards" because the style system will remove the animation when it is finished. This avoids a flash.
+        fillMode = PlatformCAAnimation::FillModeType::Both; // Use "both" rather than "backwards" because the style system will remove the animation when it is finished. This avoids a flash.
         break;
     case AnimationFillMode::Forwards:
-        fillMode = PlatformCAAnimation::Forwards;
+        fillMode = PlatformCAAnimation::FillModeType::Forwards;
         break;
     case AnimationFillMode::Both:
-        fillMode = PlatformCAAnimation::Both;
+        fillMode = PlatformCAAnimation::FillModeType::Both;
         break;
     }
 
@@ -3844,7 +3844,7 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
     }
 
     auto valueFunction = getValueFunctionNameForTransformOperation(transformOpType);
-    if (valueFunction != PlatformCAAnimation::NoValueFunction)
+    if (valueFunction != PlatformCAAnimation::ValueFunctionType::NoValueFunction)
         basicAnim->setValueFunction(valueFunction);
 
     return true;
@@ -3907,7 +3907,7 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
     keyframeAnim->setTimingFunctions(timingFunctions, !forwards);
 
     PlatformCAAnimation::ValueFunctionType valueFunction = getValueFunctionNameForTransformOperation(transformOpType);
-    if (valueFunction != PlatformCAAnimation::NoValueFunction)
+    if (valueFunction != PlatformCAAnimation::ValueFunctionType::NoValueFunction)
         keyframeAnim->setValueFunction(valueFunction);
 
     return true;

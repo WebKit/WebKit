@@ -117,3 +117,35 @@ enum class WebCore::ApplePayShippingContactEditingMode : uint8_t {
     StorePickup,
 };
 #endif
+
+header: <WebCore/PlatformCAAnimation.h>
+enum class WebCore::PlatformCAAnimationType : uint8_t {
+    Basic,
+    Group,
+    Keyframe,
+    Spring
+};
+
+header: <WebCore/PlatformCAAnimation.h>
+enum class WebCore::PlatformCAAnimationFillModeType : uint8_t {
+    NoFillMode,
+    Forwards,
+    Backwards,
+    Both
+};
+
+header: <WebCore/PlatformCAAnimation.h>
+enum class WebCore::PlatformCAAnimationValueFunctionType : uint8_t {
+    NoValueFunction,
+    RotateX,
+    RotateY,
+    RotateZ,
+    ScaleX,
+    ScaleY,
+    ScaleZ,
+    Scale,
+    TranslateX,
+    TranslateY,
+    TranslateZ,
+    Translate
+};
