@@ -43,7 +43,7 @@ std::optional<Ref<ByteArrayPixelBuffer>> ByteArrayPixelBuffer::create(const Pixe
         return std::nullopt;
     }
 
-    auto computedBufferSize = PixelBuffer::computeBufferSize(format, size);
+    auto computedBufferSize = PixelBuffer::computeBufferSize(format.pixelFormat, size);
     if (computedBufferSize.hasOverflowed()) {
         ASSERT_NOT_REACHED();
         return std::nullopt;
@@ -67,10 +67,8 @@ RefPtr<ByteArrayPixelBuffer> ByteArrayPixelBuffer::tryCreate(const PixelBufferFo
 {
     ASSERT(supportedPixelFormat(format.pixelFormat));
 
-    auto bufferSize = computeBufferSize(format, size);
+    auto bufferSize = computeBufferSize(format.pixelFormat, size);
     if (bufferSize.hasOverflowed())
-        return nullptr;
-    if (bufferSize > std::numeric_limits<int32_t>::max())
         return nullptr;
 
     auto data = Uint8ClampedArray::tryCreateUninitialized(bufferSize);
@@ -84,7 +82,7 @@ RefPtr<ByteArrayPixelBuffer> ByteArrayPixelBuffer::tryCreate(const PixelBufferFo
 {
     ASSERT(supportedPixelFormat(format.pixelFormat));
 
-    auto bufferSize = computeBufferSize(format, size);
+    auto bufferSize = computeBufferSize(format.pixelFormat, size);
     if (bufferSize.hasOverflowed())
         return nullptr;
     if (bufferSize != arrayBuffer->byteLength())

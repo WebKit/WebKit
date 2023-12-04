@@ -38,6 +38,8 @@ namespace WebCore {
 class PixelBuffer : public RefCounted<PixelBuffer> {
     WTF_MAKE_NONCOPYABLE(PixelBuffer);
 public:
+    WEBCORE_EXPORT static CheckedUint32 computeBufferSize(PixelFormat, const IntSize&);
+
     WEBCORE_EXPORT static bool supportedPixelFormat(PixelFormat);
 
     WEBCORE_EXPORT virtual ~PixelBuffer();
@@ -61,8 +63,6 @@ public:
 protected:
     WEBCORE_EXPORT PixelBuffer(const PixelBufferFormat&, const IntSize&, uint8_t* bytes, size_t sizeInBytes);
     
-    WEBCORE_EXPORT static CheckedUint32 computeBufferSize(const PixelBufferFormat&, const IntSize&);
-
     PixelBufferFormat m_format;
     IntSize m_size;
 
