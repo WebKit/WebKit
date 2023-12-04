@@ -28,6 +28,7 @@
 
 #include "FormattingConstraints.h"
 #include "InlineWalker.h"
+#include "LayoutBoxGeometry.h"
 #include "RenderAttachment.h"
 #include "RenderBlockFlow.h"
 #include "RenderBoxInlines.h"

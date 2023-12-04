@@ -81,6 +81,7 @@ public:
     // see https://drafts.csswg.org/css-text-3/#line-break-details
     struct ContinuousContent {
         InlineLayoutUnit logicalWidth() const { return m_logicalWidth; }
+        std::optional<InlineLayoutUnit> minimumRequiredWidth() const { return m_minimumRequiredWidth; }
         InlineLayoutUnit leadingTrimmableWidth() const { return m_leadingTrimmableWidth; }
         InlineLayoutUnit trailingTrimmableWidth() const { return m_trailingTrimmableWidth; }
         InlineLayoutUnit hangingContentWidth() const { return m_hangingContentWidth.value_or(0.f); }
@@ -94,6 +95,7 @@ public:
         void append(const InlineItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
         void appendTextContent(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalWidth);
         void setHangingContentWidth(InlineLayoutUnit logicalWidth) { m_hangingContentWidth = logicalWidth; }
+        void setMinimumRequiredWidth(InlineLayoutUnit minimumRequiredWidth) { m_minimumRequiredWidth = minimumRequiredWidth; }
         void reset();
 
         struct Run {
@@ -117,6 +119,7 @@ public:
         InlineLayoutUnit m_leadingTrimmableWidth { 0.f };
         InlineLayoutUnit m_trailingTrimmableWidth { 0.f };
         std::optional<InlineLayoutUnit> m_hangingContentWidth { };
+        std::optional<InlineLayoutUnit> m_minimumRequiredWidth { };
         bool m_hasTextContent { false };
         bool m_isTextOnlyContent { true };
         bool m_isFullyTrimmable { false };

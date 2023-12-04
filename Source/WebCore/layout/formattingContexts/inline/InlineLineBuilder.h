@@ -58,7 +58,6 @@ private:
     enum MayOverConstrainLine : uint8_t { No, Yes, OnlyWhenFirstFloatOnLine };
     bool tryPlacingFloatBox(const Box&, MayOverConstrainLine);
     Result handleInlineContent(const InlineItemRange& needsLayoutRange, const LineCandidate&);
-    Result handleRubyContent(const InlineItemRange& rubyContainerRange, InlineLayoutUnit availableWidthForCandidateContent);
     Result processLineBreakingResult(const LineCandidate&, const InlineItemRange& layoutRange, const InlineContentBreaker::Result&);
     struct RectAndFloatConstraints {
         InlineRect logicalRect;

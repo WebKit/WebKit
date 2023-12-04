@@ -406,8 +406,6 @@ void InlineDisplayContentBuilder::appendSpanningInlineBoxDisplayBox(const Line::
     ASSERT(lineRun.layoutBox().isInlineBox());
     ASSERT(inlineBox.isInlineBox());
     ASSERT(!inlineBox.isFirstBox());
-    // We don't break inside bases yet.
-    ASSERT(!lineRun.layoutBox().isRubyBase());
 
     if (!lineHasContent) {
         // When a spanning inline box (e.g. <div>text<span><br></span></div>) lands on an empty line

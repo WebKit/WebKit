@@ -29,6 +29,7 @@
 #if ENABLE(JIT)
 
 #include "GCAwareJITStubRoutine.h"
+#include "HeapInlines.h"
 
 namespace JSC {
 

@@ -30,6 +30,7 @@
 #include "RenderSVGText.h"
 #include "RenderStyleInlines.h"
 #include "SVGElementInlines.h"
+#include "SVGElementTypeHelpers.h"
 #include "SVGNames.h"
 #include "SVGUseElement.h"
 #include "StyleResolver.h"

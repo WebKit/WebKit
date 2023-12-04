@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "Document.h"
 #include "Element.h"
 #include "ExceptionOr.h"
 #include "JSValueInWrappedObject.h"

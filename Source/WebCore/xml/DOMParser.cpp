@@ -20,6 +20,7 @@
 #include "DOMParser.h"
 
 #include "DOMImplementation.h"
+#include "SecurityOriginPolicy.h"
 
 namespace WebCore {
 

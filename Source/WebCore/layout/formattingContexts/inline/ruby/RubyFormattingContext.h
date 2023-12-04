@@ -56,6 +56,9 @@ public:
 
     static std::optional<size_t> nextWrapOpportunity(size_t inlineItemIndex, std::optional<size_t> previousInlineItemIndex, const InlineItemRange&, const InlineItemList&);
 
+    static bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& current);
+    static std::optional<InlineLayoutUnit> annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, const InlineFormattingContext&);
+
 private:
     struct BaseLayoutResult {
         size_t committedCount { 0 };

@@ -30,6 +30,7 @@
 #include "IntRect.h"
 #include "RenderLayer.h"
 #include "RenderLayerInlines.h"
+#include "RenderSVGModelObjectInlines.h"
 #include "RenderSVGResourceMaskerInlines.h"
 #include "SVGContainerLayout.h"
 #include "SVGLengthContext.h"

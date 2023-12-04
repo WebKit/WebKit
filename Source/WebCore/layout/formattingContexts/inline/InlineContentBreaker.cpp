@@ -876,6 +876,7 @@ void InlineContentBreaker::ContinuousContent::reset()
     m_leadingTrimmableWidth = { };
     m_trailingTrimmableWidth = { };
     m_hangingContentWidth = { };
+    m_minimumRequiredWidth = { };
     m_runs.clear();
     m_hasTextContent = false;
     m_isTextOnlyContent = true;

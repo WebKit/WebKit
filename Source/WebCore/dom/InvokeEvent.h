@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class Element;
 class HTMLElement;
 
 class InvokeEvent final : public Event {
