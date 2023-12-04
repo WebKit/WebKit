@@ -50,7 +50,7 @@ public:
     
     static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
 
-    IOSurface* surface();
+    IOSurface* surface() override;
     GraphicsContext& context() override;
     void flushContext() override;
 

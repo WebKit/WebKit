@@ -54,6 +54,7 @@ struct ImageBufferCreationContext;
 class GraphicsContext;
 class GraphicsContextGL;
 #if HAVE(IOSURFACE)
+class IOSurface;
 class IOSurfacePool;
 #endif
 class Image;
@@ -121,6 +122,10 @@ public:
 
     virtual void getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination) = 0;
     virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
+
+#if HAVE(IOSURFACE)
+    virtual IOSurface* surface() { return nullptr; }
+#endif
 
 #if USE(CAIRO)
     virtual RefPtr<cairo_surface_t> createCairoSurface() { return nullptr; }
