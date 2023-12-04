@@ -375,8 +375,8 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
     // e.g. [inline box start][prior_continuous_content][inline box end] (<span>prior_continuous_content</span>)
     // An incoming <img> box would enable us to commit the "<span>prior_continuous_content</span>" content
     // but an incoming text content would not necessarily.
-    ASSERT(previous.isText() || previous.isBox());
-    ASSERT(next.isText() || next.isBox());
+    ASSERT(previous.isText() || previous.isBox() || previous.layoutBox().isRubyInlineBox());
+    ASSERT(next.isText() || next.isBox() || next.layoutBox().isRubyInlineBox());
     if (previous.isText() && next.isText()) {
         auto& currentInlineTextItem = downcast<InlineTextItem>(previous);
         auto& nextInlineTextItem = downcast<InlineTextItem>(next);
@@ -411,6 +411,9 @@ static inline bool isAtSoftWrapOpportunity(const InlineItem& previous, const Inl
         // The line breaking behavior of a replaced element or other atomic inline is equivalent to an ideographic character.
         return true;
     }
+    if (previous.layoutBox().isRubyInlineBox() || next.layoutBox().isRubyInlineBox())
+        return RubyFormattingContext::isAtSoftWrapOpportunity(previous, next);
+
     ASSERT_NOT_REACHED();
     return true;
 }
@@ -435,9 +438,8 @@ size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const Inlin
             for (++index; index < layoutRange.endIndex() && inlineItemList[index].isInlineBoxEnd(); ++index) { }
             return index;
         }
-        if (currentItem.isInlineBoxStart() || currentItem.isInlineBoxEnd()) {
-            if (auto nextWrapOpportunityForRuby = RubyFormattingContext::nextWrapOpportunity(index, previousInlineItemIndex, layoutRange, inlineItemList))
-                return *nextWrapOpportunityForRuby;
+        auto isNonRubyInlineBox = (currentItem.isInlineBoxStart() || currentItem.isInlineBoxEnd()) && !currentItem.layoutBox().isRubyInlineBox();
+        if (isNonRubyInlineBox) {
             // Need to see what comes next to decide.
             continue;
         }
@@ -445,7 +447,7 @@ size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const Inlin
             // This item is invisible to line breaking. Need to pretend it's not here.
             continue;
         }
-        ASSERT(currentItem.isText() || currentItem.isBox() || currentItem.isFloat());
+        ASSERT(currentItem.isText() || currentItem.isBox() || currentItem.isFloat() || currentItem.layoutBox().isRubyInlineBox());
         if (currentItem.isFloat()) {
             // While floats are not part of the inline content and they are not supposed to introduce soft wrap opportunities,
             // e.g. [text][float box][float box][text][float box][text] is essentially just [text][text][text]
@@ -488,7 +490,7 @@ size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const Inlin
             // Soft wrap opportunity is at the first inline box that encloses the trailing content.
             for (auto candidateIndex = start + 1; candidateIndex < end; ++candidateIndex) {
                 auto& inlineItem = inlineItemList[candidateIndex];
-                ASSERT((inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque()) && !inlineItem.layoutBox().isRuby());
+                ASSERT(inlineItem.isInlineBoxStart() || inlineItem.isInlineBoxEnd() || inlineItem.isOpaque());
                 if (inlineItem.isInlineBoxStart())
                     inlineBoxStack.append({ &inlineItem.layoutBox(), candidateIndex });
                 else if (inlineItem.isInlineBoxEnd() && !inlineBoxStack.isEmpty())

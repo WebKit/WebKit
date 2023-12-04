@@ -64,6 +64,59 @@ RubyFormattingContext::RubyFormattingContext(const InlineFormattingContext& pare
 {
 }
 
+bool RubyFormattingContext::isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& current)
+{
+    auto& previousLayoutBox = previous.layoutBox();
+    auto& currentLayoutBox = current.layoutBox();
+    ASSERT(previousLayoutBox.isRubyInlineBox() || currentLayoutBox.isRubyInlineBox());
+
+    if (currentLayoutBox.isRubyBase() || previousLayoutBox.isRubyBase()) {
+        // There's always a soft wrap opportunity between two bases.
+        return currentLayoutBox.isRubyBase() && previousLayoutBox.isRubyBase();
+    }
+
+    if (currentLayoutBox.isRuby()) {
+        ASSERT((!previous.isInlineBoxStart() && !previous.isInlineBoxEnd()) || previous.layoutBox().isRuby());
+
+        if (current.isInlineBoxStart()) {
+            // At the beginning of <ruby>.
+            if (!previous.isText())
+                return true;
+            // FIXME: Copy special character handling from RenderRubyText::canBreakBefore.
+            return true;
+        }
+        // Don't break between base end and <ruby> end.
+        return false;
+    }
+
+    if (previousLayoutBox.isRuby()) {
+        ASSERT((!current.isInlineBoxStart() && !current.isInlineBoxEnd()) || current.layoutBox().isRuby());
+
+        if (previous.isInlineBoxEnd()) {
+            // At the end of <ruby>
+            if (!current.isText())
+                return true;
+            // FIXME: Copy special character handling from RenderRubyText::canBreakBefore.
+            return true;
+        }
+        // We should handled this case already when looking at current: base, previous: ruby.
+        ASSERT_NOT_REACHED();
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+std::optional<InlineLayoutUnit> RubyFormattingContext::annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, const InlineFormattingContext& inlineFormattingContext)
+{
+    ASSERT(rubyBaseLayoutBox.isRubyBase());
+
+    if (auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox())
+        return InlineLayoutUnit { inlineFormattingContext.geometryForBox(*annotationBox).marginBoxWidth() };
+    return { };
+}
+
 RubyFormattingContext::InlineLayoutResult RubyFormattingContext::layoutInlineAxis(const InlineItemRange& rubyRange, const InlineItemList& inlineItemList, Line& line, InlineLayoutUnit availableWidth)
 {
     ASSERT(!rubyRange.isEmpty());
