@@ -47,7 +47,6 @@
 		416E995323DAE6BE00E871CB /* AudioToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E995123DAE6BD00E871CB /* AudioToolboxSoftLink.cpp */; };
 		4177B3DA296CB8C3009711F0 /* CoreCryptoSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4177B3D9296CB8C3009711F0 /* CoreCryptoSPI.h */; };
 		41E1F344248A6A000022D5DE /* VideoToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E995523DAEFF700E871CB /* VideoToolboxSoftLink.cpp */; };
-		41E9EE2328BB57A0006A2298 /* MediaExperienceAVSystemControllerSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E9EE2228BB57A0006A2298 /* MediaExperienceAVSystemControllerSPI.h */; };
 		41E9EE2628BCA19E006A2298 /* SBSStatusBarSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E9EE2528BCA19E006A2298 /* SBSStatusBarSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4450FC9F21F5F602004DFA56 /* QuickLookSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4450FC9D21F5F602004DFA56 /* QuickLookSoftLink.mm */; };
 		4469328B28483EF700614F16 /* FoundationSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4469328A2848321C00614F16 /* FoundationSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -557,7 +556,6 @@
 		416E995623DAEFF700E871CB /* VideoToolboxSoftLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoToolboxSoftLink.h; sourceTree = "<group>"; };
 		4177B3D9296CB8C3009711F0 /* CoreCryptoSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreCryptoSPI.h; sourceTree = "<group>"; };
 		41B99E4525DD70150007829A /* AVStreamDataParserSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVStreamDataParserSPI.h; sourceTree = "<group>"; };
-		41E9EE2228BB57A0006A2298 /* MediaExperienceAVSystemControllerSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaExperienceAVSystemControllerSPI.h; sourceTree = "<group>"; };
 		41E9EE2528BCA19E006A2298 /* SBSStatusBarSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBSStatusBarSPI.h; sourceTree = "<group>"; };
 		442956CC218A72DE0080DB54 /* RevealSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RevealSPI.h; sourceTree = "<group>"; };
 		445097BB26EBF66D003EF771 /* CFNotificationCenterSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFNotificationCenterSPI.h; sourceTree = "<group>"; };
@@ -846,7 +844,6 @@
 				0C5AF9111F43A4C7002EAC02 /* GraphicsServicesSPI.h */,
 				2D68D6572740B15B005EBB2E /* IOKitSPIIOS.h */,
 				5C7C787523AC3E850065F47E /* ManagedConfigurationSPI.h */,
-				41E9EE2228BB57A0006A2298 /* MediaExperienceAVSystemControllerSPI.h */,
 				0C5AF9131F43A4C7002EAC02 /* MediaPlayerSPI.h */,
 				0C5AF9141F43A4C7002EAC02 /* MobileGestaltSPI.h */,
 				0C5AF9151F43A4C7002EAC02 /* OpenGLESSPI.h */,
@@ -1350,7 +1347,6 @@
 				DD20DDC027BC90D70093D175 /* ManagedConfigurationSoftLink.h in Headers */,
 				DD20DE1427BC90D80093D175 /* ManagedConfigurationSPI.h in Headers */,
 				DD20DDD227BC90D70093D175 /* MediaAccessibilitySPI.h in Headers */,
-				41E9EE2328BB57A0006A2298 /* MediaExperienceAVSystemControllerSPI.h in Headers */,
 				DD20DE1527BC90D80093D175 /* MediaPlayerSPI.h in Headers */,
 				DD20DE2227BC90D80093D175 /* MediaRemoteSPI.h in Headers */,
 				DD20DD1227BC90D60093D175 /* MediaTimeAVFoundation.h in Headers */,
