@@ -186,7 +186,11 @@ void ViewTransition::setupViewTransition()
     if (!m_document)
         return;
 
-    captureOldState();
+    auto checkFailure = captureOldState();
+    if (checkFailure.hasException()) {
+        skipViewTransition(checkFailure.releaseException());
+        return;
+    }
 
     // FIXME: Set document’s rendering suppression for view transitions to true.
     protectedDocument()->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [this, weakThis = WeakPtr { *this }] {
@@ -220,44 +224,76 @@ void ViewTransition::setupViewTransition()
     });
 }
 
+static AtomString effectiveViewTransitionName(Element& element)
+{
+    CheckVisibilityOptions visibilityOptions { .contentVisibilityAuto = true };
+    if (!element.checkVisibility(visibilityOptions))
+        return nullAtom();
+    ASSERT(element.computedStyle());
+    auto transitionName = element.computedStyle()->viewTransitionName();
+    if (!transitionName)
+        return nullAtom();
+    return transitionName->name;
+}
+
+static ExceptionOr<void> checkDuplicateViewTransitionName(const AtomString& name, ListHashSet<AtomString>& usedTransitionNames)
+{
+    if (usedTransitionNames.contains(name))
+        return Exception { ExceptionCode::InvalidStateError, makeString("Multiple elements found with view-transition-name: "_s, name) };
+    usedTransitionNames.add(name);
+    return { };
+}
+
 // https://drafts.csswg.org/css-view-transitions/#capture-old-state-algorithm
-void ViewTransition::captureOldState()
+ExceptionOr<void> ViewTransition::captureOldState()
 {
     if (!m_document)
-        return;
+        return { };
     ListHashSet<AtomString> usedTransitionNames;
     Vector<Ref<Element>> captureElements;
     Ref document = *m_document;
     // FIXME: Set transition’s initial snapshot containing block size to the snapshot containing block size.
-    CheckVisibilityOptions visibilityOptions { .contentVisibilityAuto = true };
     // FIXME: Loop should probably use flat tree.
     for (Ref element : descendantsOfType<Element>(document)) {
-        if (!element->checkVisibility(visibilityOptions))
-            continue;
-        ASSERT(element->computedStyle());
-        auto transitionName = element->computedStyle()->viewTransitionName();
-        if (!transitionName)
-            continue;
-        // FIXME: The spec says "return failure". Clarify what that means.
-        if (usedTransitionNames.contains(transitionName->name))
-            return;
-        usedTransitionNames.add(transitionName->name);
-        // FIXME: Set element’s captured in a view transition to true.
-        captureElements.append(element);
+        // FIXME: This check should also cover fragmented content.
+        if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
+            if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
+                return check.releaseException();
+            // FIXME: Set element’s captured in a view transition to true.
+            captureElements.append(element);
+        }
     }
-    // FIXME: Sort captureElement in paint order.
+    // FIXME: Sort captureElements in paint order.
     for (auto& element : captureElements) {
         // FIXME: Fill in the rest of CapturedElement.
         CapturedElement capture;
         auto transitionName = element->computedStyle()->viewTransitionName();
-        m_namedElements.set(transitionName->name, capture);
+        m_namedElements.add(transitionName->name, capture);
     }
+    return { };
 }
 
 // https://drafts.csswg.org/css-view-transitions/#capture-new-state-algorithm
-void ViewTransition::captureNewState()
+ExceptionOr<void> ViewTransition::captureNewState()
 {
-    // FIXME: Implement this.
+    if (!m_document)
+        return { };
+    ListHashSet<AtomString> usedTransitionNames;
+    Ref document = *m_document;
+    // FIXME: Loop should probably use flat tree.
+    for (Ref element : descendantsOfType<Element>(document)) {
+        if (auto name = effectiveViewTransitionName(element); !name.isNull()) {
+            if (auto check = checkDuplicateViewTransitionName(name, usedTransitionNames); check.hasException())
+                return check.releaseException();
+
+            if (!m_namedElements.contains(name)) {
+                CapturedElement capturedElement;
+                m_namedElements.add(name, capturedElement);
+            }
+            m_namedElements.find(name)->newElement = element.ptr();
+        }
+    }
+    return { };
 }
 
 // https://drafts.csswg.org/css-view-transitions/#setup-transition-pseudo-elements
@@ -280,7 +316,11 @@ void ViewTransition::activateViewTransition()
 
     // FIXME: If transition’s initial snapshot containing block size is not equal to the snapshot containing block size, then skip the view transition for transition, and return.
 
-    // FIXME: Capture the new state for transition.
+    auto checkFailure = captureNewState();
+    if (checkFailure.hasException()) {
+        skipViewTransition(checkFailure.releaseException());
+        return;
+    }
 
     // FIXME: Set captured element flag to true.
 

@@ -7052,7 +7052,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/web-animation-pseudo-in
 
 # Flakes
 imported/w3c/web-platform-tests/css/css-view-transitions/synchronous-callback-skipped-before-run.html [ Failure Pass ]
-imported/w3c/web-platform-tests/css/css-view-transitions/duplicate-tag-rejects-capture.html [ Failure Pass ]
 
 # -- END: View transitions -- #
 
