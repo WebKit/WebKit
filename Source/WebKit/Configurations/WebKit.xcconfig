@@ -236,7 +236,15 @@ WK_EXCLUDED_WEBPUSHD_SANDBOX = $(WK_EXCLUDED_WEBPUSHD_SANDBOX_$(WK_RELOCATABLE_W
 WK_EXCLUDED_WEBPUSHD_SANDBOX_NO = com.apple.WebKit.webpushd.relocatable.mac.sb
 WK_EXCLUDED_WEBPUSHD_SANDBOX_YES = com.apple.WebKit.webpushd.mac.sb
 
-EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_PRODUCT_DEPENDENCY_NAMES) $(EXCLUDED_IOS_RESOURCE_FILE_NAMES) $(EXCLUDED_MACOS_PLUGIN_FILE_NAMES) $(EXCLUDED_MIGRATED_HEADERS_COCOA_TOUCH_$(WK_IS_COCOA_TOUCH)) $(WK_EXCLUDED_WEBPUSHD_SANDBOX);
+EXCLUDED_EXTENSION_SOURCE_FILE_NAMES = Shared/AuxiliaryProcessExtensions/*;
+
+INCLUDED_EXTENSION_SOURCE_FILE_NAMES_YES[sdk=iphone*] = Shared/AuxiliaryProcessExtensions/*;
+INCLUDED_EXTENSION_SOURCE_FILE_NAMES_YES[sdk=iphone*17.0.internal] = ;
+INCLUDED_EXTENSION_SOURCE_FILE_NAMES_YES[sdk=iphone*17.1.internal] = ;
+INCLUDED_EXTENSION_SOURCE_FILE_NAMES_YES[sdk=iphone*17.2.internal] = ;
+INCLUDED_EXTENSION_SOURCE_FILE_NAMES_YES[sdk=iphone*17.3.internal] = ;
+
+EXCLUDED_SOURCE_FILE_NAMES = $(EXCLUDED_PRODUCT_DEPENDENCY_NAMES) $(EXCLUDED_IOS_RESOURCE_FILE_NAMES) $(EXCLUDED_MACOS_PLUGIN_FILE_NAMES) $(EXCLUDED_MIGRATED_HEADERS_COCOA_TOUCH_$(WK_IS_COCOA_TOUCH)) $(WK_EXCLUDED_WEBPUSHD_SANDBOX) $(EXCLUDED_EXTENSION_SOURCE_FILE_NAMES);
 
 // These are only available in internal builds, so they must be explicitly ignored for the open-source build to succeed.
 EXCLUDED_PRODUCT_DEPENDENCY_NAMES = libWebKitAdditions.a AuthenticationServicesCore.framework;
@@ -245,7 +253,7 @@ EXCLUDED_IOS_RESOURCE_FILE_NAMES[sdk=iphone*] = ;
 EXCLUDED_MIGRATED_HEADERS_COCOA_TOUCH_YES = WebDynamicScrollBarsView.h WebEventRegion.h WebIconDatabase.h WebJavaScriptTextInputPanel.h WebNSEventExtras.h WebNSPasteboardExtras.h WebNSWindowExtras.h WebPanelAuthenticationHandler.h WebStringTruncator.h;
 EXCLUDED_MIGRATED_HEADERS_COCOA_TOUCH_NO = AbstractPasteboard.h DOMHTMLTextAreaElementPrivate.h DOMUIKitExtensions.h KeyEventCodesIOS.h WAKAppKitStubs.h WAKResponder.h WAKView.h WAKWindow.h WebCaretChangeListener.h WebCoreThread.h WebCoreThreadMessage.h WebCoreThreadRun.h WebEvent.h WebEventRegion.h WebFixedPositionContent.h WebFrameIOS.h WebFrameIPhone.h WebGeolocationCoreLocationProvider.h WebGeolocationPrivate.h WebGeolocationProviderIOS.h WebItemProviderPasteboard.h WebMIMETypeRegistry.h WebNSStringExtrasIOS.h WebNSStringExtrasIPhone.h WebPDFViewIOS.h WebPDFViewIPhone.h WebPDFViewPlaceholder.h WebSelectionRect.h WebUIKitDelegate.h WebUIKitSupport.h WebVisiblePosition.h WKContentObservation.h WKGraphics.h WKTypes.h;
 
-INCLUDED_SOURCE_FILE_NAMES = $(INCLUDED_MIGRATED_HEADERS_$(USE_INTERNAL_SDK)_$(WK_COCOA_TOUCH)) $(INCLUDED_MIGRATED_HEADERS_$(ENABLE_IOS_TOUCH_EVENTS));
+INCLUDED_SOURCE_FILE_NAMES = $(INCLUDED_MIGRATED_HEADERS_$(USE_INTERNAL_SDK)_$(WK_COCOA_TOUCH)) $(INCLUDED_MIGRATED_HEADERS_$(ENABLE_IOS_TOUCH_EVENTS)) $(INCLUDED_EXTENSION_SOURCE_FILE_NAMES_$(USE_INTERNAL_SDK));
 // WebEventRegion.h is migrated when building for an iOS family target with an internal SDK...
 INCLUDED_MIGRATED_HEADERS_YES_cocoatouch = WebEventRegion.h;
 // ...or when --ios-touch-events was passed to build-webkit manually.
