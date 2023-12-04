@@ -481,10 +481,6 @@ WK_EXPORT void WKPreferencesSetShouldAllowUserInstalledFonts(WKPreferencesRef, b
 WK_EXPORT bool WKPreferencesGetShouldAllowUserInstalledFonts(WKPreferencesRef);
 
 // Defaults to false.
-WK_EXPORT void WKPreferencesSetServerTimingEnabled(WKPreferencesRef, bool flag);
-WK_EXPORT bool WKPreferencesGetServerTimingEnabled(WKPreferencesRef);
-
-// Defaults to false.
 WK_EXPORT void WKPreferencesSetColorFilterEnabled(WKPreferencesRef, bool flag);
 WK_EXPORT bool WKPreferencesGetColorFilterEnabled(WKPreferencesRef);
 
@@ -537,6 +533,8 @@ WK_EXPORT void WKPreferencesSetSyntheticEditingCommandsEnabled(WKPreferencesRef,
 WK_EXPORT bool WKPreferencesGetSyntheticEditingCommandsEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
 WK_EXPORT void WKPreferencesSetReferrerPolicyAttributeEnabled(WKPreferencesRef, bool flag) WK_C_API_DEPRECATED;
 WK_EXPORT bool WKPreferencesGetReferrerPolicyAttributeEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
+WK_EXPORT void WKPreferencesSetServerTimingEnabled(WKPreferencesRef, bool flag) WK_C_API_DEPRECATED;
+WK_EXPORT bool WKPreferencesGetServerTimingEnabled(WKPreferencesRef) WK_C_API_DEPRECATED;
 
 
 #ifdef __cplusplus

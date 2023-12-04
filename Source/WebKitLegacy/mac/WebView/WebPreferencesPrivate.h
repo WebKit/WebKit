@@ -307,7 +307,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL webAnimationsCompositeOperationsEnabled;
 @property (nonatomic) BOOL webAnimationsMutableTimelinesEnabled;
 @property (nonatomic) BOOL maskWebGLStringsEnabled;
-@property (nonatomic) BOOL serverTimingEnabled;
 @property (nonatomic) BOOL CSSCustomPropertiesAndValuesEnabled;
 @property (nonatomic) BOOL privateClickMeasurementEnabled;
 @property (nonatomic) BOOL genericCueAPIEnabled;
@@ -356,6 +355,7 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL transformStreamAPIEnabled;
 @property (nonatomic) BOOL lineHeightUnitsEnabled;
 @property (nonatomic) BOOL CSSIndividualTransformPropertiesEnabled;
+@property (nonatomic) BOOL serverTimingEnabled;
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;
 

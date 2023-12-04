@@ -5766,19 +5766,6 @@ SerifFontFamily:
     WebCore:
       default: '""'
 
-ServerTimingEnabled:
-  type: bool
-  status: stable
-  category: networking
-  humanReadableName: "Server Timing"
-  humanReadableDescription: "Enable Server Timing API"
-  webcoreBinding: DeprecatedGlobalSettings
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-
 ServiceControlsEnabled:
   type: bool
   status: embedder

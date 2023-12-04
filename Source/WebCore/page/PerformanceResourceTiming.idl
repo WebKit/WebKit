@@ -55,7 +55,7 @@ typedef double DOMHighResTimeStamp;
     readonly attribute unsigned long long decodedBodySize;
 
     // https://www.w3.org/TR/server-timing/#extension-to-the-performanceresourcetiming-interface
-    [EnabledByDeprecatedGlobalSetting=ServerTimingEnabled] readonly attribute FrozenArray<PerformanceServerTiming> serverTiming;
+    readonly attribute FrozenArray<PerformanceServerTiming> serverTiming;
 
     [Default] object toJSON();
 };
