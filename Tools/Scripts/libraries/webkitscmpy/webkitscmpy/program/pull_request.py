@@ -344,9 +344,9 @@ class PullRequest(Command):
                 if command.returncode == 0:
                     log.info('    Ran {}!'.format(name))
                     break
-                options = ['Continue', 'Re-Run', 'No']
+                options = ['Yes', 'Retry', 'No']
                 response = Terminal.choose(
-                    '{} failed, continue uploading pull request?'.format(name),
+                    '{} failed, continue uploading pull request?\nRetry will amend the commit with your changes.'.format(name),
                     options=(options[0], options[2]) if attempt + 1 == attempts else options,
                     default='No',
                 )
