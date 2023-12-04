@@ -133,7 +133,7 @@ static bool hasTrailingSoftWrapOpportunity(size_t softWrapOpportunityIndex, size
         return true;
     }
     if (trailingInlineItem.isInlineBoxStart()) {
-        // This is a special case when the inline box's fist child is a float box.
+        // This is a special case when the inline box's first child is a float box.
         return false;
     }
     if (trailingInlineItem.isOpaque()) {
@@ -480,7 +480,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
                 // soft wrap opportunity, any overflowing out-of-flow content would pile up as trailing content.
                 // Alternatively we could initiate a two pass layout first with out-of-flow content treated as true inflow and a second without them.
                 ASSERT(!lineContent.range.end.offset);
-                if (auto* lastRemovedTrailingBox = m_line.removeOverflowingOurOfFlowContent()) {
+                if (auto* lastRemovedTrailingBox = m_line.removeOverflowingOutOfFlowContent()) {
                     auto lineEndIndex = [&] {
                         for (auto index = lineContent.range.start.index; index < lineContent.range.end.index; ++index) {
                             if (&m_inlineItemList[index].layoutBox() == lastRemovedTrailingBox)
