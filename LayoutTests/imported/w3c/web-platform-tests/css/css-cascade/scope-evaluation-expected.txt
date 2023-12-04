@@ -1,9 +1,9 @@
 
 PASS Single scope
 PASS Scope can not match its own root without :scope
-FAIL Selecting self with :scope assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Selecting self with :scope
 PASS Single scope with limit
-FAIL Single scope, :scope pseudo in main selector assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Single scope, :scope pseudo in main selector
 FAIL Single scope, :scope pseudo in to-selector assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 128, 0)"
 FAIL Multiple scopes, :scope pseudo in to-selector assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 128, 0)"
 FAIL Inner @scope with :scope in from-selector assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
@@ -12,13 +12,13 @@ PASS Multiple scopes from same @scope-rule, both limited
 PASS Nested scopes
 FAIL Nested scopes, reverse assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 128, 0)"
 PASS Nested scopes, with to-selector
-FAIL :scope selecting itself assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
-FAIL The scoping limit is not in scope assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 128, 0)"
-FAIL Simulated inclusive scoping limit assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 128, 0)"
+PASS :scope selecting itself
+PASS The scoping limit is not in scope
+PASS Simulated inclusive scoping limit
 FAIL Scope with no elements assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 128, 0)"
 PASS :scope direct adjacent sibling
 PASS :scope indirect adjacent sibling
-FAIL Relative selector inside @scope assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS Relative selector inside @scope
 PASS :scope in two different compounds
 PASS Scope root with :has()
 

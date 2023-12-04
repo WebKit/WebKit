@@ -6920,6 +6920,9 @@ imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-on-synthet
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-without-intercept.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/no-args.html [ Pass ]
 
+# css-scoping and css-nesting https://bugs.webkit.org/show_bug.cgi?id=265368
+imported/w3c/web-platform-tests/css/css-nesting/conditional-rules.html [ ImageOnlyFailure ]
+
 # -- View Transitions -- #
 # Reftest failures:
 imported/w3c/web-platform-tests/css/css-view-transitions/3d-transform-incoming.html [ ImageOnlyFailure ]

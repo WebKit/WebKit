@@ -1,10 +1,10 @@
 
 FAIL Nesting-selector in <scope-end> assert_equals: expected "auto" but got "1"
-FAIL Implicit :scope in <scope-end> assert_equals: expected "1" but got "auto"
-FAIL Relative selectors in <scope-end> assert_equals: expected "1" but got "auto"
+FAIL Implicit :scope in <scope-end> assert_equals: expected "1" but got "42"
+PASS Relative selectors in <scope-end>
 FAIL Nesting-selector in the scope's <stylesheet> assert_equals: expected "1" but got "auto"
-FAIL Nesting-selector within :scope rule assert_equals: expected "2" but got "auto"
-FAIL Nesting-selector within :scope rule (double nested) assert_equals: expected "2" but got "auto"
+PASS Nesting-selector within :scope rule
+PASS Nesting-selector within :scope rule (double nested)
 FAIL @scope nested within style rule assert_equals: expected "1" but got "auto"
 FAIL Parent pseudo class within scope-start assert_equals: expected "1" but got "auto"
 FAIL Parent pseudo class within scope-end assert_equals: expected "1" but got "auto"

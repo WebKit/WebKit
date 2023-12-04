@@ -7,12 +7,12 @@ PASS :link as scoping root
 FAIL :visited as scoping root assert_equals: expected "rgb(255, 255, 255)" but got "rgb(0, 128, 0)"
 PASS :not(:visited) as scoping root
 PASS :not(:link) as scoping root
-FAIL :link as scoping root, :scope assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 255, 255)"
-PASS :visited as scoping root, :scope
-FAIL :not(:visited) as scoping root, :scope assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 255, 255)"
+PASS :link as scoping root, :scope
+FAIL :visited as scoping root, :scope assert_equals: expected "rgb(255, 255, 255)" but got "rgb(0, 128, 0)"
+PASS :not(:visited) as scoping root, :scope
 PASS :not(:link) as scoping root, :scope
-FAIL :link as scoping limit assert_equals: expected "rgb(255, 255, 255)" but got "rgb(0, 128, 0)"
-PASS :visited as scoping limit
+PASS :link as scoping limit
+FAIL :visited as scoping limit assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 255, 255)"
 PASS :not(:link) as scoping limit
-FAIL :not(:visited) as scoping limit assert_equals: expected "rgb(255, 255, 255)" but got "rgb(0, 128, 0)"
+PASS :not(:visited) as scoping limit
 

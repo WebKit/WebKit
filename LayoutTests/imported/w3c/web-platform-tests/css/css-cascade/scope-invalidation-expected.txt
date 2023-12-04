@@ -18,7 +18,7 @@ FAIL Element becoming root via ~ combinator assert_equals: expected "rgb(0, 128,
 FAIL Element becoming root via + combinator assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL :not(scope) in subject assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 128, 0)"
 FAIL :not(scope) in ancestor assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 128, 0)"
-FAIL :not(scope) in limit subject assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+FAIL :not(scope) in limit subject assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 128, 0)"
 FAIL :not(scope) in limit ancestor assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL :nth-child() in scope root assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 FAIL :nth-child() in scope limit assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 128, 0)"

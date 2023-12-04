@@ -1,10 +1,10 @@
 
-FAIL @scope without prelude implicitly scopes to parent of owner node assert_equals: expected "auto" but got "1"
+FAIL @scope without prelude implicitly scopes to parent of owner node assert_equals: expected "1" but got "auto"
 FAIL :scope can style implicit root assert_equals: expected "1" but got "auto"
-FAIL @scope works with two identical stylesheets assert_equals: expected "auto" but got "1"
+FAIL @scope works with two identical stylesheets assert_equals: expected "1" but got "auto"
 PASS @scope with effectively empty :is() must not match anything
-FAIL Implicit @scope has implicitly added :scope descendant combinator assert_equals: expected "auto" but got "1"
+PASS Implicit @scope has implicitly added :scope descendant combinator
 FAIL Implicit @scope with inner relative selector assert_equals: expected "1" but got "auto"
 FAIL Implicit @scope with inner nesting selector assert_equals: expected "1" but got "auto"
-FAIL Implicit @scope with limit assert_equals: expected "auto" but got "1"
+FAIL Implicit @scope with limit assert_equals: expected "1" but got "auto"
 
