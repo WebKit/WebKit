@@ -475,6 +475,7 @@ void WebLocalFrameLoaderClient::didSameDocumentNavigationForFrameViaJSHistoryAPI
         false, /* openedByDOMWithOpener */
         !!m_frame->coreLocalFrame()->loader().opener(), /* hasOpener */
         { }, /* requesterOrigin */
+        { }, /* requesterTopOrigin */
         std::nullopt, /* targetBackForwardItemIdentifier */
         std::nullopt, /* sourceBackForwardItemIdentifier */
         WebCore::LockHistory::No,
@@ -938,6 +939,7 @@ void WebLocalFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(const Nav
         false, /* openedByDOMWithOpener */
         navigationAction.newFrameOpenerPolicy() == NewFrameOpenerPolicy::Allow, /* hasOpener */
         { }, /* requesterOrigin */
+        { }, /* requesterTopOrigin */
         std::nullopt, /* targetBackForwardItemIdentifier */
         std::nullopt, /* sourceBackForwardItemIdentifier */
         WebCore::LockHistory::No,
