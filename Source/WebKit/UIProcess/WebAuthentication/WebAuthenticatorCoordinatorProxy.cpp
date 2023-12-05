@@ -90,15 +90,9 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
                     RELEASE_LOG_ERROR(WebAuthn, "Web Authentication is not currently supported in this environment.");
                     return;
                 }
-                auto context = contextForRequest(WTFMove(data));
-                if (context.get() == nullptr) {
-                    handler({ }, (AuthenticatorAttachment)0, ExceptionData { ExceptionCode::NotAllowedError, "The origin of the document is not the same as its ancestors."_s });
-                    RELEASE_LOG_ERROR(WebAuthn, "The origin of the document is not the same as its ancestors.");
-                    return;
-                }
                 // performRequest calls out to ASCAgent which will then call [_WKWebAuthenticationPanel makeCredential/getAssertionWithChallenge]
                 // which calls authenticatorManager.handleRequest(..)
-                performRequest(context, WTFMove(handler));
+                performRequest(WTFMove(data), WTFMove(handler));
                 return;
             }
 #else
