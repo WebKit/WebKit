@@ -147,6 +147,7 @@ struct WKWebViewState {
     UIEdgeInsets _savedEdgeInset = UIEdgeInsetsZero;
     BOOL _savedHaveSetObscuredInsets = NO;
     UIEdgeInsets _savedObscuredInsets = UIEdgeInsetsZero;
+    UIRectEdge _savedObscuredInsetEdgesAffectedBySafeArea = UIRectEdgeAll;
     UIEdgeInsets _savedScrollIndicatorInsets = UIEdgeInsetsZero;
 #if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     BOOL _savedContentInsetAdjustmentBehaviorWasExternallyOverridden = NO;
@@ -172,6 +173,8 @@ struct WKWebViewState {
             webView._obscuredInsets = _savedObscuredInsets;
         else
             [webView _resetObscuredInsets];
+
+        webView._obscuredInsetEdgesAffectedBySafeArea = _savedObscuredInsetEdgesAffectedBySafeArea;
 
         auto* scrollView = (WKScrollView *)[webView scrollView];
         if (_savedContentInsetWasExternallyOverridden)
@@ -217,6 +220,7 @@ struct WKWebViewState {
         _savedPageScale = webView._pageScale;
         _savedHaveSetObscuredInsets = webView._haveSetObscuredInsets;
         _savedObscuredInsets = webView._obscuredInsets;
+        _savedObscuredInsetEdgesAffectedBySafeArea = webView._obscuredInsetEdgesAffectedBySafeArea;
         _savedContentInsetWasExternallyOverridden = scrollView._contentInsetWasExternallyOverridden;
         _savedEdgeInset = scrollView.contentInset;
         _savedContentOffset = scrollView.contentOffset;
