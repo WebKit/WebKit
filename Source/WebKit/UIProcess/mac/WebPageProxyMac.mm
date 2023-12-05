@@ -522,16 +522,16 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
     for (unsigned i = 0; i < contextMenu.items.size(); i++) {
         auto& item = contextMenu.items[i];
         
-        if (item.separator) {
+        if (item.separator == ContextMenuItemIsSeparator::Yes) {
             [nsMenu insertItem:[NSMenuItem separatorItem] atIndex:i];
             continue;
         }
         
         RetainPtr<NSMenuItem> nsItem = adoptNS([[NSMenuItem alloc] init]);
         [nsItem setTitle:item.title];
-        [nsItem setEnabled:item.enabled];
+        [nsItem setEnabled:item.enabled == ContextMenuItemEnablement::Enabled];
         [nsItem setState:item.state];
-        if (item.hasAction) {
+        if (item.hasAction == ContextMenuItemHasAction::Yes) {
             [nsItem setTarget:menuTarget.get()];
             [nsItem setAction:@selector(contextMenuAction:)];
         }

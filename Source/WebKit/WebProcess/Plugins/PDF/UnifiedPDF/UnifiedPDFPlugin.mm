@@ -580,7 +580,12 @@ PDFContextMenu UnifiedPDFPlugin::createContextMenu(const IntPoint& contextMenuPo
     Vector<PDFContextMenuItem> menuItems;
 
     // FIXME: We should also set the openInPreviewIndex when UnifiedPdfPlugin::openWithPreview is implemented
-    menuItems.append({ WebCore::contextMenuItemPDFOpenWithPreview(), true, false, 0, true, static_cast<uint8_t>(ContextMenuItemTag::OpenWithPreview) });
+    menuItems.append({ WebCore::contextMenuItemPDFOpenWithPreview(), 0,
+        enumToUnderlyingType(ContextMenuItemTag::OpenWithPreview),
+        ContextMenuItemEnablement::Enabled,
+        ContextMenuItemHasAction::Yes,
+        ContextMenuItemIsSeparator::No
+    });
 
     return { contextMenuPoint, WTFMove(menuItems), { } };
 }

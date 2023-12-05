@@ -25,11 +25,11 @@
    
 [CustomHeader] struct WebKit::PDFContextMenuItem {
     String title;
-    bool enabled;
-    bool separator;
     int state;
-    bool hasAction;
     int tag;
+    WebKit::ContextMenuItemEnablement enabled;
+    WebKit::ContextMenuItemHasAction hasAction;
+    WebKit::ContextMenuItemIsSeparator separator;
 };
 
 struct WebKit::PDFContextMenu {
