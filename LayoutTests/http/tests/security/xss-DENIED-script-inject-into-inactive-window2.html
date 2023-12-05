@@ -39,8 +39,8 @@ if (document.location.search.indexOf("?actually-attack") !== -1) {
 
 function checkDidLoadVictim()
 {
-    if (openerDocument.location.href == "http://127.0.0.1:8000/security/xss-DENIED-script-inject-into-inactive-window2.html") {
-        // Victim loaded.
+    if (window.internals && !window.internals.isFullyActive(openerDocument)) {
+        console.log("Victim loaded.");
         window.clearInterval(intervalId);
 
         // Run code in victim.
