@@ -101,8 +101,8 @@ void SpeculativeLoad::willSendRedirectedRequest(ResourceRequest&& request, Resou
         m_cacheEntry = m_cache->makeRedirectEntry(request, redirectResponse, redirectRequest);
 
     // Don't follow the redirect. The redirect target will be registered for speculative load when it is loaded.
-    completionHandler({ });
     didComplete();
+    completionHandler({ });
 }
 
 void SpeculativeLoad::didReceiveResponse(ResourceResponse&& receivedResponse, PrivateRelayed privateRelayed, ResponseCompletionHandler&& completionHandler)
