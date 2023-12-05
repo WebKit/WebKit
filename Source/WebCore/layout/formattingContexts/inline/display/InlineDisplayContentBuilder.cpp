@@ -1126,13 +1126,17 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
     auto isHorizontalWritingMode = root().style().isHorizontalWritingMode();
     auto rubyFormattingContext = RubyFormattingContext { formattingContext() };
     for (auto startEndPair : interlinearRubyColumnRangeList) {
-        auto rubyBaseIndex = startEndPair.begin();
-        auto& rubyBaseLayoutBox = displayBoxes[rubyBaseIndex].layoutBox();
+        ASSERT(startEndPair);
+        if (startEndPair.distance() == 1)
+            continue;
+
+        auto rubyBaseStart = startEndPair.begin();
+        auto& rubyBaseLayoutBox = displayBoxes[rubyBaseStart].layoutBox();
         ASSERT(rubyBaseLayoutBox.isRubyBase());
         ASSERT(isInterlinearAnnotationBox(rubyBaseLayoutBox.associatedRubyAnnotationBox()));
 
-        auto beforeOverhang = rubyFormattingContext.overhangForAnnotationBefore(rubyBaseLayoutBox, rubyBaseIndex, displayBoxes);
-        auto afterOverhang = rubyFormattingContext.overhangForAnnotationAfter(rubyBaseLayoutBox, rubyBaseIndex, startEndPair.end(), displayBoxes);
+        auto beforeOverhang = rubyFormattingContext.overhangForAnnotationBefore(rubyBaseLayoutBox, rubyBaseStart, displayBoxes);
+        auto afterOverhang = rubyFormattingContext.overhangForAnnotationAfter(rubyBaseLayoutBox, { rubyBaseStart, startEndPair.end() }, displayBoxes);
 
         // FIXME: If this turns out to be a pref bottleneck, make sure we pass in the accumulated shift to overhangForAnnotationBefore/after and
         // offset all box geometry as we check for overlap.
@@ -1150,7 +1154,7 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
             }
         };
         if (beforeOverhang)
-            moveBoxRangeToVisualLeft(rubyBaseIndex, displayBoxes.size() - 1, beforeOverhang);
+            moveBoxRangeToVisualLeft(rubyBaseStart, displayBoxes.size() - 1, beforeOverhang);
         if (afterOverhang)
             moveBoxRangeToVisualLeft(startEndPair.end() + 1, displayBoxes.size() - 1, afterOverhang);
     }
