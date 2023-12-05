@@ -224,6 +224,29 @@ struct RequestEncodedWithBody {
     [EncodeRequestBody] WebCore::ResourceRequest request;
 };
 
+webkit_secure_coding NSSomeFoundationType {
+    StringKey: String
+    NumberKey: Number
+    OptionalNumberKey: Number?
+    ArrayKey: Array
+    OptionalArrayKey: Array?
+    DictionaryKey: Dictionary
+    OptionalDictionaryKey: Dictionary?
+}
+
+#if ENABLE(DATA_DETECTION)
+secure_coding_headers: <pal/cocoa/DataDetectorsCoreSoftLink.h>
+[WebKitSecureCodingClass=PAL::getDDScannerResultClass(), ] webkit_secure_coding DDScannerResult {
+    StringKey: String
+    NumberKey: Number
+    OptionalNumberKey: Number?
+    ArrayKey: Array<DDScannerResult>
+    OptionalArrayKey: Array<DDScannerResult>?
+    DictionaryKey: Dictionary<String, Number>
+    OptionalDictionaryKey: Dictionary<String, DDScannerResult>?
+}
+#endif
+
 CFFooRef wrapped by WebKit::FooWrapper {
 }
 

@@ -1225,10 +1225,10 @@
 		51A9E10B1315CD18009E7031 /* WKKeyValueStorageManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 51A9E1091315CD18009E7031 /* WKKeyValueStorageManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51ACBB82127A8BAD00D203B9 /* WebContextMenuProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ACBB81127A8BAD00D203B9 /* WebContextMenuProxy.h */; };
 		51ACBBA0127A8F2C00D203B9 /* WebContextMenuProxyMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ACBB9E127A8F2C00D203B9 /* WebContextMenuProxyMac.h */; };
-		51ACFFD92B048804001331A2 /* CoreIPCDDScannerResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ACFFD62B048804001331A2 /* CoreIPCDDScannerResult.h */; };
 		51ACFFDF2B048821001331A2 /* CoreIPCNSValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ACFFDC2B048820001331A2 /* CoreIPCNSValue.h */; };
 		51ACFFE02B048829001331A2 /* CoreIPCNSValue.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51ACFFDB2B048820001331A2 /* CoreIPCNSValue.mm */; };
-		51ACFFE12B048831001331A2 /* CoreIPCDDScannerResult.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51ACFFD42B048803001331A2 /* CoreIPCDDScannerResult.mm */; };
+		51AD56822B1A8CF6001A0ECB /* GeneratedWebKitSecureCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 51AD56812B1A8CF5001A0ECB /* GeneratedWebKitSecureCoding.h */; };
+		51AD56862B1AB839001A0ECB /* GeneratedWebKitSecureCoding.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51AD56832B1AA324001A0ECB /* GeneratedWebKitSecureCoding.mm */; };
 		51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51BE6C572AA92480001745C1 /* WebPushToolMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517B5F64275A8D7E002DC22D /* WebPushToolMain.mm */; };
 		51BE6C5A2AA9250D001745C1 /* webpushtool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BE6C582AA92503001745C1 /* webpushtool.cpp */; };
@@ -5356,12 +5356,13 @@
 		51ACBB9F127A8F2C00D203B9 /* WebContextMenuProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuProxyMac.mm; sourceTree = "<group>"; };
 		51ACC9341628064800342550 /* NetworkProcessMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkProcessMessageReceiver.cpp; sourceTree = "<group>"; };
 		51ACC9351628064800342550 /* NetworkProcessMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkProcessMessages.h; sourceTree = "<group>"; };
-		51ACFFD42B048803001331A2 /* CoreIPCDDScannerResult.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCDDScannerResult.mm; sourceTree = "<group>"; };
 		51ACFFD52B048804001331A2 /* CoreIPCDDScannerResult.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CoreIPCDDScannerResult.serialization.in; sourceTree = "<group>"; };
-		51ACFFD62B048804001331A2 /* CoreIPCDDScannerResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCDDScannerResult.h; sourceTree = "<group>"; };
 		51ACFFDA2B048820001331A2 /* CoreIPCNSValue.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CoreIPCNSValue.serialization.in; sourceTree = "<group>"; };
 		51ACFFDB2B048820001331A2 /* CoreIPCNSValue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCNSValue.mm; sourceTree = "<group>"; };
 		51ACFFDC2B048820001331A2 /* CoreIPCNSValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCNSValue.h; sourceTree = "<group>"; };
+		51AD56812B1A8CF5001A0ECB /* GeneratedWebKitSecureCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneratedWebKitSecureCoding.h; path = GeneratedWebKitSecureCoding.h; sourceTree = "<group>"; };
+		51AD56832B1AA324001A0ECB /* GeneratedWebKitSecureCoding.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GeneratedWebKitSecureCoding.mm; path = GeneratedWebKitSecureCoding.mm; sourceTree = "<group>"; };
+		51AD56882B1ABFC1001A0ECB /* SerializedTypeInfo.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = SerializedTypeInfo.mm; path = SerializedTypeInfo.mm; sourceTree = "<group>"; };
 		51B15A8213843A3900321AD8 /* EnvironmentUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EnvironmentUtilities.cpp; path = unix/EnvironmentUtilities.cpp; sourceTree = "<group>"; };
 		51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EnvironmentUtilities.h; path = unix/EnvironmentUtilities.h; sourceTree = "<group>"; };
 		51BE6C552AA92406001745C1 /* WebPushToolMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPushToolMain.h; sourceTree = "<group>"; };
@@ -10913,8 +10914,6 @@
 				F48C81E52AE0E1DF00073850 /* CoreIPCData.serialization.in */,
 				F49EE2202AE87F41003E3C34 /* CoreIPCDate.h */,
 				F49EE21F2AE87ED7003E3C34 /* CoreIPCDate.serialization.in */,
-				51ACFFD62B048804001331A2 /* CoreIPCDDScannerResult.h */,
-				51ACFFD42B048803001331A2 /* CoreIPCDDScannerResult.mm */,
 				51ACFFD52B048804001331A2 /* CoreIPCDDScannerResult.serialization.in */,
 				5197FAD22AFD33B0009180C5 /* CoreIPCDictionary.h */,
 				5187BDED2B005DEE008A6EE5 /* CoreIPCDictionary.mm */,
@@ -14079,6 +14078,8 @@
 				1AA576001496B7C000A4EE06 /* EventDispatcherMessages.h */,
 				5CAB7DDF28B80FE1002282A6 /* GeneratedSerializers.h */,
 				86760A6928DB305F00D07D06 /* GeneratedSerializers.mm */,
+				51AD56812B1A8CF5001A0ECB /* GeneratedWebKitSecureCoding.h */,
+				51AD56832B1AA324001A0ECB /* GeneratedWebKitSecureCoding.mm */,
 				0F5562E627EE28D200953585 /* GPUConnectionToWebProcessMessageReceiver.cpp */,
 				0F5562E527EE28D200953585 /* GPUConnectionToWebProcessMessages.h */,
 				0F5562E327EE28D100953585 /* GPUProcessConnectionMessageReceiver.cpp */,
@@ -14277,6 +14278,7 @@
 				A55BA8221BA25BB8007CD33D /* RemoteWebInspectorUIProxyMessages.h */,
 				E18E6913169B667B009B6670 /* SecItemShimProxyMessageReceiver.cpp */,
 				E18E6914169B667B009B6670 /* SecItemShimProxyMessages.h */,
+				51AD56882B1ABFC1001A0ECB /* SerializedTypeInfo.mm */,
 				2DE6943B18BD2A68005C15E5 /* SmartMagnificationControllerMessageReceiver.cpp */,
 				2DE6943C18BD2A68005C15E5 /* SmartMagnificationControllerMessages.h */,
 				1DD2A6722562324F00FF7B6F /* SourceBufferPrivateRemoteMessageReceiver.cpp */,
@@ -15160,7 +15162,6 @@
 				5197FAE82AFD33CF009180C5 /* CoreIPCColor.h in Headers */,
 				F48C81E42AE0BA8E00073850 /* CoreIPCData.h in Headers */,
 				F49EE2212AE87F41003E3C34 /* CoreIPCDate.h in Headers */,
-				51ACFFD92B048804001331A2 /* CoreIPCDDScannerResult.h in Headers */,
 				5197FAEA2AFD33CF009180C5 /* CoreIPCDictionary.h in Headers */,
 				F4ABDB632B018C4B00C5471A /* CoreIPCError.h in Headers */,
 				5197FAE32AFD33CF009180C5 /* CoreIPCFont.h in Headers */,
@@ -15250,6 +15251,7 @@
 				CDA93DB022F8BCF400490A69 /* FullscreenTouchSecheuristicParameters.h in Headers */,
 				515BE1B31D5902DD00DD7C68 /* GamepadData.h in Headers */,
 				5CAB7DE128B80FE1002282A6 /* GeneratedSerializers.h in Headers */,
+				51AD56822B1A8CF6001A0ECB /* GeneratedWebKitSecureCoding.h in Headers */,
 				9EC532A32447FBAD00215216 /* GeolocationIdentifier.h in Headers */,
 				BC06F42F12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h in Headers */,
 				BC06F44A12DBD1F5002D78DE /* GeolocationPermissionRequestManagerProxy.h in Headers */,
@@ -18006,7 +18008,6 @@
 				51FFD3092AE9A9FC00B0AB70 /* ArgumentCodersCocoa.mm in Sources */,
 				5131D5442AE9D4370016EF39 /* ArgumentCodersCocoa.mm in Sources */,
 				5187BDEA2AFF5419008A6EE5 /* CoreIPCArray.mm in Sources */,
-				51ACFFE12B048831001331A2 /* CoreIPCDDScannerResult.mm in Sources */,
 				5187BDEE2B005E16008A6EE5 /* CoreIPCDictionary.mm in Sources */,
 				F4ABDB662B01C68F00C5471A /* CoreIPCError.mm in Sources */,
 				5187BDF02B007445008A6EE5 /* CoreIPCFont.mm in Sources */,
@@ -18015,6 +18016,7 @@
 				51ACFFE02B048829001331A2 /* CoreIPCNSValue.mm in Sources */,
 				5197FAED2AFD33FF009180C5 /* CoreIPCSecureCoding.mm in Sources */,
 				5131D5462AE9D5230016EF39 /* CoreTextHelpers.mm in Sources */,
+				51AD56862B1AB839001A0ECB /* GeneratedWebKitSecureCoding.mm in Sources */,
 				7B9FC5D128A53014007570E7 /* PlatformUnifiedSource1-mm.mm in Sources */,
 				7B9FC5A828A38D1E007570E7 /* PlatformUnifiedSource1.cpp in Sources */,
 				7B9FC5D028A5300D007570E7 /* PlatformUnifiedSource2-mm.mm in Sources */,

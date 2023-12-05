@@ -32,8 +32,19 @@
 
 namespace WebKit {
 
-CoreIPCSecureCoding::CoreIPCSecureCoding(NSObject<NSSecureCoding> *object)
-    : m_secureCoding(object)
+bool CoreIPCSecureCoding::conformsToWebKitSecureCoding(id object)
+{
+    return [object respondsToSelector:@selector(_webKitPropertyListData)]
+        && [object respondsToSelector:@selector(_initWithWebKitPropertyListData:)];
+}
+
+bool CoreIPCSecureCoding::conformsToSecureCoding(id object)
+{
+    return [object conformsToProtocol:@protocol(NSSecureCoding)];
+}
+
+CoreIPCSecureCoding::CoreIPCSecureCoding(id object)
+    : m_secureCoding((NSObject<NSSecureCoding> *)object)
 {
     RELEASE_ASSERT(!m_secureCoding || [object conformsToProtocol:@protocol(NSSecureCoding)]);
 }

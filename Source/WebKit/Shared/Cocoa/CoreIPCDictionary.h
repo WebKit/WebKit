@@ -48,6 +48,11 @@ public:
 
     RetainPtr<id> toID() const;
 
+    bool keyHasValueOfType(const String&, IPC::NSType) const;
+    bool keyIsMissingOrHasValueOfType(const String&, IPC::NSType) const;
+    bool collectionValuesAreOfType(const String& key, IPC::NSType) const;
+    bool collectionValuesAreOfType(const String& key, IPC::NSType, IPC::NSType) const;
+
 private:
     friend struct IPC::ArgumentCoder<CoreIPCDictionary, void>;
 
@@ -58,6 +63,9 @@ private:
     {
     }
 
+    void createNSDictionaryIfNeeded() const;
+
+    mutable RetainPtr<NSDictionary> m_nsDictionary;
     ValueType m_keyValuePairs;
 };
 

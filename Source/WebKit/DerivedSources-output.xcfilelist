@@ -32,6 +32,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/GPUProcessProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/GPUProcessProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/GeneratedSerializers.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/GeneratedSerializers.mm
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/GeneratedWebKitSecureCoding.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/GeneratedWebKitSecureCoding.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/HTTPHeaderNames.serialization.in
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPCConnectionTesterMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/IPCConnectionTesterMessages.h
