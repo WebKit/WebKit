@@ -108,8 +108,8 @@ public:
     static bool isVisiting(const RenderElement&);
 
 private:
-    static WeakHashSet<RenderElement>& visitedElements();
-    WeakPtr<RenderElement> m_element;
+    static SingleThreadWeakHashSet<RenderElement>& visitedElements();
+    SingleThreadWeakPtr<RenderElement> m_element;
 };
 
 } // namespace WebCore

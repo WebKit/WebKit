@@ -64,7 +64,7 @@ private:
 
     struct ClampedContent {
         LayoutUnit contentHeight;
-        WeakPtr<const RenderBlockFlow> renderer;
+        SingleThreadWeakPtr<const RenderBlockFlow> renderer;
     };
     std::optional<ClampedContent> applyLineClamp(FlexBoxIterator&, bool relayoutChildren);
     std::optional<ClampedContent> applyModernLineClamp(FlexBoxIterator&);

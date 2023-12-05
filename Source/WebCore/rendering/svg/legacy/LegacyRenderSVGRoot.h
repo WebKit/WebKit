@@ -119,7 +119,7 @@ private:
     mutable Markable<FloatRect, FloatRect::MarkableTraits> m_accurateRepaintBoundingBox;
     mutable AffineTransform m_localToParentTransform;
     AffineTransform m_localToBorderBoxTransform;
-    WeakHashSet<LegacyRenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;
+    SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;
     bool m_isLayoutSizeChanged : 1;
     bool m_needsBoundariesOrTransformUpdate : 1;
     bool m_hasBoxDecorations : 1;

@@ -75,7 +75,7 @@ private:
     void updateValueNow() const;
     void counterDirectivesChanged();
 
-    WeakPtr<RenderListMarker> m_marker;
+    SingleThreadWeakPtr<RenderListMarker> m_marker;
     mutable std::optional<int> m_value;
     bool m_notInList { false };
 };

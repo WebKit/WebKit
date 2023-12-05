@@ -34,7 +34,7 @@
 namespace WebCore {
 
 bool SVGResourcesCycleSolver::resourceContainsCycles(LegacyRenderSVGResourceContainer& resource,
-    WeakHashSet<LegacyRenderSVGResourceContainer>& activeResources, WeakHashSet<LegacyRenderSVGResourceContainer>& acyclicResources)
+    SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer>& activeResources, SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer>& acyclicResources)
 {
     if (acyclicResources.contains(resource))
         return false;
@@ -52,7 +52,7 @@ bool SVGResourcesCycleSolver::resourceContainsCycles(LegacyRenderSVGResourceCont
         }
         if (is<RenderElement>(*node)) {
             if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(downcast<RenderElement>(*node))) {
-                WeakHashSet<LegacyRenderSVGResourceContainer> resourceSet;
+                SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> resourceSet;
                 resources->buildSetOfResources(resourceSet);
 
                 for (auto& resource : resourceSet) {
@@ -77,11 +77,11 @@ void SVGResourcesCycleSolver::resolveCycles(RenderElement& renderer, SVGResource
         RELEASE_ASSERT_NOT_REACHED();
 #endif
 
-    WeakHashSet<LegacyRenderSVGResourceContainer> localResources;
+    SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> localResources;
     resources.buildSetOfResources(localResources);
 
-    WeakHashSet<LegacyRenderSVGResourceContainer> activeResources;
-    WeakHashSet<LegacyRenderSVGResourceContainer> acyclicResources;
+    SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> activeResources;
+    SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> acyclicResources;
 
     if (is<LegacyRenderSVGResourceContainer>(renderer))
         activeResources.add(downcast<LegacyRenderSVGResourceContainer>(renderer));

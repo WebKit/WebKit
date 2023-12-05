@@ -54,7 +54,7 @@ bool LegacyRenderSVGResourceFilter::isIdentity() const
     return SVGFilter::isIdentity(filterElement());
 }
 
-void LegacyRenderSVGResourceFilter::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
+void LegacyRenderSVGResourceFilter::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers)
 {
     LOG(Filters, "LegacyRenderSVGResourceFilter %p removeAllClientsFromCacheIfNeeded", this);
 

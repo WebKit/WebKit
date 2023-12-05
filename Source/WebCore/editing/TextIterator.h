@@ -162,7 +162,7 @@ private:
     InlineIterator::TextLogicalOrderCache m_remainingTextRunLogicalOrderCache;
 
     // Used to point to RenderText object for :first-letter.
-    WeakPtr<RenderText> m_firstLetterText;
+    SingleThreadWeakPtr<RenderText> m_firstLetterText;
 
     // Used to do the whitespace collapsing logic.
     RefPtr<Text> m_lastTextNode;

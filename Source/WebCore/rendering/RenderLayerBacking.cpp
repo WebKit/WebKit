@@ -290,7 +290,7 @@ void RenderLayerBacking::willDestroyLayer(const GraphicsLayer* layer)
         compositor().layerTiledBackingUsageChanged(layer, false);
 }
 
-static void clearBackingSharingLayerProviders(WeakListHashSet<RenderLayer>& sharingLayers, const RenderLayer& providerLayer)
+static void clearBackingSharingLayerProviders(SingleThreadWeakListHashSet<RenderLayer>& sharingLayers, const RenderLayer& providerLayer)
 {
     for (auto& layer : sharingLayers) {
         if (layer.backingProviderLayer() == &providerLayer)
@@ -298,7 +298,7 @@ static void clearBackingSharingLayerProviders(WeakListHashSet<RenderLayer>& shar
     }
 }
 
-void RenderLayerBacking::setBackingSharingLayers(WeakListHashSet<RenderLayer>&& sharingLayers)
+void RenderLayerBacking::setBackingSharingLayers(SingleThreadWeakListHashSet<RenderLayer>&& sharingLayers)
 {
     bool sharingLayersChanged = m_backingSharingLayers.computeSize() != sharingLayers.computeSize();
     // For layers that used to share and no longer do, and are not composited, recompute repaint rects.

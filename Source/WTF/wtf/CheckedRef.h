@@ -421,6 +421,7 @@ public:
 
     operator IntegralType() const;
     explicit operator bool() const;
+    SingleThreadIntegralWrapper& operator=(IntegralType);
     SingleThreadIntegralWrapper& operator++();
     SingleThreadIntegralWrapper& operator--();
 
@@ -457,6 +458,14 @@ inline SingleThreadIntegralWrapper<IntegralType>::operator bool() const
 {
     assertThread();
     return m_value;
+}
+
+template <typename IntegralType>
+inline SingleThreadIntegralWrapper<IntegralType>& SingleThreadIntegralWrapper<IntegralType>::operator=(IntegralType value)
+{
+    assertThread();
+    m_value = value;
+    return *this;
 }
 
 template <typename IntegralType>

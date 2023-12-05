@@ -66,7 +66,7 @@ private:
     // Alternative description that can be used for accessibility instead of the native text.
     String m_altText;
     String m_contentString;
-    WeakPtr<RenderBoxModelObject> m_firstLetter;
+    SingleThreadWeakPtr<RenderBoxModelObject> m_firstLetter;
 };
 
 } // namespace WebCore

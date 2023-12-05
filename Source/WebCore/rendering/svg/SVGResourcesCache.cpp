@@ -54,7 +54,7 @@ void SVGResourcesCache::addResourcesFromRenderer(RenderElement& renderer, const 
     SVGResourcesCycleSolver::resolveCycles(renderer, resources);
 
     // Walk resources and register the render object at each resources.
-    WeakHashSet<LegacyRenderSVGResourceContainer> resourceSet;
+    SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> resourceSet;
     resources.buildSetOfResources(resourceSet);
 
     for (auto& resourceContainer : resourceSet)
@@ -74,7 +74,7 @@ void SVGResourcesCache::removeResourcesFromRenderer(RenderElement& renderer)
         return;
 
     // Walk resources and register the render object at each resources.
-    WeakHashSet<LegacyRenderSVGResourceContainer> resourceSet;
+    SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> resourceSet;
     resources->buildSetOfResources(resourceSet);
 
     for (auto& resourceContainer : resourceSet)

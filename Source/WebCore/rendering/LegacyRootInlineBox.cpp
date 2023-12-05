@@ -49,7 +49,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyRootInlineBox);
 
 struct SameSizeAsLegacyRootInlineBox : LegacyInlineFlowBox, CanMakeWeakPtr<LegacyRootInlineBox>, CanMakeCheckedPtr {
     unsigned lineBreakPos;
-    WeakPtr<RenderObject> lineBreakObj;
+    SingleThreadWeakPtr<RenderObject> lineBreakObj;
     void* lineBreakContext;
     int layoutUnits[6];
     void* floats;
@@ -57,7 +57,7 @@ struct SameSizeAsLegacyRootInlineBox : LegacyInlineFlowBox, CanMakeWeakPtr<Legac
 
 static_assert(sizeof(LegacyRootInlineBox) == sizeof(SameSizeAsLegacyRootInlineBox), "LegacyRootInlineBox should stay small");
 #if !ASSERT_ENABLED
-static_assert(sizeof(WeakPtr<RenderObject>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
+static_assert(sizeof(SingleThreadWeakPtr<RenderObject>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 #endif
 
 typedef HashMap<const LegacyRootInlineBox*, std::unique_ptr<LegacyEllipsisBox>> EllipsisBoxMap;

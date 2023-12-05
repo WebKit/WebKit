@@ -1274,7 +1274,7 @@ void LocalFrameView::adjustScrollbarsForLayout(bool isFirstLayout)
         setScrollbarModes(hMode, vMode);
 }
 
-void LocalFrameView::willDoLayout(WeakPtr<RenderElement> layoutRoot)
+void LocalFrameView::willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot)
 {
     bool subtreeLayout = !is<RenderView>(*layoutRoot);
     if (subtreeLayout)
@@ -1304,7 +1304,7 @@ void LocalFrameView::willDoLayout(WeakPtr<RenderElement> layoutRoot)
     forceLayoutParentViewIfNeeded();
 }
 
-void LocalFrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
+void LocalFrameView::didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot)
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
@@ -1546,7 +1546,7 @@ void LocalFrameView::addSlowRepaintObject(RenderElement& renderer)
     bool hadSlowRepaintObjects = hasSlowRepaintObjects();
 
     if (!m_slowRepaintObjects)
-        m_slowRepaintObjects = makeUnique<WeakHashSet<RenderElement>>();
+        m_slowRepaintObjects = makeUnique<SingleThreadWeakHashSet<RenderElement>>();
 
     auto addResult = m_slowRepaintObjects->add(renderer);
     if (addResult.isNewEntry) {
@@ -1596,7 +1596,7 @@ bool LocalFrameView::hasViewportConstrainedObjects() const
 void LocalFrameView::addViewportConstrainedObject(RenderLayerModelObject& object)
 {
     if (!m_viewportConstrainedObjects)
-        m_viewportConstrainedObjects = makeUnique<WeakHashSet<RenderLayerModelObject>>();
+        m_viewportConstrainedObjects = makeUnique<SingleThreadWeakHashSet<RenderLayerModelObject>>();
 
     if (!m_viewportConstrainedObjects->contains(object)) {
         m_viewportConstrainedObjects->add(object);
@@ -3698,7 +3698,7 @@ void LocalFrameView::scrollToTextFragmentRange()
     TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
 }
 
-void LocalFrameView::updateEmbeddedObject(const WeakPtr<RenderEmbeddedObject>& embeddedObject)
+void LocalFrameView::updateEmbeddedObject(const SingleThreadWeakPtr<RenderEmbeddedObject>& embeddedObject)
 {
     // The to-be-updated renderer is passed in as WeakPtr for convenience, but it will be alive at this point.
     ASSERT(embeddedObject);
@@ -3741,7 +3741,7 @@ bool LocalFrameView::updateEmbeddedObjects()
         // the underlying object can be destroyed, leaving the CheckedPtr dangling. Instead, construct a WeakPtr
         // that can be passed to the updateEmbeddedObject() method.
 
-        WeakPtr<RenderEmbeddedObject> weakObject;
+        SingleThreadWeakPtr<RenderEmbeddedObject> weakObject;
         {
             CheckedPtr embeddedObject = m_embeddedObjectsToUpdate->takeFirst();
             if (!embeddedObject)

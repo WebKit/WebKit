@@ -158,7 +158,7 @@ void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         invalidateCollapsedBorders();
 }
 
-static inline void resetSectionPointerIfNotBefore(WeakPtr<RenderTableSection>& section, RenderObject* before)
+static inline void resetSectionPointerIfNotBefore(SingleThreadWeakPtr<RenderTableSection>& section, RenderObject* before)
 {
     if (!before || !section)
         return;

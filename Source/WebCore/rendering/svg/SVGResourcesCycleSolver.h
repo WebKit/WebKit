@@ -37,7 +37,7 @@ public:
 private:
     SVGResourcesCycleSolver() { }
 
-    static bool resourceContainsCycles(LegacyRenderSVGResourceContainer&, WeakHashSet<LegacyRenderSVGResourceContainer>& activeResources, WeakHashSet<LegacyRenderSVGResourceContainer>& acyclicResources);
+    static bool resourceContainsCycles(LegacyRenderSVGResourceContainer&, SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer>& activeResources, SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer>& acyclicResources);
     static void breakCycle(LegacyRenderSVGResourceContainer&, SVGResources&);
 };
 

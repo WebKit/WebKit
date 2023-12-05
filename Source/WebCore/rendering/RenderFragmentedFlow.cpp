@@ -259,7 +259,7 @@ public:
     const LayoutUnit& lowValue() const { return m_offset; }
     const LayoutUnit& highValue() const { return m_offset; }
 
-    void collectIfNeeded(const PODInterval<LayoutUnit, WeakPtr<RenderFragmentContainer>>& interval)
+    void collectIfNeeded(const PODInterval<LayoutUnit, SingleThreadWeakPtr<RenderFragmentContainer>>& interval)
     {
         if (m_result)
             return;
@@ -271,7 +271,7 @@ public:
 
 private:
     LayoutUnit m_offset;
-    WeakPtr<RenderFragmentContainer> m_result;
+    SingleThreadWeakPtr<RenderFragmentContainer> m_result;
 };
 
 RenderFragmentContainer* RenderFragmentedFlow::fragmentAtBlockOffset(const RenderBox* clampBox, LayoutUnit offset, bool extendLastFragment) const

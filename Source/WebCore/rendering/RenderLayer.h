@@ -152,7 +152,7 @@ struct ScrollRectToVisibleOptions {
 
 using ScrollingScope = uint64_t;
 
-class RenderLayer : public CanMakeWeakPtr<RenderLayer>, public CanMakeCheckedPtr {
+class RenderLayer : public CanMakeSingleThreadWeakPtr<RenderLayer>, public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(RenderLayer);
 public:
     friend class RenderReplica;
@@ -1300,7 +1300,7 @@ private:
     RenderLayer* m_first { nullptr };
     RenderLayer* m_last { nullptr };
 
-    WeakPtr<RenderLayer> m_backingProviderLayer;
+    SingleThreadWeakPtr<RenderLayer> m_backingProviderLayer;
 
     // For layers that establish stacking contexts, m_posZOrderList holds a sorted list of all the
     // descendant layers within the stacking context that have z-indices of 0 or greater
@@ -1335,11 +1335,11 @@ private:
     RenderPtr<RenderReplica> m_reflection;
 
     // Pointer to the enclosing RenderLayer that caused us to be paginated. It is 0 if we are not paginated.
-    WeakPtr<RenderLayer> m_enclosingPaginationLayer;
+    SingleThreadWeakPtr<RenderLayer> m_enclosingPaginationLayer;
 
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     // Pointer to the enclosing RenderSVGHiddenContainer or RenderSVGResourceContainer, if present.
-    WeakPtr<RenderSVGHiddenContainer> m_enclosingSVGHiddenOrResourceContainer;
+    SingleThreadWeakPtr<RenderSVGHiddenContainer> m_enclosingSVGHiddenOrResourceContainer;
 #endif
 
     IntRect m_blockSelectionGapsBounds;

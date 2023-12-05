@@ -274,16 +274,16 @@ private:
 
     mutable Vector<LayoutUnit> m_columnPos;
     mutable Vector<ColumnStruct> m_columns;
-    mutable Vector<WeakPtr<RenderTableCaption>> m_captions;
-    mutable Vector<WeakPtr<RenderTableCol>> m_columnRenderers;
+    mutable Vector<SingleThreadWeakPtr<RenderTableCaption>> m_captions;
+    mutable Vector<SingleThreadWeakPtr<RenderTableCol>> m_columnRenderers;
 
     unsigned effectiveIndexOfColumn(const RenderTableCol&) const;
     typedef HashMap<const RenderTableCol*, unsigned> EffectiveColumnIndexMap;
     mutable EffectiveColumnIndexMap m_effectiveColumnIndexMap;
 
-    mutable WeakPtr<RenderTableSection> m_head;
-    mutable WeakPtr<RenderTableSection> m_foot;
-    mutable WeakPtr<RenderTableSection> m_firstBody;
+    mutable SingleThreadWeakPtr<RenderTableSection> m_head;
+    mutable SingleThreadWeakPtr<RenderTableSection> m_foot;
+    mutable SingleThreadWeakPtr<RenderTableSection> m_firstBody;
 
     std::unique_ptr<TableLayout> m_tableLayout;
 

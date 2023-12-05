@@ -531,7 +531,7 @@ bool FullscreenManager::willEnterFullscreen(Element& element)
     for (auto ancestor : makeReversedRange(ancestorsInTreeOrder)) {
         ancestor->document().hideAllPopoversUntil(nullptr, FocusPreviousElement::No, FireEvents::No);
 
-        auto containingBlockBeforeStyleResolution = WeakPtr<RenderBlock> { };
+        auto containingBlockBeforeStyleResolution = SingleThreadWeakPtr<RenderBlock> { };
         if (auto* renderer = ancestor->renderer())
             containingBlockBeforeStyleResolution = renderer->containingBlock();
 

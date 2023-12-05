@@ -930,12 +930,12 @@ void RenderView::removeRendererWithPausedImageAnimations(RenderElement& renderer
 
 void RenderView::resumePausedImageAnimationsIfNeeded(const IntRect& visibleRect)
 {
-    Vector<std::pair<WeakPtr<RenderElement>, WeakPtr<CachedImage>>, 10> toRemove;
+    Vector<std::pair<SingleThreadWeakPtr<RenderElement>, WeakPtr<CachedImage>>, 10> toRemove;
     for (auto it : m_renderersWithPausedImageAnimation) {
         auto& renderer = it.key;
         for (auto& image : it.value) {
             if (renderer.repaintForPausedImageAnimationsIfNeeded(visibleRect, *image))
-                toRemove.append({ renderer, image });
+                toRemove.append({ WeakPtr { renderer }, image });
         }
     }
     for (auto& pair : toRemove)
@@ -1131,7 +1131,7 @@ void RenderView::addCounterNeedingUpdate(RenderCounter& renderer)
     m_countersNeedingUpdate.add(renderer);
 }
 
-WeakHashSet<RenderCounter> RenderView::takeCountersNeedingUpdate()
+SingleThreadWeakHashSet<RenderCounter> RenderView::takeCountersNeedingUpdate()
 {
     return std::exchange(m_countersNeedingUpdate, { });
 }

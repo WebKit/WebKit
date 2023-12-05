@@ -264,7 +264,7 @@ void SVGRenderSupport::layoutChildren(RenderElement& start, bool selfNeedsLayout
 {
     bool layoutSizeChanged = layoutSizeOfNearestViewportChanged(start);
     bool transformChanged = transformToRootChanged(&start);
-    WeakHashSet<RenderElement> elementsThatDidNotReceiveLayout;
+    SingleThreadWeakHashSet<RenderElement> elementsThatDidNotReceiveLayout;
 
     for (auto& child : childrenOfType<RenderObject>(start)) {
         bool needsLayout = selfNeedsLayout;
@@ -562,9 +562,9 @@ SVGHitTestCycleDetectionScope::~SVGHitTestCycleDetectionScope()
     ASSERT_UNUSED(result, result);
 }
 
-WeakHashSet<RenderElement>& SVGHitTestCycleDetectionScope::visitedElements()
+SingleThreadWeakHashSet<RenderElement>& SVGHitTestCycleDetectionScope::visitedElements()
 {
-    static NeverDestroyed<WeakHashSet<RenderElement>> s_visitedElements;
+    static NeverDestroyed<SingleThreadWeakHashSet<RenderElement>> s_visitedElements;
     return s_visitedElements;
 }
 

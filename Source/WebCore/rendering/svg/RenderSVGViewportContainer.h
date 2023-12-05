@@ -62,7 +62,7 @@ private:
 
     AffineTransform m_supplementalLayerTransform;
     FloatRect m_viewport;
-    WeakPtr<RenderSVGRoot> m_owningSVGRoot;
+    SingleThreadWeakPtr<RenderSVGRoot> m_owningSVGRoot;
 };
 
 } // namespace WebCore

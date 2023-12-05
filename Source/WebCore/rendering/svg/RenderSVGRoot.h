@@ -125,7 +125,7 @@ private:
     FloatRect m_objectBoundingBox;
     FloatRect m_objectBoundingBoxWithoutTransformations;
     mutable Markable<FloatRect, FloatRect::MarkableTraits> m_strokeBoundingBox;
-    WeakHashSet<LegacyRenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;
+    SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer> m_resourcesNeedingToInvalidateClients;
 };
 
 } // namespace WebCore

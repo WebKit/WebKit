@@ -276,17 +276,17 @@ private:
     // need an additional layout pass for correct stretch alignment handling, as
     // the first layout likely did not use the correct value for percentage
     // sizing of children.
-    WeakHashSet<const RenderBox> m_relaidOutChildren;
+    SingleThreadWeakHashSet<const RenderBox> m_relaidOutChildren;
 
     mutable OrderIterator m_orderIterator { *this };
     std::optional<size_t> m_numberOfInFlowChildrenOnFirstLine { };
     std::optional<size_t> m_numberOfInFlowChildrenOnLastLine { };
 
     struct MarginTrimItems {
-        WeakHashSet<const RenderBox> m_itemsAtFlexLineStart;
-        WeakHashSet<const RenderBox> m_itemsAtFlexLineEnd;
-        WeakHashSet<const RenderBox> m_itemsOnFirstFlexLine;
-        WeakHashSet<const RenderBox> m_itemsOnLastFlexLine;
+        SingleThreadWeakHashSet<const RenderBox> m_itemsAtFlexLineStart;
+        SingleThreadWeakHashSet<const RenderBox> m_itemsAtFlexLineEnd;
+        SingleThreadWeakHashSet<const RenderBox> m_itemsOnFirstFlexLine;
+        SingleThreadWeakHashSet<const RenderBox> m_itemsOnLastFlexLine;
     } m_marginTrimItems;
 
     // This is SizeIsUnknown outside of layoutBlock()

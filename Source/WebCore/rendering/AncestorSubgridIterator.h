@@ -35,7 +35,7 @@ namespace WebCore {
 class AncestorSubgridIterator {
 public:
     AncestorSubgridIterator();
-    AncestorSubgridIterator(WeakPtr<RenderGrid> firstAncestorSubgrid, GridTrackSizingDirection);
+    AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, GridTrackSizingDirection);
 
     RenderGrid& operator*();
 
@@ -45,11 +45,11 @@ public:
     AncestorSubgridIterator begin();
     AncestorSubgridIterator end();
 private:
-    AncestorSubgridIterator(WeakPtr<RenderGrid> firstAncestorSubgrid, WeakPtr<RenderGrid> currentAncestor, GridTrackSizingDirection);
-    AncestorSubgridIterator(WeakPtr<RenderGrid> firstAncestorSubgrid, WeakPtr<RenderGrid> currentAncestor, std::optional<GridTrackSizingDirection>);
+    AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, SingleThreadWeakPtr<RenderGrid> currentAncestor, GridTrackSizingDirection);
+    AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, SingleThreadWeakPtr<RenderGrid> currentAncestor, std::optional<GridTrackSizingDirection>);
 
-    const WeakPtr<const RenderGrid> m_firstAncestorSubgrid;
-    WeakPtr<RenderGrid> m_currentAncestorSubgrid { nullptr };
+    const SingleThreadWeakPtr<const RenderGrid> m_firstAncestorSubgrid;
+    SingleThreadWeakPtr<RenderGrid> m_currentAncestorSubgrid;
     const std::optional<GridTrackSizingDirection> m_direction;
 
 };

@@ -277,7 +277,7 @@ public:
     virtual void suspendAnimations(MonotonicTime = MonotonicTime()) { }
     std::unique_ptr<RenderStyle> animatedStyle();
 
-    WeakPtr<RenderBlockFlow> backdropRenderer() const;
+    SingleThreadWeakPtr<RenderBlockFlow> backdropRenderer() const;
     void setBackdropRenderer(RenderBlockFlow&);
 
     ReferencedSVGResources& ensureReferencedSVGResources();

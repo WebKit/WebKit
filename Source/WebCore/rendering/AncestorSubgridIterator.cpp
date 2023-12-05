@@ -32,7 +32,7 @@ namespace WebCore {
 
 AncestorSubgridIterator::AncestorSubgridIterator() { }
 
-AncestorSubgridIterator::AncestorSubgridIterator(WeakPtr<RenderGrid> firstAncestorSubgrid, GridTrackSizingDirection direction)
+AncestorSubgridIterator::AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, GridTrackSizingDirection direction)
     : m_firstAncestorSubgrid(firstAncestorSubgrid)
     , m_direction(direction)
 {
@@ -40,7 +40,7 @@ AncestorSubgridIterator::AncestorSubgridIterator(WeakPtr<RenderGrid> firstAncest
 }
 
 
-AncestorSubgridIterator::AncestorSubgridIterator(WeakPtr<RenderGrid> firstAncestorSubgrid, WeakPtr<RenderGrid> currentAncestorSubgrid, GridTrackSizingDirection direction)
+AncestorSubgridIterator::AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, SingleThreadWeakPtr<RenderGrid> currentAncestorSubgrid, GridTrackSizingDirection direction)
     : m_firstAncestorSubgrid(firstAncestorSubgrid)
     , m_currentAncestorSubgrid(currentAncestorSubgrid)
     , m_direction(direction)
@@ -48,7 +48,7 @@ AncestorSubgridIterator::AncestorSubgridIterator(WeakPtr<RenderGrid> firstAncest
     ASSERT_IMPLIES(firstAncestorSubgrid, firstAncestorSubgrid->isSubgrid(direction));
 }
 
-AncestorSubgridIterator::AncestorSubgridIterator(WeakPtr<RenderGrid> firstAncestorSubgrid, WeakPtr<RenderGrid> currentAncestorSubgrid, std::optional<GridTrackSizingDirection> direction)
+AncestorSubgridIterator::AncestorSubgridIterator(SingleThreadWeakPtr<RenderGrid> firstAncestorSubgrid, SingleThreadWeakPtr<RenderGrid> currentAncestorSubgrid, std::optional<GridTrackSizingDirection> direction)
     : m_firstAncestorSubgrid(firstAncestorSubgrid)
     , m_currentAncestorSubgrid(currentAncestorSubgrid)
     , m_direction(direction)

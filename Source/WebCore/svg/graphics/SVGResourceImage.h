@@ -49,7 +49,7 @@ private:
 
     void dump(WTF::TextStream&) const final;
 
-    WeakPtr<LegacyRenderSVGResourceContainer> m_renderResource;
+    SingleThreadWeakPtr<LegacyRenderSVGResourceContainer> m_renderResource;
     URL m_reresolvedURL;
 };
 

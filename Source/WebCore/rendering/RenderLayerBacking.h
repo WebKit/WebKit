@@ -68,8 +68,8 @@ public:
     RenderLayer& owningLayer() const { return m_owningLayer; }
 
     // Included layers are non-z-order descendant layers that are painted into this backing.
-    const WeakListHashSet<RenderLayer>& backingSharingLayers() const { return m_backingSharingLayers; }
-    void setBackingSharingLayers(WeakListHashSet<RenderLayer>&&);
+    const SingleThreadWeakListHashSet<RenderLayer>& backingSharingLayers() const { return m_backingSharingLayers; }
+    void setBackingSharingLayers(SingleThreadWeakListHashSet<RenderLayer>&&);
 
     bool hasBackingSharingLayers() const { return !m_backingSharingLayers.isEmptyIgnoringNullReferences(); }
 
@@ -410,7 +410,7 @@ private:
     RenderLayer& m_owningLayer;
     
     // A list other layers that paint into this backing store, later than m_owningLayer in paint order.
-    WeakListHashSet<RenderLayer> m_backingSharingLayers;
+    SingleThreadWeakListHashSet<RenderLayer> m_backingSharingLayers;
 
     std::unique_ptr<LayerAncestorClippingStack> m_ancestorClippingStack; // Only used if we are clipped by an ancestor which is not a stacking context.
     std::unique_ptr<LayerAncestorClippingStack> m_overflowControlsHostLayerAncestorClippingStack; // Used when we have an overflow controls host layer which was reparented, and needs clipping by ancestors.

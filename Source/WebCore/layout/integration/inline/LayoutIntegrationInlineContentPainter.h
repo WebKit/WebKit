@@ -68,7 +68,7 @@ private:
     const RenderInline* m_layerRenderer { nullptr };
     const InlineContent& m_inlineContent;
     const BoxTree& m_boxTree;
-    WeakListHashSet<RenderInline> m_outlineObjects;
+    SingleThreadWeakListHashSet<RenderInline> m_outlineObjects;
 };
 
 class LayerPaintScope {

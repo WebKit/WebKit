@@ -84,7 +84,7 @@ private:
     uint8_t m_textWithoutSuffixLength { 0 };
     bool m_textIsLeftToRightDirection { true };
     RefPtr<StyleImage> m_image;
-    WeakPtr<RenderListItem> m_listItem;
+    SingleThreadWeakPtr<RenderListItem> m_listItem;
     LayoutUnit m_lineOffsetForListItem;
     LayoutUnit m_lineLogicalOffsetForListItem;
 };

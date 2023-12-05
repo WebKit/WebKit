@@ -44,7 +44,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(LegacyInlineBox);
 struct SameSizeAsLegacyInlineBox {
     virtual ~SameSizeAsLegacyInlineBox() = default;
     void* a[3];
-    WeakPtr<RenderObject> r;
+    SingleThreadWeakPtr<RenderObject> r;
     FloatPoint b;
     float c[2];
     unsigned d : 23;

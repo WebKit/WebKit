@@ -56,7 +56,7 @@ private:
 
     WeakPtr<PaintWorkletGlobalScope::PaintDefinition> m_paintDefinition;
     Vector<AtomString> m_inputProperties;
-    WeakPtr<const RenderElement> m_element;
+    SingleThreadWeakPtr<const RenderElement> m_element;
     Vector<String> m_arguments;
 };
 

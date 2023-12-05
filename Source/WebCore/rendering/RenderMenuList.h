@@ -141,8 +141,8 @@ private:
 
     bool isFlexibleBoxImpl() const override { return true; }
 
-    WeakPtr<RenderText> m_buttonText;
-    WeakPtr<RenderBlock> m_innerBlock;
+    SingleThreadWeakPtr<RenderText> m_buttonText;
+    SingleThreadWeakPtr<RenderBlock> m_innerBlock;
 
     bool m_needsOptionsWidthUpdate;
     int m_optionsWidth;

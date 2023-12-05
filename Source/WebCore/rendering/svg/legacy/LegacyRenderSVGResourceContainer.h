@@ -61,7 +61,7 @@ protected:
     virtual bool selfNeedsClientInvalidation() const { return everHadLayout() && selfNeedsLayout(); }
 
     void markAllClientsForInvalidation(InvalidationMode);
-    void markAllClientsForInvalidationIfNeeded(InvalidationMode, WeakHashSet<RenderObject>* visitedRenderers);
+    void markAllClientsForInvalidationIfNeeded(InvalidationMode, SingleThreadWeakHashSet<RenderObject>* visitedRenderers);
     void markClientForInvalidation(RenderObject&, InvalidationMode);
 
 private:
@@ -73,8 +73,8 @@ private:
     void registerResource();
 
     AtomString m_id;
-    WeakHashSet<RenderElement> m_clients;
-    WeakHashSet<RenderLayer> m_clientLayers;
+    SingleThreadWeakHashSet<RenderElement> m_clients;
+    SingleThreadWeakHashSet<RenderLayer> m_clientLayers;
     bool m_registered { false };
     bool m_isInvalidating { false };
 };

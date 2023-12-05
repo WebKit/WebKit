@@ -629,7 +629,7 @@ void RenderTreeBuilder::normalizeTreeAfterStyleChange(RenderElement& renderer, R
 
             // Style change may have moved some subtree out of the fragmented flow. Their flow states have already been updated (see adjustFragmentedFlowStateOnContainingBlockChangeIfNeeded)
             // and here is where we take care of the remaining, spanner tree mutation.
-            WeakHashSet<RenderElement> spannerContainingBlockSet;
+            SingleThreadWeakHashSet<RenderElement> spannerContainingBlockSet;
             for (auto& descendant : descendantsOfType<RenderMultiColumnSpannerPlaceholder>(renderer)) {
                 if (auto* containingBlock = descendant.containingBlock(); containingBlock && containingBlock->enclosingFragmentedFlow() != enclosingFragmentedFlow)
                     spannerContainingBlockSet.add(*containingBlock);

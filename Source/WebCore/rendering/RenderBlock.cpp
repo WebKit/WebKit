@@ -94,8 +94,8 @@ struct SameSizeAsRenderBlock : public RenderBox {
 
 static_assert(sizeof(RenderBlock) == sizeof(SameSizeAsRenderBlock), "RenderBlock should stay small");
 
-using TrackedDescendantsMap = WeakHashMap<const RenderBlock, std::unique_ptr<TrackedRendererListHashSet>>;
-using TrackedContainerMap = WeakHashMap<const RenderBox, WeakHashSet<const RenderBlock>>;
+using TrackedDescendantsMap = SingleThreadWeakHashMap<const RenderBlock, std::unique_ptr<TrackedRendererListHashSet>>;
+using TrackedContainerMap = SingleThreadWeakHashMap<const RenderBox, SingleThreadWeakHashSet<const RenderBlock>>;
 
 static TrackedDescendantsMap* percentHeightDescendantsMap;
 static TrackedContainerMap* percentHeightContainerMap;
@@ -121,7 +121,7 @@ static void insertIntoTrackedRendererMaps(const RenderBlock& container, RenderBo
         return;
     }
     
-    auto& containerSet = percentHeightContainerMap->add(descendant, WeakHashSet<const RenderBlock>()).iterator->value;
+    auto& containerSet = percentHeightContainerMap->add(descendant, SingleThreadWeakHashSet<const RenderBlock>()).iterator->value;
     ASSERT(!containerSet.contains(container));
     containerSet.add(container);
 }
@@ -229,7 +229,7 @@ public:
 
 private:
     using DescendantsMap = HashMap<CheckedPtr<const RenderBlock>, std::unique_ptr<TrackedRendererListHashSet>>;
-    using ContainerMap = WeakHashMap<const RenderBox, WeakPtr<const RenderBlock>>;
+    using ContainerMap = SingleThreadWeakHashMap<const RenderBox, SingleThreadWeakPtr<const RenderBlock>>;
     
     DescendantsMap m_descendantsMap;
     ContainerMap m_containerMap;
@@ -256,7 +256,7 @@ public:
     LayoutUnit m_pageLogicalOffset;
     LayoutUnit m_intrinsicBorderForFieldset;
     
-    std::optional<WeakPtr<RenderFragmentedFlow>> m_enclosingFragmentedFlow;
+    std::optional<SingleThreadWeakPtr<RenderFragmentedFlow>> m_enclosingFragmentedFlow;
 };
 
 typedef HashMap<const RenderBlock*, std::unique_ptr<RenderBlockRareData>> RenderBlockRareDataMap;

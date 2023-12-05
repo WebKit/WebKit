@@ -161,7 +161,7 @@ public:
     void setHasQuotesNeedingUpdate(bool b) { m_hasQuotesNeedingUpdate = b; }
 
     void addCounterNeedingUpdate(RenderCounter&);
-    WeakHashSet<RenderCounter> takeCountersNeedingUpdate();
+    SingleThreadWeakHashSet<RenderCounter> takeCountersNeedingUpdate();
 
     void incrementRendersWithOutline() { ++m_renderersWithOutlineCount; }
     void decrementRendersWithOutline() { ASSERT(m_renderersWithOutlineCount > 0); --m_renderersWithOutlineCount; }
@@ -195,7 +195,7 @@ public:
         ~RepaintRegionAccumulator();
 
     private:
-        WeakPtr<RenderView> m_rootView;
+        SingleThreadWeakPtr<RenderView> m_rootView;
         bool m_wasAccumulatingRepaintRegion { false };
     };
 
@@ -207,11 +207,11 @@ public:
 
     void registerBoxWithScrollSnapPositions(const RenderBox&);
     void unregisterBoxWithScrollSnapPositions(const RenderBox&);
-    const WeakHashSet<const RenderBox>& boxesWithScrollSnapPositions() { return m_boxesWithScrollSnapPositions; }
+    const SingleThreadWeakHashSet<const RenderBox>& boxesWithScrollSnapPositions() { return m_boxesWithScrollSnapPositions; }
 
     void registerContainerQueryBox(const RenderBox&);
     void unregisterContainerQueryBox(const RenderBox&);
-    const WeakHashSet<const RenderBox>& containerQueryBoxes() const { return m_containerQueryBoxes; }
+    const SingleThreadWeakHashSet<const RenderBox>& containerQueryBoxes() const { return m_containerQueryBoxes; }
 
 private:
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
@@ -246,7 +246,7 @@ private:
     mutable std::unique_ptr<Region> m_accumulatedRepaintRegion;
     RenderSelection m_selection;
 
-    WeakPtr<RenderLayer> m_styleChangeLayerMutationRoot;
+    SingleThreadWeakPtr<RenderLayer> m_styleChangeLayerMutationRoot;
 
     // FIXME: Only used by embedded WebViews inside AppKit NSViews.  Find a way to remove.
     struct LegacyPrinting {
@@ -264,7 +264,7 @@ private:
     void lazyRepaintTimerFired();
 
     Timer m_lazyRepaintTimer;
-    WeakHashSet<RenderBox> m_renderersNeedingLazyRepaint;
+    SingleThreadWeakHashSet<RenderBox> m_renderersNeedingLazyRepaint;
 
     std::unique_ptr<ImageQualityController> m_imageQualityController;
     std::optional<LayoutSize> m_pageLogicalSize;
@@ -273,7 +273,7 @@ private:
 
     bool m_hasQuotesNeedingUpdate { false };
 
-    WeakHashSet<RenderCounter> m_countersNeedingUpdate;
+    SingleThreadWeakHashSet<RenderCounter> m_countersNeedingUpdate;
     unsigned m_renderCounterCount { 0 };
     unsigned m_renderersWithOutlineCount { 0 };
 
@@ -281,12 +281,12 @@ private:
     bool m_needsRepaintHackAfterCompositingLayerUpdateForDebugOverlaysOnly { false };
     bool m_needsEventRegionUpdateForNonCompositedFrame { false };
 
-    WeakHashMap<RenderElement, Vector<WeakPtr<CachedImage>>> m_renderersWithPausedImageAnimation;
+    SingleThreadWeakHashMap<RenderElement, Vector<WeakPtr<CachedImage>>> m_renderersWithPausedImageAnimation;
     WeakHashSet<SVGSVGElement, WeakPtrImplWithEventTargetData> m_SVGSVGElementsWithPausedImageAnimation;
-    WeakHashSet<RenderElement> m_visibleInViewportRenderers;
+    SingleThreadWeakHashSet<RenderElement> m_visibleInViewportRenderers;
 
-    WeakHashSet<const RenderBox> m_boxesWithScrollSnapPositions;
-    WeakHashSet<const RenderBox> m_containerQueryBoxes;
+    SingleThreadWeakHashSet<const RenderBox> m_boxesWithScrollSnapPositions;
+    SingleThreadWeakHashSet<const RenderBox> m_containerQueryBoxes;
 };
 
 } // namespace WebCore

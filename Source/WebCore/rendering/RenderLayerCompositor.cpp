@@ -294,8 +294,8 @@ public:
     BackingSharingState() = default;
 
     struct Provider {
-        WeakPtr<RenderLayer> providerLayer;
-        WeakListHashSet<RenderLayer> sharingLayers;
+        SingleThreadWeakPtr<RenderLayer> providerLayer;
+        SingleThreadWeakListHashSet<RenderLayer> sharingLayers;
         LayoutRect absoluteBounds;
     };
 
@@ -331,7 +331,7 @@ private:
 
     Vector<Provider> m_backingProviderCandidates;
     RenderLayer* m_backingSharingStackingContext { nullptr };
-    WeakHashSet<RenderLayer> m_layersPendingRepaint;
+    SingleThreadWeakHashSet<RenderLayer> m_layersPendingRepaint;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderLayerCompositor::BackingSharingState::Provider&);

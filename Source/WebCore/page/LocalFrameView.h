@@ -346,12 +346,12 @@ public:
     void removeSlowRepaintObject(RenderElement&);
     bool hasSlowRepaintObject(const RenderElement& renderer) const;
     bool hasSlowRepaintObjects() const;
-    WeakHashSet<RenderElement>* slowRepaintObjects() const { return m_slowRepaintObjects.get(); }
+    SingleThreadWeakHashSet<RenderElement>* slowRepaintObjects() const { return m_slowRepaintObjects.get(); }
 
     // Includes fixed- and sticky-position objects.
     void addViewportConstrainedObject(RenderLayerModelObject&);
     void removeViewportConstrainedObject(RenderLayerModelObject&);
-    const WeakHashSet<RenderLayerModelObject>* viewportConstrainedObjects() const { return m_viewportConstrainedObjects.get(); }
+    const SingleThreadWeakHashSet<RenderLayerModelObject>* viewportConstrainedObjects() const { return m_viewportConstrainedObjects.get(); }
     WEBCORE_EXPORT bool hasViewportConstrainedObjects() const;
 
     float frameScaleFactor() const;
@@ -845,7 +845,7 @@ private:
 
     void updateEmbeddedObjectsTimerFired();
     bool updateEmbeddedObjects();
-    void updateEmbeddedObject(const WeakPtr<RenderEmbeddedObject>&);
+    void updateEmbeddedObject(const SingleThreadWeakPtr<RenderEmbeddedObject>&);
 
     void updateWidgetPositionsTimerFired();
 
@@ -880,8 +880,8 @@ private:
 
     RenderElement* viewportRenderer() const;
     
-    void willDoLayout(WeakPtr<RenderElement> layoutRoot);
-    void didLayout(WeakPtr<RenderElement> layoutRoot);
+    void willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot);
+    void didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot);
 
     FloatSize calculateSizeForCSSViewportUnitsOverride(std::optional<OverrideViewportSize>) const;
 
@@ -913,7 +913,7 @@ private:
 
     HashSet<CheckedPtr<Widget>> m_widgetsInRenderTree;
     std::unique_ptr<ListHashSet<CheckedPtr<RenderEmbeddedObject>>> m_embeddedObjectsToUpdate;
-    std::unique_ptr<WeakHashSet<RenderElement>> m_slowRepaintObjects;
+    std::unique_ptr<SingleThreadWeakHashSet<RenderElement>> m_slowRepaintObjects;
 
     HashMap<ScrollingNodeID, WeakPtr<ScrollableArea>> m_scrollingNodeIDToPluginScrollableAreaMap;
 
@@ -983,7 +983,7 @@ private:
 
     std::unique_ptr<ScrollableAreaSet> m_scrollableAreas;
     std::unique_ptr<ScrollableAreaSet> m_scrollableAreasForAnimatedScroll;
-    std::unique_ptr<WeakHashSet<RenderLayerModelObject>> m_viewportConstrainedObjects;
+    std::unique_ptr<SingleThreadWeakHashSet<RenderLayerModelObject>> m_viewportConstrainedObjects;
 
     OptionSet<LayoutMilestone> m_milestonesPendingPaint;
 
