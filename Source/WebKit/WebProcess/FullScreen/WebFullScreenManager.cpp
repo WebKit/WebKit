@@ -344,6 +344,19 @@ void WebFullScreenManager::willExitFullScreen()
     m_page->injectedBundleFullScreenClient().beganExitFullScreen(m_page.ptr(), m_finalFrame, m_initialFrame);
 }
 
+static Vector<Ref<Element>> collectFullscreenElementsFromElement(Element* element)
+{
+    Vector<Ref<Element>> fullscreenElements;
+
+    while (element && element->document().fullscreenManager().fullscreenElement() == element) {
+        fullscreenElements.append(*element);
+        auto parentDocument = element->document().parentDocument();
+        element = parentDocument ? parentDocument->fullscreenManager().fullscreenElement() : nullptr;
+    }
+
+    return fullscreenElements;
+}
+
 void WebFullScreenManager::didExitFullScreen()
 {
     if (!m_element)
@@ -353,7 +366,17 @@ void WebFullScreenManager::didExitFullScreen()
 
     setFullscreenInsets(WebCore::FloatBoxExtent());
     setFullscreenAutoHideDuration(0_s);
+
+    auto fullscreenElements = collectFullscreenElementsFromElement(m_element.get());
+
     m_element->document().fullscreenManager().didExitFullscreen();
+
+    // Ensure the element (and all its parent fullscreen elements) that just exited fullscreen are still in view:
+    while (!fullscreenElements.isEmpty()) {
+        auto element = fullscreenElements.takeLast();
+        element->scrollIntoView();
+    }
+
     clearElement();
 }
 

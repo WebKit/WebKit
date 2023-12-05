@@ -1171,7 +1171,7 @@ public:
     WEBCORE_EXPORT String designMode() const;
     WEBCORE_EXPORT void setDesignMode(const String&);
 
-    Document* parentDocument() const;
+    WEBCORE_EXPORT Document* parentDocument() const;
     RefPtr<Document> protectedParentDocument() const { return parentDocument(); }
     WEBCORE_EXPORT Document& topDocument() const;
     Ref<Document> protectedTopDocument() const { return topDocument(); }
