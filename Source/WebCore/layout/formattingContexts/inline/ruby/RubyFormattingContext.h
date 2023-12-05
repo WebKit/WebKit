@@ -41,12 +41,6 @@ class RubyFormattingContext {
 public:
     RubyFormattingContext(const InlineFormattingContext& parentFormattingContext);
 
-    struct InlineLayoutResult {
-        InlineContentBreaker::IsEndOfLine isEndOfLine { InlineContentBreaker::IsEndOfLine::No };
-        size_t committedCount { 0 };
-    };
-    InlineLayoutResult layoutInlineAxis(const InlineItemRange&, const InlineItemList&, Line&, InlineLayoutUnit availableWidth);
-
     void applyAnnotationContributionToLayoutBounds(InlineLevelBox& rubyBaseInlineBox) const;
     InlineLayoutPoint placeAnnotationBox(const Box& rubyBaseLayoutBox);
     InlineLayoutSize sizeAnnotationBox(const Box& rubyBaseLayoutBox);
@@ -62,14 +56,7 @@ public:
     static void applyRubyAlign(Line&, const InlineFormattingContext&);
 
 private:
-    struct BaseLayoutResult {
-        size_t committedCount { 0 };
-        InlineLayoutUnit logicalRightSpacing { 0.f };
-    };
-    BaseLayoutResult layoutRubyBaseInlineAxis(Line&, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStart, const InlineItemList&);
     bool annotationOverlapCheck(const InlineDisplay::Box&, const InlineLayoutRect& overhangingRect) const;
-    void placeRubyContent(WTF::Range<size_t> candidateRange, const InlineItemList&, Line&);
-    InlineLayoutUnit logicaWidthForRubyRange(WTF::Range<size_t> candidateRange, const InlineItemList&, InlineLayoutUnit lineContentLogicalRight) const;
     InlineLayoutRect visualRectIncludingBlockDirection(const InlineLayoutRect& visualRectIgnoringBlockDirection) const;
 
     const InlineFormattingContext& parentFormattingContext() const { return m_parentFormattingContext; }
