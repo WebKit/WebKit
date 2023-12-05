@@ -2612,3 +2612,6 @@ inspector/layers/layers-compositing-reasons.html [ Pass Failure ]
 inspector/layers/layers-blending-compositing-reasons.html [ Pass Failure ]
 
 webkit.org/b/265685 [ Sonoma+ ] http/wpt/webcodecs/encoder-task-failing.html [ Failure ]
+
+# webkit.org/b/265834 ASSERTION FAILED with void WebCore::ViewTransition::ca llUpdateCallback() result of multiple tests constant crash
+[ Monterey Ventura Debug ] imported/w3c/web-platform-tests/css/css-view-transitions [ Skip ]
