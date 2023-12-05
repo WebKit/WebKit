@@ -43,7 +43,7 @@
 #import <WebCore/BifurcatedGraphicsContext.h>
 #import <WebCore/DynamicContentScalingTypes.h>
 #import <WebCore/GraphicsContextCG.h>
-#import <WebCore/IOSurfacePool.h>
+#import <WebCore/IOSurface.h>
 #import <WebCore/ImageBuffer.h>
 #import <WebCore/PlatformCALayerClient.h>
 #import <WebCore/PlatformCALayerDelegatedContents.h>
@@ -321,58 +321,6 @@ unsigned RemoteLayerBackingStore::bytesPerPixel() const
     return 4;
 }
 
-SetNonVolatileResult RemoteLayerBackingStore::swapToValidFrontBuffer()
-{
-    ASSERT(!WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM));
-
-    // Sometimes, we can get two swaps ahead of the render server.
-    // If we're using shared IOSurfaces, we must wait to modify
-    // a surface until it no longer has outstanding clients.
-    if (m_parameters.type == Type::IOSurface) {
-        if (!m_backBuffer.imageBuffer || m_backBuffer.imageBuffer->isInUse()) {
-            std::swap(m_backBuffer, m_secondaryBackBuffer);
-
-            // When pulling the secondary back buffer out of hibernation (to become
-            // the new front buffer), if it is somehow still in use (e.g. we got
-            // three swaps ahead of the render server), just give up and discard it.
-            if (m_backBuffer.imageBuffer && m_backBuffer.imageBuffer->isInUse())
-                m_backBuffer.discard();
-        }
-    }
-
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    if (m_displayListBuffer)
-        m_displayListBuffer->releaseGraphicsContext();
-#endif
-
-    m_contentsBufferHandle = std::nullopt;
-    std::swap(m_frontBuffer, m_backBuffer);
-    return setBufferNonVolatile(m_frontBuffer);
-}
-
-// Called after buffer swapping in the GPU process.
-void RemoteLayerBackingStore::applySwappedBuffers(RefPtr<ImageBuffer>&& front, RefPtr<ImageBuffer>&& back, RefPtr<ImageBuffer>&& secondaryBack, SwapBuffersDisplayRequirement displayRequirement)
-{
-    ASSERT(WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM));
-    m_contentsBufferHandle = std::nullopt;
-
-    if (front != m_backBuffer.imageBuffer || back != m_frontBuffer.imageBuffer || displayRequirement != SwapBuffersDisplayRequirement::NeedsNormalDisplay)
-        m_previouslyPaintedRect = std::nullopt;
-
-    m_frontBuffer.imageBuffer = WTFMove(front);
-    m_backBuffer.imageBuffer = WTFMove(back);
-    m_secondaryBackBuffer.imageBuffer = WTFMove(secondaryBack);
-
-    if (displayRequirement == SwapBuffersDisplayRequirement::NeedsNoDisplay)
-        return;
-
-    if (displayRequirement == SwapBuffersDisplayRequirement::NeedsFullDisplay)
-        setNeedsDisplay();
-
-    dirtyRepaintCounterIfNecessary();
-    ensureFrontBuffer();
-}
-
 bool RemoteLayerBackingStore::supportsPartialRepaint() const
 {
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
@@ -438,35 +386,6 @@ bool RemoteLayerBackingStore::performDelegatedLayerDisplay()
     return false;
 }
 
-void RemoteLayerBackingStore::prepareToDisplay()
-{
-    ASSERT(!WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM));
-    ASSERT(!m_frontBufferFlushers.size());
-
-    auto* collection = backingStoreCollection();
-    if (!collection) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    ASSERT(needsDisplay());
-
-    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareToDisplay()");
-
-    if (performDelegatedLayerDisplay())
-        return;
-
-    auto displayRequirement = prepareBuffers();
-    if (displayRequirement == SwapBuffersDisplayRequirement::NeedsNoDisplay)
-        return;
-
-    if (displayRequirement == SwapBuffersDisplayRequirement::NeedsFullDisplay)
-        setNeedsDisplay();
-
-    dirtyRepaintCounterIfNecessary();
-    ensureFrontBuffer();
-}
-
 void RemoteLayerBackingStore::dirtyRepaintCounterIfNecessary()
 {
     if (m_layer->owner()->platformCALayerShowRepaintCounter(m_layer)) {
@@ -480,13 +399,7 @@ void RemoteLayerBackingStore::ensureFrontBuffer()
     if (m_frontBuffer.imageBuffer)
         return;
 
-    auto* collection = backingStoreCollection();
-    if (!collection) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    m_frontBuffer.imageBuffer = collection->allocateBufferForBackingStore(*this);
+    m_frontBuffer.imageBuffer = allocateBuffer();
     m_frontBuffer.isCleared = true;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
@@ -500,32 +413,6 @@ void RemoteLayerBackingStore::ensureFrontBuffer()
 #endif
 }
 
-SwapBuffersDisplayRequirement RemoteLayerBackingStore::prepareBuffers()
-{
-    ASSERT(!WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM));
-    m_contentsBufferHandle = std::nullopt;
-
-    auto displayRequirement = SwapBuffersDisplayRequirement::NeedsNoDisplay;
-
-    // Make the previous front buffer non-volatile early, so that we can dirty the whole layer if it comes back empty.
-    if (!hasFrontBuffer() || setFrontBufferNonVolatile() == SetNonVolatileResult::Empty)
-        displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
-    else if (!hasEmptyDirtyRegion())
-        displayRequirement = SwapBuffersDisplayRequirement::NeedsNormalDisplay;
-
-    if (displayRequirement == SwapBuffersDisplayRequirement::NeedsNoDisplay)
-        return displayRequirement;
-
-    if (!supportsPartialRepaint())
-        displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
-
-    auto result = swapToValidFrontBuffer();
-    if (!hasFrontBuffer() || result == SetNonVolatileResult::Empty)
-        displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
-
-    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStore " << m_layer->layerID() << " prepareBuffers() - " << displayRequirement);
-    return displayRequirement;
-}
 
 void RemoteLayerBackingStore::paintContents()
 {
@@ -807,55 +694,6 @@ void RemoteLayerBackingStoreProperties::updateCachedBuffers(RemoteLayerTreeNode&
 Vector<std::unique_ptr<ThreadSafeImageBufferFlusher>> RemoteLayerBackingStore::takePendingFlushers()
 {
     return std::exchange(m_frontBufferFlushers, { });
-}
-
-bool RemoteLayerBackingStore::setBufferVolatile(Buffer& buffer)
-{
-    if (!buffer.imageBuffer || buffer.imageBuffer->volatilityState() == VolatilityState::Volatile)
-        return true;
-
-    buffer.imageBuffer->releaseGraphicsContext();
-    return buffer.imageBuffer->setVolatile();
-}
-
-SetNonVolatileResult RemoteLayerBackingStore::setBufferNonVolatile(Buffer& buffer)
-{
-    ASSERT(!WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM));
-
-    if (!buffer.imageBuffer)
-        return SetNonVolatileResult::Valid; // Not really valid but the caller only checked the Empty state.
-
-    if (buffer.imageBuffer->volatilityState() == VolatilityState::NonVolatile)
-        return SetNonVolatileResult::Valid;
-
-    return buffer.imageBuffer->setNonVolatile();
-}
-
-bool RemoteLayerBackingStore::setBufferVolatile(BufferType bufferType)
-{
-    if (m_parameters.type != Type::IOSurface)
-        return true;
-
-    switch (bufferType) {
-    case BufferType::Front:
-        return setBufferVolatile(m_frontBuffer);
-
-    case BufferType::Back:
-        return setBufferVolatile(m_backBuffer);
-
-    case BufferType::SecondaryBack:
-        return setBufferVolatile(m_secondaryBackBuffer);
-    }
-
-    return true;
-}
-
-SetNonVolatileResult RemoteLayerBackingStore::setFrontBufferNonVolatile()
-{
-    if (m_parameters.type != Type::IOSurface)
-        return SetNonVolatileResult::Valid;
-
-    return setBufferNonVolatile(m_frontBuffer);
 }
 
 RefPtr<ImageBuffer> RemoteLayerBackingStore::bufferForType(BufferType bufferType) const

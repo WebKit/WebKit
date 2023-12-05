@@ -1887,6 +1887,8 @@
 		A73E66BD2AB107C3005FC327 /* IPCEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = A73E66BC2AB107BB005FC327 /* IPCEvent.h */; };
 		A7A3D555289395E2008D683D /* WebWorkerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A7A3D553289395E2008D683D /* WebWorkerClient.h */; };
 		A7D792D81767CCA300881CBE /* ActivityAssertion.h in Headers */ = {isa = PBXBuildFile; fileRef = A7D792D41767CB0900881CBE /* ActivityAssertion.h */; };
+		A7F35F5C2B194C0800E43D98 /* RemoteLayerWithRemoteRenderingBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F35F5B2B194C0800E43D98 /* RemoteLayerWithRemoteRenderingBackingStore.h */; };
+		A7F35F5F2B1959C000E43D98 /* RemoteLayerWithInProcessRenderingBackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = A7F35F5E2B1959B300E43D98 /* RemoteLayerWithInProcessRenderingBackingStore.h */; };
 		AAB145E6223F931200E489D8 /* PrefetchCache.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB145E4223F931200E489D8 /* PrefetchCache.h */; };
 		AAFA634F234F7C6400FFA864 /* AsyncRevalidation.h in Headers */ = {isa = PBXBuildFile; fileRef = AAFA634E234F7C6300FFA864 /* AsyncRevalidation.h */; };
 		B6114A7F29394A1600380B1B /* JSWebExtensionAPIEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = B6114A7D29394A1500380B1B /* JSWebExtensionAPIEvent.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -3115,8 +3117,6 @@
 		0F707C791A1FEEA300DA7A45 /* RemoteLayerTreeScrollingPerformanceData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteLayerTreeScrollingPerformanceData.h; sourceTree = "<group>"; };
 		0F73B767222B38C600805316 /* ScrollingTreeOverflowScrollingNodeRemoteMac.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollingTreeOverflowScrollingNodeRemoteMac.cpp; sourceTree = "<group>"; };
 		0F73B768222B38C600805316 /* ScrollingTreeOverflowScrollingNodeRemoteMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollingTreeOverflowScrollingNodeRemoteMac.h; sourceTree = "<group>"; };
-		0F80264627AB4AEF00EC6ED7 /* RemoteLayerWithRemoteRenderingBackingStoreCollection.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteLayerWithRemoteRenderingBackingStoreCollection.mm; sourceTree = "<group>"; };
-		0F80264727AB4AEF00EC6ED7 /* RemoteLayerWithRemoteRenderingBackingStoreCollection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerWithRemoteRenderingBackingStoreCollection.h; sourceTree = "<group>"; };
 		0F850FE41ED7C39F00FB77A7 /* WebPerformanceLoggingClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPerformanceLoggingClient.cpp; sourceTree = "<group>"; };
 		0F850FE51ED7C39F00FB77A7 /* WebPerformanceLoggingClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPerformanceLoggingClient.h; sourceTree = "<group>"; };
 		0F86361B27BDC2B6006E6D52 /* BufferIdentifierSet.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BufferIdentifierSet.h; sourceTree = "<group>"; };
@@ -6747,6 +6747,10 @@
 		A7D792D41767CB0900881CBE /* ActivityAssertion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActivityAssertion.h; sourceTree = "<group>"; };
 		A7D792D51767CB6E00881CBE /* ActivityAssertion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActivityAssertion.cpp; sourceTree = "<group>"; };
 		A7E93CEB192531AA00A1DC48 /* AuxiliaryProcessIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AuxiliaryProcessIOS.mm; path = ios/AuxiliaryProcessIOS.mm; sourceTree = "<group>"; };
+		A7F35F5A2B194BF100E43D98 /* RemoteLayerWithRemoteRenderingBackingStore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RemoteLayerWithRemoteRenderingBackingStore.mm; sourceTree = "<group>"; };
+		A7F35F5B2B194C0800E43D98 /* RemoteLayerWithRemoteRenderingBackingStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerWithRemoteRenderingBackingStore.h; sourceTree = "<group>"; };
+		A7F35F5D2B1958B200E43D98 /* RemoteLayerWithInProcessRenderingBackingStore.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RemoteLayerWithInProcessRenderingBackingStore.mm; sourceTree = "<group>"; };
+		A7F35F5E2B1959B300E43D98 /* RemoteLayerWithInProcessRenderingBackingStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLayerWithInProcessRenderingBackingStore.h; sourceTree = "<group>"; };
 		AAB145E4223F931200E489D8 /* PrefetchCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefetchCache.h; sourceTree = "<group>"; };
 		AAB145E5223F931200E489D8 /* PrefetchCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrefetchCache.cpp; sourceTree = "<group>"; };
 		AAFA634E234F7C6300FFA864 /* AsyncRevalidation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncRevalidation.h; sourceTree = "<group>"; };
@@ -9849,8 +9853,10 @@
 				2DDE0AF918298CC900F97EAA /* RemoteLayerTreePropertyApplier.mm */,
 				1AF1AC6A1651759E00C17D7F /* RemoteLayerTreeTransaction.h */,
 				1AF1AC691651759E00C17D7F /* RemoteLayerTreeTransaction.mm */,
-				0F80264727AB4AEF00EC6ED7 /* RemoteLayerWithRemoteRenderingBackingStoreCollection.h */,
-				0F80264627AB4AEF00EC6ED7 /* RemoteLayerWithRemoteRenderingBackingStoreCollection.mm */,
+				A7F35F5E2B1959B300E43D98 /* RemoteLayerWithInProcessRenderingBackingStore.h */,
+				A7F35F5D2B1958B200E43D98 /* RemoteLayerWithInProcessRenderingBackingStore.mm */,
+				A7F35F5B2B194C0800E43D98 /* RemoteLayerWithRemoteRenderingBackingStore.h */,
+				A7F35F5A2B194BF100E43D98 /* RemoteLayerWithRemoteRenderingBackingStore.mm */,
 				0F5947A1187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.cpp */,
 				0F5947A2187B3B7D00437857 /* RemoteScrollingCoordinatorTransaction.h */,
 				FAC3C3BA2A93E561001E2EB8 /* RemoteScrollingCoordinatorTransaction.serialization.in */,
@@ -15536,6 +15542,8 @@
 				0FF264A01A1FF9CC001FE759 /* RemoteLayerTreeScrollingPerformanceData.h in Headers */,
 				1AF1AC6C1651759E00C17D7F /* RemoteLayerTreeTransaction.h in Headers */,
 				2DC18FB3218A6E9E0025A88D /* RemoteLayerTreeViews.h in Headers */,
+				A7F35F5F2B1959C000E43D98 /* RemoteLayerWithInProcessRenderingBackingStore.h in Headers */,
+				A7F35F5C2B194C0800E43D98 /* RemoteLayerWithRemoteRenderingBackingStore.h in Headers */,
 				0792314C239CBCB8009598E2 /* RemoteMediaPlayerManagerProxyMessages.h in Headers */,
 				071BC59023CE1EAA00680D7C /* RemoteMediaPlayerProxyMessages.h in Headers */,
 				1D4D737123A9E56200717A25 /* RemoteMediaResourceManagerMessages.h in Headers */,
