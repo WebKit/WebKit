@@ -665,8 +665,19 @@ bool WidthIterator::characterCanUseSimplifiedTextMeasuring(char32_t codePoint, b
     case zeroWidthNoBreakSpace:
     case zeroWidthNonJoiner:
     case zeroWidthJoiner:
+    case wordJoiner:
+    case zeroWidthSpace:
+    case functionApplication:
+    case invisibleTimes:
+    case invisibleSeparator:
+    case inhibitSymmetricSwapping:
+    case activateSymmetricSwapping:
+    case inhibitArabicFormShaping:
+    case activateArabicFormShaping:
+    case nationalDigitShapes:
+    case nominalDigitShapes:
+    case mediumShade:
         return false;
-        break;
     }
 
     if (codePoint >= HiraganaLetterSmallA || isControlCharacter(codePoint))

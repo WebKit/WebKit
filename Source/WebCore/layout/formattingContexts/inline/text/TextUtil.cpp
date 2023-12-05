@@ -69,9 +69,13 @@ InlineLayoutUnit TextUtil::width(const InlineTextBox& inlineTextBox, const FontC
         ++to;
     auto width = 0.f;
     auto useSimplifiedContentMeasuring = inlineTextBox.canUseSimplifiedContentMeasuring();
-    if (useSimplifiedContentMeasuring)
-        width = fontCascade.widthForSimpleText(StringView(text).substring(from, to - from));
-    else {
+    if (useSimplifiedContentMeasuring) {
+        auto view = StringView(text).substring(from, to - from);
+        if (fontCascade.canTakeFixedPitchFastContentMeasuring())
+            width = fontCascade.widthForSimpleTextWithFixedPitch(view, inlineTextBox.style().collapseWhiteSpace());
+        else
+            width = fontCascade.widthForSimpleText(view);
+    } else {
         auto& style = inlineTextBox.style();
         auto directionalOverride = style.unicodeBidi() == UnicodeBidi::Override;
         auto run = WebCore::TextRun { StringView(text).substring(from, to - from), contentLogicalLeft, { }, ExpansionBehavior::defaultBehavior(), directionalOverride ? style.direction() : TextDirection::LTR, directionalOverride };

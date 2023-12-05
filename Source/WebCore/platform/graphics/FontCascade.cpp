@@ -361,6 +361,36 @@ float FontCascade::widthForSimpleText(StringView text, TextDirection textDirecti
     return width;
 }
 
+float FontCascade::widthForSimpleTextWithFixedPitch(StringView text, bool whitespaceIsCollapsed) const
+{
+    if (text.isNull() || text.isEmpty())
+        return 0;
+
+    auto monospaceCharacterWidth = primaryFont().spaceWidth();
+    if (whitespaceIsCollapsed)
+        return text.length() * monospaceCharacterWidth;
+
+    float* cacheEntry = m_fonts->widthCache().add(text, std::numeric_limits<float>::quiet_NaN());
+    if (cacheEntry && !std::isnan(*cacheEntry))
+        return *cacheEntry;
+
+    auto width = 0.f;
+    for (unsigned index = 0; index < text.length(); ++index) {
+        auto character = text[index];
+        ASSERT(character != tabCharacter); // canUseSimplifiedTextMeasuring will return false for tab character with !whitespaceIsCollapsed.
+        if (character == newlineCharacter || character == lineSeparator || character == paragraphSeparator) {
+            // Zero width.
+        } else if (character >= space)
+            width += monospaceCharacterWidth;
+        if (index && character == space)
+            width += wordSpacing();
+    }
+
+    if (cacheEntry)
+        *cacheEntry = width;
+    return width;
+}
+
 GlyphData FontCascade::glyphDataForCharacter(char32_t c, bool mirror, FontVariant variant) const
 {
     if (variant == AutoVariant) {

@@ -65,8 +65,8 @@ class GlyphPage;
 
 struct GlyphData;
 
-enum FontVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
-enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
+enum FontVariant : uint8_t { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
+enum Pitch : uint8_t { UnknownPitch, FixedPitch, VariablePitch };
 enum class IsForPlatformFont : bool { No, Yes };
 
 // Used to create platform fonts.
@@ -181,6 +181,7 @@ public:
 
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
+    bool canTakeFixedPitchFastContentMeasuring() const { return m_canTakeFixedPitchFastContentMeasuring; }
 
     Origin origin() const { return m_attributes.origin; }
     bool isInterstitial() const { return m_attributes.isInterstitial == IsInterstitial::Yes; }
@@ -356,6 +357,7 @@ private:
     float m_syntheticBoldOffset { 0 };
 
     unsigned m_treatAsFixedPitch : 1;
+    unsigned m_canTakeFixedPitchFastContentMeasuring : 1 { false };
     unsigned m_isBrokenIdeographFallback : 1;
     unsigned m_hasVerticalGlyphs : 1;
 

@@ -136,6 +136,21 @@ void FontCascadeFonts::determinePitch(const FontCascadeDescription& description)
         m_pitch = VariablePitch;
 }
 
+void FontCascadeFonts::determineCanTakeFixedPitchFastContentMeasuring(const FontCascadeDescription& description)
+{
+#if PLATFORM(COCOA)
+    auto& primaryRanges = realizeFallbackRangesAt(description, 0);
+    unsigned numRanges = primaryRanges.size();
+    if (numRanges == 1)
+        m_canTakeFixedPitchFastContentMeasuring = triState(primaryRanges.fontForFirstRange().canTakeFixedPitchFastContentMeasuring());
+    else
+        m_canTakeFixedPitchFastContentMeasuring = TriState::False;
+#else
+    UNUSED_PARAM(description);
+    m_canTakeFixedPitchFastContentMeasuring = TriState::False;
+#endif
+}
+
 bool FontCascadeFonts::isLoadingCustomFonts() const
 {
     for (auto& fontRanges : m_realizedFallbackRanges) {
