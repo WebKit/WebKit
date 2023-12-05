@@ -27,6 +27,10 @@
 #include "ViewTimeline.h"
 
 #include "CSSNumericFactory.h"
+#include "CSSPrimitiveValue.h"
+#include "CSSPrimitiveValueMappings.h"
+#include "CSSUnits.h"
+#include "CSSViewValue.h"
 #include "Element.h"
 
 namespace WebCore {
@@ -39,6 +43,40 @@ Ref<ViewTimeline> ViewTimeline::create(ViewTimelineOptions&& options)
 Ref<ViewTimeline> ViewTimeline::create(const AtomString& name, ScrollAxis axis, ViewTimelineInsets&& insets)
 {
     return adoptRef(*new ViewTimeline(name, axis, WTFMove(insets)));
+}
+
+Ref<ViewTimeline> ViewTimeline::createFromCSSValue(const CSSViewValue& cssViewValue)
+{
+    auto axisValue = cssViewValue.axis();
+    auto axis = axisValue ? fromCSSValueID<ScrollAxis>(axisValue->valueID()) : ScrollAxis::Block;
+
+    auto convertInsetValue = [](CSSValue* value) -> std::optional<Length> {
+        if (!value)
+            return std::nullopt;
+
+        if (value->valueID() == CSSValueAuto)
+            return Length();
+
+        ASSERT(value->isPrimitiveValue());
+        auto& primitiveValue = downcast<CSSPrimitiveValue>(*value);
+        if (primitiveValue.isPercentage())
+            return Length(primitiveValue.doubleValue(CSSUnitType::CSS_PERCENTAGE), LengthType::Percent);
+        if (primitiveValue.isLength())
+            return Length(primitiveValue.doubleValue(CSSUnitType::CSS_PX), LengthType::Fixed);
+
+        ASSERT_NOT_REACHED();
+        return std::nullopt;
+    };
+
+    auto startInset = convertInsetValue(cssViewValue.startInset().get());
+
+    auto endInset = [&]() {
+        if (auto endInsetValue = cssViewValue.endInset())
+            return convertInsetValue(endInsetValue.get());
+        return convertInsetValue(cssViewValue.startInset().get());
+    }();
+
+    return adoptRef(*new ViewTimeline(nullAtom(), axis, { startInset, endInset }));
 }
 
 // FIXME: compute offset values from options.
@@ -56,6 +94,21 @@ ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, ViewTimeline
     , m_endOffset(CSSNumericFactory::px(0))
     , m_insets(WTFMove(insets))
 {
+}
+
+Ref<CSSValue> ViewTimeline::toCSSValue() const
+{
+    auto insetCSSValue = [](const std::optional<Length>& inset) -> RefPtr<CSSValue> {
+        if (!inset)
+            return nullptr;
+        return CSSPrimitiveValue::create(*inset);
+    };
+
+    return CSSViewValue::create(
+        CSSPrimitiveValue::create(toCSSValueID(axis())),
+        insetCSSValue(m_insets.start),
+        insetCSSValue(m_insets.end)
+    );
 }
 
 } // namespace WebCore

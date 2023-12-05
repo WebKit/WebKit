@@ -317,9 +317,10 @@ RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange&, CSSParserMode);
 RefPtr<CSSValue> consumeTextSpacingTrim(CSSParserTokenRange&);
 RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeAnimationTimeline(CSSParserTokenRange&);
-RefPtr<CSSValue> consumeSingleAnimationTimeline(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeAnimationTimeline(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeSingleAnimationTimeline(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange&);
+RefPtr<CSSValue> consumeAnimationTimelineView(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeViewTimelineInsetListItem(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeViewTimelineInset(CSSParserTokenRange&, const CSSParserContext&);
 

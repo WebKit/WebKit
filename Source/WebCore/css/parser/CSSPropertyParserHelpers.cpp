@@ -83,6 +83,7 @@
 #include "CSSValuePool.h"
 #include "CSSVariableData.h"
 #include "CSSVariableParser.h"
+#include "CSSViewValue.h"
 #include "CalculationCategory.h"
 #include "ColorConversion.h"
 #include "ColorInterpolation.h"
@@ -8695,14 +8696,14 @@ RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange& range)
     return nullptr;
 }
 
-RefPtr<CSSValue> consumeAnimationTimeline(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeAnimationTimeline(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeCommaSeparatedListWithSingleValueOptimization(range, [](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
-        return consumeSingleAnimationTimeline(range);
+    return consumeCommaSeparatedListWithSingleValueOptimization(range, [context](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
+        return consumeSingleAnimationTimeline(range, context);
     });
 }
 
-RefPtr<CSSValue> consumeSingleAnimationTimeline(CSSParserTokenRange& range)
+RefPtr<CSSValue> consumeSingleAnimationTimeline(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // <single-animation-timeline> = auto | none | <dashed-ident> | <scroll()> | <view()>
     auto id = range.peek().id();
@@ -8710,7 +8711,9 @@ RefPtr<CSSValue> consumeSingleAnimationTimeline(CSSParserTokenRange& range)
         return consumeIdent(range);
     if (auto name = consumeDashedIdent(range))
         return name;
-    return consumeAnimationTimelineScroll(range);
+    if (auto scroll = consumeAnimationTimelineScroll(range))
+        return scroll;
+    return consumeAnimationTimelineView(range, context);
 }
 
 RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange& range)
@@ -8740,6 +8743,37 @@ RefPtr<CSSValue> consumeAnimationTimelineScroll(CSSParserTokenRange& range)
         return nullptr;
 
     return CSSScrollValue::create(WTFMove(scroller), WTFMove(axis));
+}
+
+RefPtr<CSSValue> consumeAnimationTimelineView(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // https://drafts.csswg.org/scroll-animations-1/#view-notation
+    // <view()> = view( [ <axis> || <'view-timeline-inset'> ]? )
+    // <axis> = block | inline | x | y
+    // <'view-timeline-inset'> = [ [ auto | <length-percentage> ]{1,2} ]#
+
+    if (range.peek().type() != FunctionToken || range.peek().functionId() != CSSValueView)
+        return nullptr;
+
+    auto args = consumeFunction(range);
+
+    if (!args.size())
+        return CSSViewValue::create();
+
+    auto axis = CSSPropertyParsing::consumeAxis(args);
+
+    auto startInset = CSSPropertyParsing::consumeSingleViewTimelineInset(args, context);
+    auto endInset = CSSPropertyParsing::consumeSingleViewTimelineInset(args, context);
+
+    // Try <axis> again since the order of <axis> and <'view-timeline-inset'> is not guaranteed.
+    if (!axis)
+        axis = CSSPropertyParsing::consumeAxis(args);
+
+    // If there are values left to consume, these are not valid <axis> or <'view-timeline-inset'> and the function is invalid.
+    if (args.size())
+        return nullptr;
+
+    return CSSViewValue::create(WTFMove(axis), WTFMove(startInset), WTFMove(endInset));
 }
 
 RefPtr<CSSValue> consumeViewTimelineInsetListItem(CSSParserTokenRange& range, const CSSParserContext& context)

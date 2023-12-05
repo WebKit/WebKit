@@ -1718,7 +1718,7 @@ static RefPtr<CSSValue> consumeAnimationValueForShorthand(CSSPropertyID property
     case CSSPropertyTransitionProperty:
         return consumeSingleTransitionPropertyOrNone(range);
     case CSSPropertyAnimationTimeline:
-        return consumeAnimationTimeline(range);
+        return consumeAnimationTimeline(range, context);
     case CSSPropertyAnimationTimingFunction:
     case CSSPropertyTransitionTimingFunction:
         return consumeTimingFunction(range, context);

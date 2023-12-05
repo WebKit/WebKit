@@ -133,6 +133,7 @@ public:
     bool isUnicodeRangeValue() const { return m_classType == UnicodeRangeClass; }
     bool isValueList() const { return m_classType == ValueListClass; }
     bool isVariableReferenceValue() const { return m_classType == VariableReferenceClass; }
+    bool isViewValue() const { return m_classType == ViewClass; }
     bool isXywhShape() const { return m_classType == XywhShapeClass; }
 
 #if ENABLE(CSS_PAINTING_API)
@@ -265,6 +266,7 @@ protected:
         UnicodeRangeClass,
         ValuePairClass,
         VariableReferenceClass,
+        ViewClass,
         XywhShapeClass,
 
         // Classes that contain vectors, which derive from CSSValueContainingVector.

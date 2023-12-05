@@ -50,7 +50,7 @@ public:
     const AtomString& name() const { return m_name; }
     void setName(const AtomString& name) { m_name = name; }
 
-    Ref<CSSValue> toCSSValue() const;
+    virtual Ref<CSSValue> toCSSValue() const;
 
 protected:
     explicit ScrollTimeline(const AtomString&, ScrollAxis);
