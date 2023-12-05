@@ -58,7 +58,7 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
-    bool isOn = style.states.contains(ControlStyle::State::Checked);
+    bool isOn = owningPart().isOn();
     bool isRTL = style.states.contains(ControlStyle::State::RightToLeft);
     bool isEnabled = style.states.contains(ControlStyle::State::Enabled);
     bool isPressed = style.states.contains(ControlStyle::State::Pressed);

@@ -600,18 +600,6 @@ String InputType::validationMessage() const
     return emptyString();
 }
 
-void InputType::handleClickEvent(MouseEvent&)
-{
-}
-
-void InputType::handleMouseDownEvent(MouseEvent&)
-{
-}
-
-void InputType::handleDOMActivateEvent(Event&)
-{
-}
-
 bool InputType::allowsShowPickerAcrossFrames()
 {
     return false;
@@ -844,14 +832,6 @@ void InputType::setValue(const String& sanitizedValue, bool valueChanged, TextFi
 
     if (auto* cache = element()->document().existingAXObjectCache())
         cache->valueChanged(element());
-}
-
-void InputType::willDispatchClick(InputElementClickState&)
-{
-}
-
-void InputType::didDispatchClick(Event&, const InputElementClickState&)
-{
 }
 
 String InputType::localizeValue(const String& proposedValue) const

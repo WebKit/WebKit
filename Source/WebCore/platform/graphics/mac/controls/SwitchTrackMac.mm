@@ -135,7 +135,7 @@ static RefPtr<ImageBuffer> trackImage(GraphicsContext& context, RefPtr<ImageBuff
 
 void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)
 {
-    auto isOn = style.states.contains(ControlStyle::State::Checked);
+    auto isOn = owningPart().isOn();
     auto isRTL = style.states.contains(ControlStyle::State::RightToLeft);
     auto isEnabled = style.states.contains(ControlStyle::State::Enabled);
     auto isPressed = style.states.contains(ControlStyle::State::Pressed);

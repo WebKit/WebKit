@@ -92,7 +92,7 @@ void RadioInputType::forEachButtonInDetachedGroup(ContainerNode& rootNode, const
     }
 }
 
-void RadioInputType::willUpdateCheckedness(bool nowChecked)
+void RadioInputType::willUpdateCheckedness(bool nowChecked, WasSetByJavaScript)
 {
     if (!nowChecked)
         return;

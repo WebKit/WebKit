@@ -341,6 +341,7 @@ public:
     bool hasEverBeenPasswordField() const { return m_hasEverBeenPasswordField; }
 
     float switchCheckedChangeAnimationProgress() const;
+    bool isSwitchVisuallyOn() const;
 
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);

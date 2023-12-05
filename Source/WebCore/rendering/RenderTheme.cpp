@@ -600,6 +600,7 @@ static void updateSwitchThumbPartForRenderer(SwitchThumbPart& switchThumbPart, c
     auto& input = checkedDowncast<HTMLInputElement>(*renderer.node()->shadowHost());
     ASSERT(input.isSwitch());
 
+    switchThumbPart.setIsOn(input.isSwitchVisuallyOn());
     switchThumbPart.setProgress(input.switchCheckedChangeAnimationProgress());
 }
 
@@ -608,6 +609,7 @@ static void updateSwitchTrackPartForRenderer(SwitchTrackPart& switchTrackPart, c
     auto& input = checkedDowncast<HTMLInputElement>(*renderer.node()->shadowHost());
     ASSERT(input.isSwitch());
 
+    switchTrackPart.setIsOn(input.isSwitchVisuallyOn());
     switchTrackPart.setProgress(input.switchCheckedChangeAnimationProgress());
 }
 
@@ -1310,13 +1312,8 @@ bool RenderTheme::isWindowActive(const RenderObject& renderer) const
 
 bool RenderTheme::isChecked(const RenderObject& renderer) const
 {
-    if (!renderer.node())
-        return false;
-    if (RefPtr element = dynamicDowncast<HTMLInputElement>(*renderer.node()))
-        return element->matchesCheckedPseudoClass();
-    if (RefPtr host = dynamicDowncast<HTMLInputElement>(renderer.node()->shadowHost()))
-        return host->matchesCheckedPseudoClass();
-    return false;
+    RefPtr element = dynamicDowncast<HTMLInputElement>(renderer.node());
+    return element && element->matchesCheckedPseudoClass();
 }
 
 bool RenderTheme::isIndeterminate(const RenderObject& renderer) const
