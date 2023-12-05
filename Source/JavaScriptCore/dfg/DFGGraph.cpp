@@ -469,7 +469,10 @@ void Graph::dumpBlockHeader(PrintStream& out, const char* prefixStr, BasicBlock*
     out.print(prefix, "  Successors:");
     if (block->terminal()) {
         for (BasicBlock* successor : block->successors()) {
-            out.print(" ", *successor);
+            if (successor)
+                out.print(" ", *successor);
+            else
+                out.print(" ", "*NULL*");
         }
     } else
         out.print(" <invalid>");
@@ -631,10 +634,10 @@ void Graph::dump(PrintStream& out, DumpContext* context)
         case LoadStore:
         case ThreadedCPS: {
             out.print(prefix, "  Vars After: ");
-            if (block->cfaHasVisited)
+            // if (block->cfaHasVisited)
                 out.print(inContext(block->valuesAtTail, context));
-            else
-                out.print("<empty>");
+            // else
+            //     out.print("<empty>");
             out.print("\n");
             out.print(prefix, "  Var Links: ", block->variablesAtTail, "\n");
             break;

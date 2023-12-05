@@ -51,6 +51,7 @@
 #include "DFGLiveCatchVariablePreservationPhase.h"
 #include "DFGLivenessAnalysisPhase.h"
 #include "DFGLoopPreHeaderCreationPhase.h"
+#include "DFGLoopUnrolling.h"
 #include "DFGMovHintRemovalPhase.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSREntrypointCreationPhase.h"
@@ -378,10 +379,22 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         RUN_PHASE(performCriticalEdgeBreaking);
         if (Options::createPreHeaders())
             RUN_PHASE(performLoopPreHeaderCreation);
+
+        if (Options::useFTLLoopUnrolling()) {
+            RUN_PHASE(performCPSRethreading);
+            RUN_PHASE(performDFGLoopUnrolling);
+            RUN_PHASE(performCFGSimplification);
+            RUN_PHASE(performCriticalEdgeBreaking);
+        }
+
         RUN_PHASE(performCPSRethreading);
         RUN_PHASE(performSSAConversion);
         RUN_PHASE(performSSALowering);
-        
+
+        if (Options::useFTLLoopUnrolling())
+            RUN_PHASE(performCFA);
+
+
         // Ideally, these would be run to fixpoint with the object allocation sinking phase.
         if (Options::usePutStackSinking())
             RUN_PHASE(performPutStackSinking);
@@ -744,4 +757,3 @@ std::unique_ptr<JITData> Plan::tryFinalizeJITData(const DFG::JITCode& jitCode)
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
-

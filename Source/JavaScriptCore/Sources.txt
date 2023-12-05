@@ -388,6 +388,7 @@ dfg/DFGLazyJSValue.cpp
 dfg/DFGLazyNode.cpp
 dfg/DFGLivenessAnalysisPhase.cpp
 dfg/DFGLoopPreHeaderCreationPhase.cpp
+dfg/DFGLoopUnrolling.cpp
 dfg/DFGMayExit.cpp
 dfg/DFGMinifiedGraph.cpp
 dfg/DFGMinifiedNode.cpp
