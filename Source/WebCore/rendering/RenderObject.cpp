@@ -1344,6 +1344,9 @@ void RenderObject::outputRenderObject(TextStream& stream, bool mark, int depth) 
     else
         stream << nameView;
 
+    if (style().styleType() != PseudoId::None)
+        stream << " (::" << style().styleType() << ")";
+
     if (is<RenderBox>(*this)) {
         auto& renderBox = downcast<RenderBox>(*this);
         FloatRect boxRect = renderBox.frameRect();
