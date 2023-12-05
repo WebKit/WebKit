@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "GeneratedSerializers.h"
+#include "GeneratedWebKitSecureCoding.h"
 
 #include "PlatformClass.h"
 
@@ -84,6 +85,71 @@ std::optional<WebKit::PlatformClass> ArgumentCoder<WebKit::PlatformClass>::decod
         }
     };
 }
+
+void ArgumentCoder<WebKit::CoreIPCNSSomeFoundationType>::encode(Encoder& encoder, const WebKit::CoreIPCNSSomeFoundationType& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_propertyList)>, WebKit::CoreIPCDictionary>);
+    struct ShouldBeSameSizeAsNSSomeFoundationType : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::CoreIPCNSSomeFoundationType>, false> {
+        WebKit::CoreIPCDictionary m_propertyList;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsNSSomeFoundationType) == sizeof(WebKit::CoreIPCNSSomeFoundationType));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(WebKit::CoreIPCNSSomeFoundationType, m_propertyList)
+    >::value);
+
+    encoder << instance.m_propertyList;
+}
+
+std::optional<WebKit::CoreIPCNSSomeFoundationType> ArgumentCoder<WebKit::CoreIPCNSSomeFoundationType>::decode(Decoder& decoder)
+{
+    auto m_propertyList = decoder.decode<WebKit::CoreIPCDictionary>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+
+    if (!(WebKit::CoreIPCNSSomeFoundationType::isValidDictionary(*m_propertyList)))
+        return std::nullopt;
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::CoreIPCNSSomeFoundationType {
+            WTFMove(*m_propertyList)
+        }
+    };
+}
+
+#if ENABLE(DATA_DETECTION)
+void ArgumentCoder<WebKit::CoreIPCDDScannerResult>::encode(Encoder& encoder, const WebKit::CoreIPCDDScannerResult& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_propertyList)>, WebKit::CoreIPCDictionary>);
+    struct ShouldBeSameSizeAsDDScannerResult : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::CoreIPCDDScannerResult>, false> {
+        WebKit::CoreIPCDictionary m_propertyList;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsDDScannerResult) == sizeof(WebKit::CoreIPCDDScannerResult));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(WebKit::CoreIPCDDScannerResult, m_propertyList)
+    >::value);
+
+    encoder << instance.m_propertyList;
+}
+
+std::optional<WebKit::CoreIPCDDScannerResult> ArgumentCoder<WebKit::CoreIPCDDScannerResult>::decode(Decoder& decoder)
+{
+    auto m_propertyList = decoder.decode<WebKit::CoreIPCDictionary>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+
+    if (!(WebKit::CoreIPCDDScannerResult::isValidDictionary(*m_propertyList)))
+        return std::nullopt;
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::CoreIPCDDScannerResult {
+            WTFMove(*m_propertyList)
+        }
+    };
+}
+
+#endif
 
 } // namespace IPC
 

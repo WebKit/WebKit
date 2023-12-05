@@ -35,47 +35,25 @@ namespace Layout {
 class InlineFormattingContext;
 class InlineLevelBox;
 class Line;
-struct InlineItemRange;
 
 class RubyFormattingContext {
 public:
-    RubyFormattingContext(const InlineFormattingContext& parentFormattingContext);
-
-    struct InlineLayoutResult {
-        InlineContentBreaker::IsEndOfLine isEndOfLine { InlineContentBreaker::IsEndOfLine::No };
-        size_t committedCount { 0 };
-    };
-    InlineLayoutResult layoutInlineAxis(const InlineItemRange&, const InlineItemList&, Line&, InlineLayoutUnit availableWidth);
-
-    void applyAnnotationContributionToLayoutBounds(InlineLevelBox& rubyBaseInlineBox) const;
-    InlineLayoutPoint placeAnnotationBox(const Box& rubyBaseLayoutBox);
-    InlineLayoutSize sizeAnnotationBox(const Box& rubyBaseLayoutBox);
-
-    InlineLayoutUnit overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseStart, const InlineDisplay::Boxes&);
-    InlineLayoutUnit overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, WTF::Range<size_t> rubyBaseRange, const InlineDisplay::Boxes&);
-
-    static std::optional<size_t> nextWrapOpportunity(size_t inlineItemIndex, std::optional<size_t> previousInlineItemIndex, const InlineItemRange&, const InlineItemList&);
-
+    // Line building
     static bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& current);
     static std::optional<InlineLayoutUnit> annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, const InlineFormattingContext&);
     static InlineLayoutUnit baseLogicalWidthFromRubyBaseEnd(const InlineItem& rubyBaseEnd, const Line::RunList&, const InlineContentBreaker::ContinuousContent::RunList&);
     static void applyRubyAlign(Line&, const InlineFormattingContext&);
 
-private:
-    struct BaseLayoutResult {
-        size_t committedCount { 0 };
-        InlineLayoutUnit logicalRightSpacing { 0.f };
-    };
-    BaseLayoutResult layoutRubyBaseInlineAxis(Line&, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStart, const InlineItemList&);
-    std::optional<bool> annotationOverlapCheck(const InlineDisplay::Box&, const InlineLayoutRect& overhangingRect) const;
-    void placeRubyContent(WTF::Range<size_t> candidateRange, const InlineItemList&, Line&);
-    InlineLayoutUnit logicaWidthForRubyRange(WTF::Range<size_t> candidateRange, const InlineItemList&, InlineLayoutUnit lineContentLogicalRight) const;
-    InlineLayoutRect visualRectIncludingBlockDirection(const InlineLayoutRect& visualRectIgnoringBlockDirection) const;
+    // Line box building
+    static void applyAnnotationContributionToLayoutBounds(InlineLevelBox& rubyBaseInlineBox, const InlineFormattingContext&);
 
-    const InlineFormattingContext& parentFormattingContext() const { return m_parentFormattingContext; }
+    // Display content building
+    static InlineLayoutPoint placeAnnotationBox(const Box& rubyBaseLayoutBox, const InlineFormattingContext&);
+    static InlineLayoutSize sizeAnnotationBox(const Box& rubyBaseLayoutBox, const InlineFormattingContext&);
 
-private:
-    const InlineFormattingContext& m_parentFormattingContext;
+    static InlineLayoutUnit overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseStart, const InlineDisplay::Boxes&, const InlineFormattingContext&);
+    static InlineLayoutUnit overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, WTF::Range<size_t> rubyBaseRange, const InlineDisplay::Boxes&, const InlineFormattingContext&);
+
 };
 
 } // namespace Layout

@@ -1993,7 +1993,11 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
             continue;
         if ([NSStringFromSelector(item.action) isEqualToString:@"openWithPreview"])
             openInPreviewIndex = i;
-        PDFContextMenuItem menuItem { String([item title]), !![item isEnabled], !![item isSeparatorItem], static_cast<int>([item state]), !![item action], i };
+        PDFContextMenuItem menuItem { String([item title]), static_cast<int>([item state]), i,
+            [item isEnabled] ? ContextMenuItemEnablement::Enabled : ContextMenuItemEnablement::Disabled,
+            [item action] ? ContextMenuItemHasAction::Yes : ContextMenuItemHasAction::No,
+            [item isSeparatorItem] ? ContextMenuItemIsSeparator::Yes : ContextMenuItemIsSeparator::No
+        };
         items.append(WTFMove(menuItem));
     }
     PDFContextMenu contextMenu { point, WTFMove(items), WTFMove(openInPreviewIndex) };

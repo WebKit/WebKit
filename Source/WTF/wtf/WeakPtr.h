@@ -317,6 +317,7 @@ private:
     template<typename, typename, EnableWeakPtrThreadingAssertions> friend class WeakListHashSet;
     template<typename, typename, typename> friend class WeakHashMap;
     template<typename, typename> friend class WeakPtr;
+    template<typename, typename> friend class WeakRef;
 
     mutable CompactRefPtrTuple<WeakPtrImpl, uint16_t> m_impl;
 #if ASSERT_ENABLED

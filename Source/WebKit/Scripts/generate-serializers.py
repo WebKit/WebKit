@@ -22,6 +22,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import copy
 import os
 import re
 import sys
@@ -39,6 +40,7 @@ import sys
 # RValue - serializer takes an rvalue reference, instead of an lvalue.
 # WebKitPlatform - put serializer into a file built as part of WebKitPlatform
 # CustomEncoder - Only generate the decoder, not the encoder.
+# WebKitSecureCodingClass - For webkit_secure_coding declarations that need a custom way of establishing the Obj-C class to instantiate (e.g. softlinked frameworks)
 #
 # Supported member attributes:
 #
@@ -68,17 +70,19 @@ class Template(object):
 
 
 class SerializedType(object):
-    def __init__(self, struct_or_class, cf_type, namespace, name, parent_class_name, members, condition, attributes, templates, other_metadata=None):
+    def __init__(self, struct_or_class, cf_type, namespace, name, parent_class_name, members, dictionary_members, condition, attributes, templates, other_metadata=None):
         self.struct_or_class = struct_or_class
         self.cf_type = cf_type
         self.to_cf_method = None
         self.from_cf_method = None
         self.forward_declaration = None
+        self.custom_secure_coding_class = None
         self.namespace = namespace
         self.name = name
         self.parent_class_name = parent_class_name
         self.parent_class = None
         self.members = members
+        self.dictionary_members = dictionary_members
         self.alias = None
         self.condition = condition
         self.encoders = ['Encoder']
@@ -106,6 +110,8 @@ class SerializedType(object):
                         self.from_cf_method = value
                     if key == 'ForwardDeclaration':
                         self.forward_declaration = value
+                    if key == 'WebKitSecureCodingClass':
+                        self.custom_secure_coding_class = value
                 else:
                     if attribute == 'Nested':
                         self.nested = True
@@ -123,18 +129,25 @@ class SerializedType(object):
         if other_metadata:
             if other_metadata == 'subclasses':
                 self.members_are_subclasses = True
+        if self.is_webkit_secure_coding_type():
+            self.namespace = 'WebKit'
+            validator_attribute = 'Validator=\'' + self.namespace_and_name() + '::isValidDictionary(*m_propertyList)\''
+            self.members.append(MemberVariable('WebKit::CoreIPCDictionary', 'm_propertyList', None, [validator_attribute]))
+            self.webkit_platform = True
 
     def namespace_and_name(self):
         if self.cf_type is not None:
             return self.cf_type + "Ref"
         if self.namespace is None:
             return self.name
-        return self.namespace + '::' + self.name
+        return self.namespace + '::' + self.cpp_struct_or_class_name()
 
     def cf_wrapper_type(self):
         return self.namespace + '::' + self.name
 
-    def namespace_unless_wtf_and_name(self):
+    def name_declaration_for_serialized_type_info(self):
+        if self.struct_or_class == 'webkit_secure_coding':
+            return 'webkit_secure_coding ' + self.name
         if self.namespace == 'WTF':
             if self.name != "UUID":
                 return self.name
@@ -157,6 +170,47 @@ class SerializedType(object):
                 return False
         return True
 
+    def members_for_serialized_type_info(self):
+        if not self.is_webkit_secure_coding_type():
+            return self.serialized_members()
+
+        result = []
+        for member in self.dictionary_members:
+            member = copy.copy(member)
+            outer_type = None
+            collection_key_type = None
+            collection_value_type = None
+            optional = False
+            if member.name.endswith('?'):
+                optional = True
+            match = re.search(r'(.*)<(.*), (.*)>', member.name)
+            if match:
+                outer_type, collection_key_type, collection_value_type = match.groups()
+            else:
+                match = re.search(r'(.*)<(.*)>', member.name)
+                if match:
+                    outer_type, collection_value_type = match.groups()
+                else:
+                    outer_type = member.name
+
+            outer_type = 'WebKit::CoreIPC' + outer_type
+            if outer_type.endswith('?'):
+                outer_type = outer_type[:-1]
+
+            if collection_key_type is not None:
+                member.name = outer_type + '<WebKit::CoreIPC' + collection_key_type + ', WebKit::CoreIPC' + collection_value_type + '>'
+            elif collection_value_type is not None:
+                member.name = outer_type + '<WebKit::CoreIPC' + collection_value_type + '>'
+            else:
+                member.name = outer_type
+
+            if optional:
+                member.name = member.name + '?'
+            result.append(member)
+
+        return result
+
+
     def serialized_members(self):
         return list(filter(lambda member: 'NotSerialized' not in member.attributes, self.members))
 
@@ -170,6 +224,26 @@ class SerializedType(object):
 
     def should_skip_forward_declare(self):
         return self.nested or self.templates
+
+    def cpp_type_from_struct_or_class(self):
+        if self.is_webkit_secure_coding_type():
+            return 'class'
+        return self.struct_or_class
+
+    def cpp_struct_or_class_name(self):
+        if self.is_webkit_secure_coding_type():
+            return 'CoreIPC' + self.name
+        return self.name
+
+    def is_webkit_secure_coding_type(self):
+        return self.struct_or_class == 'webkit_secure_coding'
+
+    def wrapper_for_webkit_secure_coding_type(self):
+        copied_type = copy.copy(self)
+        copied_type.struct_or_class = 'class'
+        copied_type.name = self.cpp_struct_or_class_name()
+        copied_type.dictionary_members = None
+        return copied_type
 
 
 class SerializedEnum(object):
@@ -261,10 +335,11 @@ class ConditionalForwardDeclaration(object):
 
 
 class ConditionalHeader(object):
-    def __init__(self, header, condition, webkit_platform=False):
+    def __init__(self, header, condition, webkit_platform=False, secure_coding=False):
         self.header = header
         self.condition = condition
         self.webkit_platform = webkit_platform
+        self.secure_coding = secure_coding
 
     def __lt__(self, other):
         if self.header != other.header:
@@ -454,7 +529,7 @@ def generate_forward_declarations(serialized_types, serialized_enums, additional
                 result.append('template<' + typenames(type.alias) + '> ' + alias_struct_or_class(type.alias) + ' ' + remove_template_parameters(type.alias) + ';')
                 result.append('using ' + type.name + ' = ' + remove_alias_struct_or_class(type.alias) + ';')
             elif type.cf_type is None:
-                result.append(type.struct_or_class + ' ' + type.name + ';')
+                result.append(type.cpp_type_from_struct_or_class() + ' ' + type.cpp_struct_or_class_name() + ';')
             if type.condition is not None:
                 result.append('#endif')
         for template in template_types_by_namespace.get(namespace, []):
@@ -841,6 +916,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
     result.append(_license_header)
     result.append('#include "config.h"')
     result.append('#include "GeneratedSerializers.h"')
+    result.append('#include "GeneratedWebKitSecureCoding.h"')
     result.append('')
     for header in headers:
         if header.webkit_platform != generating_webkit_platform_impl:
@@ -900,6 +976,8 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
     result.append('')
     result.append('namespace WTF {')
     for type in serialized_types:
+        if type.is_webkit_secure_coding_type():
+            continue
         if generating_webkit_platform_impl:
             continue
         if not type.members_are_subclasses:
@@ -988,18 +1066,72 @@ def generate_optional_tuple_type_info(type):
     return result
 
 
+def generate_one_serialized_type_info(type):
+    result = []
+    if type.cf_type is not None:
+        return result
+    result.append('        { "' + type.name_declaration_for_serialized_type_info() + '"_s, {')
+    if type.members_are_subclasses:
+        result.append('            { "std::variant<' + ', '.join([member.namespace + '::' + member.name for member in type.members]) + '>"_s, "subclasses"_s }')
+        result.append('        } },')
+        return result
+
+    serialized_members = type.members_for_serialized_type_info()
+    optional_tuple_state = None
+    for member in serialized_members:
+        if member.condition is not None:
+            result.append('#if ' + member.condition)
+        if member.optional_tuple_bits():
+            result.append('            {')
+            result.append('                "OptionalTuple<"')
+            optional_tuple_state = 'begin'
+        elif member.optional_tuple_bit():
+            result.append('                    "' + ('' if optional_tuple_state == 'begin' else ', ') + member.type + '"')
+            optional_tuple_state = 'middle'
+        else:
+            if optional_tuple_state == 'middle':
+                result.append('                ">"_s,')
+                result.append('                "optionalTuple"_s')
+                result.append('            },')
+                optional_tuple_state = None
+            result.append('            {')
+            result.append('                "' + member.type + '"_s,')
+            result.append('                "' + member.name + '"_s')
+            result.append('            },')
+            optional_tuple_state = None
+        if member.condition is not None:
+            result.append('#endif')
+    if optional_tuple_state == 'middle':
+        result.append('                ">"_s,')
+        result.append('                "optionalTuple"_s')
+        result.append('            },')
+    result.append('        } },')
+    return result
+
+
+def output_sorted_headers(sorted_headers):
+    result = []
+    for header in sorted_headers:
+        if header.condition is not None:
+            result.append('#if ' + header.condition)
+        result.append('#include ' + header.header)
+        if header.condition is not None:
+            result.append('#endif')
+    return result
+
+
 def generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements):
     result = []
     result.append(_license_header)
     result.append('#include "config.h"')
     result.append('#include "SerializedTypeInfo.h"')
     result.append('')
+    header_set = set()
     for header in headers:
-        if header.condition is not None:
-            result.append('#if ' + header.condition)
-        result.append('#include ' + header.header)
-        if header.condition is not None:
-            result.append('#endif')
+        header_set.add(header)
+    header_set.add(ConditionalHeader('"GeneratedWebKitSecureCoding.h"', None))
+    result.extend(output_sorted_headers(sorted(header_set)))
+
     result.append('')
     result.append('#if ENABLE(IPC_TESTING_API)')
     result.append('')
@@ -1009,44 +1141,10 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, u
     result.append('{')
     result.append('    return {')
     for type in serialized_types:
-        if type.cf_type is not None:
-            continue
-        result.append('        { "' + type.namespace_unless_wtf_and_name() + '"_s, {')
-        if type.members_are_subclasses:
-            result.append('            { "std::variant<' + ', '.join([member.namespace + '::' + member.name for member in type.members]) + '>"_s, "subclasses"_s }')
-            result.append('        } },')
-            continue
+        result.extend(generate_one_serialized_type_info(type))
+        if type.is_webkit_secure_coding_type():
+            result.extend(generate_one_serialized_type_info(type.wrapper_for_webkit_secure_coding_type()))
 
-        serialized_members = type.serialized_members()
-        optional_tuple_state = None
-        for member in serialized_members:
-            if member.condition is not None:
-                result.append('#if ' + member.condition)
-            if member.optional_tuple_bits():
-                result.append('            {')
-                result.append('                "OptionalTuple<"')
-                optional_tuple_state = 'begin'
-            elif member.optional_tuple_bit():
-                result.append('                    "' + ('' if optional_tuple_state == 'begin' else ', ') + member.type + '"')
-                optional_tuple_state = 'middle'
-            else:
-                if optional_tuple_state == 'middle':
-                    result.append('                ">"_s,')
-                    result.append('                "optionalTuple"_s')
-                    result.append('            },')
-                    optional_tuple_state = None
-                result.append('            {')
-                result.append('                "' + member.type + '"_s,')
-                result.append('                "' + member.name + '"_s')
-                result.append('            },')
-                optional_tuple_state = None
-            if member.condition is not None:
-                result.append('#endif')
-        if optional_tuple_state == 'middle':
-            result.append('                ">"_s,')
-            result.append('                "optionalTuple"_s')
-            result.append('            },')
-        result.append('        } },')
     for using_statement in using_statements:
         if using_statement.condition is not None:
             result.append('#if ' + using_statement.condition)
@@ -1098,6 +1196,7 @@ def parse_serialized_types(file):
     namespace = None
     name = None
     members = []
+    dictionary_members = []
     type_condition = None
     member_condition = None
     struct_or_class = None
@@ -1130,7 +1229,7 @@ def parse_serialized_types(file):
             if underlying_type is not None:
                 serialized_enums.append(SerializedEnum(namespace, name, underlying_type, members, type_condition, attributes))
             else:
-                type = SerializedType(struct_or_class, cf_type, namespace, name, parent_class_name, members, type_condition, attributes, templates, metadata)
+                type = SerializedType(struct_or_class, cf_type, namespace, name, parent_class_name, members, dictionary_members, type_condition, attributes, templates, metadata)
                 serialized_types.append(type)
                 if namespace is not None and (attributes is None or ('CustomHeader' not in attributes and 'Nested' not in attributes)):
                     if namespace == 'WebKit' or namespace == 'WebKit::WebPushD':
@@ -1145,6 +1244,7 @@ def parse_serialized_types(file):
             namespace = None
             name = None
             members = []
+            dictionary_members = []
             member_condition = None
             struct_or_class = None
             cf_type = None
@@ -1174,6 +1274,12 @@ def parse_serialized_types(file):
             for header in match.group(1).split():
                 headers.append(ConditionalHeader(header, type_condition, True))
             continue
+        match = re.search(r'secure_coding_headers?: (.*)', line)
+        if match:
+            for header in match.group(1).split():
+                headers.append(ConditionalHeader(header, type_condition, False, True))
+            continue
+
 
         match = re.search(r'(.*)enum class (.*)::(.*) : (.*) {', line)
         if match:
@@ -1210,11 +1316,11 @@ def parse_serialized_types(file):
         if match:
             struct_or_class, namespace, name = match.groups()
             continue
-        match = re.search(r'\[(.*)\] (struct|class|alias) (.*) {', line)
+        match = re.search(r'\[(.*)\] (struct|class|alias|webkit_secure_coding) (.*) {', line)
         if match:
             attributes, struct_or_class, name = match.groups()
             continue
-        match = re.search(r'(struct|class|alias) (.*) {', line)
+        match = re.search(r'(struct|class|alias|webkit_secure_coding) (.*) {', line)
         if match:
             struct_or_class, name = match.groups()
             continue
@@ -1246,7 +1352,10 @@ def parse_serialized_types(file):
                 members.append(subclass_member)
             continue
 
-        match = re.search(r'\[(.*)\] (.*) ([^;]*)', line)
+        if struct_or_class == 'webkit_secure_coding':
+            match = re.search(r'\[(.*)\] (.*): ([^;]*)', line)
+        else:
+            match = re.search(r'\[(.*)\] (.*) ([^;]*)', line)
         if match:
             member_attributes_s, member_type, member_name = match.groups()
             member_attributes = []
@@ -1261,13 +1370,172 @@ def parse_serialized_types(file):
                 member_attributes.append(allow_list)
                 member_attributes_s = member_attributes_s.replace(complete, "")
             member_attributes += [member_attribute.strip() for member_attribute in member_attributes_s.split(",")]
-            members.append(MemberVariable(member_type, member_name, member_condition, member_attributes))
+            if struct_or_class == 'webkit_secure_coding':
+                dictionary_members.append(MemberVariable(member_type, member_name, member_condition, member_attributes))
+            else:
+                members.append(MemberVariable(member_type, member_name, member_condition, member_attributes))
         else:
-            match = re.search(r'(.*) ([^;]*)', line)
+            if struct_or_class == 'webkit_secure_coding':
+                match = re.search(r'(.*): ([^;]*)', line)
+            else:
+                match = re.search(r'(.*) ([^;]*)', line)
             if match:
                 member_type, member_name = match.groups()
-                members.append(MemberVariable(member_type, member_name, member_condition, []))
+                if struct_or_class == 'webkit_secure_coding':
+                    dictionary_members.append(MemberVariable(member_type, member_name, member_condition, []))
+                else:
+                    members.append(MemberVariable(member_type, member_name, member_condition, []))
     return [serialized_types, serialized_enums, headers, using_statements, additional_forward_declarations]
+
+
+# When describing a webkit_secure_coding dictionary validation format, the MemberVariable's "type" is the dictionary string key,
+# and the MemberVariables "name" is the expected value type.
+def generate_one_dictionary_member_validation(member):
+    result = []
+    key = member.type
+    value = member.name
+    optional = value.endswith('?')
+    if optional:
+        value = value[:-1]
+
+    match = re.search(r'(.*)<(.*)>', value)
+    collection_key_type = None
+    collection_value_type = None
+    if match:
+        value, collection_value_type = match.groups()
+
+    if collection_value_type is not None:
+        match = re.search(r'(.*), (.*)', collection_value_type)
+        if match:
+            collection_key_type, collection_value_type = match.groups()
+
+    if optional:
+        result.append('    if (!dictionary.keyIsMissingOrHasValueOfType("' + key + '"_s, IPC::NSType::' + value + '))')
+    else:
+        result.append('    if (!dictionary.keyHasValueOfType("' + key + '"_s, IPC::NSType::' + value + '))')
+    result.append('        return false;')
+
+    if collection_value_type is not None:
+        if collection_key_type is not None:
+            result.append('    if (!dictionary.collectionValuesAreOfType("' + key + '"_s, IPC::NSType::' + collection_key_type + ', IPC::NSType::' + collection_value_type + '))')
+        else:
+            result.append('    if (!dictionary.collectionValuesAreOfType("' + key + '"_s, IPC::NSType::' + collection_value_type + '))')
+        result.append('        return false;')
+
+    result.append('')
+    return result
+
+
+def generate_webkit_secure_coding_impl(serialized_types, headers):
+    serialized_types = resolve_inheritance(serialized_types)
+    result = []
+    result.append(_license_header)
+    result.append('#include "config.h"')
+    result.append('#include "GeneratedWebKitSecureCoding.h"')
+    result.append('')
+
+    header_set = set()
+    header_set.add(ConditionalHeader('"ArgumentCodersCocoa.h"', None))
+    for header in headers:
+        if header.secure_coding:
+            header_set.add(header)
+    result.extend(output_sorted_headers(sorted(header_set)))
+
+    result.append('')
+    result.append('namespace WebKit {')
+    result.append('')
+    for type in serialized_types:
+        if not type.is_webkit_secure_coding_type():
+            continue
+        if type.condition is not None:
+            result.append('#if ' + type.condition)
+
+        result.append(type.cpp_struct_or_class_name() + '::' + type.cpp_struct_or_class_name() + '(' + type.name + ' *object)')
+        result.append('    : m_propertyList([object _webKitPropertyListData])')
+        result.append('{')
+        result.append('}')
+        result.append('')
+        result.append('bool ' + type.cpp_struct_or_class_name() + '::isValidDictionary(CoreIPCDictionary& dictionary)')
+        result.append('{')
+        for dictionary_member in type.dictionary_members:
+            result.extend(generate_one_dictionary_member_validation(dictionary_member))
+        result.append('    return true;')
+        result.append('}')
+        result.append('')
+        result.append('RetainPtr<id> ' + type.cpp_struct_or_class_name() + '::toID() const')
+        result.append('{')
+        if type.custom_secure_coding_class is not None:
+            result.append('    RELEASE_ASSERT([' + type.custom_secure_coding_class + ' instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]);')
+            result.append('    return adoptNS([[' + type.custom_secure_coding_class + ' alloc] _initWithWebKitPropertyListData:m_propertyList.toID().get()]);')
+        else:
+            result.append('    RELEASE_ASSERT([' + type.name + ' instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]);')
+            result.append('    return adoptNS([[' + type.name + ' alloc] _initWithWebKitPropertyListData:m_propertyList.toID().get()]);')
+        result.append('}')
+        if type.condition is not None:
+            result.append('#endif // ' + type.condition)
+        result.append('')
+
+    result.append('} // namespace WebKit')
+    result.append('')
+    return '\n'.join(result)
+
+
+def generate_webkit_secure_coding_header(serialized_types):
+    serialized_types = resolve_inheritance(serialized_types)
+    result = []
+    result.append(_license_header)
+    result.append('#pragma once')
+    result.append('')
+    result.append('#if PLATFORM(COCOA)')
+    result.append('#include "CoreIPCTypes.h"')
+    result.append('')
+
+    for type in serialized_types:
+        if not type.is_webkit_secure_coding_type():
+            continue
+        if type.condition is not None:
+            result.append('#if ' + type.condition)
+        result.append('OBJC_CLASS ' + type.name + ';')
+        if type.condition is not None:
+            result.append('#endif')
+
+    result.append('')
+    result.append('namespace WebKit {')
+    result.append('')
+    for type in serialized_types:
+        if not type.is_webkit_secure_coding_type():
+            continue
+        if type.condition is not None:
+            result.append('#if ' + type.condition)
+        result.append('class ' + type.cpp_struct_or_class_name() + ' {')
+        result.append('public:')
+        result.append('    ' + type.cpp_struct_or_class_name() + '(' + type.name + ' *);')
+        result.append('    ' + type.cpp_struct_or_class_name() + '(const RetainPtr<' + type.name + '>& object)')
+        result.append('        : ' + type.cpp_struct_or_class_name() + '(object.get())')
+        result.append('    {')
+        result.append('    }')
+        result.append('')
+        result.append('    static bool isValidDictionary(CoreIPCDictionary&);')
+        result.append('    RetainPtr<id> toID() const;')
+        result.append('')
+        result.append('private:')
+        result.append('    friend struct IPC::ArgumentCoder<' + type.cpp_struct_or_class_name() + ', void>;')
+        result.append('')
+        result.append('    ' + type.cpp_struct_or_class_name() + '(CoreIPCDictionary&& propertyList)')
+        result.append('        : m_propertyList(WTFMove(propertyList))')
+        result.append('    {')
+        result.append('    }')
+        result.append('')
+        result.append('    CoreIPCDictionary m_propertyList;')
+        result.append('};')
+        if type.condition is not None:
+            result.append('#endif')
+    result.append('')
+    result.append('} // namespace WebKit')
+    result.append('')
+    result.append('#endif // PLATFORM(COCOA)')
+    result.append('')
+    return '\n'.join(result)
 
 
 def main(argv):
@@ -1312,6 +1580,10 @@ def main(argv):
         output.write(generate_impl(serialized_types, serialized_enums, headers, True))
     with open('SerializedTypeInfo.%s' % file_extension, "w+") as output:
         output.write(generate_serialized_type_info(serialized_types, serialized_enums, headers, using_statements))
+    with open('GeneratedWebKitSecureCoding.h', "w+") as output:
+        output.write(generate_webkit_secure_coding_header(serialized_types))
+    with open('GeneratedWebKitSecureCoding.%s' % file_extension, "w+") as output:
+        output.write(generate_webkit_secure_coding_impl(serialized_types, headers))
     return 0
 
 

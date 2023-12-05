@@ -44,7 +44,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
-#include <wtf/WeakPtr.h>
+#include <wtf/WeakRef.h>
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSView;
@@ -611,7 +611,7 @@ private:
 
     Ref<LocalFrame> protectedFrame() const;
 
-    CheckedRef<LocalFrame> m_frame;
+    WeakRef<LocalFrame> m_frame;
     RefPtr<Node> m_mousePressNode;
     Timer m_hoverTimer;
 #if ENABLE(IMAGE_ANALYSIS)

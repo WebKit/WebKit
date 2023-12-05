@@ -98,6 +98,7 @@ template<typename> class UniqueRef;
 template<typename T, class... Args> UniqueRef<T> makeUniqueRef(Args&&...);
 template<typename, size_t = 0, typename = CrashOnOverflow, size_t = 16, typename = VectorBufferMalloc> class Vector;
 template<typename, typename = DefaultWeakPtrImpl> class WeakPtr;
+template<typename, typename = DefaultWeakPtrImpl> class WeakRef;
 
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<AtomString>;
@@ -187,6 +188,7 @@ using WTF::URL;
 using WTF::UniqueRef;
 using WTF::Vector;
 using WTF::WeakPtr;
+using WTF::WeakRef;
 
 template<class T, class E> using Expected = std::experimental::expected<T, E>;
 template<class E> using Unexpected = std::experimental::unexpected<E>;

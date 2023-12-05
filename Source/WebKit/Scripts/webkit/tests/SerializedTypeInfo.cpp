@@ -35,6 +35,7 @@
 #endif
 #include "FooWrapper.h"
 #include "FormDataReference.h"
+#include "GeneratedWebKitSecureCoding.h"
 #include "HeaderWithoutCondition"
 #include "LayerProperties.h"
 #include "PlatformClass.h"
@@ -57,6 +58,9 @@
 #include <WebCore/ScrollingStateFrameHostingNode.h>
 #include <WebCore/ScrollingStateFrameHostingNodeWithStuffAfterTuple.h>
 #include <WebCore/TimingFunction.h>
+#if ENABLE(DATA_DETECTION)
+#include <pal/cocoa/DataDetectorsCoreSoftLink.h>
+#endif
 #include <wtf/CreateUsingClass.h>
 #include <wtf/Seconds.h>
 
@@ -310,6 +314,78 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "WebCore::ResourceRequest"_s,
                 "request"_s
+            },
+        } },
+        { "webkit_secure_coding NSSomeFoundationType"_s, {
+            {
+                "StringKey"_s,
+                "WebKit::CoreIPCString"_s
+            },
+            {
+                "NumberKey"_s,
+                "WebKit::CoreIPCNumber"_s
+            },
+            {
+                "OptionalNumberKey"_s,
+                "WebKit::CoreIPCNumber?"_s
+            },
+            {
+                "ArrayKey"_s,
+                "WebKit::CoreIPCArray"_s
+            },
+            {
+                "OptionalArrayKey"_s,
+                "WebKit::CoreIPCArray?"_s
+            },
+            {
+                "DictionaryKey"_s,
+                "WebKit::CoreIPCDictionary"_s
+            },
+            {
+                "OptionalDictionaryKey"_s,
+                "WebKit::CoreIPCDictionary?"_s
+            },
+        } },
+        { "WebKit::CoreIPCNSSomeFoundationType"_s, {
+            {
+                "WebKit::CoreIPCDictionary"_s,
+                "m_propertyList"_s
+            },
+        } },
+        { "webkit_secure_coding DDScannerResult"_s, {
+            {
+                "StringKey"_s,
+                "WebKit::CoreIPCString"_s
+            },
+            {
+                "NumberKey"_s,
+                "WebKit::CoreIPCNumber"_s
+            },
+            {
+                "OptionalNumberKey"_s,
+                "WebKit::CoreIPCNumber?"_s
+            },
+            {
+                "ArrayKey"_s,
+                "WebKit::CoreIPCArray<WebKit::CoreIPCDDScannerResult>"_s
+            },
+            {
+                "OptionalArrayKey"_s,
+                "WebKit::CoreIPCArray<WebKit::CoreIPCDDScannerResult>?"_s
+            },
+            {
+                "DictionaryKey"_s,
+                "WebKit::CoreIPCDictionary<WebKit::CoreIPCString, WebKit::CoreIPCNumber>"_s
+            },
+            {
+                "OptionalDictionaryKey"_s,
+                "WebKit::CoreIPCDictionary<WebKit::CoreIPCString, WebKit::CoreIPCDDScannerResult>?"_s
+            },
+        } },
+        { "WebKit::CoreIPCDDScannerResult"_s, {
+            {
+                "WebKit::CoreIPCDictionary"_s,
+                "m_propertyList"_s
             },
         } },
         { "WebKit::RValueWithFunctionCalls"_s, {

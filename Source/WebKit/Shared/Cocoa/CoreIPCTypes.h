@@ -28,7 +28,6 @@
 #import "CoreIPCArray.h"
 #import "CoreIPCCFType.h"
 #import "CoreIPCColor.h"
-#import "CoreIPCDDScannerResult.h"
 #import "CoreIPCData.h"
 #import "CoreIPCDate.h"
 #import "CoreIPCDictionary.h"
@@ -40,3 +39,4 @@
 #import "CoreIPCSecureCoding.h"
 #import "CoreIPCString.h"
 #import "CoreIPCURL.h"
+#import "GeneratedWebKitSecureCoding.h"

@@ -271,7 +271,7 @@ void LineBoxBuilder::setVerticalPropertiesForInlineLevelBox(const LineBox& lineB
         auto fontMetricBasedAscent = primaryFontMetricsForInlineBox(inlineLevelBox, lineBox.baselineType()).ascent;
         inlineLevelBox.setInlineBoxContentOffsetForTextBoxTrim(fontMetricBasedAscent - ascentAndDescent.ascent);
         if (inlineLevelBox.layoutBox().isRubyBase())
-            RubyFormattingContext { formattingContext() }.applyAnnotationContributionToLayoutBounds(inlineLevelBox);
+            RubyFormattingContext::applyAnnotationContributionToLayoutBounds(inlineLevelBox, formattingContext());
         return;
     }
     if (inlineLevelBox.isLineBreakBox()) {

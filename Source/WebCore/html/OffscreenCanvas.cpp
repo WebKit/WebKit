@@ -213,36 +213,7 @@ static bool shouldEnableWebGL(const Settings::Values& settings, bool isWorker)
     return settings.acceleratedCompositingEnabled;
 }
 
-void OffscreenCanvas::createContextWebGL(RenderingContextType contextType, WebGLContextAttributes&& attrs)
-{
-    ASSERT(!m_context);
-
-    auto scriptExecutionContext = this->scriptExecutionContext();
-    if (auto* workerGlobalScope = dynamicDowncast<WorkerGlobalScope>(*scriptExecutionContext)) {
-        if (!shouldEnableWebGL(workerGlobalScope->settingsValues(), true))
-            return;
-    } else if (auto* document = dynamicDowncast<Document>(*scriptExecutionContext)) {
-        auto& settings = document->settings();
-        if (!shouldEnableWebGL(settings.values(), false))
-            return;
-    } else
-        return;
-
-    auto webGLVersion = (contextType == RenderingContextType::Webgl) ? WebGLVersion::WebGL1 : WebGLVersion::WebGL2;
-    m_context = WebGLRenderingContextBase::create(*this, attrs, webGLVersion);
-}
-
 #endif // ENABLE(WEBGL)
-
-GPUCanvasContext* OffscreenCanvas::createContextWebGPU(RenderingContextType type, GPU* gpu)
-{
-    ASSERT_UNUSED(type, type == RenderingContextType::Webgpu);
-    ASSERT(!m_context);
-
-    m_context = GPUCanvasContext::create(*this, *gpu);
-
-    return static_cast<GPUCanvasContext*>(m_context.get());
-}
 
 ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContext(JSC::JSGlobalObject& state, RenderingContextType contextType, FixedVector<JSC::Strong<JSC::Unknown>>&& arguments)
 {
@@ -250,90 +221,59 @@ ExceptionOr<std::optional<OffscreenRenderingContext>> OffscreenCanvas::getContex
         return Exception { ExceptionCode::InvalidStateError };
 
     if (contextType == RenderingContextType::_2d) {
-        if (m_context) {
-            RefPtr context = dynamicDowncast<OffscreenCanvasRenderingContext2D>(*m_context);
-            if (!context)
-                return { { std::nullopt } };
+        if (!m_context) {
+            auto scope = DECLARE_THROW_SCOPE(state.vm());
+            auto settings = convert<IDLDictionary<CanvasRenderingContext2DSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
+            RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
+            m_context = OffscreenCanvasRenderingContext2D::create(*this, WTFMove(settings));
+        }
+        if (RefPtr context = dynamicDowncast<OffscreenCanvasRenderingContext2D>(m_context.get()))
             return { { WTFMove(context) } };
+        return { { std::nullopt } };
+    }
+    if (contextType == RenderingContextType::Bitmaprenderer) {
+        if (!m_context) {
+            auto scope = DECLARE_THROW_SCOPE(state.vm());
+            auto settings = convert<IDLDictionary<ImageBitmapRenderingContextSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
+            RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
+            m_context = ImageBitmapRenderingContext::create(*this, WTFMove(settings));
         }
-
-        auto scope = DECLARE_THROW_SCOPE(state.vm());
-        auto settings = convert<IDLDictionary<CanvasRenderingContext2DSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
-        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
-
-        m_context = OffscreenCanvasRenderingContext2D::create(*this, WTFMove(settings));
-        if (!m_context)
-            return { { std::nullopt } };
-
-        return { { RefPtr<OffscreenCanvasRenderingContext2D> { &downcast<OffscreenCanvasRenderingContext2D>(*m_context) } } };
-    } else if (contextType == RenderingContextType::Bitmaprenderer) {
-        if (m_context) {
-            RefPtr context = dynamicDowncast<ImageBitmapRenderingContext>(*m_context);
-            if (!context)
-                return { { std::nullopt } };
+        if (RefPtr context = dynamicDowncast<ImageBitmapRenderingContext>(m_context.get()))
             return { { WTFMove(context) } };
+        return { { std::nullopt } };
+    }
+    if (contextType == RenderingContextType::Webgpu) {
+        if (!m_context) {
+            auto scope = DECLARE_THROW_SCOPE(state.vm());
+            RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
+            if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(this->scriptExecutionContext())) {
+                if (auto* gpu = globalScope->navigator().gpu())
+                    m_context = GPUCanvasContext::create(*this, *gpu);
+            }
         }
-
-        auto scope = DECLARE_THROW_SCOPE(state.vm());
-        auto settings = convert<IDLDictionary<ImageBitmapRenderingContextSettings>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
-        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
-
-        auto context = ImageBitmapRenderingContext::create(*this, WTFMove(settings));
-        auto* contextPtr = context.get();
-        m_context = WTFMove(context);
-        if (!m_context)
-            return { { std::nullopt } };
-
-        return { { contextPtr } };
-    } else if (contextType == RenderingContextType::Webgpu) {
-        if (m_context) {
-            if (RefPtr context = dynamicDowncast<GPUCanvasContext>(*m_context))
-                return { { WTFMove(context) } };
-
-            return { { std::nullopt } };
-        }
-
-        auto scope = DECLARE_THROW_SCOPE(state.vm());
-        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
-
-        auto scriptExecutionContext = this->scriptExecutionContext();
-        if (!scriptExecutionContext)
-            return { { std::nullopt } };
-
-        if (auto* globalScope = dynamicDowncast<WorkerGlobalScope>(*scriptExecutionContext)) {
-            auto gpu = globalScope->navigator().gpu();
-            createContextWebGPU(contextType, gpu);
-        }
-
-        if (!m_context)
-            return { { std::nullopt } };
-
-        return { { RefPtr<GPUCanvasContext> { &downcast<GPUCanvasContext>(*m_context) } } };
+        if (RefPtr context = dynamicDowncast<GPUCanvasContext>(m_context.get()))
+            return { { WTFMove(context) } };
+        return { { std::nullopt } };
     }
 #if ENABLE(WEBGL)
-    else {
-        if (m_context) {
-            if (RefPtr context = dynamicDowncast<WebGLRenderingContext>(*m_context))
-                return { { WTFMove(context) } };
-
-            if (RefPtr context = dynamicDowncast<WebGL2RenderingContext>(*m_context))
-                return { { WTFMove(context) } };
-
-            return { { std::nullopt } };
+    if (contextType == RenderingContextType::Webgl || contextType == RenderingContextType::Webgl2) {
+        auto webGLVersion = contextType == RenderingContextType::Webgl ? WebGLVersion::WebGL1 : WebGLVersion::WebGL2;
+        if (!m_context) {
+            auto scope = DECLARE_THROW_SCOPE(state.vm());
+            auto attributes = convert<IDLDictionary<WebGLContextAttributes>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
+            RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
+            auto* scriptExecutionContext = this->scriptExecutionContext();
+            if (shouldEnableWebGL(scriptExecutionContext->settingsValues(), is<WorkerGlobalScope>(scriptExecutionContext)))
+                m_context = WebGLRenderingContextBase::create(*this, attributes, webGLVersion);
         }
-
-        auto scope = DECLARE_THROW_SCOPE(state.vm());
-        auto attributes = convert<IDLDictionary<WebGLContextAttributes>>(state, arguments.isEmpty() ? JSC::jsUndefined() : (arguments[0].isObject() ? arguments[0].get() : JSC::jsNull()));
-        RETURN_IF_EXCEPTION(scope, Exception { ExceptionCode::ExistingExceptionError });
-
-        createContextWebGL(contextType, WTFMove(attributes));
-        if (!m_context)
-            return { { std::nullopt } };
-
-        if (RefPtr context = dynamicDowncast<WebGL2RenderingContext>(*m_context))
-            return { { WTFMove(context) } };
-
-        return { { RefPtr<WebGLRenderingContext> { &downcast<WebGLRenderingContext>(*m_context) } } };
+        if (webGLVersion == WebGLVersion::WebGL1) {
+            if (RefPtr context = dynamicDowncast<WebGLRenderingContext>(m_context.get()))
+                return { { WTFMove(context) } };
+        } else {
+            if (RefPtr context = dynamicDowncast<WebGL2RenderingContext>(m_context.get()))
+                return { { WTFMove(context) } };
+        }
+        return { { std::nullopt } };
     }
 #endif
 

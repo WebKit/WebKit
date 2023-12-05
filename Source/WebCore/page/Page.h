@@ -1064,7 +1064,7 @@ public:
     void willBeginScrolling();
     void didFinishScrolling();
 
-    const HashSet<CheckedRef<LocalFrame>>& rootFrames() const { return m_rootFrames; }
+    const HashSet<WeakRef<LocalFrame>>& rootFrames() const { return m_rootFrames; }
     WEBCORE_EXPORT void addRootFrame(LocalFrame&);
     WEBCORE_EXPORT void removeRootFrame(LocalFrame&);
 
@@ -1156,7 +1156,7 @@ private:
     UniqueRef<ProgressTracker> m_progress;
 
     UniqueRef<BackForwardController> m_backForwardController;
-    HashSet<CheckedRef<LocalFrame>> m_rootFrames;
+    HashSet<WeakRef<LocalFrame>> m_rootFrames;
     UniqueRef<EditorClient> m_editorClient;
     Ref<Frame> m_mainFrame;
     URL m_mainFrameURL;

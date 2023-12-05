@@ -746,9 +746,9 @@ WEBCORE_SERIALIZATION_DESCRIPTION_FILES = \
 
 WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH := $(foreach I,$(WEBCORE_SERIALIZATION_DESCRIPTION_FILES),$(WebCorePrivateHeaders)/$I)
 
-all : GeneratedSerializers.h GeneratedSerializers.mm SerializedTypeInfo.mm WebKitPlatformGeneratedSerializers.mm
+all : GeneratedSerializers.h GeneratedSerializers.mm GeneratedWebKitSecureCoding.h GeneratedWebKitSecureCoding.mm SerializedTypeInfo.mm WebKitPlatformGeneratedSerializers.mm
 
-GeneratedSerializers.h GeneratedSerializers.mm SerializedTypeInfo.mm WebKitPlatformGeneratedSerializers.mm : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make $(WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH)
+GeneratedSerializers.h GeneratedSerializers.mm GeneratedWebKitSecureCoding.h GeneratedWebKitSecureCoding.mm SerializedTypeInfo.mm WebKitPlatformGeneratedSerializers.mm : $(WebKit2)/Scripts/generate-serializers.py $(SERIALIZATION_DESCRIPTION_FILES) $(WebKit2)/DerivedSources.make $(WEBCORE_SERIALIZATION_DESCRIPTION_FILES_FULLPATH)
 	$(PYTHON) $(WebKit2)/Scripts/generate-serializers.py mm DIRECTORY $(WebKit2) $(SERIALIZATION_DESCRIPTION_FILES) DIRECTORY $(WebCorePrivateHeaders) $(WEBCORE_SERIALIZATION_DESCRIPTION_FILES)
 
 EXTENSIONS_DIR = $(WebKit2)/WebProcess/Extensions

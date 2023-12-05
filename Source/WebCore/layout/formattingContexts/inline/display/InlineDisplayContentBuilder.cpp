@@ -1060,11 +1060,10 @@ size_t InlineDisplayContentBuilder::processRubyBase(size_t rubyBaseStart, Inline
         return rubyBaseStart;
 
     auto computeBoxGeometryForAnnotationBox = [&] {
-        auto rubyFormattingContext = RubyFormattingContext { formattingContext() };
-
-        auto visualBorderBoxTopLeft = rubyFormattingContext.placeAnnotationBox(rubyBaseLayoutBox);
-        auto visualContentBoxSize = rubyFormattingContext.sizeAnnotationBox(rubyBaseLayoutBox);
-        auto& annotationBoxGeometry = formattingContext().geometryForBox(*annotationBox);
+        auto& formattingContext = this->formattingContext();
+        auto visualBorderBoxTopLeft = RubyFormattingContext::placeAnnotationBox(rubyBaseLayoutBox, formattingContext);
+        auto visualContentBoxSize = RubyFormattingContext::sizeAnnotationBox(rubyBaseLayoutBox, formattingContext);
+        auto& annotationBoxGeometry = formattingContext.geometryForBox(*annotationBox);
         annotationBoxGeometry.setTopLeft(toLayoutPoint(visualBorderBoxTopLeft));
         annotationBoxGeometry.setContentBoxSize(toLayoutSize(visualContentBoxSize));
     };
@@ -1124,7 +1123,7 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
         return;
 
     auto isHorizontalWritingMode = root().style().isHorizontalWritingMode();
-    auto rubyFormattingContext = RubyFormattingContext { formattingContext() };
+    auto& formattingContext = this->formattingContext();
     for (auto startEndPair : interlinearRubyColumnRangeList) {
         ASSERT(startEndPair);
         if (startEndPair.distance() == 1)
@@ -1135,8 +1134,8 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
         ASSERT(rubyBaseLayoutBox.isRubyBase());
         ASSERT(isInterlinearAnnotationBox(rubyBaseLayoutBox.associatedRubyAnnotationBox()));
 
-        auto beforeOverhang = rubyFormattingContext.overhangForAnnotationBefore(rubyBaseLayoutBox, rubyBaseStart, displayBoxes);
-        auto afterOverhang = rubyFormattingContext.overhangForAnnotationAfter(rubyBaseLayoutBox, { rubyBaseStart, startEndPair.end() }, displayBoxes);
+        auto beforeOverhang = RubyFormattingContext::overhangForAnnotationBefore(rubyBaseLayoutBox, rubyBaseStart, displayBoxes, formattingContext);
+        auto afterOverhang = RubyFormattingContext::overhangForAnnotationAfter(rubyBaseLayoutBox, { rubyBaseStart, startEndPair.end() }, displayBoxes, formattingContext);
 
         // FIXME: If this turns out to be a pref bottleneck, make sure we pass in the accumulated shift to overhangForAnnotationBefore/after and
         // offset all box geometry as we check for overlap.
@@ -1147,7 +1146,7 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
                     auto& layoutBox = displayBoxes[index].layoutBox();
                     if (!layoutBox.isRubyBase() || !layoutBox.associatedRubyAnnotationBox())
                         return;
-                    auto& annotationBoxGeometry = formattingContext().geometryForBox(*layoutBox.associatedRubyAnnotationBox());
+                    auto& annotationBoxGeometry = formattingContext.geometryForBox(*layoutBox.associatedRubyAnnotationBox());
                     isHorizontalWritingMode ? annotationBoxGeometry.moveHorizontally(LayoutUnit { -shiftValue }) : annotationBoxGeometry.moveVertically(LayoutUnit { -shiftValue });
                 };
                 updateAnnotationGeometryIfNeeded();

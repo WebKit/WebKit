@@ -3818,7 +3818,7 @@ void Page::setFullscreenControlsHidden(bool hidden)
 Document* Page::outermostFullscreenDocument() const
 {
 #if ENABLE(FULLSCREEN_API)
-    CheckedPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
     if (!localMainFrame)
         return nullptr;
 

@@ -30,9 +30,23 @@
 
 #import "ArgumentCodersCocoa.h"
 #import "CoreIPCTypes.h"
+#import "GeneratedWebKitSecureCoding.h"
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
+
+// This method helps us bridge the gap between classic NSSecureCoding types and new WebKit coding types
+// as we get more and more support in various classes.
+// The eventual goal is to remove the CoreIPCSecureCoding wrapper altogether, but for now this runtime
+// fork in behavior is necessary.
+template <typename WebKitSecureCodingWrapper, typename ObjCType> ObjectValue secureCodingValueFromID(ObjCType object)
+{
+    if (CoreIPCSecureCoding::conformsToWebKitSecureCoding(object))
+        return WebKitSecureCodingWrapper(object);
+    if (CoreIPCSecureCoding::conformsToSecureCoding(object))
+        return CoreIPCSecureCoding(object);
+    RELEASE_ASSERT_NOT_REACHED();
+}
 
 static ObjectValue valueFromID(id object)
 {
@@ -46,7 +60,7 @@ static ObjectValue valueFromID(id object)
         return CoreIPCColor((WebCore::CocoaColor *)object);
 #if ENABLE(DATA_DETECTION)
     case IPC::NSType::DDScannerResult:
-        return CoreIPCDDScannerResult((DDScannerResult *)object);
+        return secureCodingValueFromID<CoreIPCDDScannerResult>((DDScannerResult *)object);
 #endif
     case IPC::NSType::Data:
         return CoreIPCData((NSData *)object);

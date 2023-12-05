@@ -30,7 +30,7 @@
 #include "Pasteboard.h"
 #include "SimpleRange.h"
 #include "markup.h"
-#include <wtf/CheckedRef.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -51,7 +51,7 @@ protected:
     MSOListQuirks msoListQuirksForMarkup() const;
 
 private:
-    CheckedRef<LocalFrame> m_frame;
+    WeakRef<LocalFrame> m_frame;
 };
 
 class WebContentReader final : public FrameWebContentReader {

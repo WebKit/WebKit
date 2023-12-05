@@ -20,12 +20,17 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if PLATFORM(COCOA) && ENABLE(DATA_DETECTION)
-
-webkit_platform_headers: "CoreIPCDDScannerResult.h"
-
-[WebKitPlatform] class WebKit::CoreIPCDDScannerResult {
-    WebKit::CoreIPCDDScannerResult::Value m_value
+#if ENABLE(DATA_DETECTION)
+secure_coding_header: <pal/cocoa/DataDetectorsCoreSoftLink.h>
+[WebKitSecureCodingClass=PAL::getDDScannerResultClass()] webkit_secure_coding DDScannerResult {
+    AR: NSValue
+    MS: String
+    T: String
+    P: Number
+    VN: Number
+    SR: Array<DDScannerResult>?
+    V: String?
+    C: Dictionary?
+    CF: Number?
 }
-
-#endif // PLATFORM(COCOA) && ENABLE(DATA_DETECTION)
+#endif // ENABLE(DATA_DETECTION)

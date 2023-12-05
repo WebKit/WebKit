@@ -24,6 +24,7 @@
 
 #include "config.h"
 #include "GeneratedSerializers.h"
+#include "GeneratedWebKitSecureCoding.h"
 
 #include "CommonHeader.h"
 #if ENABLE(TEST_FEATURE)
@@ -56,6 +57,9 @@
 #include <WebCore/ScrollingStateFrameHostingNode.h>
 #include <WebCore/ScrollingStateFrameHostingNodeWithStuffAfterTuple.h>
 #include <WebCore/TimingFunction.h>
+#if ENABLE(DATA_DETECTION)
+#include <pal/cocoa/DataDetectorsCoreSoftLink.h>
+#endif
 #include <wtf/CreateUsingClass.h>
 #include <wtf/Seconds.h>
 

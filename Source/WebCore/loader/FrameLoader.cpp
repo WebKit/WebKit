@@ -314,7 +314,7 @@ public:
     }
 
 private:
-    CheckedRef<LocalFrame> m_frame;
+    WeakRef<LocalFrame> m_frame;
     bool m_inProgress { false };
 };
 
