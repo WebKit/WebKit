@@ -195,7 +195,8 @@ enum class SpecializationConstantType : uint8_t {
     Boolean,
     Float,
     Int,
-    Unsigned
+    Unsigned,
+    Half
 };
 
 struct SpecializationConstant {

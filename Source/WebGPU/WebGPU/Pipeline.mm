@@ -98,6 +98,11 @@ std::tuple<MTLFunctionConstantValues *, HashMap<String, WGSL::ConstantValue>> cr
             [constantValues setConstantValue:&value type:MTLDataTypeUInt withName:specializationConstant.mangledName];
             break;
         }
+        case WGSL::Reflection::SpecializationConstantType::Half: {
+            auto value = std::get<WGSL::half>(constantValue);
+            [constantValues setConstantValue:&value type:MTLDataTypeHalf withName:specializationConstant.mangledName];
+            break;
+        }
         }
     }
 
@@ -130,6 +135,12 @@ std::tuple<MTLFunctionConstantValues *, HashMap<String, WGSL::ConstantValue>> cr
             unsigned value = entry.value;
             wgslConstantValues.set(fromAPI(entry.key), value);
             [constantValues setConstantValue:&value type:MTLDataTypeUInt withName:specializationConstant.mangledName];
+            break;
+        }
+        case WGSL::Reflection::SpecializationConstantType::Half: {
+            float value = entry.value;
+            wgslConstantValues.set(fromAPI(entry.key), value);
+            [constantValues setConstantValue:&value type:MTLDataTypeHalf withName:specializationConstant.mangledName];
             break;
         }
         }
