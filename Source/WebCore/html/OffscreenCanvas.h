@@ -176,12 +176,6 @@ private:
 
     void setSize(const IntSize&) final;
 
-#if ENABLE(WEBGL)
-    void createContextWebGL(RenderingContextType, WebGLContextAttributes&& = { });
-#endif
-
-    GPUCanvasContext* createContextWebGPU(RenderingContextType, GPU*);
-
     void createImageBuffer() const final;
     std::unique_ptr<SerializedImageBuffer> takeImageBuffer() const;
 
