@@ -375,7 +375,7 @@ static RetainPtr<WKProcessPool>& sharedProcessPool()
 - (pid_t)_gpuProcessIdentifier
 {
 #if ENABLE(GPU_PROCESS)
-    auto* gpuProcess = _processPool->gpuProcess();
+    RefPtr gpuProcess = _processPool->gpuProcess();
     return gpuProcess ? gpuProcess->processID() : 0;
 #else
     return 0;
