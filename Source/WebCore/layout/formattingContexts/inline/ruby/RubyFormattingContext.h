@@ -59,6 +59,7 @@ public:
     static bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& current);
     static std::optional<InlineLayoutUnit> annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, const InlineFormattingContext&);
     static InlineLayoutUnit baseLogicalWidthFromRubyBaseEnd(const InlineItem& rubyBaseEnd, const Line::RunList&, const InlineContentBreaker::ContinuousContent::RunList&);
+    static void applyRubyAlign(Line&, const InlineFormattingContext&);
 
 private:
     struct BaseLayoutResult {
@@ -66,7 +67,6 @@ private:
         InlineLayoutUnit logicalRightSpacing { 0.f };
     };
     BaseLayoutResult layoutRubyBaseInlineAxis(Line&, const Box& rubyBaseLayoutBox, size_t rubyBaseContentStart, const InlineItemList&);
-    InlineLayoutUnit applyRubyAlign(Line&, WTF::Range<size_t> baseRunRange, const Box& rubyBaseLayoutBox, InlineLayoutUnit baseContentLogicalWidth);
     std::optional<bool> annotationOverlapCheck(const InlineDisplay::Box&, const InlineLayoutRect& overhangingRect) const;
     void placeRubyContent(WTF::Range<size_t> candidateRange, const InlineItemList&, Line&);
     InlineLayoutUnit logicaWidthForRubyRange(WTF::Range<size_t> candidateRange, const InlineItemList&, InlineLayoutUnit lineContentLogicalRight) const;
