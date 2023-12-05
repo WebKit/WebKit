@@ -804,15 +804,12 @@ http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-de
 http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Skip ] # Failure
 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ] # Failure
 
-webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Skip ] # Crash
-webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-allowed-redirect.html [ Skip ] # Crash
-webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Skip ] # Crash
-webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html [ Skip ] # Crash
-webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-localhost.html [ Skip ] # Crash
-webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-redirect.html [ Skip ] # Crash
-[ Release ] http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Failure ]
-[ Release ] http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Failure ]
-[ Release ] http/tests/security/canvas-remote-read-remote-video-redirect.html [ Failure ]
+webkit.org/b/255747 http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Skip ] # Crash
+webkit.org/b/255747 http/tests/security/canvas-remote-read-remote-video-allowed-redirect.html [ Skip ] # Crash
+webkit.org/b/255747 http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Skip ] # Crash
+webkit.org/b/255747 http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html [ Skip ] # Crash
+webkit.org/b/255747 http/tests/security/canvas-remote-read-remote-video-localhost.html [ Skip ] # Crash
+webkit.org/b/255747 http/tests/security/canvas-remote-read-remote-video-redirect.html [ Skip ] # Crash
 
 http/tests/security/canvas-remote-read-remote-video-hls.html [ Skip ] # Timeout
 
