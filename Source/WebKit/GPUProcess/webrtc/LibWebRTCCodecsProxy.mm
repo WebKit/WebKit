@@ -366,6 +366,12 @@ void LibWebRTCCodecsProxy::releaseEncoder(VideoEncoderIdentifier identifier)
         return;
 
     webrtc::releaseLocalEncoder(encoder.webrtcEncoder);
+
+    m_queue->dispatch([encodingCallbacks = WTFMove(encoder.encodingCallbacks)] () mutable {
+        while (!encodingCallbacks.isEmpty())
+            encodingCallbacks.takeFirst()(-2);
+    });
+
     m_hasEncodersOrDecoders = !m_encoders.isEmpty() || !m_decoders.isEmpty();
 }
 
