@@ -4520,22 +4520,35 @@ Color LocalFrameView::documentBackgroundColor() const
 
     auto* htmlElement = backgroundDocument->documentElement();
     auto* bodyElement = backgroundDocument->bodyOrFrameset();
-#if ENABLE(FULLSCREEN_API)
-    auto* fullscreenElement = backgroundDocument->fullscreenManager().fullscreenElement();
-#else
-    Element* fullscreenElement = nullptr;
-#endif
 
     // Start with invalid colors.
     Color htmlBackgroundColor;
     Color bodyBackgroundColor;
-    Color fullscreenBackgroundColor;
     if (htmlElement && htmlElement->renderer())
         htmlBackgroundColor = htmlElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
     if (bodyElement && bodyElement->renderer())
         bodyBackgroundColor = bodyElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-    if (fullscreenElement && fullscreenElement->renderer())
-        fullscreenBackgroundColor = fullscreenElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+
+#if ENABLE(FULLSCREEN_API)
+    Color fullscreenBackgroundColor = [&] () -> Color {
+        auto* fullscreenElement = backgroundDocument->fullscreenManager().fullscreenElement();
+        if (!fullscreenElement)
+            return { };
+
+        auto* fullscreenRenderer = fullscreenElement->renderer();
+        if (!fullscreenRenderer)
+            return { };
+
+        auto fullscreenElementColor = fullscreenRenderer->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+
+        WeakPtr backdropRenderer = fullscreenRenderer->backdropRenderer();
+        if (!backdropRenderer)
+            return fullscreenElementColor;
+
+        // Do not blend the fullscreenElementColor atop the backdrop color. The backdrop should
+        // intentionally be visible underneath (and around) the fullscreen element.
+        return backdropRenderer->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    }();
 
     // Replace or blend the fullscreen background color with the body background color, if present.
     if (fullscreenBackgroundColor.isValid()) {
@@ -4544,6 +4557,7 @@ Color LocalFrameView::documentBackgroundColor() const
         else
             bodyBackgroundColor = blendSourceOver(bodyBackgroundColor, fullscreenBackgroundColor);
     }
+#endif
 
     if (!bodyBackgroundColor.isValid()) {
         if (!htmlBackgroundColor.isValid())
