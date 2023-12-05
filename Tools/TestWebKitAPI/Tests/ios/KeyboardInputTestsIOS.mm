@@ -1159,7 +1159,7 @@ TEST(KeyboardInputTests, AutocorrectionIndicatorColorNotAffectedByAuthorDefinedA
 
         __block bool done = false;
 
-        [[webView textInputContentView] applyAutocorrection:@"different" toString:@"diferent" shouldUnderline:YES withCompletionHandler:^(UIWKAutocorrectionRects *) {
+        [webView applyAutocorrection:@"different" toString:@"diferent" isCandidate:YES withCompletionHandler:^() {
             NSString *hasCorrectionIndicatorMarker = [webView stringByEvaluatingJavaScript:hasCorrectionIndicatorMarkerJavaScript];
             EXPECT_WK_STREQ("1", hasCorrectionIndicatorMarker);
             done = true;
