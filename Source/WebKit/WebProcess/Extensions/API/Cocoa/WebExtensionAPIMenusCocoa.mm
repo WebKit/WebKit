@@ -74,9 +74,9 @@ static NSString * const frameURLKey = @"frameUrl";
 static NSString * const linkTextKey = @"linkText";
 static NSString * const linkURLKey = @"linkUrl";
 static NSString * const mediaTypeKey = @"mediaType";
-static NSString * const menuIDKey = @"menuId";
+static NSString * const menuItemIDKey = @"menuItemId";
 static NSString * const pageURLKey = @"pageUrl";
-static NSString * const parentMenuIDKey = @"parentMenuId";
+static NSString * const parentMenuItemIDKey = @"parentMenuItemId";
 static NSString * const selectionTextKey = @"selectionText";
 static NSString * const srcURLKey = @"srcUrl";
 static NSString * const wasCheckedKey = @"wasChecked";
@@ -463,10 +463,10 @@ void WebExtensionContextProxy::dispatchMenusClickedEvent(const WebExtensionMenuI
 
     auto *info = [NSMutableDictionary dictionary];
 
-    info[menuIDKey] = toMenuIdentifierWebAPI(menuItemParameters.identifier);
+    info[menuItemIDKey] = toMenuIdentifierWebAPI(menuItemParameters.identifier);
 
     if (menuItemParameters.parentIdentifier)
-        info[parentMenuIDKey] = toMenuIdentifierWebAPI(menuItemParameters.parentIdentifier.value());
+        info[parentMenuItemIDKey] = toMenuIdentifierWebAPI(menuItemParameters.parentIdentifier.value());
 
     if (isCheckedType(menuItemParameters.type.value())) {
         info[checkedKey] = @(menuItemParameters.checked.value_or(false));

@@ -343,20 +343,34 @@ InlineLayoutSize RubyFormattingContext::sizeAnnotationBox(const Box& rubyBaseLay
     return { logicalAnnotationBoxGeometry.contentBoxHeight(), logicalAnnotationBoxGeometry.marginBoxWidth() };
 }
 
-void RubyFormattingContext::applyAnnotationContributionToLayoutBounds(InlineLevelBox& rubyBaseInlineBox, const InlineFormattingContext& inlineFormattingContext)
+void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox& lineBox, InlineLevelBox& rubyBaseInlineBox, const InlineFormattingContext& inlineFormattingContext)
 {
-    // In order to ensure consistent spacing of lines, documents with ruby typically ensure that the line-height is
-    // large enough to accommodate ruby between lines of text. Therefore, ordinarily, ruby annotation containers and ruby annotation
-    // boxes do not contribute to the measured height of a line’s inline contents;
-    // line-height calculations are performed using only the ruby base container, exactly as if it were a normal inline.
-    // However, if the line-height specified on the ruby container is less than the distance between the top of the top ruby annotation
-    // container and the bottom of the bottom ruby annotation container, then additional leading is added on the appropriate side(s).
-
     auto& rubyBaseLayoutBox = rubyBaseInlineBox.layoutBox();
     ASSERT(rubyBaseLayoutBox.isRubyBase());
+
+    auto stretchAncestorRubyBaseIfApplicable = [&](auto layoutBounds) {
+        auto& rootBox = inlineFormattingContext.root();
+        for (auto* ancestor = &rubyBaseLayoutBox.parent(); ancestor != &rootBox; ancestor = &ancestor->parent()) {
+            if (ancestor->isRubyBase()) {
+                auto* ancestorInlineBox = lineBox.inlineLevelBoxFor(*ancestor);
+                if (!ancestorInlineBox) {
+                    ASSERT_NOT_REACHED();
+                    break;
+                }
+                auto ancestorLayoutBounds = ancestorInlineBox->layoutBounds();
+                ancestorInlineBox->setLayoutBounds({ std::max(ancestorLayoutBounds.ascent, layoutBounds.ascent), std::max(ancestorLayoutBounds.descent, layoutBounds.descent) });
+                break;
+            }
+        }
+    };
+
+    auto layoutBounds = rubyBaseInlineBox.layoutBounds();
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
-    if (!isInterlinearAnnotation(annotationBox))
+    if (!isInterlinearAnnotation(annotationBox)) {
+        // Make sure decendant rubies with annotations are propagated.
+        stretchAncestorRubyBaseIfApplicable(layoutBounds);
         return;
+    }
 
     auto over = InlineLayoutUnit { };
     auto under = InlineLayoutUnit { };
@@ -366,7 +380,6 @@ void RubyFormattingContext::applyAnnotationContributionToLayoutBounds(InlineLeve
     else
         under = annotationBoxLogicalHeight;
 
-    auto layoutBounds = rubyBaseInlineBox.layoutBounds();
     if (rubyBaseInlineBox.isPreferredLineHeightFontMetricsBased()) {
         layoutBounds.ascent += over;
         layoutBounds.descent += under;
@@ -378,6 +391,22 @@ void RubyFormattingContext::applyAnnotationContributionToLayoutBounds(InlineLeve
             layoutBounds = { ascent , descent };
     }
     rubyBaseInlineBox.setLayoutBounds(layoutBounds);
+    stretchAncestorRubyBaseIfApplicable(layoutBounds);
+}
+
+void RubyFormattingContext::applyAnnotationContributionToLayoutBounds(LineBox& lineBox, const InlineFormattingContext& inlineFormattingContext)
+{
+    // In order to ensure consistent spacing of lines, documents with ruby typically ensure that the line-height is
+    // large enough to accommodate ruby between lines of text. Therefore, ordinarily, ruby annotation containers and ruby annotation
+    // boxes do not contribute to the measured height of a line’s inline contents;
+    // line-height calculations are performed using only the ruby base container, exactly as if it were a normal inline.
+    // However, if the line-height specified on the ruby container is less than the distance between the top of the top ruby annotation
+    // container and the bottom of the bottom ruby annotation container, then additional leading is added on the appropriate side(s).
+    for (auto& inlineLevelBox : makeReversedRange(lineBox.nonRootInlineLevelBoxes())) {
+        if (!inlineLevelBox.isInlineBox() || !inlineLevelBox.layoutBox().isRubyBase())
+            continue;
+        adjustLayoutBoundsAndStretchAncestorRubyBase(lineBox, inlineLevelBox, inlineFormattingContext);
+    }
 }
 
 InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseStart, const InlineDisplay::Boxes& boxes, const InlineFormattingContext& inlineFormattingContext)

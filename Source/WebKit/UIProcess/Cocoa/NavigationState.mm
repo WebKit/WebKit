@@ -607,10 +607,15 @@ void NavigationState::NavigationClient::decidePolicyForNavigationAction(WebPageP
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
-void NavigationState::NavigationClient::contentRuleListNotification(WebPageProxy&, URL&& url, ContentRuleListResults&& results)
+void NavigationState::NavigationClient::contentRuleListNotification(WebPageProxy& page, URL&& url, ContentRuleListResults&& results)
 {
     if (!m_navigationState)
         return;
+
+#if ENABLE(WK_WEB_EXTENSIONS)
+    if (RefPtr extensionController = page.webExtensionController())
+        extensionController->handleContentRuleListNotification(page.identifier(), url, results);
+#endif
 
     if (!m_navigationState->m_navigationDelegateMethods.webViewURLContentRuleListIdentifiersNotifications
         && !m_navigationState->m_navigationDelegateMethods.webViewContentRuleListWithIdentifierPerformedActionForURL)

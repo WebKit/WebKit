@@ -2462,10 +2462,6 @@ css3/color-filters/color-filter-caret-color.html [ ImageOnlyFailure ]
 fast/css/caret-color-fallback-to-color.html [ ImageOnlyFailure ]
 fast/css/caret-color-span-inside-editable-parent.html [ ImageOnlyFailure ]
 
-# rdar://111079967 (REGRESSION ( Sonoma ): [ Sonoma ] Two editing/caret/color-span-inside-editabl tests are constant image failures)
-editing/caret/color-span-inside-editable-background.html [ ImageOnlyFailure ]
-editing/caret/color-span-inside-editable.html [ ImageOnlyFailure ]
-
 # Caps lock indicator is disabled on Sonoma, as it is provided by the OS.
 fast/forms/caps-lock-indicator-width.html [ Skip ]
 

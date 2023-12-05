@@ -282,6 +282,7 @@ unsigned Type::size() const
             case Types::Primitive::U32:
                 return 4;
             case Types::Primitive::Bool:
+                return 1;
             case Types::Primitive::Void:
             case Types::Primitive::AbstractInt:
             case Types::Primitive::AbstractFloat:
@@ -356,6 +357,7 @@ unsigned Type::alignment() const
             case Types::Primitive::U32:
                 return 4;
             case Types::Primitive::Bool:
+                return 1;
             case Types::Primitive::Void:
             case Types::Primitive::AbstractInt:
             case Types::Primitive::AbstractFloat:

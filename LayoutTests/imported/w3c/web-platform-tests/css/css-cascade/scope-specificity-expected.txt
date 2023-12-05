@@ -3,7 +3,7 @@ FAIL @scope (#main) { .b {  } } assert_equals: unscoped + scoped expected "2" bu
 FAIL @scope (#main) to (.b) { .a {  } } assert_equals: unscoped + scoped expected "2" but got "1"
 FAIL @scope (#main, .foo, .bar) { #a {  } } assert_equals: unscoped + scoped expected "2" but got "1"
 FAIL @scope (#main) { div.b {  } } assert_equals: unscoped + scoped expected "2" but got "1"
-FAIL @scope (#main) { :scope .b {  } } assert_equals: scoped + unscoped expected "1" but got "2"
+PASS @scope (#main) { :scope .b {  } }
 FAIL @scope (#main) { & .b {  } } assert_equals: scoped + unscoped expected "1" but got "2"
 FAIL @scope (#main) { div .b {  } } assert_equals: unscoped + scoped expected "2" but got "1"
 FAIL @scope (#main) { @scope (.a) { .b {  } } } assert_equals: unscoped + scoped expected "2" but got "1"

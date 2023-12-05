@@ -26,6 +26,19 @@ video {
 @scope (.a) {
   :scope :scope .green-7 { color: green; }
 }
+
+@scope (.a) {
+  span.green-9 { color: green; }
+}
+@scope (.b) {
+  .green-8 { color: green; }
+  .green-9 { color: red; }
+}
+@scope (.a) {
+  .green-8 { color: red; }
+  .green-9 { color: red; }
+}
+
 </style>
 
 <div class="a">
@@ -67,5 +80,17 @@ video {
     <div class="a">
       <span class="green-7">should not be green</span>
     </div>
+  </div>
+</div>
+
+<div class="a">
+  <div class="b">
+    <span class="green-8">should be green</span>
+  </div>
+</div>
+
+<div class="a">
+  <div class="b">
+    <span class="green-9">should be green</span>
   </div>
 </div>

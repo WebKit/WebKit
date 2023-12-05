@@ -1948,7 +1948,9 @@ NSArray *WebExtensionContext::platformMenuItems(const WebExtensionTab& tab) cons
     contextParameters.types = WebExtensionMenuItemContextType::Tab;
     contextParameters.tabIdentifier = tab.identifier();
 
-    return WebExtensionMenuItem::matchingPlatformMenuItems(mainMenuItems(), contextParameters);
+    if (auto *menuItem = singleMenuItemOrExtensionItemWithSubmenu(contextParameters))
+        return @[ menuItem ];
+    return @[ ];
 }
 
 WebExtensionMenuItem* WebExtensionContext::menuItem(const String& identifier) const
@@ -1981,6 +1983,38 @@ void WebExtensionContext::performMenuItem(WebExtensionMenuItem& menuItem, const 
 
     bool wasChecked = menuItem.toggleCheckedIfNeeded(contextParameters);
     fireMenusClickedEventIfNeeded(menuItem, wasChecked, contextParameters);
+}
+
+CocoaMenuItem *WebExtensionContext::singleMenuItemOrExtensionItemWithSubmenu(const WebExtensionMenuItemContextParameters& contextParameters) const
+{
+#if USE(APPKIT)
+    auto *menuItems = WebExtensionMenuItem::matchingPlatformMenuItems(mainMenuItems(), contextParameters);
+    if (!menuItems.count)
+        return nil;
+
+    if (menuItems.count == 1) {
+        // Don't allow images for the top-level items, it isn't typical on macOS for menus.
+        dynamic_objc_cast<NSMenuItem>(menuItems.firstObject).image = nil;
+
+        return menuItems.firstObject;
+    }
+
+    auto *extensionItem = [[_WKWebExtensionMenuItem alloc] initWithTitle:extension().displayShortName() handler:^(id) { }];
+    auto *extensionSubmenu = [[NSMenu alloc] init];
+    extensionSubmenu.itemArray = menuItems;
+    extensionItem.submenu = extensionSubmenu;
+
+    return extensionItem;
+#else
+    auto *menuItems = WebExtensionMenuItem::matchingPlatformMenuItems(mainMenuItems(), contextParameters);
+    if (!menuItems.count)
+        return nil;
+
+    if (menuItems.count == 1)
+        return menuItems.firstObject;
+
+    return [UIMenu menuWithTitle:extension().displayShortName() children:menuItems];
+#endif
 }
 
 #if PLATFORM(MAC)
@@ -2054,24 +2088,8 @@ void WebExtensionContext::addItemsToContextMenu(WebPageProxy& page, const Contex
     if (contextParameters.types.isEmpty())
         contextParameters.types.add(frameInfo.isMainFrame ? WebExtensionMenuItemContextType::Page : WebExtensionMenuItemContextType::Frame);
 
-    auto *menuItems = WebExtensionMenuItem::matchingPlatformMenuItems(mainMenuItems(), contextParameters);
-    if (!menuItems.count)
-        return;
-
-    if (menuItems.count == 1) {
-        // Don't allow images for the top-level items, it isn't typical on macOS for context menus.
-        dynamic_objc_cast<NSMenuItem>(menuItems.firstObject).image = nil;
-
-        [menu addItem:menuItems.firstObject];
-        return;
-    }
-
-    auto *extensionItem = [[NSMenuItem alloc] initWithTitle:extension().displayShortName() action:nullptr keyEquivalent:@""];
-    auto *extensionSubmenu = [[NSMenu alloc] init];
-    extensionSubmenu.itemArray = menuItems;
-    extensionItem.submenu = extensionSubmenu;
-
-    [menu addItem:extensionItem];
+    if (auto *menuItem = singleMenuItemOrExtensionItemWithSubmenu(contextParameters))
+        [menu addItem:menuItem];
 }
 #endif
 

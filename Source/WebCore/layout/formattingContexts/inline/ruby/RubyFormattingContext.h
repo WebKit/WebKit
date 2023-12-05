@@ -35,6 +35,7 @@ namespace Layout {
 class InlineFormattingContext;
 class InlineLevelBox;
 class Line;
+class LineBox;
 
 class RubyFormattingContext {
 public:
@@ -45,7 +46,7 @@ public:
     static void applyRubyAlign(Line&, const InlineFormattingContext&);
 
     // Line box building
-    static void applyAnnotationContributionToLayoutBounds(InlineLevelBox& rubyBaseInlineBox, const InlineFormattingContext&);
+    static void applyAnnotationContributionToLayoutBounds(LineBox&, const InlineFormattingContext&);
 
     // Display content building
     static InlineLayoutPoint placeAnnotationBox(const Box& rubyBaseLayoutBox, const InlineFormattingContext&);
@@ -54,6 +55,8 @@ public:
     static InlineLayoutUnit overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseStart, const InlineDisplay::Boxes&, const InlineFormattingContext&);
     static InlineLayoutUnit overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, WTF::Range<size_t> rubyBaseRange, const InlineDisplay::Boxes&, const InlineFormattingContext&);
 
+private:
+    static void adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox&, InlineLevelBox& rubyBaseInlineBox, const InlineFormattingContext&);
 };
 
 } // namespace Layout

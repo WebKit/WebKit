@@ -34,7 +34,6 @@
 #import "WebExtensionAction.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionTab.h"
-#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CompletionHandler.h>
 
@@ -54,8 +53,7 @@ using CocoaMenuItem = UIMenuElement;
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebExtensionAction.class, self))
-        return;
+    ASSERT(isMainRunLoop());
 
     _webExtensionAction->~WebExtensionAction();
 }

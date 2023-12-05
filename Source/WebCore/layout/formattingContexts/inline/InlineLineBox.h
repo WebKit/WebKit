@@ -39,6 +39,7 @@ class BoxGeometry;
 class InlineFormattingContext;
 class LineBoxBuilder;
 class LineBoxVerticalAligner;
+class RubyFormattingContext;
 
 //   ____________________________________________________________ Line Box
 // |                                    --------------------
@@ -89,6 +90,7 @@ public:
 private:
     friend class LineBoxBuilder;
     friend class LineBoxVerticalAligner;
+    friend class RubyFormattingContext;
 
     void addInlineLevelBox(InlineLevelBox&&);
     InlineLevelBoxList& nonRootInlineLevelBoxes() { return m_nonRootInlineLevelBoxList; }

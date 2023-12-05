@@ -45,6 +45,7 @@
 #import "WebExtensionEventListenerType.h"
 #import "WebPageProxy.h"
 #import "WebProcessPool.h"
+#import <WebCore/ContentRuleListResults.h>
 #import <wtf/FileSystem.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>
@@ -293,6 +294,25 @@ void WebExtensionController::didFailLoadForFrame(WebPageProxyIdentifier pageID, 
     for (auto& context : m_extensionContexts)
         context->didFailLoadForFrame(pageID, frameID, parentFrameID, frameURL, timestamp);
 }
+
+void WebExtensionController::handleContentRuleListNotification(WebPageProxyIdentifier pageID, URL& url, WebCore::ContentRuleListResults& results)
+{
+    for (const auto& result : results.results) {
+        auto contentRuleListIdentifier = result.first;
+        for (auto& context : m_extensionContexts) {
+            if (context->uniqueIdentifier() != contentRuleListIdentifier)
+                continue;
+
+            RefPtr tab = context->getTab(pageID);
+            if (!tab)
+                break;
+
+            context->incrementActionCountForTab(*tab, 1);
+            break;
+        }
+    }
+}
+
 
 } // namespace WebKit
 

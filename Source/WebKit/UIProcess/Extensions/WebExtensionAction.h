@@ -70,6 +70,7 @@ public:
     WebExtensionWindow* window() { return m_window.get(); }
 
     void clearCustomizations();
+    void clearBlockedResourceCount();
 
     void propertiesDidChange();
 
@@ -81,6 +82,8 @@ public:
 
     String badgeText() const;
     void setBadgeText(String);
+
+    void incrementBlockedResourceCount(ssize_t amount);
 
     bool isEnabled() const;
     void setEnabled(std::optional<bool>);
@@ -116,6 +119,7 @@ private:
     RetainPtr<NSDictionary> m_customIcons;
     String m_customLabel;
     String m_customBadgeText;
+    ssize_t m_blockedResourceCount { 0 };
     std::optional<bool> m_customEnabled;
     bool m_popupPresented { false };
     bool m_respondsToPresentPopup { false };

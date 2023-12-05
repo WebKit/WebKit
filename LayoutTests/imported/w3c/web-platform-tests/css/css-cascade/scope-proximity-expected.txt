@@ -1,5 +1,5 @@
 
-FAIL Alternating light/dark assert_equals: expected "rgb(100, 100, 100)" but got "rgb(200, 200, 200)"
-FAIL Proximity wins over order of appearance assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+PASS Alternating light/dark
+PASS Proximity wins over order of appearance
 PASS Specificity wins over proximity
 

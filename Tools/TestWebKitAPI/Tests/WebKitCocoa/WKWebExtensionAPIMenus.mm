@@ -206,8 +206,8 @@ TEST(WKWebExtensionAPIMenus, ActionMenus)
         @"  browser.test.assertEq(typeof info, 'object')",
         @"  browser.test.assertEq(typeof tab, 'object')",
 
-        @"  browser.test.assertEq(info.menuId, 'top-level-1')",
-        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.menuItemId, 'top-level-1')",
+        @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
 
         @"  browser.test.assertEq(typeof tab.id, 'number')",
         @"  browser.test.assertEq(typeof tab.windowId, 'number')",
@@ -271,8 +271,8 @@ TEST(WKWebExtensionAPIMenus, ActionSubmenus)
         @"  browser.test.assertEq(typeof info, 'object')",
         @"  browser.test.assertEq(typeof tab, 'object')",
 
-        @"  browser.test.assertEq(info.menuId, 'submenu-1')",
-        @"  browser.test.assertEq(info.parentMenuId, 'top-level-1')",
+        @"  browser.test.assertEq(info.menuItemId, 'submenu-1')",
+        @"  browser.test.assertEq(info.parentMenuItemId, 'top-level-1')",
 
         @"  browser.test.notifyPass()",
         @"})",
@@ -373,8 +373,8 @@ TEST(WKWebExtensionAPIMenus, ActionSubmenusUpdate)
         @"  browser.test.assertEq(typeof info, 'object')",
         @"  browser.test.assertEq(typeof tab, 'object')",
 
-        @"  browser.test.assertEq(info.menuId, 'submenu-1')",
-        @"  browser.test.assertEq(info.parentMenuId, 'top-level-1')",
+        @"  browser.test.assertEq(info.menuItemId, 'submenu-1')",
+        @"  browser.test.assertEq(info.parentMenuItemId, 'top-level-1')",
 
         @"  browser.test.notifyPass()",
         @"})",
@@ -448,7 +448,7 @@ TEST(WKWebExtensionAPIMenus, TabMenus)
         @"  browser.test.assertEq(typeof info, 'object')",
         @"  browser.test.assertEq(typeof tab, 'object')",
 
-        @"  browser.test.assertEq(info.menuId, 'tab-item-1')",
+        @"  browser.test.assertEq(info.menuItemId, 'tab-item-1')",
         @"  browser.test.assertEq(typeof tab.id, 'number')",
 
         @"  browser.test.notifyPass()",
@@ -462,6 +462,16 @@ TEST(WKWebExtensionAPIMenus, TabMenus)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
+    EXPECT_EQ(menuItems.count, 1lu);
+
+#if USE(APPKIT)
+    menuItems = menuItems.firstObject.submenu.itemArray;
+#else
+    auto *parentMenu = dynamic_objc_cast<UIMenu>(menuItems.firstObject);
+    menuItems = parentMenu.children;
+#endif
+
+    EXPECT_EQ(menuItems.count, 2lu);
 
     auto *expectedTitles = @[ @"Tab Item 1", @"Tab Item 2" ];
     EXPECT_EQ(menuItems.count, expectedTitles.count);
@@ -520,6 +530,14 @@ TEST(WKWebExtensionAPIMenus, MenuItemProperties)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
+    EXPECT_EQ(menuItems.count, 1lu);
+
+#if USE(APPKIT)
+    menuItems = menuItems.firstObject.submenu.itemArray;
+#else
+    auto *parentMenu = dynamic_objc_cast<UIMenu>(menuItems.firstObject);
+    menuItems = parentMenu.children;
+#endif
 
     EXPECT_EQ(menuItems.count, 2lu);
 
@@ -601,6 +619,14 @@ TEST(WKWebExtensionAPIMenus, MenuItemPropertiesUpdate)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
+    EXPECT_EQ(menuItems.count, 1lu);
+
+#if USE(APPKIT)
+    menuItems = menuItems.firstObject.submenu.itemArray;
+#else
+    auto *parentMenu = dynamic_objc_cast<UIMenu>(menuItems.firstObject);
+    menuItems = parentMenu.children;
+#endif
 
     EXPECT_EQ(menuItems.count, 2lu);
 
@@ -649,10 +675,10 @@ TEST(WKWebExtensionAPIMenus, ToggleCheckboxMenuItems)
         @"let clickCount = 0",
 
         @"browser.menus.onClicked.addListener((info) => {",
-        @"  if (info.menuId === 'checkbox-1') {",
+        @"  if (info.menuItemId === 'checkbox-1') {",
         @"    browser.test.assertTrue(info.wasChecked)",
         @"    browser.test.assertFalse(info.checked)",
-        @"  } else if (info.menuId === 'checkbox-2') {",
+        @"  } else if (info.menuItemId === 'checkbox-2') {",
         @"    browser.test.assertFalse(info.wasChecked)",
         @"    browser.test.assertTrue(info.checked)",
         @"  }",
@@ -669,6 +695,15 @@ TEST(WKWebExtensionAPIMenus, ToggleCheckboxMenuItems)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
+    EXPECT_EQ(menuItems.count, 1lu);
+
+#if USE(APPKIT)
+    menuItems = menuItems.firstObject.submenu.itemArray;
+#else
+    auto *parentMenu = dynamic_objc_cast<UIMenu>(menuItems.firstObject);
+    menuItems = parentMenu.children;
+#endif
+
     EXPECT_EQ(menuItems.count, 2lu);
 
     auto *checkbox1 = dynamic_objc_cast<CocoaMenuAction>(menuItems.firstObject);
@@ -687,6 +722,16 @@ TEST(WKWebExtensionAPIMenus, ToggleCheckboxMenuItems)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Clicked");
 
     auto *updatedMenuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
+    EXPECT_EQ(updatedMenuItems.count, 1lu);
+
+#if USE(APPKIT)
+    updatedMenuItems = updatedMenuItems.firstObject.submenu.itemArray;
+#else
+    parentMenu = dynamic_objc_cast<UIMenu>(updatedMenuItems.firstObject);
+    updatedMenuItems = parentMenu.children;
+#endif
+
+    EXPECT_EQ(updatedMenuItems.count, 2lu);
 
     checkbox1 = dynamic_objc_cast<CocoaMenuAction>(updatedMenuItems.firstObject);
     checkbox2 = dynamic_objc_cast<CocoaMenuAction>(updatedMenuItems.lastObject);
@@ -744,10 +789,10 @@ TEST(WKWebExtensionAPIMenus, RadioItemGrouping)
         @"let clickCount = 0",
 
         @"browser.menus.onClicked.addListener((info) => {",
-        @"  if (info.menuId === 'radio-2-group-1') {",
+        @"  if (info.menuItemId === 'radio-2-group-1') {",
         @"    browser.test.assertTrue(info.wasChecked)",
         @"    browser.test.assertTrue(info.checked)",
-        @"  } else if (info.menuId === 'radio-2-group-2') {",
+        @"  } else if (info.menuItemId === 'radio-2-group-2') {",
         @"    browser.test.assertFalse(info.wasChecked)",
         @"    browser.test.assertTrue(info.checked)",
         @"  }",
@@ -764,6 +809,15 @@ TEST(WKWebExtensionAPIMenus, RadioItemGrouping)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
+    EXPECT_EQ(menuItems.count, 1lu);
+
+#if USE(APPKIT)
+    menuItems = menuItems.firstObject.submenu.itemArray;
+#else
+    auto *parentMenu = dynamic_objc_cast<UIMenu>(menuItems.firstObject);
+    menuItems = parentMenu.children;
+#endif
+
     EXPECT_EQ(menuItems.count, 6lu);
 
     auto *radio1Group1 = dynamic_objc_cast<CocoaMenuAction>(menuItems[0]);
@@ -787,6 +841,16 @@ TEST(WKWebExtensionAPIMenus, RadioItemGrouping)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Clicked");
 
     auto *updatedMenuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
+    EXPECT_EQ(updatedMenuItems.count, 1lu);
+
+#if USE(APPKIT)
+    updatedMenuItems = updatedMenuItems.firstObject.submenu.itemArray;
+#else
+    parentMenu = dynamic_objc_cast<UIMenu>(updatedMenuItems.firstObject);
+    updatedMenuItems = parentMenu.children;
+#endif
+
+    EXPECT_EQ(updatedMenuItems.count, 6lu);
 
     radio1Group1 = dynamic_objc_cast<CocoaMenuAction>(updatedMenuItems[0]);
     radio2Group1 = dynamic_objc_cast<CocoaMenuAction>(updatedMenuItems[1]);
@@ -815,7 +879,7 @@ TEST(WKWebExtensionAPIMenus, OnClick)
         @"    browser.test.assertEq(typeof info, 'object')",
         @"    browser.test.assertEq(typeof tab, 'object')",
 
-        @"    browser.test.assertEq(info.menuId, 'click-item')",
+        @"    browser.test.assertEq(info.menuItemId, 'click-item')",
         @"    browser.test.assertEq(typeof tab.id, 'number')",
 
         @"    browser.test.notifyPass()",
@@ -828,7 +892,6 @@ TEST(WKWebExtensionAPIMenus, OnClick)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menu Item Created");
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
-
     EXPECT_EQ(menuItems.count, 1lu);
 
     performMenuItemAction(menuItems.firstObject);
@@ -850,7 +913,7 @@ TEST(WKWebExtensionAPIMenus, OnClickAfterUpdate)
         @"    browser.test.assertEq(typeof info, 'object')",
         @"    browser.test.assertEq(typeof tab, 'object')",
 
-        @"    browser.test.assertEq(info.menuId, 'click-item')",
+        @"    browser.test.assertEq(info.menuItemId, 'click-item')",
         @"    browser.test.assertEq(typeof tab.id, 'number')",
 
         @"    browser.test.notifyPass()",
@@ -865,7 +928,6 @@ TEST(WKWebExtensionAPIMenus, OnClickAfterUpdate)
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menu Item Created");
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
-
     EXPECT_EQ(menuItems.count, 1lu);
 
     performMenuItemAction(menuItems.firstObject);
@@ -903,8 +965,8 @@ TEST(WKWebExtensionAPIMenus, MacContextMenuItems)
         @"  browser.test.assertEq(typeof info, 'object')",
         @"  browser.test.assertEq(typeof tab, 'object')",
 
-        @"  browser.test.assertEq(info.menuId, 'context-menu-1')",
-        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.menuItemId, 'context-menu-1')",
+        @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
         @"  browser.test.assertEq(info.selectionText, undefined)",
         @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
         @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
@@ -998,8 +1060,8 @@ TEST(WKWebExtensionAPIMenus, MacActiveTabContextMenuItems)
         @"  browser.test.assertEq(typeof info, 'object')",
         @"  browser.test.assertEq(typeof tab, 'object')",
 
-        @"  browser.test.assertEq(info.menuId, 'context-menu')",
-        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.menuItemId, 'context-menu')",
+        @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
         @"  browser.test.assertEq(info.selectionText, undefined)",
         @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
         @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
@@ -1094,8 +1156,8 @@ TEST(WKWebExtensionAPIMenus, MacURLPatternContextMenuItems)
         @"  browser.test.assertEq(typeof info, 'object')",
         @"  browser.test.assertEq(typeof tab, 'object')",
 
-        @"  browser.test.assertEq(info.menuId, 'url-pattern-menu-item')",
-        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.menuItemId, 'url-pattern-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
         @"  browser.test.assertEq(info.selectionText, 'Large Example Link')",
         @"  browser.test.assertEq(info.linkText, 'Large Example Link')",
         @"  browser.test.assertEq(info.linkUrl, 'http://example.com/test')",
@@ -1181,8 +1243,8 @@ TEST(WKWebExtensionAPIMenus, MacSelectionContextMenuItems)
         @"  browser.test.assertEq(typeof info, 'object')",
         @"  browser.test.assertEq(typeof tab, 'object')",
 
-        @"  browser.test.assertEq(info.menuId, 'selection-menu-item')",
-        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.menuItemId, 'selection-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
         @"  browser.test.assertEq(info.selectionText, 'Example ')",
         @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
         @"  browser.test.assertTrue(info.pageUrl.startsWith('http://localhost:'))",
@@ -1265,8 +1327,8 @@ TEST(WKWebExtensionAPIMenus, MacLinkContextMenuItems)
         @"  browser.test.assertEq(typeof info, 'object')",
         @"  browser.test.assertEq(typeof tab, 'object')",
 
-        @"  browser.test.assertEq(info.menuId, 'link-menu-item')",
-        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.menuItemId, 'link-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
         @"  browser.test.assertEq(info.selectionText, 'Large Example Link')",
         @"  browser.test.assertEq(info.linkText, 'Large Example Link')",
         @"  browser.test.assertEq(info.linkUrl, 'http://example.com/test')",
@@ -1350,8 +1412,8 @@ TEST(WKWebExtensionAPIMenus, MacImageContextMenuItems)
         @"  browser.test.assertEq(typeof info, 'object')",
         @"  browser.test.assertEq(typeof tab, 'object')",
 
-        @"  browser.test.assertEq(info.menuId, 'image-menu-item')",
-        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.menuItemId, 'image-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
         @"  browser.test.assertEq(info.mediaType, 'image')",
         @"  browser.test.assertEq(info.srcUrl, 'http://example.com/example.png')",
         @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
@@ -1434,8 +1496,8 @@ TEST(WKWebExtensionAPIMenus, MacVideoContextMenuItems)
         @"  browser.test.assertEq(typeof info, 'object')",
         @"  browser.test.assertEq(typeof tab, 'object')",
 
-        @"  browser.test.assertEq(info.menuId, 'video-menu-item')",
-        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.menuItemId, 'video-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
         @"  browser.test.assertEq(info.mediaType, 'video')",
         @"  browser.test.assertEq(info.srcUrl, 'http://example.com/example.mp4')",
         @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
@@ -1518,8 +1580,8 @@ TEST(WKWebExtensionAPIMenus, MacAudioContextMenuItems)
         @"  browser.test.assertEq(typeof info, 'object')",
         @"  browser.test.assertEq(typeof tab, 'object')",
 
-        @"  browser.test.assertEq(info.menuId, 'audio-menu-item')",
-        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.menuItemId, 'audio-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
         @"  browser.test.assertEq(info.mediaType, 'audio')",
         @"  browser.test.assertEq(info.srcUrl, 'http://example.com/example.mp3')",
         @"  browser.test.assertEq(typeof info.pageUrl, 'string')",
@@ -1602,8 +1664,8 @@ TEST(WKWebExtensionAPIMenus, MacEditableContextMenuItems)
         @"  browser.test.assertEq(typeof info, 'object')",
         @"  browser.test.assertEq(typeof tab, 'object')",
 
-        @"  browser.test.assertEq(info.menuId, 'editable-menu-item')",
-        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.menuItemId, 'editable-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
         @"  browser.test.assertEq(info.selectionText, 'Area')",
         @"  browser.test.assertEq(info.editable, true)",
 
@@ -1682,8 +1744,8 @@ TEST(WKWebExtensionAPIMenus, MacFrameContextMenuItems)
         @"  browser.test.assertEq(typeof info, 'object')",
         @"  browser.test.assertEq(typeof tab, 'object')",
 
-        @"  browser.test.assertEq(info.menuId, 'frame-menu-item')",
-        @"  browser.test.assertEq(info.parentMenuId, undefined)",
+        @"  browser.test.assertEq(info.menuItemId, 'frame-menu-item')",
+        @"  browser.test.assertEq(info.parentMenuItemId, undefined)",
         @"  browser.test.assertEq(info.selectionText, undefined)",
         @"  browser.test.assertEq(typeof info.frameUrl, 'string')",
         @"  browser.test.assertTrue(info.frameUrl.endsWith('frame.html'))",

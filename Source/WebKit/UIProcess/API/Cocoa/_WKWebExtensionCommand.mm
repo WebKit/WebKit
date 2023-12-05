@@ -32,7 +32,6 @@
 
 #import "WebExtensionCommand.h"
 #import "WebExtensionContext.h"
-#import <WebCore/WebCoreObjCExtras.h>
 
 #if USE(APPKIT)
 using CocoaModifierFlags = NSEventModifierFlags;
@@ -48,8 +47,7 @@ using CocoaMenuItem = UIMenuElement;
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebExtensionCommand.class, self))
-        return;
+    ASSERT(isMainRunLoop());
 
     _webExtensionCommand->~WebExtensionCommand();
 }
