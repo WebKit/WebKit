@@ -177,15 +177,17 @@ namespace WebCore {
 #if ENABLE(UNIFIED_PDF)
     WEBCORE_EXPORT String contextMenuItemPDFOpenWithPreview();
 #endif
+#if ENABLE(PDFJS) || ENABLE(UNIFIED_PDF)
+    WEBCORE_EXPORT String contextMenuItemPDFSinglePage();
+    WEBCORE_EXPORT String contextMenuItemPDFSinglePageContinuous();
+    WEBCORE_EXPORT String contextMenuItemPDFTwoPages();
+    WEBCORE_EXPORT String contextMenuItemPDFTwoPagesContinuous();
+#endif
 #if ENABLE(PDFJS)
     String contextMenuItemPDFAutoSize();
     String contextMenuItemPDFZoomIn();
     String contextMenuItemPDFZoomOut();
     String contextMenuItemPDFActualSize();
-    String contextMenuItemPDFSinglePage();
-    String contextMenuItemPDFSinglePageContinuous();
-    String contextMenuItemPDFTwoPages();
-    String contextMenuItemPDFTwoPagesContinuous();
     String contextMenuItemPDFNextPage();
     String contextMenuItemPDFPreviousPage();
 #endif
