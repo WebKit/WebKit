@@ -815,13 +815,13 @@ AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
     return newObj.get();
 }
 
-AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
+AccessibilityObject* AXObjectCache::getOrCreate(Node* node, IsRelationTarget isRelationTarget)
 {
     if (!node)
         return nullptr;
 
-    if (AccessibilityObject* obj = get(node))
-        return obj;
+    if (auto* object = get(node))
+        return object;
 
     if (node->renderer())
         return getOrCreate(node->renderer());
@@ -852,23 +852,25 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     }
 
     bool inCanvasSubtree = lineageOfType<HTMLCanvasElement>(*node->parentElement()).first();
-    bool insideMeterElement = is<HTMLMeterElement>(*node->parentElement());
-    auto* element = dynamicDowncast<Element>(node);
-    bool hasDisplayContents = element && element->hasDisplayContents();
-    bool isPopover = element && element->hasAttributeWithoutSynchronization(popoverAttr);
-    if (!inCanvasSubtree && !insideMeterElement && !hasDisplayContents && !isPopover && !isNodeAriaVisible(node))
-        return nullptr;
+    // If node is the target of a relationship or a descendant of one, create an AX object unconditionally.
+    if (isRelationTarget == IsRelationTarget::No && !isDescendantOfRelationTarget(*node)) {
+        bool insideMeterElement = is<HTMLMeterElement>(*node->parentElement());
+        auto* element = dynamicDowncast<Element>(node);
+        bool hasDisplayContents = element && element->hasDisplayContents();
+        bool isPopover = element && element->hasAttributeWithoutSynchronization(popoverAttr);
+        if (!inCanvasSubtree && !insideMeterElement && !hasDisplayContents && !isPopover && !isNodeAriaVisible(node))
+            return nullptr;
+    }
 
     // Fallback content is only focusable as long as the canvas is displayed and visible.
     // Update the style before Element::isFocusable() gets called.
     if (inCanvasSubtree)
         node->document().updateStyleIfNeeded();
 
-    RefPtr<AccessibilityObject> newObject = createFromNode(*node);
+    RefPtr newObject = createFromNode(*node);
 
     // Will crash later if we have two objects for the same node.
     ASSERT(!get(node));
-
     cacheAndInitializeWrapper(newObject.get(), node);
     // Compute the object's initial ignored status.
     newObject->recomputeIsIgnored();
@@ -876,7 +878,6 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     // it will disappear when this function is finished, leading to a use-after-free.
     if (newObject->isDetached())
         return nullptr;
-
     return newObject.get();
 }
 
@@ -4601,7 +4602,7 @@ void AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType
         ASSERT_NOT_REACHED();
         return;
     }
-    addRelation(getOrCreate(origin), getOrCreate(target), relationType);
+    addRelation(getOrCreate(origin), getOrCreate(target, IsRelationTarget::Yes), relationType);
 }
 
 static bool canHaveRelations(Element& element)
@@ -4822,6 +4823,17 @@ const HashSet<AXID>& AXObjectCache::relationTargetIDs()
 {
     updateRelationsIfNeeded();
     return m_relationTargets;
+}
+
+bool AXObjectCache::isDescendantOfRelationTarget(Node& node)
+{
+    auto& targetIDs = relationTargetIDs();
+    for (auto* parent = node.parentNode(); parent; parent = parent->parentNode()) {
+        auto* object = get(parent);
+        if (object && targetIDs.contains(object->objectID()))
+            return true;
+    }
+    return false;
 }
 
 std::optional<ListHashSet<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCoreObject& object, AXRelationType relationType)
