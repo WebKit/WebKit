@@ -1659,8 +1659,8 @@
 #define HAVE_UI_CONTEXT_MENU_ASYNC_CONFIGURATION 1
 #endif
 
-#if !PLATFORM(APPLETV) && !PLATFORM(WATCHOS) && __has_include(<UIKit/_UITextCursorDragAnimator.h>)
-#define HAVE_UI_TEXT_CURSOR_DRAG_ANIMATOR 1
+#if !PLATFORM(APPLETV) && !PLATFORM(WATCHOS) && __has_include(<UIKit/UITextCursorDropPositionAnimator.h>)
+#define HAVE_UI_TEXT_CURSOR_DROP_POSITION_ANIMATOR 1
 #endif
 
 #if __has_include(<UIKit/UIAsyncTextInteraction.h>)
