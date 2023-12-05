@@ -4023,6 +4023,7 @@ ManageWebKitProcessesAsExtensions:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
+      "PLATFORM(COCOA)": true
       default: false
 
 ManagedMediaSourceEnabled:
