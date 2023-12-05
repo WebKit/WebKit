@@ -76,8 +76,10 @@ void GPUBuffer::mapAsync(GPUMapModeFlags mode, std::optional<GPUSize64> offset, 
     m_pendingMapPromise = promise;
     // FIXME: Should this capture a weak pointer to |this| instead?
     m_backing->mapAsync(convertMapModeFlagsToBacking(mode), offset.value_or(0), size, [promise = WTFMove(promise), protectedThis = Ref { *this }](bool success) mutable {
-        if (!protectedThis->m_pendingMapPromise)
+        if (!protectedThis->m_pendingMapPromise) {
+            promise.resolve(nullptr);
             return;
+        }
 
         protectedThis->m_pendingMapPromise = std::nullopt;
         if (success) {
