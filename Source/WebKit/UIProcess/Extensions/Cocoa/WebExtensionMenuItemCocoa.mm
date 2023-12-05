@@ -47,34 +47,34 @@
 #endif
 
 #if USE(APPKIT)
-using MenuItemHandlerBlock = void (^)(id);
-
-@interface _WKWebExtensionMenuItem : NSMenuItem
-
-- (instancetype)initWithTitle:(NSString *)title handler:(MenuItemHandlerBlock)block;
-
-@property (nonatomic, copy) MenuItemHandlerBlock handler;
-
-@end
-
 @implementation _WKWebExtensionMenuItem
 
-- (instancetype)initWithTitle:(NSString *)title handler:(MenuItemHandlerBlock)handler
+- (instancetype)initWithTitle:(NSString *)title handler:(WebExtensionMenuItemHandlerBlock)handler
 {
-    ASSERT(handler);
+    RELEASE_ASSERT(handler);
 
     if (!(self = [super initWithTitle:title action:@selector(_performAction:) keyEquivalent:@""]))
         return nil;
 
     self.target = self;
-    _handler = handler;
+
+    _handler = [handler copy];
 
     return self;
 }
 
+- (id)copyWithZone:(NSZone *)zone
+{
+    _WKWebExtensionMenuItem *copy = [super copyWithZone:zone];
+    copy->_handler = [_handler copy];
+    return copy;
+}
+
 - (IBAction)_performAction:(id)sender
 {
-    _handler(sender);
+    ASSERT(_handler);
+    if (_handler)
+        _handler(sender);
 }
 
 @end

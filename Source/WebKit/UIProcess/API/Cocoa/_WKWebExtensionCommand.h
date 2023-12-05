@@ -28,7 +28,7 @@
 #import <Foundation/Foundation.h>
 
 #if TARGET_OS_IPHONE
-#import <UIKit/UICommand.h>
+#import <UIKit/UIKeyCommand.h>
 #endif
 
 @class _WKWebExtensionContext;
@@ -51,7 +51,7 @@ NS_SWIFT_NAME(WKWebExtension.Command)
 /*! @abstract The web extension context associated with the command. */
 @property (nonatomic, readonly, weak) _WKWebExtensionContext *webExtensionContext;
 
-/*! @abstract Unique identifier for the command. */
+/*! @abstract A unique identifier for the command. */
 @property (nonatomic, readonly, copy) NSString *identifier;
 
 /*!
@@ -79,6 +79,28 @@ NS_SWIFT_NAME(WKWebExtension.Command)
 #else
 @property (nonatomic) NSEventModifierFlags modifierFlags;
 #endif
+
+/*!
+ @abstract A menu item representation of the web extension command for use in menus.
+ @discussion This property provides a representation of the web extension command as a menu item to display in the app.
+ Selecting the menu item will perform the command, offering a convenient and visual way for users to execute this web extension command.
+ */
+#if TARGET_OS_IPHONE
+@property (nonatomic, readonly, copy) UIMenuElement *menuItem;
+#else
+@property (nonatomic, readonly, copy) NSMenuItem *menuItem;
+#endif
+
+#if TARGET_OS_IPHONE
+/*!
+ @abstract A key command representation of the web extension command for use in the responder chain.
+ @discussion This property provides a `UIKeyCommand` instance representing the web extension command, ready for integration in the app.
+ The property is `nil` if no shortcut is defined. Otherwise, the key command is fully configured with the necessary input key and modifier flags
+ to perform the associated command upon activation. It can be included in a view controller or other responder's `keyCommands` property, enabling
+ keyboard activation and discoverability of the web extension command.
+ */
+@property (nonatomic, readonly, copy, nullable) UIKeyCommand *keyCommand;
+#endif // TARGET_OS_IPHONE
 
 @end
 

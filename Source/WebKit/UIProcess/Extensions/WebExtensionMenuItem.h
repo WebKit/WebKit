@@ -46,6 +46,18 @@ OBJC_CLASS UIMenuElement;
 using CocoaMenuItem = UIMenuElement;
 #endif
 
+#if defined(__OBJC__) && USE(APPKIT)
+using WebExtensionMenuItemHandlerBlock = void (^)(id);
+
+@interface _WKWebExtensionMenuItem : NSMenuItem
+
+- (instancetype)initWithTitle:(NSString *)title handler:(WebExtensionMenuItemHandlerBlock)block;
+
+@property (nonatomic, copy) WebExtensionMenuItemHandlerBlock handler;
+
+@end
+#endif // USE(APPKIT)
+
 namespace WebKit {
 
 class WebExtensionCommand;
