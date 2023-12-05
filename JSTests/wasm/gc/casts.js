@@ -3,6 +3,24 @@
 import * as assert from "../assert.js";
 import { compile, instantiate } from "./wast-wrapper.js";
 
+function testValidation() {
+  assert.throws(
+    () => compile(`
+      (module
+        (func (export "f") (result (ref any))
+          (ref.cast (ref 256) (ref.null none))))
+    `),
+    WebAssembly.CompileError,
+    "WebAssembly.Module doesn't parse at byte 7: can't get heap type for ref.cast, in function at index 0"
+  );
+
+  compile(`
+    (module
+      (func (export "f") (result (ref any))
+        (ref.cast (ref any) (ref.null none))))
+  `);
+}
+
 function testBasicCasts() {
   instantiate(`
      (module
@@ -962,6 +980,23 @@ function testNullCasts() {
   );
 }
 
+function testLargeIndexCasts() {
+  {
+    let typedefs = "", casts = "";
+    for (var i = 0; i < 500; i++) {
+      typedefs += `(type (struct))\n`;
+      casts += `(ref.cast (ref ${i}) (struct.new ${i})) drop\n`
+    }
+    instantiate(`
+      (module
+        ${typedefs}
+        (start 0)
+        (func ${casts}))
+    `);
+  }
+}
+
+testValidation();
 testBasicCasts();
 testI31Casts();
 testFunctionCasts();
@@ -971,3 +1006,4 @@ testSubtypeCasts();
 testEqCasts();
 testAnyCasts();
 testNullCasts();
+testLargeIndexCasts();

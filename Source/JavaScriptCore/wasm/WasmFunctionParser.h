@@ -2366,39 +2366,41 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             WASM_VALIDATOR_FAIL_IF(!isRefType(ref.type()), opName, " to type ", ref.type(), " expected a reference type");
 
             TypeIndex resultTypeIndex = static_cast<TypeIndex>(heapType);
-            switch (static_cast<TypeKind>(heapType)) {
-            case TypeKind::Funcref:
-            case TypeKind::Nullfuncref:
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), funcrefType()), opName, " to type ", ref.type(), " expected a funcref");
-                break;
-            case TypeKind::Externref:
-            case TypeKind::Nullexternref:
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), externrefType()), opName, " to type ", ref.type(), " expected an externref");
-                break;
-            case TypeKind::Eqref:
-            case TypeKind::Anyref:
-            case TypeKind::Nullref:
-            case TypeKind::I31ref:
-            case TypeKind::Arrayref:
-            case TypeKind::Structref:
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), anyrefType()), "ref.cast to type ", ref.type(), " expected a subtype of anyref");
-                break;
-            default:
-                ASSERT(isTypeIndexHeapType(heapType));
+            if (typeIndexIsType(resultTypeIndex)) {
+                switch (static_cast<TypeKind>(heapType)) {
+                case TypeKind::Funcref:
+                case TypeKind::Nullfuncref:
+                    WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), funcrefType()), opName, " to type ", ref.type(), " expected a funcref");
+                    break;
+                case TypeKind::Externref:
+                case TypeKind::Nullexternref:
+                    WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), externrefType()), opName, " to type ", ref.type(), " expected an externref");
+                    break;
+                case TypeKind::Eqref:
+                case TypeKind::Anyref:
+                case TypeKind::Nullref:
+                case TypeKind::I31ref:
+                case TypeKind::Arrayref:
+                case TypeKind::Structref:
+                    WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), anyrefType()), "ref.cast to type ", ref.type(), " expected a subtype of anyref");
+                    break;
+                default:
+                    RELEASE_ASSERT_NOT_REACHED();
+                }
+            } else {
                 const TypeDefinition& signature = m_info.typeSignatures[heapType];
                 if (signature.expand().is<FunctionSignature>())
                     WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), funcrefType()), opName, " to type ", ref.type(), " expected a funcref");
                 else
-                    WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), anyrefType()), "ref.cast to type ", ref.type(), " expected a subtype of anyref");
+                    WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), anyrefType()), opName, " to type ", ref.type(), " expected a subtype of anyref");
                 resultTypeIndex = signature.index();
-                break;
             }
 
             ExpressionType result;
             bool allowNull = op == ExtGCOpType::RefCastNull || op == ExtGCOpType::RefTestNull;
             if (op == ExtGCOpType::RefCast || op == ExtGCOpType::RefCastNull) {
                 WASM_TRY_ADD_TO_CONTEXT(addRefCast(ref, allowNull, heapType, result));
-                m_expressionStack.constructAndAppend(Type { ref.type().kind, resultTypeIndex }, result);
+                m_expressionStack.constructAndAppend(Type { allowNull ? TypeKind::RefNull : TypeKind::Ref, resultTypeIndex }, result);
             } else {
                 WASM_TRY_ADD_TO_CONTEXT(addRefTest(ref, allowNull, heapType, result));
                 m_expressionStack.constructAndAppend(Types::I32, result);
