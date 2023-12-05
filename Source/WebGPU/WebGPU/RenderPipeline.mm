@@ -193,7 +193,12 @@ bool Device::validateRenderPipeline(const WGPURenderPipelineDescriptor& descript
     // FIXME: Implement this according to the description in
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpurenderpipelinedescriptor
 
-    UNUSED_PARAM(descriptor);
+    if (descriptor.fragment) {
+        const auto& fragmentDescriptor = *descriptor.fragment;
+
+        if (fragmentDescriptor.targetCount > limits().maxColorAttachments)
+            return false;
+    }
 
     return true;
 }
