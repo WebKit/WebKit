@@ -26,9 +26,11 @@
 #import "config.h"
 #import "ExtensionEventHandler.h"
 
+#import "WKProcessExtension.h"
 #import "XPCServiceEntryPoint.h"
 
-void ExtensionEventHandler(xpc_connection_t connection)
+void ExtensionEventHandler(xpc_connection_t connection, NSObject* processExtension)
 {
+    WebKit::setProcessExtension(processExtension);
     return WebKit::XPCServiceEventHandler(connection);
 }

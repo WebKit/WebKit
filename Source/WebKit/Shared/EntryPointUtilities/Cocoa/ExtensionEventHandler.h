@@ -34,7 +34,7 @@
 extern "C" {
 #endif
 
-WK_EXPORT void ExtensionEventHandler(xpc_connection_t);
+WK_EXPORT void ExtensionEventHandler(xpc_connection_t, NSObject*);
 
 #ifdef __cplusplus
 }

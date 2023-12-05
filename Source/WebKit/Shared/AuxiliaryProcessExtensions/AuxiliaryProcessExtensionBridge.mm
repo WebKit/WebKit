@@ -27,7 +27,7 @@
 
 #import "ExtensionEventHandler.h"
 
-void handleNewConnection(xpc_connection_t connection)
+void handleNewConnection(xpc_connection_t connection, NSObject* process)
 {
-    ExtensionEventHandler(connection);
+    ExtensionEventHandler(connection, process);
 }

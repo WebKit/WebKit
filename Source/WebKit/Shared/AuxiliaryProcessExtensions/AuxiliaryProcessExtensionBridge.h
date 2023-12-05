@@ -25,8 +25,6 @@
 
 #pragma once
 
-#import "WKProcessExtension.h"
-
 // FIXME: forward declare xpc_connection_t to build with public SDK.
 #import <xpc/xpc.h>
 
@@ -34,7 +32,7 @@
 extern "C" {
 #endif
 
-void handleNewConnection(xpc_connection_t);
+void handleNewConnection(xpc_connection_t, NSObject*);
 
 #ifdef __cplusplus
 }

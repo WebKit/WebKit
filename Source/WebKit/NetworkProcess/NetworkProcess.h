@@ -72,7 +72,7 @@ typedef struct OpaqueCFHTTPCookieStorage*  CFHTTPCookieStorageRef;
 #endif
 
 #if USE(EXTENSIONKIT)
-OBJC_CLASS WKGrant;
+OBJC_CLASS NSObject;
 #endif
 
 namespace IPC {
@@ -569,7 +569,7 @@ private:
 #if USE(RUNNINGBOARD)
     WebSQLiteDatabaseTracker m_webSQLiteDatabaseTracker;
 #if USE(EXTENSIONKIT)
-    RetainPtr<WKGrant> m_holdingLockedFileGrant;
+    RetainPtr<NSObject> m_holdingLockedFileGrant;
 #endif
     RefPtr<ProcessAssertion> m_holdingLockedFileAssertion;
 #endif

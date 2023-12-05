@@ -28,28 +28,22 @@
 
 #import <wtf/RetainPtr.h>
 
-static RetainPtr<WKProcessExtension>& sharedInstance()
+namespace WebKit {
+
+static RetainPtr<NSObject>& sharedProcessExtension()
 {
-    static NeverDestroyed<RetainPtr<WKProcessExtension>> instance;
+    static NeverDestroyed<RetainPtr<NSObject>> instance;
     return instance.get();
 }
 
-@implementation WKGrant
-@end
-
-@implementation WKProcessExtension
-+ (WKProcessExtension*) sharedInstance
+void setProcessExtension(NSObject* instance)
 {
-    return sharedInstance().get();
+    sharedProcessExtension() = instance;
 }
 
-- (void)setSharedInstance:(WKProcessExtension*)instance
+NSObject* processExtension()
 {
-    sharedInstance() = instance;
+    return sharedProcessExtension().get();
 }
 
-- (id)grant:(NSString*)domain name:(NSString*)name
-{
-    return nil;
 }
-@end

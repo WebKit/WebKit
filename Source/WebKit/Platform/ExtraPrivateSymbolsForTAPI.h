@@ -36,7 +36,7 @@ void NetworkServiceInitializer();
 void WebContentServiceInitializer();
 void GPUServiceInitializer();
 
-void ExtensionEventHandler(xpc_connection_t);
+void ExtensionEventHandler(xpc_connection_t, NSObject*);
 
 #ifdef __cplusplus
 }

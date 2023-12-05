@@ -25,13 +25,9 @@
 
 #pragma once
 
-OBJC_EXPORT
-@interface WKGrant : NSObject
-@end
+namespace WebKit {
 
-OBJC_EXPORT
-@interface WKProcessExtension : NSObject
-+ (WKProcessExtension*) sharedInstance;
-- (void)setSharedInstance:(WKProcessExtension*)instance;
-- (id)grant:(NSString*)domain name:(NSString*)name;
-@end
+NSObject* processExtension();
+void setProcessExtension(NSObject* instance);
+
+}

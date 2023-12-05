@@ -33,6 +33,6 @@ class GPUProcessExtension {
 
 extension GPUProcessExtension: GPUServiceExtension {
     func handle(xpcConnection: xpc_connection_t) {
-        handleNewConnection(xpcConnection)
+        handleNewConnection(xpcConnection, nil)
     }
 }

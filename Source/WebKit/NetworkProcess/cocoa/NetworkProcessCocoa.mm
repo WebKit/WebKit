@@ -259,7 +259,11 @@ void NetworkProcess::setProxyConfigData(PAL::SessionID sessionID, Vector<std::pa
 #if USE(RUNNINGBOARD) && USE(EXTENSIONKIT)
 bool NetworkProcess::aqcuireLockedFileGrant()
 {
-    m_holdingLockedFileGrant = [WKProcessExtension.sharedInstance grant:@"com.apple.common" name:@"FinishTaskInterruptable"];
+    if (!processExtension())
+        return false;
+    SEL selector = NSSelectorFromString(@"grant:name:");
+    RELEASE_ASSERT([processExtension() respondsToSelector:selector]);
+    m_holdingLockedFileGrant = [processExtension() performSelector:selector withObject:@"com.apple.common" withObject:@"FinishTaskInterruptable"];
     if (m_holdingLockedFileGrant)
         RELEASE_LOG(Process, "Successfully took assertion on Network process for locked file.");
     else

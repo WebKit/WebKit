@@ -28,7 +28,7 @@ import ServiceExtensions
 
 @objc
 @_spi(Private)
-open class Grant: WKGrant {
+open class Grant: NSObject {
     let inner : _Capabilities.Grant
 
     init(inner: _Capabilities.Grant) {
@@ -49,24 +49,24 @@ open class Grant: WKGrant {
 }
 
 @main
-class NetworkingProcessExtension : WKProcessExtension {
+class NetworkingProcessExtension : NSObject {
     override required init() {
         super.init()
-        setSharedInstance(self)
     }
 }
 
 extension NetworkingProcessExtension : NetworkingServiceExtension {
     func handle(xpcConnection: xpc_connection_t) {
-        handleNewConnection(xpcConnection)
+        handleNewConnection(xpcConnection, self)
     }
 
-    override func grant(_ domain: String, name: String) -> Any {
+    @objc(grant:name:)
+    func grant(_ domain: String, name: String) -> Any {
         do {
             let grant = try self._request(capabilities: _Capabilities.assertion(domain, name))
             return Grant(inner: grant)
         } catch {
-            return WKGrant()
+            return NSObject()
         }
     }
 }

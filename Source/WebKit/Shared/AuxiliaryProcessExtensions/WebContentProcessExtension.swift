@@ -33,6 +33,6 @@ class WebContentProcessExtension {
 
 extension WebContentProcessExtension: ContentServiceExtension {
     func handle(xpcConnection: xpc_connection_t) {
-        handleNewConnection(xpcConnection)
+        handleNewConnection(xpcConnection, nil)
     }
 }
