@@ -798,18 +798,21 @@ http/tests/resourceLoadStatistics/switch-session-on-navigation-to-prevalent-with
 http/tests/resourceLoadStatistics/website-data-removal-for-site-navigated-to-with-link-decoration.html [ Failure ]
 http/tests/resourceLoadStatistics/website-data-removal-for-site-without-user-interaction.html [ Failure ]
 
-http/tests/security/XFrameOptions/x-frame-options-cached.html [ Skip ] # Crash
 http/tests/security/XFrameOptions/x-frame-options-deny.html [ Skip ] # Failure
 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-conflict.html [ Skip ] # Failure
 http/tests/security/XFrameOptions/x-frame-options-multiple-headers-sameorigin-deny.html [ Skip ] # Failure
 http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html [ Skip ] # Failure
 http/tests/security/bypassing-cors-checks-for-extension-urls.html [ Skip ] # Failure
-http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Skip ] # Failure
-http/tests/security/canvas-remote-read-remote-video-allowed-redirect.html [ Skip ] # Crash
-http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Skip ] # Failure
-http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html [ Skip ] # Crash
+
+webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Skip ] # Crash
+webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-allowed-redirect.html [ Skip ] # Crash
+webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Skip ] # Crash
+webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html [ Skip ] # Crash
+webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-localhost.html [ Skip ] # Crash
+webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-redirect.html [ Skip ] # Crash
+
 http/tests/security/canvas-remote-read-remote-video-hls.html [ Skip ] # Timeout
-http/tests/security/canvas-remote-read-remote-video-redirect.html [ Skip ] # Crash
+
 http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html [ Skip ] # Failure
 http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Skip ] # Failure
 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.html [ Skip ] # Failure
@@ -853,7 +856,6 @@ http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ S
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Skip ] # Failure
 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ] # Failure
 
-webkit.org/b/255747 http/tests/security/canvas-remote-read-remote-video-localhost.html [ Skip ] # Crash
 webkit.org/b/255748 http/tests/security/navigate-when-restoring-cached-page.html [ Skip ] # Crash
 webkit.org/b/255748 http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ] # Crash
 
@@ -1132,7 +1134,7 @@ webkit.org/b/151759 fast/dom/Window/property-access-on-cached-window-after-frame
 
 fast/dom/HTMLInputElement/change-type-in-input-event-listener.html [ Skip ]
 
-webkit.org/b/224735 fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Skip ] # Crash
+webkit.org/b/224735 [ Release ] fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Skip ] # Crash
 
 ################################################################################
 ##############################   End DOM Issues   ##############################
@@ -2710,10 +2712,6 @@ webkit.org/b/222563 http/tests/loading/basic-auth-load-URL-with-consecutive-slas
 webkit.org/b/265213 fast/dom/Range/detach-range-during-deletecontents.html [ Skip ] # Timeout
 
 imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-name-is-backdrop-filter-root.html [ Pass ]
-
-webkit.org/b/265537 compositing/geometry/fixed-position-composited-page-scale-scroll.html [ Skip ] # Crash
-webkit.org/b/265537 fast/visual-viewport/zoomed-scroll-into-view-fixed.html [ Skip ] # Crash
-webkit.org/b/265537 fast/visual-viewport/zoomed-scroll-to-anchor-in-position-fixed.html [ Skip ] # Crash
 
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-partially-onscreen-new.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-right-of-viewport-partially-onscreen-old.html [ Pass ]
