@@ -732,7 +732,7 @@ uint32_t Texture::texelBlockHeight(WGPUTextureFormat format)
     }
 }
 
-static bool isRenderableFormat(WGPUTextureFormat format)
+static bool isRenderableFormat(WGPUTextureFormat format, const Device& device)
 {
     // https://gpuweb.github.io/gpuweb/#renderable-format
     switch (format) {
@@ -774,8 +774,9 @@ static bool isRenderableFormat(WGPUTextureFormat format)
     case WGPUTextureFormat_Depth24PlusStencil8:
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
-    case WGPUTextureFormat_RG11B10Ufloat:
         return true;
+    case WGPUTextureFormat_RG11B10Ufloat:
+        return device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
     case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_RG8Snorm:
     case WGPUTextureFormat_RGBA8Snorm:
@@ -840,7 +841,7 @@ static bool isRenderableFormat(WGPUTextureFormat format)
     }
 }
 
-static bool supportsMultisampling(WGPUTextureFormat format)
+static bool supportsMultisampling(WGPUTextureFormat format, const Device& device)
 {
     switch (format) {
     // https://gpuweb.github.io/gpuweb/#texture-format-caps
@@ -868,7 +869,6 @@ static bool supportsMultisampling(WGPUTextureFormat format)
     case WGPUTextureFormat_BGRA8UnormSrgb:
     case WGPUTextureFormat_RGB10A2Unorm:
     case WGPUTextureFormat_RGB10A2Uint:
-    case WGPUTextureFormat_RG11B10Ufloat:
     case WGPUTextureFormat_RGBA16Uint:
     case WGPUTextureFormat_RGBA16Sint:
     case WGPUTextureFormat_RGBA16Float:
@@ -880,6 +880,8 @@ static bool supportsMultisampling(WGPUTextureFormat format)
     case WGPUTextureFormat_Depth32Float:
     case WGPUTextureFormat_Depth32FloatStencil8:
         return true;
+    case WGPUTextureFormat_RG11B10Ufloat:
+        return device.hasFeature(WGPUFeatureName_RG11B10UfloatRenderable);
     case WGPUTextureFormat_R32Uint:
     case WGPUTextureFormat_R32Sint:
     case WGPUTextureFormat_RG32Float:
@@ -1307,10 +1309,10 @@ bool Device::validateCreateTexture(const WGPUTextureDescriptor& descriptor, cons
         if ((descriptor.usage & WGPUTextureUsage_StorageBinding) || !(descriptor.usage & WGPUTextureUsage_RenderAttachment))
             return false;
 
-        if (!isRenderableFormat(descriptor.format))
+        if (!isRenderableFormat(descriptor.format, *this))
             return false;
 
-        if (!supportsMultisampling(descriptor.format))
+        if (!supportsMultisampling(descriptor.format, *this))
             return false;
     }
 
@@ -1318,7 +1320,7 @@ bool Device::validateCreateTexture(const WGPUTextureDescriptor& descriptor, cons
         return false;
 
     if (descriptor.usage & WGPUTextureUsage_RenderAttachment) {
-        if (!isRenderableFormat(descriptor.format))
+        if (!isRenderableFormat(descriptor.format, *this))
             return false;
 
         if (descriptor.dimension != WGPUTextureDimension_2D)

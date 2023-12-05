@@ -100,7 +100,7 @@ public:
     size_t enumerateFeatures(WGPUFeatureName* features);
     bool getLimits(WGPUSupportedLimits&);
     Queue& getQueue();
-    bool hasFeature(WGPUFeatureName);
+    bool hasFeature(WGPUFeatureName) const;
     bool popErrorScope(CompletionHandler<void(WGPUErrorType, String&&)>&& callback);
     void pushErrorScope(WGPUErrorFilter);
     void setDeviceLostCallback(Function<void(WGPUDeviceLostReason, String&&)>&&);
