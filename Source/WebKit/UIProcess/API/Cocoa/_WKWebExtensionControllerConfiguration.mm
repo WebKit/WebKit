@@ -33,7 +33,6 @@
 #import "APIPageConfiguration.h"
 #import "WKWebViewConfigurationPrivate.h"
 #import "WebExtensionControllerConfiguration.h"
-#import <WebCore/WebCoreObjCExtras.h>
 
 static NSString * const persistentCodingKey = @"persistent";
 static NSString * const identifierCodingKey = @"identifier";
@@ -106,8 +105,7 @@ static NSString * const webViewConfigurationCodingKey = @"webViewConfiguration";
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebExtensionControllerConfiguration.class, self))
-        return;
+    ASSERT(isMainRunLoop());
 
     _webExtensionControllerConfiguration->~WebExtensionControllerConfiguration();
 }

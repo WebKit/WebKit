@@ -31,7 +31,6 @@
 #import "_WKWebExtensionMatchPatternInternal.h"
 
 #import "WebExtensionMatchPattern.h"
-#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/URLParser.h>
 
 static NSString * const stringCodingKey = @"string";
@@ -139,8 +138,7 @@ NSErrorDomain const _WKWebExtensionMatchPatternErrorDomain = @"_WKWebExtensionMa
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebExtensionMatchPattern.class, self))
-        return;
+    ASSERT(isMainRunLoop());
 
     _webExtensionMatchPattern->~WebExtensionMatchPattern();
 }

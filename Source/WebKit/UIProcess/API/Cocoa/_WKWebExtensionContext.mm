@@ -41,7 +41,6 @@
 #import "_WKWebExtensionInternal.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionTab.h"
-#import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/URLParser.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -91,8 +90,7 @@ using CocoaMenuItem = UIMenuElement;
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebExtensionContext.class, self))
-        return;
+    ASSERT(isMainRunLoop());
 
     _webExtensionContext->~WebExtensionContext();
 }

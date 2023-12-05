@@ -33,7 +33,6 @@
 #import "CocoaImage.h"
 #import "WebExtension.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
-#import <WebCore/WebCoreObjCExtras.h>
 
 NSErrorDomain const _WKWebExtensionErrorDomain = @"_WKWebExtensionErrorDomain";
 NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWebExtensionErrorsWereUpdated";
@@ -149,8 +148,7 @@ NSNotificationName const _WKWebExtensionErrorsWereUpdatedNotification = @"_WKWeb
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebExtension.class, self))
-        return;
+    ASSERT(isMainRunLoop());
 
     _webExtension->~WebExtension();
 }
