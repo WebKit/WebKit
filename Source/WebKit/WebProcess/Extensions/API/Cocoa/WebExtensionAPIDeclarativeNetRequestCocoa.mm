@@ -51,6 +51,12 @@ static NSString * const regexKey = @"regex";
 static NSString * const regexIsCaseSensitiveKey = @"isCaseSensitive";
 static NSString * const regexRequireCapturingKey = @"requireCapturing";
 
+static NSString * const actionCountDisplayActionCountAsBadgeTextKey = @"displayActionCountAsBadgeText";
+static NSString * const actionCountTabUpdateKey = @"tabUpdate";
+static NSString * const actionCountTabIDKey = @"tabId";
+static NSString * const actionCountIncrementKey = @"increment";
+
+
 void WebExtensionAPIDeclarativeNetRequest::updateEnabledRulesets(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     static NSDictionary<NSString *, id> *types = @{
@@ -124,9 +130,51 @@ void WebExtensionAPIDeclarativeNetRequest::isRegexSupported(NSDictionary *option
         callback->call(@{ @"isSupported": @YES });
 }
 
-void WebExtensionAPIDeclarativeNetRequest::setExtensionActionOptions(NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString)
+void WebExtensionAPIDeclarativeNetRequest::setExtensionActionOptions(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
-    // FIXME: rdar://118476776 - Support badging the extension's action with the number of blocked resources
+    static NSDictionary<NSString *, Class> *types = @{
+        actionCountDisplayActionCountAsBadgeTextKey: @YES.class,
+        actionCountTabUpdateKey: NSDictionary.class
+    };
+
+    if (!validateDictionary(options, @"extensionActionOptions", nil, types, outExceptionString))
+        return;
+
+    if (NSDictionary *tabUpdateDictionary = objectForKey<NSDictionary>(options, actionCountTabUpdateKey)) {
+        static NSDictionary<NSString *, Class> *tabUpdateTypes = @{
+            actionCountTabIDKey: NSNumber.class,
+            actionCountIncrementKey: NSNumber.class
+        };
+
+        if (!validateDictionary(tabUpdateDictionary, @"tabUpdate", @[ actionCountTabIDKey, actionCountIncrementKey ], tabUpdateTypes, outExceptionString))
+            return;
+
+        NSNumber *tabID = objectForKey<NSNumber>(tabUpdateDictionary, actionCountTabIDKey);
+        auto tabIdentifier = toWebExtensionTabIdentifier(tabID.doubleValue);
+        if (!isValid(tabIdentifier)) {
+            *outExceptionString = toErrorString(nil, actionCountTabIDKey, @"%@ is not a valid tab identifier", tabID);
+            return;
+        }
+
+        WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DeclarativeNetRequestIncrementActionCount(tabIdentifier.value(), objectForKey<NSNumber>(tabUpdateDictionary, actionCountIncrementKey).doubleValue), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> error) {
+            if (error) {
+                callback->reportError(error.value());
+                return;
+            }
+
+            callback->call();
+        }, extensionContext().identifier());
+        return;
+    }
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DeclarativeNetRequestDisplayActionCountAsBadgeText(objectForKey<NSNumber>(options, actionCountDisplayActionCountAsBadgeTextKey).boolValue), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<String> error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        callback->call();
+    }, extensionContext().identifier());
 }
 
 } // namespace WebKit

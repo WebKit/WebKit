@@ -37,6 +37,7 @@
 #import "WebExtensionUtilities.h"
 
 static NSString * const declarativeNetRequestRulesetStateKey = @"DeclarativeNetRequestRulesetState";
+static NSString * const displayBlockedResourceCountAsBadgeTextStateKey = @"DisplayBlockedResourceCountAsBadgeText";
 
 namespace WebKit {
 
@@ -171,6 +172,54 @@ void WebExtensionContext::declarativeNetRequestUpdateEnabledRulesets(const Vecto
 
         completionHandler(toErrorString(@"declarativeNetRequest.updateEnabledRulesets()", nil, @"Failed to apply rules."));
     });
+}
+
+bool WebExtensionContext::shouldDisplayBlockedResourceCountAsBadgeText()
+{
+    return objectForKey<NSNumber>(m_state, displayBlockedResourceCountAsBadgeTextStateKey).boolValue;
+}
+
+void WebExtensionContext::saveShouldDisplayBlockedResourceCountAsBadgeText(bool shouldDisplay)
+{
+    [m_state setObject:@(shouldDisplay) forKey:displayBlockedResourceCountAsBadgeTextStateKey];
+    writeStateToStorage();
+}
+
+void WebExtensionContext::incrementActionCountForTab(WebExtensionTab& tab, ssize_t incrementAmount)
+{
+    if (!shouldDisplayBlockedResourceCountAsBadgeText())
+        return;
+
+    RefPtr tabAction = getOrCreateAction(&tab);
+    tabAction->incrementBlockedResourceCount(incrementAmount);
+}
+
+void WebExtensionContext::declarativeNetRequestDisplayActionCountAsBadgeText(bool displayActionCountAsBadgeText, CompletionHandler<void(std::optional<String>)>&& completionHandler)
+{
+    if (shouldDisplayBlockedResourceCountAsBadgeText() == displayActionCountAsBadgeText) {
+        completionHandler(std::nullopt);
+        return;
+    }
+
+    saveShouldDisplayBlockedResourceCountAsBadgeText(displayActionCountAsBadgeText);
+    if (!displayActionCountAsBadgeText) {
+        for (auto entry : m_actionTabMap)
+            entry.value->clearBlockedResourceCount();
+    }
+
+    completionHandler(std::nullopt);
+}
+
+void WebExtensionContext::declarativeNetRequestIncrementActionCount(WebExtensionTabIdentifier tabIdentifier, double increment, CompletionHandler<void(std::optional<String>)>&& completionHandler)
+{
+    RefPtr tab = getTab(tabIdentifier);
+    if (!tab) {
+        completionHandler(toErrorString(@"declarativeNetRequest.setExtensionActionOptions()", nil, @"tab not found"));
+        return;
+    }
+
+    incrementActionCountForTab(*tab, increment);
+    completionHandler(std::nullopt);
 }
 
 } // namespace WebKit

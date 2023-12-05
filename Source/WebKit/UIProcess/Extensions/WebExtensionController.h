@@ -123,6 +123,8 @@ public:
     void addItemsToContextMenu(WebPageProxy&, const ContextMenuContextData&, NSMenu *);
 #endif
 
+    void handleContentRuleListNotification(WebPageProxyIdentifier, URL&, WebCore::ContentRuleListResults&);
+
 #ifdef __OBJC__
     _WKWebExtensionController *wrapper() const { return (_WKWebExtensionController *)API::ObjectImpl<API::Object::Type::WebExtensionController>::wrapper(); }
     _WKWebExtensionControllerDelegatePrivate *delegate() const { return (_WKWebExtensionControllerDelegatePrivate *)wrapper().delegate; }

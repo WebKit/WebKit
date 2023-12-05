@@ -365,6 +365,8 @@ public:
     void addInjectedContent(WebUserContentControllerProxy&);
     void removeInjectedContent(WebUserContentControllerProxy&);
 
+    void incrementActionCountForTab(WebExtensionTab&, ssize_t incrementAmount);
+
     UserStyleSheetVector& dynamicallyInjectedUserStyleSheets() { return m_dynamicallyInjectedUserStyleSheets; };
 
     std::optional<WebCore::PageIdentifier> backgroundPageIdentifier() const;
@@ -443,14 +445,24 @@ private:
     void removeInjectedContent(MatchPatternSet&);
     void removeInjectedContent(WebExtensionMatchPattern&);
 
+    // DeclarativeNetRequest methods.
+    // Loading/unloading static rules
     void loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>&&);
     void compileDeclarativeNetRequestRules(NSArray *, CompletionHandler<void(bool)>&&);
-    void removeDeclarativeNetRequestRules();
-    void addDeclarativeNetRequestRulesToPrivateUserContentControllers();
     WKContentRuleListStore *declarativeNetRequestRuleStore();
+
+    // Updating user content controllers with new rules.
+    void addDeclarativeNetRequestRulesToPrivateUserContentControllers();
+    void removeDeclarativeNetRequestRules();
+
+    // Customizing static rulesets.
     void saveDeclarativeNetRequestRulesetStateToStorage(NSDictionary *rulesetState);
     void loadDeclarativeNetRequestRulesetStateFromStorage();
     void clearDeclarativeNetRequestRulesetState();
+
+    // Displaying action count as badge text.
+    bool shouldDisplayBlockedResourceCountAsBadgeText();
+    void saveShouldDisplayBlockedResourceCountAsBadgeText(bool);
 
     // Action APIs
     void actionGetTitle(std::optional<WebExtensionWindowIdentifier>, std::optional<WebExtensionTabIdentifier>, CompletionHandler<void(std::optional<String>, std::optional<String>)>&&);
@@ -481,6 +493,8 @@ private:
     // DeclarativeNetRequest APIs
     void declarativeNetRequestGetEnabledRulesets(CompletionHandler<void(const Vector<String>&)>&&);
     void declarativeNetRequestUpdateEnabledRulesets(const Vector<String>& rulesetIdentifiersToEnable, const Vector<String>& rulesetIdentifiersToDisable, CompletionHandler<void(std::optional<String>)>&&);
+    void declarativeNetRequestDisplayActionCountAsBadgeText(bool displayActionCountAsBadgeText, CompletionHandler<void(std::optional<String>)>&&);
+    void declarativeNetRequestIncrementActionCount(WebExtensionTabIdentifier, double increment, CompletionHandler<void(std::optional<String>)>&&);
     DeclarativeNetRequestValidatedRulesets declarativeNetRequestValidateRulesetIdentifiers(const Vector<String>&);
     size_t declarativeNetRequestEnabledRulesetCount();
     void declarativeNetRequestToggleRulesets(const Vector<String>& rulesetIdentifiers, bool newValue, NSMutableDictionary *rulesetIdentifiersToEnabledState);
