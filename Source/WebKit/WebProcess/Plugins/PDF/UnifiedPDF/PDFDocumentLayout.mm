@@ -38,16 +38,6 @@ using namespace WebCore;
 
 static constexpr float minScale = 0.1; // Arbitrarily chosen min scale.
 
-FloatSize PDFDocumentLayout::documentMargin()
-{
-    return { 6, 8 };
-}
-
-FloatSize PDFDocumentLayout::pageMargin()
-{
-    return { 4, 6 };
-}
-
 PDFDocumentLayout::PDFDocumentLayout() = default;
 PDFDocumentLayout::~PDFDocumentLayout() = default;
 
@@ -84,8 +74,6 @@ void PDFDocumentLayout::updateLayout(IntSize pluginSize)
     float currentRowWidth = 0;
     bool isTwoUpLayout = m_displayMode == DisplayMode::TwoUp || m_displayMode == DisplayMode::TwoUpContinuous;
 
-    auto pageMargin = PDFDocumentLayout::pageMargin();
-
     for (PageIndex i = 0; i < pageCount; ++i) {
         auto page = pageAtIndex(i);
         if (!page) {
@@ -115,7 +103,6 @@ void PDFDocumentLayout::updateLayout(IntSize pluginSize)
         m_pageGeometry.append({ pageBounds, rotation });
     }
 
-    auto documentMargin = PDFDocumentLayout::documentMargin();
     maxRowWidth += 2 * documentMargin.width();
 
     layoutPages(pluginSize.width(), maxRowWidth);
@@ -141,9 +128,6 @@ void PDFDocumentLayout::layoutPages(float availableWidth, float maxRowWidth)
 
 void PDFDocumentLayout::layoutSingleColumn(float availableWidth, float maxRowWidth)
 {
-    auto documentMargin = PDFDocumentLayout::documentMargin();
-    auto pageMargin = PDFDocumentLayout::pageMargin();
-
     float currentYOffset = documentMargin.height();
     auto pageCount = this->pageCount();
 
@@ -170,9 +154,6 @@ void PDFDocumentLayout::layoutSingleColumn(float availableWidth, float maxRowWid
 
 void PDFDocumentLayout::layoutTwoUpColumn(float availableWidth, float maxRowWidth)
 {
-    auto documentMargin = PDFDocumentLayout::documentMargin();
-    auto pageMargin = PDFDocumentLayout::pageMargin();
-
     FloatSize currentRowSize;
     float currentYOffset = documentMargin.height();
     auto pageCount = this->pageCount();
