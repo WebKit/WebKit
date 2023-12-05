@@ -193,10 +193,10 @@ public:
         auto* gl = m_context.graphicsContextGL();
         if (m_context.isWebGL2()) {
             auto& context2 = downcast<WebGL2RenderingContext>(m_context);
-            gl->bindFramebuffer(GraphicsContextGL::READ_FRAMEBUFFER_BINDING, objectOrZero(context2.m_readFramebufferBinding));
-            gl->bindFramebuffer(GraphicsContextGL::DRAW_FRAMEBUFFER_BINDING, objectOrZero(context2.m_framebufferBinding));
+            gl->bindFramebuffer(GraphicsContextGL::READ_FRAMEBUFFER, objectOrZero(context2.m_readFramebufferBinding));
+            gl->bindFramebuffer(GraphicsContextGL::DRAW_FRAMEBUFFER, objectOrZero(context2.m_framebufferBinding));
         } else
-            gl->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER_BINDING, objectOrZero(m_context.m_framebufferBinding));
+            gl->bindFramebuffer(GraphicsContextGL::FRAMEBUFFER, objectOrZero(m_context.m_framebufferBinding));
     }
 
 private:
@@ -234,7 +234,7 @@ public:
         PlatformGLObject texture = 0;
         switch (m_target) {
         case GraphicsContextGL::TEXTURE_2D:
-            texture = objectOrZero(textureUnit.textureCubeMapBinding);
+            texture = objectOrZero(textureUnit.texture2DBinding);
             break;
         case GraphicsContextGL::TEXTURE_CUBE_MAP:
             texture = objectOrZero(textureUnit.textureCubeMapBinding);
