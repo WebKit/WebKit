@@ -82,6 +82,41 @@ static bool annotationOverlapCheck(const InlineDisplay::Box& adjacentDisplayBox,
     return false;
 }
 
+static bool canBreakAtCharacter(UChar character)
+{
+    auto lineBreak = (ULineBreak)u_getIntPropertyValue(character, UCHAR_LINE_BREAK);
+    // UNICODE LINE BREAKING ALGORITHM
+    // http://www.unicode.org/reports/tr14/
+    // And Requirements for Japanese Text Layout, 3.1.7 Characters Not Starting a Line
+    // http://www.w3.org/TR/2012/NOTE-jlreq-20120403/#characters_not_starting_a_line
+    switch (lineBreak) {
+    case U_LB_NONSTARTER:
+    case U_LB_CLOSE_PARENTHESIS:
+    case U_LB_CLOSE_PUNCTUATION:
+    case U_LB_EXCLAMATION:
+    case U_LB_BREAK_SYMBOLS:
+    case U_LB_INFIX_NUMERIC:
+    case U_LB_ZWSPACE:
+    case U_LB_WORD_JOINER:
+        return false;
+    default:
+        break;
+    }
+    // Special care for Requirements for Japanese Text Layout
+    switch (character) {
+    case 0x2019: // RIGHT SINGLE QUOTATION MARK
+    case 0x201D: // RIGHT DOUBLE QUOTATION MARK
+    case 0x00BB: // RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
+    case 0x2010: // HYPHEN
+    case 0x2013: // EN DASH
+    case 0x300C: // LEFT CORNER BRACKET
+        return false;
+    default:
+        break;
+    }
+    return true;
+}
+
 bool RubyFormattingContext::isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& current)
 {
     auto& previousLayoutBox = previous.layoutBox();
@@ -95,8 +130,13 @@ bool RubyFormattingContext::isAtSoftWrapOpportunity(const InlineItem& previous, 
             // At the beginning of <ruby>.
             if (!previous.isText())
                 return true;
-            // FIXME: Copy special character handling from RenderRubyText::canBreakBefore.
-            return true;
+            auto& leadingTextItem = downcast<InlineTextItem>(previous);
+            if (!leadingTextItem.length()) {
+                // FIXME: This needs to know prior context.
+                return true;
+            }
+            auto lastCharacter = leadingTextItem.inlineTextBox().content()[leadingTextItem.end() - 1];
+            return canBreakAtCharacter(lastCharacter);
         }
         // Don't break between base end and <ruby> end.
         return false;
@@ -114,8 +154,13 @@ bool RubyFormattingContext::isAtSoftWrapOpportunity(const InlineItem& previous, 
             // At the end of <ruby>
             if (!current.isText())
                 return true;
-            // FIXME: Copy special character handling from RenderRubyText::canBreakBefore.
-            return true;
+            auto& trailingTextItem = downcast<InlineTextItem>(current);
+            if (!trailingTextItem.length()) {
+                // FIXME: This should be turned into one of those "can't decide it yet" cases.
+                return true;
+            }
+            auto firstCharacter = trailingTextItem.inlineTextBox().content()[trailingTextItem.start()];
+            return canBreakAtCharacter(firstCharacter);
         }
         // We should handled this case already when looking at current: base, previous: ruby.
         ASSERT_NOT_REACHED();
