@@ -810,6 +810,9 @@ webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-vide
 webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-blocked-no-crossorigin.html [ Skip ] # Crash
 webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-localhost.html [ Skip ] # Crash
 webkit.org/b/255747 [ Debug ] http/tests/security/canvas-remote-read-remote-video-redirect.html [ Skip ] # Crash
+[ Release ] http/tests/security/canvas-remote-read-remote-video-allowed-anonymous.html [ Failure ]
+[ Release ] http/tests/security/canvas-remote-read-remote-video-allowed-with-credentials.html [ Failure ]
+[ Release ] http/tests/security/canvas-remote-read-remote-video-redirect.html [ Failure ]
 
 http/tests/security/canvas-remote-read-remote-video-hls.html [ Skip ] # Timeout
 
@@ -856,8 +859,8 @@ http/tests/security/webaudio-render-remote-audio-blocked-no-crossorigin.html [ S
 http/tests/security/xss-DENIED-xsl-external-entity-redirect.xml [ Skip ] # Failure
 http/tests/security/xss-DENIED-xsl-external-entity.xml [ Skip ] # Failure
 
-webkit.org/b/255748 http/tests/security/navigate-when-restoring-cached-page.html [ Skip ] # Crash
-webkit.org/b/255748 http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ] # Crash
+webkit.org/b/255748 [ Debug ] http/tests/security/navigate-when-restoring-cached-page.html [ Skip ] # Crash
+webkit.org/b/255748 [ Debug ] http/tests/security/showModalDialog-sync-cross-origin-page-load2.html [ Skip ] # Crash
 
 http/tests/ssl/media-stream [ Skip ]
 
@@ -1213,8 +1216,8 @@ storage/indexeddb/IDBKey-create-array-buffer-view-oom.html [ Skip ] # Slow
 storage/indexeddb/cursor-request-cycle-private.html [ Skip ] # Slow
 storage/indexeddb/cursor-request-cycle.html [ Skip ] # Slow
 
-storage/indexeddb/key-type-array-private.html [ Skip ] # Crash by assertion failure
-storage/indexeddb/key-type-array.html [ Skip ] # Crash by assertion failure
+storage/indexeddb/key-type-array-private.html [ Skip ] # Crash by stack overflow
+storage/indexeddb/key-type-array.html [ Skip ] # Crash by stack overflow
 
 storage/indexeddb/shared-memory-structured-clone.html [ Skip ] # Timeout
 storage/indexeddb/structured-clone-image-data-display-p3.html [ Failure ]
@@ -1253,7 +1256,7 @@ webkit.org/b/199186 fonts/use-typo-metrics-1.html [ Skip ]
 
 webkit.org/b/227189 fast/forms/checkbox-and-pseudo.html [ Skip ] # Require expect file for dumped render tree.
 
-webkit.org/b/238491 fast/editing/apply-relative-font-style-change-crash-004.html [ Skip ] # Crash
+webkit.org/b/238491 fast/editing/apply-relative-font-style-change-crash-004.html [ Skip ] # Crash by stack overflow
 
 webkit.org/b/238644 fast/events/mouse-click-events.html [ Skip ]
 
@@ -1889,7 +1892,6 @@ webgl/2.0.0/conformance2/textures/image_bitmap_from_image_bitmap [ Skip ]
 webxr [ Skip ]
 
 [ Debug ] webgl/2.0.y/conformance/attribs/gl-vertexattribpointer.html [ Skip ] # Slow
-[ Debug ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Skip ] # Crash by assertion failure
 [ Debug ] webgl/2.0.y/conformance/glsl/bugs/compound-assignment-type-combination.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.y/conformance/glsl/constructors/glsl-construct-ivec4.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.y/conformance/glsl/constructors/glsl-construct-vec4.html [ Skip ] # Slow
@@ -1902,7 +1904,7 @@ webxr [ Skip ]
 [ Debug ] webgl/2.0.0/conformance2/glsl3/compound-assignment-type-combination.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance2/rendering/blitframebuffer-filter-outofbounds.html [ Skip ] # Slow
 [ Debug ] webgl/2.0.0/conformance2/textures/misc/copy-texture-image-luma-format.html [ Skip ] # Slow
-[ Release ] webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Crash Failure ]
+webgl/2.0.0/conformance/canvas/drawingbuffer-test.html [ Failure ]
 animations/shadow-host-child-change.html [ Skip ]
 css1/font_properties/font_family.html [ Failure Pass ]
 css2.1/t1503-c522-font-family-00-b.html [ Failure Pass ]
@@ -1925,7 +1927,7 @@ fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
 fast/canvas/canvas-toDataURL-webp.html [ Failure ]
 fast/canvas/font-family-system-ui-canvas.html [ Skip ] # ImageOnlyFailure
 fast/canvas/webgl/array-bounds-clamping.html [ Failure ]
-fast/canvas/webgl/drawingbuffer-test.html [ Skip ] # Crash
+fast/canvas/webgl/drawingbuffer-test.html [ Skip ] # Failure
 fast/canvas/webgl/lose-context-on-status-failure.html [ Skip ] # Timeout
 fast/canvas/webgl/oes-texture-float-linear.html [ Failure ]
 fast/canvas/webgl/oes-vertex-array-object.html [ Failure Pass ]
@@ -1943,7 +1945,6 @@ fast/css-grid-layout/grid-align-baseline-vertical.html [ Failure ]
 fast/custom-elements/defined-rule.html [ ImageOnlyFailure ]
 fast/dom/call-a-constructor-as-a-function.html [ Failure ]
 fast/dynamic/float-in-trailing-whitespace-after-last-line-break-2.html [ Failure ]
-fast/editing/frame-selection-is-not-caret.html [ Skip ] # Crash by assertion failure
 fast/events/attempt-scroll-with-no-scrollbars.html [ Failure ]
 fast/events/autoscroll-when-input-is-offscreen.html [ Skip ] # UIScript
 fast/events/autoscroll-with-software-keyboard.html [ Skip ] # UIScript
@@ -1983,8 +1984,7 @@ fast/events/wheel/platform-wheelevent-paging-y-in-non-scrolling-page.html [ Fail
 fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-div.html [ Failure ]
 fast/events/wheel/platform-wheelevent-paging-y-in-scrolling-page.html [ Failure ]
 fast/events/wheel/redispatched-wheel-event.html [ Skip ] # Timeout
-fast/events/wheel/wheel-event-destroys-overflow.html [ Skip ] # Crash
-fast/events/wheel/wheel-event-outside-body.html [ Skip ] # Crash
+fast/events/wheel/wheel-event-destroys-overflow.html [ Skip ] # Timeout
 fast/events/wheel/wheelevent-basic.html [ Failure ]
 fast/events/wheel/wheelevent-in-horizontal-scrollbar-in-rtl.html [ Failure ]
 fast/events/wheel/wheelevent-in-vertical-scrollbar-in-rtl.html [ Failure ]
@@ -2072,7 +2072,6 @@ loader/reload-subresource-when-type-changes.html [ Failure ]
 loader/stateobjects/pushstate-size-iframe.html [ Skip ] # Timeout
 loader/stateobjects/pushstate-size.html [ Skip ] # Timeout
 webgl/2.0.0/conformance/canvas/drawingbuffer-static-canvas-test.html [ Failure Pass ]
-webgl/2.0.0/conformance/canvas/framebuffer-bindings-affected-by-to-data-url.html [ Skip ] # Crash
 webgl/2.0.y/conformance/glsl/bugs/loop-if-loop-gradient.html [ Skip ] # Flaky timeout if it runs with other tests
 webgl/2.0.y/conformance/glsl/bugs/qualcomm-crash.html [ Skip ] # Flaky timeout if it runs with other tests
 webgl/2.0.y/conformance/glsl/bugs/qualcomm-loop-with-continue-crash.html [ Skip ] # Flaky timeout if it runs with other tests
