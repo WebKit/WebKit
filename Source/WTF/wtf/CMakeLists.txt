@@ -339,6 +339,7 @@ set(WTF_PUBLIC_HEADERS
     WeakPtr.h
     WeakRandom.h
     WeakRandomNumber.h
+    WeakRef.h
     WindowsExtras.h
     WordLock.h
     WorkQueue.h

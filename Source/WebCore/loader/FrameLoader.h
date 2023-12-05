@@ -53,6 +53,7 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/WallTime.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -446,7 +447,7 @@ private:
     void clearProvisionalLoadForPolicyCheck();
     bool hasOpenedFrames() const;
 
-    CheckedRef<LocalFrame> m_frame;
+    WeakRef<LocalFrame> m_frame;
     UniqueRef<LocalFrameLoaderClient> m_client;
 
     const std::unique_ptr<PolicyChecker> m_policyChecker;

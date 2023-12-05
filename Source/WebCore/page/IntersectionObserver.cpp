@@ -358,7 +358,7 @@ auto IntersectionObserver::computeIntersectionState(const IntersectionObserverRe
 
         ASSERT(frameView.frame().isMainFrame());
         // FIXME: Handle the case of an implicit-root observer that has a target in a different frame tree.
-        if (targetRenderer->frame().mainFrame() != frameView.frame())
+        if (&targetRenderer->frame().mainFrame() != &frameView.frame())
             return;
 
         intersectionState.canComputeIntersection = true;

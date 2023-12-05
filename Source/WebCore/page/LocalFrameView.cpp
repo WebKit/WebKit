@@ -2962,7 +2962,7 @@ bool LocalFrameView::shouldUpdateCompositingLayersAfterScrolling() const
     if (!page)
         return true;
 
-    if (page->mainFrame() != m_frame)
+    if (&page->mainFrame() != m_frame.ptr())
         return true;
 
     auto scrollingCoordinator = this->scrollingCoordinator();
