@@ -128,10 +128,10 @@ const Vector<RefPtr<const StyleRule>>& ElementRuleCollector::matchedRuleList() c
     return m_matchedRuleList;
 }
 
-inline void ElementRuleCollector::addMatchedRule(const RuleData& ruleData, unsigned specificity, const MatchRequest& matchRequest)
+inline void ElementRuleCollector::addMatchedRule(const RuleData& ruleData, unsigned specificity, unsigned scopingRootDistance, const MatchRequest& matchRequest)
 {
     auto cascadeLayerPriority = matchRequest.ruleSet.cascadeLayerPriorityFor(ruleData);
-    m_matchedRules.append({ &ruleData, specificity, matchRequest.styleScopeOrdinal, cascadeLayerPriority });
+    m_matchedRules.append({ &ruleData, specificity, scopingRootDistance, matchRequest.styleScopeOrdinal, cascadeLayerPriority });
 }
 
 void ElementRuleCollector::clearMatchedRules()
@@ -541,7 +541,7 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
         if (matchRequest.ruleSet.hasContainerQueries() && !containerQueriesMatch(ruleData, matchRequest))
             continue;
 
-        std::optional<Vector<const Element*>> scopingRoots;
+        std::optional<Vector<ScopingRootWithDistance>> scopingRoots;
         if (matchRequest.ruleSet.hasScopeRules()) {
             auto [result, roots] = scopeRulesMatch(ruleData, matchRequest);
             if (!result)
@@ -557,14 +557,14 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
         if (rule.properties().isEmpty() && !m_shouldIncludeEmptyRules)
             continue;
 
-        auto addRuleIfMatches = [&] (const Element* scopingRoot = nullptr) {
+        auto addRuleIfMatches = [&] (ScopingRootWithDistance scopingRootWithDistance = { }) {
             unsigned specificity;
-            if (ruleMatches(ruleData, specificity, matchRequest.styleScopeOrdinal, scopingRoot))
-                addMatchedRule(ruleData, specificity, matchRequest);
+            if (ruleMatches(ruleData, specificity, matchRequest.styleScopeOrdinal, scopingRootWithDistance.scopingRoot))
+                addMatchedRule(ruleData, specificity, scopingRootWithDistance.distance, matchRequest);
         };
 
         if (scopingRoots) {
-            for (const auto* scopingRoot : *scopingRoots)
+            for (auto scopingRoot : *scopingRoots)
                 addRuleIfMatches(scopingRoot);
             continue;
         }
@@ -598,7 +598,7 @@ bool ElementRuleCollector::containerQueriesMatch(const RuleData& ruleData, const
     return true;
 }
 
-std::pair<bool, std::optional<Vector<const Element*>>>  ElementRuleCollector::scopeRulesMatch(const RuleData& ruleData, const MatchRequest& matchRequest)
+std::pair<bool, std::optional<Vector<ElementRuleCollector::ScopingRootWithDistance>>>  ElementRuleCollector::scopeRulesMatch(const RuleData& ruleData, const MatchRequest& matchRequest)
 {
     auto scopeRules = matchRequest.ruleSet.scopeRulesFor(ruleData);
 
@@ -608,18 +608,20 @@ std::pair<bool, std::optional<Vector<const Element*>>>  ElementRuleCollector::sc
     SelectorChecker checker(element().rootElement()->document());
     SelectorChecker::CheckingContext context(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
 
-    Vector<const Element*> scopingRoots;
+    Vector<ScopingRootWithDistance> scopingRoots;
     auto isWithinScope = [&](auto& rule) {
         auto findScopingRoots = [&](const auto& selectorList) {
+            unsigned distance = 0;
             const auto* ancestor = &element();
             while (ancestor) {
                 for (const auto* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
                     auto match = checker.match(*selector, *ancestor, context);
                     if (match) {
-                        scopingRoots.append(ancestor);
+                        scopingRoots.append({ ancestor, distance });
                     }
                 }
                 ancestor = ancestor->parentElement();
+                ++distance;
             }
         };
         /* @scope (a,b) to (c,d) would create 4 scopes for elements in between
@@ -645,7 +647,7 @@ std::pair<bool, std::optional<Vector<const Element*>>>  ElementRuleCollector::sc
                 return false;
             };
 
-            for (const auto* scopingRoot : scopingRoots) {
+            for (auto [scopingRoot, distance] : scopingRoots) {
                 for (const auto* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
                     if (!match(scopingRoot, selector))
                         return true;
@@ -696,6 +698,10 @@ static inline bool compareRules(MatchedRule r1, MatchedRule r2)
 
     if (r1.specificity != r2.specificity)
         return r1.specificity < r2.specificity;
+
+    // Rule with the smallest distance has priority.
+    if (r1.scopingRootDistance != r2.scopingRootDistance)
+        return r2.scopingRootDistance < r1.scopingRootDistance;
 
     return r1.ruleData->position() < r2.ruleData->position();
 }
