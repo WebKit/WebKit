@@ -1,44 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/js-test.js"></script>
 <script src="../resources/accessibility-helper.js"></script>
 </head>
 <body>
+
 <div id="content">
-  <input id="test1" type="text" aria-labelledby="hidden" />
-  <input id="test2" type="text" aria-describedby="hidden" />
-  <div style="display:none;">
-    <div id="hidden">
-      <table>
-        <tr>
-	  <td>cell 1</td>
-          <td><div>cell 2</div></td>
-	  <td>cell 3</td>
-        </tr>
-      </table>
+    <input id="test1" type="text" aria-labelledby="hidden" />
+    <input id="test2" type="text" aria-describedby="hidden" />
+    <div style="display:none;">
+        <div id="hidden">
+            <table>
+                <tr><td>cell 1</td><td><div>cell 2</div></td><td>cell 3</td></tr>
+            </table>
+        </div>
     </div>
-  </div>
 </div>
-<p id="description"></p>
-<div id="console"></div>
 
 <script>
-    description("This tests text alternative calculation from an unrendered table.");
-    if (window.accessibilityController) {
-        var test1 = accessibilityController.accessibleElementById("test1");
-        debug("Test 1 - W3C Name: " + platformValueForW3CName(test1));
+if (window.accessibilityController) {
+    let output = "This tests text alternative calculation from an unrendered table.\n\n";
 
-        var test2 = accessibilityController.accessibleElementById("test2");
-        if (accessibilityController.platformName == "mac")
-           debug("Test 2 - Custom content: " + test2.customContent);
-        else
-           debug("Test 2 - W3C Description: " + platformValueForW3CDescription(test2));
-    
-        document.getElementById("content").style.visibility = "hidden";
-    }
+    let test1 = accessibilityController.accessibleElementById("test1");
+    output += `Test 1 - W3C Name: ${platformValueForW3CName(test1)}\n`;
+
+    let test2 = accessibilityController.accessibleElementById("test2");
+    if (accessibilityController.platformName == "mac")
+       output += `Test 2 - Custom content: ${test2.customContent}\n`;
+    else
+       output += `Test 2 - W3C Description: ${platformValueForW3CDescription(test2)}\n`;
+
+    document.getElementById("content").style.visibility = "hidden";
+    debug(output);
+}
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
