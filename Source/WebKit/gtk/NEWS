@@ -1,4 +1,16 @@
 ================
+WebKitGTK 2.42.3
+================
+
+What's new in WebKitGTK 2.42.3?
+
+  - Fix flickering while playing videos with DMA-BUF sink.
+  - Fix color picker being triggered in the inspector when typing "tan".
+  - Do not special case the "sans" font family name.
+  - Fix build failure with libxml2 version 2.12.0 due to an API change.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.42.2
 ================
 
