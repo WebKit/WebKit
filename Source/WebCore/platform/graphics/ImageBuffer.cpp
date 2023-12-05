@@ -48,7 +48,7 @@
 #endif
 
 #if HAVE(IOSURFACE)
-#include "IOSurfaceImageBuffer.h"
+#include "ImageBufferIOSurfaceBackend.h"
 #endif
 
 namespace WebCore {
@@ -70,7 +70,7 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
         ImageBufferCreationContext creationContext;
         if (graphicsClient)
             creationContext.displayID = graphicsClient->displayID();
-        if (auto imageBuffer = IOSurfaceImageBuffer::create(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext))
+        if (auto imageBuffer = ImageBuffer::create<ImageBufferIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext))
             return imageBuffer;
     }
 #endif
@@ -351,6 +351,13 @@ RefPtr<NativeImage> ImageBuffer::filteredNativeImage(Filter& filter, Function<vo
 
     return filteredNativeImage(filter);
 }
+
+#if HAVE(IOSURFACE)
+IOSurface* ImageBuffer::surface()
+{
+    return m_backend ? m_backend->surface() : nullptr;
+}
+#endif
 
 #if USE(CAIRO)
 RefPtr<cairo_surface_t> ImageBuffer::createCairoSurface()

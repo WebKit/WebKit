@@ -40,6 +40,9 @@
 - (void)scrollView:(WKBaseScrollView *)scrollView handleScrollEvent:(UIScrollEvent *)event completion:(void(^)(BOOL handled))completion;
 #endif
 
+@optional
+- (UIScrollView *)actingParentScrollViewForScrollView:(WKBaseScrollView *)scrollView;
+
 @end
 
 @interface WKBaseScrollView : UIScrollView

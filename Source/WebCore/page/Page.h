@@ -1264,7 +1264,7 @@ private:
     int m_footerHeight { 0 };
 
     std::unique_ptr<RenderingUpdateScheduler> m_renderingUpdateScheduler;
-    WeakHashSet<const RenderObject> m_relevantUnpaintedRenderObjects;
+    SingleThreadWeakHashSet<const RenderObject> m_relevantUnpaintedRenderObjects;
 
     Region m_topRelevantPaintedRegion;
     Region m_bottomRelevantPaintedRegion;

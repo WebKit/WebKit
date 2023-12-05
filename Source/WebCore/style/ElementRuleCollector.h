@@ -118,9 +118,9 @@ private:
     void collectMatchingRules(CascadeLevel);
     void collectMatchingRules(const MatchRequest&);
     void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&);
-    bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal);
+    bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal, const Element* scopingRoot = nullptr);
     bool containerQueriesMatch(const RuleData&, const MatchRequest&);
-    bool scopeRulesMatch(const RuleData&, const MatchRequest&);
+    std::pair<bool, std::optional<Vector<const Element*>>> scopeRulesMatch(const RuleData&, const MatchRequest&);
 
     void sortMatchedRules();
 

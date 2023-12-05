@@ -545,6 +545,24 @@ static inline WebKit::WebExtensionContext::PermissionState toImpl(_WKWebExtensio
     _webExtensionContext->performCommand(command._webExtensionCommand, WebKit::WebExtensionContext::UserTriggered::Yes);
 }
 
+#if USE(APPKIT)
+- (BOOL)performCommandForEvent:(NSEvent *)event
+{
+    NSParameterAssert([event isKindOfClass:NSEvent.class]);
+
+    return _webExtensionContext->performCommand(event);
+}
+
+- (_WKWebExtensionCommand *)commandForEvent:(NSEvent *)event
+{
+    NSParameterAssert([event isKindOfClass:NSEvent.class]);
+
+    if (RefPtr result = _webExtensionContext->command(event))
+        return result->wrapper();
+    return nil;
+}
+#endif // USE(APPKIT)
+
 - (NSArray<CocoaMenuItem *> *)menuItemsForTab:(id<_WKWebExtensionTab>)tab
 {
     NSParameterAssert([tab conformsToProtocol:@protocol(_WKWebExtensionTab)]);
@@ -1050,6 +1068,18 @@ static inline OptionSet<WebKit::WebExtensionTab::ChangedProperties> toImpl(_WKWe
 - (void)performCommand:(_WKWebExtensionCommand *)command
 {
 }
+
+#if USE(APPKIT)
+- (BOOL)performCommandForEvent:(NSEvent *)event
+{
+    return NO;
+}
+
+- (_WKWebExtensionCommand *)commandForEvent:(NSEvent *)event
+{
+    return nil;
+}
+#endif // USE(APPKIT)
 
 - (NSArray<CocoaMenuItem *> *)menuItemsForTab:(id<_WKWebExtensionTab>)tab
 {

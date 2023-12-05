@@ -618,7 +618,7 @@ private:
     DeferrableOneShotTimer m_textRecognitionHoverTimer;
 #endif
     std::unique_ptr<AutoscrollController> m_autoscrollController;
-    WeakPtr<RenderLayer> m_resizeLayer;
+    SingleThreadWeakPtr<RenderLayer> m_resizeLayer;
 
     double m_maxMouseMovedDuration { 0 };
 

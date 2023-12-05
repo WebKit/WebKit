@@ -41,7 +41,7 @@ LegacyRenderSVGResourceGradient::LegacyRenderSVGResourceGradient(Type type, SVGG
 {
 }
 
-void LegacyRenderSVGResourceGradient::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
+void LegacyRenderSVGResourceGradient::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers)
 {
     m_gradientMap.clear();
     m_shouldCollectGradientAttributes = true;

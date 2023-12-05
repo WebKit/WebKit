@@ -1274,7 +1274,7 @@ void LocalFrameView::adjustScrollbarsForLayout(bool isFirstLayout)
         setScrollbarModes(hMode, vMode);
 }
 
-void LocalFrameView::willDoLayout(WeakPtr<RenderElement> layoutRoot)
+void LocalFrameView::willDoLayout(SingleThreadWeakPtr<RenderElement> layoutRoot)
 {
     bool subtreeLayout = !is<RenderView>(*layoutRoot);
     if (subtreeLayout)
@@ -1304,7 +1304,7 @@ void LocalFrameView::willDoLayout(WeakPtr<RenderElement> layoutRoot)
     forceLayoutParentViewIfNeeded();
 }
 
-void LocalFrameView::didLayout(WeakPtr<RenderElement> layoutRoot)
+void LocalFrameView::didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot)
 {
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
@@ -1546,7 +1546,7 @@ void LocalFrameView::addSlowRepaintObject(RenderElement& renderer)
     bool hadSlowRepaintObjects = hasSlowRepaintObjects();
 
     if (!m_slowRepaintObjects)
-        m_slowRepaintObjects = makeUnique<WeakHashSet<RenderElement>>();
+        m_slowRepaintObjects = makeUnique<SingleThreadWeakHashSet<RenderElement>>();
 
     auto addResult = m_slowRepaintObjects->add(renderer);
     if (addResult.isNewEntry) {
@@ -1596,7 +1596,7 @@ bool LocalFrameView::hasViewportConstrainedObjects() const
 void LocalFrameView::addViewportConstrainedObject(RenderLayerModelObject& object)
 {
     if (!m_viewportConstrainedObjects)
-        m_viewportConstrainedObjects = makeUnique<WeakHashSet<RenderLayerModelObject>>();
+        m_viewportConstrainedObjects = makeUnique<SingleThreadWeakHashSet<RenderLayerModelObject>>();
 
     if (!m_viewportConstrainedObjects->contains(object)) {
         m_viewportConstrainedObjects->add(object);
@@ -3698,7 +3698,7 @@ void LocalFrameView::scrollToTextFragmentRange()
     TemporarySelectionChange selectionChange(document, { range }, { TemporarySelectionOption::RevealSelection, TemporarySelectionOption::RevealSelectionBounds, TemporarySelectionOption::UserTriggered, TemporarySelectionOption::ForceCenterScroll });
 }
 
-void LocalFrameView::updateEmbeddedObject(const WeakPtr<RenderEmbeddedObject>& embeddedObject)
+void LocalFrameView::updateEmbeddedObject(const SingleThreadWeakPtr<RenderEmbeddedObject>& embeddedObject)
 {
     // The to-be-updated renderer is passed in as WeakPtr for convenience, but it will be alive at this point.
     ASSERT(embeddedObject);
@@ -3741,7 +3741,7 @@ bool LocalFrameView::updateEmbeddedObjects()
         // the underlying object can be destroyed, leaving the CheckedPtr dangling. Instead, construct a WeakPtr
         // that can be passed to the updateEmbeddedObject() method.
 
-        WeakPtr<RenderEmbeddedObject> weakObject;
+        SingleThreadWeakPtr<RenderEmbeddedObject> weakObject;
         {
             CheckedPtr embeddedObject = m_embeddedObjectsToUpdate->takeFirst();
             if (!embeddedObject)
@@ -4520,22 +4520,35 @@ Color LocalFrameView::documentBackgroundColor() const
 
     auto* htmlElement = backgroundDocument->documentElement();
     auto* bodyElement = backgroundDocument->bodyOrFrameset();
-#if ENABLE(FULLSCREEN_API)
-    auto* fullscreenElement = backgroundDocument->fullscreenManager().fullscreenElement();
-#else
-    Element* fullscreenElement = nullptr;
-#endif
 
     // Start with invalid colors.
     Color htmlBackgroundColor;
     Color bodyBackgroundColor;
-    Color fullscreenBackgroundColor;
     if (htmlElement && htmlElement->renderer())
         htmlBackgroundColor = htmlElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
     if (bodyElement && bodyElement->renderer())
         bodyBackgroundColor = bodyElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
-    if (fullscreenElement && fullscreenElement->renderer())
-        fullscreenBackgroundColor = fullscreenElement->renderer()->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+
+#if ENABLE(FULLSCREEN_API)
+    Color fullscreenBackgroundColor = [&] () -> Color {
+        auto* fullscreenElement = backgroundDocument->fullscreenManager().fullscreenElement();
+        if (!fullscreenElement)
+            return { };
+
+        auto* fullscreenRenderer = fullscreenElement->renderer();
+        if (!fullscreenRenderer)
+            return { };
+
+        auto fullscreenElementColor = fullscreenRenderer->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+
+        WeakPtr backdropRenderer = fullscreenRenderer->backdropRenderer();
+        if (!backdropRenderer)
+            return fullscreenElementColor;
+
+        // Do not blend the fullscreenElementColor atop the backdrop color. The backdrop should
+        // intentionally be visible underneath (and around) the fullscreen element.
+        return backdropRenderer->style().visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor);
+    }();
 
     // Replace or blend the fullscreen background color with the body background color, if present.
     if (fullscreenBackgroundColor.isValid()) {
@@ -4544,6 +4557,7 @@ Color LocalFrameView::documentBackgroundColor() const
         else
             bodyBackgroundColor = blendSourceOver(bodyBackgroundColor, fullscreenBackgroundColor);
     }
+#endif
 
     if (!bodyBackgroundColor.isValid()) {
         if (!htmlBackgroundColor.isValid())

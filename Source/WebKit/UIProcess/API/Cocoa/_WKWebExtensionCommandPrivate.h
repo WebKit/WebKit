@@ -27,4 +27,22 @@
 
 @interface _WKWebExtensionCommand ()
 
+/*!
+ @abstract Represents the shortcut for the web extension, formatted according to web extension specification.
+ @discussion This property provides a string representation of the shortcut, incorporating any customizations made to the `activationKey`
+ and `modifierFlags` properties. It will be empty if no shortcut is defined for the command.
+ */
+@property (nonatomic, readonly, copy) NSString *_shortcut;
+
+#if TARGET_OS_OSX
+/*!
+ @abstract Determines whether an event matches the command's activation key and modifier flags.
+ @discussion This method can be used to check if a given keyboard event corresponds to the command's activation key and modifiers, if any.
+ The app can use this during event handling in the app, without showing the command in a menu.
+ @param event The event to be checked against the command's activation key and modifiers.
+ @result A Boolean value indicating whether the event matches the command's shortcut.
+ */
+- (BOOL)_matchesEvent:(NSEvent *)event;
+#endif // TARGET_OS_OSX
+
 @end

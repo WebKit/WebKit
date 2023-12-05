@@ -136,7 +136,8 @@ public:
 
     float widthOfTextRange(const TextRun&, unsigned from, unsigned to, WeakHashSet<const Font>* fallbackFonts = nullptr, float* outWidthBeforeRange = nullptr, float* outWidthAfterRange = nullptr) const;
     WEBCORE_EXPORT float width(const TextRun&, WeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
-    float widthForSimpleText(StringView text, TextDirection = TextDirection::LTR) const;
+    WEBCORE_EXPORT float widthForSimpleText(StringView text, TextDirection = TextDirection::LTR) const;
+    WEBCORE_EXPORT float widthForSimpleTextWithFixedPitch(StringView text, bool whitespaceIsCollapsed) const;
 
     std::unique_ptr<TextLayout, TextLayoutDeleter> createLayout(RenderText&, float xPos, bool collapseWhiteSpace) const;
     static float width(TextLayout&, unsigned from, unsigned len, WeakHashSet<const Font>* fallbackFonts = nullptr);
@@ -161,6 +162,7 @@ public:
     TextSpacingTrim textSpacingTrim() const { return m_fontDescription.textSpacingTrim(); }
     TextAutospace textAutospace() const { return m_fontDescription.textAutospace(); }
     bool isFixedPitch() const;
+    bool canTakeFixedPitchFastContentMeasuring() const;
     
     bool enableKerning() const { return m_enableKerning; }
     bool requiresShaping() const { return m_requiresShaping; }
@@ -188,7 +190,7 @@ public:
 
     const Font& primaryFont() const;
     const FontRanges& fallbackRangesAt(unsigned) const;
-    GlyphData glyphDataForCharacter(char32_t, bool mirror, FontVariant = AutoVariant) const;
+    WEBCORE_EXPORT GlyphData glyphDataForCharacter(char32_t, bool mirror, FontVariant = AutoVariant) const;
 
     const Font* fontForCombiningCharacterSequence(StringView) const;
 
@@ -208,7 +210,7 @@ public:
     WEBCORE_EXPORT static bool shouldDisableFontSubpixelAntialiasingForTesting();
 
     enum class CodePath : uint8_t { Auto, Simple, Complex, SimpleWithGlyphOverflow };
-    CodePath codePath(const TextRun&, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt) const;
+    WEBCORE_EXPORT CodePath codePath(const TextRun&, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt) const;
     static CodePath characterRangeCodePath(const LChar*, unsigned) { return CodePath::Simple; }
     static CodePath characterRangeCodePath(const UChar*, unsigned len);
 
@@ -354,6 +356,12 @@ inline bool FontCascade::isFixedPitch() const
 {
     ASSERT(m_fonts);
     return m_fonts->isFixedPitch(m_fontDescription);
+}
+
+inline bool FontCascade::canTakeFixedPitchFastContentMeasuring() const
+{
+    ASSERT(m_fonts);
+    return m_fonts->canTakeFixedPitchFastContentMeasuring(m_fontDescription);
 }
 
 inline FontSelector* FontCascade::fontSelector() const

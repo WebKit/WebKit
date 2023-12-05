@@ -28,7 +28,7 @@
 
 #if ENABLE(JOURNALD_LOG)
 #include <errno.h>
-#include <glib-unix.h>
+#include <gio/gunixfdlist.h>
 #include <sys/stat.h>
 #include <sys/sysmacros.h>
 #include <systemd/sd-login.h>

@@ -1899,7 +1899,7 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
     auto localPoint = roundedIntPoint(mouseEvent.hitTestResult().localPoint());
     if (layer && layer->isPointInResizeControl(localPoint)) {
         layer->setInResizeMode(true);
-        m_resizeLayer = WeakPtr { layer };
+        m_resizeLayer = *layer;
         m_offsetFromResizeCorner = layer->offsetFromResizeCorner(localPoint);
         return true;
     }

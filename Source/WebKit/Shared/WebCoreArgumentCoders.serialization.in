@@ -3267,10 +3267,12 @@ enum class WebCore::ApplePayButtonStyle : uint8_t {
 }
 
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SwitchThumbPart {
+    bool isOn();
     [Validator='progress >= 0.0f && progress <= 1.0f'] float progress();
 };
 
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::SwitchTrackPart {
+    bool isOn();
     [Validator='progress >= 0.0f && progress <= 1.0f'] float progress();
 };
 

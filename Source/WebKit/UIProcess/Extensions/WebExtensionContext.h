@@ -69,7 +69,6 @@
 OBJC_CLASS NSArray;
 OBJC_CLASS NSDate;
 OBJC_CLASS NSDictionary;
-OBJC_CLASS NSMenu;
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
@@ -83,6 +82,11 @@ OBJC_CLASS _WKWebExtensionContext;
 OBJC_CLASS _WKWebExtensionContextDelegate;
 OBJC_PROTOCOL(_WKWebExtensionTab);
 OBJC_PROTOCOL(_WKWebExtensionWindow);
+
+#if PLATFORM(MAC)
+OBJC_CLASS NSEvent;
+OBJC_CLASS NSMenu;
+#endif
 
 namespace WebKit {
 
@@ -325,6 +329,11 @@ public:
     const CommandsVector& commands();
     WebExtensionCommand* command(const String& identifier);
     void performCommand(WebExtensionCommand&, UserTriggered = UserTriggered::No);
+
+#if USE(APPKIT)
+    WebExtensionCommand* command(NSEvent *);
+    bool performCommand(NSEvent *);
+#endif
 
     NSArray *platformMenuItems(const WebExtensionTab&) const;
 

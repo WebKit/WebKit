@@ -516,6 +516,9 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
             };
             if (runsExpandHorizontally())
                 m_line.applyRunExpansion(horizontalAvailableSpace);
+            else if (m_line.hasRubyContent())
+                RubyFormattingContext::applyRubyAlign(m_line, formattingContext());
+
             auto& lastTextContent = m_line.runs().last().textContent();
             lineContent.endsWithHyphen = lastTextContent && lastTextContent->needsHyphen;
         }

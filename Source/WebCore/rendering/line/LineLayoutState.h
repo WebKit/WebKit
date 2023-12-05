@@ -160,7 +160,7 @@ private:
 
     LayoutUnit m_adjustedLogicalLineTop;
 
-    WeakPtr<RenderFragmentedFlow> m_fragmentedFlow;
+    SingleThreadWeakPtr<RenderFragmentedFlow> m_fragmentedFlow;
 
     FloatList m_floatList;
     // FIXME: Should this be a range object instead of two ints?

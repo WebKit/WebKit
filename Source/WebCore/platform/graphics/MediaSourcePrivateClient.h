@@ -43,11 +43,9 @@ public:
     virtual ~MediaSourcePrivateClient() = default;
 
     virtual void setPrivateAndOpen(Ref<MediaSourcePrivate>&&) = 0;
-    virtual MediaTime duration() const = 0;
     virtual const PlatformTimeRanges& buffered() const = 0;
     virtual Ref<MediaTimePromise> waitForTarget(const SeekTarget&) = 0;
     virtual Ref<MediaPromise> seekToTime(const MediaTime&) = 0;
-    virtual void monitorSourceBuffers() = 0;
 
 #if !RELEASE_LOG_DISABLED
     virtual void setLogIdentifier(const void*) = 0;

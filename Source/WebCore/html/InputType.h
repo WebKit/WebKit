@@ -270,11 +270,12 @@ public:
 
     // Event handlers.
 
-    virtual void handleClickEvent(MouseEvent&);
-    virtual void handleMouseDownEvent(MouseEvent&);
-    virtual void willDispatchClick(InputElementClickState&);
-    virtual void didDispatchClick(Event&, const InputElementClickState&);
-    virtual void handleDOMActivateEvent(Event&);
+    virtual void handleClickEvent(MouseEvent&) { }
+    virtual void handleMouseDownEvent(MouseEvent&) { }
+    virtual void handleMouseMoveEvent(MouseEvent&) { }
+    virtual void willDispatchClick(InputElementClickState&) { }
+    virtual void didDispatchClick(Event&, const InputElementClickState&) { }
+    virtual void handleDOMActivateEvent(Event&) { }
 
     virtual bool allowsShowPickerAcrossFrames();
     virtual void showPicker();
@@ -365,7 +366,7 @@ public:
 #if ENABLE(DATALIST_ELEMENT)
     virtual bool isFocusingWithDataListDropdown() const { return false; };
 #endif
-    virtual void willUpdateCheckedness(bool /*nowChecked*/) { }
+    virtual void willUpdateCheckedness(bool /*nowChecked*/, WasSetByJavaScript) { }
 
     // Parses the specified string for the type, and return
     // the Decimal value for the parsing result if the parsing

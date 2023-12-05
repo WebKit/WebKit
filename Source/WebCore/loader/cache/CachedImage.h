@@ -191,7 +191,7 @@ private:
     using ContainerContextRequests = HashMap<const CachedImageClient*, ContainerContext>;
     ContainerContextRequests m_pendingContainerContextRequests;
 
-    WeakHashSet<CachedImageClient> m_clientsWaitingForAsyncDecoding;
+    SingleThreadWeakHashSet<CachedImageClient> m_clientsWaitingForAsyncDecoding;
 
     RefPtr<CachedImageObserver> m_imageObserver;
     RefPtr<Image> m_image;

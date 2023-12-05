@@ -1814,7 +1814,7 @@ std::optional<LayoutUnit> RenderGrid::lastLineBaseline() const
     return baseline.value() + baselineChild->logicalTop().toInt();
 }
 
-WeakPtr<RenderBox> RenderGrid::getBaselineChild(ItemPosition alignment) const
+SingleThreadWeakPtr<RenderBox> RenderGrid::getBaselineChild(ItemPosition alignment) const
 {
     ASSERT(alignment == ItemPosition::Baseline || alignment == ItemPosition::LastBaseline);
     const RenderBox* baselineChild = nullptr;

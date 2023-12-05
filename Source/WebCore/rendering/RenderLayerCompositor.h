@@ -136,8 +136,8 @@ private:
 
     ChromeClient& m_chromeClient;
 
-    WeakHashSet<RenderLayer> m_scrollingLayers;
-    WeakHashSet<RenderLayer> m_viewportConstrainedLayers;
+    SingleThreadWeakHashSet<RenderLayer> m_scrollingLayers;
+    SingleThreadWeakHashSet<RenderLayer> m_viewportConstrainedLayers;
 
     const bool m_coordinateViewportConstrainedLayers;
 };
@@ -640,8 +640,8 @@ private:
     Color m_viewBackgroundColor;
     Color m_rootExtendedBackgroundColor;
 
-    HashMap<ScrollingNodeID, WeakPtr<RenderLayer>> m_scrollingNodeToLayerMap;
-    WeakHashSet<RenderLayer> m_layersWithUnresolvedRelations;
+    HashMap<ScrollingNodeID, SingleThreadWeakPtr<RenderLayer>> m_scrollingNodeToLayerMap;
+    SingleThreadWeakHashSet<RenderLayer> m_layersWithUnresolvedRelations;
 #if PLATFORM(IOS_FAMILY)
     std::unique_ptr<LegacyWebKitScrollingLayerCoordinator> m_legacyScrollingLayerCoordinator;
 #endif

@@ -63,7 +63,7 @@ public:
     // Chainable resources - linked through xlink:href
     LegacyRenderSVGResourceContainer* linkedResource() const { return m_linkedResource.get(); }
 
-    void buildSetOfResources(WeakHashSet<LegacyRenderSVGResourceContainer>&);
+    void buildSetOfResources(SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer>&);
 
     // Methods operating on all cached resources
     void removeClientFromCache(RenderElement&, bool markForInvalidation = true) const;
@@ -110,9 +110,9 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         ClipperFilterMaskerData() = default;
-        WeakPtr<LegacyRenderSVGResourceClipper> clipper;
-        WeakPtr<LegacyRenderSVGResourceFilter> filter;
-        WeakPtr<LegacyRenderSVGResourceMasker> masker;
+        SingleThreadWeakPtr<LegacyRenderSVGResourceClipper> clipper;
+        SingleThreadWeakPtr<LegacyRenderSVGResourceFilter> filter;
+        SingleThreadWeakPtr<LegacyRenderSVGResourceMasker> masker;
     };
 
     // From SVG 1.1 2nd Edition
@@ -121,9 +121,9 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         MarkerData() = default;
-        WeakPtr<LegacyRenderSVGResourceMarker> markerStart;
-        WeakPtr<LegacyRenderSVGResourceMarker> markerMid;
-        WeakPtr<LegacyRenderSVGResourceMarker> markerEnd;
+        SingleThreadWeakPtr<LegacyRenderSVGResourceMarker> markerStart;
+        SingleThreadWeakPtr<LegacyRenderSVGResourceMarker> markerMid;
+        SingleThreadWeakPtr<LegacyRenderSVGResourceMarker> markerEnd;
     };
 
     // From SVG 1.1 2nd Edition
@@ -134,14 +134,14 @@ private:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         FillStrokeData() = default;
-        WeakPtr<LegacyRenderSVGResourceContainer> fill;
-        WeakPtr<LegacyRenderSVGResourceContainer> stroke;
+        SingleThreadWeakPtr<LegacyRenderSVGResourceContainer> fill;
+        SingleThreadWeakPtr<LegacyRenderSVGResourceContainer> stroke;
     };
 
     std::unique_ptr<ClipperFilterMaskerData> m_clipperFilterMaskerData;
     std::unique_ptr<MarkerData> m_markerData;
     std::unique_ptr<FillStrokeData> m_fillStrokeData;
-    WeakPtr<LegacyRenderSVGResourceContainer> m_linkedResource;
+    SingleThreadWeakPtr<LegacyRenderSVGResourceContainer> m_linkedResource;
 };
 
 } // namespace WebCore

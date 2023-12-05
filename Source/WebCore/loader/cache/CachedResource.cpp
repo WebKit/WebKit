@@ -786,7 +786,7 @@ void CachedResource::switchClientsToRevalidatedResource()
     ASSERT(!m_handleCount);
     m_handlesToRevalidate.clear();
 
-    Vector<WeakPtr<CachedResourceClient>> clientsToMove;
+    Vector<SingleThreadWeakPtr<CachedResourceClient>> clientsToMove;
     for (auto entry : m_clients) {
         auto& client = entry.key;
         unsigned count = entry.value;

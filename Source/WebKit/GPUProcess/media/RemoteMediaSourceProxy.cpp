@@ -73,11 +73,6 @@ void RemoteMediaSourceProxy::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSo
     m_private = WTFMove(mediaSourcePrivate);
 }
 
-MediaTime RemoteMediaSourceProxy::duration() const
-{
-    return m_duration;
-}
-
 const PlatformTimeRanges& RemoteMediaSourceProxy::buffered() const
 {
     return m_buffered;
@@ -101,11 +96,6 @@ Ref<MediaPromise> RemoteMediaSourceProxy::seekToTime(const MediaTime& time)
     return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::MediaSourcePrivateRemote::ProxySeekToTime(time), m_identifier)->whenSettled(RunLoop::current(), [](auto&& result) {
         return result ? MediaPromise::createAndSettle(WTFMove(*result)) : MediaPromise::createAndReject(PlatformMediaError::IPCError);
     });
-}
-
-void RemoteMediaSourceProxy::monitorSourceBuffers()
-{
-    notImplemented();
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -141,10 +131,6 @@ void RemoteMediaSourceProxy::addSourceBuffer(const WebCore::ContentType& content
 
 void RemoteMediaSourceProxy::durationChanged(const MediaTime& duration)
 {
-    if (m_duration == duration)
-        return;
-
-    m_duration = duration;
     if (m_private)
         m_private->durationChanged(duration);
 }

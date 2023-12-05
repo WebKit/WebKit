@@ -2032,6 +2032,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/VideoTrackPrivate.h
     platform/graphics/VideoTrackPrivateClient.h
     platform/graphics/WidthCache.h
+    platform/graphics/WidthIterator.h
     platform/graphics/WindRule.h
 
     platform/graphics/angle/ANGLEHeaders.h

@@ -58,6 +58,10 @@ public:
     void setPDFDocument(PDFDocument *document) { m_pdfDocument = document; }
 
     size_t pageCount() const;
+    DisplayMode displayMode() const { return m_displayMode; }
+
+    static constexpr FloatSize documentMargin { 6, 8 };
+    static constexpr FloatSize pageMargin { 4, 6 };
 
     RetainPtr<PDFPage> pageAtIndex(PageIndex) const;
     WebCore::FloatRect boundsForPageAtIndex(PageIndex) const;
@@ -75,9 +79,6 @@ private:
 
     void layoutSingleColumn(float availableWidth, float maxRowWidth);
     void layoutTwoUpColumn(float availableWidth, float maxRowWidth);
-
-    static FloatSize documentMargin();
-    static FloatSize pageMargin();
 
     struct PageGeometry {
         WebCore::FloatRect normalizedBounds;

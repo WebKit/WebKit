@@ -7239,6 +7239,21 @@ WebAudioEnabled:
     WebCore:
       default: false
 
+
+WebAuthenticationASEnabled:
+  type: bool
+  status: embedder
+  humanReadableName: "Web Authentication AuthenticationServices"
+  humanReadableDescription: "Enable Modern Web Authentication support though AuthenticationServices"
+  condition: ENABLE(WEB_AUTHN_AS_MODERN)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 WebAuthenticationEnabled:
   type: bool

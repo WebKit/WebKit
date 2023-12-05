@@ -114,8 +114,7 @@ Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
     if (!validateCreateBuffer(*this, descriptor)) {
         generateAValidationError("Validation failure."_s);
 
-        if (!validateCreateBuffer(*this, descriptor))
-            return Buffer::createInvalid(*this);
+        return Buffer::createInvalid(*this);
     }
 
     // FIXME(PERFORMANCE): Consider write-combining CPU cache mode.
@@ -211,7 +210,7 @@ void* Buffer::getMappedRange(size_t offset, size_t size)
 {
     // https://gpuweb.github.io/gpuweb/#dom-gpubuffer-getmappedrange
     if (!isValid()) {
-        m_emptyBuffer.resize(size);
+        m_emptyBuffer.resize(std::max<size_t>(size, 1));
         return &m_emptyBuffer[0];
     }
 

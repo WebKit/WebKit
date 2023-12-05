@@ -47,6 +47,7 @@ namespace WebCore {
 class Filter;
 class GraphicsClient;
 #if HAVE(IOSURFACE)
+class IOSurface;
 class IOSurfacePool;
 #endif
 class ScriptExecutionContext;
@@ -165,6 +166,10 @@ public:
 
     WEBCORE_EXPORT virtual RefPtr<NativeImage> filteredNativeImage(Filter&);
     RefPtr<NativeImage> filteredNativeImage(Filter&, Function<void(GraphicsContext&)> drawCallback);
+
+#if HAVE(IOSURFACE)
+    IOSurface* surface();
+#endif
 
 #if USE(CAIRO)
     WEBCORE_EXPORT RefPtr<cairo_surface_t> createCairoSurface();

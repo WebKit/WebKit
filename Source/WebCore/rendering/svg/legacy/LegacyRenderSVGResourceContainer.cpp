@@ -94,11 +94,11 @@ void LegacyRenderSVGResourceContainer::markAllClientsForRepaint()
 
 void LegacyRenderSVGResourceContainer::markAllClientsForInvalidation(InvalidationMode mode)
 {
-    WeakHashSet<RenderObject> visitedRenderers;
+    SingleThreadWeakHashSet<RenderObject> visitedRenderers;
     markAllClientsForInvalidationIfNeeded(mode, &visitedRenderers);
 }
 
-void LegacyRenderSVGResourceContainer::markAllClientsForInvalidationIfNeeded(InvalidationMode mode, WeakHashSet<RenderObject>* visitedRenderers)
+void LegacyRenderSVGResourceContainer::markAllClientsForInvalidationIfNeeded(InvalidationMode mode, SingleThreadWeakHashSet<RenderObject>* visitedRenderers)
 {
     // FIXME: Style invalidation should either be a pre-layout task or this function
     // should never get called while in layout. See webkit.org/b/208903.

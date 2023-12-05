@@ -39,7 +39,7 @@ class Page;
 class RenderImageResource;
 
 template<typename T, typename Counter> class EventSender;
-using ImageEventSender = EventSender<ImageLoader, WTF::DefaultWeakPtrImpl>;
+using ImageEventSender = EventSender<ImageLoader, SingleThreadWeakPtrImpl>;
 
 enum class RelevantMutation : bool { No, Yes };
 enum class LazyImageLoadState : uint8_t { None, Deferred, LoadImmediately, FullImage };

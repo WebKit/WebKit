@@ -33,7 +33,33 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if defined(__OBJC__) && PLATFORM(IOS_FAMILY)
+#include <UIKit/UIKeyCommand.h>
+#endif
+
 OBJC_CLASS _WKWebExtensionCommand;
+
+#if USE(APPKIT)
+OBJC_CLASS NSEvent;
+OBJC_CLASS NSMenuItem;
+using CocoaMenuItem = NSMenuItem;
+#else
+OBJC_CLASS UIKeyCommand;
+OBJC_CLASS UIMenuElement;
+using CocoaMenuItem = UIMenuElement;
+#endif
+
+#if defined(__OBJC__) && PLATFORM(IOS_FAMILY)
+using WebExtensionKeyCommandHandlerBlock = void (^)(void);
+
+@interface _WKWebExtensionKeyCommand : UIKeyCommand
+
++ (instancetype)commandWithTitle:(NSString *)title image:(UIImage *)image input:(NSString *)input modifierFlags:(UIKeyModifierFlags)modifierFlags handler:(WebExtensionKeyCommandHandlerBlock)handler;
+
+@property (nonatomic, copy) WebExtensionKeyCommandHandlerBlock handler;
+
+@end
+#endif // PLATFORM(IOS_FAMILY)
 
 namespace WebKit {
 
@@ -72,6 +98,16 @@ public:
     void setModifierFlags(OptionSet<ModifierFlags> modifierFlags) { dispatchChangedEventSoonIfNeeded(); m_modifierFlags = modifierFlags; }
 
     String shortcutString() const;
+
+    CocoaMenuItem *platformMenuItem() const;
+
+#if PLATFORM(IOS_FAMILY)
+    UIKeyCommand *keyCommand() const;
+#endif
+
+#if USE(APPKIT)
+    bool matchesEvent(NSEvent *) const;
+#endif
 
 #ifdef __OBJC__
     _WKWebExtensionCommand *wrapper() const { return (_WKWebExtensionCommand *)API::ObjectImpl<API::Object::Type::WebExtensionCommand>::wrapper(); }

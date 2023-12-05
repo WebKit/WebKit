@@ -57,7 +57,7 @@ LegacyRenderSVGResourceClipper::LegacyRenderSVGResourceClipper(SVGClipPathElemen
 
 LegacyRenderSVGResourceClipper::~LegacyRenderSVGResourceClipper() = default;
 
-void LegacyRenderSVGResourceClipper::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
+void LegacyRenderSVGResourceClipper::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers)
 {
     m_clipBoundaries.fill(FloatRect { });
     m_clipperMap.clear();

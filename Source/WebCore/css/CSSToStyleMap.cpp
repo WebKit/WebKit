@@ -42,11 +42,13 @@
 #include "CSSScrollValue.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueKeywords.h"
+#include "CSSViewValue.h"
 #include "CompositeOperation.h"
 #include "FillLayer.h"
 #include "ScrollTimeline.h"
 #include "StyleBuilderConverter.h"
 #include "StyleResolver.h"
+#include "ViewTimeline.h"
 
 namespace WebCore {
 
@@ -450,6 +452,8 @@ void CSSToStyleMap::mapAnimationTimeline(Animation& animation, const CSSValue& v
 {
     if (treatAsInitialValue(value, CSSPropertyAnimationTimeline))
         animation.setTimeline(Animation::initialTimeline());
+    else if (auto* viewValue = dynamicDowncast<CSSViewValue>(value))
+        animation.setTimeline(ViewTimeline::createFromCSSValue(*viewValue));
     else if (auto* scrollValue = dynamicDowncast<CSSScrollValue>(value))
         animation.setTimeline(ScrollTimeline::createFromCSSValue(*scrollValue));
     else if (value.isCustomIdent())

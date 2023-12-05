@@ -126,6 +126,7 @@ StepRange RangeInputType::createStepRange(AnyStepHandling anyStepHandling) const
     return StepRange(minimum, RangeLimitations::Valid, minimum, maximum, step, rangeStepDescription);
 }
 
+// FIXME: Should this work for untrusted input?
 void RangeInputType::handleMouseDownEvent(MouseEvent& event)
 {
     ASSERT(element());
@@ -134,9 +135,6 @@ void RangeInputType::handleMouseDownEvent(MouseEvent& event)
         return;
 
     if (element()->isDisabledFormControl())
-        return;
-
-    if (event.button() != MouseButton::Left)
         return;
 
     auto* targetNode = dynamicDowncast<Node>(event.target());

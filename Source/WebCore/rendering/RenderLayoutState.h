@@ -45,13 +45,13 @@ class RenderLayoutState {
 public:
     struct TextBoxTrim {
         bool trimFirstFormattedLine { false };
-        WeakPtr<const RenderBlockFlow> trimLastFormattedLineOnTarget;
+        SingleThreadWeakPtr<const RenderBlockFlow> trimLastFormattedLineOnTarget;
     };
     struct LineClamp {
         size_t maximumLineCount { 0 };
         size_t currentLineCount { 0 };
         std::optional<LayoutUnit> clampedContentLogicalHeight;
-        WeakPtr<const RenderBlockFlow> clampedRenderer;
+        SingleThreadWeakPtr<const RenderBlockFlow> clampedRenderer;
     };
 
     RenderLayoutState()
@@ -141,7 +141,7 @@ private:
     Vector<bool> m_blockStartTrimming;
 
     // The current line grid that we're snapping to and the offset of the start of the grid.
-    WeakPtr<RenderBlockFlow> m_lineGrid;
+    SingleThreadWeakPtr<RenderBlockFlow> m_lineGrid;
 
     // FIXME: Distinguish between the layout clip rect and the paint clip rect which may be larger,
     // e.g., because of composited scrolling.

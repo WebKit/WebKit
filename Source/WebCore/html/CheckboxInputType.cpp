@@ -32,10 +32,13 @@
 #include "config.h"
 #include "CheckboxInputType.h"
 
+#include "EventHandler.h"
 #include "HTMLInputElement.h"
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
+#include "LocalFrame.h"
 #include "LocalizedStrings.h"
+#include "MouseEvent.h"
 #include "Page.h"
 #include "RenderElement.h"
 #include "RenderStyleInlines.h"
@@ -87,6 +90,56 @@ void CheckboxInputType::handleKeyupEvent(KeyboardEvent& event)
     dispatchSimulatedClickIfActive(event);
 }
 
+void CheckboxInputType::handleMouseDownEvent(MouseEvent& event)
+{
+    ASSERT(element());
+
+    if (!event.isTrusted() || !isSwitch() || element()->isDisabledFormControl() || !element()->renderer())
+        return;
+    m_isSwitchVisuallyOn = element()->checked();
+    startSwitchPointerTracking(element()->renderer()->absoluteToLocal(event.absoluteLocation(), UseTransforms).x());
+}
+
+void CheckboxInputType::handleMouseMoveEvent(MouseEvent& event)
+{
+    ASSERT(element());
+
+    if (!isSwitchPointerTracking())
+        return;
+
+    ASSERT(!element()->isDisabledFormControl());
+
+    if (!event.isTrusted() || !isSwitch() || !element()->renderer()) {
+        stopSwitchPointerTracking();
+        return;
+    }
+
+    auto isSwitchVisuallyOn = m_isSwitchVisuallyOn;
+    auto isRTL = element()->computedStyle()->direction() == TextDirection::RTL;
+    auto switchThumbIsLeft = (!isRTL && !isSwitchVisuallyOn) || (isRTL && isSwitchVisuallyOn);
+    auto xPosition = element()->renderer()->absoluteToLocal(event.absoluteLocation(), UseTransforms).x();
+    auto switchTrackRect = element()->renderer()->absoluteBoundingBoxRect();
+    auto switchThumbLength = switchTrackRect.height();
+    auto switchTrackWidth = switchTrackRect.width();
+
+    auto changePosition = switchTrackWidth / 2;
+    if (!m_hasSwitchVisuallyOnChanged) {
+        auto switchTrackNoThumbWidth = switchTrackWidth - switchThumbLength;
+        auto changeOffset = switchTrackWidth * RenderTheme::singleton().switchPointerTrackingMagnitudeProportion();
+        if (switchThumbIsLeft && *m_switchPointerTrackingXPositionStart > switchTrackNoThumbWidth)
+            changePosition = *m_switchPointerTrackingXPositionStart + changeOffset;
+        else if (!switchThumbIsLeft && *m_switchPointerTrackingXPositionStart < switchTrackNoThumbWidth)
+            changePosition = *m_switchPointerTrackingXPositionStart - changeOffset;
+    }
+
+    auto switchThumbIsLeftNow = xPosition < changePosition;
+    if (switchThumbIsLeftNow != switchThumbIsLeft) {
+        m_hasSwitchVisuallyOnChanged = true;
+        m_isSwitchVisuallyOn = !m_isSwitchVisuallyOn;
+        performSwitchCheckedChangeAnimation();
+    }
+}
+
 void CheckboxInputType::willDispatchClick(InputElementClickState& state)
 {
     ASSERT(element());
@@ -100,7 +153,17 @@ void CheckboxInputType::willDispatchClick(InputElementClickState& state)
     if (state.indeterminate)
         element()->setIndeterminate(false);
 
+    if (isSwitchPointerTracking() && m_hasSwitchVisuallyOnChanged && m_isSwitchVisuallyOn == state.checked) {
+        stopSwitchPointerTracking();
+        return;
+    }
+
     element()->setChecked(!state.checked, state.trusted ? WasSetByJavaScript::No : WasSetByJavaScript::Yes);
+
+    if (isSwitch() && state.trusted && !(isSwitchPointerTracking() && m_hasSwitchVisuallyOnChanged && m_isSwitchVisuallyOn == !state.checked))
+        performSwitchCheckedChangeAnimation();
+
+    stopSwitchPointerTracking();
 }
 
 void CheckboxInputType::didDispatchClick(Event& event, const InputElementClickState& state)
@@ -116,6 +179,32 @@ void CheckboxInputType::didDispatchClick(Event& event, const InputElementClickSt
     event.setDefaultHandled();
 }
 
+void CheckboxInputType::startSwitchPointerTracking(int xPositionStart)
+{
+    ASSERT(element());
+    if (RefPtr frame = element()->document().frame()) {
+        frame->eventHandler().setCapturingMouseEventsElement(element());
+        m_switchPointerTrackingXPositionStart = xPositionStart;
+    }
+}
+
+void CheckboxInputType::stopSwitchPointerTracking()
+{
+    ASSERT(element());
+    if (!isSwitchPointerTracking())
+        return;
+
+    if (RefPtr frame = element()->document().frame())
+        frame->eventHandler().setCapturingMouseEventsElement(nullptr);
+    m_hasSwitchVisuallyOnChanged = false;
+    m_switchPointerTrackingXPositionStart = std::nullopt;
+}
+
+bool CheckboxInputType::isSwitchPointerTracking() const
+{
+    return !!m_switchPointerTrackingXPositionStart;
+}
+
 bool CheckboxInputType::matchesIndeterminatePseudoClass() const
 {
     ASSERT(element());
@@ -124,7 +213,20 @@ bool CheckboxInputType::matchesIndeterminatePseudoClass() const
 
 void CheckboxInputType::disabledStateChanged()
 {
-    stopSwitchCheckedChangeAnimation();
+    ASSERT(element());
+    if (isSwitch() && element()->isDisabledFormControl()) {
+        stopSwitchCheckedChangeAnimation();
+        stopSwitchPointerTracking();
+    }
+}
+
+void CheckboxInputType::willUpdateCheckedness(bool, WasSetByJavaScript wasCheckedByJavaScript)
+{
+    ASSERT(element());
+    if (isSwitch() && wasCheckedByJavaScript == WasSetByJavaScript::Yes) {
+        stopSwitchCheckedChangeAnimation();
+        stopSwitchPointerTracking();
+    }
 }
 
 // FIXME: ideally CheckboxInputType would not be responsible for the timer specifics and instead
@@ -136,17 +238,14 @@ static Seconds switchCheckedChangeAnimationUpdateInterval(HTMLInputElement* elem
     return 0_s;
 }
 
-void CheckboxInputType::performSwitchCheckedChangeAnimation(WasSetByJavaScript wasCheckedByJavaScript)
+void CheckboxInputType::performSwitchCheckedChangeAnimation()
 {
     ASSERT(isSwitch());
     ASSERT(element());
     ASSERT(element()->renderer());
-    ASSERT(element()->renderer()->style().hasEffectiveAppearance());
 
-    if (wasCheckedByJavaScript == WasSetByJavaScript::Yes) {
-        stopSwitchCheckedChangeAnimation();
+    if (!element()->renderer()->style().hasEffectiveAppearance())
         return;
-    }
 
     auto updateInterval = switchCheckedChangeAnimationUpdateInterval(element());
     auto duration = RenderTheme::singleton().switchCheckedChangeAnimationDuration();
@@ -185,6 +284,13 @@ float CheckboxInputType::switchCheckedChangeAnimationProgress() const
         return 1.0f;
     auto duration = RenderTheme::singleton().switchCheckedChangeAnimationDuration();
     return std::min((float)((MonotonicTime::now().secondsSinceEpoch() - m_switchCheckedChangeAnimationStartTime) / duration), 1.0f);
+}
+
+bool CheckboxInputType::isSwitchVisuallyOn() const
+{
+    ASSERT(element());
+    ASSERT(isSwitch());
+    return isSwitchPointerTracking() ? m_isSwitchVisuallyOn : element()->checked();
 }
 
 void CheckboxInputType::switchCheckedChangeAnimationTimerFired()

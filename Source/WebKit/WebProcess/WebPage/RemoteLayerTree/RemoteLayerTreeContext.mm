@@ -31,7 +31,6 @@
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerTreeDrawingArea.h"
 #import "RemoteLayerTreeTransaction.h"
-#import "RemoteLayerWithRemoteRenderingBackingStoreCollection.h"
 #import "VideoPresentationManager.h"
 #import "WebFrame.h"
 #import "WebPage.h"
@@ -50,10 +49,7 @@ using namespace WebCore;
 RemoteLayerTreeContext::RemoteLayerTreeContext(WebPage& webPage)
     : m_webPage(webPage)
 {
-    if (WebProcess::singleton().shouldUseRemoteRenderingFor(WebCore::RenderingPurpose::DOM))
-        m_backingStoreCollection = makeUnique<RemoteLayerWithRemoteRenderingBackingStoreCollection>(*this);
-    else
-        m_backingStoreCollection = makeUnique<RemoteLayerBackingStoreCollection>(*this);
+    m_backingStoreCollection = makeUnique<RemoteLayerBackingStoreCollection>(*this);
 }
 
 RemoteLayerTreeContext::~RemoteLayerTreeContext()

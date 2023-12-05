@@ -149,7 +149,7 @@ public:
         MarginValues m_margins;
         int m_lineBreakToAvoidWidow;
 
-        WeakPtr<RenderMultiColumnFlow> m_multiColumnFlow;
+        SingleThreadWeakPtr<RenderMultiColumnFlow> m_multiColumnFlow;
 
         bool m_didBreakAtLineToAvoidWidow : 1;
     };

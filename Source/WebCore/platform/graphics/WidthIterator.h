@@ -60,7 +60,7 @@ public:
     float runWidthSoFar() const { return m_runWidthSoFar; }
     unsigned currentCharacterIndex() const { return m_currentCharacterIndex; }
 
-    static bool characterCanUseSimplifiedTextMeasuring(char32_t, bool whitespaceIsCollapsed);
+    WEBCORE_EXPORT static bool characterCanUseSimplifiedTextMeasuring(char32_t, bool whitespaceIsCollapsed);
 
 private:
     GlyphData glyphDataForCharacter(char32_t, bool mirror);

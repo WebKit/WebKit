@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/CheckedRef.h>
 #include <wtf/CompactRefPtrTuple.h>
 #include <wtf/GetPtr.h>
 #include <wtf/HashTraits.h>
@@ -76,6 +77,60 @@ private:
 #if ASSERT_ENABLED
     bool m_wasConstructedOnMainThread;
 #endif
+};
+
+template<typename Derived>
+class WeakPtrImplBaseSingleThread {
+    WTF_MAKE_NONCOPYABLE(WeakPtrImplBaseSingleThread);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(WeakPtrImplBaseSingleThread);
+public:
+    ~WeakPtrImplBaseSingleThread() = default;
+
+    template<typename T> typename T::WeakValueType* get()
+    {
+        return static_cast<typename T::WeakValueType*>(m_ptr);
+    }
+
+    explicit operator bool() const { return m_ptr; }
+    void clear() { m_ptr = nullptr; }
+
+#if ASSERT_ENABLED
+    bool wasConstructedOnMainThread() const { return m_wasConstructedOnMainThread; }
+#endif
+
+    template<typename T>
+    explicit WeakPtrImplBaseSingleThread(T* ptr)
+        : m_ptr(static_cast<typename T::WeakValueType*>(ptr))
+#if ASSERT_ENABLED
+        , m_wasConstructedOnMainThread(isMainThread())
+#endif
+    {
+    }
+
+    uint32_t refCount() const { return m_refCount; }
+    void ref() const { ++m_refCount; }
+    void deref() const
+    {
+        uint32_t tempRefCount = m_refCount - 1;
+        if (!tempRefCount) {
+            delete this;
+            return;
+        }
+        m_refCount = tempRefCount;
+    }
+
+private:
+    mutable SingleThreadIntegralWrapper<uint32_t> m_refCount { 1 };
+    void* m_ptr;
+#if ASSERT_ENABLED
+    bool m_wasConstructedOnMainThread;
+#endif
+};
+
+class SingleThreadWeakPtrImpl final : public WeakPtrImplBaseSingleThread<SingleThreadWeakPtrImpl> {
+public:
+    template<typename T>
+    explicit SingleThreadWeakPtrImpl(T* ptr) : WeakPtrImplBaseSingleThread<SingleThreadWeakPtrImpl>(ptr) { }
 };
 
 class DefaultWeakPtrImpl final : public WeakPtrImplBase<DefaultWeakPtrImpl> {
@@ -395,11 +450,30 @@ WeakPtr(const Ref<T>& value, EnableWeakPtrThreadingAssertions = EnableWeakPtrThr
 template<class T, typename = std::enable_if_t<!IsSmartPtr<T>::value>>
 WeakPtr(const RefPtr<T>& value, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes) -> WeakPtr<T, typename T::WeakPtrImplType>;
 
+template<typename T> using SingleThreadWeakPtr = WeakPtr<T, SingleThreadWeakPtrImpl>;
+
+template<typename T, WeakPtrFactoryInitialization initializationMode = WeakPtrFactoryInitialization::Lazy>
+using CanMakeSingleThreadWeakPtr = CanMakeWeakPtr<T, initializationMode, SingleThreadWeakPtrImpl>;
+
+template<typename T, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes>
+using SingleThreadWeakHashSet = WeakHashSet<T, SingleThreadWeakPtrImpl, enableWeakPtrThreadingAssertions>;
+
+template<typename KeyType, typename ValueType> using SingleThreadWeakHashMap = WeakHashMap<KeyType, ValueType, SingleThreadWeakPtrImpl>;
+
+template<typename T, EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes>
+using SingleThreadWeakListHashSet = WeakListHashSet<T, SingleThreadWeakPtrImpl, enableWeakPtrThreadingAssertions>;
+
 } // namespace WTF
 
 using WTF::CanMakeWeakPtr;
+using WTF::CanMakeSingleThreadWeakPtr;
 using WTF::EnableWeakPtrThreadingAssertions;
+using WTF::SingleThreadWeakPtr;
+using WTF::SingleThreadWeakPtrImpl;
+using WTF::SingleThreadWeakHashSet;
+using WTF::SingleThreadWeakListHashSet;
 using WTF::WeakHashMap;
+using WTF::SingleThreadWeakHashMap;
 using WTF::WeakHashSet;
 using WTF::WeakListHashSet;
 using WTF::WeakPtr;

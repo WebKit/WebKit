@@ -86,9 +86,9 @@ private:
     void insertChild(UniqueRef<Layout::Box>, RenderObject&, const RenderObject* beforeChild = nullptr);
 
     RenderBlock& m_rootRenderer;
-    Vector<WeakPtr<RenderObject>, 1> m_renderers;
+    Vector<SingleThreadWeakPtr<RenderObject>, 1> m_renderers;
 
-    HashMap<CheckedRef<const Layout::Box>, WeakPtr<RenderObject>> m_boxToRendererMap;
+    HashMap<CheckedRef<const Layout::Box>, SingleThreadWeakPtr<RenderObject>> m_boxToRendererMap;
 };
 
 #if ENABLE(TREE_DEBUGGING)

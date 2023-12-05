@@ -138,6 +138,18 @@ constexpr UChar zeroWidthJoiner = 0x200D;
 constexpr UChar zeroWidthNoBreakSpace = 0xFEFF;
 constexpr UChar zeroWidthNonJoiner = 0x200C;
 constexpr UChar zeroWidthSpace = 0x200B;
+constexpr UChar lineSeparator = 0x2028;
+constexpr UChar paragraphSeparator = 0x2029;
+constexpr UChar mediumShade = 0x2592;
+constexpr UChar functionApplication = 0x2061;
+constexpr UChar invisibleTimes = 0x2062;
+constexpr UChar invisibleSeparator = 0x2063;
+constexpr UChar inhibitSymmetricSwapping = 0x206A;
+constexpr UChar activateSymmetricSwapping = 0x206B;
+constexpr UChar inhibitArabicFormShaping = 0x206C;
+constexpr UChar activateArabicFormShaping = 0x206D;
+constexpr UChar nationalDigitShapes = 0x206E;
+constexpr UChar nominalDigitShapes = 0x206F;
 
 } // namespace WTF::Unicode
 
@@ -242,3 +254,15 @@ using WTF::Unicode::zeroWidthJoiner;
 using WTF::Unicode::zeroWidthNoBreakSpace;
 using WTF::Unicode::zeroWidthNonJoiner;
 using WTF::Unicode::zeroWidthSpace;
+using WTF::Unicode::lineSeparator;
+using WTF::Unicode::paragraphSeparator;
+using WTF::Unicode::mediumShade;
+using WTF::Unicode::functionApplication;
+using WTF::Unicode::invisibleTimes;
+using WTF::Unicode::invisibleSeparator;
+using WTF::Unicode::inhibitSymmetricSwapping;
+using WTF::Unicode::activateSymmetricSwapping;
+using WTF::Unicode::inhibitArabicFormShaping;
+using WTF::Unicode::activateArabicFormShaping;
+using WTF::Unicode::nationalDigitShapes;
+using WTF::Unicode::nominalDigitShapes;

@@ -72,7 +72,7 @@ protected:
     CachedResource* ownedResource() { return m_resource.get(); }
 
 private:
-    WeakPtr<LinkLoader> m_loader;
+    SingleThreadWeakPtr<LinkLoader> m_loader;
     CachedResourceHandle<CachedResource> m_resource;
 };
 

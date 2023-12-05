@@ -28,16 +28,16 @@ PASS Property animation-timeline value 'scroll(nearest inline)'
 PASS Property animation-timeline value 'scroll(block self)'
 PASS Property animation-timeline value 'scroll(self block)'
 PASS Property animation-timeline value 'scroll(y root)'
-FAIL Property animation-timeline value 'view()' assert_true: 'view()' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'view(block)' assert_true: 'view(block)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'view(inline)' assert_true: 'view(inline)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'view(x)' assert_true: 'view(x)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'view(y)' assert_true: 'view(y)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'view(y 1px)' assert_true: 'view(y 1px)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'view(1px auto)' assert_true: 'view(1px auto)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'view(auto 1px)' assert_true: 'view(auto 1px)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'view(y 1px auto)' assert_true: 'view(y 1px auto)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'view(1px y)' assert_true: 'view(1px y)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'view(y auto)' assert_true: 'view(y auto)' is a supported value for animation-timeline. expected true got false
-FAIL Property animation-timeline value 'view(y auto auto)' assert_true: 'view(y auto auto)' is a supported value for animation-timeline. expected true got false
+PASS Property animation-timeline value 'view()'
+PASS Property animation-timeline value 'view(block)'
+PASS Property animation-timeline value 'view(inline)'
+PASS Property animation-timeline value 'view(x)'
+PASS Property animation-timeline value 'view(y)'
+PASS Property animation-timeline value 'view(y 1px)'
+PASS Property animation-timeline value 'view(1px auto)'
+PASS Property animation-timeline value 'view(auto 1px)'
+PASS Property animation-timeline value 'view(y 1px auto)'
+PASS Property animation-timeline value 'view(1px y)'
+PASS Property animation-timeline value 'view(y auto)'
+PASS Property animation-timeline value 'view(y auto auto)'
 

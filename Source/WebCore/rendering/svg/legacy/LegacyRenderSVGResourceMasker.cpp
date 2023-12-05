@@ -42,7 +42,7 @@ LegacyRenderSVGResourceMasker::LegacyRenderSVGResourceMasker(SVGMaskElement& ele
 
 LegacyRenderSVGResourceMasker::~LegacyRenderSVGResourceMasker() = default;
 
-void LegacyRenderSVGResourceMasker::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
+void LegacyRenderSVGResourceMasker::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers)
 {
     m_maskContentBoundaries.fill(FloatRect { });
     m_masker.clear();

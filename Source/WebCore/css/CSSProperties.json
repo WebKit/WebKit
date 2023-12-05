@@ -1529,6 +1529,7 @@
                 "name-for-methods": "Timeline",
                 "settings-flag": "scrollDrivenAnimationsEnabled",
                 "parser-function": "consumeAnimationTimeline",
+                "parser-function-requires-context": true,
                 "parser-grammar-unused": "auto | none | <dashed-ident> | <scroll()> | <view()>",
                 "parser-grammar-unused-reason": "Needs support for function notation."
             },

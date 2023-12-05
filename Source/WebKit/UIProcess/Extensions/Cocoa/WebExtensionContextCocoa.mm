@@ -1890,6 +1890,10 @@ void WebExtensionContext::performCommand(WebExtensionCommand& command, UserTrigg
     if (!isLoaded())
         return;
 
+    ASSERT(command.extensionContext() == this);
+    if (command.extensionContext() != this)
+        return;
+
     auto currentWindow = frontmostWindow();
     auto activeTab = currentWindow ? currentWindow->activeTab() : nullptr;
 
@@ -1903,6 +1907,40 @@ void WebExtensionContext::performCommand(WebExtensionCommand& command, UserTrigg
 
     fireCommandEventIfNeeded(command, activeTab.get());
 }
+
+#if USE(APPKIT)
+WebExtensionCommand* WebExtensionContext::command(NSEvent *event)
+{
+    ASSERT(event);
+
+    if (event.type != NSEventTypeKeyDown || event.isARepeat)
+        return nullptr;
+
+    for (auto& command : commands()) {
+        if (command->matchesEvent(event))
+            return command.ptr();
+    }
+
+    return nullptr;
+}
+
+bool WebExtensionContext::performCommand(NSEvent *event)
+{
+    ASSERT(isLoaded());
+    if (!isLoaded())
+        return false;
+
+    if (event.type != NSEventTypeKeyDown || event.isARepeat)
+        return false;
+
+    if (RefPtr result = command(event)) {
+        performCommand(*result, UserTriggered::Yes);
+        return true;
+    }
+
+    return false;
+}
+#endif // USE(APPKIT)
 
 NSArray *WebExtensionContext::platformMenuItems(const WebExtensionTab& tab) const
 {
@@ -1924,6 +1962,10 @@ void WebExtensionContext::performMenuItem(WebExtensionMenuItem& menuItem, const 
 {
     ASSERT(isLoaded());
     if (!isLoaded())
+        return;
+
+    ASSERT(menuItem.extensionContext() == this);
+    if (menuItem.extensionContext() != this)
         return;
 
     if (contextParameters.tabIdentifier) {

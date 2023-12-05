@@ -51,6 +51,7 @@ void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool is
     m_clonedEndDecorationWidthForInlineBoxRuns = { };
     m_nonSpanningInlineLevelBoxCount = 0;
     m_hasNonDefaultBidiLevelRun = false;
+    m_hasRubyContent = false;
     m_contentLogicalWidth = { };
     m_inlineBoxLogicalLeftStack.clear();
     m_runs.clear();
@@ -106,7 +107,8 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
         return;
 
     auto expansion = ExpansionInfo { };
-    TextUtil::computedExpansions(m_runs, { 0, m_runs.size() }, m_hangingContent.trailingWhitespaceLength(), expansion);
+    auto contentRange = WTF::Range<size_t> { 0, m_runs.size() };
+    TextUtil::computedExpansions(m_runs, contentRange, m_hangingContent.trailingWhitespaceLength(), expansion);
 
     if (rootBox.isRubyAnnotationBox()) {
         // FIXME: This is a workaround until after we generate inline boxes for annotation content.
@@ -114,12 +116,12 @@ void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
             // ruby-align: space-around
             auto contentInset = spaceToDistribute / (expansion.opportunityCount + 1) / 2;
             spaceToDistribute -= contentInset;
-            applyExpansionOnRange({ 0, m_runs.size() }, expansion, spaceToDistribute);
-            moveRunsBy(0, contentInset / 2);
+            applyExpansionOnRange(contentRange, expansion, spaceToDistribute);
+            moveBy(contentRange, contentInset / 2);
             return;
         }
         auto centerOffset = spaceToDistribute / 2;
-        moveRunsBy(0, centerOffset);
+        moveBy(contentRange, centerOffset);
         expandBy(m_runs.size() - 1, centerOffset);
         return;
     }
@@ -154,13 +156,13 @@ void Line::applyExpansionOnRange(WTF::Range<size_t> runRange, const ExpansionInf
     m_contentLogicalWidth += accumulatedExpansion;
 }
 
-void Line::moveRunsBy(size_t startRunIndex, InlineLayoutUnit offset)
+void Line::moveBy(WTF::Range<size_t> runRange, InlineLayoutUnit offset)
 {
-    if (startRunIndex >= m_runs.size()) {
+    if (runRange.begin() >= m_runs.size() || runRange.end() > m_runs.size()) {
         ASSERT_NOT_REACHED();
         return;
     }
-    for (auto index = startRunIndex; index < m_runs.size(); ++index)
+    for (auto index = runRange.begin(); index < runRange.end(); ++index)
         m_runs[index].moveHorizontally(offset);
     m_contentLogicalWidth += offset;
 }
@@ -173,7 +175,7 @@ void Line::expandBy(size_t runIndex, InlineLayoutUnit logicalWidth)
     }
     m_runs[runIndex].shrinkHorizontally(-logicalWidth);
     if (runIndex < m_runs.size() - 1)
-        moveRunsBy(runIndex + 1, logicalWidth);
+        moveBy({ runIndex + 1, m_runs.size() }, logicalWidth);
     else
         m_contentLogicalWidth += logicalWidth;
 }
@@ -395,6 +397,7 @@ void Line::appendInlineBoxStart(const InlineItem& inlineItem, const RenderStyle&
     if (mayPullNonInlineBoxContentToLogicalLeft)
         m_inlineBoxLogicalLeftStack.append(logicalLeft);
 
+    m_hasRubyContent = m_hasRubyContent || inlineItem.layoutBox().isRubyBase();
     m_runs.append({ inlineItem, style, logicalLeft, logicalWidth });
 }
 

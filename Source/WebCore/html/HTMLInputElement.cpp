@@ -1036,7 +1036,7 @@ void HTMLInputElement::setChecked(bool isChecked, WasSetByJavaScript wasCheckedB
     if (checked() == isChecked)
         return;
 
-    m_inputType->willUpdateCheckedness(isChecked);
+    m_inputType->willUpdateCheckedness(isChecked, wasCheckedByJavaScript);
 
     Style::PseudoClassChangeInvalidation checkedInvalidation(*this, CSSSelector::PseudoClassType::Checked, isChecked);
 
@@ -1044,11 +1044,8 @@ void HTMLInputElement::setChecked(bool isChecked, WasSetByJavaScript wasCheckedB
 
     if (auto* buttons = radioButtonGroups())
         buttons->updateCheckedState(*this);
-    if (auto* renderer = this->renderer(); renderer && renderer->style().hasEffectiveAppearance()) {
-        if (isSwitch())
-            downcast<CheckboxInputType>(*m_inputType).performSwitchCheckedChangeAnimation(wasCheckedByJavaScript);
+    if (auto* renderer = this->renderer(); renderer && renderer->style().hasEffectiveAppearance())
         renderer->theme().stateChanged(*renderer, ControlStates::States::Checked);
-    }
     updateValidity();
 
     // Ideally we'd do this from the render tree (matching
@@ -1251,8 +1248,15 @@ void HTMLInputElement::didBlur()
 
 void HTMLInputElement::defaultEventHandler(Event& event)
 {
-    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && mouseEvent->type() == eventNames().clickEvent && mouseEvent->button() == MouseButton::Left) {
-        m_inputType->handleClickEvent(*mouseEvent);
+    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && mouseEvent->button() == MouseButton::Left) {
+        auto eventType = mouseEvent->type();
+        if (eventType == eventNames().clickEvent)
+            m_inputType->handleClickEvent(*mouseEvent);
+        else if (eventType == eventNames().mousedownEvent)
+            m_inputType->handleMouseDownEvent(*mouseEvent);
+        else if (eventType == eventNames().mousemoveEvent)
+            m_inputType->handleMouseMoveEvent(*mouseEvent);
+
         if (mouseEvent->defaultHandled())
             return;
     }
@@ -1329,12 +1333,6 @@ void HTMLInputElement::defaultEventHandler(Event& event)
 
     if (auto* beforeTextInsertedEvent = dynamicDowncast<BeforeTextInsertedEvent>(event); beforeTextInsertedEvent)
         m_inputType->handleBeforeTextInsertedEvent(*beforeTextInsertedEvent);
-
-    if (auto* mouseEvent = dynamicDowncast<MouseEvent>(event); mouseEvent && mouseEvent->type() == eventNames().mousedownEvent) {
-        m_inputType->handleMouseDownEvent(*mouseEvent);
-        if (mouseEvent->defaultHandled())
-            return;
-    }
 
     m_inputType->forwardEvent(event);
 
@@ -2309,7 +2307,13 @@ bool HTMLInputElement::dirAutoUsesValue() const
 float HTMLInputElement::switchCheckedChangeAnimationProgress() const
 {
     ASSERT(isSwitch());
-    return downcast<CheckboxInputType>(*m_inputType).switchCheckedChangeAnimationProgress();
+    return checkedDowncast<CheckboxInputType>(*m_inputType).switchCheckedChangeAnimationProgress();
+}
+
+bool HTMLInputElement::isSwitchVisuallyOn() const
+{
+    ASSERT(isSwitch());
+    return checkedDowncast<CheckboxInputType>(*m_inputType).isSwitchVisuallyOn();
 }
 
 } // namespace

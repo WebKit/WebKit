@@ -103,7 +103,7 @@ public:
     LayoutSize translationOffsetToAncestor() const;
 
 private:
-    WeakPtr<RenderBox> m_renderer;
+    SingleThreadWeakPtr<RenderBox> m_renderer;
     WeakPtr<LegacyRootInlineBox> m_originatingLine;
     LayoutRect m_frameRect;
     LayoutUnit m_paginationStrut;
@@ -189,7 +189,7 @@ private:
     unsigned m_leftObjectsCount { 0 };
     unsigned m_rightObjectsCount { 0 };
     bool m_horizontalWritingMode { false };
-    WeakPtr<const RenderBlockFlow> m_renderer;
+    SingleThreadWeakPtr<const RenderBlockFlow> m_renderer;
 };
 
 #if ENABLE(TREE_DEBUGGING)

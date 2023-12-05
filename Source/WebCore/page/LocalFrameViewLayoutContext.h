@@ -58,7 +58,7 @@ struct UpdateScrollInfoAfterLayoutTransaction {
     ~UpdateScrollInfoAfterLayoutTransaction();
 
     int nestedCount { 0 };
-    WeakHashSet<RenderBlock> blocks;
+    SingleThreadWeakHashSet<RenderBlock> blocks;
 };
 
 class LocalFrameViewLayoutContext : public CanMakeCheckedPtr {
@@ -133,7 +133,7 @@ public:
     UpdateScrollInfoAfterLayoutTransaction& updateScrollInfoAfterLayoutTransaction();
     UpdateScrollInfoAfterLayoutTransaction* updateScrollInfoAfterLayoutTransactionIfExists() { return m_updateScrollInfoAfterLayoutTransaction.get(); }
     void setBoxNeedsTransformUpdateAfterContainerLayout(RenderBox&, RenderBlock& container);
-    Vector<WeakPtr<RenderBox>> takeBoxesNeedingTransformUpdateAfterContainerLayout(RenderBlock&);
+    Vector<SingleThreadWeakPtr<RenderBox>> takeBoxesNeedingTransformUpdateAfterContainerLayout(RenderBlock&);
 
 private:
     friend class LayoutScope;
@@ -179,7 +179,7 @@ private:
     LocalFrameView& m_frameView;
     Timer m_layoutTimer;
     Timer m_postLayoutTaskTimer;
-    WeakPtr<RenderElement> m_subtreeLayoutRoot;
+    SingleThreadWeakPtr<RenderElement> m_subtreeLayoutRoot;
 
     bool m_layoutSchedulingIsEnabled { true };
     bool m_firstLayout { true };
@@ -197,7 +197,7 @@ private:
     std::unique_ptr<Layout::LayoutTree> m_layoutTree;
     std::unique_ptr<Layout::LayoutState> m_layoutState;
     std::unique_ptr<UpdateScrollInfoAfterLayoutTransaction> m_updateScrollInfoAfterLayoutTransaction;
-    WeakHashMap<RenderBlock, Vector<WeakPtr<RenderBox>>> m_containersWithDescendantsNeedingTransformUpdate;
+    SingleThreadWeakHashMap<RenderBlock, Vector<SingleThreadWeakPtr<RenderBox>>> m_containersWithDescendantsNeedingTransformUpdate;
 };
 
 } // namespace WebCore

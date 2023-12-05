@@ -145,7 +145,7 @@ private:
     LayoutPoint mapFragmentPointIntoFragmentedFlowCoordinates(const LayoutPoint&);
 
 protected:
-    WeakPtr<RenderFragmentedFlow> m_fragmentedFlow;
+    SingleThreadWeakPtr<RenderFragmentedFlow> m_fragmentedFlow;
 
 private:
     LayoutRect m_fragmentedFlowPortionRect;

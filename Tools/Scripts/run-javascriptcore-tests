@@ -555,8 +555,8 @@ if (defined $remoteConfigFile) {
 if (defined $archs) {
     die "$archs not supported by the provided binary, which supports '$archsInBuild'" if index($archsInBuild, $archs) == -1;
 } else {
-    # Fallback is x86_64, which we replace with the native architecture if the native architecture is in the provided build
-    $archs = "x86_64";
+    # Fallback is the architecture of the host machine. Avoid calling lipo which allows this script to work without Xcode being installed.
+    chomp($archs = `/usr/bin/arch`);
     $archs = nativeArchitecture($remotes) if (!isAppleMacWebKit() || index($archsInBuild, nativeArchitecture($remotes)) != -1);
 }
 

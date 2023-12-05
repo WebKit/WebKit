@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,26 +25,24 @@
 
 #pragma once
 
-#include "ImageBuffer.h"
-#include "ImageBufferIOSurfaceBackend.h"
+#include "RemoteLayerBackingStore.h"
 
-namespace WebCore {
+namespace WebKit {
 
-class IOSurfaceImageBuffer final : public ImageBuffer {
+class RemoteLayerWithRemoteRenderingBackingStore : public RemoteLayerBackingStore {
 public:
-    static auto create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, RenderingPurpose purpose, const ImageBufferCreationContext& creationContext = { })
-    {
-        return ImageBuffer::create<ImageBufferIOSurfaceBackend, IOSurfaceImageBuffer>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
-    }
+    using RemoteLayerBackingStore::RemoteLayerBackingStore;
 
-    IOSurface& surface() { return *static_cast<ImageBufferIOSurfaceBackend&>(*m_backend).surface(); }
+    bool isRemoteLayerWithRemoteRenderingBackingStore() const final { return true; }
 
-protected:
-    using ImageBuffer::ImageBuffer;
+    void applySwappedBuffers(RefPtr<WebCore::ImageBuffer>&& front, RefPtr<WebCore::ImageBuffer>&& back, RefPtr<WebCore::ImageBuffer>&& secondaryBack, SwapBuffersDisplayRequirement);
+
+
+    RefPtr<WebCore::ImageBuffer> allocateBuffer() const final;
 };
 
-} // namespace WebCore
+} // namespace WebKit
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::IOSurfaceImageBuffer)
-    static bool isType(const WebCore::ImageBuffer& buffer) { return buffer.renderingMode() == WebCore::RenderingMode::Accelerated; }
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::RemoteLayerWithRemoteRenderingBackingStore)
+    static bool isType(const WebKit::RemoteLayerBackingStore& backingStore) { return backingStore.isRemoteLayerWithRemoteRenderingBackingStore(); }
 SPECIALIZE_TYPE_TRAITS_END()

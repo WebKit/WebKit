@@ -459,7 +459,7 @@ bool SVGResources::resourceDestroyed(LegacyRenderSVGResourceContainer& resource)
     return foundResources;
 }
 
-void SVGResources::buildSetOfResources(WeakHashSet<LegacyRenderSVGResourceContainer>& set)
+void SVGResources::buildSetOfResources(SingleThreadWeakHashSet<LegacyRenderSVGResourceContainer>& set)
 {
     if (isEmpty())
         return;

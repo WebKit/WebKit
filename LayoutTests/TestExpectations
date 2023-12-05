@@ -3157,7 +3157,6 @@ webkit.org/b/67007 fast/ruby/after-block-doesnt-crash.html [ Skip ]
 webkit.org/b/67007 fast/ruby/after-table-doesnt-crash.html [ Skip ]
 webkit.org/b/67007 fast/ruby/generated-after-counter-doesnt-crash.html [ Skip ]
 webkit.org/b/67007 fast/ruby/generated-before-and-after-counter-doesnt-crash.html [ Skip ]
-webkit.org/b/265766 fast/ruby/ruby-line-height.html [ Skip ]
 webkit.org/b/164888 fast/shadow-dom/copy-shadow-tree.html [ Skip ]
 webkit.org/b/81826 fast/table/double-height-table-no-tbody.html [ Skip ]
 webkit.org/b/56140 fast/text/large-text-composed-char-dos.html [ Skip ]
@@ -6919,6 +6918,9 @@ imported/w3c/web-platform-tests/navigation-api/scroll-behavior/after-transition-
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-on-synthetic-event.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/scroll-without-intercept.html [ Pass ]
 imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/no-args.html [ Pass ]
+
+# css-scoping and css-nesting https://bugs.webkit.org/show_bug.cgi?id=265368
+imported/w3c/web-platform-tests/css/css-nesting/conditional-rules.html [ ImageOnlyFailure ]
 
 # -- View Transitions -- #
 # Reftest failures:

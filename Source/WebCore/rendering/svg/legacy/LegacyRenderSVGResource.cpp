@@ -147,7 +147,7 @@ static inline LegacyRenderSVGResource* requestPaintingResource(RenderSVGResource
 
 void LegacyRenderSVGResource::removeAllClientsFromCache(bool markForInvalidation)
 {
-    WeakHashSet<RenderObject> visitedRenderers;
+    SingleThreadWeakHashSet<RenderObject> visitedRenderers;
     removeAllClientsFromCacheIfNeeded(markForInvalidation, &visitedRenderers);
 }
 
@@ -169,7 +169,7 @@ LegacyRenderSVGResourceSolidColor* LegacyRenderSVGResource::sharedSolidPaintingR
     return s_sharedSolidPaintingResource;
 }
 
-static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bool needsLayout, WeakHashSet<RenderObject>* visitedRenderers)
+static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bool needsLayout, SingleThreadWeakHashSet<RenderObject>* visitedRenderers)
 {
     if (auto* resources = SVGResourcesCache::cachedResourcesForRenderer(renderer)) {
         if (LegacyRenderSVGResourceFilter* filter = resources->filter())
@@ -210,11 +210,11 @@ static void removeFromCacheAndInvalidateDependencies(RenderElement& renderer, bo
 
 void LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject& object, bool needsLayout)
 {
-    WeakHashSet<RenderObject> visitedRenderers;
+    SingleThreadWeakHashSet<RenderObject> visitedRenderers;
     markForLayoutAndParentResourceInvalidationIfNeeded(object, needsLayout, &visitedRenderers);
 }
 
-void LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidationIfNeeded(RenderObject& object, bool needsLayout, WeakHashSet<RenderObject>* visitedRenderers)
+void LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidationIfNeeded(RenderObject& object, bool needsLayout, SingleThreadWeakHashSet<RenderObject>* visitedRenderers)
 {
     ASSERT(object.node());
 #if ENABLE(LAYER_BASED_SVG_ENGINE)

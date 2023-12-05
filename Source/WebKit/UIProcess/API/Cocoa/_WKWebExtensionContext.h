@@ -170,7 +170,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 @property (nonatomic, copy) NSURL *baseURL;
 
 /*!
- @abstract An unique identifier used to distinguish the extension from other extensions and target it for messages.
+ @abstract A unique identifier used to distinguish the extension from other extensions and target it for messages.
  @discussion The default value is a unique value that matches the host in the default base URL. The identifier can be any
  value that is unique. Setting is only allowed when the context is not loaded. This value is accessible by the extension via
  `browser.runtime.id` and is used for messaging the extension via `browser.runtime.sendMessage()`.
@@ -530,6 +530,26 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
  @discussion This method performs the given command as if it was triggered by a user gesture within the context of the focused window and active tab.
  */
 - (void)performCommand:(_WKWebExtensionCommand *)command;
+
+#if TARGET_OS_OSX
+/*!
+ @abstract Performs the command associated with the given event.
+ @discussion This method checks for a command corresponding to the provided event and performs it, if available. The app should use this method to perform
+ any extension commands at an appropriate time in the app's event handling, like in `sendEvent:` of `NSApplication` or `NSWindow` subclasses.
+ @param event The event representing the user input.
+ @result Returns `YES` if a command corresponding to the event was found and performed, `NO` otherwise.
+ */
+- (BOOL)performCommandForEvent:(NSEvent *)event;
+
+/*!
+ @abstract Retrieves the command associated with the given event without performing it.
+ @discussion This method returns the command that corresponds to the provided event, if such a command exists. This provides a way to programmatically
+ determine what action would occur for a given event, without triggering the command.
+ @param event The event for which to retrieve the corresponding command.
+ @result The command associated with the event, or `nil` if there is no such command.
+ */
+- (nullable _WKWebExtensionCommand *)commandForEvent:(NSEvent *)event;
+#endif // TARGET_OS_OSX
 
 /*!
  @abstract Retrieves an array of menu items for a given tab.

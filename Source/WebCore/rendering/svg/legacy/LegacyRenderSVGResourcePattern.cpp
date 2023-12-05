@@ -48,7 +48,7 @@ SVGPatternElement& LegacyRenderSVGResourcePattern::patternElement() const
     return downcast<SVGPatternElement>(LegacyRenderSVGResourceContainer::element());
 }
 
-void LegacyRenderSVGResourcePattern::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers)
+void LegacyRenderSVGResourcePattern::removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers)
 {
     m_patternMap.clear();
     m_shouldCollectPatternAttributes = true;

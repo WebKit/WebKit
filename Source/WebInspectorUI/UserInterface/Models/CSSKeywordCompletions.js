@@ -838,7 +838,7 @@ WI.CSSKeywordCompletions._propertyKeywordMap = {
         "paused", "running"
     ],
     "animation-timeline": [
-        "auto", "none", "scroll()"
+        "auto", "none", "scroll()", "view()"
     ],
     "animation-timing-function": [
         "ease", "linear", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "steps()", "cubic-bezier()", "linear()", "spring()"

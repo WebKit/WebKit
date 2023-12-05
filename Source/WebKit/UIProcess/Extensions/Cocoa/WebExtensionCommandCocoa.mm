@@ -33,12 +33,62 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "WebExtensionContext.h"
+#import "WebExtensionMenuItem.h"
 #import <wtf/BlockPtr.h>
 #import <wtf/text/StringBuilder.h>
+
+#if USE(APPKIT)
+#import <Carbon/Carbon.h>
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>
 #endif
+
+#if PLATFORM(IOS_FAMILY)
+@implementation _WKWebExtensionKeyCommand
+
++ (instancetype)commandWithTitle:(NSString *)title image:(UIImage *)image input:(NSString *)input modifierFlags:(UIKeyModifierFlags)modifierFlags handler:(WebExtensionKeyCommandHandlerBlock)handler
+{
+    RELEASE_ASSERT(title.length);
+    RELEASE_ASSERT(input.length);
+    RELEASE_ASSERT(handler);
+
+    auto *command = [self commandWithTitle:title image:image action:@selector(_performWithTarget:) input:input modifierFlags:modifierFlags propertyList:nil];
+    if (!command)
+        return nil;
+
+    command->_handler = [handler copy];
+
+    return command;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    _WKWebExtensionKeyCommand *copy = [super copyWithZone:zone];
+    copy->_handler = [_handler copy];
+    return copy;
+}
+
+- (void)performWithSender:(id)sender target:(id)target
+{
+    [super performWithSender:sender target:self];
+}
+
+- (id)_resolvedTargetFromFirstTarget:(id)firstTarget sender:(id)sender
+{
+    return nil;
+}
+
+- (void)_performWithTarget:(id)target
+{
+    ASSERT(_handler);
+    if (_handler)
+        _handler();
+}
+
+@end
+#endif // PLATFORM(IOS_FAMILY)
 
 namespace WebKit {
 
@@ -163,6 +213,90 @@ String WebExtensionCommand::shortcutString() const
 
     return stringBuilder.toString();
 }
+
+CocoaMenuItem *WebExtensionCommand::platformMenuItem() const
+{
+#if USE(APPKIT)
+    auto *result = [[_WKWebExtensionMenuItem alloc] initWithTitle:description() handler:makeBlockPtr([this, protectedThis = Ref { *this }](id sender) mutable {
+        if (RefPtr context = extensionContext())
+            context->performCommand(const_cast<WebExtensionCommand&>(*this), WebExtensionContext::UserTriggered::Yes);
+    }).get()];
+
+    result.keyEquivalent = activationKey();
+    result.keyEquivalentModifierMask = modifierFlags().toRaw();
+
+    return result;
+#else
+    return [UIAction actionWithTitle:description() image:nil identifier:nil handler:makeBlockPtr([this, protectedThis = Ref { *this }](UIAction *) mutable {
+        if (RefPtr context = extensionContext())
+            context->performCommand(const_cast<WebExtensionCommand&>(*this), WebExtensionContext::UserTriggered::Yes);
+    }).get()];
+#endif
+}
+
+#if PLATFORM(IOS_FAMILY)
+UIKeyCommand *WebExtensionCommand::keyCommand() const
+{
+    if (activationKey().isEmpty())
+        return nil;
+
+    return [_WKWebExtensionKeyCommand commandWithTitle:description() image:nil input:activationKey() modifierFlags:modifierFlags().toRaw() handler:makeBlockPtr([this, protectedThis = Ref { *this }]() mutable {
+        if (RefPtr context = extensionContext())
+            context->performCommand(const_cast<WebExtensionCommand&>(*this), WebExtensionContext::UserTriggered::Yes);
+    }).get()];
+}
+#endif
+
+#if USE(APPKIT)
+bool WebExtensionCommand::matchesEvent(NSEvent *event) const
+{
+    if (event.type != NSEventTypeKeyDown || event.isARepeat)
+        return false;
+
+    if (activationKey().isEmpty())
+        return false;
+
+    auto expectedModifierFlags = modifierFlags().toRaw();
+    if ((event.modifierFlags & expectedModifierFlags) != expectedModifierFlags)
+        return false;
+
+    static NeverDestroyed<HashMap<String, uint16_t>> specialKeyMap = HashMap<String, uint16_t> {
+        { ","_s, kVK_ANSI_Comma },
+        { "."_s, kVK_ANSI_Period },
+        { " "_s, kVK_Space },
+        { @"\uF704", kVK_F1 },
+        { @"\uF705", kVK_F2 },
+        { @"\uF706", kVK_F3 },
+        { @"\uF707", kVK_F4 },
+        { @"\uF708", kVK_F5 },
+        { @"\uF709", kVK_F6 },
+        { @"\uF70A", kVK_F7 },
+        { @"\uF70B", kVK_F8 },
+        { @"\uF70C", kVK_F9 },
+        { @"\uF70D", kVK_F10 },
+        { @"\uF70E", kVK_F11 },
+        { @"\uF70F", kVK_F12 },
+        // Insert (\uF727) is not present on Apple keyboards.
+        { @"\uF728", kVK_ForwardDelete },
+        { @"\uF729", kVK_Home },
+        { @"\uF72B", kVK_End },
+        { @"\uF72C", kVK_PageUp },
+        { @"\uF72D", kVK_PageDown },
+        { @"\uF700", kVK_UpArrow },
+        { @"\uF701", kVK_DownArrow },
+        { @"\uF702", kVK_LeftArrow },
+        { @"\uF703", kVK_RightArrow }
+    };
+
+    if (equalIgnoringASCIICase(activationKey(), String(event.charactersIgnoringModifiers)))
+        return true;
+
+    if (auto mappedKeyCode = specialKeyMap.get().get(activationKey()))
+        return mappedKeyCode == event.keyCode;
+
+    return false;
+}
+#endif // USE(APPKIT)
 
 } // namespace WebKit
 

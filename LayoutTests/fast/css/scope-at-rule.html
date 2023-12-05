@@ -20,6 +20,12 @@ video {
 @scope (.b) to (.a) {
   .green-5 { color: green; }
 }
+@scope (.a) {
+  .green-6 :scope { color: green; }
+}
+@scope (.a) {
+  :scope :scope .green-7 { color: green; }
+}
 </style>
 
 <div class="a">
@@ -49,5 +55,17 @@ video {
 <div class="a">
   <div class="b">
     <span class="green-5">should be green</span>
+  </div>
+</div>
+
+<div class="green-6">
+    <span class="a">should be green</span>
+</div>
+
+<div class="a">
+  <div class="a">
+    <div class="a">
+      <span class="green-7">should not be green</span>
+    </div>
   </div>
 </div>

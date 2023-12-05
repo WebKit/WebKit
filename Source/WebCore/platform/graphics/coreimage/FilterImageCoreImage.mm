@@ -28,7 +28,7 @@
 
 #if USE(CORE_IMAGE)
 
-#import "IOSurfaceImageBuffer.h"
+#import "ImageBufferIOSurfaceBackend.h"
 #import <CoreImage/CIContext.h>
 #import <CoreImage/CoreImage.h>
 #import <wtf/NeverDestroyed.h>
@@ -61,12 +61,13 @@ ImageBuffer* FilterImage::imageBufferFromCIImage()
     if (m_imageBuffer)
         return m_imageBuffer.get();
 
-    m_imageBuffer = IOSurfaceImageBuffer::create(m_absoluteImageRect.size(), 1, m_colorSpace, PixelFormat::BGRA8, RenderingPurpose::Unspecified);
+    m_imageBuffer = ImageBuffer::create<ImageBufferIOSurfaceBackend>(m_absoluteImageRect.size(), 1, m_colorSpace, PixelFormat::BGRA8, RenderingPurpose::Unspecified, { });
     if (!m_imageBuffer)
         return nullptr;
 
+    ASSERT(m_imageBuffer->surface());
     auto destRect = FloatRect { FloatPoint(), m_absoluteImageRect.size() };
-    [sharedCIContext().get() render: m_ciImage.get() toIOSurface: downcast<IOSurfaceImageBuffer>(*m_imageBuffer).surface().surface() bounds:destRect colorSpace:m_colorSpace.platformColorSpace()];
+    [sharedCIContext().get() render:m_ciImage.get() toIOSurface:m_imageBuffer->surface()->surface() bounds:destRect colorSpace:m_colorSpace.platformColorSpace()];
 
     return m_imageBuffer.get();
 }

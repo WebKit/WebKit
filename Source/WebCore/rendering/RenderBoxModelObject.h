@@ -246,7 +246,7 @@ public:
     struct ContinuationChainNode {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
-        WeakPtr<RenderBoxModelObject> renderer;
+        SingleThreadWeakPtr<RenderBoxModelObject> renderer;
         ContinuationChainNode* previous { nullptr };
         ContinuationChainNode* next { nullptr };
 

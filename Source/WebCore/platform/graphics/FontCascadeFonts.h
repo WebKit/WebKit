@@ -32,6 +32,7 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/HashTraits.h>
 #include <wtf/MainThread.h>
+#include <wtf/TriState.h>
 
 #if PLATFORM(IOS_FAMILY)
 #include "WebCoreThread.h"
@@ -60,7 +61,8 @@ public:
     GlyphData glyphDataForCharacter(char32_t, const FontCascadeDescription&, FontVariant, ResolvedEmojiPolicy);
 
     bool isFixedPitch(const FontCascadeDescription&);
-    void determinePitch(const FontCascadeDescription&);
+
+    bool canTakeFixedPitchFastContentMeasuring(const FontCascadeDescription&);
 
     bool isLoadingCustomFonts() const;
 
@@ -83,6 +85,9 @@ private:
 
     GlyphData glyphDataForSystemFallback(char32_t, const FontCascadeDescription&, FontVariant, ResolvedEmojiPolicy, bool systemFallbackShouldBeInvisible);
     GlyphData glyphDataForVariant(char32_t, const FontCascadeDescription&, FontVariant, ResolvedEmojiPolicy, unsigned fallbackIndex = 0);
+
+    WEBCORE_EXPORT void determinePitch(const FontCascadeDescription&);
+    WEBCORE_EXPORT void determineCanTakeFixedPitchFastContentMeasuring(const FontCascadeDescription&);
 
     Vector<FontRanges, 1> m_realizedFallbackRanges;
     unsigned m_lastRealizedFallbackIndex { 0 };
@@ -119,6 +124,7 @@ private:
     unsigned short m_generation;
     Pitch m_pitch { UnknownPitch };
     bool m_isForPlatformFont { false };
+    TriState m_canTakeFixedPitchFastContentMeasuring : 2 { TriState::Indeterminate };
 #if ASSERT_ENABLED
     std::optional<Ref<Thread>> m_thread;
 #endif
@@ -129,7 +135,14 @@ inline bool FontCascadeFonts::isFixedPitch(const FontCascadeDescription& descrip
     if (m_pitch == UnknownPitch)
         determinePitch(description);
     return m_pitch == FixedPitch;
-};
+}
+
+inline bool FontCascadeFonts::canTakeFixedPitchFastContentMeasuring(const FontCascadeDescription& description)
+{
+    if (m_canTakeFixedPitchFastContentMeasuring == TriState::Indeterminate)
+        determineCanTakeFixedPitchFastContentMeasuring(description);
+    return m_canTakeFixedPitchFastContentMeasuring == TriState::True;
+}
 
 inline const Font& FontCascadeFonts::primaryFont(FontCascadeDescription& description)
 {

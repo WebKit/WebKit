@@ -34,7 +34,7 @@
 namespace WebCore {
 
 struct SameSizeAsFloatingObject {
-    WeakPtr<RenderBox> renderer;
+    SingleThreadWeakPtr<RenderBox> renderer;
     WeakPtr<LegacyRootInlineBox> originatingLine;
     LayoutRect rect;
     int paginationStrut;
@@ -44,7 +44,7 @@ struct SameSizeAsFloatingObject {
 
 static_assert(sizeof(FloatingObject) == sizeof(SameSizeAsFloatingObject), "FloatingObject should stay small");
 #if !ASSERT_ENABLED
-static_assert(sizeof(WeakPtr<RenderBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
+static_assert(sizeof(SingleThreadWeakPtr<RenderBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 static_assert(sizeof(CheckedPtr<LegacyRootInlineBox>) == sizeof(void*), "WeakPtr should be same size as raw pointer");
 #endif
 
@@ -165,7 +165,7 @@ public:
 protected:
     virtual bool updateOffsetIfNeeded(const FloatingObject&) = 0;
 
-    WeakPtr<const RenderBlockFlow> m_renderer;
+    SingleThreadWeakPtr<const RenderBlockFlow> m_renderer;
     LayoutUnit m_lineTop;
     LayoutUnit m_lineBottom;
     LayoutUnit m_offset;
@@ -220,7 +220,7 @@ public:
     LayoutUnit nextShapeLogicalBottom() const { return m_nextShapeLogicalBottom.value_or(nextLogicalBottom()); }
 
 private:
-    WeakPtr<const RenderBlockFlow> m_renderer;
+    SingleThreadWeakPtr<const RenderBlockFlow> m_renderer;
     LayoutUnit m_belowLogicalHeight;
     std::optional<LayoutUnit> m_nextLogicalBottom;
     std::optional<LayoutUnit> m_nextShapeLogicalBottom;

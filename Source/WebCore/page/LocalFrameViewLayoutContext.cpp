@@ -185,7 +185,7 @@ void LocalFrameViewLayoutContext::performLayout()
     TraceScope tracingScope(PerformLayoutStart, PerformLayoutEnd);
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
     InspectorInstrumentation::willLayout(view().frame());
-    WeakPtr<RenderElement> layoutRoot;
+    SingleThreadWeakPtr<RenderElement> layoutRoot;
     
     m_layoutTimer.stop();
     m_setNeedsLayoutWasDeferred = false;
@@ -621,11 +621,11 @@ void LocalFrameViewLayoutContext::popLayoutState()
 
 void LocalFrameViewLayoutContext::setBoxNeedsTransformUpdateAfterContainerLayout(RenderBox& box, RenderBlock& container)
 {
-    auto it = m_containersWithDescendantsNeedingTransformUpdate.ensure(container, [] { return Vector<WeakPtr<RenderBox>>({ }); });
+    auto it = m_containersWithDescendantsNeedingTransformUpdate.ensure(container, [] { return Vector<SingleThreadWeakPtr<RenderBox>>({ }); });
     it.iterator->value.append(WeakPtr { box });
 }
 
-Vector<WeakPtr<RenderBox>> LocalFrameViewLayoutContext::takeBoxesNeedingTransformUpdateAfterContainerLayout(RenderBlock& container)
+Vector<SingleThreadWeakPtr<RenderBox>> LocalFrameViewLayoutContext::takeBoxesNeedingTransformUpdateAfterContainerLayout(RenderBlock& container)
 {
     return m_containersWithDescendantsNeedingTransformUpdate.take(container);
 }

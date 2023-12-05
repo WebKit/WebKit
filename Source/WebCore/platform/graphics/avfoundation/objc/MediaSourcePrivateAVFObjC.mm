@@ -114,8 +114,9 @@ void MediaSourcePrivateAVFObjC::notifyActiveSourceBuffersChanged()
         player->notifyActiveSourceBuffersChanged();
 }
 
-void MediaSourcePrivateAVFObjC::durationChanged(const MediaTime&)
+void MediaSourcePrivateAVFObjC::durationChanged(const MediaTime& duration)
 {
+    MediaSourcePrivate::durationChanged(duration);
     if (auto* player = this->player())
         player->durationChanged();
 }

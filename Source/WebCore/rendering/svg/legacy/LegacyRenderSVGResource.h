@@ -61,7 +61,7 @@ public:
     virtual ~LegacyRenderSVGResource() = default;
 
     void removeAllClientsFromCache(bool markForInvalidation = true);
-    virtual void removeAllClientsFromCacheIfNeeded(bool markForInvalidation, WeakHashSet<RenderObject>* visitedRenderers) = 0;
+    virtual void removeAllClientsFromCacheIfNeeded(bool markForInvalidation, SingleThreadWeakHashSet<RenderObject>* visitedRenderers) = 0;
     virtual void removeClientFromCache(RenderElement&, bool markForInvalidation = true) = 0;
 
     virtual bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, OptionSet<RenderSVGResourceMode>) = 0;
@@ -76,7 +76,7 @@ public:
     static LegacyRenderSVGResourceSolidColor* sharedSolidPaintingResource();
 
     static void markForLayoutAndParentResourceInvalidation(RenderObject&, bool needsLayout = true);
-    static void markForLayoutAndParentResourceInvalidationIfNeeded(RenderObject&, bool needsLayout, WeakHashSet<RenderObject>* visitedRenderers);
+    static void markForLayoutAndParentResourceInvalidationIfNeeded(RenderObject&, bool needsLayout, SingleThreadWeakHashSet<RenderObject>* visitedRenderers);
 
 protected:
     void fillAndStrokePathOrShape(GraphicsContext&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement* shape) const;

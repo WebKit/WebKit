@@ -30,19 +30,23 @@
 
 #include "PDFContextMenu.h"
 #include "PluginView.h"
+#include "WebEventConversion.h"
 #include "WebEventType.h"
 #include "WebMouseEvent.h"
 #include "WebPageProxyMessages.h"
 #include <CoreGraphics/CoreGraphics.h>
+#include <PDFKit/PDFKit.h>
 #include <WebCore/AffineTransform.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ChromeClient.h>
 #include <WebCore/ColorCocoa.h>
+#include <WebCore/FloatPoint.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerBacking.h>
@@ -460,9 +464,83 @@ static WebCore::Cursor::Type toWebCoreCursorType(UnifiedPDFPlugin::PDFElementTyp
     return WebCore::Cursor::Type::Pointer;
 }
 
-auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint&) const -> PDFElementTypes
+WebCore::IntPoint UnifiedPDFPlugin::convertFromPluginToDocument(const WebCore::IntPoint& point) const
 {
-    return { };
+    return WebCore::AffineTransform { }.scale(1.0f / m_documentLayout.scale()).translate(m_scrollOffset).mapPoint(point);
+}
+
+std::optional<PDFDocumentLayout::PageIndex> UnifiedPDFPlugin::nearestPageIndexForDocumentPoint(const WebCore::IntPoint& point) const
+{
+    switch (m_documentLayout.displayMode()) {
+    case PDFDocumentLayout::DisplayMode::TwoUp:
+    case PDFDocumentLayout::DisplayMode::TwoUpContinuous:
+        // FIXME: Implement page index resolution for TwoUp display modes.
+        notImplemented();
+        break;
+    case PDFDocumentLayout::DisplayMode::SinglePage:
+    case PDFDocumentLayout::DisplayMode::Continuous: {
+        // Walk down the document, find the first page bound that contains the position.
+        // Note that we don't consider display direction (vertical vs horizontal).
+        for (PDFDocumentLayout::PageIndex index = 0; index < m_documentLayout.pageCount(); ++index) {
+            auto pageBounds = m_documentLayout.boundsForPageAtIndex(index);
+            pageBounds.expand(PDFDocumentLayout::documentMargin);
+            pageBounds.contract(PDFDocumentLayout::pageMargin);
+            // At this point, this page index necessarily corresponds to the
+            // nearest page to the point (so far), so we always keep track of it.
+            if (point.y() <= pageBounds.maxY())
+                return index;
+        }
+    }
+    }
+
+    return std::nullopt;
+}
+
+WebCore::IntPoint UnifiedPDFPlugin::convertFromDocumentToPage(const WebCore::IntPoint& point, PDFDocumentLayout::PageIndex pageIndex) const
+{
+    ASSERT(pageIndex < m_documentLayout.pageCount());
+
+    auto pageBounds = m_documentLayout.boundsForPageAtIndex(pageIndex);
+    auto pageRotation = m_documentLayout.rotationForPageAtIndex(pageIndex);
+    auto pointInPDFPageSpace = IntPoint { point - WebCore::flooredIntPoint(pageBounds.location()) };
+    auto documentSpaceToPageSpaceTransform = AffineTransform::makeRotation(pageRotation).translate([&pageBounds, pageRotation] () -> FloatPoint {
+        auto width = pageBounds.width();
+        auto height = pageBounds.height();
+        switch (pageRotation) {
+        case 0:
+            return { };
+        case 90:
+            return { 0, height };
+        case 180:
+            return { height, width };
+        case 270:
+            return { width, 0 };
+        default:
+            ASSERT_NOT_REACHED();
+            return { };
+        }
+    }());
+
+    auto pointWithTopLeftOrigin = documentSpaceToPageSpaceTransform.mapPoint(pointInPDFPageSpace);
+    return IntPoint { pointWithTopLeftOrigin.x(), static_cast<int>(pageBounds.height()) - pointWithTopLeftOrigin.y() };
+}
+
+auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint& point) const -> PDFElementTypes
+{
+    auto pointInDocumentSpace = convertFromPluginToDocument(point);
+    auto maybeNearestPageIndex = nearestPageIndexForDocumentPoint(pointInDocumentSpace);
+    if (!maybeNearestPageIndex || *maybeNearestPageIndex >= m_documentLayout.pageCount())
+        return { };
+    auto nearestPageIndex = *maybeNearestPageIndex;
+    auto pointInPDFPageSpace = convertFromDocumentToPage(pointInDocumentSpace, nearestPageIndex);
+
+    if (auto annotation = [m_documentLayout.pageAtIndex(nearestPageIndex) annotationAtPoint:pointInPDFPageSpace]) {
+        // FIXME: Reason about the annotation type to construct the full set of PDFElementTypes at this page point.
+        UNUSED_VARIABLE(annotation);
+    }
+
+    // Default element if we could map to a PDF page at all.
+    return { PDFElementType::Page };
 }
 
 bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
@@ -514,7 +592,7 @@ void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag) const
     case ContextMenuItemTag::OpenWithPreview: return;
     }
 }
-#endif
+#endif // PLATFORM(MAC)
 
 bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 {
@@ -538,7 +616,7 @@ bool UnifiedPDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
     return true;
 #else
     return false;
-#endif
+#endif // PLATFORM(MAC)
 }
 
 bool UnifiedPDFPlugin::handleKeyboardEvent(const WebKeyboardEvent&)

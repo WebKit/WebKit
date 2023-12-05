@@ -197,7 +197,7 @@ private:
     void stretchFlexibleTracks(std::optional<LayoutUnit> freeSpace);
     void stretchAutoTracks();
 
-    void accumulateIntrinsicSizesForTrack(GridTrack&, unsigned trackIndex, GridIterator&, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, WeakHashSet<RenderBox>& itemsSet, LayoutUnit currentAccumulatedMbp);
+    void accumulateIntrinsicSizesForTrack(GridTrack&, unsigned trackIndex, GridIterator&, Vector<GridItemWithSpan>& itemsSortedByIncreasingSpan, Vector<GridItemWithSpan>& itemsCrossingFlexibleTracks, SingleThreadWeakHashSet<RenderBox>& itemsSet, LayoutUnit currentAccumulatedMbp);
 
     bool copyUsedTrackSizesForSubgrid();
 
@@ -256,7 +256,7 @@ private:
     BaselineItemsCache m_columnBaselineItemsMap;
     BaselineItemsCache m_rowBaselineItemsMap;
 
-    WeakHashSet<RenderGrid> m_rowSubgridsWithBaselineAlignedItems;
+    SingleThreadWeakHashSet<RenderGrid> m_rowSubgridsWithBaselineAlignedItems;
 
     // This is a RAII class used to ensure that the track sizing algorithm is
     // executed as it is suppossed to be, i.e., first resolve columns and then

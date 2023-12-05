@@ -297,6 +297,10 @@ inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
 
 inline bool isSubtype(Type sub, Type parent)
 {
+    // Before the typed funcref proposal there is no non-trivial subtyping.
+    if (!Options::useWebAssemblyTypedFunctionReferences())
+        return sub == parent;
+
     if (sub.isNullable() && !parent.isNullable())
         return false;
 

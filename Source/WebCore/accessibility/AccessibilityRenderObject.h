@@ -152,7 +152,7 @@ protected:
     virtual bool isIgnoredElementWithinMathTree() const;
 #endif
 
-    WeakPtr<RenderObject> m_renderer;
+    SingleThreadWeakPtr<RenderObject> m_renderer;
 
 private:
     bool isAccessibilityRenderObject() const final { return true; }

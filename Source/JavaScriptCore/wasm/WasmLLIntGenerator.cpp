@@ -1197,6 +1197,8 @@ auto LLIntGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDe
         case Wasm::TypeKind::Externref:
         case Wasm::TypeKind::Funcref:
         case Wasm::TypeKind::V128:
+        case Wasm::TypeKind::Ref:
+        case Wasm::TypeKind::RefNull:
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

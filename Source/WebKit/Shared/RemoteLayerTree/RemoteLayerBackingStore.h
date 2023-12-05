@@ -66,7 +66,7 @@ class RemoteLayerBackingStore : public CanMakeWeakPtr<RemoteLayerBackingStore> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     RemoteLayerBackingStore(PlatformCALayerRemote*);
-    ~RemoteLayerBackingStore();
+    virtual ~RemoteLayerBackingStore();
 
     enum class Type : bool {
         IOSurface,
@@ -76,6 +76,9 @@ public:
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     enum class IncludeDisplayList : bool { No, Yes };
 #endif
+
+    virtual bool isRemoteLayerWithRemoteRenderingBackingStore() const { return false; }
+    virtual bool isRemoteLayerWithInProcessRenderingBackingStore() const { return false; }
 
     struct Parameters {
         Type type { Type::Bitmap };
@@ -104,7 +107,6 @@ public:
     bool needsDisplay() const;
 
     bool performDelegatedLayerDisplay();
-    void prepareToDisplay();
     void paintContents();
 
     WebCore::FloatSize size() const { return m_parameters.size; }
@@ -132,10 +134,6 @@ public:
         return !m_frontBuffer.imageBuffer && !m_backBuffer.imageBuffer && !m_secondaryBackBuffer.imageBuffer && !m_contentsBufferHandle;
     }
 
-    // Just for RemoteBackingStoreCollection.
-    void applySwappedBuffers(RefPtr<WebCore::ImageBuffer>&& front, RefPtr<WebCore::ImageBuffer>&& back, RefPtr<WebCore::ImageBuffer>&& secondaryBack, SwapBuffersDisplayRequirement);
-    WebCore::SetNonVolatileResult swapToValidFrontBuffer();
-
     Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> takePendingFlushers();
 
     enum class BufferType {
@@ -146,10 +144,6 @@ public:
 
     RefPtr<WebCore::ImageBuffer> bufferForType(BufferType) const;
 
-    // Returns true if it was able to fulfill the request. This can fail when trying to mark an in-use surface as volatile.
-    bool setBufferVolatile(BufferType);
-    WebCore::SetNonVolatileResult setFrontBufferNonVolatile();
-
     bool hasEmptyDirtyRegion() const { return m_dirtyRegion.isEmpty() || m_parameters.size.isEmpty(); }
     bool supportsPartialRepaint() const;
 
@@ -157,7 +151,9 @@ public:
 
     void clearBackingStore();
 
-private:
+protected:
+    virtual RefPtr<WebCore::ImageBuffer> allocateBuffer() const = 0;
+
     RemoteLayerBackingStoreCollection* backingStoreCollection() const;
 
     void drawInContext(WebCore::GraphicsContext&);
@@ -174,10 +170,6 @@ private:
         void discard();
     };
 
-    bool setBufferVolatile(Buffer&);
-    WebCore::SetNonVolatileResult setBufferNonVolatile(Buffer&);
-    
-    SwapBuffersDisplayRequirement prepareBuffers();
     void ensureFrontBuffer();
     void dirtyRepaintCounterIfNecessary();
 

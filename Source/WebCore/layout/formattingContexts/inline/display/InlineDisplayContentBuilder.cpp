@@ -450,21 +450,9 @@ void InlineDisplayContentBuilder::appendInlineDisplayBoxAtBidiBoundary(const Box
     });
 }
 
-void InlineDisplayContentBuilder::insertRubyAnnotationBox(const Box& rubyBaseLayoutBox, size_t insertionPosition, InlineDisplay::Boxes& boxes)
+void InlineDisplayContentBuilder::insertRubyAnnotationBox(const Box& annotationBox, size_t insertionPosition, InlineDisplay::Boxes& boxes)
 {
-    ASSERT(rubyBaseLayoutBox.isRubyBase());
-
-    auto& annotationBox = *rubyBaseLayoutBox.associatedRubyAnnotationBox();
-    auto rubyFormattingContext = RubyFormattingContext { formattingContext() };
-    auto visualBorderBoxTopLeft = rubyFormattingContext.placeAnnotationBox(rubyBaseLayoutBox);
-    auto visualContentBoxSize = rubyFormattingContext.sizeAnnotationBox(rubyBaseLayoutBox);
-
-    auto& annotationBoxGeometry = formattingContext().geometryForBox(annotationBox);
-    annotationBoxGeometry.setTopLeft(toLayoutPoint(visualBorderBoxTopLeft));
-    annotationBoxGeometry.setContentBoxSize(toLayoutSize(visualContentBoxSize));
-
-    auto visualBorderBoxRect = BoxGeometry::borderBoxRect(annotationBoxGeometry);
-
+    auto visualBorderBoxRect = BoxGeometry::borderBoxRect(formattingContext().geometryForBox(annotationBox));
     boxes.insert(insertionPosition, { m_lineIndex
         , InlineDisplay::Box::Type::AtomicInlineLevelBox
         , annotationBox
@@ -1064,6 +1052,51 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(InlineDis
     }
 }
 
+size_t InlineDisplayContentBuilder::processRubyBase(size_t rubyBaseStart, InlineDisplay::Boxes& displayBoxes, Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList, Vector<size_t>& rubyBaseStartIndexListWithAnnotation)
+{
+    auto& rubyBaseLayoutBox = displayBoxes[rubyBaseStart].layoutBox();
+    auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
+    if (!annotationBox)
+        return rubyBaseStart;
+
+    auto computeBoxGeometryForAnnotationBox = [&] {
+        auto rubyFormattingContext = RubyFormattingContext { formattingContext() };
+
+        auto visualBorderBoxTopLeft = rubyFormattingContext.placeAnnotationBox(rubyBaseLayoutBox);
+        auto visualContentBoxSize = rubyFormattingContext.sizeAnnotationBox(rubyBaseLayoutBox);
+        auto& annotationBoxGeometry = formattingContext().geometryForBox(*annotationBox);
+        annotationBoxGeometry.setTopLeft(toLayoutPoint(visualBorderBoxTopLeft));
+        annotationBoxGeometry.setContentBoxSize(toLayoutSize(visualContentBoxSize));
+    };
+    computeBoxGeometryForAnnotationBox();
+
+    rubyBaseStartIndexListWithAnnotation.append(rubyBaseStart);
+    if (!isInterlinearAnnotationBox(annotationBox))
+        return rubyBaseStart;
+
+    auto rubyBaseEnd = displayBoxes.size();
+    auto& rubyBox = rubyBaseLayoutBox.parent();
+    auto& rubyBoxParent = rubyBox.parent();
+    for (auto index = rubyBaseStart + 1; index < displayBoxes.size(); ++index) {
+        if (displayBoxes[index].layoutBox().isRubyBase()) {
+            index = processRubyBase(index, displayBoxes, interlinearRubyColumnRangeList, rubyBaseStartIndexListWithAnnotation);
+            if (index == displayBoxes.size()) {
+                rubyBaseEnd = index;
+                break;
+            }
+        }
+
+        auto& layoutBox = displayBoxes[index].layoutBox();
+        if (&layoutBox.parent() == &rubyBox || &layoutBox.parent() == &rubyBoxParent) {
+            rubyBaseEnd = index;
+            break;
+        }
+    }
+
+    interlinearRubyColumnRangeList.append({ rubyBaseStart, rubyBaseEnd });
+    return rubyBaseEnd;
+}
+
 void InlineDisplayContentBuilder::processRubyContent(InlineDisplay::Boxes& displayBoxes)
 {
     if (!m_hasSeenRubyBase)
@@ -1071,31 +1104,17 @@ void InlineDisplayContentBuilder::processRubyContent(InlineDisplay::Boxes& displ
 
     Vector<WTF::Range<size_t>> interlinearRubyColumnRangeList;
     Vector<size_t> rubyBaseStartIndexListWithAnnotation;
-    for (size_t index = 0; index < displayBoxes.size(); ++index) {
-        auto& layoutBox = displayBoxes[index].layoutBox();
-        auto* annotationBox = layoutBox.associatedRubyAnnotationBox();
-        if (!annotationBox)
+    for (size_t index = 1; index < displayBoxes.size(); ++index) {
+        auto& displayBox = displayBoxes[index];
+        if (!displayBox.isNonRootInlineBox() || !displayBox.layoutBox().isRubyBase())
             continue;
 
-        rubyBaseStartIndexListWithAnnotation.append(index);
-        if (!isInterlinearAnnotationBox(annotationBox))
-            continue;
-
-        auto rubyBaseStartIndex = index;
-        auto rubyBaseEndIndex = [&] {
-            auto& rubyBox = layoutBox.parent();
-            for (++index; index < displayBoxes.size(); ++index) {
-                if (&displayBoxes[index].layoutBox().parent() == &rubyBox)
-                    return index - 1;
-            }
-            return displayBoxes.size() - 1;
-        };
-        interlinearRubyColumnRangeList.append({ rubyBaseStartIndex, rubyBaseEndIndex() });
+        index = processRubyBase(index, displayBoxes, interlinearRubyColumnRangeList, rubyBaseStartIndexListWithAnnotation);
     }
     applyRubyOverhang(displayBoxes, interlinearRubyColumnRangeList);
 
     for (auto baseIndex : makeReversedRange(rubyBaseStartIndexListWithAnnotation))
-        insertRubyAnnotationBox(displayBoxes[baseIndex].layoutBox(), baseIndex + 1, displayBoxes);
+        insertRubyAnnotationBox(*displayBoxes[baseIndex].layoutBox().associatedRubyAnnotationBox(), baseIndex + 1, displayBoxes);
 }
 
 void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displayBoxes, const Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList)
@@ -1107,13 +1126,17 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
     auto isHorizontalWritingMode = root().style().isHorizontalWritingMode();
     auto rubyFormattingContext = RubyFormattingContext { formattingContext() };
     for (auto startEndPair : interlinearRubyColumnRangeList) {
-        auto rubyBaseIndex = startEndPair.begin();
-        auto& rubyBaseLayoutBox = displayBoxes[rubyBaseIndex].layoutBox();
+        ASSERT(startEndPair);
+        if (startEndPair.distance() == 1)
+            continue;
+
+        auto rubyBaseStart = startEndPair.begin();
+        auto& rubyBaseLayoutBox = displayBoxes[rubyBaseStart].layoutBox();
         ASSERT(rubyBaseLayoutBox.isRubyBase());
         ASSERT(isInterlinearAnnotationBox(rubyBaseLayoutBox.associatedRubyAnnotationBox()));
 
-        auto beforeOverhang = rubyFormattingContext.overhangForAnnotationBefore(rubyBaseLayoutBox, rubyBaseIndex, displayBoxes);
-        auto afterOverhang = rubyFormattingContext.overhangForAnnotationAfter(rubyBaseLayoutBox, rubyBaseIndex, startEndPair.end(), displayBoxes);
+        auto beforeOverhang = rubyFormattingContext.overhangForAnnotationBefore(rubyBaseLayoutBox, rubyBaseStart, displayBoxes);
+        auto afterOverhang = rubyFormattingContext.overhangForAnnotationAfter(rubyBaseLayoutBox, { rubyBaseStart, startEndPair.end() }, displayBoxes);
 
         // FIXME: If this turns out to be a pref bottleneck, make sure we pass in the accumulated shift to overhangForAnnotationBefore/after and
         // offset all box geometry as we check for overlap.
@@ -1131,7 +1154,7 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
             }
         };
         if (beforeOverhang)
-            moveBoxRangeToVisualLeft(rubyBaseIndex, displayBoxes.size() - 1, beforeOverhang);
+            moveBoxRangeToVisualLeft(rubyBaseStart, displayBoxes.size() - 1, beforeOverhang);
         if (afterOverhang)
             moveBoxRangeToVisualLeft(startEndPair.end() + 1, displayBoxes.size() - 1, afterOverhang);
     }

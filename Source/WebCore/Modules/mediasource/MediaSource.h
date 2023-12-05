@@ -77,19 +77,19 @@ public:
     void openIfInEndedState();
     void openIfDeferredOpen();
     virtual bool isOpen() const;
+    virtual void monitorSourceBuffers();
     bool isClosed() const;
     bool isEnded() const;
     void sourceBufferDidChangeActiveState(SourceBuffer&, bool);
+    MediaTime duration() const;
 
     enum class EndOfStreamError { Network, Decode };
     void streamEndedWithError(std::optional<EndOfStreamError>);
 
-    MediaTime duration() const final;
     const PlatformTimeRanges& buffered() const final;
 
     bool attachToElement(HTMLMediaElement&);
     void detachFromElement(HTMLMediaElement&);
-    void monitorSourceBuffers() override;
     bool isSeeking() const { return !!m_pendingSeekTarget; }
     Ref<TimeRanges> seekable();
     ExceptionOr<void> setLiveSeekableRange(double start, double end);
@@ -186,7 +186,7 @@ private:
     PlatformTimeRanges m_buffered;
     PlatformTimeRanges m_liveSeekable;
     WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
-    MediaTime m_duration;
+    MediaTime m_duration { MediaTime::invalidTime() };
     std::optional<SeekTarget> m_pendingSeekTarget;
     std::optional<MediaTimePromise::Producer> m_seekTargetPromise;
     ReadyState m_readyState { ReadyState::Closed };

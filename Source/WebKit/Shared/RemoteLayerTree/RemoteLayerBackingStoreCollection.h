@@ -41,6 +41,8 @@ enum class SetNonVolatileResult : uint8_t;
 namespace WebKit {
 
 class RemoteLayerBackingStore;
+class RemoteLayerWithRemoteRenderingBackingStore;
+class RemoteLayerWithInProcessRenderingBackingStore;
 class RemoteLayerTreeContext;
 class RemoteLayerTreeTransaction;
 
@@ -60,6 +62,8 @@ public:
     bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
     void backingStoreBecameUnreachable(RemoteLayerBackingStore&);
 
+    std::unique_ptr<RemoteLayerBackingStore> createRemoteLayerBackingStore(PlatformCALayerRemote*);
+
     virtual void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&);
     bool paintReachableBackingStoreContents();
 
@@ -72,12 +76,11 @@ public:
 
     void scheduleVolatilityTimer();
 
-    virtual RefPtr<WebCore::ImageBuffer> allocateBufferForBackingStore(const RemoteLayerBackingStore&);
+    virtual void gpuProcessConnectionWasDestroyed();
 
-    virtual void gpuProcessConnectionWasDestroyed() { }
+    RemoteLayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
 
 protected:
-    RemoteLayerTreeContext& layerTreeContext() const { return m_layerTreeContext; }
 
     enum class VolatilityMarkingBehavior : uint8_t {
         IgnoreReachability              = 1 << 0,
@@ -87,14 +90,21 @@ protected:
     virtual void markBackingStoreVolatileAfterReachabilityChange(RemoteLayerBackingStore&);
     virtual void markAllBackingStoreVolatileFromTimer();
 
+    bool collectRemoteRenderingBackingStoreBufferIdentifiersToMarkVolatile(RemoteLayerWithRemoteRenderingBackingStore&, OptionSet<VolatilityMarkingBehavior>, MonotonicTime now, Vector<WebCore::RenderingResourceIdentifier>&);
+
+    bool collectAllRemoteRenderingBufferIdentifiersToMarkVolatile(OptionSet<VolatilityMarkingBehavior> liveBackingStoreMarkingBehavior, OptionSet<VolatilityMarkingBehavior> unparentedBackingStoreMarkingBehavior, Vector<WebCore::RenderingResourceIdentifier>&);
+
+
 private:
-    bool markBackingStoreVolatile(RemoteLayerBackingStore&, OptionSet<VolatilityMarkingBehavior> = { }, MonotonicTime = { });
+    bool markInProcessBackingStoreVolatile(RemoteLayerWithInProcessRenderingBackingStore&, OptionSet<VolatilityMarkingBehavior> = { }, MonotonicTime = { });
     bool markAllBackingStoreVolatile(OptionSet<VolatilityMarkingBehavior> liveBackingStoreMarkingBehavior, OptionSet<VolatilityMarkingBehavior> unparentedBackingStoreMarkingBehavior);
 
     bool updateUnreachableBackingStores();
     void volatilityTimerFired();
 
 protected:
+    void sendMarkBuffersVolatile(Vector<WebCore::RenderingResourceIdentifier>&&, CompletionHandler<void(bool)>&&);
+
     static constexpr auto volatileBackingStoreAgeThreshold = 1_s;
     static constexpr auto volatileSecondaryBackingStoreAgeThreshold = 200_ms;
 

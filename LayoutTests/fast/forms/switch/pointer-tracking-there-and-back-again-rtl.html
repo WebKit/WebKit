@@ -1,0 +1,16 @@
+<!doctype html>
+<html class="reftest-wait">
+<input type=checkbox switch onclick=end() dir=rtl>
+<script>
+window.onload = () => {
+    const input = document.querySelector("input");
+    window.eventSender.mouseMoveTo(input.offsetLeft + input.offsetWidth - 1, input.offsetTop);
+    window.eventSender.mouseDown();
+    window.eventSender.mouseMoveTo(input.offsetLeft, input.offsetTop);
+    window.eventSender.mouseMoveTo(input.offsetLeft + input.offsetWidth - 1, input.offsetTop);
+    window.eventSender.mouseUp();
+}
+function end() {
+    setTimeout(() => document.documentElement.removeAttribute("class"), 50);
+}
+</script>

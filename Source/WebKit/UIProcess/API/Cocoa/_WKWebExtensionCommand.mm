@@ -36,8 +36,10 @@
 
 #if USE(APPKIT)
 using CocoaModifierFlags = NSEventModifierFlags;
+using CocoaMenuItem = NSMenuItem;
 #else
 using CocoaModifierFlags = UIKeyModifierFlags;
+using CocoaMenuItem = UIMenuElement;
 #endif
 
 @implementation _WKWebExtensionCommand
@@ -122,6 +124,32 @@ using CocoaModifierFlags = UIKeyModifierFlags;
     _webExtensionCommand->setModifierFlags(optionSet);
 }
 
+- (CocoaMenuItem *)menuItem
+{
+    return _webExtensionCommand->platformMenuItem();
+}
+
+#if PLATFORM(IOS_FAMILY)
+- (UIKeyCommand *)keyCommand
+{
+    return _webExtensionCommand->keyCommand();
+}
+#endif
+
+- (NSString *)_shortcut
+{
+    return _webExtensionCommand->shortcutString();
+}
+
+#if USE(APPKIT)
+- (BOOL)_matchesEvent:(NSEvent *)event
+{
+    NSParameterAssert([event isKindOfClass:NSEvent.class]);
+
+    return _webExtensionCommand->matchesEvent(event);
+}
+#endif
+
 #pragma mark WKObject protocol implementation
 
 - (API::Object&)_apiObject
@@ -168,6 +196,30 @@ using CocoaModifierFlags = UIKeyModifierFlags;
 - (void)setModifierFlags:(CocoaModifierFlags)modifierFlags
 {
 }
+
+- (CocoaMenuItem *)menuItem
+{
+    return nil;
+}
+
+#if PLATFORM(IOS_FAMILY)
+- (UIKeyCommand *)keyCommand
+{
+    return nil;
+}
+#endif
+
+- (NSString *)_shortcut
+{
+    return nil;
+}
+
+#if USE(APPKIT)
+- (BOOL)_matchesEvent:(NSEvent *)event
+{
+    return NO;
+}
+#endif
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)
 

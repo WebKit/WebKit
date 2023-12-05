@@ -222,7 +222,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
         return;
 
     PaintInfo info(paintInfo);
-    WeakListHashSet<RenderInline> outlineObjects;
+    SingleThreadWeakListHashSet<RenderInline> outlineObjects;
     info.outlineObjects = &outlineObjects;
 
     // See if our root lines intersect with the dirty rect.  If so, then we paint

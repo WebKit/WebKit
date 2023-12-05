@@ -437,7 +437,7 @@ void ElementRuleCollector::matchUARules(const RuleSet& rules)
     sortAndTransferMatchedRules(DeclarationOrigin::UserAgent);
 }
 
-inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned& specificity, ScopeOrdinal styleScopeOrdinal)
+inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned& specificity, ScopeOrdinal styleScopeOrdinal, const Element* scopingRoot)
 {
     // We know a sufficiently simple single part selector matches simply because we found it from the rule hash when filtering the RuleSet.
     // This is limited to HTML only so we don't need to check the namespace (because of tag name match).
@@ -493,6 +493,7 @@ inline bool ElementRuleCollector::ruleMatches(const RuleData& ruleData, unsigned
     context.nameIdentifier = m_pseudoElementRequest.nameIdentifier;
     context.styleScopeOrdinal = styleScopeOrdinal;
     context.selectorMatchingState = m_selectorMatchingState;
+    context.scope = scopingRoot;
 
     bool selectorMatches;
 #if ENABLE(CSS_SELECTOR_JIT)
@@ -540,8 +541,13 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
         if (matchRequest.ruleSet.hasContainerQueries() && !containerQueriesMatch(ruleData, matchRequest))
             continue;
 
-        if (matchRequest.ruleSet.hasScopeRules() && !scopeRulesMatch(ruleData, matchRequest))
-            continue;
+        std::optional<Vector<const Element*>> scopingRoots;
+        if (matchRequest.ruleSet.hasScopeRules()) {
+            auto [result, roots] = scopeRulesMatch(ruleData, matchRequest);
+            if (!result)
+                continue;
+            scopingRoots = WTFMove(roots);
+        }
 
         auto& rule = ruleData.styleRule();
 
@@ -551,9 +557,19 @@ void ElementRuleCollector::collectMatchingRulesForList(const RuleSet::RuleDataVe
         if (rule.properties().isEmpty() && !m_shouldIncludeEmptyRules)
             continue;
 
-        unsigned specificity;
-        if (ruleMatches(ruleData, specificity, matchRequest.styleScopeOrdinal))
-            addMatchedRule(ruleData, specificity, matchRequest);
+        auto addRuleIfMatches = [&] (const Element* scopingRoot = nullptr) {
+            unsigned specificity;
+            if (ruleMatches(ruleData, specificity, matchRequest.styleScopeOrdinal, scopingRoot))
+                addMatchedRule(ruleData, specificity, matchRequest);
+        };
+
+        if (scopingRoots) {
+            for (const auto* scopingRoot : *scopingRoots)
+                addRuleIfMatches(scopingRoot);
+            continue;
+        }
+
+        addRuleIfMatches();
     }
 }
 
@@ -582,61 +598,91 @@ bool ElementRuleCollector::containerQueriesMatch(const RuleData& ruleData, const
     return true;
 }
 
-bool ElementRuleCollector::scopeRulesMatch(const RuleData& ruleData, const MatchRequest& matchRequest)
+std::pair<bool, std::optional<Vector<const Element*>>>  ElementRuleCollector::scopeRulesMatch(const RuleData& ruleData, const MatchRequest& matchRequest)
 {
     auto scopeRules = matchRequest.ruleSet.scopeRulesFor(ruleData);
 
     if (scopeRules.isEmpty())
-        return true;
+        return { true, { } };
 
     SelectorChecker checker(element().rootElement()->document());
     SelectorChecker::CheckingContext context(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
 
+    Vector<const Element*> scopingRoots;
     auto isWithinScope = [&](auto& rule) {
-        const Element* scopingRoot = nullptr;
-
-        auto ancestorsMatch = [&](const auto& selectorList) {
-            const auto* ancestor = element().parentElement();
+        auto findScopingRoots = [&](const auto& selectorList) {
+            const auto* ancestor = &element();
             while (ancestor) {
-                if (ancestor == scopingRoot) {
-                    // The end of the scope has to be a descendant of the start of the scope.
-                    return false;
-                }
                 for (const auto* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
                     auto match = checker.match(*selector, *ancestor, context);
                     if (match) {
-                        scopingRoot = ancestor;
-                        return true;
+                        scopingRoots.append(ancestor);
                     }
                 }
                 ancestor = ancestor->parentElement();
+            }
+        };
+        /* @scope (a,b) to (c,d) would create 4 scopes for elements in between
+                [a,c]
+                [a,d]
+                [b,c]
+                [b,d]
+         For an element to not be in the rule @scope, it needs to not be inside any of those scopes
+        */
+        auto isWithinScopingRootsAndScopeEnd = [&](const auto& selectorList) {
+            auto match = [&] (const auto* scopingRoot, const auto* selector) {
+                const auto* ancestor = &element();
+                while (ancestor) {
+                    if (ancestor == scopingRoot) {
+                        // The end of the scope has to be a descendant of the start of the scope.
+                        return false;
+                    }
+                    auto match = checker.match(*selector, *ancestor, context);
+                    if (match)
+                        return true;
+                    ancestor = ancestor->parentElement();
+                }
+                return false;
+            };
+
+            for (const auto* scopingRoot : scopingRoots) {
+                for (const auto* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
+                    if (!match(scopingRoot, selector))
+                        return true;
+                }
             }
             return false;
         };
 
         const auto& scopeStart = rule->scopeStart();
         if (!scopeStart.isEmpty()) {
-            if (!ancestorsMatch(scopeStart))
+            findScopingRoots(scopeStart);
+            if (scopingRoots.isEmpty())
                 return false;
+        } else {
+            // FIXME: the scoping root is the parent element of the owner node of the stylesheet where the @scope rule is defined. (If no such element exists, then the scoping root is the root of the containing node tree.
+            // We don't support those @scope rules without scope start yet
+            return false;
         }
 
         const auto& scopeEnd = rule->scopeEnd();
         if (!scopeEnd.isEmpty()) {
-            if (ancestorsMatch(scopeEnd))
+            if (!isWithinScopingRootsAndScopeEnd(scopeEnd))
                 return false;
         }
-
         // element is in the @scope donut
         return true;
     };
 
     // We need to respect each nested @scope to collect this rule
     for (auto& rule : scopeRules) {
+        // The last rule (=innermost @scope rule) determines the scoping roots
+        scopingRoots.clear();
         if (!isWithinScope(rule))
-            return false;
+            return { false, { } };
     }
 
-    return true;
+    return { true, WTFMove(scopingRoots) };
 }
 
 static inline bool compareRules(MatchedRule r1, MatchedRule r2)

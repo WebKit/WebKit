@@ -51,8 +51,8 @@ private:
     void paint(PaintInfo&, const LayoutPoint&) override { }
     ASCIILiteral renderName() const override;
 
-    WeakPtr<RenderBox> m_spanner;
-    WeakPtr<RenderMultiColumnFlow> m_fragmentedFlow;
+    SingleThreadWeakPtr<RenderBox> m_spanner;
+    SingleThreadWeakPtr<RenderMultiColumnFlow> m_fragmentedFlow;
 };
 
 } // namespace WebCore

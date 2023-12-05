@@ -137,6 +137,18 @@
 
 #endif // HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_SUBCLASS_HOOKS)
 
+#if HAVE(UI_SCROLL_VIEW_ACTING_PARENT_FOR_SCROLL_VIEW)
+
+- (UIScrollView *)_actingParentScrollView
+{
+    if (![self.baseScrollViewDelegate respondsToSelector:@selector(actingParentScrollViewForScrollView:)])
+        return nil;
+
+    return [self.baseScrollViewDelegate actingParentScrollViewForScrollView:self];
+}
+
+#endif // HAVE(UI_SCROLL_VIEW_ACTING_PARENT_FOR_SCROLL_VIEW)
+
 #pragma mark - UIGestureRecognizerDelegate
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
