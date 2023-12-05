@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import <Foundation/Foundation.h>
+
 #import "WKProcessExtension.h"
 
 // FIXME: forward declare xpc_connection_t to build with public SDK.
