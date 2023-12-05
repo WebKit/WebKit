@@ -453,21 +453,14 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& r
         overhangingAnnotationRect.move(offset);
         baseContentBoxRect.move(offset);
 
-        for (size_t index = rubyBaseStart - 1; index > 0; --index) {
+        for (size_t index = 1; index < rubyBaseStart - 1; ++index) {
             auto& previousDisplayBox = boxes[index];
-            if (previousDisplayBox.layoutBox().isRuby()) {
-                // We can certainly overlap with our own ruby container.
-                continue;
-            }
-            auto wouldAnnotationOverlap = annotationOverlapCheck(previousDisplayBox, overhangingAnnotationRect);
-            auto wouldBaseContentOverlap = annotationOverlapCheck(previousDisplayBox, baseContentBoxRect);
-            if (!wouldAnnotationOverlap && !wouldBaseContentOverlap) {
-                // Can't decide it yet.
-                continue;
-            }
-            return *wouldAnnotationOverlap || *wouldBaseContentOverlap;
+            if (annotationOverlapCheck(previousDisplayBox, overhangingAnnotationRect))
+                return true;
+            if (annotationOverlapCheck(previousDisplayBox, baseContentBoxRect))
+                return true;
         }
-        return true;
+        return false;
     };
     return wouldAnnotationOrBaseOverlapAdjacentContent() ? 0.f : overhangValue;
 }
@@ -502,17 +495,14 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationAfter(const Box& ru
         overhangingAnnotationRect.move(offset);
         baseContentBoxRect.move(offset);
 
-        for (size_t index = rubyBaseRange.end(); index < boxes.size(); ++index) {
+        for (size_t index = boxes.size() - 1; index > rubyBaseRange.end(); --index) {
             auto& previousDisplayBox = boxes[index];
-            auto wouldAnnotationOverlap = annotationOverlapCheck(previousDisplayBox, overhangingAnnotationRect);
-            auto wouldBaseContentOverlap = annotationOverlapCheck(previousDisplayBox, baseContentBoxRect);
-            if (!wouldAnnotationOverlap && !wouldBaseContentOverlap) {
-                // Can't decide it yet.
-                continue;
-            }
-            return *wouldAnnotationOverlap || *wouldBaseContentOverlap;
+            if (annotationOverlapCheck(previousDisplayBox, overhangingAnnotationRect))
+                return true;
+            if (annotationOverlapCheck(previousDisplayBox, baseContentBoxRect))
+                return true;
         }
-        return true;
+        return false;
     };
     return wouldAnnotationOrBaseOverlapLineContent() ? 0.f : overhangValue;
 }
@@ -549,29 +539,23 @@ InlineLayoutRect RubyFormattingContext::visualRectIncludingBlockDirection(const 
     return flippedRect;
 }
 
-std::optional<bool> RubyFormattingContext::annotationOverlapCheck(const InlineDisplay::Box& adjacentDisplayBox, const InlineLayoutRect& overhangingRect) const
+bool RubyFormattingContext::annotationOverlapCheck(const InlineDisplay::Box& adjacentDisplayBox, const InlineLayoutRect& overhangingRect) const
 {
     // We are in the middle of a line, should not see any line breaks or ellipsis boxes here.
     ASSERT(!adjacentDisplayBox.isEllipsis() && !adjacentDisplayBox.isRootInlineBox());
     // Skip empty content like <span></span>
     if (adjacentDisplayBox.visualRectIgnoringBlockDirection().isEmpty())
-        return { };
+        return false;
     if (visualRectIncludingBlockDirection(adjacentDisplayBox.inkOverflow()).intersects(visualRectIncludingBlockDirection(overhangingRect)))
         return true;
     auto& adjacentLayoutBox = adjacentDisplayBox.layoutBox();
-    if (adjacentLayoutBox.isRuby()) {
-        // Need to look inside the ruby container to find overlapping content.
-        return { };
-    }
-    // Check if there might be some inline box (end decoration) overlapping as previous content.
-    if (&adjacentLayoutBox.parent() == &parentFormattingContext().root())
-        return false;
+    // Adjacent ruby may have overlapping annotation.
     if (adjacentLayoutBox.isRubyBase() && adjacentLayoutBox.associatedRubyAnnotationBox()) {
         auto annotationMarginBoxRect = InlineLayoutRect { BoxGeometry::marginBoxRect(parentFormattingContext().geometryForBox(*adjacentLayoutBox.associatedRubyAnnotationBox())) };
         if (visualRectIncludingBlockDirection(annotationMarginBoxRect).intersects(visualRectIncludingBlockDirection(overhangingRect)))
             return true;
     }
-    return { };
+    return false;
 }
 
 InlineLayoutUnit RubyFormattingContext::logicaWidthForRubyRange(WTF::Range<size_t> candidateRange, const InlineItemList& inlineItemList, InlineLayoutUnit lineContentLogicalRight) const
