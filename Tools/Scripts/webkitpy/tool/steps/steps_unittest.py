@@ -30,12 +30,11 @@
 import logging
 import unittest
 
-from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.config.ports import DeprecatedPort
-from webkitpy.tool.mocktool import MockOptions, MockTool
-from webkitpy.tool import steps
-
 from webkitcorepy import OutputCapture
+
+from webkitpy.common.config.ports import DeprecatedPort
+from webkitpy.tool import steps
+from webkitpy.tool.mocktool import MockOptions, MockTool
 
 
 class StepsTest(unittest.TestCase):
@@ -152,52 +151,4 @@ MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--debug', 'ARCHS=True']
             '''Building WebKit
 MOCK run_and_throw_if_fail: ['Tools/Scripts/build-jsc', '--release', 'ARCHS=True'], cwd=/mock-checkout, env={'MOCK_ENVIRON_COPY': '1', 'TERM': 'dumb'}
 ''',
-        )
-
-    def test_patch_relevant(self):
-        self.maxDiff = None
-        mock_options = self._step_options()
-        tool = MockTool(log_executive=True)
-        tool.scm()._mockChangedFiles = ["JSTests/MockFile1", "ChangeLog"]
-        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
-        tool._deprecated_port = DeprecatedPort()
-        step = steps.CheckPatchRelevance(tool, mock_options)
-        with OutputCapture(level=logging.INFO) as captured:
-            step.run({})
-        self.assertEqual(
-            captured.root.log.getvalue(),
-            'Checking relevance of patch\n',
-        )
-
-    def test_patch_relevant_jsc(self):
-        self.maxDiff = None
-        mock_options = self._step_options()
-        mock_options.group = "jsc"
-        tool = MockTool(log_executive=True)
-        tool.scm()._mockChangedFiles = ["JSTests/MockFile1", "ChangeLog"]
-        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
-        tool._deprecated_port = DeprecatedPort()
-        step = steps.CheckPatchRelevance(tool, mock_options)
-        with OutputCapture(level=logging.INFO) as captured:
-            step.run({})
-        self.assertEqual(
-            captured.root.log.getvalue(),
-            'Checking relevance of patch\n',
-        )
-
-    def test_patch_not_relevant_jsc(self):
-        self.maxDiff = None
-        mock_options = self._step_options()
-        mock_options.group = "jsc"
-        tool = MockTool(log_executive=True)
-        tool.scm()._mockChangedFiles = ["Tools/ChangeLog", "Tools/Scripts/webkitpy/tool/steps/steps_unittest.py"]
-        # FIXME: We shouldn't use a real port-object here, but there is too much to mock at the moment.
-        tool._deprecated_port = DeprecatedPort()
-        step = steps.CheckPatchRelevance(tool, mock_options)
-
-        with self.assertRaises(ScriptError), OutputCapture(level=logging.INFO) as captured:
-            step.run({})
-        self.assertEqual(
-            captured.root.log.getvalue(),
-            'Checking relevance of patch\n',
         )

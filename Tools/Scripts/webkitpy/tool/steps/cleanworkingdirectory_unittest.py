@@ -28,10 +28,10 @@
 
 import unittest
 
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.cleanworkingdirectory import CleanWorkingDirectory
-from webkitpy.common.system.executive import ScriptError
 
 
 class CleanWorkingDirectoryTest(unittest.TestCase):

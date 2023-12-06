@@ -41,8 +41,9 @@ if sys.version_info > (3, 0):
     from http.server import BaseHTTPRequestHandler
     from urllib.parse import parse_qs
 else:
-    from BaseHTTPServer import BaseHTTPRequestHandler
     from cgi import parse_qs
+
+    from BaseHTTPServer import BaseHTTPRequestHandler
 
 
 class ReflectionHandler(BaseHTTPRequestHandler):

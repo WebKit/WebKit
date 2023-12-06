@@ -30,30 +30,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import print_function
-import fnmatch
+
 import logging
-import re
-
-from datetime import datetime
-from optparse import make_option
-
-from webkitcorepy.string_utils import pluralize
 
 from webkitpy.tool import steps
-
-import webkitpy.common.config.urls as config_urls
-from webkitpy.common.checkout.commitinfo import CommitInfo
-from webkitpy.common.config.committers import CommitterList
-from webkitpy.common.net.bugzilla import Bugzilla
-from webkitpy.common.net.buildbot import BuildBot
-from webkitpy.common.net.regressionwindow import RegressionWindow
-from webkitpy.common.system.crashlogs import CrashLogs
-from webkitpy.common.system.user import User
-from webkitpy.layout_tests.controllers.layout_test_finder_legacy import LayoutTestFinder
-from webkitpy.layout_tests.models.test_expectations import TestExpectations
-from webkitpy.port import platform_options, configuration_options
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
-from webkitpy.tool.multicommandtool import Command
 
 _log = logging.getLogger(__name__)
 
