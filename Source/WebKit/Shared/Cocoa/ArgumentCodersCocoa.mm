@@ -264,6 +264,13 @@ template<> Class getClass<DDScannerResult>()
 {
     return PAL::getDDScannerResultClass();
 }
+
+#if PLATFORM(MAC)
+template<> Class getClass<WKDDActionContext>()
+{
+    return PAL::getWKDDActionContextClass();
+}
+#endif
 #endif
 
 NSType typeFromObject(id object)
@@ -276,6 +283,10 @@ NSType typeFromObject(id object)
     if ([object isKindOfClass:[WebCore::CocoaColor class]])
         return NSType::Color;
 #if ENABLE(DATA_DETECTION)
+#if PLATFORM(MAC)
+    if (PAL::isDataDetectorsCoreFrameworkAvailable() && [object isKindOfClass:[PAL::getWKDDActionContextClass() class]])
+        return NSType::DDActionContext;
+#endif
     if (PAL::isDataDetectorsCoreFrameworkAvailable() && [object isKindOfClass:[PAL::getDDScannerResultClass() class]])
         return NSType::DDScannerResult;
 #endif
@@ -295,6 +306,8 @@ NSType typeFromObject(id object)
         return NSType::Number;
     if ([object isKindOfClass:[NSValue class]])
         return NSType::NSValue;
+    if ([object isKindOfClass:[NSPersonNameComponents class]])
+        return NSType::PersonNameComponents;
     if ([object isKindOfClass:[NSString class]])
         return NSType::String;
     if ([object isKindOfClass:[NSURL class]])

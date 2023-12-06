@@ -200,6 +200,7 @@ $(PROJECT_DIR)/Shared/Cocoa/CacheStoragePolicy.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCArray.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCCFType.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCColor.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCDDActionContext.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCDDScannerResult.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCData.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCDate.serialization.in
@@ -209,6 +210,7 @@ $(PROJECT_DIR)/Shared/Cocoa/CoreIPCFont.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCLocale.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSCFObject.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCNSValue.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCPersonNameComponents.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCSecureCoding.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCString.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCURL.serialization.in

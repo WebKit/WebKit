@@ -33,7 +33,17 @@
 
 #if ENABLE(DATA_DETECTION)
 OBJC_CLASS DDScannerResult;
-#endif
+#if PLATFORM(MAC)
+#if HAVE(SECURE_ACTION_CONTEXT)
+OBJC_CLASS DDSecureActionContext;
+using WKDDActionContext = DDSecureActionContext;
+#else
+OBJC_CLASS DDActionContext;
+using WKDDActionContext = DDActionContext;
+#endif // #if HAVE(SECURE_ACTION_CONTEXT)
+#endif // #if PLATFORM(MAC)
+#endif // #if ENABLE(DATA_DETECTION)
+
 
 namespace IPC {
 
@@ -62,6 +72,9 @@ enum class NSType : uint8_t {
     Array,
     Color,
 #if ENABLE(DATA_DETECTION)
+#if PLATFORM(MAC)
+    DDActionContext,
+#endif
     DDScannerResult,
 #endif
     Data,
@@ -71,6 +84,7 @@ enum class NSType : uint8_t {
     Font,
     Locale,
     Number,
+    PersonNameComponents,
     SecureCoding,
     String,
     URL,
@@ -83,6 +97,9 @@ bool isSerializableValue(id);
 
 #if ENABLE(DATA_DETECTION)
 template<> Class getClass<DDScannerResult>();
+#if PLATFORM(MAC)
+template<> Class getClass<WKDDActionContext>();
+#endif
 #endif
 
 void encodeObjectWithWrapper(Encoder&, id);

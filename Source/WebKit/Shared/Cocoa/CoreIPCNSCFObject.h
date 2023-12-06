@@ -57,6 +57,9 @@ using ObjectValue = std::variant<
     CoreIPCCFType,
     CoreIPCColor,
 #if ENABLE(DATA_DETECTION)
+#if PLATFORM(MAC)
+    CoreIPCDDActionContext,
+#endif
     CoreIPCDDScannerResult,
 #endif
     CoreIPCData,
@@ -67,6 +70,7 @@ using ObjectValue = std::variant<
     CoreIPCLocale,
     CoreIPCNSValue,
     CoreIPCNumber,
+    CoreIPCPersonNameComponents,
     CoreIPCSecureCoding,
     CoreIPCString,
     CoreIPCURL

@@ -23,21 +23,40 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#import "CoreIPCArray.h"
-#import "CoreIPCCFType.h"
-#import "CoreIPCColor.h"
-#import "CoreIPCData.h"
-#import "CoreIPCDate.h"
-#import "CoreIPCDictionary.h"
-#import "CoreIPCError.h"
-#import "CoreIPCFont.h"
-#import "CoreIPCLocale.h"
-#import "CoreIPCNSValue.h"
-#import "CoreIPCNumber.h"
+#import "config.h"
 #import "CoreIPCPersonNameComponents.h"
-#import "CoreIPCSecureCoding.h"
-#import "CoreIPCString.h"
-#import "CoreIPCURL.h"
-#import "GeneratedWebKitSecureCoding.h"
+
+#if PLATFORM(COCOA)
+
+#import <wtf/RetainPtr.h>
+
+namespace WebKit {
+
+CoreIPCPersonNameComponents::CoreIPCPersonNameComponents(NSPersonNameComponents *components)
+    : m_namePrefix(components.namePrefix)
+    , m_givenName(components.givenName)
+    , m_middleName(components.middleName)
+    , m_familyName(components.familyName)
+    , m_nickname(components.nickname)
+{
+    if (components.phoneticRepresentation)
+        m_phoneticRepresentation = makeUnique<CoreIPCPersonNameComponents>(components.phoneticRepresentation);
+}
+
+RetainPtr<id> CoreIPCPersonNameComponents::toID() const
+{
+    auto components = adoptNS([NSPersonNameComponents new]);
+    components.get().namePrefix = (NSString *)m_namePrefix;
+    components.get().givenName = (NSString *)m_givenName;
+    components.get().middleName = (NSString *)m_middleName;
+    components.get().familyName = (NSString *)m_familyName;
+    components.get().nickname = (NSString *)m_nickname;
+    if (m_phoneticRepresentation)
+        components.get().phoneticRepresentation = m_phoneticRepresentation->toID().get();
+
+    return components;
+}
+
+} // namespace WebKit
+
+#endif // PLATFORM(COCOA)

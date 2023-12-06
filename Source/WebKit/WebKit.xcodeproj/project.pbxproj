@@ -1229,6 +1229,8 @@
 		51ACFFE02B048829001331A2 /* CoreIPCNSValue.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51ACFFDB2B048820001331A2 /* CoreIPCNSValue.mm */; };
 		51AD56822B1A8CF6001A0ECB /* GeneratedWebKitSecureCoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 51AD56812B1A8CF5001A0ECB /* GeneratedWebKitSecureCoding.h */; };
 		51AD56862B1AB839001A0ECB /* GeneratedWebKitSecureCoding.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51AD56832B1AA324001A0ECB /* GeneratedWebKitSecureCoding.mm */; };
+		51AD56902B1C46FE001A0ECB /* CoreIPCPersonNameComponents.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51AD568E2B1C46EF001A0ECB /* CoreIPCPersonNameComponents.mm */; };
+		51AD56912B1C4704001A0ECB /* CoreIPCPersonNameComponents.h in Headers */ = {isa = PBXBuildFile; fileRef = 51AD568D2B1C46EF001A0ECB /* CoreIPCPersonNameComponents.h */; };
 		51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51BE6C572AA92480001745C1 /* WebPushToolMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 517B5F64275A8D7E002DC22D /* WebPushToolMain.mm */; };
 		51BE6C5A2AA9250D001745C1 /* webpushtool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51BE6C582AA92503001745C1 /* webpushtool.cpp */; };
@@ -5370,9 +5372,13 @@
 		51ACFFDA2B048820001331A2 /* CoreIPCNSValue.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CoreIPCNSValue.serialization.in; sourceTree = "<group>"; };
 		51ACFFDB2B048820001331A2 /* CoreIPCNSValue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCNSValue.mm; sourceTree = "<group>"; };
 		51ACFFDC2B048820001331A2 /* CoreIPCNSValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCNSValue.h; sourceTree = "<group>"; };
-		51AD56812B1A8CF5001A0ECB /* GeneratedWebKitSecureCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeneratedWebKitSecureCoding.h; path = GeneratedWebKitSecureCoding.h; sourceTree = "<group>"; };
-		51AD56832B1AA324001A0ECB /* GeneratedWebKitSecureCoding.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GeneratedWebKitSecureCoding.mm; path = GeneratedWebKitSecureCoding.mm; sourceTree = "<group>"; };
-		51AD56882B1ABFC1001A0ECB /* SerializedTypeInfo.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = SerializedTypeInfo.mm; path = SerializedTypeInfo.mm; sourceTree = "<group>"; };
+		51AD56812B1A8CF5001A0ECB /* GeneratedWebKitSecureCoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratedWebKitSecureCoding.h; sourceTree = "<group>"; };
+		51AD56832B1AA324001A0ECB /* GeneratedWebKitSecureCoding.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GeneratedWebKitSecureCoding.mm; sourceTree = "<group>"; };
+		51AD56882B1ABFC1001A0ECB /* SerializedTypeInfo.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SerializedTypeInfo.mm; sourceTree = "<group>"; };
+		51AD56892B1C3BA1001A0ECB /* CoreIPCDDActionContext.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CoreIPCDDActionContext.serialization.in; sourceTree = "<group>"; };
+		51AD568D2B1C46EF001A0ECB /* CoreIPCPersonNameComponents.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCPersonNameComponents.h; sourceTree = "<group>"; };
+		51AD568E2B1C46EF001A0ECB /* CoreIPCPersonNameComponents.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCPersonNameComponents.mm; sourceTree = "<group>"; };
+		51AD568F2B1C46F0001A0ECB /* CoreIPCPersonNameComponents.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCPersonNameComponents.serialization.in; sourceTree = "<group>"; };
 		51B15A8213843A3900321AD8 /* EnvironmentUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EnvironmentUtilities.cpp; path = unix/EnvironmentUtilities.cpp; sourceTree = "<group>"; };
 		51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EnvironmentUtilities.h; path = unix/EnvironmentUtilities.h; sourceTree = "<group>"; };
 		51BE6C552AA92406001745C1 /* WebPushToolMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPushToolMain.h; sourceTree = "<group>"; };
@@ -10934,6 +10940,7 @@
 				F48C81E52AE0E1DF00073850 /* CoreIPCData.serialization.in */,
 				F49EE2202AE87F41003E3C34 /* CoreIPCDate.h */,
 				F49EE21F2AE87ED7003E3C34 /* CoreIPCDate.serialization.in */,
+				51AD56892B1C3BA1001A0ECB /* CoreIPCDDActionContext.serialization.in */,
 				51ACFFD52B048804001331A2 /* CoreIPCDDScannerResult.serialization.in */,
 				5197FAD22AFD33B0009180C5 /* CoreIPCDictionary.h */,
 				5187BDED2B005DEE008A6EE5 /* CoreIPCDictionary.mm */,
@@ -10953,6 +10960,9 @@
 				51ACFFDC2B048820001331A2 /* CoreIPCNSValue.h */,
 				51ACFFDB2B048820001331A2 /* CoreIPCNSValue.mm */,
 				51ACFFDA2B048820001331A2 /* CoreIPCNSValue.serialization.in */,
+				51AD568D2B1C46EF001A0ECB /* CoreIPCPersonNameComponents.h */,
+				51AD568E2B1C46EF001A0ECB /* CoreIPCPersonNameComponents.mm */,
+				51AD568F2B1C46F0001A0ECB /* CoreIPCPersonNameComponents.serialization.in */,
 				5197FAD92AFD33B2009180C5 /* CoreIPCSecureCoding.h */,
 				5197FADA2AFD33B2009180C5 /* CoreIPCSecureCoding.mm */,
 				5197FAD12AFD33B0009180C5 /* CoreIPCSecureCoding.serialization.in */,
@@ -15205,6 +15215,7 @@
 				5197FAE42AFD33CF009180C5 /* CoreIPCNSCFObject.h in Headers */,
 				51ACFFDF2B048821001331A2 /* CoreIPCNSValue.h in Headers */,
 				F4EFF36D2AF0267300479AB8 /* CoreIPCNumber.h in Headers */,
+				51AD56912B1C4704001A0ECB /* CoreIPCPersonNameComponents.h in Headers */,
 				5197FAE92AFD33CF009180C5 /* CoreIPCSecureCoding.h in Headers */,
 				5197FAE52AFD33CF009180C5 /* CoreIPCString.h in Headers */,
 				51D1B6942B09723A00FEA5CB /* CoreIPCTypes.h in Headers */,
@@ -18050,6 +18061,7 @@
 				F4A30A6D2B08255B004E1F24 /* CoreIPCLocale.mm in Sources */,
 				5197FAF22AFD33FF009180C5 /* CoreIPCNSCFObject.mm in Sources */,
 				51ACFFE02B048829001331A2 /* CoreIPCNSValue.mm in Sources */,
+				51AD56902B1C46FE001A0ECB /* CoreIPCPersonNameComponents.mm in Sources */,
 				5197FAED2AFD33FF009180C5 /* CoreIPCSecureCoding.mm in Sources */,
 				5131D5462AE9D5230016EF39 /* CoreTextHelpers.mm in Sources */,
 				51AD56862B1AB839001A0ECB /* GeneratedWebKitSecureCoding.mm in Sources */,

@@ -25,19 +25,42 @@
 
 #pragma once
 
-#import "CoreIPCArray.h"
-#import "CoreIPCCFType.h"
-#import "CoreIPCColor.h"
-#import "CoreIPCData.h"
-#import "CoreIPCDate.h"
-#import "CoreIPCDictionary.h"
-#import "CoreIPCError.h"
-#import "CoreIPCFont.h"
-#import "CoreIPCLocale.h"
-#import "CoreIPCNSValue.h"
-#import "CoreIPCNumber.h"
-#import "CoreIPCPersonNameComponents.h"
-#import "CoreIPCSecureCoding.h"
-#import "CoreIPCString.h"
-#import "CoreIPCURL.h"
-#import "GeneratedWebKitSecureCoding.h"
+#if PLATFORM(COCOA)
+
+#include "ArgumentCodersCocoa.h"
+#include <Foundation/Foundation.h>
+#include <wtf/text/WTFString.h>
+
+namespace WebKit {
+
+class CoreIPCPersonNameComponents {
+WTF_MAKE_FAST_ALLOCATED;
+public:
+    CoreIPCPersonNameComponents(NSPersonNameComponents *);
+
+    RetainPtr<id> toID() const;
+
+private:
+    friend struct IPC::ArgumentCoder<CoreIPCPersonNameComponents, void>;
+
+    CoreIPCPersonNameComponents(const String& namePrefix, const String& givenName, const String& middleName, const String& familyName, const String& nickname, std::unique_ptr<CoreIPCPersonNameComponents>&& phoneticRepresentation)
+        : m_namePrefix(namePrefix)
+        , m_givenName(givenName)
+        , m_middleName(middleName)
+        , m_familyName(familyName)
+        , m_nickname(nickname)
+        , m_phoneticRepresentation(WTFMove(phoneticRepresentation))
+    {
+    }
+
+    String m_namePrefix;
+    String m_givenName;
+    String m_middleName;
+    String m_familyName;
+    String m_nickname;
+    std::unique_ptr<CoreIPCPersonNameComponents> m_phoneticRepresentation;
+};
+
+} // namespace WebKit
+
+#endif // PLATFORM(COCOA)
