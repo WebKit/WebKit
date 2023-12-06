@@ -9,6 +9,7 @@ from __future__ import division
 from __future__ import print_function
 
 import os
+import platform
 import shutil
 import subprocess
 import stat
@@ -28,7 +29,7 @@ except ImportError:
 # CLANG_REVISION and CLANG_SUB_REVISION determine the build of clang
 # to use. These should be synced with tools/clang/scripts/update.py in
 # Chromium.
-CLANG_REVISION = 'llvmorg-17-init-10134-g3da83fba'
+CLANG_REVISION = 'llvmorg-18-init-7785-geef35c28'
 CLANG_SUB_REVISION = 1
 
 PACKAGE_VERSION = '%s-%s' % (CLANG_REVISION, CLANG_SUB_REVISION)
@@ -138,6 +139,11 @@ def UpdateClang():
     cds_full_url = CDS_URL + '/Win/' + cds_file
   elif sys.platform.startswith('linux'):
     cds_full_url = CDS_URL + '/Linux_x64/' + cds_file
+  elif sys.platform == 'darwin':
+    if platform.machine() == 'arm64':
+      cds_full_url = CDS_URL + '/Mac_arm64/' + cds_file
+    else:
+      cds_full_url = CDS_URL + '/Mac/' + cds_file
   else:
     return 0
 

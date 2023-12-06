@@ -92,11 +92,10 @@ IMPLEMENT_ASN1_FUNCTIONS(X509_CINF)
 // x509_new_null returns a new |X509| object where the |cert_info|, |sig_alg|,
 // and |signature| fields are not yet filled in.
 static X509 *x509_new_null(void) {
-  X509 *ret = OPENSSL_malloc(sizeof(X509));
+  X509 *ret = OPENSSL_zalloc(sizeof(X509));
   if (ret == NULL) {
     return NULL;
   }
-  OPENSSL_memset(ret, 0, sizeof(X509));
 
   ret->references = 1;
   ret->ex_pathlen = -1;
@@ -343,7 +342,6 @@ static int x509_i2d_cb(ASN1_VALUE **pval, unsigned char **out,
 static const ASN1_EXTERN_FUNCS x509_extern_funcs = {
     x509_new_cb,
     x509_free_cb,
-    /*asn1_ex_clear=*/NULL,
     x509_d2i_cb,
     x509_i2d_cb,
 };

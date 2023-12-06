@@ -288,9 +288,9 @@ void PrintConnectionInfo(BIO *bio, const SSL *ssl) {
   BIO_printf(bio, "  Resumed session: %s\n",
              SSL_session_reused(ssl) ? "yes" : "no");
   BIO_printf(bio, "  Cipher: %s\n", SSL_CIPHER_standard_name(cipher));
-  uint16_t curve = SSL_get_curve_id(ssl);
-  if (curve != 0) {
-    BIO_printf(bio, "  ECDHE curve: %s\n", SSL_get_curve_name(curve));
+  uint16_t group = SSL_get_group_id(ssl);
+  if (group != 0) {
+    BIO_printf(bio, "  ECDHE group: %s\n", SSL_get_group_name(group));
   }
   uint16_t sigalg = SSL_get_peer_signature_algorithm(ssl);
   if (sigalg != 0) {

@@ -6,6 +6,7 @@ default	rel
 %define XMMWORD
 %define YMMWORD
 %define ZMMWORD
+%define _CET_ENDBR
 
 %ifdef BORINGSSL_PREFIX
 %include "boringssl_prefix_symbols_nasm.inc"
@@ -67,6 +68,7 @@ $L$SEH_begin_ChaCha20_ctr32:
 
 
 
+_CET_ENDBR
 	cmp	rdx,0
 	je	NEAR $L$no_data
 	mov	r10,QWORD[((OPENSSL_ia32cap_P+4))]
@@ -343,7 +345,7 @@ $L$done:
 $L$no_data:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ChaCha20_ctr32:
 
@@ -498,7 +500,7 @@ $L$done_ssse3:
 $L$ssse3_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ChaCha20_ssse3:
 
@@ -1084,7 +1086,7 @@ $L$done4x:
 $L$4x_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ChaCha20_4x:
 
@@ -1724,7 +1726,7 @@ $L$done8x:
 $L$8x_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ChaCha20_8x:
 EXTERN	__imp_RtlVirtualUnwind
@@ -1810,7 +1812,7 @@ $L$common_seh_tail:
 	pop	rbx
 	pop	rdi
 	pop	rsi
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 

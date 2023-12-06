@@ -161,7 +161,7 @@ int X509_REQ_add_extensions(X509_REQ *req,
 }
 
 int X509_REQ_get_attr_count(const X509_REQ *req) {
-  return sk_X509_ATTRIBUTE_num(req->req_info->attributes);
+  return (int)sk_X509_ATTRIBUTE_num(req->req_info->attributes);
 }
 
 int X509_REQ_get_attr_by_NID(const X509_REQ *req, int nid, int lastpos) {
@@ -181,7 +181,7 @@ int X509_REQ_get_attr_by_OBJ(const X509_REQ *req, const ASN1_OBJECT *obj,
   if (lastpos < 0) {
     lastpos = 0;
   }
-  int n = sk_X509_ATTRIBUTE_num(req->req_info->attributes);
+  int n = (int)sk_X509_ATTRIBUTE_num(req->req_info->attributes);
   for (; lastpos < n; lastpos++) {
     const X509_ATTRIBUTE *attr =
         sk_X509_ATTRIBUTE_value(req->req_info->attributes, lastpos);

@@ -138,8 +138,8 @@ void ec_compute_wNAF(const EC_GROUP *group, int8_t *out,
     // we shift and add at most one copy of |bit|, this will continue to hold
     // afterwards.
     window_val >>= 1;
-    window_val +=
-        bit * bn_is_bit_set_words(scalar->words, group->order.width, j + w + 1);
+    window_val += bit * bn_is_bit_set_words(scalar->words, group->order.N.width,
+                                            j + w + 1);
     assert(window_val <= next_bit);
   }
 
@@ -183,7 +183,7 @@ int ec_GFp_mont_mul_public_batch(const EC_GROUP *group, EC_JACOBIAN *r,
                                  const EC_SCALAR *g_scalar,
                                  const EC_JACOBIAN *points,
                                  const EC_SCALAR *scalars, size_t num) {
-  size_t bits = BN_num_bits(&group->order);
+  size_t bits = EC_GROUP_order_bits(group);
   size_t wNAF_len = bits + 1;
 
   int ret = 0;
@@ -197,13 +197,8 @@ int ec_GFp_mont_mul_public_batch(const EC_GROUP *group, EC_JACOBIAN *r,
     wNAF = wNAF_stack;
     precomp = precomp_stack;
   } else {
-    if (num >= ((size_t)-1) / sizeof(wNAF_alloc[0]) ||
-        num >= ((size_t)-1) / sizeof(precomp_alloc[0])) {
-      OPENSSL_PUT_ERROR(EC, ERR_R_OVERFLOW);
-      goto err;
-    }
-    wNAF_alloc = OPENSSL_malloc(num * sizeof(wNAF_alloc[0]));
-    precomp_alloc = OPENSSL_malloc(num * sizeof(precomp_alloc[0]));
+    wNAF_alloc = OPENSSL_calloc(num, sizeof(wNAF_alloc[0]));
+    precomp_alloc = OPENSSL_calloc(num, sizeof(precomp_alloc[0]));
     if (wNAF_alloc == NULL || precomp_alloc == NULL) {
       goto err;
     }
@@ -214,7 +209,7 @@ int ec_GFp_mont_mul_public_batch(const EC_GROUP *group, EC_JACOBIAN *r,
   int8_t g_wNAF[EC_MAX_BYTES * 8 + 1];
   EC_JACOBIAN g_precomp[EC_WNAF_TABLE_SIZE];
   assert(wNAF_len <= OPENSSL_ARRAY_SIZE(g_wNAF));
-  const EC_JACOBIAN *g = &group->generator->raw;
+  const EC_JACOBIAN *g = &group->generator.raw;
   if (g_scalar != NULL) {
     ec_compute_wNAF(group, g_wNAF, g_scalar, bits, EC_WNAF_WINDOW_BITS);
     compute_precomp(group, g_precomp, g, EC_WNAF_TABLE_SIZE);

@@ -211,6 +211,7 @@ static void TestCipherAPI(const EVP_CIPHER *cipher, Operation op, bool padding,
     ASSERT_LE(iv.size(), size_t{INT_MAX});
     ASSERT_TRUE(EVP_CIPHER_CTX_ctrl(ctx.get(), EVP_CTRL_AEAD_SET_IVLEN,
                                     static_cast<int>(iv.size()), 0));
+    ASSERT_EQ(EVP_CIPHER_CTX_iv_length(ctx.get()), iv.size());
   } else {
     ASSERT_EQ(iv.size(), EVP_CIPHER_CTX_iv_length(ctx.get()));
   }

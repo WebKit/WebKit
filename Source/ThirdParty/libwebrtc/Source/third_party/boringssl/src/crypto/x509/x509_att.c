@@ -189,7 +189,7 @@ err:
 }
 
 int X509_ATTRIBUTE_count(const X509_ATTRIBUTE *attr) {
-  return sk_ASN1_TYPE_num(attr->set);
+  return (int)sk_ASN1_TYPE_num(attr->set);
 }
 
 ASN1_OBJECT *X509_ATTRIBUTE_get0_object(X509_ATTRIBUTE *attr) {

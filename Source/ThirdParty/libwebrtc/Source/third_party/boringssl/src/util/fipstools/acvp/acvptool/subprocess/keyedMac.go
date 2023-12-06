@@ -65,6 +65,7 @@ func (k *keyedMACPrimitive) Process(vectorSet []byte, m Transactable) (any, erro
 
 	var respGroups []keyedMACTestGroupResponse
 	for _, group := range vs.Groups {
+		group := group
 		respGroup := keyedMACTestGroupResponse{ID: group.ID}
 
 		if group.KeyBits%8 != 0 {
@@ -90,6 +91,7 @@ func (k *keyedMACPrimitive) Process(vectorSet []byte, m Transactable) (any, erro
 		outputBytes := uint32le(group.MACBits / 8)
 
 		for _, test := range group.Tests {
+			test := test
 			respTest := keyedMACTestResponse{ID: test.ID}
 
 			// Validate input.

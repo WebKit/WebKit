@@ -422,22 +422,10 @@ static const uint8_t kTLSSeed2[16] = {
     0x31, 0x1e, 0x2b, 0x21, 0x41, 0x8d, 0x32, 0x81,
 };
 
-static const uint8_t kTLSOutput_mdsha1[32] = {
+static const uint8_t kTLSOutput_md5_sha1[32] = {
     0x36, 0xa9, 0x31, 0xb0, 0x43, 0xe3, 0x64, 0x72, 0xb9, 0x47, 0x54,
     0x0d, 0x8a, 0xfc, 0xe3, 0x5c, 0x1c, 0x15, 0x67, 0x7e, 0xa3, 0x5d,
     0xf2, 0x3a, 0x57, 0xfd, 0x50, 0x16, 0xe1, 0xa4, 0xa6, 0x37,
-};
-
-static const uint8_t kTLSOutput_md[32] = {
-    0x79, 0xef, 0x46, 0xc4, 0x35, 0xbc, 0xe5, 0xda, 0xd3, 0x66, 0x91,
-    0xdc, 0x86, 0x09, 0x41, 0x66, 0xf2, 0x0c, 0xeb, 0xe6, 0xab, 0x5c,
-    0x58, 0xf4, 0x65, 0xce, 0x2f, 0x5f, 0x4b, 0x34, 0x1e, 0xa1,
-};
-
-static const uint8_t kTLSOutput_sha1[32] = {
-    0xbb, 0x0a, 0x73, 0x52, 0xf8, 0x85, 0xd7, 0xbd, 0x12, 0x34, 0x78,
-    0x3b, 0x54, 0x4c, 0x75, 0xfe, 0xd7, 0x23, 0x6e, 0x22, 0x3f, 0x42,
-    0x34, 0x99, 0x57, 0x6b, 0x14, 0xc4, 0xc8, 0xae, 0x9f, 0x4c,
 };
 
 static const uint8_t kTLSOutput_sha224[32] = {
@@ -1065,7 +1053,7 @@ TEST(ServiceIndicatorTest, RSAKeyGen) {
     EXPECT_TRUE(CALL_SERVICE_AND_CHECK_APPROVED(
         approved, RSA_generate_key_fips(rsa.get(), bits, nullptr)));
     EXPECT_EQ(approved, FIPSStatus::APPROVED);
-    EXPECT_EQ(bits, BN_num_bits(rsa->n));
+    EXPECT_EQ(bits, RSA_bits(rsa.get()));
   }
 
   // Test running the EVP_PKEY_keygen interfaces one by one directly, and check
@@ -1497,12 +1485,12 @@ TEST_P(ECDSAServiceIndicatorTest, ECDSASigGen) {
 
   FIPSStatus approved = FIPSStatus::NOT_APPROVED;
 
-  bssl::UniquePtr<EC_GROUP> group(EC_GROUP_new_by_curve_name(test.nid));
+  const EC_GROUP *group = EC_GROUP_new_by_curve_name(test.nid);
   bssl::UniquePtr<EC_KEY> eckey(EC_KEY_new());
   bssl::UniquePtr<EVP_PKEY> pkey(EVP_PKEY_new());
   bssl::ScopedEVP_MD_CTX md_ctx;
   ASSERT_TRUE(eckey);
-  ASSERT_TRUE(EC_KEY_set_group(eckey.get(), group.get()));
+  ASSERT_TRUE(EC_KEY_set_group(eckey.get(), group));
 
   // Generate a generic EC key.
   ASSERT_TRUE(EC_KEY_generate_key(eckey.get()));
@@ -1557,12 +1545,12 @@ TEST_P(ECDSAServiceIndicatorTest, ECDSASigVer) {
 
   FIPSStatus approved = FIPSStatus::NOT_APPROVED;
 
-  bssl::UniquePtr<EC_GROUP> group(EC_GROUP_new_by_curve_name(test.nid));
+  const EC_GROUP *group = EC_GROUP_new_by_curve_name(test.nid);
   bssl::UniquePtr<EC_KEY> eckey(EC_KEY_new());
   bssl::UniquePtr<EVP_PKEY> pkey(EVP_PKEY_new());
   bssl::ScopedEVP_MD_CTX md_ctx;
   ASSERT_TRUE(eckey);
-  ASSERT_TRUE(EC_KEY_set_group(eckey.get(), group.get()));
+  ASSERT_TRUE(EC_KEY_set_group(eckey.get(), group));
 
   // Generate ECDSA signatures for ECDSA verification.
   ASSERT_TRUE(EC_KEY_generate_key(eckey.get()));
@@ -1623,12 +1611,12 @@ TEST_P(ECDSAServiceIndicatorTest, ManualECDSASignVerify) {
   ASSERT_TRUE(EVP_DigestInit(ctx.get(), test.func()));
   ASSERT_TRUE(EVP_DigestUpdate(ctx.get(), kPlaintext, sizeof(kPlaintext)));
 
-  bssl::UniquePtr<EC_GROUP> group(EC_GROUP_new_by_curve_name(test.nid));
+  const EC_GROUP *group = EC_GROUP_new_by_curve_name(test.nid);
   bssl::UniquePtr<EC_KEY> eckey(EC_KEY_new());
   bssl::UniquePtr<EVP_PKEY> pkey(EVP_PKEY_new());
   bssl::ScopedEVP_MD_CTX md_ctx;
   ASSERT_TRUE(eckey);
-  ASSERT_TRUE(EC_KEY_set_group(eckey.get(), group.get()));
+  ASSERT_TRUE(EC_KEY_set_group(eckey.get(), group));
 
   // Generate a generic ec key.
   EC_KEY_generate_key(eckey.get());
@@ -1719,7 +1707,7 @@ TEST_P(ECDH_ServiceIndicatorTest, ECDH) {
 
   FIPSStatus approved = FIPSStatus::NOT_APPROVED;
 
-  bssl::UniquePtr<EC_GROUP> group(EC_GROUP_new_by_curve_name(test.nid));
+  const EC_GROUP *group = EC_GROUP_new_by_curve_name(test.nid);
   bssl::UniquePtr<EC_KEY> our_key(EC_KEY_new());
   bssl::UniquePtr<EC_KEY> peer_key(EC_KEY_new());
   bssl::ScopedEVP_MD_CTX md_ctx;
@@ -1727,11 +1715,11 @@ TEST_P(ECDH_ServiceIndicatorTest, ECDH) {
   ASSERT_TRUE(peer_key);
 
   // Generate two generic ec key pairs.
-  ASSERT_TRUE(EC_KEY_set_group(our_key.get(), group.get()));
+  ASSERT_TRUE(EC_KEY_set_group(our_key.get(), group));
   ASSERT_TRUE(EC_KEY_generate_key(our_key.get()));
   ASSERT_TRUE(EC_KEY_check_key(our_key.get()));
 
-  ASSERT_TRUE(EC_KEY_set_group(peer_key.get(), group.get()));
+  ASSERT_TRUE(EC_KEY_set_group(peer_key.get(), group));
   ASSERT_TRUE(EC_KEY_generate_key(peer_key.get()));
   ASSERT_TRUE(EC_KEY_check_key(peer_key.get()));
 
@@ -1783,9 +1771,7 @@ static const struct KDFTestVector {
   const uint8_t *expected_output;
   const FIPSStatus expect_approved;
 } kKDFTestVectors[] = {
-    {EVP_md5, kTLSOutput_md, FIPSStatus::APPROVED},
-    {EVP_sha1, kTLSOutput_sha1, FIPSStatus::APPROVED},
-    {EVP_md5_sha1, kTLSOutput_mdsha1, FIPSStatus::APPROVED},
+    {EVP_md5_sha1, kTLSOutput_md5_sha1, FIPSStatus::APPROVED},
     {EVP_sha224, kTLSOutput_sha224, FIPSStatus::NOT_APPROVED},
     {EVP_sha256, kTLSOutput_sha256, FIPSStatus::APPROVED},
     {EVP_sha384, kTLSOutput_sha384, FIPSStatus::APPROVED},

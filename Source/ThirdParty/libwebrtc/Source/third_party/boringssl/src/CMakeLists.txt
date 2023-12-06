@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 
 # Defer enabling C and CXX languages.
 project(BoringSSL NONE)
@@ -56,7 +56,7 @@ endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT CMAKE_CROSSCOMPILING)
   find_package(PkgConfig QUIET)
   if (PkgConfig_FOUND)
-    pkg_check_modules(LIBUNWIND libunwind-generic)
+    pkg_check_modules(LIBUNWIND libunwind-generic>=1.3.0)
     if(LIBUNWIND_FOUND)
       add_definitions(-DBORINGSSL_HAVE_LIBUNWIND)
     else()
@@ -139,7 +139,8 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 if(CMAKE_COMPILER_IS_GNUCXX OR CLANG)
   # Note clang-cl is odd and sets both CLANG and MSVC. We base our configuration
   # primarily on our normal Clang one.
-  set(C_CXX_FLAGS "-Werror -Wformat=2 -Wsign-compare -Wmissing-field-initializers -Wwrite-strings -Wvla -Wshadow -Wtype-limits")
+  # TODO(bbe) took out -Wmissing-field-initializers for pki - fix and put back or disable only for pki
+  set(C_CXX_FLAGS "-Werror -Wformat=2 -Wsign-compare -Wwrite-strings -Wvla -Wshadow -Wtype-limits")
   if(MSVC)
     # clang-cl sets different default warnings than clang. It also treats -Wall
     # as -Weverything, to match MSVC. Instead -W3 is the alias for -Wall.
@@ -477,14 +478,22 @@ endif()
 
 # Add minimal googletest targets. The provided one has many side-effects, and
 # googletest has a very straightforward build.
-add_library(boringssl_gtest third_party/googletest/src/gtest-all.cc)
+add_library(
+  boringssl_gtest
+  third_party/googletest/googlemock/src/gmock-all.cc
+  third_party/googletest/googletest/src/gtest-all.cc
+)
 if(USE_CUSTOM_LIBCXX)
   target_link_libraries(boringssl_gtest libcxx)
 endif()
 target_include_directories(
     boringssl_gtest
-    PUBLIC third_party/googletest/include
-    PRIVATE third_party/googletest
+    PUBLIC
+    third_party/googletest/googlemock/include
+    third_party/googletest/googletest/include
+    PRIVATE
+    third_party/googletest/googlemock
+    third_party/googletest/googletest
 )
 
 # Declare a dummy target to build all unit tests. Test targets should inject
@@ -514,10 +523,73 @@ add_library(crypto_test_data OBJECT crypto_test_data.cc)
 add_subdirectory(crypto)
 add_subdirectory(ssl)
 add_subdirectory(ssl/test)
-add_subdirectory(tool)
 add_subdirectory(util/fipstools)
 add_subdirectory(util/fipstools/acvp/modulewrapper)
 add_subdirectory(decrepit)
+
+add_library(test_support_lib STATIC ${TEST_SUPPORT_SOURCES})
+if (LIBUNWIND_FOUND)
+  target_compile_options(test_support_lib PRIVATE ${LIBUNWIND_CFLAGS_OTHER})
+  target_include_directories(test_support_lib PRIVATE ${LIBUNWIND_INCLUDE_DIRS})
+  target_link_libraries(test_support_lib ${LIBUNWIND_LDFLAGS})
+endif()
+if(WIN32)
+  target_link_libraries(test_support_lib dbghelp)
+endif()
+target_link_libraries(test_support_lib boringssl_gtest crypto)
+
+# urandom_test is a separate binary because it needs to be able to observe the
+# PRNG initialisation, which means that it can't have other tests running before
+# it does.
+add_executable(urandom_test ${URANDOM_TEST_SOURCES})
+target_link_libraries(urandom_test test_support_lib boringssl_gtest crypto)
+add_dependencies(all_tests urandom_test)
+
+add_executable(crypto_test ${CRYPTO_TEST_SOURCES} $<TARGET_OBJECTS:crypto_test_data>)
+target_link_libraries(crypto_test test_support_lib boringssl_gtest crypto)
+add_dependencies(all_tests crypto_test)
+
+add_executable(ssl_test ${SSL_TEST_SOURCES})
+target_link_libraries(ssl_test test_support_lib boringssl_gtest ssl crypto)
+add_dependencies(all_tests ssl_test)
+
+add_executable(decrepit_test ${DECREPIT_TEST_SOURCES})
+target_link_libraries(decrepit_test test_support_lib boringssl_gtest
+                      decrepit crypto)
+add_dependencies(all_tests decrepit_test)
+
+if(APPLE)
+  set(PKI_CXX_FLAGS "-fno-aligned-new")
+endif()
+
+add_library(pki ${PKI_SOURCES})
+target_compile_definitions(pki PRIVATE _BORINGSSL_LIBPKI_)
+target_link_libraries(pki crypto)
+
+add_executable(pki_test ${PKI_TEST_SOURCES})
+target_compile_definitions(pki_test PRIVATE _BORINGSSL_LIBPKI_)
+target_link_libraries(pki_test test_support_lib boringssl_gtest pki crypto)
+add_dependencies(all_tests pki_test)
+
+# The PKI library requires C++17.
+set_target_properties(
+  pki pki_test
+  PROPERTIES
+  CXX_STANDARD 17
+  CXX_STANDARD_REQUIRED YES
+  COMPILE_FLAGS "${PKI_CXX_FLAGS}")
+
+add_executable(bssl ${BSSL_SOURCES})
+install_if_enabled(TARGETS bssl DESTINATION ${INSTALL_DESTINATION_DEFAULT})
+target_link_libraries(bssl ssl crypto)
+
+# Historically, targets were built in subdirectories. For compatibility with
+# existing tools, we, for now, copy the targets into the subdirectories. This
+# will be removed sometime in 2024.
+copy_post_build(crypto crypto_test urandom_test)
+copy_post_build(ssl ssl_test)
+copy_post_build(decrepit decrepit_test)
+copy_post_build(tool bssl)
 
 if(FUZZ)
   if(LIBFUZZER_FROM_DEPS)
@@ -568,10 +640,7 @@ else()
   add_custom_target(fips_specific_tests_if_any)
 endif()
 
-# Read util/go_tests.txt into a CMake variable.
-file(READ util/go_tests.txt GO_TESTS)
-string(REPLACE "\n" ";" GO_TESTS "${GO_TESTS}")
-list(REMOVE_ITEM GO_TESTS "")
+file(STRINGS util/go_tests.txt GO_TESTS)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
              util/go_tests.txt)
 

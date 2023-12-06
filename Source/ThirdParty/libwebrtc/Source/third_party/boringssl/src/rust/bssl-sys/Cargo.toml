@@ -5,3 +5,7 @@ authors = ["Benjamin Brittain <bwb@google.com>"]
 edition = "2018"
 publish = false
 license = "MIT"
+
+# This exists to workaround a limitation in cargo:
+# https://github.com/rust-lang/cargo/issues/3544
+links = "bssl"

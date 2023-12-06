@@ -303,14 +303,11 @@ void HMAC_verify_service_indicator(const EVP_MD *evp_md) {
 }
 
 void TLSKDF_verify_service_indicator(const EVP_MD *md) {
-  // HMAC-MD5, HMAC-SHA1, and HMAC-MD5/HMAC-SHA1 (both used concurrently) are
-  // approved for use in the KDF in TLS 1.0/1.1.
-  // HMAC-SHA{256, 384, 512} are approved for use in the KDF in TLS 1.2.
-  // These Key Derivation functions are to be used in the context of the TLS
-  // protocol.
+  // HMAC-MD5/HMAC-SHA1 (both used concurrently) is approved for use in the KDF
+  // in TLS 1.0/1.1. HMAC-SHA{256, 384, 512} are approved for use in the KDF in
+  // TLS 1.2. These Key Derivation functions are to be used in the context of
+  // the TLS protocol.
   switch (EVP_MD_type(md)) {
-    case NID_md5:
-    case NID_sha1:
     case NID_md5_sha1:
     case NID_sha256:
     case NID_sha384:

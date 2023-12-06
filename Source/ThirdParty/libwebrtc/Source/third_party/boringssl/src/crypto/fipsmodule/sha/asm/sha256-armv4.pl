@@ -86,7 +86,7 @@ sub BODY_00_15 {
 my ($i,$a,$b,$c,$d,$e,$f,$g,$h) = @_;
 
 $code.=<<___ if ($i<16);
-#if __ARM_ARCH__>=7
+#if __ARM_ARCH>=7
 	@ ldr	$t1,[$inp],#4			@ $i
 # if $i==15
 	str	$inp,[sp,#17*4]			@ make room for $t4
@@ -129,7 +129,7 @@ $code.=<<___;
 	cmp	$t2,#0xf2			@ done?
 #endif
 #if $i<15
-# if __ARM_ARCH__>=7
+# if __ARM_ARCH>=7
 	ldr	$t1,[$inp],#4			@ prefetch
 # else
 	ldrb	$t1,[$inp,#3]
@@ -179,7 +179,7 @@ $code=<<___;
 #ifndef __KERNEL__
 # include <openssl/arm_arch.h>
 #else
-# define __ARM_ARCH__ __LINUX_ARM_ARCH__
+# define __ARM_ARCH __LINUX_ARM_ARCH__
 # define __ARM_MAX_ARCH__ 7
 #endif
 
@@ -227,7 +227,7 @@ K256:
 .type	sha256_block_data_order,%function
 sha256_block_data_order:
 .Lsha256_block_data_order:
-#if __ARM_ARCH__<7 && !defined(__thumb2__)
+#if __ARM_ARCH<7 && !defined(__thumb2__)
 	sub	r3,pc,#8		@ sha256_block_data_order
 #else
 	adr	r3,.Lsha256_block_data_order
@@ -249,7 +249,7 @@ sha256_block_data_order:
 	sub	$Ktbl,r3,#256+32	@ K256
 	sub	sp,sp,#16*4		@ alloca(X[16])
 .Loop:
-# if __ARM_ARCH__>=7
+# if __ARM_ARCH>=7
 	ldr	$t1,[$inp],#4
 # else
 	ldrb	$t1,[$inp,#3]
@@ -261,7 +261,7 @@ for($i=0;$i<16;$i++)	{ &BODY_00_15($i,@V); unshift(@V,pop(@V)); }
 $code.=".Lrounds_16_xx:\n";
 for (;$i<32;$i++)	{ &BODY_16_XX($i,@V); unshift(@V,pop(@V)); }
 $code.=<<___;
-#if __ARM_ARCH__>=7
+#if __ARM_ARCH>=7
 	ite	eq			@ Thumb2 thing, sanity check in ARM
 #endif
 	ldreq	$t3,[sp,#16*4]		@ pull ctx
@@ -292,7 +292,7 @@ $code.=<<___;
 	bne	.Loop
 
 	add	sp,sp,#`16+3`*4	@ destroy frame
-#if __ARM_ARCH__>=5
+#if __ARM_ARCH>=5
 	ldmia	sp!,{r4-r11,pc}
 #else
 	ldmia	sp!,{r4-r11,lr}

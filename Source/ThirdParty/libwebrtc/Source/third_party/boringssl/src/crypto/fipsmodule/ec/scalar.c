@@ -23,8 +23,8 @@
 
 int ec_bignum_to_scalar(const EC_GROUP *group, EC_SCALAR *out,
                         const BIGNUM *in) {
-  if (!bn_copy_words(out->words, group->order.width, in) ||
-      !bn_less_than_words(out->words, group->order.d, group->order.width)) {
+  if (!bn_copy_words(out->words, group->order.N.width, in) ||
+      !bn_less_than_words(out->words, group->order.N.d, group->order.N.width)) {
     OPENSSL_PUT_ERROR(EC, EC_R_INVALID_SCALAR);
     return 0;
   }
@@ -34,12 +34,12 @@ int ec_bignum_to_scalar(const EC_GROUP *group, EC_SCALAR *out,
 int ec_scalar_equal_vartime(const EC_GROUP *group, const EC_SCALAR *a,
                             const EC_SCALAR *b) {
   return OPENSSL_memcmp(a->words, b->words,
-                        group->order.width * sizeof(BN_ULONG)) == 0;
+                        group->order.N.width * sizeof(BN_ULONG)) == 0;
 }
 
 int ec_scalar_is_zero(const EC_GROUP *group, const EC_SCALAR *a) {
   BN_ULONG mask = 0;
-  for (int i = 0; i < group->order.width; i++) {
+  for (int i = 0; i < group->order.N.width; i++) {
     mask |= a->words[i];
   }
   return mask == 0;
@@ -47,27 +47,27 @@ int ec_scalar_is_zero(const EC_GROUP *group, const EC_SCALAR *a) {
 
 int ec_random_nonzero_scalar(const EC_GROUP *group, EC_SCALAR *out,
                              const uint8_t additional_data[32]) {
-  return bn_rand_range_words(out->words, 1, group->order.d, group->order.width,
-                             additional_data);
+  return bn_rand_range_words(out->words, 1, group->order.N.d,
+                             group->order.N.width, additional_data);
 }
 
 void ec_scalar_to_bytes(const EC_GROUP *group, uint8_t *out, size_t *out_len,
                         const EC_SCALAR *in) {
-  size_t len = BN_num_bytes(&group->order);
-  bn_words_to_big_endian(out, len, in->words, group->order.width);
+  size_t len = BN_num_bytes(&group->order.N);
+  bn_words_to_big_endian(out, len, in->words, group->order.N.width);
   *out_len = len;
 }
 
 int ec_scalar_from_bytes(const EC_GROUP *group, EC_SCALAR *out,
                          const uint8_t *in, size_t len) {
-  if (len != BN_num_bytes(&group->order)) {
+  if (len != BN_num_bytes(&group->order.N)) {
     OPENSSL_PUT_ERROR(EC, EC_R_INVALID_SCALAR);
     return 0;
   }
 
-  bn_big_endian_to_words(out->words, group->order.width, in, len);
+  bn_big_endian_to_words(out->words, group->order.N.width, in, len);
 
-  if (!bn_less_than_words(out->words, group->order.d, group->order.width)) {
+  if (!bn_less_than_words(out->words, group->order.N.d, group->order.N.width)) {
     OPENSSL_PUT_ERROR(EC, EC_R_INVALID_SCALAR);
     return 0;
   }
@@ -78,15 +78,15 @@ int ec_scalar_from_bytes(const EC_GROUP *group, EC_SCALAR *out,
 void ec_scalar_reduce(const EC_GROUP *group, EC_SCALAR *out,
                       const BN_ULONG *words, size_t num) {
   // Convert "from" Montgomery form so the value is reduced modulo the order.
-  bn_from_montgomery_small(out->words, group->order.width, words, num,
-                           group->order_mont);
+  bn_from_montgomery_small(out->words, group->order.N.width, words, num,
+                           &group->order);
   // Convert "to" Montgomery form to remove the R^-1 factor added.
   ec_scalar_to_montgomery(group, out, out);
 }
 
 void ec_scalar_add(const EC_GROUP *group, EC_SCALAR *r, const EC_SCALAR *a,
                    const EC_SCALAR *b) {
-  const BIGNUM *order = &group->order;
+  const BIGNUM *order = &group->order.N;
   BN_ULONG tmp[EC_MAX_WORDS];
   bn_mod_add_words(r->words, a->words, b->words, order->d, tmp, order->width);
   OPENSSL_cleanse(tmp, sizeof(tmp));
@@ -94,7 +94,7 @@ void ec_scalar_add(const EC_GROUP *group, EC_SCALAR *r, const EC_SCALAR *a,
 
 void ec_scalar_sub(const EC_GROUP *group, EC_SCALAR *r, const EC_SCALAR *a,
                    const EC_SCALAR *b) {
-  const BIGNUM *order = &group->order;
+  const BIGNUM *order = &group->order.N;
   BN_ULONG tmp[EC_MAX_WORDS];
   bn_mod_sub_words(r->words, a->words, b->words, order->d, tmp, order->width);
   OPENSSL_cleanse(tmp, sizeof(tmp));
@@ -108,35 +108,35 @@ void ec_scalar_neg(const EC_GROUP *group, EC_SCALAR *r, const EC_SCALAR *a) {
 
 void ec_scalar_select(const EC_GROUP *group, EC_SCALAR *out, BN_ULONG mask,
                       const EC_SCALAR *a, const EC_SCALAR *b) {
-  const BIGNUM *order = &group->order;
+  const BIGNUM *order = &group->order.N;
   bn_select_words(out->words, mask, a->words, b->words, order->width);
 }
 
 void ec_scalar_to_montgomery(const EC_GROUP *group, EC_SCALAR *r,
                              const EC_SCALAR *a) {
-  const BIGNUM *order = &group->order;
-  bn_to_montgomery_small(r->words, a->words, order->width, group->order_mont);
+  const BIGNUM *order = &group->order.N;
+  bn_to_montgomery_small(r->words, a->words, order->width, &group->order);
 }
 
 void ec_scalar_from_montgomery(const EC_GROUP *group, EC_SCALAR *r,
                                const EC_SCALAR *a) {
-  const BIGNUM *order = &group->order;
+  const BIGNUM *order = &group->order.N;
   bn_from_montgomery_small(r->words, order->width, a->words, order->width,
-                           group->order_mont);
+                           &group->order);
 }
 
 void ec_scalar_mul_montgomery(const EC_GROUP *group, EC_SCALAR *r,
                               const EC_SCALAR *a, const EC_SCALAR *b) {
-  const BIGNUM *order = &group->order;
+  const BIGNUM *order = &group->order.N;
   bn_mod_mul_montgomery_small(r->words, a->words, b->words, order->width,
-                              group->order_mont);
+                              &group->order);
 }
 
 void ec_simple_scalar_inv0_montgomery(const EC_GROUP *group, EC_SCALAR *r,
                                       const EC_SCALAR *a) {
-  const BIGNUM *order = &group->order;
+  const BIGNUM *order = &group->order.N;
   bn_mod_inverse0_prime_mont_small(r->words, a->words, order->width,
-                                   group->order_mont);
+                                   &group->order);
 }
 
 int ec_simple_scalar_to_montgomery_inv_vartime(const EC_GROUP *group,

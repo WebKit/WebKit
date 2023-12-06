@@ -111,9 +111,35 @@
 #
 # Modified from upstream OpenSSL to remove the XOP code.
 
-$flavour = shift;
-$output  = shift;
-if ($flavour =~ /\./) { $output = $flavour; undef $flavour; }
+my ($flavour, $hash, $output) = @ARGV;
+
+if ($hash eq "sha512") {
+	$func="sha512_block_data_order";
+	$TABLE="K512";
+	$SZ=8;
+	@ROT=($A,$B,$C,$D,$E,$F,$G,$H)=("%rax","%rbx","%rcx","%rdx",
+					"%r8", "%r9", "%r10","%r11");
+	($T1,$a0,$a1,$a2,$a3)=("%r12","%r13","%r14","%r15","%rdi");
+	@Sigma0=(28,34,39);
+	@Sigma1=(14,18,41);
+	@sigma0=(1,  8, 7);
+	@sigma1=(19,61, 6);
+	$rounds=80;
+} elsif ($hash eq "sha256") {
+	$func="sha256_block_data_order";
+	$TABLE="K256";
+	$SZ=4;
+	@ROT=($A,$B,$C,$D,$E,$F,$G,$H)=("%eax","%ebx","%ecx","%edx",
+					"%r8d","%r9d","%r10d","%r11d");
+	($T1,$a0,$a1,$a2,$a3)=("%r12d","%r13d","%r14d","%r15d","%edi");
+	@Sigma0=( 2,13,22);
+	@Sigma1=( 6,11,25);
+	@sigma0=( 7,18, 3);
+	@sigma1=(17,19,10);
+	$rounds=64;
+} else {
+	die "unknown hash: $hash";
+}
 
 $win64=0; $win64=1 if ($flavour =~ /[nm]asm|mingw64/ || $output =~ /\.asm$/);
 
@@ -135,32 +161,6 @@ $shaext = 1;
 
 open OUT,"| \"$^X\" \"$xlate\" $flavour \"$output\"";
 *STDOUT=*OUT;
-
-if ($output =~ /512/) {
-	$func="sha512_block_data_order";
-	$TABLE="K512";
-	$SZ=8;
-	@ROT=($A,$B,$C,$D,$E,$F,$G,$H)=("%rax","%rbx","%rcx","%rdx",
-					"%r8", "%r9", "%r10","%r11");
-	($T1,$a0,$a1,$a2,$a3)=("%r12","%r13","%r14","%r15","%rdi");
-	@Sigma0=(28,34,39);
-	@Sigma1=(14,18,41);
-	@sigma0=(1,  8, 7);
-	@sigma1=(19,61, 6);
-	$rounds=80;
-} else {
-	$func="sha256_block_data_order";
-	$TABLE="K256";
-	$SZ=4;
-	@ROT=($A,$B,$C,$D,$E,$F,$G,$H)=("%eax","%ebx","%ecx","%edx",
-					"%r8d","%r9d","%r10d","%r11d");
-	($T1,$a0,$a1,$a2,$a3)=("%r12d","%r13d","%r14d","%r15d","%edi");
-	@Sigma0=( 2,13,22);
-	@Sigma1=( 6,11,25);
-	@sigma0=( 7,18, 3);
-	@sigma1=(17,19,10);
-	$rounds=64;
-}
 
 $ctx="%rdi";	# 1st arg, zapped by $a3
 $inp="%rsi";	# 2nd arg
@@ -263,6 +263,7 @@ $code=<<___;
 .align	16
 $func:
 .cfi_startproc
+	_CET_ENDBR
 ___
 $code.=<<___ if ($SZ==4 || $avx);
 	leaq	OPENSSL_ia32cap_P(%rip),%r11

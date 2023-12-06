@@ -250,9 +250,7 @@ TEST(TrustTokenTest, KeyGenExp2PMB) {
 
 // Test that H in |TRUST_TOKEN_experiment_v1| was computed correctly.
 TEST(TrustTokenTest, HExp1) {
-  const EC_GROUP *group = EC_GROUP_new_by_curve_name(NID_secp384r1);
-  ASSERT_TRUE(group);
-
+  const EC_GROUP *group = EC_group_p384();
   const uint8_t kHGen[] = "generator";
   const uint8_t kHLabel[] = "PMBTokens Experiment V1 HashH";
 
@@ -272,9 +270,7 @@ TEST(TrustTokenTest, HExp1) {
 
 // Test that H in |TRUST_TOKEN_experiment_v2_pmb| was computed correctly.
 TEST(TrustTokenTest, HExp2) {
-  const EC_GROUP *group = EC_GROUP_new_by_curve_name(NID_secp384r1);
-  ASSERT_TRUE(group);
-
+  const EC_GROUP *group = EC_group_p384();
   const uint8_t kHGen[] = "generator";
   const uint8_t kHLabel[] = "PMBTokens Experiment V2 HashH";
 
@@ -1080,15 +1076,14 @@ TEST_P(TrustTokenMetadataTest, TruncatedProof) {
   ASSERT_TRUE(CBS_get_u32(&real_response, &parsed_public_metadata));
   ASSERT_TRUE(CBB_add_u32(bad_response.get(), parsed_public_metadata));
 
-  const EC_GROUP *group = EC_GROUP_new_by_curve_name(NID_secp384r1);
-  size_t token_length =
-      TRUST_TOKEN_NONCE_SIZE + 2 * (1 + 2 * BN_num_bytes(&group->field));
+  const size_t kP384PointLen = 1 + 2 * (384 / 8);
+  size_t token_length = TRUST_TOKEN_NONCE_SIZE + 2 * kP384PointLen;
   if (method() == TRUST_TOKEN_experiment_v1()) {
     token_length += 4;
   }
   if (method() == TRUST_TOKEN_experiment_v2_voprf() ||
       method() == TRUST_TOKEN_pst_v1_voprf()) {
-    token_length = 1 + 2 * BN_num_bytes(&group->field);
+    token_length = kP384PointLen;
   }
   for (size_t i = 0; i < count; i++) {
     ASSERT_TRUE(CBB_add_bytes(bad_response.get(), CBS_data(&real_response),
@@ -1149,15 +1144,14 @@ TEST_P(TrustTokenMetadataTest, ExcessDataProof) {
   ASSERT_TRUE(CBS_get_u32(&real_response, &parsed_public_metadata));
   ASSERT_TRUE(CBB_add_u32(bad_response.get(), parsed_public_metadata));
 
-  const EC_GROUP *group = EC_GROUP_new_by_curve_name(NID_secp384r1);
-  size_t token_length =
-      TRUST_TOKEN_NONCE_SIZE + 2 * (1 + 2 * BN_num_bytes(&group->field));
+  const size_t kP384PointLen = 1 + 2 * (384 / 8);
+  size_t token_length = TRUST_TOKEN_NONCE_SIZE + 2 * kP384PointLen;
   if (method() == TRUST_TOKEN_experiment_v1()) {
     token_length += 4;
   }
   if (method() == TRUST_TOKEN_experiment_v2_voprf() ||
       method() == TRUST_TOKEN_pst_v1_voprf()) {
-    token_length = 1 + 2 * BN_num_bytes(&group->field);
+    token_length = kP384PointLen;
   }
   for (size_t i = 0; i < count; i++) {
     ASSERT_TRUE(CBB_add_bytes(bad_response.get(), CBS_data(&real_response),

@@ -41,7 +41,7 @@ enum early_data_t {
 
 // serialize_features adds a description of features supported by this binary to
 // |out|.  Returns true on success and false on error.
-static bool serialize_features(CBB *out) {
+static bool serialize_features(CBB *out, uint16_t alps_extension_type) {
   CBB ciphers;
   if (!CBB_add_asn1(out, &ciphers, CBS_ASN1_OCTETSTRING)) {
     return false;
@@ -52,12 +52,12 @@ static bool serialize_features(CBB *out) {
       return false;
     }
   }
-  CBB curves;
-  if (!CBB_add_asn1(out, &curves, CBS_ASN1_OCTETSTRING)) {
+  CBB groups;
+  if (!CBB_add_asn1(out, &groups, CBS_ASN1_OCTETSTRING)) {
     return false;
   }
   for (const NamedGroup& g : NamedGroups()) {
-    if (!CBB_add_u16(&curves, g.group_id)) {
+    if (!CBB_add_u16(&groups, g.group_id)) {
       return false;
     }
   }
@@ -68,7 +68,7 @@ static bool serialize_features(CBB *out) {
   // removed.
   CBB alps;
   if (!CBB_add_asn1(out, &alps, kHandoffTagALPS) ||
-      !CBB_add_u16(&alps, TLSEXT_TYPE_application_settings)) {
+      !CBB_add_u16(&alps, alps_extension_type)) {
     return false;
   }
   return CBB_flush(out);
@@ -86,13 +86,18 @@ bool SSL_serialize_handoff(const SSL *ssl, CBB *out,
   CBB seq;
   SSLMessage msg;
   Span<const uint8_t> transcript = s3->hs->transcript.buffer();
+
+  uint16_t alps_extension_type = TLSEXT_TYPE_application_settings_old;
+  if (s3->hs->config->alps_use_new_codepoint) {
+    alps_extension_type = TLSEXT_TYPE_application_settings;
+  }
   if (!CBB_add_asn1(out, &seq, CBS_ASN1_SEQUENCE) ||
       !CBB_add_asn1_uint64(&seq, kHandoffVersion) ||
       !CBB_add_asn1_octet_string(&seq, transcript.data(), transcript.size()) ||
       !CBB_add_asn1_octet_string(&seq,
                                  reinterpret_cast<uint8_t *>(s3->hs_buf->data),
                                  s3->hs_buf->length) ||
-      !serialize_features(&seq) ||
+      !serialize_features(&seq, alps_extension_type) ||
       !CBB_flush(out) ||
       !ssl->method->get_message(ssl, &msg) ||
       !ssl_client_hello_init(ssl, out_hello, msg.body)) {
@@ -169,46 +174,46 @@ static bool apply_remote_features(SSL *ssl, CBS *in) {
     return false;
   }
 
-  CBS curves;
-  if (!CBS_get_asn1(in, &curves, CBS_ASN1_OCTETSTRING)) {
+  CBS groups;
+  if (!CBS_get_asn1(in, &groups, CBS_ASN1_OCTETSTRING)) {
     return false;
   }
-  Array<uint16_t> supported_curves;
-  if (!supported_curves.Init(CBS_len(&curves) / 2)) {
+  Array<uint16_t> supported_groups;
+  if (!supported_groups.Init(CBS_len(&groups) / 2)) {
     return false;
   }
   size_t idx = 0;
-  while (CBS_len(&curves)) {
-    uint16_t curve;
-    if (!CBS_get_u16(&curves, &curve)) {
+  while (CBS_len(&groups)) {
+    uint16_t group;
+    if (!CBS_get_u16(&groups, &group)) {
       return false;
     }
-    supported_curves[idx++] = curve;
+    supported_groups[idx++] = group;
   }
-  Span<const uint16_t> configured_curves =
+  Span<const uint16_t> configured_groups =
       tls1_get_grouplist(ssl->s3->hs.get());
-  Array<uint16_t> new_configured_curves;
-  if (!new_configured_curves.Init(configured_curves.size())) {
+  Array<uint16_t> new_configured_groups;
+  if (!new_configured_groups.Init(configured_groups.size())) {
     return false;
   }
   idx = 0;
-  for (uint16_t configured_curve : configured_curves) {
+  for (uint16_t configured_group : configured_groups) {
     bool ok = false;
-    for (uint16_t supported_curve : supported_curves) {
-      if (supported_curve == configured_curve) {
+    for (uint16_t supported_group : supported_groups) {
+      if (supported_group == configured_group) {
         ok = true;
         break;
       }
     }
     if (ok) {
-      new_configured_curves[idx++] = configured_curve;
+      new_configured_groups[idx++] = configured_group;
     }
   }
   if (idx == 0) {
     return false;
   }
-  new_configured_curves.Shrink(idx);
-  ssl->config->supported_group_list = std::move(new_configured_curves);
+  new_configured_groups.Shrink(idx);
+  ssl->config->supported_group_list = std::move(new_configured_groups);
 
   CBS alps;
   CBS_init(&alps, nullptr, 0);
@@ -222,9 +227,12 @@ static bool apply_remote_features(SSL *ssl, CBS *in) {
     if (!CBS_get_u16(&alps, &id)) {
       return false;
     }
-    // For now, we only support one ALPS code point, so we only need to extract
-    // a boolean signal from the feature list.
-    if (id == TLSEXT_TYPE_application_settings) {
+    // For now, we support two ALPS codepoints, so we need to extract both
+    // codepoints, and then filter what the handshaker might try to send.
+    if ((id == TLSEXT_TYPE_application_settings &&
+         ssl->config->alps_use_new_codepoint) ||
+        (id == TLSEXT_TYPE_application_settings_old &&
+         !ssl->config->alps_use_new_codepoint)) {
       supports_alps = true;
       break;
     }
@@ -742,8 +750,13 @@ using namespace bssl;
 
 int SSL_serialize_capabilities(const SSL *ssl, CBB *out) {
   CBB seq;
+  const SSL_HANDSHAKE *hs = ssl->s3->hs.get();
+  uint16_t alps_extension_type = TLSEXT_TYPE_application_settings_old;
+  if (hs->config->alps_use_new_codepoint) {
+    alps_extension_type = TLSEXT_TYPE_application_settings;
+  }
   if (!CBB_add_asn1(out, &seq, CBS_ASN1_SEQUENCE) ||
-      !serialize_features(&seq) ||  //
+      !serialize_features(&seq, alps_extension_type) ||  //
       !CBB_flush(out)) {
     return 0;
   }

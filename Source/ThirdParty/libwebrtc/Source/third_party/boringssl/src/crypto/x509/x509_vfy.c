@@ -217,7 +217,7 @@ int X509_verify_cert(X509_STORE_CTX *ctx) {
     goto end;
   }
 
-  num = sk_X509_num(ctx->chain);
+  num = (int)sk_X509_num(ctx->chain);
   x = sk_X509_value(ctx->chain, num - 1);
   depth = param->depth;
 
@@ -284,7 +284,7 @@ int X509_verify_cert(X509_STORE_CTX *ctx) {
 
   do {
     // Examine last certificate in chain and see if it is self signed.
-    i = sk_X509_num(ctx->chain);
+    i = (int)sk_X509_num(ctx->chain);
     x = sk_X509_value(ctx->chain, i - 1);
 
     int is_self_signed;
@@ -396,7 +396,7 @@ int X509_verify_cert(X509_STORE_CTX *ctx) {
             X509_free(xtmp);
             num--;
           }
-          ctx->last_untrusted = sk_X509_num(ctx->chain);
+          ctx->last_untrusted = (int)sk_X509_num(ctx->chain);
           retry = 1;
           break;
         }
@@ -628,7 +628,7 @@ static int check_name_constraints(X509_STORE_CTX *ctx) {
   int i, j, rv;
   int has_name_constraints = 0;
   // Check name constraints for all certificates
-  for (i = sk_X509_num(ctx->chain) - 1; i >= 0; i--) {
+  for (i = (int)sk_X509_num(ctx->chain) - 1; i >= 0; i--) {
     X509 *x = sk_X509_value(ctx->chain, i);
     // Ignore self issued certs unless last in chain
     if (i && (x->ex_flags & EXFLAG_SI)) {
@@ -638,7 +638,7 @@ static int check_name_constraints(X509_STORE_CTX *ctx) {
     // including trust anchor. Trust anchor not strictly speaking needed
     // but if it includes constraints it is to be assumed it expects them
     // to be obeyed.
-    for (j = sk_X509_num(ctx->chain) - 1; j > i; j--) {
+    for (j = (int)sk_X509_num(ctx->chain) - 1; j > i; j--) {
       NAME_CONSTRAINTS *nc = sk_X509_value(ctx->chain, j)->nc;
       if (nc) {
         has_name_constraints = 1;
@@ -748,11 +748,10 @@ static int check_id(X509_STORE_CTX *ctx) {
 }
 
 static int check_trust(X509_STORE_CTX *ctx) {
-  size_t i;
   int ok;
   X509 *x = NULL;
   // Check all trusted certificates in chain
-  for (i = ctx->last_untrusted; i < sk_X509_num(ctx->chain); i++) {
+  for (size_t i = ctx->last_untrusted; i < sk_X509_num(ctx->chain); i++) {
     x = sk_X509_value(ctx->chain, i);
     ok = X509_check_trust(x, ctx->param->trust, 0);
     // If explicitly trusted return trusted
@@ -762,7 +761,7 @@ static int check_trust(X509_STORE_CTX *ctx) {
     // If explicitly rejected notify callback and reject if not
     // overridden.
     if (ok == X509_TRUST_REJECTED) {
-      ctx->error_depth = i;
+      ctx->error_depth = (int)i;
       ctx->current_cert = x;
       ctx->error = X509_V_ERR_CERT_REJECTED;
       ok = ctx->verify_cb(0, ctx);
@@ -794,12 +793,12 @@ static int check_trust(X509_STORE_CTX *ctx) {
 }
 
 static int check_revocation(X509_STORE_CTX *ctx) {
-  int i, last, ok;
   if (!(ctx->param->flags & X509_V_FLAG_CRL_CHECK)) {
     return 1;
   }
+  int last;
   if (ctx->param->flags & X509_V_FLAG_CRL_CHECK_ALL) {
-    last = sk_X509_num(ctx->chain) - 1;
+    last = (int)sk_X509_num(ctx->chain) - 1;
   } else {
     // If checking CRL paths this isn't the EE certificate
     if (ctx->parent) {
@@ -807,9 +806,9 @@ static int check_revocation(X509_STORE_CTX *ctx) {
     }
     last = 0;
   }
-  for (i = 0; i <= last; i++) {
+  for (int i = 0; i <= last; i++) {
     ctx->error_depth = i;
-    ok = check_cert(ctx);
+    int ok = check_cert(ctx);
     if (!ok) {
       return ok;
     }
@@ -1478,9 +1477,9 @@ done:
 static int check_crl(X509_STORE_CTX *ctx, X509_CRL *crl) {
   X509 *issuer = NULL;
   EVP_PKEY *ikey = NULL;
-  int ok = 0, chnum, cnum;
-  cnum = ctx->error_depth;
-  chnum = sk_X509_num(ctx->chain) - 1;
+  int ok = 0;
+  int cnum = ctx->error_depth;
+  int chnum = (int)sk_X509_num(ctx->chain) - 1;
   // if we have an alternative CRL issuer cert use that
   if (ctx->current_issuer) {
     issuer = ctx->current_issuer;
@@ -1691,11 +1690,11 @@ static int check_cert_time(X509_STORE_CTX *ctx, X509 *x) {
 }
 
 static int internal_verify(X509_STORE_CTX *ctx) {
-  int ok = 0, n;
+  int ok = 0;
   X509 *xs, *xi;
   EVP_PKEY *pkey = NULL;
 
-  n = sk_X509_num(ctx->chain);
+  int n = (int)sk_X509_num(ctx->chain);
   ctx->error_depth = n - 1;
   n--;
   xi = sk_X509_value(ctx->chain, n);
@@ -1776,7 +1775,7 @@ int X509_cmp_current_time(const ASN1_TIME *ctm) {
   return X509_cmp_time_posix(ctm, time(NULL));
 }
 
-int X509_cmp_time(const ASN1_TIME *ctm, time_t *cmp_time) {
+int X509_cmp_time(const ASN1_TIME *ctm, const time_t *cmp_time) {
   int64_t compare_time = (cmp_time == NULL) ? time(NULL) : *cmp_time;
   return X509_cmp_time_posix(ctm, compare_time);
 }
@@ -1794,12 +1793,12 @@ ASN1_TIME *X509_gmtime_adj(ASN1_TIME *s, long offset_sec) {
   return X509_time_adj(s, offset_sec, NULL);
 }
 
-ASN1_TIME *X509_time_adj(ASN1_TIME *s, long offset_sec, time_t *in_tm) {
+ASN1_TIME *X509_time_adj(ASN1_TIME *s, long offset_sec, const time_t *in_tm) {
   return X509_time_adj_ex(s, 0, offset_sec, in_tm);
 }
 
 ASN1_TIME *X509_time_adj_ex(ASN1_TIME *s, int offset_day, long offset_sec,
-                            time_t *in_tm) {
+                            const time_t *in_tm) {
   int64_t t = 0;
 
   if (in_tm) {

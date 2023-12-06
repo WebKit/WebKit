@@ -113,12 +113,11 @@ int EVP_CIPHER_CTX_copy(EVP_CIPHER_CTX *out, const EVP_CIPHER_CTX *in) {
   OPENSSL_memcpy(out, in, sizeof(EVP_CIPHER_CTX));
 
   if (in->cipher_data && in->cipher->ctx_size) {
-    out->cipher_data = OPENSSL_malloc(in->cipher->ctx_size);
+    out->cipher_data = OPENSSL_memdup(in->cipher_data, in->cipher->ctx_size);
     if (!out->cipher_data) {
       out->cipher = NULL;
       return 0;
     }
-    OPENSSL_memcpy(out->cipher_data, in->cipher_data, in->cipher->ctx_size);
   }
 
   if (in->cipher->flags & EVP_CIPH_CUSTOM_COPY) {
@@ -586,6 +585,16 @@ unsigned EVP_CIPHER_CTX_key_length(const EVP_CIPHER_CTX *ctx) {
 }
 
 unsigned EVP_CIPHER_CTX_iv_length(const EVP_CIPHER_CTX *ctx) {
+  if (EVP_CIPHER_mode(ctx->cipher) == EVP_CIPH_GCM_MODE) {
+    int length;
+    int res = EVP_CIPHER_CTX_ctrl((EVP_CIPHER_CTX *)ctx, EVP_CTRL_GET_IVLEN, 0,
+                                  &length);
+    // EVP_CIPHER_CTX_ctrl returning an error should be impossible under this
+    // circumstance. If it somehow did, fallback to the static cipher iv_len.
+    if (res == 1) {
+      return length;
+    }
+  }
   return ctx->cipher->iv_len;
 }
 

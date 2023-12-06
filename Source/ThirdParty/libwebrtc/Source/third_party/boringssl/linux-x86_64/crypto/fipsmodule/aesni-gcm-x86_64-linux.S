@@ -1,16 +1,9 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#if defined(__has_feature)
-#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
-#define OPENSSL_NO_ASM
-#endif
-#endif
+#include <openssl/asm_base.h>
 
-#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && defined(__ELF__)
-#if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols_asm.h>
-#endif
+#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__ELF__)
 .text	
 
 .type	_aesni_ctr32_ghash_6x,@function
@@ -343,7 +336,7 @@ _aesni_ctr32_ghash_6x:
 	vpxor	16+8(%rsp),%xmm8,%xmm8
 	vpxor	%xmm4,%xmm8,%xmm8
 
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	_aesni_ctr32_ghash_6x,.-_aesni_ctr32_ghash_6x
 .globl	aesni_gcm_decrypt
@@ -353,6 +346,7 @@ _aesni_ctr32_ghash_6x:
 aesni_gcm_decrypt:
 .cfi_startproc	
 
+_CET_ENDBR
 	xorq	%rax,%rax
 
 
@@ -472,7 +466,7 @@ aesni_gcm_decrypt:
 .cfi_adjust_cfa_offset	-8
 .cfi_restore	%rbp
 .Lgcm_dec_abort:
-	.byte	0xf3,0xc3
+	ret
 
 .cfi_endproc	
 .size	aesni_gcm_decrypt,.-aesni_gcm_decrypt
@@ -543,7 +537,7 @@ _aesni_ctr32_6x:
 	vmovups	%xmm14,80(%rsi)
 	leaq	96(%rsi),%rsi
 
-	.byte	0xf3,0xc3
+	ret
 .align	32
 .Lhandle_ctr32_2:
 	vpshufb	%xmm0,%xmm1,%xmm6
@@ -576,6 +570,7 @@ _aesni_ctr32_6x:
 aesni_gcm_encrypt:
 .cfi_startproc	
 
+_CET_ENDBR
 #ifdef BORINGSSL_DISPATCH_TEST
 .extern	BORINGSSL_function_hit
 .hidden BORINGSSL_function_hit
@@ -866,10 +861,10 @@ aesni_gcm_encrypt:
 .cfi_adjust_cfa_offset	-8
 .cfi_restore	%rbp
 .Lgcm_enc_abort:
-	.byte	0xf3,0xc3
+	ret
 
 .cfi_endproc	
-.size	aesni_gcm_decrypt,.-aesni_gcm_decrypt
+.size	aesni_gcm_encrypt,.-aesni_gcm_encrypt
 .section	.rodata
 .align	64
 .Lbswap_mask:
@@ -885,8 +880,4 @@ aesni_gcm_encrypt:
 .byte	65,69,83,45,78,73,32,71,67,77,32,109,111,100,117,108,101,32,102,111,114,32,120,56,54,95,54,52,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
 .align	64
 .text	
-#endif
-#if defined(__ELF__)
-// See https://www.airs.com/blog/archives/518.
-.section .note.GNU-stack,"",%progbits
 #endif
