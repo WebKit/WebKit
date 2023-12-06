@@ -263,7 +263,7 @@ public:
 #if USE(SYSTEM_PREVIEW)
     virtual void paintSystemPreviewBadge(Image&, const PaintInfo&, const FloatRect&);
 #endif
-    virtual Seconds switchCheckedChangeAnimationDuration() const { return 0_s; }
+    virtual Seconds switchAnimationVisuallyOnDuration() const { return 0_s; }
     float switchPointerTrackingMagnitudeProportion() const { return 0.4f; }
 
 protected:

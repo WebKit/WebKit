@@ -601,7 +601,7 @@ static void updateSwitchThumbPartForRenderer(SwitchThumbPart& switchThumbPart, c
     ASSERT(input.isSwitch());
 
     switchThumbPart.setIsOn(input.isSwitchVisuallyOn());
-    switchThumbPart.setProgress(input.switchCheckedChangeAnimationProgress());
+    switchThumbPart.setProgress(input.switchAnimationVisuallyOnProgress());
 }
 
 static void updateSwitchTrackPartForRenderer(SwitchTrackPart& switchTrackPart, const RenderObject& renderer)
@@ -610,7 +610,7 @@ static void updateSwitchTrackPartForRenderer(SwitchTrackPart& switchTrackPart, c
     ASSERT(input.isSwitch());
 
     switchTrackPart.setIsOn(input.isSwitchVisuallyOn());
-    switchTrackPart.setProgress(input.switchCheckedChangeAnimationProgress());
+    switchTrackPart.setProgress(input.switchAnimationVisuallyOnProgress());
 }
 
 RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer) const

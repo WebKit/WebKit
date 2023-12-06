@@ -2304,10 +2304,10 @@ bool HTMLInputElement::dirAutoUsesValue() const
     return m_inputType->dirAutoUsesValue();
 }
 
-float HTMLInputElement::switchCheckedChangeAnimationProgress() const
+float HTMLInputElement::switchAnimationVisuallyOnProgress() const
 {
     ASSERT(isSwitch());
-    return checkedDowncast<CheckboxInputType>(*m_inputType).switchCheckedChangeAnimationProgress();
+    return checkedDowncast<CheckboxInputType>(*m_inputType).switchAnimationVisuallyOnProgress();
 }
 
 bool HTMLInputElement::isSwitchVisuallyOn() const
