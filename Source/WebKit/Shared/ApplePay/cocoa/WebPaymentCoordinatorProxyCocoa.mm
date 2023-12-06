@@ -396,9 +396,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return page->userAgent();
         return WebPageProxy::standardUserAgent();
     }();
-    // FIXME: <rdar://116640656> Remove this selector check when its corresponding staging declaration is removed.
-    if ([result respondsToSelector:@selector(setUserAgent:)])
-        [result setUserAgent:userAgent];
+    [result setUserAgent:userAgent];
 #else
     UNUSED_PARAM(webPageProxyID);
 #endif // HAVE(PKPAYMENTREQUEST_USERAGENT)
