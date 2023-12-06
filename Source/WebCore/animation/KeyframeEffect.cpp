@@ -2291,6 +2291,10 @@ bool KeyframeEffect::ticksContinouslyWhileActive() const
     if (doesNotAffectStyles)
         return false;
 
+    auto targetHasDisplayContents = [&]() { return m_target && m_pseudoId == PseudoId::None && m_target->hasDisplayContents(); };
+    if (!renderer() && !targetHasDisplayContents())
+        return false;
+
     if (isCompletelyAccelerated() && isRunningAccelerated())
         return false;
 
