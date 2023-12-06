@@ -679,6 +679,14 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static resizeWindowTo(width, height)
+    {
+        if (!this.isWebKit2())
+            return Promise.resolve();
+
+        return new Promise(resolve => testRunner.runUIScript(`uiController.resizeWindowTo(${width}, ${height})`, resolve));
+    }
+
     static activateElementAndWaitForInputSession(element)
     {
         const x = element.offsetLeft + element.offsetWidth / 2;
