@@ -246,7 +246,8 @@ static void copy_points_at_indices(double *dest, const double *src,
 // Returns true on success, false on error
 static bool ransac_internal(const Correspondence *matched_points, int npoints,
                             MotionModel *motion_models, int num_desired_motions,
-                            const RansacModelInfo *model_info) {
+                            const RansacModelInfo *model_info,
+                            bool *mem_alloc_failed) {
   assert(npoints >= 0);
   int i = 0;
   int minpts = model_info->minpts;
@@ -297,6 +298,7 @@ static bool ransac_internal(const Correspondence *matched_points, int npoints,
   if (!(points1 && points2 && corners1 && corners2 && projected_corners &&
         motions && inlier_buffer)) {
     ret_val = false;
+    *mem_alloc_failed = true;
     goto finish_ransac;
   }
 
@@ -469,7 +471,7 @@ static const RansacModelInfo ransac_model_info[TRANS_TYPES] = {
 // Returns true on success, false on error
 bool ransac(const Correspondence *matched_points, int npoints,
             TransformationType type, MotionModel *motion_models,
-            int num_desired_motions) {
+            int num_desired_motions, bool *mem_alloc_failed) {
 #if ALLOW_TRANSLATION_MODELS
   assert(type > IDENTITY && type < TRANS_TYPES);
 #else
@@ -477,5 +479,6 @@ bool ransac(const Correspondence *matched_points, int npoints,
 #endif  // ALLOW_TRANSLATION_MODELS
 
   return ransac_internal(matched_points, npoints, motion_models,
-                         num_desired_motions, &ransac_model_info[type]);
+                         num_desired_motions, &ransac_model_info[type],
+                         mem_alloc_failed);
 }

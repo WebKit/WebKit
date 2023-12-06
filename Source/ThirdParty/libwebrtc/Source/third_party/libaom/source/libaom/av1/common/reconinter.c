@@ -819,11 +819,11 @@ int av1_skip_u4x4_pred_in_obmc(BLOCK_SIZE bsize,
 #if DISABLE_CHROMA_U8X8_OBMC
     case BLOCK_4X4:
     case BLOCK_8X4:
-    case BLOCK_4X8: return 1; break;
+    case BLOCK_4X8: return 1;
 #else
     case BLOCK_4X4:
     case BLOCK_8X4:
-    case BLOCK_4X8: return dir == 0; break;
+    case BLOCK_4X8: return dir == 0;
 #endif
     default: return 0;
   }
@@ -832,8 +832,6 @@ int av1_skip_u4x4_pred_in_obmc(BLOCK_SIZE bsize,
 void av1_modify_neighbor_predictor_for_obmc(MB_MODE_INFO *mbmi) {
   mbmi->ref_frame[1] = NONE_FRAME;
   mbmi->interinter_comp.type = COMPOUND_AVERAGE;
-
-  return;
 }
 
 struct obmc_inter_pred_ctxt {

@@ -258,7 +258,8 @@ int av1_rc_clamp_iframe_target_size(const AV1_COMP *const cpi, int64_t target) {
 
 // Update the buffer level for higher temporal layers, given the encoded current
 // temporal layer.
-static void update_layer_buffer_level(SVC *svc, int encoded_frame_size) {
+static void update_layer_buffer_level(SVC *svc, int encoded_frame_size,
+                                      bool is_screen) {
   const int current_temporal_layer = svc->temporal_layer_id;
   for (int i = current_temporal_layer + 1; i < svc->number_temporal_layers;
        ++i) {
@@ -272,6 +273,15 @@ static void update_layer_buffer_level(SVC *svc, int encoded_frame_size) {
     lp_rc->bits_off_target =
         AOMMIN(lp_rc->bits_off_target, lp_rc->maximum_buffer_size);
     lp_rc->buffer_level = lp_rc->bits_off_target;
+
+    // For screen-content mode: don't let buffer level go below threshold,
+    // given here as -rc->maximum_ buffer_size, to allow buffer to come back
+    // up sooner after slide change with big oveshoot.
+    if (is_screen) {
+      lp_rc->bits_off_target =
+          AOMMAX(lp_rc->bits_off_target, -lp_rc->maximum_buffer_size);
+      lp_rc->buffer_level = lp_rc->bits_off_target;
+    }
   }
 }
 // Update the buffer level: leaky bucket model.
@@ -298,7 +308,8 @@ static void update_buffer_level(AV1_COMP *cpi, int encoded_frame_size) {
   p_rc->buffer_level = p_rc->bits_off_target;
 
   if (cpi->ppi->use_svc)
-    update_layer_buffer_level(&cpi->svc, encoded_frame_size);
+    update_layer_buffer_level(&cpi->svc, encoded_frame_size,
+                              cpi->oxcf.tune_cfg.content == AOM_CONTENT_SCREEN);
 
 #if CONFIG_FPMT_TEST
   /* The variable temp_buffer_level is introduced for quality
@@ -442,8 +453,11 @@ int av1_rc_drop_frame(AV1_COMP *cpi) {
 #else
   int64_t buffer_level = p_rc->buffer_level;
 #endif
-
-  if (!oxcf->rc_cfg.drop_frames_water_mark) {
+  // Never drop on key frame, or for frame whose base layer is key.
+  if (cpi->common.current_frame.frame_type == KEY_FRAME ||
+      (cpi->ppi->use_svc &&
+       cpi->svc.layer_context[cpi->svc.temporal_layer_id].is_key_frame) ||
+      !oxcf->rc_cfg.drop_frames_water_mark) {
     return 0;
   } else {
     if (buffer_level < 0) {
@@ -482,8 +496,16 @@ static int adjust_q_cbr(const AV1_COMP *cpi, int q, int active_worst_quality,
   const AV1_COMMON *const cm = &cpi->common;
   const SVC *const svc = &cpi->svc;
   const RefreshFrameInfo *const refresh_frame = &cpi->refresh_frame;
+  // Flag to indicate previous frame has overshoot, and buffer level
+  // for current frame is low (less than ~half of optimal). For such
+  // (inter) frames, if the source_sad is non-zero, relax the max_delta_up
+  // and clamp applied below.
+  const bool overshoot_buffer_low =
+      cpi->rc.rc_1_frame == -1 && rc->frame_source_sad > 1000 &&
+      p_rc->buffer_level < (p_rc->optimal_buffer_level >> 1) &&
+      rc->frames_since_key > 4;
   int max_delta_down;
-  int max_delta_up = 20;
+  int max_delta_up = overshoot_buffer_low ? 60 : 20;
   const int change_avg_frame_bandwidth =
       abs(rc->avg_frame_bandwidth - rc->prev_avg_frame_bandwidth) >
       0.1 * (rc->avg_frame_bandwidth);
@@ -512,8 +534,6 @@ static int adjust_q_cbr(const AV1_COMP *cpi, int q, int active_worst_quality,
                          ? AOMMIN(8, AOMMAX(1, rc->q_1_frame / 16))
                          : AOMMIN(16, AOMMAX(1, rc->q_1_frame / 8));
   }
-  if (svc->number_temporal_layers > 1 && svc->temporal_layer_id == 0)
-    max_delta_up = AOMMIN(max_delta_up, 14);
   // If resolution changes or avg_frame_bandwidth significantly changed,
   // then set this flag to indicate change in target bits per macroblock.
   const int change_target_bits_mb =
@@ -521,14 +541,20 @@ static int adjust_q_cbr(const AV1_COMP *cpi, int q, int active_worst_quality,
       (width != cm->prev_frame->width || height != cm->prev_frame->height ||
        change_avg_frame_bandwidth);
   // Apply some control/clamp to QP under certain conditions.
-  if (cm->current_frame.frame_type != KEY_FRAME && rc->frames_since_key > 1 &&
+  // Delay the use of the clamping for svc until after num_temporal_layers,
+  // to make they have been set for each temporal layer.
+  if (!frame_is_intra_only(cm) && rc->frames_since_key > 1 &&
+      (!cpi->ppi->use_svc ||
+       svc->current_superframe > (unsigned int)svc->number_temporal_layers) &&
       !change_target_bits_mb && !cpi->rc.rtc_external_ratectrl &&
       (!cpi->oxcf.rc_cfg.gf_cbr_boost_pct ||
        !(refresh_frame->alt_ref_frame || refresh_frame->golden_frame))) {
     // If in the previous two frames we have seen both overshoot and undershoot
-    // clamp Q between the two.
+    // clamp Q between the two. Check for rc->q_1/2_frame > 0 in case they have
+    // not been set due to dropped frames.
     if (rc->rc_1_frame * rc->rc_2_frame == -1 &&
-        rc->q_1_frame != rc->q_2_frame) {
+        rc->q_1_frame != rc->q_2_frame && rc->q_1_frame > 0 &&
+        rc->q_2_frame > 0 && !overshoot_buffer_low) {
       int qclamp = clamp(q, AOMMIN(rc->q_1_frame, rc->q_2_frame),
                          AOMMAX(rc->q_1_frame, rc->q_2_frame));
       // If the previous frame had overshoot and the current q needs to
@@ -569,17 +595,28 @@ static int adjust_q_cbr(const AV1_COMP *cpi, int q, int active_worst_quality,
     else if (q - rc->q_1_frame > max_delta_up)
       q = rc->q_1_frame + max_delta_up;
   }
-  // Constrain the Q for enhancement temporal layer, relative to base TLO.
-  if (svc->number_temporal_layers > 1 && svc->temporal_layer_id > 0 &&
-      svc->spatial_layer_id == 0) {
-    // Get base temporal layer TL0.
-    const int layer = LAYER_IDS_TO_IDX(0, 0, svc->number_temporal_layers);
-    LAYER_CONTEXT *lc = &svc->layer_context[layer];
-    // lc->rc.avg_frame_bandwidth and lc->p_rc.last_q correspond to the
-    // last TL0 frame.
-    if (rc->avg_frame_bandwidth < lc->rc.avg_frame_bandwidth &&
-        q < lc->p_rc.last_q[INTER_FRAME] - 4)
-      q = lc->p_rc.last_q[INTER_FRAME] - 4;
+  // Adjustment for temporal layers.
+  if (svc->number_temporal_layers > 1 && svc->spatial_layer_id == 0 &&
+      !change_target_bits_mb && !cpi->rc.rtc_external_ratectrl &&
+      cpi->oxcf.resize_cfg.resize_mode != RESIZE_DYNAMIC) {
+    if (svc->temporal_layer_id > 0) {
+      // Constrain enhancement relative to the previous base TL0.
+      // Get base temporal layer TL0.
+      const int layer = LAYER_IDS_TO_IDX(0, 0, svc->number_temporal_layers);
+      LAYER_CONTEXT *lc = &svc->layer_context[layer];
+      // lc->rc.avg_frame_bandwidth and lc->p_rc.last_q correspond to the
+      // last TL0 frame.
+      if (rc->avg_frame_bandwidth < lc->rc.avg_frame_bandwidth &&
+          q < lc->p_rc.last_q[INTER_FRAME] - 4)
+        q = lc->p_rc.last_q[INTER_FRAME] - 4;
+    } else if (cpi->svc.temporal_layer_id == 0 &&
+               p_rc->buffer_level > (p_rc->optimal_buffer_level >> 2) &&
+               rc->frame_source_sad < 100000) {
+      // Push base TL0 Q down if buffer is stable and frame_source_sad
+      // is below threshold.
+      int delta = (svc->number_temporal_layers == 2) ? 4 : 10;
+      q = q - delta;
+    }
   }
   // For non-svc (single layer): if resolution has increased push q closer
   // to the active_worst to avoid excess overshoot.
@@ -749,7 +786,7 @@ void av1_rc_update_rate_correction_factors(AV1_COMP *cpi, int is_encode_stage,
   // recorded as INTRA only key frames.
   if ((cpi->oxcf.q_cfg.aq_mode == CYCLIC_REFRESH_AQ) &&
       (cpi->cyclic_refresh->counter_encode_maxq_scene_change == 0) &&
-      (cm->current_frame.frame_type != KEY_FRAME) && (!cpi->ppi->use_svc)) {
+      !frame_is_intra_only(cm) && !cpi->ppi->use_svc) {
     cpi->rc.q_2_frame = cm->quant_params.base_qindex;
     cpi->rc.q_1_frame = cm->quant_params.base_qindex;
     cpi->rc.rc_2_frame = 0;
@@ -1646,9 +1683,6 @@ static void adjust_active_best_and_worst_quality(const AV1_COMP *cpi,
   const int simulate_parallel_frame =
       cpi->ppi->gf_group.frame_parallel_level[cpi->gf_frame_index] > 0 &&
       cpi->ppi->fpmt_unit_test_cfg == PARALLEL_SIMULATION_ENCODE;
-  int extend_minq_fast = simulate_parallel_frame
-                             ? p_rc->temp_extend_minq_fast
-                             : cpi->ppi->twopass.extend_minq_fast;
   int extend_minq = simulate_parallel_frame ? p_rc->temp_extend_minq
                                             : cpi->ppi->twopass.extend_minq;
   int extend_maxq = simulate_parallel_frame ? p_rc->temp_extend_maxq
@@ -1662,21 +1696,18 @@ static void adjust_active_best_and_worst_quality(const AV1_COMP *cpi,
          (refresh_frame->golden_frame || is_intrl_arf_boost ||
           refresh_frame->alt_ref_frame))) {
 #if CONFIG_FPMT_TEST
-      active_best_quality -= (extend_minq + extend_minq_fast);
+      active_best_quality -= extend_minq;
       active_worst_quality += (extend_maxq / 2);
 #else
-      active_best_quality -=
-          (cpi->ppi->twopass.extend_minq + cpi->ppi->twopass.extend_minq_fast);
+      active_best_quality -= cpi->ppi->twopass.extend_minq / 4;
       active_worst_quality += (cpi->ppi->twopass.extend_maxq / 2);
 #endif
     } else {
 #if CONFIG_FPMT_TEST
-      active_best_quality -= (extend_minq + extend_minq_fast) / 2;
+      active_best_quality -= extend_minq / 2;
       active_worst_quality += extend_maxq;
 #else
-      active_best_quality -=
-          (cpi->ppi->twopass.extend_minq + cpi->ppi->twopass.extend_minq_fast) /
-          2;
+      active_best_quality -= cpi->ppi->twopass.extend_minq / 4;
       active_worst_quality += cpi->ppi->twopass.extend_maxq;
 #endif
     }
@@ -2321,6 +2352,8 @@ void av1_rc_postencode_update(AV1_COMP *cpi, uint64_t bytes_used) {
     rc->frame_num_last_gf_refresh = current_frame->frame_number;
   rc->prev_coded_width = cm->width;
   rc->prev_coded_height = cm->height;
+  rc->frame_number_encoded++;
+  rc->prev_frame_is_dropped = 0;
   // if (current_frame->frame_number == 1 && cm->show_frame)
   /*
   rc->this_frame_target =
@@ -2341,6 +2374,11 @@ void av1_rc_postencode_update_drop_frame(AV1_COMP *cpi) {
   cpi->rc.prev_avg_frame_bandwidth = cpi->rc.avg_frame_bandwidth;
   cpi->rc.prev_coded_width = cpi->common.width;
   cpi->rc.prev_coded_height = cpi->common.height;
+  cpi->rc.prev_frame_is_dropped = 1;
+  // On a scene/slide change for dropped frame: reset the avg_source_sad to 0,
+  // otherwise the avg_source_sad can get too large and subsequent frames
+  // may miss the scene/slide detection.
+  if (cpi->rc.high_source_sad) cpi->rc.avg_source_sad = 0;
 }
 
 int av1_find_qindex(double desired_q, aom_bit_depth_t bit_depth,
@@ -2809,6 +2847,9 @@ void av1_set_rtc_reference_structure_one_layer(AV1_COMP *cpi, int gf_update) {
   ExtRefreshFrameFlagsInfo *const ext_refresh_frame_flags =
       &ext_flags->refresh_frame;
   RTC_REF *const rtc_ref = &cpi->ppi->rtc_ref;
+  unsigned int frame_number = (cpi->oxcf.rc_cfg.drop_frames_water_mark)
+                                  ? rc->frame_number_encoded
+                                  : cm->current_frame.frame_number;
   unsigned int lag_alt = 4;
   int last_idx = 0;
   int last_idx_refresh = 0;
@@ -2854,19 +2895,16 @@ void av1_set_rtc_reference_structure_one_layer(AV1_COMP *cpi, int gf_update) {
     ext_flags->ref_frame_flags ^= AOM_LAST2_FLAG;
   const int sh = 6;
   // Moving index slot for last: 0 - (sh - 1).
-  if (cm->current_frame.frame_number > 1)
-    last_idx = ((cm->current_frame.frame_number - 1) % sh);
+  if (frame_number > 1) last_idx = ((frame_number - 1) % sh);
   // Moving index for refresh of last: one ahead for next frame.
-  last_idx_refresh = (cm->current_frame.frame_number % sh);
+  last_idx_refresh = (frame_number % sh);
   gld_idx = 6;
 
   // Moving index for alt_ref, lag behind LAST by lag_alt frames.
-  if (cm->current_frame.frame_number > lag_alt)
-    alt_ref_idx = ((cm->current_frame.frame_number - lag_alt) % sh);
+  if (frame_number > lag_alt) alt_ref_idx = ((frame_number - lag_alt) % sh);
   if (cpi->sf.rt_sf.ref_frame_comp_nonrd[1]) {
     // Moving index for LAST2, lag behind LAST by 2 frames.
-    if (cm->current_frame.frame_number > 2)
-      last2_idx = ((cm->current_frame.frame_number - 2) % sh);
+    if (frame_number > 2) last2_idx = ((frame_number - 2) % sh);
   }
   rtc_ref->ref_idx[0] = last_idx;          // LAST
   rtc_ref->ref_idx[1] = last_idx_refresh;  // LAST2 (for refresh of last).
@@ -2930,10 +2968,8 @@ static void rc_scene_detection_onepass_rt(AV1_COMP *cpi,
   }
   if (width != cm->render_width || height != cm->render_height ||
       unscaled_src == NULL || unscaled_last_src == NULL) {
-    if (cpi->src_sad_blk_64x64) {
-      aom_free(cpi->src_sad_blk_64x64);
-      cpi->src_sad_blk_64x64 = NULL;
-    }
+    aom_free(cpi->src_sad_blk_64x64);
+    cpi->src_sad_blk_64x64 = NULL;
   }
   if (unscaled_src == NULL || unscaled_last_src == NULL) return;
   src_y = unscaled_src->y_buffer;
@@ -2945,10 +2981,8 @@ static void rc_scene_detection_onepass_rt(AV1_COMP *cpi,
   last_src_width = unscaled_last_src->y_width;
   last_src_height = unscaled_last_src->y_height;
   if (src_width != last_src_width || src_height != last_src_height) {
-    if (cpi->src_sad_blk_64x64) {
-      aom_free(cpi->src_sad_blk_64x64);
-      cpi->src_sad_blk_64x64 = NULL;
-    }
+    aom_free(cpi->src_sad_blk_64x64);
+    cpi->src_sad_blk_64x64 = NULL;
     return;
   }
   rc->high_source_sad = 0;
@@ -2963,13 +2997,18 @@ static void rc_scene_detection_onepass_rt(AV1_COMP *cpi,
   }
   int num_zero_temp_sad = 0;
   uint32_t min_thresh = 10000;
-  if (cpi->oxcf.tune_cfg.content != AOM_CONTENT_SCREEN) min_thresh = 100000;
+  if (cpi->oxcf.tune_cfg.content != AOM_CONTENT_SCREEN) {
+    min_thresh = cm->width * cm->height <= 320 * 240 && cpi->framerate < 10.0
+                     ? 50000
+                     : 100000;
+  }
   const BLOCK_SIZE bsize = BLOCK_64X64;
   // Loop over sub-sample of frame, compute average sad over 64x64 blocks.
   uint64_t avg_sad = 0;
   uint64_t tmp_sad = 0;
   int num_samples = 0;
-  const int thresh = 6;
+  const int thresh =
+      cm->width * cm->height <= 320 * 240 && cpi->framerate < 10.0 ? 5 : 6;
   // SAD is computed on 64x64 blocks
   const int sb_size_by_mb = (cm->seq_params->sb_size == BLOCK_128X128)
                                 ? (cm->seq_params->mib_size >> 1)
@@ -2981,6 +3020,13 @@ static void rc_scene_detection_onepass_rt(AV1_COMP *cpi,
   int light_change = 0;
   // Flag to check light change or not.
   const int check_light_change = 0;
+  // TODO(marpan): There seems some difference along the bottom border when
+  // using the source_last_tl0 for last_source (used for temporal layers or
+  // when previous frame is dropped).
+  // Remove this bord parameter when issue is resolved: difference is that
+  // non-zero sad exists along bottom border even though source is static.
+  const int border =
+      rc->prev_frame_is_dropped || cpi->svc.number_temporal_layers > 1;
   // Store blkwise SAD for later use
   if (width == cm->render_width && height == cm->render_height) {
     if (cpi->src_sad_blk_64x64 == NULL) {
@@ -2989,7 +3035,8 @@ static void rc_scene_detection_onepass_rt(AV1_COMP *cpi,
                                              sizeof(*cpi->src_sad_blk_64x64)));
     }
   }
-  for (int sbi_row = 0; sbi_row < sb_rows; ++sbi_row) {
+  // Avoid bottom and right border.
+  for (int sbi_row = 0; sbi_row < sb_rows - border; ++sbi_row) {
     for (int sbi_col = 0; sbi_col < sb_cols; ++sbi_col) {
       tmp_sad = cpi->ppi->fn_ptr[bsize].sdf(src_y, src_ystride, last_src_y,
                                             last_src_ystride);
@@ -3092,6 +3139,10 @@ static void resize_reset_rc(AV1_COMP *cpi, int resize_width, int resize_height,
   int qindex;
   double tot_scale_change = (double)(resize_width * resize_height) /
                             (double)(prev_width * prev_height);
+  // Disable the skip mv search for svc on resize frame.
+  svc->skip_mvsearch_last = 0;
+  svc->skip_mvsearch_gf = 0;
+  svc->skip_mvsearch_altref = 0;
   // Reset buffer level to optimal, update target size.
   p_rc->buffer_level = p_rc->optimal_buffer_level;
   p_rc->bits_off_target = p_rc->optimal_buffer_level;
@@ -3315,6 +3366,7 @@ void av1_get_one_pass_rt_params(AV1_COMP *cpi, FRAME_TYPE *const frame_type,
         av1_svc_reset_temporal_layers(cpi, 1);
       svc->layer_context[layer].is_key_frame = 1;
     }
+    rc->frame_number_encoded = 0;
   } else {
     *frame_type = INTER_FRAME;
     gf_group->update_type[cpi->gf_frame_index] = LF_UPDATE;
@@ -3350,7 +3402,7 @@ void av1_get_one_pass_rt_params(AV1_COMP *cpi, FRAME_TYPE *const frame_type,
     if (rc->prev_coded_width == cm->width &&
         rc->prev_coded_height == cm->height) {
       rc_scene_detection_onepass_rt(cpi, frame_input);
-    } else if (cpi->src_sad_blk_64x64) {
+    } else {
       aom_free(cpi->src_sad_blk_64x64);
       cpi->src_sad_blk_64x64 = NULL;
     }

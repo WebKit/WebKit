@@ -12,8 +12,12 @@
 #include <arm_neon.h>
 #include <assert.h>
 
+#include "config/aom_config.h"
+
 #include "aom/aom_integer.h"
 #include "aom_dsp/arm/sum_neon.h"
+
+#define MAX_UPSAMPLE_SZ 16
 
 DECLARE_ALIGNED(16, const int8_t,
                 av1_filter_intra_taps_neon[FILTER_INTRA_MODES][8][8]) = {
@@ -126,7 +130,7 @@ void av1_filter_intra_predictor_neon(uint8_t *dst, ptrdiff_t stride,
       out_45 = vmlaq_s16(out_45, vreinterpretq_s16_u16(p_b_hi), f5f4_hi);
       int16x8_t out_67 = vmulq_s16(vreinterpretq_s16_u16(p_b_lo), f7f6_lo);
       out_67 = vmlaq_s16(out_67, vreinterpretq_s16_u16(p_b_hi), f7f6_hi);
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
       const int16x8_t out_0123 = vpaddq_s16(out_01, out_23);
       const int16x8_t out_4567 = vpaddq_s16(out_45, out_67);
       const int16x8_t out_01234567 = vpaddq_s16(out_0123, out_4567);
@@ -137,7 +141,7 @@ void av1_filter_intra_predictor_neon(uint8_t *dst, ptrdiff_t stride,
                                               vqmovn_s32(vpaddlq_s16(out_67)));
       const int16x8_t out_01234567 = vcombine_s16(
           vqmovn_s32(vpaddlq_s16(out_0123)), vqmovn_s32(vpaddlq_s16(out_4567)));
-#endif  // (__aarch64__)
+#endif  // AOM_ARCH_AARCH64
       const uint32x2_t out_r =
           vreinterpret_u32_u8(vqmovun_s16(vrshrq_n_s16(out_01234567, 4)));
       // Storing
@@ -150,4 +154,186 @@ void av1_filter_intra_predictor_neon(uint8_t *dst, ptrdiff_t stride,
     memcpy(dst, &buffer[r + 1][1], bw * sizeof(uint8_t));
     dst += stride;
   }
+}
+
+void av1_filter_intra_edge_neon(uint8_t *p, int sz, int strength) {
+  if (!strength) return;
+  assert(sz >= 0 && sz <= 129);
+
+  uint8_t edge[160];  // Max value of sz + enough padding for vector accesses.
+  memcpy(edge + 1, p, sz * sizeof(*p));
+
+  // Populate extra space appropriately.
+  edge[0] = edge[1];
+  edge[sz + 1] = edge[sz];
+  edge[sz + 2] = edge[sz];
+
+  // Don't overwrite first pixel.
+  uint8_t *dst = p + 1;
+  sz--;
+
+  if (strength == 1) {  // Filter: {4, 8, 4}.
+    const uint8_t *src = edge + 1;
+
+    while (sz >= 8) {
+      uint8x8_t s0 = vld1_u8(src);
+      uint8x8_t s1 = vld1_u8(src + 1);
+      uint8x8_t s2 = vld1_u8(src + 2);
+
+      // Make use of the identity:
+      // (4*a + 8*b + 4*c) >> 4 == (a + (b << 1) + c) >> 2
+      uint16x8_t t0 = vaddl_u8(s0, s2);
+      uint16x8_t t1 = vaddl_u8(s1, s1);
+      uint16x8_t sum = vaddq_u16(t0, t1);
+      uint8x8_t res = vrshrn_n_u16(sum, 2);
+
+      vst1_u8(dst, res);
+
+      src += 8;
+      dst += 8;
+      sz -= 8;
+    }
+
+    if (sz > 0) {  // Handle sz < 8 to avoid modifying out-of-bounds values.
+      uint8x8_t s0 = vld1_u8(src);
+      uint8x8_t s1 = vld1_u8(src + 1);
+      uint8x8_t s2 = vld1_u8(src + 2);
+
+      uint16x8_t t0 = vaddl_u8(s0, s2);
+      uint16x8_t t1 = vaddl_u8(s1, s1);
+      uint16x8_t sum = vaddq_u16(t0, t1);
+      uint8x8_t res = vrshrn_n_u16(sum, 2);
+
+      // Mask off out-of-bounds indices.
+      uint8x8_t current_dst = vld1_u8(dst);
+      uint8x8_t mask = vcgt_u8(vdup_n_u8(sz), vcreate_u8(0x0706050403020100));
+      res = vbsl_u8(mask, res, current_dst);
+
+      vst1_u8(dst, res);
+    }
+  } else if (strength == 2) {  // Filter: {5, 6, 5}.
+    const uint8_t *src = edge + 1;
+
+    const uint8x8x3_t filter = { { vdup_n_u8(5), vdup_n_u8(6), vdup_n_u8(5) } };
+
+    while (sz >= 8) {
+      uint8x8_t s0 = vld1_u8(src);
+      uint8x8_t s1 = vld1_u8(src + 1);
+      uint8x8_t s2 = vld1_u8(src + 2);
+
+      uint16x8_t accum = vmull_u8(s0, filter.val[0]);
+      accum = vmlal_u8(accum, s1, filter.val[1]);
+      accum = vmlal_u8(accum, s2, filter.val[2]);
+      uint8x8_t res = vrshrn_n_u16(accum, 4);
+
+      vst1_u8(dst, res);
+
+      src += 8;
+      dst += 8;
+      sz -= 8;
+    }
+
+    if (sz > 0) {  // Handle sz < 8 to avoid modifying out-of-bounds values.
+      uint8x8_t s0 = vld1_u8(src);
+      uint8x8_t s1 = vld1_u8(src + 1);
+      uint8x8_t s2 = vld1_u8(src + 2);
+
+      uint16x8_t accum = vmull_u8(s0, filter.val[0]);
+      accum = vmlal_u8(accum, s1, filter.val[1]);
+      accum = vmlal_u8(accum, s2, filter.val[2]);
+      uint8x8_t res = vrshrn_n_u16(accum, 4);
+
+      // Mask off out-of-bounds indices.
+      uint8x8_t current_dst = vld1_u8(dst);
+      uint8x8_t mask = vcgt_u8(vdup_n_u8(sz), vcreate_u8(0x0706050403020100));
+      res = vbsl_u8(mask, res, current_dst);
+
+      vst1_u8(dst, res);
+    }
+  } else {  // Filter {2, 4, 4, 4, 2}.
+    const uint8_t *src = edge;
+
+    while (sz >= 8) {
+      uint8x8_t s0 = vld1_u8(src);
+      uint8x8_t s1 = vld1_u8(src + 1);
+      uint8x8_t s2 = vld1_u8(src + 2);
+      uint8x8_t s3 = vld1_u8(src + 3);
+      uint8x8_t s4 = vld1_u8(src + 4);
+
+      // Make use of the identity:
+      // (2*a + 4*b + 4*c + 4*d + 2*e) >> 4 == (a + ((b + c + d) << 1) + e) >> 3
+      uint16x8_t t0 = vaddl_u8(s0, s4);
+      uint16x8_t t1 = vaddl_u8(s1, s2);
+      t1 = vaddw_u8(t1, s3);
+      t1 = vaddq_u16(t1, t1);
+      uint16x8_t sum = vaddq_u16(t0, t1);
+      uint8x8_t res = vrshrn_n_u16(sum, 3);
+
+      vst1_u8(dst, res);
+
+      src += 8;
+      dst += 8;
+      sz -= 8;
+    }
+
+    if (sz > 0) {  // Handle sz < 8 to avoid modifying out-of-bounds values.
+      uint8x8_t s0 = vld1_u8(src);
+      uint8x8_t s1 = vld1_u8(src + 1);
+      uint8x8_t s2 = vld1_u8(src + 2);
+      uint8x8_t s3 = vld1_u8(src + 3);
+      uint8x8_t s4 = vld1_u8(src + 4);
+
+      uint16x8_t t0 = vaddl_u8(s0, s4);
+      uint16x8_t t1 = vaddl_u8(s1, s2);
+      t1 = vaddw_u8(t1, s3);
+      t1 = vaddq_u16(t1, t1);
+      uint16x8_t sum = vaddq_u16(t0, t1);
+      uint8x8_t res = vrshrn_n_u16(sum, 3);
+
+      // Mask off out-of-bounds indices.
+      uint8x8_t current_dst = vld1_u8(dst);
+      uint8x8_t mask = vcgt_u8(vdup_n_u8(sz), vcreate_u8(0x0706050403020100));
+      res = vbsl_u8(mask, res, current_dst);
+
+      vst1_u8(dst, res);
+    }
+  }
+}
+
+void av1_upsample_intra_edge_neon(uint8_t *p, int sz) {
+  if (!sz) return;
+
+  assert(sz <= MAX_UPSAMPLE_SZ);
+
+  uint8_t edge[MAX_UPSAMPLE_SZ + 3];
+  const uint8_t *src = edge;
+
+  // Copy p[-1..(sz-1)] and pad out both ends.
+  edge[0] = p[-1];
+  edge[1] = p[-1];
+  memcpy(edge + 2, p, sz);
+  edge[sz + 2] = p[sz - 1];
+  p[-2] = p[-1];
+
+  uint8_t *dst = p - 1;
+
+  do {
+    uint8x8_t s0 = vld1_u8(src);
+    uint8x8_t s1 = vld1_u8(src + 1);
+    uint8x8_t s2 = vld1_u8(src + 2);
+    uint8x8_t s3 = vld1_u8(src + 3);
+
+    int16x8_t t0 = vreinterpretq_s16_u16(vaddl_u8(s0, s3));
+    int16x8_t t1 = vreinterpretq_s16_u16(vaddl_u8(s1, s2));
+    t1 = vmulq_n_s16(t1, 9);
+    t1 = vsubq_s16(t1, t0);
+
+    uint8x8x2_t res = { { vqrshrun_n_s16(t1, 4), s2 } };
+
+    vst2_u8(dst, res);
+
+    src += 8;
+    dst += 16;
+    sz -= 8;
+  } while (sz > 0);
 }

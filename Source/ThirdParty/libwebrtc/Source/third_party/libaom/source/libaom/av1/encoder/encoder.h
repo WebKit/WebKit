@@ -1088,9 +1088,6 @@ typedef struct AV1EncoderConfig {
 
   // A flag to control if we enable the superblock qp sweep for a given lambda
   int sb_qp_sweep;
-
-  // Selected global motion search method
-  GlobalMotionMethod global_motion_method;
   /*!\endcond */
 } AV1EncoderConfig;
 
@@ -1445,6 +1442,8 @@ typedef struct RD_COUNTS {
 
 typedef struct ThreadData {
   MACROBLOCK mb;
+  MvCosts *mv_costs_alloc;
+  IntraBCMVCosts *dv_costs_alloc;
   RD_COUNTS rd_counts;
   FRAME_COUNTS *counts;
   PC_TREE_SHARED_BUFFERS shared_coeff_buf;
@@ -1467,7 +1466,9 @@ typedef struct ThreadData {
   int32_t num_64x64_blocks;
   PICK_MODE_CONTEXT *firstpass_ctx;
   TemporalFilterData tf_data;
+  TplBuffers tpl_tmp_buffers;
   TplTxfmStats tpl_txfm_stats;
+  GlobalMotionData gm_data;
   // Pointer to the array of structures to store gradient information of each
   // pixel in a superblock. The buffer constitutes of MAX_SB_SQUARE pixel level
   // structures for each of the plane types (PLANE_TYPE_Y and PLANE_TYPE_UV).
@@ -1528,6 +1529,19 @@ typedef struct {
    * allocated.
    */
   int allocated_sb_rows;
+
+  /*!
+   * Initialized to false, set to true by the worker thread that encounters an
+   * error in order to abort the processing of other worker threads.
+   */
+  bool row_mt_exit;
+
+  /*!
+   * Initialized to false, set to true during first pass encoding by the worker
+   * thread that encounters an error in order to abort the processing of other
+   * worker threads.
+   */
+  bool firstpass_mt_exit;
 
 #if CONFIG_MULTITHREAD
   /*!
@@ -1661,6 +1675,11 @@ typedef struct PrimaryMultiThreadInfo {
    * Number of primary workers created for multi-threading.
    */
   int p_num_workers;
+
+  /*!
+   * Tracks the number of workers in encode stage multi-threading.
+   */
+  int prev_num_enc_workers;
 } PrimaryMultiThreadInfo;
 
 /*!
@@ -2936,6 +2955,11 @@ typedef struct AV1_COMP {
   TemporalFilterCtx tf_ctx;
 
   /*!
+   * Pointer to CDEF search context.
+   */
+  CdefSearchCtx *cdef_search_ctx;
+
+  /*!
    * Variables related to forcing integer mv decisions for the current frame.
    */
   ForceIntegerMVInfo force_intpel_info;
@@ -3361,6 +3385,11 @@ typedef struct AV1_COMP {
    * in a scale of 8x8 block.
    */
   uint8_t *consec_zero_mv;
+
+  /*!
+   * Allocated memory size for |consec_zero_mv|.
+   */
+  int consec_zero_mv_alloc_size;
 
   /*!
    * Block size of first pass encoding
@@ -4272,7 +4301,9 @@ static INLINE unsigned int derive_skip_apply_postproc_filters(
   }
   if (use_loopfilter) return SKIP_APPLY_LOOPFILTER;
 
-  return 0;  // All post-processing stages disabled.
+  // If we reach here, all post-processing stages are disabled, so none need to
+  // be skipped.
+  return 0;
 }
 
 static INLINE void set_postproc_filter_default_params(AV1_COMMON *cm) {

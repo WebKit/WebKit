@@ -184,8 +184,8 @@ static void cfl_compute_parameters(MACROBLOCKD *const xd, TX_SIZE tx_size) {
   cfl->are_parameters_computed = 1;
 }
 
-void cfl_predict_block(MACROBLOCKD *const xd, uint8_t *dst, int dst_stride,
-                       TX_SIZE tx_size, int plane) {
+void av1_cfl_predict_block(MACROBLOCKD *const xd, uint8_t *dst, int dst_stride,
+                           TX_SIZE tx_size, int plane) {
   CFL_CTX *const cfl = &xd->cfl;
   MB_MODE_INFO *mbmi = xd->mi[0];
   assert(is_cfl_allowed(xd));

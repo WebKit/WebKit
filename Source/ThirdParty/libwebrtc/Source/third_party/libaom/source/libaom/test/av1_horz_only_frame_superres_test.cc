@@ -162,14 +162,13 @@ template <typename Pixel>
 class ConvolveHorizRSTestBase : public ::testing::Test {
  public:
   ConvolveHorizRSTestBase() : image_(nullptr) {}
-  virtual ~ConvolveHorizRSTestBase() {}
-  virtual void TearDown() {}
+  ~ConvolveHorizRSTestBase() override = default;
 
   // Implemented by subclasses (SetUp depends on the parameters passed
   // in and RunOne depends on the function to be tested. These can't
   // be templated for low/high bit depths because they have different
   // numbers of parameters)
-  virtual void SetUp() = 0;
+  void SetUp() override = 0;
   virtual void RunOne(bool ref) = 0;
 
  protected:
@@ -261,15 +260,15 @@ class LowBDConvolveHorizRSTest
     : public ConvolveHorizRSTestBase<uint8_t>,
       public ::testing::WithParamInterface<LowBDParams> {
  public:
-  virtual ~LowBDConvolveHorizRSTest() {}
+  ~LowBDConvolveHorizRSTest() override = default;
 
-  void SetUp() {
+  void SetUp() override {
     tst_fun_ = GET_PARAM(0);
     const int bd = 8;
     SetBitDepth(bd);
   }
 
-  void RunOne(bool ref) {
+  void RunOne(bool ref) override {
     const uint8_t *src = image_->GetSrcData(ref, false);
     uint8_t *dst = image_->GetDstData(ref, false);
     const int src_stride = image_->src_stride();
@@ -299,8 +298,13 @@ class LowBDConvolveHorizRSTest
 TEST_P(LowBDConvolveHorizRSTest, Correctness) { CorrectnessTest(); }
 TEST_P(LowBDConvolveHorizRSTest, DISABLED_Speed) { SpeedTest(); }
 
+INSTANTIATE_TEST_SUITE_P(C, LowBDConvolveHorizRSTest,
+                         ::testing::Values(av1_convolve_horiz_rs_c));
+
+#if HAVE_SSE4_1
 INSTANTIATE_TEST_SUITE_P(SSE4_1, LowBDConvolveHorizRSTest,
                          ::testing::Values(av1_convolve_horiz_rs_sse4_1));
+#endif
 
 #if CONFIG_AV1_HIGHBITDEPTH
 typedef void (*HighBDConvolveHorizRsFunc)(const uint16_t *src, int src_stride,
@@ -317,15 +321,15 @@ class HighBDConvolveHorizRSTest
     : public ConvolveHorizRSTestBase<uint16_t>,
       public ::testing::WithParamInterface<HighBDParams> {
  public:
-  virtual ~HighBDConvolveHorizRSTest() {}
+  ~HighBDConvolveHorizRSTest() override = default;
 
-  void SetUp() {
+  void SetUp() override {
     tst_fun_ = GET_PARAM(0);
     const int bd = GET_PARAM(1);
     SetBitDepth(bd);
   }
 
-  void RunOne(bool ref) {
+  void RunOne(bool ref) override {
     const uint16_t *src = image_->GetSrcData(ref, false);
     uint16_t *dst = image_->GetDstData(ref, false);
     const int src_stride = image_->src_stride();
@@ -358,9 +362,24 @@ TEST_P(HighBDConvolveHorizRSTest, Correctness) { CorrectnessTest(); }
 TEST_P(HighBDConvolveHorizRSTest, DISABLED_Speed) { SpeedTest(); }
 
 INSTANTIATE_TEST_SUITE_P(
+    C, HighBDConvolveHorizRSTest,
+    ::testing::Combine(::testing::Values(av1_highbd_convolve_horiz_rs_c),
+                       ::testing::ValuesIn(kBDs)));
+
+#if HAVE_SSE4_1
+INSTANTIATE_TEST_SUITE_P(
     SSE4_1, HighBDConvolveHorizRSTest,
     ::testing::Combine(::testing::Values(av1_highbd_convolve_horiz_rs_sse4_1),
                        ::testing::ValuesIn(kBDs)));
+#endif  // HAVE_SSE4_1
+
+#if HAVE_NEON
+INSTANTIATE_TEST_SUITE_P(
+    NEON, HighBDConvolveHorizRSTest,
+    ::testing::Combine(::testing::Values(av1_highbd_convolve_horiz_rs_neon),
+                       ::testing::ValuesIn(kBDs)));
+#endif  // HAVE_NEON
+
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
 }  // namespace

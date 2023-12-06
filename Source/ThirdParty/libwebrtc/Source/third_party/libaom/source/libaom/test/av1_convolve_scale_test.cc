@@ -244,8 +244,10 @@ void TestImage<SrcPixel>::Check() const {
 typedef tuple<int, int> BlockDimension;
 
 struct BaseParams {
-  BaseParams(BlockDimension dims, NTaps ntaps_x, NTaps ntaps_y, bool avg)
-      : dims(dims), ntaps_x(ntaps_x), ntaps_y(ntaps_y), avg(avg) {}
+  BaseParams(BlockDimension dimensions, NTaps num_taps_x, NTaps num_taps_y,
+             bool average)
+      : dims(dimensions), ntaps_x(num_taps_x), ntaps_y(num_taps_y),
+        avg(average) {}
 
   BlockDimension dims;
   NTaps ntaps_x, ntaps_y;
@@ -256,14 +258,13 @@ template <typename SrcPixel>
 class ConvolveScaleTestBase : public ::testing::Test {
  public:
   ConvolveScaleTestBase() : image_(nullptr) {}
-  virtual ~ConvolveScaleTestBase() { delete image_; }
-  virtual void TearDown() {}
+  ~ConvolveScaleTestBase() override { delete image_; }
 
   // Implemented by subclasses (SetUp depends on the parameters passed
   // in and RunOne depends on the function to be tested. These can't
   // be templated for low/high bit depths because they have different
   // numbers of parameters)
-  virtual void SetUp() = 0;
+  void SetUp() override = 0;
   virtual void RunOne(bool ref) = 0;
 
  protected:
@@ -405,9 +406,9 @@ class LowBDConvolveScaleTest
     : public ConvolveScaleTestBase<uint8_t>,
       public ::testing::WithParamInterface<LowBDParams> {
  public:
-  virtual ~LowBDConvolveScaleTest() {}
+  ~LowBDConvolveScaleTest() override = default;
 
-  void SetUp() {
+  void SetUp() override {
     tst_fun_ = GET_PARAM(0);
 
     const BlockDimension &block = GET_PARAM(1);
@@ -419,7 +420,7 @@ class LowBDConvolveScaleTest
     SetParams(BaseParams(block, ntaps_x, ntaps_y, avg), bd);
   }
 
-  void RunOne(bool ref) {
+  void RunOne(bool ref) override {
     const uint8_t *src = image_->GetSrcData(ref, false);
     uint8_t *dst = image_->GetDstData(ref, false);
     convolve_params_.dst = image_->GetDst16Data(ref, false);
@@ -455,11 +456,20 @@ TEST_P(LowBDConvolveScaleTest, Check) { Run(); }
 TEST_P(LowBDConvolveScaleTest, DISABLED_Speed) { SpeedTest(); }
 
 INSTANTIATE_TEST_SUITE_P(
+    C, LowBDConvolveScaleTest,
+    ::testing::Combine(::testing::Values(av1_convolve_2d_scale_c),
+                       ::testing::ValuesIn(kBlockDim),
+                       ::testing::ValuesIn(kNTaps), ::testing::ValuesIn(kNTaps),
+                       ::testing::Bool()));
+
+#if HAVE_SSE4_1
+INSTANTIATE_TEST_SUITE_P(
     SSE4_1, LowBDConvolveScaleTest,
     ::testing::Combine(::testing::Values(av1_convolve_2d_scale_sse4_1),
                        ::testing::ValuesIn(kBlockDim),
                        ::testing::ValuesIn(kNTaps), ::testing::ValuesIn(kNTaps),
                        ::testing::Bool()));
+#endif  // HAVE_SSE4_1
 
 #if CONFIG_AV1_HIGHBITDEPTH
 typedef void (*HighbdConvolveFunc)(const uint16_t *src, int src_stride,
@@ -479,9 +489,9 @@ class HighBDConvolveScaleTest
     : public ConvolveScaleTestBase<uint16_t>,
       public ::testing::WithParamInterface<HighBDParams> {
  public:
-  virtual ~HighBDConvolveScaleTest() {}
+  ~HighBDConvolveScaleTest() override = default;
 
-  void SetUp() {
+  void SetUp() override {
     tst_fun_ = GET_PARAM(0);
 
     const BlockDimension &block = GET_PARAM(1);
@@ -493,7 +503,7 @@ class HighBDConvolveScaleTest
     SetParams(BaseParams(block, ntaps_x, ntaps_y, avg), bd);
   }
 
-  void RunOne(bool ref) {
+  void RunOne(bool ref) override {
     const uint16_t *src = image_->GetSrcData(ref, false);
     uint16_t *dst = image_->GetDstData(ref, false);
     convolve_params_.dst = image_->GetDst16Data(ref, false);
@@ -522,10 +532,30 @@ TEST_P(HighBDConvolveScaleTest, Check) { Run(); }
 TEST_P(HighBDConvolveScaleTest, DISABLED_Speed) { SpeedTest(); }
 
 INSTANTIATE_TEST_SUITE_P(
+    C, HighBDConvolveScaleTest,
+    ::testing::Combine(::testing::Values(av1_highbd_convolve_2d_scale_c),
+                       ::testing::ValuesIn(kBlockDim),
+                       ::testing::ValuesIn(kNTaps), ::testing::ValuesIn(kNTaps),
+                       ::testing::Bool(), ::testing::ValuesIn(kBDs)));
+
+#if HAVE_SSE4_1
+INSTANTIATE_TEST_SUITE_P(
     SSE4_1, HighBDConvolveScaleTest,
     ::testing::Combine(::testing::Values(av1_highbd_convolve_2d_scale_sse4_1),
                        ::testing::ValuesIn(kBlockDim),
                        ::testing::ValuesIn(kNTaps), ::testing::ValuesIn(kNTaps),
                        ::testing::Bool(), ::testing::ValuesIn(kBDs)));
+#endif  // HAVE_SSE4_1
+
+#if HAVE_NEON
+INSTANTIATE_TEST_SUITE_P(
+    NEON, HighBDConvolveScaleTest,
+    ::testing::Combine(::testing::Values(av1_highbd_convolve_2d_scale_neon),
+                       ::testing::ValuesIn(kBlockDim),
+                       ::testing::ValuesIn(kNTaps), ::testing::ValuesIn(kNTaps),
+                       ::testing::Bool(), ::testing::ValuesIn(kBDs)));
+
+#endif  // HAVE_NEON
+
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 }  // namespace

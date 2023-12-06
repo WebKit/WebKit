@@ -10,6 +10,7 @@
  */
 #include <arm_neon.h>
 
+#include "config/aom_config.h"
 #include "config/av1_rtcd.h"
 
 #include "av1/common/cfl.h"
@@ -132,7 +133,7 @@ static void cfl_luma_subsampling_444_lbd_neon(const uint8_t *input,
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
-#ifndef __aarch64__
+#if !AOM_ARCH_AARCH64
 uint16x8_t vpaddq_u16(uint16x8_t a, uint16x8_t b) {
   return vcombine_u16(vpadd_u16(vget_low_u16(a), vget_high_u16(a)),
                       vpadd_u16(vget_low_u16(b), vget_high_u16(b)));
@@ -313,7 +314,7 @@ static INLINE void subtract_average_neon(const uint16_t *src, int16_t *dst,
 
   // Permute and add in such a way that each lane contains the block sum.
   // [A+C+B+D, B+D+A+C, C+A+D+B, D+B+C+A]
-#ifdef __aarch64__
+#if AOM_ARCH_AARCH64
   sum_32x4 = vpaddq_u32(sum_32x4, sum_32x4);
   sum_32x4 = vpaddq_u32(sum_32x4, sum_32x4);
 #else

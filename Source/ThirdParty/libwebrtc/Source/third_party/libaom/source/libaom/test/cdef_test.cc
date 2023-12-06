@@ -38,8 +38,8 @@ typedef std::tuple<CdefFilterBlockFunctions, CdefFilterBlockFunctions,
 
 class CDEFBlockTest : public ::testing::TestWithParam<cdef_dir_param_t> {
  public:
-  virtual ~CDEFBlockTest() {}
-  virtual void SetUp() {
+  ~CDEFBlockTest() override = default;
+  void SetUp() override {
     cdef = GET_PARAM(0);
     ref_cdef = GET_PARAM(1);
     bsize = GET_PARAM(2);
@@ -47,10 +47,8 @@ class CDEFBlockTest : public ::testing::TestWithParam<cdef_dir_param_t> {
     depth = GET_PARAM(4);
   }
 
-  virtual void TearDown() {}
-
  protected:
-  int bsize;
+  BLOCK_SIZE bsize;
   int boundary;
   int depth;
   CdefFilterBlockFunctions cdef;
@@ -67,7 +65,8 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CDEFSpeedTest);
 typedef CDEFBlockTest CDEFSpeedHighbdTest;
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(CDEFSpeedHighbdTest);
 
-int64_t test_cdef(int bsize, int iterations, CdefFilterBlockFunctions cdef,
+int64_t test_cdef(BLOCK_SIZE bsize, int iterations,
+                  CdefFilterBlockFunctions cdef,
                   CdefFilterBlockFunctions ref_cdef, int boundary, int depth) {
   aom_usec_timer ref_timer;
   int64_t ref_elapsed_time = 0;
@@ -188,7 +187,8 @@ int64_t test_cdef(int bsize, int iterations, CdefFilterBlockFunctions cdef,
   return ref_elapsed_time;
 }
 
-void test_cdef_speed(int bsize, int iterations, CdefFilterBlockFunctions cdef,
+void test_cdef_speed(BLOCK_SIZE bsize, int iterations,
+                     CdefFilterBlockFunctions cdef,
                      CdefFilterBlockFunctions ref_cdef, int boundary,
                      int depth) {
   int64_t ref_elapsed_time =
@@ -213,13 +213,11 @@ typedef std::tuple<find_dir_t, find_dir_t> find_dir_param_t;
 
 class CDEFFindDirTest : public ::testing::TestWithParam<find_dir_param_t> {
  public:
-  virtual ~CDEFFindDirTest() {}
-  virtual void SetUp() {
+  ~CDEFFindDirTest() override = default;
+  void SetUp() override {
     finddir = GET_PARAM(0);
     ref_finddir = GET_PARAM(1);
   }
-
-  virtual void TearDown() {}
 
  protected:
   find_dir_t finddir;
@@ -304,13 +302,11 @@ typedef std::tuple<find_dir_dual_t, find_dir_dual_t> find_dir_dual_param_t;
 class CDEFFindDirDualTest
     : public ::testing::TestWithParam<find_dir_dual_param_t> {
  public:
-  virtual ~CDEFFindDirDualTest() {}
-  virtual void SetUp() {
+  ~CDEFFindDirDualTest() override = default;
+  void SetUp() override {
     finddir = GET_PARAM(0);
     ref_finddir = GET_PARAM(1);
   }
-
-  virtual void TearDown() {}
 
  protected:
   find_dir_dual_t finddir;

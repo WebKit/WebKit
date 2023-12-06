@@ -14,6 +14,10 @@
 #ifndef AOM_EXAMPLES_ENCODER_UTIL_H_
 #define AOM_EXAMPLES_ENCODER_UTIL_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "aom/aom_image.h"
 
 // Returns mismatch location (?loc[0],?loc[1]) and the values at that location
@@ -30,4 +34,7 @@ void aom_find_mismatch(const aom_image_t *const img1,
 int aom_compare_img(const aom_image_t *const img1,
                     const aom_image_t *const img2);
 
+#ifdef __cplusplus
+}
+#endif
 #endif  // AOM_EXAMPLES_ENCODER_UTIL_H_

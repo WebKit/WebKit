@@ -47,16 +47,16 @@ class DummyTimebaseVideoSource : public ::libaom_test::DummyVideoSource {
            (static_cast<double>(framerate_numerator_) / framerate_denominator_);
   }
 
-  virtual aom_codec_pts_t pts() const {
+  aom_codec_pts_t pts() const override {
     return static_cast<aom_codec_pts_t>(frame_ * FrameDuration() +
                                         starting_pts_ + 0.5);
   }
 
-  virtual unsigned long duration() const {
+  unsigned long duration() const override {
     return static_cast<unsigned long>(FrameDuration() + 0.5);
   }
 
-  virtual aom_rational_t timebase() const { return timebase_; }
+  aom_rational_t timebase() const override { return timebase_; }
 
   void set_starting_pts(int64_t starting_pts) { starting_pts_ = starting_pts; }
 
@@ -72,9 +72,9 @@ class TimestampTest
       public ::libaom_test::CodecTestWithParam<libaom_test::TestMode> {
  protected:
   TimestampTest() : EncoderTest(GET_PARAM(0)) {}
-  virtual ~TimestampTest() {}
+  ~TimestampTest() override = default;
 
-  virtual void SetUp() { InitializeConfig(GET_PARAM(1)); }
+  void SetUp() override { InitializeConfig(GET_PARAM(1)); }
 };
 
 // Tests encoding in millisecond timebase.

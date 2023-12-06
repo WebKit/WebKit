@@ -37,7 +37,7 @@ class ErrorResilienceTestLarge
     Reset();
   }
 
-  virtual ~ErrorResilienceTestLarge() {}
+  ~ErrorResilienceTestLarge() override = default;
 
   void Reset() {
     error_nframes_ = 0;
@@ -58,9 +58,9 @@ class ErrorResilienceTestLarge
     init_flags_ = AOM_CODEC_USE_PSNR;
   }
 
-  virtual void SetUp() { InitializeConfig(encoding_mode_); }
+  void SetUp() override { InitializeConfig(encoding_mode_); }
 
-  virtual void BeginPassHook(unsigned int /*pass*/) {
+  void BeginPassHook(unsigned int /*pass*/) override {
     psnr_ = 0.0;
     nframes_ = 0;
     decoded_nframes_ = 0;
@@ -68,13 +68,13 @@ class ErrorResilienceTestLarge
     mismatch_nframes_ = 0;
   }
 
-  virtual void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) {
+  void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) override {
     psnr_ += pkt->data.psnr.psnr[0];
     nframes_++;
   }
 
-  virtual void PreEncodeFrameHook(libaom_test::VideoSource *video,
-                                  libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(libaom_test::VideoSource *video,
+                          libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, kCpuUsed);
       encoder->Control(AOME_SET_ENABLEAUTOALTREF, enable_altref_);
@@ -146,7 +146,7 @@ class ErrorResilienceTestLarge
     }
   }
 
-  virtual void FramePktHook(const aom_codec_cx_pkt_t *pkt) {
+  void FramePktHook(const aom_codec_cx_pkt_t *pkt) override {
     // Check that the encode frame flags are correctly reflected
     // in the output frame flags.
     const int encode_flags = pkt->data.frame.flags >> 16;
@@ -176,21 +176,21 @@ class ErrorResilienceTestLarge
     return 0.0;
   }
 
-  virtual bool DoDecode() const {
+  bool DoDecode() const override {
     if (error_nframes_ > 0 &&
         (cfg_.g_pass == AOM_RC_LAST_PASS || cfg_.g_pass == AOM_RC_ONE_PASS)) {
       for (unsigned int i = 0; i < error_nframes_; ++i) {
         if (error_frames_[i] == nframes_ - 1) {
           std::cout << "             Skipping decoding frame: "
                     << error_frames_[i] << "\n";
-          return 0;
+          return false;
         }
       }
     }
-    return 1;
+    return true;
   }
 
-  virtual bool DoDecodeInvisible() const {
+  bool DoDecodeInvisible() const override {
     if (invisible_error_nframes_ > 0 &&
         (cfg_.g_pass == AOM_RC_LAST_PASS || cfg_.g_pass == AOM_RC_ONE_PASS)) {
       for (unsigned int i = 0; i < invisible_error_nframes_; ++i) {
@@ -198,14 +198,14 @@ class ErrorResilienceTestLarge
           std::cout << "             Skipping decoding all invisible frames in "
                        "frame pkt: "
                     << invisible_error_frames_[i] << "\n";
-          return 0;
+          return false;
         }
       }
     }
-    return 1;
+    return true;
   }
 
-  virtual void MismatchHook(const aom_image_t *img1, const aom_image_t *img2) {
+  void MismatchHook(const aom_image_t *img1, const aom_image_t *img2) override {
     if (allow_mismatch_) {
       double mismatch_psnr = compute_psnr(img1, img2);
       mismatch_psnr_ += mismatch_psnr;
@@ -216,8 +216,8 @@ class ErrorResilienceTestLarge
     }
   }
 
-  virtual void DecompressedFrameHook(const aom_image_t &img,
-                                     aom_codec_pts_t pts) {
+  void DecompressedFrameHook(const aom_image_t &img,
+                             aom_codec_pts_t pts) override {
     (void)img;
     (void)pts;
     ++decoded_nframes_;

@@ -23,18 +23,19 @@ void ReferenceBuildNmvComponentCostTable(int *mvcost,
   int bits_cost[MV_OFFSET_BITS][2];
   int class0_fp_cost[CLASS0_SIZE][MV_FP_SIZE], fp_cost[MV_FP_SIZE];
   int class0_hp_cost[2], hp_cost[2];
-  av1_cost_tokens_from_cdf(sign_cost, mvcomp->sign_cdf, NULL);
-  av1_cost_tokens_from_cdf(class_cost, mvcomp->classes_cdf, NULL);
-  av1_cost_tokens_from_cdf(class0_cost, mvcomp->class0_cdf, NULL);
+  av1_cost_tokens_from_cdf(sign_cost, mvcomp->sign_cdf, nullptr);
+  av1_cost_tokens_from_cdf(class_cost, mvcomp->classes_cdf, nullptr);
+  av1_cost_tokens_from_cdf(class0_cost, mvcomp->class0_cdf, nullptr);
   for (i = 0; i < MV_OFFSET_BITS; ++i) {
-    av1_cost_tokens_from_cdf(bits_cost[i], mvcomp->bits_cdf[i], NULL);
+    av1_cost_tokens_from_cdf(bits_cost[i], mvcomp->bits_cdf[i], nullptr);
   }
   for (i = 0; i < CLASS0_SIZE; ++i)
-    av1_cost_tokens_from_cdf(class0_fp_cost[i], mvcomp->class0_fp_cdf[i], NULL);
-  av1_cost_tokens_from_cdf(fp_cost, mvcomp->fp_cdf, NULL);
+    av1_cost_tokens_from_cdf(class0_fp_cost[i], mvcomp->class0_fp_cdf[i],
+                             nullptr);
+  av1_cost_tokens_from_cdf(fp_cost, mvcomp->fp_cdf, nullptr);
   if (precision > MV_SUBPEL_LOW_PRECISION) {
-    av1_cost_tokens_from_cdf(class0_hp_cost, mvcomp->class0_hp_cdf, NULL);
-    av1_cost_tokens_from_cdf(hp_cost, mvcomp->hp_cdf, NULL);
+    av1_cost_tokens_from_cdf(class0_hp_cost, mvcomp->class0_hp_cdf, nullptr);
+    av1_cost_tokens_from_cdf(hp_cost, mvcomp->hp_cdf, nullptr);
   }
   mvcost[0] = 0;
   for (v = 1; v <= MV_MAX; ++v) {

@@ -662,8 +662,7 @@ int64_t av1_interpolation_filter_search(
   const int num_planes = av1_num_planes(cm);
   MACROBLOCKD *const xd = &x->e_mbd;
   MB_MODE_INFO *const mbmi = xd->mi[0];
-  const int need_search =
-      av1_is_interp_needed(xd) && !cpi->sf.rt_sf.skip_interp_filter_search;
+  const int need_search = av1_is_interp_needed(xd);
   const int ref_frame = xd->mi[0]->ref_frame[0];
   RD_STATS rd_stats_luma, rd_stats;
 
@@ -682,6 +681,7 @@ int64_t av1_interpolation_filter_search(
     *rd = args->interp_filter_stats[match_found_idx].rd;
     x->pred_sse[ref_frame] =
         args->interp_filter_stats[match_found_idx].pred_sse;
+    *skip_build_pred = 0;
     return 0;
   }
 

@@ -14,6 +14,8 @@
 
 #include "config/aom_config.h"
 
+#include "aom/internal/aom_codec_internal.h"
+
 #include "aom_ports/mem.h"
 #include "av1/common/blockd.h"
 #include "av1/common/seg_common.h"
@@ -87,6 +89,7 @@ typedef struct LoopFilterWorkerData {
 
   AV1_DEBLOCKING_PARAMETERS params_buf[MAX_MIB_SIZE];
   TX_SIZE tx_buf[MAX_MIB_SIZE];
+  struct aom_internal_error_info error_info;
 } LFWorkerData;
 /*!\endcond */
 

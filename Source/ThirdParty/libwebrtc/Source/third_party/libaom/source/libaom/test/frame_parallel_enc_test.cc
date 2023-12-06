@@ -36,9 +36,9 @@ class AVxFrameParallelThreadEncodeTest
     cfg.allow_lowbitdepth = 1;
     decoder_ = codec_->CreateDecoder(cfg, 0);
   }
-  virtual ~AVxFrameParallelThreadEncodeTest() { delete decoder_; }
+  ~AVxFrameParallelThreadEncodeTest() override { delete decoder_; }
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(::libaom_test::kTwoPassGood);
     cfg_.rc_end_usage = AOM_VBR;
     cfg_.g_lag_in_frames = 35;
@@ -49,12 +49,12 @@ class AVxFrameParallelThreadEncodeTest
     cfg_.g_threads = 16;
   }
 
-  virtual void BeginPassHook(unsigned int /*pass*/) {
+  void BeginPassHook(unsigned int /*pass*/) override {
     encoder_initialized_ = false;
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource * /*video*/,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource * /*video*/,
+                          ::libaom_test::Encoder *encoder) override {
     if (encoder_initialized_) return;
     SetTileSize(encoder);
     encoder->Control(AOME_SET_CPUUSED, set_cpu_used_);
@@ -73,7 +73,7 @@ class AVxFrameParallelThreadEncodeTest
     encoder->Control(AV1E_SET_TILE_ROWS, tile_rows_);
   }
 
-  virtual void FramePktHook(const aom_codec_cx_pkt_t *pkt) {
+  void FramePktHook(const aom_codec_cx_pkt_t *pkt) override {
     size_enc_.push_back(pkt->data.frame.sz);
 
     ::libaom_test::MD5 md5_enc;

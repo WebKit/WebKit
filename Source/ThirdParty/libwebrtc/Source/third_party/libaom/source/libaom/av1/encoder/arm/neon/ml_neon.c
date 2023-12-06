@@ -13,6 +13,7 @@
 #include <assert.h>
 #include <arm_neon.h>
 
+#include "config/aom_config.h"
 #include "config/av1_rtcd.h"
 #include "av1/encoder/ml.h"
 
@@ -46,7 +47,7 @@ static void nn_propagate_8to1(int num_inputs, const float *const inputs,
     vadd = vmlaq_f32(vadd, inputs_h, weights_h);
     vadd = vmlaq_f32(vadd, inputs_l, weights_l);
   }
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   total += vaddvq_f32(vadd);
 #else
   float32x2_t vadd_lo = vadd_f32(vget_low_f32(vadd), vget_high_f32(vadd));
@@ -80,7 +81,7 @@ static void nn_propagate_xto1(int num_inputs, const float *const inputs,
     j -= 8;
   }
 
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   total += vaddvq_f32(vadd);
 
 #else
@@ -98,7 +99,7 @@ static void nn_propagate_xsto1(int num_inputs, const float *const inputs,
                                const float *layer_bias,
                                float *const output_nodes) {
   float total = *layer_bias;
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   const float32x4_t v_inputs = vld1q_f32(inputs);
   const float32x4_t v_weights = vld1q_f32(weights);
   const float32x4_t vadd = vmulq_f32(v_inputs, v_weights);
@@ -126,7 +127,7 @@ static void nn_propagate_4to1(int num_inputs, const float *const inputs,
     vadd = vmlaq_f32(vadd, v_inputs, v_weights);
   }
 
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   total += vaddvq_f32(vadd);
 #else
   float32x2_t vadd_lo = vadd_f32(vget_low_f32(vadd), vget_high_f32(vadd));
@@ -159,7 +160,7 @@ static void nn_propagate_4to4(int num_inputs, const float *const inputs,
     }
   }
   for (int i = 0; i < 2; i++)
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
     mul0[i] = vpaddq_f32(mul0[i], mul1[i]);
   const float32x4_t hh = vpaddq_f32(mul0[0], mul0[1]);
 #else
@@ -197,7 +198,7 @@ static void nn_propagate_4to8(const int num_inputs, const float *const inputs,
     }
   }
   for (int i = 0; i < 4; i++)
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
     mul0[i] = vpaddq_f32(mul0[i], mul1[i]);
   const float32x4_t hh0 = vpaddq_f32(mul0[0], mul0[1]);
   const float32x4_t hh1 = vpaddq_f32(mul0[2], mul0[3]);
@@ -239,7 +240,7 @@ static void nn_propagate_8to4(const int num_inputs, const float *const inputs,
       add[i] = vmlaq_f32(add[i], inputs_h, weight_h);
     }
   }
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   const float32x4_t hadd_h = vpaddq_f32(add[2], add[3]);
   const float32x4_t hadd_l = vpaddq_f32(add[0], add[1]);
   const float32x4_t haddhadd = vpaddq_f32(hadd_l, hadd_h);

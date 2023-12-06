@@ -139,6 +139,14 @@ typedef struct SVC {
    * Force zero-mv in mode search for the spatial/inter-layer reference.
    */
   int force_zero_mode_spatial_ref;
+
+  /*!
+   * Flag to indicate that current spatial layer has a lower quality layer
+   * (at the same timestamp) that can be used as a reference.
+   * Lower quality layer refers to the same resolution but encoded at
+   * different/lower bitrate.
+   */
+  int has_lower_quality_layer;
 } SVC;
 
 struct AV1_COMP;

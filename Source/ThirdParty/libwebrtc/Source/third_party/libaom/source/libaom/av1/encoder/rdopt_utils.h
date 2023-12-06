@@ -772,6 +772,24 @@ static INLINE void av1_copy_usable_ref_mv_stack_and_weight(
          USABLE_REF_MV_STACK_SIZE * sizeof(xd->ref_mv_stack[0][0]));
 }
 
+// Get transform rd gate level for the given transform search case.
+static INLINE int get_txfm_rd_gate_level(
+    const int is_masked_compound_enabled,
+    const int txfm_rd_gate_level[TX_SEARCH_CASES], BLOCK_SIZE bsize,
+    TX_SEARCH_CASE tx_search_case, int eval_motion_mode) {
+  assert(tx_search_case < TX_SEARCH_CASES);
+  if (tx_search_case == TX_SEARCH_MOTION_MODE && !eval_motion_mode &&
+      num_pels_log2_lookup[bsize] > 8)
+    return txfm_rd_gate_level[TX_SEARCH_MOTION_MODE];
+  // Enable aggressive gating of transform search only when masked compound type
+  // is enabled.
+  else if (tx_search_case == TX_SEARCH_COMP_TYPE_MODE &&
+           is_masked_compound_enabled)
+    return txfm_rd_gate_level[TX_SEARCH_COMP_TYPE_MODE];
+
+  return txfm_rd_gate_level[TX_SEARCH_DEFAULT];
+}
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif

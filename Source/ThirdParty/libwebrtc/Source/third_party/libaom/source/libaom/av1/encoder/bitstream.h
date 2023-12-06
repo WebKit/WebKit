@@ -74,6 +74,9 @@ typedef struct {
 
   // Index of next job to be processed.
   int next_job_idx;
+  // Initialized to false, set to true by the worker thread that encounters an
+  // error in order to abort the processing of other worker threads.
+  bool pack_bs_mt_exit;
 } AV1EncPackBSSync;
 
 /*!\endcond */

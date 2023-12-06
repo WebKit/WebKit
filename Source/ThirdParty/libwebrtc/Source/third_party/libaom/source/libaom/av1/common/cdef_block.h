@@ -47,9 +47,6 @@ typedef void (*cdef_filter_block_func)(void *dest, int dstride,
                                        int coeff_shift, int block_width,
                                        int block_height);
 
-void copy_cdef_16bit_to_16bit(uint16_t *dst, int dstride, uint16_t *src,
-                              cdef_list *dlist, int cdef_count, int bsize);
-
 void av1_cdef_filter_fb(uint8_t *dst8, uint16_t *dst16, int dstride,
                         const uint16_t *in, int xdec, int ydec,
                         int dir[CDEF_NBLOCKS][CDEF_NBLOCKS], int *dirinit,

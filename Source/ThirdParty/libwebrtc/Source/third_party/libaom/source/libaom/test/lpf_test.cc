@@ -127,15 +127,13 @@ uint8_t GetHevThresh(ACMRandom *rnd) {
 template <typename func_type_t, typename params_t>
 class LoopTestParam : public ::testing::TestWithParam<params_t> {
  public:
-  virtual ~LoopTestParam() {}
-  virtual void SetUp() {
+  ~LoopTestParam() override = default;
+  void SetUp() override {
     loopfilter_op_ = std::get<0>(this->GetParam());
     ref_loopfilter_op_ = std::get<1>(this->GetParam());
     bit_depth_ = std::get<2>(this->GetParam());
     mask_ = (1 << bit_depth_) - 1;
   }
-
-  virtual void TearDown() {}
 
  protected:
   int bit_depth_;

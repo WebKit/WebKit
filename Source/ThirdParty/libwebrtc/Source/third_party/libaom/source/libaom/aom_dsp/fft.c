@@ -11,6 +11,7 @@
 
 #include "aom_dsp/aom_dsp_common.h"
 #include "aom_dsp/fft_common.h"
+#include "config/aom_dsp_rtcd.h"
 
 static INLINE void simple_transpose(const float *A, float *B, int n) {
   for (int y = 0; y < n; y++) {

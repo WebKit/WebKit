@@ -86,9 +86,9 @@ class EndToEndTest
         cpu_used_(GET_PARAM(3)), psnr_(0.0), nframes_(0),
         encoding_mode_(GET_PARAM(1)) {}
 
-  virtual ~EndToEndTest() {}
+  ~EndToEndTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(encoding_mode_);
     if (encoding_mode_ == ::libaom_test::kOnePassGood ||
         encoding_mode_ == ::libaom_test::kTwoPassGood) {
@@ -100,18 +100,18 @@ class EndToEndTest
     }
   }
 
-  virtual void BeginPassHook(unsigned int) {
+  void BeginPassHook(unsigned int) override {
     psnr_ = 0.0;
     nframes_ = 0;
   }
 
-  virtual void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) {
+  void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) override {
     psnr_ += pkt->data.psnr.psnr[0];
     nframes_++;
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AV1E_SET_FRAME_PARALLEL_DECODING, 1);
       encoder->Control(AV1E_SET_TILE_COLUMNS, 4);

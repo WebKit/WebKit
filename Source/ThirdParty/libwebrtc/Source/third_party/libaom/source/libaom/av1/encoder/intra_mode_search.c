@@ -874,16 +874,17 @@ int64_t av1_rd_pick_intra_sbuv_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
   for (int mode_idx = 0; mode_idx < UV_INTRA_MODES; ++mode_idx) {
     int this_rate;
     RD_STATS tokenonly_rd_stats;
-    UV_PREDICTION_MODE mode = uv_rd_search_mode_order[mode_idx];
+    UV_PREDICTION_MODE uv_mode = uv_rd_search_mode_order[mode_idx];
 
     // Skip the current mode evaluation if the RD cost derived using the mode
     // signaling rate exceeds the best_rd so far.
     const int mode_rate =
-        mode_costs->intra_uv_mode_cost[cfl_allowed][mbmi->mode][mode];
+        mode_costs->intra_uv_mode_cost[cfl_allowed][mbmi->mode][uv_mode];
     if (RDCOST(x->rdmult, mode_rate, 0) > best_rd) continue;
 
-    const int is_diagonal_mode = av1_is_diagonal_mode(get_uv_mode(mode));
-    const int is_directional_mode = av1_is_directional_mode(get_uv_mode(mode));
+    PREDICTION_MODE equiv_mode = get_uv_mode(uv_mode);
+    const int is_diagonal_mode = av1_is_diagonal_mode(equiv_mode);
+    const int is_directional_mode = av1_is_directional_mode(equiv_mode);
 
     if (is_diagonal_mode && !cpi->oxcf.intra_mode_cfg.enable_diagonal_intra)
       continue;
@@ -892,25 +893,26 @@ int64_t av1_rd_pick_intra_sbuv_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
       continue;
 
     if (!(cpi->sf.intra_sf.intra_uv_mode_mask[txsize_sqr_up_map[max_tx_size]] &
-          (1 << mode)))
+          (1 << uv_mode)))
       continue;
-    if (!intra_mode_cfg->enable_smooth_intra && mode >= UV_SMOOTH_PRED &&
-        mode <= UV_SMOOTH_H_PRED)
+    if (!intra_mode_cfg->enable_smooth_intra && uv_mode >= UV_SMOOTH_PRED &&
+        uv_mode <= UV_SMOOTH_H_PRED)
       continue;
 
-    if (!intra_mode_cfg->enable_paeth_intra && mode == UV_PAETH_PRED) continue;
+    if (!intra_mode_cfg->enable_paeth_intra && uv_mode == UV_PAETH_PRED)
+      continue;
 
     assert(mbmi->mode < INTRA_MODES);
     if (cpi->sf.intra_sf.prune_chroma_modes_using_luma_winner &&
-        !(av1_derived_chroma_intra_mode_used_flag[mbmi->mode] & (1 << mode)))
+        !(av1_derived_chroma_intra_mode_used_flag[mbmi->mode] & (1 << uv_mode)))
       continue;
 
-    mbmi->uv_mode = mode;
+    mbmi->uv_mode = uv_mode;
 
     // Init variables for cfl and angle delta
     const SPEED_FEATURES *sf = &cpi->sf;
     mbmi->angle_delta[PLANE_TYPE_UV] = 0;
-    if (mode == UV_CFL_PRED) {
+    if (uv_mode == UV_CFL_PRED) {
       if (!cfl_allowed || !intra_mode_cfg->enable_cfl_intra) continue;
       assert(!is_directional_mode);
       const TX_SIZE uv_tx_size = av1_get_tx_size(AOM_PLANE_U, xd);
@@ -936,18 +938,18 @@ int64_t av1_rd_pick_intra_sbuv_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
             intra_search_state.directional_mode_skip_mask, is_chroma);
         intra_search_state.dir_mode_skip_mask_ready = 1;
       }
-      if (intra_search_state.directional_mode_skip_mask[mode]) {
+      if (intra_search_state.directional_mode_skip_mask[uv_mode]) {
         continue;
       }
 
       // Search through angle delta
       const int rate_overhead =
-          mode_costs->intra_uv_mode_cost[cfl_allowed][mbmi->mode][mode];
+          mode_costs->intra_uv_mode_cost[cfl_allowed][mbmi->mode][uv_mode];
       if (!rd_pick_intra_angle_sbuv(cpi, x, bsize, rate_overhead, best_rd,
                                     &this_rate, &tokenonly_rd_stats))
         continue;
     } else {
-      if (mode == UV_SMOOTH_PRED &&
+      if (uv_mode == UV_SMOOTH_PRED &&
           should_prune_chroma_smooth_pred_based_on_source_variance(cpi, x,
                                                                    bsize))
         continue;
@@ -958,7 +960,7 @@ int64_t av1_rd_pick_intra_sbuv_mode(const AV1_COMP *const cpi, MACROBLOCK *x,
       }
     }
     const int mode_cost =
-        mode_costs->intra_uv_mode_cost[cfl_allowed][mbmi->mode][mode];
+        mode_costs->intra_uv_mode_cost[cfl_allowed][mbmi->mode][uv_mode];
     this_rate = tokenonly_rd_stats.rate +
                 intra_mode_info_cost_uv(cpi, x, mbmi, bsize, mode_cost);
     this_rd = RDCOST(x->rdmult, this_rate, tokenonly_rd_stats.dist);

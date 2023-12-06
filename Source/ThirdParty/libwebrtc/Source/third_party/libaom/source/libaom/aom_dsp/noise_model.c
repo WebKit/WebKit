@@ -1680,10 +1680,12 @@ int aom_denoise_and_model_run(struct aom_denoise_and_model_t *ctx,
     if (apply_denoise) {
       memcpy(raw_data[0], ctx->denoised[0],
              (strides[0] * sd->y_height) << use_highbd);
-      memcpy(raw_data[1], ctx->denoised[1],
-             (strides[1] * sd->uv_height) << use_highbd);
-      memcpy(raw_data[2], ctx->denoised[2],
-             (strides[2] * sd->uv_height) << use_highbd);
+      if (!sd->monochrome) {
+        memcpy(raw_data[1], ctx->denoised[1],
+               (strides[1] * sd->uv_height) << use_highbd);
+        memcpy(raw_data[2], ctx->denoised[2],
+               (strides[2] * sd->uv_height) << use_highbd);
+      }
     }
   }
   return 1;

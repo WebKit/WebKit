@@ -27,9 +27,9 @@ class CpuUsedFirstpassTest
  protected:
   CpuUsedFirstpassTest()
       : EncoderTest(GET_PARAM(0)), second_pass_cpu_used_(GET_PARAM(2)) {}
-  virtual ~CpuUsedFirstpassTest() {}
+  ~CpuUsedFirstpassTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(::libaom_test::kTwoPassGood);
     const aom_rational timebase = { 1, 30 };
     cfg_.g_timebase = timebase;
@@ -40,7 +40,7 @@ class CpuUsedFirstpassTest
     init_flags_ = AOM_CODEC_USE_PSNR;
   }
 
-  virtual void BeginPassHook(unsigned int pass) {
+  void BeginPassHook(unsigned int pass) override {
     psnr_ = 0.0;
     nframes_ = 0;
 
@@ -50,13 +50,13 @@ class CpuUsedFirstpassTest
       cpu_used_ = second_pass_cpu_used_;
   }
 
-  virtual void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) {
+  void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) override {
     psnr_ += pkt->data.psnr.psnr[0];
     nframes_++;
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, cpu_used_);
       encoder->Control(AOME_SET_ENABLEAUTOALTREF, 1);

@@ -82,7 +82,7 @@ void Dropout(TX_SIZE tx_size, TX_TYPE tx_type, int dropout_num_before,
   while (new_eob > 0 && qcoeff_scan[new_eob - 1] == 0) --new_eob;
   EXPECT_EQ(new_eob, mb.plane[kPlane].eobs[0]);
 
-  // Check qqcoeff is still valid.
+  // Check dqcoeff is still valid.
   for (int i = 0; i < max_eob; ++i) {
     EXPECT_EQ(qcoeff[i] * kDequantFactor, dqcoeff[i]);
   }

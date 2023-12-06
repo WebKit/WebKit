@@ -28,6 +28,9 @@ static INLINE void transpose4x4(const float *A, float *B, const int lda,
   _mm_store_ps(&B[3 * ldb], row4);
 }
 
+// Referenced by fft_avx2.c.
+void aom_transpose_float_sse2(const float *A, float *B, int n);
+
 void aom_transpose_float_sse2(const float *A, float *B, int n) {
   for (int y = 0; y < n; y += 4) {
     for (int x = 0; x < n; x += 4) {
@@ -35,6 +38,9 @@ void aom_transpose_float_sse2(const float *A, float *B, int n) {
     }
   }
 }
+
+// Referenced by fft_avx2.c.
+void aom_fft_unpack_2d_output_sse2(const float *packed, float *output, int n);
 
 void aom_fft_unpack_2d_output_sse2(const float *packed, float *output, int n) {
   const int n2 = n / 2;

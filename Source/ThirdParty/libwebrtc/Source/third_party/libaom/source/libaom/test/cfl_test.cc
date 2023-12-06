@@ -88,7 +88,7 @@ static void printSpeed(int ref_elapsed_time, int elapsed_time, int width,
 
 class CFLTest {
  public:
-  virtual ~CFLTest() {}
+  virtual ~CFLTest() = default;
   void init(TX_SIZE tx) {
     tx_size = tx;
     width = tx_size_wide[tx_size];
@@ -106,7 +106,7 @@ class CFLTest {
 template <typename I>
 class CFLTestWithData : public CFLTest {
  public:
-  virtual ~CFLTestWithData() {}
+  ~CFLTestWithData() override = default;
 
  protected:
   I data[CFL_BUF_SQUARE];
@@ -125,7 +125,7 @@ class CFLTestWithData : public CFLTest {
 template <typename I>
 class CFLTestWithAlignedData : public CFLTest {
  public:
-  ~CFLTestWithAlignedData() {
+  ~CFLTestWithAlignedData() override {
     aom_free(chroma_pels_ref);
     aom_free(sub_luma_pels_ref);
     aom_free(chroma_pels);
@@ -177,12 +177,12 @@ typedef std::tuple<TX_SIZE, sub_avg_fn> sub_avg_param;
 class CFLSubAvgTest : public ::testing::TestWithParam<sub_avg_param>,
                       public CFLTestWithData<int16_t> {
  public:
-  virtual void SetUp() {
+  void SetUp() override {
     CFLTest::init(std::get<0>(this->GetParam()));
     sub_avg = std::get<1>(this->GetParam())(tx_size);
     sub_avg_ref = cfl_get_subtract_average_fn_c(tx_size);
   }
-  virtual ~CFLSubAvgTest() {}
+  ~CFLSubAvgTest() override = default;
 
  protected:
   cfl_subtract_average_fn sub_avg;
@@ -223,7 +223,7 @@ template <typename S, typename T, typename I>
 class CFLSubsampleTest : public ::testing::TestWithParam<S>,
                          public CFLTestWithData<I> {
  public:
-  virtual void SetUp() {
+  void SetUp() override {
     CFLTest::init(std::get<0>(this->GetParam()));
     fun_420 = std::get<1>(this->GetParam())(this->tx_size);
     fun_422 = std::get<2>(this->GetParam())(this->tx_size);
@@ -284,8 +284,8 @@ class CFLSubsampleLBDTest
     : public CFLSubsampleTest<subsample_lbd_param, cfl_subsample_lbd_fn,
                               uint8_t> {
  public:
-  virtual ~CFLSubsampleLBDTest() {}
-  virtual void SetUp() {
+  ~CFLSubsampleLBDTest() override = default;
+  void SetUp() override {
     CFLSubsampleTest::SetUp();
     fun_420_ref = cfl_get_luma_subsampling_420_lbd_c(tx_size);
     fun_422_ref = cfl_get_luma_subsampling_422_lbd_c(tx_size);
@@ -328,8 +328,8 @@ class CFLSubsampleHBDTest
     : public CFLSubsampleTest<subsample_hbd_param, cfl_subsample_hbd_fn,
                               uint16_t> {
  public:
-  virtual ~CFLSubsampleHBDTest() {}
-  virtual void SetUp() {
+  ~CFLSubsampleHBDTest() override = default;
+  void SetUp() override {
     CFLSubsampleTest::SetUp();
     fun_420_ref = cfl_get_luma_subsampling_420_hbd_c(tx_size);
     fun_422_ref = cfl_get_luma_subsampling_422_hbd_c(tx_size);
@@ -369,13 +369,13 @@ typedef std::tuple<TX_SIZE, get_predict_fn> predict_param;
 class CFLPredictTest : public ::testing::TestWithParam<predict_param>,
                        public CFLTestWithAlignedData<uint8_t> {
  public:
-  virtual void SetUp() {
+  void SetUp() override {
     CFLTest::init(std::get<0>(this->GetParam()));
     CFLTestWithAlignedData::init();
     predict = std::get<1>(this->GetParam())(tx_size);
     predict_ref = cfl_get_predict_lbd_fn_c(tx_size);
   }
-  virtual ~CFLPredictTest() {}
+  ~CFLPredictTest() override = default;
 
  protected:
   cfl_predict_lbd_fn predict;
@@ -418,13 +418,13 @@ typedef std::tuple<TX_SIZE, get_predict_fn_hbd> predict_param_hbd;
 class CFLPredictHBDTest : public ::testing::TestWithParam<predict_param_hbd>,
                           public CFLTestWithAlignedData<uint16_t> {
  public:
-  virtual void SetUp() {
+  void SetUp() override {
     CFLTest::init(std::get<0>(this->GetParam()));
     CFLTestWithAlignedData::init();
     predict = std::get<1>(this->GetParam())(tx_size);
     predict_ref = cfl_get_predict_hbd_fn_c(tx_size);
   }
-  virtual ~CFLPredictHBDTest() {}
+  ~CFLPredictHBDTest() override = default;
 
  protected:
   cfl_predict_hbd_fn predict;

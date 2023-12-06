@@ -114,10 +114,7 @@ void FillImageGradient(aom_image_t *image, int bit_depth) {
   }
 }
 
-// A test that reproduces bug aomedia:3348: Assertion
-// `ms_params->ms_buffers.ref->stride == ms_params->search_sites->stride'
-// failed.
-TEST(EncodeForcedMaxFrameWidthHeight, DISABLED_DimensionDecreasing) {
+TEST(EncodeForcedMaxFrameWidthHeight, DimensionDecreasing) {
   constexpr int kWidth = 128;
   constexpr int kHeight = 128;
   constexpr size_t kBufferSize = 3 * kWidth * kHeight;

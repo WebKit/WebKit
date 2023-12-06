@@ -510,8 +510,8 @@ MAKE_SDSF_SKIP_SAD_4D_WRAPPER(aom_highbd_sad_skip_8x32x4d)
 #define HIGHBD_OBFP_WRAPPER_8(WIDTH, HEIGHT)                 \
   HIGHBD_OBFP(BLOCK_##WIDTH##X##HEIGHT,                      \
               aom_highbd_obmc_sad##WIDTH##x##HEIGHT##_bits8, \
-              aom_highbd_obmc_variance##WIDTH##x##HEIGHT,    \
-              aom_highbd_obmc_sub_pixel_variance##WIDTH##x##HEIGHT)
+              aom_highbd_8_obmc_variance##WIDTH##x##HEIGHT,  \
+              aom_highbd_8_obmc_sub_pixel_variance##WIDTH##x##HEIGHT)
 
 #define HIGHBD_OBFP(BT, OSDF, OVF, OSVF) \
   ppi->fn_ptr[BT].osdf = OSDF;           \

@@ -31,13 +31,12 @@ extern "C" {
 #define DO_RANGE_CHECK_CLAMP 0
 #endif
 
-extern const int32_t av1_cospi_arr_data[7][64];
-extern const int32_t av1_sinpi_arr_data[7][5];
+extern const int32_t av1_cospi_arr_data[4][64];
+extern const int32_t av1_sinpi_arr_data[4][5];
 
 #define MAX_TXFM_STAGE_NUM 12
 
 static const int cos_bit_min = 10;
-static const int cos_bit_max = 16;
 
 #define NewSqrt2Bits ((int32_t)12)
 // 2^12 * sqrt(2)
@@ -52,6 +51,29 @@ static INLINE const int32_t *cospi_arr(int n) {
 static INLINE const int32_t *sinpi_arr(int n) {
   return av1_sinpi_arr_data[n - cos_bit_min];
 }
+
+// The reduced bit-width and permuted arrays are only used in the Arm Neon
+// implementations in av1_fwd_txfm2d_neon.c and highbd_fwd_txfm_neon.c for now.
+#if HAVE_NEON
+// Store cospi/sinpi costants in Q2.13 format.
+// See: https://en.wikipedia.org/wiki/Q_(number_format)
+extern const int16_t av1_cospi_arr_q13_data[4][128];
+extern const int16_t av1_sinpi_arr_q13_data[4][4];
+
+extern const int32_t av1_cospi_arr_s32_data[4][66];
+
+static INLINE const int16_t *cospi_arr_q13(int n) {
+  return av1_cospi_arr_q13_data[n - cos_bit_min];
+}
+
+static INLINE const int16_t *sinpi_arr_q13(int n) {
+  return av1_sinpi_arr_q13_data[n - cos_bit_min];
+}
+
+static INLINE const int32_t *cospi_arr_s32(int n) {
+  return av1_cospi_arr_s32_data[n - cos_bit_min];
+}
+#endif  // HAVE_NEON
 
 static INLINE int32_t range_check_value(int32_t value, int8_t bit) {
 #if CONFIG_COEFFICIENT_RANGE_CHECKING

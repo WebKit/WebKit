@@ -2520,7 +2520,7 @@ typedef libaom_test::FuncParam<CNNConvolveNoMaxpoolPaddingValidFunc>
 
 class CNNConvolveTest : public ::testing::TestWithParam<CNNConvolveTestFuncs> {
  protected:
-  virtual void SetUp() { params_ = GetParam(); }
+  void SetUp() override { params_ = GetParam(); }
 
   void RunCNNConvolveSetup(int run_times) {
     int in_width = 65;

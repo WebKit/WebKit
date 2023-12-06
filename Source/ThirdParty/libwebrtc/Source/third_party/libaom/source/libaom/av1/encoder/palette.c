@@ -564,7 +564,24 @@ void av1_rd_pick_palette_intra_sby(
   }
 
   uint8_t *const color_map = xd->plane[0].color_index_map;
-  if (colors_threshold > 1 && colors_threshold <= 64) {
+  int color_thresh_palette = 64;
+  // Allow for larger color_threshold for palette search, based on color,
+  // scene_change, and block source variance.
+  // Since palette is Y based, only allow larger threshold if block
+  // color_dist is below threshold.
+  if (cpi->sf.rt_sf.use_nonrd_pick_mode &&
+      cpi->sf.rt_sf.increase_color_thresh_palette && cpi->rc.high_source_sad &&
+      x->source_variance > 50) {
+    int64_t norm_color_dist = 0;
+    if (x->color_sensitivity[0] || x->color_sensitivity[1]) {
+      norm_color_dist = x->min_dist_inter_uv >>
+                        (mi_size_wide_log2[bsize] + mi_size_high_log2[bsize]);
+      if (x->color_sensitivity[0] && x->color_sensitivity[1])
+        norm_color_dist = norm_color_dist >> 1;
+    }
+    if (norm_color_dist < 8000) color_thresh_palette += 20;
+  }
+  if (colors_threshold > 1 && colors_threshold <= color_thresh_palette) {
     int16_t *const data = x->palette_buffer->kmeans_data_buf;
     int16_t centroids[PALETTE_MAX_SIZE];
     int lower_bound, upper_bound;

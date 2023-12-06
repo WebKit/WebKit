@@ -125,7 +125,7 @@ class TempOutFile {
 // aom_image_t images with associated timestamps and duration.
 class VideoSource {
  public:
-  virtual ~VideoSource() {}
+  virtual ~VideoSource() = default;
 
   // Prepare the stream for reading, rewind/open as necessary.
   virtual void Begin() = 0;
@@ -160,35 +160,35 @@ class DummyVideoSource : public VideoSource {
     ReallocImage();
   }
 
-  virtual ~DummyVideoSource() { aom_img_free(img_); }
+  ~DummyVideoSource() override { aom_img_free(img_); }
 
-  virtual void Begin() {
+  void Begin() override {
     frame_ = 0;
     FillFrame();
   }
 
-  virtual void Next() {
+  void Next() override {
     ++frame_;
     FillFrame();
   }
 
-  virtual aom_image_t *img() const {
+  aom_image_t *img() const override {
     return (frame_ < limit_) ? img_ : nullptr;
   }
 
   // Models a stream where Timebase = 1/FPS, so pts == frame.
-  virtual aom_codec_pts_t pts() const { return frame_; }
+  aom_codec_pts_t pts() const override { return frame_; }
 
-  virtual unsigned long duration() const { return 1; }
+  unsigned long duration() const override { return 1; }
 
-  virtual aom_rational_t timebase() const {
+  aom_rational_t timebase() const override {
     const aom_rational_t t = { 1, 30 };
     return t;
   }
 
-  virtual unsigned int frame() const { return frame_; }
+  unsigned int frame() const override { return frame_; }
 
-  virtual unsigned int limit() const { return limit_; }
+  unsigned int limit() const override { return limit_; }
 
   void set_limit(unsigned int limit) { limit_ = limit; }
 
@@ -234,7 +234,7 @@ class RandomVideoSource : public DummyVideoSource {
       : rnd_(seed), seed_(seed) {}
 
   // Reset the RNG to get a matching stream for the second pass
-  virtual void Begin() {
+  void Begin() override {
     frame_ = 0;
     rnd_.Reset(seed_);
     FillFrame();
@@ -243,7 +243,7 @@ class RandomVideoSource : public DummyVideoSource {
  protected:
   // 15 frames of noise, followed by 15 static frames. Reset to 0 rather
   // than holding previous frames to encourage keyframes to be thrown.
-  virtual void FillFrame() {
+  void FillFrame() override {
     if (img_) {
       if (frame_ % 30 < 15)
         for (size_t i = 0; i < raw_sz_; ++i) img_->img_data[i] = rnd_.Rand8();
@@ -260,7 +260,7 @@ class RandomVideoSource : public DummyVideoSource {
 // decompressed images to the decoder.
 class CompressedVideoSource {
  public:
-  virtual ~CompressedVideoSource() {}
+  virtual ~CompressedVideoSource() = default;
 
   virtual void Init() = 0;
 

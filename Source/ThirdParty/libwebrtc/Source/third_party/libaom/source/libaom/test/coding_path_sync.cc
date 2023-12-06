@@ -120,9 +120,9 @@ class CompressedSource {
   int width_, height_;
 };
 
-// lowers an aom_image_t to a easily comparable/printable form
-std::vector<int16_t> Serialize(const aom_image_t *img) {
-  std::vector<int16_t> bytes;
+// lowers an aom_image_t to an easily comparable/printable form
+std::vector<uint16_t> Serialize(const aom_image_t *img) {
+  std::vector<uint16_t> bytes;
   bytes.reserve(img->d_w * img->d_h * 3);
   for (int plane = 0; plane < 3; ++plane) {
     const int w = aom_img_plane_width(img, plane);
@@ -130,11 +130,13 @@ std::vector<int16_t> Serialize(const aom_image_t *img) {
 
     for (int r = 0; r < h; ++r) {
       for (int c = 0; c < w; ++c) {
-        unsigned char *row = img->planes[plane] + r * img->stride[plane];
-        if (img->fmt & AOM_IMG_FMT_HIGHBITDEPTH)
-          bytes.push_back(row[c * 2]);
-        else
+        const unsigned char *row = img->planes[plane] + r * img->stride[plane];
+        if (img->fmt & AOM_IMG_FMT_HIGHBITDEPTH) {
+          const uint16_t *row16 = reinterpret_cast<const uint16_t *>(row);
+          bytes.push_back(row16[c]);
+        } else {
           bytes.push_back(row[c]);
+        }
       }
     }
   }
@@ -155,7 +157,7 @@ class Decoder {
 
   ~Decoder() { aom_codec_destroy(&dec_); }
 
-  std::vector<int16_t> decode(const aom_codec_cx_pkt_t *pkt) {
+  std::vector<uint16_t> decode(const aom_codec_cx_pkt_t *pkt) {
     aom_codec_decode(&dec_, static_cast<uint8_t *>(pkt->data.frame.buf),
                      pkt->data.frame.sz, nullptr);
 
@@ -179,8 +181,8 @@ TEST(CodingPathSync, SearchForHbdLbdMismatch) {
     for (int k = 0; k < 3; ++k) {
       const aom_codec_cx_pkt_t *frame = enc.ReadFrame();
 
-      std::vector<int16_t> lbd_yuv = dec_lbd.decode(frame);
-      std::vector<int16_t> hbd_yuv = dec_hbd.decode(frame);
+      std::vector<uint16_t> lbd_yuv = dec_lbd.decode(frame);
+      std::vector<uint16_t> hbd_yuv = dec_hbd.decode(frame);
 
       ASSERT_EQ(lbd_yuv, hbd_yuv);
     }
@@ -199,8 +201,8 @@ TEST(CodingPathSyncLarge, SearchForHbdLbdMismatchLarge) {
     for (int k = 0; k < 5; ++k) {
       const aom_codec_cx_pkt_t *frame = enc.ReadFrame();
 
-      std::vector<int16_t> lbd_yuv = dec_lbd.decode(frame);
-      std::vector<int16_t> hbd_yuv = dec_hbd.decode(frame);
+      std::vector<uint16_t> lbd_yuv = dec_lbd.decode(frame);
+      std::vector<uint16_t> hbd_yuv = dec_hbd.decode(frame);
 
       ASSERT_EQ(lbd_yuv, hbd_yuv);
     }

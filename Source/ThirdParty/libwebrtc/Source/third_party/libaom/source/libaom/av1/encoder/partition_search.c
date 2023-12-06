@@ -40,7 +40,6 @@
 #endif
 
 #define COLLECT_MOTION_SEARCH_FEATURE_SB 0
-#define ML_PARTITION_WHOLE_TREE_DECISION 0
 
 void av1_reset_part_sf(PARTITION_SPEED_FEATURES *part_sf) {
   part_sf->partition_search_type = SEARCH_PARTITION;
@@ -73,6 +72,7 @@ void av1_reset_part_sf(PARTITION_SPEED_FEATURES *part_sf) {
   part_sf->intra_cnn_based_part_prune_level = 0;
   part_sf->ext_partition_eval_thresh = BLOCK_8X8;
   part_sf->rect_partition_eval_thresh = BLOCK_128X128;
+  part_sf->ext_part_eval_based_on_cur_best = 0;
   part_sf->prune_ext_part_using_split_info = 0;
   part_sf->prune_rectangular_split_based_on_qidx = 0;
   part_sf->early_term_after_none_split = 0;
@@ -1772,6 +1772,9 @@ void av1_rd_use_partition(AV1_COMP *cpi, ThreadData *td, TileDataEnc *tile_data,
 
   if (pc_tree->none == NULL) {
     pc_tree->none = av1_alloc_pmc(cpi, bsize, &td->shared_coeff_buf);
+    if (!pc_tree->none)
+      aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
+                         "Failed to allocate PICK_MODE_CONTEXT");
   }
   PICK_MODE_CONTEXT *ctx_none = pc_tree->none;
 
@@ -1848,6 +1851,9 @@ void av1_rd_use_partition(AV1_COMP *cpi, ThreadData *td, TileDataEnc *tile_data,
       for (int i = 0; i < SUB_PARTITIONS_RECT; ++i) {
         pc_tree->horizontal[i] =
             av1_alloc_pmc(cpi, subsize, &td->shared_coeff_buf);
+        if (!pc_tree->horizontal[i])
+          aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
+                             "Failed to allocate PICK_MODE_CONTEXT");
       }
       pick_sb_modes(cpi, tile_data, x, mi_row, mi_col, &last_part_rdc,
                     PARTITION_HORZ, subsize, pc_tree->horizontal[0],
@@ -1881,6 +1887,9 @@ void av1_rd_use_partition(AV1_COMP *cpi, ThreadData *td, TileDataEnc *tile_data,
       for (int i = 0; i < SUB_PARTITIONS_RECT; ++i) {
         pc_tree->vertical[i] =
             av1_alloc_pmc(cpi, subsize, &td->shared_coeff_buf);
+        if (!pc_tree->vertical[i])
+          aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
+                             "Failed to allocate PICK_MODE_CONTEXT");
       }
       pick_sb_modes(cpi, tile_data, x, mi_row, mi_col, &last_part_rdc,
                     PARTITION_VERT, subsize, pc_tree->vertical[0], invalid_rdc);
@@ -1981,6 +1990,9 @@ void av1_rd_use_partition(AV1_COMP *cpi, ThreadData *td, TileDataEnc *tile_data,
       if (pc_tree->split[i]->none == NULL)
         pc_tree->split[i]->none =
             av1_alloc_pmc(cpi, split_subsize, &td->shared_coeff_buf);
+      if (!pc_tree->split[i]->none)
+        aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
+                           "Failed to allocate PICK_MODE_CONTEXT");
       pick_sb_modes(cpi, tile_data, x, mi_row + y_idx, mi_col + x_idx, &tmp_rdc,
                     PARTITION_SPLIT, split_subsize, pc_tree->split[i]->none,
                     invalid_rdc);
@@ -2264,10 +2276,13 @@ static void pick_sb_modes_nonrd(AV1_COMP *const cpi, TileDataEnc *tile_data,
   x->force_zeromv_skip_for_blk =
       get_force_zeromv_skip_flag_for_blk(cpi, x, bsize);
 
-  if (!x->force_zeromv_skip_for_blk) {
+  // Source variance may be already compute at superblock level, so no need
+  // to recompute, unless bsize < sb_size or source_variance is not yet set.
+  if (!x->force_zeromv_skip_for_blk &&
+      (x->source_variance == UINT_MAX || bsize < cm->seq_params->sb_size))
     x->source_variance = av1_get_perpixel_variance_facade(
         cpi, xd, &x->plane[0].src, bsize, AOM_PLANE_Y);
-  }
+
   // Save rdmult before it might be changed, so it can be restored later.
   const int orig_rdmult = x->rdmult;
   setup_block_rdmult(cpi, x, mi_row, mi_col, bsize, aq_mode, mbmi);
@@ -2319,7 +2334,9 @@ static void pick_sb_modes_nonrd(AV1_COMP *const cpi, TileDataEnc *tile_data,
     // Do not skip if intra or new mv is picked, or color sensitivity is set.
     // Never skip on slide/scene change.
     if (cpi->sf.rt_sf.skip_cdef_sb >= 2) {
-      mi_sb[0]->cdef_strength = mi_sb[0]->cdef_strength && allow_cdef_skipping;
+      mi_sb[0]->cdef_strength =
+          mi_sb[0]->cdef_strength &&
+          (allow_cdef_skipping || x->source_variance == 0);
     } else {
       mi_sb[0]->cdef_strength =
           mi_sb[0]->cdef_strength && allow_cdef_skipping &&
@@ -2394,6 +2411,9 @@ static int try_split_partition(AV1_COMP *const cpi, ThreadData *const td,
   av1_set_offsets(cpi, tile_info, x, mi_row, mi_col, bsize);
   if (!pc_tree->none) {
     pc_tree->none = av1_alloc_pmc(cpi, bsize, &td->shared_coeff_buf);
+    if (!pc_tree->none)
+      aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
+                         "Failed to allocate PICK_MODE_CONTEXT");
   } else {
     av1_reset_pmc(pc_tree->none);
   }
@@ -2432,6 +2452,9 @@ static int try_split_partition(AV1_COMP *const cpi, ThreadData *const td,
     if (!pc_tree->split[i]->none) {
       pc_tree->split[i]->none =
           av1_alloc_pmc(cpi, subsize, &td->shared_coeff_buf);
+      if (!pc_tree->split[i]->none)
+        aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
+                           "Failed to allocate PICK_MODE_CONTEXT");
     } else {
       av1_reset_pmc(pc_tree->split[i]->none);
     }
@@ -2566,6 +2589,9 @@ static void try_merge(AV1_COMP *const cpi, ThreadData *td,
   pc_tree->partitioning = PARTITION_NONE;
   if (!pc_tree->none) {
     pc_tree->none = av1_alloc_pmc(cpi, bsize, &td->shared_coeff_buf);
+    if (!pc_tree->none)
+      aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
+                         "Failed to allocate PICK_MODE_CONTEXT");
   } else {
     av1_reset_pmc(pc_tree->none);
   }
@@ -2597,6 +2623,9 @@ static void try_merge(AV1_COMP *const cpi, ThreadData *td,
         if (!pc_tree->split[i]->none) {
           pc_tree->split[i]->none =
               av1_alloc_pmc(cpi, subsize, &td->shared_coeff_buf);
+          if (!pc_tree->split[i]->none)
+            aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
+                               "Failed to allocate PICK_MODE_CONTEXT");
         } else {
           av1_reset_pmc(pc_tree->split[i]->none);
         }
@@ -2657,6 +2686,9 @@ static void try_merge(AV1_COMP *const cpi, ThreadData *td,
       if (!pc_tree->split[i]->none) {
         pc_tree->split[i]->none =
             av1_alloc_pmc(cpi, subsize, &td->shared_coeff_buf);
+        if (!pc_tree->split[i]->none)
+          aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
+                             "Failed to allocate PICK_MODE_CONTEXT");
       }
       encode_b_nonrd(cpi, tile_data, td, tp, mi_row + y_idx, mi_col + x_idx, 0,
                      subsize, PARTITION_NONE, pc_tree->split[i]->none, NULL);
@@ -2760,6 +2792,7 @@ static void direct_partition_merging(AV1_COMP *cpi, ThreadData *td,
   struct buf_2d yv12_mb[REF_FRAMES][MAX_MB_PLANE];
   int force_skip_low_temp_var = 0;
   int skip_pred_mv = 0;
+  bool use_scaled_ref;
 
   for (int i = 0; i < MB_MODE_COUNT; ++i) {
     for (int j = 0; j < REF_FRAMES; ++j) {
@@ -2772,7 +2805,7 @@ static void direct_partition_merging(AV1_COMP *cpi, ThreadData *td,
                   x->color_sensitivity[COLOR_SENS_IDX(AOM_PLANE_V)] != 2);
 
   find_predictors(cpi, x, ref_frame, frame_mv, yv12_mb, bsize,
-                  force_skip_low_temp_var, skip_pred_mv);
+                  force_skip_low_temp_var, skip_pred_mv, &use_scaled_ref);
 
   int continue_merging = 1;
   if (frame_mv[NEARESTMV][ref_frame].as_mv.row != b0[0]->mv[0].as_mv.row ||
@@ -2788,7 +2821,7 @@ static void direct_partition_merging(AV1_COMP *cpi, ThreadData *td,
     av1_set_offsets_without_segment_id(cpi, &tile_data->tile_info, x, mi_row,
                                        mi_col, this_mi[0]->bsize);
     find_predictors(cpi, x, ref_frame, frame_mv, yv12_mb, this_mi[0]->bsize,
-                    force_skip_low_temp_var, skip_pred_mv);
+                    force_skip_low_temp_var, skip_pred_mv, &use_scaled_ref);
   } else {
     struct scale_factors *sf = get_ref_scale_factors(cm, ref_frame);
     const int is_scaled = av1_is_scaled(sf);
@@ -2943,6 +2976,9 @@ void av1_nonrd_use_partition(AV1_COMP *cpi, ThreadData *td,
     case PARTITION_NONE:
       if (!pc_tree->none) {
         pc_tree->none = av1_alloc_pmc(cpi, bsize, &td->shared_coeff_buf);
+        if (!pc_tree->none)
+          aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
+                             "Failed to allocate PICK_MODE_CONTEXT");
       } else {
         av1_reset_pmc(pc_tree->none);
       }
@@ -2956,6 +2992,9 @@ void av1_nonrd_use_partition(AV1_COMP *cpi, ThreadData *td,
         if (!pc_tree->vertical[i]) {
           pc_tree->vertical[i] =
               av1_alloc_pmc(cpi, subsize, &td->shared_coeff_buf);
+          if (!pc_tree->vertical[i])
+            aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
+                               "Failed to allocate PICK_MODE_CONTEXT");
         } else {
           av1_reset_pmc(pc_tree->vertical[i]);
         }
@@ -2976,6 +3015,9 @@ void av1_nonrd_use_partition(AV1_COMP *cpi, ThreadData *td,
         if (!pc_tree->horizontal[i]) {
           pc_tree->horizontal[i] =
               av1_alloc_pmc(cpi, subsize, &td->shared_coeff_buf);
+          if (!pc_tree->horizontal[i])
+            aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
+                               "Failed to allocate PICK_MODE_CONTEXT");
         } else {
           av1_reset_pmc(pc_tree->horizontal[i]);
         }
@@ -3492,6 +3534,9 @@ static void rectangular_partition_search(
       if (cur_ctx[i][j][0] == NULL) {
         cur_ctx[i][j][0] =
             av1_alloc_pmc(cpi, blk_params.subsize, &td->shared_coeff_buf);
+        if (!cur_ctx[i][j][0])
+          aom_internal_error(x->e_mbd.error_info, AOM_CODEC_MEM_ERROR,
+                             "Failed to allocate PICK_MODE_CONTEXT");
       }
     }
     sum_rdc->rate = part_search_state->partition_cost[partition_type];
@@ -3571,7 +3616,7 @@ static void rd_pick_ab_part(
   PartitionBlkParams blk_params = part_search_state->part_blk_params;
   const int mi_row = blk_params.mi_row;
   const int mi_col = blk_params.mi_col;
-  const int bsize = blk_params.bsize;
+  const BLOCK_SIZE bsize = blk_params.bsize;
   int64_t this_rdcost = 0;
 
 #if CONFIG_COLLECT_PARTITION_STATS
@@ -3681,7 +3726,7 @@ static void ab_partitions_search(
   PartitionBlkParams blk_params = part_search_state->part_blk_params;
   const int mi_row = blk_params.mi_row;
   const int mi_col = blk_params.mi_col;
-  const int bsize = blk_params.bsize;
+  const BLOCK_SIZE bsize = blk_params.bsize;
 
   if (part_search_state->terminate_partition_search) {
     return;
@@ -3757,6 +3802,9 @@ static void ab_partitions_search(
       // Set AB partition context.
       cur_part_ctxs[ab_part_type][i] = av1_alloc_pmc(
           cpi, ab_subsize[ab_part_type][i], &td->shared_coeff_buf);
+      if (!cur_part_ctxs[ab_part_type][i])
+        aom_internal_error(x->e_mbd.error_info, AOM_CODEC_MEM_ERROR,
+                           "Failed to allocate PICK_MODE_CONTEXT");
       // Set mode as not ready.
       cur_part_ctxs[ab_part_type][i]->rd_mode_is_ready = 0;
     }
@@ -3816,8 +3864,12 @@ static void set_4_part_ctx_and_rdcost(
       part_search_state->partition_cost[partition_type];
   part_search_state->sum_rdc.rdcost =
       RDCOST(x->rdmult, part_search_state->sum_rdc.rate, 0);
-  for (PART4_TYPES i = 0; i < SUB_PARTITIONS_PART4; ++i)
+  for (PART4_TYPES i = 0; i < SUB_PARTITIONS_PART4; ++i) {
     cur_part_ctx[i] = av1_alloc_pmc(cpi, subsize, &td->shared_coeff_buf);
+    if (!cur_part_ctx[i])
+      aom_internal_error(x->e_mbd.error_info, AOM_CODEC_MEM_ERROR,
+                         "Failed to allocate PICK_MODE_CONTEXT");
+  }
 }
 
 // Partition search of HORZ4 / VERT4 partition types.
@@ -3880,6 +3932,50 @@ static void rd_pick_4partition(
                       blk_params.bsize, av1_num_planes(cm));
 }
 
+// Do not evaluate extended partitions if NONE partition is skippable.
+static INLINE int prune_ext_part_none_skippable(
+    PICK_MODE_CONTEXT *part_none, int must_find_valid_partition,
+    int skip_non_sq_part_based_on_none, BLOCK_SIZE bsize) {
+  if ((skip_non_sq_part_based_on_none >= 1) && (part_none != NULL)) {
+    if (part_none->skippable && !must_find_valid_partition &&
+        bsize >= BLOCK_16X16) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+// Allow ab partition search
+static int allow_ab_partition_search(PartitionSearchState *part_search_state,
+                                     PARTITION_SPEED_FEATURES *part_sf,
+                                     PARTITION_TYPE curr_best_part,
+                                     int must_find_valid_partition,
+                                     int prune_ext_part_state,
+                                     int64_t best_rdcost) {
+  const PartitionBlkParams blk_params = part_search_state->part_blk_params;
+  const BLOCK_SIZE bsize = blk_params.bsize;
+
+  // Do not prune if there is no valid partition
+  if (best_rdcost == INT64_MAX) return 1;
+
+  // Determine bsize threshold to evaluate ab partitions
+  BLOCK_SIZE ab_bsize_thresh = part_sf->ext_partition_eval_thresh;
+  if (part_sf->ext_part_eval_based_on_cur_best && !must_find_valid_partition &&
+      !(curr_best_part == PARTITION_HORZ || curr_best_part == PARTITION_VERT))
+    ab_bsize_thresh = BLOCK_128X128;
+
+  // ab partitions are only allowed for square block sizes BLOCK_16X16 or
+  // higher, so ab_bsize_thresh must be large enough to exclude BLOCK_4X4 and
+  // BLOCK_8X8.
+  assert(ab_bsize_thresh >= BLOCK_8X8);
+
+  int ab_partition_allowed =
+      part_search_state->do_rectangular_split && bsize > ab_bsize_thresh &&
+      av1_blk_has_rows_and_cols(&blk_params) && !prune_ext_part_state;
+
+  return ab_partition_allowed;
+}
+
 // Prune 4-way partitions based on the number of horz/vert wins
 // in the current block and sub-blocks in PARTITION_SPLIT.
 static void prune_4_partition_using_split_info(
@@ -3913,9 +4009,28 @@ static void prune_4_partition_using_split_info(
 static void prune_4_way_partition_search(
     AV1_COMP *const cpi, MACROBLOCK *x, PC_TREE *pc_tree,
     PartitionSearchState *part_search_state, RD_STATS *best_rdc,
-    int pb_source_variance, int ext_partition_allowed,
+    int pb_source_variance, int prune_ext_part_state,
     int part4_search_allowed[NUM_PART4_TYPES]) {
-  PartitionBlkParams blk_params = part_search_state->part_blk_params;
+  const PartitionBlkParams blk_params = part_search_state->part_blk_params;
+  const BLOCK_SIZE bsize = blk_params.bsize;
+
+  // Do not prune if there is no valid partition
+  if (best_rdc->rdcost == INT64_MAX) return;
+
+  // Determine bsize threshold to evaluate 4-way partitions
+  BLOCK_SIZE part4_bsize_thresh = cpi->sf.part_sf.ext_partition_eval_thresh;
+  if (cpi->sf.part_sf.ext_part_eval_based_on_cur_best &&
+      !x->must_find_valid_partition && pc_tree->partitioning == PARTITION_NONE)
+    part4_bsize_thresh = BLOCK_128X128;
+
+  // 4-way partitions are only allowed for BLOCK_16X16, BLOCK_32X32, and
+  // BLOCK_64X64, so part4_bsize_thresh must be large enough to exclude
+  // BLOCK_4X4 and BLOCK_8X8.
+  assert(part4_bsize_thresh >= BLOCK_8X8);
+
+  bool partition4_allowed =
+      part_search_state->do_rectangular_split && bsize > part4_bsize_thresh &&
+      av1_blk_has_rows_and_cols(&blk_params) && !prune_ext_part_state;
 
   // Disable 4-way partition search flags for width less than a multiple of the
   // minimum partition width.
@@ -3926,17 +4041,15 @@ static void prune_4_way_partition_search(
     return;
   }
 
-  const int bsize = blk_params.bsize;
   PARTITION_TYPE cur_part[NUM_PART4_TYPES] = { PARTITION_HORZ_4,
                                                PARTITION_VERT_4 };
   const PartitionCfg *const part_cfg = &cpi->oxcf.part_cfg;
   // partition4_allowed is 1 if we can use a PARTITION_HORZ_4 or
   // PARTITION_VERT_4 for this block. This is almost the same as
-  // ext_partition_allowed, except that we don't allow 128x32 or 32x128
+  // partition4_allowed, except that we don't allow 128x32 or 32x128
   // blocks, so we require that bsize is not BLOCK_128X128.
-  const int partition4_allowed = part_cfg->enable_1to4_partitions &&
-                                 ext_partition_allowed &&
-                                 bsize != BLOCK_128X128;
+  partition4_allowed &=
+      part_cfg->enable_1to4_partitions && bsize != BLOCK_128X128;
 
   for (PART4_TYPES i = HORZ4; i < NUM_PART4_TYPES; i++) {
     part4_search_allowed[i] =
@@ -3986,6 +4099,9 @@ static void set_none_partition_params(const AV1_COMP *const cpi, ThreadData *td,
   // Set PARTITION_NONE context.
   if (pc_tree->none == NULL)
     pc_tree->none = av1_alloc_pmc(cpi, blk_params.bsize, &td->shared_coeff_buf);
+  if (!pc_tree->none)
+    aom_internal_error(x->e_mbd.error_info, AOM_CODEC_MEM_ERROR,
+                       "Failed to allocate PICK_MODE_CONTEXT");
 
   // Set PARTITION_NONE type cost.
   if (part_search_state->partition_none_allowed) {
@@ -4213,7 +4329,7 @@ static void split_partition_search(
   const CommonModeInfoParams *const mi_params = &cm->mi_params;
   const int mi_row = blk_params.mi_row;
   const int mi_col = blk_params.mi_col;
-  const int bsize = blk_params.bsize;
+  const BLOCK_SIZE bsize = blk_params.bsize;
   assert(bsize < BLOCK_SIZES_ALL);
   RD_STATS sum_rdc = part_search_state->sum_rdc;
   const BLOCK_SIZE subsize = get_partition_subsize(bsize, PARTITION_SPLIT);
@@ -4398,6 +4514,7 @@ static void write_partition_tree(AV1_COMP *const cpi,
   fclose(pfile);
 }
 
+#if CONFIG_PARTITION_SEARCH_ORDER
 static void verify_write_partition_tree(const AV1_COMP *const cpi,
                                         const PC_TREE *const pc_tree,
                                         const BLOCK_SIZE bsize,
@@ -4462,14 +4579,15 @@ static void verify_write_partition_tree(const AV1_COMP *const cpi,
 
 static int read_partition_tree(AV1_COMP *const cpi, PC_TREE *const pc_tree,
                                const int config_id) {
+  const AV1_COMMON *const cm = &cpi->common;
   const char *path = cpi->oxcf.partition_info_path;
   char filename[256];
   snprintf(filename, sizeof(filename), "%s/partition_tree_sb%d_c%d", path,
            cpi->sb_counter, config_id);
   FILE *pfile = fopen(filename, "r");
   if (pfile == NULL) {
-    printf("Can't find the file: %s\n", filename);
-    exit(0);
+    aom_internal_error(cm->error, AOM_CODEC_ERROR, "Can't find input file: %s.",
+                       filename);
   }
 
   int read_bsize;
@@ -4629,7 +4747,9 @@ static RD_STATS rd_search_for_fixed_partition(
       best_rdc.dist = sum_subblock_dist;
       best_rdc.rdcost = RDCOST(x->rdmult, best_rdc.rate, best_rdc.dist);
       break;
-    default: assert(0 && "invalid partition type."); exit(0);
+    default:
+      assert(0 && "invalid partition type.");
+      aom_internal_error(cm->error, AOM_CODEC_ERROR, "Invalid partition type.");
   }
   // Note: it is necessary to restore context information.
   av1_restore_context(x, &x_ctx, mi_row, mi_col, bsize, num_planes);
@@ -5071,6 +5191,7 @@ bool av1_rd_partition_search(AV1_COMP *const cpi, ThreadData *td,
                              SIMPLE_MOTION_DATA_TREE *sms_root, int mi_row,
                              int mi_col, const BLOCK_SIZE bsize,
                              RD_STATS *best_rd_cost) {
+  AV1_COMMON *const cm = &cpi->common;
   if (cpi->ext_part_controller.ready) {
     bool valid_search = true;
     const aom_ext_part_decision_mode_t decision_mode =
@@ -5086,13 +5207,13 @@ bool av1_rd_partition_search(AV1_COMP *const cpi, ThreadData *td,
       return false;
     }
     if (!valid_search) {
-      assert(0 && "Invalid search from ML model, partition search failed.");
-      exit(0);
+      aom_internal_error(
+          cm->error, AOM_CODEC_ERROR,
+          "Invalid search from ML model, partition search failed");
     }
     return true;
   }
 
-  AV1_COMMON *const cm = &cpi->common;
   MACROBLOCK *const x = &td->mb;
   int best_idx = 0;
   int64_t min_rdcost = INT64_MAX;
@@ -5108,9 +5229,8 @@ bool av1_rd_partition_search(AV1_COMP *const cpi, ThreadData *td,
     if (num_configs <= 0) {
       av1_free_pc_tree_recursive(pc_tree, av1_num_planes(cm), 0, 0,
                                  cpi->sf.part_sf.partition_search_type);
-      if (rdcost != NULL) aom_free(rdcost);
-      exit(0);
-      return false;
+      aom_free(rdcost);
+      aom_internal_error(cm->error, AOM_CODEC_ERROR, "Invalid configs.");
     }
     verify_write_partition_tree(cpi, pc_tree, bsize, i, mi_row, mi_col);
     // Encode the block with the given partition tree. Get rdcost and encoding
@@ -5143,6 +5263,7 @@ bool av1_rd_partition_search(AV1_COMP *const cpi, ThreadData *td,
 
   return true;
 }
+#endif  // CONFIG_PARTITION_SEARCH_ORDER
 
 static AOM_INLINE bool should_do_dry_run_encode_for_current_block(
     BLOCK_SIZE sb_size, BLOCK_SIZE max_partition_size, int curr_block_index,
@@ -5488,25 +5609,21 @@ BEGIN_PARTITION_SEARCH:
   assert(IMPLIES(!cpi->oxcf.part_cfg.enable_rect_partitions,
                  !part_search_state.do_rectangular_split));
 
-  int ext_partition_allowed =
-      part_search_state.do_rectangular_split &&
-      bsize > cpi->sf.part_sf.ext_partition_eval_thresh &&
-      av1_blk_has_rows_and_cols(&blk_params);
+  const int prune_ext_part_state = prune_ext_part_none_skippable(
+      pc_tree->none, x->must_find_valid_partition,
+      cpi->sf.part_sf.skip_non_sq_part_based_on_none, bsize);
 
-  // Do not evaluate extended partitions if NONE partition is skippable.
-  if ((cpi->sf.part_sf.skip_non_sq_part_based_on_none >= 1) &&
-      (pc_tree->none != NULL)) {
-    if (pc_tree->none->skippable && !x->must_find_valid_partition &&
-        bsize >= BLOCK_16X16)
-      ext_partition_allowed = 0;
-  }
+  const int ab_partition_allowed = allow_ab_partition_search(
+      &part_search_state, &cpi->sf.part_sf, pc_tree->partitioning,
+      x->must_find_valid_partition, prune_ext_part_state, best_rdc.rdcost);
+
 #if CONFIG_COLLECT_COMPONENT_TIMING
   start_timing(cpi, ab_partitions_search_time);
 #endif
   // AB partitions search stage.
   ab_partitions_search(cpi, td, tile_data, tp, x, &x_ctx, pc_tree,
                        &part_search_state, &best_rdc, rect_part_win_info,
-                       pb_source_variance, ext_partition_allowed, HORZ_A,
+                       pb_source_variance, ab_partition_allowed, HORZ_A,
                        VERT_B);
 #if CONFIG_COLLECT_COMPONENT_TIMING
   end_timing(cpi, ab_partitions_search_time);
@@ -5516,7 +5633,7 @@ BEGIN_PARTITION_SEARCH:
   int part4_search_allowed[NUM_PART4_TYPES] = { 1, 1 };
   // Prune 4-way partition search.
   prune_4_way_partition_search(cpi, x, pc_tree, &part_search_state, &best_rdc,
-                               pb_source_variance, ext_partition_allowed,
+                               pb_source_variance, prune_ext_part_state,
                                part4_search_allowed);
 
 #if CONFIG_COLLECT_COMPONENT_TIMING
@@ -5936,6 +6053,9 @@ void av1_nonrd_pick_partition(AV1_COMP *cpi, ThreadData *td,
   // PARTITION_NONE
   if (partition_none_allowed) {
     pc_tree->none = av1_alloc_pmc(cpi, bsize, &td->shared_coeff_buf);
+    if (!pc_tree->none)
+      aom_internal_error(xd->error_info, AOM_CODEC_MEM_ERROR,
+                         "Failed to allocate PICK_MODE_CONTEXT");
     PICK_MODE_CONTEXT *ctx = pc_tree->none;
 
 // Flip for RDO based pick mode

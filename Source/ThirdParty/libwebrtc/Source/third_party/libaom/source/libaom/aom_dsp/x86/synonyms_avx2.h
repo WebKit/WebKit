@@ -62,8 +62,8 @@ static INLINE __m256i yy_set_m128i(__m128i hi, __m128i lo) {
 }
 
 static INLINE __m256i yy_loadu2_128(const void *hi, const void *lo) {
-  __m128i mhi = _mm_loadu_si128((__m128i *)(hi));
-  __m128i mlo = _mm_loadu_si128((__m128i *)(lo));
+  __m128i mhi = _mm_loadu_si128((const __m128i *)(hi));
+  __m128i mlo = _mm_loadu_si128((const __m128i *)(lo));
   return yy_set_m128i(mhi, mlo);
 }
 

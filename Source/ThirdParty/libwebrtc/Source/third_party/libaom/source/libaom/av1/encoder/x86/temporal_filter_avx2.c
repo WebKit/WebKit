@@ -30,6 +30,205 @@ DECLARE_ALIGNED(32, static const uint8_t, shufflemask_16b[2][16]) = {
   { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 10, 11, 10, 11 }
 };
 
+#define CALC_X_GRADIENT(AC, GI, DF, out) \
+  out = _mm256_abs_epi16(                \
+      _mm256_add_epi16(_mm256_add_epi16(AC, GI), _mm256_slli_epi16(DF, 1)));
+
+#define CALC_Y_GRADIENT(AC, GI, BH, out) \
+  out = _mm256_abs_epi16(                \
+      _mm256_add_epi16(_mm256_sub_epi16(AC, GI), _mm256_slli_epi16(BH, 1)));
+
+double av1_estimate_noise_from_single_plane_avx2(const uint8_t *src, int height,
+                                                 int width, int stride,
+                                                 int edge_thresh) {
+  int count = 0;
+  int64_t accum = 0;
+  // w32 stores width multiple of 32.
+  const int w32 = (width - 1) & ~0x1f;
+  const __m256i zero = _mm256_setzero_si256();
+  const __m256i edge_threshold = _mm256_set1_epi16(edge_thresh);
+  __m256i num_accumulator = zero;
+  __m256i sum_accumulator = zero;
+
+  //  A | B | C
+  //  D | E | F
+  //  G | H | I
+  // g_x = (A - C) + (G - I) + 2*(D - F)
+  // g_y = (A + C) - (G + I) + 2*(B - H)
+  // v   = 4*E - 2*(D+F+B+H) + (A+C+G+I)
+
+  // Process the width multiple of 32 here.
+  for (int w = 1; w < w32; w += 32) {
+    int h = 1;
+    const int start_idx = h * stride + w;
+    const int stride_0 = start_idx - stride;
+
+    __m256i num_accum_row_lvl = zero;
+    const __m256i A = _mm256_loadu_si256((__m256i *)(&src[stride_0 - 1]));
+    const __m256i C = _mm256_loadu_si256((__m256i *)(&src[stride_0 + 1]));
+    const __m256i D = _mm256_loadu_si256((__m256i *)(&src[start_idx - 1]));
+    const __m256i F = _mm256_loadu_si256((__m256i *)(&src[start_idx + 1]));
+    __m256i B = _mm256_loadu_si256((__m256i *)(&src[stride_0]));
+    __m256i E = _mm256_loadu_si256((__m256i *)(&src[start_idx]));
+
+    const __m256i A_lo = _mm256_unpacklo_epi8(A, zero);
+    const __m256i A_hi = _mm256_unpackhi_epi8(A, zero);
+    const __m256i C_lo = _mm256_unpacklo_epi8(C, zero);
+    const __m256i C_hi = _mm256_unpackhi_epi8(C, zero);
+    const __m256i D_lo = _mm256_unpacklo_epi8(D, zero);
+    const __m256i D_hi = _mm256_unpackhi_epi8(D, zero);
+    const __m256i F_lo = _mm256_unpacklo_epi8(F, zero);
+    const __m256i F_hi = _mm256_unpackhi_epi8(F, zero);
+
+    __m256i sub_AC_lo = _mm256_sub_epi16(A_lo, C_lo);
+    __m256i sub_AC_hi = _mm256_sub_epi16(A_hi, C_hi);
+    __m256i sum_AC_lo = _mm256_add_epi16(A_lo, C_lo);
+    __m256i sum_AC_hi = _mm256_add_epi16(A_hi, C_hi);
+    __m256i sub_DF_lo = _mm256_sub_epi16(D_lo, F_lo);
+    __m256i sub_DF_hi = _mm256_sub_epi16(D_hi, F_hi);
+    __m256i sum_DF_lo = _mm256_add_epi16(D_lo, F_lo);
+    __m256i sum_DF_hi = _mm256_add_epi16(D_hi, F_hi);
+
+    for (; h < height - 1; h++) {
+      __m256i sum_GI_lo, sub_GI_lo, sum_GI_hi, sub_GI_hi, gx_lo, gy_lo, gx_hi,
+          gy_hi;
+      const int k = h * stride + w;
+      const __m256i G = _mm256_loadu_si256((__m256i *)(&src[k + stride - 1]));
+      const __m256i H = _mm256_loadu_si256((__m256i *)(&src[k + stride]));
+      const __m256i I = _mm256_loadu_si256((__m256i *)(&src[k + stride + 1]));
+
+      const __m256i B_lo = _mm256_unpacklo_epi8(B, zero);
+      const __m256i B_hi = _mm256_unpackhi_epi8(B, zero);
+      const __m256i G_lo = _mm256_unpacklo_epi8(G, zero);
+      const __m256i G_hi = _mm256_unpackhi_epi8(G, zero);
+      const __m256i I_lo = _mm256_unpacklo_epi8(I, zero);
+      const __m256i I_hi = _mm256_unpackhi_epi8(I, zero);
+      const __m256i H_lo = _mm256_unpacklo_epi8(H, zero);
+      const __m256i H_hi = _mm256_unpackhi_epi8(H, zero);
+
+      sub_GI_lo = _mm256_sub_epi16(G_lo, I_lo);
+      sub_GI_hi = _mm256_sub_epi16(G_hi, I_hi);
+      sum_GI_lo = _mm256_add_epi16(G_lo, I_lo);
+      sum_GI_hi = _mm256_add_epi16(G_hi, I_hi);
+      const __m256i sub_BH_lo = _mm256_sub_epi16(B_lo, H_lo);
+      const __m256i sub_BH_hi = _mm256_sub_epi16(B_hi, H_hi);
+
+      CALC_X_GRADIENT(sub_AC_lo, sub_GI_lo, sub_DF_lo, gx_lo)
+      CALC_Y_GRADIENT(sum_AC_lo, sum_GI_lo, sub_BH_lo, gy_lo)
+
+      const __m256i ga_lo = _mm256_add_epi16(gx_lo, gy_lo);
+
+      CALC_X_GRADIENT(sub_AC_hi, sub_GI_hi, sub_DF_hi, gx_hi)
+      CALC_Y_GRADIENT(sum_AC_hi, sum_GI_hi, sub_BH_hi, gy_hi)
+
+      const __m256i ga_hi = _mm256_add_epi16(gx_hi, gy_hi);
+
+      __m256i cmp_lo = _mm256_cmpgt_epi16(edge_threshold, ga_lo);
+      __m256i cmp_hi = _mm256_cmpgt_epi16(edge_threshold, ga_hi);
+      const __m256i comp_reg = _mm256_add_epi16(cmp_lo, cmp_hi);
+
+      // v = 4*E -2*(D+F+B+H) + (A+C+G+I)
+      if (_mm256_movemask_epi8(comp_reg) != 0) {
+        const __m256i sum_BH_lo = _mm256_add_epi16(B_lo, H_lo);
+        const __m256i sum_BH_hi = _mm256_add_epi16(B_hi, H_hi);
+
+        // 2*(D+F+B+H)
+        const __m256i sum_DFBH_lo =
+            _mm256_slli_epi16(_mm256_add_epi16(sum_DF_lo, sum_BH_lo), 1);
+        // (A+C+G+I)
+        const __m256i sum_ACGI_lo = _mm256_add_epi16(sum_AC_lo, sum_GI_lo);
+        const __m256i sum_DFBH_hi =
+            _mm256_slli_epi16(_mm256_add_epi16(sum_DF_hi, sum_BH_hi), 1);
+        const __m256i sum_ACGI_hi = _mm256_add_epi16(sum_AC_hi, sum_GI_hi);
+
+        // Convert E register values from 8bit to 16bit
+        const __m256i E_lo = _mm256_unpacklo_epi8(E, zero);
+        const __m256i E_hi = _mm256_unpackhi_epi8(E, zero);
+
+        // 4*E - 2*(D+F+B+H)+ (A+C+G+I)
+        const __m256i var_lo_0 = _mm256_abs_epi16(_mm256_add_epi16(
+            _mm256_sub_epi16(_mm256_slli_epi16(E_lo, 2), sum_DFBH_lo),
+            sum_ACGI_lo));
+        const __m256i var_hi_0 = _mm256_abs_epi16(_mm256_add_epi16(
+            _mm256_sub_epi16(_mm256_slli_epi16(E_hi, 2), sum_DFBH_hi),
+            sum_ACGI_hi));
+        cmp_lo = _mm256_srli_epi16(cmp_lo, 15);
+        cmp_hi = _mm256_srli_epi16(cmp_hi, 15);
+        const __m256i var_lo = _mm256_mullo_epi16(var_lo_0, cmp_lo);
+        const __m256i var_hi = _mm256_mullo_epi16(var_hi_0, cmp_hi);
+
+        num_accum_row_lvl = _mm256_add_epi16(num_accum_row_lvl, cmp_lo);
+        num_accum_row_lvl = _mm256_add_epi16(num_accum_row_lvl, cmp_hi);
+
+        sum_accumulator = _mm256_add_epi32(sum_accumulator,
+                                           _mm256_unpacklo_epi16(var_lo, zero));
+        sum_accumulator = _mm256_add_epi32(sum_accumulator,
+                                           _mm256_unpackhi_epi16(var_lo, zero));
+        sum_accumulator = _mm256_add_epi32(sum_accumulator,
+                                           _mm256_unpacklo_epi16(var_hi, zero));
+        sum_accumulator = _mm256_add_epi32(sum_accumulator,
+                                           _mm256_unpackhi_epi16(var_hi, zero));
+      }
+      sub_AC_lo = sub_DF_lo;
+      sub_AC_hi = sub_DF_hi;
+      sub_DF_lo = sub_GI_lo;
+      sub_DF_hi = sub_GI_hi;
+      sum_AC_lo = sum_DF_lo;
+      sum_AC_hi = sum_DF_hi;
+      sum_DF_lo = sum_GI_lo;
+      sum_DF_hi = sum_GI_hi;
+      B = E;
+      E = H;
+    }
+    const __m256i num_0 = _mm256_unpacklo_epi16(num_accum_row_lvl, zero);
+    const __m256i num_1 = _mm256_unpackhi_epi16(num_accum_row_lvl, zero);
+    num_accumulator =
+        _mm256_add_epi32(num_accumulator, _mm256_add_epi32(num_0, num_1));
+  }
+
+  // Process the remaining width here.
+  for (int h = 1; h < height - 1; ++h) {
+    for (int w = w32 + 1; w < width - 1; ++w) {
+      const int k = h * stride + w;
+
+      // Compute sobel gradients
+      const int g_x = (src[k - stride - 1] - src[k - stride + 1]) +
+                      (src[k + stride - 1] - src[k + stride + 1]) +
+                      2 * (src[k - 1] - src[k + 1]);
+      const int g_y = (src[k - stride - 1] - src[k + stride - 1]) +
+                      (src[k - stride + 1] - src[k + stride + 1]) +
+                      2 * (src[k - stride] - src[k + stride]);
+      const int ga = abs(g_x) + abs(g_y);
+
+      if (ga < edge_thresh) {
+        // Find Laplacian
+        const int v =
+            4 * src[k] -
+            2 * (src[k - 1] + src[k + 1] + src[k - stride] + src[k + stride]) +
+            (src[k - stride - 1] + src[k - stride + 1] + src[k + stride - 1] +
+             src[k + stride + 1]);
+        accum += abs(v);
+        ++count;
+      }
+    }
+  }
+
+  // s0 s1 n0 n1 s2 s3 n2 n3
+  __m256i sum_avx = _mm256_hadd_epi32(sum_accumulator, num_accumulator);
+  __m128i sum_avx_lo = _mm256_castsi256_si128(sum_avx);
+  __m128i sum_avx_hi = _mm256_extractf128_si256(sum_avx, 1);
+  // s0+s2 s1+s3 n0+n2 n1+n3
+  __m128i sum_avx_1 = _mm_add_epi32(sum_avx_lo, sum_avx_hi);
+  // s0+s2+s1+s3 n0+n2+n1+n3
+  __m128i result = _mm_add_epi32(_mm_srli_si128(sum_avx_1, 4), sum_avx_1);
+
+  accum += _mm_cvtsi128_si32(result);
+  count += _mm_extract_epi32(result, 2);
+
+  // If very few smooth pels, return -1 since the estimate is unreliable.
+  return (count < 16) ? -1.0 : (double)accum / (6 * count) * SQRT_PI_BY_2;
+}
+
 static AOM_FORCE_INLINE void get_squared_error_16x16_avx2(
     const uint8_t *frame1, const unsigned int stride, const uint8_t *frame2,
     const unsigned int stride2, const int block_width, const int block_height,
