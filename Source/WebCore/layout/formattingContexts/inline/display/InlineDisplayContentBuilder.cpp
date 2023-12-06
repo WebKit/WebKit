@@ -82,11 +82,6 @@ static inline OptionSet<InlineDisplay::Box::PositionWithinInlineLevelBox> isFirs
     return positionWithinInlineLevelBox;
 }
 
-static inline bool isInterlinearAnnotationBox(const Box* annotationBox)
-{
-    return annotationBox && annotationBox->style().rubyPosition() != RubyPosition::InterCharacter;
-}
-
 InlineDisplayContentBuilder::InlineDisplayContentBuilder(InlineFormattingContext& formattingContext, const ConstraintsForInlineContent& constraints, const InlineDisplay::Line& displayLine, size_t lineIndex)
     : m_formattingContext(formattingContext)
     , m_constraints(constraints)
@@ -1069,7 +1064,8 @@ size_t InlineDisplayContentBuilder::processRubyBase(size_t rubyBaseStart, Inline
         auto& baseContentLayoutBox = displayBoxes[index].layoutBox();
         if (baseContentLayoutBox.isRubyBase()) {
             index = processRubyBase(index, displayBoxes, interlinearRubyColumnRangeList, rubyBaseStartIndexListWithAnnotation);
-            if (auto* annotation = baseContentLayoutBox.associatedRubyAnnotationBox(); annotation && isInterlinearAnnotationBox(annotation)) {
+            if (RubyFormattingContext::hasInterlinearAnnotation(baseContentLayoutBox)) {
+                auto& interlinearAnnotationBox = *baseContentLayoutBox.associatedRubyAnnotationBox();
                 auto isNestedRubyBase = [&] {
                     for (auto* ancestor = &baseContentLayoutBox.parent(); ancestor != &root(); ancestor = &ancestor->parent()) {
                         if (ancestor->isRubyBase())
@@ -1078,7 +1074,7 @@ size_t InlineDisplayContentBuilder::processRubyBase(size_t rubyBaseStart, Inline
                     return false;
                 };
                 if (isNestedRubyBase()) {
-                    auto nestedAnnotationMarginBoxRect = BoxGeometry::marginBoxRect(formattingContext.geometryForBox(*annotation));
+                    auto nestedAnnotationMarginBoxRect = BoxGeometry::marginBoxRect(formattingContext.geometryForBox(interlinearAnnotationBox));
                     baseMarginBoxRect.expandToContain(nestedAnnotationMarginBoxRect);
                 }
             }
@@ -1096,7 +1092,7 @@ size_t InlineDisplayContentBuilder::processRubyBase(size_t rubyBaseStart, Inline
         }
     }
 
-    if (isInterlinearAnnotationBox(annotationBox))
+    if (RubyFormattingContext::hasInterlinearAnnotation(rubyBaseLayoutBox))
         interlinearRubyColumnRangeList.append({ rubyBaseStart, rubyBaseEnd });
 
     if (annotationBox) {
@@ -1148,7 +1144,7 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
         auto rubyBaseStart = startEndPair.begin();
         auto& rubyBaseLayoutBox = displayBoxes[rubyBaseStart].layoutBox();
         ASSERT(rubyBaseLayoutBox.isRubyBase());
-        ASSERT(isInterlinearAnnotationBox(rubyBaseLayoutBox.associatedRubyAnnotationBox()));
+        ASSERT(RubyFormattingContext::hasInterlinearAnnotation(rubyBaseLayoutBox));
 
         auto beforeOverhang = RubyFormattingContext::overhangForAnnotationBefore(rubyBaseLayoutBox, rubyBaseStart, displayBoxes, formattingContext);
         auto afterOverhang = RubyFormattingContext::overhangForAnnotationAfter(rubyBaseLayoutBox, { rubyBaseStart, startEndPair.end() }, displayBoxes, formattingContext);
