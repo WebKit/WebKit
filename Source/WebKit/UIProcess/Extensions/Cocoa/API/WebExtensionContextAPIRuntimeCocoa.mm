@@ -140,7 +140,7 @@ void WebExtensionContext::runtimeSendMessage(const String& extensionID, const St
 
     for (auto& process : mainWorldProcesses) {
         process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters), [callbackAggregator](std::optional<String> replyJSON) {
-            (*callbackAggregator)(replyJSON, std::nullopt);
+            callbackAggregator.get()(replyJSON, std::nullopt);
         }, identifier());
     }
 }
