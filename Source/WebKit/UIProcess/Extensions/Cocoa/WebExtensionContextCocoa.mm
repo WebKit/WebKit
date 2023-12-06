@@ -268,6 +268,8 @@ bool WebExtensionContext::unload(NSError **outError)
     m_extensionController = nil;
     m_contentScriptWorld = nullptr;
 
+    m_matchedRules.clear();
+
     return true;
 }
 
@@ -3008,6 +3010,23 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
     }
 
     compileDeclarativeNetRequestRules(allJSONData, WTFMove(completionHandler));
+}
+
+
+void WebExtensionContext::handleContentRuleListNotificationForTab(WebExtensionTab& tab, const URL& url, WebCore::ContentRuleListResults::Result)
+{
+    incrementActionCountForTab(tab, 1);
+
+    if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestFeedback) && !(hasPermission(_WKWebExtensionPermissionDeclarativeNetRequest) && hasPermission(_WKWebExtensionPermissionActiveTab)))
+        return;
+
+    // FIXME: rdar://118940129 - Set a timer to purge old matched rules.
+
+    m_matchedRules.append({
+        url,
+        WallTime::now(),
+        tab.identifier()
+    });
 }
 
 } // namespace WebKit

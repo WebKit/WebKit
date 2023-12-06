@@ -222,6 +222,45 @@ void WebExtensionContext::declarativeNetRequestIncrementActionCount(WebExtension
     completionHandler(std::nullopt);
 }
 
+void WebExtensionContext::declarativeNetRequestGetMatchedRules(std::optional<WebExtensionTabIdentifier> tabIdentifier, std::optional<WallTime> minTimeStamp, CompletionHandler<void(std::optional<Vector<WebExtensionMatchedRuleParameters>> matchedRules, std::optional<String>)>&& completionHandler)
+{
+    RefPtr tab = tabIdentifier ? getTab(tabIdentifier.value()) : nullptr;
+
+    static NSString * const apiName = @"declarativeNetRequest.getMatchedRules()";
+    if (tabIdentifier && !tab) {
+        completionHandler(std::nullopt, toErrorString(apiName, nil, @"tab not found"));
+        return;
+    }
+
+    if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestFeedback)) {
+        ASSERT(hasPermission(_WKWebExtensionPermissionActiveTab));
+
+        if (!hasPermission(_WKWebExtensionPermissionTabs, tab.get())) {
+            completionHandler(std::nullopt, toErrorString(apiName, nil, @"The 'activeTab' permission has not been granted by the user for the specified tab."));
+            return;
+        }
+    }
+
+    WallTime minTime = minTimeStamp ? minTimeStamp.value() : WallTime::nan();
+
+    DeclarativeNetRequestMatchedRuleVector filteredMatchedRules;
+    for (auto matchedRule : matchedRules()) {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=262714 - we should be requesting permission if we don't have access to this URL.
+        if (!hasPermission(matchedRule.url))
+            continue;
+
+        if (tabIdentifier && matchedRule.tabIdentifier != tabIdentifier)
+            continue;
+
+        if (minTime != WallTime::nan() && matchedRule.timeStamp <= minTime)
+            continue;
+
+        filteredMatchedRules.append(matchedRule);
+    }
+
+    completionHandler(filteredMatchedRules, std::nullopt);
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

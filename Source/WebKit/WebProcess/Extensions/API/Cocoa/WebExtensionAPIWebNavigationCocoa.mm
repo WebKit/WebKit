@@ -182,7 +182,7 @@ void WebExtensionContextProxy::dispatchWebNavigationEvent(WebExtensionEventListe
         @"tabId": @(toWebAPI(tabID)),
         @"frameId": @(toWebAPI(frameID)),
         @"parentFrameId": @(toWebAPI(parentFrameID)),
-        @"timeStamp": @(timestamp.approximateWallTime().secondsSinceEpoch().milliseconds())
+        @"timeStamp": @(floor(timestamp.approximateWallTime().secondsSinceEpoch().milliseconds()))
     };
 
     enumerateNamespaceObjects([&](auto& namespaceObject) {

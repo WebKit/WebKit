@@ -36,6 +36,7 @@
 #import "WKContentRuleListPrivate.h"
 #import "WebExtensionContext.h"
 #import "WebExtensionContextMessages.h"
+#import "WebExtensionMatchedRuleParameters.h"
 #import "WebExtensionUtilities.h"
 #import "WebProcess.h"
 #import <wtf/cocoa/VectorCocoa.h>
@@ -56,6 +57,8 @@ static NSString * const actionCountTabUpdateKey = @"tabUpdate";
 static NSString * const actionCountTabIDKey = @"tabId";
 static NSString * const actionCountIncrementKey = @"increment";
 
+static NSString * const getMatchedRulesTabIDKey = @"tabId";
+static NSString * const getMatchedRulesMinTimeStampKey = @"minTimeStamp";
 
 void WebExtensionAPIDeclarativeNetRequest::updateEnabledRulesets(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
@@ -107,9 +110,71 @@ void WebExtensionAPIDeclarativeNetRequest::getSessionRules(Ref<WebExtensionCallb
     // FIXME: rdar://118476774 - Support session rules
 }
 
-void WebExtensionAPIDeclarativeNetRequest::getMatchedRules(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString)
+static bool extensionHasPermission(WebExtensionContextProxy& extensionContext, NSString *permission)
 {
-    // FIXME: rdar://118940129 - Support getMatchedRules
+    // FIXME: https://webkit.org/b/259914 This should be a hasPermission: call to extensionContext() and updated with actually granted permissions from the UI process.
+    auto *permissions = objectForKey<NSArray>(extensionContext.manifest(), @"permissions", true, NSString.class);
+    return [permissions containsObject:permission];
+}
+
+static NSDictionary *toWebAPI(const Vector<WebExtensionMatchedRuleParameters>& matchedRules)
+{
+    NSMutableArray *matchedRuleArray = [NSMutableArray array];
+    for (auto& matchedRule : matchedRules) {
+        [matchedRuleArray addObject:@{
+            @"request": @{ @"url": matchedRule.url.string() },
+            @"timeStamp": @(floor(matchedRule.timeStamp.secondsSinceEpoch().milliseconds())),
+            @"tabId": @(toWebAPI(matchedRule.tabIdentifier))
+        }];
+    }
+
+    return @{ @"rulesMatchedInfo": matchedRuleArray };
+}
+
+void WebExtensionAPIDeclarativeNetRequest::getMatchedRules(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
+{
+    bool hasFeedbackPermission = extensionHasPermission(extensionContext(), _WKWebExtensionPermissionDeclarativeNetRequestFeedback);
+    bool hasActiveTabPermission = extensionHasPermission(extensionContext(), _WKWebExtensionPermissionActiveTab);
+
+    if (!hasFeedbackPermission && !hasActiveTabPermission) {
+        *outExceptionString = @"Invalid call to declarativeNetRequest.getMatchedRules(). The 'declarativeNetRequestFeedback' or 'activeTab' permission is required.";
+        return;
+    }
+
+    static NSArray<NSString *> *requiredKeysForActiveTab = @[
+        getMatchedRulesTabIDKey,
+    ];
+
+    static NSDictionary<NSString *, id> *keyTypes = @{
+        getMatchedRulesTabIDKey: NSNumber.class,
+        getMatchedRulesMinTimeStampKey: NSNumber.class,
+    };
+
+    NSArray<NSString *> *requiredKeys = !hasFeedbackPermission ? requiredKeysForActiveTab : @[ ];
+    if (!validateDictionary(filter, nil, requiredKeys, keyTypes, outExceptionString))
+        return;
+
+    NSNumber *tabID = objectForKey<NSNumber>(filter, getMatchedRulesTabIDKey);
+    auto optionalTabIdentifier = tabID ? toWebExtensionTabIdentifier(tabID.doubleValue) : std::nullopt;
+    if (tabID && !isValid(optionalTabIdentifier)) {
+        *outExceptionString = toErrorString(nil, getMatchedRulesTabIDKey, @"%@ is not a valid tab identifier", tabID);
+        return;
+    }
+
+    NSNumber *minTimeStamp = objectForKey<NSNumber>(filter, getMatchedRulesMinTimeStampKey);
+    std::optional<WallTime> optionalTimeStamp;
+    if (minTimeStamp)
+        optionalTimeStamp = WallTime::fromRawSeconds(Seconds::fromMilliseconds(minTimeStamp.doubleValue).value());
+
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::DeclarativeNetRequestGetMatchedRules(optionalTabIdentifier, optionalTimeStamp), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Vector<WebExtensionMatchedRuleParameters>> matchedRules, std::optional<String> error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
+        callback->call(toWebAPI(matchedRules.value()));
+    }, extensionContext().identifier());
+
 }
 
 void WebExtensionAPIDeclarativeNetRequest::isRegexSupported(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
