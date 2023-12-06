@@ -59,6 +59,7 @@ inline double parseDouble(StringView string, size_t& parsedLength)
 
 using WTF::NumberToStringBuffer;
 using WTF::numberToString;
+using WTF::numberToStringWithTrailingPoint;
 using WTF::numberToFixedPrecisionString;
 using WTF::numberToFixedWidthString;
 using WTF::parseDouble;
