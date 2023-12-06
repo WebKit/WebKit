@@ -691,17 +691,17 @@ enum class WebCore::IndexedDB::RequestType : uint8_t {
 
 #if USE(CG)
 headers: <CoreGraphics/CGGeometry.h> <CoreGraphics/CGAffineTransform.h>
-[AdditionalEncoder=StreamConnectionEncoder] struct CGSize {
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] struct CGSize {
     CGFloat width
     CGFloat height
 };
 
-struct CGPoint {
+[WebKitPlatform] struct CGPoint {
     CGFloat x
     CGFloat y
 };
 
-struct CGRect {
+[WebKitPlatform] struct CGRect {
     CGPoint origin
     CGSize size
 };

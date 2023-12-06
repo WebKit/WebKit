@@ -52,7 +52,11 @@ public:
 private:
     friend struct IPC::ArgumentCoder<CoreIPCNSValue, void>;
 
+#if PLATFORM(MAC)
+    using WrappedNSValue = std::variant<NSRange, NSRect>;
+#else
     using WrappedNSValue = std::variant<NSRange>;
+#endif
     using Value = std::variant<WrappedNSValue, CoreIPCSecureCoding>;
 
     static Value valueFromNSValue(NSValue *);

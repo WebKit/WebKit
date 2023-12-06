@@ -40,6 +40,7 @@
 
 #include <CoreGraphics/CGContextDelegatePrivate.h>
 #include <CoreGraphics/CGFontCache.h>
+#include <CoreGraphics/CGPDFPageLayout.h>
 #include <CoreGraphics/CGPathPrivate.h>
 #include <CoreGraphics/CGShadingPrivate.h>
 #include <CoreGraphics/CGStylePrivate.h>
@@ -50,7 +51,7 @@
 #include <CoreGraphics/CGEventPrivate.h>
 #endif
 
-#else
+#else // USE(APPLE_INTERNAL_SDK)
 
 struct CGFontHMetrics {
     int ascent;
@@ -237,6 +238,17 @@ typedef struct CGRenderingState *CGRenderingStateRef;
 typedef struct CGGState *CGGStateRef;
 typedef struct CGStyle *CGStyleRef;
 
+#if ENABLE(UNIFIED_PDF)
+
+typedef CF_OPTIONS(uint32_t, CGPDFAreaOfInterest) {
+    kCGPDFAreaText   = (1 << 0),
+    kCGPDFAreaImage  = (1 << 1),
+};
+typedef struct CGPDFPageLayout *CGPDFPageLayoutRef;
+CGPDFAreaOfInterest CGPDFPageLayoutGetAreaOfInterestAtPoint(CGPDFPageLayoutRef, CGPoint);
+
+#endif // ENABLE(UNIFIED_PDF)
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #if PLATFORM(COCOA)
@@ -290,6 +302,9 @@ CGImageCachingFlags CGImageGetCachingFlags(CGImageRef);
 void CGImageSetProperty(CGImageRef, CFStringRef, CFTypeRef);
 
 CGDataProviderRef CGPDFDocumentGetDataProvider(CGPDFDocumentRef);
+#if ENABLE(UNIFIED_PDF)
+bool CGPDFDocumentIsTaggedPDF(CGPDFDocumentRef);
+#endif // ENABLE(UNIFIED_PDF)
 
 CGFontAntialiasingStyle CGContextGetFontAntialiasingStyle(CGContextRef);
 void CGContextSetFontAntialiasingStyle(CGContextRef, CGFontAntialiasingStyle);

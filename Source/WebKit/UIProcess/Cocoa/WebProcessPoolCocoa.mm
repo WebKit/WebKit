@@ -419,7 +419,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     auto metalFEDirectory = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/com.apple.metalfe"_s);
     if (auto metalFEDirectoryHandle = SandboxExtension::createHandleForReadWriteDirectory(metalFEDirectory))
         parameters.metalCacheDirectoryExtensionHandles.append(WTFMove(*metalFEDirectoryHandle));
-    auto gpuArchiverDirectory = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory("Library/Caches/com.apple.WebKit.WebContent/com.apple.gpuarchiver"_s);
+    auto gpuArchiverDirectory = WebsiteDataStore::cacheDirectoryInContainerOrHomeDirectory("/Library/Caches/com.apple.WebKit.WebContent/com.apple.gpuarchiver"_s);
     if (auto gpuArchiverDirectoryHandle = SandboxExtension::createHandleForReadWriteDirectory(gpuArchiverDirectory))
         parameters.metalCacheDirectoryExtensionHandles.append(WTFMove(*gpuArchiverDirectoryHandle));
 #endif

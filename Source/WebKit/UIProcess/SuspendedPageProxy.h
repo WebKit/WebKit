@@ -26,8 +26,8 @@
 #pragma once
 
 #include "Connection.h"
-#include "MessageSender.h"
 #include "ProcessThrottler.h"
+#include "RemotePageProxyState.h"
 #include "WebBackForwardListItem.h"
 #include "WebPageProxyMessageReceiverRegistration.h"
 #include "WebProcessProxy.h"
@@ -42,6 +42,7 @@ class RegistrableDomain;
 
 namespace WebKit {
 
+class BrowsingContextGroup;
 class RemotePageProxy;
 class WebBackForwardCache;
 class WebPageProxy;
@@ -54,10 +55,10 @@ using LayerHostingContextID = uint32_t;
 
 enum class ShouldDelayClosingUntilFirstLayerFlush : bool { No, Yes };
 
-class SuspendedPageProxy final: public IPC::MessageReceiver, public IPC::MessageSender, public CanMakeCheckedPtr {
+class SuspendedPageProxy final: public IPC::MessageReceiver, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, Ref<WebFrameProxy>&& mainFrame, ShouldDelayClosingUntilFirstLayerFlush);
+    SuspendedPageProxy(WebPageProxy&, Ref<WebProcessProxy>&&, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&&, RemotePageProxyState&&, ShouldDelayClosingUntilFirstLayerFlush);
     ~SuspendedPageProxy();
 
     static RefPtr<WebProcessProxy> findReusableSuspendedPageProcess(WebProcessPool&, const WebCore::RegistrableDomain&, WebsiteDataStore&, WebProcessProxy::LockdownMode, const API::PageConfiguration&);
@@ -66,6 +67,8 @@ public:
     WebCore::PageIdentifier webPageID() const { return m_webPageID; }
     WebProcessProxy& process() const { return m_process.get(); }
     WebFrameProxy& mainFrame() { return m_mainFrame.get(); }
+    BrowsingContextGroup& browsingContextGroup() { return m_browsingContextGroup.get(); }
+    RemotePageProxyState takeRemotePageProxyState() { return std::exchange(m_remotePageProxyState, { }); }
 
     WebBackForwardCache& backForwardCache() const;
 
@@ -102,16 +105,13 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
-    // IPC::MessageSender
-    IPC::Connection* messageSenderConnection() const final;
-    uint64_t messageSenderDestinationID() const final;
-    bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>) final;
-    bool sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&&, AsyncReplyHandler, OptionSet<IPC::SendOption>) final;
+    template<typename T> void sendToAllProcesses(T&&);
 
     CheckedRef<WebPageProxy> m_page;
     WebCore::PageIdentifier m_webPageID;
     Ref<WebProcessProxy> m_process;
     Ref<WebFrameProxy> m_mainFrame;
+    Ref<BrowsingContextGroup> m_browsingContextGroup;
     WebPageProxyMessageReceiverRegistration m_messageReceiverRegistration;
     bool m_isClosed { false };
     ShouldDelayClosingUntilFirstLayerFlush m_shouldDelayClosingUntilFirstLayerFlush { ShouldDelayClosingUntilFirstLayerFlush::No };
@@ -129,6 +129,7 @@ private:
     LayerHostingContextID m_contextIDForVisibilityPropagationInGPUProcess { 0 };
 #endif
 #endif
+    RemotePageProxyState m_remotePageProxyState;
 };
 
 } // namespace WebKit

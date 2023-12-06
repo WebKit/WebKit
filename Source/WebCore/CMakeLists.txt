@@ -740,6 +740,7 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/webauthn/AuthenticatorResponse.idl
     Modules/webauthn/AuthenticatorTransport.idl
     Modules/webauthn/PublicKeyCredential.idl
+    Modules/webauthn/PublicKeyCredentialClientCapabilities.idl
     Modules/webauthn/PublicKeyCredentialCreationOptions.idl
     Modules/webauthn/PublicKeyCredentialDescriptor.idl
     Modules/webauthn/PublicKeyCredentialRequestOptions.idl

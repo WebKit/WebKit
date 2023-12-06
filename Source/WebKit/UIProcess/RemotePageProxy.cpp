@@ -209,4 +209,9 @@ RefPtr<WebPageProxy> RemotePageProxy::protectedPage() const
     return m_page.get();
 }
 
+WebPageProxy* RemotePageProxy::page() const
+{
+    return m_page.get();
+}
+
 }

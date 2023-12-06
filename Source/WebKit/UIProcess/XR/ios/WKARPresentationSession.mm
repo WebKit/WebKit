@@ -95,7 +95,6 @@ NS_ASSUME_NONNULL_BEGIN
     RetainPtr<WKARPresentationSessionDescriptor> _sessionDescriptor;
 
     // View state
-    RetainPtr<UIView> _view;
     WeakObjCPtr<CALayer> _cameraLayer;
     WeakObjCPtr<CAMetalLayer> _metalLayer;
     RetainPtr<WKExtrinsicButton> _cancelButton;

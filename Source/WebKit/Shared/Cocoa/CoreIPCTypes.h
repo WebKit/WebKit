@@ -36,6 +36,7 @@
 #import "CoreIPCLocale.h"
 #import "CoreIPCNSValue.h"
 #import "CoreIPCNumber.h"
+#import "CoreIPCPersonNameComponents.h"
 #import "CoreIPCSecureCoding.h"
 #import "CoreIPCString.h"
 #import "CoreIPCURL.h"

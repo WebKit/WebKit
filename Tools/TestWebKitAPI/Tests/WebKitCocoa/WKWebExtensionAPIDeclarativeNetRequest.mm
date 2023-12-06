@@ -436,6 +436,65 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, SetExtensionActionOptions)
     EXPECT_NS_EQUAL(action.badgeText, @"3");
 }
 
+TEST(WKWebExtensionAPIDeclarativeNetRequest, GetMatchedRules)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='background-color: blue'></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"setTimeout(async () => {",
+        @"  const matchedRules = await browser.declarativeNetRequest.getMatchedRules()",
+        @"  browser.test.assertEq(matchedRules.rulesMatchedInfo.length, 1)",
+        @"  const matchedURL = matchedRules.rulesMatchedInfo[0].request.url",
+        @"  browser.test.assertTrue(matchedURL.includes('localhost'), 'URL should include localhost')",
+        @"  browser.test.assertTrue(matchedURL.includes('frame'), 'URL should include frame')",
+        @"  browser.test.notifyPass()",
+        @"}, 1000)",
+
+        // Yield after the background page has loaded so we can load a tab.
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto *declarativeNetRequestManifest = @{
+        @"manifest_version": @3,
+        @"permissions": @[ @"declarativeNetRequest", @"declarativeNetRequestFeedback" ],
+        @"background": @{ @"scripts": @[ @"background.js" ], @"type": @"module", @"persistent": @NO },
+        @"declarative_net_request": @{
+            @"rule_resources": @[
+                @{
+                    @"id": @"blockFrame",
+                    @"enabled": @YES,
+                    @"path": @"rules.json"
+                }
+            ]
+        }
+    };
+
+    auto *rules = @"[ { \"id\" : 1, \"priority\": 1, \"action\" : { \"type\" : \"block\" }, \"condition\" : { \"urlFilter\" : \"frame\" } } ]";
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:declarativeNetRequestManifest resources:@{ @"background.js": backgroundScript, @"rules.json": rules  }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Grant the declarativeNetRequestFeedback permission.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionDeclarativeNetRequest];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionDeclarativeNetRequestFeedback];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    NSURL *requestURL = urlRequest.URL;
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:requestURL];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:[requestURL URLByAppendingPathComponent:@"frame.html"]];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 // MARK: Rule translation tests
 
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RequiredAndOptionalKeys)

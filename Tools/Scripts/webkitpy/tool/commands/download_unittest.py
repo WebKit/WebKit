@@ -29,14 +29,13 @@
 
 import unittest
 
+from webkitcorepy import OutputCapture, mocks
+
+from webkitpy.common.checkout.checkout_mock import MockCheckout
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.commandtest import CommandsTest
 from webkitpy.tool.commands.download import *
 from webkitpy.tool.mocktool import MockOptions, MockTool
-from webkitpy.common.checkout.checkout_mock import MockCheckout
-
-from webkitcorepy import OutputCapture
-from webkitcorepy import mocks
 
 
 class AbstractRevertPrepCommandTest(unittest.TestCase):
@@ -142,22 +141,6 @@ Adding comment and closing bug 50000
             # Make sure we're not calling expensive calls too often.
             self.assertEqual(mock_tool.scm().create_patch.call_count, 0)
             self.assertEqual(mock_tool.checkout().modified_changelogs.call_count, 1)
-
-    def test_land_cowhand(self):
-        expected_logs = """MOCK run_and_throw_if_fail: ['mock-prepare-ChangeLog', '--email=MOCK email', '--merge-base=None', 'MockFile1'], cwd=/mock-checkout
-MOCK run_and_throw_if_fail: ['mock-check-webkit-style', '--git-commit', 'MOCK git commit', '--diff-files', 'MockFile1', '--filter', '-changelog'], cwd=/mock-checkout
-MOCK run_command: ['ruby', '-I', '/mock-checkout/Websites/bugs.webkit.org/PrettyPatch', '/mock-checkout/Websites/bugs.webkit.org/PrettyPatch/prettify.rb'], cwd=None, input=Patch1
-MOCK: user.open_url: file://...
-Was that diff correct?
-Building WebKit
-MOCK run_and_throw_if_fail: ['mock-build-webkit', 'ARCHS=MOCK ARCH'], cwd=/mock-checkout, env={'MOCK_ENVIRON_COPY': '1', 'TERM': 'dumb'}
-Committed r49824: <https://commits.webkit.org/r49824>
-Committed r49824 (5@main): <https://commits.webkit.org/5@main>
-No bug id provided.
-"""
-        with self.mock_svn_remote():
-            mock_tool = MockTool(log_executive=True)
-            self.assert_execute_outputs(LandCowhand(), [50000], options=self._default_options(), expected_logs=expected_logs, tool=mock_tool)
 
     def test_land_red_builders(self):
         expected_logs = """Building WebKit

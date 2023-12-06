@@ -67,6 +67,7 @@ class WebPageProxy;
 struct FrameInfoData;
 struct WebAuthenticationRequestData;
 
+using CapbilitiesCompletionHandler = CompletionHandler<void(const HashMap<WTF::String, bool>&)>;
 using RequestCompletionHandler = CompletionHandler<void(const WebCore::AuthenticatorResponseData&, WebCore::AuthenticatorAttachment, const WebCore::ExceptionData&)>;
 
 class WebAuthenticatorCoordinatorProxy : public IPC::MessageReceiver {
@@ -87,6 +88,7 @@ private:
     void getAssertion(WebCore::FrameIdentifier, FrameInfoData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialRequestOptions&&, WebCore::MediationRequirement, std::optional<WebCore::SecurityOriginData>, bool processingUserGesture, RequestCompletionHandler&&);
     void isUserVerifyingPlatformAuthenticatorAvailable(const WebCore::SecurityOriginData&, QueryCompletionHandler&&);
     void isConditionalMediationAvailable(const WebCore::SecurityOriginData&, QueryCompletionHandler&&);
+    void getClientCapabilities(const WebCore::SecurityOriginData&, CapbilitiesCompletionHandler&&);
     void cancel();
 
     void handleRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);

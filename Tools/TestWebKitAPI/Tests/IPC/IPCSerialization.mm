@@ -35,6 +35,7 @@
 #import <WebCore/FontCocoa.h>
 #import <limits.h>
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
+#import <pal/mac/DataDetectorsSoftLink.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
@@ -150,9 +151,13 @@ struct ObjCHolderForTesting {
         RetainPtr<NSError>,
         RetainPtr<NSLocale>,
 #if ENABLE(DATA_DETECTION)
+#if PLATFORM(MAC)
+        RetainPtr<WKDDActionContext>,
+#endif
         RetainPtr<DDScannerResult>,
 #endif
-        RetainPtr<NSValue>
+        RetainPtr<NSValue>,
+        RetainPtr<NSPersonNameComponents>
     > ValueType;
 
     ValueType value;
@@ -175,6 +180,27 @@ std::optional<ObjCHolderForTesting> ObjCHolderForTesting::decode(IPC::Decoder& d
     } };
 }
 
+#if PLATFORM(MAC)
+inline bool isEqual(WKDDActionContext *a, WKDDActionContext* b)
+{
+    if (![a.authorNameComponents isEqual:b.authorNameComponents])
+        return false;
+    if (!CFEqual(a.mainResult, b.mainResult))
+        return false;
+    if (a.allResults.count != b.allResults.count)
+        return false;
+    for (size_t i = 0; i < a.allResults.count; ++i) {
+        if (!CFEqual((__bridge DDResultRef)a.allResults[i], (__bridge DDResultRef)b.allResults[i]))
+            return false;
+    }
+
+    if (!NSEqualRects(a.highlightFrame, b.highlightFrame))
+        return false;
+
+    return true;
+}
+#endif
+
 inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting& b)
 {
     id aObject = a.valueAsID();
@@ -182,6 +208,12 @@ inline bool operator==(const ObjCHolderForTesting& a, const ObjCHolderForTesting
 
     EXPECT_TRUE(aObject != nil);
     EXPECT_TRUE(bObject != nil);
+
+#if PLATFORM(MAC)
+    // DDActionContext doesn't have an isEqual: reliable for our unit testing, so do it ourselves.
+    if ([aObject isKindOfClass:PAL::getWKDDActionContextClass()] && [bObject isKindOfClass:PAL::getWKDDActionContextClass()])
+        return isEqual(aObject, bObject);
+#endif
 
     return [aObject isEqual:bObject];
 }
@@ -345,6 +377,26 @@ static RetainPtr<SecKeyRef> createPrivateKey()
     auto privateKey = adoptCF(SecKeyCreateWithData((CFDataRef)keyData, (CFDictionaryRef)keyAttrs, NULL));
     EXPECT_NOT_NULL(privateKey);
     return privateKey;
+}
+
+static RetainPtr<NSPersonNameComponents> personNameComponentsForTesting()
+{
+    auto phoneticComponents = adoptNS([[NSPersonNameComponents alloc] init]);
+    phoneticComponents.get().familyName = @"Family";
+    phoneticComponents.get().middleName = @"Middle";
+    phoneticComponents.get().namePrefix = @"Doctor";
+    phoneticComponents.get().givenName = @"Given";
+    phoneticComponents.get().nickname = @"Buddy";
+
+    auto components = adoptNS([[NSPersonNameComponents alloc] init]);
+    components.get().familyName = @"Familia";
+    components.get().middleName = @"Median";
+    components.get().namePrefix = @"Physician";
+    components.get().givenName = @"Gifted";
+    components.get().nickname = @"Pal";
+    components.get().phoneticRepresentation = phoneticComponents.get();
+
+    return components;
 }
 
 TEST(IPCSerialization, Basic)
@@ -522,6 +574,11 @@ TEST(IPCSerialization, Basic)
     for (NSString* identifier : [NSLocale availableLocaleIdentifiers])
         runTestNS({ [NSLocale localeWithLocaleIdentifier: identifier] });
 
+    // NSPersonNameComponents
+    auto components = personNameComponentsForTesting();
+    runTestNS({ components.get().phoneticRepresentation });
+    runTestNS({ components.get() });
+
     auto runValueTest = [&](NSValue *value) {
         ObjCHolderForTesting::ValueType valueVariant;
         valueVariant.emplace<RetainPtr<NSValue>>(value);
@@ -530,12 +587,14 @@ TEST(IPCSerialization, Basic)
 
     // NSValue, wrapping any of the following classes:
     //   - NSRange
+    //   - NSRect
     runValueTest([NSValue valueWithRange:NSMakeRange(1, 2)]);
+    runValueTest([NSValue valueWithRect:NSMakeRect(1, 2, 79, 80)]);
 }
 
 #if PLATFORM(MAC)
 
-static DDScannerResult *fakeDataDetectorResultForTesting()
+static RetainPtr<DDScannerResult> fakeDataDetectorResultForTesting()
 {
     auto scanner = adoptCF(PAL::softLink_DataDetectorsCore_DDScannerCreate(DDScannerTypeStandard, 0, nullptr));
     auto stringToScan = CFSTR("webkit.org");
@@ -567,7 +626,18 @@ TEST(IPCSerialization, SecureCoding)
 
     // DDScannerResult
     //   - Note: For now, there's no reasonable way to create anything but an empty DDScannerResult object
-    runTestNS({ fakeDataDetectorResultForTesting() });
+    auto scannerResult = fakeDataDetectorResultForTesting();
+    runTestNS({ scannerResult.get() });
+
+    // DDActionContext/DDSecureActionContext
+    auto actionContext = adoptNS([PAL::allocWKDDActionContextInstance() init]);
+    [actionContext setAllResults:@[ (__bridge id)scannerResult.get().coreResult ]];
+    [actionContext setMainResult:scannerResult.get().coreResult];
+    auto components = personNameComponentsForTesting();
+    [actionContext setAuthorNameComponents:components.get()];
+    [actionContext setHighlightFrame:NSMakeRect(1, 2, 3, 4)];
+
+    runTestNS({ actionContext.get() });
 }
 
 #endif // PLATFORM(MAC)

@@ -23,12 +23,19 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#pragma once
+
+#import <pal/spi/cg/CoreGraphicsSPI.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 
+#if HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
 #import <PDFKit/PDFHostViewController.h>
+#endif // HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
 
 #else
 
+#if HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 
 @interface _UIRemoteViewController : UIViewController
@@ -64,5 +71,12 @@
 - (void) snapshotViewRect: (CGRect) rect snapshotWidth: (NSNumber*) width afterScreenUpdates: (BOOL) afterScreenUpdates withResult: (void (^)(UIImage* image)) completion;
 
 @end
+#endif // HAVE(PDFKIT) && PLATFORM(IOS_FAMILY)
 
-#endif
+#endif // USE(APPLE_INTERNAL_SDK)
+
+#if ENABLE(UNIFIED_PDF)
+@interface PDFPage (IPI)
+- (CGPDFPageLayoutRef) pageLayout;
+@end
+#endif // ENABLE(UNIFIED_PDF)

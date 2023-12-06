@@ -55,8 +55,11 @@ bool CoreIPCDictionary::keyHasValueOfType(const String& key, IPC::NSType type) c
 {
     createNSDictionaryIfNeeded();
     id object = [m_nsDictionary.get() objectForKey:(NSString *)key];
-    if (!object)
-        return false;
+    if (!object) {
+        // Many objects have a required key that sometimes has a missing value, which is okay.
+        return true;
+    }
+
     return IPC::typeFromObject(object) == type;
 }
 

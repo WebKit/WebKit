@@ -1174,13 +1174,25 @@ TEST(SiteIsolation, NavigationWithIFrames)
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/1"]]];
     [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://domain1.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://domain2.com"_s } } }
+    });
 
     [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain3.com/3"]]];
     [navigationDelegate waitForDidFinishNavigation];
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://domain3.com"_s, { { RemoteFrame, { { RemoteFrame } } } } },
+        { RemoteFrame, { { "https://domain4.com"_s, { { RemoteFrame } } } } },
+        { RemoteFrame, { { RemoteFrame, { { "https://domain5.com"_s } } } } }
+    });
 
     [webView goBack];
     [navigationDelegate waitForDidFinishNavigation];
-    // FIXME: Implement CachedFrame for RemoteFrames and verify the page is resumed correctly.
+    checkFrameTreesInProcesses(webView.get(), {
+        { "https://domain1.com"_s, { { RemoteFrame } } },
+        { RemoteFrame, { { "https://domain2.com"_s } } }
+    });
 }
 
 TEST(SiteIsolation, RemoveFrames)
@@ -1402,8 +1414,8 @@ TEST(SiteIsolation, ShutDownFrameProcessesAfterNavigation)
     [navigationDelegate waitForDidFinishNavigation];
     checkFrameTreesInProcesses(webView.get(), { { "https://apple.com"_s } });
 
-    while (processStillRunning(iframePID))
-        Util::spinRunLoop();
+    Util::runFor(100_ms);
+    EXPECT_TRUE(processStillRunning(iframePID));
 }
 
 TEST(SiteIsolation, OpenerProcessSharing)

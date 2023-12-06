@@ -85,13 +85,20 @@ void ComputePassEncoder::executePreDispatchCommands()
 
 void ComputePassEncoder::dispatch(uint32_t x, uint32_t y, uint32_t z)
 {
+    if (!(x * y * z))
+        return;
+
     executePreDispatchCommands();
     [m_computeCommandEncoder dispatchThreadgroups:MTLSizeMake(x, y, z) threadsPerThreadgroup:m_threadsPerThreadgroup];
 }
 
 void ComputePassEncoder::dispatchIndirect(const Buffer& indirectBuffer, uint64_t indirectOffset)
 {
-    // FIXME: ensure higher levels perform validation on indirectOffset before reaching this callsite
+    if ((indirectOffset % 4) || !(indirectBuffer.usage() & WGPUBufferUsage_Indirect) || (indirectOffset + 3 * sizeof(uint32_t) > indirectBuffer.buffer().length)) {
+        makeInvalid();
+        return;
+    }
+
     executePreDispatchCommands();
     [m_computeCommandEncoder dispatchThreadgroupsWithIndirectBuffer:indirectBuffer.buffer() indirectBufferOffset:indirectOffset threadsPerThreadgroup:m_threadsPerThreadgroup];
 }

@@ -38,6 +38,11 @@ CoreIPCNSValue::Value CoreIPCNSValue::valueFromNSValue(NSValue *nsValue)
     if (!strcmp(nsValue.objCType, @encode(NSRange)))
         return WrappedNSValue { nsValue.rangeValue };
 
+#if PLATFORM(MAC)
+    if (!strcmp(nsValue.objCType, @encode(NSRect)))
+        return WrappedNSValue { nsValue.rectValue };
+#endif
+
     RELEASE_ASSERT_NOT_REACHED();
 }
 
@@ -55,6 +60,10 @@ RetainPtr<id> CoreIPCNSValue::toID() const
 
         WTF::switchOn(wrappedValue, [&](const NSRange& range) {
             result = [NSValue valueWithRange:range];
+#if PLATFORM(MAC)
+        }, [&](const NSRect& rect) {
+            result = [NSValue valueWithRect:rect];
+#endif
         });
 
         return result;
@@ -73,7 +82,14 @@ RetainPtr<id> CoreIPCNSValue::toID() const
 
 bool CoreIPCNSValue::shouldWrapValue(NSValue *value)
 {
-    return !strcmp(value.objCType, @encode(NSRange));
+    if (!strcmp(value.objCType, @encode(NSRange)))
+        return true;
+#if PLATFORM(MAC)
+    if (!strcmp(value.objCType, @encode(NSRect)))
+        return true;
+#endif
+
+    return false;
 }
 
 } // namespace WebKit

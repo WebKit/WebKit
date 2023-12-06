@@ -59,6 +59,10 @@ static ObjectValue valueFromID(id object)
     case IPC::NSType::Color:
         return CoreIPCColor((WebCore::CocoaColor *)object);
 #if ENABLE(DATA_DETECTION)
+#if PLATFORM(MAC)
+    case IPC::NSType::DDActionContext:
+        return secureCodingValueFromID<CoreIPCDDActionContext>((DDActionContext *)object);
+#endif
     case IPC::NSType::DDScannerResult:
         return secureCodingValueFromID<CoreIPCDDScannerResult>((DDScannerResult *)object);
 #endif
@@ -78,6 +82,8 @@ static ObjectValue valueFromID(id object)
         return CoreIPCNSValue((NSValue *)object);
     case IPC::NSType::Number:
         return CoreIPCNumber(bridge_cast((NSNumber *)object));
+    case IPC::NSType::PersonNameComponents:
+        return CoreIPCPersonNameComponents((NSPersonNameComponents *)object);
     case IPC::NSType::SecureCoding:
         return CoreIPCSecureCoding((NSObject<NSSecureCoding> *)object);
     case IPC::NSType::String:

@@ -1857,6 +1857,7 @@ void WebPage::suspendForProcessSwap()
         send(Messages::WebPageProxy::DidFailToSuspendAfterProcessSwap());
     };
 
+    // FIXME: Make this work if the main frame is not a LocalFrame.
     RefPtr currentHistoryItem = m_mainFrame->coreLocalFrame()->loader().history().currentItem();
     if (!currentHistoryItem) {
         failedToSuspend();

@@ -116,6 +116,11 @@ bool WebAuthenticatorCoordinator::processingUserGesture(const LocalFrame& frame,
     return processingUserGestureOrFreebie;
 }
 
+void WebAuthenticatorCoordinator::getClientCapabilities(const SecurityOrigin& origin, CapabilitiesCompletionHandler&& handler)
+{
+    m_webPage.sendWithAsyncReply(Messages::WebAuthenticatorCoordinatorProxy::GetClientCapabilities(origin.data()), WTFMove(handler));
+}
+
 } // namespace WebKit
 
 #undef WEBAUTHN_RELEASE_LOG_ERROR_NO_FRAME

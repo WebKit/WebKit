@@ -299,6 +299,12 @@ typedef NS_ENUM(NSInteger, PKPaymentSetupFeatureType) {
 @end
 #endif
 
+#if HAVE(PKPAYMENTREQUEST_USERAGENT)
+@interface PKPaymentRequest ()
+@property (nonatomic, copy) NSString *userAgent;
+@end
+#endif
+
 NS_ASSUME_NONNULL_END
 
 #endif // USE(APPLE_INTERNAL_SDK)
@@ -334,13 +340,6 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 typedef void(^PKCanMakePaymentsCompletion)(BOOL isValid, NSError *);
-
-#if HAVE(PKPAYMENTREQUEST_USERAGENT)
-// FIXME: <rdar://116640656> Remove `PKPaymentRequest.userAgent` staging code
-@interface PKPaymentRequest (Staging_110687914)
-@property (nonatomic, copy) NSString *userAgent;
-@end
-#endif
 
 NS_ASSUME_NONNULL_END
 

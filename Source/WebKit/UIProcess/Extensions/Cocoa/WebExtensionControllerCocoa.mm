@@ -307,7 +307,7 @@ void WebExtensionController::handleContentRuleListNotification(WebPageProxyIdent
             if (!tab)
                 break;
 
-            context->incrementActionCountForTab(*tab, 1);
+            context->handleContentRuleListNotificationForTab(*tab, url, result.second);
             break;
         }
     }

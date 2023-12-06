@@ -31,6 +31,7 @@
 @property (class, nonatomic) BOOL shouldUseAlternateCredentialStore;
 + (BOOL)arePasskeysDisallowedForRelyingParty:(nonnull NSString *)relyingParty;
 + (BOOL)canCurrentProcessAccessPasskeysForRelyingParty:(nonnull NSString *)relyingParty;
++ (void)getClientCapabilitiesForRelyingParty:(nonnull NSString *)relyingParty withCompletionHandler:(void (^ _Nonnull)(NSDictionary<NSString *, NSNumber *> * _Nonnull))completionHandler;
 @end
 
 // FIXME: Most of the forward declarations below should be behind a non-Apple-internal SDK compile-time flag.

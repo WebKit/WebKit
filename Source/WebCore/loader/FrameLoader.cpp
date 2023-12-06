@@ -2446,11 +2446,13 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
     
     // When navigating to a CachedFrame its FrameView should never be null.  If it is we'll crash in creative ways downstream.
     ASSERT(view);
-    view->setWasScrolledByUser(false);
+    if (RefPtr localView = dynamicDowncast<LocalFrameView>(view.get()))
+        localView->setWasScrolledByUser(false);
 
     Ref frame = m_frame.get();
     std::optional<IntRect> previousViewFrameRect = frame->view() ?  frame->view()->frameRect() : std::optional<IntRect>(std::nullopt);
-    frame->setView(view.copyRef());
+    if (RefPtr localView = dynamicDowncast<LocalFrameView>(view.get()))
+        frame->setView(localView.releaseNonNull());
 
     // Use the previous ScrollView's frame rect.
     if (previousViewFrameRect)

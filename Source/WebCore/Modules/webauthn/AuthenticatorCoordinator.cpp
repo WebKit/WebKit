@@ -40,6 +40,7 @@
 #include "JSCredentialCreationOptions.h"
 #include "JSCredentialRequestOptions.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSPublicKeyCredentialClientCapabilities.h"
 #include "PublicKeyCredential.h"
 #include "PublicKeyCredentialCreationOptions.h"
 #include "PublicKeyCredentialRequestOptions.h"
@@ -312,6 +313,21 @@ void AuthenticatorCoordinator::isConditionalMediationAvailable(const Document& d
     };
     // Async operations are dispatched and handled in the messenger.
     m_client->isConditionalMediationAvailable(document.securityOrigin(), WTFMove(completionHandler));
+}
+
+void AuthenticatorCoordinator::getClientCapabilities(const Document& document, DOMPromiseDeferred<IDLInterface<PublicKeyCredentialClientCapabilities>>&& promise) const
+{
+    if (!m_client)  {
+        promise.reject(Exception { ExceptionCode::UnknownError, "Unknown internal error."_s });
+        return;
+    }
+
+    auto completionHandler = [promise = WTFMove(promise)] (HashMap<String, bool>&& resultMap) mutable {
+        auto result = PublicKeyCredentialClientCapabilities::create(WTFMove(resultMap));
+        promise.resolve(result);
+    };
+
+    m_client->getClientCapabilities(document.securityOrigin(), WTFMove(completionHandler));
 }
 
 void AuthenticatorCoordinator::resetUserGestureRequirement()

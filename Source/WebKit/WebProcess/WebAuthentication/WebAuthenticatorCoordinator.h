@@ -44,6 +44,7 @@ private:
     void getAssertion(const WebCore::LocalFrame&, const WebCore::SecurityOrigin&, const Vector<uint8_t>& hash, const WebCore::PublicKeyCredentialRequestOptions&, WebCore::MediationRequirement, const std::pair<WebAuthn::Scope, std::optional<WebCore::SecurityOriginData>>&, WebCore::RequestCompletionHandler&&) final;
     void isConditionalMediationAvailable(const WebCore::SecurityOrigin&, WebCore::QueryCompletionHandler&&) final;
     void isUserVerifyingPlatformAuthenticatorAvailable(const WebCore::SecurityOrigin&, WebCore::QueryCompletionHandler&&) final;
+    void getClientCapabilities(const WebCore::SecurityOrigin&, WebCore::CapabilitiesCompletionHandler&&) final;
     void resetUserGestureRequirement() final { m_requireUserGesture = false; }
     void cancel() final;
 
