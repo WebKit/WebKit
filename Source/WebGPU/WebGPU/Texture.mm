@@ -1228,116 +1228,116 @@ static bool textureViewFormatCompatible(WGPUTextureFormat format1, WGPUTextureFo
     return Texture::removeSRGBSuffix(format1) == Texture::removeSRGBSuffix(format2);
 }
 
-bool Device::validateCreateTexture(const WGPUTextureDescriptor& descriptor, const Vector<WGPUTextureFormat>& viewFormats)
+NSString *Device::errorValidatingTextureCreation(const WGPUTextureDescriptor& descriptor, const Vector<WGPUTextureFormat>& viewFormats)
 {
     if (!isValid())
-        return false;
+        return @"createTexture: Device is not valid";
 
     if (!descriptor.usage)
-        return false;
+        return @"createTexture: descriptor.usage is zero";
 
     if (!descriptor.size.width || !descriptor.size.height || !descriptor.size.depthOrArrayLayers)
-        return false;
+        return @"createTexture: descriptor.size.width/height/depth is zero";
 
     if (!descriptor.mipLevelCount)
-        return false;
+        return @"createTexture: descriptor.mipLevelCount is zero";
 
     if (descriptor.sampleCount != 1 && descriptor.sampleCount != 4)
-        return false;
+        return @"createTexture: descriptor.sampleCount is neither 1 nor 4";
 
     switch (descriptor.dimension) {
     case WGPUTextureDimension_1D:
         if (descriptor.size.width > limits().maxTextureDimension1D)
-            return false;
+            return @"createTexture: descriptor.size.width is greater than limits().maxTextureDimension1D";
 
         if (descriptor.size.height != 1)
-            return false;
+            return @"createTexture: descriptor.size.height != 1";
 
         if (descriptor.size.depthOrArrayLayers != 1)
-            return false;
+            return @"createTexture: descriptor.size.depthOrArrayLayers != 1";
 
         if (descriptor.sampleCount != 1)
-            return false;
+            return @"createTexture: descriptor.sampleCount != 1";
 
         if (Texture::isCompressedFormat(descriptor.format) || Texture::isDepthOrStencilFormat(descriptor.format))
-            return false;
+            return @"createTexture: descriptor.format is compressed or a depth stencil format";
         break;
     case WGPUTextureDimension_2D:
         if (descriptor.size.width > limits().maxTextureDimension2D)
-            return false;
+            return @"createTexture: descriptor.size.width is greater than limits().maxTextureDimension2D";
 
         if (descriptor.size.height > limits().maxTextureDimension2D)
-            return false;
+            return @"createTexture: descriptor.size.height is greater than limits().maxTextureDimension2D";
 
         if (descriptor.size.depthOrArrayLayers > limits().maxTextureArrayLayers)
-            return false;
+            return @"createTexture: descriptor.size.depthOrArrayLayers > limits().maxTextureArrayLayers";
         break;
     case WGPUTextureDimension_3D:
         if (descriptor.size.width > limits().maxTextureDimension3D)
-            return false;
+            return @"createTexture: descriptor.size.width > limits().maxTextureDimension3D";
 
         if (descriptor.size.height > limits().maxTextureDimension3D)
-            return false;
+            return @"createTexture: descriptor.size.height > limits().maxTextureDimension3D";
 
         if (descriptor.size.depthOrArrayLayers > limits().maxTextureDimension3D)
-            return false;
+            return @"createTexture: descriptor.size.depthOrArrayLayers > limits().maxTextureDimension3D";
 
         if (descriptor.sampleCount != 1)
-            return false;
+            return @"createTexture: descriptor.sampleCount != 1";
 
         if (Texture::isCompressedFormat(descriptor.format) || Texture::isDepthOrStencilFormat(descriptor.format))
-            return false;
+            return @"createTexture: descriptor.format is compressed or a depth stencil format";
         break;
     case WGPUTextureDimension_Force32:
         ASSERT_NOT_REACHED();
-        return false;
+        return @"createTexture: descriptor.dimension is WGPUTextureDimension_Force32";
     }
 
     if (descriptor.size.width % Texture::texelBlockWidth(descriptor.format))
-        return false;
+        return @"createTexture: descriptor.size.width % Texture::texelBlockWidth(descriptor.format)";
 
     if (descriptor.size.height % Texture::texelBlockHeight(descriptor.format))
-        return false;
+        return @"createTexture: descriptor.size.height % Texture::texelBlockHeight(descriptor.format)";
 
     if (descriptor.sampleCount > 1) {
         if (descriptor.mipLevelCount != 1)
-            return false;
+            return @"createTexture: descriptor.sampleCount > 1 and descriptor.mipLevelCount != 1";
 
         if (descriptor.size.depthOrArrayLayers != 1)
-            return false;
+            return @"createTexture: descriptor.sampleCount > 1 and descriptor.size.depthOrArrayLayers != 1";
 
         if ((descriptor.usage & WGPUTextureUsage_StorageBinding) || !(descriptor.usage & WGPUTextureUsage_RenderAttachment))
-            return false;
+            return @"createTexture: descriptor.sampleCount > 1 and (descriptor.usage & WGPUTextureUsage_StorageBinding) || !(descriptor.usage & WGPUTextureUsage_RenderAttachment)";
 
         if (!isRenderableFormat(descriptor.format, *this))
-            return false;
+            return @"createTexture: descriptor.sampleCount > 1 and !isRenderableFormat(descriptor.format, *this)";
 
         if (!supportsMultisampling(descriptor.format, *this))
-            return false;
+            return @"createTexture: descriptor.sampleCount > 1 and !supportsMultisampling(descriptor.format, *this)";
     }
 
     if (descriptor.mipLevelCount > maximumMiplevelCount(descriptor.dimension, descriptor.size))
-        return false;
+        return @"createTexture: descriptor.mipLevelCount > maximumMiplevelCount(descriptor.dimension, descriptor.size)";
 
     if (descriptor.usage & WGPUTextureUsage_RenderAttachment) {
         if (!isRenderableFormat(descriptor.format, *this))
-            return false;
+            return @"createTexture: descriptor.usage & WGPUTextureUsage_RenderAttachment && !isRenderableFormat(descriptor.format, *this)";
 
         if (descriptor.dimension != WGPUTextureDimension_2D)
-            return false;
+            return @"createTexture: descriptor.usage & WGPUTextureUsage_RenderAttachment && descriptor.dimension != WGPUTextureDimension_2D";
     }
 
     if (descriptor.usage & WGPUTextureUsage_StorageBinding) {
         if (!hasStorageBindingCapability(descriptor.format))
-            return false;
+            return @"createTexture: descriptor.usage & WGPUTextureUsage_StorageBinding && !hasStorageBindingCapability(descriptor.format)";
     }
 
     for (auto viewFormat : viewFormats) {
         if (!textureViewFormatCompatible(descriptor.format, viewFormat))
-            return false;
+            return @"createTexture: !textureViewFormatCompatible(descriptor.format, viewFormat)";
     }
 
-    return true;
+    return nil;
 }
 
 MTLTextureUsage Texture::usage(WGPUTextureUsageFlags usage, WGPUTextureFormat format)
@@ -1986,8 +1986,8 @@ Ref<Texture> Device::createTexture(const WGPUTextureDescriptor& descriptor)
 
     Vector viewFormats = { descriptor.viewFormats, descriptor.viewFormatCount };
 
-    if (!validateCreateTexture(descriptor, viewFormats)) {
-        generateAValidationError("Validation failure."_s);
+    if (NSString *error = errorValidatingTextureCreation(descriptor, viewFormats)) {
+        generateAValidationError(error);
         return Texture::createInvalid(*this);
     }
 
