@@ -3757,6 +3757,28 @@ webkit.org/b/264680 webgl/webgl-visible-after-context-restore.html [ ImageOnlyFa
 
 webkit.org/b/265868 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions [ Skip ]
 
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/delete.html?2001-3000 [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/delete.html?3001-4000 [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/delete.html?4001-5000 [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/delete.html?5001-6000 [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/delete.html?7001-last [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/formatblock.html?2001-3000  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/formatblock.html?3001-4000  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/forwarddelete.html?1-1000  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/forwarddelete.html?1001-2000  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/forwarddelete.html?2001-3000  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/forwarddelete.html?3001-4000  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/forwarddelete.html?4001-5000  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/forwarddelete.html?5001-6000  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/forwarddelete.html?6001-last  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/justifyright.html?3001-4000  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/justifyright.html?4001-last  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/multitest.html?1001-2000  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/multitest.html?2001-3000  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/multitest.html?3001-4000  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/multitest.html?4001-5000  [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/multitest.html?5001-6000  [ Slow ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
