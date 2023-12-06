@@ -58,6 +58,13 @@ public:
 
     bool hasHyphen() const { return inlineTextBox()->hasHyphen(); }
     StringView originalText() const { return StringView(inlineTextBox()->renderer().text()).substring(inlineTextBox()->start(), inlineTextBox()->len()); }
+    size_t lineIndex() const
+    {
+        size_t precedingLines = 0;
+        for (auto* rootBox = rootInlineBox().prevRootBox(); rootBox; rootBox = rootBox->prevRootBox())
+            ++precedingLines;
+        return precedingLines;
+    }
     unsigned start() const { return inlineTextBox()->start(); }
     unsigned end() const { return inlineTextBox()->end(); }
     unsigned length() const { return inlineTextBox()->len(); }
