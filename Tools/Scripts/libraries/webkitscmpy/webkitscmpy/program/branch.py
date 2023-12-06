@@ -100,6 +100,35 @@ class Branch(Command):
         return string_utils.encode(result, target_type=str)
 
     @classmethod
+    def cc_radar(cls, args, repository, issue):
+        needs_radar = issue and not isinstance(issue.tracker, radar.Tracker) and getattr(args, 'update_issue', True)
+        needs_radar = needs_radar and any([
+            isinstance(tracker, radar.Tracker) and tracker.radarclient()
+            for tracker in Tracker._trackers
+        ])
+        needs_radar = needs_radar and not any([
+            isinstance(reference.tracker, radar.Tracker)
+            for reference in issue.references
+        ])
+
+        radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
+        if needs_radar and (args.cc_radar or (radar_cc_default and args.cc_radar is not False)):
+            rdar = None
+            if not getattr(args, 'defaults', None):
+                sys.stdout.write('Existing radar to CC (leave empty to create new radar)')
+                sys.stdout.flush()
+                input = Terminal.input(': ')
+                if re.match(r'\d+', input):
+                    input = '<rdar://problem/{}>'.format(input)
+                rdar = Tracker.from_string(input)
+            cced = issue.cc_radar(block=True, radar=rdar)
+            if cced and rdar and cced.id != rdar.id:
+                print('Duping {} to {}'.format(cced.link, rdar.link))
+                cced.close(original=rdar)
+            return rdar if rdar else cced
+        return None
+
+    @classmethod
     def main(cls, args, repository, why=None, redact=False, target_remote='fork', **kwargs):
         if not isinstance(repository, local.Git):
             sys.stderr.write("Can only 'branch' on a native Git repository\n")
@@ -142,30 +171,7 @@ class Branch(Command):
             else:
                 log.warning("'{}' has no spaces, assuming user intends it to be a branch name".format(args.issue))
 
-        needs_radar = issue and not isinstance(issue.tracker, radar.Tracker) and getattr(args, 'update_issue', True)
-        needs_radar = needs_radar and any([
-            isinstance(tracker, radar.Tracker) and tracker.radarclient()
-            for tracker in Tracker._trackers
-        ])
-        needs_radar = needs_radar and not any([
-            isinstance(reference.tracker, radar.Tracker)
-            for reference in issue.references
-        ])
-
-        radar_cc_default = repository.config().get('webkitscmpy.cc-radar', 'true') == 'true'
-        if needs_radar and (args.cc_radar or (radar_cc_default and args.cc_radar is not False)):
-            rdar = None
-            if not getattr(args, 'defaults', None):
-                sys.stdout.write('Existing radar to CC (leave empty to create new radar)')
-                sys.stdout.flush()
-                input = Terminal.input(': ')
-                if re.match(r'\d+', input):
-                    input = '<rdar://problem/{}>'.format(input)
-                rdar = Tracker.from_string(input)
-            cced = issue.cc_radar(block=True, radar=rdar)
-            if cced and rdar and cced.id != rdar.id:
-                print('Duping {} to {}'.format(cced.link, rdar.link))
-                cced.close(original=rdar)
+        cls.cc_radar(args, repository, issue)
 
         if issue and not issue.tracker.hide_title:
             args._title = issue.title
