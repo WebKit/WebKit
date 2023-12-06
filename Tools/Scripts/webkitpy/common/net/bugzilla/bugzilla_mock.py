@@ -153,8 +153,6 @@ _patch8 = {  # Resolved bug, without review flag, not marked obsolete (maybe alr
 
 # This matches one of Bug.unassigned_emails
 _unassigned_email = "webkit-unassigned@lists.webkit.org"
-# This is needed for the FlakyTestReporter to believe the bug
-# was filed by one of the webkitpy bots.
 _commit_queue_email = "commit-queue@webkit.org"
 
 
