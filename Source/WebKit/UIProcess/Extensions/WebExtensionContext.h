@@ -297,6 +297,7 @@ public:
     Ref<WebExtensionTab> getOrCreateTab(_WKWebExtensionTab *);
     RefPtr<WebExtensionTab> getTab(WebExtensionTabIdentifier, IgnoreExtensionAccess = IgnoreExtensionAccess::No);
     RefPtr<WebExtensionTab> getTab(WebPageProxyIdentifier, std::optional<WebExtensionTabIdentifier> = std::nullopt, IgnoreExtensionAccess = IgnoreExtensionAccess::No);
+    RefPtr<WebExtensionTab> getCurrentTab(WebPageProxyIdentifier, IgnoreExtensionAccess = IgnoreExtensionAccess::No);
 
     WindowVector openWindows() const;
     TabMapValueIterator openTabs() const { return m_tabMap.values(); }
