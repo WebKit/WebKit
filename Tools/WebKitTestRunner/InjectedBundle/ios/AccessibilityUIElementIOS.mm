@@ -986,6 +986,11 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
     return [rangeDescription createJSStringRef];
 }
 
+JSRetainPtr<JSStringRef> AccessibilityUIElement::intersectionWithSelectionRange()
+{
+    return nullptr;
+}
+
 bool AccessibilityUIElement::setSelectedTextMarkerRange(AccessibilityTextMarkerRange*)
 {
     return false;

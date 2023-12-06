@@ -156,6 +156,8 @@ public:
     std::optional<SimpleRange> simpleRange() const;
     std::optional<CharacterRange> characterRange() const;
 
+    std::optional<AXTextMarkerRange> intersectionWith(const AXTextMarkerRange&) const;
+
 #if PLATFORM(MAC)
     RetainPtr<AXTextMarkerRangeRef> platformData() const;
     operator AXTextMarkerRangeRef() const { return platformData().autorelease(); }

@@ -60,6 +60,7 @@
     readonly attribute unsigned long numberOfCharacters;
     readonly attribute long insertionPointLineNumber;
     readonly attribute DOMString selectedTextRange;
+    readonly attribute DOMString intersectionWithSelectionRange;
     readonly attribute DOMString textInputMarkedRange;
 
     DOMString stringDescriptionOfAttributeValue(DOMString attr);

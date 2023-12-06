@@ -1,0 +1,61 @@
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="text1">Alpha Bravo</div>
+<div id="text2">  Charlie  Delta  </div>
+
+<pre id="tree"></pre>
+
+<script>
+    var output = "This tests the intersectionWithSelectionRange api, which returns the range of characters in a static text node that are part of the document selection, if any.\n\n";
+
+    async function selectNodeIdRange(nodeId0, offset0, nodeId1, offset1) {
+        let root = accessibilityController.rootElement.childAtIndex(0);
+        let previousAXSelection = root.stringForTextMarkerRange(root.selectedTextMarkerRange())
+        let sel = window.getSelection();
+        let range = document.createRange();
+        range.setStart(document.getElementById(nodeId0).firstChild, offset0);
+        range.setEnd(document.getElementById(nodeId1).firstChild, offset1);
+        sel.removeAllRanges();
+        sel.addRange(range);
+        await waitFor(() => previousAXSelection != root.stringForTextMarkerRange(root.selectedTextMarkerRange()));
+    }
+
+    async function runTest(nodeId0, offset0, nodeId1, offset1,
+                     expectedText,
+                     accessibleElementId, expectedAccessibleRange) {
+        output += `Trying range: ${nodeId0}:${offset0} - ${nodeId1}:${offset1} : ${expectedText}\n`;
+        await selectNodeIdRange(nodeId0, offset0, nodeId1, offset1);
+        window.expectedText = expectedText;
+        output += expect('window.getSelection().toString()', 'expectedText');
+
+        axElement = accessibilityController.accessibleElementById(accessibleElementId);
+        axStaticText = axElement.childAtIndex(0);
+        output += expect('axStaticText.role', '"AXRole: AXStaticText"');
+        window.expectedAccessibleRange = expectedAccessibleRange
+        output += expect('axStaticText.intersectionWithSelectionRange', 'expectedAccessibleRange');
+
+        output += '\n';
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        setTimeout(async () => {
+            await runTest('text1', 0, 'text1', 5, 'Alpha', 'text1', '{0, 5}');
+            await runTest('text1', 6, 'text1', 11, 'Bravo', 'text1', '{6, 5}');
+            await runTest('text2', 2, 'text2', 9, 'Charlie', 'text2', '{0, 7}');
+            await runTest('text2', 11, 'text2', 16, 'Delta', 'text2', '{8, 5}');
+            await runTest('text1', 6, 'text2', 9, 'Bravo\nCharlie', 'text1', '{6, 5}');
+            await runTest('text1', 0, 'text1', 5, 'Alpha', 'text2', null);
+            await runTest('text1', 6, 'text2', 9, 'Bravo\nCharlie', 'text2', '{0, 7}');
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

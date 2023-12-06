@@ -844,6 +844,9 @@ accessibility/mac/lazy-spellchecking.html [ Skip ]
 accessibility/mac/spellcheck-with-voiceover.html [ Skip ]
 accessibility/text-marker/text-marker-range-with-unordered-markers.html
 
+# New API not supported in WK1
+accessibility/mac/intersection-with-selection-range.html [ Skip ]
+
 # DOM paste access requests are not implemented in WebKit1.
 editing/async-clipboard/clipboard-change-data-while-reading.html [ Skip ]
 editing/async-clipboard/clipboard-do-not-read-text-from-platform-if-text-changes.html [ Skip ]

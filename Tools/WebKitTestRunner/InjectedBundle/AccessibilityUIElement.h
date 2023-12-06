@@ -178,6 +178,7 @@ public:
     unsigned numberOfCharacters() const;
     int insertionPointLineNumber();
     JSRetainPtr<JSStringRef> selectedTextRange();
+    JSRetainPtr<JSStringRef> intersectionWithSelectionRange();
     JSRetainPtr<JSStringRef> textInputMarkedRange() const;
     bool isAtomicLiveRegion() const;
     bool isBusy() const;
