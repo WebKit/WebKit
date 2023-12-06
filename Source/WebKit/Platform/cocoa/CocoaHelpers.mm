@@ -34,10 +34,6 @@
 #import "WKNSData.h"
 #import <wtf/FileSystem.h>
 
-#if PLATFORM(MAC)
-#import <sys/mount.h>
-#endif
-
 namespace WebKit {
 
 static NSString * const privacyPreservingDescriptionKey = @"privacyPreservingDescription";
@@ -366,7 +362,7 @@ NSString *privacyPreservingDescription(NSError *error)
 NSURL *ensureDirectoryExists(NSURL *directory)
 {
     ASSERT(directory.isFileURL);
-    if (!FileSystem::makeAllDirectories(directory.absoluteString)) {
+    if (!FileSystem::makeAllDirectories(directory.path)) {
         RELEASE_LOG_ERROR(Extensions, "Failed to create directory: %{private}@", (NSString *)directory);
         return nil;
     }
