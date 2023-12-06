@@ -538,7 +538,7 @@ uint64_t SourceBufferPrivate::totalTrackBufferSizeInBytes() const
 
 void SourceBufferPrivate::addTrackBuffer(TrackID trackId, RefPtr<MediaDescription>&& description)
 {
-    ASSERT(!m_trackBufferMap.contains(trackId));
+    ASSERT(m_trackBufferMap.find(trackId) == m_trackBufferMap.end());
 
     m_hasAudio = m_hasAudio || description->isAudio();
     m_hasVideo = m_hasVideo || description->isVideo();
@@ -640,21 +640,21 @@ bool SourceBufferPrivate::validateInitializationSegment(const SourceBufferPrivat
     //   IDs match the ones in the first initialization segment.
     if (segment.audioTracks.size() >= 2) {
         for (auto& audioTrackInfo : segment.audioTracks) {
-            if (!m_trackBufferMap.contains(audioTrackInfo.track->id()))
+            if (m_trackBufferMap.find(audioTrackInfo.track->id()) == m_trackBufferMap.end())
                 return false;
         }
     }
 
     if (segment.videoTracks.size() >= 2) {
         for (auto& videoTrackInfo : segment.videoTracks) {
-            if (!m_trackBufferMap.contains(videoTrackInfo.track->id()))
+            if (m_trackBufferMap.find(videoTrackInfo.track->id()) == m_trackBufferMap.end())
                 return false;
         }
     }
 
     if (segment.textTracks.size() >= 2) {
         for (auto& textTrackInfo : segment.videoTracks) {
-            if (!m_trackBufferMap.contains(textTrackInfo.track->id()))
+            if (m_trackBufferMap.find(textTrackInfo.track->id()) == m_trackBufferMap.end())
                 return false;
         }
     }
