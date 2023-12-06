@@ -52,4 +52,8 @@ static RetainPtr<WKProcessExtension>& sharedInstance()
 {
     return nil;
 }
+
+- (void)lockdownSandbox:(NSString*)version
+{
+}
 @end

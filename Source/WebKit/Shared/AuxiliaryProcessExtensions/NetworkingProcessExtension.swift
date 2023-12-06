@@ -69,4 +69,11 @@ extension NetworkingProcessExtension : NetworkingServiceExtension {
             return WKGrant()
         }
     }
+
+    override func lockdownSandbox(_ version: String) {
+        if let lockdownVersion = _LockdownVersion(rawValue: version) {
+            self._lockdown(version: lockdownVersion)
+        }
+    }
+
 }
