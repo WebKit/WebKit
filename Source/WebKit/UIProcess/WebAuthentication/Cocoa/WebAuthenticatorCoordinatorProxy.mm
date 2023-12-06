@@ -841,6 +841,25 @@ void WebAuthenticatorCoordinatorProxy::isConditionalMediationAvailable(const Web
     handler(false);
 }
 
+void WebAuthenticatorCoordinatorProxy::getClientCapabilities(const WebCore::SecurityOriginData& originData, CapbilitiesCompletionHandler&& handler)
+{
+    if (![getASCWebKitSPISupportClass() respondsToSelector:@selector(getClientCapabilitiesForRelyingParty:withCompletionHandler:)]) {
+        HashMap<String, bool> resultMap;
+        handler(resultMap);
+        return;
+    }
+
+    [getASCWebKitSPISupportClass() getClientCapabilitiesForRelyingParty:originData.securityOrigin()->domain() withCompletionHandler:makeBlockPtr([handler = WTFMove(handler)](NSDictionary<NSString *, NSNumber *> *result) mutable {
+        HashMap<String, bool> resultMap;
+        for (NSString *key in result)
+            resultMap.set(key, result[key].boolValue);
+
+        ensureOnMainRunLoop([handler = WTFMove(handler), resultMap = WTFMove(resultMap)] () mutable {
+            handler(resultMap);
+        });
+    }).get()];
+}
+
 void WebAuthenticatorCoordinatorProxy::isUserVerifyingPlatformAuthenticatorAvailable(const SecurityOriginData& data, QueryCompletionHandler&& handler)
 {
     if (canCurrentProcessAccessPasskeysForRelyingParty(data)) {

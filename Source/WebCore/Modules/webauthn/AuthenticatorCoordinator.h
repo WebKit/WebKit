@@ -42,6 +42,7 @@ class AbortSignal;
 class AuthenticatorCoordinatorClient;
 class BasicCredential;
 class Document;
+class PublicKeyCredentialClientCapabilities;
 
 struct PublicKeyCredentialCreationOptions;
 struct PublicKeyCredentialRequestOptions;
@@ -66,6 +67,8 @@ public:
     void discoverFromExternalSource(const Document&, CredentialRequestOptions&&, const ScopeAndCrossOriginParent&, CredentialPromise&&);
     void isUserVerifyingPlatformAuthenticatorAvailable(const Document&, DOMPromiseDeferred<IDLBoolean>&&) const;
     void isConditionalMediationAvailable(const Document&, DOMPromiseDeferred<IDLBoolean>&&) const;
+
+    void getClientCapabilities(const Document&, DOMPromiseDeferred<IDLInterface<PublicKeyCredentialClientCapabilities>>&&) const;
 
     WEBCORE_EXPORT void resetUserGestureRequirement();
 
