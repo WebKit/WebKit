@@ -30,6 +30,7 @@ import unittest
 
 # Do not import changelog_unittest.ChangeLogTest directly as that will cause it to be run again.
 from webkitpy.common.checkout import changelog_unittest
+
 from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.tool.steps.preparechangelogforrevert import *

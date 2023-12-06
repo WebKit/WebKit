@@ -30,12 +30,12 @@
 import logging
 import unittest
 
-from webkitcorepy import OutputCapture
-
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.executive_mock import MockExecutive
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.commit import Commit
+
+from webkitcorepy import OutputCapture
 
 
 class CommitTest(unittest.TestCase):

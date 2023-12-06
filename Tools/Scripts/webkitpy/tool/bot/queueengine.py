@@ -29,11 +29,56 @@
 
 import logging
 import sys
+import traceback
+
+from datetime import datetime, timedelta
+
+from webkitpy.common.host import Host
+from webkitpy.common.system import logutils
+from webkitpy.common.system.executive import ScriptError
+from webkitpy.common.system.outputtee import OutputTee
 
 _log = logging.getLogger(__name__)
 
 
+# FIXME: This will be caught by "except Exception:" blocks, we should consider
+# making this inherit from SystemExit instead (or BaseException, except that's not recommended).
+class TerminateQueue(Exception):
+    pass
+
+
+class QueueEngineDelegate:
+    def queue_log_path(self):
+        raise NotImplementedError('subclasses must implement')
+
+    def work_item_log_path(self, work_item):
+        raise NotImplementedError('subclasses must implement')
+
+    def begin_work_queue(self):
+        raise NotImplementedError('subclasses must implement')
+
+    def should_continue_work_queue(self):
+        raise NotImplementedError('subclasses must implement')
+
+    def next_work_item(self):
+        raise NotImplementedError('subclasses must implement')
+
+    def process_work_item(self, work_item):
+        raise NotImplementedError('subclasses must implement')
+
+    def handle_unexpected_error(self, work_item, message):
+        raise NotImplementedError('subclasses must implement')
+
+
 class QueueEngine:
+    def __init__(self, name, delegate, wakeup_event, seconds_to_sleep=120):
+        self._name = name
+        self._delegate = delegate
+        self._wakeup_event = wakeup_event
+        self._output_tee = OutputTee()
+        self._seconds_to_sleep = seconds_to_sleep
+
+    log_date_format = "%Y-%m-%d %H:%M:%S"
     handled_error_code = 2
 
     # Child processes exit with a special code to the parent queue process can detect the error was handled.
@@ -41,3 +86,84 @@ class QueueEngine:
     def exit_after_handled_error(cls, error):
         _log.error(error)
         sys.exit(cls.handled_error_code)
+
+    def run(self):
+        self._begin_logging()
+
+        self._delegate.begin_work_queue()
+        while (self._delegate.should_continue_work_queue()):
+            try:
+                self._ensure_work_log_closed()
+                work_item = self._delegate.next_work_item()
+                if not work_item:
+                    self._sleep("No work item.")
+                    continue
+
+                try:
+                    if not self._delegate.process_work_item(work_item):
+                        _log.warning("Unable to process work item.")
+                        continue
+                except ScriptError as e:
+                    self._open_work_log(work_item)
+                    self._work_log.write(e.message_with_output(output_limit=5000))
+                    # Use a special exit code to indicate that the error was already
+                    # handled in the child process and we should just keep looping.
+                    if e.exit_code == self.handled_error_code:
+                        continue
+                    message = "Unexpected failure when processing patch!  Please file a bug against webkit-patch.\n%s" % e.message_with_output(output_limit=5000)
+                    self._delegate.handle_unexpected_error(work_item, message)
+            except TerminateQueue:
+                self._stopping("TerminateQueue exception received.")
+                return 0
+            except KeyboardInterrupt:
+                self._stopping("User terminated queue.")
+                return 1
+            except Exception:
+                traceback.print_exc()
+                # Don't try tell the status bot, in case telling it causes an exception.
+                self._sleep("Exception while preparing queue")
+        self._stopping("Delegate terminated queue.")
+        return 0
+
+    def _stopping(self, message):
+        _log.info(message)
+        logging.getLogger("webkitpy").removeHandler(self._log_handler)
+        # Be careful to shut down our OutputTee or the unit tests will be unhappy.
+        self._ensure_work_log_closed()
+        self._output_tee.remove_log(self._queue_log)
+
+    def _begin_logging(self):
+        _queue_log_path = self._delegate.queue_log_path()
+        # We are using logging.getLogger("webkitpy") instead of _log since we want to capture all messages logged from webkitpy modules.
+        self._log_handler = logutils.configure_logger_to_log_to_file(logging.getLogger("webkitpy"), _queue_log_path, Host().filesystem)
+        self._queue_log = self._output_tee.add_log(_queue_log_path)
+        self._work_log = None
+
+    def _open_work_log(self, work_item):
+        work_item_log_path = self._delegate.work_item_log_path(work_item)
+        if not work_item_log_path:
+            return
+        self._work_log = self._output_tee._open_log_file(work_item_log_path)
+
+    def _ensure_work_log_closed(self):
+        # If we still have a bug log open, close it.
+        if self._work_log:
+            self._work_log.close()
+            self._work_log = None
+
+    def _now(self):
+        """Overriden by the unit tests to allow testing _sleep_message"""
+        return datetime.now()
+
+    def _sleep_message(self, message):
+        wake_time = self._now() + timedelta(seconds=self._seconds_to_sleep)
+        if self._seconds_to_sleep < 3 * 60:
+            sleep_duration_text = str(self._seconds_to_sleep) + ' seconds'
+        else:
+            sleep_duration_text = str(round(self._seconds_to_sleep / 60)) + ' minutes'
+        return "%s Sleeping until %s (%s)." % (message, wake_time.strftime(self.log_date_format), sleep_duration_text)
+
+    def _sleep(self, message):
+        _log.info(self._sleep_message(message))
+        self._wakeup_event.wait(self._seconds_to_sleep)
+        self._wakeup_event.clear()

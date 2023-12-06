@@ -26,43 +26,24 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.common.system import logutils
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
 
 
-_log = logutils.get_logger(__file__)
-
-
-class ApplyWatchList(AbstractStep):
+class AttachToBug(AbstractStep):
     @classmethod
     def options(cls):
         return AbstractStep.options() + [
-            Options.git_commit,
+            Options.comment,
+            Options.description,
         ]
 
     def run(self, state):
-        diff = self.cached_lookup(state, 'diff')
-        bug_id = state.get('bug_id')
+        filepath = state["filepath"]
+        bug_id = state["bug_id"]
+        description = self._options.description or self._tool.filesystem.basename(filepath)
+        comment_text = self._options.comment
 
-        cc_and_messages = self._tool.watch_list().determine_cc_and_messages(diff)
-        cc_emails = cc_and_messages['cc_list']
-        messages = cc_and_messages['messages']
-        if bug_id:
-            # Remove emails and cc's which are already in the bug or the reporter.
-            bug = self._tool.bugs.fetch_bug(bug_id)
-            if not bug:
-                _log.info('Unable to fetch bug {}. Skipped applying watchlist.'.format(bug_id))
-                return
-
-            messages = filter(lambda message: not bug.is_in_comments(message), messages)
-            cc_emails = set(cc_emails).difference(bug.cc_emails())
-            cc_emails.discard(bug.reporter_email())
-
-        comment_text = '\n\n'.join(messages)
-        if bug_id:
-            if cc_emails or comment_text:
-                self._tool.bugs.post_comment_to_bug(bug_id, comment_text, cc_emails)
-        else:
-            _log.info('No bug was updated because no id was given.')
-        _log.info('Result of watchlist: cc "{}" messages "{}"'.format(', '.join(sorted(cc_emails)), comment_text))
+        # add_attachment_to_bug fills in the filename from the file path.
+        filename = None
+        self._tool.bugs.add_attachment_to_bug(bug_id, filepath, description, filename, comment_text)

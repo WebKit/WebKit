@@ -21,11 +21,10 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import os
 import sys
+import os
 
 from webkitcorepy import string_utils
-
 from webkitpy.common.checkout.diff_parser import DiffParser
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.systemhost import SystemHost

@@ -30,12 +30,10 @@
 import logging
 import unittest
 
-from webkitcorepy import OutputCapture
-
 from webkitpy.tool.mocktool import MockOptions, MockTool
-from webkitpy.tool.steps.updatechangelogswithreviewer import (
-    UpdateChangeLogsWithReviewer,
-)
+from webkitpy.tool.steps.updatechangelogswithreviewer import UpdateChangeLogsWithReviewer
+
+from webkitcorepy import OutputCapture
 
 
 class UpdateChangeLogsWithReviewerTest(unittest.TestCase):

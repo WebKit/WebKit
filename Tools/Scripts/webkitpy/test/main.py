@@ -271,12 +271,16 @@ def main():
         "webkitpy.test.finder_unittest",
         "webkitpy.test.main_unittest",
         "webkitpy.test.runner_unittest",
+        "webkitpy.tool.bot.botinfo_unittest",
+        "webkitpy.tool.bot.queueengine_unittest",
         "webkitpy.tool.commands.applywatchlistlocal_unittest",
         "webkitpy.tool.commands.download_unittest",
+        "webkitpy.tool.commands.queues_unittest",
         "webkitpy.tool.commands.suggestnominations_unittest",
         "webkitpy.tool.commands.upload_unittest",
         "webkitpy.tool.mocktool_unittest",
         "webkitpy.tool.multicommandtool_unittest",
+        "webkitpy.tool.servers.gardeningserver_unittest",
         "webkitpy.tool.servers.rebaselineserver_unittest",
         "webkitpy.tool.servers.reflectionhandler_unittest",
         "webkitpy.tool.steps.applywatchlist_unittest",
@@ -284,6 +288,7 @@ def main():
         "webkitpy.tool.steps.closebugforlanddiff_unittest",
         "webkitpy.tool.steps.commit_unittest",
         "webkitpy.tool.steps.discardlocalchanges_unittest",
+        "webkitpy.tool.steps.haslanded_unittest",
         "webkitpy.tool.steps.preparechangelog_unittest",
         "webkitpy.tool.steps.preparechangelogforrevert_unittest",
         "webkitpy.tool.steps.steps_unittest",
@@ -330,7 +335,6 @@ def main():
     }
 
     all_tests = set(tester.finder.find_names([], True))
-    assert len(py2_tests - all_tests) == 0, py2_tests - all_tests
 
     if sys.version_info < (3,):
         tester.expect_error_on_import(

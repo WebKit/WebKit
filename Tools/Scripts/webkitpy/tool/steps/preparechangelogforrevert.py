@@ -30,6 +30,7 @@ import re
 
 from webkitcorepy import string_utils
 
+from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.config import urls
 from webkitpy.tool.steps.abstractstep import AbstractStep
 
