@@ -95,7 +95,6 @@ void SVGMPathElement::didFinishInsertingNode()
 void SVGMPathElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     SVGElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    notifyParentOfPathChange(&oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument)
         clearResourceReferences();
 }
@@ -127,11 +126,7 @@ RefPtr<SVGPathElement> SVGMPathElement::pathElement()
 
 void SVGMPathElement::targetPathChanged()
 {
-    notifyParentOfPathChange(parentNode());
-}
-
-void SVGMPathElement::notifyParentOfPathChange(ContainerNode* parent)
-{
+    auto* parent = parentNode();
     if (is<SVGAnimateMotionElement>(parent))
         downcast<SVGAnimateMotionElement>(*parent).updateAnimationPath();
 }
