@@ -62,7 +62,7 @@ String CSSScopeRule::cssText() const
 
 String CSSScopeRule::start() const
 {
-    auto& scope = styleRuleScope().scopeStart();
+    auto& scope = styleRuleScope().originalScopeStart();
     if (scope.isEmpty())
         return { };
 
@@ -71,7 +71,7 @@ String CSSScopeRule::start() const
 
 String CSSScopeRule::end() const
 {
-    auto& scope = styleRuleScope().scopeEnd();
+    auto& scope = styleRuleScope().originalScopeEnd();
     if (scope.isEmpty())
         return { };
 

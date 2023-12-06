@@ -951,11 +951,6 @@ RefPtr<StyleRuleScope> CSSParserImpl::consumeScopeRule(CSSParserTokenRange prelu
     if (!m_context.cssScopeAtRuleEnabled)
         return nullptr;
 
-    // FIXME: implement mixing style nesting and scope nesting
-    // https://bugs.webkit.org/show_bug.cgi?id=265368
-    if (isStyleNestedContext())
-        return nullptr;
-
     auto preludeRangeCopy = prelude;
     CSSSelectorList scopeStart;
     CSSSelectorList scopeEnd;

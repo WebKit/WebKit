@@ -2,13 +2,13 @@
 FAIL Nesting-selector in <scope-end> assert_equals: expected "auto" but got "1"
 FAIL Implicit :scope in <scope-end> assert_equals: expected "1" but got "42"
 PASS Relative selectors in <scope-end>
-FAIL Nesting-selector in the scope's <stylesheet> assert_equals: expected "1" but got "auto"
+PASS Nesting-selector in the scope's <stylesheet>
 PASS Nesting-selector within :scope rule
 PASS Nesting-selector within :scope rule (double nested)
-FAIL @scope nested within style rule assert_equals: expected "1" but got "auto"
-FAIL Parent pseudo class within scope-start assert_equals: expected "1" but got "auto"
-FAIL Parent pseudo class within scope-end assert_equals: expected "1" but got "auto"
-FAIL Parent pseudo class within body of nested @scope assert_equals: matching: DIVa b c expected "1" but got "auto"
+PASS @scope nested within style rule
+PASS Parent pseudo class within scope-start
+FAIL Parent pseudo class within scope-end assert_equals: limit element is not in scope expected "auto" but got "1"
+FAIL Parent pseudo class within body of nested @scope assert_equals: non-matching: DIVb c expected "auto" but got "1"
 FAIL Implicit rule within nested @scope  assert_equals: expected "1" but got "auto"
 FAIL Implicit rule within nested @scope (proximity) assert_equals: expected "1" but got "2"
 

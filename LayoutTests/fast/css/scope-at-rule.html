@@ -39,6 +39,22 @@ video {
   .green-9 { color: red; }
 }
 
+div {
+  @scope (&.a) to (&.foo) {
+    & {
+      .green-10 { color:green; }
+    }
+  }
+}
+
+div {
+  @scope (&) {
+    & {
+      .green-11 { color:green; }
+    }
+  }
+}
+
 </style>
 
 <div class="a">
@@ -55,10 +71,6 @@ video {
   <div class="b">
     <span class="green-2">should be green</span>
   </div>
-</div>
-
-<div class="a">
-  <span class="green-3">should not be green</span>
 </div>
 
 <div>
@@ -93,4 +105,15 @@ video {
   <div class="b">
     <span class="green-9">should be green</span>
   </div>
+
+<div>
+  <div class="a b">
+    <div class="a b">
+      <div class="a b green-10">should be green</span>
+    </div>
+  </div>
+</div>
+
+<div>
+  <div class="green-11">should be green</span>
 </div>
