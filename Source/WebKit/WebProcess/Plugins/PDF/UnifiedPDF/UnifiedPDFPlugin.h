@@ -201,8 +201,6 @@ private:
     WebCore::IntPoint convertFromDocumentToPage(const WebCore::IntPoint&, PDFDocumentLayout::PageIndex) const;
     PDFElementTypes pdfElementTypesForPluginPoint(const WebCore::IntPoint&) const;
 
-    bool isTaggedPDF() const;
-
     PDFDocumentLayout m_documentLayout;
     RefPtr<WebCore::GraphicsLayer> m_rootLayer;
     RefPtr<WebCore::GraphicsLayer> m_scrollContainerLayer;
