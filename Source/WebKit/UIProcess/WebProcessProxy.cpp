@@ -801,7 +801,7 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
 
     updateRegistrationWithDataStore();
     updateBackgroundResponsivenessTimer();
-    updateBlobRegistryPartitioningState();
+    websiteDataStore()->updateBlobRegistryPartitioningState();
 
     // If this was previously a standalone worker process with no pages we need to call didChangeThrottleState()
     // to update our process assertions on the network process since standalone worker processes do not hold
@@ -840,7 +840,7 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     updateAudibleMediaAssertions();
     updateMediaStreamingActivity();
     updateBackgroundResponsivenessTimer();
-    updateBlobRegistryPartitioningState();
+    websiteDataStore()->updateBlobRegistryPartitioningState();
 
     maybeShutDown();
 }
@@ -1939,13 +1939,6 @@ void WebProcessProxy::didExceedCPULimit()
 void WebProcessProxy::updateBackgroundResponsivenessTimer()
 {
     m_backgroundResponsivenessTimer.updateState();
-}
-
-void WebProcessProxy::updateBlobRegistryPartitioningState() const
-{
-    RefPtr dataStore = websiteDataStore();
-    if (RefPtr networkProcess = dataStore ? dataStore->networkProcessIfExists() : nullptr)
-        networkProcess->setBlobRegistryTopOriginPartitioningEnabled(sessionID(),  dataStore->isBlobRegistryPartitioningEnabled());
 }
 
 #if !PLATFORM(COCOA)

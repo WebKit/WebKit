@@ -177,6 +177,7 @@ public:
     std::optional<double> originQuotaRatio() { return m_resolvedConfiguration->originQuotaRatio(); }
 
     bool isBlobRegistryPartitioningEnabled() const;
+    void updateBlobRegistryPartitioningState();
 
 #if PLATFORM(IOS_FAMILY)
     String resolvedCookieStorageDirectory();
@@ -603,6 +604,8 @@ private:
 
     bool m_inspectionForServiceWorkersAllowed { true };
     FileSystem::Salt m_mediaKeysStorageSalt;
+
+    bool m_isBlobRegistryPartitioningEnabled { false };
 };
 
 }
