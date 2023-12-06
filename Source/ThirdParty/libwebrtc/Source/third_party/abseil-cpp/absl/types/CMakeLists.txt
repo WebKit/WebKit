@@ -68,7 +68,7 @@ absl_cc_test(
     absl::any
     absl::config
     absl::exception_testing
-    absl::raw_logging_internal
+    absl::log
     absl::test_instance_tracker
     GTest::gmock_main
 )
@@ -220,7 +220,7 @@ absl_cc_test(
   DEPS
     absl::optional
     absl::config
-    absl::raw_logging_internal
+    absl::log
     absl::strings
     absl::type_traits
     GTest::gmock_main
@@ -237,59 +237,6 @@ absl_cc_test(
     absl::optional
     absl::config
     absl::exception_safety_testing
-    GTest::gmock_main
-)
-
-# Internal-only target, do not depend on directly.
-absl_cc_library(
-  NAME
-    conformance_testing
-  HDRS
-    "internal/conformance_aliases.h"
-    "internal/conformance_archetype.h"
-    "internal/conformance_profile.h"
-    "internal/conformance_testing.h"
-    "internal/conformance_testing_helpers.h"
-    "internal/parentheses.h"
-    "internal/transform_args.h"
-  COPTS
-    ${ABSL_DEFAULT_COPTS}
-  DEPS
-    absl::algorithm
-    absl::debugging
-    absl::type_traits
-    absl::strings
-    absl::utility
-    GTest::gmock_main
-  TESTONLY
-)
-
-absl_cc_test(
-  NAME
-    conformance_testing_test
-  SRCS
-    "internal/conformance_testing_test.cc"
-  COPTS
-    ${ABSL_TEST_COPTS}
-    ${ABSL_EXCEPTIONS_FLAG}
-  LINKOPTS
-    ${ABSL_EXCEPTIONS_FLAG_LINKOPTS}
-  DEPS
-    absl::conformance_testing
-    absl::type_traits
-    GTest::gmock_main
-)
-
-absl_cc_test(
-  NAME
-    conformance_testing_test_no_exceptions
-  SRCS
-    "internal/conformance_testing_test.cc"
-  COPTS
-    ${ABSL_TEST_COPTS}
-  DEPS
-    absl::conformance_testing
-    absl::type_traits
     GTest::gmock_main
 )
 

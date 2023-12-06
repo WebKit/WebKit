@@ -23,6 +23,11 @@ load(
 
 package(
     default_visibility = ["//visibility:public"],
+    features = [
+        "header_modules",
+        "layering_check",
+        "parse_headers",
+    ],
 )
 
 licenses(["notice"])
@@ -62,6 +67,7 @@ cc_test(
     deps = [
         ":stacktrace",
         "//absl/base:core_headers",
+        "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -122,7 +128,8 @@ cc_test(
         "//absl/base",
         "//absl/base:config",
         "//absl/base:core_headers",
-        "//absl/base:raw_logging_internal",
+        "//absl/log",
+        "//absl/log:check",
         "//absl/memory",
         "//absl/strings",
         "@com_google_googletest//:gtest",
@@ -180,6 +187,7 @@ cc_test(
         ":stacktrace",
         ":symbolize",
         "//absl/base:raw_logging_internal",
+        "//absl/log:check",
         "//absl/strings",
         "@com_google_googletest//:gtest",
     ],
@@ -215,7 +223,10 @@ cc_library(
     hdrs = ["internal/demangle.h"],
     copts = ABSL_DEFAULT_COPTS,
     linkopts = ABSL_DEFAULT_LINKOPTS,
-    visibility = ["//visibility:private"],
+    visibility = [
+        "//absl/container:__pkg__",
+        "//absl/debugging:__pkg__",
+    ],
     deps = [
         "//absl/base",
         "//absl/base:config",
@@ -233,8 +244,9 @@ cc_test(
         ":stack_consumption",
         "//absl/base:config",
         "//absl/base:core_headers",
-        "//absl/base:raw_logging_internal",
+        "//absl/log",
         "//absl/memory",
+        "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -260,7 +272,8 @@ cc_test(
     deps = [
         ":leak_check",
         "//absl/base:config",
-        "//absl/base:raw_logging_internal",
+        "//absl/log",
+        "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -277,7 +290,8 @@ cc_binary(
     linkopts = ABSL_DEFAULT_LINKOPTS,
     deps = [
         ":leak_check",
-        "//absl/base:raw_logging_internal",
+        "//absl/log",
+        "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
 )
@@ -306,7 +320,8 @@ cc_test(
     deps = [
         ":stack_consumption",
         "//absl/base:core_headers",
-        "//absl/base:raw_logging_internal",
+        "//absl/log",
+        "@com_google_googletest//:gtest",
         "@com_google_googletest//:gtest_main",
     ],
 )

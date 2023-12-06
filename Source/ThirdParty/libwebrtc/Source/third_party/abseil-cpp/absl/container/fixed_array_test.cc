@@ -30,7 +30,7 @@
 #include "absl/base/config.h"
 #include "absl/base/internal/exception_testing.h"
 #include "absl/base/options.h"
-#include "absl/container/internal/counting_allocator.h"
+#include "absl/container/internal/test_allocator.h"
 #include "absl/hash/hash_testing.h"
 #include "absl/memory/memory.h"
 
@@ -766,6 +766,22 @@ TEST(AllocatorSupportTest, SizeValAllocConstructor) {
     EXPECT_EQ(allocated, len * sizeof(int));
     EXPECT_THAT(arr, AllOf(SizeIs(len), Each(0)));
   }
+}
+
+TEST(AllocatorSupportTest, PropagatesStatefulAllocator) {
+  constexpr size_t inlined_size = 4;
+  using Alloc = absl::container_internal::CountingAllocator<int>;
+  using AllocFxdArr = absl::FixedArray<int, inlined_size, Alloc>;
+
+  auto len = inlined_size * 2;
+  auto val = 0;
+  int64_t allocated = 0;
+  AllocFxdArr arr(len, val, Alloc(&allocated));
+
+  EXPECT_EQ(allocated, len * sizeof(int));
+
+  AllocFxdArr copy = arr;
+  EXPECT_EQ(allocated, len * sizeof(int) * 2);
 }
 
 #ifdef ABSL_HAVE_ADDRESS_SANITIZER

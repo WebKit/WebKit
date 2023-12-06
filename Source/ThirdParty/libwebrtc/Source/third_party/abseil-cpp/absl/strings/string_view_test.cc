@@ -15,20 +15,23 @@
 #include "absl/strings/string_view.h"
 
 #include <stdlib.h>
+
+#include <cstddef>
+#include <cstdlib>
+#include <cstring>
 #include <iomanip>
+#include <ios>
 #include <iterator>
 #include <limits>
 #include <map>
+#include <memory>
 #include <sstream>
-#include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <utility>
 
 #include "gtest/gtest.h"
 #include "absl/base/config.h"
-#include "absl/base/dynamic_annotations.h"
-#include "absl/base/options.h"
 
 #if defined(ABSL_HAVE_STD_STRING_VIEW) || defined(__ANDROID__)
 // We don't control the death messaging when using std::string_view.
@@ -947,6 +950,76 @@ TEST(StringViewTest, At) {
   ABSL_EXPECT_DEATH_IF_SUPPORTED((void)abc.at(3), "absl::string_view::at");
 #endif
 }
+
+#if ABSL_INTERNAL_CPLUSPLUS_LANG >= 202002L
+TEST(StringViewTest, StartsWith) {
+  const absl::string_view a("foobar");
+  const absl::string_view b("123\0abc", 7);
+  const absl::string_view e;
+  EXPECT_TRUE(a.starts_with(a));
+  EXPECT_TRUE(a.starts_with("foo"));
+  EXPECT_TRUE(a.starts_with('f'));
+  EXPECT_TRUE(a.starts_with(e));
+  EXPECT_TRUE(b.starts_with(b));
+  EXPECT_TRUE(b.starts_with('1'));
+  EXPECT_TRUE(b.starts_with(e));
+  EXPECT_TRUE(e.starts_with(""));
+  EXPECT_FALSE(a.starts_with(b));
+  EXPECT_FALSE(b.starts_with(a));
+  EXPECT_FALSE(e.starts_with(a));
+  EXPECT_FALSE(a.starts_with('r'));
+  EXPECT_FALSE(a.starts_with('\0'));
+  EXPECT_FALSE(e.starts_with('r'));
+  EXPECT_FALSE(e.starts_with('\0'));
+
+  // Test that constexpr compiles.
+  constexpr absl::string_view kFooBar("foobar");
+  constexpr absl::string_view kFoo("foo");
+  constexpr absl::string_view kBar("bar");
+  constexpr bool k1 = kFooBar.starts_with(kFoo);
+  EXPECT_TRUE(k1);
+  constexpr bool k2 = kFooBar.starts_with(kBar);
+  EXPECT_FALSE(k2);
+  constexpr bool k3 = kFooBar.starts_with('f');
+  EXPECT_TRUE(k3);
+  constexpr bool k4 = kFooBar.starts_with("fo");
+  EXPECT_TRUE(k4);
+}
+
+TEST(StringViewTest, EndsWith) {
+  const absl::string_view a("foobar");
+  const absl::string_view b("123\0abc", 7);
+  const absl::string_view e;
+  EXPECT_TRUE(a.ends_with(a));
+  EXPECT_TRUE(a.ends_with('r'));
+  EXPECT_TRUE(a.ends_with("bar"));
+  EXPECT_TRUE(a.ends_with(e));
+  EXPECT_TRUE(b.ends_with(b));
+  EXPECT_TRUE(b.ends_with('c'));
+  EXPECT_TRUE(b.ends_with(e));
+  EXPECT_TRUE(e.ends_with(""));
+  EXPECT_FALSE(a.ends_with(b));
+  EXPECT_FALSE(b.ends_with(a));
+  EXPECT_FALSE(e.ends_with(a));
+  EXPECT_FALSE(a.ends_with('f'));
+  EXPECT_FALSE(a.ends_with('\0'));
+  EXPECT_FALSE(e.ends_with('r'));
+  EXPECT_FALSE(e.ends_with('\0'));
+
+  // Test that constexpr compiles.
+  constexpr absl::string_view kFooBar("foobar");
+  constexpr absl::string_view kFoo("foo");
+  constexpr absl::string_view kBar("bar");
+  constexpr bool k1 = kFooBar.ends_with(kFoo);
+  EXPECT_FALSE(k1);
+  constexpr bool k2 = kFooBar.ends_with(kBar);
+  EXPECT_TRUE(k2);
+  constexpr bool k3 = kFooBar.ends_with('r');
+  EXPECT_TRUE(k3);
+  constexpr bool k4 = kFooBar.ends_with("ar");
+  EXPECT_TRUE(k4);
+}
+#endif  // ABSL_INTERNAL_CPLUSPLUS_LANG >= 202002L
 
 struct MyCharAlloc : std::allocator<char> {};
 

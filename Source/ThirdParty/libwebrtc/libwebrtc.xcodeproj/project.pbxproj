@@ -4433,13 +4433,10 @@
 		DD2E76AC27C6B61400F2A74C /* node_hash_map.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3093827C59391006A526F /* node_hash_map.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD2E76AD27C6B61400F2A74C /* node_hash_set.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3093927C59391006A526F /* node_hash_set.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD2E76AE27C6B61400F2A74C /* memory.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A08BB721268A7D001D5D7B /* memory.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DD2E76AF27C6B61400F2A74C /* char_map.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3095927C593B3006A526F /* char_map.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD2E76B027C6B61400F2A74C /* charconv_bigint.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3095427C593B2006A526F /* charconv_bigint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD2E76B127C6B61400F2A74C /* charconv_parse.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3095227C593B2006A526F /* charconv_parse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD2E76B227C6B61400F2A74C /* cord_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3095527C593B2006A526F /* cord_internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD2E76B327C6B61400F2A74C /* cord_rep_flat.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3095027C593B1006A526F /* cord_rep_flat.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DD2E76B427C6B61400F2A74C /* cord_rep_ring.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3095827C593B3006A526F /* cord_rep_ring.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DD2E76B527C6B61400F2A74C /* cord_rep_ring_reader.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3095627C593B2006A526F /* cord_rep_ring_reader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD2E76B627C6B61400F2A74C /* cordz_functions.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3094227C593AF006A526F /* cordz_functions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD2E76B727C6B61400F2A74C /* cordz_handle.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3094127C593AF006A526F /* cordz_handle.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD2E76B827C6B61400F2A74C /* cordz_info.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3094627C593B0006A526F /* cordz_info.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -4629,8 +4626,6 @@
 		DD77E1C327F75D8F00DC90C0 /* unordered_map_constructor_test.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E16527F75D8F00DC90C0 /* unordered_map_constructor_test.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD77E1C427F75D8F00DC90C0 /* tracked.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E16627F75D8F00DC90C0 /* tracked.h */; };
 		DD77E1C527F75D8F00DC90C0 /* tracked.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E16627F75D8F00DC90C0 /* tracked.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DD77E1CC27F75D8F00DC90C0 /* counting_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E16A27F75D8F00DC90C0 /* counting_allocator.h */; };
-		DD77E1CD27F75D8F00DC90C0 /* counting_allocator.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E16A27F75D8F00DC90C0 /* counting_allocator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD77E1CE27F75D8F00DC90C0 /* hash_generator_testing.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E16B27F75D8F00DC90C0 /* hash_generator_testing.h */; };
 		DD77E1CF27F75D8F00DC90C0 /* hash_generator_testing.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E16B27F75D8F00DC90C0 /* hash_generator_testing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD77E1D727F7E55500DC90C0 /* h265_globals.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1D627F7E55500DC90C0 /* h265_globals.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -4640,24 +4635,10 @@
 		DD77E1ED27F7E64400DC90C0 /* invoke.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1DF27F7E64200DC90C0 /* invoke.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD77E1EE27F7E64400DC90C0 /* identity.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1E027F7E64200DC90C0 /* identity.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD77E1F227F7E64400DC90C0 /* flat_set.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1E527F7E64200DC90C0 /* flat_set.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DD77E20027FB766800DC90C0 /* transform_args.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1F527FB766800DC90C0 /* transform_args.h */; };
-		DD77E20127FB766800DC90C0 /* transform_args.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1F527FB766800DC90C0 /* transform_args.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DD77E20227FB766800DC90C0 /* conformance_archetype.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1F627FB766800DC90C0 /* conformance_archetype.h */; };
-		DD77E20327FB766800DC90C0 /* conformance_archetype.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1F627FB766800DC90C0 /* conformance_archetype.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DD77E20427FB766800DC90C0 /* conformance_testing_helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1F727FB766800DC90C0 /* conformance_testing_helpers.h */; };
-		DD77E20527FB766800DC90C0 /* conformance_testing_helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1F727FB766800DC90C0 /* conformance_testing_helpers.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DD77E20827FB766800DC90C0 /* conformance_aliases.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1F927FB766800DC90C0 /* conformance_aliases.h */; };
-		DD77E20927FB766800DC90C0 /* conformance_aliases.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1F927FB766800DC90C0 /* conformance_aliases.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD77E20A27FB766800DC90C0 /* optional.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FA27FB766800DC90C0 /* optional.h */; };
 		DD77E20B27FB766800DC90C0 /* optional.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FA27FB766800DC90C0 /* optional.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DD77E20C27FB766800DC90C0 /* parentheses.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FB27FB766800DC90C0 /* parentheses.h */; };
-		DD77E20D27FB766800DC90C0 /* parentheses.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FB27FB766800DC90C0 /* parentheses.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DD77E20E27FB766800DC90C0 /* conformance_testing.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FC27FB766800DC90C0 /* conformance_testing.h */; };
-		DD77E20F27FB766800DC90C0 /* conformance_testing.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FC27FB766800DC90C0 /* conformance_testing.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD77E21027FB766800DC90C0 /* span.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FD27FB766800DC90C0 /* span.h */; };
 		DD77E21127FB766800DC90C0 /* span.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FD27FB766800DC90C0 /* span.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		DD77E21227FB766800DC90C0 /* conformance_profile.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FE27FB766800DC90C0 /* conformance_profile.h */; };
-		DD77E21327FB766800DC90C0 /* conformance_profile.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FE27FB766800DC90C0 /* conformance_profile.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DD77E21427FB766800DC90C0 /* variant.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FF27FB766800DC90C0 /* variant.h */; };
 		DD77E21527FB766800DC90C0 /* variant.h in Headers */ = {isa = PBXBuildFile; fileRef = DD77E1FF27FB766800DC90C0 /* variant.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DDEBB4CA24C01A0D00ADBD44 /* libaom.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DDEBB11924C0187400ADBD44 /* libaom.a */; };
@@ -4986,7 +4967,6 @@
 		DDF30D3327C5C1D3006A526F /* compare.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3098D27C593DB006A526F /* compare.h */; };
 		DDF30D3427C5C1D3006A526F /* cord_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3095527C593B2006A526F /* cord_internal.h */; };
 		DDF30D3527C5C1D3006A526F /* cord_test_helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3097927C593CC006A526F /* cord_test_helpers.h */; };
-		DDF30D3627C5C1D3006A526F /* cord_rep_ring_reader.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3095627C593B2006A526F /* cord_rep_ring_reader.h */; };
 		DDF30D3727C5C1D3006A526F /* str_join.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3097E27C593CC006A526F /* str_join.h */; };
 		DDF30D3827C5C1D3006A526F /* pow10_helper.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3094727C593B0006A526F /* pow10_helper.h */; };
 		DDF30D3927C5C1D3006A526F /* invoke.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF308F827C56D24006A526F /* invoke.h */; };
@@ -5006,7 +4986,6 @@
 		DDF30D4727C5C1D3006A526F /* str_split.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3097327C593CB006A526F /* str_split.h */; };
 		DDF30D4827C5C1D3006A526F /* inline_variable_testing.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3091427C56D28006A526F /* inline_variable_testing.h */; };
 		DDF30D4927C5C1D3006A526F /* flat_hash_map.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3093627C59390006A526F /* flat_hash_map.h */; };
-		DDF30D4B27C5C1D3006A526F /* cord_rep_ring.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3095827C593B3006A526F /* cord_rep_ring.h */; };
 		DDF30D4C27C5C1D3006A526F /* bad_optional_access.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41A08BC6212695DE001D5D7B /* bad_optional_access.cc */; };
 		DDF30D4D27C5C1D3006A526F /* match.h in Headers */ = {isa = PBXBuildFile; fileRef = 41FCBB3B21B1FD3F00A5DF27 /* match.h */; };
 		DDF30D4E27C5C1D3006A526F /* flat_hash_set.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3093427C59390006A526F /* flat_hash_set.h */; };
@@ -5055,7 +5034,6 @@
 		DDF30D7927C5C1D5006A526F /* fixed_array.h in Headers */ = {isa = PBXBuildFile; fileRef = 41DDB24B21265BD700296D47 /* fixed_array.h */; };
 		DDF30D7A27C5C1D5006A526F /* string_view.cc in Sources */ = {isa = PBXBuildFile; fileRef = 41FCBB7F21B2001100A5DF27 /* string_view.cc */; };
 		DDF30D7B27C5C1D5006A526F /* resize_uninitialized.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3094527C593B0006A526F /* resize_uninitialized.h */; };
-		DDF30D7C27C5C1D5006A526F /* char_map.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3095927C593B3006A526F /* char_map.h */; };
 		DDF30D7D27C5C1D5006A526F /* unaligned_access.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF308FD27C56D25006A526F /* unaligned_access.h */; };
 		DDF30D7E27C5C1D5006A526F /* variant.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3099027C593DC006A526F /* variant.h */; };
 		DDF30D7F27C5C1D5006A526F /* str_join_internal.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF3094327C593AF006A526F /* str_join_internal.h */; };
@@ -10576,7 +10554,6 @@
 		DD77E16127F75D8F00DC90C0 /* unordered_set_lookup_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unordered_set_lookup_test.h; sourceTree = "<group>"; };
 		DD77E16527F75D8F00DC90C0 /* unordered_map_constructor_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unordered_map_constructor_test.h; sourceTree = "<group>"; };
 		DD77E16627F75D8F00DC90C0 /* tracked.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tracked.h; sourceTree = "<group>"; };
-		DD77E16A27F75D8F00DC90C0 /* counting_allocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = counting_allocator.h; sourceTree = "<group>"; };
 		DD77E16B27F75D8F00DC90C0 /* hash_generator_testing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hash_generator_testing.h; sourceTree = "<group>"; };
 		DD77E1D627F7E55500DC90C0 /* h265_globals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = h265_globals.h; sourceTree = "<group>"; };
 		DD77E1D927F7E64200DC90C0 /* flat_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flat_map.h; sourceTree = "<group>"; };
@@ -10585,15 +10562,8 @@
 		DD77E1DF27F7E64200DC90C0 /* invoke.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = invoke.h; sourceTree = "<group>"; };
 		DD77E1E027F7E64200DC90C0 /* identity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = identity.h; sourceTree = "<group>"; };
 		DD77E1E527F7E64200DC90C0 /* flat_set.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = flat_set.h; sourceTree = "<group>"; };
-		DD77E1F527FB766800DC90C0 /* transform_args.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = transform_args.h; sourceTree = "<group>"; };
-		DD77E1F627FB766800DC90C0 /* conformance_archetype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conformance_archetype.h; sourceTree = "<group>"; };
-		DD77E1F727FB766800DC90C0 /* conformance_testing_helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conformance_testing_helpers.h; sourceTree = "<group>"; };
-		DD77E1F927FB766800DC90C0 /* conformance_aliases.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conformance_aliases.h; sourceTree = "<group>"; };
 		DD77E1FA27FB766800DC90C0 /* optional.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = optional.h; sourceTree = "<group>"; };
-		DD77E1FB27FB766800DC90C0 /* parentheses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = parentheses.h; sourceTree = "<group>"; };
-		DD77E1FC27FB766800DC90C0 /* conformance_testing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conformance_testing.h; sourceTree = "<group>"; };
 		DD77E1FD27FB766800DC90C0 /* span.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = span.h; sourceTree = "<group>"; };
-		DD77E1FE27FB766800DC90C0 /* conformance_profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conformance_profile.h; sourceTree = "<group>"; };
 		DD77E1FF27FB766800DC90C0 /* variant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = variant.h; sourceTree = "<group>"; };
 		DDEBB11924C0187400ADBD44 /* libaom.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libaom.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDEBB11E24C0189600ADBD44 /* libaom.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = libaom.xcconfig; sourceTree = "<group>"; };
@@ -10663,10 +10633,7 @@
 		DDF3095327C593B2006A526F /* cordz_sample_token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cordz_sample_token.h; sourceTree = "<group>"; };
 		DDF3095427C593B2006A526F /* charconv_bigint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = charconv_bigint.h; sourceTree = "<group>"; };
 		DDF3095527C593B2006A526F /* cord_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cord_internal.h; sourceTree = "<group>"; };
-		DDF3095627C593B2006A526F /* cord_rep_ring_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cord_rep_ring_reader.h; sourceTree = "<group>"; };
 		DDF3095727C593B2006A526F /* cordz_statistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cordz_statistics.h; sourceTree = "<group>"; };
-		DDF3095827C593B3006A526F /* cord_rep_ring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cord_rep_ring.h; sourceTree = "<group>"; };
-		DDF3095927C593B3006A526F /* char_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = char_map.h; sourceTree = "<group>"; };
 		DDF3097327C593CB006A526F /* str_split.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = str_split.h; sourceTree = "<group>"; };
 		DDF3097427C593CB006A526F /* escaping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = escaping.h; sourceTree = "<group>"; };
 		DDF3097527C593CB006A526F /* str_format.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = str_format.h; sourceTree = "<group>"; };
@@ -16036,13 +16003,10 @@
 		41FCBB8121B2005A00A5DF27 /* internal */ = {
 			isa = PBXGroup;
 			children = (
-				DDF3095927C593B3006A526F /* char_map.h */,
 				DDF3095427C593B2006A526F /* charconv_bigint.h */,
 				DDF3095227C593B2006A526F /* charconv_parse.h */,
 				DDF3095527C593B2006A526F /* cord_internal.h */,
 				DDF3095027C593B1006A526F /* cord_rep_flat.h */,
-				DDF3095827C593B3006A526F /* cord_rep_ring.h */,
-				DDF3095627C593B2006A526F /* cord_rep_ring_reader.h */,
 				DDF3094227C593AF006A526F /* cordz_functions.h */,
 				DDF3094127C593AF006A526F /* cordz_handle.h */,
 				DDF3094627C593B0006A526F /* cordz_info.h */,
@@ -19881,7 +19845,6 @@
 				DD77E15F27F75D8F00DC90C0 /* common.h */,
 				DD77E14027F75D8F00DC90C0 /* compressed_tuple.h */,
 				DD77E14327F75D8F00DC90C0 /* container_memory.h */,
-				DD77E16A27F75D8F00DC90C0 /* counting_allocator.h */,
 				DD77E14A27F75D8F00DC90C0 /* hash_function_defaults.h */,
 				DD77E16B27F75D8F00DC90C0 /* hash_generator_testing.h */,
 				DD77E15E27F75D8F00DC90C0 /* hash_policy_testing.h */,
@@ -19939,15 +19902,8 @@
 		DD77E1F427FB766800DC90C0 /* internal */ = {
 			isa = PBXGroup;
 			children = (
-				DD77E1F927FB766800DC90C0 /* conformance_aliases.h */,
-				DD77E1F627FB766800DC90C0 /* conformance_archetype.h */,
-				DD77E1FE27FB766800DC90C0 /* conformance_profile.h */,
-				DD77E1FC27FB766800DC90C0 /* conformance_testing.h */,
-				DD77E1F727FB766800DC90C0 /* conformance_testing_helpers.h */,
 				DD77E1FA27FB766800DC90C0 /* optional.h */,
-				DD77E1FB27FB766800DC90C0 /* parentheses.h */,
 				DD77E1FD27FB766800DC90C0 /* span.h */,
-				DD77E1F527FB766800DC90C0 /* transform_args.h */,
 				DD77E1FF27FB766800DC90C0 /* variant.h */,
 			);
 			path = internal;
@@ -20673,7 +20629,6 @@
 				DD2E76A727C6B61400F2A74C /* btree_test.h in Headers */,
 				DD2E769727C6B61400F2A74C /* call_once.h in Headers */,
 				DD2E769827C6B61400F2A74C /* casts.h in Headers */,
-				DD2E76AF27C6B61400F2A74C /* char_map.h in Headers */,
 				DD2E76CC27C6B61400F2A74C /* charconv.h in Headers */,
 				DD2E76B027C6B61400F2A74C /* charconv_bigint.h in Headers */,
 				DD2E76B127C6B61400F2A74C /* charconv_parse.h in Headers */,
@@ -20686,19 +20641,12 @@
 				DD77E17927F75D8F00DC90C0 /* compressed_tuple.h in Headers */,
 				DD77E03927F6731500DC90C0 /* config.h in Headers */,
 				DD2E769927C6B61400F2A74C /* config.h in Headers */,
-				DD77E20927FB766800DC90C0 /* conformance_aliases.h in Headers */,
-				DD77E20327FB766800DC90C0 /* conformance_archetype.h in Headers */,
-				DD77E21327FB766800DC90C0 /* conformance_profile.h in Headers */,
-				DD77E20F27FB766800DC90C0 /* conformance_testing.h in Headers */,
-				DD77E20527FB766800DC90C0 /* conformance_testing_helpers.h in Headers */,
 				DD2E769A27C6B61400F2A74C /* const_init.h in Headers */,
 				DD2E767527C6B61400F2A74C /* container.h in Headers */,
 				DD77E17F27F75D8F00DC90C0 /* container_memory.h in Headers */,
 				DD2E76CD27C6B61400F2A74C /* cord.h in Headers */,
 				DD2E76B227C6B61400F2A74C /* cord_internal.h in Headers */,
 				DD2E76B327C6B61400F2A74C /* cord_rep_flat.h in Headers */,
-				DD2E76B427C6B61400F2A74C /* cord_rep_ring.h in Headers */,
-				DD2E76B527C6B61400F2A74C /* cord_rep_ring_reader.h in Headers */,
 				DD2E76CE27C6B61400F2A74C /* cord_test_helpers.h in Headers */,
 				DD2E76B627C6B61400F2A74C /* cordz_functions.h in Headers */,
 				DD2E76B727C6B61400F2A74C /* cordz_handle.h in Headers */,
@@ -20708,7 +20656,6 @@
 				DD2E76CF27C6B61400F2A74C /* cordz_test_helpers.h in Headers */,
 				DD2E76BB27C6B61400F2A74C /* cordz_update_scope.h in Headers */,
 				DD2E76BC27C6B61400F2A74C /* cordz_update_tracker.h in Headers */,
-				DD77E1CD27F75D8F00DC90C0 /* counting_allocator.h in Headers */,
 				DD2E767827C6B61400F2A74C /* cycleclock.h in Headers */,
 				DD77E02D27F6731500DC90C0 /* declare.h in Headers */,
 				DD2E767927C6B61400F2A74C /* direct_mmap.h in Headers */,
@@ -20773,7 +20720,6 @@
 				DD2E76E427C6B61400F2A74C /* optional.h in Headers */,
 				DD2E769F27C6B61400F2A74C /* options.h in Headers */,
 				DD2E76C227C6B61400F2A74C /* ostringstream.h in Headers */,
-				DD77E20D27FB766800DC90C0 /* parentheses.h in Headers */,
 				DD77E03D27F6731500DC90C0 /* parse.h in Headers */,
 				DD2E768727C6B61400F2A74C /* per_thread_tls.h in Headers */,
 				DD77DF0D27F6731400DC90C0 /* poisson_distribution.h in Headers */,
@@ -20820,7 +20766,6 @@
 				DD2E769227C6B61400F2A74C /* throw_delegate.h in Headers */,
 				DD77E0D127F6731500DC90C0 /* time.h in Headers */,
 				DD77E1C527F75D8F00DC90C0 /* tracked.h in Headers */,
-				DD77E20127FB766800DC90C0 /* transform_args.h in Headers */,
 				DD2E769327C6B61400F2A74C /* tsan_mutex_interface.h in Headers */,
 				DD77DEE527F6731400DC90C0 /* type_traits.h in Headers */,
 				DD2E769427C6B61400F2A74C /* unaligned_access.h in Headers */,
@@ -21113,7 +21058,6 @@
 				412FF9A0254B3EC4001DF036 /* channel_receive_frame_transformer_delegate.h in Headers */,
 				417953D42169834F0028266B /* channel_send.h in Headers */,
 				412FF99F254B3EC4001DF036 /* channel_send_frame_transformer_delegate.h in Headers */,
-				DDF30D7C27C5C1D5006A526F /* char_map.h in Headers */,
 				DDF30D0D27C5C1D1006A526F /* charconv.h in Headers */,
 				DDF30D2527C5C1D2006A526F /* charconv_bigint.h in Headers */,
 				DDF30D0F27C5C1D1006A526F /* charconv_parse.h in Headers */,
@@ -21154,11 +21098,6 @@
 				DD77E03827F6731500DC90C0 /* config.h in Headers */,
 				DDF30D6F27C5C1D4006A526F /* config.h in Headers */,
 				41B8D83628C88E6200E5FA37 /* config_selector.h in Headers */,
-				DD77E20827FB766800DC90C0 /* conformance_aliases.h in Headers */,
-				DD77E20227FB766800DC90C0 /* conformance_archetype.h in Headers */,
-				DD77E21227FB766800DC90C0 /* conformance_profile.h in Headers */,
-				DD77E20E27FB766800DC90C0 /* conformance_testing.h in Headers */,
-				DD77E20427FB766800DC90C0 /* conformance_testing_helpers.h in Headers */,
 				41FCBB4021B1FDB800A5DF27 /* congestion_window_pushback_controller.h in Headers */,
 				4131C1CF234B8A4B0028A615 /* connection.h in Headers */,
 				41323A6326652AA200B38623 /* connection_context.h in Headers */,
@@ -21179,8 +21118,6 @@
 				DDF30D1C27C5C1D2006A526F /* cord.h in Headers */,
 				DDF30D3427C5C1D3006A526F /* cord_internal.h in Headers */,
 				DDF30D5427C5C1D4006A526F /* cord_rep_flat.h in Headers */,
-				DDF30D4B27C5C1D3006A526F /* cord_rep_ring.h in Headers */,
-				DDF30D3627C5C1D3006A526F /* cord_rep_ring_reader.h in Headers */,
 				DDF30D3527C5C1D3006A526F /* cord_test_helpers.h in Headers */,
 				DDF30D5E27C5C1D4006A526F /* cordz_functions.h in Headers */,
 				DDF30D7527C5C1D5006A526F /* cordz_handle.h in Headers */,
@@ -21190,7 +21127,6 @@
 				DDF30D1627C5C1D2006A526F /* cordz_test_helpers.h in Headers */,
 				DDF30D1327C5C1D2006A526F /* cordz_update_scope.h in Headers */,
 				DDF30D2627C5C1D2006A526F /* cordz_update_tracker.h in Headers */,
-				DD77E1CC27F75D8F00DC90C0 /* counting_allocator.h in Headers */,
 				41323A9C26652EDD00B38623 /* cpu_features.h in Headers */,
 				DDF30BE127C5A4C3006A526F /* cpu_features_wrapper.h in Headers */,
 				DDF30BE327C5A4C3006A526F /* cpu_info.h in Headers */,
@@ -21809,7 +21745,6 @@
 				5CDD8AAD1E43C00F00621E92 /* packet_source.h in Headers */,
 				4131C1CC234B8A4B0028A615 /* packet_transport_internal.h in Headers */,
 				41B8D91D28CB85EC00E5FA37 /* parameter.h in Headers */,
-				DD77E20C27FB766800DC90C0 /* parentheses.h in Headers */,
 				DD77E03C27F6731500DC90C0 /* parse.h in Headers */,
 				4131C27C234B8CC40028A615 /* payload_type_mapper.h in Headers */,
 				5CDD90011E43CE3A00621E92 /* pcm16b.h in Headers */,
@@ -22571,7 +22506,6 @@
 				DD77E1C427F75D8F00DC90C0 /* tracked.h in Headers */,
 				41B8D96228CB862900E5FA37 /* traditional_reassembly_streams.h in Headers */,
 				412FF97D254B3CA6001DF036 /* transceiver_list.h in Headers */,
-				DD77E20027FB766800DC90C0 /* transform_args.h in Headers */,
 				5CDD8C921E43C66000621E92 /* transient_detector.h in Headers */,
 				5CDD8C961E43C66000621E92 /* transient_suppressor.h in Headers */,
 				412FFA5A254B4500001DF036 /* transient_suppressor_impl.h in Headers */,
