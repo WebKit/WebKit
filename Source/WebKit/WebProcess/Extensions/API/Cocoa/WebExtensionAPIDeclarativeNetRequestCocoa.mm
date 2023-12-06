@@ -178,7 +178,6 @@ void WebExtensionAPIDeclarativeNetRequest::getMatchedRules(NSDictionary *filter,
 
         callback->call(toWebAPI(matchedRules.value()));
     }, extensionContext().identifier());
-
 }
 
 void WebExtensionAPIDeclarativeNetRequest::isRegexSupported(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)

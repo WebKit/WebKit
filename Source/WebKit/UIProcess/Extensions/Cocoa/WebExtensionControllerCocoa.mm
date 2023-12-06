@@ -52,6 +52,8 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/text/WTFString.h>
 
+static constexpr Seconds purgeMatchedRulesInterval = 5_min;
+
 namespace WebKit {
 
 String WebExtensionController::storageDirectory(WebExtensionContext& extensionContext) const
@@ -297,6 +299,8 @@ void WebExtensionController::didFailLoadForFrame(WebPageProxyIdentifier pageID, 
 
 void WebExtensionController::handleContentRuleListNotification(WebPageProxyIdentifier pageID, URL& url, WebCore::ContentRuleListResults& results)
 {
+    bool savedMatchedRule = false;
+
     for (const auto& result : results.results) {
         auto contentRuleListIdentifier = result.first;
         for (auto& context : m_extensionContexts) {
@@ -307,12 +311,30 @@ void WebExtensionController::handleContentRuleListNotification(WebPageProxyIdent
             if (!tab)
                 break;
 
-            context->handleContentRuleListNotificationForTab(*tab, url, result.second);
+            savedMatchedRule |= context->handleContentRuleListNotificationForTab(*tab, url, result.second);
+
             break;
         }
     }
+
+    if (!savedMatchedRule || m_purgeOldMatchedRulesTimer)
+        return;
+
+    m_purgeOldMatchedRulesTimer = makeUnique<WebCore::Timer>(*this, &WebExtensionController::purgeOldMatchedRules);
+    m_purgeOldMatchedRulesTimer->start(purgeMatchedRulesInterval, purgeMatchedRulesInterval);
 }
 
+void WebExtensionController::purgeOldMatchedRules()
+{
+    WallTime earliestDateToKeep = WallTime::now() - purgeMatchedRulesInterval;
+
+    bool stillHaveRules = false;
+    for (auto& extensionContext : m_extensionContexts)
+        stillHaveRules |= extensionContext->purgeMatchedRulesFromBefore(earliestDateToKeep);
+
+    if (!stillHaveRules)
+        m_purgeOldMatchedRulesTimer = nullptr;
+}
 
 } // namespace WebKit
 
