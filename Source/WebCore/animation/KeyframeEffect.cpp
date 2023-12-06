@@ -2299,13 +2299,17 @@ bool KeyframeEffect::ticksContinouslyWhileActive() const
 
 Seconds KeyframeEffect::timeToNextTick(const BasicEffectTiming& timing) const
 {
-    if (timing.phase == AnimationEffectPhase::Active) {
-        // CSS Animations need to trigger "animationiteration" events even if there is no need to
-        // update styles while animating, so if we're dealing with one we must wait until the next iteration.
-        if (!ticksContinouslyWhileActive() && is<CSSAnimation>(animation())) {
-            if (auto iterationProgress = getComputedTiming().simpleIterationProgress)
-                return iterationDuration() * (1 - *iterationProgress);
-        }
+    // CSS Animations need to trigger "animationiteration" events even if there is no need to
+    // update styles while animating, so if we're dealing with one we must wait until the next iteration.
+    // We only do this in case any CSS Animation event was registered since, in the general case, there's
+    // a good chance that no such event listeners were registered and we can avoid some unnecessary
+    // animation resolution scheduling.
+    ASSERT(document());
+    if (timing.phase == AnimationEffectPhase::Active && is<CSSAnimation>(animation())
+        && document()->hasListenerType(Document::ListenerType::CSSAnimation)
+        && !ticksContinouslyWhileActive()) {
+        if (auto iterationProgress = getComputedTiming().simpleIterationProgress)
+            return iterationDuration() * (1 - *iterationProgress);
     }
 
     return AnimationEffect::timeToNextTick(timing);

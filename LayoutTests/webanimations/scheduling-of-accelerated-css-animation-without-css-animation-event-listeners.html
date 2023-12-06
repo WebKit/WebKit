@@ -1,0 +1,40 @@
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="../resources/ui-helper.js"></script>
+<style>
+
+@keyframes slide {
+    from { transform: translate(100px) }
+    to { transform: translate(200px) }
+}
+
+#target {
+    width: 100px;
+    height: 100px;
+    animation-name: slide;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+}
+
+</style>
+<div id="target"></div>
+<script>
+
+promise_test(async () => {
+    const target = document.getElementById("target");
+    const animation = target.getAnimations()[0];
+    await animation.ready;
+
+    // Wait until the animation has started with acceleration.
+    await UIHelper.animationFrame();
+    await UIHelper.animationFrame();
+    await UIHelper.animationFrame();
+
+    assert_equals(internals.timeToNextAnimationTick(animation), Infinity, "Animation does not need to schedule animation resolution if it is accelerated and does not have any CSS Animation event listeners registered.");
+
+    target.addEventListener("animationiteration", () => {});
+    animation.currentTime = 100;
+    assert_equals(internals.timeToNextAnimationTick(animation), 900, "Adding a CSS Animation event listener will make the animation require an animation resolution at the end of its current iteration.");
+}, "CSS Animations that run accelerated do not need to schedule animation resolution without CSS Animation event listeners.");
+
+</script>
