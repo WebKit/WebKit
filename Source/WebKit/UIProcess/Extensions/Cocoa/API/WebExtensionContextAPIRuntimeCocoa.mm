@@ -42,6 +42,7 @@
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionTabCreationOptionsInternal.h"
 #import <wtf/BlockPtr.h>
+#import <wtf/CallbackAggregator.h>
 
 namespace WebKit {
 
@@ -116,7 +117,9 @@ void WebExtensionContext::runtimeReload()
     reload();
 }
 
-void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(std::optional<String> replyJSON, std::optional<String> error)>&& completionHandler)
+using ReplyCompletionHandlerSignature = void(std::optional<String> replyJSON, std::optional<String> error);
+
+void WebExtensionContext::runtimeSendMessage(const String& extensionID, const String& messageJSON, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<ReplyCompletionHandlerSignature>&& completionHandler)
 {
     if (!extensionID.isEmpty() && uniqueIdentifier() != extensionID) {
         completionHandler(std::nullopt, toErrorString(@"runtime.sendMessage()", @"extensionID", @"cross-extension messaging is not supported"));
@@ -133,18 +136,13 @@ void WebExtensionContext::runtimeSendMessage(const String& extensionID, const St
         return;
     }
 
-    bool sentReply = false;
+    auto callbackAggregator = EagerCallbackAggregator<ReplyCompletionHandlerSignature>::create(WTFMove(completionHandler), std::nullopt, std::nullopt);
 
-    auto handleReply = [&sentReply, completionHandler = WTFMove(completionHandler), protectedThis = Ref { *this }](std::optional<String> replyJSON) mutable {
-        if (sentReply)
-            return;
-
-        sentReply = true;
-        completionHandler(replyJSON, std::nullopt);
-    };
-
-    for (auto& process : mainWorldProcesses)
-        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters), handleReply, identifier());
+    for (auto& process : mainWorldProcesses) {
+        process->sendWithAsyncReply(Messages::WebExtensionContextProxy::DispatchRuntimeMessageEvent(WebExtensionContentWorldType::Main, messageJSON, std::nullopt, completeSenderParameters), [callbackAggregator](std::optional<String> replyJSON) {
+            (*callbackAggregator)(replyJSON, std::nullopt);
+        }, identifier());
+    }
 }
 
 void WebExtensionContext::runtimeConnect(const String& extensionID, WebExtensionPortChannelIdentifier channelIdentifier, const String& name, const WebExtensionMessageSenderParameters& senderParameters, CompletionHandler<void(WebExtensionTab::Error)>&& completionHandler)

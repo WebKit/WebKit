@@ -115,6 +115,7 @@ public:
     T* operator->() const { ASSERT(m_ptr); return PtrTraits::unwrap(m_ptr); }
     T* ptr() const RETURNS_NONNULL { ASSERT(m_ptr); return PtrTraits::unwrap(m_ptr); }
     T& get() const { ASSERT(m_ptr); return *PtrTraits::unwrap(m_ptr); }
+    T& operator*() const { ASSERT(m_ptr); return *PtrTraits::unwrap(m_ptr); }
     operator T&() const { ASSERT(m_ptr); return *PtrTraits::unwrap(m_ptr); }
     bool operator!() const { ASSERT(m_ptr); return !*m_ptr; }
 
