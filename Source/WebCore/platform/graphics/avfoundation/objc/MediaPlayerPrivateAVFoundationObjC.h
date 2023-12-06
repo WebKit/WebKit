@@ -489,6 +489,7 @@ private:
     std::unique_ptr<Observer<void()>> m_waitForVideoOutputMediaDataWillChangeObserver;
     ProcessIdentity m_resourceOwner;
     PlatformTimeRanges m_buffered;
+    TrackID m_currentTextTrackID { 0 };
 };
 
 }

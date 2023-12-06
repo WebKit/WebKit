@@ -85,30 +85,24 @@ Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitiali
     segmentInfo.duration = segment.duration;
 
     segmentInfo.audioTracks = segment.audioTracks.map([&](auto& audioTrackInfo) {
-        auto identifier = m_remoteMediaPlayerProxy->addRemoteAudioTrackProxy(*audioTrackInfo.track);
-        if (!m_trackIds.contains(identifier))
-            m_trackIds.add(identifier, audioTrackInfo.track->id());
-        if (!m_mediaDescriptions.contains(identifier))
-            m_mediaDescriptions.add(identifier, *audioTrackInfo.description);
-        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*audioTrackInfo.description), identifier };
+        auto id = audioTrackInfo.track->id();
+        m_remoteMediaPlayerProxy->addRemoteAudioTrackProxy(*audioTrackInfo.track);
+        m_mediaDescriptions.try_emplace(id, *audioTrackInfo.description);
+        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*audioTrackInfo.description), id };
     });
 
     segmentInfo.videoTracks = segment.videoTracks.map([&](auto& videoTrackInfo) {
-        auto identifier = m_remoteMediaPlayerProxy->addRemoteVideoTrackProxy(*videoTrackInfo.track);
-        if (!m_trackIds.contains(identifier))
-            m_trackIds.add(identifier, videoTrackInfo.track->id());
-        if (!m_mediaDescriptions.contains(identifier))
-            m_mediaDescriptions.add(identifier, *videoTrackInfo.description);
-        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*videoTrackInfo.description), identifier };
+        auto id = videoTrackInfo.track->id();
+        m_remoteMediaPlayerProxy->addRemoteVideoTrackProxy(*videoTrackInfo.track);
+        m_mediaDescriptions.try_emplace(id, *videoTrackInfo.description);
+        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*videoTrackInfo.description), id };
     });
 
     segmentInfo.textTracks = segment.textTracks.map([&](auto& textTrackInfo) {
-        auto identifier = m_remoteMediaPlayerProxy->addRemoteTextTrackProxy(*textTrackInfo.track);
-        if (!m_trackIds.contains(identifier))
-            m_trackIds.add(identifier, textTrackInfo.track->id());
-        if (!m_mediaDescriptions.contains(identifier))
-            m_mediaDescriptions.add(identifier, *textTrackInfo.description);
-        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*textTrackInfo.description), identifier };
+        auto id = textTrackInfo.track->id();
+        m_remoteMediaPlayerProxy->addRemoteTextTrackProxy(*textTrackInfo.track);
+        m_mediaDescriptions.try_emplace(id, *textTrackInfo.description);
+        return InitializationSegmentInfo::TrackInformation { MediaDescriptionInfo(*textTrackInfo.description), id };
     });
 
     if (!m_connectionToWebProcess)
@@ -261,11 +255,10 @@ void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, uint64_t ma
     completionHandler(WTFMove(buffered), m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
 }
 
-void RemoteSourceBufferProxy::addTrackBuffer(TrackPrivateRemoteIdentifier trackPrivateRemoteIdentifier)
+void RemoteSourceBufferProxy::addTrackBuffer(TrackID trackId)
 {
-    ASSERT(m_trackIds.contains(trackPrivateRemoteIdentifier));
-    ASSERT(m_mediaDescriptions.contains(trackPrivateRemoteIdentifier));
-    m_sourceBufferPrivate->addTrackBuffer(m_trackIds.get(trackPrivateRemoteIdentifier), m_mediaDescriptions.get(trackPrivateRemoteIdentifier));
+    ASSERT(m_mediaDescriptions.contains(trackId));
+    m_sourceBufferPrivate->addTrackBuffer(trackId, m_mediaDescriptions.find(trackId)->second.ptr());
 }
 
 void RemoteSourceBufferProxy::resetTrackBuffers()
@@ -333,30 +326,20 @@ void RemoteSourceBufferProxy::seekToTime(const MediaTime& time)
     m_sourceBufferPrivate->seekToTime(time);
 }
 
-void RemoteSourceBufferProxy::updateTrackIds(Vector<std::pair<TrackPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier>>&& identifierPairs)
+void RemoteSourceBufferProxy::updateTrackIds(Vector<std::pair<TrackID, TrackID>>&& trackIdPairs)
 {
-    auto trackIdPairs = identifierPairs.map([&](auto& identifierPair) {
-        ASSERT(m_trackIds.contains(identifierPair.first));
-        ASSERT(m_trackIds.contains(identifierPair.second));
-        return std::pair { m_trackIds.take(identifierPair.first), m_trackIds.get(identifierPair.second) };
-    });
-
     if (!trackIdPairs.isEmpty())
         m_sourceBufferPrivate->updateTrackIds(WTFMove(trackIdPairs));
 }
 
-void RemoteSourceBufferProxy::bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier trackPrivateRemoteIdentifier, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&& completionHandler)
+void RemoteSourceBufferProxy::bufferedSamplesForTrackId(TrackID trackId, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&& completionHandler)
 {
-    ASSERT(m_trackIds.contains(trackPrivateRemoteIdentifier));
-    ASSERT(m_mediaDescriptions.contains(trackPrivateRemoteIdentifier));
-    m_sourceBufferPrivate->bufferedSamplesForTrackId(m_trackIds.get(trackPrivateRemoteIdentifier))->whenSettled(RunLoop::current(), WTFMove(completionHandler));
+    m_sourceBufferPrivate->bufferedSamplesForTrackId(trackId)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
-void RemoteSourceBufferProxy::enqueuedSamplesForTrackID(TrackPrivateRemoteIdentifier trackPrivateRemoteIdentifier, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&& completionHandler)
+void RemoteSourceBufferProxy::enqueuedSamplesForTrackID(TrackID trackId, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&& completionHandler)
 {
-    ASSERT(m_trackIds.contains(trackPrivateRemoteIdentifier));
-    ASSERT(m_mediaDescriptions.contains(trackPrivateRemoteIdentifier));
-    m_sourceBufferPrivate->enqueuedSamplesForTrackID(m_trackIds.get(trackPrivateRemoteIdentifier))->whenSettled(RunLoop::current(), WTFMove(completionHandler));
+    m_sourceBufferPrivate->enqueuedSamplesForTrackID(trackId)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
 void RemoteSourceBufferProxy::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)

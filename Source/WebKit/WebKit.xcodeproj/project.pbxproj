@@ -2979,7 +2979,6 @@
 		071BC57723C93BB700680D7C /* AudioTrackPrivateRemote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioTrackPrivateRemote.h; sourceTree = "<group>"; };
 		071BC57923C93BB900680D7C /* AudioTrackPrivateRemote.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioTrackPrivateRemote.cpp; sourceTree = "<group>"; };
 		071BC57B23CA532400680D7C /* TrackPrivateRemoteConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPrivateRemoteConfiguration.h; sourceTree = "<group>"; };
-		071BC57D23CA56D200680D7C /* TrackPrivateRemoteIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrackPrivateRemoteIdentifier.h; sourceTree = "<group>"; };
 		071BC57E23CA5DB100680D7C /* RemoteAudioTrackProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioTrackProxy.cpp; sourceTree = "<group>"; };
 		071BC57F23CA5DB100680D7C /* RemoteAudioTrackProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioTrackProxy.h; sourceTree = "<group>"; };
 		071BC58223CC2BD300680D7C /* VideoTrackPrivateRemote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoTrackPrivateRemote.h; sourceTree = "<group>"; };
@@ -8173,7 +8172,6 @@
 				07E19F0523D4DC880094FFB4 /* TextTrackPrivateRemoteConfiguration.h */,
 				5C046A1C290B26CF00FF7820 /* TextTrackPrivateRemoteConfiguration.serialization.in */,
 				071BC57B23CA532400680D7C /* TrackPrivateRemoteConfiguration.h */,
-				071BC57D23CA56D200680D7C /* TrackPrivateRemoteIdentifier.h */,
 				CDD08AC4277ED7E000EA3755 /* VideoTrackPrivateRemoteConfiguration.h */,
 			);
 			path = media;

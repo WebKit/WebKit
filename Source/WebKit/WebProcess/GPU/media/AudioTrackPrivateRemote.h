@@ -28,7 +28,6 @@
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
-#include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/AudioTrackPrivate.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 
@@ -41,16 +40,16 @@ struct AudioTrackPrivateRemoteConfiguration;
 class AudioTrackPrivateRemote final : public WebCore::AudioTrackPrivate {
     WTF_MAKE_NONCOPYABLE(AudioTrackPrivateRemote)
 public:
-    static Ref<AudioTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, TrackPrivateRemoteIdentifier identifier, AudioTrackPrivateRemoteConfiguration&& configuration)
+    static Ref<AudioTrackPrivateRemote> create(GPUProcessConnection& gpuProcessConnection, WebCore::MediaPlayerIdentifier playerIdentifier, AudioTrackPrivateRemoteConfiguration&& configuration)
     {
-        return adoptRef(*new AudioTrackPrivateRemote(gpuProcessConnection, playerIdentifier, identifier, WTFMove(configuration)));
+        return adoptRef(*new AudioTrackPrivateRemote(gpuProcessConnection, playerIdentifier, WTFMove(configuration)));
     }
 
     WebCore::TrackID id() const final { return m_id; }
     void updateConfiguration(AudioTrackPrivateRemoteConfiguration&&);
 
 private:
-    AudioTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, TrackPrivateRemoteIdentifier, AudioTrackPrivateRemoteConfiguration&&);
+    AudioTrackPrivateRemote(GPUProcessConnection&, WebCore::MediaPlayerIdentifier, AudioTrackPrivateRemoteConfiguration&&);
 
     using AudioTrackKind = WebCore::AudioTrackPrivate::Kind;
     AudioTrackKind kind() const final { return m_kind; }
@@ -69,7 +68,6 @@ private:
 
     MediaTime m_startTimeVariance { MediaTime::zeroTime() };
     WebCore::MediaPlayerIdentifier m_playerIdentifier;
-    TrackPrivateRemoteIdentifier m_identifier;
 };
 
 } // namespace WebKit

@@ -32,7 +32,6 @@
 #include "MessageReceiver.h"
 #include "RemoteSourceBufferIdentifier.h"
 #include "SharedMemory.h"
-#include "TrackPrivateRemoteIdentifier.h"
 #include <WebCore/MediaDescription.h>
 #include <WebCore/SourceBufferPrivate.h>
 #include <WebCore/SourceBufferPrivateClient.h>
@@ -95,7 +94,7 @@ private:
     void startChangingType();
     void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&&);
     void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&&);
-    void addTrackBuffer(TrackPrivateRemoteIdentifier);
+    void addTrackBuffer(TrackID);
     void resetTrackBuffers();
     void clearTrackBuffers();
     void setAllTrackBuffersNeedRandomAccess();
@@ -109,9 +108,9 @@ private:
     void setAppendWindowEnd(const MediaTime&);
     void computeSeekTime(const WebCore::SeekTarget&, CompletionHandler<void(WebCore::SourceBufferPrivate::ComputeSeekPromise::Result&&)>&&);
     void seekToTime(const MediaTime&);
-    void updateTrackIds(Vector<std::pair<TrackPrivateRemoteIdentifier, TrackPrivateRemoteIdentifier>>&&);
-    void bufferedSamplesForTrackId(TrackPrivateRemoteIdentifier, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&&);
-    void enqueuedSamplesForTrackID(TrackPrivateRemoteIdentifier, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&&);
+    void updateTrackIds(Vector<std::pair<TrackID, TrackID>>&&);
+    void bufferedSamplesForTrackId(TrackID, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&&);
+    void enqueuedSamplesForTrackID(TrackID, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&&);
     void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&&);
     void minimumUpcomingPresentationTimeForTrackID(TrackID, CompletionHandler<void(MediaTime)>&&);
     void setMaximumQueueDepthForTrackID(TrackID, uint64_t);
@@ -121,8 +120,7 @@ private:
     Ref<WebCore::SourceBufferPrivate> m_sourceBufferPrivate;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
 
-    HashMap<TrackPrivateRemoteIdentifier, TrackID> m_trackIds;
-    HashMap<TrackPrivateRemoteIdentifier, Ref<WebCore::MediaDescription>> m_mediaDescriptions;
+    StdUnorderedMap<TrackID, Ref<WebCore::MediaDescription>> m_mediaDescriptions;
 };
 
 } // namespace WebKit
