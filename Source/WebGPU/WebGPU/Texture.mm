@@ -1323,8 +1323,8 @@ NSString *Device::errorValidatingTextureCreation(const WGPUTextureDescriptor& de
         if (!isRenderableFormat(descriptor.format, *this))
             return @"createTexture: descriptor.usage & WGPUTextureUsage_RenderAttachment && !isRenderableFormat(descriptor.format, *this)";
 
-        if (descriptor.dimension != WGPUTextureDimension_2D)
-            return @"createTexture: descriptor.usage & WGPUTextureUsage_RenderAttachment && descriptor.dimension != WGPUTextureDimension_2D";
+        if (descriptor.dimension == WGPUTextureDimension_1D)
+            return @"createTexture: descriptor.usage & WGPUTextureUsage_RenderAttachment && descriptor.dimension == WGPUTextureDimension_1D";
     }
 
     if (descriptor.usage & WGPUTextureUsage_StorageBinding) {
