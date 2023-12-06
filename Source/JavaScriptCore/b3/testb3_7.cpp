@@ -380,6 +380,43 @@ void testReduceStrengthReassociation(bool flip)
         (root->last()->child(0)->child(0)->child(0) == arg2 && root->last()->child(0)->child(0)->child(1) == arg1));
 }
 
+template<typename B3ContType, typename Type64, typename Type32>
+void testReduceStrengthTruncConstant(Type64 filler, Type32 value)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+
+    int64_t bits = bitwise_cast<int64_t>(filler);
+    int32_t loBits = bitwise_cast<int32_t>(value);
+    bits = ((bits >> 32) << 32) | loBits;
+    Type64 testValue = bitwise_cast<Type64>(bits);
+
+    Value* b2  = root->appendNew<B3ContType>(proc, Origin(), testValue);
+    Value* b3  = root->appendNew<Value>(proc, JSC::B3::Trunc, Origin(), b2);
+    root->appendNew<Value>(proc, Return, Origin(), b3);
+
+    proc.resetReachability();
+
+    reduceStrength(proc);
+
+    CHECK_EQ(root->last()->opcode(), Return);
+    if constexpr (std::is_same_v<B3ContType, ConstDoubleValue>) {
+        CHECK_EQ(root->last()->child(0)->opcode(), ConstFloat);
+        CHECK(bitwise_cast<int32_t>(root->last()->child(0)->asFloat()) == bitwise_cast<int32_t>(value));
+    } else
+        CHECK(root->last()->child(0)->isInt32(value));
+}
+
+void testReduceStrengthTruncInt64Constant(int64_t filler, int32_t value)
+{
+    testReduceStrengthTruncConstant<Const64Value>(filler, value);
+}
+
+void testReduceStrengthTruncDoubleConstant(double filler, float value)
+{
+    testReduceStrengthTruncConstant<ConstDoubleValue>(filler, value);
+}
+
 void testLoadBaseIndexShift2()
 {
     Procedure proc;
