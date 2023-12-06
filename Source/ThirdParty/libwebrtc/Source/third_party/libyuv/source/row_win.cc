@@ -895,7 +895,7 @@ __declspec(naked) void ARGBToRGB565Row_SSE2(const uint8_t* src_argb,
 
 __declspec(naked) void ARGBToRGB565DitherRow_SSE2(const uint8_t* src_argb,
                                                   uint8_t* dst_rgb,
-                                                  const uint32_t dither4,
+                                                  uint32_t dither4,
                                                   int width) {
   __asm {
 
@@ -942,7 +942,7 @@ __declspec(naked) void ARGBToRGB565DitherRow_SSE2(const uint8_t* src_argb,
 #ifdef HAS_ARGBTORGB565DITHERROW_AVX2
 __declspec(naked) void ARGBToRGB565DitherRow_AVX2(const uint8_t* src_argb,
                                                   uint8_t* dst_rgb,
-                                                  const uint32_t dither4,
+                                                  uint32_t dither4,
                                                   int width) {
   __asm {
     mov        eax, [esp + 4]  // src_argb

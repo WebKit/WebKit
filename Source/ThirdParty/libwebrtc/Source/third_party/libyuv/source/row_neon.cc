@@ -725,12 +725,12 @@ void DetileToYUY2_NEON(const uint8_t* src_y,
 void UnpackMT2T_NEON(const uint8_t* src, uint16_t* dst, size_t size) {
   asm volatile(
       "1:                                        \n"
-      "vld1.8      q14, [%0]!                    \n"  // Load lower bits.
-      "vld1.8      q9, [%0]!                     \n"  // Load upper bits row
+      "vld1.8      {q14}, [%0]!                  \n"  // Load lower bits.
+      "vld1.8      {q9}, [%0]!                   \n"  // Load upper bits row
                                                       // by row.
-      "vld1.8      q11, [%0]!                    \n"
-      "vld1.8      q13, [%0]!                    \n"
-      "vld1.8      q15, [%0]!                    \n"
+      "vld1.8      {q11}, [%0]!                  \n"
+      "vld1.8      {q13}, [%0]!                  \n"
+      "vld1.8      {q15}, [%0]!                  \n"
       "vshl.u8     q8, q14, #6                   \n"  // Shift lower bit data
                                                       // appropriately.
       "vshl.u8     q10, q14, #4                  \n"
@@ -804,7 +804,7 @@ void SplitRGBRow_NEON(const uint8_t* src_rgb,
         "+r"(dst_b),                      // %3
         "+r"(width)                       // %4
       :                                   // Input registers
-      : "cc", "memory", "d0", "d1", "d2"  // Clobber List
+      : "cc", "memory", "q0", "q1", "q2"  // Clobber List
   );
 }
 
@@ -1753,7 +1753,7 @@ void ARGBToRGB565Row_NEON(const uint8_t* src_argb,
 
 void ARGBToRGB565DitherRow_NEON(const uint8_t* src_argb,
                                 uint8_t* dst_rgb,
-                                const uint32_t dither4,
+                                uint32_t dither4,
                                 int width) {
   asm volatile(
       "vdup.32     d7, %2                        \n"  // dither4
@@ -3845,7 +3845,7 @@ void SplitUVRow_16_NEON(const uint16_t* src_uv,
         "+r"(dst_v),   // %2
         "+r"(width)    // %3
       : "r"(shift)     // %4
-      : "cc", "memory", "q0", "q1", "q2", "q3", "q4");
+      : "cc", "memory", "q0", "q1", "q2");
 }
 
 void MergeUVRow_16_NEON(const uint16_t* src_u,

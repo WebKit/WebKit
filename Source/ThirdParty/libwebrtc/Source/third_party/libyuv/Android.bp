@@ -72,6 +72,7 @@ cc_library {
         "source/scale_neon.cc",
         "source/scale_neon64.cc",
         "source/scale_rgb.cc",
+        "source/scale_rvv.cc",
         "source/scale_uv.cc",
         "source/video_common.cc",
     ],
@@ -82,6 +83,7 @@ cc_library {
         "-Wno-unused-parameter",
         "-fexceptions",
         "-DHAVE_JPEG",
+        "-DLIBYUV_UNLIMITED_DATA",
     ],
 
     arch: {

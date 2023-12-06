@@ -142,6 +142,7 @@ static_library("libyuv_internal") {
     "source/scale_common.cc",
     "source/scale_gcc.cc",
     "source/scale_rgb.cc",
+    "source/scale_rvv.cc",
     "source/scale_uv.cc",
     "source/scale_win.cc",
     "source/video_common.cc",
