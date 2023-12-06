@@ -1072,6 +1072,8 @@ void testAddShl32();
 void testAddShl64();
 void testAddShl65();
 void testReduceStrengthReassociation(bool flip);
+void testReduceStrengthTruncInt64Constant(int64_t filler, int32_t value);
+void testReduceStrengthTruncDoubleConstant(double filler, float value);
 void testLoadBaseIndexShift2();
 void testLoadBaseIndexShift32();
 void testOptimizeMaterialization();
