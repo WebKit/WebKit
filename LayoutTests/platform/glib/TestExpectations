@@ -3755,6 +3755,8 @@ webkit.org/b/264680 media/media-source/media-managedmse-resume-after-stall.html 
 webkit.org/b/264680 media/video-page-visibility-restriction.html [ Pass Timeout ]
 webkit.org/b/264680 webgl/webgl-visible-after-context-restore.html [ ImageOnlyFailure Pass ]
 
+webkit.org/b/265868 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions [ Skip ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////
