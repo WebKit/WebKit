@@ -1,15 +1,15 @@
 
-FAIL ":state(--foo)" should be a valid selector ':state(--foo)' is not a valid selector.
-FAIL ":state(bar)" should be a valid selector ':state(bar)' is not a valid selector.
-FAIL ":state(--)" should be a valid selector ':state(--)' is not a valid selector.
-FAIL ":state(--0)" should be a valid selector ':state(--0)' is not a valid selector.
-FAIL ":host(:state(--foo))" should be a valid selector ':host(:state(--foo))' is not a valid selector.
-FAIL "my-input[type=\"foo\"]:state(checked)" should be a valid selector 'my-input[type="foo"]:state(checked)' is not a valid selector.
-FAIL "my-input[type=\"foo\"]:state(--0)::before" should be a valid selector 'my-input[type="foo"]:state(--0)::before' is not a valid selector.
-FAIL "my-input[type=\"foo\"]:state(--0)::part(inner)" should be a valid selector 'my-input[type="foo"]:state(--0)::part(inner)' is not a valid selector.
-FAIL "my-input[type=\"foo\"]:state(--0)::part(inner):state(bar)" should be a valid selector 'my-input[type="foo"]:state(--0)::part(inner):state(bar)' is not a valid selector.
-FAIL "::part(inner):state(bar)::before" should be a valid selector '::part(inner):state(bar)::before' is not a valid selector.
-FAIL "::part(inner):state(bar)::after" should be a valid selector '::part(inner):state(bar)::after' is not a valid selector.
+PASS ":state(--foo)" should be a valid selector
+PASS ":state(bar)" should be a valid selector
+PASS ":state(--)" should be a valid selector
+PASS ":state(--0)" should be a valid selector
+PASS ":host(:state(--foo))" should be a valid selector
+PASS "my-input[type=\"foo\"]:state(checked)" should be a valid selector
+PASS "my-input[type=\"foo\"]:state(--0)::before" should be a valid selector
+PASS "my-input[type=\"foo\"]:state(--0)::part(inner)" should be a valid selector
+PASS "my-input[type=\"foo\"]:state(--0)::part(inner):state(bar)" should be a valid selector
+PASS "::part(inner):state(bar)::before" should be a valid selector
+PASS "::part(inner):state(bar)::after" should be a valid selector
 PASS ":state" should be an invalid selector
 PASS ":state(" should be an invalid selector
 PASS ":state()" should be an invalid selector

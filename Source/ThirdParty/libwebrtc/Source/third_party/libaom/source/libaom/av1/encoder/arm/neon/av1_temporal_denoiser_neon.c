@@ -24,7 +24,7 @@
 
 // Compute the sum of all pixel differences of this MB.
 static INLINE int horizontal_add_s8x16(const int8x16_t v_sum_diff_total) {
-#if defined(__aarch64__)
+#if AOM_ARCH_AARCH64
   return vaddlvq_s8(v_sum_diff_total);
 #else
   const int16x8_t fe_dc_ba_98_76_54_32_10 = vpaddlq_s8(v_sum_diff_total);

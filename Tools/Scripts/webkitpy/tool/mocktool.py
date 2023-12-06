@@ -29,10 +29,11 @@
 
 import threading
 
-# FIXME: Old-style "Ports" need to die and be replaced by modern layout_tests.port which needs to move to common.
-from webkitpy.common.config.ports_mock import MockPort
 from webkitpy.common.host_mock import MockHost
 from webkitpy.common.net.ewsserver_mock import MockEWSServer
+
+# FIXME: Old-style "Ports" need to die and be replaced by modern layout_tests.port which needs to move to common.
+from webkitpy.common.config.ports_mock import MockPort
 
 
 # FIXME: We should just replace this with optparse.Values(default=kwargs)

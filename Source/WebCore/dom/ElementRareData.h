@@ -23,6 +23,7 @@
 
 #include "CustomElementDefaultARIA.h"
 #include "CustomElementReactionQueue.h"
+#include "CustomStateSet.h"
 #include "DOMTokenList.h"
 #include "DatasetDOMStringMap.h"
 #include "ElementAnimationRareData.h"
@@ -148,6 +149,9 @@ public:
     const std::optional<OptionSet<ContentRelevancy>>& contentRelevancy() const { return m_contentRelevancy; }
     void setContentRelevancy(OptionSet<ContentRelevancy>& contentRelevancy) { m_contentRelevancy = contentRelevancy; }
 
+    CustomStateSet* customStateSet() { return m_customStateSet.get(); }
+    void setCustomStateSet(Ref<CustomStateSet>&& customStateSet) { m_customStateSet = WTFMove(customStateSet); }
+
 #if DUMP_NODE_STATISTICS
     OptionSet<UseType> useTypes() const
     {
@@ -200,6 +204,8 @@ public:
             result.add(UseType::Popover);
         if (m_childIndex)
             result.add(UseType::ChildIndex);
+        if (!m_customStateSet.isEmpty())
+            result.add(UseType::CustomStateSet);
         return result;
     }
 #endif
@@ -246,6 +252,8 @@ private:
     ExplicitlySetAttrElementsMap m_explicitlySetAttrElementsMap;
 
     std::unique_ptr<PopoverData> m_popoverData;
+
+    RefPtr<CustomStateSet> m_customStateSet;
 };
 
 inline ElementRareData::ElementRareData()

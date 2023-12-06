@@ -190,13 +190,16 @@ static const uint32_t nonLinearizedPDFSentinel = std::numeric_limits<uint32_t>::
 
 - (NSObject *)parent
 {
-    if (!_parent) {
-        if (auto* axObjectCache = _pdfPlugin->axObjectCache()) {
-            if (RefPtr pluginAxObject = axObjectCache->getOrCreate(_pluginElement.get()))
-                _parent = pluginAxObject->wrapper();
-        }
+    RetainPtr<WKPDFPluginAccessibilityObject> protectedSelf = retainPtr(self);
+    if (!protectedSelf->_parent) {
+        callOnMainRunLoopAndWait([&protectedSelf] {
+            if (auto* axObjectCache = protectedSelf->_pdfPlugin->axObjectCache()) {
+                if (RefPtr pluginAxObject = axObjectCache->getOrCreate(protectedSelf->_pluginElement.get()))
+                    protectedSelf->_parent = pluginAxObject->wrapper();
+            }
+        });
     }
-    return _parent.get().get();
+    return protectedSelf->_parent.get().get();
 }
 
 - (void)setParent:(NSObject *)parent

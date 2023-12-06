@@ -1229,6 +1229,7 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClassType::Drag:
     case CSSSelector::PseudoClassType::Has:
     case CSSSelector::PseudoClassType::HasScope:
+    case CSSSelector::PseudoClassType::State:
         return FunctionType::CannotCompile;
 
     // Optimized pseudo selectors.

@@ -32,9 +32,9 @@ const int kCodecFactoryParam = 0;
 
 class CodecFactory {
  public:
-  CodecFactory() {}
+  CodecFactory() = default;
 
-  virtual ~CodecFactory() {}
+  virtual ~CodecFactory() = default;
 
   virtual Decoder *CreateDecoder(aom_codec_dec_cfg_t cfg) const = 0;
 
@@ -95,7 +95,7 @@ class AV1Decoder : public Decoder {
       : Decoder(cfg, flag) {}
 
  protected:
-  virtual aom_codec_iface_t *CodecInterface() const {
+  aom_codec_iface_t *CodecInterface() const override {
 #if CONFIG_AV1_DECODER
     return aom_codec_av1_dx();
 #else
@@ -111,7 +111,7 @@ class AV1Encoder : public Encoder {
       : Encoder(cfg, init_flags, stats) {}
 
  protected:
-  virtual aom_codec_iface_t *CodecInterface() const {
+  aom_codec_iface_t *CodecInterface() const override {
 #if CONFIG_AV1_ENCODER
     return aom_codec_av1_cx();
 #else
@@ -124,12 +124,12 @@ class AV1CodecFactory : public CodecFactory {
  public:
   AV1CodecFactory() : CodecFactory() {}
 
-  virtual Decoder *CreateDecoder(aom_codec_dec_cfg_t cfg) const {
+  Decoder *CreateDecoder(aom_codec_dec_cfg_t cfg) const override {
     return CreateDecoder(cfg, 0);
   }
 
-  virtual Decoder *CreateDecoder(aom_codec_dec_cfg_t cfg,
-                                 const aom_codec_flags_t flags) const {
+  Decoder *CreateDecoder(aom_codec_dec_cfg_t cfg,
+                         const aom_codec_flags_t flags) const override {
 #if CONFIG_AV1_DECODER
     return new AV1Decoder(cfg, flags);
 #else
@@ -139,9 +139,9 @@ class AV1CodecFactory : public CodecFactory {
 #endif
   }
 
-  virtual Encoder *CreateEncoder(aom_codec_enc_cfg_t cfg,
-                                 const aom_codec_flags_t init_flags,
-                                 TwopassStatsStore *stats) const {
+  Encoder *CreateEncoder(aom_codec_enc_cfg_t cfg,
+                         const aom_codec_flags_t init_flags,
+                         TwopassStatsStore *stats) const override {
 #if CONFIG_AV1_ENCODER
     return new AV1Encoder(cfg, init_flags, stats);
 #else
@@ -152,8 +152,8 @@ class AV1CodecFactory : public CodecFactory {
 #endif
   }
 
-  virtual aom_codec_err_t DefaultEncoderConfig(aom_codec_enc_cfg_t *cfg,
-                                               unsigned int usage) const {
+  aom_codec_err_t DefaultEncoderConfig(aom_codec_enc_cfg_t *cfg,
+                                       unsigned int usage) const override {
 #if CONFIG_AV1_ENCODER
     return aom_codec_enc_config_default(aom_codec_av1_cx(), cfg, usage);
 #else

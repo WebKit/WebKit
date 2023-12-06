@@ -20,21 +20,21 @@
 
 #include "config.h"
 #include <wtf/dtoa.h>
+#include <wtf/dragonbox/dragonbox_to_chars.h>
 
 namespace WTF {
 
 const char* numberToString(float number, NumberToStringBuffer& buffer)
 {
     double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
-    double_conversion::DoubleToStringConverter::EcmaScriptConverter().ToShortestSingle(number, &builder);
+    dragonbox::ToShortest(number, &builder);
     return builder.Finalize();
 }
 
 const char* numberToString(double d, NumberToStringBuffer& buffer)
 {
     double_conversion::StringBuilder builder(&buffer[0], sizeof(buffer));
-    auto& converter = double_conversion::DoubleToStringConverter::EcmaScriptConverter();
-    converter.ToShortest(d, &builder);
+    dragonbox::ToShortest(d, &builder);
     return builder.Finalize();
 }
 

@@ -43,7 +43,7 @@ class DecodeScalabilityTest
       : DecoderTest(GET_PARAM(0)), headers_(GET_PARAM(1).headers),
         num_headers_(GET_PARAM(1).num_headers) {}
 
-  ~DecodeScalabilityTest() override {}
+  ~DecodeScalabilityTest() override = default;
 
   void PreDecodeFrameHook(const libaom_test::CompressedVideoSource &video,
                           libaom_test::Decoder *decoder) override {

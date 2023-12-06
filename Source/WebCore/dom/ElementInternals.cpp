@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "ElementInternals.h"
+#include "CustomStateSet.h"
 
 #include "AXObjectCache.h"
 #include "DocumentInlines.h"
@@ -189,6 +190,11 @@ void ElementInternals::setElementsArrayAttribute(const QualifiedName& name, std:
 
     if (CheckedPtr cache = element->document().existingAXObjectCache())
         cache->deferAttributeChangeIfNeeded(element.get(), name, oldValue, computeValueForAttribute(*element, name));
+}
+
+CustomStateSet& ElementInternals::states()
+{
+    return m_element->ensureCustomStateSet();
 }
 
 } // namespace WebCore

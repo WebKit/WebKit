@@ -1261,7 +1261,7 @@ int av1_setup_sm_rdmult_scaling_factor(AV1_COMP *cpi, double motion_ratio) {
     return 0;
   }
 
-  const int bsize = cm->seq_params->sb_size;
+  const BLOCK_SIZE bsize = cm->seq_params->sb_size;
   const int num_mi_w = mi_size_wide[bsize];
   const int num_mi_h = mi_size_high[bsize];
   const int block_width = block_size_wide[bsize];

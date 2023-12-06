@@ -292,6 +292,10 @@ using namespace WebCore;
 #define NSAccessibilitySelectTextWithCriteriaParameterizedAttribute @"AXSelectTextWithCriteria"
 #endif
 
+#ifndef NSAccessibilityIntersectionWithSelectionRangeAttribute
+#define NSAccessibilityIntersectionWithSelectionRangeAttribute @"AXIntersectionWithSelectionRange"
+#endif
+
 // Text search
 
 #ifndef NSAccessibilitySearchTextWithCriteriaParameterizedAttribute
@@ -1159,6 +1163,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityURLAttribute];
         return tempArray;
     }();
+    static NeverDestroyed staticTextAttrs = [] {
+        auto tempArray = adoptNS([[NSMutableArray alloc] initWithArray:attributes.get().get()]);
+        [tempArray addObject:NSAccessibilityIntersectionWithSelectionRangeAttribute];
+        return tempArray;
+    }();
 
     NSArray *objectAttributes = attributes.get().get();
 
@@ -1166,6 +1175,8 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         objectAttributes = secureFieldAttributes.get().get();
     else if (backingObject->isWebArea())
         objectAttributes = webAreaAttrs.get().get();
+    else if (backingObject->isStaticText())
+        objectAttributes = staticTextAttrs.get().get();
     else if (backingObject->isTextControl())
         objectAttributes = textAttrs.get().get();
     else if (backingObject->isLink())
@@ -1624,6 +1635,11 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
             int lineNumber = backingObject->insertionPointLineNumber();
             return lineNumber >= 0 ? @(lineNumber) : nil;
         }
+    }
+
+    if (backingObject->isStaticText()) {
+        if ([attributeName isEqualToString:NSAccessibilityIntersectionWithSelectionRangeAttribute])
+            return [self intersectionWithSelectionRange];
     }
 
     if ([attributeName isEqualToString:NSAccessibilityVisibleCharacterRangeAttribute]) {
@@ -2230,6 +2246,25 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if ([attributeName isEqualToString:NSAccessibilityTextInputMarkedTextMarkerRangeAttribute]) {
         auto range = backingObject->textInputMarkedTextMarkerRange();
         return range ? range.platformData().bridgingAutorelease() : nil;
+    }
+
+    return nil;
+}
+
+- (NSValue *)intersectionWithSelectionRange
+{
+    RefPtr<AXCoreObject> backingObject = self.updateObjectBackingStore;
+    if (!backingObject)
+        return nil;
+
+    auto objectRange = backingObject->textMarkerRange();
+    auto selectionRange = backingObject->selectedTextMarkerRange();
+
+    auto intersection = selectionRange.intersectionWith(objectRange);
+    if (intersection.has_value()) {
+        auto intersectionCharacterRange = intersection->characterRange();
+        if (intersectionCharacterRange.has_value())
+            return [NSValue valueWithRange:intersectionCharacterRange.value()];
     }
 
     return nil;

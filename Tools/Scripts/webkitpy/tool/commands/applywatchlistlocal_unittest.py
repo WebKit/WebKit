@@ -27,8 +27,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
-from webkitpy.tool.commands.applywatchlistlocal import ApplyWatchListLocal
 from webkitpy.tool.commands.commandtest import CommandsTest
+from webkitpy.tool.commands.applywatchlistlocal import ApplyWatchListLocal
 
 
 class ApplyWatchListLocalTest(CommandsTest):

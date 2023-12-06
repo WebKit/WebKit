@@ -32,6 +32,8 @@
 // * The `QFATAL` pseudo-severity level is equivalent to `FATAL` but triggers
 //   quieter termination messages, e.g. without a full stack trace, and skips
 //   running registered error handlers.
+// * The `DFATAL` pseudo-severity level is defined as `FATAL` in debug mode and
+//   as `ERROR` otherwise.
 // Some preprocessor shenanigans are used to ensure that e.g. `LOG(INFO)` has
 // the same meaning even if a local symbol or preprocessor macro named `INFO` is
 // defined.  To specify a severity level using an expression instead of a
@@ -196,29 +198,32 @@
 // Example:
 //
 //   LOG(INFO) << "Found " << num_cookies << " cookies";
-#define LOG(severity) ABSL_LOG_IMPL(_##severity)
+#define LOG(severity) ABSL_LOG_INTERNAL_LOG_IMPL(_##severity)
 
 // PLOG()
 //
 // `PLOG` behaves like `LOG` except that a description of the current state of
 // `errno` is appended to the streamed message.
-#define PLOG(severity) ABSL_PLOG_IMPL(_##severity)
+#define PLOG(severity) ABSL_LOG_INTERNAL_PLOG_IMPL(_##severity)
 
 // DLOG()
 //
 // `DLOG` behaves like `LOG` in debug mode (i.e. `#ifndef NDEBUG`).  Otherwise
 // it compiles away and does nothing.  Note that `DLOG(FATAL)` does not
 // terminate the program if `NDEBUG` is defined.
-#define DLOG(severity) ABSL_DLOG_IMPL(_##severity)
+#define DLOG(severity) ABSL_LOG_INTERNAL_DLOG_IMPL(_##severity)
 
 // `LOG_IF` and friends add a second argument which specifies a condition.  If
 // the condition is false, nothing is logged.
 // Example:
 //
 //   LOG_IF(INFO, num_cookies > 10) << "Got lots of cookies";
-#define LOG_IF(severity, condition) ABSL_LOG_IF_IMPL(_##severity, condition)
-#define PLOG_IF(severity, condition) ABSL_PLOG_IF_IMPL(_##severity, condition)
-#define DLOG_IF(severity, condition) ABSL_DLOG_IF_IMPL(_##severity, condition)
+#define LOG_IF(severity, condition) \
+  ABSL_LOG_INTERNAL_LOG_IF_IMPL(_##severity, condition)
+#define PLOG_IF(severity, condition) \
+  ABSL_LOG_INTERNAL_PLOG_IF_IMPL(_##severity, condition)
+#define DLOG_IF(severity, condition) \
+  ABSL_LOG_INTERNAL_DLOG_IF_IMPL(_##severity, condition)
 
 // LOG_EVERY_N
 //
@@ -231,21 +236,24 @@
 //
 //   LOG_EVERY_N(WARNING, 1000) << "Got a packet with a bad CRC (" << COUNTER
 //                              << " total)";
-#define LOG_EVERY_N(severity, n) ABSL_LOG_EVERY_N_IMPL(_##severity, n)
+#define LOG_EVERY_N(severity, n) \
+  ABSL_LOG_INTERNAL_LOG_EVERY_N_IMPL(_##severity, n)
 
 // LOG_FIRST_N
 //
 // `LOG_FIRST_N` behaves like `LOG_EVERY_N` except that the specified message is
 // logged when the counter's value is less than `n`.  `LOG_FIRST_N` is
 // thread-safe.
-#define LOG_FIRST_N(severity, n) ABSL_LOG_FIRST_N_IMPL(_##severity, n)
+#define LOG_FIRST_N(severity, n) \
+  ABSL_LOG_INTERNAL_LOG_FIRST_N_IMPL(_##severity, n)
 
 // LOG_EVERY_POW_2
 //
 // `LOG_EVERY_POW_2` behaves like `LOG_EVERY_N` except that the specified
 // message is logged when the counter's value is a power of 2.
 // `LOG_EVERY_POW_2` is thread-safe.
-#define LOG_EVERY_POW_2(severity) ABSL_LOG_EVERY_POW_2_IMPL(_##severity)
+#define LOG_EVERY_POW_2(severity) \
+  ABSL_LOG_INTERNAL_LOG_EVERY_POW_2_IMPL(_##severity)
 
 // LOG_EVERY_N_SEC
 //
@@ -257,19 +265,25 @@
 //
 //   LOG_EVERY_N_SEC(INFO, 2.5) << "Got " << COUNTER << " cookies so far";
 #define LOG_EVERY_N_SEC(severity, n_seconds) \
-  ABSL_LOG_EVERY_N_SEC_IMPL(_##severity, n_seconds)
+  ABSL_LOG_INTERNAL_LOG_EVERY_N_SEC_IMPL(_##severity, n_seconds)
 
-#define PLOG_EVERY_N(severity, n) ABSL_PLOG_EVERY_N_IMPL(_##severity, n)
-#define PLOG_FIRST_N(severity, n) ABSL_PLOG_FIRST_N_IMPL(_##severity, n)
-#define PLOG_EVERY_POW_2(severity) ABSL_PLOG_EVERY_POW_2_IMPL(_##severity)
+#define PLOG_EVERY_N(severity, n) \
+  ABSL_LOG_INTERNAL_PLOG_EVERY_N_IMPL(_##severity, n)
+#define PLOG_FIRST_N(severity, n) \
+  ABSL_LOG_INTERNAL_PLOG_FIRST_N_IMPL(_##severity, n)
+#define PLOG_EVERY_POW_2(severity) \
+  ABSL_LOG_INTERNAL_PLOG_EVERY_POW_2_IMPL(_##severity)
 #define PLOG_EVERY_N_SEC(severity, n_seconds) \
-  ABSL_PLOG_EVERY_N_SEC_IMPL(_##severity, n_seconds)
+  ABSL_LOG_INTERNAL_PLOG_EVERY_N_SEC_IMPL(_##severity, n_seconds)
 
-#define DLOG_EVERY_N(severity, n) ABSL_DLOG_EVERY_N_IMPL(_##severity, n)
-#define DLOG_FIRST_N(severity, n) ABSL_DLOG_FIRST_N_IMPL(_##severity, n)
-#define DLOG_EVERY_POW_2(severity) ABSL_DLOG_EVERY_POW_2_IMPL(_##severity)
+#define DLOG_EVERY_N(severity, n) \
+  ABSL_LOG_INTERNAL_DLOG_EVERY_N_IMPL(_##severity, n)
+#define DLOG_FIRST_N(severity, n) \
+  ABSL_LOG_INTERNAL_DLOG_FIRST_N_IMPL(_##severity, n)
+#define DLOG_EVERY_POW_2(severity) \
+  ABSL_LOG_INTERNAL_DLOG_EVERY_POW_2_IMPL(_##severity)
 #define DLOG_EVERY_N_SEC(severity, n_seconds) \
-  ABSL_DLOG_EVERY_N_SEC_IMPL(_##severity, n_seconds)
+  ABSL_LOG_INTERNAL_DLOG_EVERY_N_SEC_IMPL(_##severity, n_seconds)
 
 // `LOG_IF_EVERY_N` and friends behave as the corresponding `LOG_EVERY_N`
 // but neither increment a counter nor log a message if condition is false (as
@@ -279,30 +293,30 @@
 //   LOG_IF_EVERY_N(INFO, (size > 1024), 10) << "Got the " << COUNTER
 //                                           << "th big cookie";
 #define LOG_IF_EVERY_N(severity, condition, n) \
-  ABSL_LOG_IF_EVERY_N_IMPL(_##severity, condition, n)
+  ABSL_LOG_INTERNAL_LOG_IF_EVERY_N_IMPL(_##severity, condition, n)
 #define LOG_IF_FIRST_N(severity, condition, n) \
-  ABSL_LOG_IF_FIRST_N_IMPL(_##severity, condition, n)
+  ABSL_LOG_INTERNAL_LOG_IF_FIRST_N_IMPL(_##severity, condition, n)
 #define LOG_IF_EVERY_POW_2(severity, condition) \
-  ABSL_LOG_IF_EVERY_POW_2_IMPL(_##severity, condition)
+  ABSL_LOG_INTERNAL_LOG_IF_EVERY_POW_2_IMPL(_##severity, condition)
 #define LOG_IF_EVERY_N_SEC(severity, condition, n_seconds) \
-  ABSL_LOG_IF_EVERY_N_SEC_IMPL(_##severity, condition, n_seconds)
+  ABSL_LOG_INTERNAL_LOG_IF_EVERY_N_SEC_IMPL(_##severity, condition, n_seconds)
 
 #define PLOG_IF_EVERY_N(severity, condition, n) \
-  ABSL_PLOG_IF_EVERY_N_IMPL(_##severity, condition, n)
+  ABSL_LOG_INTERNAL_PLOG_IF_EVERY_N_IMPL(_##severity, condition, n)
 #define PLOG_IF_FIRST_N(severity, condition, n) \
-  ABSL_PLOG_IF_FIRST_N_IMPL(_##severity, condition, n)
+  ABSL_LOG_INTERNAL_PLOG_IF_FIRST_N_IMPL(_##severity, condition, n)
 #define PLOG_IF_EVERY_POW_2(severity, condition) \
-  ABSL_PLOG_IF_EVERY_POW_2_IMPL(_##severity, condition)
+  ABSL_LOG_INTERNAL_PLOG_IF_EVERY_POW_2_IMPL(_##severity, condition)
 #define PLOG_IF_EVERY_N_SEC(severity, condition, n_seconds) \
-  ABSL_PLOG_IF_EVERY_N_SEC_IMPL(_##severity, condition, n_seconds)
+  ABSL_LOG_INTERNAL_PLOG_IF_EVERY_N_SEC_IMPL(_##severity, condition, n_seconds)
 
 #define DLOG_IF_EVERY_N(severity, condition, n) \
-  ABSL_DLOG_IF_EVERY_N_IMPL(_##severity, condition, n)
+  ABSL_LOG_INTERNAL_DLOG_IF_EVERY_N_IMPL(_##severity, condition, n)
 #define DLOG_IF_FIRST_N(severity, condition, n) \
-  ABSL_DLOG_IF_FIRST_N_IMPL(_##severity, condition, n)
+  ABSL_LOG_INTERNAL_DLOG_IF_FIRST_N_IMPL(_##severity, condition, n)
 #define DLOG_IF_EVERY_POW_2(severity, condition) \
-  ABSL_DLOG_IF_EVERY_POW_2_IMPL(_##severity, condition)
+  ABSL_LOG_INTERNAL_DLOG_IF_EVERY_POW_2_IMPL(_##severity, condition)
 #define DLOG_IF_EVERY_N_SEC(severity, condition, n_seconds) \
-  ABSL_DLOG_IF_EVERY_N_SEC_IMPL(_##severity, condition, n_seconds)
+  ABSL_LOG_INTERNAL_DLOG_IF_EVERY_N_SEC_IMPL(_##severity, condition, n_seconds)
 
 #endif  // ABSL_LOG_LOG_H_

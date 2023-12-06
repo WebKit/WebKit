@@ -527,13 +527,17 @@ static MTLResourceUsage resourceUsageForBindingAcccess(BindGroupLayout::BindingA
     }
 }
 
+template <typename ExpectedType>
+static bool hasBinding(const BindGroupLayout::EntriesContainer& bindGroupLayoutEntries, auto bindingIndex)
+{
+    auto it = bindGroupLayoutEntries.find(bindingIndex);
+    return it != bindGroupLayoutEntries.end() && std::get_if<ExpectedType>(&it->value.bindingLayout);
+}
+
 Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor)
 {
     if (descriptor.nextInChain || !descriptor.layout || !isValid())
         return BindGroup::createInvalid(*this);
-
-    // FIXME: We have to validate that the bind group is compatible with the bind group layout.
-    // Otherwise, we are in crazytown.
 
     constexpr ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };
     constexpr size_t stageCount = std::size(stages);
@@ -554,9 +558,7 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
     constexpr auto maxResourceUsageValue = MTLResourceUsageRead | MTLResourceUsageWrite;
     static_assert(maxResourceUsageValue == 3, "Code path assumes MTLResourceUsageRead | MTLResourceUsageWrite == 3");
     Vector<id<MTLResource>> stageResources[stageCount][maxResourceUsageValue];
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=257190 The bind group layout determines the layout of what gets put into the bind group.
-    // We should probably iterate over the bind group layout here, rather than the bind group.
-    // For each entry in the bind group layout, we should find the corresponding member of the bind group, and then process it.
+    auto& bindGroupLayoutEntries = bindGroupLayout.entries();
     for (uint32_t i = 0, entryCount = descriptor.entryCount; i < entryCount; ++i) {
         const WGPUBindGroupEntry& entry = descriptor.entries[i];
 
@@ -593,8 +595,12 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
             MTLResourceUsage resourceUsage = resourceUsageForBindingAcccess(*optionalAccess);
 
             if (bufferIsPresent) {
+                if (!hasBinding<WGPUBufferBindingLayout>(bindGroupLayoutEntries, bindingIndex)) {
+                    generateAValidationError("Expected buffer but it was not present in the bind group layout"_s);
+                    return BindGroup::createInvalid(*this);
+                }
                 id<MTLBuffer> buffer = WebGPU::fromAPI(entry.buffer).buffer();
-                if (entry.offset > buffer.length)
+                if (entry.offset >= buffer.length)
                     return BindGroup::createInvalid(*this);
 
                 [argumentEncoder[stage] setBuffer:buffer offset:entry.offset atIndex:index];
@@ -602,13 +608,25 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 if (bufferSizeArgumentBufferIndex)
                     *(uint32_t*)[argumentEncoder[stage] constantDataAtIndex:*bufferSizeArgumentBufferIndex] = static_cast<uint32_t>(entry.size == WGPU_WHOLE_MAP_SIZE ? buffer.length : entry.size);
             } else if (samplerIsPresent) {
+                if (!hasBinding<WGPUSamplerBindingLayout>(bindGroupLayoutEntries, bindingIndex)) {
+                    generateAValidationError("Expected sampler but it was not present in the bind group layout"_s);
+                    return BindGroup::createInvalid(*this);
+                }
                 id<MTLSamplerState> sampler = WebGPU::fromAPI(entry.sampler).samplerState();
                 [argumentEncoder[stage] setSamplerState:sampler atIndex:index];
             } else if (textureViewIsPresent) {
+                if (!hasBinding<WGPUTextureBindingLayout>(bindGroupLayoutEntries, bindingIndex) && !hasBinding<WGPUStorageTextureBindingLayout>(bindGroupLayoutEntries, bindingIndex)) {
+                    generateAValidationError("Expected texture or storage texture but it was not present in the bind group layout"_s);
+                    return BindGroup::createInvalid(*this);
+                }
                 id<MTLTexture> texture = WebGPU::fromAPI(entry.textureView).texture();
                 [argumentEncoder[stage] setTexture:texture atIndex:index];
                 stageResources[metalRenderStage(stage)][resourceUsage - 1].append(texture);
             } else if (externalTextureIsPresent) {
+                if (!hasBinding<WGPUExternalTextureBindingLayout>(bindGroupLayoutEntries, bindingIndex)) {
+                    generateAValidationError("Expected external texture but it was not present in the bind group layout"_s);
+                    return BindGroup::createInvalid(*this);
+                }
                 auto& externalTexture = WebGPU::fromAPI(wgpuExternalTexture);
                 auto textureData = createExternalTextureFromPixelBuffer(externalTexture.pixelBuffer(), externalTexture.colorSpace());
                 [argumentEncoder[stage] setTexture:textureData.texture0 atIndex:index++];

@@ -23,7 +23,7 @@ pub type AesBlock = [u8; BLOCK_SIZE];
 pub struct Aes;
 
 impl Aes {
-    /// Encrypt `block` in place.
+    /// Encrypts `block` in place.
     pub fn encrypt(key: &AesEncryptKey, block: &mut AesBlock) {
         let input = *block;
         // Safety:
@@ -31,7 +31,7 @@ impl Aes {
         unsafe { bssl_sys::AES_encrypt(input.as_ptr(), block.as_mut_ptr(), &key.0) }
     }
 
-    /// Decrypt `block` in place.
+    /// Decrypts `block` in place.
     pub fn decrypt(key: &AesDecryptKey, block: &mut AesBlock) {
         let input = *block;
         // Safety:

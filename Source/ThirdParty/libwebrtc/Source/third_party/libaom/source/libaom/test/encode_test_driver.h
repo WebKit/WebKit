@@ -199,7 +199,7 @@ class EncoderTest {
     cfg_.g_threads = 1;
   }
 
-  virtual ~EncoderTest() {}
+  virtual ~EncoderTest() = default;
 
   // Initialize the cfg_ member with the default configuration for the
   // TestMode enum and maps the TestMode enum to the passes_ variable.

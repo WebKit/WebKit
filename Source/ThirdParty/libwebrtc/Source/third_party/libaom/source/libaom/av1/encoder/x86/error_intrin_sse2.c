@@ -65,11 +65,11 @@ int64_t av1_block_error_lp_sse2(const int16_t *coeff, const int16_t *dqcoeff,
   accum = reduce_sum_epi64(accum);
 
   // Store the results.
-#if ARCH_X86_64
+#if AOM_ARCH_X86_64
   return _mm_cvtsi128_si64(accum);
 #else
   int64_t result;
   _mm_storel_epi64((__m128i *)&result, accum);
   return result;
-#endif  // ARCH_X86_64
+#endif  // AOM_ARCH_X86_64
 }

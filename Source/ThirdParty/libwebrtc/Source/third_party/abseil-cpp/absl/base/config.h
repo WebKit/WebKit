@@ -75,6 +75,12 @@
 #define ABSL_INTERNAL_CPLUSPLUS_LANG __cplusplus
 #endif
 
+#if defined(ABSL_INTERNAL_CPLUSPLUS_LANG) && \
+    ABSL_INTERNAL_CPLUSPLUS_LANG >= 202002L
+// Include library feature test macros.
+#include <version>
+#endif
+
 #if defined(__APPLE__)
 // Included for TARGET_OS_IPHONE, __IPHONE_OS_VERSION_MIN_REQUIRED,
 // __IPHONE_8_0.
@@ -332,8 +338,8 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 #ifdef ABSL_HAVE_INTRINSIC_INT128
 #error ABSL_HAVE_INTRINSIC_INT128 cannot be directly set
 #elif defined(__SIZEOF_INT128__)
-#if (defined(__clang__) && !defined(_WIN32)) || \
-    (defined(__CUDACC__) && __CUDACC_VER_MAJOR__ >= 9) ||                \
+#if (defined(__clang__) && !defined(_WIN32)) ||           \
+    (defined(__CUDACC__) && __CUDACC_VER_MAJOR__ >= 9) || \
     (defined(__GNUC__) && !defined(__clang__) && !defined(__CUDACC__))
 #define ABSL_HAVE_INTRINSIC_INT128 1
 #elif defined(__CUDACC__)
@@ -395,7 +401,7 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 //   Windows                           _WIN32
 //   NaCL                              __native_client__
 //   AsmJS                             __asmjs__
-//   WebAssembly                       __wasm__
+//   WebAssembly (Emscripten)          __EMSCRIPTEN__
 //   Fuchsia                           __Fuchsia__
 //
 // Note that since Android defines both __ANDROID__ and __linux__, one
@@ -407,12 +413,12 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 // POSIX.1-2001.
 #ifdef ABSL_HAVE_MMAP
 #error ABSL_HAVE_MMAP cannot be directly set
-#elif defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__) || \
-    defined(_AIX) || defined(__ros__) || defined(__native_client__) ||    \
-    defined(__asmjs__) || defined(__wasm__) || defined(__Fuchsia__) ||    \
-    defined(__sun) || defined(__ASYLO__) || defined(__myriad2__) ||       \
-    defined(__HAIKU__) || defined(__OpenBSD__) || defined(__NetBSD__) ||  \
-    defined(__QNX__)
+#elif defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__) ||    \
+    defined(_AIX) || defined(__ros__) || defined(__native_client__) ||       \
+    defined(__asmjs__) || defined(__EMSCRIPTEN__) || defined(__Fuchsia__) || \
+    defined(__sun) || defined(__ASYLO__) || defined(__myriad2__) ||          \
+    defined(__HAIKU__) || defined(__OpenBSD__) || defined(__NetBSD__) ||     \
+    defined(__QNX__) || defined(__VXWORKS__) || defined(__hexagon__)
 #define ABSL_HAVE_MMAP 1
 #endif
 
@@ -424,7 +430,7 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 #error ABSL_HAVE_PTHREAD_GETSCHEDPARAM cannot be directly set
 #elif defined(__linux__) || defined(__APPLE__) || defined(__FreeBSD__) || \
     defined(_AIX) || defined(__ros__) || defined(__OpenBSD__) ||          \
-    defined(__NetBSD__)
+    defined(__NetBSD__) || defined(__VXWORKS__)
 #define ABSL_HAVE_PTHREAD_GETSCHEDPARAM 1
 #endif
 
@@ -443,7 +449,8 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 // POSIX.1-2001.
 #ifdef ABSL_HAVE_SCHED_YIELD
 #error ABSL_HAVE_SCHED_YIELD cannot be directly set
-#elif defined(__linux__) || defined(__ros__) || defined(__native_client__)
+#elif defined(__linux__) || defined(__ros__) || defined(__native_client__) || \
+    defined(__VXWORKS__)
 #define ABSL_HAVE_SCHED_YIELD 1
 #endif
 
@@ -458,7 +465,7 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 // platforms.
 #ifdef ABSL_HAVE_SEMAPHORE_H
 #error ABSL_HAVE_SEMAPHORE_H cannot be directly set
-#elif defined(__linux__) || defined(__ros__)
+#elif defined(__linux__) || defined(__ros__) || defined(__VXWORKS__)
 #define ABSL_HAVE_SEMAPHORE_H 1
 #endif
 
@@ -483,9 +490,13 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 // https://sourceforge.net/p/mingw-w64/mingw-w64/ci/master/tree/mingw-w64-crt/misc/alarm.c
 #elif defined(__EMSCRIPTEN__)
 // emscripten doesn't support signals
+#elif defined(__wasi__)
+// WASI doesn't support signals
 #elif defined(__Fuchsia__)
 // Signals don't exist on fuchsia.
 #elif defined(__native_client__)
+// Signals don't exist on hexagon/QuRT
+#elif defined(__hexagon__)
 #else
 // other standard libraries
 #define ABSL_HAVE_ALARM 1
@@ -519,41 +530,29 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 #error "absl endian detection needs to be set up for your compiler"
 #endif
 
-// macOS < 10.13 and iOS < 11 don't let you use <any>, <optional>, or <variant>
-// even though the headers exist and are publicly noted to work, because the
-// libc++ shared library shipped on the system doesn't have the requisite
-// exported symbols.  See https://github.com/abseil/abseil-cpp/issues/207 and
+// macOS < 10.13 and iOS < 12 don't support <any>, <optional>, or <variant>
+// because the libc++ shared library shipped on the system doesn't have the
+// requisite exported symbols.  See
+// https://github.com/abseil/abseil-cpp/issues/207 and
 // https://developer.apple.com/documentation/xcode_release_notes/xcode_10_release_notes
 //
 // libc++ spells out the availability requirements in the file
 // llvm-project/libcxx/include/__config via the #define
-// _LIBCPP_AVAILABILITY_BAD_OPTIONAL_ACCESS.
-//
-// Unfortunately, Apple initially mis-stated the requirements as macOS < 10.14
-// and iOS < 12 in the libc++ headers. This was corrected by
+// _LIBCPP_AVAILABILITY_BAD_OPTIONAL_ACCESS. The set of versions has been
+// modified a few times, via
 // https://github.com/llvm/llvm-project/commit/7fb40e1569dd66292b647f4501b85517e9247953
-// which subsequently made it into the XCode 12.5 release. We need to match the
-// old (incorrect) conditions when built with old XCode, but can use the
-// corrected earlier versions with new XCode.
-#if defined(__APPLE__) && defined(_LIBCPP_VERSION) &&               \
-    ((_LIBCPP_VERSION >= 11000 && /* XCode 12.5 or later: */        \
-      ((defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) &&   \
-        __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 101300) ||  \
-       (defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__) &&  \
-        __ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__ < 110000) || \
-       (defined(__ENVIRONMENT_WATCH_OS_VERSION_MIN_REQUIRED__) &&   \
-        __ENVIRONMENT_WATCH_OS_VERSION_MIN_REQUIRED__ < 40000) ||   \
-       (defined(__ENVIRONMENT_TV_OS_VERSION_MIN_REQUIRED__) &&      \
-        __ENVIRONMENT_TV_OS_VERSION_MIN_REQUIRED__ < 110000))) ||   \
-     (_LIBCPP_VERSION < 11000 && /* Pre-XCode 12.5: */              \
-      ((defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) &&   \
-        __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 101400) ||  \
-       (defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__) &&  \
-        __ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__ < 120000) || \
-       (defined(__ENVIRONMENT_WATCH_OS_VERSION_MIN_REQUIRED__) &&   \
-        __ENVIRONMENT_WATCH_OS_VERSION_MIN_REQUIRED__ < 50000) ||   \
-       (defined(__ENVIRONMENT_TV_OS_VERSION_MIN_REQUIRED__) &&      \
-        __ENVIRONMENT_TV_OS_VERSION_MIN_REQUIRED__ < 120000))))
+// and
+// https://github.com/llvm/llvm-project/commit/0bc451e7e137c4ccadcd3377250874f641ca514a
+// The second has the actually correct versions, thus, is what we copy here.
+#if defined(__APPLE__) &&                                         \
+    ((defined(__ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__) &&   \
+      __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ < 101300) ||  \
+     (defined(__ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__) &&  \
+      __ENVIRONMENT_IPHONE_OS_VERSION_MIN_REQUIRED__ < 120000) || \
+     (defined(__ENVIRONMENT_WATCH_OS_VERSION_MIN_REQUIRED__) &&   \
+      __ENVIRONMENT_WATCH_OS_VERSION_MIN_REQUIRED__ < 50000) ||   \
+     (defined(__ENVIRONMENT_TV_OS_VERSION_MIN_REQUIRED__) &&      \
+      __ENVIRONMENT_TV_OS_VERSION_MIN_REQUIRED__ < 120000))
 #define ABSL_INTERNAL_APPLE_CXX17_TYPES_UNAVAILABLE 1
 #else
 #define ABSL_INTERNAL_APPLE_CXX17_TYPES_UNAVAILABLE 0
@@ -564,6 +563,8 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 // Checks whether C++17 std::any is available.
 #ifdef ABSL_HAVE_STD_ANY
 #error "ABSL_HAVE_STD_ANY cannot be directly set."
+#elif defined(__cpp_lib_any) && __cpp_lib_any >= 201606L
+#define ABSL_HAVE_STD_ANY 1
 #elif defined(ABSL_INTERNAL_CPLUSPLUS_LANG) && \
     ABSL_INTERNAL_CPLUSPLUS_LANG >= 201703L && \
     !ABSL_INTERNAL_APPLE_CXX17_TYPES_UNAVAILABLE
@@ -575,7 +576,9 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 // Checks whether C++17 std::optional is available.
 #ifdef ABSL_HAVE_STD_OPTIONAL
 #error "ABSL_HAVE_STD_OPTIONAL cannot be directly set."
-#elif defined(ABSL_INTERNAL_CPLUSPLUS_LANG) &&  \
+#elif defined(__cpp_lib_optional) && __cpp_lib_optional >= 202106L
+#define ABSL_HAVE_STD_OPTIONAL 1
+#elif defined(ABSL_INTERNAL_CPLUSPLUS_LANG) && \
     ABSL_INTERNAL_CPLUSPLUS_LANG >= 201703L && \
     !ABSL_INTERNAL_APPLE_CXX17_TYPES_UNAVAILABLE
 #define ABSL_HAVE_STD_OPTIONAL 1
@@ -586,6 +589,8 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 // Checks whether C++17 std::variant is available.
 #ifdef ABSL_HAVE_STD_VARIANT
 #error "ABSL_HAVE_STD_VARIANT cannot be directly set."
+#elif defined(__cpp_lib_variant) && __cpp_lib_variant >= 201606L
+#define ABSL_HAVE_STD_VARIANT 1
 #elif defined(ABSL_INTERNAL_CPLUSPLUS_LANG) && \
     ABSL_INTERNAL_CPLUSPLUS_LANG >= 201703L && \
     !ABSL_INTERNAL_APPLE_CXX17_TYPES_UNAVAILABLE
@@ -597,6 +602,8 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 // Checks whether C++17 std::string_view is available.
 #ifdef ABSL_HAVE_STD_STRING_VIEW
 #error "ABSL_HAVE_STD_STRING_VIEW cannot be directly set."
+#elif defined(__cpp_lib_string_view) && __cpp_lib_string_view >= 201606L
+#define ABSL_HAVE_STD_STRING_VIEW 1
 #elif defined(ABSL_INTERNAL_CPLUSPLUS_LANG) && \
     ABSL_INTERNAL_CPLUSPLUS_LANG >= 201703L
 #define ABSL_HAVE_STD_STRING_VIEW 1
@@ -846,11 +853,30 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 // RTTI support.
 #ifdef ABSL_INTERNAL_HAS_RTTI
 #error ABSL_INTERNAL_HAS_RTTI cannot be directly set
-#elif (defined(__GNUC__) && defined(__GXX_RTTI)) || \
-    (defined(_MSC_VER) && defined(_CPPRTTI)) ||     \
-    (!defined(__GNUC__) && !defined(_MSC_VER))
+#elif ABSL_HAVE_FEATURE(cxx_rtti)
 #define ABSL_INTERNAL_HAS_RTTI 1
-#endif  // !defined(__GNUC__) || defined(__GXX_RTTI)
+#elif defined(__GNUC__) && defined(__GXX_RTTI)
+#define ABSL_INTERNAL_HAS_RTTI 1
+#elif defined(_MSC_VER) && defined(_CPPRTTI)
+#define ABSL_INTERNAL_HAS_RTTI 1
+#elif !defined(__GNUC__) && !defined(_MSC_VER)
+// Unknown compiler, default to RTTI
+#define ABSL_INTERNAL_HAS_RTTI 1
+#endif
+
+// `ABSL_INTERNAL_HAS_CXA_DEMANGLE` determines whether `abi::__cxa_demangle` is
+// available.
+#ifdef ABSL_INTERNAL_HAS_CXA_DEMANGLE
+#error ABSL_INTERNAL_HAS_CXA_DEMANGLE cannot be directly set
+#elif defined(OS_ANDROID) && (defined(__i386__) || defined(__x86_64__))
+#define ABSL_INTERNAL_HAS_CXA_DEMANGLE 0
+#elif defined(__GNUC__) && defined(__GNUC_MINOR__) &&            \
+    (__GNUC__ >= 4 || (__GNUC__ >= 3 && __GNUC_MINOR__ >= 4)) && \
+    !defined(__mips__)
+#define ABSL_INTERNAL_HAS_CXA_DEMANGLE 1
+#elif defined(__clang__) && !defined(_MSC_VER)
+#define ABSL_INTERNAL_HAS_CXA_DEMANGLE 1
+#endif
 
 // ABSL_INTERNAL_HAVE_SSE is used for compile-time detection of SSE support.
 // See https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html for an overview of
@@ -921,6 +947,26 @@ static_assert(ABSL_INTERNAL_INLINE_NAMESPACE_STR[0] != 'h' ||
 #define ABSL_HAVE_CONSTANT_EVALUATED 1
 #elif ABSL_HAVE_BUILTIN(__builtin_is_constant_evaluated)
 #define ABSL_HAVE_CONSTANT_EVALUATED 1
+#endif
+
+// ABSL_INTERNAL_EMSCRIPTEN_VERSION combines Emscripten's three version macros
+// into an integer that can be compared against.
+#ifdef ABSL_INTERNAL_EMSCRIPTEN_VERSION
+#error ABSL_INTERNAL_EMSCRIPTEN_VERSION cannot be directly set
+#endif
+#ifdef __EMSCRIPTEN__
+#include <emscripten/version.h>
+#ifdef __EMSCRIPTEN_major__
+#if __EMSCRIPTEN_minor__ >= 1000
+#error __EMSCRIPTEN_minor__ is too big to fit in ABSL_INTERNAL_EMSCRIPTEN_VERSION
+#endif
+#if __EMSCRIPTEN_tiny__ >= 1000
+#error __EMSCRIPTEN_tiny__ is too big to fit in ABSL_INTERNAL_EMSCRIPTEN_VERSION
+#endif
+#define ABSL_INTERNAL_EMSCRIPTEN_VERSION                              \
+  ((__EMSCRIPTEN_major__) * 1000000 + (__EMSCRIPTEN_minor__) * 1000 + \
+   (__EMSCRIPTEN_tiny__))
+#endif
 #endif
 
 #endif  // ABSL_BASE_CONFIG_H_

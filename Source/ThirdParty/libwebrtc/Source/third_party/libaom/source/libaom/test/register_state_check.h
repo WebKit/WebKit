@@ -26,7 +26,7 @@
 //   See platform implementations of RegisterStateCheck and
 //   RegisterStateCheckMMX for details.
 
-#if defined(_WIN64) && ARCH_X86_64
+#if defined(_WIN64) && AOM_ARCH_X86_64
 
 #undef NOMINMAX
 #define NOMINMAX
@@ -86,9 +86,9 @@ namespace libaom_test {
 class RegisterStateCheck {};
 }  // namespace libaom_test
 
-#endif  // _WIN64 && ARCH_X86_64
+#endif  // _WIN64 && AOM_ARCH_X86_64
 
-#if (ARCH_X86 || ARCH_X86_64) && defined(__GNUC__)
+#if (AOM_ARCH_X86 || AOM_ARCH_X86_64) && defined(__GNUC__)
 namespace libaom_test {
 
 // Checks the FPU tag word pre/post execution to ensure emms has been called.
@@ -122,7 +122,7 @@ namespace libaom_test {
 class RegisterStateCheckMMX {};
 }  // namespace libaom_test
 
-#endif  // (ARCH_X86 || ARCH_X86_64) && defined(__GNUC__)
+#endif  // (AOM_ARCH_X86 || AOM_ARCH_X86_64) && defined(__GNUC__)
 
 #define API_REGISTER_STATE_CHECK(statement)           \
   do {                                                \

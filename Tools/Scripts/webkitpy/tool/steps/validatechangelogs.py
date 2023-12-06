@@ -28,11 +28,11 @@
 
 import logging
 import sys
-from optparse import make_option
 
-from webkitpy.common.checkout.diff_parser import DiffParser
+from optparse import make_option
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
+from webkitpy.common.checkout.diff_parser import DiffParser
 
 _log = logging.getLogger(__name__)
 

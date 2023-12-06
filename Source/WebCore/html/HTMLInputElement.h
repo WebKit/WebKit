@@ -340,7 +340,7 @@ public:
 
     bool hasEverBeenPasswordField() const { return m_hasEverBeenPasswordField; }
 
-    float switchCheckedChangeAnimationProgress() const;
+    float switchAnimationVisuallyOnProgress() const;
     bool isSwitchVisuallyOn() const;
 
 protected:

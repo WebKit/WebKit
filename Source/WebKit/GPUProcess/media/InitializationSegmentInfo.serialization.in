@@ -31,7 +31,7 @@ struct WebKit::InitializationSegmentInfo {
 
 [Nested] struct WebKit::InitializationSegmentInfo::TrackInformation {
     WebKit::MediaDescriptionInfo description;
-    WebKit::TrackPrivateRemoteIdentifier identifier;
+    WebCore::TrackID id;
 };
 
 #endif

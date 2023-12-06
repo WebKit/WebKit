@@ -1023,12 +1023,16 @@ static INLINE int prune_mode_by_skip_rd(const AV1_COMP *const cpi,
                                         const BLOCK_SIZE bsize,
                                         int64_t ref_skip_rd, int mode_rate) {
   int eval_txfm = 1;
+  const int txfm_rd_gate_level =
+      get_txfm_rd_gate_level(cpi->common.seq_params->enable_masked_compound,
+                             cpi->sf.inter_sf.txfm_rd_gate_level, bsize,
+                             TX_SEARCH_COMP_TYPE_MODE, /*eval_motion_mode=*/0);
   // Check if the mode is good enough based on skip rd
-  if (cpi->sf.inter_sf.txfm_rd_gate_level) {
+  if (txfm_rd_gate_level) {
     int64_t sse_y = compute_sse_plane(x, xd, PLANE_TYPE_Y, bsize);
     int64_t skip_rd = RDCOST(x->rdmult, mode_rate, (sse_y << 4));
-    eval_txfm = check_txfm_eval(x, bsize, ref_skip_rd, skip_rd,
-                                cpi->sf.inter_sf.txfm_rd_gate_level, 1);
+    eval_txfm =
+        check_txfm_eval(x, bsize, ref_skip_rd, skip_rd, txfm_rd_gate_level, 1);
   }
   return eval_txfm;
 }
@@ -1104,9 +1108,13 @@ static int64_t masked_compound_type_rd(
   // Check if the mode is good enough based on skip rd
   // TODO(nithya): Handle wedge_newmv_search if extending for lower speed
   // setting
-  if (cpi->sf.inter_sf.txfm_rd_gate_level) {
+  const int txfm_rd_gate_level =
+      get_txfm_rd_gate_level(cm->seq_params->enable_masked_compound,
+                             cpi->sf.inter_sf.txfm_rd_gate_level, bsize,
+                             TX_SEARCH_COMP_TYPE_MODE, /*eval_motion_mode=*/0);
+  if (txfm_rd_gate_level) {
     int eval_txfm = check_txfm_eval(x, bsize, ref_skip_rd, skip_rd_cur,
-                                    cpi->sf.inter_sf.txfm_rd_gate_level, 1);
+                                    txfm_rd_gate_level, 1);
     if (!eval_txfm) {
       *comp_model_rd_cur = INT64_MAX;
       return INT64_MAX;
@@ -1605,20 +1613,24 @@ int av1_compound_type_rd(const AV1_COMP *const cpi, MACROBLOCK *x,
       mbmi->mv[1] = tmp_mv[1];
     } else {
       // Handle masked compound types
-      // Factors to control gating of compound type selection based on best
-      // approximate rd so far
-      const int max_comp_type_rd_threshold_mul =
-          comp_type_rd_threshold_mul[cpi->sf.inter_sf
-                                         .prune_comp_type_by_comp_avg];
-      const int max_comp_type_rd_threshold_div =
-          comp_type_rd_threshold_div[cpi->sf.inter_sf
-                                         .prune_comp_type_by_comp_avg];
-      // Evaluate COMPOUND_WEDGE / COMPOUND_DIFFWTD if approximated cost is
-      // within threshold
-      int64_t approx_rd = ((*rd / max_comp_type_rd_threshold_div) *
-                           max_comp_type_rd_threshold_mul);
+      bool eval_masked_comp_type = true;
+      if (*rd != INT64_MAX) {
+        // Factors to control gating of compound type selection based on best
+        // approximate rd so far
+        const int max_comp_type_rd_threshold_mul =
+            comp_type_rd_threshold_mul[cpi->sf.inter_sf
+                                           .prune_comp_type_by_comp_avg];
+        const int max_comp_type_rd_threshold_div =
+            comp_type_rd_threshold_div[cpi->sf.inter_sf
+                                           .prune_comp_type_by_comp_avg];
+        // Evaluate COMPOUND_WEDGE / COMPOUND_DIFFWTD if approximated cost is
+        // within threshold
+        const int64_t approx_rd = ((*rd / max_comp_type_rd_threshold_div) *
+                                   max_comp_type_rd_threshold_mul);
+        if (approx_rd >= ref_best_rd) eval_masked_comp_type = false;
+      }
 
-      if (approx_rd < ref_best_rd) {
+      if (eval_masked_comp_type) {
         const int64_t tmp_rd_thresh = AOMMIN(*rd, rd_thresh);
         best_rd_cur = masked_compound_type_rd(
             cpi, x, cur_mv, bsize, this_mode, &rs2, *rate_mv, orig_dst,

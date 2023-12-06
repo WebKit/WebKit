@@ -41,15 +41,15 @@ typedef libaom_test::FuncParam<SSI16Func> TestFuncs;
 
 class SumSSETest : public ::testing::TestWithParam<TestFuncs> {
  public:
-  virtual ~SumSSETest() {}
-  virtual void SetUp() {
+  ~SumSSETest() override = default;
+  void SetUp() override {
     params_ = this->GetParam();
     rnd_.Reset(ACMRandom::DeterministicSeed());
     src_ = reinterpret_cast<int16_t *>(aom_memalign(16, 256 * 256 * 2));
     ASSERT_NE(src_, nullptr);
   }
 
-  virtual void TearDown() { aom_free(src_); }
+  void TearDown() override { aom_free(src_); }
   void RunTest(int isRandom);
   void RunSpeedTest();
 

@@ -716,6 +716,11 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
             case CSSSelector::PseudoClassType::Scope:
                 builder.append(":scope");
                 break;
+            case CSSSelector::PseudoClassType::State:
+                builder.append(":state(");
+                serializeIdentifier(cs->argument(), builder);
+                builder.append(')');
+                break;
             case CSSSelector::PseudoClassType::HasScope:
                 // Remove the space from the start to generate a relative selector string like in ":has(> foo)".
                 return makeString(separator.substring(1), rightSide);

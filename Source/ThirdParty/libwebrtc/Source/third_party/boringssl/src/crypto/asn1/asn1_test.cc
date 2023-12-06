@@ -1100,6 +1100,32 @@ TEST(ASN1Test, TimeSetString) {
   EXPECT_EQ(V_ASN1_GENERALIZEDTIME, ASN1_STRING_type(s.get()));
   EXPECT_EQ("19700101000000Z", ASN1StringToStdString(s.get()));
 
+  // |ASN1_TIME_set_string_X509| behaves similarly except it additionally
+  // converts GeneralizedTime to UTCTime if it fits.
+  ASSERT_TRUE(ASN1_TIME_set_string_X509(s.get(), "700101000000Z"));
+  EXPECT_EQ(V_ASN1_UTCTIME, ASN1_STRING_type(s.get()));
+  EXPECT_EQ("700101000000Z", ASN1StringToStdString(s.get()));
+
+  ASSERT_TRUE(ASN1_TIME_set_string_X509(s.get(), "19700101000000Z"));
+  EXPECT_EQ(V_ASN1_UTCTIME, ASN1_STRING_type(s.get()));
+  EXPECT_EQ("700101000000Z", ASN1StringToStdString(s.get()));
+
+  ASSERT_TRUE(ASN1_TIME_set_string_X509(s.get(), "19500101000000Z"));
+  EXPECT_EQ(V_ASN1_UTCTIME, ASN1_STRING_type(s.get()));
+  EXPECT_EQ("500101000000Z", ASN1StringToStdString(s.get()));
+
+  ASSERT_TRUE(ASN1_TIME_set_string_X509(s.get(), "19491231235959Z"));
+  EXPECT_EQ(V_ASN1_GENERALIZEDTIME, ASN1_STRING_type(s.get()));
+  EXPECT_EQ("19491231235959Z", ASN1StringToStdString(s.get()));
+
+  ASSERT_TRUE(ASN1_TIME_set_string_X509(s.get(), "20491231235959Z"));
+  EXPECT_EQ(V_ASN1_UTCTIME, ASN1_STRING_type(s.get()));
+  EXPECT_EQ("491231235959Z", ASN1StringToStdString(s.get()));
+
+  ASSERT_TRUE(ASN1_TIME_set_string_X509(s.get(), "20500101000000Z"));
+  EXPECT_EQ(V_ASN1_GENERALIZEDTIME, ASN1_STRING_type(s.get()));
+  EXPECT_EQ("20500101000000Z", ASN1StringToStdString(s.get()));
+
   // Invalid inputs are rejected.
   EXPECT_FALSE(ASN1_UTCTIME_set_string(s.get(), "nope"));
   EXPECT_FALSE(ASN1_UTCTIME_set_string(s.get(), "19700101000000Z"));
@@ -1111,11 +1137,26 @@ TEST(ASN1Test, TimeSetString) {
   // to anything.
   EXPECT_TRUE(ASN1_UTCTIME_set_string(nullptr, "700101000000Z"));
   EXPECT_TRUE(ASN1_TIME_set_string(nullptr, "700101000000Z"));
+  EXPECT_TRUE(ASN1_TIME_set_string_X509(nullptr, "700101000000Z"));
   EXPECT_TRUE(ASN1_GENERALIZEDTIME_set_string(nullptr, "19700101000000Z"));
   EXPECT_TRUE(ASN1_TIME_set_string(nullptr, "19700101000000Z"));
+  EXPECT_TRUE(ASN1_TIME_set_string_X509(nullptr, "19700101000000Z"));
+  // Test an input |ASN1_TIME_set_string_X509| won't convert to UTCTime.
+  EXPECT_TRUE(ASN1_GENERALIZEDTIME_set_string(nullptr, "20500101000000Z"));
+  EXPECT_TRUE(ASN1_TIME_set_string(nullptr, "20500101000000Z"));
+  EXPECT_TRUE(ASN1_TIME_set_string_X509(nullptr, "20500101000000Z"));
   EXPECT_FALSE(ASN1_UTCTIME_set_string(nullptr, "nope"));
   EXPECT_FALSE(ASN1_GENERALIZEDTIME_set_string(nullptr, "nope"));
   EXPECT_FALSE(ASN1_TIME_set_string(nullptr, "nope"));
+  EXPECT_FALSE(ASN1_TIME_set_string_X509(nullptr, "nope"));
+
+  // Timezone offsets are not allowed by DER.
+  EXPECT_FALSE(ASN1_UTCTIME_set_string(nullptr, "700101000000-0400"));
+  EXPECT_FALSE(ASN1_TIME_set_string(nullptr, "700101000000-0400"));
+  EXPECT_FALSE(ASN1_TIME_set_string_X509(nullptr, "700101000000-0400"));
+  EXPECT_FALSE(ASN1_GENERALIZEDTIME_set_string(nullptr, "19700101000000-0400"));
+  EXPECT_FALSE(ASN1_TIME_set_string(nullptr, "19700101000000-0400"));
+  EXPECT_FALSE(ASN1_TIME_set_string_X509(nullptr, "19700101000000-0400"));
 }
 
 TEST(ASN1Test, AdjTime) {

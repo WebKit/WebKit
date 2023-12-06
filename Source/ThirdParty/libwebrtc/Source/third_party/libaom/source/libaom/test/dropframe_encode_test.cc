@@ -25,10 +25,10 @@ class DropFrameEncodeTestLarge
   DropFrameEncodeTestLarge()
       : EncoderTest(GET_PARAM(0)), frame_number_(0), threads_(GET_PARAM(2)) {}
 
-  virtual void SetUp() { InitializeConfig(GET_PARAM(1)); }
+  void SetUp() override { InitializeConfig(GET_PARAM(1)); }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     frame_number_ = video->frame();
     if (frame_number_ == 0) {
       encoder->Control(AOME_SET_CPUUSED, 1);

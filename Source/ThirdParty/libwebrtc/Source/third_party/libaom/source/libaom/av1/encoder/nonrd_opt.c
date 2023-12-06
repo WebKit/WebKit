@@ -926,5 +926,8 @@ void av1_estimate_intra_mode(AV1_COMP *cpi, MACROBLOCK *x, BLOCK_SIZE bsize,
                sizeof(x->txfm_search_info.blk_skip[0]) * ctx->num_4x4_blk);
     }
   }
+  if (best_pickmode->best_ref_frame == INTRA_FRAME)
+    memset(ctx->blk_skip, 0,
+           sizeof(x->txfm_search_info.blk_skip[0]) * ctx->num_4x4_blk);
   mi->tx_size = best_pickmode->best_tx_size;
 }

@@ -1,16 +1,9 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#if defined(__has_feature)
-#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
-#define OPENSSL_NO_ASM
-#endif
-#endif
+#include <openssl/asm_base.h>
 
-#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && defined(__ELF__)
-#if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols_asm.h>
-#endif
+#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__ELF__)
 .text	
 
 
@@ -22,12 +15,13 @@
 .align	16
 CRYPTO_rdrand:
 .cfi_startproc	
+_CET_ENDBR
 	xorq	%rax,%rax
 .byte	72,15,199,242
 
 	adcq	%rax,%rax
 	movq	%rdx,0(%rdi)
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	CRYPTO_rdrand,.-CRYPTO_rdrand
 
@@ -41,6 +35,7 @@ CRYPTO_rdrand:
 .align	16
 CRYPTO_rdrand_multiple8_buf:
 .cfi_startproc	
+_CET_ENDBR
 	testq	%rsi,%rsi
 	jz	.Lout
 	movq	$8,%rdx
@@ -53,14 +48,10 @@ CRYPTO_rdrand_multiple8_buf:
 	jnz	.Lloop
 .Lout:
 	movq	$1,%rax
-	.byte	0xf3,0xc3
+	ret
 .Lerr:
 	xorq	%rax,%rax
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	CRYPTO_rdrand_multiple8_buf,.-CRYPTO_rdrand_multiple8_buf
-#endif
-#if defined(__ELF__)
-// See https://www.airs.com/blog/archives/518.
-.section .note.GNU-stack,"",%progbits
 #endif

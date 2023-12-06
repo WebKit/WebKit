@@ -713,6 +713,574 @@ void YUY2ToUV422Row_LSX(const uint8_t* src_yuy2,
   }
 }
 
+void UYVYToYRow_LSX(const uint8_t* src_uyvy, uint8_t* dst_y, int width) {
+  int x;
+  int len = width / 16;
+  __m128i src0, src1, dst0;
+
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lsx_vld, src_uyvy, 0, src_uyvy, 16, src0, src1);
+    dst0 = __lsx_vpickod_b(src1, src0);
+    __lsx_vst(dst0, dst_y, 0);
+    src_uyvy += 32;
+    dst_y += 16;
+  }
+}
+
+void UYVYToUVRow_LSX(const uint8_t* src_uyvy,
+                     int src_stride_uyvy,
+                     uint8_t* dst_u,
+                     uint8_t* dst_v,
+                     int width) {
+  const uint8_t* src_uyvy_next = src_uyvy + src_stride_uyvy;
+  int x;
+  int len = width / 16;
+  __m128i src0, src1, src2, src3, tmp0, dst0, dst1;
+
+  for (x = 0; x < len; x++) {
+    DUP4_ARG2(__lsx_vld, src_uyvy, 0, src_uyvy, 16, src_uyvy_next, 0,
+              src_uyvy_next, 16, src0, src1, src2, src3);
+    src0 = __lsx_vpickev_b(src1, src0);
+    src1 = __lsx_vpickev_b(src3, src2);
+    tmp0 = __lsx_vavgr_bu(src1, src0);
+    dst0 = __lsx_vpickev_b(tmp0, tmp0);
+    dst1 = __lsx_vpickod_b(tmp0, tmp0);
+    __lsx_vstelm_d(dst0, dst_u, 0, 0);
+    __lsx_vstelm_d(dst1, dst_v, 0, 0);
+    src_uyvy += 32;
+    src_uyvy_next += 32;
+    dst_u += 8;
+    dst_v += 8;
+  }
+}
+
+void UYVYToUV422Row_LSX(const uint8_t* src_uyvy,
+                        uint8_t* dst_u,
+                        uint8_t* dst_v,
+                        int width) {
+  int x;
+  int len = width / 16;
+  __m128i src0, src1, tmp0, dst0, dst1;
+
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lsx_vld, src_uyvy, 0, src_uyvy, 16, src0, src1);
+    tmp0 = __lsx_vpickev_b(src1, src0);
+    dst0 = __lsx_vpickev_b(tmp0, tmp0);
+    dst1 = __lsx_vpickod_b(tmp0, tmp0);
+    __lsx_vstelm_d(dst0, dst_u, 0, 0);
+    __lsx_vstelm_d(dst1, dst_v, 0, 0);
+    src_uyvy += 32;
+    dst_u += 8;
+    dst_v += 8;
+  }
+}
+
+void ARGBToUVRow_LSX(const uint8_t* src_argb0,
+                     int src_stride_argb,
+                     uint8_t* dst_u,
+                     uint8_t* dst_v,
+                     int width) {
+  int x;
+  int len = width / 16;
+  const uint8_t* src_argb1 = src_argb0 + src_stride_argb;
+
+  __m128i src0, src1, src2, src3, src4, src5, src6, src7;
+  __m128i vec0, vec1, vec2, vec3;
+  __m128i tmp0, tmp1, tmp2, tmp3, tmp4, tmp5, dst0, dst1;
+  __m128i const_0x70 = {0x0038003800380038, 0x0038003800380038};
+  __m128i const_0x4A = {0x0025002500250025, 0x0025002500250025};
+  __m128i const_0x26 = {0x0013001300130013, 0x0013001300130013};
+  __m128i const_0x5E = {0x002f002f002f002f, 0x002f002f002f002f};
+  __m128i const_0x12 = {0x0009000900090009, 0x0009000900090009};
+  __m128i const_0x8080 = {0x8080808080808080, 0x8080808080808080};
+  for (x = 0; x < len; x++) {
+    DUP4_ARG2(__lsx_vld, src_argb0, 0, src_argb0, 16, src_argb0, 32, src_argb0,
+              48, src0, src1, src2, src3);
+    DUP4_ARG2(__lsx_vld, src_argb1, 0, src_argb1, 16, src_argb1, 32, src_argb1,
+              48, src4, src5, src6, src7);
+    vec0 = __lsx_vaddwev_h_bu(src0, src4);
+    vec1 = __lsx_vaddwev_h_bu(src1, src5);
+    vec2 = __lsx_vaddwev_h_bu(src2, src6);
+    vec3 = __lsx_vaddwev_h_bu(src3, src7);
+    tmp0 = __lsx_vpickev_h(vec1, vec0);
+    tmp1 = __lsx_vpickev_h(vec3, vec2);
+    tmp2 = __lsx_vpickod_h(vec1, vec0);
+    tmp3 = __lsx_vpickod_h(vec3, vec2);
+    vec0 = __lsx_vaddwod_h_bu(src0, src4);
+    vec1 = __lsx_vaddwod_h_bu(src1, src5);
+    vec2 = __lsx_vaddwod_h_bu(src2, src6);
+    vec3 = __lsx_vaddwod_h_bu(src3, src7);
+    tmp4 = __lsx_vpickev_h(vec1, vec0);
+    tmp5 = __lsx_vpickev_h(vec3, vec2);
+    vec0 = __lsx_vpickev_h(tmp1, tmp0);
+    vec1 = __lsx_vpickod_h(tmp1, tmp0);
+    src0 = __lsx_vavgr_h(vec0, vec1);
+    vec0 = __lsx_vpickev_h(tmp3, tmp2);
+    vec1 = __lsx_vpickod_h(tmp3, tmp2);
+    src1 = __lsx_vavgr_h(vec0, vec1);
+    vec0 = __lsx_vpickev_h(tmp5, tmp4);
+    vec1 = __lsx_vpickod_h(tmp5, tmp4);
+    src2 = __lsx_vavgr_h(vec0, vec1);
+    dst0 = __lsx_vmadd_h(const_0x8080, src0, const_0x70);
+    dst0 = __lsx_vmsub_h(dst0, src2, const_0x4A);
+    dst0 = __lsx_vmsub_h(dst0, src1, const_0x26);
+    dst1 = __lsx_vmadd_h(const_0x8080, src1, const_0x70);
+    dst1 = __lsx_vmsub_h(dst1, src2, const_0x5E);
+    dst1 = __lsx_vmsub_h(dst1, src0, const_0x12);
+    dst0 = __lsx_vsrai_h(dst0, 8);
+    dst1 = __lsx_vsrai_h(dst1, 8);
+    dst0 = __lsx_vpickev_b(dst1, dst0);
+    __lsx_vstelm_d(dst0, dst_u, 0, 0);
+    __lsx_vstelm_d(dst0, dst_v, 0, 1);
+    src_argb0 += 64;
+    src_argb1 += 64;
+    dst_u += 8;
+    dst_v += 8;
+  }
+}
+
+void ARGBToRGB24Row_LSX(const uint8_t* src_argb, uint8_t* dst_rgb, int width) {
+  int x;
+  int len = (width / 16) - 1;
+  __m128i src0, src1, src2, src3;
+  __m128i tmp0, tmp1, tmp2, tmp3;
+  __m128i shuf = {0x0908060504020100, 0x000000000E0D0C0A};
+  for (x = 0; x < len; x++) {
+    DUP4_ARG2(__lsx_vld, src_argb, 0, src_argb, 16, src_argb, 32, src_argb, 48,
+              src0, src1, src2, src3);
+    tmp0 = __lsx_vshuf_b(src0, src0, shuf);
+    tmp1 = __lsx_vshuf_b(src1, src1, shuf);
+    tmp2 = __lsx_vshuf_b(src2, src2, shuf);
+    tmp3 = __lsx_vshuf_b(src3, src3, shuf);
+    __lsx_vst(tmp0, dst_rgb, 0);
+    __lsx_vst(tmp1, dst_rgb, 12);
+    __lsx_vst(tmp2, dst_rgb, 24);
+    __lsx_vst(tmp3, dst_rgb, 36);
+    dst_rgb += 48;
+    src_argb += 64;
+  }
+  DUP4_ARG2(__lsx_vld, src_argb, 0, src_argb, 16, src_argb, 32, src_argb, 48,
+            src0, src1, src2, src3);
+  tmp0 = __lsx_vshuf_b(src0, src0, shuf);
+  tmp1 = __lsx_vshuf_b(src1, src1, shuf);
+  tmp2 = __lsx_vshuf_b(src2, src2, shuf);
+  tmp3 = __lsx_vshuf_b(src3, src3, shuf);
+  __lsx_vst(tmp0, dst_rgb, 0);
+  __lsx_vst(tmp1, dst_rgb, 12);
+  __lsx_vst(tmp2, dst_rgb, 24);
+  dst_rgb += 36;
+  __lsx_vst(tmp3, dst_rgb, 0);
+}
+
+void ARGBToRAWRow_LSX(const uint8_t* src_argb, uint8_t* dst_rgb, int width) {
+  int x;
+  int len = (width / 16) - 1;
+  __m128i src0, src1, src2, src3;
+  __m128i tmp0, tmp1, tmp2, tmp3;
+  __m128i shuf = {0x090A040506000102, 0x000000000C0D0E08};
+  for (x = 0; x < len; x++) {
+    DUP4_ARG2(__lsx_vld, src_argb, 0, src_argb, 16, src_argb, 32, src_argb, 48,
+              src0, src1, src2, src3);
+    tmp0 = __lsx_vshuf_b(src0, src0, shuf);
+    tmp1 = __lsx_vshuf_b(src1, src1, shuf);
+    tmp2 = __lsx_vshuf_b(src2, src2, shuf);
+    tmp3 = __lsx_vshuf_b(src3, src3, shuf);
+    __lsx_vst(tmp0, dst_rgb, 0);
+    __lsx_vst(tmp1, dst_rgb, 12);
+    __lsx_vst(tmp2, dst_rgb, 24);
+    __lsx_vst(tmp3, dst_rgb, 36);
+    dst_rgb += 48;
+    src_argb += 64;
+  }
+  DUP4_ARG2(__lsx_vld, src_argb, 0, src_argb, 16, src_argb, 32, src_argb, 48,
+            src0, src1, src2, src3);
+  tmp0 = __lsx_vshuf_b(src0, src0, shuf);
+  tmp1 = __lsx_vshuf_b(src1, src1, shuf);
+  tmp2 = __lsx_vshuf_b(src2, src2, shuf);
+  tmp3 = __lsx_vshuf_b(src3, src3, shuf);
+  __lsx_vst(tmp0, dst_rgb, 0);
+  __lsx_vst(tmp1, dst_rgb, 12);
+  __lsx_vst(tmp2, dst_rgb, 24);
+  dst_rgb += 36;
+  __lsx_vst(tmp3, dst_rgb, 0);
+}
+
+void ARGBToRGB565Row_LSX(const uint8_t* src_argb, uint8_t* dst_rgb, int width) {
+  int x;
+  int len = width / 8;
+  __m128i zero = __lsx_vldi(0);
+  __m128i src0, src1, tmp0, tmp1, dst0;
+  __m128i shift = {0x0300030003000300, 0x0300030003000300};
+
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lsx_vld, src_argb, 0, src_argb, 16, src0, src1);
+    tmp0 = __lsx_vpickev_b(src1, src0);
+    tmp1 = __lsx_vpickod_b(src1, src0);
+    tmp0 = __lsx_vsrli_b(tmp0, 3);
+    tmp1 = __lsx_vpackev_b(zero, tmp1);
+    tmp1 = __lsx_vsrli_h(tmp1, 2);
+    tmp0 = __lsx_vsll_b(tmp0, shift);
+    tmp1 = __lsx_vslli_h(tmp1, 5);
+    dst0 = __lsx_vor_v(tmp0, tmp1);
+    __lsx_vst(dst0, dst_rgb, 0);
+    dst_rgb += 16;
+    src_argb += 32;
+  }
+}
+
+void ARGBToARGB1555Row_LSX(const uint8_t* src_argb,
+                           uint8_t* dst_rgb,
+                           int width) {
+  int x;
+  int len = width / 8;
+  __m128i zero = __lsx_vldi(0);
+  __m128i src0, src1, tmp0, tmp1, tmp2, tmp3, dst0;
+  __m128i shift1 = {0x0703070307030703, 0x0703070307030703};
+  __m128i shift2 = {0x0200020002000200, 0x0200020002000200};
+
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lsx_vld, src_argb, 0, src_argb, 16, src0, src1);
+    tmp0 = __lsx_vpickev_b(src1, src0);
+    tmp1 = __lsx_vpickod_b(src1, src0);
+    tmp0 = __lsx_vsrli_b(tmp0, 3);
+    tmp1 = __lsx_vsrl_b(tmp1, shift1);
+    tmp0 = __lsx_vsll_b(tmp0, shift2);
+    tmp2 = __lsx_vpackev_b(zero, tmp1);
+    tmp3 = __lsx_vpackod_b(zero, tmp1);
+    tmp2 = __lsx_vslli_h(tmp2, 5);
+    tmp3 = __lsx_vslli_h(tmp3, 15);
+    dst0 = __lsx_vor_v(tmp0, tmp2);
+    dst0 = __lsx_vor_v(dst0, tmp3);
+    __lsx_vst(dst0, dst_rgb, 0);
+    dst_rgb += 16;
+    src_argb += 32;
+  }
+}
+
+void ARGBToARGB4444Row_LSX(const uint8_t* src_argb,
+                           uint8_t* dst_rgb,
+                           int width) {
+  int x;
+  int len = width / 8;
+  __m128i src0, src1, tmp0, tmp1, dst0;
+
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lsx_vld, src_argb, 0, src_argb, 16, src0, src1);
+    tmp0 = __lsx_vpickev_b(src1, src0);
+    tmp1 = __lsx_vpickod_b(src1, src0);
+    tmp1 = __lsx_vandi_b(tmp1, 0xF0);
+    tmp0 = __lsx_vsrli_b(tmp0, 4);
+    dst0 = __lsx_vor_v(tmp1, tmp0);
+    __lsx_vst(dst0, dst_rgb, 0);
+    dst_rgb += 16;
+    src_argb += 32;
+  }
+}
+
+void ARGBToUV444Row_LSX(const uint8_t* src_argb,
+                        uint8_t* dst_u,
+                        uint8_t* dst_v,
+                        int32_t width) {
+  int x;
+  int len = width / 16;
+  __m128i src0, src1, src2, src3;
+  __m128i tmp0, tmp1, tmp2, tmp3;
+  __m128i reg0, reg1, reg2, reg3, dst0, dst1;
+  __m128i const_112 = __lsx_vldi(112);
+  __m128i const_74 = __lsx_vldi(74);
+  __m128i const_38 = __lsx_vldi(38);
+  __m128i const_94 = __lsx_vldi(94);
+  __m128i const_18 = __lsx_vldi(18);
+  __m128i const_0x8080 = {0x8080808080808080, 0x8080808080808080};
+  for (x = 0; x < len; x++) {
+    DUP4_ARG2(__lsx_vld, src_argb, 0, src_argb, 16, src_argb, 32, src_argb, 48,
+              src0, src1, src2, src3);
+    tmp0 = __lsx_vpickev_h(src1, src0);
+    tmp1 = __lsx_vpickod_h(src1, src0);
+    tmp2 = __lsx_vpickev_h(src3, src2);
+    tmp3 = __lsx_vpickod_h(src3, src2);
+    reg0 = __lsx_vmaddwev_h_bu(const_0x8080, tmp0, const_112);
+    reg1 = __lsx_vmaddwev_h_bu(const_0x8080, tmp2, const_112);
+    reg2 = __lsx_vmulwod_h_bu(tmp0, const_74);
+    reg3 = __lsx_vmulwod_h_bu(tmp2, const_74);
+    reg2 = __lsx_vmaddwev_h_bu(reg2, tmp1, const_38);
+    reg3 = __lsx_vmaddwev_h_bu(reg3, tmp3, const_38);
+    reg0 = __lsx_vsub_h(reg0, reg2);
+    reg1 = __lsx_vsub_h(reg1, reg3);
+    reg0 = __lsx_vsrai_h(reg0, 8);
+    reg1 = __lsx_vsrai_h(reg1, 8);
+    dst0 = __lsx_vpickev_b(reg1, reg0);
+
+    reg0 = __lsx_vmaddwev_h_bu(const_0x8080, tmp1, const_112);
+    reg1 = __lsx_vmaddwev_h_bu(const_0x8080, tmp3, const_112);
+    reg2 = __lsx_vmulwev_h_bu(tmp0, const_18);
+    reg3 = __lsx_vmulwev_h_bu(tmp2, const_18);
+    reg2 = __lsx_vmaddwod_h_bu(reg2, tmp0, const_94);
+    reg3 = __lsx_vmaddwod_h_bu(reg3, tmp2, const_94);
+    reg0 = __lsx_vsub_h(reg0, reg2);
+    reg1 = __lsx_vsub_h(reg1, reg3);
+    reg0 = __lsx_vsrai_h(reg0, 8);
+    reg1 = __lsx_vsrai_h(reg1, 8);
+    dst1 = __lsx_vpickev_b(reg1, reg0);
+
+    __lsx_vst(dst0, dst_u, 0);
+    __lsx_vst(dst1, dst_v, 0);
+    dst_u += 16;
+    dst_v += 16;
+    src_argb += 64;
+  }
+}
+
+void ARGBMultiplyRow_LSX(const uint8_t* src_argb0,
+                         const uint8_t* src_argb1,
+                         uint8_t* dst_argb,
+                         int width) {
+  int x;
+  int len = width / 4;
+  __m128i zero = __lsx_vldi(0);
+  __m128i src0, src1, dst0, dst1;
+  __m128i tmp0, tmp1, tmp2, tmp3;
+
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lsx_vld, src_argb0, 0, src_argb1, 0, src0, src1);
+    tmp0 = __lsx_vilvl_b(src0, src0);
+    tmp1 = __lsx_vilvh_b(src0, src0);
+    tmp2 = __lsx_vilvl_b(zero, src1);
+    tmp3 = __lsx_vilvh_b(zero, src1);
+    dst0 = __lsx_vmuh_hu(tmp0, tmp2);
+    dst1 = __lsx_vmuh_hu(tmp1, tmp3);
+    dst0 = __lsx_vpickev_b(dst1, dst0);
+    __lsx_vst(dst0, dst_argb, 0);
+    src_argb0 += 16;
+    src_argb1 += 16;
+    dst_argb += 16;
+  }
+}
+
+void ARGBAddRow_LSX(const uint8_t* src_argb0,
+                    const uint8_t* src_argb1,
+                    uint8_t* dst_argb,
+                    int width) {
+  int x;
+  int len = width / 4;
+  __m128i src0, src1, dst0;
+
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lsx_vld, src_argb0, 0, src_argb1, 0, src0, src1);
+    dst0 = __lsx_vsadd_bu(src0, src1);
+    __lsx_vst(dst0, dst_argb, 0);
+    src_argb0 += 16;
+    src_argb1 += 16;
+    dst_argb += 16;
+  }
+}
+
+void ARGBSubtractRow_LSX(const uint8_t* src_argb0,
+                         const uint8_t* src_argb1,
+                         uint8_t* dst_argb,
+                         int width) {
+  int x;
+  int len = width / 4;
+  __m128i src0, src1, dst0;
+
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lsx_vld, src_argb0, 0, src_argb1, 0, src0, src1);
+    dst0 = __lsx_vssub_bu(src0, src1);
+    __lsx_vst(dst0, dst_argb, 0);
+    src_argb0 += 16;
+    src_argb1 += 16;
+    dst_argb += 16;
+  }
+}
+
+void ARGBAttenuateRow_LSX(const uint8_t* src_argb,
+                          uint8_t* dst_argb,
+                          int width) {
+  int x;
+  int len = width / 8;
+  __m128i src0, src1, tmp0, tmp1;
+  __m128i reg0, reg1, reg2, reg3, reg4, reg5;
+  __m128i b, g, r, a, dst0, dst1;
+  __m128i control = {0x0005000100040000, 0x0007000300060002};
+
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lsx_vld, src_argb, 0, src_argb, 16, src0, src1);
+    tmp0 = __lsx_vpickev_b(src1, src0);
+    tmp1 = __lsx_vpickod_b(src1, src0);
+    b = __lsx_vpackev_b(tmp0, tmp0);
+    r = __lsx_vpackod_b(tmp0, tmp0);
+    g = __lsx_vpackev_b(tmp1, tmp1);
+    a = __lsx_vpackod_b(tmp1, tmp1);
+    reg0 = __lsx_vmulwev_w_hu(b, a);
+    reg1 = __lsx_vmulwod_w_hu(b, a);
+    reg2 = __lsx_vmulwev_w_hu(r, a);
+    reg3 = __lsx_vmulwod_w_hu(r, a);
+    reg4 = __lsx_vmulwev_w_hu(g, a);
+    reg5 = __lsx_vmulwod_w_hu(g, a);
+    reg0 = __lsx_vssrani_h_w(reg1, reg0, 24);
+    reg2 = __lsx_vssrani_h_w(reg3, reg2, 24);
+    reg4 = __lsx_vssrani_h_w(reg5, reg4, 24);
+    reg0 = __lsx_vshuf_h(control, reg0, reg0);
+    reg2 = __lsx_vshuf_h(control, reg2, reg2);
+    reg4 = __lsx_vshuf_h(control, reg4, reg4);
+    tmp0 = __lsx_vpackev_b(reg4, reg0);
+    tmp1 = __lsx_vpackev_b(a, reg2);
+    dst0 = __lsx_vilvl_h(tmp1, tmp0);
+    dst1 = __lsx_vilvh_h(tmp1, tmp0);
+    __lsx_vst(dst0, dst_argb, 0);
+    __lsx_vst(dst1, dst_argb, 16);
+    dst_argb += 32;
+    src_argb += 32;
+  }
+}
+
+void ARGBToRGB565DitherRow_LSX(const uint8_t* src_argb,
+                               uint8_t* dst_rgb,
+                               uint32_t dither4,
+                               int width) {
+  int x;
+  int len = width / 8;
+  __m128i src0, src1, tmp0, tmp1, dst0;
+  __m128i b, g, r;
+  __m128i zero = __lsx_vldi(0);
+  __m128i vec_dither = __lsx_vldrepl_w(&dither4, 0);
+
+  vec_dither = __lsx_vilvl_b(zero, vec_dither);
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lsx_vld, src_argb, 0, src_argb, 16, src0, src1);
+    tmp0 = __lsx_vpickev_b(src1, src0);
+    tmp1 = __lsx_vpickod_b(src1, src0);
+    b = __lsx_vpackev_b(zero, tmp0);
+    r = __lsx_vpackod_b(zero, tmp0);
+    g = __lsx_vpackev_b(zero, tmp1);
+    b = __lsx_vadd_h(b, vec_dither);
+    g = __lsx_vadd_h(g, vec_dither);
+    r = __lsx_vadd_h(r, vec_dither);
+    DUP2_ARG1(__lsx_vclip255_h, b, g, b, g);
+    r = __lsx_vclip255_h(r);
+    b = __lsx_vsrai_h(b, 3);
+    g = __lsx_vsrai_h(g, 2);
+    r = __lsx_vsrai_h(r, 3);
+    g = __lsx_vslli_h(g, 5);
+    r = __lsx_vslli_h(r, 11);
+    dst0 = __lsx_vor_v(b, g);
+    dst0 = __lsx_vor_v(dst0, r);
+    __lsx_vst(dst0, dst_rgb, 0);
+    src_argb += 32;
+    dst_rgb += 16;
+  }
+}
+
+void ARGBShuffleRow_LSX(const uint8_t* src_argb,
+                        uint8_t* dst_argb,
+                        const uint8_t* shuffler,
+                        int width) {
+  int x;
+  int len = width / 8;
+  __m128i src0, src1, dst0, dst1;
+  __m128i shuf = {0x0404040400000000, 0x0C0C0C0C08080808};
+  __m128i temp = __lsx_vldrepl_w(shuffler, 0);
+
+  shuf = __lsx_vadd_b(shuf, temp);
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lsx_vld, src_argb, 0, src_argb, 16, src0, src1);
+    dst0 = __lsx_vshuf_b(src0, src0, shuf);
+    dst1 = __lsx_vshuf_b(src1, src1, shuf);
+    __lsx_vst(dst0, dst_argb, 0);
+    __lsx_vst(dst1, dst_argb, 16);
+    src_argb += 32;
+    dst_argb += 32;
+  }
+}
+
+void ARGBShadeRow_LSX(const uint8_t* src_argb,
+                      uint8_t* dst_argb,
+                      int width,
+                      uint32_t value) {
+  int x;
+  int len = width / 4;
+  __m128i src0, dst0, tmp0, tmp1;
+  __m128i vec_value = __lsx_vreplgr2vr_w(value);
+
+  vec_value = __lsx_vilvl_b(vec_value, vec_value);
+  for (x = 0; x < len; x++) {
+    src0 = __lsx_vld(src_argb, 0);
+    tmp0 = __lsx_vilvl_b(src0, src0);
+    tmp1 = __lsx_vilvh_b(src0, src0);
+    tmp0 = __lsx_vmuh_hu(tmp0, vec_value);
+    tmp1 = __lsx_vmuh_hu(tmp1, vec_value);
+    dst0 = __lsx_vpickod_b(tmp1, tmp0);
+    __lsx_vst(dst0, dst_argb, 0);
+    src_argb += 16;
+    dst_argb += 16;
+  }
+}
+
+void ARGBGrayRow_LSX(const uint8_t* src_argb, uint8_t* dst_argb, int width) {
+  int x;
+  int len = width / 8;
+  __m128i src0, src1, tmp0, tmp1;
+  __m128i reg0, reg1, reg2, dst0, dst1;
+  __m128i const_128 = __lsx_vldi(0x480);
+  __m128i const_150 = __lsx_vldi(0x96);
+  __m128i const_br = {0x4D1D4D1D4D1D4D1D, 0x4D1D4D1D4D1D4D1D};
+
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lsx_vld, src_argb, 0, src_argb, 16, src0, src1);
+    tmp0 = __lsx_vpickev_b(src1, src0);
+    tmp1 = __lsx_vpickod_b(src1, src0);
+    reg0 = __lsx_vdp2_h_bu(tmp0, const_br);
+    reg1 = __lsx_vmaddwev_h_bu(const_128, tmp1, const_150);
+    reg2 = __lsx_vadd_h(reg0, reg1);
+    tmp0 = __lsx_vpackod_b(reg2, reg2);
+    tmp1 = __lsx_vpackod_b(tmp1, reg2);
+    dst0 = __lsx_vilvl_h(tmp1, tmp0);
+    dst1 = __lsx_vilvh_h(tmp1, tmp0);
+    __lsx_vst(dst0, dst_argb, 0);
+    __lsx_vst(dst1, dst_argb, 16);
+    src_argb += 32;
+    dst_argb += 32;
+  }
+}
+
+void ARGBSepiaRow_LSX(uint8_t* dst_argb, int width) {
+  int x;
+  int len = width / 8;
+  __m128i src0, src1, tmp0, tmp1;
+  __m128i reg0, reg1, spb, spg, spr;
+  __m128i dst0, dst1;
+  __m128i spb_g = __lsx_vldi(68);
+  __m128i spg_g = __lsx_vldi(88);
+  __m128i spr_g = __lsx_vldi(98);
+  __m128i spb_br = {0x2311231123112311, 0x2311231123112311};
+  __m128i spg_br = {0x2D162D162D162D16, 0x2D162D162D162D16};
+  __m128i spr_br = {0x3218321832183218, 0x3218321832183218};
+  __m128i shuff = {0x1706150413021100, 0x1F0E1D0C1B0A1908};
+
+  for (x = 0; x < len; x++) {
+    DUP2_ARG2(__lsx_vld, dst_argb, 0, dst_argb, 16, src0, src1);
+    tmp0 = __lsx_vpickev_b(src1, src0);
+    tmp1 = __lsx_vpickod_b(src1, src0);
+    DUP2_ARG2(__lsx_vdp2_h_bu, tmp0, spb_br, tmp0, spg_br, spb, spg);
+    spr = __lsx_vdp2_h_bu(tmp0, spr_br);
+    spb = __lsx_vmaddwev_h_bu(spb, tmp1, spb_g);
+    spg = __lsx_vmaddwev_h_bu(spg, tmp1, spg_g);
+    spr = __lsx_vmaddwev_h_bu(spr, tmp1, spr_g);
+    spb = __lsx_vsrli_h(spb, 7);
+    spg = __lsx_vsrli_h(spg, 7);
+    spr = __lsx_vsrli_h(spr, 7);
+    spg = __lsx_vsat_hu(spg, 7);
+    spr = __lsx_vsat_hu(spr, 7);
+    reg0 = __lsx_vpackev_b(spg, spb);
+    reg1 = __lsx_vshuf_b(tmp1, spr, shuff);
+    dst0 = __lsx_vilvl_h(reg1, reg0);
+    dst1 = __lsx_vilvh_h(reg1, reg0);
+    __lsx_vst(dst0, dst_argb, 0);
+    __lsx_vst(dst1, dst_argb, 16);
+    dst_argb += 32;
+  }
+}
+
 void ARGB4444ToARGBRow_LSX(const uint8_t* src_argb4444,
                            uint8_t* dst_argb,
                            int width) {

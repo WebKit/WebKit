@@ -31,7 +31,7 @@ static INLINE void accumulate_sse_sum(__m256i regx_sum, __m256i regx2_sum,
   out_buffer = _mm256_castsi256_si128(regx_sum);
   *x_sum += _mm_cvtsi128_si32(out_buffer);
   out_buffer = _mm256_castsi256_si128(regx2_sum);
-#if ARCH_X86_64
+#if AOM_ARCH_X86_64
   *x2_sum += _mm_cvtsi128_si64(out_buffer);
 #else
   {

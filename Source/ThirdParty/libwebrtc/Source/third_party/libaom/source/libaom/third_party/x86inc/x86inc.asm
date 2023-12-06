@@ -45,7 +45,7 @@
 %endif
 
 %ifndef STACK_ALIGNMENT
-    %if ARCH_X86_64
+    %if AOM_ARCH_X86_64
         %define STACK_ALIGNMENT 16
     %else
         %define STACK_ALIGNMENT 4
@@ -54,7 +54,7 @@
 
 %define WIN64  0
 %define UNIX64 0
-%if ARCH_X86_64
+%if AOM_ARCH_X86_64
     %ifidn __OUTPUT_FORMAT__,win32
         %define WIN64  1
     %elifidn __OUTPUT_FORMAT__,win64
@@ -168,7 +168,7 @@
         %endif
     %endif
 
-    %if ARCH_X86_64 == 0
+    %if AOM_ARCH_X86_64 == 0
         %undef PIC
     %endif
 
@@ -277,7 +277,7 @@
     %if %0 == 2
         %define r%1m  %2d
         %define r%1mp %2
-    %elif ARCH_X86_64 ; memory
+    %elif AOM_ARCH_X86_64 ; memory
         %define r%1m [rstk + stack_offset + %3]
         %define r%1mp qword r %+ %1 %+ m
     %else
@@ -298,7 +298,7 @@
     %define e%1h %3
     %define r%1b %2
     %define e%1b %2
-    %if ARCH_X86_64 == 0
+    %if AOM_ARCH_X86_64 == 0
         %define r%1 e%1
     %endif
 %endmacro
@@ -335,14 +335,14 @@ DECLARE_REG_SIZE bp, bpl, null
 
 DECLARE_REG_TMP_SIZE 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14
 
-%if ARCH_X86_64
+%if AOM_ARCH_X86_64
     %define gprsize 8
 %else
     %define gprsize 4
 %endif
 
 %macro LEA 2
-%if ARCH_X86_64
+%if AOM_ARCH_X86_64
     lea %1, [%2]
 %elif PIC
     call $+5 ; special-cased to not affect the RSB on most CPU:s
@@ -414,7 +414,7 @@ DECLARE_REG_TMP_SIZE 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14
     %endif
 %endmacro
 
-%if ARCH_X86_64 == 0
+%if AOM_ARCH_X86_64 == 0
     %define movsxd movifnidn
 %endif
 
@@ -466,7 +466,7 @@ DECLARE_REG_TMP_SIZE 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14
 %endmacro
 
 %define required_stack_alignment ((mmsize + 15) & ~15)
-%define vzeroupper_required (mmsize > 16 && (ARCH_X86_64 == 0 || xmm_regs_used > 16 || notcpuflag(avx512)))
+%define vzeroupper_required (mmsize > 16 && (AOM_ARCH_X86_64 == 0 || xmm_regs_used > 16 || notcpuflag(avx512)))
 %define high_mm_regs (16*cpuflag(avx512))
 
 %macro ALLOC_STACK 1-2 0 ; stack_size, n_xmm_regs (for win64 only)
@@ -521,13 +521,13 @@ DECLARE_REG_TMP_SIZE 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14
                 ; Reserve an additional register for storing the original stack pointer, but avoid using
                 ; eax/rax for this purpose since it can potentially get overwritten as a return value.
                 %assign regs_used (regs_used + 1)
-                %if ARCH_X86_64 && regs_used == 7
+                %if AOM_ARCH_X86_64 && regs_used == 7
                     %assign regs_used 8
-                %elif ARCH_X86_64 == 0 && regs_used == 1
+                %elif AOM_ARCH_X86_64 == 0 && regs_used == 1
                     %assign regs_used 2
                 %endif
             %endif
-            %if ARCH_X86_64 && regs_used < 5 + UNIX64 * 3
+            %if AOM_ARCH_X86_64 && regs_used < 5 + UNIX64 * 3
                 ; Ensure that we don't clobber any registers containing arguments. For UNIX64 we also preserve r6 (rax)
                 ; since it's used as a hidden argument in vararg functions to specify the number of vector registers used.
                 %assign regs_used 5 + UNIX64 * 3
@@ -654,7 +654,7 @@ DECLARE_REG 14, R13, 120
     AUTO_REP_RET
 %endmacro
 
-%elif ARCH_X86_64 ; *nix x64 ;=============================================
+%elif AOM_ARCH_X86_64 ; *nix x64 ;=============================================
 
 DECLARE_REG 0,  rdi
 DECLARE_REG 1,  rsi
@@ -1002,7 +1002,7 @@ BRANCH_INSTR jz, je, jnz, jne, jl, jle, jnl, jnle, jg, jge, jng, jnge, ja, jae, 
         %endif
     %endif
 
-    %if ARCH_X86_64 || cpuflag(sse2)
+    %if AOM_ARCH_X86_64 || cpuflag(sse2)
         %ifdef __NASM_VER__
             ALIGNMODE p6
         %else
@@ -1039,7 +1039,7 @@ BRANCH_INSTR jz, je, jnz, jne, jl, jle, jnl, jnle, jg, jge, jng, jnge, ja, jae, 
     %endif
 
     %assign num_mmregs 8
-    %if ARCH_X86_64 && mmsize >= 16
+    %if AOM_ARCH_X86_64 && mmsize >= 16
         %assign num_mmregs 16
         %if cpuflag(avx512) || mmsize == 64
             %assign num_mmregs 32
@@ -1064,7 +1064,7 @@ BRANCH_INSTR jz, je, jnz, jne, jl, jle, jnl, jnle, jg, jge, jng, jnge, ja, jae, 
 
 ; Prefer registers 16-31 over 0-15 to avoid having to use vzeroupper
 %macro AVX512_MM_PERMUTATION 0-1 0 ; start_reg
-    %if ARCH_X86_64 && cpuflag(avx512)
+    %if AOM_ARCH_X86_64 && cpuflag(avx512)
         %assign %%i %1
         %rep 16-%1
             %assign %%i_high %%i+16

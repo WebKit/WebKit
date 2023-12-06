@@ -67,9 +67,9 @@ void iwht4x4_12_sse4_1(const tran_low_t *in, uint8_t *out, int stride) {
 class Trans4x4WHT : public libaom_test::TransformTestBase<tran_low_t>,
                     public ::testing::TestWithParam<Dct4x4Param> {
  public:
-  virtual ~Trans4x4WHT() {}
+  ~Trans4x4WHT() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     fwd_txfm_ = GET_PARAM(0);
     inv_txfm_ = GET_PARAM(1);
     pitch_ = 4;
@@ -80,13 +80,12 @@ class Trans4x4WHT : public libaom_test::TransformTestBase<tran_low_t>,
     num_coeffs_ = GET_PARAM(4);
     fwd_txfm_c_ = GET_PARAM(5);
   }
-  virtual void TearDown() {}
 
  protected:
-  void RunFwdTxfm(const int16_t *in, tran_low_t *out, int stride) {
+  void RunFwdTxfm(const int16_t *in, tran_low_t *out, int stride) override {
     fwd_txfm_(in, out, stride);
   }
-  void RunInvTxfm(const tran_low_t *out, uint8_t *dst, int stride) {
+  void RunInvTxfm(const tran_low_t *out, uint8_t *dst, int stride) override {
     inv_txfm_(out, dst, stride);
   }
   void RunSpeedTest() {
@@ -113,9 +112,8 @@ class Trans4x4WHT : public libaom_test::TransformTestBase<tran_low_t>,
       ASSERT_NE(output_block, nullptr);
 
       for (int i = 0; i < count_test_block; ++i) {
-        int j, k;
-        for (j = 0; j < height_; ++j) {
-          for (k = 0; k < pitch_; ++k) {
+        for (int j = 0; j < height_; ++j) {
+          for (int k = 0; k < pitch_; ++k) {
             int in_idx = j * stride + k;
             int out_idx = j * pitch_ + k;
             input_block[in_idx] =
@@ -131,7 +129,7 @@ class Trans4x4WHT : public libaom_test::TransformTestBase<tran_low_t>,
 
         aom_usec_timer c_timer_;
         aom_usec_timer_start(&c_timer_);
-        for (int i = 0; i < numIter; i++) {
+        for (int iter = 0; iter < numIter; iter++) {
           API_REGISTER_STATE_CHECK(
               fwd_txfm_c_(input_block, output_ref_block, stride));
         }
@@ -140,7 +138,7 @@ class Trans4x4WHT : public libaom_test::TransformTestBase<tran_low_t>,
         aom_usec_timer simd_timer_;
         aom_usec_timer_start(&simd_timer_);
 
-        for (int i = 0; i < numIter; i++) {
+        for (int iter = 0; iter < numIter; iter++) {
           API_REGISTER_STATE_CHECK(
               fwd_txfm_(input_block, output_block, stride));
         }
@@ -150,8 +148,8 @@ class Trans4x4WHT : public libaom_test::TransformTestBase<tran_low_t>,
         simd_sum_time += static_cast<int>(aom_usec_timer_elapsed(&simd_timer_));
 
         // The minimum quant value is 4.
-        for (j = 0; j < height_; ++j) {
-          for (k = 0; k < pitch_; ++k) {
+        for (int j = 0; j < height_; ++j) {
+          for (int k = 0; k < pitch_; ++k) {
             int out_idx = j * pitch_ + k;
             ASSERT_EQ(output_block[out_idx], output_ref_block[out_idx])
                 << "Error: not bit-exact result at index: " << out_idx

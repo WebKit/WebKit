@@ -1349,7 +1349,7 @@ MTLTextureUsage Texture::usage(WGPUTextureUsageFlags usage, WGPUTextureFormat fo
         result |= MTLTextureUsageShaderWrite;
     if (usage & WGPUTextureUsage_RenderAttachment)
         result |= MTLTextureUsageRenderTarget;
-    if (Texture::isDepthOrStencilFormat(format))
+    if (Texture::isDepthOrStencilFormat(format) || Texture::isCompressedFormat(format))
         result |= MTLTextureUsagePixelFormatView;
     return result;
 }

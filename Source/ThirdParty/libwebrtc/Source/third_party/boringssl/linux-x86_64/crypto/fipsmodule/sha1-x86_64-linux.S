@@ -1,16 +1,9 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#if defined(__has_feature)
-#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
-#define OPENSSL_NO_ASM
-#endif
-#endif
+#include <openssl/asm_base.h>
 
-#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && defined(__ELF__)
-#if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols_asm.h>
-#endif
+#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__ELF__)
 .text	
 .extern	OPENSSL_ia32cap_P
 .hidden OPENSSL_ia32cap_P
@@ -21,6 +14,7 @@
 .align	16
 sha1_block_data_order:
 .cfi_startproc	
+_CET_ENDBR
 	leaq	OPENSSL_ia32cap_P(%rip),%r10
 	movl	0(%r10),%r9d
 	movl	4(%r10),%r8d
@@ -1268,7 +1262,7 @@ sha1_block_data_order:
 	leaq	(%rsi),%rsp
 .cfi_def_cfa_register	%rsp
 .Lepilogue:
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	sha1_block_data_order,.-sha1_block_data_order
 .type	sha1_block_data_order_shaext,@function
@@ -1438,7 +1432,7 @@ _shaext_shortcut:
 	pshufd	$27,%xmm1,%xmm1
 	movdqu	%xmm0,(%rdi)
 	movd	%xmm1,16(%rdi)
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	sha1_block_data_order_shaext,.-sha1_block_data_order_shaext
 .type	sha1_block_data_order_ssse3,@function
@@ -2626,7 +2620,7 @@ _ssse3_shortcut:
 	leaq	(%r11),%rsp
 .cfi_def_cfa_register	%rsp
 .Lepilogue_ssse3:
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	sha1_block_data_order_ssse3,.-sha1_block_data_order_ssse3
 .type	sha1_block_data_order_avx,@function
@@ -3754,7 +3748,7 @@ _avx_shortcut:
 	leaq	(%r11),%rsp
 .cfi_def_cfa_register	%rsp
 .Lepilogue_avx:
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	sha1_block_data_order_avx,.-sha1_block_data_order_avx
 .type	sha1_block_data_order_avx2,@function
@@ -5447,7 +5441,7 @@ _avx2_shortcut:
 	leaq	(%r11),%rsp
 .cfi_def_cfa_register	%rsp
 .Lepilogue_avx2:
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	sha1_block_data_order_avx2,.-sha1_block_data_order_avx2
 .section	.rodata
@@ -5467,8 +5461,4 @@ K_XX_XX:
 .byte	83,72,65,49,32,98,108,111,99,107,32,116,114,97,110,115,102,111,114,109,32,102,111,114,32,120,56,54,95,54,52,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
 .align	64
 .text	
-#endif
-#if defined(__ELF__)
-// See https://www.airs.com/blog/archives/518.
-.section .note.GNU-stack,"",%progbits
 #endif

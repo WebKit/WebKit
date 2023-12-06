@@ -65,6 +65,65 @@ struct Length {
 public:
     Length(LengthType = LengthType::Auto);
 
+    using FloatOrInt = std::variant<float, int>;
+    struct AutoData { };
+    struct NormalData { };
+    struct RelativeData {
+        FloatOrInt value;
+        bool hasQuirk;
+    };
+    struct PercentData {
+        FloatOrInt value;
+        bool hasQuirk;
+    };
+    struct FixedData {
+        FloatOrInt value;
+        bool hasQuirk;
+    };
+    struct IntrinsicData {
+        FloatOrInt value;
+        bool hasQuirk;
+    };
+    struct MinIntrinsicData {
+        FloatOrInt value;
+        bool hasQuirk;
+    };
+    struct MinContentData {
+        FloatOrInt value;
+        bool hasQuirk;
+    };
+    struct MaxContentData {
+        FloatOrInt value;
+        bool hasQuirk;
+    };
+    struct FillAvailableData {
+        FloatOrInt value;
+        bool hasQuirk;
+    };
+    struct FitContentData {
+        FloatOrInt value;
+        bool hasQuirk;
+    };
+    struct ContentData { };
+    struct UndefinedData { };
+    using IPCData = std::variant<
+        AutoData,
+        NormalData,
+        RelativeData,
+        PercentData,
+        FixedData,
+        IntrinsicData,
+        MinIntrinsicData,
+        MinContentData,
+        MaxContentData,
+        FillAvailableData,
+        FitContentData,
+        ContentData,
+        UndefinedData
+        // LengthType::Calculated is intentionally not serialized.
+    >;
+
+    WEBCORE_EXPORT Length(IPCData&&);
     Length(int value, LengthType, bool hasQuirk = false);
     Length(LayoutUnit value, LengthType, bool hasQuirk = false);
     Length(float value, LengthType, bool hasQuirk = false);
@@ -92,6 +151,7 @@ public:
     CalculationValue& calculationValue() const;
 
     LengthType type() const;
+    WEBCORE_EXPORT IPCData ipcData() const;
 
     bool isAuto() const;
     bool isCalculated() const;
@@ -139,7 +199,9 @@ private:
 
     WEBCORE_EXPORT void ref() const;
     WEBCORE_EXPORT void deref() const;
-    
+    FloatOrInt floatOrInt() const;
+    static LengthType typeFromIndex(const IPCData&);
+
     union {
         int m_intValue { 0 };
         float m_floatValue;

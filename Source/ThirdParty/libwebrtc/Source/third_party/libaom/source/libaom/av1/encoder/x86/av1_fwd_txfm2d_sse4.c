@@ -75,9 +75,9 @@ static void idtx32x32_sse4_1(__m128i *input, __m128i *output,
 
 static INLINE TxfmFuncSSE2 fwd_txfm_type_to_func(TXFM_TYPE txfm_type) {
   switch (txfm_type) {
-    case TXFM_TYPE_DCT32: return fdct32_sse4_1; break;
-    case TXFM_TYPE_DCT64: return fdct64_new_sse4_1; break;
-    case TXFM_TYPE_IDENTITY32: return idtx32x32_sse4_1; break;
+    case TXFM_TYPE_DCT32: return fdct32_sse4_1;
+    case TXFM_TYPE_DCT64: return fdct64_new_sse4_1;
+    case TXFM_TYPE_IDENTITY32: return idtx32x32_sse4_1;
     default: assert(0);
   }
   return NULL;

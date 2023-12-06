@@ -19,8 +19,6 @@
 //
 // The field functions are shared by Ed25519 and X25519 where possible.
 
-#include <openssl/curve25519.h>
-
 #include <assert.h>
 #include <string.h>
 
@@ -30,7 +28,6 @@
 
 #include "internal.h"
 #include "../internal.h"
-
 
 // Various pre-computed constants.
 #include "./curve25519_tables.h"
@@ -315,11 +312,6 @@ static void fe_copy_lt(fe_loose *h, const fe *f) {
   static_assert(sizeof(fe_loose) == sizeof(fe), "fe and fe_loose mismatch");
   OPENSSL_memmove(h, f, sizeof(fe));
 }
-#if !defined(OPENSSL_SMALL)
-static void fe_copy_ll(fe_loose *h, const fe_loose *f) {
-  OPENSSL_memmove(h, f, sizeof(fe_loose));
-}
-#endif // !defined(OPENSSL_SMALL)
 
 static void fe_loose_invert(fe *out, const fe_loose *z) {
   fe t0;
@@ -698,16 +690,6 @@ void x25519_ge_sub(ge_p1p1 *r, const ge_p3 *p, const ge_cached *q) {
   fe_add(&r->T, &trZ, &trT);
 }
 
-static uint8_t equal(signed char b, signed char c) {
-  uint8_t ub = b;
-  uint8_t uc = c;
-  uint8_t x = ub ^ uc;  // 0: yes; 1..255: no
-  uint32_t y = x;       // 0: yes; 1..255: no
-  y -= 1;               // 4294967295: yes; 0..254: no
-  y >>= 31;             // 1: yes; 0: no
-  return y;
-}
-
 static void cmov(ge_precomp *t, const ge_precomp *u, uint8_t b) {
   fe_cmov(&t->yplusx, &u->yplusx, b);
   fe_cmov(&t->yminusx, &u->yminusx, b);
@@ -754,7 +736,7 @@ void x25519_ge_scalarmult_small_precomp(
     ge_precomp_0(&e);
 
     for (j = 1; j < 16; j++) {
-      cmov(&e, &multiples[j-1], equal(index, j));
+      cmov(&e, &multiples[j-1], 1&constant_time_eq_w(index, j));
     }
 
     ge_cached cached;
@@ -776,35 +758,36 @@ void x25519_ge_scalarmult_base(ge_p3 *h, const uint8_t a[32]) {
 
 #else
 
-static uint8_t negative(signed char b) {
-  uint32_t x = b;
-  x >>= 31;  // 1: yes; 0: no
-  return x;
-}
+static void table_select(ge_precomp *t, const int pos, const signed char b) {
+  uint8_t bnegative = constant_time_msb_w(b);
+  uint8_t babs = b - ((bnegative & b) << 1);
 
-static void table_select(ge_precomp *t, int pos, signed char b) {
+  uint8_t t_bytes[3][32] = {
+      {constant_time_is_zero_w(b) & 1}, {constant_time_is_zero_w(b) & 1}, {0}};
+#if defined(__clang__) // materialize for vectorization, 6% speedup
+  __asm__("" : "+m" (t_bytes) : /*no inputs*/);
+#endif
+  static_assert(sizeof(t_bytes) == sizeof(k25519Precomp[pos][0]), "");
+  for (int i = 0; i < 8; i++) {
+    constant_time_conditional_memxor(t_bytes, k25519Precomp[pos][i],
+                                     sizeof(t_bytes),
+                                     constant_time_eq_w(babs, 1 + i));
+  }
+
+  fe yplusx, yminusx, xy2d;
+  fe_frombytes_strict(&yplusx, t_bytes[0]);
+  fe_frombytes_strict(&yminusx, t_bytes[1]);
+  fe_frombytes_strict(&xy2d, t_bytes[2]);
+
+  fe_copy_lt(&t->yplusx, &yplusx);
+  fe_copy_lt(&t->yminusx, &yminusx);
+  fe_copy_lt(&t->xy2d, &xy2d);
+
   ge_precomp minust;
-  uint8_t bnegative = negative(b);
-  uint8_t babs = b - ((uint8_t)((-bnegative) & b) << 1);
-
-  ge_precomp_0(t);
-  cmov(t, &k25519Precomp[pos][0], equal(babs, 1));
-  cmov(t, &k25519Precomp[pos][1], equal(babs, 2));
-  cmov(t, &k25519Precomp[pos][2], equal(babs, 3));
-  cmov(t, &k25519Precomp[pos][3], equal(babs, 4));
-  cmov(t, &k25519Precomp[pos][4], equal(babs, 5));
-  cmov(t, &k25519Precomp[pos][5], equal(babs, 6));
-  cmov(t, &k25519Precomp[pos][6], equal(babs, 7));
-  cmov(t, &k25519Precomp[pos][7], equal(babs, 8));
-  fe_copy_ll(&minust.yplusx, &t->yminusx);
-  fe_copy_ll(&minust.yminusx, &t->yplusx);
-
-  // NOTE: the input table is canonical, but types don't encode it
-  fe tmp;
-  fe_carry(&tmp, &t->xy2d);
-  fe_neg(&minust.xy2d, &tmp);
-
-  cmov(t, &minust, bnegative);
+  fe_copy_lt(&minust.yplusx, &yminusx);
+  fe_copy_lt(&minust.yminusx, &yplusx);
+  fe_neg(&minust.xy2d, &xy2d);
+  cmov(t, &minust, bnegative>>7);
 }
 
 // h = a * B
@@ -814,6 +797,18 @@ static void table_select(ge_precomp *t, int pos, signed char b) {
 // Preconditions:
 //   a[31] <= 127
 void x25519_ge_scalarmult_base(ge_p3 *h, const uint8_t a[32]) {
+#if defined(BORINGSSL_FE25519_ADX)
+  if (CRYPTO_is_BMI1_capable() && CRYPTO_is_BMI2_capable() &&
+      CRYPTO_is_ADX_capable()) {
+    uint8_t t[4][32];
+    x25519_ge_scalarmult_base_adx(t, a);
+    fiat_25519_from_bytes(h->X.v, t[0]);
+    fiat_25519_from_bytes(h->Y.v, t[1]);
+    fiat_25519_from_bytes(h->Z.v, t[2]);
+    fiat_25519_from_bytes(h->T.v, t[3]);
+    return;
+  }
+#endif
   signed char e[64];
   signed char carry;
   ge_p1p1 r;
@@ -916,7 +911,7 @@ void x25519_ge_scalarmult(ge_p2 *r, const uint8_t *scalar, const ge_p3 *A) {
     ge_cached selected;
     ge_cached_0(&selected);
     for (j = 0; j < 16; j++) {
-      cmov_cached(&selected, &Ai[j], equal(j, index));
+      cmov_cached(&selected, &Ai[j], 1&constant_time_eq_w(index, j));
     }
 
     x25519_ge_add(&t, &u, &selected);
@@ -2083,6 +2078,12 @@ static void x25519_scalar_mult(uint8_t out[32], const uint8_t scalar[32],
     x25519_NEON(out, scalar, point);
     return;
   }
+#elif defined(BORINGSSL_FE25519_ADX)
+  if (CRYPTO_is_BMI1_capable() && CRYPTO_is_BMI2_capable() &&
+      CRYPTO_is_ADX_capable()) {
+    x25519_scalar_mult_adx(out, scalar, point);
+    return;
+  }
 #endif
 
   x25519_scalar_mult_generic(out, scalar, point);
@@ -2116,7 +2117,8 @@ int X25519(uint8_t out_shared_key[32], const uint8_t private_key[32],
   static const uint8_t kZeros[32] = {0};
   x25519_scalar_mult(out_shared_key, private_key, peer_public_value);
   // The all-zero output results when the input is a point of small order.
-  return CRYPTO_memcmp(kZeros, out_shared_key, 32) != 0;
+  return constant_time_declassify_int(
+             CRYPTO_memcmp(kZeros, out_shared_key, 32)) != 0;
 }
 
 void X25519_public_from_private(uint8_t out_public_value[32],
@@ -2147,4 +2149,5 @@ void X25519_public_from_private(uint8_t out_public_value[32],
   fe_loose_invert(&zminusy_inv, &zminusy);
   fe_mul_tlt(&zminusy_inv, &zplusy, &zminusy_inv);
   fe_tobytes(out_public_value, &zminusy_inv);
+  CONSTTIME_DECLASSIFY(out_public_value, 32);
 }

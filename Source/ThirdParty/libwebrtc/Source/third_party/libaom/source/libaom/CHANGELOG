@@ -1,3 +1,133 @@
+2023-08-10 v3.7.0
+  This release includes new codec interfaces, compression efficiency and
+  perceptual improvements, speedup and memory optimizations and many bug fixes.
+  This release is ABI compatible with the last release.
+
+  - New Features
+    * New codec controls:
+      * AV1E_SET_QUANTIZER_ONE_PASS: Set quantizer for each frame.
+      * AV1E_ENABLE_RATE_GUIDE_DELTAQ: enable the rate distribution guided delta
+        quantization in all intra mode. The "enable-rate-guide-deltaq" option is
+        added for this control.
+      * AV1E_SET_RATE_DISTRIBUTION_INFO: set the input file for rate
+        distribution used in all intra mode. The "rate-distribution-info" option
+        is added for this control.
+      * AV1E_GET_LUMA_CDEF_STRENGTH
+      * AV1E_SET_BITRATE_ONE_PASS_CBR
+    * AOM_SCALING_MODE is extended to include 2/3 and 1/3 scaling.
+    * aom_tune_metric is extended to include AOM_TUNE_VMAF_SALIENCY_MAP.
+      The "tune" option is extended to include "vmaf_saliency_map".
+    * SVC example encoder svc_encoder_rtc is able to use the rate control
+      library.
+    * Loopfilter level and CDEF filter level is supported by RTC rate control
+      library.
+    * New speed (--cpu-used) 11, intended for RTC screen sharing, added for
+      faster encoding with ~3% bdrate loss with 16% IC (instruction count)
+      speedup compared to speed 10.
+
+  - Compression Efficiency Improvements
+    * Improved VoD encoding performance
+      * 0.1-0.6% BDrate gains for encoding speeds 2 to 6
+      * Rate control accuracy improvement in VBR mode
+    * RTC encoding improvements
+      * Screen content mode: 10-19% BDrate gains for speeds 6 - 10
+      * Temporal layers video mode, for speed 10:
+        * 2 temporal layers on low resolutions: 13-15% BDrate gain
+        * 3 temporal layers on VGA/HD: 3-4% BDrate gain
+
+  - Perceptual Quality Improvements
+    * Fixed multiple block and color artifacts for RTC screen content by
+      * Incorporating color into RD cost for IDTX
+      * Reducing thresholds for palette mode in non RD mode
+      * Allowing more palette mode testing
+    * Improved color sensitivity for altref in non-RD mode.
+    * Reduced video flickering for temporal layer encoding.
+
+  - Speedup and Memory Optimizations
+    * Speed up the VoD encoder
+      * 2-5% for encoding speed 2 to 4
+      * 9-15% for encoding speed 5 to 6
+      * ARM
+        * Standard bitdepth
+          * speed 5: +31%
+          * speed 4: +2%
+          * speed 3: +9%
+          * speed 2: +157%
+        * High bitdepth
+          * speed 5: +85%
+    * RTC speedups
+      * Screen content mode
+        * 15% IC speedup for speeds 6-8
+        * ARM: 7% for speed 9, 3% for speed 10
+      * Temporal layers video mode
+        * 7% speedup for 3 temporal layers on VGA/HD, for speed 10
+      * Single layer video
+        * x86: 2% IC speedup for speeds 7-10
+        * ARM: 2-4% speedup across speeds 5-10
+
+  - Other improvements
+    * VoD: Major improvements to global motion estimation, now enabled up to
+      speed 4
+    * RTC
+      * Fixes to make lossless coding work.
+      * Fixes to make frame dropper (--drop_frames) work for single and temporal
+        layers.
+      * Improvements to RPS (reference picture selection) recovery frames.
+      * Improvements to rate control for temporal layers.
+    * libwebm is updated to libwebm-1.0.0.29-9-g1930e3c
+
+  - Bug Fixes
+    * aomedia:3261 Assertion failed when encoding av1 with film grain and
+      '--monochrome' flag
+    * aomedia:3276 ensure all allocations are checked (partial fix)
+    * aomedia:3451 The libaom library calls exit()
+    * aomedia:3450 enable -Wshadow for C++ sources
+    * aomedia:3449 Test Seg Faults After
+      b459af3e345be402db052a143fcc5383d4b74cbd
+    * aomedia:3416 prune unused symbols / restrict symbol visibility
+    * aomedia:3443 Jenkins failure:
+      UninstantiatedParameterizedTestSuite<EstimateNoiseTest>
+    * aomedia:3434 realtime failures with CONFIG_BITSTREAM_DEBUG=1
+    * aomedia:3433 DeltaqModeTest crash w/row_mt=0
+    * aomedia:3429 Encoder crash when turn on both ExternalResize and
+      g_threads > 2
+    * aomedia:3438 Build failure with
+      `-DSANITIZE=address -DBUILD_SHARED_LIBS=ON` when using clang.
+    * aomedia:3435 Block artifacts when scrolling with AV1 in screen sharing
+      scenarios
+    * aomedia:3170 vmaf tune presets produce extreme glitches in one scene
+    * aomedia:3401 Building shared libaom with MSVC results in a race condition
+      with the export library
+    * aomedia:3420 Floating point exception in av1_tpl_get_frame_importance()
+    * aomedia:3424 heap-buffer-overflow in ScaleFilterCols_16_C() (SIGABRT)
+    * aomedia:3417 examples/svc_encoder_rtc.c is using internal macros and
+      functions
+    * aomedia:3372 SEGV in assign_frame_buffer_p av1_common_int.h
+    * aomedia:3130 'cpu-features.h' file not found on Android NDK 22
+    * aomedia:3415 Encoder/decoder mismatch for svc_encoder_rtc running
+      1 SL 3 TL
+    * aomedia:3412 Lossless Mode Fails Loopback Bit Test
+    * aomedia:3409 The use of AV1_VAR_OFFS in av1/encoder/var_based_part.c is
+      incorrect for high bit depths
+    * aomedia:3403 test_libaom fails with error message
+      "feenableexcept() failed" on Linux arm
+    * aomedia:3370 Random color block at fast motion area
+    * aomedia:3393 Assertion failure in av1_convolve_2d_sr_c()
+    * aomedia:3392 Strong artifacting for high bit-depth real-time
+    * aomedia:3376 aomenc --threads=10 --deltaq-mode=3 crashes after
+      "Allintra: multi-threading of calculating differential contrast"
+    * aomedia:3380 Crashes and ASan and TSan errors in deltaq-mode=3
+      multithreading code
+    * chromium:1410766 heap-buffer-overflow in aom_yv12_copy_v_c
+    * Cannot set level via AV1E_SET_TARGET_SEQ_LEVEL_IDX
+    * Encoding failure due to the use of loop restoration with unintended use of
+      lossless mode.
+    * Signed integer overflow in scan_past_frames
+    * Signed integer overflow in update_a_sep_sym
+    * Flickering in AV1 1440p/2160p HDR transcodes
+    * Fixed artifacts with screen share at encoder speed 10
+    * Fixed prediction setup for IDTX
+
 2023-05-08 v3.6.1
   This release includes several bug fixes. This release is ABI
   compatible with the last release. See

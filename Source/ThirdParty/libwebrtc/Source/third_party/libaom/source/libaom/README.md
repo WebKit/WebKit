@@ -159,6 +159,7 @@ cross compiling via the use of toolchain files included in the AV1 repository.
 The toolchain files available at the time of this writing are:
 
  - arm64-ios.cmake
+ - arm64-linux-clang.cmake
  - arm64-linux-gcc.cmake
  - arm64-mingw-gcc.cmake
  - armv7-ios.cmake

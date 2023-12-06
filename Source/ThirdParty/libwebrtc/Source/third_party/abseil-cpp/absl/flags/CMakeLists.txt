@@ -87,6 +87,7 @@ absl_cc_library(
     absl::config
     absl::core_headers
     absl::log_severity
+    absl::int128
     absl::optional
     absl::strings
     absl::str_format
@@ -242,7 +243,6 @@ absl_cc_library(
     absl::flags_private_handle_accessor
     absl::flags_program_name
     absl::flags_reflection
-    absl::flat_hash_map
     absl::strings
     absl::synchronization
 )
@@ -345,6 +345,7 @@ absl_cc_test(
     absl::flags_internal
     absl::flags_marshalling
     absl::flags_reflection
+    absl::int128
     absl::strings
     absl::time
     GTest::gtest_main
@@ -374,7 +375,7 @@ absl_cc_test(
     absl::flags_parse
     absl::flags_reflection
     absl::flags_usage_internal
-    absl::raw_logging_internal
+    absl::log
     absl::scoped_set_env
     absl::span
     absl::strings

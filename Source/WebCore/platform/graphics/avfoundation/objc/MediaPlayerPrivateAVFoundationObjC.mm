@@ -2269,7 +2269,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
         String language = [locale localeIdentifier];
         auto track = m_chapterTracks.ensure(language, [&]() {
-            auto track = InbandChapterTrackPrivateAVFObjC::create(locale);
+            auto track = InbandChapterTrackPrivateAVFObjC::create(locale, m_currentTextTrackID++);
             if (player)
                 player->addTextTrack(track.get());
             return track;

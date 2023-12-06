@@ -291,6 +291,19 @@ int main(int argc, char **argv) {
   printf("  got ");
   hexdump(hkdf_output, sizeof(hkdf_output));
 
+  /* TLS v1.0 KDF */
+  printf("About to run TLS v1.0 KDF\n");
+  uint8_t tls10_output[32];
+  if (!CRYPTO_tls1_prf(EVP_md5_sha1(), tls10_output, sizeof(tls10_output),
+                       kAESKey, sizeof(kAESKey), "foo", 3, kPlaintextSHA256,
+                       sizeof(kPlaintextSHA256), kPlaintextSHA256,
+                       sizeof(kPlaintextSHA256))) {
+    fprintf(stderr, "TLS v1.0 KDF failed.\n");
+    goto err;
+  }
+  printf("  got ");
+  hexdump(tls10_output, sizeof(tls10_output));
+
   /* TLS v1.2 KDF */
   printf("About to run TLS v1.2 KDF\n");
   uint8_t tls12_output[32];

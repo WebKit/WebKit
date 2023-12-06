@@ -352,6 +352,13 @@ int EVP_HPKE_KEY_copy(EVP_HPKE_KEY *dst, const EVP_HPKE_KEY *src) {
   return 1;
 }
 
+void EVP_HPKE_KEY_move(EVP_HPKE_KEY *out, EVP_HPKE_KEY *in) {
+  EVP_HPKE_KEY_cleanup(out);
+  // For now, |EVP_HPKE_KEY| is trivially movable.
+  OPENSSL_memcpy(out, in, sizeof(EVP_HPKE_KEY));
+  EVP_HPKE_KEY_zero(in);
+}
+
 int EVP_HPKE_KEY_init(EVP_HPKE_KEY *key, const EVP_HPKE_KEM *kem,
                       const uint8_t *priv_key, size_t priv_key_len) {
   EVP_HPKE_KEY_zero(key);

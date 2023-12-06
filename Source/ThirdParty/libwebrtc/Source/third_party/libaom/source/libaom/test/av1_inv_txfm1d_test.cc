@@ -73,31 +73,31 @@ TEST(av1_inv_txfm1d, InvAccuracyCheck) {
   const int max_error[] = { 6, 10, 19, 31, 40 };
   ASSERT_EQ(NELEMENTS(max_error), TX_SIZES);
   ASSERT_EQ(NELEMENTS(inv_txfm_func_ls), TX_SIZES);
-  for (int k = 0; k < count_test_block; ++k) {
+  for (int i = 0; i < count_test_block; ++i) {
     // choose a random transform to test
     const TxSize tx_size = static_cast<TxSize>(rnd.Rand8() % TX_SIZES);
-    const int tx_size_pix = txfm_size_ls[tx_size];
+    const int txfm_size = txfm_size_ls[tx_size];
     const TxfmFunc inv_txfm_func = inv_txfm_func_ls[tx_size][0];
 
     int32_t input[64];
-    random_matrix(input, tx_size_pix, &rnd);
+    random_matrix(input, txfm_size, &rnd);
 
     // 64x64 transform assumes last 32 values are zero.
     memset(input + 32, 0, 32 * sizeof(input[0]));
 
     int32_t ref_output[64];
     memset(ref_output, 0, sizeof(ref_output));
-    reference_idct_1d_int(input, ref_output, tx_size_pix);
+    reference_idct_1d_int(input, ref_output, txfm_size);
 
     int32_t output[64];
     memset(output, 0, sizeof(output));
     inv_txfm_func(input, output, cos_bit, range_bit);
 
-    for (int i = 0; i < tx_size_pix; ++i) {
-      EXPECT_LE(abs(output[i] - ref_output[i]), max_error[tx_size])
-          << "tx_size = " << tx_size << ", i = " << i
-          << ", output[i] = " << output[i]
-          << ", ref_output[i] = " << ref_output[i];
+    for (int ni = 0; ni < txfm_size; ++ni) {
+      EXPECT_LE(abs(output[ni] - ref_output[ni]), max_error[tx_size])
+          << "tx_size = " << tx_size << ", ni = " << ni
+          << ", output[ni] = " << output[ni]
+          << ", ref_output[ni] = " << ref_output[ni];
     }
   }
 }
@@ -129,7 +129,7 @@ TEST(av1_inv_txfm1d, round_trip) {
       if (!fwd_txfm_func) continue;
 
       const int count_test_block = 5000;
-      for (int ci = 0; ci < count_test_block; ++ci) {
+      for (int i = 0; i < count_test_block; ++i) {
         int32_t input[64];
         int32_t output[64];
         int32_t round_trip_output[64];

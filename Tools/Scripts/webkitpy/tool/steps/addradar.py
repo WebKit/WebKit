@@ -20,10 +20,10 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import logging
-
-from webkitpy.common.checkout.changelog import *
 from webkitpy.tool.steps.abstractstep import AbstractStep
+from webkitpy.common.checkout.changelog import *
+
+import logging
 
 _log = logging.getLogger(__name__)
 

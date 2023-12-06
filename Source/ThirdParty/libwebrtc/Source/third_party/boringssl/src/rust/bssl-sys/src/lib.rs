@@ -5,6 +5,7 @@
 // Set in build.rs
 include!(env!("BINDGEN_RS_FILE"));
 
+// TODO(crbug.com/boringssl/596): Remove these wrappers.
 pub fn ERR_GET_LIB(packed_error: u32) -> i32 {
     unsafe { ERR_GET_LIB_RUST(packed_error) }
 }

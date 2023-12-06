@@ -55,7 +55,8 @@ EC_KEY *EC_KEY_derive_from_secret(const EC_GROUP *group, const uint8_t *secret,
   }
 
   uint8_t derived[EC_KEY_DERIVE_EXTRA_BYTES + EC_MAX_BYTES];
-  size_t derived_len = BN_num_bytes(&group->order) + EC_KEY_DERIVE_EXTRA_BYTES;
+  size_t derived_len =
+      BN_num_bytes(EC_GROUP_get0_order(group)) + EC_KEY_DERIVE_EXTRA_BYTES;
   assert(derived_len <= sizeof(derived));
   if (!HKDF(derived, derived_len, EVP_sha256(), secret, secret_len,
             /*salt=*/NULL, /*salt_len=*/0, (const uint8_t *)info,
@@ -74,10 +75,10 @@ EC_KEY *EC_KEY_derive_from_secret(const EC_GROUP *group, const uint8_t *secret,
       // enough. 2^(num_bytes(order)) < 2^8 * order, so:
       //
       //    priv < 2^8 * order * 2^128 < order * order < order * R
-      !BN_from_montgomery(priv, priv, group->order_mont, ctx) ||
+      !BN_from_montgomery(priv, priv, &group->order, ctx) ||
       // Multiply by R^2 and do another Montgomery reduction to compute
       // priv * R^-1 * R^2 * R^-1 = priv mod order.
-      !BN_to_montgomery(priv, priv, group->order_mont, ctx) ||
+      !BN_to_montgomery(priv, priv, &group->order, ctx) ||
       !EC_POINT_mul(group, pub, priv, NULL, NULL, ctx) ||
       !EC_KEY_set_group(key, group) || !EC_KEY_set_public_key(key, pub) ||
       !EC_KEY_set_private_key(key, priv)) {

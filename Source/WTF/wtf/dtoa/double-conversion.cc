@@ -47,19 +47,19 @@ namespace double_conversion {
 
 const DoubleToStringConverter& DoubleToStringConverter::EcmaScriptConverter() {
   constexpr int flags = UNIQUE_ZERO | EMIT_POSITIVE_EXPONENT_SIGN;
-  static constexpr DoubleToStringConverter converter(flags, "Infinity", "NaN", 'e', -6, 21, 6, 0);
+  static constexpr DoubleToStringConverter converter(flags, "Infinity", "NaN", 'e', default_decimal_in_shortest_low, default_decimal_in_shortest_high, 6, 0);
   return converter;
 }
 
 const DoubleToStringConverter& DoubleToStringConverter::EcmaScriptConverterWithTrailingPoint() {
   constexpr int flags = UNIQUE_ZERO | EMIT_POSITIVE_EXPONENT_SIGN | EMIT_TRAILING_DECIMAL_POINT;
-  static constexpr DoubleToStringConverter converter(flags, "Infinity", "NaN", 'e', -6, 21, 6, 0);
+  static constexpr DoubleToStringConverter converter(flags, "Infinity", "NaN", 'e', default_decimal_in_shortest_low, default_decimal_in_shortest_high, 6, 0);
   return converter;
 }
 
 const DoubleToStringConverter& DoubleToStringConverter::CSSConverter() {
   constexpr int flags = UNIQUE_ZERO | EMIT_POSITIVE_EXPONENT_SIGN;
-  static constexpr DoubleToStringConverter converter(flags, "infinity", "NaN", 'e', -6, 21, 6, 0);
+  static constexpr DoubleToStringConverter converter(flags, "infinity", "NaN", 'e', default_decimal_in_shortest_low, default_decimal_in_shortest_high, 6, 0);
   return converter;
 }
 
@@ -195,8 +195,7 @@ bool DoubleToStringConverter::ToShortestIeeeNumber(
   }
 
   int exponent = decimal_point - 1;
-  if ((decimal_in_shortest_low_ <= exponent) &&
-      (exponent < decimal_in_shortest_high_)) {
+  if (validShortestRepresentation(exponent, decimal_in_shortest_low_, decimal_in_shortest_high_)) {
     CreateDecimalRepresentation(decimal_rep, decimal_rep_length,
                                 decimal_point,
                                 Max(0, decimal_rep_length - decimal_point),

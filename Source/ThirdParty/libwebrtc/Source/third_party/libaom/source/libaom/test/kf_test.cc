@@ -47,9 +47,9 @@ class KeyFrameIntervalTestLarge
     kf_dist_ = -1;
     is_kf_interval_violated_ = false;
   }
-  virtual ~KeyFrameIntervalTestLarge() {}
+  ~KeyFrameIntervalTestLarge() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(encoding_mode_);
     const aom_rational timebase = { 1, 30 };
     cfg_.g_timebase = timebase;
@@ -60,18 +60,18 @@ class KeyFrameIntervalTestLarge
     cfg_.g_lag_in_frames = 19;
   }
 
-  virtual bool DoDecode() const { return 1; }
+  bool DoDecode() const override { return true; }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, 5);
       encoder->Control(AOME_SET_ENABLEAUTOALTREF, 1);
     }
   }
 
-  virtual bool HandleDecodeResult(const aom_codec_err_t res_dec,
-                                  libaom_test::Decoder *decoder) {
+  bool HandleDecodeResult(const aom_codec_err_t res_dec,
+                          libaom_test::Decoder *decoder) override {
     EXPECT_EQ(AOM_CODEC_OK, res_dec) << decoder->DecodeError();
     if (AOM_CODEC_OK == res_dec) {
       aom_codec_ctx_t *ctx_dec = decoder->GetDecoder();
@@ -149,9 +149,9 @@ class ForcedKeyTestLarge
     frame_num_ = 0;
     is_kf_placement_violated_ = false;
   }
-  virtual ~ForcedKeyTestLarge() {}
+  ~ForcedKeyTestLarge() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(encoding_mode_);
     cfg_.rc_end_usage = rc_end_usage_;
     cfg_.g_threads = 0;
@@ -160,8 +160,8 @@ class ForcedKeyTestLarge
     cfg_.fwd_kf_enabled = fwd_kf_enabled_;
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, cpu_used_);
       encoder->Control(AOME_SET_ENABLEAUTOALTREF, auto_alt_ref_);
@@ -176,8 +176,8 @@ class ForcedKeyTestLarge
         ((int)video->frame() == forced_kf_frame_num_) ? AOM_EFLAG_FORCE_KF : 0;
   }
 
-  virtual bool HandleDecodeResult(const aom_codec_err_t res_dec,
-                                  libaom_test::Decoder *decoder) {
+  bool HandleDecodeResult(const aom_codec_err_t res_dec,
+                          libaom_test::Decoder *decoder) override {
     EXPECT_EQ(AOM_CODEC_OK, res_dec) << decoder->DecodeError();
     if (AOM_CODEC_OK == res_dec) {
       if ((int)frame_num_ == forced_kf_frame_num_) {

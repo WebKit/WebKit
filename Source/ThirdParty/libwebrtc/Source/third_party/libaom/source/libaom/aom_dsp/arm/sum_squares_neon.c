@@ -287,130 +287,6 @@ uint64_t aom_sum_squares_i16_neon(const int16_t *src, uint32_t n) {
   return aom_sum_squares_i16_c(src, n);
 }
 
-#if defined(__ARM_FEATURE_DOTPROD)
-
-static INLINE uint64_t aom_var_2d_u8_4xh_neon(uint8_t *src, int src_stride,
-                                              int width, int height) {
-  uint64_t sum = 0;
-  uint64_t sse = 0;
-  uint32x2_t sum_u32 = vdup_n_u32(0);
-  uint32x2_t sse_u32 = vdup_n_u32(0);
-
-  int h = height / 2;
-  do {
-    int w = width;
-    uint8_t *src_ptr = src;
-    do {
-      uint8x8_t s0 = load_unaligned_u8(src_ptr, src_stride);
-
-      sum_u32 = vdot_u32(sum_u32, s0, vdup_n_u8(1));
-
-      sse_u32 = vdot_u32(sse_u32, s0, s0);
-
-      src_ptr += 8;
-      w -= 8;
-    } while (w >= 8);
-
-    // Process remaining columns in the row using C.
-    while (w > 0) {
-      int idx = width - w;
-      const uint8_t v = src[idx];
-      sum += v;
-      sse += v * v;
-      w--;
-    }
-
-    src += 2 * src_stride;
-  } while (--h != 0);
-
-  sum += horizontal_long_add_u32x2(sum_u32);
-  sse += horizontal_long_add_u32x2(sse_u32);
-
-  return sse - sum * sum / (width * height);
-}
-
-static INLINE uint64_t aom_var_2d_u8_8xh_neon(uint8_t *src, int src_stride,
-                                              int width, int height) {
-  uint64_t sum = 0;
-  uint64_t sse = 0;
-  uint32x2_t sum_u32 = vdup_n_u32(0);
-  uint32x2_t sse_u32 = vdup_n_u32(0);
-
-  int h = height;
-  do {
-    int w = width;
-    uint8_t *src_ptr = src;
-    do {
-      uint8x8_t s0 = vld1_u8(src_ptr);
-
-      sum_u32 = vdot_u32(sum_u32, s0, vdup_n_u8(1));
-
-      sse_u32 = vdot_u32(sse_u32, s0, s0);
-
-      src_ptr += 8;
-      w -= 8;
-    } while (w >= 8);
-
-    // Process remaining columns in the row using C.
-    while (w > 0) {
-      int idx = width - w;
-      const uint8_t v = src[idx];
-      sum += v;
-      sse += v * v;
-      w--;
-    }
-
-    src += src_stride;
-  } while (--h != 0);
-
-  sum += horizontal_long_add_u32x2(sum_u32);
-  sse += horizontal_long_add_u32x2(sse_u32);
-
-  return sse - sum * sum / (width * height);
-}
-
-static INLINE uint64_t aom_var_2d_u8_16xh_neon(uint8_t *src, int src_stride,
-                                               int width, int height) {
-  uint64_t sum = 0;
-  uint64_t sse = 0;
-  uint32x4_t sum_u32 = vdupq_n_u32(0);
-  uint32x4_t sse_u32 = vdupq_n_u32(0);
-
-  int h = height;
-  do {
-    int w = width;
-    uint8_t *src_ptr = src;
-    do {
-      uint8x16_t s0 = vld1q_u8(src_ptr);
-
-      sum_u32 = vdotq_u32(sum_u32, s0, vdupq_n_u8(1));
-
-      sse_u32 = vdotq_u32(sse_u32, s0, s0);
-
-      src_ptr += 16;
-      w -= 16;
-    } while (w >= 16);
-
-    // Process remaining columns in the row using C.
-    while (w > 0) {
-      int idx = width - w;
-      const uint8_t v = src[idx];
-      sum += v;
-      sse += v * v;
-      w--;
-    }
-
-    src += src_stride;
-  } while (--h != 0);
-
-  sum += horizontal_long_add_u32x4(sum_u32);
-  sse += horizontal_long_add_u32x4(sse_u32);
-
-  return sse - sum * sum / (width * height);
-}
-
-#else  //  !defined(__ARM_FEATURE_DOTPROD)
-
 static INLINE uint64_t aom_var_2d_u8_4xh_neon(uint8_t *src, int src_stride,
                                               int width, int height) {
   uint64_t sum = 0;
@@ -583,8 +459,6 @@ static INLINE uint64_t aom_var_2d_u8_16xh_neon(uint8_t *src, int src_stride,
 
   return sse - sum * sum / (width * height);
 }
-
-#endif  // defined(__ARM_FEATURE_DOTPROD)
 
 uint64_t aom_var_2d_u8_neon(uint8_t *src, int src_stride, int width,
                             int height) {

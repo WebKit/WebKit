@@ -89,6 +89,10 @@
 #define NSAccessibilityTextInputMarkedTextMarkerRangeAttribute @"AXTextInputMarkedTextMarkerRange"
 #endif
 
+#ifndef NSAccessibilityIntersectionWithSelectionRangeAttribute
+#define NSAccessibilityIntersectionWithSelectionRangeAttribute @"AXIntersectionWithSelectionRange"
+#endif
+
 typedef void (*AXPostedNotificationCallback)(id element, NSString* notification, void* context);
 
 @interface NSObject (WebKitAccessibilityAdditions)
@@ -134,7 +138,15 @@ bool AccessibilityUIElement::isEqual(AccessibilityUIElement* otherElement)
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 bool AccessibilityUIElement::isIsolatedObject() const
 {
-    return [m_element isIsolatedObject];
+    BOOL value;
+
+    BEGIN_AX_OBJC_EXCEPTIONS
+    s_controller->executeOnAXThreadAndWait([this, &value] {
+        value = [m_element isIsolatedObject];
+    });
+    END_AX_OBJC_EXCEPTIONS
+
+    return value;
 }
 #endif
 
@@ -1542,8 +1554,21 @@ JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
     auto indexRange = attributeValue(NSAccessibilitySelectedTextRangeAttribute);
     if (indexRange)
         range = [indexRange rangeValue];
-    NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%lu, %lu}", static_cast<unsigned long>(range.location), static_cast<unsigned long>(range.length)];
+    NSString *rangeDescription = [NSString stringWithFormat:@"{%lu, %lu}", static_cast<unsigned long>(range.location), static_cast<unsigned long>(range.length)];
     return [rangeDescription createJSStringRef];
+    END_AX_OBJC_EXCEPTIONS
+
+    return nullptr;
+}
+
+JSRetainPtr<JSStringRef> AccessibilityUIElement::intersectionWithSelectionRange()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    if (auto rangeAttribute = attributeValue(NSAccessibilityIntersectionWithSelectionRangeAttribute)) {
+        NSRange range = [rangeAttribute rangeValue];
+        NSString *rangeDescription = [NSString stringWithFormat:@"{%lu, %lu}", static_cast<unsigned long>(range.location), static_cast<unsigned long>(range.length)];
+        return [rangeDescription createJSStringRef];
+    }
     END_AX_OBJC_EXCEPTIONS
 
     return nullptr;

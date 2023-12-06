@@ -7,8 +7,8 @@ perlasm(BCM_SOURCES aarch64 ghashv8-armv8 modes/asm/ghashv8-armx.pl)
 perlasm(BCM_SOURCES aarch64 p256_beeu-armv8-asm ec/asm/p256_beeu-armv8-asm.pl)
 perlasm(BCM_SOURCES aarch64 p256-armv8-asm ec/asm/p256-armv8-asm.pl)
 perlasm(BCM_SOURCES aarch64 sha1-armv8 sha/asm/sha1-armv8.pl)
-perlasm(BCM_SOURCES aarch64 sha256-armv8 sha/asm/sha512-armv8.pl)
-perlasm(BCM_SOURCES aarch64 sha512-armv8 sha/asm/sha512-armv8.pl)
+perlasm(BCM_SOURCES aarch64 sha256-armv8 sha/asm/sha512-armv8.pl sha256)
+perlasm(BCM_SOURCES aarch64 sha512-armv8 sha/asm/sha512-armv8.pl sha512)
 perlasm(BCM_SOURCES aarch64 vpaes-armv8 aes/asm/vpaes-armv8.pl)
 perlasm(BCM_SOURCES arm aesv8-armv7 aes/asm/aesv8-armx.pl)
 perlasm(BCM_SOURCES arm armv4-mont bn/asm/armv4-mont.pl)
@@ -40,8 +40,8 @@ perlasm(BCM_SOURCES x86_64 p256-x86_64-asm ec/asm/p256-x86_64-asm.pl)
 perlasm(BCM_SOURCES x86_64 rdrand-x86_64 rand/asm/rdrand-x86_64.pl)
 perlasm(BCM_SOURCES x86_64 rsaz-avx2 bn/asm/rsaz-avx2.pl)
 perlasm(BCM_SOURCES x86_64 sha1-x86_64 sha/asm/sha1-x86_64.pl)
-perlasm(BCM_SOURCES x86_64 sha256-x86_64 sha/asm/sha512-x86_64.pl)
-perlasm(BCM_SOURCES x86_64 sha512-x86_64 sha/asm/sha512-x86_64.pl)
+perlasm(BCM_SOURCES x86_64 sha256-x86_64 sha/asm/sha512-x86_64.pl sha256)
+perlasm(BCM_SOURCES x86_64 sha512-x86_64 sha/asm/sha512-x86_64.pl sha512)
 perlasm(BCM_SOURCES x86_64 vpaes-x86_64 aes/asm/vpaes-x86_64.pl)
 perlasm(BCM_SOURCES x86_64 x86_64-mont bn/asm/x86_64-mont.pl)
 perlasm(BCM_SOURCES x86_64 x86_64-mont5 bn/asm/x86_64-mont5.pl)
@@ -55,7 +55,7 @@ endif()
 
 if(FIPS_DELOCATE)
   if(FIPS_SHARED)
-    error("Can't set both delocate and shared mode for FIPS build")
+    message(FATAL_ERROR "Can't set both delocate and shared mode for FIPS build")
   endif()
 
   add_library(
@@ -85,12 +85,16 @@ if(FIPS_DELOCATE)
     -cc ${CMAKE_ASM_COMPILER}
     -cc-flags "${TARGET} $CMAKE_ASM_FLAGS"
     ${PROJECT_SOURCE_DIR}/include/openssl/arm_arch.h
+    ${PROJECT_SOURCE_DIR}/include/openssl/asm_base.h
+    ${PROJECT_SOURCE_DIR}/include/openssl/target.h
     ${BCM_SOURCES_ASM_USED}
     DEPENDS
     bcm_c_generated_asm
     delocate
     ${BCM_SOURCES_ASM_USED}
     ${PROJECT_SOURCE_DIR}/include/openssl/arm_arch.h
+    ${PROJECT_SOURCE_DIR}/include/openssl/asm_base.h
+    ${PROJECT_SOURCE_DIR}/include/openssl/target.h
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
 
@@ -130,7 +134,7 @@ if(FIPS_DELOCATE)
   set_target_properties(fipsmodule PROPERTIES LINKER_LANGUAGE C)
 elseif(FIPS_SHARED)
   if(NOT BUILD_SHARED_LIBS)
-    error("FIPS_SHARED set but not BUILD_SHARED_LIBS")
+    message(FATAL_ERROR "FIPS_SHARED set but not BUILD_SHARED_LIBS")
   endif()
 
   add_library(

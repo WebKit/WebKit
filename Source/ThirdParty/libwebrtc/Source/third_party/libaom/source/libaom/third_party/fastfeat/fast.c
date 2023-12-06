@@ -42,7 +42,21 @@ xy* aom_fast9_detect_nonmax(const byte* im, int xsize, int ysize, int stride, in
   xy* nonmax;
 
   corners = aom_fast9_detect(im, xsize, ysize, stride, b, &num_corners);
+  if(!corners)
+  {
+    // Memory allocation failure
+    *ret_num_corners = -1;
+    return NULL;
+  }
+  // num_corners may be zero.
   scores = aom_fast9_score(im, stride, corners, num_corners, b);
+  if(!scores && num_corners > 0)
+  {
+    // Memory allocation failure
+    free(corners);
+    *ret_num_corners = -1;
+    return NULL;
+  }
   nonmax = aom_nonmax_suppression(corners, scores, num_corners, ret_scores, ret_num_corners);
 
   free(corners);

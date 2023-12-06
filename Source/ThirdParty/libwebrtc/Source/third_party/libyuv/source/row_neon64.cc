@@ -1979,7 +1979,7 @@ void ARGBToRGB565Row_NEON(const uint8_t* src_argb,
 
 void ARGBToRGB565DitherRow_NEON(const uint8_t* src_argb,
                                 uint8_t* dst_rgb,
-                                const uint32_t dither4,
+                                uint32_t dither4,
                                 int width) {
   asm volatile(
       "dup         v1.4s, %w3                    \n"  // dither4
@@ -3957,6 +3957,46 @@ void ByteToFloatRow_NEON(const uint8_t* src,
         "+r"(dst),   // %1
         "+r"(width)  // %2
       : "w"(scale)   // %3
+      : "cc", "memory", "v1", "v2", "v3");
+}
+
+// Convert FP16 Half Floats to FP32 Floats
+void ConvertFP16ToFP32Row_NEON(const uint16_t* src,  // fp16
+                               float* dst,
+                               int width) {
+  asm volatile(
+      "1:                                        \n"
+      "ld1         {v1.8h}, [%0], #16            \n"  // load 8 halffloats
+      "subs        %w2, %w2, #8                  \n"  // 8 floats per loop
+      "prfm        pldl1keep, [%0, 448]          \n"
+      "fcvtl       v2.4s, v1.4h                  \n"  // 8 floats
+      "fcvtl2      v3.4s, v1.8h                  \n"
+      "stp         q2, q3, [%1], #32             \n"  // store 8 floats
+      "b.gt        1b                            \n"
+      : "+r"(src),   // %0
+        "+r"(dst),   // %1
+        "+r"(width)  // %2
+      :
+      : "cc", "memory", "v1", "v2", "v3");
+}
+
+// Convert FP32 Floats to FP16 Half Floats
+void ConvertFP32ToFP16Row_NEON(const float* src,
+                               uint16_t* dst,  // fp16
+                               int width) {
+  asm volatile(
+      "1:                                        \n"
+      "ldp         q2, q3, [%0], #32             \n"  // load 8 floats
+      "subs        %w2, %w2, #8                  \n"  // 8 floats per loop
+      "prfm        pldl1keep, [%0, 448]          \n"
+      "fcvtn       v1.4h, v2.4s                  \n"  // 8 fp16 halffloats
+      "fcvtn2      v1.8h, v3.4s                  \n"
+      "str         q1, [%1], #16                 \n"  // store 8 fp16 halffloats
+      "b.gt        1b                            \n"
+      : "+r"(src),   // %0
+        "+r"(dst),   // %1
+        "+r"(width)  // %2
+      :
       : "cc", "memory", "v1", "v2", "v3");
 }
 

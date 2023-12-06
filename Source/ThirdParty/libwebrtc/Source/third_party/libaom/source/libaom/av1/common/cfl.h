@@ -72,8 +72,8 @@ static INLINE void clear_cfl_dc_pred_cache_flags(CFL_CTX *cfl) {
   cfl->dc_pred_is_cached[CFL_PRED_V] = false;
 }
 
-void cfl_predict_block(MACROBLOCKD *const xd, uint8_t *dst, int dst_stride,
-                       TX_SIZE tx_size, int plane);
+void av1_cfl_predict_block(MACROBLOCKD *const xd, uint8_t *dst, int dst_stride,
+                           TX_SIZE tx_size, int plane);
 
 void cfl_store_block(MACROBLOCKD *const xd, BLOCK_SIZE bsize, TX_SIZE tx_size);
 

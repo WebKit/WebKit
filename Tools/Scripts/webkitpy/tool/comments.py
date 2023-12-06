@@ -31,7 +31,6 @@
 # patches, etc.
 
 import requests
-
 from webkitpy.common.config import urls
 
 

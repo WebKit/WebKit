@@ -13,8 +13,6 @@ if(AOM_BUILD_CMAKE_AOM_CONFIGURE_CMAKE_)
 endif() # AOM_BUILD_CMAKE_AOM_CONFIGURE_CMAKE_
 set(AOM_BUILD_CMAKE_AOM_CONFIGURE_CMAKE_ 1)
 
-include(FindGit)
-include(FindPerl)
 include(FindThreads)
 
 include("${AOM_ROOT}/build/cmake/aom_config_defaults.cmake")
@@ -214,7 +212,6 @@ elseif(AOM_TARGET_CPU MATCHES "arm")
 endif()
 
 if(CONFIG_ANALYZER)
-  include(FindwxWidgets)
   find_package(wxWidgets REQUIRED adv base core)
   include(${wxWidgets_USE_FILE})
 endif()
@@ -302,6 +299,9 @@ endif()
 
 # Test compiler flags.
 if(MSVC)
+  # It isn't possible to specify C99 conformance for MSVC. MSVC doesn't support
+  # C++ standards modes earlier than C++14.
+  add_cxx_flag_if_supported("/std:c++14")
   add_compiler_flag_if_supported("/W3")
 
   # Disable MSVC warnings that suggest making code non-portable.
@@ -341,11 +341,13 @@ else()
   add_c_flag_if_supported("-Wimplicit-function-declaration")
   add_compiler_flag_if_supported("-Wlogical-op")
   add_compiler_flag_if_supported("-Wpointer-arith")
+  add_compiler_flag_if_supported("-Wshadow")
   add_compiler_flag_if_supported("-Wshorten-64-to-32")
   add_compiler_flag_if_supported("-Wsign-compare")
   add_compiler_flag_if_supported("-Wstring-conversion")
   add_compiler_flag_if_supported("-Wtype-limits")
   add_compiler_flag_if_supported("-Wuninitialized")
+  add_compiler_flag_if_supported("-Wunreachable-code-aggressive")
   add_compiler_flag_if_supported("-Wunused")
   add_compiler_flag_if_supported("-Wvla")
   add_cxx_flag_if_supported("-Wc++14-extensions")
@@ -356,7 +358,7 @@ else()
 
     # This combination has more stack overhead, so we account for it by
     # providing higher stack limit than usual.
-    add_c_flag_if_supported("-Wstack-usage=170000")
+    add_c_flag_if_supported("-Wstack-usage=285000")
     add_cxx_flag_if_supported("-Wstack-usage=270000")
   elseif(CONFIG_RD_DEBUG) # Another case where higher stack usage is expected.
     add_c_flag_if_supported("-Wstack-usage=135000")
@@ -370,9 +372,6 @@ else()
     # Disable no optimization warning when compiling with sanitizers
     add_compiler_flag_if_supported("-Wno-disabled-optimization")
   endif()
-
-  # Add -Wshadow only for C files to avoid massive gtest warning spam.
-  add_c_flag_if_supported("-Wshadow")
 
   # Add -Wundef only for C files to avoid massive gtest warning spam.
   add_c_flag_if_supported("-Wundef")
@@ -442,6 +441,7 @@ if(NOT GIT_FOUND)
   message("--- Git missing, version will be read from CHANGELOG.")
 endif()
 
+string(TIMESTAMP year "%Y")
 configure_file("${AOM_ROOT}/build/cmake/aom_config.c.template"
                "${AOM_CONFIG_DIR}/config/aom_config.c")
 

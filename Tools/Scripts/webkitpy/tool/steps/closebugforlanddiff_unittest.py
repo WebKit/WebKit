@@ -30,10 +30,10 @@
 import logging
 import unittest
 
-from webkitcorepy import OutputCapture, mocks
-
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.closebugforlanddiff import CloseBugForLandDiff
+
+from webkitcorepy import mocks, OutputCapture
 
 
 class CloseBugForLandDiffTest(unittest.TestCase):

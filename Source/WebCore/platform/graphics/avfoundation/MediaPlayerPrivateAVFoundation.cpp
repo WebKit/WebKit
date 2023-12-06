@@ -807,7 +807,7 @@ void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector
         ++inBandCount;
         if (track->hasBeenReported())
             continue;
-        
+
         track->setHasBeenReported(true);
         if (player)
             player->addTextTrack(*track);

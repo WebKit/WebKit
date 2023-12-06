@@ -70,7 +70,9 @@ WebCodecsVideoEncoder::~WebCodecsVideoEncoder()
 static bool isSupportedEncoderCodec(const String& codec, const Settings::Values& settings)
 {
     return codec.startsWith("vp8"_s) || codec.startsWith("vp09.00"_s) || codec.startsWith("avc1."_s)
+#if ENABLE(WEB_RTC)
         || (codec.startsWith("vp09.02"_s) && settings.webRTCVP9Profile2CodecEnabled)
+#endif
         || (codec.startsWith("hev1."_s) && settings.webCodecsHEVCEnabled)
         || (codec.startsWith("hvc1."_s) && settings.webCodecsHEVCEnabled)
         || (codec.startsWith("av01.0"_s) && settings.webCodecsAV1Enabled);

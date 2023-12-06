@@ -169,6 +169,7 @@ namespace WebCore {
     macro(CookieStoreManager) \
     macro(CustomElementRegistry) \
     macro(CustomEffect) \
+    macro(CustomStateSet) \
     macro(Database) \
     macro(DataTransferItem) \
     macro(DataTransferItemList) \

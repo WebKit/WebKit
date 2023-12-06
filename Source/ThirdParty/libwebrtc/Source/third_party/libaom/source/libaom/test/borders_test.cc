@@ -24,12 +24,12 @@ class BordersTestLarge
       public ::libaom_test::EncoderTest {
  protected:
   BordersTestLarge() : EncoderTest(GET_PARAM(0)) {}
-  virtual ~BordersTestLarge() {}
+  ~BordersTestLarge() override = default;
 
-  virtual void SetUp() { InitializeConfig(GET_PARAM(1)); }
+  void SetUp() override { InitializeConfig(GET_PARAM(1)); }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, 1);
       encoder->Control(AOME_SET_ENABLEAUTOALTREF, 1);
@@ -38,7 +38,7 @@ class BordersTestLarge
     }
   }
 
-  virtual void FramePktHook(const aom_codec_cx_pkt_t *pkt) {
+  void FramePktHook(const aom_codec_cx_pkt_t *pkt) override {
     if (pkt->data.frame.flags & AOM_FRAME_IS_KEY) {
     }
   }

@@ -41,7 +41,7 @@ class RcInterfaceTest : public ::libaom_test::EncoderTest,
     memset(&layer_id_, 0, sizeof(layer_id_));
   }
 
-  ~RcInterfaceTest() override {}
+  ~RcInterfaceTest() override = default;
 
  protected:
   void SetUp() override { InitializeConfig(::libaom_test::kRealTime); }
@@ -150,6 +150,10 @@ class RcInterfaceTest : public ::libaom_test::EncoderTest,
     encoder->Control(AOME_GET_LOOPFILTER_LEVEL, &encoder_lpf_level);
     aom::AV1LoopfilterLevel loopfilter_level = rc_api_->GetLoopfilterLevel();
     ASSERT_EQ(loopfilter_level.filter_level[0], encoder_lpf_level);
+    aom::AV1CdefInfo cdef_level = rc_api_->GetCdefInfo();
+    int cdef_y_strengths[16];
+    encoder->Control(AV1E_GET_LUMA_CDEF_STRENGTH, cdef_y_strengths);
+    ASSERT_EQ(cdef_level.cdef_strength_y, cdef_y_strengths[0]);
   }
 
   void FramePktHook(const aom_codec_cx_pkt_t *pkt) override {

@@ -36,6 +36,8 @@ namespace WebCore {
 
 enum class WasSetByJavaScript : bool;
 
+enum class SwitchAnimationType { VisuallyOn };
+
 class CheckboxInputType final : public BaseCheckableInputType {
 public:
     static Ref<CheckboxInputType> create(HTMLInputElement& element)
@@ -44,7 +46,7 @@ public:
     }
 
     bool valueMissing(const String&) const final;
-    float switchCheckedChangeAnimationProgress() const;
+    float switchAnimationVisuallyOnProgress() const;
     bool isSwitchVisuallyOn() const;
 
 private:
@@ -59,7 +61,7 @@ private:
     void handleKeyupEvent(KeyboardEvent&) final;
     void handleMouseDownEvent(MouseEvent&) final;
     void handleMouseMoveEvent(MouseEvent&) final;
-    void startSwitchPointerTracking(int);
+    void startSwitchPointerTracking(LayoutPoint);
     void stopSwitchPointerTracking();
     bool isSwitchPointerTracking() const;
     void willDispatchClick(InputElementClickState&) final;
@@ -67,17 +69,22 @@ private:
     bool matchesIndeterminatePseudoClass() const final;
     void willUpdateCheckedness(bool /* nowChecked */, WasSetByJavaScript);
     void disabledStateChanged() final;
-    void performSwitchCheckedChangeAnimation();
-    void stopSwitchCheckedChangeAnimation();
-    void switchCheckedChangeAnimationTimerFired();
+    Seconds switchAnimationStartTime(SwitchAnimationType) const;
+    void setSwitchAnimationStartTime(SwitchAnimationType, Seconds);
+    bool isSwitchAnimating(SwitchAnimationType) const;
+    void performSwitchAnimation(SwitchAnimationType);
+    void stopSwitchAnimation(SwitchAnimationType);
+    float switchAnimationProgress(SwitchAnimationType) const;
+    void updateIsSwitchVisuallyOnFromAbsoluteLocation(LayoutPoint);
+    void switchAnimationTimerFired();
 
     // FIXME: Consider moving all switch-related state (and methods?) to their own object so
     // CheckboxInputType can stay somewhat small.
     std::optional<int> m_switchPointerTrackingXPositionStart { std::nullopt };
     bool m_hasSwitchVisuallyOnChanged { false };
     bool m_isSwitchVisuallyOn { false };
-    Seconds m_switchCheckedChangeAnimationStartTime { 0_s };
-    std::unique_ptr<Timer> m_switchCheckedChangeAnimationTimer;
+    Seconds m_switchAnimationVisuallyOnStartTime { 0_s };
+    std::unique_ptr<Timer> m_switchAnimationTimer;
 };
 
 } // namespace WebCore

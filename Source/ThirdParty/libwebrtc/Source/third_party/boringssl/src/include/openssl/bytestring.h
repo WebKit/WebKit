@@ -635,6 +635,28 @@ OPENSSL_EXPORT int CBB_add_asn1_oid_from_text(CBB *cbb, const char *text,
 OPENSSL_EXPORT int CBB_flush_asn1_set_of(CBB *cbb);
 
 
+// Unicode utilities.
+
+// The following functions read one Unicode code point from |cbs| with the
+// corresponding encoding and store it in |*out|. They return one on success and
+// zero on error.
+OPENSSL_EXPORT int CBS_get_utf8(CBS *cbs, uint32_t *out);
+OPENSSL_EXPORT int CBS_get_latin1(CBS *cbs, uint32_t *out);
+OPENSSL_EXPORT int CBS_get_ucs2_be(CBS *cbs, uint32_t *out);
+OPENSSL_EXPORT int CBS_get_utf32_be(CBS *cbs, uint32_t *out);
+
+// CBB_get_utf8_len returns the number of bytes needed to represent |u| in
+// UTF-8.
+OPENSSL_EXPORT size_t CBB_get_utf8_len(uint32_t u);
+
+// The following functions encode |u| to |cbb| with the corresponding
+// encoding. They return one on success and zero on error.
+OPENSSL_EXPORT int CBB_add_utf8(CBB *cbb, uint32_t u);
+OPENSSL_EXPORT int CBB_add_latin1(CBB *cbb, uint32_t u);
+OPENSSL_EXPORT int CBB_add_ucs2_be(CBB *cbb, uint32_t u);
+OPENSSL_EXPORT int CBB_add_utf32_be(CBB *cbb, uint32_t u);
+
+
 #if defined(__cplusplus)
 }  // extern C
 

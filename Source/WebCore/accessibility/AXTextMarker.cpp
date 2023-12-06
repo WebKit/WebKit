@@ -299,6 +299,40 @@ std::optional<CharacterRange> AXTextMarkerRange::characterRange() const
     return { { m_start.m_data.characterOffset, m_end.m_data.characterOffset - m_start.m_data.characterOffset } };
 }
 
+std::optional<AXTextMarkerRange> AXTextMarkerRange::intersectionWith(const AXTextMarkerRange& other) const
+{
+    if (UNLIKELY(m_start.m_data.treeID != m_end.m_data.treeID
+        || other.m_start.m_data.treeID != other.m_end.m_data.treeID
+        || m_start.m_data.treeID != other.m_start.m_data.treeID)) {
+        return std::nullopt;
+    }
+
+    // Fast path: both ranges span one object
+    if (m_start.m_data.objectID == m_end.m_data.objectID
+        && other.m_start.m_data.objectID == other.m_end.m_data.objectID) {
+        if (m_start.m_data.objectID != other.m_start.m_data.objectID)
+            return std::nullopt;
+
+        unsigned startOffset = std::max(m_start.m_data.characterOffset, other.m_start.m_data.characterOffset);
+        unsigned endOffset = std::min(m_end.m_data.characterOffset, other.m_end.m_data.characterOffset);
+
+        if (startOffset > endOffset)
+            return std::nullopt;
+
+        auto startMarker = AXTextMarker({ m_start.treeID(), m_start.objectID(), nullptr, startOffset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, startOffset });
+        auto endMarker = AXTextMarker({ m_start.treeID(), m_start.objectID(), nullptr, endOffset, Position::PositionIsOffsetInAnchor, Affinity::Downstream, 0, endOffset });
+        return { { startMarker, endMarker } };
+    }
+
+    return Accessibility::retrieveValueFromMainThread<std::optional<AXTextMarkerRange>>([this, &other] () -> std::optional<AXTextMarkerRange> {
+        auto intersection = WebCore::intersection(*this, other);
+        if (intersection.isNull())
+            return std::nullopt;
+
+        return { AXTextMarkerRange(intersection) };
+    });
+}
+
 String AXTextMarkerRange::debugDescription() const
 {
     return makeString("start: {", m_start.debugDescription(), "}\nend: {", m_end.debugDescription(), "}");

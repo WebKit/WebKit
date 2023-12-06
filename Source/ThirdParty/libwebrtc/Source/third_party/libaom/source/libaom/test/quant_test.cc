@@ -32,15 +32,15 @@ class QMTest
       public ::libaom_test::EncoderTest {
  protected:
   QMTest() : EncoderTest(GET_PARAM(0)) {}
-  virtual ~QMTest() {}
+  ~QMTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(GET_PARAM(1));
     set_cpu_used_ = GET_PARAM(2);
   }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, set_cpu_used_);
       encoder->Control(AV1E_SET_ENABLE_QM, 1);
@@ -119,9 +119,9 @@ class QuantizerBoundsCheckTestLarge
         quant_param_(GET_PARAM(2)), rc_end_usage_(GET_PARAM(3)) {
     quant_bound_violated_ = false;
   }
-  virtual ~QuantizerBoundsCheckTestLarge() {}
+  ~QuantizerBoundsCheckTestLarge() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(encoding_mode_);
     const aom_rational timebase = { 1, 30 };
     cfg_.g_timebase = timebase;
@@ -135,17 +135,17 @@ class QuantizerBoundsCheckTestLarge
     }
   }
 
-  virtual bool DoDecode() const { return 1; }
+  bool DoDecode() const override { return true; }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, 5);
     }
   }
 
-  virtual bool HandleDecodeResult(const aom_codec_err_t res_dec,
-                                  libaom_test::Decoder *decoder) {
+  bool HandleDecodeResult(const aom_codec_err_t res_dec,
+                          libaom_test::Decoder *decoder) override {
     EXPECT_EQ(AOM_CODEC_OK, res_dec) << decoder->DecodeError();
     if (AOM_CODEC_OK == res_dec) {
       aom_codec_ctx_t *ctx_dec = decoder->GetDecoder();

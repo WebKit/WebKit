@@ -74,7 +74,10 @@ static AOM_TOOLS_FORMAT_PRINTF(3, 0) void warn_or_exit_on_errorv(
 
     if (detail) fprintf(stderr, "    %s\n", detail);
 
-    if (fatal) exit(EXIT_FAILURE);
+    if (fatal) {
+      aom_codec_destroy(ctx);
+      exit(EXIT_FAILURE);
+    }
   }
 }
 
@@ -457,7 +460,6 @@ const arg_def_t *av1_key_val_args[] = {
   &g_av1_codec_arg_defs.sb_qp_sweep,
   &g_av1_codec_arg_defs.dist_metric,
   &g_av1_codec_arg_defs.kf_max_pyr_height,
-  &g_av1_codec_arg_defs.global_motion_method,
   NULL,
 };
 

@@ -48,8 +48,6 @@ type Subprocess struct {
 	pendingReads chan pendingRead
 	// readerFinished is a channel that is closed if `readerRoutine` has finished (e.g. because of a read error).
 	readerFinished chan struct{}
-	// readerError is set iff readerFinished is closed. If non-nil then it is the read error that caused `readerRoutine` to finished.
-	readerError error
 }
 
 // pendingRead represents an expected response from the modulewrapper.
@@ -153,6 +151,7 @@ func (m *Subprocess) Close() {
 	m.stdout.Close()
 	m.stdin.Close()
 	m.cmd.Wait()
+	close(m.pendingReads)
 	<-m.readerFinished
 }
 
@@ -176,7 +175,7 @@ func (m *Subprocess) flush() error {
 func (m *Subprocess) enqueueRead(pending pendingRead) error {
 	select {
 	case <-m.readerFinished:
-		return m.readerError
+		panic("attempted to enqueue request after the reader failed")
 	default:
 	}
 
@@ -266,7 +265,7 @@ func (m *Subprocess) Transact(cmd string, expectedNumResults int, args ...[]byte
 	case <-done:
 		return result, nil
 	case <-m.readerFinished:
-		return nil, m.readerError
+		panic("was still waiting for a result when the reader finished")
 	}
 }
 
@@ -284,13 +283,11 @@ func (m *Subprocess) readerRoutine() {
 
 		result, err := m.readResult(pendingRead.cmd, pendingRead.expectedNumResults)
 		if err != nil {
-			m.readerError = err
-			return
+			panic(fmt.Errorf("failed to read from subprocess: %w", err))
 		}
 
 		if err := pendingRead.callback(result); err != nil {
-			m.readerError = err
-			return
+			panic(fmt.Errorf("result from subprocess was rejected: %w", err))
 		}
 	}
 }

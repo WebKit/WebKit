@@ -13,7 +13,7 @@
 #define AOM_AOM_DSP_ENTENC_H_
 #include <stddef.h>
 #include "aom_dsp/entcode.h"
-#include "aom_ports/bitops.h"
+#include "aom_util/endian_inl.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -87,13 +87,14 @@ static AOM_INLINE void propagate_carry_bwd(unsigned char *buf, uint32_t offs) {
   } while (carry);
 }
 
-// Reverse byte order and write data to buffer adding the carry-bit
+// Convert to big-endian byte order and write data to buffer adding the
+// carry-bit
 static AOM_INLINE void write_enc_data_to_out_buf(unsigned char *out,
                                                  uint32_t offs, uint64_t output,
                                                  uint64_t carry,
                                                  uint32_t *enc_offs,
                                                  uint8_t num_bytes_ready) {
-  const uint64_t reg = get_byteswap64(output) >> ((8 - num_bytes_ready) << 3);
+  const uint64_t reg = HToBE64(output << ((8 - num_bytes_ready) << 3));
   memcpy(&out[offs], &reg, 8);
   // Propagate carry backwards if exists
   if (carry) {

@@ -724,6 +724,7 @@ static bool isOnlyPseudoClassFunction(CSSSelector::PseudoClassType pseudoClassTy
     case CSSSelector::PseudoClassType::Lang:
     case CSSSelector::PseudoClassType::Any:
     case CSSSelector::PseudoClassType::Dir:
+    case CSSSelector::PseudoClassType::State:
         return true;
     default:
         break;
@@ -776,6 +777,8 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             if (!m_context.hasPseudoClassEnabled && selector->pseudoClassType() == CSSSelector::PseudoClassType::Has)
                 return nullptr;
             if (!m_context.popoverAttributeEnabled && selector->pseudoClassType() == CSSSelector::PseudoClassType::PopoverOpen)
+                return nullptr;
+            if (!m_context.customStateSetEnabled && selector->pseudoClassType() == CSSSelector::PseudoClassType::State)
                 return nullptr;
             if (m_context.mode != UASheetMode && selector->pseudoClassType() == CSSSelector::PseudoClassType::HtmlDocument)
                 return nullptr;
@@ -895,6 +898,13 @@ std::unique_ptr<CSSParserSelector> CSSSelectorParser::consumePseudo(CSSParserTok
             return selector;
         }
         case CSSSelector::PseudoClassType::Dir: {
+            const CSSParserToken& ident = block.consumeIncludingWhitespace();
+            if (ident.type() != IdentToken || !block.atEnd())
+                return nullptr;
+            selector->setArgument(ident.value().toAtomString());
+            return selector;
+        }
+        case CSSSelector::PseudoClassType::State: {
             const CSSParserToken& ident = block.consumeIncludingWhitespace();
             if (ident.type() != IdentToken || !block.atEnd())
                 return nullptr;

@@ -76,6 +76,7 @@
 #import <WebCore/UTIUtilities.h>
 #import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
+#import <wtf/spi/darwin/SandboxSPI.h>
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
 #include "LibWebRTCCodecs.h"
@@ -83,6 +84,10 @@
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
 #import <WebCore/ParentalControlsContentFilter.h>
+#endif
+
+#if USE(EXTENSIONKIT)
+#import "WKProcessExtension.h"
 #endif
 
 #define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
@@ -117,6 +122,22 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
     WebCore::setAdditionalSupportedImageTypes(parameters.additionalSupportedImageTypes);
     WebCore::setImageSourceAllowableTypes(WebCore::allowableImageTypes());
 }
+
+#if HAVE(SANDBOX_STATE_FLAGS)
+void WebPage::setHasLaunchedWebContentProcess()
+{
+    static bool hasSetLaunchVariable = false;
+    if (!hasSetLaunchVariable) {
+        auto auditToken = WebProcess::singleton().auditTokenForSelf();
+#if USE(EXTENSIONKIT)
+        if (WKProcessExtension.sharedInstance)
+            [WKProcessExtension.sharedInstance lockdownSandbox:@"1.0"];
+#endif
+        sandbox_enable_state_flag("local:WebContentProcessLaunched", *auditToken);
+        hasSetLaunchVariable = true;
+    }
+}
+#endif
 
 void WebPage::platformDidReceiveLoadParameters(const LoadParameters& parameters)
 {

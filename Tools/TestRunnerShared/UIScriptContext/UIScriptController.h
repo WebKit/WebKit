@@ -129,6 +129,8 @@ public:
     virtual void removeViewFromWindow(JSValueRef) { notImplemented(); }
     virtual void addViewToWindow(JSValueRef) { notImplemented(); }
 
+    virtual void resizeWindowTo(unsigned /* width */, unsigned /* height */) { notImplemented(); }
+
     virtual void installTapGestureOnWindow(JSValueRef) { notImplemented(); }
 
     // Editable region

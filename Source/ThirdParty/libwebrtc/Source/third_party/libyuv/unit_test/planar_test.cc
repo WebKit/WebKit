@@ -2749,12 +2749,23 @@ TEST_F(LibYUVPlanarTest, TestARGBExtractAlpha) {
   MaskCpuFlags(disable_cpu_flags_);
   ARGBExtractAlpha(src_pixels, benchmark_width_ * 4, dst_pixels_c,
                    benchmark_width_, benchmark_width_, benchmark_height_);
-  MaskCpuFlags(benchmark_cpu_info_);
+  double c_time = get_time();
+  ARGBExtractAlpha(src_pixels, benchmark_width_ * 4, dst_pixels_c,
+                   benchmark_width_, benchmark_width_, benchmark_height_);
+  c_time = (get_time() - c_time);
 
+  MaskCpuFlags(benchmark_cpu_info_);
+  ARGBExtractAlpha(src_pixels, benchmark_width_ * 4, dst_pixels_opt,
+                  benchmark_width_, benchmark_width_, benchmark_height_);
+  double opt_time = get_time();
   for (int i = 0; i < benchmark_iterations_; ++i) {
     ARGBExtractAlpha(src_pixels, benchmark_width_ * 4, dst_pixels_opt,
                      benchmark_width_, benchmark_width_, benchmark_height_);
   }
+  opt_time = (get_time() - opt_time) / benchmark_iterations_;
+  // Report performance of C vs OPT
+  printf("%8d us C - %8d us OPT\n",
+         static_cast<int>(c_time * 1e6), static_cast<int>(opt_time * 1e6));
   for (int i = 0; i < kPixels; ++i) {
     EXPECT_EQ(dst_pixels_c[i], dst_pixels_opt[i]);
   }
@@ -2777,12 +2788,24 @@ TEST_F(LibYUVPlanarTest, TestARGBCopyYToAlpha) {
   MaskCpuFlags(disable_cpu_flags_);
   ARGBCopyYToAlpha(orig_pixels, benchmark_width_, dst_pixels_c,
                    benchmark_width_ * 4, benchmark_width_, benchmark_height_);
-  MaskCpuFlags(benchmark_cpu_info_);
+  double c_time = get_time();
+  ARGBCopyYToAlpha(orig_pixels, benchmark_width_, dst_pixels_c,
+                   benchmark_width_ * 4, benchmark_width_, benchmark_height_);
+  c_time = (get_time() - c_time);
 
+  MaskCpuFlags(benchmark_cpu_info_);
+  ARGBCopyYToAlpha(orig_pixels, benchmark_width_, dst_pixels_opt,
+                   benchmark_width_ * 4, benchmark_width_, benchmark_height_);
+  double opt_time = get_time();
   for (int i = 0; i < benchmark_iterations_; ++i) {
     ARGBCopyYToAlpha(orig_pixels, benchmark_width_, dst_pixels_opt,
                      benchmark_width_ * 4, benchmark_width_, benchmark_height_);
   }
+  opt_time = (get_time() - opt_time) / benchmark_iterations_;
+
+  // Report performance of C vs OPT
+  printf("%8d us C - %8d us OPT\n",
+         static_cast<int>(c_time * 1e6), static_cast<int>(opt_time * 1e6));
   for (int i = 0; i < kPixels * 4; ++i) {
     EXPECT_EQ(dst_pixels_c[i], dst_pixels_opt[i]);
   }
@@ -4467,5 +4490,47 @@ TEST_F(LibYUVPlanarTest, NV21Copy) {
   free_aligned_buffer_page_end(dst_y);
   free_aligned_buffer_page_end(dst_vu);
 }
+
+#if defined(ENABLE_ROW_TESTS) && !defined(LIBYUV_DISABLE_NEON) && \
+    defined(__aarch64__)
+
+TEST_F(LibYUVPlanarTest, TestConvertFP16ToFP32) {
+  int i, j;
+  const int y_plane_size = benchmark_width_ * benchmark_height_;
+
+  align_buffer_page_end(orig_f, y_plane_size * 4);
+  align_buffer_page_end(orig_y, y_plane_size * 2);
+  align_buffer_page_end(dst_opt, y_plane_size * 4);
+  align_buffer_page_end(rec_opt, y_plane_size * 2);
+
+  for (i = 0; i < y_plane_size; ++i) {
+    ((float*)orig_f)[i] = (float)(i % 10000) * 3.14f;
+  }
+  memset(orig_y, 1, y_plane_size * 2);
+  memset(dst_opt, 2, y_plane_size * 4);
+  memset(rec_opt, 3, y_plane_size * 2);
+
+  ConvertFP32ToFP16Row_NEON((const float*)orig_f, (uint16_t*)orig_y,
+                            y_plane_size);
+
+  for (j = 0; j < benchmark_iterations_; j++) {
+    ConvertFP16ToFP32Row_NEON((const uint16_t*)orig_y, (float*)dst_opt,
+                              y_plane_size);
+  }
+
+  ConvertFP32ToFP16Row_NEON((const float*)dst_opt, (uint16_t*)rec_opt,
+                            y_plane_size);
+
+  for (i = 0; i < y_plane_size; ++i) {
+    EXPECT_EQ(((const uint16_t*)orig_y)[i], ((const uint16_t*)rec_opt)[i]);
+  }
+
+  free_aligned_buffer_page_end(orig_f);
+  free_aligned_buffer_page_end(orig_y);
+  free_aligned_buffer_page_end(dst_opt);
+  free_aligned_buffer_page_end(rec_opt);
+}
+
+#endif  // defined(ENABLE_ROW_TESTS) && defined(__aarch64__)
 
 }  // namespace libyuv

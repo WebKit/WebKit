@@ -82,9 +82,9 @@ class UniformTileConfigTestLarge
     max_tile_cols_log2_ = tile_log2(1, AOM_MAX_TILE_COLS);
     max_tile_rows_log2_ = tile_log2(1, AOM_MAX_TILE_ROWS);
   }
-  virtual ~UniformTileConfigTestLarge() {}
+  ~UniformTileConfigTestLarge() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(encoding_mode_);
     const aom_rational timebase = { 1, 30 };
     cfg_.g_timebase = timebase;
@@ -93,10 +93,10 @@ class UniformTileConfigTestLarge
     cfg_.g_lag_in_frames = 19;
   }
 
-  virtual bool DoDecode() const { return 1; }
+  bool DoDecode() const override { return true; }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AV1E_SET_TILE_COLUMNS, tile_config_param_.tile_cols);
       encoder->Control(AV1E_SET_TILE_ROWS, tile_config_param_.tile_rows);
@@ -109,8 +109,8 @@ class UniformTileConfigTestLarge
     }
   }
 
-  virtual bool HandleDecodeResult(const aom_codec_err_t res_dec,
-                                  libaom_test::Decoder *decoder) {
+  bool HandleDecodeResult(const aom_codec_err_t res_dec,
+                          libaom_test::Decoder *decoder) override {
     EXPECT_EQ(AOM_CODEC_OK, res_dec) << decoder->DecodeError();
     if (AOM_CODEC_OK == res_dec) {
       aom_codec_ctx_t *ctx_dec = decoder->GetDecoder();
@@ -148,9 +148,9 @@ class NonUniformTileConfigTestLarge
         tile_config_param_(GET_PARAM(2)), rc_end_usage_(GET_PARAM(3)) {
     tile_config_violated_ = false;
   }
-  virtual ~NonUniformTileConfigTestLarge() {}
+  ~NonUniformTileConfigTestLarge() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(encoding_mode_);
     const aom_rational timebase = { 1, 30 };
     cfg_.g_timebase = timebase;
@@ -168,10 +168,10 @@ class NonUniformTileConfigTestLarge
                tile_config_param_.tile_height_count);
   }
 
-  virtual bool DoDecode() const { return 1; }
+  bool DoDecode() const override { return true; }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, 5);
       encoder->Control(AOME_SET_ENABLEAUTOALTREF, 1);
@@ -182,8 +182,8 @@ class NonUniformTileConfigTestLarge
     }
   }
 
-  virtual bool HandleDecodeResult(const aom_codec_err_t res_dec,
-                                  libaom_test::Decoder *decoder) {
+  bool HandleDecodeResult(const aom_codec_err_t res_dec,
+                          libaom_test::Decoder *decoder) override {
     EXPECT_EQ(AOM_CODEC_OK, res_dec) << decoder->DecodeError();
     if (AOM_CODEC_OK == res_dec) {
       aom_codec_ctx_t *ctx_dec = decoder->GetDecoder();
@@ -302,9 +302,9 @@ class TileGroupTestLarge
         tile_group_config_params_(GET_PARAM(2)) {
     tile_group_config_violated_ = false;
   }
-  virtual ~TileGroupTestLarge() {}
+  ~TileGroupTestLarge() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(encoding_mode_);
     const aom_rational timebase = { 1, 30 };
     cfg_.g_timebase = timebase;
@@ -312,10 +312,10 @@ class TileGroupTestLarge
     cfg_.g_threads = 1;
   }
 
-  virtual bool DoDecode() const { return 1; }
+  bool DoDecode() const override { return true; }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, 5);
       encoder->Control(AV1E_SET_NUM_TG, tile_group_config_params_.num_tg);
@@ -326,8 +326,8 @@ class TileGroupTestLarge
     }
   }
 
-  virtual bool HandleDecodeResult(const aom_codec_err_t res_dec,
-                                  libaom_test::Decoder *decoder) {
+  bool HandleDecodeResult(const aom_codec_err_t res_dec,
+                          libaom_test::Decoder *decoder) override {
     EXPECT_EQ(AOM_CODEC_OK, res_dec) << decoder->DecodeError();
     if (AOM_CODEC_OK == res_dec) {
       aom_tile_info tile_info;

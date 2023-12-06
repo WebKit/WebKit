@@ -53,11 +53,11 @@ typedef struct corner_list {
   int corners[2 * MAX_CORNERS];
 } CornerList;
 
-size_t av1_get_corner_list_size();
+size_t av1_get_corner_list_size(void);
 
-CornerList *av1_alloc_corner_list();
+CornerList *av1_alloc_corner_list(void);
 
-void av1_compute_corner_list(const ImagePyramid *pyr, CornerList *corners);
+bool av1_compute_corner_list(const ImagePyramid *pyr, CornerList *corners);
 
 #ifndef NDEBUG
 // Check if a corner list has already been computed.

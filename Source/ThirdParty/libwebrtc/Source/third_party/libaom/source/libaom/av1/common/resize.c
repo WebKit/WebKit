@@ -644,17 +644,20 @@ static void fill_arr_to_col_double_prec(double *img, int stride, int len,
   }
 }
 
-void av1_resize_plane(const uint8_t *const input, int height, int width,
+bool av1_resize_plane(const uint8_t *const input, int height, int width,
                       int in_stride, uint8_t *output, int height2, int width2,
                       int out_stride) {
   int i;
+  bool mem_status = true;
   uint8_t *intbuf = (uint8_t *)aom_malloc(sizeof(uint8_t) * width2 * height);
   uint8_t *tmpbuf =
       (uint8_t *)aom_malloc(sizeof(uint8_t) * AOMMAX(width, height));
   uint8_t *arrbuf = (uint8_t *)aom_malloc(sizeof(uint8_t) * height);
   uint8_t *arrbuf2 = (uint8_t *)aom_malloc(sizeof(uint8_t) * height2);
-  if (intbuf == NULL || tmpbuf == NULL || arrbuf == NULL || arrbuf2 == NULL)
+  if (intbuf == NULL || tmpbuf == NULL || arrbuf == NULL || arrbuf2 == NULL) {
+    mem_status = false;
     goto Error;
+  }
   assert(width > 0);
   assert(height > 0);
   assert(width2 > 0);
@@ -673,16 +676,21 @@ Error:
   aom_free(tmpbuf);
   aom_free(arrbuf);
   aom_free(arrbuf2);
+  return mem_status;
 }
 
-void av1_upscale_plane_double_prec(const double *const input, int height,
+bool av1_upscale_plane_double_prec(const double *const input, int height,
                                    int width, int in_stride, double *output,
                                    int height2, int width2, int out_stride) {
   int i;
+  bool mem_status = true;
   double *intbuf = (double *)aom_malloc(sizeof(double) * width2 * height);
   double *arrbuf = (double *)aom_malloc(sizeof(double) * height);
   double *arrbuf2 = (double *)aom_malloc(sizeof(double) * height2);
-  if (intbuf == NULL || arrbuf == NULL || arrbuf2 == NULL) goto Error;
+  if (intbuf == NULL || arrbuf == NULL || arrbuf2 == NULL) {
+    mem_status = false;
+    goto Error;
+  }
   assert(width > 0);
   assert(height > 0);
   assert(width2 > 0);
@@ -700,6 +708,7 @@ Error:
   aom_free(intbuf);
   aom_free(arrbuf);
   aom_free(arrbuf2);
+  return mem_status;
 }
 
 static bool upscale_normative_rect(const uint8_t *const input, int height,
@@ -1128,35 +1137,49 @@ void av1_resize_frame420(const uint8_t *const y, int y_stride,
                          int uv_stride, int height, int width, uint8_t *oy,
                          int oy_stride, uint8_t *ou, uint8_t *ov,
                          int ouv_stride, int oheight, int owidth) {
-  av1_resize_plane(y, height, width, y_stride, oy, oheight, owidth, oy_stride);
-  av1_resize_plane(u, height / 2, width / 2, uv_stride, ou, oheight / 2,
-                   owidth / 2, ouv_stride);
-  av1_resize_plane(v, height / 2, width / 2, uv_stride, ov, oheight / 2,
-                   owidth / 2, ouv_stride);
+  if (!av1_resize_plane(y, height, width, y_stride, oy, oheight, owidth,
+                        oy_stride))
+    abort();
+  if (!av1_resize_plane(u, height / 2, width / 2, uv_stride, ou, oheight / 2,
+                        owidth / 2, ouv_stride))
+    abort();
+  if (!av1_resize_plane(v, height / 2, width / 2, uv_stride, ov, oheight / 2,
+                        owidth / 2, ouv_stride))
+    abort();
 }
 
-void av1_resize_frame422(const uint8_t *const y, int y_stride,
+bool av1_resize_frame422(const uint8_t *const y, int y_stride,
                          const uint8_t *const u, const uint8_t *const v,
                          int uv_stride, int height, int width, uint8_t *oy,
                          int oy_stride, uint8_t *ou, uint8_t *ov,
                          int ouv_stride, int oheight, int owidth) {
-  av1_resize_plane(y, height, width, y_stride, oy, oheight, owidth, oy_stride);
-  av1_resize_plane(u, height, width / 2, uv_stride, ou, oheight, owidth / 2,
-                   ouv_stride);
-  av1_resize_plane(v, height, width / 2, uv_stride, ov, oheight, owidth / 2,
-                   ouv_stride);
+  if (!av1_resize_plane(y, height, width, y_stride, oy, oheight, owidth,
+                        oy_stride))
+    return false;
+  if (!av1_resize_plane(u, height, width / 2, uv_stride, ou, oheight,
+                        owidth / 2, ouv_stride))
+    return false;
+  if (!av1_resize_plane(v, height, width / 2, uv_stride, ov, oheight,
+                        owidth / 2, ouv_stride))
+    return false;
+  return true;
 }
 
-void av1_resize_frame444(const uint8_t *const y, int y_stride,
+bool av1_resize_frame444(const uint8_t *const y, int y_stride,
                          const uint8_t *const u, const uint8_t *const v,
                          int uv_stride, int height, int width, uint8_t *oy,
                          int oy_stride, uint8_t *ou, uint8_t *ov,
                          int ouv_stride, int oheight, int owidth) {
-  av1_resize_plane(y, height, width, y_stride, oy, oheight, owidth, oy_stride);
-  av1_resize_plane(u, height, width, uv_stride, ou, oheight, owidth,
-                   ouv_stride);
-  av1_resize_plane(v, height, width, uv_stride, ov, oheight, owidth,
-                   ouv_stride);
+  if (!av1_resize_plane(y, height, width, y_stride, oy, oheight, owidth,
+                        oy_stride))
+    return false;
+  if (!av1_resize_plane(u, height, width, uv_stride, ou, oheight, owidth,
+                        ouv_stride))
+    return false;
+  if (!av1_resize_plane(v, height, width, uv_stride, ov, oheight, owidth,
+                        ouv_stride))
+    return false;
+  return true;
 }
 
 #if CONFIG_AV1_HIGHBITDEPTH
@@ -1251,7 +1274,7 @@ void av1_resize_and_extend_frame_c(const YV12_BUFFER_CONFIG *src,
   aom_extend_frame_borders(dst, num_planes);
 }
 
-void av1_resize_and_extend_frame_nonnormative(const YV12_BUFFER_CONFIG *src,
+bool av1_resize_and_extend_frame_nonnormative(const YV12_BUFFER_CONFIG *src,
                                               YV12_BUFFER_CONFIG *dst, int bd,
                                               const int num_planes) {
   // TODO(dkovalev): replace YV12_BUFFER_CONFIG with aom_image_t
@@ -1261,25 +1284,29 @@ void av1_resize_and_extend_frame_nonnormative(const YV12_BUFFER_CONFIG *src,
   for (int i = 0; i < AOMMIN(num_planes, MAX_MB_PLANE); ++i) {
     const int is_uv = i > 0;
 #if CONFIG_AV1_HIGHBITDEPTH
-    if (src->flags & YV12_FLAG_HIGHBITDEPTH)
+    if (src->flags & YV12_FLAG_HIGHBITDEPTH) {
       av1_highbd_resize_plane(src->buffers[i], src->crop_heights[is_uv],
                               src->crop_widths[is_uv], src->strides[is_uv],
                               dst->buffers[i], dst->crop_heights[is_uv],
                               dst->crop_widths[is_uv], dst->strides[is_uv], bd);
-    else
-      av1_resize_plane(src->buffers[i], src->crop_heights[is_uv],
-                       src->crop_widths[is_uv], src->strides[is_uv],
-                       dst->buffers[i], dst->crop_heights[is_uv],
-                       dst->crop_widths[is_uv], dst->strides[is_uv]);
+    } else if (!av1_resize_plane(src->buffers[i], src->crop_heights[is_uv],
+                                 src->crop_widths[is_uv], src->strides[is_uv],
+                                 dst->buffers[i], dst->crop_heights[is_uv],
+                                 dst->crop_widths[is_uv],
+                                 dst->strides[is_uv])) {
+      return false;
+    }
 #else
     (void)bd;
-    av1_resize_plane(src->buffers[i], src->crop_heights[is_uv],
-                     src->crop_widths[is_uv], src->strides[is_uv],
-                     dst->buffers[i], dst->crop_heights[is_uv],
-                     dst->crop_widths[is_uv], dst->strides[is_uv]);
+    if (!av1_resize_plane(src->buffers[i], src->crop_heights[is_uv],
+                          src->crop_widths[is_uv], src->strides[is_uv],
+                          dst->buffers[i], dst->crop_heights[is_uv],
+                          dst->crop_widths[is_uv], dst->strides[is_uv]))
+      return false;
 #endif
   }
   aom_extend_frame_borders(dst, num_planes);
+  return true;
 }
 
 void av1_upscale_normative_rows(const AV1_COMMON *cm, const uint8_t *src,
@@ -1410,15 +1437,19 @@ YV12_BUFFER_CONFIG *av1_realloc_and_scale_if_required(
         cm->seq_params->bit_depth == AOM_BITS_8) {
       av1_resize_and_extend_frame(unscaled, scaled, filter, phase, num_planes);
     } else {
-      av1_resize_and_extend_frame_nonnormative(
-          unscaled, scaled, (int)cm->seq_params->bit_depth, num_planes);
+      if (!av1_resize_and_extend_frame_nonnormative(
+              unscaled, scaled, (int)cm->seq_params->bit_depth, num_planes))
+        aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
+                           "Failed to allocate buffers during resize");
     }
 #else
     if (use_optimized_scaler && has_optimized_scaler) {
       av1_resize_and_extend_frame(unscaled, scaled, filter, phase, num_planes);
     } else {
-      av1_resize_and_extend_frame_nonnormative(
-          unscaled, scaled, (int)cm->seq_params->bit_depth, num_planes);
+      if (!av1_resize_and_extend_frame_nonnormative(
+              unscaled, scaled, (int)cm->seq_params->bit_depth, num_planes))
+        aom_internal_error(cm->error, AOM_CODEC_MEM_ERROR,
+                           "Failed to allocate buffers during resize");
     }
 #endif
     return scaled;

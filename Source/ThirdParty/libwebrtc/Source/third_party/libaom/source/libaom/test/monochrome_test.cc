@@ -42,12 +42,12 @@ class MonochromeTest
       : EncoderTest(GET_PARAM(0)), lossless_(GET_PARAM(2)),
         frame0_psnr_y_(0.0) {}
 
-  virtual ~MonochromeTest() {}
+  ~MonochromeTest() override = default;
 
-  virtual void SetUp() { InitializeConfig(GET_PARAM(1)); }
+  void SetUp() override { InitializeConfig(GET_PARAM(1)); }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, GET_PARAM(3));
       if (mode_ == ::libaom_test::kAllIntra) {
@@ -59,8 +59,8 @@ class MonochromeTest
     }
   }
 
-  virtual void DecompressedFrameHook(const aom_image_t &img,
-                                     aom_codec_pts_t pts) {
+  void DecompressedFrameHook(const aom_image_t &img,
+                             aom_codec_pts_t pts) override {
     (void)pts;
 
     // Get value of top-left corner pixel of U plane
@@ -96,7 +96,7 @@ class MonochromeTest
     return true;
   }
 
-  virtual void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) {
+  void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) override {
     // Check average PSNR value is >= 100 db in case of lossless encoding.
     if (lossless_) {
       EXPECT_GE(pkt->data.psnr.psnr[0], kMaxPsnr);

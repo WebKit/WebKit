@@ -39,8 +39,9 @@ static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> devi
 {
     auto computePipelineDescriptor = [MTLComputePipelineDescriptor new];
     computePipelineDescriptor.computeFunction = function;
-    // FIXME: check this calculation for overflow
-    computePipelineDescriptor.maxTotalThreadsPerThreadgroup = size.width * size.height * size.depth;
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=265910 - [WebGPU] Investigate the appropriate way to set MTLComputePipelineDescriptor.maxTotalThreadsPerThreadgroup
+    // -[MTLComputePipelineDescriptor setMaxTotalThreadsPerThreadgroup:] will release assert if maxTotalThreadsPerThreadgroup > USHRT_MAX
+    computePipelineDescriptor.maxTotalThreadsPerThreadgroup = std::min<NSUInteger>(size.width * size.height * size.depth, USHRT_MAX);
     for (size_t i = 0; i < pipelineLayout.numberOfBindGroupLayouts(); ++i)
         computePipelineDescriptor.buffers[i].mutability = MTLMutabilityImmutable; // Argument buffers are always immutable in WebGPU.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=249345 don't unconditionally set this to YES

@@ -59,10 +59,10 @@ template <typename OutputType>
 class Trans4x4FDCT : public libaom_test::TransformTestBase<OutputType>,
                      public ::testing::TestWithParam<Fdct4x4Param<OutputType>> {
  public:
-  virtual ~Trans4x4FDCT() {}
+  ~Trans4x4FDCT() override = default;
 
   using TxfmBaseOutType = libaom_test::TransformTestBase<OutputType>;
-  virtual void SetUp() {
+  void SetUp() override {
     fwd_txfm_ = std::get<0>(this->GetParam());
     TxfmBaseOutType::pitch_ = 4;
     TxfmBaseOutType::height_ = 4;
@@ -71,14 +71,13 @@ class Trans4x4FDCT : public libaom_test::TransformTestBase<OutputType>,
     TxfmBaseOutType::mask_ = (1 << TxfmBaseOutType::bit_depth_) - 1;
     TxfmBaseOutType::num_coeffs_ = std::get<3>(this->GetParam());
   }
-  virtual void TearDown() {}
 
  protected:
-  void RunFwdTxfm(const int16_t *in, OutputType *out, int stride) {
+  void RunFwdTxfm(const int16_t *in, OutputType *out, int stride) override {
     fwd_txfm_(in, out, stride);
   }
 
-  void RunInvTxfm(const OutputType *out, uint8_t *dst, int stride) {
+  void RunInvTxfm(const OutputType *out, uint8_t *dst, int stride) override {
     (void)out;
     (void)dst;
     (void)stride;

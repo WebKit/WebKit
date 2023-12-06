@@ -38,7 +38,6 @@
 #include <WebCore/InputMode.h>
 #include <WebCore/LayoutPoint.h>
 #include <WebCore/LayoutSize.h>
-#include <WebCore/LengthBox.h>
 #include <WebCore/MediaSelectionOption.h>
 #include <WebCore/NetworkLoadMetrics.h>
 #include <WebCore/NotificationDirection.h>
@@ -131,7 +130,6 @@ class SystemImage;
 
 struct CompositionUnderline;
 struct DataDetectorElementInfo;
-struct Length;
 struct SoupNetworkProxySettings;
 struct TextRecognitionDataDetector;
 struct ViewportArguments;
@@ -150,11 +148,6 @@ namespace IPC {
 template<> struct ArgumentCoder<WebCore::DOMCacheEngine::Record> {
     static void encode(Encoder&, const WebCore::DOMCacheEngine::Record&);
     static std::optional<WebCore::DOMCacheEngine::Record> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::Length> {
-    static void encode(Encoder&, const WebCore::Length&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Length&);
 };
 
 template<> struct ArgumentCoder<WebCore::Credential> {

@@ -45,7 +45,7 @@ class InvalidFileTest : public ::libaom_test::DecoderTest,
  protected:
   InvalidFileTest() : DecoderTest(GET_PARAM(0)), res_file_(nullptr) {}
 
-  virtual ~InvalidFileTest() {
+  ~InvalidFileTest() override {
     if (res_file_ != nullptr) fclose(res_file_);
   }
 
@@ -55,15 +55,14 @@ class InvalidFileTest : public ::libaom_test::DecoderTest,
         << "Result file open failed. Filename: " << res_file_name;
   }
 
-  virtual void DecompressedFrameHook(const aom_image_t &img,
-                                     const unsigned int /*frame_number*/) {
+  void DecompressedFrameHook(const aom_image_t &img,
+                             const unsigned int /*frame_number*/) override {
     EXPECT_NE(img.fb_priv, nullptr);
   }
 
-  virtual bool HandleDecodeResult(
-      const aom_codec_err_t res_dec,
-      const libaom_test::CompressedVideoSource &video,
-      libaom_test::Decoder *decoder) {
+  bool HandleDecodeResult(const aom_codec_err_t res_dec,
+                          const libaom_test::CompressedVideoSource &video,
+                          libaom_test::Decoder *decoder) override {
     EXPECT_NE(res_file_, nullptr);
     int expected_res_dec = -1;
 
@@ -95,9 +94,9 @@ class InvalidFileTest : public ::libaom_test::DecoderTest,
     return !HasFailure();
   }
 
-  virtual void HandlePeekResult(libaom_test::Decoder *const /*decoder*/,
-                                libaom_test::CompressedVideoSource * /*video*/,
-                                const aom_codec_err_t /*res_peek*/) {}
+  void HandlePeekResult(libaom_test::Decoder *const /*decoder*/,
+                        libaom_test::CompressedVideoSource * /*video*/,
+                        const aom_codec_err_t /*res_peek*/) override {}
 
   void RunTest() {
     const DecodeParam input = GET_PARAM(1);

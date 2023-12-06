@@ -255,6 +255,7 @@ public:
         ExplicitlySetAttrElementsMap = 1 << 24,
         Popover = 1 << 25,
         DisplayContentsStyle = 1 << 26,
+        CustomStateSet = 1 << 27,
     };
 #endif
 

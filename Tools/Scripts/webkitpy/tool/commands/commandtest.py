@@ -30,9 +30,9 @@
 import logging
 import unittest
 
-from webkitcorepy import OutputCapture
-
 from webkitpy.tool.mocktool import MockOptions, MockTool
+
+from webkitcorepy import OutputCapture
 
 
 class CommandsTest(unittest.TestCase):

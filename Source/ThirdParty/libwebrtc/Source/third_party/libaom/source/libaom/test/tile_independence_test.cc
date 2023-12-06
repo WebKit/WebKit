@@ -47,15 +47,15 @@ class TileIndependenceTest
     }
   }
 
-  virtual ~TileIndependenceTest() {
+  ~TileIndependenceTest() override {
     delete fw_dec_;
     delete inv_dec_;
   }
 
-  virtual void SetUp() { InitializeConfig(libaom_test::kTwoPassGood); }
+  void SetUp() override { InitializeConfig(libaom_test::kTwoPassGood); }
 
-  virtual void PreEncodeFrameHook(libaom_test::VideoSource *video,
-                                  libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(libaom_test::VideoSource *video,
+                          libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AV1E_SET_TILE_COLUMNS, n_tile_cols_);
       encoder->Control(AV1E_SET_TILE_ROWS, n_tile_rows_);
@@ -82,7 +82,7 @@ class TileIndependenceTest
     md5->Add(img);
   }
 
-  virtual void FramePktHook(const aom_codec_cx_pkt_t *pkt) {
+  void FramePktHook(const aom_codec_cx_pkt_t *pkt) override {
     UpdateMD5(fw_dec_, pkt, &md5_fw_order_);
     UpdateMD5(inv_dec_, pkt, &md5_inv_order_);
   }
@@ -123,7 +123,7 @@ TEST_P(TileIndependenceTest, MD5Match) {
 }
 
 class TileIndependenceTestLarge : public TileIndependenceTest {
-  virtual void SetCpuUsed(libaom_test::Encoder *encoder) {
+  void SetCpuUsed(libaom_test::Encoder *encoder) override {
     static const int kCpuUsed = 0;
     encoder->Control(AOME_SET_CPUUSED, kCpuUsed);
   }

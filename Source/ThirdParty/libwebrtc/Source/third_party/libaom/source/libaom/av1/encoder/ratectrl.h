@@ -204,6 +204,13 @@ typedef struct {
 
   int decimation_factor;
   int decimation_count;
+  int prev_frame_is_dropped;
+
+  /*!
+   * Frame number for encoded frames (non-dropped).
+   * Use for setting the rtc reference structure.
+   */
+  unsigned int frame_number_encoded;
 
   /*!\endcond */
   /*!
@@ -470,11 +477,6 @@ typedef struct {
    */
   int temp_extend_maxq;
 
-  /*!
-   * Temporary variable used in simulating the delayed update of
-   * extend_minq_fast.
-   */
-  int temp_extend_minq_fast;
 #endif
   /*!
    * Proposed minimum allowed Q different layers in a coding pyramid

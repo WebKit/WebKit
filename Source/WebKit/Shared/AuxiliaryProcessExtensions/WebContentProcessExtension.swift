@@ -27,12 +27,22 @@ import ServiceExtensions
 @_spi(Private) import ServiceExtensions
 
 @main
-class WebContentProcessExtension {
-    required init() {}
+class WebContentProcessExtension : WKProcessExtension {
+    override required init() {
+        super.init()
+        setSharedInstance(self)
+    }
 }
+
 
 extension WebContentProcessExtension: ContentServiceExtension {
     func handle(xpcConnection: xpc_connection_t) {
         handleNewConnection(xpcConnection)
+    }
+
+    override func lockdownSandbox(_ version: String) {
+        if let lockdownVersion = _LockdownVersion(rawValue: version) {
+            self._lockdown(version: lockdownVersion)
+        }
     }
 }

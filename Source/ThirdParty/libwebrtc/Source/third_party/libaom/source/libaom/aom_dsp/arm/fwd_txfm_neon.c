@@ -69,7 +69,7 @@ static void aom_fdct4x4_helper(const int16_t *input, int stride,
 
     // Only transpose the first pass
     if (i == 0) {
-      transpose_s16_4x4d(&out_0, &out_1, &out_2, &out_3);
+      transpose_elems_inplace_s16_4x4(&out_0, &out_1, &out_2, &out_3);
     }
 
     *input_0 = out_0;

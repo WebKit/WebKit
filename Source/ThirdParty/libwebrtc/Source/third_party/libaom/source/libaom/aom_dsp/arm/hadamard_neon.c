@@ -37,7 +37,7 @@ void aom_hadamard_4x4_neon(const int16_t *src_diff, ptrdiff_t src_stride,
 
   hadamard_4x4_one_pass(&a0, &a1, &a2, &a3);
 
-  transpose_s16_4x4d(&a0, &a1, &a2, &a3);
+  transpose_elems_inplace_s16_4x4(&a0, &a1, &a2, &a3);
 
   hadamard_4x4_one_pass(&a0, &a1, &a2, &a3);
 
@@ -91,7 +91,7 @@ void aom_hadamard_8x8_neon(const int16_t *src_diff, ptrdiff_t src_stride,
 
   hadamard8x8_one_pass(&a0, &a1, &a2, &a3, &a4, &a5, &a6, &a7);
 
-  transpose_s16_8x8(&a0, &a1, &a2, &a3, &a4, &a5, &a6, &a7);
+  transpose_elems_inplace_s16_8x8(&a0, &a1, &a2, &a3, &a4, &a5, &a6, &a7);
 
   hadamard8x8_one_pass(&a0, &a1, &a2, &a3, &a4, &a5, &a6, &a7);
 
@@ -120,7 +120,7 @@ void aom_hadamard_lp_8x8_neon(const int16_t *src_diff, ptrdiff_t src_stride,
 
   hadamard8x8_one_pass(&a0, &a1, &a2, &a3, &a4, &a5, &a6, &a7);
 
-  transpose_s16_8x8(&a0, &a1, &a2, &a3, &a4, &a5, &a6, &a7);
+  transpose_elems_inplace_s16_8x8(&a0, &a1, &a2, &a3, &a4, &a5, &a6, &a7);
 
   hadamard8x8_one_pass(&a0, &a1, &a2, &a3, &a4, &a5, &a6, &a7);
 
@@ -196,56 +196,90 @@ void aom_hadamard_16x16_neon(const int16_t *src_diff, ptrdiff_t src_stride,
   /* Bottom right. */
   aom_hadamard_8x8_neon(src_diff + 8 + 8 * src_stride, src_stride, coeff + 192);
 
+  // Each iteration of the loop operates on entire rows (16 samples each)
+  // because we need to swap the second and third quarters of every row in the
+  // output to match AVX2 output (i.e., aom_hadamard_16x16_avx2). See the for
+  // loop at the end of aom_hadamard_16x16_c.
   for (int i = 0; i < 64; i += 16) {
-    const int16x8_t a00 = load_tran_low_to_s16q(coeff + 0);
-    const int16x8_t a01 = load_tran_low_to_s16q(coeff + 64);
-    const int16x8_t a02 = load_tran_low_to_s16q(coeff + 128);
-    const int16x8_t a03 = load_tran_low_to_s16q(coeff + 192);
+    const int32x4_t a00 = vld1q_s32(coeff + 0);
+    const int32x4_t a01 = vld1q_s32(coeff + 64);
+    const int32x4_t a02 = vld1q_s32(coeff + 128);
+    const int32x4_t a03 = vld1q_s32(coeff + 192);
 
-    const int16x8_t b00 = vhaddq_s16(a00, a01);
-    const int16x8_t b01 = vhsubq_s16(a00, a01);
-    const int16x8_t b02 = vhaddq_s16(a02, a03);
-    const int16x8_t b03 = vhsubq_s16(a02, a03);
+    const int32x4_t b00 = vhaddq_s32(a00, a01);
+    const int32x4_t b01 = vhsubq_s32(a00, a01);
+    const int32x4_t b02 = vhaddq_s32(a02, a03);
+    const int32x4_t b03 = vhsubq_s32(a02, a03);
 
-    const int16x8_t c00 = vaddq_s16(b00, b02);
-    const int16x8_t c01 = vaddq_s16(b01, b03);
-    const int16x8_t c02 = vsubq_s16(b00, b02);
-    const int16x8_t c03 = vsubq_s16(b01, b03);
+    const int32x4_t c00 = vaddq_s32(b00, b02);
+    const int32x4_t c01 = vaddq_s32(b01, b03);
+    const int32x4_t c02 = vsubq_s32(b00, b02);
+    const int32x4_t c03 = vsubq_s32(b01, b03);
 
-    const int16x8_t a10 = load_tran_low_to_s16q(coeff + 8 + 0);
-    const int16x8_t a11 = load_tran_low_to_s16q(coeff + 8 + 64);
-    const int16x8_t a12 = load_tran_low_to_s16q(coeff + 8 + 128);
-    const int16x8_t a13 = load_tran_low_to_s16q(coeff + 8 + 192);
+    const int32x4_t a10 = vld1q_s32(coeff + 4 + 0);
+    const int32x4_t a11 = vld1q_s32(coeff + 4 + 64);
+    const int32x4_t a12 = vld1q_s32(coeff + 4 + 128);
+    const int32x4_t a13 = vld1q_s32(coeff + 4 + 192);
 
-    const int16x8_t b10 = vhaddq_s16(a10, a11);
-    const int16x8_t b11 = vhsubq_s16(a10, a11);
-    const int16x8_t b12 = vhaddq_s16(a12, a13);
-    const int16x8_t b13 = vhsubq_s16(a12, a13);
+    const int32x4_t b10 = vhaddq_s32(a10, a11);
+    const int32x4_t b11 = vhsubq_s32(a10, a11);
+    const int32x4_t b12 = vhaddq_s32(a12, a13);
+    const int32x4_t b13 = vhsubq_s32(a12, a13);
 
-    const int16x8_t c10 = vaddq_s16(b10, b12);
-    const int16x8_t c11 = vaddq_s16(b11, b13);
-    const int16x8_t c12 = vsubq_s16(b10, b12);
-    const int16x8_t c13 = vsubq_s16(b11, b13);
+    const int32x4_t c10 = vaddq_s32(b10, b12);
+    const int32x4_t c11 = vaddq_s32(b11, b13);
+    const int32x4_t c12 = vsubq_s32(b10, b12);
+    const int32x4_t c13 = vsubq_s32(b11, b13);
 
-    store_s16_to_tran_low(coeff + 0 + 0, vget_low_s16(c00));
-    store_s16_to_tran_low(coeff + 0 + 4, vget_low_s16(c10));
-    store_s16_to_tran_low(coeff + 0 + 8, vget_high_s16(c00));
-    store_s16_to_tran_low(coeff + 0 + 12, vget_high_s16(c10));
+    const int32x4_t a20 = vld1q_s32(coeff + 8 + 0);
+    const int32x4_t a21 = vld1q_s32(coeff + 8 + 64);
+    const int32x4_t a22 = vld1q_s32(coeff + 8 + 128);
+    const int32x4_t a23 = vld1q_s32(coeff + 8 + 192);
 
-    store_s16_to_tran_low(coeff + 64 + 0, vget_low_s16(c01));
-    store_s16_to_tran_low(coeff + 64 + 4, vget_low_s16(c11));
-    store_s16_to_tran_low(coeff + 64 + 8, vget_high_s16(c01));
-    store_s16_to_tran_low(coeff + 64 + 12, vget_high_s16(c11));
+    const int32x4_t b20 = vhaddq_s32(a20, a21);
+    const int32x4_t b21 = vhsubq_s32(a20, a21);
+    const int32x4_t b22 = vhaddq_s32(a22, a23);
+    const int32x4_t b23 = vhsubq_s32(a22, a23);
 
-    store_s16_to_tran_low(coeff + 128 + 0, vget_low_s16(c02));
-    store_s16_to_tran_low(coeff + 128 + 4, vget_low_s16(c12));
-    store_s16_to_tran_low(coeff + 128 + 8, vget_high_s16(c02));
-    store_s16_to_tran_low(coeff + 128 + 12, vget_high_s16(c12));
+    const int32x4_t c20 = vaddq_s32(b20, b22);
+    const int32x4_t c21 = vaddq_s32(b21, b23);
+    const int32x4_t c22 = vsubq_s32(b20, b22);
+    const int32x4_t c23 = vsubq_s32(b21, b23);
 
-    store_s16_to_tran_low(coeff + 192 + 0, vget_low_s16(c03));
-    store_s16_to_tran_low(coeff + 192 + 4, vget_low_s16(c13));
-    store_s16_to_tran_low(coeff + 192 + 8, vget_high_s16(c03));
-    store_s16_to_tran_low(coeff + 192 + 12, vget_high_s16(c13));
+    const int32x4_t a30 = vld1q_s32(coeff + 12 + 0);
+    const int32x4_t a31 = vld1q_s32(coeff + 12 + 64);
+    const int32x4_t a32 = vld1q_s32(coeff + 12 + 128);
+    const int32x4_t a33 = vld1q_s32(coeff + 12 + 192);
+
+    const int32x4_t b30 = vhaddq_s32(a30, a31);
+    const int32x4_t b31 = vhsubq_s32(a30, a31);
+    const int32x4_t b32 = vhaddq_s32(a32, a33);
+    const int32x4_t b33 = vhsubq_s32(a32, a33);
+
+    const int32x4_t c30 = vaddq_s32(b30, b32);
+    const int32x4_t c31 = vaddq_s32(b31, b33);
+    const int32x4_t c32 = vsubq_s32(b30, b32);
+    const int32x4_t c33 = vsubq_s32(b31, b33);
+
+    vst1q_s32(coeff + 0 + 0, c00);
+    vst1q_s32(coeff + 0 + 4, c20);
+    vst1q_s32(coeff + 0 + 8, c10);
+    vst1q_s32(coeff + 0 + 12, c30);
+
+    vst1q_s32(coeff + 64 + 0, c01);
+    vst1q_s32(coeff + 64 + 4, c21);
+    vst1q_s32(coeff + 64 + 8, c11);
+    vst1q_s32(coeff + 64 + 12, c31);
+
+    vst1q_s32(coeff + 128 + 0, c02);
+    vst1q_s32(coeff + 128 + 4, c22);
+    vst1q_s32(coeff + 128 + 8, c12);
+    vst1q_s32(coeff + 128 + 12, c32);
+
+    vst1q_s32(coeff + 192 + 0, c03);
+    vst1q_s32(coeff + 192 + 4, c23);
+    vst1q_s32(coeff + 192 + 8, c13);
+    vst1q_s32(coeff + 192 + 12, c33);
 
     coeff += 16;
   }
@@ -265,27 +299,27 @@ void aom_hadamard_32x32_neon(const int16_t *src_diff, ptrdiff_t src_stride,
   aom_hadamard_16x16_neon(src_diff + 16 + 16 * src_stride, src_stride,
                           coeff + 768);
 
-  for (int i = 0; i < 256; i += 8) {
-    const int16x8_t a0 = load_tran_low_to_s16q(coeff);
-    const int16x8_t a1 = load_tran_low_to_s16q(coeff + 256);
-    const int16x8_t a2 = load_tran_low_to_s16q(coeff + 512);
-    const int16x8_t a3 = load_tran_low_to_s16q(coeff + 768);
+  for (int i = 0; i < 256; i += 4) {
+    const int32x4_t a0 = vld1q_s32(coeff);
+    const int32x4_t a1 = vld1q_s32(coeff + 256);
+    const int32x4_t a2 = vld1q_s32(coeff + 512);
+    const int32x4_t a3 = vld1q_s32(coeff + 768);
 
-    const int16x8_t b0 = vshrq_n_s16(vaddq_s16(a0, a1), 2);
-    const int16x8_t b1 = vshrq_n_s16(vsubq_s16(a0, a1), 2);
-    const int16x8_t b2 = vshrq_n_s16(vaddq_s16(a2, a3), 2);
-    const int16x8_t b3 = vshrq_n_s16(vsubq_s16(a2, a3), 2);
+    const int32x4_t b0 = vshrq_n_s32(vaddq_s32(a0, a1), 2);
+    const int32x4_t b1 = vshrq_n_s32(vsubq_s32(a0, a1), 2);
+    const int32x4_t b2 = vshrq_n_s32(vaddq_s32(a2, a3), 2);
+    const int32x4_t b3 = vshrq_n_s32(vsubq_s32(a2, a3), 2);
 
-    const int16x8_t c0 = vaddq_s16(b0, b2);
-    const int16x8_t c1 = vaddq_s16(b1, b3);
-    const int16x8_t c2 = vsubq_s16(b0, b2);
-    const int16x8_t c3 = vsubq_s16(b1, b3);
+    const int32x4_t c0 = vaddq_s32(b0, b2);
+    const int32x4_t c1 = vaddq_s32(b1, b3);
+    const int32x4_t c2 = vsubq_s32(b0, b2);
+    const int32x4_t c3 = vsubq_s32(b1, b3);
 
-    store_s16q_to_tran_low(coeff + 0, c0);
-    store_s16q_to_tran_low(coeff + 256, c1);
-    store_s16q_to_tran_low(coeff + 512, c2);
-    store_s16q_to_tran_low(coeff + 768, c3);
+    vst1q_s32(coeff + 0, c0);
+    vst1q_s32(coeff + 256, c1);
+    vst1q_s32(coeff + 512, c2);
+    vst1q_s32(coeff + 768, c3);
 
-    coeff += 8;
+    coeff += 4;
   }
 }

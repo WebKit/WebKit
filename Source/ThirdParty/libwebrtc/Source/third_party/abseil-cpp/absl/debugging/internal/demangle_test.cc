@@ -17,10 +17,11 @@
 #include <cstdlib>
 #include <string>
 
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "absl/base/config.h"
-#include "absl/base/internal/raw_logging.h"
 #include "absl/debugging/internal/stack_consumption.h"
+#include "absl/log/log.h"
 #include "absl/memory/memory.h"
 
 namespace absl {
@@ -28,15 +29,7 @@ ABSL_NAMESPACE_BEGIN
 namespace debugging_internal {
 namespace {
 
-// A wrapper function for Demangle() to make the unit test simple.
-static const char *DemangleIt(const char * const mangled) {
-  static char demangled[4096];
-  if (Demangle(mangled, demangled, sizeof(demangled))) {
-    return demangled;
-  } else {
-    return mangled;
-  }
-}
+using ::testing::ContainsRegex;
 
 // Test corner cases of boundary conditions.
 TEST(Demangle, CornerCases) {
@@ -151,7 +144,7 @@ static const char *DemangleStackConsumption(const char *mangled,
                                             int *stack_consumed) {
   g_mangled = mangled;
   *stack_consumed = GetSignalHandlerStackConsumption(DemangleSignalHandler);
-  ABSL_RAW_LOG(INFO, "Stack consumption of Demangle: %d", *stack_consumed);
+  LOG(INFO) << "Stack consumption of Demangle: " << *stack_consumed;
   return g_demangle_result;
 }
 
@@ -235,6 +228,25 @@ TEST(DemangleRegression, DeeplyNestedArrayType) {
     data += "A1_";
   }
   TestOnInput(data.c_str());
+}
+
+struct Base {
+  virtual ~Base() = default;
+};
+
+struct Derived : public Base {};
+
+TEST(DemangleStringTest, SupportsSymbolNameReturnedByTypeId) {
+  EXPECT_EQ(DemangleString(typeid(int).name()), "int");
+  // We want to test that `DemangleString` can demangle the symbol names
+  // returned by `typeid`, but without hard-coding the actual demangled values
+  // (because they are platform-specific).
+  EXPECT_THAT(
+      DemangleString(typeid(Base).name()),
+      ContainsRegex("absl.*debugging_internal.*anonymous namespace.*::Base"));
+  EXPECT_THAT(DemangleString(typeid(Derived).name()),
+              ContainsRegex(
+                  "absl.*debugging_internal.*anonymous namespace.*::Derived"));
 }
 
 }  // namespace

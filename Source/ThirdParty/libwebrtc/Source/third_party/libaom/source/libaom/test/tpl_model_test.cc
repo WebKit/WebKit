@@ -202,6 +202,7 @@ TEST(TplModelTest, TxfmStatsInitTest) {
   }
 }
 
+#if CONFIG_BITRATE_ACCURACY
 TEST(TplModelTest, TxfmStatsAccumulateTest) {
   TplTxfmStats sub_stats;
   av1_init_tpl_txfm_stats(&sub_stats);
@@ -248,6 +249,7 @@ TEST(TplModelTest, TxfmStatsRecordTest) {
     EXPECT_DOUBLE_EQ(stats2.abs_coeff_sum[i], 2 * stats1.abs_coeff_sum[i]);
   }
 }
+#endif  // CONFIG_BITRATE_ACCURACY
 
 TEST(TplModelTest, ComputeMVDifferenceTest) {
   TplDepFrame tpl_frame_small;
@@ -418,7 +420,7 @@ int find_gop_q_iterative(double bit_budget, aom_bit_depth_t bit_depth,
   double min_bits_diff = fabs(curr_estimate - bit_budget);
   // Start at q = 254 because we already have an estimate for q = 255.
   for (int q = 254; q >= 0; q--) {
-    double curr_estimate = av1_vbr_rc_info_estimate_gop_bitrate(
+    curr_estimate = av1_vbr_rc_info_estimate_gop_bitrate(
         q, bit_depth, update_type_scale_factors, frame_count, update_type_list,
         qstep_ratio_list, stats_list, q_index_list, estimated_bitrate_byframe);
     double bits_diff = fabs(curr_estimate - bit_budget);

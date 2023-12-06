@@ -250,7 +250,7 @@ static INLINE void fill_border(uint8_t *img_buf, const int width,
 
 // Compute coarse to fine pyramids for a frame
 // This must only be called while holding frame_pyr->mutex
-static INLINE void fill_pyramid(const YV12_BUFFER_CONFIG *frame, int bit_depth,
+static INLINE bool fill_pyramid(const YV12_BUFFER_CONFIG *frame, int bit_depth,
                                 ImagePyramid *frame_pyr) {
   int n_levels = frame_pyr->n_levels;
   const int frame_width = frame->y_crop_width;
@@ -312,11 +312,13 @@ static INLINE void fill_pyramid(const YV12_BUFFER_CONFIG *frame, int bit_depth,
     // 2) Up/downsampling by a factor of 2 can be implemented much more
     //    efficiently than up/downsampling by a generic ratio.
     //    TODO(rachelbarker): Use optimized downsample-by-2 function
-    av1_resize_plane(prev_buffer, this_height << 1, this_width << 1,
-                     prev_stride, this_buffer, this_height, this_width,
-                     this_stride);
+    if (!av1_resize_plane(prev_buffer, this_height << 1, this_width << 1,
+                          prev_stride, this_buffer, this_height, this_width,
+                          this_stride))
+      return false;
     fill_border(this_buffer, this_width, this_height, this_stride);
   }
+  return true;
 }
 
 // Fill out a downsampling pyramid for a given frame.
@@ -331,7 +333,7 @@ static INLINE void fill_pyramid(const YV12_BUFFER_CONFIG *frame, int bit_depth,
 //
 // However, if the input frame has a side of length < MIN_PYRAMID_SIZE,
 // we will still construct the top level.
-void aom_compute_pyramid(const YV12_BUFFER_CONFIG *frame, int bit_depth,
+bool aom_compute_pyramid(const YV12_BUFFER_CONFIG *frame, int bit_depth,
                          ImagePyramid *pyr) {
   assert(pyr);
 
@@ -344,9 +346,9 @@ void aom_compute_pyramid(const YV12_BUFFER_CONFIG *frame, int bit_depth,
 #endif  // CONFIG_MULTITHREAD
 
   if (!pyr->valid) {
-    fill_pyramid(frame, bit_depth, pyr);
-    pyr->valid = true;
+    pyr->valid = fill_pyramid(frame, bit_depth, pyr);
   }
+  bool valid = pyr->valid;
 
   // At this point, the pyramid is guaranteed to be valid, and can be safely
   // read from without holding the mutex any more
@@ -354,6 +356,7 @@ void aom_compute_pyramid(const YV12_BUFFER_CONFIG *frame, int bit_depth,
 #if CONFIG_MULTITHREAD
   pthread_mutex_unlock(&pyr->mutex);
 #endif  // CONFIG_MULTITHREAD
+  return valid;
 }
 
 #ifndef NDEBUG

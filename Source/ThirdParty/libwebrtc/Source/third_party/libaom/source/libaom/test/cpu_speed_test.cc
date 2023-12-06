@@ -28,19 +28,19 @@ class CpuSpeedTest
       : EncoderTest(GET_PARAM(0)), encoding_mode_(GET_PARAM(1)),
         set_cpu_used_(GET_PARAM(2)), min_psnr_(kMaxPSNR),
         tune_content_(AOM_CONTENT_DEFAULT) {}
-  virtual ~CpuSpeedTest() {}
+  ~CpuSpeedTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(encoding_mode_);
     if (encoding_mode_ != ::libaom_test::kRealTime) {
       cfg_.g_lag_in_frames = 25;
     }
   }
 
-  virtual void BeginPassHook(unsigned int /*pass*/) { min_psnr_ = kMaxPSNR; }
+  void BeginPassHook(unsigned int /*pass*/) override { min_psnr_ = kMaxPSNR; }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, set_cpu_used_);
       encoder->Control(AV1E_SET_TUNE_CONTENT, tune_content_);
@@ -52,7 +52,7 @@ class CpuSpeedTest
     }
   }
 
-  virtual void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) {
+  void PSNRPktHook(const aom_codec_cx_pkt_t *pkt) override {
     if (pkt->data.psnr.psnr[0] < min_psnr_) min_psnr_ = pkt->data.psnr.psnr[0];
   }
 

@@ -906,12 +906,13 @@ OPENSSL_EXPORT const ASN1_INTEGER *X509_get0_authority_serial(X509 *x509);
 
 OPENSSL_EXPORT int X509_PURPOSE_get_count(void);
 OPENSSL_EXPORT X509_PURPOSE *X509_PURPOSE_get0(int idx);
-OPENSSL_EXPORT int X509_PURPOSE_get_by_sname(char *sname);
+OPENSSL_EXPORT int X509_PURPOSE_get_by_sname(const char *sname);
 OPENSSL_EXPORT int X509_PURPOSE_get_by_id(int id);
 OPENSSL_EXPORT int X509_PURPOSE_add(int id, int trust, int flags,
                                     int (*ck)(const X509_PURPOSE *,
                                               const X509 *, int),
-                                    char *name, char *sname, void *arg);
+                                    const char *name, const char *sname,
+                                    void *arg);
 OPENSSL_EXPORT char *X509_PURPOSE_get0_name(const X509_PURPOSE *xp);
 OPENSSL_EXPORT char *X509_PURPOSE_get0_sname(const X509_PURPOSE *xp);
 OPENSSL_EXPORT int X509_PURPOSE_get_trust(const X509_PURPOSE *xp);

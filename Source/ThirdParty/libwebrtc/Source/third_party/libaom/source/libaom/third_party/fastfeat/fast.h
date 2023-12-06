@@ -37,10 +37,14 @@ typedef unsigned char byte;
 
 int aom_fast9_corner_score(const byte* p, const int pixel[], int bstart);
 
+// Returns NULL on memory allocation failure.
 xy* aom_fast9_detect(const byte* im, int xsize, int ysize, int stride, int b, int* ret_num_corners);
 
-int* aom_fast9_score(const byte* i, int stride, xy* corners, int num_corners, int b);
+// If num_corners > 0, returns NULL on memory allocation failure.
+int* aom_fast9_score(const byte* i, int stride, const xy* corners, int num_corners, int b);
 
+// Sets *ret_num_corners to -1 (and returns NULL) on memory allocation failure.
+// Sets *ret_num_corners to 0 if nothing went wrong but no corners were found.
 xy* aom_fast9_detect_nonmax(const byte* im, int xsize, int ysize, int stride, int b,
                             int** ret_scores, int* ret_num_corners);
 

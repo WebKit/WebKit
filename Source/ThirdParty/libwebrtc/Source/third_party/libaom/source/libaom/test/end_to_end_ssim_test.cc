@@ -66,7 +66,7 @@ class EndToEndSSIMTest
         test_video_param_(GET_PARAM(2)), cpu_used_(GET_PARAM(3)), nframes_(0),
         ssim_(0.0) {}
 
-  ~EndToEndSSIMTest() override {}
+  ~EndToEndSSIMTest() override = default;
 
   void SetUp() override { InitializeConfig(encoding_mode_); }
 

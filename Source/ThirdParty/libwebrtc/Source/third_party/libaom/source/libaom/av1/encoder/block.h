@@ -1322,6 +1322,12 @@ typedef struct macroblock {
   uint8_t color_sensitivity_sb_alt[MAX_MB_PLANE - 1];
   //! Color sensitivity flag for the coding block.
   uint8_t color_sensitivity[MAX_MB_PLANE - 1];
+  //! Coding block distortion value for uv/color, minimum over the inter modes.
+  int64_t min_dist_inter_uv;
+
+  //! The buffer used by search_tx_type() to swap dqcoeff in macroblockd_plane
+  // so we can keep dqcoeff of the best tx_type.
+  tran_low_t *dqcoeff_buf;
   /**@}*/
 
   /*****************************************************************************
@@ -1330,6 +1336,18 @@ typedef struct macroblock {
   /**@{*/
   //! Variance of the source frame.
   unsigned int source_variance;
+  //! Flag to indicate coding block is zero sad.
+  int block_is_zero_sad;
+  //! Flag to indicate superblock ME in variance partition is determined to be
+  // good/reliable, and so the superblock MV will be tested in the
+  // nonrd_pickmode. This is only used for LAST_FRAME.
+  int sb_me_partition;
+  //! Flag to indicate to test the superblock MV for the coding block in the
+  // nonrd_pickmode.
+  int sb_me_block;
+  //! Motion vector from superblock MV derived from int_pro_motion() in
+  // the variance_partitioning.
+  int_mv sb_me_mv;
   //! SSE of the current predictor.
   unsigned int pred_sse[REF_FRAMES];
   //! Prediction for ML based partition.
@@ -1366,6 +1384,16 @@ typedef struct macroblock {
    * fast encoding stage for screen content tool detemination.
    */
   int palette_pixels;
+
+  /*!\brief Pointer to the structure which stores the statistics used by
+   * sb-level multi-pass encoding.
+   */
+  struct SB_FIRST_PASS_STATS *sb_stats_cache;
+
+  /*!\brief Pointer to the structure which stores the statistics used by
+   * first-pass when superblock is searched twice consecutively.
+   */
+  struct SB_FIRST_PASS_STATS *sb_fp_stats;
 } MACROBLOCK;
 #undef SINGLE_REF_MODES
 

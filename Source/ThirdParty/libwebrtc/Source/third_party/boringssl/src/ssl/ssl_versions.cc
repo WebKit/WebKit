@@ -85,10 +85,14 @@ bool ssl_method_supports_version(const SSL_PROTOCOL_METHOD *method,
 // The following functions map between API versions and wire versions. The
 // public API works on wire versions.
 
-static const struct {
+static const char* kUnknownVersion = "unknown";
+
+struct VersionInfo {
   uint16_t version;
   const char *name;
-} kVersionNames[] = {
+};
+
+static const VersionInfo kVersionNames[] = {
     {TLS1_3_VERSION, "TLSv1.3"},
     {TLS1_2_VERSION, "TLSv1.2"},
     {TLS1_1_VERSION, "TLSv1.1"},
@@ -103,7 +107,7 @@ static const char *ssl_version_to_string(uint16_t version) {
       return v.name;
     }
   }
-  return "unknown";
+  return kUnknownVersion;
 }
 
 static uint16_t wire_version_to_api(uint16_t version) {
@@ -383,17 +387,8 @@ const char *SSL_get_version(const SSL *ssl) {
 }
 
 size_t SSL_get_all_version_names(const char **out, size_t max_out) {
-  auto span = MakeSpan(out, max_out);
-  if (!span.empty()) {
-    // |ssl_version_to_string| returns "unknown" for unknown versions.
-    span[0] = "unknown";
-    span = span.subspan(1);
-  }
-  span = span.subspan(0, OPENSSL_ARRAY_SIZE(kVersionNames));
-  for (size_t i = 0; i < span.size(); i++) {
-    span[i] = kVersionNames[i].name;
-  }
-  return 1 + OPENSSL_ARRAY_SIZE(kVersionNames);
+  return GetAllNames(out, max_out, MakeConstSpan(&kUnknownVersion, 1),
+                     &VersionInfo::name, MakeConstSpan(kVersionNames));
 }
 
 const char *SSL_SESSION_get_version(const SSL_SESSION *session) {

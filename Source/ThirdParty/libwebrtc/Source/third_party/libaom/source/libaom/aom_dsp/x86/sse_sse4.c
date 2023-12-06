@@ -13,6 +13,7 @@
 #include <smmintrin.h>
 
 #include "config/aom_config.h"
+#include "config/aom_dsp_rtcd.h"
 
 #include "aom_ports/mem.h"
 #include "aom/aom_integer.h"
@@ -62,6 +63,7 @@ static INLINE void sse4x2_sse4_1(const uint8_t *a, int a_stride,
   const __m128i v_d_w = _mm_sub_epi16(v_a_w, v_b_w);
   *sum = _mm_add_epi32(*sum, _mm_madd_epi16(v_d_w, v_d_w));
 }
+
 static INLINE void sse8_sse4_1(const uint8_t *a, const uint8_t *b,
                                __m128i *sum) {
   const __m128i v_a0 = xx_loadl_64(a);

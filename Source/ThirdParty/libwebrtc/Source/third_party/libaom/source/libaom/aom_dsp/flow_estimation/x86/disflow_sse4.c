@@ -24,7 +24,7 @@
 // If you set this to 1 and compile in debug mode, then the outputs of the two
 // convolution stages will be checked against the plain C version of the code,
 // and an assertion will be fired if the results differ.
-#define CHECK_RESULTS 1
+#define CHECK_RESULTS 0
 
 // Note: Max sum(+ve coefficients) = 1.125 * scale
 static INLINE void get_cubic_kernel_dbl(double x, double *kernel) {
@@ -61,11 +61,22 @@ static INLINE int get_cubic_value_int(const int *p, const int16_t *kernel) {
 //
 // TODO(rachelbarker): Test speed/quality impact of using bilinear interpolation
 // instad of bicubic interpolation
-static INLINE void compute_flow_error(const uint8_t *src, const uint8_t *ref,
-                                      int width, int height, int stride, int x,
-                                      int y, double u, double v, int16_t *dt) {
+static INLINE void compute_flow_vector(const uint8_t *src, const uint8_t *ref,
+                                       int width, int height, int stride, int x,
+                                       int y, double u, double v,
+                                       const int16_t *dx, const int16_t *dy,
+                                       int *b) {
   // This function is written to do 8x8 convolutions only
   assert(DISFLOW_PATCH_SIZE == 8);
+
+  // Accumulate 4 32-bit partial sums for each element of b
+  // These will be flattened at the end.
+  __m128i b0_acc = _mm_setzero_si128();
+  __m128i b1_acc = _mm_setzero_si128();
+#if CHECK_RESULTS
+  // Also keep a running sum using the C algorithm, for cross-checking
+  int c_result[2] = { 0 };
+#endif  // CHECK_RESULTS
 
   // Split offset into integer and fractional parts, and compute cubic
   // interpolation kernels
@@ -231,10 +242,20 @@ static INLINE void compute_flow_error(const uint8_t *src, const uint8_t *ref,
     __m128i src_pixels = _mm_slli_epi16(_mm_cvtepu8_epi16(src_pixels_u8), 3);
 
     // Calculate delta from the target patch
-    __m128i err = _mm_sub_epi16(warped, src_pixels);
-    _mm_storeu_si128((__m128i *)&dt[i * DISFLOW_PATCH_SIZE], err);
+    __m128i dt = _mm_sub_epi16(warped, src_pixels);
+
+    // Load 8 elements each of dx and dt, to pair with the 8 elements of dt
+    // that we have just computed. Then compute 8 partial sums of dx * dt
+    // and dy * dt, implicitly sum to give 4 partial sums of each, and
+    // accumulate.
+    __m128i dx_row = _mm_loadu_si128((__m128i *)&dx[i * DISFLOW_PATCH_SIZE]);
+    __m128i dy_row = _mm_loadu_si128((__m128i *)&dy[i * DISFLOW_PATCH_SIZE]);
+    b0_acc = _mm_add_epi32(b0_acc, _mm_madd_epi16(dx_row, dt));
+    b1_acc = _mm_add_epi32(b1_acc, _mm_madd_epi16(dy_row, dt));
 
 #if CHECK_RESULTS
+    int16_t dt_arr[8];
+    memcpy(dt_arr, &dt, 8 * sizeof(*dt_arr));
     for (int j = 0; j < DISFLOW_PATCH_SIZE; ++j) {
       int16_t *p = &tmp[i * DISFLOW_PATCH_SIZE + j];
       int arr[4] = { p[-DISFLOW_PATCH_SIZE], p[0], p[DISFLOW_PATCH_SIZE],
@@ -247,19 +268,37 @@ static INLINE void compute_flow_error(const uint8_t *src, const uint8_t *ref,
       // of precision to match the scale of the dx and dy arrays.
       const int c_warped = ROUND_POWER_OF_TWO(result, round_bits);
       const int c_src_px = src[(x + j) + (y + i) * stride] << 3;
-      const int c_err = c_warped - c_src_px;
-      (void)c_err;
-      assert(dt[i * DISFLOW_PATCH_SIZE + j] == c_err);
+      const int c_dt = c_warped - c_src_px;
+
+      assert(dt_arr[j] == c_dt);
+
+      c_result[0] += dx[i * DISFLOW_PATCH_SIZE + j] * c_dt;
+      c_result[1] += dy[i * DISFLOW_PATCH_SIZE + j] * c_dt;
     }
 #endif  // CHECK_RESULTS
   }
+
+  // Flatten the two sets of partial sums to find the final value of b
+  // We need to set b[0] = sum(b0_acc), b[1] = sum(b1_acc).
+  // We need to do 6 additions in total; a `hadd` instruction can take care
+  // of four of them, leaving two scalar additions.
+  __m128i partial_sum = _mm_hadd_epi32(b0_acc, b1_acc);
+  b[0] = _mm_extract_epi32(partial_sum, 0) + _mm_extract_epi32(partial_sum, 1);
+  b[1] = _mm_extract_epi32(partial_sum, 2) + _mm_extract_epi32(partial_sum, 3);
+
+#if CHECK_RESULTS
+  assert(b[0] == c_result[0]);
+  assert(b[1] == c_result[1]);
+#endif  // CHECK_RESULTS
 }
 
 static INLINE void sobel_filter_x(const uint8_t *src, int src_stride,
                                   int16_t *dst, int dst_stride) {
   int16_t tmp_[DISFLOW_PATCH_SIZE * (DISFLOW_PATCH_SIZE + 2)];
   int16_t *tmp = tmp_ + DISFLOW_PATCH_SIZE;
+#if CHECK_RESULTS
   const int taps = 3;
+#endif  // CHECK_RESULTS
 
   // Horizontal filter
   // As the kernel is simply {1, 0, -1}, we implement this as simply
@@ -330,7 +369,9 @@ static INLINE void sobel_filter_y(const uint8_t *src, int src_stride,
                                   int16_t *dst, int dst_stride) {
   int16_t tmp_[DISFLOW_PATCH_SIZE * (DISFLOW_PATCH_SIZE + 2)];
   int16_t *tmp = tmp_ + DISFLOW_PATCH_SIZE;
+#if CHECK_RESULTS
   const int taps = 3;
+#endif  // CHECK_RESULTS
 
   // Horizontal filter
   // Here the kernel is {1, 2, 1}, which can be implemented
@@ -395,50 +436,6 @@ static INLINE void sobel_filter_y(const uint8_t *src, int src_stride,
     }
 #endif  // CHECK_RESULTS
   }
-}
-
-static INLINE void compute_flow_vector(const int16_t *dx, int dx_stride,
-                                       const int16_t *dy, int dy_stride,
-                                       const int16_t *dt, int dt_stride,
-                                       int *b) {
-  __m128i b0_acc = _mm_setzero_si128();
-  __m128i b1_acc = _mm_setzero_si128();
-
-  for (int i = 0; i < DISFLOW_PATCH_SIZE; i++) {
-    // Need to load 8 values of dx, 8 of dy, 8 of dt, which conveniently
-    // works out to one register each. Then just calculate dx * dt, dy * dt,
-    // and (implicitly) sum horizontally in pairs.
-    // This gives four 32-bit partial sums for each of b[0] and b[1],
-    // which can be accumulated and summed at the end.
-    __m128i dx_row = _mm_loadu_si128((__m128i *)&dx[i * dx_stride]);
-    __m128i dy_row = _mm_loadu_si128((__m128i *)&dy[i * dy_stride]);
-    __m128i dt_row = _mm_loadu_si128((__m128i *)&dt[i * dt_stride]);
-
-    b0_acc = _mm_add_epi32(b0_acc, _mm_madd_epi16(dx_row, dt_row));
-    b1_acc = _mm_add_epi32(b1_acc, _mm_madd_epi16(dy_row, dt_row));
-  }
-
-  // We need to set b[0] = sum(b0_acc), b[1] = sum(b1_acc).
-  // We might as well use a `hadd` instruction to do 4 of the additions
-  // needed here. Then that just leaves two more additions, which can be
-  // done in scalar code
-  __m128i partial_sum = _mm_hadd_epi32(b0_acc, b1_acc);
-  b[0] = _mm_extract_epi32(partial_sum, 0) + _mm_extract_epi32(partial_sum, 1);
-  b[1] = _mm_extract_epi32(partial_sum, 2) + _mm_extract_epi32(partial_sum, 3);
-
-#if CHECK_RESULTS
-  int c_result[2] = { 0 };
-
-  for (int i = 0; i < DISFLOW_PATCH_SIZE; i++) {
-    for (int j = 0; j < DISFLOW_PATCH_SIZE; j++) {
-      c_result[0] += dx[i * dx_stride + j] * dt[i * dt_stride + j];
-      c_result[1] += dy[i * dy_stride + j] * dt[i * dt_stride + j];
-    }
-  }
-
-  assert(b[0] == c_result[0]);
-  assert(b[1] == c_result[1]);
-#endif  // CHECK_RESULTS
 }
 
 static INLINE void compute_flow_matrix(const int16_t *dx, int dx_stride,
@@ -524,7 +521,6 @@ void aom_compute_flow_at_point_sse4_1(const uint8_t *src, const uint8_t *ref,
   double M[4];
   double M_inv[4];
   int b[2];
-  int16_t dt[DISFLOW_PATCH_SIZE * DISFLOW_PATCH_SIZE];
   int16_t dx[DISFLOW_PATCH_SIZE * DISFLOW_PATCH_SIZE];
   int16_t dy[DISFLOW_PATCH_SIZE * DISFLOW_PATCH_SIZE];
 
@@ -537,9 +533,8 @@ void aom_compute_flow_at_point_sse4_1(const uint8_t *src, const uint8_t *ref,
   invert_2x2(M, M_inv);
 
   for (int itr = 0; itr < DISFLOW_MAX_ITR; itr++) {
-    compute_flow_error(src, ref, width, height, stride, x, y, *u, *v, dt);
-    compute_flow_vector(dx, DISFLOW_PATCH_SIZE, dy, DISFLOW_PATCH_SIZE, dt,
-                        DISFLOW_PATCH_SIZE, b);
+    compute_flow_vector(src, ref, width, height, stride, x, y, *u, *v, dx, dy,
+                        b);
 
     // Solve flow equations to find a better estimate for the flow vector
     // at this point

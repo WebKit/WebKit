@@ -48,7 +48,7 @@ class SharpnessTest
         cpu_used_(GET_PARAM(2)), sharpness_level_(GET_PARAM(3)), psnr_(0.0),
         nframes_(0) {}
 
-  ~SharpnessTest() override {}
+  ~SharpnessTest() override = default;
 
   void SetUp() override {
     InitializeConfig(encoding_mode_);

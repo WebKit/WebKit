@@ -6805,3 +6805,51 @@ enum class WebCore::SourceBufferAppendMode : uint8_t {
 };
 
 #endif
+
+struct WebCore::Length {
+    std::variant<WebCore::Length::AutoData, WebCore::Length::NormalData, WebCore::Length::RelativeData, WebCore::Length::PercentData, WebCore::Length::FixedData, WebCore::Length::IntrinsicData, WebCore::Length::MinIntrinsicData, WebCore::Length::MinContentData, WebCore::Length::MaxContentData, WebCore::Length::FillAvailableData, WebCore::Length::FitContentData, WebCore::Length::ContentData, WebCore::Length::UndefinedData> ipcData()
+}
+[Nested] struct WebCore::Length::AutoData {
+};
+[Nested] struct WebCore::Length::NormalData {
+};
+[Nested] struct WebCore::Length::RelativeData {
+    std::variant<float, int> value
+    bool hasQuirk
+};
+[Nested] struct WebCore::Length::PercentData {
+    std::variant<float, int> value
+    bool hasQuirk
+};
+[Nested] struct WebCore::Length::FixedData {
+    std::variant<float, int> value
+    bool hasQuirk
+};
+[Nested] struct WebCore::Length::IntrinsicData {
+    std::variant<float, int> value
+    bool hasQuirk
+};
+[Nested] struct WebCore::Length::MinIntrinsicData {
+    std::variant<float, int> value
+    bool hasQuirk
+};
+[Nested] struct WebCore::Length::MinContentData {
+    std::variant<float, int> value
+    bool hasQuirk
+};
+[Nested] struct WebCore::Length::MaxContentData {
+    std::variant<float, int> value
+    bool hasQuirk
+};
+[Nested] struct WebCore::Length::FillAvailableData {
+    std::variant<float, int> value
+    bool hasQuirk
+};
+[Nested] struct WebCore::Length::FitContentData {
+    std::variant<float, int> value
+    bool hasQuirk
+};
+[Nested] struct WebCore::Length::ContentData {
+};
+[Nested] struct WebCore::Length::UndefinedData {
+};

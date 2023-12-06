@@ -604,7 +604,7 @@ static void init_sad(__m256i *s) {
 
 static AOM_FORCE_INLINE void aom_highbd_sadMxNxD_avx2(
     int M, int N, int D, const uint8_t *src, int src_stride,
-    const uint8_t *const ref_array[], int ref_stride, uint32_t *sad_array) {
+    const uint8_t *const ref_array[4], int ref_stride, uint32_t sad_array[4]) {
   __m256i sad_vec[4];
   const uint16_t *refp[4];
   const uint16_t *keep = CONVERT_TO_SHORTPTR(src);
@@ -639,26 +639,26 @@ static AOM_FORCE_INLINE void aom_highbd_sadMxNxD_avx2(
 
 #define HIGHBD_SAD_MXNX4D_AVX2(m, n)                                          \
   void aom_highbd_sad##m##x##n##x4d_avx2(                                     \
-      const uint8_t *src, int src_stride, const uint8_t *const ref_array[],   \
-      int ref_stride, uint32_t *sad_array) {                                  \
+      const uint8_t *src, int src_stride, const uint8_t *const ref_array[4],  \
+      int ref_stride, uint32_t sad_array[4]) {                                \
     aom_highbd_sadMxNxD_avx2(m, n, 4, src, src_stride, ref_array, ref_stride, \
                              sad_array);                                      \
   }
-#define HIGHBD_SAD_SKIP_MXNX4D_AVX2(m, n)                                   \
-  void aom_highbd_sad_skip_##m##x##n##x4d_avx2(                             \
-      const uint8_t *src, int src_stride, const uint8_t *const ref_array[], \
-      int ref_stride, uint32_t *sad_array) {                                \
-    aom_highbd_sadMxNxD_avx2(m, (n / 2), 4, src, 2 * src_stride, ref_array, \
-                             2 * ref_stride, sad_array);                    \
-    sad_array[0] <<= 1;                                                     \
-    sad_array[1] <<= 1;                                                     \
-    sad_array[2] <<= 1;                                                     \
-    sad_array[3] <<= 1;                                                     \
+#define HIGHBD_SAD_SKIP_MXNX4D_AVX2(m, n)                                    \
+  void aom_highbd_sad_skip_##m##x##n##x4d_avx2(                              \
+      const uint8_t *src, int src_stride, const uint8_t *const ref_array[4], \
+      int ref_stride, uint32_t sad_array[4]) {                               \
+    aom_highbd_sadMxNxD_avx2(m, (n / 2), 4, src, 2 * src_stride, ref_array,  \
+                             2 * ref_stride, sad_array);                     \
+    sad_array[0] <<= 1;                                                      \
+    sad_array[1] <<= 1;                                                      \
+    sad_array[2] <<= 1;                                                      \
+    sad_array[3] <<= 1;                                                      \
   }
 #define HIGHBD_SAD_MXNX3D_AVX2(m, n)                                          \
   void aom_highbd_sad##m##x##n##x3d_avx2(                                     \
-      const uint8_t *src, int src_stride, const uint8_t *const ref_array[],   \
-      int ref_stride, uint32_t *sad_array) {                                  \
+      const uint8_t *src, int src_stride, const uint8_t *const ref_array[4],  \
+      int ref_stride, uint32_t sad_array[4]) {                                \
     aom_highbd_sadMxNxD_avx2(m, n, 3, src, src_stride, ref_array, ref_stride, \
                              sad_array);                                      \
   }

@@ -270,7 +270,7 @@ function(add_rtcd_build_step config output source symbol)
             --arch=${AOM_TARGET_CPU}
             --sym=${symbol} ${AOM_RTCD_FLAGS}
             --config=${AOM_CONFIG_DIR}/config/aom_config.h ${config} > ${output}
-    DEPENDS ${config}
+    DEPENDS "${AOM_ROOT}/build/cmake/rtcd.pl" ${config}
     COMMENT "Generating ${output}"
     WORKING_DIRECTORY ${AOM_CONFIG_DIR}
     VERBATIM)

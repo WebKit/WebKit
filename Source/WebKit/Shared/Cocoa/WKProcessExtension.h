@@ -34,4 +34,5 @@ OBJC_EXPORT
 + (WKProcessExtension*) sharedInstance;
 - (void)setSharedInstance:(WKProcessExtension*)instance;
 - (id)grant:(NSString*)domain name:(NSString*)name;
+- (void)lockdownSandbox:(NSString*)version;
 @end

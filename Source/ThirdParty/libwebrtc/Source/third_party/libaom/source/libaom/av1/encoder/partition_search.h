@@ -42,11 +42,14 @@ void av1_nonrd_pick_partition(AV1_COMP *cpi, ThreadData *td,
 void av1_reset_part_sf(PARTITION_SPEED_FEATURES *part_sf);
 void av1_reset_sf_for_ext_part(AV1_COMP *const cpi);
 
+#if CONFIG_PARTITION_SEARCH_ORDER
 bool av1_rd_partition_search(AV1_COMP *const cpi, ThreadData *td,
                              TileDataEnc *tile_data, TokenExtra **tp,
                              SIMPLE_MOTION_DATA_TREE *sms_root, int mi_row,
                              int mi_col, BLOCK_SIZE bsize,
                              RD_STATS *best_rd_cost);
+#endif
+
 bool av1_rd_pick_partition(AV1_COMP *const cpi, ThreadData *td,
                            TileDataEnc *tile_data, TokenExtra **tp, int mi_row,
                            int mi_col, BLOCK_SIZE bsize, RD_STATS *rd_cost,

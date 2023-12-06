@@ -365,6 +365,8 @@ interface UIScriptController {
     undefined removeViewFromWindow(object callback);
     undefined addViewToWindow(object callback);
 
+    undefined resizeWindowTo(unsigned long width, unsigned long height);
+
     undefined installTapGestureOnWindow(object callback);
 
     undefined overridePreference(DOMString preference, DOMString value);

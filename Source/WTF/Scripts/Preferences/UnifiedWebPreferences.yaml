@@ -1914,6 +1914,20 @@ CustomPasteboardDataEnabled:
       "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WIN)": true
       default: false
 
+CustomStateSetEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "CustomStateSet"
+  humanReadableDescription: "Support for CustomStateSet in custom elements"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 DNSPrefetchingEnabled:
   type: bool
   status: embedder

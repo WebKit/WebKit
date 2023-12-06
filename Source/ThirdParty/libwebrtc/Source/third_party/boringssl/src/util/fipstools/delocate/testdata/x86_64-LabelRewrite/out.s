@@ -93,7 +93,7 @@ bar:
 # assumption that it's too small to hold a pointer. But Clang
 # will store offsets in it.
 # WAS .byte   (.LBB231_40-.LBB231_19)>>2, 4, .Lfoo, (.Lfoo), .Lfoo<<400, (   .Lfoo ) <<  66
-	.byte	(.LBB231_40_BCM_1-.LBB231_19_BCM_1)>>2, 4, .Lfoo_BCM_1, (.Lfoo_BCM_1), .Lfoo_BCM_1<<400, (   .Lfoo_BCM_1 ) <<  66
+	.byte	(.LBB231_40_BCM_1-.LBB231_19_BCM_1)>>2, 4, .Lfoo_BCM_1, (.Lfoo_BCM_1), .Lfoo_BCM_1<<400, (.Lfoo_BCM_1)<<66
 .byte   421
 .text
 .loc 1 2 0

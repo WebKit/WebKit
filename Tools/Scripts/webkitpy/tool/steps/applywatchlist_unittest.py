@@ -30,10 +30,10 @@
 import logging
 import unittest
 
-from webkitcorepy import OutputCapture
-
 from webkitpy.tool.mocktool import MockOptions, MockTool
 from webkitpy.tool.steps.applywatchlist import ApplyWatchList
+
+from webkitcorepy import OutputCapture
 
 
 class ApplyWatchListTest(unittest.TestCase):

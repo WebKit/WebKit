@@ -27,12 +27,22 @@ import ServiceExtensions
 @_spi(Private) import ServiceExtensions
 
 @main
-class GPUProcessExtension {
-    required init() {}
+class GPUProcessExtension : WKProcessExtension {
+    override required init() {
+        super.init()
+        setSharedInstance(self)
+    }
 }
 
 extension GPUProcessExtension: GPUServiceExtension {
     func handle(xpcConnection: xpc_connection_t) {
         handleNewConnection(xpcConnection)
     }
+
+    override func lockdownSandbox(_ version: String) {
+        if let lockdownVersion = _LockdownVersion(rawValue: version) {
+            self._lockdown(version: lockdownVersion)
+        }
+    }
+
 }

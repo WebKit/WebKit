@@ -1,0 +1,46 @@
+This tests the intersectionWithSelectionRange api, which returns the range of characters in a static text node that are part of the document selection, if any.
+
+Trying range: text1:0 - text1:5 : Alpha
+PASS: window.getSelection().toString() === expectedText
+PASS: axStaticText.role === "AXRole: AXStaticText"
+PASS: axStaticText.intersectionWithSelectionRange === expectedAccessibleRange
+
+Trying range: text1:6 - text1:11 : Bravo
+PASS: window.getSelection().toString() === expectedText
+PASS: axStaticText.role === "AXRole: AXStaticText"
+PASS: axStaticText.intersectionWithSelectionRange === expectedAccessibleRange
+
+Trying range: text2:2 - text2:9 : Charlie
+PASS: window.getSelection().toString() === expectedText
+PASS: axStaticText.role === "AXRole: AXStaticText"
+PASS: axStaticText.intersectionWithSelectionRange === expectedAccessibleRange
+
+Trying range: text2:11 - text2:16 : Delta
+PASS: window.getSelection().toString() === expectedText
+PASS: axStaticText.role === "AXRole: AXStaticText"
+PASS: axStaticText.intersectionWithSelectionRange === expectedAccessibleRange
+
+Trying range: text1:6 - text2:9 : Bravo
+Charlie
+PASS: window.getSelection().toString() === expectedText
+PASS: axStaticText.role === "AXRole: AXStaticText"
+PASS: axStaticText.intersectionWithSelectionRange === expectedAccessibleRange
+
+Trying range: text1:0 - text1:5 : Alpha
+PASS: window.getSelection().toString() === expectedText
+PASS: axStaticText.role === "AXRole: AXStaticText"
+PASS: axStaticText.intersectionWithSelectionRange === expectedAccessibleRange
+
+Trying range: text1:6 - text2:9 : Bravo
+Charlie
+PASS: window.getSelection().toString() === expectedText
+PASS: axStaticText.role === "AXRole: AXStaticText"
+PASS: axStaticText.intersectionWithSelectionRange === expectedAccessibleRange
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Alpha Bravo
+Charlie Delta
+

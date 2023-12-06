@@ -173,13 +173,12 @@ STACK_OF(CONF_VALUE) *i2v_GENERAL_NAME(const X509V3_EXT_METHOD *method,
     case GEN_IPADD:
       p = gen->d.ip->data;
       if (gen->d.ip->length == 4) {
-        BIO_snprintf(oline, sizeof(oline), "%d.%d.%d.%d", p[0], p[1], p[2],
-                     p[3]);
+        snprintf(oline, sizeof(oline), "%d.%d.%d.%d", p[0], p[1], p[2], p[3]);
       } else if (gen->d.ip->length == 16) {
         oline[0] = 0;
         for (i = 0; i < 8; i++) {
           uint16_t v = ((uint16_t)p[0] << 8) | p[1];
-          BIO_snprintf(htmp, sizeof(htmp), "%X", v);
+          snprintf(htmp, sizeof(htmp), "%X", v);
           p += 2;
           OPENSSL_strlcat(oline, htmp, sizeof(oline));
           if (i != 7) {

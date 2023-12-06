@@ -97,7 +97,7 @@ void CheckboxInputType::handleMouseDownEvent(MouseEvent& event)
     if (!event.isTrusted() || !isSwitch() || element()->isDisabledFormControl() || !element()->renderer())
         return;
     m_isSwitchVisuallyOn = element()->checked();
-    startSwitchPointerTracking(element()->renderer()->absoluteToLocal(event.absoluteLocation(), UseTransforms).x());
+    startSwitchPointerTracking(event.absoluteLocation());
 }
 
 void CheckboxInputType::handleMouseMoveEvent(MouseEvent& event)
@@ -114,30 +114,7 @@ void CheckboxInputType::handleMouseMoveEvent(MouseEvent& event)
         return;
     }
 
-    auto isSwitchVisuallyOn = m_isSwitchVisuallyOn;
-    auto isRTL = element()->computedStyle()->direction() == TextDirection::RTL;
-    auto switchThumbIsLeft = (!isRTL && !isSwitchVisuallyOn) || (isRTL && isSwitchVisuallyOn);
-    auto xPosition = element()->renderer()->absoluteToLocal(event.absoluteLocation(), UseTransforms).x();
-    auto switchTrackRect = element()->renderer()->absoluteBoundingBoxRect();
-    auto switchThumbLength = switchTrackRect.height();
-    auto switchTrackWidth = switchTrackRect.width();
-
-    auto changePosition = switchTrackWidth / 2;
-    if (!m_hasSwitchVisuallyOnChanged) {
-        auto switchTrackNoThumbWidth = switchTrackWidth - switchThumbLength;
-        auto changeOffset = switchTrackWidth * RenderTheme::singleton().switchPointerTrackingMagnitudeProportion();
-        if (switchThumbIsLeft && *m_switchPointerTrackingXPositionStart > switchTrackNoThumbWidth)
-            changePosition = *m_switchPointerTrackingXPositionStart + changeOffset;
-        else if (!switchThumbIsLeft && *m_switchPointerTrackingXPositionStart < switchTrackNoThumbWidth)
-            changePosition = *m_switchPointerTrackingXPositionStart - changeOffset;
-    }
-
-    auto switchThumbIsLeftNow = xPosition < changePosition;
-    if (switchThumbIsLeftNow != switchThumbIsLeft) {
-        m_hasSwitchVisuallyOnChanged = true;
-        m_isSwitchVisuallyOn = !m_isSwitchVisuallyOn;
-        performSwitchCheckedChangeAnimation();
-    }
+    updateIsSwitchVisuallyOnFromAbsoluteLocation(event.absoluteLocation());
 }
 
 void CheckboxInputType::willDispatchClick(InputElementClickState& state)
@@ -161,7 +138,7 @@ void CheckboxInputType::willDispatchClick(InputElementClickState& state)
     element()->setChecked(!state.checked, state.trusted ? WasSetByJavaScript::No : WasSetByJavaScript::Yes);
 
     if (isSwitch() && state.trusted && !(isSwitchPointerTracking() && m_hasSwitchVisuallyOnChanged && m_isSwitchVisuallyOn == !state.checked))
-        performSwitchCheckedChangeAnimation();
+        performSwitchAnimation(SwitchAnimationType::VisuallyOn);
 
     stopSwitchPointerTracking();
 }
@@ -179,12 +156,14 @@ void CheckboxInputType::didDispatchClick(Event& event, const InputElementClickSt
     event.setDefaultHandled();
 }
 
-void CheckboxInputType::startSwitchPointerTracking(int xPositionStart)
+void CheckboxInputType::startSwitchPointerTracking(LayoutPoint absoluteLocation)
 {
     ASSERT(element());
+    ASSERT(element()->renderer());
     if (RefPtr frame = element()->document().frame()) {
         frame->eventHandler().setCapturingMouseEventsElement(element());
-        m_switchPointerTrackingXPositionStart = xPositionStart;
+        m_isSwitchVisuallyOn = element()->checked();
+        m_switchPointerTrackingXPositionStart = element()->renderer()->absoluteToLocal(absoluteLocation, UseTransforms).x();
     }
 }
 
@@ -215,7 +194,7 @@ void CheckboxInputType::disabledStateChanged()
 {
     ASSERT(element());
     if (isSwitch() && element()->isDisabledFormControl()) {
-        stopSwitchCheckedChangeAnimation();
+        stopSwitchAnimation(SwitchAnimationType::VisuallyOn);
         stopSwitchPointerTracking();
     }
 }
@@ -224,21 +203,41 @@ void CheckboxInputType::willUpdateCheckedness(bool, WasSetByJavaScript wasChecke
 {
     ASSERT(element());
     if (isSwitch() && wasCheckedByJavaScript == WasSetByJavaScript::Yes) {
-        stopSwitchCheckedChangeAnimation();
+        stopSwitchAnimation(SwitchAnimationType::VisuallyOn);
         stopSwitchPointerTracking();
     }
 }
 
 // FIXME: ideally CheckboxInputType would not be responsible for the timer specifics and instead
 // ask a more knowledgable system for a refresh callback (perhaps passing a desired FPS).
-static Seconds switchCheckedChangeAnimationUpdateInterval(HTMLInputElement* element)
+static Seconds switchAnimationUpdateInterval(HTMLInputElement* element)
 {
     if (auto* page = element->document().page())
         return page->preferredRenderingUpdateInterval();
     return 0_s;
 }
 
-void CheckboxInputType::performSwitchCheckedChangeAnimation()
+static Seconds switchAnimationDuration(SwitchAnimationType)
+{
+    return RenderTheme::singleton().switchAnimationVisuallyOnDuration();
+}
+
+Seconds CheckboxInputType::switchAnimationStartTime(SwitchAnimationType) const
+{
+    return m_switchAnimationVisuallyOnStartTime;
+}
+
+void CheckboxInputType::setSwitchAnimationStartTime(SwitchAnimationType, Seconds time)
+{
+    m_switchAnimationVisuallyOnStartTime = time;
+}
+
+bool CheckboxInputType::isSwitchAnimating(SwitchAnimationType type) const
+{
+    return switchAnimationStartTime(type) != 0_s;
+}
+
+void CheckboxInputType::performSwitchAnimation(SwitchAnimationType type)
 {
     ASSERT(isSwitch());
     ASSERT(element());
@@ -247,43 +246,47 @@ void CheckboxInputType::performSwitchCheckedChangeAnimation()
     if (!element()->renderer()->style().hasEffectiveAppearance())
         return;
 
-    auto updateInterval = switchCheckedChangeAnimationUpdateInterval(element());
-    auto duration = RenderTheme::singleton().switchCheckedChangeAnimationDuration();
+    auto updateInterval = switchAnimationUpdateInterval(element());
+    auto duration = switchAnimationDuration(type);
 
-    if (!m_switchCheckedChangeAnimationTimer) {
+    if (!m_switchAnimationTimer) {
         if (!(duration > 0_s && updateInterval > 0_s))
             return;
-        m_switchCheckedChangeAnimationTimer = makeUnique<Timer>(*this, &CheckboxInputType::switchCheckedChangeAnimationTimerFired);
+        m_switchAnimationTimer = makeUnique<Timer>(*this, &CheckboxInputType::switchAnimationTimerFired);
     }
     ASSERT(duration > 0_s);
     ASSERT(updateInterval > 0_s);
-    ASSERT(m_switchCheckedChangeAnimationTimer);
+    ASSERT(m_switchAnimationTimer);
 
-    auto isAnimating = m_switchCheckedChangeAnimationStartTime != 0_s;
     auto currentTime = MonotonicTime::now().secondsSinceEpoch();
-    auto remainingTime = currentTime - m_switchCheckedChangeAnimationStartTime;
+    auto remainingTime = currentTime - switchAnimationStartTime(type);
     auto startTimeOffset = 0_s;
-    if (isAnimating && remainingTime < duration)
+    if (isSwitchAnimating(type) && remainingTime < duration)
         startTimeOffset = duration - remainingTime;
 
-    m_switchCheckedChangeAnimationStartTime = MonotonicTime::now().secondsSinceEpoch() - startTimeOffset;
-    m_switchCheckedChangeAnimationTimer->startOneShot(updateInterval);
+    setSwitchAnimationStartTime(type, MonotonicTime::now().secondsSinceEpoch() - startTimeOffset);
+    m_switchAnimationTimer->startOneShot(updateInterval);
 }
 
-void CheckboxInputType::stopSwitchCheckedChangeAnimation()
+void CheckboxInputType::stopSwitchAnimation(SwitchAnimationType type)
 {
-    m_switchCheckedChangeAnimationStartTime = 0_s;
+    setSwitchAnimationStartTime(type, 0_s);
 }
 
-float CheckboxInputType::switchCheckedChangeAnimationProgress() const
+float CheckboxInputType::switchAnimationProgress(SwitchAnimationType type) const
+{
+    if (!isSwitchAnimating(type))
+        return 1.0f;
+    auto duration = switchAnimationDuration(type);
+    return std::min((float)((MonotonicTime::now().secondsSinceEpoch() - switchAnimationStartTime(type)) / duration), 1.0f);
+}
+
+float CheckboxInputType::switchAnimationVisuallyOnProgress() const
 {
     ASSERT(isSwitch());
+    ASSERT(switchAnimationDuration(SwitchAnimationType::VisuallyOn) > 0_s);
 
-    auto isAnimating = m_switchCheckedChangeAnimationStartTime != 0_s;
-    if (!isAnimating)
-        return 1.0f;
-    auto duration = RenderTheme::singleton().switchCheckedChangeAnimationDuration();
-    return std::min((float)((MonotonicTime::now().secondsSinceEpoch() - m_switchCheckedChangeAnimationStartTime) / duration), 1.0f);
+    return switchAnimationProgress(SwitchAnimationType::VisuallyOn);
 }
 
 bool CheckboxInputType::isSwitchVisuallyOn() const
@@ -293,22 +296,50 @@ bool CheckboxInputType::isSwitchVisuallyOn() const
     return isSwitchPointerTracking() ? m_isSwitchVisuallyOn : element()->checked();
 }
 
-void CheckboxInputType::switchCheckedChangeAnimationTimerFired()
+void CheckboxInputType::updateIsSwitchVisuallyOnFromAbsoluteLocation(LayoutPoint absoluteLocation)
 {
-    ASSERT(m_switchCheckedChangeAnimationTimer);
+    auto xPosition = element()->renderer()->absoluteToLocal(absoluteLocation, UseTransforms).x();
+    auto isSwitchVisuallyOn = m_isSwitchVisuallyOn;
+    auto isRTL = element()->computedStyle()->direction() == TextDirection::RTL;
+    auto switchThumbIsLeft = (!isRTL && !isSwitchVisuallyOn) || (isRTL && isSwitchVisuallyOn);
+    auto switchTrackRect = element()->renderer()->absoluteBoundingBoxRect();
+    auto switchThumbLength = switchTrackRect.height();
+    auto switchTrackWidth = switchTrackRect.width();
+
+    auto changePosition = switchTrackWidth / 2;
+    if (!m_hasSwitchVisuallyOnChanged) {
+        auto switchTrackNoThumbWidth = switchTrackWidth - switchThumbLength;
+        auto changeOffset = switchTrackWidth * RenderTheme::singleton().switchPointerTrackingMagnitudeProportion();
+        if (switchThumbIsLeft && *m_switchPointerTrackingXPositionStart > switchTrackNoThumbWidth)
+            changePosition = *m_switchPointerTrackingXPositionStart + changeOffset;
+        else if (!switchThumbIsLeft && *m_switchPointerTrackingXPositionStart < switchTrackNoThumbWidth)
+            changePosition = *m_switchPointerTrackingXPositionStart - changeOffset;
+    }
+
+    auto switchThumbIsLeftNow = xPosition < changePosition;
+    if (switchThumbIsLeftNow != switchThumbIsLeft) {
+        m_hasSwitchVisuallyOnChanged = true;
+        m_isSwitchVisuallyOn = !m_isSwitchVisuallyOn;
+        performSwitchAnimation(SwitchAnimationType::VisuallyOn);
+    }
+}
+
+void CheckboxInputType::switchAnimationTimerFired()
+{
+    ASSERT(m_switchAnimationTimer);
     if (!isSwitch() || !element() || !element()->renderer())
         return;
 
-    auto updateInterval = switchCheckedChangeAnimationUpdateInterval(element());
+    auto updateInterval = switchAnimationUpdateInterval(element());
     if (!(updateInterval > 0_s))
         return;
 
     auto currentTime = MonotonicTime::now().secondsSinceEpoch();
-    auto duration = RenderTheme::singleton().switchCheckedChangeAnimationDuration();
-    if (currentTime - m_switchCheckedChangeAnimationStartTime < duration)
-        m_switchCheckedChangeAnimationTimer->startOneShot(updateInterval);
+    auto isVisuallyOnOngoing = currentTime - switchAnimationStartTime(SwitchAnimationType::VisuallyOn) < switchAnimationDuration(SwitchAnimationType::VisuallyOn);
+    if (isVisuallyOnOngoing)
+        m_switchAnimationTimer->startOneShot(updateInterval);
     else
-        stopSwitchCheckedChangeAnimation();
+        stopSwitchAnimation(SwitchAnimationType::VisuallyOn);
 
     element()->renderer()->repaint();
 }

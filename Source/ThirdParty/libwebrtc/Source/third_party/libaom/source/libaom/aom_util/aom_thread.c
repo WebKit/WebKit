@@ -24,6 +24,7 @@
 #include <string.h>  // for memset()
 
 #include "aom_mem/aom_mem.h"
+#include "aom_ports/sanitizer.h"
 #include "aom_util/aom_thread.h"
 
 #if CONFIG_MULTITHREAD
@@ -144,11 +145,30 @@ static int reset(AVxWorker *const worker) {
       pthread_mutex_destroy(&worker->impl_->mutex_);
       goto Error;
     }
+    pthread_attr_t attr;
+    if (pthread_attr_init(&attr)) goto Error2;
+      // Debug ASan builds require at least ~1MiB of stack; prevents
+      // failures on macOS arm64 where the default is 512KiB.
+      // See: https://crbug.com/aomedia/3379
+#if defined(AOM_ADDRESS_SANITIZER) && defined(__APPLE__) && AOM_ARCH_ARM && \
+    !defined(NDEBUG)
+    size_t stacksize;
+    if (!pthread_attr_getstacksize(&attr, &stacksize)) {
+      const size_t kMinStackSize = 1 << 20;  // 1 MiB
+      if (stacksize < kMinStackSize &&
+          pthread_attr_setstacksize(&attr, kMinStackSize)) {
+        pthread_attr_destroy(&attr);
+        goto Error2;
+      }
+    }
+#endif
     pthread_mutex_lock(&worker->impl_->mutex_);
-    ok = !pthread_create(&worker->impl_->thread_, NULL, thread_loop, worker);
+    ok = !pthread_create(&worker->impl_->thread_, &attr, thread_loop, worker);
     if (ok) worker->status_ = OK;
     pthread_mutex_unlock(&worker->impl_->mutex_);
+    pthread_attr_destroy(&attr);
     if (!ok) {
+    Error2:
       pthread_mutex_destroy(&worker->impl_->mutex_);
       pthread_cond_destroy(&worker->impl_->condition_);
     Error:

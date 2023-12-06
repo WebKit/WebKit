@@ -27,8 +27,6 @@ extern "C" {
 
 /*!\cond */
 
-#undef MAX_SB_SIZE
-
 // Max superblock size
 #define MAX_SB_SIZE_LOG2 7
 #define MAX_SB_SIZE (1 << MAX_SB_SIZE_LOG2)

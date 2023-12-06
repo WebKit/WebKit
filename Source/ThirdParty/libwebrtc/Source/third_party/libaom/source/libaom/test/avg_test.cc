@@ -35,7 +35,7 @@ class AverageTestBase : public ::testing::Test {
       : width_(width), height_(height), source_data_(nullptr),
         source_stride_(0), bit_depth_(bit_depth) {}
 
-  virtual void TearDown() {
+  void TearDown() override {
     aom_free(source_data_);
     source_data_ = nullptr;
   }
@@ -47,7 +47,7 @@ class AverageTestBase : public ::testing::Test {
   static const int kDataBlockHeight = 128;
   static const int kDataBlockSize = kDataBlockWidth * kDataBlockHeight;
 
-  virtual void SetUp() {
+  void SetUp() override {
     const testing::TestInfo *const test_info =
         testing::UnitTest::GetInstance()->current_test_info();
     // Skip the speed test for C code as the baseline uses the same function.
@@ -378,7 +378,7 @@ class IntProRowTest : public AverageTestBase<uint8_t>,
   }
 
  protected:
-  virtual void SetUp() {
+  void SetUp() override {
     source_data_ = static_cast<uint8_t *>(
         aom_memalign(kDataAlignment, kDataBlockSize * sizeof(source_data_[0])));
     ASSERT_NE(source_data_, nullptr);
@@ -391,7 +391,7 @@ class IntProRowTest : public AverageTestBase<uint8_t>,
     ASSERT_NE(hbuf_c_, nullptr);
   }
 
-  virtual void TearDown() {
+  void TearDown() override {
     aom_free(source_data_);
     source_data_ = nullptr;
     aom_free(hbuf_c_);
@@ -469,7 +469,7 @@ class IntProColTest : public AverageTestBase<uint8_t>,
   }
 
  protected:
-  virtual void SetUp() {
+  void SetUp() override {
     source_data_ = static_cast<uint8_t *>(
         aom_memalign(kDataAlignment, kDataBlockSize * sizeof(source_data_[0])));
     ASSERT_NE(source_data_, nullptr);
@@ -482,7 +482,7 @@ class IntProColTest : public AverageTestBase<uint8_t>,
     ASSERT_NE(vbuf_c_, nullptr);
   }
 
-  virtual void TearDown() {
+  void TearDown() override {
     aom_free(source_data_);
     source_data_ = nullptr;
     aom_free(vbuf_c_);
@@ -582,13 +582,13 @@ TEST_P(IntProColTest, DISABLED_Speed) {
 class VectorVarTestBase : public ::testing::Test {
  public:
   explicit VectorVarTestBase(int bwl) { m_bwl = bwl; }
-  VectorVarTestBase() {}
-  ~VectorVarTestBase() {}
+  VectorVarTestBase() = default;
+  ~VectorVarTestBase() override = default;
 
  protected:
   static const int kDataAlignment = 16;
 
-  virtual void SetUp() {
+  void SetUp() override {
     width = 4 << m_bwl;
 
     ref_vector = static_cast<int16_t *>(
@@ -600,7 +600,7 @@ class VectorVarTestBase : public ::testing::Test {
 
     rnd_.Reset(ACMRandom::DeterministicSeed());
   }
-  virtual void TearDown() {
+  void TearDown() override {
     aom_free(ref_vector);
     ref_vector = nullptr;
     aom_free(src_vector);
@@ -847,7 +847,13 @@ INSTANTIATE_TEST_SUITE_P(
                       make_tuple(32, 32, 10, 15, 4, &aom_highbd_avg_4x4_neon),
                       make_tuple(16, 16, 12, 0, 4, &aom_highbd_avg_4x4_neon),
                       make_tuple(16, 16, 12, 5, 4, &aom_highbd_avg_4x4_neon),
-                      make_tuple(32, 32, 12, 15, 4, &aom_highbd_avg_4x4_neon)));
+                      make_tuple(32, 32, 12, 15, 4, &aom_highbd_avg_4x4_neon),
+                      make_tuple(16, 16, 10, 0, 8, &aom_highbd_avg_8x8_neon),
+                      make_tuple(16, 16, 10, 5, 8, &aom_highbd_avg_8x8_neon),
+                      make_tuple(32, 32, 10, 15, 8, &aom_highbd_avg_8x8_neon),
+                      make_tuple(16, 16, 12, 0, 8, &aom_highbd_avg_8x8_neon),
+                      make_tuple(16, 16, 12, 5, 8, &aom_highbd_avg_8x8_neon),
+                      make_tuple(32, 32, 12, 15, 8, &aom_highbd_avg_8x8_neon)));
 #endif  // HAVE_NEON
 #endif  // CONFIG_AV1_HIGHBITDEPTH
 
@@ -877,13 +883,13 @@ class SatdTestBase
     satd_func_ref_ = func_param.func_ref;
     satd_func_simd_ = func_param.func_simd;
   }
-  virtual void SetUp() {
+  void SetUp() override {
     rnd_.Reset(ACMRandom::DeterministicSeed());
     src_ = reinterpret_cast<CoeffType *>(
         aom_memalign(32, sizeof(*src_) * satd_size_));
     ASSERT_NE(src_, nullptr);
   }
-  virtual void TearDown() { aom_free(src_); }
+  void TearDown() override { aom_free(src_); }
   void FillConstant(const CoeffType val) {
     for (int i = 0; i < satd_size_; ++i) src_[i] = val;
   }
@@ -957,13 +963,13 @@ class SatdTest : public SatdTestBase<tran_low_t, SatdFunc> {
 };
 
 TEST_P(SatdTest, MinValue) {
-  const int kMin = -32640;
+  const int kMin = -524287;
   const int expected = -kMin * satd_size_;
   FillConstant(kMin);
   Check(expected);
 }
 TEST_P(SatdTest, MaxValue) {
-  const int kMax = 32640;
+  const int kMax = 524287;
   const int expected = kMax * satd_size_;
   FillConstant(kMax);
   Check(expected);

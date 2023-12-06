@@ -6,6 +6,7 @@ default	rel
 %define XMMWORD
 %define YMMWORD
 %define ZMMWORD
+%define _CET_ENDBR
 
 %ifdef BORINGSSL_PREFIX
 %include "boringssl_prefix_symbols_nasm.inc"
@@ -52,6 +53,7 @@ $L$SEH_begin_ecp_nistz256_neg:
 
 
 
+_CET_ENDBR
 	push	r12
 
 	push	r13
@@ -99,7 +101,7 @@ $L$neg_body:
 $L$neg_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_neg:
 
@@ -122,6 +124,7 @@ $L$SEH_begin_ecp_nistz256_ord_mul_mont:
 
 
 
+_CET_ENDBR
 	lea	rcx,[OPENSSL_ia32cap_P]
 	mov	rcx,QWORD[8+rcx]
 	and	ecx,0x80100
@@ -436,7 +439,7 @@ $L$ord_mul_body:
 $L$ord_mul_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_ord_mul_mont:
 
@@ -460,6 +463,7 @@ $L$SEH_begin_ecp_nistz256_ord_sqr_mont:
 
 
 
+_CET_ENDBR
 	lea	rcx,[OPENSSL_ia32cap_P]
 	mov	rcx,QWORD[8+rcx]
 	and	ecx,0x80100
@@ -744,7 +748,7 @@ DB	102,72,15,126,216
 $L$ord_sqr_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_ord_sqr_mont:
 
@@ -991,7 +995,7 @@ $L$ord_mulx_body:
 $L$ord_mulx_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_ord_mul_montx:
 
@@ -1210,7 +1214,7 @@ DB	102,72,15,126,218
 $L$ord_sqrx_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_ord_sqr_montx:
 
@@ -1233,6 +1237,7 @@ $L$SEH_begin_ecp_nistz256_mul_mont:
 
 
 
+_CET_ENDBR
 	lea	rcx,[OPENSSL_ia32cap_P]
 	mov	rcx,QWORD[8+rcx]
 	and	ecx,0x80100
@@ -1291,7 +1296,7 @@ $L$mul_mont_done:
 $L$mul_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_mul_mont:
 
@@ -1509,7 +1514,7 @@ __ecp_nistz256_mul_montq:
 	mov	QWORD[16+rdi],r8
 	mov	QWORD[24+rdi],r9
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -1533,6 +1538,7 @@ $L$SEH_begin_ecp_nistz256_sqr_mont:
 
 
 
+_CET_ENDBR
 	lea	rcx,[OPENSSL_ia32cap_P]
 	mov	rcx,QWORD[8+rcx]
 	and	ecx,0x80100
@@ -1586,7 +1592,7 @@ $L$sqr_mont_done:
 $L$sqr_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_sqr_mont:
 
@@ -1750,7 +1756,7 @@ __ecp_nistz256_sqr_montq:
 	mov	QWORD[16+rdi],r14
 	mov	QWORD[24+rdi],r15
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -1918,7 +1924,7 @@ __ecp_nistz256_mul_montx:
 	mov	QWORD[16+rdi],r8
 	mov	QWORD[24+rdi],r9
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -2048,7 +2054,7 @@ __ecp_nistz256_sqr_montx:
 	mov	QWORD[16+rdi],r14
 	mov	QWORD[24+rdi],r15
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -2058,6 +2064,7 @@ global	ecp_nistz256_select_w5
 ALIGN	32
 ecp_nistz256_select_w5:
 
+_CET_ENDBR
 	lea	rax,[OPENSSL_ia32cap_P]
 	mov	rax,QWORD[8+rax]
 	test	eax,32
@@ -2136,7 +2143,7 @@ $L$select_loop_sse_w5:
 	movaps	xmm14,XMMWORD[128+rsp]
 	movaps	xmm15,XMMWORD[144+rsp]
 	lea	rsp,[168+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_select_w5:
 
@@ -2148,6 +2155,7 @@ global	ecp_nistz256_select_w7
 ALIGN	32
 ecp_nistz256_select_w7:
 
+_CET_ENDBR
 	lea	rax,[OPENSSL_ia32cap_P]
 	mov	rax,QWORD[8+rax]
 	test	eax,32
@@ -2215,7 +2223,7 @@ $L$select_loop_sse_w7:
 	movaps	xmm14,XMMWORD[128+rsp]
 	movaps	xmm15,XMMWORD[144+rsp]
 	lea	rsp,[168+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_select_w7:
 
@@ -2303,7 +2311,7 @@ $L$select_loop_avx2_w5:
 	movaps	xmm14,XMMWORD[128+rsp]
 	movaps	xmm15,XMMWORD[144+rsp]
 	lea	rsp,[r11]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_avx2_select_w5:
 
@@ -2316,6 +2324,7 @@ ALIGN	32
 ecp_nistz256_avx2_select_w7:
 
 $L$avx2_select_w7:
+_CET_ENDBR
 	vzeroupper
 	mov	r11,rsp
 	lea	rax,[((-136))+rsp]
@@ -2408,7 +2417,7 @@ $L$select_loop_avx2_w7:
 	movaps	xmm14,XMMWORD[128+rsp]
 	movaps	xmm15,XMMWORD[144+rsp]
 	lea	rsp,[r11]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_avx2_select_w7:
 
@@ -2442,7 +2451,7 @@ __ecp_nistz256_add_toq:
 	mov	QWORD[16+rdi],r8
 	mov	QWORD[24+rdi],r9
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -2475,7 +2484,7 @@ __ecp_nistz256_sub_fromq:
 	mov	QWORD[16+rdi],r8
 	mov	QWORD[24+rdi],r9
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -2504,7 +2513,7 @@ __ecp_nistz256_subq:
 	cmovnz	r8,rcx
 	cmovnz	r9,r10
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -2538,7 +2547,7 @@ __ecp_nistz256_mul_by_2q:
 	mov	QWORD[16+rdi],r8
 	mov	QWORD[24+rdi],r9
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 global	ecp_nistz256_point_double
@@ -2554,6 +2563,7 @@ $L$SEH_begin_ecp_nistz256_point_double:
 
 
 
+_CET_ENDBR
 	lea	rcx,[OPENSSL_ia32cap_P]
 	mov	rcx,QWORD[8+rcx]
 	and	ecx,0x80100
@@ -2775,7 +2785,7 @@ DB	102,72,15,126,207
 $L$point_doubleq_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_point_double:
 global	ecp_nistz256_point_add
@@ -2792,6 +2802,7 @@ $L$SEH_begin_ecp_nistz256_point_add:
 
 
 
+_CET_ENDBR
 	lea	rcx,[OPENSSL_ia32cap_P]
 	mov	rcx,QWORD[8+rcx]
 	and	ecx,0x80100
@@ -3216,7 +3227,7 @@ $L$add_doneq:
 $L$point_addq_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_point_add:
 global	ecp_nistz256_point_add_affine
@@ -3233,6 +3244,7 @@ $L$SEH_begin_ecp_nistz256_point_add_affine:
 
 
 
+_CET_ENDBR
 	lea	rcx,[OPENSSL_ia32cap_P]
 	mov	rcx,QWORD[8+rcx]
 	and	ecx,0x80100
@@ -3554,7 +3566,7 @@ DB	102,72,15,126,199
 $L$add_affineq_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_point_add_affine:
 
@@ -3588,7 +3600,7 @@ __ecp_nistz256_add_tox:
 	mov	QWORD[16+rdi],r8
 	mov	QWORD[24+rdi],r9
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -3623,7 +3635,7 @@ __ecp_nistz256_sub_fromx:
 	mov	QWORD[16+rdi],r8
 	mov	QWORD[24+rdi],r9
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -3654,7 +3666,7 @@ __ecp_nistz256_subx:
 	cmovc	r8,rcx
 	cmovc	r9,r10
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -3689,7 +3701,7 @@ __ecp_nistz256_mul_by_2x:
 	mov	QWORD[16+rdi],r8
 	mov	QWORD[24+rdi],r9
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 
@@ -3921,7 +3933,7 @@ DB	102,72,15,126,207
 $L$point_doublex_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_point_doublex:
 
@@ -4357,7 +4369,7 @@ $L$add_donex:
 $L$point_addx_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_point_addx:
 
@@ -4690,7 +4702,7 @@ DB	102,72,15,126,199
 $L$add_affinex_epilogue:
 	mov	rdi,QWORD[8+rsp]	;WIN64 epilogue
 	mov	rsi,QWORD[16+rsp]
-	DB	0F3h,0C3h		;repret
+	ret
 
 $L$SEH_end_ecp_nistz256_point_add_affinex:
 EXTERN	__imp_RtlVirtualUnwind
@@ -4822,7 +4834,7 @@ $L$common_seh_tail:
 	pop	rbx
 	pop	rdi
 	pop	rsi
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 section	.pdata rdata align=4

@@ -58,9 +58,9 @@ class AltRefFramePresenceTestLarge
         rc_end_usage_(GET_PARAM(2)) {
     is_arf_frame_present_ = 0;
   }
-  virtual ~AltRefFramePresenceTestLarge() {}
+  ~AltRefFramePresenceTestLarge() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(altref_test_params_.encoding_mode);
     const aom_rational timebase = { 1, 30 };
     cfg_.g_timebase = timebase;
@@ -71,10 +71,10 @@ class AltRefFramePresenceTestLarge
     cfg_.g_lag_in_frames = altref_test_params_.lag_in_frames;
   }
 
-  virtual bool DoDecode() const { return 1; }
+  bool DoDecode() const override { return true; }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, 5);
       encoder->Control(AOME_SET_ENABLEAUTOALTREF, 1);
@@ -85,8 +85,8 @@ class AltRefFramePresenceTestLarge
     }
   }
 
-  virtual bool HandleDecodeResult(const aom_codec_err_t res_dec,
-                                  libaom_test::Decoder *decoder) {
+  bool HandleDecodeResult(const aom_codec_err_t res_dec,
+                          libaom_test::Decoder *decoder) override {
     EXPECT_EQ(AOM_CODEC_OK, res_dec) << decoder->DecodeError();
     if (is_arf_frame_present_ != 1 && AOM_CODEC_OK == res_dec) {
       aom_codec_ctx_t *ctx_dec = decoder->GetDecoder();
@@ -149,9 +149,9 @@ class GoldenFrameIntervalTestLarge
     limit_ = 60;
     frame_num_ = 0;
   }
-  virtual ~GoldenFrameIntervalTestLarge() {}
+  ~GoldenFrameIntervalTestLarge() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig(gf_interval_param_.encoding_mode);
     const aom_rational timebase = { 1, 30 };
     cfg_.g_timebase = timebase;
@@ -166,10 +166,10 @@ class GoldenFrameIntervalTestLarge
     cfg_.rc_target_bitrate = 1000;
   }
 
-  virtual bool DoDecode() const { return 1; }
+  bool DoDecode() const override { return true; }
 
-  virtual void PreEncodeFrameHook(::libaom_test::VideoSource *video,
-                                  ::libaom_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libaom_test::VideoSource *video,
+                          ::libaom_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(AOME_SET_CPUUSED, 5);
       encoder->Control(AOME_SET_ENABLEAUTOALTREF, 1);
@@ -189,7 +189,7 @@ class GoldenFrameIntervalTestLarge
     }
   }
 
-  virtual void FramePktHook(const aom_codec_cx_pkt_t *pkt) {
+  void FramePktHook(const aom_codec_cx_pkt_t *pkt) override {
     (void)pkt;
     ++frame_num_;
   }

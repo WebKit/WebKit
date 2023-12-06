@@ -86,15 +86,14 @@
 DEFINE_STATIC_EX_DATA_CLASS(g_ec_ex_data_class)
 
 static EC_WRAPPED_SCALAR *ec_wrapped_scalar_new(const EC_GROUP *group) {
-  EC_WRAPPED_SCALAR *wrapped = OPENSSL_malloc(sizeof(EC_WRAPPED_SCALAR));
+  EC_WRAPPED_SCALAR *wrapped = OPENSSL_zalloc(sizeof(EC_WRAPPED_SCALAR));
   if (wrapped == NULL) {
     return NULL;
   }
 
-  OPENSSL_memset(wrapped, 0, sizeof(EC_WRAPPED_SCALAR));
   wrapped->bignum.d = wrapped->scalar.words;
-  wrapped->bignum.width = group->order.width;
-  wrapped->bignum.dmax = group->order.width;
+  wrapped->bignum.width = group->order.N.width;
+  wrapped->bignum.dmax = group->order.N.width;
   wrapped->bignum.flags = BN_FLG_STATIC_DATA;
   return wrapped;
 }
@@ -106,12 +105,10 @@ static void ec_wrapped_scalar_free(EC_WRAPPED_SCALAR *scalar) {
 EC_KEY *EC_KEY_new(void) { return EC_KEY_new_method(NULL); }
 
 EC_KEY *EC_KEY_new_method(const ENGINE *engine) {
-  EC_KEY *ret = OPENSSL_malloc(sizeof(EC_KEY));
+  EC_KEY *ret = OPENSSL_zalloc(sizeof(EC_KEY));
   if (ret == NULL) {
     return NULL;
   }
-
-  OPENSSL_memset(ret, 0, sizeof(EC_KEY));
 
   if (engine) {
     ret->ecdsa_meth = ENGINE_get_ECDSA_method(engine);
@@ -485,7 +482,7 @@ int EC_KEY_generate_key(EC_KEY *key) {
   }
 
   // Check that the group order is FIPS compliant (FIPS 186-4 B.4.2).
-  if (BN_num_bits(EC_GROUP_get0_order(key->group)) < 160) {
+  if (EC_GROUP_order_bits(key->group) < 160) {
     OPENSSL_PUT_ERROR(EC, EC_R_INVALID_GROUP_ORDER);
     return 0;
   }

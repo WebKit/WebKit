@@ -39,10 +39,11 @@ typedef std::tuple<comp_round_shift_array_func, BLOCK_SIZE, int>
 class AV1CompRoundShiftTest
     : public ::testing::TestWithParam<CompRoundShiftParam> {
  public:
-  ~AV1CompRoundShiftTest();
+  ~AV1CompRoundShiftTest() override;
 
-  void SetUp() { rnd_.Reset(libaom_test::ACMRandom::DeterministicSeed()); }
-  void TearDown() {}
+  void SetUp() override {
+    rnd_.Reset(libaom_test::ACMRandom::DeterministicSeed());
+  }
 
  protected:
   void RunCheckOutput(comp_round_shift_array_func test_impl, BLOCK_SIZE bsize,
@@ -54,7 +55,7 @@ class AV1CompRoundShiftTest
 };
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(AV1CompRoundShiftTest);
 
-AV1CompRoundShiftTest::~AV1CompRoundShiftTest() {}
+AV1CompRoundShiftTest::~AV1CompRoundShiftTest() = default;
 
 void AV1CompRoundShiftTest::RunCheckOutput(
     comp_round_shift_array_func test_impl, BLOCK_SIZE bsize, int bit) {

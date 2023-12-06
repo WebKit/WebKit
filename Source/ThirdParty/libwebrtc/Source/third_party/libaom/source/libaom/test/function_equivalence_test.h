@@ -36,8 +36,8 @@ namespace libaom_test {
 
 template <typename T>
 struct FuncParam {
-  FuncParam(T ref = nullptr, T tst = nullptr, int bit_depth = 0)
-      : ref_func(ref), tst_func(tst), bit_depth(bit_depth) {}
+  FuncParam(T ref = nullptr, T tst = nullptr, int depth = 0)
+      : ref_func(ref), tst_func(tst), bit_depth(depth) {}
   T ref_func;
   T tst_func;
   int bit_depth;
@@ -55,11 +55,9 @@ class FunctionEquivalenceTest : public ::testing::TestWithParam<FuncParam<T> > {
  public:
   FunctionEquivalenceTest() : rng_(ACMRandom::DeterministicSeed()) {}
 
-  virtual ~FunctionEquivalenceTest() {}
+  ~FunctionEquivalenceTest() override = default;
 
-  virtual void SetUp() { params_ = this->GetParam(); }
-
-  virtual void TearDown() {}
+  void SetUp() override { params_ = this->GetParam(); }
 
  protected:
   ACMRandom rng_;

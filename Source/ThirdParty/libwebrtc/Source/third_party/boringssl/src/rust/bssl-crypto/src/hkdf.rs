@@ -15,6 +15,7 @@
 use crate::digest::Md;
 use crate::digest::{Sha256, Sha512};
 use crate::{CSlice, CSliceMut, ForeignTypeRef};
+use alloc::vec::Vec;
 use core::marker::PhantomData;
 
 /// Implementation of HKDF-SHA-256
@@ -23,12 +24,12 @@ pub type HkdfSha256 = Hkdf<Sha256>;
 /// Implementation of HKDF-SHA-512
 pub type HkdfSha512 = Hkdf<Sha512>;
 
-/// Error type returned from the hkdf expand operations when the output key material has
+/// Error type returned from the HKDF-Expand operations when the output key material has
 /// an invalid length
 #[derive(Debug)]
 pub struct InvalidLength;
 
-/// Implementation of hkdf operations which are generic over a provided hashing functions. Type
+/// Implementation of HKDF operations which are generic over a provided hashing functions. Type
 /// aliases are provided above for convenience of commonly used hashes
 pub struct Hkdf<M: Md> {
     salt: Option<Vec<u8>>,
@@ -40,18 +41,18 @@ impl<M: Md> Hkdf<M> {
     /// The max length of the output key material used for expanding
     pub const MAX_OUTPUT_LENGTH: usize = M::OUTPUT_SIZE * 255;
 
-    /// Creates a new instance of an hkdf from a salt and key material
+    /// Creates a new instance of HKDF from a salt and key material
     pub fn new(salt: Option<&[u8]>, ikm: &[u8]) -> Self {
         Self {
             salt: salt.map(Vec::from),
             ikm: Vec::from(ikm),
-            _marker: PhantomData::default(),
+            _marker: PhantomData,
         }
     }
 
-    /// The RFC5869 HKDF-Expand operation. The info argument for the expand is set to
+    /// Computes HKDF-Expand operation from RFC 5869. The info argument for the expand is set to
     /// the concatenation of all the elements of info_components. Returns InvalidLength if the
-    /// output is too large or panics if there is an allocation failure.
+    /// output is too large.
     pub fn expand_multi_info(
         &self,
         info_components: &[&[u8]],
@@ -60,8 +61,7 @@ impl<M: Md> Hkdf<M> {
         self.expand(&info_components.concat(), okm)
     }
 
-    /// The RFC5869 HKDF-Expand operation. Returns InvalidLength if the output is too large, or
-    /// panics if there is an allocation failure
+    /// Computes HKDF-Expand operation from RFC 5869. Returns InvalidLength if the output is too large.
     pub fn expand(&self, info: &[u8], okm: &mut [u8]) -> Result<(), InvalidLength> {
         // extract the salt bytes from the option, or empty slice if option is None
         let salt = self.salt.as_deref().unwrap_or_default();
@@ -95,6 +95,12 @@ impl<M: Md> Hkdf<M> {
 }
 
 #[cfg(test)]
+#[allow(
+    clippy::expect_used,
+    clippy::panic,
+    clippy::indexing_slicing,
+    clippy::unwrap_used
+)]
 mod tests {
     use crate::hkdf::{HkdfSha256, HkdfSha512};
     use crate::test_helpers::{decode_hex, decode_hex_into_vec};

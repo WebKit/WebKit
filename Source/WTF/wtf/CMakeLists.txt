@@ -346,6 +346,20 @@ set(WTF_PUBLIC_HEADERS
     WorkerPool.h
     dtoa.h
 
+    dragonbox/dragonbox.h
+    dragonbox/dragonbox_to_chars.h
+    dragonbox/ieee754_format.h
+
+    dragonbox/detail/bits.h
+    dragonbox/detail/cache_holder.h
+    dragonbox/detail/decimal_fp.h
+    dragonbox/detail/div.h
+    dragonbox/detail/log.h
+    dragonbox/detail/policy.h
+    dragonbox/detail/policy_holder.h
+    dragonbox/detail/util.h
+    dragonbox/detail/wuint.h
+
     dtoa/bignum-dtoa.h
     dtoa/bignum.h
     dtoa/cached-powers.h
@@ -532,6 +546,8 @@ set(WTF_SOURCES
     WorkQueue.cpp
     WorkerPool.cpp
     dtoa.cpp
+
+    dragonbox/dragonbox_to_chars.cpp
 
     dtoa/bignum-dtoa.cc
     dtoa/bignum.cc

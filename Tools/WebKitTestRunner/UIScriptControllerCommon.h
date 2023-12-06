@@ -38,6 +38,8 @@ public:
 
     bool windowIsKey() const override;
     void setWindowIsKey(bool) override;
+
+    void resizeWindowTo(unsigned width, unsigned height) override;
 };
 
 } // namespace WTR
