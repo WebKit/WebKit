@@ -2122,7 +2122,7 @@ void RenderElement::clearReferencedSVGResources()
 // This needs to run when the entire render tree has been constructed, so can't be called from styleDidChange.
 void RenderElement::updateReferencedSVGResources()
 {
-    auto referencedElementIDs = ReferencedSVGResources::referencedSVGResourceIDs(style());
+    auto referencedElementIDs = ReferencedSVGResources::referencedSVGResourceIDs(style(), document());
     if (!referencedElementIDs.isEmpty())
         ensureReferencedSVGResources().updateReferencedResources(treeScopeForSVGReferences(), referencedElementIDs);
     else

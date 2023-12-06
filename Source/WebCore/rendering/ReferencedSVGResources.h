@@ -57,7 +57,7 @@ public:
     ReferencedSVGResources(RenderElement&);
     ~ReferencedSVGResources();
 
-    static Vector<std::pair<AtomString, QualifiedName>> referencedSVGResourceIDs(const RenderStyle&);
+    static Vector<std::pair<AtomString, QualifiedName>> referencedSVGResourceIDs(const RenderStyle&, const Document&);
     void updateReferencedResources(TreeScope&, const Vector<std::pair<AtomString, QualifiedName>>&);
 
     // Legacy: Clipping needs a renderer, filters use an element.
