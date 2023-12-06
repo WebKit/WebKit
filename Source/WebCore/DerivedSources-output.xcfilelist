@@ -677,6 +677,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomElementRegistry.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomElementRegistry.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomEvent.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomEvent.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomStateSet.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomStateSet.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomXPathNSResolver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCustomXPathNSResolver.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDOMApplicationCache.cpp

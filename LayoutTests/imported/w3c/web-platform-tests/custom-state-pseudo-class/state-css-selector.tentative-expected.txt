@@ -4,12 +4,12 @@ I should be blue
 I should be blue
 
 
-FAIL state selector has no influence when state is not applied undefined is not an object (evaluating 'myCE.elementInternals.states.has')
-FAIL state selector has no influence on sibling selectors when not applied undefined is not an object (evaluating 'myCE.elementInternals.states.has')
-FAIL state selector has influence when state is applied undefined is not an object (evaluating 'myCE.elementInternals.states.add')
-FAIL state selector influences siblings when state is applied undefined is not an object (evaluating 'myCE.elementInternals.states.add')
-FAIL state selector influences has() when state is applied undefined is not an object (evaluating 'myCE.elementInternals.states.add')
-FAIL state selector only applies on given ident undefined is not an object (evaluating 'myCE.elementInternals.states.add')
-FAIL state selector only applies to siblings on given ident undefined is not an object (evaluating 'myCE.elementInternals.states.add')
-FAIL state selector only applies to has() on given ident undefined is not an object (evaluating 'myCE.elementInternals.states.add')
+PASS state selector has no influence when state is not applied
+PASS state selector has no influence on sibling selectors when not applied
+PASS state selector has influence when state is applied
+FAIL state selector influences siblings when state is applied assert_equals: expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+FAIL state selector influences has() when state is applied assert_equals: expected "rgb(0, 0, 255)" but got "rgb(255, 0, 0)"
+PASS state selector only applies on given ident
+PASS state selector only applies to siblings on given ident
+PASS state selector only applies to has() on given ident
 

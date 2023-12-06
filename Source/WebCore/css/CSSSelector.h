@@ -152,6 +152,7 @@ struct PossiblyQuotedIdentifier {
             Not,
             Root,
             Scope,
+            State,
             HasScope, // for internal use, matches the :has() scope
             WindowInactive,
             CornerPresent,

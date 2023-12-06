@@ -51,6 +51,7 @@ class Attribute;
 class AttributeIteratorAccessor;
 class CustomElementDefaultARIA;
 class CustomElementReactionQueue;
+class CustomStateSet;
 class DatasetDOMStringMap;
 class DOMRect;
 class DOMRectList;
@@ -755,6 +756,9 @@ public:
 
     std::optional<OptionSet<ContentRelevancy>> contentRelevancy() const;
     void setContentRelevancy(OptionSet<ContentRelevancy>);
+
+    bool hasCustomState(const AtomString& state) const;
+    CustomStateSet& ensureCustomStateSet();
 
 protected:
     Element(const QualifiedName&, Document&, ConstructionType);

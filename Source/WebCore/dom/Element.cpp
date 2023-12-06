@@ -43,6 +43,7 @@
 #include "ContentVisibilityDocumentState.h"
 #include "CustomElementReactionQueue.h"
 #include "CustomElementRegistry.h"
+#include "CustomStateSet.h"
 #include "DOMRect.h"
 #include "DOMRectList.h"
 #include "DOMTokenList.h"
@@ -5529,6 +5530,27 @@ AtomString Element::makeTargetBlankIfHasDanglingMarkup(const AtomString& target)
     if ((target.contains('\n') || target.contains('\r') || target.contains('\t')) && target.contains('<'))
         return "_blank"_s;
     return target;
+}
+
+bool Element::hasCustomState(const AtomString& state) const
+{
+    if (!document().settings().customStateSetEnabled())
+        return false;
+
+    if (hasRareData()) {
+        RefPtr customStates = elementRareData()->customStateSet();
+        return customStates && customStates->has(state);
+    }
+
+    return false;
+}
+
+CustomStateSet& Element::ensureCustomStateSet()
+{
+    auto& rareData = const_cast<Element*>(this)->ensureElementRareData();
+    if (!rareData.customStateSet())
+        rareData.setCustomStateSet(CustomStateSet::create(*this));
+    return *rareData.customStateSet();
 }
 
 } // namespace WebCore

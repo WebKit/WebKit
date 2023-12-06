@@ -1,3 +1,3 @@
 
-FAIL customstateset doesn't crash after GC on detached node promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'states.add')"
+PASS customstateset doesn't crash after GC on detached node
 

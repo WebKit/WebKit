@@ -1028,6 +1028,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/ContentVisibilityAutoStateChangeEvent.idl \
     $(WebCore)/dom/CustomElementRegistry.idl \
     $(WebCore)/dom/CustomEvent.idl \
+    $(WebCore)/dom/CustomStateSet.idl \
     $(WebCore)/dom/DOMException.idl \
     $(WebCore)/dom/DOMImplementation.idl \
     $(WebCore)/dom/DOMPoint.idl \

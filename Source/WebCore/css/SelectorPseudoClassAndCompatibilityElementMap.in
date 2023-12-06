@@ -66,6 +66,7 @@ read-write
 required
 root
 scope
+state
 single-button
 start
 target

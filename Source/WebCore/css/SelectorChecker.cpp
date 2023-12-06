@@ -1072,6 +1072,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, const LocalCont
             const Node* contextualReferenceNode = !checkingContext.scope ? element.document().documentElement() : checkingContext.scope;
             return &element == contextualReferenceNode;
         }
+        case CSSSelector::PseudoClassType::State:
+            return element.hasCustomState(selector.argument());
         case CSSSelector::PseudoClassType::HasScope: {
             bool matches = &element == checkingContext.hasScope || checkingContext.matchesAllHasScopes;
 
