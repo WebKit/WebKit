@@ -1036,8 +1036,10 @@ void RewriteGlobalVariables::usesOverride(AST::Variable& variable)
         constantType = Reflection::SpecializationConstantType::Boolean;
         break;
     case Types::Primitive::F32:
-    case Types::Primitive::F16: // Is this correct?
         constantType = Reflection::SpecializationConstantType::Float;
+        break;
+    case Types::Primitive::F16:
+        constantType = Reflection::SpecializationConstantType::Half;
         break;
     case Types::Primitive::I32:
         constantType = Reflection::SpecializationConstantType::Int;

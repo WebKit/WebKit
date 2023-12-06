@@ -255,7 +255,7 @@ Queue& Device::getQueue()
     return m_defaultQueue;
 }
 
-bool Device::hasFeature(WGPUFeatureName feature)
+bool Device::hasFeature(WGPUFeatureName feature) const
 {
     return std::find(m_capabilities.features.begin(), m_capabilities.features.end(), feature);
 }

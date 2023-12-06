@@ -58,7 +58,6 @@ public:
     void setPDFDocument(PDFDocument *document) { m_pdfDocument = document; }
 
     size_t pageCount() const;
-    DisplayMode displayMode() const { return m_displayMode; }
 
     static constexpr FloatSize documentMargin { 6, 8 };
     static constexpr FloatSize pageMargin { 4, 6 };
@@ -73,6 +72,9 @@ public:
 
     void updateLayout(WebCore::IntSize pluginSize);
     WebCore::FloatSize scaledContentsSize() const;
+
+    void setDisplayMode(DisplayMode displayMode) { m_displayMode = displayMode; }
+    DisplayMode displayMode() const { return m_displayMode; }
 
 private:
     void layoutPages(float availableWidth, float maxRowWidth);

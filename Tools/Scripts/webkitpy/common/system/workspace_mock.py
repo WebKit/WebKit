@@ -30,8 +30,3 @@
 class MockWorkspace(object):
     def find_unused_filename(self, directory, name, extension, search_limit=10):
         return "%s/%s.%s" % (directory, name, extension)
-
-    def create_zip(self, zip_path, source_path):
-        self.zip_path = zip_path
-        self.source_path = source_path
-        return object()  # Something that is not None

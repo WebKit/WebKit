@@ -92,7 +92,7 @@
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/263417"}}
             },
             "/webkit/WebKitWebView/notification": {
-                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/265886"}}
+                "expected": {"all": {"status": ["CRASH", "PASS"], "bug": "webkit.org/b/265886"}}
             }
         }
     },

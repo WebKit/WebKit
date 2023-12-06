@@ -115,12 +115,40 @@ private:
     bool isEditingCommandEnabled(StringView commandName) override;
 
     enum class ContextMenuItemTag : uint8_t {
-        OpenWithPreview
+        OpenWithPreview,
+        SinglePage,
+        SinglePageContinuous,
+        TwoPages,
+        TwoPagesContinuous
     };
 
 #if PLATFORM(MAC)
     PDFContextMenu createContextMenu(const WebCore::IntPoint& contextMenuPoint) const;
-    void performContextMenuAction(ContextMenuItemTag) const;
+    void performContextMenuAction(ContextMenuItemTag);
+
+    ContextMenuItemTag contextMenuItemTagFromDisplyMode(const PDFDocumentLayout::DisplayMode& displayMode) const
+    {
+        switch (displayMode) {
+        case PDFDocumentLayout::DisplayMode::SinglePage: return ContextMenuItemTag::SinglePage;
+        case PDFDocumentLayout::DisplayMode::Continuous: return ContextMenuItemTag::SinglePageContinuous;
+        case PDFDocumentLayout::DisplayMode::TwoUp: return ContextMenuItemTag::TwoPages;
+        case PDFDocumentLayout::DisplayMode::TwoUpContinuous: return ContextMenuItemTag::TwoPagesContinuous;
+        }
+    }
+    PDFDocumentLayout::DisplayMode displayModeFromContextMenuItemTag(const ContextMenuItemTag& tag)
+    {
+        ASSERT(tag == ContextMenuItemTag::SinglePage || tag == ContextMenuItemTag::SinglePageContinuous || tag == ContextMenuItemTag::TwoPages || tag == ContextMenuItemTag::TwoPagesContinuous);
+        switch (tag) {
+        case ContextMenuItemTag::SinglePage: return PDFDocumentLayout::DisplayMode::SinglePage;
+        case ContextMenuItemTag::SinglePageContinuous: return PDFDocumentLayout::DisplayMode::Continuous;
+        case ContextMenuItemTag::TwoPages: return PDFDocumentLayout::DisplayMode::TwoUp;
+        case ContextMenuItemTag::TwoPagesContinuous: return PDFDocumentLayout::DisplayMode::TwoUpContinuous;
+        default:
+            ASSERT_NOT_REACHED();
+            return PDFDocumentLayout::DisplayMode::Continuous;
+        }
+    }
+    static constexpr int invalidContextMenuItemTag { -1 };
 #endif
 
     String getSelectionString() const override;

@@ -25,19 +25,46 @@
 
 #pragma once
 
-#import <Foundation/Foundation.h>
+NS_ASSUME_NONNULL_BEGIN
 
-#import "WKProcessExtension.h"
+@class _WKWebExtensionSQLiteRowEnumerator;
+@class _WKWebExtensionSQLiteStatement;
 
-// FIXME: forward declare xpc_connection_t to build with public SDK.
-#import <xpc/xpc.h>
+typedef int _WKSQLiteErrorCode;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+@interface _WKWebExtensionSQLiteRow : NSObject
 
-void handleNewConnection(xpc_connection_t);
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithStatement:(_WKWebExtensionSQLiteStatement *)statement NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithCurrentRowOfEnumerator:(_WKWebExtensionSQLiteRowEnumerator *)rowEnumerator;
 
-#ifdef __cplusplus
-}
-#endif
+- (nullable NSString *)stringAtIndex:(NSUInteger)index;
+- (int)intAtIndex:(NSUInteger)index;
+- (int64_t)int64AtIndex:(NSUInteger)index;
+- (double)doubleAtIndex:(NSUInteger)index;
+- (BOOL)boolAtIndex:(NSUInteger)index;
+- (nullable NSData *)dataAtIndex:(NSUInteger)index;
+- (nullable NSObject *)objectAtIndex:(NSUInteger)index;
+
+- (nullable NSData *)uncopiedDataAtIndex:(NSUInteger)index;
+
+struct RawData {
+    const bool isNull;
+    const void* bytes;
+    const int length;
+};
+
+- (struct RawData)uncopiedRawDataAtIndex:(NSUInteger)index;
+
+@end
+
+@interface _WKWebExtensionSQLiteRowEnumerator : NSEnumerator
+
+- (instancetype)initWithResultsOfStatement:(_WKWebExtensionSQLiteStatement *)statement;
+
+@property (readonly, nonatomic) _WKWebExtensionSQLiteStatement *statement;
+@property (readonly, nonatomic) _WKSQLiteErrorCode lastResultCode;
+
+@end
+
+NS_ASSUME_NONNULL_END

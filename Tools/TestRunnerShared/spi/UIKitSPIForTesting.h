@@ -70,6 +70,11 @@
 #import <UIKit/UIKeyEventContext.h>
 #endif
 
+#if !__has_include(<UIKit/UIAsyncTextInput_ForWebKitOnly.h>)
+#define UITextDocumentContext UIWKDocumentContext
+#define UITextDocumentRequest UIWKDocumentRequest
+#endif
+
 IGNORE_WARNINGS_BEGIN("deprecated-implementations")
 #import <UIKit/UIWebBrowserView.h>
 #import <UIKit/UIWebScrollView.h>
@@ -85,6 +90,9 @@ IGNORE_WARNINGS_END
 #endif // PLATFORM(IOS) || PLATFORM(VISION)
 
 #else // USE(APPLE_INTERNAL_SDK)
+
+#define UITextDocumentContext UIWKDocumentContext
+#define UITextDocumentRequest UIWKDocumentRequest
 
 @interface NSTextAlternatives : NSObject
 - (id)initWithPrimaryString:(NSString *)primaryString alternativeStrings:(NSArray<NSString *> *)alternativeStrings;
@@ -253,9 +261,9 @@ typedef NS_ENUM(NSInteger, UIWKGestureType) {
 - (void)applyAutocorrection:(NSString *)correction toString:(NSString *)input shouldUnderline:(BOOL)shouldUnderline withCompletionHandler:(void (^)(UIWKAutocorrectionRects *rectsForCorrection))completionHandler;
 
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
-- (void)requestDocumentContext:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler;
+- (void)requestDocumentContext:(UITextDocumentRequest *)request completionHandler:(void (^)(UITextDocumentContext *))completionHandler;
 - (void)adjustSelectionWithDelta:(NSRange)deltaRange completionHandler:(void (^)(void))completionHandler;
-- (void)selectPositionAtPoint:(CGPoint)point withContextRequest:(UIWKDocumentRequest *)request completionHandler:(void (^)(UIWKDocumentContext *))completionHandler;
+- (void)selectPositionAtPoint:(CGPoint)point withContextRequest:(UITextDocumentRequest *)request completionHandler:(void (^)(UITextDocumentContext *))completionHandler;
 #endif
 
 @property (nonatomic, readonly) NSString *selectedText;

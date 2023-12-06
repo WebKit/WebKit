@@ -141,7 +141,6 @@ class WebPageProxy;
 @class UIPointerRegion;
 @class UITargetedPreview;
 @class _UILookupGestureRecognizer;
-@class _UITextCursorDragAnimator;
 
 #if HAVE(PEPPER_UI_CORE)
 @class PUICQuickboardViewController;
@@ -537,9 +536,9 @@ struct ImageAnalysisContextMenuActionData {
     RetainPtr<_UITextDragCaretView> _editDropCaretView;
     BlockPtr<void()> _actionToPerformAfterReceivingEditDragSnapshot;
 #endif
-#if HAVE(UI_TEXT_CURSOR_DRAG_ANIMATOR)
+#if HAVE(UI_TEXT_CURSOR_DROP_POSITION_ANIMATOR)
     RetainPtr<UIView<UITextCursorView>> _editDropTextCursorView;
-    RetainPtr<_UITextCursorDragAnimator> _editDropCaretAnimator;
+    RetainPtr<UITextCursorDropPositionAnimator> _editDropCaretAnimator;
 #endif
 
 #if HAVE(PEPPER_UI_CORE)

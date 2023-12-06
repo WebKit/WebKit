@@ -30,7 +30,13 @@
 #import "config.h"
 #import "APIData.h"
 #import "CocoaHelpers.h"
+#import "Logging.h"
 #import "WKNSData.h"
+#import <wtf/FileSystem.h>
+
+#if PLATFORM(MAC)
+#import <sys/mount.h>
+#endif
 
 namespace WebKit {
 
@@ -355,6 +361,17 @@ NSString *privacyPreservingDescription(NSError *error)
         return [NSString stringWithFormat:@"Error Domain=%@ Code=%ld \"%@\"", error.domain, (long)error.code, privacyPreservingDescription];
 
     return [NSError errorWithDomain:error.domain ?: @"" code:error.code userInfo:nil].description;
+}
+
+NSURL *ensureDirectoryExists(NSURL *directory)
+{
+    ASSERT(directory.isFileURL);
+    if (!FileSystem::makeAllDirectories(directory.absoluteString)) {
+        RELEASE_LOG_ERROR(Extensions, "Failed to create directory: %{private}@", (NSString *)directory);
+        return nil;
+    }
+
+    return directory;
 }
 
 NSString *escapeCharactersInString(NSString *string, NSString *charactersToEscape)

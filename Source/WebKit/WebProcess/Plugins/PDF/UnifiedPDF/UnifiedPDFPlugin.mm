@@ -579,7 +579,7 @@ PDFContextMenu UnifiedPDFPlugin::createContextMenu(const IntPoint& contextMenuPo
 {
     Vector<PDFContextMenuItem> menuItems;
 
-    // FIXME: We should also set the openInPreviewIndex when UnifiedPdfPlugin::openWithPreview is implemented
+    // FIXME: We should also set the openInPreviewIndex when UnifiedPdfPlugin::openWithPreview is implemented.
     menuItems.append({ WebCore::contextMenuItemPDFOpenWithPreview(), 0,
         enumToUnderlyingType(ContextMenuItemTag::OpenWithPreview),
         ContextMenuItemEnablement::Enabled,
@@ -587,14 +587,33 @@ PDFContextMenu UnifiedPDFPlugin::createContextMenu(const IntPoint& contextMenuPo
         ContextMenuItemIsSeparator::No
     });
 
+    menuItems.append({ String(), 0, invalidContextMenuItemTag, ContextMenuItemEnablement::Disabled, ContextMenuItemHasAction::No, ContextMenuItemIsSeparator::Yes });
+
+    auto currentDisplayMode = contextMenuItemTagFromDisplyMode(m_documentLayout.displayMode());
+    menuItems.append({ WebCore::contextMenuItemPDFSinglePage(), currentDisplayMode == ContextMenuItemTag::SinglePage, enumToUnderlyingType(ContextMenuItemTag::SinglePage), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No });
+
+    menuItems.append({ WebCore::contextMenuItemPDFSinglePageContinuous(), currentDisplayMode == ContextMenuItemTag::SinglePageContinuous, enumToUnderlyingType(ContextMenuItemTag::SinglePageContinuous), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No });
+
+    menuItems.append({ WebCore::contextMenuItemPDFTwoPages(), currentDisplayMode == ContextMenuItemTag::TwoPages, enumToUnderlyingType(ContextMenuItemTag::TwoPages), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No });
+
+    menuItems.append({ WebCore::contextMenuItemPDFTwoPagesContinuous(), currentDisplayMode == ContextMenuItemTag::TwoPagesContinuous, enumToUnderlyingType(ContextMenuItemTag::TwoPagesContinuous), ContextMenuItemEnablement::Enabled, ContextMenuItemHasAction::Yes, ContextMenuItemIsSeparator::No });
+
     return { contextMenuPoint, WTFMove(menuItems), { } };
 }
 
-void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag) const
+void UnifiedPDFPlugin::performContextMenuAction(ContextMenuItemTag tag)
 {
     switch (tag) {
-    // The OpenWithPreviewAction is handled in the UI Process
+    // The OpenWithPreview action is handled in the UI Process.
     case ContextMenuItemTag::OpenWithPreview: return;
+    case ContextMenuItemTag::SinglePage:
+    case ContextMenuItemTag::SinglePageContinuous:
+    case ContextMenuItemTag::TwoPagesContinuous:
+    case ContextMenuItemTag::TwoPages:
+        if (tag != contextMenuItemTagFromDisplyMode(m_documentLayout.displayMode())) {
+            m_documentLayout.setDisplayMode(displayModeFromContextMenuItemTag(tag));
+            updateLayout();
+        }
     }
 }
 #endif // PLATFORM(MAC)

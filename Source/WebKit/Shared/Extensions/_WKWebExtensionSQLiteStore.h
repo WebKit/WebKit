@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,33 @@
 
 #pragma once
 
-#include <wtf/spi/darwin/XPCSPI.h>
+OBJC_CLASS _WKWebExtensionSQLiteDatabase;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+NS_ASSUME_NONNULL_BEGIN
 
-// FIXME: Remove these after <rdar://problem/30772033> is fixed.
-void NetworkServiceInitializer();
-void WebContentServiceInitializer();
-void GPUServiceInitializer();
-
-void ExtensionEventHandler(xpc_connection_t);
-
-// Declared in WKProcessExtension.h for use in extension targets. Must be declared in project
-//  headers because the extension targets cannot import the entire WebKit module (rdar://119162443).
-@interface WKGrant : NSObject
-@end
-
-@interface WKProcessExtension : NSObject
-@end
-
-#ifdef __cplusplus
+@interface _WKWebExtensionSQLiteStore : NSObject {
+@protected
+    NSString *_uniqueIdentifier;
+    NSURL *_directory;
+    _WKWebExtensionSQLiteDatabase *_database;
+    dispatch_queue_t _databaseQueue;
+    BOOL _useInMemoryDatabase;
 }
-#endif
+
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+
+- (instancetype)initWithUniqueIdentifier:(NSString *)uniqueIdentifier directory:(NSString *)directory usesInMemoryDatabase:(BOOL)useInMemoryDatabase;
+
+@property (nonatomic, readonly) BOOL useInMemoryDatabase;
+
+- (void)deleteStorageWithCompletionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+
+- (void)deleteDatabaseWithCompletionHandler:(void (^)(NSString * _Nullable errorMessage))completionHandler;
+
+- (BOOL)_openDatabaseIfNecessaryReturningErrorMessage:(NSString * _Nullable * _Nonnull)outErrorMessage;
+- (nullable NSString *)_deleteDatabaseIfEmpty;
+
+@end
+
+NS_ASSUME_NONNULL_END

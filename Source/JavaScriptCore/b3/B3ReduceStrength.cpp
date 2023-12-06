@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -1979,11 +1979,18 @@ private:
             break;
 
         case Trunc:
-            // Turn this: Trunc(constant)
-            // Into this: static_cast<int32_t>(constant)
-            if (m_value->child(0)->hasInt64() || m_value->child(0)->hasDouble()) {
-                replaceWithNewValue(
-                    m_proc.addIntConstant(m_value, static_cast<int32_t>(m_value->child(0)->asInt64())));
+            // Turn this: Trunc(int64Constant)
+            // Into this: static_cast<int32_t>(int64Constant)
+            if (m_value->child(0)->hasInt64()) {
+                replaceWithNewValue(m_proc.addIntConstant(m_value, static_cast<int32_t>(m_value->child(0)->asInt64())));
+                break;
+            }
+
+            // Turn this: Trunc(doubleConstant)
+            // Into this: bitwise_cast<float>(static_cast<int32_t>(bitwise_cast<int64_t>(doubleConstant)))
+            if (m_value->child(0)->hasDouble()) {
+                double value = m_value->child(0)->asDouble();
+                replaceWithNewValue(m_proc.addConstant(m_value->origin(), m_value->type(), bitwise_cast<int64_t>(value)));
                 break;
             }
 

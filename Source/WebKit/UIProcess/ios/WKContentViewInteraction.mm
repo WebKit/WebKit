@@ -198,7 +198,7 @@
 SOFT_LINK_FRAMEWORK(UIKit)
 SOFT_LINK_CLASS_OPTIONAL(UIKit, _UIAsyncDragInteraction)
 SOFT_LINK_CLASS_OPTIONAL(UIKit, _UIContextMenuAsyncConfiguration)
-SOFT_LINK_CLASS_OPTIONAL(UIKit, _UITextCursorDragAnimator)
+SOFT_LINK_CLASS_OPTIONAL(UIKit, UITextCursorDropPositionAnimator)
 SOFT_LINK_CLASS_OPTIONAL(UIKit, UIKeyEventContext)
 
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
@@ -1151,12 +1151,12 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 
 - (BOOL)_shouldUseTextCursorDragAnimator
 {
-#if HAVE(UI_TEXT_CURSOR_DRAG_ANIMATOR)
+#if HAVE(UI_TEXT_CURSOR_DROP_POSITION_ANIMATOR)
     if (!self.shouldUseAsyncInteractions)
         return NO;
 
-    static BOOL hasTextCursorDragAnimatorClass = !!get_UITextCursorDragAnimatorClass();
-    return hasTextCursorDragAnimatorClass;
+    static BOOL hasClass = !!getUITextCursorDropPositionAnimatorClass();
+    return hasClass;
 #else
     return NO;
 #endif
@@ -9826,17 +9826,17 @@ static std::optional<WebCore::DragOperation> coreDragOperationForUIDropOperation
 
 - (void)_insertDropCaret:(CGRect)rect
 {
-#if HAVE(UI_TEXT_CURSOR_DRAG_ANIMATOR)
+#if HAVE(UI_TEXT_CURSOR_DROP_POSITION_ANIMATOR)
     if (self._shouldUseTextCursorDragAnimator) {
         _editDropTextCursorView = [adoptNS([[UITextSelectionDisplayInteraction alloc] initWithTextInput:self delegate:self]) cursorView];
         [self addSubview:_editDropTextCursorView.get()];
         [_editDropTextCursorView setFrame:rect];
-        _editDropCaretAnimator = adoptNS([alloc_UITextCursorDragAnimatorInstance() _initWithTextCursorView:_editDropTextCursorView.get() textInput:self]);
-        [_editDropCaretAnimator _setCursorVisible:YES animated:YES];
-        [_editDropCaretAnimator _updateCursorForPosition:[WKTextPosition textPositionWithRect:rect] animated:NO];
+        _editDropCaretAnimator = adoptNS([allocUITextCursorDropPositionAnimatorInstance() initWithTextCursorView:_editDropTextCursorView.get() textInput:self]);
+        [_editDropCaretAnimator setCursorVisible:YES animated:YES];
+        [_editDropCaretAnimator placeCursorAtPosition:[WKTextPosition textPositionWithRect:rect] animated:NO];
         return;
     }
-#endif // HAVE(UI_TEXT_CURSOR_DRAG_ANIMATOR)
+#endif // HAVE(UI_TEXT_CURSOR_DROP_POSITION_ANIMATOR)
     _editDropCaretView = adoptNS([[_UITextDragCaretView alloc] initWithTextInputView:self]);
     [_editDropCaretView insertAtPosition:[WKTextPosition textPositionWithRect:rect]];
 }
@@ -9844,8 +9844,8 @@ static std::optional<WebCore::DragOperation> coreDragOperationForUIDropOperation
 - (void)_removeDropCaret
 {
     [std::exchange(_editDropCaretView, nil) remove];
-#if HAVE(UI_TEXT_CURSOR_DRAG_ANIMATOR)
-    [std::exchange(_editDropCaretAnimator, nil) _setCursorVisible:NO animated:NO];
+#if HAVE(UI_TEXT_CURSOR_DROP_POSITION_ANIMATOR)
+    [std::exchange(_editDropCaretAnimator, nil) setCursorVisible:NO animated:NO];
     [std::exchange(_editDropTextCursorView, nil) removeFromSuperview];
 #endif
 }
@@ -9945,8 +9945,8 @@ static NSArray<NSItemProvider *> *extractItemProvidersFromDropSession(id <UIDrop
     }
 
     RetainPtr caretPosition = [WKTextPosition textPositionWithRect:rect];
-#if HAVE(UI_TEXT_CURSOR_DRAG_ANIMATOR)
-    [_editDropCaretAnimator _updateCursorForPosition:caretPosition.get() animated:YES];
+#if HAVE(UI_TEXT_CURSOR_DROP_POSITION_ANIMATOR)
+    [_editDropCaretAnimator placeCursorAtPosition:caretPosition.get() animated:YES];
 #endif
     [_editDropCaretView updateToPosition:caretPosition.get()];
 }
