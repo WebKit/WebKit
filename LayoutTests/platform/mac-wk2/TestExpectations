@@ -2011,3 +2011,8 @@ http/wpt/webcodecs/h264-encoder-default-config.https.any.html [ Failure ]
 http/wpt/webcodecs/h264-encoder-default-config.https.any.worker.html [ Failure ]
 
 webkit.org/b/265599 [ Sonoma+ Debug x86_64 ] imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-noreferrer.html [ Pass Crash ]
+
+# rdar://119272478 (REGRESSION ( Sonoma?): [ Sonoma Release wk2 ] 3 tests in fast/attachment are a flaky failure with image diff)
+[ Sonoma+ Release ] fast/attachment/attachment-folder-icon.html [ Pass Failure ]
+[ Sonoma+ Release ] fast/attachment/attachment-type-attribute.html [ Pass Failure ]
+[ Sonoma+ Release ] fast/attachment/attachment-default-icon.html [ Pass Failure ]
