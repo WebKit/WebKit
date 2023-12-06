@@ -198,7 +198,10 @@ public:
     Lock& getLock() const;
 
 #if ENABLE(JUMP_ISLANDS)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundefined-inline"
     JS_EXPORT_PRIVATE __attribute__((preserve_most)) void* getJumpIslandTo(void* from, void* newDestination);
+#pragma clang diagnostic pop
     JS_EXPORT_PRIVATE void* getJumpIslandToConcurrently(void* from, void* newDestination);
 #endif
 

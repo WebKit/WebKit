@@ -702,7 +702,7 @@ public:
         }
     }
 
-    void* makeIsland(uintptr_t jumpLocation, uintptr_t newTarget, bool concurrently)
+    ALWAYS_INLINE void* makeIsland(uintptr_t jumpLocation, uintptr_t newTarget, bool concurrently)
     {
         Locker locker { getLock() };
         return islandForJumpLocation(locker, jumpLocation, newTarget, concurrently);
@@ -740,7 +740,7 @@ private:
         delete islands;
     }
 
-    void* islandForJumpLocation(const LockHolder& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently)
+    ALWAYS_INLINE void* islandForJumpLocation(const LockHolder& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently)
     {
         Islands* islands = m_islandsForJumpSourceLocation.findExact(bitwise_cast<void*>(jumpLocation));
         if (islands) {

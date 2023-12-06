@@ -258,13 +258,13 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     if (g_jscConfig.useFastJITPermissions)
             threadSelfRestrictRWXToRW();
 
-    ([](LinkBuffer* thiz, MacroAssembler& macroAssembler,
+    auto critical = [](LinkBuffer* thiz, MacroAssembler& macroAssembler,
         uint8_t* outData, uint8_t* codeOutData, Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink
 #if CPU(ARM64E)
         , ARM64EHash<ShouldSign::No>& verifyUncompactedHash
 #endif
         ) __attribute__((noinline)) /*__attribute__((nospill))*/ {
-        __asm__ volatile ("brk 42\n");
+        WTF::compilerFence(); __asm__ volatile ("brk 43\n");WTF::compilerFence();
         const size_t initialSize = macroAssembler.m_assembler.codeSize();
 
         thiz->m_assemblerStorage = macroAssembler.m_assembler.buffer().releaseAssemblerData();
@@ -392,7 +392,11 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
         if (thiz->m_executableMemory)
             thiz->m_size = compactSize; // we shrink below
 
-    })(this, macroAssembler,
+        WTF::compilerFence(); __asm__ volatile ("brk 43\n");WTF::compilerFence();
+
+    };
+    WTF::compilerFence();
+    critical(this, macroAssembler,
         outData, codeOutData, jumpsToLink
 #if CPU(ARM64E)
         , verifyUncompactedHash
