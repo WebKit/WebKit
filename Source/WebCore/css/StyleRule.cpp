@@ -558,19 +558,9 @@ Ref<StyleRuleScope> StyleRuleScope::copy() const
 
 StyleRuleScope::StyleRuleScope(CSSSelectorList&& scopeStart, CSSSelectorList&& scopeEnd, Vector<Ref<StyleRuleBase>>&& rules)
     : StyleRuleGroup(StyleRuleType::Scope, WTFMove(rules))
-    , m_scopeStart(WTFMove(scopeStart))
-    , m_scopeEnd(WTFMove(scopeEnd))
+    , m_originalScopeStart(WTFMove(scopeStart))
+    , m_originalScopeEnd(WTFMove(scopeEnd))
 {
-}
-
-const CSSSelectorList& StyleRuleScope::scopeStart() const
-{
-    return m_scopeStart;
-}
-
-const CSSSelectorList& StyleRuleScope::scopeEnd() const
-{
-    return m_scopeEnd;
 }
 
 StyleRuleScope::StyleRuleScope(const StyleRuleScope&) = default;

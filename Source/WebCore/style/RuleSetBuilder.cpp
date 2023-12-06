@@ -41,6 +41,7 @@
 #include "StyleRuleImport.h"
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
+#include "css/CSSSelectorList.h"
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -124,7 +125,23 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
             m_ruleSet->m_scopeRules.append({ scopeRule.copyRef(), previousScopeIdentifier });
             m_currentScopeIdentifier = m_ruleSet->m_scopeRules.size();
         }
+
+        // https://drafts.csswg.org/css-nesting/#nesting-at-scope
+        // For the purposes of the style rules in its body and its own <scope-end> selector,
+        // the @scope rule is treated as an ancestor style rule, matching the elements matched by its <scope-start> selector.
+        if (m_shouldResolveNesting == ShouldResolveNesting::Yes) {
+            const CSSSelectorList* parentResolvedSelectorList = nullptr;
+            if (m_selectorListStack.size())
+                parentResolvedSelectorList =  m_selectorListStack.last();
+            if (!scopeRule->originalScopeStart().isEmpty())
+                scopeRule->setScopeStart(CSSSelectorParser::resolveNestingParent(scopeRule->originalScopeStart(), parentResolvedSelectorList));
+            if (!scopeRule->originalScopeEnd().isEmpty())
+                scopeRule->setScopeEnd(CSSSelectorParser::resolveNestingParent(scopeRule->originalScopeEnd(), &scopeRule->scopeStart()));
+        }
+
+        m_selectorListStack.append(&scopeRule->scopeStart());
         addChildRules(scopeRule->childRules());
+        m_selectorListStack.removeLast();
         if (m_ruleSet)
             m_currentScopeIdentifier = previousScopeIdentifier;
         return;
@@ -233,8 +250,8 @@ void RuleSetBuilder::addRulesFromSheetContents(const StyleSheetContents& sheet)
 void RuleSetBuilder::resolveSelectorListWithNesting(StyleRuleWithNesting& rule)
 {
     const CSSSelectorList* parentResolvedSelectorList = nullptr;
-    if (m_styleRuleStack.size())
-        parentResolvedSelectorList =  m_styleRuleStack.last();
+    if (m_selectorListStack.size())
+        parentResolvedSelectorList =  m_selectorListStack.last();
 
     // If it's a top-level rule without a nesting parent selector, keep the selector list as is.
     if (!rule.originalSelectorList().hasExplicitNestingParent() && !parentResolvedSelectorList)
@@ -266,10 +283,10 @@ void RuleSetBuilder::addStyleRule(StyleRuleWithNesting& rule)
     addStyleRuleWithSelectorList(selectorList, rule);
 
     // Process nested rules
-    m_styleRuleStack.append(&selectorList);
+    m_selectorListStack.append(&selectorList);
     for (auto& nestedRule : rule.nestedRules())
         addChildRule(nestedRule);
-    m_styleRuleStack.removeLast();
+    m_selectorListStack.removeLast();
 }
 
 void RuleSetBuilder::addStyleRule(const StyleRule& rule)
