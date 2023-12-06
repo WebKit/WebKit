@@ -90,24 +90,28 @@ void WebExtensionAPIDeclarativeNetRequest::getEnabledRulesets(Ref<WebExtensionCa
     }, extensionContext().identifier());
 }
 
-void WebExtensionAPIDeclarativeNetRequest::updateDynamicRules(NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString)
+void WebExtensionAPIDeclarativeNetRequest::updateDynamicRules(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // FIXME: rdar://118476702 - Support dynamic rules
+    callback->call();
 }
 
-void WebExtensionAPIDeclarativeNetRequest::getDynamicRules(Ref<WebExtensionCallbackHandler>&&)
+void WebExtensionAPIDeclarativeNetRequest::getDynamicRules(Ref<WebExtensionCallbackHandler>&& callback)
 {
     // FIXME: rdar://118476702 - Support dynamic rules
+    callback->call(@[ ]);
 }
 
-void WebExtensionAPIDeclarativeNetRequest::updateSessionRules(NSDictionary *options, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString)
+void WebExtensionAPIDeclarativeNetRequest::updateSessionRules(NSDictionary *options, Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     // FIXME: rdar://118476774 - Support session rules
+    callback->call();
 }
 
-void WebExtensionAPIDeclarativeNetRequest::getSessionRules(Ref<WebExtensionCallbackHandler>&&)
+void WebExtensionAPIDeclarativeNetRequest::getSessionRules(Ref<WebExtensionCallbackHandler>&& callback)
 {
     // FIXME: rdar://118476774 - Support session rules
+    callback->call(@[ ]);
 }
 
 static bool extensionHasPermission(WebExtensionContextProxy& extensionContext, NSString *permission)
