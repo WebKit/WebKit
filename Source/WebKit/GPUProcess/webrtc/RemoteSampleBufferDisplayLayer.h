@@ -63,7 +63,8 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 
     CGRect bounds() const;
-    
+    void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&&);
+
 private:
     RemoteSampleBufferDisplayLayer(GPUConnectionToWebProcess&, SampleBufferDisplayLayerIdentifier, Ref<IPC::Connection>&&);
 
@@ -71,7 +72,6 @@ private:
     void setLogIdentifier(String&&);
 #endif
     void updateDisplayMode(bool hideDisplayLayer, bool hideRootLayer);
-    void updateBoundsAndPosition(CGRect, std::optional<WTF::MachSendRight>&&);
     void flush();
     void flushAndRemoveImage();
     void play();

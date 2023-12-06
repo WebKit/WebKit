@@ -28,6 +28,7 @@
 
 #if PLATFORM(COCOA) && ENABLE(GPU_PROCESS) && ENABLE(MEDIA_STREAM)
 
+#include "GPUConnectionToWebProcessMessages.h"
 #include "GPUProcessConnection.h"
 #include "LayerHostingContext.h"
 #include "Logging.h"
@@ -95,7 +96,7 @@ void SampleBufferDisplayLayer::updateDisplayMode(bool hideDisplayLayer, bool hid
 
 void SampleBufferDisplayLayer::updateBoundsAndPosition(CGRect bounds, std::optional<WTF::MachSendRight>&& fence)
 {
-    m_connection->send(Messages::RemoteSampleBufferDisplayLayer::UpdateBoundsAndPosition { bounds, WTFMove(fence) }, m_identifier);
+    m_connection->send(Messages::GPUConnectionToWebProcess::UpdateSampleBufferDisplayLayerBoundsAndPosition { m_identifier, bounds, WTFMove(fence) }, m_identifier);
 }
 
 void SampleBufferDisplayLayer::flush()
