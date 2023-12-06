@@ -1054,31 +1054,35 @@ void InlineDisplayContentBuilder::collectInkOverflowForTextDecorations(InlineDis
 
 size_t InlineDisplayContentBuilder::processRubyBase(size_t rubyBaseStart, InlineDisplay::Boxes& displayBoxes, Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList, Vector<size_t>& rubyBaseStartIndexListWithAnnotation)
 {
+    auto& formattingContext = this->formattingContext();
     auto& rubyBaseLayoutBox = displayBoxes[rubyBaseStart].layoutBox();
+    auto baseMarginBoxRect = BoxGeometry::marginBoxRect(formattingContext.geometryForBox(rubyBaseLayoutBox));
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
-    if (!annotationBox)
-        return rubyBaseStart;
 
-    auto computeBoxGeometryForAnnotationBox = [&] {
-        auto& formattingContext = this->formattingContext();
-        auto visualBorderBoxTopLeft = RubyFormattingContext::placeAnnotationBox(rubyBaseLayoutBox, formattingContext);
-        auto visualContentBoxSize = RubyFormattingContext::sizeAnnotationBox(rubyBaseLayoutBox, formattingContext);
-        auto& annotationBoxGeometry = formattingContext.geometryForBox(*annotationBox);
-        annotationBoxGeometry.setTopLeft(toLayoutPoint(visualBorderBoxTopLeft));
-        annotationBoxGeometry.setContentBoxSize(toLayoutSize(visualContentBoxSize));
-    };
-    computeBoxGeometryForAnnotationBox();
-
-    rubyBaseStartIndexListWithAnnotation.append(rubyBaseStart);
-    if (!isInterlinearAnnotationBox(annotationBox))
-        return rubyBaseStart;
+    if (annotationBox)
+        rubyBaseStartIndexListWithAnnotation.append(rubyBaseStart);
 
     auto rubyBaseEnd = displayBoxes.size();
     auto& rubyBox = rubyBaseLayoutBox.parent();
     auto& rubyBoxParent = rubyBox.parent();
     for (auto index = rubyBaseStart + 1; index < displayBoxes.size(); ++index) {
-        if (displayBoxes[index].layoutBox().isRubyBase()) {
+        auto& baseContentLayoutBox = displayBoxes[index].layoutBox();
+        if (baseContentLayoutBox.isRubyBase()) {
             index = processRubyBase(index, displayBoxes, interlinearRubyColumnRangeList, rubyBaseStartIndexListWithAnnotation);
+            if (auto* annotation = baseContentLayoutBox.associatedRubyAnnotationBox(); annotation && isInterlinearAnnotationBox(annotation)) {
+                auto isNestedRubyBase = [&] {
+                    for (auto* ancestor = &baseContentLayoutBox.parent(); ancestor != &root(); ancestor = &ancestor->parent()) {
+                        if (ancestor->isRubyBase())
+                            return ancestor == &rubyBaseLayoutBox;
+                    }
+                    return false;
+                };
+                if (isNestedRubyBase()) {
+                    auto nestedAnnotationMarginBoxRect = BoxGeometry::marginBoxRect(formattingContext.geometryForBox(*annotation));
+                    baseMarginBoxRect.expandToContain(nestedAnnotationMarginBoxRect);
+                }
+            }
+
             if (index == displayBoxes.size()) {
                 rubyBaseEnd = index;
                 break;
@@ -1092,7 +1096,19 @@ size_t InlineDisplayContentBuilder::processRubyBase(size_t rubyBaseStart, Inline
         }
     }
 
-    interlinearRubyColumnRangeList.append({ rubyBaseStart, rubyBaseEnd });
+    if (isInterlinearAnnotationBox(annotationBox))
+        interlinearRubyColumnRangeList.append({ rubyBaseStart, rubyBaseEnd });
+
+    if (annotationBox) {
+        auto placeAndSizeAnnotationBox = [&] {
+            auto visualBorderBoxTopLeft = RubyFormattingContext::placeAnnotationBox(rubyBaseLayoutBox, baseMarginBoxRect, formattingContext);
+            auto visualContentBoxSize = RubyFormattingContext::sizeAnnotationBox(rubyBaseLayoutBox, formattingContext);
+            auto& annotationBoxGeometry = formattingContext.geometryForBox(*annotationBox);
+            annotationBoxGeometry.setTopLeft(toLayoutPoint(visualBorderBoxTopLeft));
+            annotationBoxGeometry.setContentBoxSize(toLayoutSize(visualContentBoxSize));
+        };
+        placeAndSizeAnnotationBox();
+    }
     return rubyBaseEnd;
 }
 
