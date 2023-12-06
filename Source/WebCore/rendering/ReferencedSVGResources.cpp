@@ -94,7 +94,7 @@ void ReferencedSVGResources::removeClientForTarget(TreeScope& treeScope, const A
         targetElement->removeReferencingCSSClient(*client);
 }
 
-Vector<std::pair<AtomString, QualifiedName>> ReferencedSVGResources::referencedSVGResourceIDs(const RenderStyle& style)
+Vector<std::pair<AtomString, QualifiedName>> ReferencedSVGResources::referencedSVGResourceIDs(const RenderStyle& style, const Document& document)
 {
     Vector<std::pair<AtomString, QualifiedName>> referencedResources;
     if (is<ReferencePathOperation>(style.clipPath())) {
@@ -114,7 +114,21 @@ Vector<std::pair<AtomString, QualifiedName>> ReferencedSVGResources::referencedS
             }
         }
     }
-    
+
+#if ENABLE(LAYER_BASED_SVG_ENGINE)
+    if (document.settings().layerBasedSVGEngineEnabled() && style.hasPositionedMask()) {
+        // FIXME: We should support all the values in the CSS mask property, but for now just use the first mask-image if it's a reference.
+        auto* maskImage = style.maskImage();
+        auto reresolvedURL = maskImage ? maskImage->reresolvedURL(document) : URL();
+
+        if (!reresolvedURL.isEmpty()) {
+            auto resourceID = SVGURIReference::fragmentIdentifierFromIRIString(reresolvedURL.string(), document);
+            if (!resourceID.isEmpty())
+                referencedResources.append({ resourceID, SVGNames::maskTag });
+        }
+    }
+#endif
+
     return referencedResources;
 }
 

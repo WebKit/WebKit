@@ -109,7 +109,7 @@ private:
 
     std::optional<WGPUTextureViewDescriptor> resolveTextureViewDescriptorDefaults(const WGPUTextureViewDescriptor&) const;
     uint32_t arrayLayerCount() const;
-    bool validateCreateView(const WGPUTextureViewDescriptor&) const;
+    NSString* errorValidatingTextureViewCreation(const WGPUTextureViewDescriptor&) const;
 
     id<MTLTexture> m_texture { nil };
 
@@ -128,6 +128,7 @@ private:
     using ClearedToZeroInnerContainer = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using ClearedToZeroContainer = HashMap<uint32_t, ClearedToZeroInnerContainer, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     ClearedToZeroContainer m_clearedToZero;
+    bool m_destroyed { false };
 };
 
 } // namespace WebGPU

@@ -113,7 +113,6 @@ void RenderSVGResourceClipper::applyPathClipping(GraphicsContext& context, const
         clipPathTransform.translate(objectBoundingBox.location());
         clipPathTransform.scale(objectBoundingBox.size());
     }
-
     if (layer()->isTransformed())
         clipPathTransform.multiply(layer()->transform()->toAffineTransform());
 
@@ -229,6 +228,22 @@ FloatRect RenderSVGResourceClipper::resourceBoundingBox(const RenderObject& obje
     }
 
     return clipContentRepaintRect;
+}
+
+void RenderSVGResourceClipper::updateFromStyle()
+{
+    updateHasSVGTransformFlags();
+}
+
+void RenderSVGResourceClipper::applyTransform(TransformationMatrix& transform, const RenderStyle& style, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption> options) const
+{
+    ASSERT(document().settings().layerBasedSVGEngineEnabled());
+    applySVGTransform(transform, clipPathElement(), style, boundingBox, std::nullopt, std::nullopt, options);
+}
+
+bool RenderSVGResourceClipper::needsHasSVGTransformFlags() const
+{
+    return clipPathElement().hasTransformRelatedAttributes();
 }
 
 }

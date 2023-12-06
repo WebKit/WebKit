@@ -3013,20 +3013,35 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
 }
 
 
-void WebExtensionContext::handleContentRuleListNotificationForTab(WebExtensionTab& tab, const URL& url, WebCore::ContentRuleListResults::Result)
+bool WebExtensionContext::handleContentRuleListNotificationForTab(WebExtensionTab& tab, const URL& url, WebCore::ContentRuleListResults::Result)
 {
     incrementActionCountForTab(tab, 1);
 
     if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestFeedback) && !(hasPermission(_WKWebExtensionPermissionDeclarativeNetRequest) && hasPermission(_WKWebExtensionPermissionActiveTab)))
-        return;
-
-    // FIXME: rdar://118940129 - Set a timer to purge old matched rules.
+        return false;
 
     m_matchedRules.append({
         url,
         WallTime::now(),
         tab.identifier()
     });
+
+    return true;
+}
+
+bool WebExtensionContext::purgeMatchedRulesFromBefore(const WallTime& startTime)
+{
+    if (m_matchedRules.isEmpty())
+        return false;
+
+    DeclarativeNetRequestMatchedRuleVector filteredMatchedRules;
+    for (auto& matchedRule : m_matchedRules) {
+        if (matchedRule.timeStamp >= startTime)
+            filteredMatchedRules.append(matchedRule);
+    }
+
+    m_matchedRules = WTFMove(filteredMatchedRules);
+    return !m_matchedRules.isEmpty();
 }
 
 } // namespace WebKit

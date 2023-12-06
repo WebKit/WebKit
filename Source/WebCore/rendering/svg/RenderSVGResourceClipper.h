@@ -49,8 +49,14 @@ public:
 
     inline SVGUnitTypes::SVGUnitType clipPathUnits() const;
 
+    void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const final;
+
 private:
     void element() const = delete;
+
+    bool needsHasSVGTransformFlags() const final;
+
+    void updateFromStyle() final;
 
     ASCIILiteral renderName() const final { return "RenderSVGResourceClipper"_s; }
 };
