@@ -2190,92 +2190,93 @@ uint32_t Texture::arrayLayerCount() const
     }
 }
 
-bool Texture::validateCreateView(const WGPUTextureViewDescriptor& descriptor) const
+NSString* Texture::errorValidatingTextureViewCreation(const WGPUTextureViewDescriptor& descriptor) const
 {
+#define ERROR_STRING(x) (@"GPUTexture.createView: " x)
     if (!isValid())
-        return false;
+        return ERROR_STRING(@"texture is not valid");
 
     if (descriptor.aspect == WGPUTextureAspect_All) {
         if (descriptor.format != m_format && !m_viewFormats.contains(descriptor.format))
-            return false;
+            return ERROR_STRING(@"aspect == all and (format != parentTexture's format and !viewFormats.contains(parentTexture's format))");
     } else {
         if (descriptor.format != resolveTextureFormat(m_format, descriptor.aspect))
-            return false;
+            return ERROR_STRING(@"aspect == All and (format != resolveTextureFormat(format, aspect))");
     }
 
     if (!descriptor.mipLevelCount)
-        return false;
+        return ERROR_STRING(@"!mipLevelCount");
 
     auto endMipLevel = checkedSum<uint32_t>(descriptor.baseMipLevel, descriptor.mipLevelCount);
     if (endMipLevel.hasOverflowed() || endMipLevel.value() > m_mipLevelCount)
-        return false;
+        return ERROR_STRING(@"endMipLevel is not valid");
 
     if (!descriptor.arrayLayerCount)
-        return false;
+        return ERROR_STRING(@"!arrayLayerCount");
 
     auto endArrayLayer = checkedSum<uint32_t>(descriptor.baseArrayLayer, descriptor.arrayLayerCount);
     if (endArrayLayer.hasOverflowed() || endArrayLayer.value() > arrayLayerCount())
-        return false;
+        return ERROR_STRING(@"endArrayLayer is not valid");
 
     if (m_sampleCount > 1) {
         if (descriptor.dimension != WGPUTextureViewDimension_2D)
-            return false;
+            return ERROR_STRING(@"sampleCount > 1 and dimension != 2D");
     }
 
     switch (descriptor.dimension) {
     case WGPUTextureViewDimension_Undefined:
-        return false;
+        return ERROR_STRING(@"dimension is undefined");
     case WGPUTextureViewDimension_1D:
         if (m_dimension != WGPUTextureDimension_1D)
-            return false;
+            return ERROR_STRING(@"attempting to create 1D texture view from non-1D base texture");
 
         if (descriptor.arrayLayerCount != 1)
-            return false;
+            return ERROR_STRING(@"attempting to create 1D texture view with array layers");
         break;
     case WGPUTextureViewDimension_2D:
         if (m_dimension != WGPUTextureDimension_2D)
-            return false;
+            return ERROR_STRING(@"attempting to create 2D texture view from non-2D base texture");
 
         if (descriptor.arrayLayerCount != 1)
-            return false;
+            return ERROR_STRING(@"attempting to create 2D texture view with array layers");
         break;
     case WGPUTextureViewDimension_2DArray:
         if (m_dimension != WGPUTextureDimension_2D)
-            return false;
+            return ERROR_STRING(@"attempting to create 2D texture array view from non-2D parent texture");
         break;
     case WGPUTextureViewDimension_Cube:
         if (m_dimension != WGPUTextureDimension_2D)
-            return false;
+            return ERROR_STRING(@"attempting to create cube texture view from non-2D parent texture");
 
         if (descriptor.arrayLayerCount != 6)
-            return false;
+            return ERROR_STRING(@"attempting to create cube texture view with arrayLayerCount != 6");
 
         if (m_width != m_height)
-            return false;
+            return ERROR_STRING(@"attempting to create cube texture view from non-square parent texture");
         break;
     case WGPUTextureViewDimension_CubeArray:
         if (m_dimension != WGPUTextureDimension_2D)
-            return false;
+            return ERROR_STRING(@"attempting to create cube array texture view from non-2D parent texture");
 
         if (descriptor.arrayLayerCount % 6)
-            return false;
+            return ERROR_STRING(@"attempting to create cube array texture view with (arrayLayerCount % 6) != 0");
 
         if (m_width != m_height)
-            return false;
+            return ERROR_STRING(@"attempting to create cube array texture view from non-square parent texture");
         break;
     case WGPUTextureViewDimension_3D:
         if (m_dimension != WGPUTextureDimension_3D)
-            return false;
+            return ERROR_STRING(@"attempting to create 3D texture view from non-3D parent texture");
 
         if (descriptor.arrayLayerCount != 1)
-            return false;
+            return ERROR_STRING(@"attempting to create 3D texture view with array layers");
         break;
     case WGPUTextureViewDimension_Force32:
         ASSERT_NOT_REACHED();
-        return false;
+        return ERROR_STRING(@"descriptor.dimension is invalid value");
     }
-
-    return true;
+#undef ERROR_STRING
+    return nil;
 }
 
 static WGPUExtent3D computeRenderExtent(const WGPUExtent3D& baseSize, uint32_t mipLevel)
@@ -2307,15 +2308,19 @@ static MTLPixelFormat resolvedPixelFormat(MTLPixelFormat viewPixelFormat, MTLPix
 
 Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescriptor)
 {
-    if (inputDescriptor.nextInChain)
+    if (inputDescriptor.nextInChain || m_destroyed)
         return TextureView::createInvalid(*this, m_device);
 
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-createview
 
     auto descriptor = resolveTextureViewDescriptorDefaults(inputDescriptor);
+    if (!descriptor) {
+        m_device->generateAValidationError("Validation failure in GPUTexture.createView: descriptor could not be resolved"_s);
+        return TextureView::createInvalid(*this, m_device);
+    }
 
-    if (!descriptor || !validateCreateView(*descriptor)) {
-        m_device->generateAValidationError("Validation failure."_s);
+    if (NSString *error = errorValidatingTextureViewCreation(*descriptor)) {
+        m_device->generateAValidationError(error);
         return TextureView::createInvalid(*this, m_device);
     }
 
@@ -2387,6 +2392,7 @@ void Texture::destroy()
     // https://gpuweb.github.io/gpuweb/#dom-gputexture-destroy
 
     m_texture = nil;
+    m_destroyed = true;
 }
 
 void Texture::setLabel(String&& label)
