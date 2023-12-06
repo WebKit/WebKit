@@ -515,13 +515,6 @@ RefPtr<RemotePageProxy> WebFrameProxy::remotePageProxy()
     return m_remotePageProxy;
 }
 
-void WebFrameProxy::removeRemotePagesForSuspension()
-{
-    m_remotePageProxy = nullptr;
-    for (auto& child : m_childFrames)
-        child->removeRemotePagesForSuspension();
-}
-
 bool WebFrameProxy::isFocused() const
 {
     auto* webPage = page();

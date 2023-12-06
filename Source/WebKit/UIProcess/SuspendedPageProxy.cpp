@@ -27,6 +27,7 @@
 #include "SuspendedPageProxy.h"
 
 #include "APIPageConfiguration.h"
+#include "BrowsingContextGroup.h"
 #include "DrawingAreaProxy.h"
 #include "HandleMessage.h"
 #include "Logging.h"
@@ -103,11 +104,12 @@ static const MessageNameSet& messageNamesToIgnoreWhileSuspended()
 }
 #endif
 
-SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, Ref<WebFrameProxy>&& mainFrame, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
+SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&& process, Ref<WebFrameProxy>&& mainFrame, Ref<BrowsingContextGroup>&& browsingContextGroup, RemotePageProxyState&& remotePageProxyState, ShouldDelayClosingUntilFirstLayerFlush shouldDelayClosingUntilFirstLayerFlush)
     : m_page(page)
     , m_webPageID(page.webPageID())
     , m_process(WTFMove(process))
     , m_mainFrame(WTFMove(mainFrame))
+    , m_browsingContextGroup(WTFMove(browsingContextGroup))
     , m_shouldDelayClosingUntilFirstLayerFlush(shouldDelayClosingUntilFirstLayerFlush)
     , m_suspensionTimeoutTimer(RunLoop::main(), this, &SuspendedPageProxy::suspensionTimedOut)
 #if USE(RUNNINGBOARD)
@@ -119,13 +121,21 @@ SuspendedPageProxy::SuspendedPageProxy(WebPageProxy& page, Ref<WebProcessProxy>&
     , m_contextIDForVisibilityPropagationInGPUProcess(page.contextIDForVisibilityPropagationInGPUProcess())
 #endif
 #endif
+    , m_remotePageProxyState(WTFMove(remotePageProxyState))
 {
     allSuspendedPages().add(*this);
     m_process->addSuspendedPageProxy(*this);
     m_messageReceiverRegistration.startReceivingMessages(m_process, m_webPageID, *this);
-    m_mainFrame->removeRemotePagesForSuspension();
     m_suspensionTimeoutTimer.startOneShot(suspensionTimeout);
-    send(Messages::WebPage::SetIsSuspended(true));
+    sendToAllProcesses(Messages::WebPage::SetIsSuspended(true));
+}
+
+template<typename T>
+void SuspendedPageProxy::sendToAllProcesses(T&& message)
+{
+    // FIXME: Iterate m_remotePageProxyState.domainToRemotePageProxyMap.values() and send to each RemotePageProxy's process.
+    // FIXME: Rename m_process to m_mainFrameProcess and make its use aware of site isolation.
+    m_process->send(std::forward<T>(message), m_webPageID);
 }
 
 SuspendedPageProxy::~SuspendedPageProxy()
@@ -187,7 +197,7 @@ void SuspendedPageProxy::unsuspend()
     ASSERT(m_suspensionState == SuspensionState::Suspended);
 
     m_suspensionState = SuspensionState::Resumed;
-    send(Messages::WebPage::SetIsSuspended(false));
+    sendToAllProcesses(Messages::WebPage::SetIsSuspended(false));
 }
 
 void SuspendedPageProxy::close()
@@ -199,7 +209,7 @@ void SuspendedPageProxy::close()
 
     RELEASE_LOG(ProcessSwapping, "%p - SuspendedPageProxy::close()", this);
     m_isClosed = true;
-    send(Messages::WebPage::Close());
+    sendToAllProcesses(Messages::WebPage::Close());
 }
 
 void SuspendedPageProxy::pageDidFirstLayerFlush()
@@ -286,28 +296,6 @@ void SuspendedPageProxy::didReceiveMessage(IPC::Connection& connection, IPC::Dec
 bool SuspendedPageProxy::didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&)
 {
     return false;
-}
-
-IPC::Connection* SuspendedPageProxy::messageSenderConnection() const
-{
-    return m_process->connection();
-}
-
-uint64_t SuspendedPageProxy::messageSenderDestinationID() const
-{
-    return m_webPageID.toUInt64();
-}
-
-bool SuspendedPageProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, OptionSet<IPC::SendOption> sendOptions)
-{
-    // Send messages via the WebProcessProxy instead of the IPC::Connection since AuxiliaryProcessProxy implements queueing of messages
-    // while the process is still launching.
-    return m_process->sendMessage(WTFMove(encoder), sendOptions);
-}
-
-bool SuspendedPageProxy::sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&& encoder, AsyncReplyHandler handler, OptionSet<IPC::SendOption> sendOptions)
-{
-    return m_process->sendMessage(WTFMove(encoder), sendOptions, WTFMove(handler));
 }
 
 #if !LOG_DISABLED

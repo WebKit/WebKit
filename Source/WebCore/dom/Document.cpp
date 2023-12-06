@@ -2764,7 +2764,8 @@ void Document::attachToCachedFrame(CachedFrameBase& cachedFrame)
     RELEASE_ASSERT(cachedFrame.document() == this);
     ASSERT(cachedFrame.view());
     ASSERT(m_backForwardCacheState == Document::InBackForwardCache);
-    observeFrame(cachedFrame.view()->protectedFrame().ptr());
+    if (auto* localFrameView = dynamicDowncast<LocalFrameView>(cachedFrame.view()))
+        observeFrame(localFrameView->protectedFrame().ptr());
 }
 
 void Document::detachFromCachedFrame(CachedFrameBase& cachedFrame)

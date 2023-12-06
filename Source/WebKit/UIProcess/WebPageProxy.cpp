@@ -1146,7 +1146,7 @@ bool WebPageProxy::suspendCurrentPageIfPossible(API::Navigation& navigation, Ref
 
     WEBPAGEPROXY_RELEASE_LOG(ProcessSwapping, "suspendCurrentPageIfPossible: Suspending current page for process pid %i", m_process->processID());
     mainFrame->frameLoadState().didSuspend();
-    auto suspendedPage = makeUnique<SuspendedPageProxy>(*this, protectedProcess(), mainFrame.releaseNonNull(), shouldDelayClosingUntilFirstLayerFlush);
+    auto suspendedPage = makeUnique<SuspendedPageProxy>(*this, protectedProcess(), mainFrame.releaseNonNull(), std::exchange(m_browsingContextGroup, BrowsingContextGroup::create()), std::exchange(internals().remotePageProxyState, { }), shouldDelayClosingUntilFirstLayerFlush);
 
     LOG(ProcessSwapping, "WebPageProxy %" PRIu64 " created suspended page %s for process pid %i, back/forward item %s" PRIu64, identifier().toUInt64(), suspendedPage->loggingString(), m_process->processID(), fromItem ? fromItem->itemID().toString().utf8().data() : "0"_s);
 
@@ -1200,6 +1200,12 @@ void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> p
     setDrawingArea(provisionalPage->takeDrawingArea());
     ASSERT(!m_mainFrame);
     m_mainFrame = provisionalPage->mainFrame();
+    // FIXME: Think about what to do if the provisional page didn't get its browsing context group from the SuspendedPageProxy.
+    // We do need to clear it at some point for navigations that aren't from back/forward navigations. Probably in the same place as PSON?
+    if (RefPtr browsingContextGroup = provisionalPage->browsingContextGroup()) {
+        m_browsingContextGroup = browsingContextGroup.releaseNonNull();
+        internals().remotePageProxyState = provisionalPage->takeRemotePageProxyState();
+    }
 
     protectedProcess()->addExistingWebPage(*this, WebProcessProxy::BeginsUsingDataStore::No);
     addAllMessageReceivers();
@@ -1495,8 +1501,7 @@ void WebPageProxy::close()
     m_processActivityState.reset();
     internals().audibleActivityTimer.stop();
 
-    internals().remotePageProxyInOpenerProcess = nullptr;
-    internals().openedRemotePageProxies.clear();
+    internals().remotePageProxyState = { };
 
     stopAllURLSchemeTasks();
     updatePlayingMediaDidChange(MediaProducer::IsNotPlaying);
@@ -5381,7 +5386,7 @@ void WebPageProxy::getAllFrameTrees(CompletionHandler<void(Vector<FrameTreeNodeD
     sendWithAsyncReply(Messages::WebPage::GetFrameTree(), [aggregator] (FrameTreeNodeData&& data) {
         aggregator->addFrameTree(WTFMove(data));
     });
-    for (auto& remotePageProxy : internals.domainToRemotePageProxyMap.values()) {
+    for (auto& remotePageProxy : internals.remotePageProxyState.domainToRemotePageProxyMap.values()) {
         Ref { *remotePageProxy }->sendWithAsyncReply(Messages::WebPage::GetFrameTree(), [aggregator] (FrameTreeNodeData&& data) {
             aggregator->addFrameTree(WTFMove(data));
         });
@@ -5509,7 +5514,7 @@ void WebPageProxy::forceRepaint(CompletionHandler<void()>&& callback)
         protectedThis->callAfterNextPresentationUpdate(WTFMove(callback));
     });
     sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [aggregator] { });
-    for (auto& remotePageProxy : internals().domainToRemotePageProxyMap.values())
+    for (auto& remotePageProxy : internals().remotePageProxyState.domainToRemotePageProxyMap.values())
         Ref { *remotePageProxy }->sendWithAsyncReply(Messages::WebPage::ForceRepaint(), [aggregator] { });
 }
 
@@ -5633,7 +5638,7 @@ void WebPageProxy::updateRemoteFrameSize(WebCore::FrameIdentifier frameID, WebCo
         ASSERT_NOT_REACHED();
         return;
     }
-    if (RefPtr remotePageProxy = internals().domainToRemotePageProxyMap.get(RegistrableDomain(frame->url())).get())
+    if (RefPtr remotePageProxy = internals().remotePageProxyState.domainToRemotePageProxyMap.get(RegistrableDomain(frame->url())).get())
         remotePageProxy->send(Messages::WebPage::UpdateFrameSize(frameID, size));
 }
 
@@ -6148,7 +6153,7 @@ void WebPageProxy::didFinishDocumentLoadForFrame(FrameIdentifier frameID, uint64
 
 void WebPageProxy::forEachWebContentProcess(Function<void(WebProcessProxy&, WebCore::PageIdentifier)>&& function)
 {
-    for (auto& pair : internals().domainToRemotePageProxyMap) {
+    for (auto& pair : internals().remotePageProxyState.domainToRemotePageProxyMap) {
         auto& remotePageProxy = pair.value;
         if (!remotePageProxy) {
             ASSERT_NOT_REACHED();
@@ -11513,7 +11518,7 @@ void WebPageProxy::callAfterNextPresentationUpdate(CompletionHandler<void()>&& c
     Ref aggregator = CallbackAggregator::create(WTFMove(callback));
     auto drawingAreaIdentifier = m_drawingArea->identifier();
     sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [aggregator] { }, drawingAreaIdentifier);
-    for (auto& remotePageProxy : internals().domainToRemotePageProxyMap.values())
+    for (auto& remotePageProxy : internals().remotePageProxyState.domainToRemotePageProxyMap.values())
         Ref { *remotePageProxy }->sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [aggregator] { }, drawingAreaIdentifier);
 #elif USE(COORDINATED_GRAPHICS)
     downcast<DrawingAreaProxyCoordinatedGraphics>(*m_drawingArea).dispatchAfterEnsuringDrawing(WTFMove(callback));
@@ -12969,7 +12974,7 @@ void WebPageProxy::generateTestReport(const String& message, const String& group
 
 void WebPageProxy::addRemotePageProxy(const WebCore::RegistrableDomain& domain, RemotePageProxy& remotePageProxy)
 {
-    auto addResult = internals().domainToRemotePageProxyMap.add(domain, remotePageProxy);
+    auto addResult = internals().remotePageProxyState.domainToRemotePageProxyMap.add(domain, remotePageProxy);
     ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
     m_browsingContextGroup->addProcessForDomain(domain, remotePageProxy.process());
@@ -12977,7 +12982,7 @@ void WebPageProxy::addRemotePageProxy(const WebCore::RegistrableDomain& domain, 
 
 void WebPageProxy::removeRemotePageProxy(const WebCore::RegistrableDomain& domain)
 {
-    internals().domainToRemotePageProxyMap.remove(domain);
+    internals().remotePageProxyState.domainToRemotePageProxyMap.remove(domain);
 }
 
 WebProcessProxy* WebPageProxy::processForRegistrableDomain(const WebCore::RegistrableDomain& domain)
@@ -12987,26 +12992,27 @@ WebProcessProxy* WebPageProxy::processForRegistrableDomain(const WebCore::Regist
 
 RemotePageProxy* WebPageProxy::remotePageProxyForRegistrableDomain(const WebCore::RegistrableDomain& domain) const
 {
-    return internals().domainToRemotePageProxyMap.get(domain).get();
+    return internals().remotePageProxyState.domainToRemotePageProxyMap.get(domain).get();
 }
 
 void WebPageProxy::setRemotePageProxyInOpenerProcess(Ref<RemotePageProxy>&& page)
 {
-    internals().remotePageProxyInOpenerProcess = WTFMove(page);
+    internals().remotePageProxyState.remotePageProxyInOpenerProcess = WTFMove(page);
 }
 
 RefPtr<RemotePageProxy> WebPageProxy::takeRemotePageProxyInOpenerProcessIfDomainEquals(const WebCore::RegistrableDomain& domain)
 {
-    if (!internals().remotePageProxyInOpenerProcess)
+    auto& state = internals().remotePageProxyState;
+    if (!state.remotePageProxyInOpenerProcess)
         return nullptr;
-    if (internals().remotePageProxyInOpenerProcess->domain() != domain)
+    if (state.remotePageProxyInOpenerProcess->domain() != domain)
         return nullptr;
-    return std::exchange(internals().remotePageProxyInOpenerProcess, nullptr);
+    return std::exchange(state.remotePageProxyInOpenerProcess, nullptr);
 }
 
 void WebPageProxy::removeOpenedRemotePageProxy(WebPageProxyIdentifier pageID)
 {
-    internals().openedRemotePageProxies.remove(pageID);
+    internals().remotePageProxyState.openedRemotePageProxies.remove(pageID);
 }
 
 void WebPageProxy::addOpenedRemotePageProxy(WebPageProxyIdentifier pageID, Ref<RemotePageProxy>&& page)
@@ -13014,7 +13020,7 @@ void WebPageProxy::addOpenedRemotePageProxy(WebPageProxyIdentifier pageID, Ref<R
     // FIXME: When <rdar://116203552> is fixed we should be able to assert that the add result is a
     // new entry because we won't make an opened RemotePageProxy until we know what process
     // the opened page's main frame will end up in after all redirects.
-    internals().openedRemotePageProxies.add(pageID, WTFMove(page));
+    internals().remotePageProxyState.openedRemotePageProxies.add(pageID, WTFMove(page));
 }
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)

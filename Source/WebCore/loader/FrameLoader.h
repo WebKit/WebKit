@@ -72,6 +72,7 @@ class FormState;
 class FormSubmission;
 class FrameLoadRequest;
 class FrameNetworkingContext;
+class HistoryController;
 class HistoryItem;
 class LocalFrameLoaderClient;
 class NavigationAction;
@@ -115,7 +116,6 @@ public:
     class PolicyChecker;
     PolicyChecker& policyChecker() const { return *m_policyChecker; }
 
-    class HistoryController;
     HistoryController& history() const { return *m_history; }
     ResourceLoadNotifier& notifier() const { return m_notifier; }
 
@@ -342,6 +342,10 @@ public:
 
     void switchBrowsingContextsGroup();
 
+    // HistoryController specific.
+    void loadItem(HistoryItem&, HistoryItem* fromItem, FrameLoadType, ShouldTreatAsContinuingLoad);
+    HistoryItem* requestedHistoryItem() const { return m_requestedHistoryItem.get(); }
+
 private:
     enum FormSubmissionCacheLoadPolicy {
         MayAttemptCacheOnlyLoadForFormSubmissionItem,
@@ -434,10 +438,6 @@ private:
 
     enum class LoadContinuingState : uint8_t { NotContinuing, ContinuingWithRequest, ContinuingWithHistoryItem };
     bool shouldTreatCurrentLoadAsContinuingLoad() const { return m_currentLoadContinuingState != LoadContinuingState::NotContinuing; }
-
-    // HistoryController specific.
-    void loadItem(HistoryItem&, HistoryItem* fromItem, FrameLoadType, ShouldTreatAsContinuingLoad);
-    HistoryItem* requestedHistoryItem() const { return m_requestedHistoryItem.get(); }
 
     // SubframeLoader specific.
     void loadURLIntoChildFrame(const URL&, const String& referer, LocalFrame*);
