@@ -64,7 +64,6 @@
     "AppleIntelMEClientController"
     "AppleMobileADBE0"
     "AppleUpstreamUserClientDriver"
-    "AppleVideoToolboxParavirtualizationDriver"
     "AudioAUUCDriver"
     "IOAudioSelectorControl"
     "IOMobileFramebufferShim"))
@@ -84,16 +83,16 @@
         "AppleM2ScalerCSCDriver"
         "IOPMrootDomain"))
 
+
+;; FIXME: Add check `(with-filter (system-attribute virtual-device)` when this is supported. See rdar://118274636.
+(allow iokit-open-service (iokit-registry-entry-class "AppleVideoToolboxParavirtualizationDriver"))
+(allow iokit-open-user-client (iokit-user-client-class "AppleVideoToolboxParavirtualizationUserClient"))
+
 (deny darwin-notification-post (with no-report))
 (deny nvram-get (with no-report))
 #endif // USE(SANDBOX_VERSION_3)
 
 (deny (with no-report) necp-client-open)
-
-;;;
-;;; The following rules were originally contained in 'system.sb'. We are duplicating them here so we can
-;;; remove unneeded sandbox extensions.
-;;;
 
 ;;; Allow read access to standard system paths.
 (allow file-read*
@@ -186,10 +185,6 @@
         (iokit-property "rgcs")
         (iokit-property "ggcs")
         (iokit-property "bgcs")))))
-
-;;;
-;;; End rules originally copied from 'system.sb'
-;;;
 
 ;;; process-info* defaults to allow; deny it and then allow operations we actually need.
 (deny process-info*)
