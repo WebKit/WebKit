@@ -473,14 +473,4 @@ template <> struct EnumTraits<WebCore::CDMInstance::HDCPStatus> {
 };
 #endif
 
-#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-template <> struct EnumTraits<WebCore::GraphicsContextGLSimulatedEventForTesting> {
-    using values = EnumValues<
-    WebCore::GraphicsContextGLSimulatedEventForTesting,
-    WebCore::GraphicsContextGLSimulatedEventForTesting::GPUStatusFailure,
-    WebCore::GraphicsContextGLSimulatedEventForTesting::Timeout
-    >;
-};
-#endif
-
 } // namespace WTF

@@ -2734,6 +2734,13 @@ struct WebCore::GraphicsContextGLAttributes {
 #endif
     WebCore::GraphicsContextGLSimulatedCreationFailure failContextCreationForTesting;
 };
+
+enum class WebCore::GraphicsContextGLSimulatedEventForTesting : uint8_t {
+    GPUStatusFailure,
+    Timeout,
+    DisplayBufferAllocationFailure
+};
+
 #endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
 [RefCounted] class WebCore::TimingFunction subclasses {
