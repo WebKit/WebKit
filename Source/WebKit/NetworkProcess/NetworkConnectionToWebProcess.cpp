@@ -53,6 +53,7 @@
 #include "NetworkSocketChannel.h"
 #include "NetworkSocketChannelMessages.h"
 #include "NetworkStorageManager.h"
+#include "NetworkStorageManagerMessages.h"
 #include "NetworkTransportSession.h"
 #include "NetworkTransportSessionMessages.h"
 #include "NotificationManagerMessageHandlerMessages.h"
@@ -322,6 +323,12 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     if (decoder.messageReceiverName() == Messages::WebPaymentCoordinatorProxy::messageReceiverName())
         return paymentCoordinator().didReceiveMessage(connection, decoder);
 #endif
+
+    if (decoder.messageReceiverName() == Messages::NetworkStorageManager::messageReceiverName()) {
+        if (auto* networkSession = this->networkSession())
+            networkSession->protectedStorageManager()->didReceiveMessage(connection, decoder);
+        return;
+    }
 
 #if ENABLE(IPC_TESTING_API)
     if (decoder.messageReceiverName() == Messages::IPCTester::messageReceiverName()) {
