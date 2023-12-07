@@ -2016,3 +2016,5 @@ webkit.org/b/265599 [ Sonoma+ Debug x86_64 ] imported/w3c/web-platform-tests/htm
 [ Sonoma+ Release ] fast/attachment/attachment-folder-icon.html [ Pass Failure ]
 [ Sonoma+ Release ] fast/attachment/attachment-type-attribute.html [ Pass Failure ]
 [ Sonoma+ Release ] fast/attachment/attachment-default-icon.html [ Pass Failure ]
+
+webkit.org/b/265954 [ Ventura+ Release x86_64 ] media/video-audio-session-mode.html [ Crash ]
