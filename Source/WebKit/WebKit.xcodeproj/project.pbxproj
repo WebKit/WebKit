@@ -5028,6 +5028,7 @@
 		461E1BF0279A010F006AF53B /* WebSharedWorkerContextManagerConnection.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebSharedWorkerContextManagerConnection.messages.in; sourceTree = "<group>"; };
 		462107D71F38DBD300DD7810 /* PingLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PingLoad.cpp; sourceTree = "<group>"; };
 		462CD80B28204DF100F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarkSurfacesAsVolatileRequestIdentifier.h; sourceTree = "<group>"; };
+		462FFFE32B20F2FC0016A855 /* SharedCARingBuffer.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SharedCARingBuffer.serialization.in; sourceTree = "<group>"; };
 		463010002984778C00715DB1 /* WKWebGeolocationPolicyDeciderIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKWebGeolocationPolicyDeciderIOS.mm; path = ios/WKWebGeolocationPolicyDeciderIOS.mm; sourceTree = "<group>"; };
 		463010012984778C00715DB1 /* WKWebGeolocationPolicyDecider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKWebGeolocationPolicyDecider.h; path = ios/WKWebGeolocationPolicyDecider.h; sourceTree = "<group>"; };
 		46323683231481EF00A48FA7 /* WebRemoteObjectRegistry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebRemoteObjectRegistry.h; sourceTree = "<group>"; };
@@ -11012,6 +11013,7 @@
 				7AB4EA42227780DD0085BBAA /* SandboxUtilities.mm */,
 				CD4B4D9A1E765E0000D27092 /* SharedCARingBuffer.cpp */,
 				CD4B4D9B1E765E0000D27092 /* SharedCARingBuffer.h */,
+				462FFFE32B20F2FC0016A855 /* SharedCARingBuffer.serialization.in */,
 				44C51842266BE8C3006DD522 /* TCCSoftLink.h */,
 				44C51843266BE8C3006DD522 /* TCCSoftLink.mm */,
 				1AB1F78E1D1B34A6007C9BD1 /* WebCoreArgumentCodersCocoa.mm */,
