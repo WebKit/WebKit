@@ -2721,3 +2721,7 @@ imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-below-v
 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-inline-orientation.html [ Skip ] # Crash
 
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/animation-events.html [ Failure Pass ]
+
+webkit.org/b/48997 animations/animation-iteration-event-destroy-renderer.html [ Pass Timeout ]
+
+webkit.org/b/229584 animations/fill-mode-forwards.html [ Pass Failure Timeout ]
