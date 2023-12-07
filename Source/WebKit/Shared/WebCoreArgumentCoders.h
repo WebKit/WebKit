@@ -162,11 +162,6 @@ template<> struct ArgumentCoder<WebCore::Image> {
     static std::optional<Ref<WebCore::Image>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<RefPtr<WebCore::SerializedScriptValue>> {
-    static void encode(Encoder&, const RefPtr<WebCore::SerializedScriptValue>&);
-    static std::optional<RefPtr<WebCore::SerializedScriptValue>> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::Font> {
     static void encode(Encoder&, const WebCore::Font&);
     static std::optional<Ref<WebCore::Font>> decode(Decoder&);

@@ -157,6 +157,8 @@ public:
         RELEASE_ASSERT(m_sizeInBytes <= MAX_ARRAY_BUFFER_SIZE);
     }
 
+    JS_EXPORT_PRIVATE static std::optional<ArrayBufferContents> fromDataSpan(std::span<const uint8_t>);
+
     ArrayBufferContents(ArrayBufferContents&& other)
     {
         swap(other);
@@ -195,6 +197,8 @@ public:
             return m_maxByteLength;
         return std::nullopt;
     }
+
+    std::span<const uint8_t> dataSpan() const { return { static_cast<const uint8_t*>(data()), sizeInBytes() }; }
     
     bool isShared() const { return m_shared; }
     bool isResizableOrGrowableShared() const { return m_hasMaxByteLength; }

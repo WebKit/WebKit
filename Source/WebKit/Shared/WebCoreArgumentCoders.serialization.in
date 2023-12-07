@@ -5457,6 +5457,11 @@ header: <JavaScriptCore/ArrayBuffer.h>
     Vector<uint8_t> toVector();
 }
 
+header: <JavaScriptCore/ArrayBuffer.h>
+[CustomHeader, CreateUsing=fromDataSpan] class JSC::ArrayBufferContents {
+    std::span<const uint8_t> dataSpan();
+}
+
 enum class WebCore::TextIndicatorPresentationTransition : uint8_t {
     None,
     Bounce,
@@ -6787,6 +6792,50 @@ enum class WebCore::InspectorClientDeveloperPreference : uint8_t {
     PrivateClickMeasurementDebugModeEnabled,
     ITPDebugModeEnabled,
     MockCaptureDevicesEnabled,
+};
+
+#if ENABLE(WEB_CODECS)
+header: <WebCore/WebCodecsEncodedVideoChunk.h>
+[CustomHeader, RefCounted] class WebCore::WebCodecsEncodedVideoChunkStorage {
+    WebCore::WebCodecsEncodedVideoChunkData data();
+};
+
+header: <WebCore/WebCodecsEncodedAudioChunk.h>
+[CustomHeader, RefCounted] class WebCore::WebCodecsEncodedAudioChunkStorage {
+    WebCore::WebCodecsEncodedAudioChunkData data();
+};
+#endif
+
+headers: <JavaScriptCore/WasmModule.h> <WebCore/ImageBitmapBacking.h> <WebCore/MessagePort.h> <WebCore/OffscreenCanvas.h>
+[Nested] class WebCore::SerializedScriptValue::Internals {
+    Vector<uint8_t> data;
+    std::unique_ptr<Vector<JSC::ArrayBufferContents>> arrayBufferContentsArray;
+#if ENABLE(WEB_RTC)
+    Vector<std::unique_ptr<WebCore::DetachedRTCDataChannel>> detachedRTCDataChannels;
+#endif
+#if ENABLE(WEB_CODECS)
+    Vector<RefPtr<WebCore::WebCodecsEncodedVideoChunkStorage>> serializedVideoChunks;
+    Vector<RefPtr<WebCore::WebCodecsEncodedAudioChunkStorage>> serializedAudioChunks;
+    [NotSerialized] Vector<WebCore::WebCodecsVideoFrameData> serializedVideoFrames;
+    [NotSerialized] Vector<WebCore::WebCodecsAudioInternalData> serializedAudioData;
+#endif
+    [NotSerialized] std::unique_ptr<Vector<JSC::ArrayBufferContents>> sharedBufferContentsArray;
+    [NotSerialized] Vector<std::optional<WebCore::ImageBitmapBacking>> backingStores;
+#if ENABLE(OFFSCREEN_CANVAS_IN_WORKERS)
+    [NotSerialized] Vector<std::unique_ptr<WebCore::DetachedOffscreenCanvas>> detachedOffscreenCanvases;
+    [NotSerialized] Vector<RefPtr<WebCore::OffscreenCanvas>> inMemoryOffscreenCanvases;
+#endif
+    [NotSerialized] Vector<RefPtr<WebCore::MessagePort>> inMemoryMessagePorts;
+#if ENABLE(WEBASSEMBLY)
+    [NotSerialized] std::unique_ptr<Vector<RefPtr<JSC::Wasm::Module>>> wasmModulesArray;
+    [NotSerialized] std::unique_ptr<Vector<RefPtr<JSC::SharedArrayBufferContents>>> wasmMemoryHandlesArray;
+#endif
+    [NotSerialized] Vector<WebCore::URLKeepingBlobAlive> blobHandles;
+    [NotSerialized] size_t memoryCost;
+};
+
+[RefCounted] class WebCore::SerializedScriptValue {
+    WebCore::SerializedScriptValue::Internals m_internals;
 };
 
 #if ENABLE(MEDIA_SOURCE)
