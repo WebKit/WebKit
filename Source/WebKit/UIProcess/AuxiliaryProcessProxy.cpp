@@ -61,7 +61,7 @@ static Seconds adjustedTimeoutForThermalState(Seconds timeout)
 }
 
 #if USE(EXTENSIONKIT)
-bool AuxiliaryProcessProxy::s_manageProcessesAsExtensions = false;
+bool AuxiliaryProcessProxy::s_manageProcessesAsExtensions = true;
 #endif
 
 AuxiliaryProcessProxy::AuxiliaryProcessProxy(bool alwaysRunsAtBackgroundPriority, Seconds responsivenessTimeout)
