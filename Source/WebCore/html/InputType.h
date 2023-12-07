@@ -308,7 +308,7 @@ public:
 
     virtual void elementDidBlur() { }
 
-#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS)
     virtual bool hasTouchEventHandler() const { return false; }
 #endif
 
