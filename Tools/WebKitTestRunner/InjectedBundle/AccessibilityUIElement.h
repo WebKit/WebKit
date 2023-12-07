@@ -421,8 +421,6 @@ public:
     bool hasTextEntryTrait();
     RefPtr<AccessibilityUIElement> fieldsetAncestorElement();
 
-    bool isIsolatedObject() const;
-    
     bool isInsertion() const;
     bool isDeletion() const;
     bool isFirstItemInSuggestion() const;

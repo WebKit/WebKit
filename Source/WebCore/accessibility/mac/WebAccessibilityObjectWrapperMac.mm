@@ -861,7 +861,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     if (AXObjectCache::isIsolatedTreeEnabled())
         [additional addObject:NSAccessibilityRelativeFrameAttribute];
 #endif
-    
+
     return additional;
 }
 
