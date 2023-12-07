@@ -44,6 +44,7 @@
 #import "RevealItem.h"
 #import "SmartMagnificationController.h"
 #import "TextChecker.h"
+#import "TextCheckerState.h"
 #import "TextInputSPI.h"
 #import "TextRecognitionUpdateResult.h"
 #import "UIKitSPI.h"
@@ -11081,6 +11082,15 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 {
     if (WebKit::TextChecker::setContinuousSpellCheckingEnabled(enabled))
         _page->process().updateTextCheckerState();
+}
+
+- (void)setGrammarCheckingEnabled:(BOOL)enabled
+{
+    if (static_cast<bool>(enabled) == WebKit::TextChecker::state().isGrammarCheckingEnabled)
+        return;
+
+    WebKit::TextChecker::setGrammarCheckingEnabled(enabled);
+    _page->process().updateTextCheckerState();
 }
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)

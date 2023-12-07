@@ -169,6 +169,15 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #endif
 }
 
+- (void)_setGrammarCheckingEnabledForTesting:(BOOL)enabled
+{
+#if PLATFORM(IOS_FAMILY)
+    [_contentView setGrammarCheckingEnabled:enabled];
+#else
+    _impl->setGrammarCheckingEnabled(enabled);
+#endif
+}
+
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem
 {
     if ([userInterfaceItem isEqualToString:@"validationBubble"]) {

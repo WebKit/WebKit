@@ -77,8 +77,9 @@ public:
     // continue even if the style isn't different from the current style.
     void setStyle(RenderStyle&&, StyleDifference minimalStyleDifference = StyleDifference::Equal);
 
-    // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
-    // any pseudo classes (and therefore has no concept of changing state).
+    // The pseudo element style can be cached or uncached. Use the uncached method if the pseudo element
+    // has the concept of changing state (like ::-webkit-scrollbar-thumb:hover), or if it takes additional
+    // parameters (like ::highlight(name)).
     const RenderStyle* getCachedPseudoStyle(PseudoId, const RenderStyle* parentStyle = nullptr) const;
     std::unique_ptr<RenderStyle> getUncachedPseudoStyle(const Style::PseudoElementRequest&, const RenderStyle* parentStyle = nullptr, const RenderStyle* ownStyle = nullptr) const;
 
@@ -113,12 +114,15 @@ public:
     bool hasEligibleContainmentForSizeQuery() const;
 
     Color selectionColor(CSSPropertyID) const;
-    std::unique_ptr<RenderStyle> selectionPseudoStyle() const;
+    const RenderStyle* selectionPseudoStyle() const;
 
     // Obtains the selection colors that should be used when painting a selection.
     Color selectionBackgroundColor() const;
     Color selectionForegroundColor() const;
     Color selectionEmphasisMarkColor() const;
+
+    const RenderStyle* spellingErrorPseudoStyle() const;
+    const RenderStyle* grammarErrorPseudoStyle() const;
 
     // FIXME: Make these standalone and move to relevant files.
     bool isRenderLayerModelObject() const;
@@ -400,6 +404,8 @@ private:
     
     void updateReferencedSVGResources();
     void clearReferencedSVGResources();
+
+    const RenderStyle* textSegmentPseudoStyle(PseudoId) const;
 
     PackedCheckedPtr<RenderObject> m_firstChild;
     unsigned m_baseTypeFlags : 8;
