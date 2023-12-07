@@ -66,6 +66,31 @@ static InlineLayoutRect visualRectIncludingBlockDirection(const InlineLayoutRect
     return flippedRect;
 }
 
+static InlineLayoutUnit baseLogicalWidthFromRubyBaseEnd(const Box& rubyBaseLayoutBox, const Line::RunList& lineRuns, const InlineContentBreaker::ContinuousContent::RunList& candidateRuns)
+{
+    ASSERT(rubyBaseLayoutBox.isRubyBase());
+    // Canidate content is supposed to hold the base content and in case of soft wrap opportunities, line may have some base content too.
+    auto baseLogicalWidth = InlineLayoutUnit { 0.f };
+    auto hasSeenRubyBaseStart = false;
+    for (auto& candidateRun : makeReversedRange(candidateRuns)) {
+        auto& inlineItem = candidateRun.inlineItem;
+        if (inlineItem.isInlineBoxStart() && &inlineItem.layoutBox() == &rubyBaseLayoutBox) {
+            hasSeenRubyBaseStart = true;
+            break;
+        }
+        baseLogicalWidth += candidateRun.logicalWidth;
+    }
+    if (hasSeenRubyBaseStart)
+        return baseLogicalWidth;
+    // Let's check the line for the rest of the base content.
+    for (auto& lineRun : makeReversedRange(lineRuns)) {
+        if ((lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart()) && &lineRun.layoutBox() == &rubyBaseLayoutBox)
+            break;
+        baseLogicalWidth += lineRun.logicalWidth();
+    }
+    return baseLogicalWidth;
+}
+
 static bool annotationOverlapCheck(const InlineDisplay::Box& adjacentDisplayBox, const InlineLayoutRect& overhangingRect, const InlineFormattingContext& inlineFormattingContext)
 {
     // We are in the middle of a line, should not see any line breaks or ellipsis boxes here.
@@ -176,39 +201,28 @@ bool RubyFormattingContext::isAtSoftWrapOpportunity(const InlineItem& previous, 
     return false;
 }
 
-std::optional<InlineLayoutUnit> RubyFormattingContext::annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, const InlineFormattingContext& inlineFormattingContext)
+InlineLayoutUnit RubyFormattingContext::annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, const InlineFormattingContext& inlineFormattingContext)
 {
     ASSERT(rubyBaseLayoutBox.isRubyBase());
+    auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
+    if (!annotationBox)
+        return { };
 
-    if (auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox())
-        return InlineLayoutUnit { inlineFormattingContext.geometryForBox(*annotationBox).marginBoxWidth() };
-    return { };
+    return inlineFormattingContext.geometryForBox(*annotationBox).marginBoxWidth();
 }
 
-InlineLayoutUnit RubyFormattingContext::baseLogicalWidthFromRubyBaseEnd(const InlineItem& rubyBaseEnd, const Line::RunList& lineRuns, const InlineContentBreaker::ContinuousContent::RunList& candidateRuns)
+InlineLayoutUnit RubyFormattingContext::baseEndAdditionalLogicalWidth(const Box& rubyBaseLayoutBox, const Line::RunList& lineRuns, const InlineContentBreaker::ContinuousContent::RunList& candidateRuns, const InlineFormattingContext& inlineFormattingContext)
 {
-    ASSERT(rubyBaseEnd.isInlineBoxEnd() && rubyBaseEnd.layoutBox().isRubyBase());
-    // Canidate content is supposed to hold the base content and in case of soft wrap opportunities, line may have some base content too.
-    auto& rubyBaseLayoutBox = rubyBaseEnd.layoutBox();
-    auto baseLogicalWidth = InlineLayoutUnit { 0.f };
-    auto hasSeenRubyBaseStart = false;
-    for (auto& candidateRun : makeReversedRange(candidateRuns)) {
-        auto& inlineItem = candidateRun.inlineItem;
-        if (inlineItem.isInlineBoxStart() && &inlineItem.layoutBox() == &rubyBaseLayoutBox) {
-            hasSeenRubyBaseStart = true;
-            break;
-        }
-        baseLogicalWidth += candidateRun.logicalWidth;
+    ASSERT(rubyBaseLayoutBox.isRubyBase());
+    if (hasInterlinearAnnotation(rubyBaseLayoutBox)) {
+        // Base is supposed be at least as wide as the annotation is.
+        // Let's adjust the inline box end width to accomodate such overflowing interlinear annotations.
+        auto rubyBaseContentWidth = baseLogicalWidthFromRubyBaseEnd(rubyBaseLayoutBox, lineRuns, candidateRuns);
+        ASSERT(rubyBaseContentWidth >= 0);
+        return std::max(0.f, annotationBoxLogicalWidth(rubyBaseLayoutBox, inlineFormattingContext) - rubyBaseContentWidth);
     }
-    if (hasSeenRubyBaseStart)
-        return baseLogicalWidth;
-    // Let's check the line for the rest of the base content.
-    for (auto& lineRun : makeReversedRange(lineRuns)) {
-        if ((lineRun.isInlineBoxStart() || lineRun.isLineSpanningInlineBoxStart()) && &lineRun.layoutBox() == &rubyBaseLayoutBox)
-            break;
-        baseLogicalWidth += lineRun.logicalWidth();
-    }
-    return baseLogicalWidth;
+    // While inter-character annotations don't participate in inline layout, they take up space.
+    return annotationBoxLogicalWidth(rubyBaseLayoutBox, inlineFormattingContext);
 }
 
 static size_t applyRubyAlignOnBaseContent(size_t rubyBaseStart, Line& line, const InlineFormattingContext& inlineFormattingContext)
@@ -318,7 +332,7 @@ InlineLayoutPoint RubyFormattingContext::placeAnnotationBox(const Box& rubyBaseL
     auto isHorizontalWritingMode = rubyBaseLayoutBox.style().isHorizontalWritingMode();
     auto annotationVisualContentBoxHeight = isHorizontalWritingMode ? annotationBoxGeometry.contentBoxHeight() : annotationBoxGeometry.contentBoxWidth();
     auto annotationBorderTop = isHorizontalWritingMode ? annotationBoxGeometry.borderBefore() : annotationBoxGeometry.borderStart();
-    auto borderBoxRight = rubyBaseMarginBox.right() + annotationBoxGeometry.marginStart();
+    auto borderBoxRight = rubyBaseMarginBox.right() - annotationBoxGeometry.marginBoxWidth() + annotationBoxGeometry.marginStart();
     return { borderBoxRight, rubyBaseMarginBox.top() + ((rubyBaseMarginBox.height() - annotationVisualContentBoxHeight) / 2) - annotationBorderTop };
 }
 
