@@ -1052,7 +1052,8 @@ webkit.org/b/218317 media/media-source/media-source-trackid-change.html [ Failur
 webkit.org/b/238201 media/media-source/media-mp4-hevc-bframes.html [ Failure ]
 
 # GStreamer doesn't set the track's id to the container's value.
-webkit.org/b/265919 media/media-audio-track.html [ Failure ]
+webkit.org/b/265919 media/track/media-audio-track.html [ Failure ]
+webkit.org/b/265919 media/track/media-source-audio-track.html [ Failure ]
 
 # WebProcess's MemoryPressureHandler are disabled, test is nonfunctional
 media/media-source/media-managedmse-memorypressure.html [ Timeout ]

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src=media-file.js></script>
-        <script src=video-test.js></script>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
         <script>
             function loadedmetadata()
             {
@@ -16,7 +16,7 @@
             {
                 findMediaElement();
                 mediaElement.onerror = () => { failTest("error occurred."); }
-                run('mediaElement.src = "content/short--1-track.webm"');
+                run('mediaElement.src = "../content/short--1-track.webm"');
                 waitForEventOnce('loadedmetadata', loadedmetadata);
                 consoleWrite("");
             }

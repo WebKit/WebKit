@@ -33,7 +33,6 @@
 #include <wtf/Box.h>
 #include <wtf/CancellableTask.h>
 #include <wtf/Deque.h>
-#include <wtf/HashMap.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/MediaTime.h>
 #include <wtf/OSObjectPtr.h>
@@ -195,8 +194,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     RefPtr<MediaPlayerPrivateMediaSourceAVFObjC> player() const;
-    bool canEnqueueSample(uint64_t trackID, const MediaSampleAVFObjC&);
-    bool trackIsBlocked(uint64_t track) const;
+    bool canEnqueueSample(TrackID, const MediaSampleAVFObjC&);
+    bool trackIsBlocked(TrackID) const;
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     void keyStatusesChanged();
@@ -204,17 +203,17 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     void setTrackChangeCallbacks(const InitializationSegment&, bool initialized);
 
-    HashMap<TrackID, RefPtr<VideoTrackPrivate>, DefaultHash<TrackID>, WTF::UnsignedWithZeroKeyHashTraits<TrackID>> m_videoTracks;
-    HashMap<TrackID, RefPtr<AudioTrackPrivate>, DefaultHash<TrackID>, WTF::UnsignedWithZeroKeyHashTraits<TrackID>> m_audioTracks;
+    StdUnorderedMap<TrackID, RefPtr<VideoTrackPrivate>> m_videoTracks;
+    StdUnorderedMap<TrackID, RefPtr<AudioTrackPrivate>> m_audioTracks;
     Vector<SourceBufferPrivateAVFObjCErrorClient*> m_errorClients;
 
     const Ref<SourceBufferParser> m_parser;
     Vector<Function<void()>> m_pendingTrackChangeTasks;
-    Deque<std::pair<uint64_t, Ref<MediaSampleAVFObjC>>> m_blockedSamples;
+    Deque<std::pair<TrackID, Ref<MediaSampleAVFObjC>>> m_blockedSamples;
 
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    HashMap<uint64_t, RetainPtr<AVSampleBufferAudioRenderer>, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_audioRenderers;
+    StdUnorderedMap<TrackID, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
 ALLOW_NEW_API_WITHOUT_GUARDS_END
     RetainPtr<WebAVSampleBufferListener> m_listener;
 #if PLATFORM(IOS_FAMILY)
@@ -236,11 +235,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         RefPtr<SharedBuffer> initData;
         KeyIDs keyIDs;
     };
-    using TrackInitDataMap = HashMap<uint64_t, TrackInitData>;
+    using TrackInitDataMap = StdUnorderedMap<TrackID, TrackInitData>;
     TrackInitDataMap m_pendingProtectedTrackInitDataMap;
     TrackInitDataMap m_protectedTrackInitDataMap;
 
-    using TrackKeyIDsMap = HashMap<uint64_t, KeyIDs>;
+    using TrackKeyIDsMap = StdUnorderedMap<TrackID, KeyIDs>;
     TrackKeyIDsMap m_currentTrackIDs;
 
     RefPtr<CDMInstanceFairPlayStreamingAVFObjC> m_cdmInstance;
