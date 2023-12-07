@@ -6862,6 +6862,15 @@ enum class WebCore::SourceBufferAppendMode : uint8_t {
 
 #endif
 
+header: <WebCore/Font.h>
+[CustomHeader] struct WebCore::FontInternalAttributes {
+    std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifier;
+    [BitField] WebCore::FontOrigin origin;
+    [BitField] WebCore::FontIsInterstitial isInterstitial;
+    [BitField] WebCore::FontVisibility visibility;
+    [BitField] WebCore::FontIsOrientationFallback isTextOrientationFallback;
+};
+
 [CustomHeader, Nested] struct WebCore::Cursor::CustomCursorIPCData {
     Ref<WebCore::Image> image;
     [Validator='(*image)->rect().contains(*hotSpot)'] WebCore::IntPoint hotSpot;

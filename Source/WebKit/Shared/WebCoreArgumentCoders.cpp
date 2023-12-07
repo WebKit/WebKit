@@ -289,45 +289,6 @@ std::optional<Ref<Font>> ArgumentCoder<Font>::decode(Decoder& decoder)
     return Font::create(*platformData, attributes->origin, attributes->isInterstitial, attributes->visibility, attributes->isTextOrientationFallback, attributes->renderingResourceIdentifier);
 }
 
-void ArgumentCoder<WebCore::Font::Attributes>::encode(Encoder& encoder, const WebCore::Font::Attributes& attributes)
-{
-    encoder << attributes.origin;
-    encoder << attributes.isInterstitial;
-    encoder << attributes.visibility;
-    encoder << attributes.isTextOrientationFallback;
-    encoder << attributes.ensureRenderingResourceIdentifier();
-}
-
-std::optional<Font::Attributes> ArgumentCoder<Font::Attributes>::decode(Decoder& decoder)
-{
-    std::optional<Font::Origin> origin;
-    decoder >> origin;
-    if (!origin)
-        return std::nullopt;
-
-    std::optional<Font::IsInterstitial> isInterstitial;
-    decoder >> isInterstitial;
-    if (!isInterstitial)
-        return std::nullopt;
-
-    std::optional<Font::Visibility> visibility;
-    decoder >> visibility;
-    if (!visibility)
-        return std::nullopt;
-
-    std::optional<Font::IsOrientationFallback> isTextOrientationFallback;
-    decoder >> isTextOrientationFallback;
-    if (!isTextOrientationFallback)
-        return std::nullopt;
-
-    std::optional<RenderingResourceIdentifier> renderingResourceIdentifier;
-    decoder >> renderingResourceIdentifier;
-    if (!renderingResourceIdentifier)
-        return std::nullopt;
-
-    return std::optional<Font::Attributes>({ renderingResourceIdentifier, origin.value(), isInterstitial.value(), visibility.value(), isTextOrientationFallback.value() });
-}
-
 void ArgumentCoder<WebCore::FontCustomPlatformData>::encode(Encoder& encoder, const WebCore::FontCustomPlatformData& customPlatformData)
 {
     std::optional<WebKit::SharedMemory::Handle> handle;

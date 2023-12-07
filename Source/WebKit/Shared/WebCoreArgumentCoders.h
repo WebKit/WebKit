@@ -164,11 +164,6 @@ template<> struct ArgumentCoder<WebCore::Font> {
     static std::optional<WebCore::FontPlatformData> decodePlatformData(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::Font::Attributes> {
-    static void encode(Encoder&, const WebCore::Font::Attributes&);
-    static std::optional<WebCore::Font::Attributes> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::FontPlatformData::Attributes> {
     static void encode(Encoder&, const WebCore::FontPlatformData::Attributes&);
     static std::optional<WebCore::FontPlatformData::Attributes> decode(Decoder&);
