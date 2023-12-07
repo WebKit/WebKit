@@ -2018,3 +2018,5 @@ webkit.org/b/265599 [ Sonoma+ Debug x86_64 ] imported/w3c/web-platform-tests/htm
 [ Sonoma+ Release ] fast/attachment/attachment-default-icon.html [ Pass Failure ]
 
 webkit.org/b/265954 [ Ventura+ Release x86_64 ] media/video-audio-session-mode.html [ Crash ]
+
+webkit.org/b/265957 [ Release ] fullscreen/full-screen-layer-dump.html [ Pass Failure ]
