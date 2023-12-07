@@ -29,18 +29,13 @@
 
 import logging
 
-from webkitpy.tool import steps
-
 from webkitcorepy.string_utils import pluralize
 
-from webkitpy.common.checkout.changelog import ChangeLog
 from webkitpy.common.config import urls
-from webkitpy.common.net.bugzilla import Bugzilla
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.tool import steps
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
-from webkitpy.tool.commands.deprecatedcommand import DeprecatedCommand
 from webkitpy.tool.commands.stepsequence import StepSequence
-from webkitpy.tool.comments import bug_comment_from_commit_text
 from webkitpy.tool.multicommandtool import Command
 
 _log = logging.getLogger(__name__)
@@ -80,26 +75,6 @@ If a bug id is provided, or one can be found in the ChangeLog land will update t
             "changed_files": changed_files,
             "bug_id": (args and args[0]) or tool.checkout().bug_id_for_this_commit(options.git_commit, changed_files),
         }
-
-
-@DeprecatedCommand
-class LandCowhand(AbstractSequencedCommand):
-    # Gender-blind term for cowboy, see: http://en.wiktionary.org/wiki/cowhand
-    name = "land-cowhand"
-    help_text = "Prepares a ChangeLog and lands the current working directory diff."
-    steps = [
-        steps.SortXcodeProjectFiles,
-        steps.PrepareChangeLog,
-        steps.EditChangeLog,
-        steps.CheckStyle,
-        steps.ConfirmDiff,
-        steps.Build,
-        steps.Commit,
-        steps.CloseBugForLandDiff,
-    ]
-
-    def _prepare_state(self, options, args, tool):
-        options.check_style_filter = "-changelog"
 
 
 class CheckStyleLocal(AbstractSequencedCommand):
@@ -184,23 +159,6 @@ class ProcessBugsMixin(object):
                 patches = tool.bugs.fetch_bug(bug_id).patches()
                 _log.info("%s found on bug %s." % (pluralize(len(patches), 'patch', plural='patches'), bug_id))
                 all_patches += patches
-        return all_patches
-
-
-class ProcessURLsMixin(object):
-    def _fetch_list_of_patches_to_process(self, options, args, tool):
-        all_patches = []
-        for url in args:
-            bug_id = urls.parse_bug_id(url)
-            if bug_id:
-                patches = tool.bugs.fetch_bug(bug_id).patches()
-                _log.info("%s found on bug %s." % (pluralize(len(patches), 'patch', plural='patches'), bug_id))
-                all_patches += patches
-
-            attachment_id = urls.parse_attachment_id(url)
-            if attachment_id:
-                all_patches += tool.bugs.fetch_attachment(attachment_id)
-
         return all_patches
 
 

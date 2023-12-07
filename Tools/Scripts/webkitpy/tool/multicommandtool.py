@@ -33,8 +33,7 @@
 
 import logging
 import sys
-
-from optparse import OptionParser, IndentedHelpFormatter, SUPPRESS_USAGE, make_option
+from optparse import SUPPRESS_USAGE, IndentedHelpFormatter, OptionParser, make_option
 
 from webkitcorepy.string_utils import pluralize
 
