@@ -920,6 +920,7 @@
 		337822472947FBA5002106BB /* WebExtensionUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 337822452947FBA4002106BB /* WebExtensionUtilities.h */; };
 		337822482947FBA5002106BB /* WebExtensionUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 337822462947FBA4002106BB /* WebExtensionUtilities.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		3378F2FD2B1FCA6A00362EF3 /* WebExtensionMatchedRuleParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 3378F2FB2B1FCA5C00362EF3 /* WebExtensionMatchedRuleParameters.h */; };
+		33AE61252B20F13B00E1C215 /* PDFKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3178AF9720E2A7F80074DE94 /* PDFKitSPI.h */; };
 		33B5A80C2AFD298100A15D40 /* WebExtensionFrameParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 33B5A80B2AFD298100A15D40 /* WebExtensionFrameParameters.h */; };
 		33B5A80F2AFD5DE800A15D40 /* WebExtensionContextAPIWebNavigationCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 33B5A80E2AFD5DE800A15D40 /* WebExtensionContextAPIWebNavigationCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		33F68338293FF6F5005C63C0 /* JSWebExtensionAPIWebNavigationEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 33F68336293FF6F5005C63C0 /* JSWebExtensionAPIWebNavigationEvent.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
@@ -10512,6 +10513,7 @@
 				57B826402304EB3E00B72EB0 /* NearFieldSPI.h */,
 				3754D5441B3A29FD003A4C7F /* NSInvocationSPI.h */,
 				F4EB4AFC269CD23600D297AE /* OSStateSPI.h */,
+				3178AF9720E2A7F80074DE94 /* PDFKitSPI.h */,
 				5CB6AE432609799C00B6ED5A /* ReasonSPI.h */,
 				0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */,
 				448AC24D267135A600B28921 /* SynapseSPI.h */,
@@ -14654,7 +14656,6 @@
 				2D4AF0882044C3C4006C8817 /* FrontBoardServicesSPI.h */,
 				4193927728BE41C000162139 /* LSApplicationWorkspaceSPI.h */,
 				A13B3DA1207F39DE0090C58D /* MobileWiFiSPI.h */,
-				3178AF9720E2A7F80074DE94 /* PDFKitSPI.h */,
 				E5DEFA6726F8F42600AB68DB /* PhotosUISPI.h */,
 				2D279E1826955768004B3EEB /* PrototypeToolsSPI.h */,
 				46F38E8B2416E66D0059375A /* RunningBoardServicesSPI.h */,
@@ -15524,6 +15525,7 @@
 				A1798B43222D98DF000764BD /* PaymentAuthorizationViewController.h in Headers */,
 				950FECF5285027200002DE4E /* PaymentTokenContext.h in Headers */,
 				C1E123BA20A11573002646F4 /* PDFContextMenu.h in Headers */,
+				33AE61252B20F13B00E1C215 /* PDFKitSPI.h in Headers */,
 				5C298DA01C3DF02100470AFE /* PendingDownload.h in Headers */,
 				832ED18C1E2FE157006BA64A /* PerActivityStateCPUUsageSampler.h in Headers */,
 				7AFBD36F21E546F8005DBACB /* PersistencyUtils.h in Headers */,
