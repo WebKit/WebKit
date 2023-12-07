@@ -32,6 +32,7 @@
 #include "config.h"
 #include "CheckboxInputType.h"
 
+#include "ChromeClient.h"
 #include "EventHandler.h"
 #include "EventNames.h"
 #include "HTMLInputElement.h"
@@ -414,6 +415,8 @@ void CheckboxInputType::updateIsSwitchVisuallyOnFromAbsoluteLocation(LayoutPoint
         m_hasSwitchVisuallyOnChanged = true;
         m_isSwitchVisuallyOn = !m_isSwitchVisuallyOn;
         performSwitchAnimation(SwitchAnimationType::VisuallyOn);
+        if (auto* page = element()->document().page())
+            page->chrome().client().performSwitchHapticFeedback();
     }
 }
 

@@ -431,6 +431,8 @@ public:
 
     virtual void takeFocus(WebCore::FocusDirection) { }
 
+    virtual void performSwitchHapticFeedback() { }
+
 #if USE(DICTATION_ALTERNATIVES)
     virtual WebCore::DictationContext addDictationAlternatives(NSTextAlternatives *) = 0;
     virtual void replaceDictationAlternatives(NSTextAlternatives *, WebCore::DictationContext) = 0;

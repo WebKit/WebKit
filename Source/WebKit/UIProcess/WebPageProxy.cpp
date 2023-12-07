@@ -11430,6 +11430,11 @@ void WebPageProxy::didResignInputElementStrongPasswordAppearance(const UserData&
     m_uiClient->didResignInputElementStrongPasswordAppearance(*this, protectedProcess()->transformHandlesToObjects(userData.protectedObject().get()).get());
 }
 
+void WebPageProxy::performSwitchHapticFeedback()
+{
+    pageClient().performSwitchHapticFeedback();
+}
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 void WebPageProxy::addPlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier contextId)

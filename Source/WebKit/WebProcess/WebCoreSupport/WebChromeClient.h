@@ -409,6 +409,8 @@ private:
 
     void inputElementDidResignStrongPasswordAppearance(WebCore::HTMLInputElement&) final;
 
+    void performSwitchHapticFeedback() final;
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
     void addPlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier) final;
     void removePlaybackTargetPickerClient(WebCore::PlaybackTargetClientContextIdentifier) final;

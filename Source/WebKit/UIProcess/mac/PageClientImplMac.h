@@ -288,6 +288,8 @@ private:
 
     void takeFocus(WebCore::FocusDirection) override;
 
+    void performSwitchHapticFeedback() final;
+
 #if HAVE(APP_ACCENT_COLORS)
     WebCore::Color accentColor() override;
 #if PLATFORM(MAC)
