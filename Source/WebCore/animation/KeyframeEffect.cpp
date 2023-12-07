@@ -2285,7 +2285,7 @@ std::optional<double> KeyframeEffect::progressUntilNextStep(double iterationProg
     return std::nullopt;
 }
 
-bool KeyframeEffect::ticksContinouslyWhileActive() const
+bool KeyframeEffect::ticksContinuouslyWhileActive() const
 {
     auto doesNotAffectStyles = m_blendingKeyframes.isEmpty() || m_blendingKeyframes.properties().isEmpty();
     if (doesNotAffectStyles)
@@ -2311,7 +2311,7 @@ Seconds KeyframeEffect::timeToNextTick(const BasicEffectTiming& timing) const
     ASSERT(document());
     if (timing.phase == AnimationEffectPhase::Active && is<CSSAnimation>(animation())
         && document()->hasListenerType(Document::ListenerType::CSSAnimation)
-        && !ticksContinouslyWhileActive()) {
+        && !ticksContinuouslyWhileActive()) {
         if (auto iterationProgress = getComputedTiming().simpleIterationProgress)
             return iterationDuration() * (1 - *iterationProgress);
     }

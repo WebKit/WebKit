@@ -321,7 +321,7 @@ Seconds AnimationEffect::timeToNextTick(const BasicEffectTiming& timing) const
         // The effect is in its "before" phase, in this case we can wait until it enters its "active" phase.
         return delay() - *timing.localTime;
     case AnimationEffectPhase::Active: {
-        if (!ticksContinouslyWhileActive())
+        if (!ticksContinuouslyWhileActive())
             return endTime() - *timing.localTime;
         if (auto iterationProgress = getComputedTiming().simpleIterationProgress) {
             // In case we're in a range that uses a steps() timing function, we can compute the time until the next step starts.

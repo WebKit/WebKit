@@ -261,7 +261,7 @@ private:
     void animationDidFinish() final;
     void setAnimation(WebAnimation*) final;
     Seconds timeToNextTick(const BasicEffectTiming&) const final;
-    bool ticksContinouslyWhileActive() const final;
+    bool ticksContinuouslyWhileActive() const final;
     std::optional<double> progressUntilNextStep(double) const final;
     bool preventsAnimationReadiness() const final;
 
