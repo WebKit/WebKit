@@ -39,10 +39,11 @@
 namespace WebKit {
 using namespace WebCore;
 
-DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy& webPageProxy)
+DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
     : m_type(type)
     , m_identifier(DrawingAreaIdentifier::generate())
     , m_webPageProxy(webPageProxy)
+    , m_webProcessProxy(webProcessProxy)
     , m_size(webPageProxy.viewSize())
 #if PLATFORM(MAC)
     , m_viewExposedRectChangedTimer(RunLoop::main(), this, &DrawingAreaProxy::viewExposedRectChangedTimerFired)
@@ -68,6 +69,26 @@ std::span<IPC::ReceiverName> DrawingAreaProxy::messageReceiverNames() const
 {
     static std::array<IPC::ReceiverName, 1> name { Messages::DrawingAreaProxy::messageReceiverName() };
     return { name };
+}
+
+IPC::Connection* DrawingAreaProxy::messageSenderConnection() const
+{
+    return m_webProcessProxy->connection();
+}
+
+bool DrawingAreaProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, OptionSet<IPC::SendOption> sendOptions)
+{
+    return m_webProcessProxy->sendMessage(WTFMove(encoder), sendOptions);
+}
+
+bool DrawingAreaProxy::sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&& encoder, AsyncReplyHandler handler, OptionSet<IPC::SendOption> sendOptions)
+{
+    return m_webProcessProxy->sendMessage(WTFMove(encoder), sendOptions, WTFMove(handler));
+}
+
+uint64_t DrawingAreaProxy::messageSenderDestinationID() const
+{
+    return identifier().toUInt64();
 }
 
 DelegatedScrollingMode DrawingAreaProxy::delegatedScrollingMode() const
@@ -112,7 +133,7 @@ void DrawingAreaProxy::viewExposedRectChangedTimerFired()
     if (viewExposedRect == m_lastSentViewExposedRect)
         return;
 
-    m_webPageProxy.send(Messages::DrawingArea::SetViewExposedRect(viewExposedRect), m_identifier);
+    send(Messages::DrawingArea::SetViewExposedRect(viewExposedRect));
     m_lastSentViewExposedRect = viewExposedRect;
 }
 #endif // PLATFORM(MAC)

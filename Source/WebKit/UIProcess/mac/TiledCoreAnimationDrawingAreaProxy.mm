@@ -43,8 +43,8 @@ namespace WebKit {
 using namespace IPC;
 using namespace WebCore;
 
-TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy(WebPageProxy& webPageProxy)
-    : DrawingAreaProxy(DrawingAreaType::TiledCoreAnimation, webPageProxy)
+TiledCoreAnimationDrawingAreaProxy::TiledCoreAnimationDrawingAreaProxy(WebPageProxy& webPageProxy, WebProcessProxy& webProcessProxy)
+    : DrawingAreaProxy(DrawingAreaType::TiledCoreAnimation, webPageProxy, webProcessProxy)
 {
 }
 
@@ -54,7 +54,7 @@ TiledCoreAnimationDrawingAreaProxy::~TiledCoreAnimationDrawingAreaProxy()
 
 void TiledCoreAnimationDrawingAreaProxy::deviceScaleFactorDidChange()
 {
-    m_webPageProxy.send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy.deviceScaleFactor()), m_identifier);
+    send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy.deviceScaleFactor()));
 }
 
 void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
@@ -72,7 +72,7 @@ void TiledCoreAnimationDrawingAreaProxy::sizeDidChange()
 
 void TiledCoreAnimationDrawingAreaProxy::colorSpaceDidChange()
 {
-    m_webPageProxy.send(Messages::DrawingArea::SetColorSpace(m_webPageProxy.colorSpace()), m_identifier);
+    send(Messages::DrawingArea::SetColorSpace(m_webPageProxy.colorSpace()));
 }
 
 void TiledCoreAnimationDrawingAreaProxy::minimumSizeForAutoLayoutDidChange()
@@ -147,9 +147,6 @@ void TiledCoreAnimationDrawingAreaProxy::willSendUpdateGeometry()
 
 MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
 {
-    if (!m_webPageProxy.hasRunningProcess())
-        return MachSendRight();
-
     RetainPtr<CAContext> rootLayerContext = [m_webPageProxy.acceleratedCompositingRootLayer() context];
     if (!rootLayerContext)
         return MachSendRight();
@@ -158,8 +155,10 @@ MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
     // will likely get dropped on the floor (if the Web process is terminated)
     // or queued up until process launch completes, and there's nothing useful
     // to synchronize in these cases.
-    if (!m_webPageProxy.process().connection())
+    if (!m_webProcessProxy->hasConnection())
         return MachSendRight();
+
+    RefPtr connection = m_webProcessProxy->connection();
 
     // Don't fence if we have incoming synchronous messages, because we may not
     // be able to reply to the message until the fence times out.
@@ -173,12 +172,8 @@ MachSendRight TiledCoreAnimationDrawingAreaProxy::createFence()
     uint64_t callbackID = m_webPageProxy.process().connection()->installIncomingSyncMessageCallback([rootLayerContext] {
         [rootLayerContext invalidateFences];
     });
-    RefPtr<WebPageProxy> retainedPage = &m_webPageProxy;
-    [CATransaction addCommitHandler:[callbackID, retainedPage] {
-        if (!retainedPage->hasRunningProcess())
-            return;
-        if (Connection* connection = retainedPage->process().connection())
-            connection->uninstallIncomingSyncMessageCallback(callbackID);
+    [CATransaction addCommitHandler:[callbackID, connection = WTFMove(connection)] () mutable {
+        connection->uninstallIncomingSyncMessageCallback(callbackID);
     } forPhase:kCATransactionPhasePostCommit];
 
     return fencePort;
@@ -189,21 +184,21 @@ void TiledCoreAnimationDrawingAreaProxy::sendUpdateGeometry()
     ASSERT(!m_isWaitingForDidUpdateGeometry);
 
     willSendUpdateGeometry();
-    m_webPageProxy.sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(m_size, std::nullopt, true /* flushSynchronously */, createFence()), [weakThis = WeakPtr { *this }] {
+    sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(m_size, std::nullopt, true /* flushSynchronously */, createFence()), [weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->didUpdateGeometry();
-    }, m_identifier);
+    });
 }
 
 void TiledCoreAnimationDrawingAreaProxy::adjustTransientZoom(double scale, FloatPoint origin)
 {
-    m_webPageProxy.send(Messages::DrawingArea::AdjustTransientZoom(scale, origin), m_identifier);
+    send(Messages::DrawingArea::AdjustTransientZoom(scale, origin));
 }
 
 void TiledCoreAnimationDrawingAreaProxy::commitTransientZoom(double scale, FloatPoint origin)
 {
-    m_webPageProxy.send(Messages::DrawingArea::CommitTransientZoom(scale, origin), m_identifier);
+    send(Messages::DrawingArea::CommitTransientZoom(scale, origin));
 }
 
 void TiledCoreAnimationDrawingAreaProxy::dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection& connection, Vector<IPC::AsyncReplyID>&& callbackIDs)
@@ -218,7 +213,7 @@ std::optional<WebCore::FramesPerSecond> TiledCoreAnimationDrawingAreaProxy::disp
 {
     if (!m_webPageProxy.displayID())
         return std::nullopt;
-    return m_webPageProxy.process().nominalFramesPerSecondForDisplay(*m_webPageProxy.displayID());
+    return m_webProcessProxy->nominalFramesPerSecondForDisplay(*m_webPageProxy.displayID());
 }
 
 } // namespace WebKit

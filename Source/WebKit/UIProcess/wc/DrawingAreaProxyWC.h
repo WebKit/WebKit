@@ -38,7 +38,7 @@ namespace WebKit {
 
 class DrawingAreaProxyWC final : public DrawingAreaProxy {
 public:
-    DrawingAreaProxyWC(WebPageProxy&);
+    DrawingAreaProxyWC(WebPageProxy&, WebProcessProxy&);
 
     void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
 

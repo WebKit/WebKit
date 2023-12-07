@@ -56,8 +56,8 @@ namespace WebKit {
 using namespace IPC;
 using namespace WebCore;
 
-RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& pageProxy)
-    : DrawingAreaProxy(DrawingAreaType::RemoteLayerTree, pageProxy)
+RemoteLayerTreeDrawingAreaProxy::RemoteLayerTreeDrawingAreaProxy(WebPageProxy& pageProxy, WebProcessProxy& webProcessProxy)
+    : DrawingAreaProxy(DrawingAreaType::RemoteLayerTree, pageProxy, webProcessProxy)
     , m_remoteLayerTreeHost(makeUnique<RemoteLayerTreeHost>(*this))
 {
     // We don't want to pool surfaces in the UI process.
@@ -119,7 +119,7 @@ void RemoteLayerTreeDrawingAreaProxy::viewWillEndLiveResize()
 
 void RemoteLayerTreeDrawingAreaProxy::deviceScaleFactorDidChange()
 {
-    m_webPageProxy.send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy.deviceScaleFactor()), m_identifier);
+    send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy.deviceScaleFactor()));
 }
 
 void RemoteLayerTreeDrawingAreaProxy::didUpdateGeometry()
@@ -149,11 +149,11 @@ void RemoteLayerTreeDrawingAreaProxy::sendUpdateGeometry()
     visibleRectUpdateInfo = m_webPageProxy.pageClient().createVisibleContentRectUpdateInfo();
 #endif
 
-    m_webPageProxy.sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(m_size, visibleRectUpdateInfo, false /* flushSynchronously */, MachSendRight()), [weakThis = WeakPtr { this }] {
+    sendWithAsyncReply(Messages::DrawingArea::UpdateGeometry(m_size, visibleRectUpdateInfo, false /* flushSynchronously */, MachSendRight()), [weakThis = WeakPtr { this }] {
         if (!weakThis)
             return;
         weakThis->didUpdateGeometry();
-    }, m_identifier);
+    });
 }
 
 RemoteLayerTreeDrawingAreaProxy::ProcessState& RemoteLayerTreeDrawingAreaProxy::processStateForConnection(IPC::Connection& connection)
@@ -163,7 +163,7 @@ RemoteLayerTreeDrawingAreaProxy::ProcessState& RemoteLayerTreeDrawingAreaProxy::
             return pair.value;
     }
 
-    ASSERT(m_webPageProxy.process().hasConnection() && &connection == m_webPageProxy.process().connection());
+    ASSERT(m_webProcessProxy->hasConnection() && &connection == m_webProcessProxy->connection());
     return m_webPageProxyProcessState;
 }
 
@@ -339,12 +339,12 @@ void RemoteLayerTreeDrawingAreaProxy::asyncSetLayerContents(WebCore::PlatformLay
 
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)
 {
-    m_webPageProxy.send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime), m_identifier);
+    send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime));
 }
 
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier layerID, const String& key)
 {
-    m_webPageProxy.send(Messages::DrawingArea::AcceleratedAnimationDidEnd(layerID, key), m_identifier);
+    send(Messages::DrawingArea::AcceleratedAnimationDidEnd(layerID, key));
 }
 
 static const float indicatorInset = 10;
@@ -496,7 +496,7 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(ProcessState& state, IPC
 
     state.commitLayerTreeMessageState = CommitLayerTreePending;
 
-    if (m_webPageProxy.process().connection() == &connection)
+    if (m_webProcessProxy->connection() == &connection)
         m_webPageProxy.scrollingCoordinatorProxy()->sendScrollingTreeNodeDidScroll();
 
     // Waiting for CA to commit is insufficient, because the render server can still be
@@ -518,8 +518,8 @@ void RemoteLayerTreeDrawingAreaProxy::didRefreshDisplay(IPC::Connection* connect
         ProcessState& state = processStateForConnection(*connection);
         didRefreshDisplay(state, *connection);
     } else {
-        if (m_webPageProxy.process().hasConnection())
-            didRefreshDisplay(m_webPageProxyProcessState, *m_webPageProxy.process().connection());
+        if (m_webProcessProxy->hasConnection())
+            didRefreshDisplay(m_webPageProxyProcessState, *m_webProcessProxy->connection());
         for (auto pair : m_remotePageProcessState) {
             if (pair.key.process().hasConnection())
                 didRefreshDisplay(pair.value, *pair.key.process().connection());
@@ -565,7 +565,7 @@ void RemoteLayerTreeDrawingAreaProxy::waitForDidUpdateActivityState(ActivityStat
 
 void RemoteLayerTreeDrawingAreaProxy::hideContentUntilPendingUpdate()
 {
-    m_replyForUnhidingContent = m_webPageProxy.sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [] { }, identifier());
+    m_replyForUnhidingContent = sendWithAsyncReply(Messages::DrawingArea::DispatchAfterEnsuringDrawing(), [] { });
     m_remoteLayerTreeHost->detachRootLayer();
 }
 
