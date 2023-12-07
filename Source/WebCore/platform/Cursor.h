@@ -27,6 +27,7 @@
 
 #include "Image.h"
 #include "IntPoint.h"
+#include <variant>
 #include <wtf/Assertions.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/RefPtr.h>
@@ -132,7 +133,17 @@ class Cursor {
 public:
     using Type = PlatformCursorType;
 
+    struct CustomCursorIPCData {
+        Ref<Image> image;
+        IntPoint hotSpot;
+#if ENABLE(MOUSE_CURSOR_SCALE)
+        float scaleFactor { 0 };
+#endif
+    };
+    using IPCData = std::variant<Type /* Non custom type */, std::optional<CustomCursorIPCData>>;
+
     Cursor() = default;
+    static std::optional<Cursor> fromIPCData(IPCData&&);
 
     WEBCORE_EXPORT static const Cursor& fromType(Cursor::Type);
 
@@ -144,6 +155,8 @@ public:
 #endif
 
     explicit Cursor(Type);
+
+    IPCData ipcData() const;
 
     Type type() const;
     RefPtr<Image> image() const { return m_image; }
@@ -228,6 +241,44 @@ inline Cursor::Type Cursor::type() const
     ASSERT(m_type > Type::Invalid);
     ASSERT(m_type <= Type::Custom);
     return m_type;
+}
+
+inline std::optional<Cursor> Cursor::fromIPCData(IPCData&& ipcData)
+{
+    return WTF::switchOn(WTFMove(ipcData), [](Type&& type) -> std::optional<Cursor> {
+        if (type == Type::Invalid || type == Type::Custom)
+            return std::nullopt;
+        auto& cursorReference = Cursor::fromType(type);
+        // Calling platformCursor here will eagerly create the platform cursor for the cursor singletons inside WebCore.
+        // This will avoid having to re-create the platform cursors over and over.
+        (void)cursorReference.platformCursor();
+        return cursorReference;
+    }, [](std::optional<CustomCursorIPCData>&& imageData) -> std::optional<Cursor> {
+        if (!imageData)
+            return Cursor { &Image::nullImage(), IntPoint() };
+        ASSERT(imageData->image->rect().contains(imageData->hotSpot));
+#if ENABLE(MOUSE_CURSOR_SCALE)
+        return Cursor(imageData->image.ptr(), imageData->hotSpot, imageData->scaleFactor);
+#else
+        return Cursor(imageData->image.ptr(), imageData->hotSpot);
+#endif
+    });
+}
+
+inline auto Cursor::ipcData() const -> IPCData
+{
+    auto type = this->type();
+    if (type != Type::Custom)
+        return type;
+    if (m_image->isNull())
+        return std::nullopt;
+    return CustomCursorIPCData {
+        *m_image
+        , m_hotSpot
+#if ENABLE(MOUSE_CURSOR_SCALE)
+        , m_imageScaleFactor
+#endif
+    };
 }
 
 } // namespace WebCore

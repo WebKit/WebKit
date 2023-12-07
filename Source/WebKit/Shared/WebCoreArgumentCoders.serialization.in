@@ -6813,6 +6813,18 @@ enum class WebCore::SourceBufferAppendMode : uint8_t {
 
 #endif
 
+[CustomHeader, Nested] struct WebCore::Cursor::CustomCursorIPCData {
+    Ref<WebCore::Image> image;
+    [Validator='(*image)->rect().contains(*hotSpot)'] WebCore::IntPoint hotSpot;
+#if ENABLE(MOUSE_CURSOR_SCALE)
+    float scaleFactor;
+#endif
+};
+
+[CreateUsing=fromIPCData] class WebCore::Cursor {
+    std::variant<WebCore::Cursor::Type, std::optional<WebCore::Cursor::CustomCursorIPCData>> ipcData();
+};
+
 struct WebCore::Length {
     std::variant<WebCore::Length::AutoData, WebCore::Length::NormalData, WebCore::Length::RelativeData, WebCore::Length::PercentData, WebCore::Length::FixedData, WebCore::Length::IntrinsicData, WebCore::Length::MinIntrinsicData, WebCore::Length::MinContentData, WebCore::Length::MaxContentData, WebCore::Length::FillAvailableData, WebCore::Length::FitContentData, WebCore::Length::ContentData, WebCore::Length::UndefinedData> ipcData()
 }
