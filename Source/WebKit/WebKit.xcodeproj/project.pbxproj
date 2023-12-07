@@ -5112,6 +5112,7 @@
 		46DF063A1F3905E5001980BB /* NetworkCORSPreflightChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkCORSPreflightChecker.h; sourceTree = "<group>"; };
 		46E9760A2757F6C900ACDD37 /* WebBroadcastChannelRegistry.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebBroadcastChannelRegistry.messages.in; sourceTree = "<group>"; };
 		46E9760B2757F6C900ACDD37 /* RemoteWebLockRegistry.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteWebLockRegistry.messages.in; sourceTree = "<group>"; };
+		46EA625A2B1FE13200DC5E39 /* ContextMenuContextData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = ContextMenuContextData.serialization.in; sourceTree = "<group>"; };
 		46EE2847269E049B00DD48AB /* WebBroadcastChannelRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebBroadcastChannelRegistry.cpp; sourceTree = "<group>"; };
 		46EE2848269E049B00DD48AB /* WebBroadcastChannelRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebBroadcastChannelRegistry.h; sourceTree = "<group>"; };
 		46EE284A269E051700DD48AB /* NetworkBroadcastChannelRegistry.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NetworkBroadcastChannelRegistry.messages.in; sourceTree = "<group>"; };
@@ -8512,6 +8513,7 @@
 				5129EB1123D0DE7800AF1CD7 /* ContentWorldShared.h */,
 				5106D7BF18BDBE73000AB166 /* ContextMenuContextData.cpp */,
 				5106D7C018BDBE73000AB166 /* ContextMenuContextData.h */,
+				46EA625A2B1FE13200DC5E39 /* ContextMenuContextData.serialization.in */,
 				99F642D21FABE378009621E9 /* CoordinateSystem.h */,
 				5C2C6FA627C958FC00CCDA9E /* DataTaskIdentifier.h */,
 				99036AE823A970870000B06A /* DebuggableInfoData.cpp */,
