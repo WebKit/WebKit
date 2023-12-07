@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: User gesture is not detected. To use the WebAuthn API, call 'navigator.credentials.create' or 'navigator.credentials.get' within user activated events.
 
 PASS CTAP NFC with empty apdu response in a mock nfc authenticator.
 PASS CTAP NFC with wrong data error in a mock nfc authenticator.

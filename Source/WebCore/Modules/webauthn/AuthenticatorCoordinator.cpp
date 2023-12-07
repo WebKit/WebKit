@@ -185,8 +185,6 @@ void AuthenticatorCoordinator::create(const Document& document, CredentialCreati
         }
 
         if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
-            if (weakThis)
-                weakThis->resetUserGestureRequirement();
             response->setClientDataJSON(WTFMove(clientDataJson));
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
@@ -268,8 +266,6 @@ void AuthenticatorCoordinator::discoverFromExternalSource(const Document& docume
         }
 
         if (auto response = AuthenticatorResponse::tryCreate(WTFMove(data), attachment)) {
-            if (weakThis)
-                weakThis->resetUserGestureRequirement();
             response->setClientDataJSON(WTFMove(clientDataJson));
             promise.resolve(PublicKeyCredential::create(response.releaseNonNull()).ptr());
             return;
@@ -328,11 +324,6 @@ void AuthenticatorCoordinator::getClientCapabilities(const Document& document, D
     };
 
     m_client->getClientCapabilities(document.securityOrigin(), WTFMove(completionHandler));
-}
-
-void AuthenticatorCoordinator::resetUserGestureRequirement()
-{
-    m_client->resetUserGestureRequirement();
 }
 
 } // namespace WebCore

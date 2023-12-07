@@ -578,8 +578,8 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         if (!vertexModule.isValid())
             return RenderPipeline::createInvalid(*this);
 
-        const auto& vertexFunctionName = String::fromLatin1(descriptor.vertex.entryPoint);
-        auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexFunctionName, label);
+        const auto& vertexFunctionName = fromAPI(descriptor.vertex.entryPoint);
+        auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexFunctionName.length() ? vertexFunctionName : vertexModule.defaultVertexEntryPoint(), label);
         if (!libraryCreationResult)
             return RenderPipeline::createInvalid(*this);
 
@@ -588,7 +588,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
             addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout);
         auto [constantValues, _] = createConstantValues(descriptor.vertex.constantCount, descriptor.vertex.constants, entryPointInformation);
         auto vertexFunction = createFunction(libraryCreationResult->library, entryPointInformation, constantValues, label);
-        if (!vertexFunction)
+        if (!vertexFunction || vertexFunction.functionType != MTLFunctionTypeVertex)
             return RenderPipeline::createInvalid(*this);
         mtlRenderPipelineDescriptor.vertexFunction = vertexFunction;
     }
@@ -604,9 +604,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
         if (!fragmentModule.isValid())
             return RenderPipeline::createInvalid(*this);
 
-        const auto& fragmentFunctionName = String::fromLatin1(fragmentDescriptor.entryPoint);
+        const auto& fragmentFunctionName = fromAPI(fragmentDescriptor.entryPoint);
 
-        auto libraryCreationResult = createLibrary(m_device, fragmentModule, pipelineLayout, fragmentFunctionName, label);
+        auto libraryCreationResult = createLibrary(m_device, fragmentModule, pipelineLayout, fragmentFunctionName.length() ? fragmentFunctionName : fragmentModule.defaultFragmentEntryPoint(), label);
         if (!libraryCreationResult)
             return RenderPipeline::createInvalid(*this);
 
@@ -616,7 +616,7 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
         auto [constantValues, _] = createConstantValues(fragmentDescriptor.constantCount, fragmentDescriptor.constants, entryPointInformation);
         auto fragmentFunction = createFunction(libraryCreationResult->library, entryPointInformation, constantValues, label);
-        if (!fragmentFunction)
+        if (!fragmentFunction || fragmentFunction.functionType != MTLFunctionTypeFragment)
             return RenderPipeline::createInvalid(*this);
         mtlRenderPipelineDescriptor.fragmentFunction = fragmentFunction;
 

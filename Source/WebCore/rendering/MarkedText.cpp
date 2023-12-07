@@ -232,6 +232,9 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
         switch (marker->type()) {
         case DocumentMarker::Grammar:
         case DocumentMarker::Spelling:
+            if (renderer.settings().grammarAndSpellingPseudoElementsEnabled())
+                break;
+            FALLTHROUGH;
         case DocumentMarker::CorrectionIndicator:
         case DocumentMarker::Replacement:
         case DocumentMarker::DictationAlternatives:

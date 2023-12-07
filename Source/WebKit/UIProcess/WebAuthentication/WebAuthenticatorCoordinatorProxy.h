@@ -77,6 +77,11 @@ public:
     explicit WebAuthenticatorCoordinatorProxy(WebPageProxy&);
     ~WebAuthenticatorCoordinatorProxy();
 
+#if HAVE(WEB_AUTHN_AS_MODERN)
+    void pauseConditionalAssertion();
+    void unpauseConditionalAssertion();
+#endif
+
 private:
     using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
@@ -84,8 +89,8 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Receivers.
-    void makeCredential(WebCore::FrameIdentifier, FrameInfoData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialCreationOptions&&, WebCore::MediationRequirement, bool processingUserGesture, RequestCompletionHandler&&);
-    void getAssertion(WebCore::FrameIdentifier, FrameInfoData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialRequestOptions&&, WebCore::MediationRequirement, std::optional<WebCore::SecurityOriginData>, bool processingUserGesture, RequestCompletionHandler&&);
+    void makeCredential(WebCore::FrameIdentifier, FrameInfoData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialCreationOptions&&, RequestCompletionHandler&&);
+    void getAssertion(WebCore::FrameIdentifier, FrameInfoData&&, Vector<uint8_t>&& hash, WebCore::PublicKeyCredentialRequestOptions&&, WebCore::MediationRequirement, std::optional<WebCore::SecurityOriginData>, RequestCompletionHandler&&);
     void isUserVerifyingPlatformAuthenticatorAvailable(const WebCore::SecurityOriginData&, QueryCompletionHandler&&);
     void isConditionalMediationAvailable(const WebCore::SecurityOriginData&, QueryCompletionHandler&&);
     void getClientCapabilities(const WebCore::SecurityOriginData&, CapbilitiesCompletionHandler&&);
@@ -113,6 +118,8 @@ private:
     RequestCompletionHandler m_completionHandler;
     RetainPtr<_WKASDelegate> m_delegate;
     RetainPtr<ASAuthorizationController> m_controller;
+    bool m_paused { false };
+    bool m_isConditionalAssertion { false };
 #endif
 
     RetainPtr<ASCAuthorizationRemotePresenter> m_presenter;

@@ -27,7 +27,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import re
 import sys
 
 from webkitpy.common.system.executive import ScriptError
@@ -51,7 +50,7 @@ class SortXcodeProjectFiles(AbstractStep):
                 args = self._tool.deprecated_port().run_sort_xcode_project_file_command()
                 args = args + changed_pbxproj
                 try:
-                    output = self._tool.executive.run_and_throw_if_fail(args, self._options.quiet, cwd=self._tool.scm().checkout_root)
+                    self._tool.executive.run_and_throw_if_fail(args, self._options.quiet, cwd=self._tool.scm().checkout_root)
                     self.did_modify_checkout(state)
                 except ScriptError:
                     _log.error("Unable to sort modified xcode projects.")

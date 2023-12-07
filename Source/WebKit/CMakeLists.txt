@@ -383,6 +383,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/AuxiliaryProcessCreationParameters.serialization.in
     Shared/BackgroundFetchState.serialization.in
     Shared/CallbackID.serialization.in
+    Shared/ContextMenuContextData.serialization.in
     Shared/DebuggableInfoData.serialization.in
     Shared/DisplayListArgumentCoders.serialization.in
     Shared/DocumentEditingContext.serialization.in

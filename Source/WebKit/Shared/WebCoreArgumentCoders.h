@@ -157,14 +157,9 @@ template<> struct ArgumentCoder<WebCore::Credential> {
     static WARN_UNUSED_RETURN bool decodePlatformData(Decoder&, WebCore::Credential&);
 };
 
-template<> struct ArgumentCoder<WebCore::Cursor> {
-    static void encode(Encoder&, const WebCore::Cursor&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Cursor&);
-};
-
-template<> struct ArgumentCoder<RefPtr<WebCore::Image>> {
-    static void encode(Encoder&, const RefPtr<WebCore::Image>&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, RefPtr<WebCore::Image>&);
+template<> struct ArgumentCoder<WebCore::Image> {
+    static void encode(Encoder&, const WebCore::Image&);
+    static std::optional<Ref<WebCore::Image>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<RefPtr<WebCore::SerializedScriptValue>> {
@@ -469,16 +464,6 @@ template <> struct EnumTraits<WebCore::CDMInstance::HDCPStatus> {
     WebCore::CDMInstance::HDCPStatus::Valid,
     WebCore::CDMInstance::HDCPStatus::OutputRestricted,
     WebCore::CDMInstance::HDCPStatus::OutputDownscaled
-    >;
-};
-#endif
-
-#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
-template <> struct EnumTraits<WebCore::GraphicsContextGLSimulatedEventForTesting> {
-    using values = EnumValues<
-    WebCore::GraphicsContextGLSimulatedEventForTesting,
-    WebCore::GraphicsContextGLSimulatedEventForTesting::GPUStatusFailure,
-    WebCore::GraphicsContextGLSimulatedEventForTesting::Timeout
     >;
 };
 #endif

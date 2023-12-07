@@ -1169,7 +1169,9 @@ WebBackForwardCache& WebPageProxy::backForwardCache() const
 
 bool WebPageProxy::shouldUseBackForwardCache() const
 {
-    return m_preferences->usesBackForwardCache() && backForwardCache().capacity() > 0;
+    return m_preferences->usesBackForwardCache()
+        && backForwardCache().capacity() > 0
+        && !m_preferences->siteIsolationEnabled();
 }
 
 void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> provisionalPage)
@@ -2655,6 +2657,15 @@ void WebPageProxy::dispatchActivityStateChange()
         else
             viewDidLeaveWindow();
     }
+
+#if ENABLE(WEB_AUTHN) && HAVE(WEB_AUTHN_AS_MODERN)
+    if ((changed & ActivityState::WindowIsActive) && m_credentialsMessenger) {
+        if (pageClient().isViewWindowActive())
+            m_credentialsMessenger->unpauseConditionalAssertion();
+        else
+            m_credentialsMessenger->pauseConditionalAssertion();
+    }
+#endif
 
     updateBackingStoreDiscardableState();
 

@@ -193,7 +193,7 @@ WGPUFeatureName ConvertToBackingContext::convertToBacking(FeatureName featureNam
 {
     switch (featureName) {
     case FeatureName::DepthClipControl:
-        return static_cast<WGPUFeatureName>(WGPUFeatureName_DepthClipControl);
+        return WGPUFeatureName_DepthClipControl;
     case FeatureName::Depth32floatStencil8:
         return WGPUFeatureName_Depth32FloatStencil8;
     case FeatureName::TextureCompressionBc:
@@ -205,13 +205,15 @@ WGPUFeatureName ConvertToBackingContext::convertToBacking(FeatureName featureNam
     case FeatureName::TimestampQuery:
         return WGPUFeatureName_TimestampQuery;
     case FeatureName::IndirectFirstInstance:
-        return static_cast<WGPUFeatureName>(WGPUFeatureName_IndirectFirstInstance);
+        return WGPUFeatureName_IndirectFirstInstance;
     case FeatureName::Bgra8unormStorage:
-        return static_cast<WGPUFeatureName>(WGPUFeatureName_BGRA8UnormStorage);
+        return WGPUFeatureName_BGRA8UnormStorage;
     case FeatureName::ShaderF16:
-        return static_cast<WGPUFeatureName>(WGPUFeatureName_ShaderF16);
+        return WGPUFeatureName_ShaderF16;
     case FeatureName::Rg11b10ufloatRenderable:
-        return static_cast<WGPUFeatureName>(WGPUFeatureName_RG11B10UfloatRenderable);
+        return WGPUFeatureName_RG11B10UfloatRenderable;
+    case FeatureName::Float32Filterable:
+        return WGPUFeatureName_Float32Filterable;
     }
 }
 

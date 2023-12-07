@@ -8043,6 +8043,7 @@ static void checkSettingsControlledByLockdownMode(WKWebView *webView, ShouldBeEn
     String embedElementCheck = makeString("document.createElement('embed').__proto__ == ", shouldBeEnabled == ShouldBeEnabled::Yes ? "HTMLEmbedElement" : "HTMLUnknownElement", ".prototype");
     EXPECT_EQ(runJSCheck(embedElementCheck), true); // Embed Element.
 
+    EXPECT_EQ(runJSCheck("CSS.supports('overflow-anchor:none')"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
     EXPECT_EQ(runJSCheck("CSS.supports('text-justify: auto')"_s), shouldBeEnabled == ShouldBeEnabled::Yes);
     EXPECT_EQ(runJSCheck("!!navigator.contacts"_s), isShowingInitialEmptyDocument != IsShowingInitialEmptyDocument::Yes && shouldBeEnabled == ShouldBeEnabled::Yes);
     EXPECT_EQ(runJSCheck("!!window.DeprecationReportBody"_s), shouldBeEnabled == ShouldBeEnabled::Yes);

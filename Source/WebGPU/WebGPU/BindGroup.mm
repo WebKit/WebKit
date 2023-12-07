@@ -531,7 +531,18 @@ template <typename ExpectedType>
 static bool hasBinding(const BindGroupLayout::EntriesContainer& bindGroupLayoutEntries, auto bindingIndex)
 {
     auto it = bindGroupLayoutEntries.find(bindingIndex);
-    return it != bindGroupLayoutEntries.end() && std::get_if<ExpectedType>(&it->value.bindingLayout);
+    RELEASE_ASSERT(it != bindGroupLayoutEntries.end());
+    return std::get_if<ExpectedType>(&it->value.bindingLayout);
+}
+
+static bool is32bppFloatFormat(id<MTLTexture> t)
+{
+    return t.pixelFormat == MTLPixelFormatR32Float || t.pixelFormat == MTLPixelFormatRG32Float || t.pixelFormat == MTLPixelFormatRGBA32Float;
+}
+
+static bool valid32bppFloatSampleType(WGPUTextureSampleType sampleType)
+{
+    return sampleType == WGPUTextureSampleType_Float || sampleType == WGPUTextureSampleType_UnfilterableFloat;
 }
 
 Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor)
@@ -615,11 +626,18 @@ Ref<BindGroup> Device::createBindGroup(const WGPUBindGroupDescriptor& descriptor
                 id<MTLSamplerState> sampler = WebGPU::fromAPI(entry.sampler).samplerState();
                 [argumentEncoder[stage] setSamplerState:sampler atIndex:index];
             } else if (textureViewIsPresent) {
-                if (!hasBinding<WGPUTextureBindingLayout>(bindGroupLayoutEntries, bindingIndex) && !hasBinding<WGPUStorageTextureBindingLayout>(bindGroupLayoutEntries, bindingIndex)) {
+                auto it = bindGroupLayoutEntries.find(bindingIndex);
+                RELEASE_ASSERT(it != bindGroupLayoutEntries.end());
+                auto* textureEntry = std::get_if<WGPUTextureBindingLayout>(&it->value.bindingLayout);
+                if (!textureEntry && !std::get_if<WGPUStorageTextureBindingLayout>(&it->value.bindingLayout)) {
                     generateAValidationError("Expected texture or storage texture but it was not present in the bind group layout"_s);
                     return BindGroup::createInvalid(*this);
                 }
                 id<MTLTexture> texture = WebGPU::fromAPI(entry.textureView).texture();
+                if (textureEntry && is32bppFloatFormat(texture) && (!valid32bppFloatSampleType(textureEntry->sampleType) || (textureEntry->sampleType == WGPUTextureSampleType_Float && !hasFeature(WGPUFeatureName_Float32Filterable)))) {
+                    generateAValidationError("Can not create bind group with filterable 32bpp floating point texture as float32-filterable feature is not enabled"_s);
+                    return BindGroup::createInvalid(*this);
+                }
                 [argumentEncoder[stage] setTexture:texture atIndex:index];
                 stageResources[metalRenderStage(stage)][resourceUsage - 1].append(texture);
             } else if (externalTextureIsPresent) {

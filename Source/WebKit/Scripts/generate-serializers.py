@@ -51,6 +51,7 @@ import sys
 # SecureCodingAllowed - ObjC classes to allow when decoding.
 # OptionalTupleBits - This member stores bits of whether each following member is serialized. Attribute must be immediately before members with OptionalTupleBit.
 # OptionalTupleBit - The name of the bit indicating whether this member is serialized.
+# SupportWKKeyedCoder - For webkit_secure_coding types, in addition to the preferred property list code path, support SupportWKKeyedCoder
 
 
 class Template(object):
@@ -94,6 +95,7 @@ class SerializedType(object):
         self.webkit_platform = False
         self.members_are_subclasses = False
         self.custom_encoder = False
+        self.support_wkkeyedcoder = False
         if attributes is not None:
             for attribute in attributes.split(', '):
                 if '=' in attribute:
@@ -125,6 +127,8 @@ class SerializedType(object):
                         self.populate_from_empty_constructor = True
                     elif attribute == 'CustomEncoder':
                         self.custom_encoder = True
+                    elif attribute == 'SupportWKKeyedCoder':
+                        self.support_wkkeyedcoder = True
         self.templates = templates
         if other_metadata:
             if other_metadata == 'subclasses':
@@ -1444,6 +1448,17 @@ def generate_webkit_secure_coding_impl(serialized_types, headers):
     result.append('')
     result.append('namespace WebKit {')
     result.append('')
+    result.append('static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingType(id object)')
+    result.append('{')
+    result.append('    if (WebKit::CoreIPCSecureCoding::conformsToWebKitSecureCoding(object))')
+    result.append('        return [object _webKitPropertyListData];')
+    result.append('')
+    result.append('    auto archiver = adoptNS([WKKeyedCoder new]);')
+    result.append('    [object encodeWithCoder:archiver.get()];')
+    result.append('    return [archiver accumulatedDictionary];')
+    result.append('}')
+    result.append('')
+
     for type in serialized_types:
         if not type.is_webkit_secure_coding_type():
             continue
@@ -1451,7 +1466,10 @@ def generate_webkit_secure_coding_impl(serialized_types, headers):
             result.append('#if ' + type.condition)
 
         result.append(type.cpp_struct_or_class_name() + '::' + type.cpp_struct_or_class_name() + '(' + type.name + ' *object)')
-        result.append('    : m_propertyList([object _webKitPropertyListData])')
+        if type.support_wkkeyedcoder:
+            result.append('    : m_propertyList(dictionaryForWebKitSecureCodingType(object))')
+        else:
+            result.append('    : m_propertyList([object _webKitPropertyListData])')
         result.append('{')
         result.append('}')
         result.append('')
@@ -1464,12 +1482,18 @@ def generate_webkit_secure_coding_impl(serialized_types, headers):
         result.append('')
         result.append('RetainPtr<id> ' + type.cpp_struct_or_class_name() + '::toID() const')
         result.append('{')
+        type_name = type.name
         if type.custom_secure_coding_class is not None:
-            result.append('    RELEASE_ASSERT([' + type.custom_secure_coding_class + ' instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]);')
-            result.append('    return adoptNS([[' + type.custom_secure_coding_class + ' alloc] _initWithWebKitPropertyListData:m_propertyList.toID().get()]);')
+            type_name = type.custom_secure_coding_class
+
+        if not type.support_wkkeyedcoder:
+            result.append('    RELEASE_ASSERT([' + type_name + ' instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]);')
         else:
-            result.append('    RELEASE_ASSERT([' + type.name + ' instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]);')
-            result.append('    return adoptNS([[' + type.name + ' alloc] _initWithWebKitPropertyListData:m_propertyList.toID().get()]);')
+            result.append('    if (![' + type_name + ' instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]) {')
+            result.append('        auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:m_propertyList.toID().get()]);')
+            result.append('        return adoptNS([[' + type_name + ' alloc] initWithCoder:unarchiver.get()]);')
+            result.append('    }')
+        result.append('    return adoptNS([[' + type_name + ' alloc] _initWithWebKitPropertyListData:m_propertyList.toID().get()]);')
         result.append('}')
         if type.condition is not None:
             result.append('#endif // ' + type.condition)

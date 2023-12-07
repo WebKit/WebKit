@@ -1414,8 +1414,8 @@ TEST(SiteIsolation, ShutDownFrameProcessesAfterNavigation)
     [navigationDelegate waitForDidFinishNavigation];
     checkFrameTreesInProcesses(webView.get(), { { "https://apple.com"_s } });
 
-    Util::runFor(100_ms);
-    EXPECT_TRUE(processStillRunning(iframePID));
+    while (processStillRunning(iframePID))
+        Util::spinRunLoop();
 }
 
 TEST(SiteIsolation, OpenerProcessSharing)

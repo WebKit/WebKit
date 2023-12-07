@@ -70,7 +70,7 @@ private:
     void applyScrollingTreeLayerPositionsAfterCommit() override;
 
 #if ENABLE(SCROLLING_THREAD)
-    RefPtr<RemoteLayerTreeEventDispatcher> m_wheelEventDispatcher;
+    RefPtr<RemoteLayerTreeEventDispatcher> m_eventDispatcher;
 #endif
 };
 

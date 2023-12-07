@@ -167,16 +167,22 @@ void WebPage::requestActiveNowPlayingSessionInfo(CompletionHandler<void(bool, bo
 #if ENABLE(PDF_PLUGIN)
 bool WebPage::shouldUsePDFPlugin(const String& contentType, StringView path) const
 {
-    return pdfPluginEnabled()
 #if ENABLE(PDFJS)
-        && !corePage()->settings().pdfJSViewerEnabled()
+    if (corePage()->settings().pdfJSViewerEnabled())
+        return false;
 #endif
+
+    bool pluginEnabled = false;
 #if ENABLE(LEGACY_PDFKIT_PLUGIN)
-        && PDFPlugin::pdfKitLayerControllerIsAvailable()
+    pluginEnabled |= pdfPluginEnabled() && PDFPlugin::pdfKitLayerControllerIsAvailable();
 #endif
-        && (MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType)
-            || (contentType.isEmpty()
-                && (path.endsWithIgnoringASCIICase(".pdf"_s) || path.endsWithIgnoringASCIICase(".ps"_s))));
+#if ENABLE(UNIFIED_PDF)
+    pluginEnabled |= corePage()->settings().unifiedPDFEnabled();
+#endif
+    if (!pluginEnabled)
+        return false;
+
+    return MIMETypeRegistry::isPDFOrPostScriptMIMEType(contentType) || (contentType.isEmpty() && (path.endsWithIgnoringASCIICase(".pdf"_s) || path.endsWithIgnoringASCIICase(".ps"_s)));
 }
 #endif
 

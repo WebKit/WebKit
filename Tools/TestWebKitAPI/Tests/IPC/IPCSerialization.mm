@@ -34,6 +34,7 @@
 #import <Foundation/NSValue.h>
 #import <WebCore/FontCocoa.h>
 #import <limits.h>
+#import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 #import <wtf/RetainPtr.h>
@@ -155,6 +156,9 @@ struct ObjCHolderForTesting {
         RetainPtr<WKDDActionContext>,
 #endif
         RetainPtr<DDScannerResult>,
+#endif
+#if USE(AVFOUNDATION)
+        RetainPtr<AVOutputContext>,
 #endif
         RetainPtr<NSValue>,
         RetainPtr<NSPersonNameComponents>
@@ -638,6 +642,13 @@ TEST(IPCSerialization, SecureCoding)
     [actionContext setHighlightFrame:NSMakeRect(1, 2, 3, 4)];
 
     runTestNS({ actionContext.get() });
+
+    // AVOutputContext
+#if USE(AVFOUNDATION)
+    RetainPtr<AVOutputContext> outputContext = adoptNS([[PAL::getAVOutputContextClass() alloc] init]);
+    runTestNS({ outputContext.get() });
+#endif // USE(AVFOUNDATION)
+
 }
 
 #endif // PLATFORM(MAC)

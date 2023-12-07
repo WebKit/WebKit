@@ -1662,6 +1662,33 @@ std::unique_ptr<RenderStyle> RenderElement::getUncachedPseudoStyle(const Style::
     return WTFMove(resolvedStyle->style);
 }
 
+const RenderStyle* RenderElement::textSegmentPseudoStyle(PseudoId pseudoId) const
+{
+    if (isAnonymous())
+        return nullptr;
+
+    if (auto* pseudoStyle = getCachedPseudoStyle(pseudoId)) {
+        // We intentionally return the pseudo style here if it exists before ascending to the
+        // shadow host element. This allows us to apply selection pseudo styles in user agent
+        // shadow roots, instead of always deferring to the shadow host's selection pseudo style.
+        return pseudoStyle;
+    }
+
+    if (RefPtr root = element()->containingShadowRoot()) {
+        if (root->mode() == ShadowRootMode::UserAgent) {
+            RefPtr currentElement = element()->shadowHost();
+            // When an element has display: contents, this element doesn't have a renderer
+            // and its children will render as children of the parent element.
+            while (currentElement && currentElement->hasDisplayContents())
+                currentElement = currentElement->parentElement();
+            if (currentElement && currentElement->renderer())
+                return currentElement->renderer()->getCachedPseudoStyle(pseudoId);
+        }
+    }
+
+    return nullptr;
+}
+
 Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
 {
     // If the element is unselectable, or we are only painting the selection,
@@ -1670,7 +1697,7 @@ Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
         || (view().frameView().paintBehavior().containsAny({ PaintBehavior::SelectionOnly, PaintBehavior::SelectionAndBackgroundsOnly })))
         return Color();
 
-    if (std::unique_ptr<RenderStyle> pseudoStyle = selectionPseudoStyle()) {
+    if (auto* pseudoStyle = selectionPseudoStyle()) {
         Color color = pseudoStyle->visitedDependentColorWithColorFilter(colorProperty);
         if (!color.isValid())
             color = pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyColor);
@@ -1682,31 +1709,9 @@ Color RenderElement::selectionColor(CSSPropertyID colorProperty) const
     return theme().inactiveSelectionForegroundColor(styleColorOptions());
 }
 
-std::unique_ptr<RenderStyle> RenderElement::selectionPseudoStyle() const
+const RenderStyle* RenderElement::selectionPseudoStyle() const
 {
-    if (isAnonymous())
-        return nullptr;
-
-    if (auto selectionStyle = getUncachedPseudoStyle({ PseudoId::Selection })) {
-        // We intentionally return the pseudo selection style here if it exists before ascending to
-        // the shadow host element. This allows us to apply selection pseudo styles in user agent
-        // shadow roots, instead of always deferring to the shadow host's selection pseudo style.
-        return selectionStyle;
-    }
-
-    if (RefPtr root = element()->containingShadowRoot()) {
-        if (root->mode() == ShadowRootMode::UserAgent) {
-            RefPtr currentElement = element()->shadowHost();
-            // When an element has display: contents, this element doesn't have a renderer
-            // and its children will render as children of the parent element.
-            while (currentElement && currentElement->hasDisplayContents())
-                currentElement = currentElement->parentElement();
-            if (currentElement && currentElement->renderer())
-                return currentElement->renderer()->getUncachedPseudoStyle({ PseudoId::Selection });
-        }
-    }
-
-    return nullptr;
+    return textSegmentPseudoStyle(PseudoId::Selection);
 }
 
 Color RenderElement::selectionForegroundColor() const
@@ -1732,7 +1737,7 @@ Color RenderElement::selectionBackgroundColor() const
         pseudoStyleCandidate = pseudoStyleCandidate->firstNonAnonymousAncestor();
 
     if (pseudoStyleCandidate) {
-        std::unique_ptr<RenderStyle> pseudoStyle = pseudoStyleCandidate->selectionPseudoStyle();
+        auto* pseudoStyle = pseudoStyleCandidate->selectionPseudoStyle();
         if (pseudoStyle && pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor).isValid())
             return theme().transformSelectionBackgroundColor(pseudoStyle->visitedDependentColorWithColorFilter(CSSPropertyBackgroundColor), styleColorOptions());
     }
@@ -1740,6 +1745,16 @@ Color RenderElement::selectionBackgroundColor() const
     if (frame().selection().isFocusedAndActive())
         return theme().activeSelectionBackgroundColor(styleColorOptions());
     return theme().inactiveSelectionBackgroundColor(styleColorOptions());
+}
+
+const RenderStyle* RenderElement::spellingErrorPseudoStyle() const
+{
+    return textSegmentPseudoStyle(PseudoId::SpellingError);
+}
+
+const RenderStyle* RenderElement::grammarErrorPseudoStyle() const
+{
+    return textSegmentPseudoStyle(PseudoId::GrammarError);
 }
 
 bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const

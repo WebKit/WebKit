@@ -27,12 +27,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import sys
 
-from webkitpy.common.checkout.scm import AuthenticationError, AmbiguousCommitError
+from webkitpy.common.checkout.scm import AmbiguousCommitError, AuthenticationError
 from webkitpy.common.config import urls
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.common.system.user import User
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
 

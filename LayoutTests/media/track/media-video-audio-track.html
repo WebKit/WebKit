@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script src=media-file.js></script>
-        <script src=video-test.js></script>
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
         <script>
             function canplaythrough()
             {
@@ -27,7 +27,7 @@
             function start()
             {
                 findMediaElement();
-                run('mediaElement.src = findMediaFile("video", "content/test")');
+                run('mediaElement.src = findMediaFile("video", "../content/test")');
                 waitForEventOnce('canplaythrough', canplaythrough);
                 consoleWrite("");
             }

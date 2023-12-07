@@ -29,6 +29,7 @@
 #import "APIConversions.h"
 #import "Device.h"
 #import "PipelineLayout.h"
+#import "WGSLShaderModule.h"
 
 #import <WebGPU/WebGPU.h>
 #import <wtf/DataLog.h>
@@ -123,6 +124,7 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
             // https://bugs.webkit.org/show_bug.cgi?id=254258
             UNUSED_PARAM(earlyCompileShaderModule);
         }
+
     } else {
         auto& failedCheck = std::get<WGSL::FailedCheck>(checkResult);
         StringPrintStream message;
@@ -152,6 +154,43 @@ ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck
     , m_library(library)
     , m_device(device)
 {
+    bool allowVertexDefault = true, allowFragmentDefault = true, allowComputeDefault = true;
+    if (std::holds_alternative<WGSL::SuccessfulCheck>(m_checkResult)) {
+        auto& check = std::get<WGSL::SuccessfulCheck>(m_checkResult);
+        for (auto& function : check.ast->functions()) {
+            if (!function.stage())
+                continue;
+            switch (*function.stage()) {
+            case WGSL::ShaderStage::Vertex: {
+                if (!allowVertexDefault || m_defaultVertexEntryPoint.length()) {
+                    allowVertexDefault = false;
+                    m_defaultVertexEntryPoint = emptyString();
+                    continue;
+                }
+                m_defaultVertexEntryPoint = function.name();
+            } break;
+            case WGSL::ShaderStage::Fragment: {
+                if (!allowFragmentDefault || m_defaultFragmentEntryPoint.length()) {
+                    allowFragmentDefault = false;
+                    m_defaultFragmentEntryPoint = emptyString();
+                    continue;
+                }
+                m_defaultFragmentEntryPoint = function.name();
+            } break;
+            case WGSL::ShaderStage::Compute: {
+                if (!allowComputeDefault || m_defaultComputeEntryPoint.length()) {
+                    allowComputeDefault = false;
+                    m_defaultComputeEntryPoint = emptyString();
+                    continue;
+                }
+                m_defaultComputeEntryPoint = function.name();
+            } break;
+            default:
+                ASSERT_NOT_REACHED();
+                break;
+            }
+        }
+    }
 }
 
 ShaderModule::ShaderModule(Device& device, CheckResult&& checkResult)
@@ -417,6 +456,21 @@ const WGSL::Reflection::EntryPointInformation* ShaderModule::entryPointInformati
     if (iterator == m_entryPointInformation.end())
         return nullptr;
     return &iterator->value;
+}
+
+const String& ShaderModule::defaultVertexEntryPoint() const
+{
+    return m_defaultVertexEntryPoint;
+}
+
+const String& ShaderModule::defaultFragmentEntryPoint() const
+{
+    return m_defaultFragmentEntryPoint;
+}
+
+const String& ShaderModule::defaultComputeEntryPoint() const
+{
+    return m_defaultComputeEntryPoint;
 }
 
 } // namespace WebGPU

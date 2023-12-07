@@ -7,6 +7,7 @@ Test passes if you see a contents layer 3x the size and with a negative offset e
     (GraphicsLayer
       (bounds 800.00 600.00)
       (contentsOpaque 1)
+      (backgroundColor #000000)
       (children 2
         (GraphicsLayer
           (preserves3D 1)

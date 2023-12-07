@@ -239,16 +239,6 @@ static bool laContextRequested = false;
     return self;
 }
 
-- (void)_webView:(WKWebView *)webView requestWebAuthenticationNoGestureForOrigin:(WKSecurityOrigin *)orgin completionHandler:(void (^)(BOOL))completionHandler
-{
-    completionHandler(webAuthenticationPanelRequestNoGesture);
-}
-
-- (void)_webView:(WKWebView *)webView requestWebAuthenticationConditionalMediationRegistrationForUser:(NSString *)user completionHandler:(void (^)(BOOL))completionHandler
-{
-    completionHandler(false);
-}
-
 - (void)_webView:(WKWebView *)webView runWebAuthenticationPanel:(_WKWebAuthenticationPanel *)panel initiatedByFrame:(WKFrameInfo *)frame completionHandler:(void (^)(_WKWebAuthenticationPanelResult))completionHandler
 {
     webAuthenticationPanelRan = true;
@@ -1367,23 +1357,6 @@ TEST(WebAuthenticationPanel, LAMakeCredentialAllowLocalAuthenticator)
     [webView waitForMessage:@"Succeeded!"];
     checkPanel([delegate panel], @"", @[adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportUSB]).get(), adoptNS([[NSNumber alloc] initWithInt:_WKWebAuthenticationTransportInternal]).get()], _WKWebAuthenticationTypeCreate);
     cleanUpKeychain(emptyString());
-}
-
-TEST(WebAuthenticationPanel, LAMakeCredentialNoMockNoUserGesture)
-{
-    reset();
-    webAuthenticationPanelRequestNoGesture = false;
-    RetainPtr<NSURL> testURL = [[NSBundle mainBundle] URLForResource:@"web-authentication-make-credential-la-no-mock" withExtension:@"html" subdirectory:@"TestWebKitAPI.resources"];
-
-    auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
-
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSZeroRect configuration:configuration]);
-    auto delegate = adoptNS([[TestWebAuthenticationPanelUIDelegate alloc] init]);
-    [webView setUIDelegate:delegate.get()];
-    [webView focus];
-
-    [webView loadRequest:[NSURLRequest requestWithURL:testURL.get()]];
-    [webView waitForMessage:@"This request has been cancelled by the user."];
 }
 
 #if PLATFORM(MAC)

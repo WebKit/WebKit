@@ -26,11 +26,51 @@
 #include "GeneratedWebKitSecureCoding.h"
 
 #include "ArgumentCodersCocoa.h"
+#if USE(AVFOUNDATION)
+#include <pal/cocoa/AVFoundationSoftLink.h>
+#endif
 #if ENABLE(DATA_DETECTION)
 #include <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #endif
 
 namespace WebKit {
+
+static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingType(id object)
+{
+    if (WebKit::CoreIPCSecureCoding::conformsToWebKitSecureCoding(object))
+        return [object _webKitPropertyListData];
+
+    auto archiver = adoptNS([WKKeyedCoder new]);
+    [object encodeWithCoder:archiver.get()];
+    return [archiver accumulatedDictionary];
+}
+
+#if USE(AVFOUNDATION)
+CoreIPCAVOutputContext::CoreIPCAVOutputContext(AVOutputContext *object)
+    : m_propertyList(dictionaryForWebKitSecureCodingType(object))
+{
+}
+
+bool CoreIPCAVOutputContext::isValidDictionary(CoreIPCDictionary& dictionary)
+{
+    if (!dictionary.keyHasValueOfType("AVOutputContextSerializationKeyContextID"_s, IPC::NSType::String))
+        return false;
+
+    if (!dictionary.keyHasValueOfType("AVOutputContextSerializationKeyContextType"_s, IPC::NSType::String))
+        return false;
+
+    return true;
+}
+
+RetainPtr<id> CoreIPCAVOutputContext::toID() const
+{
+    if (![PAL::getAVOutputContextClass() instancesRespondToSelector:@selector(_initWithWebKitPropertyListData:)]) {
+        auto unarchiver = adoptNS([[WKKeyedCoder alloc] initWithDictionary:m_propertyList.toID().get()]);
+        return adoptNS([[PAL::getAVOutputContextClass() alloc] initWithCoder:unarchiver.get()]);
+    }
+    return adoptNS([[PAL::getAVOutputContextClass() alloc] _initWithWebKitPropertyListData:m_propertyList.toID().get()]);
+}
+#endif // USE(AVFOUNDATION)
 
 CoreIPCNSSomeFoundationType::CoreIPCNSSomeFoundationType(NSSomeFoundationType *object)
     : m_propertyList([object _webKitPropertyListData])

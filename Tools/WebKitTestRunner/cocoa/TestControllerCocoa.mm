@@ -422,6 +422,7 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
         platformView._minimumEffectiveDeviceWidth = 0;
         platformView._editable = NO;
         [platformView _setContinuousSpellCheckingEnabledForTesting:options.shouldShowSpellCheckingDots()];
+        [platformView _setGrammarCheckingEnabledForTesting:YES];
         [platformView resetInteractionCallbacks];
         [platformView _resetNavigationGestureStateForTesting];
         [platformView.configuration.preferences setTextInteractionEnabled:options.textInteractionEnabled()];

@@ -57,6 +57,7 @@ public:
     const Configuration& configuration() const { return m_configuration; }
     AST::Directive::List& directives() { return m_directives; }
     AST::Function::List& functions() { return m_functions; }
+    const AST::Function::List& functions() const { return m_functions; }
     AST::Structure::List& structures() { return m_structures; }
     AST::Variable::List& variables() { return m_variables; }
     TypeStore& types() { return m_types; }

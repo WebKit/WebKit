@@ -72,6 +72,9 @@ public:
     id<MTLLibrary> library() const { return m_library; }
 
     Device& device() const { return m_device; }
+    const String& defaultVertexEntryPoint() const;
+    const String& defaultFragmentEntryPoint() const;
+    const String& defaultComputeEntryPoint() const;
 
 private:
     ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck>&&, HashMap<String, Ref<PipelineLayout>>&&, HashMap<String, WGSL::Reflection::EntryPointInformation>&&, id<MTLLibrary>, Device&);
@@ -87,6 +90,10 @@ private:
     const Ref<Device> m_device;
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=250441 - this needs to be populated from the compiler
     HashMap<String, String> m_constantIdentifiersToNames;
+
+    String m_defaultVertexEntryPoint;
+    String m_defaultFragmentEntryPoint;
+    String m_defaultComputeEntryPoint;
 };
 
 } // namespace WebGPU

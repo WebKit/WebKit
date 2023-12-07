@@ -4162,11 +4162,14 @@ public:
             return { };
         }
 
-        Location structLocation = allocate(structValue);
+        Location structLocation = loadIfNecessary(structValue);
         emitThrowOnNullReference(ExceptionType::NullStructSet, structLocation);
 
         emitStructSet(structLocation.asGPR(), structType, fieldIndex, value);
         LOG_INSTRUCTION("StructSet", structValue, fieldIndex, value);
+
+        consume(structValue);
+
         return { };
     }
 

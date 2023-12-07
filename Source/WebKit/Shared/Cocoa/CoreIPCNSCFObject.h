@@ -53,6 +53,9 @@ class CoreIPCURL;
 
 using ObjectValue = std::variant<
     std::nullptr_t,
+#if USE(AVFOUNDATION)
+    CoreIPCAVOutputContext,
+#endif
     CoreIPCArray,
     CoreIPCCFType,
     CoreIPCColor,

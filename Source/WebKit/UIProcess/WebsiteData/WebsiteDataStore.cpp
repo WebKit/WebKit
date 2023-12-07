@@ -1757,6 +1757,17 @@ bool WebsiteDataStore::isBlobRegistryPartitioningEnabled() const
     });
 }
 
+void WebsiteDataStore::updateBlobRegistryPartitioningState()
+{
+    auto enabled = isBlobRegistryPartitioningEnabled();
+    if (m_isBlobRegistryPartitioningEnabled == enabled)
+        return;
+    if (RefPtr networkProcess = networkProcessIfExists()) {
+        m_isBlobRegistryPartitioningEnabled = enabled;
+        networkProcess->send(Messages::NetworkProcess::SetBlobRegistryTopOriginPartitioningEnabled(sessionID(), enabled), 0);
+    }
+}
+
 void WebsiteDataStore::dispatchOnQueue(Function<void()>&& function)
 {
     protectedQueue()->dispatch(WTFMove(function));

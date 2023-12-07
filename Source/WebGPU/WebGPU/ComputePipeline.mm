@@ -76,7 +76,8 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
 
     PipelineLayout& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
     auto label = fromAPI(descriptor.label);
-    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, fromAPI(descriptor.compute.entryPoint), label);
+    auto entryPoint = fromAPI(descriptor.compute.entryPoint);
+    auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, entryPoint.length() ? entryPoint : shaderModule.defaultComputeEntryPoint(), label);
     if (!libraryCreationResult)
         return ComputePipeline::createInvalid(*this);
 
@@ -89,7 +90,7 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
 
     auto [constantValues, wgslConstantValues] = createConstantValues(descriptor.compute.constantCount, descriptor.compute.constants, entryPointInformation);
     auto function = createFunction(library, entryPointInformation, constantValues, label);
-    if (!function)
+    if (!function || function.functionType != MTLFunctionTypeKernel)
         return ComputePipeline::createInvalid(*this);
 
     auto size = metalSize(computeInformation.workgroupSize, wgslConstantValues);

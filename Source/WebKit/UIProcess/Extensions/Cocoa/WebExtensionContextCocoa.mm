@@ -1315,7 +1315,7 @@ RefPtr<WebExtensionWindow> WebExtensionContext::getWindow(WebExtensionWindowIden
 
     if (isCurrent(identifier)) {
         if (webPageProxyIdentifier) {
-            if (auto tab = getTab(webPageProxyIdentifier.value(), std::nullopt, ignoreExtensionAccess))
+            if (auto tab = getCurrentTab(webPageProxyIdentifier.value(), ignoreExtensionAccess))
                 result = tab->window();
         }
 
@@ -1410,7 +1410,59 @@ RefPtr<WebExtensionTab> WebExtensionContext::getTab(WebPageProxyIdentifier webPa
             break;
     }
 
-    // FIXME: <https://webkit.org/b/260154> Use the page identifier to get the current tab for popup pages.
+    if (!result) {
+        RELEASE_LOG_ERROR(Extensions, "Tab for page %{public}llu was not found", webPageProxyIdentifier.toUInt64());
+        return nullptr;
+    }
+
+    if (!result->isValid()) {
+        RELEASE_LOG_ERROR(Extensions, "Tab %{public}llu has nil delegate; reference not removed via didCloseTab: before release", result->identifier().toUInt64());
+        m_tabMap.remove(result->identifier());
+        return nullptr;
+    }
+
+    if (ignoreExtensionAccess == IgnoreExtensionAccess::No && !result->extensionHasAccess())
+        return nullptr;
+
+    return result;
+}
+
+RefPtr<WebExtensionTab> WebExtensionContext::getCurrentTab(WebPageProxyIdentifier webPageProxyIdentifier, IgnoreExtensionAccess ignoreExtensionAccess)
+{
+    if (m_backgroundWebView && webPageProxyIdentifier == m_backgroundWebView.get()._page->identifier()) {
+        if (RefPtr window = frontmostWindow())
+            return window->activeTab();
+        return nullptr;
+    }
+
+    // Search open tabs for the page.
+    RefPtr<WebExtensionTab> result = getTab(webPageProxyIdentifier, std::nullopt, ignoreExtensionAccess);
+    if (result)
+        return result;
+
+    // Search tab actions for the page.
+    for (auto entry : m_actionTabMap) {
+        auto *webView = entry.value->popupWebView(WebExtensionAction::LoadOnFirstAccess::No);
+        if (!webView)
+            continue;
+
+        if (webView._page->identifier() == webPageProxyIdentifier) {
+            result = &entry.key;
+            break;
+        }
+    }
+
+    // Search window actions for the page.
+    for (auto entry : m_actionWindowMap) {
+        auto *webView = entry.value->popupWebView(WebExtensionAction::LoadOnFirstAccess::No);
+        if (!webView)
+            continue;
+
+        if (webView._page->identifier() == webPageProxyIdentifier) {
+            result = entry.key.activeTab();
+            break;
+        }
+    }
 
     if (!result) {
         RELEASE_LOG_ERROR(Extensions, "Tab for page %{public}llu was not found", webPageProxyIdentifier.toUInt64());

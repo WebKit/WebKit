@@ -32,7 +32,7 @@ namespace WebGPU {
 
 std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const ShaderModule& shaderModule, const PipelineLayout* pipelineLayout, const String& entryPoint, NSString *label)
 {
-    if (!shaderModule.isValid())
+    if (!entryPoint.length() || !shaderModule.isValid())
         return std::nullopt;
 
     if (shaderModule.library() && pipelineLayout) {

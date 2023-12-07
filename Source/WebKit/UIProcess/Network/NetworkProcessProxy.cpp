@@ -1374,11 +1374,6 @@ void NetworkProcessProxy::setPrivateClickMeasurementDebugMode(PAL::SessionID ses
     send(Messages::NetworkProcess::SetPrivateClickMeasurementDebugMode(sessionID, debugMode), 0);
 }
 
-void NetworkProcessProxy::setBlobRegistryTopOriginPartitioningEnabled(PAL::SessionID sessionID, bool enabled)
-{
-    send(Messages::NetworkProcess::SetBlobRegistryTopOriginPartitioningEnabled(sessionID, enabled), 0);
-}
-
 void NetworkProcessProxy::sendProcessWillSuspendImminentlyForTesting()
 {
     if (canSendMessage())

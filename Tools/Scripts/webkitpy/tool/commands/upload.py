@@ -28,20 +28,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import os
 import re
 import sys
-
 from optparse import make_option
 
-from webkitpy.tool import steps
-
-from webkitcorepy import string_utils
 from webkitscmpy import local
 
 from webkitpy.common.checkout.changelog import parse_bug_id_from_changelog
-from webkitpy.common.config.committers import CommitterList
-from webkitpy.common.system.user import User
+from webkitpy.tool import steps
 from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool.comments import bug_comment_from_svn_revision
 from webkitpy.tool.multicommandtool import Command

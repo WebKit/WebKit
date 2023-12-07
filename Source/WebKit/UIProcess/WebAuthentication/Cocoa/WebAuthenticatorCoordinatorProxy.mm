@@ -254,6 +254,25 @@ RetainPtr<NSArray> WebAuthenticatorCoordinatorProxy::requestsForAssertion(const 
     return requests;
 }
 
+void WebAuthenticatorCoordinatorProxy::pauseConditionalAssertion()
+{
+    if (m_paused)
+        return;
+    m_paused = true;
+    if (m_isConditionalAssertion)
+        [m_controller cancel];
+}
+
+void WebAuthenticatorCoordinatorProxy::unpauseConditionalAssertion()
+{
+    if (!m_paused)
+        return;
+    if (m_controller && m_isConditionalAssertion)
+        [m_controller performAutoFillAssistedRequests];
+
+    m_paused = false;
+}
+
 #endif // HAVE(WEB_AUTHN_AS_MODERN)
 
 void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestData &&requestData, RequestCompletionHandler &&handler)
@@ -269,10 +288,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
         return;
     }
 #if HAVE(WEB_AUTHN_AS_MODERN)
-    if (requestData.mediation && *requestData.mediation == MediationRequirement::Conditional) {
-        handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
-        return;
-    }
+    m_isConditionalAssertion = *requestData.mediation == MediationRequirement::Conditional;
     auto controller = constructASController(WTFMove(requestData));
     if (!controller) {
         handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
@@ -310,16 +326,21 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 response.signature = toArrayBuffer(credential.get().signature);
                 response.userHandle = toArrayBuffer(credential.get().userID);
             }
-            m_completionHandler(response, attachment, exceptionData);
-            m_delegate.clear();
-            m_controller.clear();
+            if (!m_paused) {
+                m_completionHandler(response, attachment, exceptionData);
+                m_delegate.clear();
+                m_controller.clear();
+                m_isConditionalAssertion = false;
+            }
         });
     }).get()]);
 
     m_controller.get().presentationContextProvider = (id<ASAuthorizationControllerPresentationContextProviding>)m_delegate.get();
     m_controller.get().delegate = (id<ASAuthorizationControllerDelegate>)m_delegate.get();
-
-    [m_controller performRequests];
+    if (requestData.mediation && *requestData.mediation == MediationRequirement::Conditional)
+        [m_controller performAutoFillAssistedRequests];
+    else
+        [m_controller performRequests];
 #endif
 }
 

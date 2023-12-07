@@ -86,6 +86,40 @@ std::optional<WebKit::PlatformClass> ArgumentCoder<WebKit::PlatformClass>::decod
     };
 }
 
+#if USE(AVFOUNDATION)
+void ArgumentCoder<WebKit::CoreIPCAVOutputContext>::encode(Encoder& encoder, const WebKit::CoreIPCAVOutputContext& instance)
+{
+    static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_propertyList)>, WebKit::CoreIPCDictionary>);
+    struct ShouldBeSameSizeAsAVOutputContext : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::CoreIPCAVOutputContext>, false> {
+        WebKit::CoreIPCDictionary m_propertyList;
+    };
+    static_assert(sizeof(ShouldBeSameSizeAsAVOutputContext) == sizeof(WebKit::CoreIPCAVOutputContext));
+    static_assert(MembersInCorrectOrder < 0
+        , offsetof(WebKit::CoreIPCAVOutputContext, m_propertyList)
+    >::value);
+
+    encoder << instance.m_propertyList;
+}
+
+std::optional<WebKit::CoreIPCAVOutputContext> ArgumentCoder<WebKit::CoreIPCAVOutputContext>::decode(Decoder& decoder)
+{
+    auto m_propertyList = decoder.decode<WebKit::CoreIPCDictionary>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+
+    if (!(WebKit::CoreIPCAVOutputContext::isValidDictionary(*m_propertyList)))
+        return std::nullopt;
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return {
+        WebKit::CoreIPCAVOutputContext {
+            WTFMove(*m_propertyList)
+        }
+    };
+}
+
+#endif
+
 void ArgumentCoder<WebKit::CoreIPCNSSomeFoundationType>::encode(Encoder& encoder, const WebKit::CoreIPCNSSomeFoundationType& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_propertyList)>, WebKit::CoreIPCDictionary>);

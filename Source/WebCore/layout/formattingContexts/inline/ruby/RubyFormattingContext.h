@@ -55,6 +55,10 @@ public:
     static InlineLayoutUnit overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseStart, const InlineDisplay::Boxes&, const InlineFormattingContext&);
     static InlineLayoutUnit overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, WTF::Range<size_t> rubyBaseRange, const InlineDisplay::Boxes&, const InlineFormattingContext&);
 
+    // Miscellaneous helpers
+    static bool hasInterlinearAnnotation(const Box& rubyBaseLayoutBox);
+    static bool hasInterCharacterAnnotation(const Box& rubyBaseLayoutBox);
+
 private:
     static void adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox&, InlineLevelBox& rubyBaseInlineBox, const InlineFormattingContext&);
 };

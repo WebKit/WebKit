@@ -516,6 +516,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/AlternativeTextClient.serialization.in \
 	Shared/AppPrivacyReportTestingData.serialization.in \
 	Shared/Cocoa/CacheStoragePolicy.serialization.in \
+	Shared/Cocoa/CoreIPCAVOutputContext.serialization.in \
 	Shared/Cocoa/CoreIPCArray.serialization.in \
 	Shared/Cocoa/CoreIPCCFType.serialization.in \
 	Shared/Cocoa/CoreIPCColor.serialization.in \
@@ -539,6 +540,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
 	Shared/CallbackID.serialization.in \
 	Shared/BackgroundFetchState.serialization.in \
+	Shared/ContextMenuContextData.serialization.in \
 	Shared/DebuggableInfoData.serialization.in \
 	Shared/DisplayListArgumentCoders.serialization.in \
 	Shared/DocumentEditingContext.serialization.in \

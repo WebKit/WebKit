@@ -328,48 +328,35 @@ bool ArgumentCoder<Credential>::decode(Decoder& decoder, Credential& credential)
     return true;
 }
 
-void ArgumentCoder<RefPtr<Image>>::encode(Encoder& encoder, const RefPtr<Image>& image)
+void ArgumentCoder<Image>::encode(Encoder& encoder, const Image& image)
 {
-    bool hasImage = !!image;
-    encoder << hasImage;
-
-    if (!hasImage)
-        return;
-
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create({ IntSize(image->size()) });
+    RefPtr bitmap = ShareableBitmap::create({ IntSize(image.size()) });
     auto graphicsContext = bitmap->createGraphicsContext();
     encoder << !!graphicsContext;
     if (!graphicsContext)
         return;
 
-    graphicsContext->drawImage(*image, IntPoint());
+    graphicsContext->drawImage(const_cast<Image&>(image), IntPoint());
     
     encoder << bitmap;
 }
 
-bool ArgumentCoder<RefPtr<Image>>::decode(Decoder& decoder, RefPtr<Image>& image)
+std::optional<Ref<Image>> ArgumentCoder<Image>::decode(Decoder& decoder)
 {
-    bool hasImage;
-    if (!decoder.decode(hasImage))
-        return false;
-
-    if (!hasImage)
-        return true;
-
     std::optional<bool> didCreateGraphicsContext;
     decoder >> didCreateGraphicsContext;
     if (!didCreateGraphicsContext || !*didCreateGraphicsContext)
-        return false;
+        return std::nullopt;
 
     std::optional<RefPtr<WebKit::ShareableBitmap>> bitmap;
     decoder >> bitmap;
     if (!bitmap)
-        return false;
+        return std::nullopt;
     
-    image = bitmap.value()->createImage();
+    RefPtr image = bitmap.value()->createImage();
     if (!image)
-        return false;
-    return true;
+        return std::nullopt;
+    return image.releaseNonNull();
 }
 
 void ArgumentCoder<WebCore::Font>::encode(Encoder& encoder, const WebCore::Font& font)
@@ -538,77 +525,6 @@ std::optional<FontPlatformData::Attributes> ArgumentCoder<FontPlatformData::Attr
         return std::nullopt;
 
     return result;
-}
-
-void ArgumentCoder<Cursor>::encode(Encoder& encoder, const Cursor& cursor)
-{
-    encoder << cursor.type();
-        
-    if (cursor.type() != Cursor::Type::Custom)
-        return;
-
-    if (cursor.image()->isNull()) {
-        encoder << false; // There is no valid image being encoded.
-        return;
-    }
-
-    encoder << true;
-    encoder << cursor.image();
-    encoder << cursor.hotSpot();
-#if ENABLE(MOUSE_CURSOR_SCALE)
-    encoder << cursor.imageScaleFactor();
-#endif
-}
-
-bool ArgumentCoder<Cursor>::decode(Decoder& decoder, Cursor& cursor)
-{
-    Cursor::Type type;
-    if (!decoder.decode(type))
-        return false;
-
-    if (type > Cursor::Type::Custom)
-        return false;
-
-    if (type != Cursor::Type::Custom) {
-        const Cursor& cursorReference = Cursor::fromType(type);
-        // Calling platformCursor here will eagerly create the platform cursor for the cursor singletons inside WebCore.
-        // This will avoid having to re-create the platform cursors over and over.
-        (void)cursorReference.platformCursor();
-
-        cursor = cursorReference;
-        return true;
-    }
-
-    bool isValidImagePresent;
-    if (!decoder.decode(isValidImagePresent))
-        return false;
-
-    if (!isValidImagePresent) {
-        cursor = Cursor(&Image::nullImage(), IntPoint());
-        return true;
-    }
-
-    RefPtr<Image> image;
-    if (!decoder.decode(image))
-        return false;
-
-    IntPoint hotSpot;
-    if (!decoder.decode(hotSpot))
-        return false;
-
-    if (!image->rect().contains(hotSpot))
-        return false;
-
-#if ENABLE(MOUSE_CURSOR_SCALE)
-    float scale;
-    if (!decoder.decode(scale))
-        return false;
-
-    cursor = Cursor(image.get(), hotSpot, scale);
-#else
-    cursor = Cursor(image.get(), hotSpot);
-#endif
-    return true;
 }
 
 void ArgumentCoder<ResourceError>::encode(Encoder& encoder, const ResourceError& resourceError)

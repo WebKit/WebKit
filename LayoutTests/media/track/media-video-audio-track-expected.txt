@@ -2,7 +2,7 @@
 1) Disable and enable an audio track in a run loop will enable the audio track.
 2) Deselect and select a video track in a run loop will select the video track.
 
-RUN(mediaElement.src = findMediaFile("video", "content/test"))
+RUN(mediaElement.src = findMediaFile("video", "../content/test"))
 
 EVENT(canplaythrough)
 EXPECTED (video.audioTracks.length == '1') OK

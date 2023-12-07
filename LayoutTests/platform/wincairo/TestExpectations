@@ -550,8 +550,6 @@ webkit.org/b/221445 fast/text/system-font-width-9.html [ Skip ]
 webkit.org/b/221445 fast/text/system-font-width.html [ Skip ]
 webkit.org/b/221445 fast/text/international/system-language/jp-circled.html [ Skip ]
 
-webkit.org/b/264710 [ Debug ] fast/svg/svg_should_not_crash.html [ Skip ] # Makes a subsequent test crash
-
 #//////////////////////////////////////////////////////////////////////////////////////////
 # crypto
 #//////////////////////////////////////////////////////////////////////////////////////////

@@ -213,11 +213,6 @@ public:
 #if ENABLE(WEB_AUTHN)
     virtual void runWebAuthenticationPanel(WebKit::WebPageProxy&, WebAuthenticationPanel&, WebKit::WebFrameProxy&, WebKit::FrameInfoData&&, CompletionHandler<void(WebKit::WebAuthenticationPanelResult)>&& completionHandler) { completionHandler(WebKit::WebAuthenticationPanelResult::Unavailable); }
 
-    virtual void requestWebAuthenticationNoGesture(SecurityOrigin& origin, CompletionHandler<void(bool)>&& completionHandler)
-    {
-        completionHandler(true);
-    }
-
     virtual void requestWebAuthenticationConditonalMediationRegistration(WTF::String&&, CompletionHandler<void(bool)>&& completionHandler)
     {
         completionHandler(false);

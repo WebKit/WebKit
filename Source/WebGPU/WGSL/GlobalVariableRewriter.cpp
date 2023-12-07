@@ -924,7 +924,7 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
         }
 
         return TextureBindingLayout {
-            .sampleType = TextureSampleType::Float,
+            .sampleType = TextureSampleType::UnfilterableFloat,
             .viewDimension = viewDimension,
             .multisampled = multisampled
         };

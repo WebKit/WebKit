@@ -1965,11 +1965,6 @@ void WebPage::loadRequest(LoadParameters&& loadParameters)
             localMainFrame->loader().forceSandboxFlags(loadParameters.effectiveSandboxFlags);
     }
 
-#if ENABLE(WEB_AUTHN)
-    if (frame.get() == m_mainFrame.ptr())
-        m_page->authenticatorCoordinator().resetUserGestureRequirement();
-#endif
-
     if (frame->coreLocalFrame())
         frame->coreLocalFrame()->loader().load(WTFMove(frameLoadRequest));
 
@@ -2111,9 +2106,6 @@ void WebPage::reload(uint64_t navigationID, OptionSet<WebCore::ReloadOption> rel
     Ref mainFrame = m_mainFrame;
     m_sandboxExtensionTracker.beginReload(mainFrame.ptr(), WTFMove(sandboxExtensionHandle));
     if (m_page && mainFrame->coreLocalFrame()) {
-#if ENABLE(WEB_AUTHN)
-        m_page->authenticatorCoordinator().resetUserGestureRequirement();
-#endif
         mainFrame->coreLocalFrame()->loader().reload(reloadOptions);
     } else
         ASSERT_NOT_REACHED();

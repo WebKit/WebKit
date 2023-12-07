@@ -33,11 +33,6 @@
 namespace WebCore {
 namespace Layout {
 
-static bool isInterlinearAnnotation(const Box* annotationBox)
-{
-    return annotationBox && annotationBox->isInterlinearRubyAnnotationBox();
-}
-
 static inline InlineLayoutUnit halfOfAFullWidthCharacter(const Box& annotationBox)
 {
     return annotationBox.style().computedFontSize() / 2.f;
@@ -49,6 +44,16 @@ static inline size_t baseContentIndex(size_t rubyBaseStart, const InlineDisplay:
     if (boxes[baseContentIndex].layoutBox().isRubyAnnotationBox())
         ++baseContentIndex;
     return baseContentIndex;
+}
+
+static RubyPosition rubyPosition(const Box& rubyBaseLayoutBox)
+{
+    ASSERT(rubyBaseLayoutBox.isRubyBase());
+    auto computedRubyPosition = rubyBaseLayoutBox.style().rubyPosition();
+    if (rubyBaseLayoutBox.style().isHorizontalWritingMode())
+        return computedRubyPosition;
+    // inter-character: If the writing mode of the enclosing ruby container is vertical, this value has the same effect as over.
+    return computedRubyPosition == RubyPosition::InterCharacter ? RubyPosition::Before : computedRubyPosition;
 }
 
 static InlineLayoutRect visualRectIncludingBlockDirection(const InlineLayoutRect& visualRectIgnoringBlockDirection, const RenderStyle& rootStyle)
@@ -282,23 +287,24 @@ InlineLayoutPoint RubyFormattingContext::placeAnnotationBox(const Box& rubyBaseL
     }
     auto& annotationBoxGeometry = inlineFormattingContext.geometryForBox(*annotationBox);
 
-    if (isInterlinearAnnotation(annotationBox)) {
+    if (hasInterlinearAnnotation(rubyBaseLayoutBox)) {
         // Move it over/under the base and make it border box positioned.
         auto leftOffset = annotationBoxGeometry.marginStart();
-        auto topOffset = annotationBox->style().rubyPosition() == RubyPosition::Before ? -annotationBoxGeometry.marginBoxHeight() : rubyBaseMarginBox.height();
+        auto position = rubyPosition(rubyBaseLayoutBox);
+        auto topOffset = position == RubyPosition::Before ? -annotationBoxGeometry.marginBoxHeight() : rubyBaseMarginBox.height();
         switch (writingModeToBlockFlowDirection(rubyBaseLayoutBox.style().writingMode())) {
         case BlockFlowDirection::TopToBottom:
             break;
         case BlockFlowDirection::BottomToTop:
-            topOffset = annotationBox->style().rubyPosition() == RubyPosition::Before ?  rubyBaseMarginBox.height() : -annotationBoxGeometry.marginBoxHeight();
+            topOffset = position == RubyPosition::Before ?  rubyBaseMarginBox.height() : -annotationBoxGeometry.marginBoxHeight();
             break;
         case BlockFlowDirection::RightToLeft:
             topOffset = leftOffset;
-            leftOffset = annotationBox->style().rubyPosition() == RubyPosition::Before ? -annotationBoxGeometry.marginBoxHeight() : rubyBaseMarginBox.width();
+            leftOffset = position == RubyPosition::Before ? -annotationBoxGeometry.marginBoxHeight() : rubyBaseMarginBox.width();
             break;
         case BlockFlowDirection::LeftToRight:
             topOffset = leftOffset;
-            leftOffset = annotationBox->style().rubyPosition() == RubyPosition::Before ? rubyBaseMarginBox.width() : -annotationBoxGeometry.marginBoxHeight();
+            leftOffset = position == RubyPosition::Before ? rubyBaseMarginBox.width() : -annotationBoxGeometry.marginBoxHeight();
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -329,16 +335,13 @@ InlineLayoutSize RubyFormattingContext::sizeAnnotationBox(const Box& rubyBaseLay
     auto& visualRubyBaseGeometry = inlineFormattingContext.geometryForBox(rubyBaseLayoutBox);
     auto& logicalAnnotationBoxGeometry = inlineFormattingContext.geometryForBox(*annotationBox);
 
-    if (isInterlinearAnnotation(annotationBox)) {
+    if (hasInterlinearAnnotation(rubyBaseLayoutBox)) {
         if (isHorizontalWritingMode)
             return { std::max(visualRubyBaseGeometry.marginBoxWidth(), logicalAnnotationBoxGeometry.marginBoxWidth()) - logicalAnnotationBoxGeometry.horizontalMarginBorderAndPadding(), logicalAnnotationBoxGeometry.contentBoxHeight() };
         return { logicalAnnotationBoxGeometry.contentBoxHeight(), std::max(logicalAnnotationBoxGeometry.marginBoxWidth(), visualRubyBaseGeometry.marginBoxHeight()) - logicalAnnotationBoxGeometry.horizontalMarginBorderAndPadding() };
     }
 
-    // Note that inter-character geometry follows the ruby base's writing direction even though it's flipped in horizontal mode.
-    if (isHorizontalWritingMode)
-        return logicalAnnotationBoxGeometry.contentBoxSize();
-    return { logicalAnnotationBoxGeometry.contentBoxHeight(), logicalAnnotationBoxGeometry.marginBoxWidth() };
+    return logicalAnnotationBoxGeometry.contentBoxSize();
 }
 
 void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox& lineBox, InlineLevelBox& rubyBaseInlineBox, const InlineFormattingContext& inlineFormattingContext)
@@ -364,7 +367,7 @@ void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox
 
     auto layoutBounds = rubyBaseInlineBox.layoutBounds();
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
-    if (!isInterlinearAnnotation(annotationBox)) {
+    if (!annotationBox || !hasInterlinearAnnotation(rubyBaseLayoutBox)) {
         // Make sure decendant rubies with annotations are propagated.
         stretchAncestorRubyBaseIfApplicable(layoutBounds);
         return;
@@ -373,7 +376,7 @@ void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox
     auto over = InlineLayoutUnit { };
     auto under = InlineLayoutUnit { };
     auto annotationBoxLogicalHeight = InlineLayoutUnit { inlineFormattingContext.geometryForBox(*annotationBox).marginBoxHeight() };
-    if (annotationBox->style().rubyPosition() == RubyPosition::Before)
+    if (rubyPosition(rubyBaseLayoutBox) == RubyPosition::Before)
         over = annotationBoxLogicalHeight;
     else
         under = annotationBoxLogicalHeight;
@@ -412,7 +415,7 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& r
     // [root inline box][ruby container][ruby base][ruby annotation]
     ASSERT(rubyBaseStart >= 2);
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
-    if (!isInterlinearAnnotation(annotationBox) || rubyBaseStart <= 2)
+    if (!annotationBox || !hasInterlinearAnnotation(rubyBaseLayoutBox) || rubyBaseStart <= 2)
         return { };
     if (rubyBaseStart + 1 >= boxes.size()) {
         // We have to have some base content.
@@ -459,7 +462,7 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationBefore(const Box& r
 InlineLayoutUnit RubyFormattingContext::overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, WTF::Range<size_t> rubyBaseRange, const InlineDisplay::Boxes& boxes, const InlineFormattingContext& inlineFormattingContext)
 {
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
-    if (!isInterlinearAnnotation(annotationBox))
+    if (!annotationBox || !hasInterlinearAnnotation(rubyBaseLayoutBox))
         return { };
 
     if (!rubyBaseRange || rubyBaseRange.distance() == 1 || rubyBaseRange.end() == boxes.size())
@@ -496,6 +499,25 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationAfter(const Box& ru
         return false;
     };
     return wouldAnnotationOrBaseOverlapLineContent() ? 0.f : overhangValue;
+}
+
+bool RubyFormattingContext::hasInterlinearAnnotation(const Box& rubyBaseLayoutBox)
+{
+    ASSERT(rubyBaseLayoutBox.isRubyBase());
+    return rubyBaseLayoutBox.associatedRubyAnnotationBox() && !hasInterCharacterAnnotation(rubyBaseLayoutBox);
+}
+
+bool RubyFormattingContext::hasInterCharacterAnnotation(const Box& rubyBaseLayoutBox)
+{
+    ASSERT(rubyBaseLayoutBox.isRubyBase());
+    if (!rubyBaseLayoutBox.style().isHorizontalWritingMode()) {
+        // If the writing mode of the enclosing ruby container is vertical, this value has the same effect as over.
+        return false;
+    }
+
+    if (auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox())
+        return annotationBox->style().rubyPosition() == RubyPosition::InterCharacter;
+    return false;
 }
 
 }

@@ -197,6 +197,7 @@ $(PROJECT_DIR)/Shared/AuxiliaryProcessCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/BackgroundFetchState.serialization.in
 $(PROJECT_DIR)/Shared/CallbackID.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CacheStoragePolicy.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCAVOutputContext.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCArray.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCCFType.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCColor.serialization.in
@@ -218,6 +219,7 @@ $(PROJECT_DIR)/Shared/Cocoa/DataDetectionResult.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/InsertTextOptions.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/RevealItem.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
+$(PROJECT_DIR)/Shared/ContextMenuContextData.serialization.in
 $(PROJECT_DIR)/Shared/Databases/IndexedDB/WebIDBResult.serialization.in
 $(PROJECT_DIR)/Shared/DebuggableInfoData.serialization.in
 $(PROJECT_DIR)/Shared/DisplayListArgumentCoders.serialization.in

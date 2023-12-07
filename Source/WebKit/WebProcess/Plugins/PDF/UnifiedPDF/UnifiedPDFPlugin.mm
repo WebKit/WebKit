@@ -29,6 +29,7 @@
 #if ENABLE(UNIFIED_PDF)
 
 #include "PDFContextMenu.h"
+#include "PDFKitSPI.h"
 #include "PluginView.h"
 #include "WebEventConversion.h"
 #include "WebEventType.h"
@@ -52,6 +53,9 @@
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderLayerCompositor.h>
 #include <WebCore/ScrollTypes.h>
+#include <pal/spi/cg/CoreGraphicsSPI.h>
+
+#include "PDFKitSoftLink.h"
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIColor.h>
@@ -455,10 +459,12 @@ enum class AltKeyIsActive : bool { No, Yes };
 
 static WebCore::Cursor::Type toWebCoreCursorType(UnifiedPDFPlugin::PDFElementTypes pdfElementTypes, AltKeyIsActive altKeyIsActive = AltKeyIsActive::No)
 {
-    if (pdfElementTypes.containsAny({ UnifiedPDFPlugin::PDFElementType::Link, UnifiedPDFPlugin::PDFElementType::Control, UnifiedPDFPlugin::PDFElementType::Icon }) || altKeyIsActive == AltKeyIsActive::Yes)
+    using PDFElementType = UnifiedPDFPlugin::PDFElementType;
+
+    if (pdfElementTypes.containsAny({ PDFElementType::Link, PDFElementType::Control, PDFElementType::Icon }) || altKeyIsActive == AltKeyIsActive::Yes)
         return WebCore::Cursor::Type::Hand;
 
-    if (pdfElementTypes.containsAny({ UnifiedPDFPlugin::PDFElementType::Text, UnifiedPDFPlugin::PDFElementType::TextField }))
+    if (pdfElementTypes.containsAny({ PDFElementType::Text, PDFElementType::TextField }))
         return WebCore::Cursor::Type::IBeam;
 
     return WebCore::Cursor::Type::Pointer;
@@ -532,15 +538,44 @@ auto UnifiedPDFPlugin::pdfElementTypesForPluginPoint(const WebCore::IntPoint& po
     if (!maybeNearestPageIndex || *maybeNearestPageIndex >= m_documentLayout.pageCount())
         return { };
     auto nearestPageIndex = *maybeNearestPageIndex;
+    auto nearestPage = m_documentLayout.pageAtIndex(nearestPageIndex);
     auto pointInPDFPageSpace = convertFromDocumentToPage(pointInDocumentSpace, nearestPageIndex);
 
-    if (auto annotation = [m_documentLayout.pageAtIndex(nearestPageIndex) annotationAtPoint:pointInPDFPageSpace]) {
-        // FIXME: Reason about the annotation type to construct the full set of PDFElementTypes at this page point.
-        UNUSED_VARIABLE(annotation);
+    PDFElementTypes pdfElementTypes { PDFElementType::Page };
+
+    if (auto annotation = [nearestPage annotationAtPoint:pointInPDFPageSpace]) {
+        pdfElementTypes.add(PDFElementType::Annotation);
+
+        if ([annotation isKindOfClass:getPDFAnnotationLinkClass()])
+            pdfElementTypes.add(PDFElementType::Link);
+
+        if ([annotation isKindOfClass:getPDFAnnotationPopupClass()])
+            pdfElementTypes.add(PDFElementType::Popup);
+
+        if ([annotation isKindOfClass:getPDFAnnotationTextClass()])
+            pdfElementTypes.add(PDFElementType::Icon);
+
+        if ([annotation isKindOfClass:getPDFAnnotationTextWidgetClass()] && ![annotation isReadOnly])
+            pdfElementTypes.add(PDFElementType::TextField);
+
+        if ([annotation isKindOfClass:getPDFAnnotationButtonWidgetClass()] && ![annotation isReadOnly])
+            pdfElementTypes.add(PDFElementType::Control);
     }
 
-    // Default element if we could map to a PDF page at all.
-    return { PDFElementType::Page };
+    if (!isTaggedPDF())
+        return pdfElementTypes;
+
+    if (auto pageLayout = [nearestPage pageLayout]) {
+        CGPDFAreaOfInterest areaOfInterest = CGPDFPageLayoutGetAreaOfInterestAtPoint(pageLayout, pointInPDFPageSpace);
+        if (areaOfInterest & kCGPDFAreaText)
+            pdfElementTypes.add(PDFElementType::Text);
+        if (areaOfInterest & kCGPDFAreaImage)
+            pdfElementTypes.add(PDFElementType::Image);
+    }
+
+    // FIXME: <https://webkit.org/b/265908> Cursor updates are incorrect over text/image elements for untagged PDFs.
+
+    return pdfElementTypes;
 }
 
 bool UnifiedPDFPlugin::handleMouseEvent(const WebMouseEvent& event)
@@ -727,6 +762,11 @@ void UnifiedPDFPlugin::openWithPreview(CompletionHandler<void(const String&, Fra
 }
 
 #endif // ENABLE(PDF_HUD)
+
+bool UnifiedPDFPlugin::isTaggedPDF() const
+{
+    return CGPDFDocumentIsTaggedPDF([m_pdfDocument documentRef]);
+}
 
 } // namespace WebKit
 

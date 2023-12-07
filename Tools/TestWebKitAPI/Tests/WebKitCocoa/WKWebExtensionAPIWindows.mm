@@ -46,6 +46,8 @@ static auto *windowsManifest = @{
     @"description": @"Windows Test",
     @"version": @"1",
 
+    @"options_page": @"options.html",
+
     @"background": @{
         @"scripts": @[ @"background.js" ],
         @"type": @"module",
@@ -119,6 +121,44 @@ TEST(WKWebExtensionAPIWindows, GetCurrent)
     ]);
 
     Util::loadAndRunExtension(windowsManifest, @{ @"background.js": backgroundScript });
+}
+
+TEST(WKWebExtensionAPIWindows, GetCurrentFromOptionsPage)
+{
+    auto *optionsScript = Util::constructScript(@[
+        @"const window = await browser.windows.getCurrent()",
+
+        @"browser.test.assertEq(typeof window, 'object', 'The window should be')",
+        @"browser.test.assertTrue(window.focused, 'The current window should be focused')",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    auto *resources = @{
+        @"background.js": @"// Not Used",
+        @"options.html": @"<script type='module' src='options.js'></script>",
+        @"options.js": optionsScript
+    };
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager load];
+
+    [manager.get().defaultWindow openNewTab];
+
+    EXPECT_EQ(manager.get().defaultWindow.tabs.count, 2lu);
+
+    auto *optionsPageURL = manager.get().context.optionsPageURL;
+    EXPECT_NOT_NULL(optionsPageURL);
+
+    auto *defaultTab = manager.get().defaultTab;
+    EXPECT_NOT_NULL(defaultTab);
+
+    [defaultTab changeWebViewIfNeededForURL:optionsPageURL forExtensionContext:manager.get().context];
+    [defaultTab.mainWebView loadRequest:[NSURLRequest requestWithURL:optionsPageURL]];
+
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIWindows, GetLastFocused)
