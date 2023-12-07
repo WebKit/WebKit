@@ -508,6 +508,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/API/APIError.serialization.in \
 	Shared/API/APIFrameHandle.serialization.in \
 	Shared/API/APIGeometry.serialization.in \
+	Shared/API/APINumber.serialization.in \
 	Shared/API/APIPageHandle.serialization.in \
 	Shared/API/APIURL.serialization.in \
 	Shared/API/APIURLRequest.serialization.in \
@@ -537,6 +538,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/DataDetectionResult.serialization.in \
 	Shared/Cocoa/InsertTextOptions.serialization.in \
 	Shared/Cocoa/RevealItem.serialization.in \
+	Shared/Cocoa/SharedCARingBuffer.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
 	Shared/CallbackID.serialization.in \
 	Shared/BackgroundFetchState.serialization.in \

@@ -336,6 +336,10 @@ struct PossiblyQuotedIdentifier {
         bool isForPage() const { return m_isForPage; }
         void setForPage() { m_isForPage = true; }
 
+        void setImplicit() { m_isImplicit = true; }
+        // Implicit means that this selector is not author/UA written.
+        bool isImplicit() const { return m_isImplicit; }
+
     private:
         unsigned m_relation : 4 { static_cast<unsigned>(RelationType::DescendantSpace) }; // enum RelationType.
         mutable unsigned m_match : 5 { static_cast<unsigned>(Match::Unknown) }; // enum Match.
@@ -348,7 +352,8 @@ struct PossiblyQuotedIdentifier {
         unsigned m_isForPage : 1 { false };
         unsigned m_tagIsForNamespaceRule : 1 { false };
         unsigned m_caseInsensitiveAttributeValueMatching : 1 { false };
-        // 24 bits
+        unsigned m_isImplicit : 1 { false };
+        // 25 bits
 #if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
         unsigned m_destructorHasBeenCalled : 1 { false };
 #endif

@@ -26,7 +26,9 @@
     WebKit::SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
     String applicationCacheFlatFileSubdirectoryName;
     String mediaCacheDirectory;
+#if !ENABLE(GPU_PROCESS)
     WebKit::SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
+#endif
     String mediaKeyStorageDirectory;
     WebKit::SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
     FileSystem::Salt mediaKeysStorageSalt;

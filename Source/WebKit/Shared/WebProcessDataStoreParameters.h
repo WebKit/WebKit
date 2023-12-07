@@ -42,7 +42,9 @@ struct WebProcessDataStoreParameters {
     SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
     String applicationCacheFlatFileSubdirectoryName;
     String mediaCacheDirectory;
+#if !ENABLE(GPU_PROCESS)
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
+#endif
     String mediaKeyStorageDirectory;
     SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
     FileSystem::Salt mediaKeysStorageSalt;

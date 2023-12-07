@@ -771,30 +771,6 @@ bool ArgumentCoder<MediaPlaybackTargetContext>::decode(Decoder& decoder, MediaPl
 }
 #endif
 
-void ArgumentCoder<RefPtr<WebCore::SerializedScriptValue>>::encode(Encoder& encoder, const RefPtr<WebCore::SerializedScriptValue>& instance)
-{
-    encoder << !!instance;
-    if (instance)
-        instance->encode(encoder);
-}
-
-std::optional<RefPtr<WebCore::SerializedScriptValue>> ArgumentCoder<RefPtr<WebCore::SerializedScriptValue>>::decode(Decoder& decoder)
-{
-    std::optional<bool> nonEmpty;
-    decoder >> nonEmpty;
-    if (!nonEmpty)
-        return std::nullopt;
-
-    if (!*nonEmpty)
-        return nullptr;
-
-    RefPtr<SerializedScriptValue> scriptValue = SerializedScriptValue::decode(decoder);
-    if (!scriptValue)
-        return std::nullopt;
-
-    return { scriptValue };
-}
-
 #if ENABLE(VIDEO)
 void ArgumentCoder<WebCore::SerializedPlatformDataCueValue>::encode(Encoder& encoder, const SerializedPlatformDataCueValue& value)
 {

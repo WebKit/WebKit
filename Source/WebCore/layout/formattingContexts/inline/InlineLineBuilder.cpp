@@ -645,20 +645,14 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             auto& layoutBox = inlineItem.layoutBox();
             auto logicalWidth = formattingContext().formattingUtils().inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLine());
             if (layoutBox.isRubyBase()) {
-                if (auto annotationBoxLogicalWidth = RubyFormattingContext::annotationBoxLogicalWidth(layoutBox, formattingContext())) {
-                    if (inlineItem.isInlineBoxStart()) {
-                        // There should only be one ruby base per/annotation candidate content as we allow line breaking between bases.
-                        ASSERT(!lineCandidate.inlineContent.continuousContent().minimumRequiredWidth());
-                        lineCandidate.inlineContent.setMinimumRequiredWidth(*annotationBoxLogicalWidth);
-                    } else {
-                        // Base is supposed be at least as wide as the annotation is.
-                        // Let's adjust the inline box end width to accomodate such overflowing liner annotation.
-                        auto rubyBaseContentWidth = RubyFormattingContext::baseLogicalWidthFromRubyBaseEnd(inlineItem, m_line.runs(), lineCandidate.inlineContent.continuousContent().runs());
-                        ASSERT(rubyBaseContentWidth >= 0);
-                        logicalWidth += std::max(0.f, *annotationBoxLogicalWidth - rubyBaseContentWidth);
-                    }
-                }
+                if (inlineItem.isInlineBoxStart()) {
+                    // There should only be one ruby base per/annotation candidate content as we allow line breaking between bases.
+                    ASSERT(!lineCandidate.inlineContent.continuousContent().minimumRequiredWidth());
+                    lineCandidate.inlineContent.setMinimumRequiredWidth(RubyFormattingContext::annotationBoxLogicalWidth(layoutBox, formattingContext()));
+                } else
+                    logicalWidth += RubyFormattingContext::baseEndAdditionalLogicalWidth(layoutBox, m_line.runs(), lineCandidate.inlineContent.continuousContent().runs(), formattingContext());
             }
+
             if (style.boxDecorationBreak() == BoxDecorationBreak::Clone) {
                 if (inlineItem.isInlineBoxStart())
                     inlineBoxListWithClonedDecorationEnd.add(&layoutBox);

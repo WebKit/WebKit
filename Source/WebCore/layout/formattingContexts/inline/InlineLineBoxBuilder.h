@@ -71,6 +71,7 @@ private:
     const InlineFormattingContext& m_inlineFormattingContext;
     const LineLayoutResult& m_lineLayoutResult;
     bool m_fallbackFontRequiresIdeographicBaseline { false };
+    bool m_lineHasRubyContent { false };
     HashMap<const InlineLevelBox*, TextUtil::FallbackFontList> m_fallbackFontsForInlineBoxes;
     Vector<size_t> m_outsideListMarkers;
 };

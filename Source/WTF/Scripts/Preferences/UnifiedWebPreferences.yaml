@@ -1221,17 +1221,17 @@ CSSRhythmicSizingEnabled:
 
 CSSScopeAtRuleEnabled:
   type: bool
-  status: testable
+  status: stable
   category: css
   humanReadableName: "CSS Scoping (@scope)"
   humanReadableDescription: "Enable the CSS Scoping feature with @scope rule"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSScrollAnchoringEnabled:
   type: bool

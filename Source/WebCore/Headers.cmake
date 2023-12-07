@@ -1248,6 +1248,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/MediaDocument.h
     html/MediaElementSession.h
     html/MediaError.h
+    html/OffscreenCanvas.h
     html/PDFDocument.h
     html/PluginDocument.h
     html/StepRange.h
@@ -1931,6 +1932,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/ImageBufferAllocator.h
     platform/graphics/ImageBufferBackend.h
     platform/graphics/ImageBufferBackendParameters.h
+    platform/graphics/ImageBufferPipe.h
     platform/graphics/ImageBufferPlatformBackend.h
     platform/graphics/ImageDecoder.h
     platform/graphics/ImageDecoderIdentifier.h

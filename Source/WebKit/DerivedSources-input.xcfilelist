@@ -180,6 +180,7 @@ $(PROJECT_DIR)/Shared/API/APIData.serialization.in
 $(PROJECT_DIR)/Shared/API/APIError.serialization.in
 $(PROJECT_DIR)/Shared/API/APIFrameHandle.serialization.in
 $(PROJECT_DIR)/Shared/API/APIGeometry.serialization.in
+$(PROJECT_DIR)/Shared/API/APINumber.serialization.in
 $(PROJECT_DIR)/Shared/API/APIPageHandle.serialization.in
 $(PROJECT_DIR)/Shared/API/APIURL.serialization.in
 $(PROJECT_DIR)/Shared/API/APIURLRequest.serialization.in
@@ -218,6 +219,7 @@ $(PROJECT_DIR)/Shared/Cocoa/CoreIPCURL.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/DataDetectionResult.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/InsertTextOptions.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/RevealItem.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/SharedCARingBuffer.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in
 $(PROJECT_DIR)/Shared/ContextMenuContextData.serialization.in
 $(PROJECT_DIR)/Shared/Databases/IndexedDB/WebIDBResult.serialization.in

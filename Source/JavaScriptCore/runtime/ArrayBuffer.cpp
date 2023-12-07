@@ -652,5 +652,16 @@ ASCIILiteral errorMessageForTransfer(ArrayBuffer* buffer)
     return "Cannot transfer an ArrayBuffer whose backing store has been accessed by the JavaScriptCore C API"_s;
 }
 
+std::optional<ArrayBufferContents> ArrayBufferContents::fromDataSpan(std::span<const uint8_t> data)
+{
+    void* buffer = Gigacage::tryMalloc(Gigacage::Primitive, data.size_bytes());
+    if (!buffer)
+        return std::nullopt;
+
+    memcpy(buffer, data.data(), data.size_bytes());
+
+    return ArrayBufferContents { buffer, data.size_bytes(), std::nullopt, ArrayBuffer::primitiveGigacageDestructor() };
+}
+
 } // namespace JSC
 

@@ -82,7 +82,29 @@ struct SelectorSpecificity {
     SelectorSpecificity(unsigned);
     SelectorSpecificity(SelectorSpecificityIncrement);
     SelectorSpecificity& operator+=(SelectorSpecificity);
+
+    std::array<uint8_t, 3> specificityTuple() const
+    {
+        uint8_t a = specificity >> 16;
+        uint8_t b = specificity >> 8;
+        uint8_t c = specificity;
+        return { a, b, c };
+    }
+
+    String debugDescription() const
+    {
+        StringBuilder builder;
+        auto tuple = specificityTuple();
+        builder.append('{', tuple[0], ' ', tuple[1], ' ', tuple[2], '}');
+        return builder.toString();
+    }
 };
+
+UNUSED_FUNCTION static TextStream& operator<<(TextStream& ts, const SelectorSpecificity& selectorSpecificity)
+{
+    ts << selectorSpecificity.debugDescription();
+    return ts;
+}
 
 SelectorSpecificity::SelectorSpecificity(unsigned specificity)
     : specificity(specificity)
@@ -119,7 +141,7 @@ static SelectorSpecificity simpleSelectorSpecificity(const CSSSelector&);
 static SelectorSpecificity selectorSpecificity(const CSSSelector& firstSimpleSelector)
 {
     SelectorSpecificity total;
-    for (auto* selector = &firstSimpleSelector; selector; selector = selector->tagHistory())
+    for (const auto* selector = &firstSimpleSelector; selector; selector = selector->tagHistory())
         total += simpleSelectorSpecificity(*selector);
     return total;
 }
@@ -128,7 +150,7 @@ static SelectorSpecificity maxSpecificity(const CSSSelectorList* selectorList)
 {
     unsigned max = 0;
     if (selectorList) {
-        for (auto* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector))
+        for (const auto* selector = selectorList->first(); selector; selector = CSSSelectorList::next(selector))
             max = std::max(max, selectorSpecificity(*selector).specificity);
     }
     return max;
@@ -137,6 +159,9 @@ static SelectorSpecificity maxSpecificity(const CSSSelectorList* selectorList)
 SelectorSpecificity simpleSelectorSpecificity(const CSSSelector& simpleSelector)
 {
     ASSERT_WITH_MESSAGE(!simpleSelector.isForPage(), "At the time of this writing, page selectors are not treated as real selectors that are matched. The value computed here only account for real selectors.");
+
+    if (UNLIKELY(simpleSelector.isImplicit()))
+        return 0;
 
     switch (simpleSelector.match()) {
     case CSSSelector::Match::Id:
@@ -197,11 +222,7 @@ unsigned CSSSelector::computeSpecificity() const
 
 std::array<uint8_t, 3> CSSSelector::computeSpecificityTuple() const
 {
-    auto integer = computeSpecificity();
-    uint8_t a = integer >> 16;
-    uint8_t b = integer >> 8;
-    uint8_t c = integer;
-    return { a, b, c };
+    return selectorSpecificity(*this).specificityTuple();
 }
 
 unsigned CSSSelector::specificityForPage() const
@@ -1022,6 +1043,7 @@ CSSSelector::CSSSelector(const CSSSelector& other)
     , m_isForPage(other.m_isForPage)
     , m_tagIsForNamespaceRule(other.m_tagIsForNamespaceRule)
     , m_caseInsensitiveAttributeValueMatching(other.m_caseInsensitiveAttributeValueMatching)
+    , m_isImplicit(other.m_isImplicit)
 {
     // Manually ref count the m_data union because they are stored as raw ptr, not as Ref.
     if (other.m_hasRareData)

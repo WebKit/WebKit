@@ -720,11 +720,13 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
     String applicationCacheFlatFileSubdirectoryName = websiteDataStore.applicationCacheFlatFileSubdirectoryName();
 
     String mediaCacheDirectory = websiteDataStore.resolvedMediaCacheDirectory();
+#if !ENABLE(GPU_PROCESS)
     SandboxExtension::Handle mediaCacheDirectoryExtensionHandle;
     if (!mediaCacheDirectory.isEmpty()) {
         if (auto handle = SandboxExtension::createHandleWithoutResolvingPath(mediaCacheDirectory, SandboxExtension::Type::ReadWrite))
             mediaCacheDirectoryExtensionHandle = WTFMove(*handle);
     }
+#endif
 
     String mediaKeyStorageDirectory = websiteDataStore.resolvedMediaKeysDirectory();
     SandboxExtension::Handle mediaKeyStorageDirectoryExtensionHandle;
@@ -773,7 +775,9 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         WTFMove(applicationCacheDirectoryExtensionHandle),
         WTFMove(applicationCacheFlatFileSubdirectoryName),
         WTFMove(mediaCacheDirectory),
+#if !ENABLE(GPU_PROCESS)
         WTFMove(mediaCacheDirectoryExtensionHandle),
+#endif
         WTFMove(mediaKeyStorageDirectory),
         WTFMove(mediaKeyStorageDirectoryExtensionHandle),
         WTFMove(mediaKeyStorageSalt),

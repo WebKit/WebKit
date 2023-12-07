@@ -41,8 +41,8 @@ class RubyFormattingContext {
 public:
     // Line building
     static bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& current);
-    static std::optional<InlineLayoutUnit> annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, const InlineFormattingContext&);
-    static InlineLayoutUnit baseLogicalWidthFromRubyBaseEnd(const InlineItem& rubyBaseEnd, const Line::RunList&, const InlineContentBreaker::ContinuousContent::RunList&);
+    static InlineLayoutUnit annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, const InlineFormattingContext&);
+    static InlineLayoutUnit baseEndAdditionalLogicalWidth(const Box& rubyBaseLayoutBox, const Line::RunList&, const InlineContentBreaker::ContinuousContent::RunList&, const InlineFormattingContext&);
     static void applyRubyAlign(Line&, const InlineFormattingContext&);
 
     // Line box building
