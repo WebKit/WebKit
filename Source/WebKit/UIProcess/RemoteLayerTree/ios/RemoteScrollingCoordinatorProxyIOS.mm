@@ -368,6 +368,18 @@ CGPoint RemoteScrollingCoordinatorProxyIOS::nearestActiveContentInsetAdjustedSna
     return activePoint;
 }
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+void RemoteScrollingCoordinatorProxyIOS::animationsWereAddedToNode(RemoteLayerTreeNode& node)
+{
+    m_animatedNodeLayerIDs.add(node.layerID());
+}
+
+void RemoteScrollingCoordinatorProxyIOS::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
+{
+    m_animatedNodeLayerIDs.remove(node.layerID());
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)

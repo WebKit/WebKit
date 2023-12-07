@@ -286,6 +286,18 @@ void RemoteScrollingCoordinatorProxyMac::applyScrollingTreeLayerPositionsAfterCo
     m_eventDispatcher->renderingUpdateComplete();
 }
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+void RemoteScrollingCoordinatorProxyMac::animationsWereAddedToNode(RemoteLayerTreeNode& node)
+{
+    m_eventDispatcher->animationsWereAddedToNode(node);
+}
+
+void RemoteScrollingCoordinatorProxyMac::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
+{
+    m_eventDispatcher->animationsWereRemovedFromNode(node);
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC) && ENABLE(UI_SIDE_COMPOSITING)

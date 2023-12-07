@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RemoteLayerTreeHost.h"
 
+#import "LayerProperties.h"
 #import "Logging.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteLayerTreePropertyApplier.h"
@@ -99,6 +100,11 @@ bool RemoteLayerTreeHost::replayDynamicContentScalingDisplayListsIntoBackingStor
 bool RemoteLayerTreeHost::css3DTransformInteroperabilityEnabled() const
 {
     return m_drawingArea->page().preferences().css3DTransformInteroperabilityEnabled();
+}
+
+bool RemoteLayerTreeHost::threadedAnimationResolutionEnabled() const
+{
+    return m_drawingArea->page().preferences().threadedAnimationResolutionEnabled();
 }
 
 #if PLATFORM(MAC)
@@ -447,6 +453,16 @@ void RemoteLayerTreeHost::mapAllIOSurfaceBackingStore()
 }
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
+void RemoteLayerTreeHost::animationsWereAddedToNode(RemoteLayerTreeNode& node)
+{
+    m_drawingArea->animationsWereAddedToNode(node);
+}
+
+void RemoteLayerTreeHost::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
+{
+    m_drawingArea->animationsWereRemovedFromNode(node);
+}
+
 Seconds RemoteLayerTreeHost::acceleratedTimelineTimeOrigin() const
 {
     return m_drawingArea->acceleratedTimelineTimeOrigin();

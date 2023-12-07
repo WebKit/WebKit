@@ -730,7 +730,7 @@ protected:
     WEBCORE_EXPORT virtual void getDebugBorderInfo(Color&, float& width) const;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
-    std::unique_ptr<AcceleratedEffectStack> m_effectStack;
+    RefPtr<AcceleratedEffectStack> m_effectStack;
 #endif
 
     GraphicsLayerClient* m_client; // Always non-null.

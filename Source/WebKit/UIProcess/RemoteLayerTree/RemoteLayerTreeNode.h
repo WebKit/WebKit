@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "RemoteAcceleratedEffectStack.h"
 #include "RemoteLayerBackingStore.h"
 #include <WebCore/EventRegion.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
@@ -42,6 +43,7 @@ OBJC_CLASS UIView;
 
 namespace WebKit {
 
+class RemoteLayerTreeHost;
 class RemoteLayerTreeScrollbars;
 
 class RemoteLayerTreeNode : public CanMakeWeakPtr<RemoteLayerTreeNode> {
@@ -131,6 +133,11 @@ public:
         m_asyncContentsIdentifier = identifier;
     }
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    void setAcceleratedEffectsAndBaseValues(const WebCore::AcceleratedEffects&, const WebCore::AcceleratedEffectValues&, RemoteLayerTreeHost&);
+    RefPtr<RemoteAcceleratedEffectStack> takeEffectStack() { return std::exchange(m_effectStack, nullptr); }
+#endif
+
 private:
     void initializeLayer();
 
@@ -168,6 +175,10 @@ private:
 
     Vector<CachedContentsBuffer> m_cachedContentsBuffers;
     std::optional<WebCore::RenderingResourceIdentifier> m_asyncContentsIdentifier;
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    RefPtr<RemoteAcceleratedEffectStack> m_effectStack;
+#endif
 };
 
 }
