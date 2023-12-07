@@ -113,10 +113,11 @@ Ref<ShaderModule> Device::createShaderModule(const WGPUShaderModuleDescriptor& d
         return ShaderModule::createInvalid(*this);
 
     auto shaderModuleParameters = findShaderModuleParameters(descriptor);
-    if (!shaderModuleParameters)
+    auto source = fromAPI(shaderModuleParameters->wgsl.code);
+    if (!shaderModuleParameters || !source.length())
         return ShaderModule::createInvalid(*this);
 
-    auto checkResult = WGSL::staticCheck(fromAPI(shaderModuleParameters->wgsl.code), std::nullopt, { maxBuffersPlusVertexBuffersForVertexStage(), maxBuffersForFragmentStage(), maxBuffersForComputeStage() });
+    auto checkResult = WGSL::staticCheck(source, std::nullopt, { maxBuffersPlusVertexBuffersForVertexStage(), maxBuffersForFragmentStage(), maxBuffersForComputeStage() });
 
     if (std::holds_alternative<WGSL::SuccessfulCheck>(checkResult)) {
         if (shaderModuleParameters->hints && descriptor.hintCount) {
