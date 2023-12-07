@@ -67,7 +67,7 @@ public:
     
     IPC::Connection& connection() { return m_connection.get(); }
     Ref<IPC::Connection> protectedConnection() { return m_connection; }
-    IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
+    IPC::MessageReceiverMap& messageReceiverMap() { RELEASE_ASSERT(isMainThread()); return m_messageReceiverMap; }
 
 #if HAVE(AUDIT_TOKEN)
     std::optional<audit_token_t> auditToken();
