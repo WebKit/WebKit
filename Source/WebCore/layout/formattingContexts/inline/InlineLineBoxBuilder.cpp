@@ -63,6 +63,8 @@ LineBox LineBoxBuilder::build(size_t lineIndex)
     constructInlineLevelBoxes(lineBox);
     adjustIdeographicBaselineIfApplicable(lineBox);
     adjustInlineBoxHeightsForLineBoxContainIfApplicable(lineBox);
+    if (m_lineHasRubyContent)
+        RubyFormattingContext::applyAnnotationContributionToLayoutBounds(lineBox, formattingContext());
     computeLineBoxGeometry(lineBox);
     adjustOutsideListMarkersPosition(lineBox);
 
@@ -344,7 +346,6 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
     };
 
     auto lineHasContent = false;
-    auto hasSeenRubyBase = false;
     auto& inlineContent = lineLayoutResult().inlineContent;
     for (size_t index = 0; index < inlineContent.size(); ++index) {
         auto& run = inlineContent[index];
@@ -369,7 +370,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, logicalWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
-            hasSeenRubyBase = hasSeenRubyBase || layoutBox.isRubyBase();
+            m_lineHasRubyContent = m_lineHasRubyContent || layoutBox.isRubyBase();
             continue;
         }
         if (run.isInlineBoxStart()) {
@@ -385,7 +386,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             inlineBox.setIsFirstBox();
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
-            hasSeenRubyBase = hasSeenRubyBase || layoutBox.isRubyBase();
+            m_lineHasRubyContent = m_lineHasRubyContent || layoutBox.isRubyBase();
             continue;
         }
         if (run.isInlineBoxEnd()) {
@@ -452,12 +453,6 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
         ASSERT(run.isOpaque());
     }
     lineBox.setHasContent(lineHasContent);
-
-    if (hasSeenRubyBase) {
-        // Adjust this ruby base's contribution to the line box height (layout bounds) with the interlinear annotation extent.
-        // This also stretches the parent (ancestor) ruby base.
-        RubyFormattingContext::applyAnnotationContributionToLayoutBounds(lineBox, formattingContext);
-    }
 }
 
 void LineBoxBuilder::adjustInlineBoxHeightsForLineBoxContainIfApplicable(LineBox& lineBox)

@@ -385,11 +385,12 @@ void RubyFormattingContext::adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox
         layoutBounds.ascent += over;
         layoutBounds.descent += under;
     } else {
+        // FIXME: Missing fallback font handling for annotation content.
         auto& fontMetrics = rubyBaseLayoutBox.style().metricsOfPrimaryFont();
-        auto ascent = fontMetrics.floatAscent() + over;
-        auto descent = fontMetrics.floatDescent() + under;
+        auto ascent = fontMetrics.floatAscent(lineBox.baselineType()) + over;
+        auto descent = fontMetrics.floatDescent(lineBox.baselineType()) + under;
         if (layoutBounds.height() < ascent + descent)
-            layoutBounds = { ascent , descent };
+            layoutBounds = { ascent, descent };
     }
     rubyBaseInlineBox.setLayoutBounds(layoutBounds);
     stretchAncestorRubyBaseIfApplicable(layoutBounds);
