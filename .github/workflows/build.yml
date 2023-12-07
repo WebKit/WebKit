@@ -159,7 +159,6 @@ jobs:
             build-type: Release
             arch: amd64
             suffix: ""
-        include:
           - runner: windows-latest
             build-type: Debug
             arch: amd64
