@@ -45,7 +45,7 @@ using namespace WebKit;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-static constexpr std::array<const char *, 3> databaseFileSuffixes { "-shm", "-wal" };
+static constexpr std::array<const char *, 2> databaseFileSuffixes { "-shm", "-wal" };
 
 @implementation _WKWebExtensionSQLiteStore
 
