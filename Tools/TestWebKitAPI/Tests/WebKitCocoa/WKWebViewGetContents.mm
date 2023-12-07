@@ -29,7 +29,7 @@
 #import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
-#import "UIKitSPIForTesting.h"
+#import "UIKitSPI.h"
 #import <WebCore/ColorCocoa.h>
 #import <WebKit/NSAttributedStringPrivate.h>
 #import <WebKit/_WKResourceLoadInfo.h>
