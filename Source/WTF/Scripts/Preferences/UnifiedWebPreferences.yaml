@@ -1235,17 +1235,17 @@ CSSScopeAtRuleEnabled:
 
 CSSScrollAnchoringEnabled:
   type: bool
-  status: stable
+  status: testable
   category: css
   humanReadableName: "CSS Scroll Anchoring"
   humanReadableDescription: "Enable CSS Scroll Anchoring"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
     WebCore:
-      default: true
+      default: false
 
 CSSScrollbarColorEnabled:
   type: bool
