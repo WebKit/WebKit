@@ -572,7 +572,9 @@ void WebProcess::platformSetWebsiteDataStoreParameters(WebProcessDataStoreParame
 {
 #if ENABLE(SANDBOX_EXTENSIONS)
     SandboxExtension::consumePermanently(parameters.applicationCacheDirectoryExtensionHandle);
+#if !ENABLE(GPU_PROCESS)
     SandboxExtension::consumePermanently(parameters.mediaCacheDirectoryExtensionHandle);
+#endif
     SandboxExtension::consumePermanently(parameters.mediaKeyStorageDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.javaScriptConfigurationDirectoryExtensionHandle);
 #if ENABLE(ARKIT_INLINE_PREVIEW)
