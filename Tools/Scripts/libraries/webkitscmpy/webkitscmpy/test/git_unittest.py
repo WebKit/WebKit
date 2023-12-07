@@ -962,3 +962,53 @@ class TestBitBucket(testing.TestCase):
         self.assertEqual(remote.BitBucket(self.remote).checkout_url(ssh=True), 'git@bitbucket.example.com/WEBKIT/webkit.git')
         with self.assertRaises(ValueError):
             remote.BitBucket(self.remote).checkout_url(http=True, ssh=True)
+
+    def test_diff(self):
+        with mocks.remote.BitBucket():
+            repo = remote.BitBucket(self.remote)
+            self.assertEqual([
+                '--- a/ChangeLog',
+                '+++ b/ChangeLog',
+                '@@ -1,0 +1,0 @@',
+                '+Patch Series',
+            ], list(repo.diff(base='bae5d1e90999d4f916a8a15810ccfa43f37a2fd6')))
+
+    def test_diff_with_commit_message(self):
+        with mocks.remote.BitBucket():
+            repo = remote.BitBucket(self.remote)
+            self.assertEqual([
+                'From bae5d1e90999d4f916a8a15810ccfa43f37a2fd6',
+                'From: Jonathan Bedard <jbedard@apple.com>',
+                'Date: {}'.format(datetime.fromtimestamp(1601668000).strftime('%a %b %d %H:%M:%S %Y')),
+                'Subject: [PATCH] 8th commit',
+                '---',
+                '--- a/ChangeLog',
+                '+++ b/ChangeLog',
+                '@@ -1,0 +1,0 @@',
+                '+8th commit',
+            ], list(repo.diff(base='3@main', head='4@main', include_log=True)))
+
+    def test_diff_with_commit_message_multiple(self):
+        self.maxDiff = None
+        with mocks.remote.BitBucket():
+            repo = remote.BitBucket(self.remote)
+            self.assertEqual([
+                'From bae5d1e90999d4f916a8a15810ccfa43f37a2fd6',
+                'From: Jonathan Bedard <jbedard@apple.com>',
+                'Date: {}'.format(datetime.fromtimestamp(1601668000).strftime('%a %b %d %H:%M:%S %Y')),
+                'Subject: [PATCH 1/2] 8th commit',
+                '---',
+                '--- a/ChangeLog',
+                '+++ b/ChangeLog',
+                '@@ -1,0 +1,0 @@',
+                '+8th commit',
+                'From 1abe25b443e985f93b90d830e4a7e3731336af4d',
+                'From: Jonathan Bedard <jbedard@apple.com>',
+                'Date: {}'.format(datetime.fromtimestamp(1601663000).strftime('%a %b %d %H:%M:%S %Y')),
+                'Subject: [PATCH 2/2] 4th commit',
+                '---',
+                '--- a/ChangeLog',
+                '+++ b/ChangeLog',
+                '@@ -1,0 +1,0 @@',
+                '+4th commit',
+            ], list(repo.diff(base='2@main', head='4@main', include_log=True)))

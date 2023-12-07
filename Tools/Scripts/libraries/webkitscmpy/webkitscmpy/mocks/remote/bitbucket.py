@@ -84,6 +84,8 @@ class BitBucket(mocks.Requests):
         return all_commits
 
     def commit(self, ref):
+        if ref == 'HEAD':
+            ref = self.default_branch
         if ref in self.commits:
             return self.commits[ref][-1]
         if ref in self.tags:
@@ -217,9 +219,32 @@ class BitBucket(mocks.Requests):
                         )
                     ) for path in ('Source/main.cpp', 'Source/main.h')],
                 ))
-            commit = self.commit(stripped_url.split('/')[-1])
+            commit = self.commit(stripped_url.split('/')[9])
             if not commit:
                 return mocks.Response.create404(url)
+
+            if stripped_url.split('?')[0].endswith('diff'):
+                return mocks.Response.fromJson(dict(
+                    fromHash=None,
+                    toHash=commit.hash,
+                    contextLines=3,
+                    whitespace='SHOW',
+                    diffs=[dict(
+                        source=dict(toString='ChangeLog'),
+                        destination=dict(toString='ChangeLog'),
+                        hunks=[dict(
+                            sourceLine=1,
+                            sourceSpan=0,
+                            destinationLine=1,
+                            destinationSpan=0,
+                            segments=[dict(
+                                type='ADDED',
+                                lines=[dict(line=line) for line in commit.message.splitlines()],
+                            )],
+                        )],
+                    )],
+                ))
+
             return mocks.Response.fromJson(dict(
                 id=commit.hash,
                 displayId=commit.hash[:12],

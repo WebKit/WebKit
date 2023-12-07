@@ -40,7 +40,6 @@ HTTPBasicAuth = CallByNeed(lambda: __import__('requests.auth', fromlist=['HTTPBa
 
 class GitHub(Scm):
     URL_RE = re.compile(r'\Ahttps?://github.(?P<domain>\S+)/(?P<owner>\S+)/(?P<repository>\S+)\Z')
-    EMAIL_RE = re.compile(r'(?P<email>[^@]+@[^@]+)(@.*)?')
     ACCEPT_HEADER = Tracker.ACCEPT_HEADER
     KNOWN_400_MESSAGES = [
         'No commit found for SHA',
