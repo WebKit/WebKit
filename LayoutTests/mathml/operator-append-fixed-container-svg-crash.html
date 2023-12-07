@@ -1,0 +1,21 @@
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+function runTest() {
+    mathElement.appendChild(svgElement);
+    result = pathElement.isPointInFill(svgElement);
+    document.write("This test passes if it does not crash.");
+}
+</script>
+<body onload=runTest()>
+  <svg id="svgElement" style="position: fixed">
+    <path id="pathElement">
+  </svg>
+  <object>
+    <math>
+      <mfrac>
+        <mo id="mathElement" style="translate: 0px">-</mo>
+      </mfrac>
+    </math>
+  </object>
+</body>
