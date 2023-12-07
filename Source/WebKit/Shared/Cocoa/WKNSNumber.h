@@ -30,7 +30,19 @@
 
 namespace WebKit {
 
-template<typename NumberType, API::Object::Type APIObjectType> struct WrapperTraits<API::Number<NumberType, APIObjectType>> {
+template<> struct WrapperTraits<API::Boolean> {
+    using WrapperClass = NSNumber;
+};
+
+template<> struct WrapperTraits<API::Double> {
+    using WrapperClass = NSNumber;
+};
+
+template<> struct WrapperTraits<API::UInt64> {
+    using WrapperClass = NSNumber;
+};
+
+template<> struct WrapperTraits<API::Int64> {
     using WrapperClass = NSNumber;
 };
 

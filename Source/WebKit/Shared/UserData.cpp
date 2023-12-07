@@ -171,7 +171,7 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
     }
 
     case API::Object::Type::Boolean:
-        static_cast<const API::Boolean&>(object).encode(encoder);
+        encoder << static_cast<const API::Boolean&>(object);
         break;
 
     case API::Object::Type::Data:
@@ -191,7 +191,7 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
     }
 
     case API::Object::Type::Double:
-        static_cast<const API::Double&>(object).encode(encoder);
+        encoder << static_cast<const API::Double&>(object);
         break;
 
     case API::Object::Type::Error:
@@ -260,11 +260,11 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
         break;
 
     case API::Object::Type::UInt64:
-        static_cast<const API::UInt64&>(object).encode(encoder);
+        encoder << static_cast<const API::UInt64&>(object);
         break;
 
     case API::Object::Type::Int64:
-        static_cast<const API::Int64&>(object).encode(encoder);
+        encoder << static_cast<const API::Int64&>(object);
         break;
 
     case API::Object::Type::UserContentURLPattern: {
@@ -314,10 +314,13 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         break;
     }
 
-    case API::Object::Type::Boolean:
-        if (!API::Boolean::decode(decoder, result))
+    case API::Object::Type::Boolean: {
+        auto data = decoder.decode<Ref<API::Boolean>>();
+        if (!data)
             return false;
+        result = WTFMove(*data);
         break;
+    }
 
     case API::Object::Type::Data: {
         auto data = decoder.decode<Ref<API::Data>>();
@@ -355,10 +358,13 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         break;
     }
 
-    case API::Object::Type::Double:
-        if (!API::Double::decode(decoder, result))
+    case API::Object::Type::Double: {
+        auto data = decoder.decode<Ref<API::Double>>();
+        if (!data)
             return false;
+        result = WTFMove(*data);
         break;
+    }
 
     case API::Object::Type::Error: {
         std::optional<Ref<API::Error>> error;
@@ -478,15 +484,21 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
         break;
     }
 
-    case API::Object::Type::UInt64:
-        if (!API::UInt64::decode(decoder, result))
+    case API::Object::Type::UInt64: {
+        auto data = decoder.decode<Ref<API::UInt64>>();
+        if (!data)
             return false;
+        result = WTFMove(*data);
         break;
+    }
 
-    case API::Object::Type::Int64:
-        if (!API::Int64::decode(decoder, result))
+    case API::Object::Type::Int64: {
+        auto data = decoder.decode<Ref<API::Int64>>();
+        if (!data)
             return false;
+        result = WTFMove(*data);
         break;
+    }
 
     case API::Object::Type::UserContentURLPattern: {
         String string;

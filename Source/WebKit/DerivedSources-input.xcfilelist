@@ -180,6 +180,7 @@ $(PROJECT_DIR)/Shared/API/APIData.serialization.in
 $(PROJECT_DIR)/Shared/API/APIError.serialization.in
 $(PROJECT_DIR)/Shared/API/APIFrameHandle.serialization.in
 $(PROJECT_DIR)/Shared/API/APIGeometry.serialization.in
+$(PROJECT_DIR)/Shared/API/APINumber.serialization.in
 $(PROJECT_DIR)/Shared/API/APIPageHandle.serialization.in
 $(PROJECT_DIR)/Shared/API/APIURL.serialization.in
 $(PROJECT_DIR)/Shared/API/APIURLRequest.serialization.in

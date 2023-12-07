@@ -508,6 +508,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/API/APIError.serialization.in \
 	Shared/API/APIFrameHandle.serialization.in \
 	Shared/API/APIGeometry.serialization.in \
+	Shared/API/APINumber.serialization.in \
 	Shared/API/APIPageHandle.serialization.in \
 	Shared/API/APIURL.serialization.in \
 	Shared/API/APIURLRequest.serialization.in \

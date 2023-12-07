@@ -85,8 +85,12 @@ template<typename APIType> struct APITypeInfo;
 template<typename ImplType> struct ImplTypeInfo;
 
 #define WK_ADD_API_MAPPING(TheAPIType, TheImplType) \
-    template<> struct APITypeInfo<TheAPIType> { typedef TheImplType ImplType; }; \
-    template<> struct ImplTypeInfo<TheImplType> { typedef TheAPIType APIType; };
+    template<> struct APITypeInfo<TheAPIType> { \
+        using ImplType = TheImplType; \
+    }; \
+    template<> struct ImplTypeInfo<TheImplType> { \
+        using APIType = TheAPIType; \
+    };
 
 WK_ADD_API_MAPPING(WKArrayRef, API::Array)
 WK_ADD_API_MAPPING(WKBooleanRef, API::Boolean)
@@ -110,8 +114,12 @@ WK_ADD_API_MAPPING(WKURLRequestRef, API::URLRequest)
 WK_ADD_API_MAPPING(WKURLResponseRef, API::URLResponse)
 WK_ADD_API_MAPPING(WKUserContentURLPatternRef, API::UserContentURLPattern)
 
-template<> struct APITypeInfo<WKMutableArrayRef> { typedef API::Array ImplType; };
-template<> struct APITypeInfo<WKMutableDictionaryRef> { typedef API::Dictionary ImplType; };
+template<> struct APITypeInfo<WKMutableArrayRef> {
+    using ImplType = API::Array;
+};
+template<> struct APITypeInfo<WKMutableDictionaryRef> {
+    using ImplType = API::Dictionary;
+};
 
 #if PLATFORM(COCOA)
 WK_ADD_API_MAPPING(WKWebArchiveRef, API::WebArchive)
