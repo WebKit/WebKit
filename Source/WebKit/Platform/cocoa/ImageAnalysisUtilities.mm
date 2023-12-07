@@ -407,6 +407,8 @@ void requestPayloadForQRCode(CGImageRef image, CompletionHandler<void(NSString *
 
         auto callCompletionOnMainRunLoopWithResult = [completion = WTFMove(completion)](NSString *result) mutable {
             callOnMainRunLoop([completion = WTFMove(completion), result = retainPtr(result)]() mutable {
+                if (!completion)
+                    return;
                 completion(result.get());
             });
         };
