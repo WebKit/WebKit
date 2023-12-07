@@ -30,7 +30,7 @@ class ErrorResilienceTestLarge
     Reset();
   }
 
-  ~ErrorResilienceTestLarge() override = default;
+  virtual ~ErrorResilienceTestLarge() {}
 
   void Reset() {
     error_nframes_ = 0;
@@ -38,19 +38,19 @@ class ErrorResilienceTestLarge
     pattern_switch_ = 0;
   }
 
-  void SetUp() override {
+  virtual void SetUp() {
     InitializeConfig();
     SetMode(encoding_mode_);
   }
 
-  void BeginPassHook(unsigned int /*pass*/) override {
+  virtual void BeginPassHook(unsigned int /*pass*/) {
     psnr_ = 0.0;
     nframes_ = 0;
     mismatch_psnr_ = 0.0;
     mismatch_nframes_ = 0;
   }
 
-  void PSNRPktHook(const vpx_codec_cx_pkt_t *pkt) override {
+  virtual void PSNRPktHook(const vpx_codec_cx_pkt_t *pkt) {
     psnr_ += pkt->data.psnr.psnr[0];
     nframes_++;
   }
@@ -90,7 +90,7 @@ class ErrorResilienceTestLarge
     return frame_flags;
   }
 
-  void PreEncodeFrameHook(libvpx_test::VideoSource *video) override {
+  virtual void PreEncodeFrameHook(libvpx_test::VideoSource *video) {
     frame_flags_ &=
         ~(VP8_EFLAG_NO_UPD_LAST | VP8_EFLAG_NO_UPD_GF | VP8_EFLAG_NO_UPD_ARF);
     // For temporal layer case.
@@ -129,21 +129,21 @@ class ErrorResilienceTestLarge
     return 0.0;
   }
 
-  bool DoDecode() const override {
+  virtual bool DoDecode() const {
     if (error_nframes_ > 0 &&
         (cfg_.g_pass == VPX_RC_LAST_PASS || cfg_.g_pass == VPX_RC_ONE_PASS)) {
       for (unsigned int i = 0; i < error_nframes_; ++i) {
         if (error_frames_[i] == nframes_ - 1) {
           std::cout << "             Skipping decoding frame: "
                     << error_frames_[i] << "\n";
-          return false;
+          return 0;
         }
       }
     }
-    return true;
+    return 1;
   }
 
-  void MismatchHook(const vpx_image_t *img1, const vpx_image_t *img2) override {
+  virtual void MismatchHook(const vpx_image_t *img1, const vpx_image_t *img2) {
     double mismatch_psnr = compute_psnr(img1, img2);
     mismatch_psnr_ += mismatch_psnr;
     ++mismatch_nframes_;
@@ -381,7 +381,7 @@ class ErrorResilienceTestLargeCodecControls
     Reset();
   }
 
-  ~ErrorResilienceTestLargeCodecControls() override = default;
+  virtual ~ErrorResilienceTestLargeCodecControls() {}
 
   void Reset() {
     last_pts_ = 0;
@@ -393,7 +393,7 @@ class ErrorResilienceTestLargeCodecControls
     duration_ = 0.0;
   }
 
-  void SetUp() override {
+  virtual void SetUp() {
     InitializeConfig();
     SetMode(encoding_mode_);
   }
@@ -460,8 +460,8 @@ class ErrorResilienceTestLargeCodecControls
     return layer_id;
   }
 
-  void PreEncodeFrameHook(libvpx_test::VideoSource *video,
-                          libvpx_test::Encoder *encoder) override {
+  virtual void PreEncodeFrameHook(libvpx_test::VideoSource *video,
+                                  libvpx_test::Encoder *encoder) {
     if (cfg_.ts_number_layers > 1) {
       int layer_id = SetLayerId(video->frame(), cfg_.ts_number_layers);
       int frame_flags = SetFrameFlags(video->frame(), cfg_.ts_number_layers);
@@ -476,7 +476,7 @@ class ErrorResilienceTestLargeCodecControls
     }
   }
 
-  void FramePktHook(const vpx_codec_cx_pkt_t *pkt) override {
+  virtual void FramePktHook(const vpx_codec_cx_pkt_t *pkt) {
     // Time since last timestamp = duration.
     vpx_codec_pts_t duration = pkt->data.frame.pts - last_pts_;
     if (duration > 1) {
@@ -496,7 +496,7 @@ class ErrorResilienceTestLargeCodecControls
     ++tot_frame_number_;
   }
 
-  void EndPassHook() override {
+  virtual void EndPassHook(void) {
     duration_ = (last_pts_ + 1) * timebase_;
     if (cfg_.ts_number_layers > 1) {
       for (int layer = 0; layer < static_cast<int>(cfg_.ts_number_layers);

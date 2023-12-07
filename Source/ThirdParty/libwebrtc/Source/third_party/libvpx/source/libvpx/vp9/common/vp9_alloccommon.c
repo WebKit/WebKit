@@ -74,8 +74,6 @@ static void free_seg_map(VP9_COMMON *cm) {
 void vp9_free_ref_frame_buffers(BufferPool *pool) {
   int i;
 
-  if (!pool) return;
-
   for (i = 0; i < FRAME_BUFFERS; ++i) {
     if (!pool->frame_bufs[i].released &&
         pool->frame_bufs[i].raw_frame_buffer.data != NULL) {
@@ -103,7 +101,7 @@ void vp9_free_postproc_buffers(VP9_COMMON *cm) {
 }
 
 void vp9_free_context_buffers(VP9_COMMON *cm) {
-  if (cm->free_mi) cm->free_mi(cm);
+  cm->free_mi(cm);
   free_seg_map(cm);
   vpx_free(cm->above_context);
   cm->above_context = NULL;

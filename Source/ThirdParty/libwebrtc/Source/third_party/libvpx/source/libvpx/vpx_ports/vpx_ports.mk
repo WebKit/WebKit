@@ -36,12 +36,7 @@ PORTS_SRCS-yes += x86.h
 PORTS_SRCS-yes += x86_abi_support.asm
 endif
 
-ifeq ($(VPX_ARCH_AARCH64),yes)
-PORTS_SRCS-yes += aarch64_cpudetect.c
-else
-PORTS_SRCS-$(VPX_ARCH_ARM) += aarch32_cpudetect.c
-endif
-PORTS_SRCS-$(VPX_ARCH_ARM) += arm_cpudetect.h
+PORTS_SRCS-$(VPX_ARCH_ARM) += arm_cpudetect.c
 PORTS_SRCS-$(VPX_ARCH_ARM) += arm.h
 
 PORTS_SRCS-$(VPX_ARCH_PPC) += ppc_cpudetect.c
@@ -49,9 +44,6 @@ PORTS_SRCS-$(VPX_ARCH_PPC) += ppc.h
 
 PORTS_SRCS-$(VPX_ARCH_MIPS) += mips_cpudetect.c
 PORTS_SRCS-$(VPX_ARCH_MIPS) += mips.h
-
-PORTS_SRCS-$(VPX_ARCH_LOONGARCH) += loongarch_cpudetect.c
-PORTS_SRCS-$(VPX_ARCH_LOONGARCH) += loongarch.h
 
 ifeq ($(VPX_ARCH_MIPS), yes)
 PORTS_SRCS-yes += asmdefs_mmi.h

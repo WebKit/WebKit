@@ -106,7 +106,7 @@ static INLINE __m128i abs_diff(__m128i a, __m128i b) {
 
 void vpx_lpf_horizontal_4_sse2(uint8_t *s, int pitch, const uint8_t *blimit,
                                const uint8_t *limit, const uint8_t *thresh) {
-  const __m128i zero = _mm_setzero_si128();
+  const __m128i zero = _mm_set1_epi16(0);
   const __m128i limit_v =
       _mm_unpacklo_epi64(_mm_loadl_epi64((const __m128i *)blimit),
                          _mm_loadl_epi64((const __m128i *)limit));
@@ -140,7 +140,7 @@ void vpx_lpf_horizontal_4_sse2(uint8_t *s, int pitch, const uint8_t *blimit,
 
 void vpx_lpf_vertical_4_sse2(uint8_t *s, int pitch, const uint8_t *blimit,
                              const uint8_t *limit, const uint8_t *thresh) {
-  const __m128i zero = _mm_setzero_si128();
+  const __m128i zero = _mm_set1_epi16(0);
   const __m128i limit_v =
       _mm_unpacklo_epi64(_mm_loadl_epi64((const __m128i *)blimit),
                          _mm_loadl_epi64((const __m128i *)limit));
@@ -211,28 +211,28 @@ void vpx_lpf_vertical_4_sse2(uint8_t *s, int pitch, const uint8_t *blimit,
   // 00 10 20 30 01 11 21 31  02 12 22 32 03 13 23 33
   ps1ps0 = _mm_unpacklo_epi8(ps1ps0, x0);
 
-  storeu_int32(s + 0 * pitch - 2, _mm_cvtsi128_si32(ps1ps0));
+  storeu_uint32(s + 0 * pitch - 2, _mm_cvtsi128_si32(ps1ps0));
   ps1ps0 = _mm_srli_si128(ps1ps0, 4);
-  storeu_int32(s + 1 * pitch - 2, _mm_cvtsi128_si32(ps1ps0));
+  storeu_uint32(s + 1 * pitch - 2, _mm_cvtsi128_si32(ps1ps0));
   ps1ps0 = _mm_srli_si128(ps1ps0, 4);
-  storeu_int32(s + 2 * pitch - 2, _mm_cvtsi128_si32(ps1ps0));
+  storeu_uint32(s + 2 * pitch - 2, _mm_cvtsi128_si32(ps1ps0));
   ps1ps0 = _mm_srli_si128(ps1ps0, 4);
-  storeu_int32(s + 3 * pitch - 2, _mm_cvtsi128_si32(ps1ps0));
+  storeu_uint32(s + 3 * pitch - 2, _mm_cvtsi128_si32(ps1ps0));
 
-  storeu_int32(s + 4 * pitch - 2, _mm_cvtsi128_si32(qs1qs0));
+  storeu_uint32(s + 4 * pitch - 2, _mm_cvtsi128_si32(qs1qs0));
   qs1qs0 = _mm_srli_si128(qs1qs0, 4);
-  storeu_int32(s + 5 * pitch - 2, _mm_cvtsi128_si32(qs1qs0));
+  storeu_uint32(s + 5 * pitch - 2, _mm_cvtsi128_si32(qs1qs0));
   qs1qs0 = _mm_srli_si128(qs1qs0, 4);
-  storeu_int32(s + 6 * pitch - 2, _mm_cvtsi128_si32(qs1qs0));
+  storeu_uint32(s + 6 * pitch - 2, _mm_cvtsi128_si32(qs1qs0));
   qs1qs0 = _mm_srli_si128(qs1qs0, 4);
-  storeu_int32(s + 7 * pitch - 2, _mm_cvtsi128_si32(qs1qs0));
+  storeu_uint32(s + 7 * pitch - 2, _mm_cvtsi128_si32(qs1qs0));
 }
 
 void vpx_lpf_horizontal_16_sse2(unsigned char *s, int pitch,
                                 const unsigned char *blimit,
                                 const unsigned char *limit,
                                 const unsigned char *thresh) {
-  const __m128i zero = _mm_setzero_si128();
+  const __m128i zero = _mm_set1_epi16(0);
   const __m128i one = _mm_set1_epi8(1);
   const __m128i blimit_v = _mm_load_si128((const __m128i *)blimit);
   const __m128i limit_v = _mm_load_si128((const __m128i *)limit);
@@ -594,7 +594,7 @@ void vpx_lpf_horizontal_16_dual_sse2(unsigned char *s, int pitch,
                                      const unsigned char *blimit,
                                      const unsigned char *limit,
                                      const unsigned char *thresh) {
-  const __m128i zero = _mm_setzero_si128();
+  const __m128i zero = _mm_set1_epi16(0);
   const __m128i one = _mm_set1_epi8(1);
   const __m128i blimit_v = _mm_load_si128((const __m128i *)blimit);
   const __m128i limit_v = _mm_load_si128((const __m128i *)limit);
@@ -932,7 +932,7 @@ void vpx_lpf_horizontal_8_sse2(unsigned char *s, int pitch,
   DECLARE_ALIGNED(16, unsigned char, flat_oq2[16]);
   DECLARE_ALIGNED(16, unsigned char, flat_oq1[16]);
   DECLARE_ALIGNED(16, unsigned char, flat_oq0[16]);
-  const __m128i zero = _mm_setzero_si128();
+  const __m128i zero = _mm_set1_epi16(0);
   const __m128i blimit_v = _mm_load_si128((const __m128i *)blimit);
   const __m128i limit_v = _mm_load_si128((const __m128i *)limit);
   const __m128i thresh_v = _mm_load_si128((const __m128i *)thresh);
@@ -1152,7 +1152,7 @@ void vpx_lpf_horizontal_8_dual_sse2(
   DECLARE_ALIGNED(16, unsigned char, flat_oq2[16]);
   DECLARE_ALIGNED(16, unsigned char, flat_oq1[16]);
   DECLARE_ALIGNED(16, unsigned char, flat_oq0[16]);
-  const __m128i zero = _mm_setzero_si128();
+  const __m128i zero = _mm_set1_epi16(0);
   const __m128i blimit =
       _mm_unpacklo_epi64(_mm_load_si128((const __m128i *)blimit0),
                          _mm_load_si128((const __m128i *)blimit1));
@@ -1406,7 +1406,7 @@ void vpx_lpf_horizontal_4_dual_sse2(unsigned char *s, int pitch,
   const __m128i thresh =
       _mm_unpacklo_epi64(_mm_load_si128((const __m128i *)thresh0),
                          _mm_load_si128((const __m128i *)thresh1));
-  const __m128i zero = _mm_setzero_si128();
+  const __m128i zero = _mm_set1_epi16(0);
   __m128i p3, p2, p1, p0, q0, q1, q2, q3;
   __m128i mask, hev, flat;
 

@@ -26,9 +26,9 @@ class CpuSpeedTest
       : EncoderTest(GET_PARAM(0)), encoding_mode_(GET_PARAM(1)),
         set_cpu_used_(GET_PARAM(2)), min_psnr_(kMaxPSNR),
         tune_content_(VP9E_CONTENT_DEFAULT) {}
-  ~CpuSpeedTest() override = default;
+  virtual ~CpuSpeedTest() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     InitializeConfig();
     SetMode(encoding_mode_);
     if (encoding_mode_ != ::libvpx_test::kRealTime) {
@@ -40,10 +40,10 @@ class CpuSpeedTest
     }
   }
 
-  void BeginPassHook(unsigned int /*pass*/) override { min_psnr_ = kMaxPSNR; }
+  virtual void BeginPassHook(unsigned int /*pass*/) { min_psnr_ = kMaxPSNR; }
 
-  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                          ::libvpx_test::Encoder *encoder) override {
+  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Encoder *encoder) {
     if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, set_cpu_used_);
       encoder->Control(VP9E_SET_TUNE_CONTENT, tune_content_);
@@ -56,7 +56,7 @@ class CpuSpeedTest
     }
   }
 
-  void PSNRPktHook(const vpx_codec_cx_pkt_t *pkt) override {
+  virtual void PSNRPktHook(const vpx_codec_cx_pkt_t *pkt) {
     if (pkt->data.psnr.psnr[0] < min_psnr_) min_psnr_ = pkt->data.psnr.psnr[0];
   }
 

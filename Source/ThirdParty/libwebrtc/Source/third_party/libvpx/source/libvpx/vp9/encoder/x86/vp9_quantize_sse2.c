@@ -16,111 +16,187 @@
 #include "vpx/vpx_integer.h"
 #include "vpx_dsp/vpx_dsp_common.h"
 #include "vpx_dsp/x86/bitdepth_conversion_sse2.h"
-#include "vpx_dsp/x86/quantize_sse2.h"
-#include "vp9/common/vp9_scan.h"
-#include "vp9/encoder/vp9_block.h"
 
 void vp9_quantize_fp_sse2(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
-                          const struct macroblock_plane *const mb_plane,
-                          tran_low_t *qcoeff_ptr, tran_low_t *dqcoeff_ptr,
-                          const int16_t *dequant_ptr, uint16_t *eob_ptr,
-                          const struct ScanOrder *const scan_order) {
-  const __m128i zero = _mm_setzero_si128();
+                          int skip_block, const int16_t *round_ptr,
+                          const int16_t *quant_ptr, tran_low_t *qcoeff_ptr,
+                          tran_low_t *dqcoeff_ptr, const int16_t *dequant_ptr,
+                          uint16_t *eob_ptr, const int16_t *scan,
+                          const int16_t *iscan) {
+  __m128i zero;
   __m128i thr;
   int nzflag;
-  int index = 16;
-  __m128i round, quant, dequant;
-  __m128i coeff0, coeff1, coeff0_sign, coeff1_sign;
-  __m128i qcoeff0, qcoeff1;
   __m128i eob;
-  const int16_t *iscan = scan_order->iscan;
+  __m128i round, quant, dequant;
 
-  // Setup global values.
-  load_fp_values(mb_plane, &round, &quant, dequant_ptr, &dequant);
+  (void)scan;
+  (void)skip_block;
+  assert(!skip_block);
 
-  // Do DC and first 15 AC.
-  coeff0 = load_tran_low(coeff_ptr);
-  coeff1 = load_tran_low(coeff_ptr + 8);
+  coeff_ptr += n_coeffs;
+  iscan += n_coeffs;
+  qcoeff_ptr += n_coeffs;
+  dqcoeff_ptr += n_coeffs;
+  n_coeffs = -n_coeffs;
+  zero = _mm_setzero_si128();
 
-  // Poor man's abs().
-  coeff0_sign = _mm_srai_epi16(coeff0, 15);
-  coeff1_sign = _mm_srai_epi16(coeff1, 15);
-  qcoeff0 = invert_sign_sse2(coeff0, coeff0_sign);
-  qcoeff1 = invert_sign_sse2(coeff1, coeff1_sign);
+  {
+    __m128i coeff0, coeff1;
 
-  qcoeff0 = _mm_adds_epi16(qcoeff0, round);
-  qcoeff0 = _mm_mulhi_epi16(qcoeff0, quant);
+    // Setup global values
+    {
+      round = _mm_load_si128((const __m128i *)round_ptr);
+      quant = _mm_load_si128((const __m128i *)quant_ptr);
+      dequant = _mm_load_si128((const __m128i *)dequant_ptr);
+    }
 
-  round = _mm_unpackhi_epi64(round, round);
-  quant = _mm_unpackhi_epi64(quant, quant);
+    {
+      __m128i coeff0_sign, coeff1_sign;
+      __m128i qcoeff0, qcoeff1;
+      __m128i qtmp0, qtmp1;
+      // Do DC and first 15 AC
+      coeff0 = load_tran_low(coeff_ptr + n_coeffs);
+      coeff1 = load_tran_low(coeff_ptr + n_coeffs + 8);
 
-  qcoeff1 = _mm_adds_epi16(qcoeff1, round);
-  qcoeff1 = _mm_mulhi_epi16(qcoeff1, quant);
+      // Poor man's sign extract
+      coeff0_sign = _mm_srai_epi16(coeff0, 15);
+      coeff1_sign = _mm_srai_epi16(coeff1, 15);
+      qcoeff0 = _mm_xor_si128(coeff0, coeff0_sign);
+      qcoeff1 = _mm_xor_si128(coeff1, coeff1_sign);
+      qcoeff0 = _mm_sub_epi16(qcoeff0, coeff0_sign);
+      qcoeff1 = _mm_sub_epi16(qcoeff1, coeff1_sign);
 
-  // Reinsert signs.
-  qcoeff0 = invert_sign_sse2(qcoeff0, coeff0_sign);
-  qcoeff1 = invert_sign_sse2(qcoeff1, coeff1_sign);
+      qcoeff0 = _mm_adds_epi16(qcoeff0, round);
+      round = _mm_unpackhi_epi64(round, round);
+      qcoeff1 = _mm_adds_epi16(qcoeff1, round);
+      qtmp0 = _mm_mulhi_epi16(qcoeff0, quant);
+      quant = _mm_unpackhi_epi64(quant, quant);
+      qtmp1 = _mm_mulhi_epi16(qcoeff1, quant);
 
-  store_tran_low(qcoeff0, qcoeff_ptr);
-  store_tran_low(qcoeff1, qcoeff_ptr + 8);
+      // Reinsert signs
+      qcoeff0 = _mm_xor_si128(qtmp0, coeff0_sign);
+      qcoeff1 = _mm_xor_si128(qtmp1, coeff1_sign);
+      qcoeff0 = _mm_sub_epi16(qcoeff0, coeff0_sign);
+      qcoeff1 = _mm_sub_epi16(qcoeff1, coeff1_sign);
 
-  qcoeff0 = _mm_mullo_epi16(qcoeff0, dequant);
-  dequant = _mm_unpackhi_epi64(dequant, dequant);
-  qcoeff1 = _mm_mullo_epi16(qcoeff1, dequant);
+      store_tran_low(qcoeff0, qcoeff_ptr + n_coeffs);
+      store_tran_low(qcoeff1, qcoeff_ptr + n_coeffs + 8);
 
-  store_tran_low(qcoeff0, dqcoeff_ptr);
-  store_tran_low(qcoeff1, dqcoeff_ptr + 8);
+      coeff0 = _mm_mullo_epi16(qcoeff0, dequant);
+      dequant = _mm_unpackhi_epi64(dequant, dequant);
+      coeff1 = _mm_mullo_epi16(qcoeff1, dequant);
 
-  eob = scan_for_eob(&qcoeff0, &qcoeff1, iscan, 0, zero);
+      store_tran_low(coeff0, dqcoeff_ptr + n_coeffs);
+      store_tran_low(coeff1, dqcoeff_ptr + n_coeffs + 8);
+    }
+
+    {
+      // Scan for eob
+      __m128i zero_coeff0, zero_coeff1;
+      __m128i nzero_coeff0, nzero_coeff1;
+      __m128i iscan0, iscan1;
+      __m128i eob1;
+      zero_coeff0 = _mm_cmpeq_epi16(coeff0, zero);
+      zero_coeff1 = _mm_cmpeq_epi16(coeff1, zero);
+      nzero_coeff0 = _mm_cmpeq_epi16(zero_coeff0, zero);
+      nzero_coeff1 = _mm_cmpeq_epi16(zero_coeff1, zero);
+      iscan0 = _mm_load_si128((const __m128i *)(iscan + n_coeffs));
+      iscan1 = _mm_load_si128((const __m128i *)(iscan + n_coeffs) + 1);
+      // Add one to convert from indices to counts
+      iscan0 = _mm_sub_epi16(iscan0, nzero_coeff0);
+      iscan1 = _mm_sub_epi16(iscan1, nzero_coeff1);
+      eob = _mm_and_si128(iscan0, nzero_coeff0);
+      eob1 = _mm_and_si128(iscan1, nzero_coeff1);
+      eob = _mm_max_epi16(eob, eob1);
+    }
+    n_coeffs += 8 * 2;
+  }
 
   thr = _mm_srai_epi16(dequant, 1);
 
-  // AC only loop.
-  while (index < n_coeffs) {
-    coeff0 = load_tran_low(coeff_ptr + index);
-    coeff1 = load_tran_low(coeff_ptr + index + 8);
+  // AC only loop
+  while (n_coeffs < 0) {
+    __m128i coeff0, coeff1;
+    {
+      __m128i coeff0_sign, coeff1_sign;
+      __m128i qcoeff0, qcoeff1;
+      __m128i qtmp0, qtmp1;
 
-    // Poor man's abs().
-    coeff0_sign = _mm_srai_epi16(coeff0, 15);
-    coeff1_sign = _mm_srai_epi16(coeff1, 15);
-    qcoeff0 = invert_sign_sse2(coeff0, coeff0_sign);
-    qcoeff1 = invert_sign_sse2(coeff1, coeff1_sign);
+      coeff0 = load_tran_low(coeff_ptr + n_coeffs);
+      coeff1 = load_tran_low(coeff_ptr + n_coeffs + 8);
 
-    nzflag = _mm_movemask_epi8(_mm_cmpgt_epi16(qcoeff0, thr)) |
-             _mm_movemask_epi8(_mm_cmpgt_epi16(qcoeff1, thr));
+      // Poor man's sign extract
+      coeff0_sign = _mm_srai_epi16(coeff0, 15);
+      coeff1_sign = _mm_srai_epi16(coeff1, 15);
+      qcoeff0 = _mm_xor_si128(coeff0, coeff0_sign);
+      qcoeff1 = _mm_xor_si128(coeff1, coeff1_sign);
+      qcoeff0 = _mm_sub_epi16(qcoeff0, coeff0_sign);
+      qcoeff1 = _mm_sub_epi16(qcoeff1, coeff1_sign);
 
-    if (nzflag) {
-      __m128i eob0;
-      qcoeff0 = _mm_adds_epi16(qcoeff0, round);
-      qcoeff1 = _mm_adds_epi16(qcoeff1, round);
-      qcoeff0 = _mm_mulhi_epi16(qcoeff0, quant);
-      qcoeff1 = _mm_mulhi_epi16(qcoeff1, quant);
+      nzflag = _mm_movemask_epi8(_mm_cmpgt_epi16(qcoeff0, thr)) |
+               _mm_movemask_epi8(_mm_cmpgt_epi16(qcoeff1, thr));
 
-      // Reinsert signs.
-      qcoeff0 = invert_sign_sse2(qcoeff0, coeff0_sign);
-      qcoeff1 = invert_sign_sse2(qcoeff1, coeff1_sign);
+      if (nzflag) {
+        qcoeff0 = _mm_adds_epi16(qcoeff0, round);
+        qcoeff1 = _mm_adds_epi16(qcoeff1, round);
+        qtmp0 = _mm_mulhi_epi16(qcoeff0, quant);
+        qtmp1 = _mm_mulhi_epi16(qcoeff1, quant);
 
-      store_tran_low(qcoeff0, qcoeff_ptr + index);
-      store_tran_low(qcoeff1, qcoeff_ptr + index + 8);
+        // Reinsert signs
+        qcoeff0 = _mm_xor_si128(qtmp0, coeff0_sign);
+        qcoeff1 = _mm_xor_si128(qtmp1, coeff1_sign);
+        qcoeff0 = _mm_sub_epi16(qcoeff0, coeff0_sign);
+        qcoeff1 = _mm_sub_epi16(qcoeff1, coeff1_sign);
 
-      qcoeff0 = _mm_mullo_epi16(qcoeff0, dequant);
-      qcoeff1 = _mm_mullo_epi16(qcoeff1, dequant);
+        store_tran_low(qcoeff0, qcoeff_ptr + n_coeffs);
+        store_tran_low(qcoeff1, qcoeff_ptr + n_coeffs + 8);
 
-      store_tran_low(qcoeff0, dqcoeff_ptr + index);
-      store_tran_low(qcoeff1, dqcoeff_ptr + index + 8);
+        coeff0 = _mm_mullo_epi16(qcoeff0, dequant);
+        coeff1 = _mm_mullo_epi16(qcoeff1, dequant);
 
-      eob0 = scan_for_eob(&qcoeff0, &qcoeff1, iscan, index, zero);
-      eob = _mm_max_epi16(eob, eob0);
-    } else {
-      store_zero_tran_low(qcoeff_ptr + index);
-      store_zero_tran_low(qcoeff_ptr + index + 8);
+        store_tran_low(coeff0, dqcoeff_ptr + n_coeffs);
+        store_tran_low(coeff1, dqcoeff_ptr + n_coeffs + 8);
+      } else {
+        store_zero_tran_low(qcoeff_ptr + n_coeffs);
+        store_zero_tran_low(qcoeff_ptr + n_coeffs + 8);
 
-      store_zero_tran_low(dqcoeff_ptr + index);
-      store_zero_tran_low(dqcoeff_ptr + index + 8);
+        store_zero_tran_low(dqcoeff_ptr + n_coeffs);
+        store_zero_tran_low(dqcoeff_ptr + n_coeffs + 8);
+      }
     }
 
-    index += 16;
+    if (nzflag) {
+      // Scan for eob
+      __m128i zero_coeff0, zero_coeff1;
+      __m128i nzero_coeff0, nzero_coeff1;
+      __m128i iscan0, iscan1;
+      __m128i eob0, eob1;
+      zero_coeff0 = _mm_cmpeq_epi16(coeff0, zero);
+      zero_coeff1 = _mm_cmpeq_epi16(coeff1, zero);
+      nzero_coeff0 = _mm_cmpeq_epi16(zero_coeff0, zero);
+      nzero_coeff1 = _mm_cmpeq_epi16(zero_coeff1, zero);
+      iscan0 = _mm_load_si128((const __m128i *)(iscan + n_coeffs));
+      iscan1 = _mm_load_si128((const __m128i *)(iscan + n_coeffs) + 1);
+      // Add one to convert from indices to counts
+      iscan0 = _mm_sub_epi16(iscan0, nzero_coeff0);
+      iscan1 = _mm_sub_epi16(iscan1, nzero_coeff1);
+      eob0 = _mm_and_si128(iscan0, nzero_coeff0);
+      eob1 = _mm_and_si128(iscan1, nzero_coeff1);
+      eob0 = _mm_max_epi16(eob0, eob1);
+      eob = _mm_max_epi16(eob, eob0);
+    }
+    n_coeffs += 8 * 2;
   }
 
-  *eob_ptr = accumulate_eob(eob);
+  // Accumulate EOB
+  {
+    __m128i eob_shuffled;
+    eob_shuffled = _mm_shuffle_epi32(eob, 0xe);
+    eob = _mm_max_epi16(eob, eob_shuffled);
+    eob_shuffled = _mm_shufflelo_epi16(eob, 0xe);
+    eob = _mm_max_epi16(eob, eob_shuffled);
+    eob_shuffled = _mm_shufflelo_epi16(eob, 0x1);
+    eob = _mm_max_epi16(eob, eob_shuffled);
+    *eob_ptr = _mm_extract_epi16(eob, 1);
+  }
 }

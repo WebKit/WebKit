@@ -210,12 +210,13 @@ class ExternalFrameBufferMD5Test
       : DecoderTest(GET_PARAM(::libvpx_test::kCodecFactoryParam)),
         md5_file_(nullptr), num_buffers_(0) {}
 
-  ~ExternalFrameBufferMD5Test() override {
+  virtual ~ExternalFrameBufferMD5Test() {
     if (md5_file_ != nullptr) fclose(md5_file_);
   }
 
-  void PreDecodeFrameHook(const libvpx_test::CompressedVideoSource &video,
-                          libvpx_test::Decoder *decoder) override {
+  virtual void PreDecodeFrameHook(
+      const libvpx_test::CompressedVideoSource &video,
+      libvpx_test::Decoder *decoder) {
     if (num_buffers_ > 0 && video.frame_number() == 0) {
       // Have libvpx use frame buffers we create.
       ASSERT_TRUE(fb_list_.CreateBufferList(num_buffers_));
@@ -231,8 +232,8 @@ class ExternalFrameBufferMD5Test
         << "Md5 file open failed. Filename: " << md5_file_name_;
   }
 
-  void DecompressedFrameHook(const vpx_image_t &img,
-                             const unsigned int frame_number) override {
+  virtual void DecompressedFrameHook(const vpx_image_t &img,
+                                     const unsigned int frame_number) {
     ASSERT_NE(md5_file_, nullptr);
     char expected_md5[33];
     char junk[128];
@@ -288,7 +289,7 @@ class ExternalFrameBufferTest : public ::testing::Test {
   ExternalFrameBufferTest()
       : video_(nullptr), decoder_(nullptr), num_buffers_(0) {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     video_ = new libvpx_test::WebMVideoSource(kVP9TestFile);
     ASSERT_NE(video_, nullptr);
     video_->Init();
@@ -299,7 +300,7 @@ class ExternalFrameBufferTest : public ::testing::Test {
     ASSERT_NE(decoder_, nullptr);
   }
 
-  void TearDown() override {
+  virtual void TearDown() {
     delete decoder_;
     decoder_ = nullptr;
     delete video_;
@@ -354,7 +355,7 @@ class ExternalFrameBufferTest : public ::testing::Test {
 
 class ExternalFrameBufferNonRefTest : public ExternalFrameBufferTest {
  protected:
-  void SetUp() override {
+  virtual void SetUp() {
     video_ = new libvpx_test::WebMVideoSource(kVP9NonRefTestFile);
     ASSERT_NE(video_, nullptr);
     video_->Init();

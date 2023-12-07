@@ -101,13 +101,6 @@ typedef enum {
   THR_INTRA,
 } THR_MODES_SUB8X8;
 
-typedef struct {
-  // RD multiplier control factors added for Vizier project.
-  double rd_mult_inter_qp_fac;
-  double rd_mult_arf_qp_fac;
-  double rd_mult_key_qp_fac;
-} RD_CONTROL;
-
 typedef struct RD_OPT {
   // Thresh_mult is used to set a threshold for the rd score. A higher value
   // means that we will accept the best mode so far more often. This number
@@ -121,9 +114,11 @@ typedef struct RD_OPT {
   int64_t prediction_type_threshes[MAX_REF_FRAMES][REFERENCE_MODES];
 
   int64_t filter_threshes[MAX_REF_FRAMES][SWITCHABLE_FILTER_CONTEXTS];
+#if CONFIG_CONSISTENT_RECODE || CONFIG_RATE_CTRL
   int64_t prediction_type_threshes_prev[MAX_REF_FRAMES][REFERENCE_MODES];
 
   int64_t filter_threshes_prev[MAX_REF_FRAMES][SWITCHABLE_FILTER_CONTEXTS];
+#endif  // CONFIG_CONSISTENT_RECODE || CONFIG_RATE_CTRL
   int RDMULT;
   int RDDIV;
   double r0;
@@ -149,8 +144,6 @@ struct TileDataEnc;
 struct VP9_COMP;
 struct macroblock;
 
-void vp9_init_rd_parameters(struct VP9_COMP *cpi);
-
 int vp9_compute_rd_mult_based_on_qindex(const struct VP9_COMP *cpi, int qindex);
 
 int vp9_compute_rd_mult(const struct VP9_COMP *cpi, int qindex);
@@ -163,6 +156,11 @@ void vp9_initialize_me_consts(struct VP9_COMP *cpi, MACROBLOCK *x, int qindex);
 
 void vp9_model_rd_from_var_lapndz(unsigned int var, unsigned int n_log2,
                                   unsigned int qstep, int *rate, int64_t *dist);
+
+void vp9_model_rd_from_var_lapndz_vec(unsigned int var[MAX_MB_PLANE],
+                                      unsigned int n_log2[MAX_MB_PLANE],
+                                      unsigned int qstep[MAX_MB_PLANE],
+                                      int64_t *rate_sum, int64_t *dist_sum);
 
 int vp9_get_switchable_rate(const struct VP9_COMP *cpi,
                             const MACROBLOCKD *const xd);

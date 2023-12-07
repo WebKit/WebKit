@@ -29,25 +29,25 @@ static unsigned int MemGetLe32(const uint8_t *mem) {
 class IVFVideoSource : public CompressedVideoSource {
  public:
   explicit IVFVideoSource(const std::string &file_name)
-      : file_name_(file_name), input_file_(nullptr),
-        compressed_frame_buf_(nullptr), frame_sz_(0), frame_(0),
-        end_of_file_(false) {}
+      : file_name_(file_name), input_file_(NULL), compressed_frame_buf_(NULL),
+        frame_sz_(0), frame_(0), end_of_file_(false) {}
 
-  ~IVFVideoSource() override {
+  virtual ~IVFVideoSource() {
     delete[] compressed_frame_buf_;
 
     if (input_file_) fclose(input_file_);
   }
 
-  void Init() override {
+  virtual void Init() {
     // Allocate a buffer for read in the compressed video frame.
     compressed_frame_buf_ = new uint8_t[libvpx_test::kCodeBufferSize];
-    ASSERT_NE(compressed_frame_buf_, nullptr) << "Allocate frame buffer failed";
+    ASSERT_TRUE(compressed_frame_buf_ != NULL)
+        << "Allocate frame buffer failed";
   }
 
-  void Begin() override {
+  virtual void Begin() {
     input_file_ = OpenTestDataFile(file_name_);
-    ASSERT_NE(input_file_, nullptr)
+    ASSERT_TRUE(input_file_ != NULL)
         << "Input file open failed. Filename: " << file_name_;
 
     // Read file header
@@ -62,13 +62,13 @@ class IVFVideoSource : public CompressedVideoSource {
     FillFrame();
   }
 
-  void Next() override {
+  virtual void Next() {
     ++frame_;
     FillFrame();
   }
 
   void FillFrame() {
-    ASSERT_NE(input_file_, nullptr);
+    ASSERT_TRUE(input_file_ != NULL);
     uint8_t frame_hdr[kIvfFrameHdrSize];
     // Check frame header and read a frame from input_file.
     if (fread(frame_hdr, 1, kIvfFrameHdrSize, input_file_) !=
@@ -86,11 +86,11 @@ class IVFVideoSource : public CompressedVideoSource {
     }
   }
 
-  const uint8_t *cxdata() const override {
-    return end_of_file_ ? nullptr : compressed_frame_buf_;
+  virtual const uint8_t *cxdata() const {
+    return end_of_file_ ? NULL : compressed_frame_buf_;
   }
-  size_t frame_size() const override { return frame_sz_; }
-  unsigned int frame_number() const override { return frame_; }
+  virtual size_t frame_size() const { return frame_sz_; }
+  virtual unsigned int frame_number() const { return frame_; }
 
  protected:
   std::string file_name_;

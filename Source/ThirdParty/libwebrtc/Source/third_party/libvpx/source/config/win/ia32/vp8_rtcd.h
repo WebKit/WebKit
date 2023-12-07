@@ -105,6 +105,36 @@ RTCD_EXTERN void (*vp8_bilinear_predict8x8)(unsigned char* src_ptr,
                                             unsigned char* dst_ptr,
                                             int dst_pitch);
 
+void vp8_blend_b_c(unsigned char* y,
+                   unsigned char* u,
+                   unsigned char* v,
+                   int y_1,
+                   int u_1,
+                   int v_1,
+                   int alpha,
+                   int stride);
+#define vp8_blend_b vp8_blend_b_c
+
+void vp8_blend_mb_inner_c(unsigned char* y,
+                          unsigned char* u,
+                          unsigned char* v,
+                          int y_1,
+                          int u_1,
+                          int v_1,
+                          int alpha,
+                          int stride);
+#define vp8_blend_mb_inner vp8_blend_mb_inner_c
+
+void vp8_blend_mb_outer_c(unsigned char* y,
+                          unsigned char* u,
+                          unsigned char* v,
+                          int y_1,
+                          int u_1,
+                          int v_1,
+                          int alpha,
+                          int stride);
+#define vp8_blend_mb_outer vp8_blend_mb_outer_c
+
 int vp8_block_error_c(short* coeff, short* dqcoeff);
 int vp8_block_error_sse2(short* coeff, short* dqcoeff);
 #define vp8_block_error vp8_block_error_sse2
@@ -307,6 +337,43 @@ void vp8_filter_by_weight8x8_sse2(unsigned char* src,
                                   int dst_stride,
                                   int src_weight);
 #define vp8_filter_by_weight8x8 vp8_filter_by_weight8x8_sse2
+
+int vp8_full_search_sad_c(struct macroblock* x,
+                          struct block* b,
+                          struct blockd* d,
+                          union int_mv* ref_mv,
+                          int sad_per_bit,
+                          int distance,
+                          struct variance_vtable* fn_ptr,
+                          int* mvcost[2],
+                          union int_mv* center_mv);
+int vp8_full_search_sadx3(struct macroblock* x,
+                          struct block* b,
+                          struct blockd* d,
+                          union int_mv* ref_mv,
+                          int sad_per_bit,
+                          int distance,
+                          struct variance_vtable* fn_ptr,
+                          int* mvcost[2],
+                          union int_mv* center_mv);
+int vp8_full_search_sadx8(struct macroblock* x,
+                          struct block* b,
+                          struct blockd* d,
+                          union int_mv* ref_mv,
+                          int sad_per_bit,
+                          int distance,
+                          struct variance_vtable* fn_ptr,
+                          int* mvcost[2],
+                          union int_mv* center_mv);
+RTCD_EXTERN int (*vp8_full_search_sad)(struct macroblock* x,
+                                       struct block* b,
+                                       struct blockd* d,
+                                       union int_mv* ref_mv,
+                                       int sad_per_bit,
+                                       int distance,
+                                       struct variance_vtable* fn_ptr,
+                                       int* mvcost[2],
+                                       union int_mv* center_mv);
 
 void vp8_loop_filter_bh_c(unsigned char* y_ptr,
                           unsigned char* u_ptr,
@@ -581,6 +648,11 @@ static void setup_rtcd_internal(void) {
   vp8_fast_quantize_b = vp8_fast_quantize_b_sse2;
   if (flags & HAS_SSSE3)
     vp8_fast_quantize_b = vp8_fast_quantize_b_ssse3;
+  vp8_full_search_sad = vp8_full_search_sad_c;
+  if (flags & HAS_SSE3)
+    vp8_full_search_sad = vp8_full_search_sadx3;
+  if (flags & HAS_SSE4_1)
+    vp8_full_search_sad = vp8_full_search_sadx8;
   vp8_regular_quantize_b = vp8_regular_quantize_b_sse2;
   if (flags & HAS_SSE4_1)
     vp8_regular_quantize_b = vp8_regular_quantize_b_sse4_1;

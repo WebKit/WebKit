@@ -1,10 +1,8 @@
 @ This file was created from a .asm file
 @  using the ads2gas.pl script.
-.syntax unified
+	.syntax unified
 .equ VPX_ARCH_ARM ,  1
 .equ ARCH_ARM ,  1
-.equ VPX_ARCH_AARCH64 ,  1
-.equ ARCH_AARCH64 ,  1
 .equ VPX_ARCH_MIPS ,  0
 .equ ARCH_MIPS ,  0
 .equ VPX_ARCH_X86 ,  0
@@ -13,12 +11,8 @@
 .equ ARCH_X86_64 ,  0
 .equ VPX_ARCH_PPC ,  0
 .equ ARCH_PPC ,  0
-.equ VPX_ARCH_LOONGARCH ,  0
-.equ ARCH_LOONGARCH ,  0
-.equ HAVE_NEON_ASM ,  0
 .equ HAVE_NEON ,  1
-.equ HAVE_NEON_DOTPROD ,  1
-.equ HAVE_NEON_I8MM ,  1
+.equ HAVE_NEON_ASM ,  0
 .equ HAVE_MIPS32 ,  0
 .equ HAVE_DSPR2 ,  0
 .equ HAVE_MSA ,  0
@@ -34,8 +28,6 @@
 .equ HAVE_AVX512 ,  0
 .equ HAVE_VSX ,  0
 .equ HAVE_MMI ,  0
-.equ HAVE_LSX ,  0
-.equ HAVE_LASX ,  0
 .equ HAVE_VPX_PORTS ,  1
 .equ HAVE_PTHREAD_H ,  1
 .equ HAVE_UNISTD_H ,  0
@@ -57,7 +49,7 @@
 .equ CONFIG_DEBUG_LIBS ,  0
 .equ CONFIG_DEQUANT_TOKENS ,  0
 .equ CONFIG_DC_RECON ,  0
-.equ CONFIG_RUNTIME_CPU_DETECT ,  1
+.equ CONFIG_RUNTIME_CPU_DETECT ,  0
 .equ CONFIG_POSTPROC ,  1
 .equ CONFIG_VP9_POSTPROC ,  1
 .equ CONFIG_MULTITHREAD ,  1
@@ -88,6 +80,7 @@
 .equ CONFIG_MULTI_RES_ENCODING ,  1
 .equ CONFIG_TEMPORAL_DENOISING ,  1
 .equ CONFIG_VP9_TEMPORAL_DENOISING ,  1
+.equ CONFIG_CONSISTENT_RECODE ,  0
 .equ CONFIG_COEFFICIENT_RANGE_CHECKING ,  0
 .equ CONFIG_VP9_HIGHBITDEPTH ,  0
 .equ CONFIG_BETTER_HW_COMPATIBILITY ,  0
@@ -100,7 +93,6 @@
 .equ CONFIG_EMULATE_HARDWARE ,  0
 .equ CONFIG_NON_GREEDY_MV ,  0
 .equ CONFIG_RATE_CTRL ,  0
-.equ CONFIG_COLLECT_COMPONENT_TIMING ,  0
 .equ DECODE_WIDTH_LIMIT ,  16384
 .equ DECODE_HEIGHT_LIMIT ,  16384
-    .section .note.GNU-stack,"",%progbits
+	.section	.note.GNU-stack,"",%progbits

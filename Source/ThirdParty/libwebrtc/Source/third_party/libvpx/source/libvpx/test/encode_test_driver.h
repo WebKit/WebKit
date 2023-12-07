@@ -19,7 +19,7 @@
 #if CONFIG_VP8_ENCODER || CONFIG_VP9_ENCODER
 #include "vpx/vp8cx.h"
 #endif
-#include "vpx/vpx_tpl.h"
+#include "vpx/vpx_encoder.h"
 
 namespace libvpx_test {
 
@@ -49,7 +49,7 @@ enum TestMode {
 class CxDataIterator {
  public:
   explicit CxDataIterator(vpx_codec_ctx_t *encoder)
-      : encoder_(encoder), iter_(nullptr) {}
+      : encoder_(encoder), iter_(NULL) {}
 
   const vpx_codec_cx_pkt_t *Next() {
     return vpx_codec_get_cx_data(encoder_, &iter_);
@@ -103,7 +103,7 @@ class Encoder {
   }
   // This is a thin wrapper around vpx_codec_encode(), so refer to
   // vpx_encoder.h for its semantics.
-  void EncodeFrame(VideoSource *video, vpx_enc_frame_flags_t frame_flags);
+  void EncodeFrame(VideoSource *video, const unsigned long frame_flags);
 
   // Convenience wrapper for EncodeFrame()
   void EncodeFrame(VideoSource *video) { EncodeFrame(video, 0); }
@@ -153,11 +153,6 @@ class Encoder {
     const vpx_codec_err_t res = vpx_codec_control_(&encoder_, ctrl_id, arg);
     ASSERT_EQ(VPX_CODEC_OK, res) << EncoderError();
   }
-
-  void Control(int ctrl_id, VpxTplGopStats *arg) {
-    const vpx_codec_err_t res = vpx_codec_control_(&encoder_, ctrl_id, arg);
-    ASSERT_EQ(VPX_CODEC_OK, res) << EncoderError();
-  }
 #endif  // CONFIG_VP9_ENCODER
 
 #if CONFIG_VP8_ENCODER || CONFIG_VP9_ENCODER
@@ -189,7 +184,7 @@ class Encoder {
 
   // Encode an image
   void EncodeFrameInternal(const VideoSource &video,
-                           vpx_enc_frame_flags_t frame_flags);
+                           const unsigned long frame_flags);
 
   // Flush the encoder on EOS
   void Flush();
@@ -211,7 +206,8 @@ class Encoder {
 class EncoderTest {
  protected:
   explicit EncoderTest(const CodecFactory *codec)
-      : codec_(codec), abort_(false), init_flags_(0), frame_flags_(0) {
+      : codec_(codec), abort_(false), init_flags_(0), frame_flags_(0),
+        last_pts_(0) {
     // Default to 1 thread.
     cfg_.g_threads = 1;
   }
@@ -264,7 +260,7 @@ class EncoderTest {
 
   const CodecFactory *codec_;
   // Hook to determine whether to decode frame after encoding
-  virtual bool DoDecode() const { return true; }
+  virtual bool DoDecode() const { return 1; }
 
   // Hook to handle encode/decode mismatch
   virtual void MismatchHook(const vpx_image_t *img1, const vpx_image_t *img2);
@@ -294,7 +290,8 @@ class EncoderTest {
   unsigned long deadline_;
   TwopassStatsStore stats_;
   unsigned long init_flags_;
-  vpx_enc_frame_flags_t frame_flags_;
+  unsigned long frame_flags_;
+  vpx_codec_pts_t last_pts_;
 };
 
 }  // namespace libvpx_test

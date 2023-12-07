@@ -7,11 +7,7 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-
 #include <limits.h>
-
-#include <memory>
-
 #include "./vpx_config.h"
 #include "./vpx_dsp_rtcd.h"
 #include "test/acm_random.h"
@@ -51,10 +47,10 @@ class VpxPostProcDownAndAcrossMbRowTest
  public:
   VpxPostProcDownAndAcrossMbRowTest()
       : mb_post_proc_down_and_across_(GetParam()) {}
-  void TearDown() override { libvpx_test::ClearSystemState(); }
+  virtual void TearDown() { libvpx_test::ClearSystemState(); }
 
  protected:
-  void Run() override;
+  virtual void Run();
 
   const VpxPostProcDownAndAcrossMbRowFunc mb_post_proc_down_and_across_;
   // Size of the underlying data block that will be filtered.
@@ -119,7 +115,7 @@ TEST_P(VpxPostProcDownAndAcrossMbRowTest, CheckFilterOutput) {
   }
 
   vpx_free(flimits_);
-}
+};
 
 TEST_P(VpxPostProcDownAndAcrossMbRowTest, CheckCvsAssembly) {
   // Size of the underlying data block that will be filtered.
@@ -218,7 +214,7 @@ TEST_P(VpxPostProcDownAndAcrossMbRowTest, DISABLED_Speed) {
   PrintMedian("16x16");
 
   vpx_free(flimits_);
-}
+};
 
 class VpxMbPostProcAcrossIpTest
     : public AbstractBench,
@@ -227,10 +223,10 @@ class VpxMbPostProcAcrossIpTest
   VpxMbPostProcAcrossIpTest()
       : rows_(16), cols_(16), mb_post_proc_across_ip_(GetParam()),
         src_(Buffer<uint8_t>(rows_, cols_, 8, 8, 17, 8)) {}
-  void TearDown() override { libvpx_test::ClearSystemState(); }
+  virtual void TearDown() { libvpx_test::ClearSystemState(); }
 
  protected:
-  void Run() override;
+  virtual void Run();
 
   void SetCols(unsigned char *s, int rows, int cols, int src_width) {
     for (int r = 0; r < rows; r++) {
@@ -356,10 +352,10 @@ class VpxMbPostProcDownTest
       : rows_(16), cols_(16), mb_post_proc_down_(GetParam()),
         src_c_(Buffer<uint8_t>(rows_, cols_, 8, 8, 8, 17)) {}
 
-  void TearDown() override { libvpx_test::ClearSystemState(); }
+  virtual void TearDown() { libvpx_test::ClearSystemState(); }
 
  protected:
-  void Run() override;
+  virtual void Run();
 
   void SetRows(unsigned char *src_c, int rows, int cols, int src_width) {
     for (int r = 0; r < rows; r++) {
@@ -462,13 +458,14 @@ TEST_P(VpxMbPostProcDownTest, CheckLowFilterOutput) {
 
   SetRows(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride());
 
-  std::unique_ptr<unsigned char[]> expected_output(
-      new unsigned char[rows_ * cols_]);
+  unsigned char *expected_output = new unsigned char[rows_ * cols_];
   ASSERT_NE(expected_output, nullptr);
-  SetRows(expected_output.get(), rows_, cols_, cols_);
+  SetRows(expected_output, rows_, cols_, cols_);
 
   RunFilterLevel(src_c_.TopLeftPixel(), rows_, cols_, src_c_.stride(), q2mbl(0),
-                 expected_output.get());
+                 expected_output);
+
+  delete[] expected_output;
 }
 
 TEST_P(VpxMbPostProcDownTest, CheckCvsAssembly) {

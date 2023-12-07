@@ -30,22 +30,17 @@ namespace {
 const int kNumPixels = 16 * 16;
 class VP8DenoiserTest : public ::testing::TestWithParam<int> {
  public:
-  ~VP8DenoiserTest() override = default;
+  virtual ~VP8DenoiserTest() {}
 
-  void SetUp() override { increase_denoising_ = GetParam(); }
+  virtual void SetUp() { increase_denoising_ = GetParam(); }
 
-  void TearDown() override { libvpx_test::ClearSystemState(); }
+  virtual void TearDown() { libvpx_test::ClearSystemState(); }
 
  protected:
   int increase_denoising_;
 };
 
-// TODO(https://crbug.com/webm/1718): This test fails with gcc 8-10.
-#if defined(__GNUC__) && __GNUC__ >= 8
-TEST_P(VP8DenoiserTest, DISABLED_BitexactCheck) {
-#else
 TEST_P(VP8DenoiserTest, BitexactCheck) {
-#endif
   ACMRandom rnd(ACMRandom::DeterministicSeed());
   const int count_test_block = 4000;
   const int stride = 16;
@@ -92,7 +87,7 @@ TEST_P(VP8DenoiserTest, BitexactCheck) {
     // Check bitexactness.
     for (int h = 0; h < 16; ++h) {
       for (int w = 0; w < 16; ++w) {
-        ASSERT_EQ(avg_block_c[h * stride + w], avg_block_sse2[h * stride + w]);
+        EXPECT_EQ(avg_block_c[h * stride + w], avg_block_sse2[h * stride + w]);
       }
     }
 
@@ -108,7 +103,7 @@ TEST_P(VP8DenoiserTest, BitexactCheck) {
     // Check bitexactness.
     for (int h = 0; h < 16; ++h) {
       for (int w = 0; w < 16; ++w) {
-        ASSERT_EQ(avg_block_c[h * stride + w], avg_block_sse2[h * stride + w]);
+        EXPECT_EQ(avg_block_c[h * stride + w], avg_block_sse2[h * stride + w]);
       }
     }
   }
