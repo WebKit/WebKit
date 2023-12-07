@@ -565,7 +565,9 @@ public:
 
     virtual void handleAutoFillButtonClick(HTMLInputElement&) { }
 
-    virtual void inputElementDidResignStrongPasswordAppearance(HTMLInputElement&) { };
+    virtual void inputElementDidResignStrongPasswordAppearance(HTMLInputElement&) { }
+
+    virtual void performSwitchHapticFeedback() { }
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     virtual void addPlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier) { }

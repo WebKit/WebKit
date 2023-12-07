@@ -28,7 +28,6 @@
 ] interface AccessibilityUIElement {
     boolean isEqual(AccessibilityUIElement otherElement);
     readonly attribute DOMString domIdentifier;
-    readonly attribute boolean isIsolatedObject;
 
     // Element access.
     AccessibilityUIElement elementAtPoint(long x, long y);

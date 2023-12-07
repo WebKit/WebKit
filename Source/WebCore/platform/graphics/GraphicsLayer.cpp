@@ -764,7 +764,7 @@ void GraphicsLayer::setAcceleratedEffectsAndBaseValues(AcceleratedEffects&& effe
     }
 
     if (!m_effectStack)
-        m_effectStack = makeUnique<AcceleratedEffectStack>();
+        m_effectStack = AcceleratedEffectStack::create();
 
     m_effectStack->setEffects(WTFMove(effects));
     m_effectStack->setBaseValues(WTFMove(baseValues));

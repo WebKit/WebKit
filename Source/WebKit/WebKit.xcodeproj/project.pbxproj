@@ -1516,6 +1516,7 @@
 		7137BA8025F1542000914EE3 /* ModelElementController.h in Headers */ = {isa = PBXBuildFile; fileRef = 7137BA7F25F1540C00914EE3 /* ModelElementController.h */; };
 		71A676A622C62325007D6295 /* WKTouchActionGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 71A676A422C62318007D6295 /* WKTouchActionGestureRecognizer.h */; };
 		71BAA73325FFD09800D7CD5D /* WKModelView.h in Headers */ = {isa = PBXBuildFile; fileRef = 71BAA73125FFCCBA00D7CD5D /* WKModelView.h */; };
+		71E29A342B20610C0010F3C9 /* RemoteAcceleratedEffectStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 71371D1E2B1F89C00092C32D /* RemoteAcceleratedEffectStack.h */; };
 		71FB810B2260627E00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FB810A2260627A00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h */; };
 		728E86F11795188C0087879E /* WebColorPickerMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 728E86EF1795188C0087879E /* WebColorPickerMac.h */; };
 		74C2F54129AC9C44006C5F97 /* DeferredPaymentRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 74C2F54029AC9C44006C5F97 /* DeferredPaymentRequest.h */; };
@@ -6009,6 +6010,8 @@
 		711725A8228D563A00018514 /* WebsiteLegacyOverflowScrollingTouchPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteLegacyOverflowScrollingTouchPolicy.h; sourceTree = "<group>"; };
 		7134A3D82603B80E00624BD3 /* WKModelInteractionGestureRecognizer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKModelInteractionGestureRecognizer.mm; path = ios/WKModelInteractionGestureRecognizer.mm; sourceTree = "<group>"; };
 		7134A3D92603B80E00624BD3 /* WKModelInteractionGestureRecognizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKModelInteractionGestureRecognizer.h; path = ios/WKModelInteractionGestureRecognizer.h; sourceTree = "<group>"; };
+		71371D1E2B1F89C00092C32D /* RemoteAcceleratedEffectStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoteAcceleratedEffectStack.h; sourceTree = "<group>"; };
+		71371D1F2B1F89C10092C32D /* RemoteAcceleratedEffectStack.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RemoteAcceleratedEffectStack.mm; sourceTree = "<group>"; };
 		7137BA7D25F153E900914EE3 /* ModelElementControllerCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ModelElementControllerCocoa.mm; sourceTree = "<group>"; };
 		7137BA7E25F1540B00914EE3 /* ModelElementController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModelElementController.cpp; sourceTree = "<group>"; };
 		7137BA7F25F1540C00914EE3 /* ModelElementController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModelElementController.h; sourceTree = "<group>"; };
@@ -9806,6 +9809,8 @@
 				2D6482482644B1AB00030335 /* cocoa */,
 				2D1551AA1F5A9BA70006E3FE /* ios */,
 				E404906F21DE65D70037F0DB /* mac */,
+				71371D1E2B1F89C00092C32D /* RemoteAcceleratedEffectStack.h */,
+				71371D1F2B1F89C10092C32D /* RemoteAcceleratedEffectStack.mm */,
 				1AB16AE01648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.h */,
 				0FF24A2F1879E4FE003ABF0C /* RemoteLayerTreeDrawingAreaProxy.messages.in */,
 				1AB16ADF1648656D00290D62 /* RemoteLayerTreeDrawingAreaProxy.mm */,
@@ -15591,6 +15596,7 @@
 				7BE9326327F5C75A00D5FEFB /* ReceiverMatcher.h in Headers */,
 				950FECF4285027200002DE4E /* RecurringPaymentRequest.h in Headers */,
 				57FD318222B3515E008D0E8B /* RedirectSOAuthorizationSession.h in Headers */,
+				71E29A342B20610C0010F3C9 /* RemoteAcceleratedEffectStack.h in Headers */,
 				9B1229D223FF2BCC008CA751 /* RemoteAudioDestinationIdentifier.h in Headers */,
 				9B1229CD23FF25F2008CA751 /* RemoteAudioDestinationManager.h in Headers */,
 				9B5BEC2A240101580070C6EF /* RemoteAudioDestinationProxy.h in Headers */,

@@ -76,10 +76,12 @@ setConfiguration();
 
 my @privateFrameworks = qw(WebCore WebGPU WebKitLegacy);
 my @publicFrameworks = qw(JavaScriptCore WebKit);
+my @extensions = qw(GPUExtension NetworkingExtension WebContentCaptivePortalExtension WebContentExtension);
 my $packagedRootBasePath = usesCryptexPath() ? "/System/Cryptexes/OS/" : "/";
 $packagedRootBasePath = "$packagedRootBasePath" . "System/iOSSupport/" if isMacCatalystWebKit();
 my $privateInstallPath = "$packagedRootBasePath" . "System/Library/PrivateFrameworks";
 my $publicInstallPath = "$packagedRootBasePath" . "System/Library/Frameworks";
+my $extensionsInstallPath = "/System/Library/ExtensionKit/Extensions";
 
 my $configuration = configuration();
 my $platform = xcodeSDKPlatformName();
@@ -87,12 +89,14 @@ my $productDir = productDir();
 my $stagingRoot = tempdir(CLEANUP => 1);
 my $stagingPrivatePath = "$stagingRoot$privateInstallPath";
 my $stagingPublicPath = "$stagingRoot$publicInstallPath";
+my $stagingExtensionsPath = "$stagingRoot$extensionsInstallPath";
 my $archiveName = "webkit-$configuration-$platform";
 my $archivePath = "$productDir/$archiveName.tar.gz";
 my ($fh, $tempArchiveName) = tempfile( "/tmp/$archiveName-XXXXXXX");
 
 system 'mkdir', '-p', $stagingPrivatePath;
 system 'mkdir', '-p', $stagingPublicPath;
+system 'mkdir', '-p', $stagingExtensionsPath;
 
 foreach my $framework (@privateFrameworks) {
     print "Copying Private $framework from $productDir ...\n";
@@ -104,6 +108,12 @@ foreach my $framework (@publicFrameworks) {
     print "Copying Public $framework from $productDir ...\n";
     system 'cp', '-LpR', $productDir . "/$framework.framework", "$stagingPublicPath/";
     die "Check to see that you have built $framework for $configuration-$platform" if $?;
+}
+
+foreach my $extension (@extensions) {
+    print "Copying extension $extension from $productDir ...\n";
+    system 'cp', '-LpR', $productDir . "/$extension.appex", "$stagingExtensionsPath/";
+    die "Check to see that you have built $extension for $configuration-$platform" if $?;
 }
 
 system 'ditto', "$productDir/usr", "$stagingRoot" . "$packagedRootBasePath" . "usr";

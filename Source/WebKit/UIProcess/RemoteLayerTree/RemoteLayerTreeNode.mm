@@ -38,6 +38,11 @@
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #endif
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+#import "RemoteLayerTreeHost.h"
+#import <WebCore/AcceleratedEffectStack.h>
+#endif
+
 namespace WebKit {
 
 static NSString *const WKRemoteLayerTreeNodePropertyKey = @"WKRemoteLayerTreeNode";
@@ -237,5 +242,28 @@ NSString *RemoteLayerTreeNode::appendLayerDescription(NSString *description, CAL
     NSString *layerDescription = [NSString stringWithFormat:@" layerID = %llu \"%@\"", WebKit::RemoteLayerTreeNode::layerID(layer).object().toUInt64(), layer.name ? layer.name : @""];
     return [description stringByAppendingString:layerDescription];
 }
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::AcceleratedEffects& effects, const WebCore::AcceleratedEffectValues& baseValues, RemoteLayerTreeHost& host)
+{
+    ASSERT(isUIThread());
+
+    if (m_effectStack)
+        host.animationsWereRemovedFromNode(*this);
+
+    if (effects.isEmpty())
+        return;
+
+    m_effectStack = RemoteAcceleratedEffectStack::create(host.acceleratedTimelineTimeOrigin());
+
+    auto clonedEffects = effects;
+    auto clonedBaseValues = baseValues.clone();
+
+    m_effectStack->setEffects(WTFMove(clonedEffects));
+    m_effectStack->setBaseValues(WTFMove(clonedBaseValues));
+
+    host.animationsWereAddedToNode(*this);
+}
+#endif
 
 }

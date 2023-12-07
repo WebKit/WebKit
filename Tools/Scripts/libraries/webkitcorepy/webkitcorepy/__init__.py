@@ -48,7 +48,7 @@ from webkitcorepy.null_context import NullContext
 from webkitcorepy.filtered_call import filtered_call
 from webkitcorepy.partial_proxy import PartialProxy
 
-version = Version(0, 16, 7)
+version = Version(0, 16, 8)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
 if sys.version_info > (3, 0):

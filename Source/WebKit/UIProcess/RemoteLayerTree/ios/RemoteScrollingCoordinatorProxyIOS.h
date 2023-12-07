@@ -33,6 +33,8 @@ OBJC_CLASS UIScrollView;
 
 namespace WebKit {
 
+class RemoteLayerTreeNode;
+
 class RemoteScrollingCoordinatorProxyIOS final : public RemoteScrollingCoordinatorProxy {
 public:
     explicit RemoteScrollingCoordinatorProxyIOS(WebPageProxy&);
@@ -55,6 +57,11 @@ public:
     const HashSet<WebCore::PlatformLayerIdentifier>& fixedScrollingNodeLayerIDs() const { return m_fixedScrollingNodeLayerIDs; }
 #endif
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    void animationsWereAddedToNode(RemoteLayerTreeNode&) override;
+    void animationsWereRemovedFromNode(RemoteLayerTreeNode&) override;
+#endif
+
 private:
     bool propagatesMainFrameScrolls() const override { return false; }
 
@@ -74,6 +81,10 @@ private:
 
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     HashSet<WebCore::PlatformLayerIdentifier> m_fixedScrollingNodeLayerIDs;
+#endif
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    HashSet<WebCore::PlatformLayerIdentifier> m_animatedNodeLayerIDs;
 #endif
 };
 

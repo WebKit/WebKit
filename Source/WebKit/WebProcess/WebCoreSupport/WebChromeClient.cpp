@@ -1563,6 +1563,11 @@ void WebChromeClient::inputElementDidResignStrongPasswordAppearance(HTMLInputEle
     page->send(Messages::WebPageProxy::DidResignInputElementStrongPasswordAppearance { UserData { WebProcess::singleton().transformObjectsToHandles(userData.get()).get() } });
 }
 
+void WebChromeClient::performSwitchHapticFeedback()
+{
+    protectedPage()->send(Messages::WebPageProxy::PerformSwitchHapticFeedback());
+}
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET) && !PLATFORM(IOS_FAMILY)
 
 void WebChromeClient::addPlaybackTargetPickerClient(PlaybackTargetClientContextIdentifier contextId)

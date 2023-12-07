@@ -112,7 +112,7 @@
     RawData data = [self uncopiedRawDataAtIndex:index];
     if (data.isNull)
         return nil;
-    return [NSData dataWithBytes:(void*)&data.bytes length:data.length];
+    return [NSData dataWithBytes:data.bytes length:data.length];
 }
 
 - (NSData *)uncopiedDataAtIndex:(NSUInteger)index
@@ -120,7 +120,7 @@
     RawData data = [self uncopiedRawDataAtIndex:index];
     if (data.isNull)
         return nil;
-    return [NSData dataWithBytesNoCopy:(void*)&data.bytes length:data.length freeWhenDone:NO];
+    return [NSData dataWithBytesNoCopy:const_cast<void *>(data.bytes) length:data.length freeWhenDone:NO];
 }
 
 - (RawData)uncopiedRawDataAtIndex:(NSUInteger)index

@@ -25,6 +25,8 @@
 
 #if USE(EXTENSIONKIT)
 
+@protocol UIInteraction;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface _SEServiceConfiguration: NSObject
@@ -60,10 +62,12 @@ NS_REFINED_FOR_SWIFT
 
 NS_REFINED_FOR_SWIFT
 @interface _SEContentProcess: _SEExtensionProcess
+-(id<UIInteraction>)createVisibilityPropagationInteraction;
 @end
 
 NS_REFINED_FOR_SWIFT
 @interface _SEGPUProcess: _SEExtensionProcess
+-(id<UIInteraction>)createVisibilityPropagationInteraction;
 @end
 
 NS_REFINED_FOR_SWIFT

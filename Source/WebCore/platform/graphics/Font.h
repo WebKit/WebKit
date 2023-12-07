@@ -80,6 +80,16 @@ bool fontHasTable(CTFontRef, unsigned tableTag);
 bool fontHasEitherTable(CTFontRef, unsigned tableTag1, unsigned tableTag2);
 #endif
 
+struct FontInternalAttributes {
+    WEBCORE_EXPORT RenderingResourceIdentifier ensureRenderingResourceIdentifier() const;
+
+    mutable std::optional<RenderingResourceIdentifier> renderingResourceIdentifier;
+    FontOrigin origin : 1;
+    FontIsInterstitial isInterstitial : 1;
+    FontVisibility visibility : 1;
+    FontIsOrientationFallback isTextOrientationFallback : 1;
+};
+
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Font);
 class Font : public RefCounted<Font>, public CanMakeWeakPtr<Font>, public CanMakeCheckedPtr {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Font);
@@ -219,16 +229,7 @@ public:
     void setIsUsedInSystemFallbackFontCache() { m_isUsedInSystemFallbackFontCache = true; }
     bool isUsedInSystemFallbackFontCache() const { return m_isUsedInSystemFallbackFontCache; }
 
-    class Attributes {
-    public:
-        WEBCORE_EXPORT RenderingResourceIdentifier ensureRenderingResourceIdentifier() const;
-
-        mutable std::optional<RenderingResourceIdentifier> renderingResourceIdentifier;
-        Font::Origin origin : 1;
-        Font::IsInterstitial isInterstitial : 1;
-        Font::Visibility visibility : 1;
-        Font::IsOrientationFallback isTextOrientationFallback : 1;
-    };
+    using Attributes = FontInternalAttributes;
     const Attributes& attributes() const { return m_attributes; }
 
     ColorGlyphType colorGlyphType(Glyph) const;

@@ -91,8 +91,6 @@ public:
 
     WEBCORE_EXPORT static RetainPtr<NSImage> iconForAttachment(const String& fileName, const String& attachmentType, const String& title);
 
-    Seconds switchAnimationVisuallyOnDuration() const final { return 300_ms; }
-
 private:
     RenderThemeMac();
 
@@ -127,6 +125,8 @@ private:
     void adjustSearchFieldResultsDecorationPartStyle(RenderStyle&, const Element*) const final;
 
     void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const final;
+
+    Seconds switchAnimationVisuallyOnDuration() const final { return 300_ms; }
 
 #if ENABLE(DATALIST_ELEMENT)
     void adjustListButtonStyle(RenderStyle&, const Element*) const final;

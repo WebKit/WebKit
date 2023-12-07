@@ -27,6 +27,8 @@ from webkitcorepy import string_utils
 
 
 class Scm(ScmBase):
+    EMAIL_RE = re.compile(r'(?P<email>[^@]+@[^@]+)(@.*)?')
+
     class PRGenerator(object):
         SUPPORTS_DRAFTS = False
 

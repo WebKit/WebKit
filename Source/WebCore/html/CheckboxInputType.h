@@ -36,7 +36,7 @@ namespace WebCore {
 
 enum class WasSetByJavaScript : bool;
 
-enum class SwitchAnimationType { VisuallyOn };
+enum class SwitchAnimationType : bool { VisuallyOn, Pressed };
 
 class CheckboxInputType final : public BaseCheckableInputType {
 public:
@@ -48,6 +48,7 @@ public:
     bool valueMissing(const String&) const final;
     float switchAnimationVisuallyOnProgress() const;
     bool isSwitchVisuallyOn() const;
+    float switchAnimationPressedProgress() const;
 
 private:
     explicit CheckboxInputType(HTMLInputElement& element)
@@ -61,7 +62,12 @@ private:
     void handleKeyupEvent(KeyboardEvent&) final;
     void handleMouseDownEvent(MouseEvent&) final;
     void handleMouseMoveEvent(MouseEvent&) final;
-    void startSwitchPointerTracking(LayoutPoint);
+// FIXME: It should not be iOS-specific, but it's not been tested with a non-iOS touch
+// implementation thus far.
+#if ENABLE(IOS_TOUCH_EVENTS)
+    void handleTouchEvent(TouchEvent&) final;
+#endif
+    void startSwitchPointerTracking(LayoutPoint, std::optional<unsigned> = std::nullopt);
     void stopSwitchPointerTracking();
     bool isSwitchPointerTracking() const;
     void willDispatchClick(InputElementClickState&) final;
@@ -84,7 +90,12 @@ private:
     bool m_hasSwitchVisuallyOnChanged { false };
     bool m_isSwitchVisuallyOn { false };
     Seconds m_switchAnimationVisuallyOnStartTime { 0_s };
+    Seconds m_switchAnimationPressedStartTime { 0_s };
     std::unique_ptr<Timer> m_switchAnimationTimer;
+    std::optional<unsigned> m_switchPointerTrackingTouchIdentifier { std::nullopt };
+#if ENABLE(IOS_TOUCH_EVENTS)
+    bool hasTouchEventHandler() const final { return true; }
+#endif
 };
 
 } // namespace WebCore

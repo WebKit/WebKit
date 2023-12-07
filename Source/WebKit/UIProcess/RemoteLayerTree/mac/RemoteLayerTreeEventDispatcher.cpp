@@ -32,6 +32,7 @@
 #include "Logging.h"
 #include "NativeWebWheelEvent.h"
 #include "RemoteLayerTreeDrawingAreaProxyMac.h"
+#include "RemoteLayerTreeNode.h"
 #include "RemoteScrollingCoordinatorProxyMac.h"
 #include "RemoteScrollingTree.h"
 #include "WebEventConversion.h"
@@ -555,6 +556,20 @@ void RemoteLayerTreeEventDispatcher::renderingUpdateComplete()
 
     m_state = SynchronizationState::Idle;
 }
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+void RemoteLayerTreeEventDispatcher::animationsWereAddedToNode(RemoteLayerTreeNode& node)
+{
+    auto effectStack = node.takeEffectStack();
+    ASSERT(effectStack);
+    m_effectStacks.set(node.layerID(), effectStack.releaseNonNull());
+}
+
+void RemoteLayerTreeEventDispatcher::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
+{
+    m_effectStacks.remove(node.layerID());
+}
+#endif
 
 void RemoteLayerTreeEventDispatcher::windowScreenWillChange()
 {

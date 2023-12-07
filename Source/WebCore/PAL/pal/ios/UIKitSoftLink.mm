@@ -70,6 +70,7 @@ SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIAccessibilityIsGrayscaleEnabled, BOO
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIAccessibilityIsInvertColorsEnabled, BOOL, (void), ())
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, UIKit, UIAccessibilityIsReduceMotionEnabled, BOOL, (void), (), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, UIKit, UIAccessibilityDarkerSystemColorsEnabled, BOOL, (void), (), PAL_EXPORT)
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, UIKit, UIAccessibilityIsOnOffSwitchLabelsEnabled, BOOL, (void), (), PAL_EXPORT)
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIAccessibilityPostNotification, void, (UIAccessibilityNotifications n, id argument), (n, argument))
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIGraphicsGetCurrentContext, CGContextRef, (void), ())
 SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, UIKit, UIGraphicsPopContext, void, (void), ())

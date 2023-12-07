@@ -76,6 +76,8 @@ public:
     void viewWillEndLiveResize() final;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    void animationsWereAddedToNode(RemoteLayerTreeNode&);
+    void animationsWereRemovedFromNode(RemoteLayerTreeNode&);
     Seconds acceleratedTimelineTimeOrigin() const { return m_acceleratedTimelineTimeOrigin; }
 #endif
 

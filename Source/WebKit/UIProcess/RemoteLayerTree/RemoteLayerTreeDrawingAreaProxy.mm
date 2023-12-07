@@ -614,4 +614,16 @@ void RemoteLayerTreeDrawingAreaProxy::sizeToContentAutoSizeMaximumSizeDidChange(
     sendUpdateGeometry();
 }
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+void RemoteLayerTreeDrawingAreaProxy::animationsWereAddedToNode(RemoteLayerTreeNode& node)
+{
+    protectedWebPageProxy()->scrollingCoordinatorProxy()->animationsWereAddedToNode(node);
+}
+
+void RemoteLayerTreeDrawingAreaProxy::animationsWereRemovedFromNode(RemoteLayerTreeNode& node)
+{
+    protectedWebPageProxy()->scrollingCoordinatorProxy()->animationsWereRemovedFromNode(node);
+}
+#endif // ENABLE(THREADED_ANIMATION_RESOLUTION)
+
 } // namespace WebKit

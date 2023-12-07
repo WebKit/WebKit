@@ -452,6 +452,8 @@ messages -> WebPageProxy {
 
     DidResignInputElementStrongPasswordAppearance(WebKit::UserData userData)
 
+    PerformSwitchHapticFeedback()
+
 #if ENABLE(CONTENT_EXTENSIONS)
     ContentRuleListNotification(URL url, struct WebCore::ContentRuleListResults results)
 #endif
