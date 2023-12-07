@@ -71,6 +71,8 @@ public:
 
     bool isDownloadableMedia() const { return m_data.isDownloadableMedia; }
 
+    bool mediaIsInFullscreen() const { return m_data.mediaIsInFullscreen; }
+
     WebKit::WebHitTestResultData::ElementType elementType() const { return m_data.elementType; }
 
     WebKit::WebPageProxy& page() { return m_page.get(); }
