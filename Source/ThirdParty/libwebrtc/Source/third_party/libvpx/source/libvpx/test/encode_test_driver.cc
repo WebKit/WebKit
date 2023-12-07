@@ -52,7 +52,8 @@ void Encoder::InitEncoder(VideoSource *video) {
   }
 }
 
-void Encoder::EncodeFrame(VideoSource *video, const unsigned long frame_flags) {
+void Encoder::EncodeFrame(VideoSource *video,
+                          const vpx_enc_frame_flags_t frame_flags) {
   if (video->img()) {
     EncodeFrameInternal(*video, frame_flags);
   } else {
@@ -70,7 +71,7 @@ void Encoder::EncodeFrame(VideoSource *video, const unsigned long frame_flags) {
 }
 
 void Encoder::EncodeFrameInternal(const VideoSource &video,
-                                  const unsigned long frame_flags) {
+                                  const vpx_enc_frame_flags_t frame_flags) {
   vpx_codec_err_t res;
   const vpx_image_t *img = video.img();
 
@@ -169,7 +170,7 @@ void EncoderTest::RunLoop(VideoSource *video) {
 
   ASSERT_TRUE(passes_ == 1 || passes_ == 2);
   for (unsigned int pass = 0; pass < passes_; pass++) {
-    last_pts_ = 0;
+    vpx_codec_pts_t last_pts = 0;
 
     if (passes_ == 1) {
       cfg_.g_pass = VPX_RC_ONE_PASS;
@@ -225,8 +226,8 @@ void EncoderTest::RunLoop(VideoSource *video) {
 
               has_dxdata = true;
             }
-            ASSERT_GE(pkt->data.frame.pts, last_pts_);
-            last_pts_ = pkt->data.frame.pts;
+            ASSERT_GE(pkt->data.frame.pts, last_pts);
+            last_pts = pkt->data.frame.pts;
             FramePktHook(pkt);
             break;
 

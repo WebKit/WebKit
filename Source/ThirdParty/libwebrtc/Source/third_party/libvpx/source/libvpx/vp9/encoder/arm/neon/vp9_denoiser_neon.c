@@ -21,6 +21,9 @@
 
 // Compute the sum of all pixel differences of this MB.
 static INLINE int horizontal_add_s8x16(const int8x16_t v_sum_diff_total) {
+#if VPX_ARCH_AARCH64
+  return vaddlvq_s8(v_sum_diff_total);
+#else
   const int16x8_t fe_dc_ba_98_76_54_32_10 = vpaddlq_s8(v_sum_diff_total);
   const int32x4_t fedc_ba98_7654_3210 = vpaddlq_s16(fe_dc_ba_98_76_54_32_10);
   const int64x2_t fedcba98_76543210 = vpaddlq_s32(fedc_ba98_7654_3210);
@@ -28,6 +31,7 @@ static INLINE int horizontal_add_s8x16(const int8x16_t v_sum_diff_total) {
                                 vget_low_s64(fedcba98_76543210));
   const int sum_diff = vget_lane_s32(vreinterpret_s32_s64(x), 0);
   return sum_diff;
+#endif
 }
 
 // Denoise a 16x1 vector.

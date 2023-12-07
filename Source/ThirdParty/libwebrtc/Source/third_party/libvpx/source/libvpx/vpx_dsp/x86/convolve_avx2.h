@@ -129,9 +129,8 @@ static INLINE void mm256_storeu2_epi64(__m128i *const dst_ptr_1,
 static INLINE void mm256_storeu2_epi32(__m128i *const dst_ptr_1,
                                        __m128i *const dst_ptr_2,
                                        const __m256i *const src) {
-  *((uint32_t *)(dst_ptr_1)) = _mm_cvtsi128_si32(_mm256_castsi256_si128(*src));
-  *((uint32_t *)(dst_ptr_2)) =
-      _mm_cvtsi128_si32(_mm256_extractf128_si256(*src, 1));
+  *((int *)(dst_ptr_1)) = _mm_cvtsi128_si32(_mm256_castsi256_si128(*src));
+  *((int *)(dst_ptr_2)) = _mm_cvtsi128_si32(_mm256_extractf128_si256(*src, 1));
 }
 
 static INLINE __m256i mm256_round_epi32(const __m256i *const src,

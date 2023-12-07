@@ -24,6 +24,8 @@
 #include "vpx/vp8dx.h"
 #endif
 
+#include "vpx/vpx_codec.h"
+
 #if defined(_WIN32) || defined(__OS2__)
 #include <io.h>
 #include <fcntl.h>
@@ -77,8 +79,8 @@ void warn(const char *fmt, ...) { LOG_ERROR("Warning"); }
 void die_codec(vpx_codec_ctx_t *ctx, const char *s) {
   const char *detail = vpx_codec_error_detail(ctx);
 
-  printf("%s: %s\n", s, vpx_codec_error(ctx));
-  if (detail) printf("    %s\n", detail);
+  fprintf(stderr, "%s: %s\n", s, vpx_codec_error(ctx));
+  if (detail) fprintf(stderr, "    %s\n", detail);
   exit(EXIT_FAILURE);
 }
 
@@ -375,7 +377,7 @@ static void highbd_img_upshift(vpx_image_t *dst, vpx_image_t *src,
     case VPX_IMG_FMT_I42216:
     case VPX_IMG_FMT_I44416:
     case VPX_IMG_FMT_I44016: break;
-    default: fatal("Unsupported image conversion"); break;
+    default: fatal("Unsupported image conversion");
   }
   for (plane = 0; plane < 3; plane++) {
     int w = src->d_w;
@@ -411,7 +413,7 @@ static void lowbd_img_upshift(vpx_image_t *dst, vpx_image_t *src,
     case VPX_IMG_FMT_I422:
     case VPX_IMG_FMT_I444:
     case VPX_IMG_FMT_I440: break;
-    default: fatal("Unsupported image conversion"); break;
+    default: fatal("Unsupported image conversion");
   }
   for (plane = 0; plane < 3; plane++) {
     int w = src->d_w;
@@ -452,7 +454,7 @@ void vpx_img_truncate_16_to_8(vpx_image_t *dst, vpx_image_t *src) {
     case VPX_IMG_FMT_I422:
     case VPX_IMG_FMT_I444:
     case VPX_IMG_FMT_I440: break;
-    default: fatal("Unsupported image conversion"); break;
+    default: fatal("Unsupported image conversion");
   }
   for (plane = 0; plane < 3; plane++) {
     int w = src->d_w;
@@ -487,7 +489,7 @@ static void highbd_img_downshift(vpx_image_t *dst, vpx_image_t *src,
     case VPX_IMG_FMT_I42216:
     case VPX_IMG_FMT_I44416:
     case VPX_IMG_FMT_I44016: break;
-    default: fatal("Unsupported image conversion"); break;
+    default: fatal("Unsupported image conversion");
   }
   for (plane = 0; plane < 3; plane++) {
     int w = src->d_w;
@@ -521,7 +523,7 @@ static void lowbd_img_downshift(vpx_image_t *dst, vpx_image_t *src,
     case VPX_IMG_FMT_I422:
     case VPX_IMG_FMT_I444:
     case VPX_IMG_FMT_I440: break;
-    default: fatal("Unsupported image conversion"); break;
+    default: fatal("Unsupported image conversion");
   }
   for (plane = 0; plane < 3; plane++) {
     int w = src->d_w;

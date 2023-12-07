@@ -9,77 +9,92 @@
  */
 
 #include <arm_neon.h>
-
 #include <assert.h>
+
 #include "./vpx_dsp_rtcd.h"
+#include "vpx_dsp/arm/sum_neon.h"
 
 uint64_t vpx_sum_squares_2d_i16_neon(const int16_t *src, int stride, int size) {
-  uint64x1_t s2;
-
   if (size == 4) {
     int16x4_t s[4];
-    int32x4_t s0;
-    uint32x2_t s1;
+    int32x4_t sum_s32;
 
     s[0] = vld1_s16(src + 0 * stride);
     s[1] = vld1_s16(src + 1 * stride);
     s[2] = vld1_s16(src + 2 * stride);
     s[3] = vld1_s16(src + 3 * stride);
-    s0 = vmull_s16(s[0], s[0]);
-    s0 = vmlal_s16(s0, s[1], s[1]);
-    s0 = vmlal_s16(s0, s[2], s[2]);
-    s0 = vmlal_s16(s0, s[3], s[3]);
-    s1 = vpadd_u32(vget_low_u32(vreinterpretq_u32_s32(s0)),
-                   vget_high_u32(vreinterpretq_u32_s32(s0)));
-    s2 = vpaddl_u32(s1);
+
+    sum_s32 = vmull_s16(s[0], s[0]);
+    sum_s32 = vmlal_s16(sum_s32, s[1], s[1]);
+    sum_s32 = vmlal_s16(sum_s32, s[2], s[2]);
+    sum_s32 = vmlal_s16(sum_s32, s[3], s[3]);
+
+    return horizontal_long_add_uint32x4(vreinterpretq_u32_s32(sum_s32));
   } else {
-    int r = size;
-    uint64x2_t s1 = vdupq_n_u64(0);
+    uint64x2_t sum_u64 = vdupq_n_u64(0);
+    int rows = size;
 
     do {
-      int c = size;
-      int32x4_t s0 = vdupq_n_s32(0);
-      const int16_t *src_t = src;
+      const int16_t *src_ptr = src;
+      int32x4_t sum_s32[2] = { vdupq_n_s32(0), vdupq_n_s32(0) };
+      int cols = size;
 
       do {
         int16x8_t s[8];
 
-        s[0] = vld1q_s16(src_t + 0 * stride);
-        s[1] = vld1q_s16(src_t + 1 * stride);
-        s[2] = vld1q_s16(src_t + 2 * stride);
-        s[3] = vld1q_s16(src_t + 3 * stride);
-        s[4] = vld1q_s16(src_t + 4 * stride);
-        s[5] = vld1q_s16(src_t + 5 * stride);
-        s[6] = vld1q_s16(src_t + 6 * stride);
-        s[7] = vld1q_s16(src_t + 7 * stride);
-        s0 = vmlal_s16(s0, vget_low_s16(s[0]), vget_low_s16(s[0]));
-        s0 = vmlal_s16(s0, vget_low_s16(s[1]), vget_low_s16(s[1]));
-        s0 = vmlal_s16(s0, vget_low_s16(s[2]), vget_low_s16(s[2]));
-        s0 = vmlal_s16(s0, vget_low_s16(s[3]), vget_low_s16(s[3]));
-        s0 = vmlal_s16(s0, vget_low_s16(s[4]), vget_low_s16(s[4]));
-        s0 = vmlal_s16(s0, vget_low_s16(s[5]), vget_low_s16(s[5]));
-        s0 = vmlal_s16(s0, vget_low_s16(s[6]), vget_low_s16(s[6]));
-        s0 = vmlal_s16(s0, vget_low_s16(s[7]), vget_low_s16(s[7]));
-        s0 = vmlal_s16(s0, vget_high_s16(s[0]), vget_high_s16(s[0]));
-        s0 = vmlal_s16(s0, vget_high_s16(s[1]), vget_high_s16(s[1]));
-        s0 = vmlal_s16(s0, vget_high_s16(s[2]), vget_high_s16(s[2]));
-        s0 = vmlal_s16(s0, vget_high_s16(s[3]), vget_high_s16(s[3]));
-        s0 = vmlal_s16(s0, vget_high_s16(s[4]), vget_high_s16(s[4]));
-        s0 = vmlal_s16(s0, vget_high_s16(s[5]), vget_high_s16(s[5]));
-        s0 = vmlal_s16(s0, vget_high_s16(s[6]), vget_high_s16(s[6]));
-        s0 = vmlal_s16(s0, vget_high_s16(s[7]), vget_high_s16(s[7]));
-        src_t += 8;
-        c -= 8;
-      } while (c);
+        s[0] = vld1q_s16(src_ptr + 0 * stride);
+        s[1] = vld1q_s16(src_ptr + 1 * stride);
+        s[2] = vld1q_s16(src_ptr + 2 * stride);
+        s[3] = vld1q_s16(src_ptr + 3 * stride);
+        s[4] = vld1q_s16(src_ptr + 4 * stride);
+        s[5] = vld1q_s16(src_ptr + 5 * stride);
+        s[6] = vld1q_s16(src_ptr + 6 * stride);
+        s[7] = vld1q_s16(src_ptr + 7 * stride);
 
-      s1 = vaddw_u32(s1, vget_low_u32(vreinterpretq_u32_s32(s0)));
-      s1 = vaddw_u32(s1, vget_high_u32(vreinterpretq_u32_s32(s0)));
+        sum_s32[0] =
+            vmlal_s16(sum_s32[0], vget_low_s16(s[0]), vget_low_s16(s[0]));
+        sum_s32[0] =
+            vmlal_s16(sum_s32[0], vget_low_s16(s[1]), vget_low_s16(s[1]));
+        sum_s32[0] =
+            vmlal_s16(sum_s32[0], vget_low_s16(s[2]), vget_low_s16(s[2]));
+        sum_s32[0] =
+            vmlal_s16(sum_s32[0], vget_low_s16(s[3]), vget_low_s16(s[3]));
+        sum_s32[0] =
+            vmlal_s16(sum_s32[0], vget_low_s16(s[4]), vget_low_s16(s[4]));
+        sum_s32[0] =
+            vmlal_s16(sum_s32[0], vget_low_s16(s[5]), vget_low_s16(s[5]));
+        sum_s32[0] =
+            vmlal_s16(sum_s32[0], vget_low_s16(s[6]), vget_low_s16(s[6]));
+        sum_s32[0] =
+            vmlal_s16(sum_s32[0], vget_low_s16(s[7]), vget_low_s16(s[7]));
+
+        sum_s32[1] =
+            vmlal_s16(sum_s32[1], vget_high_s16(s[0]), vget_high_s16(s[0]));
+        sum_s32[1] =
+            vmlal_s16(sum_s32[1], vget_high_s16(s[1]), vget_high_s16(s[1]));
+        sum_s32[1] =
+            vmlal_s16(sum_s32[1], vget_high_s16(s[2]), vget_high_s16(s[2]));
+        sum_s32[1] =
+            vmlal_s16(sum_s32[1], vget_high_s16(s[3]), vget_high_s16(s[3]));
+        sum_s32[1] =
+            vmlal_s16(sum_s32[1], vget_high_s16(s[4]), vget_high_s16(s[4]));
+        sum_s32[1] =
+            vmlal_s16(sum_s32[1], vget_high_s16(s[5]), vget_high_s16(s[5]));
+        sum_s32[1] =
+            vmlal_s16(sum_s32[1], vget_high_s16(s[6]), vget_high_s16(s[6]));
+        sum_s32[1] =
+            vmlal_s16(sum_s32[1], vget_high_s16(s[7]), vget_high_s16(s[7]));
+
+        src_ptr += 8;
+        cols -= 8;
+      } while (cols);
+
+      sum_u64 = vpadalq_u32(sum_u64, vreinterpretq_u32_s32(sum_s32[0]));
+      sum_u64 = vpadalq_u32(sum_u64, vreinterpretq_u32_s32(sum_s32[1]));
       src += 8 * stride;
-      r -= 8;
-    } while (r);
+      rows -= 8;
+    } while (rows);
 
-    s2 = vadd_u64(vget_low_u64(s1), vget_high_u64(s1));
+    return horizontal_add_uint64x2(sum_u64);
   }
-
-  return vget_lane_u64(s2, 0);
 }

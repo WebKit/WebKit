@@ -41,6 +41,11 @@ typedef struct search_site_config {
   int total_steps;
 } search_site_config;
 
+typedef struct vp9_sad_table {
+  vpx_sad_fn_t sdf;
+  vpx_sad_multi_d_fn_t sdx4df;
+} vp9_sad_fn_ptr_t;
+
 static INLINE const uint8_t *get_buf_from_mv(const struct buf_2d *buf,
                                              const MV *mv) {
   return &buf->buf[mv->row * buf->stride + mv->col];
@@ -63,12 +68,13 @@ int vp9_get_mvpred_av_var(const MACROBLOCK *x, const MV *best_mv,
 
 struct VP9_COMP;
 struct SPEED_FEATURES;
+struct vp9_sad_table;
 
 int vp9_init_search_range(int size);
 
 int vp9_refining_search_sad(const struct macroblock *x, struct mv *ref_mv,
                             int error_per_bit, int search_range,
-                            const struct vp9_variance_vtable *fn_ptr,
+                            const struct vp9_sad_table *sad_fn_ptr,
                             const struct mv *center_mv);
 
 // Perform integral projection based motion estimation.
@@ -93,20 +99,10 @@ extern fractional_mv_step_fp vp9_skip_sub_pixel_tree;
 extern fractional_mv_step_fp vp9_return_max_sub_pixel_mv;
 extern fractional_mv_step_fp vp9_return_min_sub_pixel_mv;
 
-typedef int (*vp9_full_search_fn_t)(const MACROBLOCK *x, const MV *ref_mv,
-                                    int sad_per_bit, int distance,
-                                    const vp9_variance_fn_ptr_t *fn_ptr,
-                                    const MV *center_mv, MV *best_mv);
-
-typedef int (*vp9_refining_search_fn_t)(const MACROBLOCK *x, MV *ref_mv,
-                                        int sad_per_bit, int distance,
-                                        const vp9_variance_fn_ptr_t *fn_ptr,
-                                        const MV *center_mv);
-
 typedef int (*vp9_diamond_search_fn_t)(
-    const MACROBLOCK *x, const search_site_config *cfg, MV *ref_mv, MV *best_mv,
-    int search_param, int sad_per_bit, int *num00,
-    const vp9_variance_fn_ptr_t *fn_ptr, const MV *center_mv);
+    const MACROBLOCK *x, const search_site_config *cfg, MV *ref_mv,
+    uint32_t start_mv_sad, MV *best_mv, int search_param, int sad_per_bit,
+    int *num00, const vp9_sad_fn_ptr_t *sad_fn_ptr, const MV *center_mv);
 
 int vp9_refining_search_8p_c(const MACROBLOCK *x, MV *ref_mv, int error_per_bit,
                              int search_range,

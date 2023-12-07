@@ -39,11 +39,10 @@ static INLINE int16x8_t vec_max_across(int16x8_t a) {
 }
 
 void vp9_quantize_fp_vsx(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
-                         int skip_block, const int16_t *round_ptr,
-                         const int16_t *quant_ptr, tran_low_t *qcoeff_ptr,
-                         tran_low_t *dqcoeff_ptr, const int16_t *dequant_ptr,
-                         uint16_t *eob_ptr, const int16_t *scan,
-                         const int16_t *iscan) {
+                         const int16_t *round_ptr, const int16_t *quant_ptr,
+                         tran_low_t *qcoeff_ptr, tran_low_t *dqcoeff_ptr,
+                         const int16_t *dequant_ptr, uint16_t *eob_ptr,
+                         const int16_t *scan, const int16_t *iscan) {
   int16x8_t qcoeff0, qcoeff1, dqcoeff0, dqcoeff1, eob;
   bool16x8_t zero_coeff0, zero_coeff1;
 
@@ -56,8 +55,6 @@ void vp9_quantize_fp_vsx(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
   int16x8_t scan1 = vec_vsx_ld(16, iscan);
 
   (void)scan;
-  (void)skip_block;
-  assert(!skip_block);
 
   // First set of 8 coeff starts with DC + 7 AC
   qcoeff0 = vec_mulhi(vec_vaddshs(vec_abs(coeff0), round), quant);
@@ -165,7 +162,7 @@ static INLINE int16x8_t dequantize_coeff_32(int16x8_t qcoeff,
 }
 
 void vp9_quantize_fp_32x32_vsx(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
-                               int skip_block, const int16_t *round_ptr,
+                               const int16_t *round_ptr,
                                const int16_t *quant_ptr, tran_low_t *qcoeff_ptr,
                                tran_low_t *dqcoeff_ptr,
                                const int16_t *dequant_ptr, uint16_t *eob_ptr,
@@ -194,9 +191,7 @@ void vp9_quantize_fp_32x32_vsx(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
   int16x8_t abs_coeff1 = vec_abs(coeff1);
 
   (void)scan;
-  (void)skip_block;
   (void)n_coeffs;
-  assert(!skip_block);
 
   mask0 = vec_cmpge(abs_coeff0, thres);
   round = vec_sra(vec_add(round, vec_ones_s16), vec_ones_u16);

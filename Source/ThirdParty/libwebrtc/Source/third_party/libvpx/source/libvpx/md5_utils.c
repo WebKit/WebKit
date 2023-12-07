@@ -151,8 +151,8 @@ void MD5Final(md5byte digest[16], struct MD5Context *ctx) {
  * reflect the addition of 16 longwords of new data.  MD5Update blocks
  * the data and converts bytes into longwords for this routine.
  */
-VPX_NO_UNSIGNED_OVERFLOW_CHECK void MD5Transform(UWORD32 buf[4],
-                                                 UWORD32 const in[16]) {
+VPX_NO_UNSIGNED_OVERFLOW_CHECK VPX_NO_UNSIGNED_SHIFT_CHECK void MD5Transform(
+    UWORD32 buf[4], UWORD32 const in[16]) {
   UWORD32 a, b, c, d;
 
   a = buf[0];

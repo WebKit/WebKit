@@ -10,7 +10,7 @@
 
 #include "vpx_config.h"
 #include "vp8_rtcd.h"
-#if !defined(WIN32) && CONFIG_OS_SUPPORT == 1
+#if !defined(_WIN32) && CONFIG_OS_SUPPORT == 1
 #include <unistd.h>
 #endif
 #include "onyxd_int.h"
@@ -30,11 +30,13 @@
 #include "error_concealment.h"
 #endif
 
-#define CALLOC_ARRAY(p, n) CHECK_MEM_ERROR((p), vpx_calloc(sizeof(*(p)), (n)))
-#define CALLOC_ARRAY_ALIGNED(p, n, algn)                            \
-  do {                                                              \
-    CHECK_MEM_ERROR((p), vpx_memalign((algn), sizeof(*(p)) * (n))); \
-    memset((p), 0, (n) * sizeof(*(p)));                             \
+#define CALLOC_ARRAY(p, n) \
+  CHECK_MEM_ERROR(&pbi->common.error, (p), vpx_calloc(sizeof(*(p)), (n)))
+#define CALLOC_ARRAY_ALIGNED(p, n, algn)                       \
+  do {                                                         \
+    CHECK_MEM_ERROR(&pbi->common.error, (p),                   \
+                    vpx_memalign((algn), sizeof(*(p)) * (n))); \
+    memset((p), 0, (n) * sizeof(*(p)));                        \
   } while (0)
 
 static void setup_decoding_thread_data(VP8D_COMP *pbi, MACROBLOCKD *xd,
@@ -54,7 +56,7 @@ static void setup_decoding_thread_data(VP8D_COMP *pbi, MACROBLOCKD *xd,
     mbd->dst = xd->dst;
 
     mbd->segmentation_enabled = xd->segmentation_enabled;
-    mbd->mb_segement_abs_delta = xd->mb_segement_abs_delta;
+    mbd->mb_segment_abs_delta = xd->mb_segment_abs_delta;
     memcpy(mbd->segment_feature_data, xd->segment_feature_data,
            sizeof(xd->segment_feature_data));
 
@@ -74,9 +76,9 @@ static void setup_decoding_thread_data(VP8D_COMP *pbi, MACROBLOCKD *xd,
     memcpy(mbd->dequant_y2, xd->dequant_y2, sizeof(xd->dequant_y2));
     memcpy(mbd->dequant_uv, xd->dequant_uv, sizeof(xd->dequant_uv));
 
-    mbd->fullpixel_mask = 0xffffffff;
+    mbd->fullpixel_mask = ~0;
 
-    if (pc->full_pixel) mbd->fullpixel_mask = 0xfffffff8;
+    if (pc->full_pixel) mbd->fullpixel_mask = ~7;
   }
 
   for (i = 0; i < pc->mb_rows; ++i)
@@ -754,7 +756,7 @@ void vp8mt_alloc_temp_buffers(VP8D_COMP *pbi, int width, int prev_mb_rows) {
     uv_width = width >> 1;
 
     /* Allocate a vpx_atomic_int for each mb row. */
-    CHECK_MEM_ERROR(pbi->mt_current_mb_col,
+    CHECK_MEM_ERROR(&pc->error, pbi->mt_current_mb_col,
                     vpx_malloc(sizeof(*pbi->mt_current_mb_col) * pc->mb_rows));
     for (i = 0; i < pc->mb_rows; ++i)
       vpx_atomic_init(&pbi->mt_current_mb_col[i], 0);
@@ -762,7 +764,7 @@ void vp8mt_alloc_temp_buffers(VP8D_COMP *pbi, int width, int prev_mb_rows) {
     /* Allocate memory for above_row buffers. */
     CALLOC_ARRAY(pbi->mt_yabove_row, pc->mb_rows);
     for (i = 0; i < pc->mb_rows; ++i) {
-      CHECK_MEM_ERROR(pbi->mt_yabove_row[i],
+      CHECK_MEM_ERROR(&pc->error, pbi->mt_yabove_row[i],
                       vpx_memalign(16, sizeof(unsigned char) *
                                            (width + (VP8BORDERINPIXELS << 1))));
       vp8_zero_array(pbi->mt_yabove_row[i], width + (VP8BORDERINPIXELS << 1));
@@ -770,7 +772,7 @@ void vp8mt_alloc_temp_buffers(VP8D_COMP *pbi, int width, int prev_mb_rows) {
 
     CALLOC_ARRAY(pbi->mt_uabove_row, pc->mb_rows);
     for (i = 0; i < pc->mb_rows; ++i) {
-      CHECK_MEM_ERROR(pbi->mt_uabove_row[i],
+      CHECK_MEM_ERROR(&pc->error, pbi->mt_uabove_row[i],
                       vpx_memalign(16, sizeof(unsigned char) *
                                            (uv_width + VP8BORDERINPIXELS)));
       vp8_zero_array(pbi->mt_uabove_row[i], uv_width + VP8BORDERINPIXELS);
@@ -778,7 +780,7 @@ void vp8mt_alloc_temp_buffers(VP8D_COMP *pbi, int width, int prev_mb_rows) {
 
     CALLOC_ARRAY(pbi->mt_vabove_row, pc->mb_rows);
     for (i = 0; i < pc->mb_rows; ++i) {
-      CHECK_MEM_ERROR(pbi->mt_vabove_row[i],
+      CHECK_MEM_ERROR(&pc->error, pbi->mt_vabove_row[i],
                       vpx_memalign(16, sizeof(unsigned char) *
                                            (uv_width + VP8BORDERINPIXELS)));
       vp8_zero_array(pbi->mt_vabove_row[i], uv_width + VP8BORDERINPIXELS);
@@ -787,17 +789,17 @@ void vp8mt_alloc_temp_buffers(VP8D_COMP *pbi, int width, int prev_mb_rows) {
     /* Allocate memory for left_col buffers. */
     CALLOC_ARRAY(pbi->mt_yleft_col, pc->mb_rows);
     for (i = 0; i < pc->mb_rows; ++i)
-      CHECK_MEM_ERROR(pbi->mt_yleft_col[i],
+      CHECK_MEM_ERROR(&pc->error, pbi->mt_yleft_col[i],
                       vpx_calloc(sizeof(unsigned char) * 16, 1));
 
     CALLOC_ARRAY(pbi->mt_uleft_col, pc->mb_rows);
     for (i = 0; i < pc->mb_rows; ++i)
-      CHECK_MEM_ERROR(pbi->mt_uleft_col[i],
+      CHECK_MEM_ERROR(&pc->error, pbi->mt_uleft_col[i],
                       vpx_calloc(sizeof(unsigned char) * 8, 1));
 
     CALLOC_ARRAY(pbi->mt_vleft_col, pc->mb_rows);
     for (i = 0; i < pc->mb_rows; ++i)
-      CHECK_MEM_ERROR(pbi->mt_vleft_col[i],
+      CHECK_MEM_ERROR(&pc->error, pbi->mt_vleft_col[i],
                       vpx_calloc(sizeof(unsigned char) * 8, 1));
   }
 }

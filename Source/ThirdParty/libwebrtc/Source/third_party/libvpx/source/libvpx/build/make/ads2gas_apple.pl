@@ -20,16 +20,13 @@
 
 print "@ This file was created from a .asm file\n";
 print "@  using the ads2gas_apple.pl script.\n\n";
-print "\t.syntax unified\n";
+print ".syntax unified\n";
 
-my %register_aliases;
 my %macro_aliases;
 
 my @mapping_list = ("\$0", "\$1", "\$2", "\$3", "\$4", "\$5", "\$6", "\$7", "\$8", "\$9");
 
 my @incoming_array;
-
-my @imported_functions;
 
 # Perl trim function to remove whitespace from the start and end of the string
 sub trim($)
@@ -46,25 +43,7 @@ while (<STDIN>)
     s/@/,:/g;
 
     # Comment character
-    s/;/ @/g;
-
-    # Hexadecimal constants prefaced by 0x
-    s/#&/#0x/g;
-
-    # Convert :OR: to |
-    s/:OR:/ | /g;
-
-    # Convert :AND: to &
-    s/:AND:/ & /g;
-
-    # Convert :NOT: to ~
-    s/:NOT:/ ~ /g;
-
-    # Convert :SHL: to <<
-    s/:SHL:/ << /g;
-
-    # Convert :SHR: to >>
-    s/:SHR:/ >> /g;
+    s/;/@/;
 
     # Convert ELSE to .else
     s/\bELSE\b/.else/g;
@@ -72,131 +51,64 @@ while (<STDIN>)
     # Convert ENDIF to .endif
     s/\bENDIF\b/.endif/g;
 
-    # Convert ELSEIF to .elseif
-    s/\bELSEIF\b/.elseif/g;
-
-    # Convert LTORG to .ltorg
-    s/\bLTORG\b/.ltorg/g;
-
-    # Convert IF :DEF:to .if
-    # gcc doesn't have the ability to do a conditional
-    # if defined variable that is set by IF :DEF: on
-    # armasm, so convert it to a normal .if and then
-    # make sure to define a value elesewhere
-    if (s/\bIF :DEF:\b/.if /g)
-    {
-        s/=/==/g;
-    }
-
     # Convert IF to .if
-    if (s/\bIF\b/.if/g)
-    {
-        s/=/==/g;
+    if (s/\bIF\b/.if/g) {
+        s/=+/==/g;
     }
 
     # Convert INCLUDE to .INCLUDE "file"
-    s/INCLUDE(\s*)(.*)$/.include $1\"$2\"/;
-
-    # Code directive (ARM vs Thumb)
-    s/CODE([0-9][0-9])/.code $1/;
+    s/INCLUDE\s?(.*)$/.include \"$1\"/;
 
     # No AREA required
     # But ALIGNs in AREA must be obeyed
-    s/^\s*AREA.*ALIGN=([0-9])$/.text\n.p2align $1/;
+    s/^(\s*)\bAREA\b.*ALIGN=([0-9])$/$1.text\n$1.p2align $2/;
     # If no ALIGN, strip the AREA and align to 4 bytes
-    s/^\s*AREA.*$/.text\n.p2align 2/;
+    s/^(\s*)\bAREA\b.*$/$1.text\n$1.p2align 2/;
 
-    # DCD to .word
-    # This one is for incoming symbols
-    s/DCD\s+\|(\w*)\|/.long $1/;
+    # Make function visible to linker.
+    s/EXPORT\s+\|([\$\w]*)\|/.globl _$1/;
 
-    # DCW to .short
-    s/DCW\s+\|(\w*)\|/.short $1/;
-    s/DCW(.*)/.short $1/;
+    # No vertical bars on function names
+    s/^\|(\$?\w+)\|/$1/g;
 
-    # Constants defined in scope
-    s/DCD(.*)/.long $1/;
-    s/DCB(.*)/.byte $1/;
+    # Labels and functions need a leading underscore and trailing colon
+    s/^([a-zA-Z_0-9\$]+)/_$1:/ if !/EQU/;
 
-    # Make function visible to linker, and make additional symbol with
-    # prepended underscore
-    s/EXPORT\s+\|([\$\w]*)\|/.globl _$1\n\t.globl $1/;
-
-    # Prepend imported functions with _
-    if (s/IMPORT\s+\|([\$\w]*)\|/.globl $1/)
-    {
-        $function = trim($1);
-        push(@imported_functions, $function);
-    }
-
-    foreach $function (@imported_functions)
-    {
-        s/$function/_$function/;
-    }
-
-    # No vertical bars required; make additional symbol with prepended
-    # underscore
-    s/^\|(\$?\w+)\|/_$1\n\t$1:/g;
-
-    # Labels need trailing colon
-#   s/^(\w+)/$1:/ if !/EQU/;
-    # put the colon at the end of the line in the macro
-    s/^([a-zA-Z_0-9\$]+)/$1:/ if !/EQU/;
+    # Branches need to call the correct, underscored, function
+    s/^(\s+b[egln]?[teq]?\s+)([a-zA-Z_0-9\$]+)/$1 _$2/ if !/EQU/;
 
     # ALIGN directive
     s/\bALIGN\b/.balign/g;
 
     # Strip ARM
-    s/\sARM/@ ARM/g;
+    s/\s+ARM//;
 
     # Strip REQUIRE8
-    #s/\sREQUIRE8/@ REQUIRE8/g;
-    s/\sREQUIRE8/@ /g;
+    s/\s+REQUIRE8//;
 
     # Strip PRESERVE8
-    s/\sPRESERVE8/@ PRESERVE8/g;
+    s/\s+PRESERVE8//;
 
     # Strip PROC and ENDPROC
-    s/\bPROC\b/@/g;
-    s/\bENDP\b/@/g;
+    s/\bPROC\b//g;
+    s/\bENDP\b//g;
 
     # EQU directive
-    s/(.*)EQU(.*)/.set $1, $2/;
+    s/(\S+\s+)EQU(\s+\S+)/.equ $1, $2/;
 
     # Begin macro definition
-    if (/\bMACRO\b/)
-    {
+    if (/\bMACRO\b/) {
         # Process next line down, which will be the macro definition
         $_ = <STDIN>;
-
-        $trimmed = trim($_);
-
-        # remove commas that are separating list
-        $trimmed =~ s/,//g;
-
-        # string to array
-        @incoming_array = split(/\s+/, $trimmed);
-
-        print ".macro @incoming_array[0]\n";
-
-        # remove the first element, as that is the name of the macro
-        shift (@incoming_array);
-
-        @macro_aliases{@incoming_array} = @mapping_list;
-
-        next;
+        s/^/.macro/;
+        s/\$//g;             # Remove $ from the variables in the declaration
     }
 
-    while (($key, $value) = each(%macro_aliases))
-    {
-        $key =~ s/\$/\\\$/;
-        s/$key\b/$value/g;
-    }
+    s/\$/\\/g;               # Use \ to reference formal parameters
+    # End macro definition
 
-    # For macros, use \ to reference formal params
-#   s/\$/\\/g;                  # End macro definition
-    s/\bMEND\b/.endm/;              # No need to tell it where to stop assembling
+    s/\bMEND\b/.endm/;       # No need to tell it where to stop assembling
     next if /^\s*END\s*$/;
-
+    s/[ \t]+$//;
     print;
 }

@@ -19,6 +19,7 @@
 #include <limits.h>
 #include "vpx/vpx_encoder.h"
 #include "vpx_mem/vpx_mem.h"
+#include "vpx_ports/compiler_attributes.h"
 #include "vpx_ports/system_state.h"
 #include "bitstream.h"
 
@@ -117,7 +118,9 @@ static void write_split(vp8_writer *bc, int x) {
                   vp8_mbsplit_encodings + x);
 }
 
-void vp8_pack_tokens(vp8_writer *w, const TOKENEXTRA *p, int xcount) {
+void VPX_NO_UNSIGNED_SHIFT_CHECK vp8_pack_tokens(vp8_writer *w,
+                                                 const TOKENEXTRA *p,
+                                                 int xcount) {
   const TOKENEXTRA *stop = p + xcount;
   unsigned int split;
   int shift;
@@ -172,9 +175,8 @@ void vp8_pack_tokens(vp8_writer *w, const TOKENEXTRA *p, int xcount) {
         validate_buffer(w->buffer + w->pos, 1, w->buffer_end, w->error);
 
         w->buffer[w->pos++] = (lowvalue >> (24 - offset)) & 0xff;
-        lowvalue <<= offset;
         shift = count;
-        lowvalue &= 0xffffff;
+        lowvalue = (int)(((uint64_t)lowvalue << offset) & 0xffffff);
         count -= 8;
       }
 
@@ -223,9 +225,8 @@ void vp8_pack_tokens(vp8_writer *w, const TOKENEXTRA *p, int xcount) {
             validate_buffer(w->buffer + w->pos, 1, w->buffer_end, w->error);
 
             w->buffer[w->pos++] = (lowvalue >> (24 - offset)) & 0xff;
-            lowvalue <<= offset;
             shift = count;
-            lowvalue &= 0xffffff;
+            lowvalue = (int)(((uint64_t)lowvalue << offset) & 0xffffff);
             count -= 8;
           }
 
@@ -1079,7 +1080,7 @@ void vp8_pack_bitstream(VP8_COMP *cpi, unsigned char *dest,
     if (xd->update_mb_segmentation_data) {
       signed char Data;
 
-      vp8_write_bit(bc, xd->mb_segement_abs_delta);
+      vp8_write_bit(bc, xd->mb_segment_abs_delta);
 
       /* For each segmentation feature (Quant and loop filter level) */
       for (i = 0; i < MB_LVL_MAX; ++i) {

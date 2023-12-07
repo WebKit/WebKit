@@ -12,31 +12,7 @@
 
 #include "./vp8_rtcd.h"
 #include "vp8/encoder/block.h"
-
-/* bitscan reverse (bsr) */
-#if defined(_MSC_VER)
-#include <intrin.h>
-#pragma intrinsic(_BitScanReverse)
-static int bsr(int mask) {
-  unsigned long eob;
-  _BitScanReverse(&eob, mask);
-  eob++;
-  if (mask == 0) eob = 0;
-  return eob;
-}
-#else
-static int bsr(int mask) {
-  int eob;
-#if defined(__GNUC__) && __GNUC__
-  __asm__ __volatile__("bsr %1, %0" : "=r"(eob) : "r"(mask) : "flags");
-#elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
-  asm volatile("bsr %1, %0" : "=r"(eob) : "r"(mask) : "flags");
-#endif
-  eob++;
-  if (mask == 0) eob = 0;
-  return eob;
-}
-#endif
+#include "vpx_ports/bitops.h" /* get_msb */
 
 void vp8_fast_quantize_b_ssse3(BLOCK *b, BLOCKD *d) {
   int eob, mask;
@@ -108,7 +84,10 @@ void vp8_fast_quantize_b_ssse3(BLOCK *b, BLOCKD *d) {
 
   mask = _mm_movemask_epi8(x);
 
-  eob = bsr(mask);
+  /* x2 is needed to increase the result from non-zero masks by 1,
+   * +1 is needed to mask undefined behavior for a null argument,
+   * the result of get_msb(1) is 0 */
+  eob = get_msb(mask * 2 + 1);
 
-  *d->eob = 0xFF & eob;
+  *d->eob = eob;
 }

@@ -100,9 +100,15 @@ EOF
 all_platforms="${all_platforms} arm64-android-gcc"
 all_platforms="${all_platforms} arm64-darwin-gcc"
 all_platforms="${all_platforms} arm64-darwin20-gcc"
+all_platforms="${all_platforms} arm64-darwin21-gcc"
+all_platforms="${all_platforms} arm64-darwin22-gcc"
 all_platforms="${all_platforms} arm64-linux-gcc"
 all_platforms="${all_platforms} arm64-win64-gcc"
 all_platforms="${all_platforms} arm64-win64-vs15"
+all_platforms="${all_platforms} arm64-win64-vs16"
+all_platforms="${all_platforms} arm64-win64-vs16-clangcl"
+all_platforms="${all_platforms} arm64-win64-vs17"
+all_platforms="${all_platforms} arm64-win64-vs17-clangcl"
 all_platforms="${all_platforms} armv7-android-gcc"   #neon Cortex-A8
 all_platforms="${all_platforms} armv7-darwin-gcc"    #neon Cortex-A8
 all_platforms="${all_platforms} armv7-linux-rvct"    #neon Cortex-A8
@@ -111,8 +117,12 @@ all_platforms="${all_platforms} armv7-none-rvct"     #neon Cortex-A8
 all_platforms="${all_platforms} armv7-win32-gcc"
 all_platforms="${all_platforms} armv7-win32-vs14"
 all_platforms="${all_platforms} armv7-win32-vs15"
+all_platforms="${all_platforms} armv7-win32-vs16"
+all_platforms="${all_platforms} armv7-win32-vs17"
 all_platforms="${all_platforms} armv7s-darwin-gcc"
 all_platforms="${all_platforms} armv8-linux-gcc"
+all_platforms="${all_platforms} loongarch32-linux-gcc"
+all_platforms="${all_platforms} loongarch64-linux-gcc"
 all_platforms="${all_platforms} mips32-linux-gcc"
 all_platforms="${all_platforms} mips64-linux-gcc"
 all_platforms="${all_platforms} ppc64le-linux-gcc"
@@ -139,6 +149,7 @@ all_platforms="${all_platforms} x86-win32-gcc"
 all_platforms="${all_platforms} x86-win32-vs14"
 all_platforms="${all_platforms} x86-win32-vs15"
 all_platforms="${all_platforms} x86-win32-vs16"
+all_platforms="${all_platforms} x86-win32-vs17"
 all_platforms="${all_platforms} x86_64-android-gcc"
 all_platforms="${all_platforms} x86_64-darwin9-gcc"
 all_platforms="${all_platforms} x86_64-darwin10-gcc"
@@ -152,6 +163,8 @@ all_platforms="${all_platforms} x86_64-darwin17-gcc"
 all_platforms="${all_platforms} x86_64-darwin18-gcc"
 all_platforms="${all_platforms} x86_64-darwin19-gcc"
 all_platforms="${all_platforms} x86_64-darwin20-gcc"
+all_platforms="${all_platforms} x86_64-darwin21-gcc"
+all_platforms="${all_platforms} x86_64-darwin22-gcc"
 all_platforms="${all_platforms} x86_64-iphonesimulator-gcc"
 all_platforms="${all_platforms} x86_64-linux-gcc"
 all_platforms="${all_platforms} x86_64-linux-icc"
@@ -160,6 +173,7 @@ all_platforms="${all_platforms} x86_64-win64-gcc"
 all_platforms="${all_platforms} x86_64-win64-vs14"
 all_platforms="${all_platforms} x86_64-win64-vs15"
 all_platforms="${all_platforms} x86_64-win64-vs16"
+all_platforms="${all_platforms} x86_64-win64-vs17"
 all_platforms="${all_platforms} generic-gnu"
 
 # all_targets is a list of all targets that can be configured
@@ -231,11 +245,20 @@ CODEC_FAMILIES="
 
 ARCH_LIST="
     arm
+    aarch64
     mips
     x86
     x86_64
     ppc
+    loongarch
 "
+
+ARCH_EXT_LIST_AARCH64="
+    neon
+    neon_dotprod
+    neon_i8mm
+"
+
 ARCH_EXT_LIST_X86="
     mmx
     sse
@@ -250,11 +273,13 @@ ARCH_EXT_LIST_X86="
 
 ARCH_EXT_LIST_LOONGSON="
     mmi
+    lsx
+    lasx
 "
 
 ARCH_EXT_LIST="
-    neon
     neon_asm
+    ${ARCH_EXT_LIST_AARCH64}
 
     mips32
     dspr2
@@ -278,6 +303,7 @@ EXPERIMENT_LIST="
     emulate_hardware
     non_greedy_mv
     rate_ctrl
+    collect_component_timing
 "
 CONFIG_LIST="
     dependency_tracking
@@ -327,7 +353,6 @@ CONFIG_LIST="
     multi_res_encoding
     temporal_denoising
     vp9_temporal_denoising
-    consistent_recode
     coefficient_range_checking
     vp9_highbitdepth
     better_hw_compatibility
@@ -391,7 +416,6 @@ CMDLINE_SELECT="
     multi_res_encoding
     temporal_denoising
     vp9_temporal_denoising
-    consistent_recode
     coefficient_range_checking
     better_hw_compatibility
     vp9_highbitdepth
@@ -620,7 +644,10 @@ process_toolchain() {
         check_add_cflags -Wall
         check_add_cflags -Wdeclaration-after-statement
         check_add_cflags -Wdisabled-optimization
+        check_add_cflags -Wextra-semi
+        check_add_cflags -Wextra-semi-stmt
         check_add_cflags -Wfloat-conversion
+        check_add_cflags -Wformat=2
         check_add_cflags -Wparentheses-equality
         check_add_cflags -Wpointer-arith
         check_add_cflags -Wtype-limits
@@ -629,8 +656,9 @@ process_toolchain() {
         check_add_cflags -Wimplicit-function-declaration
         check_add_cflags -Wmissing-declarations
         check_add_cflags -Wmissing-prototypes
+        check_add_cflags -Wshadow
         check_add_cflags -Wuninitialized
-        check_add_cflags -Wunreachable-code-loop-increment
+        check_add_cflags -Wunreachable-code-aggressive
         check_add_cflags -Wunused
         check_add_cflags -Wextra
         # check_add_cflags also adds to cxxflags. gtest does not do well with
@@ -654,11 +682,22 @@ process_toolchain() {
           check_add_cxxflags -Wno-psabi
         fi
 
-        # disable some warnings specific to libyuv.
+        # Enforce C++11 compatibility.
+        check_add_cxxflags -Wc++14-extensions
+        check_add_cxxflags -Wc++17-extensions
+        check_add_cxxflags -Wc++20-extensions
+        check_add_cxxflags -Wnon-virtual-dtor
+
+        # disable some warnings specific to libyuv / libwebm.
         check_cxxflags -Wno-missing-declarations \
           && LIBYUV_CXXFLAGS="${LIBYUV_CXXFLAGS} -Wno-missing-declarations"
         check_cxxflags -Wno-missing-prototypes \
           && LIBYUV_CXXFLAGS="${LIBYUV_CXXFLAGS} -Wno-missing-prototypes"
+        check_cxxflags -Wno-pass-failed \
+          && LIBYUV_CXXFLAGS="${LIBYUV_CXXFLAGS} -Wno-pass-failed"
+        check_cxxflags -Wno-shadow \
+          && LIBWEBM_CXXFLAGS="${LIBWEBM_CXXFLAGS} -Wno-shadow" \
+          && LIBYUV_CXXFLAGS="${LIBYUV_CXXFLAGS} -Wno-shadow"
         check_cxxflags -Wno-unused-parameter \
           && LIBYUV_CXXFLAGS="${LIBYUV_CXXFLAGS} -Wno-unused-parameter"
     fi
@@ -731,33 +770,33 @@ process_toolchain() {
             soft_enable libyuv
         ;;
         *-android-*)
-            check_add_cxxflags -std=c++11 && soft_enable webm_io
+            check_add_cxxflags -std=gnu++11 && soft_enable webm_io
             soft_enable libyuv
             # GTestLog must be modified to use Android logging utilities.
         ;;
         *-darwin-*)
-            check_add_cxxflags -std=c++11
+            check_add_cxxflags -std=gnu++11
             # iOS/ARM builds do not work with gtest. This does not match
             # x86 targets.
         ;;
         *-iphonesimulator-*)
-            check_add_cxxflags -std=c++11 && soft_enable webm_io
+            check_add_cxxflags -std=gnu++11 && soft_enable webm_io
             soft_enable libyuv
         ;;
         *-win*)
             # Some mingw toolchains don't have pthread available by default.
             # Treat these more like visual studio where threading in gtest
             # would be disabled for the same reason.
-            check_add_cxxflags -std=c++11 && soft_enable unit_tests \
+            check_add_cxxflags -std=gnu++11 && soft_enable unit_tests \
               && soft_enable webm_io
             check_cxx "$@" <<EOF && soft_enable libyuv
 int z;
 EOF
         ;;
         *)
-            enabled pthread_h && check_add_cxxflags -std=c++11 \
+            enabled pthread_h && check_add_cxxflags -std=gnu++11 \
               && soft_enable unit_tests
-            check_add_cxxflags -std=c++11 && soft_enable webm_io
+            check_add_cxxflags -std=gnu++11 && soft_enable webm_io
             check_cxx "$@" <<EOF && soft_enable libyuv
 int z;
 EOF

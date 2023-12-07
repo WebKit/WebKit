@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 ##  Copyright (c) 2012 The WebM project authors. All Rights Reserved.
 ##
 ##  Use of this source code is governed by a BSD-style license
@@ -10,7 +10,7 @@
 """Performs style checking on each diff hunk."""
 import getopt
 import os
-import StringIO
+import io
 import subprocess
 import sys
 
@@ -63,21 +63,21 @@ def main(argv=None):
     try:
         try:
             opts, args = getopt.getopt(argv[1:], SHORT_OPTIONS, LONG_OPTIONS)
-        except getopt.error, msg:
+        except getopt.error as msg:
             raise Usage(msg)
 
         # process options
         for o, _ in opts:
             if o in ("-h", "--help"):
-                print __doc__
+                print(__doc__)
                 sys.exit(0)
 
         if args and len(args) > 1:
-            print __doc__
+            print(__doc__)
             sys.exit(0)
 
         # Find the fully qualified path to the root of the tree
-        tl = Subprocess(TOPLEVEL_CMD, stdout=subprocess.PIPE)
+        tl = Subprocess(TOPLEVEL_CMD, stdout=subprocess.PIPE, text=True)
         tl = tl.communicate()[0].strip()
 
         # See if we're working on the index or not.
@@ -93,9 +93,9 @@ def main(argv=None):
 
         # Get a list of all affected lines
         file_affected_line_map = {}
-        p = Subprocess(diff_cmd, stdout=subprocess.PIPE)
+        p = Subprocess(diff_cmd, stdout=subprocess.PIPE, text=True)
         stdout = p.communicate()[0]
-        for hunk in diff.ParseDiffHunks(StringIO.StringIO(stdout)):
+        for hunk in diff.ParseDiffHunks(io.StringIO(stdout)):
             filename = hunk.right.filename[2:]
             if filename not in file_affected_line_map:
                 file_affected_line_map[filename] = set()
@@ -103,7 +103,7 @@ def main(argv=None):
 
         # Run each affected file through cpplint
         lint_failed = False
-        for filename, affected_lines in file_affected_line_map.iteritems():
+        for filename, affected_lines in file_affected_line_map.items():
             if filename.split(".")[-1] not in ("c", "h", "cc"):
                 continue
             if filename.startswith("third_party"):
@@ -112,14 +112,16 @@ def main(argv=None):
             if args:
                 # File contents come from git
                 show_cmd = SHOW_CMD + [args[0] + ":" + filename]
-                show = Subprocess(show_cmd, stdout=subprocess.PIPE)
+                show = Subprocess(show_cmd, stdout=subprocess.PIPE, text=True)
                 lint = Subprocess(cpplint_cmd, expected_returncode=(0, 1),
-                                  stdin=show.stdout, stderr=subprocess.PIPE)
+                                  stdin=show.stdout, stderr=subprocess.PIPE,
+                                  text=True)
                 lint_out = lint.communicate()[1]
             else:
                 # File contents come from the working tree
                 lint = Subprocess(cpplint_cmd, expected_returncode=(0, 1),
-                                  stdin=subprocess.PIPE, stderr=subprocess.PIPE)
+                                  stdin=subprocess.PIPE, stderr=subprocess.PIPE,
+                                  text=True)
                 stdin = open(os.path.join(tl, filename)).read()
                 lint_out = lint.communicate(stdin)[1]
 
@@ -129,17 +131,17 @@ def main(argv=None):
                     continue
                 warning_line_num = int(fields[1])
                 if warning_line_num in affected_lines:
-                    print "%s:%d:%s"%(filename, warning_line_num,
-                                      ":".join(fields[2:]))
+                    print("%s:%d:%s"%(filename, warning_line_num,
+                                      ":".join(fields[2:])))
                     lint_failed = True
 
         # Set exit code if any relevant lint errors seen
         if lint_failed:
             return 1
 
-    except Usage, err:
-        print >>sys.stderr, err
-        print >>sys.stderr, "for help use --help"
+    except Usage as err:
+        print(err, file=sys.stderr)
+        print("for help use --help", file=sys.stderr)
         return 2
 
 if __name__ == "__main__":

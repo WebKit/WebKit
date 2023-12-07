@@ -130,13 +130,19 @@ std::ostream &operator<<(std::ostream &os, const HadamardFuncWithSize &hfs) {
 
 class HadamardTestBase : public ::testing::TestWithParam<HadamardFuncWithSize> {
  public:
-  virtual void SetUp() {
+  void SetUp() override {
     h_func_ = GetParam().func;
     bwh_ = GetParam().block_size;
     block_size_ = bwh_ * bwh_;
     rnd_.Reset(ACMRandom::DeterministicSeed());
   }
 
+  // The Rand() function generates values in the range [-((1 << BitDepth) - 1),
+  // (1 << BitDepth) - 1]. This is because the input to the Hadamard transform
+  // is the residual pixel, which is defined as 'source pixel - predicted
+  // pixel'. Source pixel and predicted pixel take values in the range
+  // [0, (1 << BitDepth) - 1] and thus the residual pixel ranges from
+  // -((1 << BitDepth) - 1) to ((1 << BitDepth) - 1).
   virtual int16_t Rand() = 0;
 
   void ReferenceHadamard(const int16_t *a, int a_stride, tran_low_t *b,
@@ -168,6 +174,31 @@ class HadamardTestBase : public ::testing::TestWithParam<HadamardFuncWithSize> {
     std::sort(b, b + block_size_);
     std::sort(b_ref, b_ref + block_size_);
     EXPECT_EQ(0, memcmp(b, b_ref, sizeof(b)));
+  }
+
+  void ExtremeValuesTest() {
+    const int kMaxBlockSize = 32 * 32;
+    DECLARE_ALIGNED(16, int16_t, input_extreme_block[kMaxBlockSize]);
+    DECLARE_ALIGNED(16, tran_low_t, b[kMaxBlockSize]);
+    memset(b, 0, sizeof(b));
+
+    tran_low_t b_ref[kMaxBlockSize];
+    memset(b_ref, 0, sizeof(b_ref));
+
+    for (int i = 0; i < 2; ++i) {
+      // Initialize a test block with input range [-mask_, mask_].
+      const int sign = (i == 0) ? 1 : -1;
+      for (int j = 0; j < kMaxBlockSize; ++j)
+        input_extreme_block[j] = sign * 255;
+
+      ReferenceHadamard(input_extreme_block, bwh_, b_ref, bwh_);
+      ASM_REGISTER_STATE_CHECK(h_func_(input_extreme_block, bwh_, b));
+
+      // The order of the output is not important. Sort before checking.
+      std::sort(b, b + block_size_);
+      std::sort(b_ref, b_ref + block_size_);
+      EXPECT_EQ(0, memcmp(b, b_ref, sizeof(b)));
+    }
   }
 
   void VaryStride() {
@@ -220,10 +251,17 @@ class HadamardTestBase : public ::testing::TestWithParam<HadamardFuncWithSize> {
 
 class HadamardLowbdTest : public HadamardTestBase {
  protected:
-  virtual int16_t Rand() { return rnd_.Rand9Signed(); }
+  // Use values between -255 (0xFF01) and 255 (0x00FF)
+  int16_t Rand() override {
+    int16_t src = rnd_.Rand8();
+    int16_t pred = rnd_.Rand8();
+    return src - pred;
+  }
 };
 
 TEST_P(HadamardLowbdTest, CompareReferenceRandom) { CompareReferenceRandom(); }
+
+TEST_P(HadamardLowbdTest, ExtremeValuesTest) { ExtremeValuesTest(); }
 
 TEST_P(HadamardLowbdTest, VaryStride) { VaryStride(); }
 
@@ -264,7 +302,8 @@ INSTANTIATE_TEST_SUITE_P(
 INSTANTIATE_TEST_SUITE_P(
     NEON, HadamardLowbdTest,
     ::testing::Values(HadamardFuncWithSize(&vpx_hadamard_8x8_neon, 8),
-                      HadamardFuncWithSize(&vpx_hadamard_16x16_neon, 16)));
+                      HadamardFuncWithSize(&vpx_hadamard_16x16_neon, 16),
+                      HadamardFuncWithSize(&vpx_hadamard_32x32_neon, 32)));
 #endif  // HAVE_NEON
 
 // TODO(jingning): Remove highbitdepth flag when the SIMD functions are
@@ -285,10 +324,22 @@ INSTANTIATE_TEST_SUITE_P(
                       HadamardFuncWithSize(&vpx_hadamard_16x16_vsx, 16)));
 #endif  // HAVE_VSX
 
+#if HAVE_LSX
+INSTANTIATE_TEST_SUITE_P(
+    LSX, HadamardLowbdTest,
+    ::testing::Values(HadamardFuncWithSize(&vpx_hadamard_8x8_lsx, 8),
+                      HadamardFuncWithSize(&vpx_hadamard_16x16_lsx, 16)));
+#endif  // HAVE_LSX
+
 #if CONFIG_VP9_HIGHBITDEPTH
 class HadamardHighbdTest : public HadamardTestBase {
  protected:
-  virtual int16_t Rand() { return rnd_.Rand13Signed(); }
+  // Use values between -4095 (0xF001) and 4095 (0x0FFF)
+  int16_t Rand() override {
+    int16_t src = rnd_.Rand12();
+    int16_t pred = rnd_.Rand12();
+    return src - pred;
+  }
 };
 
 TEST_P(HadamardHighbdTest, CompareReferenceRandom) { CompareReferenceRandom(); }
@@ -315,6 +366,15 @@ INSTANTIATE_TEST_SUITE_P(
                       HadamardFuncWithSize(&vpx_highbd_hadamard_32x32_avx2,
                                            32)));
 #endif  // HAVE_AVX2
+
+#if HAVE_NEON
+INSTANTIATE_TEST_SUITE_P(
+    NEON, HadamardHighbdTest,
+    ::testing::Values(HadamardFuncWithSize(&vpx_highbd_hadamard_8x8_neon, 8),
+                      HadamardFuncWithSize(&vpx_highbd_hadamard_16x16_neon, 16),
+                      HadamardFuncWithSize(&vpx_highbd_hadamard_32x32_neon,
+                                           32)));
+#endif
 
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 }  // namespace

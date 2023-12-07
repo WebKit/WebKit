@@ -24,10 +24,10 @@ class DatarateTestLarge
  public:
   DatarateTestLarge() : EncoderTest(GET_PARAM(0)) {}
 
-  virtual ~DatarateTestLarge() {}
+  ~DatarateTestLarge() override = default;
 
  protected:
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig();
     SetMode(GET_PARAM(1));
     set_cpu_used_ = GET_PARAM(2);
@@ -47,8 +47,8 @@ class DatarateTestLarge
     use_roi_ = false;
   }
 
-  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                                  ::libvpx_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                          ::libvpx_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(VP8E_SET_NOISE_SENSITIVITY, denoiser_on_);
       encoder->Control(VP8E_SET_CPUUSED, set_cpu_used_);
@@ -74,7 +74,7 @@ class DatarateTestLarge
     duration_ = 0;
   }
 
-  virtual void FramePktHook(const vpx_codec_cx_pkt_t *pkt) {
+  void FramePktHook(const vpx_codec_cx_pkt_t *pkt) override {
     // Time since last timestamp = duration.
     vpx_codec_pts_t duration = pkt->data.frame.pts - last_pts_;
 
@@ -121,7 +121,7 @@ class DatarateTestLarge
     ++frame_number_;
   }
 
-  virtual void EndPassHook(void) {
+  void EndPassHook() override {
     if (bits_total_) {
       const double file_size_in_kb = bits_total_ / 1000.;  // bits per kilobit
 
@@ -301,7 +301,7 @@ TEST_P(DatarateTestLarge, DropFramesMultiThreads) {
 
 class DatarateTestRealTime : public DatarateTestLarge {
  public:
-  virtual ~DatarateTestRealTime() {}
+  ~DatarateTestRealTime() override = default;
 };
 
 #if CONFIG_TEMPORAL_DENOISING

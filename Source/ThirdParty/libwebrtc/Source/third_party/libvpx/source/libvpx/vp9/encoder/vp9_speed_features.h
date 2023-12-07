@@ -210,6 +210,10 @@ typedef struct MV_SPEED_FEATURES {
 
   // This variable sets the step_param used in full pel motion search.
   int fullpel_search_step_param;
+
+  // Whether to downsample the rows in sad calculation during motion search.
+  // This is only active when there are at least 8 rows.
+  int use_downsampled_sad;
 } MV_SPEED_FEATURES;
 
 typedef struct PARTITION_SEARCH_BREAKOUT_THR {
@@ -246,6 +250,24 @@ typedef enum {
   USE_8_TAPS_SHARP,
 } SUBPEL_SEARCH_TYPE;
 
+typedef enum {
+  // Disable trellis coefficient optimization
+  DISABLE_TRELLIS_OPT,
+  // Enable trellis coefficient optimization
+  ENABLE_TRELLIS_OPT,
+  // Enable trellis coefficient optimization based on source variance of the
+  // prediction block during transform RD
+  ENABLE_TRELLIS_OPT_TX_RD_SRC_VAR,
+  // Enable trellis coefficient optimization based on residual mse of the
+  // transform block during transform RD
+  ENABLE_TRELLIS_OPT_TX_RD_RESIDUAL_MSE,
+} ENABLE_TRELLIS_OPT_METHOD;
+
+typedef struct TRELLIS_OPT_CONTROL {
+  ENABLE_TRELLIS_OPT_METHOD method;
+  double thresh;
+} TRELLIS_OPT_CONTROL;
+
 typedef struct SPEED_FEATURES {
   MV_SPEED_FEATURES mv;
 
@@ -264,11 +286,20 @@ typedef struct SPEED_FEATURES {
   // adds overhead.
   int static_segmentation;
 
-  // If 1 we iterate finding a best reference for 2 ref frames together - via
-  // a log search that iterates 4 times (check around mv for last for best
-  // error of combined predictor then check around mv for alt). If 0 we
-  // we just use the best motion vector found for each frame by itself.
-  BLOCK_SIZE comp_inter_joint_search_thresh;
+  // The best compound predictor is found using an iterative log search process
+  // that searches for best ref0 mv using error of combined predictor and then
+  // searches for best ref1 mv. This sf determines the number of iterations of
+  // this process based on block size. The sf becomes more aggressive from level
+  // 0 to 2. The following table indicates the number of iterations w.r.t bsize:
+  //  -----------------------------------------------
+  // |sf (level)|bsize < 8X8| [8X8, 16X16] | > 16X16 |
+  // |    0     |     4     |      4       |    4    |
+  // |    1     |     0     |      2       |    4    |
+  // |    2     |     0     |      0       |    0    |
+  //  -----------------------------------------------
+  // Here, 0 iterations indicate using the best single motion vector selected
+  // for each ref frame without any iterative refinement.
+  int comp_inter_joint_search_iter_level;
 
   // This variable is used to cap the maximum number of times we skip testing a
   // mode to be evaluated. A high value means we will be faster.
@@ -292,8 +323,8 @@ typedef struct SPEED_FEATURES {
   int coeff_prob_appx_step;
 
   // Enable uniform quantizer followed by trellis coefficient optimization
-  int allow_quant_coeff_opt;
-  double quant_opt_thresh;
+  // during transform RD
+  TRELLIS_OPT_CONTROL trellis_opt_tx_rd;
 
   // Enable asymptotic closed-loop encoding decision for key frame and
   // alternate reference frames.
@@ -399,8 +430,20 @@ typedef struct SPEED_FEATURES {
   // Adaptive prediction mode search
   int adaptive_mode_search;
 
-  // Chessboard pattern prediction filter type search
+  // Prune NEAREST and ZEROMV single reference modes based on motion vector
+  // difference and mode rate
+  int prune_single_mode_based_on_mv_diff_mode_rate;
+
+  // Chessboard pattern prediction for interp filter. Aggressiveness increases
+  // with levels.
+  // 0: disable
+  // 1: cb pattern in eval when filter is not switchable
+  // 2: cb pattern prediction for filter search
   int cb_pred_filter_search;
+
+  // This variable enables an early termination of interpolation filter eval
+  // based on the current rd cost after processing each plane
+  int early_term_interp_search_plane_rd;
 
   int cb_partition_search;
 
@@ -525,9 +568,6 @@ typedef struct SPEED_FEATURES {
     int prune_rect_thresh[4];
   } rd_ml_partition;
 
-  // Allow skipping partition search for still image frame
-  int allow_partition_search_skip;
-
   // Fast approximation of vp9_model_rd_from_var_lapndz
   int simple_model_rd_from_var;
 
@@ -603,7 +643,7 @@ typedef struct SPEED_FEATURES {
   // Use machine learning based partition search.
   int nonrd_use_ml_partition;
 
-  // Multiplier for base thresold for variance partitioning.
+  // Multiplier for base threshold for variance partitioning.
   int variance_part_thresh_mult;
 
   // Force subpel motion filter to always use SMOOTH_FILTER.
@@ -612,6 +652,12 @@ typedef struct SPEED_FEATURES {
   // For real-time mode: force DC only under intra search when content
   // does not have high souce SAD.
   int rt_intra_dc_only_low_content;
+
+  // The encoder has a feature that skips forward transform and quantization
+  // based on a model rd estimation to reduce encoding time.
+  // However, this feature is dangerous since it could lead to bad perceptual
+  // quality. This flag is added to guard the feature.
+  int allow_skip_txfm_ac_dc;
 } SPEED_FEATURES;
 
 struct VP9_COMP;

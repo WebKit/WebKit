@@ -25,13 +25,14 @@ void vp9_write_prob_diff_update(struct vpx_writer *w, vpx_prob newp,
 void vp9_cond_prob_diff_update(struct vpx_writer *w, vpx_prob *oldp,
                                const unsigned int ct[2]);
 
-int vp9_prob_diff_update_savings_search(const unsigned int *ct, vpx_prob oldp,
-                                        vpx_prob *bestp, vpx_prob upd);
+int64_t vp9_prob_diff_update_savings_search(const unsigned int *ct,
+                                            vpx_prob oldp, vpx_prob *bestp,
+                                            vpx_prob upd);
 
-int vp9_prob_diff_update_savings_search_model(const unsigned int *ct,
-                                              const vpx_prob oldp,
-                                              vpx_prob *bestp, vpx_prob upd,
-                                              int stepsize);
+int64_t vp9_prob_diff_update_savings_search_model(const unsigned int *ct,
+                                                  const vpx_prob oldp,
+                                                  vpx_prob *bestp, vpx_prob upd,
+                                                  int stepsize);
 
 #ifdef __cplusplus
 }  // extern "C"

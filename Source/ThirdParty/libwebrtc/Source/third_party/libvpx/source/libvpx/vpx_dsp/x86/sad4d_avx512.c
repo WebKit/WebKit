@@ -13,7 +13,7 @@
 
 void vpx_sad64x64x4d_avx512(const uint8_t *src_ptr, int src_stride,
                             const uint8_t *const ref_array[4], int ref_stride,
-                            uint32_t res[4]) {
+                            uint32_t sad_array[4]) {
   __m512i src_reg, ref0_reg, ref1_reg, ref2_reg, ref3_reg;
   __m512i sum_ref0, sum_ref1, sum_ref2, sum_ref3;
   __m512i sum_mlow, sum_mhigh;
@@ -78,6 +78,6 @@ void vpx_sad64x64x4d_avx512(const uint8_t *src_ptr, int src_stride,
     sum128 = _mm_add_epi32(_mm256_castsi256_si128(sum256),
                            _mm256_extractf128_si256(sum256, 1));
 
-    _mm_storeu_si128((__m128i *)(res), sum128);
+    _mm_storeu_si128((__m128i *)(sad_array), sum128);
   }
 }

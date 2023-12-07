@@ -22,9 +22,9 @@ class KeyframeTest
       public ::libvpx_test::CodecTestWithParam<libvpx_test::TestMode> {
  protected:
   KeyframeTest() : EncoderTest(GET_PARAM(0)) {}
-  virtual ~KeyframeTest() {}
+  ~KeyframeTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig();
     SetMode(GET_PARAM(1));
     kf_count_ = 0;
@@ -33,8 +33,8 @@ class KeyframeTest
     set_cpu_used_ = 0;
   }
 
-  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                                  ::libvpx_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                          ::libvpx_test::Encoder *encoder) override {
     if (kf_do_force_kf_) {
       frame_flags_ = (video->frame() % 3) ? 0 : VPX_EFLAG_FORCE_KF;
     }
@@ -43,7 +43,7 @@ class KeyframeTest
     }
   }
 
-  virtual void FramePktHook(const vpx_codec_cx_pkt_t *pkt) {
+  void FramePktHook(const vpx_codec_cx_pkt_t *pkt) override {
     if (pkt->data.frame.flags & VPX_FRAME_IS_KEY) {
       kf_pts_list_.push_back(pkt->data.frame.pts);
       kf_count_++;
