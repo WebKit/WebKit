@@ -40,7 +40,9 @@
 
 #include <CoreGraphics/CGContextDelegatePrivate.h>
 #include <CoreGraphics/CGFontCache.h>
+#if ENABLE(UNIFIED_PDF)
 #include <CoreGraphics/CGPDFPageLayout.h>
+#endif // ENABLE(UNIFIED_PDF)
 #include <CoreGraphics/CGPathPrivate.h>
 #include <CoreGraphics/CGShadingPrivate.h>
 #include <CoreGraphics/CGStylePrivate.h>
