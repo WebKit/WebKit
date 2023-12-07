@@ -251,7 +251,6 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: bun-webkit-windows-amd64-debug
-          name: bun-webkit-windows-amd64-debug
           path: ${{runner.temp}}/bun-webkit-windows-amd64-debug
 
       - name: Rename files
