@@ -1169,7 +1169,9 @@ WebBackForwardCache& WebPageProxy::backForwardCache() const
 
 bool WebPageProxy::shouldUseBackForwardCache() const
 {
-    return m_preferences->usesBackForwardCache() && backForwardCache().capacity() > 0;
+    return m_preferences->usesBackForwardCache()
+        && backForwardCache().capacity() > 0
+        && !m_preferences->siteIsolationEnabled();
 }
 
 void WebPageProxy::swapToProvisionalPage(std::unique_ptr<ProvisionalPageProxy> provisionalPage)
