@@ -87,7 +87,6 @@ typedef NSString *ASAuthorizationPublicKeyCredentialAttestationKind;
 @interface ASAuthorizationController : NSObject
 @property (nonatomic, weak, nullable) id<ASAuthorizationControllerDelegate> delegate;
 @property (nonatomic, weak, nullable) id<ASAuthorizationControllerPresentationContextProviding> presentationContextProvider;
-- (void)performRequests;
 
 - (void)cancel;
 
@@ -95,6 +94,9 @@ typedef NSString *ASAuthorizationPublicKeyCredentialAttestationKind;
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithAuthorizationRequests:(NSArray<ASAuthorizationRequest *> *)authorizationRequests;
+
+- (void)performRequests;
+- (void)performAutoFillAssistedRequests;
 @end
 
 @protocol ASAuthorizationPublicKeyCredentialRegistrationRequest <NSObject, NSSecureCoding, NSCopying>

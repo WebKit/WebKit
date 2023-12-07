@@ -77,6 +77,11 @@ public:
     explicit WebAuthenticatorCoordinatorProxy(WebPageProxy&);
     ~WebAuthenticatorCoordinatorProxy();
 
+#if HAVE(WEB_AUTHN_AS_MODERN)
+    void pauseConditionalAssertion();
+    void unpauseConditionalAssertion();
+#endif
+
 private:
     using QueryCompletionHandler = CompletionHandler<void(bool)>;
 
@@ -113,6 +118,8 @@ private:
     RequestCompletionHandler m_completionHandler;
     RetainPtr<_WKASDelegate> m_delegate;
     RetainPtr<ASAuthorizationController> m_controller;
+    bool m_paused { false };
+    bool m_isConditionalAssertion { false };
 #endif
 
     RetainPtr<ASCAuthorizationRemotePresenter> m_presenter;
