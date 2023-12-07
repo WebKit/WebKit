@@ -50,23 +50,23 @@ using namespace WebCore;
 RemoteScrollingCoordinatorProxyMac::RemoteScrollingCoordinatorProxyMac(WebPageProxy& webPageProxy)
     : RemoteScrollingCoordinatorProxy(webPageProxy)
 #if ENABLE(SCROLLING_THREAD)
-    , m_wheelEventDispatcher(RemoteLayerTreeEventDispatcher::create(*this, webPageProxy.webPageID()))
+    , m_eventDispatcher(RemoteLayerTreeEventDispatcher::create(*this, webPageProxy.webPageID()))
 #endif
 {
-    m_wheelEventDispatcher->setScrollingTree(scrollingTree());
+    m_eventDispatcher->setScrollingTree(scrollingTree());
 }
 
 RemoteScrollingCoordinatorProxyMac::~RemoteScrollingCoordinatorProxyMac()
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->invalidate();
+    m_eventDispatcher->invalidate();
 #endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::cacheWheelEventScrollingAccelerationCurve(const NativeWebWheelEvent& nativeWheelEvent)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->cacheWheelEventScrollingAccelerationCurve(nativeWheelEvent);
+    m_eventDispatcher->cacheWheelEventScrollingAccelerationCurve(nativeWheelEvent);
 #else
     UNUSED_PARAM(nativeWheelEvent);
 #endif
@@ -75,7 +75,7 @@ void RemoteScrollingCoordinatorProxyMac::cacheWheelEventScrollingAccelerationCur
 void RemoteScrollingCoordinatorProxyMac::handleWheelEvent(const WebWheelEvent& wheelEvent, RectEdges<bool> rubberBandableEdges)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->handleWheelEvent(wheelEvent, rubberBandableEdges);
+    m_eventDispatcher->handleWheelEvent(wheelEvent, rubberBandableEdges);
 #else
     UNUSED_PARAM(wheelEvent);
     UNUSED_PARAM(rubberBandableEdges);
@@ -85,7 +85,7 @@ void RemoteScrollingCoordinatorProxyMac::handleWheelEvent(const WebWheelEvent& w
 void RemoteScrollingCoordinatorProxyMac::wheelEventHandlingCompleted(const PlatformWheelEvent& wheelEvent, ScrollingNodeID scrollingNodeID, std::optional<WheelScrollGestureState> gestureState, bool wasHandled)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->wheelEventHandlingCompleted(wheelEvent, scrollingNodeID, gestureState, wasHandled);
+    m_eventDispatcher->wheelEventHandlingCompleted(wheelEvent, scrollingNodeID, gestureState, wasHandled);
 #else
     UNUSED_PARAM(wheelEvent);
     UNUSED_PARAM(scrollingNodeID);
@@ -109,7 +109,7 @@ bool RemoteScrollingCoordinatorProxyMac::scrollingTreeNodeRequestsKeyboardScroll
 void RemoteScrollingCoordinatorProxyMac::hasNodeWithAnimatedScrollChanged(bool hasAnimatedScrolls)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->hasNodeWithAnimatedScrollChanged(hasAnimatedScrolls);
+    m_eventDispatcher->hasNodeWithAnimatedScrollChanged(hasAnimatedScrolls);
 #else
     auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingAreaProxy>(webPageProxy().drawingArea());
     if (!drawingArea)
@@ -252,21 +252,21 @@ void RemoteScrollingCoordinatorProxyMac::establishLayerTreeScrollingRelations(co
 void RemoteScrollingCoordinatorProxyMac::displayDidRefresh(PlatformDisplayID displayID)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->mainThreadDisplayDidRefresh(displayID);
+    m_eventDispatcher->mainThreadDisplayDidRefresh(displayID);
 #endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::windowScreenDidChange(PlatformDisplayID displayID, std::optional<FramesPerSecond> nominalFramesPerSecond)
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->windowScreenDidChange(displayID, nominalFramesPerSecond);
+    m_eventDispatcher->windowScreenDidChange(displayID, nominalFramesPerSecond);
 #endif
 }
 
 void RemoteScrollingCoordinatorProxyMac::windowScreenWillChange()
 {
 #if ENABLE(SCROLLING_THREAD)
-    m_wheelEventDispatcher->windowScreenWillChange();
+    m_eventDispatcher->windowScreenWillChange();
 #endif
 }
 
@@ -283,7 +283,7 @@ void RemoteScrollingCoordinatorProxyMac::didCommitLayerAndScrollingTrees()
 void RemoteScrollingCoordinatorProxyMac::applyScrollingTreeLayerPositionsAfterCommit()
 {
     RemoteScrollingCoordinatorProxy::applyScrollingTreeLayerPositionsAfterCommit();
-    m_wheelEventDispatcher->renderingUpdateComplete();
+    m_eventDispatcher->renderingUpdateComplete();
 }
 
 } // namespace WebKit
