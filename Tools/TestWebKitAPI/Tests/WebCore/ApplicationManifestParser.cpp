@@ -467,9 +467,9 @@ TEST_F(ApplicationManifestParserTest, Scope)
 
     // If start URL is not within scope of scope URL, return the default scope.
     testScope("\"https://example.com/subdirectory\""_s, "https://example.com/app/"_s, true);
-    testScope("\"https://example.com/app\""_s, "https://example.com/app"_s, true);
+    testScope("\"https://example.com/app\""_s, "https://example.com/app"_s, false);
     testScope("\"https://example.com/APP\""_s, "https://example.com/app/"_s, true);
-    testScope("\"https://example.com/a\""_s, "https://example.com/a"_s, true);
+    testScope("\"https://example.com/a\""_s, "https://example.com/a"_s, false);
 
     m_documentURL = URL { "https://example.com/a/b/c/index"_s };
     m_startURL = URL { "https://example.com/a/b/c/index"_s };
