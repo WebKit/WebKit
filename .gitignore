@@ -74,3 +74,4 @@ Source/ThirdParty/ANGLE/parsetab.py
 CMakeUserPresets.json
 
 bun-webkit-*
+bun-webkit
