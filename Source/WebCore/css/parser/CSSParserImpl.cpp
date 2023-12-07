@@ -1231,6 +1231,8 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelud
                 if (!selector->hasExplicitNestingParent() || selectorStartWithExplicitCombinator) {
                     auto nestingParentSelector = makeUnique<CSSParserSelector>();
                     nestingParentSelector->setMatch(CSSSelector::Match::NestingParent);
+                    // https://drafts.csswg.org/css-nesting/#nesting
+                    // Spec: nested rules with relative selectors include the specificity of their implied nesting selector.
                     selector->appendTagHistoryAsRelative(WTFMove(nestingParentSelector));
                 }
             // For a rule inside a scope rule, we had the implicit ":scope" if there is no explicit & or :scope already
@@ -1239,6 +1241,7 @@ RefPtr<StyleRuleBase> CSSParserImpl::consumeStyleRule(CSSParserTokenRange prelud
                     auto scopeSelector = makeUnique<CSSParserSelector>();
                     scopeSelector->setMatch(CSSSelector::Match::PseudoClass);
                     scopeSelector->setPseudoClassType(CSSSelector::PseudoClassType::Scope);
+                    scopeSelector->selector()->setImplicit();
                     selector->appendTagHistoryAsRelative(WTFMove(scopeSelector));
                 }
             }
