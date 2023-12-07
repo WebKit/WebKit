@@ -27,6 +27,7 @@
 #include "Frame.h"
 
 #include "HTMLFrameOwnerElement.h"
+#include "HistoryController.h"
 #include "NavigationScheduler.h"
 #include "Page.h"
 #include "RemoteFrame.h"
@@ -45,6 +46,7 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
     , m_settings(page.settings())
     , m_frameType(frameType)
     , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
+    , m_history(makeUniqueRef<HistoryController>(*this))
 {
     if (parent)
         parent->tree().appendChild(*this);

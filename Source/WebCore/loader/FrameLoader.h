@@ -116,7 +116,7 @@ public:
     class PolicyChecker;
     PolicyChecker& policyChecker() const { return *m_policyChecker; }
 
-    HistoryController& history() const { return *m_history; }
+    WEBCORE_EXPORT HistoryController& history() const;
     ResourceLoadNotifier& notifier() const { return m_notifier; }
 
     class SubframeLoader;
@@ -451,7 +451,6 @@ private:
     UniqueRef<LocalFrameLoaderClient> m_client;
 
     const std::unique_ptr<PolicyChecker> m_policyChecker;
-    const std::unique_ptr<HistoryController> m_history;
     mutable ResourceLoadNotifier m_notifier;
     const std::unique_ptr<SubframeLoader> m_subframeLoader;
     mutable FrameLoaderStateMachine m_stateMachine;

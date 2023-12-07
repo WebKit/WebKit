@@ -322,7 +322,6 @@ FrameLoader::FrameLoader(LocalFrame& frame, UniqueRef<LocalFrameLoaderClient>&& 
     : m_frame(frame)
     , m_client(WTFMove(client))
     , m_policyChecker(makeUnique<PolicyChecker>(frame))
-    , m_history(makeUnique<HistoryController>(frame))
     , m_notifier(frame)
     , m_subframeLoader(makeUnique<SubframeLoader>(frame))
     , m_state(FrameState::Provisional)
@@ -4555,6 +4554,11 @@ RefPtr<DocumentLoader> FrameLoader::protectedDocumentLoader() const
 RefPtr<DocumentLoader> FrameLoader::protectedProvisionalDocumentLoader() const
 {
     return m_provisionalDocumentLoader;
+}
+
+HistoryController& FrameLoader::history() const
+{
+    return m_frame->history();
 }
 
 } // namespace WebCore

@@ -48,7 +48,7 @@ class HistoryController {
 public:
     enum HistoryUpdateType { UpdateAll, UpdateAllExceptBackForwardList };
 
-    explicit HistoryController(LocalFrame&);
+    explicit HistoryController(Frame&);
     ~HistoryController();
 
     WEBCORE_EXPORT void saveScrollPositionAndViewStateToItem(HistoryItem*);
@@ -98,7 +98,7 @@ private:
 
     void initializeItem(HistoryItem&);
     Ref<HistoryItem> createItem(HistoryItemClient&);
-    Ref<HistoryItem> createItemTree(HistoryItemClient&, LocalFrame& targetFrame, bool clipAtTarget);
+    Ref<HistoryItem> createItemTree(HistoryItemClient&, Frame& targetFrame, bool clipAtTarget);
 
     void recursiveSetProvisionalItem(HistoryItem&, HistoryItem*);
     void recursiveGoToItem(HistoryItem&, HistoryItem*, FrameLoadType, ShouldTreatAsContinuingLoad);
@@ -111,7 +111,7 @@ private:
     void updateBackForwardListClippedAtTarget(bool doClip);
     void updateCurrentItem();
 
-    LocalFrame& m_frame;
+    Frame& m_frame;
 
     RefPtr<HistoryItem> m_currentItem;
     RefPtr<HistoryItem> m_previousItem;

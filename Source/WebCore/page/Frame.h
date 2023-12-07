@@ -40,6 +40,7 @@ class DOMWindow;
 class FrameView;
 class FrameLoadRequest;
 class HTMLFrameOwnerElement;
+class HistoryController;
 class NavigationScheduler;
 class Page;
 class RenderWidget;
@@ -66,6 +67,7 @@ public:
     WEBCORE_EXPORT std::optional<PageIdentifier> pageID() const;
     Settings& settings() const { return m_settings.get(); }
     Frame& mainFrame() const { return m_mainFrame.get(); }
+    HistoryController& history() { return m_history.get(); }
     bool isMainFrame() const { return this == m_mainFrame.ptr(); }
     WEBCORE_EXPORT bool isRootFrame() const;
 
@@ -111,6 +113,7 @@ private:
     const Ref<Settings> m_settings;
     FrameType m_frameType;
     mutable UniqueRef<NavigationScheduler> m_navigationScheduler;
+    mutable UniqueRef<HistoryController> m_history;
 };
 
 } // namespace WebCore
