@@ -964,7 +964,6 @@ void TestController::createWebViewWithOptions(const TestOptions& options)
         runWebAuthenticationPanel,
         0,
         decidePolicyForMediaKeySystemPermissionRequest,
-        nullptr, // requestWebAuthenticationNoGesture
         queryPermission,
 #if PLATFORM(IOS) || PLATFORM(VISION)
         lockScreenOrientationCallback,

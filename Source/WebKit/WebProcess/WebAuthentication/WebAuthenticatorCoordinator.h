@@ -45,13 +45,9 @@ private:
     void isConditionalMediationAvailable(const WebCore::SecurityOrigin&, WebCore::QueryCompletionHandler&&) final;
     void isUserVerifyingPlatformAuthenticatorAvailable(const WebCore::SecurityOrigin&, WebCore::QueryCompletionHandler&&) final;
     void getClientCapabilities(const WebCore::SecurityOrigin&, WebCore::CapabilitiesCompletionHandler&&) final;
-    void resetUserGestureRequirement() final { m_requireUserGesture = false; }
     void cancel() final;
 
-    bool processingUserGesture(const WebCore::LocalFrame&, const WebCore::FrameIdentifier&);
-
     WebPage& m_webPage;
-    bool m_requireUserGesture { false };
 };
 
 } // namespace WebKit

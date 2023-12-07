@@ -2171,16 +2171,6 @@ void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClientBase* wkClient
             panel.setClient(WTF::makeUniqueRef<PanelClient>());
             completionHandler(WebKit::WebAuthenticationPanelResult::Presented);
         }
-
-        void requestWebAuthenticationNoGesture(API::SecurityOrigin&, CompletionHandler<void(bool)>&& completionHandler) final
-        {
-            if (!m_client.requestWebAuthenticationNoGesture) {
-                completionHandler(true);
-                return;
-            }
-
-            completionHandler(true);
-        }
 #endif
 
         void decidePolicyForMediaKeySystemPermissionRequest(WebPageProxy& page, API::SecurityOrigin& origin, const String& keySystem, CompletionHandler<void(bool)>&& completionHandler) final

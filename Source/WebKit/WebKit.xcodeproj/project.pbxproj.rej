@@ -1,0 +1,10 @@
+diff a/Source/WebKit/WebKit.xcodeproj/project.pbxproj b/Source/WebKit/WebKit.xcodeproj/project.pbxproj	(rejected hunks)
+@@ -3,7 +3,7 @@
+ 	archiveVersion = 1;
+ 	classes = {
+ 	};
+-	objectVersion = 54;
++	objectVersion = 55;
+ 	objects = {
+ 
+ /* Begin PBXAggregateTarget section */

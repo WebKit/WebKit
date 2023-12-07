@@ -70,8 +70,6 @@ public:
 
     void getClientCapabilities(const Document&, DOMPromiseDeferred<IDLInterface<PublicKeyCredentialClientCapabilities>>&&) const;
 
-    WEBCORE_EXPORT void resetUserGestureRequirement();
-
 private:
     AuthenticatorCoordinator() = default;
 

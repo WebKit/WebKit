@@ -67,8 +67,6 @@ public:
     virtual void isUserVerifyingPlatformAuthenticatorAvailable(const SecurityOrigin&, QueryCompletionHandler&&) = 0;
     virtual void getClientCapabilities(const SecurityOrigin&, CapabilitiesCompletionHandler&&) = 0;
     virtual void cancel() = 0;
-
-    virtual void resetUserGestureRequirement() { }
 };
 
 } // namespace WebCore

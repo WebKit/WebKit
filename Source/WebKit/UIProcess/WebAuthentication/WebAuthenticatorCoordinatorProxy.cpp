@@ -60,14 +60,14 @@ WebAuthenticatorCoordinatorProxy::~WebAuthenticatorCoordinatorProxy()
     m_webPageProxy.process().removeMessageReceiver(Messages::WebAuthenticatorCoordinatorProxy::messageReceiverName(), m_webPageProxy.webPageID());
 }
 
-void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialCreationOptions&& options, MediationRequirement mediation, bool processingUserGesture, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::makeCredential(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialCreationOptions&& options, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), processingUserGesture, String(), nullptr, mediation, std::nullopt }, WTFMove(handler));
+    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), String(), nullptr, std::nullopt, std::nullopt }, WTFMove(handler));
 }
 
-void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, std::optional<WebCore::SecurityOriginData> parentOrigin, bool processingUserGesture, RequestCompletionHandler&& handler)
+void WebAuthenticatorCoordinatorProxy::getAssertion(FrameIdentifier frameId, FrameInfoData&& frameInfo, Vector<uint8_t>&& hash, PublicKeyCredentialRequestOptions&& options, MediationRequirement mediation, std::optional<WebCore::SecurityOriginData> parentOrigin, RequestCompletionHandler&& handler)
 {
-    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), processingUserGesture, String(), nullptr, mediation, parentOrigin }, WTFMove(handler));
+    handleRequest({ WTFMove(hash), WTFMove(options), m_webPageProxy, WebAuthenticationPanelResult::Unavailable, nullptr, GlobalFrameIdentifier { m_webPageProxy.webPageID(), frameId }, WTFMove(frameInfo), String(), nullptr, mediation, parentOrigin }, WTFMove(handler));
 }
 
 void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestData&& data, RequestCompletionHandler&& handler)
@@ -116,11 +116,6 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
             RELEASE_LOG_ERROR(WebAuthn, "Request cancelled due to rejected prompt after lack of user gesture.");
         }
     };
-    
-    if (!data.processingUserGesture && data.mediation != MediationRequirement::Conditional && !m_webPageProxy.websiteDataStore().authenticatorManager().isVirtual()) {
-        m_webPageProxy.uiClient().requestWebAuthenticationNoGesture(origin, WTFMove(afterConsent));
-        return;
-    }
 
     if (shouldRequestConditionalRegistration) {
         m_webPageProxy.uiClient().requestWebAuthenticationConditonalMediationRegistration(WTFMove(username), WTFMove(afterConsent));
@@ -129,6 +124,7 @@ void WebAuthenticatorCoordinatorProxy::handleRequest(WebAuthenticationRequestDat
 
     afterConsent(true);
 }
+
 
 #if !HAVE(UNIFIED_ASC_AUTH_UI)
 void WebAuthenticatorCoordinatorProxy::cancel()

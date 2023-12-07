@@ -413,10 +413,6 @@ void AuthenticatorManager::filterTransports(TransportSet& transports) const
     if (!LocalService::isAvailable())
         transports.remove(AuthenticatorTransport::Internal);
     transports.remove(AuthenticatorTransport::Ble);
-
-    // For the modern UI, we should only consider invoking it when the operation is triggered by users.
-    if (!m_pendingRequestData.processingUserGesture)
-        transports.clear();
 }
 
 void AuthenticatorManager::startDiscovery(const TransportSet& transports)
