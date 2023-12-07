@@ -22,7 +22,7 @@
 
 #if ENABLE(CONTEXT_MENUS)
 
-[CreateUsing=fromIPC] class WebKit::ContextMenuContextData {
+class WebKit::ContextMenuContextData {
     WebCore::ContextMenuContext::Type type();
     WebCore::IntPoint menuLocation();
     Vector<WebKit::WebContextMenuItemData> menuItems();

@@ -48,8 +48,7 @@ public:
     ContextMenuContextData();
     ContextMenuContextData(const WebCore::IntPoint& menuLocation, const Vector<WebKit::WebContextMenuItemData>& menuItems, const WebCore::ContextMenuContext&);
 
-    static ContextMenuContextData fromIPC(
-        WebCore::ContextMenuContext::Type
+    ContextMenuContextData(WebCore::ContextMenuContext::Type
         , WebCore::IntPoint&& menuLocation
         , Vector<WebContextMenuItemData>&& menuItems
         , std::optional<WebKit::WebHitTestResultData>&&

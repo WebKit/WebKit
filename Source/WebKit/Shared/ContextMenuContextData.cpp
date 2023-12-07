@@ -132,8 +132,7 @@ std::optional<ShareableBitmap::Handle> ContextMenuContextData::createPotentialQR
 
 #endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
 
-ContextMenuContextData ContextMenuContextData::fromIPC(
-    WebCore::ContextMenuContext::Type type
+ContextMenuContextData::ContextMenuContextData(WebCore::ContextMenuContext::Type type
     , WebCore::IntPoint&& menuLocation
     , Vector<WebContextMenuItemData>&& menuItems
     , std::optional<WebKit::WebHitTestResultData>&& webHitTestResultData
@@ -153,35 +152,34 @@ ContextMenuContextData ContextMenuContextData::fromIPC(
     , std::optional<WebKit::ShareableBitmapHandle>&& potentialQRCodeViewportSnapshotImageHandle
 #endif // ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
     , bool hasEntireImage
-) {
-    ContextMenuContextData result;
-    result.m_type = type;
-    result.m_menuLocation = WTFMove(menuLocation);
-    result.m_menuItems = WTFMove(menuItems);
-    result.m_webHitTestResultData = WTFMove(webHitTestResultData);
-    result.m_selectedText = WTFMove(selectedText);
-    result.m_hasEntireImage = hasEntireImage;
-
+)
+    : m_type(type)
+    , m_menuLocation(WTFMove(menuLocation))
+    , m_menuItems(WTFMove(menuItems))
+    , m_webHitTestResultData(WTFMove(webHitTestResultData))
+    , m_selectedText(WTFMove(selectedText))
+    , m_hasEntireImage(hasEntireImage)
+#if ENABLE(SERVICE_CONTROLS)
+    , m_controlledSelectionData(WTFMove(controlledSelectionData))
+    , m_selectedTelephoneNumbers(WTFMove(selectedTelephoneNumbers))
+    , m_selectionIsEditable(selectionIsEditable)
+    , m_controlledImageBounds(WTFMove(controlledImageBounds))
+    , m_controlledImageAttachmentID(WTFMove(controlledImageAttachmentID))
+    , m_controlledImageElementContext(WTFMove(controlledImageElementContext))
+    , m_controlledImageMIMEType(WTFMove(controlledImageMIMEType))
+#endif
+{
 #if ENABLE(SERVICE_CONTROLS)
     if (controlledImageHandle)
-        result.m_controlledImage = ShareableBitmap::create(WTFMove(*controlledImageHandle), SharedMemory::Protection::ReadOnly);
-    result.m_controlledSelectionData = WTFMove(controlledSelectionData);
-    result.m_selectedTelephoneNumbers = WTFMove(selectedTelephoneNumbers);
-    result.m_selectionIsEditable = selectionIsEditable;
-    result.m_controlledImageBounds = WTFMove(controlledImageBounds);
-    result.m_controlledImageAttachmentID = WTFMove(controlledImageAttachmentID);
-    result.m_controlledImageElementContext = WTFMove(controlledImageElementContext);
-    result.m_controlledImageMIMEType = WTFMove(controlledImageMIMEType);
+        m_controlledImage = ShareableBitmap::create(WTFMove(*controlledImageHandle), SharedMemory::Protection::ReadOnly);
 #endif // ENABLE(SERVICE_CONTROLS)
 
 #if ENABLE(CONTEXT_MENU_QR_CODE_DETECTION)
     if (potentialQRCodeNodeSnapshotImageHandle)
-        result.m_potentialQRCodeNodeSnapshotImage = ShareableBitmap::create(WTFMove(*potentialQRCodeNodeSnapshotImageHandle), SharedMemory::Protection::ReadOnly);
+        m_potentialQRCodeNodeSnapshotImage = ShareableBitmap::create(WTFMove(*potentialQRCodeNodeSnapshotImageHandle), SharedMemory::Protection::ReadOnly);
     if (potentialQRCodeViewportSnapshotImageHandle)
-        result.m_potentialQRCodeViewportSnapshotImage = ShareableBitmap::create(WTFMove(*potentialQRCodeViewportSnapshotImageHandle), SharedMemory::Protection::ReadOnly);
+        m_potentialQRCodeViewportSnapshotImage = ShareableBitmap::create(WTFMove(*potentialQRCodeViewportSnapshotImageHandle), SharedMemory::Protection::ReadOnly);
 #endif
-
-    return result;
 }
 
 #if ENABLE(SERVICE_CONTROLS)
