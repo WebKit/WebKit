@@ -6874,6 +6874,22 @@ enum class WebCore::SourceBufferAppendMode : uint8_t {
     std::variant<WebCore::Cursor::Type, std::optional<WebCore::Cursor::CustomCursorIPCData>> ipcData();
 };
 
+header: <WebCore/DOMCacheEngine.h>
+[CustomHeader] struct WebCore::DOMCacheEngine::Record {
+    uint64_t identifier;
+    uint64_t updateResponseCounter;
+
+    WebCore::FetchHeaders::Guard requestHeadersGuard;
+    WebCore::ResourceRequest request;
+    WebCore::FetchOptions options;
+    String referrer;
+
+    WebCore::FetchHeaders::Guard responseHeadersGuard;
+    WebCore::ResourceResponse response;
+    std::variant<std::nullptr_t, Ref<WebCore::FormData>, Ref<WebCore::SharedBuffer>> responseBody;
+    uint64_t responseBodySize;
+};
+
 struct WebCore::Length {
     std::variant<WebCore::Length::AutoData, WebCore::Length::NormalData, WebCore::Length::RelativeData, WebCore::Length::PercentData, WebCore::Length::FixedData, WebCore::Length::IntrinsicData, WebCore::Length::MinIntrinsicData, WebCore::Length::MinContentData, WebCore::Length::MaxContentData, WebCore::Length::FillAvailableData, WebCore::Length::FitContentData, WebCore::Length::ContentData, WebCore::Length::UndefinedData> ipcData()
 }

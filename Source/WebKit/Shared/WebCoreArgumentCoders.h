@@ -145,11 +145,6 @@ struct Record;
 
 namespace IPC {
 
-template<> struct ArgumentCoder<WebCore::DOMCacheEngine::Record> {
-    static void encode(Encoder&, const WebCore::DOMCacheEngine::Record&);
-    static std::optional<WebCore::DOMCacheEngine::Record> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::Credential> {
     static void encode(Encoder&, const WebCore::Credential&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::Credential&);
