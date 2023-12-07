@@ -27,6 +27,9 @@
 #if PLATFORM(COCOA)
 #include "CoreIPCTypes.h"
 
+#if USE(AVFOUNDATION)
+OBJC_CLASS AVOutputContext;
+#endif
 OBJC_CLASS NSSomeFoundationType;
 #if ENABLE(DATA_DETECTION)
 OBJC_CLASS DDScannerResult;
@@ -34,6 +37,29 @@ OBJC_CLASS DDScannerResult;
 
 namespace WebKit {
 
+#if USE(AVFOUNDATION)
+class CoreIPCAVOutputContext {
+public:
+    CoreIPCAVOutputContext(AVOutputContext *);
+    CoreIPCAVOutputContext(const RetainPtr<AVOutputContext>& object)
+        : CoreIPCAVOutputContext(object.get())
+    {
+    }
+
+    static bool isValidDictionary(CoreIPCDictionary&);
+    RetainPtr<id> toID() const;
+
+private:
+    friend struct IPC::ArgumentCoder<CoreIPCAVOutputContext, void>;
+
+    CoreIPCAVOutputContext(CoreIPCDictionary&& propertyList)
+        : m_propertyList(WTFMove(propertyList))
+    {
+    }
+
+    CoreIPCDictionary m_propertyList;
+};
+#endif
 class CoreIPCNSSomeFoundationType {
 public:
     CoreIPCNSSomeFoundationType(NSSomeFoundationType *);

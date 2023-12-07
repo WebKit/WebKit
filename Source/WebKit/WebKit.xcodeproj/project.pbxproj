@@ -1257,6 +1257,8 @@
 		51DD9F2916367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51DD9F2716367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h */; };
 		51E351CB180F2CCC00E53BE9 /* IDBUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E351C9180F2CCC00E53BE9 /* IDBUtilities.h */; };
 		51E481052AAA8F0A0069B158 /* WebPushDaemonConnectionConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 517B5F2D2757382A002DC22D /* WebPushDaemonConnectionConfiguration.h */; };
+		51E8284E2B21395A009119F9 /* WKKeyedCoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E8284C2B213954009119F9 /* WKKeyedCoder.h */; };
+		51E8284F2B213967009119F9 /* WKKeyedCoder.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51E8284D2B213955009119F9 /* WKKeyedCoder.mm */; };
 		51E9049A27BCB9D400929E7E /* LaunchServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E9049827BCB9D100929E7E /* LaunchServicesSPI.h */; };
 		51E9049B27BCB9D400929E7E /* LaunchServicesSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 51E9049827BCB9D100929E7E /* LaunchServicesSPI.h */; };
 		51EE7B5B2A95B5820016FF78 /* PushClientConnectionMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EE7B5A2A95B5820016FF78 /* PushClientConnectionMessages.h */; };
@@ -5439,6 +5441,9 @@
 		51E351C8180F2CCC00E53BE9 /* IDBUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IDBUtilities.cpp; sourceTree = "<group>"; };
 		51E351C9180F2CCC00E53BE9 /* IDBUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IDBUtilities.h; sourceTree = "<group>"; };
 		51E399051D6F54C5009C8831 /* UIGamepadProviderCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIGamepadProviderCocoa.mm; sourceTree = "<group>"; };
+		51E8284B2B2036DD009119F9 /* CoreIPCAVOutputContext.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCAVOutputContext.serialization.in; sourceTree = "<group>"; };
+		51E8284C2B213954009119F9 /* WKKeyedCoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKKeyedCoder.h; sourceTree = "<group>"; };
+		51E8284D2B213955009119F9 /* WKKeyedCoder.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKKeyedCoder.mm; sourceTree = "<group>"; };
 		51E8B68D1E712873001B7132 /* WebURLSchemeTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebURLSchemeTask.cpp; sourceTree = "<group>"; };
 		51E9049827BCB9D100929E7E /* LaunchServicesSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LaunchServicesSPI.h; sourceTree = "<group>"; };
 		51E949961D761CC700EC9EB9 /* UIGamepadProviderIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UIGamepadProviderIOS.mm; sourceTree = "<group>"; };
@@ -10944,6 +10949,7 @@
 				5197FACD2AFD33AF009180C5 /* CoreIPCArray.h */,
 				5187BDE82AFF4A3A008A6EE5 /* CoreIPCArray.mm */,
 				5197FAD82AFD33B1009180C5 /* CoreIPCArray.serialization.in */,
+				51E8284B2B2036DD009119F9 /* CoreIPCAVOutputContext.serialization.in */,
 				5197FAE22AFD33B4009180C5 /* CoreIPCCFType.h */,
 				5197FAD62AFD33B1009180C5 /* CoreIPCCFType.serialization.in */,
 				5197FAD32AFD33B0009180C5 /* CoreIPCColor.h */,
@@ -11016,6 +11022,8 @@
 				465250E51ECF52CD002025CB /* WebKit2InitializeCocoa.mm */,
 				1DE076D92460CCBD00B211E8 /* WebPreferencesDefaultValuesCocoa.mm */,
 				517B5F98275EC600002DC22D /* WebPushMessageCocoa.mm */,
+				51E8284C2B213954009119F9 /* WKKeyedCoder.h */,
+				51E8284D2B213955009119F9 /* WKKeyedCoder.mm */,
 				37C4C0921814B3AF003688B9 /* WKNSArray.h */,
 				37C4C0911814B3AF003688B9 /* WKNSArray.mm */,
 				373CEAD4185417AE008C363D /* WKNSData.h */,
@@ -16288,6 +16296,7 @@
 				994BADF41F7D781400B571E7 /* WKInspectorViewController.h in Headers */,
 				A518B5D21FE1D55B00F9FA28 /* WKInspectorWKWebView.h in Headers */,
 				2DD5E129210ADC7B00DB6012 /* WKKeyboardScrollingAnimator.h in Headers */,
+				51E8284E2B21395A009119F9 /* WKKeyedCoder.h in Headers */,
 				51A9E10B1315CD18009E7031 /* WKKeyValueStorageManager.h in Headers */,
 				2D790A9F1AD7164900AB90B3 /* WKLayoutMode.h in Headers */,
 				5CE912142293C280005BEC78 /* WKMain.h in Headers */,
@@ -18092,6 +18101,7 @@
 				7B9FC5DC28A53C24007570E7 /* PlatformUnifiedSource5.cpp in Sources */,
 				5C9E0F992A577EDD00FC2664 /* WebKitPlatformGeneratedSerializers.mm in Sources */,
 				5192DDB92AB54ED700E88DE7 /* WebPushMessageCocoa.mm in Sources */,
+				51E8284F2B213967009119F9 /* WKKeyedCoder.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

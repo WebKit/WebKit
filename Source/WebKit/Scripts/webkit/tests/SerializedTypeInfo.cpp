@@ -58,6 +58,9 @@
 #include <WebCore/ScrollingStateFrameHostingNode.h>
 #include <WebCore/ScrollingStateFrameHostingNodeWithStuffAfterTuple.h>
 #include <WebCore/TimingFunction.h>
+#if USE(AVFOUNDATION)
+#include <pal/cocoa/AVFoundationSoftLink.h>
+#endif
 #if ENABLE(DATA_DETECTION)
 #include <pal/cocoa/DataDetectorsCoreSoftLink.h>
 #endif
@@ -314,6 +317,22 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             {
                 "WebCore::ResourceRequest"_s,
                 "request"_s
+            },
+        } },
+        { "webkit_secure_coding AVOutputContext"_s, {
+            {
+                "AVOutputContextSerializationKeyContextID"_s,
+                "WebKit::CoreIPCString"_s
+            },
+            {
+                "AVOutputContextSerializationKeyContextType"_s,
+                "WebKit::CoreIPCString"_s
+            },
+        } },
+        { "WebKit::CoreIPCAVOutputContext"_s, {
+            {
+                "WebKit::CoreIPCDictionary"_s,
+                "m_propertyList"_s
             },
         } },
         { "webkit_secure_coding NSSomeFoundationType"_s, {

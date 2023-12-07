@@ -54,6 +54,10 @@ static ObjectValue valueFromID(id object)
         return nullptr;
 
     switch (IPC::typeFromObject(object)) {
+#if USE(AVFOUNDATION)
+    case IPC::NSType::AVOutputContext:
+        return CoreIPCAVOutputContext((AVOutputContext *)object);
+#endif
     case IPC::NSType::Array:
         return CoreIPCArray((NSArray *)object);
     case IPC::NSType::Color:

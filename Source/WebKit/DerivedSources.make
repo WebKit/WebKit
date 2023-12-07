@@ -516,6 +516,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/AlternativeTextClient.serialization.in \
 	Shared/AppPrivacyReportTestingData.serialization.in \
 	Shared/Cocoa/CacheStoragePolicy.serialization.in \
+	Shared/Cocoa/CoreIPCAVOutputContext.serialization.in \
 	Shared/Cocoa/CoreIPCArray.serialization.in \
 	Shared/Cocoa/CoreIPCCFType.serialization.in \
 	Shared/Cocoa/CoreIPCColor.serialization.in \
