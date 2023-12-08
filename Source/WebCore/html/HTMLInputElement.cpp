@@ -145,9 +145,14 @@ HTMLInputElement::~HTMLInputElement()
     if (m_inputType && isRadioButton())
         treeScope().radioButtonGroups().removeButton(*this);
 
-#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
-    if (m_hasTouchEventHandler)
+#if ENABLE(TOUCH_EVENTS)
+    if (m_hasTouchEventHandler) {
+#if ENABLE(IOS_TOUCH_EVENTS)
+        document().removeTouchEventHandler(*this);
+#else
         document().didRemoveEventTargetNode(*this);
+#endif
+    }
 #endif
 }
 
@@ -604,15 +609,8 @@ void HTMLInputElement::updateType(const AtomString& typeAttributeValue)
 inline void HTMLInputElement::runPostTypeUpdateTasks()
 {
     ASSERT(m_inputType);
-#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
-    bool hasTouchEventHandler = m_inputType->hasTouchEventHandler();
-    if (hasTouchEventHandler != m_hasTouchEventHandler) {
-        if (hasTouchEventHandler)
-            document().didAddTouchEventHandler(*this);
-        else
-            document().didRemoveTouchEventHandler(*this);
-        m_hasTouchEventHandler = hasTouchEventHandler;
-    }
+#if ENABLE(TOUCH_EVENTS)
+    updateTouchEventHandler();
 #endif
 
     if (isPasswordField())
@@ -628,6 +626,29 @@ inline void HTMLInputElement::runPostTypeUpdateTasks()
 
     addToRadioButtonGroup();
 }
+
+#if ENABLE(TOUCH_EVENTS)
+inline void HTMLInputElement::updateTouchEventHandler()
+{
+    bool hasTouchEventHandler = m_inputType->hasTouchEventHandler();
+    if (hasTouchEventHandler != m_hasTouchEventHandler) {
+        if (hasTouchEventHandler) {
+#if ENABLE(IOS_TOUCH_EVENTS)
+            document().addTouchEventHandler(*this);
+#else
+            document().didAddTouchEventHandler(*this);
+#endif
+        } else {
+#if ENABLE(IOS_TOUCH_EVENTS)
+            document().removeTouchEventHandler(*this);
+#else
+            document().didRemoveTouchEventHandler(*this);
+#endif
+        }
+        m_hasTouchEventHandler = hasTouchEventHandler;
+    }
+}
+#endif
 
 void HTMLInputElement::subtreeHasChanged()
 {
@@ -862,6 +883,9 @@ void HTMLInputElement::attributeChanged(const QualifiedName& name, const AtomStr
                 m_inputType->removeShadowSubtree();
             if (renderer())
                 invalidateStyleAndRenderersForSubtree();
+#if ENABLE(TOUCH_EVENTS)
+            updateTouchEventHandler();
+#endif
         }
         break;
     default:
@@ -1733,10 +1757,15 @@ void HTMLInputElement::didMoveToNewDocument(Document& oldDocument, Document& new
         newDocument.registerForDocumentSuspensionCallbacks(*this);
     }
 
-#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS)
     if (m_hasTouchEventHandler) {
+#if ENABLE(IOS_TOUCH_EVENTS)
+        oldDocument.removeTouchEventHandler(*this);
+        newDocument.addTouchEventHandler(*this);
+#else
         oldDocument.didRemoveEventTargetNode(*this);
         newDocument.didAddTouchEventHandler(*this);
+#endif
     }
 #endif
 
@@ -2314,6 +2343,12 @@ bool HTMLInputElement::isSwitchVisuallyOn() const
 {
     ASSERT(isSwitch());
     return checkedDowncast<CheckboxInputType>(*m_inputType).isSwitchVisuallyOn();
+}
+
+float HTMLInputElement::switchAnimationPressedProgress() const
+{
+    ASSERT(isSwitch());
+    return checkedDowncast<CheckboxInputType>(*m_inputType).switchAnimationPressedProgress();
 }
 
 } // namespace

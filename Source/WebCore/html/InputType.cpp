@@ -1193,4 +1193,18 @@ void InputType::createShadowSubtreeIfNeeded()
     createShadowSubtree();
 }
 
+#if ENABLE(TOUCH_EVENTS)
+bool InputType::hasTouchEventHandler() const
+{
+#if ENABLE(IOS_TOUCH_EVENTS)
+    if (isSwitch())
+        return true;
+#else
+    if (isRangeControl())
+        return true;
+#endif
+    return false;
+}
+#endif
+
 } // namespace WebCore

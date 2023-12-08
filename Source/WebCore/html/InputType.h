@@ -212,6 +212,10 @@ public:
     bool needsShadowSubtree() const { return !nonShadowRootTypes.contains(m_type) || isSwitch(); }
     bool hasCreatedShadowSubtree() const { return m_hasCreatedShadowSubtree; }
 
+#if ENABLE(TOUCH_EVENTS)
+    bool hasTouchEventHandler() const;
+#endif
+
     // Form value functions.
 
     virtual bool shouldSaveAndRestoreFormControlState() const;
@@ -307,10 +311,6 @@ public:
     virtual void blur();
 
     virtual void elementDidBlur() { }
-
-#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
-    virtual bool hasTouchEventHandler() const { return false; }
-#endif
 
     // Shadow tree handling.
 

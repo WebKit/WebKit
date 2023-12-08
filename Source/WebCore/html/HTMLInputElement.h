@@ -342,6 +342,7 @@ public:
 
     float switchAnimationVisuallyOnProgress() const;
     bool isSwitchVisuallyOn() const;
+    float switchAnimationPressedProgress() const;
 
 protected:
     HTMLInputElement(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
@@ -435,6 +436,10 @@ private:
     void updateType(const AtomString& typeAttributeValue);
     void runPostTypeUpdateTasks();
 
+#if ENABLE(TOUCH_EVENTS)
+    void updateTouchEventHandler();
+#endif
+
     void subtreeHasChanged() final;
     void disabledStateChanged() final;
     void readOnlyStateChanged() final;
@@ -481,7 +486,7 @@ private:
     bool m_valueAttributeWasUpdatedAfterParsing : 1 { false };
     bool m_wasModifiedByUser : 1 { false };
     bool m_canReceiveDroppedFiles : 1 { false };
-#if ENABLE(TOUCH_EVENTS) && !ENABLE(IOS_TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS)
     bool m_hasTouchEventHandler : 1 { false };
 #endif
     bool m_isSpellcheckDisabledExceptTextReplacement : 1 { false };
