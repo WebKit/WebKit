@@ -1568,15 +1568,16 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoPrivateFuncFromFast, (JSGlobalObject* globalO
     if (UNLIKELY(constructor != globalObject->arrayConstructor() && constructor.isObject()))
         return JSValue::encode(jsUndefined());
 
-    auto* array = jsDynamicCast<JSArray*>(callFrame->uncheckedArgument(1));
-    if (!array)
+    JSValue arrayValue = callFrame->uncheckedArgument(1);
+    if (UNLIKELY(!isJSArray(arrayValue)))
         return JSValue::encode(jsUndefined());
 
+    auto* array = jsCast<JSArray*>(arrayValue);
     if (UNLIKELY(!array->isIteratorProtocolFastAndNonObservable()))
         return JSValue::encode(jsUndefined());
 
     IndexingType sourceType = array->indexingType();
-    if (UNLIKELY(shouldUseSlowPut(sourceType)))
+    if (UNLIKELY(shouldUseSlowPut(sourceType) || sourceType == ArrayClass))
         return JSValue::encode(jsUndefined());
 
     Butterfly* butterfly= array->butterfly();
