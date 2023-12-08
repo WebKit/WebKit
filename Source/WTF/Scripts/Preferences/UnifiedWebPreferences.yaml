@@ -7448,7 +7448,8 @@ WebGLUsingMetal:
 
 WebGPUEnabled:
   type: bool
-  status: unstable
+  status: testable
+  category: dom
   humanReadableName: "WebGPU"
   humanReadableDescription: "Enable WebGPU"
   defaultValue:
