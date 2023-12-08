@@ -138,4 +138,9 @@ RenderWidget* Frame::ownerRenderer() const
     return downcast<RenderWidget>(object);
 }
 
+bool Frame::arePluginsEnabled()
+{
+    return settings().arePluginsEnabled();
+}
+
 } // namespace WebCore

@@ -132,8 +132,7 @@ IntSize PageOverlay::viewToOverlayOffset() const
         return IntSize();
 
     case OverlayType::Document: {
-        auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-        auto* frameView = localMainFrame ? localMainFrame->view() : nullptr;
+        auto* frameView = m_page->mainFrame().virtualView();
         return frameView ? toIntSize(frameView->viewToContents(IntPoint())) : IntSize();
     }
     }
@@ -198,9 +197,8 @@ bool PageOverlay::mouseEvent(const PlatformMouseEvent& mouseEvent)
 {
     IntPoint mousePositionInOverlayCoordinates(mouseEvent.position());
 
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (m_overlayType == PageOverlay::OverlayType::Document && localMainFrame)
-        mousePositionInOverlayCoordinates = localMainFrame->view()->windowToContents(mousePositionInOverlayCoordinates);
+    if (m_overlayType == PageOverlay::OverlayType::Document)
+        mousePositionInOverlayCoordinates = m_page->mainFrame().virtualView()->windowToContents(mousePositionInOverlayCoordinates);
     mousePositionInOverlayCoordinates.moveBy(-frame().location());
 
     // Ignore events outside the bounds.

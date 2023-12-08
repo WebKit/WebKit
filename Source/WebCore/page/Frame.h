@@ -93,6 +93,8 @@ public:
 
     WEBCORE_EXPORT RenderWidget* ownerRenderer() const; // Renderer for the element that contains this frame.
 
+    WEBCORE_EXPORT bool arePluginsEnabled();
+
 protected:
     Frame(Page&, FrameIdentifier, FrameType, HTMLFrameOwnerElement*, Frame* parent);
     void resetWindowProxy();
