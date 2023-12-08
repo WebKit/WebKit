@@ -210,6 +210,11 @@ public:
     {
         fastFree(pointer);
     }
+
+    template <typename U>
+    struct rebind {
+        using other = FastAllocator<U>;
+    };
 };
 
 template<typename T, typename U> inline bool operator==(const FastAllocator<T>&, const FastAllocator<U>&) { return true; }
