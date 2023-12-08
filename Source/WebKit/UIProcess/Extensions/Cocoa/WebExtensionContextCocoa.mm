@@ -65,6 +65,7 @@
 #import "_WKWebExtensionLocalization.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionPermission.h"
+#import "_WKWebExtensionRegisteredScriptsSQLiteStore.h"
 #import "_WKWebExtensionTab.h"
 #import "_WKWebExtensionWindow.h"
 #import <WebCore/LocalizedStrings.h>
@@ -234,10 +235,12 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
 
     populateWindowsAndTabs();
 
+    // FIXME: <https://webkit.org/b/249266> Remove registered scripts from storage if an extension has updated.
+
     moveLocalStorageIfNeeded(lastSeenBaseURL, [&] {
         loadBackgroundWebViewDuringLoad();
 
-        // FIXME: <https://webkit.org/b/248429> Support dynamic content scripts by loading them from storage here.
+        loadRegisteredContentScripts();
 
         loadDeclarativeNetRequestRulesetStateFromStorage();
         loadDeclarativeNetRequestRules([](bool) { });
@@ -266,7 +269,8 @@ bool WebExtensionContext::unload(NSError **outError)
     removeInjectedContent();
     removeDeclarativeNetRequestRules();
 
-    m_storageDirectory = nullString();
+    invalidateStorage();
+
     m_extensionController = nil;
     m_contentScriptWorld = nullptr;
 
@@ -363,6 +367,12 @@ void WebExtensionContext::moveLocalStorageIfNeeded(const URL& previousBaseURL, C
     [webViewConfiguration().websiteDataStore _renameOrigin:previousBaseURL to:baseURL() forDataOfTypes:dataTypes completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
 }
 
+void WebExtensionContext::invalidateStorage()
+{
+    m_storageDirectory = nullString();
+    m_registeredContentScriptsStorage = nil;
+}
+
 void WebExtensionContext::setBaseURL(URL&& url)
 {
     ASSERT(!isLoaded());
@@ -413,7 +423,6 @@ void WebExtensionContext::setInspectable(bool inspectable)
 
 const WebExtensionContext::InjectedContentVector& WebExtensionContext::injectedContents()
 {
-    // FIXME: <https://webkit.org/b/248429> Support dynamic content scripts by including them here.
     return m_extension->staticInjectedContents();
 }
 
@@ -3144,6 +3153,13 @@ bool WebExtensionContext::purgeMatchedRulesFromBefore(const WallTime& startTime)
 
     m_matchedRules = WTFMove(filteredMatchedRules);
     return !m_matchedRules.isEmpty();
+}
+
+RetainPtr<_WKWebExtensionRegisteredScriptsSQLiteStore> WebExtensionContext::registeredContentScriptsStore()
+{
+    if (!m_registeredContentScriptsStorage)
+        m_registeredContentScriptsStorage = [[_WKWebExtensionRegisteredScriptsSQLiteStore alloc] initWithUniqueIdentifier:m_uniqueIdentifier directory:storageDirectory() usesInMemoryDatabase:!storageIsPersistent()];
+    return m_registeredContentScriptsStorage;
 }
 
 } // namespace WebKit

@@ -36,6 +36,7 @@
 #import "WKFrameInfoPrivate.h"
 #import "WKWebViewInternal.h"
 #import "WKWebViewPrivate.h"
+#import "WebExtensionAPIScripting.h"
 #import "WebExtensionContextProxy.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionRegisteredScriptParameters.h"
@@ -45,6 +46,7 @@
 #import "WebExtensionUtilities.h"
 #import "_WKFrameHandle.h"
 #import "_WKFrameTreeNode.h"
+#import "_WKWebExtensionRegisteredScriptsSQLiteStore.h"
 #import <WebCore/UserStyleSheet.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/cocoa/VectorCocoa.h>
@@ -151,19 +153,24 @@ void WebExtensionContext::scriptingRegisterContentScripts(const Vector<WebExtens
 
     InjectedContentVector injectedContents;
     NSString *errorMessage;
-    if (!parseRegisteredContentScripts(scripts, WebExtensionRegisteredScript::FirstTimeRegistration::Yes, injectedContents, apiName, &errorMessage)) {
+    if (!createInjectedContentForScripts(scripts, WebExtensionRegisteredScript::FirstTimeRegistration::Yes, injectedContents, apiName, &errorMessage)) {
         completionHandler(errorMessage);
         return;
     }
 
-    for (auto& parameters : scripts)
-        m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters));
+    [registeredContentScriptsStore() addScripts:toWebAPI(scripts) completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, injectedContents, scripts, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
+        if (errorMessage) {
+            completionHandler(toErrorString(apiName, nil, errorMessage));
+            return;
+        }
 
-    // FIXME: <https://webkit.org/b/264892> Add persistent scripts to storage.
+        for (auto& parameters : scripts)
+            m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters));
 
-    addInjectedContent(injectedContents);
+        addInjectedContent(injectedContents);
 
-    completionHandler(std::nullopt);
+        completionHandler(std::nullopt);
+    }).get()];
 }
 
 void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&& completionHandler)
@@ -186,83 +193,118 @@ void WebExtensionContext::scriptingUpdateRegisteredScripts(const Vector<WebExten
 
     NSString *errorMessage;
     InjectedContentVector injectedContents;
-    if (!parseRegisteredContentScripts(updatedParameters, WebExtensionRegisteredScript::FirstTimeRegistration::No, injectedContents, apiName, &errorMessage)) {
+    if (!createInjectedContentForScripts(updatedParameters, WebExtensionRegisteredScript::FirstTimeRegistration::No, injectedContents, apiName, &errorMessage)) {
         completionHandler(errorMessage);
         return;
     }
 
-    for (auto& parameters : updatedParameters) {
-        auto scriptID = parameters.identifier;
-        RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
-        ASSERT(registeredScript);
+    [registeredContentScriptsStore() updateScripts:toWebAPI(updatedParameters) completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, updatedParameters, injectedContents, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
+        if (errorMessage) {
+            completionHandler(toErrorString(apiName, nil, errorMessage));
+            return;
+        }
 
-        if (!registeredScript)
-            continue;
+        for (auto& parameters : updatedParameters) {
+            auto scriptID = parameters.identifier;
+            RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
+            ASSERT(registeredScript);
 
-        registeredScript->updateParameters(parameters);
-        registeredScript->removeUserScriptsAndStyleSheets(scriptID);
-    }
+            if (!registeredScript)
+                continue;
 
-    // FIXME: <https://webkit.org/b/264892> Add persistent scripts to storage.
+            registeredScript->updateParameters(parameters);
+            registeredScript->removeUserScriptsAndStyleSheets(scriptID);
+        }
 
-    addInjectedContent(injectedContents);
+        addInjectedContent(injectedContents);
 
-    completionHandler(std::nullopt);
+        completionHandler(std::nullopt);
+    }).get()];
 }
 
 void WebExtensionContext::scriptingGetRegisteredScripts(const Vector<String>& scriptIDs, CompletionHandler<void(Vector<WebExtensionRegisteredScriptParameters> scripts)>&& completionHandler)
 {
-    Vector<WebExtensionRegisteredScriptParameters> results;
+    Vector<WebExtensionRegisteredScriptParameters> scripts;
 
     if (scriptIDs.isEmpty()) {
-        // Returns all registered scripts if no filter is specififed.
+        // Return all registered scripts if no filter is specififed.
         for (auto& entry : m_registeredScriptsMap)
-            results.append(entry.value.get().parameters());
+            scripts.append(entry.value.get().parameters());
     } else {
         for (auto& scriptID : scriptIDs) {
             RefPtr registeredScript = m_registeredScriptsMap.get(scriptID);
             if (!registeredScript)
                 continue;
 
-            results.append(registeredScript->parameters());
+            scripts.append(registeredScript->parameters());
         }
     }
 
-    completionHandler(results);
+    completionHandler(scripts);
 }
 
 void WebExtensionContext::scriptingUnregisterContentScripts(const Vector<String>& scriptIDs, CompletionHandler<void(WebExtensionDynamicScripts::Error)>&& completionHandler)
 {
-    auto removeUserScriptsAndStyleSheets = ^(String scriptID) {
-        RefPtr registeredScript = m_registeredScriptsMap.take(scriptID);
-        registeredScript->removeUserScriptsAndStyleSheets(scriptID);
-    };
+    static NSString * const apiName = @"scripting.unregisterContentScripts()";
 
-    if (scriptIDs.isEmpty()) {
-        // Removes all registered scripts if no filter is specififed.
-        for (auto& scriptID : copyToVector(m_registeredScriptsMap.keys()))
-            removeUserScriptsAndStyleSheets(scriptID);
+    // Remove all registered scripts if no filter is specififed.
+    auto ids = scriptIDs.isEmpty() ? copyToVector(m_registeredScriptsMap.keys()) : scriptIDs;
 
-        completionHandler(std::nullopt);
-        return;
-    }
-
-    for (auto& scriptID : scriptIDs) {
+    for (auto& scriptID : ids) {
         if (!m_registeredScriptsMap.contains(scriptID)) {
-            completionHandler(toErrorString(@"scripting.unregisterContentScripts()", nil, @"no script with ID '%@'", (NSString *)scriptID));
+            completionHandler(toErrorString(apiName, nil, @"no script with ID '%@'", (NSString *)scriptID));
             return;
         }
     }
 
-    for (auto& scriptID : scriptIDs)
-        removeUserScriptsAndStyleSheets(scriptID);
+    [registeredContentScriptsStore() deleteScriptsWithIDs:createNSArray(ids).get() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, ids, completionHandler = WTFMove(completionHandler)](NSString *errorMessage) mutable {
+        if (errorMessage) {
+            completionHandler(toErrorString(apiName, nil, errorMessage));
+            return;
+        }
 
-    // FIXME: <https://webkit.org/b/264892> Remove persistent scripts from storage.
+        auto removeUserScriptsAndStyleSheets = ^(String scriptID) {
+            RefPtr registeredScript = m_registeredScriptsMap.take(scriptID);
+            registeredScript->removeUserScriptsAndStyleSheets(scriptID);
+        };
 
-    completionHandler(std::nullopt);
+        for (auto& scriptID : ids)
+            removeUserScriptsAndStyleSheets(scriptID);
+
+        completionHandler(std::nullopt);
+    }).get()];
 }
 
-bool WebExtensionContext::parseRegisteredContentScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, WebExtensionRegisteredScript::FirstTimeRegistration firstTimeRegistration, InjectedContentVector& injectedConents, NSString *callingAPIName, NSString **errorMessage)
+void WebExtensionContext::loadRegisteredContentScripts()
+{
+    if (!hasPermission(_WKWebExtensionPermissionScripting))
+        return;
+
+    [registeredContentScriptsStore() getScriptsWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }](NSArray *scripts, NSString *errorMessage) mutable {
+        if (errorMessage) {
+            RELEASE_LOG_ERROR(Extensions, "Unable to get registered scripts for extension %{private}@. Error: %{public}@", (NSString *)m_uniqueIdentifier, errorMessage);
+            return;
+        }
+
+        Vector<WebExtensionRegisteredScriptParameters> parametersVector;
+        WebExtensionAPIScripting::parseRegisteredContentScripts(scripts, FirstTimeRegistration::Yes, parametersVector);
+
+        WebExtension::InjectedContentVector injectedContents;
+        createInjectedContentForScripts(parametersVector, FirstTimeRegistration::Yes, injectedContents, nil, &errorMessage);
+
+        if (errorMessage) {
+            RELEASE_LOG_ERROR(Extensions, "Failed to create injected content data for extension %{private}@. Error: %{public}@", (NSString *)m_uniqueIdentifier, errorMessage);
+            return;
+        }
+
+        for (auto& parameters : parametersVector)
+            m_registeredScriptsMap.set(parameters.identifier, WebExtensionRegisteredScript::create(*this, parameters));
+
+        addInjectedContent(injectedContents);
+    }).get()];
+}
+
+bool WebExtensionContext::createInjectedContentForScripts(const Vector<WebExtensionRegisteredScriptParameters>& scripts, WebExtensionRegisteredScript::FirstTimeRegistration firstTimeRegistration, InjectedContentVector& injectedConents, NSString *callingAPIName, NSString **errorMessage)
 {
     Vector<String> idsToAdd;
 
