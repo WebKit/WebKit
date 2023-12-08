@@ -540,22 +540,6 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
     if (isSimpleParameterList)
         initializeVarLexicalEnvironment(symbolTableConstantIndex, functionSymbolTable, shouldCaptureSomeOfTheThings);
 
-    // Figure out some interesting facts about our arguments.
-    bool capturesAnyArgumentByName = false;
-    if (functionNode->hasCapturedVariables()) {
-        FunctionParameters& parameters = *functionNode->parameters();
-        for (size_t i = 0; i < parameters.size(); ++i) {
-            auto pattern = parameters.at(i).first;
-            if (!pattern->isBindingNode())
-                continue;
-            const Identifier& ident = static_cast<const BindingNode*>(pattern)->boundProperty();
-            capturesAnyArgumentByName |= captures(ident.impl());
-        }
-    }
-    
-    if (capturesAnyArgumentByName)
-        ASSERT(m_lexicalEnvironmentRegister);
-
     // Need to know what our functions are called. Parameters have some goofy behaviors when it
     // comes to functions of the same name.
     for (FunctionMetadataNode* function : functionNode->functionStack())
@@ -576,8 +560,21 @@ BytecodeGenerator::BytecodeGenerator(VM& vm, FunctionNode* functionNode, Unlinke
         // If we captured any formal parameter by name, then we use ScopedArguments. Otherwise we
         // use DirectArguments. With ScopedArguments, we lift all of our arguments into the
         // activation.
+        bool capturesAnyParameterByName = false;
+        if (functionNode->hasCapturedVariables()) {
+            for (size_t i = 0; i < parameters.size(); ++i) {
+                auto pattern = parameters.at(i).first;
+                ASSERT(pattern->isBindingNode());
+                const Identifier& ident = static_cast<const BindingNode*>(pattern)->boundProperty();
+                if (captures(ident.impl())) {
+                    capturesAnyParameterByName = true;
+                    break;
+                }
+            }
+        }
         
-        if (capturesAnyArgumentByName) {
+        if (capturesAnyParameterByName) {
+            ASSERT(m_lexicalEnvironmentRegister);
             bool success = functionSymbolTable->trySetArgumentsLength(vm, parameters.size());
             if (UNLIKELY(!success)) {
                 m_outOfMemoryDuringConstruction = true;
