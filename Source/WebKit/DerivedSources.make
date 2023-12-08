@@ -621,6 +621,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebContextMenuItemData.serialization.in \
 	Shared/WebCoreArgumentCoders.serialization.in \
 	Shared/WebEvent.serialization.in \
+	Shared/WebFindOptions.serialization.in \
 	Shared/WebFoundTextRange.serialization.in \
 	Shared/WebHitTestResultData.serialization.in \
 	Shared/WebNavigationDataStore.serialization.in \
