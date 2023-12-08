@@ -298,8 +298,6 @@ public:
     void selfOnlyRef();
     void selfOnlyDeref();
 
-    WEBCORE_EXPORT bool arePluginsEnabled();
-
     void documentURLDidChange(const URL&);
 
 protected:

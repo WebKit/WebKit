@@ -353,13 +353,9 @@ void WebFoundTextRangeController::flashTextIndicatorAndUpdateSelectionWithRange(
 Vector<WebCore::FloatRect> WebFoundTextRangeController::rectsForTextMatchesInRect(WebCore::IntRect clipRect)
 {
     Vector<WebCore::FloatRect> rects;
-    RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage->corePage()->mainFrame());
-    if (!localMainFrame)
-        return rects;
-
-    RefPtr mainFrameView = localMainFrame->view();
-
-    for (RefPtr<Frame> frame = localMainFrame; frame; frame = frame->tree().traverseNext()) {
+    Ref mainFrame = m_webPage->corePage()->mainFrame();
+    RefPtr mainFrameView = mainFrame->virtualView();
+    for (RefPtr<Frame> frame = mainFrame.ptr(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<WebCore::LocalFrame>(*frame);
         if (!localFrame)
             continue;

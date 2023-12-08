@@ -4264,8 +4264,6 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     if (!_page->editorState().postLayoutData)
         return result;
 
-    [result setObject:[UIColor blackColor] forKey:NSForegroundColorAttributeName];
-
     auto typingAttributes = _page->editorState().postLayoutData->typingAttributes;
     
     UIFont *font = _autocorrectionData.font.get();
