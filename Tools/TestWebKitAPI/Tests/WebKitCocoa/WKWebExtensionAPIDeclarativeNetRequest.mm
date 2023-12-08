@@ -552,14 +552,17 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, DynamicRules)
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *backgroundScript = Util::constructScript(@[
-        @"let sessionRules = await browser.declarativeNetRequest.getDynamicRules()",
-        @"browser.test.assertEq(sessionRules.length, 0)",
-        @"await browser.declarativeNetRequest.updateDynamicRules({ addRules: [{ id: 1, priority: 1, action: {type: 'block'}, condition: { urlFilter: 'frame' } }] })",
-        @"sessionRules = await browser.declarativeNetRequest.getDynamicRules()",
-        @"browser.test.assertEq(sessionRules.length, 1)",
-
-        // Yield after the background page has loaded so we can load a tab.
-        @"browser.test.yield('Load Tab')"
+        @"let dynamicRules = await browser.declarativeNetRequest.getDynamicRules()",
+        @"if (dynamicRules.length == 0) {",
+        @"  await browser.declarativeNetRequest.updateDynamicRules({ addRules: [{ id: 1, priority: 1, action: {type: 'block'}, condition: { urlFilter: 'frame' } }] })",
+        @"  dynamicRules = await browser.declarativeNetRequest.getDynamicRules()",
+        @"  browser.test.assertEq(dynamicRules.length, 1)",
+        // Yield after updating the dynamic rules so we can unload and re-load the extension.
+        @"  browser.test.yield('Unload extension')",
+        @"} else {",
+        @"  browser.test.assertEq(dynamicRules.length, 1)",
+        @"  browser.test.yield('Load Tab')",
+        @"}"
     ]);
 
     auto *declarativeNetRequestManifest = @{
@@ -569,14 +572,22 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, DynamicRules)
     };
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:declarativeNetRequestManifest resources:@{ @"background.js": backgroundScript  }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get() extensionControllerConfiguration:_WKWebExtensionControllerConfiguration._temporaryConfiguration]);
+
+    // Give the extension a unique identifier so it opts into saving data in the temporary configuration.
+    manager.get().context.uniqueIdentifier = @"org.webkit.test.extension (76C788B8)";
 
     // Grant the declarativeNetRequest permission.
     [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionDeclarativeNetRequest];
 
     [manager loadAndRun];
 
-    // FIXME: We should attempt to unload and reload the extension context to verify that the dynamic rules are persisted, but this won't work since tests are run with non-persistent storage.
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Unload extension");
+
+    [manager.get().controller unloadExtensionContext:manager.get().context error:nullptr];
+
+    [manager loadAndRun];
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
 

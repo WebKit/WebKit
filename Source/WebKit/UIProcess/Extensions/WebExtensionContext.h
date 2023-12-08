@@ -462,6 +462,7 @@ private:
     // Loading/unloading static rules
     void loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>&&);
     void compileDeclarativeNetRequestRules(NSArray *, CompletionHandler<void(bool)>&&);
+    void unloadDeclarativeNetRequestState();
     WKContentRuleListStore *declarativeNetRequestRuleStore();
 
     // Updating user content controllers with new rules.
