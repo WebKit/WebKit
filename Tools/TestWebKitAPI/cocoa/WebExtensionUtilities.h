@@ -41,6 +41,7 @@
 @interface TestWebExtensionManager : NSObject
 
 - (instancetype)initForExtension:(_WKWebExtension *)extension;
+- (instancetype)initForExtension:(_WKWebExtension *)extension extensionControllerConfiguration:(_WKWebExtensionControllerConfiguration *)configuration;
 
 @property (nonatomic, strong) _WKWebExtension *extension;
 @property (nonatomic, strong) _WKWebExtensionContext *context;
@@ -142,10 +143,10 @@ NSData *makePNGData(CGSize, SEL colorSelector);
 
 #endif
 
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(_WKWebExtension *);
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources);
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *resources);
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSURL *baseURL);
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(_WKWebExtension *, _WKWebExtensionControllerConfiguration * = nil);
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources, _WKWebExtensionControllerConfiguration * = nil);
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *resources, _WKWebExtensionControllerConfiguration * = nil);
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSURL *baseURL, _WKWebExtensionControllerConfiguration * = nil);
 
 } // namespace TestWebKitAPI::Util
 

@@ -40,27 +40,21 @@ namespace WebKit {
 
 String WebExtensionControllerConfiguration::createStorageDirectoryPath(std::optional<WTF::UUID> identifier)
 {
-    static NeverDestroyed<String> defaultStoragePath;
-    static dispatch_once_t onceToken;
+    String libraryPath = [NSFileManager.defaultManager URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nullptr].path;
+    RELEASE_ASSERT(!libraryPath.isEmpty());
 
-    dispatch_once(&onceToken, ^{
-        String libraryPath = [NSFileManager.defaultManager URLForDirectory:NSLibraryDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nullptr].path;
-        if (libraryPath.isEmpty())
-            RELEASE_ASSERT_NOT_REACHED();
+    String identifierPath = identifier ? identifier->toString() : "Default"_s;
 
-        String identifierPath = identifier ? identifier->toString() : "Default"_s;
-        if (processHasContainer()) {
-            defaultStoragePath.get() = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebExtensions"_s, identifierPath });
-            return;
-        }
+    if (processHasContainer())
+        return FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, "WebExtensions"_s, identifierPath });
 
-        String appDirectoryName = [NSBundle mainBundle].bundleIdentifier ?: [NSProcessInfo processInfo].processName;
-        defaultStoragePath.get() = FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, appDirectoryName, "WebExtensions"_s, identifierPath });
+    String appDirectoryName = NSBundle.mainBundle.bundleIdentifier ?: NSProcessInfo.processInfo.processName;
+    return FileSystem::pathByAppendingComponents(libraryPath, { "WebKit"_s, appDirectoryName, "WebExtensions"_s, identifierPath });
+}
 
-        RELEASE_ASSERT(!defaultStoragePath->isEmpty());
-    });
-
-    return defaultStoragePath.get();
+String WebExtensionControllerConfiguration::createTemporaryStorageDirectoryPath()
+{
+    return FileSystem::createTemporaryDirectory(@"WebExtensions");
 }
 
 Ref<WebExtensionControllerConfiguration> WebExtensionControllerConfiguration::copy() const
@@ -69,11 +63,14 @@ Ref<WebExtensionControllerConfiguration> WebExtensionControllerConfiguration::co
 
     if (m_identifier)
         result = create(m_identifier.value());
+    else if (storageIsTemporary())
+        result = createTemporary();
     else if (storageIsPersistent())
         result = createDefault();
     else
         result = createNonPersistent();
 
+    result->setStorageDirectory(storageDirectory());
     result->setWebViewConfiguration([m_webViewConfiguration copy]);
 
     return result.releaseNonNull();
@@ -86,7 +83,7 @@ WKWebViewConfiguration *WebExtensionControllerConfiguration::webViewConfiguratio
     return m_webViewConfiguration.get();
 }
 
-String WebExtensionControllerConfiguration::declarativeNetRequestStoreDirectory()
+const String& WebExtensionControllerConfiguration::declarativeNetRequestStoreDirectory()
 {
     if (!m_declarativeNetRequestStoreDirectory.isEmpty())
         return m_declarativeNetRequestStoreDirectory;
@@ -96,7 +93,7 @@ String WebExtensionControllerConfiguration::declarativeNetRequestStoreDirectory(
         return m_declarativeNetRequestStoreDirectory;
     }
 
-    m_declarativeNetRequestStoreDirectory = FileSystem::pathByAppendingComponent(m_storageDirectory, "DeclarativeNetRequest"_s);
+    m_declarativeNetRequestStoreDirectory = FileSystem::pathByAppendingComponent(storageDirectory(), "DeclarativeNetRequest"_s);
     if (!FileSystem::makeAllDirectories(m_declarativeNetRequestStoreDirectory)) {
         m_declarativeNetRequestStoreDirectory = String();
         return m_declarativeNetRequestStoreDirectory;
