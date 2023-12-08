@@ -33,7 +33,7 @@
 #include "RemoteMediaPlayerProxy.h"
 #include "RemoteSourceBufferProxyMessages.h"
 #include "SharedBufferReference.h"
-#include "SourceBufferPrivateRemoteMessages.h"
+#include "SourceBufferPrivateRemoteMessageReceiverMessages.h"
 #include <WebCore/AudioTrackPrivate.h>
 #include <WebCore/ContentType.h>
 #include <WebCore/MediaDescription.h>
@@ -108,7 +108,7 @@ Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitiali
     if (!m_connectionToWebProcess)
         return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
-    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveInitializationSegment(segmentInfo), m_identifier)->whenSettled(RunLoop::current(), [](auto&& result) {
+    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidReceiveInitializationSegment(segmentInfo), m_identifier)->whenSettled(RunLoop::current(), [](auto&& result) {
         return MediaPromise::createAndSettle(!result ? makeUnexpected(PlatformMediaError::IPCError) : WTFMove(*result));
     });
 }
@@ -118,7 +118,7 @@ void RemoteSourceBufferProxy::sourceBufferPrivateHighestPresentationTimestampCha
     if (!m_connectionToWebProcess)
         return;
 
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateHighestPresentationTimestampChanged(timestamp), m_identifier);
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateHighestPresentationTimestampChanged(timestamp), m_identifier);
 }
 
 Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(const MediaTime& duration)
@@ -126,7 +126,7 @@ Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(co
     if (!m_connectionToWebProcess)
         return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
-    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDurationChanged(duration), m_identifier)->whenSettled(RunLoop::current(), [](auto&& result) {
+    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDurationChanged(duration), m_identifier)->whenSettled(RunLoop::current(), [](auto&& result) {
         return result ? MediaPromise::createAndResolve() : MediaPromise::createAndReject(PlatformMediaError::IPCError);
     });
 }
@@ -136,7 +136,7 @@ Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateBufferedChanged(co
     if (!m_connectionToWebProcess)
         return MediaPromise::createAndResolve();
 
-    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedChanged(trackRanges, totalMemorySize), m_identifier)->whenSettled(RunLoop::current(), [](auto&& result) {
+    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateBufferedChanged(trackRanges, totalMemorySize), m_identifier)->whenSettled(RunLoop::current(), [](auto&& result) {
         return result ? MediaPromise::createAndResolve() : MediaPromise::createAndReject(PlatformMediaError::IPCError);
     });
 }
@@ -146,7 +146,7 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidParseSample(double sampleDur
     if (!m_connectionToWebProcess)
         return;
 
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidParseSample(sampleDuration), m_identifier);
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidParseSample(sampleDuration), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidDropSample()
@@ -154,7 +154,7 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidDropSample()
     if (!m_connectionToWebProcess)
         return;
 
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidDropSample(), m_identifier);
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidDropSample(), m_identifier);
 }
 
 void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
@@ -162,7 +162,7 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int64_
     if (!m_connectionToWebProcess)
         return;
 
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveRenderingError(errorCode), m_identifier);
+    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidReceiveRenderingError(errorCode), m_identifier);
 }
 
 void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, CompletionHandler<void(MediaPromise::Result, const MediaTime&)>&& completionHandler)
@@ -173,7 +173,7 @@ void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, Comple
 
     auto handle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
     if (handle && m_connectionToWebProcess)
-        m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::TakeOwnershipOfMemory(WTFMove(*handle)), m_identifier);
+        m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemoteMessageReceiver::TakeOwnershipOfMemory(WTFMove(*handle)), m_identifier);
 
     m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(buffer.size()))->whenSettled(RunLoop::current(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
         completionHandler(WTFMove(result), m_sourceBufferPrivate->timestampOffset());

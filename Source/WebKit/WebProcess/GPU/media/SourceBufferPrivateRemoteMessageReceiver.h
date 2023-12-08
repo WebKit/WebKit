@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,17 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
+#pragma once
 
-messages -> SourceBufferPrivateRemote NotRefCounted {
-    SourceBufferPrivateDidReceiveInitializationSegment(struct WebKit::InitializationSegmentInfo segmentConfiguration) -> (WebCore::MediaPromise::Result result)
-    TakeOwnershipOfMemory(WebKit::SharedMemory::Handle remoteData)
-    SourceBufferPrivateHighestPresentationTimestampChanged(MediaTime timestamp)
-    SourceBufferPrivateBufferedChanged(Vector<WebCore::PlatformTimeRanges> trackBuffers, uint64_t extraMemory) -> ()
-    SourceBufferPrivateDurationChanged(MediaTime duration) -> ()
-    SourceBufferPrivateDidParseSample(double sampleDuration)
-    SourceBufferPrivateDidDropSample()
-    SourceBufferPrivateDidReceiveRenderingError(int64_t errorCode)
-}
+#include "SourceBufferPrivateRemote.h"
 
-#endif
+namespace WebKit {
+
+using SourceBufferPrivateRemoteMessageReceiver = SourceBufferPrivateRemote::MessageReceiver;
+
+} // namespace WebKit

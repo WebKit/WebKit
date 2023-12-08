@@ -408,7 +408,7 @@ void MediaSource::monitorSourceBuffers()
     }
 
     // ↳ If the HTMLMediaElement.readyState attribute equals HAVE_NOTHING:
-    if (mediaElement()->readyState() == HTMLMediaElement::HAVE_NOTHING) {
+    if (m_private->mediaPlayerReadyState() == MediaPlayer::ReadyState::HaveNothing) {
         // 1. Abort these steps.
         return;
     }

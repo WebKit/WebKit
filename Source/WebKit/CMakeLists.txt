@@ -279,14 +279,14 @@ set(WebKit_MESSAGES_IN_FILES
 
     WebProcess/GPU/media/RemoteAudioHardwareListener
     WebProcess/GPU/media/MediaPlayerPrivateRemote
-    WebProcess/GPU/media/MediaSourcePrivateRemote
+    WebProcess/GPU/media/MediaSourcePrivateRemoteMessageReceiver
     WebProcess/GPU/media/RemoteAudioSession
     WebProcess/GPU/media/RemoteAudioSourceProviderManager
     WebProcess/GPU/media/RemoteCDMInstance
     WebProcess/GPU/media/RemoteCDMInstanceSession
     WebProcess/GPU/media/RemoteLegacyCDMSession
     WebProcess/GPU/media/RemoteRemoteCommandListener
-    WebProcess/GPU/media/SourceBufferPrivateRemote
+    WebProcess/GPU/media/SourceBufferPrivateRemoteMessageReceiver
 
     WebProcess/GPU/webrtc/LibWebRTCCodecs
     WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor

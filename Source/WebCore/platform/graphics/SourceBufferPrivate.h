@@ -166,6 +166,11 @@ protected:
     MediaTime currentMediaTime() const;
     MediaTime mediaSourceDuration() const;
 
+    WEBCORE_EXPORT void ensureOnClientDispatcher(Function<void()>&&) const;
+    WEBCORE_EXPORT void ensureOnDispatcher(Function<void()>&&) const;
+    RefCountedSerialFunctionDispatcher& clientDispatcher() const { return m_clientDispatcher.get(); } // SerialFunctionDispatcher the client needs to be called on.
+    RefCountedSerialFunctionDispatcher& dispatcher() const { return m_dispatcher.get(); } // SerialFunctionDispatcher the SourceBufferPrivate/MediaSourcePrivate needs to be called on.
+
     using InitializationSegment = SourceBufferPrivateClient::InitializationSegment;
     WEBCORE_EXPORT void didReceiveInitializationSegment(InitializationSegment&&);
     WEBCORE_EXPORT void didUpdateFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t);
@@ -255,6 +260,8 @@ private:
     MediaTime m_groupEndTimestamp { MediaTime::zeroTime() };
 
     bool m_isMediaSourceEnded { false };
+    const Ref<RefCountedSerialFunctionDispatcher> m_clientDispatcher;
+    const Ref<RefCountedSerialFunctionDispatcher> m_dispatcher;
 };
 
 } // namespace WebCore

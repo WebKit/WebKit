@@ -57,6 +57,7 @@ bool MediaSourcePrivate::hasFutureTime(const MediaTime& currentTime) const
 
 MediaSourcePrivate::MediaSourcePrivate(MediaSourcePrivateClient& client)
     : m_client(client)
+    , m_clientDispatcher(RunLoop::current())
 {
 }
 
@@ -74,15 +75,21 @@ const MediaTime& MediaSourcePrivate::duration() const
 
 Ref<MediaTimePromise> MediaSourcePrivate::waitForTarget(const SeekTarget& target)
 {
-    if (RefPtr client = this->client())
-        return client->waitForTarget(target);
+    if (RefPtr client = this->client()) {
+        return invokeAsync(m_clientDispatcher, [client = WTFMove(client), target] {
+            return client->waitForTarget(target);
+        });
+    }
     return MediaTimePromise::createAndReject(PlatformMediaError::ClientDisconnected);
 }
 
 Ref<MediaPromise> MediaSourcePrivate::seekToTime(const MediaTime& time)
 {
-    if (RefPtr client = this->client())
-        return client->seekToTime(time);
+    if (RefPtr client = this->client()) {
+        return invokeAsync(m_clientDispatcher, [client = WTFMove(client), time] {
+            return client->seekToTime(time);
+        });
+    }
     return MediaPromise::createAndReject(PlatformMediaError::ClientDisconnected);
 }
 
@@ -152,6 +159,21 @@ void MediaSourcePrivate::setCDMSession(LegacyCDMSession* session)
         sourceBuffer->setCDMSession(session);
 }
 #endif
+
+RefCountedSerialFunctionDispatcher& MediaSourcePrivate::clientDispatcher() const
+{
+    return m_clientDispatcher;
+}
+
+void MediaSourcePrivate::ensureOnClientDispatcher(Function<void()>&& function)
+{
+    if (RefPtr client = this->client()) {
+        if (m_clientDispatcher->isCurrent())
+            function();
+        else
+            m_clientDispatcher->dispatch(WTFMove(function));
+    }
+}
 
 } // namespace WebCore
 

@@ -106,6 +106,10 @@ public:
 #endif
 
 protected:
+    WEBCORE_EXPORT void ensureOnClientDispatcher(Function<void()>&&);
+    WEBCORE_EXPORT void ensureOnDispatcher(Function<void()>&&);
+    RefCountedSerialFunctionDispatcher& clientDispatcher() const; // SerialFunctionDispatcher the client needs to be called on.
+
     Vector<RefPtr<SourceBufferPrivate>> m_sourceBuffers;
     Vector<SourceBufferPrivate*> m_activeSourceBuffers;
     bool m_isEnded { false };
@@ -115,6 +119,7 @@ private:
     PlatformTimeRanges m_buffered;
     MediaTime m_timeFudgeFactor;
     ThreadSafeWeakPtr<MediaSourcePrivateClient> m_client;
+    const Ref<RefCountedSerialFunctionDispatcher> m_clientDispatcher;
 };
 
 String convertEnumerationToString(MediaSourcePrivate::AddStatus);
