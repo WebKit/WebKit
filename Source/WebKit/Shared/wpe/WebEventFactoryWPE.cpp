@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebEventFactory.h"
 
+#if ENABLE(WPE_PLATFORM)
 #include <WebCore/FloatPoint.h>
 #include <WebCore/Scrollbar.h>
 #include <wpe/wpe-platform.h>
@@ -230,3 +231,5 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(WPEEvent* event, Vector<WebPl
 #endif // ENABLE(TOUCH_EVENTS)
 
 } // namespace WebKit
+
+#endif // ENABLE(WPE_PLATFORM)

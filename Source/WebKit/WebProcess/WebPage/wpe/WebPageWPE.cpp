@@ -81,7 +81,7 @@ OptionSet<PointerCharacteristics> WebPage::pointerCharacteristicsOfAllAvailableP
     return PointerCharacteristics::Fine;
 }
 
-#if USE(GBM)
+#if USE(GBM) && ENABLE(WPE_PLATFORM)
 void WebPage::preferredBufferFormatsDidChange(Vector<DMABufRendererBufferFormat>&& preferredBufferFormats)
 {
     m_preferredBufferFormats = WTFMove(preferredBufferFormats);

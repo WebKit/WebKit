@@ -192,7 +192,9 @@ enum {
 
 #if PLATFORM(WPE)
     PROP_BACKEND,
+#if ENABLE(WPE_PLATFORM)
     PROP_DISPLAY,
+#endif
 #endif
 
     PROP_WEB_CONTEXT,
@@ -278,7 +280,9 @@ struct _WebKitWebViewPrivate {
 
 #if PLATFORM(WPE)
     GRefPtr<WebKitWebViewBackend> backend;
+#if ENABLE(WPE_PLATFORM)
     GRefPtr<WPEDisplay> display;
+#endif
     std::unique_ptr<WKWPE::View> view;
     Vector<FrameDisplayedCallback> frameDisplayedCallbacks;
     bool inFrameDisplayed;
@@ -787,7 +791,7 @@ static void webkitWebViewConstructed(GObject* object)
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     WebKitWebViewPrivate* priv = webView->priv;
     if (priv->relatedView) {
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
         if (priv->display)
             g_critical("WebKitWebView display property can't be set when related-view is set too, passed display value is ignored.");
         priv->display = webkit_web_view_get_display(priv->relatedView);
@@ -814,7 +818,7 @@ static void webkitWebViewConstructed(GObject* object)
         priv->isEphemeral = webkit_web_context_is_ephemeral(priv->context.get());
 #endif
 
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     if (!priv->display && !priv->backend)
         priv->display = wpe_display_get_default();
     else if (priv->backend) {
@@ -923,11 +927,13 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
         webView->priv->backend = backend ? adoptGRef(static_cast<WebKitWebViewBackend*>(backend)) : nullptr;
         break;
     }
+#if ENABLE(WPE_PLATFORM)
     case PROP_DISPLAY: {
         gpointer display = g_value_get_object(value);
         webView->priv->display = display ? WPE_DISPLAY(display) : nullptr;
         break;
     }
+#endif
 #endif
     case PROP_WEB_CONTEXT: {
         gpointer webContext = g_value_get_object(value);
@@ -1008,9 +1014,11 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     case PROP_BACKEND:
         g_value_set_static_boxed(value, webView->priv->backend.get());
         break;
+#if ENABLE(WPE_PLATFORM)
     case PROP_DISPLAY:
         g_value_set_object(value, webView->priv->display.get());
         break;
+#endif
 #endif
     case PROP_WEB_CONTEXT:
         g_value_set_object(value, webView->priv->context.get());
@@ -1176,6 +1184,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             nullptr, nullptr,
             WEBKIT_TYPE_WEB_VIEW_BACKEND,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+#if ENABLE(WPE_PLATFORM)
     /**
      * WebKitWebView:display:
      *
@@ -1189,6 +1198,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
             nullptr, nullptr,
             WPE_TYPE_DISPLAY,
             static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+#endif
 #endif
 
     /**
@@ -2469,7 +2479,11 @@ void webkitWebViewCreatePage(WebKitWebView* webView, Ref<API::PageConfiguration>
 #if PLATFORM(GTK)
     webkitWebViewBaseCreateWebPage(WEBKIT_WEB_VIEW_BASE(webView), WTFMove(configuration));
 #elif PLATFORM(WPE)
+#if ENABLE(WPE_PLATFORM)
     webView->priv->view.reset(WKWPE::View::create(webView->priv->backend ? webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()) : nullptr, webkit_web_view_get_display(webView), configuration.get()));
+#else
+    webView->priv->view.reset(WKWPE::View::create(webkit_web_view_backend_get_wpe_backend(webView->priv->backend.get()), configuration.get()));
+#endif
 #endif
 }
 
@@ -3060,6 +3074,7 @@ WebKitWebViewBackend* webkit_web_view_get_backend(WebKitWebView* webView)
     return webView->priv->backend.get();
 }
 
+#if ENABLE(WPE_PLATFORM)
 /**
  * webkit_web_view_get_display:
  * @web_view: a #WebKitWebView
@@ -3093,6 +3108,7 @@ WPEView* webkit_web_view_get_wpe_view(WebKitWebView* webView)
 
     return webView->priv->view->wpeView();
 }
+#endif
 #endif
 
 /**

@@ -44,7 +44,7 @@ EventSenderProxy::EventSenderProxy(TestController* testController)
     , m_clickTime(0)
     , m_clickButton(kWKEventMouseButtonNoButton)
 {
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     if (testController->useWPEPlatformAPI())
         m_client = makeUnique<EventSenderProxyClientWPE>(*testController);
     else

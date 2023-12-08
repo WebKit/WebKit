@@ -34,14 +34,20 @@
 
 using namespace WebKit;
 
+#if ENABLE(WPE_PLATFORM)
 WKViewRef WKViewCreate(WPEDisplay* display, WKPageConfigurationRef configuration)
 {
     return toAPI(WKWPE::View::create(nullptr, display, *toImpl(configuration)));
 }
+#endif
 
 WKViewRef WKViewCreateDeprecated(struct wpe_view_backend* backend, WKPageConfigurationRef configuration)
 {
+#if ENABLE(WPE_PLATFORM)
     return toAPI(WKWPE::View::create(backend, nullptr, *toImpl(configuration)));
+#else
+    return toAPI(WKWPE::View::create(backend, *toImpl(configuration)));
+#endif
 }
 
 WKPageRef WKViewGetPage(WKViewRef view)
@@ -49,7 +55,9 @@ WKPageRef WKViewGetPage(WKViewRef view)
     return toAPI(&toImpl(view)->page());
 }
 
+#if ENABLE(WPE_PLATFORM)
 WPEView* WKViewGetView(WKViewRef view)
 {
     return toImpl(view)->wpeView();
 }
+#endif

@@ -55,7 +55,9 @@ static const char* featureList = nullptr;
 static gboolean enableITP;
 static gboolean printVersion;
 static GHashTable* openViews;
+#if ENABLE_WPE_PLATFORM
 static gboolean useWPEPlatformAPI;
+#endif
 
 static const GOptionEntry commandLineOptions[] =
 {
@@ -72,7 +74,9 @@ static const GOptionEntry commandLineOptions[] =
     { "enable-itp", 0, 0, G_OPTION_ARG_NONE, &enableITP, "Enable Intelligent Tracking Prevention (ITP)", nullptr },
     { "time-zone", 't', 0, G_OPTION_ARG_STRING, &timeZone, "Set time zone", "TIMEZONE" },
     { "features", 'F', 0, G_OPTION_ARG_STRING, &featureList, "Enable or disable WebKit features (hint: pass 'help' for a list)", "FEATURE-LIST" },
+#if ENABLE_WPE_PLATFORM
     { "use-wpe-platform-api", 0, 0, G_OPTION_ARG_NONE, &useWPEPlatformAPI, "Use the WPE platform API", nullptr },
+#endif
     { "version", 'v', 0, G_OPTION_ARG_NONE, &printVersion, "Print the WPE version", nullptr },
     { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &uriArguments, nullptr, "[URL]" },
     { nullptr, 0, 0, G_OPTION_ARG_NONE, nullptr, nullptr, nullptr }
@@ -116,6 +120,7 @@ private:
     WebKitWebView* m_webView { nullptr };
 };
 
+#if ENABLE_WPE_PLATFORM
 static gboolean wpeViewEventCallback(WPEView* view, WPEEvent* event, WebKitWebView* webView)
 {
     if (wpe_event_get_event_type(event) != WPE_EVENT_KEYBOARD_KEY_DOWN)
@@ -151,6 +156,7 @@ static gboolean wpeViewEventCallback(WPEView* view, WPEEvent* event, WebKitWebVi
 
     return FALSE;
 }
+#endif
 
 static WebKitWebView* createWebViewForAutomationCallback(WebKitAutomationSession*, WebKitWebView* view)
 {
@@ -177,8 +183,10 @@ static gboolean decidePermissionRequest(WebKitWebView *, WebKitPermissionRequest
 
 static std::unique_ptr<WPEToolingBackends::ViewBackend> createViewBackend(uint32_t width, uint32_t height)
 {
+#if ENABLE_WPE_PLATFORM
     if (useWPEPlatformAPI)
         return nullptr;
+#endif
 
     if (headlessMode)
         return std::make_unique<WPEToolingBackends::HeadlessViewBackend>(width, height);
@@ -401,8 +409,10 @@ static void activate(GApplication* application, WPEToolingBackends::ViewBackend*
 #endif
     }
 
+#if ENABLE_WPE_PLATFORM
     if (auto* wpeView = webkit_web_view_get_wpe_view(webView))
         g_signal_connect(wpeView, "event", G_CALLBACK(wpeViewEventCallback), webView);
+#endif
 
     openViews = g_hash_table_new_full(nullptr, nullptr, g_object_unref, nullptr);
 

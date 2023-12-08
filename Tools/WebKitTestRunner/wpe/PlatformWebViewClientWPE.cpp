@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PlatformWebViewClientWPE.h"
 
+#if ENABLE(WPE_PLATFORM)
+
 #include <cairo.h>
 #include <wpe/headless/wpe-headless.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -84,3 +86,5 @@ cairo_surface_t* PlatformWebViewClientWPE::snapshot()
 }
 
 } // namespace WTR
+
+#endif // ENABLE(WPE_PLATFORM)

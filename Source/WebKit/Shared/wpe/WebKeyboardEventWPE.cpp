@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebKeyboardEvent.h"
 
-#if PLATFORM(WPE)
+#if ENABLE(WPE_PLATFORM)
 
 #include <WebCore/WindowsKeyboardCodes.h>
 #include <wpe/wpe-platform.h>
@@ -1326,4 +1326,4 @@ String WebKeyboardEvent::singleCharacterStringForWPEKeyval(unsigned keyval)
 
 } // namespace WebKit
 
-#endif // PLATFORM(WPE)
+#endif // ENABLE(WPE_PLATFORM)

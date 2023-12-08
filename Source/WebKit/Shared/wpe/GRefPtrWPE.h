@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WPE_PLATFORM)
+
 #include <wtf/glib/GRefPtr.h>
 
 typedef struct _WPEEvent WPEEvent;
@@ -35,3 +37,5 @@ template <> WPEEvent* refGPtr(WPEEvent*);
 template <> void derefGPtr(WPEEvent*);
 
 } // namespace WTF
+
+#endif // ENABLE(WPE_PLATFORM)

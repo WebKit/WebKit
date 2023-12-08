@@ -78,7 +78,11 @@ void webkitWebViewRestoreWindow(WebKitWebView*, CompletionHandler<void()>&& comp
  */
 WebKitWebView* webkit_web_view_new(WebKitWebViewBackend* backend)
 {
+#if ENABLE(WPE_PLATFORM)
     g_return_val_if_fail(!backend || !g_type_class_peek(WPE_TYPE_DISPLAY), nullptr);
+#else
+    g_return_val_if_fail(backend, nullptr);
+#endif
 
     return WEBKIT_WEB_VIEW(g_object_new(WEBKIT_TYPE_WEB_VIEW,
         "backend", backend,

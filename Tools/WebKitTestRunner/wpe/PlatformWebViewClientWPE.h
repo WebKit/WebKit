@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WPE_PLATFORM)
+
 #include "PlatformWebViewClient.h"
 
 #include <wtf/glib/GRefPtr.h>
@@ -52,3 +54,5 @@ private:
 };
 
 } // namespace WTR
+
+#endif // ENABLE(WPE_PLATFORM)

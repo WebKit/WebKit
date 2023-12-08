@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AcceleratedBackingStoreDMABuf.h"
 
-#if USE(GBM)
+#if ENABLE(WPE_PLATFORM)
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
 #include "ShareableBitmap.h"
@@ -154,4 +154,4 @@ void AcceleratedBackingStoreDMABuf::bufferRendered()
 
 } // namespace WebKit
 
-#endif // USE(GBM)
+#endif // ENABLE(WPE_PLATFORM)

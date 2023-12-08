@@ -1111,7 +1111,7 @@ public:
     void accentColorDidChange();
 #endif
 
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     WPEView* wpeView() const;
 #endif
 
@@ -2294,7 +2294,7 @@ public:
     OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtectionsPolicies() const { return m_advancedPrivacyProtectionsPolicies; }
 #endif
 
-#if PLATFORM(WPE) && USE(GBM)
+#if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
     void preferredBufferFormatsDidChange();
 #endif
 

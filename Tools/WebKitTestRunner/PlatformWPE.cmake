@@ -41,8 +41,13 @@ list(APPEND WebKitTestRunner_LIBRARIES
     ${WPEBACKEND_FDO_LIBRARIES}
     Cairo::Cairo
     WebKit::WPEToolingBackends
-    WPEPlatform-${WPE_API_VERSION}
 )
+
+if (ENABLE_WPE_PLATFORM)
+    list(APPEND WebKitTestRunner_LIBRARIES
+        WPEPlatform-${WPE_API_VERSION}
+    )
+endif ()
 
 list(APPEND TestRunnerInjectedBundle_LIBRARIES
     ${GLIB_LIBRARIES}

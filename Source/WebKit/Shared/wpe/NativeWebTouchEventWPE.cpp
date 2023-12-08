@@ -26,7 +26,7 @@
 #include "config.h"
 #include "NativeWebTouchEvent.h"
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && ENABLE(WPE_PLATFORM)
 
 #include "WebEventFactory.h"
 
@@ -39,4 +39,4 @@ NativeWebTouchEvent::NativeWebTouchEvent(WPEEvent* event, Vector<WebPlatformTouc
 
 } // namespace WebKit
 
-#endif // ENABLE(TOUCH_EVENTS)
+#endif // ENABLE(TOUCH_EVENTS) && ENABLE(WPE_PLATFORM)

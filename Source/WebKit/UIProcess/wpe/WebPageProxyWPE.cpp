@@ -35,11 +35,10 @@
 #include <atk/atk.h>
 #endif
 
-#if USE(GBM)
+#if USE(GBM) && ENABLE(WPE_PLATFORM)
 #include "DMABufRendererBufferFormat.h"
 #include "MessageSenderInlines.h"
 #include "WebPageMessages.h"
-#include <drm_fourcc.h>
 #endif
 
 namespace WebKit {
@@ -53,10 +52,12 @@ struct wpe_view_backend* WebPageProxy::viewBackend()
     return static_cast<PageClientImpl&>(pageClient()).viewBackend();
 }
 
+#if ENABLE(WPE_PLATFORM)
 WPEView* WebPageProxy::wpeView() const
 {
     return static_cast<PageClientImpl&>(pageClient()).wpeView();
 }
+#endif
 
 void WebPageProxy::bindAccessibilityTree(const String& plugID)
 {
@@ -91,6 +92,7 @@ void WebPageProxy::setInputMethodState(std::optional<InputMethodState>&& state)
 #if USE(GBM)
 Vector<DMABufRendererBufferFormat> WebPageProxy::preferredBufferFormats() const
 {
+#if ENABLE(WPE_PLATFORM)
     auto* view = wpeView();
     if (!view)
         return { };
@@ -125,8 +127,12 @@ Vector<DMABufRendererBufferFormat> WebPageProxy::preferredBufferFormats() const
         dmabufFormats.append(WTFMove(dmabufFormat));
     }
     return dmabufFormats;
+#else
+    return { };
+#endif
 }
 
+#if ENABLE(WPE_PLATFORM)
 void WebPageProxy::preferredBufferFormatsDidChange()
 {
     auto* view = wpeView();
@@ -136,9 +142,11 @@ void WebPageProxy::preferredBufferFormatsDidChange()
     send(Messages::WebPage::PreferredBufferFormatsDidChange(preferredBufferFormats()));
 }
 #endif
+#endif
 
 OptionSet<WebCore::PlatformEvent::Modifier> WebPageProxy::currentStateOfModifierKeys()
 {
+#if ENABLE(WPE_PLATFORM)
     auto* view = wpeView();
     if (!view)
         return { };
@@ -160,6 +168,9 @@ OptionSet<WebCore::PlatformEvent::Modifier> WebPageProxy::currentStateOfModifier
     if (wpeModifiers & WPE_MODIFIER_KEYBOARD_CAPS_LOCK)
         modifiers.add(WebCore::PlatformEvent::Modifier::CapsLockKey);
     return modifiers;
+#else
+    return { };
+#endif
 }
 
 } // namespace WebKit

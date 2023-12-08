@@ -42,7 +42,7 @@
 #include <wpe/wpe.h>
 #endif
 
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
 typedef struct _WPEEvent WPEEvent;
 #endif
 
@@ -67,7 +67,7 @@ public:
 #elif USE(LIBWPE)
     NativeWebTouchEvent(struct wpe_input_touch_event*, float deviceScaleFactor);
     const struct wpe_input_touch_event_raw* nativeFallbackTouchPoint() const { return &m_fallbackTouchPoint; }
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     NativeWebTouchEvent(WPEEvent*, Vector<WebPlatformTouchPoint>&&);
 #endif
 #elif PLATFORM(WIN)

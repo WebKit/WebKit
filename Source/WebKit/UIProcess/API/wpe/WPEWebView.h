@@ -73,10 +73,17 @@ namespace WKWPE {
 
 class View : public API::ObjectImpl<API::Object::Type::View> {
 public:
+#if ENABLE(WPE_PLATFORM)
     static View* create(struct wpe_view_backend* backend, WPEDisplay* display, const API::PageConfiguration& configuration)
     {
         return new View(backend, display, configuration);
     }
+#else
+    static View* create(struct wpe_view_backend* backend, const API::PageConfiguration& configuration)
+    {
+        return new View(backend, configuration);
+    }
+#endif
 
     ~View();
 
@@ -99,7 +106,9 @@ public:
 
     API::ViewClient& client() const { return *m_client; }
     struct wpe_view_backend* backend() { return m_backend; }
+#if ENABLE(WPE_PLATFORM)
     WPEView* wpeView() const { return m_wpeView.get(); }
+#endif
 
     const WebCore::IntSize& size() const { return m_size; }
 
@@ -110,12 +119,16 @@ public:
 #if ENABLE(FULLSCREEN_API)
     bool isFullScreen() const;
     void willEnterFullScreen();
+#if ENABLE(WPE_PLATFORM)
     void enterFullScreen();
     void didEnterFullScreen();
+#endif
     void willExitFullScreen();
+#if ENABLE(WPE_PLATFORM)
     void exitFullScreen();
     void didExitFullScreen();
     void requestExitFullScreen();
+#endif
     bool setFullScreen(bool);
 #endif
 
@@ -130,18 +143,24 @@ public:
     static WebKit::WebPageProxy* platformWebPageProxyForGamepadInput();
 #endif
 
+#if ENABLE(WPE_PLATFORM)
     void updateAcceleratedSurface(uint64_t);
+#endif
 
     void setCursor(const WebCore::Cursor&);
 
 private:
+#if ENABLE(WPE_PLATFORM)
     View(struct wpe_view_backend*, WPEDisplay*, const API::PageConfiguration&);
+#else
+    View(struct wpe_view_backend*, const API::PageConfiguration&);
+#endif
 
     void setSize(const WebCore::IntSize&);
     void setViewState(OptionSet<WebCore::ActivityState>);
     void handleKeyboardEvent(struct wpe_input_keyboard_event*);
 
-#if ENABLE(TOUCH_EVENTS)
+#if ENABLE(TOUCH_EVENTS) && ENABLE(WPE_PLATFORM)
     Vector<WebKit::WebPlatformTouchPoint> touchPointsForEvent(WPEEvent*);
 #endif
 
@@ -149,16 +168,20 @@ private:
 
 #if ENABLE(TOUCH_EVENTS)
     std::unique_ptr<WebKit::TouchGestureController> m_touchGestureController;
+#if ENABLE(WPE_PLATFORM)
     HashMap<uint32_t, GRefPtr<WPEEvent>> m_touchEvents;
+#endif
 #endif
     std::unique_ptr<WebKit::PageClientImpl> m_pageClient;
     RefPtr<WebKit::WebPageProxy> m_pageProxy;
     WebCore::IntSize m_size;
     OptionSet<WebCore::ActivityState> m_viewStateFlags;
-    std::unique_ptr<WebKit::AcceleratedBackingStoreDMABuf> m_backingStore;
 
     struct wpe_view_backend* m_backend;
+#if ENABLE(WPE_PLATFORM)
     GRefPtr<WPEView> m_wpeView;
+    std::unique_ptr<WebKit::AcceleratedBackingStoreDMABuf> m_backingStore;
+#endif
 
 #if ENABLE(FULLSCREEN_API)
     WebKit::WebFullScreenManagerProxy::FullscreenState m_fullscreenState { WebKit::WebFullScreenManagerProxy::FullscreenState::NotInFullscreen };

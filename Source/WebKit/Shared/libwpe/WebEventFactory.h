@@ -40,7 +40,7 @@ struct wpe_input_pointer_event;
 struct wpe_input_touch_event;
 #endif
 
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
 typedef struct _WPEEvent WPEEvent;
 #endif
 
@@ -55,7 +55,7 @@ public:
     static WebTouchEvent createWebTouchEvent(struct wpe_input_touch_event*, float deviceScaleFactor);
 #endif
 
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     static WebMouseEvent createWebMouseEvent(WPEEvent*);
     static WebWheelEvent createWebWheelEvent(WPEEvent*);
     static WebKeyboardEvent createWebKeyboardEvent(WPEEvent*, const String&, bool isAutoRepeat);

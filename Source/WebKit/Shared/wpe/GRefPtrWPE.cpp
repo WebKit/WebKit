@@ -26,6 +26,8 @@
 #include "config.h"
 #include "GRefPtrWPE.h"
 
+#if ENABLE(WPE_PLATFORM)
+
 #include <wpe/wpe-platform.h>
 
 namespace WTF {
@@ -44,3 +46,5 @@ template <> void derefGPtr(WPEEvent* ptr)
 }
 
 } // namespace WTF
+
+#endif // ENABLE(WPE_PLATFORM)

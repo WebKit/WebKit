@@ -45,7 +45,7 @@
 #include <gtk/gtk.h>
 #endif
 
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
 #include <wpe/wpe-platform.h>
 #endif
 
@@ -166,7 +166,7 @@ static std::optional<std::pair<uint32_t, uint32_t>> findCrtc(int fd)
 
 std::unique_ptr<DisplayVBlankMonitor> DisplayVBlankMonitorDRM::create(PlatformDisplayID displayID)
 {
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     String filename;
     if (g_type_class_peek(WPE_TYPE_DISPLAY))
         filename = String::fromUTF8(wpe_render_device());

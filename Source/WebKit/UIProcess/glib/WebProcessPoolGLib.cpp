@@ -56,7 +56,7 @@
 #include "ScreenManager.h"
 #endif
 
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
 #include <wpe/wpe-platform.h>
 #endif
 
@@ -77,12 +77,12 @@ void WebProcessPool::platformInitialize(NeedsGlobalStaticInitialization)
 
 void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process, WebProcessCreationParameters& parameters)
 {
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     bool usingWPEPlatformAPI = !!g_type_class_peek(WPE_TYPE_DISPLAY);
 #endif
 
 #if USE(GBM)
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     if (usingWPEPlatformAPI)
         parameters.renderDeviceFile = String::fromUTF8(wpe_render_node_device());
     else
@@ -94,7 +94,7 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 
 #if PLATFORM(GTK) && USE(EGL)
     parameters.dmaBufRendererBufferMode = AcceleratedBackingStoreDMABuf::rendererBufferMode();
-#elif PLATFORM(WPE)
+#elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     if (usingWPEPlatformAPI) {
 #if USE(GBM)
         if (!parameters.renderDeviceFile.isEmpty())
