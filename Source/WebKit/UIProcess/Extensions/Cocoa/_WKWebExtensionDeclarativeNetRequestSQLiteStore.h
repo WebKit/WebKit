@@ -27,9 +27,13 @@
 
 #import "_WKWebExtensionSQLiteStore.h"
 
+enum class _WKWebExtensionDeclarativeNetRequestStorageType : bool { Dynamic, Session };
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKWebExtensionDeclarativeNetRequestSQLiteStore : _WKWebExtensionSQLiteStore
+
+- (instancetype)initWithUniqueIdentifier:(NSString *)uniqueIdentifier storageType:(_WKWebExtensionDeclarativeNetRequestStorageType)storageType directory:(NSString *)directory usesInMemoryDatabase:(BOOL)useInMemoryDatabase;
 
 - (void)getRulesWithCompletionHandler:(void (^)(NSArray<NSDictionary<NSString *, id> *> *rules, NSString *errorMessage))completionHandler;
 - (void)updateRulesByRemovingIDs:(NSArray<NSNumber *> *)ruleIDs addRules:(NSArray<NSDictionary<NSString *, id> *> *)rules completionHandler:(void (^)(NSString *errorMessage))completionHandler;

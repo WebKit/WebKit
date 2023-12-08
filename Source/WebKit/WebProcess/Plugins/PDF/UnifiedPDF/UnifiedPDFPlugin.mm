@@ -297,7 +297,7 @@ void UnifiedPDFPlugin::paintContents(const GraphicsLayer* layer, GraphicsContext
 
 CGFloat UnifiedPDFPlugin::scaleFactor() const
 {
-    return 1;
+    return m_scaleFactor;
 }
 
 float UnifiedPDFPlugin::deviceScaleFactor() const

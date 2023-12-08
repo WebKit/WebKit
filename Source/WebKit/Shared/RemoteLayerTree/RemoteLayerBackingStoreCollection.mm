@@ -338,7 +338,7 @@ void RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileFromTimer()
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteLayerBackingStoreCollection::markAllBackingStoreVolatileFromTimer pid " << getpid() << " - live " << m_liveBackingStore.computeSize() << ", unparented " << m_unparentedBackingStore.computeSize() << ", " << identifiers.size() << " buffers to set volatile: " << identifiers);
 
     if (identifiers.isEmpty()) {
-        if (successfullyMadeBackingStoreVolatile)
+        if (successfullyMadeBackingStoreVolatile && collectedAllRemoteRenderingBuffers)
             m_volatilityTimer.stop();
         return;
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,57 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "APIDictionary.h"
+#if USE(APPLE_INTERNAL_SDK)
 
-#include "APIArray.h"
-#include "APIString.h"
+#import <ARKit/ARKit.h>
+#import <ARKit/ARKitPrivate.h>
 
-namespace API {
+#else // !USE(APPLE_INTERNAL_SDK)
 
-Ref<Dictionary> Dictionary::create()
-{
-    return create({ });
-}
+#import <simd/simd.h>
 
-Ref<Dictionary> Dictionary::create(MapType&& map)
-{
-    return adoptRef(*new Dictionary(WTFMove(map)));
-}
+FOUNDATION_EXTERN simd_float4x4 ARMatrixMakeLookAt(simd_float3 origin, simd_float3 direction);
 
-Dictionary::Dictionary(MapType&& map)
-    : m_map(WTFMove(map))
-{
-}
-
-Dictionary::~Dictionary() = default;
-
-Ref<Array> Dictionary::keys() const
-{
-    if (m_map.isEmpty())
-        return API::Array::create();
-
-    auto keys = WTF::map(m_map, [](auto& entry) -> RefPtr<API::Object> {
-        return API::String::create(entry.key);
-    });
-    return API::Array::create(WTFMove(keys));
-}
-
-bool Dictionary::add(const WTF::String& key, RefPtr<API::Object>&& item)
-{
-    MapType::AddResult result = m_map.add(key, WTFMove(item));
-    return result.isNewEntry;
-}
-
-bool Dictionary::set(const WTF::String& key, RefPtr<API::Object>&& item)
-{
-    MapType::AddResult result = m_map.set(key, WTFMove(item));
-    return result.isNewEntry;
-}
-
-void Dictionary::remove(const WTF::String& key)
-{
-    m_map.remove(key);
-}
-
-} // namespace API
+#endif

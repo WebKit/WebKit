@@ -29,6 +29,7 @@
 
 #import <Metal/Metal.h>
 #import <UIKit/UIKit.h>
+#import <WebCore/PlatformXR.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -43,6 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @protocol WKARPresentationSession <NSObject>
+@property (nonatomic, readonly) UIView *view;
 @property (nonatomic, retain, readonly) ARFrame *currentFrame;
 @property (nonatomic, retain, readonly) ARSession *session;
 @property (nonatomic, nonnull, retain, readonly) id<MTLSharedEvent> completionEvent;
@@ -51,6 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (atomic, readonly, getter=isSessionEndRequested) BOOL sessionEndRequested;
 
 - (NSUInteger)startFrame;
+- (Vector<PlatformXR::Device::FrameData::InputSource>)collectInputSources;
 - (void)present;
 - (void)terminate;
 @end

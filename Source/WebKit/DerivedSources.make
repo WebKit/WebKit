@@ -500,19 +500,24 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Platform/IPC/FormDataReference.serialization.in \
 	Platform/IPC/IPCSemaphore.serialization.in \
 	Platform/IPC/SharedBufferReference.serialization.in \
-        Platform/IPC/SharedFileHandle.serialization.in \
+	Platform/IPC/SharedFileHandle.serialization.in \
 	Platform/IPC/StreamServerConnection.serialization.in \
 	Platform/SharedMemory.serialization.in \
 	Shared/AuxiliaryProcessCreationParameters.serialization.in \
+	Shared/API/APIArray.serialization.in \
 	Shared/API/APIData.serialization.in \
+	Shared/API/APIDictionary.serialization.in \
 	Shared/API/APIError.serialization.in \
 	Shared/API/APIFrameHandle.serialization.in \
 	Shared/API/APIGeometry.serialization.in \
 	Shared/API/APINumber.serialization.in \
 	Shared/API/APIPageHandle.serialization.in \
+	Shared/API/APISerializedScriptValue.serialization.in \
+	Shared/API/APIString.serialization.in \
 	Shared/API/APIURL.serialization.in \
 	Shared/API/APIURLRequest.serialization.in \
 	Shared/API/APIURLResponse.serialization.in \
+	Shared/API/APIUserContentURLPattern.serialization.in \
 	Shared/AccessibilityPreferences.serialization.in \
 	Shared/AlternativeTextClient.serialization.in \
 	Shared/AppPrivacyReportTestingData.serialization.in \
@@ -579,6 +584,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/ios/InteractionInformationRequest.serialization.in \
 	Shared/ios/WebAutocorrectionContext.serialization.in \
 	Shared/ios/WebAutocorrectionData.serialization.in \
+	Shared/JavaScriptCore.serialization.in \
 	Shared/LayerTreeContext.serialization.in \
 	Shared/LoadParameters.serialization.in \
 	Shared/LocalFrameCreationParameters.serialization.in \
@@ -615,8 +621,10 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebContextMenuItemData.serialization.in \
 	Shared/WebCoreArgumentCoders.serialization.in \
 	Shared/WebEvent.serialization.in \
+	Shared/WebFindOptions.serialization.in \
 	Shared/WebFoundTextRange.serialization.in \
 	Shared/WebHitTestResultData.serialization.in \
+	Shared/WebImage.serialization.in \
 	Shared/WebNavigationDataStore.serialization.in \
 	Shared/WebPageCreationParameters.serialization.in \
 	Shared/WebPageNetworkParameters.serialization.in \

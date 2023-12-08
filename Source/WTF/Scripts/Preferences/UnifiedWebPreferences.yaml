@@ -2647,6 +2647,20 @@ FileSystemAccessEnabled:
       "PLATFORM(COCOA)" : true
       default: false
 
+FilterLinkDecorationByDefaultEnabled:
+  type: bool
+  status: testable
+  category: networking
+  humanReadableName: "Filter Link Decoration"
+  humanReadableDescription: "Enable Filtering Link Decoration"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 FixedFontFamily:
   type: String
   status: embedder
@@ -4024,19 +4038,6 @@ ManageCaptureStatusBarInGPUProcessEnabled:
     WebKitLegacy:
       default: false
     WebCore:
-      default: false
-
-ManageWebKitProcessesAsExtensions:
-  type: bool
-  status: internal
-  defaultsOverridable: true
-  humanReadableName: "Manage WebKit processes as extensions"
-  humanReadableDescription: "Manage WebKit processes as extensions"
-  condition: USE(EXTENSIONKIT)
-  webcoreBinding: none
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
       default: false
 
 ManagedMediaSourceEnabled:

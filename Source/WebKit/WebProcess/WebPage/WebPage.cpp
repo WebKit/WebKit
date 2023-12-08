@@ -3011,10 +3011,10 @@ static ImageOptions snapshotImageOptions(LocalFrame& frame)
 RefPtr<WebImage> WebPage::snapshotAtSize(const IntRect& rect, const IntSize& bitmapSize, SnapshotOptions options, LocalFrame& frame, LocalFrameView& frameView)
 {
     auto snapshot = WebImage::create(bitmapSize, snapshotImageOptions(frame), snapshotColorSpace(options, *this), &m_page->chrome().client());
-    if (!snapshot)
+    if (!snapshot->context())
         return nullptr;
 
-    auto& graphicsContext = snapshot->context();
+    auto& graphicsContext = *snapshot->context();
     paintSnapshotAtSize(rect, bitmapSize, options, frame, frameView, graphicsContext);
 
     return snapshot;
@@ -3047,10 +3047,10 @@ RefPtr<WebImage> WebPage::snapshotNode(WebCore::Node& node, SnapshotOptions opti
     }
 
     auto snapshot = WebImage::create(snapshotSize, snapshotOptionsToImageOptions(options), snapshotColorSpace(options, *this), &m_page->chrome().client());
-    if (!snapshot)
+    if (!snapshot->context())
         return nullptr;
 
-    auto& graphicsContext = snapshot->context();
+    auto& graphicsContext = *snapshot->context();
 
     if (!(options & SnapshotOptionsExcludeDeviceScaleFactor)) {
         double deviceScaleFactor = corePage()->deviceScaleFactor();
@@ -6175,12 +6175,12 @@ void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInf
 #endif
         
         image = WebImage::create(imageSize, ImageOptionsLocal, DestinationColorSpace::SRGB(), &m_page->chrome().client());
-        if (!image) {
+        if (!image || !image->context()) {
             ASSERT_NOT_REACHED();
             return completionHandler({ });
         }
 
-        auto& graphicsContext = image->context();
+        auto& graphicsContext = *image->context();
         float printingScale = static_cast<float>(imageSize.width()) / rect.width();
         graphicsContext.scale(printingScale);
 

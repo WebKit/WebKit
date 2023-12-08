@@ -8118,12 +8118,12 @@ void WebPageProxy::didCountStringMatches(const String& string, uint32_t matchCou
 
 void WebPageProxy::didGetImageForFindMatch(ImageBufferParameters&& parameters, ShareableBitmap::Handle&& contentImageHandle, uint32_t matchIndex)
 {
-    RefPtr image = WebImage::create(WTFMove(parameters), WTFMove(contentImageHandle));
-    if (!image) {
+    Ref image = WebImage::create({ { WTFMove(parameters), WTFMove(contentImageHandle) } });
+    if (image->isEmpty()) {
         ASSERT_NOT_REACHED();
         return;
     }
-    m_findMatchesClient->didGetImageForMatchResult(this, image.get(), matchIndex);
+    m_findMatchesClient->didGetImageForMatchResult(this, image.ptr(), matchIndex);
 }
 
 void WebPageProxy::setTextIndicator(const TextIndicatorData& indicatorData, uint64_t lifetime)

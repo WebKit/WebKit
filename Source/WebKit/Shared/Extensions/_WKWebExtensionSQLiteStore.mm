@@ -318,6 +318,111 @@ static constexpr std::array<const char *, 2> databaseFileSuffixes { "-shm", "-wa
     return 0;
 }
 
+- (NSString *)_savepointNameFromUUID:(NSUUID *)savepointIdentifier
+{
+    // Hyphens are not allowed in the name, so strip them from the UUID.
+    // Also a letter needs to be first, so prepend "S" incase the UUID starts with a number.
+    return [@"S" stringByAppendingString:[savepointIdentifier.UUIDString stringByReplacingOccurrencesOfString:@"-" withString:@""]];
+}
+
+- (void)createSavepointWithCompletionHandler:(void (^)(NSUUID *savepointIdentifier, NSString *errorMessage))completionHandler
+{
+    NSUUID *savepointIdentifier = [NSUUID UUID];
+
+    auto weakSelf = WeakObjCPtr<_WKWebExtensionSQLiteStore> { self };
+    dispatch_async(_databaseQueue, ^{
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+
+        NSString *errorMessage;
+        if (![strongSelf _openDatabaseIfNecessaryReturningErrorMessage:&errorMessage]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionHandler(nil, errorMessage);
+            });
+
+            return;
+        }
+
+        ASSERT(!errorMessage.length);
+        ASSERT(strongSelf->_database);
+
+        DatabaseResult result = SQLiteDatabaseExecute(strongSelf->_database, [NSString stringWithFormat:@"SAVEPOINT %@", [strongSelf _savepointNameFromUUID:savepointIdentifier]]);
+        if (result != SQLITE_DONE) {
+            RELEASE_LOG_ERROR(Extensions, "Failed to create storage savepoint for extension %{private}@. %{public}@ (%d)", strongSelf->_uniqueIdentifier, strongSelf->_database.lastErrorMessage, result);
+            errorMessage = @"Failed to create savepoint.";
+        }
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionHandler(!errorMessage.length ? savepointIdentifier : nil, errorMessage);
+        });
+    });
+}
+
+- (void)commitSavepoint:(NSUUID *)savepointIdentifier completionHandler:(void (^)(NSString *errorMessage))completionHandler
+{
+    auto weakSelf = WeakObjCPtr<_WKWebExtensionSQLiteStore> { self };
+    dispatch_async(_databaseQueue, ^{
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+
+        NSString *errorMessage;
+        if (![strongSelf _openDatabaseIfNecessaryReturningErrorMessage:&errorMessage]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionHandler(errorMessage);
+            });
+
+            return;
+        }
+
+        ASSERT(!errorMessage.length);
+        ASSERT(strongSelf->_database);
+
+        DatabaseResult result = SQLiteDatabaseExecute(strongSelf->_database, [NSString stringWithFormat:@"RELEASE SAVEPOINT %@", [strongSelf _savepointNameFromUUID:savepointIdentifier]]);
+        if (result != SQLITE_DONE) {
+            RELEASE_LOG_ERROR(Extensions, "Failed to release storage savepoint for extension %{private}@. %{public}@ (%d)", strongSelf->_uniqueIdentifier, strongSelf->_database.lastErrorMessage, result);
+            errorMessage = @"Failed to release savepoint.";
+        }
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionHandler(errorMessage);
+        });
+    });
+}
+
+- (void)rollbackToSavepoint:(NSUUID *)savepointIdentifier completionHandler:(void (^)(NSString *errorMessage))completionHandler
+{
+    auto weakSelf = WeakObjCPtr<_WKWebExtensionSQLiteStore> { self };
+    dispatch_async(_databaseQueue, ^{
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return;
+
+        NSString *errorMessage;
+        if (![strongSelf _openDatabaseIfNecessaryReturningErrorMessage:&errorMessage]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionHandler(errorMessage);
+            });
+
+            return;
+        }
+
+        ASSERT(!errorMessage.length);
+        ASSERT(strongSelf->_database);
+
+        DatabaseResult result = SQLiteDatabaseExecute(strongSelf->_database, [NSString stringWithFormat:@"ROLLBACK TO SAVEPOINT %@", [strongSelf _savepointNameFromUUID:savepointIdentifier]]);
+        if (result != SQLITE_DONE) {
+            RELEASE_LOG_ERROR(Extensions, "Failed to rollback to storage savepoint for extension %{private}@. %{public}@ (%d)", strongSelf->_uniqueIdentifier, strongSelf->_database.lastErrorMessage, result);
+            errorMessage = @"Failed to rollback to savepoint.";
+        }
+
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completionHandler(errorMessage);
+        });
+    });
+}
+
 // MARK: - Must be implemented by subclasses
 
 - (SchemaVersion)_currentDatabaseSchemaVersion

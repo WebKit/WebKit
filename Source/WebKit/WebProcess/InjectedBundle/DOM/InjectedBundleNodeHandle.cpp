@@ -169,10 +169,10 @@ static RefPtr<WebImage> imageForRect(LocalFrameView* frameView, const IntRect& p
         return nullptr;
 
     auto snapshot = WebImage::create(bitmapSize, snapshotOptionsToImageOptions(options), DestinationColorSpace::SRGB());
-    if (!snapshot)
+    if (!snapshot->context())
         return nullptr;
 
-    auto& graphicsContext = snapshot->context();
+    auto& graphicsContext = *snapshot->context();
 
     graphicsContext.clearRect(IntRect(IntPoint(), bitmapSize));
     graphicsContext.applyDeviceScaleFactor(deviceScaleFactor);

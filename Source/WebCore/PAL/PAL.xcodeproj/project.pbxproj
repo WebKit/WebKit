@@ -43,6 +43,7 @@
 		297CB483288B11D700BB7971 /* AccessibilitySoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 297CB481288B11D700BB7971 /* AccessibilitySoftLink.mm */; };
 		2E1342CD215AA10A007199D2 /* UIKitSoftLink.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2E1342CB215AA10A007199D2 /* UIKitSoftLink.mm */; };
 		31647FB0251759DD0010F8FB /* OpenGLSoftLinkCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31647FAE251759DB0010F8FB /* OpenGLSoftLinkCocoa.mm */; };
+		3A02FE2B2B214A38001724B1 /* ARKitSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A02FE2A2B214A38001724B1 /* ARKitSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3CBEEDE928A1861D00221FAE /* BarcodeSupportSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C963637289DC1C600570DD6 /* BarcodeSupportSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		416E995323DAE6BE00E871CB /* AudioToolboxSoftLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E995123DAE6BD00E871CB /* AudioToolboxSoftLink.cpp */; };
 		4177B3DA296CB8C3009711F0 /* CoreCryptoSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 4177B3D9296CB8C3009711F0 /* CoreCryptoSPI.h */; };
@@ -549,6 +550,7 @@
 		31308B1320A21705003FB929 /* SystemPreviewSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemPreviewSPI.h; sourceTree = "<group>"; };
 		31647FAE251759DB0010F8FB /* OpenGLSoftLinkCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = OpenGLSoftLinkCocoa.mm; sourceTree = "<group>"; };
 		31647FAF251759DC0010F8FB /* OpenGLSoftLinkCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenGLSoftLinkCocoa.h; sourceTree = "<group>"; };
+		3A02FE2A2B214A38001724B1 /* ARKitSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ARKitSPI.h; sourceTree = "<group>"; };
 		3C963637289DC1C600570DD6 /* BarcodeSupportSPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BarcodeSupportSPI.h; sourceTree = "<group>"; };
 		411A9AC02525D4CA00807D7E /* AVAssetWriterSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVAssetWriterSPI.h; sourceTree = "<group>"; };
 		416E995123DAE6BD00E871CB /* AudioToolboxSoftLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioToolboxSoftLink.cpp; sourceTree = "<group>"; };
@@ -772,6 +774,7 @@
 				293EE4A724154F8F0047493D /* AccessibilitySupportSoftLink.h */,
 				C037494124127CCB00D9A36E /* AccessibilitySupportSPI.h */,
 				576CA9D522B854AB0030143C /* AppSSOSPI.h */,
+				3A02FE2A2B214A38001724B1 /* ARKitSPI.h */,
 				2D02E93B2056FAA700A13797 /* AudioToolboxSPI.h */,
 				572A107722B456F500F410C8 /* AuthKitSPI.h */,
 				411A9AC02525D4CA00807D7E /* AVAssetWriterSPI.h */,
@@ -1273,6 +1276,7 @@
 				1CD50E0F2A33EA1300032F1A /* AppleJPEGXLSPI.h in Headers */,
 				DD20DD1A27BC90D60093D175 /* AppSSOSoftLink.h in Headers */,
 				DD20DDD727BC90D70093D175 /* AppSSOSPI.h in Headers */,
+				3A02FE2B2B214A38001724B1 /* ARKitSPI.h in Headers */,
 				DD20DD1527BC90D60093D175 /* AudioToolboxSoftLink.h in Headers */,
 				DD20DDD827BC90D70093D175 /* AudioToolboxSPI.h in Headers */,
 				DD20DDD927BC90D70093D175 /* AuthKitSPI.h in Headers */,

@@ -27,6 +27,7 @@
 
 #if ((USE(SYSTEM_PREVIEW) && HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)) || ((PLATFORM(IOS) || PLATFORM(VISION)) && USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.mm>)))
 
+#import <simd/simd.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebKit, ARKit);
@@ -34,6 +35,8 @@ SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebKit, ARKit);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ARKit, ARQuickLookPreviewItem);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ARKit, ARSession);
 SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ARKit, ARWorldTrackingConfiguration);
+
+SOFT_LINK_FUNCTION_FOR_SOURCE(WebKit, ARKit, ARMatrixMakeLookAt, simd_float4x4, (simd_float3 origin, simd_float3 direction), (origin, direction));
 
 #if (PLATFORM(IOS) || PLATFORM(VISION)) && USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.mm>)
 #import <WebKitAdditions/ARKitSoftLinkAdditions.mm>

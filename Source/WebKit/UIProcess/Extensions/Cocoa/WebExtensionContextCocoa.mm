@@ -60,6 +60,7 @@
 #import "_WKWebExtensionContextInternal.h"
 #import "_WKWebExtensionControllerDelegatePrivate.h"
 #import "_WKWebExtensionControllerInternal.h"
+#import "_WKWebExtensionDeclarativeNetRequestSQLiteStore.h"
 #import "_WKWebExtensionDeclarativeNetRequestTranslator.h"
 #import "_WKWebExtensionLocalization.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
@@ -3032,10 +3033,6 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData, 
 
 void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>&& completionHandler)
 {
-    // FIXME: rdar://118476702 - Load dynamic rules here.
-    // FIXME: rdar://118476774 - Load session rules here.
-    // FIXME: rdar://118476776 - Set state if the extension should show the blocked resource count as its badge text.
-
     if (!hasPermission(_WKWebExtensionPermissionDeclarativeNetRequest) && !hasPermission(_WKWebExtensionPermissionDeclarativeNetRequestWithHostAccess)) {
         completionHandler(false);
         return;
@@ -3043,25 +3040,65 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
 
     auto *allJSONData = [NSMutableArray array];
 
-    for (auto& ruleset : extension().declarativeNetRequestRulesets()) {
-        if (!ruleset.enabled)
-            continue;
+    auto applyDeclarativeNetRequestRules = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), allJSONData = RetainPtr { allJSONData }] () mutable {
+        if (!allJSONData.get().count) {
+            removeDeclarativeNetRequestRules();
+            [declarativeNetRequestRuleStore() removeContentRuleListForIdentifier:uniqueIdentifier() completionHandler:^(NSError *) { }];
+            completionHandler(true);
+            return;
+        }
 
-        auto *jsonData = extension().resourceDataForPath(ruleset.jsonPath);
-        if (!jsonData)
-            continue;
+        compileDeclarativeNetRequestRules(allJSONData.get(), WTFMove(completionHandler));
+    };
 
-        [allJSONData addObject:jsonData];
-    }
+    auto addStaticRulesets = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), applyDeclarativeNetRequestRules = WTFMove(applyDeclarativeNetRequestRules), allJSONData = RetainPtr { allJSONData }] () mutable {
+        for (auto& ruleset : extension().declarativeNetRequestRulesets()) {
+            if (!ruleset.enabled)
+                continue;
 
-    if (!allJSONData.count) {
-        removeDeclarativeNetRequestRules();
-        [declarativeNetRequestRuleStore() removeContentRuleListForIdentifier:uniqueIdentifier() completionHandler:^(NSError *) { }];
-        completionHandler(true);
-        return;
-    }
+            auto *jsonData = extension().resourceDataForPath(ruleset.jsonPath);
+            if (!jsonData)
+                continue;
 
-    compileDeclarativeNetRequestRules(allJSONData, WTFMove(completionHandler));
+            [allJSONData addObject:jsonData];
+        }
+
+        applyDeclarativeNetRequestRules();
+    };
+
+    auto addDynamicAndStaticRules = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), addStaticRulesets = WTFMove(addStaticRulesets), allJSONData = RetainPtr { allJSONData }] () mutable {
+        [declarativeNetRequestDynamicRulesStore() getRulesWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), addStaticRulesets = WTFMove(addStaticRulesets), allJSONData = RetainPtr { allJSONData }](NSArray *rules, NSString *errorMessage) mutable {
+            if (!rules.count) {
+                addStaticRulesets();
+                return;
+            }
+
+            NSError *serializationError;
+            NSData *dynamicRulesAsData = encodeJSONData(rules, JSONOptions::FragmentsAllowed, &serializationError);
+            if (serializationError)
+                RELEASE_LOG_ERROR(Extensions, "Unable to serialize dynamic declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", (NSString *)uniqueIdentifier(), privacyPreservingDescription(serializationError));
+            else
+                [allJSONData addObject:dynamicRulesAsData];
+
+            addStaticRulesets();
+        }).get()];
+    };
+
+    [declarativeNetRequestSessionRulesStore() getRulesWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), addDynamicAndStaticRules = WTFMove(addDynamicAndStaticRules), allJSONData = RetainPtr { allJSONData }](NSArray *rules, NSString *errorMessage) mutable {
+        if (!rules.count) {
+            addDynamicAndStaticRules();
+            return;
+        }
+
+        NSError *serializationError;
+        NSData *sessionRulesAsData = encodeJSONData(rules, JSONOptions::FragmentsAllowed, &serializationError);
+        if (serializationError)
+            RELEASE_LOG_ERROR(Extensions, "Unable to serialize session declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", (NSString *)uniqueIdentifier(), privacyPreservingDescription(serializationError));
+        else
+            [allJSONData addObject:sessionRulesAsData];
+
+        addDynamicAndStaticRules();
+    }).get()];
 }
 
 

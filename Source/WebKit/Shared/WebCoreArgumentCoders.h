@@ -398,11 +398,6 @@ template<> struct ArgumentCoder<RetainPtr<CVPixelBufferRef>> {
 
 #endif
 
-template<> struct ArgumentCoder<WebCore::PixelBuffer> {
-    template<class Encoder> static void encode(Encoder&, const WebCore::PixelBuffer&);
-    static std::optional<Ref<WebCore::PixelBuffer>> decode(Decoder&);
-};
-
 } // namespace IPC
 
 namespace WTF {

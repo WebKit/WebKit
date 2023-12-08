@@ -363,8 +363,6 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         return adjustSearchFieldResultsDecorationPartStyle(style, element);
     case StyleAppearance::SearchFieldResultsButton:
         return adjustSearchFieldResultsButtonStyle(style, element);
-    case StyleAppearance::Switch:
-        return adjustSwitchStyle(style, element);
     case StyleAppearance::ProgressBar:
         return adjustProgressBarStyle(style, element);
     case StyleAppearance::Meter:
@@ -945,12 +943,6 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
         return paintSearchFieldResultsDecorationPart(box, paintInfo, integralSnappedRect);
     case StyleAppearance::SearchFieldResultsButton:
         return paintSearchFieldResultsButton(box, paintInfo, integralSnappedRect);
-    case StyleAppearance::Switch:
-        return true;
-    case StyleAppearance::SwitchThumb:
-        return paintSwitchThumb(box, paintInfo, devicePixelSnappedRect);
-    case StyleAppearance::SwitchTrack:
-        return paintSwitchTrack(box, paintInfo, devicePixelSnappedRect);
 #if ENABLE(SERVICE_CONTROLS)
     case StyleAppearance::ImageControlsButton:
         return paintImageControlsButton(box, paintInfo, integralSnappedRect);

@@ -29,15 +29,34 @@
 #if ENABLE(WEBXR) && USE(ARKITXR_IOS)
 
 #import "Logging.h"
+#import "PlatformXRPose.h"
 #import "WKExtrinsicButton.h"
 
 #import <Metal/Metal.h>
+#import <WebCore/PlatformXR.h>
+#import <wtf/OSObjectPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/WeakObjCPtr.h>
 
 #import "ARKitSoftLink.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+#pragma mark -
+
+@interface UITouch (NormalizedLocation)
+- (CGPoint)normalizedLocationInView:(UIView *)view;
+@end
+
+@implementation UITouch (NormalizedLocation)
+
+- (CGPoint)normalizedLocationInView:(UIView *)view
+{
+    auto viewSize = view.bounds.size;
+    auto point = [self locationInView:view];
+    return CGPoint { point.x / viewSize.width, point.y / viewSize.height };
+}
+@end
 
 #pragma mark - WKARPresentationSessionDescriptor
 
@@ -83,12 +102,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface _WKARPresentationSession : UIViewController <WKARPresentationSession>
+#pragma mark - _WKARPresentationSession
+
+@interface _WKARPresentationSession : UIViewController <WKARPresentationSession, UIGestureRecognizerDelegate>
 @property (atomic, readwrite, getter=isSessionEndRequested) BOOL sessionEndRequested;
 - (nullable instancetype)initWithSession:(ARSession *)session descriptor:(WKARPresentationSessionDescriptor *)descriptor;
+- (simd_float4x4)raycastQueryTransformFromPoint:(CGPoint) point;
 @end
 
-#pragma mark - _WKARPresentationSession
+#pragma mark - _WKTransientGestureRecognizer
+
+@interface _WKTransientGestureRecognizer : UIGestureRecognizer
+- (nullable instancetype)initWithSession:(_WKARPresentationSession *)session;
+- (Vector<PlatformXR::Device::FrameData::InputSource>)collectInputSources;
+@end
+
+#pragma mark - _WKARPresentationSession implementation
 
 @implementation _WKARPresentationSession {
     RetainPtr<ARSession> _session;
@@ -98,6 +127,7 @@ NS_ASSUME_NONNULL_BEGIN
     WeakObjCPtr<CALayer> _cameraLayer;
     WeakObjCPtr<CAMetalLayer> _metalLayer;
     RetainPtr<WKExtrinsicButton> _cancelButton;
+    RetainPtr<_WKTransientGestureRecognizer> _touchGestureRecognizer;
 
     // CAMetalLayer state
     RetainPtr<id<CAMetalDrawable>> _currentDrawable;
@@ -129,6 +159,21 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
+- (simd_float4x4)raycastQueryTransformFromPoint:(CGPoint)point
+{
+    RetainPtr frame = [self currentFrame];
+    ASSERT(frame, "Requires a valid frame");
+    if (!frame)
+        return matrix_identity_float4x4;
+
+    // allowingTarget and alignment are dummy values. We only use origin and direction
+    // from the raycast query object.
+    auto allowingTarget = ARRaycastTargetEstimatedPlane;
+    auto alignment = ARRaycastTargetAlignmentAny;
+    RetainPtr query = [frame raycastQueryFromPoint:point allowingTarget:allowingTarget alignment:alignment];
+    return ARMatrixMakeLookAt([query origin], [query direction]);
+}
+
 #pragma mark - WKARPresentationSession
 
 - (ARFrame *)currentFrame {
@@ -149,17 +194,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSUInteger)startFrame
 {
-    ARFrame *currentFrame = [_session currentFrame];
-    if (!currentFrame) {
+    RetainPtr frame = [_session currentFrame];
+    if (!frame) {
         RELEASE_LOG(XR, "%s: no frame available", __FUNCTION__);
         return 0;
     }
 
-    _capturedImage = currentFrame.capturedImage;
+    _capturedImage = [frame capturedImage];
     _currentDrawable = [_metalLayer nextDrawable];
     _renderingFrameIndex += 1;
 
     return 1;
+}
+
+- (Vector<PlatformXR::Device::FrameData::InputSource>)collectInputSources
+{
+    return [_touchGestureRecognizer collectInputSources];
 }
 
 - (void)present
@@ -182,12 +232,23 @@ NS_ASSUME_NONNULL_BEGIN
     RELEASE_LOG(XR, "%s", __FUNCTION__);
 }
 
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    return touch.view == self.view;
+}
+
 #pragma mark - UIViewController
 
 - (void)loadView
 {
     RELEASE_LOG(XR, "%s", __FUNCTION__);
-    RetainPtr<UIView> view = adoptNS([[UIView alloc] initWithFrame:UIScreen.mainScreen.bounds]);
+    RetainPtr view = adoptNS([[UIView alloc] initWithFrame:UIScreen.mainScreen.bounds]);
+
+    _touchGestureRecognizer = adoptNS([[_WKTransientGestureRecognizer alloc] initWithSession:self]);
+    [_touchGestureRecognizer setDelegate:self];
+    [view addGestureRecognizer:_touchGestureRecognizer.get()];
     self.view = view.get();
 }
 
@@ -241,7 +302,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RELEASE_LOG(XR, "%s", __FUNCTION__);
     [super viewWillAppear:animated];
 
-    RetainPtr<ARWorldTrackingConfiguration> configuration = adoptNS([WebKit::allocARWorldTrackingConfigurationInstance() init]);
+    RetainPtr configuration = adoptNS([WebKit::allocARWorldTrackingConfigurationInstance() init]);
     [_session runWithConfiguration:configuration.get()];
 }
 
@@ -295,6 +356,190 @@ id<WKARPresentationSession> createPresesentationSession(ARSession *session, WKAR
 {
     return [[_WKARPresentationSession alloc] initWithSession:session descriptor:descriptor];
 }
+
+#pragma mark - _WKTransientAction
+
+@interface _WKTransientAction : NSObject
+@property (nonatomic, readonly) simd_float4x4 targetRay;
+@property (nonatomic, readonly) simd_float4x4 startingPoseInverse;
+@property (nonatomic) simd_float4x4 pose;
+- (nullable instancetype)initWithTargetRay:(simd_float4x4)targetRay pose:(simd_float4x4)pose;
+@end
+
+@implementation _WKTransientAction
+
+- (nullable instancetype)initWithTargetRay:(simd_float4x4)targetRay pose:(simd_float4x4)pose
+{
+    self = [super init];
+    if (self) {
+        _targetRay = targetRay;
+        _startingPoseInverse = simd_inverse(pose);
+        _pose = pose;
+    }
+    return self;
+}
+
+@end
+
+#pragma mark - _WKTransientGestureRecognizer implementation
+
+@implementation _WKTransientGestureRecognizer {
+    OSObjectPtr<dispatch_queue_t> _accessQueue;
+    WeakObjCPtr<_WKARPresentationSession> _session;
+    RetainPtr<NSMutableDictionary<NSNumber *, _WKTransientAction *>> _transientActions;
+}
+
+- (nullable instancetype)initWithSession:(_WKARPresentationSession *)session
+{
+    self = [super init];
+    if (self) {
+        _accessQueue = adoptOSObject(dispatch_queue_create("com.apple.WebContent._WKTransientGestureRecognizer.AccessQueue", DISPATCH_QUEUE_SERIAL_WITH_AUTORELEASE_POOL));
+        _session = session;
+        _transientActions = adoptNS([NSMutableDictionary new]);
+    }
+    return self;
+}
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    if (!_session)
+        return;
+
+    RetainPtr view = [_session view];
+    RetainPtr frame = [_session currentFrame];
+    if (!frame)
+        return;
+
+    // We differ from visionOS here and use the ARCamera as the pose reference
+    // space.
+    simd_float4x4 poseTransform = [frame camera].transform;
+
+    Vector<RetainPtr<UITouch>> touchList;
+    for (UITouch *touch in touches)
+        touchList.append(touch);
+
+    dispatch_async(_accessQueue.get(), ^{
+        for (RetainPtr touch : touchList) {
+            auto normalizedPoint = [touch normalizedLocationInView:view.get()];
+            auto targetRayTransform = [_session raycastQueryTransformFromPoint:normalizedPoint];
+
+            RetainPtr id = @([touch hash]);
+            RetainPtr transientAction = adoptNS([[_WKTransientAction alloc] initWithTargetRay:targetRayTransform pose:poseTransform]);
+            [_transientActions setObject:transientAction.get() forKey:id.get()];
+            RELEASE_LOG_DEBUG(XR, "Transient action started: %@", id.get());
+        }
+    });
+}
+
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    if (!_session)
+        return;
+
+    RetainPtr frame = [_session currentFrame];
+    if (!frame)
+        return;
+
+    // We differ from visionOS here and use the ARCamera as the pose reference
+    // space.
+    simd_float4x4 poseTransform = [frame camera].transform;
+
+    Vector<RetainPtr<UITouch>> touchList;
+    for (UITouch *touch in touches)
+        touchList.append(touch);
+
+    dispatch_async(_accessQueue.get(), ^{
+        for (RetainPtr touch : touchList) {
+            RetainPtr id = @([touch hash]);
+            RetainPtr transientAction = [_transientActions objectForKey:id.get()];
+            ASSERT(transientAction);
+            if (!transientAction)
+                RELEASE_LOG_ERROR(XR, "ERROR: Transient action updated without begin: %@", id.get());
+            [transientAction setPose:poseTransform];
+        }
+    });
+}
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [self _doneWithTouches:touches];
+}
+
+- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event
+{
+    [self _doneWithTouches:touches];
+}
+
+- (void)_doneWithTouches:(NSSet<UITouch *> *)touches
+{
+    if (!_session)
+        return;
+
+    Vector<RetainPtr<UITouch>> touchList;
+    for (UITouch *touch in touches)
+        touchList.append(touch);
+
+    dispatch_async(_accessQueue.get(), ^{
+        for (RetainPtr touch : touchList) {
+            RetainPtr id = @([touch hash]);
+            RetainPtr transientAction = [_transientActions objectForKey:id.get()];
+            ASSERT(transientAction);
+            if (!transientAction)
+                RELEASE_LOG_ERROR(XR, "ERROR: Transient action ended without begin: %@", id.get());
+            [_transientActions removeObjectForKey:id.get()];
+            RELEASE_LOG_DEBUG(XR, "Transient action ended: %@", id.get());
+        }
+    });
+}
+
+#pragma mark - Input sources collection
+
+- (std::optional<PlatformXR::Device::FrameData::InputSource>)_platformXRInputSourceFromTransientAction:(_WKTransientAction *)transientAction actionIdentifier:(int)actionIdentifier
+{
+    dispatch_assert_queue(_accessQueue.get());
+
+    simd_float4x4 multiplier = simd_mul(transientAction.pose, transientAction.startingPoseInverse);
+    PlatformXRPose targetRay(simd_mul(multiplier, transientAction.targetRay));
+    PlatformXRPose pose(transientAction.pose);
+
+    PlatformXR::Device::FrameData::InputSource data;
+    data.handeness = PlatformXR::XRHandedness::None;
+    data.handle = actionIdentifier;
+    data.profiles = Vector<String> { "generic-button-invisible"_s, "generic-button"_s };
+    data.targetRayMode = PlatformXR::XRTargetRayMode::TransientPointer;
+
+    data.pointerOrigin.pose = targetRay.pose();
+    data.pointerOrigin.isPositionEmulated = false;
+
+    PlatformXR::Device::FrameData::InputSourcePose gripPose;
+    gripPose.pose = pose.pose();
+    gripPose.isPositionEmulated = false;
+    data.gripOrigin = gripPose;
+
+    PlatformXR::Device::FrameData::InputSourceButton button;
+    button.pressed = true;
+    button.touched = true;
+    button.pressedValue = 1.0;
+    data.buttons.append(button);
+
+    return data;
+}
+
+- (Vector<PlatformXR::Device::FrameData::InputSource>)collectInputSources
+{
+    __block Vector<PlatformXR::Device::FrameData::InputSource> result;
+
+    dispatch_sync(_accessQueue.get(), ^{
+        [_transientActions enumerateKeysAndObjectsUsingBlock:^(NSNumber *id, _WKTransientAction *transientAction, BOOL*) {
+            if (auto transientInputData = [self _platformXRInputSourceFromTransientAction:transientAction actionIdentifier:id.intValue])
+                result.append(transientInputData.value());
+        }];
+    });
+
+    return result;
+}
+
+@end
 
 NS_ASSUME_NONNULL_END
 

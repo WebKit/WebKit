@@ -64,6 +64,7 @@ public:
     bool isAppInitiated() const { return boolTestRunnerFeatureValue("isAppInitiated"); }
     bool advancedPrivacyProtectionsEnabled() const { return boolTestRunnerFeatureValue("advancedPrivacyProtectionsEnabled"); }
     bool runSingly() const { return boolTestRunnerFeatureValue("runSingly"); }
+    bool runInCrossOriginIFrame() const { return boolTestRunnerFeatureValue("runInCrossOriginIFrame"); }
     bool shouldHandleRunOpenPanel() const { return boolTestRunnerFeatureValue("shouldHandleRunOpenPanel"); }
     bool shouldPresentPopovers() const { return boolTestRunnerFeatureValue("shouldPresentPopovers"); }
     bool shouldShowSpellCheckingDots() const { return boolTestRunnerFeatureValue("spellCheckingDots"); }

@@ -735,40 +735,37 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, Completi
     completionHandler(true);
 }
 
-URL WebPage::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilteringTrigger trigger)
+std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWithResult(const URL& url, LinkDecorationFilteringTrigger trigger)
 {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     if (m_linkDecorationFilteringData.isEmpty() && m_domainScopedLinkDecorationFilteringData.isEmpty()) {
         RELEASE_LOG_ERROR(ResourceLoadStatistics, "Unable to filter tracking query parameters (missing data)");
-        return url;
+        return { url, DidFilterLinkDecoration::No };
     }
 
     RefPtr mainFrame = m_mainFrame->coreLocalFrame();
     if (!mainFrame)
-        return url;
+        return { url, DidFilterLinkDecoration::No };
 
     auto isLinkDecorationFilteringEnabled = [&](const DocumentLoader* loader) {
         if (!loader)
             return false;
         auto effectivePolicies = trigger == LinkDecorationFilteringTrigger::Navigation ? loader->originatorAdvancedPrivacyProtections() : loader->advancedPrivacyProtections();
-        return effectivePolicies.contains(AdvancedPrivacyProtections::LinkDecorationFiltering);
+        return effectivePolicies.contains(AdvancedPrivacyProtections::LinkDecorationFiltering) || m_page->settings().filterLinkDecorationByDefaultEnabled();
     };
 
     bool shouldApplyLinkDecorationFiltering = [&] {
-        if (isLinkDecorationFilteringEnabled(RefPtr { mainFrame->loader().documentLoader() }.get()))
-            return true;
-
-        if (isLinkDecorationFilteringEnabled(RefPtr { mainFrame->loader().provisionalDocumentLoader() }.get()))
+        if (isLinkDecorationFilteringEnabled(RefPtr { mainFrame->loader().activeDocumentLoader() }.get()))
             return true;
 
         return isLinkDecorationFilteringEnabled(RefPtr { mainFrame->loader().policyDocumentLoader() }.get());
     }();
 
     if (!shouldApplyLinkDecorationFiltering)
-        return url;
+        return { url, DidFilterLinkDecoration::No };
 
     if (!url.hasQuery())
-        return url;
+        return { url, DidFilterLinkDecoration::No };
 
     auto sanitizedURL = url;
 
@@ -784,9 +781,9 @@ URL WebPage::applyLinkDecorationFiltering(const URL& url, LinkDecorationFilterin
         WEBPAGE_RELEASE_LOG(ResourceLoadStatistics, "Blocked known tracking query parameters: %s", removedParametersString.utf8().data());
     }
 
-    return sanitizedURL;
+    return { sanitizedURL, DidFilterLinkDecoration::Yes };
 #else
-    return url;
+    return { url, DidFilterLinkDecoration::No };
 #endif
 }
 

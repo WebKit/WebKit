@@ -33,26 +33,3 @@ input[type="checkbox"][switch]::thumb, input[type="checkbox"][switch]::track {
     appearance: inherit !important;
     grid-area: 1/1;
 }
-
-#if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
-input[type="checkbox"][switch] {
-    border-radius: initial;
-    width: initial;
-    height: initial;
-    padding: initial;
-    background-color: initial;
-}
-
-input[type="checkbox"][switch]:checked {
-    border-color: initial;
-}
-
-input[type="checkbox"][switch]:disabled {
-    opacity: initial;
-}
-
-input[type="checkbox"][switch]:checked:disabled {
-    opacity: initial;
-    background: initial;
-}
-#endif // defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY

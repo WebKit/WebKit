@@ -210,11 +210,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT_NOT_REACHED();
 }
 
-void ObjCObjectGraph::encode(IPC::Encoder& encoder) const
-{
-    encode(encoder, m_rootObject.get());
-}
-
 bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
 {
     ObjCType type;
@@ -336,17 +331,25 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return false;
 }
 
-bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
+} // namespace WebKit
+
+namespace IPC {
+
+std::optional<Ref<WebKit::ObjCObjectGraph>> ArgumentCoder<WebKit::ObjCObjectGraph>::decode(IPC::Decoder& decoder)
 {
     RetainPtr<id> rootObject;
-    if (!decode(decoder, rootObject))
-        return false;
+    if (!WebKit::ObjCObjectGraph::decode(decoder, rootObject))
+        return std::nullopt;
 
-    result = ObjCObjectGraph::create(rootObject.get());
-    return true;
+    return WebKit::ObjCObjectGraph::create(rootObject.get());
 }
 
-} // namespace WebKit
+void ArgumentCoder<WebKit::ObjCObjectGraph>::encode(IPC::Encoder& encoder, const WebKit::ObjCObjectGraph& object)
+{
+    WebKit::ObjCObjectGraph::encode(encoder, object.rootObject());
+}
+
+} // namespace IPC
 
 namespace WTF {
 

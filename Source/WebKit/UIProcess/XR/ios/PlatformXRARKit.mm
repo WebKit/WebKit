@@ -273,6 +273,8 @@ void ARKitCoordinator::renderLoop(Box<RenderState> active)
             frameData.predictedDisplayTime = frame.timestamp;
             frameData.origin = PlatformXRPose(camera.transform).pose();
 
+            frameData.inputSources = [presentationSession collectInputSources];
+
             // Only one view
             frameData.views.append({
                 .offset = { },

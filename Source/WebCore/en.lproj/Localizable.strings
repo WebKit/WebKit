@@ -542,7 +542,7 @@
 "Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets." = "Exceeded maximum number of `declarative_net_request` rulesets. Ignoring extra rulesets.";
 
 /* _WKWebExtensionErrorInvalidDeclarativeNetRequestEntry description for too many enabled static rulesets */
-"Exceeded maxmimum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored." = "Exceeded maxmimum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored.";
+"Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored." = "Exceeded maximum number of enabled `declarative_net_request` static rulesets. The first %lu will be applied, the remaining will be ignored.";
 
 /* Button for exiting full screen when in full screen media playback */
 "Exit Full Screen" = "Exit Full Screen";
@@ -907,6 +907,9 @@
 /* context menu item for PDF */
 "Open with %@" = "Open with %@";
 
+/* Open with Preview context menu item */
+"Open with Preview" = "Open with Preview";
+
 /* Label for the order with Apple Pay button. */
 "Order with Apple Pay" = "Order with Apple Pay";
 
@@ -1113,9 +1116,6 @@
 
 /* Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
 "Show in blocked plug-in" = "Show in blocked plug-in";
-
-/* Open with Preview context menu item */
-"Open with Preview" = "Open with Preview";
 
 /* Single Page context menu item */
 "Single Page" = "Single Page";

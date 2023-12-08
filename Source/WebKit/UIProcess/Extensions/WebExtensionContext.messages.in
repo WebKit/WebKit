@@ -54,6 +54,10 @@ messages -> WebExtensionContext {
     DeclarativeNetRequestDisplayActionCountAsBadgeText(bool result) -> (std::optional<String> error);
     DeclarativeNetRequestIncrementActionCount(WebKit::WebExtensionTabIdentifier tabIdentifier, double increment) -> (std::optional<String> error);
     DeclarativeNetRequestGetMatchedRules(std::optional<WebKit::WebExtensionTabIdentifier> tabIdentifier, std::optional<WallTime> minTimeStamp) -> (std::optional<Vector<WebKit::WebExtensionMatchedRuleParameters>> matchedRules, std::optional<String> error);
+    DeclarativeNetRequestGetDynamicRules() -> (std::optional<String> rulesJSON, std::optional<String> error);
+    DeclarativeNetRequestUpdateDynamicRules(std::optional<String> rulesToAddJSON, std::optional<Vector<double>> ruleIdsToRemove) -> (std::optional<String> error);
+    DeclarativeNetRequestGetSessionRules() -> (std::optional<String> rulesJSON, std::optional<String> error);
+    DeclarativeNetRequestUpdateSessionRules(std::optional<String> rulesToAddJSON, std::optional<Vector<double>> ruleIdsToRemove) -> (std::optional<String> error);
 
     // Event APIs
     AddListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType);
