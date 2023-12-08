@@ -48,6 +48,7 @@
 #import "WebMemoryPressureHandler.h"
 #import "WebPageGroup.h"
 #import "WebPreferencesKeys.h"
+#import "WebPrivacyHelpers.h"
 #import "WebProcessCache.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessMessages.h"
@@ -502,6 +503,10 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
     parameters.enablePrivateClickMeasurement = ![defaults objectForKey:WebPreferencesKey::privateClickMeasurementEnabledKey()] || [defaults boolForKey:WebPreferencesKey::privateClickMeasurementEnabledKey()];
     parameters.ftpEnabled = [defaults objectForKey:WebPreferencesKey::ftpEnabledKey()] && [defaults boolForKey:WebPreferencesKey::ftpEnabledKey()];
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::shared().cachedQuirks();
+#endif
 }
 
 void WebProcessPool::platformInvalidateContext()

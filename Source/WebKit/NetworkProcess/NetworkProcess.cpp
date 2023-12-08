@@ -365,6 +365,8 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     m_localhostAliasesForTesting = WTFMove(parameters.localhostAliasesForTesting);
 
+    updateStorageAccessPromptQuirks(WTFMove(parameters.storageAccessPromptQuirksData));
+
     RELEASE_LOG(Process, "%p - NetworkProcess::initializeNetworkProcess: Presenting processPID=%d", this, WebCore::presentingApplicationPID());
 }
 
@@ -1215,6 +1217,10 @@ void NetworkProcess::setTrackingPreventionEnabled(PAL::SessionID sessionID, bool
 {
     if (auto* session = networkSession(sessionID))
         session->setTrackingPreventionEnabled(enabled);
+}
+
+void NetworkProcess::updateStorageAccessPromptQuirks(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&&)
+{
 }
 
 void NetworkProcess::setResourceLoadStatisticsLogTestingEvent(bool enabled)

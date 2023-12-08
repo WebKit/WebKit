@@ -99,6 +99,7 @@ enum class StorageAccessWasGranted : bool;
 struct ClientOrigin;
 struct MessageWithMessagePorts;
 class SecurityOriginData;
+struct OrganizationStorageAccessPromptQuirk;
 struct SoupNetworkProxySettings;
 }
 
@@ -263,6 +264,7 @@ public:
     void setResourceLoadStatisticsTimeAdvanceForTesting(PAL::SessionID, Seconds, CompletionHandler<void()>&&);
     void setIsRunningResourceLoadStatisticsTest(PAL::SessionID, bool value, CompletionHandler<void()>&&);
     void setTrackingPreventionEnabled(PAL::SessionID, bool);
+    void updateStorageAccessPromptQuirks(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&&);
     void setResourceLoadStatisticsLogTestingEvent(bool);
     void setResourceLoadStatisticsDebugMode(PAL::SessionID, bool debugMode, CompletionHandler<void()>&&d);
     void isResourceLoadStatisticsEphemeral(PAL::SessionID, CompletionHandler<void(bool)>&&) const;

@@ -7030,3 +7030,8 @@ struct WebCore::Length {
 };
 [Nested] struct WebCore::Length::UndefinedData {
 };
+
+struct WebCore::OrganizationStorageAccessPromptQuirk {
+    String organizationName;
+    HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> domainPairings;
+};

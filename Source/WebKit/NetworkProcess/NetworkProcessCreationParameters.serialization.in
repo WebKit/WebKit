@@ -60,4 +60,5 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
     Vector<WebKit::WebsiteDataStoreParameters> websiteDataStoreParameters
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies;
     HashSet<String> localhostAliasesForTesting;
+    Vector<WebCore::OrganizationStorageAccessPromptQuirk> storageAccessPromptQuirksData;
 }

@@ -88,6 +88,7 @@
 
 #if PLATFORM(COCOA)
 #include "DefaultWebBrowserChecks.h"
+#include "WebPrivacyHelpers.h"
 #endif
 
 #if ENABLE(WEB_AUTHN)
@@ -1274,6 +1275,27 @@ void WebsiteDataStore::setNotifyPagesWhenDataRecordsWereScanned(bool value, Comp
 void WebsiteDataStore::setResourceLoadStatisticsTimeAdvanceForTesting(Seconds time, CompletionHandler<void()>&& completionHandler)
 {
     protectedNetworkProcess()->setResourceLoadStatisticsTimeAdvanceForTesting(m_sessionID, time, WTFMove(completionHandler));
+}
+
+void WebsiteDataStore::setStorageAccessPromptQuirkForTesting(String&& topFrameDomain, Vector<String>&& subFrameDomains, CompletionHandler<void()>&& completionHandler)
+{
+    auto registrableTopFrameDomain = WebCore::RegistrableDomain::fromRawString(WTFMove(topFrameDomain));
+    auto registrableTopFrameDomainString = registrableTopFrameDomain.string();
+    Vector<WebCore::OrganizationStorageAccessPromptQuirk> quirk { {
+        WTFMove(registrableTopFrameDomainString)
+        , HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> { {
+            KeyValuePair { WTFMove(registrableTopFrameDomain),
+                subFrameDomains.map([](auto& domain) { return WebCore::RegistrableDomain::fromRawString(String { domain }); })
+            },
+        } }
+    } };
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    StorageAccessPromptQuirkController::shared().setCachedQuirksForTesting(WTFMove(quirk));
+#else
+    protectedNetworkProcess()->send(Messages::NetworkProcess::UpdateStorageAccessPromptQuirks(WTFMove(quirk)), 0);
+#endif
+    completionHandler();
 }
 
 void WebsiteDataStore::setIsRunningResourceLoadStatisticsTest(bool value, CompletionHandler<void()>&& completionHandler)

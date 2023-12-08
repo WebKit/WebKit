@@ -90,6 +90,25 @@ typedef void (^WPTrackingDomainsCompletionHandler)(NSArray<WPTrackingDomain *> *
 
 #endif // !HAVE(WEB_PRIVACY_FRAMEWORK)
 
+#if !defined(HAS_WEB_PRIVACY_STORAGE_ACCESS_PROMPT_QUIRK_CLASS)
+constexpr NSInteger WPResourceTypeStorageAccessPromptQuirksData = 7;
+
+@interface WPStorageAccessPromptQuirk : NSObject
+@property (nonatomic, readonly) NSString *name;
+@property (nonatomic, readonly) NSDictionary<NSString *, NSArray<NSString *> *> *domainPairings;
+@end
+
+@interface WPStorageAccessPromptQuirksData : NSObject
+@property (nonatomic, readonly) NSArray<WPStorageAccessPromptQuirk *> *quirks;
+@end
+
+typedef void (^WPStorageAccessPromptQuirksDataCompletionHandler)(WPStorageAccessPromptQuirksData *, NSError *);
+
+@interface WPResources (Staging_119342418)
+- (void)requestStorageAccessPromptQuirksData:(WPResourceRequestOptions *)options completionHandler:(WPStorageAccessPromptQuirksDataCompletionHandler)completion;
+@end
+#endif
+
 WTF_EXTERN_C_BEGIN
 
 extern NSString *const WPNotificationUserInfoResourceTypeKey;

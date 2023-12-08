@@ -81,6 +81,7 @@ enum class StoredCredentialsPolicy : uint8_t;
 struct ClientOrigin;
 struct NotificationData;
 struct NotificationPayload;
+struct OrganizationStorageAccessPromptQuirk;
 }
 
 namespace WebKit {
@@ -89,6 +90,7 @@ class DownloadProxy;
 class DownloadProxyMap;
 class WebPageProxy;
 class WebUserContentControllerProxy;
+class StorageAccessPromptQuirkObserver;
 
 enum class BackgroundFetchChange : uint8_t;
 enum class ProcessTerminationReason : uint8_t;
@@ -422,6 +424,10 @@ private:
 
 #if ENABLE(CONTENT_EXTENSIONS)
     WeakHashSet<WebUserContentControllerProxy> m_webUserContentControllerProxies;
+#endif
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    RefPtr<StorageAccessPromptQuirkObserver> m_storageAccessPromptQuirksDataUpdateObserver;
 #endif
 
     struct UploadActivity {

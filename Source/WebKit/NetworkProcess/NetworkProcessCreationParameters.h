@@ -82,6 +82,7 @@ struct NetworkProcessCreationParameters {
     Vector<WebsiteDataStoreParameters> websiteDataStoreParameters;
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies;
     HashSet<String> localhostAliasesForTesting;
+    Vector<WebCore::OrganizationStorageAccessPromptQuirk> storageAccessPromptQuirksData;
 };
 
 } // namespace WebKit
