@@ -78,10 +78,10 @@ bool defaultMediaSourceEnabled()
 bool defaultUseAsyncUIKitInteractions()
 {
     static bool enabled = false;
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if PLATFORM(IOS) && HAVE(UI_ASYNC_TEXT_INTERACTION)
     static std::once_flag flag;
     std::call_once(flag, [] {
-        enabled = os_feature_enabled(UIKit, async_text_input);
+        enabled = PAL::deviceClassIsSmallScreen() && os_feature_enabled(UIKit, async_text_input);
     });
 #endif
     return enabled;
