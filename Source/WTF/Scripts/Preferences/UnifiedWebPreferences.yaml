@@ -197,6 +197,20 @@ AggressiveTileRetentionEnabled:
     WebCore:
       default: false
 
+AlignContentOnBlocksEnabled:
+  type: bool
+  status: stable
+  category: css
+  humanReadableName: "align-content on blocks"
+  humanReadableDescription: "Enable align-content for block containers"
+  defaultValue:
+    WebKitLegacy:
+      default: true
+    WebKit:
+      default: true
+    WebCore:
+      default: true
+
 AllowContentSecurityPolicySourceStarToMatchAnyProtocol:
   type: bool
   status: embedder

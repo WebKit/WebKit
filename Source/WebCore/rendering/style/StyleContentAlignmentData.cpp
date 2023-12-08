@@ -35,4 +35,63 @@ TextStream& operator<<(TextStream& ts, const StyleContentAlignmentData& o)
     return ts << o.position() << " " << o.distribution() << " " << o.overflow();
 }
 
+bool StyleContentAlignmentData::isStartward(TextDirection inlineDirection, bool isFlexReverse) const
+{
+    switch (static_cast<ContentPosition>(m_position)) {
+    case ContentPosition::Normal:
+        return static_cast<ContentDistribution>(m_distribution) == ContentDistribution::Default
+            || static_cast<ContentDistribution>(m_distribution) == ContentDistribution::Stretch
+            || static_cast<ContentDistribution>(m_distribution) == ContentDistribution::SpaceBetween;
+    case ContentPosition::Start:
+    case ContentPosition::Baseline:
+        return true;
+    case ContentPosition::End:
+    case ContentPosition::LastBaseline:
+    case ContentPosition::Center:
+        return false;
+    case ContentPosition::FlexStart:
+        return !isFlexReverse;
+    case ContentPosition::FlexEnd:
+        return isFlexReverse;
+    case ContentPosition::Left:
+        return inlineDirection == TextDirection::LTR;
+    case ContentPosition::Right:
+        return inlineDirection == TextDirection::RTL;
+    default:
+        ASSERT("Invalid ContentPosition");
+        return true;
+    }
+}
+bool StyleContentAlignmentData::isEndward(TextDirection inlineDirection, bool isFlexReverse) const
+{
+    switch (static_cast<ContentPosition>(m_position)) {
+    case ContentPosition::Normal:
+    case ContentPosition::Start:
+    case ContentPosition::Baseline:
+        return false;
+    case ContentPosition::End:
+    case ContentPosition::LastBaseline:
+    case ContentPosition::Center:
+        return true;
+    case ContentPosition::FlexStart:
+        return isFlexReverse;
+    case ContentPosition::FlexEnd:
+        return !isFlexReverse;
+    case ContentPosition::Left:
+        return inlineDirection == TextDirection::RTL;
+    case ContentPosition::Right:
+        return inlineDirection == TextDirection::LTR;
+    default:
+        ASSERT("Invalid ContentPosition");
+        return false;
+    }
+}
+
+bool StyleContentAlignmentData::isCentered() const
+{
+    return static_cast<ContentPosition>(m_position) == ContentPosition::Center
+        || static_cast<ContentDistribution>(m_distribution) == ContentDistribution::SpaceAround
+        || static_cast<ContentDistribution>(m_distribution) == ContentDistribution::SpaceEvenly;
+}
+
 }

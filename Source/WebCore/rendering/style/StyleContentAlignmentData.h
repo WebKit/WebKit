@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RenderStyleConstants.h"
+#include "TextDirection.h"
 
 namespace WTF {
 class TextStream;
@@ -53,6 +54,14 @@ public:
     ContentPosition position() const { return static_cast<ContentPosition>(m_position); }
     ContentDistribution distribution() const { return static_cast<ContentDistribution>(m_distribution); }
     OverflowAlignment overflow() const { return static_cast<OverflowAlignment>(m_overflow); }
+    bool isNormal() const
+    {
+        return ContentPosition::Normal == static_cast<ContentPosition>(m_position)
+        && ContentDistribution::Default == static_cast<ContentDistribution>(m_distribution);
+    }
+    bool isStartward(TextDirection = TextDirection::LTR, bool isFlexReverse = false) const; // TextDirection only needed for inline axis.
+    bool isEndward(TextDirection = TextDirection::LTR, bool isFlexReverse = false) const;
+    bool isCentered() const;
 
     friend bool operator==(const StyleContentAlignmentData&, const StyleContentAlignmentData&) = default;
 

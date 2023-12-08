@@ -106,6 +106,7 @@ public:
     void extractLine() final;
     void attachLine() final;
     void adjustPosition(float dx, float dy) override;
+    void adjustBlockDirectionPosition(float delta, bool adjustStaticPosition = false) override;
 
     virtual void extractLineBoxFromRenderObject();
     virtual void attachLineBoxToRenderObject();
