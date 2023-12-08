@@ -27,7 +27,7 @@
 package Hasher;
 
 use strict;
-use Math::BigInt;
+use bigint;
 
 my $mask64 = 2**64 - 1;
 my $mask32 = 2**32 - 1;
