@@ -186,22 +186,9 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
         encoder << static_cast<const API::FrameHandle&>(object);
         break;
 
-    case API::Object::Type::Image: {
-        auto& image = static_cast<const WebImage&>(object);
-
-        auto handle = image.createHandle();
-        if (!handle) {
-            // Initial false indicates no allocated bitmap or is not shareable.
-            encoder << false;
-            break;
-        }
-
-        // Initial true indicates a bitmap was allocated and is shareable.
-        encoder << true;
-        encoder << image.parameters();
-        encoder << WTFMove(*handle);
+    case API::Object::Type::Image:
+        encoder << static_cast<const WebImage&>(object);
         break;
-    }
 
     case API::Object::Type::PageHandle:
         encoder << static_cast<const API::PageHandle&>(object);
@@ -328,17 +315,11 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
     }
 
     case API::Object::Type::Image: {
-        bool didEncode = false;
-        if (!decoder.decode(didEncode))
+        std::optional<Ref<WebKit::WebImage>> image;
+        decoder >> image;
+        if (!image)
             return false;
-
-        if (!didEncode)
-            break;
-        auto parameters = decoder.decode<WebCore::ImageBufferParameters>();
-        auto handle = decoder.decode<ShareableBitmap::Handle>();
-        if (UNLIKELY(!decoder.isValid()))
-            return false;
-        result = WebImage::create(WTFMove(*parameters), WTFMove(*handle));
+        result = WTFMove(*image);
         break;
     }
 
