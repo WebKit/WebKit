@@ -66,6 +66,9 @@ public:
 #if ENABLE(APP_PRIVACY_REPORT)
         virtual void setTCCIdentity() { }
 #endif
+#if ENABLE(PROCESS_CAPABILITIES)
+        virtual void setCurrentMediaEnvironment(WebCore::PageIdentifier) { };
+#endif
         virtual void startProducingData(WebCore::CaptureDevice::DeviceType) { }
         virtual RemoteVideoFrameObjectHeap* remoteVideoFrameObjectHeap() { return nullptr; }
     };
@@ -87,7 +90,7 @@ private:
 
     using CreateSourceCallback = CompletionHandler<void(const WebCore::CaptureSourceError&, const WebCore::RealtimeMediaSourceSettings&, const WebCore::RealtimeMediaSourceCapabilities&)>;
     void createMediaSourceForCaptureDeviceWithConstraints(WebCore::RealtimeMediaSourceIdentifier, const WebCore::CaptureDevice& deviceID, WebCore::MediaDeviceHashSalts&&, const WebCore::MediaConstraints&, bool shouldUseGPUProcessRemoteFrames, WebCore::PageIdentifier, CreateSourceCallback&&);
-    void startProducingData(WebCore::RealtimeMediaSourceIdentifier);
+    void startProducingData(WebCore::RealtimeMediaSourceIdentifier, WebCore::PageIdentifier);
     void stopProducingData(WebCore::RealtimeMediaSourceIdentifier);
     void removeSource(WebCore::RealtimeMediaSourceIdentifier);
     void capabilities(WebCore::RealtimeMediaSourceIdentifier, CompletionHandler<void(WebCore::RealtimeMediaSourceCapabilities&&)>&&);

@@ -414,6 +414,13 @@ void GPUProcessConnection::updateMediaConfiguration(bool forceUpdate)
 #endif
 }
 
+#if ENABLE(PROCESS_CAPABILITIES)
+void GPUProcessConnection::setMediaEnvironment(WebCore::PageIdentifier pageIdentifier, const String& mediaEnvironment)
+{
+    connection().send(Messages::GPUConnectionToWebProcess::SetMediaEnvironment(pageIdentifier, mediaEnvironment), { });
+}
+#endif
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS)

@@ -64,6 +64,10 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     UpdateSampleBufferDisplayLayerBoundsAndPosition(WebKit::SampleBufferDisplayLayerIdentifier identifier, WebCore::FloatRect bounds, std::optional<MachSendRight> fence);
 #endif
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    SetMediaEnvironment(WebCore::PageIdentifier pageIdentifier, String mediaEnvironment);
+#endif
 }
 
 #endif // ENABLE(GPU_PROCESS)

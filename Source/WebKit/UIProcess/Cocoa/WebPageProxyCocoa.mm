@@ -1011,6 +1011,12 @@ void WebPageProxy::setMediaCapability(std::optional<MediaCapability>&& capabilit
         WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setMediaCapability: granting (envID=%{public}s) for registrable domain '%{sensitive}s'", newCapability->environmentIdentifier().utf8().data(), newCapability->registrableDomain().string().utf8().data());
         processPool->processCapabilityGranter().grant(*newCapability);
     }
+
+    send(Messages::WebPage::SetMediaEnvironment([&]() -> String {
+        if (auto& capability = internals().mediaCapability)
+            return capability->environmentIdentifier();
+        return { };
+    }()));
 }
 
 void WebPageProxy::updateMediaCapability()

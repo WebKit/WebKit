@@ -424,6 +424,18 @@ bool RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange()
 }
 #endif
 
+#if ENABLE(PROCESS_CAPABILITIES)
+const String& RealtimeMediaSourceCenter::currentMediaEnvironment() const
+{
+    return m_currentMediaEnvironment;
+}
+
+void RealtimeMediaSourceCenter::setCurrentMediaEnvironment(const String& mediaEnvironment)
+{
+    m_currentMediaEnvironment = mediaEnvironment;
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

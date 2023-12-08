@@ -220,6 +220,13 @@ private:
     }
 #endif
 
+#if ENABLE(PROCESS_CAPABILITIES)
+    void setCurrentMediaEnvironment(WebCore::PageIdentifier pageIdentifier) final
+    {
+        WebCore::RealtimeMediaSourceCenter::singleton().setCurrentMediaEnvironment(m_process.mediaEnvironment(pageIdentifier));
+    }
+#endif
+
     void startProducingData(CaptureDevice::DeviceType type) final
     {
         if (type == CaptureDevice::DeviceType::Microphone)

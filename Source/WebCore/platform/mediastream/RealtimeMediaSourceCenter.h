@@ -111,6 +111,11 @@ public:
     OSObjectPtr<tcc_identity_t> identity() const { return m_identity; }
 #endif
 
+#if ENABLE(PROCESS_CAPABILITIES)
+    const String& currentMediaEnvironment() const;
+    void setCurrentMediaEnvironment(const String&);
+#endif
+
 private:
     RealtimeMediaSourceCenter();
     friend class NeverDestroyed<RealtimeMediaSourceCenter>;
@@ -144,6 +149,10 @@ private:
 
 #if ENABLE(APP_PRIVACY_REPORT)
     OSObjectPtr<tcc_identity_t> m_identity;
+#endif
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    String m_currentMediaEnvironment;
 #endif
 
     bool m_useMockCaptureDevices { false };

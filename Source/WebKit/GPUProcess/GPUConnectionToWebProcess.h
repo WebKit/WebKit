@@ -245,6 +245,11 @@ public:
     void overridePresentingApplicationPIDIfNeeded();
 #endif
 
+#if ENABLE(PROCESS_CAPABILITIES)
+    String mediaEnvironment(WebCore::PageIdentifier);
+    void setMediaEnvironment(WebCore::PageIdentifier, const String&);
+#endif
+
 private:
     GPUConnectionToWebProcess(GPUProcess&, WebCore::ProcessIdentifier, PAL::SessionID, IPC::Connection::Handle&&, GPUProcessConnectionParameters&&);
 
@@ -414,6 +419,10 @@ private:
     const bool m_isLockdownModeEnabled { false };
 #if ENABLE(MEDIA_SOURCE)
     bool m_mockMediaSourceEnabled { false };
+#endif
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    HashMap<WebCore::PageIdentifier, String> m_mediaEnvironments;
 #endif
 
 #if ENABLE(ROUTING_ARBITRATION) && HAVE(AVAUDIO_ROUTING_ARBITER)

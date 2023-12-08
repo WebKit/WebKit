@@ -80,7 +80,7 @@ protected:
 
 private:
     // RealtimeMediaSource
-    void startProducingData() final { m_proxy.startProducingData(); }
+    void startProducingData() final { m_proxy.startProducingData(pageIdentifier()); }
     void stopProducingData() final { m_proxy.stopProducingData(); }
     bool isCaptureSource() const final { return true; }
     void applyConstraints(const WebCore::MediaConstraints&, ApplyConstraintsHandler&&) final;

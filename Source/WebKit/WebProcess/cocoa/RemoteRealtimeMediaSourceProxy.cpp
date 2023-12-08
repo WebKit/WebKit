@@ -74,10 +74,10 @@ void RemoteRealtimeMediaSourceProxy::updateConnection()
     m_connection = getSourceConnection(m_shouldCaptureInGPUProcess);
 }
 
-void RemoteRealtimeMediaSourceProxy::startProducingData()
+void RemoteRealtimeMediaSourceProxy::startProducingData(WebCore::PageIdentifier pageIdentifier)
 {
     m_interrupted = false;
-    m_connection->send(Messages::UserMediaCaptureManagerProxy::StartProducingData { m_identifier }, 0);
+    m_connection->send(Messages::UserMediaCaptureManagerProxy::StartProducingData { m_identifier, pageIdentifier }, 0);
 }
 
 void RemoteRealtimeMediaSourceProxy::stopProducingData()
