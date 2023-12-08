@@ -36,6 +36,11 @@
 #import <WebCore/PlatformCALayerClient.h>
 #import <wtf/Scope.h>
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+#import "DynamicContentScalingImageBufferBackend.h"
+#import <WebCore/BifurcatedGraphicsContext.h>
+#endif
+
 namespace WebKit {
 
 using namespace WebCore;
