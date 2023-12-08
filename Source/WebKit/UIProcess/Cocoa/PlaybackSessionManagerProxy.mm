@@ -708,8 +708,7 @@ PlatformPlaybackSessionInterface* PlaybackSessionManagerProxy::controlsManagerIn
     if (!m_controlsManagerContextId)
         return nullptr;
 
-    auto& interface = ensureInterface(m_controlsManagerContextId);
-    return &interface;
+    return &ensureInterface(m_controlsManagerContextId);
 }
 
 bool PlaybackSessionManagerProxy::isPaused(PlaybackSessionContextIdentifier identifier) const
@@ -718,15 +717,15 @@ bool PlaybackSessionManagerProxy::isPaused(PlaybackSessionContextIdentifier iden
     if (iterator == m_contextMap.end())
         return false;
 
-    auto& model = *std::get<0>(iterator->value);
-    return !model.isPlaying() && !model.isStalled();
+    Ref model = *std::get<0>(iterator->value);
+    return !model->isPlaying() && !model->isStalled();
 }
 
 #if !RELEASE_LOG_DISABLED
 void PlaybackSessionManagerProxy::setLogIdentifier(PlaybackSessionContextIdentifier identifier, uint64_t logIdentifier)
 {
-    auto& model = ensureModel(identifier);
-    model.setLogIdentifier(reinterpret_cast<const void*>(logIdentifier));
+    Ref model = ensureModel(identifier);
+    model->setLogIdentifier(reinterpret_cast<const void*>(logIdentifier));
 }
 
 WTFLogChannel& PlaybackSessionManagerProxy::logChannel() const
