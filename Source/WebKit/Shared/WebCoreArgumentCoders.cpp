@@ -1666,25 +1666,4 @@ std::optional<TextRecognitionDataDetector> ArgumentCoder<TextRecognitionDataDete
 
 #endif // ENABLE(IMAGE_ANALYSIS) && ENABLE(DATA_DETECTION)
 
-template<class Encoder>
-void ArgumentCoder<PixelBuffer>::encode(Encoder& encoder, const PixelBuffer& pixelBuffer)
-{
-    if (LIKELY(is<const ByteArrayPixelBuffer>(pixelBuffer))) {
-        encoder << downcast<ByteArrayPixelBuffer>(pixelBuffer);
-        return;
-    }
-    ASSERT_NOT_REACHED();
-}
-
-std::optional<Ref<PixelBuffer>> ArgumentCoder<PixelBuffer>::decode(Decoder& decoder)
-{
-    return decoder.decode<Ref<ByteArrayPixelBuffer>>();
-}
-
-template
-void ArgumentCoder<PixelBuffer>::encode<Encoder>(Encoder&, const PixelBuffer&);
-
-template
-void ArgumentCoder<PixelBuffer>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const PixelBuffer&);
-
 } // namespace IPC

@@ -2832,6 +2832,10 @@ header: <WebCore/BasicShapes.h>
     WebCore::BasicShapeInset
 }
 
+[AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::PixelBuffer subclasses {
+    WebCore::ByteArrayPixelBuffer
+}
+
 header: <WebCore/RenderStyleConstants.h>
 [CustomHeader] enum class WebCore::CSSBoxType : uint8_t {
     BoxMissing,
