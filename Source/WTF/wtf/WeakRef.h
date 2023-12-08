@@ -86,7 +86,7 @@ private:
     template<typename U> static WeakPtrImpl& implForObject(const U& object)
     {
         object.weakPtrFactory().initializeIfNeeded(object);
-        return *object.weakPtrFactory().m_impl.pointer();
+        return *object.weakPtrFactory().impl();
     }
 
     Ref<WeakPtrImpl> m_impl;

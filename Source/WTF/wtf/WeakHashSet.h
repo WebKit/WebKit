@@ -98,8 +98,8 @@ public:
     const_iterator find(const U& value) const
     {
         increaseOperationCountSinceLastCleanup();
-        if (auto* pointer = value.weakPtrFactory().m_impl.pointer(); pointer && *pointer)
-            return WeakHashSetConstIterator(*this, m_set.find(pointer));
+        if (auto* impl = value.weakPtrFactory().impl(); impl && *impl)
+            return WeakHashSetConstIterator(*this, m_set.find(impl));
         return end();
     }
 
@@ -122,8 +122,8 @@ public:
     bool remove(const U& value)
     {
         amortizedCleanupIfNeeded();
-        if (auto* pointer = value.weakPtrFactory().m_impl.pointer(); pointer && *pointer)
-            return m_set.remove(*pointer);
+        if (auto* impl = value.weakPtrFactory().impl(); impl && *impl)
+            return m_set.remove(*impl);
         return false;
     }
 
@@ -144,8 +144,8 @@ public:
     bool contains(const U& value) const
     {
         increaseOperationCountSinceLastCleanup();
-        if (auto* pointer = value.weakPtrFactory().m_impl.pointer(); pointer && *pointer)
-            return m_set.contains(*pointer);
+        if (auto* impl = value.weakPtrFactory().impl(); impl && *impl)
+            return m_set.contains(*impl);
         return false;
     }
 
