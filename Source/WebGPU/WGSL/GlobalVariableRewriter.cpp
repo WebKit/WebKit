@@ -510,9 +510,11 @@ auto RewriteGlobalVariables::packingForType(const Type* type) -> Packing
 
 void RewriteGlobalVariables::collectGlobals()
 {
-    auto& globalVars = m_callGraph.ast().variables();
     Vector<std::tuple<AST::Variable*, unsigned>> bufferLengths;
-    for (auto& globalVar : globalVars) {
+    for (auto& declaration : m_callGraph.ast().declarations()) {
+        if (!is<AST::Variable>(declaration))
+            continue;
+        auto& globalVar = downcast<AST::Variable>(declaration);
         std::optional<Global::Resource> resource;
         if (globalVar.group().has_value()) {
             RELEASE_ASSERT(globalVar.binding().has_value());
@@ -722,7 +724,7 @@ const Type* RewriteGlobalVariables::packStructType(const Types::Struct* structTy
         AST::StructureRole::PackedResource,
         &structType->structure
     );
-    m_callGraph.ast().append(m_callGraph.ast().structures(), packedStruct);
+    m_callGraph.ast().append(m_callGraph.ast().declarations(), packedStruct);
     const Type* packedStructType = m_callGraph.ast().types().structType(packedStruct);
     m_packedStructTypes.add(structType, packedStructType);
     return packedStructType;
@@ -1167,14 +1169,15 @@ void RewriteGlobalVariables::finalizeArgumentBufferStruct(unsigned group, Vector
     for (auto& [_, member] : entries)
         structMembers.append(*member);
 
-    m_callGraph.ast().append(m_callGraph.ast().structures(), m_callGraph.ast().astBuilder().construct<AST::Structure>(
+    auto& argumentBufferStruct = m_callGraph.ast().astBuilder().construct<AST::Structure>(
         SourceSpan::empty(),
         argumentBufferStructName(group),
         WTFMove(structMembers),
         AST::Attribute::List { },
         AST::StructureRole::BindGroup
-    ));
-    m_structTypes.add(group, m_callGraph.ast().types().structType(m_callGraph.ast().structures().last()));
+    );
+    m_callGraph.ast().append(m_callGraph.ast().declarations(), argumentBufferStruct);
+    m_structTypes.add(group, m_callGraph.ast().types().structType(argumentBufferStruct));
 }
 
 Vector<unsigned> RewriteGlobalVariables::insertStructs(const PipelineLayout& layout)

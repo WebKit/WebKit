@@ -158,12 +158,18 @@ void FunctionDefinitionWriter::write()
 {
     emitNecessaryHelpers();
 
-    for (auto& structure : m_callGraph.ast().structures())
-        visit(structure);
-    for (auto& structure : m_callGraph.ast().structures())
-        generatePackingHelpers(structure);
-    for (auto& variable : m_callGraph.ast().variables())
-        visitGlobal(variable);
+    for (auto& declaration : m_callGraph.ast().declarations()) {
+        if (is<AST::Structure>(declaration))
+            visit(downcast<AST::Structure>(declaration));
+        else if (is<AST::Variable>(declaration))
+            visitGlobal(downcast<AST::Variable>(declaration));
+    }
+
+    for (auto& declaration : m_callGraph.ast().declarations()) {
+        if (is<AST::Structure>(declaration))
+            generatePackingHelpers(downcast<AST::Structure>(declaration));
+    }
+
     for (auto& entryPoint : m_callGraph.entrypoints())
         visit(entryPoint.function);
 }

@@ -47,12 +47,8 @@ void Visitor::visit(ShaderModule& shaderModule)
 {
     for (auto& directive : shaderModule.directives())
         checkErrorAndVisit(directive);
-    for (auto& structure : shaderModule.structures())
-        checkErrorAndVisit(structure);
-    for (auto& variable : shaderModule.variables())
-        checkErrorAndVisit(variable);
-    for (auto& function : shaderModule.functions())
-        checkErrorAndVisit(function);
+    for (auto& declaration : shaderModule.declarations())
+        checkErrorAndVisit(declaration);
 }
 
 // Directive
@@ -70,6 +66,25 @@ void Visitor::visit(AST::Directive& directive)
 
 void Visitor::visit(AST::DiagnosticDirective&)
 {
+}
+
+// Declarations
+
+void Visitor::visit(AST::Declaration& declaration)
+{
+    switch (declaration.kind()) {
+    case AST::NodeKind::Function:
+        checkErrorAndVisit(downcast<AST::Function>(declaration));
+        break;
+    case AST::NodeKind::Variable:
+        checkErrorAndVisit(downcast<AST::Variable>(declaration));
+        break;
+    case AST::NodeKind::Structure:
+        checkErrorAndVisit(downcast<AST::Structure>(declaration));
+        break;
+    default:
+        ASSERT_NOT_REACHED("Unhandled Declaration");
+    }
 }
 
 // Attribute

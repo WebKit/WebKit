@@ -30,6 +30,8 @@ namespace WGSL::AST {
 class Directive;
 class DiagnosticDirective;
 
+class Declaration;
+
 class Attribute;
 class AlignAttribute;
 class BindingAttribute;

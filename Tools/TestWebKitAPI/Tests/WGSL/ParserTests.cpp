@@ -115,10 +115,9 @@ static void testStruct(ASCIILiteral program, const Vector<String>& fieldNames, c
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_EQ(shader->structures().size(), 1u);
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_TRUE(shader->functions().isEmpty());
-    auto& str = shader->structures()[0];
+    EXPECT_EQ(shader->declarations().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::Structure>(shader->declarations()[0]));
+    auto& str = downcast<WGSL::AST::Structure>(shader->declarations()[0]);
     EXPECT_EQ(str.name(), "B"_s);
     EXPECT_TRUE(str.attributes().isEmpty());
 
@@ -175,10 +174,9 @@ TEST(WGSLParserTests, SourceLifecycle)
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_EQ(shader->variables().size(), 1u);
-    EXPECT_TRUE(shader->functions().isEmpty());
-    auto& var = shader->variables()[0];
+    EXPECT_EQ(shader->declarations().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::Variable>(shader->declarations()[0]));
+    auto& var = downcast<WGSL::AST::Variable>(shader->declarations()[0]);
     EXPECT_EQ(var.attributes().size(), 2u);
     EXPECT_TRUE(is<WGSL::AST::GroupAttribute>(var.attributes()[0]));
     auto group = extractInteger(downcast<WGSL::AST::GroupAttribute>(var.attributes()[0]).group());
@@ -237,10 +235,9 @@ TEST(WGSLParserTests, GlobalVariable)
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_EQ(shader->variables().size(), 1u);
-    EXPECT_TRUE(shader->functions().isEmpty());
-    auto& var = shader->variables()[0];
+    EXPECT_EQ(shader->declarations().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::Variable>(shader->declarations()[0]));
+    auto& var = downcast<WGSL::AST::Variable>(shader->declarations()[0]);
     EXPECT_EQ(var.attributes().size(), 2u);
     EXPECT_TRUE(is<WGSL::AST::GroupAttribute>(var.attributes()[0]));
     auto& groupAttribute = downcast<WGSL::AST::GroupAttribute>(var.attributes()[0]);
@@ -274,10 +271,9 @@ TEST(WGSLParserTests, FunctionDecl)
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_FALSE(shader->directives().size());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
-    auto& func = shader->functions()[0];
+    EXPECT_EQ(shader->declarations().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
+    auto& func = downcast<WGSL::AST::Function>(shader->declarations()[0]);
     EXPECT_EQ(func.attributes().size(), 1u);
     EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
     EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::ShaderStage::Compute);
@@ -314,12 +310,11 @@ TEST(WGSLParserTests, TrivialGraphicsShader)
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_FALSE(shader->directives().size());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 2u);
+    EXPECT_EQ(shader->declarations().size(), 2u);
 
     {
-        auto& func = shader->functions()[0];
+        EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
+        auto& func = downcast<WGSL::AST::Function>(shader->declarations()[0]);
         EXPECT_EQ(func.attributes().size(), 1u);
         EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
         EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::ShaderStage::Vertex);
@@ -350,7 +345,8 @@ TEST(WGSLParserTests, TrivialGraphicsShader)
     }
 
     {
-        auto& func = shader->functions()[1];
+        EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[1]));
+        auto& func = downcast<WGSL::AST::Function>(shader->declarations()[1]);
         EXPECT_EQ(func.attributes().size(), 1u);
         EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
         EXPECT_EQ(downcast<WGSL::AST::StageAttribute>(func.attributes()[0]).stage(), WGSL::ShaderStage::Fragment);
@@ -388,13 +384,12 @@ TEST(WGSLParserTests, GlobalConstant)
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_EQ(shader->variables().size(), 1u);
-    EXPECT_TRUE(shader->functions().isEmpty());
+    EXPECT_EQ(shader->declarations().size(), 1u);
 
     {
         // const x: i32 = 1
-        auto& constant = shader->variables()[0];
+        EXPECT_TRUE(is<WGSL::AST::Variable>(shader->declarations()[0]));
+        auto& constant = downcast<WGSL::AST::Variable>(shader->declarations()[0]);
         EXPECT_EQ(constant.flavor(), WGSL::AST::VariableFlavor::Const);
         EXPECT_EQ(constant.name(), "x"_s);
         EXPECT_TRUE(constant.maybeTypeName());
@@ -417,12 +412,11 @@ TEST(WGSLParserTests, LocalConstant)
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
+    EXPECT_EQ(shader->declarations().size(), 1u);
 
     {
-        auto& func = shader->functions()[0];
+        EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
+        auto& func = downcast<WGSL::AST::Function>(shader->declarations()[0]);
         // @vertex
         EXPECT_EQ(func.attributes().size(), 1u);
         EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
@@ -475,12 +469,11 @@ TEST(WGSLParserTests, LocalLet)
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
+    EXPECT_EQ(shader->declarations().size(), 1u);
 
     {
-        auto& func = shader->functions()[0];
+        EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
+        auto& func = downcast<WGSL::AST::Function>(shader->declarations()[0]);
         // @vertex
         EXPECT_EQ(func.attributes().size(), 1u);
         EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
@@ -527,13 +520,12 @@ TEST(WGSLParserTests, GlobalOverride)
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_EQ(shader->variables().size(), 1u);
-    EXPECT_TRUE(shader->functions().isEmpty());
+    EXPECT_EQ(shader->declarations().size(), 1u);
 
     {
         // override x: i32
-        auto& override = shader->variables()[0];
+        EXPECT_TRUE(is<WGSL::AST::Variable>(shader->declarations()[0]));
+        auto& override = downcast<WGSL::AST::Variable>(shader->declarations()[0]);
         EXPECT_TRUE(override.attributes().isEmpty());
         EXPECT_EQ(override.flavor(), WGSL::AST::VariableFlavor::Override);
         EXPECT_EQ(override.name(), "x"_s);
@@ -557,12 +549,11 @@ TEST(WGSLParserTests, LocalVariable)
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
+    EXPECT_EQ(shader->declarations().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
+    auto& func = downcast<WGSL::AST::Function>(shader->declarations()[0]);
 
     {
-        auto& func = shader->functions()[0];
         // @vertex
         EXPECT_EQ(func.attributes().size(), 1u);
         EXPECT_TRUE(is<WGSL::AST::StageAttribute>(func.attributes()[0]));
@@ -614,12 +605,11 @@ TEST(WGSLParserTests, ArrayAccess)
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
+    EXPECT_EQ(shader->declarations().size(), 1u);
 
     {
-        auto& func = shader->functions()[0];
+        EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
+        auto& func = downcast<WGSL::AST::Function>(shader->declarations()[0]);
         // fn test() { ... }
         EXPECT_EQ(func.name(), "test"_s);
         EXPECT_TRUE(func.parameters().isEmpty());
@@ -652,12 +642,11 @@ TEST(WGSLParserTests, UnaryExpression)
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
+    EXPECT_EQ(shader->declarations().size(), 1u);
 
     {
-        auto& func = shader->functions()[0];
+        EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
+        auto& func = downcast<WGSL::AST::Function>(shader->declarations()[0]);
         // @vertex
         EXPECT_TRUE(func.attributes().isEmpty());
 
@@ -694,10 +683,9 @@ static void testUnaryExpressionX(ASCIILiteral program, WGSL::AST::UnaryOperation
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
-    auto& function = shader->functions()[0];
+    EXPECT_EQ(shader->declarations().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
+    auto& function = downcast<WGSL::AST::Function>(shader->declarations()[0]);
 
     EXPECT_EQ(function.body().statements().size(), 1u);
     EXPECT_TRUE(is<WGSL::AST::PhonyAssignmentStatement>(function.body().statements()[0]));
@@ -735,10 +723,9 @@ static void testBinaryExpressionXY(ASCIILiteral program, WGSL::AST::BinaryOperat
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
-    auto& function = shader->functions()[0];
+    EXPECT_EQ(shader->declarations().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
+    auto& function = downcast<WGSL::AST::Function>(shader->declarations()[0]);
 
     EXPECT_EQ(function.body().statements().size(), 1u);
     EXPECT_TRUE(is<WGSL::AST::PhonyAssignmentStatement>(function.body().statements()[0]));
@@ -770,10 +757,9 @@ static void testBinaryExpressionXYZ(ASCIILiteral program, const Vector<WGSL::AST
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
-    auto& function = shader->functions()[0];
+    EXPECT_EQ(shader->declarations().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
+    auto& function = downcast<WGSL::AST::Function>(shader->declarations()[0]);
 
     EXPECT_EQ(function.body().statements().size(), 1u);
     EXPECT_TRUE(is<WGSL::AST::PhonyAssignmentStatement>(function.body().statements()[0]));
@@ -817,12 +803,11 @@ TEST(WGSLParserTests, BinaryExpression)
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
+    EXPECT_EQ(shader->declarations().size(), 1u);
 
     {
-        auto& func = shader->functions()[0];
+        EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
+        auto& func = downcast<WGSL::AST::Function>(shader->declarations()[0]);
         EXPECT_TRUE(func.attributes().isEmpty());
 
         // fn add(x: f32, y: f32) -> f32 {
@@ -943,11 +928,10 @@ TEST(WGSLParserTest, IfStatement)
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
+    EXPECT_EQ(shader->declarations().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
 
-    auto& func = shader->functions()[0];
+    auto& func = downcast<WGSL::AST::Function>(shader->declarations()[0]);
     EXPECT_GE(func.body().statements().size(), 1u);
     auto& stmt = func.body().statements()[0];
     EXPECT_TRUE(is<WGSL::AST::IfStatement>(stmt));
@@ -980,13 +964,12 @@ TEST(WGSLParserTests, TriangleVert)
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
+    EXPECT_EQ(shader->declarations().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
+    auto& func = downcast<WGSL::AST::Function>(shader->declarations()[0]);
 
     // fn main(...)
     {
-        auto& func = shader->functions()[0];
         // @vertex
         EXPECT_EQ(func.attributes().size(), 1u);
 
@@ -1002,7 +985,6 @@ TEST(WGSLParserTests, TriangleVert)
 
     // var pos = array<vec2<f32>, 3>(...);
     {
-        auto& func = shader->functions()[0];
         EXPECT_GE(func.body().statements().size(), 1u);
         auto& stmt = func.body().statements()[0];
         EXPECT_TRUE(is<WGSL::AST::VariableStatement>(stmt));
@@ -1026,7 +1008,6 @@ TEST(WGSLParserTests, TriangleVert)
 
     // return vec4<f32>(..);
     {
-        auto& func = shader->functions()[0];
         EXPECT_GE(func.body().statements().size(), 1u);
         auto& stmt = func.body().statements()[1];
         EXPECT_TRUE(is<WGSL::AST::ReturnStatement>(stmt));
@@ -1049,11 +1030,9 @@ TEST(WGSLParserTests, VectorWithOutComponentType)
     EXPECT_SHADER(shader);
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
-
-    auto& func = shader->functions()[0];
+    EXPECT_EQ(shader->declarations().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
+    auto& func = downcast<WGSL::AST::Function>(shader->declarations()[0]);
     EXPECT_EQ(func.body().statements().size(), 1u);
 
     // x = vec4(1.0);
@@ -1080,11 +1059,9 @@ TEST(WGSLParserTests, VectorWithComponentType)
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
-
-    auto& func = shader->functions()[0];
+    EXPECT_EQ(shader->declarations().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
+    auto& func = downcast<WGSL::AST::Function>(shader->declarations()[0]);
     EXPECT_EQ(func.body().statements().size(), 1u);
 
     // x = vec4<f32>(1.0);
@@ -1111,9 +1088,8 @@ TEST(WGSLParserTests, RedFrag)
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
     EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
+    EXPECT_EQ(shader->declarations().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
 }
 
 TEST(WGSLParserTests, TrailingSemicolon)
@@ -1126,10 +1102,8 @@ TEST(WGSLParserTests, TrailingSemicolon)
 
     EXPECT_SHADER(shader);
     EXPECT_TRUE(shader.has_value());
-    EXPECT_TRUE(shader->directives().isEmpty());
-    EXPECT_TRUE(shader->structures().isEmpty());
-    EXPECT_TRUE(shader->variables().isEmpty());
-    EXPECT_EQ(shader->functions().size(), 1u);
+    EXPECT_EQ(shader->declarations().size(), 1u);
+    EXPECT_TRUE(is<WGSL::AST::Function>(shader->declarations()[0]));
 }
 
 TEST(WGSLParserTests, GlobalVarWithoutTypeOrInitializer)

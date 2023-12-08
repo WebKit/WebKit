@@ -76,6 +76,7 @@ public:
     void visit(AST::WorkgroupSizeAttribute&) override;
 
     // Statements
+    void visit(AST::VariableStatement&) override;
     void visit(AST::AssignmentStatement&) override;
     void visit(AST::CallStatement&) override;
     void visit(AST::CompoundAssignmentStatement&) override;
@@ -317,14 +318,7 @@ TypeChecker::TypeChecker(ShaderModule& shaderModule)
 
 std::optional<FailedCheck> TypeChecker::check()
 {
-    for (auto& structure : m_shaderModule.structures())
-        visit(structure);
-
-    for (auto& variable : m_shaderModule.variables())
-        visitVariable(variable, VariableKind::Global);
-
-    for (auto& function : m_shaderModule.functions())
-        visit(function);
+    AST::Visitor::visit(m_shaderModule);
 
     if (shouldDumpInferredTypes) {
         for (auto& error : m_errors)
@@ -355,8 +349,14 @@ void TypeChecker::visit(AST::Structure& structure)
 
 void TypeChecker::visit(AST::Variable& variable)
 {
-    visitVariable(variable, VariableKind::Local);
+    visitVariable(variable, VariableKind::Global);
 }
+
+void TypeChecker::visit(AST::VariableStatement& statement)
+{
+    visitVariable(statement.variable(), VariableKind::Local);
+}
+
 
 void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKind)
 {
