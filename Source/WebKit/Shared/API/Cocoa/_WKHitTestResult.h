@@ -41,6 +41,8 @@ WK_CLASS_AVAILABLE(macos(10.12), ios(16.0))
 @interface _WKHitTestResult : NSObject <NSCopying>
 
 @property (nonatomic, readonly, copy) NSURL *absoluteImageURL;
+@property (nonatomic, readonly, copy) NSString *imageMIMEType WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
 @property (nonatomic, readonly, copy) NSURL *absolutePDFURL;
 @property (nonatomic, readonly, copy) NSURL *absoluteLinkURL;
 @property (nonatomic, readonly, copy) NSURL *absoluteMediaURL;
