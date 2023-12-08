@@ -23,43 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#pragma once
 
-#if ENABLE(GPU_PROCESS)
-#include "PrepareBackingStoreBuffersData.h"
-
-#include <wtf/text/TextStream.h>
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-TextStream& operator<<(TextStream& ts, const ImageBufferSetPrepareBufferForDisplayInputData& inputData)
-{
-    ts << "remoteImageBufferSet: " << inputData.remoteBufferSet;
-    ts << " dirtyRegion: " << inputData.dirtyRegion;
-    ts << " supportsPartialRepaint: " << inputData.supportsPartialRepaint;
-    ts << " hasEmptyDirtyRegion: " << inputData.hasEmptyDirtyRegion;
-    ts << " requiresClearedPixels: " << inputData.requiresClearedPixels;
-    return ts;
+struct RemoteImageBufferSetIdentifierType;
+using RemoteImageBufferSetIdentifier = ObjectIdentifier<RemoteImageBufferSetIdentifierType>;
+
 }
-
-TextStream& operator<<(TextStream& ts, const ImageBufferSetPrepareBufferForDisplayOutputData& outputData)
-{
-    ts << "displayRequirement: " << outputData.displayRequirement;
-    ts << "bufferCacheIdentifiers: " << outputData.bufferCacheIdentifiers;
-    return ts;
-}
-
-TextStream& operator<<(TextStream& ts, SwapBuffersDisplayRequirement displayRequirement)
-{
-    switch (displayRequirement) {
-    case SwapBuffersDisplayRequirement::NeedsFullDisplay: ts << "full display"; break;
-    case SwapBuffersDisplayRequirement::NeedsNormalDisplay: ts << "normal display"; break;
-    case SwapBuffersDisplayRequirement::NeedsNoDisplay: ts << "no display"; break;
-    }
-
-    return ts;
-}
-
-} // namespace WebKit
-
-#endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)

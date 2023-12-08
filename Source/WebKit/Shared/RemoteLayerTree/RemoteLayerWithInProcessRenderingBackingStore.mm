@@ -33,10 +33,138 @@
 #import "RemoteLayerTreeContext.h"
 #import "SwapBuffersDisplayRequirement.h"
 #import <WebCore/IOSurfacePool.h>
+#import <WebCore/PlatformCALayerClient.h>
+#import <wtf/Scope.h>
 
 namespace WebKit {
 
 using namespace WebCore;
+
+void RemoteLayerWithInProcessRenderingBackingStore::Buffer::discard()
+{
+    imageBuffer = nullptr;
+}
+
+bool RemoteLayerWithInProcessRenderingBackingStore::hasFrontBuffer() const
+{
+    return m_contentsBufferHandle || !!m_frontBuffer.imageBuffer;
+}
+
+bool RemoteLayerWithInProcessRenderingBackingStore::frontBufferMayBeVolatile() const
+{
+    if (!m_frontBuffer)
+        return false;
+    return m_frontBuffer.imageBuffer->volatilityState() == WebCore::VolatilityState::Volatile;
+}
+
+
+void RemoteLayerWithInProcessRenderingBackingStore::clearBackingStore()
+{
+    m_frontBuffer.discard();
+    m_backBuffer.discard();
+    m_secondaryBackBuffer.discard();
+    m_contentsBufferHandle = std::nullopt;
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    m_displayListBuffer = nullptr;
+#endif
+}
+
+static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buffer)
+{
+    auto* sharing = buffer.toBackendSharing();
+    if (is<ImageBufferBackendHandleSharing>(sharing))
+        return downcast<ImageBufferBackendHandleSharing>(*sharing).takeBackendHandle();
+
+    return std::nullopt;
+}
+
+std::optional<ImageBufferBackendHandle> RemoteLayerWithInProcessRenderingBackingStore::frontBufferHandle() const
+{
+    if (RefPtr protectedBuffer = m_frontBuffer.imageBuffer)
+        return handleFromBuffer(*protectedBuffer);
+    return std::nullopt;
+}
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+std::optional<ImageBufferBackendHandle> RemoteLayerWithInProcessRenderingBackingStore::displayListHandle() const
+{
+    if (m_displayListBuffer)
+        return handleFromBuffer(*m_displayListBuffer);
+    return std::nullopt;
+}
+#endif
+
+void RemoteLayerWithInProcessRenderingBackingStore::createContextAndPaintContents()
+{
+    if (!m_frontBuffer.imageBuffer) {
+        ASSERT(m_layer->owner()->platformCALayerDelegatesDisplay(m_layer));
+        return;
+    }
+
+    auto markFrontBufferNotCleared = makeScopeExit([&]() {
+        m_frontBuffer.isCleared = false;
+    });
+
+    auto clipAndDrawInContext = [&](GraphicsContext& context) {
+        if (m_paintingRects.size() == 1)
+            context.clip(m_paintingRects[0]);
+        else {
+            Path clipPath;
+            for (auto rect : m_paintingRects)
+                clipPath.addRect(rect);
+            context.clipPath(clipPath);
+        }
+
+        if (drawingRequiresClearedPixels() && !m_frontBuffer.isCleared)
+            context.clearRect(layerBounds());
+
+        drawInContext(context);
+    };
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    if (m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
+        auto& displayListContext = m_displayListBuffer->context();
+
+        BifurcatedGraphicsContext context(m_frontBuffer.imageBuffer->context(), displayListContext);
+        clipAndDrawInContext(context);
+        return;
+    }
+#endif
+
+    GraphicsContext& context = m_frontBuffer.imageBuffer->context();
+
+    // We never need to copy forward when using display list drawing, since we don't do partial repaint.
+    // FIXME: Copy forward logic is duplicated in RemoteImageBufferSet, find a good place to share.
+    if (RefPtr imageBuffer = m_backBuffer.imageBuffer; !m_dirtyRegion.contains(layerBounds()) && imageBuffer) {
+        if (!m_previouslyPaintedRect)
+            context.drawImageBuffer(*imageBuffer, { 0, 0 }, { CompositeOperator::Copy });
+        else {
+            Region copyRegion(*m_previouslyPaintedRect);
+            copyRegion.subtract(m_dirtyRegion);
+            IntRect copyRect = copyRegion.bounds();
+            if (!copyRect.isEmpty())
+                context.drawImageBuffer(*imageBuffer, copyRect, copyRect, { CompositeOperator::Copy });
+        }
+    }
+
+    clipAndDrawInContext(context);
+}
+
+Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> RemoteLayerWithInProcessRenderingBackingStore::createFlushers()
+{
+    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers;
+
+    m_frontBuffer.imageBuffer->flushDrawingContextAsync();
+    flushers.append(m_frontBuffer.imageBuffer->createFlusher());
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    if (m_parameters.includeDisplayList == IncludeDisplayList::Yes)
+        flushers.append(m_displayListBuffer->createFlusher());
+#endif
+
+    return flushers;
+}
+
 
 SwapBuffersDisplayRequirement RemoteLayerWithInProcessRenderingBackingStore::prepareBuffers()
 {
@@ -124,6 +252,25 @@ RefPtr<WebCore::ImageBuffer> RemoteLayerWithInProcessRenderingBackingStore::allo
     }
 }
 
+void RemoteLayerWithInProcessRenderingBackingStore::ensureFrontBuffer()
+{
+    if (m_frontBuffer.imageBuffer)
+        return;
+
+    m_frontBuffer.imageBuffer = allocateBuffer();
+    m_frontBuffer.isCleared = true;
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    if (!m_displayListBuffer && m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
+        ImageBufferCreationContext creationContext;
+        if (type() == RemoteLayerBackingStore::Type::IOSurface)
+            m_displayListBuffer = ImageBuffer::create<DynamicContentScalingAcceleratedImageBufferBackend>(m_parameters.size, m_parameters.scale, colorSpace(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
+        else
+            m_displayListBuffer = ImageBuffer::create<DynamicContentScalingImageBufferBackend>(m_parameters.size, m_parameters.scale, colorSpace(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
+    }
+#endif
+}
+
 void RemoteLayerWithInProcessRenderingBackingStore::prepareToDisplay()
 {
     ASSERT(!m_frontBufferFlushers.size());
@@ -177,6 +324,30 @@ SetNonVolatileResult RemoteLayerWithInProcessRenderingBackingStore::swapToValidF
     m_contentsBufferHandle = std::nullopt;
     std::swap(m_frontBuffer, m_backBuffer);
     return setBufferNonVolatile(m_frontBuffer);
+}
+
+void RemoteLayerWithInProcessRenderingBackingStore::encodeBufferAndBackendInfos(IPC::Encoder& encoder) const
+{
+    auto encodeBuffer = [&](const Buffer& buffer) {
+        if (buffer.imageBuffer) {
+            encoder << std::optional { BufferAndBackendInfo::fromImageBuffer(*buffer.imageBuffer) };
+            return;
+        }
+
+        encoder << std::optional<BufferAndBackendInfo>();
+    };
+
+    encodeBuffer(m_frontBuffer);
+    encodeBuffer(m_backBuffer);
+    encodeBuffer(m_secondaryBackBuffer);
+}
+
+void RemoteLayerWithInProcessRenderingBackingStore::dump(WTF::TextStream& ts) const
+{
+    ts.dumpProperty("front buffer", m_frontBuffer.imageBuffer);
+    ts.dumpProperty("back buffer", m_backBuffer.imageBuffer);
+    ts.dumpProperty("secondaryBack buffer", m_secondaryBackBuffer.imageBuffer);
+    ts.dumpProperty("is opaque", isOpaque());
 }
 
 } // namespace WebKit

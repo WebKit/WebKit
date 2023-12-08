@@ -65,14 +65,12 @@ private:
     void filteredNativeImage(Ref<WebCore::Filter>, CompletionHandler<void(std::optional<ShareableBitmap::Handle>&&)>&&);
     void convertToLuminanceMask();
     void transformToColorSpace(const WebCore::DestinationColorSpace&);
-    void setFlushSignal(IPC::Signal&&);
     void flushContext();
     void flushContextSync(CompletionHandler<void()>&&);
 
     RefPtr<RemoteRenderingBackend> m_backend;
     Ref<WebCore::ImageBuffer> m_imageBuffer;
     ScopedRenderingResourcesRequest m_renderingResourcesRequest { ScopedRenderingResourcesRequest::acquire() };
-    std::optional<IPC::Signal> m_flushSignal;
 };
 
 } // namespace WebKit

@@ -356,6 +356,7 @@ def serialized_identifiers():
         'WebKit::RemoteAudioDestinationIdentifier',
         'WebKit::RemoteAudioHardwareListenerIdentifier',
         'WebKit::RemoteAudioSessionIdentifier',
+        'WebKit::RemoteImageBufferSetIdentifier',
         'WebKit::RemoteCDMIdentifier',
         'WebKit::RemoteCDMInstanceIdentifier',
         'WebKit::RemoteCDMInstanceSessionIdentifier',
@@ -672,6 +673,7 @@ def class_template_headers(template_string):
         'Ref': {'headers': ['<wtf/Ref.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RefPtr': {'headers': ['<wtf/RefCounted.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
         'RetainPtr': {'headers': ['<wtf/RetainPtr.h>'], 'argument_coder_headers': ['"ArgumentCodersCF.h"']},
+        'WebCore::ProcessQualified': {'headers': ['<WebCore/ProcessQualified.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
     }
 
     match = re.match('(?P<template_name>.+?)<(?P<parameter_string>.+)>', template_string)
@@ -950,6 +952,7 @@ def headers_for_type(type):
         'WebKit::AppPrivacyReportTestingData': ['"AppPrivacyReport.h"'],
         'WebKit::AuthenticationChallengeIdentifier': ['"IdentifierTypes.h"'],
         'WebKit::BackForwardListItemState': ['"SessionState.h"'],
+        'WebKit::BufferInSetType': ['"BufferIdentifierSet.h"'],
         'WebKit::CallDownloadDidStart': ['"DownloadManager.h"'],
         'WebKit::ConsumerSharedCARingBuffer::Handle': ['"SharedCARingBuffer.h"'],
         'WebKit::ContentWorldIdentifier': ['"ContentWorldShared.h"'],
@@ -965,8 +968,8 @@ def headers_for_type(type):
         'WebKit::PageState': ['"SessionState.h"'],
         'WebKit::PaymentSetupConfiguration': ['"PaymentSetupConfigurationWebKit.h"'],
         'WebKit::PaymentSetupFeatures': ['"ApplePayPaymentSetupFeaturesWebKit.h"'],
-        'WebKit::PrepareBackingStoreBuffersInputData': ['"PrepareBackingStoreBuffersData.h"'],
-        'WebKit::PrepareBackingStoreBuffersOutputData': ['"PrepareBackingStoreBuffersData.h"'],
+        'WebKit::ImageBufferSetPrepareBufferForDisplayInputData': ['"PrepareBackingStoreBuffersData.h"'],
+        'WebKit::ImageBufferSetPrepareBufferForDisplayOutputData': ['"PrepareBackingStoreBuffersData.h"'],
         'WebKit::RemoteVideoFrameReadReference': ['"RemoteVideoFrameIdentifier.h"'],
         'WebKit::RemoteVideoFrameWriteReference': ['"RemoteVideoFrameIdentifier.h"'],
         'WebKit::RespectSelectionAnchor': ['"GestureTypes.h"'],

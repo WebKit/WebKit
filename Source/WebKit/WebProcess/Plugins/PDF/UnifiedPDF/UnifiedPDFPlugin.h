@@ -166,7 +166,7 @@ private:
     void paint(WebCore::GraphicsContext&, const WebCore::IntRect&) override;
 
     // GraphicsLayerClient
-    void notifyFlushRequired(const GraphicsLayer*) override;
+    void notifyFlushRequired(const WebCore::GraphicsLayer*) override;
     void paintContents(const WebCore::GraphicsLayer*, WebCore::GraphicsContext&, const WebCore::FloatRect&, OptionSet<WebCore::GraphicsLayerPaintBehavior>) override;
     float deviceScaleFactor() const override;
     float pageScaleFactor() const override;
@@ -184,7 +184,7 @@ private:
     void invalidateScrollbarRect(WebCore::Scrollbar&, const WebCore::IntRect&) override;
     void invalidateScrollCornerRect(const WebCore::IntRect&) override;
     void updateScrollingExtents();
-    ScrollingCoordinator* scrollingCoordinator();
+    WebCore::ScrollingCoordinator* scrollingCoordinator();
 
     // HUD Actions.
 #if ENABLE(PDF_HUD)
@@ -194,7 +194,7 @@ private:
     void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, const IPC::DataReference&, const String&)>&&) final;
 #endif
 
-    RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, GraphicsLayer::Type);
+    RefPtr<WebCore::GraphicsLayer> createGraphicsLayer(const String& name, WebCore::GraphicsLayer::Type);
 
     WebCore::IntPoint convertFromPluginToDocument(const WebCore::IntPoint&) const;
     std::optional<PDFDocumentLayout::PageIndex> nearestPageIndexForDocumentPoint(const WebCore::IntPoint&) const;

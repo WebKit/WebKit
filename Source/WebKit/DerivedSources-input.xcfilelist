@@ -45,6 +45,7 @@ $(PROJECT_DIR)/GPUProcess/graphics/RemoteGraphicsContext.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteGraphicsContextGL.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteGraphicsContextGLInitializationState.serialization.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteImageBuffer.messages.in
+$(PROJECT_DIR)/GPUProcess/graphics/RemoteImageBufferSet.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteRenderingBackend.messages.in
 $(PROJECT_DIR)/GPUProcess/graphics/RemoteRenderingBackendCreationParameters.serialization.in
 $(PROJECT_DIR)/GPUProcess/graphics/WebGPU/RemoteAdapter.messages.in

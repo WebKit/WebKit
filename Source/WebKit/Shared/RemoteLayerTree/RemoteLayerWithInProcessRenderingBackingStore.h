@@ -36,19 +36,55 @@ public:
     bool isRemoteLayerWithInProcessRenderingBackingStore() const final { return true; }
 
     void prepareToDisplay();
+    void createContextAndPaintContents() final;
+    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> createFlushers() final;
 
-    RefPtr<WebCore::ImageBuffer> allocateBuffer() const final;
+    void clearBackingStore() final;
 
     bool setBufferVolatile(BufferType);
+
+    std::optional<ImageBufferBackendHandle> frontBufferHandle() const final;
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    std::optional<ImageBufferBackendHandle> displayListHandle() const final;
+#endif
+    void encodeBufferAndBackendInfos(IPC::Encoder&) const final;
+
+    void dump(WTF::TextStream&) const final;
+
 private:
+    RefPtr<WebCore::ImageBuffer> allocateBuffer() const;
     SwapBuffersDisplayRequirement prepareBuffers();
     WebCore::SetNonVolatileResult swapToValidFrontBuffer();
+
+    void ensureFrontBuffer();
+    bool hasFrontBuffer() const final;
+    bool frontBufferMayBeVolatile() const final;
+
+    struct Buffer {
+        RefPtr<WebCore::ImageBuffer> imageBuffer;
+        bool isCleared { false };
+
+        explicit operator bool() const
+        {
+            return !!imageBuffer;
+        }
+
+        void discard();
+    };
 
     // Returns true if it was able to fulfill the request. This can fail when trying to mark an in-use surface as volatile.
     bool setBufferVolatile(Buffer&);
 
     WebCore::SetNonVolatileResult setBufferNonVolatile(Buffer&);
     WebCore::SetNonVolatileResult setFrontBufferNonVolatile();
+
+    Buffer m_frontBuffer;
+    Buffer m_backBuffer;
+    Buffer m_secondaryBackBuffer;
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    RefPtr<WebCore::ImageBuffer> m_displayListBuffer;
+#endif
 };
 
 } // namespace WebKit

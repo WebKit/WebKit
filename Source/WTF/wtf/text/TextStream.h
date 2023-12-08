@@ -349,6 +349,12 @@ TextStream& operator<<(TextStream& ts, const std::array<T, size>& array)
     return ts << "]";
 }
 
+template<typename T, typename U>
+TextStream& operator<<(TextStream& ts, const std::pair<T, U>& pair)
+{
+    return ts << "[" << pair.first << ", " << pair.second << "]";
+}
+
 template<typename, typename = void, typename = void, typename = void, typename = void, size_t = 0>
 struct supports_text_stream_insertion : std::false_type { };
 
@@ -384,6 +390,9 @@ struct supports_text_stream_insertion<Ref<T>> : supports_text_stream_insertion<T
 
 template<typename T, size_t size>
 struct supports_text_stream_insertion<std::array<T, size>> : supports_text_stream_insertion<T> { };
+
+template<typename T, typename U>
+struct supports_text_stream_insertion<std::pair<T, U>> : std::conjunction<supports_text_stream_insertion<T>, supports_text_stream_insertion<U>> { };
 
 template<typename T>
 struct ValueOrEllipsis {

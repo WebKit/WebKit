@@ -29,16 +29,42 @@
 
 namespace WebKit {
 
+class RemoteDisplayListRecorderProxy;
+
 class RemoteLayerWithRemoteRenderingBackingStore : public RemoteLayerBackingStore {
 public:
-    using RemoteLayerBackingStore::RemoteLayerBackingStore;
+    RemoteLayerWithRemoteRenderingBackingStore(PlatformCALayerRemote*);
 
     bool isRemoteLayerWithRemoteRenderingBackingStore() const final { return true; }
 
-    void applySwappedBuffers(RefPtr<WebCore::ImageBuffer>&& front, RefPtr<WebCore::ImageBuffer>&& back, RefPtr<WebCore::ImageBuffer>&& secondaryBack, SwapBuffersDisplayRequirement);
+    void clearBackingStore() final;
+    void createContextAndPaintContents() final;
 
+    RefPtr<RemoteImageBufferSetProxy> protectedBufferSet() { return m_bufferSet; }
 
-    RefPtr<WebCore::ImageBuffer> allocateBuffer() const final;
+    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> createFlushers() final;
+    std::optional<ImageBufferBackendHandle> frontBufferHandle() const final { return std::exchange(const_cast<RemoteLayerWithRemoteRenderingBackingStore*>(this)->m_backendHandle, std::nullopt); }
+    void encodeBufferAndBackendInfos(IPC::Encoder&) const final;
+
+    void ensureBackingStore(const Parameters&) final;
+    bool hasFrontBuffer() const final;
+    bool frontBufferMayBeVolatile() const final;
+
+    void setBufferCacheIdentifiers(BufferIdentifierSet&& identifiers)
+    {
+        m_bufferCacheIdentifiers = WTFMove(identifiers);
+    }
+    void setBackendHandle(std::optional<ImageBufferBackendHandle>&& backendHandle)
+    {
+        m_backendHandle = WTFMove(backendHandle);
+    }
+
+    void dump(WTF::TextStream&) const final;
+private:
+    RefPtr<RemoteImageBufferSetProxy> m_bufferSet;
+    BufferIdentifierSet m_bufferCacheIdentifiers;
+    std::optional<ImageBufferBackendHandle> m_backendHandle;
+    bool m_cleared { true };
 };
 
 } // namespace WebKit

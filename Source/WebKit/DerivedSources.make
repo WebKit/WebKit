@@ -265,6 +265,7 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/ShapeDetection/RemoteTextDetector \
 	GPUProcess/graphics/RemoteDisplayListRecorder \
 	GPUProcess/graphics/RemoteImageBuffer \
+	GPUProcess/graphics/RemoteImageBufferSet \
 	GPUProcess/graphics/RemoteRenderingBackend \
 	GPUProcess/graphics/RemoteGraphicsContextGL \
 	GPUProcess/graphics/WebGPU/RemoteAdapter \

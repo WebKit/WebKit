@@ -5544,17 +5544,17 @@ struct WebCore::InteractionRegion {
     OptionSet<WebCore::InteractionRegion::CornerMask> maskedCorners;
 };
 
-[Nested] struct WebCore::Region::Span {
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Region::Span {
     int y;
     size_t segmentIndex;
 };
 
-[Nested] class WebCore::Region::Shape {
+[Nested, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Region::Shape {
     Vector<int, 32> m_segments;
     Vector<WebCore::Region::Span, 16> m_spans;
 };
 
-class WebCore::Region {
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::Region {
     WebCore::IntRect bounds();
     std::unique_ptr<WebCore::Region::Shape> copyShape();
 }

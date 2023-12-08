@@ -155,7 +155,7 @@ private:
     void invalidateScrollCornerRect(const WebCore::IntRect&) override;
     void updateScrollbars() override;
     WebCore::IntPoint lastKnownMousePositionInView() const override { return m_lastMousePositionInPluginCoordinates; }
-    Ref<Scrollbar> createScrollbar(WebCore::ScrollbarOrientation) override;
+    Ref<WebCore::Scrollbar> createScrollbar(WebCore::ScrollbarOrientation) override;
     void destroyScrollbar(WebCore::ScrollbarOrientation) override;
 
     // PDFPluginBase

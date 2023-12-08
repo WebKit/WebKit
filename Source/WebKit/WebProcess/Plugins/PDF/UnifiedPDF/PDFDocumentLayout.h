@@ -59,13 +59,13 @@ public:
 
     size_t pageCount() const;
 
-    static constexpr FloatSize documentMargin { 6, 8 };
-    static constexpr FloatSize pageMargin { 4, 6 };
+    static constexpr WebCore::FloatSize documentMargin { 6, 8 };
+    static constexpr WebCore::FloatSize pageMargin { 4, 6 };
 
     RetainPtr<PDFPage> pageAtIndex(PageIndex) const;
     WebCore::FloatRect boundsForPageAtIndex(PageIndex) const;
     // Returns 0, 90, 180, 270.
-    IntDegrees rotationForPageAtIndex(PageIndex) const;
+    WebCore::IntDegrees rotationForPageAtIndex(PageIndex) const;
 
     // This is the scale that scales the largest page or pair of pages up or down to fit the available width.
     float scale() const { return m_scale; }
@@ -84,7 +84,7 @@ private:
 
     struct PageGeometry {
         WebCore::FloatRect normalizedBounds;
-        IntDegrees rotation { 0 };
+        WebCore::IntDegrees rotation { 0 };
     };
 
     RetainPtr<PDFDocument> m_pdfDocument;

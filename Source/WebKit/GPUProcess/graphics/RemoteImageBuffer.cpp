@@ -165,17 +165,10 @@ void RemoteImageBuffer::transformToColorSpace(const WebCore::DestinationColorSpa
     m_imageBuffer->transformToColorSpace(colorSpace);
 }
 
-void RemoteImageBuffer::setFlushSignal(IPC::Signal&& signal)
-{
-    m_flushSignal = WTFMove(signal);
-}
-
 void RemoteImageBuffer::flushContext()
 {
-    RELEASE_ASSERT(m_flushSignal);
     assertIsCurrent(workQueue());
     m_imageBuffer->flushDrawingContext();
-    m_flushSignal->signal();
 }
 
 void RemoteImageBuffer::flushContextSync(CompletionHandler<void()>&& completionHandler)
