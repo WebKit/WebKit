@@ -6863,6 +6863,40 @@ headers: <JavaScriptCore/WasmModule.h> <WebCore/ImageBitmapBacking.h> <WebCore/M
     WebCore::SerializedScriptValue::Internals m_internals;
 };
 
+#if !USE(COORDINATED_GRAPHICS)
+[RefCounted] class WebCore::FilterOperation subclasses {
+    WebCore::BasicColorMatrixFilterOperation
+    WebCore::BasicComponentTransferFilterOperation
+    WebCore::BlurFilterOperation
+    WebCore::DropShadowFilterOperation
+    WebCore::DefaultFilterOperation
+    WebCore::PassthroughFilterOperation
+}
+
+[CustomHeader, RefCounted] class WebCore::BasicColorMatrixFilterOperation {
+    double amount();
+    [Validator='WebCore::FilterOperation::isBasicColorMatrixFilterOperationType(*type)'] WebCore::FilterOperation::Type type();
+};
+[CustomHeader, RefCounted] class WebCore::BasicComponentTransferFilterOperation {
+    double amount();
+    [Validator='WebCore::FilterOperation::isBasicComponentTransferFilterOperationType(*type)'] WebCore::FilterOperation::Type type();
+};
+[CustomHeader, RefCounted] class WebCore::BlurFilterOperation {
+    WebCore::Length stdDeviation();
+};
+[CustomHeader, RefCounted] class WebCore::DropShadowFilterOperation {
+    WebCore::IntPoint location();
+    int stdDeviation();
+    WebCore::Color color();
+};
+[CustomHeader, RefCounted] class WebCore::DefaultFilterOperation {
+    WebCore::FilterOperation::Type representedType();
+};
+[CustomHeader, RefCounted] class WebCore::PassthroughFilterOperation {
+    [NotSerialized] WebCore::FilterOperation::Type type();
+};
+#endif // !USE(COORDINATED_GRAPHICS)
+
 #if ENABLE(MEDIA_SOURCE)
 
 header: <WebCore/MediaSourcePrivate.h>

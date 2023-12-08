@@ -431,121 +431,6 @@ bool ArgumentCoder<ResourceError>::decode(Decoder& decoder, ResourceError& resou
 }
 
 #if !USE(COORDINATED_GRAPHICS)
-void ArgumentCoder<FilterOperation>::encode(Encoder& encoder, const FilterOperation& filter)
-{
-    encoder << filter.type();
-
-    switch (filter.type()) {
-    case FilterOperation::Type::None:
-    case FilterOperation::Type::Reference:
-        ASSERT_NOT_REACHED();
-        return;
-    case FilterOperation::Type::Grayscale:
-    case FilterOperation::Type::Sepia:
-    case FilterOperation::Type::Saturate:
-    case FilterOperation::Type::HueRotate:
-        encoder << downcast<BasicColorMatrixFilterOperation>(filter).amount();
-        return;
-    case FilterOperation::Type::Invert:
-    case FilterOperation::Type::Opacity:
-    case FilterOperation::Type::Brightness:
-    case FilterOperation::Type::Contrast:
-        encoder << downcast<BasicComponentTransferFilterOperation>(filter).amount();
-        return;
-    case FilterOperation::Type::AppleInvertLightness:
-        ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
-        return;
-    case FilterOperation::Type::Blur:
-        encoder << downcast<BlurFilterOperation>(filter).stdDeviation();
-        return;
-    case FilterOperation::Type::DropShadow: {
-        const auto& dropShadowFilter = downcast<DropShadowFilterOperation>(filter);
-        encoder << dropShadowFilter.location();
-        encoder << dropShadowFilter.stdDeviation();
-        encoder << dropShadowFilter.color();
-        return;
-    }
-    case FilterOperation::Type::Default:
-        encoder << downcast<DefaultFilterOperation>(filter).representedType();
-        return;
-    case FilterOperation::Type::Passthrough:
-        return;
-    }
-
-    ASSERT_NOT_REACHED();
-}
-
-bool decodeFilterOperation(Decoder& decoder, RefPtr<FilterOperation>& filter)
-{
-    FilterOperation::Type type;
-    if (!decoder.decode(type))
-        return false;
-
-    switch (type) {
-    case FilterOperation::Type::None:
-    case FilterOperation::Type::Reference:
-        ASSERT_NOT_REACHED();
-        return false;
-    case FilterOperation::Type::Grayscale:
-    case FilterOperation::Type::Sepia:
-    case FilterOperation::Type::Saturate:
-    case FilterOperation::Type::HueRotate: {
-        double amount;
-        if (!decoder.decode(amount))
-            return false;
-        filter = BasicColorMatrixFilterOperation::create(amount, type);
-        return true;
-    }
-    case FilterOperation::Type::Invert:
-    case FilterOperation::Type::Opacity:
-    case FilterOperation::Type::Brightness:
-    case FilterOperation::Type::Contrast: {
-        double amount;
-        if (!decoder.decode(amount))
-            return false;
-        filter = BasicComponentTransferFilterOperation::create(amount, type);
-        return true;
-    }
-    case FilterOperation::Type::AppleInvertLightness:
-        ASSERT_NOT_REACHED(); // AppleInvertLightness is only used in -apple-color-filter.
-        return false;
-    case FilterOperation::Type::Blur: {
-        Length stdDeviation;
-        if (!decoder.decode(stdDeviation))
-            return false;
-        filter = BlurFilterOperation::create(stdDeviation);
-        return true;
-    }
-    case FilterOperation::Type::DropShadow: {
-        IntPoint location;
-        int stdDeviation;
-        Color color;
-        if (!decoder.decode(location))
-            return false;
-        if (!decoder.decode(stdDeviation))
-            return false;
-        if (!decoder.decode(color))
-            return false;
-        filter = DropShadowFilterOperation::create(location, stdDeviation, color);
-        return true;
-    }
-    case FilterOperation::Type::Default: {
-        FilterOperation::Type representedType;
-        if (!decoder.decode(representedType))
-            return false;
-        filter = DefaultFilterOperation::create(representedType);
-        return true;
-    }
-    case FilterOperation::Type::Passthrough:
-        filter = PassthroughFilterOperation::create();
-        return true;
-    }
-            
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-
 void ArgumentCoder<FilterOperations>::encode(Encoder& encoder, const FilterOperations& filters)
 {
     encoder << static_cast<uint64_t>(filters.size());
@@ -561,36 +446,15 @@ bool ArgumentCoder<FilterOperations>::decode(Decoder& decoder, FilterOperations&
         return false;
 
     for (uint64_t i = 0; i < filterCount; ++i) {
-        RefPtr<FilterOperation> filter;
-        if (!decodeFilterOperation(decoder, filter))
+        std::optional<Ref<FilterOperation>> filter;
+        decoder >> filter;
+        if (!filter)
             return false;
-        filters.operations().append(WTFMove(filter));
+        filters.operations().append(WTFMove(*filter));
     }
 
     return true;
 }
-
-void ArgumentCoder<RefPtr<WebCore::FilterOperation>>::encode(Encoder& encoder, const RefPtr<WebCore::FilterOperation>& operation)
-{
-    encoder << !!operation;
-    if (operation)
-        encoder << *operation;
-}
-
-WARN_UNUSED_RETURN bool ArgumentCoder<RefPtr<WebCore::FilterOperation>>::decode(Decoder& decoder, RefPtr<WebCore::FilterOperation>& value)
-{
-    std::optional<bool> isNull;
-    decoder >> isNull;
-    if (!isNull)
-        return false;
-    
-    if (!decodeFilterOperation(decoder, value)) {
-        value = nullptr;
-        return false;
-    }
-    return true;
-}
-
 #endif // !USE(COORDINATED_GRAPHICS)
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)

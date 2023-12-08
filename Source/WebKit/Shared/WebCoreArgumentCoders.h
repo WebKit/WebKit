@@ -212,16 +212,6 @@ template<> struct ArgumentCoder<WebCore::FilterOperations> {
     static void encode(Encoder&, const WebCore::FilterOperations&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FilterOperations&);
 };
-
-template<> struct ArgumentCoder<WebCore::FilterOperation> {
-    static void encode(Encoder&, const WebCore::FilterOperation&);
-};
-WARN_UNUSED_RETURN bool decodeFilterOperation(Decoder&, RefPtr<WebCore::FilterOperation>&);
-
-template<> struct ArgumentCoder<RefPtr<WebCore::FilterOperation>> {
-    static void encode(Encoder&, const RefPtr<WebCore::FilterOperation>&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, RefPtr<WebCore::FilterOperation>&);
-};
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
