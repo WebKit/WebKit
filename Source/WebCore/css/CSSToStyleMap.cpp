@@ -489,6 +489,14 @@ void CSSToStyleMap::mapAnimationCompositeOperation(Animation& animation, const C
         animation.setCompositeOperation(*compositeOperation);
 }
 
+void CSSToStyleMap::mapAnimationAllowsDiscreteTransitions(Animation& layer, const CSSValue& value)
+{
+    if (treatAsInitialValue(value, CSSPropertyTransitionBehavior))
+        layer.setAllowsDiscreteTransitions(Animation::initialAllowsDiscreteTransitions());
+    else if (is<CSSPrimitiveValue>(value))
+        layer.setAllowsDiscreteTransitions(value.valueID() == CSSValueAllowDiscrete);
+}
+
 void CSSToStyleMap::mapNinePieceImage(const CSSValue* value, NinePieceImage& image)
 {
     // If we're not a value list, then we are "none" and don't need to alter the empty image at all.

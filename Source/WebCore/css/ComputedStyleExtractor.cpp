@@ -1434,6 +1434,11 @@ static Ref<CSSValue> fontVariantEastAsianPropertyValue(FontVariantEastAsianVaria
     return CSSValueList::createSpaceSeparated(WTFMove(valueList));
 }
 
+static Ref<CSSPrimitiveValue> valueForTransitionBehavior(bool allowsDiscreteTransitions)
+{
+    return CSSPrimitiveValue::create(allowsDiscreteTransitions ? CSSValueAllowDiscrete : CSSValueNormal);
+}
+
 static Ref<CSSPrimitiveValue> valueForAnimationDuration(double duration)
 {
     return CSSPrimitiveValue::create(duration, CSSUnitType::CSS_S);
@@ -1570,9 +1575,18 @@ static Ref<CSSValue> valueForAnimationTimingFunction(const TimingFunction& timin
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void ComputedStyleExtractor::addValueForAnimationPropertyToList(CSSValueListBuilder& list, CSSPropertyID property, const Animation* animation)
+enum IsShorthand : bool { No, Yes };
+static void addValueForAnimationPropertyToList(CSSValueListBuilder& list, CSSPropertyID property, const Animation* animation, IsShorthand isShorthand = IsShorthand::No)
 {
-    if (property == CSSPropertyAnimationDuration || property == CSSPropertyTransitionDuration) {
+    if (property == CSSPropertyTransitionBehavior) {
+        if (animation) {
+            if (animation->isAllowsDiscreteTransitionsFilled())
+                return;
+            if (isShorthand == IsShorthand::Yes && animation->allowsDiscreteTransitions() == Animation::initialAllowsDiscreteTransitions())
+                return;
+        }
+        list.append(valueForTransitionBehavior(animation ? animation->allowsDiscreteTransitions() : Animation::initialAllowsDiscreteTransitions()));
+    } else if (property == CSSPropertyAnimationDuration || property == CSSPropertyTransitionDuration) {
         if (!animation || !animation->isDurationFilled())
             list.append(valueForAnimationDuration(animation ? animation->duration() : Animation::initialDuration()));
     } else if (property == CSSPropertyAnimationDelay || property == CSSPropertyTransitionDelay) {
@@ -1619,9 +1633,9 @@ static Ref<CSSValueList> valueListForAnimationOrTransitionProperty(CSSPropertyID
     CSSValueListBuilder list;
     if (animationList) {
         for (auto& animation : *animationList)
-            ComputedStyleExtractor::addValueForAnimationPropertyToList(list, property, animation.ptr());
+            addValueForAnimationPropertyToList(list, property, animation.ptr());
     } else
-        ComputedStyleExtractor::addValueForAnimationPropertyToList(list, property, nullptr);
+        addValueForAnimationPropertyToList(list, property, nullptr);
     return CSSValueList::createCommaSeparated(WTFMove(list));
 }
 
@@ -1631,7 +1645,7 @@ static Ref<CSSValueList> animationShorthandValue(CSSPropertyID property, const A
     auto addAnimation = [&](Ref<Animation> animation) {
         CSSValueListBuilder childList;
         for (auto longhand : shorthandForProperty(property))
-            ComputedStyleExtractor::addValueForAnimationPropertyToList(childList, longhand, animation.ptr());
+            addValueForAnimationPropertyToList(childList, longhand, animation.ptr(), IsShorthand::Yes);
         parentList.append(CSSValueList::createSpaceSeparated(WTFMove(childList)));
     };
     if (animationList && !animationList->isEmpty()) {
@@ -4191,6 +4205,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return computedScale(renderer, style);
     case CSSPropertyRotate:
         return computedRotate(renderer, style);
+    case CSSPropertyTransitionBehavior:
     case CSSPropertyTransitionDelay:
     case CSSPropertyTransitionDuration:
     case CSSPropertyTransitionTimingFunction:

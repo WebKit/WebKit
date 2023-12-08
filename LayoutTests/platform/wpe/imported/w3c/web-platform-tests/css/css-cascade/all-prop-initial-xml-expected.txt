@@ -346,6 +346,7 @@ PASS transform
 PASS transform-box
 PASS transform-origin
 PASS transform-style
+PASS transition-behavior
 PASS transition-delay
 PASS transition-duration
 PASS transition-property

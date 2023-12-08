@@ -1,30 +1,30 @@
 
-FAIL e.style['transition-behavior'] = "normal" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL Property transition-behavior value 'normal' assert_true: transition-behavior doesn't seem to be supported in the computed style expected true got false
-FAIL e.style['transition-behavior'] = "allow-discrete" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL Property transition-behavior value 'allow-discrete' assert_true: transition-behavior doesn't seem to be supported in the computed style expected true got false
-FAIL e.style['transition'] = "allow-discrete display" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL Property transition value 'allow-discrete display' assert_true: 'allow-discrete display' is a supported value for transition. expected true got false
-FAIL e.style['transition'] = "allow-discrete display 3s" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL Property transition value 'allow-discrete display 3s' assert_true: 'allow-discrete display 3s' is a supported value for transition. expected true got false
-FAIL e.style['transition'] = "allow-discrete display 3s 1s" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL Property transition value 'allow-discrete display 3s 1s' assert_true: 'allow-discrete display 3s 1s' is a supported value for transition. expected true got false
-FAIL e.style['transition'] = "allow-discrete display 3s ease-in-out" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL Property transition value 'allow-discrete display 3s ease-in-out' assert_true: 'allow-discrete display 3s ease-in-out' is a supported value for transition. expected true got false
-FAIL e.style['transition'] = "allow-discrete display 3s ease-in-out 1s" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL Property transition value 'allow-discrete display 3s ease-in-out 1s' assert_true: 'allow-discrete display 3s ease-in-out 1s' is a supported value for transition. expected true got false
+PASS e.style['transition-behavior'] = "normal" should set the property value
+PASS Property transition-behavior value 'normal'
+PASS e.style['transition-behavior'] = "allow-discrete" should set the property value
+PASS Property transition-behavior value 'allow-discrete'
+PASS e.style['transition'] = "allow-discrete display" should set the property value
+PASS Property transition value 'allow-discrete display'
+PASS e.style['transition'] = "allow-discrete display 3s" should set the property value
+PASS Property transition value 'allow-discrete display 3s'
+PASS e.style['transition'] = "allow-discrete display 3s 1s" should set the property value
+PASS Property transition value 'allow-discrete display 3s 1s'
+PASS e.style['transition'] = "allow-discrete display 3s ease-in-out" should set the property value
+PASS Property transition value 'allow-discrete display 3s ease-in-out'
+PASS e.style['transition'] = "allow-discrete display 3s ease-in-out 1s" should set the property value
+PASS Property transition value 'allow-discrete display 3s ease-in-out 1s'
 PASS e.style['transition'] = "asdf display" should not set the property value
 PASS e.style['transition'] = "display asdf" should not set the property value
-FAIL e.style['transition'] = "display allow-discrete 3s ease-in-out 1s" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['transition'] = "display 3s allow-discrete ease-in-out 1s" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['transition'] = "display 3s ease-in-out allow-discrete 1s" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['transition'] = "display 3s ease-in-out 1s allow-discrete" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL Property transition value 'display allow-discrete 3s ease-in-out 1s' assert_true: 'display allow-discrete 3s ease-in-out 1s' is a supported value for transition. expected true got false
-FAIL Property transition value 'display 3s allow-discrete ease-in-out 1s' assert_true: 'display 3s allow-discrete ease-in-out 1s' is a supported value for transition. expected true got false
-FAIL Property transition value 'display 3s ease-in-out allow-discrete 1s' assert_true: 'display 3s ease-in-out allow-discrete 1s' is a supported value for transition. expected true got false
-FAIL Property transition value 'display 3s ease-in-out 1s allow-discrete' assert_true: 'display 3s ease-in-out 1s allow-discrete' is a supported value for transition. expected true got false
-FAIL e.style['transition'] = "allow-discrete display, normal opacity, color" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL Property transition value 'allow-discrete display, normal opacity, color' assert_true: 'allow-discrete display, normal opacity, color' is a supported value for transition. expected true got false
-FAIL e.style['transition'] = "normal opacity, color, allow-discrete display" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL Property transition value 'normal opacity, color, allow-discrete display' assert_true: 'normal opacity, color, allow-discrete display' is a supported value for transition. expected true got false
+PASS e.style['transition'] = "display allow-discrete 3s ease-in-out 1s" should set the property value
+PASS e.style['transition'] = "display 3s allow-discrete ease-in-out 1s" should set the property value
+PASS e.style['transition'] = "display 3s ease-in-out allow-discrete 1s" should set the property value
+PASS e.style['transition'] = "display 3s ease-in-out 1s allow-discrete" should set the property value
+PASS Property transition value 'display allow-discrete 3s ease-in-out 1s'
+PASS Property transition value 'display 3s allow-discrete ease-in-out 1s'
+PASS Property transition value 'display 3s ease-in-out allow-discrete 1s'
+PASS Property transition value 'display 3s ease-in-out 1s allow-discrete'
+PASS e.style['transition'] = "allow-discrete display, normal opacity, color" should set the property value
+PASS Property transition value 'allow-discrete display, normal opacity, color'
+PASS e.style['transition'] = "normal opacity, color, allow-discrete display" should set the property value
+PASS Property transition value 'normal opacity, color, allow-discrete display'
 

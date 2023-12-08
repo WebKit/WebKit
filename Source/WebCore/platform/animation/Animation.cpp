@@ -40,6 +40,7 @@ Animation::Animation()
     , m_fillMode(static_cast<unsigned>(initialFillMode()))
     , m_playState(static_cast<unsigned>(initialPlayState()))
     , m_compositeOperation(static_cast<unsigned>(initialCompositeOperation()))
+    , m_allowsDiscreteTransitions(initialAllowsDiscreteTransitions())
     , m_delaySet(false)
     , m_directionSet(false)
     , m_durationSet(false)
@@ -51,6 +52,7 @@ Animation::Animation()
     , m_timelineSet(false)
     , m_timingFunctionSet(false)
     , m_compositeOperationSet(false)
+    , m_allowsDiscreteTransitionsSet(false)
     , m_isNone(false)
     , m_delayFilled(false)
     , m_directionFilled(false)
@@ -62,6 +64,7 @@ Animation::Animation()
     , m_timelineFilled(false)
     , m_timingFunctionFilled(false)
     , m_compositeOperationFilled(false)
+    , m_allowsDiscreteTransitionsFilled(false)
 {
 }
 
@@ -78,6 +81,7 @@ Animation::Animation(const Animation& o)
     , m_fillMode(o.m_fillMode)
     , m_playState(o.m_playState)
     , m_compositeOperation(o.m_compositeOperation)
+    , m_allowsDiscreteTransitions(o.m_allowsDiscreteTransitions)
     , m_delaySet(o.m_delaySet)
     , m_directionSet(o.m_directionSet)
     , m_durationSet(o.m_durationSet)
@@ -89,6 +93,7 @@ Animation::Animation(const Animation& o)
     , m_timelineSet(o.m_timelineSet)
     , m_timingFunctionSet(o.m_timingFunctionSet)
     , m_compositeOperationSet(o.m_compositeOperationSet)
+    , m_allowsDiscreteTransitionsSet(o.m_allowsDiscreteTransitionsSet)
     , m_isNone(o.m_isNone)
     , m_delayFilled(o.m_delayFilled)
     , m_directionFilled(o.m_directionFilled)
@@ -100,6 +105,7 @@ Animation::Animation(const Animation& o)
     , m_timelineFilled(o.m_timelineFilled)
     , m_timingFunctionFilled(o.m_timingFunctionFilled)
     , m_compositeOperationFilled(o.m_compositeOperationFilled)
+    , m_allowsDiscreteTransitionsFilled(o.m_allowsDiscreteTransitionsFilled)
 {
 }
 
@@ -110,6 +116,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
     bool result = m_name == other.m_name
         && m_playState == other.m_playState
         && m_compositeOperation == other.m_compositeOperation
+        && m_allowsDiscreteTransitions == other.m_allowsDiscreteTransitions
         && m_playStateSet == other.m_playStateSet
         && m_iterationCount == other.m_iterationCount
         && m_delay == other.m_delay
@@ -127,6 +134,7 @@ bool Animation::animationsMatch(const Animation& other, bool matchProperties) co
         && m_timelineSet == other.m_timelineSet
         && m_timingFunctionSet == other.m_timingFunctionSet
         && m_compositeOperationSet == other.m_compositeOperationSet
+        && m_allowsDiscreteTransitionsSet == other.m_allowsDiscreteTransitionsSet
         && m_isNone == other.m_isNone;
 
     if (!result)

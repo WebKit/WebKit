@@ -31,7 +31,7 @@ StylePropertyShorthand transitionShorthandForParsing()
     // duration.
     static const CSSPropertyID transitionProperties[] = {
         CSSPropertyTransitionDuration, CSSPropertyTransitionTimingFunction,
-        CSSPropertyTransitionDelay, CSSPropertyTransitionProperty};
+        CSSPropertyTransitionDelay, CSSPropertyTransitionBehavior, CSSPropertyTransitionProperty };
     return StylePropertyShorthand(CSSPropertyTransition, transitionProperties);
 }
 
