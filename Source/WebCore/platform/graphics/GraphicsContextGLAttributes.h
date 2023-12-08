@@ -56,7 +56,6 @@ struct GraphicsContextGLAttributes {
     bool premultipliedAlpha { true };
     bool preserveDrawingBuffer { false };
     GraphicsContextGLPowerPreference powerPreference { GraphicsContextGLPowerPreference::Default };
-    float devicePixelRatio { 1 };
     bool isWebGL2 { false };
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     PlatformGPUID windowGPUID { 0 };

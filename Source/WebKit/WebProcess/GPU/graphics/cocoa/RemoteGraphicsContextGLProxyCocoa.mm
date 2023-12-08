@@ -81,16 +81,15 @@ private:
 
 class DisplayBufferDisplayDelegate final : public WebCore::GraphicsLayerContentsDisplayDelegate {
 public:
-    static Ref<DisplayBufferDisplayDelegate> create(bool isOpaque, float contentsScale)
+    static Ref<DisplayBufferDisplayDelegate> create(bool isOpaque)
     {
-        return adoptRef(*new DisplayBufferDisplayDelegate(isOpaque, contentsScale));
+        return adoptRef(*new DisplayBufferDisplayDelegate(isOpaque));
     }
 
     // WebCore::GraphicsLayerContentsDisplayDelegate overrides.
     void prepareToDelegateDisplay(WebCore::PlatformCALayer& layer) final
     {
         layer.setOpaque(m_isOpaque);
-        layer.setContentsScale(m_contentsScale);
     }
 
     void display(WebCore::PlatformCALayer& layer) final
@@ -120,15 +119,13 @@ public:
     }
 
 private:
-    DisplayBufferDisplayDelegate(bool isOpaque, float contentsScale)
-        : m_contentsScale(contentsScale)
-        , m_isOpaque(isOpaque)
+    DisplayBufferDisplayDelegate(bool isOpaque)
+        : m_isOpaque(isOpaque)
     {
     }
 
     MachSendRight m_displayBuffer;
     RefPtr<DisplayBufferFence> m_finishedFence;
-    const float m_contentsScale;
     const bool m_isOpaque;
 };
 
@@ -148,7 +145,7 @@ public:
 private:
     RemoteGraphicsContextGLProxyCocoa(IPC::Connection& connection,  Ref<IPC::StreamClientConnection> streamConnection, const WebCore::GraphicsContextGLAttributes& attributes, Ref<RemoteVideoFrameObjectHeapProxy>&& videoFrameObjectHeapProxy)
         : RemoteGraphicsContextGLProxy(connection, WTFMove(streamConnection), attributes, WTFMove(videoFrameObjectHeapProxy))
-        , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha, attributes.devicePixelRatio))
+        , m_layerContentsDisplayDelegate(DisplayBufferDisplayDelegate::create(!attributes.alpha))
     {
     }
     void addNewFence(Ref<DisplayBufferFence> newFence);

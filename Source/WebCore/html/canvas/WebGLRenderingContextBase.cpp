@@ -399,7 +399,7 @@ static GraphicsContextGL::SurfaceBuffer toGCGLSurfaceBuffer(CanvasRenderingConte
     return buffer == CanvasRenderingContext::SurfaceBuffer::DrawingBuffer ? GraphicsContextGL::SurfaceBuffer::DrawingBuffer : GraphicsContextGL::SurfaceBuffer::DisplayBuffer;
 }
 
-static GraphicsContextGLAttributes resolveGraphicsContextGLAttributes(const WebGLContextAttributes& attributes, bool isWebGL2, ScriptExecutionContext& scriptExecutionContext, HTMLCanvasElement* canvasElement)
+static GraphicsContextGLAttributes resolveGraphicsContextGLAttributes(const WebGLContextAttributes& attributes, bool isWebGL2, ScriptExecutionContext& scriptExecutionContext)
 {
     UNUSED_PARAM(scriptExecutionContext);
     GraphicsContextGLAttributes glAttributes;
@@ -410,8 +410,6 @@ static GraphicsContextGLAttributes resolveGraphicsContextGLAttributes(const WebG
     glAttributes.premultipliedAlpha = attributes.premultipliedAlpha;
     glAttributes.preserveDrawingBuffer = attributes.preserveDrawingBuffer;
     glAttributes.powerPreference = attributes.powerPreference;
-    if (canvasElement)
-        glAttributes.devicePixelRatio = canvasElement->document().deviceScaleFactor();
     glAttributes.isWebGL2 = isWebGL2;
 #if PLATFORM(MAC)
     GraphicsClient* graphicsClient = scriptExecutionContext.graphicsClient();
@@ -447,7 +445,7 @@ std::unique_ptr<WebGLRenderingContextBase> WebGLRenderingContextBase::create(Can
     const bool isWebGL2 = type == WebGLVersion::WebGL2;
     RefPtr<GraphicsContextGL> context;
     if (graphicsClient)
-        context = graphicsClient->createGraphicsContextGL(resolveGraphicsContextGLAttributes(attributes, isWebGL2, *scriptExecutionContext, canvasElement));
+        context = graphicsClient->createGraphicsContextGL(resolveGraphicsContextGLAttributes(attributes, isWebGL2, *scriptExecutionContext));
     if (!context) {
         if (canvasElement) {
             canvasElement->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextcreationerrorEvent,
@@ -5365,7 +5363,7 @@ void WebGLRenderingContextBase::maybeRestoreContext()
     if (!graphicsClient)
         return;
 
-    if (auto context = graphicsClient->createGraphicsContextGL(resolveGraphicsContextGLAttributes(m_creationAttributes, isWebGL2(), *scriptExecutionContext, htmlCanvas()))) {
+    if (auto context = graphicsClient->createGraphicsContextGL(resolveGraphicsContextGLAttributes(m_creationAttributes, isWebGL2(), *scriptExecutionContext))) {
         initializeNewContext(context.releaseNonNull());
         if (!m_context->isContextLost()) {
             // Context lost state is reset only here: context creation succeeded

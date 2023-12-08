@@ -2722,7 +2722,6 @@ struct WebCore::GraphicsContextGLAttributes {
     bool premultipliedAlpha;
     bool preserveDrawingBuffer;
     WebCore::GraphicsContextGLPowerPreference powerPreference;
-    float devicePixelRatio;
     bool isWebGL2;
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     uint64_t windowGPUID;
