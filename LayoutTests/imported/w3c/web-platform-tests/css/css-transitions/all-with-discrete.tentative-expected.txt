@@ -1,4 +1,4 @@
 hello
 
-FAIL transition:all with transition-behavior:allow-discrete should animate discrete properties. assert_equals: Did not start a discrete-property transition expected 1 but got 0
+PASS transition:all with transition-behavior:allow-discrete should animate discrete properties.
 
