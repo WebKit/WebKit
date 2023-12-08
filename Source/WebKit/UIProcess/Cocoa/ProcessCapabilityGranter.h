@@ -27,21 +27,44 @@
 
 #if ENABLE(PROCESS_CAPABILITIES)
 
+#include <wtf/CheckedPtr.h>
+#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
-#include <wtf/text/WTFString.h>
-
-OBJC_CLASS _SECapabilities;
+#include <wtf/Noncopyable.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
-class ProcessCapability {
-public:
-    virtual ~ProcessCapability() = default;
-    virtual String environmentIdentifier() const = 0;
-    virtual RetainPtr<_SECapabilities> platformCapability() const = 0;
+class GPUProcessProxy;
+class MediaCapability;
+class ProcessCapability;
+class ProcessCapabilityGrant;
+class WebPageProxy;
+class WebProcessProxy;
 
-protected:
-    ProcessCapability() = default;
+class ProcessCapabilityGranter : public CanMakeWeakPtr<ProcessCapabilityGranter> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(ProcessCapabilityGranter);
+public:
+    struct Client : public CanMakeCheckedPtr {
+        virtual ~Client() = default;
+        virtual RefPtr<GPUProcessProxy> gpuProcessForCapabilityGranter(const ProcessCapabilityGranter&) = 0;
+        virtual RefPtr<WebProcessProxy> webProcessForCapabilityGranter(const ProcessCapabilityGranter&, const String& environmentIdentifier) = 0;
+    };
+
+    static UniqueRef<ProcessCapabilityGranter> create(Client&);
+
+    void grant(const ProcessCapability&);
+    void revoke(const ProcessCapability&);
+
+    void setMediaCapabilityActive(MediaCapability&, bool);
+    void invalidateGrants(Vector<ProcessCapabilityGrant>&&);
+
+private:
+    friend UniqueRef<ProcessCapabilityGranter> WTF::makeUniqueRefWithoutFastMallocCheck(Client&);
+    explicit ProcessCapabilityGranter(Client&);
+
+    CheckedPtr<Client> m_client;
 };
 
 } // namespace WebKit

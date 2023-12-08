@@ -31,6 +31,10 @@
 
 OBJC_CLASS UIScrollView;
 
+namespace WebCore {
+enum class TouchAction : uint8_t;
+}
+
 namespace WebKit {
 
 class RemoteLayerTreeNode;

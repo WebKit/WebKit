@@ -89,6 +89,7 @@ extern "C" {
     M(Printing) \
     M(PrivateClickMeasurement) \
     M(Process) \
+    M(ProcessCapabilities) \
     M(ProcessSuspension) \
     M(ProcessSwapping) \
     M(ProximityNetworking) \

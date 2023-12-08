@@ -2687,6 +2687,10 @@ void WebPageProxy::dispatchActivityStateChange()
     m_activityStateChangeWantsSynchronousReply = false;
     m_viewWasEverInWindow |= isNowInWindow;
 
+#if ENABLE(PROCESS_CAPABILITIES)
+    updateMediaCapability();
+#endif
+
 #if PLATFORM(COCOA)
     for (auto& callback : m_activityStateUpdateCallbacks)
         callback();
@@ -6152,6 +6156,11 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
     if (m_userMediaPermissionRequestManager)
         m_userMediaPermissionRequestManager->didCommitLoadForFrame(frameID);
 #endif
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    if (frame->isMainFrame())
+        updateMediaCapability();
+#endif
 }
 
 void WebPageProxy::didFinishDocumentLoadForFrame(FrameIdentifier frameID, uint64_t navigationID, const UserData& userData)
@@ -9463,6 +9472,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     m_advancedPrivacyProtectionsPolicies = { };
 #endif
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    setMediaCapability(std::nullopt);
+#endif
 }
 
 void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason terminationReason)
@@ -11230,6 +11243,10 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducerMediaStateFlags newS
     bool mediaStreamingChanges = oldState.contains(MediaProducerMediaState::HasStreamingActivity) != newState.contains(MediaProducerMediaState::HasStreamingActivity);
     if (mediaStreamingChanges)
         process->updateMediaStreamingActivity();
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    updateMediaCapability();
+#endif
 }
 
 void WebPageProxy::updateReportedMediaCaptureState()
@@ -12584,6 +12601,12 @@ void WebPageProxy::clearLoadedSubresourceDomains()
 void WebPageProxy::gpuProcessDidFinishLaunching()
 {
     pageClient().gpuProcessDidFinishLaunching();
+#if ENABLE(PROCESS_CAPABILITIES)
+    if (auto& mediaCapability = this->mediaCapability()) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "gpuProcessDidFinishLaunching: [envID=%{public}s] granting media capability", mediaCapability->environmentIdentifier().utf8().data());
+        protectedProcess()->protectedProcessPool()->processCapabilityGranter().grant(*mediaCapability);
+    }
+#endif
 }
 
 void WebPageProxy::gpuProcessExited(ProcessTerminationReason)

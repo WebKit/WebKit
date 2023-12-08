@@ -27,21 +27,34 @@
 
 #if ENABLE(PROCESS_CAPABILITIES)
 
-#include <wtf/Forward.h>
+#include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
 
-OBJC_CLASS _SECapabilities;
+OBJC_PROTOCOL(_SEGrant);
 
 namespace WebKit {
 
-class ProcessCapability {
+class ProcessCapabilityGrant {
 public:
-    virtual ~ProcessCapability() = default;
-    virtual String environmentIdentifier() const = 0;
-    virtual RetainPtr<_SECapabilities> platformCapability() const = 0;
+    ProcessCapabilityGrant() = default;
+    ProcessCapabilityGrant(ProcessCapabilityGrant&&) = default;
+    explicit ProcessCapabilityGrant(String environmentIdentifier);
+    ~ProcessCapabilityGrant();
 
-protected:
-    ProcessCapability() = default;
+    ProcessCapabilityGrant& operator=(ProcessCapabilityGrant&&) = default;
+    ProcessCapabilityGrant isolatedCopy() &&;
+
+    const String& environmentIdentifier() const { return m_environmentIdentifier; }
+    bool isEmpty() const;
+    bool isValid() const;
+
+    void setPlatformGrant(RetainPtr<_SEGrant>&&);
+
+private:
+    ProcessCapabilityGrant(String&&, RetainPtr<_SEGrant>&&);
+
+    String m_environmentIdentifier;
+    RetainPtr<_SEGrant> m_platformGrant;
 };
 
 } // namespace WebKit

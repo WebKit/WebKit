@@ -4178,6 +4178,20 @@ MediaCapabilitiesExtensionsEnabled:
     WebCore:
       default: false
 
+MediaCapabilityGrantsEnabled:
+  type: bool
+  status: unstable
+  condition: ENABLE(PROCESS_CAPABILITIES)
+  humanReadableName: "Media Capability Grants"
+  humanReadableDescription: "Enable granting and revoking of media capabilities"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 MediaCaptionFormatTypesAllowedInLockdownMode:
   type: String
   status: embedder

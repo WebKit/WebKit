@@ -32,6 +32,7 @@
 #include "OverrideLanguages.h"
 #include "UIProcessLogInitialization.h"
 #include "WebPageProxy.h"
+#include "WebPageProxyIdentifier.h"
 #include "WebProcessProxy.h"
 #include <wtf/RunLoop.h>
 
@@ -43,11 +44,15 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-#import <pal/spi/ios/MobileGestaltSPI.h>
+#include <pal/spi/ios/MobileGestaltSPI.h>
 #endif
 
 #if PLATFORM(VISION)
-#import <WebCore/ThermalMitigationNotifier.h>
+#include <WebCore/ThermalMitigationNotifier.h>
+#endif
+
+#if ENABLE(PROCESS_CAPABILITIES)
+#include "ProcessCapabilityGrant.h"
 #endif
 
 namespace WebKit {
@@ -85,6 +90,10 @@ AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
     }
 
     replyToPendingMessages();
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    ASSERT(m_processCapabilityGrants.isEmpty());
+#endif
 }
 
 void AuxiliaryProcessProxy::populateOverrideLanguagesLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions) const

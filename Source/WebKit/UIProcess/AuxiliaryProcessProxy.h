@@ -34,6 +34,8 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <memory>
 #include <wtf/CheckedRef.h>
+#include <wtf/Forward.h>
+#include <wtf/HashMap.h>
 #include <wtf/ProcessID.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -45,11 +47,14 @@ class SharedBuffer;
 
 namespace WebKit {
 
+class ProcessCapabilityGrant;
 class ProcessThrottler;
 class ProcessAssertion;
 class SandboxExtensionHandle;
 
 struct AuxiliaryProcessCreationParameters;
+
+using ProcessCapabilityGrantMap = HashMap<String, ProcessCapabilityGrant>;
 
 class AuxiliaryProcessProxy
     : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>
@@ -187,6 +192,10 @@ public:
     static bool manageProcessesAsExtensions() { return s_manageProcessesAsExtensions; }
 #endif
 
+#if ENABLE(PROCESS_CAPABILITIES)
+    ProcessCapabilityGrantMap& processCapabilityGrants() { return m_processCapabilityGrants; }
+#endif
+
 protected:
     // ProcessLauncher::Client
     void didFinishLaunching(ProcessLauncher*, IPC::Connection::Identifier) override;
@@ -246,6 +255,9 @@ private:
     std::unique_ptr<ProcessThrottler::ForegroundActivity> m_lifetimeActivity;
     RefPtr<ProcessAssertion> m_boostedJetsamAssertion;
 #endif
+#endif
+#if ENABLE(PROCESS_CAPABILITIES)
+    ProcessCapabilityGrantMap m_processCapabilityGrants;
 #endif
 #if USE(EXTENSIONKIT)
     static bool s_manageProcessesAsExtensions;

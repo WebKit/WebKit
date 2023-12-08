@@ -24,36 +24,68 @@
  */
 
 #import "config.h"
-#import "AssertionCapability.h"
+#import "ProcessCapabilityGrant.h"
 
 #if ENABLE(PROCESS_CAPABILITIES)
 
-#import "ExtensionKitSoftLink.h"
+#import "ExtensionKitSPI.h"
+#import "Logging.h"
 
 namespace WebKit {
 
-AssertionCapability::AssertionCapability(String environmentIdentifier, String domain, String name, Function<void()>&& willInvalidateFunction, Function<void()>&& didInvalidateFunction)
+static void platformInvalidate(RetainPtr<_SEGrant>&& platformGrant)
+{
+    if (![platformGrant isValid])
+        return;
+
+#if USE(EXTENSIONKIT)
+    NSError *error = nil;
+    if (![platformGrant invalidateWithError:&error])
+        RELEASE_LOG_ERROR(ProcessCapabilities, "Invalidating grant %{public}@ failed with error: %{public}@", platformGrant.get(), error);
+#endif
+}
+
+ProcessCapabilityGrant::ProcessCapabilityGrant(String environmentIdentifier)
     : m_environmentIdentifier { WTFMove(environmentIdentifier) }
-    , m_domain { WTFMove(domain) }
-    , m_name { WTFMove(name) }
-    , m_willInvalidateBlock { makeBlockPtr(WTFMove(willInvalidateFunction)) }
-    , m_didInvalidateBlock { makeBlockPtr(WTFMove(didInvalidateFunction)) }
 {
 }
 
-RetainPtr<_SECapabilities> AssertionCapability::platformCapability() const
+ProcessCapabilityGrant::ProcessCapabilityGrant(String&& environmentIdentifier, RetainPtr<_SEGrant>&& platformGrant)
+    : m_environmentIdentifier { WTFMove(environmentIdentifier) }
+    , m_platformGrant { WTFMove(platformGrant) }
+{
+}
+
+ProcessCapabilityGrant::~ProcessCapabilityGrant()
+{
+    setPlatformGrant(nil);
+}
+
+ProcessCapabilityGrant ProcessCapabilityGrant::isolatedCopy() &&
+{
+    return {
+        crossThreadCopy(WTFMove(m_environmentIdentifier)),
+        WTFMove(m_platformGrant)
+    };
+}
+
+bool ProcessCapabilityGrant::isEmpty() const
+{
+    return !m_platformGrant;
+}
+
+bool ProcessCapabilityGrant::isValid() const
 {
 #if USE(EXTENSIONKIT)
-#if USE(EXTENSIONKIT_INVALIDATION_CALLBACKS)
-    return [get_SECapabilitiesClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:environmentIdentifier() willInvalidate:m_willInvalidateBlock.get() didInvalidate:m_didInvalidateBlock.get()];
-#else
-    if ([get_SECapabilitiesClass() respondsToSelector:@selector(assertionWithDomain:name:environmentIdentifier:)])
-        return [get_SECapabilitiesClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:environmentIdentifier()];
-    return [get_SECapabilitiesClass() assertionWithDomain:m_domain name:m_name];
+    if ([m_platformGrant isValid])
+        return true;
 #endif
-#else
-    return nil;
-#endif
+    return false;
+}
+
+void ProcessCapabilityGrant::setPlatformGrant(RetainPtr<_SEGrant>&& platformGrant)
+{
+    platformInvalidate(std::exchange(m_platformGrant, WTFMove(platformGrant)));
 }
 
 } // namespace WebKit

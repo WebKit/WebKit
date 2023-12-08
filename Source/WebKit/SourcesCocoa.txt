@@ -81,9 +81,10 @@ Platform/classifier/cocoa/ResourceLoadStatisticsClassifierCocoa.cpp
 Platform/classifier/ResourceLoadStatisticsClassifier.cpp
 
 Platform/cocoa/AssertionCapability.mm @no-unify
+Platform/cocoa/MediaCapability.mm @no-unify
 Platform/cocoa/PaymentAuthorizationPresenter.mm
 Platform/cocoa/PaymentAuthorizationViewController.mm
-Platform/cocoa/ProcessCapability.cpp
+Platform/cocoa/ProcessCapabilityGrant.mm
 Platform/cocoa/WKPaymentAuthorizationDelegate.mm
 Platform/cocoa/WebKitAdditions.mm @no-unify
 Platform/cocoa/WebPrivacyHelpers.mm
@@ -401,6 +402,7 @@ UIProcess/Cocoa/PageClientImplCocoa.mm
 UIProcess/Cocoa/PlatformXRCoordinator.mm
 UIProcess/Cocoa/PlaybackSessionManagerProxy.mm
 UIProcess/Cocoa/ProcessAssertionCocoa.mm
+UIProcess/Cocoa/ProcessCapabilityGranter.mm
 UIProcess/Cocoa/ResourceLoadDelegate.mm
 UIProcess/Cocoa/SafeBrowsingWarningCocoa.mm
 UIProcess/Cocoa/SessionStateCoding.mm

@@ -23,16 +23,45 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ProcessCapability.h"
+#import "config.h"
+#import "MediaCapability.h"
 
 #if ENABLE(PROCESS_CAPABILITIES)
 
+#import "ExtensionKitSoftLink.h"
+
 namespace WebKit {
 
-ProcessCapability::ProcessCapability(String environmentIdentifier)
-    : m_environmentIdentifier { WTFMove(environmentIdentifier) }
+static RetainPtr<_SECapabilities> createPlatformCapability(const RegistrableDomain& registrableDomain)
 {
+#if USE(EXTENSIONKIT)
+    if ([get_SECapabilitiesClass() respondsToSelector:@selector(mediaWithWebsite:)])
+        return [get_SECapabilitiesClass() mediaWithWebsite:registrableDomain.string()];
+#else
+    UNUSED_PARAM(url);
+#endif
+
+    return nil;
+}
+
+MediaCapability::MediaCapability(RegistrableDomain registrableDomain)
+    : m_registrableDomain { WTFMove(registrableDomain) }
+    , m_platformCapability { createPlatformCapability(m_registrableDomain) }
+{
+}
+
+MediaCapability::MediaCapability(const URL& url)
+    : MediaCapability { RegistrableDomain(url) }
+{
+}
+
+String MediaCapability::environmentIdentifier() const
+{
+#if USE(EXTENSIONKIT)
+    return [m_platformCapability mediaEnvironment];
+#else
+    return { };
+#endif
 }
 
 } // namespace WebKit

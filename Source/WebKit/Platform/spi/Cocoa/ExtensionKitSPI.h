@@ -47,6 +47,9 @@ typedef void(^_SEServiceInteruptionHandler)();
 +(instancetype)assertionWithDomain:(NSString*)domain name:(NSString*)name;
 +(instancetype)assertionWithDomain:(NSString*)domain name:(NSString*)name environmentIdentifier:(NSString*)environmentIdentifier;
 +(instancetype)assertionWithDomain:(NSString*)domain name:(NSString*)name environmentIdentifier:(NSString*)environmentIdentifier willInvalidate:(void (^)())willInvalidateBlock didInvalidate:(void (^)())didInvalidateBlock;
++(instancetype)mediaWithWebsite:(NSString*)website;
+-(BOOL)setActive:(BOOL)active;
+@property (nonatomic, readonly) NSString *mediaEnvironment;
 @end
 
 NS_REFINED_FOR_SWIFT

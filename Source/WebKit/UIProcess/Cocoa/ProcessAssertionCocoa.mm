@@ -387,7 +387,7 @@ ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String&
             if (strongThis)
                 strongThis->processAssertionWillBeInvalidated();
         };
-        AssertionCapability capability { String(runningBoardDomain), String(runningBoardAssertionName), process.environmentIdentifier(), WTFMove(willInvalidateBlock), WTFMove(didInvalidateBlock) };
+        AssertionCapability capability { process.environmentIdentifier(), runningBoardDomain, runningBoardAssertionName, WTFMove(willInvalidateBlock), WTFMove(didInvalidateBlock) };
         m_capabilities = capability.platformCapability();
         m_process = process.extensionProcess();
         if (m_capabilities)

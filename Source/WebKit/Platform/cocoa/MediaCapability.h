@@ -27,21 +27,42 @@
 
 #if ENABLE(PROCESS_CAPABILITIES)
 
+#include "ProcessCapability.h"
+#include <WebCore/RegistrableDomain.h>
 #include <wtf/Forward.h>
-#include <wtf/text/WTFString.h>
-
-OBJC_CLASS _SECapabilities;
+#include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
-class ProcessCapability {
-public:
-    virtual ~ProcessCapability() = default;
-    virtual String environmentIdentifier() const = 0;
-    virtual RetainPtr<_SECapabilities> platformCapability() const = 0;
+class ProcessCapabilityGrant;
 
-protected:
-    ProcessCapability() = default;
+using WebCore::RegistrableDomain;
+
+class MediaCapability final : public ProcessCapability, public CanMakeWeakPtr<MediaCapability> {
+public:
+    explicit MediaCapability(RegistrableDomain);
+    explicit MediaCapability(const URL&);
+
+    enum class State : uint8_t {
+        Inactive,
+        Activating,
+        Active,
+        Deactivating,
+    };
+
+    State state() const { return m_state; }
+    void setState(State state) { m_state = state; }
+
+    const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
+
+    // ProcessCapability
+    String environmentIdentifier() const final;
+    RetainPtr<_SECapabilities> platformCapability() const final { return m_platformCapability.get(); }
+
+private:
+    State m_state { State::Inactive };
+    RegistrableDomain m_registrableDomain;
+    RetainPtr<_SECapabilities> m_platformCapability;
 };
 
 } // namespace WebKit

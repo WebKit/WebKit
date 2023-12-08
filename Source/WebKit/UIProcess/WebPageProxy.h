@@ -294,7 +294,7 @@ using ScrollingNodeID = uint64_t;
 using SleepDisablerIdentifier = ObjectIdentifier<SleepDisablerIdentifierType>;
 using UserMediaRequestIdentifier = ObjectIdentifier<UserMediaRequestIdentifierType>;
 
-}
+} // namespace WebCore
 
 OBJC_CLASS AMSUIEngagementTask;
 OBJC_CLASS CALayer;
@@ -335,6 +335,7 @@ class GamepadData;
 class GeolocationPermissionRequestManagerProxy;
 class LayerTreeContext;
 class LinkDecorationFilteringDataObserver;
+class MediaCapability;
 class MediaKeySystemPermissionRequestManagerProxy;
 class MediaSessionCoordinatorProxyPrivate;
 class MediaUsageManager;
@@ -2304,6 +2305,11 @@ public:
     bool shouldAllowAutoFillForCellularIdentifiers() const;
 #endif
 
+#if ENABLE(PROCESS_CAPABILITIES)
+    const std::optional<MediaCapability>& mediaCapability() const;
+    void updateMediaCapability();
+#endif
+
 private:
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
     void platformInitialize();
@@ -2860,6 +2866,12 @@ private:
     bool useGPUProcessForDOMRenderingEnabled() const;
 
     void dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier);
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    void setMediaCapability(std::optional<MediaCapability>&&);
+    bool shouldActivateMediaCapability() const;
+    bool shouldDeactivateMediaCapability() const;
+#endif
 
     template<typename F> decltype(auto) sendToWebPage(std::optional<WebCore::FrameIdentifier>, F&&);
     template<typename M, typename C> void sendToProcessContainingFrame(std::optional<WebCore::FrameIdentifier>, M&&, C&&);
