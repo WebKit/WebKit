@@ -5274,6 +5274,7 @@
 		515262BA1FB951310070E579 /* WebSWServerToContextConnectionMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWServerToContextConnectionMessageReceiver.cpp; sourceTree = "<group>"; };
 		515262BB1FB951310070E579 /* WebSWServerToContextConnectionMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSWServerToContextConnectionMessages.h; sourceTree = "<group>"; };
 		51578B821209ECEF00A37C4A /* APIData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIData.h; sourceTree = "<group>"; };
+		5157ADF42B22C8F400C0E095 /* AuxiliaryProcessCreationParameters.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = AuxiliaryProcessCreationParameters.serialization.in; sourceTree = "<group>"; };
 		515BE1731D53FDDC00DD7C68 /* WebGamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGamepadProvider.cpp; sourceTree = "<group>"; };
 		515BE1741D53FDDC00DD7C68 /* WebGamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebGamepadProvider.h; sourceTree = "<group>"; };
 		515BE19F1D550AB000DD7C68 /* WebGamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebGamepad.cpp; sourceTree = "<group>"; };
@@ -8516,6 +8517,7 @@
 				1A2D956D12848564001EB962 /* AuxiliaryProcess.h */,
 				5164C0941B05B757004F102A /* AuxiliaryProcess.messages.in */,
 				7BDDA33F275652EA0038659E /* AuxiliaryProcessCreationParameters.h */,
+				5157ADF42B22C8F400C0E095 /* AuxiliaryProcessCreationParameters.serialization.in */,
 				290F4271172A0C7400939FF0 /* AuxiliaryProcessSupplement.h */,
 				413E5C9329B0EDF3002F4987 /* BackgroundFetchChange.h */,
 				413E5C8E29B0C5F4002F4987 /* BackgroundFetchState.h */,

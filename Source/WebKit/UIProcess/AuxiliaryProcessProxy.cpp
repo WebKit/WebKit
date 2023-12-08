@@ -36,6 +36,7 @@
 #include <wtf/RunLoop.h>
 
 #if PLATFORM(COCOA)
+#include "CoreIPCSecureCoding.h"
 #include "SandboxUtilities.h"
 #include <sys/sysctl.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
@@ -499,6 +500,13 @@ AuxiliaryProcessCreationParameters AuxiliaryProcessProxy::auxiliaryProcessParame
     parameters.webCoreLoggingChannels = UIProcess::webCoreLogLevelString();
     parameters.webKitLoggingChannels = UIProcess::webKitLogLevelString();
 #endif
+
+#if PLATFORM(COCOA)
+    auto* exemptClassNames = SecureCoding::classNamesExemptFromSecureCodingCrash();
+    if (exemptClassNames)
+        parameters.classNamesExemptFromSecureCodingCrash = WTF::makeUnique<HashSet<String>>(*exemptClassNames);
+#endif
+
     return parameters;
 }
 

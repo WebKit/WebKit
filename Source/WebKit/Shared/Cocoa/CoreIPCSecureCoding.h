@@ -39,6 +39,17 @@
 
 namespace WebKit {
 
+struct AuxiliaryProcessCreationParameters;
+
+namespace SecureCoding {
+
+const HashSet<String>* classNamesExemptFromSecureCodingCrash();
+void applyProcessCreationParameters(const AuxiliaryProcessCreationParameters&);
+
+} // namespace SecureCoding
+
+#ifdef __OBJC__
+
 class CoreIPCSecureCoding {
 WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -60,6 +71,8 @@ private:
 
     IPC::CoreIPCRetainPtr<NSObject<NSSecureCoding>> m_secureCoding;
 };
+
+#endif // __OBJC__
 
 } // namespace WebKit
 
