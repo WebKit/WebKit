@@ -535,6 +535,22 @@ public:
         rotateRight32(srcDst, imm, srcDst);
     }
 
+    void rotateLeft32(RegisterID src, RegisterID shift, RegisterID dest)
+    {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        m_assembler.ARM_and(scratch, shift, ARMThumbImmediate::makeEncodedImm(0x1f));
+        m_assembler.sub(scratch, ARMThumbImmediate::makeUInt12(32), scratch);
+        m_assembler.ror(dest, src, scratch);
+    }
+
+    void rotateLeft32(RegisterID src, TrustedImm32 shift, RegisterID dest)
+    {
+        RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
+        move(shift, scratch);
+        m_assembler.ARM_and(scratch, scratch, ARMThumbImmediate::makeEncodedImm(0x1f));
+        m_assembler.sub(scratch, ARMThumbImmediate::makeUInt12(32), scratch);
+        m_assembler.ror(dest, src, scratch);
+    }
     void rshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)
     {
         RegisterID scratch = getCachedDataTempRegisterIDAndInvalidate();
@@ -1721,6 +1737,12 @@ public:
         m_assembler.vcvt_signedToFloatingPoint(dest, fpTempRegisterAsSingle(), /* toDouble: */ false);
     }
 
+    void convertInt32ToDouble(TrustedImm32 imm, FPRegisterID dest)
+    {
+        move(imm, dataTempRegister);
+        convertInt32ToDouble(dataTempRegister, dest);
+    }
+
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
     {
         m_assembler.vmov(fpTempRegister, src, src);
@@ -2687,6 +2709,13 @@ public:
     void breakpoint(uint8_t imm = 0)
     {
         m_assembler.udf(imm);
+    }
+
+    void setCarry(RegisterID dest)
+    {
+        m_assembler.it(ARMv7Assembler::ConditionCS, false);
+        move(TrustedImm32(1), dest);
+        move(TrustedImm32(0), dest);
     }
 
     static bool isBreakpoint(void* address) { return ARMv7Assembler::isBkpt(address); }
