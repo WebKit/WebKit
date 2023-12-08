@@ -104,11 +104,9 @@ namespace WebCore {
 
 class AppKitControlSystemImage;
 class BlobPart;
-class CSSFilter;
 class ControlPart;
 class Credential;
 class Cursor;
-class Filter;
 class FilterEffect;
 class FilterFunction;
 class FilterOperation;
@@ -121,7 +119,6 @@ class LightSource;
 class PaymentInstallmentConfiguration;
 class PixelBuffer;
 class ResourceError;
-class SVGFilter;
 class ScriptBuffer;
 class SerializedScriptValue;
 class SharedBuffer;
@@ -323,24 +320,6 @@ template<> struct ArgumentCoder<WebCore::FilterEffect> {
     template<typename Encoder>
     static void encode(Encoder&, const WebCore::FilterEffect&);
     static std::optional<Ref<WebCore::FilterEffect>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::CSSFilter> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::CSSFilter&);
-    static std::optional<Ref<WebCore::CSSFilter>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::SVGFilter> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::SVGFilter&);
-    static std::optional<Ref<WebCore::SVGFilter>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::Filter> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::Filter&);
-    static std::optional<Ref<WebCore::Filter>> decode(Decoder&);
 };
 
 #if ENABLE(DATA_DETECTION)

@@ -6577,6 +6577,31 @@ struct WebCore::KeypressCommand {
 }
 #endif
 
+[AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::Filter subclasses {
+    WebCore::CSSFilter
+    WebCore::SVGFilter
+}
+
+[AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::CSSFilter {
+    Vector<Ref<WebCore::FilterFunction>> functions();
+
+    OptionSet<WebCore::FilterRenderingMode> filterRenderingModes();
+    WebCore::FloatSize filterScale();
+    WebCore::FloatRect filterRegion();
+}
+
+[AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::SVGFilter {
+    WebCore::FloatRect targetBoundingBox();
+    WebCore::SVGUnitTypes::SVGUnitType primitiveUnits();
+    WebCore::SVGFilterExpression expression();
+    Vector<Ref<WebCore::FilterEffect>> effects();
+    std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifierIfExists();
+
+    OptionSet<WebCore::FilterRenderingMode> filterRenderingModes();
+    WebCore::FloatSize filterScale();
+    WebCore::FloatRect filterRegion();
+}
+
 [Nested] enum class WebCore::UserStyleLevel : bool;
 
 header: <WebCore/WheelEventTestMonitor.h>
