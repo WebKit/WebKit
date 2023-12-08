@@ -1,14 +1,17 @@
 
+FAIL e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should set transition-behavior assert_equals: transition-behavior should be canonical expected (string) "normal" but got (undefined) undefined
 PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should set transition-delay
 PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should set transition-duration
 PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should set transition-property
 PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should set transition-timing-function
 PASS e.style['transition'] = "1s -3s cubic-bezier(0, -2, 1, 3) top" should not set unrelated longhands
+FAIL e.style['transition'] = "1s -3s, cubic-bezier(0, -2, 1, 3) top" should set transition-behavior assert_equals: transition-behavior should be canonical expected (string) "normal, normal" but got (undefined) undefined
 PASS e.style['transition'] = "1s -3s, cubic-bezier(0, -2, 1, 3) top" should set transition-delay
 PASS e.style['transition'] = "1s -3s, cubic-bezier(0, -2, 1, 3) top" should set transition-duration
 PASS e.style['transition'] = "1s -3s, cubic-bezier(0, -2, 1, 3) top" should set transition-property
 PASS e.style['transition'] = "1s -3s, cubic-bezier(0, -2, 1, 3) top" should set transition-timing-function
 PASS e.style['transition'] = "1s -3s, cubic-bezier(0, -2, 1, 3) top" should not set unrelated longhands
+FAIL e.style['transition'] = "cubic-bezier(0, -2, 1, 3) top, 1s -3s" should set transition-behavior assert_equals: transition-behavior should be canonical expected (string) "normal, normal" but got (undefined) undefined
 PASS e.style['transition'] = "cubic-bezier(0, -2, 1, 3) top, 1s -3s" should set transition-delay
 PASS e.style['transition'] = "cubic-bezier(0, -2, 1, 3) top, 1s -3s" should set transition-duration
 PASS e.style['transition'] = "cubic-bezier(0, -2, 1, 3) top, 1s -3s" should set transition-property

@@ -1,0 +1,5 @@
+
+FAIL Triggered transition from first style update assert_equals: Background transition from @starting-style value black to white expected "rgb(128, 128, 128)" but got "rgb(255, 255, 255)"
+FAIL Triggered transition from display:none to display:block assert_equals: Background transition from @starting-style value black to white expected "rgb(128, 128, 128)" but got "rgb(255, 255, 255)"
+FAIL Triggered transition on DOM insertion assert_equals: Background transition from @starting-style value black to white expected "rgb(128, 128, 128)" but got "rgb(255, 255, 255)"
+

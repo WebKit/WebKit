@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<link rel=author href="mailto:jarhar@chromium.org">
+<link rel=help href="https://github.com/w3c/csswg-drafts/issues/4441">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/css/css-animations/support/testcommon.js"></script>
+
+<div id=target>hello</div>
+
+<style>
+#target {
+  float: left;
+  width: 100px;
+  height: 100px;
+  transition: all 1s;
+  transition-behavior: allow-discrete;
+}
+#target.animated {
+  float: right;
+}
+</style>
+
+<script>
+promise_test(async () => {
+  await waitForAnimationFrames(2);
+  target.classList.add('animated');
+  const anims = document.getAnimations();
+  assert_equals(anims.length, 1,
+                "Did not start a discrete-property transition");
+  assert_equals(anims[0].transitionProperty, 'float');
+}, 'transition:all with transition-behavior:allow-discrete should animate discrete properties.');
+</script>

@@ -1,0 +1,3 @@
+
+PASS Elements which are transitioning to display:none should be inert.
+

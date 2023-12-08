@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/transition-during-style-attr-mutation.html
-/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/crashtests/transition-large-word-spacing-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/render-blocking/no-transition-from-ua-to-blocking-stylesheet-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/render-blocking/no-transition-from-ua-to-blocking-stylesheet-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-transitions/render-blocking/no-transition-from-ua-to-blocking-stylesheet.html
