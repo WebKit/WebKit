@@ -584,6 +584,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/ios/InteractionInformationRequest.serialization.in \
 	Shared/ios/WebAutocorrectionContext.serialization.in \
 	Shared/ios/WebAutocorrectionData.serialization.in \
+	Shared/JavaScriptCore.serialization.in \
 	Shared/LayerTreeContext.serialization.in \
 	Shared/LoadParameters.serialization.in \
 	Shared/LocalFrameCreationParameters.serialization.in \

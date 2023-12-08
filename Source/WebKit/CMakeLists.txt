@@ -399,6 +399,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/GPUProcessConnectionParameters.serialization.in
     Shared/GPUProcessPreferencesForWebProcess.serialization.in
     Shared/GoToBackForwardItemParameters.serialization.in
+    Shared/JavaScriptCore.serialization.in
     Shared/LayerTreeContext.serialization.in
     Shared/LoadParameters.serialization.in
     Shared/LocalFrameCreationParameters.serialization.in
