@@ -1844,9 +1844,13 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
     auto registrableDomain = RegistrableDomain { navigation.currentRequest().url() };
     if (page.preferences().siteIsolationEnabled() && !registrableDomain.isEmpty()) {
         RegistrableDomain mainFrameDomain(URL(page.pageLoadState().activeURL()));
-        if (!frame.isMainFrame() && registrableDomain == mainFrameDomain)
-            return completionHandler(page.mainFrame()->protectedProcess(), nullptr, "Found process for the same registration domain as mainFrame domain"_s);
-        if (RefPtr process = page.processForRegistrableDomain(registrableDomain))
+        if (!frame.isMainFrame() && registrableDomain == mainFrameDomain) {
+            Ref mainFrameProcess = page.mainFrame()->protectedProcess();
+            if (!mainFrameProcess->isInProcessCache())
+                return completionHandler(mainFrameProcess.copyRef(), nullptr, "Found process for the same registration domain as mainFrame domain"_s);
+        }
+        RefPtr process = page.processForRegistrableDomain(registrableDomain);
+        if (process && !process->isInProcessCache())
             return completionHandler(process.releaseNonNull(), nullptr, "Found process for the same registration domain"_s);
     }
 
