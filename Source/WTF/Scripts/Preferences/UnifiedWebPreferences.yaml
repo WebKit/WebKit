@@ -4040,19 +4040,6 @@ ManageCaptureStatusBarInGPUProcessEnabled:
     WebCore:
       default: false
 
-ManageWebKitProcessesAsExtensions:
-  type: bool
-  status: internal
-  defaultsOverridable: true
-  humanReadableName: "Manage WebKit processes as extensions"
-  humanReadableDescription: "Manage WebKit processes as extensions"
-  condition: USE(EXTENSIONKIT)
-  webcoreBinding: none
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: false
-
 ManagedMediaSourceEnabled:
   type: bool
   status: stable
