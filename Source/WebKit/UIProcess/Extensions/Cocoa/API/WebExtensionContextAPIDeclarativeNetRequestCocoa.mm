@@ -351,17 +351,23 @@ void WebExtensionContext::declarativeNetRequestUpdateDynamicRules(std::optional<
 {
     auto *ruleIDsToDelete = @[ ];
     if (ruleIDsToDeleteVector) {
-        ruleIDsToDelete = createNSArray(ruleIDsToDeleteVector.value(), [](double ruleID) {
+        ruleIDsToDelete = createNSArray(ruleIDsToDeleteVector.value(), [this, protectedThis = Ref { *this }](double ruleID) -> NSNumber * {
+            if (!m_dynamicRulesIDs.contains(ruleID))
+                return nil;
             return @(ruleID);
         }).get();
     }
 
     NSArray *rulesToAdd = rulesToAddJSON ? parseJSON(rulesToAddJSON.value(), JSONOptions::FragmentsAllowed) : @[ ];
 
-    // FIXME: Make sure that adding these rules won't get us over the maximum number of dynamic + session rules.
-
     if (!ruleIDsToDelete.count && !rulesToAdd.count) {
         completionHandler(std::nullopt);
+        return;
+    }
+
+    auto updatedDynamicRulesCount = m_dynamicRulesIDs.size() + rulesToAdd.count - ruleIDsToDelete.count;
+    if (updatedDynamicRulesCount + m_sessionRulesIDs.size() > webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules) {
+        completionHandler(toErrorString(@"declarativeNetRequest.updateDynamicRules()", nil, @"Failed to add dynamic rules. Maximum number of dynamic and session rules exceeded."));
         return;
     }
 
@@ -384,17 +390,23 @@ void WebExtensionContext::declarativeNetRequestUpdateSessionRules(std::optional<
 {
     auto *ruleIDsToDelete = @[ ];
     if (ruleIDsToDeleteVector) {
-        ruleIDsToDelete = createNSArray(ruleIDsToDeleteVector.value(), [](double ruleID) {
+        ruleIDsToDelete = createNSArray(ruleIDsToDeleteVector.value(), [this, protectedThis = Ref { *this }](double ruleID) -> NSNumber * {
+            if (!m_sessionRulesIDs.contains(ruleID))
+                return nil;
             return @(ruleID);
         }).get();
     }
 
     NSArray *rulesToAdd = rulesToAddJSON ? parseJSON(rulesToAddJSON.value(), JSONOptions::FragmentsAllowed) : @[ ];
 
-    // FIXME: Make sure that adding these rules won't get us over the maximum number of dynamic + session rules.
-
     if (!ruleIDsToDelete.count && !rulesToAdd.count) {
         completionHandler(std::nullopt);
+        return;
+    }
+
+    auto updatedSessionRulesCount = m_sessionRulesIDs.size() + rulesToAdd.count - ruleIDsToDelete.count;
+    if (updatedSessionRulesCount + m_dynamicRulesIDs.size() > webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules) {
+        completionHandler(toErrorString(@"declarativeNetRequest.updateSessionRules()", nil, @"Failed to add session rules. Maximum number of dynamic and session rules exceeded."));
         return;
     }
 

@@ -714,6 +714,8 @@ private:
     DeclarativeNetRequestMatchedRuleVector m_matchedRules;
     RetainPtr<_WKWebExtensionDeclarativeNetRequestSQLiteStore> m_declarativeNetRequestDynamicRulesStore;
     RetainPtr<_WKWebExtensionDeclarativeNetRequestSQLiteStore> m_declarativeNetRequestSessionRulesStore;
+    HashSet<double> m_sessionRulesIDs;
+    HashSet<double> m_dynamicRulesIDs;
 
     MenuItemMap m_menuItems;
     MenuItemVector m_mainMenuItems;
