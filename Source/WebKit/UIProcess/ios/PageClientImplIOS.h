@@ -283,6 +283,8 @@ private:
     void didChangeDragCaretRect(const WebCore::IntRect& previousCaretRect, const WebCore::IntRect& caretRect) override;
 #endif
 
+    void performSwitchHapticFeedback() final;
+
     void handleAutocorrectionContext(const WebAutocorrectionContext&) final;
 
     void setMouseEventPolicy(WebCore::MouseEventPolicy) final;
