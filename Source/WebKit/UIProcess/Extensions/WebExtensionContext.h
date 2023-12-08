@@ -211,6 +211,7 @@ public:
     NSError *createError(Error, NSString *customLocalizedDescription = nil, NSError *underlyingError = nil);
 
     bool storageIsPersistent() const { return !m_storageDirectory.isEmpty(); }
+    const String& storageDirectory() const { return m_storageDirectory; }
 
     bool load(WebExtensionController&, String storageDirectory, NSError ** = nullptr);
     bool unload(NSError ** = nullptr);

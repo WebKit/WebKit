@@ -268,7 +268,7 @@ void WebExtensionContext::declarativeNetRequestGetMatchedRules(std::optional<Web
 _WKWebExtensionDeclarativeNetRequestSQLiteStore *WebExtensionContext::declarativeNetRequestDynamicRulesStore()
 {
     if (!m_declarativeNetRequestDynamicRulesStore)
-        m_declarativeNetRequestDynamicRulesStore = [[_WKWebExtensionDeclarativeNetRequestSQLiteStore alloc] initWithUniqueIdentifier:uniqueIdentifier() storageType:_WKWebExtensionDeclarativeNetRequestStorageType::Dynamic directory:m_storageDirectory usesInMemoryDatabase:!storageIsPersistent()];
+        m_declarativeNetRequestDynamicRulesStore = [[_WKWebExtensionDeclarativeNetRequestSQLiteStore alloc] initWithUniqueIdentifier:uniqueIdentifier() storageType:_WKWebExtensionDeclarativeNetRequestStorageType::Dynamic directory:storageDirectory() usesInMemoryDatabase:!storageIsPersistent()];
 
     return m_declarativeNetRequestDynamicRulesStore.get();
 }
@@ -276,7 +276,7 @@ _WKWebExtensionDeclarativeNetRequestSQLiteStore *WebExtensionContext::declarativ
 _WKWebExtensionDeclarativeNetRequestSQLiteStore *WebExtensionContext::declarativeNetRequestSessionRulesStore()
 {
     if (!m_declarativeNetRequestSessionRulesStore)
-        m_declarativeNetRequestSessionRulesStore = [[_WKWebExtensionDeclarativeNetRequestSQLiteStore alloc] initWithUniqueIdentifier:uniqueIdentifier() storageType:_WKWebExtensionDeclarativeNetRequestStorageType::Session directory:m_storageDirectory usesInMemoryDatabase:YES];
+        m_declarativeNetRequestSessionRulesStore = [[_WKWebExtensionDeclarativeNetRequestSQLiteStore alloc] initWithUniqueIdentifier:uniqueIdentifier() storageType:_WKWebExtensionDeclarativeNetRequestStorageType::Session directory:storageDirectory() usesInMemoryDatabase:YES];
 
     return m_declarativeNetRequestSessionRulesStore.get();
 }

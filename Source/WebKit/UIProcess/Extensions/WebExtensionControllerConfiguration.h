@@ -64,8 +64,6 @@ public:
     const String& storageDirectory() const { return m_storageDirectory; }
     void setStorageDirectory(const String& directory) { m_storageDirectory = directory; }
 
-    const String& declarativeNetRequestStoreDirectory();
-
     WKWebViewConfiguration *webViewConfiguration();
     void setWebViewConfiguration(WKWebViewConfiguration *configuration) { m_webViewConfiguration = configuration; }
 
@@ -82,7 +80,6 @@ private:
     Markable<WTF::UUID> m_identifier;
     bool m_temporary { false };
     String m_storageDirectory;
-    String m_declarativeNetRequestStoreDirectory;
     RetainPtr<WKWebViewConfiguration> m_webViewConfiguration;
 };
 
