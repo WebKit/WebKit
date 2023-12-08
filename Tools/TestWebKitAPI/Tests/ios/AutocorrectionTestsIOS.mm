@@ -97,14 +97,18 @@ TEST(AutocorrectionTests, FontAtCaretWhenUsingUICTFontTextStyle)
     checkCGRectIsNotEmpty([autocorrectionRects lastRect]);
 
     auto contentView = [webView textInputContentView];
-    UIFont *fontBeforeScaling = [contentView fontForCaretSelection];
+    auto selectedTextRangeBeforeScaling = contentView.selectedTextRange;
+    auto stylingDictionaryBeforeScaling = [contentView textStylingAtPosition:selectedTextRangeBeforeScaling.start inDirection:UITextStorageDirectionForward];
+    UIFont *fontBeforeScaling = [stylingDictionaryBeforeScaling objectForKey:NSFontAttributeName];
     UIFont *size16SystemFont = [UIFont systemFontOfSize:16];
     EXPECT_WK_STREQ(size16SystemFont.fontName, fontBeforeScaling.fontName);
     EXPECT_WK_STREQ(size16SystemFont.familyName, fontBeforeScaling.familyName);
     EXPECT_EQ(16, fontBeforeScaling.pointSize);
 
     [webView scrollView].zoomScale = 2;
-    UIFont *fontAfterScaling = [contentView fontForCaretSelection];
+    auto selectedTextRangeAfterScaling = contentView.selectedTextRange;
+    auto stylingDictionaryAfterScaling = [contentView textStylingAtPosition:selectedTextRangeAfterScaling.start inDirection:UITextStorageDirectionForward];
+    UIFont *fontAfterScaling = [stylingDictionaryAfterScaling objectForKey:NSFontAttributeName];
     UIFont *size32SystemFont = [UIFont systemFontOfSize:32];
     EXPECT_WK_STREQ(size32SystemFont.fontName, fontAfterScaling.fontName);
     EXPECT_WK_STREQ(size32SystemFont.familyName, fontAfterScaling.familyName);
