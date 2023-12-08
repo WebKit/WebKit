@@ -79,8 +79,4 @@ Ref<API::Array> Array::copy()
     return Array::create(WTFMove(elements));
 }
 
-Array::~Array()
-{
-}
-
 } // namespace API

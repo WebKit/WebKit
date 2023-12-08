@@ -26,12 +26,8 @@
 #pragma once
 
 #include "APIObject.h"
+#include <wtf/ArgumentCoder.h>
 #include <wtf/RetainPtr.h>
-
-namespace IPC {
-class Decoder;
-class Encoder;
-}
 
 typedef struct objc_object* id;
 
@@ -53,13 +49,10 @@ public:
     };
     static RetainPtr<id> transform(id, const Transformer&);
 
-    void encode(IPC::Encoder&) const;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RefPtr<API::Object>&);
-
-private:
     static void encode(IPC::Encoder&, id);
     static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, RetainPtr<id>&);
 
+private:
     explicit ObjCObjectGraph(id rootObject)
         : m_rootObject(rootObject)
     {
@@ -69,3 +62,10 @@ private:
 };
 
 } // namespace WebKit
+
+namespace IPC {
+template<> struct ArgumentCoder<WebKit::ObjCObjectGraph> {
+    static void encode(Encoder&, const WebKit::ObjCObjectGraph&);
+    static std::optional<Ref<WebKit::ObjCObjectGraph>> decode(Decoder&);
+};
+}

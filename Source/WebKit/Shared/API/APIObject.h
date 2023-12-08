@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/ArgumentCoder.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -491,5 +492,12 @@ template<> struct EnumTraits<API::Object::Type> {
 };
 
 } // namespace WTF
+
+namespace IPC {
+template<> struct ArgumentCoder<RefPtr<API::Object>> {
+    static void encode(Encoder&, const RefPtr<API::Object>&);
+    static std::optional<RefPtr<API::Object>> decode(Decoder&);
+};
+}
 
 #undef DELEGATE_REF_COUNTING_TO_COCOA

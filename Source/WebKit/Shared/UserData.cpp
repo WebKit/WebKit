@@ -53,18 +53,14 @@
 
 namespace WebKit {
 
-UserData::UserData()
-{
-}
+UserData::UserData() = default;
 
 UserData::UserData(RefPtr<API::Object>&& object)
     : m_object(WTFMove(object))
 {
 }
 
-UserData::~UserData()
-{
-}
+UserData::~UserData() = default;
 
 static bool shouldTransform(const API::Object& object, const UserData::Transformer& transformer)
 {
@@ -162,13 +158,9 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
     encoder << type;
 
     switch (object.type()) {
-    case API::Object::Type::Array: {
-        auto& array = static_cast<const API::Array&>(object);
-        encoder << static_cast<uint64_t>(array.size());
-        for (size_t i = 0; i < array.size(); ++i)
-            encode(encoder, RefPtr { array.at(i) }.get());
+    case API::Object::Type::Array:
+        encoder << static_cast<const API::Array&>(object);
         break;
-    }
 
     case API::Object::Type::Boolean:
         encoder << static_cast<const API::Boolean&>(object);
@@ -178,17 +170,9 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
         encoder << static_cast<const API::Data&>(object);
         break;
     
-    case API::Object::Type::Dictionary: {
-        auto& dictionary = static_cast<const API::Dictionary&>(object);
-        auto& map = dictionary.map();
-
-        encoder << static_cast<uint64_t>(map.size());
-        for (const auto& keyValuePair : map) {
-            encoder << keyValuePair.key;
-            encode(encoder, keyValuePair.value.get());
-        }
+    case API::Object::Type::Dictionary:
+        encoder << static_cast<const API::Dictionary&>(object);
         break;
-    }
 
     case API::Object::Type::Double:
         encoder << static_cast<const API::Double&>(object);
@@ -231,21 +215,17 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
         encoder << static_cast<const API::Rect&>(object);
         break;
 
-    case API::Object::Type::SerializedScriptValue: {
-        auto& serializedScriptValue = static_cast<const API::SerializedScriptValue&>(object);
-        encoder << serializedScriptValue.dataReference();
+    case API::Object::Type::SerializedScriptValue:
+        encoder << static_cast<const API::SerializedScriptValue&>(object);
         break;
-    }
 
     case API::Object::Type::Size:
         encoder << static_cast<const API::Size&>(object);
         break;
 
-    case API::Object::Type::String: {
-        auto& string = static_cast<const API::String&>(object);
-        encoder << string.string();
+    case API::Object::Type::String:
+        encoder << static_cast<const API::String&>(object);
         break;
-    }
 
     case API::Object::Type::URL:
         encoder << static_cast<const API::URL&>(object);
@@ -267,15 +247,13 @@ void UserData::encode(IPC::Encoder& encoder, const API::Object& object)
         encoder << static_cast<const API::Int64&>(object);
         break;
 
-    case API::Object::Type::UserContentURLPattern: {
-        auto& urlPattern = static_cast<const API::UserContentURLPattern&>(object);
-        encoder << urlPattern.patternString();
+    case API::Object::Type::UserContentURLPattern:
+        encoder << static_cast<const API::UserContentURLPattern&>(object);
         break;
-    }
 
 #if PLATFORM(COCOA)
     case API::Object::Type::ObjCObjectGraph:
-        static_cast<const ObjCObjectGraph&>(object).encode(encoder);
+        encoder << static_cast<const ObjCObjectGraph&>(object);
         break;
 #endif
 
@@ -292,25 +270,10 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
 
     switch (type) {
     case API::Object::Type::Array: {
-        uint64_t decodedSize;
-        if (!decoder.decode(decodedSize))
+        auto array = decoder.decode<Ref<API::Array>>();
+        if (!array)
             return false;
-
-        if (!isInBounds<size_t>(decodedSize))
-            return false;
-
-        auto size = static_cast<size_t>(decodedSize);
-
-        Vector<RefPtr<API::Object>> elements;
-        for (size_t i = 0; i < size; ++i) {
-            RefPtr<API::Object> element;
-            if (!decode(decoder, element))
-                return false;
-
-            elements.append(WTFMove(element));
-        }
-
-        result = API::Array::create(WTFMove(elements));
+        result = WTFMove(*array);
         break;
     }
 
@@ -331,30 +294,10 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
     }
 
     case API::Object::Type::Dictionary: {
-        uint64_t decodedSize;
-        if (!decoder.decode(decodedSize))
+        auto dictionary = decoder.decode<Ref<API::Dictionary>>();
+        if (!dictionary)
             return false;
-
-        if (!isInBounds<size_t>(decodedSize))
-            return false;
-
-        auto size = static_cast<size_t>(decodedSize);
-
-        API::Dictionary::MapType map;
-        for (size_t i = 0; i < size; ++i) {
-            String key;
-            if (!decoder.decode(key))
-                return false;
-
-            RefPtr<API::Object> value;
-            if (!decode(decoder, value))
-                return false;
-
-            if (!map.add(WTFMove(key), WTFMove(value)).isNewEntry)
-                return false;
-        }
-
-        result = API::Dictionary::create(WTFMove(map));
+        result = WTFMove(*dictionary);
         break;
     }
 
@@ -431,11 +374,11 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
     }
 
     case API::Object::Type::SerializedScriptValue: {
-        IPC::DataReference dataReference;
-        if (!decoder.decode(dataReference))
+        std::optional<Ref<API::SerializedScriptValue>> value;
+        decoder >> value;
+        if (!value)
             return false;
-
-        result = API::SerializedScriptValue::createFromWireBytes({ dataReference });
+        result = WTFMove(*value);
         break;
     }
 
@@ -449,11 +392,11 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
     }
 
     case API::Object::Type::String: {
-        String string;
-        if (!decoder.decode(string))
+        std::optional<Ref<API::String>> string;
+        decoder >> string;
+        if (!string)
             return false;
-
-        result = API::String::create(string);
+        result = WTFMove(*string);
         break;
     }
 
@@ -501,18 +444,21 @@ bool UserData::decode(IPC::Decoder& decoder, RefPtr<API::Object>& result)
     }
 
     case API::Object::Type::UserContentURLPattern: {
-        String string;
-        if (!decoder.decode(string))
+        auto data = decoder.decode<Ref<API::UserContentURLPattern>>();
+        if (!data)
             return false;
-        result = API::UserContentURLPattern::create(string);
+        result = WTFMove(*data);
         break;
     }
 
 #if PLATFORM(COCOA)
-    case API::Object::Type::ObjCObjectGraph:
-        if (!ObjCObjectGraph::decode(decoder, result))
+    case API::Object::Type::ObjCObjectGraph: {
+        auto graph = decoder.decode<Ref<WebKit::ObjCObjectGraph>>();
+        if (!graph)
             return false;
+        result = WTFMove(*graph);
         break;
+    }
 #endif
 
     default:

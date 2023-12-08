@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef UserData_h
-#define UserData_h
+#pragma once
 
 #include "APIObject.h"
 #include <wtf/RefPtr.h>
@@ -65,5 +64,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // UserData_h

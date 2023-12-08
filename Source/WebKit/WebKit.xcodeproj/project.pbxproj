@@ -7790,6 +7790,7 @@
 		F634445512A885C8000612D8 /* APISecurityOrigin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APISecurityOrigin.h; sourceTree = "<group>"; };
 		F6A90811133C1F3D0082C3F4 /* WebCookieManagerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebCookieManagerMac.mm; sourceTree = "<group>"; };
 		FA1473272B06EE6200765CC1 /* SandboxExtension.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SandboxExtension.serialization.in; sourceTree = "<group>"; };
+		FA39AE4B2B2269C4008F93CD /* APIDictionary.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = APIDictionary.serialization.in; sourceTree = "<group>"; };
 		FA651BA42AA3CBB500747576 /* NetworkTransportBidirectionalStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkTransportBidirectionalStream.h; sourceTree = "<group>"; };
 		FA651BA52AA3CBB500747576 /* NetworkTransportBidirectionalStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkTransportBidirectionalStream.cpp; sourceTree = "<group>"; };
 		FA651BA62AA3CBB600747576 /* NetworkTransportReceiveStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkTransportReceiveStream.cpp; sourceTree = "<group>"; };
@@ -7800,6 +7801,10 @@
 		FA8262722B2193EA00BB8236 /* APINumber.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = APINumber.serialization.in; sourceTree = "<group>"; };
 		FA96E4AC2AA90A1E0090C5A3 /* WebHistoryItemClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebHistoryItemClient.cpp; sourceTree = "<group>"; };
 		FA96E4AD2AA90A1E0090C5A3 /* WebHistoryItemClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebHistoryItemClient.h; sourceTree = "<group>"; };
+		FA9AFA652B224DE400953DC5 /* APIUserContentURLPattern.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = APIUserContentURLPattern.serialization.in; sourceTree = "<group>"; };
+		FA9AFA662B2250E600953DC5 /* APISerializedScriptValue.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = APISerializedScriptValue.serialization.in; sourceTree = "<group>"; };
+		FA9AFA672B2251D100953DC5 /* APIString.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = APIString.serialization.in; sourceTree = "<group>"; };
+		FA9AFA692B2254F600953DC5 /* APIArray.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = APIArray.serialization.in; sourceTree = "<group>"; };
 		FA9CD6332A01B21700EA5CAC /* NetworkOriginAccessPatterns.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkOriginAccessPatterns.cpp; sourceTree = "<group>"; };
 		FA9CD6342A01B21700EA5CAC /* NetworkOriginAccessPatterns.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkOriginAccessPatterns.h; sourceTree = "<group>"; };
 		FAA4E2FE2A1575A3003F5E50 /* WebFrameLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFrameLoaderClient.cpp; sourceTree = "<group>"; };
@@ -14001,6 +14006,7 @@
 				37DFA6FE1810BB2D001F4A9F /* Cocoa */,
 				BC64696D11DBE603006455B0 /* APIArray.cpp */,
 				BC64696E11DBE603006455B0 /* APIArray.h */,
+				FA9AFA692B2254F600953DC5 /* APIArray.serialization.in */,
 				C68BA2622ADBA6EC00770791 /* APICaptionUserPreferencesTestingModeToken.h */,
 				1A3DD205125E5A2F004515E6 /* APIClient.h */,
 				1AAB037B185F99D800EDF501 /* APIData.cpp */,
@@ -14008,6 +14014,7 @@
 				5CCE5B5E29F73CDE0086A188 /* APIData.serialization.in */,
 				7C1BA33B1A4A0E600043E249 /* APIDictionary.cpp */,
 				7C1BA33C1A4A0E600043E249 /* APIDictionary.h */,
+				FA39AE4B2B2269C4008F93CD /* APIDictionary.serialization.in */,
 				BC575612126E0138006F0F12 /* APIError.cpp */,
 				516A4A5B120A2CCD00C05B7F /* APIError.h */,
 				7A873BF22953C541006140C4 /* APIError.serialization.in */,
@@ -14023,7 +14030,9 @@
 				7AE42B452954EDC200B20510 /* APIPageHandle.serialization.in */,
 				F634445512A885C8000612D8 /* APISecurityOrigin.h */,
 				A72D5D7F1236CBA800A88B15 /* APISerializedScriptValue.h */,
+				FA9AFA662B2250E600953DC5 /* APISerializedScriptValue.serialization.in */,
 				BCF04C8E11FF9F6E00F86A58 /* APIString.h */,
+				FA9AFA672B2251D100953DC5 /* APIString.serialization.in */,
 				BCDB86C01200FB97007254BE /* APIURL.h */,
 				7AE42B412954E1DE00B20510 /* APIURL.serialization.in */,
 				BCE2315C122C30CA00D5C35A /* APIURLRequest.cpp */,
@@ -14032,6 +14041,7 @@
 				BC90A1D0122DD55E00CC8C50 /* APIURLResponse.h */,
 				7AE42B432954E8C200B20510 /* APIURLResponse.serialization.in */,
 				F6113E24126CE1820057D0A7 /* APIUserContentURLPattern.h */,
+				FA9AFA652B224DE400953DC5 /* APIUserContentURLPattern.serialization.in */,
 			);
 			path = API;
 			sourceTree = "<group>";
