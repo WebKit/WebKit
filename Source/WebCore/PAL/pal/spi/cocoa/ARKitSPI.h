@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,23 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
+#if USE(APPLE_INTERNAL_SDK)
 
-#if ((USE(SYSTEM_PREVIEW) && HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)) || ((PLATFORM(IOS) || PLATFORM(VISION)) && USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.mm>)))
+#import <ARKit/ARKit.h>
+#import <ARKit/ARKitPrivate.h>
+
+#else // !USE(APPLE_INTERNAL_SDK)
 
 #import <simd/simd.h>
-#import <wtf/SoftLinking.h>
 
-SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebKit, ARKit);
-
-SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ARKit, ARQuickLookPreviewItem);
-SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ARKit, ARSession);
-SOFT_LINK_CLASS_FOR_SOURCE(WebKit, ARKit, ARWorldTrackingConfiguration);
-
-SOFT_LINK_FUNCTION_FOR_SOURCE(WebKit, ARKit, ARMatrixMakeLookAt, simd_float4x4, (simd_float3 origin, simd_float3 direction), (origin, direction));
-
-#if (PLATFORM(IOS) || PLATFORM(VISION)) && USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.mm>)
-#import <WebKitAdditions/ARKitSoftLinkAdditions.mm>
-#endif
+FOUNDATION_EXTERN simd_float4x4 ARMatrixMakeLookAt(simd_float3 origin, simd_float3 direction);
 
 #endif
