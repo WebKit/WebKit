@@ -622,6 +622,7 @@ void ArgumentCoder<WebCore::TimingFunction>::encode(Encoder& encoder, const WebC
 std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<WebCore::TimingFunction>::decode(Decoder& decoder)
 {
     auto type = decoder.decode<WebCore_TimingFunction_Subclass>();
+    UNUSED_PARAM(type);
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
 
@@ -756,6 +757,7 @@ void ArgumentCoder<WebCore::MoveOnlyBaseClass>::encode(Encoder& encoder, WebCore
 std::optional<WebCore::MoveOnlyBaseClass> ArgumentCoder<WebCore::MoveOnlyBaseClass>::decode(Decoder& decoder)
 {
     auto type = decoder.decode<WebCore_MoveOnlyBaseClass_Subclass>();
+    UNUSED_PARAM(type);
     if (UNLIKELY(!decoder.isValid()))
         return std::nullopt;
 
@@ -1225,6 +1227,7 @@ namespace WTF {
 
 template<> bool isValidEnum<IPC::WebCore_TimingFunction_Subclass, void>(IPC::EncodedVariantIndex value)
 {
+IGNORE_WARNINGS_BEGIN("switch-unreachable")
     switch (static_cast<IPC::WebCore_TimingFunction_Subclass>(value)) {
     case IPC::WebCore_TimingFunction_Subclass::LinearTimingFunction:
     case IPC::WebCore_TimingFunction_Subclass::CubicBezierTimingFunction:
@@ -1236,16 +1239,19 @@ template<> bool isValidEnum<IPC::WebCore_TimingFunction_Subclass, void>(IPC::Enc
     default:
         return false;
     }
+IGNORE_WARNINGS_END
 }
 
 template<> bool isValidEnum<IPC::WebCore_MoveOnlyBaseClass_Subclass, void>(IPC::EncodedVariantIndex value)
 {
+IGNORE_WARNINGS_BEGIN("switch-unreachable")
     switch (static_cast<IPC::WebCore_MoveOnlyBaseClass_Subclass>(value)) {
     case IPC::WebCore_MoveOnlyBaseClass_Subclass::MoveOnlyDerivedClass:
         return true;
     default:
         return false;
     }
+IGNORE_WARNINGS_END
 }
 
 template<> bool isValidEnum<EnumWithoutNamespace, void>(uint8_t value)

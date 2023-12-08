@@ -729,6 +729,7 @@ def decode_type(type):
 
     if type.members_are_subclasses:
         result.append('    auto type = decoder.decode<' + type.subclass_enum_name() + '>();')
+        result.append('    UNUSED_PARAM(type);')
         result.append('    if (UNLIKELY(!decoder.isValid()))')
         result.append('        return std::nullopt;')
         result.append('')
@@ -995,6 +996,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
             result.append('#if ' + type.condition)
         result.append('template<> bool ' + type.function_name_for_enum() + '<IPC::' + type.subclass_enum_name() + ', void>(IPC::EncodedVariantIndex value)')
         result.append('{')
+        result.append('IGNORE_WARNINGS_BEGIN("switch-unreachable")')
         result.append('    switch (static_cast<IPC::' + type.subclass_enum_name() + '>(value)) {')
         for member in type.members:
             if member.condition is not None:
@@ -1006,6 +1008,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
         result.append('    default:')
         result.append('        return false;')
         result.append('    }')
+        result.append('IGNORE_WARNINGS_END')
         result.append('}')
         if type.condition is not None:
             result.append('#endif')

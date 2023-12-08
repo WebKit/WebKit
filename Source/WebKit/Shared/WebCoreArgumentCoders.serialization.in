@@ -6844,6 +6844,18 @@ enum class WebCore::InspectorClientDeveloperPreference : uint8_t {
     MockCaptureDevicesEnabled,
 };
 
+[AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::SystemImage subclasses {
+#if ENABLE(APPLE_PAY)
+    WebCore::ApplePayLogoSystemImage
+#endif
+#if USE(SYSTEM_PREVIEW)
+    WebCore::ARKitBadgeSystemImage
+#endif
+#if USE(APPKIT)
+    WebCore::AppKitControlSystemImage
+#endif
+}
+
 #if ENABLE(WEB_CODECS)
 header: <WebCore/WebCodecsEncodedVideoChunk.h>
 [CustomHeader, RefCounted] class WebCore::WebCodecsEncodedVideoChunkStorage {
