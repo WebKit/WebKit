@@ -382,6 +382,4 @@ template <> struct EnumTraits<WebCore::CurlProxySettings::Mode> {
 };
 #endif
 
-#undef Always
-
 } // namespace WTF
