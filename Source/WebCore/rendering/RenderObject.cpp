@@ -118,7 +118,7 @@ struct SameSizeAsRenderObject : public CachedImageClient, public CanMakeCheckedP
 #endif
     unsigned m_bitfields;
     CheckedRef<Node> node;
-    void* pointers[2];
+    SingleThreadWeakPtr<RenderObject> pointers[2];
     PackedPtr<RenderObject> m_next;
     uint8_t m_type;
     CheckedPtr<Layout::Box> layoutBox;
@@ -184,7 +184,7 @@ RenderTheme& RenderObject::theme() const
 
 bool RenderObject::isDescendantOf(const RenderObject* ancestor) const
 {
-    for (CheckedPtr renderer = this; renderer; renderer = renderer->m_parent) {
+    for (auto* renderer = this; renderer; renderer = renderer->m_parent.get()) {
         if (renderer == ancestor)
             return true;
     }

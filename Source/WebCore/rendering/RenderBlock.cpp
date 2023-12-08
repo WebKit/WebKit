@@ -241,7 +241,7 @@ static PositionedDescendantsMap& positionedDescendantsMap()
     return mapForPositionedDescendants;
 }
 
-using ContinuationOutlineTableMap = HashMap<CheckedPtr<RenderBlock>, std::unique_ptr<ListHashSet<CheckedPtr<RenderInline>>>>;
+using ContinuationOutlineTableMap = HashMap<SingleThreadWeakRef<RenderBlock>, std::unique_ptr<ListHashSet<SingleThreadWeakRef<RenderInline>>>>;
 
 // Allocated only when some of these fields have non-default values
 
@@ -1360,11 +1360,11 @@ void RenderBlock::addContinuationWithOutline(RenderInline* flow)
     auto* table = continuationOutlineTable();
     auto* continuations = table->get(this);
     if (!continuations) {
-        continuations = new ListHashSet<CheckedPtr<RenderInline>>;
-        table->set(this, std::unique_ptr<ListHashSet<CheckedPtr<RenderInline>>>(continuations));
+        continuations = new ListHashSet<SingleThreadWeakRef<RenderInline>>;
+        table->set(*this, std::unique_ptr<ListHashSet<SingleThreadWeakRef<RenderInline>>>(continuations));
     }
     
-    continuations->add(flow);
+    continuations->add(*flow);
 }
 
 bool RenderBlock::paintsContinuationOutline(RenderInline* flow)
@@ -1388,11 +1388,11 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, const LayoutPoint& 
     // Paint each continuation outline.
     for (auto& flow : *continuations) {
         // Need to add in the coordinates of the intervening blocks.
-        RenderBlock* block = flow.get()->containingBlock();
+        RenderBlock* block = flow->containingBlock();
         for ( ; block && block != this; block = block->containingBlock())
             accumulatedPaintOffset.moveBy(block->location());
         ASSERT(block);
-        flow.get()->paintOutline(info, accumulatedPaintOffset);
+        flow->paintOutline(info, accumulatedPaintOffset);
     }
 }
 

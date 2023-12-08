@@ -610,7 +610,7 @@ inline RenderElement* RenderObject::parent() const
 
 inline CheckedPtr<RenderElement> RenderObject::checkedParent() const
 {
-    return m_parent;
+    return m_parent.get();
 }
 
 } // namespace WebCore

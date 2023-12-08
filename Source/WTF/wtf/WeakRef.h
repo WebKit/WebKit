@@ -138,6 +138,9 @@ template<typename P, typename WeakPtrImpl> struct PtrHash<WeakRef<P, WeakPtrImpl
 
 template<typename P, typename WeakPtrImpl> struct DefaultHash<WeakRef<P, WeakPtrImpl>> : PtrHash<WeakRef<P, WeakPtrImpl>> { };
 
+template<typename T> using SingleThreadWeakRef = WeakRef<T, SingleThreadWeakPtrImpl>;
+
 } // namespace WTF
 
+using WTF::SingleThreadWeakRef;
 using WTF::WeakRef;

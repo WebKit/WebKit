@@ -44,6 +44,7 @@
 #include <wtf/ListHashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace WTF {
@@ -912,7 +913,7 @@ private:
     LocalFrameViewLayoutContext m_layoutContext;
 
     HashSet<CheckedPtr<Widget>> m_widgetsInRenderTree;
-    std::unique_ptr<ListHashSet<CheckedPtr<RenderEmbeddedObject>>> m_embeddedObjectsToUpdate;
+    std::unique_ptr<ListHashSet<SingleThreadWeakRef<RenderEmbeddedObject>>> m_embeddedObjectsToUpdate;
     std::unique_ptr<SingleThreadWeakHashSet<RenderElement>> m_slowRepaintObjects;
 
     HashMap<ScrollingNodeID, WeakPtr<ScrollableArea>> m_scrollingNodeIDToPluginScrollableAreaMap;
