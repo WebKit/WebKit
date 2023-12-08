@@ -1868,6 +1868,7 @@ header: <WebCore/ResourceRequest.h>
     [BitField] bool m_isAppInitiated;
     [BitField] bool m_privacyProxyFailClosedForUnreachableNonMainHosts;
     [BitField] bool m_useAdvancedPrivacyProtections;
+    [BitField] bool m_didFilterLinkDecoration;
 };
 
 #if USE(SOUP)

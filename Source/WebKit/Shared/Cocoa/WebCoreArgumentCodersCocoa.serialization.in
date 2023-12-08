@@ -46,6 +46,7 @@ header: <WebCore/ResourceRequest.h>
     std::optional<WebCore::ResourceRequestRequester> m_requester;
     bool m_privacyProxyFailClosedForUnreachableNonMainHosts;
     bool m_useAdvancedPrivacyProtections;
+    bool m_didFilterLinkDecoration;
 };
 
 [Nested] struct WebCore::AttributedString::ParagraphStyleWithTableAndListIDs {

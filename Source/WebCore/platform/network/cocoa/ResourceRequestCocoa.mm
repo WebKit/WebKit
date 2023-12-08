@@ -68,6 +68,7 @@ ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, con
         setIsAppInitiated(*platformData.m_isAppInitiated);
         setPrivacyProxyFailClosedForUnreachableNonMainHosts(platformData.m_privacyProxyFailClosedForUnreachableNonMainHosts);
         setUseAdvancedPrivacyProtections(platformData.m_useAdvancedPrivacyProtections);
+        setDidFilterLinkDecoration(platformData.m_didFilterLinkDecoration);
     }
 
     setCachePartition(cachePartition);
@@ -125,6 +126,7 @@ ResourceRequestPlatformData ResourceRequest::getResourceRequestPlatformData() co
         requester(),
         privacyProxyFailClosedForUnreachableNonMainHosts(),
         useAdvancedPrivacyProtections(),
+        didFilterLinkDecoration(),
     };
 }
 
