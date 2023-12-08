@@ -36,7 +36,8 @@ class HTMLIFrameElement;
 
 class FeaturePolicy {
 public:
-    static FeaturePolicy parse(Document&, const HTMLIFrameElement&, StringView);
+    static FeaturePolicy defaultPolicy(Document& document) { return parse(document, nullptr, { }); }
+    static FeaturePolicy parse(Document& document, const HTMLIFrameElement& frame, StringView allow) { return parse(document, &frame, allow); }
 
     enum class Type {
         Camera,
@@ -70,6 +71,8 @@ public:
     };
 
 private:
+    static FeaturePolicy parse(Document&, const HTMLIFrameElement*, StringView);
+
     AllowRule m_cameraRule;
     AllowRule m_microphoneRule;
     AllowRule m_speakerSelectionRule;
