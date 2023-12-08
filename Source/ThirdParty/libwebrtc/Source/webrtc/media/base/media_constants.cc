@@ -116,9 +116,13 @@ const char kH264ProfileLevelConstrainedHigh[] = "640c1f";
 #ifdef WEBRTC_USE_H265
 // RFC 7798 RTP Payload Format for H.265 video
 const char kH265FmtpProfileSpace[] = "profile-space";
-const char kH265FmtpProfileId[] = "profile-id";
 const char kH265FmtpTierFlag[] = "tier-flag";
+const char kH265FmtpProfileId[] = "profile-id";
 const char kH265FmtpLevelId[] = "level-id";
+const char kH265FmtpProfileCompatibilityIndicator[] =
+    "profile-compatibility-indicator";
+const char kH265FmtpInteropConstraints[] = "interop-constraints";
+const char kH265FmtpTxMode[] = "tx-mode";
 #endif
 
 const char kVP9ProfileId[] = "profile-id";

@@ -42,9 +42,11 @@ enum class H265PacketizationMode {
 };
 
 struct RTPVideoHeaderH265 {
-  // The NAL unit type. If this is a header for a fragmented packet, it's the
-  // NAL unit type of the original data. If this is the header for an aggregated
-  // packet, it's the NAL unit type of the first NAL unit in the packet.
+  // The NAL unit type. If this is a header for a
+  // fragmented packet, it's the NAL unit type of
+  // the original data. If this is the header for an
+  // aggregated packet, it's the NAL unit type of
+  // the first NAL unit in the packet.
   uint8_t nalu_type;
   H265PacketizationTypes packetization_type;
   H265NaluInfo nalus[kMaxNalusPerPacket];

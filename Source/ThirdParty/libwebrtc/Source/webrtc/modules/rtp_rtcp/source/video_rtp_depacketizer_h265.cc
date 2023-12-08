@@ -123,7 +123,7 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessApOrSingleNalu(
   const size_t nalu_length = rtp_payload.size() - kHevcNalHeaderSize;
   uint8_t nal_type = (payload_data[0] & kHevcTypeMask) >> 1;
   std::vector<size_t> nalu_start_offsets;
-  if (nal_type == H265::NaluType::kAP) {
+  if (nal_type == H265::NaluType::kAp) {
     // Skip the StapA header (StapA NAL type + length).
     if (rtp_payload.size() <= kHevcApHeaderSize) {
       RTC_LOG(LS_ERROR) << "AP header truncated.";
@@ -188,7 +188,7 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessApOrSingleNalu(
         if (sps) {
           parsed_payload->video_header.width = sps->width;
           parsed_payload->video_header.height = sps->height;
-          nalu.sps_id = sps->id;
+          nalu.sps_id = sps->sps_id;
           nalu.vps_id = sps->vps_id;
         } else {
           RTC_LOG(LS_WARNING)
@@ -245,8 +245,8 @@ absl::optional<VideoRtpDepacketizer::ParsedRtpPayload> ProcessApOrSingleNalu(
       case H265::NaluType::kPrefixSei:
       case H265::NaluType::kSuffixSei:
         break;
-      case H265::NaluType::kAP:
-      case H265::NaluType::kFU:
+      case H265::NaluType::kAp:
+      case H265::NaluType::kFu:
         RTC_LOG(LS_WARNING) << "Unexpected AP or FU received.";
         return absl::nullopt;
     }
@@ -339,7 +339,7 @@ VideoRtpDepacketizerH265::Parse(rtc::CopyOnWriteBuffer rtp_payload) {
 
   uint8_t nal_type = (rtp_payload.cdata()[0] & kHevcTypeMask) >> 1;
 
-  if (nal_type == H265::NaluType::kFU) {
+  if (nal_type == H265::NaluType::kFu) {
     // Fragmented NAL units (FU-A).
     return ParseFuNalu(std::move(rtp_payload));
   } else {

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2018 The WebRTC project authors. All Rights Reserved.
+ *  Copyright (c) 2023 The WebRTC project authors. All Rights Reserved.
  *
  *  Use of this source code is governed by a BSD-style license
  *  that can be found in the LICENSE file in the root of the source
@@ -15,34 +15,61 @@
 
 #include "absl/types/optional.h"
 #include "common_video/h265/h265_common.h"
-#include "common_video/h265/h265_sps_parser.h"
 #include "rtc_base/bit_buffer.h"
 #include "rtc_base/bitstream_reader.h"
 #include "rtc_base/logging.h"
 
-#define RETURN_EMPTY_ON_FAIL(x) \
-  if (!(x)) {                   \
-    return absl::nullopt;       \
-  }
+#define IN_RANGE_OR_RETURN_NULL(val, min, max)                                \
+  do {                                                                        \
+    if (!reader.Ok() || (val) < (min) || (val) > (max)) {                     \
+      RTC_LOG(LS_WARNING) << "Error in stream: invalid value, expected " #val \
+                             " to be"                                         \
+                          << " in range [" << (min) << ":" << (max) << "]"    \
+                          << " found " << (val) << " instead";                \
+      return absl::nullopt;                                                   \
+    }                                                                         \
+  } while (0)
+
+#define IN_RANGE_OR_RETURN_FALSE(val, min, max)                               \
+  do {                                                                        \
+    if (!reader.Ok() || (val) < (min) || (val) > (max)) {                     \
+      RTC_LOG(LS_WARNING) << "Error in stream: invalid value, expected " #val \
+                             " to be"                                         \
+                          << " in range [" << (min) << ":" << (max) << "]"    \
+                          << " found " << (val) << " instead";                \
+      return false;                                                           \
+    }                                                                         \
+  } while (0)
+
+#define TRUE_OR_RETURN(a)                                                \
+  do {                                                                   \
+    if (!reader.Ok() || !(a)) {                                          \
+      RTC_LOG(LS_WARNING) << "Error in stream: invalid value, expected " \
+                          << #a;                                         \
+      return absl::nullopt;                                              \
+    }                                                                    \
+  } while (0)
 
 namespace {
-const int kMaxPicInitQpDeltaValue = 25;
-const int kMinPicInitQpDeltaValue = -26;
+constexpr int kMaxNumTileColumnWidth = 19;
+constexpr int kMaxNumTileRowHeight = 21;
+constexpr int kMaxRefIdxActive = 15;
 }  // namespace
 
 namespace webrtc {
 
-// General note: this is based off the 06/2019 version of the H.265 standard.
+// General note: this is based off the 08/2021 version of the H.265 standard.
 // You can find it on this page:
 // http://www.itu.int/rec/T-REC-H.265
 
 absl::optional<H265PpsParser::PpsState> H265PpsParser::ParsePps(
     const uint8_t* data,
-    size_t length) {
+    size_t length,
+    const H265SpsParser::SpsState* sps) {
   // First, parse out rbsp, which is basically the source buffer minus emulation
   // bytes (the last byte of a 0x00 0x00 0x03 sequence). RBSP is defined in
   // section 7.3.1.1 of the H.265 standard.
-  return ParseInternal(H265::ParseRbsp(data, length));
+  return ParseInternal(H265::ParseRbsp(data, length), sps);
 }
 
 bool H265PpsParser::ParsePpsIds(const uint8_t* data,
@@ -57,7 +84,9 @@ bool H265PpsParser::ParsePpsIds(const uint8_t* data,
   std::vector<uint8_t> unpacked_buffer = H265::ParseRbsp(data, length);
   BitstreamReader reader(unpacked_buffer);
   *pps_id = reader.ReadExponentialGolomb();
+  IN_RANGE_OR_RETURN_FALSE(*pps_id, 0, 63);
   *sps_id = reader.ReadExponentialGolomb();
+  IN_RANGE_OR_RETURN_FALSE(*sps_id, 0, 15);
   return reader.Ok();
 }
 
@@ -90,11 +119,16 @@ absl::optional<uint32_t> H265PpsParser::ParsePpsIdFromSliceSegmentLayerRbsp(
 }
 
 absl::optional<H265PpsParser::PpsState> H265PpsParser::ParseInternal(
-    rtc::ArrayView<const uint8_t> buffer) {
+    rtc::ArrayView<const uint8_t> buffer,
+    const H265SpsParser::SpsState* sps) {
   BitstreamReader reader(buffer);
   PpsState pps;
 
-  if(!ParsePpsIdsInternal(reader, pps.id, pps.sps_id)){
+  if (!sps) {
+    return absl::nullopt;
+  }
+
+  if (!ParsePpsIdsInternal(reader, pps.pps_id, pps.sps_id)) {
     return absl::nullopt;
   }
 
@@ -104,22 +138,25 @@ absl::optional<H265PpsParser::PpsState> H265PpsParser::ParseInternal(
   pps.output_flag_present_flag = reader.Read<bool>();
   // num_extra_slice_header_bits: u(3)
   pps.num_extra_slice_header_bits = reader.ReadBits(3);
+  IN_RANGE_OR_RETURN_NULL(pps.num_extra_slice_header_bits, 0, 2);
   // sign_data_hiding_enabled_flag: u(1)
   reader.ConsumeBits(1);
   // cabac_init_present_flag: u(1)
   pps.cabac_init_present_flag = reader.Read<bool>();
   // num_ref_idx_l0_default_active_minus1: ue(v)
   pps.num_ref_idx_l0_default_active_minus1 = reader.ReadExponentialGolomb();
+  IN_RANGE_OR_RETURN_NULL(pps.num_ref_idx_l0_default_active_minus1, 0,
+                          kMaxRefIdxActive - 1);
   // num_ref_idx_l1_default_active_minus1: ue(v)
   pps.num_ref_idx_l1_default_active_minus1 = reader.ReadExponentialGolomb();
+  IN_RANGE_OR_RETURN_NULL(pps.num_ref_idx_l1_default_active_minus1, 0,
+                          kMaxRefIdxActive - 1);
   // init_qp_minus26: se(v)
-  pps.pic_init_qp_minus26 = reader.ReadSignedExponentialGolomb();
+  pps.init_qp_minus26 = reader.ReadSignedExponentialGolomb();
+  pps.qp_bd_offset_y = 6 * sps->bit_depth_luma_minus8;
   // Sanity-check parsed value
-  if (pps.pic_init_qp_minus26 > kMaxPicInitQpDeltaValue ||
-      pps.pic_init_qp_minus26 < kMinPicInitQpDeltaValue) {
-    return absl::nullopt;
-  }
-  // constrained_intra_pred_flag: u(1)
+  IN_RANGE_OR_RETURN_NULL(pps.init_qp_minus26, -(26 + pps.qp_bd_offset_y), 25);
+  // constrained_intra_pred_flag: u(1)log2_min_pcm_luma_coding_block_size_minus3
   reader.ConsumeBits(1);
   // transform_skip_enabled_flag: u(1)
   reader.ConsumeBits(1);
@@ -127,12 +164,16 @@ absl::optional<H265PpsParser::PpsState> H265PpsParser::ParseInternal(
   bool cu_qp_delta_enabled_flag = reader.Read<bool>();
   if (cu_qp_delta_enabled_flag) {
     // diff_cu_qp_delta_depth: ue(v)
-    reader.ReadExponentialGolomb();
+    uint32_t diff_cu_qp_delta_depth = reader.ReadExponentialGolomb();
+    IN_RANGE_OR_RETURN_NULL(diff_cu_qp_delta_depth, 0,
+                            sps->log2_diff_max_min_luma_coding_block_size);
   }
   // pps_cb_qp_offset: se(v)
-  reader.ReadSignedExponentialGolomb();
+  int32_t pps_cb_qp_offset = reader.ReadSignedExponentialGolomb();
+  IN_RANGE_OR_RETURN_NULL(pps_cb_qp_offset, -12, 12);
   // pps_cr_qp_offset: se(v)
-  reader.ReadSignedExponentialGolomb();
+  int32_t pps_cr_qp_offset = reader.ReadSignedExponentialGolomb();
+  IN_RANGE_OR_RETURN_NULL(pps_cr_qp_offset, -12, 12);
   // pps_slice_chroma_qp_offsets_present_flag: u(1)
   reader.ConsumeBits(1);
   // weighted_pred_flag: u(1)
@@ -148,18 +189,39 @@ absl::optional<H265PpsParser::PpsState> H265PpsParser::ParseInternal(
   if (tiles_enabled_flag) {
     // num_tile_columns_minus1: ue(v)
     uint32_t num_tile_columns_minus1 = reader.ReadExponentialGolomb();
+    IN_RANGE_OR_RETURN_NULL(num_tile_columns_minus1, 0,
+                            sps->pic_width_in_ctbs_y - 1);
+    TRUE_OR_RETURN(num_tile_columns_minus1 < kMaxNumTileColumnWidth);
     // num_tile_rows_minus1: ue(v)
     uint32_t num_tile_rows_minus1 = reader.ReadExponentialGolomb();
+    IN_RANGE_OR_RETURN_NULL(num_tile_rows_minus1, 0,
+                            sps->pic_height_in_ctbs_y - 1);
+    TRUE_OR_RETURN((num_tile_columns_minus1 != 0) ||
+                   (num_tile_rows_minus1 != 0));
+    TRUE_OR_RETURN(num_tile_rows_minus1 < kMaxNumTileRowHeight);
     // uniform_spacing_flag: u(1)
     bool uniform_spacing_flag = reader.Read<bool>();
     if (!uniform_spacing_flag) {
+      int column_width_minus1[kMaxNumTileColumnWidth];
+      column_width_minus1[num_tile_columns_minus1] =
+          sps->pic_width_in_ctbs_y - 1;
       for (uint32_t i = 0; i < num_tile_columns_minus1; i++) {
         // column_width_minus1: ue(v)
-        reader.ReadExponentialGolomb();
+        column_width_minus1[i] = reader.ReadExponentialGolomb();
+        IN_RANGE_OR_RETURN_NULL(
+            column_width_minus1[i], 0,
+            column_width_minus1[num_tile_columns_minus1] - 1);
+        column_width_minus1[num_tile_columns_minus1] -=
+            column_width_minus1[i] + 1;
       }
+      int row_height_minus1[kMaxNumTileRowHeight];
+      row_height_minus1[num_tile_rows_minus1] = sps->pic_height_in_ctbs_y - 1;
       for (uint32_t i = 0; i < num_tile_rows_minus1; i++) {
         // row_height_minus1: ue(v)
-        reader.ReadExponentialGolomb();
+        row_height_minus1[i] = reader.ReadExponentialGolomb();
+        IN_RANGE_OR_RETURN_NULL(row_height_minus1[i], 0,
+                                row_height_minus1[num_tile_rows_minus1] - 1);
+        row_height_minus1[num_tile_rows_minus1] -= row_height_minus1[i] + 1;
       }
       // loop_filter_across_tiles_enabled_flag: u(1)
       reader.ConsumeBits(1);
@@ -176,9 +238,11 @@ absl::optional<H265PpsParser::PpsState> H265PpsParser::ParseInternal(
     bool pps_deblocking_filter_disabled_flag = reader.Read<bool>();
     if (!pps_deblocking_filter_disabled_flag) {
       // pps_beta_offset_div2: se(v)
-      reader.ReadSignedExponentialGolomb();
+      int pps_beta_offset_div2 = reader.ReadSignedExponentialGolomb();
+      IN_RANGE_OR_RETURN_NULL(pps_beta_offset_div2, -6, 6);
       // pps_tc_offset_div2: se(v)
-      reader.ReadSignedExponentialGolomb();
+      int pps_tc_offset_div2 = reader.ReadSignedExponentialGolomb();
+      IN_RANGE_OR_RETURN_NULL(pps_tc_offset_div2, -6, 6);
     }
   }
   // pps_scaling_list_data_present_flag: u(1)
@@ -192,10 +256,6 @@ absl::optional<H265PpsParser::PpsState> H265PpsParser::ParseInternal(
   }
   // lists_modification_present_flag: u(1)
   pps.lists_modification_present_flag = reader.Read<bool>();
-  // log2_parallel_merge_level_minus2: ue(v)
-  reader.ReadExponentialGolomb();
-  // slice_segment_header_extension_present_flag: u(1)
-  reader.ConsumeBits(1);
 
   if (!reader.Ok()) {
     return absl::nullopt;
@@ -209,12 +269,10 @@ bool H265PpsParser::ParsePpsIdsInternal(BitstreamReader& reader,
                                         uint32_t& sps_id) {
   // pic_parameter_set_id: ue(v)
   pps_id = reader.ReadExponentialGolomb();
-  if (!reader.Ok())
-    return false;
+  IN_RANGE_OR_RETURN_FALSE(pps_id, 0, 63);
   // seq_parameter_set_id: ue(v)
   sps_id = reader.ReadExponentialGolomb();
-  if (!reader.Ok())
-    return false;
+  IN_RANGE_OR_RETURN_FALSE(sps_id, 0, 15);
   return true;
 }
 

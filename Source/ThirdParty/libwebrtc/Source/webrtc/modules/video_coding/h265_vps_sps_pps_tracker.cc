@@ -261,8 +261,10 @@ void H265VpsSpsPpsTracker::InsertVpsSpsPpsNalus(
       vps.data() + kNaluHeaderOffset, vps.size() - kNaluHeaderOffset);
   absl::optional<H265SpsParser::SpsState> parsed_sps = H265SpsParser::ParseSps(
       sps.data() + kNaluHeaderOffset, sps.size() - kNaluHeaderOffset);
+
+  const H265SpsParser::SpsState *sps_state_ptr = &(parsed_sps.value());
   absl::optional<H265PpsParser::PpsState> parsed_pps = H265PpsParser::ParsePps(
-      pps.data() + kNaluHeaderOffset, pps.size() - kNaluHeaderOffset);
+      pps.data() + kNaluHeaderOffset, pps.size() - kNaluHeaderOffset, sps_state_ptr);
 
   if (!parsed_vps) {
     RTC_LOG(LS_WARNING) << "Failed to parse VPS.";
@@ -295,7 +297,7 @@ void H265VpsSpsPpsTracker::InsertVpsSpsPpsNalus(
   uint8_t* sps_data = new uint8_t[sps_info.size];
   memcpy(sps_data, sps.data(), sps_info.size);
   sps_info.data.reset(sps_data);
-  sps_data_[parsed_sps->id] = std::move(sps_info);
+  sps_data_[parsed_sps->sps_id] = std::move(sps_info);
 
   PpsInfo pps_info;
   pps_info.size = pps.size();
@@ -303,10 +305,10 @@ void H265VpsSpsPpsTracker::InsertVpsSpsPpsNalus(
   uint8_t* pps_data = new uint8_t[pps_info.size];
   memcpy(pps_data, pps.data(), pps_info.size);
   pps_info.data.reset(pps_data);
-  pps_data_[parsed_pps->id] = std::move(pps_info);
+  pps_data_[parsed_pps->pps_id] = std::move(pps_info);
 
-  RTC_LOG(LS_INFO) << "Inserted SPS id " << parsed_sps->id << " and PPS id "
-                   << parsed_pps->id << " (referencing SPS "
+  RTC_LOG(LS_INFO) << "Inserted SPS id " << parsed_sps->sps_id << " and PPS id "
+                   << parsed_pps->pps_id << " (referencing SPS "
                    << parsed_pps->sps_id << ")";
 }
 
