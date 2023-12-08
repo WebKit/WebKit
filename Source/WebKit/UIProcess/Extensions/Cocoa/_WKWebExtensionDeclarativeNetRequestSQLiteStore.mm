@@ -48,13 +48,13 @@ static const SchemaVersion currentDatabaseSchemaVersion = 1;
     NSString *_tableName;
 }
 
-- (instancetype)initWithUniqueIdentifier:(NSString *)uniqueIdentifier directory:(NSString *)directory usesInMemoryDatabase:(BOOL)useInMemoryDatabase
+- (instancetype)initWithUniqueIdentifier:(NSString *)uniqueIdentifier storageType:(_WKWebExtensionDeclarativeNetRequestStorageType)storageType directory:(NSString *)directory usesInMemoryDatabase:(BOOL)useInMemoryDatabase
 {
     if (!(self = [super initWithUniqueIdentifier:uniqueIdentifier directory:directory usesInMemoryDatabase:useInMemoryDatabase]))
         return nil;
 
-    _storageType = _useInMemoryDatabase ? @"session" : @"dynamic";
-    _tableName = [NSString stringWithFormat:@"%@_rules", _storageType];
+    _storageType = storageType == _WKWebExtensionDeclarativeNetRequestStorageType::Dynamic ? @"dynamic" : @"session";
+    _tableName = @"rules";
     return self;
 }
 
