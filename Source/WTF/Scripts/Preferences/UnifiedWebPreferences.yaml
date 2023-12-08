@@ -6373,16 +6373,19 @@ SuppressesIncrementalRendering:
 
 SwitchControlEnabled:
   type: bool
-  status: testable
+  status: stable
   category: html
   humanReadableName: "HTML switch control"
   humanReadableDescription: "Enable HTML switch control"
   defaultValue:
     WebKitLegacy:
+      "PLATFORM(COCOA)": true
       default: false
     WebKit:
+      "PLATFORM(COCOA)": true
       default: false
     WebCore:
+      "PLATFORM(COCOA)": true
       default: false
 
 # FIXME: There is no custom binding implemented for WebKitLegacy.
