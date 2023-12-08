@@ -402,16 +402,6 @@ template<> struct ArgumentCoder<RetainPtr<CVPixelBufferRef>> {
 
 namespace WTF {
 
-#if ENABLE(MEDIA_STREAM)
-template<> struct EnumTraits<WebCore::RealtimeMediaSource::Type> {
-    using values = EnumValues<
-        WebCore::RealtimeMediaSource::Type,
-        WebCore::RealtimeMediaSource::Type::Audio,
-        WebCore::RealtimeMediaSource::Type::Video
-    >;
-};
-#endif
-
 #if USE(CURL)
 template <> struct EnumTraits<WebCore::CurlProxySettings::Mode> {
     using values = EnumValues<
@@ -424,28 +414,5 @@ template <> struct EnumTraits<WebCore::CurlProxySettings::Mode> {
 #endif
 
 #undef Always
-
-#if ENABLE(ENCRYPTED_MEDIA)
-template <> struct EnumTraits<WebCore::CDMInstanceSession::SessionLoadFailure> {
-    using values = EnumValues <
-    WebCore::CDMInstanceSession::SessionLoadFailure,
-    WebCore::CDMInstanceSession::SessionLoadFailure::None,
-    WebCore::CDMInstanceSession::SessionLoadFailure::NoSessionData,
-    WebCore::CDMInstanceSession::SessionLoadFailure::MismatchedSessionType,
-    WebCore::CDMInstanceSession::SessionLoadFailure::QuotaExceeded,
-    WebCore::CDMInstanceSession::SessionLoadFailure::Other
-    >;
-};
-
-template <> struct EnumTraits<WebCore::CDMInstance::HDCPStatus> {
-    using values = EnumValues <
-    WebCore::CDMInstance::HDCPStatus,
-    WebCore::CDMInstance::HDCPStatus::Unknown,
-    WebCore::CDMInstance::HDCPStatus::Valid,
-    WebCore::CDMInstance::HDCPStatus::OutputRestricted,
-    WebCore::CDMInstance::HDCPStatus::OutputDownscaled
-    >;
-};
-#endif
 
 } // namespace WTF
