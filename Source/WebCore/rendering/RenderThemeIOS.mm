@@ -97,10 +97,6 @@
 #include "HTMLOptionElement.h"
 #endif
 
-#if USE(APPLE_INTERNAL_SDK)
-#include <WebKitAdditions/RenderThemeIOSAdditions.mm>
-#endif
-
 #import <pal/ios/UIKitSoftLink.h>
 
 namespace WebCore {
@@ -705,46 +701,6 @@ void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, const Element*) c
 
 constexpr auto reducedMotionProgressAnimationMinOpacity = 0.3f;
 constexpr auto reducedMotionProgressAnimationMaxOpacity = 0.6f;
-
-#if !USE(APPLE_INTERNAL_SDK)
-constexpr auto switchHeight = 31.f;
-constexpr auto switchWidth = 51.f;
-
-static bool renderThemePaintSwitchThumb(OptionSet<ControlStates::States>, const RenderObject&, const PaintInfo&, const FloatRect&)
-{
-    return true;
-}
-
-static bool renderThemePaintSwitchTrack(OptionSet<ControlStates::States>, const RenderObject&, const PaintInfo&, const FloatRect&, const Color)
-{
-    return true;
-}
-#endif
-
-void RenderThemeIOS::adjustSwitchStyle(RenderStyle& style, const Element* element) const
-{
-    RenderTheme::adjustSwitchStyle(style, element);
-
-    if (!style.width().isAuto() && !style.height().isAuto())
-        return;
-
-    auto size = std::max(style.computedFontSize(), switchHeight);
-    style.setWidth({ size * (switchWidth / switchHeight), LengthType::Fixed });
-    style.setHeight({ size, LengthType::Fixed });
-
-    if (element->isDisabledFormControl())
-        style.setOpacity(.4f);
-}
-
-bool RenderThemeIOS::paintSwitchThumb(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
-{
-    return renderThemePaintSwitchThumb(extractControlStatesForRenderer(renderer), renderer, paintInfo, rect);
-}
-
-bool RenderThemeIOS::paintSwitchTrack(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
-{
-    return renderThemePaintSwitchTrack(extractControlStatesForRenderer(renderer), renderer, paintInfo, rect, systemColor(CSSValueAppleSystemGreen, renderer.styleColorOptions()));
-}
 
 bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
