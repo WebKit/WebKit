@@ -32,7 +32,6 @@
 #import "UserData.h"
 #import "WKAPICast.h"
 #import "WKBrowsingContextHandleInternal.h"
-#import "WKTypeRefWrapper.h"
 #import <wtf/EnumTraits.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
@@ -106,7 +105,6 @@ enum class ObjCType : uint8_t {
     NSString,
 
     WKBrowsingContextHandle,
-    WKTypeRefWrapper,
 };
 
 static std::optional<ObjCType> typeFromObject(id object)
@@ -128,10 +126,6 @@ static std::optional<ObjCType> typeFromObject(id object)
 
     if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
         return ObjCType::WKBrowsingContextHandle;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    if (dynamic_objc_cast<WKTypeRefWrapper>(object))
-        return ObjCType::WKTypeRefWrapper;
-ALLOW_DEPRECATED_DECLARATIONS_END
 
     return std::nullopt;
 }
@@ -196,13 +190,6 @@ void ObjCObjectGraph::encode(IPC::Encoder& encoder, id object)
     case ObjCType::WKBrowsingContextHandle: {
         encoder << static_cast<WKBrowsingContextHandle *>(object).pageProxyID;
         encoder << static_cast<WKBrowsingContextHandle *>(object).webPageID;
-        return;
-    }
-
-    case ObjCType::WKTypeRefWrapper: {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        UserData::encode(encoder, toImpl(static_cast<WKTypeRefWrapper *>(object).object));
-ALLOW_DEPRECATED_DECLARATIONS_END
         return;
     }
     }
@@ -314,17 +301,6 @@ bool ObjCObjectGraph::decode(IPC::Decoder& decoder, RetainPtr<id>& result)
         result = adoptNS([[WKBrowsingContextHandle alloc] _initWithPageProxyID:*pageProxyID andWebPageID:*webPageID]);
         return true;
     }
-
-    case ObjCType::WKTypeRefWrapper: {
-        RefPtr<API::Object> object;
-        if (!UserData::decode(decoder, object))
-            return false;
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        result = adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(object.get())]);
-ALLOW_DEPRECATED_DECLARATIONS_END
-        return true;
-    }
     }
 
     ASSERT_NOT_REACHED();
@@ -363,8 +339,7 @@ template<> struct EnumTraits<WebKit::ObjCType> {
         WebKit::ObjCType::NSDictionary,
         WebKit::ObjCType::NSNumber,
         WebKit::ObjCType::NSString,
-        WebKit::ObjCType::WKBrowsingContextHandle,
-        WebKit::ObjCType::WKTypeRefWrapper
+        WebKit::ObjCType::WKBrowsingContextHandle
     >;
 };
 

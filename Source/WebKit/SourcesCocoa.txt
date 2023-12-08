@@ -341,7 +341,6 @@ UIProcess/API/Cocoa/WKProcessPool.mm
 UIProcess/API/Cocoa/WKScriptMessage.mm
 UIProcess/API/Cocoa/WKSecurityOrigin.mm
 UIProcess/API/Cocoa/WKSnapshotConfiguration.mm
-UIProcess/API/Cocoa/WKTypeRefWrapper.mm
 UIProcess/API/Cocoa/WKURLSchemeTask.mm
 UIProcess/API/Cocoa/WKUserContentController.mm
 UIProcess/API/Cocoa/WKUserScript.mm

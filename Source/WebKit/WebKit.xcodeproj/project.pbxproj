@@ -1622,7 +1622,6 @@
 		7CD3A4831A5D02FA009623B8 /* APINavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD3A4811A5D02FA009623B8 /* APINavigation.h */; };
 		7CD5EBB91746A15B000C1C45 /* WKObjCTypeWrapperRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD5EBB71746A15B000C1C45 /* WKObjCTypeWrapperRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CD5EBBB1746A83E000C1C45 /* WKBaseMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD5EBBA1746A83E000C1C45 /* WKBaseMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7CD5EBBF1746B04C000C1C45 /* WKTypeRefWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CD5EBBD1746B04C000C1C45 /* WKTypeRefWrapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7CE4D2071A46776100C7F152 /* APILegacyContextHistoryClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE4D2061A46775700C7F152 /* APILegacyContextHistoryClient.h */; };
 		7CE4D21B1A4914A300C7F152 /* WebProcessPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE4D2181A4914A300C7F152 /* WebProcessPool.h */; };
 		7CE4D2201A4914CA00C7F152 /* APIProcessPoolConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 7CE4D21E1A4914CA00C7F152 /* APIProcessPoolConfiguration.h */; };
@@ -6244,8 +6243,6 @@
 		7CD5EBB61746A15B000C1C45 /* WKObjCTypeWrapperRef.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKObjCTypeWrapperRef.mm; sourceTree = "<group>"; };
 		7CD5EBB71746A15B000C1C45 /* WKObjCTypeWrapperRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKObjCTypeWrapperRef.h; sourceTree = "<group>"; };
 		7CD5EBBA1746A83E000C1C45 /* WKBaseMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBaseMac.h; sourceTree = "<group>"; };
-		7CD5EBBC1746B04C000C1C45 /* WKTypeRefWrapper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKTypeRefWrapper.mm; sourceTree = "<group>"; };
-		7CD5EBBD1746B04C000C1C45 /* WKTypeRefWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKTypeRefWrapper.h; sourceTree = "<group>"; };
 		7CDE73A01F9DA37B00390312 /* WebPreferencesDefaultValues.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPreferencesDefaultValues.h; sourceTree = "<group>"; };
 		7CDE73A21F9DA59700390312 /* PreferencesTemplates */ = {isa = PBXFileReference; lastKnownFileType = folder; path = PreferencesTemplates; sourceTree = "<group>"; };
 		7CDE73A31F9DAB6500390312 /* WebPreferencesDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebPreferencesDefinitions.h; sourceTree = "<group>"; };
@@ -7792,6 +7789,8 @@
 		FA1473272B06EE6200765CC1 /* SandboxExtension.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = SandboxExtension.serialization.in; sourceTree = "<group>"; };
 		FA39AE4B2B2269C4008F93CD /* APIDictionary.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = APIDictionary.serialization.in; sourceTree = "<group>"; };
 		FA39AE4C2B229187008F93CD /* WebImage.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebImage.serialization.in; sourceTree = "<group>"; };
+		FA39AE4D2B22D766008F93CD /* APIObject.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = APIObject.serialization.in; sourceTree = "<group>"; };
+		FA39AE4E2B22DA68008F93CD /* UserData.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = UserData.serialization.in; sourceTree = "<group>"; };
 		FA651BA42AA3CBB500747576 /* NetworkTransportBidirectionalStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NetworkTransportBidirectionalStream.h; sourceTree = "<group>"; };
 		FA651BA52AA3CBB500747576 /* NetworkTransportBidirectionalStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkTransportBidirectionalStream.cpp; sourceTree = "<group>"; };
 		FA651BA62AA3CBB600747576 /* NetworkTransportReceiveStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkTransportReceiveStream.cpp; sourceTree = "<group>"; };
@@ -8369,8 +8368,6 @@
 				BCBAACE5145225C90053F82F /* WKProcessGroup.h */,
 				BCBAACE6145225CA0053F82F /* WKProcessGroup.mm */,
 				BCBAACE7145225CB0053F82F /* WKProcessGroupPrivate.h */,
-				7CD5EBBD1746B04C000C1C45 /* WKTypeRefWrapper.h */,
-				7CD5EBBC1746B04C000C1C45 /* WKTypeRefWrapper.mm */,
 				BC8699B2116AADAA002A925B /* WKView.h */,
 				BFA6179E12F0B99D0033E0CA /* WKViewPrivate.h */,
 			);
@@ -8685,6 +8682,7 @@
 				516BF1D32AE5FF24009A0204 /* UserContentControllerParameters.serialization.in */,
 				1AC1336518565B5700F3EC05 /* UserData.cpp */,
 				1AC1336618565B5700F3EC05 /* UserData.h */,
+				FA39AE4E2B22DA68008F93CD /* UserData.serialization.in */,
 				2DA3E37D2A33C98900F7799D /* UserInterfaceIdiom.serialization.in */,
 				419BD18F28E1A86C0089D7B7 /* VideoCodecType.h */,
 				9B38009D2AEA2D8B0011A892 /* ViewWindowCoordinates.h */,
@@ -14028,6 +14026,7 @@
 				FA8262722B2193EA00BB8236 /* APINumber.serialization.in */,
 				B63403F814910D57001070B5 /* APIObject.cpp */,
 				BCF04C8C11FF9B7D00F86A58 /* APIObject.h */,
+				FA39AE4D2B22D766008F93CD /* APIObject.serialization.in */,
 				1AC1336B18565C7A00F3EC05 /* APIPageHandle.h */,
 				7AE42B452954EDC200B20510 /* APIPageHandle.serialization.in */,
 				F634445512A885C8000612D8 /* APISecurityOrigin.h */,
@@ -16476,7 +16475,6 @@
 				F4F475822A4F55A80004197B /* WKTouchEventsGestureRecognizer.h in Headers */,
 				F4E727232A547F0400CE34FD /* WKTouchEventsGestureRecognizerTypes.h in Headers */,
 				BC407608124FF0270068F20A /* WKType.h in Headers */,
-				7CD5EBBF1746B04C000C1C45 /* WKTypeRefWrapper.h in Headers */,
 				1AD8790A18B6C38A006CAFD7 /* WKUIDelegate.h in Headers */,
 				3743925818BC4C60001C8675 /* WKUIDelegatePrivate.h in Headers */,
 				BC40760A124FF0270068F20A /* WKURL.h in Headers */,

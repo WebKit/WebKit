@@ -183,6 +183,7 @@ $(PROJECT_DIR)/Shared/API/APIError.serialization.in
 $(PROJECT_DIR)/Shared/API/APIFrameHandle.serialization.in
 $(PROJECT_DIR)/Shared/API/APIGeometry.serialization.in
 $(PROJECT_DIR)/Shared/API/APINumber.serialization.in
+$(PROJECT_DIR)/Shared/API/APIObject.serialization.in
 $(PROJECT_DIR)/Shared/API/APIPageHandle.serialization.in
 $(PROJECT_DIR)/Shared/API/APISerializedScriptValue.serialization.in
 $(PROJECT_DIR)/Shared/API/APIString.serialization.in
@@ -302,6 +303,7 @@ $(PROJECT_DIR)/Shared/TextRecognitionResult.serialization.in
 $(PROJECT_DIR)/Shared/URLSchemeTaskParameters.serialization.in
 $(PROJECT_DIR)/Shared/UpdateInfo.serialization.in
 $(PROJECT_DIR)/Shared/UserContentControllerParameters.serialization.in
+$(PROJECT_DIR)/Shared/UserData.serialization.in
 $(PROJECT_DIR)/Shared/UserInterfaceIdiom.serialization.in
 $(PROJECT_DIR)/Shared/ViewWindowCoordinates.serialization.in
 $(PROJECT_DIR)/Shared/VisibleContentRectUpdateInfo.serialization.in

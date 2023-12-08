@@ -584,10 +584,12 @@ std::optional<SoftLinkedMember> ArgumentCoder<SoftLinkedMember>::decode(Decoder&
 }
 
 enum class WebCore_TimingFunction_Subclass : IPC::EncodedVariantIndex {
-    LinearTimingFunction,
-    CubicBezierTimingFunction,
-    StepsTimingFunction,
-    SpringTimingFunction
+    LinearTimingFunction
+    , CubicBezierTimingFunction
+#if CONDITION
+    , StepsTimingFunction
+#endif
+    , SpringTimingFunction
 };
 
 void ArgumentCoder<WebCore::TimingFunction>::encode(Encoder& encoder, const WebCore::TimingFunction& instance)
@@ -602,11 +604,13 @@ void ArgumentCoder<WebCore::TimingFunction>::encode(Encoder& encoder, const WebC
         encoder << *subclass;
         return;
     }
+#if CONDITION
     if (auto* subclass = dynamicDowncast<WebCore::StepsTimingFunction>(instance)) {
         encoder << WebCore_TimingFunction_Subclass::StepsTimingFunction;
         encoder << *subclass;
         return;
     }
+#endif
     if (auto* subclass = dynamicDowncast<WebCore::SpringTimingFunction>(instance)) {
         encoder << WebCore_TimingFunction_Subclass::SpringTimingFunction;
         encoder << *subclass;
@@ -633,12 +637,14 @@ std::optional<Ref<WebCore::TimingFunction>> ArgumentCoder<WebCore::TimingFunctio
             return std::nullopt;
         return WTFMove(*result);
     }
+#if CONDITION
     if (type == WebCore_TimingFunction_Subclass::StepsTimingFunction) {
         auto result = decoder.decode<Ref<WebCore::StepsTimingFunction>>();
         if (UNLIKELY(!decoder.isValid()))
             return std::nullopt;
         return WTFMove(*result);
     }
+#endif
     if (type == WebCore_TimingFunction_Subclass::SpringTimingFunction) {
         auto result = decoder.decode<Ref<WebCore::SpringTimingFunction>>();
         if (UNLIKELY(!decoder.isValid()))
@@ -1222,7 +1228,9 @@ template<> bool isValidEnum<IPC::WebCore_TimingFunction_Subclass, void>(IPC::Enc
     switch (static_cast<IPC::WebCore_TimingFunction_Subclass>(value)) {
     case IPC::WebCore_TimingFunction_Subclass::LinearTimingFunction:
     case IPC::WebCore_TimingFunction_Subclass::CubicBezierTimingFunction:
+#if CONDITION
     case IPC::WebCore_TimingFunction_Subclass::StepsTimingFunction:
+#endif
     case IPC::WebCore_TimingFunction_Subclass::SpringTimingFunction:
         return true;
     default:

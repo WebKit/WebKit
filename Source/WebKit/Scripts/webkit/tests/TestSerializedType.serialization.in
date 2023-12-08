@@ -105,7 +105,9 @@ struct SoftLinkedMember {
 [RefCounted] class WebCore::TimingFunction subclasses {
     WebCore::LinearTimingFunction,
     WebCore::CubicBezierTimingFunction,
+#if CONDITION
     WebCore::StepsTimingFunction,
+#endif
     WebCore::SpringTimingFunction
 }
 

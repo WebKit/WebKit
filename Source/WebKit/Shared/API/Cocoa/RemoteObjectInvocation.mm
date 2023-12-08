@@ -31,9 +31,7 @@
 
 namespace WebKit {
 
-RemoteObjectInvocation::RemoteObjectInvocation()
-{
-}
+RemoteObjectInvocation::RemoteObjectInvocation() = default;
 
 RemoteObjectInvocation::RemoteObjectInvocation(const String& interfaceIdentifier, RefPtr<API::Dictionary>&& encodedInvocation, std::unique_ptr<ReplyInfo>&& replyInfo)
     : m_interfaceIdentifier(interfaceIdentifier)
@@ -45,7 +43,7 @@ RemoteObjectInvocation::RemoteObjectInvocation(const String& interfaceIdentifier
 void RemoteObjectInvocation::encode(IPC::Encoder& encoder) const
 {
     encoder << m_interfaceIdentifier;
-    UserData::encode(encoder, m_encodedInvocation.get());
+    encoder << m_encodedInvocation;
     if (!m_replyInfo) {
         encoder << false;
         return;
@@ -61,14 +59,10 @@ bool RemoteObjectInvocation::decode(IPC::Decoder& decoder, RemoteObjectInvocatio
     if (!decoder.decode(result.m_interfaceIdentifier))
         return false;
 
-    RefPtr<API::Object> encodedInvocation;
-    if (!UserData::decode(decoder, encodedInvocation))
+    auto encodedInvocation = decoder.decode<RefPtr<API::Dictionary>>();
+    if (!encodedInvocation)
         return false;
-
-    if (!encodedInvocation || encodedInvocation->type() != API::Object::Type::Dictionary)
-        return false;
-
-    result.m_encodedInvocation = static_cast<API::Dictionary*>(encodedInvocation.get());
+    result.m_encodedInvocation = WTFMove(*encodedInvocation);
 
     bool hasReplyInfo;
     if (!decoder.decode(hasReplyInfo))

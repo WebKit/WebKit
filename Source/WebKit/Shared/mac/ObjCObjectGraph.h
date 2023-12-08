@@ -69,3 +69,7 @@ template<> struct ArgumentCoder<WebKit::ObjCObjectGraph> {
     static std::optional<Ref<WebKit::ObjCObjectGraph>> decode(Decoder&);
 };
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::ObjCObjectGraph)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::ObjCObjectGraph; }
+SPECIALIZE_TYPE_TRAITS_END()

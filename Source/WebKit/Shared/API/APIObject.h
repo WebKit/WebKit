@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include <wtf/ArgumentCoder.h>
-#include <wtf/EnumTraits.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
@@ -227,9 +225,7 @@ public:
 #endif
     };
 
-    virtual ~Object()
-    {
-    }
+    virtual ~Object() = default;
 
     virtual Type type() const = 0;
 
@@ -278,16 +274,10 @@ class ObjectImpl : public Object {
 public:
     static const Type APIType = ArgumentType;
 
-    virtual ~ObjectImpl()
-    {
-    }
-
 protected:
     friend class Object;
 
-    ObjectImpl()
-    {
-    }
+    ObjectImpl() = default;
 
     Type type() const override { return APIType; }
 
@@ -311,193 +301,9 @@ inline API::Object* Object::unwrap(void* object)
 
 } // namespace Object
 
-namespace WTF {
-
-template<> struct EnumTraits<API::Object::Type> {
-    using values = EnumValues<
-        API::Object::Type,
-        // Base types
-        API::Object::Type::Null,
-        API::Object::Type::Array,
-        API::Object::Type::AuthenticationChallenge,
-        API::Object::Type::AuthenticationDecisionListener,
-        API::Object::Type::CaptionUserPreferencesTestingModeToken,
-        API::Object::Type::CertificateInfo,
-        API::Object::Type::Connection,
-        API::Object::Type::ContextMenuItem,
-        API::Object::Type::Credential,
-        API::Object::Type::Data,
-        API::Object::Type::Dictionary,
-        API::Object::Type::Error,
-        API::Object::Type::FrameHandle,
-        API::Object::Type::Image,
-        API::Object::Type::PageHandle,
-        API::Object::Type::ProtectionSpace,
-        API::Object::Type::ResourceLoadInfo,
-        API::Object::Type::SecurityOrigin,
-        API::Object::Type::SessionState,
-        API::Object::Type::SerializedScriptValue,
-        API::Object::Type::String,
-        API::Object::Type::URL,
-        API::Object::Type::URLRequest,
-        API::Object::Type::URLResponse,
-        API::Object::Type::UserContentURLPattern,
-        API::Object::Type::UserScript,
-        API::Object::Type::UserStyleSheet,
-        API::Object::Type::WebArchive,
-        API::Object::Type::WebArchiveResource,
-
-        // Base numeric types
-        API::Object::Type::Boolean,
-        API::Object::Type::Double,
-        API::Object::Type::UInt64,
-        API::Object::Type::Int64,
-
-        // Geometry types
-        API::Object::Type::Point,
-        API::Object::Type::Size,
-        API::Object::Type::Rect,
-
-        // UIProcess types
-        API::Object::Type::ApplicationCacheManager,
-#if ENABLE(APPLICATION_MANIFEST)
-        API::Object::Type::ApplicationManifest,
-#endif
-        API::Object::Type::Attachment,
-        API::Object::Type::AutomationSession,
-        API::Object::Type::BackForwardList,
-        API::Object::Type::BackForwardListItem,
-        API::Object::Type::CacheManager,
-        API::Object::Type::ColorPickerResultListener,
-        API::Object::Type::ContentRuleList,
-        API::Object::Type::ContentRuleListAction,
-        API::Object::Type::ContentRuleListStore,
-        API::Object::Type::ContentWorld,
-#if PLATFORM(IOS_FAMILY)
-        API::Object::Type::ContextMenuElementInfo,
-#endif
-#if PLATFORM(MAC)
-        API::Object::Type::ContextMenuElementInfoMac,
-#endif
-        API::Object::Type::ContextMenuListener,
-        API::Object::Type::CustomHeaderFields,
-        API::Object::Type::DataTask,
-        API::Object::Type::DebuggableInfo,
-        API::Object::Type::Download,
-        API::Object::Type::Feature,
-        API::Object::Type::FormSubmissionListener,
-        API::Object::Type::Frame,
-        API::Object::Type::FrameInfo,
-        API::Object::Type::FramePolicyListener,
-        API::Object::Type::FrameTreeNode,
-        API::Object::Type::FullScreenManager,
-        API::Object::Type::GeolocationManager,
-        API::Object::Type::GeolocationPermissionRequest,
-        API::Object::Type::HTTPCookieStore,
-        API::Object::Type::HitTestResult,
-        API::Object::Type::GeolocationPosition,
-        API::Object::Type::GrammarDetail,
-        API::Object::Type::IconDatabase,
-        API::Object::Type::Inspector,
-        API::Object::Type::InspectorConfiguration,
-#if ENABLE(INSPECTOR_EXTENSIONS)
-        API::Object::Type::InspectorExtension,
-#endif
-        API::Object::Type::KeyValueStorageManager,
-        API::Object::Type::MediaCacheManager,
-        API::Object::Type::MessageListener,
-        API::Object::Type::Navigation,
-        API::Object::Type::NavigationAction,
-        API::Object::Type::NavigationData,
-        API::Object::Type::NavigationResponse,
-        API::Object::Type::Notification,
-        API::Object::Type::NotificationManager,
-        API::Object::Type::NotificationPermissionRequest,
-        API::Object::Type::OpenPanelParameters,
-        API::Object::Type::OpenPanelResultListener,
-        API::Object::Type::OriginDataManager,
-        API::Object::Type::Page,
-        API::Object::Type::PageConfiguration,
-        API::Object::Type::PageGroup,
-        API::Object::Type::ProcessPool,
-        API::Object::Type::ProcessPoolConfiguration,
-        API::Object::Type::PluginSiteDataManager,
-        API::Object::Type::Preferences,
-        API::Object::Type::RequestStorageAccessConfirmResultListener,
-        API::Object::Type::ResourceLoadStatisticsStore,
-        API::Object::Type::ResourceLoadStatisticsFirstParty,
-        API::Object::Type::ResourceLoadStatisticsThirdParty,
-        API::Object::Type::RunBeforeUnloadConfirmPanelResultListener,
-        API::Object::Type::RunJavaScriptAlertResultListener,
-        API::Object::Type::RunJavaScriptConfirmResultListener,
-        API::Object::Type::RunJavaScriptPromptResultListener,
-        API::Object::Type::SpeechRecognitionPermissionCallback,
-        API::Object::Type::TextChecker,
-        API::Object::Type::URLSchemeTask,
-        API::Object::Type::UserContentController,
-        API::Object::Type::UserInitiatedAction,
-        API::Object::Type::UserMediaPermissionCheck,
-        API::Object::Type::UserMediaPermissionRequest,
-        API::Object::Type::ViewportAttributes,
-        API::Object::Type::VisitedLinkStore,
-#if ENABLE(WK_WEB_EXTENSIONS)
-        API::Object::Type::WebExtension,
-        API::Object::Type::WebExtensionAction,
-        API::Object::Type::WebExtensionCommand,
-        API::Object::Type::WebExtensionContext,
-        API::Object::Type::WebExtensionController,
-        API::Object::Type::WebExtensionControllerConfiguration,
-        API::Object::Type::WebExtensionMatchPattern,
-        API::Object::Type::WebExtensionMessagePort,
-#endif
-        API::Object::Type::WebResourceLoadStatisticsManager,
-        API::Object::Type::WebsiteDataRecord,
-        API::Object::Type::WebsiteDataStore,
-        API::Object::Type::WebsiteDataStoreConfiguration,
-        API::Object::Type::WebsitePolicies,
-        API::Object::Type::WindowFeatures,
-
-#if ENABLE(WEB_AUTHN)
-        API::Object::Type::WebAuthenticationAssertionResponse,
-        API::Object::Type::WebAuthenticationPanel,
-#endif
-
-        API::Object::Type::MediaKeySystemPermissionCallback,
-
-        // Bundle types
-        API::Object::Type::Bundle,
-        API::Object::Type::BundleBackForwardList,
-        API::Object::Type::BundleBackForwardListItem,
-        API::Object::Type::BundleCSSStyleDeclarationHandle,
-        API::Object::Type::BundleDOMWindowExtension,
-        API::Object::Type::BundleFrame,
-        API::Object::Type::BundleHitTestResult,
-        API::Object::Type::BundleInspector,
-        API::Object::Type::BundleNodeHandle,
-        API::Object::Type::BundlePage,
-        API::Object::Type::BundlePageBanner,
-        API::Object::Type::BundlePageOverlay,
-        API::Object::Type::BundleRangeHandle,
-        API::Object::Type::BundleScriptWorld,
-
-        // Platform specific
-        API::Object::Type::EditCommandProxy,
-        API::Object::Type::ObjCObjectGraph,
-        API::Object::Type::View
-#if USE(SOUP)
-        , API::Object::Type::SoupRequestManager
-        , API::Object::Type::SoupCustomProtocolRequestManager
-#endif
-    >;
-};
-
-} // namespace WTF
-
-namespace IPC {
-template<> struct ArgumentCoder<RefPtr<API::Object>> {
-    static void encode(Encoder&, const RefPtr<API::Object>&);
-    static std::optional<RefPtr<API::Object>> decode(Decoder&);
-};
-}
-
 #undef DELEGATE_REF_COUNTING_TO_COCOA
+
+#define SPECIALIZE_TYPE_TRAITS_API_OBJECT(ClassName) \
+SPECIALIZE_TYPE_TRAITS_BEGIN(API::ClassName) \
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::ClassName; } \
+SPECIALIZE_TYPE_TRAITS_END()

@@ -59,3 +59,5 @@ private:
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_API_OBJECT(UserContentURLPattern);

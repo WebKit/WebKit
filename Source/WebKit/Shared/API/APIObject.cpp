@@ -31,7 +31,6 @@
 #include "config.h"
 #include "APIObject.h"
 
-#include "UserData.h"
 #include "WebKit2Initialize.h"
 
 namespace API {
@@ -42,20 +41,3 @@ Object::Object()
 }
 
 } // namespace API
-
-namespace IPC {
-
-void ArgumentCoder<RefPtr<API::Object>>::encode(Encoder& encoder, const RefPtr<API::Object>& object)
-{
-    WebKit::UserData(RefPtr { object }).encode(encoder);
-}
-
-std::optional<RefPtr<API::Object>> ArgumentCoder<RefPtr<API::Object>>::decode(Decoder& decoder)
-{
-    RefPtr<API::Object> object;
-    if (!WebKit::UserData::decode(decoder, object))
-        return std::nullopt;
-    return { WTFMove(object) };
-}
-
-} // namespace IPC

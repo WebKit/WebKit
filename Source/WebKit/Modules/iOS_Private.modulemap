@@ -1759,11 +1759,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module WKTypeRefWrapper {
-    header "WKTypeRefWrapper.h"
-    export *
-  }
-
   explicit module WKTypes {
     header "WKTypes.h"
     export *
