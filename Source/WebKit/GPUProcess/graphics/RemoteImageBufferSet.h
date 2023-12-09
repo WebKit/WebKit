@@ -34,6 +34,10 @@
 #include "StreamMessageReceiver.h"
 #include <WebCore/ImageBuffer.h>
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+#include <WebCore/DynamicContentScalingDisplayList.h>
+#endif
+
 namespace WebKit {
 
 class RemoteRenderingBackend;
@@ -67,6 +71,10 @@ private:
     void updateConfiguration(const WebCore::FloatSize&, WebCore::RenderingMode, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::PixelFormat);
     void setFlushSignal(IPC::Signal&&);
     void flush();
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    void dynamicContentScalingDisplayList(CompletionHandler<void(std::optional<WebCore::DynamicContentScalingDisplayList>&&)>&&);
+#endif
 
     bool isOpaque() const
     {

@@ -44,6 +44,8 @@ class TextStream;
 
 namespace WebCore {
 
+class BifurcatedGraphicsContext;
+class DynamicContentScalingDisplayList;
 class Filter;
 class GraphicsClient;
 #if HAVE(IOSURFACE)
@@ -91,13 +93,13 @@ public:
         if (!backend)
             return nullptr;
         auto backendInfo = populateBackendInfo<BackendType>(backendParameters);
-        return create<ImageBufferType>(parameters, backendInfo, WTFMove(backend), std::forward<Arguments>(arguments)...);
+        return create<ImageBufferType>(parameters, backendInfo, creationContext, WTFMove(backend), std::forward<Arguments>(arguments)...);
     }
 
     template<typename ImageBufferType = ImageBuffer, typename... Arguments>
-    static RefPtr<ImageBufferType> create(Parameters parameters, const ImageBufferBackend::Info& backendInfo, std::unique_ptr<ImageBufferBackend>&& backend, Arguments&&... arguments)
+    static RefPtr<ImageBufferType> create(Parameters parameters, const ImageBufferBackend::Info& backendInfo, const WebCore::ImageBufferCreationContext& creationContext, std::unique_ptr<ImageBufferBackend>&& backend, Arguments&&... arguments)
     {
-        return adoptRef(new ImageBufferType(parameters, backendInfo, WTFMove(backend), std::forward<Arguments>(arguments)...));
+        return adoptRef(new ImageBufferType(parameters, backendInfo, creationContext, WTFMove(backend), std::forward<Arguments>(arguments)...));
     }
 
     template<typename BackendType>
@@ -175,6 +177,10 @@ public:
     WEBCORE_EXPORT RefPtr<cairo_surface_t> createCairoSurface();
 #endif
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    WEBCORE_EXPORT virtual std::optional<DynamicContentScalingDisplayList> dynamicContentScalingDisplayList();
+#endif
+
     // Returns NativeImage of the current drawing results. Results in an immutable copy of the current back buffer.
     // Caller is responsible for ensuring that the passed reference is the only reference to the ImageBuffer.
     // Has better performance than:
@@ -199,7 +205,7 @@ public:
     WEBCORE_EXPORT virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied);
 
     WEBCORE_EXPORT bool isInUse() const;
-    WEBCORE_EXPORT void releaseGraphicsContext();
+    WEBCORE_EXPORT virtual void releaseGraphicsContext();
     WEBCORE_EXPORT bool setVolatile();
     WEBCORE_EXPORT SetNonVolatileResult setNonVolatile();
     WEBCORE_EXPORT VolatilityState volatilityState() const;
@@ -211,11 +217,10 @@ public:
 
     WEBCORE_EXPORT virtual String debugDescription() const;
 
-    // FIXME: This should just be "ImageBufferSharing".
     WEBCORE_EXPORT virtual ImageBufferBackendSharing* toBackendSharing();
 
 protected:
-    WEBCORE_EXPORT ImageBuffer(ImageBufferParameters, const ImageBufferBackend::Info&, std::unique_ptr<ImageBufferBackend>&& = nullptr, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
+    WEBCORE_EXPORT ImageBuffer(ImageBufferParameters, const ImageBufferBackend::Info&, const WebCore::ImageBufferCreationContext&, std::unique_ptr<ImageBufferBackend>&& = nullptr, RenderingResourceIdentifier = RenderingResourceIdentifier::generate());
 
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
     WEBCORE_EXPORT virtual RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread();

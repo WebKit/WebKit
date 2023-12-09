@@ -35,7 +35,7 @@ namespace WebCore {
 // Any state that is returned by GraphicsContext methods will be retrieved from the primary context.
 
 class WEBCORE_EXPORT BifurcatedGraphicsContext : public GraphicsContext {
-    WTF_FORBID_HEAP_ALLOCATION;
+    WTF_MAKE_NONCOPYABLE(BifurcatedGraphicsContext);
 public:
     BifurcatedGraphicsContext(GraphicsContext& primaryContext, GraphicsContext& secondaryContext);
     ~BifurcatedGraphicsContext();

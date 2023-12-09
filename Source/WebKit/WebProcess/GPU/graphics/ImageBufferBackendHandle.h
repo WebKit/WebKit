@@ -25,10 +25,13 @@
 
 #pragma once
 
-#include "DynamicContentScalingDisplayList.h"
 #include "ShareableBitmap.h"
 #include <variant>
 #include <wtf/MachSendRight.h>
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+#include <WebCore/DynamicContentScalingDisplayList.h>
+#endif
 
 namespace WebKit {
 
@@ -38,7 +41,7 @@ using ImageBufferBackendHandle = std::variant<
     , MachSendRight
 #endif
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    , DynamicContentScalingDisplayList
+    , WebCore::DynamicContentScalingDisplayList
 #endif
 >;
 

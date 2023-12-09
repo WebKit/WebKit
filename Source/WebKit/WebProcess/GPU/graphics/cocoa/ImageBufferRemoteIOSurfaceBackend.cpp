@@ -90,11 +90,6 @@ void ImageBufferRemoteIOSurfaceBackend::clearBackendHandle()
     m_handle = { };
 }
 
-bool ImageBufferRemoteIOSurfaceBackend::hasBackendHandle() const
-{
-    return !!m_handle;
-}
-
 GraphicsContext& ImageBufferRemoteIOSurfaceBackend::context()
 {
     RELEASE_ASSERT_NOT_REACHED();

@@ -97,7 +97,7 @@ void RemoteLayerWithRemoteRenderingBackingStore::ensureBackingStore(const Parame
     m_parameters = parameters;
     clearBackingStore();
     if (m_bufferSet)
-        m_bufferSet->setConfiguration(size(), scale(), colorSpace(), pixelFormat(), type() == RemoteLayerBackingStore::Type::IOSurface ? RenderingMode::Accelerated : RenderingMode::Unaccelerated);
+        m_bufferSet->setConfiguration(size(), scale(), colorSpace(), pixelFormat(), type() == RemoteLayerBackingStore::Type::IOSurface ? RenderingMode::Accelerated : RenderingMode::Unaccelerated, m_layer->containsBitmapOnly() ? WebCore::RenderingPurpose::BitmapOnlyLayerBacking : WebCore::RenderingPurpose::LayerBacking);
 }
 
 void RemoteLayerWithRemoteRenderingBackingStore::encodeBufferAndBackendInfos(IPC::Encoder& encoder) const
@@ -115,6 +115,13 @@ void RemoteLayerWithRemoteRenderingBackingStore::encodeBufferAndBackendInfos(IPC
     encodeBuffer(m_bufferCacheIdentifiers.back);
     encodeBuffer(m_bufferCacheIdentifiers.secondaryBack);
 }
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+std::optional<ImageBufferBackendHandle> RemoteLayerWithRemoteRenderingBackingStore::displayListHandle() const
+{
+    return m_bufferSet ? m_bufferSet->dynamicContentScalingDisplayList() : std::nullopt;
+}
+#endif
 
 void RemoteLayerWithRemoteRenderingBackingStore::dump(WTF::TextStream& ts) const
 {

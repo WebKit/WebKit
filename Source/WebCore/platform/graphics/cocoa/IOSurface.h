@@ -65,6 +65,7 @@ public:
         ImageBuffer,
         ImageBufferShareableMapped,
         LayerBacking,
+        BitmapOnlyLayerBacking,
         MediaPainting,
         Snapshot,
         ShareableSnapshot,

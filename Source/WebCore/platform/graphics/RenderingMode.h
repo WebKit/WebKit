@@ -36,6 +36,7 @@ enum class RenderingPurpose : uint8_t {
     Canvas,
     DOM,
     LayerBacking,
+    BitmapOnlyLayerBacking,
     Snapshot,
     ShareableSnapshot,
     ShareableLocalSnapshot,

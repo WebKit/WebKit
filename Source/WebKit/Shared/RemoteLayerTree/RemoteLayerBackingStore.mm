@@ -140,8 +140,8 @@ static bool hasValue(const ImageBufferBackendHandle& backendHandle)
             return !!machSendRight;
         }
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-        , [&] (const DynamicContentScalingDisplayList& handle) {
-            return !!handle.buffer();
+        , [&] (const WebCore::DynamicContentScalingDisplayList& handle) {
+            return !!handle.displayList();
         }
 #endif
     );
@@ -498,7 +498,7 @@ RetainPtr<id> RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendH
             }
         }
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-        , [&] (DynamicContentScalingDisplayList& handle) {
+        , [&] (WebCore::DynamicContentScalingDisplayList& handle) {
             ASSERT_NOT_REACHED();
         }
 #endif

@@ -67,14 +67,19 @@ public:
 
     std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> flushFrontBufferAsync();
 
-    void setConfiguration(WebCore::FloatSize, float, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, WebCore::RenderingMode);
+    void setConfiguration(WebCore::FloatSize, float, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, WebCore::RenderingMode, WebCore::RenderingPurpose);
     void willPrepareForDisplay();
     void remoteBufferSetWasDestroyed();
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    std::optional<WebCore::DynamicContentScalingDisplayList> dynamicContentScalingDisplayList();
+#endif
 
     unsigned generation() const { return m_generation; }
 
 private:
     template<typename T> void send(T&& message);
+    template<typename T> auto sendSync(T&& message);
 
     WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
     RemoteImageBufferSetIdentifier m_identifier;
@@ -92,6 +97,7 @@ private:
     WebCore::DestinationColorSpace m_colorSpace { WebCore::DestinationColorSpace::SRGB() };
     WebCore::PixelFormat m_pixelFormat;
     WebCore::RenderingMode m_renderingMode { WebCore::RenderingMode::Unaccelerated };
+    WebCore::RenderingPurpose m_renderingPurpose { WebCore::RenderingPurpose::Unspecified };
     unsigned m_generation { 0 };
     bool m_remoteNeedsConfigurationUpdate { false };
 };

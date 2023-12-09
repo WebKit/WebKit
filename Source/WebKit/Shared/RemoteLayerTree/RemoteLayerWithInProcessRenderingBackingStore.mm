@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RemoteLayerWithInProcessRenderingBackingStore.h"
 
+#import "DynamicContentScalingBifurcatedImageBuffer.h"
 #import "ImageBufferShareableBitmapBackend.h"
 #import "ImageBufferShareableMappedIOSurfaceBackend.h"
 #import "Logging.h"
@@ -64,9 +65,6 @@ void RemoteLayerWithInProcessRenderingBackingStore::clearBackingStore()
     m_backBuffer.discard();
     m_secondaryBackBuffer.discard();
     m_contentsBufferHandle = std::nullopt;
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    m_displayListBuffer = nullptr;
-#endif
 }
 
 static std::optional<ImageBufferBackendHandle> handleFromBuffer(ImageBuffer& buffer)
@@ -88,8 +86,8 @@ std::optional<ImageBufferBackendHandle> RemoteLayerWithInProcessRenderingBacking
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 std::optional<ImageBufferBackendHandle> RemoteLayerWithInProcessRenderingBackingStore::displayListHandle() const
 {
-    if (m_displayListBuffer)
-        return handleFromBuffer(*m_displayListBuffer);
+    if (RefPtr frontBuffer = m_frontBuffer.imageBuffer)
+        return frontBuffer->dynamicContentScalingDisplayList();
     return std::nullopt;
 }
 #endif
@@ -121,16 +119,6 @@ void RemoteLayerWithInProcessRenderingBackingStore::createContextAndPaintContent
         drawInContext(context);
     };
 
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    if (m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
-        auto& displayListContext = m_displayListBuffer->context();
-
-        BifurcatedGraphicsContext context(m_frontBuffer.imageBuffer->context(), displayListContext);
-        clipAndDrawInContext(context);
-        return;
-    }
-#endif
-
     GraphicsContext& context = m_frontBuffer.imageBuffer->context();
 
     // We never need to copy forward when using display list drawing, since we don't do partial repaint.
@@ -156,11 +144,6 @@ Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> RemoteLayerWithIn
 
     m_frontBuffer.imageBuffer->flushDrawingContextAsync();
     flushers.append(m_frontBuffer.imageBuffer->createFlusher());
-
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    if (m_parameters.includeDisplayList == IncludeDisplayList::Yes)
-        flushers.append(m_displayListBuffer->createFlusher());
-#endif
 
     return flushers;
 }
@@ -239,17 +222,29 @@ SetNonVolatileResult RemoteLayerWithInProcessRenderingBackingStore::setFrontBuff
     return setBufferNonVolatile(m_frontBuffer);
 }
 
+template<typename ImageBufferType>
+static RefPtr<ImageBuffer> allocateBufferInternal(RemoteLayerBackingStore::Type type, const WebCore::FloatSize& logicalSize, WebCore::RenderingPurpose purpose, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::ImageBufferCreationContext& creationContext)
+{
+    switch (type) {
+    case RemoteLayerBackingStore::Type::IOSurface:
+        return WebCore::ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
+    case RemoteLayerBackingStore::Type::Bitmap:
+        return WebCore::ImageBuffer::create<ImageBufferShareableBitmapBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
+    }
+}
+
 RefPtr<WebCore::ImageBuffer> RemoteLayerWithInProcessRenderingBackingStore::allocateBuffer() const
 {
-    switch (type()) {
-    case RemoteLayerBackingStore::Type::IOSurface: {
-        ImageBufferCreationContext creationContext;
-        creationContext.surfacePool = &WebCore::IOSurfacePool::sharedPool();
-        return WebCore::ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBackend>(size(), scale(), colorSpace(), pixelFormat(), WebCore::RenderingPurpose::LayerBacking, creationContext);
-    }
-    case RemoteLayerBackingStore::Type::Bitmap:
-        return WebCore::ImageBuffer::create<ImageBufferShareableBitmapBackend>(size(), scale(), colorSpace(), pixelFormat(), WebCore::RenderingPurpose::LayerBacking, { });
-    }
+    auto purpose = m_layer->containsBitmapOnly() ? WebCore::RenderingPurpose::BitmapOnlyLayerBacking : WebCore::RenderingPurpose::LayerBacking;
+    ImageBufferCreationContext creationContext;
+    creationContext.surfacePool = &WebCore::IOSurfacePool::sharedPool();
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    if (m_parameters.includeDisplayList == IncludeDisplayList::Yes)
+        return allocateBufferInternal<DynamicContentScalingBifurcatedImageBuffer>(type(), size(), purpose, scale(), colorSpace(), pixelFormat(), creationContext);
+#endif
+
+    return allocateBufferInternal<ImageBuffer>(type(), size(), purpose, scale(), colorSpace(), pixelFormat(), creationContext);
 }
 
 void RemoteLayerWithInProcessRenderingBackingStore::ensureFrontBuffer()
@@ -259,16 +254,6 @@ void RemoteLayerWithInProcessRenderingBackingStore::ensureFrontBuffer()
 
     m_frontBuffer.imageBuffer = allocateBuffer();
     m_frontBuffer.isCleared = true;
-
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    if (!m_displayListBuffer && m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
-        ImageBufferCreationContext creationContext;
-        if (type() == RemoteLayerBackingStore::Type::IOSurface)
-            m_displayListBuffer = ImageBuffer::create<DynamicContentScalingAcceleratedImageBufferBackend>(m_parameters.size, m_parameters.scale, colorSpace(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
-        else
-            m_displayListBuffer = ImageBuffer::create<DynamicContentScalingImageBufferBackend>(m_parameters.size, m_parameters.scale, colorSpace(), pixelFormat(), RenderingPurpose::DOM, WTFMove(creationContext));
-    }
-#endif
 }
 
 void RemoteLayerWithInProcessRenderingBackingStore::prepareToDisplay()
@@ -315,11 +300,6 @@ SetNonVolatileResult RemoteLayerWithInProcessRenderingBackingStore::swapToValidF
                 m_backBuffer.discard();
         }
     }
-
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    if (m_displayListBuffer)
-        m_displayListBuffer->releaseGraphicsContext();
-#endif
 
     m_contentsBufferHandle = std::nullopt;
     std::swap(m_frontBuffer, m_backBuffer);

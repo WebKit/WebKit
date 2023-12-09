@@ -178,6 +178,15 @@ void RemoteImageBuffer::flushContextSync(CompletionHandler<void()>&& completionH
     completionHandler();
 }
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+void RemoteImageBuffer::dynamicContentScalingDisplayList(CompletionHandler<void(std::optional<WebCore::DynamicContentScalingDisplayList>&&)>&& completionHandler)
+{
+    assertIsCurrent(workQueue());
+    auto displayList = m_imageBuffer->dynamicContentScalingDisplayList();
+    completionHandler({ WTFMove(displayList) });
+}
+#endif
+
 IPC::StreamConnectionWorkQueue& RemoteImageBuffer::workQueue() const
 {
     return m_backend->workQueue();

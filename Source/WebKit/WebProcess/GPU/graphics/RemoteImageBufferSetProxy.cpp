@@ -118,6 +118,22 @@ ALWAYS_INLINE void RemoteImageBufferSetProxy::send(T&& message)
 #endif
 }
 
+template<typename T>
+ALWAYS_INLINE auto RemoteImageBufferSetProxy::sendSync(T&& message)
+{
+    if (UNLIKELY(!m_remoteRenderingBackendProxy))
+        return IPC::StreamClientConnection::SendSyncResult<T> { IPC::Error::InvalidConnection };
+
+    auto result = m_remoteRenderingBackendProxy->streamConnection().sendSync(std::forward<T>(message), m_identifier, RemoteRenderingBackendProxy::defaultTimeout);
+#if !RELEASE_LOG_DISABLED
+    if (UNLIKELY(!result.succeeded())) {
+        auto& parameters = m_remoteRenderingBackendProxy->parameters();
+        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] Proxy::sendSync - failed, name:%" PUBLIC_LOG_STRING ", error:%" PUBLIC_LOG_STRING,
+            parameters.pageProxyID.toUInt64(), parameters.pageID.toUInt64(), parameters.identifier.toUInt64(), IPC::description(T::name()), IPC::errorAsString(result.error));
+    }
+#endif
+    return result;
+}
 
 RemoteImageBufferSetProxy::RemoteImageBufferSetProxy(RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
     : m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
@@ -151,13 +167,14 @@ void RemoteImageBufferSetProxy::clearVolatilityUntilAfter(MarkSurfacesAsVolatile
 }
 
 
-void RemoteImageBufferSetProxy::setConfiguration(WebCore::FloatSize size, float scale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingMode renderingMode)
+void RemoteImageBufferSetProxy::setConfiguration(WebCore::FloatSize size, float scale, const WebCore::DestinationColorSpace& colorSpace, WebCore::PixelFormat pixelFormat, WebCore::RenderingMode renderingMode, WebCore::RenderingPurpose renderingPurpose)
 {
     m_size = size;
     m_scale = scale;
     m_colorSpace = colorSpace;
     m_pixelFormat = pixelFormat;
     m_renderingMode = renderingMode;
+    m_renderingPurpose = renderingPurpose;
     m_remoteNeedsConfigurationUpdate = true;
 }
 
@@ -193,7 +210,7 @@ void RemoteImageBufferSetProxy::willPrepareForDisplay()
         if (m_renderingMode == RenderingMode::Accelerated)
             options.add(WebCore::ImageBufferOptions::Accelerated);
 
-        m_displayListRecorder = m_remoteRenderingBackendProxy->createDisplayListRecorder(m_displayListIdentifier, m_size, WebCore::RenderingPurpose::LayerBacking, m_scale, m_colorSpace, m_pixelFormat, options);
+        m_displayListRecorder = m_remoteRenderingBackendProxy->createDisplayListRecorder(m_displayListIdentifier, m_size, m_renderingPurpose, m_scale, m_colorSpace, m_pixelFormat, options);
     }
     m_remoteNeedsConfigurationUpdate = false;
 }
@@ -210,6 +227,21 @@ GraphicsContext& RemoteImageBufferSetProxy::context()
     RELEASE_ASSERT(m_displayListRecorder);
     return *m_displayListRecorder;
 }
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+std::optional<WebCore::DynamicContentScalingDisplayList> RemoteImageBufferSetProxy::dynamicContentScalingDisplayList()
+{
+    if (UNLIKELY(!m_remoteRenderingBackendProxy))
+        return std::nullopt;
+    auto sendResult = sendSync(Messages::RemoteImageBufferSet::DynamicContentScalingDisplayList());
+    if (!sendResult.succeeded())
+        return std::nullopt;
+    auto [handle] = sendResult.takeReply();
+    if (!handle)
+        return std::nullopt;
+    return WTFMove(handle);
+}
+#endif
 
 
 } // namespace WebKit

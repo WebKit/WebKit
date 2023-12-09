@@ -1644,6 +1644,7 @@ enum class WebCore::RenderingPurpose : uint8_t {
     Canvas,
     DOM,
     LayerBacking,
+    BitmapOnlyLayerBacking,
     Snapshot,
     ShareableSnapshot,
     ShareableLocalSnapshot,
@@ -7053,3 +7054,10 @@ struct WebCore::OrganizationStorageAccessPromptQuirk {
     String organizationName;
     HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> domainPairings;
 };
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+[RValue] class WebCore::DynamicContentScalingDisplayList {
+    Ref<WebCore::SharedBuffer> displayList();
+    Vector<MachSendRight> takeSurfaces();
+}
+#endif

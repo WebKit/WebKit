@@ -37,6 +37,7 @@ TextStream& operator<<(TextStream& ts, RenderingPurpose purpose)
     case RenderingPurpose::Canvas: ts << "Canvas"; break;
     case RenderingPurpose::DOM: ts << "DOM"; break;
     case RenderingPurpose::LayerBacking: ts << "LayerBacking"; break;
+    case RenderingPurpose::BitmapOnlyLayerBacking: ts << "BitmapOnlyLayerBacking"; break;
     case RenderingPurpose::Snapshot: ts << "Snapshot"; break;
     case RenderingPurpose::ShareableSnapshot: ts << "ShareableSnapshot"; break;
     case RenderingPurpose::ShareableLocalSnapshot: ts << "ShareableLocalSnapshot"; break;

@@ -81,10 +81,6 @@ private:
     Buffer m_frontBuffer;
     Buffer m_backBuffer;
     Buffer m_secondaryBackBuffer;
-
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    RefPtr<WebCore::ImageBuffer> m_displayListBuffer;
-#endif
 };
 
 } // namespace WebKit

@@ -33,6 +33,10 @@
 #include "StreamMessageReceiver.h"
 #include <WebCore/ImageBuffer.h>
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+#include <WebCore/DynamicContentScalingDisplayList.h>
+#endif
+
 namespace IPC {
 class Semaphore;
 class StreamConnectionWorkQueue;
@@ -67,6 +71,10 @@ private:
     void transformToColorSpace(const WebCore::DestinationColorSpace&);
     void flushContext();
     void flushContextSync(CompletionHandler<void()>&&);
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    void dynamicContentScalingDisplayList(CompletionHandler<void(std::optional<WebCore::DynamicContentScalingDisplayList>&&)>&&);
+#endif
 
     RefPtr<RemoteRenderingBackend> m_backend;
     Ref<WebCore::ImageBuffer> m_imageBuffer;

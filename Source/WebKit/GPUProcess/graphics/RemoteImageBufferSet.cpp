@@ -253,6 +253,14 @@ bool RemoteImageBufferSet::makeBuffersVolatile(OptionSet<BufferInSetType> reques
     return allSucceeded;
 }
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+void RemoteImageBufferSet::dynamicContentScalingDisplayList(CompletionHandler<void(std::optional<WebCore::DynamicContentScalingDisplayList>&&)>&& completionHandler)
+{
+    auto displayList = m_frontBuffer->dynamicContentScalingDisplayList();
+    completionHandler({ WTFMove(displayList) });
+}
+#endif
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK

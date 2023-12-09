@@ -33,6 +33,10 @@ messages -> RemoteImageBuffer NotRefCounted Stream {
     TransformToColorSpace(WebCore::DestinationColorSpace colorSpace)
     FlushContext()
     FlushContextSync() -> () Synchronous
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    DynamicContentScalingDisplayList() -> (std::optional<WebCore::DynamicContentScalingDisplayList> displayList) Synchronous NotStreamEncodableReply
+#endif
 }
 
 #endif
