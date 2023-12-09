@@ -43,6 +43,7 @@
 #import "TransactionID.h"
 #import "UIKitSPI.h"
 #import "WKMouseInteraction.h"
+#import "WKSEDefinitions.h"
 #import <WebKit/WKActionSheetAssistant.h>
 #import <WebKit/WKAirPlayRoutePicker.h>
 #import <WebKit/WKContactPicker.h>
@@ -606,7 +607,7 @@ struct ImageAnalysisContextMenuActionData {
     , WKMouseInteractionDelegate
 #endif
 #if HAVE(UI_ASYNC_DRAG_INTERACTION)
-    , _UIAsyncDragInteractionDelegate
+    , WKSEDragInteractionDelegate
 #elif ENABLE(DRAG_SUPPORT)
     , UIDragInteractionDelegate
 #endif

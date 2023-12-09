@@ -197,10 +197,7 @@
 #import <pal/spi/ios/DataDetectorsUISoftLink.h>
 
 SOFT_LINK_FRAMEWORK(UIKit)
-SOFT_LINK_CLASS_OPTIONAL(UIKit, _UIAsyncDragInteraction)
-SOFT_LINK_CLASS_OPTIONAL(UIKit, _UIContextMenuAsyncConfiguration)
 SOFT_LINK_CLASS_OPTIONAL(UIKit, UITextCursorDropPositionAnimator)
-SOFT_LINK_CLASS_OPTIONAL(UIKit, UIKeyEventContext)
 
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS)
 #define UIWKDocumentRequestAutocorrectedRanges (1 << 7)
@@ -1140,11 +1137,7 @@ static WKDragSessionContext *ensureLocalDragSessionContext(id <UIDragSession> se
 - (BOOL)_shouldUseUIContextMenuAsyncConfiguration
 {
 #if HAVE(UI_CONTEXT_MENU_ASYNC_CONFIGURATION)
-    if (!self.shouldUseAsyncInteractions)
-        return NO;
-
-    static BOOL hasAsyncConfigurationClass = !!get_UIContextMenuAsyncConfigurationClass();
-    return hasAsyncConfigurationClass;
+    return self.shouldUseAsyncInteractions;
 #else
     return NO;
 #endif
@@ -7119,7 +7112,7 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
         if (!inputDelegate)
             return NO;
 
-        auto context = adoptNS([allocUIKeyEventContextInstance() initWithKeyEvent:event.originalUIKeyEvent]);
+        auto context = adoptNS([[UIKeyEventContext alloc] initWithKeyEvent:event.originalUIKeyEvent]);
         if ([context respondsToSelector:@selector(setShouldEvaluateForInputSystemHandling:)])
             [context setShouldEvaluateForInputSystemHandling:YES];
         [context setDocumentIsEditable:YES];
@@ -7187,7 +7180,7 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
         if (!systemDelegate)
             return NO;
 
-        auto context = adoptNS([allocUIKeyEventContextInstance() initWithKeyEvent:event.originalUIKeyEvent]);
+        auto context = adoptNS([[UIKeyEventContext alloc] initWithKeyEvent:event.originalUIKeyEvent]);
         [context setDocumentIsEditable:_page->editorState().isContentEditable];
         [context setShouldInsertChar:isCharEvent];
         return [systemDelegate deferEventHandlingToSystemWithContext:context.get()];
@@ -9656,10 +9649,8 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
 - (Class)_dragInteractionClass
 {
 #if HAVE(UI_ASYNC_DRAG_INTERACTION)
-    if (self.shouldUseAsyncInteractions) {
-        if (auto interactionClass = get_UIAsyncDragInteractionClass())
-            return interactionClass;
-    }
+    if (self.shouldUseAsyncInteractions)
+        return [WKSEDragInteraction class];
 #endif
     return UIDragInteraction.class;
 }
@@ -9668,10 +9659,12 @@ static BOOL shouldEnableDragInteractionForPolicy(_WKDragInteractionPolicy policy
 {
     _dragInteraction = adoptNS([[self._dragInteractionClass alloc] initWithDelegate:self]);
     _dropInteraction = adoptNS([[UIDropInteraction alloc] initWithDelegate:self]);
-    [_dragInteraction _setLiftDelay:self.dragLiftDelay];
     [_dragInteraction setEnabled:shouldEnableDragInteractionForPolicy(self.webView._dragInteractionPolicy)];
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
-    [_dragInteraction _setAllowsPointerDragBeforeLiftDelay:NO];
+    if (!self.shouldUseAsyncInteractions) {
+        [_dragInteraction _setLiftDelay:self.dragLiftDelay];
+        [_dragInteraction _setAllowsPointerDragBeforeLiftDelay:NO];
+    }
 #endif
 
     [self addInteraction:_dragInteraction.get()];
@@ -10689,16 +10682,24 @@ static Vector<WebCore::IntSize> sizesOfPlaceholderElementsToInsertWhenDroppingIt
 
 #if HAVE(UI_ASYNC_DRAG_INTERACTION)
 
-#pragma mark - _UIAsyncDragInteractionDelegate
+#pragma mark - WKSEDragInteractionDelegate
 
-- (void)_asyncDragInteraction:(_UIAsyncDragInteraction *)interaction prepareDragSession:(id<UIDragSession>)session completion:(BOOL(^)(void))completion
+#if SERVICE_EXTENSIONS_DRAG_INTERACTION_IS_AVAILABLE
+- (void)dragInteraction:(WKSEDragInteraction *)interaction prepareDragSession:(id<UIDragSession>)session completion:(BOOL(^)(void))completion
+#else
+- (void)_asyncDragInteraction:(WKSEDragInteraction *)interaction prepareDragSession:(id<UIDragSession>)session completion:(BOOL(^)(void))completion
+#endif
 {
     [self _dragInteraction:interaction prepareForSession:session completion:[completion = makeBlockPtr(completion)] {
         completion();
     }];
 }
 
-- (void)_asyncDragInteraction:(_UIAsyncDragInteraction *)interaction itemsForAddingToSession:(id<UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(BOOL(^)(NSArray<UIDragItem *> *))completion
+#if SERVICE_EXTENSIONS_DRAG_INTERACTION_IS_AVAILABLE
+- (void)dragInteraction:(WKSEDragInteraction *)interaction itemsForAddingToSession:(id<UIDragSession>)session forTouchAtPoint:(CGPoint)point completion:(BOOL(^)(NSArray<UIDragItem *> *))completion
+#else
+- (void)_asyncDragInteraction:(WKSEDragInteraction *)interaction itemsForAddingToSession:(id<UIDragSession>)session withTouchAtPoint:(CGPoint)point completion:(BOOL(^)(NSArray<UIDragItem *> *))completion
+#endif
 {
     [self _dragInteraction:interaction itemsForAddingToSession:session withTouchAtPoint:point completion:[completion = makeBlockPtr(completion)](NSArray<UIDragItem *> *items) {
         completion(items);
@@ -13332,9 +13333,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr<UIContextMenuConfiguration> configuration;
 #if HAVE(UI_CONTEXT_MENU_ASYNC_CONFIGURATION)
     if (self._shouldUseUIContextMenuAsyncConfiguration) {
-        auto asyncConfiguration = adoptNS([alloc_UIContextMenuAsyncConfigurationInstance() init]);
+        auto asyncConfiguration = adoptNS([[WKSEContextMenuConfiguration alloc] init]);
         [self _internalContextMenuInteraction:interaction configurationForMenuAtLocation:location completion:[asyncConfiguration](UIContextMenuConfiguration *finalConfiguration) {
+#if SERVICE_EXTENSIONS_CONTEXT_MENU_CONFIGURATION_IS_AVAILABLE
+            [asyncConfiguration fulfillUsingConfiguration:finalConfiguration];
+#else
             [asyncConfiguration fulfillWithConfiguration:finalConfiguration];
+#endif
         }];
         configuration = asyncConfiguration.get();
     }
