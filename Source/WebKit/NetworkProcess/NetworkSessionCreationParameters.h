@@ -103,7 +103,7 @@ struct NetworkSessionCreationParameters {
     std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue;
     bool preventsSystemHTTPProxyAuthentication { false };
     bool appHasRequestedCrossWebsiteTrackingPermission { false };
-    bool useNetworkLoader { false };
+    std::optional<bool> useNetworkLoader { std::nullopt };
     bool allowsHSTSWithUntrustedRootCertificate { false };
     String pcmMachServiceName;
     String webPushMachServiceName;

@@ -308,7 +308,7 @@ public:
     void dispatchOnQueue(Function<void()>&&);
 
 #if PLATFORM(COCOA)
-    static bool useNetworkLoader();
+    static std::optional<bool> useNetworkLoader();
 #endif
 
 #if USE(CURL)

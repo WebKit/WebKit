@@ -841,9 +841,9 @@ BuiltInNotificationsEnabled:
 
 CFNetworkNetworkLoaderEnabled:
   type: bool
-  status: unstable
+  status: testable
   category: networking
-  humanReadableName: "Experimental network loader"
+  humanReadableName: "Enable experimental network loader"
   humanReadableDescription: "Enable experimental network loader"
   webcoreBinding: none
   condition: HAVE(NETWORK_LOADER)
