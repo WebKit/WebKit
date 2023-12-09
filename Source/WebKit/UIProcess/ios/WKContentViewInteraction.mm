@@ -4730,7 +4730,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
 
-    [self _defineForWebView:sender];
+    [self defineForWebView:sender];
 }
 
 - (void)accessibilityRetrieveSpeakSelectionContent
