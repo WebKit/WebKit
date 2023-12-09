@@ -110,13 +110,13 @@ void RemoteLayerTreeDrawingAreaMac::willCommitLayerTree(RemoteLayerTreeTransacti
     if (!frameView)
         return;
 
-    auto* renderViewGraphicsLayer = frameView->graphicsLayerForPageScale();
+    RefPtr renderViewGraphicsLayer = frameView->graphicsLayerForPageScale();
     if (!renderViewGraphicsLayer)
         return;
 
     transaction.setPageScalingLayerID(renderViewGraphicsLayer->primaryLayerID());
 
-    auto* scrolledContentsLayer = frameView->graphicsLayerForScrolledContents();
+    RefPtr scrolledContentsLayer = frameView->graphicsLayerForScrolledContents();
     if (!scrolledContentsLayer)
         return;
 
