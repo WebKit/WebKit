@@ -2151,8 +2151,16 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
         }
     }
 
-    AssemblyHelpers::Jump slow = stubJit.jump();
-        
+    stubJit.jumpThunk(CodeLocationLabel<JITThunkPtrTag>(vm.getCTIStub(CommonJITThunkID::LinkPolymorphicCall).code()));
+
+    if (!done.empty()) {
+        ASSERT(!isDataIC);
+        done.linkThunk(callLinkInfo.doneLocation(), &stubJit);
+    }
+
+    for (CallToCodePtr callToCodePtr : calls)
+        callToCodePtr.call.linkThunk(CodeLocationLabel { callToCodePtr.codePtr.retagged<NoPtrTag>() }, &stubJit);
+
     LinkBuffer patchBuffer(stubJit, owner, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
     if (patchBuffer.didFailToAllocate()) {
         linkVirtualFor(vm, callFrame, callLinkInfo);
@@ -2160,15 +2168,6 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
     }
     
     RELEASE_ASSERT(callCases.size() == calls.size());
-    for (CallToCodePtr callToCodePtr : calls)
-        patchBuffer.link(callToCodePtr.call, callToCodePtr.codePtr);
-
-    if (!done.empty()) {
-        ASSERT(!isDataIC);
-        patchBuffer.link(done, callLinkInfo.doneLocation());
-    }
-    patchBuffer.link(slow, CodeLocationLabel<JITThunkPtrTag>(vm.getCTIStub(CommonJITThunkID::LinkPolymorphicCall).code()));
-    
     auto stubRoutine = adoptRef(*new PolymorphicCallStubRoutine(
         FINALIZE_CODE_FOR(
             callerCodeBlock, patchBuffer, JITStubRoutinePtrTag,

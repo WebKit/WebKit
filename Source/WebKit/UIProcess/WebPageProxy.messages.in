@@ -618,6 +618,10 @@ messages -> WebPageProxy {
 
     RequestCookieConsent() -> (enum:uint8_t WebCore::CookieConsentDecisionResult result)
 
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+    DidAccessWindowProxyPropertyViaOpenerForFrame(WebCore::FrameIdentifier frameID, WebCore::SecurityOriginData openerOrigin, enum:uint8_t WebCore::WindowProxyProperty property)
+#endif
+
     DidApplyLinkDecorationFiltering(URL originalURL, URL adjustedURL)
     BroadcastFrameRemovalToOtherProcesses(WebCore::FrameIdentifier frameID)
     BroadcastMainFrameURLChangeToOtherProcesses(URL newURL)

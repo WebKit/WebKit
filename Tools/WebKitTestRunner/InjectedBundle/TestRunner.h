@@ -592,6 +592,9 @@ public:
     // Reporting API
     void generateTestReport(JSStringRef message, JSStringRef group);
 
+    void getAndClearReportedWindowProxyAccessDomains(JSValueRef);
+    void didGetAndClearReportedWindowProxyAccessDomains(WKArrayRef);
+
 private:
     TestRunner();
 

@@ -33,6 +33,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "MediaPlayer.h"
+#include "PlatformTimeRanges.h"
 #include <wtf/Forward.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/Vector.h>
@@ -75,8 +76,8 @@ public:
     virtual void removeSourceBuffer(SourceBufferPrivate&);
     void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivate&, bool active);
     virtual void notifyActiveSourceBuffersChanged() = 0;
-    virtual void durationChanged(const MediaTime&);
-    virtual void bufferedChanged(const PlatformTimeRanges&) { }
+    virtual void durationChanged(const MediaTime&); // Base class method must be called in overrides.
+    virtual void bufferedChanged(const PlatformTimeRanges&); // Base class method must be called in overrides.
 
     virtual void markEndOfStream(EndOfStreamStatus) { m_isEnded = true; }
     virtual void unmarkEndOfStream() { m_isEnded = false; }
@@ -93,7 +94,7 @@ public:
     virtual void setTimeFudgeFactor(const MediaTime& fudgeFactor) { m_timeFudgeFactor = fudgeFactor; }
     MediaTime timeFudgeFactor() const { return m_timeFudgeFactor; }
 
-    MediaTime duration() const;
+    const MediaTime& duration() const;
     const PlatformTimeRanges& buffered() const;
 
     bool hasFutureTime(const MediaTime& currentTime) const;
@@ -111,6 +112,7 @@ protected:
 
 private:
     MediaTime m_duration { MediaTime::invalidTime() };
+    PlatformTimeRanges m_buffered;
     MediaTime m_timeFudgeFactor;
     ThreadSafeWeakPtr<MediaSourcePrivateClient> m_client;
 };

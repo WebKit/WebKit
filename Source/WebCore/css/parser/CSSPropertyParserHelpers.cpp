@@ -6921,10 +6921,12 @@ static RefPtr<CSSPolygonValue> consumeBasicShapePolygon(CSSParserTokenRange& arg
     return CSSPolygonValue::create(WTFMove(points), rule);
 }
 
-static RefPtr<CSSPathValue> consumeBasicShapePath(CSSParserTokenRange& args)
+static RefPtr<CSSPathValue> consumeBasicShapePath(CSSParserTokenRange& args, OptionSet<PathParsingOption> options)
 {
     WindRule rule = WindRule::NonZero;
     if (identMatches<CSSValueEvenodd, CSSValueNonzero>(args.peek().id())) {
+        if (options.contains(RejectFillRule))
+            return nullptr;
         if (args.consumeIncludingWhitespace().id() == CSSValueEvenodd)
             rule = WindRule::EvenOdd;
         if (!consumeCommaIncludingWhitespace(args))
@@ -6935,7 +6937,7 @@ static RefPtr<CSSPathValue> consumeBasicShapePath(CSSParserTokenRange& args)
         return nullptr;
 
     SVGPathByteStream byteStream;
-    if (!buildSVGPathByteStreamFromString(args.consumeIncludingWhitespace().value(), byteStream, UnalteredParsing))
+    if (!buildSVGPathByteStreamFromString(args.consumeIncludingWhitespace().value(), byteStream, UnalteredParsing) || byteStream.isEmpty())
         return nullptr;
 
     return CSSPathValue::create(WTFMove(byteStream), rule);
@@ -7057,7 +7059,7 @@ static RefPtr<CSSInsetShapeValue> consumeBasicShapeInset(CSSParserTokenRange& ar
     return nullptr;
 }
 
-static RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, const CSSParserContext& context)
+static RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, const CSSParserContext& context, OptionSet<PathParsingOption> options)
 {
     auto rangeCopy = range;
 
@@ -7079,7 +7081,7 @@ static RefPtr<CSSValue> consumeBasicShape(CSSParserTokenRange& range, const CSSP
     else if (id == CSSValueXywh)
         result = consumeBasicShapeXywh(args, context);
     else if (id == CSSValuePath)
-        result = consumeBasicShapePath(args);
+        result = consumeBasicShapePath(args, options);
     if (!result || !args.atEnd())
         return nullptr;
 
@@ -7129,7 +7131,7 @@ static RefPtr<CSSRayValue> consumeRayShape(CSSParserTokenRange& range, const CSS
     );
 }
 
-static RefPtr<CSSValue> consumeBasicShapeRayOrBox(CSSParserTokenRange& range, const CSSParserContext& context, ConsumeRay consumeRay)
+static RefPtr<CSSValue> consumeBasicShapeRayOrBox(CSSParserTokenRange& range, const CSSParserContext& context, OptionSet<PathParsingOption> options)
 {
     CSSValueListBuilder list;
     RefPtr<CSSValue> shape;
@@ -7137,9 +7139,9 @@ static RefPtr<CSSValue> consumeBasicShapeRayOrBox(CSSParserTokenRange& range, co
 
     auto consumeShapeOrRay = [&](CSSParserTokenRange& subrange) -> RefPtr<CSSValue> {
         RefPtr<CSSValue> ray;
-        if (consumeRay == ConsumeRay::Include && (ray = consumeRayShape(subrange, context)))
+        if (!options.contains(RejectRay) && (ray = consumeRayShape(subrange, context)))
             return ray;
-        return consumeBasicShape(subrange, context);
+        return consumeBasicShape(subrange, context, options);
     };
 
     while (!range.atEnd()) {
@@ -7167,14 +7169,13 @@ static RefPtr<CSSValue> consumeBasicShapeRayOrBox(CSSParserTokenRange& range, co
     return CSSValueList::createSpaceSeparated(WTFMove(list));
 }
 
-// Consumes shapes accepted by clip-path and offset-path.
-RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange& range, const CSSParserContext& context, ConsumeRay consumeRay)
+RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange& range, const CSSParserContext& context, OptionSet<PathParsingOption> options)
 {
     if (range.peek().id() == CSSValueNone)
         return consumeIdent(range);
     if (auto url = consumeURL(range))
         return url;
-    return consumeBasicShapeRayOrBox(range, context, consumeRay);
+    return consumeBasicShapeRayOrBox(range, context, options);
 }
 
 RefPtr<CSSValue> consumeListStyleType(CSSParserTokenRange& range, const CSSParserContext& context)
@@ -7200,7 +7201,7 @@ RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange& range, const CSSParser
     CSSValueListBuilder list;
     auto boxValue = CSSPropertyParsing::consumeShapeBox(range);
     bool hasShapeValue = false;
-    if (auto shapeValue = consumeBasicShape(range, context)) {
+    if (auto shapeValue = consumeBasicShape(range, context, { })) {
         if (shapeValue->isPath())
             return nullptr;
         list.append(shapeValue.releaseNonNull());

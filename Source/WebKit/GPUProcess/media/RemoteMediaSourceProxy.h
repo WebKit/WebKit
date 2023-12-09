@@ -62,7 +62,6 @@ public:
 
     // MediaSourcePrivateClient overrides
     void setPrivateAndOpen(Ref<WebCore::MediaSourcePrivate>&&) final;
-    const WebCore::PlatformTimeRanges& buffered() const final;
     Ref<WebCore::MediaTimePromise> waitForTarget(const WebCore::SeekTarget&) final;
     Ref<WebCore::MediaPromise> seekToTime(const MediaTime&) final;
 
@@ -94,8 +93,6 @@ private:
     bool m_webMParserEnabled { false };
     RefPtr<WebCore::MediaSourcePrivate> m_private;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
-
-    WebCore::PlatformTimeRanges m_buffered;
 
     Vector<RefPtr<RemoteSourceBufferProxy>> m_sourceBuffers;
 };

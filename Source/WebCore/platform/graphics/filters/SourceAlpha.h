@@ -31,7 +31,7 @@ public:
     static AtomString effectName() { return FilterEffect::sourceAlphaName(); }
 
 private:
-    explicit SourceAlpha(const DestinationColorSpace&);
+    explicit SourceAlpha(DestinationColorSpace);
 
     std::unique_ptr<FilterEffectApplier> createSoftwareApplier() const override;
 

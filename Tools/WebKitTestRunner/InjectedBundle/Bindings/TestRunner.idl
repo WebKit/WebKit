@@ -463,4 +463,6 @@ interface TestRunner {
 
     // Reporting API
     undefined generateTestReport(DOMString message, DOMString group);
+
+    undefined getAndClearReportedWindowProxyAccessDomains(object callback);
 };

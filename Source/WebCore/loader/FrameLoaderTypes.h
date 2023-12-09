@@ -162,4 +162,10 @@ enum class AllowsContentJavaScript : bool {
     Yes,
 };
 
+enum class WindowProxyProperty : uint8_t {
+    Other = 1 << 0,
+    Closed = 1 << 1,
+    PostMessage = 1 << 2,
+};
+
 } // namespace WebCore

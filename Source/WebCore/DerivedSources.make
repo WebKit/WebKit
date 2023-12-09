@@ -747,6 +747,13 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/WebCodecsAlphaOption.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsAudioData.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsAudioDataOutputCallback.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoder.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoderConfig.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoderSupport.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoder.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoderConfig.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoderSupport.idl \
+    $(WebCore)/Modules/webcodecs/WebCodecsCodecState.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedAudioChunk.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedAudioChunkMetadata.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedAudioChunkOutputCallback.idl \
@@ -756,15 +763,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkOutputCallback.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsEncodedVideoChunkType.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsErrorCallback.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsCodecState.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsSvcOutputMetadata.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsAudioData.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoder.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoderConfig.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsAudioDecoderSupport.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoder.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoderConfig.idl \
-    $(WebCore)/Modules/webcodecs/WebCodecsAudioEncoderSupport.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoder.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoderConfig.idl \
     $(WebCore)/Modules/webcodecs/WebCodecsVideoDecoderSupport.idl \

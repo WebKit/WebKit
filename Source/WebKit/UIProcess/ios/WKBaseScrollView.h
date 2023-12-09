@@ -27,6 +27,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
+#import "WKSEDefinitions.h"
 #import <UIKit/UIKit.h>
 
 @class UIScrollEvent;
@@ -45,7 +46,7 @@
 
 @end
 
-@interface WKBaseScrollView : UIScrollView
+@interface WKBaseScrollView : WKSEScrollView
 
 @property (nonatomic, weak) id<WKBaseScrollViewDelegate> baseScrollViewDelegate;
 @property (nonatomic, readonly) UIAxis axesToPreventMomentumScrolling;

@@ -233,15 +233,15 @@ void TiledCoreAnimationDrawingArea::triggerRenderingUpdate()
 
 void TiledCoreAnimationDrawingArea::updatePreferences(const WebPreferencesStore& store)
 {
-    Settings& settings = m_webPage->corePage()->settings();
+    Ref settings = m_webPage->corePage()->settings();
 
     // Fixed position elements need to be composited and create stacking contexts
     // in order to be scrolled by the ScrollingCoordinator.
-    settings.setAcceleratedCompositingForFixedPositionEnabled(true);
+    settings->setAcceleratedCompositingForFixedPositionEnabled(true);
 
     DebugPageOverlays::settingsChanged(*m_webPage->corePage());
 
-    bool showTiledScrollingIndicator = settings.showTiledScrollingIndicator();
+    bool showTiledScrollingIndicator = settings->showTiledScrollingIndicator();
     if (showTiledScrollingIndicator == !!m_debugInfoLayer)
         return;
 
@@ -704,7 +704,7 @@ void TiledCoreAnimationDrawingArea::applyTransientZoomToLayers(double scale, Flo
     transform.translate(origin.x(), origin.y());
     transform.scale(scale);
 
-    PlatformCALayer* zoomLayer = layerForTransientZoom();
+    RefPtr zoomLayer = layerForTransientZoom();
     zoomLayer->setTransform(transform);
     zoomLayer->setAnchorPoint(FloatPoint3D());
     zoomLayer->setPosition(FloatPoint3D());

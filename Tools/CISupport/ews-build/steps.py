@@ -4930,7 +4930,7 @@ class UploadFileToS3(shell.ShellCommandNewStyle, AddToLogMixin):
     flunkOnFailure = False
 
     def __init__(self, **kwargs):
-        super().__init__(timeout=6 * 60, logEnviron=False, **kwargs)
+        super().__init__(timeout=30 * 60, logEnviron=False, **kwargs)
 
     @defer.inlineCallbacks
     def run(self):

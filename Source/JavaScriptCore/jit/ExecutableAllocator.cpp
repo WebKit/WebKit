@@ -766,7 +766,7 @@ private:
                 RELEASE_ASSERT(Assembler::canEmitJump(bitwise_cast<void*>(jumpLocation), target));
 
                 MacroAssembler jit;
-                auto nearTailCall = jit.nearTailCall();
+                jit.nearTailCallThunk(CodeLocationLabel<NoPtrTag>(target));
                 LinkBuffer linkBuffer(jit, CodePtr<NoPtrTag>(currentIsland), islandSizeInBytes, LinkBuffer::Profile::JumpIsland, JITCompilationMustSucceed, false);
                 RELEASE_ASSERT(linkBuffer.isValid());
 
@@ -778,7 +778,6 @@ private:
                 // has a jump linked to this island hasn't finalized yet, they're guaranteed to finalize there code and run an isb.
                 linkBuffer.setIsJumpIsland();
 
-                linkBuffer.link(nearTailCall, CodeLocationLabel<NoPtrTag>(target));
                 FINALIZE_CODE(linkBuffer, NoPtrTag, "Jump Island: %lu", jumpLocation);
             };
 

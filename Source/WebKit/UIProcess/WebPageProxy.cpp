@@ -225,6 +225,7 @@
 #include <stdio.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/EnumTraits.h>
+#include <wtf/ListHashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/NumberOfCores.h>
 #include <wtf/Scope.h>
@@ -458,6 +459,56 @@ public:
 private:
     WeakPtr<PageClient> m_pageClient;
 };
+
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+
+class WebPageProxyFrameLoadStateObserver final : public FrameLoadState::Observer {
+    WTF_MAKE_NONCOPYABLE(WebPageProxyFrameLoadStateObserver);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static constexpr size_t maxVisitedDomainsSize = 6;
+
+    WebPageProxyFrameLoadStateObserver() = default;
+    virtual ~WebPageProxyFrameLoadStateObserver() = default;
+
+    void didReceiveProvisionalURL(const URL& url) override
+    {
+        m_provisionalURLs.append(url);
+    }
+
+    void didCancelProvisionalLoad() override
+    {
+        m_provisionalURLs.clear();
+    }
+
+    void didCommitProvisionalLoad() override
+    {
+        for (auto& url : m_provisionalURLs)
+            didVisitDomain(RegistrableDomain(url));
+    }
+
+    const ListHashSet<RegistrableDomain>& visitedDomains() const
+    {
+        return m_visitedDomains;
+    }
+
+private:
+    void didVisitDomain(RegistrableDomain&& domain)
+    {
+        if (domain.isEmpty())
+            return;
+
+        m_visitedDomains.prependOrMoveToFirst(WTFMove(domain));
+
+        if (m_visitedDomains.size() > maxVisitedDomainsSize)
+            m_visitedDomains.removeLast();
+    }
+
+    Vector<URL> m_provisionalURLs;
+    ListHashSet<RegistrableDomain> m_visitedDomains;
+};
+
+#endif // #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
 
 void WebPageProxy::forMostVisibleWebPageIfAny(PAL::SessionID sessionID, const SecurityOriginData& origin, CompletionHandler<void(WebPageProxy*)>&& completionHandler)
 {
@@ -5586,6 +5637,11 @@ void WebPageProxy::didCreateMainFrame(FrameIdentifier frameID)
 
     Ref mainFrame = WebFrameProxy::create(*this, protectedProcess(), frameID);
     m_mainFrame = mainFrame.copyRef();
+
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+    internals().frameLoadStateObserver = WTF::makeUnique<WebPageProxyFrameLoadStateObserver>();
+    m_mainFrame->frameLoadState().addObserver(*internals().frameLoadStateObserver);
+#endif
 
     if (internals().serviceWorkerOpenWindowCompletionCallback) {
         mainFrame->setNavigationCallback([callback = WTFMove(internals().serviceWorkerOpenWindowCompletionCallback)](auto pageID, auto) mutable {
@@ -13284,6 +13340,33 @@ void WebPageProxy::useRedirectionForCurrentNavigation(const ResourceResponse& re
     ASSERT(response.isRedirection());
     send(Messages::WebPage::UseRedirectionForCurrentNavigation(response));
 }
+
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+
+void WebPageProxy::didAccessWindowProxyPropertyViaOpenerForFrame(FrameIdentifier frameID, const SecurityOriginData& parentOrigin, WindowProxyProperty property)
+{
+    if (!internals().frameLoadStateObserver)
+        return;
+
+    RefPtr frame = WebFrameProxy::webFrame(frameID);
+    MESSAGE_CHECK(m_process, frame);
+
+    RegistrableDomain parentDomain { parentOrigin };
+
+    bool isMostRecentDomain = true;
+    for (auto& childDomain : internals().frameLoadStateObserver->visitedDomains()) {
+        // If we already told the embedder about this domain/property pair before, don't tell them again.
+        auto result = internals().windowOpenerAccessedProperties.add(childDomain, OptionSet<WindowProxyProperty> { });
+        if (result.iterator->value.contains(property))
+            continue;
+        result.iterator->value.add(property);
+
+        websiteDataStore().client().didAccessWindowProxyProperty(parentDomain, childDomain, property, isMostRecentDomain);
+        isMostRecentDomain = false;
+    }
+}
+
+#endif
 
 void WebPageProxy::dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
 {

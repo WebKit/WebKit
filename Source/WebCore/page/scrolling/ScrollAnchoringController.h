@@ -57,7 +57,7 @@ public:
 
 private:
     Element* findAnchorElementRecursive(Element*);
-    CandidateExaminationResult examineCandidate(Element&);
+    CandidateExaminationResult examineAnchorCandidate(Element&);
     bool didFindPriorityCandidate(Document&);
     FloatPoint computeOffsetFromOwningScroller(RenderObject& candidate);
     LocalFrameView& frameView();

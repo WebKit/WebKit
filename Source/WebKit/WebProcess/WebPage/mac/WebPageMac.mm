@@ -588,7 +588,7 @@ void WebPage::setTopOverhangImage(WebImage* image)
     if (!frameView)
         return;
 
-    auto* layer = frameView->setWantsLayerForTopOverHangArea(image);
+    RefPtr layer = frameView->setWantsLayerForTopOverHangArea(image);
     if (!layer)
         return;
 
@@ -607,7 +607,7 @@ void WebPage::setBottomOverhangImage(WebImage* image)
     if (!frameView)
         return;
 
-    auto* layer = frameView->setWantsLayerForBottomOverHangArea(image);
+    RefPtr layer = frameView->setWantsLayerForBottomOverHangArea(image);
     if (!layer)
         return;
 

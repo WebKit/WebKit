@@ -497,4 +497,24 @@ static NSNumber *_currentBadge;
     }];
 }
 
+static const char* windowProxyPropertyDescription(WKWindowProxyProperty property)
+{
+    switch (property) {
+    case WKWindowProxyPropertyInitialOpen:
+        return "initialOpen";
+    case WKWindowProxyPropertyClosed:
+        return "closed";
+    case WKWindowProxyPropertyPostMessage:
+        return "postMessage";
+    case WKWindowProxyPropertyOther:
+        return "other";
+    }
+    return "other";
+}
+
+- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore domain:(NSString *)registrableDomain didOpenDomainViaWindowOpen:(NSString *)openedRegistrableDomain withProperty:(WKWindowProxyProperty)property directly:(BOOL)directly
+{
+    NSLog(@"MiniBrowser detected cross-tab WindowProxy access between parent origin %@ and child origin %@ via property %s (directlyAccessed = %d)", registrableDomain, openedRegistrableDomain, windowProxyPropertyDescription(property), directly);
+}
+
 @end

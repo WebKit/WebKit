@@ -1,0 +1,3 @@
+
+PASS Test parent window accessing child window properties via WindowProxy.
+

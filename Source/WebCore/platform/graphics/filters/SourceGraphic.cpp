@@ -31,13 +31,13 @@
 
 namespace WebCore {
 
-Ref<SourceGraphic> SourceGraphic::create()
+Ref<SourceGraphic> SourceGraphic::create(DestinationColorSpace colorSpace)
 {
-    return adoptRef(*new SourceGraphic());
+    return adoptRef(*new SourceGraphic(colorSpace));
 }
 
-SourceGraphic::SourceGraphic()
-    : FilterEffect(FilterEffect::Type::SourceGraphic)
+SourceGraphic::SourceGraphic(DestinationColorSpace colorSpace)
+    : FilterEffect(FilterEffect::Type::SourceGraphic, colorSpace)
 {
 }
 

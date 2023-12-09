@@ -43,6 +43,7 @@
 #include "WebPopupMenuProxy.h"
 #include "WebURLSchemeHandlerIdentifier.h"
 #include "WindowKind.h"
+#include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/PrivateClickMeasurement.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
@@ -91,6 +92,8 @@
 #endif
 
 namespace WebKit {
+
+class WebPageProxyFrameLoadStateObserver;
 
 struct PrivateClickMeasurementAndMetadata {
     WebCore::PrivateClickMeasurement pcm;
@@ -305,6 +308,11 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 
 #if ENABLE(PROCESS_CAPABILITIES)
     std::optional<MediaCapability> mediaCapability;
+#endif
+
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+    std::unique_ptr<WebPageProxyFrameLoadStateObserver> frameLoadStateObserver;
+    HashMap<WebCore::RegistrableDomain, OptionSet<WebCore::WindowProxyProperty>> windowOpenerAccessedProperties;
 #endif
 
     explicit Internals(WebPageProxy&);

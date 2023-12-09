@@ -67,16 +67,9 @@ RefPtr<MediaSourcePrivateClient> MediaSourcePrivate::client() const
     return m_client.get();
 }
 
-MediaTime MediaSourcePrivate::duration() const
+const MediaTime& MediaSourcePrivate::duration() const
 {
     return m_duration;
-}
-
-const PlatformTimeRanges& MediaSourcePrivate::buffered() const
-{
-    if (RefPtr client = this->client())
-        return client->buffered();
-    return PlatformTimeRanges::emptyRanges();
 }
 
 Ref<MediaTimePromise> MediaSourcePrivate::waitForTarget(const SeekTarget& target)
@@ -140,6 +133,16 @@ void MediaSourcePrivate::durationChanged(const MediaTime& duration)
     m_duration = duration;
     for (auto& sourceBuffer : m_sourceBuffers)
         sourceBuffer->setMediaSourceDuration(duration);
+}
+
+void MediaSourcePrivate::bufferedChanged(const PlatformTimeRanges& buffered)
+{
+    m_buffered = buffered;
+}
+
+const PlatformTimeRanges& MediaSourcePrivate::buffered() const
+{
+    return m_buffered;
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)

@@ -172,7 +172,10 @@ void MediaSource::removedFromRegistry()
 
 MediaTime MediaSource::duration() const
 {
-    return m_duration;
+    // 1. If the readyState attribute is "closed" then return NaN and abort these steps.
+    // 2. Return the current value of the attribute.
+
+    return isClosed() ? MediaTime::invalidTime() : m_private->duration();
 }
 
 MediaTime MediaSource::currentTime() const
@@ -184,7 +187,7 @@ MediaTime MediaSource::currentTime() const
 
 const PlatformTimeRanges& MediaSource::buffered() const
 {
-    return m_buffered;
+    return isClosed() ? PlatformTimeRanges::emptyRanges() : m_private->buffered();
 }
 
 Ref<MediaTimePromise> MediaSource::waitForTarget(const SeekTarget& target)
@@ -283,12 +286,12 @@ Ref<TimeRanges> MediaSource::seekable()
 
     // ↳ If duration equals NaN:
     // Return an empty TimeRanges object.
-    if (m_duration.isInvalid())
+    if (duration().isInvalid())
         return TimeRanges::create();
 
     // ↳ If duration equals positive Infinity:
-    if (m_duration.isPositiveInfinite()) {
-        auto buffered = this->buffered();
+    if (duration().isPositiveInfinite()) {
+        auto buffered = m_private->buffered();
         // If live seekable range is not empty:
         if (m_liveSeekable.length()) {
             // Let union ranges be the union of live seekable range and the HTMLMediaElement.buffered attribute.
@@ -311,7 +314,7 @@ Ref<TimeRanges> MediaSource::seekable()
 
     // ↳ Otherwise:
     // Return a single range with a start time of 0 and an end time equal to duration.
-    return TimeRanges::create({MediaTime::zeroTime(), m_duration});
+    return TimeRanges::create({ MediaTime::zeroTime(), duration() });
 }
 
 ExceptionOr<void> MediaSource::setLiveSeekableRange(double start, double end)
@@ -370,7 +373,7 @@ bool MediaSource::hasBufferedTime(const MediaTime& time)
     if (time > duration())
         return false;
 
-    auto& ranges = buffered();
+    auto& ranges = m_private->buffered();
     if (!ranges.length())
         return false;
 
@@ -424,7 +427,7 @@ void MediaSource::monitorSourceBuffers()
     // ↳ If HTMLMediaElement.buffered contains a TimeRange that includes the current
     //  playback position and enough data to ensure uninterrupted playback:
     if (std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [&](auto& sourceBuffer) {
-        return sourceBuffer->canPlayThroughRange(buffered());
+        return sourceBuffer->canPlayThroughRange(m_private->buffered());
     })) {
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_ENOUGH_DATA.
         // 2. Queue a task to fire a simple event named canplaythrough at the media element.
@@ -502,7 +505,7 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& newDuration)
     // https://www.w3.org/TR/2016/REC-media-source-20161117/#duration-change-algorithm
 
     // 1. If the current value of duration is equal to new duration, then return.
-    if (newDuration == m_duration)
+    if (newDuration == duration())
         return { };
 
     // 2. If new duration is less than the highest presentation timestamp of any buffered coded frames
@@ -521,12 +524,13 @@ ExceptionOr<void> MediaSource::setDurationInternal(const MediaTime& newDuration)
 
     // 4. If new duration is less than highest end time, then
     // 4.1. Update new duration to equal highest end time.
-    // 5. Update duration to new duration.
-    m_duration =  highestEndTime.isValid() && newDuration < highestEndTime ? highestEndTime : newDuration;
-    ALWAYS_LOG(LOGIDENTIFIER, m_duration);
+    auto duration = highestEndTime.isValid() && newDuration < highestEndTime ? highestEndTime : newDuration;
 
+    ALWAYS_LOG(LOGIDENTIFIER, duration);
+
+    // 5. Update duration to new duration.
     // 6. Update the media duration to new duration and run the HTMLMediaElement duration change algorithm.
-    m_private->durationChanged(m_duration);
+    m_private->durationChanged(duration);
 
     // Changing the duration affects the buffered range.
     monitorSourceBuffers();
@@ -975,7 +979,7 @@ void MediaSource::detachFromElement(HTMLMediaElement& element)
     setReadyState(ReadyState::Closed);
 
     // 2. Update duration to NaN.
-    m_duration = MediaTime::invalidTime();
+    // Step is done in duration() method which will now always return invalidTime()
 
     // 3. Remove all the SourceBuffer objects from activeSourceBuffers.
     // 4. Queue a task to fire a simple event named removesourcebuffer at activeSourceBuffers.
@@ -1200,17 +1204,20 @@ void MediaSource::sourceBufferBufferedChanged()
 
 void MediaSource::updateBufferedIfNeeded(bool force)
 {
+    if (isClosed())
+        return;
+
     if (!force && m_activeSourceBuffers->length() && std::all_of(m_activeSourceBuffers->begin(), m_activeSourceBuffers->end(), [](auto& buffer) { return !buffer->isBufferedDirty(); }))
         return;
 
     for (auto& sourceBuffer : *m_activeSourceBuffers)
         sourceBuffer->setBufferedDirty(false);
 
-    auto buffered = std::exchange(m_buffered, { });
+    PlatformTimeRanges buffered;
     auto updatePrivate = makeScopeExit([&] {
-        if (!m_private || buffered == m_buffered)
+        if (buffered == m_private->buffered())
             return;
-        m_private->bufferedChanged(m_buffered);
+        m_private->bufferedChanged(buffered);
         monitorSourceBuffers();
     });
 
@@ -1236,7 +1243,7 @@ void MediaSource::updateBufferedIfNeeded(bool force)
         return;
 
     // 4. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
-    m_buffered.add(MediaTime::zeroTime(), highestEndTime);
+    buffered.add(MediaTime::zeroTime(), highestEndTime);
 
     // 5. For each SourceBuffer object in activeSourceBuffers run the following steps:
     bool ended = readyState() == ReadyState::Ended;
@@ -1248,7 +1255,7 @@ void MediaSource::updateBufferedIfNeeded(bool force)
 
         // 5.3 Let new intersection ranges equal the intersection between the intersection ranges and the source ranges.
         // 5.4 Replace the ranges in intersection ranges with the new intersection ranges.
-        m_buffered.intersectWith(sourceRanges);
+        buffered.intersectWith(sourceRanges);
     }
 }
 

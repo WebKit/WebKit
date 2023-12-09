@@ -520,7 +520,6 @@
 		DDA35E4A29CA9B68006C1018 /* PlatformEnablePlayStation.h in Headers */ = {isa = PBXBuildFile; fileRef = DD4901E127B4748A00D7E50D /* PlatformEnablePlayStation.h */; };
 		DDA35E4B29CA9B68006C1018 /* PlatformEnableWinCairo.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C98CDC923E7AFC80012F232 /* PlatformEnableWinCairo.h */; };
 		DDCAF31D27B1E7C500C45308 /* GenericHashKey.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FD6D6627A1F6AD00935000 /* GenericHashKey.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		DDE99319278D08DC00F60D26 /* libWebKitAdditions.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = DDE99317278D08C900F60D26 /* libWebKitAdditions.a */; };
 		DDF306D827C08654006A526F /* CFStringSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF306C127C08654006A526F /* CFStringSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF306D927C08654006A526F /* CFRunLoopSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF306C227C08654006A526F /* CFRunLoopSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		DDF306DA27C08654006A526F /* CFBundleSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = DDF306C327C08654006A526F /* CFBundleSPI.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -952,7 +951,6 @@
 			dstSubfolderSpec = 16;
 			files = (
 				DD403D5628EB93BE009B4684 /* libbmalloc.a in Product Dependencies */,
-				DDE99319278D08DC00F60D26 /* libWebKitAdditions.a in Product Dependencies */,
 			);
 			name = "Product Dependencies";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1698,7 +1696,6 @@
 		DDD8BB7A27B347C500C109E0 /* ulistformatter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ulistformatter.h; sourceTree = "<group>"; };
 		DDD8BB7B27B347C500C109E0 /* measfmt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = measfmt.h; sourceTree = "<group>"; };
 		DDD8BB7C27B347C500C109E0 /* unifilt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = unifilt.h; sourceTree = "<group>"; };
-		DDE99317278D08C900F60D26 /* libWebKitAdditions.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWebKitAdditions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		DDF306C127C08654006A526F /* CFStringSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFStringSPI.h; sourceTree = "<group>"; };
 		DDF306C227C08654006A526F /* CFRunLoopSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFRunLoopSPI.h; sourceTree = "<group>"; };
 		DDF306C327C08654006A526F /* CFBundleSPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CFBundleSPI.h; sourceTree = "<group>"; };
@@ -2845,7 +2842,6 @@
 			isa = PBXGroup;
 			children = (
 				DD403D5528EB93BE009B4684 /* libbmalloc.a */,
-				DDE99317278D08C900F60D26 /* libWebKitAdditions.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

@@ -501,6 +501,13 @@ void InjectedBundle::didReceiveMessageToPage(WKBundlePageRef page, WKStringRef m
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "DidGetAndClearReportedWindowProxyAccessDomains")) {
+        ASSERT(messageBody);
+        ASSERT(WKGetTypeID(messageBody) == WKArrayGetTypeID());
+        m_testRunner->didGetAndClearReportedWindowProxyAccessDomains(static_cast<WKArrayRef>(messageBody));
+        return;
+    }
+
     if (WKStringIsEqualToUTF8CString(messageName, "WheelEventMarker")) {
         ASSERT(messageBody);
         ASSERT(WKGetTypeID(messageBody) == WKStringGetTypeID());

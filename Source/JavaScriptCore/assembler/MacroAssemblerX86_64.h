@@ -250,7 +250,8 @@ public:
         return result;
     }
 
-    void callOperation(const CodePtr<OperationPtrTag> operation)
+    template<PtrTag tag>
+    void callOperation(const CodePtr<tag> operation)
     {
         move(TrustedImmPtr(operation.taggedPtr()), scratchRegister());
         m_assembler.call(scratchRegister());

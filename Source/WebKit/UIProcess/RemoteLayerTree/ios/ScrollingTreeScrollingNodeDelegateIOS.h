@@ -25,6 +25,7 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(ASYNC_SCROLLING)
 
+#import "WKSEDefinitions.h"
 #import <UIKit/UIScrollView.h>
 #import <WebCore/ScrollingCoordinator.h>
 #import <WebCore/ScrollingTreeScrollingNode.h>
@@ -102,7 +103,7 @@ private:
 
 } // namespace WebKit
 
-@interface WKScrollingNodeScrollViewDelegate : NSObject <UIScrollViewDelegate> {
+@interface WKScrollingNodeScrollViewDelegate : NSObject <WKSEScrollViewDelegate> {
     WebKit::ScrollingTreeScrollingNodeDelegateIOS* _scrollingTreeNodeDelegate;
 }
 

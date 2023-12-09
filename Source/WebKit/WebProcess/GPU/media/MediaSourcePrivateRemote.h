@@ -66,7 +66,6 @@ public:
     void removeSourceBuffer(WebCore::SourceBufferPrivate&) final { }
     void notifyActiveSourceBuffersChanged() final { };
     void durationChanged(const MediaTime&) final;
-    void bufferedChanged(const WebCore::PlatformTimeRanges&) final;
     void markEndOfStream(EndOfStreamStatus) final;
     void unmarkEndOfStream() final;
     WebCore::MediaPlayer::ReadyState mediaPlayerReadyState() const final;
@@ -95,6 +94,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     void mediaSourcePrivateShuttingDown(CompletionHandler<void()>&&);
     bool isGPURunning() const { return !m_shutdown && m_gpuProcessConnection.get(); }
+    void bufferedChanged(const WebCore::PlatformTimeRanges&) final;
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteMediaSourceIdentifier m_identifier;

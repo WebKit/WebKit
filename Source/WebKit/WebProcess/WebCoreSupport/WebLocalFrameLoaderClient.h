@@ -275,6 +275,10 @@ private:
     void broadcastFrameRemovalToOtherProcesses() final;
     void broadcastMainFrameURLChangeToOtherProcesses(const URL&) final;
 
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+    void didAccessWindowProxyPropertyViaOpener(WebCore::SecurityOriginData&&, WebCore::WindowProxyProperty) final;
+#endif
+
     ScopeExit<Function<void()>> m_frameInvalidator;
 
 #if ENABLE(PDF_PLUGIN)

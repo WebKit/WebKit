@@ -57,13 +57,7 @@ public:
 
         jit.setupArguments<FunctionType>(std::get<ArgumentsIndex>(m_arguments)...);
         jit.prepareCallOperation(compiler.vm());
-
-        CCallHelpers::Call operationCall = jit.call(OperationPtrTag);
-        auto function = m_function;
-        jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-            linkBuffer.link<OperationPtrTag>(operationCall, function);
-        });
-
+        jit.callOperation<OperationPtrTag>(m_function);
         jit.setupResults(m_result);
         jit.reclaimSpaceOnStackForCCall();
 

@@ -91,6 +91,9 @@ GCC_WARN_UNUSED_FUNCTION = YES;
 GCC_WARN_UNUSED_VARIABLE = YES;
 PREBINDING = NO;
 WARNING_CFLAGS = $(inherited) -Wcast-qual -Wchar-subscripts -Wextra-tokens -Winit-self -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wimplicit-fallthrough -Wvla -Wliteral-conversion -Wthread-safety -Wno-typedef-redefinition;
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)$(BMALLOC_INSTALL_PATH_PREFIX)$(WK_LIBRARY_HEADERS_FOLDER_PATH) $(DSTROOT)$(BMALLOC_INSTALL_PATH_PREFIX)$(WK_LIBRARY_HEADERS_FOLDER_PATH) $(inherited);
+SYSTEM_HEADER_SEARCH_PATHS = $(WK_PRIVATE_SDK_DIR)$(BMALLOC_INSTALL_PATH_PREFIX)$(WK_LIBRARY_HEADERS_FOLDER_PATH) $(inherited);
+LIBRARY_SEARCH_PATHS = $(SDK_DIR)$(BMALLOC_INSTALL_PATH_PREFIX)$(WK_LIBRARY_INSTALL_PATH) $(inherited);
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;
@@ -114,6 +117,8 @@ BMALLOC_INSTALL_PATH_PREFIX_DEPLOYMENT_YES = $(BMALLOC_INSTALL_PATH_PREFIX_DEPLO
 BMALLOC_INSTALL_PATH_PREFIX_DEPLOYMENT_YES_USE_ALTERNATE_YES = $(WK_ALTERNATE_FRAMEWORKS_DIR)/;
 
 LLVM_LTO = $(WK_USER_LTO_MODE_$(WK_LTO_MODE));
+
+EXCLUDED_SOURCE_FILE_NAMES = libWebKitAdditions.a
 
 WK_USER_LTO_MODE_full = YES;
 WK_USER_LTO_MODE_thin = YES_THIN;
