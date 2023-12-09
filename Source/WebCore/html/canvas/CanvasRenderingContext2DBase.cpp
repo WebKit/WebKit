@@ -35,6 +35,7 @@
 
 #include "BitmapImage.h"
 #include "CSSFontSelector.h"
+#include "CSSMarkup.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "CSSStyleImageValue.h"
@@ -318,8 +319,7 @@ String CanvasRenderingContext2DBase::State::fontString() const
             family = family.substring(8);
 
         auto separator = i ? ", " : " ";
-        auto quote = family.contains(' ') ? "\"" : "";
-        serializedFont.append(separator, quote, family, quote);
+        serializedFont.append(separator, serializeFontFamily(family.toString()));
     }
 
     return serializedFont.toString();
