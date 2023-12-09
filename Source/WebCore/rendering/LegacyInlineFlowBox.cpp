@@ -282,19 +282,6 @@ void LegacyInlineFlowBox::adjustPosition(float dx, float dy)
         m_overflow->move(LayoutUnit(dx), LayoutUnit(dy)); // FIXME: Rounding error here since overflow was pixel snapped, but nobody other than list markers passes non-integral values here.
 }
 
-void LegacyInlineFlowBox::adjustBlockDirectionPosition(float delta, bool adjustStaticPosition)
-{
-    LegacyInlineBox::adjustBlockDirectionPosition(delta, adjustStaticPosition);
-    for (auto* child = firstChild(); child; child = child->nextOnLine())
-        child->adjustBlockDirectionPosition(delta, adjustStaticPosition);
-    if (RefPtr overflow = m_overflow) {
-        if (isHorizontal())
-            overflow->move(0_lu, LayoutUnit(delta));
-        else
-            overflow->move(LayoutUnit(delta), 0_lu);
-    }
-}
-
 static inline bool isLastChildForRenderer(const RenderElement& ancestor, const RenderObject* child)
 {
     if (!child)

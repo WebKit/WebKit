@@ -682,12 +682,12 @@ inline LayoutUnit RenderBlockFlow::shiftForAlignContent(LayoutUnit intrinsicLogi
                 }
             }
         }
-    } else if (legacyLineLayout()) {
+    } else /* if (legacyLineLayout()) {
         if (isHorizontalWritingMode())
             legacyLineLayout()->lineBoxes().shiftLinesBy(0, space);
         else
             legacyLineLayout()->lineBoxes().shiftLinesBy(-space, 0);
-    } else if (modernLineLayout())
+    } else */ if (modernLineLayout())
         modernLineLayout()->shiftLinesBy(space);
     if (m_floatingObjects)
         m_floatingObjects->shiftFloatsBy(space);

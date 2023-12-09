@@ -27,9 +27,7 @@
 #include "LegacyRootInlineBox.h"
 #include "LocalFrame.h"
 #include "RenderBlockFlow.h"
-#include "RenderBox.h"
 #include "RenderBoxModelObjectInlines.h"
-#include "RenderLayer.h"
 #include "RenderLineBreak.h"
 #include "RenderStyleInlines.h"
 #include <wtf/IsoMallocInlines.h>
@@ -190,23 +188,6 @@ void LegacyInlineBox::adjustPosition(float dx, float dy)
 
     if (renderer().isReplacedOrInlineBlock())
         downcast<RenderBox>(renderer()).move(LayoutUnit(dx), LayoutUnit(dy));
-}
-
-void LegacyInlineBox::adjustBlockDirectionPosition(float delta, bool adjustStaticPosition)
-{
-    if (isHorizontal())
-        adjustPosition(0, delta);
-    else
-        adjustPosition(delta, 0);
-
-    if (adjustStaticPosition && renderer().isOutOfFlowPositioned()) {
-        CheckedRef box = downcast<RenderBox>(renderer());
-        if (box->style().hasStaticBlockPosition(isHorizontal())) {
-            ASSERT(box->layer());
-            box->checkedLayer()->setStaticBlockPosition(box->layer()->staticBlockPosition() + LayoutUnit(delta));
-            box->setChildNeedsLayout(MarkOnlyThis);
-        }
-    }
 }
 
 const LegacyRootInlineBox& LegacyInlineBox::root() const

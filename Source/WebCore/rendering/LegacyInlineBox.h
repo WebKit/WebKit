@@ -64,7 +64,13 @@ public:
         else
             adjustPosition(0, delta);
     }
-    WEBCORE_EXPORT virtual void adjustBlockDirectionPosition(float delta, bool adjustStaticPosition = false);
+    void adjustBlockDirectionPosition(float delta)
+    {
+        if (isHorizontal())
+            adjustPosition(0, delta);
+        else
+            adjustPosition(delta, 0);
+    }
 
     virtual void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) = 0;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) = 0;
