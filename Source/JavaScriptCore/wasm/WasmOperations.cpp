@@ -1146,15 +1146,17 @@ JSC_DEFINE_JIT_OPERATION(operationWasmAnyConvertExtern, EncodedJSValue, (Encoded
     return externInternalize(reference);
 }
 
-JSC_DEFINE_JIT_OPERATION(operationWasmRefTest, int32_t, (Instance* instance, EncodedJSValue reference, uint32_t allowNull, int32_t heapType))
+JSC_DEFINE_JIT_OPERATION(operationWasmRefTest, int32_t, (Instance* instance, EncodedJSValue reference, uint32_t allowNull, int32_t heapType, bool shouldNegate))
 {
     Wasm::TypeIndex typeIndex;
     if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType)))
         typeIndex = static_cast<Wasm::TypeIndex>(heapType);
     else
         typeIndex = instance->module().moduleInformation().typeSignatures[heapType]->index();
+    int32_t truth = shouldNegate ? 0 : 1;
+    int32_t falsity = shouldNegate ? 1 : 0;
     // Explicitly return 1 or 0 because bool in C++ only reqiures that the bottom bit match the other bits can be anything.
-    return Wasm::refCast(reference, static_cast<bool>(allowNull), typeIndex) ? 1 : 0;
+    return Wasm::refCast(reference, static_cast<bool>(allowNull), typeIndex) ? truth : falsity;
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmRefCast, EncodedJSValue, (Instance* instance, EncodedJSValue reference, uint32_t allowNull, int32_t heapType))

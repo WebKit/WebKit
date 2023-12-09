@@ -4191,18 +4191,19 @@ public:
         return { };
     }
 
-    PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result)
+    PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, bool shouldNegate, ExpressionType& result)
     {
         Vector<Value, 8> arguments = {
             instanceValue(),
             reference,
             Value::fromI32(allowNull),
             Value::fromI32(heapType),
+            Value::fromI32(shouldNegate),
         };
         result = topValue(TypeKind::I32);
         emitCCall(operationWasmRefTest, arguments, result);
 
-        LOG_INSTRUCTION("RefTest", reference, allowNull, heapType, RESULT(result));
+        LOG_INSTRUCTION("RefTest", reference, allowNull, heapType, shouldNegate, RESULT(result));
 
         return { };
     }
@@ -7492,7 +7493,7 @@ public:
             Location referenceLocation = loadIfNecessary(reference);
             ASSERT(referenceLocation.isGPR());
             // The branch will try to move to the scratch anyway so this is fine.
-            condition = Value::pinned(TypeKind::Ref, Location::fromGPR(wasmScratchGPR));
+            condition = Value::pinned(TypeKind::I32, Location::fromGPR(wasmScratchGPR));
             Location conditionLocation = locationOf(condition);
             ASSERT(JSValue::encode(jsNull()) >= 0 && JSValue::encode(jsNull()) <= INT32_MAX);
             m_jit.compare64(shouldNegate ? RelationalCondition::NotEqual : RelationalCondition::Equal, referenceLocation.asGPR(), TrustedImm32(static_cast<int32_t>(JSValue::encode(jsNull()))), conditionLocation.asGPR());
@@ -7504,6 +7505,41 @@ public:
 
         if (!shouldNegate)
             result = reference;
+
+        return { };
+    }
+
+    PartialResult WARN_UNUSED_RETURN addBranchCast(ControlData& data, ExpressionType reference, Stack& returnValues, bool allowNull, int32_t heapType, bool shouldNegate)
+    {
+        Value condition;
+        if (reference.isConst()) {
+            JSValue refValue = JSValue::decode(reference.asRef());
+            ASSERT(refValue.isNull() || refValue.isNumber());
+            if (refValue.isNull())
+                condition = Value::fromI32(static_cast<uint32_t>(shouldNegate ? !allowNull : allowNull));
+            else {
+                bool matches = isSubtype(Type { TypeKind::Ref, static_cast<TypeIndex>(TypeKind::I31ref) }, Type { TypeKind::Ref, static_cast<TypeIndex>(heapType) });
+                condition = Value::fromI32(shouldNegate ? !matches : matches);
+            }
+        } else {
+            // Use an indirection for the reference to avoid it getting consumed here.
+            Value tempReference = Value::pinned(TypeKind::Ref, Location::fromGPR(wasmScratchGPR));
+            emitMove(reference, locationOf(tempReference));
+
+            Vector<Value, 8> arguments = {
+                instanceValue(),
+                tempReference,
+                Value::fromI32(allowNull),
+                Value::fromI32(heapType),
+                Value::fromI32(shouldNegate),
+            };
+            condition = topValue(TypeKind::I32);
+            emitCCall(operationWasmRefTest, arguments, condition);
+        }
+
+        WASM_FAIL_IF_HELPER_FAILS(addBranch(data, condition, returnValues));
+
+        LOG_INSTRUCTION("BrOnCast/CastFail", reference);
 
         return { };
     }
