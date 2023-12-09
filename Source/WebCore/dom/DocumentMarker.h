@@ -38,7 +38,7 @@ namespace WebCore {
 // It optionally includes a description that could be displayed in the user interface.
 class DocumentMarker : public CanMakeWeakPtr<DocumentMarker> {
 public:
-    enum MarkerType {
+    enum class Type : uint16_t {
         Spelling = 1 << 0,
         Grammar = 1 << 1,
         TextMatch = 1 << 2,
@@ -84,7 +84,7 @@ public:
 #endif
     };
 
-    static constexpr OptionSet<MarkerType> allMarkers();
+    static constexpr OptionSet<Type> allMarkers();
 
     struct DictationData {
         DictationContext context;
@@ -110,9 +110,9 @@ public:
 #endif
     >;
 
-    DocumentMarker(MarkerType, OffsetRange, Data&& = { });
+    DocumentMarker(Type, OffsetRange, Data&& = { });
 
-    MarkerType type() const { return m_type; }
+    Type type() const { return m_type; }
     unsigned startOffset() const { return m_range.start; }
     unsigned endOffset() const { return m_range.end; }
 
@@ -128,40 +128,40 @@ public:
     void shiftOffsets(int delta);
 
 private:
-    MarkerType m_type;
+    Type m_type;
     OffsetRange m_range;
     Data m_data;
 };
 
-constexpr auto DocumentMarker::allMarkers() -> OptionSet<MarkerType>
+constexpr auto DocumentMarker::allMarkers() -> OptionSet<Type>
 {
     return {
-        AcceptedCandidate,
-        Autocorrected,
-        CorrectionIndicator,
-        DeletedAutocorrection,
-        DictationAlternatives,
-        DraggedContent,
-        Grammar,
-        RejectedCorrection,
-        Replacement,
-        SpellCheckingExemption,
-        Spelling,
-        TextMatch,
+        Type::AcceptedCandidate,
+        Type::Autocorrected,
+        Type::CorrectionIndicator,
+        Type::DeletedAutocorrection,
+        Type::DictationAlternatives,
+        Type::DraggedContent,
+        Type::Grammar,
+        Type::RejectedCorrection,
+        Type::Replacement,
+        Type::SpellCheckingExemption,
+        Type::Spelling,
+        Type::TextMatch,
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-        TelephoneNumber,
+        Type::TelephoneNumber,
 #endif
 #if PLATFORM(IOS_FAMILY)
-        DictationPhraseWithAlternatives,
-        DictationResult,
+        Type::DictationPhraseWithAlternatives,
+        Type::DictationResult,
 #endif
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
-        PlatformTextChecking
+        Type::PlatformTextChecking,
 #endif
     };
 }
 
-inline DocumentMarker::DocumentMarker(MarkerType type, OffsetRange range, Data&& data)
+inline DocumentMarker::DocumentMarker(Type type, OffsetRange range, Data&& data)
     : m_type(type)
     , m_range(range)
     , m_data(WTFMove(data))
