@@ -210,18 +210,20 @@ void DrawingAreaWC::triggerRenderingUpdate()
     m_updateRenderingTimer.startOneShot(0_s);
 }
 
-static void flushLayerImageBuffers(WCUpdateInfo& info)
+static Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> createLayerImageBufferFlushers(WCUpdateInfo& info)
 {
+    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers;
     for (auto& layerInfo : info.changedLayers) {
         if (layerInfo.changes & WCLayerChange::Background) {
             for (auto& tileUpdate : layerInfo.tileUpdate) {
                 if (auto image = tileUpdate.backingStore.imageBuffer()) {
                     if (auto flusher = image->createFlusher())
-                        flusher->flush();
+                        flushers.append(WTFMove(flusher));
                 }
             }
         }
     }
+    return flushers;
 }
 
 bool DrawingAreaWC::isCompositingMode()
@@ -290,8 +292,10 @@ void DrawingAreaWC::sendUpdateAC()
         if (rootLayer.viewOverlayRootLayer)
             rootLayer.viewOverlayRootLayer->flushCompositingState(visibleRect);
 
-        m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), stateID = m_backingStoreStateID, updateInfo = std::exchange(m_updateInfo, { }), willCallDisplayDidRefresh]() mutable {
-            flushLayerImageBuffers(updateInfo);
+        auto flushers = createLayerImageBufferFlushers(m_updateInfo);
+
+        m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), stateID = m_backingStoreStateID, updateInfo = std::exchange(m_updateInfo, { }), flushers = WTFMove(flushers), willCallDisplayDidRefresh]() mutable {
+            WTF::forEach(flushers, [](auto& flusher) { flusher->flush(); });
             RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), stateID, updateInfo = WTFMove(updateInfo), willCallDisplayDidRefresh]() mutable {
                 if (!weakThis)
                     return;
@@ -367,9 +371,10 @@ void DrawingAreaWC::sendUpdateNonAC()
     for (const auto& rect : rects)
         webPage->drawRect(image->context(), rect);
     image->flushDrawingContextAsync();
+    auto flusher = image->createFlusher();
 
-    m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), stateID = m_backingStoreStateID, updateInfo = WTFMove(updateInfo), image = WTFMove(image)]() mutable {
-        if (auto flusher = image->createFlusher())
+    m_commitQueue->dispatch([this, weakThis = WeakPtr(*this), stateID = m_backingStoreStateID, updateInfo = WTFMove(updateInfo), image = WTFMove(image), flusher = WTFMove(flusher)]() mutable {
+        if (flusher)
             flusher->flush();
         RunLoop::main().dispatch([this, weakThis = WTFMove(weakThis), stateID, updateInfo = WTFMove(updateInfo), image = WTFMove(image)]() mutable {
             if (!weakThis)
