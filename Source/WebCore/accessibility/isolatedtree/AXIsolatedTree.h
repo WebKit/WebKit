@@ -68,6 +68,7 @@ enum class AXPropertyName : uint16_t {
     BrailleLabel,
     BrailleRoleDescription,
     ButtonState,
+    CanBeMultilineTextField,
     CanSetFocusAttribute,
     CanSetSelectedAttribute,
     CanSetSelectedChildren,
