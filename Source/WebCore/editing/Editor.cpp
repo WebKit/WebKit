@@ -1173,7 +1173,7 @@ static inline bool didApplyAutocorrection(Document& document, AlternativeTextCon
     auto wordEnd = endOfWord(startOfSelection, WordSide::LeftWordIfOnBoundary);
 
     if (auto range = makeSimpleRange(wordStart, wordEnd)) {
-        if (document.markers().hasMarkers(*range, DocumentMarker::CorrectionIndicator))
+        if (document.markers().hasMarkers(*range, DocumentMarker::Type::CorrectionIndicator))
             autocorrectionWasApplied = true;
     }
 
@@ -1184,10 +1184,10 @@ static inline bool didApplyAutocorrection(Document& document, AlternativeTextCon
 #endif
 }
 
-static inline void adjustMarkerTypesToRemoveForWordsAffectedByEditing(OptionSet<DocumentMarker::MarkerType>& markerTypes)
+static inline void adjustMarkerTypesToRemoveForWordsAffectedByEditing(OptionSet<DocumentMarker::Type>& markerTypes)
 {
 #if HAVE(AUTOCORRECTION_ENHANCEMENTS) && PLATFORM(IOS_FAMILY)
-    markerTypes.remove(DocumentMarker::CorrectionIndicator);
+    markerTypes.remove(DocumentMarker::Type::CorrectionIndicator);
 #else
     UNUSED_PARAM(markerTypes);
 #endif
@@ -2375,7 +2375,7 @@ void Editor::ignoreSpelling()
         return;
 
     if (auto selectedRange = document().selection().selection().toNormalizedRange())
-        removeMarkers(*selectedRange, DocumentMarker::Spelling);
+        removeMarkers(*selectedRange, DocumentMarker::Type::Spelling);
 
     String text = selectedText();
     ASSERT(text.length());
@@ -2390,7 +2390,7 @@ void Editor::learnSpelling()
     // FIXME: On Mac OS X, when use "learn" button on "Spelling and Grammar" panel, we don't call this function. It should remove misspelling markers around the learned word, see <rdar://problem/5396072>.
 
     if (auto selectedRange = document().selection().selection().toNormalizedRange())
-        removeMarkers(*selectedRange, DocumentMarker::Spelling);
+        removeMarkers(*selectedRange, DocumentMarker::Type::Spelling);
 
     String text = selectedText();
     ASSERT(text.length());
@@ -2535,7 +2535,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         document->selection().revealSelection();
         
         client()->updateSpellingUIWithGrammarString(ungrammaticalPhrase.phrase, ungrammaticalPhrase.detail);
-        addMarker(badGrammarRange, DocumentMarker::Grammar, ungrammaticalPhrase.detail.userDescription);
+        addMarker(badGrammarRange, DocumentMarker::Type::Grammar, ungrammaticalPhrase.detail.userDescription);
     } else if (!misspelledWord.word.isEmpty()) {
         // We found a misspelling, but not any earlier bad grammar. Select the misspelling, update the spelling panel, and store
         // a marker so we draw the red squiggle later.
@@ -2545,7 +2545,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         document->selection().revealSelection();
         
         client()->updateSpellingUIWithMisspelledWord(misspelledWord.word);
-        addMarker(misspellingRange, DocumentMarker::Spelling);
+        addMarker(misspellingRange, DocumentMarker::Type::Spelling);
     }
 }
 
@@ -2667,7 +2667,7 @@ bool Editor::spellingPanelIsShowing()
 void Editor::clearMisspellingsAndBadGrammar(const VisibleSelection& movingSelection)
 {
     if (auto selectedRange = movingSelection.toNormalizedRange())
-        removeMarkers(*selectedRange, { DocumentMarker::Spelling, DocumentMarker::Grammar });
+        removeMarkers(*selectedRange, { DocumentMarker::Type::Spelling, DocumentMarker::Type::Grammar });
 }
 
 void Editor::markMisspellingsAndBadGrammar(const VisibleSelection &movingSelection)
@@ -2792,8 +2792,8 @@ void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition& wordStart,
         // cause any other part of the current sentence to lose or gain spelling correction markers, due to
         // sentence retro correction. As such, we expand the spell checking range to encompass as much of the
         // full sentence as we can, respecting boundaries where spellchecking is disabled.
-        removeMarkers(*fullSentenceRange, DocumentMarker::Grammar);
-        removeMarkers(*spellCheckingRange, DocumentMarker::Spelling);
+        removeMarkers(*fullSentenceRange, DocumentMarker::Type::Grammar);
+        removeMarkers(*spellCheckingRange, DocumentMarker::Type::Spelling);
         markAllMisspellingsAndBadGrammarInRanges(textCheckingOptions, spellCheckingRange, adjacentWordRange, fullSentenceRange);
         return;
     }
@@ -3056,14 +3056,14 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
             auto misspellingRange = paragraph.subrange({ resultLocation, resultLength });
             if (!m_alternativeTextController->isSpellingMarkerAllowed(misspellingRange))
                 continue;
-            addMarker(misspellingRange, DocumentMarker::Spelling, replacement);
+            addMarker(misspellingRange, DocumentMarker::Type::Spelling, replacement);
         } else if (shouldMarkGrammar && resultType == TextCheckingType::Grammar && paragraph.checkingRangeCovers({ resultLocation, resultLength })) {
             ASSERT(resultLength > 0);
             for (auto& detail : results[i].details) {
                 ASSERT(detail.range.length > 0);
                 if (paragraph.checkingRangeCovers({ resultLocation + detail.range.location, detail.range.length })) {
                     auto badGrammarRange = paragraph.subrange({ resultLocation + detail.range.location, detail.range.length });
-                    addMarker(badGrammarRange, DocumentMarker::Grammar, detail.userDescription);
+                    addMarker(badGrammarRange, DocumentMarker::Type::Grammar, detail.userDescription);
                     previousGrammarRanges.append(CharacterRange(resultLocation + detail.range.location, detail.range.length));
                 }
             }
@@ -3178,7 +3178,7 @@ void Editor::changeBackToReplacedString(const String& replacedString)
     TextCheckingParagraph paragraph(*selection);
     replaceSelectionWithText(replacedString, SelectReplacement::No, SmartReplace::No, EditAction::Insert);
     auto changedRange = paragraph.subrange(CharacterRange(paragraph.checkingStart(), replacedString.length()));
-    addMarker(changedRange, DocumentMarker::Replacement, String());
+    addMarker(changedRange, DocumentMarker::Type::Replacement, String());
     m_alternativeTextController->markReversed(changedRange);
 #else
     ASSERT_NOT_REACHED();
@@ -3287,22 +3287,22 @@ void Editor::updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionA
     // of marker that contains the word in question, and remove marker on that whole range.
     auto wordRange = *makeSimpleRange(startOfFirstWord, endOfLastWord);
 
-    for (auto& marker : document->markers().markersInRange(wordRange, DocumentMarker::DictationAlternatives))
+    for (auto& marker : document->markers().markersInRange(wordRange, DocumentMarker::Type::DictationAlternatives))
         m_alternativeTextController->removeDictationAlternativesForMarker(*marker);
 
-    OptionSet<DocumentMarker::MarkerType> markerTypesToRemove {
-        DocumentMarker::CorrectionIndicator,
-        DocumentMarker::DictationAlternatives,
-        DocumentMarker::SpellCheckingExemption,
-        DocumentMarker::Spelling,
+    OptionSet<DocumentMarker::Type> markerTypesToRemove {
+        DocumentMarker::Type::CorrectionIndicator,
+        DocumentMarker::Type::DictationAlternatives,
+        DocumentMarker::Type::SpellCheckingExemption,
+        DocumentMarker::Type::Spelling,
 #if !PLATFORM(IOS_FAMILY)
-        DocumentMarker::Grammar,
+        DocumentMarker::Type::Grammar,
 #endif
     };
     adjustMarkerTypesToRemoveForWordsAffectedByEditing(markerTypesToRemove);
 
     removeMarkers(wordRange, markerTypesToRemove, RemovePartiallyOverlappingMarker::Yes);
-    document->markers().clearDescriptionOnMarkersIntersectingRange(wordRange, DocumentMarker::Replacement);
+    document->markers().clearDescriptionOnMarkersIntersectingRange(wordRange, DocumentMarker::Type::Replacement);
 }
 
 void Editor::deletedAutocorrectionAtPosition(const Position& position, const String& originalString)
@@ -3831,7 +3831,7 @@ unsigned Editor::countMatchesForText(const String& target, const std::optional<S
             matches->append(resultRange);
 
         if (markMatches)
-            addMarker(resultRange, DocumentMarker::TextMatch);
+            addMarker(resultRange, DocumentMarker::Type::TextMatch);
 
         // Stop looking if we hit the specified limit. A limit of 0 means no limit.
         if (limit > 0 && matchCount >= limit)
@@ -3856,7 +3856,7 @@ void Editor::setMarkedTextMatchesAreHighlighted(bool flag)
         return;
 
     m_areMarkedTextMatchesHighlighted = flag;
-    document().markers().repaintMarkers(DocumentMarker::TextMatch);
+    document().markers().repaintMarkers(DocumentMarker::Type::TextMatch);
 }
 
 #if !PLATFORM(MAC)
@@ -3968,7 +3968,7 @@ void Editor::scanSelectionForTelephoneNumbers()
 
     for (auto& range : scanForTelephoneNumbers(*extendedRange)) {
         // FIXME: Why do we do this unconditionally instead of when only when it overlaps the selection?
-        addMarker(range, DocumentMarker::TelephoneNumber);
+        addMarker(range, DocumentMarker::Type::TelephoneNumber);
 
         // Only consider ranges with a detected telephone number if they overlap with the selection.
         if (intersects<ComposedTree>(range, *selectedRange))
@@ -4036,19 +4036,19 @@ void Editor::editorUIUpdateTimerFired()
 
         if (!textChecker() || textChecker()->shouldEraseMarkersAfterChangeSelection(TextCheckingType::Spelling)) {
             if (auto wordRange = newAdjacentWords.toNormalizedRange())
-                removeMarkers(*wordRange, DocumentMarker::Spelling);
+                removeMarkers(*wordRange, DocumentMarker::Type::Spelling);
         }
         if (!textChecker() || textChecker()->shouldEraseMarkersAfterChangeSelection(TextCheckingType::Grammar)) {
             if (auto sentenceRange = newSelectedSentence.toNormalizedRange())
-                removeMarkers(*sentenceRange, DocumentMarker::Grammar);
+                removeMarkers(*sentenceRange, DocumentMarker::Type::Grammar);
         }
     }
 
     // When continuous spell checking is off, existing markers disappear after the selection changes.
     if (!isContinuousSpellCheckingEnabled)
-        document->markers().removeMarkers(DocumentMarker::Spelling);
+        document->markers().removeMarkers(DocumentMarker::Type::Spelling);
     if (!isContinuousGrammarCheckingEnabled)
-        document->markers().removeMarkers(DocumentMarker::Grammar);
+        document->markers().removeMarkers(DocumentMarker::Type::Grammar);
 
     if (!m_editorUIUpdateTimerWasTriggeredByDictation)
         m_alternativeTextController->respondToChangedSelection(oldSelection);
@@ -4082,7 +4082,7 @@ static RefPtr<Node> findFirstMarkable(Node* startingNode)
     return nullptr;
 }
 
-bool Editor::selectionStartHasMarkerFor(DocumentMarker::MarkerType markerType, int from, int length) const
+bool Editor::selectionStartHasMarkerFor(DocumentMarker::Type markerType, int from, int length) const
 {
     auto node = findFirstMarkable(document().selection().selection().start().protectedDeprecatedNode().get());
     if (!node)
@@ -4498,7 +4498,7 @@ void Editor::handleAcceptedCandidate(TextCheckingResult acceptedCandidate)
         insertText(acceptedCandidate.replacement, nullptr);
 
     if (auto insertedCandidateRange = rangeExpandedByCharactersInDirectionAtWordBoundary(selection.visibleStart(), acceptedCandidate.replacement.length(), SelectionDirection::Backward))
-        addMarker(*insertedCandidateRange, DocumentMarker::AcceptedCandidate, acceptedCandidate.replacement);
+        addMarker(*insertedCandidateRange, DocumentMarker::Type::AcceptedCandidate, acceptedCandidate.replacement);
 
     m_isHandlingAcceptedCandidate = false;
 }

@@ -473,31 +473,31 @@ void InspectorStubFrontend::sendMessageToFrontend(const String& message)
     frontendAPIDispatcher().dispatchMessageAsync(message);
 }
 
-static bool markerTypeFrom(const String& markerType, DocumentMarker::MarkerType& result)
+static bool markerTypeFrom(const String& markerType, DocumentMarker::Type& result)
 {
     if (equalLettersIgnoringASCIICase(markerType, "spelling"_s))
-        result = DocumentMarker::Spelling;
+        result = DocumentMarker::Type::Spelling;
     else if (equalLettersIgnoringASCIICase(markerType, "grammar"_s))
-        result = DocumentMarker::Grammar;
+        result = DocumentMarker::Type::Grammar;
     else if (equalLettersIgnoringASCIICase(markerType, "textmatch"_s))
-        result = DocumentMarker::TextMatch;
+        result = DocumentMarker::Type::TextMatch;
     else if (equalLettersIgnoringASCIICase(markerType, "replacement"_s))
-        result = DocumentMarker::Replacement;
+        result = DocumentMarker::Type::Replacement;
     else if (equalLettersIgnoringASCIICase(markerType, "correctionindicator"_s))
-        result = DocumentMarker::CorrectionIndicator;
+        result = DocumentMarker::Type::CorrectionIndicator;
     else if (equalLettersIgnoringASCIICase(markerType, "rejectedcorrection"_s))
-        result = DocumentMarker::RejectedCorrection;
+        result = DocumentMarker::Type::RejectedCorrection;
     else if (equalLettersIgnoringASCIICase(markerType, "autocorrected"_s))
-        result = DocumentMarker::Autocorrected;
+        result = DocumentMarker::Type::Autocorrected;
     else if (equalLettersIgnoringASCIICase(markerType, "spellcheckingexemption"_s))
-        result = DocumentMarker::SpellCheckingExemption;
+        result = DocumentMarker::Type::SpellCheckingExemption;
     else if (equalLettersIgnoringASCIICase(markerType, "deletedautocorrection"_s))
-        result = DocumentMarker::DeletedAutocorrection;
+        result = DocumentMarker::Type::DeletedAutocorrection;
     else if (equalLettersIgnoringASCIICase(markerType, "dictationalternatives"_s))
-        result = DocumentMarker::DictationAlternatives;
+        result = DocumentMarker::Type::DictationAlternatives;
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
     else if (equalLettersIgnoringASCIICase(markerType, "telephonenumber"_s))
-        result = DocumentMarker::TelephoneNumber;
+        result = DocumentMarker::Type::TelephoneNumber;
 #endif
     else
         return false;
@@ -505,9 +505,9 @@ static bool markerTypeFrom(const String& markerType, DocumentMarker::MarkerType&
     return true;
 }
 
-static bool markerTypesFrom(const String& markerType, OptionSet<DocumentMarker::MarkerType>& result)
+static bool markerTypesFrom(const String& markerType, OptionSet<DocumentMarker::Type>& result)
 {
-    DocumentMarker::MarkerType singularResult;
+    DocumentMarker::Type singularResult;
 
     if (markerType.isEmpty() || equalLettersIgnoringASCIICase(markerType, "all"_s))
         result = DocumentMarker::allMarkers();
@@ -1906,7 +1906,7 @@ ExceptionOr<unsigned> Internals::inspectorPaintRectCount()
 
 ExceptionOr<unsigned> Internals::markerCountForNode(Node& node, const String& markerType)
 {
-    OptionSet<DocumentMarker::MarkerType> markerTypes;
+    OptionSet<DocumentMarker::Type> markerTypes;
     if (!markerTypesFrom(markerType, markerTypes))
         return Exception { ExceptionCode::SyntaxError };
 
@@ -1918,7 +1918,7 @@ ExceptionOr<RenderedDocumentMarker*> Internals::markerAt(Node& node, const Strin
 {
     node.document().updateLayout(LayoutOptions::IgnorePendingStylesheets);
 
-    OptionSet<DocumentMarker::MarkerType> markerTypes;
+    OptionSet<DocumentMarker::Type> markerTypes;
     if (!markerTypesFrom(markerType, markerTypes))
         return Exception { ExceptionCode::SyntaxError };
 
@@ -1954,7 +1954,7 @@ ExceptionOr<String> Internals::markerDescriptionForNode(Node& node, const String
 
 ExceptionOr<String> Internals::dumpMarkerRects(const String& markerTypeString)
 {
-    DocumentMarker::MarkerType markerType;
+    DocumentMarker::Type markerType;
     if (!markerTypeFrom(markerTypeString, markerType))
         return Exception { ExceptionCode::SyntaxError };
 
@@ -2685,7 +2685,7 @@ void Internals::updateEditorUINowIfScheduled()
     }
 }
 
-bool Internals::hasMarkerFor(DocumentMarker::MarkerType type, int from, int length)
+bool Internals::hasMarkerFor(DocumentMarker::Type type, int from, int length)
 {
     Document* document = contextDocument();
     if (!document || !document->frame())
@@ -2698,27 +2698,27 @@ bool Internals::hasMarkerFor(DocumentMarker::MarkerType type, int from, int leng
 
 bool Internals::hasSpellingMarker(int from, int length)
 {
-    return hasMarkerFor(DocumentMarker::Spelling, from, length);
+    return hasMarkerFor(DocumentMarker::Type::Spelling, from, length);
 }
 
 bool Internals::hasGrammarMarker(int from, int length)
 {
-    return hasMarkerFor(DocumentMarker::Grammar, from, length);
+    return hasMarkerFor(DocumentMarker::Type::Grammar, from, length);
 }
 
 bool Internals::hasAutocorrectedMarker(int from, int length)
 {
-    return hasMarkerFor(DocumentMarker::Autocorrected, from, length);
+    return hasMarkerFor(DocumentMarker::Type::Autocorrected, from, length);
 }
 
 bool Internals::hasDictationAlternativesMarker(int from, int length)
 {
-    return hasMarkerFor(DocumentMarker::DictationAlternatives, from, length);
+    return hasMarkerFor(DocumentMarker::Type::DictationAlternatives, from, length);
 }
 
 bool Internals::hasCorrectionIndicatorMarker(int from, int length)
 {
-    return hasMarkerFor(DocumentMarker::CorrectionIndicator, from, length);
+    return hasMarkerFor(DocumentMarker::Type::CorrectionIndicator, from, length);
 }
 
 void Internals::setContinuousSpellCheckingEnabled(bool enabled)

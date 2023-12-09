@@ -277,7 +277,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     if (!_visibilityPropagationInteractionForWebProcess) {
         SEL selector = NSSelectorFromString(@"createVisibilityPropagationInteraction");
         if ([_page->process().extensionProcess().get() respondsToSelector:selector])
-            _visibilityPropagationInteractionForWebProcess = adoptNS([_page->process().extensionProcess() performSelector:selector]);
+            _visibilityPropagationInteractionForWebProcess = [_page->process().extensionProcess() performSelector:selector];
         if (_visibilityPropagationInteractionForWebProcess)
             [self addInteraction:_visibilityPropagationInteractionForWebProcess.get()];
     }
@@ -313,7 +313,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     if (!_visibilityPropagationInteractionForGPUProcess) {
         SEL selector = NSSelectorFromString(@"createVisibilityPropagationInteraction");
         if ([_page->process().extensionProcess().get() respondsToSelector:selector])
-            _visibilityPropagationInteractionForGPUProcess = adoptNS([_page->process().extensionProcess() performSelector:selector]);
+            _visibilityPropagationInteractionForGPUProcess = [_page->process().extensionProcess() performSelector:selector];
         if (_visibilityPropagationInteractionForGPUProcess)
             [self addInteraction:_visibilityPropagationInteractionForGPUProcess.get()];
     }
@@ -337,8 +337,10 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 - (void)_removeVisibilityPropagationViewForWebProcess
 {
 #if USE(EXTENSIONKIT)
-    if (_visibilityPropagationInteractionForWebProcess)
+    if (_visibilityPropagationInteractionForWebProcess) {
         [self removeInteraction:_visibilityPropagationInteractionForWebProcess.get()];
+        _visibilityPropagationInteractionForWebProcess = nullptr;
+    }
 #endif
 
     if (!_visibilityPropagationViewForWebProcess)
@@ -352,8 +354,10 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 - (void)_removeVisibilityPropagationViewForGPUProcess
 {
 #if USE(EXTENSIONKIT)
-    if (_visibilityPropagationInteractionForGPUProcess)
+    if (_visibilityPropagationInteractionForGPUProcess) {
         [self removeInteraction:_visibilityPropagationInteractionForGPUProcess.get()];
+        _visibilityPropagationInteractionForGPUProcess = nullptr;
+    }
 #endif
 
     if (!_visibilityPropagationViewForGPUProcess)

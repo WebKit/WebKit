@@ -128,12 +128,12 @@ void MediaSourcePrivateGStreamer::markEndOfStream(EndOfStreamStatus endOfStreamS
     MediaSourcePrivate::markEndOfStream(endOfStreamStatus);
 }
 
-MediaPlayer::ReadyState MediaSourcePrivateGStreamer::readyState() const
+MediaPlayer::ReadyState MediaSourcePrivateGStreamer::mediaPlayerReadyState() const
 {
     return m_playerPrivate.readyState();
 }
 
-void MediaSourcePrivateGStreamer::setReadyState(MediaPlayer::ReadyState state)
+void MediaSourcePrivateGStreamer::setMediaPlayerReadyState(MediaPlayer::ReadyState state)
 {
     m_playerPrivate.setReadyState(state);
 }

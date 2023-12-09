@@ -908,23 +908,12 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegme
     m_pendingInitializationSegmentForChangeType = false;
 
     // 6. If the HTMLMediaElement.readyState attribute is HAVE_NOTHING, then run the following steps:
-    if (m_private->readyState() == MediaPlayer::ReadyState::HaveNothing) {
-        // 6.1 If one or more objects in sourceBuffers have first initialization segment flag set to false, then abort these steps.
-        for (auto& sourceBuffer : *m_source->sourceBuffers()) {
-            if (!sourceBuffer->m_receivedFirstInitializationSegment)
-                return MediaPromise::createAndResolve();
-        }
-
-        // 6.2 Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
-        // 6.3 Queue a task to fire a simple event named loadedmetadata at the media element.
-        m_private->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
-    }
+    m_source->sourceBufferReceivedFirstInitializationSegmentChanged();
 
     // 7. If the active track flag equals true and the HTMLMediaElement.readyState
     // attribute is greater than HAVE_CURRENT_DATA, then set the HTMLMediaElement.readyState
     // attribute to HAVE_METADATA.
-    if (activeTrackFlag && m_private->readyState() > MediaPlayer::ReadyState::HaveCurrentData)
-        m_private->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
+    m_source->sourceBufferActiveTrackFlagChanged(activeTrackFlag);
 
     return MediaPromise::createAndResolve();
 }

@@ -63,8 +63,6 @@ public:
     Ref<MediaPromise> appendInternal(Ref<SharedBuffer>&&) final;
     void resetParserStateInternal() final;
     void removedFromMediaSource() final;
-    MediaPlayer::ReadyState readyState() const final;
-    void setReadyState(MediaPlayer::ReadyState) final;
 
     void flush(TrackID) final;
     void enqueueSample(Ref<MediaSample>&&, TrackID) final;

@@ -85,12 +85,12 @@ void MockMediaSourcePrivate::markEndOfStream(EndOfStreamStatus status)
     MediaSourcePrivate::markEndOfStream(status);
 }
 
-MediaPlayer::ReadyState MockMediaSourcePrivate::readyState() const
+MediaPlayer::ReadyState MockMediaSourcePrivate::mediaPlayerReadyState() const
 {
     return m_player.readyState();
 }
 
-void MockMediaSourcePrivate::setReadyState(MediaPlayer::ReadyState readyState)
+void MockMediaSourcePrivate::setMediaPlayerReadyState(MediaPlayer::ReadyState readyState)
 {
     m_player.setReadyState(readyState);
 }

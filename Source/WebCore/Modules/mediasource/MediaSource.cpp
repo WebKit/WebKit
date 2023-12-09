@@ -212,7 +212,7 @@ Ref<MediaTimePromise> MediaSource::waitForTarget(const SeekTarget& target)
         ALWAYS_LOG(LOGIDENTIFIER, "No data at seeked time, waiting");
         // 1. If the HTMLMediaElement.readyState attribute is greater than HAVE_METADATA,
         // then set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
-        m_private->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
+        m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveMetadata);
 
         // 2. The media element waits until an appendBuffer() or an appendStream() call causes the coded
         // frame processing algorithm to set the HTMLMediaElement.readyState attribute to a value greater
@@ -400,7 +400,7 @@ void MediaSource::monitorSourceBuffers()
 
     // Note, the behavior if activeSourceBuffers is empty is undefined.
     if (!m_activeSourceBuffers) {
-        m_private->setReadyState(MediaPlayer::ReadyState::HaveNothing);
+        m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveNothing);
         return;
     }
 
@@ -415,7 +415,7 @@ void MediaSource::monitorSourceBuffers()
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
         // 2. If this is the first transition to HAVE_METADATA, then queue a task to fire a simple event
         // named loadedmetadata at the media element.
-        m_private->setReadyState(MediaPlayer::ReadyState::HaveMetadata);
+        m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveMetadata);
 
         // 3. Abort these steps.
         return;
@@ -429,7 +429,7 @@ void MediaSource::monitorSourceBuffers()
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_ENOUGH_DATA.
         // 2. Queue a task to fire a simple event named canplaythrough at the media element.
         // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
-        m_private->setReadyState(MediaPlayer::ReadyState::HaveEnoughData);
+        m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveEnoughData);
 
         if (m_pendingSeekTarget)
             completeSeek();
@@ -444,7 +444,7 @@ void MediaSource::monitorSourceBuffers()
         // 1. Set the HTMLMediaElement.readyState attribute to HAVE_FUTURE_DATA.
         // 2. If the previous value of HTMLMediaElement.readyState was less than HAVE_FUTURE_DATA, then queue a task to fire a simple event named canplay at the media element.
         // 3. Playback may resume at this point if it was previously suspended by a transition to HAVE_CURRENT_DATA.
-        m_private->setReadyState(MediaPlayer::ReadyState::HaveFutureData);
+        m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveFutureData);
 
         if (m_pendingSeekTarget)
             completeSeek();
@@ -461,7 +461,7 @@ void MediaSource::monitorSourceBuffers()
     // event named loadeddata at the media element.
     // 3. Playback is suspended at this point since the media element doesn't have enough data to
     // advance the media timeline.
-    m_private->setReadyState(MediaPlayer::ReadyState::HaveCurrentData);
+    m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveCurrentData);
 
     if (m_pendingSeekTarget)
         completeSeek();
@@ -1269,6 +1269,35 @@ void MediaSource::failedToCreateRenderer(RendererType type)
 {
     if (auto context = scriptExecutionContext())
         context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("MediaSource ", type == RendererType::Video ? "video" : "audio", " renderer creation failed."));
+}
+
+void MediaSource::sourceBufferReceivedFirstInitializationSegmentChanged()
+{
+    if (m_private && m_private->mediaPlayerReadyState() == MediaPlayer::ReadyState::HaveNothing) {
+        // 6.1 If one or more objects in sourceBuffers have first initialization segment flag set to false, then abort these steps.
+        for (auto& sourceBuffer : *sourceBuffers()) {
+            if (!sourceBuffer->receivedFirstInitializationSegment())
+                return;
+        }
+        // 6.2 Set the HTMLMediaElement.readyState attribute to HAVE_METADATA.
+        // 6.3 Queue a task to fire a simple event named loadedmetadata at the media element.
+        m_private->setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveMetadata);
+    }
+}
+
+void MediaSource::sourceBufferActiveTrackFlagChanged(bool activeTrackFlag)
+{
+    if (!m_private)
+        return;
+    if (activeTrackFlag && m_private->mediaPlayerReadyState() > MediaPlayer::ReadyState::HaveCurrentData)
+        setMediaPlayerReadyState(MediaPlayer::ReadyState::HaveMetadata);
+}
+
+void MediaSource::setMediaPlayerReadyState(MediaPlayer::ReadyState readyState)
+{
+    if (!m_private)
+        return;
+    m_private->setMediaPlayerReadyState(readyState);
 }
 
 #if ENABLE(MANAGED_MEDIA_SOURCE)

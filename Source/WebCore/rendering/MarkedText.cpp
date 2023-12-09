@@ -201,20 +201,20 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
 
     auto markers = renderer.document().markers().markersFor(*renderer.textNode());
 
-    auto markedTextTypeForMarkerType = [] (DocumentMarker::MarkerType type) {
+    auto markedTextTypeForMarkerType = [] (DocumentMarker::Type type) {
         switch (type) {
-        case DocumentMarker::Spelling:
+        case DocumentMarker::Type::Spelling:
             return MarkedText::Type::SpellingError;
-        case DocumentMarker::Grammar:
+        case DocumentMarker::Type::Grammar:
             return MarkedText::Type::GrammarError;
-        case DocumentMarker::CorrectionIndicator:
+        case DocumentMarker::Type::CorrectionIndicator:
             return MarkedText::Type::Correction;
-        case DocumentMarker::TextMatch:
+        case DocumentMarker::Type::TextMatch:
             return MarkedText::Type::TextMatch;
-        case DocumentMarker::DictationAlternatives:
+        case DocumentMarker::Type::DictationAlternatives:
             return MarkedText::Type::DictationAlternatives;
 #if PLATFORM(IOS_FAMILY)
-        case DocumentMarker::DictationPhraseWithAlternatives:
+        case DocumentMarker::Type::DictationPhraseWithAlternatives:
             return MarkedText::Type::DictationPhraseWithAlternatives;
 #endif
         default:
@@ -230,29 +230,29 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
     for (auto& marker : markers) {
         // Collect either the background markers or the foreground markers, but not both
         switch (marker->type()) {
-        case DocumentMarker::Grammar:
-        case DocumentMarker::Spelling:
+        case DocumentMarker::Type::Grammar:
+        case DocumentMarker::Type::Spelling:
             if (renderer.settings().grammarAndSpellingPseudoElementsEnabled())
                 break;
             FALLTHROUGH;
-        case DocumentMarker::CorrectionIndicator:
-        case DocumentMarker::Replacement:
-        case DocumentMarker::DictationAlternatives:
+        case DocumentMarker::Type::CorrectionIndicator:
+        case DocumentMarker::Type::Replacement:
+        case DocumentMarker::Type::DictationAlternatives:
 #if PLATFORM(IOS_FAMILY)
         // FIXME: Remove the PLATFORM(IOS_FAMILY)-guard.
-        case DocumentMarker::DictationPhraseWithAlternatives:
+        case DocumentMarker::Type::DictationPhraseWithAlternatives:
 #endif
             if (phase != MarkedText::PaintPhase::Decoration)
                 continue;
             break;
-        case DocumentMarker::TextMatch:
+        case DocumentMarker::Type::TextMatch:
             if (!renderer.frame().editor().markedTextMatchesAreHighlighted())
                 continue;
             if (phase == MarkedText::PaintPhase::Decoration)
                 continue;
             break;
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-        case DocumentMarker::TelephoneNumber:
+        case DocumentMarker::Type::TelephoneNumber:
             if (!renderer.frame().editor().markedTextMatchesAreHighlighted())
                 continue;
             if (phase != MarkedText::PaintPhase::Background)
@@ -276,23 +276,23 @@ Vector<MarkedText> MarkedText::collectForDocumentMarkers(const RenderText& rende
 
         // Marker intersects this run. Collect it.
         switch (marker->type()) {
-        case DocumentMarker::Spelling:
-        case DocumentMarker::CorrectionIndicator:
-        case DocumentMarker::DictationAlternatives:
-        case DocumentMarker::Grammar:
+        case DocumentMarker::Type::Spelling:
+        case DocumentMarker::Type::CorrectionIndicator:
+        case DocumentMarker::Type::DictationAlternatives:
+        case DocumentMarker::Type::Grammar:
 #if PLATFORM(IOS_FAMILY)
         // FIXME: See <rdar://problem/8933352>. Also, remove the PLATFORM(IOS_FAMILY)-guard.
-        case DocumentMarker::DictationPhraseWithAlternatives:
+        case DocumentMarker::Type::DictationPhraseWithAlternatives:
 #endif
-        case DocumentMarker::TextMatch: {
+        case DocumentMarker::Type::TextMatch: {
             auto [clampedStart, clampedEnd] = selectableRange.clamp(marker->startOffset(), marker->endOffset());
             markedTexts.append({ clampedStart, clampedEnd, markedTextTypeForMarkerType(marker->type()), marker.get() });
             break;
         }
-        case DocumentMarker::Replacement:
+        case DocumentMarker::Type::Replacement:
             break;
 #if ENABLE(TELEPHONE_NUMBER_DETECTION)
-        case DocumentMarker::TelephoneNumber:
+        case DocumentMarker::Type::TelephoneNumber:
             break;
 #endif
         default:

@@ -288,6 +288,10 @@ inline bool isSubtypeIndex(TypeIndex sub, TypeIndex parent)
     if (sub == parent)
         return true;
 
+    // When Wasm GC is off, RTTs are not registered and there is no subtyping on typedefs.
+    if (!Options::useWebAssemblyGC())
+        return false;
+
     auto subRTT = TypeInformation::tryGetCanonicalRTT(sub);
     auto parentRTT = TypeInformation::tryGetCanonicalRTT(parent);
     ASSERT(subRTT.has_value() && parentRTT.has_value());

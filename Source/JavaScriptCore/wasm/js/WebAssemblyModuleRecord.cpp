@@ -616,15 +616,21 @@ void WebAssemblyModuleRecord::initializeExports(JSGlobalObject* globalObject)
 
             switch (global.bindingMode) {
             case Wasm::GlobalInformation::BindingMode::EmbeddedInInstance: {
-                m_instance->instance().setGlobal(globalIndex, initialBits);
+                if (Wasm::isRefType(global.type))
+                    m_instance->instance().setGlobal(globalIndex, JSValue::decode(initialBits));
+                else
+                    m_instance->instance().setGlobal(globalIndex, initialBits);
                 break;
             }
             case Wasm::GlobalInformation::BindingMode::Portable: {
                 ASSERT(global.mutability == Wasm::Mutable);
-                Ref<Wasm::Global> globalRef = Wasm::Global::create(global.type, Wasm::Mutability::Mutable, initialBits);
+                // For reference types, set to 0 and set the real value via the instance afterwards.
+                Ref<Wasm::Global> globalRef = Wasm::Global::create(global.type, Wasm::Mutability::Mutable, Wasm::isRefType(global.type) ? 0 : initialBits);
                 JSWebAssemblyGlobal* globalValue = JSWebAssemblyGlobal::tryCreate(globalObject, vm, globalObject->webAssemblyGlobalStructure(), WTFMove(globalRef));
                 scope.assertNoException();
                 m_instance->linkGlobal(vm, globalIndex, globalValue);
+                if (Wasm::isRefType(global.type))
+                    m_instance->instance().setGlobal(globalIndex, JSValue::decode(initialBits));
                 ensureStillAliveHere(initialBits); // Ensure this is kept alive while creating JSWebAssemblyGlobal.
                 break;
             }

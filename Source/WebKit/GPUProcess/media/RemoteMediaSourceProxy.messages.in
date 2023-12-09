@@ -29,7 +29,7 @@ messages -> RemoteMediaSourceProxy NotRefCounted {
     AddSourceBuffer(WebCore::ContentType contentType) -> (enum:uint8_t WebCore::MediaSourcePrivate::AddStatus status, std::optional<WebKit::RemoteSourceBufferIdentifier> remoteSourceBufferIdentifier) Synchronous
     DurationChanged(MediaTime duration)
     BufferedChanged(WebCore::PlatformTimeRanges buffered)
-    SetReadyState(WebCore::MediaPlayerEnums::ReadyState readyState)
+    SetMediaPlayerReadyState(WebCore::MediaPlayerEnums::ReadyState readyState)
     SetTimeFudgeFactor(MediaTime fudgeFactor)
     MarkEndOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus status)
     UnmarkEndOfStream()

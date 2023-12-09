@@ -147,7 +147,7 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
 template<typename Visitor>
 void Global::visitAggregateImpl(Visitor& visitor)
 {
-    if (isFuncref(m_type) || isExternref(m_type)) {
+    if (isRefType(m_type)) {
         RELEASE_ASSERT(m_owner);
         visitor.append(m_value.m_externref);
     }

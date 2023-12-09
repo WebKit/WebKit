@@ -230,11 +230,6 @@ void RemoteSourceBufferProxy::setMode(WebCore::SourceBufferAppendMode appendMode
     m_sourceBufferPrivate->setMode(appendMode);
 }
 
-void RemoteSourceBufferProxy::setReadyState(WebCore::MediaPlayer::ReadyState state)
-{
-    m_sourceBufferPrivate->setReadyState(state);
-}
-
 void RemoteSourceBufferProxy::startChangingType()
 {
     m_sourceBufferPrivate->startChangingType();

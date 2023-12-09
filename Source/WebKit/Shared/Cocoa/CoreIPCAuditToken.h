@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,28 @@
 
 #pragma once
 
-#include <wtf/ArgumentCoder.h>
+#include <array>
+#include <mach/mach.h>
 
-namespace WTF {
-class MachSendRight;
-}
+namespace WebKit {
 
-namespace IPC {
+struct CoreIPCAuditToken {
+    CoreIPCAuditToken(audit_token_t input)
+    {
+        memcpy(token.data(), &input, sizeof(token));
+    }
+    CoreIPCAuditToken(std::array<int, 8> token)
+        : token(token) { }
 
-template<> struct ArgumentCoder<WTF::MachSendRight> {
-    static void encode(Encoder&, WTF::MachSendRight&&);
-    static std::optional<WTF::MachSendRight> decode(Decoder&);
+    audit_token_t auditToken() const
+    {
+        audit_token_t result;
+        memcpy(&result, token.data(), sizeof(token));
+        return result;
+    }
+
+    std::array<int, 8> token;
+    static_assert(sizeof(token) == sizeof(audit_token_t));
 };
 
-}
+} // namespace WebKit

@@ -1442,7 +1442,7 @@ private:
 
     CachedResource* resourceFromMemoryCache(const String& url);
 
-    bool hasMarkerFor(DocumentMarker::MarkerType, int from, int length);
+    bool hasMarkerFor(DocumentMarker::Type, int from, int length);
 
 #if ENABLE(MEDIA_STREAM)
     // RealtimeMediaSource::Observer API

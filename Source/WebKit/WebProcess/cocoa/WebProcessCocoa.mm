@@ -28,6 +28,7 @@
 
 #import "AccessibilitySupportSPI.h"
 #import "ArgumentCodersCocoa.h"
+#import "CoreIPCAuditToken.h"
 #import "DefaultWebBrowserChecks.h"
 #import "LegacyCustomProtocolManager.h"
 #import "LogInitialization.h"

@@ -155,10 +155,10 @@ void RemoteMediaSourceProxy::unmarkEndOfStream()
 }
 
 
-void RemoteMediaSourceProxy::setReadyState(WebCore::MediaPlayerEnums::ReadyState readyState)
+void RemoteMediaSourceProxy::setMediaPlayerReadyState(WebCore::MediaPlayerEnums::ReadyState readyState)
 {
     if (m_private)
-        m_private->setReadyState(readyState);
+        m_private->setMediaPlayerReadyState(readyState);
 }
 
 void RemoteMediaSourceProxy::setTimeFudgeFactor(const MediaTime& fudgeFactor)

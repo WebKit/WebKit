@@ -220,11 +220,11 @@ void SpellChecker::didCheckSucceed(TextCheckingRequestIdentifier identifier, con
 {
     TextCheckingRequestData requestData = m_processingRequest->data();
     if (requestData.identifier() == identifier) {
-        OptionSet<DocumentMarker::MarkerType> markerTypes;
+        OptionSet<DocumentMarker::Type> markerTypes;
         if (requestData.checkingTypes().contains(TextCheckingType::Spelling))
-            markerTypes.add(DocumentMarker::Spelling);
+            markerTypes.add(DocumentMarker::Type::Spelling);
         if (requestData.checkingTypes().contains(TextCheckingType::Grammar))
-            markerTypes.add(DocumentMarker::Grammar);
+            markerTypes.add(DocumentMarker::Type::Grammar);
         if (!markerTypes.isEmpty())
             removeMarkers(m_processingRequest->checkingRange(), markerTypes);
     }

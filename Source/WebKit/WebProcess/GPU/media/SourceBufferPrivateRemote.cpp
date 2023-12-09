@@ -146,27 +146,6 @@ void SourceBufferPrivateRemote::removedFromMediaSource()
     gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::RemovedFromMediaSource(), m_remoteSourceBufferIdentifier);
 }
 
-MediaPlayer::ReadyState SourceBufferPrivateRemote::readyState() const
-{
-    return m_mediaPlayerPrivate ? m_mediaPlayerPrivate->readyState() : MediaPlayer::ReadyState::HaveNothing;
-}
-
-void SourceBufferPrivateRemote::setReadyState(MediaPlayer::ReadyState state)
-{
-    auto mediaSource = m_mediaSource.get();
-    if (!mediaSource)
-        return;
-
-    if (m_mediaPlayerPrivate)
-        m_mediaPlayerPrivate->setReadyState(state);
-
-    auto gpuProcessConnection = m_gpuProcessConnection.get();
-    if (!isGPURunning())
-        return;
-
-    gpuProcessConnection->connection().send(Messages::RemoteSourceBufferProxy::SetReadyState(state), m_remoteSourceBufferIdentifier);
-}
-
 void SourceBufferPrivateRemote::setActive(bool active)
 {
     SourceBufferPrivate::setActive(active);

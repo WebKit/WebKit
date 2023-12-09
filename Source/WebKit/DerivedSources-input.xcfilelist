@@ -207,6 +207,7 @@ $(PROJECT_DIR)/Shared/CallbackID.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CacheStoragePolicy.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCAVOutputContext.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCArray.serialization.in
+$(PROJECT_DIR)/Shared/Cocoa/CoreIPCAuditToken.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCCFType.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCColor.serialization.in
 $(PROJECT_DIR)/Shared/Cocoa/CoreIPCDDActionContext.serialization.in

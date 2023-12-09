@@ -627,6 +627,7 @@ inline UGPRPair doWasmCallIndirect(CallFrame* callFrame, Wasm::Instance* instanc
         WASM_THROW(Wasm::ExceptionType::NullTableEntry);
 
     const auto& callSignature = CALLEE()->signature(typeIndex);
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=260820
     if (callSignature.index() != function.m_function.typeIndex)
         WASM_THROW(Wasm::ExceptionType::BadSignature);
 
@@ -656,6 +657,7 @@ inline UGPRPair doWasmCallRef(CallFrame* callFrame, Wasm::Instance* callerInstan
     Wasm::WasmToWasmImportableFunction function = wasmFunction->importableFunction();
     Wasm::Instance* calleeInstance = &wasmFunction->instance()->instance();
 
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=260820
     ASSERT(function.typeIndex == CALLEE()->signature(typeIndex).index());
     UNUSED_PARAM(typeIndex);
     WASM_CALL_RETURN(calleeInstance, function.entrypointLoadLocation->taggedPtr(), WasmEntryPtrTag);

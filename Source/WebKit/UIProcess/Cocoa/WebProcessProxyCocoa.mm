@@ -28,6 +28,7 @@
 
 #import "AccessibilitySupportSPI.h"
 #import "CodeSigning.h"
+#import "CoreIPCAuditToken.h"
 #import "DefaultWebBrowserChecks.h"
 #import "HighPerformanceGPUManager.h"
 #import "Logging.h"
@@ -246,9 +247,9 @@ void WebProcessProxy::unblockAccessibilityServerIfNeeded()
 }
 
 #if PLATFORM(MAC)
-void WebProcessProxy::isAXAuthenticated(audit_token_t auditToken, CompletionHandler<void(bool)>&& completionHandler)
+void WebProcessProxy::isAXAuthenticated(CoreIPCAuditToken&& auditToken, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto authenticated = TCCAccessCheckAuditToken(get_TCC_kTCCServiceAccessibility(), auditToken, nullptr);
+    auto authenticated = TCCAccessCheckAuditToken(get_TCC_kTCCServiceAccessibility(), auditToken.auditToken(), nullptr);
     completionHandler(authenticated);
 }
 #endif

@@ -36,6 +36,7 @@
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "HTMLMediaElement.h"
+#include "MediaPlayer.h"
 #include "MediaPromiseTypes.h"
 #include "MediaSourcePrivateClient.h"
 #include "URLRegistry.h"
@@ -113,8 +114,6 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const final;
 
-    void sourceBufferBufferedChanged();
-
     using MediaSourcePrivateClient::ref;
     using MediaSourcePrivateClient::deref;
 
@@ -138,6 +137,12 @@ public:
 #endif
 
     void setAsSrcObject(bool);
+
+    // Called by SourceBuffer.
+    void sourceBufferBufferedChanged();
+    void sourceBufferReceivedFirstInitializationSegmentChanged();
+    void sourceBufferActiveTrackFlagChanged(bool);
+    void setMediaPlayerReadyState(MediaPlayer::ReadyState);
 
 protected:
     explicit MediaSource(ScriptExecutionContext&);

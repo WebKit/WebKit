@@ -765,21 +765,6 @@ void SourceBufferPrivateAVFObjC::removedFromMediaSource()
     SourceBufferPrivate::removedFromMediaSource();
 }
 
-MediaPlayer::ReadyState SourceBufferPrivateAVFObjC::readyState() const
-{
-    if (auto player = this->player())
-        return player->readyState();
-    return MediaPlayer::ReadyState::HaveNothing;
-}
-
-void SourceBufferPrivateAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
-{
-    ALWAYS_LOG(LOGIDENTIFIER, readyState);
-
-    if (auto player = this->player())
-        player->setReadyState(readyState);
-}
-
 bool SourceBufferPrivateAVFObjC::hasSelectedVideo() const
 {
     return !!m_enabledVideoTrackID;

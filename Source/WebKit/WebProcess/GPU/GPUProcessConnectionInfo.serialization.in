@@ -25,7 +25,7 @@
 struct WebKit::GPUProcessConnectionInfo {
 
 #if HAVE(AUDIT_TOKEN)
-    std::optional<audit_token_t> auditToken;
+    std::optional<WebKit::CoreIPCAuditToken> auditToken;
 #endif
 
 #if ENABLE(VP9)
