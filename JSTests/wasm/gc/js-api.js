@@ -412,6 +412,25 @@ function testGlobal() {
     `);
     assert.eq(m.exports.f(m.exports.g.value), 42);
   }
+
+  // Test portable globals, with mutation.
+  {
+    let m = instantiate(`
+      (module
+        (type (sub (struct (field i32))))
+        (type (sub 0 (struct (field i32))))
+        (type (sub 0 (struct (field i32 i64))))
+        (global (export "g01") (mut (ref 0)) (struct.new 0 (i32.const 42)))
+        (global (export "g02") (mut (ref null 0)) (ref.null 0))
+        (global (export "g1") (mut (ref null 1)) (struct.new 1 (i32.const 42)))
+        (global (export "g2") (mut (ref null 2)) (struct.new 2 (i32.const 42) (i64.const 84)))
+      )
+    `);
+    m.exports.g01.value = m.exports.g1.value;
+    m.exports.g02.value = m.exports.g2.value;
+    m.exports.g1.value = null;
+    m.exports.g2.value = null;
+  }
 }
 
 function testTable() {
