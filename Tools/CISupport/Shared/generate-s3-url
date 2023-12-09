@@ -13,7 +13,7 @@ def generateS3URL(bucket, identifier, revision):
     config = Config(region_name = 'us-west-2')
     s3 = boto3.client('s3', config=config)
     params = {'Bucket': bucket, 'Key': key}
-    url = s3.generate_presigned_url(ClientMethod='put_object', Params=params, ExpiresIn=600)
+    url = s3.generate_presigned_url(ClientMethod='put_object', Params=params, ExpiresIn=30*60)
     print(f'S3 URL: {url}\n')
     return url
 
