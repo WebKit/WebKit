@@ -38,7 +38,12 @@ namespace TestWebKitAPI {
 
 #if PLATFORM(COCOA)
 
+// FIXME when rdar://119399924 is resolved.
+#if PLATFORM(MAC)
+TEST(MonospaceFontsTest, DISABLED_EnsureMonospaceFontInvariants)
+#else
 TEST(MonospaceFontsTest, EnsureMonospaceFontInvariants)
+#endif
 {
     RetainPtr collection = CTFontCollectionCreateFromAvailableFonts(nullptr);
     RetainPtr results = adoptCF(CTFontCollectionCreateMatchingFontDescriptors(collection.get()));
