@@ -881,6 +881,12 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         return;
     }
 
+    if (WKStringIsEqualToUTF8CString(messageName, "GetAndClearReportedWindowProxyAccessDomains")) {
+        auto value = TestController::singleton().getAndClearReportedWindowProxyAccessDomains();
+        postPageMessage("DidGetAndClearReportedWindowProxyAccessDomains", value.get());
+        return;
+    }
+
     ASSERT_NOT_REACHED();
 }
 

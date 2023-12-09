@@ -43,8 +43,10 @@ public:
     class Observer : public CanMakeWeakPtr<Observer> {
     public:
         virtual ~Observer() = default;
-
-        virtual void didFinishLoad() = 0;
+        virtual void didReceiveProvisionalURL(const URL&) { }
+        virtual void didCancelProvisionalLoad() { }
+        virtual void didCommitProvisionalLoad() { }
+        virtual void didFinishLoad() { }
     };
 
     void addObserver(Observer&);
@@ -64,7 +66,7 @@ public:
 
     State state() const { return m_state; }
     const URL& url() const { return m_url; }
-    void setURL(const URL& url) { m_url = url; }
+    void setURL(const URL&);
     const URL& provisionalURL() const { return m_provisionalURL; }
 
     void setUnreachableURL(const URL&);

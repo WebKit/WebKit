@@ -51,6 +51,7 @@
 #import "_WKWebsiteDataStoreConfigurationInternal.h"
 #import "_WKWebsiteDataStoreDelegate.h"
 #import <WebCore/Credential.h>
+#import <WebCore/RegistrableDomain.h>
 #import <WebCore/ServiceWorkerClientData.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
@@ -77,6 +78,7 @@ public:
         , m_hasGetDisplayedNotificationsSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:getDisplayedNotificationsForWorkerOrigin:completionHandler:)])
         , m_hasRequestBackgroundFetchPermissionSelector([m_delegate.get() respondsToSelector:@selector(requestBackgroundFetchPermission:frameOrigin:decisionHandler:)])
         , m_hasNotifyBackgroundFetchChangeSelector([m_delegate.get() respondsToSelector:@selector(notifyBackgroundFetchChange:change:)])
+        , m_hasWindowProxyPropertyAccessSelector([m_delegate.get() respondsToSelector:@selector(websiteDataStore:domain:didOpenDomainViaWindowOpen:withProperty:directly:)])
     {
     }
 
@@ -268,6 +270,26 @@ private:
         [m_delegate.getAutoreleased() notifyBackgroundFetchChange:backgroundFetchIdentifier change:change];
     }
 
+    void didAccessWindowProxyProperty(const WebCore::RegistrableDomain& parentDomain, const WebCore::RegistrableDomain& childDomain, WebCore::WindowProxyProperty property, bool directlyAccessedProperty) final
+    {
+        if (!m_hasWindowProxyPropertyAccessSelector)
+            return;
+
+        WKWindowProxyProperty windowProxyProperty;
+        switch (property) {
+        case WebCore::WindowProxyProperty::PostMessage:
+            windowProxyProperty = WKWindowProxyPropertyPostMessage;
+            break;
+        case WebCore::WindowProxyProperty::Closed:
+            windowProxyProperty = WKWindowProxyPropertyClosed;
+            break;
+        default:
+            windowProxyProperty = WKWindowProxyPropertyOther;
+        }
+
+        [m_delegate.getAutoreleased() websiteDataStore:m_dataStore.getAutoreleased() domain:parentDomain.string() didOpenDomainViaWindowOpen:childDomain.string() withProperty:windowProxyProperty directly:directlyAccessedProperty];
+    }
+
     WeakObjCPtr<WKWebsiteDataStore> m_dataStore;
     WeakObjCPtr<id <_WKWebsiteDataStoreDelegate> > m_delegate;
     bool m_hasRequestStorageSpaceSelector { false };
@@ -280,6 +302,7 @@ private:
     bool m_hasGetDisplayedNotificationsSelector { false };
     bool m_hasRequestBackgroundFetchPermissionSelector { false };
     bool m_hasNotifyBackgroundFetchChangeSelector { false };
+    bool m_hasWindowProxyPropertyAccessSelector { false };
 };
 
 @implementation WKWebsiteDataStore {

@@ -4146,6 +4146,13 @@ WKRetainPtr<WKStringRef> TestController::takeViewPortSnapshot()
 }
 #endif
 
+#if !PLATFORM(COCOA)
+WKRetainPtr<WKArrayRef> TestController::getAndClearReportedWindowProxyAccessDomains()
+{
+    return nullptr;
+}
+#endif
+
 void TestController::setServiceWorkerFetchTimeoutForTesting(double seconds)
 {
     WKWebsiteDataStoreSetServiceWorkerFetchTimeoutForTesting(websiteDataStore(), seconds);

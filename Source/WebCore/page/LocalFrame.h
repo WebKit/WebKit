@@ -97,6 +97,8 @@ class SecurityOrigin;
 class VisiblePosition;
 class Widget;
 
+enum class WindowProxyProperty : uint8_t;
+
 struct SimpleRange;
 
 #if PLATFORM(IOS_FAMILY)
@@ -300,6 +302,10 @@ public:
 
     void documentURLDidChange(const URL&);
 
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+    void didAccessWindowProxyPropertyViaOpener(WindowProxyProperty);
+#endif
+
 protected:
     void frameWasDisconnectedFromOwner() const final;
 
@@ -361,6 +367,10 @@ private:
     unsigned m_navigationDisableCount { 0 };
     unsigned m_selfOnlyRefCount { 0 };
     bool m_hasHadUserInteraction { false };
+
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+    OptionSet<WindowProxyProperty> m_accessedWindowProxyPropertiesViaOpener;
+#endif
 
     FloatSize m_overrideScreenSize;
 

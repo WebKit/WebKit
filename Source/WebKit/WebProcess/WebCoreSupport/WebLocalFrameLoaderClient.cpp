@@ -1961,6 +1961,19 @@ void WebLocalFrameLoaderClient::dispatchLoadEventToOwnerElementInAnotherProcess(
     page->send(Messages::WebPageProxy::DispatchLoadEventToFrameOwnerElement(m_frame->frameID()));
 }
 
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+
+void WebLocalFrameLoaderClient::didAccessWindowProxyPropertyViaOpener(WebCore::SecurityOriginData&& parentOrigin, WebCore::WindowProxyProperty property)
+{
+    RefPtr page = m_frame->page();
+    if (!page)
+        return;
+
+    page->send(Messages::WebPageProxy::DidAccessWindowProxyPropertyViaOpenerForFrame(m_frame->frameID(), WTFMove(parentOrigin), property));
+}
+
+#endif
+
 } // namespace WebKit
 
 #undef PREFIX_PARAMETERS

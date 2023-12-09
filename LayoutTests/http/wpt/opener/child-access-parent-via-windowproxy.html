@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="/common/get-host-info.sub.js"></script>
+<script>
+
+const wait_for_message = () => {
+  return new Promise((resolve, reject) => {
+    window.addEventListener('message', e => {
+      resolve(e);
+    }, { once: true });
+  });
+};
+
+promise_test(async function(t) {
+  let remoteOrigin = new URL(get_host_info()['REMOTE_ORIGIN']);
+
+  let url = new URL("resources/send-message-to-opener.html", document.location);
+  url.protocol = remoteOrigin.protocol;
+  url.hostname = remoteOrigin.hostname;
+  url.port = remoteOrigin.port;
+
+  var w = window.open("/common/redirect.py?location=" + encodeURIComponent(url.href));
+
+  let message = await wait_for_message();
+  assert_equals(message.data, 'hello world!');
+
+  let domains = await new Promise(resolve => {
+    window.testRunner.getAndClearReportedWindowProxyAccessDomains(resolve);
+  });
+  assert_array_equals(domains, [remoteOrigin.hostname, window.location.hostname]);
+
+  w.close();
+}, 'Test child window accessing parent window properties via WindowProxy.');
+</script>

@@ -2459,3 +2459,8 @@ webkit.org/b/260640 [ Release arm64 ] editing/execCommand/apply-inline-style-to-
 
 # This test relies on mouse input.
 imported/w3c/web-platform-tests/css/css-view-transitions/input-targets-root-while-render-blocked.html [ Skip ]
+
+# WindowProxy property access delegate callbacks are only implemented on Mac and iOS WK2.
+http/wpt/opener/child-access-parent-via-windowproxy.html [ Pass ]
+http/wpt/opener/iframe-access-top-via-windowproxy.html [ Pass ]
+http/wpt/opener/parent-access-child-via-windowproxy.html [ Pass ]

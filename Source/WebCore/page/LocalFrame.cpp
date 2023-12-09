@@ -329,6 +329,10 @@ void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
 
     InspectorInstrumentation::frameDocumentUpdated(*this);
 
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+    m_accessedWindowProxyPropertiesViaOpener = { };
+#endif
+
     m_documentIsBeingReplaced = false;
 }
 
@@ -1255,6 +1259,27 @@ void LocalFrame::frameWasDisconnectedFromOwner() const
 
     protectedDocument()->detachFromFrame();
 }
+
+#if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
+
+void LocalFrame::didAccessWindowProxyPropertyViaOpener(WindowProxyProperty property)
+{
+    if (m_accessedWindowProxyPropertiesViaOpener.contains(property))
+        return;
+    m_accessedWindowProxyPropertiesViaOpener.add(property);
+
+    RefPtr parentWindow { opener() ? opener()->window() : nullptr };
+    if (!parentWindow)
+        return;
+
+    auto parentOrigin = SecurityOriginData::fromURL(parentWindow->location().url());
+    if (parentOrigin.isNull() || parentOrigin.isOpaque())
+        return;
+
+    checkedLoader()->client().didAccessWindowProxyPropertyViaOpener(WTFMove(parentOrigin), property);
+}
+
+#endif
 
 } // namespace WebCore
 

@@ -2008,6 +2008,11 @@ http/wpt/webcodecs/h264-encoder-default-config.https.any.worker.html [ Failure ]
 
 webkit.org/b/265599 [ Sonoma+ Debug x86_64 ] imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-noreferrer.html [ Pass Crash ]
 
+# WindowProxy property access delegate callbacks are only implemented on Mac and iOS WK2.
+http/wpt/opener/child-access-parent-via-windowproxy.html [ Pass ]
+http/wpt/opener/iframe-access-top-via-windowproxy.html [ Pass ]
+http/wpt/opener/parent-access-child-via-windowproxy.html [ Pass ]
+
 # rdar://119272478 (REGRESSION ( Sonoma?): [ Sonoma Release wk2 ] 3 tests in fast/attachment are a flaky failure with image diff)
 [ Sonoma+ Release ] fast/attachment/attachment-folder-icon.html [ Pass Failure ]
 [ Sonoma+ Release ] fast/attachment/attachment-type-attribute.html [ Pass Failure ]

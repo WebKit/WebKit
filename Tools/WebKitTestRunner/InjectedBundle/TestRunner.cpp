@@ -684,6 +684,7 @@ enum {
     AppBoundRequestContextDataForDomainCallbackID,
     TakeViewPortSnapshotCallbackID,
     RemoveAllCookiesCallbackID,
+    GetAndClearReportedWindowProxyAccessDomainsCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -2423,6 +2424,18 @@ void TestRunner::viewPortSnapshotTaken(WKStringRef value)
 void TestRunner::generateTestReport(JSStringRef message, JSStringRef group)
 {
     _WKBundleFrameGenerateTestReport(mainFrame(), toWK(message).get(), toWK(group).get());
+}
+
+void TestRunner::getAndClearReportedWindowProxyAccessDomains(JSValueRef callback)
+{
+    cacheTestRunnerCallback(GetAndClearReportedWindowProxyAccessDomainsCallbackID, callback);
+    postMessage("GetAndClearReportedWindowProxyAccessDomains");
+}
+
+void TestRunner::didGetAndClearReportedWindowProxyAccessDomains(WKArrayRef value)
+{
+    auto jsValue = stringArrayToJS(mainFrameJSContext(), value);
+    callTestRunnerCallback(GetAndClearReportedWindowProxyAccessDomainsCallbackID, 1, &jsValue);
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_END

@@ -75,12 +75,13 @@ public:
     DOMWindow* window() { return m_window.get(); }
     RefPtr<DOMWindow> protectedWindow();
 
+    const URL& url() const;
+
 private:
     explicit Location(DOMWindow&);
 
     ExceptionOr<void> setLocation(LocalDOMWindow& incumbentWindow, LocalDOMWindow& firstWindow, const String&);
 
-    const URL& url() const;
     Frame* frame();
     const Frame* frame() const;
 
