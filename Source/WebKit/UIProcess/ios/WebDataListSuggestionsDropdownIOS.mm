@@ -298,6 +298,10 @@ void WebDataListSuggestionsDropdownIOS::didSelectOption(const String& selectedOp
 {
 }
 
+- (void)controlUpdateEditing
+{
+}
+
 - (void)controlEndEditing
 {
     [self.control didSelectOptionAtIndex:[self selectedRowInComponent:0]];

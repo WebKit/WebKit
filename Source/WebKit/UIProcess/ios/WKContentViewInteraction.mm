@@ -8024,6 +8024,18 @@ static RetainPtr<NSObject <WKFormPeripheral>> createInputPeripheralWithView(WebK
         [UIKeyboardImpl.activeInstance updateForChangedSelection];
 }
 
+- (void)_updateFocusedElementInformation:(const WebKit::FocusedElementInformation&)information
+{
+    if (!self._hasFocusedElement)
+        return;
+
+    if (!_focusedElementInformation.elementContext.isSameElement(information.elementContext))
+        return;
+
+    _focusedElementInformation = information;
+    [_inputPeripheral updateEditing];
+}
+
 - (BOOL)shouldIgnoreKeyboardWillHideNotification
 {
     // Ignore keyboard will hide notifications sent during rotation. They're just there for

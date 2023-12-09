@@ -254,6 +254,11 @@ void WebChromeClient::focusedElementDidChangeInputMode(Element& element, InputMo
     protectedPage()->focusedElementDidChangeInputMode(element, mode);
 }
 
+void WebChromeClient::focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElement& element)
+{
+    protectedPage()->focusedSelectElementDidChangeOptions(element);
+}
+
 void WebChromeClient::makeFirstResponder()
 {
     protectedPage()->send(Messages::WebPageProxy::MakeFirstResponder());

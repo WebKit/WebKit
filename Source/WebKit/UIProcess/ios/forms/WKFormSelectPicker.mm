@@ -208,6 +208,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
 }
 
+- (void)controlUpdateEditing
+{
+    [self reloadAllComponents];
+}
+
 - (void)controlEndEditing
 {
 }
@@ -394,6 +399,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
 }
 
+- (void)controlUpdateEditing
+{
+    [self reloadAllComponents];
+}
+
 - (void)controlEndEditing
 {
     if (_selectedIndex == NSNotFound)
@@ -521,6 +531,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(UICONTEXTMENU)
     _selectMenu = [self createMenu];
     [self showSelectPicker];
+#endif
+}
+
+- (void)controlUpdateEditing
+{
+#if USE(UICONTEXTMENU)
+    if (!_selectContextMenuPresenter)
+        return;
+
+    _selectMenu = [self createMenu];
+    _selectContextMenuPresenter->updateVisibleMenu(^UIMenu *(UIMenu *) {
+        return _selectMenu.get();
+    });
 #endif
 }
 
@@ -1239,6 +1262,11 @@ static NSString *optionCellReuseIdentifier = @"WKSelectPickerTableViewCell";
     [self configurePresentation];
     auto presentingViewController = _view._wk_viewControllerForFullScreenPresentation;
     [presentingViewController presentViewController:_navigationController.get() animated:YES completion:nil];
+}
+
+- (void)controlUpdateEditing
+{
+    [[_tableViewController tableView] reloadData];
 }
 
 - (void)controlEndEditing

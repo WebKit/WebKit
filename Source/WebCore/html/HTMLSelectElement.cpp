@@ -29,6 +29,8 @@
 #include "HTMLSelectElement.h"
 
 #include "AXObjectCache.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "DOMFormData.h"
 #include "DocumentInlines.h"
 #include "ElementChildIteratorInlines.h"
@@ -812,6 +814,11 @@ void HTMLSelectElement::setRecalcListItems()
         invalidateSelectedItems();
     if (auto* cache = document().existingAXObjectCache())
         cache->childrenChanged(this);
+
+    if (Ref document = this->document(); this == document->focusedElement()) {
+        if (CheckedPtr page = document->page())
+            page->chrome().client().focusedSelectElementDidChangeOptions(*this);
+    }
 }
 
 void HTMLSelectElement::recalcListItems(bool updateSelectedStates, AllowStyleInvalidation allowStyleInvalidation) const

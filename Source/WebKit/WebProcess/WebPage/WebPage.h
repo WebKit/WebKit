@@ -206,6 +206,7 @@ class GraphicsContext;
 class HTMLElement;
 class HTMLImageElement;
 class HTMLPlugInElement;
+class HTMLSelectElement;
 class HTMLVideoElement;
 class HandleUserInputEventResult;
 class IgnoreSelectionChangeForScope;
@@ -815,6 +816,7 @@ public:
     void elementDidRefocus(WebCore::Element&, const WebCore::FocusOptions&);
     void elementDidBlur(WebCore::Element&);
     void focusedElementDidChangeInputMode(WebCore::Element&, WebCore::InputMode);
+    void focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElement&);
     void resetFocusedElementForFrame(WebFrame*);
     void updateInputContextAfterBlurringAndRefocusingElementIfNeeded(WebCore::Element&);
 

@@ -2686,6 +2686,7 @@ private:
     void elementDidFocus(const FocusedElementInformation&, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, const UserData&);
     void elementDidBlur();
     void updateInputContextAfterBlurringAndRefocusingElement();
+    void updateFocusedElementInformation(const FocusedElementInformation&);
     void focusedElementDidChangeInputMode(WebCore::InputMode);
     void didReleaseAllTouchPoints();
 

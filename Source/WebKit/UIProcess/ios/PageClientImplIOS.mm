@@ -657,6 +657,11 @@ void PageClientImpl::updateInputContextAfterBlurringAndRefocusingElement()
     [contentView() _updateInputContextAfterBlurringAndRefocusingElement];
 }
 
+void PageClientImpl::updateFocusedElementInformation(const FocusedElementInformation& information)
+{
+    [contentView() _updateFocusedElementInformation:information];
+}
+
 bool PageClientImpl::isFocusingElement()
 {
     return [contentView() isFocusingElement];

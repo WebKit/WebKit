@@ -6904,6 +6904,22 @@ void WebPage::focusedElementDidChangeInputMode(WebCore::Element& element, WebCor
 #endif
 }
 
+void WebPage::focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElement& element)
+{
+#if PLATFORM(IOS_FAMILY)
+    if (m_focusedElement != &element)
+        return;
+
+    auto information = focusedElementInformation();
+    if (!information)
+        return;
+
+    send(Messages::WebPageProxy::UpdateFocusedElementInformation(*information));
+#else
+    UNUSED_PARAM(element);
+#endif
+}
+
 void WebPage::didUpdateComposition()
 {
     sendEditorStateUpdate();

@@ -1096,9 +1096,13 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => {
             testRunner.runUIScript(`
             (function() {
-                uiController.didShowContextMenuCallback = function() {
+                if (!uiController.isShowingContextMenu) {
+                    uiController.didShowContextMenuCallback = function() {
+                        uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('selectMenu')));
+                    };
+                } else {
                     uiController.uiScriptComplete(JSON.stringify(uiController.contentsOfUserInterfaceItem('selectMenu')));
-                };
+                }
             })();`, result => resolve(JSON.parse(result).selectMenu));
         });
     }
