@@ -3151,7 +3151,7 @@
                 "converter": "PathOperation",
                 "parser-function": "consumePathOperation",
                 "parser-function-requires-context": true,
-                "parser-function-requires-additional-parameters": ["ConsumeRay::Exclude"],
+                "parser-function-requires-additional-parameters": ["RejectRay"],
                 "parser-grammar-unused": "<clip-source> | [ <basic-shape> || <geometry-box> ] | none",
                 "parser-grammar-unused-reason": "Needs support for '||' groups."
             },
@@ -4725,7 +4725,7 @@
                 "settings-flag": "cssMotionPathEnabled",
                 "parser-function": "consumePathOperation",
                 "parser-function-requires-context": true,
-                "parser-function-requires-additional-parameters": ["ConsumeRay::Include"],
+                "parser-function-requires-additional-parameters": ["RejectFillRule"],
                 "parser-grammar-unused": "none | <ray()> | <path()> | <url> | [ <basic-shape> && <coord-box>? ] | <coord-box>",
                 "parser-grammar-unused-reason": "Needs support for '||' groups, '&&' groups, optionals and function notation."
             },
