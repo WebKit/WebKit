@@ -74,8 +74,8 @@ WebInspectorClient::~WebInspectorClient()
     
     m_paintRectLayers.clear();
 
-    if (m_paintRectOverlay && m_page->corePage())
-        m_page->corePage()->pageOverlayController().uninstallPageOverlay(*m_paintRectOverlay, PageOverlay::FadeMode::Fade);
+    if (RefPtr paintRectOverlay = m_paintRectOverlay; paintRectOverlay && m_page->corePage())
+        m_page->corePage()->pageOverlayController().uninstallPageOverlay(*paintRectOverlay, PageOverlay::FadeMode::Fade);
 }
 
 void WebInspectorClient::inspectedPageDestroyed()
@@ -150,8 +150,8 @@ void WebInspectorClient::hideHighlight()
 #endif
 
 #if !PLATFORM(IOS_FAMILY)
-    if (m_highlightOverlay)
-        m_page->corePage()->pageOverlayController().uninstallPageOverlay(*m_highlightOverlay, PageOverlay::FadeMode::Fade);
+    if (RefPtr highlightOverlay = m_highlightOverlay; m_highlightOverlay)
+        m_page->corePage()->pageOverlayController().uninstallPageOverlay(*highlightOverlay, PageOverlay::FadeMode::Fade);
 #else
     m_page->hideInspectorHighlight();
 #endif
@@ -164,7 +164,8 @@ void WebInspectorClient::showPaintRect(const FloatRect& rect)
 
     if (!m_paintRectOverlay) {
         m_paintRectOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
-        m_page->corePage()->pageOverlayController().installPageOverlay(*m_paintRectOverlay, PageOverlay::FadeMode::DoNotFade);
+        RefPtr paintRectOverlay = m_paintRectOverlay;
+        m_page->corePage()->pageOverlayController().installPageOverlay(*paintRectOverlay, PageOverlay::FadeMode::DoNotFade);
     }
 
     if (!m_paintIndicatorLayerClient)
