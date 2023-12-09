@@ -90,8 +90,6 @@ auto RenderSVGInline::rectsForRepaintingAfterLayout(const RenderLayerModelObject
 #if ENABLE(LAYER_BASED_SVG_ENGINE)
     if (document().settings().layerBasedSVGEngineEnabled())
         return RenderInline::rectsForRepaintingAfterLayout(repaintContainer, repaintOutlineBounds);
-#else
-    UNUSED_PARAM(context);
 #endif
 
     auto rects = RepaintRects { SVGRenderSupport::clippedOverflowRectForRepaint(*this, repaintContainer, visibleRectContextForRepaint()) };
