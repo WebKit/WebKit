@@ -62,10 +62,10 @@ void LazySlowPath::generate(CodeBlock* codeBlock)
 
     m_generator->run(jit, params);
 
-    LinkBuffer linkBuffer(jit, codeBlock, LinkBuffer::Profile::FTL, JITCompilationMustSucceed);
-    linkBuffer.link(params.doneJumps, m_done);
+    params.doneJumps.linkThunk(m_done, &jit);
     if (m_exceptionTarget)
-        linkBuffer.link(exceptionJumps, m_exceptionTarget);
+        exceptionJumps.linkThunk(m_exceptionTarget, &jit);
+    LinkBuffer linkBuffer(jit, codeBlock, LinkBuffer::Profile::FTL, JITCompilationMustSucceed);
     m_stub = FINALIZE_CODE_FOR(codeBlock, linkBuffer, JITStubRoutinePtrTag, "Lazy slow path call stub");
 
     MacroAssembler::repatchJump(m_patchableJump, CodeLocationLabel<JITStubRoutinePtrTag>(m_stub.code()));

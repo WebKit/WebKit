@@ -2265,6 +2265,24 @@ public:
     void print(Arguments&&... args);
 
     void print(Printer::PrintRecordList*);
+
+    template<PtrTag tag>
+    void nearCallThunk(CodeLocationLabel<tag> label)
+    {
+        nearCall().linkThunk(label, this);
+    }
+
+    template<PtrTag tag>
+    void nearTailCallThunk(CodeLocationLabel<tag> label)
+    {
+        nearTailCall().linkThunk(label, this);
+    }
+
+    template<PtrTag tag>
+    void jumpThunk(CodeLocationLabel<tag> label)
+    {
+        jump().linkThunk(label, this);
+    }
 };
 
 } // namespace JSC

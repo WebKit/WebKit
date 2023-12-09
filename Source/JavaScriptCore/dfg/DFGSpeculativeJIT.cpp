@@ -207,7 +207,6 @@ void SpeculativeJIT::compileFunction()
     // determine the correct number of arguments have been passed, or have already checked).
     // In cases where an arity check is necessary, we enter here.
     // FIXME: change this from a cti call to a DFG style operation (normal C calling conventions).
-    Call callArityFixup;
     Label arityCheck;
     bool requiresArityFixup = m_codeBlock->numParameters() != 1;
     if (requiresArityFixup) {
@@ -222,7 +221,7 @@ void SpeculativeJIT::compileFunction()
 
         emitStoreCodeOrigin(CodeOrigin(BytecodeIndex(0)));
         move(GPRInfo::regT0, GPRInfo::argumentGPR0);
-        callArityFixup = nearCall();
+        nearCallThunk(CodeLocationLabel { vm().getCTIStub(CommonJITThunkID::ArityFixup).retaggedCode<NoPtrTag>() });
         jump(fromArityCheck);
     } else
         arityCheck = entryLabel;
@@ -260,9 +259,6 @@ void SpeculativeJIT::compileFunction()
     }
     link(*linkBuffer);
     linkOSREntries(*linkBuffer);
-
-    if (requiresArityFixup)
-        linkBuffer->link(callArityFixup, vm().getCTIStub(CommonJITThunkID::ArityFixup).code());
 
     disassemble(*linkBuffer);
 
@@ -308,7 +304,7 @@ void SpeculativeJIT::exceptionCheck()
         // We assume here that this is called after callOpeartion()/appendCall() is called.
         appendExceptionHandlingOSRExit(this, ExceptionCheck, streamIndex, opCatchOrigin, exceptionHandler, m_jitCode->common.codeOrigins->lastCallSite(), hadException);
     } else
-        m_exceptionChecks.append(emitExceptionCheck(vm()));
+        emitExceptionCheck(vm()).linkThunk(CodeLocationLabel(vm().getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), this);
 }
 
 CallSiteIndex SpeculativeJIT::recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(const CodeOrigin& callSiteCodeOrigin, unsigned eventStreamIndex)

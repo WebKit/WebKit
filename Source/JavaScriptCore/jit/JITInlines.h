@@ -87,30 +87,6 @@ ALWAYS_INLINE void JIT::emitLoadCharacterString(RegisterID src, RegisterID dst, 
     done.link(this);
 }
 
-ALWAYS_INLINE JIT::Call JIT::emitNakedNearCall(CodePtr<NoPtrTag> target)
-{
-    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
-    Call nakedCall = nearCall();
-    m_nearCalls.append(NearCallRecord(nakedCall, target.retagged<JSInternalPtrTag>()));
-    return nakedCall;
-}
-
-ALWAYS_INLINE JIT::Call JIT::emitNakedNearTailCall(CodePtr<NoPtrTag> target)
-{
-    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
-    Call nakedCall = nearTailCall();
-    m_nearCalls.append(NearCallRecord(nakedCall, target.retagged<JSInternalPtrTag>()));
-    return nakedCall;
-}
-
-ALWAYS_INLINE JIT::Jump JIT::emitNakedNearJump(CodePtr<JITThunkPtrTag> target)
-{
-    ASSERT(m_bytecodeIndex); // This method should only be called during hot/cold path generation, so that m_bytecodeIndex is set.
-    Jump nakedJump = jump();
-    m_nearJumps.append(NearJumpRecord(nakedJump, CodeLocationLabel(target)));
-    return nakedJump;
-}
-
 ALWAYS_INLINE void JIT::updateTopCallFrame()
 {
     uint32_t locationBits = CallSiteIndex(m_bytecodeIndex.offset()).bits();

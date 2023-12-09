@@ -98,7 +98,7 @@ void JIT::generateGetByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::ite
     JITGetByValGenerator& gen = m_getByVals[m_getByValIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emitSlow_op_get_by_val(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -146,7 +146,7 @@ void JIT::emitSlow_op_get_private_name(const JSInstruction*, Vector<SlowCaseEntr
     JITGetByValGenerator& gen = m_getByVals[m_getByValIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emit_op_set_private_brand(const JSInstruction* currentInstruction)
@@ -187,7 +187,7 @@ void JIT::emitSlow_op_set_private_brand(const JSInstruction* currentInstruction,
     JITPrivateBrandAccessGenerator& gen = m_privateBrandAccesses[m_privateBrandAccessIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emit_op_check_private_brand(const JSInstruction* currentInstruction)
@@ -223,7 +223,7 @@ void JIT::emitSlow_op_check_private_brand(const JSInstruction*, Vector<SlowCaseE
     JITPrivateBrandAccessGenerator& gen = m_privateBrandAccesses[m_privateBrandAccessIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 template<typename Op>
@@ -293,7 +293,7 @@ void JIT::generatePutByValSlowCase(const OpcodeType&, Vector<SlowCaseEntry>::ite
     JITPutByValGenerator& gen = m_putByVals[m_putByValIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emitSlow_op_put_by_val(const JSInstruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -347,7 +347,7 @@ void JIT::emitSlow_op_put_private_name(const JSInstruction*, Vector<SlowCaseEntr
     JITPutByValGenerator& gen = m_putByVals[m_putByValIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emit_op_put_getter_by_id(const JSInstruction* currentInstruction)
@@ -464,7 +464,7 @@ void JIT::emitSlow_op_del_by_id(const JSInstruction*, Vector<SlowCaseEntry>::ite
     JITDelByIdGenerator& gen = m_delByIds[m_delByIdIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emit_op_del_by_val(const JSInstruction* currentInstruction)
@@ -514,7 +514,7 @@ void JIT::emitSlow_op_del_by_val(const JSInstruction*, Vector<SlowCaseEntry>::it
     JITDelByValGenerator& gen = m_delByVals[m_delByValIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emit_op_try_get_by_id(const JSInstruction* currentInstruction)
@@ -554,7 +554,7 @@ void JIT::emitSlow_op_try_get_by_id(const JSInstruction*, Vector<SlowCaseEntry>:
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emit_op_get_by_id_direct(const JSInstruction* currentInstruction)
@@ -594,7 +594,7 @@ void JIT::emitSlow_op_get_by_id_direct(const JSInstruction*, Vector<SlowCaseEntr
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emit_op_get_by_id(const JSInstruction* currentInstruction)
@@ -646,7 +646,7 @@ void JIT::emitSlow_op_get_by_id(const JSInstruction*, Vector<SlowCaseEntry>::ite
     JITGetByIdGenerator& gen = m_getByIds[m_getByIdIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emit_op_get_by_id_with_this(const JSInstruction* currentInstruction)
@@ -691,7 +691,7 @@ void JIT::emitSlow_op_get_by_id_with_this(const JSInstruction*, Vector<SlowCaseE
     JITGetByIdWithThisGenerator& gen = m_getByIdsWithThis[m_getByIdWithThisIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emit_op_put_by_id(const JSInstruction* currentInstruction)
@@ -742,7 +742,7 @@ void JIT::emitSlow_op_put_by_id(const JSInstruction*, Vector<SlowCaseEntry>::ite
     JITPutByIdGenerator& gen = m_putByIds[m_putByIdIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emit_op_in_by_id(const JSInstruction* currentInstruction)
@@ -781,7 +781,7 @@ void JIT::emitSlow_op_in_by_id(const JSInstruction*, Vector<SlowCaseEntry>::iter
     JITInByIdGenerator& gen = m_inByIds[m_inByIdIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emit_op_in_by_val(const JSInstruction* currentInstruction)
@@ -826,7 +826,7 @@ void JIT::emitSlow_op_in_by_val(const JSInstruction*, Vector<SlowCaseEntry>::ite
     JITInByValGenerator& gen = m_inByVals[m_inByValIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emitHasPrivate(VirtualRegister dst, VirtualRegister base, VirtualRegister propertyOrBrand, AccessType type)
@@ -863,7 +863,7 @@ void JIT::emitHasPrivateSlow(AccessType type, Vector<SlowCaseEntry>::iterator& i
     JITInByValGenerator& gen = m_inByVals[m_inByValIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emit_op_has_private_name(const JSInstruction* currentInstruction)
@@ -935,7 +935,7 @@ void JIT::emit_op_resolve_scope(const JSInstruction* currentInstruction)
         else
             code = vm().getCTIStub(generateOpResolveScopeThunk<GlobalVar>);
 
-        emitNakedNearCall(code.retaggedCode<NoPtrTag>());
+        nearCallThunk(CodeLocationLabel { code.retaggedCode<NoPtrTag>() });
     }
 
     boxCell(returnValueGPR, returnValueJSR);
@@ -1073,8 +1073,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpResolveScopeThunk(VM& vm)
 
     jit.ret();
 
+    slowCase.linkThunk(CodeLocationLabel { vm.getCTIStub(slow_op_resolve_scopeGenerator).retaggedCode<NoPtrTag>() }, &jit);
+
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    patchBuffer.link(slowCase, CodeLocationLabel(vm.getCTIStub(slow_op_resolve_scopeGenerator).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "resolve_scope thunk");
 }
 
@@ -1103,16 +1104,14 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_resolve_scopeGenerator(VM& vm
     jit.loadPtr(Address(scratch1GPR, CodeBlock::offsetOfInstructionsRawPointer()), instructionGPR);
     jit.addPtr(bytecodeOffsetGPR, instructionGPR);
     jit.setupArguments<decltype(operationResolveScopeForBaseline)>(globalObjectGPR, instructionGPR);
-    Call operation = jit.call(OperationPtrTag);
+    jit.callOperation<OperationPtrTag>(operationResolveScopeForBaseline);
 
     jit.emitCTIThunkEpilogue();
 
     // Tail call to exception check thunk
-    Jump exceptionCheck = jit.jump();
+    jit.jumpThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::CheckException).retaggedCode<NoPtrTag>()));
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    patchBuffer.link<OperationPtrTag>(operation, operationResolveScopeForBaseline);
-    patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::CheckException).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_resolve_scope");
 }
 
@@ -1155,7 +1154,7 @@ void JIT::emit_op_get_from_scope(const JSInstruction* currentInstruction)
     else
         code = vm().getCTIStub(generateOpGetFromScopeThunk<GlobalVar>);
 
-    emitNakedNearCall(code.retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { code.retaggedCode<NoPtrTag>() });
     emitValueProfilingSite(bytecode, returnValueJSR);
     emitPutVirtualRegister(dst, returnValueJSR);
 }
@@ -1288,8 +1287,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::generateOpGetFromScopeThunk(VM& vm)
 
     jit.ret();
 
+    slowCase.linkThunk(CodeLocationLabel { vm.getCTIStub(slow_op_get_from_scopeGenerator).retaggedCode<NoPtrTag>() }, &jit);
+
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::Thunk);
-    patchBuffer.link(slowCase, CodeLocationLabel(vm.getCTIStub(slow_op_get_from_scopeGenerator).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "get_from_scope thunk");
 }
 
@@ -1322,7 +1322,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
     jit.subPtr(TrustedImmPtr(16), stackPointerRegister);
     jit.storePtr(metadataGPR, Address(stackPointerRegister));
 
-    Call operation = jit.call(OperationPtrTag);
+    jit.callOperation<OperationPtrTag>(operationGetFromScope);
     Jump exceptionCheck = jit.emitNonPatchableExceptionCheck(vm);
 
     jit.loadPtr(Address(stackPointerRegister), metadataGPR); // Restore metadataGPR
@@ -1334,12 +1334,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_get_from_scopeGenerator(VM& v
     exceptionCheck.link(&jit);
     jit.addPtr(TrustedImmPtr(16), stackPointerRegister); // Restore stack pointer
 
-    Jump jumpToHandler = jit.jump();
+    jit.jumpThunk(CodeLocationLabel { vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator).retaggedCode<NoPtrTag>() });
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link<OperationPtrTag>(operation, operationGetFromScope);
-    auto handler = vm.getCTIStub(popThunkStackPreservesAndHandleExceptionGenerator);
-    patchBuffer.link(jumpToHandler, CodeLocationLabel(handler.retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_get_from_scope");
 }
 
@@ -1501,7 +1498,7 @@ void JIT::emitSlow_op_put_to_scope(const JSInstruction* currentInstruction, Vect
         using BaselineJITRegisters::PutToScope::bytecodeOffsetGPR;
 
         move(TrustedImm32(bytecodeOffset), bytecodeOffsetGPR);
-        emitNakedNearCall(vm().getCTIStub(slow_op_put_to_scopeGenerator).retaggedCode<NoPtrTag>());
+        nearCallThunk(CodeLocationLabel { vm().getCTIStub(slow_op_put_to_scopeGenerator).retaggedCode<NoPtrTag>() });
     }
 }
 
@@ -1529,16 +1526,14 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JIT::slow_op_put_to_scopeGenerator(VM& vm)
     jit.loadPtr(Address(codeBlockGPR, CodeBlock::offsetOfInstructionsRawPointer()), instructionGPR);
     jit.addPtr(bytecodeOffsetGPR, instructionGPR);
     jit.setupArguments<decltype(operationPutToScope)>(globalObjectGPR, instructionGPR);
-    Call operation = jit.call(OperationPtrTag);
+    jit.callOperation<OperationPtrTag>(operationPutToScope);
 
     jit.emitCTIThunkEpilogue();
 
     // Tail call to exception check thunk
-    Jump exceptionCheck = jit.jump();
+    jit.jumpThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::CheckException).retaggedCode<NoPtrTag>()));
 
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link<OperationPtrTag>(operation, operationPutToScope);
-    patchBuffer.link(exceptionCheck, CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::CheckException).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "Baseline: slow_op_put_to_scope");
 }
 
@@ -1651,7 +1646,7 @@ void JIT::emitSlow_op_get_by_val_with_this(const JSInstruction*, Vector<SlowCase
     JITGetByValWithThisGenerator& gen = m_getByValsWithThis[m_getByValWithThisIndex++];
     linkAllSlowCases(iter);
     gen.reportBaselineDataICSlowPathBegin(label());
-    emitNakedNearCall(InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>());
+    nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
 }
 
 void JIT::emit_op_get_property_enumerator(const JSInstruction* currentInstruction)

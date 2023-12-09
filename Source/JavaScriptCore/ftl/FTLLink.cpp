@@ -88,7 +88,7 @@ void link(State& state)
 
             jit.emitFunctionPrologue();
             jit.move(GPRInfo::regT0, GPRInfo::argumentGPR0);
-            CCallHelpers::Call callArityFixup = jit.nearCall();
+            jit.nearCallThunk(CodeLocationLabel { vm.getCTIStub(CommonJITThunkID::ArityFixup).retaggedCode<NoPtrTag>() });
             jit.emitFunctionEpilogue();
             jit.untagReturnAddress();
             mainPathJumps.append(jit.jump());
@@ -97,18 +97,15 @@ void link(State& state)
             jit.emitFunctionPrologue();
             jit.move(CCallHelpers::TrustedImmPtr(codeBlock), GPRInfo::argumentGPR0);
             jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
-            CCallHelpers::Call throwStackOverflow = jit.call(OperationPtrTag);
-            auto jumpToExceptionHandler = jit.jump();
+            jit.callOperation<OperationPtrTag>(operationThrowStackOverflowError);
+            jit.jumpThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleExceptionWithCallFrameRollback).retaggedCode<NoPtrTag>()));
+            mainPathJumps.linkThunk(state.generatedFunction, &jit);
 
             linkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, LinkBuffer::Profile::FTL, JITCompilationCanFail);
             if (linkBuffer->didFailToAllocate()) {
                 state.allocationFailed = true;
                 return;
             }
-            linkBuffer->link<OperationPtrTag>(throwStackOverflow, operationThrowStackOverflowError);
-            linkBuffer->link(jumpToExceptionHandler, CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleExceptionWithCallFrameRollback).retaggedCode<NoPtrTag>()));
-            linkBuffer->link(callArityFixup, vm.getCTIStub(CommonJITThunkID::ArityFixup).code());
-            linkBuffer->link(mainPathJumps, state.generatedFunction);
         }
 
         state.jitCode->initializeAddressForCall(state.generatedFunction);
@@ -123,14 +120,13 @@ void link(State& state)
         CCallHelpers::Label start = jit.label();
         jit.emitFunctionEpilogue();
         jit.untagReturnAddress();
-        CCallHelpers::Jump mainPathJump = jit.jump();
+        jit.jumpThunk(CodeLocationLabel { state.generatedFunction });
         
         linkBuffer = makeUnique<LinkBuffer>(jit, codeBlock, LinkBuffer::Profile::FTL, JITCompilationCanFail);
         if (linkBuffer->didFailToAllocate()) {
             state.allocationFailed = true;
             return;
         }
-        linkBuffer->link(mainPathJump, state.generatedFunction);
 
         state.jitCode->initializeAddressForCall(linkBuffer->locationOf<JSEntryPtrTag>(start));
         break;

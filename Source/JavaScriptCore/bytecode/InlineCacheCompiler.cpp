@@ -625,24 +625,13 @@ void InlineCacheCompiler::emitExplicitExceptionHandler()
         // does here. I.e, set callFrameForCatch and copy callee saves.
 
         m_jit->storePtr(GPRInfo::callFrameRegister, m_vm.addressOfCallFrameForCatch());
-        CCallHelpers::Jump jumpToOSRExitExceptionHandler = m_jit->jump();
-
         // We don't need to insert a new exception handler in the table
         // because we're doing a manual exception check here. i.e, we'll
         // never arrive here from genericUnwind().
         HandlerInfo originalHandler = originalExceptionHandler();
-        m_jit->addLinkTask(
-            [=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(jumpToOSRExitExceptionHandler, originalHandler.nativeCode);
-            });
-    } else {
-        CCallHelpers::Jump jumpToExceptionHandler = m_jit->jump();
-        VM* vm = &m_vm;
-        m_jit->addLinkTask(
-            [=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(jumpToExceptionHandler, CodeLocationLabel(vm->getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
-            });
-    }
+        m_jit->jumpThunk(originalHandler.nativeCode);
+    } else
+        m_jit->jumpThunk(CodeLocationLabel(m_vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
 }
 
 ScratchRegisterAllocator InlineCacheCompiler::makeDefaultScratchAllocator(GPRReg extraToLock)
@@ -747,14 +736,13 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdSlowPathCodeGenerator(VM& vm
     static_assert(preferredArgumentGPR<SlowOperation, 2>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
-    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+    jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
 
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_by_id_slow");
 }
 
@@ -778,14 +766,13 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdWithThisSlowPathCodeGenerato
     static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
-    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+    jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
 
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_by_id_with_this_slow");
 }
 
@@ -810,14 +797,13 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValSlowPathCodeGenerator(VM& v
     static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
-    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+    jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
 
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_by_val_slow");
 }
 
@@ -841,14 +827,13 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getPrivateNameSlowPathCodeGenerator
     static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
-    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+    jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
 
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_private_name_slow");
 }
 
@@ -875,14 +860,13 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValWithThisSlowPathCodeGenerat
     static_assert(preferredArgumentGPR<SlowOperation, 4>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
-    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+    jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
 
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC get_by_val_with_this_slow");
 }
 #endif
@@ -907,14 +891,13 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByIdSlowPathCodeGenerator(VM& vm
     static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
-    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+    jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
 
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC put_by_id_slow");
 }
 
@@ -943,14 +926,13 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> putByValSlowPathCodeGenerator(VM& v
     JIT::emitMaterializeMetadataAndConstantPoolRegisters(jit);
 #endif
 
-    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+    jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
 
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC put_by_val_slow");
 }
 
@@ -974,14 +956,13 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> instanceOfSlowPathCodeGenerator(VM&
     static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
-    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+    jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
 
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC instanceof_slow");
 }
 
@@ -1004,14 +985,13 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> delByIdSlowPathCodeGenerator(VM& vm
     static_assert(preferredArgumentGPR<SlowOperation, 2>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
-    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+    jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
 
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC del_by_id_slow");
 }
 
@@ -1035,14 +1015,13 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> delByValSlowPathCodeGenerator(VM& v
     static_assert(preferredArgumentGPR<SlowOperation, 3>() == stubInfoGPR, "Needed for branch to slow operation via StubInfo");
     jit.call(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfSlowOperation()), OperationPtrTag);
 
-    auto handleException = jit.emitNonPatchableExceptionCheck(vm);
+    jit.emitNonPatchableExceptionCheck(vm).linkThunk(CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()), &jit);
 
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
     // While sp is extended, it is OK. Jump target will adjust it.
     LinkBuffer patchBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::ExtraCTIThunk);
-    patchBuffer.link(handleException, CodeLocationLabel(vm.getCTIStub(CommonJITThunkID::HandleException).retaggedCode<NoPtrTag>()));
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "DataIC del_by_val_slow");
 }
 
@@ -2713,22 +2692,15 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
             }
             jit.storePtr(GPRInfo::callFrameRegister, &vm.topCallFrame);
 
-            if (Options::useJITCage())
-                operationCall = jit.call(OperationPtrTag);
-            else
-                operationCall = jit.call(CustomAccessorPtrTag);
-
             auto type = accessCase.m_type;
             auto customAccessor = accessCase.as<GetterSetterAccessCase>().m_customAccessor;
-            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                if (Options::useJITCage()) {
-                    if (type == AccessCase::CustomValueGetter || type == AccessCase::CustomAccessorGetter)
-                        linkBuffer.link<OperationPtrTag>(operationCall, vmEntryCustomGetter);
-                    else
-                        linkBuffer.link<OperationPtrTag>(operationCall, vmEntryCustomSetter);
-                } else
-                    linkBuffer.link(operationCall, customAccessor);
-            });
+            if (Options::useJITCage()) {
+                if (type == AccessCase::CustomValueGetter || type == AccessCase::CustomAccessorGetter)
+                    jit.callOperation<OperationPtrTag>(vmEntryCustomGetter);
+                else
+                    jit.callOperation<OperationPtrTag>(vmEntryCustomSetter);
+            } else
+                jit.callOperation<CustomAccessorPtrTag>(customAccessor);
 
             if (accessCase.m_type == AccessCase::CustomValueGetter || accessCase.m_type == AccessCase::CustomAccessorGetter)
                 jit.setupResults(valueRegs);
@@ -2783,10 +2755,7 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
 
             jit.setupArguments<decltype(operationWriteBarrierSlowPath)>(CCallHelpers::TrustedImmPtr(&vm), scratchGPR);
             jit.prepareCallOperation(vm);
-            auto operationCall = jit.call(OperationPtrTag);
-            jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link<OperationPtrTag>(operationCall, operationWriteBarrierSlowPath);
-            });
+            jit.callOperation<OperationPtrTag>(operationWriteBarrierSlowPath);
             restoreLiveRegistersFromStackForCall(spillState);
 
             skipBarrier.link(&jit);
@@ -2878,25 +2847,13 @@ void InlineCacheCompiler::generateImpl(AccessCase& accessCase)
                 if (!reallocating) {
                     jit.setupArguments<decltype(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity)>(CCallHelpers::TrustedImmPtr(&vm), baseGPR);
                     jit.prepareCallOperation(vm);
-
-                    CCallHelpers::Call operationCall = jit.call(OperationPtrTag);
-                    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                        linkBuffer.link<OperationPtrTag>(
-                            operationCall,
-                            operationReallocateButterflyToHavePropertyStorageWithInitialCapacity);
-                    });
+                    jit.callOperation<OperationPtrTag>(operationReallocateButterflyToHavePropertyStorageWithInitialCapacity);
                 } else {
                     // Handle the case where we are reallocating (i.e. the old structure/butterfly
                     // already had out-of-line property storage).
                     jit.setupArguments<decltype(operationReallocateButterflyToGrowPropertyStorage)>(CCallHelpers::TrustedImmPtr(&vm), baseGPR, CCallHelpers::TrustedImm32(newSize / sizeof(JSValue)));
                     jit.prepareCallOperation(vm);
-
-                    CCallHelpers::Call operationCall = jit.call(OperationPtrTag);
-                    jit.addLinkTask([=] (LinkBuffer& linkBuffer) {
-                        linkBuffer.link<OperationPtrTag>(
-                            operationCall,
-                            operationReallocateButterflyToGrowPropertyStorage);
-                    });
+                    jit.callOperation<OperationPtrTag>(operationReallocateButterflyToGrowPropertyStorage);
                 }
 
                 jit.reclaimSpaceOnStackForCCall();
@@ -4171,14 +4128,11 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
 
         restoreLiveRegistersFromStackForCallWithThrownException(spillState);
         restoreScratch();
-        CCallHelpers::Jump jumpToOSRExitExceptionHandler = jit.jump();
-
         HandlerInfo oldHandler = originalExceptionHandler();
+        jit.jumpThunk(oldHandler.nativeCode);
         DisposableCallSiteIndex newExceptionHandlingCallSite = this->callSiteIndexForExceptionHandling();
         jit.addLinkTask(
             [=] (LinkBuffer& linkBuffer) {
-                linkBuffer.link(jumpToOSRExitExceptionHandler, oldHandler.nativeCode);
-
                 HandlerInfo handlerToRegister = oldHandler;
                 handlerToRegister.nativeCode = linkBuffer.locationOf<ExceptionHandlerPtrTag>(makeshiftCatchHandler);
                 handlerToRegister.start = newExceptionHandlingCallSite.bits();
@@ -4193,12 +4147,18 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         callSiteIndexForExceptionHandling = this->callSiteIndexForExceptionHandling();
     }
 
+    CodeLocationLabel<JSInternalPtrTag> successLabel = m_stubInfo->doneLocation;
     if (codeBlock->useDataIC()) {
-        if (!useHandlerIC()) {
+        if (useHandlerIC())
+            failure.linkThunk(CodeLocationLabel(CodePtr<NoPtrTag> { (generateSlowPathCode(vm(), m_stubInfo->accessType).retaggedCode<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC) }), &jit);
+        else {
             failure.link(&jit);
             JIT_COMMENT(jit, "failure far jump");
             jit.farJump(CCallHelpers::Address(m_stubInfo->m_stubInfoGPR, StructureStubInfo::offsetOfSlowPathStartLocation()), JITStubRoutinePtrTag);
         }
+    } else {
+        m_success.linkThunk(successLabel, &jit);
+        failure.linkThunk(m_stubInfo->slowPathStartLocation, &jit);
     }
 
     RefPtr<PolymorphicAccessJITStubRoutine> stub;
@@ -4228,16 +4188,9 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         return AccessGenerationResult::GaveUp;
     }
 
-    CodeLocationLabel<JSInternalPtrTag> successLabel = m_stubInfo->doneLocation;
 
-    if (codeBlock->useDataIC()) {
+    if (codeBlock->useDataIC())
         ASSERT(m_success.empty());
-        if (useHandlerIC())
-            linkBuffer.link(failure, CodeLocationLabel(CodePtr<NoPtrTag> { (generateSlowPathCode(vm(), m_stubInfo->accessType).retaggedCode<NoPtrTag>().dataLocation<uint8_t*>() + prologueSizeInBytesDataIC) }));
-    } else {
-        linkBuffer.link(m_success, successLabel);
-        linkBuffer.link(failure, m_stubInfo->slowPathStartLocation);
-    }
 
     dataLogLnIf(InlineCacheCompilerInternal::verbose, FullCodeOrigin(codeBlock, m_stubInfo->codeOrigin), ": Generating polymorphic access stub for ", listDump(cases));
 

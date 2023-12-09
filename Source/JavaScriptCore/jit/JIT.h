@@ -251,15 +251,9 @@ namespace JSC {
         void loadCodeBlockConstantTag(VirtualRegister, RegisterID);
 #endif
 
-        void exceptionCheck(Jump jumpToHandler)
-        {
-            m_exceptionChecks.append(jumpToHandler);
-        }
-
-        void exceptionCheck()
-        {
-            m_exceptionChecks.append(emitExceptionCheck(vm()));
-        }
+        void exceptionCheck(Jump jumpToHandler);
+        void exceptionCheck();
+        void exceptionChecksWithCallFrameRollback(Jump jumpToHandler);
 
         void advanceToNextCheckpoint();
         void emitJumpSlowToHotForCheckpoint(Jump);
@@ -823,7 +817,7 @@ namespace JSC {
             setupArguments<OperationType>(args...);
             updateTopCallFrame(); // The callee is responsible for setting topCallFrame to their caller
             MacroAssembler::Call call = appendCall(operation);
-            m_exceptionChecksWithCallFrameRollback.append(jump());
+            exceptionChecksWithCallFrameRollback(jump());
             return call;
         }
 
@@ -839,10 +833,6 @@ namespace JSC {
         void emitRightShiftFastPath(const JSInstruction* currentInstruction, JITRightShiftGenerator::ShiftType);
 
         void updateTopCallFrame();
-
-        Call emitNakedNearCall(CodePtr<NoPtrTag> function = { });
-        Call emitNakedNearTailCall(CodePtr<NoPtrTag> function = { });
-        Jump emitNakedNearJump(CodePtr<JITThunkPtrTag> function = { });
 
         // Loads the character value of a single character string into dst.
         void emitLoadCharacterString(RegisterID src, RegisterID dst, JumpList& failures);
@@ -898,8 +888,6 @@ namespace JSC {
         BaselineUnlinkedCallLinkInfo* addUnlinkedCallLinkInfo();
 
         Vector<FarCallRecord> m_farCalls;
-        Vector<NearCallRecord> m_nearCalls;
-        Vector<NearJumpRecord> m_nearJumps;
         Vector<Label> m_labels;
         HashMap<BytecodeIndex, Label> m_checkpointLabels;
         HashMap<BytecodeIndex, Label> m_fastPathResumeLabels;
@@ -922,8 +910,6 @@ namespace JSC {
         Vector<SlowCaseEntry> m_slowCases;
         Vector<SwitchRecord> m_switches;
 
-        JumpList m_exceptionChecks;
-        JumpList m_exceptionChecksWithCallFrameRollback;
 #if ASSERT_ENABLED
         Label m_consistencyCheckLabel;
         Vector<Call> m_consistencyCheckCalls;

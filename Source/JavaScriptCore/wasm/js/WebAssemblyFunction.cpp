@@ -429,13 +429,12 @@ CodePtr<JSEntryPtrTag> WebAssemblyFunction::jsCallEntrypointSlow()
 #if CPU(ARM64E)
     jit.untagReturnAddress(scratchJSR.payloadGPR());
 #endif
-    auto jumpToHostCallThunk = jit.jump();
+    jit.jumpThunk(CodeLocationLabel<JSEntryPtrTag> { executable()->entrypointFor(CodeForCall, MustCheckArity) });
 
     LinkBuffer linkBuffer(jit, nullptr, LinkBuffer::Profile::WasmThunk, JITCompilationCanFail);
     if (UNLIKELY(linkBuffer.didFailToAllocate()))
         return nullptr;
 
-    linkBuffer.link(jumpToHostCallThunk, CodeLocationLabel<JSEntryPtrTag>(executable()->entrypointFor(CodeForCall, MustCheckArity)));
     auto compilation = makeUnique<Compilation>(FINALIZE_WASM_CODE(linkBuffer, JITCompilationPtrTag, "JS->Wasm IC"), nullptr);
     jsToWasmICCallee->setEntrypoint({ WTFMove(compilation), WTFMove(registersToSpill) });
 

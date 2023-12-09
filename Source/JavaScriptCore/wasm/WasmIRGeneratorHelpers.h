@@ -131,11 +131,8 @@ static inline void emitRethrowImpl(CCallHelpers& jit)
     jit.copyCalleeSavesToVMEntryFrameCalleeSavesBuffer(scratch);
 
     jit.prepareWasmCallOperation(GPRInfo::argumentGPR0);
-    CCallHelpers::Call call = jit.call(OperationPtrTag);
+    jit.callOperation<OperationPtrTag>(operationWasmRethrow);
     jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
-    jit.addLinkTask([call] (LinkBuffer& linkBuffer) {
-        linkBuffer.link<OperationPtrTag>(call, operationWasmRethrow);
-    });
 }
 
 static inline void emitThrowImpl(CCallHelpers& jit, unsigned exceptionIndex)
@@ -151,11 +148,8 @@ static inline void emitThrowImpl(CCallHelpers& jit, unsigned exceptionIndex)
     jit.move(MacroAssembler::TrustedImm32(exceptionIndex), GPRInfo::argumentGPR1);
     jit.move(MacroAssembler::stackPointerRegister, GPRInfo::argumentGPR2);
     jit.prepareWasmCallOperation(GPRInfo::argumentGPR0);
-    CCallHelpers::Call call = jit.call(OperationPtrTag);
+    jit.callOperation<OperationPtrTag>(operationWasmThrow);
     jit.farJump(GPRInfo::returnValueGPR, ExceptionHandlerPtrTag);
-    jit.addLinkTask([call] (LinkBuffer& linkBuffer) {
-        linkBuffer.link<OperationPtrTag>(call, operationWasmThrow);
-    });
 }
 
 template<SavedFPWidth savedFPWidth>

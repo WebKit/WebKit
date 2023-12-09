@@ -124,13 +124,10 @@ public:
     {
         auto linkJumpToOutOfLineSnippet = [&] () {
             CCallHelpers jit(codeBlock);
-            auto jump = jit.jump();
-            // We don't need a nop sled here because nobody should be jumping into the middle of an IC.
-            bool needsBranchCompaction = false;
+            jit.jumpThunk(CodeLocationLabel<JITStubRoutinePtrTag>(m_code.code()));
             RELEASE_ASSERT(jit.m_assembler.buffer().codeSize() <= static_cast<size_t>(MacroAssembler::differenceBetweenCodePtr(m_inlineStart, m_inlineEnd)));
-            LinkBuffer linkBuffer(jit, m_inlineStart, jit.m_assembler.buffer().codeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, needsBranchCompaction);
+            LinkBuffer linkBuffer(jit, m_inlineStart, jit.m_assembler.buffer().codeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed);
             RELEASE_ASSERT(linkBuffer.isValid());
-            linkBuffer.link(jump, CodeLocationLabel<JITStubRoutinePtrTag>(m_code.code()));
             FINALIZE_CODE(linkBuffer, NoPtrTag, "JITMathIC: linking constant jump to out of line stub");
         };
 
@@ -154,13 +151,11 @@ public:
             m_generateFastPathOnRepatch = false;
 
             if (generatedInline) {
-                auto jumpToDone = jit.jump();
+                jit.jumpThunk(doneLocation());
+                generationState.slowPathJumps.linkThunk(slowPathStartLocation(), &jit);
 
                 LinkBuffer linkBuffer(jit, codeBlock, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
                 if (!linkBuffer.didFailToAllocate()) {
-                    linkBuffer.link(generationState.slowPathJumps, slowPathStartLocation());
-                    linkBuffer.link(jumpToDone, doneLocation());
-
                     m_code = FINALIZE_CODE_FOR(
                         codeBlock, linkBuffer, JITStubRoutinePtrTag, "JITMathIC: generating out of line fast IC snippet");
 
@@ -195,13 +190,13 @@ public:
             if (!emittedFastPath)
                 return;
             endJumpList.append(jit.jump());
+            endJumpList.linkThunk(doneLocation(), &jit);
+            slowPathJumpList.linkThunk(slowPathStartLocation(), &jit);
 
             LinkBuffer linkBuffer(jit, codeBlock, LinkBuffer::Profile::InlineCache, JITCompilationCanFail);
             if (linkBuffer.didFailToAllocate())
                 return;
 
-            linkBuffer.link(endJumpList, doneLocation());
-            linkBuffer.link(slowPathJumpList, slowPathStartLocation());
 
             m_code = FINALIZE_CODE_FOR(
                 codeBlock, linkBuffer, JITStubRoutinePtrTag, "JITMathIC: generating out of line IC snippet");

@@ -3071,7 +3071,8 @@ public:
     Call call(RegisterID target, RegisterID callTag) { UNUSED_PARAM(callTag); return call(target, NoPtrTag); }
     Call call(Address address, RegisterID callTag) { UNUSED_PARAM(callTag); return call(address, NoPtrTag); }
 
-    void callOperation(const CodePtr<OperationPtrTag> operation)
+    template<PtrTag tag>
+    void callOperation(const CodePtr<tag> operation)
     {
         auto temp = temps<Data>();
         loadImmediate(TrustedImmPtr(operation.taggedPtr()), temp.data());
