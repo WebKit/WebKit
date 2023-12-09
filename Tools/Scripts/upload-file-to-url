@@ -45,7 +45,7 @@ def upload(filename, url):
     with open(filename, 'rb') as f:
         try:
             data = f.read()
-            response = requests.put(url, data=data, timeout=5*60)
+            response = requests.put(url, data=data, timeout=10*60)
         except Exception as e:
            print(f'Exception: {e}')
            sys.exit(-1)
