@@ -247,7 +247,12 @@ typedef CF_OPTIONS(uint32_t, CGPDFAreaOfInterest) {
     kCGPDFAreaImage  = (1 << 1),
 };
 typedef struct CGPDFPageLayout *CGPDFPageLayoutRef;
+
+WTF_EXTERN_C_BEGIN
+
 CGPDFAreaOfInterest CGPDFPageLayoutGetAreaOfInterestAtPoint(CGPDFPageLayoutRef, CGPoint);
+
+WTF_EXTERN_C_END
 
 #endif // ENABLE(UNIFIED_PDF)
 
