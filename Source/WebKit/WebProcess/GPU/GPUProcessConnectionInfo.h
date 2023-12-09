@@ -29,11 +29,15 @@
 
 #include <optional>
 
+#if HAVE(AUDIT_TOKEN)
+#include "CoreIPCAuditToken.h"
+#endif
+
 namespace WebKit {
 
 struct GPUProcessConnectionInfo {
 #if HAVE(AUDIT_TOKEN)
-    std::optional<audit_token_t> auditToken;
+    std::optional<CoreIPCAuditToken> auditToken;
 #endif
 #if ENABLE(VP9)
     bool hasVP9HardwareDecoder { false };

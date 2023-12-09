@@ -107,8 +107,8 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     RegisterURLSchemesAsCORSEnabled(Vector<String> schemes);
     SetCORSDisablingPatterns(WebCore::PageIdentifier pageIdentifier, Vector<String> patterns)
 #if PLATFORM(MAC)
-    GetProcessDisplayName(audit_token_t auditToken) -> (String displayName)
-    UpdateActivePages(String name, Vector<String> activePagesOrigins, audit_token_t auditToken)
+    GetProcessDisplayName(struct WebKit::CoreIPCAuditToken auditToken) -> (String displayName)
+    UpdateActivePages(String name, Vector<String> activePagesOrigins, struct WebKit::CoreIPCAuditToken auditToken)
 #endif
     SetResourceLoadSchedulingMode(WebCore::PageIdentifier webPageID, enum:uint8_t WebCore::LoadSchedulingMode mode)
     PrioritizeResourceLoads(Vector<WebCore::ResourceLoaderIdentifier> loadIdentifiers)

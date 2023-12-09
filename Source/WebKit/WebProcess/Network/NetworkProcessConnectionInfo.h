@@ -28,13 +28,17 @@
 #include "Connection.h"
 #include <WebCore/HTTPCookieAcceptPolicy.h>
 
+#if HAVE(AUDIT_TOKEN)
+#include "CoreIPCAuditToken.h"
+#endif
+
 namespace WebKit {
 
 struct NetworkProcessConnectionInfo {
     IPC::Connection::Handle connection;
     WebCore::HTTPCookieAcceptPolicy cookieAcceptPolicy;
 #if HAVE(AUDIT_TOKEN)
-    std::optional<audit_token_t> auditToken;
+    std::optional<CoreIPCAuditToken> auditToken;
 #endif
 };
 

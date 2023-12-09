@@ -32,6 +32,10 @@
 #include <WebCore/ProcessIdentity.h>
 #include <wtf/MachSendRight.h>
 
+#if HAVE(AUDIT_TOKEN)
+#include "CoreIPCAuditToken.h"
+#endif
+
 namespace WebKit {
 
 struct GPUProcessConnectionParameters {
@@ -42,7 +46,7 @@ struct GPUProcessConnectionParameters {
     bool ignoreInvalidMessageForTesting { false };
 #endif
 #if HAVE(AUDIT_TOKEN)
-    std::optional<audit_token_t> presentingApplicationAuditToken;
+    std::optional<CoreIPCAuditToken> presentingApplicationAuditToken;
 #endif
 #if ENABLE(VP9)
     std::optional<bool> hasVP9HardwareDecoder;
