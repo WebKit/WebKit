@@ -85,6 +85,11 @@ static NSURL *URLFromString(const WTF::String& urlString)
     return _hitTestResult->lookupText();
 }
 
+- (NSString *)imageMIMEType
+{
+    return _hitTestResult->sourceImageMIMEType();
+}
+
 - (BOOL)isContentEditable
 {
     return _hitTestResult->isContentEditable();
