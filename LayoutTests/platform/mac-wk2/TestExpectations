@@ -1811,10 +1811,6 @@ webkit.org/b/259740 [ Ventura Release arm64 ] css3/color-filters/color-filter-ou
 
 webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pass Failure ]
 
-# rdar://102425691 ([ New Test ](256068@main): [ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html is a consistent failure)
-[ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html [ Pass Failure ]
-[ Sonoma+ ] http/wpt/webcodecs/encoder-task-failing.html [ Pass ]
-
 # These tests require compile-time flags in WebKit that are only enabled in iOS 17 and Sonoma. They were marked as Skip in
 # https://bugs.webkit.org/show_bug.cgi?id=248545 — re-enable them here.
 [ Sonoma+ ] fast/images/animations-resume-from-last-displayed-frame.html [ Pass ]
@@ -2020,3 +2016,6 @@ webkit.org/b/265599 [ Sonoma+ Debug x86_64 ] imported/w3c/web-platform-tests/htm
 webkit.org/b/265954 [ Ventura+ Release x86_64 ] media/video-audio-session-mode.html [ Crash ]
 
 webkit.org/b/265957 [ Release ] fullscreen/full-screen-layer-dump.html [ Pass Failure ]
+
+# rdar://102425691 ([ New Test ](256068@main): [ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html is a consistent failure)
+[ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html [ Pass Failure ]
