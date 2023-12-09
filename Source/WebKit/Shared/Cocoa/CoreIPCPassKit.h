@@ -25,21 +25,43 @@
 
 #pragma once
 
-#import "CoreIPCArray.h"
-#import "CoreIPCCFType.h"
-#import "CoreIPCColor.h"
-#import "CoreIPCContacts.h"
-#import "CoreIPCData.h"
-#import "CoreIPCDate.h"
-#import "CoreIPCDictionary.h"
-#import "CoreIPCError.h"
-#import "CoreIPCFont.h"
-#import "CoreIPCLocale.h"
-#import "CoreIPCNSValue.h"
-#import "CoreIPCNumber.h"
-#import "CoreIPCPassKit.h"
-#import "CoreIPCPersonNameComponents.h"
-#import "CoreIPCSecureCoding.h"
-#import "CoreIPCString.h"
-#import "CoreIPCURL.h"
-#import "GeneratedWebKitSecureCoding.h"
+#if USE(PASSKIT)
+
+#include "CoreIPCContacts.h"
+#include "CoreIPCPersonNameComponents.h"
+#include <wtf/ArgumentCoder.h>
+#include <wtf/RetainPtr.h>
+#include <wtf/text/WTFString.h>
+
+OBJC_CLASS PKContact;
+
+namespace WebKit {
+
+class CoreIPCPKContact {
+public:
+    CoreIPCPKContact(PKContact *);
+
+    RetainPtr<id> toID() const;
+
+private:
+    friend struct IPC::ArgumentCoder<CoreIPCPKContact, void>;
+
+    CoreIPCPKContact(CoreIPCPersonNameComponents&& name, String&& emailAddress, CoreIPCCNPhoneNumber&& phoneNumber, CoreIPCCNPostalAddress&& postalAddress, String&& supplementarySublocality)
+        : m_name(WTFMove(name))
+        , m_emailAddress(WTFMove(emailAddress))
+        , m_phoneNumber(WTFMove(phoneNumber))
+        , m_postalAddress(WTFMove(postalAddress))
+        , m_supplementarySublocality(WTFMove(supplementarySublocality))
+    {
+    }
+
+    CoreIPCPersonNameComponents m_name;
+    String m_emailAddress;
+    CoreIPCCNPhoneNumber m_phoneNumber;
+    CoreIPCCNPostalAddress m_postalAddress;
+    String m_supplementarySublocality;
+};
+
+} // namespace WebKit
+
+#endif // USE(PASSKIT)

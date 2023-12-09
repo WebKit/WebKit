@@ -35,6 +35,11 @@ namespace WebKit {
 
 class CoreIPCArray;
 class CoreIPCCFType;
+#if USE(PASSKIT)
+class CoreIPCCNPhoneNumber;
+class CoreIPCCNPostalAddress;
+class CoreIPCPKContact;
+#endif
 class CoreIPCColor;
 #if ENABLE(DATA_DETECTION)
 class CoreIPCDDScannerResult;
@@ -58,6 +63,11 @@ using ObjectValue = std::variant<
 #endif
     CoreIPCArray,
     CoreIPCCFType,
+#if USE(PASSKIT)
+    CoreIPCCNPhoneNumber,
+    CoreIPCCNPostalAddress,
+    CoreIPCPKContact,
+#endif
     CoreIPCColor,
 #if ENABLE(DATA_DETECTION)
 #if PLATFORM(MAC)

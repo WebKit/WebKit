@@ -23,23 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#import "CoreIPCArray.h"
-#import "CoreIPCCFType.h"
-#import "CoreIPCColor.h"
-#import "CoreIPCContacts.h"
-#import "CoreIPCData.h"
-#import "CoreIPCDate.h"
-#import "CoreIPCDictionary.h"
-#import "CoreIPCError.h"
-#import "CoreIPCFont.h"
-#import "CoreIPCLocale.h"
-#import "CoreIPCNSValue.h"
-#import "CoreIPCNumber.h"
+#import "config.h"
 #import "CoreIPCPassKit.h"
-#import "CoreIPCPersonNameComponents.h"
-#import "CoreIPCSecureCoding.h"
-#import "CoreIPCString.h"
-#import "CoreIPCURL.h"
-#import "GeneratedWebKitSecureCoding.h"
+
+#if USE(PASSKIT)
+
+#import <pal/cocoa/PassKitSoftLink.h>
+
+namespace WebKit {
+
+CoreIPCPKContact::CoreIPCPKContact(PKContact *contact)
+    : m_name(contact.name)
+    , m_emailAddress(contact.emailAddress)
+    , m_phoneNumber(contact.phoneNumber)
+    , m_postalAddress(contact.postalAddress)
+    , m_supplementarySublocality(contact.supplementarySubLocality)
+{
+}
+
+RetainPtr<id> CoreIPCPKContact::toID() const
+{
+    RetainPtr<PKContact> contact = adoptNS([[PAL::getPKContactClass() alloc] init]);
+
+    contact.get().name = (NSPersonNameComponents *)m_name.toID();
+    contact.get().emailAddress = (NSString *)m_emailAddress;
+    contact.get().phoneNumber = (CNPhoneNumber *)m_phoneNumber.toID();
+    contact.get().postalAddress = (CNPostalAddress *)m_postalAddress.toID();
+    contact.get().supplementarySubLocality = (NSString *)m_supplementarySublocality;
+
+    return contact;
+}
+
+} // namespace WebKit
+
+#endif // USE(PASSKIT)

@@ -23,23 +23,32 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#if HAVE(CONTACTS)
 
-#import "CoreIPCArray.h"
-#import "CoreIPCCFType.h"
-#import "CoreIPCColor.h"
-#import "CoreIPCContacts.h"
-#import "CoreIPCData.h"
-#import "CoreIPCDate.h"
-#import "CoreIPCDictionary.h"
-#import "CoreIPCError.h"
-#import "CoreIPCFont.h"
-#import "CoreIPCLocale.h"
-#import "CoreIPCNSValue.h"
-#import "CoreIPCNumber.h"
-#import "CoreIPCPassKit.h"
-#import "CoreIPCPersonNameComponents.h"
-#import "CoreIPCSecureCoding.h"
-#import "CoreIPCString.h"
-#import "CoreIPCURL.h"
-#import "GeneratedWebKitSecureCoding.h"
+#import <Contacts/Contacts.h>
+
+#if USE(APPLE_INTERNAL_SDK)
+
+#import <Contacts/CNMutablePostalAddress_Private.h>
+#import <Contacts/CNPhoneNumber_Private.h>
+#import <Contacts/CNPostalAddress_Private.h>
+
+#else // USE(APPLE_INTERNAL_SDK)
+
+@interface CNPhoneNumber ()
++ (nonnull instancetype)phoneNumberWithDigits:(nonnull NSString *)digits countryCode:(nullable NSString *)countryCode;
+
+@property (readonly, copy, nullable) NSString *countryCode;
+@property (readonly, copy, nonnull) NSString *digits;
+@end
+
+
+@interface CNPostalAddress ()
+
+@property (copy, nullable) NSString *formattedAddress;
+
+@end
+
+#endif // USE(APPLE_INTERNAL_SDK)
+#endif // HAVE(CONTACTS)
+

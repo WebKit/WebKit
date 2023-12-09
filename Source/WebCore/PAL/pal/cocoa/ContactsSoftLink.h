@@ -25,21 +25,14 @@
 
 #pragma once
 
-#import "CoreIPCArray.h"
-#import "CoreIPCCFType.h"
-#import "CoreIPCColor.h"
-#import "CoreIPCContacts.h"
-#import "CoreIPCData.h"
-#import "CoreIPCDate.h"
-#import "CoreIPCDictionary.h"
-#import "CoreIPCError.h"
-#import "CoreIPCFont.h"
-#import "CoreIPCLocale.h"
-#import "CoreIPCNSValue.h"
-#import "CoreIPCNumber.h"
-#import "CoreIPCPassKit.h"
-#import "CoreIPCPersonNameComponents.h"
-#import "CoreIPCSecureCoding.h"
-#import "CoreIPCString.h"
-#import "CoreIPCURL.h"
-#import "GeneratedWebKitSecureCoding.h"
+#if HAVE(CONTACTS)
+
+#import <Contacts/Contacts.h>
+#import <wtf/SoftLinking.h>
+
+SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, Contacts)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, CNPhoneNumber)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, CNPostalAddress)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, CNMutablePostalAddress)
+
+#endif

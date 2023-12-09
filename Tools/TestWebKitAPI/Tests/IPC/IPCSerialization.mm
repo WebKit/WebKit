@@ -34,13 +34,17 @@
 #import <Foundation/NSValue.h>
 #import <WebCore/FontCocoa.h>
 #import <limits.h>
-#import <pal/cocoa/AVFoundationSoftLink.h>
-#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
-#import <pal/mac/DataDetectorsSoftLink.h>
+#import <pal/spi/cocoa/ContactsSPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/Base64.h>
+
+#import <pal/cocoa/AVFoundationSoftLink.h>
+#import <pal/cocoa/ContactsSoftLink.h>
+#import <pal/cocoa/DataDetectorsCoreSoftLink.h>
+#import <pal/cocoa/PassKitSoftLink.h>
+#import <pal/mac/DataDetectorsSoftLink.h>
 
 // This test makes it trivial to test round trip encoding and decoding of a particular object type.
 // The primary focus here is Objective-C and similar types - Objects that exist on the platform or in
@@ -160,8 +164,13 @@ struct ObjCHolderForTesting {
 #if USE(AVFOUNDATION)
         RetainPtr<AVOutputContext>,
 #endif
-        RetainPtr<NSValue>,
-        RetainPtr<NSPersonNameComponents>
+        RetainPtr<NSPersonNameComponents>,
+#if USE(PASSKIT) && !PLATFORM(WATCHOS)
+        RetainPtr<CNPhoneNumber>,
+        RetainPtr<CNPostalAddress>,
+        RetainPtr<PKContact>,
+#endif
+        RetainPtr<NSValue>
     > ValueType;
 
     ValueType value;
@@ -583,6 +592,34 @@ TEST(IPCSerialization, Basic)
     runTestNS({ components.get().phoneticRepresentation });
     runTestNS({ components.get() });
 
+#if USE(PASSKIT) && !PLATFORM(WATCHOS)
+    // CNPhoneNumber
+    RetainPtr<CNPhoneNumber> phoneNumber = [PAL::getCNPhoneNumberClass() phoneNumberWithDigits:@"4085551234" countryCode:@"us"];
+    runTestNS({ phoneNumber.get() });
+
+    // CNPostalAddress
+    RetainPtr<CNMutablePostalAddress> address = adoptNS([PAL::getCNMutablePostalAddressClass() new]);
+    address.get().street = @"1 Apple Park Way";
+    address.get().subLocality = @"Birdland";
+    address.get().city = @"Cupertino";
+    address.get().subAdministrativeArea = @"Santa Clara County";
+    address.get().state = @"California";
+    address.get().postalCode = @"95014";
+    address.get().country = @"United States of America";
+    address.get().ISOCountryCode = @"US";
+    address.get().formattedAddress = @"Hello world";
+    runTestNS({ address.get() });
+
+    // PKContact
+    RetainPtr<PKContact> contact = adoptNS([PAL::getPKContactClass() new]);
+    contact.get().name = components.get();
+    contact.get().emailAddress = @"admin@webkit.org";
+    contact.get().phoneNumber = phoneNumber.get();
+    contact.get().postalAddress = address.get();
+    contact.get().supplementarySubLocality = @"City 17";
+    runTestNS({ contact.get() });
+#endif // USE(PASSKIT) && !PLATFORM(WATCHOS)
+
     auto runValueTest = [&](NSValue *value) {
         ObjCHolderForTesting::ValueType valueVariant;
         valueVariant.emplace<RetainPtr<NSValue>>(value);
@@ -648,7 +685,6 @@ TEST(IPCSerialization, SecureCoding)
     RetainPtr<AVOutputContext> outputContext = adoptNS([[PAL::getAVOutputContextClass() alloc] init]);
     runTestNS({ outputContext.get() });
 #endif // USE(AVFOUNDATION)
-
 }
 
 #endif // PLATFORM(MAC)

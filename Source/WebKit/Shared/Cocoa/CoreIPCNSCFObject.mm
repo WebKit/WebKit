@@ -60,6 +60,14 @@ static ObjectValue valueFromID(id object)
 #endif
     case IPC::NSType::Array:
         return CoreIPCArray((NSArray *)object);
+#if USE(PASSKIT)
+    case IPC::NSType::CNPhoneNumber:
+        return CoreIPCCNPhoneNumber((CNPhoneNumber *)object);
+    case IPC::NSType::CNPostalAddress:
+        return CoreIPCCNPostalAddress((CNPostalAddress *)object);
+    case IPC::NSType::PKContact:
+        return CoreIPCPKContact((PKContact *)object);
+#endif
     case IPC::NSType::Color:
         return CoreIPCColor((WebCore::CocoaColor *)object);
 #if ENABLE(DATA_DETECTION)

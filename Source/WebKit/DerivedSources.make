@@ -529,6 +529,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/CoreIPCAuditToken.serialization.in \
 	Shared/Cocoa/CoreIPCCFType.serialization.in \
 	Shared/Cocoa/CoreIPCColor.serialization.in \
+	Shared/Cocoa/CoreIPCContacts.serialization.in \
 	Shared/Cocoa/CoreIPCDDActionContext.serialization.in \
 	Shared/Cocoa/CoreIPCDDScannerResult.serialization.in \
 	Shared/Cocoa/CoreIPCData.serialization.in \
@@ -539,6 +540,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/CoreIPCLocale.serialization.in \
 	Shared/Cocoa/CoreIPCNSCFObject.serialization.in \
 	Shared/Cocoa/CoreIPCNSValue.serialization.in \
+	Shared/Cocoa/CoreIPCPassKit.serialization.in \
 	Shared/Cocoa/CoreIPCPersonNameComponents.serialization.in \
 	Shared/Cocoa/CoreIPCSecureCoding.serialization.in \
 	Shared/Cocoa/CoreIPCString.serialization.in \
