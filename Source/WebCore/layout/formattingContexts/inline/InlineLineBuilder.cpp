@@ -27,6 +27,7 @@
 #include "InlineLineBuilder.h"
 
 #include "CSSLineBoxContainValue.h"
+#include "InlineContentAligner.h"
 #include "InlineFormattingContext.h"
 #include "InlineFormattingUtils.h"
 #include "InlineQuirks.h"
@@ -514,9 +515,11 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
                     return rootStyle.textAlignLast() == TextAlignLast::Justify;
                 return rootStyle.textAlign() == TextAlignMode::Justify;
             };
-            if (runsExpandHorizontally())
-                m_line.applyRunExpansion(horizontalAvailableSpace);
-            else if (m_line.hasRubyContent())
+            if (runsExpandHorizontally()) {
+                auto spaceToDistribute = horizontalAvailableSpace - m_line.contentLogicalWidth() + (m_line.isHangingTrailingContentWhitespace() ? m_line.hangingTrailingContentWidth() : 0.f);
+                auto additionalSpaceForAlignedContent = InlineContentAligner::applyTextAlignJustify(m_line.runs(), spaceToDistribute, m_line.hangingTrailingWhitespaceLength());
+                m_line.inflateContentLogicalWidth(additionalSpaceForAlignedContent);
+            } else if (m_line.hasRubyContent())
                 RubyFormattingContext::applyRubyAlign(m_line, formattingContext());
 
             auto& lastTextContent = m_line.runs().last().textContent();

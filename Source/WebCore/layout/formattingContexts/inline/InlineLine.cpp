@@ -96,41 +96,6 @@ Line::Result Line::close()
     };
 }
 
-void Line::applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace)
-{
-    if (m_runs.isEmpty())
-        return;
-    auto& rootBox = formattingContext().root();
-    ASSERT(rootBox.isRubyAnnotationBox() || rootBox.style().textAlign() == TextAlignMode::Justify || rootBox.style().textAlignLast() == TextAlignLast::Justify);
-    auto spaceToDistribute = horizontalAvailableSpace - contentLogicalWidth() + m_hangingContent.trailingWhitespaceWidth();
-    if (spaceToDistribute <= 0)
-        return;
-
-    auto expansion = ExpansionInfo { };
-    auto contentRange = WTF::Range<size_t> { 0, m_runs.size() };
-    TextUtil::computedExpansions(m_runs, contentRange, m_hangingContent.trailingWhitespaceLength(), expansion);
-
-    if (rootBox.isRubyAnnotationBox()) {
-        // FIXME: This is a workaround until after we generate inline boxes for annotation content.
-        if (expansion.opportunityCount) {
-            // ruby-align: space-around
-            auto contentInset = spaceToDistribute / (expansion.opportunityCount + 1) / 2;
-            spaceToDistribute -= contentInset;
-            applyExpansionOnRange(contentRange, expansion, spaceToDistribute);
-            moveBy(contentRange, contentInset / 2);
-            return;
-        }
-        auto centerOffset = spaceToDistribute / 2;
-        moveBy(contentRange, centerOffset);
-        expandBy(m_runs.size() - 1, centerOffset);
-        return;
-    }
-    // Anything to distribute?
-    if (!expansion.opportunityCount)
-        return;
-    applyExpansionOnRange({ 0, m_runs.size() }, expansion, spaceToDistribute);
-}
-
 void Line::applyExpansionOnRange(WTF::Range<size_t> runRange, const ExpansionInfo& expansion, InlineLayoutUnit spaceToDistribute)
 {
     ASSERT(spaceToDistribute > 0);

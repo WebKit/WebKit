@@ -1725,6 +1725,7 @@ layout/floats/FloatAvoider.cpp
 layout/floats/FloatingContext.cpp
 layout/floats/PlacedFloats.cpp
 layout/formattingContexts/inline/AbstractLineBuilder.cpp
+layout/formattingContexts/inline/InlineContentAligner.cpp
 layout/formattingContexts/inline/InlineContentBalancer.cpp
 layout/formattingContexts/inline/InlineContentBreaker.cpp
 layout/formattingContexts/inline/InlineFormattingContext.cpp

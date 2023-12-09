@@ -72,6 +72,7 @@ public:
     FontBaseline baselineType() const { return m_baselineType; }
 
     bool isHorizontal() const { return m_isHorizontal; }
+    bool isLeftToRightInlineDirection() const { return m_isLeftToRightDirection; }
 
     bool isTruncatedInBlockDirection() const { return m_isTruncatedInBlockDirection; }
 
