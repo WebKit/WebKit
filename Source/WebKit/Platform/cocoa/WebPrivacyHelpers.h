@@ -50,22 +50,20 @@ void requestLinkDecorationFilteringData(CompletionHandler<void(Vector<WebCore::L
 
 class LinkDecorationFilteringDataObserver : public RefCounted<LinkDecorationFilteringDataObserver>, public CanMakeWeakPtr<LinkDecorationFilteringDataObserver> {
 public:
-    ~LinkDecorationFilteringDataObserver() = default;
-
-private:
-    friend class LinkDecorationFilteringController;
-
-    LinkDecorationFilteringDataObserver(Function<void()>&& callback)
-        : m_callback { WTFMove(callback) }
-    {
-    }
-
     static Ref<LinkDecorationFilteringDataObserver> create(Function<void()>&& callback)
     {
         return adoptRef(*new LinkDecorationFilteringDataObserver(WTFMove(callback)));
     }
 
+    ~LinkDecorationFilteringDataObserver() = default;
+
     void invokeCallback() { m_callback(); }
+
+private:
+    explicit LinkDecorationFilteringDataObserver(Function<void()>&& callback)
+        : m_callback { WTFMove(callback) }
+    {
+    }
 
     Function<void()> m_callback;
 };
@@ -80,7 +78,9 @@ public:
     Ref<LinkDecorationFilteringDataObserver> observeUpdates(Function<void()>&&);
 
 private:
+    friend class NeverDestroyed<LinkDecorationFilteringController, MainThreadAccessTraits>;
     LinkDecorationFilteringController() = default;
+
     void setCachedStrings(Vector<WebCore::LinkDecorationFilteringData>&&);
 
     RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;

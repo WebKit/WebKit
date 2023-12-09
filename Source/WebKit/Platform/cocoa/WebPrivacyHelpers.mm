@@ -154,22 +154,24 @@ namespace WebKit {
 
 LinkDecorationFilteringController& LinkDecorationFilteringController::shared()
 {
-    static LinkDecorationFilteringController* sharedInstance = new LinkDecorationFilteringController;
-    return *sharedInstance;
+    static MainThreadNeverDestroyed<LinkDecorationFilteringController> sharedInstance;
+    return sharedInstance.get();
 }
 
 Ref<LinkDecorationFilteringDataObserver> LinkDecorationFilteringController::observeUpdates(Function<void()>&& callback)
 {
+    ASSERT(RunLoop::isMain());
     if (!m_notificationListener) {
         m_notificationListener = adoptNS([WKWebPrivacyNotificationListener new]);
         [m_notificationListener listenForLinkFilteringDataChanges:^{
             updateStrings([this] {
-                for (auto& observer : m_observers)
+                m_observers.forEach([](auto& observer) {
                     observer.invokeCallback();
+                });
             });
         }];
     }
-    auto observer = LinkDecorationFilteringDataObserver::create(WTFMove(callback));
+    Ref observer = LinkDecorationFilteringDataObserver::create(WTFMove(callback));
     m_observers.add(observer.get());
     return observer;
 }
@@ -180,19 +182,20 @@ void LinkDecorationFilteringController::setCachedStrings(Vector<WebCore::LinkDec
     m_cachedStrings.shrinkToFit();
 }
 
-void LinkDecorationFilteringController::updateStrings(CompletionHandler<void()>&& callback)
+void LinkDecorationFilteringController::updateStrings(CompletionHandler<void()>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
     if (!WebKit::canUseWebPrivacyFramework()) {
-        callback();
+        completionHandler();
         return;
     }
 
-    static NeverDestroyed<Vector<CompletionHandler<void()>, 1>> lookupCallbacks;
-    lookupCallbacks->append(WTFMove(callback));
-    if (lookupCallbacks->size() > 1)
+    static NeverDestroyed<Vector<CompletionHandler<void()>, 1>> lookupCompletionHandlers;
+    lookupCompletionHandlers->append(WTFMove(completionHandler));
+    if (lookupCompletionHandlers->size() > 1)
         return;
 
-    auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
     [options setAfterUpdates:NO];
 
     [[PAL::getWPResourcesClass() sharedInstance] requestLinkFilteringData:options.get() completionHandler:^(WPLinkFilteringData *data, NSError *error) {
@@ -206,8 +209,8 @@ void LinkDecorationFilteringController::updateStrings(CompletionHandler<void()>&
             setCachedStrings(WTFMove(result));
         }
 
-        for (auto& callback : std::exchange(lookupCallbacks.get(), { }))
-            callback();
+        for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
+            completionHandler();
     }];
 
 }
