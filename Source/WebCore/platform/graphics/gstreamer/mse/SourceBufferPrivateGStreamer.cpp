@@ -130,19 +130,6 @@ void SourceBufferPrivateGStreamer::removedFromMediaSource()
     SourceBufferPrivate::removedFromMediaSource();
 }
 
-MediaPlayer::ReadyState SourceBufferPrivateGStreamer::readyState() const
-{
-    if (RefPtr mediaSource = m_mediaSource.get())
-        return mediaSource->readyState();
-    return MediaPlayer::ReadyState::HaveNothing;
-}
-
-void SourceBufferPrivateGStreamer::setReadyState(MediaPlayer::ReadyState state)
-{
-    if (RefPtr mediaSource = m_mediaSource.get())
-        mediaSource->setReadyState(state);
-}
-
 void SourceBufferPrivateGStreamer::flush(TrackID trackId)
 {
     ASSERT(isMainThread());

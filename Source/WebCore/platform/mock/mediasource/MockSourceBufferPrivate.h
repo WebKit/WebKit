@@ -52,8 +52,6 @@ private:
     // SourceBufferPrivate overrides
     Ref<MediaPromise> appendInternal(Ref<SharedBuffer>&&) final;
     void resetParserStateInternal() final;
-    MediaPlayer::ReadyState readyState() const final;
-    void setReadyState(MediaPlayer::ReadyState) final;
     bool canSetMinimumUpcomingPresentationTime(TrackID) const final;
     void setMinimumUpcomingPresentationTime(TrackID, const MediaTime&) final;
     void clearMinimumUpcomingPresentationTime(TrackID) final;

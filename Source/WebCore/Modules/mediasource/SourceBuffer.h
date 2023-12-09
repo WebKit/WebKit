@@ -135,6 +135,7 @@ public:
     size_t memoryCost() const;
 
     void setMediaSourceEnded(bool isEnded);
+    bool receivedFirstInitializationSegment() const { return m_receivedFirstInitializationSegment; }
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }

@@ -85,7 +85,7 @@ private:
     void bufferedChanged(WebCore::PlatformTimeRanges&&);
     void markEndOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus);
     void unmarkEndOfStream();
-    void setReadyState(WebCore::MediaPlayerEnums::ReadyState);
+    void setMediaPlayerReadyState(WebCore::MediaPlayerEnums::ReadyState);
     void setTimeFudgeFactor(const MediaTime&);
     void disconnect();
 

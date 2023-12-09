@@ -34,7 +34,6 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     ResetParserState()
     RemovedFromMediaSource()
     SetMediaSourceEnded(bool isEnded)
-    SetReadyState(WebCore::MediaPlayer::ReadyState state)
     StartChangingType()
     AddTrackBuffer(WebCore::TrackID trackID)
     ResetTrackBuffers()

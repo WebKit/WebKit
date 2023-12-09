@@ -128,14 +128,14 @@ void MediaSourcePrivateAVFObjC::markEndOfStream(EndOfStreamStatus status)
     MediaSourcePrivate::markEndOfStream(status);
 }
 
-MediaPlayer::ReadyState MediaSourcePrivateAVFObjC::readyState() const
+MediaPlayer::ReadyState MediaSourcePrivateAVFObjC::mediaPlayerReadyState() const
 {
     if (auto* player = this->player())
         return player->readyState();
     return MediaPlayer::ReadyState::HaveNothing;
 }
 
-void MediaSourcePrivateAVFObjC::setReadyState(MediaPlayer::ReadyState readyState)
+void MediaSourcePrivateAVFObjC::setMediaPlayerReadyState(MediaPlayer::ReadyState readyState)
 {
     if (auto* player = this->player())
         player->setReadyState(readyState);

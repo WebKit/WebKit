@@ -203,19 +203,6 @@ void MockSourceBufferPrivate::resetParserStateInternal()
 {
 }
 
-MediaPlayer::ReadyState MockSourceBufferPrivate::readyState() const
-{
-    if (RefPtr mediaSource = mediaSourcePrivate())
-        return mediaSource->player().readyState();
-    return MediaPlayer::ReadyState::HaveNothing;
-}
-
-void MockSourceBufferPrivate::setReadyState(MediaPlayer::ReadyState readyState)
-{
-    if (RefPtr mediaSource = mediaSourcePrivate())
-        mediaSource->player().setReadyState(readyState);
-}
-
 Ref<SourceBufferPrivate::SamplesPromise> MockSourceBufferPrivate::enqueuedSamplesForTrackID(TrackID)
 {
     return SamplesPromise::createAndResolve(copyToVector(m_enqueuedSamples));
