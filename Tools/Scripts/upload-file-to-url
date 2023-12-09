@@ -30,7 +30,7 @@ import requests
 import sys
 
 
-def upload(filename, url):
+def upload(filename, url, max_attempts=3):
     if not os.path.isfile(filename):
         print(f'ERROR: File not found: {filename}')
         return -1
@@ -45,10 +45,20 @@ def upload(filename, url):
     with open(filename, 'rb') as f:
         try:
             data = f.read()
-            response = requests.put(url, data=data, timeout=10*60)
         except Exception as e:
-           print(f'Exception: {e}')
-           sys.exit(-1)
+            print(f'Exception: {e}')
+            return -1
+
+        for attempt in range(1, max_attempts + 1):
+            try:
+                response = requests.put(url, data=data, timeout=600)
+                break
+            except Exception as e:
+                print(f'Exception: {e}')
+            if attempt < max_attempts:
+                print(f'Retrying, attempt {attempt + 1} of {max_attempts}')
+            else:
+                return -1
         print(f'Response: {response}, status_code: {response.status_code}, {response.reason}')
         if response and response.status_code // 100 == 2:
             return 0
