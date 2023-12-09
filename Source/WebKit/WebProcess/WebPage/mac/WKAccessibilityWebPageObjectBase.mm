@@ -139,7 +139,7 @@ namespace ax = WebCore::Accessibility;
     m_size = size;
 }
 
-- (void)setIsolatedTreeRoot:(NakedPtr<WebCore::AXCoreObject>)root
+- (void)setIsolatedTreeRoot:(RefPtr<WebCore::AXCoreObject>)root
 {
     ASSERT(isMainRunLoop());
     m_isolatedTreeRoot = root.get();

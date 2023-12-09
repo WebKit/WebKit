@@ -53,7 +53,7 @@ class AXCoreObject;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 - (void)setPosition:(const WebCore::FloatPoint&)point;
 - (void)setSize:(const WebCore::IntSize&)size;
-- (void)setIsolatedTreeRoot:(NakedPtr<WebCore::AXCoreObject>)root;
+- (void)setIsolatedTreeRoot:(RefPtr<WebCore::AXCoreObject>)root;
 #endif
 - (void)setRemoteParent:(id)parent;
 - (void)setHasMainFramePlugin:(bool)hasPlugin;
