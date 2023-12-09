@@ -40,7 +40,7 @@ enum CompositeOperationType {
 
 class FEComposite : public FilterEffect {
 public:
-    WEBCORE_EXPORT static Ref<FEComposite> create(const CompositeOperationType&, float k1, float k2, float k3, float k4);
+    WEBCORE_EXPORT static Ref<FEComposite> create(const CompositeOperationType&, float k1, float k2, float k3, float k4, DestinationColorSpace = DestinationColorSpace::SRGB());
 
     bool operator==(const FEComposite&) const;
 
@@ -60,7 +60,7 @@ public:
     bool setK4(float);
 
 private:
-    FEComposite(const CompositeOperationType&, float k1, float k2, float k3, float k4);
+    FEComposite(const CompositeOperationType&, float k1, float k2, float k3, float k4, DestinationColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEComposite>(*this, other); }
 

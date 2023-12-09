@@ -303,12 +303,6 @@ template<> struct ArgumentCoder<WebCore::FilterFunction> {
     static std::optional<Ref<WebCore::FilterFunction>> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::FilterEffect> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::FilterEffect&);
-    static std::optional<Ref<WebCore::FilterEffect>> decode(Decoder&);
-};
-
 #if ENABLE(DATA_DETECTION)
 
 template<> struct ArgumentCoder<WebCore::DataDetectorElementInfo> {

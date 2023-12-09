@@ -34,6 +34,12 @@
 
 namespace WebCore {
 
+FilterEffect::FilterEffect(Type type, DestinationColorSpace colorSpace, std::optional<RenderingResourceIdentifier> renderingResourceIdentifier)
+    : FilterFunction(type, renderingResourceIdentifier)
+    , m_operatingColorSpace(colorSpace)
+{
+}
+
 bool FilterEffect::operator==(const FilterEffect& other) const
 {
     if (filterType() != other.filterType())

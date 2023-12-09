@@ -34,7 +34,7 @@ enum class MorphologyOperatorType {
 
 class FEMorphology : public FilterEffect {
 public:
-    WEBCORE_EXPORT static Ref<FEMorphology> create(MorphologyOperatorType, float radiusX, float radiusY);
+    WEBCORE_EXPORT static Ref<FEMorphology> create(MorphologyOperatorType, float radiusX, float radiusY, DestinationColorSpace = DestinationColorSpace::SRGB());
 
     bool operator==(const FEMorphology&) const;
 
@@ -48,7 +48,7 @@ public:
     bool setRadiusY(float);
 
 private:
-    FEMorphology(MorphologyOperatorType, float radiusX, float radiusY);
+    FEMorphology(MorphologyOperatorType, float radiusX, float radiusY, DestinationColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEMorphology>(*this, other); }
 

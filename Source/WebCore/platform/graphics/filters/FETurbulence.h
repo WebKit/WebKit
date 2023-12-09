@@ -37,7 +37,7 @@ enum class TurbulenceType {
 
 class FETurbulence : public FilterEffect {
 public:
-    WEBCORE_EXPORT static Ref<FETurbulence> create(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles);
+    WEBCORE_EXPORT static Ref<FETurbulence> create(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles, DestinationColorSpace = DestinationColorSpace::SRGB());
 
     bool operator==(const FETurbulence&) const;
 
@@ -60,7 +60,7 @@ public:
     bool setStitchTiles(bool);
 
 private:
-    FETurbulence(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles);
+    FETurbulence(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles, DestinationColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FETurbulence>(*this, other); }
 

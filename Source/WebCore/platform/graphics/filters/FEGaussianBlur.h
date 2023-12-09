@@ -29,7 +29,7 @@ namespace WebCore {
 
 class FEGaussianBlur : public FilterEffect {
 public:
-    WEBCORE_EXPORT static Ref<FEGaussianBlur> create(float x, float y, EdgeModeType);
+    WEBCORE_EXPORT static Ref<FEGaussianBlur> create(float x, float y, EdgeModeType, DestinationColorSpace = DestinationColorSpace::SRGB());
 
     bool operator==(const FEGaussianBlur&) const;
 
@@ -49,7 +49,7 @@ public:
     static IntOutsets calculateOutsets(const FloatSize& stdDeviation);
 
 private:
-    FEGaussianBlur(float x, float y, EdgeModeType);
+    FEGaussianBlur(float x, float y, EdgeModeType, DestinationColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEGaussianBlur>(*this, other); }
 

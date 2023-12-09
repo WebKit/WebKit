@@ -37,7 +37,7 @@ enum ColorMatrixType {
 
 class FEColorMatrix : public FilterEffect {
 public:
-    WEBCORE_EXPORT static Ref<FEColorMatrix> create(ColorMatrixType, Vector<float>&&);
+    WEBCORE_EXPORT static Ref<FEColorMatrix> create(ColorMatrixType, Vector<float>&&, DestinationColorSpace = DestinationColorSpace::SRGB());
 
     bool operator==(const FEColorMatrix&) const;
 
@@ -52,7 +52,7 @@ public:
     static Vector<float> normalizedFloats(const Vector<float>& values);
 
 private:
-    FEColorMatrix(ColorMatrixType, Vector<float>&&);
+    FEColorMatrix(ColorMatrixType, Vector<float>&&, DestinationColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEColorMatrix>(*this, other); }
 

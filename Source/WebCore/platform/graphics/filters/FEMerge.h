@@ -28,14 +28,14 @@ namespace WebCore {
 
 class FEMerge : public FilterEffect {
 public:
-    WEBCORE_EXPORT static Ref<FEMerge> create(unsigned numberOfEffectInputs);
+    WEBCORE_EXPORT static Ref<FEMerge> create(unsigned numberOfEffectInputs, DestinationColorSpace = DestinationColorSpace::SRGB());
 
     bool operator==(const FEMerge&) const;
 
     unsigned numberOfEffectInputs() const override { return m_numberOfEffectInputs; }
 
 private:
-    FEMerge(unsigned numberOfEffectInputs);
+    FEMerge(unsigned numberOfEffectInputs, DestinationColorSpace);
 
     bool operator==(const FilterEffect& other) const override { return areEqual<FEMerge>(*this, other); }
 
