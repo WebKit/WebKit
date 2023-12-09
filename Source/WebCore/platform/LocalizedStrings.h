@@ -71,7 +71,7 @@ namespace WebCore {
     String contextMenuItemTagDownloadImageToDisk();
     String contextMenuItemTagCopyImageToClipboard();
 #if PLATFORM(GTK)
-    String contextMenuItemTagCopyImageUrlToClipboard();
+    String contextMenuItemTagCopyImageURLToClipboard();
 #endif
     String contextMenuItemTagOpenFrameInNewWindow();
     String contextMenuItemTagCopy();

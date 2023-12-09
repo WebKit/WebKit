@@ -229,7 +229,7 @@ static NSString * const WKInspectorResourceScheme = @"inspector-resource";
         case kWKContextMenuItemTagOpenImageInNewWindow:
         case kWKContextMenuItemTagOpenFrameInNewWindow:
         case kWKContextMenuItemTagOpenMediaInNewWindow:
-        case kWKContextMenuItemTagCopyImageUrlToClipboard:
+        case kWKContextMenuItemTagCopyImageURLToClipboard:
         case kWKContextMenuItemTagCopyImageToClipboard:
         case kWKContextMenuItemTagDownloadLinkToDisk:
         case kWKContextMenuItemTagDownloadImageToDisk:
