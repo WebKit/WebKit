@@ -73,11 +73,6 @@ void RemoteMediaSourceProxy::setPrivateAndOpen(Ref<MediaSourcePrivate>&& mediaSo
     m_private = WTFMove(mediaSourcePrivate);
 }
 
-const PlatformTimeRanges& RemoteMediaSourceProxy::buffered() const
-{
-    return m_buffered;
-}
-
 Ref<MediaTimePromise> RemoteMediaSourceProxy::waitForTarget(const SeekTarget& target)
 {
     if (!m_connectionToWebProcess)
@@ -137,9 +132,8 @@ void RemoteMediaSourceProxy::durationChanged(const MediaTime& duration)
 
 void RemoteMediaSourceProxy::bufferedChanged(WebCore::PlatformTimeRanges&& buffered)
 {
-    m_buffered = WTFMove(buffered);
     if (m_private)
-        m_private->bufferedChanged(m_buffered);
+        m_private->bufferedChanged(WTFMove(buffered));
 }
 
 void RemoteMediaSourceProxy::markEndOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus status )

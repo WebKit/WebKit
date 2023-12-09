@@ -83,11 +83,10 @@ public:
     bool isEnded() const;
     void sourceBufferDidChangeActiveState(SourceBuffer&, bool);
     MediaTime duration() const;
+    const PlatformTimeRanges& buffered() const;
 
     enum class EndOfStreamError { Network, Decode };
     void streamEndedWithError(std::optional<EndOfStreamError>);
-
-    const PlatformTimeRanges& buffered() const final;
 
     bool attachToElement(HTMLMediaElement&);
     void detachFromElement(HTMLMediaElement&);
@@ -188,10 +187,8 @@ private:
 
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
-    PlatformTimeRanges m_buffered;
     PlatformTimeRanges m_liveSeekable;
     WeakPtr<HTMLMediaElement, WeakPtrImplWithEventTargetData> m_mediaElement;
-    MediaTime m_duration { MediaTime::invalidTime() };
     std::optional<SeekTarget> m_pendingSeekTarget;
     std::optional<MediaTimePromise::Producer> m_seekTargetPromise;
     ReadyState m_readyState { ReadyState::Closed };

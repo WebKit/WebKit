@@ -94,7 +94,7 @@ bool ManagedMediaSource::isBuffered(const PlatformTimeRanges& ranges) const
 
     ASSERT(ranges.length() == 1);
 
-    auto bufferedRanges = buffered();
+    auto bufferedRanges = m_private->buffered();
     if (!bufferedRanges.length())
         return false;
     bufferedRanges.intersectWith(ranges);
