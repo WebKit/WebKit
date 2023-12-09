@@ -485,6 +485,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(IOS_FAMILY)
     parameters.applicationAccessibilityEnabled = _AXSApplicationAccessibilityEnabled();
 #endif
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    // FIXME: Filter by process's site when site isolation is enabled
+    parameters.storageAccessUserAgentStringQuirksData = StorageAccessUserAgentStringQuirkController::shared().cachedQuirks();
+#endif
 }
 
 void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationParameters& parameters)

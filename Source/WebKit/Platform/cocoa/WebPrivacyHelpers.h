@@ -108,6 +108,26 @@ private:
     Function<void()> m_callback;
 };
 
+class StorageAccessUserAgentStringQuirkObserver : public RefCounted<StorageAccessUserAgentStringQuirkObserver>, public CanMakeWeakPtr<StorageAccessUserAgentStringQuirkObserver> {
+public:
+    static Ref<StorageAccessUserAgentStringQuirkObserver> create(Function<void()>&& callback)
+    {
+        return adoptRef(*new StorageAccessUserAgentStringQuirkObserver(WTFMove(callback)));
+    }
+
+    ~StorageAccessUserAgentStringQuirkObserver() = default;
+
+    void invokeCallback() { m_callback(); }
+
+private:
+    explicit StorageAccessUserAgentStringQuirkObserver(Function<void()>&& callback)
+        : m_callback { WTFMove(callback) }
+    {
+    }
+
+    Function<void()> m_callback;
+};
+
 class StorageAccessPromptQuirkController {
 public:
     static StorageAccessPromptQuirkController& shared();
@@ -126,6 +146,26 @@ private:
     RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
     Vector<WebCore::OrganizationStorageAccessPromptQuirk> m_cachedQuirks;
     WeakHashSet<StorageAccessPromptQuirkObserver> m_observers;
+};
+
+class StorageAccessUserAgentStringQuirkController {
+public:
+    static StorageAccessUserAgentStringQuirkController& shared();
+
+    const HashMap<WebCore::RegistrableDomain, String>& cachedQuirks() const { return m_cachedQuirks; }
+    void updateQuirks(CompletionHandler<void()>&&);
+    void setCachedQuirksForTesting(HashMap<WebCore::RegistrableDomain, String>&&);
+
+    Ref<StorageAccessUserAgentStringQuirkObserver> observeUpdates(Function<void()>&&);
+
+private:
+    friend class NeverDestroyed<StorageAccessUserAgentStringQuirkController, MainThreadAccessTraits>;
+    StorageAccessUserAgentStringQuirkController() = default;
+    void setCachedQuirks(HashMap<WebCore::RegistrableDomain, String>&&);
+
+    RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
+    HashMap<WebCore::RegistrableDomain, String> m_cachedQuirks;
+    WeakHashSet<StorageAccessUserAgentStringQuirkObserver> m_observers;
 };
 
 void configureForAdvancedPrivacyProtections(NSURLSession *);

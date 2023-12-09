@@ -112,6 +112,9 @@ namespace WebKit {
 
 class LockdownModeObserver;
 class PerActivityStateCPUUsageSampler;
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+class StorageAccessUserAgentStringQuirkObserver;
+#endif
 class SuspendedPageProxy;
 class UIGamepad;
 class WebAutomationSession;
@@ -843,6 +846,9 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     bool m_processesShouldSuspend { false };
+#endif
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    RefPtr<StorageAccessUserAgentStringQuirkObserver> m_storageAccessUserAgentStringQuirksDataUpdateObserver;
 #endif
 };
 

@@ -1415,3 +1415,40 @@ TEST(ResourceLoadStatistics, UserGestureLogsUserInteraction)
     }];
     TestWebKitAPI::Util::run(&done);
 }
+
+TEST(ResourceLoadStatistics, UserAgentStringForSite)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()]);
+    [configuration setWebsiteDataStore:dataStore.get()];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100) configuration:configuration.get()]);
+    auto delegate = adoptNS([TestNavigationDelegate new]);
+    auto userAgent = @"NotARealUserAgent";
+
+    __block bool done = false;
+    [dataStore _setUserAgentStringQuirkForTesting:@"webkit.org" withUserAgent:userAgent completionHandler:^{
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        EXPECT_WK_STREQ(action.request.allHTTPHeaderFields[@"User-Agent"], userAgent);
+        decisionHandler(WKNavigationActionPolicyCancel);
+        done = true;
+    };
+    [webView setNavigationDelegate:delegate.get()];
+
+    [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://webkit.org"]];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    delegate.get().decidePolicyForNavigationAction = ^(WKNavigationAction *action, void (^decisionHandler)(WKNavigationActionPolicy)) {
+        EXPECT_FALSE([action.request.allHTTPHeaderFields[@"User-Agent"] isEqual:userAgent]);
+        decisionHandler(WKNavigationActionPolicyCancel);
+        done = true;
+    };
+    [webView loadHTMLString:@"" baseURL:[NSURL URLWithString:@"http://not-webkit.org"]];
+    TestWebKitAPI::Util::run(&done);
+}

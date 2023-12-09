@@ -857,6 +857,13 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     return _websiteDataStore->networkProcessHasEntitlementForTesting(entitlement);
 }
 
+- (void)_setUserAgentStringQuirkForTesting:(NSString *)domain withUserAgent:(NSString *)userAgent completionHandler:(void (^)(void))completionHandler
+{
+    _websiteDataStore->setUserAgentStringQuirkForTesting(domain, userAgent, [completionHandler = makeBlockPtr(completionHandler)] {
+        completionHandler();
+    });
+}
+
 - (id <_WKWebsiteDataStoreDelegate>)_delegate
 {
     return _delegate.get().get();

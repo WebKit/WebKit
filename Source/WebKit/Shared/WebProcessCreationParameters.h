@@ -271,6 +271,8 @@ struct WebProcessCreationParameters {
 #endif
 
     String timeZoneOverride;
+
+    HashMap<WebCore::RegistrableDomain, String> storageAccessUserAgentStringQuirksData;
 };
 
 } // namespace WebKit

@@ -125,6 +125,7 @@
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/ProcessWarming.h>
+#include <WebCore/Quirks.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/RemoteCommandListener.h>
 #include <WebCore/RenderTreeAsText.h>
@@ -610,6 +611,8 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters)
         prewarmGlobally();
 #endif
 
+    updateStorageAccessUserAgentStringQuirks(WTFMove(parameters.storageAccessUserAgentStringQuirksData));
+
     WEBPROCESS_RELEASE_LOG(Process, "initializeWebProcess: Presenting processPID=%d", WebCore::presentingApplicationPID());
 }
 
@@ -824,6 +827,11 @@ WebPage* WebProcess::focusedWebPage() const
             return page.get();
     }
     return 0;
+}
+
+void WebProcess::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&& userAgentStringQuirk)
+{
+    Quirks::updateStorageAccessUserAgentStringQuirks(WTFMove(userAgentStringQuirk));
 }
     
 WebPage* WebProcess::webPage(PageIdentifier pageID) const
