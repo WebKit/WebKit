@@ -65,6 +65,7 @@ public:
     static constexpr bool is32Bit = false;
 #endif
     static constexpr bool isCompactedType = true;
+    static_assert(::allowCompactPointers<T*>());
 
     ALWAYS_INLINE constexpr CompactPtr() = default;
 

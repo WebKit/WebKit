@@ -111,7 +111,7 @@ class WatchpointSet;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Watchpoint);
 
-class Watchpoint : public PackedRawSentinelNode<Watchpoint> {
+class Watchpoint : public BasicRawSentinelNode<Watchpoint> {
     WTF_MAKE_NONCOPYABLE(Watchpoint);
     WTF_MAKE_NONMOVABLE(Watchpoint);
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Watchpoint);
@@ -274,7 +274,7 @@ private:
     int8_t m_state;
     int8_t m_setIsNotEmpty;
 
-    SentinelLinkedList<Watchpoint, PackedRawSentinelNode<Watchpoint>> m_set;
+    SentinelLinkedList<Watchpoint, BasicRawSentinelNode<Watchpoint>> m_set;
 };
 
 // InlineWatchpointSet is a low-overhead, non-copyable watchpoint set in which

@@ -93,7 +93,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-WTF_MAKE_ISO_ALLOCATED_IMPL(RenderObject);
+WTF_MAKE_COMPACT_ISO_ALLOCATED_IMPL(RenderObject);
 
 #if ASSERT_ENABLED
 

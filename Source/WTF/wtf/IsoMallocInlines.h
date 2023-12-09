@@ -25,23 +25,28 @@
 
 #pragma once
 
+#include <wtf/FastMalloc.h>
 #include <wtf/Platform.h>
 
 #if USE(SYSTEM_MALLOC) || !USE(ISO_MALLOC)
 
-#include <wtf/FastMalloc.h>
-
 #define WTF_MAKE_ISO_ALLOCATED_INLINE(name) WTF_MAKE_FAST_ALLOCATED
 #define WTF_MAKE_ISO_ALLOCATED_IMPL(name) struct WTFIsoMallocSemicolonifier##name { }
 #define WTF_MAKE_ISO_ALLOCATED_IMPL_TEMPLATE(name) struct WTFIsoMallocSemicolonifier##name { }
+#define WTF_MAKE_COMPACT_ISO_ALLOCATED_INLINE(name) WTF_MAKE_FAST_COMPACT_ALLOCATED
+#define WTF_MAKE_COMPACT_ISO_ALLOCATED_IMPL(name) struct WTFIsoMallocSemicolonifier##name { }
+#define WTF_MAKE_COMPACT_ISO_ALLOCATED_IMPL_TEMPLATE(name) struct WTFIsoMallocSemicolonifier##name { }
 
 #else
 
 #include <bmalloc/IsoHeapInlines.h>
 
-#define WTF_MAKE_ISO_ALLOCATED_INLINE(name) MAKE_BISO_MALLOCED_INLINE(name)
-#define WTF_MAKE_ISO_ALLOCATED_IMPL(name) MAKE_BISO_MALLOCED_IMPL(name)
-#define WTF_MAKE_ISO_ALLOCATED_IMPL_TEMPLATE(name) MAKE_BISO_MALLOCED_IMPL_TEMPLATE(name)
+#define WTF_MAKE_ISO_ALLOCATED_INLINE(name) MAKE_BISO_MALLOCED_INLINE(name, IsoHeap)
+#define WTF_MAKE_ISO_ALLOCATED_IMPL(name) MAKE_BISO_MALLOCED_IMPL(name, IsoHeap)
+#define WTF_MAKE_ISO_ALLOCATED_IMPL_TEMPLATE(name) MAKE_BISO_MALLOCED_IMPL_TEMPLATE(name, IsoHeap)
+#define WTF_MAKE_COMPACT_ISO_ALLOCATED_INLINE(name) MAKE_BISO_MALLOCED_INLINE(name, CompactIsoHeap)
+#define WTF_MAKE_COMPACT_ISO_ALLOCATED_IMPL(name) MAKE_BISO_MALLOCED_IMPL(name, CompactIsoHeap)
+#define WTF_MAKE_COMPACT_ISO_ALLOCATED_IMPL_TEMPLATE(name) MAKE_BISO_MALLOCED_IMPL_TEMPLATE(name, IsoHeap)
 
 #endif
 

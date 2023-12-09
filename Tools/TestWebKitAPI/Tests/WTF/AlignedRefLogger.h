@@ -30,6 +30,8 @@
 namespace TestWebKitAPI {
 
 struct alignas(16) AlignedRefLogger {
+    WTF_MAKE_STRUCT_FAST_COMPACT_ALLOCATED;
+
     AlignedRefLogger(const char* name)
         : name { *name }
     {

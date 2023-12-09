@@ -67,7 +67,7 @@ public:
         FunctionExpr,
     };
 
-    using Value = CompactPointerTuple<void*, Type>;
+    using Value = JITConstant<Type>;
 
     JITConstantPool() = default;
     JITConstantPool(JITConstantPool&&) = default;

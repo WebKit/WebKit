@@ -31,7 +31,7 @@ namespace JSC {
 
 class VM;
 
-class CallLinkInfoBase : public PackedRawSentinelNode<CallLinkInfoBase> {
+class CallLinkInfoBase : public BasicRawSentinelNode<CallLinkInfoBase> {
 public:
     enum class CallSiteType : uint8_t {
         CallLinkInfo,

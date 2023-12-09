@@ -32,10 +32,8 @@
 
 namespace WTF {
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BagNode);
 template<typename T, typename PassedPtrTraits = RawPtrTraits<T>>
 class BagNode {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BagNode);
 public:
     using PtrTraits = typename PassedPtrTraits::template RebindTraits<BagNode>;
 
@@ -48,7 +46,7 @@ public:
     typename PtrTraits::StorageType m_next { nullptr };
 };
 
-template<typename T, typename PassedPtrTraits = RawPtrTraits<T>>
+template<typename T, typename PassedPtrTraits = RawPtrTraits<T>, typename Malloc = FastMalloc>
 class Bag final {
     WTF_MAKE_NONCOPYABLE(Bag);
     WTF_MAKE_FAST_ALLOCATED;
@@ -91,7 +89,8 @@ public:
         while (head) {
             Node* current = head;
             head = Node::PtrTraits::unwrap(current->m_next);
-            delete current;
+            current->~Node();
+            Malloc::free(current);
         }
         m_head = nullptr;
     }
@@ -99,7 +98,8 @@ public:
     template<typename... Args>
     T* add(Args&&... args)
     {
-        Node* newNode = new Node(std::forward<Args>(args)...);
+        Node* newNode = static_cast<Node*>(Malloc::malloc(sizeof(Node)));
+        new (NotNull, newNode) Node(std::forward<Args>(args)...);
         newNode->m_next = unwrappedHead();
         m_head = newNode;
         return &newNode->m_item;
@@ -127,7 +127,7 @@ public:
         friend bool operator==(iterator, iterator) = default;
 
     private:
-        template<typename, typename> friend class WTF::Bag;
+        template<typename, typename, typename> friend class WTF::Bag;
         Node* m_node;
     };
     
