@@ -178,8 +178,6 @@ struct MethodTable {
     ClassName::isResizableOrGrowableSharedTypedArray, \
 
 struct CLASS_INFO_ALIGNMENT ClassInfo {
-    WTF_ALLOW_STRUCT_COMPACT_POINTERS;
-
     using CheckJSCastSnippetFunctionPtr = Ref<Snippet> (*)(void);
 
     // A string denoting the class name. Example: "Window".

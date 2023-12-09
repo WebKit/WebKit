@@ -38,7 +38,7 @@ class SlotVisitor;
 // objects directly using malloc, and put the PreciseAllocation header just before them. We can detect
 // when a HeapCell* is a PreciseAllocation because it will have the MarkedBlock::atomSize / 2 bit set.
 
-class PreciseAllocation : public BasicRawSentinelNode<PreciseAllocation> {
+class PreciseAllocation : public PackedRawSentinelNode<PreciseAllocation> {
 public:
     friend class LLIntOffsetsExtractor;
     friend class IsoSubspace;

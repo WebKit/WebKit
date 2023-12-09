@@ -94,7 +94,7 @@ class LinkerIR {
 public:
     using Constant = unsigned;
 
-    enum class Type : uint8_t {
+    enum class Type : uint16_t {
         Invalid,
         CallLinkInfo,
         CellPointer,
@@ -115,12 +115,12 @@ public:
         ObjectPrototypeChainIsSaneWatchpointSet,
     };
 
-    using Value = JITConstant<Type>;
+    using Value = CompactPointerTuple<void*, Type>;
 
     struct ValueHash {
         static unsigned hash(const Value& p)
         {
-            return p.hash();
+            return computeHash(p.type(), p.pointer());
         }
 
         static bool equal(const Value& a, const Value& b)

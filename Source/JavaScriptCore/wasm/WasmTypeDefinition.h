@@ -669,7 +669,7 @@ enum class RTTKind : uint8_t {
 };
 
 class RTT_ALIGNMENT RTT : public ThreadSafeRefCounted<RTT> {
-    WTF_MAKE_FAST_COMPACT_ALLOCATED;
+    WTF_MAKE_FAST_ALLOCATED;
 
 public:
     RTT() = delete;

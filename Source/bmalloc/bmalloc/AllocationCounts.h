@@ -31,8 +31,7 @@
 #define BFOR_EACH_ALLOCATION_KIND(macro) \
     macro(JS_CELL)      /* Allocation of any JSCell */ \
     macro(NON_JS_CELL)  /* Allocation of any non-JSCell */ \
-    macro(GIGACAGE)     /* Allocation within a gigacage, takes heap kind as first parameter */ \
-    macro(COMPACTIBLE)  /* Pointers to this allocation are allowed to be stored compact. */
+    macro(GIGACAGE)     /* Allocation within a gigacage, takes heap kind as first parameter */
 
 #define BPROFILE_ALLOCATION(kind, ...) \
     BPROFILE_ALLOCATION_ ## kind(__VA_ARGS__)
@@ -62,25 +61,11 @@
 #define BPROFILE_ALLOCATION_JS_CELL(ptr, size) do { } while (false)
 #endif
 
-#ifdef BPROFILE_TRY_ALLOCATION_JS_CELL
-#define BENABLE_PROFILE_JS_CELL_TRY_ALLOCATION 1
-#else
-#define BENABLE_PROFILE_JS_CELL_TRY_ALLOCATION 0
-#define BPROFILE_TRY_ALLOCATION_JS_CELL(ptr, size) do { } while (false)
-#endif
-
 #ifdef BPROFILE_ALLOCATION_NON_JS_CELL
 #define BENABLE_PROFILE_NON_JS_CELL_ALLOCATION 1
 #else
 #define BENABLE_PROFILE_NON_JS_CELL_ALLOCATION 0
 #define BPROFILE_ALLOCATION_NON_JS_CELL(ptr, size) do { } while (false)
-#endif
-
-#ifdef BPROFILE_TRY_ALLOCATION_NON_JS_CELL
-#define BENABLE_PROFILE_NON_JS_CELL_TRY_ALLOCATION 1
-#else
-#define BENABLE_PROFILE_NON_JS_CELL_TRY_ALLOCATION 0
-#define BPROFILE_TRY_ALLOCATION_NON_JS_CELL(ptr, size) do { } while (false)
 #endif
 
 #ifdef BPROFILE_ALLOCATION_GIGACAGE
@@ -90,23 +75,23 @@
 #define BPROFILE_ALLOCATION_GIGACAGE(kind, ptr, size) do { } while (false)
 #endif
 
+#ifdef BPROFILE_TRY_ALLOCATION_JS_CELL
+#define BENABLE_PROFILE_JS_CELL_TRY_ALLOCATION 1
+#else
+#define BENABLE_PROFILE_JS_CELL_TRY_ALLOCATION 0
+#define BPROFILE_TRY_ALLOCATION_JS_CELL(ptr, size) do { } while (false)
+#endif
+
+#ifdef BPROFILE_TRY_ALLOCATION_NON_JS_CELL
+#define BENABLE_PROFILE_NON_JS_CELL_TRY_ALLOCATION 1
+#else
+#define BENABLE_PROFILE_NON_JS_CELL_TRY_ALLOCATION 0
+#define BPROFILE_TRY_ALLOCATION_NON_JS_CELL(ptr, size) do { } while (false)
+#endif
+
 #ifdef BPROFILE_TRY_ALLOCATION_GIGACAGE
 #define BENABLE_PROFILE_GIGACAGE_TRY_ALLOCATION 1
 #else
 #define BENABLE_PROFILE_GIGACAGE_TRY_ALLOCATION 0
 #define BPROFILE_TRY_ALLOCATION_GIGACAGE(kind, ptr, size) do { } while (false)
-#endif
-
-#ifdef BPROFILE_ALLOCATION_COMPACTIBLE
-#define BENABLE_PROFILE_COMPACTIBLE_ALLOCATION 1
-#else
-#define BENABLE_PROFILE_COMPACTIBLE_ALLOCATION 0
-#define BPROFILE_ALLOCATION_COMPACTIBLE(ptr, size) do { } while (false)
-#endif
-
-#ifdef BPROFILE_TRY_ALLOCATION_COMPACTIBLE
-#define BENABLE_PROFILE_COMPACTIBLE_TRY_ALLOCATION 1
-#else
-#define BENABLE_PROFILE_COMPACTIBLE_TRY_ALLOCATION 0
-#define BPROFILE_TRY_ALLOCATION_COMPACTIBLE(ptr, size) do { } while (false)
 #endif

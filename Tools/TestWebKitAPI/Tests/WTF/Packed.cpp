@@ -36,14 +36,9 @@
 
 namespace TestWebKitAPI {
 
-struct PackableUint8 {
-    WTF_ALLOW_STRUCT_COMPACT_POINTERS;
-    uint8_t value;
-};
-
 struct PackedPair {
-    PackedPtr<PackableUint8> key { nullptr };
-    PackedPtr<PackableUint8> value { nullptr };
+    PackedPtr<uint8_t> key { nullptr };
+    PackedPtr<uint8_t> value { nullptr };
 };
 
 TEST(WTF_Packed, StructSize)
@@ -70,19 +65,19 @@ TEST(WTF_Packed, StructSize)
 TEST(WTF_Packed, AssignAndGet)
 {
     {
-        PackedPtr<PackableUint8> key { nullptr };
+        PackedPtr<uint8_t> key { nullptr };
         static_assert(OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) != 64);
-        PackableUint8* candidates[] = {
+        uint8_t* candidates[] = {
             0,
-            bitwise_cast<PackableUint8*>(static_cast<uintptr_t>((1ULL << (OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) / 2)) - 1)),
-            bitwise_cast<PackableUint8*>(static_cast<uintptr_t>((1ULL << (OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) - 1)) - 1)),
+            bitwise_cast<uint8_t*>(static_cast<uintptr_t>((1ULL << (OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) / 2)) - 1)),
+            bitwise_cast<uint8_t*>(static_cast<uintptr_t>((1ULL << (OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) - 1)) - 1)),
 #if !CPU(X86_64) || OS(DARWIN) || OS(LINUX) || OS(WINDOWS)
             // These OSes will never allocate user space addresses with
             // bit 47 (i.e. OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) - 1) set.
-            bitwise_cast<PackableUint8*>(static_cast<uintptr_t>((1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1)),
+            bitwise_cast<uint8_t*>(static_cast<uintptr_t>((1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1)),
 #else
-            bitwise_cast<PackableUint8*>(static_cast<uintptr_t>(~((1ULL << (OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) - 1)) - 1))), // min higher half
-            bitwise_cast<PackableUint8*>(std::numeric_limits<uintptr_t>::max()), // max higher half
+            bitwise_cast<uint8_t*>(static_cast<uintptr_t>(~((1ULL << (OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH) - 1)) - 1))), // min higher half
+            bitwise_cast<uint8_t*>(std::numeric_limits<uintptr_t>::max()), // max higher half
 #endif
         };
         int count = sizeof(candidates) / sizeof(uint8_t*);
@@ -96,11 +91,11 @@ TEST(WTF_Packed, AssignAndGet)
 TEST(WTF_Packed, PackedAlignedPtr)
 {
     {
-        PackedAlignedPtr<PackableUint8, 256> key { nullptr };
+        PackedAlignedPtr<uint8_t, 256> key { nullptr };
         EXPECT_LE(sizeof(key), 5U);
     }
     {
-        PackedAlignedPtr<PackableUint8, 16> key { nullptr };
+        PackedAlignedPtr<uint8_t, 16> key { nullptr };
 #if (OS(IOS) || OS(TVOS) || OS(WATCHOS) || OS(VISION)) && CPU(ARM64) && !PLATFORM(IOS_FAMILY_SIMULATOR)
         EXPECT_EQ(sizeof(key), 4U);
 #else
@@ -110,7 +105,6 @@ TEST(WTF_Packed, PackedAlignedPtr)
 }
 
 struct PackingTarget {
-    WTF_ALLOW_STRUCT_COMPACT_POINTERS;
     unsigned m_value { 0 };
 };
 TEST(WTF_Packed, HashMap)

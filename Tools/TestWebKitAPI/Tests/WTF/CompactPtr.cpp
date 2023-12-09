@@ -197,7 +197,6 @@ TEST(WTF_CompactPtr, Assignment)
 }
 
 struct alignas(16) AlignedPackingTarget {
-    WTF_ALLOW_STRUCT_COMPACT_POINTERS;
     unsigned m_value { 0 };
 };
 TEST(WTF_CompactPtr, HashMap)

@@ -37,7 +37,6 @@ class JSArray : public JSNonFinalObject {
     friend class LLIntOffsetsExtractor;
     friend class Walker;
     friend class JIT;
-    WTF_ALLOW_COMPACT_POINTERS;
 
 public:
     typedef JSNonFinalObject Base;

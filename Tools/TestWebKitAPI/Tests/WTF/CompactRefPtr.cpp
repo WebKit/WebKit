@@ -421,7 +421,6 @@ TEST(WTF_CompactRefPtr, ReturnValue)
 
 struct alignas(16) ConstRefCounted
     : RefCounted<ConstRefCounted> {
-    WTF_MAKE_STRUCT_FAST_COMPACT_ALLOCATED;
     static Ref<ConstRefCounted> create() { return adoptRef(*new ConstRefCounted); }
 };
 

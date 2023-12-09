@@ -90,7 +90,6 @@ template<typename T> void* tryAllocateCell(VM&, GCDeferralContext*, size_t = siz
 #endif
 
 class JSCell : public HeapCell {
-    WTF_ALLOW_COMPACT_POINTERS;
     friend class JSValue;
     friend class MarkedBlock;
     template<typename T>

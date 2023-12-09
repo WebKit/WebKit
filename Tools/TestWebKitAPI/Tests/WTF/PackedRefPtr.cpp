@@ -407,7 +407,6 @@ TEST(WTF_PackedRefPtr, ReturnValue)
 }
 
 struct ConstRefCounted : RefCounted<ConstRefCounted> {
-    WTF_ALLOW_STRUCT_COMPACT_POINTERS;
     static Ref<ConstRefCounted> create() { return adoptRef(*new ConstRefCounted); }
 };
 

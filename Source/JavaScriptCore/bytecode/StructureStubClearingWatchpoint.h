@@ -54,7 +54,7 @@ public:
     void fireInternal(VM&, const FireDetail&);
 
 private:
-    WatchpointsOnStructureStubInfo* m_holder;
+    PackedPtr<WatchpointsOnStructureStubInfo> m_holder;
     ObjectPropertyCondition m_key;
 };
 
@@ -75,7 +75,7 @@ public:
 
 
 private:
-    WatchpointsOnStructureStubInfo* m_holder;
+    PackedPtr<WatchpointsOnStructureStubInfo> m_holder;
 };
 
 class WatchpointsOnStructureStubInfo final {

@@ -42,7 +42,7 @@ IsoCellSet::IsoCellSet(IsoSubspace& subspace)
 IsoCellSet::~IsoCellSet()
 {
     if (isOnList())
-        BasicRawSentinelNode<IsoCellSet>::remove();
+        PackedRawSentinelNode<IsoCellSet>::remove();
 }
 
 Ref<SharedTask<MarkedBlock::Handle*()>> IsoCellSet::parallelNotEmptyMarkedBlockSource()
