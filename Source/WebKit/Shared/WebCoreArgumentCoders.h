@@ -115,7 +115,6 @@ class FixedPositionViewportConstraints;
 class Font;
 class FontPlatformData;
 class FragmentedSharedBuffer;
-class LightSource;
 class PaymentInstallmentConfiguration;
 class PixelBuffer;
 class ResourceError;
@@ -296,12 +295,6 @@ template<> struct ArgumentCoder<WebCore::ControlPart> {
     template<typename Encoder>
     static void encode(Encoder&, const WebCore::ControlPart&);
     static std::optional<Ref<WebCore::ControlPart>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::LightSource> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::LightSource&);
-    static std::optional<Ref<WebCore::LightSource>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::FilterFunction> {
