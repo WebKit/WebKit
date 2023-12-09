@@ -104,11 +104,11 @@ struct Config {
 
 #if BENABLE(UNIFIED_AND_FREEZABLE_CONFIG_RECORD)
 
-// The first 2 slots are reserved for the use of the ExecutableAllocator.
-constexpr size_t startSlotOfGigacageConfig = 2;
+// The first 4 slots are reserved for the use of the ExecutableAllocator.
+constexpr size_t startSlotOfGigacageConfig = 4;
 constexpr size_t startOffsetOfGigacageConfig = startSlotOfGigacageConfig * sizeof(WebConfig::Slot);
 
-constexpr size_t reservedSlotsForGigacageConfig = 12;
+constexpr size_t reservedSlotsForGigacageConfig = 16;
 constexpr size_t reservedBytesForGigacageConfig = reservedSlotsForGigacageConfig * sizeof(WebConfig::Slot);
 
 constexpr size_t alignmentOfGigacageConfig = std::alignment_of<Gigacage::Config>::value;
