@@ -260,6 +260,9 @@ WebKit::GPUProcessPreferencesForWebProcess PageConfiguration::preferencesForGPUP
         preferences->webGLEnabled(),
         preferences->webGPUEnabled(),
         preferences->useGPUProcessForDOMRenderingEnabled(),
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+        preferences->useCGDisplayListsForDOMRendering(),
+#endif
         allowTestOnlyIPC()
     };
 }

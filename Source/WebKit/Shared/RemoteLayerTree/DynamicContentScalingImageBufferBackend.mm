@@ -28,9 +28,9 @@
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 
-#import "DynamicContentScalingDisplayList.h"
 #import "Logging.h"
 #import <CoreRE/RECGCommandsContext.h>
+#import <WebCore/DynamicContentScalingDisplayList.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/PixelBuffer.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -116,7 +116,7 @@ std::optional<ImageBufferBackendHandle> DynamicContentScalingImageBufferBackend:
         });
     }
 
-    return DynamicContentScalingDisplayList { WebCore::SharedBuffer::create(data.get()), WTFMove(sendRights) };
+    return WebCore::DynamicContentScalingDisplayList { WebCore::SharedBuffer::create(data.get()), WTFMove(sendRights) };
 }
 
 WebCore::GraphicsContext& DynamicContentScalingImageBufferBackend::context()

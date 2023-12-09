@@ -555,7 +555,7 @@ void UserMediaCaptureManagerProxy::createMediaSourceForCaptureDeviceWithConstrai
     });
 }
 
-void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentifier id)
+void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentifier id, WebCore::PageIdentifier pageIdentifier)
 {
     auto* proxy = m_proxies.get(id);
     if (!proxy)
@@ -568,6 +568,9 @@ void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentif
 
 #if ENABLE(APP_PRIVACY_REPORT)
     m_connectionProxy->setTCCIdentity();
+#endif
+#if ENABLE(PROCESS_CAPABILITIES)
+    m_connectionProxy->setCurrentMediaEnvironment(pageIdentifier);
 #endif
     m_connectionProxy->startProducingData(proxy->source().deviceType());
     proxy->start();

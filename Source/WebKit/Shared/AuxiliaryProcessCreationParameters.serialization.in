@@ -24,4 +24,5 @@ struct WebKit::AuxiliaryProcessCreationParameters {
     String wtfLoggingChannels;
     String webCoreLoggingChannels;
     String webKitLoggingChannels;
+    std::unique_ptr<HashSet<String>> classNamesExemptFromSecureCodingCrash;
 };

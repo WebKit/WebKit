@@ -1205,8 +1205,8 @@ private:
 
     CheckedRef<Node> m_node;
 
-    CheckedPtr<RenderElement> m_parent;
-    CheckedPtr<RenderObject> m_previous;
+    SingleThreadWeakPtr<RenderElement> m_parent;
+    SingleThreadWeakPtr<RenderObject> m_previous;
     PackedCheckedPtr<RenderObject> m_next;
     Type m_type;
 

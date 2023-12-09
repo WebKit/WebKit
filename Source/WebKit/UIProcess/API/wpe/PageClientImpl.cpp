@@ -59,10 +59,12 @@ struct wpe_view_backend* PageClientImpl::viewBackend()
     return m_view.backend();
 }
 
+#if ENABLE(WPE_PLATFORM)
 WPEView* PageClientImpl::wpeView() const
 {
     return m_view.wpeView();
 }
+#endif
 
 UnixFileDescriptor PageClientImpl::hostFileDescriptor()
 {
@@ -272,17 +274,25 @@ Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& pa
 
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& context)
 {
+#if ENABLE(WPE_PLATFORM)
     m_view.updateAcceleratedSurface(context.contextID);
+#else
+    UNUSED_PARAM(context);
+#endif
 }
 
 void PageClientImpl::exitAcceleratedCompositingMode()
 {
+#if ENABLE(WPE_PLATFORM)
     m_view.updateAcceleratedSurface(0);
+#endif
 }
 
 void PageClientImpl::updateAcceleratedCompositingMode(const LayerTreeContext& context)
 {
+#if ENABLE(WPE_PLATFORM)
     m_view.updateAcceleratedSurface(context.contextID);
+#endif
 }
 
 void PageClientImpl::didFinishLoadingDataForCustomContentProvider(const String&, const IPC::DataReference&)
@@ -377,10 +387,12 @@ void PageClientImpl::enterFullScreen()
         return;
 
     m_view.willEnterFullScreen();
+#if ENABLE(WPE_PLATFORM)
     if (m_view.wpeView()) {
         m_view.enterFullScreen();
         return;
     }
+#endif
 
     WebFullScreenManagerProxy* fullScreenManagerProxy = m_view.page().fullScreenManager();
     if (fullScreenManagerProxy) {
@@ -395,10 +407,12 @@ void PageClientImpl::exitFullScreen()
         return;
 
     m_view.willExitFullScreen();
+#if ENABLE(WPE_PLATFORM)
     if (m_view.wpeView()) {
         m_view.exitFullScreen();
         return;
     }
+#endif
 
     WebFullScreenManagerProxy* fullScreenManagerProxy = m_view.page().fullScreenManager();
     if (fullScreenManagerProxy) {

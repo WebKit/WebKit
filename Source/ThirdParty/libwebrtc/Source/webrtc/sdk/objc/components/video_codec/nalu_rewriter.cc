@@ -377,8 +377,8 @@ bool H265AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
   // TODO(tkchin): figure out how to use a pool.
   CMBlockBufferRef block_buffer = nullptr;
   OSStatus status = CMBlockBufferCreateWithMemoryBlock(
-      nullptr, nullptr, reader.BytesRemaining(), nullptr, nullptr, 0,
-      reader.BytesRemaining(), kCMBlockBufferAssureMemoryNowFlag,
+      nullptr, nullptr, reader.BytesRemainingForAVC(), nullptr, nullptr, 0,
+      reader.BytesRemainingForAVC(), kCMBlockBufferAssureMemoryNowFlag,
       &block_buffer);
   if (status != kCMBlockBufferNoErr) {
     RTC_LOG(LS_ERROR) << "Failed to create block buffer.";
@@ -411,9 +411,9 @@ bool H265AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
     CFRelease(contiguous_buffer);
     return false;
   }
-  RTC_DCHECK(block_buffer_size == reader.BytesRemaining());
+  RTC_DCHECK(block_buffer_size == reader.BytesRemainingForAVC());
 
-  // Write Avcc NALUs into block buffer memory.
+  // Write Hvcc NALUs into block buffer memory.
   AvccBufferWriter writer(reinterpret_cast<uint8_t*>(data_ptr),
                           block_buffer_size);
   while (reader.BytesRemaining() > 0) {
@@ -876,6 +876,7 @@ AvccBufferWriter::AvccBufferWriter(uint8_t* const avcc_buffer, size_t length)
 bool AvccBufferWriter::WriteNalu(const uint8_t* data, size_t data_size) {
   // Check if we can write this length of data.
   if (data_size + kAvccHeaderByteSize > BytesRemaining()) {
+    RTC_LOG(LS_ERROR) << "AvccBufferWriter::WriteNalu failed.";
     return false;
   }
   // Write length header, which needs to be big endian.

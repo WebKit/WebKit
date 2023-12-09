@@ -160,7 +160,7 @@ void EntryPointRewriter::checkReturnType()
                 AST::Attribute::List { },
                 role
             );
-            m_shaderModule.append(m_shaderModule.structures(), returnStruct);
+            m_shaderModule.append(m_shaderModule.declarations(), returnStruct);
             auto& returnType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
                 SourceSpan::empty(),
                 AST::Identifier::make(returnStructName)
@@ -200,7 +200,7 @@ void EntryPointRewriter::checkReturnType()
         AST::Attribute::List { },
         AST::StructureRole::FragmentOutputWrapper
     );
-    m_shaderModule.append(m_shaderModule.structures(), returnStruct);
+    m_shaderModule.append(m_shaderModule.declarations(), returnStruct);
     auto& returnType = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(
         SourceSpan::empty(),
         AST::Identifier::make(returnStructName)
@@ -235,14 +235,15 @@ void EntryPointRewriter::constructInputStruct()
         break;
     }
 
-    m_shaderModule.append(m_shaderModule.structures(), m_shaderModule.astBuilder().construct<AST::Structure>(
+    auto& structure = m_shaderModule.astBuilder().construct<AST::Structure>(
         SourceSpan::empty(),
         AST::Identifier::make(m_structTypeName),
         WTFMove(structMembers),
         AST::Attribute::List { },
         role
-    ));
-    m_structType = m_shaderModule.types().structType(m_shaderModule.structures().last());
+    );
+    m_shaderModule.append(m_shaderModule.declarations(), structure);
+    m_structType = m_shaderModule.types().structType(structure);
 }
 
 void EntryPointRewriter::materialize(Vector<String>& path, MemberOrParameter& data, IsBuiltin isBuiltin)

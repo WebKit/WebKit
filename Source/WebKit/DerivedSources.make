@@ -265,6 +265,7 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/ShapeDetection/RemoteTextDetector \
 	GPUProcess/graphics/RemoteDisplayListRecorder \
 	GPUProcess/graphics/RemoteImageBuffer \
+	GPUProcess/graphics/RemoteImageBufferSet \
 	GPUProcess/graphics/RemoteRenderingBackend \
 	GPUProcess/graphics/RemoteGraphicsContextGL \
 	GPUProcess/graphics/WebGPU/RemoteAdapter \
@@ -511,6 +512,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/API/APIFrameHandle.serialization.in \
 	Shared/API/APIGeometry.serialization.in \
 	Shared/API/APINumber.serialization.in \
+	Shared/API/APIObject.serialization.in \
 	Shared/API/APIPageHandle.serialization.in \
 	Shared/API/APISerializedScriptValue.serialization.in \
 	Shared/API/APIString.serialization.in \
@@ -612,6 +614,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/TextRecognitionResult.serialization.in \
 	Shared/URLSchemeTaskParameters.serialization.in \
 	Shared/UserContentControllerParameters.serialization.in \
+	Shared/UserData.serialization.in \
 	Shared/UserInterfaceIdiom.serialization.in \
 	Shared/WebCompiledContentRuleListData.serialization.in \
 	Shared/ViewWindowCoordinates.serialization.in \

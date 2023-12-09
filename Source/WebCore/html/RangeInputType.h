@@ -82,9 +82,6 @@ private:
 
 #if ENABLE(TOUCH_EVENTS)
     void handleTouchEvent(TouchEvent&) final;
-#if !ENABLE(IOS_TOUCH_EVENTS)
-    bool hasTouchEventHandler() const final { return true; }
-#endif
 #endif
 
     void disabledStateChanged() final;

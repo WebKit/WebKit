@@ -35,10 +35,12 @@
 #import "LegacyCustomProtocolManagerClient.h"
 #import "LockdownModeObserver.h"
 #import "Logging.h"
+#import "MediaCapability.h"
 #import "NetworkProcessCreationParameters.h"
 #import "NetworkProcessMessages.h"
 #import "NetworkProcessProxy.h"
 #import "PreferenceObserver.h"
+#import "ProcessCapabilityGranter.h"
 #import "ProcessThrottler.h"
 #import "SandboxExtension.h"
 #import "SandboxUtilities.h"
@@ -48,6 +50,7 @@
 #import "WebMemoryPressureHandler.h"
 #import "WebPageGroup.h"
 #import "WebPreferencesKeys.h"
+#import "WebPrivacyHelpers.h"
 #import "WebProcessCache.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessMessages.h"
@@ -502,6 +505,10 @@ void WebProcessPool::platformInitializeNetworkProcess(NetworkProcessCreationPara
 
     parameters.enablePrivateClickMeasurement = ![defaults objectForKey:WebPreferencesKey::privateClickMeasurementEnabledKey()] || [defaults boolForKey:WebPreferencesKey::privateClickMeasurementEnabledKey()];
     parameters.ftpEnabled = [defaults objectForKey:WebPreferencesKey::ftpEnabledKey()] && [defaults boolForKey:WebPreferencesKey::ftpEnabledKey()];
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::shared().cachedQuirks();
+#endif
 }
 
 void WebProcessPool::platformInvalidateContext()
@@ -1196,5 +1203,38 @@ void WebProcessPool::registerHighDynamicRangeChangeCallback()
     } };
 }
 #endif // PLATFORM(IOS) || PLATFORM(VISION)
+
+#if ENABLE(PROCESS_CAPABILITIES)
+ProcessCapabilityGranter& WebProcessPool::processCapabilityGranter()
+{
+    if (!m_processCapabilityGranter)
+        m_processCapabilityGranter = ProcessCapabilityGranter::create(*this).moveToUniquePtr();
+    return *m_processCapabilityGranter;
+}
+
+RefPtr<GPUProcessProxy> WebProcessPool::gpuProcessForCapabilityGranter(const ProcessCapabilityGranter& processCapabilityGranter)
+{
+    ASSERT_UNUSED(processCapabilityGranter, m_processCapabilityGranter.get() == &processCapabilityGranter);
+    return gpuProcess();
+}
+
+RefPtr<WebProcessProxy> WebProcessPool::webProcessForCapabilityGranter(const ProcessCapabilityGranter& processCapabilityGranter, const String& environmentIdentifier)
+{
+    ASSERT_UNUSED(processCapabilityGranter, m_processCapabilityGranter.get() == &processCapabilityGranter);
+
+    auto index = processes().findIf([&](auto& process) {
+        return process->pages().containsIf([&](auto& page) {
+            if (auto& mediaCapability = page->mediaCapability())
+                return mediaCapability->environmentIdentifier() == environmentIdentifier;
+            return false;
+        });
+    });
+
+    if (index == notFound)
+        return nullptr;
+
+    return processes()[index].ptr();
+}
+#endif
 
 } // namespace WebKit

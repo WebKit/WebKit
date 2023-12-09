@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if USE(GBM)
+#if ENABLE(WPE_PLATFORM)
 #include "MessageReceiver.h"
 #include <WebCore/IntSize.h>
 #include <wtf/HashMap.h>
@@ -81,4 +81,4 @@ private:
 
 } // namespace WebKit
 
-#endif // USE(GBM)
+#endif // ENABLE(WPE_PLATFORM)

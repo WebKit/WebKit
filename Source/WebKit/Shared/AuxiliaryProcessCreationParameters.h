@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/HashSet.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
@@ -34,6 +35,7 @@ struct AuxiliaryProcessCreationParameters {
     String wtfLoggingChannels;
     String webCoreLoggingChannels;
     String webKitLoggingChannels;
+    std::unique_ptr<HashSet<String>> classNamesExemptFromSecureCodingCrash;
 };
 
 } // namespace WebKit

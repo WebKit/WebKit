@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ASTBuilder.h"
+#include "ASTIdentifier.h"
 #include "ASTNode.h"
 #include <wtf/ReferenceWrapperVector.h>
 #include <wtf/TypeCasts.h>
@@ -35,7 +36,10 @@ namespace WGSL::AST {
 class Declaration : public Node {
     WGSL_AST_BUILDER_NODE(Declaration);
 public:
+    using Ref = std::reference_wrapper<Declaration>;
     using List = ReferenceWrapperVector<Declaration>;
+
+    virtual Identifier& name() = 0;
 
 protected:
     Declaration(SourceSpan span)

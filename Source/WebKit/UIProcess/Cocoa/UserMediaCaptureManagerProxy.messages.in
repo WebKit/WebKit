@@ -25,7 +25,7 @@
 
 messages -> UserMediaCaptureManagerProxy NotRefCounted {
     CreateMediaSourceForCaptureDeviceWithConstraints(WebCore::RealtimeMediaSourceIdentifier id, WebCore::CaptureDevice device, struct WebCore::MediaDeviceHashSalts hashSalts, struct WebCore::MediaConstraints constraints, bool shouldUseGPUProcessRemoteFrames, WebCore::PageIdentifier pageIdentifier) -> (struct WebCore::CaptureSourceError error, WebCore::RealtimeMediaSourceSettings settings, WebCore::RealtimeMediaSourceCapabilities capabilities) Async
-    StartProducingData(WebCore::RealtimeMediaSourceIdentifier id)
+    StartProducingData(WebCore::RealtimeMediaSourceIdentifier id, WebCore::PageIdentifier pageIdentifier)
     StopProducingData(WebCore::RealtimeMediaSourceIdentifier id)
     RemoveSource(WebCore::RealtimeMediaSourceIdentifier id)
     ApplyConstraints(WebCore::RealtimeMediaSourceIdentifier id, struct WebCore::MediaConstraints constraints)

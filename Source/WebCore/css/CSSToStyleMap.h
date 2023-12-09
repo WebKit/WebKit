@@ -71,6 +71,7 @@ public:
     static void mapAnimationTimeline(Animation&, const CSSValue&);
     static void mapAnimationTimingFunction(Animation&, const CSSValue&);
     static void mapAnimationCompositeOperation(Animation&, const CSSValue&);
+    static void mapAnimationAllowsDiscreteTransitions(Animation&, const CSSValue&);
 
     void mapNinePieceImage(const CSSValue*, NinePieceImage&);
     static void mapNinePieceImageSlice(const CSSValue&, NinePieceImage&);

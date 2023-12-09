@@ -997,6 +997,14 @@ void PageClientImpl::didChangeDragCaretRect(const IntRect& previousCaretRect, co
 }
 #endif
 
+void PageClientImpl::performSwitchHapticFeedback()
+{
+#if HAVE(UI_IMPACT_FEEDBACK_GENERATOR)
+    auto feedbackGenerator = adoptNS([[UIImpactFeedbackGenerator alloc] initWithStyle:UIImpactFeedbackStyleLight]);
+    [feedbackGenerator impactOccurred];
+#endif
+}
+
 #if USE(QUICK_LOOK)
 void PageClientImpl::requestPasswordForQuickLookDocument(const String& fileName, WTF::Function<void(const String&)>&& completionHandler)
 {

@@ -104,11 +104,9 @@ namespace WebCore {
 
 class AppKitControlSystemImage;
 class BlobPart;
-class CSSFilter;
 class ControlPart;
 class Credential;
 class Cursor;
-class Filter;
 class FilterEffect;
 class FilterFunction;
 class FilterOperation;
@@ -117,11 +115,9 @@ class FixedPositionViewportConstraints;
 class Font;
 class FontPlatformData;
 class FragmentedSharedBuffer;
-class LightSource;
 class PaymentInstallmentConfiguration;
 class PixelBuffer;
 class ResourceError;
-class SVGFilter;
 class ScriptBuffer;
 class SerializedScriptValue;
 class SharedBuffer;
@@ -212,16 +208,6 @@ template<> struct ArgumentCoder<WebCore::FilterOperations> {
     static void encode(Encoder&, const WebCore::FilterOperations&);
     static WARN_UNUSED_RETURN bool decode(Decoder&, WebCore::FilterOperations&);
 };
-
-template<> struct ArgumentCoder<WebCore::FilterOperation> {
-    static void encode(Encoder&, const WebCore::FilterOperation&);
-};
-WARN_UNUSED_RETURN bool decodeFilterOperation(Decoder&, RefPtr<WebCore::FilterOperation>&);
-
-template<> struct ArgumentCoder<RefPtr<WebCore::FilterOperation>> {
-    static void encode(Encoder&, const RefPtr<WebCore::FilterOperation>&);
-    static WARN_UNUSED_RETURN bool decode(Decoder&, RefPtr<WebCore::FilterOperation>&);
-};
 #endif
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
@@ -305,22 +291,10 @@ template<> struct ArgumentCoder<WebCore::ScriptBuffer> {
     static std::optional<WebCore::ScriptBuffer> decode(Decoder&);
 };
 
-template<> struct ArgumentCoder<WebCore::SystemImage> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::SystemImage&);
-    static std::optional<Ref<WebCore::SystemImage>> decode(Decoder&);
-};
-
 template<> struct ArgumentCoder<WebCore::ControlPart> {
     template<typename Encoder>
     static void encode(Encoder&, const WebCore::ControlPart&);
     static std::optional<Ref<WebCore::ControlPart>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::LightSource> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::LightSource&);
-    static std::optional<Ref<WebCore::LightSource>> decode(Decoder&);
 };
 
 template<> struct ArgumentCoder<WebCore::FilterFunction> {
@@ -333,24 +307,6 @@ template<> struct ArgumentCoder<WebCore::FilterEffect> {
     template<typename Encoder>
     static void encode(Encoder&, const WebCore::FilterEffect&);
     static std::optional<Ref<WebCore::FilterEffect>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::CSSFilter> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::CSSFilter&);
-    static std::optional<Ref<WebCore::CSSFilter>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::SVGFilter> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::SVGFilter&);
-    static std::optional<Ref<WebCore::SVGFilter>> decode(Decoder&);
-};
-
-template<> struct ArgumentCoder<WebCore::Filter> {
-    template<typename Encoder>
-    static void encode(Encoder&, const WebCore::Filter&);
-    static std::optional<Ref<WebCore::Filter>> decode(Decoder&);
 };
 
 #if ENABLE(DATA_DETECTION)
@@ -402,16 +358,6 @@ template<> struct ArgumentCoder<RetainPtr<CVPixelBufferRef>> {
 
 namespace WTF {
 
-#if ENABLE(MEDIA_STREAM)
-template<> struct EnumTraits<WebCore::RealtimeMediaSource::Type> {
-    using values = EnumValues<
-        WebCore::RealtimeMediaSource::Type,
-        WebCore::RealtimeMediaSource::Type::Audio,
-        WebCore::RealtimeMediaSource::Type::Video
-    >;
-};
-#endif
-
 #if USE(CURL)
 template <> struct EnumTraits<WebCore::CurlProxySettings::Mode> {
     using values = EnumValues<
@@ -419,31 +365,6 @@ template <> struct EnumTraits<WebCore::CurlProxySettings::Mode> {
         WebCore::CurlProxySettings::Mode::Default,
         WebCore::CurlProxySettings::Mode::NoProxy,
         WebCore::CurlProxySettings::Mode::Custom
-    >;
-};
-#endif
-
-#undef Always
-
-#if ENABLE(ENCRYPTED_MEDIA)
-template <> struct EnumTraits<WebCore::CDMInstanceSession::SessionLoadFailure> {
-    using values = EnumValues <
-    WebCore::CDMInstanceSession::SessionLoadFailure,
-    WebCore::CDMInstanceSession::SessionLoadFailure::None,
-    WebCore::CDMInstanceSession::SessionLoadFailure::NoSessionData,
-    WebCore::CDMInstanceSession::SessionLoadFailure::MismatchedSessionType,
-    WebCore::CDMInstanceSession::SessionLoadFailure::QuotaExceeded,
-    WebCore::CDMInstanceSession::SessionLoadFailure::Other
-    >;
-};
-
-template <> struct EnumTraits<WebCore::CDMInstance::HDCPStatus> {
-    using values = EnumValues <
-    WebCore::CDMInstance::HDCPStatus,
-    WebCore::CDMInstance::HDCPStatus::Unknown,
-    WebCore::CDMInstance::HDCPStatus::Valid,
-    WebCore::CDMInstance::HDCPStatus::OutputRestricted,
-    WebCore::CDMInstance::HDCPStatus::OutputDownscaled
     >;
 };
 #endif

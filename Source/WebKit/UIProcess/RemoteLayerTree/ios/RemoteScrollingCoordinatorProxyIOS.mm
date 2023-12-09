@@ -33,9 +33,10 @@
 #import "ScrollingTreeFrameScrollingNodeRemoteIOS.h"
 #import "ScrollingTreeOverflowScrollingNodeIOS.h"
 #import "ScrollingTreePluginScrollingNodeIOS.h"
+#import "WKBaseScrollView.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
-#import <UIKit/UIView.h>
+#import <WebCore/LocalFrameView.h>
 #import <WebCore/ScrollSnapOffsetsInfo.h>
 #import <WebCore/ScrollTypes.h>
 #import <WebCore/ScrollingStateFrameScrollingNode.h>

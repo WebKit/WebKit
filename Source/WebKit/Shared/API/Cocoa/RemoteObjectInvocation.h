@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef RemoteObjectInvocation_h
-#define RemoteObjectInvocation_h
+#pragma once
 
 #include "APIDictionary.h"
 #include <wtf/text/WTFString.h>
@@ -67,5 +66,3 @@ private:
 };
 
 }
-
-#endif // RemoteObjectInvocation_h

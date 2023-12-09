@@ -27,7 +27,7 @@
 
 #if ENABLE(PROCESS_CAPABILITIES)
 
-#include <wtf/FastMalloc.h>
+#include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
 OBJC_CLASS _SECapabilities;
@@ -37,18 +37,11 @@ namespace WebKit {
 class ProcessCapability {
 public:
     virtual ~ProcessCapability() = default;
-
-    const String& environmentIdentifier() const { return m_environmentIdentifier; }
-
-#if USE(EXTENSIONKIT)
+    virtual String environmentIdentifier() const = 0;
     virtual RetainPtr<_SECapabilities> platformCapability() const = 0;
-#endif
 
 protected:
-    explicit ProcessCapability(String environmentIdentifier);
-
-private:
-    String m_environmentIdentifier;
+    ProcessCapability() = default;
 };
 
 } // namespace WebKit

@@ -25,30 +25,38 @@
 
 #include "config.h"
 
-#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+#if ENABLE(GPU_PROCESS)
 #include "PrepareBackingStoreBuffersData.h"
 
-#include "BufferIdentifierSet.h"
-#include "RemoteLayerBackingStore.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebKit {
 
-static TextStream& operator<<(TextStream& ts, const BufferIdentifierSet& identifierSet)
+TextStream& operator<<(TextStream& ts, const ImageBufferSetPrepareBufferForDisplayInputData& inputData)
 {
-    ts << "front: " << identifierSet.front << " back: " << identifierSet.back << " secondaryBack: " << identifierSet.secondaryBack;
+    ts << "remoteImageBufferSet: " << inputData.remoteBufferSet;
+    ts << " dirtyRegion: " << inputData.dirtyRegion;
+    ts << " supportsPartialRepaint: " << inputData.supportsPartialRepaint;
+    ts << " hasEmptyDirtyRegion: " << inputData.hasEmptyDirtyRegion;
+    ts << " requiresClearedPixels: " << inputData.requiresClearedPixels;
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, const PrepareBackingStoreBuffersInputData& inputData)
+TextStream& operator<<(TextStream& ts, const ImageBufferSetPrepareBufferForDisplayOutputData& outputData)
 {
-    ts << inputData.bufferSet << ", supportsPartialRepaint: " << inputData.supportsPartialRepaint << " hasEmptyDirtyRegion: " << inputData.hasEmptyDirtyRegion;
+    ts << "displayRequirement: " << outputData.displayRequirement;
+    ts << "bufferCacheIdentifiers: " << outputData.bufferCacheIdentifiers;
     return ts;
 }
 
-TextStream& operator<<(TextStream& ts, const PrepareBackingStoreBuffersOutputData& outputData)
+TextStream& operator<<(TextStream& ts, SwapBuffersDisplayRequirement displayRequirement)
 {
-    ts << outputData.bufferSet << ", has front buffer handle: " << !!outputData.frontBufferHandle << " displayRequirement: " << outputData.displayRequirement;
+    switch (displayRequirement) {
+    case SwapBuffersDisplayRequirement::NeedsFullDisplay: ts << "full display"; break;
+    case SwapBuffersDisplayRequirement::NeedsNormalDisplay: ts << "normal display"; break;
+    case SwapBuffersDisplayRequirement::NeedsNoDisplay: ts << "no display"; break;
+    }
+
     return ts;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,16 +23,47 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import "config.h"
+#import "MediaCapability.h"
 
-#import <Foundation/Foundation.h>
-#import <WebKit/WKBase.h>
+#if ENABLE(PROCESS_CAPABILITIES)
 
-WK_CLASS_DEPRECATED_WITH_REPLACEMENT("WKObject", macos(10.10, 10.14.4), ios(8.0, 12.2))
-@interface WKTypeRefWrapper : NSObject
+#import "ExtensionKitSoftLink.h"
 
-- (id)initWithObject:(WKTypeRef)object;
+namespace WebKit {
 
-@property(readonly) WKTypeRef object;
+static RetainPtr<_SECapabilities> createPlatformCapability(const RegistrableDomain& registrableDomain)
+{
+#if USE(EXTENSIONKIT)
+    if ([get_SECapabilitiesClass() respondsToSelector:@selector(mediaWithWebsite:)])
+        return [get_SECapabilitiesClass() mediaWithWebsite:registrableDomain.string()];
+#else
+    UNUSED_PARAM(url);
+#endif
 
-@end
+    return nil;
+}
+
+MediaCapability::MediaCapability(RegistrableDomain registrableDomain)
+    : m_registrableDomain { WTFMove(registrableDomain) }
+    , m_platformCapability { createPlatformCapability(m_registrableDomain) }
+{
+}
+
+MediaCapability::MediaCapability(const URL& url)
+    : MediaCapability { RegistrableDomain(url) }
+{
+}
+
+String MediaCapability::environmentIdentifier() const
+{
+#if USE(EXTENSIONKIT)
+    return [m_platformCapability mediaEnvironment];
+#else
+    return { };
+#endif
+}
+
+} // namespace WebKit
+
+#endif // ENABLE(PROCESS_CAPABILITIES)

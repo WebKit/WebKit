@@ -48,13 +48,18 @@
 
 - (instancetype)initForExtension:(_WKWebExtension *)extension
 {
+    return [self initForExtension:extension extensionControllerConfiguration:nil];
+}
+
+- (instancetype)initForExtension:(_WKWebExtension *)extension extensionControllerConfiguration:(_WKWebExtensionControllerConfiguration *)configuration
+{
     if (!(self = [super init]))
         return nil;
 
     _yieldMessage = @"";
     _extension = extension;
     _context = [[_WKWebExtensionContext alloc] initForExtension:extension];
-    _controller = [[_WKWebExtensionController alloc] initWithConfiguration:_WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
+    _controller = [[_WKWebExtensionController alloc] initWithConfiguration:configuration ?: _WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
 
     _context._testingMode = YES;
 
@@ -794,26 +799,26 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 namespace TestWebKitAPI {
 namespace Util {
 
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(_WKWebExtension *extension)
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(_WKWebExtension *extension, _WKWebExtensionControllerConfiguration *configuration)
 {
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension extensionControllerConfiguration:configuration]);
     [manager loadAndRun];
     return manager;
 }
 
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources)
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources, _WKWebExtensionControllerConfiguration *configuration)
 {
-    return loadAndRunExtension([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    return loadAndRunExtension([[_WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources], configuration);
 }
 
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *resources)
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *resources, _WKWebExtensionControllerConfiguration *configuration)
 {
-    return loadAndRunExtension([[_WKWebExtension alloc] _initWithResources:resources]);
+    return loadAndRunExtension([[_WKWebExtension alloc] _initWithResources:resources], configuration);
 }
 
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSURL *baseURL)
+RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSURL *baseURL, _WKWebExtensionControllerConfiguration *configuration)
 {
-    return loadAndRunExtension([[_WKWebExtension alloc] initWithResourceBaseURL:baseURL error:nullptr]);
+    return loadAndRunExtension([[_WKWebExtension alloc] initWithResourceBaseURL:baseURL error:nullptr], configuration);
 }
 
 NSData *makePNGData(CGSize size, SEL colorSelector)

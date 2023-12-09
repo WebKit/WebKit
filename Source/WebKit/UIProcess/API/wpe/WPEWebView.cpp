@@ -46,9 +46,12 @@
 #endif
 #include <WebCore/RefPtrCairo.h>
 #include <cairo.h>
-#include <wpe/wpe-platform.h>
 #include <wpe/wpe.h>
 #include <wtf/NeverDestroyed.h>
+
+#if ENABLE(WPE_PLATFORM)
+#include <wpe/wpe-platform.h>
+#endif
 
 using namespace WebKit;
 
@@ -60,7 +63,11 @@ static Vector<View*>& viewsVector()
     return vector;
 }
 
+#if ENABLE(WPE_PLATFORM)
 View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::PageConfiguration& baseConfiguration)
+#else
+    View::View(struct wpe_view_backend* backend, const API::PageConfiguration& baseConfiguration)
+#endif
     : m_client(makeUnique<API::ViewClient>())
 #if ENABLE(TOUCH_EVENTS)
     , m_touchGestureController(makeUnique<TouchGestureController>())
@@ -70,7 +77,11 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
     , m_viewStateFlags { WebCore::ActivityState::WindowIsActive, WebCore::ActivityState::IsFocused, WebCore::ActivityState::IsVisible, WebCore::ActivityState::IsInWindow }
     , m_backend(backend)
 {
+#if ENABLE(WPE_PLATFORM)
     ASSERT(m_backend || display);
+#else
+    ASSERT(m_backend);
+#endif
 
     auto configuration = baseConfiguration.copy();
     auto* preferences = configuration->preferences();
@@ -91,6 +102,8 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
         configuration->setProcessPool(pool);
     }
     m_pageProxy = pool->createWebPage(*m_pageClient, WTFMove(configuration));
+
+#if ENABLE(WPE_PLATFORM)
     if (display) {
         m_wpeView = adoptGRef(wpe_view_new(display));
         m_size.setWidth(wpe_view_get_width(m_wpeView.get()));
@@ -223,6 +236,7 @@ View::View(struct wpe_view_backend* backend, WPEDisplay* display, const API::Pag
         }), this);
         m_backingStore = AcceleratedBackingStoreDMABuf::create(*m_pageProxy, m_wpeView.get());
     }
+#endif
 
 #if ENABLE(MEMORY_SAMPLER)
     if (getenv("WEBKIT_SAMPLE_MEMORY"))
@@ -471,9 +485,13 @@ View::~View()
     }
 
     viewsVector().removeAll(this);
+
+#if ENABLE(WPE_PLATFORM)
     if (m_wpeView)
         g_signal_handlers_disconnect_by_data(m_wpeView.get(), this);
     m_backingStore = nullptr;
+#endif
+
 #if ENABLE(ACCESSIBILITY)
     if (m_accessible)
         webkitWebViewAccessibleSetWebView(m_accessible.get(), nullptr);
@@ -612,6 +630,7 @@ void View::willEnterFullScreen()
     m_fullscreenState = WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen;
 }
 
+#if ENABLE(WPE_PLATFORM)
 void View::enterFullScreen()
 {
     ASSERT(m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen);
@@ -639,6 +658,7 @@ void View::didEnterFullScreen()
         fullScreenManagerProxy->didEnterFullScreen();
     m_fullscreenState = WebFullScreenManagerProxy::FullscreenState::InFullscreen;
 }
+#endif
 
 void View::willExitFullScreen()
 {
@@ -649,6 +669,7 @@ void View::willExitFullScreen()
     m_fullscreenState = WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen;
 }
 
+#if ENABLE(WPE_PLATFORM)
 void View::exitFullScreen()
 {
     ASSERT(m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::ExitingFullscreen);
@@ -683,10 +704,13 @@ void View::requestExitFullScreen()
     if (auto* fullScreenManagerProxy = page().fullScreenManager())
         fullScreenManagerProxy->requestExitFullScreen();
 }
+#endif
 
 bool View::setFullScreen(bool fullScreenState)
 {
+#if ENABLE(WPE_PLATFORM)
     ASSERT(!m_wpeView);
+#endif
 #if WPE_CHECK_VERSION(1, 11, 1)
     if (m_backend && !wpe_view_backend_platform_set_fullscreen(m_backend, fullScreenState))
         return false;
@@ -742,6 +766,7 @@ WebKit::WebPageProxy* View::platformWebPageProxyForGamepadInput()
 }
 #endif
 
+#if ENABLE(WPE_PLATFORM)
 void View::updateAcceleratedSurface(uint64_t surfaceID)
 {
     if (m_backingStore)
@@ -783,9 +808,11 @@ Vector<WebKit::WebPlatformTouchPoint> View::touchPointsForEvent(WPEEvent* event)
     return points;
 }
 #endif
+#endif
 
 void View::setCursor(const WebCore::Cursor& cursor)
 {
+#if ENABLE(WPE_PLATFORM)
     if (!m_wpeView)
         return;
 
@@ -901,6 +928,9 @@ void View::setCursor(const WebCore::Cursor& cursor)
 
     WebCore::IntPoint hotspot = WebCore::determineHotSpot(image.get(), cursor.hotSpot());
     wpe_view_set_cursor_from_bytes(m_wpeView.get(), bytes.get(), width, height, hotspot.x(), hotspot.y());
+#else
+    UNUSED_PARAM(cursor);
+#endif
 }
 
 } // namespace WKWPE

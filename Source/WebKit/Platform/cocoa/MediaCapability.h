@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,35 +23,48 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "WKTypeRefWrapper.h"
+#pragma once
 
-#import "WKRetainPtr.h"
+#if ENABLE(PROCESS_CAPABILITIES)
 
-@interface WKTypeRefWrapper () {
-    // Underlying WKTypeRef.
-    WKRetainPtr<WKTypeRef> _object;
-}
-@end
+#include "ProcessCapability.h"
+#include <WebCore/RegistrableDomain.h>
+#include <wtf/Forward.h>
+#include <wtf/WeakPtr.h>
 
-ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
-@implementation WKTypeRefWrapper
-ALLOW_DEPRECATED_IMPLEMENTATIONS_END
+namespace WebKit {
 
-- (id)initWithObject:(WKTypeRef)object
-{
-    self = [super init];
-    if (!self)
-        return nil;
+class ProcessCapabilityGrant;
 
-    _object = object;
+using WebCore::RegistrableDomain;
 
-    return self;
-}
+class MediaCapability final : public ProcessCapability, public CanMakeWeakPtr<MediaCapability> {
+public:
+    explicit MediaCapability(RegistrableDomain);
+    explicit MediaCapability(const URL&);
 
-- (WKTypeRef)object
-{
-    return _object.get();
-}
+    enum class State : uint8_t {
+        Inactive,
+        Activating,
+        Active,
+        Deactivating,
+    };
 
-@end
+    State state() const { return m_state; }
+    void setState(State state) { m_state = state; }
+
+    const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
+
+    // ProcessCapability
+    String environmentIdentifier() const final;
+    RetainPtr<_SECapabilities> platformCapability() const final { return m_platformCapability.get(); }
+
+private:
+    State m_state { State::Inactive };
+    RegistrableDomain m_registrableDomain;
+    RetainPtr<_SECapabilities> m_platformCapability;
+};
+
+} // namespace WebKit
+
+#endif // ENABLE(PROCESS_CAPABILITIES)

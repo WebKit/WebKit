@@ -55,6 +55,8 @@ public:
     void unregisterContentScripts(NSDictionary *filter, Ref<WebExtensionCallbackHandler>&&, NSString **outExceptionString);
 
 private:
+    friend class WebExtensionContext;
+
     bool hasValidExecutionWorld(NSDictionary *script, NSString **outExceptionString);
 
     bool validateScript(NSDictionary *, NSString **outExceptionString);
@@ -67,7 +69,7 @@ private:
     void parseCSSInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&);
     void parseTargetInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&, NSString **outExceptionString);
     void parseScriptInjectionOptions(NSDictionary *, WebExtensionScriptInjectionParameters&);
-    void parseRegisteredContentScripts(NSArray *, FirstTimeRegistration, Vector<WebExtensionRegisteredScriptParameters>&);
+    static void parseRegisteredContentScripts(NSArray *, FirstTimeRegistration, Vector<WebExtensionRegisteredScriptParameters>&);
 
 #endif
 };

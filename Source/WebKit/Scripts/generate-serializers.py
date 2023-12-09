@@ -729,6 +729,7 @@ def decode_type(type):
 
     if type.members_are_subclasses:
         result.append('    auto type = decoder.decode<' + type.subclass_enum_name() + '>();')
+        result.append('    UNUSED_PARAM(type);')
         result.append('    if (UNLIKELY(!decoder.isValid()))')
         result.append('        return std::nullopt;')
         result.append('')
@@ -850,10 +851,14 @@ def generate_one_impl(type, template_argument):
         result.append('enum class ' + type.subclass_enum_name() + " : IPC::EncodedVariantIndex {")
         for idx in range(0, len(type.members)):
             member = type.members[idx]
-            if idx == len(type.members) - 1:
+            if member.condition is not None:
+                result.append('#if ' + member.condition)
+            if idx == 0:
                 result.append('    ' + member.name)
             else:
-                result.append('    ' + member.name + ',')
+                result.append('    , ' + member.name)
+            if member.condition is not None:
+                result.append('#endif')
         result.append('};')
         result.append('')
     for encoder in type.encoders:
@@ -991,6 +996,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
             result.append('#if ' + type.condition)
         result.append('template<> bool ' + type.function_name_for_enum() + '<IPC::' + type.subclass_enum_name() + ', void>(IPC::EncodedVariantIndex value)')
         result.append('{')
+        result.append('IGNORE_WARNINGS_BEGIN("switch-unreachable")')
         result.append('    switch (static_cast<IPC::' + type.subclass_enum_name() + '>(value)) {')
         for member in type.members:
             if member.condition is not None:
@@ -1002,6 +1008,7 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
         result.append('    default:')
         result.append('        return false;')
         result.append('    }')
+        result.append('IGNORE_WARNINGS_END')
         result.append('}')
         if type.condition is not None:
             result.append('#endif')
@@ -1076,7 +1083,15 @@ def generate_one_serialized_type_info(type):
         return result
     result.append('        { "' + type.name_declaration_for_serialized_type_info() + '"_s, {')
     if type.members_are_subclasses:
-        result.append('            { "std::variant<' + ', '.join([member.namespace + '::' + member.name for member in type.members]) + '>"_s, "subclasses"_s }')
+        result.append('            { "std::variant<"')
+        for i in range(len(type.members)):
+            member = type.members[i]
+            if member.condition is not None:
+                result.append('#if ' + member.condition)
+            result.append('                "' + ('' if i == 0 else ', ') + member.namespace + '::' + member.name + '"')
+            if member.condition is not None:
+                result.append('#endif')
+        result.append('            ">"_s, "subclasses"_s }')
         result.append('        } },')
         return result
 
@@ -1352,7 +1367,7 @@ def parse_serialized_types(file):
             match = re.search(r'(.*)::(.*)', line.strip(' ,'))
             if match:
                 subclass_namespace, subclass_name = match.groups()
-                subclass_member = MemberVariable("subclass", subclass_name, None, [], namespace=subclass_namespace, is_subclass=True)
+                subclass_member = MemberVariable("subclass", subclass_name, member_condition, [], namespace=subclass_namespace, is_subclass=True)
                 members.append(subclass_member)
             continue
 

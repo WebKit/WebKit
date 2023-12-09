@@ -35,6 +35,7 @@
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 #import <WebCore/LinkDecorationFilteringData.h>
+#import <WebCore/OrganizationStorageAccessPromptQuirk.h>
 #endif
 
 OBJC_CLASS WKWebPrivacyNotificationListener;
@@ -85,6 +86,46 @@ private:
     RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
     Vector<WebCore::LinkDecorationFilteringData> m_cachedStrings;
     WeakHashSet<LinkDecorationFilteringDataObserver> m_observers;
+};
+
+class StorageAccessPromptQuirkObserver : public RefCounted<StorageAccessPromptQuirkObserver>, public CanMakeWeakPtr<StorageAccessPromptQuirkObserver> {
+public:
+    static Ref<StorageAccessPromptQuirkObserver> create(Function<void()>&& callback)
+    {
+        return adoptRef(*new StorageAccessPromptQuirkObserver(WTFMove(callback)));
+    }
+
+    ~StorageAccessPromptQuirkObserver() = default;
+
+    void invokeCallback() { m_callback(); }
+
+private:
+    explicit StorageAccessPromptQuirkObserver(Function<void()>&& callback)
+        : m_callback { WTFMove(callback) }
+    {
+    }
+
+    Function<void()> m_callback;
+};
+
+class StorageAccessPromptQuirkController {
+public:
+    static StorageAccessPromptQuirkController& shared();
+
+    const Vector<WebCore::OrganizationStorageAccessPromptQuirk>& cachedQuirks() const { return m_cachedQuirks; }
+    void updateQuirks(CompletionHandler<void()>&&);
+    void setCachedQuirksForTesting(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&&);
+
+    Ref<StorageAccessPromptQuirkObserver> observeUpdates(Function<void()>&&);
+
+private:
+    friend class NeverDestroyed<StorageAccessPromptQuirkController, MainThreadAccessTraits>;
+    StorageAccessPromptQuirkController() = default;
+    void setCachedQuirks(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&&);
+
+    RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
+    Vector<WebCore::OrganizationStorageAccessPromptQuirk> m_cachedQuirks;
+    WeakHashSet<StorageAccessPromptQuirkObserver> m_observers;
 };
 
 void configureForAdvancedPrivacyProtections(NSURLSession *);

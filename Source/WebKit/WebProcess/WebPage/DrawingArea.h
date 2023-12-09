@@ -164,7 +164,7 @@ public:
     virtual bool enterAcceleratedCompositingModeIfNeeded() = 0;
 #endif
 
-#if PLATFORM(WPE) && USE(GBM)
+#if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
     virtual void preferredBufferFormatsDidChange() { }
 #endif
 

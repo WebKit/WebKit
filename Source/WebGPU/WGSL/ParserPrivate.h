@@ -29,6 +29,7 @@
 #include "ASTBuilder.h"
 #include "ASTExpression.h"
 #include "ASTForward.h"
+#include "ASTFunction.h"
 #include "ASTStatement.h"
 #include "ASTStructure.h"
 #include "ASTVariable.h"
@@ -63,7 +64,7 @@ public:
     Result<AST::Identifier> parseIdentifier();
     Result<void> parseEnableDirective();
     Result<void> parseRequireDirective();
-    Result<void> parseGlobalDecl();
+    Result<AST::Declaration::Ref> parseDeclaration();
     Result<AST::Attribute::List> parseAttributes();
     Result<AST::Attribute::Ref> parseAttribute();
     Result<AST::Structure::Ref> parseStructure(AST::Attribute::List&&);

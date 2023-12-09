@@ -86,6 +86,10 @@
 #include <WebCore/WebMediaSessionManagerClient.h>
 #endif
 
+#if ENABLE(PROCESS_CAPABILITIES)
+#include "MediaCapability.h"
+#endif
+
 namespace WebKit {
 
 struct PrivateClickMeasurementAndMetadata {
@@ -297,6 +301,10 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
 
 #if ENABLE(WEBXR) && !USE(OPENXR)
     std::unique_ptr<PlatformXRSystem> xrSystem;
+#endif
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    std::optional<MediaCapability> mediaCapability;
 #endif
 
     explicit Internals(WebPageProxy&);

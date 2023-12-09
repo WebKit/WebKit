@@ -138,6 +138,7 @@ set(WebKit_MESSAGES_IN_FILES
     GPUProcess/graphics/RemoteDisplayListRecorder
     GPUProcess/graphics/RemoteGraphicsContextGL
     GPUProcess/graphics/RemoteImageBuffer
+    GPUProcess/graphics/RemoteImageBufferSet
     GPUProcess/graphics/RemoteRenderingBackend
 
     GPUProcess/graphics/WebGPU/RemoteAdapter
@@ -427,6 +428,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/URLSchemeTaskParameters.serialization.in
     Shared/UpdateInfo.serialization.in
     Shared/UserContentControllerParameters.serialization.in
+    Shared/UserData.serialization.in
     Shared/VisibleContentRectUpdateInfo.serialization.in
     Shared/WTFArgumentCoders.serialization.in
     Shared/WebBackForwardListCounts.serialization.in
@@ -459,6 +461,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/API/APIFrameHandle.serialization.in
     Shared/API/APIGeometry.serialization.in
     Shared/API/APINumber.serialization.in
+    Shared/API/APIObject.serialization.in
     Shared/API/APIPageHandle.serialization.in
     Shared/API/APISerializedScriptValue.serialization.in
     Shared/API/APIString.serialization.in

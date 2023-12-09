@@ -43,12 +43,17 @@
 #if USE(CG)
 #include "ImageBufferUtilitiesCG.h"
 #endif
+
 #if USE(CAIRO)
 #include "ImageBufferUtilitiesCairo.h"
 #endif
 
 #if HAVE(IOSURFACE)
 #include "ImageBufferIOSurfaceBackend.h"
+#endif
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+#include "DynamicContentScalingDisplayList.h"
 #endif
 
 namespace WebCore {
@@ -78,7 +83,7 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingPurpose 
     return create<ImageBufferPlatformBitmapBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
 }
 
-ImageBuffer::ImageBuffer(Parameters parameters, const ImageBufferBackend::Info& backendInfo, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier renderingResourceIdentifier)
+ImageBuffer::ImageBuffer(Parameters parameters, const ImageBufferBackend::Info& backendInfo, const WebCore::ImageBufferCreationContext&, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier renderingResourceIdentifier)
     : m_parameters(parameters)
     , m_backendInfo(backendInfo)
     , m_backend(WTFMove(backend))
@@ -513,6 +518,13 @@ ImageBufferBackendSharing* ImageBuffer::toBackendSharing()
         return backend->toBackendSharing();
     return nullptr;
 }
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+std::optional<DynamicContentScalingDisplayList> ImageBuffer::dynamicContentScalingDisplayList()
+{
+    return std::nullopt;
+}
+#endif
 
 void ImageBuffer::transferToNewContext(const ImageBufferCreationContext& context)
 {

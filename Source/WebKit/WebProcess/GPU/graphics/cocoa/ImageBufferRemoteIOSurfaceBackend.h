@@ -76,7 +76,6 @@ private:
     ImageBufferBackendSharing* toBackendSharing() final { return this; }
     void setBackendHandle(ImageBufferBackendHandle&&) final;
     void clearBackendHandle() final;
-    bool hasBackendHandle() const final;
 
     String debugDescription() const final;
 

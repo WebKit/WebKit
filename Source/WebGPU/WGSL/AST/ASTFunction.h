@@ -44,11 +44,8 @@ class Function final : public Declaration {
     friend AttributeValidator;
 
 public:
-    using Ref = std::reference_wrapper<Function>;
-    using List = ReferenceWrapperVector<Function>;
-
     NodeKind kind() const override;
-    Identifier& name() { return m_name; }
+    Identifier& name() override { return m_name; }
     Parameter::List& parameters() { return m_parameters; }
     Attribute::List& attributes() { return m_attributes; }
     Attribute::List& returnAttributes() { return m_returnAttributes; }

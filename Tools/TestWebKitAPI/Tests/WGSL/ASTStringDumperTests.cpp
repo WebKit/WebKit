@@ -68,7 +68,7 @@ TEST(WGSLASTDumperTests, dumpTriangleVert)
         "{\n"
         "    var pos = array<vec2<f32>, 3>(vec2<f32>(0.000000, 0.500000), vec2<f32>(-0.500000, -0.500000), vec2<f32>(0.500000, -0.500000));\n"
         "    return vec4<f32>(pos[VertexIndex], 0.000000, 1.000000);\n"
-        "}\n\n\n"_str);
+        "}\n\n"_str);
 }
 
 } // namespace TestWGSLAPI

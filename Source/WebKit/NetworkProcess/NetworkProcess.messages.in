@@ -83,6 +83,7 @@ messages -> NetworkProcess LegacyReceiver {
     ClearUserInteraction(PAL::SessionID sessionID, WebCore::RegistrableDomain resourceDomain) -> ()
     DumpResourceLoadStatistics(PAL::SessionID sessionID) -> (String dumpedStatistics)
     SetTrackingPreventionEnabled(PAL::SessionID sessionID, bool enabled)
+    UpdateStorageAccessPromptQuirks(Vector<WebCore::OrganizationStorageAccessPromptQuirk> organizationStorageAccessQuirks)
     SetResourceLoadStatisticsLogTestingEvent(bool enabled)
     UpdatePrevalentDomainsToBlockCookiesFor(PAL::SessionID sessionID, Vector<WebCore::RegistrableDomain> domainsToBlock) -> ()
     IsGrandfathered(PAL::SessionID sessionID, WebCore::RegistrableDomain targetDomain) -> (bool isGrandfathered)

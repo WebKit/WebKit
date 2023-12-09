@@ -36,6 +36,7 @@
 #include "RemoteImageBufferMessages.h"
 #include "RemoteImageBufferProxy.h"
 #include "RemoteImageBufferProxyMessages.h"
+#include "RemoteImageBufferSetProxy.h"
 #include "RemoteRenderingBackendMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "SwapBuffersDisplayRequirement.h"
@@ -134,6 +135,11 @@ void RemoteRenderingBackendProxy::didClose(IPC::Connection&)
     disconnectGPUProcess();
     // Note: The cache will call back to this to setup a new connection.
     m_remoteResourceCacheProxy.remoteResourceCacheWasDestroyed();
+
+    for (auto bufferSet : m_bufferSets) {
+        bufferSet.value->remoteBufferSetWasDestroyed();
+        send(Messages::RemoteRenderingBackend::CreateRemoteImageBufferSet(bufferSet.value->identifier(), bufferSet.value->displayListResourceIdentifier()));
+    }
 }
 
 void RemoteRenderingBackendProxy::disconnectGPUProcess()
@@ -180,11 +186,48 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
     return nullptr;
 }
 
+std::unique_ptr<RemoteDisplayListRecorderProxy> RemoteRenderingBackendProxy::createDisplayListRecorder(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, const FloatSize& size, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, PixelFormat pixelFormat, OptionSet<ImageBufferOptions> options)
+{
+    ASSERT(WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM));
+    ImageBufferParameters parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
+    auto renderingMode = RenderingMode::Unaccelerated;
+    auto transform = ImageBufferBackend::calculateBaseTransform(ImageBuffer::backendParameters(parameters), ImageBufferShareableBitmapBackend::isOriginAtBottomLeftCorner);
+
+#if HAVE(IOSURFACE)
+    if (options.contains(ImageBufferOptions::Accelerated)) {
+        renderingMode = RenderingMode::Accelerated;
+        transform = ImageBufferBackend::calculateBaseTransform(ImageBuffer::backendParameters(parameters), ImageBufferRemoteIOSurfaceBackend::isOriginAtBottomLeftCorner);
+    }
+#endif
+
+    return makeUnique<RemoteDisplayListRecorderProxy>(*this, renderingResourceIdentifier, colorSpace, renderingMode, FloatRect { { }, size }, transform);
+}
+
 void RemoteRenderingBackendProxy::releaseImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (!m_streamConnection)
         return;
     send(Messages::RemoteRenderingBackend::ReleaseImageBuffer(renderingResourceIdentifier));
+}
+
+RefPtr<RemoteImageBufferSetProxy>  RemoteRenderingBackendProxy::createRemoteImageBufferSet()
+{
+    RefPtr<RemoteImageBufferSetProxy> result = adoptRef(new RemoteImageBufferSetProxy(*this));
+    send(Messages::RemoteRenderingBackend::CreateRemoteImageBufferSet(result->identifier(), result->displayListResourceIdentifier()));
+
+    auto addResult = m_bufferSets.add(result->identifier(), result);
+    ASSERT_UNUSED(addResult, addResult.isNewEntry);
+    return result;
+}
+
+void RemoteRenderingBackendProxy::releaseRemoteImageBufferSet(RemoteImageBufferSetProxy& bufferSet)
+{
+    bool success = m_bufferSets.remove(bufferSet.identifier());
+    ASSERT_UNUSED(success, success);
+
+    if (!m_streamConnection)
+        return;
+    send(Messages::RemoteRenderingBackend::ReleaseRemoteImageBufferSet(bufferSet.identifier()));
 }
 
 void RemoteRenderingBackendProxy::moveToSerializedBuffer(WebCore::RenderingResourceIdentifier identifier)
@@ -315,117 +358,85 @@ void RemoteRenderingBackendProxy::releaseAllImageResources()
 }
 
 #if PLATFORM(COCOA)
-auto RemoteRenderingBackendProxy::prepareBuffersForDisplay(const Vector<LayerPrepareBuffersData>& prepareBuffersInput) -> Vector<SwapBuffersResult>
+void RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay(Vector<LayerPrepareBuffersData>&& prepareBuffersInput, CompletionHandler<void(Vector<SwapBuffersResult>&&)> callback)
 {
-    if (prepareBuffersInput.isEmpty())
-        return { };
+    if (prepareBuffersInput.isEmpty()) {
+        callback(Vector<SwapBuffersResult>());
+        return;
+    }
 
-    auto bufferIdentifier = [](ImageBuffer* buffer) -> std::optional<RenderingResourceIdentifier> {
-        if (!buffer)
-            return std::nullopt;
-        return buffer->renderingResourceIdentifier();
-    };
-
-    auto clearBackendHandle = [](ImageBuffer* buffer) {
-        if (!buffer)
-            return;
-
-        auto* sharing = buffer->toBackendSharing();
-        if (is<ImageBufferBackendHandleSharing>(sharing))
-            downcast<ImageBufferBackendHandleSharing>(*sharing).clearBackendHandle();
-    };
+    bool needsSync = false;
 
     auto inputData = WTF::map(prepareBuffersInput, [&](auto& perLayerData) {
-        // Clear all the buffer's MachSendRights to avoid all the surfaces appearing to be in-use.
-        // We get back the new front buffer's MachSendRight in the reply.
-        clearBackendHandle(perLayerData.buffers.front.get());
-        clearBackendHandle(perLayerData.buffers.back.get());
-        clearBackendHandle(perLayerData.buffers.secondaryBack.get());
+        // If the front buffer might be volatile, then we have to wait for the callback
+        // to find out we were able to copy pixels from it or if it had been discarded.
+        if (perLayerData.bufferSet->requestedVolatility().contains(BufferInSetType::Front))
+            needsSync = true;
 
-        return PrepareBackingStoreBuffersInputData {
-            {
-                bufferIdentifier(perLayerData.buffers.front.get()),
-                bufferIdentifier(perLayerData.buffers.back.get()),
-                bufferIdentifier(perLayerData.buffers.secondaryBack.get())
-            },
+        // Using the  will mark buffers as non-volatile and
+        // we don't know exactly which. Assume they all are non-volatile.
+        perLayerData.bufferSet->clearVolatilityUntilAfter(m_currentVolatilityRequest);
+        perLayerData.bufferSet->willPrepareForDisplay();
+
+        return ImageBufferSetPrepareBufferForDisplayInputData {
+            perLayerData.bufferSet->identifier(),
+            perLayerData.dirtyRegion,
             perLayerData.supportsPartialRepaint,
-            perLayerData.hasEmptyDirtyRegion
+            perLayerData.hasEmptyDirtyRegion,
+            perLayerData.requiresClearedPixels,
         };
     });
 
-    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteRenderingBackendProxy::prepareBuffersForDisplay - input buffers  " << inputData);
+    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay - input buffers  " << inputData);
 
-    Vector<PrepareBackingStoreBuffersOutputData> outputData;
-    auto sendResult = sendSync(Messages::RemoteRenderingBackend::PrepareBuffersForDisplay(inputData));
-    if (!sendResult.succeeded()) {
-        // GPU Process crashed. Set the output data to all null buffers, requiring a full display.
-        RELEASE_LOG(RemoteLayerBuffers, "[pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", renderingBackend=%" PRIu64 "] RemoteRenderingBackendProxy::prepareBuffersForDisplay - prepareBuffersForDisplay returned error: %" PUBLIC_LOG_STRING,
-            m_parameters.pageProxyID.toUInt64(), m_parameters.pageID.toUInt64(), m_parameters.identifier.toUInt64(), IPC::errorAsString(sendResult.error));
-        outputData.grow(inputData.size());
-        for (auto& perLayerOutputData : outputData)
-            perLayerOutputData.displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
-    } else
-        std::tie(outputData) = sendResult.takeReply();
+    m_prepareReply = streamConnection().sendWithAsyncReply(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplay(inputData), [prepareBuffersInput = WTFMove(prepareBuffersInput), callback = WTFMove(callback)](Vector<ImageBufferSetPrepareBufferForDisplayOutputData>&& outputData) mutable {
+        Vector<SwapBuffersResult> result;
+        for (auto& data : outputData)
+            result.append(SwapBuffersResult { WTFMove(data.backendHandle), data.displayRequirement, data.bufferCacheIdentifiers });
+        callback(WTFMove(result));
+    }, renderingBackendIdentifier(), defaultTimeout);
 
-    RELEASE_ASSERT_WITH_MESSAGE(inputData.size() == outputData.size(), "PrepareBuffersForDisplay: mismatched buffer vector sizes");
+    if (needsSync)
+        ensurePrepareCompleted();
+}
 
-    LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteRenderingBackendProxy::prepareBuffersForDisplay - output buffers " << outputData);
-
-    auto fetchBufferWithIdentifier = [&](std::optional<RenderingResourceIdentifier> identifier, std::optional<ImageBufferBackendHandle>&& handle = std::nullopt, bool isFrontBuffer = false) -> RefPtr<ImageBuffer> {
-        if (!identifier)
-            return nullptr;
-
-        auto buffer = m_remoteResourceCacheProxy.cachedImageBuffer(*identifier);
-        if (!buffer)
-            return nullptr;
-
-        if (handle) {
-            auto* sharing = buffer->toBackendSharing();
-            if (is<ImageBufferBackendHandleSharing>(sharing))
-                downcast<ImageBufferBackendHandleSharing>(*sharing).setBackendHandle(WTFMove(*handle));
-        }
-
-        if (isFrontBuffer) {
-            // We know the GPU Process always sets the new front buffer to be non-volatile.
-            buffer->setVolatilityState(VolatilityState::NonVolatile);
-        }
-
-        return buffer;
-    };
-
-    return WTF::map(outputData, [&](auto&& perLayerOutputData) {
-        return SwapBuffersResult {
-            {
-                fetchBufferWithIdentifier(perLayerOutputData.bufferSet.front, WTFMove(perLayerOutputData.frontBufferHandle), true),
-                fetchBufferWithIdentifier(perLayerOutputData.bufferSet.back),
-                fetchBufferWithIdentifier(perLayerOutputData.bufferSet.secondaryBack)
-            },
-            perLayerOutputData.displayRequirement
-        };
-    });
+void RemoteRenderingBackendProxy::ensurePrepareCompleted()
+{
+    if (m_prepareReply) {
+        streamConnection().waitForAsyncReplyAndDispatchImmediately<Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplay>(m_prepareReply, defaultTimeout);
+        m_prepareReply = { };
+    }
 }
 #endif
 
-void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<WebCore::RenderingResourceIdentifier>&& identifiers, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteRenderingBackendProxy::markSurfacesVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&& bufferSets, CompletionHandler<void(bool)>&& completionHandler)
 {
-    auto requestIdentifier = MarkSurfacesAsVolatileRequestIdentifier::generate();
-    m_markAsVolatileRequests.add(requestIdentifier, WTFMove(completionHandler));
+    Vector<std::pair<RemoteImageBufferSetIdentifier, OptionSet<BufferInSetType>>> identifiers;
+    for (auto& pair : bufferSets) {
+        identifiers.append(std::make_pair(pair.first->identifier(), pair.second));
+        pair.first->addRequestedVolatility(pair.second);
+    }
+    m_currentVolatilityRequest = MarkSurfacesAsVolatileRequestIdentifier::generate();
+    m_markAsVolatileRequests.add(m_currentVolatilityRequest, WTFMove(completionHandler));
 
-    send(Messages::RemoteRenderingBackend::MarkSurfacesVolatile(requestIdentifier, identifiers));
+    send(Messages::RemoteRenderingBackend::MarkSurfacesVolatile(m_currentVolatilityRequest, identifiers));
 }
 
-void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, const Vector<WebCore::RenderingResourceIdentifier>& markedVolatileBufferIdentifiers, bool didMarkAllLayersAsVolatile)
+void RemoteRenderingBackendProxy::didMarkLayersAsVolatile(MarkSurfacesAsVolatileRequestIdentifier requestIdentifier, Vector<std::pair<RemoteImageBufferSetIdentifier, OptionSet<BufferInSetType>>> markedBufferSets, bool didMarkAllLayersAsVolatile)
 {
     ASSERT(requestIdentifier);
     auto completionHandler = m_markAsVolatileRequests.take(requestIdentifier);
     if (!completionHandler)
         return;
 
-    for (auto identifier : markedVolatileBufferIdentifiers) {
-        auto imageBuffer = m_remoteResourceCacheProxy.cachedImageBuffer(identifier);
-        if (imageBuffer)
-            imageBuffer->setVolatilityState(WebCore::VolatilityState::Volatile);
+    for (auto& bufferSetIdentifierAndType : markedBufferSets) {
+        auto bufferSet = m_bufferSets.get(bufferSetIdentifierAndType.first);
+        if (!bufferSet)
+            continue;
+
+        bufferSet->setConfirmedVolatility(requestIdentifier, bufferSetIdentifierAndType.second);
     }
+
     completionHandler(didMarkAllLayersAsVolatile);
 }
 

@@ -37,11 +37,15 @@ struct wpe_view_backend;
 typedef struct _WPEDisplay WPEDisplay;
 typedef struct _WPEView WPEView;
 
+#if ENABLE(WPE_PLATFORM)
 WK_EXPORT WKViewRef WKViewCreate(WPEDisplay*, WKPageConfigurationRef);
+#endif
 WK_EXPORT WKViewRef WKViewCreateDeprecated(struct wpe_view_backend*, WKPageConfigurationRef);
 
 WK_EXPORT WKPageRef WKViewGetPage(WKViewRef);
+#if ENABLE(WPE_PLATFORM)
 WK_EXPORT WPEView*  WKViewGetView(WKViewRef);
+#endif
 
 #ifdef __cplusplus
 }

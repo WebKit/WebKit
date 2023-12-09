@@ -268,7 +268,7 @@ void WebExtensionContext::declarativeNetRequestGetMatchedRules(std::optional<Web
 _WKWebExtensionDeclarativeNetRequestSQLiteStore *WebExtensionContext::declarativeNetRequestDynamicRulesStore()
 {
     if (!m_declarativeNetRequestDynamicRulesStore)
-        m_declarativeNetRequestDynamicRulesStore = [[_WKWebExtensionDeclarativeNetRequestSQLiteStore alloc] initWithUniqueIdentifier:uniqueIdentifier() storageType:_WKWebExtensionDeclarativeNetRequestStorageType::Dynamic directory:m_storageDirectory usesInMemoryDatabase:!storageIsPersistent()];
+        m_declarativeNetRequestDynamicRulesStore = [[_WKWebExtensionDeclarativeNetRequestSQLiteStore alloc] initWithUniqueIdentifier:uniqueIdentifier() storageType:_WKWebExtensionDeclarativeNetRequestStorageType::Dynamic directory:storageDirectory() usesInMemoryDatabase:!storageIsPersistent()];
 
     return m_declarativeNetRequestDynamicRulesStore.get();
 }
@@ -276,7 +276,7 @@ _WKWebExtensionDeclarativeNetRequestSQLiteStore *WebExtensionContext::declarativ
 _WKWebExtensionDeclarativeNetRequestSQLiteStore *WebExtensionContext::declarativeNetRequestSessionRulesStore()
 {
     if (!m_declarativeNetRequestSessionRulesStore)
-        m_declarativeNetRequestSessionRulesStore = [[_WKWebExtensionDeclarativeNetRequestSQLiteStore alloc] initWithUniqueIdentifier:uniqueIdentifier() storageType:_WKWebExtensionDeclarativeNetRequestStorageType::Session directory:m_storageDirectory usesInMemoryDatabase:YES];
+        m_declarativeNetRequestSessionRulesStore = [[_WKWebExtensionDeclarativeNetRequestSQLiteStore alloc] initWithUniqueIdentifier:uniqueIdentifier() storageType:_WKWebExtensionDeclarativeNetRequestStorageType::Session directory:storageDirectory() usesInMemoryDatabase:YES];
 
     return m_declarativeNetRequestSessionRulesStore.get();
 }
@@ -351,17 +351,23 @@ void WebExtensionContext::declarativeNetRequestUpdateDynamicRules(std::optional<
 {
     auto *ruleIDsToDelete = @[ ];
     if (ruleIDsToDeleteVector) {
-        ruleIDsToDelete = createNSArray(ruleIDsToDeleteVector.value(), [](double ruleID) {
+        ruleIDsToDelete = createNSArray(ruleIDsToDeleteVector.value(), [this, protectedThis = Ref { *this }](double ruleID) -> NSNumber * {
+            if (!m_dynamicRulesIDs.contains(ruleID))
+                return nil;
             return @(ruleID);
         }).get();
     }
 
     NSArray *rulesToAdd = rulesToAddJSON ? parseJSON(rulesToAddJSON.value(), JSONOptions::FragmentsAllowed) : @[ ];
 
-    // FIXME: Make sure that adding these rules won't get us over the maximum number of dynamic + session rules.
-
     if (!ruleIDsToDelete.count && !rulesToAdd.count) {
         completionHandler(std::nullopt);
+        return;
+    }
+
+    auto updatedDynamicRulesCount = m_dynamicRulesIDs.size() + rulesToAdd.count - ruleIDsToDelete.count;
+    if (updatedDynamicRulesCount + m_sessionRulesIDs.size() > webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules) {
+        completionHandler(toErrorString(@"declarativeNetRequest.updateDynamicRules()", nil, @"Failed to add dynamic rules. Maximum number of dynamic and session rules exceeded."));
         return;
     }
 
@@ -384,17 +390,23 @@ void WebExtensionContext::declarativeNetRequestUpdateSessionRules(std::optional<
 {
     auto *ruleIDsToDelete = @[ ];
     if (ruleIDsToDeleteVector) {
-        ruleIDsToDelete = createNSArray(ruleIDsToDeleteVector.value(), [](double ruleID) {
+        ruleIDsToDelete = createNSArray(ruleIDsToDeleteVector.value(), [this, protectedThis = Ref { *this }](double ruleID) -> NSNumber * {
+            if (!m_sessionRulesIDs.contains(ruleID))
+                return nil;
             return @(ruleID);
         }).get();
     }
 
     NSArray *rulesToAdd = rulesToAddJSON ? parseJSON(rulesToAddJSON.value(), JSONOptions::FragmentsAllowed) : @[ ];
 
-    // FIXME: Make sure that adding these rules won't get us over the maximum number of dynamic + session rules.
-
     if (!ruleIDsToDelete.count && !rulesToAdd.count) {
         completionHandler(std::nullopt);
+        return;
+    }
+
+    auto updatedSessionRulesCount = m_sessionRulesIDs.size() + rulesToAdd.count - ruleIDsToDelete.count;
+    if (updatedSessionRulesCount + m_dynamicRulesIDs.size() > webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules) {
+        completionHandler(toErrorString(@"declarativeNetRequest.updateSessionRules()", nil, @"Failed to add session rules. Maximum number of dynamic and session rules exceeded."));
         return;
     }
 

@@ -31,9 +31,12 @@ messages -> RemoteImageBuffer NotRefCounted Stream {
     FilteredNativeImage(Ref<WebCore::Filter> filter) -> (std::optional<WebKit::ShareableBitmap::Handle> handle) Synchronous NotStreamEncodableReply
     ConvertToLuminanceMask()
     TransformToColorSpace(WebCore::DestinationColorSpace colorSpace)
-    SetFlushSignal(IPC::Signal signal) NotStreamEncodable
     FlushContext()
     FlushContextSync() -> () Synchronous
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    DynamicContentScalingDisplayList() -> (std::optional<WebCore::DynamicContentScalingDisplayList> displayList) Synchronous NotStreamEncodableReply
+#endif
 }
 
 #endif

@@ -1,0 +1,4 @@
+hello
+
+PASS transition:all with transition-behavior:allow-discrete should animate discrete properties.
+

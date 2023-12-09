@@ -60,7 +60,7 @@ public:
     NodeKind kind() const override;
     StructureRole role() const { return m_role; }
     StructureRole& role() { return m_role; }
-    Identifier& name() { return m_name; }
+    Identifier& name() override { return m_name; }
     Attribute::List& attributes() { return m_attributes; }
     StructureMember::List& members() { return m_members; }
     Structure* original() const { return m_original; }

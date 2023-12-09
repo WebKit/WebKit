@@ -1978,7 +1978,16 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
     loadParameters.userData = UserData(process->transformObjectsToHandles(userData).get());
     prepareToLoadWebPage(process, loadParameters);
 
-    websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(process->coreProcessIdentifier(), RegistrableDomain(baseURL), LoadedWebArchive::No), [this, protectedThis = Ref { *this }, process, loadParameters = WTFMove(loadParameters), baseURL, unreachableURL, htmlData = WTFMove(htmlData)] () mutable {
+    auto continueLoad = [
+        this,
+        protectedThis = Ref { *this },
+        process,
+        loadParameters = WTFMove(loadParameters),
+        baseURL,
+        unreachableURL,
+        htmlData = WTFMove(htmlData),
+        preventProcessShutdownScope = process->shutdownPreventingScope()
+    ] () mutable {
         loadParameters.data = { htmlData->data(), htmlData->size() };
         process->markProcessAsRecentlyUsed();
         process->assumeReadAccessToBaseURL(*this, baseURL.string());
@@ -1989,7 +1998,9 @@ void WebPageProxy::loadAlternateHTML(Ref<WebCore::DataSegment>&& htmlData, const
             process->addPreviouslyApprovedFileURL(unreachableURL);
         send(Messages::WebPage::LoadAlternateHTML(WTFMove(loadParameters)));
         process->startResponsivenessTimer();
-    });
+    };
+
+    websiteDataStore().protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(process->coreProcessIdentifier(), RegistrableDomain(baseURL), LoadedWebArchive::No), WTFMove(continueLoad));
 }
 
 void WebPageProxy::navigateToPDFLinkWithSimulatedClick(const String& urlString, IntPoint documentPoint, IntPoint screenPoint)
@@ -2675,6 +2686,10 @@ void WebPageProxy::dispatchActivityStateChange()
     internals().potentiallyChangedActivityStateFlags = { };
     m_activityStateChangeWantsSynchronousReply = false;
     m_viewWasEverInWindow |= isNowInWindow;
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    updateMediaCapability();
+#endif
 
 #if PLATFORM(COCOA)
     for (auto& callback : m_activityStateUpdateCallbacks)
@@ -4459,7 +4474,13 @@ void WebPageProxy::continueNavigationInNewProcess(API::Navigation& navigation, W
     };
 
     if (m_provisionalPage->needsCookieAccessAddedInNetworkProcess()) {
-        continuation = [networkProcess = Ref { websiteDataStore().networkProcess() }, continuation = WTFMove(continuation), navigationDomain = RegistrableDomain(navigation.currentRequest().url()), processIdentifier = m_provisionalPage->process().coreProcessIdentifier()] () mutable {
+        continuation = [
+            networkProcess = Ref { websiteDataStore().networkProcess() },
+            continuation = WTFMove(continuation),
+            navigationDomain = RegistrableDomain(navigation.currentRequest().url()),
+            processIdentifier = m_provisionalPage->process().coreProcessIdentifier(),
+            preventProcessShutdownScope = m_provisionalPage->process().shutdownPreventingScope()
+        ] () mutable {
             networkProcess->sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(processIdentifier, navigationDomain, LoadedWebArchive::No), WTFMove(continuation));
         };
     }
@@ -6134,6 +6155,11 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
 #if ENABLE(MEDIA_STREAM)
     if (m_userMediaPermissionRequestManager)
         m_userMediaPermissionRequestManager->didCommitLoadForFrame(frameID);
+#endif
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    if (frame->isMainFrame())
+        updateMediaCapability();
 #endif
 }
 
@@ -9446,6 +9472,10 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     m_advancedPrivacyProtectionsPolicies = { };
 #endif
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    setMediaCapability(std::nullopt);
+#endif
 }
 
 void WebPageProxy::resetStateAfterProcessExited(ProcessTerminationReason terminationReason)
@@ -11213,6 +11243,10 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducerMediaStateFlags newS
     bool mediaStreamingChanges = oldState.contains(MediaProducerMediaState::HasStreamingActivity) != newState.contains(MediaProducerMediaState::HasStreamingActivity);
     if (mediaStreamingChanges)
         process->updateMediaStreamingActivity();
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    updateMediaCapability();
+#endif
 }
 
 void WebPageProxy::updateReportedMediaCaptureState()
@@ -12567,6 +12601,12 @@ void WebPageProxy::clearLoadedSubresourceDomains()
 void WebPageProxy::gpuProcessDidFinishLaunching()
 {
     pageClient().gpuProcessDidFinishLaunching();
+#if ENABLE(PROCESS_CAPABILITIES)
+    if (auto& mediaCapability = this->mediaCapability()) {
+        WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "gpuProcessDidFinishLaunching: [envID=%{public}s] granting media capability", mediaCapability->environmentIdentifier().utf8().data());
+        protectedProcess()->protectedProcessPool()->processCapabilityGranter().grant(*mediaCapability);
+    }
+#endif
 }
 
 void WebPageProxy::gpuProcessExited(ProcessTerminationReason)

@@ -60,7 +60,7 @@ public:
     NodeKind kind() const override;
     VariableFlavor flavor() const { return m_flavor; };
     VariableFlavor& flavor() { return m_flavor; };
-    Identifier& name() { return m_name; }
+    Identifier& name() override { return m_name; }
     Identifier& originalName() { return m_originalName; }
     Attribute::List& attributes() { return m_attributes; }
     VariableQualifier* maybeQualifier() { return m_qualifier; }

@@ -1744,3 +1744,7 @@ no-autospace
 // auto
 // stable
 both-edges
+
+// transition-behavior
+// normal
+allow-discrete

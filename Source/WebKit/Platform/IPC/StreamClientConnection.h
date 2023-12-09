@@ -86,6 +86,7 @@ public:
 
     template<typename T, typename U, typename V>
     Error waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout, OptionSet<WaitForOption> = { });
+    template<typename> Error waitForAsyncReplyAndDispatchImmediately(AsyncReplyID, Timeout);
 
     StreamClientConnectionBuffer& bufferForTesting();
     Connection& connectionForTesting();
@@ -222,6 +223,12 @@ template<typename T, typename U, typename V>
 Error StreamClientConnection::waitForAndDispatchImmediately(ObjectIdentifierGeneric<U, V> destinationID, Timeout timeout, OptionSet<WaitForOption> waitForOptions)
 {
     return m_connection->waitForAndDispatchImmediately<T>(destinationID, timeout, waitForOptions);
+}
+
+template<typename T>
+Error StreamClientConnection::waitForAsyncReplyAndDispatchImmediately(AsyncReplyID replyID, Timeout timeout)
+{
+    return m_connection->waitForAsyncReplyAndDispatchImmediately<T>(replyID, timeout);
 }
 
 template<typename T>

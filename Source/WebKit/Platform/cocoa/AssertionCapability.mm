@@ -32,8 +32,8 @@
 
 namespace WebKit {
 
-AssertionCapability::AssertionCapability(String domain, String name, String environmentIdentifier, Function<void()>&& willInvalidateFunction, Function<void()>&& didInvalidateFunction)
-    : ProcessCapability { WTFMove(environmentIdentifier) }
+AssertionCapability::AssertionCapability(String environmentIdentifier, String domain, String name, Function<void()>&& willInvalidateFunction, Function<void()>&& didInvalidateFunction)
+    : m_environmentIdentifier { WTFMove(environmentIdentifier) }
     , m_domain { WTFMove(domain) }
     , m_name { WTFMove(name) }
     , m_willInvalidateBlock { makeBlockPtr(WTFMove(willInvalidateFunction)) }
@@ -41,9 +41,9 @@ AssertionCapability::AssertionCapability(String domain, String name, String envi
 {
 }
 
-#if USE(EXTENSIONKIT)
 RetainPtr<_SECapabilities> AssertionCapability::platformCapability() const
 {
+#if USE(EXTENSIONKIT)
 #if USE(EXTENSIONKIT_INVALIDATION_CALLBACKS)
     return [get_SECapabilitiesClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:environmentIdentifier() willInvalidate:m_willInvalidateBlock.get() didInvalidate:m_didInvalidateBlock.get()];
 #else
@@ -51,8 +51,10 @@ RetainPtr<_SECapabilities> AssertionCapability::platformCapability() const
         return [get_SECapabilitiesClass() assertionWithDomain:m_domain name:m_name environmentIdentifier:environmentIdentifier()];
     return [get_SECapabilitiesClass() assertionWithDomain:m_domain name:m_name];
 #endif
-}
+#else
+    return nil;
 #endif
+}
 
 } // namespace WebKit
 

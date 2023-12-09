@@ -59,7 +59,6 @@ void GridMasonryLayout::performMasonryPlacement(unsigned gridAxisTracks, GridTra
     m_renderGrid.populateGridPositionsForDirection(GridTrackSizingDirection::ForRows);
 
     // 2.4 Masonry Layout Algorithm
-    addItemsToFirstTrack();
     
     // the insertIntoGridAndLayoutItem() will modify the m_autoFlowNextCursor, so m_autoFlowNextCursor needs to be reset.
     m_autoFlowNextCursor = 0;
@@ -75,7 +74,7 @@ void GridMasonryLayout::performMasonryPlacement(unsigned gridAxisTracks, GridTra
 void GridMasonryLayout::collectMasonryItems()
 {
     ASSERT(m_gridAxisTracksCount);
-    m_firstTrackItems.clear();
+
     m_itemsWithDefiniteGridAxisPosition.shrink(0);
     m_itemsWithIndefiniteGridAxisPosition.shrink(0);
 
@@ -84,10 +83,7 @@ void GridMasonryLayout::collectMasonryItems()
         if (grid.orderIterator().shouldSkipChild(*child))
             continue;
 
-        auto gridArea = grid.gridItemArea(*child);
-        if (m_firstTrackItems.size() != m_gridAxisTracksCount && itemGridAreaStartsAtFirstLine(gridArea, m_masonryAxisDirection) && m_renderGrid.itemGridAreaIsWithinImplicitGrid(gridArea, m_gridAxisTracksCount + 1, gridAxisDirection()))
-            m_firstTrackItems.add(child, gridArea);
-        else if (m_renderGrid.style().masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::Ordered)
+        if (m_renderGrid.style().masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::Ordered)
             m_itemsWithDefiniteGridAxisPosition.append(child);
         else if (m_renderGrid.style().masonryAutoFlow().placementOrder == MasonryAutoFlowPlacementOrder::DefiniteFirst) {
             if (hasDefiniteGridAxisPosition(*child, gridAxisDirection()))
@@ -115,16 +111,6 @@ void GridMasonryLayout::resizeAndResetRunningPositions()
 {
     m_runningPositions.resize(m_gridAxisTracksCount);
     m_runningPositions.fill(LayoutUnit());
-}
-
-void GridMasonryLayout::addItemsToFirstTrack()
-{
-    for (auto& [item, gridArea] : m_firstTrackItems) {
-        ASSERT(item);
-        if (!item)
-            continue;
-        insertIntoGridAndLayoutItem(*item, gridArea);
-    }
 }
 
 void GridMasonryLayout::placeItemsUsingOrderModifiedDocumentOrder()

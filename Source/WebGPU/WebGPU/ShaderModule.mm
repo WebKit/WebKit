@@ -27,6 +27,7 @@
 #import "ShaderModule.h"
 
 #import "APIConversions.h"
+#import "ASTFunction.h"
 #import "Device.h"
 #import "PipelineLayout.h"
 #import "WGSLShaderModule.h"
@@ -157,7 +158,10 @@ ShaderModule::ShaderModule(std::variant<WGSL::SuccessfulCheck, WGSL::FailedCheck
     bool allowVertexDefault = true, allowFragmentDefault = true, allowComputeDefault = true;
     if (std::holds_alternative<WGSL::SuccessfulCheck>(m_checkResult)) {
         auto& check = std::get<WGSL::SuccessfulCheck>(m_checkResult);
-        for (auto& function : check.ast->functions()) {
+        for (auto& declaration : check.ast->declarations()) {
+            if (!is<WGSL::AST::Function>(declaration))
+                continue;
+            auto& function = downcast<WGSL::AST::Function>(declaration);
             if (!function.stage())
                 continue;
             switch (*function.stage()) {

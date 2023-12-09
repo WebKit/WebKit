@@ -543,9 +543,7 @@ void LocalFrameView::didDestroyRenderTree()
     ASSERT(!layoutContext().subtreeLayoutRoot());
     ASSERT(m_widgetsInRenderTree.isEmpty());
 
-    // If the render tree is destroyed below LocalFrameView::updateEmbeddedObjects(), there will still be a null sentinel in the set.
-    // Everything else should have removed itself as the tree was felled.
-    ASSERT(!m_embeddedObjectsToUpdate || m_embeddedObjectsToUpdate->isEmpty() || (m_embeddedObjectsToUpdate->size() == 1 && m_embeddedObjectsToUpdate->first() == nullptr));
+    ASSERT(!m_embeddedObjectsToUpdate || m_embeddedObjectsToUpdate->isEmpty());
 
     ASSERT(!m_viewportConstrainedObjects || m_viewportConstrainedObjects->isEmptyIgnoringNullReferences());
     ASSERT(!m_slowRepaintObjects || m_slowRepaintObjects->isEmptyIgnoringNullReferences());
@@ -1364,13 +1362,13 @@ RenderBox* LocalFrameView::embeddedContentBox() const
 void LocalFrameView::addEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
 {
     if (!m_embeddedObjectsToUpdate)
-        m_embeddedObjectsToUpdate = makeUnique<ListHashSet<CheckedPtr<RenderEmbeddedObject>>>();
+        m_embeddedObjectsToUpdate = makeUnique<ListHashSet<SingleThreadWeakRef<RenderEmbeddedObject>>>();
 
     auto& element = embeddedObject.frameOwnerElement();
     if (is<HTMLPlugInImageElement>(element))
         downcast<HTMLPlugInImageElement>(element).setNeedsWidgetUpdate(true);
 
-    m_embeddedObjectsToUpdate->add(&embeddedObject);
+    m_embeddedObjectsToUpdate->add(embeddedObject);
 }
 
 void LocalFrameView::removeEmbeddedObjectToUpdate(RenderEmbeddedObject& embeddedObject)
@@ -3732,24 +3730,15 @@ bool LocalFrameView::updateEmbeddedObjects()
 
     WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
 
-    // Insert a marker for where we should stop.
-    ASSERT(!m_embeddedObjectsToUpdate->contains(nullptr));
-    m_embeddedObjectsToUpdate->add(nullptr);
-
-    while (!m_embeddedObjectsToUpdate->isEmpty()) {
-        // The CheckedPtr value taken from the ListHashSet shouldn't be kept alive during the update since
-        // the underlying object can be destroyed, leaving the CheckedPtr dangling. Instead, construct a WeakPtr
-        // that can be passed to the updateEmbeddedObject() method.
-
-        SingleThreadWeakPtr<RenderEmbeddedObject> weakObject;
-        {
-            CheckedPtr embeddedObject = m_embeddedObjectsToUpdate->takeFirst();
-            if (!embeddedObject)
-                break;
-
-            weakObject = *embeddedObject;
-        }
-        updateEmbeddedObject(weakObject);
+    // Make sure we process at most numberOfObjectsToUpdate objects to avoid
+    // potential infinite loops if objects get added to m_embeddedObjectsToUpdate
+    // during the execution of this loop.
+    unsigned numberOfObjectsToUpdate = m_embeddedObjectsToUpdate->size();
+    for (unsigned i = 0; i < numberOfObjectsToUpdate; ++i) {
+        if (m_embeddedObjectsToUpdate->isEmpty())
+            break;
+        WeakPtr embeddedObject = m_embeddedObjectsToUpdate->takeFirst().get();
+        updateEmbeddedObject(embeddedObject);
     }
 
     return m_embeddedObjectsToUpdate->isEmpty();

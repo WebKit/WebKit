@@ -36,16 +36,17 @@ namespace WebKit {
 
 class AssertionCapability final : public ProcessCapability {
 public:
-    AssertionCapability(String domain, String name, String environmentIdentifier, Function<void()>&& willInvalidateFunction = nullptr, Function<void()>&& didInvalidateFunction = nullptr);
+    AssertionCapability(String environmentIdentifier, String domain, String name, Function<void()>&& willInvalidateFunction = nullptr, Function<void()>&& didInvalidateFunction = nullptr);
 
     const String& domain() const { return m_domain; }
     const String& name() const { return m_name; }
 
-#if USE(EXTENSIONKIT)
+    // ProcessCapability
+    String environmentIdentifier() const final { return m_environmentIdentifier; }
     RetainPtr<_SECapabilities> platformCapability() const final;
-#endif
 
 private:
+    String m_environmentIdentifier;
     String m_domain;
     String m_name;
     BlockPtr<void()> m_willInvalidateBlock;

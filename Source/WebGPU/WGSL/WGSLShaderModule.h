@@ -26,11 +26,9 @@
 #pragma once
 
 #include "ASTBuilder.h"
+#include "ASTDeclaration.h"
 #include "ASTDirective.h"
-#include "ASTFunction.h"
 #include "ASTIdentityExpression.h"
-#include "ASTStructure.h"
-#include "ASTVariable.h"
 #include "TypeStore.h"
 #include "WGSL.h"
 #include "WGSLEnums.h"
@@ -55,11 +53,9 @@ public:
 
     const String& source() const { return m_source; }
     const Configuration& configuration() const { return m_configuration; }
+    AST::Declaration::List& declarations() { return m_declarations; }
+    const AST::Declaration::List& declarations() const { return m_declarations; }
     AST::Directive::List& directives() { return m_directives; }
-    AST::Function::List& functions() { return m_functions; }
-    const AST::Function::List& functions() const { return m_functions; }
-    AST::Structure::List& structures() { return m_structures; }
-    AST::Variable::List& variables() { return m_variables; }
     TypeStore& types() { return m_types; }
     AST::Builder& astBuilder() { return m_astBuilder; }
 
@@ -238,10 +234,8 @@ private:
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;
+    AST::Declaration::List m_declarations;
     AST::Directive::List m_directives;
-    AST::Function::List m_functions;
-    AST::Structure::List m_structures;
-    AST::Variable::List m_variables;
     TypeStore m_types;
     AST::Builder m_astBuilder;
     Vector<std::function<void()>> m_replacements;

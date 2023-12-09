@@ -339,15 +339,15 @@ void StorageAreaMap::didConnect(StorageAreaIdentifier remoteAreaIdentifier, Hash
 void StorageAreaMap::disconnect()
 {
     if (!m_remoteAreaIdentifier) {
-        auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
+        RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
         if (m_isWaitingForConnectReply && networkProcessConnection)
-            networkProcessConnection->connection().send(Messages::NetworkStorageManager::CancelConnectToStorageArea(computeStorageType(), m_namespace.storageNamespaceID(), clientOrigin()), 0);
+            networkProcessConnection->protectedConnection()->send(Messages::NetworkStorageManager::CancelConnectToStorageArea(computeStorageType(), m_namespace.storageNamespaceID(), clientOrigin()), 0);
 
         return;
     }
 
-    if (auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
-        networkProcessConnection->connection().send(Messages::NetworkStorageManager::DisconnectFromStorageArea(*m_remoteAreaIdentifier), 0);
+    if (RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection())
+        networkProcessConnection->protectedConnection()->send(Messages::NetworkStorageManager::DisconnectFromStorageArea(*m_remoteAreaIdentifier), 0);
 
     m_remoteAreaIdentifier = { };
     m_lastHandledMessageIdentifier = 0;

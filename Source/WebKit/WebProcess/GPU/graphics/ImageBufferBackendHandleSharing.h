@@ -28,16 +28,24 @@
 #include "ImageBufferBackendHandle.h"
 #include <WebCore/ImageBufferBackend.h>
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+#include <WebCore/DynamicContentScalingDisplayList.h>
+#endif
+
 namespace WebKit {
 
 class ImageBufferBackendHandleSharing : public WebCore::ImageBufferBackendSharing {
 public:
     virtual std::optional<ImageBufferBackendHandle> createBackendHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const = 0;
     virtual std::optional<ImageBufferBackendHandle> takeBackendHandle(SharedMemory::Protection protection = SharedMemory::Protection::ReadWrite) { return createBackendHandle(protection); }
+
     virtual RefPtr<ShareableBitmap> bitmap() const { return nullptr; }
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    virtual std::optional<WebCore::DynamicContentScalingDisplayList> dynamicContentScalingDisplayList() { return std::nullopt; }
+#endif
+
     virtual void setBackendHandle(ImageBufferBackendHandle&&) { }
-    virtual bool hasBackendHandle() const { return false; }
     virtual void clearBackendHandle() { }
 
 private:

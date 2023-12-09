@@ -65,6 +65,7 @@
 #import "_WKWebExtensionLocalization.h"
 #import "_WKWebExtensionMatchPatternInternal.h"
 #import "_WKWebExtensionPermission.h"
+#import "_WKWebExtensionRegisteredScriptsSQLiteStore.h"
 #import "_WKWebExtensionTab.h"
 #import "_WKWebExtensionWindow.h"
 #import <WebCore/LocalizedStrings.h>
@@ -82,7 +83,7 @@ static NSString * const backgroundContentEventListenersKey = @"BackgroundContent
 static NSString * const backgroundContentEventListenersVersionKey = @"BackgroundContentEventListenersVersion";
 static NSString * const lastSeenBaseURLStateKey = @"LastSeenBaseURL";
 static NSString * const lastSeenVersionStateKey = @"LastSeenVersion";
-static NSString * const lastLoadedDNRHashStateKey = @"LastLoadedDNRHash";
+static NSString * const lastLoadedDeclarativeNetRequestHashStateKey = @"LastLoadedDeclarativeNetRequestHash";
 
 // Update this value when any changes are made to the WebExtensionEventListenerType enum.
 static constexpr NSInteger currentBackgroundContentListenerStateVersion = 3;
@@ -233,10 +234,12 @@ bool WebExtensionContext::load(WebExtensionController& controller, String storag
 
     populateWindowsAndTabs();
 
+    // FIXME: <https://webkit.org/b/249266> Remove registered scripts from storage if an extension has updated.
+
     moveLocalStorageIfNeeded(lastSeenBaseURL, [&] {
         loadBackgroundWebViewDuringLoad();
 
-        // FIXME: <https://webkit.org/b/248429> Support dynamic content scripts by loading them from storage here.
+        loadRegisteredContentScripts();
 
         loadDeclarativeNetRequestRulesetStateFromStorage();
         loadDeclarativeNetRequestRules([](bool) { });
@@ -263,13 +266,12 @@ bool WebExtensionContext::unload(NSError **outError)
 
     unloadBackgroundWebView();
     removeInjectedContent();
-    removeDeclarativeNetRequestRules();
 
-    m_storageDirectory = nullString();
+    invalidateStorage();
+    unloadDeclarativeNetRequestState();
+
     m_extensionController = nil;
     m_contentScriptWorld = nullptr;
-
-    m_matchedRules.clear();
 
     return true;
 }
@@ -300,7 +302,7 @@ String WebExtensionContext::stateFilePath() const
 {
     if (!storageIsPersistent())
         return nullString();
-    return FileSystem::pathByAppendingComponent(m_storageDirectory, "State.plist"_s);
+    return FileSystem::pathByAppendingComponent(storageDirectory(), "State.plist"_s);
 }
 
 NSDictionary *WebExtensionContext::currentState() const
@@ -362,6 +364,12 @@ void WebExtensionContext::moveLocalStorageIfNeeded(const URL& previousBaseURL, C
     [webViewConfiguration().websiteDataStore _renameOrigin:previousBaseURL to:baseURL() forDataOfTypes:dataTypes completionHandler:makeBlockPtr(WTFMove(completionHandler)).get()];
 }
 
+void WebExtensionContext::invalidateStorage()
+{
+    m_storageDirectory = nullString();
+    m_registeredContentScriptsStorage = nil;
+}
+
 void WebExtensionContext::setBaseURL(URL&& url)
 {
     ASSERT(!isLoaded());
@@ -412,7 +420,6 @@ void WebExtensionContext::setInspectable(bool inspectable)
 
 const WebExtensionContext::InjectedContentVector& WebExtensionContext::injectedContents()
 {
-    // FIXME: <https://webkit.org/b/248429> Support dynamic content scripts by including them here.
     return m_extension->staticInjectedContents();
 }
 
@@ -503,6 +510,7 @@ void WebExtensionContext::setGrantedPermissions(PermissionsMap&& grantedPermissi
             continue;
         }
 
+        addedPermissions.add(entry.key);
         addedPermissions.add(entry.key);
     }
 
@@ -2933,16 +2941,27 @@ void WebExtensionContext::removeInjectedContent(WebUserContentControllerProxy& u
     }
 }
 
+void WebExtensionContext::unloadDeclarativeNetRequestState()
+{
+    removeDeclarativeNetRequestRules();
+
+    m_sessionRulesIDs.clear();
+    m_dynamicRulesIDs.clear();
+    m_matchedRules.clear();
+
+    m_declarativeNetRequestDynamicRulesStore = nullptr;
+    m_declarativeNetRequestSessionRulesStore = nullptr;
+    m_declarativeNetRequestRuleStore = nullptr;
+}
+
 WKContentRuleListStore *WebExtensionContext::declarativeNetRequestRuleStore()
 {
     if (m_declarativeNetRequestRuleStore)
         return m_declarativeNetRequestRuleStore.get();
 
-    String contentBlockerStorePath = m_extensionController->configuration().declarativeNetRequestStoreDirectory();
-    if (contentBlockerStorePath.isEmpty())
-        return nil;
-
+    auto contentBlockerStorePath = storageIsPersistent() ? storageDirectory() : String(FileSystem::createTemporaryDirectory(@"DeclarativeNetRequest"));
     m_declarativeNetRequestRuleStore = [WKContentRuleListStore storeWithURL:[NSURL fileURLWithPath:contentBlockerStorePath]];
+
     return m_declarativeNetRequestRuleStore.get();
 }
 
@@ -2997,7 +3016,7 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData, 
         return;
     }
 
-    auto *previouslyLoadedHash = objectForKey<NSString>(m_state, lastLoadedDNRHashStateKey);
+    auto *previouslyLoadedHash = objectForKey<NSString>(m_state, lastLoadedDeclarativeNetRequestHashStateKey);
     auto *hashOfWebKitRules = computeStringHashForContentBlockerRules(webKitRules);
 
     [declarativeNetRequestRuleStore() lookUpContentRuleListForIdentifier:uniqueIdentifier() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), previouslyLoadedHash = String { previouslyLoadedHash }, hashOfWebKitRules = String { hashOfWebKitRules }, webKitRules = String { webKitRules }](WKContentRuleList *foundRuleList, NSError *) mutable {
@@ -3019,7 +3038,7 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData, 
                 return;
             }
 
-            [m_state setObject:hashOfWebKitRules forKey:lastLoadedDNRHashStateKey];
+            [m_state setObject:hashOfWebKitRules forKey:lastLoadedDeclarativeNetRequestHashStateKey];
             writeStateToStorage();
 
             auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
@@ -3069,6 +3088,7 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
     auto addDynamicAndStaticRules = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), addStaticRulesets = WTFMove(addStaticRulesets), allJSONData = RetainPtr { allJSONData }] () mutable {
         [declarativeNetRequestDynamicRulesStore() getRulesWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), addStaticRulesets = WTFMove(addStaticRulesets), allJSONData = RetainPtr { allJSONData }](NSArray *rules, NSString *errorMessage) mutable {
             if (!rules.count) {
+                m_dynamicRulesIDs.clear();
                 addStaticRulesets();
                 return;
             }
@@ -3080,12 +3100,19 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
             else
                 [allJSONData addObject:dynamicRulesAsData];
 
+            HashSet<double> dynamicRuleIDs;
+            for (NSDictionary<NSString *, id> *rule in rules)
+                dynamicRuleIDs.add(objectForKey<NSNumber>(rule, @"id").doubleValue);
+
+            m_dynamicRulesIDs = WTFMove(dynamicRuleIDs);
+
             addStaticRulesets();
         }).get()];
     };
 
     [declarativeNetRequestSessionRulesStore() getRulesWithCompletionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), addDynamicAndStaticRules = WTFMove(addDynamicAndStaticRules), allJSONData = RetainPtr { allJSONData }](NSArray *rules, NSString *errorMessage) mutable {
         if (!rules.count) {
+            m_sessionRulesIDs.clear();
             addDynamicAndStaticRules();
             return;
         }
@@ -3096,6 +3123,12 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
             RELEASE_LOG_ERROR(Extensions, "Unable to serialize session declarativeNetRequest rules for extension with identifier %{private}@ with error: %{public}@", (NSString *)uniqueIdentifier(), privacyPreservingDescription(serializationError));
         else
             [allJSONData addObject:sessionRulesAsData];
+
+        HashSet<double> sessionRuleIDs;
+        for (NSDictionary<NSString *, id> *rule in rules)
+            sessionRuleIDs.add(objectForKey<NSNumber>(rule, @"id").doubleValue);
+
+        m_sessionRulesIDs = WTFMove(sessionRuleIDs);
 
         addDynamicAndStaticRules();
     }).get()];
@@ -3131,6 +3164,13 @@ bool WebExtensionContext::purgeMatchedRulesFromBefore(const WallTime& startTime)
 
     m_matchedRules = WTFMove(filteredMatchedRules);
     return !m_matchedRules.isEmpty();
+}
+
+RetainPtr<_WKWebExtensionRegisteredScriptsSQLiteStore> WebExtensionContext::registeredContentScriptsStore()
+{
+    if (!m_registeredContentScriptsStorage)
+        m_registeredContentScriptsStorage = [[_WKWebExtensionRegisteredScriptsSQLiteStore alloc] initWithUniqueIdentifier:m_uniqueIdentifier directory:storageDirectory() usesInMemoryDatabase:!storageIsPersistent()];
+    return m_registeredContentScriptsStorage;
 }
 
 } // namespace WebKit

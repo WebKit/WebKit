@@ -815,6 +815,15 @@ URL WebPage::allowedQueryParametersForAdvancedPrivacyProtections(const URL& url)
 #endif
 }
 
+#if ENABLE(PROCESS_CAPABILITIES)
+void WebPage::setMediaEnvironment(const String& mediaEnvironment)
+{
+    m_mediaEnvironment = mediaEnvironment;
+    if (auto gpuProcessConnection = WebProcess::singleton().existingGPUProcessConnection())
+        gpuProcessConnection->setMediaEnvironment(identifier(), mediaEnvironment);
+}
+#endif
+
 } // namespace WebKit
 
 #endif // PLATFORM(COCOA)

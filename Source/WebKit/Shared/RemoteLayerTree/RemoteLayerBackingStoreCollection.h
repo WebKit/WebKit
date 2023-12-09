@@ -45,6 +45,7 @@ class RemoteLayerWithRemoteRenderingBackingStore;
 class RemoteLayerWithInProcessRenderingBackingStore;
 class RemoteLayerTreeContext;
 class RemoteLayerTreeTransaction;
+class RemoteImageBufferSetProxy;
 
 enum class SwapBuffersDisplayRequirement : uint8_t;
 
@@ -55,8 +56,9 @@ public:
     RemoteLayerBackingStoreCollection(RemoteLayerTreeContext&);
     virtual ~RemoteLayerBackingStoreCollection();
 
-    void backingStoreWasCreated(RemoteLayerBackingStore&);
-    void backingStoreWillBeDestroyed(RemoteLayerBackingStore&);
+    virtual void backingStoreWasCreated(RemoteLayerBackingStore&);
+    virtual void backingStoreWillBeDestroyed(RemoteLayerBackingStore&);
+    void backingStoreWillBeEncoded(const RemoteLayerBackingStore&);
 
     // Return value indicates whether the backing store needs to be included in the transaction.
     bool backingStoreWillBeDisplayed(RemoteLayerBackingStore&);
@@ -65,7 +67,7 @@ public:
     std::unique_ptr<RemoteLayerBackingStore> createRemoteLayerBackingStore(PlatformCALayerRemote*);
 
     virtual void prepareBackingStoresForDisplay(RemoteLayerTreeTransaction&);
-    bool paintReachableBackingStoreContents();
+    virtual bool paintReachableBackingStoreContents();
 
     void willFlushLayers();
     void willBuildTransaction();
@@ -90,9 +92,9 @@ protected:
     virtual void markBackingStoreVolatileAfterReachabilityChange(RemoteLayerBackingStore&);
     virtual void markAllBackingStoreVolatileFromTimer();
 
-    bool collectRemoteRenderingBackingStoreBufferIdentifiersToMarkVolatile(RemoteLayerWithRemoteRenderingBackingStore&, OptionSet<VolatilityMarkingBehavior>, MonotonicTime now, Vector<WebCore::RenderingResourceIdentifier>&);
+    bool collectRemoteRenderingBackingStoreBufferIdentifiersToMarkVolatile(RemoteLayerWithRemoteRenderingBackingStore&, OptionSet<VolatilityMarkingBehavior>, MonotonicTime now, Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&);
 
-    bool collectAllRemoteRenderingBufferIdentifiersToMarkVolatile(OptionSet<VolatilityMarkingBehavior> liveBackingStoreMarkingBehavior, OptionSet<VolatilityMarkingBehavior> unparentedBackingStoreMarkingBehavior, Vector<WebCore::RenderingResourceIdentifier>&);
+    bool collectAllRemoteRenderingBufferIdentifiersToMarkVolatile(OptionSet<VolatilityMarkingBehavior> liveBackingStoreMarkingBehavior, OptionSet<VolatilityMarkingBehavior> unparentedBackingStoreMarkingBehavior, Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&);
 
 
 private:
@@ -103,7 +105,7 @@ private:
     void volatilityTimerFired();
 
 protected:
-    void sendMarkBuffersVolatile(Vector<WebCore::RenderingResourceIdentifier>&&, CompletionHandler<void(bool)>&&);
+    void sendMarkBuffersVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&&, CompletionHandler<void(bool)>&&);
 
     static constexpr auto volatileBackingStoreAgeThreshold = 1_s;
     static constexpr auto volatileSecondaryBackingStoreAgeThreshold = 200_ms;

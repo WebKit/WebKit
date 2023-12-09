@@ -52,6 +52,7 @@ public:
     bool isTimelineSet() const { return m_timelineSet; }
     bool isTimingFunctionSet() const { return m_timingFunctionSet; }
     bool isCompositeOperationSet() const { return m_compositeOperationSet; }
+    bool isAllowsDiscreteTransitionsSet() const { return m_allowsDiscreteTransitionsSet; }
 
     // Flags this to be the special "none" animation (animation-name: none)
     bool isNoneAnimation() const { return m_isNone; }
@@ -65,7 +66,8 @@ public:
         return !m_directionSet && !m_durationSet && !m_fillModeSet
             && !m_nameSet && !m_playStateSet && !m_iterationCountSet
             && !m_delaySet && !m_timingFunctionSet && !m_propertySet
-            && !m_isNone && !m_compositeOperationSet && !m_timelineSet;
+            && !m_isNone && !m_compositeOperationSet && !m_timelineSet
+            && !m_allowsDiscreteTransitionsSet;
     }
 
     bool isEmptyOrZeroDuration() const
@@ -84,6 +86,7 @@ public:
     void clearTimeline() { m_timelineSet = false; m_timelineFilled = false; }
     void clearTimingFunction() { m_timingFunctionSet = false; m_timingFunctionFilled = false; }
     void clearCompositeOperation() { m_compositeOperationSet = false; m_compositeOperationFilled = false; }
+    void clearAllowsDiscreteTransitions() { m_allowsDiscreteTransitionsSet = false; m_allowsDiscreteTransitionsFilled = false; }
 
     void clearAll()
     {
@@ -98,6 +101,7 @@ public:
         clearTimeline();
         clearTimingFunction();
         clearCompositeOperation();
+        clearAllowsDiscreteTransitions();
     }
 
     double delay() const { return m_delay; }
@@ -170,6 +174,7 @@ public:
     void fillTimeline(Timeline timeline) { setTimeline(timeline); m_timelineFilled = true; }
     void fillTimingFunction(RefPtr<TimingFunction>&& timingFunction) { setTimingFunction(WTFMove(timingFunction)); m_timingFunctionFilled = true; }
     void fillCompositeOperation(CompositeOperation compositeOperation) { setCompositeOperation(compositeOperation); m_compositeOperationFilled = true; }
+    void fillAllowsDiscreteTransitions(bool allowsDiscreteTransitionsFilled) { setAllowsDiscreteTransitions(allowsDiscreteTransitionsFilled); m_allowsDiscreteTransitionsFilled = true; }
 
     bool isDelayFilled() const { return m_delayFilled; }
     bool isDirectionFilled() const { return m_directionFilled; }
@@ -181,11 +186,12 @@ public:
     bool isTimelineFilled() const { return m_timelineFilled; }
     bool isTimingFunctionFilled() const { return m_timingFunctionFilled; }
     bool isCompositeOperationFilled() const { return m_compositeOperationFilled; }
+    bool isAllowsDiscreteTransitionsFilled() const { return m_allowsDiscreteTransitionsFilled; }
 
     // return true if all members of this class match (excluding m_next)
     bool animationsMatch(const Animation&, bool matchProperties = true) const;
 
-    // return true every Animation in the chain (defined by m_next) match 
+    // return true every Animation in the chain (defined by m_next) match
     bool operator==(const Animation& o) const { return animationsMatch(o); }
 
     bool fillsBackwards() const { return m_fillModeSet && (fillMode() == AnimationFillMode::Backwards || fillMode() == AnimationFillMode::Both); }
@@ -194,10 +200,13 @@ public:
     CompositeOperation compositeOperation() const { return static_cast<CompositeOperation>(m_compositeOperation); }
     void setCompositeOperation(CompositeOperation op) { m_compositeOperation = static_cast<unsigned>(op); m_compositeOperationSet = true; }
 
+    void setAllowsDiscreteTransitions(bool allowsDiscreteTransitions) { m_allowsDiscreteTransitions = allowsDiscreteTransitions; m_allowsDiscreteTransitionsSet = true; }
+    bool allowsDiscreteTransitions() const { return m_allowsDiscreteTransitions; }
+
 private:
     WEBCORE_EXPORT Animation();
     Animation(const Animation&);
-    
+
     // Packs with m_refCount from the base class.
     TransitionProperty m_property { TransitionMode::All, CSSPropertyInvalid };
 
@@ -214,6 +223,7 @@ private:
     unsigned m_fillMode : 2; // AnimationFillMode
     unsigned m_playState : 2; // AnimationPlayState
     unsigned m_compositeOperation : 2; // CompositeOperation
+    bool m_allowsDiscreteTransitions : 1;
 
     bool m_delaySet : 1;
     bool m_directionSet : 1;
@@ -226,6 +236,7 @@ private:
     bool m_timelineSet : 1;
     bool m_timingFunctionSet : 1;
     bool m_compositeOperationSet : 1;
+    bool m_allowsDiscreteTransitionsSet : 1;
 
     bool m_isNone : 1;
 
@@ -239,6 +250,7 @@ private:
     bool m_timelineFilled : 1;
     bool m_timingFunctionFilled : 1;
     bool m_compositeOperationFilled : 1;
+    bool m_allowsDiscreteTransitionsFilled : 1;
 
 public:
     static double initialDelay() { return 0; }
@@ -252,6 +264,7 @@ public:
     static TransitionProperty initialProperty() { return { TransitionMode::All, CSSPropertyInvalid }; }
     static Timeline initialTimeline() { return TimelineKeyword::Auto; }
     static Ref<TimingFunction> initialTimingFunction() { return CubicBezierTimingFunction::create(); }
+    static bool initialAllowsDiscreteTransitions() { return false; }
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, AnimationPlayState);

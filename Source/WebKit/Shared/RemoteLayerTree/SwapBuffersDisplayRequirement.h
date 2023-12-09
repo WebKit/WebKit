@@ -25,6 +25,10 @@
 
 #pragma once
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebKit {
 
 enum class SwapBuffersDisplayRequirement : uint8_t {
@@ -32,5 +36,7 @@ enum class SwapBuffersDisplayRequirement : uint8_t {
     NeedsNormalDisplay,
     NeedsNoDisplay
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, SwapBuffersDisplayRequirement);
 
 } // namespace WebKit

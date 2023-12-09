@@ -1124,10 +1124,15 @@ void WebPage::mainFrameURLChangedInAnotherProcess(const URL& newURL)
 #if ENABLE(GPU_PROCESS)
 void WebPage::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuProcessConnection)
 {
+    UNUSED_PARAM(gpuProcessConnection);
+
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
     gpuProcessConnection.createVisibilityPropagationContextForPage(*this);
-#else
-    UNUSED_PARAM(gpuProcessConnection);
+#endif
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    if (!mediaEnvironment().isEmpty())
+        gpuProcessConnection.setMediaEnvironment(identifier(), mediaEnvironment());
 #endif
 }
 
@@ -1302,6 +1307,10 @@ WebPage::~WebPage()
 
     for (auto& completionHandler : std::exchange(m_markLayersAsVolatileCompletionHandlers, { }))
         completionHandler(false);
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    setMediaEnvironment({ });
+#endif
 }
 
 IPC::Connection* WebPage::messageSenderConnection() const

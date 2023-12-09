@@ -253,7 +253,7 @@ using JSTestGlobalObjectDOMConstructor = JSDOMConstructorNotConstructable<JSTest
 /* Hash table */
 #if PLATFORM(MAC)
 
-static const struct CompactHashIndex JSTestGlobalObjectTableIndex[269] = {
+static const struct CompactHashIndex JSTestGlobalObjectTableIndex[268] = {
     { -1, -1 },
     { 43, -1 },
     { -1, -1 },
@@ -356,7 +356,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[269] = {
     { 20, -1 },
     { -1, -1 },
     { -1, -1 },
-    { -1, -1 },
+    { 50, -1 },
     { -1, -1 },
     { 38, -1 },
     { -1, -1 },
@@ -414,7 +414,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[269] = {
     { -1, -1 },
     { 67, -1 },
     { -1, -1 },
-    { 50, 267 },
+    { 68, -1 },
     { -1, -1 },
     { 29, -1 },
     { 34, -1 },
@@ -438,7 +438,7 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[269] = {
     { -1, -1 },
     { -1, -1 },
     { -1, -1 },
-    { 36, 268 },
+    { 36, 267 },
     { -1, -1 },
     { 18, 256 },
     { -1, -1 },
@@ -521,7 +521,6 @@ static const struct CompactHashIndex JSTestGlobalObjectTableIndex[269] = {
     { 53, -1 },
     { 58, -1 },
     { 64, -1 },
-    { 68, -1 },
     { 69, -1 },
 };
 

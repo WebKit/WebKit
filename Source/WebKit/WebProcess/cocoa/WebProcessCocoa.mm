@@ -42,7 +42,6 @@
 #import "WKAPICast.h"
 #import "WKBrowsingContextHandleInternal.h"
 #import "WKFullKeyboardAccessWatcher.h"
-#import "WKTypeRefWrapper.h"
 #import "WKWebProcessPlugInBrowserContextControllerInternal.h"
 #import "WebFrame.h"
 #import "WebInspector.h"
@@ -1082,11 +1081,6 @@ RefPtr<ObjCObjectGraph> WebProcess::transformHandlesToObjects(ObjCObjectGraph& o
         {
             if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
                 return true;
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if (dynamic_objc_cast<WKTypeRefWrapper>(object))
-                return true;
-ALLOW_DEPRECATED_DECLARATIONS_END
             return false;
         }
 
@@ -1098,14 +1092,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
                 return [NSNull null];
             }
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object)) {
-                RefPtr impl = toImpl(wrapper.object);
-                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(WebProcess::singleton().transformHandlesToObjects(impl.get()).get())]);
-            }
-
-ALLOW_DEPRECATED_DECLARATIONS_END
             return object;
         }
     };
@@ -1120,11 +1106,6 @@ RefPtr<ObjCObjectGraph> WebProcess::transformObjectsToHandles(ObjCObjectGraph& o
         {
             if (dynamic_objc_cast<WKWebProcessPlugInBrowserContextController>(object))
                 return true;
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if (dynamic_objc_cast<WKTypeRefWrapper>(object))
-                return true;
-ALLOW_DEPRECATED_DECLARATIONS_END
             return false;
         }
 
@@ -1132,13 +1113,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         {
             if (auto* controller = dynamic_objc_cast<WKWebProcessPlugInBrowserContextController>(object))
                 return controller.handle;
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object)) {
-                RefPtr impl = toImpl(wrapper.object);
-                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(transformObjectsToHandles(impl.get()).get())]);
-            }
-ALLOW_DEPRECATED_DECLARATIONS_END
             return object;
         }
     };

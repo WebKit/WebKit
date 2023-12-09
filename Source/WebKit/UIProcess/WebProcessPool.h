@@ -82,6 +82,10 @@ OBJC_CLASS WKWebInspectorPreferenceObserver;
 #include "IPCTester.h"
 #endif
 
+#if ENABLE(PROCESS_CAPABILITIES)
+#include "ProcessCapabilityGranter.h"
+#endif
+
 namespace API {
 class AutomationClient;
 class DownloadClient;
@@ -107,9 +111,9 @@ class PowerSourceNotifier;
 namespace WebKit {
 
 class LockdownModeObserver;
-class UIGamepad;
 class PerActivityStateCPUUsageSampler;
 class SuspendedPageProxy;
+class UIGamepad;
 class WebAutomationSession;
 class WebBackForwardCache;
 class WebContextSupplement;
@@ -139,9 +143,13 @@ enum class ProcessSwapRequestedByClient : bool;
 class WebProcessPool final
     : public API::ObjectImpl<API::Object::Type::ProcessPool>
     , public IPC::MessageReceiver
-    , public CanMakeCheckedPtr
 #if PLATFORM(MAC)
     , private PAL::SystemSleepListener::Client
+#endif
+#if ENABLE(PROCESS_CAPABILITIES)
+    , public ProcessCapabilityGranter::Client
+#else
+    , public CanMakeCheckedPtr
 #endif
 {
 public:
@@ -524,6 +532,12 @@ public:
     void hardwareConsoleStateChanged();
 #endif
 
+#if ENABLE(PROCESS_CAPABILITIES)
+    ProcessCapabilityGranter& processCapabilityGranter();
+    RefPtr<GPUProcessProxy> gpuProcessForCapabilityGranter(const ProcessCapabilityGranter&) final;
+    RefPtr<WebProcessProxy> webProcessForCapabilityGranter(const ProcessCapabilityGranter&, const String& environmentIdentifier) final;
+#endif
+
     bool operator==(const WebProcessPool& other) const { return (this == &other); }
 
 private:
@@ -821,6 +835,10 @@ private:
 #endif
 #if ENABLE(IPC_TESTING_API)
     IPCTester m_ipcTester;
+#endif
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    std::unique_ptr<ProcessCapabilityGranter> m_processCapabilityGranter;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

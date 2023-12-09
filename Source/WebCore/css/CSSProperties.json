@@ -6012,12 +6012,29 @@
                     "transition-property",
                     "transition-duration",
                     "transition-timing-function",
-                    "transition-delay"
+                    "transition-delay",
+                    "transition-behavior"
                 ]
             },
             "specification": {
                 "category": "css-transitions",
                 "url": "https://www.w3.org/TR/css3-transitions/#transition-shorthand-property"
+            }
+        },
+        "transition-behavior": {
+            "values": [
+                "normal",
+                "allow-discrete"
+            ],
+            "animatable": true,
+            "codegen-properties": {
+                "name-for-methods": "AllowsDiscreteTransitions",
+                "separator": ",",
+                "parser-grammar": "<transition-behavior-value>#"
+            },
+            "specification": {
+                "category": "css-transitions",
+                "url": "https://drafts.csswg.org/css-transitions-2/#transition-behavior-property"
             }
         },
         "transition-delay": {
@@ -10661,6 +10678,14 @@
             "specification": {
                 "category": "css-animations",
                 "url": "https://www.w3.org/TR/css-animations-1/#typedef-single-animation-play-state"
+            }
+        },
+        "<transition-behavior-value>": {
+            "grammar": "normal | allow-discrete",
+            "exported": true,
+            "specification": {
+                "category": "css-transitions",
+                "url": "https://drafts.csswg.org/css-transitions-2/#typedef-transition-behavior-value"
             }
         },
         "<page-size>": {

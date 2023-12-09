@@ -53,7 +53,6 @@ private:
     GridArea gridAreaForDefiniteGridAxisItem(const RenderBox&) const;
 
     void collectMasonryItems();
-    void addItemsToFirstTrack(); 
     void placeItemsUsingOrderModifiedDocumentOrder(); 
     void placeItemsWithDefiniteGridAxisPosition();
     void placeItemsWithIndefiniteGridAxisPosition();
@@ -78,7 +77,6 @@ private:
 
     unsigned m_gridAxisTracksCount;
 
-    HashMap<RenderBox*, GridArea> m_firstTrackItems;
     Vector<RenderBox*> m_itemsWithDefiniteGridAxisPosition;
     Vector<RenderBox*> m_itemsWithIndefiniteGridAxisPosition;
 

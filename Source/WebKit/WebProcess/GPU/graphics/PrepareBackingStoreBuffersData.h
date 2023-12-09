@@ -25,11 +25,13 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+#if ENABLE(GPU_PROCESS)
 
 #include "BufferIdentifierSet.h"
 #include "ImageBufferBackendHandle.h"
+#include "RemoteImageBufferSetIdentifier.h"
 #include "SwapBuffersDisplayRequirement.h"
+#include <WebCore/Region.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 
 namespace WTF {
@@ -38,21 +40,23 @@ class TextStream;
 
 namespace WebKit {
 
-struct PrepareBackingStoreBuffersInputData {
-    BufferIdentifierSet bufferSet;
+struct ImageBufferSetPrepareBufferForDisplayInputData {
+    RemoteImageBufferSetIdentifier remoteBufferSet;
+    WebCore::Region dirtyRegion;
     bool supportsPartialRepaint { true };
     bool hasEmptyDirtyRegion { true };
+    bool requiresClearedPixels { true };
 };
 
-struct PrepareBackingStoreBuffersOutputData {
-    BufferIdentifierSet bufferSet;
-    std::optional<ImageBufferBackendHandle> frontBufferHandle;
+struct ImageBufferSetPrepareBufferForDisplayOutputData {
+    std::optional<ImageBufferBackendHandle> backendHandle;
     SwapBuffersDisplayRequirement displayRequirement { SwapBuffersDisplayRequirement::NeedsNoDisplay };
+    BufferIdentifierSet bufferCacheIdentifiers;
 };
 
-WTF::TextStream& operator<<(WTF::TextStream&, const PrepareBackingStoreBuffersInputData&);
-WTF::TextStream& operator<<(WTF::TextStream&, const PrepareBackingStoreBuffersOutputData&);
+WTF::TextStream& operator<<(WTF::TextStream&, const ImageBufferSetPrepareBufferForDisplayInputData&);
+WTF::TextStream& operator<<(WTF::TextStream&, const ImageBufferSetPrepareBufferForDisplayOutputData&);
 
 } // namespace WebKit
 
-#endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)
+#endif // ENABLE(GPU_PROCESS)

@@ -60,6 +60,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 #include "RemoteCDMInstanceSessionIdentifier.h"
 #endif
+#include "RemoteImageBufferSetIdentifier.h"
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 #include "RemoteLegacyCDMIdentifier.h"
 #endif
@@ -501,6 +502,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteAudioSessionIdentifier));
 #endif
+    static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteImageBufferSetIdentifier));
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
     static_assert(sizeof(uint64_t) == sizeof(WebKit::RemoteCDMIdentifier));
 #endif
@@ -607,6 +609,7 @@ Vector<ASCIILiteral> serializedIdentifiers()
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
         "WebKit::RemoteAudioSessionIdentifier"_s,
 #endif
+        "WebKit::RemoteImageBufferSetIdentifier"_s,
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
         "WebKit::RemoteCDMIdentifier"_s,
 #endif

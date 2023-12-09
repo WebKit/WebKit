@@ -75,7 +75,7 @@ Ref<WebImage> WebImage::create(std::optional<ParametersAndHandle>&& parametersAn
     
     auto info = ImageBuffer::populateBackendInfo<ImageBufferShareableBitmapBackend>(backendParameters);
 
-    auto buffer = ImageBuffer::create(WTFMove(parameters), info, WTFMove(backend));
+    auto buffer = ImageBuffer::create(WTFMove(parameters), info, { }, WTFMove(backend));
     if (!buffer)
         return createEmpty();
 

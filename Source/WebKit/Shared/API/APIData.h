@@ -33,11 +33,6 @@
 #include <wtf/RetainPtr.h>
 #endif
 
-namespace IPC {
-class Decoder;
-class Encoder;
-}
-
 OBJC_CLASS NSData;
 
 namespace API {
@@ -114,3 +109,5 @@ private:
 };
 
 } // namespace API
+
+SPECIALIZE_TYPE_TRAITS_API_OBJECT(Data);

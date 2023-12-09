@@ -26,6 +26,8 @@
 #include "config.h"
 #include "EventSenderProxyClientWPE.h"
 
+#if ENABLE(WPE_PLATFORM)
+
 #include "PlatformWebView.h"
 #include "PlatformWebViewClientWPE.h"
 #include "TestController.h"
@@ -279,3 +281,5 @@ void EventSenderProxyClientWPE::keyDown(WKStringRef keyRef, double time, WKEvent
 }
 
 } // namespace WTR
+
+#endif // ENABLE(WPE_PLATFORM)

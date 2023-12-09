@@ -27,6 +27,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
+#include <WebCore/ProcessQualified.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 
 namespace WebKit {
@@ -36,6 +37,42 @@ struct BufferIdentifierSet {
     std::optional<WebCore::RenderingResourceIdentifier> back;
     std::optional<WebCore::RenderingResourceIdentifier> secondaryBack;
 };
+
+inline TextStream& operator<<(TextStream& ts, const BufferIdentifierSet& set)
+{
+    auto dumpBuffer = [&](const char* name, const std::optional<WebCore::RenderingResourceIdentifier>& bufferInfo) {
+        ts.startGroup();
+        ts << name << " ";
+        if (bufferInfo)
+            ts << *bufferInfo;
+        else
+            ts << "none";
+        ts.endGroup();
+    };
+    dumpBuffer("front buffer", set.front);
+    dumpBuffer("back buffer", set.back);
+    dumpBuffer("secondaryBack buffer", set.secondaryBack);
+
+    return ts;
+}
+
+enum class BufferInSetType : uint8_t {
+    Front = 1 << 0,
+    Back = 1 << 1,
+    SecondaryBack = 1 << 2,
+};
+
+inline TextStream& operator<<(TextStream& ts, BufferInSetType bufferType)
+{
+    if (bufferType == BufferInSetType::Front)
+        ts << "Front";
+    else if (bufferType == BufferInSetType::Back)
+        ts << "Back";
+    else
+        ts << "SecondaryBack";
+
+    return ts;
+}
 
 } // namespace WebKit
 

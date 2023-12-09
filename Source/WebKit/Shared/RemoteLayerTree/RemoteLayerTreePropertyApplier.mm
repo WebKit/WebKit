@@ -26,6 +26,7 @@
 #import "config.h"
 #import "RemoteLayerTreePropertyApplier.h"
 
+#import "Logging.h"
 #import "PlatformCAAnimationRemote.h"
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerTreeHost.h"

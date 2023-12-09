@@ -1,0 +1,11 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS CSSTransition interface: existence and properties of interface object
+PASS CSSTransition interface object length
+PASS CSSTransition interface object name
+PASS CSSTransition interface: existence and properties of interface prototype object
+PASS CSSTransition interface: existence and properties of interface prototype object's "constructor" property
+PASS CSSTransition interface: existence and properties of interface prototype object's @@unscopables property
+PASS CSSTransition interface: attribute transitionProperty
+

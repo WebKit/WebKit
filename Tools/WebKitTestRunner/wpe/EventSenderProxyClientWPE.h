@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(WPE_PLATFORM)
+
 #include "EventSenderProxyClient.h"
 
 namespace WTR {
@@ -46,3 +48,5 @@ private:
 };
 
 } // namespace WTR
+
+#endif // ENABLE(WPE_PLATFORM)

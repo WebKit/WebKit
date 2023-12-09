@@ -74,3 +74,7 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebImage)
+static bool isType(const API::Object& object) { return object.type() == API::Object::Type::Image; }
+SPECIALIZE_TYPE_TRAITS_END()

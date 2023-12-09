@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NativeWebKeyboardEvent.h"
 
+#if ENABLE(WPE_PLATFORM)
+
 #include "WebEventFactory.h"
 
 namespace WebKit {
@@ -36,3 +38,5 @@ NativeWebKeyboardEvent::NativeWebKeyboardEvent(WPEEvent* event, const String& te
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(WPE_PLATFORM)

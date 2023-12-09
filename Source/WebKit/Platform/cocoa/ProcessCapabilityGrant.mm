@@ -23,16 +23,69 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ProcessCapability.h"
+#import "config.h"
+#import "ProcessCapabilityGrant.h"
 
 #if ENABLE(PROCESS_CAPABILITIES)
 
+#import "ExtensionKitSPI.h"
+#import "Logging.h"
+
 namespace WebKit {
 
-ProcessCapability::ProcessCapability(String environmentIdentifier)
+static void platformInvalidate(RetainPtr<_SEGrant>&& platformGrant)
+{
+    if (![platformGrant isValid])
+        return;
+
+#if USE(EXTENSIONKIT)
+    NSError *error = nil;
+    if (![platformGrant invalidateWithError:&error])
+        RELEASE_LOG_ERROR(ProcessCapabilities, "Invalidating grant %{public}@ failed with error: %{public}@", platformGrant.get(), error);
+#endif
+}
+
+ProcessCapabilityGrant::ProcessCapabilityGrant(String environmentIdentifier)
     : m_environmentIdentifier { WTFMove(environmentIdentifier) }
 {
+}
+
+ProcessCapabilityGrant::ProcessCapabilityGrant(String&& environmentIdentifier, RetainPtr<_SEGrant>&& platformGrant)
+    : m_environmentIdentifier { WTFMove(environmentIdentifier) }
+    , m_platformGrant { WTFMove(platformGrant) }
+{
+}
+
+ProcessCapabilityGrant::~ProcessCapabilityGrant()
+{
+    setPlatformGrant(nil);
+}
+
+ProcessCapabilityGrant ProcessCapabilityGrant::isolatedCopy() &&
+{
+    return {
+        crossThreadCopy(WTFMove(m_environmentIdentifier)),
+        WTFMove(m_platformGrant)
+    };
+}
+
+bool ProcessCapabilityGrant::isEmpty() const
+{
+    return !m_platformGrant;
+}
+
+bool ProcessCapabilityGrant::isValid() const
+{
+#if USE(EXTENSIONKIT)
+    if ([m_platformGrant isValid])
+        return true;
+#endif
+    return false;
+}
+
+void ProcessCapabilityGrant::setPlatformGrant(RetainPtr<_SEGrant>&& platformGrant)
+{
+    platformInvalidate(std::exchange(m_platformGrant, WTFMove(platformGrant)));
 }
 
 } // namespace WebKit

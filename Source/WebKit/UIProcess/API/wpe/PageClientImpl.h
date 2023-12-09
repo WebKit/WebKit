@@ -58,7 +58,9 @@ public:
     virtual ~PageClientImpl();
 
     struct wpe_view_backend* viewBackend();
+#if ENABLE(WPE_PLATFORM)
     WPEView* wpeView() const;
+#endif
 
 #if ENABLE(ACCESSIBILITY)
     AtkObject* accessible();

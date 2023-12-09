@@ -28,9 +28,9 @@
 
 #if PLATFORM(COCOA)
 
-#import "DynamicContentScalingDisplayList.h"
 #import "Logging.h"
 #import "RemoteLayerTreeNode.h"
+#import <WebCore/DynamicContentScalingDisplayList.h>
 #import <WebCore/DynamicContentScalingTypes.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/MachSendRight.h>
@@ -53,9 +53,9 @@
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 
-- (void)_setWKContents:(id)contents withDisplayList:(WebKit::DynamicContentScalingDisplayList&&)displayList replayForTesting:(BOOL)replay
+- (void)_setWKContents:(id)contents withDisplayList:(WebCore::DynamicContentScalingDisplayList&&)displayList replayForTesting:(BOOL)replay
 {
-    auto data = displayList.buffer()->createCFData();
+    auto data = displayList.displayList()->createCFData();
 
     if (replay) {
         _displayListDataForTesting = data;

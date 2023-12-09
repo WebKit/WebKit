@@ -244,7 +244,7 @@ static const SchemaVersion currentDatabaseSchemaVersion = 1;
     DatabaseResult result = SQLiteDatabaseExecute(database, [NSString stringWithFormat:@"INSERT INTO %@ (id, rule) VALUES (?, ?)", _tableName], ruleID.integerValue, ruleAsData);
     if (result != SQLITE_DONE) {
         RELEASE_LOG_ERROR(Extensions, "Failed to insert dynamic declarative net request rule for extension %{private}@.", _uniqueIdentifier);
-        return [NSString stringWithFormat:@"Failed to add %@ rule.", self->_storageType];
+        return [NSString stringWithFormat:@"Failed to add %@ rule.", _storageType];
     }
 
     return nil;
@@ -262,7 +262,9 @@ static const SchemaVersion currentDatabaseSchemaVersion = 1;
     if (_useInMemoryDatabase)
         return [_WKWebExtensionSQLiteDatabase inMemoryDatabaseURL];
 
-    NSString *databaseName = @"dnr-dynamic-rules.db";
+    ASSERT([_storageType isEqualToString:@"dynamic"]);
+
+    NSString *databaseName = @"DynamicRules-DeclarativeNetRequest.db";
     return [_directory URLByAppendingPathComponent:databaseName isDirectory:NO];
 }
 

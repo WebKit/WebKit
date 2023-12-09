@@ -37,7 +37,6 @@
 #import "WKAPICast.h"
 #import "WKBrowsingContextControllerInternal.h"
 #import "WKBrowsingContextHandleInternal.h"
-#import "WKTypeRefWrapper.h"
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
 #import <WebCore/ActivityState.h>
@@ -99,11 +98,6 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformHandlesToObjects(ObjCObjectGra
         {
             if (dynamic_objc_cast<WKBrowsingContextHandle>(object))
                 return true;
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if (dynamic_objc_cast<WKTypeRefWrapper>(object))
-                return true;
-ALLOW_DEPRECATED_DECLARATIONS_END
             return false;
         }
 
@@ -118,11 +112,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
                 return [NSNull null];
             }
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
-                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(protectedWebProcessProxy()->transformHandlesToObjects(toImpl(wrapper.object)).get())]);
-ALLOW_DEPRECATED_DECLARATIONS_END
             return object;
         }
 
@@ -140,8 +129,6 @@ RefPtr<ObjCObjectGraph> WebProcessProxy::transformObjectsToHandles(ObjCObjectGra
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (dynamic_objc_cast<WKBrowsingContextController>(object))
                 return true;
-            if (dynamic_objc_cast<WKTypeRefWrapper>(object))
-                return true;
 ALLOW_DEPRECATED_DECLARATIONS_END
             return false;
         }
@@ -151,8 +138,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             if (auto* controller = dynamic_objc_cast<WKBrowsingContextController>(object))
                 return controller.handle;
-            if (auto* wrapper = dynamic_objc_cast<WKTypeRefWrapper>(object))
-                return adoptNS([[WKTypeRefWrapper alloc] initWithObject:toAPI(transformObjectsToHandles(toImpl(wrapper.object)).get())]);
 ALLOW_DEPRECATED_DECLARATIONS_END
             return object;
         }

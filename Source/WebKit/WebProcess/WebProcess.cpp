@@ -2206,13 +2206,15 @@ bool WebProcess::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
         return m_useGPUProcessForCanvasRendering;
     case RenderingPurpose::DOM:
     case RenderingPurpose::LayerBacking:
+    case RenderingPurpose::BitmapOnlyLayerBacking:
     case RenderingPurpose::Snapshot:
     case RenderingPurpose::ShareableSnapshot:
         return m_useGPUProcessForDOMRendering;
     case RenderingPurpose::MediaPainting:
         return m_useGPUProcessForMedia;
-    default:
-        break;
+    case RenderingPurpose::ShareableLocalSnapshot:
+    case RenderingPurpose::Unspecified:
+        return false;
     }
     return false;
 }

@@ -28,4 +28,10 @@
     std::optional<WebCore::RenderingResourceIdentifier> secondaryBack;
 };
 
+[AdditionalEncoder=StreamConnectionEncoder, OptionSet] enum class WebKit::BufferInSetType : uint8_t {
+    Front,
+    Back,
+    SecondaryBack,
+};
+
 #endif

@@ -1,0 +1,3 @@
+
+PASS Transitions and animations should not occur on display:none elements.
+

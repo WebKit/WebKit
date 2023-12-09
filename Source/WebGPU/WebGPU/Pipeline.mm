@@ -74,7 +74,7 @@ std::tuple<MTLFunctionConstantValues *, HashMap<String, WGSL::ConstantValue>> cr
             continue;
 
         auto constantValue = WGSL::evaluate(*kvp.value.defaultValue, wgslConstantValues);
-        auto addResult = wgslConstantValues.add(specializationConstant.mangledName, constantValue);
+        auto addResult = wgslConstantValues.add(kvp.key, constantValue);
         ASSERT_UNUSED(addResult, addResult.isNewEntry);
 
         switch (specializationConstant.type) {

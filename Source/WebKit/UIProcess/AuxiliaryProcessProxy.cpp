@@ -32,21 +32,27 @@
 #include "OverrideLanguages.h"
 #include "UIProcessLogInitialization.h"
 #include "WebPageProxy.h"
+#include "WebPageProxyIdentifier.h"
 #include "WebProcessProxy.h"
 #include <wtf/RunLoop.h>
 
 #if PLATFORM(COCOA)
+#include "CoreIPCSecureCoding.h"
 #include "SandboxUtilities.h"
 #include <sys/sysctl.h>
 #include <wtf/spi/darwin/SandboxSPI.h>
 #endif
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(MACCATALYST)
-#import <pal/spi/ios/MobileGestaltSPI.h>
+#include <pal/spi/ios/MobileGestaltSPI.h>
 #endif
 
 #if PLATFORM(VISION)
-#import <WebCore/ThermalMitigationNotifier.h>
+#include <WebCore/ThermalMitigationNotifier.h>
+#endif
+
+#if ENABLE(PROCESS_CAPABILITIES)
+#include "ProcessCapabilityGrant.h"
 #endif
 
 namespace WebKit {
@@ -84,6 +90,10 @@ AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
     }
 
     replyToPendingMessages();
+
+#if ENABLE(PROCESS_CAPABILITIES)
+    ASSERT(m_processCapabilityGrants.isEmpty());
+#endif
 }
 
 void AuxiliaryProcessProxy::populateOverrideLanguagesLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions) const
@@ -499,6 +509,13 @@ AuxiliaryProcessCreationParameters AuxiliaryProcessProxy::auxiliaryProcessParame
     parameters.webCoreLoggingChannels = UIProcess::webCoreLogLevelString();
     parameters.webKitLoggingChannels = UIProcess::webKitLogLevelString();
 #endif
+
+#if PLATFORM(COCOA)
+    auto* exemptClassNames = SecureCoding::classNamesExemptFromSecureCodingCrash();
+    if (exemptClassNames)
+        parameters.classNamesExemptFromSecureCodingCrash = WTF::makeUnique<HashSet<String>>(*exemptClassNames);
+#endif
+
     return parameters;
 }
 

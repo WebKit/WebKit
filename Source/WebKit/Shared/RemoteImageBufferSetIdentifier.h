@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "DynamicContentScalingDisplayList.h"
+#pragma once
 
-#include "SharedBufferReference.h"
-
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+#include <wtf/ObjectIdentifier.h>
 
 namespace WebKit {
 
-void DynamicContentScalingDisplayList::encode(IPC::Encoder& encoder) &&
-{
-    encoder << m_displayList;
-    encoder << WTFMove(m_surfaces);
-}
-
-bool DynamicContentScalingDisplayList::decode(IPC::Decoder& decoder, DynamicContentScalingDisplayList& displayList)
-{
-    if (!decoder.decode(displayList.m_displayList))
-        return false;
-    if (!decoder.decode(displayList.m_surfaces))
-        return false;
-    return true;
-}
+struct RemoteImageBufferSetIdentifierType;
+using RemoteImageBufferSetIdentifier = ObjectIdentifier<RemoteImageBufferSetIdentifierType>;
 
 }
-
-#endif // ENABLE(RE_DYNAMIC_CONTENT_SCALING)

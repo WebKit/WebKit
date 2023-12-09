@@ -1600,9 +1600,6 @@ webkit.org/b/205403 accessibility/presentation-role-iframe.html [ Pass Failure ]
 # Full investigation at: https://bugs.webkit.org/show_bug.cgi?id=243407
 webkit.org/b/243407 accessibility/add-children-pseudo-element.html [ Pass Failure ]
 
-# Disabled temporarily since it is causing other tests to fail.
-accessibility/mac/isolated-tree-mode-on-off.html [ Skip ]
-
 # Requires (INLINE_PREDICTIONS)
 accessibility/mac/attributed-string/attributed-string-has-completion-annotation.html [ Skip ]
 accessibility/mac/text-input-session-notifications.html [ Skip ]

@@ -39,7 +39,7 @@ PlatformWebView::PlatformWebView(WKPageConfigurationRef configuration, const Tes
     : m_windowIsKey(true)
     , m_options(options)
 {
-#if PLATFORM(WPE)
+#if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     if (TestController::singleton().useWPEPlatformAPI())
         m_window = new PlatformWebViewClientWPE(configuration);
     else

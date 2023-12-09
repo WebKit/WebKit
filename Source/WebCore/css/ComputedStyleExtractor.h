@@ -81,8 +81,6 @@ public:
 
     static Ref<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle&, const StyleColor&);
 
-    static void addValueForAnimationPropertyToList(CSSValueListBuilder&, CSSPropertyID, const Animation*);
-
     static bool updateStyleIfNeededForProperty(Element&, CSSPropertyID);
 
 private:

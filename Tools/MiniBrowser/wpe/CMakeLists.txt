@@ -8,8 +8,6 @@ set(MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES
     ${FORWARDING_HEADERS_WPE_DIR}
     ${JavaScriptCoreGLib_DERIVED_SOURCES_DIR}
     ${JavaScriptCoreGLib_FRAMEWORK_HEADERS_DIR}
-    ${WPEPlatform_DERIVED_SOURCES_DIR}
-    ${WEBKIT_DIR}/WPEPlatform
 )
 
 set(MiniBrowser_SYSTEM_INCLUDE_DIRECTORIES
@@ -24,10 +22,20 @@ set(MiniBrowser_PRIVATE_LIBRARIES
     ${JavaScriptCore_LIBRARY_NAME}
     ${WPEBACKEND_FDO_LIBRARIES}
     WPE::libwpe
-    WPEPlatform-${WPE_API_VERSION}
     WebKit::WPEToolingBackends
     WebKit::WebKit
 )
+
+if (ENABLE_WPE_PLATFORM)
+    list(APPEND MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES
+        ${WPEPlatform_DERIVED_SOURCES_DIR}
+        ${WEBKIT_DIR}/WPEPlatform
+    )
+
+    list(APPEND MiniBrowser_PRIVATE_LIBRARIES
+        WPEPlatform-${WPE_API_VERSION}
+    )
+endif ()
 
 if (NOT USE_GSTREAMER_FULL)
   list(APPEND MiniBrowser_PRIVATE_INCLUDE_DIRECTORIES ${GSTREAMER_INCLUDE_DIRS})

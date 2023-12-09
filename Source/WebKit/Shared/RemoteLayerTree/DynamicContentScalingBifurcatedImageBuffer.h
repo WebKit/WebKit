@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,39 +27,36 @@
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 
-#include "WebCoreArgumentCoders.h"
-#include <WebCore/SharedBuffer.h>
-#include <wtf/MachSendRight.h>
+#include <WebCore/ImageBuffer.h>
+#include <WebCore/ImageBufferCGBackend.h>
+#include <wtf/IsoMalloc.h>
 
-namespace IPC {
-class Encoder;
-class Decoder;
+namespace WebCore {
+class BifurcatedGraphicsContext;
+class DynamicContentScalingDisplayList;
 }
 
 namespace WebKit {
 
-class DynamicContentScalingDisplayList {
-    WTF_MAKE_NONCOPYABLE(DynamicContentScalingDisplayList);
+class DynamicContentScalingImageBufferBackend;
+
+// Ideally this would be a generic "BifurcatedImageBuffer", but it is
+// currently insufficiently general (e.g. needs to support bifurcating
+// the context flush, etc.).
+
+class DynamicContentScalingBifurcatedImageBuffer : public WebCore::ImageBuffer {
 public:
-    DynamicContentScalingDisplayList() = default;
-    DynamicContentScalingDisplayList(WebCore::SharedBuffer& displayList, Vector<MachSendRight>&& surfaces)
-        : m_displayList(&displayList)
-        , m_surfaces(WTFMove(surfaces))
-    {
-    }
+    DynamicContentScalingBifurcatedImageBuffer(WebCore::ImageBufferParameters, const WebCore::ImageBufferBackend::Info&, const WebCore::ImageBufferCreationContext&, std::unique_ptr<WebCore::ImageBufferBackend>&& = nullptr, WebCore::RenderingResourceIdentifier = WebCore::RenderingResourceIdentifier::generate());
 
-    DynamicContentScalingDisplayList(DynamicContentScalingDisplayList&&) = default;
-    DynamicContentScalingDisplayList& operator=(DynamicContentScalingDisplayList&&) = default;
+    WebCore::GraphicsContext& context() const final;
 
-    RefPtr<WebCore::SharedBuffer> buffer() const { return m_displayList; }
-    Vector<MachSendRight> takeSurfaces() { return std::exchange(m_surfaces, { }); }
+protected:
+    std::optional<WebCore::DynamicContentScalingDisplayList> dynamicContentScalingDisplayList() final;
 
-    void encode(IPC::Encoder&) &&;
-    static WARN_UNUSED_RETURN bool decode(IPC::Decoder&, DynamicContentScalingDisplayList&);
+    void releaseGraphicsContext() final;
 
-private:
-    RefPtr<WebCore::SharedBuffer> m_displayList;
-    Vector<MachSendRight> m_surfaces;
+    mutable std::unique_ptr<WebCore::BifurcatedGraphicsContext> m_context;
+    std::unique_ptr<DynamicContentScalingImageBufferBackend> m_dynamicContentScalingBackend;
 };
 
 }

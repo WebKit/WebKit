@@ -66,7 +66,7 @@ private:
     bool enterAcceleratedCompositingModeIfNeeded() override;
 #endif
 
-#if PLATFORM(WPE) && USE(GBM)
+#if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
     void preferredBufferFormatsDidChange() override;
 #endif
 

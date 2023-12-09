@@ -71,7 +71,11 @@ CallGraph CallGraphBuilder::build()
 
 void CallGraphBuilder::initializeMappings()
 {
-    for (auto& function : m_callGraph.m_ast.functions()) {
+    for (auto& declaration : m_callGraph.m_ast.declarations()) {
+        if (!is<AST::Function>(declaration))
+            continue;
+
+        auto& function = downcast<AST::Function>(declaration);
         const auto& name = function.name();
         {
             auto result = m_callGraph.m_functionsByName.add(name, &function);

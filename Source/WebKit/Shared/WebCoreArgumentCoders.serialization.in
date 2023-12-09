@@ -1644,6 +1644,7 @@ enum class WebCore::RenderingPurpose : uint8_t {
     Canvas,
     DOM,
     LayerBacking,
+    BitmapOnlyLayerBacking,
     Snapshot,
     ShareableSnapshot,
     ShareableLocalSnapshot,
@@ -4337,6 +4338,22 @@ enum class WebCore::CDMRequirement : uint8_t {
     Optional,
     NotAllowed
 };
+
+enum class WebCore::CDMInstanceSessionLoadFailure : uint8_t {
+    None,
+    NoSessionData,
+    MismatchedSessionType,
+    QuotaExceeded,
+    Other,
+};
+
+[Nested] enum class WebCore::CDMInstance::HDCPStatus : uint8_t {
+    Unknown,
+    Valid,
+    OutputRestricted,
+    OutputDownscaled,
+};
+
 #endif
 
 #if ENABLE(WEB_RTC)
@@ -4908,6 +4925,11 @@ class WebCore::RealtimeMediaSourceSupportedConstraints {
     bool supportsWhiteBalanceMode();
     bool supportsZoom();
     bool supportsTorch();
+};
+
+[Nested] class WebCore::RealtimeMediaSource::Type : uint8_t {
+    Audio,
+    Video,
 };
 
 enum class WebCore::VideoFacingMode : uint8_t {
@@ -5523,17 +5545,17 @@ struct WebCore::InteractionRegion {
     OptionSet<WebCore::InteractionRegion::CornerMask> maskedCorners;
 };
 
-[Nested] struct WebCore::Region::Span {
+[Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Region::Span {
     int y;
     size_t segmentIndex;
 };
 
-[Nested] class WebCore::Region::Shape {
+[Nested, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Region::Shape {
     Vector<int, 32> m_segments;
     Vector<WebCore::Region::Span, 16> m_spans;
 };
 
-class WebCore::Region {
+[AdditionalEncoder=StreamConnectionEncoder] class WebCore::Region {
     WebCore::IntRect bounds();
     std::unique_ptr<WebCore::Region::Shape> copyShape();
 }
@@ -6556,6 +6578,31 @@ struct WebCore::KeypressCommand {
 }
 #endif
 
+[AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::Filter subclasses {
+    WebCore::CSSFilter
+    WebCore::SVGFilter
+}
+
+[AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::CSSFilter {
+    Vector<Ref<WebCore::FilterFunction>> functions();
+
+    OptionSet<WebCore::FilterRenderingMode> filterRenderingModes();
+    WebCore::FloatSize filterScale();
+    WebCore::FloatRect filterRegion();
+}
+
+[AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::SVGFilter {
+    WebCore::FloatRect targetBoundingBox();
+    WebCore::SVGUnitTypes::SVGUnitType primitiveUnits();
+    WebCore::SVGFilterExpression expression();
+    Vector<Ref<WebCore::FilterEffect>> effects();
+    std::optional<WebCore::RenderingResourceIdentifier> renderingResourceIdentifierIfExists();
+
+    OptionSet<WebCore::FilterRenderingMode> filterRenderingModes();
+    WebCore::FloatSize filterScale();
+    WebCore::FloatRect filterRegion();
+}
+
 [Nested] enum class WebCore::UserStyleLevel : bool;
 
 header: <WebCore/WheelEventTestMonitor.h>
@@ -6798,6 +6845,18 @@ enum class WebCore::InspectorClientDeveloperPreference : uint8_t {
     MockCaptureDevicesEnabled,
 };
 
+[AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::SystemImage subclasses {
+#if ENABLE(APPLE_PAY)
+    WebCore::ApplePayLogoSystemImage
+#endif
+#if USE(SYSTEM_PREVIEW)
+    WebCore::ARKitBadgeSystemImage
+#endif
+#if USE(APPKIT)
+    WebCore::AppKitControlSystemImage
+#endif
+}
+
 #if ENABLE(WEB_CODECS)
 header: <WebCore/WebCodecsEncodedVideoChunk.h>
 [CustomHeader, RefCounted] class WebCore::WebCodecsEncodedVideoChunkStorage {
@@ -6841,6 +6900,40 @@ headers: <JavaScriptCore/WasmModule.h> <WebCore/ImageBitmapBacking.h> <WebCore/M
 [RefCounted] class WebCore::SerializedScriptValue {
     WebCore::SerializedScriptValue::Internals m_internals;
 };
+
+#if !USE(COORDINATED_GRAPHICS)
+[RefCounted] class WebCore::FilterOperation subclasses {
+    WebCore::BasicColorMatrixFilterOperation
+    WebCore::BasicComponentTransferFilterOperation
+    WebCore::BlurFilterOperation
+    WebCore::DropShadowFilterOperation
+    WebCore::DefaultFilterOperation
+    WebCore::PassthroughFilterOperation
+}
+
+[CustomHeader, RefCounted] class WebCore::BasicColorMatrixFilterOperation {
+    double amount();
+    [Validator='WebCore::FilterOperation::isBasicColorMatrixFilterOperationType(*type)'] WebCore::FilterOperation::Type type();
+};
+[CustomHeader, RefCounted] class WebCore::BasicComponentTransferFilterOperation {
+    double amount();
+    [Validator='WebCore::FilterOperation::isBasicComponentTransferFilterOperationType(*type)'] WebCore::FilterOperation::Type type();
+};
+[CustomHeader, RefCounted] class WebCore::BlurFilterOperation {
+    WebCore::Length stdDeviation();
+};
+[CustomHeader, RefCounted] class WebCore::DropShadowFilterOperation {
+    WebCore::IntPoint location();
+    int stdDeviation();
+    WebCore::Color color();
+};
+[CustomHeader, RefCounted] class WebCore::DefaultFilterOperation {
+    WebCore::FilterOperation::Type representedType();
+};
+[CustomHeader, RefCounted] class WebCore::PassthroughFilterOperation {
+    [NotSerialized] WebCore::FilterOperation::Type type();
+};
+#endif // !USE(COORDINATED_GRAPHICS)
 
 #if ENABLE(MEDIA_SOURCE)
 
@@ -6903,6 +6996,12 @@ header: <WebCore/DOMCacheEngine.h>
     uint64_t responseBodySize;
 };
 
+[AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::LightSource subclasses {
+    WebCore::DistantLightSource
+    WebCore::PointLightSource
+    WebCore::SpotLightSource
+}
+
 struct WebCore::Length {
     std::variant<WebCore::Length::AutoData, WebCore::Length::NormalData, WebCore::Length::RelativeData, WebCore::Length::PercentData, WebCore::Length::FixedData, WebCore::Length::IntrinsicData, WebCore::Length::MinIntrinsicData, WebCore::Length::MinContentData, WebCore::Length::MaxContentData, WebCore::Length::FillAvailableData, WebCore::Length::FitContentData, WebCore::Length::ContentData, WebCore::Length::UndefinedData> ipcData()
 }
@@ -6950,3 +7049,15 @@ struct WebCore::Length {
 };
 [Nested] struct WebCore::Length::UndefinedData {
 };
+
+struct WebCore::OrganizationStorageAccessPromptQuirk {
+    String organizationName;
+    HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> domainPairings;
+};
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+[RValue] class WebCore::DynamicContentScalingDisplayList {
+    Ref<WebCore::SharedBuffer> displayList();
+    Vector<MachSendRight> takeSurfaces();
+}
+#endif

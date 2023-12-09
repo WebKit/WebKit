@@ -1,0 +1,105 @@
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<style>
+#textbox_singleline {
+  border: 1px solid #000;
+  width: 100px;
+  white-space: nowrap;
+}
+#textbox_multiline {
+  border: 1px solid #000;
+  width: 100px;
+}
+input, textarea, div {
+margin-top: 1em;
+}
+</style>
+
+<input id="input" value="Some text">
+
+<br>
+
+<textarea id="textarea">First line
+Second line
+</textarea>
+
+<br>
+
+<div id="textbox_singleline" contenteditable="true" role="textbox" aria-multiline="false">
+  This ARIA text box has aria-multiline=false
+</div>
+
+<div id="textbox_multiline" contenteditable="true" role="textbox" aria-multiline="true">
+  This ARIA text box has aria-multiline=true
+</div>
+
+<script>
+    var output = "This tests the insertionPointLineNumber api with single-line and multi-line text fields.\n\n";
+
+    function getAXSelectionElementId() {
+        let root = accessibilityController.rootElement.childAtIndex(0);
+        let range = root.selectedTextMarkerRange();
+        let start = root.startTextMarkerForTextMarkerRange(range);
+        var element = root.accessibilityElementForTextMarker(start);
+        while (element && !element.domIdentifier) {
+            element = element.parentElement();
+        }
+        return element ? element.domIdentifier : null;
+    }
+
+    function getAXSelectionStartIndex() {
+        let root = accessibilityController.rootElement.childAtIndex(0);
+        let range = root.selectedTextMarkerRange();
+        let start = root.startTextMarkerForTextMarkerRange(range);
+        return root.indexForTextMarker(start);
+    }
+
+    async function selectTextField(id) {
+        let previousAXSelectionElementId = getAXSelectionElementId();
+        let element = document.getElementById(id);
+        element.focus();
+        if (element.setSelectionRange) {
+            element.setSelectionRange(0, 0);
+        }
+        await waitFor(() => previousAXSelectionElementId != getAXSelectionElementId());
+    }
+
+    async function moveToEnd(id) {
+        let previousAXSelectionStartIndex = getAXSelectionStartIndex();
+        window.getSelection().modify("move", "forward", "documentboundary");
+        await waitFor(() => previousAXSelectionStartIndex != getAXSelectionStartIndex());
+    }
+
+    async function runTest(id, expectedLineIndexAfterMove) {
+        output += `Focusing text field with id: ${id}\n`;
+        await selectTextField(id);
+
+        let root = accessibilityController.rootElement.childAtIndex(0);
+        axElement = accessibilityController.accessibleElementById(id);
+        output += expect('axElement.insertionPointLineNumber', 0);
+
+        output += 'Moving to end of text field\n';
+        await moveToEnd(id);
+        output += expect('axElement.insertionPointLineNumber', expectedLineIndexAfterMove);
+        output += '\n';
+    }
+
+    if (window.accessibilityController) {
+        window.jsTestIsAsync = true;
+        setTimeout(async () => {
+            await runTest('input', 0);
+            await runTest('textarea', 2);
+            await runTest('textbox_singleline', 0);
+            await runTest('textbox_multiline', 2);
+            debug(output);
+            finishJSTest();
+        }, 0);
+    }
+</script>
+</body>
+</html>

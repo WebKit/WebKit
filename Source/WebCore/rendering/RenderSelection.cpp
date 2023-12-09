@@ -40,6 +40,7 @@
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "VisibleSelection.h"
+#include <wtf/WeakRef.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -48,8 +49,8 @@ namespace {
 
 struct SelectionContext {
     
-    using RendererMap = HashMap<CheckedPtr<RenderObject>, std::unique_ptr<RenderSelectionGeometry>>;
-    using RenderBlockMap = HashMap<CheckedPtr<const RenderBlock>, std::unique_ptr<RenderBlockSelectionGeometry>>;
+    using RendererMap = HashMap<SingleThreadWeakRef<RenderObject>, std::unique_ptr<RenderSelectionGeometry>>;
+    using RenderBlockMap = HashMap<SingleThreadWeakRef<const RenderBlock>, std::unique_ptr<RenderBlockSelectionGeometry>>;
 
     unsigned startOffset;
     unsigned endOffset;
@@ -92,10 +93,10 @@ static SelectionContext collectSelectionData(const RenderRange& selection, bool 
     while (start && start != stop) {
         if (isValidRendererForSelection(*start, selection)) {
             // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
-            oldSelectionData.renderers.set(start, makeUnique<RenderSelectionGeometry>(*start, true));
+            oldSelectionData.renderers.set(*start, makeUnique<RenderSelectionGeometry>(*start, true));
             if (repaintDifference) {
                 for (auto* block = containingBlockBelowView(*start); block; block = containingBlockBelowView(*block)) {
-                    auto& blockInfo = oldSelectionData.blocks.add(block, nullptr).iterator->value;
+                    auto& blockInfo = oldSelectionData.blocks.add(*block, nullptr).iterator->value;
                     if (blockInfo)
                         break;
                     blockInfo = makeUnique<RenderBlockSelectionGeometry>(*block);
@@ -177,13 +178,13 @@ IntRect RenderSelection::collectBounds(ClipToVisibleContent clipToVisibleContent
         if ((start->canBeSelectionLeaf() || start == m_renderRange.start() || start == m_renderRange.end())
             && start->selectionState() != RenderObject::HighlightState::None) {
             // Blocks are responsible for painting line gaps and margin gaps. They must be examined as well.
-            renderers.set(start, makeUnique<RenderSelectionGeometry>(*start, clipToVisibleContent == ClipToVisibleContent::Yes));
+            renderers.set(*start, makeUnique<RenderSelectionGeometry>(*start, clipToVisibleContent == ClipToVisibleContent::Yes));
             LOG_WITH_STREAM(Selection, stream << " added start " << *start << " with rect " << renderers.get(start)->rect());
             
             auto* block = start->containingBlock();
             while (block && !is<RenderView>(*block)) {
                 LOG_WITH_STREAM(Scrolling, stream << " added block " << *block);
-                auto& blockSelectionGeometry = renderers.add(block, nullptr).iterator->value;
+                auto& blockSelectionGeometry = renderers.add(*block, nullptr).iterator->value;
                 if (blockSelectionGeometry)
                     break;
                 blockSelectionGeometry = makeUnique<RenderSelectionGeometry>(*block, clipToVisibleContent == ClipToVisibleContent::Yes);
@@ -263,10 +264,10 @@ void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRe
             if (!currentRenderer->isRenderTextOrLineBreak())
                 m_selectionGeometryGatherer.setTextOnly(false);
 #endif
-            newSelectedRenderers.set(currentRenderer, WTFMove(selectionGeometry));
+            newSelectedRenderers.set(*currentRenderer, WTFMove(selectionGeometry));
             auto* containingBlock = currentRenderer->containingBlock();
             while (containingBlock && !is<RenderView>(*containingBlock)) {
-                auto& blockSelectionGeometry = newSelectedBlocks.add(containingBlock, nullptr).iterator->value;
+                auto& blockSelectionGeometry = newSelectedBlocks.add(*containingBlock, nullptr).iterator->value;
                 if (blockSelectionGeometry)
                     break;
                 blockSelectionGeometry = makeUnique<RenderBlockSelectionGeometry>(*containingBlock);
@@ -287,8 +288,8 @@ void RenderSelection::apply(const RenderRange& newSelection, RepaintMode blockRe
         auto* newInfo = newSelectedRenderers.get(renderer.get());
         auto* oldInfo = selectedRendererInfo.value.get();
         if (!newInfo || oldInfo->rect() != newInfo->rect() || oldInfo->state() != newInfo->state()
-            || (m_renderRange.start() == renderer.get() && oldSelectionData.startOffset != m_renderRange.startOffset())
-            || (m_renderRange.end() == renderer.get() && oldSelectionData.endOffset != m_renderRange.endOffset())) {
+            || (m_renderRange.start() == renderer.ptr() && oldSelectionData.startOffset != m_renderRange.startOffset())
+            || (m_renderRange.end() == renderer.ptr() && oldSelectionData.endOffset != m_renderRange.endOffset())) {
             oldInfo->repaint();
             if (newInfo) {
                 newInfo->repaint();

@@ -73,6 +73,11 @@ using namespace WebCore;
 @property (readonly) CMVideoDimensions CMVideoDimensionsValue;
 @end
 
+// FIXME (119325252): Remove staging code for -[AVCaptureSession initWithMediaEnvironment:]
+@interface AVCaptureSession(Staging_113653478)
+- (instancetype)initWithMediaEnvironment:(NSString *)mediaEnvironment;
+@end
+
 @interface WebCoreAVVideoCaptureSourceObserver : NSObject<AVCaptureVideoDataOutputSampleBufferDelegate, AVCapturePhotoCaptureDelegate> {
     AVVideoCaptureSource* m_callback;
 }
@@ -962,15 +967,24 @@ bool AVVideoCaptureSource::setupSession()
 
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
 
-#if ENABLE(APP_PRIVACY_REPORT)
-    auto identity = RealtimeMediaSourceCenter::singleton().identity();
-    ERROR_LOG_IF(loggerPtr() && !identity, LOGIDENTIFIER, "RealtimeMediaSourceCenter::identity() returned null!");
+#if ENABLE(PROCESS_CAPABILITIES)
+    String mediaEnvironment = RealtimeMediaSourceCenter::singleton().currentMediaEnvironment();
+    // FIXME (119325252): Remove staging code for -[AVCaptureSession initWithMediaEnvironment:]
+    if (!mediaEnvironment.isEmpty() && [PAL::getAVCaptureSessionClass() instancesRespondToSelector:@selector(initWithMediaEnvironment:)])
+        m_session = adoptNS([PAL::allocAVCaptureSessionInstance() initWithMediaEnvironment:mediaEnvironment]);
+#endif
 
-    if (identity && [PAL::getAVCaptureSessionClass() instancesRespondToSelector:@selector(initWithAssumedIdentity:)])
-        m_session = adoptNS([PAL::allocAVCaptureSessionInstance() initWithAssumedIdentity:identity.get()]);
+#if ENABLE(APP_PRIVACY_REPORT)
+    if (!m_session) {
+        auto identity = RealtimeMediaSourceCenter::singleton().identity();
+        ERROR_LOG_IF(loggerPtr() && !identity, LOGIDENTIFIER, "RealtimeMediaSourceCenter::identity() returned null!");
+
+        if (identity && [PAL::getAVCaptureSessionClass() instancesRespondToSelector:@selector(initWithAssumedIdentity:)])
+            m_session = adoptNS([PAL::allocAVCaptureSessionInstance() initWithAssumedIdentity:identity.get()]);
+    }
+#endif
 
     if (!m_session)
-#endif
         m_session = adoptNS([PAL::allocAVCaptureSessionInstance() init]);
 
     if (!m_session) {

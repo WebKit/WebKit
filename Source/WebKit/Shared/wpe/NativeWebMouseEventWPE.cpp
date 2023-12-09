@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NativeWebMouseEvent.h"
 
+#if ENABLE(WPE_PLATFORM)
+
 #include "WebEventFactory.h"
 
 namespace WebKit {
@@ -36,3 +38,5 @@ NativeWebMouseEvent::NativeWebMouseEvent(WPEEvent* event)
 }
 
 } // namespace WebKit
+
+#endif // ENABLE(WPE_PLATFORM)

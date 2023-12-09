@@ -48,6 +48,12 @@ public:
     virtual void visit(AST::Directive&);
     virtual void visit(AST::DiagnosticDirective&);
 
+    // Declaration
+    virtual void visit(AST::Declaration&);
+    virtual void visit(AST::Function&);
+    virtual void visit(AST::Variable&);
+    virtual void visit(AST::Structure&);
+
     // Attribute
     virtual void visit(AST::Attribute&);
     virtual void visit(AST::AlignAttribute&);
@@ -84,7 +90,6 @@ public:
     virtual void visit(AST::UnaryExpression&);
     virtual void visit(AST::Unsigned32Literal&);
 
-    virtual void visit(AST::Function&);
     virtual void visit(AST::Parameter&);
 
     virtual void visit(AST::Identifier&);
@@ -109,16 +114,12 @@ public:
     virtual void visit(AST::VariableStatement&);
     virtual void visit(AST::WhileStatement&);
 
-    virtual void visit(AST::Structure&);
-    virtual void visit(AST::StructureMember&);
-
     virtual void visit(AST::ArrayTypeExpression&);
     virtual void visit(AST::ElaboratedTypeExpression&);
     virtual void visit(AST::ReferenceTypeExpression&);
 
-    virtual void visit(AST::Variable&);
+    virtual void visit(AST::StructureMember&);
     virtual void visit(AST::VariableQualifier&);
-
     virtual void visit(AST::SwitchClause&);
     virtual void visit(AST::Continuing&);
 

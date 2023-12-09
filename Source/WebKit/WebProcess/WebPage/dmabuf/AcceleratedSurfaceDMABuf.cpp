@@ -26,7 +26,7 @@
 #include "config.h"
 #include "AcceleratedSurfaceDMABuf.h"
 
-#if USE(EGL)
+#if (PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))) && USE(EGL)
 
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
@@ -459,7 +459,7 @@ void AcceleratedSurfaceDMABuf::SwapChain::releaseUnusedBuffers()
     m_freeTargets.clear();
 }
 
-#if PLATFORM(WPE) && USE(GBM)
+#if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
 void AcceleratedSurfaceDMABuf::preferredBufferFormatsDidChange()
 {
     if (m_swapChain.type() != SwapChain::Type::EGLImage)
@@ -568,4 +568,4 @@ void AcceleratedSurfaceDMABuf::frameDone()
 
 } // namespace WebKit
 
-#endif // USE(EGL)
+#endif // (PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))) && USE(EGL)

@@ -1203,6 +1203,8 @@ imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Pass Du
 
 http/tests/webcodecs/h264-reordering.html [ Failure ]
 http/tests/webcodecs/hevc-reordering.html [ Failure ]
+http/wpt/webcodecs/hevc-decoder-annexb.https.any.html [ Failure ]
+http/wpt/webcodecs/hevc-decoder-annexb.https.any.worker.html [ Failure ]
 
 # This test is flaky crashing with the current GStreamer version of the SDK (1.22), raising a
 # critical warning in GStreamer, but the issue is not happening with GStreamer 1.23. So this test is
@@ -3792,6 +3794,7 @@ webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/justifycenter.ht
 webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/justifyfull.html?1-1000 [ Slow ]
 webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/justifyright.html?3001-4000 [ Slow ]
 webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/justifyright.html?4001-last [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/multitest.html?1-1000 [ Slow ]
 webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/multitest.html?1001-2000 [ Slow ]
 webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/multitest.html?2001-3000 [ Slow ]
 webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/multitest.html?3001-4000 [ Slow ]
@@ -3801,6 +3804,7 @@ webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/multitest.html?6
 webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/multitest.html?7001-8000 [ Slow ]
 webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/multitest.html?8001-9000 [ Slow ]
 webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/multitest.html?9001-last [ Slow ]
+webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run/removeformat.html [ Slow ]
 
 # End: Common failures between GTK and WPE.
 

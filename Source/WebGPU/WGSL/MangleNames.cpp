@@ -105,27 +105,20 @@ private:
 
 void NameManglerVisitor::run()
 {
-    auto& module = m_callGraph.ast();
-    for (auto& structure : module.structures())
-        visit(structure);
-
-    for (auto& variable : module.variables())
-        visit(variable);
-
-    for (auto& function : module.functions()) {
-        String originalName = function.name();
-        introduceVariable(function.name(), MangledName::Function);
-        auto it = m_result.entryPoints.find(originalName);
-        if (it != m_result.entryPoints.end()) {
-            it->value.originalName = originalName;
-            it->value.mangledName = function.name();
-        }
-        visit(function);
-    }
+    AST::Visitor::visit(m_callGraph.ast());
 }
 
 void NameManglerVisitor::visit(AST::Function& function)
 {
+
+    String originalName = function.name();
+    introduceVariable(function.name(), MangledName::Function);
+    auto it = m_result.entryPoints.find(originalName);
+    if (it != m_result.entryPoints.end()) {
+        it->value.originalName = originalName;
+        it->value.mangledName = function.name();
+    }
+
     ContextScope functionScope(this);
     AST::Visitor::visit(function);
 }

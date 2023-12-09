@@ -30,6 +30,7 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -67,7 +68,7 @@ public:
 private:
     Vector<LayoutRect> boundingRects() const;
 
-    CheckedRef<RenderView> m_renderView;
+    SingleThreadWeakRef<RenderView> m_renderView;
 
     // All rects are in RenderView coordinates.
     Vector<FloatQuad> m_quads;

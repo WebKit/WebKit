@@ -207,7 +207,14 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             },
         } },
         { "WebCore::TimingFunction"_s, {
-            { "std::variant<WebCore::LinearTimingFunction, WebCore::CubicBezierTimingFunction, WebCore::StepsTimingFunction, WebCore::SpringTimingFunction>"_s, "subclasses"_s }
+            { "std::variant<"
+                "WebCore::LinearTimingFunction"
+                ", WebCore::CubicBezierTimingFunction"
+#if CONDITION
+                ", WebCore::StepsTimingFunction"
+#endif
+                ", WebCore::SpringTimingFunction"
+            ">"_s, "subclasses"_s }
         } },
         { "Namespace::ConditionalCommonClass"_s, {
             {
@@ -228,7 +235,9 @@ Vector<SerializedTypeInfo> allSerializedTypes()
             },
         } },
         { "WebCore::MoveOnlyBaseClass"_s, {
-            { "std::variant<WebCore::MoveOnlyDerivedClass>"_s, "subclasses"_s }
+            { "std::variant<"
+                "WebCore::MoveOnlyDerivedClass"
+            ">"_s, "subclasses"_s }
         } },
         { "WebCore::MoveOnlyDerivedClass"_s, {
             {
