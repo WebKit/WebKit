@@ -6565,6 +6565,20 @@ ThreadedScrollingEnabled:
     WebKit:
       default: true
 
+ThumbAndTrackPseudoElementsEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "::thumb and ::track pseudo-elements"
+  humanReadableDescription: "Enable support for CSS ::thumb and ::track pseudo-elements"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 TiledScrollingIndicatorVisible:
   type: bool

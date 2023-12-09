@@ -100,6 +100,7 @@ struct CSSParserContext {
     bool highlightAPIEnabled : 1 { false };
     bool grammarAndSpellingPseudoElementsEnabled : 1 { false };
     bool customStateSetEnabled : 1 { false };
+    bool thumbAndTrackPseudoElementsEnabled : 1 { false };
 
     // Settings, those affecting properties.
     CSSPropertySettings propertySettings;

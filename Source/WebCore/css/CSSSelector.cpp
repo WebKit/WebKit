@@ -325,7 +325,7 @@ CSSSelector::PseudoElementType CSSSelector::parsePseudoElementType(StringView na
     auto type = parsePseudoElementString(name);
     switch (type) {
     case PseudoElementWebKitCustom:
-        if (context.mode != UASheetMode && (equalLettersIgnoringASCIICase(name, "thumb"_s) || equalLettersIgnoringASCIICase(name, "track"_s)))
+        if (!context.thumbAndTrackPseudoElementsEnabled && (equalLettersIgnoringASCIICase(name, "thumb"_s) || equalLettersIgnoringASCIICase(name, "track"_s)))
             return PseudoElementUnknown;
         break;
     case PseudoElementUnknown:
