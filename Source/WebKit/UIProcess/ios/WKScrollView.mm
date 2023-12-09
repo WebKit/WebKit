@@ -32,6 +32,7 @@
 #import "UIKitSPI.h"
 #import "UIKitUtilities.h"
 #import "WKDeferringGestureRecognizer.h"
+#import "WKSEDefinitions.h"
 #import "WKWebViewIOS.h"
 #import "WebPage.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -43,7 +44,7 @@
 #import "PepperUICoreSPI.h"
 #endif
 
-@interface WKScrollViewDelegateForwarder : NSObject <UIScrollViewDelegate>
+@interface WKScrollViewDelegateForwarder : NSObject <WKSEScrollViewDelegate>
 
 - (instancetype)initWithInternalDelegate:(WKWebView *)internalDelegate externalDelegate:(id <UIScrollViewDelegate>)externalDelegate;
 
@@ -54,7 +55,7 @@
     WeakObjCPtr<id <UIScrollViewDelegate>> _externalDelegate;
 }
 
-- (instancetype)initWithInternalDelegate:(WKWebView <UIScrollViewDelegate> *)internalDelegate externalDelegate:(id <UIScrollViewDelegate>)externalDelegate
+- (instancetype)initWithInternalDelegate:(WKWebView<WKSEScrollViewDelegate> *)internalDelegate externalDelegate:(id<UIScrollViewDelegate>)externalDelegate
 {
     self = [super init];
     if (!self)
@@ -236,7 +237,7 @@ static BOOL shouldForwardScrollViewDelegateMethodToExternalDelegate(SEL selector
     if (!externalDelegate)
         [super setDelegate:_internalDelegate];
     else if (!_internalDelegate)
-        [super setDelegate:externalDelegate.get()];
+        [super setDelegate:(id<WKSEScrollViewDelegate>)externalDelegate.get()];
     else {
         _delegateForwarder = adoptNS([[WKScrollViewDelegateForwarder alloc] initWithInternalDelegate:_internalDelegate externalDelegate:externalDelegate.get()]);
         [super setDelegate:_delegateForwarder.get()];

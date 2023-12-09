@@ -25,32 +25,15 @@
 
 #pragma once
 
-#if PLATFORM(IOS_FAMILY)
+#if USE(APPLE_INTERNAL_SDK)
 
-#import "WKSEDefinitions.h"
-#import <UIKit/UIKit.h>
+#import <WebKitAdditions/WKSEDefinitionsAdditions.h>
 
-@class UIScrollEvent;
-@class WKBaseScrollView;
+#else
 
-@protocol WKBaseScrollViewDelegate <NSObject>
+#define WKSEScrollViewDelegate UIScrollViewDelegate
+#define WKSEScrollView UIScrollView
 
-- (UIAxis)axesToPreventScrollingForPanGestureInScrollView:(WKBaseScrollView *)scrollView;
-
-#if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
-- (void)scrollView:(WKBaseScrollView *)scrollView handleScrollEvent:(UIScrollEvent *)event completion:(void(^)(BOOL handled))completion;
 #endif
 
-@optional
-- (UIScrollView *)actingParentScrollViewForScrollView:(WKBaseScrollView *)scrollView;
 
-@end
-
-@interface WKBaseScrollView : WKSEScrollView
-
-@property (nonatomic, weak) id<WKBaseScrollViewDelegate> baseScrollViewDelegate;
-@property (nonatomic, readonly) UIAxis axesToPreventMomentumScrolling;
-
-@end
-
-#endif // PLATFORM(IOS_FAMILY)
