@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RubyFormattingContext.h"
 
+#include "InlineContentAligner.h"
 #include "InlineFormattingContext.h"
 #include "InlineLine.h"
 #include "RenderStyleInlines.h"
@@ -252,29 +253,7 @@ static size_t applyRubyAlignOnBaseContent(size_t rubyBaseStart, Line& line, cons
     if (annotationBoxLogicalWidth <= baseContentLogicalWidth)
         return rubyBaseEnd;
 
-    if (rubyBaseEnd != runs.size()) {
-        ASSERT(runs[rubyBaseEnd].isInlineBoxEnd());
-        // Remove ruby inline box end extra width (see InlineBuilder where we add it to accomodate for overflowing annotation) before applying expansion.
-        auto extraWidth = annotationBoxLogicalWidth - baseContentLogicalWidth;
-        line.moveBy({ rubyBaseEnd, runs.size() }, extraWidth);
-        line.expandBy(rubyBaseEnd, -extraWidth);
-    }
-
-    auto expansion = ExpansionInfo { };
-    // ruby-align: space-around
-    // As for space-between except that there exists an extra justification opportunities whose space is distributed half before and half after the ruby content.
-    auto baseContentRunRange = WTF::Range<size_t> { rubyBaseStart + 1, rubyBaseEnd };
-    TextUtil::computedExpansions(line.runs(), baseContentRunRange, { }, expansion);
-
-    auto contentLogicalLeftOffset = InlineLayoutUnit { };
-    if (expansion.opportunityCount) {
-        auto extraSpace = annotationBoxLogicalWidth - baseContentLogicalWidth;
-        contentLogicalLeftOffset = extraSpace / (expansion.opportunityCount + 1) / 2;
-        extraSpace -= (2 * contentLogicalLeftOffset);
-        line.applyExpansionOnRange(baseContentRunRange, expansion, extraSpace);
-    } else
-        contentLogicalLeftOffset = (annotationBoxLogicalWidth - baseContentLogicalWidth) / 2;
-    line.moveBy(baseContentRunRange, contentLogicalLeftOffset);
+    InlineContentAligner::applyRubyAlign(line.runs(), { rubyBaseStart, rubyBaseEnd }, annotationBoxLogicalWidth - baseContentLogicalWidth, { });
     return rubyBaseEnd;
 }
 

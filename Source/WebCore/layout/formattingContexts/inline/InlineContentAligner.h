@@ -31,6 +31,7 @@ namespace Layout {
 class InlineContentAligner {
 public:
     static InlineLayoutUnit applyTextAlignJustify(Line::RunList&, InlineLayoutUnit spaceToDistribute, size_t hangingTrailingWhitespaceLength);
+    static void applyRubyAlign(Line::RunList&, WTF::Range<size_t> rubyBaseRange, InlineLayoutUnit spaceToDistribute, size_t hangingTrailingWhitespaceLength);
 
 private:
     static InlineLayoutUnit applyExpansionOnRange(Line::RunList&, WTF::Range<size_t>, const ExpansionInfo&, InlineLayoutUnit spaceToDistribute);

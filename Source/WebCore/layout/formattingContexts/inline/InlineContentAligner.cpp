@@ -146,6 +146,23 @@ InlineLayoutUnit InlineContentAligner::applyTextAlignJustify(Line::RunList& runs
     return applyExpansionOnRange(runs, fullRange, expansion, spaceToDistribute);
 }
 
+void InlineContentAligner::applyRubyAlign(Line::RunList& runs, WTF::Range<size_t> rubyBaseRange, InlineLayoutUnit spaceToDistribute, size_t hangingTrailingWhitespaceLength)
+{
+    if (rubyBaseRange.distance() <= 1)
+        return;
+    // FIXME: ruby-align: space-around only
+    // As for space-between except that there exists an extra justification opportunities whose space is distributed half before and half after the ruby content.
+    auto baseContentRunRange = WTF::Range<size_t> { rubyBaseRange.begin() + 1, rubyBaseRange.end() - 1 };
+    auto expansion = ExpansionInfo { };
+    computedExpansions(runs, baseContentRunRange, hangingTrailingWhitespaceLength, expansion);
+
+    if (expansion.opportunityCount) {
+        auto contentLogicalLeftOffset = spaceToDistribute / (expansion.opportunityCount + 1) / 2;
+        spaceToDistribute -= (2 * contentLogicalLeftOffset);
+        applyExpansionOnRange(runs, baseContentRunRange, expansion, spaceToDistribute);
+    }
+}
+
 }
 }
 
