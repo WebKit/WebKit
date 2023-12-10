@@ -50,7 +50,7 @@ namespace WTF {
     // closer to having all the nearly-identical hash functions in one place.
 
     struct StringHash {
-        static unsigned hash(StringImpl* key) { return key->hash(); }
+        static unsigned hash(const StringImpl* key) { return key->hash(); }
         static inline bool equal(const StringImpl* a, const StringImpl* b)
         {
             return WTF::equal(*a, *b);
@@ -122,13 +122,13 @@ namespace WTF {
             return StringHasher::computeHashAndMaskTop8Bits<UChar, FoldCase>(data, length);
         }
 
-        static unsigned hash(StringImpl& string)
+        static unsigned hash(const StringImpl& string)
         {
             if (string.is8Bit())
                 return hash(string.characters8(), string.length());
             return hash(string.characters16(), string.length());
         }
-        static unsigned hash(StringImpl* string)
+        static unsigned hash(const StringImpl* string)
         {
             ASSERT(string);
             return hash(*string);

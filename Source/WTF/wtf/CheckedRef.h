@@ -237,13 +237,15 @@ private:
 
 template <typename T, typename PtrTraits>
 struct GetPtrHelper<CheckedRef<T, PtrTraits>> {
-    typedef T* PtrType;
+    using PtrType = T*;
+    using UnderlyingType = T;
     static T* getPtr(const CheckedRef<T, PtrTraits>& p) { return const_cast<T*>(p.ptr()); }
 };
 
 template <typename T, typename U>
 struct IsSmartPtr<CheckedRef<T, U>> {
     static constexpr bool value = true;
+    static constexpr bool isNullable = true;
 };
 
 template<typename ExpectedType, typename ArgType, typename ArgPtrTraits>

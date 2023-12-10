@@ -66,6 +66,7 @@ public:
     bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
     bool isHashTableEmptyValue() const { return m_impl.isHashTableEmptyValue(); }
 
+    WeakPtrImpl& impl() const { return m_impl; }
     Ref<WeakPtrImpl> releaseImpl() { return WTFMove(m_impl); }
 
     T* ptr() const
@@ -127,13 +128,15 @@ WeakRef(const T& value, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadin
 
 template <typename T, typename WeakPtrImpl>
 struct GetPtrHelper<WeakRef<T, WeakPtrImpl>> {
-    typedef T* PtrType;
+    using PtrType = T*;
+    using UnderlyingType = T;
     static T* getPtr(const WeakRef<T, WeakPtrImpl>& p) { return const_cast<T*>(p.ptr()); }
 };
 
 template <typename T, typename WeakPtrImpl>
 struct IsSmartPtr<WeakRef<T, WeakPtrImpl>> {
     static constexpr bool value = true;
+    static constexpr bool isNullable = false;
 };
 
 template<typename P, typename WeakPtrImpl> struct WeakRefHashTraits : SimpleClassHashTraits<WeakRef<P, WeakPtrImpl>> {

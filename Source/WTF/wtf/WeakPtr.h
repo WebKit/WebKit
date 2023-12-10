@@ -393,7 +393,7 @@ template<typename T, typename WeakPtrImpl> template<typename U> inline WeakPtr<T
 }
 
 template<typename T, typename WeakPtrImpl> template<typename U> inline WeakPtr<T, WeakPtrImpl>::WeakPtr(const WeakRef<U, WeakPtrImpl>& o)
-    : m_impl(&weak_ptr_impl_cast<T, U>(o.m_impl.get()))
+    : m_impl(&weak_ptr_impl_cast<T, U>(o.impl()))
 #if ASSERT_ENABLED
     , m_shouldEnableAssertions(o.enableWeakPtrThreadingAssertions() == EnableWeakPtrThreadingAssertions::Yes)
 #endif
@@ -401,7 +401,7 @@ template<typename T, typename WeakPtrImpl> template<typename U> inline WeakPtr<T
 }
 
 template<typename T, typename WeakPtrImpl> template<typename U> inline WeakPtr<T, WeakPtrImpl>::WeakPtr(WeakRef<U, WeakPtrImpl>&& o)
-    : m_impl(adoptRef(weak_ptr_impl_cast<T, U>(o.m_impl.leakRef())))
+    : m_impl(adoptRef(weak_ptr_impl_cast<T, U>(o.releaseImpl().leakRef())))
 #if ASSERT_ENABLED
     , m_shouldEnableAssertions(o.enableWeakPtrThreadingAssertions() == EnableWeakPtrThreadingAssertions::Yes)
 #endif
@@ -447,12 +447,14 @@ template<typename T, typename WeakPtrImpl> template<typename U> inline WeakPtr<T
 template <typename T, typename WeakPtrImpl>
 struct GetPtrHelper<WeakPtr<T, WeakPtrImpl>> {
     using PtrType = T*;
+    using UnderlyingType = T;
     static T* getPtr(const WeakPtr<T, WeakPtrImpl>& p) { return const_cast<T*>(p.get()); }
 };
 
 template <typename T, typename WeakPtrImpl>
 struct IsSmartPtr<WeakPtr<T, WeakPtrImpl>> {
     static constexpr bool value = true;
+    static constexpr bool isNullable = true;
 };
 
 template<typename ExpectedType, typename ArgType, typename WeakPtrImpl>

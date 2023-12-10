@@ -171,10 +171,16 @@ public:
     bool isSubset(const OtherCollection&);
 
     // Overloads for smart pointer values that take the raw pointer type as the parameter.
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type find(typename GetPtrHelper<V>::PtrType) const;
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type contains(typename GetPtrHelper<V>::PtrType) const;
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type remove(typename GetPtrHelper<V>::PtrType);
-    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, TakeType>::type take(typename GetPtrHelper<V>::PtrType);
+    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*) const;
+    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*) const;
+    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, bool>::type remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*);
+    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value, TakeType>::type take(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>*);
+
+    // Overloads for non-nullable smart pointer values that take the raw reference type as the parameter.
+    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, iterator>::type find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&) const;
+    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, bool>::type contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&) const;
+    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, bool>::type remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&);
+    template<typename V = ValueType> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, TakeType>::type take(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>&);
 
     static bool isValidValue(const ValueType&);
 
@@ -462,30 +468,58 @@ inline bool HashSet<T, U, V, W>::isSubset(const OtherCollection& other)
 
 template<typename Value, typename HashFunctions, typename Traits, typename TableTraits>
 template<typename V>
-inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::find(typename GetPtrHelper<V>::PtrType value) const -> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type
+inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) const -> typename std::enable_if<IsSmartPtr<V>::value, iterator>::type
 {
     return m_impl.template find<HashSetTranslator<Traits, HashFunctions>>(value);
 }
 
 template<typename Value, typename HashFunctions, typename Traits, typename TableTraits>
 template<typename V>
-inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::contains(typename GetPtrHelper<V>::PtrType value) const -> typename std::enable_if<IsSmartPtr<V>::value, bool>::type
+inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) const -> typename std::enable_if<IsSmartPtr<V>::value, bool>::type
 {
     return m_impl.template contains<HashSetTranslator<Traits, HashFunctions>>(value);
 }
 
 template<typename Value, typename HashFunctions, typename Traits, typename TableTraits>
 template<typename V>
-inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::remove(typename GetPtrHelper<V>::PtrType value) -> typename std::enable_if<IsSmartPtr<V>::value, bool>::type
+inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) -> typename std::enable_if<IsSmartPtr<V>::value, bool>::type
 {
     return remove(find(value));
 }
 
 template<typename Value, typename HashFunctions, typename Traits, typename TableTraits>
 template<typename V>
-inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::take(typename GetPtrHelper<V>::PtrType value) -> typename std::enable_if<IsSmartPtr<V>::value, TakeType>::type
+inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::take(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>* value) -> typename std::enable_if<IsSmartPtr<V>::value, TakeType>::type
 {
     return take(find(value));
+}
+
+template<typename Value, typename HashFunctions, typename Traits, typename TableTraits>
+template<typename V>
+inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::find(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) const -> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, iterator>::type
+{
+    return find(&value);
+}
+
+template<typename Value, typename HashFunctions, typename Traits, typename TableTraits>
+template<typename V>
+inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::contains(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) const -> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, bool>::type
+{
+    return contains(&value);
+}
+
+template<typename Value, typename HashFunctions, typename Traits, typename TableTraits>
+template<typename V>
+inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::remove(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) -> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, bool>::type
+{
+    return remove(&value);
+}
+
+template<typename Value, typename HashFunctions, typename Traits, typename TableTraits>
+template<typename V>
+inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::take(std::add_const_t<typename GetPtrHelper<V>::UnderlyingType>& value) -> typename std::enable_if<IsSmartPtr<V>::value && !IsSmartPtr<V>::isNullable, TakeType>::type
+{
+    return take(&value);
 }
 
 template<typename T, typename U, typename V, typename W>
