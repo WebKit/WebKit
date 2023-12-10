@@ -1171,7 +1171,7 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
         if (beforeOverhang)
             moveBoxRangeToVisualLeft(rubyBaseStart, displayBoxes.size() - 1, beforeOverhang);
         if (afterOverhang)
-            moveBoxRangeToVisualLeft(startEndPair.end() + 1, displayBoxes.size() - 1, afterOverhang);
+            moveBoxRangeToVisualLeft(startEndPair.end(), displayBoxes.size() - 1, afterOverhang);
     }
 }
 

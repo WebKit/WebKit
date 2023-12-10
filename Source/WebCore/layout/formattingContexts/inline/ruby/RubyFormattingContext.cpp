@@ -229,23 +229,26 @@ InlineLayoutUnit RubyFormattingContext::baseEndAdditionalLogicalWidth(const Box&
 size_t RubyFormattingContext::applyRubyAlignOnBaseContent(size_t rubyBaseStart, Line& line, HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, const InlineFormattingContext& inlineFormattingContext)
 {
     auto& runs = line.runs();
-    auto& rubyBaseLayoutBox = runs[rubyBaseStart].layoutBox();
-    auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
-    if (!annotationBox)
+    if (runs.isEmpty()) {
+        ASSERT_NOT_REACHED();
         return rubyBaseStart;
-
+    }
+    auto& rubyBaseLayoutBox = runs[rubyBaseStart].layoutBox();
     auto rubyBaseEnd = [&] {
         auto& rubyBox = rubyBaseLayoutBox.parent();
         for (auto index = rubyBaseStart + 1; index < runs.size(); ++index) {
             if (&runs[index].layoutBox().parent() == &rubyBox)
                 return index;
         }
-        return runs.size();
+        return runs.size() - 1;
     }();
-    if (rubyBaseEnd == rubyBaseStart + 1) {
+    if (rubyBaseEnd - rubyBaseStart == 1) {
         // Blank base needs no alignment.
         return rubyBaseEnd;
     }
+    auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
+    if (!annotationBox)
+        return rubyBaseEnd;
 
     auto annotationBoxLogicalWidth = InlineLayoutUnit { inlineFormattingContext.geometryForBox(*annotationBox).marginBoxWidth() };
     auto baseContentLogicalWidth = runs[rubyBaseEnd].logicalLeft() - runs[rubyBaseStart].logicalRight();
@@ -500,7 +503,7 @@ InlineLayoutUnit RubyFormattingContext::overhangForAnnotationAfter(const Box& ru
         overhangingAnnotationRect.move(offset);
         baseContentBoxRect.move(offset);
 
-        for (size_t index = boxes.size() - 1; index > rubyBaseRange.end(); --index) {
+        for (size_t index = boxes.size() - 1; index >= rubyBaseRange.end(); --index) {
             auto& previousDisplayBox = boxes[index];
             if (annotationOverlapCheck(previousDisplayBox, overhangingAnnotationRect, inlineFormattingContext))
                 return true;
