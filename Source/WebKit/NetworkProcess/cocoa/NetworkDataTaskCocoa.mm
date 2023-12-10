@@ -455,6 +455,15 @@ void NetworkDataTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&
 
     if (isTopLevelNavigation())
         request.setFirstPartyForCookies(request.url());
+    else {
+        WebCore::RegistrableDomain firstPartyDomain { request.firstPartyForCookies() };
+        if (auto* storageSession = m_session->networkStorageSession()) {
+            bool didPreviousRequestHaveStorageAccess = storageSession->hasStorageAccess(WebCore::RegistrableDomain { redirectResponse.url() }, firstPartyDomain, m_frameID, m_pageID);
+            bool doesRequestHaveStorageAccess = storageSession->hasStorageAccess(WebCore::RegistrableDomain { request.url() }, firstPartyDomain, m_frameID, m_pageID);
+            if (didPreviousRequestHaveStorageAccess && doesRequestHaveStorageAccess)
+                request.setFirstPartyForCookies(request.url());
+        }
+    }
 
     NetworkTaskCocoa::willPerformHTTPRedirection(WTFMove(redirectResponse), WTFMove(request), [completionHandler = WTFMove(completionHandler), this, weakThis = ThreadSafeWeakPtr { *this }, redirectResponse] (WebCore::ResourceRequest&& request) mutable {
         auto protectedThis = weakThis.get();

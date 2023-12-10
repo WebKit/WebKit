@@ -166,6 +166,8 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     SetDomainsWithCrossPageStorageAccess(HashMap<WebCore::RegistrableDomain, WebCore::RegistrableDomain> domains) -> ()
     SendResourceLoadStatisticsDataImmediately() -> ()
 
+    UpdateDomainsWithStorageAccessQuirks(HashSet<WebCore::RegistrableDomain> domainsWithStorageAccessQuirks);
+
     GrantAccessToAssetServices(Vector<WebKit::SandboxExtension::Handle> assetServicesHandles)
     RevokeAccessToAssetServices()
     SwitchFromStaticFontRegistryToUserFontRegistry(Vector<WebKit::SandboxExtension::Handle> fontMachExtensionHandles)

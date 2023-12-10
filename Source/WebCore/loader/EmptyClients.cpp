@@ -937,6 +937,10 @@ bool EmptyFrameLoaderClient::shouldFallBack(const ResourceError&) const
     return false;
 }
 
+void EmptyFrameLoaderClient::loadStorageAccessQuirksIfNeeded()
+{
+}
+
 bool EmptyFrameLoaderClient::canHandleRequest(const ResourceRequest&) const
 {
     return false;

@@ -136,6 +136,8 @@ private:
     ResourceError httpNavigationWithHTTPSOnlyError(const ResourceRequest&) const final;
     ResourceError pluginWillHandleLoadError(const ResourceResponse&) const final;
 
+    void loadStorageAccessQuirksIfNeeded() final;
+
     bool shouldFallBack(const ResourceError&) const final;
 
     bool canHandleRequest(const ResourceRequest&) const final;

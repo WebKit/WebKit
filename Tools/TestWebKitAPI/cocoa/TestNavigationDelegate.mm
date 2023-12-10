@@ -217,6 +217,12 @@
         _didChangeLookalikeCharactersFromURL(webView, originalURL, adjustedURL);
 }
 
+- (void)_webView:(WKWebView *)webView didPromptForStorageAccess:(NSString *)topFrameDomain forSubFrameDomain:(NSString *)subFrameDomain forQuirk:(BOOL)hasQuirk
+{
+    if (_didPromptForStorageAccess)
+        _didPromptForStorageAccess(webView, topFrameDomain, subFrameDomain, hasQuirk);
+}
+
 @end
 
 @implementation WKWebView (TestWebKitAPIExtras)

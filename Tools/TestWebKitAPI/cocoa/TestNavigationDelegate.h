@@ -44,6 +44,7 @@
 @property (nonatomic, copy) void (^didReceiveAuthenticationChallenge)(WKWebView *, NSURLAuthenticationChallenge *, void (^)(NSURLSessionAuthChallengeDisposition, NSURLCredential *));
 @property (nonatomic, copy) void (^contentRuleListPerformedAction)(WKWebView *, NSString *, _WKContentRuleListAction *, NSURL *);
 @property (nonatomic, copy) void (^didChangeLookalikeCharactersFromURL)(WKWebView *, NSURL *, NSURL *);
+@property (nonatomic, copy) void (^didPromptForStorageAccess)(WKWebView *, NSString *, NSString *, BOOL);
 
 - (void)allowAnyTLSCertificate;
 - (void)waitForDidStartProvisionalNavigation;

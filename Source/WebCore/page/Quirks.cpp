@@ -47,6 +47,7 @@
 #include "LocalDOMWindow.h"
 #include "NamedNodeMap.h"
 #include "NetworkStorageSession.h"
+#include "OrganizationStorageAccessPromptQuirk.h"
 #include "PlatformMouseEvent.h"
 #include "RegistrableDomain.h"
 #include "ResourceLoadObserver.h"
@@ -1155,6 +1156,25 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
         });
     });
     return Quirks::StorageAccessResult::ShouldCancelEvent;
+}
+
+void Quirks::triggerOptionalStorageAccessIframeQuirk(const URL& frameURL, CompletionHandler<void()>&& completionHandler) const
+{
+    if (m_document) {
+        if (m_document->frame() && !m_document->frame()->isMainFrame()) {
+            auto& mainFrame = m_document->frame()->mainFrame();
+            if (auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame); localMainFrame && localMainFrame->document()) {
+                localMainFrame->document()->quirks().triggerOptionalStorageAccessIframeQuirk(frameURL, WTFMove(completionHandler));
+                return;
+            }
+        }
+        if (subFrameDomainsForStorageAccessQuirk().contains(RegistrableDomain { frameURL })) {
+            return DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, RegistrableDomain { frameURL }, [completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted) mutable {
+                completionHandler();
+            });
+        }
+    }
+    completionHandler();
 }
 
 // rdar://64549429
