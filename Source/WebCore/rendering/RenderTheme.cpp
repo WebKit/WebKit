@@ -1195,18 +1195,9 @@ Color RenderTheme::platformInactiveListBoxSelectionForegroundColor(OptionSet<Sty
 
 int RenderTheme::baselinePosition(const RenderBox& box) const
 {
-    auto baseline = [&]() -> int {
-        if (box.isHorizontalWritingMode())
-            return box.height() + box.marginTop();
-
-        return (box.width() / 2.0f) + box.marginBefore();
-    }();
-
-#if !PLATFORM(IOS_FAMILY)
-    return baseline + Theme::singleton().baselinePositionAdjustment(box.style().effectiveAppearance(), box.isHorizontalWritingMode()) * box.style().effectiveZoom();
-#else
-    return baseline;
-#endif
+    if (box.isHorizontalWritingMode())
+        return box.height() + box.marginTop();
+    return (box.width() / 2.0f) + box.marginBefore();
 }
 
 bool RenderTheme::isControlContainer(StyleAppearance appearance) const
@@ -1238,17 +1229,6 @@ bool RenderTheme::isControlStyled(const RenderStyle& style, const RenderStyle& u
     default:
         return false;
     }
-}
-
-void RenderTheme::adjustRepaintRect(const RenderObject& renderer, FloatRect& rect)
-{
-#if !PLATFORM(IOS_FAMILY)
-    ControlStates states(extractControlStatesForRenderer(renderer));
-    Theme::singleton().inflateControlPaintRect(renderer.style().effectiveAppearance(), states, rect, renderer.style().effectiveZoom());
-#else
-    UNUSED_PARAM(renderer);
-    UNUSED_PARAM(rect);
-#endif
 }
 
 bool RenderTheme::supportsFocusRing(const RenderStyle& style) const

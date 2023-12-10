@@ -231,6 +231,15 @@ bool RenderThemeMac::canCreateControlPartForDecorations(const RenderObject& rend
     return renderer.style().effectiveAppearance() == StyleAppearance::MenulistButton;
 }
 
+int RenderThemeMac::baselinePosition(const RenderBox& renderer) const
+{
+    auto appearance = renderer.style().effectiveAppearance();
+    auto baseline = RenderTheme::baselinePosition(renderer);
+    if ((appearance == StyleAppearance::Checkbox || appearance == StyleAppearance::Radio) && renderer.isHorizontalWritingMode())
+        return baseline - (2 * renderer.style().effectiveZoom());
+    return baseline;
+}
+
 bool RenderThemeMac::useFormSemanticContext() const
 {
     return ThemeMac::useFormSemanticContext();
@@ -740,9 +749,11 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& 
     case StyleAppearance::PushButton:
     case StyleAppearance::Radio:
     case StyleAppearance::SquareButton:
-    case StyleAppearance::Switch:
-        RenderTheme::adjustRepaintRect(renderer, rect);
+    case StyleAppearance::Switch: {
+        ControlStates states(extractControlStatesForRenderer(renderer));
+        Theme::singleton().inflateControlPaintRect(renderer.style().effectiveAppearance(), states, rect, renderer.style().effectiveZoom());
         break;
+    }
     case StyleAppearance::Menulist: {
         auto zoomLevel = renderer.style().effectiveZoom();
         setPopupButtonCellState(renderer, IntSize(rect.size()));

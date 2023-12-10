@@ -548,13 +548,6 @@ static LengthSize switchSize(const LengthSize& zoomedSize, float zoomFactor)
 
 // Theme overrides
 
-int ThemeMac::baselinePositionAdjustment(StyleAppearance appearance, bool isHorizontalWritingMode) const
-{
-    if ((appearance == StyleAppearance::Checkbox || appearance == StyleAppearance::Radio) && isHorizontalWritingMode)
-        return -2;
-    return Theme::baselinePositionAdjustment(appearance, isHorizontalWritingMode);
-}
-
 std::optional<FontCascadeDescription> ThemeMac::controlFont(StyleAppearance appearance, const FontCascade& font, float zoomFactor) const
 {
     switch (appearance) {
