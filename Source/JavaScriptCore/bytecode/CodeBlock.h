@@ -952,7 +952,7 @@ private:
     VM* const m_vm;
 
     const void* const m_instructionsRawPointer { nullptr };
-    SentinelLinkedList<CallLinkInfoBase, PackedRawSentinelNode<CallLinkInfoBase>> m_incomingCalls;
+    SentinelLinkedList<CallLinkInfoBase, BasicRawSentinelNode<CallLinkInfoBase>> m_incomingCalls;
     uint16_t m_optimizationDelayCounter { 0 };
     uint16_t m_reoptimizationRetryCounter { 0 };
     StructureWatchpointMap m_llintGetByIdWatchpointMap;

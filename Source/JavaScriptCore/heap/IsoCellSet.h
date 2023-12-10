@@ -42,7 +42,7 @@ class IsoSubspace;
 // Create a set of cells that are in an IsoSubspace. This allows concurrent O(1) set insertion and
 // removal. Each such set should be thought of as a 0.8% increase in object size for objects in that
 // IsoSubspace (it's like adding 1 bit every 16 bytes, or 1 bit every 128 bits).
-class IsoCellSet final : public PackedRawSentinelNode<IsoCellSet> {
+class IsoCellSet final : public BasicRawSentinelNode<IsoCellSet> {
     WTF_MAKE_NONCOPYABLE(IsoCellSet);
     WTF_MAKE_NONMOVABLE(IsoCellSet);
 public:

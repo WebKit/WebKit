@@ -38,9 +38,9 @@ namespace WTF {
 class MetaAllocator;
 class PrintStream;
 
-DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetaAllocatorHandle);
+DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetaAllocatorHandle);
 class MetaAllocatorHandle : public ThreadSafeRefCounted<MetaAllocatorHandle>, public RedBlackTree<MetaAllocatorHandle, void*>::Node {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(MetaAllocatorHandle);
+    WTF_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(MetaAllocatorHandle);
 
 public:
     using MemoryPtr = CodePtr<HandleMemoryPtrTag>;

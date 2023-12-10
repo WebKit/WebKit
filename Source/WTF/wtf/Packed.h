@@ -110,6 +110,7 @@ template<typename T, size_t passedAlignment>
 class PackedAlignedPtr {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static_assert(::allowCompactPointers<T*>());
     static_assert(hasOneBitSet(passedAlignment), "Alignment needs to be power-of-two");
     static constexpr size_t alignment = passedAlignment;
     static constexpr bool isPackedType = true;
@@ -241,6 +242,7 @@ private:
 template<typename T>
 class Packed<T*> : public PackedAlignedPtr<T, 1> {
 public:
+    static_assert(::allowCompactPointers<T*>());
     using Base = PackedAlignedPtr<T, 1>;
     using Base::Base;
 
