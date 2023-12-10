@@ -58,7 +58,7 @@ WebCore::SWClientConnection& WebServiceWorkerProvider::serviceWorkerConnection()
 
 WebCore::SWClientConnection* WebServiceWorkerProvider::existingServiceWorkerConnection()
 {
-    auto* networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
+    RefPtr networkProcessConnection = WebProcess::singleton().existingNetworkProcessConnection();
     if (!networkProcessConnection)
         return nullptr;
 
