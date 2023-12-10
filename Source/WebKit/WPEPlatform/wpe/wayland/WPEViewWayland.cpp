@@ -216,6 +216,11 @@ static const struct wl_surface_listener surfaceListener = {
     {
     },
 #endif
+#ifdef WL_SURFACE_PREFERRED_BUFFER_TRANSFORM_SINCE_VERSION
+    // preferred_buffer_transform
+    [](void*, struct wl_surface*, uint32_t) {
+    },
+#endif
 };
 
 static const struct zwp_linux_dmabuf_feedback_v1_listener linuxDMABufFeedbackListener = {
