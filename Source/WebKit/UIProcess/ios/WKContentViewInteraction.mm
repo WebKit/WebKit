@@ -4615,6 +4615,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (id)targetForActionForWebView:(SEL)action withSender:(id)sender
 {
+    BOOL hasFallbackAsyncTextInputAction = action == @selector(_define:) || action == @selector(_translate:) || action == @selector(_lookup:);
+    if (self.shouldUseAsyncInteractions && hasFallbackAsyncTextInputAction)
+        return nil;
     return [super targetForAction:action withSender:sender];
 }
 
