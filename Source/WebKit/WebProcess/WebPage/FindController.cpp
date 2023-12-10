@@ -223,8 +223,8 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
     }
 
     if (!shouldShowOverlay) {
-        if (m_findPageOverlay)
-            m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, PageOverlay::FadeMode::Fade);
+        if (RefPtr findPageOverlay = m_findPageOverlay)
+            m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
     } else {
         if (!m_findPageOverlay) {
             auto findPageOverlay = PageOverlay::create(*this, PageOverlay::OverlayType::Document);
@@ -403,8 +403,8 @@ void FindController::indicateFindMatch(uint32_t matchIndex)
 void FindController::hideFindUI()
 {
     m_findMatches.clear();
-    if (m_findPageOverlay)
-        m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*m_findPageOverlay, PageOverlay::FadeMode::Fade);
+    if (RefPtr findPageOverlay = m_findPageOverlay)
+        m_webPage->corePage()->pageOverlayController().uninstallPageOverlay(*findPageOverlay, PageOverlay::FadeMode::Fade);
 
 #if ENABLE(PDF_PLUGIN)
     if (auto* pluginView = mainFramePlugIn())
