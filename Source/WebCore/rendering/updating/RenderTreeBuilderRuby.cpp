@@ -273,7 +273,10 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild
         return downcast<RenderElement>(*previous);
     }
 
-    auto rubyBase = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::RubyBase));
+    auto baseStyle = RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::RubyBase);
+    baseStyle.setUnicodeBidi(UnicodeBidi::Isolate);
+
+    auto rubyBase = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), WTFMove(baseStyle));
     rubyBase->initializeStyle();
     WeakPtr newParent = rubyBase.get();
     m_builder.inlineBuilder().attach(downcast<RenderInline>(parent), WTFMove(rubyBase), beforeChild);

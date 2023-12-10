@@ -369,6 +369,28 @@ static bool shouldInlinifyForRuby(const RenderStyle& style, const RenderStyle& p
     return hasRubyParent && !style.hasOutOfFlowPosition() && !style.isFloating();
 }
 
+static bool isRubyContainerOrInternalRubyBox(const RenderStyle& style)
+{
+    auto display = style.display();
+    return display == DisplayType::Ruby
+        || display == DisplayType::RubyAnnotation
+        || display == DisplayType::RubyBase;
+}
+
+// https://drafts.csswg.org/css-ruby-1/#bidi
+static UnicodeBidi adjustUnicodeBidiForRuby(UnicodeBidi unicodeBidi)
+{
+    switch (unicodeBidi) {
+    case UnicodeBidi::Normal:
+    case UnicodeBidi::Embed:
+        return UnicodeBidi::Isolate;
+    case UnicodeBidi::Override:
+        return UnicodeBidi::IsolateOverride;
+    default:
+        return unicodeBidi;
+    }
+}
+
 void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearanceStyle) const
 {
     if (style.display() == DisplayType::Contents)
@@ -442,6 +464,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         // https://www.w3.org/TR/css-ruby-1/#anon-gen-inlinize
         if (shouldInlinifyForRuby(style, m_parentBoxStyle))
             style.setEffectiveDisplay(equivalentInlineDisplay(style));
+        // https://drafts.csswg.org/css-ruby-1/#bidi
+        if (isRubyContainerOrInternalRubyBox(style))
+            style.setUnicodeBidi(adjustUnicodeBidiForRuby(style.unicodeBidi()));
     }
 
     auto hasAutoZIndex = [](const RenderStyle& style, const RenderStyle& parentBoxStyle, const Element* element) {
