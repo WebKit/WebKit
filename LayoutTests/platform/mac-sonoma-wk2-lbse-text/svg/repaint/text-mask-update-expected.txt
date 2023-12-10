@@ -5,9 +5,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (10,2) size 48x23
-  RenderSVGHiddenContainer {defs} at (10,2) size 47.81x23
-layer at (10,2) size 48x23
-  RenderSVGResourceMasker {mask} at (0,0) size 47.81x23
+  RenderSVGResourceMasker {mask} at (10,2) size 47.81x23
 layer at (10,2) size 48x23
   RenderSVGText {text} at (0,0) size 48x23 contains 1 chunk(s)
     RenderSVGInlineText {#text} at (0,0) size 48x23

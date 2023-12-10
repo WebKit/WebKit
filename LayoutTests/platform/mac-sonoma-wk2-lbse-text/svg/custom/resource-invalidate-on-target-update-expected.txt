@@ -1,0 +1,22 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGRoot {svg} at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderSVGViewportContainer at (0,0) size 800x600
+layer at (0,0) size 1x1
+  RenderSVGResourceClipper {clipPath} at (0,0) size 1x1
+layer at (0,0) size 1x1
+  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#000000]}] [cx=0.50] [cy=0.50] [r=0.50]
+layer at (0,0) size 1x1
+  RenderSVGResourceMasker {mask} at (0,0) size 1x1
+layer at (0,0) size 1x1
+  RenderSVGEllipse {circle} at (0,0) size 1x1 [fill={[type=SOLID] [color=#FFFFFF]}] [cx=0.50] [cy=0.50] [r=0.50]
+layer at (10,10) size 100x340
+  RenderSVGTransformableContainer {g} at (10,10) size 100x340
+layer at (10,10) size 100x100
+  RenderSVGRect {rect} at (0,0) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=10.00] [width=100.00] [height=100.00]
+layer at (10,130) size 100x100
+  RenderSVGRect {rect} at (0,120) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=130.00] [width=100.00] [height=100.00]
+layer at (10,250) size 100x100
+  RenderSVGRect {rect} at (0,240) size 100x100 [fill={[type=SOLID] [color=#008000]}] [x=10.00] [y=250.00] [width=100.00] [height=100.00]
