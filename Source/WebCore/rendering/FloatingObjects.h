@@ -31,6 +31,7 @@ namespace WebCore {
 
 class RenderBlockFlow;
 class RenderBox;
+class FloatingObjects;
 
 template<typename, typename> class PODInterval;
 template<typename, typename> class PODIntervalTree;
@@ -103,6 +104,8 @@ public:
     LayoutSize translationOffsetToAncestor() const;
 
 private:
+    friend FloatingObjects;
+
     SingleThreadWeakPtr<RenderBox> m_renderer;
     WeakPtr<LegacyRootInlineBox> m_originatingLine;
     LayoutRect m_frameRect;
@@ -175,6 +178,8 @@ public:
 
     LayoutUnit findNextFloatLogicalBottomBelow(LayoutUnit logicalHeight);
     LayoutUnit findNextFloatLogicalBottomBelowForBlock(LayoutUnit logicalHeight);
+
+    void shiftFloatsBy(LayoutUnit blockShift);
 
 private:
     const RenderBlockFlow& renderer() const { ASSERT(m_renderer); return *m_renderer; }

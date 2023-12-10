@@ -439,6 +439,17 @@ LayoutUnit FloatingObjects::logicalRightOffset(LayoutUnit fixedOffset, LayoutUni
     return std::min(fixedOffset, adapter.offset());
 }
 
+void FloatingObjects::shiftFloatsBy(LayoutUnit blockShift)
+{
+    LayoutUnit shiftX = (m_horizontalWritingMode) ? 0_lu : -blockShift;
+    LayoutUnit shiftY = (m_horizontalWritingMode) ? blockShift : 0_lu;
+
+    for (auto& floater : m_set) {
+        floater->m_frameRect.move(shiftX, shiftY);
+        floater->renderer().move(shiftX, shiftY);
+    }
+}
+
 template<>
 inline bool ComputeFloatOffsetForFloatLayoutAdapter<FloatingObject::FloatLeft>::updateOffsetIfNeeded(const FloatingObject& floatingObject)
 {
