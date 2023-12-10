@@ -37,7 +37,9 @@ CoreIPCPKContact::CoreIPCPKContact(PKContact *contact)
     , m_emailAddress(contact.emailAddress)
     , m_phoneNumber(contact.phoneNumber)
     , m_postalAddress(contact.postalAddress)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     , m_supplementarySublocality(contact.supplementarySubLocality)
+ALLOW_DEPRECATED_DECLARATIONS_END
 {
 }
 
@@ -49,7 +51,9 @@ RetainPtr<id> CoreIPCPKContact::toID() const
     contact.get().emailAddress = (NSString *)m_emailAddress;
     contact.get().phoneNumber = (CNPhoneNumber *)m_phoneNumber.toID();
     contact.get().postalAddress = (CNPostalAddress *)m_postalAddress.toID();
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     contact.get().supplementarySubLocality = (NSString *)m_supplementarySublocality;
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     return contact;
 }

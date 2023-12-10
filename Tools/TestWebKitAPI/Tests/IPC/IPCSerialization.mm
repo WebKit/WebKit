@@ -616,7 +616,9 @@ TEST(IPCSerialization, Basic)
     contact.get().emailAddress = @"admin@webkit.org";
     contact.get().phoneNumber = phoneNumber.get();
     contact.get().postalAddress = address.get();
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     contact.get().supplementarySubLocality = @"City 17";
+ALLOW_DEPRECATED_DECLARATIONS_END
     runTestNS({ contact.get() });
 #endif // USE(PASSKIT) && !PLATFORM(WATCHOS)
 
