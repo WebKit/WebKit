@@ -1410,8 +1410,10 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
 #endif
 
 #if HAVE(NETWORK_LOADER)
-    RELEASE_LOG_IF(parameters.useNetworkLoader, NetworkSession, "Using experimental network loader.");
-    configuration._usesNWLoader = parameters.useNetworkLoader;
+    if (parameters.useNetworkLoader) {
+        RELEASE_LOG_IF(*parameters.useNetworkLoader, NetworkSession, "Using experimental network loader.");
+        configuration._usesNWLoader = *parameters.useNetworkLoader;
+    }
 #endif
 
     if (parameters.allowsHSTSWithUntrustedRootCertificate && [configuration respondsToSelector:@selector(_allowsHSTSWithUntrustedRootCertificate)])

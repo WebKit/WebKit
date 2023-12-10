@@ -404,8 +404,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagPauseAnimation;
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
 #if PLATFORM(GTK)
-    case WebCore::ContextMenuItemTagCopyImageUrlToClipboard:
-        return kWKContextMenuItemTagCopyImageUrlToClipboard;
+    case WebCore::ContextMenuItemTagCopyImageURLToClipboard:
+        return kWKContextMenuItemTagCopyImageURLToClipboard;
 #endif
     case WebCore::ContextMenuItemTagOpenFrameInNewWindow:
         return kWKContextMenuItemTagOpenFrameInNewWindow;
@@ -619,8 +619,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     case kWKContextMenuItemTagOpenFrameInNewWindow:
 #if PLATFORM(GTK)
-    case kWKContextMenuItemTagCopyImageUrlToClipboard:
-        return WebCore::ContextMenuItemTagCopyImageUrlToClipboard;
+    case kWKContextMenuItemTagCopyImageURLToClipboard:
+        return WebCore::ContextMenuItemTagCopyImageURLToClipboard;
 #endif
         return WebCore::ContextMenuItemTagOpenFrameInNewWindow;
     case kWKContextMenuItemTagCopy:

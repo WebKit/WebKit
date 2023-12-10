@@ -70,7 +70,7 @@
     std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue;
     bool preventsSystemHTTPProxyAuthentication;
     bool appHasRequestedCrossWebsiteTrackingPermission;
-    bool useNetworkLoader;
+    std::optional<bool> useNetworkLoader;
     bool allowsHSTSWithUntrustedRootCertificate;
     String pcmMachServiceName;
     String webPushMachServiceName;

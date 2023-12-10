@@ -41,6 +41,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const CSSParserContext& conte
     , hasPseudoClassEnabled(context.hasPseudoClassEnabled)
     , highlightAPIEnabled(context.highlightAPIEnabled)
     , popoverAttributeEnabled(context.popoverAttributeEnabled)
+    , thumbAndTrackPseudoElementsEnabled(context.thumbAndTrackPseudoElementsEnabled)
     , viewTransitionsEnabled(context.propertySettings.viewTransitionsEnabled)
 {
 }
@@ -54,6 +55,7 @@ CSSSelectorParserContext::CSSSelectorParserContext(const Document& document)
     , hasPseudoClassEnabled(document.settings().hasPseudoClassEnabled())
     , highlightAPIEnabled(document.settings().highlightAPIEnabled())
     , popoverAttributeEnabled(document.settings().popoverAttributeEnabled())
+    , thumbAndTrackPseudoElementsEnabled(document.settings().thumbAndTrackPseudoElementsEnabled())
     , viewTransitionsEnabled(document.settings().viewTransitionsEnabled())
 {
 }
@@ -69,6 +71,7 @@ void add(Hasher& hasher, const CSSSelectorParserContext& context)
         context.hasPseudoClassEnabled,
         context.highlightAPIEnabled,
         context.popoverAttributeEnabled,
+        context.thumbAndTrackPseudoElementsEnabled,
         context.viewTransitionsEnabled
     );
 }

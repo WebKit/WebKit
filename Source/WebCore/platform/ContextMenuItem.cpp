@@ -155,7 +155,7 @@ static bool isValidContextMenuAction(WebCore::ContextMenuAction action)
     case ContextMenuAction::ContextMenuItemTagCopyImageToClipboard:
     case ContextMenuAction::ContextMenuItemTagCopySubject:
 #if PLATFORM(GTK)
-    case ContextMenuAction::ContextMenuItemTagCopyImageUrlToClipboard:
+    case ContextMenuAction::ContextMenuItemTagCopyImageURLToClipboard:
 #endif
     case ContextMenuAction::ContextMenuItemTagOpenFrameInNewWindow:
     case ContextMenuAction::ContextMenuItemTagCopy:

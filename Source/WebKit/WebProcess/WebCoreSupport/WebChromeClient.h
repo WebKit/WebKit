@@ -328,6 +328,7 @@ private:
     void elementDidBlur(WebCore::Element&) final;
     void elementDidRefocus(WebCore::Element&, const WebCore::FocusOptions&) final;
     void focusedElementDidChangeInputMode(WebCore::Element&, WebCore::InputMode) final;
+    void focusedSelectElementDidChangeOptions(const WebCore::HTMLSelectElement&) final;
 
     void makeFirstResponder() final;
     void assistiveTechnologyMakeFirstResponder() final;

@@ -582,7 +582,7 @@ const TypeDefinition& TypeInformation::signatureForLLIntBuiltin(LLIntBuiltin bui
     case LLIntBuiltin::ElemDrop:
         return *singleton().m_Void_I32;
     case LLIntBuiltin::RefTest:
-        return *singleton().m_I32_RefI32I32;
+        return *singleton().m_I32_RefI32I32I32;
     case LLIntBuiltin::RefCast:
         return *singleton().m_Ref_RefI32I32;
     case LLIntBuiltin::ArrayNewData:
@@ -880,9 +880,8 @@ TypeInformation::TypeInformation()
     m_I32_I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { Wasm::Types::I32 } }).iterator->key;
     if (!Options::useWebAssemblyGC())
         return;
-    m_I32_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { anyrefType(), Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
+    m_I32_RefI32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { anyrefType(), Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Ref_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { anyrefType() }, { anyrefType(), Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
-    m_I32_RefI32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { Wasm::Types::I32 }, { Wasm::Type { Wasm::TypeKind::Ref, static_cast<TypeIndex>(Wasm::TypeKind::Externref) }, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Arrayref_I32I32I32I32 = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { arrayrefType(false) }, { Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32, Wasm::Types::I32 } }).iterator->key;
     m_Anyref_Externref = m_typeSet.template add<FunctionParameterTypes>(FunctionParameterTypes { { anyrefType() }, { externrefType() } }).iterator->key;
 }

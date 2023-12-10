@@ -35,6 +35,7 @@ SOFT_LINK_CLASS_FOR_HEADER(PAL, WPResourceRequestOptions)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, WPResources)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, WPLinkFilteringData)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, WPStorageAccessQuirksData)
+SOFT_LINK_CLASS_FOR_HEADER(PAL, WPStorageAccessUserAgentStringQuirkData)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, WebPrivacy, WPNotificationUserInfoResourceTypeKey, NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, WebPrivacy, WPResourceDataChangedNotificationName, NSNotificationName)
 

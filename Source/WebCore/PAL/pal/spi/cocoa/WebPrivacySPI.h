@@ -109,6 +109,24 @@ typedef void (^WPStorageAccessPromptQuirksDataCompletionHandler)(WPStorageAccess
 @end
 #endif
 
+#if !defined(HAS_WEB_PRIVACY_STORAGE_ACCESS_USER_AGENT_STRING_CLASS)
+constexpr NSInteger WPResourceTypeStorageAccessUserAgentStringQuirksData = 6;
+@interface WPStorageAccessUserAgentStringQuirk : NSObject
+@property (nonatomic, readonly) NSString *domain;
+@property (nonatomic, readonly) NSString *userAgentString;
+@end
+
+@interface WPStorageAccessUserAgentStringQuirksData : NSObject
+@property (nonatomic, readonly) NSArray<WPStorageAccessUserAgentStringQuirk *> *quirks;
+@end
+
+typedef void (^WPStorageAccessUserAgentStringQuirksDataCompletionHandler)(WPStorageAccessUserAgentStringQuirksData *, NSError *);
+
+@interface WPStorageAccessUserAgentStringQuirk (Staging_119342418)
+- (void)requestStorageAccessUserAgentStringQuirksData:(WPResourceRequestOptions *)options completionHandler:(WPStorageAccessUserAgentStringQuirksDataCompletionHandler)completion;
+@end
+#endif
+
 WTF_EXTERN_C_BEGIN
 
 extern NSString *const WPNotificationUserInfoResourceTypeKey;

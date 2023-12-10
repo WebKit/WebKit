@@ -779,14 +779,18 @@ WASM_SLOW_PATH_DECL(call_builtin)
         auto reference = takeGPR().encodedJSValue();
         bool allowNull = static_cast<bool>(takeGPR().unboxedInt32());
         int32_t heapType = takeGPR().unboxedInt32();
+        bool shouldNegate = false;
+        if (builtin == Wasm::LLIntBuiltin::RefTest)
+            shouldNegate = takeGPR().unboxedInt32();
         Wasm::TypeIndex typeIndex;
         if (Wasm::typeIndexIsType(static_cast<Wasm::TypeIndex>(heapType)))
             typeIndex = static_cast<Wasm::TypeIndex>(heapType);
         else
             typeIndex = instance->module().moduleInformation().typeSignatures[heapType]->index();
-        if (builtin == Wasm::LLIntBuiltin::RefTest)
-            gprStart[0] = static_cast<uint32_t>(Wasm::refCast(reference, allowNull, typeIndex));
-        else {
+        if (builtin == Wasm::LLIntBuiltin::RefTest) {
+            bool result = Wasm::refCast(reference, allowNull, typeIndex);
+            gprStart[0] = static_cast<uint32_t>((!shouldNegate || !result) && (shouldNegate || result));
+        } else {
             if (!Wasm::refCast(reference, allowNull, typeIndex))
                 WASM_THROW(Wasm::ExceptionType::CastFailure);
             gprStart[0] = reference;

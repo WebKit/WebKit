@@ -328,7 +328,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t index, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructGet(ExtGCOpType structGetKind, ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType structReference, const StructType&, uint32_t fieldIndex, ExpressionType value);
-    PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
+    PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, bool shouldNegate, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addAnyConvertExtern(ExpressionType reference, ExpressionType& result);
     PartialResult WARN_UNUSED_RETURN addExternConvertAny(ExpressionType reference, ExpressionType& result);
@@ -365,6 +365,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlType&, Stack& returnValues);
     PartialResult WARN_UNUSED_RETURN addBranch(ControlType&, ExpressionType condition, Stack& returnValues);
     PartialResult WARN_UNUSED_RETURN addBranchNull(ControlType&, ExpressionType, Stack&, bool, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addBranchCast(ControlType&, ExpressionType, Stack&, bool, int32_t, bool);
     PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType condition, const Vector<ControlType*>& targets, ControlType& defaultTargets, Stack& expressionStack);
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, Stack& expressionStack);
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, Stack& expressionStack, bool unreachable = true);
@@ -1343,6 +1344,21 @@ auto LLIntGenerator::addBranchNull(ControlType& data, ExpressionType reference, 
     return { };
 }
 
+auto LLIntGenerator::addBranchCast(ControlType& data, ExpressionType reference, Stack& returnValues, bool allowNull, int32_t heapType, bool shouldNegate) -> PartialResult
+{
+    ResultList results;
+    addCallBuiltin(LLIntBuiltin::RefTest, { reference, addConstantWithoutPush(Types::I32, static_cast<uint32_t>(allowNull)), addConstantWithoutPush(Types::I32, heapType), addConstantWithoutPush(Types::I32, static_cast<uint32_t>(shouldNegate)) }, results);
+    ASSERT(results.size() == 1);
+    auto condition = results.at(0);
+
+    // Pop temporary condition variable.
+    --m_stackSize;
+
+    WASM_FAIL_IF_HELPER_FAILS(addBranch(data, condition, returnValues));
+
+    return { };
+}
+
 auto LLIntGenerator::addSwitch(ExpressionType condition, const Vector<ControlType*>& targets, ControlType& defaultTarget, Stack& expressionStack) -> PartialResult
 {
     materializeConstantsAndLocals(expressionStack);
@@ -2184,10 +2200,10 @@ auto LLIntGenerator::addStructSet(ExpressionType structReference, const StructTy
     return { };
 }
 
-auto LLIntGenerator::addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, ExpressionType& result) -> PartialResult
+auto LLIntGenerator::addRefTest(ExpressionType reference, bool allowNull, int32_t heapType, bool shouldNegate, ExpressionType& result) -> PartialResult
 {
     ResultList results;
-    addCallBuiltin(LLIntBuiltin::RefTest, { reference, addConstantWithoutPush(Types::I32, static_cast<uint32_t>(allowNull)), addConstantWithoutPush(Types::I32, heapType) }, results);
+    addCallBuiltin(LLIntBuiltin::RefTest, { reference, addConstantWithoutPush(Types::I32, static_cast<uint32_t>(allowNull)), addConstantWithoutPush(Types::I32, heapType), addConstantWithoutPush(Types::I32, static_cast<uint32_t>(shouldNegate)) }, results);
     ASSERT(results.size() == 1);
     result = results.at(0);
     return { };

@@ -96,6 +96,7 @@ static NSString *notificationUserInfoResourceTypeKey()
 @implementation WKWebPrivacyNotificationListener {
     BlockPtr<void()> _linkFilteringDataCallback;
     BlockPtr<void()> _storageAccessPromptQuirksDataCallback;
+    BlockPtr<void()> _storageAccessUserAgentStringQuirksDataCallback;
 }
 
 - (instancetype)init
@@ -118,6 +119,11 @@ static NSString *notificationUserInfoResourceTypeKey()
     _storageAccessPromptQuirksDataCallback = callback;
 }
 
+- (void)listenForStorageAccessUserAgentStringQuirkChanges:(void(^)())callback
+{
+    _storageAccessUserAgentStringQuirksDataCallback = callback;
+}
+
 - (void)dealloc
 {
     if (WebKit::canUseWebPrivacyFramework())
@@ -137,6 +143,9 @@ static NSString *notificationUserInfoResourceTypeKey()
 
     if (_storageAccessPromptQuirksDataCallback && type.integerValue == WPResourceTypeStorageAccessPromptQuirksData)
         _storageAccessPromptQuirksDataCallback();
+
+    if (_storageAccessUserAgentStringQuirksDataCallback && type.integerValue == WPResourceTypeStorageAccessUserAgentStringQuirksData)
+        _storageAccessUserAgentStringQuirksDataCallback();
 }
 
 @end
@@ -145,22 +154,24 @@ namespace WebKit {
 
 LinkDecorationFilteringController& LinkDecorationFilteringController::shared()
 {
-    static LinkDecorationFilteringController* sharedInstance = new LinkDecorationFilteringController;
-    return *sharedInstance;
+    static MainThreadNeverDestroyed<LinkDecorationFilteringController> sharedInstance;
+    return sharedInstance.get();
 }
 
 Ref<LinkDecorationFilteringDataObserver> LinkDecorationFilteringController::observeUpdates(Function<void()>&& callback)
 {
+    ASSERT(RunLoop::isMain());
     if (!m_notificationListener) {
         m_notificationListener = adoptNS([WKWebPrivacyNotificationListener new]);
         [m_notificationListener listenForLinkFilteringDataChanges:^{
             updateStrings([this] {
-                for (auto& observer : m_observers)
+                m_observers.forEach([](auto& observer) {
                     observer.invokeCallback();
+                });
             });
         }];
     }
-    auto observer = LinkDecorationFilteringDataObserver::create(WTFMove(callback));
+    Ref observer = LinkDecorationFilteringDataObserver::create(WTFMove(callback));
     m_observers.add(observer.get());
     return observer;
 }
@@ -171,19 +182,20 @@ void LinkDecorationFilteringController::setCachedStrings(Vector<WebCore::LinkDec
     m_cachedStrings.shrinkToFit();
 }
 
-void LinkDecorationFilteringController::updateStrings(CompletionHandler<void()>&& callback)
+void LinkDecorationFilteringController::updateStrings(CompletionHandler<void()>&& completionHandler)
 {
+    ASSERT(RunLoop::isMain());
     if (!WebKit::canUseWebPrivacyFramework()) {
-        callback();
+        completionHandler();
         return;
     }
 
-    static NeverDestroyed<Vector<CompletionHandler<void()>, 1>> lookupCallbacks;
-    lookupCallbacks->append(WTFMove(callback));
-    if (lookupCallbacks->size() > 1)
+    static NeverDestroyed<Vector<CompletionHandler<void()>, 1>> lookupCompletionHandlers;
+    lookupCompletionHandlers->append(WTFMove(completionHandler));
+    if (lookupCompletionHandlers->size() > 1)
         return;
 
-    auto options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
     [options setAfterUpdates:NO];
 
     [[PAL::getWPResourcesClass() sharedInstance] requestLinkFilteringData:options.get() completionHandler:^(WPLinkFilteringData *data, NSError *error) {
@@ -197,8 +209,8 @@ void LinkDecorationFilteringController::updateStrings(CompletionHandler<void()>&
             setCachedStrings(WTFMove(result));
         }
 
-        for (auto& callback : std::exchange(lookupCallbacks.get(), { }))
-            callback();
+        for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
+            completionHandler();
     }];
 
 }
@@ -330,7 +342,75 @@ void StorageAccessPromptQuirkController::updateQuirks(CompletionHandler<void()>&
         for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
             completionHandler();
     }];
+}
 
+StorageAccessUserAgentStringQuirkController& StorageAccessUserAgentStringQuirkController::shared()
+{
+    static MainThreadNeverDestroyed<StorageAccessUserAgentStringQuirkController> sharedInstance;
+    return sharedInstance.get();
+}
+
+Ref<StorageAccessUserAgentStringQuirkObserver> StorageAccessUserAgentStringQuirkController::observeUpdates(Function<void()>&& callback)
+{
+    ASSERT(RunLoop::isMain());
+    if (!m_notificationListener) {
+        m_notificationListener = adoptNS([WKWebPrivacyNotificationListener new]);
+        [m_notificationListener listenForStorageAccessUserAgentStringQuirkChanges:^{
+            updateQuirks([this] {
+                m_observers.forEach([](auto& observer) {
+                    observer.invokeCallback();
+                });
+            });
+        }];
+    }
+    Ref observer = StorageAccessUserAgentStringQuirkObserver::create(WTFMove(callback));
+    m_observers.add(observer.get());
+    return observer;
+}
+
+void StorageAccessUserAgentStringQuirkController::setCachedQuirks(HashMap<WebCore::RegistrableDomain, String>&& quirks)
+{
+    m_cachedQuirks = WTFMove(quirks);
+}
+
+void StorageAccessUserAgentStringQuirkController::setCachedQuirksForTesting(HashMap<WebCore::RegistrableDomain, String>&& quirks)
+{
+    setCachedQuirks(WTFMove(quirks));
+    m_observers.forEach([](auto& observer) {
+        observer.invokeCallback();
+    });
+}
+
+void StorageAccessUserAgentStringQuirkController::updateQuirks(CompletionHandler<void()>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    if (!WebKit::canUseWebPrivacyFramework() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestStorageAccessUserAgentStringQuirksData:completionHandler:)]) {
+        completionHandler();
+        return;
+    }
+
+    static MainThreadNeverDestroyed<Vector<CompletionHandler<void()>, 1>> lookupCompletionHandlers;
+    lookupCompletionHandlers->append(WTFMove(completionHandler));
+    if (lookupCompletionHandlers->size() > 1)
+        return;
+
+    RetainPtr options = adoptNS([PAL::allocWPResourceRequestOptionsInstance() init]);
+    [options setAfterUpdates:NO];
+
+    [[PAL::getWPResourcesClass() sharedInstance] requestStorageAccessUserAgentStringQuirksData:options.get() completionHandler:^(WPStorageAccessUserAgentStringQuirksData *data, NSError *error) {
+        HashMap<WebCore::RegistrableDomain, String> result;
+        if (error)
+            RELEASE_LOG_ERROR(ResourceLoadStatistics, "Failed to request storage access user agent string quirks from WebPrivacy.");
+        else {
+            auto quirks = [data quirks];
+            for (WPStorageAccessUserAgentStringQuirk *quirk : quirks)
+                result.add(WebCore::RegistrableDomain::fromRawString(quirk.domain), quirk.userAgentString);
+            setCachedQuirks(WTFMove(result));
+        }
+
+        for (auto& completionHandler : std::exchange(lookupCompletionHandlers.get(), { }))
+            completionHandler();
+    }];
 }
 
 #if HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)

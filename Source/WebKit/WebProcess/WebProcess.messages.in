@@ -49,6 +49,7 @@ messages -> WebProcess LegacyReceiver NotRefCounted {
     ClearResourceLoadStatistics();
     UserPreferredLanguagesChanged(Vector<String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
+    UpdateStorageAccessUserAgentStringQuirks(HashMap<WebCore::RegistrableDomain, String> userAgentStringQuirks)
 
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
     SetHasMouseDevice(bool hasMouseDevice)

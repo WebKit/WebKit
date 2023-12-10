@@ -48,21 +48,9 @@ struct Box {
         size_t length() const { return m_length; }
         StringView originalContent() const { return StringView(m_originalContent).substring(m_start, m_length); }
         StringView renderedContent() const { return m_adjustedContentToRender.isNull() ? originalContent() : m_adjustedContentToRender; }
-
         bool hasHyphen() const { return m_hasHyphen; }
-
-        std::optional<size_t> partiallyVisibleContentLength() const
-        {
-            if (!m_hasPartiallyVisibleContentLength)
-                return { };
-            return m_partiallyVisibleContentLength;
-        }
-
-        void setPartiallyVisibleContentLength(size_t truncatedLength)
-        {
-            m_partiallyVisibleContentLength = truncatedLength;
-            m_hasPartiallyVisibleContentLength = true;
-        }
+        std::optional<size_t> partiallyVisibleContentLength() const;
+        void setPartiallyVisibleContentLength(size_t truncatedLength);
 
     private:
         friend struct Box;
@@ -131,47 +119,17 @@ struct Box {
     float width() const { return visualRectIgnoringBlockDirection().width(); }
     float height() const { return visualRectIgnoringBlockDirection().height(); }
 
-    void moveVertically(float offset)
-    {
-        m_unflippedVisualRect.move({ { }, offset });
-        m_inkOverflow.move({ { }, offset });
-    }
-    void moveHorizontally(float offset)
-    {
-        m_unflippedVisualRect.move({ offset, { } });
-        m_inkOverflow.move({ offset, { } });
-    }
+    void moveVertically(float offset);
+    void moveHorizontally(float offset);
+    void expandVertically(float delta);
+    void expandHorizontally(float delta);
 
     void adjustInkOverflow(const FloatRect& childBorderBox) { return m_inkOverflow.uniteEvenIfEmpty(childBorderBox); }
-    void setLeft(float physicalLeft)
-    {
-        auto offset = physicalLeft - left();
-        m_unflippedVisualRect.setX(physicalLeft);
-        m_inkOverflow.setX(m_inkOverflow.x() + offset);
-    }
-    void setRight(float physicalRight)
-    {
-        auto offset = physicalRight - right();
-        m_unflippedVisualRect.shiftMaxXEdgeTo(physicalRight);
-        m_inkOverflow.shiftMaxXEdgeTo(m_inkOverflow.maxX() + offset);
-    }
-    void setTop(float physicalTop)
-    {
-        auto offset = physicalTop - top();
-        m_unflippedVisualRect.setY(physicalTop);
-        m_inkOverflow.setY(m_inkOverflow.y() + offset);
-    }
-    void setBottom(float physicalBottom)
-    {
-        auto offset = physicalBottom - bottom();
-        m_unflippedVisualRect.shiftMaxYEdgeTo(physicalBottom);
-        m_inkOverflow.shiftMaxYEdgeTo(m_inkOverflow.maxY() + offset);
-    }
-    void setRect(const FloatRect& rect, const FloatRect& inkOverflow)
-    {
-        m_unflippedVisualRect = rect;
-        m_inkOverflow = inkOverflow;
-    }
+    void setLeft(float physicalLeft);
+    void setRight(float physicalRight);
+    void setTop(float physicalTop);
+    void setBottom(float physicalBottom);
+    void setRect(const FloatRect&, const FloatRect& inkOverflow);
     void setHasContent() { m_hasContent = true; }
     void setIsFullyTruncated() { m_isFullyTruncated = true; }
 
@@ -182,6 +140,7 @@ struct Box {
         ExpansionBehavior behavior { ExpansionBehavior::defaultBehavior() };
         float horizontalExpansion { 0 };
     };
+    void setExpansion(Expansion);
     Expansion expansion() const { return { m_expansionBehavior, m_horizontalExpansion }; }
 
     const Layout::Box& layoutBox() const { return m_layoutBox; }
@@ -254,6 +213,83 @@ inline FloatRect Box::visibleRectIgnoringBlockDirection(const Box& box, const Fl
     visualRectIgnoringBlockDirection.shiftMaxXEdgeTo(visibleBoxRight);
 
     return visualRectIgnoringBlockDirection;
+}
+
+inline void Box::setExpansion(Expansion expansion)
+{
+    m_horizontalExpansion = expansion.horizontalExpansion;
+    m_expansionBehavior = expansion.behavior;
+}
+
+inline void Box::moveVertically(float offset)
+{
+    m_unflippedVisualRect.move({ { }, offset });
+    m_inkOverflow.move({ { }, offset });
+}
+
+inline void Box::moveHorizontally(float offset)
+{
+    m_unflippedVisualRect.move({ offset, { } });
+    m_inkOverflow.move({ offset, { } });
+}
+
+inline void Box::expandVertically(float delta)
+{
+    m_unflippedVisualRect.expand({ { }, delta });
+    m_inkOverflow.expand({ { }, delta });
+}
+
+inline void Box::expandHorizontally(float delta)
+{
+    m_unflippedVisualRect.expand({ delta, { } });
+    m_inkOverflow.expand({ delta, { } });
+}
+
+inline void Box::setLeft(float physicalLeft)
+{
+    auto offset = physicalLeft - left();
+    m_unflippedVisualRect.setX(physicalLeft);
+    m_inkOverflow.setX(m_inkOverflow.x() + offset);
+}
+
+inline void Box::setRight(float physicalRight)
+{
+    auto offset = physicalRight - right();
+    m_unflippedVisualRect.shiftMaxXEdgeTo(physicalRight);
+    m_inkOverflow.shiftMaxXEdgeTo(m_inkOverflow.maxX() + offset);
+}
+
+inline void Box::setTop(float physicalTop)
+{
+    auto offset = physicalTop - top();
+    m_unflippedVisualRect.setY(physicalTop);
+    m_inkOverflow.setY(m_inkOverflow.y() + offset);
+}
+
+inline void Box::setBottom(float physicalBottom)
+{
+    auto offset = physicalBottom - bottom();
+    m_unflippedVisualRect.shiftMaxYEdgeTo(physicalBottom);
+    m_inkOverflow.shiftMaxYEdgeTo(m_inkOverflow.maxY() + offset);
+}
+
+inline void Box::setRect(const FloatRect& rect, const FloatRect& inkOverflow)
+{
+    m_unflippedVisualRect = rect;
+    m_inkOverflow = inkOverflow;
+}
+
+inline std::optional<size_t> Box::Text::partiallyVisibleContentLength() const
+{
+    if (!m_hasPartiallyVisibleContentLength)
+        return { };
+    return m_partiallyVisibleContentLength;
+}
+
+inline void Box::Text::setPartiallyVisibleContentLength(size_t truncatedLength)
+{
+    m_partiallyVisibleContentLength = truncatedLength;
+    m_hasPartiallyVisibleContentLength = true;
 }
 
 inline bool operator==(const Box::Text& a, const Box::Text& b)

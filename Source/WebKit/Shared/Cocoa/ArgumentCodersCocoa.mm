@@ -75,6 +75,9 @@
 #if USE(AVFOUNDATION)
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #endif
+#if USE(PASSKIT)
+#import <pal/cocoa/ContactsSoftLink.h>
+#endif
 
 @interface WKSecureCodingArchivingDelegate : NSObject <NSKeyedArchiverDelegate, NSKeyedUnarchiverDelegate>
 @property (nonatomic, assign) BOOL rewriteMutableArray;
@@ -281,7 +284,20 @@ template<> Class getClass<AVOutputContext>()
     return PAL::getAVOutputContextClass();
 }
 #endif
-
+#if USE(PASSKIT)
+template<> Class getClass<CNPhoneNumber>()
+{
+    return PAL::getCNPhoneNumberClass();
+}
+template<> Class getClass<CNPostalAddress>()
+{
+    return PAL::getCNPostalAddressClass();
+}
+template<> Class getClass<PKContact>()
+{
+    return PAL::getPKContactClass();
+}
+#endif
 
 NSType typeFromObject(id object)
 {
@@ -294,6 +310,14 @@ NSType typeFromObject(id object)
 #endif
     if ([object isKindOfClass:[NSArray class]])
         return NSType::Array;
+#if USE(PASSKIT)
+    if ([object isKindOfClass:PAL::getCNPhoneNumberClass()])
+        return NSType::CNPhoneNumber;
+    if ([object isKindOfClass:PAL::getCNPostalAddressClass()])
+        return NSType::CNPostalAddress;
+    if ([object isKindOfClass:PAL::getPKContactClass()])
+        return NSType::PKContact;
+#endif
     if ([object isKindOfClass:[WebCore::CocoaColor class]])
         return NSType::Color;
 #if ENABLE(DATA_DETECTION)

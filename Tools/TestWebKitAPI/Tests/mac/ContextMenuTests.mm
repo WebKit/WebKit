@@ -665,6 +665,27 @@ TEST(ContextMenuTests, HitTestResultMediaDownloadable)
     Util::run(&gotProposedMenu);
 }
 
+TEST(ContextMenuTests, HitTestResultImageMIMEType)
+{
+    auto delegate = adoptNS([[TestUIDelegate alloc] init]);
+
+    __block bool gotProposedMenu = false;
+    [delegate setGetContextMenuFromProposedMenu:^(NSMenu *menu, _WKContextMenuElementInfo *elementInfo, id<NSSecureCoding>, void (^completion)(NSMenu *)) {
+        EXPECT_NOT_NULL(elementInfo.hitTestResult);
+        EXPECT_TRUE([elementInfo.hitTestResult.imageMIMEType isEqualToString:@"image/jpeg"]);
+        completion(nil);
+        gotProposedMenu = true;
+    }];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 400, 400)]);
+    [webView setUIDelegate:delegate.get()];
+    [webView synchronouslyLoadHTMLString:@"<img src='sunset-in-cupertino-600px.jpg'></img>"];
+
+    [webView mouseDownAtPoint:NSMakePoint(200, 200) simulatePressure:NO withFlags:0 eventType:NSEventTypeRightMouseDown];
+    [webView mouseUpAtPoint:NSMakePoint(200, 200) withFlags:0 eventType:NSEventTypeRightMouseUp];
+    Util::run(&gotProposedMenu);
+}
+
 } // namespace TestWebKitAPI
 
 #endif // PLATFORM(MAC)

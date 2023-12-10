@@ -299,7 +299,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addStructNewDefault(uint32_t, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addStructGet(ExtGCOpType, ExpressionType, const StructType&, uint32_t, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addStructSet(ExpressionType, const StructType&, uint32_t, ExpressionType);
-    PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType, bool, int32_t, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addRefTest(ExpressionType, bool, int32_t, bool, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addRefCast(ExpressionType, bool, int32_t, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addAnyConvertExtern(ExpressionType, ExpressionType&);
     PartialResult WARN_UNUSED_RETURN addExternConvertAny(ExpressionType, ExpressionType&);
@@ -460,6 +460,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addReturn(const ControlType&, const Stack&);
     PartialResult WARN_UNUSED_RETURN addBranch(ControlType&, ExpressionType, const Stack&);
     PartialResult WARN_UNUSED_RETURN addBranchNull(ControlType&, ExpressionType, Stack&, bool, ExpressionType&);
+    PartialResult WARN_UNUSED_RETURN addBranchCast(ControlType&, ExpressionType, Stack&, bool, int32_t, bool);
     PartialResult WARN_UNUSED_RETURN addSwitch(ExpressionType, const Vector<ControlType*>&, ControlType&, const Stack&);
     PartialResult WARN_UNUSED_RETURN endBlock(ControlEntry&, Stack&);
     PartialResult WARN_UNUSED_RETURN addEndToUnreachable(ControlEntry&, Stack&);
@@ -830,7 +831,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructNew(uint32_t, Vector<E
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructNewDefault(uint32_t, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructGet(ExtGCOpType, ExpressionType, const StructType&, uint32_t, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addStructSet(ExpressionType, const StructType&, uint32_t, ExpressionType) { return { }; }
-PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefTest(ExpressionType, bool, int32_t, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefTest(ExpressionType, bool, int32_t, bool, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addRefCast(ExpressionType, bool, int32_t, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addAnyConvertExtern(ExpressionType, ExpressionType&) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addExternConvertAny(ExpressionType, ExpressionType&) { return { }; }
@@ -1297,6 +1298,7 @@ PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBranch(ControlType& block, E
     return { };
 }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBranchNull(ControlType&, ExpressionType, Stack&, bool, ExpressionType&) { return { }; }
+PartialResult WARN_UNUSED_RETURN IPIntGenerator::addBranchCast(ControlType&, ExpressionType, Stack&, bool, int32_t, bool) { return { }; }
 PartialResult WARN_UNUSED_RETURN IPIntGenerator::addSwitch(ExpressionType, const Vector<ControlType*>& jumps, ControlType& defaultJump, const Stack& stack)
 {
     auto size = m_metadata->m_metadata.size();

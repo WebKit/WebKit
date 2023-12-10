@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+    </head>
+<body>
+<select id="select">
+    <option>Option 1</option>
+    <option>Option 2</option>
+    <option>Option 3</option>
+</select>
+</body>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("This test verifies that a &lt;select&gt; element's menu is updated if options are removed while it is visible.");
+
+    shouldBeEqualToString("select.value", "Option 1");
+    await UIHelper.activateElement(select);
+
+    items = await UIHelper.selectMenuItems();
+    shouldBeTrue("areArraysEqual(items, " + '["Option 1", "Option 2", "Option 3"]' + ")");
+
+    select.remove(0);
+    await UIHelper.ensurePresentationUpdate();
+
+    items = await UIHelper.selectMenuItems();
+    shouldBeTrue("areArraysEqual(items, " + '["Option 2", "Option 3"]' + ")");
+
+    await UIHelper.selectFormAccessoryPickerRow(1);
+    await UIHelper.waitForContextMenuToHide();
+    shouldBeEqualToString("select.value", "Option 3");
+
+    finishJSTest();
+});
+</script>
+</html>

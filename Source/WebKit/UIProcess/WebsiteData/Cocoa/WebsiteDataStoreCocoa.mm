@@ -88,13 +88,18 @@ static std::atomic<bool> hasInitializedManagedDomains = false;
 static std::atomic<bool> managedKeyExists = false;
 #endif
 
-bool experimentalFeatureEnabled(const String& key, bool defaultValue)
+static std::optional<bool> optionalExperimentalFeatureEnabled(const String& key, std::optional<bool> defaultValue = false)
 {
     auto defaultsKey = adoptNS([[NSString alloc] initWithFormat:@"WebKitExperimental%@", static_cast<NSString *>(key)]);
     if ([[NSUserDefaults standardUserDefaults] objectForKey:defaultsKey.get()] != nil)
         return [[NSUserDefaults standardUserDefaults] boolForKey:defaultsKey.get()];
 
     return defaultValue;
+}
+
+bool experimentalFeatureEnabled(const String& key, bool defaultValue)
+{
+    return *optionalExperimentalFeatureEnabled(key, defaultValue);
 }
 
 static NSString* applicationOrProcessIdentifier()
@@ -212,10 +217,10 @@ void WebsiteDataStore::platformSetNetworkParameters(WebsiteDataStoreParameters& 
     parameters.networkSessionParameters.enablePrivateClickMeasurementDebugMode = experimentalFeatureEnabled(WebPreferencesKey::privateClickMeasurementDebugModeEnabledKey());
 }
 
-bool WebsiteDataStore::useNetworkLoader()
+std::optional<bool> WebsiteDataStore::useNetworkLoader()
 {
 #if HAVE(NETWORK_LOADER)
-    return experimentalFeatureEnabled(WebPreferencesKey::cFNetworkNetworkLoaderEnabledKey());
+    return optionalExperimentalFeatureEnabled(WebPreferencesKey::cFNetworkNetworkLoaderEnabledKey(), std::nullopt);
 #else
     return false;
 #endif

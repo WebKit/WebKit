@@ -79,6 +79,13 @@ static inline OptionSet<AutoplayQuirk> allowedAutoplayQuirks(Document& document)
     return loader->allowedAutoplayQuirks();
 }
 
+static HashMap<RegistrableDomain, String>& updatableStorageAccessUserAgentStringQuirks()
+{
+    // FIXME: Make this a member of Quirks.
+    static MainThreadNeverDestroyed<HashMap<RegistrableDomain, String>> map;
+    return map.get();
+}
+
 #if PLATFORM(IOS_FAMILY)
 static inline bool isYahooMail(Document& document)
 {
@@ -357,6 +364,27 @@ bool Quirks::shouldAvoidUsingIOS17UserAgentForFacebook() const
 #else
     return false;
 #endif
+}
+
+void Quirks::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&& userAgentStringQuirks)
+{
+    auto& quirks = updatableStorageAccessUserAgentStringQuirks();
+    quirks.clear();
+    for (auto&& [domain, userAgent] : userAgentStringQuirks)
+        quirks.add(WTFMove(domain), WTFMove(userAgent));
+}
+
+String Quirks::storageAccessUserAgentStringQuirkForDomain(const URL& url)
+{
+    if (!needsQuirks())
+        return { };
+
+    const auto& quirks = updatableStorageAccessUserAgentStringQuirks();
+    RegistrableDomain domain { url };
+    auto iterator = quirks.find(domain);
+    if (iterator == quirks.end())
+        return { };
+    return iterator->value;
 }
 
 bool Quirks::shouldDisableElementFullscreenQuirk() const

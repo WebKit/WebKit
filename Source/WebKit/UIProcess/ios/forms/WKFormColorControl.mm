@@ -123,6 +123,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [presentingViewController presentViewController:_colorPickerViewController.get() animated:YES completion:nil];
 }
 
+- (void)controlUpdateEditing
+{
+}
+
 - (void)controlEndEditing
 {
     [_view stopRelinquishingFirstResponderToFocusedElement];

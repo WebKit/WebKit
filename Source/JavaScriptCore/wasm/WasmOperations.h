@@ -115,7 +115,7 @@ JSC_DECLARE_JIT_OPERATION(operationWasmArraySet, void, (Instance* instance, uint
 JSC_DECLARE_JIT_OPERATION(operationWasmIsSubRTT, bool, (Wasm::RTT*, Wasm::RTT*));
 JSC_DECLARE_JIT_OPERATION(operationWasmAnyConvertExtern, EncodedJSValue, (EncodedJSValue));
 
-JSC_DECLARE_JIT_OPERATION(operationWasmRefTest, int32_t, (Instance*, EncodedJSValue, uint32_t, int32_t));
+JSC_DECLARE_JIT_OPERATION(operationWasmRefTest, int32_t, (Instance*, EncodedJSValue, uint32_t, int32_t, bool));
 JSC_DECLARE_JIT_OPERATION(operationWasmRefCast, EncodedJSValue, (Instance*, EncodedJSValue, uint32_t, int32_t));
 
 #if USE(JSVALUE64)

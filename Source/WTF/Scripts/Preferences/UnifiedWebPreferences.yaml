@@ -841,9 +841,9 @@ BuiltInNotificationsEnabled:
 
 CFNetworkNetworkLoaderEnabled:
   type: bool
-  status: unstable
+  status: testable
   category: networking
-  humanReadableName: "Experimental network loader"
+  humanReadableName: "Enable experimental network loader"
   humanReadableDescription: "Enable experimental network loader"
   webcoreBinding: none
   condition: HAVE(NETWORK_LOADER)
@@ -6564,6 +6564,20 @@ ThreadedScrollingEnabled:
   defaultValue:
     WebKit:
       default: true
+
+ThumbAndTrackPseudoElementsEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "::thumb and ::track pseudo-elements"
+  humanReadableDescription: "Enable support for CSS ::thumb and ::track pseudo-elements"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
 
 # FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
 TiledScrollingIndicatorVisible:

@@ -36,6 +36,7 @@ namespace WebCore {
 namespace Layout {
 
 struct ExpansionInfo;
+class InlineContentAligner;
 class InlineFormattingContext;
 class InlineSoftLineBreakItem;
 enum class IntrinsicWidthMode;
@@ -61,6 +62,7 @@ public:
     bool contentNeedsBidiReordering() const { return m_hasNonDefaultBidiLevelRun; }
     size_t nonSpanningInlineLevelBoxCount() const { return m_nonSpanningInlineLevelBoxCount; }
     InlineLayoutUnit hangingTrailingContentWidth() const { return m_hangingContent.trailingWidth(); }
+    size_t hangingTrailingWhitespaceLength() const { return m_hangingContent.trailingWhitespaceLength(); }
     bool isHangingTrailingContentWhitespace() const { return !!m_hangingContent.trailingWhitespaceLength(); }
 
     InlineLayoutUnit trimmableTrailingWidth() const { return m_trimmableTrailingContent.width(); }
@@ -75,7 +77,6 @@ public:
     void handleOverflowingNonBreakingSpace(TrailingContentAction, InlineLayoutUnit overflowingWidth);
     const Box* removeOverflowingOutOfFlowContent();
     void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
-    void applyRunExpansion(InlineLayoutUnit horizontalAvailableSpace);
     void applyExpansionOnRange(WTF::Range<size_t> runRange, const ExpansionInfo&, InlineLayoutUnit spaceToDistribute);
     void moveBy(WTF::Range<size_t> runRange, InlineLayoutUnit offset);
     void expandBy(size_t startRunIndex, InlineLayoutUnit logicalWidth);
@@ -144,6 +145,7 @@ public:
 
     private:
         friend class Line;
+        friend class InlineContentAligner;
 
         Run(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
         Run(const InlineSoftLineBreakItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);
@@ -193,6 +195,9 @@ public:
     };
     using RunList = Vector<Run, 10>;
     const RunList& runs() const { return m_runs; }
+    RunList& runs() { return m_runs; }
+    void inflateContentLogicalWidth(InlineLayoutUnit delta) { m_contentLogicalWidth += delta; }
+
     using InlineBoxListWithClonedDecorationEnd = HashMap<const Box*, InlineLayoutUnit>;
     const InlineBoxListWithClonedDecorationEnd& inlineBoxListWithClonedDecorationEnd() const { return m_inlineBoxListWithClonedDecorationEnd; }
 

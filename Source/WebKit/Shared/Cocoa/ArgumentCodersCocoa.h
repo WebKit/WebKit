@@ -49,6 +49,12 @@ using WKDDActionContext = DDActionContext;
 OBJC_CLASS AVOutputContext;
 #endif
 
+#if USE(PASSKIT)
+OBJC_CLASS CNPhoneNumber;
+OBJC_CLASS CNPostalAddress;
+OBJC_CLASS PKContact;
+#endif
+
 namespace IPC {
 
 #ifdef __OBJC__
@@ -77,6 +83,11 @@ enum class NSType : uint8_t {
     AVOutputContext,
 #endif
     Array,
+#if USE(PASSKIT)
+    CNPhoneNumber,
+    CNPostalAddress,
+    PKContact,
+#endif
     Color,
 #if ENABLE(DATA_DETECTION)
 #if PLATFORM(MAC)
@@ -110,6 +121,11 @@ template<> Class getClass<WKDDActionContext>();
 #endif
 #if USE(AVFOUNDATION)
 template<> Class getClass<AVOutputContext>();
+#endif
+#if USE(PASSKIT)
+template<> Class getClass<CNPhoneNumber>();
+template<> Class getClass<CNPostalAddress>();
+template<> Class getClass<PKContact>();
 #endif
 
 void encodeObjectWithWrapper(Encoder&, id);

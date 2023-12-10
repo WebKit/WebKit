@@ -132,6 +132,7 @@
 
 #if PLATFORM(COCOA)
 #include "DefaultWebBrowserChecks.h"
+#include "WebPrivacyHelpers.h"
 #include <WebCore/GameControllerGamepadProvider.h>
 #include <WebCore/HIDGamepadProvider.h>
 #include <WebCore/MultiGamepadProvider.h>
@@ -300,6 +301,18 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
         });
     }
 #endif
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    m_storageAccessUserAgentStringQuirksDataUpdateObserver = StorageAccessUserAgentStringQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis.get()) {
+            if (StorageAccessUserAgentStringQuirkController::shared().cachedQuirks().isEmpty())
+                return;
+            // FIXME: Filter by process's site when site isolation is enabled
+            protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateStorageAccessUserAgentStringQuirks(StorageAccessUserAgentStringQuirkController::shared().cachedQuirks()));
+        }
+    });
+#endif
+
 }
 
 WebProcessPool::~WebProcessPool()

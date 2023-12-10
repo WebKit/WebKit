@@ -43,7 +43,7 @@ enum ContextMenuAction {
     ContextMenuItemTagDownloadImageToDisk,
     ContextMenuItemTagCopyImageToClipboard,
 #if PLATFORM(GTK)
-    ContextMenuItemTagCopyImageUrlToClipboard,
+    ContextMenuItemTagCopyImageURLToClipboard,
 #endif
     ContextMenuItemTagOpenFrameInNewWindow,
     ContextMenuItemTagCopy,

@@ -116,6 +116,7 @@ class GraphicsLayerFactory;
 class HTMLImageElement;
 class HTMLInputElement;
 class HTMLMediaElement;
+class HTMLSelectElement;
 class HTMLVideoElement;
 class HitTestResult;
 class IntRect;
@@ -364,6 +365,7 @@ public:
     virtual void elementDidRefocus(Element&, const FocusOptions&) { }
 
     virtual void focusedElementDidChangeInputMode(Element&, InputMode) { }
+    virtual void focusedSelectElementDidChangeOptions(const HTMLSelectElement&) { }
 
     virtual bool shouldPaintEntireContents() const { return false; }
     virtual bool hasStablePageScaleFactor() const { return true; }

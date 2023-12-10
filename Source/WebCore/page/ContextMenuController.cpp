@@ -332,7 +332,7 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuAction action, co
         frame->editor().copyImage(m_context.hitTestResult());
         break;
 #if PLATFORM(GTK)
-    case ContextMenuItemTagCopyImageUrlToClipboard:
+    case ContextMenuItemTagCopyImageURLToClipboard:
         frame->editor().copyURL(m_context.hitTestResult().absoluteImageURL(), m_context.hitTestResult().textContent());
         break;
 #endif
@@ -902,8 +902,8 @@ void ContextMenuController::populate()
     ContextMenuItem CopyImageItem(ActionType, ContextMenuItemTagCopyImageToClipboard, 
         contextMenuItemTagCopyImageToClipboard());
 #if PLATFORM(GTK)
-    ContextMenuItem CopyImageUrlItem(ActionType, ContextMenuItemTagCopyImageUrlToClipboard, 
-        contextMenuItemTagCopyImageUrlToClipboard());
+    ContextMenuItem CopyImageURLItem(ActionType, ContextMenuItemTagCopyImageURLToClipboard,
+        contextMenuItemTagCopyImageURLToClipboard());
 #endif
     ContextMenuItem OpenMediaInNewWindowItem(ActionType, ContextMenuItemTagOpenMediaInNewWindow, String());
     ContextMenuItem DownloadMediaItem(ActionType, ContextMenuItemTagDownloadMediaToDisk, String());
@@ -1108,7 +1108,7 @@ void ContextMenuController::populate()
 #endif // ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
             }
 #if PLATFORM(GTK)
-            appendItem(CopyImageUrlItem, m_contextMenu.get());
+            appendItem(CopyImageURLItem, m_contextMenu.get());
 #endif
         }
 
@@ -1631,7 +1631,7 @@ void ContextMenuController::checkOrEnableIfNeeded(ContextMenuItem& item) const
         case ContextMenuItemTagCopyImageToClipboard:
         case ContextMenuItemTagCopySubject:
 #if PLATFORM(GTK)
-        case ContextMenuItemTagCopyImageUrlToClipboard:
+        case ContextMenuItemTagCopyImageURLToClipboard:
 #endif
             break;
         case ContextMenuItemTagDownloadImageToDisk:

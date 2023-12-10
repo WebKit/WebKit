@@ -43,6 +43,7 @@ struct CSSSelectorParserContext {
     bool hasPseudoClassEnabled { false };
     bool highlightAPIEnabled { false };
     bool popoverAttributeEnabled { false };
+    bool thumbAndTrackPseudoElementsEnabled { false };
     bool viewTransitionsEnabled { false };
 
     bool isHashTableDeletedValue { false };

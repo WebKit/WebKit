@@ -943,6 +943,11 @@ void WebPageProxy::elementDidBlur()
     pageClient().elementDidBlur();
 }
 
+void WebPageProxy::updateFocusedElementInformation(const FocusedElementInformation& information)
+{
+    pageClient().updateFocusedElementInformation(information);
+}
+
 void WebPageProxy::focusedElementDidChangeInputMode(WebCore::InputMode mode)
 {
 #if ENABLE(TOUCH_EVENTS)

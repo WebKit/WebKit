@@ -489,6 +489,7 @@ public:
 
     virtual void elementDidFocus(const FocusedElementInformation&, bool userIsInteracting, bool blurPreviousNode, OptionSet<WebCore::ActivityState> activityStateChanges, API::Object* userData) = 0;
     virtual void updateInputContextAfterBlurringAndRefocusingElement() = 0;
+    virtual void updateFocusedElementInformation(const FocusedElementInformation&) = 0;
     virtual void elementDidBlur() = 0;
     virtual void focusedElementDidChangeInputMode(WebCore::InputMode) = 0;
     virtual void didUpdateEditorState() = 0;

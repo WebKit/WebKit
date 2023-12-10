@@ -1770,6 +1770,14 @@ void WebsiteDataStore::clearResourceLoadStatisticsInWebProcesses(CompletionHandl
     callback();
 }
 
+void WebsiteDataStore::setUserAgentStringQuirkForTesting(const String& domain, const String& userAgentString, CompletionHandler<void()>&& completionHandler)
+{
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
+    StorageAccessUserAgentStringQuirkController::shared().setCachedQuirksForTesting({ { RegistrableDomain::uncheckedCreateFromHost(domain), userAgentString } });
+#endif
+    completionHandler();
+}
+
 bool WebsiteDataStore::isBlobRegistryPartitioningEnabled() const
 {
     return WTF::anyOf(m_processes, [] (const WebProcessProxy& process) {
