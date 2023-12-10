@@ -1846,10 +1846,6 @@ webkit.org/b/260113 [ arm64 ] http/wpt/webauthn/ctap-hid-failure.https.html [ Pa
 # rdar://107437068 ([UI side compositing] fast/mediastream/video-rotation.html fails)
 [ Sonoma+ ] fast/mediastream/video-rotation.html [ Failure ]
 
-# rdar://108508177 (REGRESSION (262629@main): [ Sonoma wk2 ] Two compositing/hidpi-image-backing-store tests are a consistent failure)
-compositing/hidpi-image-backing-store-scaled.html [ Failure ]
-compositing/hidpi-image-backing-store.html [ Failure ]
-
 # rdar://108846032 (REGRESSION (263506@main): [ Sonoma wk2 ] fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html: WebCore::Layout::Line::TrimmableTrailingContent::remove)
 [ Sonoma+ ] fast/layoutformattingcontext/horizontal-sizing-with-trailing-letter-spacing.html [ Skip ]
 
