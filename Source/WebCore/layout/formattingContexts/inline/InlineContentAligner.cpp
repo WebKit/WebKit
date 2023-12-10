@@ -266,6 +266,18 @@ InlineLayoutUnit InlineContentAligner::applyRubyAlignSpaceAround(Line::RunList& 
     return extraExpansionOpportunitySpace / 2;
 }
 
+InlineLayoutUnit InlineContentAligner::applyRubyAlignOnAnnotationBox(Line::RunList& runs, InlineLayoutUnit spaceToDistribute)
+{
+    auto accumulatedExpansion = applyTextAlignJustify(runs, spaceToDistribute, { });
+    if (accumulatedExpansion)
+        return accumulatedExpansion;
+
+    auto centerOffset = spaceToDistribute / 2;
+    for (auto& run : runs)
+        run.moveHorizontally(centerOffset);
+    return spaceToDistribute;
+}
+
 void InlineContentAligner::applyRubyBaseAlignmentOffset(InlineDisplay::Boxes& displayBoxes, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, AdjustContentOnlyInsideRubyBase adjustContentOnlyInsideRubyBase, InlineFormattingContext& inlineFormattingContext)
 {
     ASSERT(!alignmentOffsetList.isEmpty());
