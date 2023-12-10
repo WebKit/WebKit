@@ -1,3 +1,3 @@
 
-FAIL passive mousewheel event listener on div assert_equals: expected false but got true
+PASS passive mousewheel event listener on div
 

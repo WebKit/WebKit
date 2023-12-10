@@ -2555,8 +2555,6 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/input/snap-area-overflow-bou
 imported/w3c/web-platform-tests/css/css-transforms/scroll-preserve-3d.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-div.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-div.html [ Skip ]
-imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Skip ]
-imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/iframe-chains.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss.html [ Skip ]
@@ -2605,6 +2603,10 @@ inspector/layers/layers-compositing-reasons.html [ Pass Failure ]
 inspector/layers/layers-blending-compositing-reasons.html [ Pass Failure ]
 
 webkit.org/b/265685 [ Sonoma+ ] http/wpt/webcodecs/encoder-task-failing.html [ Failure ]
+
+# webkit.org/b/266168 Two wheel/mousewheel passive event listeners WPT test pass on macOS Sonoma and up
+[ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Pass ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Pass ]
 
 # webkit.org/b/265834 ASSERTION FAILED with void WebCore::ViewTransition::ca llUpdateCallback() result of multiple tests constant crash
 [ Monterey Ventura Debug ] imported/w3c/web-platform-tests/css/css-view-transitions [ Skip ]
