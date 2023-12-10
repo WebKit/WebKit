@@ -26,118 +26,16 @@
 
 #pragma once
 
-#include <wtf/CheckedRef.h>
 #include <wtf/CompactRefPtrTuple.h>
-#include <wtf/GetPtr.h>
-#include <wtf/HashTraits.h>
-#include <wtf/Threading.h>
-#include <wtf/TypeCasts.h>
+#include <wtf/WeakRef.h>
 
 namespace WTF {
 
-enum class EnableWeakPtrThreadingAssertions : bool { No, Yes };
 template<typename, typename> class WeakPtrFactory;
 
 template<typename, typename, typename = DefaultWeakPtrImpl> class WeakHashMap;
 template<typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes> class WeakHashSet;
 template <typename, typename = DefaultWeakPtrImpl, EnableWeakPtrThreadingAssertions = EnableWeakPtrThreadingAssertions::Yes> class WeakListHashSet;
-
-DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(WeakPtrImplBase);
-
-template<typename Derived>
-class WeakPtrImplBase : public ThreadSafeRefCounted<Derived> {
-    WTF_MAKE_NONCOPYABLE(WeakPtrImplBase);
-    WTF_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(WeakPtrImplBase);
-public:
-    ~WeakPtrImplBase() = default;
-
-    template<typename T> typename T::WeakValueType* get()
-    {
-        return static_cast<typename T::WeakValueType*>(m_ptr);
-    }
-
-    explicit operator bool() const { return m_ptr; }
-    void clear() { m_ptr = nullptr; }
-
-#if ASSERT_ENABLED
-    bool wasConstructedOnMainThread() const { return m_wasConstructedOnMainThread; }
-#endif
-
-    template<typename T>
-    explicit WeakPtrImplBase(T* ptr)
-        : m_ptr(static_cast<typename T::WeakValueType*>(ptr))
-#if ASSERT_ENABLED
-        , m_wasConstructedOnMainThread(isMainThread())
-#endif
-    {
-    }
-
-private:
-    void* m_ptr;
-#if ASSERT_ENABLED
-    bool m_wasConstructedOnMainThread;
-#endif
-};
-
-template<typename Derived>
-class WeakPtrImplBaseSingleThread {
-    WTF_MAKE_NONCOPYABLE(WeakPtrImplBaseSingleThread);
-    WTF_MAKE_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(WeakPtrImplBaseSingleThread);
-public:
-    ~WeakPtrImplBaseSingleThread() = default;
-
-    template<typename T> typename T::WeakValueType* get()
-    {
-        return static_cast<typename T::WeakValueType*>(m_ptr);
-    }
-
-    explicit operator bool() const { return m_ptr; }
-    void clear() { m_ptr = nullptr; }
-
-#if ASSERT_ENABLED
-    bool wasConstructedOnMainThread() const { return m_wasConstructedOnMainThread; }
-#endif
-
-    template<typename T>
-    explicit WeakPtrImplBaseSingleThread(T* ptr)
-        : m_ptr(static_cast<typename T::WeakValueType*>(ptr))
-#if ASSERT_ENABLED
-        , m_wasConstructedOnMainThread(isMainThread())
-#endif
-    {
-    }
-
-    uint32_t refCount() const { return m_refCount; }
-    void ref() const { ++m_refCount; }
-    void deref() const
-    {
-        uint32_t tempRefCount = m_refCount - 1;
-        if (!tempRefCount) {
-            delete this;
-            return;
-        }
-        m_refCount = tempRefCount;
-    }
-
-private:
-    mutable SingleThreadIntegralWrapper<uint32_t> m_refCount { 1 };
-    void* m_ptr;
-#if ASSERT_ENABLED
-    bool m_wasConstructedOnMainThread;
-#endif
-};
-
-class SingleThreadWeakPtrImpl final : public WeakPtrImplBaseSingleThread<SingleThreadWeakPtrImpl> {
-public:
-    template<typename T>
-    explicit SingleThreadWeakPtrImpl(T* ptr) : WeakPtrImplBaseSingleThread<SingleThreadWeakPtrImpl>(ptr) { }
-};
-
-class DefaultWeakPtrImpl final : public WeakPtrImplBase<DefaultWeakPtrImpl> {
-public:
-    template<typename T>
-    explicit DefaultWeakPtrImpl(T* ptr) : WeakPtrImplBase<DefaultWeakPtrImpl>(ptr) { }
-};
 
 template<typename T, typename WeakPtrImpl> class WeakPtr {
     WTF_MAKE_FAST_ALLOCATED;
@@ -146,6 +44,9 @@ public:
     WeakPtr(std::nullptr_t) { }
     template<typename U> WeakPtr(const WeakPtr<U, WeakPtrImpl>&);
     template<typename U> WeakPtr(WeakPtr<U, WeakPtrImpl>&&);
+
+    template<typename U> WeakPtr(const WeakRef<U, WeakPtrImpl>&);
+    template<typename U> WeakPtr(WeakRef<U, WeakPtrImpl>&&);
 
     template<typename = std::enable_if_t<!IsSmartPtr<T>::value>> WeakPtr(const T* object, EnableWeakPtrThreadingAssertions shouldEnableAssertions = EnableWeakPtrThreadingAssertions::Yes)
         : m_impl(object ? implForObject(*object) : nullptr)
@@ -175,10 +76,22 @@ public:
         : WeakPtr(object.get(), shouldEnableAssertions)
     { }
 
+    explicit WeakPtr(RefPtr<WeakPtrImpl> impl)
+        : m_impl(WTFMove(impl))
+    {
+    }
+
+    RefPtr<WeakPtrImpl> releaseImpl() { return WTFMove(m_impl); }
+
     T* get() const
     {
         ASSERT(canSafelyBeUsed());
         return m_impl ? static_cast<T*>(m_impl->template get<T>()) : nullptr;
+    }
+
+    WeakRef<T> releaseNonNull()
+    {
+        return WeakRef<T> { m_impl.releaseNonNull(), enableWeakPtrThreadingAssertions() };
     }
 
     bool operator!() const { return !m_impl || !*m_impl; }
@@ -187,6 +100,8 @@ public:
     WeakPtr& operator=(std::nullptr_t) { m_impl = nullptr; return *this; }
     template<typename U> WeakPtr& operator=(const WeakPtr<U, WeakPtrImpl>&);
     template<typename U> WeakPtr& operator=(WeakPtr<U, WeakPtrImpl>&&);
+    template<typename U> WeakPtr& operator=(const WeakRef<U, WeakPtrImpl>&);
+    template<typename U> WeakPtr& operator=(WeakRef<U, WeakPtrImpl>&&);
 
     T* operator->() const
     {
@@ -201,6 +116,15 @@ public:
     }
 
     void clear() { m_impl = nullptr; }
+
+    EnableWeakPtrThreadingAssertions enableWeakPtrThreadingAssertions() const
+    {
+#if ASSERT_ENABLED
+        return m_shouldEnableAssertions ? EnableWeakPtrThreadingAssertions::Yes : EnableWeakPtrThreadingAssertions::No;
+#else
+        return EnableWeakPtrThreadingAssertions::No;
+#endif
+    }
 
 private:
     template<typename, typename, typename> friend class WeakHashMap;
@@ -446,25 +370,77 @@ template<typename T, typename U, typename WeakPtrImpl> inline WeakPtrImpl* weak_
     return impl;
 }
 
+template<typename T, typename U, typename WeakPtrImpl> inline WeakPtrImpl& weak_ptr_impl_cast(WeakPtrImpl& impl)
+{
+    static_assert(std::is_same_v<typename T::WeakValueType, typename U::WeakValueType>, "Invalid weak pointer cast");
+    return impl;
+}
+
 template<typename T, typename WeakPtrImpl> template<typename U> inline WeakPtr<T, WeakPtrImpl>::WeakPtr(const WeakPtr<U, WeakPtrImpl>& o)
     : m_impl(weak_ptr_impl_cast<T, U>(o.m_impl.get()))
+#if ASSERT_ENABLED
+    , m_shouldEnableAssertions(o.m_shouldEnableAssertions)
+#endif
 {
 }
 
 template<typename T, typename WeakPtrImpl> template<typename U> inline WeakPtr<T, WeakPtrImpl>::WeakPtr(WeakPtr<U, WeakPtrImpl>&& o)
     : m_impl(adoptRef(weak_ptr_impl_cast<T, U>(o.m_impl.leakRef())))
+#if ASSERT_ENABLED
+    , m_shouldEnableAssertions(o.m_shouldEnableAssertions)
+#endif
+{
+}
+
+template<typename T, typename WeakPtrImpl> template<typename U> inline WeakPtr<T, WeakPtrImpl>::WeakPtr(const WeakRef<U, WeakPtrImpl>& o)
+    : m_impl(&weak_ptr_impl_cast<T, U>(o.m_impl.get()))
+#if ASSERT_ENABLED
+    , m_shouldEnableAssertions(o.enableWeakPtrThreadingAssertions() == EnableWeakPtrThreadingAssertions::Yes)
+#endif
+{
+}
+
+template<typename T, typename WeakPtrImpl> template<typename U> inline WeakPtr<T, WeakPtrImpl>::WeakPtr(WeakRef<U, WeakPtrImpl>&& o)
+    : m_impl(adoptRef(weak_ptr_impl_cast<T, U>(o.m_impl.leakRef())))
+#if ASSERT_ENABLED
+    , m_shouldEnableAssertions(o.enableWeakPtrThreadingAssertions() == EnableWeakPtrThreadingAssertions::Yes)
+#endif
 {
 }
 
 template<typename T, typename WeakPtrImpl> template<typename U> inline WeakPtr<T, WeakPtrImpl>& WeakPtr<T, WeakPtrImpl>::operator=(const WeakPtr<U, WeakPtrImpl>& o)
 {
     m_impl = weak_ptr_impl_cast<T, U>(o.m_impl.get());
+#if ASSERT_ENABLED
+    m_shouldEnableAssertions = o.m_shouldEnableAssertions;
+#endif
     return *this;
 }
 
 template<typename T, typename WeakPtrImpl> template<typename U> inline WeakPtr<T, WeakPtrImpl>& WeakPtr<T, WeakPtrImpl>::operator=(WeakPtr<U, WeakPtrImpl>&& o)
 {
     m_impl = adoptRef(weak_ptr_impl_cast<T, U>(o.m_impl.leakRef()));
+#if ASSERT_ENABLED
+    m_shouldEnableAssertions = o.m_shouldEnableAssertions;
+#endif
+    return *this;
+}
+
+template<typename T, typename WeakPtrImpl> template<typename U> inline WeakPtr<T, WeakPtrImpl>& WeakPtr<T, WeakPtrImpl>::operator=(const WeakRef<U, WeakPtrImpl>& o)
+{
+    m_impl = &weak_ptr_impl_cast<T, U>(o.m_impl.get());
+#if ASSERT_ENABLED
+    m_shouldEnableAssertions = o.enableWeakPtrThreadingAssertions() == EnableWeakPtrThreadingAssertions::Yes;
+#endif
+    return *this;
+}
+
+template<typename T, typename WeakPtrImpl> template<typename U> inline WeakPtr<T, WeakPtrImpl>& WeakPtr<T, WeakPtrImpl>::operator=(WeakRef<U, WeakPtrImpl>&& o)
+{
+    m_impl = adoptRef(weak_ptr_impl_cast<T, U>(o.m_impl.leakRef()));
+#if ASSERT_ENABLED
+    m_shouldEnableAssertions = o.enableWeakPtrThreadingAssertions() == EnableWeakPtrThreadingAssertions::Yes;
+#endif
     return *this;
 }
 
@@ -492,15 +468,22 @@ inline bool is(const WeakPtr<ArgType, WeakPtrImpl>& source)
 }
 
 template<typename Target, typename Source, typename WeakPtrImpl>
-inline Target* downcast(WeakPtr<Source, WeakPtrImpl>& source)
+inline WeakPtr<match_constness_t<Source, Target>, WeakPtrImpl> downcast(WeakPtr<Source, WeakPtrImpl> source)
 {
-    return downcast<Target>(source.get());
+    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    ASSERT_WITH_SECURITY_IMPLICATION(!source || is<Target>(*source));
+    return WeakPtr<match_constness_t<Source, Target>, WeakPtrImpl> { static_pointer_cast<match_constness_t<Source, Target>>(source.releaseImpl()), source.enableWeakPtrThreadingAssertions() };
 }
 
 template<typename Target, typename Source, typename WeakPtrImpl>
-inline Target* downcast(const WeakPtr<Source, WeakPtrImpl>& source)
+inline WeakPtr<match_constness_t<Source, Target>, WeakPtrImpl> dynamicDowncast(WeakPtr<Source, WeakPtrImpl> source)
 {
-    return downcast<Target>(source.get());
+    static_assert(!std::is_same_v<Source, Target>, "Unnecessary cast to same type");
+    static_assert(std::is_base_of_v<Source, Target>, "Should be a downcast");
+    if (!is<Target>(source))
+        return nullptr;
+    return WeakPtr<match_constness_t<Source, Target>, WeakPtrImpl> { static_pointer_cast<match_constness_t<Source, Target>, WeakPtrImpl>(source.releaseImpl()), source.enableWeakPtrThreadingAssertions() };
 }
 
 template<typename T, typename U, typename WeakPtrImpl> inline bool operator==(const WeakPtr<T, WeakPtrImpl>& a, const WeakPtr<U, WeakPtrImpl>& b)
@@ -548,9 +531,7 @@ using SingleThreadWeakListHashSet = WeakListHashSet<T, SingleThreadWeakPtrImpl, 
 using WTF::CanMakeWeakPtr;
 using WTF::CanMakeWeakPtrWithBitField;
 using WTF::CanMakeSingleThreadWeakPtr;
-using WTF::EnableWeakPtrThreadingAssertions;
 using WTF::SingleThreadWeakPtr;
-using WTF::SingleThreadWeakPtrImpl;
 using WTF::SingleThreadWeakHashSet;
 using WTF::SingleThreadWeakListHashSet;
 using WTF::WeakHashMap;

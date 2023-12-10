@@ -30,6 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashTraits.h>
 #include <wtf/RawPtrTraits.h>
+#include <wtf/SingleThreadIntegralWrapper.h>
 #include <wtf/StackTrace.h>
 #include <wtf/text/WTFString.h>
 
@@ -413,76 +414,6 @@ void CanMakeCheckedPtrBase<StorageType, PtrCounterType>::registerCheckedPtr(cons
         m_checkedPtrs.add(pointer, SharedStackTrace::create());
 }
 #endif
-
-template <typename IntegralType>
-class SingleThreadIntegralWrapper {
-public:
-    SingleThreadIntegralWrapper(IntegralType);
-
-    operator IntegralType() const;
-    explicit operator bool() const;
-    SingleThreadIntegralWrapper& operator=(IntegralType);
-    SingleThreadIntegralWrapper& operator++();
-    SingleThreadIntegralWrapper& operator--();
-
-private:
-#if ASSERT_ENABLED && !USE(WEB_THREAD)
-    void assertThread() const { ASSERT(m_thread.ptr() == &Thread::current()); }
-#else
-    constexpr void assertThread() const { }
-#endif
-
-    IntegralType m_value;
-#if ASSERT_ENABLED && !USE(WEB_THREAD)
-    Ref<Thread> m_thread;
-#endif
-};
-
-template <typename IntegralType>
-inline SingleThreadIntegralWrapper<IntegralType>::SingleThreadIntegralWrapper(IntegralType value)
-    : m_value { value }
-#if ASSERT_ENABLED && !USE(WEB_THREAD)
-    , m_thread { Thread::current() }
-#endif
-{ }
-
-template <typename IntegralType>
-inline SingleThreadIntegralWrapper<IntegralType>::operator IntegralType() const
-{
-    assertThread();
-    return m_value;
-}
-
-template <typename IntegralType>
-inline SingleThreadIntegralWrapper<IntegralType>::operator bool() const
-{
-    assertThread();
-    return m_value;
-}
-
-template <typename IntegralType>
-inline SingleThreadIntegralWrapper<IntegralType>& SingleThreadIntegralWrapper<IntegralType>::operator=(IntegralType value)
-{
-    assertThread();
-    m_value = value;
-    return *this;
-}
-
-template <typename IntegralType>
-inline SingleThreadIntegralWrapper<IntegralType>& SingleThreadIntegralWrapper<IntegralType>::operator++()
-{
-    assertThread();
-    m_value++;
-    return *this;
-}
-
-template <typename IntegralType>
-inline SingleThreadIntegralWrapper<IntegralType>& SingleThreadIntegralWrapper<IntegralType>::operator--()
-{
-    assertThread();
-    m_value--;
-    return *this;
-}
 
 using CanMakeCheckedPtr = CanMakeCheckedPtrBase<SingleThreadIntegralWrapper<uint32_t>, uint32_t>;
 using CanMakeThreadSafeCheckedPtr = CanMakeCheckedPtrBase<std::atomic<uint32_t>, uint32_t>;

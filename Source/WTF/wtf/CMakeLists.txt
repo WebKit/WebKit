@@ -257,6 +257,7 @@ set(WTF_PUBLIC_HEADERS
     SignedPtr.h
     SimpleStats.h
     SingleRootGraph.h
+    SingleThreadIntegralWrapper.h
     SinglyLinkedList.h
     SinglyLinkedListWithTail.h
     SixCharacterHash.h
