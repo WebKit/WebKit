@@ -27,6 +27,7 @@
 #include "InlineDisplayContentBuilder.h"
 
 #include "FontCascade.h"
+#include "InlineContentAligner.h"
 #include "InlineFormattingUtils.h"
 #include "InlineTextBoxStyle.h"
 #include "LayoutBoxGeometry.h"
@@ -103,7 +104,7 @@ InlineDisplay::Boxes InlineDisplayContentBuilder::build(const LineLayoutResult& 
     else
         processNonBidiContent(lineLayoutResult, lineBox, boxes);
     processFloatBoxes(lineLayoutResult);
-    processRubyContent(boxes);
+    processRubyContent(boxes, lineLayoutResult);
 
     collectInkOverflowForTextDecorations(boxes);
     collectInkOverflowForInlineBoxes(boxes);
@@ -1108,10 +1109,13 @@ size_t InlineDisplayContentBuilder::processRubyBase(size_t rubyBaseStart, Inline
     return rubyBaseEnd;
 }
 
-void InlineDisplayContentBuilder::processRubyContent(InlineDisplay::Boxes& displayBoxes)
+void InlineDisplayContentBuilder::processRubyContent(InlineDisplay::Boxes& displayBoxes, const LineLayoutResult& lineLayoutResult)
 {
     if (!m_hasSeenRubyBase)
         return;
+
+    auto rubyBasesMayHaveCollapsed = !lineLayoutResult.directionality.visualOrderList.isEmpty();
+    RubyFormattingContext::applyAlignmentOffsetList(displayBoxes, lineLayoutResult.rubyAlignemntOffsetList, rubyBasesMayHaveCollapsed ? RubyFormattingContext::RubyBasesMayNeedResizing::Yes : RubyFormattingContext::RubyBasesMayNeedResizing::No, formattingContext());
 
     Vector<WTF::Range<size_t>> interlinearRubyColumnRangeList;
     Vector<size_t> rubyBaseStartIndexListWithAnnotation;

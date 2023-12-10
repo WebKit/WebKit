@@ -48,6 +48,7 @@ struct LineContent {
     bool endsWithHyphen { false };
     size_t partialTrailingContentLength { 0 };
     std::optional<InlineLayoutUnit> overflowLogicalWidth { };
+    HashMap<const Box*, InlineLayoutUnit> rubyAlignmentOffsetList { };
 };
 
 static inline StringBuilder toString(const Line::RunList& runs)
@@ -260,6 +261,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth }
         , { WTFMove(visualOrderList), inlineBaseDirection }
         , { isFirstFormattedLine() ? LineLayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LineLayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
+        , WTFMove(lineContent.rubyAlignmentOffsetList)
         , lineContent.endsWithHyphen
         , result.nonSpanningInlineLevelBoxCount
         , { }
@@ -520,7 +522,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
                 auto additionalSpaceForAlignedContent = InlineContentAligner::applyTextAlignJustify(m_line.runs(), spaceToDistribute, m_line.hangingTrailingWhitespaceLength());
                 m_line.inflateContentLogicalWidth(additionalSpaceForAlignedContent);
             } else if (m_line.hasRubyContent())
-                RubyFormattingContext::applyRubyAlign(m_line, formattingContext());
+                lineContent.rubyAlignmentOffsetList = RubyFormattingContext::applyRubyAlign(m_line, formattingContext());
 
             auto& lastTextContent = m_line.runs().last().textContent();
             lineContent.endsWithHyphen = lastTextContent && lastTextContent->needsHyphen;

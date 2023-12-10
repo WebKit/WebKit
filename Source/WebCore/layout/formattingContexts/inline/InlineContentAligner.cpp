@@ -31,6 +31,104 @@
 namespace WebCore {
 namespace Layout {
 
+static inline void shiftDisplayBox(InlineDisplay::Box& displayBox, InlineLayoutUnit offset, InlineFormattingContext& inlineFormattingContext)
+{
+    if (!offset)
+        return;
+    auto isHorizontalWritingMode = inlineFormattingContext.root().style().isHorizontalWritingMode();
+    isHorizontalWritingMode ? displayBox.moveHorizontally(offset) : displayBox.moveVertically(offset);
+    if (!displayBox.isTextOrSoftLineBreak() && !displayBox.isRootInlineBox()) {
+        auto& boxGeometry = inlineFormattingContext.geometryForBox(displayBox.layoutBox());
+        isHorizontalWritingMode ? boxGeometry.moveHorizontally(LayoutUnit { offset }) : boxGeometry.moveVertically(LayoutUnit { offset });
+    }
+}
+
+static inline void expandInlineBox(InlineLayoutUnit expansion, InlineDisplay::Box& displayBox, InlineFormattingContext& inlineFormattingContext)
+{
+    ASSERT(displayBox.isInlineBox());
+    if (!expansion)
+        return;
+    auto isHorizontalWritingMode = inlineFormattingContext.root().style().isHorizontalWritingMode();
+    isHorizontalWritingMode ? displayBox.expandHorizontally(expansion) : displayBox.expandVertically(expansion);
+    if (!displayBox.isTextOrSoftLineBreak() && !displayBox.isRootInlineBox()) {
+        auto& boxGeometry = inlineFormattingContext.geometryForBox(displayBox.layoutBox());
+        isHorizontalWritingMode ? boxGeometry.setContentBoxWidth(boxGeometry.contentBoxWidth() + LayoutUnit { expansion }) : boxGeometry.setContentBoxHeight(boxGeometry.contentBoxHeight() + LayoutUnit { expansion });
+    }
+}
+
+static inline InlineLayoutUnit alignmentOffset(auto& latyoutBox, auto& alignmentOffsetList)
+{
+    auto alignmentOffsetEntry = alignmentOffsetList.find(&latyoutBox);
+    return alignmentOffsetEntry != alignmentOffsetList.end() ? alignmentOffsetEntry->value : 0.f;
+}
+
+struct InlineBoxIndexAndExpansion {
+    size_t index { 0 };
+    InlineLayoutUnit expansion { 0.f };
+};
+static InlineBoxIndexAndExpansion expandInlineBoxWithDescendants(size_t inlineBoxIndex, InlineDisplay::Boxes& displayBoxes, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList,  InlineFormattingContext& inlineFormattingContext)
+{
+    if (inlineBoxIndex >= displayBoxes.size() || !displayBoxes[inlineBoxIndex].isInlineBox()) {
+        ASSERT_NOT_REACHED();
+        return { inlineBoxIndex, { } };
+    }
+    auto& inlineBox = displayBoxes[inlineBoxIndex].layoutBox();
+    auto descendantExpansion = InlineLayoutUnit { 0.f };
+    size_t index = inlineBoxIndex + 1;
+    while (index < displayBoxes.size() && &displayBoxes[index].layoutBox().parent() == &inlineBox) {
+        if (displayBoxes[index].isInlineBox()) {
+            auto indexAndExpansion = expandInlineBoxWithDescendants(index, displayBoxes, alignmentOffsetList, inlineFormattingContext);
+            index = indexAndExpansion.index;
+            descendantExpansion += indexAndExpansion.expansion;
+            continue;
+        }
+        ++index;
+    }
+    auto totalExpansion = 2 * alignmentOffset(inlineBox, alignmentOffsetList) + descendantExpansion;
+    if (inlineBoxIndex) {
+        // Root inline box has the correct (inflated) logical width.
+        expandInlineBox(totalExpansion, displayBoxes[inlineBoxIndex], inlineFormattingContext);
+    }
+    return { index, totalExpansion };
+}
+
+struct BaseIndexAndOffset {
+    size_t index { 0 };
+    InlineLayoutUnit offset { 0.f };
+};
+static BaseIndexAndOffset shiftRubyBaseContentByAlignmentOffset(BaseIndexAndOffset baseIndexAndOffset, InlineDisplay::Boxes& displayBoxes, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, InlineFormattingContext& inlineFormattingContext)
+{
+    auto baseIndex = baseIndexAndOffset.index;
+    if (baseIndex >= displayBoxes.size() || !displayBoxes[baseIndex].layoutBox().isRubyBase()) {
+        ASSERT_NOT_REACHED();
+        return { baseIndexAndOffset.index, { } };
+    }
+
+    // Shift base content within the base (no resize) as part of the alignment process.
+    auto& rubyBaseBox = displayBoxes[baseIndex].layoutBox();
+    auto& rubyBox = rubyBaseBox.parent();
+    auto baseOffset = baseIndexAndOffset.offset;
+    auto baseContentOffset = alignmentOffset(rubyBaseBox, alignmentOffsetList);
+    size_t baseContentIndex = baseIndex + 1;
+
+    while (baseContentIndex < displayBoxes.size()) {
+        auto& displayBox = displayBoxes[baseContentIndex];
+        auto& layoutBox = displayBox.layoutBox();
+        if (&layoutBox.parent() == &rubyBox || &layoutBox.parent() == &rubyBox.parent()) {
+            // Not in this ruby base anymore.
+            break;
+        }
+        if (!layoutBox.isRubyAnnotationBox())
+            shiftDisplayBox(displayBox, baseOffset + baseContentOffset, inlineFormattingContext);
+        if (layoutBox.isRubyBase()) {
+            baseContentIndex = shiftRubyBaseContentByAlignmentOffset({ baseContentIndex, baseOffset + baseContentOffset }, displayBoxes, alignmentOffsetList, inlineFormattingContext).index;
+            continue;
+        }
+        ++baseContentIndex;
+    }
+    return { baseContentIndex, 2 * baseContentOffset };
+}
+
 static void computedExpansions(const Line::RunList& runs, WTF::Range<size_t> runRange, size_t hangingTrailingWhitespaceLength, ExpansionInfo& expansionInfo)
 {
     // Collect and distribute the expansion opportunities.
@@ -146,21 +244,51 @@ InlineLayoutUnit InlineContentAligner::applyTextAlignJustify(Line::RunList& runs
     return applyExpansionOnRange(runs, fullRange, expansion, spaceToDistribute);
 }
 
-void InlineContentAligner::applyRubyAlign(Line::RunList& runs, WTF::Range<size_t> rubyBaseRange, InlineLayoutUnit spaceToDistribute, size_t hangingTrailingWhitespaceLength)
+InlineLayoutUnit InlineContentAligner::applyRubyAlignSpaceAround(Line::RunList& runs, WTF::Range<size_t> range, InlineLayoutUnit spaceToDistribute)
 {
-    if (rubyBaseRange.distance() <= 1)
-        return;
+    if (runs.isEmpty()) {
+        ASSERT_NOT_REACHED();
+        return { };
+    }
+
+    if (spaceToDistribute <= 0)
+        return { };
+
+    auto expansion = ExpansionInfo { };
+    computedExpansions(runs, range, { }, expansion);
+    // Anything to distribute?
+    if (!expansion.opportunityCount)
+        return spaceToDistribute / 2;
     // FIXME: ruby-align: space-around only
     // As for space-between except that there exists an extra justification opportunities whose space is distributed half before and half after the ruby content.
-    auto baseContentRunRange = WTF::Range<size_t> { rubyBaseRange.begin() + 1, rubyBaseRange.end() - 1 };
-    auto expansion = ExpansionInfo { };
-    computedExpansions(runs, baseContentRunRange, hangingTrailingWhitespaceLength, expansion);
+    auto extraExpansionOpportunitySpace = spaceToDistribute / (expansion.opportunityCount + 1);
+    applyExpansionOnRange(runs, range, expansion, spaceToDistribute - extraExpansionOpportunitySpace);
+    return extraExpansionOpportunitySpace / 2;
+}
 
-    if (expansion.opportunityCount) {
-        auto contentLogicalLeftOffset = spaceToDistribute / (expansion.opportunityCount + 1) / 2;
-        spaceToDistribute -= (2 * contentLogicalLeftOffset);
-        applyExpansionOnRange(runs, baseContentRunRange, expansion, spaceToDistribute);
+void InlineContentAligner::applyRubyBaseAlignmentOffset(InlineDisplay::Boxes& displayBoxes, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, AdjustContentOnlyInsideRubyBase adjustContentOnlyInsideRubyBase, InlineFormattingContext& inlineFormattingContext)
+{
+    ASSERT(!alignmentOffsetList.isEmpty());
+
+    auto contentOffset = InlineLayoutUnit { 0.f };
+    for (size_t index = 0; index < displayBoxes.size();) {
+        auto& displayBox = displayBoxes[index];
+
+        if (adjustContentOnlyInsideRubyBase == AdjustContentOnlyInsideRubyBase::No)
+            shiftDisplayBox(displayBox, contentOffset, inlineFormattingContext);
+
+        if (displayBox.layoutBox().isRubyBase()) {
+            auto baseEndIndexAndAlignment = shiftRubyBaseContentByAlignmentOffset({ index, contentOffset }, displayBoxes, alignmentOffsetList, inlineFormattingContext);
+            index = baseEndIndexAndAlignment.index;
+            if (adjustContentOnlyInsideRubyBase == AdjustContentOnlyInsideRubyBase::No)
+                contentOffset += baseEndIndexAndAlignment.offset;
+            continue;
+        }
+        ++index;
     }
+
+    if (adjustContentOnlyInsideRubyBase == AdjustContentOnlyInsideRubyBase::No)
+        expandInlineBoxWithDescendants(0, displayBoxes, alignmentOffsetList, inlineFormattingContext);
 }
 
 }

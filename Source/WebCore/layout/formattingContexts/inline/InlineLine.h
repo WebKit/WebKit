@@ -143,6 +143,7 @@ public:
     private:
         friend class Line;
         friend class InlineContentAligner;
+        friend class RubyFormattingContext;
 
         Run(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
         Run(const InlineSoftLineBreakItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);

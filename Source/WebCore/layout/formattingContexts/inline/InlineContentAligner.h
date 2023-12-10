@@ -31,7 +31,11 @@ namespace Layout {
 class InlineContentAligner {
 public:
     static InlineLayoutUnit applyTextAlignJustify(Line::RunList&, InlineLayoutUnit spaceToDistribute, size_t hangingTrailingWhitespaceLength);
-    static void applyRubyAlign(Line::RunList&, WTF::Range<size_t> rubyBaseRange, InlineLayoutUnit spaceToDistribute, size_t hangingTrailingWhitespaceLength);
+
+    static InlineLayoutUnit applyRubyAlignSpaceAround(Line::RunList&, WTF::Range<size_t>, InlineLayoutUnit spaceToDistribute);
+
+    enum class AdjustContentOnlyInsideRubyBase : bool { No, Yes };
+    static void applyRubyBaseAlignmentOffset(InlineDisplay::Boxes&, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, AdjustContentOnlyInsideRubyBase, InlineFormattingContext&);
 
 private:
     static InlineLayoutUnit applyExpansionOnRange(Line::RunList&, WTF::Range<size_t>, const ExpansionInfo&, InlineLayoutUnit spaceToDistribute);

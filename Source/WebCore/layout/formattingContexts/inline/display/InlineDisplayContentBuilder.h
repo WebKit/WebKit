@@ -64,7 +64,7 @@ private:
     void insertRubyAnnotationBox(const Box& annotationBox, size_t insertionPosition, InlineDisplay::Boxes&);
 
     size_t processRubyBase(size_t rubyBaseStart, InlineDisplay::Boxes&, Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList, Vector<size_t>& rubyBaseStartIndexListWithAnnotation);
-    void processRubyContent(InlineDisplay::Boxes&);
+    void processRubyContent(InlineDisplay::Boxes&, const LineLayoutResult&);
     void applyRubyOverhang(InlineDisplay::Boxes&, const Vector<WTF::Range<size_t>>& interlinearRubyColumnRangeList);
 
     void setInlineBoxGeometry(const Box&, const InlineRect&, bool isFirstInlineBoxFragment);

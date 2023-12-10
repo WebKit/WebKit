@@ -43,7 +43,7 @@ public:
     static bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& current);
     static InlineLayoutUnit annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, const InlineFormattingContext&);
     static InlineLayoutUnit baseEndAdditionalLogicalWidth(const Box& rubyBaseLayoutBox, const Line::RunList&, const InlineContentBreaker::ContinuousContent::RunList&, const InlineFormattingContext&);
-    static void applyRubyAlign(Line&, const InlineFormattingContext&);
+    static HashMap<const Box*, InlineLayoutUnit> applyRubyAlign(Line&, const InlineFormattingContext&);
 
     // Line box building
     static void applyAnnotationContributionToLayoutBounds(LineBox&, const InlineFormattingContext&);
@@ -55,12 +55,16 @@ public:
     static InlineLayoutUnit overhangForAnnotationBefore(const Box& rubyBaseLayoutBox, size_t rubyBaseStart, const InlineDisplay::Boxes&, const InlineFormattingContext&);
     static InlineLayoutUnit overhangForAnnotationAfter(const Box& rubyBaseLayoutBox, WTF::Range<size_t> rubyBaseRange, const InlineDisplay::Boxes&, const InlineFormattingContext&);
 
+    enum class RubyBasesMayNeedResizing : bool { No, Yes };
+    static void applyAlignmentOffsetList(InlineDisplay::Boxes&, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, RubyBasesMayNeedResizing, InlineFormattingContext&);
+
     // Miscellaneous helpers
     static bool hasInterlinearAnnotation(const Box& rubyBaseLayoutBox);
     static bool hasInterCharacterAnnotation(const Box& rubyBaseLayoutBox);
 
 private:
     static void adjustLayoutBoundsAndStretchAncestorRubyBase(LineBox&, InlineLevelBox& rubyBaseInlineBox, const InlineFormattingContext&);
+    static size_t applyRubyAlignOnBaseContent(size_t rubyBaseStart, Line&, HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, const InlineFormattingContext&);
 };
 
 } // namespace Layout
