@@ -409,7 +409,7 @@ svg/stroke/zero-length-path-linecap-rendering.svg [ Failure ]
 svg/stroke/zero-length-subpaths-linecap-rendering.svg [ Failure ]
 
 webkit.org/b/110871 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
-webkit.org/b/114340 compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
+webkit.org/b/114340 [ Monterey ] compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
 webkit.org/b/146523 compositing/masks/compositing-clip-path-origin.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/95027 fast/block/float/016.html [ Failure ]
