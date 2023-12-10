@@ -141,7 +141,7 @@ static bool hasValue(const ImageBufferBackendHandle& backendHandle)
         }
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
         , [&] (const WebCore::DynamicContentScalingDisplayList& handle) {
-            return !!handle.displayList();
+            return true;
         }
 #endif
     );
