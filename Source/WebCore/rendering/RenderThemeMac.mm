@@ -256,13 +256,8 @@ Color RenderThemeMac::platformActiveSelectionBackgroundColor(OptionSet<StyleColo
 
 Color RenderThemeMac::platformInactiveSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     return colorFromCocoaColor([NSColor unemphasizedSelectedTextBackgroundColor]);
-#else
-    UNUSED_PARAM(options);
-    return colorFromCocoaColor([NSColor unemphasizedSelectedContentBackgroundColor]);
-#endif
 }
 
 Color RenderThemeMac::transformSelectionBackgroundColor(const Color& color, OptionSet<StyleColorOptions> options) const
@@ -293,37 +288,21 @@ Color RenderThemeMac::platformActiveSelectionForegroundColor(OptionSet<StyleColo
 
 Color RenderThemeMac::platformInactiveSelectionForegroundColor(OptionSet<StyleColorOptions> options) const
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     if (localAppearance.usingDarkAppearance())
         return colorFromCocoaColor([NSColor unemphasizedSelectedTextColor]);
     return { };
-#else
-    UNUSED_PARAM(options);
-    return { };
-#endif
 }
 
 Color RenderThemeMac::platformActiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     return colorFromCocoaColor([NSColor selectedContentBackgroundColor]);
-#else
-    UNUSED_PARAM(options);
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    return colorFromCocoaColor([NSColor alternateSelectedControlColor]);
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
 }
 
 Color RenderThemeMac::platformInactiveListBoxSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
-#else
-    UNUSED_PARAM(options);
-#endif
     return colorFromCocoaColor([NSColor unemphasizedSelectedContentBackgroundColor]);
 
 }
@@ -336,13 +315,8 @@ Color RenderThemeMac::platformActiveListBoxSelectionForegroundColor(OptionSet<St
 
 Color RenderThemeMac::platformInactiveListBoxSelectionForegroundColor(OptionSet<StyleColorOptions> options) const
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     LocalDefaultSystemAppearance localAppearance(options.contains(StyleColorOptions::UseDarkAppearance));
     return colorFromCocoaColor([NSColor unemphasizedSelectedTextColor]);
-#else
-    UNUSED_PARAM(options);
-    return colorFromCocoaColor([NSColor selectedControlTextColor]);
-#endif
 }
 
 inline static Color defaultFocusRingColor(OptionSet<StyleColorOptions> options)
@@ -476,13 +450,7 @@ Color RenderThemeMac::systemColor(CSSValueID cssValueID, OptionSet<StyleColorOpt
             return focusRingColor(options);
 
         case CSSValueAppleSystemControlAccent:
-#if HAVE(OS_DARK_MODE_SUPPORT)
             return systemAppearanceColor(cache.systemControlAccentColor, @selector(controlAccentColor));
-#else
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-            return systemAppearanceColor(cache.systemControlAccentColor, @selector(alternateSelectedControlColor));
-ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
 
         case CSSValueAppleSystemSelectedContentBackground:
             return activeListBoxSelectionBackgroundColor(options);
@@ -575,9 +543,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             case CSSValueAppleSystemTextBackground:
                 return @selector(textBackgroundColor);
             case CSSValueAppleSystemControlBackground:
-#if HAVE(OS_DARK_MODE_SUPPORT)
             case CSSValueWebkitControlBackground:
-#endif
                 return @selector(controlBackgroundColor);
             case CSSValueAppleSystemAlternateSelectedText:
                 return @selector(alternateSelectedControlTextColor);
@@ -586,28 +552,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             case CSSValueAppleSystemSelectedText:
                 return @selector(selectedTextColor);
             case CSSValueAppleSystemUnemphasizedSelectedText:
-#if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(unemphasizedSelectedTextColor);
-#else
-                return @selector(textColor);
-#endif
             case CSSValueAppleSystemUnemphasizedSelectedTextBackground:
-#if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(unemphasizedSelectedTextBackgroundColor);
-#else
-                return @selector(unemphasizedSelectedContentBackgroundColor);
-#endif
             case CSSValueAppleSystemPlaceholderText:
                 return @selector(placeholderTextColor);
             case CSSValueAppleSystemFindHighlightBackground:
                 return @selector(findHighlightColor);
             case CSSValueAppleSystemContainerBorder:
-#if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(containerBorderColor);
-#else
-                // Handled below.
-                return nullptr;
-#endif
             case CSSValueAppleSystemLabel:
                 return @selector(labelColor);
             case CSSValueAppleSystemSecondaryLabel:
@@ -627,11 +580,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             case CSSValueAppleSystemGrid:
                 return @selector(gridColor);
             case CSSValueAppleSystemSeparator:
-#if HAVE(OS_DARK_MODE_SUPPORT)
                 return @selector(separatorColor);
-#else
-                return @selector(gridColor);
-#endif
             case CSSValueAppleWirelessPlaybackTargetActive:
             case CSSValueAppleSystemBlue:
                 return @selector(systemBlueColor);
@@ -700,27 +649,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
                 return { SRGBA<uint8_t> { 63, 99, 139, 204 }, Color::Flags::Semantic };
             return { SRGBA<uint8_t> { 128, 188, 254, 153 }, Color::Flags::Semantic };
 
-#if !HAVE(OS_DARK_MODE_SUPPORT)
-        case CSSValueAppleSystemContainerBorder:
-            return SRGBA<uint8_t> { 197, 197, 197 };
-#endif
-
         case CSSValueAppleSystemEvenAlternatingContentBackground: {
-#if HAVE(OS_DARK_MODE_SUPPORT)
             NSArray<NSColor *> *alternateColors = [NSColor alternatingContentBackgroundColors];
-#else
-            NSArray<NSColor *> *alternateColors = [NSColor controlAlternatingRowBackgroundColors];
-#endif
             ASSERT(alternateColors.count >= 2);
             return semanticColorFromNSColor(alternateColors[0]);
         }
 
         case CSSValueAppleSystemOddAlternatingContentBackground: {
-#if HAVE(OS_DARK_MODE_SUPPORT)
             NSArray<NSColor *> *alternateColors = [NSColor alternatingContentBackgroundColors];
-#else
-            NSArray<NSColor *> *alternateColors = [NSColor controlAlternatingRowBackgroundColors];
-#endif
             ASSERT(alternateColors.count >= 2);
             return semanticColorFromNSColor(alternateColors[1]);
         }

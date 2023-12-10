@@ -46,23 +46,13 @@ public:
     WEBCORE_EXPORT LocalDefaultSystemAppearance(bool useDarkAppearance, const Color& tintColor = { });
     WEBCORE_EXPORT ~LocalDefaultSystemAppearance();
 
-    bool usingDarkAppearance() const
-    {
-#if HAVE(OS_DARK_MODE_SUPPORT)
-        return m_usingDarkAppearance;
-#else
-        return false;
-#endif
-    }
+    bool usingDarkAppearance() const { return m_usingDarkAppearance; }
 
 private:
-#if HAVE(OS_DARK_MODE_SUPPORT)
     RetainPtr<NSAppearance> m_savedSystemAppearance;
     bool m_usingDarkAppearance { false };
-#endif
 };
     
 }
 
 #endif // USE(APPKIT)
-
