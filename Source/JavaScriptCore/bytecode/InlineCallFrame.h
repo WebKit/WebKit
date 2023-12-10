@@ -40,7 +40,11 @@ struct InlineCallFrame;
 class CallFrame;
 class JSFunction;
 
+DECLARE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(InlineCallFrame);
+
 struct InlineCallFrame {
+    WTF_MAKE_STRUCT_FAST_COMPACT_ALLOCATED_WITH_HEAP_IDENTIFIER(InlineCallFrame);
+
     enum Kind {
         Call,
         Construct,

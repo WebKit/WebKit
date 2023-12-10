@@ -5703,12 +5703,8 @@ void WebViewImpl::effectiveAppearanceDidChange()
 
 bool WebViewImpl::effectiveAppearanceIsDark()
 {
-#if HAVE(OS_DARK_MODE_SUPPORT)
     NSAppearanceName appearance = [[m_view effectiveAppearance] bestMatchFromAppearancesWithNames:@[ NSAppearanceNameAqua, NSAppearanceNameDarkAqua ]];
     return [appearance isEqualToString:NSAppearanceNameDarkAqua];
-#else
-    return false;
-#endif
 }
 
 bool WebViewImpl::effectiveUserInterfaceLevelIsElevated()

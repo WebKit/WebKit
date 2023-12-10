@@ -90,6 +90,7 @@
 #include <WebCore/PluginDocument.h>
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/ProgressTracker.h>
+#include <WebCore/Quirks.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/RuntimeApplicationChecks.h>
@@ -1327,6 +1328,28 @@ bool WebLocalFrameLoaderClient::representationExistsForURLScheme(StringView /*UR
 {
     notImplemented();
     return false;
+}
+
+void WebLocalFrameLoaderClient::loadStorageAccessQuirksIfNeeded()
+{
+    RefPtr webPage = m_frame->page();
+
+    if (!webPage || !m_frame->coreLocalFrame() || !m_frame->coreLocalFrame()->isMainFrame() || !m_frame->coreLocalFrame()->document())
+        return;
+
+    auto* document = m_frame->coreLocalFrame()->document();
+    RegistrableDomain domain { document->url() };
+    if (!WebProcess::singleton().haveStorageAccessQuirksForDomain(domain))
+        return;
+
+    WebProcess::singleton().ensureNetworkProcessConnection().connection().sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::StorageAccessQuirkForTopFrameDomain(WTFMove(domain)), [weakDocument = WeakPtr { *document }](Vector<RegistrableDomain>&& domains) {
+        if (!domains.size())
+            return;
+        if (!weakDocument)
+            return;
+        weakDocument->quirks().setSubFrameDomainsForStorageAccessQuirk(WTFMove(domains));
+    });
+
 }
 
 String WebLocalFrameLoaderClient::generatedMIMETypeForURLScheme(StringView /*URLScheme*/) const

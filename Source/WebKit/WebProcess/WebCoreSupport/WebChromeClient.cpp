@@ -288,7 +288,8 @@ void WebChromeClient::focusedElementChanged(Element* element)
     if (!inputElement || !inputElement->isText())
         return;
 
-    auto webFrame = WebFrame::fromCoreFrame(*element->document().frame());
+    RefPtr frame = element->document().frame();
+    RefPtr webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);
     auto page = protectedPage();
     page->injectedBundleFormClient().didFocusTextField(page.ptr(), *inputElement, webFrame.get());
@@ -831,9 +832,9 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin& origin,
     if (page->injectedBundleUIClient().didReachApplicationCacheOriginQuota(page.ptr(), securityOrigin.ptr(), totalBytesNeeded))
         return;
 
-    auto& cacheStorage = page->corePage()->applicationCacheStorage();
+    Ref cacheStorage = page->corePage()->applicationCacheStorage();
     int64_t currentQuota = 0;
-    if (!cacheStorage.calculateQuotaForOrigin(origin, currentQuota))
+    if (!cacheStorage->calculateQuotaForOrigin(origin, currentQuota))
         return;
 
     auto relay = AXRelayProcessSuspendedNotification(page);
@@ -841,7 +842,7 @@ void WebChromeClient::reachedApplicationCacheOriginQuota(SecurityOrigin& origin,
     auto sendResult = page->sendSyncWithDelayedReply(Messages::WebPageProxy::ReachedApplicationCacheOriginQuota(origin.data().databaseIdentifier(), currentQuota, totalBytesNeeded));
     auto [newQuota] = sendResult.takeReplyOr(0);
 
-    cacheStorage.storeUpdatedQuotaForOrigin(&origin, newQuota);
+    cacheStorage->storeUpdatedQuotaForOrigin(&origin, newQuota);
 }
 
 #if ENABLE(INPUT_TYPE_COLOR)

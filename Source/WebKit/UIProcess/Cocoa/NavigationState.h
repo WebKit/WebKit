@@ -115,6 +115,7 @@ private:
         void didFailLoadWithErrorForFrame(WebPageProxy&, WebCore::ResourceRequest&&, const WebCore::ResourceError&, FrameInfoData&&) override;
         void didSameDocumentNavigation(WebPageProxy&, API::Navigation*, SameDocumentNavigationType, API::Object*) override;
         void didApplyLinkDecorationFiltering(WebPageProxy&, const URL&, const URL&) override;
+        void didPromptForStorageAccess(WebPageProxy&, const String& topFrameDomain, const String& subFrameDomain, bool hasQuirk) override;
 
         void renderingProgressDidChange(WebPageProxy&, OptionSet<WebCore::LayoutMilestone>) override;
 
@@ -233,6 +234,7 @@ private:
         bool webViewNavigationDidSameDocumentNavigation : 1;
         bool webViewDidFailLoadDueToNetworkConnectionIntegrityWithURL : 1;
         bool webViewDidChangeLookalikeCharactersFromURLToURL : 1;
+        bool webViewDidPromptForStorageAccessForSubFrameDomainForQuirk : 1;
 
         bool webViewRenderingProgressDidChange : 1;
         bool webViewDidReceiveAuthenticationChallengeCompletionHandler : 1;

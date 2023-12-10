@@ -849,6 +849,7 @@ private:
 #endif
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     RefPtr<StorageAccessUserAgentStringQuirkObserver> m_storageAccessUserAgentStringQuirksDataUpdateObserver;
+    RefPtr<StorageAccessPromptQuirkObserver> m_storageAccessPromptQuirksDataUpdateObserver;
 #endif
 };
 

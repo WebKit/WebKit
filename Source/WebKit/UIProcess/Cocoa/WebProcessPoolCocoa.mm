@@ -489,6 +489,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
     // FIXME: Filter by process's site when site isolation is enabled
     parameters.storageAccessUserAgentStringQuirksData = StorageAccessUserAgentStringQuirkController::shared().cachedQuirks();
+
+    for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedQuirks()) {
+        for (auto&& domain : entry.domainPairings.keys())
+            parameters.storageAccessPromptQuirksDomains.add(domain);
+    }
 #endif
 }
 

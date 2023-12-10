@@ -1,0 +1,24 @@
+first
+second
+first
+second
+first
+second
+third
+first
+second
+first
+second
+first
+second
+third
+
+FAIL vertical-align:top and align-content:start are equivalent assert_equals: The first cell content top expected 0 but got 15
+PASS vertical-align:middle and `align-content:unsafe center` are equivalent
+FAIL vertical-align:bottom and `align-content:unsafe end` are equivalent assert_equals: The first cell content top expected 30 but got 15
+FAIL vertical-align:baseline and align-content:baseline are equivalent assert_equals: The first cell content top expected 9 but got 15
+PASS vertical-align:middle and `align-content:safe center` are equivalent if the container is tall
+FAIL vertical-align:bottom and `align-content:safe end` are equivalent if the container is tall assert_equals: The first cell content top expected 30 but got 15
+PASS `align-content:safe center` is equivalent to `unsafe center` even if the specified `height` is short
+PASS `align-content:safe end` is equivalent to `unsafe end` even if the specified `height` is short
+

@@ -40,21 +40,21 @@
 namespace bmalloc {
 
 template<typename Type>
-void* IsoTLS::allocate(api::IsoHeap<Type>& handle, bool abortOnFailure)
+void* IsoTLS::allocate(api::IsoHeapBase<Type>& handle, bool abortOnFailure)
 {
-    return allocateImpl<typename api::IsoHeap<Type>::Config>(handle, abortOnFailure);
+    return allocateImpl<typename api::IsoHeapBase<Type>::Config>(handle, abortOnFailure);
 }
 
 template<typename Type>
-void IsoTLS::deallocate(api::IsoHeap<Type>& handle, void* p)
+void IsoTLS::deallocate(api::IsoHeapBase<Type>& handle, void* p)
 {
     if (!p)
         return;
-    deallocateImpl<typename api::IsoHeap<Type>::Config>(handle, p);
+    deallocateImpl<typename api::IsoHeapBase<Type>::Config>(handle, p);
 }
 
 template<typename Type>
-void IsoTLS::scavenge(api::IsoHeap<Type>& handle)
+void IsoTLS::scavenge(api::IsoHeapBase<Type>& handle)
 {
     IsoTLS* tls = get();
     if (!tls)
@@ -63,15 +63,15 @@ void IsoTLS::scavenge(api::IsoHeap<Type>& handle)
         return;
     unsigned offset = handle.allocatorOffset();
     if (offset < tls->m_extent)
-        reinterpret_cast<IsoAllocator<typename api::IsoHeap<Type>::Config>*>(tls->m_data + offset)->scavenge(handle.impl());
+        reinterpret_cast<IsoAllocator<typename api::IsoHeapBase<Type>::Config>*>(tls->m_data + offset)->scavenge(handle.impl());
     offset = handle.deallocatorOffset();
     if (offset < tls->m_extent)
-        reinterpret_cast<IsoDeallocator<typename api::IsoHeap<Type>::Config>*>(tls->m_data + offset)->scavenge();
+        reinterpret_cast<IsoDeallocator<typename api::IsoHeapBase<Type>::Config>*>(tls->m_data + offset)->scavenge();
     handle.impl().scavengeNow();
 }
 
 template<typename Config, typename Type>
-void* IsoTLS::allocateImpl(api::IsoHeap<Type>& handle, bool abortOnFailure)
+void* IsoTLS::allocateImpl(api::IsoHeapBase<Type>& handle, bool abortOnFailure)
 {
     unsigned offset = handle.allocatorOffset();
     IsoTLS* tls = get();
@@ -81,13 +81,13 @@ void* IsoTLS::allocateImpl(api::IsoHeap<Type>& handle, bool abortOnFailure)
 }
 
 template<typename Config, typename Type>
-void* IsoTLS::allocateFast(api::IsoHeap<Type>& handle, unsigned offset, bool abortOnFailure)
+void* IsoTLS::allocateFast(api::IsoHeapBase<Type>& handle, unsigned offset, bool abortOnFailure)
 {
     return reinterpret_cast<IsoAllocator<Config>*>(m_data + offset)->allocate(handle.impl(), abortOnFailure);
 }
 
 template<typename Config, typename Type>
-BNO_INLINE void* IsoTLS::allocateSlow(api::IsoHeap<Type>& handle, bool abortOnFailure)
+BNO_INLINE void* IsoTLS::allocateSlow(api::IsoHeapBase<Type>& handle, bool abortOnFailure)
 {
     IsoMallocFallback::MallocResult fallbackResult = IsoMallocFallback::tryMalloc(
         Config::objectSize
@@ -107,7 +107,7 @@ BNO_INLINE void* IsoTLS::allocateSlow(api::IsoHeap<Type>& handle, bool abortOnFa
 }
 
 template<typename Config, typename Type>
-void IsoTLS::deallocateImpl(api::IsoHeap<Type>& handle, void* p)
+void IsoTLS::deallocateImpl(api::IsoHeapBase<Type>& handle, void* p)
 {
     unsigned offset = handle.deallocatorOffset();
     IsoTLS* tls = get();
@@ -120,13 +120,13 @@ void IsoTLS::deallocateImpl(api::IsoHeap<Type>& handle, void* p)
 }
 
 template<typename Config, typename Type>
-void IsoTLS::deallocateFast(api::IsoHeap<Type>& handle, unsigned offset, void* p)
+void IsoTLS::deallocateFast(api::IsoHeapBase<Type>& handle, unsigned offset, void* p)
 {
     reinterpret_cast<IsoDeallocator<Config>*>(m_data + offset)->deallocate(handle, p);
 }
 
 template<typename Config, typename Type>
-BNO_INLINE void IsoTLS::deallocateSlow(api::IsoHeap<Type>& handle, void* p)
+BNO_INLINE void IsoTLS::deallocateSlow(api::IsoHeapBase<Type>& handle, void* p)
 {
     bool result = IsoMallocFallback::tryFree(
         p
@@ -168,7 +168,7 @@ inline void IsoTLS::set(IsoTLS* tls)
 }
 
 template<typename Type>
-void IsoTLS::ensureHeap(api::IsoHeap<Type>& handle)
+void IsoTLS::ensureHeap(api::IsoHeapBase<Type>& handle)
 {
     if (!handle.isInitialized()) {
         LockHolder locker(handle.m_initializationLock);
@@ -178,7 +178,7 @@ void IsoTLS::ensureHeap(api::IsoHeap<Type>& handle)
 }
 
 template<typename Type>
-BNO_INLINE IsoTLS* IsoTLS::ensureHeapAndEntries(api::IsoHeap<Type>& handle)
+BNO_INLINE IsoTLS* IsoTLS::ensureHeapAndEntries(api::IsoHeapBase<Type>& handle)
 {
     RELEASE_BASSERT(
         !get()

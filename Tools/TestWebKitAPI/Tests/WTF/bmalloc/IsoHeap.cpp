@@ -237,7 +237,7 @@ TEST(bmalloc, IsoMallocAndFreeFast)
 }
 
 class BisoMalloced {
-    MAKE_BISO_MALLOCED(BisoMalloced, BNOEXPORT);
+    MAKE_BISO_MALLOCED(BisoMalloced, IsoHeap, BNOEXPORT);
 public:
     BisoMalloced(int x, float y)
         : x(x)
@@ -249,7 +249,7 @@ public:
     float y;
 };
 
-MAKE_BISO_MALLOCED_IMPL(BisoMalloced);
+MAKE_BISO_MALLOCED_IMPL(BisoMalloced, IsoHeap);
 
 TEST(bmalloc, BisoMalloced)
 {
@@ -260,7 +260,7 @@ TEST(bmalloc, BisoMalloced)
 }
 
 class BisoMallocedInline {
-    MAKE_BISO_MALLOCED_INLINE(BisoMalloced);
+    MAKE_BISO_MALLOCED_INLINE(BisoMalloced, IsoHeap);
 public:
     BisoMallocedInline(int x, float y)
         : x(x)

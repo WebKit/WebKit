@@ -50,11 +50,11 @@ public:
     
     void unlinkImpl(VM&);
 
-    bool hasCallLinkInfo(CallLinkInfo* info) { return m_callLinkInfo.get() == info; }
+    bool hasCallLinkInfo(CallLinkInfo* info) { return m_callLinkInfo == info; }
     void clearCallLinkInfo();
     
 private:
-    PackedPtr<CallLinkInfo> m_callLinkInfo;
+    CallLinkInfo* m_callLinkInfo;
 };
 
 class PolymorphicCallCase {

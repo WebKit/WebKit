@@ -117,7 +117,7 @@ void WebServiceWorkerFetchTaskClient::didReceiveFormDataAndFinish(Ref<FormData>&
     }
 
     callOnMainRunLoop([this, protectedThis = Ref { *this }, blobURL = WTFMove(blobURL).isolatedCopy()] () {
-        auto* serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(m_serviceWorkerIdentifier);
+        RefPtr serviceWorkerThreadProxy = SWContextManager::singleton().serviceWorkerThreadProxy(m_serviceWorkerIdentifier);
         if (!serviceWorkerThreadProxy) {
             didFail(internalError(blobURL));
             return;

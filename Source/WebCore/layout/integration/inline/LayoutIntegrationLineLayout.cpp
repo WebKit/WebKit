@@ -971,6 +971,34 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
     return false;
 }
 
+void LineLayout::shiftLinesBy(LayoutUnit blockShift)
+{
+    if (!m_inlineContent)
+        return;
+    bool isHorizontalWritingMode = WebCore::isHorizontalWritingMode(flow().style().writingMode());
+
+    for (auto& line : m_inlineContent->displayContent().lines)
+        line.moveInBlockDirection(blockShift, isHorizontalWritingMode);
+
+    for (auto& box : m_inlineContent->displayContent().boxes) {
+        if (isHorizontalWritingMode)
+            box.moveVertically(blockShift);
+        else
+            box.moveHorizontally(blockShift);
+    }
+
+    for (auto& object : m_boxTree.renderers()) {
+        Layout::Box& layoutBox = *object->layoutBox();
+        if (layoutBox.isOutOfFlowPositioned() && layoutBox.style().hasStaticBlockPosition(isHorizontalWritingMode)) {
+            CheckedRef renderer = downcast<RenderBox>(m_boxTree.rendererForLayoutBox(layoutBox));
+            ASSERT(renderer->layer());
+            CheckedRef layer = *renderer->layer();
+            layer->setStaticBlockPosition(layer->staticBlockPosition() + blockShift);
+            renderer->setChildNeedsLayout(MarkOnlyThis);
+        }
+    }
+}
+
 void LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& child)
 {
     if (!m_inlineContent) {

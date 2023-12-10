@@ -304,8 +304,8 @@ PASS grid-row-start (type: discrete) has testAddition function
 PASS grid-row-start: "5" onto "1"
 PASS grid-row-start: "1" onto "5"
 PASS grid-template-areas (type: discrete) has testAddition function
-PASS grid-template-areas: "none" onto "". . a b" ". .a b""
-FAIL grid-template-areas: "". . a b" ". .a b"" onto "none" assert_equals: The value should be ". . a b" ". .a b" at 0ms expected "\". . a b\" \". .a b\"" but got "\". . a b\" \". . a b\""
+PASS grid-template-areas: "none" onto "". . a b" ". . a b""
+PASS grid-template-areas: "". . a b" ". . a b"" onto "none"
 PASS hyphens (type: discrete) has testAddition function
 PASS hyphens: "none" onto "manual"
 PASS hyphens: "manual" onto "none"

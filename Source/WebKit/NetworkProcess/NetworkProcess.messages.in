@@ -134,6 +134,7 @@ messages -> NetworkProcess LegacyReceiver {
     DidCommitCrossSiteLoadWithDataTransfer(PAL::SessionID sessionID, WebCore::RegistrableDomain fromDomain, WebCore::RegistrableDomain toDomain, OptionSet<WebCore::CrossSiteNavigationDataTransfer::Flag> navigationDataTransfer, WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier webPageID)
     SetCrossSiteLoadWithLinkDecorationForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain fromDomain, WebCore::RegistrableDomain toDomain) -> ()
     ResetCrossSiteLoadsWithLinkDecorationForTesting(PAL::SessionID sessionID) -> ()
+    GrantStorageAccessForTesting(PAL::SessionID sessionID, Vector<WebCore::RegistrableDomain> subFrameDomain, WebCore::RegistrableDomain topFrameDomain) -> ()
     DeleteCookiesForTesting(PAL::SessionID sessionID, WebCore::RegistrableDomain domain, bool includeHttpOnlyCookies) -> ()
     HasIsolatedSession(PAL::SessionID sessionID, WebCore::RegistrableDomain domain) -> (bool hasIsolatedSession)
     CloseITPDatabase(PAL::SessionID sessionID) -> ()

@@ -183,6 +183,7 @@ void NavigationState::setNavigationDelegate(id<WKNavigationDelegate> delegate)
     m_navigationDelegateMethods.webViewDidFailLoadWithRequestInFrameWithError = [delegate respondsToSelector:@selector(_webView:didFailLoadWithRequest:inFrame:withError:)];
     m_navigationDelegateMethods.webViewDidFailLoadDueToNetworkConnectionIntegrityWithURL = [delegate respondsToSelector:@selector(_webView:didFailLoadDueToNetworkConnectionIntegrityWithURL:)];
     m_navigationDelegateMethods.webViewDidChangeLookalikeCharactersFromURLToURL = [delegate respondsToSelector:@selector(_webView:didChangeLookalikeCharactersFromURL:toURL:)];
+    m_navigationDelegateMethods.webViewDidPromptForStorageAccessForSubFrameDomainForQuirk = [delegate respondsToSelector:@selector(_webView:didPromptForStorageAccess:forSubFrameDomain:forQuirk:)];
     
     m_navigationDelegateMethods.webViewNavigationDidFailProvisionalLoadInSubframeWithError = [delegate respondsToSelector:@selector(_webView:navigation:didFailProvisionalLoadInSubframe:withError:)];
     m_navigationDelegateMethods.webViewWillPerformClientRedirect = [delegate respondsToSelector:@selector(_webView:willPerformClientRedirectToURL:delay:)];
@@ -946,6 +947,19 @@ void NavigationState::NavigationClient::didApplyLinkDecorationFiltering(WebPageP
 
     if (m_navigationState->m_navigationDelegateMethods.webViewDidChangeLookalikeCharactersFromURLToURL)
         [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_navigationState->webView().get() didChangeLookalikeCharactersFromURL:originalURL toURL:adjustedURL];
+}
+
+void NavigationState::NavigationClient::didPromptForStorageAccess(WebPageProxy&, const String& topFrameDomain, const String& subFrameDomain, bool hasQuirk)
+{
+    if (!m_navigationState)
+        return;
+
+    auto navigationDelegate = m_navigationState->navigationDelegate();
+    if (!navigationDelegate)
+        return;
+
+    if (m_navigationState->m_navigationDelegateMethods.webViewDidPromptForStorageAccessForSubFrameDomainForQuirk)
+        [static_cast<id<WKNavigationDelegatePrivate>>(navigationDelegate) _webView:m_navigationState->webView().get() didPromptForStorageAccess:topFrameDomain forSubFrameDomain:subFrameDomain forQuirk:hasQuirk];
 }
 
 void NavigationState::NavigationClient::didFailNavigationWithError(WebPageProxy& page, const FrameInfoData& frameInfo, API::Navigation* navigation, const WebCore::ResourceError& error, API::Object* userInfo)

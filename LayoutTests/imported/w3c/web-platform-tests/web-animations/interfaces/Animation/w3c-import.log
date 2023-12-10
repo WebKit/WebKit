@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/cancel.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/commitStyles-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/commitStyles-svg-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/commitStyles.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/interfaces/Animation/effect.html

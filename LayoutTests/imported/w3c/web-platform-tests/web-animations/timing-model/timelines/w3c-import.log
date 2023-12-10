@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/timelines/document-timelines.html
+/LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/timelines/sibling-iframe-timeline.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/timelines/timelines.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/timelines/update-and-send-events-replacement.html
 /LayoutTests/imported/w3c/web-platform-tests/web-animations/timing-model/timelines/update-and-send-events.html

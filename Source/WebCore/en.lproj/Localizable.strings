@@ -424,6 +424,15 @@
 /* Message for requesting cross-site cookie and website data access. */
 "Do you want to allow “%@” to use cookies and website data while browsing “%@”?" = "Do you want to allow “%@” to use cookies and website data while browsing “%@”?";
 
+/* Message for requesting cross-site cookie and website data access. */
+"Are you logging in to this website, and do you want to allow other %@ sites access to your website data while browsing the websites listed below?" = "Are you logging in to this website, and do you want to allow other %@ sites access to your website data while browsing the websites listed below?";
+
+/* Informative text for requesting cross-site cookie and website data access. */
+"Allowing access to website data is necessary for the website to work correctly." = "Allowing access to website data is necessary for the website to work correctly.";
+
+/* Accessory text for requesting cross-site cookie and website data access. */
+"While you are visiting %@, the following related websites will gain access to their cookies:\n  - %@" = "While you are visiting %@, the following related websites will gain access to their cookies:\n  - %@";
+
 /* Label for the donate with Apple Pay button. */
 "Donate with Apple Pay" = "Donate with Apple Pay";
 

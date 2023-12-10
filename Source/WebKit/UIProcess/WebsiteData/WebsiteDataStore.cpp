@@ -1298,6 +1298,13 @@ void WebsiteDataStore::setStorageAccessPromptQuirkForTesting(String&& topFrameDo
     completionHandler();
 }
 
+void WebsiteDataStore::grantStorageAccessForTesting(String&& topFrameDomain, Vector<String>&& subFrameDomains, CompletionHandler<void()>&& completionHandler)
+{
+    protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::GrantStorageAccessForTesting(sessionID(), subFrameDomains.map([](const String& domain) {
+        return WebCore::RegistrableDomain::uncheckedCreateFromHost(domain);
+    }), WebCore::RegistrableDomain::uncheckedCreateFromHost((topFrameDomain))), WTFMove(completionHandler));
+}
+
 void WebsiteDataStore::setIsRunningResourceLoadStatisticsTest(bool value, CompletionHandler<void()>&& completionHandler)
 {
     useExplicitTrackingPreventionState();

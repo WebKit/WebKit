@@ -436,7 +436,7 @@ void UIDelegate::UIClient::runJavaScriptPrompt(WebPageProxy& page, const WTF::St
     }).get()];
 }
 
-void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProxy, WebFrameProxy*, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, CompletionHandler<void(bool)>&& completionHandler)
+void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProxy, WebFrameProxy*, const WebCore::RegistrableDomain& requestingDomain, const WebCore::RegistrableDomain& currentDomain, std::optional<WebCore::OrganizationStorageAccessPromptQuirk>&& organizationStorageAccessPromptQuirk, CompletionHandler<void(bool)>&& completionHandler)
 {
     if (!m_uiDelegate)
         return completionHandler(false);
@@ -444,6 +444,13 @@ void UIDelegate::UIClient::requestStorageAccessConfirm(WebPageProxy& webPageProx
     auto delegate = m_uiDelegate->m_delegate.get();
     if (!delegate) {
         completionHandler(false);
+        return;
+    }
+
+    if (organizationStorageAccessPromptQuirk) {
+#if !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
+        presentStorageAccessAlertSSOQuirk(m_uiDelegate->m_webView.get().get(), organizationStorageAccessPromptQuirk->organizationName, organizationStorageAccessPromptQuirk->domainPairings, WTFMove(completionHandler));
+#endif
         return;
     }
 

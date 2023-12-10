@@ -1219,8 +1219,9 @@ void NetworkProcess::setTrackingPreventionEnabled(PAL::SessionID sessionID, bool
         session->setTrackingPreventionEnabled(enabled);
 }
 
-void NetworkProcess::updateStorageAccessPromptQuirks(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&&)
+void NetworkProcess::updateStorageAccessPromptQuirks(Vector<WebCore::OrganizationStorageAccessPromptQuirk>&& organizationStorageAccessPromptQuirks)
 {
+    NetworkStorageSession::updateStorageAccessPromptQuirks(WTFMove(organizationStorageAccessPromptQuirks));
 }
 
 void NetworkProcess::setResourceLoadStatisticsLogTestingEvent(bool enabled)
@@ -1307,6 +1308,21 @@ void NetworkProcess::resetCrossSiteLoadsWithLinkDecorationForTesting(PAL::Sessio
     if (auto* networkStorageSession = storageSession(sessionID))
         networkStorageSession->resetCrossSiteLoadsWithLinkDecorationForTesting();
     else
+        ASSERT_NOT_REACHED();
+    completionHandler();
+}
+
+void NetworkProcess::grantStorageAccessForTesting(PAL::SessionID sessionID, Vector<RegistrableDomain>&& subFrameDomains, RegistrableDomain&& topFrameDomain, CompletionHandler<void(void)>&& completionHandler)
+{
+    HashSet allowedDomains { "site1.example"_str, "site2.example"_str, "site3.example"_str, "site4.example"_str };
+    if (!allowedDomains.contains(topFrameDomain.string())) {
+        completionHandler();
+        return;
+    }
+    if (auto* networkStorageSession = storageSession(sessionID)) {
+        for (auto&& subFrameDomain : subFrameDomains)
+            networkStorageSession->grantCrossPageStorageAccess(WTFMove(topFrameDomain), WTFMove(subFrameDomain));
+    } else
         ASSERT_NOT_REACHED();
     completionHandler();
 }

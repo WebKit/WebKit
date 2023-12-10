@@ -311,6 +311,17 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
             protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateStorageAccessUserAgentStringQuirks(StorageAccessUserAgentStringQuirkController::shared().cachedQuirks()));
         }
     });
+
+    m_storageAccessPromptQuirksDataUpdateObserver = StorageAccessPromptQuirkController::shared().observeUpdates([weakThis = WeakPtr { *this }] {
+        if (RefPtr protectedThis = weakThis.get()) {
+            HashSet<WebCore::RegistrableDomain> domainSet;
+            for (auto&& entry : StorageAccessPromptQuirkController::shared().cachedQuirks()) {
+                for (auto&& domain : entry.domainPairings.keys())
+                    domainSet.add(domain);
+            }
+            protectedThis->sendToAllProcesses(Messages::WebProcess::UpdateDomainsWithStorageAccessQuirks(domainSet));
+        }
+    });
 #endif
 
 }

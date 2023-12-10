@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2018 Apple Inc.  All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,12 +35,21 @@
 #include "RuntimeApplicationChecks.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/ProcessPrivilege.h>
+#include <wtf/RunLoop.h>
 
 #if ENABLE(PUBLIC_SUFFIX_LIST)
 #include "PublicSuffix.h"
 #endif
 
 namespace WebCore {
+
+static HashSet<OrganizationStorageAccessPromptQuirk>& updatableStorageAccessPromptQuirks()
+{
+    ASSERT(RunLoop::isMain());
+    // FIXME: Move this isn't an instance of a class, probably as a member of NetworkStorageSession.
+    static MainThreadNeverDestroyed<HashSet<OrganizationStorageAccessPromptQuirk>> set;
+    return set.get();
+}
 
 bool NetworkStorageSession::m_processMayUseCookieAPI = false;
 
@@ -428,10 +437,18 @@ const HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& NetworkStorageSess
     return map.get();
 }
 
+void NetworkStorageSession::updateStorageAccessPromptQuirks(Vector<OrganizationStorageAccessPromptQuirk>&& organizationStorageAccessPromptQuirks)
+{
+    auto& quirks = updatableStorageAccessPromptQuirks();
+    quirks.clear();
+    for (auto&& quirk : organizationStorageAccessPromptQuirks)
+        quirks.add(quirk);
+}
+
 bool NetworkStorageSession::loginDomainMatchesRequestingDomain(const TopFrameDomain& topFrameDomain, const SubResourceDomain& resourceDomain)
 {
     auto loginDomains = WebCore::NetworkStorageSession::subResourceDomainsInNeedOfStorageAccessForFirstParty(topFrameDomain);
-    return loginDomains && loginDomains.value().contains(resourceDomain);
+    return (loginDomains && loginDomains.value().contains(resourceDomain)) || !!storageAccessQuirkForDomainPair(topFrameDomain, resourceDomain);
 }
 
 bool NetworkStorageSession::canRequestStorageAccessForLoginOrCompatibilityPurposesWithoutPriorUserInteraction(const SubResourceDomain& resourceDomain, const TopFrameDomain& topFrameDomain)
@@ -455,6 +472,36 @@ std::optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomai
     if (subDomain.string() == "sonyentertainmentnetwork.com"_s && topDomain.string() == "playstation.com"_s)
         return RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s);
 
+    return std::nullopt;
+}
+
+Vector<RegistrableDomain> NetworkStorageSession::storageAccessQuirkForTopFrameDomain(const TopFrameDomain& topDomain)
+{
+    if (!RunLoop::isMain())
+        return { };
+    for (auto&& quirk : updatableStorageAccessPromptQuirks()) {
+        auto& domainPairings = quirk.domainPairings;
+        auto entry = domainPairings.find(topDomain);
+        if (entry == domainPairings.end())
+            continue;
+        return entry->value;
+    }
+    return { };
+}
+
+std::optional<OrganizationStorageAccessPromptQuirk> NetworkStorageSession::storageAccessQuirkForDomainPair(const TopFrameDomain& topDomain, const SubResourceDomain& subDomain)
+{
+    if (!RunLoop::isMain())
+        return std::nullopt;
+    for (auto&& quirk : updatableStorageAccessPromptQuirks()) {
+        auto& domainPairings = quirk.domainPairings;
+        auto entry = domainPairings.find(topDomain);
+        if (entry == domainPairings.end())
+            continue;
+        if (!WTF::anyOf(entry->value, [&subDomain](auto&& entry) { return entry == subDomain; }))
+            break;
+        return quirk;
+    }
     return std::nullopt;
 }
 

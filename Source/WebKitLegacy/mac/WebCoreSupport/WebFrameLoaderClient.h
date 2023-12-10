@@ -178,6 +178,8 @@ private:
     WebCore::ResourceError httpNavigationWithHTTPSOnlyError(const WebCore::ResourceRequest&) const final;
     WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&) const final;
 
+    void loadStorageAccessQuirksIfNeeded() final { }
+
     bool shouldFallBack(const WebCore::ResourceError&) const final;
 
     WTF::String userAgent(const URL&) const final;

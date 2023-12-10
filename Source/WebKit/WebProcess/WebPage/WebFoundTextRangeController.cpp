@@ -295,7 +295,7 @@ void WebFoundTextRangeController::drawRect(WebCore::PageOverlay&, WebCore::Graph
         graphicsContext.fillPath(path);
 
     if (m_textIndicator && !m_textIndicator->selectionRectInRootViewCoordinates().isEmpty()) {
-        auto* indicatorImage = m_textIndicator->contentImage();
+        RefPtr indicatorImage = m_textIndicator->contentImage();
         if (!indicatorImage)
             return;
 
