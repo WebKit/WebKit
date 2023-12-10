@@ -1,0 +1,16 @@
+
+FAIL CSS Animations: property <display> from [grid] to [flex] at (-0.3) should be [grid] assert_equals: expected "grid " but got "block "
+FAIL CSS Animations: property <display> from [grid] to [flex] at (0) should be [grid] assert_equals: expected "grid " but got "block "
+FAIL CSS Animations: property <display> from [grid] to [flex] at (0.3) should be [grid] assert_equals: expected "grid " but got "block "
+FAIL CSS Animations: property <display> from [grid] to [flex] at (0.5) should be [flex] assert_equals: expected "flex " but got "block "
+FAIL CSS Animations: property <display> from [grid] to [flex] at (0.6) should be [flex] assert_equals: expected "flex " but got "block "
+FAIL CSS Animations: property <display> from [grid] to [flex] at (1) should be [flex] assert_equals: expected "flex " but got "block "
+FAIL CSS Animations: property <display> from [grid] to [flex] at (1.5) should be [flex] assert_equals: expected "flex " but got "block "
+FAIL Web Animations: property <display> from [grid] to [flex] at (-0.3) should be [grid] assert_equals: expected "grid " but got "block "
+FAIL Web Animations: property <display> from [grid] to [flex] at (0) should be [grid] assert_equals: expected "grid " but got "block "
+FAIL Web Animations: property <display> from [grid] to [flex] at (0.3) should be [grid] assert_equals: expected "grid " but got "block "
+FAIL Web Animations: property <display> from [grid] to [flex] at (0.5) should be [flex] assert_equals: expected "flex " but got "block "
+FAIL Web Animations: property <display> from [grid] to [flex] at (0.6) should be [flex] assert_equals: expected "flex " but got "block "
+FAIL Web Animations: property <display> from [grid] to [flex] at (1) should be [flex] assert_equals: expected "flex " but got "block "
+FAIL Web Animations: property <display> from [grid] to [flex] at (1.5) should be [flex] assert_equals: expected "flex " but got "block "
+

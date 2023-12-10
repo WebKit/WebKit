@@ -1,0 +1,4 @@
+
+
+PASS animation tied to another frame's timeline runs properly
+

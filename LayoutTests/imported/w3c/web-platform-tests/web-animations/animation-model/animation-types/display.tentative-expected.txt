@@ -1,0 +1,3 @@
+
+FAIL Display can be held by animation assert_equals: Display when progress = 0 expected "block" but got "none"
+

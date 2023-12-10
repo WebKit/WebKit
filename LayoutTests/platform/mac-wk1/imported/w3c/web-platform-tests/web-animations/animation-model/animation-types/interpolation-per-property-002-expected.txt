@@ -258,9 +258,9 @@ PASS text-anchor uses discrete animation when animating between "middle" and "en
 PASS text-anchor uses discrete animation when animating between "middle" and "end" with effect easing
 PASS text-anchor uses discrete animation when animating between "middle" and "end" with keyframe easing
 PASS text-autospace (type: discrete) has testInterpolation function
-PASS text-autospace uses discrete animation when animating between "auto" and "no-autospace" with linear easing
-PASS text-autospace uses discrete animation when animating between "auto" and "no-autospace" with effect easing
-PASS text-autospace uses discrete animation when animating between "auto" and "no-autospace" with keyframe easing
+FAIL text-autospace uses discrete animation when animating between "normal" and "no-autospace" with linear easing assert_equals: The value should be normal at 0ms expected "normal" but got "no-autospace"
+FAIL text-autospace uses discrete animation when animating between "normal" and "no-autospace" with effect easing assert_equals: The value should be normal at 0ms expected "normal" but got "no-autospace"
+FAIL text-autospace uses discrete animation when animating between "normal" and "no-autospace" with keyframe easing assert_equals: The value should be normal at 0ms expected "normal" but got "no-autospace"
 PASS text-decoration-color (type: color) has testInterpolation function
 PASS text-decoration-color supports animating as color of rgb()
 PASS text-decoration-color supports animating as color of #RGB

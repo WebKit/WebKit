@@ -1,0 +1,5 @@
+
+PASS Offsets must be loosely sorted
+PASS Invalid offset
+PASS Offsets must be null or in the range [0,1]
+

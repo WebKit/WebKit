@@ -4391,6 +4391,7 @@ webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-background
 webkit.org/b/206579 [ Debug ] imported/w3c/web-platform-tests/css/css-backgrounds/background-size/vector/zero-width-ratio-auto-5px.html [ Skip ]
 
 webkit.org/b/207262 imported/w3c/web-platform-tests/web-animations/timing-model/animations/sync-start-times.html [ Pass ImageOnlyFailure ]
+webkit.org/b/266149 imported/w3c/web-platform-tests/web-animations/responsive/toggle-animated-iframe-visibility.html [ ImageOnlyFailure ]
 
 webkit.org/b/230080 imported/w3c/web-platform-tests/css/css-transforms/transform-transformed-tr-percent-height-child.html [ ImageOnlyFailure ]
 
