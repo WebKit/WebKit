@@ -1879,11 +1879,6 @@ webkit.org/b/227891 http/tests/appcache/fail-on-update.html [ Pass Timeout DumpJ
 [ x86_64 ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-opacity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-saturate.html [ ImageOnlyFailure ]
 
-# rdar://66661355 ([ASi Layout Tests] 3 compositing tests failing with 0.01% diffs)
-[ arm64 ] compositing/backgrounds/fixed-background-on-descendant.html [ ImageOnlyFailure ]
-[ arm64 ] compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
-[ arm64 ] compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure ]
-
 # rdar://66802945 (REGRESSION (20A2323e-20A234b): [ Layout Test] 1 canvas layout tests are a constant failure)
 [ arm64 ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
 
