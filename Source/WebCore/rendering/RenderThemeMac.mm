@@ -792,14 +792,6 @@ void RenderThemeMac::updateEnabledState(NSCell* cell, const RenderObject& o)
         [cell setEnabled:enabled];
 }
 
-void RenderThemeMac::updateFocusedState(NSCell *cell, const RenderObject* o)
-{
-    bool oldFocused = [cell showsFirstResponder];
-    bool focused = o && isFocused(*o) && o->style().outlineStyleIsAuto() == OutlineIsAuto::On;
-    if (focused != oldFocused)
-        [cell setShowsFirstResponder:focused];
-}
-
 void RenderThemeMac::updatePressedState(NSCell* cell, const RenderObject& o)
 {
     bool oldPressed = [cell isHighlighted];
