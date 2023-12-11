@@ -54,18 +54,18 @@ Ref<WebContextMenuItem> WebContextMenuItem::create(const String& title, bool ena
 
     bool checked = false;
     unsigned indentationLevel = 0;
-    return adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::SubmenuType, WebCore::ContextMenuItemTagNoAction, String { title }, enabled, checked, indentationLevel, WTFMove(submenu)))).leakRef();
+    return adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemType::Submenu, WebCore::ContextMenuItemTagNoAction, String { title }, enabled, checked, indentationLevel, WTFMove(submenu)))).leakRef();
 }
 
 WebContextMenuItem* WebContextMenuItem::separatorItem()
 {
-    static NeverDestroyed<Ref<WebContextMenuItem>> separatorItem = adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::SeparatorType, WebCore::ContextMenuItemTagNoAction, String(), true, false)));
+    static NeverDestroyed<Ref<WebContextMenuItem>> separatorItem = adoptRef(*new WebContextMenuItem(WebContextMenuItemData(WebCore::ContextMenuItemType::Separator, WebCore::ContextMenuItemTagNoAction, String(), true, false)));
     return separatorItem->ptr();
 }
 
 Ref<API::Array> WebContextMenuItem::submenuItemsAsAPIArray() const
 {
-    if (m_webContextMenuItemData.type() != WebCore::SubmenuType)
+    if (m_webContextMenuItemData.type() != WebCore::ContextMenuItemType::Submenu)
         return API::Array::create();
 
     auto submenuItems = m_webContextMenuItemData.submenu().map([](auto& item) -> RefPtr<API::Object> {

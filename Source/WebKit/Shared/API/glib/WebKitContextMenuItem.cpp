@@ -125,7 +125,7 @@ WebContextMenuItemData webkitContextMenuItemToWebContextMenuItemData(WebKitConte
         webkitContextMenuPopulate(item->priv->subMenu.get(), subMenuItems);
         bool checked = false;
         unsigned indentationLevel = 0;
-        return WebContextMenuItemData(WebCore::SubmenuType, item->priv->menuItem->action(), String { item->priv->menuItem->title() }, item->priv->menuItem->enabled(), checked, indentationLevel, WTFMove(subMenuItems));
+        return WebContextMenuItemData(WebCore::ContextMenuItemType::Submenu, item->priv->menuItem->action(), String { item->priv->menuItem->title() }, item->priv->menuItem->enabled(), checked, indentationLevel, WTFMove(subMenuItems));
     }
 
     return WebContextMenuItemData(item->priv->menuItem->type(), item->priv->menuItem->action(), String { item->priv->menuItem->title() }, item->priv->menuItem->enabled(), item->priv->menuItem->checked());
@@ -209,7 +209,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_from_stock_action(WebKitCont
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
 #if ENABLE(CONTEXT_MENUS)
-    ContextMenuItemType type = webkitContextMenuActionIsCheckable(action) ? CheckableActionType : ActionType;
+    ContextMenuItemType type = webkitContextMenuActionIsCheckable(action) ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action;
     item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(type, webkitContextMenuActionGetActionTag(action), webkitContextMenuActionGetLabel(action));
 #endif // ENABLE(CONTEXT_MENUS)
 
@@ -234,7 +234,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_from_stock_action_with_label
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
 #if ENABLE(CONTEXT_MENUS)
-    ContextMenuItemType type = webkitContextMenuActionIsCheckable(action) ? CheckableActionType : ActionType;
+    ContextMenuItemType type = webkitContextMenuActionIsCheckable(action) ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action;
     item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(type, webkitContextMenuActionGetActionTag(action), String::fromUTF8(label));
 #endif // ENABLE(CONTEXT_MENUS)
 
@@ -262,7 +262,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_with_submenu(const gchar* la
 
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
 #if ENABLE(CONTEXT_MENUS)
-    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(ActionType, ContextMenuItemBaseApplicationTag, String::fromUTF8(label));
+    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(ContextMenuItemType::Action, ContextMenuItemBaseApplicationTag, String::fromUTF8(label));
     item->priv->subMenu = submenu;
     webkitContextMenuSetParentItem(submenu, item);
 #endif // ENABLE(CONTEXT_MENUS)
@@ -281,7 +281,7 @@ WebKitContextMenuItem* webkit_context_menu_item_new_separator(void)
 {
     WebKitContextMenuItem* item = WEBKIT_CONTEXT_MENU_ITEM(g_object_new(WEBKIT_TYPE_CONTEXT_MENU_ITEM, nullptr));
 #if ENABLE(CONTEXT_MENUS)
-    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(SeparatorType, ContextMenuItemTagNoAction, String());
+    item->priv->menuItem = makeUnique<WebContextMenuItemGlib>(ContextMenuItemType::Separator, ContextMenuItemTagNoAction, String());
 #endif // ENABLE(CONTEXT_MENUS)
 
     return item;
@@ -370,7 +370,7 @@ gboolean webkit_context_menu_item_is_separator(WebKitContextMenuItem* item)
     g_return_val_if_fail(WEBKIT_IS_CONTEXT_MENU_ITEM(item), FALSE);
 
 #if ENABLE(CONTEXT_MENUS)
-    return item->priv->menuItem->type() == SeparatorType;
+    return item->priv->menuItem->type() == ContextMenuItemType::Separator;
 #else
     g_assert_not_reached();
 #endif // ENABLE(CONTEXT_MENUS)

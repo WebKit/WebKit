@@ -152,7 +152,7 @@
     }
 
     ASSERT(!sender || [sender isKindOfClass:NSMenuItem.class]);
-    WebKit::WebContextMenuItemData item(WebCore::ActionType, static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title], [sender isEnabled], [(NSMenuItem *)sender state] == NSControlStateValueOn);
+    WebKit::WebContextMenuItemData item(WebCore::ContextMenuItemType::Action, static_cast<WebCore::ContextMenuAction>([sender tag]), [sender title], [sender isEnabled], [(NSMenuItem *)sender state] == NSControlStateValueOn);
     if (representedObject) {
         ASSERT([representedObject isKindOfClass:[WKUserDataWrapper class]]);
         item.setUserData([static_cast<WKUserDataWrapper *>(representedObject) userData]);
@@ -669,7 +669,7 @@ static NSString *menuItemIdentifier(const WebCore::ContextMenuAction action)
 static RetainPtr<NSMenuItem> createMenuActionItem(const WebContextMenuItemData& item)
 {
     auto type = item.type();
-    ASSERT_UNUSED(type, type == WebCore::ActionType || type == WebCore::CheckableActionType);
+    ASSERT_UNUSED(type, type == WebCore::ContextMenuItemType::Action || type == WebCore::ContextMenuItemType::CheckableAction);
 
     auto menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title() action:@selector(forwardContextMenuAction:) keyEquivalent:@""]);
 
@@ -808,16 +808,16 @@ void WebContextMenuProxyMac::getContextMenuItem(const WebContextMenuItemData& it
 #endif
 
     switch (item.type()) {
-    case WebCore::ActionType:
-    case WebCore::CheckableActionType:
+    case WebCore::ContextMenuItemType::Action:
+    case WebCore::ContextMenuItemType::CheckableAction:
         completionHandler(createMenuActionItem(item).get());
         return;
 
-    case WebCore::SeparatorType:
+    case WebCore::ContextMenuItemType::Separator:
         completionHandler(NSMenuItem.separatorItem);
         return;
 
-    case WebCore::SubmenuType: {
+    case WebCore::ContextMenuItemType::Submenu: {
         getContextMenuFromItems(item.submenu(), [action = item.action(), completionHandler = WTFMove(completionHandler), enabled = item.enabled(), title = item.title(), indentationLevel = item.indentationLevel()](NSMenu *menu) mutable {
             auto menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:title action:nullptr keyEquivalent:@""]);
             [menuItem setEnabled:enabled];
