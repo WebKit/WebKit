@@ -3615,8 +3615,8 @@ static RetainPtr<NSMenuItem> createMenuItem(const WebCore::HitTestResult& hitTes
         return createShareMenuItem(hitTestResult);
 
     switch (item.type()) {
-    case WebCore::ActionType:
-    case WebCore::CheckableActionType: {
+    case WebCore::ContextMenuItemType::Action:
+    case WebCore::ContextMenuItemType::CheckableAction: {
         auto menuItem = adoptNS([[NSMenuItem alloc] initWithTitle:item.title() action:@selector(forwardContextMenuAction:) keyEquivalent:@""]);
 
         if (auto tag = toTag(item.action()))
@@ -3628,10 +3628,10 @@ static RetainPtr<NSMenuItem> createMenuItem(const WebCore::HitTestResult& hitTes
         return menuItem;
     }
 
-    case WebCore::SeparatorType:
+    case WebCore::ContextMenuItemType::Separator:
         return [NSMenuItem separatorItem];
 
-    case WebCore::SubmenuType: {
+    case WebCore::ContextMenuItemType::Submenu: {
         auto menu = adoptNS([[NSMenu alloc] init]);
         {
             auto submenuItems = createMenuItems(hitTestResult, item.subMenuItems());

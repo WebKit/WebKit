@@ -534,7 +534,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
         return { id, title, icon, checked, /* children */ { } };
 #elif ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
         UNUSED_PARAM(icon);
-        return { CheckableActionType, static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id), title, /* enabled */ true, checked };
+        return { ContextMenuItemType::CheckableAction, static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + id), title, /* enabled */ true, checked };
 #endif
     };
 
@@ -542,7 +542,7 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
 #if USE(UICONTEXTMENU)
         return { MediaControlsContextMenuItem::invalidID, /* title */ nullString(), /* icon */ nullString(), /* checked */ false, /* children */ { } };
 #elif ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
-        return { SeparatorType, ContextMenuItemTagNoAction, /* title */ nullString() };
+        return { ContextMenuItemType::Separator, ContextMenuItemTagNoAction, /* title */ nullString() };
 #endif
     };
 
@@ -633,17 +633,17 @@ bool MediaControlsHost::showMediaControlsContextMenu(HTMLElement& target, String
     }
 
 #if ENABLE(CONTEXT_MENUS) && USE(ACCESSIBILITY_CONTEXT_MENUS)
-    if ((items.size() == 1 && items[0].type() == SubmenuType) || optionsJSONObject->getBoolean("promoteSubMenus"_s).value_or(false)) {
+    if ((items.size() == 1 && items[0].type() == ContextMenuItemType::Submenu) || optionsJSONObject->getBoolean("promoteSubMenus"_s).value_or(false)) {
         for (auto&& item : std::exchange(items, { })) {
             if (!items.isEmpty())
-                items.append({ SeparatorType, invalidMenuItemIdentifier, /* title */ nullString() });
+                items.append({ ContextMenuItemType::Separator, invalidMenuItemIdentifier, /* title */ nullString() });
 
-            ASSERT(item.type() == SubmenuType);
-            items.append({ ActionType, invalidMenuItemIdentifier, item.title(), /* enabled */ false, /* checked */ false });
+            ASSERT(item.type() == ContextMenuItemType::Submenu);
+            items.append({ ContextMenuItemType::Action, invalidMenuItemIdentifier, item.title(), /* enabled */ false, /* checked */ false });
             items.appendVector(WTF::map(item.subMenuItems(), [] (const auto& item) -> ContextMenuItem {
                 // The disabled inline item used instead of an actual submenu should be indented less than the submenu items.
                 constexpr unsigned indentationLevel = 1;
-                if (item.type() == SubmenuType)
+                if (item.type() == ContextMenuItemType::Submenu)
                     return { item.action(), item.title(), item.enabled(), item.checked(), item.subMenuItems(), indentationLevel };
                 return { item.type(), item.action(), item.title(), item.enabled(), item.checked(), indentationLevel };
             }));

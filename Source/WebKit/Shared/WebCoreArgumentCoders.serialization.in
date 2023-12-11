@@ -7177,5 +7177,13 @@ enum class WebCore::PlatformCursorType : uint8_t {
     ZoomOut,
     Grab,
     Grabbing,
-    Custom
+    Custom,
+};
+
+header: <WebCore/ContextMenuItem.h>
+enum class WebCore::ContextMenuItemType : uint8_t {
+    Action,
+    CheckableAction,
+    Separator,
+    Submenu,
 };

@@ -294,7 +294,6 @@ protected:
     virtual bool supportsSelectionForegroundColors(OptionSet<StyleColorOptions>) const { return true; }
     virtual bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColorOptions>) const { return true; }
 
-#if PLATFORM(IOS_FAMILY)
     // Methods for each appearance value.
     virtual void adjustCheckboxStyle(RenderStyle&, const Element*) const;
     virtual bool paintCheckbox(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
@@ -302,18 +301,16 @@ protected:
     virtual void adjustRadioStyle(RenderStyle&, const Element*) const;
     virtual bool paintRadio(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
 
-    virtual void adjustButtonStyle(RenderStyle&, const Element*) const { }
+    virtual void adjustButtonStyle(RenderStyle&, const Element*) const;
     virtual bool paintButton(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
 
 #if ENABLE(INPUT_TYPE_COLOR)
     virtual void adjustColorWellStyle(RenderStyle&, const Element*) const;
-    virtual bool paintColorWell(const RenderObject&, const PaintInfo&, const IntRect&);
-#endif
-#endif // PLATFORM(IOS_FAMILY)
-
-#if ENABLE(INPUT_TYPE_COLOR)
+    virtual bool paintColorWell(const RenderObject&, const PaintInfo&, const IntRect&) { return true; }
     virtual void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) { }
 #endif
+
+    virtual void adjustInnerSpinButtonStyle(RenderStyle&, const Element*) const;
 
     virtual void adjustTextFieldStyle(RenderStyle&, const Element*) const { }
     virtual bool paintTextField(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
@@ -384,9 +381,12 @@ protected:
     virtual void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const { }
     virtual bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) { return true; }
 
-    virtual void adjustSwitchStyle(RenderStyle&, const Element*) const { }
+    virtual void adjustSwitchStyle(RenderStyle&, const Element*) const;
     virtual bool paintSwitchThumb(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
     virtual bool paintSwitchTrack(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
+
+private:
+    void adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(RenderStyle&, const Element*) const;
 
 public:
     void updateControlStatesForRenderer(const RenderBox&, ControlStates&) const;

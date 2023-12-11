@@ -84,6 +84,8 @@ private:
 
     void adjustButtonStyle(RenderStyle&, const Element*) const override;
 
+    void adjustInnerSpinButtonStyle(RenderStyle&, const Element*) const final { }
+
     void adjustTextFieldStyle(RenderStyle&, const Element*) const final;
     void paintTextFieldDecorations(const RenderBox&, const PaintInfo&, const FloatRect&) override;
     void adjustTextAreaStyle(RenderStyle&, const Element*) const final;
@@ -138,7 +140,6 @@ private:
     String colorInputStyleSheet() const final;
 
     void adjustColorWellStyle(RenderStyle&, const Element*) const final;
-    bool paintColorWell(const RenderObject&, const PaintInfo&, const IntRect&) final;
     void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) final;
 #endif
 

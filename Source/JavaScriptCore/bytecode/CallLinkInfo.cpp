@@ -517,9 +517,8 @@ void OptimizingCallLinkInfo::emitDirectFastPath(CCallHelpers& jit)
         m_callLocation = linkBuffer.locationOfNearCall<JSInternalPtrTag>(call);
         u.codeIC.m_codeBlockLocation = linkBuffer.locationOf<JSInternalPtrTag>(codeBlockStore);
     });
-    jit.addLateLinkTask([this] (LinkBuffer&) {
-        initializeDirectCall();
-    });
+
+    initializeDirectCallRepatch(jit);
 }
 
 void OptimizingCallLinkInfo::emitDirectTailCallFastPath(CCallHelpers& jit, ScopedLambda<void()>&& prepareForTailCall)
@@ -529,9 +528,6 @@ void OptimizingCallLinkInfo::emitDirectTailCallFastPath(CCallHelpers& jit, Scope
     ASSERT(UseDataIC::No == this->useDataIC());
 
     auto fastPathStart = jit.label();
-    jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
-        m_fastPathStart = linkBuffer.locationOf<JSInternalPtrTag>(fastPathStart);
-    });
 
     // - If we're not yet linked, this is a jump to the slow path.
     // - Once we're linked to a fast path, this goes back to being nops so we fall through to the linked jump.
@@ -541,12 +537,12 @@ void OptimizingCallLinkInfo::emitDirectTailCallFastPath(CCallHelpers& jit, Scope
     auto codeBlockStore = jit.storePtrWithPatch(CCallHelpers::TrustedImmPtr(nullptr), CCallHelpers::calleeFrameCodeBlockBeforeTailCall());
     auto call = jit.nearTailCall();
     jit.addLinkTask([=, this] (LinkBuffer& linkBuffer) {
+        m_fastPathStart = linkBuffer.locationOf<JSInternalPtrTag>(fastPathStart);
         m_callLocation = linkBuffer.locationOfNearCall<JSInternalPtrTag>(call);
         u.codeIC.m_codeBlockLocation = linkBuffer.locationOf<JSInternalPtrTag>(codeBlockStore);
     });
-    jit.addLateLinkTask([this] (LinkBuffer&) {
-        initializeDirectCall();
-    });
+
+    initializeDirectCallRepatch(jit);
 }
 
 void OptimizingCallLinkInfo::initializeDirectCall()
@@ -574,6 +570,29 @@ void OptimizingCallLinkInfo::setDirectCallTarget(CodeBlock* codeBlock, CodeLocat
 
     MacroAssembler::repatchNearCall(m_callLocation, target);
     MacroAssembler::repatchPointer(u.codeIC.m_codeBlockLocation, codeBlock);
+}
+
+void OptimizingCallLinkInfo::initializeDirectCallRepatch(CCallHelpers& jit)
+{
+    auto* executable = this->executable();
+    if (executable->isHostFunction()) {
+        CodeSpecializationKind kind = specializationKind();
+        CodePtr<JSEntryPtrTag> codePtr;
+        if (kind == CodeForCall)
+            codePtr = executable->generatedJITCodeWithArityCheckForCall();
+        else
+            codePtr = executable->generatedJITCodeWithArityCheckForConstruct();
+        if (codePtr) {
+            jit.addLateLinkTask([this, codePtr](LinkBuffer&) {
+                setDirectCallTarget(nullptr, CodeLocationLabel { codePtr });
+            });
+            return;
+        }
+    }
+
+    jit.addLateLinkTask([this](LinkBuffer&) {
+        initializeDirectCall();
+    });
 }
 
 void OptimizingCallLinkInfo::setDirectCallMaxArgumentCountIncludingThis(unsigned value)

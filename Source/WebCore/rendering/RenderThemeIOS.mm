@@ -1819,11 +1819,6 @@ void RenderThemeIOS::adjustColorWellStyle(RenderStyle& style, const Element* ele
     adjustStyleForAlternateFormControlDesignTransition(style, element);
 }
 
-bool RenderThemeIOS::paintColorWell(const RenderObject&, const PaintInfo&, const IntRect&)
-{
-    return true;
-}
-
 void RenderThemeIOS::paintColorWellDecorations(const RenderObject&, const PaintInfo& paintInfo, const FloatRect& rect)
 {
     constexpr int strokeThickness = 3;

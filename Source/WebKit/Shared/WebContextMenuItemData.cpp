@@ -38,7 +38,7 @@ namespace WebKit {
 using namespace WebCore;
 
 WebContextMenuItemData::WebContextMenuItemData()
-    : m_type(WebCore::ActionType)
+    : m_type(WebCore::ContextMenuItemType::Action)
     , m_action(WebCore::ContextMenuItemTagNoAction)
     , m_enabled(true)
     , m_checked(false)
@@ -62,7 +62,7 @@ WebContextMenuItemData::WebContextMenuItemData(const WebCore::ContextMenuItem& i
     , m_action(item.action())
     , m_title(item.title())
 {
-    if (m_type == WebCore::SubmenuType) {
+    if (m_type == WebCore::ContextMenuItemType::Submenu) {
         const Vector<WebCore::ContextMenuItem>& coreSubmenu = item.subMenuItems();
         m_submenu = kitItems(coreSubmenu);
     }
@@ -74,7 +74,7 @@ WebContextMenuItemData::WebContextMenuItemData(const WebCore::ContextMenuItem& i
 
 ContextMenuItem WebContextMenuItemData::core() const
 {
-    if (m_type != SubmenuType)
+    if (m_type != ContextMenuItemType::Submenu)
         return ContextMenuItem(m_type, m_action, m_title, m_enabled, m_checked, m_indentationLevel);
     
     Vector<ContextMenuItem> subMenuItems = coreItems(m_submenu);

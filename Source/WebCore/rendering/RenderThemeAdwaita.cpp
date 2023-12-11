@@ -417,7 +417,7 @@ bool RenderThemeAdwaita::paintMenuList(const RenderObject& renderObject, const P
     if (isHovered(renderObject))
         states.add(ControlStates::States::Hovered);
     ControlStates controlStates(states);
-    Theme::singleton().paint(StyleAppearance::Button, controlStates, graphicsContext, rect, 1., nullptr, 1., 1., false, renderObject.useDarkAppearance(), renderObject.style().effectiveAccentColor());
+    Theme::singleton().paint(StyleAppearance::Button, controlStates, graphicsContext, rect, renderObject.useDarkAppearance(), renderObject.style().effectiveAccentColor());
 
     auto zoomedArrowSize = menuListButtonArrowSize * renderObject.style().effectiveZoom();
     FloatRect fieldRect = rect;

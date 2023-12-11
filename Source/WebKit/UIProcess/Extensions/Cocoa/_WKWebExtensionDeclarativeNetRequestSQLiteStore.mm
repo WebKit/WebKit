@@ -264,7 +264,7 @@ static const SchemaVersion currentDatabaseSchemaVersion = 1;
 
     ASSERT([_storageType isEqualToString:@"dynamic"]);
 
-    NSString *databaseName = @"DynamicRules-DeclarativeNetRequest.db";
+    NSString *databaseName = @"DeclarativeNetRequestDynamicRules.db";
     return [_directory URLByAppendingPathComponent:databaseName isDirectory:NO];
 }
 

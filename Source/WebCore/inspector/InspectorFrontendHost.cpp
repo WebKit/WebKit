@@ -547,7 +547,7 @@ static void populateContextMenu(Vector<InspectorFrontendHost::ContextMenuItem>&&
 {
     for (auto& item : items) {
         if (item.type == "separator"_s) {
-            menu.appendItem({ SeparatorType, ContextMenuItemTagNoAction, { } });
+            menu.appendItem({ ContextMenuItemType::Separator, ContextMenuItemTagNoAction, { } });
             continue;
         }
 
@@ -555,11 +555,11 @@ static void populateContextMenu(Vector<InspectorFrontendHost::ContextMenuItem>&&
             ContextMenu subMenu;
             populateContextMenu(WTFMove(*item.subItems), subMenu);
 
-            menu.appendItem({ SubmenuType, ContextMenuItemTagNoAction, item.label, &subMenu });
+            menu.appendItem({ ContextMenuItemType::Submenu, ContextMenuItemTagNoAction, item.label, &subMenu });
             continue;
         }
 
-        auto type = item.type == "checkbox"_s ? CheckableActionType : ActionType;
+        auto type = item.type == "checkbox"_s ? ContextMenuItemType::CheckableAction : ContextMenuItemType::Action;
         auto action = static_cast<ContextMenuAction>(ContextMenuItemBaseCustomTag + item.id.value_or(0));
         ContextMenuItem menuItem = { type, action, item.label };
         if (item.enabled)

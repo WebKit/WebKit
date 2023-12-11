@@ -808,13 +808,13 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
 inline WKContextMenuItemType toAPI(WebCore::ContextMenuItemType type)
 {
     switch(type) {
-    case WebCore::ActionType:
+    case WebCore::ContextMenuItemType::Action:
         return kWKContextMenuItemTypeAction;
-    case WebCore::CheckableActionType:
+    case WebCore::ContextMenuItemType::CheckableAction:
         return kWKContextMenuItemTypeCheckableAction;
-    case WebCore::SeparatorType:
+    case WebCore::ContextMenuItemType::Separator:
         return kWKContextMenuItemTypeSeparator;
-    case WebCore::SubmenuType:
+    case WebCore::ContextMenuItemType::Submenu:
         return kWKContextMenuItemTypeSubmenu;
     default:
         ASSERT_NOT_REACHED();
