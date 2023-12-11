@@ -96,12 +96,11 @@ void RemoteImageBufferSet::setFlushSignal(IPC::Signal&& signal)
 
 void RemoteImageBufferSet::flush()
 {
-    if (m_frontBuffer) {
-        m_backend->releaseDisplayListRecorder(m_displayListIdentifier);
-        ASSERT(m_flushSignal);
+    m_backend->releaseDisplayListRecorder(m_displayListIdentifier);
+    ASSERT(m_flushSignal);
+    if (m_frontBuffer)
         m_frontBuffer->flushDrawingContext();
-        m_flushSignal->signal();
-    }
+    m_flushSignal->signal();
 }
 
 // This is the GPU Process version of RemoteLayerBackingStore::prepareBuffers().
