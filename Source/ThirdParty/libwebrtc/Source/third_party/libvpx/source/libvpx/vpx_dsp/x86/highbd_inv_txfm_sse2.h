@@ -249,7 +249,7 @@ static INLINE void highbd_idct16_4col_stage7(const __m128i *const in,
 
 static INLINE __m128i add_clamp(const __m128i in0, const __m128i in1,
                                 const int bd) {
-  const __m128i zero = _mm_set1_epi16(0);
+  const __m128i zero = _mm_setzero_si128();
   // Faster than _mm_set1_epi16((1 << bd) - 1).
   const __m128i one = _mm_set1_epi16(1);
   const __m128i max = _mm_sub_epi16(_mm_slli_epi16(one, bd), one);

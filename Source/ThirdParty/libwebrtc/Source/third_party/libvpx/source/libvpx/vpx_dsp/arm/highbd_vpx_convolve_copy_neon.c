@@ -26,76 +26,88 @@ void vpx_highbd_convolve_copy_neon(const uint16_t *src, ptrdiff_t src_stride,
   (void)bd;
 
   if (w < 8) {  // copy4
+    uint16x4_t s0, s1;
     do {
-      vst1_u16(dst, vld1_u16(src));
+      s0 = vld1_u16(src);
       src += src_stride;
+      s1 = vld1_u16(src);
+      src += src_stride;
+
+      vst1_u16(dst, s0);
       dst += dst_stride;
-      vst1_u16(dst, vld1_u16(src));
-      src += src_stride;
+      vst1_u16(dst, s1);
       dst += dst_stride;
       h -= 2;
-    } while (h > 0);
+    } while (h != 0);
   } else if (w == 8) {  // copy8
+    uint16x8_t s0, s1;
     do {
-      vst1q_u16(dst, vld1q_u16(src));
+      s0 = vld1q_u16(src);
       src += src_stride;
+      s1 = vld1q_u16(src);
+      src += src_stride;
+
+      vst1q_u16(dst, s0);
       dst += dst_stride;
-      vst1q_u16(dst, vld1q_u16(src));
-      src += src_stride;
+      vst1q_u16(dst, s1);
       dst += dst_stride;
       h -= 2;
-    } while (h > 0);
+    } while (h != 0);
   } else if (w < 32) {  // copy16
+    uint16x8_t s0, s1, s2, s3;
     do {
-      vst2q_u16(dst, vld2q_u16(src));
+      s0 = vld1q_u16(src);
+      s1 = vld1q_u16(src + 8);
       src += src_stride;
-      dst += dst_stride;
-      vst2q_u16(dst, vld2q_u16(src));
+      s2 = vld1q_u16(src);
+      s3 = vld1q_u16(src + 8);
       src += src_stride;
+
+      vst1q_u16(dst, s0);
+      vst1q_u16(dst + 8, s1);
       dst += dst_stride;
-      vst2q_u16(dst, vld2q_u16(src));
-      src += src_stride;
+      vst1q_u16(dst, s2);
+      vst1q_u16(dst + 8, s3);
       dst += dst_stride;
-      vst2q_u16(dst, vld2q_u16(src));
-      src += src_stride;
-      dst += dst_stride;
-      h -= 4;
-    } while (h > 0);
+      h -= 2;
+    } while (h != 0);
   } else if (w == 32) {  // copy32
+    uint16x8_t s0, s1, s2, s3;
     do {
-      vst4q_u16(dst, vld4q_u16(src));
+      s0 = vld1q_u16(src);
+      s1 = vld1q_u16(src + 8);
+      s2 = vld1q_u16(src + 16);
+      s3 = vld1q_u16(src + 24);
       src += src_stride;
+
+      vst1q_u16(dst, s0);
+      vst1q_u16(dst + 8, s1);
+      vst1q_u16(dst + 16, s2);
+      vst1q_u16(dst + 24, s3);
       dst += dst_stride;
-      vst4q_u16(dst, vld4q_u16(src));
-      src += src_stride;
-      dst += dst_stride;
-      vst4q_u16(dst, vld4q_u16(src));
-      src += src_stride;
-      dst += dst_stride;
-      vst4q_u16(dst, vld4q_u16(src));
-      src += src_stride;
-      dst += dst_stride;
-      h -= 4;
-    } while (h > 0);
+    } while (--h != 0);
   } else {  // copy64
+    uint16x8_t s0, s1, s2, s3, s4, s5, s6, s7;
     do {
-      vst4q_u16(dst, vld4q_u16(src));
-      vst4q_u16(dst + 32, vld4q_u16(src + 32));
+      s0 = vld1q_u16(src);
+      s1 = vld1q_u16(src + 8);
+      s2 = vld1q_u16(src + 16);
+      s3 = vld1q_u16(src + 24);
+      s4 = vld1q_u16(src + 32);
+      s5 = vld1q_u16(src + 40);
+      s6 = vld1q_u16(src + 48);
+      s7 = vld1q_u16(src + 56);
       src += src_stride;
+
+      vst1q_u16(dst, s0);
+      vst1q_u16(dst + 8, s1);
+      vst1q_u16(dst + 16, s2);
+      vst1q_u16(dst + 24, s3);
+      vst1q_u16(dst + 32, s4);
+      vst1q_u16(dst + 40, s5);
+      vst1q_u16(dst + 48, s6);
+      vst1q_u16(dst + 56, s7);
       dst += dst_stride;
-      vst4q_u16(dst, vld4q_u16(src));
-      vst4q_u16(dst + 32, vld4q_u16(src + 32));
-      src += src_stride;
-      dst += dst_stride;
-      vst4q_u16(dst, vld4q_u16(src));
-      vst4q_u16(dst + 32, vld4q_u16(src + 32));
-      src += src_stride;
-      dst += dst_stride;
-      vst4q_u16(dst, vld4q_u16(src));
-      vst4q_u16(dst + 32, vld4q_u16(src + 32));
-      src += src_stride;
-      dst += dst_stride;
-      h -= 4;
-    } while (h > 0);
+    } while (--h != 0);
   }
 }

@@ -450,8 +450,6 @@ void vp9_highbd_apply_temporal_filter_c(
   // Apply the filter to luma
   for (row = 0; row < (int)block_height; row++) {
     for (col = 0; col < (int)block_width; col++) {
-      const int uv_row = row >> ss_y;
-      const int uv_col = col >> ss_x;
       const int filter_weight = get_filter_weight(
           row, col, block_height, block_width, blk_fw, use_32x32);
 
@@ -476,6 +474,8 @@ void vp9_highbd_apply_temporal_filter_c(
 
       // Sum the corresponding uv pixels to the current y modifier
       // Note we are rounding down instead of rounding to the nearest pixel.
+      uv_row = row >> ss_y;
+      uv_col = col >> ss_x;
       y_mod += u_diff_sse[uv_row * uv_diff_stride + uv_col];
       y_mod += v_diff_sse[uv_row * uv_diff_stride + uv_col];
 
@@ -777,16 +777,16 @@ void vp9_temporal_filter_iterate_row_c(VP9_COMP *cpi, ThreadData *td,
           // Assign higher weight to matching MB if it's error
           // score is lower. If not applying MC default behavior
           // is to weight all MBs equal.
-          blk_fw[0] = err < (thresh_low << THR_SHIFT)
-                          ? 2
-                          : err < (thresh_high << THR_SHIFT) ? 1 : 0;
+          blk_fw[0] = err < (thresh_low << THR_SHIFT)    ? 2
+                      : err < (thresh_high << THR_SHIFT) ? 1
+                                                         : 0;
           blk_fw[1] = blk_fw[2] = blk_fw[3] = blk_fw[0];
         } else {
           use_32x32 = 0;
           for (k = 0; k < 4; k++)
-            blk_fw[k] = blk_bestsme[k] < thresh_low
-                            ? 2
-                            : blk_bestsme[k] < thresh_high ? 1 : 0;
+            blk_fw[k] = blk_bestsme[k] < thresh_low    ? 2
+                        : blk_bestsme[k] < thresh_high ? 1
+                                                       : 0;
         }
 
         for (k = 0; k < 4; k++) {
@@ -995,7 +995,6 @@ void vp9_temporal_filter_iterate_row_c(VP9_COMP *cpi, ThreadData *td,
   }
 }
 
-#if !CONFIG_REALTIME_ONLY // WEBRTC_WEBKIT_BUILD
 static void temporal_filter_iterate_tile_c(VP9_COMP *cpi, int tile_row,
                                            int tile_col) {
   VP9_COMMON *const cm = &cpi->common;
@@ -1204,4 +1203,3 @@ void vp9_temporal_filter(VP9_COMP *cpi, int distance) {
   else
     vp9_temporal_filter_row_mt(cpi);
 }
-#endif

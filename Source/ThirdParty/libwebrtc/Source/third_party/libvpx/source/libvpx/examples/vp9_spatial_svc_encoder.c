@@ -32,6 +32,7 @@
 #include "vp9/encoder/vp9_encoder.h"
 #include "./y4minput.h"
 
+#define OUTPUT_FRAME_STATS 0
 #define OUTPUT_RC_STATS 1
 
 #define SIMULCAST_MODE 0
@@ -66,12 +67,6 @@ static const arg_def_t kf_dist_arg =
     ARG_DEF("k", "kf-dist", 1, "number of frames between keyframes");
 static const arg_def_t scale_factors_arg =
     ARG_DEF("r", "scale-factors", 1, "scale factors (lowest to highest layer)");
-static const arg_def_t passes_arg =
-    ARG_DEF("p", "passes", 1, "Number of passes (1/2)");
-static const arg_def_t pass_arg =
-    ARG_DEF(NULL, "pass", 1, "Pass to execute (1/2)");
-static const arg_def_t fpf_name_arg =
-    ARG_DEF(NULL, "fpf", 1, "First pass statistics file name");
 static const arg_def_t min_q_arg =
     ARG_DEF(NULL, "min-q", 1, "Minimum quantizer");
 static const arg_def_t max_q_arg =
@@ -125,9 +120,6 @@ static const arg_def_t *svc_args[] = { &frames_arg,
                                        &spatial_layers_arg,
                                        &kf_dist_arg,
                                        &scale_factors_arg,
-                                       &passes_arg,
-                                       &pass_arg,
-                                       &fpf_name_arg,
                                        &min_q_arg,
                                        &max_q_arg,
                                        &min_bitrate_arg,
@@ -173,8 +165,6 @@ typedef struct {
   uint32_t frames_to_skip;
   struct VpxInputContext input_ctx;
   stats_io_t rc_stats;
-  int passes;
-  int pass;
   int tune_content;
   int inter_layer_pred;
 } AppInput;
@@ -197,9 +187,6 @@ static void parse_command_line(int argc, const char **argv_,
   char **argi = NULL;
   char **argj = NULL;
   vpx_codec_err_t res;
-  int passes = 0;
-  int pass = 0;
-  const char *fpf_file_name = NULL;
   unsigned int min_bitrate = 0;
   unsigned int max_bitrate = 0;
   char string_options[1024] = { 0 };
@@ -236,6 +223,10 @@ static void parse_command_line(int argc, const char **argv_,
 
   // process command line options
   argv = argv_dup(argc - 1, argv_ + 1);
+  if (!argv) {
+    fprintf(stderr, "Error allocating argument list\n");
+    exit(EXIT_FAILURE);
+  }
   for (argi = argj = argv; (*argj = *argi); argi += arg.argv_step) {
     arg.argv_step = 1;
 
@@ -289,18 +280,6 @@ static void parse_command_line(int argc, const char **argv_,
               sizeof(string_options) - strlen(string_options) - 1);
       strncat(string_options, arg.val,
               sizeof(string_options) - strlen(string_options) - 1);
-    } else if (arg_match(&arg, &passes_arg, argi)) {
-      passes = arg_parse_uint(&arg);
-      if (passes < 1 || passes > 2) {
-        die("Error: Invalid number of passes (%d)\n", passes);
-      }
-    } else if (arg_match(&arg, &pass_arg, argi)) {
-      pass = arg_parse_uint(&arg);
-      if (pass < 1 || pass > 2) {
-        die("Error: Invalid pass selected (%d)\n", pass);
-      }
-    } else if (arg_match(&arg, &fpf_name_arg, argi)) {
-      fpf_file_name = arg.val;
     } else if (arg_match(&arg, &min_q_arg, argi)) {
       strncat(string_options, " min-quantizers=",
               sizeof(string_options) - strlen(string_options) - 1);
@@ -337,7 +316,6 @@ static void parse_command_line(int argc, const char **argv_,
           break;
         default:
           die("Error: Invalid bit depth selected (%d)\n", enc_cfg->g_bit_depth);
-          break;
       }
 #endif  // CONFIG_VP9_HIGHBITDEPTH
     } else if (arg_match(&arg, &dropframe_thresh_arg, argi)) {
@@ -355,35 +333,7 @@ static void parse_command_line(int argc, const char **argv_,
   if (strlen(string_options) > 0)
     vpx_svc_set_options(svc_ctx, string_options + 1);
 
-  if (passes == 0 || passes == 1) {
-    if (pass) {
-      fprintf(stderr, "pass is ignored since there's only one pass\n");
-    }
-    enc_cfg->g_pass = VPX_RC_ONE_PASS;
-  } else {
-    if (pass == 0) {
-      die("pass must be specified when passes is 2\n");
-    }
-
-    if (fpf_file_name == NULL) {
-      die("fpf must be specified when passes is 2\n");
-    }
-
-    if (pass == 1) {
-      enc_cfg->g_pass = VPX_RC_FIRST_PASS;
-      if (!stats_open_file(&app_input->rc_stats, fpf_file_name, 0)) {
-        fatal("Failed to open statistics store");
-      }
-    } else {
-      enc_cfg->g_pass = VPX_RC_LAST_PASS;
-      if (!stats_open_file(&app_input->rc_stats, fpf_file_name, 1)) {
-        fatal("Failed to open statistics store");
-      }
-      enc_cfg->rc_twopass_stats_in = stats_get(&app_input->rc_stats);
-    }
-    app_input->passes = passes;
-    app_input->pass = pass;
-  }
+  enc_cfg->g_pass = VPX_RC_ONE_PASS;
 
   if (enc_cfg->rc_target_bitrate > 0) {
     if (min_bitrate > 0) {
@@ -411,6 +361,8 @@ static void parse_command_line(int argc, const char **argv_,
   if (app_input->input_ctx.file_type == FILE_TYPE_Y4M) {
     enc_cfg->g_w = app_input->input_ctx.width;
     enc_cfg->g_h = app_input->input_ctx.height;
+    enc_cfg->g_timebase.den = app_input->input_ctx.framerate.numerator;
+    enc_cfg->g_timebase.num = app_input->input_ctx.framerate.denominator;
   }
 
   if (enc_cfg->g_w < 16 || enc_cfg->g_w % 2 || enc_cfg->g_h < 16 ||
@@ -633,7 +585,8 @@ static void set_frame_flags_bypass_mode_ex0(
       ref_frame_config->alt_fb_idx[sl] = 0;
     } else if (tl == 1) {
       ref_frame_config->lst_fb_idx[sl] = sl;
-      ref_frame_config->gld_fb_idx[sl] = num_spatial_layers + sl - 1;
+      ref_frame_config->gld_fb_idx[sl] =
+          (sl == 0) ? 0 : num_spatial_layers + sl - 1;
       ref_frame_config->alt_fb_idx[sl] = num_spatial_layers + sl;
     }
     // Set the reference and update flags.
@@ -927,7 +880,9 @@ int main(int argc, const char **argv) {
   int pts = 0;            /* PTS starts at 0 */
   int frame_duration = 1; /* 1 timebase tick per frame */
   int end_of_stream = 0;
+#if OUTPUT_FRAME_STATS
   int frames_received = 0;
+#endif
 #if OUTPUT_RC_STATS
   VpxVideoWriter *outfile[VPX_SS_MAX_LAYERS] = { NULL };
   struct RateControlStats rc;
@@ -1004,13 +959,11 @@ int main(int argc, const char **argv) {
   info.time_base.numerator = enc_cfg.g_timebase.num;
   info.time_base.denominator = enc_cfg.g_timebase.den;
 
-  if (!(app_input.passes == 2 && app_input.pass == 1)) {
-    // We don't save the bitstream for the 1st pass on two pass rate control
-    writer =
-        vpx_video_writer_open(app_input.output_filename, kContainerIVF, &info);
-    if (!writer)
-      die("Failed to open %s for writing\n", app_input.output_filename);
-  }
+  writer =
+      vpx_video_writer_open(app_input.output_filename, kContainerIVF, &info);
+  if (!writer)
+    die("Failed to open %s for writing\n", app_input.output_filename);
+
 #if OUTPUT_RC_STATS
   // Write out spatial layer stream.
   // TODO(marpan/jianj): allow for writing each spatial and temporal stream.
@@ -1175,14 +1128,14 @@ int main(int argc, const char **argv) {
             }
 #endif
           }
-          /*
+#if OUTPUT_FRAME_STATS
           printf("SVC frame: %d, kf: %d, size: %d, pts: %d\n", frames_received,
                  !!(cx_pkt->data.frame.flags & VPX_FRAME_IS_KEY),
                  (int)cx_pkt->data.frame.sz, (int)cx_pkt->data.frame.pts);
-          */
+          ++frames_received;
+#endif
           if (enc_cfg.ss_number_layers == 1 && enc_cfg.ts_number_layers == 1)
             si->bytes_sum[0] += (int)cx_pkt->data.frame.sz;
-          ++frames_received;
 #if CONFIG_VP9_DECODER && !SIMULCAST_MODE
           if (vpx_codec_decode(&decoder, cx_pkt->data.frame.buf,
                                (unsigned int)cx_pkt->data.frame.sz, NULL, 0))
@@ -1195,7 +1148,9 @@ int main(int argc, const char **argv) {
                       cx_pkt->data.twopass_stats.sz);
           break;
         }
-        default: { break; }
+        default: {
+          break;
+        }
       }
 
 #if CONFIG_VP9_DECODER && !SIMULCAST_MODE
@@ -1230,7 +1185,6 @@ int main(int argc, const char **argv) {
 #endif
   if (vpx_codec_destroy(&encoder))
     die_codec(&encoder, "Failed to destroy codec");
-  if (app_input.passes == 2) stats_close(&app_input.rc_stats, 1);
   if (writer) {
     vpx_video_writer_close(writer);
   }

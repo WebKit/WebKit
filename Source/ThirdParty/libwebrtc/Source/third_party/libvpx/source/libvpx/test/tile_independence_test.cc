@@ -36,18 +36,18 @@ class TileIndependenceTest : public ::libvpx_test::EncoderTest,
     inv_dec_->Control(VP9_INVERT_TILE_DECODE_ORDER, 1);
   }
 
-  virtual ~TileIndependenceTest() {
+  ~TileIndependenceTest() override {
     delete fw_dec_;
     delete inv_dec_;
   }
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig();
     SetMode(libvpx_test::kTwoPassGood);
   }
 
-  virtual void PreEncodeFrameHook(libvpx_test::VideoSource *video,
-                                  libvpx_test::Encoder *encoder) {
+  void PreEncodeFrameHook(libvpx_test::VideoSource *video,
+                          libvpx_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(VP9E_SET_TILE_COLUMNS, n_tiles_);
     }
@@ -65,7 +65,7 @@ class TileIndependenceTest : public ::libvpx_test::EncoderTest,
     md5->Add(img);
   }
 
-  virtual void FramePktHook(const vpx_codec_cx_pkt_t *pkt) {
+  void FramePktHook(const vpx_codec_cx_pkt_t *pkt) override {
     UpdateMD5(fw_dec_, pkt, &md5_fw_order_);
     UpdateMD5(inv_dec_, pkt, &md5_inv_order_);
   }

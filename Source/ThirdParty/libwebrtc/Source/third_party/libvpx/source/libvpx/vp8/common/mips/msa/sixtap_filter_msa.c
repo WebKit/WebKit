@@ -35,101 +35,134 @@ static const uint8_t vp8_mc_filt_mask_arr[16 * 3] = {
 #define HORIZ_6TAP_FILT(src0, src1, mask0, mask1, mask2, filt_h0, filt_h1, \
                         filt_h2)                                           \
   ({                                                                       \
-    v16i8 vec0_m, vec1_m, vec2_m;                                          \
-    v8i16 hz_out_m;                                                        \
+    v16i8 _6tap_vec0_m, _6tap_vec1_m, _6tap_vec2_m;                        \
+    v8i16 _6tap_out_m;                                                     \
                                                                            \
     VSHF_B3_SB(src0, src1, src0, src1, src0, src1, mask0, mask1, mask2,    \
-               vec0_m, vec1_m, vec2_m);                                    \
-    hz_out_m =                                                             \
-        DPADD_SH3_SH(vec0_m, vec1_m, vec2_m, filt_h0, filt_h1, filt_h2);   \
+               _6tap_vec0_m, _6tap_vec1_m, _6tap_vec2_m);                  \
+    _6tap_out_m = DPADD_SH3_SH(_6tap_vec0_m, _6tap_vec1_m, _6tap_vec2_m,   \
+                               filt_h0, filt_h1, filt_h2);                 \
                                                                            \
-    hz_out_m = __msa_srari_h(hz_out_m, VP8_FILTER_SHIFT);                  \
-    hz_out_m = __msa_sat_s_h(hz_out_m, 7);                                 \
+    _6tap_out_m = __msa_srari_h(_6tap_out_m, VP8_FILTER_SHIFT);            \
+    _6tap_out_m = __msa_sat_s_h(_6tap_out_m, 7);                           \
                                                                            \
-    hz_out_m;                                                              \
+    _6tap_out_m;                                                           \
   })
 
 #define HORIZ_6TAP_4WID_4VECS_FILT(src0, src1, src2, src3, mask0, mask1,   \
                                    mask2, filt0, filt1, filt2, out0, out1) \
   {                                                                        \
-    v16i8 vec0_m, vec1_m, vec2_m, vec3_m, vec4_m, vec5_m;                  \
+    v16i8 _6tap_4wid_vec0_m, _6tap_4wid_vec1_m, _6tap_4wid_vec2_m,         \
+        _6tap_4wid_vec3_m, _6tap_4wid_vec4_m, _6tap_4wid_vec5_m;           \
                                                                            \
-    VSHF_B2_SB(src0, src1, src2, src3, mask0, mask0, vec0_m, vec1_m);      \
-    DOTP_SB2_SH(vec0_m, vec1_m, filt0, filt0, out0, out1);                 \
-    VSHF_B2_SB(src0, src1, src2, src3, mask1, mask1, vec2_m, vec3_m);      \
-    DPADD_SB2_SH(vec2_m, vec3_m, filt1, filt1, out0, out1);                \
-    VSHF_B2_SB(src0, src1, src2, src3, mask2, mask2, vec4_m, vec5_m);      \
-    DPADD_SB2_SH(vec4_m, vec5_m, filt2, filt2, out0, out1);                \
+    VSHF_B2_SB(src0, src1, src2, src3, mask0, mask0, _6tap_4wid_vec0_m,    \
+               _6tap_4wid_vec1_m);                                         \
+    DOTP_SB2_SH(_6tap_4wid_vec0_m, _6tap_4wid_vec1_m, filt0, filt0, out0,  \
+                out1);                                                     \
+    VSHF_B2_SB(src0, src1, src2, src3, mask1, mask1, _6tap_4wid_vec2_m,    \
+               _6tap_4wid_vec3_m);                                         \
+    DPADD_SB2_SH(_6tap_4wid_vec2_m, _6tap_4wid_vec3_m, filt1, filt1, out0, \
+                 out1);                                                    \
+    VSHF_B2_SB(src0, src1, src2, src3, mask2, mask2, _6tap_4wid_vec4_m,    \
+               _6tap_4wid_vec5_m);                                         \
+    DPADD_SB2_SH(_6tap_4wid_vec4_m, _6tap_4wid_vec5_m, filt2, filt2, out0, \
+                 out1);                                                    \
   }
 
-#define HORIZ_6TAP_8WID_4VECS_FILT(src0, src1, src2, src3, mask0, mask1,     \
-                                   mask2, filt0, filt1, filt2, out0, out1,   \
-                                   out2, out3)                               \
-  {                                                                          \
-    v16i8 vec0_m, vec1_m, vec2_m, vec3_m, vec4_m, vec5_m, vec6_m, vec7_m;    \
-                                                                             \
-    VSHF_B2_SB(src0, src0, src1, src1, mask0, mask0, vec0_m, vec1_m);        \
-    VSHF_B2_SB(src2, src2, src3, src3, mask0, mask0, vec2_m, vec3_m);        \
-    DOTP_SB4_SH(vec0_m, vec1_m, vec2_m, vec3_m, filt0, filt0, filt0, filt0,  \
-                out0, out1, out2, out3);                                     \
-    VSHF_B2_SB(src0, src0, src1, src1, mask1, mask1, vec0_m, vec1_m);        \
-    VSHF_B2_SB(src2, src2, src3, src3, mask1, mask1, vec2_m, vec3_m);        \
-    VSHF_B2_SB(src0, src0, src1, src1, mask2, mask2, vec4_m, vec5_m);        \
-    VSHF_B2_SB(src2, src2, src3, src3, mask2, mask2, vec6_m, vec7_m);        \
-    DPADD_SB4_SH(vec0_m, vec1_m, vec2_m, vec3_m, filt1, filt1, filt1, filt1, \
-                 out0, out1, out2, out3);                                    \
-    DPADD_SB4_SH(vec4_m, vec5_m, vec6_m, vec7_m, filt2, filt2, filt2, filt2, \
-                 out0, out1, out2, out3);                                    \
+#define HORIZ_6TAP_8WID_4VECS_FILT(src0, src1, src2, src3, mask0, mask1,    \
+                                   mask2, filt0, filt1, filt2, out0, out1,  \
+                                   out2, out3)                              \
+  {                                                                         \
+    v16i8 _6tap_8wid_vec0_m, _6tap_8wid_vec1_m, _6tap_8wid_vec2_m,          \
+        _6tap_8wid_vec3_m, _6tap_8wid_vec4_m, _6tap_8wid_vec5_m,            \
+        _6tap_8wid_vec6_m, _6tap_8wid_vec7_m;                               \
+                                                                            \
+    VSHF_B2_SB(src0, src0, src1, src1, mask0, mask0, _6tap_8wid_vec0_m,     \
+               _6tap_8wid_vec1_m);                                          \
+    VSHF_B2_SB(src2, src2, src3, src3, mask0, mask0, _6tap_8wid_vec2_m,     \
+               _6tap_8wid_vec3_m);                                          \
+    DOTP_SB4_SH(_6tap_8wid_vec0_m, _6tap_8wid_vec1_m, _6tap_8wid_vec2_m,    \
+                _6tap_8wid_vec3_m, filt0, filt0, filt0, filt0, out0, out1,  \
+                out2, out3);                                                \
+    VSHF_B2_SB(src0, src0, src1, src1, mask1, mask1, _6tap_8wid_vec0_m,     \
+               _6tap_8wid_vec1_m);                                          \
+    VSHF_B2_SB(src2, src2, src3, src3, mask1, mask1, _6tap_8wid_vec2_m,     \
+               _6tap_8wid_vec3_m);                                          \
+    VSHF_B2_SB(src0, src0, src1, src1, mask2, mask2, _6tap_8wid_vec4_m,     \
+               _6tap_8wid_vec5_m);                                          \
+    VSHF_B2_SB(src2, src2, src3, src3, mask2, mask2, _6tap_8wid_vec6_m,     \
+               _6tap_8wid_vec7_m);                                          \
+    DPADD_SB4_SH(_6tap_8wid_vec0_m, _6tap_8wid_vec1_m, _6tap_8wid_vec2_m,   \
+                 _6tap_8wid_vec3_m, filt1, filt1, filt1, filt1, out0, out1, \
+                 out2, out3);                                               \
+    DPADD_SB4_SH(_6tap_8wid_vec4_m, _6tap_8wid_vec5_m, _6tap_8wid_vec6_m,   \
+                 _6tap_8wid_vec7_m, filt2, filt2, filt2, filt2, out0, out1, \
+                 out2, out3);                                               \
   }
 
-#define FILT_4TAP_DPADD_S_H(vec0, vec1, filt0, filt1)        \
-  ({                                                         \
-    v8i16 tmp0;                                              \
-                                                             \
-    tmp0 = __msa_dotp_s_h((v16i8)vec0, (v16i8)filt0);        \
-    tmp0 = __msa_dpadd_s_h(tmp0, (v16i8)vec1, (v16i8)filt1); \
-                                                             \
-    tmp0;                                                    \
-  })
-
-#define HORIZ_4TAP_FILT(src0, src1, mask0, mask1, filt_h0, filt_h1)   \
+#define FILT_4TAP_DPADD_S_H(vec0, vec1, filt0, filt1)                 \
   ({                                                                  \
-    v16i8 vec0_m, vec1_m;                                             \
-    v8i16 hz_out_m;                                                   \
+    v8i16 _4tap_dpadd_tmp0;                                           \
                                                                       \
-    VSHF_B2_SB(src0, src1, src0, src1, mask0, mask1, vec0_m, vec1_m); \
-    hz_out_m = FILT_4TAP_DPADD_S_H(vec0_m, vec1_m, filt_h0, filt_h1); \
+    _4tap_dpadd_tmp0 = __msa_dotp_s_h((v16i8)vec0, (v16i8)filt0);     \
+    _4tap_dpadd_tmp0 =                                                \
+        __msa_dpadd_s_h(_4tap_dpadd_tmp0, (v16i8)vec1, (v16i8)filt1); \
                                                                       \
-    hz_out_m = __msa_srari_h(hz_out_m, VP8_FILTER_SHIFT);             \
-    hz_out_m = __msa_sat_s_h(hz_out_m, 7);                            \
-                                                                      \
-    hz_out_m;                                                         \
+    _4tap_dpadd_tmp0;                                                 \
   })
 
-#define HORIZ_4TAP_4WID_4VECS_FILT(src0, src1, src2, src3, mask0, mask1, \
-                                   filt0, filt1, out0, out1)             \
-  {                                                                      \
-    v16i8 vec0_m, vec1_m, vec2_m, vec3_m;                                \
-                                                                         \
-    VSHF_B2_SB(src0, src1, src2, src3, mask0, mask0, vec0_m, vec1_m);    \
-    DOTP_SB2_SH(vec0_m, vec1_m, filt0, filt0, out0, out1);               \
-    VSHF_B2_SB(src0, src1, src2, src3, mask1, mask1, vec2_m, vec3_m);    \
-    DPADD_SB2_SH(vec2_m, vec3_m, filt1, filt1, out0, out1);              \
+#define HORIZ_4TAP_FILT(src0, src1, mask0, mask1, filt_h0, filt_h1)        \
+  ({                                                                       \
+    v16i8 _4tap_vec0_m, _4tap_vec1_m;                                      \
+    v8i16 _4tap_out_m;                                                     \
+                                                                           \
+    VSHF_B2_SB(src0, src1, src0, src1, mask0, mask1, _4tap_vec0_m,         \
+               _4tap_vec1_m);                                              \
+    _4tap_out_m =                                                          \
+        FILT_4TAP_DPADD_S_H(_4tap_vec0_m, _4tap_vec1_m, filt_h0, filt_h1); \
+                                                                           \
+    _4tap_out_m = __msa_srari_h(_4tap_out_m, VP8_FILTER_SHIFT);            \
+    _4tap_out_m = __msa_sat_s_h(_4tap_out_m, 7);                           \
+                                                                           \
+    _4tap_out_m;                                                           \
+  })
+
+#define HORIZ_4TAP_4WID_4VECS_FILT(src0, src1, src2, src3, mask0, mask1,   \
+                                   filt0, filt1, out0, out1)               \
+  {                                                                        \
+    v16i8 _4tap_4wid_vec0_m, _4tap_4wid_vec1_m, _4tap_4wid_vec2_m,         \
+        _4tap_4wid_vec3_m;                                                 \
+                                                                           \
+    VSHF_B2_SB(src0, src1, src2, src3, mask0, mask0, _4tap_4wid_vec0_m,    \
+               _4tap_4wid_vec1_m);                                         \
+    DOTP_SB2_SH(_4tap_4wid_vec0_m, _4tap_4wid_vec1_m, filt0, filt0, out0,  \
+                out1);                                                     \
+    VSHF_B2_SB(src0, src1, src2, src3, mask1, mask1, _4tap_4wid_vec2_m,    \
+               _4tap_4wid_vec3_m);                                         \
+    DPADD_SB2_SH(_4tap_4wid_vec2_m, _4tap_4wid_vec3_m, filt1, filt1, out0, \
+                 out1);                                                    \
   }
 
-#define HORIZ_4TAP_8WID_4VECS_FILT(src0, src1, src2, src3, mask0, mask1,     \
-                                   filt0, filt1, out0, out1, out2, out3)     \
-  {                                                                          \
-    v16i8 vec0_m, vec1_m, vec2_m, vec3_m;                                    \
-                                                                             \
-    VSHF_B2_SB(src0, src0, src1, src1, mask0, mask0, vec0_m, vec1_m);        \
-    VSHF_B2_SB(src2, src2, src3, src3, mask0, mask0, vec2_m, vec3_m);        \
-    DOTP_SB4_SH(vec0_m, vec1_m, vec2_m, vec3_m, filt0, filt0, filt0, filt0,  \
-                out0, out1, out2, out3);                                     \
-    VSHF_B2_SB(src0, src0, src1, src1, mask1, mask1, vec0_m, vec1_m);        \
-    VSHF_B2_SB(src2, src2, src3, src3, mask1, mask1, vec2_m, vec3_m);        \
-    DPADD_SB4_SH(vec0_m, vec1_m, vec2_m, vec3_m, filt1, filt1, filt1, filt1, \
-                 out0, out1, out2, out3);                                    \
+#define HORIZ_4TAP_8WID_4VECS_FILT(src0, src1, src2, src3, mask0, mask1,    \
+                                   filt0, filt1, out0, out1, out2, out3)    \
+  {                                                                         \
+    v16i8 _4tap_8wid_vec0_m, _4tap_8wid_vec1_m, _4tap_8wid_vec2_m,          \
+        _4tap_8wid_vec3_m;                                                  \
+                                                                            \
+    VSHF_B2_SB(src0, src0, src1, src1, mask0, mask0, _4tap_8wid_vec0_m,     \
+               _4tap_8wid_vec1_m);                                          \
+    VSHF_B2_SB(src2, src2, src3, src3, mask0, mask0, _4tap_8wid_vec2_m,     \
+               _4tap_8wid_vec3_m);                                          \
+    DOTP_SB4_SH(_4tap_8wid_vec0_m, _4tap_8wid_vec1_m, _4tap_8wid_vec2_m,    \
+                _4tap_8wid_vec3_m, filt0, filt0, filt0, filt0, out0, out1,  \
+                out2, out3);                                                \
+    VSHF_B2_SB(src0, src0, src1, src1, mask1, mask1, _4tap_8wid_vec0_m,     \
+               _4tap_8wid_vec1_m);                                          \
+    VSHF_B2_SB(src2, src2, src3, src3, mask1, mask1, _4tap_8wid_vec2_m,     \
+               _4tap_8wid_vec3_m);                                          \
+    DPADD_SB4_SH(_4tap_8wid_vec0_m, _4tap_8wid_vec1_m, _4tap_8wid_vec2_m,   \
+                 _4tap_8wid_vec3_m, filt1, filt1, filt1, filt1, out0, out1, \
+                 out2, out3);                                               \
   }
 
 static void common_hz_6t_4x4_msa(uint8_t *RESTRICT src, int32_t src_stride,

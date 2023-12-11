@@ -48,7 +48,7 @@ class TestVectorTest : public ::libvpx_test::DecoderTest,
 #endif
   }
 
-  virtual ~TestVectorTest() {
+  ~TestVectorTest() override {
     if (md5_file_) fclose(md5_file_);
   }
 
@@ -59,9 +59,8 @@ class TestVectorTest : public ::libvpx_test::DecoderTest,
   }
 
 #if CONFIG_VP9_DECODER
-  virtual void PreDecodeFrameHook(
-      const libvpx_test::CompressedVideoSource &video,
-      libvpx_test::Decoder *decoder) {
+  void PreDecodeFrameHook(const libvpx_test::CompressedVideoSource &video,
+                          libvpx_test::Decoder *decoder) override {
     if (video.frame_number() == 0 && mt_mode_ >= 0) {
       if (mt_mode_ == 1) {
         decoder->Control(VP9D_SET_LOOP_FILTER_OPT, 1);
@@ -77,8 +76,8 @@ class TestVectorTest : public ::libvpx_test::DecoderTest,
   }
 #endif
 
-  virtual void DecompressedFrameHook(const vpx_image_t &img,
-                                     const unsigned int frame_number) {
+  void DecompressedFrameHook(const vpx_image_t &img,
+                             const unsigned int frame_number) override {
     ASSERT_NE(md5_file_, nullptr);
     char expected_md5[33];
     char junk[128];

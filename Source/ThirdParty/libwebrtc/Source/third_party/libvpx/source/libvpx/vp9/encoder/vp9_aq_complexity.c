@@ -87,7 +87,7 @@ void vp9_setup_in_frame_q_adj(VP9_COMP *cpi) {
           &cpi->rc, cm->frame_type, cm->base_qindex,
           aq_c_q_adj_factor[aq_strength][segment], cm->bit_depth);
 
-      // For AQ complexity mode, we dont allow Q0 in a segment if the base
+      // For AQ complexity mode, we don't allow Q0 in a segment if the base
       // Q is not 0. Q0 (lossless) implies 4x4 only and in AQ mode 2 a segment
       // Q delta is sometimes applied without going back around the rd loop.
       // This could lead to an illegal combination of partition size and q.

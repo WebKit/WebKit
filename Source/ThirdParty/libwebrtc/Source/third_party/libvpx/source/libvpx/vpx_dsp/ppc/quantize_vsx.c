@@ -78,11 +78,10 @@ static INLINE int16x8_t dequantize_coeff_32(int16x8_t qcoeff,
   return (int16x8_t)vec_perm(dqcoeffe, dqcoeffo, vec_perm_odd_even_pack);
 }
 
-static INLINE int16x8_t nonzero_scanindex(int16x8_t qcoeff, bool16x8_t mask,
+static INLINE int16x8_t nonzero_scanindex(int16x8_t qcoeff,
                                           const int16_t *iscan_ptr, int index) {
   int16x8_t scan = vec_vsx_ld(index, iscan_ptr);
   bool16x8_t zero_coeff = vec_cmpeq(qcoeff, vec_zeros_s16);
-  scan = vec_sub(scan, mask);
   return vec_andc(scan, zero_coeff);
 }
 
@@ -95,8 +94,8 @@ static INLINE int16x8_t vec_max_across(int16x8_t a) {
 }
 
 void vpx_quantize_b_vsx(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
-                        int skip_block, const int16_t *zbin_ptr,
-                        const int16_t *round_ptr, const int16_t *quant_ptr,
+                        const int16_t *zbin_ptr, const int16_t *round_ptr,
+                        const int16_t *quant_ptr,
                         const int16_t *quant_shift_ptr, tran_low_t *qcoeff_ptr,
                         tran_low_t *dqcoeff_ptr, const int16_t *dequant_ptr,
                         uint16_t *eob_ptr, const int16_t *scan_ptr,
@@ -122,8 +121,6 @@ void vpx_quantize_b_vsx(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
   zero_mask1 = vec_cmpge(coeff1_abs, zbin);
 
   (void)scan_ptr;
-  (void)skip_block;
-  assert(!skip_block);
 
   qcoeff0 =
       quantize_coeff(coeff0, coeff0_abs, round, quant, quant_shift, zero_mask0);
@@ -141,8 +138,8 @@ void vpx_quantize_b_vsx(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
   dqcoeff1 = vec_mladd(qcoeff1, dequant, vec_zeros_s16);
   vec_vsx_st(dqcoeff1, 16, dqcoeff_ptr);
 
-  eob = vec_max(nonzero_scanindex(qcoeff0, zero_mask0, iscan_ptr, 0),
-                nonzero_scanindex(qcoeff1, zero_mask1, iscan_ptr, 16));
+  eob = vec_max(nonzero_scanindex(qcoeff0, iscan_ptr, 0),
+                nonzero_scanindex(qcoeff1, iscan_ptr, 16));
 
   if (n_coeffs > 16) {
     int index = 16;
@@ -179,10 +176,9 @@ void vpx_quantize_b_vsx(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
       vec_vsx_st(dqcoeff1, off1, dqcoeff_ptr);
       vec_vsx_st(dqcoeff2, off2, dqcoeff_ptr);
 
-      eob =
-          vec_max(eob, nonzero_scanindex(qcoeff0, zero_mask0, iscan_ptr, off0));
-      eob2 = vec_max(nonzero_scanindex(qcoeff1, zero_mask1, iscan_ptr, off1),
-                     nonzero_scanindex(qcoeff2, zero_mask2, iscan_ptr, off2));
+      eob = vec_max(eob, nonzero_scanindex(qcoeff0, iscan_ptr, off0));
+      eob2 = vec_max(nonzero_scanindex(qcoeff1, iscan_ptr, off1),
+                     nonzero_scanindex(qcoeff2, iscan_ptr, off2));
       eob = vec_max(eob, eob2);
 
       index += 24;
@@ -196,12 +192,14 @@ void vpx_quantize_b_vsx(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
   *eob_ptr = eob[0];
 }
 
-void vpx_quantize_b_32x32_vsx(
-    const tran_low_t *coeff_ptr, intptr_t n_coeffs, int skip_block,
-    const int16_t *zbin_ptr, const int16_t *round_ptr, const int16_t *quant_ptr,
-    const int16_t *quant_shift_ptr, tran_low_t *qcoeff_ptr,
-    tran_low_t *dqcoeff_ptr, const int16_t *dequant_ptr, uint16_t *eob_ptr,
-    const int16_t *scan_ptr, const int16_t *iscan_ptr) {
+void vpx_quantize_b_32x32_vsx(const tran_low_t *coeff_ptr, intptr_t n_coeffs,
+                              const int16_t *zbin_ptr, const int16_t *round_ptr,
+                              const int16_t *quant_ptr,
+                              const int16_t *quant_shift_ptr,
+                              tran_low_t *qcoeff_ptr, tran_low_t *dqcoeff_ptr,
+                              const int16_t *dequant_ptr, uint16_t *eob_ptr,
+                              const int16_t *scan_ptr,
+                              const int16_t *iscan_ptr) {
   // In stage 1, we quantize 16 coeffs (DC + 15 AC)
   // In stage 2, we loop 42 times and quantize 24 coeffs per iteration
   // (32 * 32 - 16) / 24 = 42
@@ -227,9 +225,7 @@ void vpx_quantize_b_32x32_vsx(
   int16x8_t coeff1_abs = vec_abs(coeff1);
 
   (void)scan_ptr;
-  (void)skip_block;
   (void)n_coeffs;
-  assert(!skip_block);
 
   // 32x32 quantization requires that zbin and round be divided by 2
   zbin = vec_sra(vec_add(zbin, vec_ones_s16), vec_ones_u16);
@@ -254,8 +250,8 @@ void vpx_quantize_b_32x32_vsx(
   dequant = vec_splat(dequant, 1);  // remove DC from dequant
   vec_vsx_st(dequantize_coeff_32(qcoeff1, dequant), 16, dqcoeff_ptr);
 
-  eob = vec_max(nonzero_scanindex(qcoeff0, zero_mask0, iscan_ptr, 0),
-                nonzero_scanindex(qcoeff1, zero_mask1, iscan_ptr, 16));
+  eob = vec_max(nonzero_scanindex(qcoeff0, iscan_ptr, 0),
+                nonzero_scanindex(qcoeff1, iscan_ptr, 16));
 
   do {
     int16x8_t coeff2, coeff2_abs, qcoeff2, eob2;
@@ -288,9 +284,9 @@ void vpx_quantize_b_32x32_vsx(
     vec_vsx_st(dequantize_coeff_32(qcoeff1, dequant), off1, dqcoeff_ptr);
     vec_vsx_st(dequantize_coeff_32(qcoeff2, dequant), off2, dqcoeff_ptr);
 
-    eob = vec_max(eob, nonzero_scanindex(qcoeff0, zero_mask0, iscan_ptr, off0));
-    eob2 = vec_max(nonzero_scanindex(qcoeff1, zero_mask1, iscan_ptr, off1),
-                   nonzero_scanindex(qcoeff2, zero_mask2, iscan_ptr, off2));
+    eob = vec_max(eob, nonzero_scanindex(qcoeff0, iscan_ptr, off0));
+    eob2 = vec_max(nonzero_scanindex(qcoeff1, iscan_ptr, off1),
+                   nonzero_scanindex(qcoeff2, iscan_ptr, off2));
     eob = vec_max(eob, eob2);
 
     // 24 int16_t is 48 bytes

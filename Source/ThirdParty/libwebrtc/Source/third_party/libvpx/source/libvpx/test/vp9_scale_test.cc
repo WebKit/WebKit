@@ -33,10 +33,10 @@ typedef void (*ScaleFrameFunc)(const YV12_BUFFER_CONFIG *src,
 class ScaleTest : public VpxScaleBase,
                   public ::testing::TestWithParam<ScaleFrameFunc> {
  public:
-  virtual ~ScaleTest() {}
+  ~ScaleTest() override = default;
 
  protected:
-  virtual void SetUp() { scale_fn_ = GetParam(); }
+  void SetUp() override { scale_fn_ = GetParam(); }
 
   void ReferenceScaleFrame(INTERP_FILTER filter_type, int phase_scaler) {
     vp9_scale_and_extend_frame_c(&img_, &ref_img_, filter_type, phase_scaler);

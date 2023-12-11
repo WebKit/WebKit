@@ -17,7 +17,7 @@
 
     INCLUDE vpx_dsp/arm/idct_neon.asm.S
 
-    AREA     Block, CODE, READONLY ; name this block of code
+    AREA     Block, CODE, READONLY
 ;void vpx_idct4x4_16_add_neon(int16_t *input, uint8_t *dest, int stride)
 ;
 ; r0  int16_t input
