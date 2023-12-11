@@ -31,11 +31,16 @@
 #include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceFactory.h"
 
+#include <wtf/Noncopyable.h>
+
 namespace WebCore {
 
 using NodeAndFD = GStreamerVideoCapturer::NodeAndFD;
 
+void teardownGStreamerCaptureDeviceManagers();
+
 class GStreamerCaptureDeviceManager : public CaptureDeviceManager, public RealtimeMediaSourceCenter::Observer {
+    WTF_MAKE_NONCOPYABLE(GStreamerCaptureDeviceManager)
 public:
     GStreamerCaptureDeviceManager();
     ~GStreamerCaptureDeviceManager();
@@ -52,6 +57,8 @@ public:
     void unregisterCapturer(const GStreamerCapturer&);
     void stopCapturing(const String& persistentId);
 
+    void teardown();
+
 private:
     void addDevice(GRefPtr<GstDevice>&&);
     void removeDevice(GRefPtr<GstDevice>&&);
@@ -62,6 +69,7 @@ private:
     Vector<GStreamerCaptureDevice> m_gstreamerDevices;
     Vector<CaptureDevice> m_devices;
     Vector<RefPtr<GStreamerCapturer>> m_capturers;
+    bool m_isTearingDown { false };
 };
 
 class GStreamerAudioCaptureDeviceManager final : public GStreamerCaptureDeviceManager {

@@ -55,6 +55,7 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
+#include "GStreamerCaptureDeviceManager.h"
 #include "GStreamerMediaStreamSource.h"
 #endif
 
@@ -436,6 +437,15 @@ void registerWebKitGStreamerVideoEncoder()
     // we need to reset the internal state of the registry scanner.
     if (registryWasUpdated && !GStreamerRegistryScanner::singletonNeedsInitialization())
         GStreamerRegistryScanner::singleton().refresh();
+}
+
+void deinitializeGStreamer()
+{
+#if ENABLE(MEDIA_STREAM)
+    teardownGStreamerCaptureDeviceManagers();
+#endif
+    teardownGStreamerRegistryScanner();
+    gst_deinit();
 }
 
 unsigned getGstPlayFlag(const char* nick)

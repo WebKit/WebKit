@@ -74,6 +74,8 @@ void setGStreamerOptionsFromUIProcess(Vector<String>&&);
 bool ensureGStreamerInitialized();
 void registerWebKitGStreamerElements();
 void registerWebKitGStreamerVideoEncoder();
+void deinitializeGStreamer();
+
 unsigned getGstPlayFlag(const char* nick);
 uint64_t toGstUnsigned64Time(const MediaTime&);
 
