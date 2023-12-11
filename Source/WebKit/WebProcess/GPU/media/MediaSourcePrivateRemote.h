@@ -100,7 +100,6 @@ private:
     RemoteMediaSourceIdentifier m_identifier;
     RemoteMediaPlayerMIMETypeCache& m_mimeTypeCache;
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
-    Vector<RefPtr<SourceBufferPrivateRemote>> m_sourceBuffers;
     bool m_shutdown { false };
     WebCore::MediaPlayer::ReadyState m_readyState { WebCore::MediaPlayer::ReadyState::HaveNothing };
 

@@ -191,7 +191,7 @@ void MediaSourcePrivateRemote::mediaSourcePrivateShuttingDown(CompletionHandler<
     m_readyState = MediaPlayer::ReadyState::HaveNothing;
 
     for (auto& sourceBuffer : m_sourceBuffers)
-        sourceBuffer->disconnect();
+        downcast<SourceBufferPrivateRemote>(sourceBuffer)->disconnect();
     completionHandler();
 }
 

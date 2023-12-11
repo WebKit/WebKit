@@ -106,11 +106,11 @@ SourceBuffer::~SourceBuffer()
     ASSERT(isRemoved());
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_private->detach();
-
+    ASSERT(!m_appendBufferPromise);
     if (m_appendBufferPromise)
         m_appendBufferPromise.disconnect();
 
+    ASSERT(!m_removeCodedFramesPromise);
     if (m_removeCodedFramesPromise)
         m_removeCodedFramesPromise.disconnect();
 }
@@ -133,6 +133,8 @@ ExceptionOr<Ref<TimeRanges>> SourceBuffer::buffered()
 
 double SourceBuffer::timestampOffset() const
 {
+    if (isRemoved())
+        return 0;
     return m_private->timestampOffset().toDouble();
 }
 
@@ -235,6 +237,8 @@ ExceptionOr<void> SourceBuffer::appendBuffer(const BufferSource& data)
 
 void SourceBuffer::resetParserState()
 {
+    ASSERT(!isRemoved());
+
     // Section 3.5.2 Reset Parser State algorithm steps.
     // http://www.w3.org/TR/2014/CR-media-source-20140717/#sourcebuffer-reset-parser-state
     // 1. If the append state equals PARSING_MEDIA_SEGMENT and the input buffer contains some complete coded frames,
@@ -343,16 +347,14 @@ void SourceBuffer::rangeRemoval(const MediaTime& start, const MediaTime& end)
     scheduleEvent(eventNames().updatestartEvent);
 
     // 5. Return control to the caller and run the rest of the steps asynchronously.
-    invokeAsync(RunLoop::current(), [protectedThis = Ref { *this }, this, start, end] {
-        if (isRemoved())
+    invokeAsync(RunLoop::current(), [weakThis = ThreadSafeWeakPtr { *this }, this, start, end] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || isRemoved())
             return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
         // 6. Run the coded frame removal algorithm with start and end as the start and end of the removal range.
         return m_private->removeCodedFrames(start, end, m_source->currentTime());
-    })->whenSettled(RunLoop::current(), [this, protectedThis = Ref { *this }] {
+    })->whenSettled(RunLoop::current(), [this] {
         m_removeCodedFramesPromise.complete();
-
-        if (isRemoved())
-            return;
 
         // 7. Set the updating attribute to false.
         m_updating = false;
@@ -430,6 +432,8 @@ void SourceBuffer::abortIfUpdating()
     // Section 3.2 abort() method step 4 substeps.
     // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-sourcebuffer-abort
 
+    ASSERT(!isRemoved());
+
     if (!m_updating)
         return;
 
@@ -467,17 +471,22 @@ void SourceBuffer::removedFromMediaSource()
     m_private->clearTrackBuffers();
     m_private->removedFromMediaSource();
     m_private->detach();
+    m_private = nullptr;
     m_source = nullptr;
 }
 
 Ref<SourceBuffer::ComputeSeekPromise> SourceBuffer::computeSeekTime(const SeekTarget& target)
 {
     ALWAYS_LOG(LOGIDENTIFIER, target);
+    if (isRemoved())
+        return ComputeSeekPromise::createAndReject(PlatformMediaError::SourceRemoved);
     return m_private->computeSeekTime(target);
 }
 
 void SourceBuffer::seekToTime(const MediaTime& time)
 {
+    if (isRemoved())
+        return;
     ALWAYS_LOG(LOGIDENTIFIER, time);
     m_private->seekToTime(time);
 }
@@ -545,57 +554,52 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, 
     scheduleEvent(eventNames().updatestartEvent);
 
     // 6. Asynchronously run the buffer append algorithm.
-    invokeAsync(RunLoop::current(), [protectedThis = Ref { *this }, this]() mutable {
+    invokeAsync(RunLoop::current(), [weakThis = ThreadSafeWeakPtr { *this }, this]() mutable {
         // 1. Loop Top: If the input buffer is empty, then jump to the need more data step below.
-        if (!m_pendingAppendData || m_pendingAppendData->isEmpty())
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !m_pendingAppendData || m_pendingAppendData->isEmpty() || isRemoved())
             return MediaPromise::createAndResolve();
         return m_private->append(m_pendingAppendData.releaseNonNull());
-    })->whenSettled(RunLoop::current(), *this, &SourceBuffer::sourceBufferPrivateAppendComplete)->track(m_appendBufferPromise);
+    })->whenSettled(RunLoop::current(), [this](auto&& result) {
+        m_appendBufferPromise.complete();
+
+        // Section 3.5.5 Buffer Append Algorithm, ctd.
+        // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-buffer-append
+
+        // 2. If the input buffer contains bytes that violate the SourceBuffer byte stream format specification,
+        // then run the append error algorithm with the decode error parameter set to true and abort this algorithm.
+        if (!result) {
+            ERROR_LOG(LOGIDENTIFIER, "ParsingFailed");
+            appendError(true);
+            return;
+        }
+
+        // NOTE: Steps 3 - 6 enforced by sourceBufferPrivateDidReceiveInitializationSegment() and
+        // sourceBufferPrivateDidReceiveSample below.
+
+        // 7. Need more data: Return control to the calling algorithm.
+
+        // NOTE: return to Section 3.5.5
+        // 2.If the segment parser loop algorithm in the previous step was aborted, then abort this algorithm.
+        // When aborted, the appendBuffer promise got disconnected
+
+        // 3. Set the updating attribute to false.
+        m_updating = false;
+
+        // 4. Queue a task to fire a simple event named update at this SourceBuffer object.
+        scheduleEvent(eventNames().updateEvent);
+
+        // 5. Queue a task to fire a simple event named updateend at this SourceBuffer object.
+        scheduleEvent(eventNames().updateendEvent);
+
+        m_source->monitorSourceBuffers();
+        monitorBufferingRate();
+        m_private->reenqueueMediaIfNeeded(m_source->currentTime());
+
+        ALWAYS_LOG(LOGIDENTIFIER, "buffered = ", m_buffered->ranges(), ", totalBufferSize: ", m_private->totalTrackBufferSizeInBytes());
+    })->track(m_appendBufferPromise);
 
     return { };
-}
-
-void SourceBuffer::sourceBufferPrivateAppendComplete(MediaPromise::Result&& result)
-{
-    m_appendBufferPromise.complete();
-
-    if (isRemoved())
-        return;
-
-    // Section 3.5.5 Buffer Append Algorithm, ctd.
-    // https://dvcs.w3.org/hg/html-media/raw-file/default/media-source/media-source.html#sourcebuffer-buffer-append
-
-    // 2. If the input buffer contains bytes that violate the SourceBuffer byte stream format specification,
-    // then run the append error algorithm with the decode error parameter set to true and abort this algorithm.
-    if (!result) {
-        ERROR_LOG(LOGIDENTIFIER, "ParsingFailed");
-        appendError(true);
-        return;
-    }
-
-    // NOTE: Steps 3 - 6 enforced by sourceBufferPrivateDidReceiveInitializationSegment() and
-    // sourceBufferPrivateDidReceiveSample below.
-
-    // 7. Need more data: Return control to the calling algorithm.
-
-    // NOTE: return to Section 3.5.5
-    // 2.If the segment parser loop algorithm in the previous step was aborted, then abort this algorithm.
-    // When aborted, the appendBuffer promise got disconnected
-
-    // 3. Set the updating attribute to false.
-    m_updating = false;
-
-    // 4. Queue a task to fire a simple event named update at this SourceBuffer object.
-    scheduleEvent(eventNames().updateEvent);
-
-    // 5. Queue a task to fire a simple event named updateend at this SourceBuffer object.
-    scheduleEvent(eventNames().updateendEvent);
-
-    m_source->monitorSourceBuffers();
-    monitorBufferingRate();
-    m_private->reenqueueMediaIfNeeded(m_source->currentTime());
-
-    ALWAYS_LOG(LOGIDENTIFIER, "buffered = ", m_buffered->ranges(), ", totalBufferSize: ", m_private->totalTrackBufferSizeInBytes());
 }
 
 void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int64_t error)
@@ -655,6 +659,8 @@ TextTrackList& SourceBuffer::textTracks()
 
 void SourceBuffer::setActive(bool active)
 {
+    if (isRemoved())
+        return;
     if (m_active == active)
         return;
 
@@ -1219,21 +1225,29 @@ void SourceBuffer::reportExtraMemoryAllocated(uint64_t extraMemory)
 
 Ref<SourceBuffer::SamplesPromise> SourceBuffer::bufferedSamplesForTrackId(TrackID trackID)
 {
+    if (isRemoved())
+        return SamplesPromise::createAndResolve(SamplesPromise::ResolveValueType { });
     return m_private->bufferedSamplesForTrackId(trackID);
 }
 
 Ref<SourceBuffer::SamplesPromise> SourceBuffer::enqueuedSamplesForTrackID(TrackID trackID)
 {
+    if (isRemoved())
+        return SamplesPromise::createAndResolve(SamplesPromise::ResolveValueType { });
     return m_private->enqueuedSamplesForTrackID(trackID);
 }
 
 MediaTime SourceBuffer::minimumUpcomingPresentationTimeForTrackID(TrackID trackID)
 {
+    if (isRemoved())
+        return MediaTime::invalidTime();
     return m_private->minimumUpcomingPresentationTimeForTrackID(trackID);
 }
 
 void SourceBuffer::setMaximumQueueDepthForTrackID(TrackID trackID, uint64_t maxQueueDepth)
 {
+    if (isRemoved())
+        return;
     m_private->setMaximumQueueDepthForTrackID(trackID, maxQueueDepth);
 }
 
@@ -1288,6 +1302,7 @@ ExceptionOr<void> SourceBuffer::setMode(AppendMode newMode)
 
 void SourceBuffer::setShouldGenerateTimestamps(bool flag)
 {
+    ASSERT(!isRemoved());
     m_shouldGenerateTimestamps = flag;
     m_private->setShouldGenerateTimestamps(flag);
 }
@@ -1388,6 +1403,8 @@ void SourceBuffer::setBufferedDirty(bool flag)
 
 void SourceBuffer::setMediaSourceEnded(bool isEnded)
 {
+    if (isRemoved())
+        return;
     m_mediaSourceEnded = isEnded;
     updateBuffered();
     m_private->setMediaSourceEnded(isEnded);
@@ -1406,7 +1423,7 @@ WebCoreOpaqueRoot SourceBuffer::opaqueRoot()
 #if ENABLE(MANAGED_MEDIA_SOURCE)
 void SourceBuffer::memoryPressure()
 {
-    if (!isManaged())
+    if (!isManaged() || isRemoved())
         return;
     m_private->memoryPressure(maximumBufferSize(), m_source->currentTime());
 }

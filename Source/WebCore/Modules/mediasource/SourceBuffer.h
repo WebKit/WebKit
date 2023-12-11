@@ -195,7 +195,6 @@ private:
     void scheduleEvent(const AtomString& eventName);
 
     ExceptionOr<void> appendBufferInternal(const unsigned char*, unsigned);
-    void sourceBufferPrivateAppendComplete(MediaPromise::Result&&);
     void resetParserState();
 
     void setActive(bool);
@@ -223,7 +222,7 @@ private:
 
     void updateBuffered();
 
-    Ref<SourceBufferPrivate> m_private;
+    RefPtr<SourceBufferPrivate> m_private;
     MediaSource* m_source;
     AppendMode m_mode { AppendMode::Segments };
 
