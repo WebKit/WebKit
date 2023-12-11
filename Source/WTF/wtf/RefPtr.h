@@ -250,6 +250,7 @@ inline RefPtr<T, U, V> static_pointer_cast(RefPtr<X, Y, Z>&& p)
 template <typename T, typename U, typename V>
 struct IsSmartPtr<RefPtr<T, U, V>> {
     static constexpr bool value = true;
+    static constexpr bool isNullable = true;
 };
 
 template<typename ExpectedType, typename ArgType, typename PtrTraits, typename RefDerefTraits>

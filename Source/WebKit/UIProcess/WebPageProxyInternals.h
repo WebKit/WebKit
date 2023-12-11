@@ -87,7 +87,7 @@
 #include <WebCore/WebMediaSessionManagerClient.h>
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
 #include "MediaCapability.h"
 #endif
 
@@ -306,7 +306,7 @@ struct WebPageProxy::Internals final : WebPopupMenuProxy::Client
     std::unique_ptr<PlatformXRSystem> xrSystem;
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     std::optional<MediaCapability> mediaCapability;
 #endif
 

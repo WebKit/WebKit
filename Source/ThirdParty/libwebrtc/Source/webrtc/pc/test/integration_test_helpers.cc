@@ -55,6 +55,13 @@ int FindFirstMediaStatsIndexByKind(
   return -1;
 }
 
+void ReplaceFirstSsrc(StreamParams& stream, uint32_t ssrc) {
+  stream.ssrcs[0] = ssrc;
+  for (auto& group : stream.ssrc_groups) {
+    group.ssrcs[0] = ssrc;
+  }
+}
+
 TaskQueueMetronome::TaskQueueMetronome(TimeDelta tick_period)
     : tick_period_(tick_period) {}
 

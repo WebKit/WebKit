@@ -257,12 +257,14 @@ using PackedPtr = Packed<T*>;
 template <typename T>
 struct GetPtrHelper<PackedPtr<T>> {
     using PtrType = T*;
+    using UnderlyingType = T;
     static T* getPtr(const PackedPtr<T>& p) { return const_cast<T*>(p.get()); }
 };
 
 template <typename T>
 struct IsSmartPtr<PackedPtr<T>> {
     static constexpr bool value = true;
+    static constexpr bool isNullable = true;
 };
 
 template<typename T, typename U>

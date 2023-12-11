@@ -26,7 +26,7 @@
 #import "config.h"
 #import "MediaCapability.h"
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
 
 #import "ExtensionKitSoftLink.h"
 
@@ -66,4 +66,4 @@ String MediaCapability::environmentIdentifier() const
 
 } // namespace WebKit
 
-#endif // ENABLE(PROCESS_CAPABILITIES)
+#endif // ENABLE(EXTENSION_CAPABILITIES)

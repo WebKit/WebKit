@@ -48,6 +48,7 @@ struct LineContent {
     bool endsWithHyphen { false };
     size_t partialTrailingContentLength { 0 };
     std::optional<InlineLayoutUnit> overflowLogicalWidth { };
+    HashMap<const Box*, InlineLayoutUnit> rubyAlignmentOffsetList { };
 };
 
 static inline StringBuilder toString(const Line::RunList& runs)
@@ -260,6 +261,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth }
         , { WTFMove(visualOrderList), inlineBaseDirection }
         , { isFirstFormattedLine() ? LineLayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LineLayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
+        , WTFMove(lineContent.rubyAlignmentOffsetList)
         , lineContent.endsWithHyphen
         , result.nonSpanningInlineLevelBoxCount
         , { }
@@ -501,27 +503,30 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
         m_line.resetBidiLevelForTrailingWhitespace(rootStyle.isLeftToRightDirection() ? UBIDI_LTR : UBIDI_RTL);
 
         if (m_line.hasContent()) {
-            auto runsExpandHorizontally = [&] {
+            auto applyRunBasedAlignmentIfApplicable = [&] {
                 if (isInIntrinsicWidthMode())
-                    return false;
+                    return;
+
+                auto spaceToDistribute = horizontalAvailableSpace - m_line.contentLogicalWidth() + (m_line.isHangingTrailingContentWhitespace() ? m_line.hangingTrailingContentWidth() : 0.f);
+                if (m_line.hasRubyContent()) {
+                    lineContent.rubyAlignmentOffsetList = RubyFormattingContext::applyRubyAlign(m_line, formattingContext());
+                    return;
+                }
                 if (root().isRubyAnnotationBox() && rootStyle.textAlign() == RenderStyle::initialTextAlign()) {
-                    // FIXME: This is a workaround until after we generate inline boxes for annotation content.
-                    return true;
+                    InlineContentAligner::applyRubyAlignOnAnnotationBox(m_line.runs(), spaceToDistribute);
+                    m_line.inflateContentLogicalWidth(spaceToDistribute);
+                    return;
                 }
                 // Text is justified according to the method specified by the text-justify property,
                 // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
                 // the last line before a forced break or the end of the block is start-aligned.
-                if (isLastLine || m_line.runs().last().isLineBreak())
-                    return rootStyle.textAlignLast() == TextAlignLast::Justify;
-                return rootStyle.textAlign() == TextAlignMode::Justify;
-            };
-            if (runsExpandHorizontally()) {
-                auto spaceToDistribute = horizontalAvailableSpace - m_line.contentLogicalWidth() + (m_line.isHangingTrailingContentWhitespace() ? m_line.hangingTrailingContentWidth() : 0.f);
+                auto hasTextAlignJustify = (isLastLine || m_line.runs().last().isLineBreak()) ? rootStyle.textAlignLast() == TextAlignLast::Justify : rootStyle.textAlign() == TextAlignMode::Justify;
+                if (!hasTextAlignJustify)
+                    return;
                 auto additionalSpaceForAlignedContent = InlineContentAligner::applyTextAlignJustify(m_line.runs(), spaceToDistribute, m_line.hangingTrailingWhitespaceLength());
                 m_line.inflateContentLogicalWidth(additionalSpaceForAlignedContent);
-            } else if (m_line.hasRubyContent())
-                RubyFormattingContext::applyRubyAlign(m_line, formattingContext());
-
+            };
+            applyRunBasedAlignmentIfApplicable();
             auto& lastTextContent = m_line.runs().last().textContent();
             lineContent.endsWithHyphen = lastTextContent && lastTextContent->needsHyphen;
         }

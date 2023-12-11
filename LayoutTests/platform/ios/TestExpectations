@@ -2208,6 +2208,7 @@ accessibility/menu-list-crash2.html [ Pass ]
 accessibility/multiple-attribute-change-crash.html [ Pass ]
 accessibility/node-only-inert-object.html [ Pass ]
 accessibility/node-only-object-element-rect.html [ Pass ]
+accessibility/checkbox-radio-element-rect.html [ Pass ]
 accessibility/out-of-bounds-rowspan.html [ Pass ]
 accessibility/out-of-bounds-rowspan-display-none.html [ Pass ]
 accessibility/out-of-bounds-rowspan-aria-hidden.html [ Pass ]
@@ -4647,9 +4648,6 @@ imported/w3c/web-platform-tests/uievents/order-of-events/mouse-events/wheel-scro
 
 #rdar://118015813 ([ iOS ]imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html is a flaky text failure (264281))
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-main-frame-root.html [ Pass Failure ]
-
-#rdar://118020922 ([ iOS ] fast/mediastream/video-srcObject-fit-fill.html is a constant text failure (264293))
-fast/mediastream/video-srcObject-fit-fill.html [ Failure ]
 
 # Failing word-break: auto-phrase tests.
 webkit.org/b/257698 imported/w3c/web-platform-tests/css/css-text/word-break/auto-phrase/word-break-auto-phrase-004.html [ ImageOnlyFailure ]

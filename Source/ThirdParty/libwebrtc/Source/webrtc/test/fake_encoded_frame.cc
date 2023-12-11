@@ -18,8 +18,9 @@ namespace webrtc {
 
 void PrintTo(const EncodedFrame& frame,
              std::ostream* os) /* no-presubmit-check TODO(webrtc:8982) */ {
-  *os << "EncodedFrame with id=" << frame.Id() << " rtp=" << frame.Timestamp()
-      << " size=" << frame.size() << " refs=[";
+  *os << "EncodedFrame with id=" << frame.Id()
+      << " rtp=" << frame.RtpTimestamp() << " size=" << frame.size()
+      << " refs=[";
   for (size_t ref = 0; ref < frame.num_references; ++ref) {
     *os << frame.references[ref] << ",";
   }
@@ -94,7 +95,7 @@ std::unique_ptr<FakeEncodedFrame> FakeFrameBuilder::Build() {
   frame->SetEncodedData(EncodedImageBuffer::Create(size_));
 
   if (rtp_timestamp_)
-    frame->SetTimestamp(*rtp_timestamp_);
+    frame->SetRtpTimestamp(*rtp_timestamp_);
   if (frame_id_)
     frame->SetId(*frame_id_);
   if (playout_delay_)

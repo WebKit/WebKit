@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 
+#include "api/async_dns_resolver.h"
 #include "api/task_queue/pending_task_safety_flag.h"
 #include "rtc_base/net_helpers.h"
 #include "rtc_base/physical_socket_server.h"
@@ -109,11 +110,11 @@ class PeerConnectionClient : public sigslot::has_slots<> {
 
   void OnClose(rtc::Socket* socket, int err);
 
-  void OnResolveResult(rtc::AsyncResolverInterface* resolver);
+  void OnResolveResult(const webrtc::AsyncDnsResolverResult& result);
 
   PeerConnectionClientObserver* callback_;
   rtc::SocketAddress server_address_;
-  rtc::AsyncResolver* resolver_;
+  std::unique_ptr<webrtc::AsyncDnsResolverInterface> resolver_;
   std::unique_ptr<rtc::Socket> control_socket_;
   std::unique_ptr<rtc::Socket> hanging_get_;
   std::string onconnect_data_;

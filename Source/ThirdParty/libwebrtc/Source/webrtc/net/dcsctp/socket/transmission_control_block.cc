@@ -25,6 +25,7 @@
 #include "net/dcsctp/packet/chunk/sack_chunk.h"
 #include "net/dcsctp/packet/sctp_packet.h"
 #include "net/dcsctp/public/dcsctp_options.h"
+#include "net/dcsctp/public/types.h"
 #include "net/dcsctp/rx/data_tracker.h"
 #include "net/dcsctp/rx/reassembly_queue.h"
 #include "net/dcsctp/socket/capabilities.h"
@@ -63,7 +64,9 @@ TransmissionControlBlock::TransmissionControlBlock(
           TimerOptions(options.rto_initial,
                        TimerBackoffAlgorithm::kExponential,
                        /*max_restarts=*/absl::nullopt,
-                       options.max_timer_backoff_duration))),
+                       options.max_timer_backoff_duration.has_value()
+                           ? *options.max_timer_backoff_duration
+                           : DurationMs::InfiniteDuration()))),
       delayed_ack_timer_(timer_manager_.CreateTimer(
           "delayed-ack",
           absl::bind_front(&TransmissionControlBlock::OnDelayedAckTimerExpiry,
@@ -71,7 +74,7 @@ TransmissionControlBlock::TransmissionControlBlock(
           TimerOptions(options.delayed_ack_max_timeout,
                        TimerBackoffAlgorithm::kExponential,
                        /*max_restarts=*/0,
-                       /*max_backoff_duration=*/absl::nullopt,
+                       /*max_backoff_duration=*/DurationMs::InfiniteDuration(),
                        webrtc::TaskQueueBase::DelayPrecision::kHigh))),
       my_verification_tag_(my_verification_tag),
       my_initial_tsn_(my_initial_tsn),
@@ -163,7 +166,7 @@ void TransmissionControlBlock::MaybeSendForwardTsn(SctpPacket::Builder& builder,
     } else {
       builder.Add(retransmission_queue_.CreateForwardTsn());
     }
-    packet_sender_.Send(builder);
+    Send(builder);
     // https://datatracker.ietf.org/doc/html/rfc3758
     // "IMPLEMENTATION NOTE: An implementation may wish to limit the number of
     // duplicate FORWARD TSN chunks it sends by ... waiting a full RTT before
@@ -198,7 +201,7 @@ void TransmissionControlBlock::MaybeSendFastRetransmit() {
       builder.Add(DataChunk(tsn, std::move(data), false));
     }
   }
-  packet_sender_.Send(builder);
+  Send(builder);
 }
 
 void TransmissionControlBlock::SendBufferedPackets(SctpPacket::Builder& builder,
@@ -245,7 +248,13 @@ void TransmissionControlBlock::SendBufferedPackets(SctpPacket::Builder& builder,
       }
     }
 
-    if (!packet_sender_.Send(builder)) {
+    // https://www.ietf.org/archive/id/draft-tuexen-tsvwg-sctp-zero-checksum-02.html#section-4.2
+    // "When an end point sends a packet containing a COOKIE ECHO chunk, it MUST
+    // include a correct CRC32c checksum in the packet containing the COOKIE
+    // ECHO chunk."
+    bool write_checksum =
+        !capabilities_.zero_checksum || cookie_echo_chunk_.has_value();
+    if (!packet_sender_.Send(builder, write_checksum)) {
       break;
     }
 
@@ -274,6 +283,9 @@ std::string TransmissionControlBlock::ToString() const {
   if (capabilities_.reconfig) {
     sb << "Reconfig,";
   }
+  if (capabilities_.zero_checksum) {
+    sb << "ZeroChecksum,";
+  }
   sb << " max_in=" << capabilities_.negotiated_maximum_incoming_streams;
   sb << " max_out=" << capabilities_.negotiated_maximum_outgoing_streams;
 
@@ -294,6 +306,7 @@ void TransmissionControlBlock::AddHandoverState(
   state.capabilities.partial_reliability = capabilities_.partial_reliability;
   state.capabilities.message_interleaving = capabilities_.message_interleaving;
   state.capabilities.reconfig = capabilities_.reconfig;
+  state.capabilities.zero_checksum = capabilities_.zero_checksum;
   state.capabilities.negotiated_maximum_incoming_streams =
       capabilities_.negotiated_maximum_incoming_streams;
   state.capabilities.negotiated_maximum_outgoing_streams =

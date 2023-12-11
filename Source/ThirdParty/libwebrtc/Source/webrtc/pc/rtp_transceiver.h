@@ -18,9 +18,11 @@
 #include <string>
 #include <vector>
 
+#include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
 #include "api/audio_options.h"
+#include "api/crypto/crypto_options.h"
 #include "api/jsep.h"
 #include "api/media_types.h"
 #include "api/rtc_error.h"
@@ -34,6 +36,8 @@
 #include "api/task_queue/task_queue_base.h"
 #include "api/video/video_bitrate_allocator_factory.h"
 #include "media/base/media_channel.h"
+#include "media/base/media_config.h"
+#include "media/base/media_engine.h"
 #include "pc/channel_interface.h"
 #include "pc/connection_context.h"
 #include "pc/proxy.h"

@@ -24,8 +24,8 @@
 #include "modules/rtp_rtcp/source/rtp_header_extension_size.h"
 #include "modules/rtp_rtcp/source/ulpfec_generator.h"
 #include "modules/rtp_rtcp/source/video_fec_generator.h"
+#include "rtc_base/bitrate_tracker.h"
 #include "rtc_base/random.h"
-#include "rtc_base/rate_statistics.h"
 #include "rtc_base/synchronization/mutex.h"
 
 namespace webrtc {
@@ -96,7 +96,7 @@ class FlexfecSender : public VideoFecGenerator {
   const size_t header_extensions_size_;
 
   mutable Mutex mutex_;
-  RateStatistics fec_bitrate_ RTC_GUARDED_BY(mutex_);
+  BitrateTracker fec_bitrate_ RTC_GUARDED_BY(mutex_);
 };
 
 }  // namespace webrtc

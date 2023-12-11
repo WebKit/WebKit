@@ -269,13 +269,15 @@ ALWAYS_INLINE Ref<T, U> static_reference_cast(const Ref<X, Y>& reference)
 
 template <typename T, typename U>
 struct GetPtrHelper<Ref<T, U>> {
-    typedef T* PtrType;
+    using PtrType = T*;
+    using UnderlyingType = T;
     static T* getPtr(const Ref<T, U>& p) { return const_cast<T*>(p.ptr()); }
 };
 
 template <typename T, typename U>
 struct IsSmartPtr<Ref<T, U>> {
     static constexpr bool value = true;
+    static constexpr bool isNullable = false;
 };
 
 template<typename T, typename U>

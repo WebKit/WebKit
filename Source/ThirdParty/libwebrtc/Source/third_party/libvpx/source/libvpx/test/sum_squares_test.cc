@@ -33,13 +33,13 @@ typedef std::tuple<SSI16Func, SSI16Func> SumSquaresParam;
 
 class SumSquaresTest : public ::testing::TestWithParam<SumSquaresParam> {
  public:
-  virtual ~SumSquaresTest() {}
-  virtual void SetUp() {
+  ~SumSquaresTest() override = default;
+  void SetUp() override {
     ref_func_ = GET_PARAM(0);
     tst_func_ = GET_PARAM(1);
   }
 
-  virtual void TearDown() { libvpx_test::ClearSystemState(); }
+  void TearDown() override { libvpx_test::ClearSystemState(); }
 
  protected:
   SSI16Func ref_func_;

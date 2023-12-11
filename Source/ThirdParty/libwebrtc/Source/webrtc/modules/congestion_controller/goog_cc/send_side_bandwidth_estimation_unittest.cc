@@ -10,7 +10,12 @@
 
 #include "modules/congestion_controller/goog_cc/send_side_bandwidth_estimation.h"
 
+#include <cstdint>
+
 #include "api/rtc_event_log/rtc_event.h"
+#include "api/units/data_rate.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
 #include "logging/rtc_event_log/mock/mock_rtc_event_log.h"
 #include "test/explicit_key_value_config.h"

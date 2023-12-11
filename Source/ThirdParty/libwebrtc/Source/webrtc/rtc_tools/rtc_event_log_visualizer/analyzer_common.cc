@@ -11,6 +11,12 @@
 
 #include "rtc_tools/rtc_event_log_visualizer/analyzer_common.h"
 
+#include <cstdint>
+#include <string>
+
+#include "logging/rtc_event_log/rtc_event_log_parser.h"
+#include "rtc_base/strings/string_builder.h"
+
 namespace webrtc {
 
 bool IsRtxSsrc(const ParsedRtcEventLog& parsed_log,

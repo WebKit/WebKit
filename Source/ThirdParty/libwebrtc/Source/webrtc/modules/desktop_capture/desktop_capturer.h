@@ -186,6 +186,11 @@ class RTC_EXPORT DesktopCapturer {
   static std::unique_ptr<DesktopCapturer> CreateScreenCapturer(
       const DesktopCaptureOptions& options);
 
+  // Creates a DesktopCapturer instance which targets to capture windows and
+  // screens.
+  static std::unique_ptr<DesktopCapturer> CreateGenericCapturer(
+      const DesktopCaptureOptions& options);
+
 #if defined(WEBRTC_USE_PIPEWIRE) || defined(WEBRTC_USE_X11)
   static bool IsRunningUnderWayland();
 

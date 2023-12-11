@@ -17,6 +17,7 @@
 #include "api/task_queue/task_queue_base.h"
 #include "api/video/encoded_frame.h"
 #include "api/video/frame_buffer.h"
+#include "modules/video_coding/include/video_coding_defines.h"
 #include "modules/video_coding/timing/inter_frame_delay_variation_calculator.h"
 #include "modules/video_coding/timing/jitter_estimator.h"
 #include "modules/video_coding/timing/timing.h"
@@ -45,10 +46,18 @@ class VideoStreamBufferControllerStatsObserver {
 
   virtual void OnDroppedFrames(uint32_t frames_dropped) = 0;
 
+  // `jitter_buffer_delay` is the delay experienced by a single frame,
+  // whereas `target_delay` and `minimum_delay` are the current delays
+  // applied by the jitter buffer.
+  virtual void OnDecodableFrame(TimeDelta jitter_buffer_delay,
+                                TimeDelta target_delay,
+                                TimeDelta minimum_delay) = 0;
+
+  // Various jitter buffer delays determined by VCMTiming.
   virtual void OnFrameBufferTimingsUpdated(int estimated_max_decode_time_ms,
                                            int current_delay_ms,
                                            int target_delay_ms,
-                                           int jitter_buffer_ms,
+                                           int jitter_delay_ms,
                                            int min_playout_delay_ms,
                                            int render_delay_ms) = 0;
 
@@ -86,7 +95,7 @@ class VideoStreamBufferController {
   void OnTimeout(TimeDelta delay);
   void FrameReadyForDecode(uint32_t rtp_timestamp, Timestamp render_time);
   void UpdateDroppedFrames() RTC_RUN_ON(&worker_sequence_checker_);
-  void UpdateJitterDelay();
+  void UpdateFrameBufferTimings(Timestamp min_receive_time, Timestamp now);
   void UpdateTimingFrameInfo();
   bool IsTooManyFramesQueued() const RTC_RUN_ON(&worker_sequence_checker_);
   void ForceKeyFrameReleaseImmediately() RTC_RUN_ON(&worker_sequence_checker_);

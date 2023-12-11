@@ -69,7 +69,7 @@ static inline NativeExecutable& getMayBeDyingNativeExecutable(const Weak<NativeE
     return *executable;
 }
 
-inline unsigned JITThunks::WeakNativeExecutableHash::hash(NativeExecutable* executable)
+inline unsigned JITThunks::WeakNativeExecutableHash::hash(const NativeExecutable* executable)
 {
     return hash(executable->function(), executable->constructor(), executable->implementationVisibility(), executable->name());
 }
@@ -79,7 +79,7 @@ inline unsigned JITThunks::WeakNativeExecutableHash::hash(const Weak<NativeExecu
     return hash(&getMayBeDyingNativeExecutable(key));
 }
 
-inline bool JITThunks::WeakNativeExecutableHash::equal(NativeExecutable& a, NativeExecutable& b)
+inline bool JITThunks::WeakNativeExecutableHash::equal(const NativeExecutable& a, const NativeExecutable& b)
 {
     if (&a == &b)
         return true;
@@ -91,7 +91,7 @@ inline bool JITThunks::WeakNativeExecutableHash::equal(const Weak<NativeExecutab
     return equal(getMayBeDyingNativeExecutable(a), getMayBeDyingNativeExecutable(b));
 }
 
-inline bool JITThunks::WeakNativeExecutableHash::equal(const Weak<NativeExecutable>& a, NativeExecutable* bExecutable)
+inline bool JITThunks::WeakNativeExecutableHash::equal(const Weak<NativeExecutable>& a, const NativeExecutable* bExecutable)
 {
     return equal(getMayBeDyingNativeExecutable(a), *bExecutable);
 }
@@ -213,8 +213,8 @@ struct JITThunks::HostKeySearcher {
 };
 
 struct JITThunks::NativeExecutableTranslator {
-    static unsigned hash(NativeExecutable* key) { return WeakNativeExecutableHash::hash(key); }
-    static bool equal(const Weak<NativeExecutable>& a, NativeExecutable* b) { return WeakNativeExecutableHash::equal(a, b); }
+    static unsigned hash(const NativeExecutable* key) { return WeakNativeExecutableHash::hash(key); }
+    static bool equal(const Weak<NativeExecutable>& a, const NativeExecutable* b) { return WeakNativeExecutableHash::equal(a, b); }
     static void translate(Weak<NativeExecutable>& location, NativeExecutable* executable, unsigned)
     {
         location = Weak<NativeExecutable>(executable, executable->vm().jitStubs.get());

@@ -28,8 +28,8 @@ class MotionEST(object):
     self.ref_f = ref_f
     self.blk_sz = blk_sz
     #convert RGB to YUV
-    self.cur_yuv = np.array(self.cur_f.convert('YCbCr'), dtype=np.int)
-    self.ref_yuv = np.array(self.ref_f.convert('YCbCr'), dtype=np.int)
+    self.cur_yuv = np.array(self.cur_f.convert('YCbCr'), dtype=int)
+    self.ref_yuv = np.array(self.ref_f.convert('YCbCr'), dtype=int)
     #frame size
     self.width = self.cur_f.size[0]
     self.height = self.cur_f.size[1]

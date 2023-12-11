@@ -134,7 +134,6 @@ class NullVideoDecoder : public webrtc::VideoDecoder {
   }
 
   int32_t Decode(const webrtc::EncodedImage& input_image,
-                 bool missing_frames,
                  int64_t render_time_ms) override {
     RTC_LOG(LS_ERROR) << "The NullVideoDecoder doesn't support decoding.";
     return WEBRTC_VIDEO_CODEC_OK;
@@ -690,13 +689,10 @@ void VideoReceiveStream2::RequestKeyFrame(Timestamp now) {
 void VideoReceiveStream2::OnCompleteFrame(std::unique_ptr<EncodedFrame> frame) {
   RTC_DCHECK_RUN_ON(&worker_sequence_checker_);
 
-  const VideoPlayoutDelay& playout_delay = frame->EncodedImage().playout_delay_;
-  if (playout_delay.min_ms >= 0) {
-    frame_minimum_playout_delay_ = TimeDelta::Millis(playout_delay.min_ms);
-    UpdatePlayoutDelays();
-  }
-  if (playout_delay.max_ms >= 0) {
-    frame_maximum_playout_delay_ = TimeDelta::Millis(playout_delay.max_ms);
+  if (absl::optional<VideoPlayoutDelay> playout_delay =
+          frame->EncodedImage().PlayoutDelay()) {
+    frame_minimum_playout_delay_ = playout_delay->min();
+    frame_maximum_playout_delay_ = playout_delay->max();
     UpdatePlayoutDelays();
   }
 
@@ -764,6 +760,7 @@ void VideoReceiveStream2::OnEncodedFrame(std::unique_ptr<EncodedFrame> frame) {
       frame->FrameType() == VideoFrameType::kVideoFrameKey;
 
   // Current OnPreDecode only cares about QP for VP8.
+  // TODO(brandtr): Move to stats_proxy_.OnDecodableFrame in VSBC, or deprecate.
   int qp = -1;
   if (frame->CodecSpecific()->codecType == kVideoCodecVP8) {
     if (!vp8::GetQp(frame->data(), frame->size(), &qp)) {
@@ -821,8 +818,13 @@ void VideoReceiveStream2::OnDecodableFrameTimeout(TimeDelta wait) {
   if (stream_is_active && !IsReceivingKeyFrame(now) &&
       (!config_.crypto_options.sframe.require_frame_encryption ||
        rtp_video_stream_receiver_.IsDecryptable())) {
+    absl::optional<uint32_t> last_timestamp =
+        rtp_video_stream_receiver_.LastReceivedFrameRtpTimestamp();
     RTC_LOG(LS_WARNING) << "No decodable frame in " << wait
-                        << ", requesting keyframe.";
+                        << " requesting keyframe. Last RTP timestamp "
+                        << (last_timestamp ? rtc::ToString(*last_timestamp)
+                                           : "<not set>")
+                        << ".";
     RequestKeyFrame(now);
   }
 
@@ -993,7 +995,7 @@ void VideoReceiveStream2::UpdatePlayoutDelays() const {
       RTC_LOG(LS_WARNING)
           << "Multiple playout delays set. Actual delay value set to "
           << *minimum_delay << " frame min delay="
-          << OptionalDelayToLogString(frame_maximum_playout_delay_)
+          << OptionalDelayToLogString(frame_minimum_playout_delay_)
           << " base min delay="
           << OptionalDelayToLogString(base_minimum_playout_delay_)
           << " sync min delay="

@@ -4195,7 +4195,7 @@ MediaCapabilitiesExtensionsEnabled:
 MediaCapabilityGrantsEnabled:
   type: bool
   status: unstable
-  condition: ENABLE(PROCESS_CAPABILITIES)
+  condition: ENABLE(EXTENSION_CAPABILITIES)
   humanReadableName: "Media Capability Grants"
   humanReadableDescription: "Enable granting and revoking of media capabilities"
   defaultValue:

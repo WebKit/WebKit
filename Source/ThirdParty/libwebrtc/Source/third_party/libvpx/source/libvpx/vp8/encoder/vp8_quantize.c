@@ -294,7 +294,7 @@ void vp8cx_mb_init_quantizer(VP8_COMP *cpi, MACROBLOCK *x, int ok_to_skip) {
   /* Select the baseline MB Q index. */
   if (xd->segmentation_enabled) {
     /* Abs Value */
-    if (xd->mb_segement_abs_delta == SEGMENT_ABSDATA) {
+    if (xd->mb_segment_abs_delta == SEGMENT_ABSDATA) {
       QIndex = xd->segment_feature_data[MB_LVL_ALT_Q]
                                        [xd->mode_info_context->mbmi.segment_id];
       /* Delta Value */

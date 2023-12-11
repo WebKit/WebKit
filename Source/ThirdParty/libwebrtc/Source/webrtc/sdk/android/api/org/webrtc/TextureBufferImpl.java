@@ -140,18 +140,12 @@ public class TextureBufferImpl implements VideoFrame.TextureBuffer {
         (int) Math.round(unscaledHeight * cropHeight / (float) height), scaleWidth, scaleHeight);
   }
 
-  /**
-   * Returns the width of the texture in memory. This should only be used for downscaling, and you
-   * should still respect the width from getWidth().
-   */
+  @Override
   public int getUnscaledWidth() {
     return unscaledWidth;
   }
 
-  /**
-   * Returns the height of the texture in memory. This should only be used for downscaling, and you
-   * should still respect the height from getHeight().
-   */
+  @Override
   public int getUnscaledHeight() {
     return unscaledHeight;
   }
@@ -169,6 +163,7 @@ public class TextureBufferImpl implements VideoFrame.TextureBuffer {
    * existing buffer is unchanged. The given transform matrix is applied first when texture
    * coordinates are still in the unmodified [0, 1] range.
    */
+  @Override
   public TextureBufferImpl applyTransformMatrix(
       Matrix transformMatrix, int newWidth, int newHeight) {
     return applyTransformMatrix(transformMatrix, /* unscaledWidth= */ newWidth,

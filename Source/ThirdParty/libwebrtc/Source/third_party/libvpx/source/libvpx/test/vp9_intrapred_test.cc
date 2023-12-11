@@ -55,6 +55,21 @@ class IntraPredTest : public ::testing::TestWithParam<PredParam> {
     ref_dst_ = ref_dst;
     int error_count = 0;
     for (int i = 0; i < count_test_block; ++i) {
+      // TODO(webm:1797): Some of the optimised predictor implementations rely
+      // on the trailing half of the above_row_ being a copy of the final
+      // element, however relying on this in some cases can cause the MD5 tests
+      // to fail. We have fixed all of these cases for Neon, so fill the whole
+      // of above_row_ randomly.
+#if HAVE_NEON
+      // Fill edges with random data, try first with saturated values.
+      for (int x = -1; x < 2 * block_size; x++) {
+        if (i == 0) {
+          above_row_[x] = mask_;
+        } else {
+          above_row_[x] = rnd.Rand16() & mask_;
+        }
+      }
+#else
       // Fill edges with random data, try first with saturated values.
       for (int x = -1; x < block_size; x++) {
         if (i == 0) {
@@ -66,6 +81,7 @@ class IntraPredTest : public ::testing::TestWithParam<PredParam> {
       for (int x = block_size; x < 2 * block_size; x++) {
         above_row_[x] = above_row_[block_size - 1];
       }
+#endif
       for (int y = 0; y < block_size; y++) {
         if (i == 0) {
           left_col_[y] = mask_;
@@ -80,7 +96,7 @@ class IntraPredTest : public ::testing::TestWithParam<PredParam> {
   }
 
  protected:
-  virtual void SetUp() {
+  void SetUp() override {
     params_ = this->GetParam();
     stride_ = params_.block_size * 3;
     mask_ = (1 << params_.bit_depth) - 1;
@@ -243,6 +259,22 @@ INSTANTIATE_TEST_SUITE_P(
                        &vpx_d45_predictor_16x16_c, 16, 8),
         IntraPredParam(&vpx_d45_predictor_32x32_neon,
                        &vpx_d45_predictor_32x32_c, 32, 8),
+        IntraPredParam(&vpx_d63_predictor_4x4_neon, &vpx_d63_predictor_4x4_c, 4,
+                       8),
+        IntraPredParam(&vpx_d63_predictor_8x8_neon, &vpx_d63_predictor_8x8_c, 8,
+                       8),
+        IntraPredParam(&vpx_d63_predictor_16x16_neon,
+                       &vpx_d63_predictor_16x16_c, 16, 8),
+        IntraPredParam(&vpx_d63_predictor_32x32_neon,
+                       &vpx_d63_predictor_32x32_c, 32, 8),
+        IntraPredParam(&vpx_d117_predictor_4x4_neon, &vpx_d117_predictor_4x4_c,
+                       4, 8),
+        IntraPredParam(&vpx_d117_predictor_8x8_neon, &vpx_d117_predictor_8x8_c,
+                       8, 8),
+        IntraPredParam(&vpx_d117_predictor_16x16_neon,
+                       &vpx_d117_predictor_16x16_c, 16, 8),
+        IntraPredParam(&vpx_d117_predictor_32x32_neon,
+                       &vpx_d117_predictor_32x32_c, 32, 8),
         IntraPredParam(&vpx_d135_predictor_4x4_neon, &vpx_d135_predictor_4x4_c,
                        4, 8),
         IntraPredParam(&vpx_d135_predictor_8x8_neon, &vpx_d135_predictor_8x8_c,
@@ -251,6 +283,22 @@ INSTANTIATE_TEST_SUITE_P(
                        &vpx_d135_predictor_16x16_c, 16, 8),
         IntraPredParam(&vpx_d135_predictor_32x32_neon,
                        &vpx_d135_predictor_32x32_c, 32, 8),
+        IntraPredParam(&vpx_d153_predictor_4x4_neon, &vpx_d153_predictor_4x4_c,
+                       4, 8),
+        IntraPredParam(&vpx_d153_predictor_8x8_neon, &vpx_d153_predictor_8x8_c,
+                       8, 8),
+        IntraPredParam(&vpx_d153_predictor_16x16_neon,
+                       &vpx_d153_predictor_16x16_c, 16, 8),
+        IntraPredParam(&vpx_d153_predictor_32x32_neon,
+                       &vpx_d153_predictor_32x32_c, 32, 8),
+        IntraPredParam(&vpx_d207_predictor_4x4_neon, &vpx_d207_predictor_4x4_c,
+                       4, 8),
+        IntraPredParam(&vpx_d207_predictor_8x8_neon, &vpx_d207_predictor_8x8_c,
+                       8, 8),
+        IntraPredParam(&vpx_d207_predictor_16x16_neon,
+                       &vpx_d207_predictor_16x16_c, 16, 8),
+        IntraPredParam(&vpx_d207_predictor_32x32_neon,
+                       &vpx_d207_predictor_32x32_c, 32, 8),
         IntraPredParam(&vpx_dc_128_predictor_4x4_neon,
                        &vpx_dc_128_predictor_4x4_c, 4, 8),
         IntraPredParam(&vpx_dc_128_predictor_8x8_neon,
@@ -440,6 +488,15 @@ INSTANTIATE_TEST_SUITE_P(
                       IntraPredParam(&vpx_v_predictor_32x32_vsx,
                                      &vpx_v_predictor_32x32_c, 32, 8)));
 #endif  // HAVE_VSX
+
+#if HAVE_LSX
+INSTANTIATE_TEST_SUITE_P(
+    LSX, VP9IntraPredTest,
+    ::testing::Values(IntraPredParam(&vpx_dc_predictor_8x8_lsx,
+                                     &vpx_dc_predictor_8x8_c, 8, 8),
+                      IntraPredParam(&vpx_dc_predictor_16x16_lsx,
+                                     &vpx_dc_predictor_16x16_c, 16, 8)));
+#endif  // HAVE_LSX
 
 #if CONFIG_VP9_HIGHBITDEPTH
 typedef void (*HighbdIntraPred)(uint16_t *dst, ptrdiff_t stride,
@@ -832,6 +889,22 @@ INSTANTIATE_TEST_SUITE_P(
                              &vpx_highbd_d45_predictor_16x16_c, 16, 8),
         HighbdIntraPredParam(&vpx_highbd_d45_predictor_32x32_neon,
                              &vpx_highbd_d45_predictor_32x32_c, 32, 8),
+        HighbdIntraPredParam(&vpx_highbd_d63_predictor_4x4_neon,
+                             &vpx_highbd_d63_predictor_4x4_c, 4, 8),
+        HighbdIntraPredParam(&vpx_highbd_d63_predictor_8x8_neon,
+                             &vpx_highbd_d63_predictor_8x8_c, 8, 8),
+        HighbdIntraPredParam(&vpx_highbd_d63_predictor_16x16_neon,
+                             &vpx_highbd_d63_predictor_16x16_c, 16, 8),
+        HighbdIntraPredParam(&vpx_highbd_d63_predictor_32x32_neon,
+                             &vpx_highbd_d63_predictor_32x32_c, 32, 8),
+        HighbdIntraPredParam(&vpx_highbd_d117_predictor_4x4_neon,
+                             &vpx_highbd_d117_predictor_4x4_c, 4, 8),
+        HighbdIntraPredParam(&vpx_highbd_d117_predictor_8x8_neon,
+                             &vpx_highbd_d117_predictor_8x8_c, 8, 8),
+        HighbdIntraPredParam(&vpx_highbd_d117_predictor_16x16_neon,
+                             &vpx_highbd_d117_predictor_16x16_c, 16, 8),
+        HighbdIntraPredParam(&vpx_highbd_d117_predictor_32x32_neon,
+                             &vpx_highbd_d117_predictor_32x32_c, 32, 8),
         HighbdIntraPredParam(&vpx_highbd_d135_predictor_4x4_neon,
                              &vpx_highbd_d135_predictor_4x4_c, 4, 8),
         HighbdIntraPredParam(&vpx_highbd_d135_predictor_8x8_neon,
@@ -840,6 +913,22 @@ INSTANTIATE_TEST_SUITE_P(
                              &vpx_highbd_d135_predictor_16x16_c, 16, 8),
         HighbdIntraPredParam(&vpx_highbd_d135_predictor_32x32_neon,
                              &vpx_highbd_d135_predictor_32x32_c, 32, 8),
+        HighbdIntraPredParam(&vpx_highbd_d153_predictor_4x4_neon,
+                             &vpx_highbd_d153_predictor_4x4_c, 4, 8),
+        HighbdIntraPredParam(&vpx_highbd_d153_predictor_8x8_neon,
+                             &vpx_highbd_d153_predictor_8x8_c, 8, 8),
+        HighbdIntraPredParam(&vpx_highbd_d153_predictor_16x16_neon,
+                             &vpx_highbd_d153_predictor_16x16_c, 16, 8),
+        HighbdIntraPredParam(&vpx_highbd_d153_predictor_32x32_neon,
+                             &vpx_highbd_d153_predictor_32x32_c, 32, 8),
+        HighbdIntraPredParam(&vpx_highbd_d207_predictor_4x4_neon,
+                             &vpx_highbd_d207_predictor_4x4_c, 4, 8),
+        HighbdIntraPredParam(&vpx_highbd_d207_predictor_8x8_neon,
+                             &vpx_highbd_d207_predictor_8x8_c, 8, 8),
+        HighbdIntraPredParam(&vpx_highbd_d207_predictor_16x16_neon,
+                             &vpx_highbd_d207_predictor_16x16_c, 16, 8),
+        HighbdIntraPredParam(&vpx_highbd_d207_predictor_32x32_neon,
+                             &vpx_highbd_d207_predictor_32x32_c, 32, 8),
         HighbdIntraPredParam(&vpx_highbd_dc_128_predictor_4x4_neon,
                              &vpx_highbd_dc_128_predictor_4x4_c, 4, 8),
         HighbdIntraPredParam(&vpx_highbd_dc_128_predictor_8x8_neon,
@@ -908,6 +997,22 @@ INSTANTIATE_TEST_SUITE_P(
                              &vpx_highbd_d45_predictor_16x16_c, 16, 10),
         HighbdIntraPredParam(&vpx_highbd_d45_predictor_32x32_neon,
                              &vpx_highbd_d45_predictor_32x32_c, 32, 10),
+        HighbdIntraPredParam(&vpx_highbd_d63_predictor_4x4_neon,
+                             &vpx_highbd_d63_predictor_4x4_c, 4, 10),
+        HighbdIntraPredParam(&vpx_highbd_d63_predictor_8x8_neon,
+                             &vpx_highbd_d63_predictor_8x8_c, 8, 10),
+        HighbdIntraPredParam(&vpx_highbd_d63_predictor_16x16_neon,
+                             &vpx_highbd_d63_predictor_16x16_c, 16, 10),
+        HighbdIntraPredParam(&vpx_highbd_d63_predictor_32x32_neon,
+                             &vpx_highbd_d63_predictor_32x32_c, 32, 10),
+        HighbdIntraPredParam(&vpx_highbd_d117_predictor_4x4_neon,
+                             &vpx_highbd_d117_predictor_4x4_c, 4, 10),
+        HighbdIntraPredParam(&vpx_highbd_d117_predictor_8x8_neon,
+                             &vpx_highbd_d117_predictor_8x8_c, 8, 10),
+        HighbdIntraPredParam(&vpx_highbd_d117_predictor_16x16_neon,
+                             &vpx_highbd_d117_predictor_16x16_c, 16, 10),
+        HighbdIntraPredParam(&vpx_highbd_d117_predictor_32x32_neon,
+                             &vpx_highbd_d117_predictor_32x32_c, 32, 10),
         HighbdIntraPredParam(&vpx_highbd_d135_predictor_4x4_neon,
                              &vpx_highbd_d135_predictor_4x4_c, 4, 10),
         HighbdIntraPredParam(&vpx_highbd_d135_predictor_8x8_neon,
@@ -916,6 +1021,22 @@ INSTANTIATE_TEST_SUITE_P(
                              &vpx_highbd_d135_predictor_16x16_c, 16, 10),
         HighbdIntraPredParam(&vpx_highbd_d135_predictor_32x32_neon,
                              &vpx_highbd_d135_predictor_32x32_c, 32, 10),
+        HighbdIntraPredParam(&vpx_highbd_d153_predictor_4x4_neon,
+                             &vpx_highbd_d153_predictor_4x4_c, 4, 10),
+        HighbdIntraPredParam(&vpx_highbd_d153_predictor_8x8_neon,
+                             &vpx_highbd_d153_predictor_8x8_c, 8, 10),
+        HighbdIntraPredParam(&vpx_highbd_d153_predictor_16x16_neon,
+                             &vpx_highbd_d153_predictor_16x16_c, 16, 10),
+        HighbdIntraPredParam(&vpx_highbd_d153_predictor_32x32_neon,
+                             &vpx_highbd_d153_predictor_32x32_c, 32, 10),
+        HighbdIntraPredParam(&vpx_highbd_d207_predictor_4x4_neon,
+                             &vpx_highbd_d207_predictor_4x4_c, 4, 10),
+        HighbdIntraPredParam(&vpx_highbd_d207_predictor_8x8_neon,
+                             &vpx_highbd_d207_predictor_8x8_c, 8, 10),
+        HighbdIntraPredParam(&vpx_highbd_d207_predictor_16x16_neon,
+                             &vpx_highbd_d207_predictor_16x16_c, 16, 10),
+        HighbdIntraPredParam(&vpx_highbd_d207_predictor_32x32_neon,
+                             &vpx_highbd_d207_predictor_32x32_c, 32, 10),
         HighbdIntraPredParam(&vpx_highbd_dc_128_predictor_4x4_neon,
                              &vpx_highbd_dc_128_predictor_4x4_c, 4, 10),
         HighbdIntraPredParam(&vpx_highbd_dc_128_predictor_8x8_neon,
@@ -984,6 +1105,22 @@ INSTANTIATE_TEST_SUITE_P(
                              &vpx_highbd_d45_predictor_16x16_c, 16, 12),
         HighbdIntraPredParam(&vpx_highbd_d45_predictor_32x32_neon,
                              &vpx_highbd_d45_predictor_32x32_c, 32, 12),
+        HighbdIntraPredParam(&vpx_highbd_d63_predictor_4x4_neon,
+                             &vpx_highbd_d63_predictor_4x4_c, 4, 12),
+        HighbdIntraPredParam(&vpx_highbd_d63_predictor_8x8_neon,
+                             &vpx_highbd_d63_predictor_8x8_c, 8, 12),
+        HighbdIntraPredParam(&vpx_highbd_d63_predictor_16x16_neon,
+                             &vpx_highbd_d63_predictor_16x16_c, 16, 12),
+        HighbdIntraPredParam(&vpx_highbd_d63_predictor_32x32_neon,
+                             &vpx_highbd_d63_predictor_32x32_c, 32, 12),
+        HighbdIntraPredParam(&vpx_highbd_d117_predictor_4x4_neon,
+                             &vpx_highbd_d117_predictor_4x4_c, 4, 10),
+        HighbdIntraPredParam(&vpx_highbd_d117_predictor_8x8_neon,
+                             &vpx_highbd_d117_predictor_8x8_c, 8, 10),
+        HighbdIntraPredParam(&vpx_highbd_d117_predictor_16x16_neon,
+                             &vpx_highbd_d117_predictor_16x16_c, 16, 10),
+        HighbdIntraPredParam(&vpx_highbd_d117_predictor_32x32_neon,
+                             &vpx_highbd_d117_predictor_32x32_c, 32, 10),
         HighbdIntraPredParam(&vpx_highbd_d135_predictor_4x4_neon,
                              &vpx_highbd_d135_predictor_4x4_c, 4, 12),
         HighbdIntraPredParam(&vpx_highbd_d135_predictor_8x8_neon,
@@ -992,6 +1129,22 @@ INSTANTIATE_TEST_SUITE_P(
                              &vpx_highbd_d135_predictor_16x16_c, 16, 12),
         HighbdIntraPredParam(&vpx_highbd_d135_predictor_32x32_neon,
                              &vpx_highbd_d135_predictor_32x32_c, 32, 12),
+        HighbdIntraPredParam(&vpx_highbd_d153_predictor_4x4_neon,
+                             &vpx_highbd_d153_predictor_4x4_c, 4, 12),
+        HighbdIntraPredParam(&vpx_highbd_d153_predictor_8x8_neon,
+                             &vpx_highbd_d153_predictor_8x8_c, 8, 12),
+        HighbdIntraPredParam(&vpx_highbd_d153_predictor_16x16_neon,
+                             &vpx_highbd_d153_predictor_16x16_c, 16, 12),
+        HighbdIntraPredParam(&vpx_highbd_d153_predictor_32x32_neon,
+                             &vpx_highbd_d153_predictor_32x32_c, 32, 12),
+        HighbdIntraPredParam(&vpx_highbd_d207_predictor_4x4_neon,
+                             &vpx_highbd_d207_predictor_4x4_c, 4, 12),
+        HighbdIntraPredParam(&vpx_highbd_d207_predictor_8x8_neon,
+                             &vpx_highbd_d207_predictor_8x8_c, 8, 12),
+        HighbdIntraPredParam(&vpx_highbd_d207_predictor_16x16_neon,
+                             &vpx_highbd_d207_predictor_16x16_c, 16, 12),
+        HighbdIntraPredParam(&vpx_highbd_d207_predictor_32x32_neon,
+                             &vpx_highbd_d207_predictor_32x32_c, 32, 12),
         HighbdIntraPredParam(&vpx_highbd_dc_128_predictor_4x4_neon,
                              &vpx_highbd_dc_128_predictor_4x4_c, 4, 12),
         HighbdIntraPredParam(&vpx_highbd_dc_128_predictor_8x8_neon,

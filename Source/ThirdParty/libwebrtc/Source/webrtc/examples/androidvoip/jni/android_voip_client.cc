@@ -427,10 +427,9 @@ void AndroidVoipClient::SendRtpPacket(const std::vector<uint8_t>& packet_copy) {
   }
 }
 
-bool AndroidVoipClient::SendRtp(const uint8_t* packet,
-                                size_t length,
+bool AndroidVoipClient::SendRtp(rtc::ArrayView<const uint8_t> packet,
                                 const webrtc::PacketOptions& options) {
-  std::vector<uint8_t> packet_copy(packet, packet + length);
+  std::vector<uint8_t> packet_copy(packet.begin(), packet.end());
   voip_thread_->PostTask([this, packet_copy = std::move(packet_copy)] {
     SendRtpPacket(packet_copy);
   });
@@ -447,8 +446,8 @@ void AndroidVoipClient::SendRtcpPacket(
   }
 }
 
-bool AndroidVoipClient::SendRtcp(const uint8_t* packet, size_t length) {
-  std::vector<uint8_t> packet_copy(packet, packet + length);
+bool AndroidVoipClient::SendRtcp(rtc::ArrayView<const uint8_t> packet) {
+  std::vector<uint8_t> packet_copy(packet.begin(), packet.end());
   voip_thread_->PostTask([this, packet_copy = std::move(packet_copy)] {
     SendRtcpPacket(packet_copy);
   });

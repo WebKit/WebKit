@@ -9,95 +9,116 @@ RUN(sourceElement.src = "http://foo.com/playlist.m3u8")
 RUN(sourceElement.type = "application/vnd.apple.mpegurl")
 RUN(video.appendChild(sourceElement))
 EVENT(sourceopen)
-RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
-RUN(sourceBuffer.appendBuffer(initSegment))
+RUN(sourceBuffer1 = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer1.appendBuffer(initSegment))
 EVENT(updateend)
-RUN(sourceBuffer.appendBuffer(syncSampleRun(5, 10)))
+RUN(sourceBuffer1.appendBuffer(syncSampleRun(5, 10)))
 onbufferedchange called.
 e.addedRanges = [5, 10)
 e.removedRanges = []
 EVENT(update)
-EXPECTED (sourceBuffer.buffered.length == '1') OK
-RUN(sourceBuffer.appendBuffer(syncSampleRun(0, 5)))
+EXPECTED (sourceBuffer1.buffered.length == '1') OK
+RUN(sourceBuffer1.appendBuffer(syncSampleRun(0, 5)))
 onbufferedchange called.
 e.addedRanges = [0, 5)
 e.removedRanges = []
 EVENT(update)
-EXPECTED (sourceBuffer.buffered.length == '1') OK
+EXPECTED (sourceBuffer1.buffered.length == '1') OK
 Clean sourcebuffer of all content.
-RUN(sourceBuffer.remove(0, sourceBuffer.buffered.end(0)))
+RUN(sourceBuffer1.remove(0, sourceBuffer1.buffered.end(0)))
 onbufferedchange called.
 e.addedRanges = []
 e.removedRanges = [0, 10)
 EVENT(update)
-EXPECTED (sourceBuffer.buffered.length == '0') OK
-RUN(sourceBuffer.appendBuffer(syncSampleRun(0, 3)))
+EXPECTED (sourceBuffer1.buffered.length == '0') OK
+RUN(sourceBuffer1.appendBuffer(syncSampleRun(0, 3)))
 onbufferedchange called.
 e.addedRanges = [0, 3)
 e.removedRanges = []
 EVENT(update)
-RUN(sourceBuffer.appendBuffer(syncSampleRun(3, 6)))
+RUN(sourceBuffer1.appendBuffer(syncSampleRun(3, 6)))
 onbufferedchange called.
 e.addedRanges = [3, 6)
 e.removedRanges = []
 EVENT(update)
-RUN(sourceBuffer.appendBuffer(syncSampleRun(6, 9)))
+RUN(sourceBuffer1.appendBuffer(syncSampleRun(6, 9)))
 onbufferedchange called.
 e.addedRanges = [6, 9)
 e.removedRanges = []
 EVENT(update)
 Re-adding the same samples does not update the buffer
-RUN(sourceBuffer.appendBuffer(syncSampleRun(0, 3)))
+RUN(sourceBuffer1.appendBuffer(syncSampleRun(0, 3)))
 EVENT(update)
 Removing first sync sample, remove the first 3 seconds block
-RUN(sourceBuffer.remove(0, 1))
+RUN(sourceBuffer1.remove(0, 1))
 onbufferedchange called.
 e.addedRanges = []
 e.removedRanges = [0, 3)
 EVENT(update)
 Removing from 8 to infinity, remove to the end of existing buffer
-RUN(sourceBuffer.remove(8, Infinity))
+RUN(sourceBuffer1.remove(8, Infinity))
 onbufferedchange called.
 e.addedRanges = []
 e.removedRanges = [8, 9)
 EVENT(update)
 Removing from empty range, does not update the buffer
-RUN(sourceBuffer.remove(0, 2))
+RUN(sourceBuffer1.remove(0, 2))
 EVENT(update)
 Removing from non-sync sample
-RUN(sourceBuffer.remove(4, 5))
+RUN(sourceBuffer1.remove(4, 5))
 onbufferedchange called.
 e.addedRanges = []
 e.removedRanges = [4, 6)
 EVENT(update)
 Overriding sync sample, remove following block and only update buffer for missing samples
 before: [3, 4),[6, 8)
-RUN(sourceBuffer.appendBuffer(syncSampleRun(5, 7)))
+RUN(sourceBuffer1.appendBuffer(syncSampleRun(5, 7)))
 onbufferedchange called.
 e.addedRanges = [5, 6)
 e.removedRanges = [7, 8)
 EVENT(update)
 after: [3, 4),[5, 7)
 Only report samples added in missing intervals
-RUN(sourceBuffer.appendBuffer(syncSampleRun(0, 10, 2)))
+RUN(sourceBuffer1.appendBuffer(syncSampleRun(0, 10, 2)))
 onbufferedchange called.
 e.addedRanges = [0, 3),[4, 5),[7, 10)
 e.removedRanges = []
 EVENT(update)
-RUN(sourceBuffer.remove(2, 4))
+RUN(sourceBuffer1.remove(2, 4))
 onbufferedchange called.
 e.addedRanges = []
 e.removedRanges = [2, 4)
 EVENT(update)
-RUN(sourceBuffer.remove(6, 8))
+RUN(sourceBuffer1.remove(6, 8))
 onbufferedchange called.
 e.addedRanges = []
 e.removedRanges = [6, 8)
 EVENT(update)
-RUN(sourceBuffer.remove(0, 10))
+RUN(sourceBuffer1.remove(0, 10))
 onbufferedchange called.
 e.addedRanges = []
 e.removedRanges = [0, 2),[4, 6),[8, 10)
 EVENT(update)
+RUN(sourceBuffer1.appendBuffer(syncSampleRun(0, 5)))
+onbufferedchange called.
+e.addedRanges = [0, 5)
+e.removedRanges = []
+EVENT(update)
+EXPECTED (sourceBuffer1.buffered.length == '1') OK
+video.buffered: [0, 5)
+RUN(sourceBuffer2 = source.addSourceBuffer("audio/mock; codecs=mock"))
+video.buffered: []
+RUN(sourceBuffer2.appendBuffer(initSegment))
+EVENT(updateend)
+video.buffered: []
+RUN(sourceBuffer2.appendBuffer(syncSampleRun(0, 6)))
+onbufferedchange called.
+e.addedRanges = [0, 6)
+e.removedRanges = []
+EVENT(update)
+EXPECTED (sourceBuffer2.buffered.length == '1') OK
+video.buffered: [0, 5)
+RUN(source.endOfStream())
+video.buffered: [0, 6)
 END OF TEST
 

@@ -78,7 +78,7 @@ class Y4mVideoSourceTest : public ::testing::TestWithParam<Y4mTestParam>,
  protected:
   Y4mVideoSourceTest() : Y4mVideoSource("", 0, 0) {}
 
-  virtual ~Y4mVideoSourceTest() { CloseSource(); }
+  ~Y4mVideoSourceTest() override { CloseSource(); }
 
   virtual void Init(const std::string &file_name, int limit) {
     file_name_ = file_name;
@@ -140,7 +140,7 @@ class Y4mVideoWriteTest : public Y4mVideoSourceTest {
  protected:
   Y4mVideoWriteTest() : tmpfile_(nullptr) {}
 
-  virtual ~Y4mVideoWriteTest() {
+  ~Y4mVideoWriteTest() override {
     delete tmpfile_;
     input_file_ = nullptr;
   }
@@ -172,7 +172,7 @@ class Y4mVideoWriteTest : public Y4mVideoSourceTest {
     ReplaceInputFile(tmpfile_->file());
   }
 
-  virtual void Init(const std::string &file_name, int limit) {
+  void Init(const std::string &file_name, int limit) override {
     Y4mVideoSourceTest::Init(file_name, limit);
     WriteY4mAndReadBack();
   }
@@ -196,12 +196,13 @@ static const char kY4MRegularHeader[] =
 
 TEST(Y4MHeaderTest, RegularHeader) {
   libvpx_test::TempOutFile f;
+  ASSERT_NE(f.file(), nullptr);
   fwrite(kY4MRegularHeader, 1, sizeof(kY4MRegularHeader), f.file());
   fflush(f.file());
   EXPECT_EQ(0, fseek(f.file(), 0, 0));
 
   y4m_input y4m;
-  EXPECT_EQ(y4m_input_open(&y4m, f.file(), /*skip_buffer=*/NULL,
+  EXPECT_EQ(y4m_input_open(&y4m, f.file(), /*skip_buffer=*/nullptr,
                            /*num_skip=*/0, /*only_420=*/0),
             0);
   EXPECT_EQ(y4m.pic_w, 4);
@@ -222,12 +223,13 @@ static const char kY4MLongHeader[] =
 
 TEST(Y4MHeaderTest, LongHeader) {
   libvpx_test::TempOutFile f;
+  ASSERT_NE(f.file(), nullptr);
   fwrite(kY4MLongHeader, 1, sizeof(kY4MLongHeader), f.file());
   fflush(f.file());
   EXPECT_EQ(fseek(f.file(), 0, 0), 0);
 
   y4m_input y4m;
-  EXPECT_EQ(y4m_input_open(&y4m, f.file(), /*skip_buffer=*/NULL,
+  EXPECT_EQ(y4m_input_open(&y4m, f.file(), /*skip_buffer=*/nullptr,
                            /*num_skip=*/0, /*only_420=*/0),
             0);
   EXPECT_EQ(y4m.pic_w, 4);

@@ -12,13 +12,13 @@ package org.webrtc;
 
 import static org.junit.Assert.assertEquals;
 
-import org.chromium.testing.local.LocalRobolectricTestRunner;
+import androidx.test.runner.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 import org.webrtc.VideoEncoder.ScalingSettings;
 
-@RunWith(LocalRobolectricTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 @Config(manifest = Config.NONE)
 public class ScalingSettingsTest {
   @Test

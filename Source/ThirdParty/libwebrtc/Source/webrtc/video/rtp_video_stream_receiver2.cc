@@ -339,7 +339,7 @@ RtpVideoStreamReceiver2::RtpVideoStreamReceiver2(
   if (frame_transformer) {
     frame_transformer_delegate_ =
         rtc::make_ref_counted<RtpVideoStreamReceiverFrameTransformerDelegate>(
-            this, std::move(frame_transformer), rtc::Thread::Current(),
+            this, clock_, std::move(frame_transformer), rtc::Thread::Current(),
             config_.rtp.remote_ssrc);
     frame_transformer_delegate_->Init();
   }
@@ -565,7 +565,13 @@ void RtpVideoStreamReceiver2::OnReceivedPayloadData(
           // Assume frequency is the same one for all video frames.
           kVideoPayloadTypeFrequency,
           rtp_packet.GetExtension<AbsoluteCaptureTimeExtension>()));
-
+  if (packet_info.absolute_capture_time().has_value()) {
+    packet_info.set_local_capture_clock_offset(
+        capture_clock_offset_updater_.ConvertsToTimeDela(
+            capture_clock_offset_updater_.AdjustEstimatedCaptureClockOffset(
+                packet_info.absolute_capture_time()
+                    ->estimated_capture_clock_offset)));
+  }
   RTPVideoHeader& video_header = packet->video_header;
   video_header.rotation = kVideoRotation_0;
   video_header.content_type = VideoContentType::UNSPECIFIED;
@@ -577,10 +583,13 @@ void RtpVideoStreamReceiver2::OnReceivedPayloadData(
       &video_header.content_type);
   rtp_packet.GetExtension<VideoTimingExtension>(&video_header.video_timing);
   if (forced_playout_delay_max_ms_ && forced_playout_delay_min_ms_) {
-    video_header.playout_delay.max_ms = *forced_playout_delay_max_ms_;
-    video_header.playout_delay.min_ms = *forced_playout_delay_min_ms_;
+    if (!video_header.playout_delay.emplace().Set(
+            TimeDelta::Millis(*forced_playout_delay_min_ms_),
+            TimeDelta::Millis(*forced_playout_delay_max_ms_))) {
+      video_header.playout_delay = absl::nullopt;
+    }
   } else {
-    rtp_packet.GetExtension<PlayoutDelayLimits>(&video_header.playout_delay);
+    video_header.playout_delay = rtp_packet.GetExtension<PlayoutDelayLimits>();
   }
 
   ParseGenericDependenciesResult generic_descriptor_state =
@@ -927,7 +936,7 @@ void RtpVideoStreamReceiver2::OnAssembledFrame(
   // Reset `reference_finder_` if `frame` is new and the codec have changed.
   if (current_codec_) {
     bool frame_is_newer =
-        AheadOf(frame->Timestamp(), last_assembled_frame_rtp_timestamp_);
+        AheadOf(frame->RtpTimestamp(), last_assembled_frame_rtp_timestamp_);
 
     if (frame->codec_type() != current_codec_) {
       if (frame_is_newer) {
@@ -945,11 +954,11 @@ void RtpVideoStreamReceiver2::OnAssembledFrame(
     }
 
     if (frame_is_newer) {
-      last_assembled_frame_rtp_timestamp_ = frame->Timestamp();
+      last_assembled_frame_rtp_timestamp_ = frame->RtpTimestamp();
     }
   } else {
     current_codec_ = frame->codec_type();
-    last_assembled_frame_rtp_timestamp_ = frame->Timestamp();
+    last_assembled_frame_rtp_timestamp_ = frame->RtpTimestamp();
   }
 
   if (buffered_frame_decryptor_ != nullptr) {
@@ -1005,7 +1014,7 @@ void RtpVideoStreamReceiver2::SetDepacketizerToDecoderFrameTransformer(
   RTC_DCHECK_RUN_ON(&worker_task_checker_);
   frame_transformer_delegate_ =
       rtc::make_ref_counted<RtpVideoStreamReceiverFrameTransformerDelegate>(
-          this, std::move(frame_transformer), rtc::Thread::Current(),
+          this, clock_, std::move(frame_transformer), rtc::Thread::Current(),
           config_.rtp.remote_ssrc);
   frame_transformer_delegate_->Init();
 }
@@ -1092,6 +1101,12 @@ absl::optional<int64_t> RtpVideoStreamReceiver2::LastReceivedPacketMs() const {
     return absl::optional<int64_t>(last_received_rtp_system_time_->ms());
   }
   return absl::nullopt;
+}
+
+absl::optional<uint32_t>
+RtpVideoStreamReceiver2::LastReceivedFrameRtpTimestamp() const {
+  RTC_DCHECK_RUN_ON(&packet_sequence_checker_);
+  return last_received_rtp_timestamp_;
 }
 
 absl::optional<int64_t> RtpVideoStreamReceiver2::LastReceivedKeyframePacketMs()

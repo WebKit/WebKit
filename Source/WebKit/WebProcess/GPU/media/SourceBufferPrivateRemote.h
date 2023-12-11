@@ -96,7 +96,6 @@ private:
     void setTimestampOffset(const MediaTime&) final;
     void setAppendWindowStart(const MediaTime&) final;
     void setAppendWindowEnd(const MediaTime&) final;
-    Vector<WebCore::PlatformTimeRanges> trackBuffersRanges() const final { return m_trackBufferRanges; };
 
     Ref<ComputeSeekPromise> computeSeekTime(const WebCore::SeekTarget&) final;
     void seekToTime(const MediaTime&) final;
@@ -114,21 +113,17 @@ private:
     void sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegmentInfo&&, CompletionHandler<void(WebCore::MediaPromise::Result&&)>&&);
     void takeOwnershipOfMemory(WebKit::SharedMemory::Handle&&);
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&);
-    void sourceBufferPrivateBufferedChanged(WebCore::PlatformTimeRanges&&, CompletionHandler<void()>&&);
-    void sourceBufferPrivateTrackBuffersChanged(Vector<WebCore::PlatformTimeRanges>&&);
+    void sourceBufferPrivateBufferedChanged(Vector<WebCore::PlatformTimeRanges>&&, uint64_t, CompletionHandler<void()>&&);
     void sourceBufferPrivateDurationChanged(const MediaTime&, CompletionHandler<void()>&&);
     void sourceBufferPrivateDidParseSample(double sampleDuration);
     void sourceBufferPrivateDidDropSample();
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode);
-    void sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory);
     MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID) override;
     void setMaximumQueueDepthForTrackID(TrackID, uint64_t) override;
 
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     RemoteSourceBufferIdentifier m_remoteSourceBufferIdentifier;
     WeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
-
-    Vector<WebCore::PlatformTimeRanges> m_trackBufferRanges;
 
     uint64_t m_totalTrackBufferSizeInBytes = { 0 };
 

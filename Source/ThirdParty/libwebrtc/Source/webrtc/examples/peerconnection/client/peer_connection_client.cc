@@ -12,6 +12,7 @@
 
 #include "api/units/time_delta.h"
 #include "examples/peerconnection/client/defaults.h"
+#include "rtc_base/async_dns_resolver.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helpers.h"
@@ -32,7 +33,7 @@ rtc::Socket* CreateClientSocket(int family) {
 }  // namespace
 
 PeerConnectionClient::PeerConnectionClient()
-    : callback_(NULL), resolver_(NULL), state_(NOT_CONNECTED), my_id_(-1) {}
+    : callback_(NULL), resolver_(nullptr), state_(NOT_CONNECTED), my_id_(-1) {}
 
 PeerConnectionClient::~PeerConnectionClient() = default;
 
@@ -95,26 +96,32 @@ void PeerConnectionClient::Connect(const std::string& server,
   client_name_ = client_name;
 
   if (server_address_.IsUnresolvedIP()) {
+    RTC_DCHECK_NE(state_, RESOLVING);
+    RTC_DCHECK(!resolver_);
     state_ = RESOLVING;
-    resolver_ = new rtc::AsyncResolver();
-    resolver_->SignalDone.connect(this, &PeerConnectionClient::OnResolveResult);
-    resolver_->Start(server_address_);
+    resolver_ = std::make_unique<webrtc::AsyncDnsResolver>();
+    resolver_->Start(server_address_,
+                     [this] { OnResolveResult(resolver_->result()); });
   } else {
     DoConnect();
   }
 }
 
 void PeerConnectionClient::OnResolveResult(
-    rtc::AsyncResolverInterface* resolver) {
-  if (resolver_->GetError() != 0) {
+    const webrtc::AsyncDnsResolverResult& result) {
+  if (result.GetError() != 0) {
     callback_->OnServerConnectionFailure();
-    resolver_->Destroy(false);
-    resolver_ = NULL;
+    resolver_.reset();
     state_ = NOT_CONNECTED;
-  } else {
-    server_address_ = resolver_->address();
-    DoConnect();
+    return;
   }
+  if (!result.GetResolvedAddress(AF_INET, &server_address_)) {
+    callback_->OnServerConnectionFailure();
+    resolver_.reset();
+    state_ = NOT_CONNECTED;
+    return;
+  }
+  DoConnect();
 }
 
 void PeerConnectionClient::DoConnect() {
@@ -196,10 +203,7 @@ void PeerConnectionClient::Close() {
   hanging_get_->Close();
   onconnect_data_.clear();
   peers_.clear();
-  if (resolver_ != NULL) {
-    resolver_->Destroy(false);
-    resolver_ = NULL;
-  }
+  resolver_.reset();
   my_id_ = -1;
   state_ = NOT_CONNECTED;
 }

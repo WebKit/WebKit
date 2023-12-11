@@ -160,6 +160,8 @@ class PeerConnectionRampUpTest : public ::testing::Test {
         virtual_socket_server_(new rtc::VirtualSocketServer()),
         firewall_socket_server_(
             new rtc::FirewallSocketServer(virtual_socket_server_.get())),
+        firewall_socket_factory_(
+            new rtc::BasicPacketSocketFactory(firewall_socket_server_.get())),
         network_thread_(new rtc::Thread(firewall_socket_server_.get())),
         worker_thread_(rtc::Thread::Create()) {
     network_thread_->SetName("PCNetworkThread", this);
@@ -201,10 +203,9 @@ class PeerConnectionRampUpTest : public ::testing::Test {
     auto observer = std::make_unique<MockPeerConnectionObserver>();
     webrtc::PeerConnectionDependencies dependencies(observer.get());
     cricket::BasicPortAllocator* port_allocator =
-        new cricket::BasicPortAllocator(
-            fake_network_manager,
-            std::make_unique<rtc::BasicPacketSocketFactory>(
-                firewall_socket_server_.get()));
+        new cricket::BasicPortAllocator(fake_network_manager,
+                                        firewall_socket_factory_.get());
+
     port_allocator->set_step_delay(cricket::kDefaultStepDelay);
     dependencies.allocator =
         std::unique_ptr<cricket::BasicPortAllocator>(port_allocator);
@@ -344,6 +345,8 @@ class PeerConnectionRampUpTest : public ::testing::Test {
   // up queue.
   std::unique_ptr<rtc::VirtualSocketServer> virtual_socket_server_;
   std::unique_ptr<rtc::FirewallSocketServer> firewall_socket_server_;
+  std::unique_ptr<rtc::BasicPacketSocketFactory> firewall_socket_factory_;
+
   std::unique_ptr<rtc::Thread> network_thread_;
   std::unique_ptr<rtc::Thread> worker_thread_;
   // The `pc_factory` uses `network_thread_` & `worker_thread_`, so it must be

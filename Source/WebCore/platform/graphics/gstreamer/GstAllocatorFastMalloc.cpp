@@ -148,6 +148,8 @@ static void gst_allocator_fast_malloc_init(GstAllocatorFastMalloc* allocator)
 {
     auto* baseAllocator = GST_ALLOCATOR_CAST(allocator);
 
+    GST_OBJECT_FLAG_SET(allocator, GST_OBJECT_FLAG_MAY_BE_LEAKED);
+
     baseAllocator->mem_type = "FastMalloc";
     baseAllocator->mem_map = reinterpret_cast<GstMemoryMapFunction>(gstAllocatorFastMallocMemMap);
     baseAllocator->mem_unmap = reinterpret_cast<GstMemoryUnmapFunction>(gstAllocatorFastMallocMemUnmap);

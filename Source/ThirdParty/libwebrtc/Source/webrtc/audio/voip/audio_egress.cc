@@ -132,8 +132,10 @@ int32_t AudioEgress::SendData(AudioFrameType frame_type,
   const uint32_t rtp_timestamp = timestamp + rtp_rtcp_->StartTimestamp();
 
   // This call will trigger Transport::SendPacket() from the RTP/RTCP module.
-  if (!rtp_sender_audio_.SendAudio(frame_type, payload_type, rtp_timestamp,
-                                   payload.data(), payload.size())) {
+  if (!rtp_sender_audio_.SendAudio({.type = frame_type,
+                                    .payload = payload,
+                                    .payload_id = payload_type,
+                                    .rtp_timestamp = rtp_timestamp})) {
     RTC_DLOG(LS_ERROR)
         << "AudioEgress::SendData() failed to send data to RTP/RTCP module";
     return -1;

@@ -20,6 +20,7 @@
 #include "absl/types/optional.h"
 #include "api/task_queue/task_queue_base.h"
 #include "net/dcsctp/public/timeout.h"
+#include "net/dcsctp/public/types.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/containers/flat_set.h"
 
@@ -53,6 +54,7 @@ class FakeTimeout : public Timeout {
   }
 
   TimeoutID timeout_id() const { return timeout_id_; }
+  TimeMs expiry() const { return expiry_; }
 
  private:
   const std::function<TimeMs()> get_time_;
@@ -95,6 +97,19 @@ class FakeTimeoutManager {
       }
     }
     return absl::nullopt;
+  }
+
+  DurationMs GetTimeToNextTimeout() const {
+    TimeMs next_expiry = TimeMs::InfiniteFuture();
+    for (const FakeTimeout* timer : timers_) {
+      if (timer->expiry() < next_expiry) {
+        next_expiry = timer->expiry();
+      }
+    }
+    TimeMs now = get_time_();
+    return next_expiry != TimeMs::InfiniteFuture() && next_expiry >= now
+               ? next_expiry - now
+               : DurationMs::InfiniteDuration();
   }
 
  private:

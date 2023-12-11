@@ -10,12 +10,16 @@
 
 #include "pc/rtp_transport.h"
 
+#include <utility>
+
 #include "p2p/base/fake_packet_transport.h"
 #include "pc/test/rtp_transport_test_util.h"
 #include "rtc_base/buffer.h"
 #include "rtc_base/containers/flat_set.h"
+#include "rtc_base/gunit.h"
 #include "rtc_base/third_party/sigslot/sigslot.h"
 #include "test/gtest.h"
+#include "test/run_loop.h"
 
 namespace webrtc {
 
@@ -30,9 +34,12 @@ class SignalObserver : public sigslot::has_slots<> {
  public:
   explicit SignalObserver(RtpTransport* transport) {
     transport_ = transport;
-    transport->SignalReadyToSend.connect(this, &SignalObserver::OnReadyToSend);
-    transport->SignalNetworkRouteChanged.connect(
-        this, &SignalObserver::OnNetworkRouteChanged);
+    transport->SubscribeReadyToSend(
+        this, [this](bool ready) { OnReadyToSend(ready); });
+    transport->SubscribeNetworkRouteChanged(
+        this, [this](absl::optional<rtc::NetworkRoute> route) {
+          OnNetworkRouteChanged(route);
+        });
     if (transport->rtp_packet_transport()) {
       transport->rtp_packet_transport()->SignalSentPacket.connect(
           this, &SignalObserver::OnSentPacket);
@@ -316,6 +323,30 @@ TEST(RtpTransportTest, DontSignalUnhandledRtpPayloadType) {
   EXPECT_EQ(0, observer.rtcp_count());
   // Remove the sink before destroying the transport.
   transport.UnregisterRtpDemuxerSink(&observer);
+}
+
+TEST(RtpTransportTest, RecursiveSetSendDoesNotCrash) {
+  const int kShortTimeout = 100;
+  test::RunLoop loop;
+  RtpTransport transport(kMuxEnabled);
+  rtc::FakePacketTransport fake_rtp("fake_rtp");
+  transport.SetRtpPacketTransport(&fake_rtp);
+  TransportObserver observer(&transport);
+  observer.SetActionOnReadyToSend([&](bool ready) {
+    const rtc::PacketOptions options;
+    const int flags = 0;
+    rtc::CopyOnWriteBuffer rtp_data(kRtpData, kRtpLen);
+    transport.SendRtpPacket(&rtp_data, options, flags);
+  });
+  // The fake RTP will have no destination, so will return -1.
+  fake_rtp.SetError(ENOTCONN);
+  fake_rtp.SetWritable(true);
+  // At this point, only the initial ready-to-send is observed.
+  EXPECT_TRUE(observer.ready_to_send());
+  EXPECT_EQ(observer.ready_to_send_signal_count(), 1);
+  // After the wait, the ready-to-send false is observed.
+  EXPECT_EQ_WAIT(observer.ready_to_send_signal_count(), 2, kShortTimeout);
+  EXPECT_FALSE(observer.ready_to_send());
 }
 
 }  // namespace webrtc

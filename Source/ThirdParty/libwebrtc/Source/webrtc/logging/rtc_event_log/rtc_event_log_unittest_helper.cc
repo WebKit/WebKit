@@ -169,11 +169,11 @@ std::unique_ptr<RtcEventFrameDecoded> EventGenerator::NewFrameDecodedEvent(
   constexpr int kMaxHeight = 8640;
   constexpr int kMinWidth = 16;
   constexpr int kMinHeight = 16;
-  constexpr int kNumCodecTypes = 5;
+  constexpr int kNumCodecTypes = 6;
 
   constexpr VideoCodecType kCodecList[kNumCodecTypes] = {
-      kVideoCodecGeneric, kVideoCodecVP8, kVideoCodecVP9, kVideoCodecAV1,
-      kVideoCodecH264};
+      kVideoCodecGeneric, kVideoCodecVP8,  kVideoCodecVP9,
+      kVideoCodecAV1,     kVideoCodecH264, kVideoCodecH265};
   const int64_t render_time_ms =
       rtc::TimeMillis() + prng_.Rand(kMinRenderDelayMs, kMaxRenderDelayMs);
   const int width = prng_.Rand(kMinWidth, kMaxWidth);

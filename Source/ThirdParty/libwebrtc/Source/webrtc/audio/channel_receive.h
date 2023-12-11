@@ -63,7 +63,7 @@ struct CallReceiveStatistics {
   // The timestamp at which the last packet was received, i.e. the time of the
   // local clock when it was received - not the RTP timestamp of that packet.
   // https://w3c.github.io/webrtc-stats/#dom-rtcinboundrtpstreamstats-lastpacketreceivedtimestamp
-  absl::optional<int64_t> last_packet_received_timestamp_ms;
+  absl::optional<Timestamp> last_packet_received;
   // Remote outbound stats derived by the received RTCP sender reports.
   // Note that the timestamps below correspond to the time elapsed since the
   // Unix epoch.

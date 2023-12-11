@@ -312,7 +312,7 @@ void TestScreenCastStreamProvider::OnStreamAddBuffer(void* data,
   spa_data->type = SPA_DATA_MemFd;
   spa_data->fd =
       memfd_create("pipewire-test-memfd", MFD_CLOEXEC | MFD_ALLOW_SEALING);
-  if (spa_data->fd == -1) {
+  if (spa_data->fd == kInvalidPipeWireFd) {
     RTC_LOG(LS_ERROR) << "PipeWire test: Can't create memfd";
     return;
   }

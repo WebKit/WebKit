@@ -1844,7 +1844,7 @@
 		A13DC682207AA6B20066EF72 /* WKApplicationStateTrackingView.h in Headers */ = {isa = PBXBuildFile; fileRef = A13DC680207AA6B20066EF72 /* WKApplicationStateTrackingView.h */; };
 		A141DF4F2B06ED0800E80B2D /* MediaCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = A141DF4D2B06ECFB00E80B2D /* MediaCapability.h */; };
 		A141DF502B06ED0F00E80B2D /* MediaCapability.mm in Sources */ = {isa = PBXBuildFile; fileRef = A141DF4E2B06ECFB00E80B2D /* MediaCapability.mm */; };
-		A141DF522B07054900E80B2D /* ProcessCapabilityGrant.h in Headers */ = {isa = PBXBuildFile; fileRef = A141DF512B07054900E80B2D /* ProcessCapabilityGrant.h */; };
+		A141DF522B07054900E80B2D /* ExtensionCapabilityGrant.h in Headers */ = {isa = PBXBuildFile; fileRef = A141DF512B07054900E80B2D /* ExtensionCapabilityGrant.h */; };
 		A15797642582B1DB00528236 /* MediaFormatReader.bundle in Copy Plug-ins */ = {isa = PBXBuildFile; fileRef = A16E66002581930800EE1749 /* MediaFormatReader.bundle */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A15799B72584433200528236 /* MediaTrackReader.h in Headers */ = {isa = PBXBuildFile; fileRef = A15799AE2584433100528236 /* MediaTrackReader.h */; };
 		A15799BC2584433200528236 /* CoreMediaWrapped.h in Headers */ = {isa = PBXBuildFile; fileRef = A15799B32584433100528236 /* CoreMediaWrapped.h */; };
@@ -1867,10 +1867,10 @@
 		A1A4FE5A18DCE9FA00B5EA8A /* _WKDownload.h in Headers */ = {isa = PBXBuildFile; fileRef = A1A4FE5718DCE9FA00B5EA8A /* _WKDownload.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A1A4FE5C18DCE9FA00B5EA8A /* _WKDownloadInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = A1A4FE5918DCE9FA00B5EA8A /* _WKDownloadInternal.h */; };
 		A1A4FE6118DD54A400B5EA8A /* _WKDownloadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = A1A4FE6018DD54A400B5EA8A /* _WKDownloadDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A1AE0EC32B166439008A2563 /* ProcessCapabilityGranter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1AE0EC12B1663D4008A2563 /* ProcessCapabilityGranter.h */; };
+		A1AE0EC32B166439008A2563 /* ExtensionCapabilityGranter.h in Headers */ = {isa = PBXBuildFile; fileRef = A1AE0EC12B1663D4008A2563 /* ExtensionCapabilityGranter.h */; };
 		A1B4DCE125A7923C007D178C /* MediaSampleByteRange.h in Headers */ = {isa = PBXBuildFile; fileRef = A1B4DCDF25A79211007D178C /* MediaSampleByteRange.h */; };
 		A1C512C9190656E500448914 /* WebPreviewLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = A1C512C7190656E500448914 /* WebPreviewLoaderClient.h */; };
-		A1D615672B06BBAC002D0E19 /* ProcessCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D615622B06BBAB002D0E19 /* ProcessCapability.h */; };
+		A1D615672B06BBAC002D0E19 /* ExtensionCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D615622B06BBAB002D0E19 /* ExtensionCapability.h */; };
 		A1D6156B2B06BBAC002D0E19 /* AssertionCapability.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D615662B06BBAB002D0E19 /* AssertionCapability.h */; };
 		A1D6156D2B06BCB2002D0E19 /* ExtensionKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D6156C2B06BCB2002D0E19 /* ExtensionKitSoftLink.h */; };
 		A1D615722B06C7C2002D0E19 /* AssertionCapability.mm in Sources */ = {isa = PBXBuildFile; fileRef = A1D615632B06BBAB002D0E19 /* AssertionCapability.mm */; };
@@ -6691,8 +6691,8 @@
 		A13DC681207AA6B20066EF72 /* WKApplicationStateTrackingView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKApplicationStateTrackingView.mm; path = ios/WKApplicationStateTrackingView.mm; sourceTree = "<group>"; };
 		A141DF4D2B06ECFB00E80B2D /* MediaCapability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaCapability.h; sourceTree = "<group>"; };
 		A141DF4E2B06ECFB00E80B2D /* MediaCapability.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaCapability.mm; sourceTree = "<group>"; };
-		A141DF512B07054900E80B2D /* ProcessCapabilityGrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProcessCapabilityGrant.h; sourceTree = "<group>"; };
-		A141DF532B07069700E80B2D /* ProcessCapabilityGrant.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessCapabilityGrant.mm; sourceTree = "<group>"; };
+		A141DF512B07054900E80B2D /* ExtensionCapabilityGrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtensionCapabilityGrant.h; sourceTree = "<group>"; };
+		A141DF532B07069700E80B2D /* ExtensionCapabilityGrant.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ExtensionCapabilityGrant.mm; sourceTree = "<group>"; };
 		A15799AE2584433100528236 /* MediaTrackReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTrackReader.h; sourceTree = "<group>"; };
 		A15799AF2584433100528236 /* MediaSampleCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSampleCursor.cpp; sourceTree = "<group>"; };
 		A15799B02584433100528236 /* MediaFormatReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaFormatReader.cpp; sourceTree = "<group>"; };
@@ -6730,14 +6730,14 @@
 		A1A4FE5918DCE9FA00B5EA8A /* _WKDownloadInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDownloadInternal.h; sourceTree = "<group>"; };
 		A1A4FE6018DD54A400B5EA8A /* _WKDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKDownloadDelegate.h; sourceTree = "<group>"; };
 		A1ADAFB52368E4B8009CB776 /* SharedMemory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SharedMemory.cpp; sourceTree = "<group>"; };
-		A1AE0EC12B1663D4008A2563 /* ProcessCapabilityGranter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProcessCapabilityGranter.h; sourceTree = "<group>"; };
-		A1AE0EC22B1663D4008A2563 /* ProcessCapabilityGranter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ProcessCapabilityGranter.mm; sourceTree = "<group>"; };
+		A1AE0EC12B1663D4008A2563 /* ExtensionCapabilityGranter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtensionCapabilityGranter.h; sourceTree = "<group>"; };
+		A1AE0EC22B1663D4008A2563 /* ExtensionCapabilityGranter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ExtensionCapabilityGranter.mm; sourceTree = "<group>"; };
 		A1B4DCDF25A79211007D178C /* MediaSampleByteRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSampleByteRange.h; sourceTree = "<group>"; };
 		A1B4DCE025A79211007D178C /* MediaSampleByteRange.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSampleByteRange.cpp; sourceTree = "<group>"; };
 		A1B9CA382246E54A003D6DCA /* WebPaymentCoordinatorCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPaymentCoordinatorCocoa.mm; sourceTree = "<group>"; };
 		A1C512C6190656E500448914 /* WebPreviewLoaderClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPreviewLoaderClient.cpp; path = ios/WebPreviewLoaderClient.cpp; sourceTree = "<group>"; };
 		A1C512C7190656E500448914 /* WebPreviewLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebPreviewLoaderClient.h; path = ios/WebPreviewLoaderClient.h; sourceTree = "<group>"; };
-		A1D615622B06BBAB002D0E19 /* ProcessCapability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessCapability.h; sourceTree = "<group>"; };
+		A1D615622B06BBAB002D0E19 /* ExtensionCapability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtensionCapability.h; sourceTree = "<group>"; };
 		A1D615632B06BBAB002D0E19 /* AssertionCapability.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AssertionCapability.mm; sourceTree = "<group>"; };
 		A1D615662B06BBAB002D0E19 /* AssertionCapability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AssertionCapability.h; sourceTree = "<group>"; };
 		A1D6156C2B06BCB2002D0E19 /* ExtensionKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtensionKitSoftLink.h; sourceTree = "<group>"; };
@@ -8968,6 +8968,8 @@
 				83891B6A1A68C30B0030F386 /* DiagnosticLoggingClient.h */,
 				83891B6B1A68C30B0030F386 /* DiagnosticLoggingClient.mm */,
 				5C2B1AF5223C1FD200B91CF7 /* DownloadProxyMapCocoa.mm */,
+				A1AE0EC12B1663D4008A2563 /* ExtensionCapabilityGranter.h */,
+				A1AE0EC22B1663D4008A2563 /* ExtensionCapabilityGranter.mm */,
 				00B9661818E25AE100CE1F88 /* FindClient.h */,
 				00B9661718E25AE100CE1F88 /* FindClient.mm */,
 				CD78E1131DB7D7ED0014A2DE /* FullscreenClient.h */,
@@ -8996,8 +8998,6 @@
 				C145CC0E23DCA427003A5EEB /* PreferenceObserver.h */,
 				C15CBB3323F34C3800300CC7 /* PreferenceObserver.mm */,
 				3AA50E2C28D37F8700D024E4 /* ProcessAssertionCocoa.mm */,
-				A1AE0EC12B1663D4008A2563 /* ProcessCapabilityGranter.h */,
-				A1AE0EC22B1663D4008A2563 /* ProcessCapabilityGranter.mm */,
 				5CB7AFDD23C5273D00E49CF3 /* ResourceLoadDelegate.h */,
 				5CB7AFDE23C5273D00E49CF3 /* ResourceLoadDelegate.mm */,
 				5CA9854B210BEB730057EB6B /* SafeBrowsingWarningCocoa.mm */,
@@ -11323,6 +11323,9 @@
 				1C62747C288B4C3E00CED3A2 /* CocoaHelpers.mm */,
 				4482734624528F6000A95493 /* CocoaImage.h */,
 				F4E47BB527B5AE5B00813B38 /* CocoaImage.mm */,
+				A1D615622B06BBAB002D0E19 /* ExtensionCapability.h */,
+				A141DF512B07054900E80B2D /* ExtensionCapabilityGrant.h */,
+				A141DF532B07069700E80B2D /* ExtensionCapabilityGrant.mm */,
 				F4351B9D25EEC84C00D63892 /* ImageAnalysisUtilities.h */,
 				F4351B9F25EEC87800D63892 /* ImageAnalysisUtilities.mm */,
 				BCE0937614FB128B001138D9 /* LayerHostingContext.h */,
@@ -11335,9 +11338,6 @@
 				A1798B4A222F133A000764BD /* PaymentAuthorizationPresenter.mm */,
 				A1798B3F222D98B6000764BD /* PaymentAuthorizationViewController.h */,
 				A1798B40222D98B6000764BD /* PaymentAuthorizationViewController.mm */,
-				A1D615622B06BBAB002D0E19 /* ProcessCapability.h */,
-				A141DF512B07054900E80B2D /* ProcessCapabilityGrant.h */,
-				A141DF532B07069700E80B2D /* ProcessCapabilityGrant.mm */,
 				4450AEBF1DC3FAE5009943F2 /* SharedMemoryCocoa.cpp */,
 				A181A79721ACAC610059A316 /* WebKitAdditions.mm */,
 				F4648E90296E81F500744170 /* WebPrivacyHelpers.h */,
@@ -15380,6 +15380,10 @@
 				DD4DB788280F9471001700D4 /* EnterFullscreen.js in Headers */,
 				51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */,
 				1AA575FB1496B52600A4EE06 /* EventDispatcher.h in Headers */,
+				A1D615672B06BBAC002D0E19 /* ExtensionCapability.h in Headers */,
+				A1D615672B06BBAC002D0E19 /* ExtensionCapability.h in Headers */,
+				A141DF522B07054900E80B2D /* ExtensionCapabilityGrant.h in Headers */,
+				A1AE0EC32B166439008A2563 /* ExtensionCapabilityGranter.h in Headers */,
 				E31586CD2AD610F30062ED2A /* ExtensionEventHandler.h in Headers */,
 				A1D6156D2B06BCB2002D0E19 /* ExtensionKitSoftLink.h in Headers */,
 				A1D6156D2B06BCB2002D0E19 /* ExtensionKitSoftLink.h in Headers */,
@@ -15654,10 +15658,6 @@
 				5C826D6B26D482EF008AEC91 /* PrivateClickMeasurementStore.h in Headers */,
 				5CB9310926E8439A0032B1C0 /* PrivateClickMeasurementXPCUtilities.h in Headers */,
 				86F9536518FF58F5001DB2EF /* ProcessAssertion.h in Headers */,
-				A1D615672B06BBAC002D0E19 /* ProcessCapability.h in Headers */,
-				A1D615672B06BBAC002D0E19 /* ProcessCapability.h in Headers */,
-				A141DF522B07054900E80B2D /* ProcessCapabilityGrant.h in Headers */,
-				A1AE0EC32B166439008A2563 /* ProcessCapabilityGranter.h in Headers */,
 				BC1A7C581136E19C00FB7167 /* ProcessLauncher.h in Headers */,
 				93E05E40282CD560000B69EB /* ProcessStateMonitor.h in Headers */,
 				463FD4821EB94EC000A2982C /* ProcessTerminationReason.h in Headers */,
@@ -18853,7 +18853,6 @@
 			isa = PBXTargetDependency;
 			platformFilters = (
 				ios,
-				xros,
 			);
 			target = 5C139DA129DB82E500D5117B /* WebContentCaptivePortalExtension */;
 			targetProxy = 5C400E6929DB8AB500446F6F /* PBXContainerItemProxy */;
@@ -18872,7 +18871,6 @@
 			isa = PBXTargetDependency;
 			platformFilters = (
 				ios,
-				xros,
 			);
 			target = 5CA5A2C929CBBA1A000F1046 /* WebContentExtension */;
 			targetProxy = 5CE4B60629CEBB760038F565 /* PBXContainerItemProxy */;
@@ -18881,7 +18879,6 @@
 			isa = PBXTargetDependency;
 			platformFilters = (
 				ios,
-				xros,
 			);
 			target = 5CE4B61529CF877F0038F565 /* GPUExtension */;
 			targetProxy = 5CE4B62229CF880B0038F565 /* PBXContainerItemProxy */;
@@ -18890,7 +18887,6 @@
 			isa = PBXTargetDependency;
 			platformFilters = (
 				ios,
-				xros,
 			);
 			target = 5CE4B60829CF87680038F565 /* NetworkingExtension */;
 			targetProxy = 5CE4B62429CF880B0038F565 /* PBXContainerItemProxy */;

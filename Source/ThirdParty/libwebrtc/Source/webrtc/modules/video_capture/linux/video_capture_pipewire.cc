@@ -51,10 +51,15 @@ VideoCaptureModulePipeWire::VideoCaptureModulePipeWire(
     : VideoCaptureImpl(), session_(options->pipewire_session()) {}
 
 VideoCaptureModulePipeWire::~VideoCaptureModulePipeWire() {
+  RTC_DCHECK_RUN_ON(&api_checker_);
+
   StopCapture();
 }
 
 int32_t VideoCaptureModulePipeWire::Init(const char* deviceUniqueId) {
+  RTC_CHECK_RUNS_SERIALIZED(&capture_checker_);
+  RTC_DCHECK_RUN_ON(&api_checker_);
+
   absl::optional<int> id;
   id = rtc::StringToNumber<int>(deviceUniqueId);
   if (id == absl::nullopt)
@@ -113,6 +118,9 @@ static spa_pod* BuildFormat(spa_pod_builder* builder,
 
 int32_t VideoCaptureModulePipeWire::StartCapture(
     const VideoCaptureCapability& capability) {
+  RTC_CHECK_RUNS_SERIALIZED(&capture_checker_);
+  RTC_DCHECK_RUN_ON(&api_checker_);
+
   uint8_t buffer[1024] = {};
 
   RTC_LOG(LS_VERBOSE) << "Creating new PipeWire stream for node " << node_id_;
@@ -160,25 +168,37 @@ int32_t VideoCaptureModulePipeWire::StartCapture(
                       << spa_strerror(res);
     return -1;
   }
+
+  _requestedCapability = capability;
   return 0;
 }
 
 int32_t VideoCaptureModulePipeWire::StopCapture() {
+  RTC_CHECK_RUNS_SERIALIZED(&capture_checker_);
+  RTC_DCHECK_RUN_ON(&api_checker_);
+
   PipeWireThreadLoopLock thread_loop_lock(session_->pw_main_loop_);
   if (stream_) {
     pw_stream_destroy(stream_);
     stream_ = nullptr;
   }
+
+  _requestedCapability = VideoCaptureCapability();
   return 0;
 }
 
 bool VideoCaptureModulePipeWire::CaptureStarted() {
+  RTC_DCHECK_RUN_ON(&api_checker_);
+  MutexLock lock(&api_lock_);
+
   return started_;
 }
 
 int32_t VideoCaptureModulePipeWire::CaptureSettings(
     VideoCaptureCapability& settings) {
-  settings = frameInfo_;
+  RTC_DCHECK_RUN_ON(&api_checker_);
+
+  settings = _requestedCapability;
 
   return 0;
 }
@@ -190,12 +210,15 @@ void VideoCaptureModulePipeWire::OnStreamParamChanged(
   VideoCaptureModulePipeWire* that =
       static_cast<VideoCaptureModulePipeWire*>(data);
   RTC_DCHECK(that);
+  RTC_CHECK_RUNS_SERIALIZED(&that->capture_checker_);
 
   if (format && id == SPA_PARAM_Format)
     that->OnFormatChanged(format);
 }
 
 void VideoCaptureModulePipeWire::OnFormatChanged(const struct spa_pod* format) {
+  RTC_CHECK_RUNS_SERIALIZED(&capture_checker_);
+
   uint32_t media_type, media_subtype;
 
   if (spa_format_parse(format, &media_type, &media_subtype) < 0) {
@@ -207,32 +230,32 @@ void VideoCaptureModulePipeWire::OnFormatChanged(const struct spa_pod* format) {
     case SPA_MEDIA_SUBTYPE_raw: {
       struct spa_video_info_raw f;
       spa_format_video_raw_parse(format, &f);
-      frameInfo_.width = f.size.width;
-      frameInfo_.height = f.size.height;
-      frameInfo_.videoType = PipeWireRawFormatToVideoType(f.format);
-      frameInfo_.maxFPS = f.framerate.num / f.framerate.denom;
+      configured_capability_.width = f.size.width;
+      configured_capability_.height = f.size.height;
+      configured_capability_.videoType = PipeWireRawFormatToVideoType(f.format);
+      configured_capability_.maxFPS = f.framerate.num / f.framerate.denom;
       break;
     }
     case SPA_MEDIA_SUBTYPE_mjpg: {
       struct spa_video_info_mjpg f;
       spa_format_video_mjpg_parse(format, &f);
-      frameInfo_.width = f.size.width;
-      frameInfo_.height = f.size.height;
-      frameInfo_.videoType = VideoType::kMJPEG;
-      frameInfo_.maxFPS = f.framerate.num / f.framerate.denom;
+      configured_capability_.width = f.size.width;
+      configured_capability_.height = f.size.height;
+      configured_capability_.videoType = VideoType::kMJPEG;
+      configured_capability_.maxFPS = f.framerate.num / f.framerate.denom;
       break;
     }
     default:
-      frameInfo_.videoType = VideoType::kUnknown;
+      configured_capability_.videoType = VideoType::kUnknown;
   }
 
-  if (frameInfo_.videoType == VideoType::kUnknown) {
+  if (configured_capability_.videoType == VideoType::kUnknown) {
     RTC_LOG(LS_ERROR) << "Unsupported video format.";
     return;
   }
 
   RTC_LOG(LS_VERBOSE) << "Configured capture format = "
-                      << static_cast<int>(frameInfo_.videoType);
+                      << static_cast<int>(configured_capability_.videoType);
 
   uint8_t buffer[1024] = {};
   auto builder = spa_pod_builder{buffer, sizeof(buffer)};
@@ -246,17 +269,17 @@ void VideoCaptureModulePipeWire::OnFormatChanged(const struct spa_pod* format) {
   if (media_subtype == SPA_MEDIA_SUBTYPE_raw) {
     // Enforce stride without padding.
     size_t stride;
-    switch (frameInfo_.videoType) {
+    switch (configured_capability_.videoType) {
       case VideoType::kI420:
       case VideoType::kNV12:
-        stride = frameInfo_.width;
+        stride = configured_capability_.width;
         break;
       case VideoType::kYUY2:
       case VideoType::kUYVY:
-        stride = frameInfo_.width * 2;
+        stride = configured_capability_.width * 2;
         break;
       case VideoType::kRGB24:
-        stride = frameInfo_.width * 3;
+        stride = configured_capability_.width * 3;
         break;
       default:
         RTC_LOG(LS_ERROR) << "Unsupported video format.";
@@ -278,6 +301,10 @@ void VideoCaptureModulePipeWire::OnFormatChanged(const struct spa_pod* format) {
       &builder, SPA_TYPE_OBJECT_ParamMeta, SPA_PARAM_Meta, SPA_PARAM_META_type,
       SPA_POD_Id(SPA_META_Header), SPA_PARAM_META_size,
       SPA_POD_Int(sizeof(struct spa_meta_header)))));
+  params.push_back(reinterpret_cast<spa_pod*>(spa_pod_builder_add_object(
+      &builder, SPA_TYPE_OBJECT_ParamMeta, SPA_PARAM_Meta, SPA_PARAM_META_type,
+      SPA_POD_Id(SPA_META_VideoTransform), SPA_PARAM_META_size,
+      SPA_POD_Int(sizeof(struct spa_meta_videotransform)))));
   pw_stream_update_params(stream_, params.data(), params.size());
 }
 
@@ -289,7 +316,9 @@ void VideoCaptureModulePipeWire::OnStreamStateChanged(
   VideoCaptureModulePipeWire* that =
       static_cast<VideoCaptureModulePipeWire*>(data);
   RTC_DCHECK(that);
+  RTC_CHECK_RUNS_SERIALIZED(&that->capture_checker_);
 
+  MutexLock lock(&that->api_lock_);
   switch (state) {
     case PW_STREAM_STATE_STREAMING:
       that->started_ = true;
@@ -312,20 +341,48 @@ void VideoCaptureModulePipeWire::OnStreamProcess(void* data) {
   VideoCaptureModulePipeWire* that =
       static_cast<VideoCaptureModulePipeWire*>(data);
   RTC_DCHECK(that);
+  RTC_CHECK_RUNS_SERIALIZED(&that->capture_checker_);
   that->ProcessBuffers();
 }
 
+static VideoRotation VideorotationFromPipeWireTransform(uint32_t transform) {
+  switch (transform) {
+    case SPA_META_TRANSFORMATION_90:
+      return kVideoRotation_90;
+    case SPA_META_TRANSFORMATION_180:
+      return kVideoRotation_180;
+    case SPA_META_TRANSFORMATION_270:
+      return kVideoRotation_270;
+    default:
+      return kVideoRotation_0;
+  }
+}
+
 void VideoCaptureModulePipeWire::ProcessBuffers() {
+  RTC_CHECK_RUNS_SERIALIZED(&capture_checker_);
+
   while (pw_buffer* buffer = pw_stream_dequeue_buffer(stream_)) {
     struct spa_meta_header* h;
     h = static_cast<struct spa_meta_header*>(
         spa_buffer_find_meta_data(buffer->buffer, SPA_META_Header, sizeof(*h)));
 
+    struct spa_meta_videotransform* videotransform;
+    videotransform =
+        static_cast<struct spa_meta_videotransform*>(spa_buffer_find_meta_data(
+            buffer->buffer, SPA_META_VideoTransform, sizeof(*videotransform)));
+    if (videotransform) {
+      VideoRotation rotation =
+          VideorotationFromPipeWireTransform(videotransform->transform);
+      SetCaptureRotation(rotation);
+      SetApplyRotation(rotation != kVideoRotation_0);
+    }
+
     if (h->flags & SPA_META_HEADER_FLAG_CORRUPTED) {
       RTC_LOG(LS_INFO) << "Dropping corruped frame.";
     } else {
       IncomingFrame(static_cast<unsigned char*>(buffer->buffer->datas[0].data),
-                    buffer->buffer->datas[0].chunk->size, frameInfo_);
+                    buffer->buffer->datas[0].chunk->size,
+                    configured_capability_);
     }
     pw_stream_queue_buffer(stream_, buffer);
   }

@@ -21,6 +21,7 @@
 #include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/net_helpers.h"
+#include "rtc_base/net_test_helpers.h"
 #include "rtc_base/network_monitor.h"
 #include "rtc_base/network_monitor_factory.h"
 #include "rtc_base/physical_socket_server.h"
@@ -44,6 +45,12 @@ using ::testing::UnorderedElementsAre;
 using ::testing::UnorderedElementsAreArray;
 
 namespace rtc {
+
+#define MAYBE_SKIP_IPV4                        \
+  if (!HasIPv4Enabled()) {                     \
+    RTC_LOG(LS_INFO) << "No IPv4... skipping"; \
+    return;                                    \
+  }
 
 namespace {
 
@@ -1263,6 +1270,7 @@ TEST_F(NetworkTest, TestNetworkMonitoring) {
 #define MAYBE_DefaultLocalAddress DefaultLocalAddress
 #endif
 TEST_F(NetworkTest, MAYBE_DefaultLocalAddress) {
+  MAYBE_SKIP_IPV4;
   IPAddress ip;
   FakeNetworkMonitorFactory factory;
   PhysicalSocketServer socket_server;

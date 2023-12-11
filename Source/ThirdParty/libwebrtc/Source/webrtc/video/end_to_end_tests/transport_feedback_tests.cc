@@ -70,8 +70,7 @@ TEST(TransportFeedbackMultiStreamTest, AssignsTransportSequenceNumbers) {
     }
     virtual ~RtpExtensionHeaderObserver() {}
 
-    bool SendRtp(const uint8_t* data,
-                 size_t length,
+    bool SendRtp(rtc::ArrayView<const uint8_t> data,
                  const PacketOptions& options) override {
       {
         MutexLock lock(&lock_);
@@ -81,7 +80,7 @@ TEST(TransportFeedbackMultiStreamTest, AssignsTransportSequenceNumbers) {
 
         if (started_) {
           RtpPacket rtp_packet(&extensions_);
-          EXPECT_TRUE(rtp_packet.Parse(data, length));
+          EXPECT_TRUE(rtp_packet.Parse(data));
           bool drop_packet = false;
 
           uint16_t transport_sequence_number = 0;
@@ -131,7 +130,7 @@ TEST(TransportFeedbackMultiStreamTest, AssignsTransportSequenceNumbers) {
         }
       }
 
-      return test::DirectTransport::SendRtp(data, length, options);
+      return test::DirectTransport::SendRtp(data, options);
     }
 
     bool IsDone() {
@@ -262,20 +261,20 @@ class TransportFeedbackTester : public test::EndToEndTest {
   }
 
  protected:
-  Action OnSendRtcp(const uint8_t* data, size_t length) override {
-    EXPECT_FALSE(HasTransportFeedback(data, length));
+  Action OnSendRtcp(rtc::ArrayView<const uint8_t> data) override {
+    EXPECT_FALSE(HasTransportFeedback(data));
     return SEND_PACKET;
   }
 
-  Action OnReceiveRtcp(const uint8_t* data, size_t length) override {
-    if (HasTransportFeedback(data, length))
+  Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> data) override {
+    if (HasTransportFeedback(data))
       observation_complete_.Set();
     return SEND_PACKET;
   }
 
-  bool HasTransportFeedback(const uint8_t* data, size_t length) const {
+  bool HasTransportFeedback(rtc::ArrayView<const uint8_t> data) const {
     test::RtcpPacketParser parser;
-    EXPECT_TRUE(parser.Parse(data, length));
+    EXPECT_TRUE(parser.Parse(data));
     return parser.transport_feedback()->num_packets() > 0;
   }
 
@@ -340,9 +339,9 @@ TEST_F(TransportFeedbackEndToEndTest,
     }
 
    protected:
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       RtpPacket rtp_packet;
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      EXPECT_TRUE(rtp_packet.Parse(packet));
       const bool only_padding = rtp_packet.payload_size() == 0;
       MutexLock lock(&mutex_);
       // Padding is expected in congested state to probe for connectivity when
@@ -363,7 +362,7 @@ TEST_F(TransportFeedbackEndToEndTest,
       return SEND_PACKET;
     }
 
-    Action OnReceiveRtcp(const uint8_t* data, size_t length) override {
+    Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> data) override {
       MutexLock lock(&mutex_);
       // To fill up the congestion window we drop feedback on packets after 20
       // packets have been sent. This means that any packets that has not yet
@@ -374,16 +373,15 @@ TEST_F(TransportFeedbackEndToEndTest,
       // padding packets and when 2 padding packets have been received, feedback
       // will be let trough again. This should cause the pacer to continue
       // sending meadia yet again.
-      if (media_sent_ > 20 && HasTransportFeedback(data, length) &&
-          padding_sent_ < 2) {
+      if (media_sent_ > 20 && HasTransportFeedback(data) && padding_sent_ < 2) {
         return DROP_PACKET;
       }
       return SEND_PACKET;
     }
 
-    bool HasTransportFeedback(const uint8_t* data, size_t length) const {
+    bool HasTransportFeedback(rtc::ArrayView<const uint8_t> data) const {
       test::RtcpPacketParser parser;
-      EXPECT_TRUE(parser.Parse(data, length));
+      EXPECT_TRUE(parser.Parse(data));
       return parser.transport_feedback()->num_packets() > 0;
     }
     void ModifySenderBitrateConfig(
@@ -435,9 +433,9 @@ TEST_F(TransportFeedbackEndToEndTest, TransportSeqNumOnAudioAndVideo) {
                        kTransportSequenceNumberExtensionId));
     }
 
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       RtpPacket rtp_packet(&extensions_);
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      EXPECT_TRUE(rtp_packet.Parse(packet));
       uint16_t transport_sequence_number = 0;
       EXPECT_TRUE(rtp_packet.GetExtension<TransportSequenceNumber>(
           &transport_sequence_number));

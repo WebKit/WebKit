@@ -46,7 +46,7 @@ class RTC_EXPORT RtpSenderInterface : public rtc::RefCountInterface {
   // The dtlsTransport attribute exposes the DTLS transport on which the
   // media is sent. It may be null.
   // https://w3c.github.io/webrtc-pc/#dom-rtcrtpsender-transport
-  virtual rtc::scoped_refptr<DtlsTransportInterface> dtls_transport() const { return { }; }
+  virtual rtc::scoped_refptr<DtlsTransportInterface> dtls_transport() const = 0;
 
   // Returns primary SSRC used by this sender for sending media.
   // Returns 0 if not yet determined.
@@ -75,7 +75,7 @@ class RTC_EXPORT RtpSenderInterface : public rtc::RefCountInterface {
   // local description is set. These initial encoding parameters can be set by
   // PeerConnection::AddTransceiver, and later updated with Get/SetParameters.
   // TODO(orphis): Make it pure virtual once Chrome has updated
-  virtual std::vector<RtpEncodingParameters> init_send_encodings() const { return { }; }
+  virtual std::vector<RtpEncodingParameters> init_send_encodings() const = 0;
 
   virtual RtpParameters GetParameters() const = 0;
   // Note that only a subset of the parameters can currently be changed. See
@@ -93,15 +93,15 @@ class RTC_EXPORT RtpSenderInterface : public rtc::RefCountInterface {
   // using the user provided encryption mechanism regardless of whether SRTP is
   // enabled or not.
   virtual void SetFrameEncryptor(
-      rtc::scoped_refptr<FrameEncryptorInterface>) { }
+      rtc::scoped_refptr<FrameEncryptorInterface> frame_encryptor) = 0;
 
   // Returns a pointer to the frame encryptor set previously by the
   // user. This can be used to update the state of the object.
   virtual rtc::scoped_refptr<FrameEncryptorInterface> GetFrameEncryptor()
-      const { return { }; }
+      const = 0;
 
   virtual void SetEncoderToPacketizerFrameTransformer(
-      rtc::scoped_refptr<FrameTransformerInterface>) { }
+      rtc::scoped_refptr<FrameTransformerInterface> frame_transformer) = 0;
 
   // Sets a user defined encoder selector.
   // Overrides selector that is (optionally) provided by VideoEncoderFactory.
@@ -109,10 +109,11 @@ class RTC_EXPORT RtpSenderInterface : public rtc::RefCountInterface {
       std::unique_ptr<VideoEncoderFactory::EncoderSelectorInterface>
           encoder_selector) = 0;
 
-  // TODO(crbug.com/1354101): make pure virtual again after Chrome roll.
+#if defined(WEBRTC_WEBKIT_BUILD)
   virtual RTCError GenerateKeyFrame(const std::vector<std::string>& rids) {
     return RTCError::OK();
   }
+#endif
 
  protected:
   ~RtpSenderInterface() override = default;

@@ -98,12 +98,6 @@ class TransportFeedbackAdapterTest : public ::testing::Test {
   virtual void TearDown() { adapter_.reset(); }
 
  protected:
-  void OnReceivedEstimatedBitrate(uint32_t bitrate) {}
-
-  void OnReceivedRtcpReceiverReport(const ReportBlockList& report_blocks,
-                                    int64_t rtt,
-                                    int64_t now_ms) {}
-
   void OnSentPacket(const PacketResult& packet_feedback) {
     RtpPacketSendInfo packet_info;
     packet_info.media_ssrc = kSsrc;

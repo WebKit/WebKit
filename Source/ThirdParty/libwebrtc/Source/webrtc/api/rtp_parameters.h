@@ -515,10 +515,14 @@ struct RTC_EXPORT RtpEncodingParameters {
   // Value to use for RID RTP header extension.
   // Called "encodingId" in ORTC.
   std::string rid;
+  bool request_key_frame = false;
 
   // Allow dynamic frame length changes for audio:
   // https://w3c.github.io/webrtc-extensions/#dom-rtcrtpencodingparameters-adaptiveptime
   bool adaptive_ptime = false;
+
+  // Allow changing the used codec for this encoding.
+  absl::optional<RtpCodec> codec;
 
   bool operator==(const RtpEncodingParameters& o) const {
     return ssrc == o.ssrc && bitrate_priority == o.bitrate_priority &&
@@ -530,7 +534,7 @@ struct RTC_EXPORT RtpEncodingParameters {
            scale_resolution_down_by == o.scale_resolution_down_by &&
            active == o.active && rid == o.rid &&
            adaptive_ptime == o.adaptive_ptime &&
-           requested_resolution == o.requested_resolution;
+           requested_resolution == o.requested_resolution && codec == o.codec;
   }
   bool operator!=(const RtpEncodingParameters& o) const {
     return !(*this == o);

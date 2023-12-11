@@ -64,8 +64,12 @@ public:
 
     LibWebRTCResolver* resolver(LibWebRTCResolverIdentifier identifier) { return m_resolvers.get(identifier); }
     std::unique_ptr<LibWebRTCResolver> takeResolver(LibWebRTCResolverIdentifier identifier) { return m_resolvers.take(identifier); }
+
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=265791
     rtc::AsyncResolverInterface* createAsyncResolver();
-    
+ALLOW_DEPRECATED_DECLARATIONS_END
+
     void disableNonLocalhostConnections() { m_disableNonLocalhostConnections = true; }
 
     void setConnection(RefPtr<IPC::Connection>&&);

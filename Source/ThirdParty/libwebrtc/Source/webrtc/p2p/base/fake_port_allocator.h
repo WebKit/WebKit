@@ -22,6 +22,7 @@
 #include "p2p/base/udp_port.h"
 #include "rtc_base/memory/always_valid_pointer.h"
 #include "rtc_base/net_helpers.h"
+#include "rtc_base/net_test_helpers.h"
 #include "rtc_base/task_queue_for_test.h"
 #include "rtc_base/thread.h"
 
@@ -63,6 +64,7 @@ class TestUDPPort : public UDPPort {
               bool emit_localhost_for_anyaddress,
               const webrtc::FieldTrialsView* field_trials)
       : UDPPort(thread,
+                LOCAL_PORT_TYPE,
                 factory,
                 network,
                 min_port,

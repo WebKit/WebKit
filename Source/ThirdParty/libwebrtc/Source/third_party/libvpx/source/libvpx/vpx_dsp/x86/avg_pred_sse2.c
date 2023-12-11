@@ -46,9 +46,9 @@ void vpx_comp_avg_pred_sse2(uint8_t *comp_pred, const uint8_t *pred, int width,
         r = _mm_loadu_si128((const __m128i *)ref);
         ref += 16;
       } else if (width == 4) {
-        r = _mm_set_epi32(loadu_uint32(ref + 3 * ref_stride),
-                          loadu_uint32(ref + 2 * ref_stride),
-                          loadu_uint32(ref + ref_stride), loadu_uint32(ref));
+        r = _mm_set_epi32(loadu_int32(ref + 3 * ref_stride),
+                          loadu_int32(ref + 2 * ref_stride),
+                          loadu_int32(ref + ref_stride), loadu_int32(ref));
 
         ref += 4 * ref_stride;
       } else {

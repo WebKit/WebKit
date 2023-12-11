@@ -17,9 +17,11 @@
 #include <utility>
 #include <vector>
 
+#include "absl/strings/match.h"
 #include "absl/types/optional.h"
 #include "api/audio/audio_mixer.h"
 #include "api/create_peerconnection_factory.h"
+#include "api/media_types.h"
 #include "api/sequence_checker.h"
 #include "api/video_codecs/video_decoder_factory.h"
 #include "api/video_codecs/video_decoder_factory_template.h"
@@ -199,6 +201,20 @@ PeerConnectionTestWrapper::CreateDataChannel(
     return nullptr;
   }
   return result.MoveValue();
+}
+
+absl::optional<webrtc::RtpCodecCapability>
+PeerConnectionTestWrapper::FindFirstSendCodecWithName(
+    cricket::MediaType media_type,
+    const std::string& name) const {
+  std::vector<webrtc::RtpCodecCapability> codecs =
+      peer_connection_factory_->GetRtpSenderCapabilities(media_type).codecs;
+  for (const auto& codec : codecs) {
+    if (absl::EqualsIgnoreCase(codec.name, name)) {
+      return codec;
+    }
+  }
+  return absl::nullopt;
 }
 
 void PeerConnectionTestWrapper::WaitForNegotiation() {

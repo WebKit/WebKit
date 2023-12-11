@@ -339,6 +339,7 @@ message FrameDecodedEvents {
     CODEC_VP9 = 3;
     CODEC_AV1 = 4;
     CODEC_H264 = 5;
+    CODEC_H265 = 6;
   }
 
   // required

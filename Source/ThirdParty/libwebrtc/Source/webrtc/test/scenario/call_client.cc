@@ -59,11 +59,12 @@ CallClientFakeAudio InitAudio(TimeController* time_controller) {
   return setup;
 }
 
-Call* CreateCall(TimeController* time_controller,
-                 RtcEventLog* event_log,
-                 CallClientConfig config,
-                 LoggingNetworkControllerFactory* network_controller_factory,
-                 rtc::scoped_refptr<AudioState> audio_state) {
+std::unique_ptr<Call> CreateCall(
+    TimeController* time_controller,
+    RtcEventLog* event_log,
+    CallClientConfig config,
+    LoggingNetworkControllerFactory* network_controller_factory,
+    rtc::scoped_refptr<AudioState> audio_state) {
   CallConfig call_config(event_log);
   call_config.bitrate_config.max_bitrate_bps =
       config.transport.rates.max_rate.bps_or(-1);
@@ -230,9 +231,9 @@ CallClient::CallClient(
                                 log_writer_factory_.get());
     fake_audio_setup_ = InitAudio(time_controller_);
 
-    call_.reset(CreateCall(time_controller_, event_log_.get(), config,
-                           &network_controller_factory_,
-                           fake_audio_setup_.audio_state));
+    call_ =
+        CreateCall(time_controller_, event_log_.get(), config,
+                   &network_controller_factory_, fake_audio_setup_.audio_state);
     transport_ = std::make_unique<NetworkNodeTransport>(clock_, call_.get());
   });
 }

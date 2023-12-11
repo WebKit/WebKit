@@ -59,7 +59,7 @@ std::vector<SdpVideoFormat> MultiplexEncoderFactory::GetSupportedFormats()
 
 std::unique_ptr<VideoEncoder> MultiplexEncoderFactory::CreateVideoEncoder(
     const SdpVideoFormat& format) {
-  if (!IsMultiplexCodec(cricket::VideoCodec(format)))
+  if (!IsMultiplexCodec(cricket::CreateVideoCodec(format)))
     return factory_->CreateVideoEncoder(format);
   const auto& it =
       format.parameters.find(cricket::kCodecParamAssociatedCodecName);
@@ -97,7 +97,7 @@ std::vector<SdpVideoFormat> MultiplexDecoderFactory::GetSupportedFormats()
 
 std::unique_ptr<VideoDecoder> MultiplexDecoderFactory::CreateVideoDecoder(
     const SdpVideoFormat& format) {
-  if (!IsMultiplexCodec(cricket::VideoCodec(format)))
+  if (!IsMultiplexCodec(cricket::CreateVideoCodec(format)))
     return factory_->CreateVideoDecoder(format);
   const auto& it =
       format.parameters.find(cricket::kCodecParamAssociatedCodecName);

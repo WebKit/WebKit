@@ -34,14 +34,15 @@ from html import escape
 # (right after the `third_party/` prefix)
 LIB_TO_LICENSES_DICT = {
     'abseil-cpp': ['third_party/abseil-cpp/LICENSE'],
-    'android_ndk': ['third_party/android_ndk/NOTICE'],
     'android_sdk': ['third_party/android_sdk/LICENSE'],
+    'android_toolchain': ['third_party/android_toolchain/NOTICE'],
     'auto': [
         'third_party/android_deps/libs/'
         'com_google_auto_service_auto_service/LICENSE'
     ],
     'boringssl': ['third_party/boringssl/src/LICENSE'],
     'crc32c': ['third_party/crc32c/src/LICENSE'],
+    'cpu_features': ['third_party/cpu_features/src/LICENSE'],
     'dav1d': ['third_party/dav1d/LICENSE'],
     'errorprone': [
         'third_party/android_deps/libs/'
@@ -52,12 +53,12 @@ LIB_TO_LICENSES_DICT = {
     'ijar': ['third_party/ijar/LICENSE'],
     'jsoncpp': ['third_party/jsoncpp/LICENSE'],
     'libaom': ['third_party/libaom/source/libaom/LICENSE'],
-    'libc++': ['buildtools/third_party/libc++/trunk/LICENSE.TXT'],
-    'libc++abi': ['buildtools/third_party/libc++abi/trunk/LICENSE.TXT'],
+    'libc++': ['third_party/libc++/src/LICENSE.TXT'],
+    'libc++abi': ['third_party/libc++abi/src/LICENSE.TXT'],
     'libevent': ['third_party/libevent/LICENSE'],
     'libjpeg_turbo': ['third_party/libjpeg_turbo/LICENSE.md'],
     'libsrtp': ['third_party/libsrtp/LICENSE'],
-    'libunwind': ['buildtools/third_party/libunwind/trunk/LICENSE.TXT'],
+    'libunwind': ['third_party/libunwind/src/LICENSE.TXT'],
     'libvpx': ['third_party/libvpx/source/libvpx/LICENSE'],
     'libyuv': ['third_party/libyuv/LICENSE'],
     'nasm': ['third_party/nasm/LICENSE'],

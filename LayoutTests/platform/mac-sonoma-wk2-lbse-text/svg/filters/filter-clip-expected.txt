@@ -5,8 +5,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderSVGViewportContainer at (0,0) size 800x600
 layer at (0,0) size 140x140
-  RenderSVGHiddenContainer {defs} at (0,0) size 140x140
-layer at (0,0) size 140x140
   RenderSVGResourceMasker {mask} at (0,0) size 140x140
 layer at (0,0) size 140x140
   RenderSVGRect {rect} at (0,0) size 140x140 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=140.00] [height=140.00]

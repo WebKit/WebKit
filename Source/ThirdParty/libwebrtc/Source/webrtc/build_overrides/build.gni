@@ -16,6 +16,8 @@ enable_safe_libcxx = true
 # only needed to support both WebRTC standalone and Chromium builds.
 build_with_chromium = false
 
+use_cxx17 = !is_android
+
 # Use our own suppressions files.
 asan_suppressions_file = "//build/sanitizers/asan_suppressions.cc"
 lsan_suppressions_file = "//tools_webrtc/sanitizers/lsan_suppressions_webrtc.cc"
@@ -51,6 +53,7 @@ declare_args() {
   # is used for base tracing, so this feature is disabled.
   enable_base_tracing = false
   use_perfetto_client_library = false
+  use_perfetto_trace_processor = false
 
   # Limits the defined //third_party/android_deps targets to only "buildCompile"
   # and "buildCompileNoDeps" targets. This is useful for third-party

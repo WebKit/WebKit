@@ -12,21 +12,29 @@
 
 #include <algorithm>
 #include <cstdint>
-#include <cstdio>
 #include <memory>
-#include <string>
 #include <utility>
+#include <vector>
 
-#include "absl/strings/match.h"
-#include "api/rtc_event_log/rtc_event.h"
+#include "absl/types/optional.h"
+#include "api/field_trials_view.h"
+#include "api/network_state_predictor.h"
 #include "api/rtc_event_log/rtc_event_log.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_delay_based.h"
+#include "modules/congestion_controller/goog_cc/delay_increase_detector_interface.h"
+#include "modules/congestion_controller/goog_cc/inter_arrival_delta.h"
 #include "modules/congestion_controller/goog_cc/trendline_estimator.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "modules/remote_bitrate_estimator/test/bwe_test_logging.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/experiments/struct_parameters_parser.h"
 #include "rtc_base/logging.h"
+#include "rtc_base/race_checker.h"
 #include "system_wrappers/include/metrics.h"
 
 namespace webrtc {

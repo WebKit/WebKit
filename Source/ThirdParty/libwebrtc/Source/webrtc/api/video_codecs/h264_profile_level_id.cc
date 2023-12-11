@@ -262,7 +262,8 @@ absl::optional<std::string> H264ProfileLevelIdToString(
   }
 
   char str[7];
-  snprintf(str, 7u, "%s%02x", profile_idc_iop_string, profile_level_id.level);
+  snprintf(str, 7u, "%s%02x", profile_idc_iop_string,
+           static_cast<unsigned>(profile_level_id.level));
   return {str};
 }
 

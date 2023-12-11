@@ -79,7 +79,7 @@ class MockRtpTransportControllerSend
               (absl::string_view, const rtc::NetworkRoute&),
               (override));
   MOCK_METHOD(void, OnNetworkAvailability, (bool), (override));
-  MOCK_METHOD(RtcpBandwidthObserver*, GetBandwidthObserver, (), (override));
+  MOCK_METHOD(NetworkLinkRtcpObserver*, GetRtcpObserver, (), (override));
   MOCK_METHOD(int64_t, GetPacerQueuingDelayMs, (), (const, override));
   MOCK_METHOD(absl::optional<Timestamp>,
               GetFirstPacketTime,

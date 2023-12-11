@@ -540,7 +540,8 @@ BasicIceController::SortAndSwitchConnection(IceSwitchReason reason) {
       });
 
   RTC_LOG(LS_VERBOSE) << "Sorting " << connections_.size()
-                      << " available connections";
+                      << " available connections due to: "
+                      << IceSwitchReasonToString(reason);
   for (size_t i = 0; i < connections_.size(); ++i) {
     RTC_LOG(LS_VERBOSE) << connections_[i]->ToString();
   }

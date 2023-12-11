@@ -35,7 +35,6 @@
 #include "pc/rtp_transceiver.h"
 #include "pc/transceiver_list.h"
 #include "pc/usage_pattern.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/thread.h"
 #include "rtc_base/thread_annotations.h"
 #include "rtc_base/weak_ptr.h"

@@ -14,6 +14,7 @@ rtc_source_set("rtp_source") {
   deps = [
     "../../../api:rtp_headers",
     "../../../api/units:time_delta",
+    "../../../api/units:timestamp",
     "../../../rtc_base:checks",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]

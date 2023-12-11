@@ -11,6 +11,7 @@
 #include "media/base/media_engine.h"
 
 #include "test/gmock.h"
+#include "test/gtest.h"
 
 using ::testing::ElementsAre;
 using ::testing::Field;
@@ -54,5 +55,32 @@ TEST(MediaEngineTest, ReturnsNotStoppedHeaderExtensions) {
                           Field(&RtpExtension::uri, StrEq("uri4")),
                           Field(&RtpExtension::uri, StrEq("uri5"))));
 }
+
+// This class mocks methods declared as pure virtual in the interface.
+// Since the tests are aiming to check the patterns of overrides, the
+// functions with default implementations are not mocked.
+class MostlyMockVoiceEngineInterface : public VoiceEngineInterface {
+ public:
+  MOCK_METHOD(std::vector<webrtc::RtpHeaderExtensionCapability>,
+              GetRtpHeaderExtensions,
+              (),
+              (const, override));
+  MOCK_METHOD(void, Init, (), (override));
+  MOCK_METHOD(rtc::scoped_refptr<webrtc::AudioState>,
+              GetAudioState,
+              (),
+              (const, override));
+  MOCK_METHOD(std::vector<AudioCodec>&, send_codecs, (), (const, override));
+  MOCK_METHOD(std::vector<AudioCodec>&, recv_codecs, (), (const, override));
+  MOCK_METHOD(bool,
+              StartAecDump,
+              (webrtc::FileWrapper file, int64_t max_size_bytes),
+              (override));
+  MOCK_METHOD(void, StopAecDump, (), (override));
+  MOCK_METHOD(absl::optional<webrtc::AudioDeviceModule::Stats>,
+              GetAudioDeviceStats,
+              (),
+              (override));
+};
 
 }  // namespace cricket

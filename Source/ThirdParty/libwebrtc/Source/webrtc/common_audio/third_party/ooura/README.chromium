@@ -6,6 +6,7 @@ Date: 2018-06-19
 License: Custome license
 License File: LICENSE
 Security Critical: yes
+Shipped: yes
 
 Description:
 This is a package to calculate Discrete Fourier/Cosine/Sine Transforms of

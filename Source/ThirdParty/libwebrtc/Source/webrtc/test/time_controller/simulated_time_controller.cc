@@ -211,6 +211,18 @@ void GlobalSimulatedTimeController::AdvanceTime(TimeDelta duration) {
   impl_.RunReadyRunners();
 }
 
+void GlobalSimulatedTimeController::SkipForwardBy(TimeDelta duration) {
+  rtc::ScopedYieldPolicy yield_policy(&impl_);
+  Timestamp current_time = impl_.CurrentTime();
+  Timestamp target_time = current_time + duration;
+  impl_.AdvanceTime(target_time);
+  sim_clock_.AdvanceTimeMicroseconds(duration.us());
+  global_clock_.AdvanceTime(duration);
+
+  // Run tasks that were pending during the skip.
+  impl_.RunReadyRunners();
+}
+
 void GlobalSimulatedTimeController::Register(
     sim_time_impl::SimulatedSequenceRunner* runner) {
   impl_.Register(runner);

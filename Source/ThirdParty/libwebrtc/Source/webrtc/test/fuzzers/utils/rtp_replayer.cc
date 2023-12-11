@@ -76,7 +76,7 @@ void RtpReplayer::Replay(
   webrtc::RtcEventLogNull event_log;
   std::unique_ptr<TaskQueueFactory> task_queue_factory =
       CreateDefaultTaskQueueFactory();
-  Call::Config call_config(&event_log);
+  CallConfig call_config(&event_log);
   call_config.task_queue_factory = task_queue_factory.get();
   FieldTrialBasedConfig field_trials;
   call_config.trials = &field_trials;

@@ -21,20 +21,23 @@ import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
-import android.support.test.InstrumentationRegistry;
+import androidx.test.InstrumentationRegistry;
 import androidx.test.filters.SmallTest;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.CountDownLatch;
-import org.chromium.base.test.BaseJUnit4ClassRunner;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
 // EmptyActivity is needed for the surface.
-@RunWith(BaseJUnit4ClassRunner.class)
+@RunWith(Parameterized.class)
 public class EglRendererTest {
   private final static String TAG = "EglRendererTest";
   private final static int RENDER_WAIT_MS = 1000;
@@ -103,12 +106,21 @@ public class EglRendererTest {
     }
   }
 
+  @Parameter(0)
+  public boolean useRenderSynchronizer;
+
   final TestFrameListener testFrameListener = new TestFrameListener();
 
   EglRenderer eglRenderer;
+  EglThread eglThread;
   CountDownLatch surfaceReadyLatch = new CountDownLatch(1);
   int oesTextureId;
   SurfaceTexture surfaceTexture;
+
+  @Parameters
+  public static Collection<Object[]> data() {
+    return Arrays.asList(new Object[] {true}, new Object[] {false});
+  }
 
   @Before
   public void setUp() throws Exception {
@@ -116,8 +128,15 @@ public class EglRendererTest {
                                          .builder(InstrumentationRegistry.getTargetContext())
                                          .setNativeLibraryName(TestConstants.NATIVE_LIBRARY)
                                          .createInitializationOptions());
+    RenderSynchronizer renderSynchronizer = useRenderSynchronizer ? new RenderSynchronizer() : null;
+    eglThread =
+        EglThread.create(
+            null /* releaseMonitor */,
+            null /* sharedContext */,
+            EglBase.CONFIG_RGBA,
+            renderSynchronizer);
     eglRenderer = new EglRenderer("TestRenderer: ");
-    eglRenderer.init(null /* sharedContext */, EglBase.CONFIG_RGBA, new GlRectDrawer());
+    eglRenderer.init(eglThread, new GlRectDrawer(), false /* usePresentationTimeStamp */);
     oesTextureId = GlUtil.generateTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES);
     surfaceTexture = new SurfaceTexture(oesTextureId);
     surfaceTexture.setDefaultBufferSize(1 /* width */, 1 /* height */);
@@ -247,6 +266,12 @@ public class EglRendererTest {
     }
   }
 
+  private void drainRenderThread() throws Exception {
+    CountDownLatch latch = new CountDownLatch(1);
+    eglThread.getHandler().post(() -> latch.countDown());
+    latch.await();
+  }
+
   /** Tells eglRenderer to render test frame with given index. */
   private void feedFrame(int i) {
     final VideoFrame.I420Buffer buffer = JavaI420Buffer.wrap(TEST_FRAME_WIDTH, TEST_FRAME_HEIGHT,
@@ -351,6 +376,22 @@ public class EglRendererTest {
         testFrameListener, 1f /* scaleFactor */, null, true /* applyFpsReduction */);
     feedFrame(1);
     assertFalse(testFrameListener.waitForBitmap(RENDER_WAIT_MS));
+  }
+
+  @Test
+  @SmallTest
+  public void testRecreateSurface() throws Exception {
+    // Make sure the EGLSurface has been created.
+    drainRenderThread();
+
+    // Relase the surface and wait for completion.
+    CountDownLatch latch = new CountDownLatch(1);
+    eglRenderer.releaseEglSurface(() -> latch.countDown());
+    latch.await();
+
+    // Recreate the surface.
+    eglRenderer.createEglSurface(surfaceTexture);
+    drainRenderThread();
   }
 
   private static ByteBuffer[][] copyTestDataToDirectByteBuffers(byte[][][] testData) {

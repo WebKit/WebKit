@@ -229,8 +229,13 @@ class ForwardErrorCorrection {
   //                            list will be valid until the next call to
   //                            DecodeFec().
   //
-  void DecodeFec(const ReceivedPacket& received_packet,
-                 RecoveredPacketList* recovered_packets);
+  struct DecodeFecResult {
+    // Number of recovered media packets using FEC.
+    size_t num_recovered_packets = 0;
+  };
+
+  DecodeFecResult DecodeFec(const ReceivedPacket& received_packet,
+                            RecoveredPacketList* recovered_packets);
 
   // Get the number of generated FEC packets, given the number of media packets
   // and the protection factor.
@@ -302,7 +307,7 @@ class ForwardErrorCorrection {
 
   // Attempt to recover missing packets, using the internally stored
   // received FEC packets.
-  void AttemptRecovery(RecoveredPacketList* recovered_packets);
+  size_t AttemptRecovery(RecoveredPacketList* recovered_packets);
 
   // Initializes headers and payload before the XOR operation
   // that recovers a packet.
@@ -391,6 +396,12 @@ class FecHeaderReader {
 
 class FecHeaderWriter {
  public:
+  struct ProtectedStream {
+    uint32_t ssrc = 0;
+    uint16_t seq_num_base = 0;
+    rtc::ArrayView<const uint8_t> packet_mask;
+  };
+
   virtual ~FecHeaderWriter();
 
   // The maximum number of media packets that can be covered by one FEC packet.
@@ -414,11 +425,8 @@ class FecHeaderWriter {
 
   // Writes FEC header.
   virtual void FinalizeFecHeader(
-      uint32_t media_ssrc,
-      uint16_t seq_num_base,
-      const uint8_t* packet_mask,
-      size_t packet_mask_size,
-      ForwardErrorCorrection::Packet* fec_packet) const = 0;
+      rtc::ArrayView<const ProtectedStream> protected_streams,
+      ForwardErrorCorrection::Packet& fec_packet) const = 0;
 
  protected:
   FecHeaderWriter(size_t max_media_packets,

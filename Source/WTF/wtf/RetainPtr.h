@@ -344,6 +344,7 @@ template<typename T> inline RetainPtr<typename RetainPtr<T>::HelperPtrType> reta
 
 template<typename T> struct IsSmartPtr<RetainPtr<T>> {
     static constexpr bool value = true;
+    static constexpr bool isNullable = true;
 };
 
 template<typename P> struct HashTraits<RetainPtr<P>> : SimpleClassHashTraits<RetainPtr<P>> {

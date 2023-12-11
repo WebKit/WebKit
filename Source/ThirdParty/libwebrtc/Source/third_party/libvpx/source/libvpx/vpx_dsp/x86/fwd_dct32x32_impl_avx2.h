@@ -89,7 +89,7 @@ void FDCT32x32_2D_AVX2(const int16_t *input, int16_t *output_org, int stride) {
   const __m256i k__cospi_m21_p11 = pair256_set_epi16(-cospi_21_64, cospi_11_64);
   const __m256i k__cospi_m05_p27 = pair256_set_epi16(-cospi_5_64, cospi_27_64);
   const __m256i k__DCT_CONST_ROUNDING = _mm256_set1_epi32(DCT_CONST_ROUNDING);
-  const __m256i kZero = _mm256_set1_epi16(0);
+  const __m256i kZero = _mm256_setzero_si256();
   const __m256i kOne = _mm256_set1_epi16(1);
   // Do the two transform/transpose passes
   int pass;

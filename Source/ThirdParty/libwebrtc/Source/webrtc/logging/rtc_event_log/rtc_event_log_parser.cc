@@ -261,10 +261,8 @@ VideoCodecType GetRuntimeCodecType(rtclog2::FrameDecodedEvents::Codec codec) {
       return VideoCodecType::kVideoCodecAV1;
     case rtclog2::FrameDecodedEvents::CODEC_H264:
       return VideoCodecType::kVideoCodecH264;
-#ifdef WEBRTC_USE_H265
     case rtclog2::FrameDecodedEvents::CODEC_H265:
       return VideoCodecType::kVideoCodecH265;
-#endif
     case rtclog2::FrameDecodedEvents::CODEC_UNKNOWN:
       RTC_LOG(LS_ERROR) << "Unknown codec type. Assuming "
                            "VideoCodecType::kVideoCodecMultiplex";
@@ -2409,12 +2407,14 @@ std::vector<LoggedPacketInfo> ParsedRtcEventLog::GetPacketInfos(
 
   RtcEventProcessor process;
   for (const auto& rtp_packets : rtp_packets_by_ssrc(direction)) {
-    process.AddEvents(rtp_packets.packet_view, rtp_handler);
+    process.AddEvents(rtp_packets.packet_view, rtp_handler, direction);
   }
   if (direction == PacketDirection::kOutgoingPacket) {
-    process.AddEvents(incoming_transport_feedback_, feedback_handler);
+    process.AddEvents(incoming_transport_feedback_, feedback_handler,
+                      PacketDirection::kIncomingPacket);
   } else {
-    process.AddEvents(outgoing_transport_feedback_, feedback_handler);
+    process.AddEvents(outgoing_transport_feedback_, feedback_handler,
+                      PacketDirection::kOutgoingPacket);
   }
   process.ProcessEventsInOrder();
   return packets;

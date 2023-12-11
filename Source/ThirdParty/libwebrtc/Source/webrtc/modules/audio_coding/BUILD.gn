@@ -155,7 +155,7 @@ rtc_library("g711") {
     "../../rtc_base:checks",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
-  public_deps = [ ":g711_c" ]  # no-presubmit-check TODO(webrtc:8603)
+  public_deps += [ ":g711_c" ]  # no-presubmit-check TODO(webrtc:8603)
 }
 
 rtc_library("g711_c") {
@@ -188,7 +188,7 @@ rtc_library("g722") {
     "../../rtc_base:safe_conversions",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
-  public_deps = [ ":g722_c" ]  # no-presubmit-check TODO(webrtc:8603)
+  public_deps += [ ":g722_c" ]  # no-presubmit-check TODO(webrtc:8603)
 }
 
 rtc_library("g722_c") {
@@ -223,7 +223,7 @@ rtc_library("ilbc") {
     "../../rtc_base:safe_conversions",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
-  public_deps = [ ":ilbc_c" ]  # no-presubmit-check TODO(webrtc:8603)
+  public_deps += [ ":ilbc_c" ]  # no-presubmit-check TODO(webrtc:8603)
 }
 
 rtc_library("ilbc_c") {
@@ -430,7 +430,7 @@ rtc_library("pcm16b") {
     "../../rtc_base:buffer",
     "../../rtc_base:checks",
   ]
-  public_deps = [ ":pcm16b_c" ]  # no-presubmit-check TODO(webrtc:8603)
+  public_deps += [ ":pcm16b_c" ]  # no-presubmit-check TODO(webrtc:8603)
 }
 
 rtc_library("pcm16b_c") {
@@ -492,7 +492,7 @@ rtc_library("webrtc_opus") {
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
-  public_deps =  # no-presubmit-check TODO(webrtc:8603)
+  public_deps +=  # no-presubmit-check TODO(webrtc:8603)
       [ ":webrtc_opus_wrapper" ]
 
   defines = audio_codec_defines
@@ -526,7 +526,7 @@ rtc_library("webrtc_multiopus") {
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
-  public_deps =  # no-presubmit-check TODO(webrtc:8603)
+  public_deps +=  # no-presubmit-check TODO(webrtc:8603)
       [ ":webrtc_opus_wrapper" ]
 
   defines = audio_codec_defines
@@ -609,7 +609,7 @@ rtc_library("audio_network_adaptor") {
     "audio_network_adaptor/util/threshold_curve.h",
   ]
 
-  public_deps =  # no-presubmit-check TODO(webrtc:8603)
+  public_deps +=  # no-presubmit-check TODO(webrtc:8603)
       [ ":audio_network_adaptor_config" ]
 
   deps = [
@@ -892,7 +892,7 @@ rtc_library("neteq_tools") {
       "neteq/tools/neteq_event_log_input.h",
     ]
     deps += [ "../../logging:rtc_event_log_parser" ]
-    public_deps =  # no-presubmit-check TODO(webrtc:8603)
+    public_deps +=  # no-presubmit-check TODO(webrtc:8603)
         [ "../../logging:rtc_event_log_proto" ]
   }
 }
@@ -1122,10 +1122,11 @@ if (rtc_include_tests) {
       "../../rtc_base:macromagic",
       "../../rtc_base:timeutils",
       "../../system_wrappers",
-      "../../system_wrappers:field_trial",
       "../../test:fileutils",
+      "../../test:test_flags",
       "../../test:test_support",
     ]
+    absl_deps = [ "//third_party/abseil-cpp/absl/flags:flag" ]
   }
 
   rtc_library("acm_receive_test") {

@@ -32,6 +32,7 @@ struct AudioStreamStats {
   SamplesStatsCounter speech_expand_rate;
   SamplesStatsCounter average_jitter_buffer_delay_ms;
   SamplesStatsCounter preferred_buffer_size_ms;
+  SamplesStatsCounter energy;
 };
 
 class DefaultAudioQualityAnalyzer : public AudioQualityAnalyzerInterface {
@@ -59,6 +60,8 @@ class DefaultAudioQualityAnalyzer : public AudioQualityAnalyzerInterface {
     TimeDelta jitter_buffer_delay = TimeDelta::Zero();
     TimeDelta jitter_buffer_target_delay = TimeDelta::Zero();
     uint64_t jitter_buffer_emitted_count = 0;
+    double total_samples_duration = 0.0;
+    double total_audio_energy = 0.0;
   };
 
   std::string GetTestCaseName(const std::string& stream_label) const;

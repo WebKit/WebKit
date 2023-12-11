@@ -31,6 +31,7 @@
 #import "PlatformCALayerRemote.h"
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeInteractionRegionLayers.h"
+#import "WKVideoView.h"
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/MediaPlayerEnumsCocoa.h>
 #import <WebCore/PlatformCAFilters.h>
@@ -307,8 +308,14 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
 
 #if HAVE(AVKIT)
     if (properties.changedProperties & LayerChange::VideoGravityChanged) {
-        if ([layer respondsToSelector:@selector(setVideoGravity:)])
-            [(WebAVPlayerLayer*)layer setVideoGravity:convertMediaPlayerToAVLayerVideoGravity(properties.videoGravity)];
+        auto *playerLayer = layer;
+#if PLATFORM(IOS_FAMILY)
+        if (layerTreeNode && [layerTreeNode->uiView() isKindOfClass:WKVideoView.class])
+            playerLayer = [(WKVideoView*)layerTreeNode->uiView() playerLayer];
+#endif
+        ASSERT([playerLayer respondsToSelector:@selector(setVideoGravity:)]);
+        if ([playerLayer respondsToSelector:@selector(setVideoGravity:)])
+            [(WebAVPlayerLayer*)playerLayer setVideoGravity:convertMediaPlayerToAVLayerVideoGravity(properties.videoGravity)];
     }
 #endif
 }

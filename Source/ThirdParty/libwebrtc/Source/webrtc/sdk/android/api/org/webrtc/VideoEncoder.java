@@ -258,6 +258,39 @@ public interface VideoEncoder {
     }
   }
 
+  /**
+   * Metadata about the Encoder.
+   */
+  public class EncoderInfo {
+    /**
+     * The width and height of the incoming video frames should be divisible by
+     * |requested_resolution_alignment|
+     */
+    public final int requestedResolutionAlignment;
+
+    /**
+     * Same as above but if true, each simulcast layer should also be divisible by
+     * |requested_resolution_alignment|.
+     */
+    public final boolean applyAlignmentToAllSimulcastLayers;
+
+    public EncoderInfo(
+        int requestedResolutionAlignment, boolean applyAlignmentToAllSimulcastLayers) {
+      this.requestedResolutionAlignment = requestedResolutionAlignment;
+      this.applyAlignmentToAllSimulcastLayers = applyAlignmentToAllSimulcastLayers;
+    }
+
+    @CalledByNative("EncoderInfo")
+    public int getRequestedResolutionAlignment() {
+      return requestedResolutionAlignment;
+    }
+
+    @CalledByNative("EncoderInfo")
+    public boolean getApplyAlignmentToAllSimulcastLayers() {
+      return applyAlignmentToAllSimulcastLayers;
+    }
+  }
+
   public interface Callback {
     /**
      * Old encoders assume that the byte buffer held by `frame` is not accessed after the call to
@@ -343,4 +376,10 @@ public interface VideoEncoder {
    * called from arbitrary thread.
    */
   @CalledByNative String getImplementationName();
+
+  @CalledByNative
+  default EncoderInfo getEncoderInfo() {
+    return new EncoderInfo(
+        /* requestedResolutionAlignment= */ 1, /* applyAlignmentToAllSimulcastLayers= */ false);
+  }
 }

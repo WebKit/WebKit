@@ -43,6 +43,7 @@ TestController::TestController(int min_port,
     udp_socket_ =
         std::unique_ptr<rtc::AsyncPacketSocket>(socket_factory_.CreateUdpSocket(
             rtc::SocketAddress(rtc::GetAnyIP(AF_INET), 0), min_port, max_port));
+    RTC_CHECK(udp_socket_ != nullptr);
     udp_socket_->SignalReadPacket.connect(this, &TestController::OnReadPacket);
   });
 }

@@ -63,6 +63,8 @@ void OutstandingData::Item::MarkAsRetransmitted() {
 }
 
 void OutstandingData::Item::Abandon() {
+  RTC_DCHECK(expires_at_ != TimeMs::InfiniteFuture() ||
+             max_retransmissions_ != MaxRetransmits::NoLimit());
   lifecycle_ = Lifecycle::kAbandoned;
 }
 
@@ -159,6 +161,9 @@ void OutstandingData::RemoveAcked(UnwrappedTSN cumulative_tsn_ack,
 
   outstanding_data_.erase(outstanding_data_.begin(), first_unacked);
   last_cumulative_tsn_ack_ = cumulative_tsn_ack;
+  stream_reset_breakpoint_tsns_.erase(stream_reset_breakpoint_tsns_.begin(),
+                                      stream_reset_breakpoint_tsns_.upper_bound(
+                                          cumulative_tsn_ack.next_value()));
 }
 
 void OutstandingData::AckGapBlocks(
@@ -249,6 +254,7 @@ bool OutstandingData::NackItem(UnwrappedTSN tsn,
       RTC_DLOG(LS_VERBOSE) << *tsn.Wrap() << " marked for retransmission";
       break;
     case Item::NackAction::kAbandon:
+      RTC_DLOG(LS_VERBOSE) << *tsn.Wrap() << " Nacked, resulted in abandoning";
       AbandonAllFor(item);
       break;
   }
@@ -257,8 +263,7 @@ bool OutstandingData::NackItem(UnwrappedTSN tsn,
 
 void OutstandingData::AbandonAllFor(const Item& item) {
   // Erase all remaining chunks from the producer, if any.
-  if (discard_from_send_queue_(item.data().is_unordered, item.data().stream_id,
-                               item.data().message_id)) {
+  if (discard_from_send_queue_(item.data().stream_id, item.message_id())) {
     // There were remaining chunks to be produced for this message. Since the
     // receiver may have already received all chunks (up till now) for this
     // message, we can't just FORWARD-TSN to the last fragment in this
@@ -269,17 +274,17 @@ void OutstandingData::AbandonAllFor(const Item& item) {
     // TSN in the sent FORWARD-TSN.
     UnwrappedTSN tsn = next_tsn_;
     next_tsn_.Increment();
-    Data message_end(item.data().stream_id, item.data().ssn,
-                     item.data().message_id, item.data().fsn, item.data().ppid,
-                     std::vector<uint8_t>(), Data::IsBeginning(false),
-                     Data::IsEnd(true), item.data().is_unordered);
+    Data message_end(item.data().stream_id, item.data().ssn, item.data().mid,
+                     item.data().fsn, item.data().ppid, std::vector<uint8_t>(),
+                     Data::IsBeginning(false), Data::IsEnd(true),
+                     item.data().is_unordered);
     Item& added_item =
         outstanding_data_
             .emplace(std::piecewise_construct, std::forward_as_tuple(tsn),
-                     std::forward_as_tuple(std::move(message_end), TimeMs(0),
-                                           MaxRetransmits::NoLimit(),
-                                           TimeMs::InfiniteFuture(),
-                                           LifecycleId::NotSet()))
+                     std::forward_as_tuple(
+                         item.message_id(), std::move(message_end), TimeMs(0),
+                         MaxRetransmits(0), TimeMs::InfiniteFuture(),
+                         LifecycleId::NotSet()))
             .first->second;
     // The added chunk shouldn't be included in `outstanding_bytes`, so set it
     // as acked.
@@ -291,8 +296,7 @@ void OutstandingData::AbandonAllFor(const Item& item) {
   for (auto& [tsn, other] : outstanding_data_) {
     if (!other.is_abandoned() &&
         other.data().stream_id == item.data().stream_id &&
-        other.data().is_unordered == item.data().is_unordered &&
-        other.data().message_id == item.data().message_id) {
+        other.message_id() == item.message_id()) {
       RTC_DLOG(LS_VERBOSE) << "Marking chunk " << *tsn.Wrap()
                            << " as abandoned";
       if (other.should_be_retransmitted()) {
@@ -375,7 +379,7 @@ void OutstandingData::ExpireOutstandingChunks(TimeMs now) {
       // Already abandoned.
     } else if (item.is_nacked() && item.has_expired(now)) {
       RTC_DLOG(LS_VERBOSE) << "Marking nacked chunk " << *tsn.Wrap()
-                           << " and message " << *item.data().message_id
+                           << " and message " << *item.data().mid
                            << " as expired";
       AbandonAllFor(item);
     } else {
@@ -392,6 +396,7 @@ UnwrappedTSN OutstandingData::highest_outstanding_tsn() const {
 }
 
 absl::optional<UnwrappedTSN> OutstandingData::Insert(
+    OutgoingMessageId message_id,
     const Data& data,
     TimeMs time_sent,
     MaxRetransmits max_retransmissions,
@@ -406,9 +411,9 @@ absl::optional<UnwrappedTSN> OutstandingData::Insert(
   ++outstanding_items_;
   auto it = outstanding_data_
                 .emplace(std::piecewise_construct, std::forward_as_tuple(tsn),
-                         std::forward_as_tuple(data.Clone(), time_sent,
-                                               max_retransmissions, expires_at,
-                                               lifecycle_id))
+                         std::forward_as_tuple(message_id, data.Clone(),
+                                               time_sent, max_retransmissions,
+                                               expires_at, lifecycle_id))
                 .first;
 
   if (it->second.has_expired(time_sent)) {
@@ -416,7 +421,7 @@ absl::optional<UnwrappedTSN> OutstandingData::Insert(
     // queue.
     RTC_DLOG(LS_VERBOSE) << "Marking freshly produced chunk "
                          << *it->first.Wrap() << " and message "
-                         << *it->second.data().message_id << " as expired";
+                         << *it->second.data().mid << " as expired";
     AbandonAllFor(it->second);
     RTC_DCHECK(IsConsistent());
     return absl::nullopt;
@@ -487,7 +492,8 @@ ForwardTsnChunk OutstandingData::CreateForwardTsn() const {
   UnwrappedTSN new_cumulative_ack = last_cumulative_tsn_ack_;
 
   for (const auto& [tsn, item] : outstanding_data_) {
-    if ((tsn != new_cumulative_ack.next_value()) || !item.is_abandoned()) {
+    if (stream_reset_breakpoint_tsns_.contains(tsn) ||
+        (tsn != new_cumulative_ack.next_value()) || !item.is_abandoned()) {
       break;
     }
     new_cumulative_ack = tsn;
@@ -510,22 +516,23 @@ IForwardTsnChunk OutstandingData::CreateIForwardTsn() const {
   UnwrappedTSN new_cumulative_ack = last_cumulative_tsn_ack_;
 
   for (const auto& [tsn, item] : outstanding_data_) {
-    if ((tsn != new_cumulative_ack.next_value()) || !item.is_abandoned()) {
+    if (stream_reset_breakpoint_tsns_.contains(tsn) ||
+        (tsn != new_cumulative_ack.next_value()) || !item.is_abandoned()) {
       break;
     }
     new_cumulative_ack = tsn;
     std::pair<IsUnordered, StreamID> stream_id =
         std::make_pair(item.data().is_unordered, item.data().stream_id);
 
-    if (item.data().message_id > skipped_per_stream[stream_id]) {
-      skipped_per_stream[stream_id] = item.data().message_id;
+    if (item.data().mid > skipped_per_stream[stream_id]) {
+      skipped_per_stream[stream_id] = item.data().mid;
     }
   }
 
   std::vector<IForwardTsnChunk::SkippedStream> skipped_streams;
   skipped_streams.reserve(skipped_per_stream.size());
-  for (const auto& [stream, message_id] : skipped_per_stream) {
-    skipped_streams.emplace_back(stream.first, stream.second, message_id);
+  for (const auto& [stream, mid] : skipped_per_stream) {
+    skipped_streams.emplace_back(stream.first, stream.second, mid);
   }
 
   return IForwardTsnChunk(new_cumulative_ack.Wrap(),
@@ -539,5 +546,9 @@ void OutstandingData::ResetSequenceNumbers(UnwrappedTSN next_tsn,
   RTC_DCHECK(next_tsn == last_cumulative_tsn.next_value());
   next_tsn_ = next_tsn;
   last_cumulative_tsn_ack_ = last_cumulative_tsn;
+}
+
+void OutstandingData::BeginResetStreams() {
+  stream_reset_breakpoint_tsns_.insert(next_tsn_);
 }
 }  // namespace dcsctp

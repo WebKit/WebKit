@@ -15,13 +15,11 @@
 #include <string>
 #include <vector>
 
-#include "api/async_resolver_factory.h"
+#include "api/async_dns_resolver.h"
 #include "api/audio/audio_mixer.h"
-#include "api/call/call_factory_interface.h"
 #include "api/fec_controller.h"
 #include "api/field_trials_view.h"
 #include "api/rtc_event_log/rtc_event_log_factory_interface.h"
-#include "api/task_queue/task_queue_factory.h"
 #include "api/test/pclf/media_configuration.h"
 #include "api/transport/network_control.h"
 #include "api/video_codecs/video_decoder_factory.h"
@@ -46,8 +44,6 @@ namespace webrtc_pc_e2e {
 // can override only some parts of media engine like video encoder/decoder
 // factories.
 struct PeerConnectionFactoryComponents {
-  std::unique_ptr<TaskQueueFactory> task_queue_factory;
-  std::unique_ptr<CallFactoryInterface> call_factory;
   std::unique_ptr<RtcEventLogFactoryInterface> event_log_factory;
   std::unique_ptr<FecControllerFactoryInterface> fec_controller_factory;
   std::unique_ptr<NetworkControllerFactoryInterface> network_controller_factory;
@@ -85,7 +81,8 @@ struct PeerConnectionComponents {
 
   rtc::NetworkManager* const network_manager;
   rtc::PacketSocketFactory* const packet_socket_factory;
-  std::unique_ptr<webrtc::AsyncResolverFactory> async_resolver_factory;
+  std::unique_ptr<webrtc::AsyncDnsResolverFactoryInterface>
+      async_dns_resolver_factory;
   std::unique_ptr<rtc::RTCCertificateGeneratorInterface> cert_generator;
   std::unique_ptr<rtc::SSLCertificateVerifier> tls_cert_verifier;
   std::unique_ptr<IceTransportFactory> ice_transport_factory;

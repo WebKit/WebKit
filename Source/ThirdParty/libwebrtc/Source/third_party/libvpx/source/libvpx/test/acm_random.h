@@ -28,43 +28,38 @@ class ACMRandom {
   explicit ACMRandom(int seed) : random_(seed) {}
 
   void Reset(int seed) { random_.Reseed(seed); }
-  uint16_t Rand16(void) {
+  uint16_t Rand16() {
     const uint32_t value =
         random_.Generate(testing::internal::Random::kMaxRange);
     return (value >> 15) & 0xffff;
   }
 
-  int32_t Rand20Signed(void) {
+  int32_t Rand20Signed() {
     // Use 20 bits: values between 524287 and -524288.
     const uint32_t value = random_.Generate(1048576);
     return static_cast<int32_t>(value) - 524288;
   }
 
-  int16_t Rand16Signed(void) {
+  int16_t Rand16Signed() {
     // Use 16 bits: values between 32767 and -32768.
     return static_cast<int16_t>(random_.Generate(65536));
   }
 
-  int16_t Rand13Signed(void) {
-    // Use 13 bits: values between 4095 and -4096.
-    const uint32_t value = random_.Generate(8192);
-    return static_cast<int16_t>(value) - 4096;
+  uint16_t Rand12() {
+    const uint32_t value =
+        random_.Generate(testing::internal::Random::kMaxRange);
+    // There's a bit more entropy in the upper bits of this implementation.
+    return (value >> 19) & 0xfff;
   }
 
-  int16_t Rand9Signed(void) {
-    // Use 9 bits: values between 255 (0x0FF) and -256 (0x100).
-    const uint32_t value = random_.Generate(512);
-    return static_cast<int16_t>(value) - 256;
-  }
-
-  uint8_t Rand8(void) {
+  uint8_t Rand8() {
     const uint32_t value =
         random_.Generate(testing::internal::Random::kMaxRange);
     // There's a bit more entropy in the upper bits of this implementation.
     return (value >> 23) & 0xff;
   }
 
-  uint8_t Rand8Extremes(void) {
+  uint8_t Rand8Extremes() {
     // Returns a random value near 0 or near 255, to better exercise
     // saturation behavior.
     const uint8_t r = Rand8();
@@ -82,7 +77,7 @@ class ACMRandom {
 
   int operator()(int n) { return PseudoUniform(n); }
 
-  static int DeterministicSeed(void) { return 0xbaba; }
+  static int DeterministicSeed() { return 0xbaba; }
 
  private:
   testing::internal::Random random_;

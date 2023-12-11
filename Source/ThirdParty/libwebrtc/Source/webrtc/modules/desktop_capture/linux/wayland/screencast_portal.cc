@@ -41,6 +41,8 @@ ScreenCastPortal::CaptureSourceType ScreenCastPortal::ToCaptureSourceType(
       return ScreenCastPortal::CaptureSourceType::kScreen;
     case CaptureType::kWindow:
       return ScreenCastPortal::CaptureSourceType::kWindow;
+    case CaptureType::kAnyScreenContent:
+      return ScreenCastPortal::CaptureSourceType::kAnyScreenContent;
   }
 }
 
@@ -80,9 +82,9 @@ void ScreenCastPortal::Stop() {
   proxy_ = nullptr;
   restore_token_ = "";
 
-  if (pw_fd_ != -1) {
+  if (pw_fd_ != kInvalidPipeWireFd) {
     close(pw_fd_);
-    pw_fd_ = -1;
+    pw_fd_ = kInvalidPipeWireFd;
   }
 }
 
@@ -456,7 +458,7 @@ void ScreenCastPortal::OnOpenPipeWireRemoteRequested(GDBusProxy* proxy,
 
   that->pw_fd_ = g_unix_fd_list_get(outlist.get(), index, error.receive());
 
-  if (that->pw_fd_ == -1) {
+  if (that->pw_fd_ == kInvalidPipeWireFd) {
     RTC_LOG(LS_ERROR) << "Failed to get file descriptor from the list: "
                       << error->message;
     that->OnPortalDone(RequestResponse::kError);

@@ -337,6 +337,7 @@ TEST(VideoBroadcasterTest, AppliesMaxOfSinkWantsRequestedResolution) {
 
   FakeVideoRenderer sink1;
   VideoSinkWants wants1;
+  wants1.is_active = true;
   wants1.requested_resolution = FrameSize(640, 360);
 
   broadcaster.AddOrUpdateSink(&sink1, wants1);
@@ -344,6 +345,7 @@ TEST(VideoBroadcasterTest, AppliesMaxOfSinkWantsRequestedResolution) {
 
   FakeVideoRenderer sink2;
   VideoSinkWants wants2;
+  wants2.is_active = true;
   wants2.requested_resolution = FrameSize(650, 350);
   broadcaster.AddOrUpdateSink(&sink2, wants2);
   EXPECT_EQ(FrameSize(650, 360), *broadcaster.wants().requested_resolution);

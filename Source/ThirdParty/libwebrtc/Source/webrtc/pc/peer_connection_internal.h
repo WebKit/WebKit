@@ -95,7 +95,6 @@ class PeerConnectionSdpMethods {
       const std::map<std::string, const cricket::ContentGroup*>&
           bundle_groups_by_mid) = 0;
 
-  virtual absl::optional<std::string> GetDataMid() const = 0;
   // Internal implementation for AddTransceiver family of methods. If
   // `fire_callback` is set, fires OnRenegotiationNeeded callback if successful.
   virtual RTCErrorOr<rtc::scoped_refptr<RtpTransceiverInterface>>
@@ -117,17 +116,14 @@ class PeerConnectionSdpMethods {
   // Returns true if SRTP (either using DTLS-SRTP or SDES) is required by
   // this session.
   virtual bool SrtpRequired() const = 0;
-  // Configures the data channel transport on the network thread.
-  // The return value will be unset if an error occurs. If the setup succeeded
-  // the return value will be set and contain the name of the transport
-  // (empty string if a name isn't available).
-  virtual absl::optional<std::string> SetupDataChannelTransport_n(
-      absl::string_view mid) = 0;
-  virtual void TeardownDataChannelTransport_n(RTCError error) = 0;
-  virtual void SetSctpDataInfo(absl::string_view mid,
-                               absl::string_view transport_name) = 0;
-  virtual void ResetSctpDataInfo() = 0;
-
+  // Initializes the data channel transport for the peerconnection instance.
+  // This will have the effect that `sctp_mid()` and `sctp_transport_name()`
+  // will return a set value (even though it might be an empty string) and the
+  // dc transport will be initialized on the network thread.
+  virtual bool CreateDataChannelTransport(absl::string_view mid) = 0;
+  // Tears down the data channel transport state and clears the `sctp_mid()` and
+  // `sctp_transport_name()` properties.
+  virtual void DestroyDataChannelTransport(RTCError error) = 0;
   virtual const FieldTrialsView& trials() const = 0;
 
   virtual void ClearStatsCache() = 0;

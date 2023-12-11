@@ -8,12 +8,13 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "sdk/android/native_api/codecs/wrapper.h"
+
 #include <memory>
 
 #include "absl/memory/memory.h"
 #include "media/base/media_constants.h"
 #include "sdk/android/generated_native_unittests_jni/CodecsWrapperTestHelper_jni.h"
-#include "sdk/android/native_api/codecs/wrapper.h"
 #include "sdk/android/src/jni/video_encoder_wrapper.h"
 #include "test/gtest.h"
 

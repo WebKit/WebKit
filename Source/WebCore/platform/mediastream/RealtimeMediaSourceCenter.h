@@ -111,7 +111,7 @@ public:
     OSObjectPtr<tcc_identity_t> identity() const { return m_identity; }
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     const String& currentMediaEnvironment() const;
     void setCurrentMediaEnvironment(const String&);
 #endif
@@ -151,7 +151,7 @@ private:
     OSObjectPtr<tcc_identity_t> m_identity;
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     String m_currentMediaEnvironment;
 #endif
 

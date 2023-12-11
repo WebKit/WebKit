@@ -19,7 +19,6 @@
 #include "modules/video_coding/utility/vp8_header_parser.h"
 #include "modules/video_coding/utility/vp9_uncompressed_header_parser.h"
 #include "rtc_base/logging.h"
-#include "rtc_base/task_utils/to_queued_task.h"
 #include "rtc_base/time_utils.h"
 #include "sdk/android/generated_video_jni/VideoEncoderWrapper_jni.h"
 #include "sdk/android/generated_video_jni/VideoEncoder_jni.h"
@@ -101,7 +100,6 @@ int32_t VideoEncoderWrapper::InitEncodeInternal(JNIEnv* jni) {
 
 void VideoEncoderWrapper::UpdateEncoderInfo(JNIEnv* jni) {
   encoder_info_.supports_native_handle = true;
-  encoder_info_.has_internal_source = false;
 
   encoder_info_.implementation_name = JavaToStdString(
       jni, Java_VideoEncoder_getImplementationName(jni, encoder_));
@@ -113,6 +111,12 @@ void VideoEncoderWrapper::UpdateEncoderInfo(JNIEnv* jni) {
 
   encoder_info_.resolution_bitrate_limits = JavaToNativeResolutionBitrateLimits(
       jni, Java_VideoEncoder_getResolutionBitrateLimits(jni, encoder_));
+
+  EncoderInfo info = GetEncoderInfoInternal(jni);
+  encoder_info_.requested_resolution_alignment =
+      info.requested_resolution_alignment;
+  encoder_info_.apply_alignment_to_all_simulcast_layers =
+      info.apply_alignment_to_all_simulcast_layers;
 }
 
 int32_t VideoEncoderWrapper::RegisterEncodeCompleteCallback(
@@ -147,8 +151,13 @@ int32_t VideoEncoderWrapper::Encode(
   JNIEnv* jni = AttachCurrentThreadIfNeeded();
 
   // Construct encode info.
-  ScopedJavaLocalRef<jobjectArray> j_frame_types =
-      NativeToJavaFrameTypeArray(jni, *frame_types);
+  ScopedJavaLocalRef<jobjectArray> j_frame_types;
+  if (frame_types != nullptr) {
+    j_frame_types = NativeToJavaFrameTypeArray(jni, *frame_types);
+  } else {
+    j_frame_types =
+        NativeToJavaFrameTypeArray(jni, {VideoFrameType::kVideoFrameDelta});
+  }
   ScopedJavaLocalRef<jobject> encode_info =
       Java_EncodeInfo_Constructor(jni, j_frame_types);
 
@@ -218,6 +227,8 @@ VideoEncoderWrapper::GetScalingSettingsInternal(JNIEnv* jni) const {
       return VideoEncoder::ScalingSettings(kLowVp9QpThreshold,
                                            kHighVp9QpThreshold);
     }
+    case kVideoCodecH265:
+    // TODO(bugs.webrtc.org/13485): Use H264 QP thresholds for now.
     case kVideoCodecH264: {
       // Same as in h264_encoder_impl.cc.
       static const int kLowH264QpThreshold = 24;
@@ -228,6 +239,26 @@ VideoEncoderWrapper::GetScalingSettingsInternal(JNIEnv* jni) const {
     default:
       return ScalingSettings::kOff;
   }
+}
+
+VideoEncoder::EncoderInfo VideoEncoderWrapper::GetEncoderInfoInternal(
+    JNIEnv* jni) const {
+  ScopedJavaLocalRef<jobject> j_encoder_info =
+      Java_VideoEncoder_getEncoderInfo(jni, encoder_);
+
+  jint requested_resolution_alignment =
+      Java_EncoderInfo_getRequestedResolutionAlignment(jni, j_encoder_info);
+
+  jboolean apply_alignment_to_all_simulcast_layers =
+      Java_EncoderInfo_getApplyAlignmentToAllSimulcastLayers(jni,
+                                                             j_encoder_info);
+
+  VideoEncoder::EncoderInfo info;
+  info.requested_resolution_alignment = requested_resolution_alignment;
+  info.apply_alignment_to_all_simulcast_layers =
+      apply_alignment_to_all_simulcast_layers;
+
+  return info;
 }
 
 void VideoEncoderWrapper::OnEncodedFrame(
@@ -274,7 +305,7 @@ void VideoEncoderWrapper::OnEncodedFrame(
   // CopyOnWriteBuffer.
   EncodedImage frame_copy = frame;
 
-  frame_copy.SetTimestamp(frame_extra_info.timestamp_rtp);
+  frame_copy.SetRtpTimestamp(frame_extra_info.timestamp_rtp);
   frame_copy.capture_time_ms_ = capture_time_ns / rtc::kNumNanosecsPerMillisec;
 
   if (frame_copy.qp_ < 0)
@@ -326,6 +357,13 @@ int VideoEncoderWrapper::ParseQp(rtc::ArrayView<const uint8_t> buffer) {
       qp = h264_bitstream_parser_.GetLastSliceQp().value_or(-1);
       success = (qp >= 0);
       break;
+#ifdef RTC_ENABLE_H265
+    case kVideoCodecH265:
+      h265_bitstream_parser_.ParseBitstream(buffer);
+      qp = h265_bitstream_parser_.GetLastSliceQp().value_or(-1);
+      success = (qp >= 0);
+      break;
+#endif
     default:  // Default is to not provide QP.
       success = false;
       break;

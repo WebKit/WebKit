@@ -3,3 +3,9 @@ include_rules = [
   "+system_wrappers",
   "+video",
 ]
+specific_include_rules = {
+  "goog_cc_network_control_unittest.cc": [
+    "+call/video_receive_stream.h",
+  ],
+}
+

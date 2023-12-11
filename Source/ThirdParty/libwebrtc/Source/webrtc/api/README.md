@@ -13,8 +13,9 @@ Mostly, just follow the regular [style guide](/g3doc/style-guide.md), but:
   mountain of technical debt that we’re trying to shrink.
 * `.cc` files in `api/`, on the other hand, are free to `#include` headers
   outside `api/`.
+* Avoid structs in api, prefer classes.
 
-That is, the preferred way for `api/` code to access non-`api/` code is to call
+The preferred way for `api/` code to access non-`api/` code is to call
 it from a `.cc` file, so that users of our API headers won’t transitively
 `#include` non-public headers.
 
@@ -25,3 +26,12 @@ usual [rules](/g3doc/style-guide.md#forward-declarations) still apply, though.
 `.cc` files in `api/` should preferably be kept reasonably small. If a
 substantial implementation is needed, consider putting it with our non-public
 code, and just call it from the `api/` `.cc` file.
+
+Avoid defining api with structs as it makes harder for the api to evolve.
+Your struct may gain invariant, or change how it represents data.
+Evolving struct from the api is particular challenging as it is designed to be
+used in other code bases and thus needs to be updated independetly from its usage.
+Class with accessors and setters makes such migration safer.
+See [Google C++ style guide](https://google.github.io/styleguide/cppguide.html#Structs_vs._Classes) for more.
+
+If you need to evolve existent struct in api, prefer first to convert it into a class.

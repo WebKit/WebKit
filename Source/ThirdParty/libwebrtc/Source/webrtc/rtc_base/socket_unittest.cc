@@ -27,6 +27,7 @@
 #include "rtc_base/gunit.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/net_helpers.h"
+#include "rtc_base/net_test_helpers.h"
 #include "rtc_base/socket_address.h"
 #include "rtc_base/socket_server.h"
 #include "rtc_base/socket_unittest.h"

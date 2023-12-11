@@ -281,7 +281,7 @@ void SharedScreenCastStreamPrivate::OnStreamParamChanged(
 
   that->stream_size_ = DesktopSize(width, height);
 
-  uint8_t buffer[1024] = {};
+  uint8_t buffer[2048] = {};
   auto builder = spa_pod_builder{buffer, sizeof(buffer)};
 
   // Setup buffers and meta header for new format.
@@ -364,7 +364,7 @@ void SharedScreenCastStreamPrivate::OnRenegotiateFormat(void* data, uint64_t) {
   {
     PipeWireThreadLoopLock thread_loop_lock(that->pw_main_loop_);
 
-    uint8_t buffer[2048] = {};
+    uint8_t buffer[4096] = {};
 
     spa_pod_builder builder = spa_pod_builder{buffer, sizeof(buffer)};
 
@@ -448,7 +448,7 @@ bool SharedScreenCastStreamPrivate::StartScreenCastStream(
   {
     PipeWireThreadLoopLock thread_loop_lock(pw_main_loop_);
 
-    if (fd >= 0) {
+    if (fd != kInvalidPipeWireFd) {
       pw_core_ = pw_context_connect_fd(
           pw_context_, fcntl(fd, F_DUPFD_CLOEXEC, 0), nullptr, 0);
     } else {
@@ -482,7 +482,7 @@ bool SharedScreenCastStreamPrivate::StartScreenCastStream(
 
     pw_stream_add_listener(pw_stream_, &spa_stream_listener_,
                            &pw_stream_events_, this);
-    uint8_t buffer[2048] = {};
+    uint8_t buffer[4096] = {};
 
     spa_pod_builder builder = spa_pod_builder{buffer, sizeof(buffer)};
 
@@ -978,7 +978,7 @@ SharedScreenCastStream::CreateDefault() {
 }
 
 bool SharedScreenCastStream::StartScreenCastStream(uint32_t stream_node_id) {
-  return private_->StartScreenCastStream(stream_node_id, -1);
+  return private_->StartScreenCastStream(stream_node_id, kInvalidPipeWireFd);
 }
 
 bool SharedScreenCastStream::StartScreenCastStream(

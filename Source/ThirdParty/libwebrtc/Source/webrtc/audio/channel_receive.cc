@@ -70,7 +70,8 @@ acm2::AcmReceiver::Config AcmConfig(
     rtc::scoped_refptr<AudioDecoderFactory> decoder_factory,
     absl::optional<AudioCodecPairId> codec_pair_id,
     size_t jitter_buffer_max_packets,
-    bool jitter_buffer_fast_playout) {
+    bool jitter_buffer_fast_playout,
+    int jitter_buffer_min_delay_ms) {
   acm2::AcmReceiver::Config acm_config;
   acm_config.neteq_factory = neteq_factory;
   acm_config.decoder_factory = decoder_factory;
@@ -78,6 +79,7 @@ acm2::AcmReceiver::Config AcmConfig(
   acm_config.neteq_config.max_packets_in_buffer = jitter_buffer_max_packets;
   acm_config.neteq_config.enable_fast_accelerate = jitter_buffer_fast_playout;
   acm_config.neteq_config.enable_muted_state = true;
+  acm_config.neteq_config.min_delay_ms = jitter_buffer_min_delay_ms;
 
   return acm_config;
 }
@@ -292,7 +294,8 @@ class ChannelReceive : public ChannelReceiveInterface,
   webrtc::AbsoluteCaptureTimeInterpolator absolute_capture_time_interpolator_
       RTC_GUARDED_BY(worker_thread_checker_);
 
-  webrtc::CaptureClockOffsetUpdater capture_clock_offset_updater_;
+  webrtc::CaptureClockOffsetUpdater capture_clock_offset_updater_
+      RTC_GUARDED_BY(ts_stats_lock_);
 
   rtc::scoped_refptr<ChannelReceiveFrameTransformerDelegate>
       frame_transformer_delegate_;
@@ -472,20 +475,15 @@ AudioMixer::Source::AudioFrameInfo ChannelReceive::GetAudioFrameWithInfo(
   // Fill in local capture clock offset in `audio_frame->packet_infos_`.
   RtpPacketInfos::vector_type packet_infos;
   for (auto& packet_info : audio_frame->packet_infos_) {
-    absl::optional<int64_t> local_capture_clock_offset_q32x32;
-    if (packet_info.absolute_capture_time().has_value()) {
-      local_capture_clock_offset_q32x32 =
-          capture_clock_offset_updater_.AdjustEstimatedCaptureClockOffset(
-              packet_info.absolute_capture_time()
-                  ->estimated_capture_clock_offset);
-    }
     RtpPacketInfo new_packet_info(packet_info);
-    absl::optional<TimeDelta> local_capture_clock_offset;
-    if (local_capture_clock_offset_q32x32.has_value()) {
-      local_capture_clock_offset = TimeDelta::Millis(
-          UQ32x32ToInt64Ms(*local_capture_clock_offset_q32x32));
+    if (packet_info.absolute_capture_time().has_value()) {
+      MutexLock lock(&ts_stats_lock_);
+      new_packet_info.set_local_capture_clock_offset(
+          capture_clock_offset_updater_.ConvertsToTimeDela(
+              capture_clock_offset_updater_.AdjustEstimatedCaptureClockOffset(
+                  packet_info.absolute_capture_time()
+                      ->estimated_capture_clock_offset)));
     }
-    new_packet_info.set_local_capture_clock_offset(local_capture_clock_offset);
     packet_infos.push_back(std::move(new_packet_info));
   }
   audio_frame->packet_infos_ = RtpPacketInfos(packet_infos);
@@ -549,7 +547,8 @@ ChannelReceive::ChannelReceive(
                               decoder_factory,
                               codec_pair_id,
                               jitter_buffer_max_packets,
-                              jitter_buffer_fast_playout)),
+                              jitter_buffer_fast_playout,
+                              jitter_buffer_min_delay_ms)),
       _outputAudioLevel(),
       clock_(clock),
       ntp_estimator_(clock),
@@ -828,13 +827,12 @@ CallReceiveStatistics ChannelReceive::GetRTCPStatistics() const {
         rtp_stats.packet_counter.header_bytes +
         rtp_stats.packet_counter.padding_bytes;
     stats.packetsReceived = rtp_stats.packet_counter.packets;
-    stats.last_packet_received_timestamp_ms =
-        rtp_stats.last_packet_received_timestamp_ms;
+    stats.last_packet_received = rtp_stats.last_packet_received;
   } else {
     stats.payload_bytes_received = 0;
     stats.header_and_padding_bytes_received = 0;
     stats.packetsReceived = 0;
-    stats.last_packet_received_timestamp_ms = absl::nullopt;
+    stats.last_packet_received = absl::nullopt;
   }
 
   {

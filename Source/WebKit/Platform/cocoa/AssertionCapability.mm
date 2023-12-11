@@ -26,7 +26,7 @@
 #import "config.h"
 #import "AssertionCapability.h"
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
 
 #import "ExtensionKitSoftLink.h"
 
@@ -58,4 +58,4 @@ RetainPtr<_SECapabilities> AssertionCapability::platformCapability() const
 
 } // namespace WebKit
 
-#endif // ENABLE(PROCESS_CAPABILITIES)
+#endif // ENABLE(EXTENSION_CAPABILITIES)

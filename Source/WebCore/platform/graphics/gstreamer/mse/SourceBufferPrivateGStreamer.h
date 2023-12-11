@@ -69,8 +69,8 @@ public:
     void allSamplesInTrackEnqueued(TrackID) final;
     bool isReadyForMoreSamples(TrackID) final;
 
-    bool precheckInitialisationSegment(const InitializationSegment&) final;
-    void processInitialisationSegment(std::optional<InitializationSegment>&&) final;
+    bool precheckInitializationSegment(const InitializationSegment&) final;
+    void processInitializationSegment(std::optional<InitializationSegment>&&) final;
 
     void didReceiveAllPendingSamples();
     void appendParsingFailed();

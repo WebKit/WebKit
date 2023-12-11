@@ -84,7 +84,7 @@ __attribute__((objc_runtime_name("WK_RTCWrappedEncodedImageBuffer")))
                                  freeWhenDone:NO];
     self.encodedWidth = rtc::dchecked_cast<int32_t>(encodedImage._encodedWidth);
     self.encodedHeight = rtc::dchecked_cast<int32_t>(encodedImage._encodedHeight);
-    self.timeStamp = encodedImage.Timestamp();
+    self.timeStamp = encodedImage.RtpTimestamp();
     self.captureTimeMs = encodedImage.capture_time_ms_;
     self.ntpTimeMs = encodedImage.ntp_time_ms_;
     self.flags = encodedImage.timing_.flags;
@@ -112,7 +112,7 @@ __attribute__((objc_runtime_name("WK_RTCWrappedEncodedImageBuffer")))
   encodedImage.set_size(self.buffer.length);
   encodedImage._encodedWidth = rtc::dchecked_cast<uint32_t>(self.encodedWidth);
   encodedImage._encodedHeight = rtc::dchecked_cast<uint32_t>(self.encodedHeight);
-  encodedImage.SetTimestamp(self.timeStamp);
+  encodedImage.SetRtpTimestamp(self.timeStamp);
   encodedImage.capture_time_ms_ = self.captureTimeMs;
   encodedImage.ntp_time_ms_ = self.ntpTimeMs;
   encodedImage.timing_.flags = self.flags;

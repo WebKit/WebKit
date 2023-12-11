@@ -98,11 +98,8 @@ void ReceiveSideCongestionController::OnReceivedPacket(
   } else {
     // Receive-side BWE.
     MutexLock lock(&mutex_);
-    RTPHeader header;
-    packet.GetHeader(&header);
     PickEstimator(packet.HasExtension<AbsoluteSendTime>());
-    rbe_->IncomingPacket(packet.arrival_time().ms(),
-                         packet.payload_size() + packet.padding_size(), header);
+    rbe_->IncomingPacket(packet);
   }
 }
 

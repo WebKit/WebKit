@@ -220,7 +220,7 @@ int32_t Dav1dDecoder::Decode(const webrtc::EncodedImage& encodedImage, bool /*mi
 
     webrtc::VideoFrame decodedFrame = webrtc::VideoFrame::Builder()
         .set_video_frame_buffer(buffer)
-        .set_timestamp_rtp(encodedImage.Timestamp())
+        .set_timestamp_rtp(encodedImage.RtpTimestamp())
         .set_ntp_time_ms(encodedImage.ntp_time_ms_)
         .set_color_space(encodedImage.ColorSpace())
         .build();

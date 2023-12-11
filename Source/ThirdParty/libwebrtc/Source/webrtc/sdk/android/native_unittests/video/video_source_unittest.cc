@@ -8,11 +8,12 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "sdk/android/native_api/video/video_source.h"
+
 #include <vector>
 
 #include "api/video/video_sink_interface.h"
 #include "sdk/android/generated_native_unittests_jni/JavaVideoSourceTestHelper_jni.h"
-#include "sdk/android/native_api/video/video_source.h"
 #include "test/gtest.h"
 
 namespace webrtc {

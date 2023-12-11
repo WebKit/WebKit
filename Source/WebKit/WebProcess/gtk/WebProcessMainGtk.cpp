@@ -33,7 +33,7 @@
 #include <libintl.h>
 
 #if USE(GSTREAMER)
-#include <gst/gst.h>
+#include <WebCore/GStreamerCommon.h>
 #endif
 
 #if USE(GCRYPT)
@@ -67,7 +67,7 @@ public:
     void platformFinalize() override
     {
 #if USE(GSTREAMER)
-        gst_deinit();
+        deinitializeGStreamer();
 #endif
     }
 };

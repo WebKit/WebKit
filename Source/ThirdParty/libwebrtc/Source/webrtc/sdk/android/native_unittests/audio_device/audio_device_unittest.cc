@@ -8,21 +8,21 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
+#include "modules/audio_device/include/audio_device.h"
+
 #include <list>
 #include <memory>
 #include <numeric>
 
 #include "api/scoped_refptr.h"
-#include "modules/audio_device/include/audio_device.h"
 #include "modules/audio_device/include/mock_audio_transport.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/event.h"
-#include "rtc_base/format_macros.h"
 #include "rtc_base/synchronization/mutex.h"
 #include "rtc_base/time_utils.h"
 #include "sdk/android/generated_native_unittests_jni/BuildInfo_jni.h"
 #include "sdk/android/native_api/audio_device_module/audio_device_android.h"
-#include "sdk/android/native_unittests/application_context_provider.h"
+#include "sdk/android/native_api/jni/application_context_provider.h"
 #include "sdk/android/src/jni/audio_device/audio_common.h"
 #include "sdk/android/src/jni/audio_device/audio_device_module.h"
 #include "sdk/android/src/jni/audio_device/opensles_common.h"
@@ -57,7 +57,7 @@ namespace jni {
 // an event indicating that the test was OK.
 static const size_t kNumCallbacks = 10;
 // Max amount of time we wait for an event to be set while counting callbacks.
-static const int kTestTimeOutInMilliseconds = 10 * 1000;
+static constexpr TimeDelta kTestTimeOut = TimeDelta::Seconds(10);
 // Average number of audio callbacks per second assuming 10ms packet size.
 static const size_t kNumCallbacksPerSecond = 100;
 // Play out a test file during this time (unit is in seconds).
@@ -66,7 +66,7 @@ static const size_t kBitsPerSample = 16;
 static const size_t kBytesPerSample = kBitsPerSample / 8;
 // Run the full-duplex test during this time (unit is in seconds).
 // Note that first `kNumIgnoreFirstCallbacks` are ignored.
-static const int kFullDuplexTimeInSec = 5;
+static constexpr TimeDelta kFullDuplexTime = TimeDelta::Seconds(5);
 // Wait for the callback sequence to stabilize by ignoring this amount of the
 // initial callbacks (avoids initial FIFO access).
 // Only used in the RunPlayoutAndRecordingInFullDuplex test.
@@ -74,8 +74,8 @@ static const size_t kNumIgnoreFirstCallbacks = 50;
 // Sets the number of impulses per second in the latency test.
 static const int kImpulseFrequencyInHz = 1;
 // Length of round-trip latency measurements. Number of transmitted impulses
-// is kImpulseFrequencyInHz * kMeasureLatencyTimeInSec - 1.
-static const int kMeasureLatencyTimeInSec = 11;
+// is kImpulseFrequencyInHz * kMeasureLatencyTime - 1.
+static constexpr TimeDelta kMeasureLatencyTime = TimeDelta::Seconds(11);
 // Utilized in round-trip latency measurements to avoid capturing noise samples.
 static const int kImpulseThreshold = 1000;
 static const char kTag[] = "[..........] ";
@@ -184,7 +184,7 @@ class FifoAudioStream : public AudioStreamInterface {
     const size_t size = fifo_->size();
     if (size > largest_size_) {
       largest_size_ = size;
-      PRINTD("(%" RTC_PRIuS ")", largest_size_);
+      PRINTD("(%zu)", largest_size_);
     }
     total_written_elements_ += size;
   }
@@ -466,7 +466,7 @@ class AudioDeviceTest : public ::testing::Test {
     // implementations.
     // Creates an audio device using a default audio layer.
     jni_ = AttachCurrentThreadIfNeeded();
-    context_ = test::GetAppContextForTest(jni_);
+    context_ = GetAppContext(jni_);
     audio_device_ = CreateJavaAudioDeviceModule(jni_, context_.obj());
     EXPECT_NE(audio_device_.get(), nullptr);
     EXPECT_EQ(0, audio_device_->Init());
@@ -491,7 +491,7 @@ class AudioDeviceTest : public ::testing::Test {
   }
 
   void SetActiveAudioLayer(AudioDeviceModule::AudioLayer audio_layer) {
-    audio_device_ = CreateAudioDevice(audio_layer);
+    audio_device_ = CreateAndroidAudioDeviceModule(audio_layer);
     EXPECT_NE(audio_device_.get(), nullptr);
     EXPECT_EQ(0, audio_device_->Init());
     UpdateParameters();
@@ -512,30 +512,6 @@ class AudioDeviceTest : public ::testing::Test {
     return audio_device_;
   }
 
-  rtc::scoped_refptr<AudioDeviceModule> CreateAudioDevice(
-      AudioDeviceModule::AudioLayer audio_layer) {
-#if defined(WEBRTC_AUDIO_DEVICE_INCLUDE_ANDROID_AAUDIO)
-    if (audio_layer == AudioDeviceModule::kAndroidAAudioAudio) {
-      return rtc::scoped_refptr<AudioDeviceModule>(
-          CreateAAudioAudioDeviceModule(jni_, context_.obj()));
-    }
-#endif
-    if (audio_layer == AudioDeviceModule::kAndroidJavaAudio) {
-      return rtc::scoped_refptr<AudioDeviceModule>(
-          CreateJavaAudioDeviceModule(jni_, context_.obj()));
-    } else if (audio_layer == AudioDeviceModule::kAndroidOpenSLESAudio) {
-      return rtc::scoped_refptr<AudioDeviceModule>(
-          CreateOpenSLESAudioDeviceModule(jni_, context_.obj()));
-    } else if (audio_layer ==
-               AudioDeviceModule::kAndroidJavaInputAndOpenSLESOutputAudio) {
-      return rtc::scoped_refptr<AudioDeviceModule>(
-          CreateJavaInputAndOpenSLESOutputAudioDeviceModule(jni_,
-                                                            context_.obj()));
-    } else {
-      return nullptr;
-    }
-  }
-
   // Returns file name relative to the resource root given a sample rate.
   std::string GetFileName(int sample_rate) {
     EXPECT_TRUE(sample_rate == 48000 || sample_rate == 44100);
@@ -547,13 +523,12 @@ class AudioDeviceTest : public ::testing::Test {
 #ifdef ENABLE_PRINTF
     PRINT("file name: %s\n", file_name.c_str());
     const size_t bytes = test::GetFileSize(file_name);
-    PRINT("file size: %" RTC_PRIuS " [bytes]\n", bytes);
-    PRINT("file size: %" RTC_PRIuS " [samples]\n", bytes / kBytesPerSample);
+    PRINT("file size: %zu [bytes]\n", bytes);
+    PRINT("file size: %zu [samples]\n", bytes / kBytesPerSample);
     const int seconds =
         static_cast<int>(bytes / (sample_rate * kBytesPerSample));
     PRINT("file size: %d [secs]\n", seconds);
-    PRINT("file size: %" RTC_PRIuS " [callbacks]\n",
-          seconds * kNumCallbacksPerSecond);
+    PRINT("file size: %zu [callbacks]\n", seconds * kNumCallbacksPerSecond);
 #endif
     return file_name;
   }
@@ -567,7 +542,7 @@ class AudioDeviceTest : public ::testing::Test {
   int TestDelayOnAudioLayer(
       const AudioDeviceModule::AudioLayer& layer_to_test) {
     rtc::scoped_refptr<AudioDeviceModule> audio_device;
-    audio_device = CreateAudioDevice(layer_to_test);
+    audio_device = CreateAndroidAudioDeviceModule(layer_to_test);
     EXPECT_NE(audio_device.get(), nullptr);
     uint16_t playout_delay;
     EXPECT_EQ(0, audio_device->PlayoutDelay(&playout_delay));
@@ -577,7 +552,7 @@ class AudioDeviceTest : public ::testing::Test {
   AudioDeviceModule::AudioLayer TestActiveAudioLayer(
       const AudioDeviceModule::AudioLayer& layer_to_test) {
     rtc::scoped_refptr<AudioDeviceModule> audio_device;
-    audio_device = CreateAudioDevice(layer_to_test);
+    audio_device = CreateAndroidAudioDeviceModule(layer_to_test);
     EXPECT_NE(audio_device.get(), nullptr);
     AudioDeviceModule::AudioLayer active;
     EXPECT_EQ(0, audio_device->ActiveAudioLayer(&active));
@@ -675,6 +650,22 @@ class AudioDeviceTest : public ::testing::Test {
     return volume;
   }
 
+  bool IsLowLatencyPlayoutSupported() {
+    return jni::IsLowLatencyInputSupported(jni_, context_);
+  }
+
+  bool IsLowLatencyRecordSupported() {
+    return jni::IsLowLatencyOutputSupported(jni_, context_);
+  }
+
+  bool IsAAudioSupported() {
+#if defined(WEBRTC_AUDIO_DEVICE_INCLUDE_ANDROID_AAUDIO)
+    return true;
+#else
+    return false;
+#endif
+  }
+
   JNIEnv* jni_;
   ScopedJavaLocalRef<jobject> context_;
   rtc::Event test_is_done_;
@@ -686,6 +677,31 @@ class AudioDeviceTest : public ::testing::Test {
 
 TEST_F(AudioDeviceTest, ConstructDestruct) {
   // Using the test fixture to create and destruct the audio device module.
+}
+
+// We always ask for a default audio layer when the ADM is constructed. But the
+// ADM will then internally set the best suitable combination of audio layers,
+// for input and output based on if low-latency output and/or input audio in
+// combination with OpenSL ES is supported or not. This test ensures that the
+// correct selection is done.
+TEST_F(AudioDeviceTest, VerifyDefaultAudioLayer) {
+  const AudioDeviceModule::AudioLayer audio_layer =
+      TestActiveAudioLayer(AudioDeviceModule::kPlatformDefaultAudio);
+  bool low_latency_output = IsLowLatencyPlayoutSupported();
+  bool low_latency_input = IsLowLatencyRecordSupported();
+  bool aaudio = IsAAudioSupported();
+  AudioDeviceModule::AudioLayer expected_audio_layer;
+  if (aaudio) {
+    expected_audio_layer = AudioDeviceModule::kAndroidAAudioAudio;
+  } else if (low_latency_output && low_latency_input) {
+    expected_audio_layer = AudioDeviceModule::kAndroidOpenSLESAudio;
+  } else if (low_latency_output && !low_latency_input) {
+    expected_audio_layer =
+        AudioDeviceModule::kAndroidJavaInputAndOpenSLESOutputAudio;
+  } else {
+    expected_audio_layer = AudioDeviceModule::kAndroidJavaAudio;
+  }
+  EXPECT_EQ(expected_audio_layer, audio_layer);
 }
 
 // Verify that it is possible to explicitly create the two types of supported
@@ -715,20 +731,32 @@ TEST_F(AudioDeviceTest, CorrectAudioLayerIsUsedForOpenSLInBothDirections) {
   EXPECT_EQ(expected_layer, active_layer);
 }
 
-// TODO(bugs.webrtc.org/8914)
-// TODO(phensman): Add test for AAudio/Java combination when this combination
-// is supported.
 #if !defined(WEBRTC_AUDIO_DEVICE_INCLUDE_ANDROID_AAUDIO)
 #define MAYBE_CorrectAudioLayerIsUsedForAAudioInBothDirections \
   DISABLED_CorrectAudioLayerIsUsedForAAudioInBothDirections
+
+#define MAYBE_CorrectAudioLayerIsUsedForCombinedJavaAAudioCombo \
+  DISABLED_CorrectAudioLayerIsUsedForCombinedJavaAAudioCombo
 #else
 #define MAYBE_CorrectAudioLayerIsUsedForAAudioInBothDirections \
   CorrectAudioLayerIsUsedForAAudioInBothDirections
+
+#define MAYBE_CorrectAudioLayerIsUsedForCombinedJavaAAudioCombo \
+  CorrectAudioLayerIsUsedForCombinedJavaAAudioCombo
 #endif
 TEST_F(AudioDeviceTest,
        MAYBE_CorrectAudioLayerIsUsedForAAudioInBothDirections) {
   AudioDeviceModule::AudioLayer expected_layer =
       AudioDeviceModule::kAndroidAAudioAudio;
+  AudioDeviceModule::AudioLayer active_layer =
+      TestActiveAudioLayer(expected_layer);
+  EXPECT_EQ(expected_layer, active_layer);
+}
+
+TEST_F(AudioDeviceTest,
+       MAYBE_CorrectAudioLayerIsUsedForCombinedJavaAAudioCombo) {
+  AudioDeviceModule::AudioLayer expected_layer =
+      AudioDeviceModule::kAndroidJavaInputAndAAudioOutputAudio;
   AudioDeviceModule::AudioLayer active_layer =
       TestActiveAudioLayer(expected_layer);
   EXPECT_EQ(expected_layer, active_layer);
@@ -881,7 +909,7 @@ TEST_F(AudioDeviceTest, StartPlayoutVerifyCallbacks) {
       .Times(AtLeast(kNumCallbacks));
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartPlayout();
-  test_is_done_.Wait(kTestTimeOutInMilliseconds);
+  test_is_done_.Wait(kTestTimeOut);
   StopPlayout();
 }
 
@@ -893,12 +921,12 @@ TEST_F(AudioDeviceTest, StartRecordingVerifyCallbacks) {
   EXPECT_CALL(
       mock, RecordedDataIsAvailable(NotNull(), record_frames_per_10ms_buffer(),
                                     kBytesPerSample, record_channels(),
-                                    record_sample_rate(), _, 0, 0, false, _))
+                                    record_sample_rate(), _, 0, 0, false, _, _))
       .Times(AtLeast(kNumCallbacks));
 
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartRecording();
-  test_is_done_.Wait(kTestTimeOutInMilliseconds);
+  test_is_done_.Wait(kTestTimeOut);
   StopRecording();
 }
 
@@ -914,12 +942,12 @@ TEST_F(AudioDeviceTest, StartPlayoutAndRecordingVerifyCallbacks) {
   EXPECT_CALL(
       mock, RecordedDataIsAvailable(NotNull(), record_frames_per_10ms_buffer(),
                                     kBytesPerSample, record_channels(),
-                                    record_sample_rate(), _, 0, 0, false, _))
+                                    record_sample_rate(), _, 0, 0, false, _, _))
       .Times(AtLeast(kNumCallbacks));
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartPlayout();
   StartRecording();
-  test_is_done_.Wait(kTestTimeOutInMilliseconds);
+  test_is_done_.Wait(kTestTimeOut);
   StopRecording();
   StopPlayout();
 }
@@ -939,7 +967,7 @@ TEST_F(AudioDeviceTest, RunPlayoutWithFileAsSource) {
   // SetMaxPlayoutVolume();
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartPlayout();
-  test_is_done_.Wait(kTestTimeOutInMilliseconds);
+  test_is_done_.Wait(kTestTimeOut);
   StopPlayout();
 }
 
@@ -972,16 +1000,16 @@ TEST_F(AudioDeviceTest, ShowAudioParameterInfo) {
   PRINT("%saudio layer: %s\n", kTag,
         low_latency_out ? "Low latency OpenSL" : "Java/JNI based AudioTrack");
   PRINT("%ssample rate: %d Hz\n", kTag, output_parameters_.sample_rate());
-  PRINT("%schannels: %" RTC_PRIuS "\n", kTag, output_parameters_.channels());
-  PRINT("%sframes per buffer: %" RTC_PRIuS " <=> %.2f ms\n", kTag,
+  PRINT("%schannels: %zu\n", kTag, output_parameters_.channels());
+  PRINT("%sframes per buffer: %zu <=> %.2f ms\n", kTag,
         output_parameters_.frames_per_buffer(),
         output_parameters_.GetBufferSizeInMilliseconds());
   PRINT("RECORD: \n");
   PRINT("%saudio layer: %s\n", kTag,
         low_latency_in ? "Low latency OpenSL" : "Java/JNI based AudioRecord");
   PRINT("%ssample rate: %d Hz\n", kTag, input_parameters_.sample_rate());
-  PRINT("%schannels: %" RTC_PRIuS "\n", kTag, input_parameters_.channels());
-  PRINT("%sframes per buffer: %" RTC_PRIuS " <=> %.2f ms\n", kTag,
+  PRINT("%schannels: %zu\n", kTag, input_parameters_.channels());
+  PRINT("%sframes per buffer: %zu <=> %.2f ms\n", kTag,
         input_parameters_.frames_per_buffer(),
         input_parameters_.GetBufferSizeInMilliseconds());
 }
@@ -1060,7 +1088,7 @@ TEST_F(AudioDeviceTest, AudioParametersWithNonDefaultConstruction) {
 // one packet on average. However, under more realistic conditions, the size
 // of the FIFO will vary more due to an unbalance between the two sides.
 // This test tries to verify that the device maintains a balanced callback-
-// sequence by running in loopback for kFullDuplexTimeInSec seconds while
+// sequence by running in loopback for kFullDuplexTime seconds while
 // measuring the size (max and average) of the FIFO. The size of the FIFO is
 // increased by the recording side and decreased by the playout side.
 // TODO(henrika): tune the final test parameters after running tests on several
@@ -1078,13 +1106,12 @@ TEST_F(AudioDeviceTest, DISABLED_RunPlayoutAndRecordingInFullDuplex) {
   std::unique_ptr<FifoAudioStream> fifo_audio_stream(
       new FifoAudioStream(playout_frames_per_10ms_buffer()));
   mock.HandleCallbacks(&test_is_done_, fifo_audio_stream.get(),
-                       kFullDuplexTimeInSec * kNumCallbacksPerSecond);
+                       kFullDuplexTime.seconds() * kNumCallbacksPerSecond);
   SetMaxPlayoutVolume();
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   StartRecording();
   StartPlayout();
-  test_is_done_.Wait(
-      std::max(kTestTimeOutInMilliseconds, 1000 * kFullDuplexTimeInSec));
+  test_is_done_.Wait(std::max(kTestTimeOut, kFullDuplexTime));
   StopPlayout();
   StopRecording();
 
@@ -1111,26 +1138,26 @@ TEST_F(AudioDeviceTest, DISABLED_MeasureLoopbackLatency) {
   std::unique_ptr<LatencyMeasuringAudioStream> latency_audio_stream(
       new LatencyMeasuringAudioStream(playout_frames_per_10ms_buffer()));
   mock.HandleCallbacks(&test_is_done_, latency_audio_stream.get(),
-                       kMeasureLatencyTimeInSec * kNumCallbacksPerSecond);
+                       kMeasureLatencyTime.seconds() * kNumCallbacksPerSecond);
   EXPECT_EQ(0, audio_device()->RegisterAudioCallback(&mock));
   SetMaxPlayoutVolume();
   DisableBuiltInAECIfAvailable();
   StartRecording();
   StartPlayout();
-  test_is_done_.Wait(
-      std::max(kTestTimeOutInMilliseconds, 1000 * kMeasureLatencyTimeInSec));
+  test_is_done_.Wait(std::max(kTestTimeOut, kMeasureLatencyTime));
   StopPlayout();
   StopRecording();
   // Verify that the correct number of transmitted impulses are detected.
   EXPECT_EQ(latency_audio_stream->num_latency_values(),
             static_cast<size_t>(
-                kImpulseFrequencyInHz * kMeasureLatencyTimeInSec - 1));
+                kImpulseFrequencyInHz * kMeasureLatencyTime.seconds() - 1));
   latency_audio_stream->PrintResults();
 }
 
-TEST(JavaAudioDeviceTest, TestRunningTwoAdmsSimultaneously) {
+// TODO(https://crbug.com/webrtc/15537): test randomly fails.
+TEST(JavaAudioDeviceTest, DISABLED_TestRunningTwoAdmsSimultaneously) {
   JNIEnv* jni = AttachCurrentThreadIfNeeded();
-  ScopedJavaLocalRef<jobject> context = test::GetAppContextForTest(jni);
+  ScopedJavaLocalRef<jobject> context = GetAppContext(jni);
 
   // Create and start the first ADM.
   rtc::scoped_refptr<AudioDeviceModule> adm_1 =

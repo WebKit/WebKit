@@ -58,9 +58,9 @@ void GlobalGcdRunTask(void* context) {
 // Post a task into the system-defined global concurrent queue.
 void PostTaskToGlobalQueue(
     std::unique_ptr<absl::AnyInvocable<void() &&>> task) {
-  dispatch_queue_global_t global_queue =
-      dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-  dispatch_async_f(global_queue, task.release(), &GlobalGcdRunTask);
+  dispatch_async_f(
+      dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
+      task.release(), &GlobalGcdRunTask);
 }
 
 }  // namespace

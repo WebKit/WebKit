@@ -409,7 +409,7 @@ svg/stroke/zero-length-path-linecap-rendering.svg [ Failure ]
 svg/stroke/zero-length-subpaths-linecap-rendering.svg [ Failure ]
 
 webkit.org/b/110871 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
-webkit.org/b/114340 compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
+webkit.org/b/114340 [ Monterey ] compositing/overlap-blending/nested-overlap.html [ ImageOnlyFailure ]
 webkit.org/b/146523 compositing/masks/compositing-clip-path-origin.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/95027 fast/block/float/016.html [ Failure ]
@@ -521,9 +521,6 @@ webkit.org/b/98560 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ Pas
 
 # This test is failing and causing subsequent tests to time out.
 webkit.org/b/98837 http/tests/security/svg-image-leak.html [ Skip ]
-
-# Should never have been a ref test.
-webkit.org/b/98456 compositing/images/truncated-direct-png-image.html [ ImageOnlyFailure ]
 
 # Timing out on Mountain Lion WK1 release sometimes
 webkit.org/b/99221 js/dom/random-array-gc-stress.html [ Pass Timeout ]
@@ -1274,7 +1271,6 @@ svg/W3C-SVG-1.1/text-intro-03-b.svg [ Failure ]
 svg/W3C-SVG-1.1/text-intro-04-t.svg [ Failure ]
 svg/custom/acid3-test-77.html [ Failure ]
 svg/custom/svg-fonts-fallback.xhtml [ Failure ]
-fast/css-generated-content/initial-letter-first-line-wrapping.html [ ImageOnlyFailure  ]
 
 # <rdar://problem/30493910> REGRESSION: LayoutTest fast/writing-mode/broken-ideograph-small-caps.html failing
 fast/writing-mode/broken-ideograph-small-caps.html [ Failure ImageOnlyFailure ]
@@ -1882,11 +1878,6 @@ webkit.org/b/227891 http/tests/appcache/fail-on-update.html [ Pass Timeout DumpJ
 
 [ x86_64 ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-opacity.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-saturate.html [ ImageOnlyFailure ]
-
-# rdar://66661355 ([ASi Layout Tests] 3 compositing tests failing with 0.01% diffs)
-[ arm64 ] compositing/backgrounds/fixed-background-on-descendant.html [ ImageOnlyFailure ]
-[ arm64 ] compositing/backgrounds/fixed-backgrounds.html [ ImageOnlyFailure ]
-[ arm64 ] compositing/patterns/direct-pattern-compositing-cover.html [ ImageOnlyFailure ]
 
 # rdar://66802945 (REGRESSION (20A2323e-20A234b): [ Layout Test] 1 canvas layout tests are a constant failure)
 [ arm64 ] fast/canvas/canvas-ellipse-zero-lineto.html [ Failure ]
@@ -2555,8 +2546,6 @@ imported/w3c/web-platform-tests/css/css-scroll-snap/input/snap-area-overflow-bou
 imported/w3c/web-platform-tests/css/css-transforms/scroll-preserve-3d.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-mousewheel-event-listener-on-div.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/non-passive-wheel-event-listener-on-div.html [ Skip ]
-imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Skip ]
-imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/iframe-chains.html [ Skip ]
 imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-for-user-scroll.html [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers/popover-light-dismiss.html [ Skip ]
@@ -2605,6 +2594,10 @@ inspector/layers/layers-compositing-reasons.html [ Pass Failure ]
 inspector/layers/layers-blending-compositing-reasons.html [ Pass Failure ]
 
 webkit.org/b/265685 [ Sonoma+ ] http/wpt/webcodecs/encoder-task-failing.html [ Failure ]
+
+# webkit.org/b/266168 Two wheel/mousewheel passive event listeners WPT test pass on macOS Sonoma and up
+[ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Pass ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Pass ]
 
 # webkit.org/b/265834 ASSERTION FAILED with void WebCore::ViewTransition::ca llUpdateCallback() result of multiple tests constant crash
 [ Monterey Ventura Debug ] imported/w3c/web-platform-tests/css/css-view-transitions [ Skip ]

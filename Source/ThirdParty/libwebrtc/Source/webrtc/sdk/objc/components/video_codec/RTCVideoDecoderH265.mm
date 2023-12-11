@@ -127,7 +127,7 @@ uint8_t ComputeH265ReorderSizeFromSPS(const uint8_t* spsData, size_t spsDataSize
     auto parsedSps = webrtc::H265SpsParser::ParseSps(spsData, spsDataSize);
     if (!parsedSps)
       return 0;
-    auto reorderSize = *std::max_element(std::begin(parsedSps->sps_max_num_reorder_pics), std::end(parsedSps->sps_max_num_reorder_pics));
+    auto reorderSize = *std::max_element(parsedSps->sps_max_num_reorder_pics, parsedSps->sps_max_num_reorder_pics + parsedSps->sps_max_sub_layers_minus1 + 1);
     // We use a max value of 16
     return std::max(reorderSize, 16u);
 }

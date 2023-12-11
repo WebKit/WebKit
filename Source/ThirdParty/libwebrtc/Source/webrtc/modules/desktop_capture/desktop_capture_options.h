@@ -159,15 +159,24 @@ class RTC_EXPORT DesktopCaptureOptions {
   }
 
 #if defined(RTC_ENABLE_WIN_WGC)
-  // This flag enables the WGC capturer for both window and screen capture.
+  // This flag enables the WGC capturer for capturing the screen.
   // This capturer should offer similar or better performance than the cropping
   // capturer without the disadvantages listed above. However, the WGC capturer
   // is only available on Windows 10 version 1809 (Redstone 5) and up. This flag
   // will have no affect on older versions.
   // If set, and running a supported version of Win10, this flag will take
   // precedence over the cropping, directx, and magnification flags.
-  bool allow_wgc_capturer() const { return allow_wgc_capturer_; }
-  void set_allow_wgc_capturer(bool allow) { allow_wgc_capturer_ = allow; }
+  bool allow_wgc_screen_capturer() const { return allow_wgc_screen_capturer_; }
+  void set_allow_wgc_screen_capturer(bool allow) {
+    allow_wgc_screen_capturer_ = allow;
+  }
+
+  // This flag has the same effect as allow_wgc_screen_capturer but it only
+  // enables or disables WGC for window capturing (not screen).
+  bool allow_wgc_window_capturer() const { return allow_wgc_window_capturer_; }
+  void set_allow_wgc_window_capturer(bool allow) {
+    allow_wgc_window_capturer_ = allow;
+  }
 
   // This flag enables the WGC capturer for fallback capturer.
   // The flag is useful when the first capturer (eg. WindowCapturerWinGdi) is
@@ -235,7 +244,8 @@ class RTC_EXPORT DesktopCaptureOptions {
   bool allow_directx_capturer_ = false;
   bool allow_cropping_window_capturer_ = false;
 #if defined(RTC_ENABLE_WIN_WGC)
-  bool allow_wgc_capturer_ = false;
+  bool allow_wgc_screen_capturer_ = false;
+  bool allow_wgc_window_capturer_ = false;
   bool allow_wgc_capturer_fallback_ = false;
   bool allow_wgc_zero_hertz_ = false;
 #endif

@@ -45,7 +45,10 @@ class Connection;
 namespace WebKit {
 class LibWebRTCSocketFactory;
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=265791
 class LibWebRTCResolver final : public rtc::AsyncResolverInterface {
+ALLOW_DEPRECATED_DECLARATIONS_END
     WTF_MAKE_FAST_ALLOCATED;
 public:
     LibWebRTCResolver() : m_identifier(LibWebRTCResolverIdentifier::generate()) { }

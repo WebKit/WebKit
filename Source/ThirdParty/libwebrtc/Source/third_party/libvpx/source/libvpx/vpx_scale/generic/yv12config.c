@@ -64,6 +64,10 @@ int vp8_yv12_realloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width,
 
     if (!ybf->buffer_alloc) {
       ybf->buffer_alloc = (uint8_t *)vpx_memalign(32, frame_size);
+      if (!ybf->buffer_alloc) {
+        ybf->buffer_alloc_sz = 0;
+        return -1;
+      }
 #if defined(__has_feature)
 #if __has_feature(memory_sanitizer)
       // This memset is needed for fixing the issue of using uninitialized
@@ -75,7 +79,7 @@ int vp8_yv12_realloc_frame_buffer(YV12_BUFFER_CONFIG *ybf, int width,
       ybf->buffer_alloc_sz = frame_size;
     }
 
-    if (!ybf->buffer_alloc || ybf->buffer_alloc_sz < frame_size) return -1;
+    if (ybf->buffer_alloc_sz < frame_size) return -1;
 
     /* Only support allocating buffers that have a border that's a multiple
      * of 32. The border restriction is required to get 16-byte alignment of

@@ -32,6 +32,13 @@ class InlineContentAligner {
 public:
     static InlineLayoutUnit applyTextAlignJustify(Line::RunList&, InlineLayoutUnit spaceToDistribute, size_t hangingTrailingWhitespaceLength);
 
+    static InlineLayoutUnit applyRubyAlignSpaceAround(Line::RunList&, WTF::Range<size_t>, InlineLayoutUnit spaceToDistribute);
+    // FIXME: This is a workaround until after we generate inline boxes for annotation content.
+    static InlineLayoutUnit applyRubyAlignOnAnnotationBox(Line::RunList&, InlineLayoutUnit spaceToDistribute);
+
+    enum class AdjustContentOnlyInsideRubyBase : bool { No, Yes };
+    static void applyRubyBaseAlignmentOffset(InlineDisplay::Boxes&, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, AdjustContentOnlyInsideRubyBase, InlineFormattingContext&);
+
 private:
     static InlineLayoutUnit applyExpansionOnRange(Line::RunList&, WTF::Range<size_t>, const ExpansionInfo&, InlineLayoutUnit spaceToDistribute);
 

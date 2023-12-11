@@ -137,6 +137,9 @@ std::string CodecSpecificToString(const VideoCodec& codec) {
       ss << "\nnum_temporal_layers: "
          << static_cast<int>(codec.H264().numberOfTemporalLayers);
       break;
+    case kVideoCodecH265:
+      // TODO(bugs.webrtc.org/13485)
+      break;
     default:
       break;
   }
@@ -245,6 +248,9 @@ void VideoCodecTestFixtureImpl::Config::SetCodecSettings(
       codec_settings.H264()->keyFrameInterval = kBaseKeyFrameInterval;
       codec_settings.H264()->numberOfTemporalLayers =
           static_cast<uint8_t>(num_temporal_layers);
+      break;
+    case kVideoCodecH265:
+      // TODO(bugs.webrtc.org/13485)
       break;
     default:
       break;

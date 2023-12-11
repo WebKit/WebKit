@@ -153,8 +153,11 @@ class RtpPacket {
   // Returns view of the raw extension or empty view on failure.
   rtc::ArrayView<const uint8_t> FindExtension(ExtensionType type) const;
 
-  // Reserve size_bytes for payload. Returns nullptr on failure.
+  // Returns pointer to the payload of size at least `size_bytes`.
+  // Keeps original payload, if any. If `size_bytes` is larger than current
+  // `payload_size()`, remaining bytes are uninitialized.
   uint8_t* SetPayloadSize(size_t size_bytes);
+
   // Same as SetPayloadSize but doesn't guarantee to keep current payload.
   uint8_t* AllocatePayload(size_t size_bytes);
 

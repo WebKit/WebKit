@@ -54,7 +54,7 @@ typedef struct {
 // decoder implementation modules critically rely on the defined entry values
 // specified herein. They should be refactored concurrently.
 
-#define NONE (-1)
+#define NO_REF_FRAME (-1)
 #define INTRA_FRAME 0
 #define LAST_FRAME 1
 #define GOLDEN_FRAME 2

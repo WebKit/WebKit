@@ -14,7 +14,6 @@
 #include <utility>
 #include <vector>
 
-#include "absl/memory/memory.h"
 #include "api/rtc_event_log/rtc_event_log.h"
 #include "api/task_queue/default_task_queue_factory.h"
 #include "api/task_queue/task_queue_base.h"
@@ -50,7 +49,7 @@ void MultiStreamTester::RunTest() {
   // to make test more stable.
   auto task_queue = task_queue_factory->CreateTaskQueue(
       "TaskQueue", TaskQueueFactory::Priority::HIGH);
-  Call::Config config(&event_log);
+  CallConfig config(&event_log);
   test::ScopedKeyValueConfig field_trials;
   config.trials = &field_trials;
   config.task_queue_factory = task_queue_factory.get();
@@ -69,8 +68,8 @@ void MultiStreamTester::RunTest() {
   InternalDecoderFactory decoder_factory;
 
   SendTask(task_queue.get(), [&]() {
-    sender_call = absl::WrapUnique(Call::Create(config));
-    receiver_call = absl::WrapUnique(Call::Create(config));
+    sender_call = Call::Create(config);
+    receiver_call = Call::Create(config);
     sender_transport = CreateSendTransport(task_queue.get(), sender_call.get());
     receiver_transport =
         CreateReceiveTransport(task_queue.get(), receiver_call.get());

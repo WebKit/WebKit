@@ -66,10 +66,16 @@ class SrtpTransportTest : public ::testing::Test, public sigslot::has_slots<> {
     srtp_transport1_->SetRtpPacketTransport(rtp_packet_transport1_.get());
     srtp_transport2_->SetRtpPacketTransport(rtp_packet_transport2_.get());
 
-    srtp_transport1_->SignalRtcpPacketReceived.connect(
-        &rtp_sink1_, &TransportObserver::OnRtcpPacketReceived);
-    srtp_transport2_->SignalRtcpPacketReceived.connect(
-        &rtp_sink2_, &TransportObserver::OnRtcpPacketReceived);
+    srtp_transport1_->SubscribeRtcpPacketReceived(
+        &rtp_sink1_,
+        [this](rtc::CopyOnWriteBuffer* buffer, int64_t packet_time_ms) {
+          rtp_sink1_.OnRtcpPacketReceived(buffer, packet_time_ms);
+        });
+    srtp_transport2_->SubscribeRtcpPacketReceived(
+        &rtp_sink2_,
+        [this](rtc::CopyOnWriteBuffer* buffer, int64_t packet_time_ms) {
+          rtp_sink2_.OnRtcpPacketReceived(buffer, packet_time_ms);
+        });
 
     RtpDemuxerCriteria demuxer_criteria;
     // 0x00 is the payload type used in kPcmuFrame.

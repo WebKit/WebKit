@@ -2030,8 +2030,8 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         GST_DEBUG_OBJECT(m_pipeline.get(), "Received STREAMS_SELECTED message selecting the following streams:");
         unsigned numStreams = gst_message_streams_selected_get_size(message);
         for (unsigned i = 0; i < numStreams; i++) {
-            GstStream* stream = gst_message_streams_selected_get_stream(message, i);
-            GST_DEBUG_OBJECT(pipeline(), "#%u %s %s", i, gst_stream_type_get_name(gst_stream_get_stream_type(stream)), gst_stream_get_stream_id(stream));
+            auto stream = adoptGRef(gst_message_streams_selected_get_stream(message, i));
+            GST_DEBUG_OBJECT(pipeline(), "#%u %s %s", i, gst_stream_type_get_name(gst_stream_get_stream_type(stream.get())), gst_stream_get_stream_id(stream.get()));
         }
 #endif
         GST_DEBUG_OBJECT(m_pipeline.get(), "Setting m_waitingForStreamsSelectedEvent to false.");

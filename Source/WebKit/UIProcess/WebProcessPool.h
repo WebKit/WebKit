@@ -82,8 +82,8 @@ OBJC_CLASS WKWebInspectorPreferenceObserver;
 #include "IPCTester.h"
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
-#include "ProcessCapabilityGranter.h"
+#if ENABLE(EXTENSION_CAPABILITIES)
+#include "ExtensionCapabilityGranter.h"
 #endif
 
 namespace API {
@@ -149,8 +149,8 @@ class WebProcessPool final
 #if PLATFORM(MAC)
     , private PAL::SystemSleepListener::Client
 #endif
-#if ENABLE(PROCESS_CAPABILITIES)
-    , public ProcessCapabilityGranter::Client
+#if ENABLE(EXTENSION_CAPABILITIES)
+    , public ExtensionCapabilityGranter::Client
 #else
     , public CanMakeCheckedPtr
 #endif
@@ -535,10 +535,10 @@ public:
     void hardwareConsoleStateChanged();
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
-    ProcessCapabilityGranter& processCapabilityGranter();
-    RefPtr<GPUProcessProxy> gpuProcessForCapabilityGranter(const ProcessCapabilityGranter&) final;
-    RefPtr<WebProcessProxy> webProcessForCapabilityGranter(const ProcessCapabilityGranter&, const String& environmentIdentifier) final;
+#if ENABLE(EXTENSION_CAPABILITIES)
+    ExtensionCapabilityGranter& extensionCapabilityGranter();
+    RefPtr<GPUProcessProxy> gpuProcessForCapabilityGranter(const ExtensionCapabilityGranter&) final;
+    RefPtr<WebProcessProxy> webProcessForCapabilityGranter(const ExtensionCapabilityGranter&, const String& environmentIdentifier) final;
 #endif
 
     bool operator==(const WebProcessPool& other) const { return (this == &other); }
@@ -840,8 +840,8 @@ private:
     IPCTester m_ipcTester;
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
-    std::unique_ptr<ProcessCapabilityGranter> m_processCapabilityGranter;
+#if ENABLE(EXTENSION_CAPABILITIES)
+    std::unique_ptr<ExtensionCapabilityGranter> m_extensionCapabilityGranter;
 #endif
 
 #if PLATFORM(IOS_FAMILY)

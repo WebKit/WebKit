@@ -19,12 +19,9 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import org.chromium.base.test.BaseJUnit4ClassRunner;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(BaseJUnit4ClassRunner.class)
 public class VideoFileRendererTest {
   @Before
   public void setUp() {

@@ -36,7 +36,7 @@
 namespace WebCore {
 
 struct SecurityOriginHash {
-    static unsigned hash(SecurityOrigin* origin)
+    static unsigned hash(const SecurityOrigin* origin)
     {
         return computeHash(*origin);
     }
@@ -45,17 +45,17 @@ struct SecurityOriginHash {
         return hash(origin.get());
     }
 
-    static bool equal(SecurityOrigin* a, SecurityOrigin* b)
+    static bool equal(const SecurityOrigin* a, const SecurityOrigin* b)
     {
         if (!a || !b)
             return a == b;
         return a->isSameSchemeHostPort(*b);
     }
-    static bool equal(SecurityOrigin* a, const RefPtr<SecurityOrigin>& b)
+    static bool equal(const SecurityOrigin* a, const RefPtr<SecurityOrigin>& b)
     {
         return equal(a, b.get());
     }
-    static bool equal(const RefPtr<SecurityOrigin>& a, SecurityOrigin* b)
+    static bool equal(const RefPtr<SecurityOrigin>& a, const SecurityOrigin* b)
     {
         return equal(a.get(), b);
     }

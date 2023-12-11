@@ -198,7 +198,7 @@ public class SurfaceTextureHelper {
 
     oesTextureId = GlUtil.generateTexture(GLES11Ext.GL_TEXTURE_EXTERNAL_OES);
     surfaceTexture = new SurfaceTexture(oesTextureId);
-    setOnFrameAvailableListener(surfaceTexture, (SurfaceTexture st) -> {
+    surfaceTexture.setOnFrameAvailableListener(st -> {
       if (hasPendingTexture) {
         Logging.d(TAG, "A frame is already pending, dropping frame.");
       }
@@ -206,20 +206,6 @@ public class SurfaceTextureHelper {
       hasPendingTexture = true;
       tryDeliverTextureFrame();
     }, handler);
-  }
-
-  @TargetApi(21)
-  private static void setOnFrameAvailableListener(SurfaceTexture surfaceTexture,
-      SurfaceTexture.OnFrameAvailableListener listener, Handler handler) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      surfaceTexture.setOnFrameAvailableListener(listener, handler);
-    } else {
-      // The documentation states that the listener will be called on an arbitrary thread, but in
-      // pratice, it is always the thread on which the SurfaceTexture was constructed. There are
-      // assertions in place in case this ever changes. For API >= 21, we use the new API to
-      // explicitly specify the handler.
-      surfaceTexture.setOnFrameAvailableListener(listener);
-    }
   }
 
   /**

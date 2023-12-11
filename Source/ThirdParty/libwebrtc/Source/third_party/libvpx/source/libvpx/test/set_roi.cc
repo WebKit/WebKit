@@ -40,7 +40,7 @@ TEST(VP8RoiMapTest, ParameterCheck) {
 
   // Initialize elements of cpi with valid defaults.
   VP8_COMP cpi;
-  cpi.mb.e_mbd.mb_segement_abs_delta = SEGMENT_DELTADATA;
+  cpi.mb.e_mbd.mb_segment_abs_delta = SEGMENT_DELTADATA;
   cpi.cyclic_refresh_mode_enabled = 0;
   cpi.mb.e_mbd.segmentation_enabled = 0;
   cpi.mb.e_mbd.update_mb_segmentation_map = 0;
@@ -161,6 +161,6 @@ TEST(VP8RoiMapTest, ParameterCheck) {
   // Free allocated memory
   if (cpi.segmentation_map) vpx_free(cpi.segmentation_map);
   if (roi_map) vpx_free(roi_map);
-};
+}
 
 }  // namespace

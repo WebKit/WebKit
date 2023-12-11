@@ -344,7 +344,7 @@ TEST_P(SvcTest, ScalabilityModeSupported) {
         alice->SetVideoCodecs({video_codec_config});
       },
       [](PeerConfigurer* bob) {}, std::move(analyzer));
-  fixture->Run(RunParams(TimeDelta::Seconds(5)));
+  fixture->Run(RunParams(TimeDelta::Seconds(10)));
   EXPECT_THAT(analyzer_ptr->encoder_layers_seen(),
               HasSpatialAndTemporalLayers(
                   SvcTestParameters().expected_spatial_layers,

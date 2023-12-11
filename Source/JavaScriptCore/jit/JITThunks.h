@@ -121,7 +121,7 @@ private:
 
     struct WeakNativeExecutableHash {
         static inline unsigned hash(const Weak<NativeExecutable>&);
-        static inline unsigned hash(NativeExecutable*);
+        static inline unsigned hash(const NativeExecutable*);
         static unsigned hash(const HostFunctionKey& key)
         {
             return hash(std::get<0>(key), std::get<1>(key), std::get<2>(key), std::get<3>(key));
@@ -129,8 +129,8 @@ private:
 
         static inline bool equal(const Weak<NativeExecutable>&, const Weak<NativeExecutable>&);
         static inline bool equal(const Weak<NativeExecutable>&, const HostFunctionKey&);
-        static inline bool equal(const Weak<NativeExecutable>&, NativeExecutable*);
-        static inline bool equal(NativeExecutable&, NativeExecutable&);
+        static inline bool equal(const Weak<NativeExecutable>&, const NativeExecutable*);
+        static inline bool equal(const NativeExecutable&, const NativeExecutable&);
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
 
     private:

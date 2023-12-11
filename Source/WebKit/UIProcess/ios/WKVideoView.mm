@@ -27,10 +27,30 @@
 #include "WKVideoView.h"
 
 #if PLATFORM(IOS_FAMILY)
-@implementation WKVideoView
+@implementation WKVideoView {
+    WebAVPlayerLayerView* _playerView;
+}
+
 + (Class)layerClass
 {
     return [CALayer class];
+}
+
+- (id)initWithFrame:(CGRect)frame playerView:(WebAVPlayerLayerView *)playerView
+{
+    self = [super initWithFrame:frame];
+    if (!self)
+        return nil;
+
+    _playerView = playerView;
+    [self addSubview:playerView];
+
+    return self;
+}
+
+- (CALayer *)playerLayer
+{
+    return _playerView.layer;
 }
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event

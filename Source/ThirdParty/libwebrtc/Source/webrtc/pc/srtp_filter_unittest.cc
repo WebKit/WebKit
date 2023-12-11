@@ -91,8 +91,8 @@ class SrtpFilterTest : public ::testing::Test {
   }
 
   void VerifyCryptoParamsMatch(const std::string& cs1, const std::string& cs2) {
-    EXPECT_EQ(rtc::SrtpCryptoSuiteFromName(cs1), f1_.send_cipher_suite());
-    EXPECT_EQ(rtc::SrtpCryptoSuiteFromName(cs2), f2_.send_cipher_suite());
+    EXPECT_EQ(rtc::SrtpCryptoSuiteFromName(cs1), f1_.send_crypto_suite());
+    EXPECT_EQ(rtc::SrtpCryptoSuiteFromName(cs2), f2_.send_crypto_suite());
     VerifyKeysAreEqual(f1_.send_key(), f2_.recv_key());
     VerifyKeysAreEqual(f2_.send_key(), f1_.recv_key());
   }
@@ -102,14 +102,14 @@ class SrtpFilterTest : public ::testing::Test {
 };
 
 // Test that we can set up the session and keys properly.
-TEST_F(SrtpFilterTest, TestGoodSetupOneCipherSuite) {
+TEST_F(SrtpFilterTest, TestGoodSetupOneCryptoSuite) {
   EXPECT_TRUE(f1_.SetOffer(MakeVector(kTestCryptoParams1), CS_LOCAL));
   EXPECT_FALSE(f1_.IsActive());
   EXPECT_TRUE(f1_.SetAnswer(MakeVector(kTestCryptoParams2), CS_REMOTE));
   EXPECT_TRUE(f1_.IsActive());
 }
 
-TEST_F(SrtpFilterTest, TestGoodSetupOneCipherSuiteGcm) {
+TEST_F(SrtpFilterTest, TestGoodSetupOneCryptoSuiteGcm) {
   EXPECT_TRUE(f1_.SetOffer(MakeVector(kTestCryptoParamsGcm1), CS_LOCAL));
   EXPECT_FALSE(f1_.IsActive());
   EXPECT_TRUE(f1_.SetAnswer(MakeVector(kTestCryptoParamsGcm2), CS_REMOTE));
@@ -117,21 +117,21 @@ TEST_F(SrtpFilterTest, TestGoodSetupOneCipherSuiteGcm) {
 }
 
 // Test that we can set up things with multiple params.
-TEST_F(SrtpFilterTest, TestGoodSetupMultipleCipherSuites) {
+TEST_F(SrtpFilterTest, TestGoodSetupMultipleCryptoSuites) {
   std::vector<CryptoParams> offer(MakeVector(kTestCryptoParams1));
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParams2));
   offer.push_back(kTestCryptoParams1);
   offer[1].tag = 2;
-  offer[1].cipher_suite = kCsAesCm128HmacSha1_32;
+  offer[1].crypto_suite = kCsAesCm128HmacSha1_32;
   answer[0].tag = 2;
-  answer[0].cipher_suite = kCsAesCm128HmacSha1_32;
+  answer[0].crypto_suite = kCsAesCm128HmacSha1_32;
   EXPECT_TRUE(f1_.SetOffer(offer, CS_LOCAL));
   EXPECT_FALSE(f1_.IsActive());
   EXPECT_TRUE(f1_.SetAnswer(answer, CS_REMOTE));
   EXPECT_TRUE(f1_.IsActive());
 }
 
-TEST_F(SrtpFilterTest, TestGoodSetupMultipleCipherSuitesGcm) {
+TEST_F(SrtpFilterTest, TestGoodSetupMultipleCryptoSuitesGcm) {
   std::vector<CryptoParams> offer(MakeVector(kTestCryptoParamsGcm1));
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParamsGcm3));
   offer.push_back(kTestCryptoParamsGcm4);
@@ -144,7 +144,7 @@ TEST_F(SrtpFilterTest, TestGoodSetupMultipleCipherSuitesGcm) {
 }
 
 // Test that we handle the cases where crypto is not desired.
-TEST_F(SrtpFilterTest, TestGoodSetupNoCipherSuites) {
+TEST_F(SrtpFilterTest, TestGoodSetupNoCryptoSuites) {
   std::vector<CryptoParams> offer, answer;
   EXPECT_TRUE(f1_.SetOffer(offer, CS_LOCAL));
   EXPECT_TRUE(f1_.SetAnswer(answer, CS_REMOTE));
@@ -152,7 +152,7 @@ TEST_F(SrtpFilterTest, TestGoodSetupNoCipherSuites) {
 }
 
 // Test that we handle the cases where crypto is not desired by the remote side.
-TEST_F(SrtpFilterTest, TestGoodSetupNoAnswerCipherSuites) {
+TEST_F(SrtpFilterTest, TestGoodSetupNoAnswerCryptoSuites) {
   std::vector<CryptoParams> answer;
   EXPECT_TRUE(f1_.SetOffer(MakeVector(kTestCryptoParams1), CS_LOCAL));
   EXPECT_TRUE(f1_.SetAnswer(answer, CS_REMOTE));
@@ -212,7 +212,7 @@ TEST_F(SrtpFilterTest, TestBadSetupMultipleOffers) {
 }
 
 // Test that we fail if we have params in the answer when none were offered.
-TEST_F(SrtpFilterTest, TestNoAnswerCipherSuites) {
+TEST_F(SrtpFilterTest, TestNoAnswerCryptoSuites) {
   std::vector<CryptoParams> offer;
   EXPECT_TRUE(f1_.SetOffer(offer, CS_LOCAL));
   EXPECT_FALSE(f1_.SetAnswer(MakeVector(kTestCryptoParams2), CS_REMOTE));
@@ -220,21 +220,21 @@ TEST_F(SrtpFilterTest, TestNoAnswerCipherSuites) {
 }
 
 // Test that we fail if we have too many params in our answer.
-TEST_F(SrtpFilterTest, TestMultipleAnswerCipherSuites) {
+TEST_F(SrtpFilterTest, TestMultipleAnswerCryptoSuites) {
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParams2));
   answer.push_back(kTestCryptoParams2);
   answer[1].tag = 2;
-  answer[1].cipher_suite = kCsAesCm128HmacSha1_32;
+  answer[1].crypto_suite = kCsAesCm128HmacSha1_32;
   EXPECT_TRUE(f1_.SetOffer(MakeVector(kTestCryptoParams1), CS_LOCAL));
   EXPECT_FALSE(f1_.SetAnswer(answer, CS_REMOTE));
   EXPECT_FALSE(f1_.IsActive());
 }
 
-// Test that we fail if we don't support the cipher-suite.
-TEST_F(SrtpFilterTest, TestInvalidCipherSuite) {
+// Test that we fail if we don't support the crypto suite.
+TEST_F(SrtpFilterTest, TestInvalidCryptoSuite) {
   std::vector<CryptoParams> offer(MakeVector(kTestCryptoParams1));
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParams2));
-  offer[0].cipher_suite = answer[0].cipher_suite = "FOO";
+  offer[0].crypto_suite = answer[0].crypto_suite = "FOO";
   EXPECT_TRUE(f1_.SetOffer(offer, CS_LOCAL));
   EXPECT_FALSE(f1_.SetAnswer(answer, CS_REMOTE));
   EXPECT_FALSE(f1_.IsActive());
@@ -250,12 +250,12 @@ TEST_F(SrtpFilterTest, TestNoMatchingTag) {
   EXPECT_FALSE(f1_.IsActive());
 }
 
-// Test that we fail if we can't agree on a cipher-suite.
-TEST_F(SrtpFilterTest, TestNoMatchingCipherSuite) {
+// Test that we fail if we can't agree on a crypto suite.
+TEST_F(SrtpFilterTest, TestNoMatchingCryptoSuite) {
   std::vector<CryptoParams> offer(MakeVector(kTestCryptoParams1));
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParams2));
   answer[0].tag = 2;
-  answer[0].cipher_suite = "FOO";
+  answer[0].crypto_suite = "FOO";
   EXPECT_TRUE(f1_.SetOffer(offer, CS_LOCAL));
   EXPECT_FALSE(f1_.SetAnswer(answer, CS_REMOTE));
   EXPECT_FALSE(f1_.IsActive());
@@ -318,7 +318,7 @@ TEST_F(SrtpFilterTest, TestProtect_AES_CM_128_HMAC_SHA1_80) {
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParams2));
   offer.push_back(kTestCryptoParams1);
   offer[1].tag = 2;
-  offer[1].cipher_suite = kCsAesCm128HmacSha1_32;
+  offer[1].crypto_suite = kCsAesCm128HmacSha1_32;
   TestSetParams(offer, answer);
   VerifyCryptoParamsMatch(kCsAesCm128HmacSha1_80, kCsAesCm128HmacSha1_80);
 }
@@ -329,9 +329,9 @@ TEST_F(SrtpFilterTest, TestProtect_AES_CM_128_HMAC_SHA1_32) {
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParams2));
   offer.push_back(kTestCryptoParams1);
   offer[1].tag = 2;
-  offer[1].cipher_suite = kCsAesCm128HmacSha1_32;
+  offer[1].crypto_suite = kCsAesCm128HmacSha1_32;
   answer[0].tag = 2;
-  answer[0].cipher_suite = kCsAesCm128HmacSha1_32;
+  answer[0].crypto_suite = kCsAesCm128HmacSha1_32;
   TestSetParams(offer, answer);
   VerifyCryptoParamsMatch(kCsAesCm128HmacSha1_32, kCsAesCm128HmacSha1_32);
 }
@@ -344,11 +344,11 @@ TEST_F(SrtpFilterTest, TestChangeParameters) {
   TestSetParams(offer, answer);
   VerifyCryptoParamsMatch(kCsAesCm128HmacSha1_80, kCsAesCm128HmacSha1_80);
 
-  // Change the key parameters and cipher_suite.
+  // Change the key parameters and crypto_suite.
   offer[0].key_params = kTestKeyParams3;
-  offer[0].cipher_suite = kCsAesCm128HmacSha1_32;
+  offer[0].crypto_suite = kCsAesCm128HmacSha1_32;
   answer[0].key_params = kTestKeyParams4;
-  answer[0].cipher_suite = kCsAesCm128HmacSha1_32;
+  answer[0].crypto_suite = kCsAesCm128HmacSha1_32;
 
   EXPECT_TRUE(f1_.SetOffer(offer, CS_LOCAL));
   EXPECT_TRUE(f2_.SetOffer(offer, CS_REMOTE));
@@ -371,7 +371,7 @@ TEST_F(SrtpFilterTest, TestProvisionalAnswer) {
   std::vector<CryptoParams> offer(MakeVector(kTestCryptoParams1));
   offer.push_back(kTestCryptoParams1);
   offer[1].tag = 2;
-  offer[1].cipher_suite = kCsAesCm128HmacSha1_32;
+  offer[1].crypto_suite = kCsAesCm128HmacSha1_32;
   std::vector<CryptoParams> answer(MakeVector(kTestCryptoParams2));
 
   EXPECT_TRUE(f1_.SetOffer(offer, CS_LOCAL));
@@ -386,7 +386,7 @@ TEST_F(SrtpFilterTest, TestProvisionalAnswer) {
 
   answer[0].key_params = kTestKeyParams4;
   answer[0].tag = 2;
-  answer[0].cipher_suite = kCsAesCm128HmacSha1_32;
+  answer[0].crypto_suite = kCsAesCm128HmacSha1_32;
   EXPECT_TRUE(f2_.SetAnswer(answer, CS_LOCAL));
   EXPECT_TRUE(f1_.SetAnswer(answer, CS_REMOTE));
   EXPECT_TRUE(f1_.IsActive());

@@ -4,6 +4,7 @@ Version: 90
 CPEPrefix: cpe:/a:webrtc_project:webrtc:90
 License: BSD
 License File: LICENSE
+Shipped: yes
 
 Description:
 WebRTC provides real time voice and video processing

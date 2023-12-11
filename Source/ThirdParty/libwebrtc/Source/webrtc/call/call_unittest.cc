@@ -15,7 +15,6 @@
 #include <memory>
 #include <utility>
 
-#include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 #include "api/audio_codecs/builtin_audio_decoder_factory.h"
 #include "api/media_types.h"
@@ -40,6 +39,7 @@
 #include "test/mock_transport.h"
 #include "test/run_loop.h"
 
+namespace webrtc {
 namespace {
 
 using ::testing::_;
@@ -47,41 +47,38 @@ using ::testing::Contains;
 using ::testing::MockFunction;
 using ::testing::NiceMock;
 using ::testing::StrictMock;
+using ::webrtc::test::MockAudioDeviceModule;
+using ::webrtc::test::MockAudioMixer;
+using ::webrtc::test::MockAudioProcessing;
+using ::webrtc::test::RunLoop;
 
 struct CallHelper {
   explicit CallHelper(bool use_null_audio_processing) {
-    task_queue_factory_ = webrtc::CreateDefaultTaskQueueFactory();
-    webrtc::AudioState::Config audio_state_config;
-    audio_state_config.audio_mixer =
-        rtc::make_ref_counted<webrtc::test::MockAudioMixer>();
+    task_queue_factory_ = CreateDefaultTaskQueueFactory();
+    AudioState::Config audio_state_config;
+    audio_state_config.audio_mixer = rtc::make_ref_counted<MockAudioMixer>();
     audio_state_config.audio_processing =
         use_null_audio_processing
             ? nullptr
-            : rtc::make_ref_counted<
-                  NiceMock<webrtc::test::MockAudioProcessing>>();
+            : rtc::make_ref_counted<NiceMock<MockAudioProcessing>>();
     audio_state_config.audio_device_module =
-        rtc::make_ref_counted<webrtc::test::MockAudioDeviceModule>();
-    webrtc::Call::Config config(&event_log_);
-    config.audio_state = webrtc::AudioState::Create(audio_state_config);
+        rtc::make_ref_counted<MockAudioDeviceModule>();
+    CallConfig config(&event_log_);
+    config.audio_state = AudioState::Create(audio_state_config);
     config.task_queue_factory = task_queue_factory_.get();
     config.trials = &field_trials_;
-    call_.reset(webrtc::Call::Create(config));
+    call_ = Call::Create(config);
   }
 
-  webrtc::Call* operator->() { return call_.get(); }
+  Call* operator->() { return call_.get(); }
 
  private:
-  webrtc::test::RunLoop loop_;
-  webrtc::RtcEventLogNull event_log_;
-  webrtc::FieldTrialBasedConfig field_trials_;
-  std::unique_ptr<webrtc::TaskQueueFactory> task_queue_factory_;
-  std::unique_ptr<webrtc::Call> call_;
+  RunLoop loop_;
+  RtcEventLogNull event_log_;
+  FieldTrialBasedConfig field_trials_;
+  std::unique_ptr<TaskQueueFactory> task_queue_factory_;
+  std::unique_ptr<Call> call_;
 };
-}  // namespace
-
-namespace webrtc {
-
-namespace {
 
 rtc::scoped_refptr<Resource> FindResourceWhoseNameContains(
     const std::vector<rtc::scoped_refptr<Resource>>& resources,

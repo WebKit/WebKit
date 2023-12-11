@@ -249,7 +249,7 @@ public:
     void overridePresentingApplicationPIDIfNeeded();
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     String mediaEnvironment(WebCore::PageIdentifier);
     void setMediaEnvironment(WebCore::PageIdentifier, const String&);
 #endif
@@ -425,7 +425,7 @@ private:
     bool m_mockMediaSourceEnabled { false };
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     HashMap<WebCore::PageIdentifier, String> m_mediaEnvironments;
 #endif
 

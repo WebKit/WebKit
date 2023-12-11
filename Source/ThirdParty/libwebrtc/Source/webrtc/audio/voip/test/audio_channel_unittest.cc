@@ -104,9 +104,8 @@ class AudioChannelTest : public ::testing::Test {
 // Resulted RTP packet is looped back into AudioChannel and gets decoded into
 // audio frame to see if it has some signal to indicate its validity.
 TEST_F(AudioChannelTest, PlayRtpByLocalLoop) {
-  auto loop_rtp = [&](const uint8_t* packet, size_t length, Unused) {
-    audio_channel_->ReceivedRTPPacket(
-        rtc::ArrayView<const uint8_t>(packet, length));
+  auto loop_rtp = [&](rtc::ArrayView<const uint8_t> packet, Unused) {
+    audio_channel_->ReceivedRTPPacket(packet);
     return true;
   };
   EXPECT_CALL(transport_, SendRtp).WillOnce(Invoke(loop_rtp));
@@ -130,8 +129,8 @@ TEST_F(AudioChannelTest, PlayRtpByLocalLoop) {
 // Validate assigned local SSRC is resulted in RTP packet.
 TEST_F(AudioChannelTest, VerifyLocalSsrcAsAssigned) {
   RtpPacketReceived rtp;
-  auto loop_rtp = [&](const uint8_t* packet, size_t length, Unused) {
-    rtp.Parse(packet, length);
+  auto loop_rtp = [&](rtc::ArrayView<const uint8_t> packet, Unused) {
+    rtp.Parse(packet);
     return true;
   };
   EXPECT_CALL(transport_, SendRtp).WillOnce(Invoke(loop_rtp));
@@ -145,9 +144,8 @@ TEST_F(AudioChannelTest, VerifyLocalSsrcAsAssigned) {
 
 // Check metrics after processing an RTP packet.
 TEST_F(AudioChannelTest, TestIngressStatistics) {
-  auto loop_rtp = [&](const uint8_t* packet, size_t length, Unused) {
-    audio_channel_->ReceivedRTPPacket(
-        rtc::ArrayView<const uint8_t>(packet, length));
+  auto loop_rtp = [&](rtc::ArrayView<const uint8_t> packet, Unused) {
+    audio_channel_->ReceivedRTPPacket(packet);
     return true;
   };
   EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(loop_rtp));
@@ -223,20 +221,18 @@ TEST_F(AudioChannelTest, TestIngressStatistics) {
 
 // Check ChannelStatistics metric after processing RTP and RTCP packets.
 TEST_F(AudioChannelTest, TestChannelStatistics) {
-  auto loop_rtp = [&](const uint8_t* packet, size_t length, Unused) {
-    audio_channel_->ReceivedRTPPacket(
-        rtc::ArrayView<const uint8_t>(packet, length));
+  auto loop_rtp = [&](rtc::ArrayView<const uint8_t> packet, Unused) {
+    audio_channel_->ReceivedRTPPacket(packet);
     return true;
   };
-  auto loop_rtcp = [&](const uint8_t* packet, size_t length) {
-    audio_channel_->ReceivedRTCPPacket(
-        rtc::ArrayView<const uint8_t>(packet, length));
+  auto loop_rtcp = [&](rtc::ArrayView<const uint8_t> packet) {
+    audio_channel_->ReceivedRTCPPacket(packet);
     return true;
   };
   EXPECT_CALL(transport_, SendRtp).WillRepeatedly(Invoke(loop_rtp));
   EXPECT_CALL(transport_, SendRtcp).WillRepeatedly(Invoke(loop_rtcp));
 
-  // Simulate microphone giving audio frame (10 ms). This will trigger tranport
+  // Simulate microphone giving audio frame (10 ms). This will trigger transport
   // to send RTP as handled in loop_rtp above.
   auto audio_sender = audio_channel_->GetAudioSender();
   audio_sender->SendAudioData(GetAudioFrame(0));
@@ -249,7 +245,7 @@ TEST_F(AudioChannelTest, TestChannelStatistics) {
   audio_mixer_->Mix(/*number_of_channels=*/1, &audio_frame);
 
   // Force sending RTCP SR report in order to have remote_rtcp field available
-  // in channel statistics. This will trigger tranport to send RTCP as handled
+  // in channel statistics. This will trigger transport to send RTCP as handled
   // in loop_rtcp above.
   audio_channel_->SendRTCPReportForTesting(kRtcpSr);
 
@@ -294,8 +290,8 @@ TEST_F(AudioChannelTest, RttIsAvailableAfterChangeOfRemoteSsrc) {
   auto send_recv_rtp = [&](rtc::scoped_refptr<AudioChannel> rtp_sender,
                            rtc::scoped_refptr<AudioChannel> rtp_receiver) {
     // Setup routing logic via transport_.
-    auto route_rtp = [&](const uint8_t* packet, size_t length, Unused) {
-      rtp_receiver->ReceivedRTPPacket(rtc::MakeArrayView(packet, length));
+    auto route_rtp = [&](rtc::ArrayView<const uint8_t> packet, Unused) {
+      rtp_receiver->ReceivedRTPPacket(packet);
       return true;
     };
     ON_CALL(transport_, SendRtp).WillByDefault(route_rtp);
@@ -316,8 +312,8 @@ TEST_F(AudioChannelTest, RttIsAvailableAfterChangeOfRemoteSsrc) {
   auto send_recv_rtcp = [&](rtc::scoped_refptr<AudioChannel> rtcp_sender,
                             rtc::scoped_refptr<AudioChannel> rtcp_receiver) {
     // Setup routing logic via transport_.
-    auto route_rtcp = [&](const uint8_t* packet, size_t length) {
-      rtcp_receiver->ReceivedRTCPPacket(rtc::MakeArrayView(packet, length));
+    auto route_rtcp = [&](rtc::ArrayView<const uint8_t> packet) {
+      rtcp_receiver->ReceivedRTCPPacket(packet);
       return true;
     };
     ON_CALL(transport_, SendRtcp).WillByDefault(route_rtcp);

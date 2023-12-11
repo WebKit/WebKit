@@ -20,6 +20,7 @@
 #include "absl/strings/match.h"
 #include "absl/types/optional.h"
 #include "api/fec_controller_override.h"
+#include "api/transport/field_trial_based_config.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_bitrate_allocation.h"
 #include "api/video/video_frame.h"
@@ -29,6 +30,7 @@
 #include "modules/video_coding/include/video_error_codes.h"
 #include "modules/video_coding/utility/simulcast_utility.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/field_trial.h"
 
@@ -48,10 +50,18 @@ namespace {
 struct ForcedFallbackParams {
  public:
   bool SupportsResolutionBasedSwitch(const VideoCodec& codec) const {
-    return enable_resolution_based_switch &&
-           codec.codecType == kVideoCodecVP8 &&
-           codec.numberOfSimulcastStreams <= 1 &&
-           codec.width * codec.height <= max_pixels;
+    if (!enable_resolution_based_switch ||
+        codec.width * codec.height > max_pixels) {
+      return false;
+    }
+
+    if (vp8_specific_resolution_switch &&
+        (codec.codecType != kVideoCodecVP8 ||
+         codec.numberOfSimulcastStreams > 1)) {
+      return false;
+    }
+
+    return true;
   }
 
   bool SupportsTemporalBasedSwitch(const VideoCodec& codec) const {
@@ -61,7 +71,8 @@ struct ForcedFallbackParams {
 
   bool enable_temporal_based_switch = false;
   bool enable_resolution_based_switch = false;
-  int min_pixels = 320 * 180;
+  bool vp8_specific_resolution_switch = false;
+  int min_pixels = kDefaultMinPixelsPerFrame;
   int max_pixels = 320 * 240;
 };
 
@@ -70,6 +81,19 @@ const char kVp8ForceFallbackEncoderFieldTrial[] =
 
 absl::optional<ForcedFallbackParams> ParseFallbackParamsFromFieldTrials(
     const VideoEncoder& main_encoder) {
+  // Ignore WebRTC-VP8-Forced-Fallback-Encoder-v2 if
+  // WebRTC-Video-EncoderFallbackSettings is present.
+  FieldTrialOptional<int> resolution_threshold_px("resolution_threshold_px");
+  ParseFieldTrial(
+      {&resolution_threshold_px},
+      FieldTrialBasedConfig().Lookup("WebRTC-Video-EncoderFallbackSettings"));
+  if (resolution_threshold_px) {
+    ForcedFallbackParams params;
+    params.enable_resolution_based_switch = true;
+    params.max_pixels = resolution_threshold_px.Value();
+    return params;
+  }
+
   const std::string field_trial =
       webrtc::field_trial::FindFullName(kVp8ForceFallbackEncoderFieldTrial);
   if (!absl::StartsWith(field_trial, "Enabled")) {
@@ -95,6 +119,7 @@ absl::optional<ForcedFallbackParams> ParseFallbackParamsFromFieldTrials(
     return absl::nullopt;
   }
 
+  params.vp8_specific_resolution_switch = true;
   return params;
 }
 
@@ -107,7 +132,7 @@ absl::optional<ForcedFallbackParams> GetForcedFallbackParams(
     if (!params.has_value()) {
       params.emplace();
     }
-    params->enable_temporal_based_switch = prefer_temporal_support;
+    params->enable_temporal_based_switch = true;
   }
   return params;
 }
@@ -421,18 +446,8 @@ VideoEncoder::EncoderInfo VideoEncoderSoftwareFallbackWrapper::GetEncoderInfo()
       fallback_encoder_info.apply_alignment_to_all_simulcast_layers ||
       default_encoder_info.apply_alignment_to_all_simulcast_layers;
 
-  if (fallback_params_.has_value()) {
-    const auto settings = (encoder_state_ == EncoderState::kForcedFallback)
-                              ? fallback_encoder_info.scaling_settings
-                              : default_encoder_info.scaling_settings;
-    info.scaling_settings =
-        settings.thresholds
-            ? VideoEncoder::ScalingSettings(settings.thresholds->low,
-                                            settings.thresholds->high,
-                                            fallback_params_->min_pixels)
-            : VideoEncoder::ScalingSettings::kOff;
-  } else {
-    info.scaling_settings = default_encoder_info.scaling_settings;
+  if (fallback_params_ && fallback_params_->vp8_specific_resolution_switch) {
+    info.scaling_settings.min_pixels_per_frame = fallback_params_->min_pixels;
   }
 
   return info;

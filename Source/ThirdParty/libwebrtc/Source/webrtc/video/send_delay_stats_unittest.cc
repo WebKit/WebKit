@@ -11,6 +11,7 @@
 #include "video/send_delay_stats.h"
 
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 #include "call/rtp_config.h"
@@ -24,7 +25,7 @@ const uint32_t kSsrc2 = 42;
 const uint32_t kRtxSsrc1 = 18;
 const uint32_t kRtxSsrc2 = 43;
 const uint16_t kPacketId = 2345;
-const int64_t kMaxPacketDelayMs = 11000;
+const TimeDelta kMaxPacketDelay = TimeDelta::Seconds(11);
 const int kMinRequiredPeriodicSamples = 5;
 const int kProcessIntervalMs = 2000;
 }  // namespace
@@ -50,16 +51,15 @@ class SendDelayStatsTest : public ::testing::Test {
   }
 
   void OnSendPacket(uint16_t id, uint32_t ssrc) {
-    OnSendPacket(id, ssrc, clock_.TimeInMilliseconds());
+    OnSendPacket(id, ssrc, clock_.CurrentTime());
   }
 
-  void OnSendPacket(uint16_t id, uint32_t ssrc, int64_t capture_ms) {
-    SendPacketObserver* observer = stats_.get();
-    observer->OnSendPacket(id, capture_ms, ssrc);
+  void OnSendPacket(uint16_t id, uint32_t ssrc, Timestamp capture) {
+    stats_->OnSendPacket(id, capture, ssrc);
   }
 
   bool OnSentPacket(uint16_t id) {
-    return stats_->OnSentPacket(id, clock_.TimeInMilliseconds());
+    return stats_->OnSentPacket(id, clock_.CurrentTime());
   }
 
   SimulatedClock clock_;
@@ -85,19 +85,19 @@ TEST_F(SendDelayStatsTest, SentPacketNotFoundForNonRegisteredSsrc) {
 
 TEST_F(SendDelayStatsTest, SentPacketFoundWithMaxSendDelay) {
   OnSendPacket(kPacketId, kSsrc1);
-  clock_.AdvanceTimeMilliseconds(kMaxPacketDelayMs - 1);
+  clock_.AdvanceTime(kMaxPacketDelay - TimeDelta::Millis(1));
   OnSendPacket(kPacketId + 1, kSsrc1);       // kPacketId -> not old/removed.
   EXPECT_TRUE(OnSentPacket(kPacketId));      // Packet found.
   EXPECT_TRUE(OnSentPacket(kPacketId + 1));  // Packet found.
 }
 
 TEST_F(SendDelayStatsTest, OldPacketsRemoved) {
-  const int64_t kCaptureTimeMs = clock_.TimeInMilliseconds();
-  OnSendPacket(0xffffu, kSsrc1, kCaptureTimeMs);
-  OnSendPacket(0u, kSsrc1, kCaptureTimeMs);
-  OnSendPacket(1u, kSsrc1, kCaptureTimeMs + 1);
-  clock_.AdvanceTimeMilliseconds(kMaxPacketDelayMs);  // 0xffff, 0 -> old.
-  OnSendPacket(2u, kSsrc1, kCaptureTimeMs + 2);
+  const Timestamp kCaptureTime = clock_.CurrentTime();
+  OnSendPacket(0xffffu, kSsrc1, kCaptureTime);
+  OnSendPacket(0u, kSsrc1, kCaptureTime);
+  OnSendPacket(1u, kSsrc1, kCaptureTime + TimeDelta::Millis(1));
+  clock_.AdvanceTime(kMaxPacketDelay);  // 0xffff, 0 -> old.
+  OnSendPacket(2u, kSsrc1, kCaptureTime + TimeDelta::Millis(2));
 
   EXPECT_FALSE(OnSentPacket(0xffffu));  // Old removed.
   EXPECT_FALSE(OnSentPacket(0u));       // Old removed.

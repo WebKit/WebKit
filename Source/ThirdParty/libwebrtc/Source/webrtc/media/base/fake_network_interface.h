@@ -43,7 +43,7 @@ class FakeNetworkInterface : public MediaChannelNetworkInterface {
         recvbuf_size_(-1),
         dscp_(rtc::DSCP_NO_CHANGE) {}
 
-  void SetDestination(MediaChannel* dest) { dest_ = dest; }
+  void SetDestination(MediaReceiveChannelInterface* dest) { dest_ = dest; }
 
   // Conference mode is a mode where instead of simply forwarding the packets,
   // the transport will send multiple copies of the packet with the specified
@@ -207,7 +207,7 @@ class FakeNetworkInterface : public MediaChannelNetworkInterface {
   }
 
   webrtc::TaskQueueBase* thread_;
-  MediaChannel* dest_;
+  MediaReceiveChannelInterface* dest_;
   bool conf_;
   // The ssrcs used in sending out packets in conference mode.
   std::vector<uint32_t> conf_sent_ssrcs_;

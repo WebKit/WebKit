@@ -183,7 +183,7 @@ class ModuleRtpRtcpImpl2 final : public RtpRtcpInterface,
   // Get RoundTripTime.
   absl::optional<TimeDelta> LastRtt() const override;
 
-  int64_t ExpectedRetransmissionTimeMs() const override;
+  TimeDelta ExpectedRetransmissionTime() const override;
 
   // Force a send of an RTCP packet.
   // Normal SR and RR are triggered via the task queue that's current when this
@@ -196,8 +196,8 @@ class ModuleRtpRtcpImpl2 final : public RtpRtcpInterface,
 
   // A snapshot of the most recent Report Block with additional data of
   // interest to statistics. Used to implement RTCRemoteInboundRtpStreamStats.
-  // Within this list, the ReportBlockData::RTCPReportBlock::source_ssrc(),
-  // which is the SSRC of the corresponding outbound RTP stream, is unique.
+  // Within this list, the `ReportBlockData::source_ssrc()`, which is the SSRC
+  // of the corresponding outbound RTP stream, is unique.
   std::vector<ReportBlockData> GetLatestReportBlockData() const override;
   absl::optional<SenderReportStats> GetSenderReportStats() const override;
   absl::optional<NonSenderRttStats> GetNonSenderRttStats() const override;
@@ -238,7 +238,7 @@ class ModuleRtpRtcpImpl2 final : public RtpRtcpInterface,
   void OnReceivedNack(
       const std::vector<uint16_t>& nack_sequence_numbers) override;
   void OnReceivedRtcpReportBlocks(
-      const ReportBlockList& report_blocks) override;
+      rtc::ArrayView<const ReportBlockData> report_blocks) override;
   void OnRequestSendReport() override;
 
   void SetVideoBitrateAllocation(
@@ -252,7 +252,8 @@ class ModuleRtpRtcpImpl2 final : public RtpRtcpInterface,
   FRIEND_TEST_ALL_PREFIXES(RtpRtcpImpl2Test, RttForReceiverOnly);
 
   struct RtpSenderContext {
-    explicit RtpSenderContext(const RtpRtcpInterface::Configuration& config);
+    explicit RtpSenderContext(TaskQueueBase& worker_queue,
+                              const RtpRtcpInterface::Configuration& config);
     // Storage of packets, for retransmissions and padding, if applicable.
     RtpPacketHistory packet_history;
     SequenceChecker sequencing_checker;

@@ -51,7 +51,8 @@ async function validateSnapshot()
     const data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
 
     // We inspect the horizontal line at pixel 50. We should get white, then green, then white.
-    // Green block width should be 300.
+    // We inspect the vertical line at pixel 100. We should get white, then green, then white.
+    // Green block aspect ratio should be roughly 3.
 
     const horizontalLine = 50;
     let j = 0;
@@ -63,14 +64,38 @@ async function validateSnapshot()
     if (!isPixelGreen(horizontalLine, j, canvas, data))
         return -2;
 
-    const startGreen = j;
+    let startGreen = j;
     while (isPixelGreen(horizontalLine, ++j, canvas, data)) { };
-    const endGreen = j;
+    let endGreen = j;
 
     if (!isPixelWhite(horizontalLine, j, canvas, data))
         return -3;
 
-    return endGreen - startGreen;
+    const width = endGreen - startGreen;
+
+    const verticalLine = 100;
+    let i = 0;
+
+    if (!isPixelWhite(i, verticalLine, canvas, data))
+        return -1;
+    while (isPixelWhite(++i, verticalLine, canvas, data)) { };
+
+    if (!isPixelGreen(i, verticalLine, canvas, data))
+        return -2;
+
+    startGreen = i;
+    while (isPixelGreen(++i, verticalLine, canvas, data)) { };
+    endGreen = i;
+
+    if (!isPixelWhite(i, verticalLine, canvas, data))
+        return -3;
+
+    const height = endGreen - startGreen;
+
+    if (!height)
+        return 0;
+
+    return width / height;
 }
 
 promise_test(async () => {
@@ -83,16 +108,17 @@ promise_test(async () => {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     let counter = 0;
-    let result =  0;
-    while (counter++ < 150 && result !== 300) {
+    let aspectRatio =  0;
+    while (counter++ < 150 && aspectRatio < 2) {
         await new Promise(resolve => video.requestVideoFrameCallback(resolve));
         try {
-            result = await validateSnapshot();
+            aspectRatio = await validateSnapshot();
         } catch (e) {
             console.log(e);
         }
     }
-    assert_equals(result, 300);
+    assert_greater_than(aspectRatio, 2.9);
+    assert_less_than(aspectRatio, 3.1);
     image.parentNode.removeChild(image);
 }, "Validate video element is filled")
 </script>

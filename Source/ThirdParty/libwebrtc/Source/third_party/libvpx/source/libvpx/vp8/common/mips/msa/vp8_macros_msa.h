@@ -40,158 +40,160 @@
 #define ST_SW(...) ST_W(v4i32, __VA_ARGS__)
 
 #if (__mips_isa_rev >= 6)
-#define LW(psrc)                                     \
-  ({                                                 \
-    const uint8_t *psrc_m = (const uint8_t *)(psrc); \
-    uint32_t val_m;                                  \
-                                                     \
-    asm volatile("lw  %[val_m],  %[psrc_m]  \n\t"    \
-                                                     \
-                 : [val_m] "=r"(val_m)               \
-                 : [psrc_m] "m"(*psrc_m));           \
-                                                     \
-    val_m;                                           \
+#define LW(psrc)                                        \
+  ({                                                    \
+    const uint8_t *lw_psrc_m = (const uint8_t *)(psrc); \
+    uint32_t lw_val_m;                                  \
+                                                        \
+    asm volatile("lw  %[lw_val_m],  %[lw_psrc_m]  \n\t" \
+                                                        \
+                 : [lw_val_m] "=r"(lw_val_m)            \
+                 : [lw_psrc_m] "m"(*lw_psrc_m));        \
+                                                        \
+    lw_val_m;                                           \
   })
 
 #if (__mips == 64)
-#define LD(psrc)                                     \
-  ({                                                 \
-    const uint8_t *psrc_m = (const uint8_t *)(psrc); \
-    uint64_t val_m = 0;                              \
-                                                     \
-    asm volatile("ld  %[val_m],  %[psrc_m]  \n\t"    \
-                                                     \
-                 : [val_m] "=r"(val_m)               \
-                 : [psrc_m] "m"(*psrc_m));           \
-                                                     \
-    val_m;                                           \
+#define LD(psrc)                                        \
+  ({                                                    \
+    const uint8_t *ld_psrc_m = (const uint8_t *)(psrc); \
+    uint64_t ld_val_m = 0;                              \
+                                                        \
+    asm volatile("ld  %[ld_val_m],  %[ld_psrc_m]  \n\t" \
+                                                        \
+                 : [ld_val_m] "=r"(ld_val_m)            \
+                 : [ld_psrc_m] "m"(*ld_psrc_m));        \
+                                                        \
+    ld_val_m;                                           \
   })
 #else  // !(__mips == 64)
-#define LD(psrc)                                            \
-  ({                                                        \
-    const uint8_t *psrc_m = (const uint8_t *)(psrc);        \
-    uint32_t val0_m, val1_m;                                \
-    uint64_t val_m = 0;                                     \
-                                                            \
-    val0_m = LW(psrc_m);                                    \
-    val1_m = LW(psrc_m + 4);                                \
-                                                            \
-    val_m = (uint64_t)(val1_m);                             \
-    val_m = (uint64_t)((val_m << 32) & 0xFFFFFFFF00000000); \
-    val_m = (uint64_t)(val_m | (uint64_t)val0_m);           \
-                                                            \
-    val_m;                                                  \
+#define LD(psrc)                                                  \
+  ({                                                              \
+    const uint8_t *ld_psrc_m = (const uint8_t *)(psrc);           \
+    uint32_t ld_val0_m, ld_val1_m;                                \
+    uint64_t ld_val_m = 0;                                        \
+                                                                  \
+    ld_val0_m = LW(ld_psrc_m);                                    \
+    ld_val1_m = LW(ld_psrc_m + 4);                                \
+                                                                  \
+    ld_val_m = (uint64_t)(ld_val1_m);                             \
+    ld_val_m = (uint64_t)((ld_val_m << 32) & 0xFFFFFFFF00000000); \
+    ld_val_m = (uint64_t)(ld_val_m | (uint64_t)ld_val0_m);        \
+                                                                  \
+    ld_val_m;                                                     \
   })
 #endif  // (__mips == 64)
 
-#define SH(val, pdst)                             \
-  {                                               \
-    uint8_t *pdst_m = (uint8_t *)(pdst);          \
-    const uint16_t val_m = (val);                 \
-                                                  \
-    asm volatile("sh  %[val_m],  %[pdst_m]  \n\t" \
-                                                  \
-                 : [pdst_m] "=m"(*pdst_m)         \
-                 : [val_m] "r"(val_m));           \
+#define SH(val, pdst)                                   \
+  {                                                     \
+    uint8_t *sh_pdst_m = (uint8_t *)(pdst);             \
+    const uint16_t sh_val_m = (val);                    \
+                                                        \
+    asm volatile("sh  %[sh_val_m],  %[sh_pdst_m]  \n\t" \
+                                                        \
+                 : [sh_pdst_m] "=m"(*sh_pdst_m)         \
+                 : [sh_val_m] "r"(sh_val_m));           \
   }
 
-#define SW(val, pdst)                             \
-  {                                               \
-    uint8_t *pdst_m = (uint8_t *)(pdst);          \
-    const uint32_t val_m = (val);                 \
-                                                  \
-    asm volatile("sw  %[val_m],  %[pdst_m]  \n\t" \
-                                                  \
-                 : [pdst_m] "=m"(*pdst_m)         \
-                 : [val_m] "r"(val_m));           \
+#define SW(val, pdst)                                   \
+  {                                                     \
+    uint8_t *sw_pdst_m = (uint8_t *)(pdst);             \
+    const uint32_t sw_val_m = (val);                    \
+                                                        \
+    asm volatile("sw  %[sw_val_m],  %[sw_pdst_m]  \n\t" \
+                                                        \
+                 : [sw_pdst_m] "=m"(*sw_pdst_m)         \
+                 : [sw_val_m] "r"(sw_val_m));           \
   }
 
-#define SD(val, pdst)                             \
-  {                                               \
-    uint8_t *pdst_m = (uint8_t *)(pdst);          \
-    const uint64_t val_m = (val);                 \
-                                                  \
-    asm volatile("sd  %[val_m],  %[pdst_m]  \n\t" \
-                                                  \
-                 : [pdst_m] "=m"(*pdst_m)         \
-                 : [val_m] "r"(val_m));           \
+#define SD(val, pdst)                                   \
+  {                                                     \
+    uint8_t *sd_pdst_m = (uint8_t *)(pdst);             \
+    const uint64_t sd_val_m = (val);                    \
+                                                        \
+    asm volatile("sd  %[sd_val_m],  %[sd_pdst_m]  \n\t" \
+                                                        \
+                 : [sd_pdst_m] "=m"(*sd_pdst_m)         \
+                 : [sd_val_m] "r"(sd_val_m));           \
   }
 #else  // !(__mips_isa_rev >= 6)
-#define LW(psrc)                                     \
-  ({                                                 \
-    const uint8_t *psrc_m = (const uint8_t *)(psrc); \
-    uint32_t val_m;                                  \
-                                                     \
-    asm volatile("lwr %[val_m], 0(%[psrc_m]) \n\t"   \
-                 "lwl %[val_m], 3(%[psrc_m]) \n\t"   \
-                 : [val_m] "=&r"(val_m)              \
-                 : [psrc_m] "r"(psrc_m));            \
-                                                     \
-    val_m;                                           \
+#define LW(psrc)                                        \
+  ({                                                    \
+    const uint8_t *lw_psrc_m = (const uint8_t *)(psrc); \
+    uint32_t lw_val_m;                                  \
+                                                        \
+    asm volatile(                                       \
+        "lwr %[lw_val_m], 0(%[lw_psrc_m]) \n\t"         \
+        "lwl %[lw_val_m], 3(%[lw_psrc_m]) \n\t"         \
+        : [lw_val_m] "=&r"(lw_val_m)                    \
+        : [lw_psrc_m] "r"(lw_psrc_m));                  \
+                                                        \
+    lw_val_m;                                           \
   })
 
 #if (__mips == 64)
-#define LD(psrc)                                     \
-  ({                                                 \
-    const uint8_t *psrc_m = (const uint8_t *)(psrc); \
-    uint64_t val_m = 0;                              \
-                                                     \
-    asm volatile("ldr %[val_m], 0(%[psrc_m]) \n\t"   \
-                 "ldl %[val_m], 7(%[psrc_m]) \n\t"   \
-                 : [val_m] "=&r"(val_m)              \
-                 : [psrc_m] "r"(psrc_m));            \
-                                                     \
-    val_m;                                           \
+#define LD(psrc)                                        \
+  ({                                                    \
+    const uint8_t *ld_psrc_m = (const uint8_t *)(psrc); \
+    uint64_t ld_val_m = 0;                              \
+                                                        \
+    asm volatile(                                       \
+        "ldr %[ld_val_m], 0(%[ld_psrc_m]) \n\t"         \
+        "ldl %[ld_val_m], 7(%[ld_psrc_m]) \n\t"         \
+        : [ld_val_m] "=&r"(ld_val_m)                    \
+        : [ld_psrc_m] "r"(ld_psrc_m));                  \
+                                                        \
+    ld_val_m;                                           \
   })
 #else  // !(__mips == 64)
-#define LD(psrc)                                            \
-  ({                                                        \
-    const uint8_t *psrc_m1 = (const uint8_t *)(psrc);       \
-    uint32_t val0_m, val1_m;                                \
-    uint64_t val_m = 0;                                     \
-                                                            \
-    val0_m = LW(psrc_m1);                                   \
-    val1_m = LW(psrc_m1 + 4);                               \
-                                                            \
-    val_m = (uint64_t)(val1_m);                             \
-    val_m = (uint64_t)((val_m << 32) & 0xFFFFFFFF00000000); \
-    val_m = (uint64_t)(val_m | (uint64_t)val0_m);           \
-                                                            \
-    val_m;                                                  \
+#define LD(psrc)                                                  \
+  ({                                                              \
+    const uint8_t *ld_psrc_m1 = (const uint8_t *)(psrc);          \
+    uint32_t ld_val0_m, ld_val1_m;                                \
+    uint64_t ld_val_m = 0;                                        \
+                                                                  \
+    ld_val0_m = LW(ld_psrc_m1);                                   \
+    ld_val1_m = LW(ld_psrc_m1 + 4);                               \
+                                                                  \
+    ld_val_m = (uint64_t)(ld_val1_m);                             \
+    ld_val_m = (uint64_t)((ld_val_m << 32) & 0xFFFFFFFF00000000); \
+    ld_val_m = (uint64_t)(ld_val_m | (uint64_t)ld_val0_m);        \
+                                                                  \
+    ld_val_m;                                                     \
   })
 #endif  // (__mips == 64)
-#define SH(val, pdst)                              \
-  {                                                \
-    uint8_t *pdst_m = (uint8_t *)(pdst);           \
-    const uint16_t val_m = (val);                  \
-                                                   \
-    asm volatile("ush  %[val_m],  %[pdst_m]  \n\t" \
-                                                   \
-                 : [pdst_m] "=m"(*pdst_m)          \
-                 : [val_m] "r"(val_m));            \
+#define SH(val, pdst)                                    \
+  {                                                      \
+    uint8_t *sh_pdst_m = (uint8_t *)(pdst);              \
+    const uint16_t sh_val_m = (val);                     \
+                                                         \
+    asm volatile("ush  %[sh_val_m],  %[sh_pdst_m]  \n\t" \
+                                                         \
+                 : [sh_pdst_m] "=m"(*sh_pdst_m)          \
+                 : [sh_val_m] "r"(sh_val_m));            \
   }
 
-#define SW(val, pdst)                              \
-  {                                                \
-    uint8_t *pdst_m = (uint8_t *)(pdst);           \
-    const uint32_t val_m = (val);                  \
-                                                   \
-    asm volatile("usw  %[val_m],  %[pdst_m]  \n\t" \
-                                                   \
-                 : [pdst_m] "=m"(*pdst_m)          \
-                 : [val_m] "r"(val_m));            \
+#define SW(val, pdst)                                    \
+  {                                                      \
+    uint8_t *sw_pdst_m = (uint8_t *)(pdst);              \
+    const uint32_t sw_val_m = (val);                     \
+                                                         \
+    asm volatile("usw  %[sw_val_m],  %[sw_pdst_m]  \n\t" \
+                                                         \
+                 : [sw_pdst_m] "=m"(*sw_pdst_m)          \
+                 : [sw_val_m] "r"(sw_val_m));            \
   }
 
-#define SD(val, pdst)                                        \
-  {                                                          \
-    uint8_t *pdst_m1 = (uint8_t *)(pdst);                    \
-    uint32_t val0_m, val1_m;                                 \
-                                                             \
-    val0_m = (uint32_t)((val)&0x00000000FFFFFFFF);           \
-    val1_m = (uint32_t)(((val) >> 32) & 0x00000000FFFFFFFF); \
-                                                             \
-    SW(val0_m, pdst_m1);                                     \
-    SW(val1_m, pdst_m1 + 4);                                 \
+#define SD(val, pdst)                                           \
+  {                                                             \
+    uint8_t *sd_pdst_m1 = (uint8_t *)(pdst);                    \
+    uint32_t sd_val0_m, sd_val1_m;                              \
+                                                                \
+    sd_val0_m = (uint32_t)((val)&0x00000000FFFFFFFF);           \
+    sd_val1_m = (uint32_t)(((val) >> 32) & 0x00000000FFFFFFFF); \
+                                                                \
+    SW(sd_val0_m, sd_pdst_m1);                                  \
+    SW(sd_val1_m, sd_pdst_m1 + 4);                              \
   }
 #endif  // (__mips_isa_rev >= 6)
 

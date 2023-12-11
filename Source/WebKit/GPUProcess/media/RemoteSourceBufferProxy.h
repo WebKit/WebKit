@@ -69,14 +69,12 @@ private:
 
     // SourceBufferPrivateClient
     Ref<WebCore::MediaPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) final;
-    Ref<WebCore::MediaPromise> sourceBufferPrivateBufferedChanged(const WebCore::PlatformTimeRanges&) final;
-    void sourceBufferPrivateTrackBuffersChanged(const Vector<WebCore::PlatformTimeRanges>&) final;
+    Ref<WebCore::MediaPromise> sourceBufferPrivateBufferedChanged(const Vector<WebCore::PlatformTimeRanges>&, uint64_t) final;
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
     Ref<WebCore::MediaPromise> sourceBufferPrivateDurationChanged(const MediaTime&) final;
     void sourceBufferPrivateDidParseSample(double sampleDuration) final;
     void sourceBufferPrivateDidDropSample() final;
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;
-    void sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory) final;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -85,14 +83,14 @@ private:
     void setActive(bool);
     void canSwitchToType(const WebCore::ContentType&, CompletionHandler<void(bool)>&&);
     void setMode(WebCore::SourceBufferAppendMode);
-    void append(IPC::SharedBufferReference&&, CompletionHandler<void(WebCore::MediaPromise::Result, uint64_t, const MediaTime&)>&&);
+    void append(IPC::SharedBufferReference&&, CompletionHandler<void(WebCore::MediaPromise::Result, const MediaTime&)>&&);
     void abort();
     void resetParserState();
     void removedFromMediaSource();
     void setMediaSourceEnded(bool);
     void startChangingType();
-    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&&);
-    void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&&);
+    void removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, CompletionHandler<void()>&&);
+    void evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(Vector<WebCore::PlatformTimeRanges>&&, uint64_t)>&&);
     void addTrackBuffer(TrackID);
     void resetTrackBuffers();
     void clearTrackBuffers();
@@ -110,7 +108,7 @@ private:
     void updateTrackIds(Vector<std::pair<TrackID, TrackID>>&&);
     void bufferedSamplesForTrackId(TrackID, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&&);
     void enqueuedSamplesForTrackID(TrackID, CompletionHandler<void(WebCore::SourceBufferPrivate::SamplesPromise::Result&&)>&&);
-    void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&&);
+    void memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime);
     void minimumUpcomingPresentationTimeForTrackID(TrackID, CompletionHandler<void(MediaTime)>&&);
     void setMaximumQueueDepthForTrackID(TrackID, uint64_t);
 

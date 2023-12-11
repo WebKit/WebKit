@@ -31,7 +31,6 @@
 #include "rtc_base/rate_tracker.h"
 #include "rtc_base/system/no_unique_address.h"
 #include "rtc_base/thread_annotations.h"
-#include "video/quality_threshold.h"
 #include "video/stats_counter.h"
 #include "video/video_quality_observer2.h"
 #include "video/video_stream_buffer_controller.h"
@@ -59,7 +58,8 @@ class ReceiveStatisticsProxy : public VideoStreamBufferControllerStatsObserver,
   void OnDecodedFrame(const VideoFrame& frame,
                       absl::optional<uint8_t> qp,
                       TimeDelta decode_time,
-                      VideoContentType content_type);
+                      VideoContentType content_type,
+                      VideoFrameType frame_type);
 
   // Called asyncronously on the worker thread as a result of a call to the
   // above OnDecodedFrame method, which is called back on the thread where
@@ -69,7 +69,8 @@ class ReceiveStatisticsProxy : public VideoStreamBufferControllerStatsObserver,
                       TimeDelta decode_time,
                       TimeDelta processing_delay,
                       TimeDelta assembly_time,
-                      VideoContentType content_type);
+                      VideoContentType content_type,
+                      VideoFrameType frame_type);
 
   void OnSyncOffsetUpdated(int64_t video_playout_ntp_ms,
                            int64_t sync_offset_ms,
@@ -90,13 +91,15 @@ class ReceiveStatisticsProxy : public VideoStreamBufferControllerStatsObserver,
                        size_t size_bytes,
                        VideoContentType content_type) override;
   void OnDroppedFrames(uint32_t frames_dropped) override;
+  void OnDecodableFrame(TimeDelta jitter_buffer_delay,
+                        TimeDelta target_delay,
+                        TimeDelta minimum_delay) override;
   void OnFrameBufferTimingsUpdated(int estimated_max_decode_time_ms,
                                    int current_delay_ms,
                                    int target_delay_ms,
-                                   int jitter_buffer_ms,
+                                   int jitter_delay_ms,
                                    int min_playout_delay_ms,
                                    int render_delay_ms) override;
-
   void OnTimingFrameInfoUpdated(const TimingFrameInfo& info) override;
 
   // Implements RtcpCnameCallback.
@@ -142,8 +145,6 @@ class ReceiveStatisticsProxy : public VideoStreamBufferControllerStatsObserver,
     rtc::HistogramPercentileCounter interframe_delay_percentiles;
   };
 
-  void QualitySample(Timestamp now);
-
   // Removes info about old frames and then updates the framerate.
   void UpdateFramerate(int64_t now_ms) const;
 
@@ -153,14 +154,6 @@ class ReceiveStatisticsProxy : public VideoStreamBufferControllerStatsObserver,
   Clock* const clock_;
   const int64_t start_ms_;
 
-  int64_t last_sample_time_ RTC_GUARDED_BY(main_thread_);
-
-  QualityThreshold fps_threshold_ RTC_GUARDED_BY(main_thread_);
-  QualityThreshold qp_threshold_ RTC_GUARDED_BY(main_thread_);
-  QualityThreshold variance_threshold_ RTC_GUARDED_BY(main_thread_);
-  rtc::SampleCounter qp_sample_ RTC_GUARDED_BY(main_thread_);
-  int num_bad_states_ RTC_GUARDED_BY(main_thread_);
-  int num_certain_states_ RTC_GUARDED_BY(main_thread_);
   // Note: The `stats_.rtp_stats` member is not used or populated by this class.
   mutable VideoReceiveStreamInterface::Stats stats_
       RTC_GUARDED_BY(main_thread_);
@@ -172,7 +165,7 @@ class ReceiveStatisticsProxy : public VideoStreamBufferControllerStatsObserver,
   rtc::RateTracker render_pixel_tracker_ RTC_GUARDED_BY(main_thread_);
   rtc::SampleCounter sync_offset_counter_ RTC_GUARDED_BY(main_thread_);
   rtc::SampleCounter decode_time_counter_ RTC_GUARDED_BY(main_thread_);
-  rtc::SampleCounter jitter_buffer_delay_counter_ RTC_GUARDED_BY(main_thread_);
+  rtc::SampleCounter jitter_delay_counter_ RTC_GUARDED_BY(main_thread_);
   rtc::SampleCounter target_delay_counter_ RTC_GUARDED_BY(main_thread_);
   rtc::SampleCounter current_delay_counter_ RTC_GUARDED_BY(main_thread_);
   rtc::SampleCounter oneway_delay_counter_ RTC_GUARDED_BY(main_thread_);

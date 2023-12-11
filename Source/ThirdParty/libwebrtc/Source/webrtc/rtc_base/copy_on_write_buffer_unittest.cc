@@ -52,6 +52,8 @@ TEST(CopyOnWriteBufferTest, TestCreateEmptyData) {
 }
 
 TEST(CopyOnWriteBufferTest, TestMoveConstruct) {
+  EXPECT_TRUE(std::is_nothrow_move_constructible_v<CopyOnWriteBuffer>);
+
   CopyOnWriteBuffer buf1(kTestData, 3, 10);
   size_t buf1_size = buf1.size();
   size_t buf1_capacity = buf1.capacity();

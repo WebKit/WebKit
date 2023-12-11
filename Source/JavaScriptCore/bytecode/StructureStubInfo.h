@@ -663,12 +663,12 @@ public:
     };
 
     struct PointerTranslator {
-        static unsigned hash(PolymorphicAccessJITStubRoutine* stub)
+        static unsigned hash(const PolymorphicAccessJITStubRoutine* stub)
         {
             return stub->hash();
         }
 
-        static bool equal(const Hash::Key& key, PolymorphicAccessJITStubRoutine* stub)
+        static bool equal(const Hash::Key& key, const PolymorphicAccessJITStubRoutine* stub)
         {
             return key.m_wrapped == stub;
         }

@@ -32,7 +32,7 @@ class ChannelSendFrameTransformerDelegate : public TransformedFrameCallback {
   using SendFrameCallback =
       std::function<int32_t(AudioFrameType frameType,
                             uint8_t payloadType,
-                            uint32_t rtp_timestamp,
+                            uint32_t rtp_timestamp_with_offset,
                             rtc::ArrayView<const uint8_t> payload,
                             int64_t absolute_capture_timestamp_ms)>;
   ChannelSendFrameTransformerDelegate(
@@ -54,7 +54,6 @@ class ChannelSendFrameTransformerDelegate : public TransformedFrameCallback {
   void Transform(AudioFrameType frame_type,
                  uint8_t payload_type,
                  uint32_t rtp_timestamp,
-                 uint32_t rtp_start_timestamp,
                  const uint8_t* payload_data,
                  size_t payload_size,
                  int64_t absolute_capture_timestamp_ms,
@@ -78,7 +77,7 @@ class ChannelSendFrameTransformerDelegate : public TransformedFrameCallback {
   rtc::TaskQueue* encoder_queue_ RTC_GUARDED_BY(send_lock_);
 };
 
-std::unique_ptr<TransformableFrameInterface> CloneSenderAudioFrame(
+std::unique_ptr<TransformableAudioFrameInterface> CloneSenderAudioFrame(
     TransformableAudioFrameInterface* original);
 
 }  // namespace webrtc

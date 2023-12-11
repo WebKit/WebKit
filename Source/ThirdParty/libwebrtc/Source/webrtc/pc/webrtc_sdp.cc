@@ -20,6 +20,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <type_traits>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -53,9 +54,9 @@
 #include "p2p/base/transport_info.h"
 #include "pc/media_protocol_names.h"
 #include "pc/media_session.h"
-#include "pc/sdp_serializer.h"
 #include "pc/session_description.h"
 #include "pc/simulcast_description.h"
+#include "pc/simulcast_sdp_serializer.h"
 #include "rtc_base/arraysize.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/helpers.h"
@@ -705,7 +706,7 @@ void CreateTracksFromSsrcInfos(const SsrcInfoVec& ssrc_infos,
                                absl::string_view msid_track_id,
                                StreamParamsVec* tracks,
                                int msid_signaling) {
-  RTC_DCHECK(tracks != NULL);
+  RTC_DCHECK(tracks);
   for (const SsrcInfo& ssrc_info : ssrc_infos) {
     // According to https://tools.ietf.org/html/rfc5576#section-6.1, the CNAME
     // attribute is mandatory, but we relax that restriction.
@@ -725,15 +726,8 @@ void CreateTracksFromSsrcInfos(const SsrcInfoVec& ssrc_infos,
       track_id = ssrc_info.track_id;
     } else {
       // Since no media streams isn't supported with older SDP signaling, we
-      // use a default a stream id.
+      // use a default stream id.
       stream_ids.push_back(kDefaultMsid);
-    }
-    // If a track ID wasn't populated from the SSRC attributes OR the
-    // msid attribute, use default/random values.
-    if (track_id.empty()) {
-      // TODO(ronghuawu): What should we do if the track id doesn't appear?
-      // Create random string (which will be used as track label later)?
-      track_id = rtc::CreateRandomString(8);
     }
 
     auto track_it = absl::c_find_if(
@@ -749,6 +743,14 @@ void CreateTracksFromSsrcInfos(const SsrcInfoVec& ssrc_infos,
     track.cname = ssrc_info.cname;
     track.set_stream_ids(stream_ids);
     track.id = track_id;
+  }
+  for (StreamParams& stream : *tracks) {
+    // If a track ID wasn't populated from the SSRC attributes OR the
+    // msid attribute, use default/random values. This happens after
+    // deduplication.
+    if (stream.id.empty()) {
+      stream.id = rtc::CreateRandomString(8);
+    }
   }
 }
 
@@ -1436,17 +1438,11 @@ void BuildMediaLine(const cricket::MediaType media_type,
   // fmt is a list of payload type numbers that MAY be used in the session.
   std::string type;
   std::string fmt;
-  if (media_type == cricket::MEDIA_TYPE_VIDEO) {
-    type = kMediaTypeVideo;
-    const VideoContentDescription* video_desc = media_desc->as_video();
-    for (const cricket::VideoCodec& codec : video_desc->codecs()) {
-      fmt.append(" ");
-      fmt.append(rtc::ToString(codec.id));
-    }
-  } else if (media_type == cricket::MEDIA_TYPE_AUDIO) {
-    type = kMediaTypeAudio;
-    const AudioContentDescription* audio_desc = media_desc->as_audio();
-    for (const cricket::AudioCodec& codec : audio_desc->codecs()) {
+  if (media_type == cricket::MEDIA_TYPE_AUDIO ||
+      media_type == cricket::MEDIA_TYPE_VIDEO) {
+    type = media_type == cricket::MEDIA_TYPE_AUDIO ? kMediaTypeAudio
+                                                   : kMediaTypeVideo;
+    for (const cricket::Codec& codec : media_desc->codecs()) {
       fmt.append(" ");
       fmt.append(rtc::ToString(codec.id));
     }
@@ -1599,7 +1595,7 @@ void BuildRtpContentAttributes(const MediaContentDescription* media_desc,
                                const cricket::MediaType media_type,
                                int msid_signaling,
                                std::string* message) {
-  SdpSerializer serializer;
+  SimulcastSdpSerializer serializer;
   rtc::StringBuilder os;
   // RFC 8285
   // a=extmap-allow-mixed
@@ -1694,7 +1690,7 @@ void BuildRtpContentAttributes(const MediaContentDescription* media_desc,
   for (const CryptoParams& crypto_params : media_desc->cryptos()) {
     InitAttrLine(kAttributeCrypto, &os);
     os << kSdpDelimiterColon << crypto_params.tag << " "
-       << crypto_params.cipher_suite << " " << crypto_params.key_params;
+       << crypto_params.crypto_suite << " " << crypto_params.key_params;
     if (!crypto_params.session_params.empty()) {
       os << " " << crypto_params.session_params;
     }
@@ -1865,8 +1861,7 @@ bool WriteFmtpParameters(const cricket::CodecParameterMap& parameters,
   return !empty;
 }
 
-template <class T>
-void AddFmtpLine(const T& codec, std::string* message) {
+void AddFmtpLine(const cricket::Codec& codec, std::string* message) {
   rtc::StringBuilder os;
   WriteFmtpHeader(codec.id, &os);
   os << kSdpDelimiterSpace;
@@ -1877,8 +1872,7 @@ void AddFmtpLine(const T& codec, std::string* message) {
   return;
 }
 
-template <class T>
-void AddPacketizationLine(const T& codec, std::string* message) {
+void AddPacketizationLine(const cricket::Codec& codec, std::string* message) {
   if (!codec.packetization) {
     return;
   }
@@ -1888,8 +1882,7 @@ void AddPacketizationLine(const T& codec, std::string* message) {
   AddLine(os.str(), message);
 }
 
-template <class T>
-void AddRtcpFbLines(const T& codec, std::string* message) {
+void AddRtcpFbLines(const cricket::Codec& codec, std::string* message) {
   for (const cricket::FeedbackParam& param : codec.feedback_params.params()) {
     rtc::StringBuilder os;
     WriteRtcpFbHeader(codec.id, &os);
@@ -1930,7 +1923,7 @@ void BuildRtpmap(const MediaContentDescription* media_desc,
   RTC_DCHECK(media_desc != NULL);
   rtc::StringBuilder os;
   if (media_type == cricket::MEDIA_TYPE_VIDEO) {
-    for (const cricket::VideoCodec& codec : media_desc->as_video()->codecs()) {
+    for (const cricket::Codec& codec : media_desc->codecs()) {
       // RFC 4566
       // a=rtpmap:<payload type> <encoding name>/<clock rate>
       // [/<encodingparameters>]
@@ -1948,7 +1941,7 @@ void BuildRtpmap(const MediaContentDescription* media_desc,
     std::vector<int> ptimes;
     std::vector<int> maxptimes;
     int max_minptime = 0;
-    for (const cricket::AudioCodec& codec : media_desc->as_audio()->codecs()) {
+    for (const cricket::Codec& codec : media_desc->codecs()) {
       RTC_DCHECK(!codec.name.empty());
       // RFC 4566
       // a=rtpmap:<payload type> <encoding name>/<clock rate>
@@ -2605,7 +2598,7 @@ static const StaticPayloadAudioCodec kStaticPayloadAudioCodecs[] = {
 };
 
 void MaybeCreateStaticPayloadAudioCodecs(const std::vector<int>& fmts,
-                                         AudioContentDescription* media_desc) {
+                                         MediaContentDescription* media_desc) {
   if (!media_desc) {
     return;
   }
@@ -2617,14 +2610,13 @@ void MaybeCreateStaticPayloadAudioCodecs(const std::vector<int>& fmts,
       std::string encoding_name = kStaticPayloadAudioCodecs[payload_type].name;
       int clock_rate = kStaticPayloadAudioCodecs[payload_type].clockrate;
       size_t channels = kStaticPayloadAudioCodecs[payload_type].channels;
-      media_desc->AddCodec(cricket::AudioCodec(payload_type, encoding_name,
-                                               clock_rate, 0, channels));
+      media_desc->AddCodec(cricket::CreateAudioCodec(
+          payload_type, encoding_name, clock_rate, channels));
     }
   }
 }
 
-template <class C>
-static std::unique_ptr<C> ParseContentDescription(
+static std::unique_ptr<MediaContentDescription> ParseContentDescription(
     absl::string_view message,
     const cricket::MediaType media_type,
     int mline_index,
@@ -2637,7 +2629,16 @@ static std::unique_ptr<C> ParseContentDescription(
     TransportDescription* transport,
     std::vector<std::unique_ptr<JsepIceCandidate>>* candidates,
     webrtc::SdpParseError* error) {
-  auto media_desc = std::make_unique<C>();
+  std::unique_ptr<MediaContentDescription> media_desc;
+  if (media_type == cricket::MediaType::MEDIA_TYPE_AUDIO) {
+    media_desc = std::make_unique<AudioContentDescription>();
+  } else if (media_type == cricket::MediaType::MEDIA_TYPE_VIDEO) {
+    media_desc = std::make_unique<VideoContentDescription>();
+  } else {
+    RTC_DCHECK_NOTREACHED();
+    return nullptr;
+  }
+
   media_desc->set_extmap_allow_mixed_enum(MediaContentDescription::kNo);
   if (!ParseContent(message, media_type, mline_index, protocol, payload_types,
                     pos, content_name, bundle_only, msid_signaling,
@@ -2653,12 +2654,11 @@ static std::unique_ptr<C> ParseContentDescription(
   for (int pt : payload_types) {
     payload_type_preferences[pt] = preference--;
   }
-  std::vector<typename C::CodecType> codecs = media_desc->codecs();
-  absl::c_sort(
-      codecs, [&payload_type_preferences](const typename C::CodecType& a,
-                                          const typename C::CodecType& b) {
-        return payload_type_preferences[a.id] > payload_type_preferences[b.id];
-      });
+  std::vector<cricket::Codec> codecs = media_desc->codecs();
+  absl::c_sort(codecs, [&payload_type_preferences](const cricket::Codec& a,
+                                                   const cricket::Codec& b) {
+    return payload_type_preferences[a.id] > payload_type_preferences[b.id];
+  });
   media_desc->set_codecs(codecs);
   return media_desc;
 }
@@ -2733,12 +2733,12 @@ bool ParseMediaDescription(
       return ParseFailed(*mline, "Unsupported protocol for media type", error);
     }
     if (media_type == kMediaTypeVideo) {
-      content = ParseContentDescription<VideoContentDescription>(
+      content = ParseContentDescription(
           message, cricket::MEDIA_TYPE_VIDEO, mline_index, protocol,
           payload_types, pos, &content_name, &bundle_only,
           &section_msid_signaling, &transport, candidates, error);
     } else if (media_type == kMediaTypeAudio) {
-      content = ParseContentDescription<AudioContentDescription>(
+      content = ParseContentDescription(
           message, cricket::MEDIA_TYPE_AUDIO, mline_index, protocol,
           payload_types, pos, &content_name, &bundle_only,
           &section_msid_signaling, &transport, candidates, error);
@@ -2856,21 +2856,6 @@ bool ParseMediaDescription(
   return true;
 }
 
-bool VerifyCodec(const cricket::Codec& codec) {
-  // Codec has not been populated correctly unless the name has been set. This
-  // can happen if an SDP has an fmtp or rtcp-fb with a payload type but doesn't
-  // have a corresponding "rtpmap" line.
-  return !codec.name.empty();
-}
-
-bool VerifyAudioCodecs(const AudioContentDescription* audio_desc) {
-  return absl::c_all_of(audio_desc->codecs(), &VerifyCodec);
-}
-
-bool VerifyVideoCodecs(const VideoContentDescription* video_desc) {
-  return absl::c_all_of(video_desc->codecs(), &VerifyCodec);
-}
-
 void AddParameters(const cricket::CodecParameterMap& parameters,
                    cricket::Codec* codec) {
   for (const auto& entry : parameters) {
@@ -2895,24 +2880,27 @@ void AddFeedbackParameters(const cricket::FeedbackParams& feedback_params,
 // Gets the current codec setting associated with `payload_type`. If there
 // is no Codec associated with that payload type it returns an empty codec
 // with that payload type.
-template <class T>
-T GetCodecWithPayloadType(const std::vector<T>& codecs, int payload_type) {
-  const T* codec = FindCodecById(codecs, payload_type);
+cricket::Codec GetCodecWithPayloadType(
+    cricket::MediaType type,
+    const std::vector<cricket::Codec>& codecs,
+    int payload_type) {
+  const cricket::Codec* codec = FindCodecById(codecs, payload_type);
   if (codec)
     return *codec;
   // Return empty codec with `payload_type`.
-  T ret_val;
-  ret_val.id = payload_type;
-  return ret_val;
+  if (type == cricket::MEDIA_TYPE_AUDIO) {
+    return cricket::CreateAudioCodec(payload_type, "", 0, 0);
+  } else {
+    return cricket::CreateVideoCodec(payload_type, "");
+  }
 }
 
 // Updates or creates a new codec entry in the media description.
-template <class T, class U>
-void AddOrReplaceCodec(MediaContentDescription* content_desc, const U& codec) {
-  T* desc = static_cast<T*>(content_desc);
-  std::vector<U> codecs = desc->codecs();
+void AddOrReplaceCodec(MediaContentDescription* content_desc,
+                       const cricket::Codec& codec) {
+  std::vector<cricket::Codec> codecs = content_desc->codecs();
   bool found = false;
-  for (U& existing_codec : codecs) {
+  for (cricket::Codec& existing_codec : codecs) {
     if (codec.id == existing_codec.id) {
       // Overwrite existing codec with the new codec.
       existing_codec = codec;
@@ -2921,41 +2909,39 @@ void AddOrReplaceCodec(MediaContentDescription* content_desc, const U& codec) {
     }
   }
   if (!found) {
-    desc->AddCodec(codec);
+    content_desc->AddCodec(codec);
     return;
   }
-  desc->set_codecs(codecs);
+  content_desc->set_codecs(codecs);
 }
 
 // Adds or updates existing codec corresponding to `payload_type` according
 // to `parameters`.
-template <class T, class U>
 void UpdateCodec(MediaContentDescription* content_desc,
                  int payload_type,
                  const cricket::CodecParameterMap& parameters) {
   // Codec might already have been populated (from rtpmap).
-  U new_codec = GetCodecWithPayloadType(static_cast<T*>(content_desc)->codecs(),
-                                        payload_type);
+  cricket::Codec new_codec = GetCodecWithPayloadType(
+      content_desc->type(), content_desc->codecs(), payload_type);
   AddParameters(parameters, &new_codec);
-  AddOrReplaceCodec<T, U>(content_desc, new_codec);
+  AddOrReplaceCodec(content_desc, new_codec);
 }
 
 // Adds or updates existing codec corresponding to `payload_type` according
 // to `feedback_param`.
-template <class T, class U>
 void UpdateCodec(MediaContentDescription* content_desc,
                  int payload_type,
                  const cricket::FeedbackParam& feedback_param) {
   // Codec might already have been populated (from rtpmap).
-  U new_codec = GetCodecWithPayloadType(static_cast<T*>(content_desc)->codecs(),
-                                        payload_type);
+  cricket::Codec new_codec = GetCodecWithPayloadType(
+      content_desc->type(), content_desc->codecs(), payload_type);
   AddFeedbackParameter(feedback_param, &new_codec);
-  AddOrReplaceCodec<T, U>(content_desc, new_codec);
+  AddOrReplaceCodec(content_desc, new_codec);
 }
 
 // Adds or updates existing video codec corresponding to `payload_type`
 // according to `packetization`.
-void UpdateVideoCodecPacketization(VideoContentDescription* video_desc,
+void UpdateVideoCodecPacketization(MediaContentDescription* desc,
                                    int payload_type,
                                    absl::string_view packetization) {
   if (packetization != cricket::kPacketizationParamRaw) {
@@ -2964,49 +2950,50 @@ void UpdateVideoCodecPacketization(VideoContentDescription* video_desc,
   }
 
   // Codec might already have been populated (from rtpmap).
-  cricket::VideoCodec codec =
-      GetCodecWithPayloadType(video_desc->codecs(), payload_type);
+  cricket::Codec codec =
+      GetCodecWithPayloadType(desc->type(), desc->codecs(), payload_type);
   codec.packetization = std::string(packetization);
-  AddOrReplaceCodec<VideoContentDescription, cricket::VideoCodec>(video_desc,
-                                                                  codec);
+  AddOrReplaceCodec(desc, codec);
 }
 
-template <class T>
-bool PopWildcardCodec(std::vector<T>* codecs, T* wildcard_codec) {
+absl::optional<cricket::Codec> PopWildcardCodec(
+    std::vector<cricket::Codec>* codecs) {
+  RTC_DCHECK(codecs);
   for (auto iter = codecs->begin(); iter != codecs->end(); ++iter) {
     if (iter->id == kWildcardPayloadType) {
-      *wildcard_codec = *iter;
+      cricket::Codec wildcard_codec = *iter;
       codecs->erase(iter);
-      return true;
+      return wildcard_codec;
     }
   }
-  return false;
+  return absl::nullopt;
 }
 
-template <class T>
-void UpdateFromWildcardCodecs(cricket::MediaContentDescriptionImpl<T>* desc) {
+void UpdateFromWildcardCodecs(cricket::MediaContentDescription* desc) {
+  RTC_DCHECK(desc);
   auto codecs = desc->codecs();
-  T wildcard_codec;
-  if (!PopWildcardCodec(&codecs, &wildcard_codec)) {
+  absl::optional<cricket::Codec> wildcard_codec = PopWildcardCodec(&codecs);
+  if (!wildcard_codec) {
     return;
   }
   for (auto& codec : codecs) {
-    AddFeedbackParameters(wildcard_codec.feedback_params, &codec);
+    AddFeedbackParameters(wildcard_codec->feedback_params, &codec);
   }
   desc->set_codecs(codecs);
 }
 
 void AddAudioAttribute(const std::string& name,
                        absl::string_view value,
-                       AudioContentDescription* audio_desc) {
+                       MediaContentDescription* desc) {
+  RTC_DCHECK(desc);
   if (value.empty()) {
     return;
   }
-  std::vector<cricket::AudioCodec> codecs = audio_desc->codecs();
-  for (cricket::AudioCodec& codec : codecs) {
+  std::vector<cricket::Codec> codecs = desc->codecs();
+  for (cricket::Codec& codec : codecs) {
     codec.params[name] = std::string(value);
   }
-  audio_desc->set_codecs(codecs);
+  desc->set_codecs(codecs);
 }
 
 bool ParseContent(absl::string_view message,
@@ -3027,7 +3014,7 @@ bool ParseContent(absl::string_view message,
   RTC_DCHECK(transport != NULL);
 
   if (media_type == cricket::MEDIA_TYPE_AUDIO) {
-    MaybeCreateStaticPayloadAudioCodecs(payload_types, media_desc->as_audio());
+    MaybeCreateStaticPayloadAudioCodecs(payload_types, media_desc);
   }
 
   // The media level "ice-ufrag" and "ice-pwd".
@@ -3042,7 +3029,7 @@ bool ParseContent(absl::string_view message,
   std::string ptime_as_string;
   std::vector<std::string> stream_ids;
   std::string track_id;
-  SdpSerializer deserializer;
+  SimulcastSdpSerializer deserializer;
   std::vector<RidDescription> rids;
   SimulcastDescription simulcast;
 
@@ -3408,27 +3395,18 @@ bool ParseContent(absl::string_view message,
     media_desc->AddStream(track);
   }
 
-  if (media_type == cricket::MEDIA_TYPE_AUDIO) {
-    AudioContentDescription* audio_desc = media_desc->as_audio();
-    UpdateFromWildcardCodecs(audio_desc);
-
-    // Verify audio codec ensures that no audio codec has been populated with
-    // only fmtp.
-    if (!VerifyAudioCodecs(audio_desc)) {
-      return ParseFailed("Failed to parse audio codecs correctly.", error);
-    }
-    AddAudioAttribute(kCodecParamMaxPTime, maxptime_as_string, audio_desc);
-    AddAudioAttribute(kCodecParamPTime, ptime_as_string, audio_desc);
+  UpdateFromWildcardCodecs(media_desc);
+  // Codec has not been populated correctly unless the name has been set. This
+  // can happen if an SDP has an fmtp or rtcp-fb with a payload type but doesn't
+  // have a corresponding "rtpmap" line. This should lead to a parse error.
+  if (!absl::c_all_of(media_desc->codecs(), [](const cricket::Codec codec) {
+        return !codec.name.empty();
+      })) {
+    return ParseFailed("Failed to parse codecs correctly.", error);
   }
-
-  if (media_type == cricket::MEDIA_TYPE_VIDEO) {
-    VideoContentDescription* video_desc = media_desc->as_video();
-    UpdateFromWildcardCodecs(video_desc);
-    // Verify video codec ensures that no video codec has been populated with
-    // only rtcp-fb.
-    if (!VerifyVideoCodecs(video_desc)) {
-      return ParseFailed("Failed to parse video codecs correctly.", error);
-    }
+  if (media_type == cricket::MEDIA_TYPE_AUDIO) {
+    AddAudioAttribute(kCodecParamMaxPTime, maxptime_as_string, media_desc);
+    AddAudioAttribute(kCodecParamPTime, ptime_as_string, media_desc);
   }
 
   // RFC 5245
@@ -3591,31 +3569,29 @@ void UpdateCodec(int payload_type,
                  int clockrate,
                  int bitrate,
                  size_t channels,
-                 AudioContentDescription* audio_desc) {
+                 MediaContentDescription* desc) {
   // Codec may already be populated with (only) optional parameters
   // (from an fmtp).
-  cricket::AudioCodec codec =
-      GetCodecWithPayloadType(audio_desc->codecs(), payload_type);
+  cricket::Codec codec =
+      GetCodecWithPayloadType(desc->type(), desc->codecs(), payload_type);
   codec.name = std::string(name);
   codec.clockrate = clockrate;
   codec.bitrate = bitrate;
   codec.channels = channels;
-  AddOrReplaceCodec<AudioContentDescription, cricket::AudioCodec>(audio_desc,
-                                                                  codec);
+  AddOrReplaceCodec(desc, codec);
 }
 
 // Updates or creates a new codec entry in the video description according to
 // `name`, `width`, `height`, and `framerate`.
 void UpdateCodec(int payload_type,
                  absl::string_view name,
-                 VideoContentDescription* video_desc) {
+                 MediaContentDescription* desc) {
   // Codec may already be populated with (only) optional parameters
   // (from an fmtp).
-  cricket::VideoCodec codec =
-      GetCodecWithPayloadType(video_desc->codecs(), payload_type);
+  cricket::Codec codec =
+      GetCodecWithPayloadType(desc->type(), desc->codecs(), payload_type);
   codec.name = std::string(name);
-  AddOrReplaceCodec<VideoContentDescription, cricket::VideoCodec>(video_desc,
-                                                                  codec);
+  AddOrReplaceCodec(desc, codec);
 }
 
 bool ParseRtpmapAttribute(absl::string_view line,
@@ -3664,8 +3640,7 @@ bool ParseRtpmapAttribute(absl::string_view line,
   }
 
   if (media_type == cricket::MEDIA_TYPE_VIDEO) {
-    VideoContentDescription* video_desc = media_desc->as_video();
-    for (const cricket::VideoCodec& existing_codec : video_desc->codecs()) {
+    for (const cricket::VideoCodec& existing_codec : media_desc->codecs()) {
       if (!existing_codec.name.empty() && payload_type == existing_codec.id &&
           (!absl::EqualsIgnoreCase(encoding_name, existing_codec.name) ||
            clock_rate != existing_codec.clockrate)) {
@@ -3679,7 +3654,7 @@ bool ParseRtpmapAttribute(absl::string_view line,
         return ParseFailed(line, description.Release(), error);
       }
     }
-    UpdateCodec(payload_type, encoding_name, video_desc);
+    UpdateCodec(payload_type, encoding_name, media_desc);
   } else if (media_type == cricket::MEDIA_TYPE_AUDIO) {
     // RFC 4566
     // For audio streams, <encoding parameters> indicates the number
@@ -3696,8 +3671,7 @@ bool ParseRtpmapAttribute(absl::string_view line,
       return ParseFailed(line, "At most 24 channels are supported.", error);
     }
 
-    AudioContentDescription* audio_desc = media_desc->as_audio();
-    for (const cricket::AudioCodec& existing_codec : audio_desc->codecs()) {
+    for (const cricket::AudioCodec& existing_codec : media_desc->codecs()) {
       // TODO(crbug.com/1338902) re-add checks for clockrate and number of
       // channels.
       if (!existing_codec.name.empty() && payload_type == existing_codec.id &&
@@ -3713,7 +3687,7 @@ bool ParseRtpmapAttribute(absl::string_view line,
       }
     }
     UpdateCodec(payload_type, encoding_name, clock_rate, 0, channels,
-                audio_desc);
+                media_desc);
   }
   return true;
 }
@@ -3784,12 +3758,9 @@ bool ParseFmtpAttributes(absl::string_view line,
     codec_params[name] = value;
   }
 
-  if (media_type == cricket::MEDIA_TYPE_AUDIO) {
-    UpdateCodec<AudioContentDescription, cricket::AudioCodec>(
-        media_desc, payload_type, codec_params);
-  } else if (media_type == cricket::MEDIA_TYPE_VIDEO) {
-    UpdateCodec<VideoContentDescription, cricket::VideoCodec>(
-        media_desc, payload_type, codec_params);
+  if (media_type == cricket::MEDIA_TYPE_AUDIO ||
+      media_type == cricket::MEDIA_TYPE_VIDEO) {
+    UpdateCodec(media_desc, payload_type, codec_params);
   }
   return true;
 }
@@ -3817,8 +3788,7 @@ bool ParsePacketizationAttribute(absl::string_view line,
     return false;
   }
   absl::string_view packetization = packetization_fields[1];
-  UpdateVideoCodecPacketization(media_desc->as_video(), payload_type,
-                                packetization);
+  UpdateVideoCodecPacketization(media_desc, payload_type, packetization);
   return true;
 }
 
@@ -3855,12 +3825,9 @@ bool ParseRtcpFbAttribute(absl::string_view line,
   }
   const cricket::FeedbackParam feedback_param(id, param);
 
-  if (media_type == cricket::MEDIA_TYPE_AUDIO) {
-    UpdateCodec<AudioContentDescription, cricket::AudioCodec>(
-        media_desc, payload_type, feedback_param);
-  } else if (media_type == cricket::MEDIA_TYPE_VIDEO) {
-    UpdateCodec<VideoContentDescription, cricket::VideoCodec>(
-        media_desc, payload_type, feedback_param);
+  if (media_type == cricket::MEDIA_TYPE_AUDIO ||
+      media_type == cricket::MEDIA_TYPE_VIDEO) {
+    UpdateCodec(media_desc, payload_type, feedback_param);
   }
   return true;
 }

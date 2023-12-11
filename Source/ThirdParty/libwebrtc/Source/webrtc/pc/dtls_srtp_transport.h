@@ -23,7 +23,6 @@
 #include "p2p/base/packet_transport_internal.h"
 #include "pc/srtp_transport.h"
 #include "rtc_base/buffer.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
 
 namespace webrtc {
 

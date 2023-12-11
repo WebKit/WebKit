@@ -11,22 +11,27 @@
 #include "modules/congestion_controller/goog_cc/send_side_bandwidth_estimation.h"
 
 #include <algorithm>
+#include <cstdint>
 #include <cstdio>
 #include <limits>
 #include <memory>
 #include <string>
+#include <utility>
 
 #include "absl/strings/match.h"
+#include "absl/types/optional.h"
 #include "api/field_trials_view.h"
 #include "api/network_state_predictor.h"
-#include "api/rtc_event_log/rtc_event.h"
 #include "api/rtc_event_log/rtc_event_log.h"
+#include "api/transport/network_types.h"
 #include "api/units/data_rate.h"
 #include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
 #include "logging/rtc_event_log/events/rtc_event_bwe_update_loss_based.h"
 #include "modules/congestion_controller/goog_cc/loss_based_bwe_v2.h"
 #include "modules/remote_bitrate_estimator/include/bwe_defines.h"
 #include "rtc_base/checks.h"
+#include "rtc_base/experiments/field_trial_parser.h"
 #include "rtc_base/logging.h"
 #include "system_wrappers/include/field_trial.h"
 #include "system_wrappers/include/metrics.h"
@@ -375,7 +380,6 @@ void SendSideBandwidthEstimation::UpdateLossBasedEstimator(
     const TransportPacketsFeedback& report,
     BandwidthUsage delay_detector_state,
     absl::optional<DataRate> probe_bitrate,
-    DataRate upper_link_capacity,
     bool in_alr) {
   if (LossBasedBandwidthEstimatorV1Enabled()) {
     loss_based_bandwidth_estimator_v1_.UpdateLossStatistics(
@@ -383,8 +387,7 @@ void SendSideBandwidthEstimation::UpdateLossBasedEstimator(
   }
   if (LossBasedBandwidthEstimatorV2Enabled()) {
     loss_based_bandwidth_estimator_v2_.UpdateBandwidthEstimate(
-        report.packet_feedbacks, delay_based_limit_, delay_detector_state,
-        probe_bitrate, upper_link_capacity, in_alr);
+        report.packet_feedbacks, delay_based_limit_, in_alr);
     UpdateEstimate(report.feedback_time);
   }
 }
@@ -488,7 +491,8 @@ void SendSideBandwidthEstimation::UpdateEstimate(Timestamp at_time) {
 
   // We trust the REMB and/or delay-based estimate during the first 2 seconds if
   // we haven't had any packet loss reported, to allow startup bitrate probing.
-  if (last_fraction_loss_ == 0 && IsInStartPhase(at_time)) {
+  if (last_fraction_loss_ == 0 && IsInStartPhase(at_time) &&
+      !loss_based_bandwidth_estimator_v2_.ReadyToUseInStartPhase()) {
     DataRate new_bitrate = current_target_;
     // TODO(srte): We should not allow the new_bitrate to be larger than the
     // receiver limit here.
@@ -498,9 +502,6 @@ void SendSideBandwidthEstimation::UpdateEstimate(Timestamp at_time) {
       new_bitrate = std::max(delay_based_limit_, new_bitrate);
     if (LossBasedBandwidthEstimatorV1Enabled()) {
       loss_based_bandwidth_estimator_v1_.Initialize(new_bitrate);
-    }
-    if (LossBasedBandwidthEstimatorV2Enabled()) {
-      loss_based_bandwidth_estimator_v2_.SetBandwidthEstimate(new_bitrate);
     }
 
     if (new_bitrate != current_target_) {

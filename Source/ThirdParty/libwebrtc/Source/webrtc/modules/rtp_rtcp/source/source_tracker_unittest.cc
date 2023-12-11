@@ -46,7 +46,7 @@ class ExpectedSourceTracker {
   explicit ExpectedSourceTracker(Clock* clock) : clock_(clock) {}
 
   void OnFrameDelivered(const RtpPacketInfos& packet_infos) {
-    const int64_t now_ms = clock_->TimeInMilliseconds();
+    const Timestamp now = clock_->CurrentTime();
 
     for (const auto& packet_info : packet_infos) {
       RtpSource::Extensions extensions = {
@@ -54,26 +54,26 @@ class ExpectedSourceTracker {
           packet_info.local_capture_clock_offset()};
 
       for (const auto& csrc : packet_info.csrcs()) {
-        entries_.emplace_front(now_ms, csrc, RtpSourceType::CSRC,
+        entries_.emplace_front(now, csrc, RtpSourceType::CSRC,
                                packet_info.rtp_timestamp(), extensions);
       }
 
-      entries_.emplace_front(now_ms, packet_info.ssrc(), RtpSourceType::SSRC,
+      entries_.emplace_front(now, packet_info.ssrc(), RtpSourceType::SSRC,
                              packet_info.rtp_timestamp(), extensions);
     }
 
-    PruneEntries(now_ms);
+    PruneEntries(now);
   }
 
   std::vector<RtpSource> GetSources() const {
-    PruneEntries(clock_->TimeInMilliseconds());
+    PruneEntries(clock_->CurrentTime());
 
     return std::vector<RtpSource>(entries_.begin(), entries_.end());
   }
 
  private:
-  void PruneEntries(int64_t now_ms) const {
-    const int64_t prune_ms = now_ms - 10000;  // 10 seconds
+  void PruneEntries(Timestamp now) const {
+    const Timestamp prune = now - TimeDelta::Seconds(10);
 
     std::set<std::pair<RtpSourceType, uint32_t>> seen;
 
@@ -84,7 +84,7 @@ class ExpectedSourceTracker {
       ++next;
 
       auto key = std::make_pair(it->source_type(), it->source_id());
-      if (!seen.insert(key).second || it->timestamp_ms() < prune_ms) {
+      if (!seen.insert(key).second || it->timestamp() < prune) {
         entries_.erase(it);
       }
 
@@ -297,18 +297,17 @@ TEST(SourceTrackerTest, OnFrameDeliveredRecordsSourcesDistinctSsrcs) {
 
   time_controller.AdvanceTime(TimeDelta::Zero());
 
-  EXPECT_THAT(
-      tracker.GetSources(),
-      ElementsAre(RtpSource(timestamp.ms(), kSsrc2, RtpSourceType::SSRC,
-                            kRtpTimestamp1, extensions1),
-                  RtpSource(timestamp.ms(), kCsrcs2, RtpSourceType::CSRC,
-                            kRtpTimestamp1, extensions1),
-                  RtpSource(timestamp.ms(), kSsrc1, RtpSourceType::SSRC,
-                            kRtpTimestamp0, extensions0),
-                  RtpSource(timestamp.ms(), kCsrcs1, RtpSourceType::CSRC,
-                            kRtpTimestamp0, extensions0),
-                  RtpSource(timestamp.ms(), kCsrcs0, RtpSourceType::CSRC,
-                            kRtpTimestamp0, extensions0)));
+  EXPECT_THAT(tracker.GetSources(),
+              ElementsAre(RtpSource(timestamp, kSsrc2, RtpSourceType::SSRC,
+                                    kRtpTimestamp1, extensions1),
+                          RtpSource(timestamp, kCsrcs2, RtpSourceType::CSRC,
+                                    kRtpTimestamp1, extensions1),
+                          RtpSource(timestamp, kSsrc1, RtpSourceType::SSRC,
+                                    kRtpTimestamp0, extensions0),
+                          RtpSource(timestamp, kCsrcs1, RtpSourceType::CSRC,
+                                    kRtpTimestamp0, extensions0),
+                          RtpSource(timestamp, kCsrcs0, RtpSourceType::CSRC,
+                                    kRtpTimestamp0, extensions0)));
 }
 
 TEST(SourceTrackerTest, OnFrameDeliveredRecordsSourcesSameSsrc) {
@@ -363,16 +362,15 @@ TEST(SourceTrackerTest, OnFrameDeliveredRecordsSourcesSameSsrc) {
       .absolute_capture_time = kAbsoluteCaptureTime,
       .local_capture_clock_offset = kLocalCaptureClockOffset};
 
-  EXPECT_THAT(
-      tracker.GetSources(),
-      ElementsAre(RtpSource(timestamp.ms(), kSsrc, RtpSourceType::SSRC,
-                            kRtpTimestamp2, extensions2),
-                  RtpSource(timestamp.ms(), kCsrcs0, RtpSourceType::CSRC,
-                            kRtpTimestamp2, extensions2),
-                  RtpSource(timestamp.ms(), kCsrcs2, RtpSourceType::CSRC,
-                            kRtpTimestamp1, extensions1),
-                  RtpSource(timestamp.ms(), kCsrcs1, RtpSourceType::CSRC,
-                            kRtpTimestamp0, extensions0)));
+  EXPECT_THAT(tracker.GetSources(),
+              ElementsAre(RtpSource(timestamp, kSsrc, RtpSourceType::SSRC,
+                                    kRtpTimestamp2, extensions2),
+                          RtpSource(timestamp, kCsrcs0, RtpSourceType::CSRC,
+                                    kRtpTimestamp2, extensions2),
+                          RtpSource(timestamp, kCsrcs2, RtpSourceType::CSRC,
+                                    kRtpTimestamp1, extensions1),
+                          RtpSource(timestamp, kCsrcs1, RtpSourceType::CSRC,
+                                    kRtpTimestamp0, extensions0)));
 }
 
 TEST(SourceTrackerTest, OnFrameDeliveredUpdatesSources) {
@@ -427,14 +425,13 @@ TEST(SourceTrackerTest, OnFrameDeliveredUpdatesSources) {
 
   time_controller.AdvanceTime(TimeDelta::Zero());
   Timestamp timestamp_0 = time_controller.GetClock()->CurrentTime();
-  EXPECT_THAT(
-      tracker.GetSources(),
-      ElementsAre(RtpSource(timestamp_0.ms(), kSsrc1, RtpSourceType::SSRC,
-                            kRtpTimestamp0, extensions0),
-                  RtpSource(timestamp_0.ms(), kCsrcs1, RtpSourceType::CSRC,
-                            kRtpTimestamp0, extensions0),
-                  RtpSource(timestamp_0.ms(), kCsrcs0, RtpSourceType::CSRC,
-                            kRtpTimestamp0, extensions0)));
+  EXPECT_THAT(tracker.GetSources(),
+              ElementsAre(RtpSource(timestamp_0, kSsrc1, RtpSourceType::SSRC,
+                                    kRtpTimestamp0, extensions0),
+                          RtpSource(timestamp_0, kCsrcs1, RtpSourceType::CSRC,
+                                    kRtpTimestamp0, extensions0),
+                          RtpSource(timestamp_0, kCsrcs0, RtpSourceType::CSRC,
+                                    kRtpTimestamp0, extensions0)));
 
   // Deliver packets with updated sources.
 
@@ -448,16 +445,15 @@ TEST(SourceTrackerTest, OnFrameDeliveredUpdatesSources) {
   time_controller.AdvanceTime(TimeDelta::Zero());
   Timestamp timestamp_1 = time_controller.GetClock()->CurrentTime();
 
-  EXPECT_THAT(
-      tracker.GetSources(),
-      ElementsAre(RtpSource(timestamp_1.ms(), kSsrc1, RtpSourceType::SSRC,
-                            kRtpTimestamp1, extensions1),
-                  RtpSource(timestamp_1.ms(), kCsrcs2, RtpSourceType::CSRC,
-                            kRtpTimestamp1, extensions1),
-                  RtpSource(timestamp_1.ms(), kCsrcs0, RtpSourceType::CSRC,
-                            kRtpTimestamp1, extensions1),
-                  RtpSource(timestamp_0.ms(), kCsrcs1, RtpSourceType::CSRC,
-                            kRtpTimestamp0, extensions0)));
+  EXPECT_THAT(tracker.GetSources(),
+              ElementsAre(RtpSource(timestamp_1, kSsrc1, RtpSourceType::SSRC,
+                                    kRtpTimestamp1, extensions1),
+                          RtpSource(timestamp_1, kCsrcs2, RtpSourceType::CSRC,
+                                    kRtpTimestamp1, extensions1),
+                          RtpSource(timestamp_1, kCsrcs0, RtpSourceType::CSRC,
+                                    kRtpTimestamp1, extensions1),
+                          RtpSource(timestamp_0, kCsrcs1, RtpSourceType::CSRC,
+                                    kRtpTimestamp0, extensions0)));
 
   // Deliver more packets with update csrcs and a new ssrc.
   time_controller.AdvanceTime(TimeDelta::Millis(17));
@@ -471,18 +467,17 @@ TEST(SourceTrackerTest, OnFrameDeliveredUpdatesSources) {
   time_controller.AdvanceTime(TimeDelta::Zero());
   Timestamp timestamp_2 = time_controller.GetClock()->CurrentTime();
 
-  EXPECT_THAT(
-      tracker.GetSources(),
-      ElementsAre(RtpSource(timestamp_2.ms(), kSsrc2, RtpSourceType::SSRC,
-                            kRtpTimestamp2, extensions2),
-                  RtpSource(timestamp_2.ms(), kCsrcs0, RtpSourceType::CSRC,
-                            kRtpTimestamp2, extensions2),
-                  RtpSource(timestamp_1.ms(), kSsrc1, RtpSourceType::SSRC,
-                            kRtpTimestamp1, extensions1),
-                  RtpSource(timestamp_1.ms(), kCsrcs2, RtpSourceType::CSRC,
-                            kRtpTimestamp1, extensions1),
-                  RtpSource(timestamp_0.ms(), kCsrcs1, RtpSourceType::CSRC,
-                            kRtpTimestamp0, extensions0)));
+  EXPECT_THAT(tracker.GetSources(),
+              ElementsAre(RtpSource(timestamp_2, kSsrc2, RtpSourceType::SSRC,
+                                    kRtpTimestamp2, extensions2),
+                          RtpSource(timestamp_2, kCsrcs0, RtpSourceType::CSRC,
+                                    kRtpTimestamp2, extensions2),
+                          RtpSource(timestamp_1, kSsrc1, RtpSourceType::SSRC,
+                                    kRtpTimestamp1, extensions1),
+                          RtpSource(timestamp_1, kCsrcs2, RtpSourceType::CSRC,
+                                    kRtpTimestamp1, extensions1),
+                          RtpSource(timestamp_0, kCsrcs1, RtpSourceType::CSRC,
+                                    kRtpTimestamp0, extensions0)));
 }
 
 TEST(SourceTrackerTest, TimedOutSourcesAreRemoved) {
@@ -531,14 +526,13 @@ TEST(SourceTrackerTest, TimedOutSourcesAreRemoved) {
       .absolute_capture_time = kAbsoluteCaptureTime1,
       .local_capture_clock_offset = kLocalCaptureClockOffset1};
 
-  EXPECT_THAT(
-      tracker.GetSources(),
-      ElementsAre(RtpSource(timestamp_1.ms(), kSsrc, RtpSourceType::SSRC,
-                            kRtpTimestamp1, extensions1),
-                  RtpSource(timestamp_1.ms(), kCsrcs2, RtpSourceType::CSRC,
-                            kRtpTimestamp1, extensions1),
-                  RtpSource(timestamp_1.ms(), kCsrcs0, RtpSourceType::CSRC,
-                            kRtpTimestamp1, extensions1)));
+  EXPECT_THAT(tracker.GetSources(),
+              ElementsAre(RtpSource(timestamp_1, kSsrc, RtpSourceType::SSRC,
+                                    kRtpTimestamp1, extensions1),
+                          RtpSource(timestamp_1, kCsrcs2, RtpSourceType::CSRC,
+                                    kRtpTimestamp1, extensions1),
+                          RtpSource(timestamp_1, kCsrcs0, RtpSourceType::CSRC,
+                                    kRtpTimestamp1, extensions1)));
 }
 
 }  // namespace webrtc

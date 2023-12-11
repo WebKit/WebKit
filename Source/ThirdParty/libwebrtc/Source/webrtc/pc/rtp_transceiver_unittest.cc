@@ -382,7 +382,7 @@ TEST_F(RtpTransceiverTestForHeaderExtensions,
   EXPECT_CALL(*mock_channel, SetFirstPacketReceivedCallback(_));
   EXPECT_CALL(*mock_channel, media_type())
       .WillRepeatedly(Return(cricket::MediaType::MEDIA_TYPE_AUDIO));
-  EXPECT_CALL(*mock_channel, media_send_channel())
+  EXPECT_CALL(*mock_channel, voice_media_send_channel())
       .WillRepeatedly(Return(nullptr));
   EXPECT_CALL(*mock_channel, mid()).WillRepeatedly(ReturnRef(content_name));
   EXPECT_CALL(*mock_channel, SetRtpTransport(_)).WillRepeatedly(Return(true));
@@ -415,7 +415,7 @@ TEST_F(RtpTransceiverTestForHeaderExtensions, ReturnsNegotiatedHdrExts) {
   EXPECT_CALL(*mock_channel, SetFirstPacketReceivedCallback(_));
   EXPECT_CALL(*mock_channel, media_type())
       .WillRepeatedly(Return(cricket::MediaType::MEDIA_TYPE_AUDIO));
-  EXPECT_CALL(*mock_channel, media_send_channel())
+  EXPECT_CALL(*mock_channel, voice_media_send_channel())
       .WillRepeatedly(Return(nullptr));
   EXPECT_CALL(*mock_channel, mid()).WillRepeatedly(ReturnRef(content_name));
   EXPECT_CALL(*mock_channel, SetRtpTransport(_)).WillRepeatedly(Return(true));

@@ -2307,7 +2307,7 @@ public:
     bool shouldAllowAutoFillForCellularIdentifiers() const;
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     const std::optional<MediaCapability>& mediaCapability() const;
     void updateMediaCapability();
 #endif
@@ -2874,7 +2874,7 @@ private:
 
     void dispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier);
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     void setMediaCapability(std::optional<MediaCapability>&&);
     bool shouldActivateMediaCapability() const;
     bool shouldDeactivateMediaCapability() const;

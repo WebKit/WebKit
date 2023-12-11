@@ -78,12 +78,19 @@ inline void add(Hasher& hasher, const SchedulePair& pair)
 }
 
 struct SchedulePairHash {
+    static unsigned hash(const SchedulePair* pair)
+    {
+        return computeHash(*pair);
+    }
+
     static unsigned hash(const RefPtr<SchedulePair>& pair)
     {
         return computeHash(*pair);
     }
 
+    static bool equal(const SchedulePair* a, const RefPtr<SchedulePair>& b) { return a == b; }
     static bool equal(const RefPtr<SchedulePair>& a, const RefPtr<SchedulePair>& b) { return a == b; }
+    static bool equal(const RefPtr<SchedulePair>& a, const SchedulePair* b) { return a == b; }
 
     static constexpr bool safeToCompareToEmptyOrDeleted = true;
 };

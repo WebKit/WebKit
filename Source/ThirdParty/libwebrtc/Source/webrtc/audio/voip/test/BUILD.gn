@@ -70,6 +70,8 @@ if (rtc_include_tests) {
       "../../../api/audio_codecs:builtin_audio_decoder_factory",
       "../../../api/audio_codecs:builtin_audio_encoder_factory",
       "../../../api/task_queue:default_task_queue_factory",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
       "../../../modules/audio_mixer:audio_mixer_test_utils",
       "../../../modules/rtp_rtcp:rtp_rtcp",
       "../../../rtc_base:logging",
@@ -77,6 +79,7 @@ if (rtc_include_tests) {
       "../../../test:mock_transport",
       "../../../test:run_loop",
       "../../../test:test_support",
+      "../../../test/time_controller:time_controller",
     ]
   }
 
@@ -88,6 +91,8 @@ if (rtc_include_tests) {
       "../../../api:transport_api",
       "../../../api/audio_codecs:builtin_audio_encoder_factory",
       "../../../api/task_queue:default_task_queue_factory",
+      "../../../api/units:time_delta",
+      "../../../api/units:timestamp",
       "../../../modules/audio_mixer:audio_mixer_test_utils",
       "../../../modules/rtp_rtcp:rtp_rtcp",
       "../../../modules/rtp_rtcp:rtp_rtcp_format",
@@ -96,6 +101,7 @@ if (rtc_include_tests) {
       "../../../test:mock_transport",
       "../../../test:run_loop",
       "../../../test:test_support",
+      "../../../test/time_controller:time_controller",
     ]
   }
 }

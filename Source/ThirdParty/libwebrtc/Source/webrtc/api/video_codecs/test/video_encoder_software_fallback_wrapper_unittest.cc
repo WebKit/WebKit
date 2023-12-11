@@ -34,6 +34,7 @@
 #include "modules/video_coding/include/video_error_codes.h"
 #include "modules/video_coding/utility/simulcast_rate_allocator.h"
 #include "rtc_base/fake_clock.h"
+#include "test/fake_encoder.h"
 #include "test/fake_texture_frame.h"
 #include "test/field_trial.h"
 #include "test/gmock.h"
@@ -42,6 +43,7 @@
 namespace webrtc {
 using ::testing::_;
 using ::testing::Return;
+using ::testing::ValuesIn;
 
 namespace {
 const int kWidth = 320;
@@ -1081,6 +1083,62 @@ TEST_F(PreferTemporalLayersFallbackTest, PrimesEncoderOnSwitch) {
   EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK,
             wrapper_->InitEncode(&codec_settings, kSettings));
   EXPECT_EQ(wrapper_->GetEncoderInfo().implementation_name, "hw");
+}
+
+struct ResolutionBasedFallbackTestParams {
+  std::string test_name;
+  std::string field_trials = "";
+  VideoCodecType codec_type = kVideoCodecGeneric;
+  int width = 16;
+  int height = 16;
+  std::string expect_implementation_name;
+};
+
+using ResolutionBasedFallbackTest =
+    ::testing::TestWithParam<ResolutionBasedFallbackTestParams>;
+
+INSTANTIATE_TEST_SUITE_P(
+    VideoEncoderFallbackTest,
+    ResolutionBasedFallbackTest,
+    ValuesIn<ResolutionBasedFallbackTestParams>(
+        {{.test_name = "FallbackNotConfigured",
+          .expect_implementation_name = "primary"},
+         {.test_name = "ResolutionAboveFallbackThreshold",
+          .field_trials = "WebRTC-Video-EncoderFallbackSettings/"
+                          "resolution_threshold_px:255/",
+          .expect_implementation_name = "primary"},
+         {.test_name = "ResolutionEqualFallbackThreshold",
+          .field_trials = "WebRTC-Video-EncoderFallbackSettings/"
+                          "resolution_threshold_px:256/",
+          .expect_implementation_name = "fallback"},
+         {.test_name = "GenericFallbackSettingsTakePrecedence",
+          .field_trials =
+              "WebRTC-Video-EncoderFallbackSettings/"
+              "resolution_threshold_px:255/"
+              "WebRTC-VP8-Forced-Fallback-Encoder-v2/Enabled-1,256,1/",
+          .codec_type = kVideoCodecVP8,
+          .expect_implementation_name = "primary"}}),
+    [](const testing::TestParamInfo<ResolutionBasedFallbackTest::ParamType>&
+           info) { return info.param.test_name; });
+
+TEST_P(ResolutionBasedFallbackTest, VerifyForcedEncoderFallback) {
+  const ResolutionBasedFallbackTestParams& params = GetParam();
+  test::ScopedFieldTrials field_trials(params.field_trials);
+  auto primary = new test::FakeEncoder(Clock::GetRealTimeClock());
+  auto fallback = new test::FakeEncoder(Clock::GetRealTimeClock());
+  auto encoder = CreateVideoEncoderSoftwareFallbackWrapper(
+      std::unique_ptr<VideoEncoder>(fallback),
+      std::unique_ptr<VideoEncoder>(primary),
+      /*prefer_temporal_support=*/false);
+  primary->SetImplementationName("primary");
+  fallback->SetImplementationName("fallback");
+  VideoCodec codec;
+  codec.codecType = params.codec_type;
+  codec.width = params.width;
+  codec.height = params.height;
+  encoder->InitEncode(&codec, kSettings);
+  EXPECT_EQ(encoder->GetEncoderInfo().implementation_name,
+            params.expect_implementation_name);
 }
 
 }  // namespace webrtc

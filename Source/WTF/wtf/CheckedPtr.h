@@ -263,7 +263,8 @@ private:
 
 template <typename T, typename PtrTraits>
 struct GetPtrHelper<CheckedPtr<T, PtrTraits>> {
-    typedef T* PtrType;
+    using PtrType = T*;
+    using UnderlyingType = T;
     static T* getPtr(const CheckedPtr<T, PtrTraits>& p) { return const_cast<T*>(p.get()); }
 };
 

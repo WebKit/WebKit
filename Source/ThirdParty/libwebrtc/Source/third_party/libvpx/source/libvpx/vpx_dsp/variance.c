@@ -156,7 +156,7 @@ static void var_filter_block2d_bil_second_pass(
       const uint8_t *second_pred) {                                          \
     uint16_t fdata3[(H + 1) * W];                                            \
     uint8_t temp2[H * W];                                                    \
-    DECLARE_ALIGNED(16, uint8_t, temp3[H * W]);                              \
+    DECLARE_ALIGNED(32, uint8_t, temp3[H * W]);                              \
                                                                              \
     var_filter_block2d_bil_first_pass(src_ptr, fdata3, src_stride, 1, H + 1, \
                                       W, bilinear_filters[x_offset]);        \
@@ -180,7 +180,7 @@ static void var_filter_block2d_bil_second_pass(
   }
 
 /* Identical to the variance call except it does not calculate the
- * sse - sum^2 / w*h and returns sse in addtion to modifying the passed in
+ * sse - sum^2 / w*h and returns sse in addition to modifying the passed in
  * variable.
  */
 #define MSE(W, H)                                                        \
@@ -549,9 +549,9 @@ HIGHBD_MSE(16, 8)
 HIGHBD_MSE(8, 16)
 HIGHBD_MSE(8, 8)
 
-void vpx_highbd_comp_avg_pred(uint16_t *comp_pred, const uint16_t *pred,
-                              int width, int height, const uint16_t *ref,
-                              int ref_stride) {
+void vpx_highbd_comp_avg_pred_c(uint16_t *comp_pred, const uint16_t *pred,
+                                int width, int height, const uint16_t *ref,
+                                int ref_stride) {
   int i, j;
   for (i = 0; i < height; ++i) {
     for (j = 0; j < width; ++j) {

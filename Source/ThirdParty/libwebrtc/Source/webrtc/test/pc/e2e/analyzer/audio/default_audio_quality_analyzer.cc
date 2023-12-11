@@ -42,8 +42,7 @@ void DefaultAudioQualityAnalyzer::OnStatsReports(
   auto stats = report->GetStatsOfType<RTCInboundRtpStreamStats>();
 
   for (auto& stat : stats) {
-    if (!stat->kind.is_defined() ||
-        !(*stat->kind == RTCMediaStreamTrackKind::kAudio)) {
+    if (!stat->kind.is_defined() || !(*stat->kind == "audio")) {
       continue;
     }
 
@@ -63,6 +62,9 @@ void DefaultAudioQualityAnalyzer::OnStatsReports(
         TimeDelta::Seconds(stat->jitter_buffer_target_delay.ValueOrDefault(0.));
     sample.jitter_buffer_emitted_count =
         stat->jitter_buffer_emitted_count.ValueOrDefault(0ul);
+    sample.total_samples_duration =
+        stat->total_samples_duration.ValueOrDefault(0.);
+    sample.total_audio_energy = stat->total_audio_energy.ValueOrDefault(0.);
 
     TrackIdStreamInfoMap::StreamInfo stream_info =
         analyzer_helper_->GetStreamInfoFromTrackId(*stat->track_identifier);
@@ -116,6 +118,9 @@ void DefaultAudioQualityAnalyzer::OnStatsReports(
           jitter_buffer_target_delay_diff.ms<double>() /
           jitter_buffer_emitted_count_diff);
     }
+    audio_stream_stats.energy.AddSample(sqrt(
+        (sample.total_audio_energy - prev_sample.total_audio_energy) /
+        (sample.total_samples_duration - prev_sample.total_samples_duration)));
 
     last_stats_sample_[stream_info.stream_label] = sample;
   }
@@ -162,6 +167,10 @@ void DefaultAudioQualityAnalyzer::Stop() {
         "preferred_buffer_size_ms", GetTestCaseName(item.first),
         item.second.preferred_buffer_size_ms, Unit::kMilliseconds,
         ImprovementDirection::kNeitherIsBetter, metric_metadata);
+    metrics_logger_->LogMetric("energy", GetTestCaseName(item.first),
+                               item.second.energy, Unit::kUnitless,
+                               ImprovementDirection::kNeitherIsBetter,
+                               metric_metadata);
   }
 }
 

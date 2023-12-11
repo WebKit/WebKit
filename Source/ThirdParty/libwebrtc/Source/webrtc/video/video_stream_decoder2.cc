@@ -46,9 +46,10 @@ VideoStreamDecoder::~VideoStreamDecoder() {
 int32_t VideoStreamDecoder::FrameToRender(VideoFrame& video_frame,
                                           absl::optional<uint8_t> qp,
                                           TimeDelta decode_time,
-                                          VideoContentType content_type) {
+                                          VideoContentType content_type,
+                                          VideoFrameType frame_type) {
   receive_stats_callback_->OnDecodedFrame(video_frame, qp, decode_time,
-                                          content_type);
+                                          content_type, frame_type);
   incoming_video_stream_->OnFrame(video_frame);
   return 0;
 }

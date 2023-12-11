@@ -59,12 +59,13 @@ bool KeyframeEffectStack::addEffect(KeyframeEffect& effect)
     if (!effect.targetStyleable() || !effect.animation() || !effect.animation()->timeline() || !effect.animation()->isRelevant())
         return false;
 
-    effect.invalidate();
     m_effects.append(effect);
     m_isSorted = false;
 
     if (m_effects.size() > 1 && effect.preventsAcceleration())
         stopAcceleratedAnimations();
+
+    effect.wasAddedToEffectStack();
 
     return true;
 }
@@ -72,12 +73,14 @@ bool KeyframeEffectStack::addEffect(KeyframeEffect& effect)
 void KeyframeEffectStack::removeEffect(KeyframeEffect& effect)
 {
     auto removedEffect = m_effects.removeFirst(&effect);
+
+    if (removedEffect)
+        effect.wasRemovedFromEffectStack();
+
     if (!removedEffect || m_effects.isEmpty())
         return;
 
-    if (effect.canBeAccelerated())
-        effect.wasRemovedFromStack();
-    else
+    if (!effect.canBeAccelerated())
         startAcceleratedAnimationsIfPossible();
 }
 

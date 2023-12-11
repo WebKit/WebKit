@@ -215,6 +215,7 @@ template <typename T, typename U> inline GRefPtr<T> const_pointer_cast(const GRe
 
 template <typename T> struct IsSmartPtr<GRefPtr<T>> {
     static const bool value = true;
+    static constexpr bool isNullable = true;
 };
 
 template <typename T> GRefPtr<T> adoptGRef(T* p)

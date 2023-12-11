@@ -18,7 +18,6 @@
 #include "rtc_base/byte_order.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/network/sent_packet.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/time_utils.h"
 
 namespace cricket {

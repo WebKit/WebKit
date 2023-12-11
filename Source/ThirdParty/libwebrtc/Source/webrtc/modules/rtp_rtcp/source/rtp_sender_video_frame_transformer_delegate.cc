@@ -10,6 +10,7 @@
 
 #include "modules/rtp_rtcp/source/rtp_sender_video_frame_transformer_delegate.h"
 
+#include <string>
 #include <utility>
 #include <vector>
 
@@ -23,15 +24,14 @@ namespace {
 
 class TransformableVideoSenderFrame : public TransformableVideoFrameInterface {
  public:
-  TransformableVideoSenderFrame(
-      const EncodedImage& encoded_image,
-      const RTPVideoHeader& video_header,
-      int payload_type,
-      absl::optional<VideoCodecType> codec_type,
-      uint32_t rtp_timestamp,
-      absl::optional<int64_t> expected_retransmission_time_ms,
-      uint32_t ssrc,
-      std::vector<uint32_t> csrcs)
+  TransformableVideoSenderFrame(const EncodedImage& encoded_image,
+                                const RTPVideoHeader& video_header,
+                                int payload_type,
+                                absl::optional<VideoCodecType> codec_type,
+                                uint32_t rtp_timestamp,
+                                TimeDelta expected_retransmission_time,
+                                uint32_t ssrc,
+                                std::vector<uint32_t> csrcs)
       : encoded_data_(encoded_image.GetEncodedData()),
         pre_transform_payload_size_(encoded_image.size()),
         header_(video_header),
@@ -39,9 +39,9 @@ class TransformableVideoSenderFrame : public TransformableVideoFrameInterface {
         payload_type_(payload_type),
         codec_type_(codec_type),
         timestamp_(rtp_timestamp),
-        capture_time_ms_(encoded_image.capture_time_ms_),
+        capture_time_(encoded_image.CaptureTime()),
         capture_time_identifier_(encoded_image.CaptureTimeIdentifier()),
-        expected_retransmission_time_ms_(expected_retransmission_time_ms),
+        expected_retransmission_time_(expected_retransmission_time),
         ssrc_(ssrc),
         csrcs_(csrcs) {
     RTC_DCHECK_GE(payload_type_, 0);
@@ -64,6 +64,8 @@ class TransformableVideoSenderFrame : public TransformableVideoFrameInterface {
   }
 
   uint32_t GetTimestamp() const override { return timestamp_; }
+  void SetRTPTimestamp(uint32_t timestamp) override { timestamp_ = timestamp; }
+
   uint32_t GetSsrc() const override { return ssrc_; }
 
   bool IsKeyFrame() const override {
@@ -86,16 +88,23 @@ class TransformableVideoSenderFrame : public TransformableVideoFrameInterface {
   const RTPVideoHeader& GetHeader() const { return header_; }
   uint8_t GetPayloadType() const override { return payload_type_; }
   absl::optional<VideoCodecType> GetCodecType() const { return codec_type_; }
-  int64_t GetCaptureTimeMs() const { return capture_time_ms_; }
+  Timestamp GetCaptureTime() const { return capture_time_; }
   absl::optional<Timestamp> GetCaptureTimeIdentifier() const override {
     return capture_time_identifier_;
   }
 
-  const absl::optional<int64_t>& GetExpectedRetransmissionTimeMs() const {
-    return expected_retransmission_time_ms_;
+  TimeDelta GetExpectedRetransmissionTime() const {
+    return expected_retransmission_time_;
   }
 
   Direction GetDirection() const override { return Direction::kSender; }
+  std::string GetMimeType() const override {
+    if (!codec_type_.has_value()) {
+      return "video/x-unknown";
+    }
+    std::string mime_type = "video/";
+    return mime_type + CodecTypeToPayloadString(*codec_type_);
+  }
 
  private:
   rtc::scoped_refptr<EncodedImageBufferInterface> encoded_data_;
@@ -104,10 +113,10 @@ class TransformableVideoSenderFrame : public TransformableVideoFrameInterface {
   const VideoFrameType frame_type_;
   const uint8_t payload_type_;
   const absl::optional<VideoCodecType> codec_type_ = absl::nullopt;
-  const uint32_t timestamp_;
-  const int64_t capture_time_ms_;
+  uint32_t timestamp_;
+  const Timestamp capture_time_;
   const absl::optional<Timestamp> capture_time_identifier_;
-  const absl::optional<int64_t> expected_retransmission_time_ms_;
+  const TimeDelta expected_retransmission_time_;
 
   uint32_t ssrc_;
   std::vector<uint32_t> csrcs_;
@@ -118,12 +127,10 @@ RTPSenderVideoFrameTransformerDelegate::RTPSenderVideoFrameTransformerDelegate(
     RTPVideoFrameSenderInterface* sender,
     rtc::scoped_refptr<FrameTransformerInterface> frame_transformer,
     uint32_t ssrc,
-    std::vector<uint32_t> csrcs,
     TaskQueueFactory* task_queue_factory)
     : sender_(sender),
       frame_transformer_(std::move(frame_transformer)),
       ssrc_(ssrc),
-      csrcs_(csrcs),
       transformation_queue_(task_queue_factory->CreateTaskQueue(
           "video_frame_transformer",
           TaskQueueFactory::Priority::NORMAL)) {}
@@ -139,10 +146,11 @@ bool RTPSenderVideoFrameTransformerDelegate::TransformFrame(
     uint32_t rtp_timestamp,
     const EncodedImage& encoded_image,
     RTPVideoHeader video_header,
-    absl::optional<int64_t> expected_retransmission_time_ms) {
+    TimeDelta expected_retransmission_time) {
   frame_transformer_->Transform(std::make_unique<TransformableVideoSenderFrame>(
       encoded_image, video_header, payload_type, codec_type, rtp_timestamp,
-      expected_retransmission_time_ms, ssrc_, csrcs_));
+      expected_retransmission_time, ssrc_,
+      /*csrcs=*/std::vector<uint32_t>()));
   return true;
 }
 
@@ -171,16 +179,15 @@ void RTPSenderVideoFrameTransformerDelegate::SendVideo(
       TransformableFrameInterface::Direction::kSender) {
     auto* transformed_video_frame =
         static_cast<TransformableVideoSenderFrame*>(transformed_frame.get());
-    sender_->SendVideo(
-        transformed_video_frame->GetPayloadType(),
-        transformed_video_frame->GetCodecType(),
-        transformed_video_frame->GetTimestamp(),
-        transformed_video_frame->GetCaptureTimeMs(),
-        transformed_video_frame->GetData(),
-        transformed_video_frame->GetPreTransformPayloadSize(),
-        transformed_video_frame->GetHeader(),
-        transformed_video_frame->GetExpectedRetransmissionTimeMs(),
-        transformed_video_frame->Metadata().GetCsrcs());
+    sender_->SendVideo(transformed_video_frame->GetPayloadType(),
+                       transformed_video_frame->GetCodecType(),
+                       transformed_video_frame->GetTimestamp(),
+                       transformed_video_frame->GetCaptureTime(),
+                       transformed_video_frame->GetData(),
+                       transformed_video_frame->GetPreTransformPayloadSize(),
+                       transformed_video_frame->GetHeader(),
+                       transformed_video_frame->GetExpectedRetransmissionTime(),
+                       transformed_video_frame->Metadata().GetCsrcs());
   } else {
     auto* transformed_video_frame =
         static_cast<TransformableVideoFrameInterface*>(transformed_frame.get());
@@ -188,10 +195,11 @@ void RTPSenderVideoFrameTransformerDelegate::SendVideo(
     sender_->SendVideo(
         transformed_video_frame->GetPayloadType(), metadata.GetCodec(),
         transformed_video_frame->GetTimestamp(),
-        /*capture_time_ms=*/0, transformed_video_frame->GetData(),
+        /*capture_time=*/Timestamp::MinusInfinity(),
+        transformed_video_frame->GetData(),
         transformed_video_frame->GetData().size(),
         RTPVideoHeader::FromMetadata(metadata),
-        /*expected_retransmission_time_ms_=*/absl::nullopt,
+        /*expected_retransmission_time=*/TimeDelta::PlusInfinity(),
         metadata.GetCsrcs());
   }
 }
@@ -235,7 +243,7 @@ std::unique_ptr<TransformableVideoFrameInterface> CloneSenderVideoFrame(
   return std::make_unique<TransformableVideoSenderFrame>(
       encoded_image, new_header, original->GetPayloadType(), new_header.codec,
       original->GetTimestamp(),
-      absl::nullopt,  // expected_retransmission_time_ms
+      /*expected_retransmission_time=*/TimeDelta::PlusInfinity(),
       original->GetSsrc(), metadata.GetCsrcs());
 }
 

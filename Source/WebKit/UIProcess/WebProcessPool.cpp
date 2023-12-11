@@ -148,9 +148,9 @@
 #include "IPCTesterMessages.h"
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
+#include "ExtensionCapabilityGrant.h"
 #include "MediaCapability.h"
-#include "ProcessCapabilityGrant.h"
 #endif
 
 #define WEBPROCESSPOOL_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - WebProcessPool::" fmt, this, ##__VA_ARGS__)
@@ -1038,11 +1038,11 @@ void WebProcessPool::processDidFinishLaunching(WebProcessProxy& process)
 
     m_connectionClient.didCreateConnection(this, process.protectedWebConnection().get());
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     for (auto& page : process.pages()) {
         if (auto& mediaCapability = page->mediaCapability()) {
             WEBPROCESSPOOL_RELEASE_LOG(ProcessCapabilities, "processDidFinishLaunching: granting media capability (envID=%{public}s)", mediaCapability->environmentIdentifier().utf8().data());
-            processCapabilityGranter().grant(*mediaCapability);
+            extensionCapabilityGranter().grant(*mediaCapability);
         }
     }
 #endif
@@ -1081,8 +1081,8 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
 
     removeProcessFromOriginCacheSet(process);
 
-#if ENABLE(PROCESS_CAPABILITIES)
-    processCapabilityGranter().invalidateGrants(moveToVector(std::exchange(process.processCapabilityGrants(), { }).values()));
+#if ENABLE(EXTENSION_CAPABILITIES)
+    extensionCapabilityGranter().invalidateGrants(moveToVector(std::exchange(process.extensionCapabilityGrants(), { }).values()));
 #endif
 }
 

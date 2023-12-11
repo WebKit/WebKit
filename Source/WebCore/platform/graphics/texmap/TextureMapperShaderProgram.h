@@ -143,40 +143,4 @@ private:
 
 } // namespace WebCore
 
-namespace WTF {
-
-template<> struct EnumTraits<WebCore::TextureMapperShaderProgram::Option> {
-    using values = EnumValues<
-        WebCore::TextureMapperShaderProgram::Option,
-        WebCore::TextureMapperShaderProgram::TextureRGB,
-        WebCore::TextureMapperShaderProgram::SolidColor,
-        WebCore::TextureMapperShaderProgram::Opacity,
-        WebCore::TextureMapperShaderProgram::Antialiasing,
-        WebCore::TextureMapperShaderProgram::GrayscaleFilter,
-        WebCore::TextureMapperShaderProgram::SepiaFilter,
-        WebCore::TextureMapperShaderProgram::SaturateFilter,
-        WebCore::TextureMapperShaderProgram::HueRotateFilter,
-        WebCore::TextureMapperShaderProgram::BrightnessFilter,
-        WebCore::TextureMapperShaderProgram::ContrastFilter,
-        WebCore::TextureMapperShaderProgram::InvertFilter,
-        WebCore::TextureMapperShaderProgram::OpacityFilter,
-        WebCore::TextureMapperShaderProgram::BlurFilter,
-        WebCore::TextureMapperShaderProgram::AlphaBlur,
-        WebCore::TextureMapperShaderProgram::ContentTexture,
-        WebCore::TextureMapperShaderProgram::ManualRepeat,
-        WebCore::TextureMapperShaderProgram::TextureYUV,
-        WebCore::TextureMapperShaderProgram::TextureNV12,
-        WebCore::TextureMapperShaderProgram::TextureNV21,
-        WebCore::TextureMapperShaderProgram::TexturePackedYUV,
-        WebCore::TextureMapperShaderProgram::TextureExternalOES,
-        WebCore::TextureMapperShaderProgram::RoundedRectClip,
-        WebCore::TextureMapperShaderProgram::Premultiply,
-        WebCore::TextureMapperShaderProgram::TextureYUVA,
-        WebCore::TextureMapperShaderProgram::TextureCopy,
-        WebCore::TextureMapperShaderProgram::AlphaToShadow
-    >;
-};
-
-} // namespace WTF
-
 #endif // USE(TEXTURE_MAPPER)

@@ -22,15 +22,15 @@ class BordersTest
       public ::libvpx_test::CodecTestWithParam<libvpx_test::TestMode> {
  protected:
   BordersTest() : EncoderTest(GET_PARAM(0)) {}
-  virtual ~BordersTest() {}
+  ~BordersTest() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig();
     SetMode(GET_PARAM(1));
   }
 
-  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                                  ::libvpx_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                          ::libvpx_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, 1);
       encoder->Control(VP8E_SET_ENABLEAUTOALTREF, 1);
@@ -40,7 +40,7 @@ class BordersTest
     }
   }
 
-  virtual void FramePktHook(const vpx_codec_cx_pkt_t *pkt) {
+  void FramePktHook(const vpx_codec_cx_pkt_t *pkt) override {
     if (pkt->data.frame.flags & VPX_FRAME_IS_KEY) {
     }
   }

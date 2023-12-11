@@ -1673,7 +1673,7 @@ public:
     const Vector<DMABufRendererBufferFormat>& preferredBufferFormats() const { return m_preferredBufferFormats; }
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     const String& mediaEnvironment() const { return m_mediaEnvironment; }
     void setMediaEnvironment(const String&);
 #endif
@@ -2670,7 +2670,7 @@ private:
     WeakHashSet<WebCore::HTMLImageElement, WebCore::WeakPtrImplWithEventTargetData> m_elementsToExcludeFromRemoveBackground;
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     String m_mediaEnvironment;
 #endif
 

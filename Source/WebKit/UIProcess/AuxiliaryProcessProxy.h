@@ -47,14 +47,14 @@ class SharedBuffer;
 
 namespace WebKit {
 
-class ProcessCapabilityGrant;
+class ExtensionCapabilityGrant;
 class ProcessThrottler;
 class ProcessAssertion;
 class SandboxExtensionHandle;
 
 struct AuxiliaryProcessCreationParameters;
 
-using ProcessCapabilityGrantMap = HashMap<String, ProcessCapabilityGrant>;
+using ExtensionCapabilityGrantMap = HashMap<String, ExtensionCapabilityGrant>;
 
 class AuxiliaryProcessProxy
     : public ThreadSafeRefCounted<AuxiliaryProcessProxy, WTF::DestructionThread::MainRunLoop>
@@ -192,8 +192,8 @@ public:
     static bool manageProcessesAsExtensions() { return s_manageProcessesAsExtensions; }
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
-    ProcessCapabilityGrantMap& processCapabilityGrants() { return m_processCapabilityGrants; }
+#if ENABLE(EXTENSION_CAPABILITIES)
+    ExtensionCapabilityGrantMap& extensionCapabilityGrants() { return m_extensionCapabilityGrants; }
 #endif
 
 protected:
@@ -256,8 +256,8 @@ private:
     RefPtr<ProcessAssertion> m_boostedJetsamAssertion;
 #endif
 #endif
-#if ENABLE(PROCESS_CAPABILITIES)
-    ProcessCapabilityGrantMap m_processCapabilityGrants;
+#if ENABLE(EXTENSION_CAPABILITIES)
+    ExtensionCapabilityGrantMap m_extensionCapabilityGrants;
 #endif
 #if USE(EXTENSIONKIT)
     static bool s_manageProcessesAsExtensions;

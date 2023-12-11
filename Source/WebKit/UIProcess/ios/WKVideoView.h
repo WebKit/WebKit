@@ -28,8 +28,12 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "RemoteLayerTreeViews.h"
+#import <WebCore/WebAVPlayerLayerView.h>
 
 @interface WKVideoView : WKCompositingView
+- (id)initWithFrame:(CGRect)frame playerView:(WebAVPlayerLayerView *)playerView;
+
+@property (nonatomic, readonly) CALayer *playerLayer;
 @end
 
 #endif

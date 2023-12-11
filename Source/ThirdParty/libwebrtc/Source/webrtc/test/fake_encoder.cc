@@ -77,6 +77,11 @@ void FakeEncoder::SetQp(int qp) {
   qp_ = qp;
 }
 
+void FakeEncoder::SetImplementationName(absl::string_view implementation_name) {
+  MutexLock lock(&mutex_);
+  implementation_name_ = std::string(implementation_name);
+}
+
 int32_t FakeEncoder::InitEncode(const VideoCodec* config,
                                 const Settings& settings) {
   MutexLock lock(&mutex_);
@@ -136,7 +141,7 @@ int32_t FakeEncoder::Encode(const VideoFrame& input_image,
     EncodedImage encoded;
     encoded.SetEncodedData(buffer);
 
-    encoded.SetTimestamp(input_image.timestamp());
+    encoded.SetRtpTimestamp(input_image.timestamp());
     encoded._frameType = frame_info.keyframe ? VideoFrameType::kVideoFrameKey
                                              : VideoFrameType::kVideoFrameDelta;
     encoded._encodedWidth = simulcast_streams[i].width;
@@ -271,12 +276,11 @@ void FakeEncoder::SetRatesLocked(const RateControlParameters& parameters) {
   }
 }
 
-const char* FakeEncoder::kImplementationName = "fake_encoder";
 VideoEncoder::EncoderInfo FakeEncoder::GetEncoderInfo() const {
   EncoderInfo info;
-  info.implementation_name = kImplementationName;
-  info.is_hardware_accelerated = true;
   MutexLock lock(&mutex_);
+  info.implementation_name = implementation_name_.value_or(kImplementationName);
+  info.is_hardware_accelerated = true;
   for (int sid = 0; sid < config_.numberOfSimulcastStreams; ++sid) {
     int number_of_temporal_layers =
         config_.simulcastStream[sid].numberOfTemporalLayers;

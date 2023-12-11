@@ -36,14 +36,13 @@ class NetworkStateEndToEndTest : public test::CallTest {
  protected:
   class UnusedTransport : public Transport {
    private:
-    bool SendRtp(const uint8_t* packet,
-                 size_t length,
+    bool SendRtp(rtc::ArrayView<const uint8_t> packet,
                  const PacketOptions& options) override {
       ADD_FAILURE() << "Unexpected RTP sent.";
       return false;
     }
 
-    bool SendRtcp(const uint8_t* packet, size_t length) override {
+    bool SendRtcp(rtc::ArrayView<const uint8_t> packet) override {
       ADD_FAILURE() << "Unexpected RTCP sent.";
       return false;
     }
@@ -62,15 +61,14 @@ class NetworkStateEndToEndTest : public test::CallTest {
     }
 
    private:
-    bool SendRtp(const uint8_t* packet,
-                 size_t length,
+    bool SendRtp(rtc::ArrayView<const uint8_t> packet,
                  const PacketOptions& options) override {
       MutexLock lock(&mutex_);
       need_rtp_ = false;
       return true;
     }
 
-    bool SendRtcp(const uint8_t* packet, size_t length) override {
+    bool SendRtcp(rtc::ArrayView<const uint8_t> packet) override {
       MutexLock lock(&mutex_);
       need_rtcp_ = false;
       return true;
@@ -96,7 +94,7 @@ void NetworkStateEndToEndTest::VerifyNewVideoSendStreamsRespectNetworkState(
 
   SendTask(task_queue(), [this, network_to_bring_up, &encoder_factory,
                           transport]() {
-    CreateSenderCall(Call::Config(send_event_log_.get()));
+    CreateSenderCall(CallConfig(send_event_log_.get()));
     sender_call_->SignalChannelNetworkState(network_to_bring_up, kNetworkUp);
 
     CreateSendConfig(1, 0, 0, transport);
@@ -174,10 +172,10 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
           receiver_rtcp_(0),
           down_frames_(0) {}
 
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       MutexLock lock(&test_mutex_);
       RtpPacket rtp_packet;
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      EXPECT_TRUE(rtp_packet.Parse(packet));
       if (rtp_packet.payload_size() == 0)
         ++sender_padding_;
       ++sender_rtp_;
@@ -185,19 +183,19 @@ TEST_F(NetworkStateEndToEndTest, RespectsNetworkState) {
       return SEND_PACKET;
     }
 
-    Action OnSendRtcp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtcp(rtc::ArrayView<const uint8_t> packet) override {
       MutexLock lock(&test_mutex_);
       ++sender_rtcp_;
       packet_event_.Set();
       return SEND_PACKET;
     }
 
-    Action OnReceiveRtp(const uint8_t* packet, size_t length) override {
+    Action OnReceiveRtp(rtc::ArrayView<const uint8_t> packet) override {
       ADD_FAILURE() << "Unexpected receiver RTP, should not be sending.";
       return SEND_PACKET;
     }
 
-    Action OnReceiveRtcp(const uint8_t* packet, size_t length) override {
+    Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> packet) override {
       MutexLock lock(&test_mutex_);
       ++receiver_rtcp_;
       packet_event_.Set();

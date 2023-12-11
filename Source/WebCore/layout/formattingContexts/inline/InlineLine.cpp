@@ -96,55 +96,6 @@ Line::Result Line::close()
     };
 }
 
-void Line::applyExpansionOnRange(WTF::Range<size_t> runRange, const ExpansionInfo& expansion, InlineLayoutUnit spaceToDistribute)
-{
-    ASSERT(spaceToDistribute > 0);
-    ASSERT(expansion.opportunityCount);
-    // Distribute the extra space.
-    auto expansionToDistribute = spaceToDistribute / expansion.opportunityCount;
-    auto accumulatedExpansion = InlineLayoutUnit { };
-    auto rangeSize = runRange.end() - runRange.begin();
-    if (runRange.end() > m_runs.size()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    for (size_t index = 0; index < rangeSize; ++index) {
-        auto& run = m_runs[runRange.begin() + index];
-        // Expand and move runs by the accumulated expansion.
-        run.moveHorizontally(accumulatedExpansion);
-        auto computedExpansion = expansionToDistribute * expansion.opportunityList[index];
-        run.setExpansion({ expansion.behaviorList[index], computedExpansion });
-        run.shrinkHorizontally(-computedExpansion);
-        accumulatedExpansion += computedExpansion;
-    }
-    // Content grows as runs expand.
-    m_contentLogicalWidth += accumulatedExpansion;
-}
-
-void Line::moveBy(WTF::Range<size_t> runRange, InlineLayoutUnit offset)
-{
-    if (runRange.begin() >= m_runs.size() || runRange.end() > m_runs.size()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    for (auto index = runRange.begin(); index < runRange.end(); ++index)
-        m_runs[index].moveHorizontally(offset);
-    m_contentLogicalWidth += offset;
-}
-
-void Line::expandBy(size_t runIndex, InlineLayoutUnit logicalWidth)
-{
-    if (runIndex >= m_runs.size()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    m_runs[runIndex].shrinkHorizontally(-logicalWidth);
-    if (runIndex < m_runs.size() - 1)
-        moveBy({ runIndex + 1, m_runs.size() }, logicalWidth);
-    else
-        m_contentLogicalWidth += logicalWidth;
-}
-
 InlineLayoutUnit Line::handleTrailingTrimmableContent(TrailingContentAction trailingTrimmableContentAction)
 {
     if (m_trimmableTrailingContent.isEmpty() || m_runs.isEmpty())

@@ -201,7 +201,7 @@ static vpx_codec_err_t update_error_state(
   return error->error_code;
 }
 
-static void init_buffer_callbacks(vpx_codec_alg_priv_t *ctx) {
+static vpx_codec_err_t init_buffer_callbacks(vpx_codec_alg_priv_t *ctx) {
   VP9_COMMON *const cm = &ctx->pbi->common;
   BufferPool *const pool = cm->buffer_pool;
 
@@ -217,12 +217,16 @@ static void init_buffer_callbacks(vpx_codec_alg_priv_t *ctx) {
     pool->get_fb_cb = vp9_get_frame_buffer;
     pool->release_fb_cb = vp9_release_frame_buffer;
 
-    if (vp9_alloc_internal_frame_buffers(&pool->int_frame_buffers))
+    if (vp9_alloc_internal_frame_buffers(&pool->int_frame_buffers)) {
       vpx_internal_error(&cm->error, VPX_CODEC_MEM_ERROR,
                          "Failed to initialize internal frame buffers");
+      return VPX_CODEC_MEM_ERROR;
+    }
 
     pool->cb_priv = &pool->int_frame_buffers;
   }
+
+  return VPX_CODEC_OK;
 }
 
 static void set_default_ppflags(vp8_postproc_cfg_t *cfg) {
@@ -252,6 +256,7 @@ static void set_ppflags(const vpx_codec_alg_priv_t *ctx, vp9_ppflags_t *flags) {
   } while (0)
 
 static vpx_codec_err_t init_decoder(vpx_codec_alg_priv_t *ctx) {
+  vpx_codec_err_t res;
   ctx->last_show_frame = -1;
   ctx->need_resync = 1;
   ctx->flushed = 0;
@@ -261,6 +266,8 @@ static vpx_codec_err_t init_decoder(vpx_codec_alg_priv_t *ctx) {
 
   ctx->pbi = vp9_decoder_create(ctx->buffer_pool);
   if (ctx->pbi == NULL) {
+    vpx_free(ctx->buffer_pool);
+    ctx->buffer_pool = NULL;
     set_error_detail(ctx, "Failed to allocate decoder");
     return VPX_CODEC_MEM_ERROR;
   }
@@ -278,9 +285,14 @@ static vpx_codec_err_t init_decoder(vpx_codec_alg_priv_t *ctx) {
   if (!ctx->postproc_cfg_set && (ctx->base.init_flags & VPX_CODEC_USE_POSTPROC))
     set_default_ppflags(&ctx->postproc_cfg);
 
-  init_buffer_callbacks(ctx);
-
-  return VPX_CODEC_OK;
+  res = init_buffer_callbacks(ctx);
+  if (res != VPX_CODEC_OK) {
+    vpx_free(ctx->buffer_pool);
+    ctx->buffer_pool = NULL;
+    vp9_decoder_remove(ctx->pbi);
+    ctx->pbi = NULL;
+  }
+  return res;
 }
 
 static INLINE void check_resync(vpx_codec_alg_priv_t *const ctx,
@@ -332,7 +344,6 @@ static vpx_codec_err_t decoder_decode(vpx_codec_alg_priv_t *ctx,
                                       const uint8_t *data, unsigned int data_sz,
                                       void *user_priv, long deadline) {
   const uint8_t *data_start = data;
-  const uint8_t *const data_end = data + data_sz;
   vpx_codec_err_t res;
   uint32_t frame_sizes[8];
   int frame_count;
@@ -347,7 +358,7 @@ static vpx_codec_err_t decoder_decode(vpx_codec_alg_priv_t *ctx,
 
   // Initialize the decoder on the first frame.
   if (ctx->pbi == NULL) {
-    const vpx_codec_err_t res = init_decoder(ctx);
+    res = init_decoder(ctx);
     if (res != VPX_CODEC_OK) return res;
   }
 
@@ -360,12 +371,12 @@ static vpx_codec_err_t decoder_decode(vpx_codec_alg_priv_t *ctx,
 
   // Decode in serial mode.
   if (frame_count > 0) {
+    const uint8_t *const data_end = data + data_sz;
     int i;
 
     for (i = 0; i < frame_count; ++i) {
       const uint8_t *data_start_copy = data_start;
       const uint32_t frame_size = frame_sizes[i];
-      vpx_codec_err_t res;
       if (data_start < data || frame_size > (uint32_t)(data_end - data_start)) {
         set_error_detail(ctx, "Invalid frame size in index");
         return VPX_CODEC_CORRUPT_FRAME;
@@ -377,10 +388,10 @@ static vpx_codec_err_t decoder_decode(vpx_codec_alg_priv_t *ctx,
       data_start += frame_size;
     }
   } else {
+    const uint8_t *const data_end = data + data_sz;
     while (data_start < data_end) {
       const uint32_t frame_size = (uint32_t)(data_end - data_start);
-      const vpx_codec_err_t res =
-          decode_one(ctx, &data_start, frame_size, user_priv, deadline);
+      res = decode_one(ctx, &data_start, frame_size, user_priv, deadline);
       if (res != VPX_CODEC_OK) return res;
 
       // Account for suboptimal termination by the encoder.

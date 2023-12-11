@@ -387,13 +387,6 @@ TEST(RTCStatsTest, RTCStatsPrintsValidJson) {
   std::cout << stats.ToJson() << std::endl;
 }
 
-TEST(RTCStatsTest, IsStandardized) {
-  RTCStatsMember<int32_t> standardized("standardized");
-  RTCNonStandardStatsMember<int32_t> unstandardized("unstandardized");
-  EXPECT_TRUE(standardized.is_standardized());
-  EXPECT_FALSE(unstandardized.is_standardized());
-}
-
 TEST(RTCStatsTest, IsSequence) {
   RTCTestStats stats("statsId", Timestamp::Micros(42));
   EXPECT_FALSE(stats.m_bool.is_sequence());
@@ -502,30 +495,6 @@ TEST(RTCStatsTest, ValueToString) {
   stats.m_map_string_double->emplace("foo", 0.5);
   stats.m_map_string_double->emplace("bar", 0.25);
   EXPECT_EQ("{bar:0.25,foo:0.5}", stats.m_map_string_double.ValueToString());
-}
-
-TEST(RTCStatsTest, RestrictedStatsTest) {
-  RTCStatsMember<bool> unrestricted("unrestricted");
-  EXPECT_EQ(unrestricted.exposure_criteria(), StatExposureCriteria::kAlways);
-  RTCRestrictedStatsMember<bool, StatExposureCriteria::kHardwareCapability>
-      restricted("restricted");
-  EXPECT_EQ(restricted.exposure_criteria(),
-            StatExposureCriteria::kHardwareCapability);
-
-  unrestricted = true;
-  restricted = true;
-  EXPECT_NE(unrestricted, restricted)
-      << "These can not be equal as they have different exposure criteria.";
-}
-
-TEST(RTCStatsTest, NonStandardGroupId) {
-  auto group_id = NonStandardGroupId::kGroupIdForTesting;
-  RTCNonStandardStatsMember<int32_t> with_group_id("stat", {group_id});
-  std::vector<NonStandardGroupId> expected_ids({group_id});
-  EXPECT_EQ(expected_ids, with_group_id.group_ids());
-
-  RTCNonStandardStatsMember<int32_t> without_group_id("stat");
-  EXPECT_TRUE(without_group_id.group_ids().empty());
 }
 
 // Death tests.

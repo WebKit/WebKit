@@ -28,7 +28,6 @@ class VideoBitrateAllocatorFactory;
 
 namespace cricket {
 
-class MediaChannel;
 class VoiceChannel;
 class VideoChannel;
 class MediaContentDescription;

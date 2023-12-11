@@ -77,9 +77,6 @@ public:
     void handleOverflowingNonBreakingSpace(TrailingContentAction, InlineLayoutUnit overflowingWidth);
     const Box* removeOverflowingOutOfFlowContent();
     void resetBidiLevelForTrailingWhitespace(UBiDiLevel rootBidiLevel);
-    void applyExpansionOnRange(WTF::Range<size_t> runRange, const ExpansionInfo&, InlineLayoutUnit spaceToDistribute);
-    void moveBy(WTF::Range<size_t> runRange, InlineLayoutUnit offset);
-    void expandBy(size_t startRunIndex, InlineLayoutUnit logicalWidth);
 
     struct Run {
         enum class Type : uint8_t {
@@ -146,6 +143,7 @@ public:
     private:
         friend class Line;
         friend class InlineContentAligner;
+        friend class RubyFormattingContext;
 
         Run(const InlineTextItem&, const RenderStyle&, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth);
         Run(const InlineSoftLineBreakItem&, const RenderStyle&, InlineLayoutUnit logicalLeft);

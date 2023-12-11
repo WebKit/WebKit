@@ -26,19 +26,8 @@ import org.webrtc.ThreadUtils.ThreadChecker;
 /**
  * Android hardware video decoder.
  */
-@SuppressWarnings("deprecation")
-// Cannot support API 16 without using deprecated methods.
-// TODO(sakal): Rename to MediaCodecVideoDecoder once the deprecated implementation is removed.
 class AndroidVideoDecoder implements VideoDecoder, VideoSink {
   private static final String TAG = "AndroidVideoDecoder";
-
-  // TODO(magjed): Use MediaFormat.KEY_* constants when part of the public API.
-  private static final String MEDIA_FORMAT_KEY_STRIDE = "stride";
-  private static final String MEDIA_FORMAT_KEY_SLICE_HEIGHT = "slice-height";
-  private static final String MEDIA_FORMAT_KEY_CROP_LEFT = "crop-left";
-  private static final String MEDIA_FORMAT_KEY_CROP_RIGHT = "crop-right";
-  private static final String MEDIA_FORMAT_KEY_CROP_TOP = "crop-top";
-  private static final String MEDIA_FORMAT_KEY_CROP_BOTTOM = "crop-bottom";
 
   // MediaCodec.release() occasionally hangs.  Release stops waiting and reports failure after
   // this timeout.
@@ -162,7 +151,7 @@ class AndroidVideoDecoder implements VideoDecoder, VideoSink {
     decoderThreadChecker.checkIsOnValidThread();
     Logging.d(TAG,
         "initDecodeInternal name: " + codecName + " type: " + codecType + " width: " + width
-            + " height: " + height);
+            + " height: " + height + " color format: " + colorFormat);
     if (outputThread != null) {
       Logging.e(TAG, "initDecodeInternal called while the codec is already running");
       return VideoCodecStatus.FALLBACK_SOFTWARE;
@@ -264,9 +253,9 @@ class AndroidVideoDecoder implements VideoDecoder, VideoSink {
 
     ByteBuffer buffer;
     try {
-      buffer = codec.getInputBuffers()[index];
+      buffer = codec.getInputBuffer(index);
     } catch (IllegalStateException e) {
-      Logging.e(TAG, "getInputBuffers failed", e);
+      Logging.e(TAG, "getInputBuffer with index=" + index + " failed", e);
       return VideoCodecStatus.ERROR;
     }
 
@@ -377,14 +366,14 @@ class AndroidVideoDecoder implements VideoDecoder, VideoSink {
       // exceeded, deliverDecodedFrame() will be called again on the next iteration of the output
       // thread's loop.  Blocking here prevents the output thread from busy-waiting while the codec
       // is idle.
-      int result = codec.dequeueOutputBuffer(info, DEQUEUE_OUTPUT_BUFFER_TIMEOUT_US);
-      if (result == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
+      int index = codec.dequeueOutputBuffer(info, DEQUEUE_OUTPUT_BUFFER_TIMEOUT_US);
+      if (index == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
         reformat(codec.getOutputFormat());
         return;
       }
 
-      if (result < 0) {
-        Logging.v(TAG, "dequeueOutputBuffer returned " + result);
+      if (index < 0) {
+        Logging.v(TAG, "dequeueOutputBuffer returned " + index);
         return;
       }
 
@@ -399,9 +388,9 @@ class AndroidVideoDecoder implements VideoDecoder, VideoSink {
       hasDecodedFirstFrame = true;
 
       if (surfaceTextureHelper != null) {
-        deliverTextureFrame(result, info, rotation, decodeTimeMs);
+        deliverTextureFrame(index, info, rotation, decodeTimeMs);
       } else {
-        deliverByteFrame(result, info, rotation, decodeTimeMs);
+        deliverByteFrame(index, info, rotation, decodeTimeMs);
       }
 
     } catch (IllegalStateException e) {
@@ -452,7 +441,7 @@ class AndroidVideoDecoder implements VideoDecoder, VideoSink {
   }
 
   private void deliverByteFrame(
-      int result, MediaCodec.BufferInfo info, int rotation, Integer decodeTimeMs) {
+      int index, MediaCodec.BufferInfo info, int rotation, Integer decodeTimeMs) {
     // Load dimensions from shared memory under the dimension lock.
     int width;
     int height;
@@ -479,7 +468,7 @@ class AndroidVideoDecoder implements VideoDecoder, VideoSink {
       stride = info.size * 2 / (height * 3);
     }
 
-    ByteBuffer buffer = codec.getOutputBuffers()[result];
+    ByteBuffer buffer = codec.getOutputBuffer(index);
     buffer.position(info.offset);
     buffer.limit(info.offset + info.size);
     buffer = buffer.slice();
@@ -491,7 +480,7 @@ class AndroidVideoDecoder implements VideoDecoder, VideoSink {
       // All other supported color formats are NV12.
       frameBuffer = copyNV12ToI420Buffer(buffer, stride, sliceHeight, width, height);
     }
-    codec.releaseOutputBuffer(result, /* render= */ false);
+    codec.releaseOutputBuffer(index, /* render= */ false);
 
     long presentationTimeNs = info.presentationTimeUs * 1000;
     VideoFrame frame = new VideoFrame(frameBuffer, rotation, presentationTimeNs);
@@ -568,17 +557,17 @@ class AndroidVideoDecoder implements VideoDecoder, VideoSink {
 
   private void reformat(MediaFormat format) {
     outputThreadChecker.checkIsOnValidThread();
-    Logging.d(TAG, "Decoder format changed: " + format.toString());
+    Logging.d(TAG, "Decoder format changed: " + format);
     final int newWidth;
     final int newHeight;
-    if (format.containsKey(MEDIA_FORMAT_KEY_CROP_LEFT)
-        && format.containsKey(MEDIA_FORMAT_KEY_CROP_RIGHT)
-        && format.containsKey(MEDIA_FORMAT_KEY_CROP_BOTTOM)
-        && format.containsKey(MEDIA_FORMAT_KEY_CROP_TOP)) {
-      newWidth = 1 + format.getInteger(MEDIA_FORMAT_KEY_CROP_RIGHT)
-          - format.getInteger(MEDIA_FORMAT_KEY_CROP_LEFT);
-      newHeight = 1 + format.getInteger(MEDIA_FORMAT_KEY_CROP_BOTTOM)
-          - format.getInteger(MEDIA_FORMAT_KEY_CROP_TOP);
+    if (format.containsKey(MediaFormat.KEY_CROP_LEFT)
+        && format.containsKey(MediaFormat.KEY_CROP_RIGHT)
+        && format.containsKey(MediaFormat.KEY_CROP_BOTTOM)
+        && format.containsKey(MediaFormat.KEY_CROP_TOP)) {
+      newWidth = 1 + format.getInteger(MediaFormat.KEY_CROP_RIGHT)
+          - format.getInteger(MediaFormat.KEY_CROP_LEFT);
+      newHeight = 1 + format.getInteger(MediaFormat.KEY_CROP_BOTTOM)
+          - format.getInteger(MediaFormat.KEY_CROP_TOP);
     } else {
       newWidth = format.getInteger(MediaFormat.KEY_WIDTH);
       newHeight = format.getInteger(MediaFormat.KEY_HEIGHT);
@@ -615,11 +604,11 @@ class AndroidVideoDecoder implements VideoDecoder, VideoSink {
 
     // Save stride and sliceHeight under the dimension lock.
     synchronized (dimensionLock) {
-      if (format.containsKey(MEDIA_FORMAT_KEY_STRIDE)) {
-        stride = format.getInteger(MEDIA_FORMAT_KEY_STRIDE);
+      if (format.containsKey(MediaFormat.KEY_STRIDE)) {
+        stride = format.getInteger(MediaFormat.KEY_STRIDE);
       }
-      if (format.containsKey(MEDIA_FORMAT_KEY_SLICE_HEIGHT)) {
-        sliceHeight = format.getInteger(MEDIA_FORMAT_KEY_SLICE_HEIGHT);
+      if (format.containsKey(MediaFormat.KEY_SLICE_HEIGHT)) {
+        sliceHeight = format.getInteger(MediaFormat.KEY_SLICE_HEIGHT);
       }
       Logging.d(TAG, "Frame stride and slice height: " + stride + " x " + sliceHeight);
       stride = Math.max(width, stride);

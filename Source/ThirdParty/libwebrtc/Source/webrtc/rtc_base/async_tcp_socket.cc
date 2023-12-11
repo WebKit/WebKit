@@ -21,7 +21,6 @@
 #include "rtc_base/checks.h"
 #include "rtc_base/logging.h"
 #include "rtc_base/network/sent_packet.h"
-#include "rtc_base/third_party/sigslot/sigslot.h"
 #include "rtc_base/time_utils.h"  // for TimeMillis
 
 #if defined(WEBRTC_POSIX)

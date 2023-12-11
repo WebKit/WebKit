@@ -20,6 +20,7 @@
 #include <utility>
 #include <vector>
 
+#include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/candidate.h"
@@ -144,7 +145,8 @@ class TestPort : public Port {
            uint16_t min_port,
            uint16_t max_port,
            absl::string_view username_fragment,
-           absl::string_view password)
+           absl::string_view password,
+           const webrtc::FieldTrialsView* field_trials = nullptr)
       : Port(thread,
              type,
              factory,
@@ -152,7 +154,8 @@ class TestPort : public Port {
              min_port,
              max_port,
              username_fragment,
-             password) {}
+             password,
+             field_trials) {}
   ~TestPort() {}
 
   // Expose GetStunMessage so that we can test it.
@@ -802,12 +805,14 @@ class PortTest : public ::testing::Test, public sigslot::has_slots<> {
         STUN_ATTR_USERNAME, std::string(username)));
     return msg;
   }
-  std::unique_ptr<TestPort> CreateTestPort(const rtc::SocketAddress& addr,
-                                           absl::string_view username,
-                                           absl::string_view password) {
-    auto port =
-        std::make_unique<TestPort>(&main_, "test", &socket_factory_,
-                                   MakeNetwork(addr), 0, 0, username, password);
+  std::unique_ptr<TestPort> CreateTestPort(
+      const rtc::SocketAddress& addr,
+      absl::string_view username,
+      absl::string_view password,
+      const webrtc::FieldTrialsView* field_trials = nullptr) {
+    auto port = std::make_unique<TestPort>(&main_, "test", &socket_factory_,
+                                           MakeNetwork(addr), 0, 0, username,
+                                           password, field_trials);
     port->SignalRoleConflict.connect(this, &PortTest::OnRoleConflict);
     return port;
   }
@@ -2626,6 +2631,44 @@ TEST_F(PortTest, TestComputeCandidatePriority) {
   ASSERT_EQ(expected_priority_6bone, port->Candidates()[8].priority());
 }
 
+TEST_F(PortTest, TestComputeCandidatePriorityWithPriorityAdjustment) {
+  webrtc::test::ScopedKeyValueConfig field_trials(
+      "WebRTC-IncreaseIceCandidatePriorityHostSrflx/Enabled/");
+  auto port = CreateTestPort(kLocalAddr1, "name", "pass", &field_trials);
+  port->SetIceTiebreaker(kTiebreakerDefault);
+  port->set_type_preference(90);
+  port->set_component(177);
+  port->AddCandidateAddress(SocketAddress("192.168.1.4", 1234));
+  port->AddCandidateAddress(SocketAddress("2001:db8::1234", 1234));
+  port->AddCandidateAddress(SocketAddress("fc12:3456::1234", 1234));
+  port->AddCandidateAddress(SocketAddress("::ffff:192.168.1.4", 1234));
+  port->AddCandidateAddress(SocketAddress("::192.168.1.4", 1234));
+  port->AddCandidateAddress(SocketAddress("2002::1234:5678", 1234));
+  port->AddCandidateAddress(SocketAddress("2001::1234:5678", 1234));
+  port->AddCandidateAddress(SocketAddress("fecf::1234:5678", 1234));
+  port->AddCandidateAddress(SocketAddress("3ffe::1234:5678", 1234));
+  // These should all be:
+  // (90 << 24) | (([rfc3484 pref value] << 8) + kMaxTurnServers) | (256 - 177)
+  uint32_t expected_priority_v4 = 1509957199U + (kMaxTurnServers << 8);
+  uint32_t expected_priority_v6 = 1509959759U + (kMaxTurnServers << 8);
+  uint32_t expected_priority_ula = 1509962319U + (kMaxTurnServers << 8);
+  uint32_t expected_priority_v4mapped = expected_priority_v4;
+  uint32_t expected_priority_v4compat = 1509949775U + (kMaxTurnServers << 8);
+  uint32_t expected_priority_6to4 = 1509954639U + (kMaxTurnServers << 8);
+  uint32_t expected_priority_teredo = 1509952079U + (kMaxTurnServers << 8);
+  uint32_t expected_priority_sitelocal = 1509949775U + (kMaxTurnServers << 8);
+  uint32_t expected_priority_6bone = 1509949775U + (kMaxTurnServers << 8);
+  ASSERT_EQ(expected_priority_v4, port->Candidates()[0].priority());
+  ASSERT_EQ(expected_priority_v6, port->Candidates()[1].priority());
+  ASSERT_EQ(expected_priority_ula, port->Candidates()[2].priority());
+  ASSERT_EQ(expected_priority_v4mapped, port->Candidates()[3].priority());
+  ASSERT_EQ(expected_priority_v4compat, port->Candidates()[4].priority());
+  ASSERT_EQ(expected_priority_6to4, port->Candidates()[5].priority());
+  ASSERT_EQ(expected_priority_teredo, port->Candidates()[6].priority());
+  ASSERT_EQ(expected_priority_sitelocal, port->Candidates()[7].priority());
+  ASSERT_EQ(expected_priority_6bone, port->Candidates()[8].priority());
+}
+
 // In the case of shared socket, one port may be shared by local and stun.
 // Test that candidates with different types will have different foundation.
 TEST_F(PortTest, TestFoundation) {
@@ -2785,6 +2828,51 @@ TEST_F(PortTest, TestConnectionPriority) {
   EXPECT_EQ(0x2001EE9FC003D0AU, rconn->priority());
 #else
   EXPECT_EQ(0x2001EE9FC003D0ALLU, rconn->priority());
+#endif
+}
+
+// Test the Connection priority is calculated correctly.
+TEST_F(PortTest, TestConnectionPriorityWithPriorityAdjustment) {
+  webrtc::test::ScopedKeyValueConfig field_trials(
+      "WebRTC-IncreaseIceCandidatePriorityHostSrflx/Enabled/");
+  auto lport = CreateTestPort(kLocalAddr1, "lfrag", "lpass", &field_trials);
+  lport->SetIceTiebreaker(kTiebreakerDefault);
+  lport->set_type_preference(cricket::ICE_TYPE_PREFERENCE_HOST);
+
+  auto rport = CreateTestPort(kLocalAddr2, "rfrag", "rpass", &field_trials);
+  rport->SetIceTiebreaker(kTiebreakerDefault);
+  rport->set_type_preference(cricket::ICE_TYPE_PREFERENCE_RELAY_UDP);
+  lport->set_component(123);
+  lport->AddCandidateAddress(SocketAddress("192.168.1.4", 1234));
+  rport->set_component(23);
+  rport->AddCandidateAddress(SocketAddress("10.1.1.100", 1234));
+
+  EXPECT_EQ(0x7E001E85U + (kMaxTurnServers << 8),
+            lport->Candidates()[0].priority());
+  EXPECT_EQ(0x2001EE9U + (kMaxTurnServers << 8),
+            rport->Candidates()[0].priority());
+
+  // RFC 5245
+  // pair priority = 2^32*MIN(G,D) + 2*MAX(G,D) + (G>D?1:0)
+  lport->SetIceRole(cricket::ICEROLE_CONTROLLING);
+  rport->SetIceRole(cricket::ICEROLE_CONTROLLED);
+  Connection* lconn =
+      lport->CreateConnection(rport->Candidates()[0], Port::ORIGIN_MESSAGE);
+#if defined(WEBRTC_WIN)
+  EXPECT_EQ(0x2003EE9FC007D0BU, lconn->priority());
+#else
+  EXPECT_EQ(0x2003EE9FC007D0BLLU, lconn->priority());
+#endif
+
+  lport->SetIceRole(cricket::ICEROLE_CONTROLLED);
+  rport->SetIceRole(cricket::ICEROLE_CONTROLLING);
+  Connection* rconn =
+      rport->CreateConnection(lport->Candidates()[0], Port::ORIGIN_MESSAGE);
+  RTC_LOG(LS_ERROR) << "RCONN " << rconn->priority();
+#if defined(WEBRTC_WIN)
+  EXPECT_EQ(0x2003EE9FC007D0AU, rconn->priority());
+#else
+  EXPECT_EQ(0x2003EE9FC007D0ALLU, rconn->priority());
 #endif
 }
 
@@ -3746,7 +3834,6 @@ class ConnectionTest : public PortTest {
 
   void OnConnectionStateChange(Connection* connection) { num_state_changes_++; }
 
- private:
   std::unique_ptr<TestPort> lport_;
   std::unique_ptr<TestPort> rport_;
 };
@@ -3833,6 +3920,95 @@ TEST_F(ConnectionTest, ConnectionForgetLearnedStateDoesNotTriggerStateChange) {
   EXPECT_FALSE(lconn->writable());
   EXPECT_FALSE(lconn->receiving());
   EXPECT_EQ(num_state_changes_, 2);
+}
+
+// Test normal happy case.
+// Sending a delta and getting a delta ack in response.
+TEST_F(ConnectionTest, SendReceiveGoogDelta) {
+  constexpr int64_t ms = 10;
+  Connection* lconn = CreateConnection(ICEROLE_CONTROLLING);
+  Connection* rconn = CreateConnection(ICEROLE_CONTROLLED);
+
+  std::unique_ptr<StunByteStringAttribute> delta =
+      absl::WrapUnique(new StunByteStringAttribute(STUN_ATTR_GOOG_DELTA));
+  delta->CopyBytes("DELTA");
+
+  std::unique_ptr<StunAttribute> delta_ack =
+      absl::WrapUnique(new StunUInt64Attribute(STUN_ATTR_GOOG_DELTA_ACK, 133));
+
+  bool received_goog_delta = false;
+  bool received_goog_delta_ack = false;
+  lconn->SetStunDictConsumer(
+      // DeltaReceived
+      [](const StunByteStringAttribute* delta)
+          -> std::unique_ptr<StunAttribute> { return nullptr; },
+      // DeltaAckReceived
+      [&](webrtc::RTCErrorOr<const StunUInt64Attribute*> error_or_ack) {
+        received_goog_delta_ack = true;
+        EXPECT_TRUE(error_or_ack.ok());
+        EXPECT_EQ(error_or_ack.value()->value(), 133ull);
+      });
+
+  rconn->SetStunDictConsumer(
+      // DeltaReceived
+      [&](const StunByteStringAttribute* delta)
+          -> std::unique_ptr<StunAttribute> {
+        received_goog_delta = true;
+        EXPECT_EQ(delta->string_view(), "DELTA");
+        return std::move(delta_ack);
+      },
+      // DeltaAckReceived
+      [](webrtc::RTCErrorOr<const StunUInt64Attribute*> error_or__ack) {});
+
+  lconn->Ping(rtc::TimeMillis(), std::move(delta));
+  ASSERT_TRUE_WAIT(lport_->last_stun_msg(), kDefaultTimeout);
+  ASSERT_TRUE(lport_->last_stun_buf());
+  rconn->OnReadPacket(lport_->last_stun_buf()->data<char>(),
+                      lport_->last_stun_buf()->size(), /* packet_time_us */ -1);
+  EXPECT_TRUE(received_goog_delta);
+
+  clock_.AdvanceTime(webrtc::TimeDelta::Millis(ms));
+  ASSERT_TRUE_WAIT(rport_->last_stun_msg(), kDefaultTimeout);
+  ASSERT_TRUE(rport_->last_stun_buf());
+  lconn->OnReadPacket(rport_->last_stun_buf()->data<char>(),
+                      rport_->last_stun_buf()->size(), /* packet_time_us */ -1);
+  EXPECT_TRUE(received_goog_delta_ack);
+}
+
+// Test that sending a goog delta and not getting
+// a delta ack in reply gives an error callback.
+TEST_F(ConnectionTest, SendGoogDeltaNoReply) {
+  constexpr int64_t ms = 10;
+  Connection* lconn = CreateConnection(ICEROLE_CONTROLLING);
+  Connection* rconn = CreateConnection(ICEROLE_CONTROLLED);
+
+  std::unique_ptr<StunByteStringAttribute> delta =
+      absl::WrapUnique(new StunByteStringAttribute(STUN_ATTR_GOOG_DELTA));
+  delta->CopyBytes("DELTA");
+
+  bool received_goog_delta_ack_error = false;
+  lconn->SetStunDictConsumer(
+      // DeltaReceived
+      [](const StunByteStringAttribute* delta)
+          -> std::unique_ptr<StunAttribute> { return nullptr; },
+      // DeltaAckReceived
+      [&](webrtc::RTCErrorOr<const StunUInt64Attribute*> error_or_ack) {
+        received_goog_delta_ack_error = true;
+        EXPECT_FALSE(error_or_ack.ok());
+      });
+
+  lconn->Ping(rtc::TimeMillis(), std::move(delta));
+  ASSERT_TRUE_WAIT(lport_->last_stun_msg(), kDefaultTimeout);
+  ASSERT_TRUE(lport_->last_stun_buf());
+  rconn->OnReadPacket(lport_->last_stun_buf()->data<char>(),
+                      lport_->last_stun_buf()->size(), /* packet_time_us */ -1);
+
+  clock_.AdvanceTime(webrtc::TimeDelta::Millis(ms));
+  ASSERT_TRUE_WAIT(rport_->last_stun_msg(), kDefaultTimeout);
+  ASSERT_TRUE(rport_->last_stun_buf());
+  lconn->OnReadPacket(rport_->last_stun_buf()->data<char>(),
+                      rport_->last_stun_buf()->size(), /* packet_time_us */ -1);
+  EXPECT_TRUE(received_goog_delta_ack_error);
 }
 
 }  // namespace cricket

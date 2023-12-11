@@ -64,7 +64,7 @@ void FuzzOneInput(const uint8_t* data, size_t size) {
       }
       case 5: {
         auto frame = std::make_unique<FuzzyFrameObject>();
-        frame->SetTimestamp(helper.ReadOrDefaultValue<uint32_t>(0));
+        frame->SetRtpTimestamp(helper.ReadOrDefaultValue<uint32_t>(0));
         int64_t wire_id =
             helper.ReadOrDefaultValue<uint16_t>(0) & (kFrameIdLength - 1);
         frame->SetId(unwrapper.Unwrap(wire_id));

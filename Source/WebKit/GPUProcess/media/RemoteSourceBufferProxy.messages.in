@@ -29,7 +29,7 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     SetActive(bool active)
     CanSwitchToType(WebCore::ContentType contentType) -> (bool canSwitch) Synchronous
     SetMode(WebCore::SourceBufferAppendMode appendMode)
-    Append(IPC::SharedBufferReference data) -> (WebCore::MediaPromise::Result result, uint64_t totalTrackBufferSizeInBytes, MediaTime timestampOffset)
+    Append(IPC::SharedBufferReference data) -> (WebCore::MediaPromise::Result result, MediaTime timestampOffset)
     Abort()
     ResetParserState()
     RemovedFromMediaSource()
@@ -39,8 +39,8 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     ResetTrackBuffers()
     ClearTrackBuffers()
     SetAllTrackBuffersNeedRandomAccess()
-    RemoveCodedFrames(MediaTime start, MediaTime end, MediaTime currentTime) -> (WebCore::PlatformTimeRanges buffered, uint64_t totalTrackBufferSizeInBytes)
-    EvictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, MediaTime currentTime) -> (WebCore::PlatformTimeRanges buffered, uint64_t totalTrackBufferSizeInBytes) Synchronous
+    RemoveCodedFrames(MediaTime start, MediaTime end, MediaTime currentTime) -> ()
+    EvictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, MediaTime currentTime) -> (Vector<WebCore::PlatformTimeRanges> trackBuffers, uint64_t extraMemory) Synchronous
     ReenqueueMediaIfNeeded(MediaTime currentMediaTime)
     SetGroupStartTimestamp(MediaTime timestamp)
     SetGroupStartTimestampToEndTimestamp()
@@ -54,7 +54,7 @@ messages -> RemoteSourceBufferProxy NotRefCounted {
     UpdateTrackIds(Vector<std::pair<WebCore::TrackID , WebCore::TrackID >> identifierPairs)
     BufferedSamplesForTrackId(WebCore::TrackID trackID) -> (WebCore::SourceBufferPrivate::SamplesPromise::Result samples)
     EnqueuedSamplesForTrackID(WebCore::TrackID trackID) -> (WebCore::SourceBufferPrivate::SamplesPromise::Result samples)
-    MemoryPressure(uint64_t maximumBufferSize, MediaTime currentTime) -> (WebCore::PlatformTimeRanges buffered, uint64_t totalTrackBufferSizeInBytes)
+    MemoryPressure(uint64_t maximumBufferSize, MediaTime currentTime)
     SetMaximumQueueDepthForTrackID(WebCore::TrackID trackID, uint64_t depth)
     MinimumUpcomingPresentationTimeForTrackID(WebCore::TrackID trackID) -> (MediaTime time) Synchronous
 }

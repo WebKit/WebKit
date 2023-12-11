@@ -100,7 +100,7 @@ public:
     ExceptionOr<void> remove(const MediaTime&, const MediaTime&);
     ExceptionOr<void> changeType(const String&);
 
-    const PlatformTimeRanges& bufferedInternal() const { return m_private->buffered(); }
+    const PlatformTimeRanges& bufferedInternal() const { return m_buffered->ranges(); }
 
     void abortIfUpdating();
     void removedFromMediaSource();
@@ -164,13 +164,12 @@ private:
 
     // SourceBufferPrivateClient
     Ref<MediaPromise> sourceBufferPrivateDidReceiveInitializationSegment(InitializationSegment&&) final;
-    Ref<MediaPromise> sourceBufferPrivateBufferedChanged(const PlatformTimeRanges&) final;
+    Ref<MediaPromise> sourceBufferPrivateBufferedChanged(const Vector<PlatformTimeRanges>&, uint64_t) final;
     void sourceBufferPrivateHighestPresentationTimestampChanged(const MediaTime&) final;
     Ref<MediaPromise> sourceBufferPrivateDurationChanged(const MediaTime& duration) final;
     void sourceBufferPrivateDidParseSample(double sampleDuration) final;
     void sourceBufferPrivateDidDropSample() final;
     void sourceBufferPrivateDidReceiveRenderingError(int64_t errorCode) final;
-    void sourceBufferPrivateReportExtraMemoryCost(uint64_t) final;
 
     // AudioTrackClient
     void audioTrackEnabledChanged(AudioTrack&) final;
@@ -222,6 +221,8 @@ private:
     WEBCORE_EXPORT MediaTime minimumUpcomingPresentationTimeForTrackID(TrackID);
     WEBCORE_EXPORT void setMaximumQueueDepthForTrackID(TrackID, uint64_t);
 
+    void updateBuffered();
+
     Ref<SourceBufferPrivate> m_private;
     MediaSource* m_source;
     AppendMode m_mode { AppendMode::Segments };
@@ -260,7 +261,9 @@ private:
     bool m_active { false };
     bool m_shouldGenerateTimestamps { false };
     bool m_pendingInitializationSegmentForChangeType { false };
+    bool m_mediaSourceEnded { false };
     Ref<TimeRanges> m_buffered;
+    Vector<PlatformTimeRanges> m_trackBuffers;
     NativePromiseRequest<MediaPromise> m_appendBufferPromise;
     NativePromiseRequest<MediaPromise> m_removeCodedFramesPromise;
 

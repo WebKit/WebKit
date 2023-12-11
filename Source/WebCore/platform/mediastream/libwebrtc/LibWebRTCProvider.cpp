@@ -388,6 +388,8 @@ void LibWebRTCProvider::setUseDTLS10(bool useDTLS10)
     m_factory->SetOptions(options);
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=265791
 rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPeerConnection(webrtc::PeerConnectionObserver& observer, rtc::NetworkManager& networkManager, rtc::PacketSocketFactory& packetSocketFactory, webrtc::PeerConnectionInterface::RTCConfiguration&& configuration, std::unique_ptr<webrtc::AsyncResolverFactory>&& asyncResolveFactory)
 {
     auto& factoryAndThreads = getStaticFactoryAndThreads(m_useNetworkThreadWithSocketServer);
@@ -414,6 +416,7 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
 
     return peerConnectionOrError.MoveValue();
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 void LibWebRTCProvider::prepareCertificateGenerator(Function<void(rtc::RTCCertificateGenerator&)>&& callback)
 {

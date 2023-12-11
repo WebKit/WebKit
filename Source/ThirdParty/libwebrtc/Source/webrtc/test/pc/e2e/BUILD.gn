@@ -130,6 +130,7 @@ if (!build_with_chromium) {
         "../../../api/test/video:test_video_track_source",
         "../../../api/video:video_frame",
       ]
+      absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
     }
 
     rtc_library("media_helper") {
@@ -225,6 +226,7 @@ if (!build_with_chromium) {
         "../..:field_trial",
         "../..:fileutils",
         "../..:perf_test",
+        "../..:test_flags",
         "../../../api:audio_quality_analyzer_api",
         "../../../api:libjingle_peerconnection_api",
         "../../../api:media_stream_interface",
@@ -259,7 +261,10 @@ if (!build_with_chromium) {
         "analyzer/video:video_quality_analyzer_injection_helper",
         "analyzer/video:video_quality_metrics_reporter",
       ]
-      absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+      absl_deps = [
+        "//third_party/abseil-cpp/absl/flags:flag",
+        "//third_party/abseil-cpp/absl/strings",
+      ]
     }
 
     peer_connection_e2e_smoke_test_resources = [
