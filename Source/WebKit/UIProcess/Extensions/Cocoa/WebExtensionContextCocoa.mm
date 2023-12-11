@@ -33,12 +33,12 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #import "APIArray.h"
+#import "APIContentRuleList.h"
+#import "APIContentRuleListStore.h"
 #import "CocoaHelpers.h"
 #import "ContextMenuContextData.h"
 #import "InjectUserScriptImmediately.h"
 #import "Logging.h"
-#import "WKContentRuleListInternal.h"
-#import "WKContentRuleListStoreInternal.h"
 #import "WKNavigationActionPrivate.h"
 #import "WKNavigationDelegatePrivate.h"
 #import "WKPreferencesPrivate.h"
@@ -2955,18 +2955,17 @@ void WebExtensionContext::unloadDeclarativeNetRequestState()
 
     m_declarativeNetRequestDynamicRulesStore = nullptr;
     m_declarativeNetRequestSessionRulesStore = nullptr;
-    m_declarativeNetRequestRuleStore = nullptr;
 }
 
-WKContentRuleListStore *WebExtensionContext::declarativeNetRequestRuleStore()
+String WebExtensionContext::declarativeNetRequestContentRuleListFilePath()
 {
-    if (m_declarativeNetRequestRuleStore)
-        return m_declarativeNetRequestRuleStore.get();
+    if (!m_declarativeNetRequestContentRuleListFilePath.isEmpty())
+        return m_declarativeNetRequestContentRuleListFilePath;
 
-    auto contentBlockerStorePath = storageIsPersistent() ? storageDirectory() : String(FileSystem::createTemporaryDirectory(@"DeclarativeNetRequest"));
-    m_declarativeNetRequestRuleStore = [WKContentRuleListStore storeWithURL:[NSURL fileURLWithPath:contentBlockerStorePath]];
+    auto directoryPath = storageIsPersistent() ? storageDirectory() : String(FileSystem::createTemporaryDirectory(@"DeclarativeNetRequest"));
+    m_declarativeNetRequestContentRuleListFilePath = FileSystem::pathByAppendingComponent(directoryPath, "DeclarativeNetRequestContentRuleList.data"_s);
 
-    return m_declarativeNetRequestRuleStore.get();
+    return m_declarativeNetRequestContentRuleListFilePath;
 }
 
 void WebExtensionContext::removeDeclarativeNetRequestRules()
@@ -2984,13 +2983,13 @@ void WebExtensionContext::removeDeclarativeNetRequestRules()
 
 void WebExtensionContext::addDeclarativeNetRequestRulesToPrivateUserContentControllers()
 {
-    [declarativeNetRequestRuleStore() lookUpContentRuleListForIdentifier:uniqueIdentifier() completionHandler:^(WKContentRuleList *ruleList, NSError *error) {
+    API::ContentRuleListStore::defaultStore().lookupContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), [this, protectedThis = Ref { *this }](RefPtr<API::ContentRuleList> ruleList, std::error_code) {
         if (!ruleList)
             return;
 
         for (auto& controller : extensionController()->allPrivateUserContentControllers())
-            controller.addContentRuleList(*ruleList->_contentRuleList, m_baseURL);
-    }];
+            controller.addContentRuleList(*ruleList, m_baseURL);
+    });
 }
 
 static NSString *computeStringHashForContentBlockerRules(NSString *rules)
@@ -3023,21 +3022,21 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData, 
     auto *previouslyLoadedHash = objectForKey<NSString>(m_state, lastLoadedDeclarativeNetRequestHashStateKey);
     auto *hashOfWebKitRules = computeStringHashForContentBlockerRules(webKitRules);
 
-    [declarativeNetRequestRuleStore() lookUpContentRuleListForIdentifier:uniqueIdentifier() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), previouslyLoadedHash = String { previouslyLoadedHash }, hashOfWebKitRules = String { hashOfWebKitRules }, webKitRules = String { webKitRules }](WKContentRuleList *foundRuleList, NSError *) mutable {
+    API::ContentRuleListStore::defaultStore().lookupContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), previouslyLoadedHash = String { previouslyLoadedHash }, hashOfWebKitRules = String { hashOfWebKitRules }, webKitRules = String { webKitRules }](RefPtr<API::ContentRuleList> foundRuleList, std::error_code) mutable {
         if (foundRuleList) {
             if ([previouslyLoadedHash isEqualToString:hashOfWebKitRules]) {
                 auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
                 for (auto& userContentController : userContentControllers)
-                    userContentController.addContentRuleList(*foundRuleList->_contentRuleList, m_baseURL);
+                    userContentController.addContentRuleList(*foundRuleList, m_baseURL);
 
                 completionHandler(true);
                 return;
             }
         }
 
-        [declarativeNetRequestRuleStore() compileContentRuleListForIdentifier:uniqueIdentifier() encodedContentRuleList:webKitRules completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), hashOfWebKitRules = String { hashOfWebKitRules }](WKContentRuleList *ruleList, NSError *error) mutable {
+        API::ContentRuleListStore::defaultStore().compileContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), uniqueIdentifier().isolatedCopy(), String(webKitRules), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), hashOfWebKitRules = String { hashOfWebKitRules }](RefPtr<API::ContentRuleList> ruleList, std::error_code error) mutable {
             if (error) {
-                RELEASE_LOG_ERROR(Extensions, "Error compiling declarativeNetRequest rules: %{public}@", privacyPreservingDescription(error));
+                RELEASE_LOG_ERROR(Extensions, "Error compiling declarativeNetRequest rules: %{public}s", error.message().c_str());
                 completionHandler(false);
                 return;
             }
@@ -3047,11 +3046,11 @@ void WebExtensionContext::compileDeclarativeNetRequestRules(NSArray *rulesData, 
 
             auto userContentControllers = hasAccessInPrivateBrowsing() ? extensionController()->allUserContentControllers() : extensionController()->allNonPrivateUserContentControllers();
             for (auto& userContentController : userContentControllers)
-                userContentController.addContentRuleList(*ruleList->_contentRuleList, m_baseURL);
+                userContentController.addContentRuleList(*ruleList, m_baseURL);
 
             completionHandler(true);
-        }).get()];
-    }).get()];
+        });
+    });
 }
 
 void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>&& completionHandler)
@@ -3066,8 +3065,9 @@ void WebExtensionContext::loadDeclarativeNetRequestRules(CompletionHandler<void(
     auto applyDeclarativeNetRequestRules = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), allJSONData = RetainPtr { allJSONData }] () mutable {
         if (!allJSONData.get().count) {
             removeDeclarativeNetRequestRules();
-            [declarativeNetRequestRuleStore() removeContentRuleListForIdentifier:uniqueIdentifier() completionHandler:^(NSError *) { }];
-            completionHandler(true);
+            API::ContentRuleListStore::defaultStore().removeContentRuleListFile(declarativeNetRequestContentRuleListFilePath(), [completionHandler = WTFMove(completionHandler)](std::error_code error) mutable {
+                completionHandler(error ? false : true);
+            });
             return;
         }
 

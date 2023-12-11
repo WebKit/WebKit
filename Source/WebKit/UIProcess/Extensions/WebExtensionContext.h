@@ -463,7 +463,7 @@ private:
     void loadDeclarativeNetRequestRules(CompletionHandler<void(bool)>&&);
     void compileDeclarativeNetRequestRules(NSArray *, CompletionHandler<void(bool)>&&);
     void unloadDeclarativeNetRequestState();
-    WKContentRuleListStore *declarativeNetRequestRuleStore();
+    String declarativeNetRequestContentRuleListFilePath();
 
     // Updating user content controllers with new rules.
     void addDeclarativeNetRequestRulesToPrivateUserContentControllers();
@@ -719,7 +719,7 @@ private:
     CommandsVector m_commands;
     bool m_populatedCommands { false };
 
-    RetainPtr<WKContentRuleListStore> m_declarativeNetRequestRuleStore;
+    String m_declarativeNetRequestContentRuleListFilePath;
     DeclarativeNetRequestMatchedRuleVector m_matchedRules;
     RetainPtr<_WKWebExtensionDeclarativeNetRequestSQLiteStore> m_declarativeNetRequestDynamicRulesStore;
     RetainPtr<_WKWebExtensionDeclarativeNetRequestSQLiteStore> m_declarativeNetRequestSessionRulesStore;
