@@ -52,7 +52,7 @@ void compileSelector(CompiledSelector&, const CSSSelector*, SelectorContext);
 inline unsigned ruleCollectorSimpleSelectorChecker(CompiledSelector& compiledSelector, const Element* element, unsigned* value)
 {
     ASSERT(compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker);
-#if CPU(ARM64E)
+#if CPU(ARM64E) && !ENABLE(C_LOOP)
     if (JSC::Options::useJITCage())
         return JSC::vmEntryToCSSJIT(bitwise_cast<uintptr_t>(element), bitwise_cast<uintptr_t>(value), 0, compiledSelector.codeRef.code().taggedPtr());
 #endif
@@ -63,7 +63,7 @@ inline unsigned ruleCollectorSimpleSelectorChecker(CompiledSelector& compiledSel
 inline unsigned querySelectorSimpleSelectorChecker(CompiledSelector& compiledSelector, const Element* element)
 {
     ASSERT(compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker);
-#if CPU(ARM64E)
+#if CPU(ARM64E) && !ENABLE(C_LOOP)
     if (JSC::Options::useJITCage())
         return JSC::vmEntryToCSSJIT(bitwise_cast<uintptr_t>(element), 0, 0, compiledSelector.codeRef.code().taggedPtr());
 #endif
@@ -74,7 +74,7 @@ inline unsigned querySelectorSimpleSelectorChecker(CompiledSelector& compiledSel
 inline unsigned ruleCollectorSelectorCheckerWithCheckingContext(CompiledSelector& compiledSelector, const Element* element, SelectorChecker::CheckingContext* context, unsigned* value)
 {
     ASSERT(compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-#if CPU(ARM64E)
+#if CPU(ARM64E) && !ENABLE(C_LOOP)
     if (JSC::Options::useJITCage())
         return JSC::vmEntryToCSSJIT(bitwise_cast<uintptr_t>(element), bitwise_cast<uintptr_t>(context), bitwise_cast<uintptr_t>(value), compiledSelector.codeRef.code().taggedPtr());
 #endif
@@ -85,7 +85,7 @@ inline unsigned ruleCollectorSelectorCheckerWithCheckingContext(CompiledSelector
 inline unsigned querySelectorSelectorCheckerWithCheckingContext(CompiledSelector& compiledSelector, const Element* element, const SelectorChecker::CheckingContext* context)
 {
     ASSERT(compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
-#if CPU(ARM64E)
+#if CPU(ARM64E) && !ENABLE(C_LOOP)
     if (JSC::Options::useJITCage())
         return JSC::vmEntryToCSSJIT(bitwise_cast<uintptr_t>(element), bitwise_cast<uintptr_t>(context), 0, compiledSelector.codeRef.code().taggedPtr());
 #endif
