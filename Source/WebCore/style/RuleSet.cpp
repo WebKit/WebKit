@@ -134,7 +134,8 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
     storeIdentifier(containerQueryIdentifier, m_containerQueryIdentifierForRulePosition);
     storeIdentifier(scopeRuleIdentifier, m_scopeRuleIdentifierForRulePosition);
 
-    m_features.collectFeatures(ruleData);
+    const auto& scopeRules = scopeRulesFor(ruleData);
+    m_features.collectFeatures(ruleData, scopeRules);
 
     unsigned classBucketSize = 0;
     const CSSSelector* idSelector = nullptr;

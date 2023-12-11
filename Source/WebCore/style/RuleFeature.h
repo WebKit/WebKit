@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class StyleRule;
+class StyleRuleScope;
 
 namespace Style {
 
@@ -98,7 +99,7 @@ struct RuleFeatureSet {
     void add(const RuleFeatureSet&);
     void clear();
     void shrinkToFit();
-    void collectFeatures(const RuleData&);
+    void collectFeatures(const RuleData&, const Vector<Ref<const StyleRuleScope>>& scopeRules = { });
     void registerContentAttribute(const AtomString&);
 
     bool usesHasPseudoClass() const;
