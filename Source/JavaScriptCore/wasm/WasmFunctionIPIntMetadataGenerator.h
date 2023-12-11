@@ -38,6 +38,7 @@
 #include "WasmOps.h"
 #include <wtf/BitVector.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -61,7 +62,7 @@ struct JumpTableEntry;
     } while (false)
 
 class FunctionIPIntMetadataGenerator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FunctionIPIntMetadataGenerator);
     WTF_MAKE_NONCOPYABLE(FunctionIPIntMetadataGenerator);
 
     friend class IPIntGenerator;

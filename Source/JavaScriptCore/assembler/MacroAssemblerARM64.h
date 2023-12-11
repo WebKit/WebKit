@@ -32,6 +32,7 @@
 #include "JITOperationValidation.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -39,6 +40,7 @@ using Assembler = TARGET_ASSEMBLER;
 class Reg;
 
 class MacroAssemblerARM64 : public AbstractMacroAssembler<Assembler> {
+    WTF_MAKE_TZONE_ALLOCATED(MacroAssemblerARM64);
 public:
     static constexpr unsigned numGPRs = 32;
     static constexpr unsigned numFPRs = 32;

@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "JITOpaqueByproducts.h"
 #include "JSCJSValueInlines.h"
 #include "JSObject.h"
 #include "JSObjectInlines.h"

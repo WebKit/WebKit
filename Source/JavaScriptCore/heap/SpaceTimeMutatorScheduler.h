@@ -27,6 +27,8 @@
 
 #include "MutatorScheduler.h"
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
+
 
 namespace JSC {
 
@@ -39,6 +41,7 @@ class Heap;
 // began.
 
 class SpaceTimeMutatorScheduler final : public MutatorScheduler {
+    WTF_MAKE_TZONE_ALLOCATED(SpaceTimeMutatorScheduler);
 public:
     SpaceTimeMutatorScheduler(Heap&);
     ~SpaceTimeMutatorScheduler() final;

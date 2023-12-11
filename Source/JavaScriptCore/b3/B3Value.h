@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,9 +37,9 @@
 #include "B3ValueKey.h"
 #include "B3Width.h"
 #include <wtf/CommaPrinter.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/IteratorRange.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TriState.h>
 
 namespace JSC { namespace B3 {
@@ -52,7 +52,7 @@ class PhiChildren;
 class Procedure;
 
 class JS_EXPORT_PRIVATE Value {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Value);
 public:
     static const char* const dumpPrefix;
 

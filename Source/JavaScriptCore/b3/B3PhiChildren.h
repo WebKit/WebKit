@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,11 +31,12 @@
 #include "B3UpsilonValue.h"
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/IndexMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 {
 
 class PhiChildren {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PhiChildren);
 public:
     PhiChildren(Procedure&);
     ~PhiChildren();

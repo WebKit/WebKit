@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Peter Varga (pvarga@inf.u-szeged.hu), University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,9 +36,13 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/DataLog.h>
 #include <wtf/StackCheck.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Yarr {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BytecodePattern);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ByteDisjunction);
 
 class ByteTermDumper {
 public:

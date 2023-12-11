@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,10 +30,12 @@
 #include "DFGFinalizer.h"
 #include "DFGJITCode.h"
 #include "LinkBuffer.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace DFG {
 
 class JITFinalizer final : public Finalizer {
+    WTF_MAKE_TZONE_ALLOCATED(JITFinalizer);
 public:
     JITFinalizer(Plan&, Ref<JITCode>&&, std::unique_ptr<LinkBuffer>, CodePtr<JSEntryPtrTag> withArityCheck = CodePtr<JSEntryPtrTag>(CodePtr<JSEntryPtrTag>::EmptyValue));
     ~JITFinalizer() final;

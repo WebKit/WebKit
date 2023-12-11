@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@ struct Node;
 // to not pass any abstract state. This works if the templatized code also does a check (using the
 // operator bool) to see if the state is valid.
 class NullAbstractState {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NullAbstractState);
 public:
     NullAbstractState() { }
     

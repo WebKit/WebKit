@@ -32,6 +32,7 @@
 #include "VM.h"
 #include "WriteBarrier.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -135,7 +136,7 @@ private:
 };
 
 class SparseArrayEntry : private WriteBarrier<Unknown> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SparseArrayEntry);
 public:
     using Base = WriteBarrier<Unknown>;
 

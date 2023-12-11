@@ -38,10 +38,13 @@
 #include "JSObjectInlines.h"
 #include "SourceCode.h"
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
 
 using namespace JSC;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InjectedScriptManager);
 
 InjectedScriptManager::InjectedScriptManager(InspectorEnvironment& environment, Ref<InjectedScriptHost>&& injectedScriptHost)
     : m_environment(environment)

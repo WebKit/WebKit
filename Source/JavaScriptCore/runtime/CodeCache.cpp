@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,11 @@
 
 #include "BytecodeGenerator.h"
 #include "IndirectEvalExecutable.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CodeCache);
 
 void CodeCacheMap::pruneSlowCase()
 {

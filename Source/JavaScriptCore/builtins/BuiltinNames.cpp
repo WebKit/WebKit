@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "BuiltinNames.h"
 
 #include "IdentifierInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 #if COMPILER(MSVC)
 #pragma warning(push)
@@ -70,6 +71,8 @@ SymbolImpl::StaticSymbolImpl polyProtoPrivateName { "PolyProto", SymbolImpl::s_f
         SymbolImpl* symbol = static_cast<SymbolImpl*>(m_##name##Symbol.impl()); \
         m_wellKnownSymbolsMap.add(m_##name##SymbolPrivateIdentifier.impl(), symbol); \
     } while (0);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BuiltinNames);
 
 // We treat the dollarVM name as a special case below for $vm (because CommonIdentifiers does not
 // yet support the $ character).

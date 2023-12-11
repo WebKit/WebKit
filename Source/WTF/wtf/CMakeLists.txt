@@ -291,6 +291,8 @@ set(WTF_PUBLIC_HEADERS
     SystemFree.h
     SystemMalloc.h
     SystemTracing.h
+    TZoneMalloc.h
+    TZoneMallocInlines.h
     TaggedArrayStoragePtr.h
     ThreadAssertions.h
     ThreadGroup.h

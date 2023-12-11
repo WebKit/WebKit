@@ -31,8 +31,11 @@
 #include "JSCJSValueInlines.h"
 #include "PreciseJumpTargets.h"
 #include "UnlinkedMetadataTableInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(UnlinkedCodeBlockGenerator);
 
 void UnlinkedCodeBlockGenerator::addExpressionInfo(unsigned instructionOffset, unsigned divot, unsigned startOffset, unsigned endOffset, unsigned line, unsigned column)
 {

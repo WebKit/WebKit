@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2002-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2002-2023 Apple Inc. All rights reserved.
  *  Copyright (C) 2010 Zoltan Herczeg (zherczeg@inf.u-szeged.hu)
  *
  *  This library is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@
 #include "ParserTokens.h"
 #include "SourceCode.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/CharacterNames.h>
 
@@ -46,7 +47,7 @@ bool isLexerKeyword(const Identifier&);
 template <typename T>
 class Lexer {
     WTF_MAKE_NONCOPYABLE(Lexer);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Lexer);
 
 public:
     Lexer(VM&, JSParserBuiltinMode, JSParserScriptMode);

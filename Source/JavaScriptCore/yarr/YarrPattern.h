@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2013-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Peter Varga (pvarga@inf.u-szeged.hu), University of Szeged
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
 #include <wtf/PrintStream.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/StringHash.h>
 
@@ -82,7 +83,7 @@ inline CharacterClassWidths& operator|=(CharacterClassWidths& lhs, CharacterClas
 }
 
 struct CharacterClass {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CharacterClass);
 public:
     // All CharacterClass instances have to have the full set of matches and ranges,
     // they may have an optional m_table for faster lookups (which must match the
@@ -149,7 +150,7 @@ public:
 };
 
 struct ClassSet : public CharacterClass {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ClassSet);
 public:
     ClassSet()
         : CharacterClass()
@@ -388,7 +389,7 @@ struct PatternTerm {
 };
 
 struct PatternAlternative {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PatternAlternative);
 public:
     PatternAlternative(PatternDisjunction* disjunction, unsigned firstSubpatternId, MatchDirection matchDirection = Forward)
         : m_parent(disjunction)
@@ -467,7 +468,7 @@ public:
 };
 
 struct PatternDisjunction {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(PatternDisjunction);
 public:
     PatternDisjunction(PatternAlternative* parent = nullptr)
         : m_parent(parent)

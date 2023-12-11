@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include "FuzzerAgent.h"
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRandom.h>
 
 namespace JSC {
@@ -34,7 +35,7 @@ namespace JSC {
 class VM;
 
 class RandomizingFuzzerAgent final : public FuzzerAgent {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(RandomizingFuzzerAgent);
 public:
     RandomizingFuzzerAgent(VM&);
 

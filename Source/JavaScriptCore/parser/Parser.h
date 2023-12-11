@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -40,6 +40,7 @@
 #include <wtf/IterationStatus.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -1032,7 +1033,7 @@ enum class ParsingContext { Program, FunctionConstructor, Eval };
 template <typename LexerType>
 class Parser {
     WTF_MAKE_NONCOPYABLE(Parser);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Parser);
 
 public:
     Parser(VM&, const SourceCode&, ImplementationVisibility, JSParserBuiltinMode, JSParserStrictMode, JSParserScriptMode, SourceParseMode, FunctionMode, SuperBinding, ConstructorKind defaultConstructorKindForTopLevelFunction = ConstructorKind::None, DerivedContextType = DerivedContextType::None, bool isEvalContext = false, EvalContextType = EvalContextType::None, DebuggerParseData* = nullptr, bool isInsideOrdinaryFunction = false);

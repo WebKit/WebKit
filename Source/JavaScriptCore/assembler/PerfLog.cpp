@@ -41,6 +41,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/PageBlock.h>
 #include <wtf/ProcessID.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
@@ -124,6 +125,8 @@ struct CodeLoadRecord {
 };
 
 } // namespace JITDump
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PerfLog);
 
 PerfLog& PerfLog::singleton()
 {

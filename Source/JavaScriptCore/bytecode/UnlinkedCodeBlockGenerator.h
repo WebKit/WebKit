@@ -27,6 +27,7 @@
 #pragma once
 
 #include "UnlinkedCodeBlock.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -34,7 +35,7 @@ namespace JSC {
 // FIXME: Create UnlinkedCodeBlock inside UnlinkedCodeBlockGenerator.
 // https://bugs.webkit.org/show_bug.cgi?id=207212
 class UnlinkedCodeBlockGenerator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(UnlinkedCodeBlockGenerator);
     WTF_MAKE_NONCOPYABLE(UnlinkedCodeBlockGenerator)
 public:
     UnlinkedCodeBlockGenerator(VM& vm, UnlinkedCodeBlock* codeBlock)

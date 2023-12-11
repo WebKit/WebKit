@@ -28,6 +28,7 @@
 #include "FuzzerAgent.h"
 #include "Opcode.h"
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -46,7 +47,7 @@ struct PredictionTarget {
 };
 
 class FileBasedFuzzerAgentBase : public FuzzerAgent {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FileBasedFuzzerAgentBase);
 
 public:
     FileBasedFuzzerAgentBase(VM&);

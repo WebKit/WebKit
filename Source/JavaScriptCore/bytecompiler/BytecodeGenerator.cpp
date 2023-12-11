@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron Zwarich <cwzwarich@uwaterloo.ca>
  * Copyright (C) 2012 Igalia, S.L.
  *
@@ -59,9 +59,13 @@
 #include <wtf/BitVector.h>
 #include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BytecodeGenerator);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ForInContext);
 
 template<typename CallOp, typename = std::true_type>
 struct VarArgsOp;

@@ -28,16 +28,16 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGDominators.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/NaturalLoops.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace DFG {
 
 template <typename CFGKind>
 class NaturalLoops : public WTF::NaturalLoops<CFGKind> {
     WTF_MAKE_NONCOPYABLE(NaturalLoops);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NaturalLoops);
 public:
     NaturalLoops(Graph& graph)
         : WTF::NaturalLoops<CFGKind>(selectCFG<CFGKind>(graph), ensureDominatorsForCFG<CFGKind>(graph), validationEnabled())

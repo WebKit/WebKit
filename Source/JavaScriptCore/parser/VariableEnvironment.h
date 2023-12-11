@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/IteratorRange.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -140,7 +141,7 @@ struct PrivateNameEntryHashTraits : HashTraits<PrivateNameEntry> {
 typedef HashMap<PackedRefPtr<UniquedStringImpl>, PrivateNameEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, PrivateNameEntryHashTraits> PrivateNameEnvironment;
 
 class VariableEnvironment {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(VariableEnvironment);
 private:
     typedef HashMap<PackedRefPtr<UniquedStringImpl>, VariableEnvironmentEntry, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, VariableEnvironmentEntryHashTraits> Map;
 
@@ -333,7 +334,7 @@ private:
 using TDZEnvironment = HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
 
 class CompactTDZEnvironment {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CompactTDZEnvironment);
     WTF_MAKE_NONCOPYABLE(CompactTDZEnvironment);
 
     friend class CachedCompactTDZEnvironment;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,8 +35,11 @@
 #include "FTLSaveRestore.h"
 #include "GPRInfo.h"
 #include "LinkBuffer.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace FTL {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Thunks);
 
 using namespace DFG;
 

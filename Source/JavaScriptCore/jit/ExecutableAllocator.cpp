@@ -41,6 +41,7 @@
 #include <wtf/RedBlackTree.h>
 #include <wtf/Scope.h>
 #include <wtf/SystemTracing.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/WorkQueue.h>
 
 #if ENABLE(LIBPAS_JIT_HEAP)
@@ -91,6 +92,8 @@ WTF_WEAK_LINK_FORCE_IMPORT(se_memory_inline_jit_restrict_with_witness_supported)
 namespace JSC {
 
 using namespace WTF;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ExecutableAllocator);
 
 #if OS(DARWIN) && CPU(ARM64)
 // We already rely on page size being CeilingOnPageSize elsewhere (e.g. MarkedBlock).
@@ -454,7 +457,7 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
 }
 
 class FixedVMPoolExecutableAllocator final {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(FixedVMPoolExecutableAllocator);
 
 #if ENABLE(JUMP_ISLANDS)
     class Islands;
@@ -1019,7 +1022,7 @@ private:
 
 #if ENABLE(JUMP_ISLANDS)
     class Islands : public RedBlackTree<Islands, void*>::Node {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Islands);
     public:
         void* key() { return jumpSourceLocation.dataLocation(); }
         CodeLocationLabel<ExecutableMemoryPtrTag> jumpSourceLocation;
@@ -1041,6 +1044,9 @@ private:
     std::atomic<size_t> m_bytesAllocated { 0 };
 #endif
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FixedVMPoolExecutableAllocator);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(FixedVMPoolExecutableAllocatorIslands, FixedVMPoolExecutableAllocator::Islands);
 
 // Keep this pointer in a mutable global variable to help Leaks find it.
 // But we do not use this pointer.

@@ -33,10 +33,10 @@
 #include <memory>
 #include <wtf/BitSet.h>
 #include <wtf/Deque.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
 #include <wtf/SharedTask.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WTF {
 
@@ -55,7 +55,7 @@ using WTF::StackTrace;
 
 class VerifierSlotVisitor : public AbstractSlotVisitor {
     WTF_MAKE_NONCOPYABLE(VerifierSlotVisitor);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(VerifierSlotVisitor);
     using Base = AbstractSlotVisitor;
 public:
     using ReferrerToken = AbstractSlotVisitor::ReferrerToken;
@@ -117,7 +117,7 @@ public:
 
 private:
     class MarkedBlockData {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(MarkedBlockData);
         WTF_MAKE_NONCOPYABLE(MarkedBlockData);
     public:
         using AtomsBitSet = WTF::BitSet<MarkedBlock::atomsPerBlock>;
@@ -140,7 +140,7 @@ private:
     };
 
     class PreciseAllocationData {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(PreciseAllocationData);
         WTF_MAKE_NONCOPYABLE(PreciseAllocationData);
     public:
         PreciseAllocationData(PreciseAllocation*);
@@ -155,7 +155,7 @@ private:
     };
 
     class OpaqueRootData {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(OpaqueRootData);
         WTF_MAKE_NONCOPYABLE(OpaqueRootData);
     public:
         OpaqueRootData() = default;

@@ -69,6 +69,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/PrintStream.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringConcatenate.h>
 
 namespace Inspector {
@@ -771,7 +772,7 @@ JSValue JSInjectedScriptHost::queryInstances(JSGlobalObject* globalObject, CallF
 }
 
 class HeapHolderFinder final : public HeapAnalyzer {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(HeapHolderFinder);
 public:
     HeapHolderFinder(HeapProfiler& profiler, JSCell* target)
         : HeapAnalyzer()
@@ -903,6 +904,8 @@ private:
     HashSet<JSCell*> m_holders;
     const JSCell* m_target;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(HeapHolderFinder);
 
 JSValue JSInjectedScriptHost::queryHolders(JSGlobalObject* globalObject, CallFrame* callFrame)
 {

@@ -37,6 +37,7 @@
 #include <wtf/BitSet.h>
 #include <wtf/FixedVector.h>
 #include <wtf/StackCheck.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 #define YARR_CALL
@@ -67,7 +68,7 @@ enum class JITFailureReason : uint8_t {
 };
 
 class BoyerMooreFastCandidates {
-    WTF_MAKE_FAST_ALLOCATED(BoyerMooreFastCandidates);
+    WTF_MAKE_TZONE_ALLOCATED(BoyerMooreFastCandidates);
 public:
     static constexpr unsigned maxSize = 2;
     using CharacterVector = Vector<char32_t, maxSize>;
@@ -118,7 +119,7 @@ private:
 
 class BoyerMooreBitmap {
     WTF_MAKE_NONCOPYABLE(BoyerMooreBitmap);
-    WTF_MAKE_FAST_ALLOCATED(BoyerMooreBitmap);
+    WTF_MAKE_TZONE_ALLOCATED(BoyerMooreBitmap);
 public:
     static constexpr unsigned mapSize = 128;
     static constexpr unsigned mapMask = 128 - 1;
@@ -208,7 +209,7 @@ extern "C" void vmEntryToYarrJITAfter(void);
 #endif
 
 class YarrBoyerMooreData {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(YarrBoyerMooreData);
     WTF_MAKE_NONCOPYABLE(YarrBoyerMooreData);
 
 public:
@@ -271,7 +272,7 @@ class YarrCodeBlock : public YarrBoyerMooreData {
         bool m_canInline : 1;
     };
 
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(YarrCodeBlock);
     WTF_MAKE_NONCOPYABLE(YarrCodeBlock);
 
 public:

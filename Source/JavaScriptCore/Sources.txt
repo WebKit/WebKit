@@ -109,6 +109,7 @@ b3/air/AirStackSlot.cpp
 b3/air/AirStackSlotKind.cpp
 b3/air/AirTmp.cpp
 b3/air/AirTmpWidth.cpp
+b3/air/AirTZoneImpls.cpp
 b3/air/AirValidate.cpp
 
 b3/B3ArgumentRegValue.cpp
@@ -176,6 +177,7 @@ b3/B3StackmapSpecial.cpp
 b3/B3StackmapValue.cpp
 b3/B3SwitchCase.cpp
 b3/B3SwitchValue.cpp
+b3/B3TZoneImpls.cpp
 b3/B3Type.cpp
 b3/B3UpsilonValue.cpp
 b3/B3UseCounts.cpp
@@ -436,6 +438,7 @@ dfg/DFGToFTLDeferredCompilationCallback.cpp
 dfg/DFGToFTLForOSREntryDeferredCompilationCallback.cpp
 dfg/DFGTransition.cpp
 dfg/DFGTypeCheckHoistingPhase.cpp
+dfg/DFGTZoneImpls.cpp
 dfg/DFGUnificationPhase.cpp
 dfg/DFGUseKind.cpp
 dfg/DFGValidate.cpp
@@ -701,6 +704,7 @@ jit/SIMDInfo.cpp
 jit/SlowPathCall.cpp
 jit/TagRegistersMode.cpp
 jit/ThunkGenerators.cpp
+jit/JITTZoneImpls.cpp
 jit/Width.cpp
 
 llint/InPlaceInterpreter.cpp
@@ -738,6 +742,7 @@ profiler/ProfilerOrigin.cpp
 profiler/ProfilerOriginStack.cpp
 profiler/ProfilerProfiledBytecodes.cpp
 profiler/ProfilerUID.cpp
+profiler/ProfilerTZoneImpls.cpp
 
 runtime/AbstractModuleRecord.cpp
 runtime/AggregateError.cpp
@@ -1016,6 +1021,7 @@ runtime/RegExpObject.cpp
 runtime/RegExpPrototype.cpp
 runtime/RegExpStringIteratorPrototype.cpp
 runtime/ResourceExhaustion.cpp
+runtime/RuntimeTZoneImpls.cpp
 runtime/RuntimeType.cpp
 runtime/SamplingCounter.cpp
 runtime/SamplingProfiler.cpp
@@ -1155,6 +1161,7 @@ wasm/WasmTable.cpp
 wasm/WasmTag.cpp
 wasm/WasmThunks.cpp
 wasm/WasmTierUpCount.cpp
+wasm/WasmTZoneImpls.cpp
 wasm/WasmValueLocation.cpp
 wasm/WasmWorklist.cpp
 
@@ -1216,6 +1223,7 @@ yarr/YarrJIT.cpp
 yarr/YarrPattern.cpp
 yarr/YarrSyntaxChecker.cpp
 yarr/YarrUnicodeProperties.cpp
+yarr/YarrTZoneImpls.cpp
 
 // Derived Sources
 yarr/YarrCanonicalizeUnicode.cpp

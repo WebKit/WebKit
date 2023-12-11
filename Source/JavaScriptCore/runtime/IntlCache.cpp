@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,12 @@
 #include "config.h"
 #include "IntlCache.h"
 
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IntlCache);
 
 UDateTimePatternGenerator* IntlCache::cacheSharedPatternGenerator(const CString& locale, UErrorCode& status)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,8 +41,11 @@
 #include "B3ValueInlines.h"
 #include "B3Variable.h"
 #include "JITOpaqueByproducts.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace B3 {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Procedure);
 
 Procedure::Procedure(bool usesSIMD)
     : m_cfg(new CFG(*this))

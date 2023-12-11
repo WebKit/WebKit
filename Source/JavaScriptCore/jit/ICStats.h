@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,11 +28,11 @@
 #include "ClassInfo.h"
 #include "Identifier.h"
 #include <wtf/Condition.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Lock.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
 #include <wtf/Spectrum.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -194,7 +194,7 @@ namespace JSC {
 
 class ICStats {
     WTF_MAKE_NONCOPYABLE(ICStats);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ICStats);
 public:
     ICStats();
     ~ICStats();

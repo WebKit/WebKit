@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  *
@@ -32,10 +32,10 @@
 
 #include "ConsoleTypes.h"
 #include "Strong.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
 #include <wtf/Logger.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC {
@@ -54,7 +54,7 @@ class ScriptCallStack;
 
 class JS_EXPORT_PRIVATE ConsoleMessage {
     WTF_MAKE_NONCOPYABLE(ConsoleMessage);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ConsoleMessage);
 public:
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, unsigned long requestIdentifier = 0, WallTime timestamp = { });
     ConsoleMessage(MessageSource, MessageType, MessageLevel, const String& message, const String& url, unsigned line, unsigned column, JSC::JSGlobalObject* = nullptr, unsigned long requestIdentifier = 0, WallTime timestamp = { });

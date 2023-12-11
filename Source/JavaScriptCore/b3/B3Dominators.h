@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,14 +30,14 @@
 #include "B3CFG.h"
 #include "B3Procedure.h"
 #include <wtf/Dominators.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 {
 
 class Dominators : public WTF::Dominators<CFG> {
     WTF_MAKE_NONCOPYABLE(Dominators);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Dominators);
 public:
     Dominators(Procedure& proc)
         : WTF::Dominators<CFG>(proc.cfg())

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Saam Barati. <saambarati1@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,8 +30,11 @@
 #include "CCallHelpers.h"
 #include <climits>
 #include <wtf/DataLog.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BasicBlockLocation);
 
 BasicBlockLocation::BasicBlockLocation(int startOffset, int endOffset)
     : m_startOffset(startOffset)

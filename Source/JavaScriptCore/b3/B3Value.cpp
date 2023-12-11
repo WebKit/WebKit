@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,9 +45,12 @@
 #include <wtf/ListDump.h>
 #include <wtf/StackTrace.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace B3 {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Value);
 
 #if ASSERT_ENABLED
 namespace B3ValueInternal {

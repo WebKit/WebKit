@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -37,6 +37,7 @@
 #undef new
 #undef delete
 #include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 #endif
 
 #include <wtf/DisallowCType.h>

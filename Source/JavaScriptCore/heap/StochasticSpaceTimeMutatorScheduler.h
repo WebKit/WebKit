@@ -27,6 +27,7 @@
 
 #include "MutatorScheduler.h"
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRandom.h>
 
 namespace JSC {
@@ -40,6 +41,7 @@ class Heap;
 // began.
 
 class StochasticSpaceTimeMutatorScheduler final : public MutatorScheduler {
+    WTF_MAKE_TZONE_ALLOCATED(StochasticSpaceTimeMutatorScheduler);
 public:
     StochasticSpaceTimeMutatorScheduler(Heap&);
     ~StochasticSpaceTimeMutatorScheduler() final;

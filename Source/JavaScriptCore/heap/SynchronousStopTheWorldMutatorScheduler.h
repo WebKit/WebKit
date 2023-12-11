@@ -26,6 +26,7 @@
 #pragma once
 
 #include "MutatorScheduler.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -36,6 +37,7 @@ namespace JSC {
 // SpaceTimeMutatorScheduler. It tells the GC to never resume the world once the GC cycle begins.
 
 class SynchronousStopTheWorldMutatorScheduler final : public MutatorScheduler {
+    WTF_MAKE_TZONE_ALLOCATED(SynchronousStopTheWorldMutatorScheduler);
 public:
     SynchronousStopTheWorldMutatorScheduler();
     ~SynchronousStopTheWorldMutatorScheduler() final;

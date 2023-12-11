@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,14 @@
 
 #include "JITCode.h"
 #include "Strong.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 class CodeBlock;
 
 class DeferredSourceDump {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DeferredSourceDump);
 public:
     DeferredSourceDump(CodeBlock*);
     DeferredSourceDump(CodeBlock*, CodeBlock* rootCodeBlock, JITType rootJITType, BytecodeIndex callerBytecodeIndex);

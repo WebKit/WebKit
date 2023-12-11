@@ -33,11 +33,14 @@
 #include "JITCode.h"
 #include "Options.h"
 #include "PerfLog.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
 size_t LinkBuffer::s_profileCummulativeLinkedSizes[LinkBuffer::numberOfProfiles];
 size_t LinkBuffer::s_profileCummulativeLinkedCounts[LinkBuffer::numberOfProfiles];
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LinkBuffer);
 
 LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithoutDisassemblyImpl()
 {

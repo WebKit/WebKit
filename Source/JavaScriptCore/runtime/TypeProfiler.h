@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "TypeLocationCache.h"
 #include <wtf/Bag.h>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -108,7 +109,7 @@ namespace JSC {
 class VM;
 
 class TypeProfiler {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TypeProfiler);
 public:
     TypeProfiler();
     void logTypesForTypeLocation(TypeLocation*, VM&);

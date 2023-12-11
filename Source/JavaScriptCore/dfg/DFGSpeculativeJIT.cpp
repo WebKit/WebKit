@@ -77,10 +77,29 @@
 #include <wtf/BitVector.h>
 #include <wtf/Box.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SpeculativeJIT);
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FPRTemporary);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(GPRTemporary);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSValueRegsFlushedCallResult);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSValueRegsTemporary);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculateInt32Operand);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculateStrictInt32Operand);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculateInt52Operand);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculateStrictInt52Operand);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculateWhicheverInt52Operand);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculateDoubleOperand);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculateCellOperand);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculateBooleanOperand);
+#if USE(BIGINT32)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculateBigInt32Operand);
+#endif
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSValueOperand);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StorageOperand);
 
 SpeculativeJIT::SpeculativeJIT(Graph& dfg)
     : Base(dfg)

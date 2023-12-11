@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "JSCast.h"
 #include "JSFunction.h"
 #include "NativeExecutable.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -61,7 +62,7 @@ namespace JSC {
 // cannot use WriteBarrier<> here because this gets used inside the compiler.
 
 class CallVariant {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CallVariant);
 public:
     explicit CallVariant(JSCell* callee = nullptr)
         : m_callee(callee)

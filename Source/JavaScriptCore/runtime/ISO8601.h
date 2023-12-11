@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2021 Sony Interactive Entertainment Inc.
- * Copyright (C) 2021 Apple Inc.
+ * Copyright (C) 2021-2023 Apple Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,12 +29,13 @@
 #include "IntlObject.h"
 #include "TemporalObject.h"
 #include <wtf/Int128.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 namespace ISO8601 {
 
 class Duration {
-    WTF_MAKE_FAST_ALLOCATED(Duration);
+    WTF_MAKE_TZONE_ALLOCATED(Duration);
 public:
     using const_iterator = std::array<double, numberOfTemporalUnits>::const_iterator;
 
@@ -83,7 +84,7 @@ private:
 };
 
 class ExactTime {
-    WTF_MAKE_FAST_ALLOCATED(ExactTime);
+    WTF_MAKE_TZONE_ALLOCATED(ExactTime);
 public:
     static constexpr Int128 dayRangeSeconds { 86400'00000000 }; // 1e8 days
     static constexpr Int128 nsPerMicrosecond { 1000 };
@@ -191,7 +192,7 @@ private:
 };
 
 class PlainTime {
-    WTF_MAKE_FAST_ALLOCATED(PlainTime);
+    WTF_MAKE_TZONE_ALLOCATED(PlainTime);
 public:
     constexpr PlainTime()
         : m_millisecond(0)
@@ -229,7 +230,7 @@ static_assert(sizeof(PlainTime) <= sizeof(uint64_t));
 // Note that PlainDate does not include week unit.
 // year can be negative. And month and day starts with 1.
 class PlainDate {
-    WTF_MAKE_FAST_ALLOCATED(PlainDate);
+    WTF_MAKE_TZONE_ALLOCATED(PlainDate);
 public:
     constexpr PlainDate()
         : m_year(0)

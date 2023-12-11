@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/PrintStream.h>
 #include <wtf/SharedTask.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/TriState.h>
 #include <wtf/Vector.h>
 
@@ -78,7 +79,7 @@ typedef SharedTask<WasmBoundsCheckGeneratorFunction> WasmBoundsCheckGenerator;
 
 class Procedure {
     WTF_MAKE_NONCOPYABLE(Procedure);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Procedure);
 public:
 
     JS_EXPORT_PRIVATE Procedure(bool usesSIMD = false);

@@ -31,8 +31,12 @@
 #include "CodeBlock.h"
 #include "FullBytecodeLiveness.h"
 #include "JSCJSValueInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BytecodeLivenessAnalysis);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FullBytecodeLiveness);
 
 BytecodeLivenessAnalysis::BytecodeLivenessAnalysis(CodeBlock* codeBlock)
     : m_graph(codeBlock, codeBlock->instructions())

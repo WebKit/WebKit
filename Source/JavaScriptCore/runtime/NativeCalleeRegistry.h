@@ -29,13 +29,14 @@
 #include <wtf/Box.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 class NativeCallee;
 
 class NativeCalleeRegistry {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NativeCalleeRegistry);
     WTF_MAKE_NONCOPYABLE(NativeCalleeRegistry);
 public:
     static void initialize();

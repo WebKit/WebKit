@@ -40,6 +40,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/SharedTask.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRandom.h>
 
@@ -60,7 +61,7 @@ struct OSRExit;
 #define JIT_COMMENT(jit, ...) do { if (UNLIKELY(Options::needDisassemblySupport())) { (jit).comment(__VA_ARGS__); } else { (void) jit; } } while (0)
 
 class AbstractMacroAssemblerBase {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(AbstractMacroAssemblerBase);
 public:
     enum StatusCondition {
         Success,

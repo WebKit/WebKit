@@ -33,8 +33,21 @@
 #include "NativeCalleeRegistry.h"
 #include "WasmCallingConvention.h"
 #include "WasmModuleInformation.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Callee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JITCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSEntrypointCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WasmToJSCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSToWasmICCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OptimizingJITCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OMGCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OSREntryCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BBQCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IPIntCallee);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(LLIntCallee);
 
 Callee::Callee(Wasm::CompilationMode compilationMode)
     : NativeCallee(NativeCallee::Category::Wasm, ImplementationVisibility::Private)

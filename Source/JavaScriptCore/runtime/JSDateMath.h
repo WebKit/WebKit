@@ -47,6 +47,7 @@
 #include <wtf/DateMath.h>
 #include <wtf/GregorianDateTime.h>
 #include <wtf/SaturatedArithmetic.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -78,7 +79,7 @@ struct LocalTimeOffsetCache {
 };
 
 class DateCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(DateCache);
     WTF_MAKE_NONCOPYABLE(DateCache);
 public:
     DateCache();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,8 @@
 #include "AirFrequentedBlock.h"
 #include "AirInst.h"
 #include "B3SuccessorCollection.h"
-#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace B3 {
 
@@ -46,7 +46,7 @@ class PhaseInsertionSet;
 
 class BasicBlock {
     WTF_MAKE_NONCOPYABLE(BasicBlock);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BasicBlock);
 public:
     static const char* const dumpPrefix;
     static constexpr unsigned uninsertedIndex = UINT_MAX;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "Heap.h"
 #include <wtf/MonotonicTime.h>
 #include <wtf/ScopedLambda.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueArray.h>
 
 namespace JSC {
@@ -37,7 +38,7 @@ class JSCell;
 class MarkedBlock;
 
 class HeapVerifier {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(HeapVerifier);
 public:
     enum class Phase {
         BeforeGC,

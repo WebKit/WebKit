@@ -29,8 +29,11 @@
 #if ENABLE(WEBASSEMBLY_OMGJIT)
 
 #include "WasmOSREntryData.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TierUpCount);
 
 TierUpCount::TierUpCount()
 {

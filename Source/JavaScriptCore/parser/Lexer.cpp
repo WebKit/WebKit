@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2006-2019 Apple Inc. All Rights Reserved.
+ *  Copyright (C) 2006-2023 Apple Inc. All Rights Reserved.
  *  Copyright (C) 2007 Cameron Zwarich (cwzwarich@uwaterloo.ca)
  *  Copyright (C) 2010 Zoltan Herczeg (zherczeg@inf.u-szeged.hu)
  *  Copyright (C) 2012 Mathias Bynens (mathias@qiwi.be)
@@ -35,6 +35,7 @@
 #include <variant>
 #include <wtf/Assertions.h>
 #include <wtf/HexNumber.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/dtoa.h>
 
 namespace JSC {
@@ -2739,5 +2740,11 @@ void Lexer<T>::clear()
 // Instantiate the two flavors of Lexer we need instead of putting most of this file in Lexer.h
 template class Lexer<LChar>;
 template class Lexer<UChar>;
+
+using LexerLChar = Lexer<LChar>;
+using LexerUChar = Lexer<UChar>;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_TEMPLATE(LexerLChar);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_TEMPLATE(LexerUChar);
 
 } // namespace JSC
