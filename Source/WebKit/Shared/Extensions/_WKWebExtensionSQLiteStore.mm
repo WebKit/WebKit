@@ -45,8 +45,6 @@ using namespace WebKit;
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-static constexpr std::array<const char *, 2> databaseFileSuffixes { "-shm", "-wal" };
-
 @implementation _WKWebExtensionSQLiteStore
 
 - (instancetype)initWithUniqueIdentifier:(NSString *)uniqueIdentifier directory:(NSString *)directory usesInMemoryDatabase:(BOOL)useInMemoryDatabase
@@ -68,18 +66,19 @@ static constexpr std::array<const char *, 2> databaseFileSuffixes { "-shm", "-wa
 
 - (void)dealloc
 {
-    _WKWebExtensionSQLiteDatabase *database = _database;
-    dispatch_async(_databaseQueue, ^{
-        [database close];
-    });
+    [self close];
 }
 
-- (void)deleteStorageWithCompletionHandler:(void (^)(NSError *error))completionHandler
+- (void)close
 {
-    dispatch_async(dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0), ^{
-        NSError *error;
-        [NSFileManager.defaultManager removeItemAtURL:self->_directory error:&error];
-        completionHandler(error);
+    if (!_database)
+        return;
+
+    auto *database = _database;
+    _database = nil;
+
+    dispatch_sync(_databaseQueue, ^{
+        [database close];
     });
 }
 
@@ -149,10 +148,12 @@ static constexpr std::array<const char *, 2> databaseFileSuffixes { "-shm", "-wa
     NSError *error;
     if (![_database openWithAccessType:SQLiteDatabaseAccessTypeReadWriteCreate error:&error]) {
         RELEASE_LOG_ERROR(Extensions, "Failed to open database for extension %{private}@: %{public}@", _uniqueIdentifier, privacyPreservingDescription(error));
-        _database = nil;
 
         if (usingDatabaseFile && deleteDatabaseFileOnError)
-            [self _deleteDatabaseFileAtURL:databaseURL reopenDatabase:YES];
+            return [self _deleteDatabaseFileAtURL:databaseURL reopenDatabase:YES];
+
+        [_database close];
+        _database = nil;
 
         return @"Failed to open extension storage database.";
     }
@@ -160,10 +161,12 @@ static constexpr std::array<const char *, 2> databaseFileSuffixes { "-shm", "-wa
     // Enable write-ahead logging to minimize the impact of SQLite's disk I/O.
     if (![_database enableWAL:&error]) {
         RELEASE_LOG_ERROR(Extensions, "Failed to enable write-ahead logging on database for extension %{private}@: %{public}@", _uniqueIdentifier, privacyPreservingDescription(error));
-        _database = nil;
 
         if (usingDatabaseFile && deleteDatabaseFileOnError)
-            [self _deleteDatabaseFileAtURL:databaseURL reopenDatabase:YES];
+            return [self _deleteDatabaseFileAtURL:databaseURL reopenDatabase:YES];
+
+        [_database close];
+        _database = nil;
 
         return @"Failed to open extension storage database.";
     }
@@ -190,13 +193,14 @@ static constexpr std::array<const char *, 2> databaseFileSuffixes { "-shm", "-wa
         _database = nil;
     }
 
-    auto databaseFilePath = (String)databaseURL.path;
+    String databaseFilePath = databaseURL.path;
+    static constexpr std::array<ASCIILiteral, 2> databaseFileSuffixes { "-shm"_s, "-wal"_s };
 
     // -shm and -wal files may not exist, so don't report errors for those.
-    for (auto* suffix : databaseFileSuffixes)
+    for (auto& suffix : databaseFileSuffixes)
         FileSystem::deleteFile(databaseFilePath + suffix);
 
-    if (!FileSystem::deleteFile(databaseFilePath)) {
+    if (FileSystem::fileExists(databaseFilePath) && !FileSystem::deleteFile(databaseFilePath)) {
         RELEASE_LOG_ERROR(Extensions, "Failed to delete database for extension %{private}@", _uniqueIdentifier);
         return @"Failed to delete extension storage database file.";
     }
@@ -256,11 +260,10 @@ static constexpr std::array<const char *, 2> databaseFileSuffixes { "-shm", "-wa
         RELEASE_LOG_ERROR(Extensions, "Schema version (%d) does not match the supported schema version (%d) in database for extension %{private}@", schemaVersion, currentDatabaseSchemaVersion, _uniqueIdentifier);
 
         if (!_useInMemoryDatabase && deleteDatabaseFileOnError)
-            [self _deleteDatabaseFileAtURL:self._databaseURL reopenDatabase:YES];
-        else {
-            [_database close];
-            _database = nil;
-        }
+            return [self _deleteDatabaseFileAtURL:self._databaseURL reopenDatabase:YES];
+
+        [_database close];
+        _database = nil;
 
         return @"Failed to open extension storage database because of an invalid schema version.";
     }

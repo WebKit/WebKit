@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL useInMemoryDatabase;
 
-- (void)deleteStorageWithCompletionHandler:(void (^)(NSError * _Nullable error))completionHandler;
+- (void)close;
 
 - (void)deleteDatabaseWithCompletionHandler:(void (^)(NSString * _Nullable errorMessage))completionHandler;
 
