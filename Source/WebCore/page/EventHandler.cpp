@@ -843,10 +843,10 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     if (event.isOverWidget() && passWidgetMouseDownEventToWidget(event))
         return true;
 
-    if (is<SVGDocument>(*frame->document()) && downcast<SVGDocument>(*frame->document()).zoomAndPanEnabled()) {
+    if (RefPtr svgDocument = dynamicDowncast<SVGDocument>(*frame->protectedDocument()); svgDocument && svgDocument->zoomAndPanEnabled()) {
         if (event.event().shiftKey() && singleClick) {
             m_svgPan = true;
-            downcast<SVGDocument>(*frame->protectedDocument()).startPan(frame->protectedView()->windowToContents(event.event().position()));
+            svgDocument->startPan(frame->protectedView()->windowToContents(event.event().position()));
             return true;
         }
     }
@@ -1198,9 +1198,10 @@ void EventHandler::didPanScrollStop()
 
 void EventHandler::startPanScrolling(RenderElement& renderer)
 {
-    if (!is<RenderBox>(renderer))
+    CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer);
+    if (renderBox)
         return;
-    m_autoscrollController->startPanScrolling(downcast<RenderBox>(renderer), lastKnownMousePosition());
+    m_autoscrollController->startPanScrolling(*renderBox, lastKnownMousePosition());
     invalidateClick();
 }
 
@@ -1395,20 +1396,21 @@ RefPtr<Frame> EventHandler::subframeForTargetNode(Node* node)
     if (!node)
         return nullptr;
 
-    auto renderer = node->renderer();
-    if (!is<RenderWidget>(renderer))
+    CheckedPtr renderWidget = dynamicDowncast<RenderWidget>(node->renderer());
+    if (!renderWidget)
         return nullptr;
 
-    Widget* widget = downcast<RenderWidget>(*renderer).widget();
-    if (!is<FrameView>(widget))
+    auto* frameView = dynamicDowncast<FrameView>(renderWidget->widget());
+    if (!frameView)
         return nullptr;
 
-    return &downcast<FrameView>(*widget).frame();
+    return &frameView->frame();
 }
 
 static bool isSubmitImage(Node* node)
 {
-    return is<HTMLInputElement>(node) && downcast<HTMLInputElement>(*node).isImageButton();
+    RefPtr input = dynamicDowncast<HTMLInputElement>(node);
+    return input && input->isImageButton();
 }
 
 // Returns true if the node's editable block is not current focused for editing
@@ -1926,7 +1928,7 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
         // If a mouse event handler changes the input element type to one that has a widget associated,
         // we'd like to EventHandler::handleMousePressEvent to pass the event to the widget and thus the
         // event target node can't still be the shadow node.
-        if (is<ShadowRoot>(*mouseEvent.targetNode()) && is<HTMLInputElement>(*downcast<ShadowRoot>(*mouseEvent.targetNode()).host()))
+        if (RefPtr shadowRoot = dynamicDowncast<ShadowRoot>(*mouseEvent.targetNode()); shadowRoot && is<HTMLInputElement>(shadowRoot->host()))
             mouseEvent = frame->protectedDocument()->prepareMouseEvent(HitTestRequest(), documentPoint, platformMouseEvent);
     }
 
@@ -1997,8 +1999,8 @@ ScrollableArea* EventHandler::enclosingScrollableArea(Node* node)
         if (!renderer)
             continue;
 
-        if (is<RenderListBox>(*renderer)) {
-            auto* scrollableArea = static_cast<ScrollableArea*>(downcast<RenderListBox>(renderer));
+        if (auto* renderListBox = dynamicDowncast<RenderListBox>(*renderer)) {
+            auto* scrollableArea = static_cast<ScrollableArea*>(renderListBox);
             if (scrollableArea->isScrollableOrRubberbandable())
                 return scrollableArea;
         }
@@ -2452,10 +2454,11 @@ bool EventHandler::canDropCurrentlyDraggedImageAsFile() const
 
 static std::pair<bool, RefPtr<LocalFrame>> contentFrameForNode(Node* target)
 {
-    if (!is<HTMLFrameElementBase>(target))
+    RefPtr frameElement = dynamicDowncast<HTMLFrameElementBase>(target);
+    if (!frameElement)
         return { false, nullptr };
 
-    return { true, dynamicDowncast<LocalFrame>(downcast<HTMLFrameElementBase>(*target).contentFrame()) };
+    return { true, dynamicDowncast<LocalFrame>(frameElement->contentFrame()) };
 }
 
 static std::optional<DragOperation> convertDropZoneOperationToDragOperation(const String& dragOperation)
@@ -2497,7 +2500,9 @@ static bool hasDropZoneType(DataTransfer& dataTransfer, const String& keyword)
 
 static bool findDropZone(Node& target, DataTransfer& dataTransfer)
 {
-    RefPtr<Element> element = is<Element>(target) ? &downcast<Element>(target) : target.parentElement();
+    RefPtr element = dynamicDowncast<Element>(target);
+    if (!element)
+        element = target.parentElement();
     for (; element; element = element->parentElement()) {
         SpaceSplitString keywords(element->attributeWithoutSynchronization(webkitdropzoneAttr), SpaceSplitString::ShouldFoldCase::Yes);
         bool matched = false;
@@ -3045,20 +3050,20 @@ Widget* EventHandler::widgetForEventTarget(Element* eventTarget)
     if (!eventTarget)
         return nullptr;
 
-    auto* target = eventTarget->renderer();
-    if (!is<RenderWidget>(target))
+    auto* renderWidget = dynamicDowncast<RenderWidget>(eventTarget->renderer());
+    if (!renderWidget)
         return nullptr;
 
-    return downcast<RenderWidget>(*target).widget();
+    return renderWidget->widget();
 }
 
 static WeakPtr<Widget> widgetForElement(const Element& element)
 {
-    auto target = element.renderer();
-    if (!is<RenderWidget>(target) || !downcast<RenderWidget>(*target).widget())
+    auto* renderWidget = dynamicDowncast<RenderWidget>(element.renderer());
+    if (!renderWidget || !renderWidget->widget())
         return { };
 
-    return *downcast<RenderWidget>(*target).widget();
+    return *renderWidget->widget();
 }
 
 bool EventHandler::completeWidgetWheelEvent(const PlatformWheelEvent& event, const WeakPtr<Widget>& widget, const WeakPtr<ScrollableArea>& scrollableArea)
@@ -3244,15 +3249,15 @@ bool EventHandler::handleWheelEventInAppropriateEnclosingBox(Node* startNode, co
     RenderBox& initialEnclosingBox = startNode->renderer()->enclosingBox();
 
     // RenderListBox is special because it's a ScrollableArea that the scrolling tree doesn't know about.
-    if (is<RenderListBox>(initialEnclosingBox))
-        handleWheelEventPhaseInScrollableArea(downcast<RenderListBox>(initialEnclosingBox), wheelEvent);
+    if (CheckedPtr renderListBox = dynamicDowncast<RenderListBox>(initialEnclosingBox))
+        handleWheelEventPhaseInScrollableArea(*renderListBox, wheelEvent);
 
     if (!shouldHandleEvent)
         return false;
 
     auto scrollableAreaForBox = [](RenderBox& box) -> ScrollableArea* {
-        if (is<RenderListBox>(box))
-            return &downcast<RenderListBox>(box);
+        if (auto* renderListBox = dynamicDowncast<RenderListBox>(box))
+            return renderListBox;
 
         if (box.hasLayer())
             return box.layer()->scrollableArea();
@@ -3722,10 +3727,10 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& keyEvent)
 
 void EventHandler::capsLockStateMayHaveChanged() const
 {
-    RefPtr focusedElement = m_frame->document()->focusedElement();
-    if (!is<HTMLInputElement>(focusedElement))
+    RefPtr input = dynamicDowncast<HTMLInputElement>(m_frame->document()->focusedElement());
+    if (!input)
         return;
-    downcast<HTMLInputElement>(*focusedElement).capsLockStateMayHaveChanged();
+    input->capsLockStateMayHaveChanged();
 }
 
 bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent)
@@ -5158,10 +5163,11 @@ bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)
 
 bool EventHandler::passWidgetMouseDownEventToWidget(const MouseEventWithHitTestResults& event)
 {
-    RenderObject* target = event.targetNode() ? event.targetNode()->renderer() : nullptr;
-    if (!is<RenderWidget>(target))
+    auto* target = event.targetNode() ? event.targetNode()->renderer() : nullptr;
+    auto* renderWidget = dynamicDowncast<RenderWidget>(target);
+    if (!renderWidget)
         return false;
-    return passMouseDownEventToWidget(downcast<RenderWidget>(*target).widget());
+    return passMouseDownEventToWidget(renderWidget->widget());
 }
 
 bool EventHandler::passMouseDownEventToWidget(Widget*)
