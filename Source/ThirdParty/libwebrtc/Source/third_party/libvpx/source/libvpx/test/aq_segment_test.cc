@@ -20,17 +20,17 @@ class AqSegmentTest
       public ::libvpx_test::CodecTestWith2Params<libvpx_test::TestMode, int> {
  protected:
   AqSegmentTest() : EncoderTest(GET_PARAM(0)) {}
-  ~AqSegmentTest() override = default;
+  virtual ~AqSegmentTest() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     InitializeConfig();
     SetMode(GET_PARAM(1));
     set_cpu_used_ = GET_PARAM(2);
     aq_mode_ = 0;
   }
 
-  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                          ::libvpx_test::Encoder *encoder) override {
+  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Encoder *encoder) {
     if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, set_cpu_used_);
       encoder->Control(VP9E_SET_AQ_MODE, aq_mode_);

@@ -20,9 +20,9 @@ class AltRefAqSegmentTest
       public ::libvpx_test::CodecTestWith2Params<libvpx_test::TestMode, int> {
  protected:
   AltRefAqSegmentTest() : EncoderTest(GET_PARAM(0)) {}
-  ~AltRefAqSegmentTest() override = default;
+  virtual ~AltRefAqSegmentTest() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     InitializeConfig();
     SetMode(GET_PARAM(1));
     set_cpu_used_ = GET_PARAM(2);
@@ -30,8 +30,8 @@ class AltRefAqSegmentTest
     alt_ref_aq_mode_ = 0;
   }
 
-  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                          ::libvpx_test::Encoder *encoder) override {
+  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Encoder *encoder) {
     if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, set_cpu_used_);
       encoder->Control(VP9E_SET_ALT_REF_AQ, alt_ref_aq_mode_);

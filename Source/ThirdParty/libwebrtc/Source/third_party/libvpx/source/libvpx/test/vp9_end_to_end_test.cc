@@ -31,7 +31,7 @@ const double kPsnrThreshold[][5] = {
   { 36.0, 37.0, 37.0, 37.0, 37.0 }, { 35.0, 36.0, 36.0, 36.0, 36.0 },
   { 34.0, 35.0, 35.0, 35.0, 35.0 }, { 33.0, 34.0, 34.0, 34.0, 34.0 },
   { 32.0, 33.0, 33.0, 33.0, 33.0 }, { 28.0, 32.0, 32.0, 32.0, 32.0 },
-  { 28.4, 31.0, 31.0, 31.0, 31.0 }, { 27.5, 30.0, 30.0, 30.0, 30.0 },
+  { 28.5, 31.0, 31.0, 31.0, 31.0 }, { 27.5, 30.0, 30.0, 30.0, 30.0 },
 };
 
 typedef struct {
@@ -89,9 +89,9 @@ class EndToEndTestAdaptiveRDThresh
       : EncoderTest(GET_PARAM(0)), cpu_used_start_(GET_PARAM(1)),
         cpu_used_end_(GET_PARAM(2)) {}
 
-  ~EndToEndTestAdaptiveRDThresh() override = default;
+  virtual ~EndToEndTestAdaptiveRDThresh() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     InitializeConfig();
     SetMode(::libvpx_test::kRealTime);
     cfg_.g_lag_in_frames = 0;
@@ -102,8 +102,8 @@ class EndToEndTestAdaptiveRDThresh
     dec_cfg_.threads = 4;
   }
 
-  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                          ::libvpx_test::Encoder *encoder) override {
+  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Encoder *encoder) {
     if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, cpu_used_start_);
       encoder->Control(VP9E_SET_ROW_MT, 1);
@@ -131,9 +131,9 @@ class EndToEndTestLarge
     denoiser_on_ = 0;
   }
 
-  ~EndToEndTestLarge() override = default;
+  virtual ~EndToEndTestLarge() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     InitializeConfig();
     SetMode(encoding_mode_);
     if (encoding_mode_ != ::libvpx_test::kRealTime) {
@@ -149,18 +149,18 @@ class EndToEndTestLarge
     dec_cfg_.threads = 4;
   }
 
-  void BeginPassHook(unsigned int) override {
+  virtual void BeginPassHook(unsigned int) {
     psnr_ = 0.0;
     nframes_ = 0;
   }
 
-  void PSNRPktHook(const vpx_codec_cx_pkt_t *pkt) override {
+  virtual void PSNRPktHook(const vpx_codec_cx_pkt_t *pkt) {
     psnr_ += pkt->data.psnr.psnr[0];
     nframes_++;
   }
 
-  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                          ::libvpx_test::Encoder *encoder) override {
+  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Encoder *encoder) {
     if (video->frame() == 0) {
       encoder->Control(VP9E_SET_FRAME_PARALLEL_DECODING, 1);
       encoder->Control(VP9E_SET_TILE_COLUMNS, 4);
@@ -207,9 +207,9 @@ class EndToEndTestLoopFilterThreading
   EndToEndTestLoopFilterThreading()
       : EncoderTest(GET_PARAM(0)), use_loop_filter_opt_(GET_PARAM(1)) {}
 
-  ~EndToEndTestLoopFilterThreading() override = default;
+  virtual ~EndToEndTestLoopFilterThreading() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     InitializeConfig();
     SetMode(::libvpx_test::kRealTime);
     cfg_.g_threads = 2;
@@ -221,16 +221,16 @@ class EndToEndTestLoopFilterThreading
     dec_cfg_.threads = GET_PARAM(2);
   }
 
-  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                          ::libvpx_test::Encoder *encoder) override {
+  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Encoder *encoder) {
     if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, 8);
     }
     encoder->Control(VP9E_SET_TILE_COLUMNS, 4 - video->frame() % 5);
   }
 
-  void PreDecodeFrameHook(::libvpx_test::VideoSource *video,
-                          ::libvpx_test::Decoder *decoder) override {
+  virtual void PreDecodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Decoder *decoder) {
     if (video->frame() == 0) {
       decoder->Control(VP9D_SET_LOOP_FILTER_OPT, use_loop_filter_opt_ ? 1 : 0);
     }

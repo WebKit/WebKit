@@ -50,21 +50,21 @@ class CQTest : public ::libvpx_test::EncoderTest,
     init_flags_ = VPX_CODEC_USE_PSNR;
   }
 
-  ~CQTest() override = default;
+  virtual ~CQTest() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     InitializeConfig();
     SetMode(libvpx_test::kTwoPassGood);
   }
 
-  void BeginPassHook(unsigned int /*pass*/) override {
+  virtual void BeginPassHook(unsigned int /*pass*/) {
     file_size_ = 0;
     psnr_ = 0.0;
     n_frames_ = 0;
   }
 
-  void PreEncodeFrameHook(libvpx_test::VideoSource *video,
-                          libvpx_test::Encoder *encoder) override {
+  virtual void PreEncodeFrameHook(libvpx_test::VideoSource *video,
+                                  libvpx_test::Encoder *encoder) {
     if (video->frame() == 0) {
       if (cfg_.rc_end_usage == VPX_CQ) {
         encoder->Control(VP8E_SET_CQ_LEVEL, cq_level_);
@@ -73,12 +73,12 @@ class CQTest : public ::libvpx_test::EncoderTest,
     }
   }
 
-  void PSNRPktHook(const vpx_codec_cx_pkt_t *pkt) override {
+  virtual void PSNRPktHook(const vpx_codec_cx_pkt_t *pkt) {
     psnr_ += pow(10.0, pkt->data.psnr.psnr[0] / 10.0);
     n_frames_++;
   }
 
-  void FramePktHook(const vpx_codec_cx_pkt_t *pkt) override {
+  virtual void FramePktHook(const vpx_codec_cx_pkt_t *pkt) {
     file_size_ += pkt->data.frame.sz;
   }
 

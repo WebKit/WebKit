@@ -24,24 +24,24 @@ class AltRefTest : public ::libvpx_test::EncoderTest,
                    public ::libvpx_test::CodecTestWithParam<int> {
  protected:
   AltRefTest() : EncoderTest(GET_PARAM(0)), altref_count_(0) {}
-  ~AltRefTest() override = default;
+  virtual ~AltRefTest() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     InitializeConfig();
     SetMode(libvpx_test::kTwoPassGood);
   }
 
-  void BeginPassHook(unsigned int /*pass*/) override { altref_count_ = 0; }
+  virtual void BeginPassHook(unsigned int /*pass*/) { altref_count_ = 0; }
 
-  void PreEncodeFrameHook(libvpx_test::VideoSource *video,
-                          libvpx_test::Encoder *encoder) override {
+  virtual void PreEncodeFrameHook(libvpx_test::VideoSource *video,
+                                  libvpx_test::Encoder *encoder) {
     if (video->frame() == 0) {
       encoder->Control(VP8E_SET_ENABLEAUTOALTREF, 1);
       encoder->Control(VP8E_SET_CPUUSED, 3);
     }
   }
 
-  void FramePktHook(const vpx_codec_cx_pkt_t *pkt) override {
+  virtual void FramePktHook(const vpx_codec_cx_pkt_t *pkt) {
     if (pkt->data.frame.flags & VPX_FRAME_IS_INVISIBLE) ++altref_count_;
   }
 
@@ -75,17 +75,17 @@ class AltRefForcedKeyTestLarge
   AltRefForcedKeyTestLarge()
       : EncoderTest(GET_PARAM(0)), encoding_mode_(GET_PARAM(1)),
         cpu_used_(GET_PARAM(2)), forced_kf_frame_num_(1), frame_num_(0) {}
-  ~AltRefForcedKeyTestLarge() override = default;
+  virtual ~AltRefForcedKeyTestLarge() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     InitializeConfig();
     SetMode(encoding_mode_);
     cfg_.rc_end_usage = VPX_VBR;
     cfg_.g_threads = 0;
   }
 
-  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                          ::libvpx_test::Encoder *encoder) override {
+  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Encoder *encoder) {
     if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, cpu_used_);
       encoder->Control(VP8E_SET_ENABLEAUTOALTREF, 1);
@@ -100,7 +100,7 @@ class AltRefForcedKeyTestLarge
         (video->frame() == forced_kf_frame_num_) ? VPX_EFLAG_FORCE_KF : 0;
   }
 
-  void FramePktHook(const vpx_codec_cx_pkt_t *pkt) override {
+  virtual void FramePktHook(const vpx_codec_cx_pkt_t *pkt) {
     if (frame_num_ == forced_kf_frame_num_) {
       ASSERT_TRUE(!!(pkt->data.frame.flags & VPX_FRAME_IS_KEY))
           << "Frame #" << frame_num_ << " isn't a keyframe!";

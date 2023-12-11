@@ -20,10 +20,7 @@ extern "C" {
 
 struct encode_b_args {
   MACROBLOCK *x;
-  int enable_trellis_opt;
-  double trellis_opt_thresh;
-  int *sse_calc_done;
-  int64_t *sse;
+  int enable_coeff_opt;
   ENTROPY_CONTEXT *ta;
   ENTROPY_CONTEXT *tl;
   int8_t *skip;
@@ -51,7 +48,7 @@ void vp9_encode_block_intra(int plane, int block, int row, int col,
                             BLOCK_SIZE plane_bsize, TX_SIZE tx_size, void *arg);
 
 void vp9_encode_intra_block_plane(MACROBLOCK *x, BLOCK_SIZE bsize, int plane,
-                                  int enable_trellis_opt);
+                                  int enable_optimize_b);
 
 #ifdef __cplusplus
 }  // extern "C"

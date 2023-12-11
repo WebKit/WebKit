@@ -42,11 +42,11 @@ class VP9DenoiserTest
     : public ::testing::Test,
       public ::testing::WithParamInterface<VP9DenoiserTestParam> {
  public:
-  ~VP9DenoiserTest() override = default;
+  virtual ~VP9DenoiserTest() {}
 
-  void SetUp() override { bs_ = GET_PARAM(1); }
+  virtual void SetUp() { bs_ = GET_PARAM(1); }
 
-  void TearDown() override { libvpx_test::ClearSystemState(); }
+  virtual void TearDown() { libvpx_test::ClearSystemState(); }
 
  protected:
   BLOCK_SIZE bs_;

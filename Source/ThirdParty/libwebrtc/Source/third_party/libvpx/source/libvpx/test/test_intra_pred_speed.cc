@@ -14,11 +14,9 @@
 
 #include "third_party/googletest/src/include/gtest/gtest.h"
 
-#include "./vpx_config.h"
 #include "./vpx_dsp_rtcd.h"
 #include "test/acm_random.h"
 #include "test/clear_system_state.h"
-#include "test/init_vpx_test.h"
 #include "test/md5_helper.h"
 #include "vpx/vpx_integer.h"
 #include "vpx_ports/mem.h"
@@ -50,9 +48,11 @@ struct IntraPredTestMem {
     for (int i = 0; i < kBPS; ++i) left[i] = rnd.Rand16() & mask;
     for (int i = -1; i < kBPS; ++i) above[i] = rnd.Rand16() & mask;
 
-    // d45/d63 require the top row to be extended.
+    // some code assumes the top row has been extended:
+    // d45/d63 C-code, for instance, but not the assembly.
+    // TODO(jzern): this style of extension isn't strictly necessary.
     ASSERT_LE(block_size, kBPS);
-    for (int i = block_size; i < 2 * block_size; ++i) {
+    for (int i = block_size; i < 2 * kBPS; ++i) {
       above[i] = above[block_size - 1];
     }
   }
@@ -271,32 +271,28 @@ INTRA_PRED_TEST(NEON, TestIntraPred4, vpx_dc_predictor_4x4_neon,
                 vpx_dc_left_predictor_4x4_neon, vpx_dc_top_predictor_4x4_neon,
                 vpx_dc_128_predictor_4x4_neon, vpx_v_predictor_4x4_neon,
                 vpx_h_predictor_4x4_neon, vpx_d45_predictor_4x4_neon,
-                vpx_d135_predictor_4x4_neon, vpx_d117_predictor_4x4_neon,
-                vpx_d153_predictor_4x4_neon, vpx_d207_predictor_4x4_neon,
-                vpx_d63_predictor_4x4_neon, vpx_tm_predictor_4x4_neon)
+                vpx_d135_predictor_4x4_neon, nullptr, nullptr, nullptr, nullptr,
+                vpx_tm_predictor_4x4_neon)
 INTRA_PRED_TEST(NEON, TestIntraPred8, vpx_dc_predictor_8x8_neon,
                 vpx_dc_left_predictor_8x8_neon, vpx_dc_top_predictor_8x8_neon,
                 vpx_dc_128_predictor_8x8_neon, vpx_v_predictor_8x8_neon,
                 vpx_h_predictor_8x8_neon, vpx_d45_predictor_8x8_neon,
-                vpx_d135_predictor_8x8_neon, vpx_d117_predictor_8x8_neon,
-                vpx_d153_predictor_8x8_neon, vpx_d207_predictor_8x8_neon,
-                vpx_d63_predictor_8x8_neon, vpx_tm_predictor_8x8_neon)
+                vpx_d135_predictor_8x8_neon, nullptr, nullptr, nullptr, nullptr,
+                vpx_tm_predictor_8x8_neon)
 INTRA_PRED_TEST(NEON, TestIntraPred16, vpx_dc_predictor_16x16_neon,
                 vpx_dc_left_predictor_16x16_neon,
                 vpx_dc_top_predictor_16x16_neon,
                 vpx_dc_128_predictor_16x16_neon, vpx_v_predictor_16x16_neon,
                 vpx_h_predictor_16x16_neon, vpx_d45_predictor_16x16_neon,
-                vpx_d135_predictor_16x16_neon, vpx_d117_predictor_16x16_neon,
-                vpx_d153_predictor_16x16_neon, vpx_d207_predictor_16x16_neon,
-                vpx_d63_predictor_16x16_neon, vpx_tm_predictor_16x16_neon)
+                vpx_d135_predictor_16x16_neon, nullptr, nullptr, nullptr,
+                nullptr, vpx_tm_predictor_16x16_neon)
 INTRA_PRED_TEST(NEON, TestIntraPred32, vpx_dc_predictor_32x32_neon,
                 vpx_dc_left_predictor_32x32_neon,
                 vpx_dc_top_predictor_32x32_neon,
                 vpx_dc_128_predictor_32x32_neon, vpx_v_predictor_32x32_neon,
                 vpx_h_predictor_32x32_neon, vpx_d45_predictor_32x32_neon,
-                vpx_d135_predictor_32x32_neon, vpx_d117_predictor_32x32_neon,
-                vpx_d153_predictor_32x32_neon, vpx_d207_predictor_32x32_neon,
-                vpx_d63_predictor_32x32_neon, vpx_tm_predictor_32x32_neon)
+                vpx_d135_predictor_32x32_neon, nullptr, nullptr, nullptr,
+                nullptr, vpx_tm_predictor_32x32_neon)
 #endif  // HAVE_NEON
 
 #if HAVE_MSA
@@ -349,15 +345,6 @@ INTRA_PRED_TEST(VSX, TestIntraPred32, vpx_dc_predictor_32x32_vsx,
                 nullptr, nullptr, nullptr, vpx_d63_predictor_32x32_vsx,
                 vpx_tm_predictor_32x32_vsx)
 #endif  // HAVE_VSX
-
-#if HAVE_LSX
-INTRA_PRED_TEST(LSX, TestIntraPred8, vpx_dc_predictor_8x8_lsx, nullptr, nullptr,
-                nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, nullptr, nullptr)
-INTRA_PRED_TEST(LSX, TestIntraPred16, vpx_dc_predictor_16x16_lsx, nullptr,
-                nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-                nullptr, nullptr, nullptr, nullptr)
-#endif  // HAVE_LSX
 
 // -----------------------------------------------------------------------------
 
@@ -576,41 +563,37 @@ HIGHBD_INTRA_PRED_TEST(
     vpx_highbd_dc_left_predictor_4x4_neon, vpx_highbd_dc_top_predictor_4x4_neon,
     vpx_highbd_dc_128_predictor_4x4_neon, vpx_highbd_v_predictor_4x4_neon,
     vpx_highbd_h_predictor_4x4_neon, vpx_highbd_d45_predictor_4x4_neon,
-    vpx_highbd_d135_predictor_4x4_neon, vpx_highbd_d117_predictor_4x4_neon,
-    vpx_highbd_d153_predictor_4x4_neon, vpx_highbd_d207_predictor_4x4_neon,
-    vpx_highbd_d63_predictor_4x4_neon, vpx_highbd_tm_predictor_4x4_neon)
+    vpx_highbd_d135_predictor_4x4_neon, nullptr, nullptr, nullptr, nullptr,
+    vpx_highbd_tm_predictor_4x4_neon)
 HIGHBD_INTRA_PRED_TEST(
     NEON, TestHighbdIntraPred8, vpx_highbd_dc_predictor_8x8_neon,
     vpx_highbd_dc_left_predictor_8x8_neon, vpx_highbd_dc_top_predictor_8x8_neon,
     vpx_highbd_dc_128_predictor_8x8_neon, vpx_highbd_v_predictor_8x8_neon,
     vpx_highbd_h_predictor_8x8_neon, vpx_highbd_d45_predictor_8x8_neon,
-    vpx_highbd_d135_predictor_8x8_neon, vpx_highbd_d117_predictor_8x8_neon,
-    vpx_highbd_d153_predictor_8x8_neon, vpx_highbd_d207_predictor_8x8_neon,
-    vpx_highbd_d63_predictor_8x8_neon, vpx_highbd_tm_predictor_8x8_neon)
-HIGHBD_INTRA_PRED_TEST(
-    NEON, TestHighbdIntraPred16, vpx_highbd_dc_predictor_16x16_neon,
-    vpx_highbd_dc_left_predictor_16x16_neon,
-    vpx_highbd_dc_top_predictor_16x16_neon,
-    vpx_highbd_dc_128_predictor_16x16_neon, vpx_highbd_v_predictor_16x16_neon,
-    vpx_highbd_h_predictor_16x16_neon, vpx_highbd_d45_predictor_16x16_neon,
-    vpx_highbd_d135_predictor_16x16_neon, vpx_highbd_d117_predictor_16x16_neon,
-    vpx_highbd_d153_predictor_16x16_neon, vpx_highbd_d207_predictor_16x16_neon,
-    vpx_highbd_d63_predictor_16x16_neon, vpx_highbd_tm_predictor_16x16_neon)
-HIGHBD_INTRA_PRED_TEST(
-    NEON, TestHighbdIntraPred32, vpx_highbd_dc_predictor_32x32_neon,
-    vpx_highbd_dc_left_predictor_32x32_neon,
-    vpx_highbd_dc_top_predictor_32x32_neon,
-    vpx_highbd_dc_128_predictor_32x32_neon, vpx_highbd_v_predictor_32x32_neon,
-    vpx_highbd_h_predictor_32x32_neon, vpx_highbd_d45_predictor_32x32_neon,
-    vpx_highbd_d135_predictor_32x32_neon, vpx_highbd_d117_predictor_32x32_neon,
-    vpx_highbd_d153_predictor_32x32_neon, vpx_highbd_d207_predictor_32x32_neon,
-    vpx_highbd_d63_predictor_32x32_neon, vpx_highbd_tm_predictor_32x32_neon)
+    vpx_highbd_d135_predictor_8x8_neon, nullptr, nullptr, nullptr, nullptr,
+    vpx_highbd_tm_predictor_8x8_neon)
+HIGHBD_INTRA_PRED_TEST(NEON, TestHighbdIntraPred16,
+                       vpx_highbd_dc_predictor_16x16_neon,
+                       vpx_highbd_dc_left_predictor_16x16_neon,
+                       vpx_highbd_dc_top_predictor_16x16_neon,
+                       vpx_highbd_dc_128_predictor_16x16_neon,
+                       vpx_highbd_v_predictor_16x16_neon,
+                       vpx_highbd_h_predictor_16x16_neon,
+                       vpx_highbd_d45_predictor_16x16_neon,
+                       vpx_highbd_d135_predictor_16x16_neon, nullptr, nullptr,
+                       nullptr, nullptr, vpx_highbd_tm_predictor_16x16_neon)
+HIGHBD_INTRA_PRED_TEST(NEON, TestHighbdIntraPred32,
+                       vpx_highbd_dc_predictor_32x32_neon,
+                       vpx_highbd_dc_left_predictor_32x32_neon,
+                       vpx_highbd_dc_top_predictor_32x32_neon,
+                       vpx_highbd_dc_128_predictor_32x32_neon,
+                       vpx_highbd_v_predictor_32x32_neon,
+                       vpx_highbd_h_predictor_32x32_neon,
+                       vpx_highbd_d45_predictor_32x32_neon,
+                       vpx_highbd_d135_predictor_32x32_neon, nullptr, nullptr,
+                       nullptr, nullptr, vpx_highbd_tm_predictor_32x32_neon)
 #endif  // HAVE_NEON
 
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 
-int main(int argc, char **argv) {
-  ::testing::InitGoogleTest(&argc, argv);
-  ::libvpx_test::init_vpx_test();
-  return RUN_ALL_TESTS();
-}
+#include "test/test_libvpx.cc"

@@ -58,7 +58,7 @@ class ByteAlignmentTest
   ByteAlignmentTest()
       : video_(nullptr), decoder_(nullptr), md5_file_(nullptr) {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     video_ = new libvpx_test::WebMVideoSource(kVP9TestFile);
     ASSERT_NE(video_, nullptr);
     video_->Init();
@@ -71,7 +71,7 @@ class ByteAlignmentTest
     OpenMd5File(kVP9Md5File);
   }
 
-  void TearDown() override {
+  virtual void TearDown() {
     if (md5_file_ != nullptr) fclose(md5_file_);
 
     delete decoder_;
