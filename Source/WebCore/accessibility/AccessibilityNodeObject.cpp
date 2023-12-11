@@ -270,7 +270,7 @@ LayoutRect AccessibilityNodeObject::checkboxOrRadioRect() const
 
 LayoutRect AccessibilityNodeObject::elementRect() const
 {
-    if (isCheckboxOrRadio())
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(node()); input && (input->isCheckbox() || input->isRadioButton()))
         return checkboxOrRadioRect();
 
     return boundingBoxRect();
