@@ -86,12 +86,15 @@ private:
  * They may be executed on different threads but can safely be used by objects that aren't already threadsafe.
  * Use `assertIsCurrent(m_myQueue);` in a runnable to assert that the runnable runs in a specific queue.
  */
-class WTF_CAPABILITY("is current") WTF_EXPORT_PRIVATE WorkQueue : public WorkQueueBase, public SerialFunctionDispatcher {
+class WTF_CAPABILITY("is current") WTF_EXPORT_PRIVATE WorkQueue : public WorkQueueBase, public RefCountedSerialFunctionDispatcher {
 public:
     static WorkQueue& main();
     static Ref<WorkQueue> create(const char* name, QOS = QOS::Default);
     void dispatch(Function<void()>&&) override;
     bool isCurrent() const override;
+    void ref() const override;
+    void deref() const override;
+
 #if !USE(COCOA_EVENT_LOOP)
     RunLoop& runLoop() const { return *m_runLoop; }
 #endif

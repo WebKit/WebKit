@@ -282,7 +282,6 @@ class NativePromiseProducer;
 enum class PromiseDispatchMode : uint8_t {
     Default, // ResolveRejectCallbacks will be dispatched on the target thread.
     RunSynchronouslyOnTarget, // ResolveRejectCallbacks will be run synchronously if target thread is current.
-
 };
 
 enum class PromiseOption : uint8_t {
@@ -355,51 +354,6 @@ public:
     const Logger::LogSiteIdentifier& logSiteIdentifier() const { return m_logSiteIdentifier; }
 
 private:
-    template <typename VisibleType>
-    class AliasedRefPtr {
-    public:
-        template <typename RefCountedType>
-        AliasedRefPtr(RefCountedType* ptr)
-            : m_ptr(ptr)
-            , m_ptrDeref([](VisibleType* d) {
-                static_cast<RefCountedType*>(d)->deref();
-            })
-        {
-            static_assert(HasRefCountMethods<RefCountedType>::value, "Must be used with a RefCounted object");
-            if (ptr)
-                ptr->ref();
-        }
-
-        AliasedRefPtr(AliasedRefPtr&& other)
-            : m_ptr(std::exchange(other.m_ptr, nullptr))
-            , m_ptrDeref(other.m_ptrDeref)
-        {
-        }
-
-        virtual ~AliasedRefPtr()
-        {
-            if (m_ptr)
-                m_ptrDeref(m_ptr);
-        }
-        AliasedRefPtr& operator=(AliasedRefPtr&& other)
-        {
-            if (&other == this)
-                return *this;
-            m_ptr = std::exchange(other.m_ptr, nullptr);
-            m_ptrDeref = other.m_ptrDeref;
-            return *this;
-        }
-
-        explicit operator bool() const { return !!m_ptr; }
-        VisibleType* operator->() { return m_ptr; }
-        VisibleType& operator*() const { return *m_ptr; }
-    private:
-        VisibleType* m_ptr;
-        using PtrDeref = void (*)(VisibleType*);
-        const PtrDeref m_ptrDeref;
-    };
-    using ManagedSerialFunctionDispatcher = AliasedRefPtr<SerialFunctionDispatcher>;
-
     // Return a |T&&| to enable move when IsExclusive is true or a |const T&| to enforce copy otherwise.
     template<typename T, typename R = std::conditional_t<IsExclusive, T&&, const T&>>
     static R maybeMove(T& aX)
@@ -696,7 +650,7 @@ private:
     class ThenCallbackBase : public Request {
 
     public:
-        ThenCallbackBase(ManagedSerialFunctionDispatcher&& targetQueue, const Logger::LogSiteIdentifier& callSite)
+        ThenCallbackBase(RefPtr<RefCountedSerialFunctionDispatcher>&& targetQueue, const Logger::LogSiteIdentifier& callSite)
             : m_targetQueue(WTFMove(targetQueue))
             , m_logSiteIdentifier(callSite)
         {
@@ -751,7 +705,7 @@ private:
 
     protected:
         virtual void processResult(Result&) = 0;
-        ManagedSerialFunctionDispatcher m_targetQueue;
+        const RefPtr<RefCountedSerialFunctionDispatcher> m_targetQueue;
         const Logger::LogSiteIdentifier m_logSiteIdentifier;
 
 #if ASSERT_ENABLED
@@ -771,7 +725,7 @@ private:
         using ReturnPromiseType = std::conditional_t<IsChaining, ReturnPromiseType_, GenericPromise>;
         using CallBackType = std::conditional_t<IsChaining, Function<Ref<ReturnPromiseType_>(ResultParam)>, Function<void(ResultParam)>>;
 
-        ThenCallback(ManagedSerialFunctionDispatcher&& targetQueue, CallBackType&& function, const Logger::LogSiteIdentifier& callSite)
+        ThenCallback(RefPtr<RefCountedSerialFunctionDispatcher>&& targetQueue, CallBackType&& function, const Logger::LogSiteIdentifier& callSite)
             : ThenCallbackBase(WTFMove(targetQueue), callSite)
             , m_settleFunction(WTFMove(function))
         {
@@ -885,27 +839,27 @@ private:
         }
 
         // Allow calling then() again by converting the ThenCommand to Ref<NativePromise>
-        template<class DispatcherType, typename ResolveFunction, typename RejectFunction>
-        auto then(DispatcherType& targetQueue, ResolveFunction&& resolveFunction, RejectFunction&& rejectFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+        template<typename ResolveFunction, typename RejectFunction>
+        auto then(RefCountedSerialFunctionDispatcher& targetQueue, ResolveFunction&& resolveFunction, RejectFunction&& rejectFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
         {
             return completionPromise()->then(targetQueue, std::forward<ResolveFunction>(resolveFunction), std::forward<RejectFunction>(rejectFunction), callSite);
         }
 
-        template<class DispatcherType, typename ThisType, typename ResolveMethod, typename RejectMethod>
-        auto then(DispatcherType& targetQueue, ThisType& thisVal, ResolveMethod resolveMethod, RejectMethod rejectMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+        template<typename ThisType, typename ResolveMethod, typename RejectMethod>
+        auto then(RefCountedSerialFunctionDispatcher& targetQueue, ThisType& thisVal, ResolveMethod resolveMethod, RejectMethod rejectMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
         {
             return completionPromise()->then(targetQueue, thisVal, std::forward<ResolveMethod>(resolveMethod), std::forward<RejectMethod>(rejectMethod), callSite);
         }
 
         // Allow calling whenSettled() again by converting the ThenCommand to Ref<NativePromise>
-        template<class DispatcherType, typename SettleFunction>
-        auto whenSettled(DispatcherType& targetQueue, SettleFunction&& settleFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+        template<typename SettleFunction>
+        auto whenSettled(RefCountedSerialFunctionDispatcher& targetQueue, SettleFunction&& settleFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
         {
             return completionPromise()->whenSettled(targetQueue, std::forward<SettleFunction>(settleFunction), callSite);
         }
 
-        template<class DispatcherType, typename ThisType, typename SettleMethod>
-        auto whenSettled(DispatcherType& targetQueue, ThisType& thisVal, SettleMethod settleMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+        template<typename ThisType, typename SettleMethod>
+        auto whenSettled(RefCountedSerialFunctionDispatcher& targetQueue, ThisType& thisVal, SettleMethod settleMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
         {
             return completionPromise()->whenSettled(targetQueue, thisVal, std::forward<SettleMethod>(settleMethod), callSite);
         }
@@ -980,21 +934,17 @@ private:
     template<typename SettleFunction>
     auto whenSettled(SettleFunction&& settleFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
-        ManagedSerialFunctionDispatcher dispatcher { static_cast<RunLoop*>(nullptr) };
         using ThenCallbackType = ThenCallback<false, void>;
         using ReturnType = ThenCommand<ThenCallbackType>;
 
-        auto thenCallback = adoptRef(*new ThenCallbackType(WTFMove(dispatcher), WTFMove(settleFunction), callSite));
+        auto thenCallback = adoptRef(*new ThenCallbackType(RefPtr<RefCountedSerialFunctionDispatcher> { }, WTFMove(settleFunction), callSite));
         return ReturnType(*this, WTFMove(thenCallback), callSite);
     }
 
 public:
-    template<class DispatcherType, typename SettleFunction>
-    auto whenSettled(DispatcherType& targetQueue, SettleFunction&& settleFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+    template<typename SettleFunction>
+    auto whenSettled(RefCountedSerialFunctionDispatcher& targetQueue, SettleFunction&& settleFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
-        using DispatcherRealType = typename RemoveSmartPointer<DispatcherType>::type;
-        static_assert(LooksLikeRCSerialDispatcher<DispatcherRealType>::value, "Must be used with a RefCounted SerialFunctionDispatcher");
-
         using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(std::forward<SettleFunction>(settleFunction), std::declval<Result>()))>::type;
         using IsChaining = std::bool_constant<IsConvertibleToNativePromise<R1>>;
         static_assert(IsConvertibleToNativePromise<R1> || std::is_void_v<R1>, "Settle method must return a promise or nothing");
@@ -1004,18 +954,16 @@ public:
             return invokeWithVoidOrWithArg(WTFMove(settleFunction), maybeMove(result));
         };
 
-        ManagedSerialFunctionDispatcher dispatcher { &static_cast<DispatcherRealType&>(targetQueue) };
         using ThenCallbackType = ThenCallback<IsChaining::value, decltype(std::declval<LambdaReturnTrait>().template type<R1>())>;
         using ReturnType = ThenCommand<ThenCallbackType>;
 
-        auto thenCallback = adoptRef(*new ThenCallbackType(WTFMove(dispatcher), WTFMove(lambda), callSite));
+        auto thenCallback = adoptRef(*new ThenCallbackType(RefPtr { &targetQueue }, WTFMove(lambda), callSite));
         return ReturnType(*this, WTFMove(thenCallback), callSite);
     }
 
-    template<class DispatcherType, typename ThisType, typename SettleMethod>
-    auto whenSettled(DispatcherType& targetQueue, ThisType& thisVal, SettleMethod settleMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+    template<typename ThisType, typename SettleMethod>
+    auto whenSettled(RefCountedSerialFunctionDispatcher& targetQueue, ThisType& thisVal, SettleMethod settleMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
-        static_assert(HasRefCountMethods<ThisType>::value, "ThisType must be refounted object");
         using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(thisVal, settleMethod, std::declval<Result>()))>::type;
         static_assert(IsConvertibleToNativePromise<R1> || std::is_void_v<R1>, "Settle method must return a promise or nothing");
         using LambdaReturnType = decltype(std::declval<LambdaReturnTrait>().template lambda<R1>());
@@ -1025,12 +973,9 @@ public:
         }, callSite);
     }
 
-    template<class DispatcherType, typename ResolveFunction, typename RejectFunction>
-    auto then(DispatcherType& targetQueue, ResolveFunction&& resolveFunction, RejectFunction&& rejectFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+    template<typename ResolveFunction, typename RejectFunction>
+    auto then(RefCountedSerialFunctionDispatcher& targetQueue, ResolveFunction&& resolveFunction, RejectFunction&& rejectFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
-        using DispatcherRealType = typename RemoveSmartPointer<DispatcherType>::type;
-        static_assert(LooksLikeRCSerialDispatcher<DispatcherRealType>::value, "Must be used with a RefCounted SerialFunctionDispatcher");
-
         using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(std::forward<ResolveFunction>(resolveFunction), std::declval<std::conditional_t<std::is_void_v<ResolveValueT>, detail::VoidPlaceholder, ResolveValueType>>()))>::type;
         using R2 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(std::forward<RejectFunction>(rejectFunction), std::declval<RejectValueType>()))>::type;
         using IsChaining = std::bool_constant<RelatedNativePromise<R1, R2>>;
@@ -1048,10 +993,9 @@ public:
         }, callSite);
     }
 
-    template<class DispatcherType, typename ThisType, typename ResolveMethod, typename RejectMethod>
-    auto then(DispatcherType& targetQueue, ThisType& thisVal, ResolveMethod resolveMethod, RejectMethod rejectMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+    template<typename ThisType, typename ResolveMethod, typename RejectMethod>
+    auto then(RefCountedSerialFunctionDispatcher& targetQueue, ThisType& thisVal, ResolveMethod resolveMethod, RejectMethod rejectMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
-        static_assert(HasRefCountMethods<ThisType>::value, "ThisType must be refounted object");
         using R1 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(thisVal, resolveMethod, std::declval<std::conditional_t<std::is_void_v<ResolveValueT>, detail::VoidPlaceholder, ResolveValueType>>()))>::type;
         using R2 = typename RemoveSmartPointer<decltype(invokeWithVoidOrWithArg(thisVal, rejectMethod, std::declval<RejectValueType>()))>::type;
         using IsChaining = std::bool_constant<RelatedNativePromise<R1, R2>>;
@@ -1362,15 +1306,15 @@ public:
     NativePromiseProducer* operator->() { return this; }
 
     // Allow calling then() again by converting the ThenCommand to Ref<NativePromise>
-    template<class DispatcherType, typename ResolveFunction, typename RejectFunction>
-    auto then(DispatcherType& targetQueue, ResolveFunction&& resolveFunction, RejectFunction&& rejectFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+    template<typename ResolveFunction, typename RejectFunction>
+    auto then(RefCountedSerialFunctionDispatcher& targetQueue, ResolveFunction&& resolveFunction, RejectFunction&& rejectFunction, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
         ASSERT(m_promise, "used after move");
         return m_promise->then(targetQueue, std::forward<ResolveFunction>(resolveFunction), std::forward<RejectFunction>(rejectFunction), callSite);
     }
 
-    template<class DispatcherType, typename ThisType, typename ResolveMethod, typename RejectMethod>
-    auto then(DispatcherType& targetQueue, ThisType& thisVal, ResolveMethod resolveMethod, RejectMethod rejectMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+    template<typename ThisType, typename ResolveMethod, typename RejectMethod>
+    auto then(RefCountedSerialFunctionDispatcher& targetQueue, ThisType& thisVal, ResolveMethod resolveMethod, RejectMethod rejectMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
         ASSERT(m_promise, "used after move");
         return m_promise->then(targetQueue, thisVal, std::forward<ResolveMethod>(resolveMethod), std::forward<RejectMethod>(rejectMethod), callSite);
@@ -1384,8 +1328,8 @@ public:
         return m_promise->whenSettled(targetQueue, std::forward<SettleFunction>(settleFunction), callSite);
     }
 
-    template<class DispatcherType, typename ThisType, typename SettleMethod>
-    auto whenSettled(DispatcherType& targetQueue, ThisType& thisVal, SettleMethod settleMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
+    template<typename ThisType, typename SettleMethod>
+    auto whenSettled(RefCountedSerialFunctionDispatcher& targetQueue, ThisType& thisVal, SettleMethod settleMethod, const Logger::LogSiteIdentifier& callSite = DEFAULT_LOGSITEIDENTIFIER)
     {
         ASSERT(m_promise, "used after move");
         return m_promise->whenSettled(targetQueue, thisVal, std::forward<SettleMethod>(settleMethod), callSite);
