@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
 
 #include <wtf/CheckedPtr.h>
 #include <wtf/FastMalloc.h>
@@ -35,38 +35,38 @@
 
 namespace WebKit {
 
+class ExtensionCapability;
+class ExtensionCapabilityGrant;
 class GPUProcessProxy;
 class MediaCapability;
-class ProcessCapability;
-class ProcessCapabilityGrant;
 class WebPageProxy;
 class WebProcessProxy;
 
-class ProcessCapabilityGranter : public CanMakeWeakPtr<ProcessCapabilityGranter> {
+class ExtensionCapabilityGranter : public CanMakeWeakPtr<ExtensionCapabilityGranter> {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(ProcessCapabilityGranter);
+    WTF_MAKE_NONCOPYABLE(ExtensionCapabilityGranter);
 public:
     struct Client : public CanMakeCheckedPtr {
         virtual ~Client() = default;
-        virtual RefPtr<GPUProcessProxy> gpuProcessForCapabilityGranter(const ProcessCapabilityGranter&) = 0;
-        virtual RefPtr<WebProcessProxy> webProcessForCapabilityGranter(const ProcessCapabilityGranter&, const String& environmentIdentifier) = 0;
+        virtual RefPtr<GPUProcessProxy> gpuProcessForCapabilityGranter(const ExtensionCapabilityGranter&) = 0;
+        virtual RefPtr<WebProcessProxy> webProcessForCapabilityGranter(const ExtensionCapabilityGranter&, const String& environmentIdentifier) = 0;
     };
 
-    static UniqueRef<ProcessCapabilityGranter> create(Client&);
+    static UniqueRef<ExtensionCapabilityGranter> create(Client&);
 
-    void grant(const ProcessCapability&);
-    void revoke(const ProcessCapability&);
+    void grant(const ExtensionCapability&);
+    void revoke(const ExtensionCapability&);
 
     void setMediaCapabilityActive(MediaCapability&, bool);
-    void invalidateGrants(Vector<ProcessCapabilityGrant>&&);
+    void invalidateGrants(Vector<ExtensionCapabilityGrant>&&);
 
 private:
-    friend UniqueRef<ProcessCapabilityGranter> WTF::makeUniqueRefWithoutFastMallocCheck(Client&);
-    explicit ProcessCapabilityGranter(Client&);
+    friend UniqueRef<ExtensionCapabilityGranter> WTF::makeUniqueRefWithoutFastMallocCheck(Client&);
+    explicit ExtensionCapabilityGranter(Client&);
 
     CheckedPtr<Client> m_client;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(PROCESS_CAPABILITIES)
+#endif // ENABLE(EXTENSION_CAPABILITIES)

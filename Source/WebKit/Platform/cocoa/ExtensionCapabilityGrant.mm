@@ -24,12 +24,13 @@
  */
 
 #import "config.h"
-#import "ProcessCapabilityGrant.h"
+#import "ExtensionCapabilityGrant.h"
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
 
 #import "ExtensionKitSPI.h"
 #import "Logging.h"
+#import <wtf/CrossThreadCopier.h>
 
 namespace WebKit {
 
@@ -45,23 +46,23 @@ static void platformInvalidate(RetainPtr<_SEGrant>&& platformGrant)
 #endif
 }
 
-ProcessCapabilityGrant::ProcessCapabilityGrant(String environmentIdentifier)
+ExtensionCapabilityGrant::ExtensionCapabilityGrant(String environmentIdentifier)
     : m_environmentIdentifier { WTFMove(environmentIdentifier) }
 {
 }
 
-ProcessCapabilityGrant::ProcessCapabilityGrant(String&& environmentIdentifier, RetainPtr<_SEGrant>&& platformGrant)
+ExtensionCapabilityGrant::ExtensionCapabilityGrant(String&& environmentIdentifier, RetainPtr<_SEGrant>&& platformGrant)
     : m_environmentIdentifier { WTFMove(environmentIdentifier) }
     , m_platformGrant { WTFMove(platformGrant) }
 {
 }
 
-ProcessCapabilityGrant::~ProcessCapabilityGrant()
+ExtensionCapabilityGrant::~ExtensionCapabilityGrant()
 {
     setPlatformGrant(nil);
 }
 
-ProcessCapabilityGrant ProcessCapabilityGrant::isolatedCopy() &&
+ExtensionCapabilityGrant ExtensionCapabilityGrant::isolatedCopy() &&
 {
     return {
         crossThreadCopy(WTFMove(m_environmentIdentifier)),
@@ -69,12 +70,12 @@ ProcessCapabilityGrant ProcessCapabilityGrant::isolatedCopy() &&
     };
 }
 
-bool ProcessCapabilityGrant::isEmpty() const
+bool ExtensionCapabilityGrant::isEmpty() const
 {
     return !m_platformGrant;
 }
 
-bool ProcessCapabilityGrant::isValid() const
+bool ExtensionCapabilityGrant::isValid() const
 {
 #if USE(EXTENSIONKIT)
     if ([m_platformGrant isValid])
@@ -83,11 +84,11 @@ bool ProcessCapabilityGrant::isValid() const
     return false;
 }
 
-void ProcessCapabilityGrant::setPlatformGrant(RetainPtr<_SEGrant>&& platformGrant)
+void ExtensionCapabilityGrant::setPlatformGrant(RetainPtr<_SEGrant>&& platformGrant)
 {
     platformInvalidate(std::exchange(m_platformGrant, WTFMove(platformGrant)));
 }
 
 } // namespace WebKit
 
-#endif // ENABLE(PROCESS_CAPABILITIES)
+#endif // ENABLE(EXTENSION_CAPABILITIES)

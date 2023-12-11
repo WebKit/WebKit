@@ -51,8 +51,8 @@
 #include <WebCore/ThermalMitigationNotifier.h>
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
-#include "ProcessCapabilityGrant.h"
+#if ENABLE(EXTENSION_CAPABILITIES)
+#include "ExtensionCapabilityGrant.h"
 #endif
 
 namespace WebKit {
@@ -91,8 +91,8 @@ AuxiliaryProcessProxy::~AuxiliaryProcessProxy()
 
     replyToPendingMessages();
 
-#if ENABLE(PROCESS_CAPABILITIES)
-    ASSERT(m_processCapabilityGrants.isEmpty());
+#if ENABLE(EXTENSION_CAPABILITIES)
+    ASSERT(m_extensionCapabilityGrants.isEmpty());
 #endif
 }
 

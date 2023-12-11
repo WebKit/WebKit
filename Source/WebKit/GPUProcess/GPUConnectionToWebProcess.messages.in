@@ -65,7 +65,7 @@ messages -> GPUConnectionToWebProcess WantsDispatchMessage {
     UpdateSampleBufferDisplayLayerBoundsAndPosition(WebKit::SampleBufferDisplayLayerIdentifier identifier, WebCore::FloatRect bounds, std::optional<MachSendRight> fence);
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     SetMediaEnvironment(WebCore::PageIdentifier pageIdentifier, String mediaEnvironment);
 #endif
 }

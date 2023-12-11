@@ -2739,7 +2739,7 @@ void WebPageProxy::dispatchActivityStateChange()
     m_activityStateChangeWantsSynchronousReply = false;
     m_viewWasEverInWindow |= isNowInWindow;
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     updateMediaCapability();
 #endif
 
@@ -6214,7 +6214,7 @@ void WebPageProxy::didCommitLoadForFrame(FrameIdentifier frameID, FrameInfoData&
         m_userMediaPermissionRequestManager->didCommitLoadForFrame(frameID);
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     if (frame->isMainFrame())
         updateMediaCapability();
 #endif
@@ -9530,7 +9530,7 @@ void WebPageProxy::resetState(ResetStateReason resetStateReason)
     m_advancedPrivacyProtectionsPolicies = { };
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     setMediaCapability(std::nullopt);
 #endif
 }
@@ -11301,7 +11301,7 @@ void WebPageProxy::updatePlayingMediaDidChange(MediaProducerMediaStateFlags newS
     if (mediaStreamingChanges)
         process->updateMediaStreamingActivity();
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     updateMediaCapability();
 #endif
 }
@@ -12659,10 +12659,10 @@ void WebPageProxy::clearLoadedSubresourceDomains()
 void WebPageProxy::gpuProcessDidFinishLaunching()
 {
     pageClient().gpuProcessDidFinishLaunching();
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     if (auto& mediaCapability = this->mediaCapability()) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "gpuProcessDidFinishLaunching: [envID=%{public}s] granting media capability", mediaCapability->environmentIdentifier().utf8().data());
-        protectedProcess()->protectedProcessPool()->processCapabilityGranter().grant(*mediaCapability);
+        protectedProcess()->protectedProcessPool()->extensionCapabilityGranter().grant(*mediaCapability);
     }
 #endif
 }

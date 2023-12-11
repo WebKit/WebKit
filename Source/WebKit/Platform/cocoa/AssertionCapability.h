@@ -25,23 +25,23 @@
 
 #pragma once
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
 
-#include "ProcessCapability.h"
+#include "ExtensionCapability.h"
 #include <wtf/BlockPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-class AssertionCapability final : public ProcessCapability {
+class AssertionCapability final : public ExtensionCapability {
 public:
     AssertionCapability(String environmentIdentifier, String domain, String name, Function<void()>&& willInvalidateFunction = nullptr, Function<void()>&& didInvalidateFunction = nullptr);
 
     const String& domain() const { return m_domain; }
     const String& name() const { return m_name; }
 
-    // ProcessCapability
+    // ExtensionCapability
     String environmentIdentifier() const final { return m_environmentIdentifier; }
     RetainPtr<_SECapabilities> platformCapability() const final;
 
@@ -55,4 +55,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(PROCESS_CAPABILITIES)
+#endif // ENABLE(EXTENSION_CAPABILITIES)

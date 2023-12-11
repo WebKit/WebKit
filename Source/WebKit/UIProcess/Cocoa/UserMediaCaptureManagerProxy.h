@@ -66,7 +66,7 @@ public:
 #if ENABLE(APP_PRIVACY_REPORT)
         virtual void setTCCIdentity() { }
 #endif
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
         virtual void setCurrentMediaEnvironment(WebCore::PageIdentifier) { };
 #endif
         virtual void startProducingData(WebCore::CaptureDevice::DeviceType) { }

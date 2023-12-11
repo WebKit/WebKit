@@ -967,7 +967,7 @@ bool AVVideoCaptureSource::setupSession()
 
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     String mediaEnvironment = RealtimeMediaSourceCenter::singleton().currentMediaEnvironment();
     // FIXME (119325252): Remove staging code for -[AVCaptureSession initWithMediaEnvironment:]
     if (!mediaEnvironment.isEmpty() && [PAL::getAVCaptureSessionClass() instancesRespondToSelector:@selector(initWithMediaEnvironment:)])

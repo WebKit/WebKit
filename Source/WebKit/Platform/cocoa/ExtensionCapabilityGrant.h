@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
 
 #include <wtf/RetainPtr.h>
 #include <wtf/text/WTFString.h>
@@ -34,15 +34,15 @@ OBJC_PROTOCOL(_SEGrant);
 
 namespace WebKit {
 
-class ProcessCapabilityGrant {
+class ExtensionCapabilityGrant {
 public:
-    ProcessCapabilityGrant() = default;
-    ProcessCapabilityGrant(ProcessCapabilityGrant&&) = default;
-    explicit ProcessCapabilityGrant(String environmentIdentifier);
-    ~ProcessCapabilityGrant();
+    ExtensionCapabilityGrant() = default;
+    ExtensionCapabilityGrant(ExtensionCapabilityGrant&&) = default;
+    explicit ExtensionCapabilityGrant(String environmentIdentifier);
+    ~ExtensionCapabilityGrant();
 
-    ProcessCapabilityGrant& operator=(ProcessCapabilityGrant&&) = default;
-    ProcessCapabilityGrant isolatedCopy() &&;
+    ExtensionCapabilityGrant& operator=(ExtensionCapabilityGrant&&) = default;
+    ExtensionCapabilityGrant isolatedCopy() &&;
 
     const String& environmentIdentifier() const { return m_environmentIdentifier; }
     bool isEmpty() const;
@@ -51,7 +51,7 @@ public:
     void setPlatformGrant(RetainPtr<_SEGrant>&&);
 
 private:
-    ProcessCapabilityGrant(String&&, RetainPtr<_SEGrant>&&);
+    ExtensionCapabilityGrant(String&&, RetainPtr<_SEGrant>&&);
 
     String m_environmentIdentifier;
     RetainPtr<_SEGrant> m_platformGrant;
@@ -59,4 +59,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(PROCESS_CAPABILITIES)
+#endif // ENABLE(EXTENSION_CAPABILITIES)

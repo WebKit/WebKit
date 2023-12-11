@@ -74,9 +74,9 @@
 #include <WebCore/PlatformDisplay.h>
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
+#include "ExtensionCapabilityGrant.h"
 #include "MediaCapability.h"
-#include "ProcessCapabilityGrant.h"
 #endif
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, this->connection())
@@ -503,10 +503,10 @@ void GPUProcessProxy::gpuProcessExited(ProcessTerminationReason reason)
         break;
     }
 
-#if ENABLE(PROCESS_CAPABILITIES)
-    // FIXME: Any ProcessCapabilityGranter can invalidate the GPUProcessProxy grants, so we pick the first one. In the future ProcessCapabilityGranter should be made a singleton.
+#if ENABLE(EXTENSION_CAPABILITIES)
+    // FIXME: Any ExtensionCapabilityGranter can invalidate the GPUProcessProxy grants, so we pick the first one. In the future ExtensionCapabilityGranter should be made a singleton.
     for (auto& processPool : WebProcessPool::allProcessPools()) {
-        processPool->processCapabilityGranter().invalidateGrants(moveToVector(std::exchange(processCapabilityGrants(), { }).values()));
+        processPool->extensionCapabilityGranter().invalidateGrants(moveToVector(std::exchange(extensionCapabilityGrants(), { }).values()));
         break;
     }
 

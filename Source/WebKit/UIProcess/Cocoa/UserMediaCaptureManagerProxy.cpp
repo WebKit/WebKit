@@ -569,7 +569,7 @@ void UserMediaCaptureManagerProxy::startProducingData(RealtimeMediaSourceIdentif
 #if ENABLE(APP_PRIVACY_REPORT)
     m_connectionProxy->setTCCIdentity();
 #endif
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     m_connectionProxy->setCurrentMediaEnvironment(pageIdentifier);
 #endif
     m_connectionProxy->startProducingData(proxy->source().deviceType());

@@ -103,7 +103,7 @@ void GPUConnectionToWebProcess::setTCCIdentity()
 }
 #endif // ENABLE(APP_PRIVACY_REPORT)
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
 String GPUConnectionToWebProcess::mediaEnvironment(WebCore::PageIdentifier pageIdentifier)
 {
     return m_mediaEnvironments.get(pageIdentifier);

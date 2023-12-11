@@ -815,7 +815,7 @@ URL WebPage::allowedQueryParametersForAdvancedPrivacyProtections(const URL& url)
 #endif
 }
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
 void WebPage::setMediaEnvironment(const String& mediaEnvironment)
 {
     m_mediaEnvironment = mediaEnvironment;

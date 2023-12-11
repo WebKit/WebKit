@@ -424,7 +424,7 @@ bool RealtimeMediaSourceCenter::shouldInterruptAudioOnPageVisibilityChange()
 }
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
 const String& RealtimeMediaSourceCenter::currentMediaEnvironment() const
 {
     return m_currentMediaEnvironment;

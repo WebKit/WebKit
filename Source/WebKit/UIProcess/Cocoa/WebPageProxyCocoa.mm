@@ -988,7 +988,7 @@ bool WebPageProxy::shouldAllowAutoFillForCellularIdentifiers() const
 
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
 
 const std::optional<MediaCapability>& WebPageProxy::mediaCapability() const
 {
@@ -1001,15 +1001,15 @@ void WebPageProxy::setMediaCapability(std::optional<MediaCapability>&& capabilit
 
     if (auto& oldCapability = internals().mediaCapability) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setMediaCapability: revoking (envID=%{public}s) for registrable domain '%{sensitive}s'", oldCapability->environmentIdentifier().utf8().data(), oldCapability->registrableDomain().string().utf8().data());
-        processPool->processCapabilityGranter().setMediaCapabilityActive(*oldCapability, false);
-        processPool->processCapabilityGranter().revoke(*oldCapability);
+        processPool->extensionCapabilityGranter().setMediaCapabilityActive(*oldCapability, false);
+        processPool->extensionCapabilityGranter().revoke(*oldCapability);
     }
 
     internals().mediaCapability = WTFMove(capability);
 
     if (auto& newCapability = internals().mediaCapability) {
         WEBPAGEPROXY_RELEASE_LOG(ProcessCapabilities, "setMediaCapability: granting (envID=%{public}s) for registrable domain '%{sensitive}s'", newCapability->environmentIdentifier().utf8().data(), newCapability->registrableDomain().string().utf8().data());
-        processPool->processCapabilityGranter().grant(*newCapability);
+        processPool->extensionCapabilityGranter().grant(*newCapability);
     }
 
     send(Messages::WebPage::SetMediaEnvironment([&]() -> String {
@@ -1043,9 +1043,9 @@ void WebPageProxy::updateMediaCapability()
     Ref processPool = protectedProcess()->protectedProcessPool();
 
     if (shouldActivateMediaCapability())
-        processPool->processCapabilityGranter().setMediaCapabilityActive(*mediaCapability, true);
+        processPool->extensionCapabilityGranter().setMediaCapabilityActive(*mediaCapability, true);
     else if (shouldDeactivateMediaCapability())
-        processPool->processCapabilityGranter().setMediaCapabilityActive(*mediaCapability, false);
+        processPool->extensionCapabilityGranter().setMediaCapabilityActive(*mediaCapability, false);
 }
 
 bool WebPageProxy::shouldActivateMediaCapability() const
@@ -1073,7 +1073,7 @@ bool WebPageProxy::shouldDeactivateMediaCapability() const
     return true;
 }
 
-#endif // ENABLE(PROCESS_CAPABILITIES)
+#endif // ENABLE(EXTENSION_CAPABILITIES)
 
 } // namespace WebKit
 

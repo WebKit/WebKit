@@ -103,7 +103,7 @@ public:
     void destroyVisibilityPropagationContextForPage(WebPage&);
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     void setMediaEnvironment(WebCore::PageIdentifier, const String&);
 #endif
 

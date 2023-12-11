@@ -1130,7 +1130,7 @@ void WebPage::gpuProcessConnectionDidBecomeAvailable(GPUProcessConnection& gpuPr
     gpuProcessConnection.createVisibilityPropagationContextForPage(*this);
 #endif
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     if (!mediaEnvironment().isEmpty())
         gpuProcessConnection.setMediaEnvironment(identifier(), mediaEnvironment());
 #endif
@@ -1308,7 +1308,7 @@ WebPage::~WebPage()
     for (auto& completionHandler : std::exchange(m_markLayersAsVolatileCompletionHandlers, { }))
         completionHandler(false);
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
     setMediaEnvironment({ });
 #endif
 }

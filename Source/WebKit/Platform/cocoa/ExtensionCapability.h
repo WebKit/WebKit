@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
 
 #include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
@@ -34,16 +34,16 @@ OBJC_CLASS _SECapabilities;
 
 namespace WebKit {
 
-class ProcessCapability {
+class ExtensionCapability {
 public:
-    virtual ~ProcessCapability() = default;
+    virtual ~ExtensionCapability() = default;
     virtual String environmentIdentifier() const = 0;
     virtual RetainPtr<_SECapabilities> platformCapability() const = 0;
 
 protected:
-    ProcessCapability() = default;
+    ExtensionCapability() = default;
 };
 
 } // namespace WebKit
 
-#endif // ENABLE(PROCESS_CAPABILITIES)
+#endif // ENABLE(EXTENSION_CAPABILITIES)

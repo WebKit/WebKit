@@ -25,20 +25,20 @@
 
 #pragma once
 
-#if ENABLE(PROCESS_CAPABILITIES)
+#if ENABLE(EXTENSION_CAPABILITIES)
 
-#include "ProcessCapability.h"
+#include "ExtensionCapability.h"
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/Forward.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
-class ProcessCapabilityGrant;
+class ExtensionCapabilityGrant;
 
 using WebCore::RegistrableDomain;
 
-class MediaCapability final : public ProcessCapability, public CanMakeWeakPtr<MediaCapability> {
+class MediaCapability final : public ExtensionCapability, public CanMakeWeakPtr<MediaCapability> {
 public:
     explicit MediaCapability(RegistrableDomain);
     explicit MediaCapability(const URL&);
@@ -55,7 +55,7 @@ public:
 
     const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
 
-    // ProcessCapability
+    // ExtensionCapability
     String environmentIdentifier() const final;
     RetainPtr<_SECapabilities> platformCapability() const final { return m_platformCapability.get(); }
 
@@ -67,4 +67,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(PROCESS_CAPABILITIES)
+#endif // ENABLE(EXTENSION_CAPABILITIES)
