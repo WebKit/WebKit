@@ -32,6 +32,7 @@
 #include "ASTFunction.h"
 #include "ASTStatement.h"
 #include "ASTStructure.h"
+#include "ASTTypeAlias.h"
 #include "ASTVariable.h"
 #include "CompilationMessage.h"
 #include "Lexer.h"
@@ -77,6 +78,7 @@ public:
     Result<AST::VariableQualifier::Ref> parseVariableQualifier();
     Result<AddressSpace> parseAddressSpace();
     Result<AccessMode> parseAccessMode();
+    Result<AST::TypeAlias::Ref> parseTypeAlias();
     Result<AST::Function::Ref> parseFunction(AST::Attribute::List&&);
     Result<std::reference_wrapper<AST::Parameter>> parseParameter();
     Result<AST::Statement::Ref> parseStatement();

@@ -20,8 +20,18 @@ fn m7(x: mat4x2f) {}
 fn m8(x: mat4x3f) {}
 fn m9(x: mat4x4f) {}
 
+struct S {
+  x: i32,
+}
+alias v = vec2<i32>;
+alias s = S;
+
 @compute @workgroup_size(1)
 fn main() {
+
+    let x = v(0);
+    let y = s(0);
+
     _ = f1(vec2f(vec2(0u)));
     _ = f2(vec2i(vec2(0f)));
     _ = f3(vec2u(vec2(0f)));

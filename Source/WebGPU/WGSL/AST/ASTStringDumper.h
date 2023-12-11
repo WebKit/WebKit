@@ -61,6 +61,7 @@ public:
     void visit(Function&) override;
     void visit(Structure&) override;
     void visit(Variable&) override;
+    void visit(TypeAlias&) override;
 
     // Expression
     void visit(AbstractFloatLiteral&) override;

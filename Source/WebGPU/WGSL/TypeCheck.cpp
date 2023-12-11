@@ -65,6 +65,7 @@ public:
     void visit(AST::Structure&) override;
     void visit(AST::Variable&) override;
     void visit(AST::Function&) override;
+    void visit(AST::TypeAlias&) override;
 
     // Attributes
     void visit(AST::AlignAttribute&) override;
@@ -352,11 +353,16 @@ void TypeChecker::visit(AST::Variable& variable)
     visitVariable(variable, VariableKind::Global);
 }
 
+void TypeChecker::visit(AST::TypeAlias& alias)
+{
+    auto* type = resolve(alias.type());
+    introduceType(alias.name(), type);
+}
+
 void TypeChecker::visit(AST::VariableStatement& statement)
 {
     visitVariable(statement.variable(), VariableKind::Local);
 }
-
 
 void TypeChecker::visitVariable(AST::Variable& variable, VariableKind variableKind)
 {

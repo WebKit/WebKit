@@ -198,6 +198,14 @@ void StringDumper::visit(Variable& variable)
     m_out.print(";");
 }
 
+void StringDumper::visit(TypeAlias& alias)
+{
+    m_out.print(m_indent);
+    m_out.print("alias ", alias.name(), " = ");
+    visit(alias.type());
+    m_out.print(";");
+}
+
 // Expression
 void StringDumper::visit(AbstractFloatLiteral& literal)
 {
