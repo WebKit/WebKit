@@ -764,8 +764,7 @@ RetainPtr<WKVideoView> VideoPresentationManagerProxy::createViewWithID(PlaybackS
         if (![[view layer] superlayer])
             [playerLayer addSublayer:[view layer]];
 
-        auto videoView = adoptNS([[WKVideoView alloc] initWithFrame:initialFrame]);
-        [videoView addSubview:playerView.get()];
+        auto videoView = adoptNS([[WKVideoView alloc] initWithFrame:initialFrame playerView:playerView.get()]);
 
         model->setPlayerLayer(WTFMove(playerLayer));
         model->setPlayerView(playerView.get());
