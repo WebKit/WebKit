@@ -99,7 +99,7 @@ inline unsigned StringHasher::hashWithTop8BitsMasked()
         uint64_t a = 0;
         uint64_t b = 0;
         if (m_bufferSize >= 8) {
-            a = wyr8(p + i - 8);
+            a = wyr8(p - (8 - i));
             b = wyr8(p + i - 4);
         } else {
             UChar tmp[8];

@@ -51,8 +51,8 @@ protected:
     // s_sizeOfStateAuditTrail states that the state machine enters. The audit
     // trail is updated before entering each state. This is for debugging use
     // only.
-    static const int s_sizeOfStateAuditTrail = 20;
-    int m_nextStateAuditEntry;
+    static constexpr unsigned s_sizeOfStateAuditTrail = 20U;
+    unsigned m_nextStateAuditEntry;
     SQLTransactionState m_stateAuditTrail[s_sizeOfStateAuditTrail];
 #endif
 };
@@ -70,7 +70,7 @@ SQLTransactionStateMachine<T>::SQLTransactionStateMachine()
 #endif
 {
 #ifndef NDEBUG
-    for (int i = 0; i < s_sizeOfStateAuditTrail; i++)
+    for (unsigned i = 0; i < s_sizeOfStateAuditTrail; i++)
         m_stateAuditTrail[i] = SQLTransactionState::NumberOfStates;
 #endif
 }
@@ -98,8 +98,9 @@ void SQLTransactionStateMachine<T>::runStateMachine()
     ASSERT(stateFunction);
 
 #ifndef NDEBUG
-    m_stateAuditTrail[m_nextStateAuditEntry] = m_nextState;
-    m_nextStateAuditEntry = (m_nextStateAuditEntry + 1) % s_sizeOfStateAuditTrail;
+    m_stateAuditTrail[m_nextStateAuditEntry++] = m_nextState;
+    if (m_nextStateAuditEntry == s_sizeOfStateAuditTrail)
+        m_nextStateAuditEntry = 0;
 #endif
 
     (static_cast<T*>(this)->*stateFunction)();

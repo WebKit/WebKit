@@ -305,7 +305,7 @@ void HRTFElevation::getKernelsFromAzimuth(double azimuthBlend, unsigned azimuthI
     frameDelayL = m_kernelListL->at(azimuthIndex)->frameDelay();
     frameDelayR = m_kernelListR->at(azimuthIndex)->frameDelay();
 
-    int azimuthIndex2 = (azimuthIndex + 1) % numKernels;
+    unsigned azimuthIndex2 = (azimuthIndex + 1) == numKernels ? 0 : azimuthIndex + 1;
     double frameDelay2L = m_kernelListL->at(azimuthIndex2)->frameDelay();
     double frameDelay2R = m_kernelListR->at(azimuthIndex2)->frameDelay();
 

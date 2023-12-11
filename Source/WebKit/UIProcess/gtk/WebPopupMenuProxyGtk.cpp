@@ -473,7 +473,7 @@ std::optional<unsigned> WebPopupMenuProxyGtk::typeAheadFindIndex(unsigned keyval
         return std::nullopt;
 
     model = gtk_tree_view_get_model(GTK_TREE_VIEW(m_treeView));
-    for (unsigned i = 0; i < itemCount; i++, index = (index + 1) % itemCount) {
+    for (unsigned i = 0; i < itemCount; i++, index = ((index + 1) == itemCount) ? 0 : index + 1) {
         auto& path = m_paths[index];
         if (!path || !gtk_tree_model_get_iter(model, &iter, path.get()))
             continue;
