@@ -32,6 +32,10 @@
 
 - (void)dealloc
 {
+    [_directory release];
+    _directory = nil;
+    [_suggestedFileName release];
+    _suggestedFileName = nil;
     [_exclusionRules release];
     _exclusionRules = nil;
 
