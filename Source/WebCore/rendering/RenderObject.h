@@ -1207,7 +1207,7 @@ private:
 
     SingleThreadWeakPtr<RenderElement> m_parent;
     SingleThreadWeakPtr<RenderObject> m_previous;
-    PackedCheckedPtr<RenderObject> m_next;
+    SingleThreadPackedWeakPtr<RenderObject> m_next;
     Type m_type;
 
     CheckedPtr<Layout::Box> m_layoutBox;

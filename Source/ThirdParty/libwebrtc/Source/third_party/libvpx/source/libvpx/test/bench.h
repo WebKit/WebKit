@@ -16,8 +16,6 @@
 
 class AbstractBench {
  public:
-  virtual ~AbstractBench() = default;
-
   void RunNTimes(int n);
   void PrintMedian(const char *title);
 

@@ -119,7 +119,7 @@ struct SameSizeAsRenderObject : public CachedImageClient, public CanMakeCheckedP
     unsigned m_bitfields;
     CheckedRef<Node> node;
     SingleThreadWeakPtr<RenderObject> pointers[2];
-    PackedPtr<RenderObject> m_next;
+    SingleThreadPackedWeakPtr<RenderObject> m_next;
     uint8_t m_type;
     CheckedPtr<Layout::Box> layoutBox;
 };

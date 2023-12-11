@@ -107,9 +107,9 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(RenderElement);
 
 struct SameSizeAsRenderElement : public RenderObject {
-    PackedPtr<RenderObject> firstChild;
+    SingleThreadPackedWeakPtr<RenderObject> firstChild;
     unsigned bitfields1 : 12;
-    PackedPtr<RenderObject> lastChild;
+    SingleThreadPackedWeakPtr<RenderObject> lastChild;
     unsigned bitfields2 : 13;
     RenderStyle style;
 };

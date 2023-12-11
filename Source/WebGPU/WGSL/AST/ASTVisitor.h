@@ -53,6 +53,7 @@ public:
     virtual void visit(AST::Function&);
     virtual void visit(AST::Variable&);
     virtual void visit(AST::Structure&);
+    virtual void visit(AST::TypeAlias&);
 
     // Attribute
     virtual void visit(AST::Attribute&);

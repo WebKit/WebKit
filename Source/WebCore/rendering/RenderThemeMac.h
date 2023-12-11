@@ -162,7 +162,6 @@ private:
 
     void updateCheckedState(NSCell*, const RenderObject&);
     void updateEnabledState(NSCell*, const RenderObject&);
-    void updateFocusedState(NSCell *, const RenderObject*);
     void updatePressedState(NSCell*, const RenderObject&);
 
     // Helpers for adjusting appearance and for painting

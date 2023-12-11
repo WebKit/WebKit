@@ -27,7 +27,7 @@ using libvpx_test::Buffer;
 
 class IDCTTest : public ::testing::TestWithParam<IdctFunc> {
  protected:
-  void SetUp() override {
+  virtual void SetUp() {
     UUT = GetParam();
 
     input = new Buffer<int16_t>(4, 4, 0);
@@ -41,7 +41,7 @@ class IDCTTest : public ::testing::TestWithParam<IdctFunc> {
     ASSERT_TRUE(output->Init());
   }
 
-  void TearDown() override {
+  virtual void TearDown() {
     delete input;
     delete predict;
     delete output;

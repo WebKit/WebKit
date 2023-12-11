@@ -1,4 +1,4 @@
-v1.13.1 Ugly Duckling
+README - 20 July 2020
 
 Welcome to the WebM VP8/VP9 Codec SDK!
 
@@ -10,14 +10,14 @@ COMPILING THE APPLICATIONS/LIBRARIES:
   1. Prerequisites
 
     * All x86 targets require the Yasm[1] assembler be installed[2].
-    * All Windows builds require that Cygwin[3] or MSYS2[4] be installed.
-    * Building the documentation requires Doxygen[5]. If you do not
+    * All Windows builds require that Cygwin[3] be installed.
+    * Building the documentation requires Doxygen[4]. If you do not
       have this package, the install-docs option will be disabled.
-    * Downloading the data for the unit tests requires curl[6] and sha1sum.
+    * Downloading the data for the unit tests requires curl[5] and sha1sum.
       sha1sum is provided via the GNU coreutils, installed by default on
       many *nix platforms, as well as MinGW and Cygwin. If coreutils is not
       available, a compatible version of sha1sum can be built from
-      source[7]. These requirements are optional if not running the unit
+      source[6]. These requirements are optional if not running the unit
       tests.
 
     [1]: http://www.tortall.net/projects/yasm
@@ -26,10 +26,9 @@ COMPILING THE APPLICATIONS/LIBRARIES:
          yasm-<version>-<arch>.exe to yasm.exe and place it in:
          Program Files (x86)/Microsoft Visual Studio/2017/<level>/Common7/Tools/
     [3]: http://www.cygwin.com
-    [4]: http://www.msys2.org/
-    [5]: http://www.doxygen.org
-    [6]: http://curl.haxx.se
-    [7]: http://www.microbrew.org/tools/md5sha1sum/
+    [4]: http://www.doxygen.org
+    [5]: http://curl.haxx.se
+    [6]: http://www.microbrew.org/tools/md5sha1sum/
 
   2. Out-of-tree builds
   Out of tree builds are a supported method of building the application. For
@@ -64,15 +63,9 @@ COMPILING THE APPLICATIONS/LIBRARIES:
     arm64-android-gcc
     arm64-darwin-gcc
     arm64-darwin20-gcc
-    arm64-darwin21-gcc
-    arm64-darwin22-gcc
     arm64-linux-gcc
     arm64-win64-gcc
     arm64-win64-vs15
-    arm64-win64-vs16
-    arm64-win64-vs16-clangcl
-    arm64-win64-vs17
-    arm64-win64-vs17-clangcl
     armv7-android-gcc
     armv7-darwin-gcc
     armv7-linux-rvct
@@ -83,8 +76,6 @@ COMPILING THE APPLICATIONS/LIBRARIES:
     armv7-win32-vs15
     armv7s-darwin-gcc
     armv8-linux-gcc
-    loongarch32-linux-gcc
-    loongarch64-linux-gcc
     mips32-linux-gcc
     mips64-linux-gcc
     ppc64le-linux-gcc
@@ -111,7 +102,6 @@ COMPILING THE APPLICATIONS/LIBRARIES:
     x86-win32-vs14
     x86-win32-vs15
     x86-win32-vs16
-    x86-win32-vs17
     x86_64-android-gcc
     x86_64-darwin9-gcc
     x86_64-darwin10-gcc
@@ -125,8 +115,6 @@ COMPILING THE APPLICATIONS/LIBRARIES:
     x86_64-darwin18-gcc
     x86_64-darwin19-gcc
     x86_64-darwin20-gcc
-    x86_64-darwin21-gcc
-    x86_64-darwin22-gcc
     x86_64-iphonesimulator-gcc
     x86_64-linux-gcc
     x86_64-linux-icc
@@ -135,7 +123,6 @@ COMPILING THE APPLICATIONS/LIBRARIES:
     x86_64-win64-vs14
     x86_64-win64-vs15
     x86_64-win64-vs16
-    x86_64-win64-vs17
     generic-gnu
 
   The generic-gnu target, in conjunction with the CROSS environment variable,

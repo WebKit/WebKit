@@ -132,18 +132,9 @@ void idct8x8_64_add_12_sse2(const tran_low_t *in, uint8_t *out, int stride) {
 #endif  // HAVE_SSE2
 #endif  // CONFIG_VP9_HIGHBITDEPTH
 
-// Visual Studio 2022 (cl.exe) targeting AArch64 with optimizations enabled
-// produces invalid code in RunExtremalCheck() and RunInvAccuracyCheck().
-// See:
-// https://developercommunity.visualstudio.com/t/1770-preview-1:-Misoptimization-for-AR/10369786
-// TODO(jzern): check the compiler version after a fix for the issue is
-// released.
-#if defined(_MSC_VER) && defined(_M_ARM64) && !defined(__clang__)
-#pragma optimize("", off)
-#endif
 class FwdTrans8x8TestBase {
  public:
-  virtual ~FwdTrans8x8TestBase() = default;
+  virtual ~FwdTrans8x8TestBase() {}
 
  protected:
   virtual void RunFwdTxfm(int16_t *in, tran_low_t *out, int stride) = 0;
@@ -179,7 +170,7 @@ class FwdTrans8x8TestBase {
     for (int j = 0; j < 64; ++j) {
       const int diff = abs(count_sign_block[j][0] - count_sign_block[j][1]);
       const int max_diff = kSignBiasMaxDiff255;
-      ASSERT_LT(diff, max_diff << (bit_depth_ - 8))
+      EXPECT_LT(diff, max_diff << (bit_depth_ - 8))
           << "Error: 8x8 FDCT/FHT has a sign bias > "
           << 1. * max_diff / count_test_block * 100 << "%"
           << " for input range [-255, 255] at index " << j
@@ -210,7 +201,7 @@ class FwdTrans8x8TestBase {
     for (int j = 0; j < 64; ++j) {
       const int diff = abs(count_sign_block[j][0] - count_sign_block[j][1]);
       const int max_diff = kSignBiasMaxDiff15;
-      ASSERT_LT(diff, max_diff << (bit_depth_ - 8))
+      EXPECT_LT(diff, max_diff << (bit_depth_ - 8))
           << "Error: 8x8 FDCT/FHT has a sign bias > "
           << 1. * max_diff / count_test_block * 100 << "%"
           << " for input range [-15, 15] at index " << j
@@ -284,11 +275,11 @@ class FwdTrans8x8TestBase {
       }
     }
 
-    ASSERT_GE(1 << 2 * (bit_depth_ - 8), max_error)
+    EXPECT_GE(1 << 2 * (bit_depth_ - 8), max_error)
         << "Error: 8x8 FDCT/IDCT or FHT/IHT has an individual"
         << " roundtrip error > 1";
 
-    ASSERT_GE((count_test_block << 2 * (bit_depth_ - 8)) / 5, total_error)
+    EXPECT_GE((count_test_block << 2 * (bit_depth_ - 8)) / 5, total_error)
         << "Error: 8x8 FDCT/IDCT or FHT/IHT has average roundtrip "
         << "error > 1/5 per block";
   }
@@ -369,17 +360,17 @@ class FwdTrans8x8TestBase {
         total_coeff_error += abs(coeff_diff);
       }
 
-      ASSERT_GE(1 << 2 * (bit_depth_ - 8), max_error)
+      EXPECT_GE(1 << 2 * (bit_depth_ - 8), max_error)
           << "Error: Extremal 8x8 FDCT/IDCT or FHT/IHT has"
-          << " an individual roundtrip error > 1";
+          << "an individual roundtrip error > 1";
 
-      ASSERT_GE((count_test_block << 2 * (bit_depth_ - 8)) / 5, total_error)
+      EXPECT_GE((count_test_block << 2 * (bit_depth_ - 8)) / 5, total_error)
           << "Error: Extremal 8x8 FDCT/IDCT or FHT/IHT has average"
           << " roundtrip error > 1/5 per block";
 
-      ASSERT_EQ(0, total_coeff_error)
+      EXPECT_EQ(0, total_coeff_error)
           << "Error: Extremal 8x8 FDCT/FHT has"
-          << " overflow issues in the intermediate steps > 1";
+          << "overflow issues in the intermediate steps > 1";
     }
   }
 
@@ -435,7 +426,7 @@ class FwdTrans8x8TestBase {
         const int diff = dst[j] - src[j];
 #endif
         const uint32_t error = diff * diff;
-        ASSERT_GE(1u << 2 * (bit_depth_ - 8), error)
+        EXPECT_GE(1u << 2 * (bit_depth_ - 8), error)
             << "Error: 8x8 IDCT has error " << error << " at index " << j;
       }
     }
@@ -465,7 +456,7 @@ class FwdTrans8x8TestBase {
       for (int j = 0; j < kNumCoeffs; ++j) {
         const int32_t diff = coeff[j] - coeff_r[j];
         const uint32_t error = diff * diff;
-        ASSERT_GE(9u << 2 * (bit_depth_ - 8), error)
+        EXPECT_GE(9u << 2 * (bit_depth_ - 8), error)
             << "Error: 8x8 DCT has error " << error << " at index " << j;
       }
     }
@@ -521,7 +512,7 @@ class FwdTrans8x8TestBase {
         const int diff = dst[j] - ref[j];
 #endif
         const uint32_t error = diff * diff;
-        ASSERT_EQ(0u, error)
+        EXPECT_EQ(0u, error)
             << "Error: 8x8 IDCT has error " << error << " at index " << j;
       }
     }
@@ -532,16 +523,13 @@ class FwdTrans8x8TestBase {
   vpx_bit_depth_t bit_depth_;
   int mask_;
 };
-#if defined(_MSC_VER) && defined(_M_ARM64) && !defined(__clang__)
-#pragma optimize("", on)
-#endif
 
 class FwdTrans8x8DCT : public FwdTrans8x8TestBase,
                        public ::testing::TestWithParam<Dct8x8Param> {
  public:
-  ~FwdTrans8x8DCT() override = default;
+  virtual ~FwdTrans8x8DCT() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     fwd_txfm_ = GET_PARAM(0);
     inv_txfm_ = GET_PARAM(1);
     tx_type_ = GET_PARAM(2);
@@ -551,13 +539,13 @@ class FwdTrans8x8DCT : public FwdTrans8x8TestBase,
     mask_ = (1 << bit_depth_) - 1;
   }
 
-  void TearDown() override { libvpx_test::ClearSystemState(); }
+  virtual void TearDown() { libvpx_test::ClearSystemState(); }
 
  protected:
-  void RunFwdTxfm(int16_t *in, tran_low_t *out, int stride) override {
+  void RunFwdTxfm(int16_t *in, tran_low_t *out, int stride) {
     fwd_txfm_(in, out, stride);
   }
-  void RunInvTxfm(tran_low_t *out, uint8_t *dst, int stride) override {
+  void RunInvTxfm(tran_low_t *out, uint8_t *dst, int stride) {
     inv_txfm_(out, dst, stride);
   }
 
@@ -578,9 +566,9 @@ TEST_P(FwdTrans8x8DCT, InvAccuracyCheck) { RunInvAccuracyCheck(); }
 class FwdTrans8x8HT : public FwdTrans8x8TestBase,
                       public ::testing::TestWithParam<Ht8x8Param> {
  public:
-  ~FwdTrans8x8HT() override = default;
+  virtual ~FwdTrans8x8HT() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     fwd_txfm_ = GET_PARAM(0);
     inv_txfm_ = GET_PARAM(1);
     tx_type_ = GET_PARAM(2);
@@ -590,13 +578,13 @@ class FwdTrans8x8HT : public FwdTrans8x8TestBase,
     mask_ = (1 << bit_depth_) - 1;
   }
 
-  void TearDown() override { libvpx_test::ClearSystemState(); }
+  virtual void TearDown() { libvpx_test::ClearSystemState(); }
 
  protected:
-  void RunFwdTxfm(int16_t *in, tran_low_t *out, int stride) override {
+  void RunFwdTxfm(int16_t *in, tran_low_t *out, int stride) {
     fwd_txfm_(in, out, stride, tx_type_);
   }
-  void RunInvTxfm(tran_low_t *out, uint8_t *dst, int stride) override {
+  void RunInvTxfm(tran_low_t *out, uint8_t *dst, int stride) {
     inv_txfm_(out, dst, stride, tx_type_);
   }
 
@@ -614,9 +602,9 @@ TEST_P(FwdTrans8x8HT, ExtremalCheck) { RunExtremalCheck(); }
 class InvTrans8x8DCT : public FwdTrans8x8TestBase,
                        public ::testing::TestWithParam<Idct8x8Param> {
  public:
-  ~InvTrans8x8DCT() override = default;
+  virtual ~InvTrans8x8DCT() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     ref_txfm_ = GET_PARAM(0);
     inv_txfm_ = GET_PARAM(1);
     thresh_ = GET_PARAM(2);
@@ -625,14 +613,13 @@ class InvTrans8x8DCT : public FwdTrans8x8TestBase,
     mask_ = (1 << bit_depth_) - 1;
   }
 
-  void TearDown() override { libvpx_test::ClearSystemState(); }
+  virtual void TearDown() { libvpx_test::ClearSystemState(); }
 
  protected:
-  void RunInvTxfm(tran_low_t *out, uint8_t *dst, int stride) override {
+  void RunInvTxfm(tran_low_t *out, uint8_t *dst, int stride) {
     inv_txfm_(out, dst, stride);
   }
-  void RunFwdTxfm(int16_t * /*out*/, tran_low_t * /*dst*/,
-                  int /*stride*/) override {}
+  void RunFwdTxfm(int16_t * /*out*/, tran_low_t * /*dst*/, int /*stride*/) {}
 
   IdctFunc ref_txfm_;
   IdctFunc inv_txfm_;
@@ -781,11 +768,4 @@ INSTANTIATE_TEST_SUITE_P(VSX, FwdTrans8x8DCT,
                                                       &vpx_idct8x8_64_add_vsx,
                                                       0, VPX_BITS_8)));
 #endif  // HAVE_VSX && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
-
-#if HAVE_LSX && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
-INSTANTIATE_TEST_SUITE_P(LSX, FwdTrans8x8DCT,
-                         ::testing::Values(make_tuple(&vpx_fdct8x8_lsx,
-                                                      &vpx_idct8x8_64_add_c, 0,
-                                                      VPX_BITS_8)));
-#endif  // HAVE_LSX && !CONFIG_VP9_HIGHBITDEPTH && !CONFIG_EMULATE_HARDWARE
 }  // namespace

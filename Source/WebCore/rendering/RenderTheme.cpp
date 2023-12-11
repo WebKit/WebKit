@@ -809,7 +809,9 @@ ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderBox& box) c
     const RenderObject* renderer = &box;
     auto type = box.style().effectiveAppearance();
 
-    if (type == StyleAppearance::SearchFieldCancelButton) {
+    if (type == StyleAppearance::SearchFieldCancelButton
+        || type == StyleAppearance::SwitchTrack
+        || type == StyleAppearance::SwitchThumb) {
         auto* input = box.element()->shadowHost();
         if (!input)
             input = box.element();
@@ -1314,11 +1316,8 @@ bool RenderTheme::isIndeterminate(const RenderObject& renderer) const
 
 bool RenderTheme::isEnabled(const RenderObject& renderer) const
 {
-    if (RefPtr element = dynamicDowncast<Element>(renderer.node())) {
-        return !(element->isDisabledFormControl()
-            || (element->shadowHost() && element->shadowHost()->isDisabledFormControl()));
-    }
-    return true;
+    RefPtr element = dynamicDowncast<Element>(renderer.node());
+    return element && !element->isDisabledFormControl();
 }
 
 bool RenderTheme::isFocused(const RenderObject& renderer) const
@@ -1327,6 +1326,7 @@ bool RenderTheme::isFocused(const RenderObject& renderer) const
     if (!element)
         return false;
 
+    // FIXME: This should be part of RenderTheme::extractControlStyleForRenderer().
     RefPtr delegate = element;
     if (RefPtr sliderThumb = dynamicDowncast<SliderThumbElement>(element))
         delegate = sliderThumb->hostInput();
@@ -1338,10 +1338,8 @@ bool RenderTheme::isFocused(const RenderObject& renderer) const
 
 bool RenderTheme::isPressed(const RenderObject& renderer) const
 {
-    if (auto* element = dynamicDowncast<Element>(renderer.node()))
-        return element->active()
-            || (element->shadowHost() && element->shadowHost()->active());
-    return false;
+    RefPtr element = dynamicDowncast<Element>(renderer.node());
+    return element && element->active();
 }
 
 bool RenderTheme::isSpinUpButtonPartPressed(const RenderObject& renderer) const

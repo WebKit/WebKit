@@ -7094,6 +7094,11 @@ inline static UIShiftKeyState shiftKeyState(UIKeyModifierFlags flags)
 {
     RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
 
+    [self _internalHandleKeyWebEvent:theEvent];
+}
+
+- (void)_internalHandleKeyWebEvent:(::WebEvent *)theEvent
+{
     _page->handleKeyboardEvent(WebKit::NativeWebKeyboardEvent(theEvent, WebKit::NativeWebKeyboardEvent::HandledByInputMethod::No));
 }
 
@@ -12770,7 +12775,7 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
             syntheticEvent = adoptNS([[WKSyntheticFlagsChangedWebEvent alloc] initWithCapsLockState:keyDown]);
             break;
         }
-        [self handleKeyWebEvent:syntheticEvent.get()];
+        [self _internalHandleKeyWebEvent:syntheticEvent.get()];
     };
 
     dispatchSyntheticFlagsChangedEvents(oldState, false);

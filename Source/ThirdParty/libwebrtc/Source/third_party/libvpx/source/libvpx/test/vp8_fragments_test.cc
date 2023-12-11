@@ -17,9 +17,9 @@ class VP8FragmentsTest : public ::libvpx_test::EncoderTest,
                          public ::testing::Test {
  protected:
   VP8FragmentsTest() : EncoderTest(&::libvpx_test::kVP8) {}
-  ~VP8FragmentsTest() override = default;
+  virtual ~VP8FragmentsTest() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     const unsigned long init_flags =  // NOLINT(runtime/int)
         VPX_CODEC_USE_OUTPUT_PARTITION;
     InitializeConfig();

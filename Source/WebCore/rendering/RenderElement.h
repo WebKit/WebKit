@@ -407,7 +407,7 @@ private:
 
     const RenderStyle* textSegmentPseudoStyle(PseudoId) const;
 
-    PackedCheckedPtr<RenderObject> m_firstChild;
+    SingleThreadPackedWeakPtr<RenderObject> m_firstChild;
     unsigned m_baseTypeFlags : 8;
     unsigned m_ancestorLineBoxDirty : 1;
     unsigned m_hasInitializedStyle : 1;
@@ -417,7 +417,7 @@ private:
     unsigned m_hasCounterNodeMap : 1;
     unsigned m_hasContinuationChainNode : 1;
 
-    PackedCheckedPtr<RenderObject> m_lastChild;
+    SingleThreadPackedWeakPtr<RenderObject> m_lastChild;
 
     unsigned m_isContinuation : 1;
     unsigned m_isFirstLetter : 1;

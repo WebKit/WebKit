@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC)
 
+#import "ColorCocoa.h"
 #import "SwitchMacUtilities.h"
 
 namespace WebCore {
@@ -140,6 +141,7 @@ void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     auto isEnabled = style.states.contains(ControlStyle::State::Enabled);
     auto isPressed = style.states.contains(ControlStyle::State::Pressed);
     auto isInActiveWindow = style.states.contains(ControlStyle::State::WindowActive);
+    auto isFocused = style.states.contains(ControlStyle::State::Focused);
     auto needsOnOffLabels = userPrefersWithoutColorDifferentiation();
     auto progress = SwitchMacUtilities::easeInOut(owningPart().progress());
 
@@ -190,6 +192,11 @@ void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
         trackImage->context().drawConsumingImageBuffer(WTFMove(toImage), IntPoint(), ImagePaintingOptions { CompositeOperator::PlusLighter });
     }
     context.drawConsumingImageBuffer(WTFMove(trackImage), inflatedTrackRect.location());
+
+    if (isFocused) {
+        auto color = colorFromCocoaColor([NSColor keyboardFocusIndicatorColor]).opaqueColor();
+        context.drawFocusRing(Vector { trackRect }, 0, 1.0f, color);
+    }
 }
 
 } // namespace WebCore

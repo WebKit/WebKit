@@ -70,11 +70,8 @@ typedef struct {
   int actual_num_seg1_blocks;
   int actual_num_seg2_blocks;
   int counter_encode_maxq_scene_change;
-  int qindex_delta[3];
   uint8_t speed;
   int loopfilter_ctrl;
-  int frame_qp;
-  int MBs;
 } LAYER_CONTEXT;
 
 typedef struct SVC {
@@ -176,8 +173,6 @@ typedef struct SVC {
   uint8_t fb_idx_temporal_layer_id[REF_FRAMES];
 
   int spatial_layer_sync[VPX_SS_MAX_LAYERS];
-  // Quantizer for each spatial layer.
-  int base_qindex[VPX_SS_MAX_LAYERS];
   uint8_t set_intra_only_frame;
   uint8_t previous_frame_is_intra_only;
   uint8_t superframe_has_layer_sync;
@@ -258,7 +253,7 @@ int vp9_denoise_svc_non_key(struct VP9_COMP *const cpi);
 
 void vp9_copy_flags_ref_update_idx(struct VP9_COMP *const cpi);
 
-int vp9_one_pass_svc_start_layer(struct VP9_COMP *const cpi);
+int vp9_one_pass_cbr_svc_start_layer(struct VP9_COMP *const cpi);
 
 void vp9_free_svc_cyclic_refresh(struct VP9_COMP *const cpi);
 

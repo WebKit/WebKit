@@ -50,12 +50,12 @@ const char *vpx_codec_err_to_string(vpx_codec_err_t err) {
   return "Unrecognized error code";
 }
 
-const char *vpx_codec_error(const vpx_codec_ctx_t *ctx) {
+const char *vpx_codec_error(vpx_codec_ctx_t *ctx) {
   return (ctx) ? vpx_codec_err_to_string(ctx->err)
                : vpx_codec_err_to_string(VPX_CODEC_INVALID_PARAM);
 }
 
-const char *vpx_codec_error_detail(const vpx_codec_ctx_t *ctx) {
+const char *vpx_codec_error_detail(vpx_codec_ctx_t *ctx) {
   if (ctx && ctx->err)
     return ctx->priv ? ctx->priv->err_detail : ctx->err_detail;
 
@@ -82,7 +82,7 @@ vpx_codec_err_t vpx_codec_destroy(vpx_codec_ctx_t *ctx) {
 }
 
 vpx_codec_caps_t vpx_codec_get_caps(vpx_codec_iface_t *iface) {
-  return iface ? iface->caps : 0;
+  return (iface) ? iface->caps : 0;
 }
 
 vpx_codec_err_t vpx_codec_control_(vpx_codec_ctx_t *ctx, int ctrl_id, ...) {

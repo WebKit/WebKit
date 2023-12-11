@@ -314,7 +314,7 @@ static void calc_iframe_target_size(VP8_COMP *cpi) {
      * bandwidth per second * fraction of the initial buffer
      * level
      */
-    target = (uint64_t)cpi->oxcf.starting_buffer_level / 2;
+    target = cpi->oxcf.starting_buffer_level / 2;
 
     if (target > cpi->oxcf.target_bandwidth * 3 / 2) {
       target = cpi->oxcf.target_bandwidth * 3 / 2;
@@ -327,8 +327,7 @@ static void calc_iframe_target_size(VP8_COMP *cpi) {
     int initial_boost = 32; /* |3.0 * per_frame_bandwidth| */
     /* Boost depends somewhat on frame rate: only used for 1 layer case. */
     if (cpi->oxcf.number_of_layers == 1) {
-      kf_boost =
-          VPXMAX(initial_boost, (int)round(2 * cpi->output_framerate - 16));
+      kf_boost = VPXMAX(initial_boost, (int)(2 * cpi->output_framerate - 16));
     } else {
       /* Initial factor: set target size to: |3.0 * per_frame_bandwidth|. */
       kf_boost = initial_boost;
@@ -346,17 +345,12 @@ static void calc_iframe_target_size(VP8_COMP *cpi) {
     /* Minimal target size is |2* per_frame_bandwidth|. */
     if (kf_boost < 16) kf_boost = 16;
 
-    target = ((uint64_t)(16 + kf_boost) * cpi->per_frame_bandwidth) >> 4;
-    target = VPXMIN(INT_MAX, target);
+    target = ((16 + kf_boost) * cpi->per_frame_bandwidth) >> 4;
   }
 
   if (cpi->oxcf.rc_max_intra_bitrate_pct) {
-    unsigned int max_rate;
-    // This product may overflow unsigned int
-    uint64_t product = cpi->per_frame_bandwidth;
-    product *= cpi->oxcf.rc_max_intra_bitrate_pct;
-    product /= 100;
-    max_rate = (unsigned int)VPXMIN(INT_MAX, product);
+    unsigned int max_rate =
+        cpi->per_frame_bandwidth * cpi->oxcf.rc_max_intra_bitrate_pct / 100;
 
     if (target > max_rate) target = max_rate;
   }
@@ -389,7 +383,7 @@ static void calc_gf_params(VP8_COMP *cpi) {
       (cpi->oxcf.fixed_q < 0) ? cpi->last_q[INTER_FRAME] : cpi->oxcf.fixed_q;
   int Boost = 0;
 
-  int gf_frame_usage = 0; /* Golden frame usage since last GF */
+  int gf_frame_useage = 0; /* Golden frame useage since last GF */
   int tot_mbs = cpi->recent_ref_frame_usage[INTRA_FRAME] +
                 cpi->recent_ref_frame_usage[LAST_FRAME] +
                 cpi->recent_ref_frame_usage[GOLDEN_FRAME] +
@@ -399,12 +393,12 @@ static void calc_gf_params(VP8_COMP *cpi) {
                       (cpi->common.mb_rows * cpi->common.mb_cols);
 
   if (tot_mbs) {
-    gf_frame_usage = (cpi->recent_ref_frame_usage[GOLDEN_FRAME] +
-                      cpi->recent_ref_frame_usage[ALTREF_FRAME]) *
-                     100 / tot_mbs;
+    gf_frame_useage = (cpi->recent_ref_frame_usage[GOLDEN_FRAME] +
+                       cpi->recent_ref_frame_usage[ALTREF_FRAME]) *
+                      100 / tot_mbs;
   }
 
-  if (pct_gf_active > gf_frame_usage) gf_frame_usage = pct_gf_active;
+  if (pct_gf_active > gf_frame_useage) gf_frame_useage = pct_gf_active;
 
   /* Not two pass */
   if (cpi->pass != 2) {
@@ -468,7 +462,7 @@ static void calc_gf_params(VP8_COMP *cpi) {
       /* Adjust boost based upon ambient Q */
       Boost = GFQ_ADJUSTMENT;
 
-      /* Adjust based upon most recently measure intra usage */
+      /* Adjust based upon most recently measure intra useage */
       Boost = Boost *
               gf_intra_usage_adjustment[(cpi->this_frame_percent_intra < 15)
                                             ? cpi->this_frame_percent_intra
@@ -476,7 +470,7 @@ static void calc_gf_params(VP8_COMP *cpi) {
               100;
 
       /* Adjust gf boost based upon GF usage since last GF */
-      Boost = Boost * gf_adjust_table[gf_frame_usage] / 100;
+      Boost = Boost * gf_adjust_table[gf_frame_useage] / 100;
 #endif
     }
 
@@ -517,8 +511,8 @@ static void calc_gf_params(VP8_COMP *cpi) {
 
       if (cpi->last_boost >= 1500) cpi->frames_till_gf_update_due++;
 
-      if (gf_interval_table[gf_frame_usage] > cpi->frames_till_gf_update_due) {
-        cpi->frames_till_gf_update_due = gf_interval_table[gf_frame_usage];
+      if (gf_interval_table[gf_frame_useage] > cpi->frames_till_gf_update_due) {
+        cpi->frames_till_gf_update_due = gf_interval_table[gf_frame_useage];
       }
 
       if (cpi->frames_till_gf_update_due > cpi->max_gf_interval) {
@@ -782,7 +776,6 @@ static void calc_pframe_target_size(VP8_COMP *cpi) {
         }
       } else {
         int percent_high = 0;
-        int64_t target = cpi->this_frame_target;
 
         if ((cpi->oxcf.end_usage == USAGE_STREAM_FROM_SERVER) &&
             (cpi->buffer_level > cpi->oxcf.optimal_buffer_level)) {
@@ -800,9 +793,7 @@ static void calc_pframe_target_size(VP8_COMP *cpi) {
           percent_high = 0;
         }
 
-        target += (target * percent_high) / 200;
-        target = VPXMIN(target, INT_MAX);
-        cpi->this_frame_target = (int)target;
+        cpi->this_frame_target += (cpi->this_frame_target * percent_high) / 200;
 
         /* Are we allowing control of active_worst_allowed_q according
          * to buffer level.
@@ -896,7 +887,7 @@ static void calc_pframe_target_size(VP8_COMP *cpi) {
       int Q = (cpi->oxcf.fixed_q < 0) ? cpi->last_q[INTER_FRAME]
                                       : cpi->oxcf.fixed_q;
 
-      int gf_frame_usage = 0; /* Golden frame usage since last GF */
+      int gf_frame_useage = 0; /* Golden frame useage since last GF */
       int tot_mbs = cpi->recent_ref_frame_usage[INTRA_FRAME] +
                     cpi->recent_ref_frame_usage[LAST_FRAME] +
                     cpi->recent_ref_frame_usage[GOLDEN_FRAME] +
@@ -906,20 +897,20 @@ static void calc_pframe_target_size(VP8_COMP *cpi) {
                           (cpi->common.mb_rows * cpi->common.mb_cols);
 
       if (tot_mbs) {
-        gf_frame_usage = (cpi->recent_ref_frame_usage[GOLDEN_FRAME] +
-                          cpi->recent_ref_frame_usage[ALTREF_FRAME]) *
-                         100 / tot_mbs;
+        gf_frame_useage = (cpi->recent_ref_frame_usage[GOLDEN_FRAME] +
+                           cpi->recent_ref_frame_usage[ALTREF_FRAME]) *
+                          100 / tot_mbs;
       }
 
-      if (pct_gf_active > gf_frame_usage) gf_frame_usage = pct_gf_active;
+      if (pct_gf_active > gf_frame_useage) gf_frame_useage = pct_gf_active;
 
       /* Is a fixed manual GF frequency being used */
       if (cpi->auto_gold) {
-        /* For one pass throw a GF if recent frame intra usage is
-         * low or the GF usage is high
+        /* For one pass throw a GF if recent frame intra useage is
+         * low or the GF useage is high
          */
         if ((cpi->pass == 0) &&
-            (cpi->this_frame_percent_intra < 15 || gf_frame_usage >= 5)) {
+            (cpi->this_frame_percent_intra < 15 || gf_frame_useage >= 5)) {
           cpi->common.refresh_golden_frame = 1;
 
           /* Two pass GF descision */
@@ -934,10 +925,10 @@ static void calc_pframe_target_size(VP8_COMP *cpi) {
           if (0) {
               FILE *f;
 
-              f = fopen("gf_usaget.stt", "a");
+              f = fopen("gf_useaget.stt", "a");
               fprintf(f, " %8ld %10ld %10ld %10ld %10ld\n",
                       cpi->common.current_video_frame,  cpi->gfu_boost,
-                      GFQ_ADJUSTMENT, cpi->gfu_boost, gf_frame_usage);
+                      GFQ_ADJUSTMENT, cpi->gfu_boost, gf_frame_useage);
               fclose(f);
           }
 
@@ -1083,8 +1074,8 @@ void vp8_update_rate_correction_factors(VP8_COMP *cpi, int damp_var) {
 
   /* Work out a size correction factor. */
   if (projected_size_based_on_q > 0) {
-    correction_factor = (int)((100 * (int64_t)cpi->projected_frame_size) /
-                              projected_size_based_on_q);
+    correction_factor =
+        (100 * cpi->projected_frame_size) / projected_size_based_on_q;
   }
 
   /* More heavily damped adjustment used if we have been oscillating

@@ -25,16 +25,17 @@ class DecodeSvcTest : public ::libvpx_test::DecoderTest,
                       public ::libvpx_test::CodecTestWithParam<const char *> {
  protected:
   DecodeSvcTest() : DecoderTest(GET_PARAM(::libvpx_test::kCodecFactoryParam)) {}
-  ~DecodeSvcTest() override = default;
+  virtual ~DecodeSvcTest() {}
 
-  void PreDecodeFrameHook(const libvpx_test::CompressedVideoSource &video,
-                          libvpx_test::Decoder *decoder) override {
+  virtual void PreDecodeFrameHook(
+      const libvpx_test::CompressedVideoSource &video,
+      libvpx_test::Decoder *decoder) {
     if (video.frame_number() == 0)
       decoder->Control(VP9_DECODE_SVC_SPATIAL_LAYER, spatial_layer_);
   }
 
-  void DecompressedFrameHook(const vpx_image_t &img,
-                             const unsigned int frame_number) override {
+  virtual void DecompressedFrameHook(const vpx_image_t &img,
+                                     const unsigned int frame_number) {
     ASSERT_EQ(img.d_w, width_);
     ASSERT_EQ(img.d_h, height_);
     total_frames_ = frame_number;

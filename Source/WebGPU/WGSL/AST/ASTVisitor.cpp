@@ -82,9 +82,17 @@ void Visitor::visit(AST::Declaration& declaration)
     case AST::NodeKind::Structure:
         checkErrorAndVisit(downcast<AST::Structure>(declaration));
         break;
+    case AST::NodeKind::TypeAlias:
+        checkErrorAndVisit(downcast<AST::TypeAlias>(declaration));
+        break;
     default:
         ASSERT_NOT_REACHED("Unhandled Declaration");
     }
+}
+
+void Visitor::visit(AST::TypeAlias& alias)
+{
+    visit(alias.type());
 }
 
 // Attribute

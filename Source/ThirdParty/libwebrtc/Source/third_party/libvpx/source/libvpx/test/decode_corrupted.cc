@@ -28,9 +28,9 @@ class DecodeCorruptedFrameTest
   DecodeCorruptedFrameTest() : EncoderTest(GET_PARAM(0)) {}
 
  protected:
-  ~DecodeCorruptedFrameTest() override = default;
+  virtual ~DecodeCorruptedFrameTest() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     InitializeConfig();
     SetMode(::libvpx_test::kRealTime);
     cfg_.g_lag_in_frames = 0;
@@ -44,16 +44,16 @@ class DecodeCorruptedFrameTest
     dec_cfg_.threads = 1;
   }
 
-  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                          ::libvpx_test::Encoder *encoder) override {
+  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Encoder *encoder) {
     if (video->frame() == 0) encoder->Control(VP8E_SET_CPUUSED, 7);
   }
 
-  void MismatchHook(const vpx_image_t * /*img1*/,
-                    const vpx_image_t * /*img2*/) override {}
+  virtual void MismatchHook(const vpx_image_t * /*img1*/,
+                            const vpx_image_t * /*img2*/) {}
 
-  const vpx_codec_cx_pkt_t *MutateEncoderOutputHook(
-      const vpx_codec_cx_pkt_t *pkt) override {
+  virtual const vpx_codec_cx_pkt_t *MutateEncoderOutputHook(
+      const vpx_codec_cx_pkt_t *pkt) {
     // Don't edit frame packet on key frame.
     if (pkt->data.frame.flags & VPX_FRAME_IS_KEY) return pkt;
     if (pkt->kind != VPX_CODEC_CX_FRAME_PKT) return pkt;
@@ -66,9 +66,9 @@ class DecodeCorruptedFrameTest
     return &modified_pkt_;
   }
 
-  bool HandleDecodeResult(const vpx_codec_err_t res_dec,
-                          const libvpx_test::VideoSource & /*video*/,
-                          libvpx_test::Decoder *decoder) override {
+  virtual bool HandleDecodeResult(const vpx_codec_err_t res_dec,
+                                  const libvpx_test::VideoSource & /*video*/,
+                                  libvpx_test::Decoder *decoder) {
     EXPECT_NE(res_dec, VPX_CODEC_MEM_ERROR) << decoder->DecodeError();
     return VPX_CODEC_MEM_ERROR != res_dec;
   }

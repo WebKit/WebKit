@@ -81,6 +81,7 @@
 #include "ASTStructure.h"
 #include "ASTStructureMember.h"
 #include "ASTSwitchStatement.h"
+#include "ASTTypeAlias.h"
 #include "ASTUnaryExpression.h"
 #include "ASTUnsigned32Literal.h"
 #include "ASTVariable.h"

@@ -215,12 +215,12 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
         }
 #endif // ENABLE(DATALIST_ELEMENT)
 #if ENABLE(INPUT_TYPE_COLOR)
-        else if (!colorInputStyleSheet && is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isColorControl()) {
+        else if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); !colorInputStyleSheet && input && input->isColorControl()) {
             colorInputStyleSheet = parseUASheet(RenderTheme::singleton().colorInputStyleSheet());
             addToDefaultStyle(*colorInputStyleSheet);
         }
 #endif // ENABLE(INPUT_TYPE_COLOR)
-        else if (!htmlSwitchControlStyleSheet && is<HTMLInputElement>(element) && downcast<HTMLInputElement>(element).isSwitch()) {
+        else if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); !htmlSwitchControlStyleSheet && input && input->isSwitch()) {
             htmlSwitchControlStyleSheet = parseUASheet(StringImpl::createWithoutCopying(htmlSwitchControlUserAgentStyleSheet, sizeof(htmlSwitchControlUserAgentStyleSheet)));
             addToDefaultStyle(*htmlSwitchControlStyleSheet);
         }

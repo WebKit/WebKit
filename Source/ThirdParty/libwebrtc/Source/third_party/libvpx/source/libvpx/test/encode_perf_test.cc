@@ -61,9 +61,9 @@ class VP9EncodePerfTest
       : EncoderTest(GET_PARAM(0)), min_psnr_(kMaxPsnr), nframes_(0),
         encoding_mode_(GET_PARAM(1)), speed_(0), threads_(1) {}
 
-  ~VP9EncodePerfTest() override = default;
+  virtual ~VP9EncodePerfTest() {}
 
-  void SetUp() override {
+  virtual void SetUp() {
     InitializeConfig();
     SetMode(encoding_mode_);
 
@@ -82,8 +82,8 @@ class VP9EncodePerfTest
     cfg_.g_threads = threads_;
   }
 
-  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                          ::libvpx_test::Encoder *encoder) override {
+  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                                  ::libvpx_test::Encoder *encoder) {
     if (video->frame() == 0) {
       const int log2_tile_columns = 3;
       encoder->Control(VP8E_SET_CPUUSED, speed_);
@@ -93,19 +93,19 @@ class VP9EncodePerfTest
     }
   }
 
-  void BeginPassHook(unsigned int /*pass*/) override {
+  virtual void BeginPassHook(unsigned int /*pass*/) {
     min_psnr_ = kMaxPsnr;
     nframes_ = 0;
   }
 
-  void PSNRPktHook(const vpx_codec_cx_pkt_t *pkt) override {
+  virtual void PSNRPktHook(const vpx_codec_cx_pkt_t *pkt) {
     if (pkt->data.psnr.psnr[0] < min_psnr_) {
       min_psnr_ = pkt->data.psnr.psnr[0];
     }
   }
 
   // for performance reasons don't decode
-  bool DoDecode() const override { return false; }
+  virtual bool DoDecode() const { return false; }
 
   double min_psnr() const { return min_psnr_; }
 

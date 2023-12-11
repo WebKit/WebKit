@@ -565,6 +565,9 @@ Result<AST::Declaration::Ref> Parser<Lexer>::parseDeclaration()
         PARSE(variable, Variable);
         CONSUME_TYPE(Semicolon);
         return { variable };
+    } else if (current().type == TokenType::KeywordAlias) {
+        PARSE(alias, TypeAlias);
+        return { alias };
     }
 
     PARSE(attributes, Attributes);
@@ -984,6 +987,23 @@ Result<AccessMode> Parser<Lexer>::parseAccessMode()
         return { *accessMode };
 
     FAIL("Expected one of 'read'/'write'/'read_write'"_s);
+}
+
+template<typename Lexer>
+Result<AST::TypeAlias::Ref> Parser<Lexer>::parseTypeAlias()
+{
+    START_PARSE();
+
+    CONSUME_TYPE(KeywordAlias);
+    PARSE(name, Identifier);
+
+    CONSUME_TYPE(Equal);
+
+    PARSE(type, TypeName);
+
+    CONSUME_TYPE(Semicolon);
+
+    RETURN_ARENA_NODE(TypeAlias, WTFMove(name), WTFMove(type));
 }
 
 template<typename Lexer>
