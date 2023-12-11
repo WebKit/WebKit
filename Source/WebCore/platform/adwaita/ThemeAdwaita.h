@@ -58,7 +58,7 @@ private:
     LengthSize controlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const final;
     LengthSize minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const final;
     LengthBox controlBorder(StyleAppearance, const FontCascade&, const LengthBox&, float) const final;
-    void paint(StyleAppearance, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float, bool, bool, const Color&) final;
+    void paint(StyleAppearance, ControlStates&, GraphicsContext&, const FloatRect&, bool, const Color&) final;
 
     void paintCheckbox(ControlStates&, GraphicsContext&, const FloatRect&, bool, const Color&);
     void paintRadio(ControlStates&, GraphicsContext&, const FloatRect&, bool, const Color&);

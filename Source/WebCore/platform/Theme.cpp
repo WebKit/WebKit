@@ -61,10 +61,6 @@ LengthSize Theme::minimumControlSize(StyleAppearance, const FontCascade&, const 
     return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
 }
 
-void Theme::paint(StyleAppearance, ControlStates&, GraphicsContext&, const FloatRect&, float, ScrollView*, float, float, bool, bool, const Color&)
-{
-}
-
 LengthBox Theme::controlBorder(StyleAppearance appearance, const FontCascade&, const LengthBox& zoomedBox, float) const
 {
     switch (appearance) {

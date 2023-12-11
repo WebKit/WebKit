@@ -63,9 +63,10 @@ public:
     // Whether or not whitespace: pre should be forced on always.
     virtual bool controlRequiresPreWhiteSpace(StyleAppearance) const { return false; }
 
-    // Method for painting a control. The rect is in zoomed coordinates.
-    // FIXME: <https://webkit.org/b/231637> Move parameters to a struct.
-    virtual void paint(StyleAppearance, ControlStates&, GraphicsContext&, const FloatRect& zoomedRect, float zoomFactor, ScrollView*, float deviceScaleFactor, float pageScaleFactor, bool useSystemAppearance, bool useDarkAppearance, const Color& tintColor);
+#if USE(THEME_ADWAITA)
+    // FIXME: Merge this into RenderThemeAdwaita.
+    virtual void paint(StyleAppearance, ControlStates&, GraphicsContext&, const FloatRect&, bool, const Color&) { }
+#endif
 
     // Some controls may spill out of their containers (e.g., the check on an OS X checkbox).  When these controls repaint,
     // the theme needs to communicate this inflated rect to the engine so that it can invalidate the whole control.
