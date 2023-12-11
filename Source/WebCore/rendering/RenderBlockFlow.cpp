@@ -4631,6 +4631,18 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     while (RenderObject* child = childIterator.next()) {
         bool autoWrap = child->isReplacedOrInlineBlock() ? child->parent()->style().autoWrap() :
             child->style().autoWrap();
+        if (child->style().display() == DisplayType::RubyAnnotation && child->style().rubyPosition() != RubyPosition::InterCharacter) {
+            // Interlinear annotation boxes don't participate in inline layout, but they opposed a minimum width on the associated ruby base.
+            ASSERT(!child->nextSibling());
+            auto annotationMinimumIntrinsicWidth = LayoutUnit { };
+            auto annotationMaximumIntrinsicWidth = LayoutUnit { };
+            computeChildPreferredLogicalWidths(*child, annotationMinimumIntrinsicWidth, annotationMaximumIntrinsicWidth);
+
+            // FIXME: Keep track of ruby base width.
+            inlineMin = std::max(inlineMin, annotationMinimumIntrinsicWidth.ceilToFloat());
+            inlineMax = std::max(inlineMax, annotationMaximumIntrinsicWidth.ceilToFloat());
+            continue;
+        }
         if (!child->isBR()) {
             // Step One: determine whether or not we need to terminate our current line.
             // Each discrete chunk can become the new min-width, if it is the widest chunk
