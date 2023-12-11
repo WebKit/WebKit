@@ -16,6 +16,8 @@
 #include "absl/memory/memory.h"
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
+#include "api/test/metrics/metric.h"
+#include "api/test/metrics/metrics_logger.h"
 #include "api/test/pclf/media_configuration.h"
 #include "api/test/video/video_frame_writer.h"
 #include "api/units/timestamp.h"
@@ -26,6 +28,7 @@
 #include "rtc_base/synchronization/mutex.h"
 #include "test/pc/e2e/analyzer/video/simulcast_dummy_buffer_helper.h"
 #include "test/pc/e2e/analyzer/video/video_dumping.h"
+#include "test/pc/e2e/metric_metadata_keys.h"
 #include "test/testsupport/fixed_fps_video_frame_writer_adapter.h"
 #include "test/video_renderer.h"
 
@@ -105,6 +108,26 @@ void AnalyzingVideoSink::OnFrame(const VideoFrame& frame) {
       stats_.analyzing_sink_processing_time_ms.AddSample(
           (processing_finished - processing_started).ms<double>());
     }
+  }
+}
+
+void AnalyzingVideoSink::LogMetrics(webrtc::test::MetricsLogger& metrics_logger,
+                                    absl::string_view test_case_name) const {
+  if (report_infra_stats_) {
+    MutexLock lock(&mutex_);
+    const std::string test_case(test_case_name);
+    // TODO(bugs.webrtc.org/14757): Remove kExperimentalTestNameMetadataKey.
+    std::map<std::string, std::string> metadata = {
+        {MetricMetadataKey::kPeerMetadataKey, peer_name_},
+        {MetricMetadataKey::kExperimentalTestNameMetadataKey, test_case}};
+    metrics_logger.LogMetric(
+        "analyzing_sink_processing_time_ms", test_case + "/" + peer_name_,
+        stats_.analyzing_sink_processing_time_ms, test::Unit::kMilliseconds,
+        test::ImprovementDirection::kSmallerIsBetter, metadata);
+    metrics_logger.LogMetric("scaling_tims_ms", test_case + "/" + peer_name_,
+                             stats_.scaling_tims_ms, test::Unit::kMilliseconds,
+                             test::ImprovementDirection::kSmallerIsBetter,
+                             metadata);
   }
 }
 

@@ -15,9 +15,9 @@
 #define SDK_ANDROID_NATIVE_API_JNI_SCOPED_JAVA_REF_H_
 
 #include <jni.h>
+
 #include <utility>
 
-#include "rtc_base/constructor_magic.h"
 #include "sdk/android/native_api/jni/jvm.h"
 
 namespace webrtc {
@@ -34,6 +34,9 @@ class JavaRef;
 template <>
 class JavaRef<jobject> {
  public:
+  JavaRef(const JavaRef&) = delete;
+  JavaRef& operator=(const JavaRef&) = delete;
+
   jobject obj() const { return obj_; }
   bool is_null() const {
     // This is not valid for weak references. For weak references you need to
@@ -49,22 +52,19 @@ class JavaRef<jobject> {
   constexpr JavaRef() : obj_(nullptr) {}
   explicit JavaRef(jobject obj) : obj_(obj) {}
   jobject obj_;
-
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(JavaRef);
 };
 
 template <typename T>
 class JavaRef : public JavaRef<jobject> {
  public:
+  JavaRef(const JavaRef&) = delete;
+  JavaRef& operator=(const JavaRef&) = delete;
+
   T obj() const { return static_cast<T>(obj_); }
 
  protected:
   JavaRef() : JavaRef<jobject>(nullptr) {}
   explicit JavaRef(T obj) : JavaRef<jobject>(obj) {}
-
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(JavaRef);
 };
 
 // Holds a local reference to a JNI method parameter.
@@ -79,8 +79,8 @@ class JavaParamRef : public JavaRef<T> {
   explicit JavaParamRef(T obj) : JavaRef<T>(obj) {}
   JavaParamRef(JNIEnv*, T obj) : JavaRef<T>(obj) {}
 
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(JavaParamRef);
+  JavaParamRef(const JavaParamRef&) = delete;
+  JavaParamRef& operator=(const JavaParamRef&) = delete;
 };
 
 // Holds a local reference to a Java object. The local reference is scoped
@@ -186,6 +186,9 @@ class ScopedJavaGlobalRef : public JavaRef<T> {
       AttachCurrentThreadIfNeeded()->DeleteGlobalRef(obj_);
   }
 
+  ScopedJavaGlobalRef(const ScopedJavaGlobalRef&) = delete;
+  ScopedJavaGlobalRef& operator=(const ScopedJavaGlobalRef&) = delete;
+
   void operator=(const JavaRef<T>& other) {
     JNIEnv* env = AttachCurrentThreadIfNeeded();
     if (obj_ != nullptr) {
@@ -209,9 +212,6 @@ class ScopedJavaGlobalRef : public JavaRef<T> {
     obj_ = nullptr;
     return obj;
   }
-
- private:
-  RTC_DISALLOW_COPY_AND_ASSIGN(ScopedJavaGlobalRef);
 };
 
 template <typename T>

@@ -10,7 +10,7 @@
 
 #include "api/audio/echo_canceller3_config.h"
 
-#include "api/audio/echo_canceller3_config_json.h"
+#include "modules/audio_processing/test/echo_canceller3_config_json.h"
 #include "test/gtest.h"
 
 namespace webrtc {

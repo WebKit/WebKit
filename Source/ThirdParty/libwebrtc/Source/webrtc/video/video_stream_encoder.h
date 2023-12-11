@@ -394,11 +394,6 @@ class VideoStreamEncoder : public VideoStreamEncoderInterface,
 
   FrameEncodeMetadataWriter frame_encode_metadata_writer_;
 
-  // Experiment groups parsed from field trials for realtime video ([0]) and
-  // screenshare ([1]). 0 means no group specified. Positive values are
-  // experiment group numbers incremented by 1.
-  const std::array<uint8_t, 2> experiment_groups_;
-
   struct AutomaticAnimationDetectionExperiment {
     bool enabled = false;
     int min_duration_ms = 2000;

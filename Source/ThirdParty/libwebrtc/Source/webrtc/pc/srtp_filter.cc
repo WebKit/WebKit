@@ -182,8 +182,8 @@ bool SrtpFilter::ResetParams() {
   offer_params_.clear();
   applied_send_params_ = CryptoParams();
   applied_recv_params_ = CryptoParams();
-  send_cipher_suite_ = absl::nullopt;
-  recv_cipher_suite_ = absl::nullopt;
+  send_crypto_suite_ = absl::nullopt;
+  recv_crypto_suite_ = absl::nullopt;
   send_key_.Clear();
   recv_key_.Clear();
   state_ = ST_INIT;
@@ -191,7 +191,7 @@ bool SrtpFilter::ResetParams() {
 }
 
 bool SrtpFilter::ApplySendParams(const CryptoParams& send_params) {
-  if (applied_send_params_.cipher_suite == send_params.cipher_suite &&
+  if (applied_send_params_.crypto_suite == send_params.crypto_suite &&
       applied_send_params_.key_params == send_params.key_params) {
     RTC_LOG(LS_INFO) << "Applying the same SRTP send parameters again. No-op.";
 
@@ -199,20 +199,20 @@ bool SrtpFilter::ApplySendParams(const CryptoParams& send_params) {
     return true;
   }
 
-  send_cipher_suite_ = rtc::SrtpCryptoSuiteFromName(send_params.cipher_suite);
-  if (send_cipher_suite_ == rtc::kSrtpInvalidCryptoSuite) {
+  send_crypto_suite_ = rtc::SrtpCryptoSuiteFromName(send_params.crypto_suite);
+  if (send_crypto_suite_ == rtc::kSrtpInvalidCryptoSuite) {
     RTC_LOG(LS_WARNING) << "Unknown crypto suite(s) received:"
-                           " send cipher_suite "
-                        << send_params.cipher_suite;
+                           " send crypto_suite "
+                        << send_params.crypto_suite;
     return false;
   }
 
   int send_key_len, send_salt_len;
-  if (!rtc::GetSrtpKeyAndSaltLengths(*send_cipher_suite_, &send_key_len,
+  if (!rtc::GetSrtpKeyAndSaltLengths(*send_crypto_suite_, &send_key_len,
                                      &send_salt_len)) {
     RTC_LOG(LS_ERROR) << "Could not get lengths for crypto suite(s):"
-                         " send cipher_suite "
-                      << send_params.cipher_suite;
+                         " send crypto_suite "
+                      << send_params.crypto_suite;
     return false;
   }
 
@@ -222,7 +222,7 @@ bool SrtpFilter::ApplySendParams(const CryptoParams& send_params) {
 }
 
 bool SrtpFilter::ApplyRecvParams(const CryptoParams& recv_params) {
-  if (applied_recv_params_.cipher_suite == recv_params.cipher_suite &&
+  if (applied_recv_params_.crypto_suite == recv_params.crypto_suite &&
       applied_recv_params_.key_params == recv_params.key_params) {
     RTC_LOG(LS_INFO) << "Applying the same SRTP recv parameters again. No-op.";
 
@@ -230,20 +230,20 @@ bool SrtpFilter::ApplyRecvParams(const CryptoParams& recv_params) {
     return true;
   }
 
-  recv_cipher_suite_ = rtc::SrtpCryptoSuiteFromName(recv_params.cipher_suite);
-  if (recv_cipher_suite_ == rtc::kSrtpInvalidCryptoSuite) {
+  recv_crypto_suite_ = rtc::SrtpCryptoSuiteFromName(recv_params.crypto_suite);
+  if (recv_crypto_suite_ == rtc::kSrtpInvalidCryptoSuite) {
     RTC_LOG(LS_WARNING) << "Unknown crypto suite(s) received:"
-                           " recv cipher_suite "
-                        << recv_params.cipher_suite;
+                           " recv crypto_suite "
+                        << recv_params.crypto_suite;
     return false;
   }
 
   int recv_key_len, recv_salt_len;
-  if (!rtc::GetSrtpKeyAndSaltLengths(*recv_cipher_suite_, &recv_key_len,
+  if (!rtc::GetSrtpKeyAndSaltLengths(*recv_crypto_suite_, &recv_key_len,
                                      &recv_salt_len)) {
     RTC_LOG(LS_ERROR) << "Could not get lengths for crypto suite(s):"
-                         " recv cipher_suite "
-                      << recv_params.cipher_suite;
+                         " recv crypto_suite "
+                      << recv_params.crypto_suite;
     return false;
   }
 

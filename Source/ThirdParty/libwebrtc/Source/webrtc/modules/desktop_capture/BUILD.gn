@@ -334,6 +334,8 @@ rtc_library("desktop_capture") {
       "mac/desktop_configuration.h",
       "mac/desktop_configuration_monitor.cc",
       "mac/desktop_configuration_monitor.h",
+      "mac/desktop_frame_utils.cc",
+      "mac/desktop_frame_utils.h",
       "mac/full_screen_mac_application_handler.cc",
       "mac/full_screen_mac_application_handler.h",
       "mac/window_list_utils.cc",

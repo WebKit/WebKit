@@ -3004,21 +3004,20 @@ TEST_P(PeerConnectionInterfaceTest,
   EXPECT_TRUE(ContainsSender(senders, kVideoTracks[0]));
 
   // Change the ssrc of the audio and video track.
-  cricket::MediaContentDescription* desc =
-      cricket::GetFirstAudioContentDescription(modified_offer->description());
-  ASSERT_TRUE(desc != nullptr);
-  for (StreamParams& stream : desc->mutable_streams()) {
-    for (unsigned int& ssrc : stream.ssrcs) {
-      ++ssrc;
-    }
-  }
-
-  desc =
-      cricket::GetFirstVideoContentDescription(modified_offer->description());
-  ASSERT_TRUE(desc != nullptr);
-  for (StreamParams& stream : desc->mutable_streams()) {
-    for (unsigned int& ssrc : stream.ssrcs) {
-      ++ssrc;
+  for (auto content : modified_offer->description()->contents()) {
+    cricket::MediaContentDescription* desc = content.media_description();
+    ASSERT_TRUE(desc);
+    for (StreamParams& stream : desc->mutable_streams()) {
+      for (unsigned int& ssrc : stream.ssrcs) {
+        unsigned int old_ssrc = ssrc++;
+        for (auto& group : stream.ssrc_groups) {
+          for (unsigned int& secondary_ssrc : group.ssrcs) {
+            if (secondary_ssrc == old_ssrc) {
+              secondary_ssrc = ssrc;
+            }
+          }
+        }
+      }
     }
   }
 

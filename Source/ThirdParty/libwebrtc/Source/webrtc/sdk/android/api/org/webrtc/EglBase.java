@@ -34,6 +34,38 @@ public interface EglBase {
     long getNativeEglContext();
   }
 
+  /**
+   * Wraps the objects needed to interact with EGL that are independent of a particular EGLSurface.
+   * In practice this means EGLContext, EGLDisplay and EGLConfig objects. Separating them out in a
+   * standalone object allows for multiple EglBase instances to use the same underlying EGLContext,
+   * while still operating on their own EGLSurface.
+   */
+  public interface EglConnection extends RefCounted {
+    /** Analogous to corresponding EglBase#create below. */
+    public static EglConnection create(@Nullable Context sharedContext, int[] configAttributes) {
+      if (sharedContext == null) {
+        return EglConnection.createEgl14(configAttributes);
+      } else if (sharedContext instanceof EglBase14.Context) {
+        return new EglBase14Impl.EglConnection(
+            ((EglBase14.Context) sharedContext).getRawContext(), configAttributes);
+      } else if (sharedContext instanceof EglBase10.Context) {
+        return new EglBase10Impl.EglConnection(
+            ((EglBase10.Context) sharedContext).getRawContext(), configAttributes);
+      }
+      throw new IllegalArgumentException("Unrecognized Context");
+    }
+
+    /** Analogous to corresponding EglBase#createEgl10 below. */
+    public static EglConnection createEgl10(int[] configAttributes) {
+      return new EglBase10Impl.EglConnection(/* sharedContext= */ null, configAttributes);
+    }
+
+    /** Analogous to corresponding EglBase#createEgl14 below. */
+    public static EglConnection createEgl14(int[] configAttributes) {
+      return new EglBase14Impl.EglConnection(/* sharedContext= */ null, configAttributes);
+    }
+  }
+
   // According to the documentation, EGL can be used from multiple threads at the same time if each
   // thread has its own EGLContext, but in practice it deadlocks on some devices when doing this.
   // Therefore, synchronize on this global lock before calling dangerous EGL functions that might
@@ -146,14 +178,30 @@ public interface EglBase {
   }
 
   /**
+   * Creates a new EglBase with a shared EglConnection. EglBase instances sharing the same
+   * EglConnection should be used on the same thread to avoid the underlying EGLContext being made
+   * current on multiple threads. It is up to the client of EglBase to ensure that instances with a
+   * shared EglConnection are current on that thread before each use since other EglBase instances
+   * may have used the same EGLContext since the last interaction.
+   */
+  public static EglBase create(EglConnection eglConnection) {
+    if (eglConnection == null) {
+      return create();
+    } else if (eglConnection instanceof EglBase14Impl.EglConnection) {
+      return new EglBase14Impl((EglBase14Impl.EglConnection) eglConnection);
+    } else if (eglConnection instanceof EglBase10Impl.EglConnection) {
+      return new EglBase10Impl((EglBase10Impl.EglConnection) eglConnection);
+    }
+    throw new IllegalArgumentException("Unrecognized EglConnection");
+  }
+
+  /**
    * Create a new context with the specified config attributes, sharing data with `sharedContext`.
-   * If `sharedContext` is null, a root context is created. This function will try to create an EGL
-   * 1.4 context if possible, and an EGL 1.0 context otherwise.
+   * If `sharedContext` is null, a root EGL 1.4 context is created.
    */
   public static EglBase create(@Nullable Context sharedContext, int[] configAttributes) {
     if (sharedContext == null) {
-      return EglBase14Impl.isEGL14Supported() ? createEgl14(configAttributes)
-                                              : createEgl10(configAttributes);
+      return createEgl14(configAttributes);
     } else if (sharedContext instanceof EglBase14.Context) {
       return createEgl14((EglBase14.Context) sharedContext, configAttributes);
     } else if (sharedContext instanceof EglBase10.Context) {

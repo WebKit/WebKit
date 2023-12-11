@@ -89,8 +89,8 @@ class TestAv1Decoder {
 
   void Decode(int64_t frame_id, const EncodedImage& image) {
     ASSERT_THAT(decoder_, NotNull());
-    int32_t error = decoder_->Decode(image, /*missing_frames=*/false,
-                                     /*render_time_ms=*/image.capture_time_ms_);
+    int32_t error =
+        decoder_->Decode(image, /*render_time_ms=*/image.capture_time_ms_);
     if (error != WEBRTC_VIDEO_CODEC_OK) {
       ADD_FAILURE() << "Failed to decode frame id " << frame_id
                     << " with error code " << error << " by decoder#"

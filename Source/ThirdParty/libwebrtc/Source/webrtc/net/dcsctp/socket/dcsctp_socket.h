@@ -179,8 +179,9 @@ class DcSctpSocket : public DcSctpSocketInterface {
   // Parses `payload`, which is a serialized packet that is just going to be
   // sent and prints all chunks.
   void DebugPrintOutgoing(rtc::ArrayView<const uint8_t> payload);
-  // Called whenever there may be reassembled messages, and delivers those.
-  void DeliverReassembledMessages();
+  // Called whenever data has been received, or the cumulative acknowledgment
+  // TSN has moved, that may result in delivering messages.
+  void MaybeDeliverMessages();
   // Returns true if there is a TCB, and false otherwise (and reports an error).
   bool ValidateHasTCB();
 

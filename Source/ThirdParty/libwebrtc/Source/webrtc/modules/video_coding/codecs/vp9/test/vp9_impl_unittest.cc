@@ -17,6 +17,8 @@
 #include "api/video_codecs/video_encoder.h"
 #include "api/video_codecs/vp9_profile.h"
 #include "common_video/libyuv/include/webrtc_libyuv.h"
+#include "media/base/codec.h"
+#include "media/base/media_constants.h"
 #include "modules/rtp_rtcp/include/rtp_rtcp_defines.h"
 #include "modules/video_coding/codecs/interface/libvpx_interface.h"
 #include "modules/video_coding/codecs/interface/mock_libvpx_interface.h"
@@ -141,7 +143,7 @@ TEST_P(TestVp9ImplForPixelFormat, EncodeDecode) {
   ASSERT_TRUE(WaitForEncodedFrame(&encoded_frame, &codec_specific_info));
   // First frame should be a key frame.
   encoded_frame._frameType = VideoFrameType::kVideoFrameKey;
-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, false, 0));
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, 0));
   std::unique_ptr<VideoFrame> decoded_frame;
   absl::optional<uint8_t> decoded_qp;
   ASSERT_TRUE(WaitForDecodedFrame(&decoded_frame, &decoded_qp));
@@ -191,7 +193,7 @@ TEST_P(TestVp9ImplForPixelFormat, DecodedColorSpaceFromBitstream) {
   ASSERT_TRUE(WaitForEncodedFrame(&encoded_frame, &codec_specific_info));
 
   // Encoded frame without explicit color space information.
-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, false, 0));
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, 0));
   std::unique_ptr<VideoFrame> decoded_frame;
   absl::optional<uint8_t> decoded_qp;
   ASSERT_TRUE(WaitForDecodedFrame(&decoded_frame, &decoded_qp));
@@ -209,7 +211,7 @@ TEST_P(TestVp9ImplForPixelFormat, DecodedQpEqualsEncodedQp) {
   ASSERT_TRUE(WaitForEncodedFrame(&encoded_frame, &codec_specific_info));
   // First frame should be a key frame.
   encoded_frame._frameType = VideoFrameType::kVideoFrameKey;
-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, false, 0));
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, 0));
   std::unique_ptr<VideoFrame> decoded_frame;
   absl::optional<uint8_t> decoded_qp;
   ASSERT_TRUE(WaitForDecodedFrame(&decoded_frame, &decoded_qp));
@@ -2038,7 +2040,8 @@ class TestVp9ImplProfile2 : public TestVp9Impl {
   }
 
   std::unique_ptr<VideoEncoder> CreateEncoder() override {
-    cricket::VideoCodec profile2_codec;
+    cricket::VideoCodec profile2_codec =
+        cricket::CreateVideoCodec(cricket::kVp9CodecName);
     profile2_codec.SetParam(kVP9FmtpProfileId,
                             VP9ProfileToString(VP9Profile::kProfile2));
     return VP9Encoder::Create(profile2_codec);
@@ -2060,7 +2063,7 @@ TEST_F(TestVp9ImplProfile2, EncodeDecode) {
   ASSERT_TRUE(WaitForEncodedFrame(&encoded_frame, &codec_specific_info));
   // First frame should be a key frame.
   encoded_frame._frameType = VideoFrameType::kVideoFrameKey;
-  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, false, 0));
+  EXPECT_EQ(WEBRTC_VIDEO_CODEC_OK, decoder_->Decode(encoded_frame, 0));
   std::unique_ptr<VideoFrame> decoded_frame;
   absl::optional<uint8_t> decoded_qp;
   ASSERT_TRUE(WaitForDecodedFrame(&decoded_frame, &decoded_qp));
@@ -2219,7 +2222,7 @@ TEST(Vp9SpeedSettingsTrialsTest, NoSvcUsesGlobalSpeedFromTl0InLayerConfig) {
   // Keep a raw pointer for EXPECT calls and the like. Ownership is otherwise
   // passed on to LibvpxVp9Encoder.
   auto* const vpx = new NiceMock<MockLibvpxInterface>();
-  LibvpxVp9Encoder encoder(cricket::VideoCodec(),
+  LibvpxVp9Encoder encoder(cricket::CreateVideoCodec(cricket::kVp9CodecName),
                            absl::WrapUnique<LibvpxInterface>(vpx), trials);
 
   VideoCodec settings = DefaultCodecSettings();
@@ -2263,7 +2266,7 @@ TEST(Vp9SpeedSettingsTrialsTest,
   // Keep a raw pointer for EXPECT calls and the like. Ownership is otherwise
   // passed on to LibvpxVp9Encoder.
   auto* const vpx = new NiceMock<MockLibvpxInterface>();
-  LibvpxVp9Encoder encoder(cricket::VideoCodec(),
+  LibvpxVp9Encoder encoder(cricket::CreateVideoCodec(cricket::kVp9CodecName),
                            absl::WrapUnique<LibvpxInterface>(vpx), trials);
 
   VideoCodec settings = DefaultCodecSettings();
@@ -2321,7 +2324,7 @@ TEST(Vp9SpeedSettingsTrialsTest, DefaultPerLayerFlagsWithSvc) {
   // Keep a raw pointer for EXPECT calls and the like. Ownership is otherwise
   // passed on to LibvpxVp9Encoder.
   auto* const vpx = new NiceMock<MockLibvpxInterface>();
-  LibvpxVp9Encoder encoder(cricket::VideoCodec(),
+  LibvpxVp9Encoder encoder(cricket::CreateVideoCodec(cricket::kVp9CodecName),
                            absl::WrapUnique<LibvpxInterface>(vpx), trials);
 
   VideoCodec settings = DefaultCodecSettings();

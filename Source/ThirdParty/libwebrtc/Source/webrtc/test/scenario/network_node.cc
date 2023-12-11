@@ -72,8 +72,7 @@ NetworkNodeTransport::NetworkNodeTransport(Clock* sender_clock,
 
 NetworkNodeTransport::~NetworkNodeTransport() = default;
 
-bool NetworkNodeTransport::SendRtp(const uint8_t* packet,
-                                   size_t length,
+bool NetworkNodeTransport::SendRtp(rtc::ArrayView<const uint8_t> packet,
                                    const PacketOptions& options) {
   int64_t send_time_ms = sender_clock_->TimeInMilliseconds();
   rtc::SentPacket sent_packet;
@@ -81,21 +80,21 @@ bool NetworkNodeTransport::SendRtp(const uint8_t* packet,
   sent_packet.info.included_in_feedback = options.included_in_feedback;
   sent_packet.info.included_in_allocation = options.included_in_allocation;
   sent_packet.send_time_ms = send_time_ms;
-  sent_packet.info.packet_size_bytes = length;
+  sent_packet.info.packet_size_bytes = packet.size();
   sent_packet.info.packet_type = rtc::PacketType::kData;
   sender_call_->OnSentPacket(sent_packet);
 
   MutexLock lock(&mutex_);
   if (!endpoint_)
     return false;
-  rtc::CopyOnWriteBuffer buffer(packet, length);
+  rtc::CopyOnWriteBuffer buffer(packet);
   endpoint_->SendPacket(local_address_, remote_address_, buffer,
                         packet_overhead_.bytes());
   return true;
 }
 
-bool NetworkNodeTransport::SendRtcp(const uint8_t* packet, size_t length) {
-  rtc::CopyOnWriteBuffer buffer(packet, length);
+bool NetworkNodeTransport::SendRtcp(rtc::ArrayView<const uint8_t> packet) {
+  rtc::CopyOnWriteBuffer buffer(packet);
   MutexLock lock(&mutex_);
   if (!endpoint_)
     return false;

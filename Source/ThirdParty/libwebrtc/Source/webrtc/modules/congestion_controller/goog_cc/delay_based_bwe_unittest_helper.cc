@@ -10,12 +10,22 @@
 #include "modules/congestion_controller/goog_cc/delay_based_bwe_unittest_helper.h"
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <vector>
 
-#include "absl/strings/string_view.h"
+#include "absl/types/optional.h"
+#include "api/transport/network_types.h"
+#include "api/units/data_rate.h"
+#include "api/units/data_size.h"
+#include "api/units/time_delta.h"
+#include "api/units/timestamp.h"
+#include "modules/congestion_controller/goog_cc/acknowledged_bitrate_estimator_interface.h"
 #include "modules/congestion_controller/goog_cc/delay_based_bwe.h"
+#include "modules/congestion_controller/goog_cc/probe_bitrate_estimator.h"
 #include "rtc_base/checks.h"
+#include "test/field_trial.h"
 
 namespace webrtc {
 constexpr size_t kMtu = 1200;
@@ -144,11 +154,9 @@ int64_t StreamGenerator::GenerateFrame(std::vector<PacketResult>* packets,
 }
 }  // namespace test
 
-DelayBasedBweTest::DelayBasedBweTest() : DelayBasedBweTest("") {}
-
-DelayBasedBweTest::DelayBasedBweTest(absl::string_view field_trial_string)
-    : field_trial(
-          std::make_unique<test::ScopedFieldTrials>(field_trial_string)),
+DelayBasedBweTest::DelayBasedBweTest()
+    : field_trial(std::make_unique<test::ScopedFieldTrials>(
+          "WebRTC-Bwe-RobustThroughputEstimatorSettings/enabled:true/")),
       clock_(100000000),
       acknowledged_bitrate_estimator_(
           AcknowledgedBitrateEstimatorInterface::Create(&field_trial_config_)),
@@ -158,6 +166,7 @@ DelayBasedBweTest::DelayBasedBweTest(absl::string_view field_trial_string)
       stream_generator_(new test::StreamGenerator(1e6,  // Capacity.
                                                   clock_.TimeInMicroseconds())),
       arrival_time_offset_ms_(0),
+      next_sequence_number_(0),
       first_update_(true) {}
 
 DelayBasedBweTest::~DelayBasedBweTest() {}
@@ -193,6 +202,7 @@ void DelayBasedBweTest::IncomingFeedback(Timestamp receive_time,
   packet.sent_packet.send_time = send_time;
   packet.sent_packet.size = DataSize::Bytes(payload_size);
   packet.sent_packet.pacing_info = pacing_info;
+  packet.sent_packet.sequence_number = next_sequence_number_++;
   if (packet.sent_packet.pacing_info.probe_cluster_id !=
       PacedPacketInfo::kNotAProbe)
     probe_bitrate_estimator_->HandleProbeAndEstimateBitrate(packet);

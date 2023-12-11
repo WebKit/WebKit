@@ -167,6 +167,17 @@ TEST(PendingTaskSafetyFlagTest, PendingTaskNotAliveInitialized) {
   EXPECT_TRUE(task_2_ran);
 }
 
+TEST(PendingTaskSafetyFlagTest, PendingTaskInitializedForTaskQueue) {
+  TaskQueueForTest tq("PendingTaskAliveInitializedForTaskQueue");
+
+  // Create a new flag that initially `alive`, attached to a specific TQ.
+  auto flag = PendingTaskSafetyFlag::CreateAttachedToTaskQueue(true, tq.Get());
+  tq.SendTask([&flag]() { EXPECT_TRUE(flag->alive()); });
+  // Repeat the same steps but initialize as inactive.
+  flag = PendingTaskSafetyFlag::CreateAttachedToTaskQueue(false, tq.Get());
+  tq.SendTask([&flag]() { EXPECT_FALSE(flag->alive()); });
+}
+
 TEST(PendingTaskSafetyFlagTest, SafeTask) {
   rtc::scoped_refptr<PendingTaskSafetyFlag> flag =
       PendingTaskSafetyFlag::Create();

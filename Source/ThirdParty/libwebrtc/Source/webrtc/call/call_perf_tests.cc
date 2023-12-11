@@ -13,6 +13,7 @@
 #include <memory>
 #include <string>
 
+#include "absl/flags/flag.h"
 #include "absl/strings/string_view.h"
 #include "api/audio_codecs/builtin_audio_encoder_factory.h"
 #include "api/numerics/samples_stats_counter.h"
@@ -52,6 +53,7 @@
 #include "test/gtest.h"
 #include "test/null_transport.h"
 #include "test/rtp_rtcp_observer.h"
+#include "test/test_flags.h"
 #include "test/testsupport/file_utils.h"
 #include "test/video_encoder_proxy_factory.h"
 #include "test/video_test_constants.h"
@@ -221,12 +223,12 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
     send_audio_state_config.audio_processing =
         AudioProcessingBuilder().Create();
     send_audio_state_config.audio_device_module = fake_audio_device;
-    Call::Config sender_config(send_event_log_.get());
+    CallConfig sender_config(send_event_log_.get());
 
     auto audio_state = AudioState::Create(send_audio_state_config);
     fake_audio_device->RegisterAudioCallback(audio_state->audio_transport());
     sender_config.audio_state = audio_state;
-    Call::Config receiver_config(recv_event_log_.get());
+    CallConfig receiver_config(recv_event_log_.get());
     receiver_config.audio_state = audio_state;
     CreateCalls(sender_config, receiver_config);
 
@@ -361,7 +363,7 @@ void CallPerfTest::TestAudioVideoSync(FecMode fec,
   observer->PrintResults();
 
   // In quick test synchronization may not be achieved in time.
-  if (!field_trial::IsEnabled("WebRTC-QuickPerfTest")) {
+  if (!absl::GetFlag(FLAGS_webrtc_quick_perf_test)) {
 // TODO(bugs.webrtc.org/10417): Reenable this for iOS
 #if !defined(WEBRTC_IOS)
     EXPECT_METRIC_EQ(1, metrics::NumSamples("WebRTC.Video.AVSyncOffsetInMs"));
@@ -469,10 +471,10 @@ void CallPerfTest::TestCaptureNtpTime(
       EXPECT_TRUE(std::abs(time_offset_ms) < threshold_ms_);
     }
 
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       MutexLock lock(&mutex_);
       RtpPacket rtp_packet;
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      EXPECT_TRUE(rtp_packet.Parse(packet));
 
       if (!rtp_start_timestamp_set_) {
         // Calculate the rtp timestamp offset in order to calculate the real
@@ -695,7 +697,7 @@ void CallPerfTest::TestMinTransmitBitrate(bool pad_to_min_bitrate) {
 
    private:
     // TODO(holmer): Run this with a timer instead of once per packet.
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       task_queue_->PostTask(SafeTask(task_safety_flag_, [this]() {
         VideoSendStream::Stats stats = send_stream_->GetStats();
 
@@ -975,8 +977,8 @@ void CallPerfTest::TestMinAudioVideoBitrate(int test_bitrate_from,
     void PerformTest() override {
       // Quick test mode, just to exercise all the code paths without actually
       // caring about performance measurements.
-      const bool quick_perf_test =
-          field_trial::IsEnabled("WebRTC-QuickPerfTest");
+      const bool quick_perf_test = absl::GetFlag(FLAGS_webrtc_quick_perf_test);
+
       int last_passed_test_bitrate = -1;
       for (int test_bitrate = test_bitrate_from_;
            test_bitrate_from_ < test_bitrate_to_
@@ -1125,8 +1127,7 @@ void CallPerfTest::TestEncodeFramerate(VideoEncoderFactory* encoder_factory,
     }
 
     void VerifyStats() const {
-      const bool quick_perf_test =
-          field_trial::IsEnabled("WebRTC-QuickPerfTest");
+      const bool quick_perf_test = absl::GetFlag(FLAGS_webrtc_quick_perf_test);
       double input_fps = 0.0;
       for (const auto& configured_framerate : configured_framerates_) {
         input_fps = std::max(configured_framerate.second, input_fps);
@@ -1147,7 +1148,7 @@ void CallPerfTest::TestEncodeFramerate(VideoEncoderFactory* encoder_factory,
       }
     }
 
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       const Timestamp now = clock_->CurrentTime();
       if (now - last_getstats_time_ > kMinGetStatsInterval) {
         last_getstats_time_ = now;

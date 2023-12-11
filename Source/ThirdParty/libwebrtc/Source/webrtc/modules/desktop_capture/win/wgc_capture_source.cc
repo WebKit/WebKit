@@ -29,6 +29,10 @@ WgcCaptureSource::WgcCaptureSource(DesktopCapturer::SourceId source_id)
     : source_id_(source_id) {}
 WgcCaptureSource::~WgcCaptureSource() = default;
 
+bool WgcCaptureSource::ShouldBeCapturable() {
+  return true;
+}
+
 bool WgcCaptureSource::IsCapturable() {
   // If we can create a capture item, then we can capture it. Unfortunately,
   // we can't cache this item because it may be created in a different COM
@@ -105,9 +109,14 @@ ABI::Windows::Graphics::SizeInt32 WgcWindowSource::GetSize() {
           window_rect.bottom - window_rect.top};
 }
 
+bool WgcWindowSource::ShouldBeCapturable() {
+  return IsWindowValidAndVisible(reinterpret_cast<HWND>(GetSourceId()));
+}
+
 bool WgcWindowSource::IsCapturable() {
-  if (!IsWindowValidAndVisible(reinterpret_cast<HWND>(GetSourceId())))
+  if (!ShouldBeCapturable()) {
     return false;
+  }
 
   return WgcCaptureSource::IsCapturable();
 }

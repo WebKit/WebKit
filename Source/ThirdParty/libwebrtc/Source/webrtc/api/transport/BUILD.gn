@@ -53,6 +53,7 @@ rtc_library("field_trial_based_config") {
   ]
   deps = [
     "../../api:field_trials_registry",
+    "../../rtc_base/system:rtc_export",
     "../../system_wrappers:field_trial",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]

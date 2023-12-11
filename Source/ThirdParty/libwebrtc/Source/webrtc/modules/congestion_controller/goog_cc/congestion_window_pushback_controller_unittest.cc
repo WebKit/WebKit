@@ -10,9 +10,11 @@
 
 #include "modules/congestion_controller/goog_cc/congestion_window_pushback_controller.h"
 
+#include <cstdint>
 #include <memory>
 
 #include "api/transport/field_trial_based_config.h"
+#include "api/units/data_size.h"
 #include "test/field_trial.h"
 #include "test/gmock.h"
 #include "test/gtest.h"

@@ -112,6 +112,16 @@ struct VideoCodecH265 {
   size_t ppsLen;
 };
 
+struct VideoCodecAV1 {
+  bool operator==(const VideoCodecAV1& other) const {
+    return automatic_resize_on == other.automatic_resize_on;
+  }
+  bool operator!=(const VideoCodecAV1& other) const {
+    return !(*this == other);
+  }
+  bool automatic_resize_on;
+};
+
 // Translates from name of codec to codec type and vice versa.
 RTC_EXPORT const char* CodecTypeToPayloadString(VideoCodecType type);
 RTC_EXPORT VideoCodecType PayloadStringToCodecType(const std::string& name);
@@ -121,6 +131,7 @@ union VideoCodecUnion {
   VideoCodecVP9 VP9;
   VideoCodecH264 H264;
   VideoCodecH265 H265;
+  VideoCodecAV1 AV1;
 };
 
 enum class VideoCodecMode { kRealtimeVideo, kScreensharing };
@@ -211,6 +222,8 @@ class RTC_EXPORT VideoCodec {
   const VideoCodecH264& H264() const;
   VideoCodecH265* H265();
   const VideoCodecH265& H265() const;
+  VideoCodecAV1* AV1();
+  const VideoCodecAV1& AV1() const;
 
  private:
   // TODO(hta): Consider replacing the union with a pointer type.

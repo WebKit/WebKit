@@ -32,7 +32,6 @@
 
 namespace webrtc {
 class RtcEventLog;
-class RtcpBandwidthObserver;
 class RtcpRttStats;
 class RtpTransportControllerSendInterface;
 

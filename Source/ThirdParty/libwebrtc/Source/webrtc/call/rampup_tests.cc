@@ -329,7 +329,7 @@ void RampUpTester::TriggerTestDone() {
   RTC_DCHECK_GE(test_start_ms_, 0);
 
   // Stop polling stats.
-  // Corner case for field_trials=WebRTC-QuickPerfTest/Enabled/
+  // Corner case for webrtc_quick_perf_test
   SendTask(task_queue_, [this] { pending_task_.Stop(); });
 
   // TODO(holmer): Add audio send stats here too when those APIs are available.

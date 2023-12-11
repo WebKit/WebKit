@@ -74,7 +74,7 @@ class RTC_EXPORT AsyncPacketSocket : public sigslot::has_slots<> {
     STATE_CONNECTED
   };
 
-  AsyncPacketSocket();
+  AsyncPacketSocket() = default;
   ~AsyncPacketSocket() override;
 
   AsyncPacketSocket(const AsyncPacketSocket&) = delete;
@@ -110,9 +110,10 @@ class RTC_EXPORT AsyncPacketSocket : public sigslot::has_slots<> {
   virtual void SetError(int error) = 0;
 
   // Register a callback to be called when the socket is closed.
-  void SubscribeClose(const void* removal_tag,
-                      std::function<void(AsyncPacketSocket*, int)> callback);
-  void UnsubscribeClose(const void* removal_tag);
+  void SubscribeCloseEvent(
+      const void* removal_tag,
+      std::function<void(AsyncPacketSocket*, int)> callback);
+  void UnsubscribeCloseEvent(const void* removal_tag);
 
   // Emitted each time a packet is read. Used only for UDP and
   // connected TCP sockets.

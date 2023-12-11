@@ -175,7 +175,8 @@ bool Convert(std::string inputfile,
   auto bwe_probe_failure_handler =
       [&](const LoggedBweProbeFailureEvent& event) {
         fprintf(output, "BWE_PROBE_FAILURE %" PRId64 " id=%d reason=%d\n",
-                event.log_time_ms(), event.id, event.failure_reason);
+                event.log_time_ms(), event.id,
+                static_cast<int>(event.failure_reason));
       };
 
   auto bwe_probe_success_handler =
@@ -209,7 +210,8 @@ bool Convert(std::string inputfile,
   auto dtls_transport_state_handler =
       [&](const LoggedDtlsTransportState& event) {
         fprintf(output, "DTLS_TRANSPORT_STATE %" PRId64 " state=%d\n",
-                event.log_time_ms(), event.dtls_transport_state);
+                event.log_time_ms(),
+                static_cast<int>(event.dtls_transport_state));
       };
 
   auto dtls_transport_writable_handler =
@@ -428,7 +430,8 @@ bool Convert(std::string inputfile,
         {VideoCodecType::kVideoCodecVP9, "VP9"},
         {VideoCodecType::kVideoCodecAV1, "AV1"},
         {VideoCodecType::kVideoCodecH264, "H264"},
-        {VideoCodecType::kVideoCodecMultiplex, "MULTIPLEX"}};
+        {VideoCodecType::kVideoCodecMultiplex, "MULTIPLEX"},
+        {VideoCodecType::kVideoCodecH265, "H265"}};
 
     fprintf(output,
             "FRAME_DECODED %" PRId64 " render_time=%" PRId64

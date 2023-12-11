@@ -41,8 +41,6 @@ TEST(FrameTransformerFactory, CloneAudioFrame) {
   std::fill_n(data, 10, 5);
   rtc::ArrayView<uint8_t> data_view(data);
   ON_CALL(original_frame, GetData()).WillByDefault(Return(data_view));
-  RTPHeader rtp_header;
-  ON_CALL(original_frame, GetHeader()).WillByDefault(ReturnRef(rtp_header));
   auto cloned_frame = CloneAudioFrame(&original_frame);
 
   EXPECT_THAT(cloned_frame->GetData(), ElementsAreArray(data));

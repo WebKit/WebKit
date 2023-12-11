@@ -32,13 +32,13 @@ TEST(AbsoluteCaptureTimeInterpolatorTest, GetSourceWithCsrcs) {
 
 TEST(AbsoluteCaptureTimeInterpolatorTest, ReceiveExtensionReturnsExtension) {
   constexpr uint32_t kSource = 1337;
-  constexpr uint32_t kRtpClockFrequency = 64000;
+  constexpr int kRtpClockFrequency = 64'000;
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
-  static const absl::optional<AbsoluteCaptureTime> kExtension0 =
-      AbsoluteCaptureTime{Int64MsToUQ32x32(9000), Int64MsToQ32x32(-350)};
-  static const absl::optional<AbsoluteCaptureTime> kExtension1 =
-      AbsoluteCaptureTime{Int64MsToUQ32x32(9020), absl::nullopt};
+  const AbsoluteCaptureTime kExtension0 = {Int64MsToUQ32x32(9000),
+                                           Int64MsToQ32x32(-350)};
+  const AbsoluteCaptureTime kExtension1 = {Int64MsToUQ32x32(9020),
+                                           absl::nullopt};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
@@ -55,299 +55,291 @@ TEST(AbsoluteCaptureTimeInterpolatorTest, ReceiveExtensionReturnsExtension) {
 TEST(AbsoluteCaptureTimeInterpolatorTest,
      ReceiveNoExtensionReturnsNoExtension) {
   constexpr uint32_t kSource = 1337;
-  constexpr uint32_t kRtpClockFrequency = 64000;
+  constexpr int kRtpClockFrequency = 64'000;
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
-  static const absl::optional<AbsoluteCaptureTime> kExtension0 = absl::nullopt;
-  static const absl::optional<AbsoluteCaptureTime> kExtension1 = absl::nullopt;
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
 
-  EXPECT_EQ(interpolator.OnReceivePacket(kSource, kRtpTimestamp0,
-                                         kRtpClockFrequency, kExtension0),
-            absl::nullopt);
+  EXPECT_EQ(
+      interpolator.OnReceivePacket(kSource, kRtpTimestamp0, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt),
+      absl::nullopt);
 
-  EXPECT_EQ(interpolator.OnReceivePacket(kSource, kRtpTimestamp1,
-                                         kRtpClockFrequency, kExtension1),
-            absl::nullopt);
+  EXPECT_EQ(
+      interpolator.OnReceivePacket(kSource, kRtpTimestamp1, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt),
+      absl::nullopt);
 }
 
 TEST(AbsoluteCaptureTimeInterpolatorTest, InterpolateLaterPacketArrivingLater) {
   constexpr uint32_t kSource = 1337;
-  constexpr uint32_t kRtpClockFrequency = 64000;
+  constexpr int kRtpClockFrequency = 64'000;
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 + 2560;
-  static const absl::optional<AbsoluteCaptureTime> kExtension0 =
-      AbsoluteCaptureTime{Int64MsToUQ32x32(9000), Int64MsToQ32x32(-350)};
-  static const absl::optional<AbsoluteCaptureTime> kExtension1 = absl::nullopt;
-  static const absl::optional<AbsoluteCaptureTime> kExtension2 = absl::nullopt;
+  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
+                                          Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
 
   EXPECT_EQ(interpolator.OnReceivePacket(kSource, kRtpTimestamp0,
-                                         kRtpClockFrequency, kExtension0),
-            kExtension0);
+                                         kRtpClockFrequency, kExtension),
+            kExtension);
 
-  absl::optional<AbsoluteCaptureTime> extension = interpolator.OnReceivePacket(
-      kSource, kRtpTimestamp1, kRtpClockFrequency, kExtension1);
-  EXPECT_TRUE(extension.has_value());
+  absl::optional<AbsoluteCaptureTime> extension =
+      interpolator.OnReceivePacket(kSource, kRtpTimestamp1, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt);
+  ASSERT_TRUE(extension.has_value());
   EXPECT_EQ(UQ32x32ToInt64Ms(extension->absolute_capture_timestamp),
-            UQ32x32ToInt64Ms(kExtension0->absolute_capture_timestamp) + 20);
+            UQ32x32ToInt64Ms(kExtension.absolute_capture_timestamp) + 20);
   EXPECT_EQ(extension->estimated_capture_clock_offset,
-            kExtension0->estimated_capture_clock_offset);
+            kExtension.estimated_capture_clock_offset);
 
-  extension = interpolator.OnReceivePacket(kSource, kRtpTimestamp2,
-                                           kRtpClockFrequency, kExtension2);
-  EXPECT_TRUE(extension.has_value());
+  extension =
+      interpolator.OnReceivePacket(kSource, kRtpTimestamp2, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt);
+  ASSERT_TRUE(extension.has_value());
   EXPECT_EQ(UQ32x32ToInt64Ms(extension->absolute_capture_timestamp),
-            UQ32x32ToInt64Ms(kExtension0->absolute_capture_timestamp) + 40);
+            UQ32x32ToInt64Ms(kExtension.absolute_capture_timestamp) + 40);
   EXPECT_EQ(extension->estimated_capture_clock_offset,
-            kExtension0->estimated_capture_clock_offset);
+            kExtension.estimated_capture_clock_offset);
 }
 
 TEST(AbsoluteCaptureTimeInterpolatorTest,
      InterpolateEarlierPacketArrivingLater) {
   constexpr uint32_t kSource = 1337;
-  constexpr uint32_t kRtpClockFrequency = 64000;
+  constexpr int kRtpClockFrequency = 64'000;
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 - 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 - 2560;
-  static const absl::optional<AbsoluteCaptureTime> kExtension0 =
-      AbsoluteCaptureTime{Int64MsToUQ32x32(9000), Int64MsToQ32x32(-350)};
-  static const absl::optional<AbsoluteCaptureTime> kExtension1 = absl::nullopt;
-  static const absl::optional<AbsoluteCaptureTime> kExtension2 = absl::nullopt;
+  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
+                                          Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
 
   EXPECT_EQ(interpolator.OnReceivePacket(kSource, kRtpTimestamp0,
-                                         kRtpClockFrequency, kExtension0),
-            kExtension0);
+                                         kRtpClockFrequency, kExtension),
+            kExtension);
 
-  absl::optional<AbsoluteCaptureTime> extension = interpolator.OnReceivePacket(
-      kSource, kRtpTimestamp1, kRtpClockFrequency, kExtension1);
-  EXPECT_TRUE(extension.has_value());
+  absl::optional<AbsoluteCaptureTime> extension =
+      interpolator.OnReceivePacket(kSource, kRtpTimestamp1, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt);
+  ASSERT_TRUE(extension.has_value());
   EXPECT_EQ(UQ32x32ToInt64Ms(extension->absolute_capture_timestamp),
-            UQ32x32ToInt64Ms(kExtension0->absolute_capture_timestamp) - 20);
+            UQ32x32ToInt64Ms(kExtension.absolute_capture_timestamp) - 20);
   EXPECT_EQ(extension->estimated_capture_clock_offset,
-            kExtension0->estimated_capture_clock_offset);
+            kExtension.estimated_capture_clock_offset);
 
-  extension = interpolator.OnReceivePacket(kSource, kRtpTimestamp2,
-                                           kRtpClockFrequency, kExtension2);
-  EXPECT_TRUE(extension.has_value());
+  extension =
+      interpolator.OnReceivePacket(kSource, kRtpTimestamp2, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt);
+  ASSERT_TRUE(extension.has_value());
   EXPECT_EQ(UQ32x32ToInt64Ms(extension->absolute_capture_timestamp),
-            UQ32x32ToInt64Ms(kExtension0->absolute_capture_timestamp) - 40);
+            UQ32x32ToInt64Ms(kExtension.absolute_capture_timestamp) - 40);
   EXPECT_EQ(extension->estimated_capture_clock_offset,
-            kExtension0->estimated_capture_clock_offset);
+            kExtension.estimated_capture_clock_offset);
 }
 
 TEST(AbsoluteCaptureTimeInterpolatorTest,
      InterpolateLaterPacketArrivingLaterWithRtpTimestampWrapAround) {
   constexpr uint32_t kSource = 1337;
-  constexpr uint32_t kRtpClockFrequency = 64000;
-  constexpr uint32_t kRtpTimestamp0 = ~uint32_t{0} - 79;
+  constexpr int kRtpClockFrequency = 64'000;
+  constexpr uint32_t kRtpTimestamp0 = uint32_t{0} - 80;
   constexpr uint32_t kRtpTimestamp1 = 1280 - 80;
   constexpr uint32_t kRtpTimestamp2 = 2560 - 80;
-  static const absl::optional<AbsoluteCaptureTime> kExtension0 =
-      AbsoluteCaptureTime{Int64MsToUQ32x32(9000), Int64MsToQ32x32(-350)};
-  static const absl::optional<AbsoluteCaptureTime> kExtension1 = absl::nullopt;
-  static const absl::optional<AbsoluteCaptureTime> kExtension2 = absl::nullopt;
+  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
+                                          Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
 
   EXPECT_EQ(interpolator.OnReceivePacket(kSource, kRtpTimestamp0,
-                                         kRtpClockFrequency, kExtension0),
-            kExtension0);
+                                         kRtpClockFrequency, kExtension),
+            kExtension);
 
-  absl::optional<AbsoluteCaptureTime> extension = interpolator.OnReceivePacket(
-      kSource, kRtpTimestamp1, kRtpClockFrequency, kExtension1);
-  EXPECT_TRUE(extension.has_value());
+  absl::optional<AbsoluteCaptureTime> extension =
+      interpolator.OnReceivePacket(kSource, kRtpTimestamp1, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt);
+  ASSERT_TRUE(extension.has_value());
   EXPECT_EQ(UQ32x32ToInt64Ms(extension->absolute_capture_timestamp),
-            UQ32x32ToInt64Ms(kExtension0->absolute_capture_timestamp) + 20);
+            UQ32x32ToInt64Ms(kExtension.absolute_capture_timestamp) + 20);
   EXPECT_EQ(extension->estimated_capture_clock_offset,
-            kExtension0->estimated_capture_clock_offset);
+            kExtension.estimated_capture_clock_offset);
 
-  extension = interpolator.OnReceivePacket(kSource, kRtpTimestamp2,
-                                           kRtpClockFrequency, kExtension2);
-  EXPECT_TRUE(extension.has_value());
+  extension =
+      interpolator.OnReceivePacket(kSource, kRtpTimestamp2, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt);
+  ASSERT_TRUE(extension.has_value());
   EXPECT_EQ(UQ32x32ToInt64Ms(extension->absolute_capture_timestamp),
-            UQ32x32ToInt64Ms(kExtension0->absolute_capture_timestamp) + 40);
+            UQ32x32ToInt64Ms(kExtension.absolute_capture_timestamp) + 40);
   EXPECT_EQ(extension->estimated_capture_clock_offset,
-            kExtension0->estimated_capture_clock_offset);
+            kExtension.estimated_capture_clock_offset);
 }
 
 TEST(AbsoluteCaptureTimeInterpolatorTest,
      InterpolateEarlierPacketArrivingLaterWithRtpTimestampWrapAround) {
   constexpr uint32_t kSource = 1337;
-  constexpr uint32_t kRtpClockFrequency = 64000;
+  constexpr int kRtpClockFrequency = 64'000;
   constexpr uint32_t kRtpTimestamp0 = 799;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 - 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp0 - 2560;
-  static const absl::optional<AbsoluteCaptureTime> kExtension0 =
-      AbsoluteCaptureTime{Int64MsToUQ32x32(9000), Int64MsToQ32x32(-350)};
-  static const absl::optional<AbsoluteCaptureTime> kExtension1 = absl::nullopt;
-  static const absl::optional<AbsoluteCaptureTime> kExtension2 = absl::nullopt;
+  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
+                                          Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
 
   EXPECT_EQ(interpolator.OnReceivePacket(kSource, kRtpTimestamp0,
-                                         kRtpClockFrequency, kExtension0),
-            kExtension0);
+                                         kRtpClockFrequency, kExtension),
+            kExtension);
 
-  absl::optional<AbsoluteCaptureTime> extension = interpolator.OnReceivePacket(
-      kSource, kRtpTimestamp1, kRtpClockFrequency, kExtension1);
-  EXPECT_TRUE(extension.has_value());
+  absl::optional<AbsoluteCaptureTime> extension =
+      interpolator.OnReceivePacket(kSource, kRtpTimestamp1, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt);
+  ASSERT_TRUE(extension.has_value());
   EXPECT_EQ(UQ32x32ToInt64Ms(extension->absolute_capture_timestamp),
-            UQ32x32ToInt64Ms(kExtension0->absolute_capture_timestamp) - 20);
+            UQ32x32ToInt64Ms(kExtension.absolute_capture_timestamp) - 20);
   EXPECT_EQ(extension->estimated_capture_clock_offset,
-            kExtension0->estimated_capture_clock_offset);
+            kExtension.estimated_capture_clock_offset);
 
-  extension = interpolator.OnReceivePacket(kSource, kRtpTimestamp2,
-                                           kRtpClockFrequency, kExtension2);
-  EXPECT_TRUE(extension.has_value());
+  extension =
+      interpolator.OnReceivePacket(kSource, kRtpTimestamp2, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt);
+  ASSERT_TRUE(extension.has_value());
   EXPECT_EQ(UQ32x32ToInt64Ms(extension->absolute_capture_timestamp),
-            UQ32x32ToInt64Ms(kExtension0->absolute_capture_timestamp) - 40);
+            UQ32x32ToInt64Ms(kExtension.absolute_capture_timestamp) - 40);
   EXPECT_EQ(extension->estimated_capture_clock_offset,
-            kExtension0->estimated_capture_clock_offset);
+            kExtension.estimated_capture_clock_offset);
 }
 
 TEST(AbsoluteCaptureTimeInterpolatorTest, SkipInterpolateIfTooLate) {
   constexpr uint32_t kSource = 1337;
-  constexpr uint32_t kRtpClockFrequency = 64000;
+  constexpr int kRtpClockFrequency = 64'000;
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp1 + 1280;
-  static const absl::optional<AbsoluteCaptureTime> kExtension0 =
-      AbsoluteCaptureTime{Int64MsToUQ32x32(9000), Int64MsToQ32x32(-350)};
-  static const absl::optional<AbsoluteCaptureTime> kExtension1 = absl::nullopt;
-  static const absl::optional<AbsoluteCaptureTime> kExtension2 = absl::nullopt;
+  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
+                                          Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
 
   EXPECT_EQ(interpolator.OnReceivePacket(kSource, kRtpTimestamp0,
-                                         kRtpClockFrequency, kExtension0),
-            kExtension0);
+                                         kRtpClockFrequency, kExtension),
+            kExtension);
 
   clock.AdvanceTime(AbsoluteCaptureTimeInterpolator::kInterpolationMaxInterval);
 
-  EXPECT_TRUE(interpolator
-                  .OnReceivePacket(kSource, kRtpTimestamp1, kRtpClockFrequency,
-                                   kExtension1)
-                  .has_value());
+  EXPECT_NE(
+      interpolator.OnReceivePacket(kSource, kRtpTimestamp1, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt),
+      absl::nullopt);
 
-  clock.AdvanceTimeMilliseconds(1);
+  clock.AdvanceTime(TimeDelta::Millis(1));
 
-  EXPECT_FALSE(interpolator
-                   .OnReceivePacket(kSource, kRtpTimestamp2, kRtpClockFrequency,
-                                    kExtension2)
-                   .has_value());
+  EXPECT_EQ(
+      interpolator.OnReceivePacket(kSource, kRtpTimestamp2, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt),
+      absl::nullopt);
 }
 
 TEST(AbsoluteCaptureTimeInterpolatorTest, SkipInterpolateIfSourceChanged) {
   constexpr uint32_t kSource0 = 1337;
   constexpr uint32_t kSource1 = 1338;
-  constexpr uint32_t kRtpClockFrequency = 64000;
+  constexpr int kRtpClockFrequency = 64'000;
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
-  static const absl::optional<AbsoluteCaptureTime> kExtension0 =
-      AbsoluteCaptureTime{Int64MsToUQ32x32(9000), Int64MsToQ32x32(-350)};
-  static const absl::optional<AbsoluteCaptureTime> kExtension1 = absl::nullopt;
+  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
+                                          Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
 
   EXPECT_EQ(interpolator.OnReceivePacket(kSource0, kRtpTimestamp0,
-                                         kRtpClockFrequency, kExtension0),
-            kExtension0);
+                                         kRtpClockFrequency, kExtension),
+            kExtension);
 
-  EXPECT_FALSE(interpolator
-                   .OnReceivePacket(kSource1, kRtpTimestamp1,
-                                    kRtpClockFrequency, kExtension1)
-                   .has_value());
+  EXPECT_EQ(
+      interpolator.OnReceivePacket(kSource1, kRtpTimestamp1, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt),
+      absl::nullopt);
 }
 
 TEST(AbsoluteCaptureTimeInterpolatorTest,
      SkipInterpolateIfRtpClockFrequencyChanged) {
   constexpr uint32_t kSource = 1337;
-  constexpr uint32_t kRtpClockFrequency0 = 64000;
-  constexpr uint32_t kRtpClockFrequency1 = 32000;
+  constexpr int kRtpClockFrequency0 = 64'000;
+  constexpr int kRtpClockFrequency1 = 32'000;
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 640;
-  static const absl::optional<AbsoluteCaptureTime> kExtension0 =
-      AbsoluteCaptureTime{Int64MsToUQ32x32(9000), Int64MsToQ32x32(-350)};
-  static const absl::optional<AbsoluteCaptureTime> kExtension1 = absl::nullopt;
+  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
+                                          Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
 
   EXPECT_EQ(interpolator.OnReceivePacket(kSource, kRtpTimestamp0,
-                                         kRtpClockFrequency0, kExtension0),
-            kExtension0);
+                                         kRtpClockFrequency0, kExtension),
+            kExtension);
 
-  EXPECT_FALSE(interpolator
-                   .OnReceivePacket(kSource, kRtpTimestamp1,
-                                    kRtpClockFrequency1, kExtension1)
-                   .has_value());
+  EXPECT_EQ(
+      interpolator.OnReceivePacket(kSource, kRtpTimestamp1, kRtpClockFrequency1,
+                                   /*received_extension=*/absl::nullopt),
+      absl::nullopt);
 }
 
 TEST(AbsoluteCaptureTimeInterpolatorTest,
      SkipInterpolateIfRtpClockFrequencyIsInvalid) {
   constexpr uint32_t kSource = 1337;
-  constexpr uint32_t kRtpClockFrequency = 0;
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 640;
-  static const absl::optional<AbsoluteCaptureTime> kExtension0 =
-      AbsoluteCaptureTime{Int64MsToUQ32x32(9000), Int64MsToQ32x32(-350)};
-  static const absl::optional<AbsoluteCaptureTime> kExtension1 = absl::nullopt;
+  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
+                                          Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
 
-  EXPECT_EQ(interpolator.OnReceivePacket(kSource, kRtpTimestamp0,
-                                         kRtpClockFrequency, kExtension0),
-            kExtension0);
+  EXPECT_EQ(
+      interpolator.OnReceivePacket(kSource, kRtpTimestamp0,
+                                   /*rtp_clock_frequency_hz=*/0, kExtension),
+      kExtension);
 
-  EXPECT_FALSE(interpolator
-                   .OnReceivePacket(kSource, kRtpTimestamp1, kRtpClockFrequency,
-                                    kExtension1)
-                   .has_value());
+  EXPECT_EQ(interpolator.OnReceivePacket(kSource, kRtpTimestamp1,
+                                         /*rtp_clock_frequency_hz=*/0,
+                                         /*received_extension=*/absl::nullopt),
+            absl::nullopt);
 }
 
 TEST(AbsoluteCaptureTimeInterpolatorTest, SkipInterpolateIsSticky) {
   constexpr uint32_t kSource0 = 1337;
   constexpr uint32_t kSource1 = 1338;
-  constexpr uint32_t kSource2 = 1337;
-  constexpr uint32_t kRtpClockFrequency = 64000;
+  constexpr int kRtpClockFrequency = 64'000;
   constexpr uint32_t kRtpTimestamp0 = 1020300000;
   constexpr uint32_t kRtpTimestamp1 = kRtpTimestamp0 + 1280;
   constexpr uint32_t kRtpTimestamp2 = kRtpTimestamp1 + 1280;
-  static const absl::optional<AbsoluteCaptureTime> kExtension0 =
-      AbsoluteCaptureTime{Int64MsToUQ32x32(9000), Int64MsToQ32x32(-350)};
-  static const absl::optional<AbsoluteCaptureTime> kExtension1 = absl::nullopt;
-  static const absl::optional<AbsoluteCaptureTime> kExtension2 = absl::nullopt;
+  const AbsoluteCaptureTime kExtension = {Int64MsToUQ32x32(9000),
+                                          Int64MsToQ32x32(-350)};
 
   SimulatedClock clock(0);
   AbsoluteCaptureTimeInterpolator interpolator(&clock);
 
   EXPECT_EQ(interpolator.OnReceivePacket(kSource0, kRtpTimestamp0,
-                                         kRtpClockFrequency, kExtension0),
-            kExtension0);
+                                         kRtpClockFrequency, kExtension),
+            kExtension);
 
-  EXPECT_FALSE(interpolator
-                   .OnReceivePacket(kSource1, kRtpTimestamp1,
-                                    kRtpClockFrequency, kExtension1)
-                   .has_value());
+  EXPECT_EQ(
+      interpolator.OnReceivePacket(kSource1, kRtpTimestamp1, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt),
+      absl::nullopt);
 
-  EXPECT_FALSE(interpolator
-                   .OnReceivePacket(kSource2, kRtpTimestamp2,
-                                    kRtpClockFrequency, kExtension2)
-                   .has_value());
+  EXPECT_EQ(
+      interpolator.OnReceivePacket(kSource0, kRtpTimestamp2, kRtpClockFrequency,
+                                   /*received_extension=*/absl::nullopt),
+      absl::nullopt);
 }
 
 }  // namespace webrtc

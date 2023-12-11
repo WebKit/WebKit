@@ -106,18 +106,22 @@ TEST(AimdRateControlTest, DefaultPeriodUntilFirstOveruse) {
   EXPECT_NE(aimd_rate_control.GetExpectedBandwidthPeriod(), kDefaultPeriod);
 }
 
-TEST(AimdRateControlTest, ExpectedPeriodAfter20kbpsDropAnd5kbpsIncrease) {
+TEST(AimdRateControlTest, ExpectedPeriodAfterTypicalDrop) {
   AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""));
-  constexpr DataRate kInitialBitrate = DataRate::BitsPerSec(110'000);
+  // The rate increase at 216 kbps should be 12 kbps. If we drop from
+  // 216 + 4*12 = 264 kbps, it should take 4 seconds to recover. Since we
+  // back off to 0.85*acked_rate-5kbps, the acked bitrate needs to be 260
+  // kbps to end up at 216 kbps.
+  constexpr DataRate kInitialBitrate = DataRate::BitsPerSec(264'000);
+  constexpr DataRate kUpdatedBitrate = DataRate::BitsPerSec(216'000);
+  const DataRate kAckedBitrate =
+      (kUpdatedBitrate + DataRate::BitsPerSec(5'000)) / kFractionAfterOveruse;
   Timestamp now = kInitialTime;
   aimd_rate_control.SetEstimate(kInitialBitrate, now);
   now += TimeDelta::Millis(100);
-  // Make the bitrate drop by 20 kbps to get to 90 kbps.
-  // The rate increase at 90 kbps should be 5 kbps, so the period should be 4 s.
-  const DataRate kAckedBitrate =
-      (kInitialBitrate - DataRate::BitsPerSec(20'000)) / kFractionAfterOveruse;
   aimd_rate_control.Update({BandwidthUsage::kBwOverusing, kAckedBitrate}, now);
-  EXPECT_EQ(aimd_rate_control.GetNearMaxIncreaseRateBpsPerSecond(), 5'000);
+  EXPECT_EQ(aimd_rate_control.LatestEstimate(), kUpdatedBitrate);
+  EXPECT_EQ(aimd_rate_control.GetNearMaxIncreaseRateBpsPerSecond(), 12'000);
   EXPECT_EQ(aimd_rate_control.GetExpectedBandwidthPeriod(),
             TimeDelta::Seconds(4));
 }
@@ -210,6 +214,36 @@ TEST(AimdRateControlTest, SetEstimateUpperLimitedByNetworkEstimate) {
   aimd_rate_control.SetEstimate(DataRate::BitsPerSec(500'000), kInitialTime);
   EXPECT_EQ(aimd_rate_control.LatestEstimate(),
             network_estimate.link_capacity_upper);
+}
+
+TEST(AimdRateControlTest,
+     SetEstimateUpperLimitedByCurrentBitrateIfNetworkEstimateIsLow) {
+  AimdRateControl aimd_rate_control(
+      ExplicitKeyValueConfig(
+          "WebRTC-Bwe-EstimateBoundedIncrease/c_upper:true/"),
+      /*send_side=*/true);
+  aimd_rate_control.SetEstimate(DataRate::BitsPerSec(500'000), kInitialTime);
+  ASSERT_EQ(aimd_rate_control.LatestEstimate(), DataRate::BitsPerSec(500'000));
+
+  NetworkStateEstimate network_estimate;
+  network_estimate.link_capacity_upper = DataRate::BitsPerSec(300'000);
+  aimd_rate_control.SetNetworkStateEstimate(network_estimate);
+  aimd_rate_control.SetEstimate(DataRate::BitsPerSec(700'000), kInitialTime);
+  EXPECT_EQ(aimd_rate_control.LatestEstimate(), DataRate::BitsPerSec(500'000));
+}
+
+TEST(AimdRateControlTest,
+     SetEstimateDefaultNotUpperLimitedByCurrentBitrateIfNetworkEstimateIsLow) {
+  AimdRateControl aimd_rate_control(ExplicitKeyValueConfig(""),
+                                    /*send_side=*/true);
+  aimd_rate_control.SetEstimate(DataRate::BitsPerSec(500'000), kInitialTime);
+  ASSERT_EQ(aimd_rate_control.LatestEstimate(), DataRate::BitsPerSec(500'000));
+
+  NetworkStateEstimate network_estimate;
+  network_estimate.link_capacity_upper = DataRate::BitsPerSec(300'000);
+  aimd_rate_control.SetNetworkStateEstimate(network_estimate);
+  aimd_rate_control.SetEstimate(DataRate::BitsPerSec(700'000), kInitialTime);
+  EXPECT_EQ(aimd_rate_control.LatestEstimate(), DataRate::BitsPerSec(300'000));
 }
 
 TEST(AimdRateControlTest, SetEstimateLowerLimitedByNetworkEstimate) {

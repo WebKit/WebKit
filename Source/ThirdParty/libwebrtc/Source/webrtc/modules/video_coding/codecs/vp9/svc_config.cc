@@ -172,6 +172,9 @@ std::vector<SpatialLayer> GetVp9SvcConfig(VideoCodec& codec) {
   absl::optional<ScalabilityMode> scalability_mode = codec.GetScalabilityMode();
   RTC_DCHECK(scalability_mode.has_value());
 
+  bool requested_single_spatial_layer =
+      ScalabilityModeToNumSpatialLayers(*scalability_mode) == 1;
+
   // Limit number of spatial layers for given resolution.
   int limited_num_spatial_layers =
       GetLimitedNumSpatialLayers(codec.width, codec.height);
@@ -204,6 +207,14 @@ std::vector<SpatialLayer> GetVp9SvcConfig(VideoCodec& codec) {
   RTC_DCHECK(!spatial_layers.empty());
 
   spatial_layers[0].minBitrate = kMinVp9SvcBitrateKbps;
+
+  // Use codec bitrate limits if spatial layering is not requested.
+  if (requested_single_spatial_layer) {
+    SpatialLayer& spatial_layer = spatial_layers[0];
+    spatial_layer.minBitrate = codec.minBitrate;
+    spatial_layer.maxBitrate = codec.maxBitrate;
+    spatial_layer.targetBitrate = codec.maxBitrate;
+  }
 
   return spatial_layers;
 }

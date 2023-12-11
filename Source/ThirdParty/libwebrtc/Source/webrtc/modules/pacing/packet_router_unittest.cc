@@ -541,18 +541,24 @@ TEST_F(PacketRouterDeathTest, DoubleRegistrationOfReceiveModuleDisallowed) {
   packet_router_.RemoveReceiveRtpModule(&module);
 }
 
-TEST_F(PacketRouterDeathTest, RemovalOfNeverAddedSendModuleDisallowed) {
-  NiceMock<MockRtpRtcpInterface> module;
-
-  EXPECT_DEATH(packet_router_.RemoveSendRtpModule(&module), "");
-}
-
 TEST_F(PacketRouterDeathTest, RemovalOfNeverAddedReceiveModuleDisallowed) {
   NiceMock<MockRtpRtcpInterface> module;
 
   EXPECT_DEATH(packet_router_.RemoveReceiveRtpModule(&module), "");
 }
 #endif  // RTC_DCHECK_IS_ON && GTEST_HAS_DEATH_TEST && !defined(WEBRTC_ANDROID)
+
+TEST_F(PacketRouterTest, RemovalOfNeverAddedSendModuleIgnored) {
+  NiceMock<MockRtpRtcpInterface> module;
+  packet_router_.RemoveSendRtpModule(&module);
+}
+
+TEST_F(PacketRouterTest, DuplicateRemovalOfSendModuleIgnored) {
+  NiceMock<MockRtpRtcpInterface> module;
+  packet_router_.AddSendRtpModule(&module, false);
+  packet_router_.RemoveSendRtpModule(&module);
+  packet_router_.RemoveSendRtpModule(&module);
+}
 
 TEST(PacketRouterRembTest, ChangeSendRtpModuleChangeRembSender) {
   rtc::ScopedFakeClock clock;

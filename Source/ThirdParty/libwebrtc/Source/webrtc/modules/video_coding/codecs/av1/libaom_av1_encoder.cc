@@ -18,8 +18,11 @@
 
 #include "absl/algorithm/container.h"
 #include "absl/base/macros.h"
+#include "absl/strings/match.h"
 #include "absl/types/optional.h"
+#include "api/field_trials_view.h"
 #include "api/scoped_refptr.h"
+#include "api/transport/field_trial_based_config.h"
 #include "api/video/encoded_image.h"
 #include "api/video/i420_buffer.h"
 #include "api/video/video_frame.h"
@@ -37,6 +40,11 @@
 #include "third_party/libaom/source/libaom/aom/aom_codec.h"
 #include "third_party/libaom/source/libaom/aom/aom_encoder.h"
 #include "third_party/libaom/source/libaom/aom/aomcx.h"
+
+#if (defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64)) && \
+    (defined(WEBRTC_ANDROID) || defined(WEBRTC_IOS))
+#define MOBILE_ARM
+#endif
 
 #define SET_ENCODER_PARAM_OR_RETURN_ERROR(param_id, param_value) \
   do {                                                           \
@@ -68,8 +76,8 @@ aom_superblock_size_t GetSuperblockSize(int width, int height, int threads) {
 
 class LibaomAv1Encoder final : public VideoEncoder {
  public:
-  explicit LibaomAv1Encoder(
-      const absl::optional<LibaomAv1EncoderAuxConfig>& aux_config);
+  LibaomAv1Encoder(const absl::optional<LibaomAv1EncoderAuxConfig>& aux_config,
+                   const FieldTrialsView& trials);
   ~LibaomAv1Encoder();
 
   int InitEncode(const VideoCodec* codec_settings,
@@ -122,6 +130,9 @@ class LibaomAv1Encoder final : public VideoEncoder {
   EncodedImageCallback* encoded_image_callback_;
   int64_t timestamp_;
   const LibaomAv1EncoderInfoSettings encoder_info_override_;
+  // TODO(webrtc:15225): Kill switch for disabling frame dropping. Remove it
+  // after frame dropping is fully rolled out.
+  bool disable_frame_dropping_;
 };
 
 int32_t VerifyCodecSettings(const VideoCodec& codec_settings) {
@@ -153,13 +164,17 @@ int32_t VerifyCodecSettings(const VideoCodec& codec_settings) {
 }
 
 LibaomAv1Encoder::LibaomAv1Encoder(
-    const absl::optional<LibaomAv1EncoderAuxConfig>& aux_config)
+    const absl::optional<LibaomAv1EncoderAuxConfig>& aux_config,
+    const FieldTrialsView& trials)
     : inited_(false),
       rates_configured_(false),
       aux_config_(aux_config),
       frame_for_encode_(nullptr),
       encoded_image_callback_(nullptr),
-      timestamp_(0) {}
+      timestamp_(0),
+      disable_frame_dropping_(absl::StartsWith(
+          trials.Lookup("WebRTC-LibaomAv1Encoder-DisableFrameDropping"),
+          "Enabled")) {}
 
 LibaomAv1Encoder::~LibaomAv1Encoder() {
   Release();
@@ -225,6 +240,9 @@ int LibaomAv1Encoder::InitEncode(const VideoCodec* codec_settings,
   cfg_.g_timebase.num = 1;
   cfg_.g_timebase.den = kRtpTicksPerSecond;
   cfg_.rc_target_bitrate = encoder_settings_.startBitrate;  // kilobits/sec.
+  cfg_.rc_dropframe_thresh =
+      (!disable_frame_dropping_ && encoder_settings_.GetFrameDropEnabled()) ? 30
+                                                                            : 0;
   cfg_.g_input_bit_depth = kBitDepth;
   cfg_.kf_mode = AOM_KF_DISABLED;
   cfg_.rc_min_quantizer = kQpMin;
@@ -279,10 +297,16 @@ int LibaomAv1Encoder::InitEncode(const VideoCodec* codec_settings,
     SET_ENCODER_PARAM_OR_RETURN_ERROR(AV1E_SET_ENABLE_PALETTE, 0);
   }
 
-  if (cfg_.g_threads == 4 && cfg_.g_w == 640 &&
-      (cfg_.g_h == 360 || cfg_.g_h == 480)) {
-    SET_ENCODER_PARAM_OR_RETURN_ERROR(AV1E_SET_TILE_ROWS,
-                                      static_cast<int>(log2(cfg_.g_threads)));
+  if (cfg_.g_threads == 8) {
+    // Values passed to AV1E_SET_TILE_ROWS and AV1E_SET_TILE_COLUMNS are log2()
+    // based.
+    // Use 4 tile columns x 2 tile rows for 8 threads.
+    SET_ENCODER_PARAM_OR_RETURN_ERROR(AV1E_SET_TILE_ROWS, 1);
+    SET_ENCODER_PARAM_OR_RETURN_ERROR(AV1E_SET_TILE_COLUMNS, 2);
+  } else if (cfg_.g_threads == 4) {
+    // Use 2 tile columns x 2 tile rows for 4 threads.
+    SET_ENCODER_PARAM_OR_RETURN_ERROR(AV1E_SET_TILE_ROWS, 1);
+    SET_ENCODER_PARAM_OR_RETURN_ERROR(AV1E_SET_TILE_COLUMNS, 1);
   } else {
     SET_ENCODER_PARAM_OR_RETURN_ERROR(AV1E_SET_TILE_COLUMNS,
                                       static_cast<int>(log2(cfg_.g_threads)));
@@ -386,14 +410,15 @@ int LibaomAv1Encoder::NumberOfThreads(int width,
   // Keep the number of encoder threads equal to the possible number of
   // column/row tiles, which is (1, 2, 4, 8). See comments below for
   // AV1E_SET_TILE_COLUMNS/ROWS.
-  if (width * height >= 640 * 360 && number_of_cores > 4) {
+  if (width * height > 1280 * 720 && number_of_cores > 8) {
+    return 8;
+  } else if (width * height >= 640 * 360 && number_of_cores > 4) {
     return 4;
   } else if (width * height >= 320 * 180 && number_of_cores > 2) {
     return 2;
   } else {
 // Use 2 threads for low res on ARM.
-#if defined(WEBRTC_ARCH_ARM) || defined(WEBRTC_ARCH_ARM64) || \
-    defined(WEBRTC_ANDROID)
+#ifdef MOBILE_ARM
     if (width * height >= 320 * 180 && number_of_cores > 2) {
       return 2;
     }
@@ -643,9 +668,6 @@ int32_t LibaomAv1Encoder::Encode(
     if (SvcEnabled()) {
       SetSvcLayerId(*layer_frame);
       SetSvcRefFrameConfig(*layer_frame);
-
-      SET_ENCODER_PARAM_OR_RETURN_ERROR(AV1E_SET_ERROR_RESILIENT_MODE,
-                                        layer_frame->TemporalId() > 0 ? 1 : 0);
     }
 
     // Encode a frame. The presentation timestamp `pts` should not use real
@@ -686,7 +708,7 @@ int32_t LibaomAv1Encoder::Encode(
         encoded_image._frameType = layer_frame->IsKeyframe()
                                        ? VideoFrameType::kVideoFrameKey
                                        : VideoFrameType::kVideoFrameDelta;
-        encoded_image.SetTimestamp(frame.timestamp());
+        encoded_image.SetRtpTimestamp(frame.timestamp());
         encoded_image.SetCaptureTimeIdentifier(frame.capture_time_identifier());
         encoded_image.capture_time_ms_ = frame.render_time_ms();
         encoded_image.rotation_ = frame.rotation();
@@ -806,7 +828,10 @@ VideoEncoder::EncoderInfo LibaomAv1Encoder::GetEncoderInfo() const {
   info.implementation_name = "libaom";
   info.has_trusted_rate_controller = true;
   info.is_hardware_accelerated = false;
-  info.scaling_settings = VideoEncoder::ScalingSettings(kMinQindex, kMaxQindex);
+  info.scaling_settings =
+      (inited_ && !encoder_settings_.AV1().automatic_resize_on)
+          ? VideoEncoder::ScalingSettings::kOff
+          : VideoEncoder::ScalingSettings(kMinQindex, kMaxQindex);
   info.preferred_pixel_formats = {VideoFrameBuffer::Type::kI420,
                                   VideoFrameBuffer::Type::kNV12};
   if (SvcEnabled()) {
@@ -828,12 +853,14 @@ VideoEncoder::EncoderInfo LibaomAv1Encoder::GetEncoderInfo() const {
 }  // namespace
 
 std::unique_ptr<VideoEncoder> CreateLibaomAv1Encoder() {
-  return std::make_unique<LibaomAv1Encoder>(absl::nullopt);
+  return std::make_unique<LibaomAv1Encoder>(absl::nullopt,
+                                            FieldTrialBasedConfig());
 }
 
 std::unique_ptr<VideoEncoder> CreateLibaomAv1Encoder(
     const LibaomAv1EncoderAuxConfig& aux_config) {
-  return std::make_unique<LibaomAv1Encoder>(aux_config);
+  return std::make_unique<LibaomAv1Encoder>(aux_config,
+                                            FieldTrialBasedConfig());
 }
 
 }  // namespace webrtc

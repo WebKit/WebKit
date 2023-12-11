@@ -127,8 +127,7 @@ bool WindowCapturerMac::FocusOnSelectedSource() {
   // TODO(jiayl): this will bring the process main window to the front. We
   // should find a way to bring only the window to the front.
   bool result =
-      [[NSRunningApplication runningApplicationWithProcessIdentifier: pid]
-          activateWithOptions: NSApplicationActivateIgnoringOtherApps];
+      [[NSRunningApplication runningApplicationWithProcessIdentifier:pid] activateWithOptions:0];
 
   CFRelease(window_id_array);
   CFRelease(window_array);

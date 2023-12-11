@@ -83,6 +83,13 @@ TEST(SequenceCheckerTest, DetachFromThreadAndUseOnTaskQueue) {
   queue.SendTask([&] { EXPECT_TRUE(sequence_checker.IsCurrent()); });
 }
 
+TEST(SequenceCheckerTest, InitializeForDifferentTaskQueue) {
+  TaskQueueForTest queue;
+  SequenceChecker sequence_checker(queue.Get());
+  EXPECT_EQ(sequence_checker.IsCurrent(), !RTC_DCHECK_IS_ON);
+  queue.SendTask([&] { EXPECT_TRUE(sequence_checker.IsCurrent()); });
+}
+
 TEST(SequenceCheckerTest, DetachFromTaskQueueAndUseOnThread) {
   TaskQueueForTest queue;
   queue.SendTask([] {

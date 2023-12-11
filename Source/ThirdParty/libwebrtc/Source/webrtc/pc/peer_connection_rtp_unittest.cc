@@ -53,6 +53,7 @@
 #include "pc/sdp_utils.h"
 #include "pc/session_description.h"
 #include "pc/test/fake_audio_capture_module.h"
+#include "pc/test/integration_test_helpers.h"
 #include "pc/test/mock_peer_connection_observers.h"
 #include "rtc_base/checks.h"
 #include "rtc_base/gunit.h"
@@ -72,8 +73,6 @@ using ::testing::ElementsAre;
 using ::testing::Pair;
 using ::testing::UnorderedElementsAre;
 using ::testing::Values;
-
-const uint32_t kDefaultTimeout = 10000u;
 
 template <typename MethodFunctor>
 class OnSuccessObserver : public webrtc::SetRemoteDescriptionObserverInterface {
@@ -826,7 +825,8 @@ TEST_F(PeerConnectionRtpTestUnifiedPlan, TracksDoNotEndWhenSsrcChanges) {
   for (size_t i = 0; i < contents.size(); ++i) {
     auto& mutable_streams = contents[i].media_description()->mutable_streams();
     ASSERT_EQ(mutable_streams.size(), 1u);
-    mutable_streams[0].ssrcs = {kFirstMungedSsrc + static_cast<uint32_t>(i)};
+    ReplaceFirstSsrc(mutable_streams[0],
+                     kFirstMungedSsrc + static_cast<uint32_t>(i));
   }
   ASSERT_TRUE(
       callee->SetLocalDescription(CloneSessionDescription(answer.get())));

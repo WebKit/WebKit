@@ -86,8 +86,8 @@ RetransmissionQueue::RetransmissionQueue(
           data_chunk_header_size_,
           tsn_unwrapper_.Unwrap(my_initial_tsn),
           tsn_unwrapper_.Unwrap(TSN(*my_initial_tsn - 1)),
-          [this](IsUnordered unordered, StreamID stream_id, MID message_id) {
-            return send_queue_.Discard(unordered, stream_id, message_id);
+          [this](StreamID stream_id, OutgoingMessageId message_id) {
+            return send_queue_.Discard(stream_id, message_id);
           }) {}
 
 bool RetransmissionQueue::IsConsistent() const {
@@ -426,18 +426,21 @@ RetransmissionQueue::GetChunksForFastRetransmit(size_t bytes_in_packet) {
   if (!t3_rtx_.is_running()) {
     t3_rtx_.Start();
   }
+
+  size_t bytes_retransmitted = absl::c_accumulate(
+      to_be_sent, 0, [&](size_t r, const std::pair<TSN, Data>& d) {
+        return r + GetSerializedChunkSize(d.second);
+      });
+  ++rtx_packets_count_;
+  rtx_bytes_count_ += bytes_retransmitted;
+
   RTC_DLOG(LS_VERBOSE) << log_prefix_ << "Fast-retransmitting TSN "
                        << StrJoin(to_be_sent, ",",
                                   [&](rtc::StringBuilder& sb,
                                       const std::pair<TSN, Data>& c) {
                                     sb << *c.first;
                                   })
-                       << " - "
-                       << absl::c_accumulate(
-                              to_be_sent, 0,
-                              [&](size_t r, const std::pair<TSN, Data>& d) {
-                                return r + GetSerializedChunkSize(d.second);
-                              })
+                       << " - " << bytes_retransmitted
                        << " bytes. outstanding_bytes=" << outstanding_bytes()
                        << " (" << old_outstanding_bytes << ")";
 
@@ -463,10 +466,17 @@ std::vector<std::pair<TSN, Data>> RetransmissionQueue::GetChunksToSend(
       RoundDownTo4(std::min(max_bytes_to_send(), bytes_remaining_in_packet));
 
   to_be_sent = outstanding_data_.GetChunksToBeRetransmitted(max_bytes);
-  max_bytes -= absl::c_accumulate(to_be_sent, 0,
-                                  [&](size_t r, const std::pair<TSN, Data>& d) {
-                                    return r + GetSerializedChunkSize(d.second);
-                                  });
+
+  size_t bytes_retransmitted = absl::c_accumulate(
+      to_be_sent, 0, [&](size_t r, const std::pair<TSN, Data>& d) {
+        return r + GetSerializedChunkSize(d.second);
+      });
+  max_bytes -= bytes_retransmitted;
+
+  if (!to_be_sent.empty()) {
+    ++rtx_packets_count_;
+    rtx_bytes_count_ += bytes_retransmitted;
+  }
 
   while (max_bytes > data_chunk_header_size_) {
     RTC_DCHECK(IsDivisibleBy4(max_bytes));
@@ -481,7 +491,7 @@ std::vector<std::pair<TSN, Data>> RetransmissionQueue::GetChunksToSend(
     rwnd_ -= chunk_size;
 
     absl::optional<UnwrappedTSN> tsn = outstanding_data_.Insert(
-        chunk_opt->data, now,
+        chunk_opt->message_id, chunk_opt->data, now,
         partial_reliability_ ? chunk_opt->max_retransmissions
                              : MaxRetransmits::NoLimit(),
         partial_reliability_ ? chunk_opt->expires_at : TimeMs::InfiniteFuture(),
@@ -562,6 +572,10 @@ void RetransmissionQueue::PrepareResetStream(StreamID stream_id) {
 }
 bool RetransmissionQueue::HasStreamsReadyToBeReset() const {
   return send_queue_.HasStreamsReadyToBeReset();
+}
+std::vector<StreamID> RetransmissionQueue::BeginResetStreams() {
+  outstanding_data_.BeginResetStreams();
+  return send_queue_.GetStreamsReadyToBeReset();
 }
 void RetransmissionQueue::CommitResetStreams() {
   send_queue_.CommitResetStreams();

@@ -33,4 +33,14 @@ specific_include_rules = {
   ".*video_replay\.cc": [
     "+modules/video_coding/utility/ivf_file_writer.h",
   ],
+  ".*video_encoder\.cc": [
+    "+modules/video_coding/codecs/av1/av1_svc_config.h",
+    "+modules/video_coding/include/video_codec_interface.h",
+    "+modules/video_coding/svc/scalability_mode_util.h",
+  ],
+  ".*encoded_image_file_writer\.(cc|h)": [
+    "+modules/video_coding/include/video_codec_interface.h",
+    "+modules/video_coding/svc/scalability_mode_util.h",
+    "+modules/video_coding/utility/ivf_file_writer.h",
+  ],
 }

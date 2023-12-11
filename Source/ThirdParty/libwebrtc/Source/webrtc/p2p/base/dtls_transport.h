@@ -158,6 +158,12 @@ class DtlsTransport : public DtlsTransportInternal {
   // Find out which DTLS-SRTP cipher was negotiated
   bool GetSrtpCryptoSuite(int* cipher) override;
 
+  // Find out which signature algorithm was used by the peer. Returns values
+  // from
+  // https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-signaturescheme
+  // If not applicable, it returns zero.
+  uint16_t GetSslPeerSignatureAlgorithm() const override;
+
   bool GetDtlsRole(rtc::SSLRole* role) const override;
   bool SetDtlsRole(rtc::SSLRole role) override;
 

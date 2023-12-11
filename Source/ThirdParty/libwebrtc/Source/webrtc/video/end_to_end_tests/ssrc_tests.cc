@@ -41,9 +41,9 @@ TEST_F(SsrcEndToEndTest, ReceiverUsesLocalSsrc) {
     SyncRtcpObserver()
         : EndToEndTest(test::VideoTestConstants::kDefaultTimeout) {}
 
-    Action OnReceiveRtcp(const uint8_t* packet, size_t length) override {
+    Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> packet) override {
       test::RtcpPacketParser parser;
-      EXPECT_TRUE(parser.Parse(packet, length));
+      EXPECT_TRUE(parser.Parse(packet));
       EXPECT_EQ(test::VideoTestConstants::kReceiverLocalVideoSsrc,
                 parser.sender_ssrc());
       observation_complete_.Set();
@@ -163,9 +163,9 @@ void SsrcEndToEndTest::TestSendsSetSsrcs(size_t num_ssrcs,
     }
 
    private:
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       RtpPacket rtp_packet;
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      EXPECT_TRUE(rtp_packet.Parse(packet));
 
       EXPECT_TRUE(valid_ssrcs_[rtp_packet.Ssrc()])
           << "Received unknown SSRC: " << rtp_packet.Ssrc();
@@ -271,9 +271,9 @@ TEST_F(SsrcEndToEndTest, DISABLED_RedundantPayloadsTransmittedOnAllSsrcs) {
     }
 
    private:
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       RtpPacket rtp_packet;
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      EXPECT_TRUE(rtp_packet.Parse(packet));
 
       if (!registered_rtx_ssrc_[rtp_packet.Ssrc()])
         return SEND_PACKET;

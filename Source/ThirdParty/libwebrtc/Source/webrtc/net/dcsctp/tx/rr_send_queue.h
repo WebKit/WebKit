@@ -22,6 +22,7 @@
 #include "absl/strings/string_view.h"
 #include "absl/types/optional.h"
 #include "api/array_view.h"
+#include "net/dcsctp/common/internal_types.h"
 #include "net/dcsctp/public/dcsctp_message.h"
 #include "net/dcsctp/public/dcsctp_socket.h"
 #include "net/dcsctp/public/types.h"
@@ -76,9 +77,7 @@ class RRSendQueue : public SendQueue {
 
   // Implementation of `SendQueue`.
   absl::optional<DataToSend> Produce(TimeMs now, size_t max_size) override;
-  bool Discard(IsUnordered unordered,
-               StreamID stream_id,
-               MID message_id) override;
+  bool Discard(StreamID stream_id, OutgoingMessageId message_id) override;
   void PrepareResetStream(StreamID streams) override;
   bool HasStreamsReadyToBeReset() const override;
   std::vector<StreamID> GetStreamsReadyToBeReset() override;
@@ -163,7 +162,7 @@ class RRSendQueue : public SendQueue {
     ThresholdWatcher& buffered_amount() { return buffered_amount_; }
 
     // Discards a partially sent message, see `SendQueue::Discard`.
-    bool Discard(IsUnordered unordered, MID message_id);
+    bool Discard(OutgoingMessageId message_id);
 
     // Pauses this stream, which is used before resetting it.
     void Pause();
@@ -219,11 +218,15 @@ class RRSendQueue : public SendQueue {
 
     // An enqueued message and metadata.
     struct Item {
-      explicit Item(DcSctpMessage msg, MessageAttributes attributes)
-          : message(std::move(msg)),
+      explicit Item(OutgoingMessageId message_id,
+                    DcSctpMessage msg,
+                    MessageAttributes attributes)
+          : message_id(message_id),
+            message(std::move(msg)),
             attributes(std::move(attributes)),
             remaining_offset(0),
             remaining_size(message.payload().size()) {}
+      OutgoingMessageId message_id;
       DcSctpMessage message;
       MessageAttributes attributes;
       // The remaining payload (offset and size) to be sent, when it has been
@@ -232,7 +235,7 @@ class RRSendQueue : public SendQueue {
       size_t remaining_size;
       // If set, an allocated Message ID and SSN. Will be allocated when the
       // first fragment is sent.
-      absl::optional<MID> message_id = absl::nullopt;
+      absl::optional<MID> mid = absl::nullopt;
       absl::optional<SSN> ssn = absl::nullopt;
       // The current Fragment Sequence Number, incremented for each fragment.
       FSN current_fsn = FSN(0);
@@ -269,6 +272,7 @@ class RRSendQueue : public SendQueue {
   DcSctpSocketCallbacks& callbacks_;
   const size_t buffer_size_;
   const StreamPriority default_priority_;
+  OutgoingMessageId current_message_id = OutgoingMessageId(0);
   StreamScheduler scheduler_;
 
   // The total amount of buffer data, for all streams.

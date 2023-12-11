@@ -10,10 +10,8 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <stdlib.h>
 
 #include "absl/strings/string_view.h"
-#include "api/jsep.h"
 #include "pc/test/integration_test_helpers.h"
 
 namespace webrtc {
@@ -23,7 +21,7 @@ class FuzzerTest : public PeerConnectionIntegrationBaseTest {
   FuzzerTest()
       : PeerConnectionIntegrationBaseTest(SdpSemantics::kUnifiedPlan) {}
 
-  void RunNegotiateCycle(SdpType sdpType, absl::string_view message) {
+  void RunNegotiateCycle(absl::string_view message) {
     CreatePeerConnectionWrappers();
     // Note - we do not do test.ConnectFakeSignaling(); all signals
     // generated are discarded.
@@ -31,8 +29,9 @@ class FuzzerTest : public PeerConnectionIntegrationBaseTest {
     auto srd_observer =
         rtc::make_ref_counted<FakeSetRemoteDescriptionObserver>();
 
+    SdpParseError error;
     std::unique_ptr<SessionDescriptionInterface> sdp(
-        CreateSessionDescription(sdpType, std::string(message)));
+        CreateSessionDescription("offer", std::string(message), &error));
     caller()->pc()->SetRemoteDescription(std::move(sdp), srd_observer);
     // Wait a short time for observer to be called. Timeout is short
     // because the fuzzer should be trying many branches.
@@ -57,42 +56,13 @@ class FuzzerTest : public PeerConnectionIntegrationBaseTest {
 };
 
 void FuzzOneInput(const uint8_t* data, size_t size) {
-  uint8_t* newData = const_cast<uint8_t*>(data);
-  size_t newSize = size;
-  uint8_t type = 0;
-
-  if (const char* var = getenv("SDP_TYPE")) {
-    if (size > 16384) {
-      return;
-    }
-    type = atoi(var);
-  } else {
-    if (size < 1 || size > 16385) {
-      return;
-    }
-    type = data[0];
-    newSize = size - 1;
-    newData = reinterpret_cast<uint8_t*>(malloc(newSize));
-    if (!newData)
-      return;
-    memcpy(newData, &data[1], newSize);
-  }
-
-  SdpType sdpType = SdpType::kOffer;
-  switch (type % 4) {
-    case 0: sdpType = SdpType::kOffer; break;
-    case 1: sdpType = SdpType::kPrAnswer; break;
-    case 2: sdpType = SdpType::kAnswer; break;
-    case 3: sdpType = SdpType::kRollback; break;
+  if (size > 16384) {
+    return;
   }
 
   FuzzerTest test;
   test.RunNegotiateCycle(
-      sdpType,
-      absl::string_view(reinterpret_cast<const char*>(newData), newSize));
-
-  if (newData != data)
-      free(newData);
+      absl::string_view(reinterpret_cast<const char*>(data), size));
 }
 
 }  // namespace webrtc

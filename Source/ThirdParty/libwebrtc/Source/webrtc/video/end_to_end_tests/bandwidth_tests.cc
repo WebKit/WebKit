@@ -58,9 +58,9 @@ TEST_F(BandwidthEndToEndTest, ReceiveStreamSendsRemb) {
           RtpExtension(RtpExtension::kAbsSendTimeUri, kAbsSendTimeExtensionId));
     }
 
-    Action OnReceiveRtcp(const uint8_t* packet, size_t length) override {
+    Action OnReceiveRtcp(rtc::ArrayView<const uint8_t> packet) override {
       test::RtcpPacketParser parser;
-      EXPECT_TRUE(parser.Parse(packet, length));
+      EXPECT_TRUE(parser.Parse(packet));
 
       if (parser.remb()->num_packets() > 0) {
         EXPECT_EQ(test::VideoTestConstants::kReceiverLocalVideoSsrc,
@@ -127,7 +127,7 @@ class BandwidthStatsTest : public test::EndToEndTest {
   }
 
   // Called on the pacer thread.
-  Action OnSendRtp(const uint8_t* packet, size_t length) override {
+  Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
     // Stats need to be fetched on the thread where the caller objects were
     // constructed.
     task_queue_->PostTask([this]() {

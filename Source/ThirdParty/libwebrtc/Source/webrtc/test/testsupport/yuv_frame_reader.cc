@@ -36,7 +36,7 @@ int WrapFrameNum(int frame_num, int num_frames, RepeatMode mode) {
   }
 
   RTC_CHECK_EQ(RepeatMode::kPingPong, mode);
-  int cycle_len = 2 * (num_frames - 1);
+  int cycle_len = std::max(1, 2 * (num_frames - 1));
   int wrapped_num = frame_num % cycle_len;
   if (wrapped_num >= num_frames) {
     return cycle_len - wrapped_num;

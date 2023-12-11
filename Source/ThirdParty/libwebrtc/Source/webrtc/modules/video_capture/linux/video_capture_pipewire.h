@@ -43,13 +43,15 @@ class VideoCaptureModulePipeWire : public VideoCaptureImpl {
   void OnFormatChanged(const struct spa_pod* format);
   void ProcessBuffers();
 
-  rtc::scoped_refptr<PipeWireSession> session_;
-  int node_id_;
-  VideoCaptureCapability frameInfo_;
-  bool started_;
+  const rtc::scoped_refptr<PipeWireSession> session_
+      RTC_GUARDED_BY(capture_checker_);
+  int node_id_ RTC_GUARDED_BY(capture_checker_);
+  VideoCaptureCapability configured_capability_
+      RTC_GUARDED_BY(capture_checker_);
+  bool started_ RTC_GUARDED_BY(api_lock_);
 
-  struct pw_stream* stream_;
-  struct spa_hook stream_listener_;
+  struct pw_stream* stream_ RTC_GUARDED_BY(capture_checker_) = nullptr;
+  struct spa_hook stream_listener_ RTC_GUARDED_BY(capture_checker_);
 };
 }  // namespace videocapturemodule
 }  // namespace webrtc

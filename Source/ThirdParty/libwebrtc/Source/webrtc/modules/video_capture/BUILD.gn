@@ -29,6 +29,7 @@ rtc_library("video_capture_module") {
 
   deps = [
     "../../api:scoped_refptr",
+    "../../api:sequence_checker",
     "../../api/video:video_frame",
     "../../api/video:video_rtp_headers",
     "../../common_video",
@@ -36,6 +37,7 @@ rtc_library("video_capture_module") {
     "../../rtc_base:event_tracer",
     "../../rtc_base:logging",
     "../../rtc_base:macromagic",
+    "../../rtc_base:race_checker",
     "../../rtc_base:refcount",
     "../../rtc_base:stringutils",
     "../../rtc_base:timeutils",
@@ -82,6 +84,8 @@ if (!build_with_chromium || is_linux || is_chromeos) {
 
       if (rtc_use_pipewire) {
         sources += [
+          "linux/camera_portal.cc",
+          "linux/camera_portal.h",
           "linux/device_info_pipewire.cc",
           "linux/device_info_pipewire.h",
           "linux/pipewire_session.cc",

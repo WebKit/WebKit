@@ -287,16 +287,15 @@ void RtpGenerator::GenerateRtpDump(const std::string& rtp_dump_path) {
                                    webrtc::kNetworkDown);
 }
 
-bool RtpGenerator::SendRtp(const uint8_t* packet,
-                           size_t length,
+bool RtpGenerator::SendRtp(rtc::ArrayView<const uint8_t> packet,
                            const webrtc::PacketOptions& options) {
-  test::RtpPacket rtp_packet = DataToRtpPacket(packet, length);
+  test::RtpPacket rtp_packet = DataToRtpPacket(packet.data(), packet.size());
   rtp_dump_writer_->WritePacket(&rtp_packet);
   return true;
 }
 
-bool RtpGenerator::SendRtcp(const uint8_t* packet, size_t length) {
-  test::RtpPacket rtcp_packet = DataToRtpPacket(packet, length);
+bool RtpGenerator::SendRtcp(rtc::ArrayView<const uint8_t> packet) {
+  test::RtpPacket rtcp_packet = DataToRtpPacket(packet.data(), packet.size());
   rtp_dump_writer_->WritePacket(&rtcp_packet);
   return true;
 }

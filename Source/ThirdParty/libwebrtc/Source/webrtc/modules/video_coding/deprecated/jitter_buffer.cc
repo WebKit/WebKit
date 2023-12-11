@@ -38,7 +38,7 @@ bool HasNonEmptyState(FrameListPair pair) {
 }
 
 void FrameList::InsertFrame(VCMFrameBuffer* frame) {
-  insert(rbegin().base(), FrameListPair(frame->Timestamp(), frame));
+  insert(rbegin().base(), FrameListPair(frame->RtpTimestamp(), frame));
 }
 
 VCMFrameBuffer* FrameList::PopFrame(uint32_t timestamp) {
@@ -286,7 +286,7 @@ VCMEncodedFrame* VCMJitterBuffer::ExtractAndSetDecode(uint32_t timestamp) {
       // Wait for this one to get complete.
       waiting_for_completion_.frame_size = frame->size();
       waiting_for_completion_.latest_packet_time = frame->LatestPacketTimeMs();
-      waiting_for_completion_.timestamp = frame->Timestamp();
+      waiting_for_completion_.timestamp = frame->RtpTimestamp();
     }
   }
 
@@ -521,7 +521,8 @@ bool VCMJitterBuffer::IsContinuous(const VCMFrameBuffer& frame) const {
   for (FrameList::const_iterator it = decodable_frames_.begin();
        it != decodable_frames_.end(); ++it) {
     VCMFrameBuffer* decodable_frame = it->second;
-    if (IsNewerTimestamp(decodable_frame->Timestamp(), frame.Timestamp())) {
+    if (IsNewerTimestamp(decodable_frame->RtpTimestamp(),
+                         frame.RtpTimestamp())) {
       break;
     }
     decoding_state.SetState(decodable_frame);
@@ -555,7 +556,7 @@ void VCMJitterBuffer::FindAndInsertContinuousFramesWithState(
        it != incomplete_frames_.end();) {
     VCMFrameBuffer* frame = it->second;
     if (IsNewerTimestamp(original_decoded_state.time_stamp(),
-                         frame->Timestamp())) {
+                         frame->RtpTimestamp())) {
       ++it;
       continue;
     }
@@ -592,11 +593,11 @@ int VCMJitterBuffer::NonContinuousOrIncompleteDuration() {
   if (incomplete_frames_.empty()) {
     return 0;
   }
-  uint32_t start_timestamp = incomplete_frames_.Front()->Timestamp();
+  uint32_t start_timestamp = incomplete_frames_.Front()->RtpTimestamp();
   if (!decodable_frames_.empty()) {
-    start_timestamp = decodable_frames_.Back()->Timestamp();
+    start_timestamp = decodable_frames_.Back()->RtpTimestamp();
   }
-  return incomplete_frames_.Back()->Timestamp() - start_timestamp;
+  return incomplete_frames_.Back()->RtpTimestamp() - start_timestamp;
 }
 
 uint16_t VCMJitterBuffer::EstimatedLowSequenceNumber(
@@ -861,7 +862,7 @@ void VCMJitterBuffer::UpdateJitterEstimate(const VCMFrameBuffer& frame,
   }
   // No retransmitted frames should be a part of the jitter
   // estimate.
-  UpdateJitterEstimate(frame.LatestPacketTimeMs(), frame.Timestamp(),
+  UpdateJitterEstimate(frame.LatestPacketTimeMs(), frame.RtpTimestamp(),
                        frame.size(), incomplete_frame);
 }
 

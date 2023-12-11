@@ -39,7 +39,7 @@ ENABLED_ARCHS = [
 DEFAULT_ARCHS = [
     'device:arm64', 'simulator:arm64', 'simulator:x64'
 ]
-IOS_DEPLOYMENT_TARGET = {
+IOS_MINIMUM_DEPLOYMENT_TARGET = {
     'device': '12.0',
     'simulator': '12.0',
     'catalyst': '14.0'
@@ -99,6 +99,11 @@ def _ParseArgs():
                       action='store_true',
                       default=False,
                       help='Use RBE to build.')
+  parser.add_argument('--deployment-target',
+                      default=IOS_MINIMUM_DEPLOYMENT_TARGET['device'],
+                      help='Raise the minimum deployment target to build for. '
+                      'Cannot be lowered below 12.0 for iOS/iPadOS '
+                      'and 14.0 for Catalyst.')
   parser.add_argument(
       '--extra-gn-args',
       default=[],
@@ -149,6 +154,12 @@ def _ParseArchitecture(architectures):
       archs.add(target_cpu)
 
   return result
+
+
+def _VersionMax(*versions):
+  return max(
+      *versions,
+      key=lambda version: [int(component) for component in version.split('.')])
 
 
 def BuildWebRTC(output_dir, target_environment, target_arch, flavor,
@@ -234,6 +245,8 @@ def main():
   framework_paths = []
   all_lib_paths = []
   for (environment, archs) in list(architectures.items()):
+    ios_deployment_target = _VersionMax(
+        args.deployment_target, IOS_MINIMUM_DEPLOYMENT_TARGET[environment])
     framework_path = os.path.join(args.output_dir, environment)
     framework_paths.append(framework_path)
     lib_paths = []
@@ -241,8 +254,8 @@ def main():
       lib_path = os.path.join(framework_path, arch + '_libs')
       lib_paths.append(lib_path)
       BuildWebRTC(lib_path, environment, arch, args.build_config,
-                  gn_target_name, IOS_DEPLOYMENT_TARGET[environment],
-                  LIBVPX_BUILD_VP9, args.use_goma, args.use_remoteexec, gn_args)
+                  gn_target_name, ios_deployment_target, LIBVPX_BUILD_VP9,
+                  args.use_goma, args.use_remoteexec, gn_args)
     all_lib_paths.extend(lib_paths)
 
     # Combine the slices.

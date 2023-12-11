@@ -29,4 +29,4 @@ native API header files.
  * [Reporting bugs](docs/bug-reporting.md)
  * [Documentation](g3doc/sitemap.md)
 
-[native-dev]: https://webrtc.googlesource.com/src/+/main/docs/native-code/index.md
+[native-dev]: https://webrtc.googlesource.com/src/+/main/docs/native-code/

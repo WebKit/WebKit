@@ -15,7 +15,7 @@
 
 namespace webrtc {
 
-enum class CaptureType { kWindow, kScreen };
+enum class CaptureType { kWindow, kScreen, kAnyScreenContent };
 
 // Type used to identify windows on the desktop. Values are platform-specific:
 //   - On Windows: HWND cast to intptr_t.

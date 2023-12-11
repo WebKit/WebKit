@@ -46,7 +46,7 @@ class AudioEncoderCopyRedTest : public ::testing::Test {
         timestamp_(4711),
         sample_rate_hz_(16000),
         num_audio_samples_10ms(sample_rate_hz_ / 100),
-        red_payload_type_(200) {
+        red_payload_type_(63) {
     AudioEncoderCopyRed::Config config;
     config.payload_type = red_payload_type_;
     config.speech_encoder = std::unique_ptr<AudioEncoder>(mock_encoder_);
@@ -315,6 +315,23 @@ TEST_F(AudioEncoderCopyRedTest, CheckPayloadSizes3) {
   }
 }
 
+// Checks that packets encoded larger than REDs 1024 maximum are returned as-is.
+TEST_F(AudioEncoderCopyRedTest, VeryLargePacket) {
+  AudioEncoder::EncodedInfo info;
+  info.payload_type = 63;
+  info.encoded_bytes =
+      1111;  // Must be > 1024 which is the maximum size encodable by RED.
+  info.encoded_timestamp = timestamp_;
+
+  EXPECT_CALL(*mock_encoder_, EncodeImpl(_, _, _))
+      .WillOnce(Invoke(MockAudioEncoder::FakeEncoding(info)));
+
+  Encode();
+  ASSERT_EQ(0u, encoded_info_.redundant.size());
+  ASSERT_EQ(info.encoded_bytes, encoded_info_.encoded_bytes);
+  ASSERT_EQ(info.payload_type, encoded_info_.payload_type);
+}
+
 // Checks that the correct timestamps are returned.
 TEST_F(AudioEncoderCopyRedTest, CheckTimestamps) {
   uint32_t primary_timestamp = timestamp_;
@@ -458,7 +475,7 @@ TEST_F(AudioEncoderCopyRedTest, CheckRFC2198Header) {
   EXPECT_EQ(encoded_[2] & 0x3u, encoded_info_.redundant[1].encoded_bytes >> 8);
   EXPECT_EQ(encoded_[3], encoded_info_.redundant[1].encoded_bytes & 0xff);
 
-  EXPECT_EQ(encoded_[4], primary_payload_type | 0x80);
+  EXPECT_EQ(encoded_[4], primary_payload_type);
   timestamp_delta = encoded_info_.encoded_timestamp -
                     encoded_info_.redundant[1].encoded_timestamp;
 }

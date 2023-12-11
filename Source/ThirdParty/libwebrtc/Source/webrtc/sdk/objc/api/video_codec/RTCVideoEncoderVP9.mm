@@ -21,7 +21,7 @@
 
 + (id<RTCVideoEncoder>)vp9Encoder:(RTCVideoCodecInfo *)codecInfo {
   return [[RTCWrappedNativeVideoEncoder alloc]
-      initWithNativeEncoder:std::unique_ptr<webrtc::VideoEncoder>(webrtc::VP9Encoder::Create(cricket::VideoCodec(codecInfo.nativeSdpVideoFormat)))];
+      initWithNativeEncoder:std::unique_ptr<webrtc::VideoEncoder>(webrtc::VP9Encoder::Create(cricket::CreateVideoCodec(codecInfo.nativeSdpVideoFormat)))];
 }
 
 @end

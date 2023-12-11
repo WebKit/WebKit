@@ -34,7 +34,7 @@ class MockSendQueue : public SendQueue {
               (override));
   MOCK_METHOD(bool,
               Discard,
-              (IsUnordered unordered, StreamID stream_id, MID message_id),
+              (StreamID stream_id, OutgoingMessageId message_id),
               (override));
   MOCK_METHOD(void, PrepareResetStream, (StreamID stream_id), (override));
   MOCK_METHOD(bool, HasStreamsReadyToBeReset, (), (const, override));

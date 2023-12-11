@@ -49,9 +49,9 @@ TEST_F(AudioSendStreamCallTest, SupportsCName) {
     CNameObserver() = default;
 
    private:
-    Action OnSendRtcp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtcp(rtc::ArrayView<const uint8_t> packet) override {
       RtcpPacketParser parser;
-      EXPECT_TRUE(parser.Parse(packet, length));
+      EXPECT_TRUE(parser.Parse(packet));
       if (parser.sdes()->num_packets() > 0) {
         EXPECT_EQ(1u, parser.sdes()->chunks().size());
         EXPECT_EQ(kCName, parser.sdes()->chunks()[0].cname);
@@ -82,9 +82,9 @@ TEST_F(AudioSendStreamCallTest, NoExtensionsByDefault) {
     NoExtensionsObserver() = default;
 
    private:
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       RtpPacket rtp_packet;
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));  // rtp packet is valid.
+      EXPECT_TRUE(rtp_packet.Parse(packet));          // rtp packet is valid.
       EXPECT_EQ(packet[0] & 0b0001'0000, 0);          // extension bit not set.
 
       observation_complete_.Set();
@@ -112,9 +112,9 @@ TEST_F(AudioSendStreamCallTest, SupportsAudioLevel) {
       extensions_.Register<AudioLevel>(kAudioLevelExtensionId);
     }
 
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       RtpPacket rtp_packet(&extensions_);
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      EXPECT_TRUE(rtp_packet.Parse(packet));
 
       uint8_t audio_level = 0;
       bool voice = false;
@@ -158,9 +158,9 @@ class TransportWideSequenceNumberObserver : public AudioSendTest {
   }
 
  private:
-  Action OnSendRtp(const uint8_t* packet, size_t length) override {
+  Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
     RtpPacket rtp_packet(&extensions_);
-    EXPECT_TRUE(rtp_packet.Parse(packet, length));
+    EXPECT_TRUE(rtp_packet.Parse(packet));
 
     EXPECT_EQ(rtp_packet.HasExtension<TransportSequenceNumber>(),
               expect_sequence_number_);
@@ -204,9 +204,9 @@ TEST_F(AudioSendStreamCallTest, SendDtmf) {
     DtmfObserver() = default;
 
    private:
-    Action OnSendRtp(const uint8_t* packet, size_t length) override {
+    Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
       RtpPacket rtp_packet;
-      EXPECT_TRUE(rtp_packet.Parse(packet, length));
+      EXPECT_TRUE(rtp_packet.Parse(packet));
 
       if (rtp_packet.PayloadType() == kDtmfPayloadType) {
         EXPECT_EQ(rtp_packet.headers_size(), 12u);

@@ -355,7 +355,7 @@ void encoderVideoTaskComplete(void* callback, webrtc::VideoCodecType codecType, 
 
     encodedImage._encodedWidth = info.width;
     encodedImage._encodedHeight = info.height;
-    encodedImage.SetTimestamp(info.timeStamp);
+    encodedImage.SetRtpTimestamp(info.timeStamp);
     encodedImage.capture_time_ms_ = info.captureTimeMS;
     encodedImage.ntp_time_ms_ = info.ntpTimeMS;
     encodedImage.timing_ = info.timing;

@@ -13,8 +13,8 @@ package org.webrtc;
 import static org.junit.Assert.assertEquals;
 import static org.webrtc.CameraEnumerationAndroid.getClosestSupportedFramerateRange;
 
+import androidx.test.runner.AndroidJUnit4;
 import java.util.Arrays;
-import org.chromium.testing.local.LocalRobolectricTestRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
@@ -23,7 +23,7 @@ import org.webrtc.CameraEnumerationAndroid.CaptureFormat.FramerateRange;
 /**
  * Tests for CameraEnumerationAndroid.
  */
-@RunWith(LocalRobolectricTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 @Config(manifest = Config.NONE)
 public class CameraEnumerationTest {
   @Test

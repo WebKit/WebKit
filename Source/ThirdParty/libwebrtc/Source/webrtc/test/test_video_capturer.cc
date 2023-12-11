@@ -46,8 +46,9 @@ void TestVideoCapturer::OnFrame(const VideoFrame& original_frame) {
     MutexLock lock(&lock_);
     enable_adaptation = enable_adaptation_;
   }
-  if (enable_adaptation) {
+  if (!enable_adaptation) {
     broadcaster_.OnFrame(frame);
+    return;
   }
 
   if (!video_adapter_.AdaptFrameResolution(

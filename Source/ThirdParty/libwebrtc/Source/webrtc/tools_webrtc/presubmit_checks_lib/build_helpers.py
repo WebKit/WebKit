@@ -80,7 +80,7 @@ def RunNinjaCommand(args, root_dir=None):
 
 def GetClangTidyPath():
   """POC/WIP! Use the one we have, even it doesn't match clang's version."""
-  tidy = ('third_party/android_ndk/toolchains/'
+  tidy = ('third_party/android_toolchain/toolchains/'
           'llvm/prebuilt/linux-x86_64/bin/clang-tidy')
   return os.path.join(SRC_DIR, tidy)
 

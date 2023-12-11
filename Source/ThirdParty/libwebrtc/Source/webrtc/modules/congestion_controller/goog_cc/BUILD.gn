@@ -156,7 +156,6 @@ rtc_library("loss_based_bwe_v2") {
   deps = [
     "../../../api:array_view",
     "../../../api:field_trials_view",
-    "../../../api:network_state_predictor_api",
     "../../../api/transport:network_control",
     "../../../api/units:data_rate",
     "../../../api/units:data_size",
@@ -231,10 +230,13 @@ rtc_library("delay_based_bwe") {
 
   deps = [
     ":estimators",
+    ":link_capacity_estimator",
     "../../../api:field_trials_view",
     "../../../api:network_state_predictor_api",
     "../../../api/rtc_event_log",
     "../../../api/transport:network_control",
+    "../../../api/units:data_rate",
+    "../../../api/units:data_size",
     "../../../api/units:time_delta",
     "../../../api/units:timestamp",
     "../../../logging:rtc_event_bwe",
@@ -347,6 +349,7 @@ if (rtc_include_tests) {
         "../../../api/units:data_size",
         "../../../api/units:time_delta",
         "../../../api/units:timestamp",
+        "../../../call:video_stream_api",
         "../../../logging:mocks",
         "../../../logging:rtc_event_bwe",
         "../../../rtc_base:checks",
@@ -360,10 +363,14 @@ if (rtc_include_tests) {
         "../../../test:field_trial",
         "../../../test:test_support",
         "../../../test/scenario",
+        "../../../test/scenario:column_printer",
         "../../pacing",
         "//testing/gmock",
       ]
-      absl_deps = [ "//third_party/abseil-cpp/absl/strings:strings" ]
+      absl_deps = [
+        "//third_party/abseil-cpp/absl/strings:strings",
+        "//third_party/abseil-cpp/absl/types:optional",
+      ]
     }
   }
 }

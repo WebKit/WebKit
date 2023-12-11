@@ -103,11 +103,13 @@ class AimdRateControl {
   // Allow the delay based estimate to only increase as long as application
   // limited region (alr) is not detected.
   const bool no_bitrate_increase_in_alr_;
+  // If true, subtract an additional 5kbps when backing off.
+  const bool subtract_additional_backoff_term_;
   // If "Disabled",  estimated link capacity is not used as upper bound.
   FieldTrialFlag disable_estimate_bounded_increase_{"Disabled"};
+  FieldTrialParameter<bool> use_current_estimate_as_min_upper_bound_{"c_upper",
+                                                                     false};
   absl::optional<DataRate> last_decrease_;
-  FieldTrialOptional<TimeDelta> initial_backoff_interval_;
-  FieldTrialFlag link_capacity_fix_;
 };
 }  // namespace webrtc
 

@@ -41,7 +41,7 @@ class RemoteEstimate : public App {
   explicit RemoteEstimate(App&& app);
   // Note, sub type must be unique among all app messages with "goog" name.
   static constexpr uint8_t kSubType = 13;
-  static constexpr uint32_t kNameGoog = NameToInt("goog");
+  static constexpr uint32_t kName = NameToInt("goog");
   static TimeDelta GetTimestampPeriod();
 
   bool ParseData();

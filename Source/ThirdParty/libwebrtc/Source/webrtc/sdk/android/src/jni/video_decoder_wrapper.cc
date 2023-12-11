@@ -87,10 +87,9 @@ bool VideoDecoderWrapper::ConfigureInternal(JNIEnv* jni) {
   return status == WEBRTC_VIDEO_CODEC_OK;
 }
 
-int32_t VideoDecoderWrapper::Decode(
-    const EncodedImage& image_param,
-    bool missing_frames,
-    int64_t render_time_ms) {
+int32_t VideoDecoderWrapper::Decode(const EncodedImage& image_param,
+                                    bool missing_frames,
+                                    int64_t render_time_ms) {
   RTC_DCHECK_RUN_ON(&decoder_thread_checker_);
   if (!initialized_) {
     // Most likely initializing the codec failed.
@@ -101,12 +100,12 @@ int32_t VideoDecoderWrapper::Decode(
   EncodedImage input_image(image_param);
   // We use RTP timestamp for capture time because capture_time_ms_ is always 0.
   input_image.capture_time_ms_ =
-      input_image.Timestamp() / kNumRtpTicksPerMillisec;
+      input_image.RtpTimestamp() / kNumRtpTicksPerMillisec;
 
   FrameExtraInfo frame_extra_info;
   frame_extra_info.timestamp_ns =
       input_image.capture_time_ms_ * rtc::kNumNanosecsPerMillisec;
-  frame_extra_info.timestamp_rtp = input_image.Timestamp();
+  frame_extra_info.timestamp_rtp = input_image.RtpTimestamp();
   frame_extra_info.timestamp_ntp = input_image.ntp_time_ms_;
   frame_extra_info.qp =
       qp_parsing_enabled_ ? ParseQP(input_image) : absl::nullopt;
@@ -148,6 +147,13 @@ int32_t VideoDecoderWrapper::Release() {
 
 const char* VideoDecoderWrapper::ImplementationName() const {
   return implementation_name_.c_str();
+}
+
+VideoDecoder::DecoderInfo VideoDecoderWrapper::GetDecoderInfo() const {
+  VideoDecoder::DecoderInfo decoder_info;
+  decoder_info.implementation_name = implementation_name_;
+  decoder_info.is_hardware_accelerated = true;
+  return decoder_info;
 }
 
 void VideoDecoderWrapper::OnDecodedFrame(
@@ -249,6 +255,13 @@ absl::optional<uint8_t> VideoDecoderWrapper::ParseQP(
       qp = h264_bitstream_parser_.GetLastSliceQp();
       break;
     }
+#ifdef RTC_ENABLE_H265
+    case kVideoCodecH265:
+      h265_bitstream_parser_.ParseBitstream(buffer);
+      qp = h265_bitstream_parser_.GetLastSliceQp().value_or(-1);
+      success = (qp >= 0);
+      break;
+#endif
     default:
       break;  // Default is to not provide QP.
   }

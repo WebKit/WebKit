@@ -35,7 +35,6 @@ class Dav1dDecoder : public VideoDecoder {
 
   bool Configure(const Settings& settings) override;
   int32_t Decode(const EncodedImage& encoded_image,
-                 bool missing_frames,
                  int64_t render_time_ms) override;
   int32_t RegisterDecodeCompleteCallback(
       DecodedImageCallback* callback) override;
@@ -119,7 +118,6 @@ const char* Dav1dDecoder::ImplementationName() const {
 }
 
 int32_t Dav1dDecoder::Decode(const EncodedImage& encoded_image,
-                             bool /*missing_frames*/,
                              int64_t /*render_time_ms*/) {
   if (!context_ || decode_complete_callback_ == nullptr) {
     return WEBRTC_VIDEO_CODEC_UNINITIALIZED;
@@ -183,12 +181,13 @@ int32_t Dav1dDecoder::Decode(const EncodedImage& encoded_image,
     return WEBRTC_VIDEO_CODEC_ERROR;
   }
 
-  VideoFrame decoded_frame = VideoFrame::Builder()
-                                 .set_video_frame_buffer(wrapped_buffer)
-                                 .set_timestamp_rtp(encoded_image.Timestamp())
-                                 .set_ntp_time_ms(encoded_image.ntp_time_ms_)
-                                 .set_color_space(encoded_image.ColorSpace())
-                                 .build();
+  VideoFrame decoded_frame =
+      VideoFrame::Builder()
+          .set_video_frame_buffer(wrapped_buffer)
+          .set_timestamp_rtp(encoded_image.RtpTimestamp())
+          .set_ntp_time_ms(encoded_image.ntp_time_ms_)
+          .set_color_space(encoded_image.ColorSpace())
+          .build();
 
   decode_complete_callback_->Decoded(decoded_frame, absl::nullopt,
                                      absl::nullopt);

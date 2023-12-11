@@ -1,3 +1,0 @@
-# Script to launch low_bandwidth_audio_test.
-per-file low_bandwidth_audio_test.py=mbonadei@webrtc.org
-per-file low_bandwidth_audio_test.py=jleconte@webrtc.org

@@ -584,7 +584,7 @@ TEST(MatchedFilterFieldTrialTest, PreEchoConfigurationTest) {
 
 TEST(MatchedFilterFieldTrialTest, WrongPreEchoConfigurationTest) {
   constexpr float kDefaultThreshold = 0.5f;
-  constexpr int kDefaultMode = 0;
+  constexpr int kDefaultMode = 3;
   float threshold_in = -0.1f;
   int mode_in = 5;
   rtc::StringBuilder field_trial_name;

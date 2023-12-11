@@ -27,7 +27,11 @@ class SendQueue {
  public:
   // Container for a data chunk that is produced by the SendQueue
   struct DataToSend {
-    explicit DataToSend(Data data) : data(std::move(data)) {}
+    DataToSend(OutgoingMessageId message_id, Data data)
+        : message_id(message_id), data(std::move(data)) {}
+
+    OutgoingMessageId message_id;
+
     // The data to send, including all parameters.
     Data data;
 
@@ -53,7 +57,7 @@ class SendQueue {
   // including any headers.
   virtual absl::optional<DataToSend> Produce(TimeMs now, size_t max_size) = 0;
 
-  // Discards a partially sent message identified by the parameters `unordered`,
+  // Discards a partially sent message identified by the parameters
   // `stream_id` and `message_id`. The `message_id` comes from the returned
   // information when having called `Produce`. A partially sent message means
   // that it has had at least one fragment of it returned when `Produce` was
@@ -67,9 +71,7 @@ class SendQueue {
   //
   // This function returns true if this message had unsent fragments still in
   // the queue that were discarded, and false if there were no such fragments.
-  virtual bool Discard(IsUnordered unordered,
-                       StreamID stream_id,
-                       MID message_id) = 0;
+  virtual bool Discard(StreamID stream_id, OutgoingMessageId message_id) = 0;
 
   // Prepares the stream to be reset. This is used to close a WebRTC data
   // channel and will be signaled to the other side.

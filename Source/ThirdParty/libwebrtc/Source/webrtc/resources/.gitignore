@@ -1,5 +1,6 @@
 **/*.aecdump
 **/*.bin
+**/*.binarypb
 **/*.byte
 **/*.chn
 **/*.dat

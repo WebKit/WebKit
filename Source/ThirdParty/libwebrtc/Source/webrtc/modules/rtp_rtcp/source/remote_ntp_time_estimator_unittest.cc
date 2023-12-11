@@ -44,7 +44,7 @@ class RemoteNtpTimeEstimatorTest : public ::testing::Test {
     NtpTime ntp = remote_clock_.CurrentNtpTime();
 
     AdvanceTime(kTestRtt / 2);
-    RTC_DCHECK(estimator_.UpdateRtcpTimestamp(kTestRtt, ntp, rtcp_timestamp));
+    EXPECT_TRUE(estimator_.UpdateRtcpTimestamp(kTestRtt, ntp, rtcp_timestamp));
   }
 
   void SendRtcpSrInaccurately(TimeDelta ntp_error, TimeDelta networking_delay) {
@@ -53,7 +53,7 @@ class RemoteNtpTimeEstimatorTest : public ::testing::Test {
     NtpTime ntp(static_cast<uint64_t>(remote_clock_.CurrentNtpTime()) +
                 ntp_error_fractions);
     AdvanceTime(kTestRtt / 2 + networking_delay);
-    RTC_DCHECK(estimator_.UpdateRtcpTimestamp(kTestRtt, ntp, rtcp_timestamp));
+    EXPECT_TRUE(estimator_.UpdateRtcpTimestamp(kTestRtt, ntp, rtcp_timestamp));
   }
 
   SimulatedClock local_clock_{kLocalClockInitialTime};

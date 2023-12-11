@@ -28,6 +28,7 @@ rtc_library("video_rtp_headers") {
 
   deps = [
     "..:array_view",
+    "../../rtc_base:checks",
     "../../rtc_base:logging",
     "../../rtc_base:safe_conversions",
     "../../rtc_base:stringutils",
@@ -125,6 +126,8 @@ rtc_source_set("recordable_encoded_frame") {
 rtc_source_set("video_frame_type") {
   visibility = [ "*" ]
   sources = [ "video_frame_type.h" ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
+  deps = [ "../../rtc_base:checks" ]
 }
 
 rtc_source_set("render_resolution") {
@@ -154,6 +157,7 @@ rtc_library("encoded_image") {
     "../../rtc_base:checks",
     "../../rtc_base:refcount",
     "../../rtc_base/system:rtc_export",
+    "../units:timestamp",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]
 }
@@ -166,7 +170,10 @@ rtc_library("encoded_frame") {
   ]
 
   deps = [
-    "../../modules/video_coding:encoded_frame",
+    ":encoded_image",
+    ":video_frame",
+    "../../modules/rtp_rtcp:rtp_video_header",
+    "../../modules/video_coding:video_codec_interface",
     "../units:timestamp",
   ]
   absl_deps = [ "//third_party/abseil-cpp/absl/types:optional" ]

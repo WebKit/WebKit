@@ -148,6 +148,8 @@ void LibWebRTCSocketFactory::forSocketInGroup(ScriptExecutionContextIdentifier c
     }
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=265791
 rtc::AsyncResolverInterface* LibWebRTCSocketFactory::createAsyncResolver()
 {
     auto resolver = makeUnique<LibWebRTCResolver>();
@@ -155,6 +157,7 @@ rtc::AsyncResolverInterface* LibWebRTCSocketFactory::createAsyncResolver()
     m_resolvers.set(resolverPointer->identifier(), WTFMove(resolver));
     return resolverPointer;
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
 } // namespace WebKit
 

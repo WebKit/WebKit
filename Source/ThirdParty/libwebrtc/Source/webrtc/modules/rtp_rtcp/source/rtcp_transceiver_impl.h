@@ -61,9 +61,6 @@ class RtcpTransceiverImpl {
 
   void SetRemb(int64_t bitrate_bps, std::vector<uint32_t> ssrcs);
   void UnsetRemb();
-  // Temporary helpers to send pre-built TransportFeedback rtcp packet.
-  uint32_t sender_ssrc() const { return config_.feedback_ssrc; }
-  void SendRawPacket(rtc::ArrayView<const uint8_t> packet);
 
   void SendNack(uint32_t ssrc, std::vector<uint16_t> sequence_numbers);
 
@@ -154,6 +151,7 @@ class RtcpTransceiverImpl {
                                                     size_t num_max_blocks);
 
   const RtcpTransceiverConfig config_;
+  std::function<void(rtc::ArrayView<const uint8_t>)> rtcp_transport_;
 
   bool ready_to_send_;
   absl::optional<rtcp::Remb> remb_;

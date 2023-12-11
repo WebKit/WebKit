@@ -36,9 +36,7 @@ public final class YuvConverter {
       // Since the alpha read from the texture is always 1, this could
       // be written as a mat4 x vec4 multiply. However, that seems to
       // give a worse framerate, possibly because the additional
-      // multiplies by 1.0 consume resources. TODO(nisse): Could also
-      // try to do it as a vec3 x mat3x4, followed by an add in of a
-      // constant vector.
+      // multiplies by 1.0 consume resources.
       + "  gl_FragColor.r = coeffs.a + dot(coeffs.rgb,\n"
       + "      sample(tc - 1.5 * xUnit).rgb);\n"
       + "  gl_FragColor.g = coeffs.a + dot(coeffs.rgb,\n"

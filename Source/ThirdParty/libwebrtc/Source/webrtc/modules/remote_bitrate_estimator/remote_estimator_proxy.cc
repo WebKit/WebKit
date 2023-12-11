@@ -18,6 +18,7 @@
 
 #include "absl/types/optional.h"
 #include "api/units/data_size.h"
+#include "api/units/time_delta.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/remote_estimate.h"
 #include "modules/rtp_rtcp/source/rtcp_packet/transport_feedback.h"
 #include "modules/rtp_rtcp/source/rtp_header_extensions.h"
@@ -42,9 +43,9 @@ TimeDelta GetAbsoluteSendTimeDelta(uint32_t new_sendtime,
   uint32_t delta = (new_sendtime - previous_sendtime) % kWrapAroundPeriod;
   if (delta >= kWrapAroundPeriod / 2) {
     // absolute send time wraps around, thus treat deltas larger than half of
-    // the wrap around period as negative. Ignore reordering of packets and
-    // treat them as they have approximately the same send time.
-    return TimeDelta::Zero();
+    // the wrap around period as negative.
+    delta = (previous_sendtime - new_sendtime) % kWrapAroundPeriod;
+    return TimeDelta::Micros(int64_t{delta} * -1'000'000 / (1 << 18));
   }
   return TimeDelta::Micros(int64_t{delta} * 1'000'000 / (1 << 18));
 }
@@ -62,7 +63,8 @@ RemoteEstimatorProxy::RemoteEstimatorProxy(
       send_interval_(kDefaultInterval),
       send_periodic_feedback_(true),
       previous_abs_send_time_(0),
-      abs_send_timestamp_(Timestamp::Zero()) {
+      abs_send_timestamp_(Timestamp::Zero()),
+      last_arrival_time_with_abs_send_time_(Timestamp::MinusInfinity()) {
   RTC_LOG(LS_INFO)
       << "Maximum interval between transport feedback RTCP messages: "
       << kMaxInterval;
@@ -138,8 +140,14 @@ void RemoteEstimatorProxy::IncomingPacket(const RtpPacketReceived& packet) {
   if (network_state_estimator_ && absolute_send_time_24bits.has_value()) {
     PacketResult packet_result;
     packet_result.receive_time = packet.arrival_time();
-    abs_send_timestamp_ += GetAbsoluteSendTimeDelta(*absolute_send_time_24bits,
-                                                    previous_abs_send_time_);
+    if (packet.arrival_time() - last_arrival_time_with_abs_send_time_ <
+        TimeDelta::Seconds(10)) {
+      abs_send_timestamp_ += GetAbsoluteSendTimeDelta(
+          *absolute_send_time_24bits, previous_abs_send_time_);
+    } else {
+      abs_send_timestamp_ = packet.arrival_time();
+    }
+    last_arrival_time_with_abs_send_time_ = packet.arrival_time();
     previous_abs_send_time_ = *absolute_send_time_24bits;
     packet_result.sent_packet.send_time = abs_send_timestamp_;
     packet_result.sent_packet.size =

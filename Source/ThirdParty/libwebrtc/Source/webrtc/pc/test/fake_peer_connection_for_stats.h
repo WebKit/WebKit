@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "media/base/fake_media_engine.h"
+#include "media/base/media_channel.h"
 #include "pc/channel.h"
 #include "pc/stream_collection.h"
 #include "pc/test/fake_data_channel_controller.h"
@@ -27,39 +28,23 @@
 namespace webrtc {
 
 // Fake VoiceMediaChannel where the result of GetStats can be configured.
-class FakeVoiceMediaChannelForStats : public cricket::FakeVoiceMediaChannel {
+class FakeVoiceMediaSendChannelForStats
+    : public cricket::FakeVoiceMediaSendChannel {
  public:
-  explicit FakeVoiceMediaChannelForStats(MediaChannel::Role role,
-                                         TaskQueueBase* network_thread)
-      : cricket::FakeVoiceMediaChannel(role,
-                                       nullptr,
-                                       cricket::AudioOptions(),
-                                       network_thread) {}
+  explicit FakeVoiceMediaSendChannelForStats(TaskQueueBase* network_thread)
+      : cricket::FakeVoiceMediaSendChannel(cricket::AudioOptions(),
+                                           network_thread) {}
 
   void SetStats(const cricket::VoiceMediaInfo& voice_info) {
     send_stats_ = cricket::VoiceMediaSendInfo();
     send_stats_->senders = voice_info.senders;
     send_stats_->send_codecs = voice_info.send_codecs;
-    receive_stats_ = cricket::VoiceMediaReceiveInfo();
-    receive_stats_->receivers = voice_info.receivers;
-    receive_stats_->receive_codecs = voice_info.receive_codecs;
-    receive_stats_->device_underrun_count = voice_info.device_underrun_count;
   }
 
   // VoiceMediaChannel overrides.
-  bool GetSendStats(cricket::VoiceMediaSendInfo* info) override {
-    RTC_DCHECK(role() == MediaChannel::Role::kSend);
+  bool GetStats(cricket::VoiceMediaSendInfo* info) override {
     if (send_stats_) {
       *info = *send_stats_;
-      return true;
-    }
-    return false;
-  }
-  bool GetReceiveStats(cricket::VoiceMediaReceiveInfo* info,
-                       bool get_and_clear_legacy_stats) override {
-    RTC_DCHECK(role() == MediaChannel::Role::kReceive);
-    if (receive_stats_) {
-      *info = *receive_stats_;
       return true;
     }
     return false;
@@ -67,49 +52,25 @@ class FakeVoiceMediaChannelForStats : public cricket::FakeVoiceMediaChannel {
 
  private:
   absl::optional<cricket::VoiceMediaSendInfo> send_stats_;
-  absl::optional<cricket::VoiceMediaReceiveInfo> receive_stats_;
 };
 
-// Fake VideoMediaChannel where the result of GetStats can be configured.
-class FakeVideoMediaChannelForStats : public cricket::FakeVideoMediaChannel {
+class FakeVoiceMediaReceiveChannelForStats
+    : public cricket::FakeVoiceMediaReceiveChannel {
  public:
-  explicit FakeVideoMediaChannelForStats(cricket::MediaChannel::Role role,
-                                         TaskQueueBase* network_thread)
-      : cricket::FakeVideoMediaChannel(role,
-                                       nullptr,
-                                       cricket::VideoOptions(),
-                                       network_thread) {}
+  explicit FakeVoiceMediaReceiveChannelForStats(TaskQueueBase* network_thread)
+      : cricket::FakeVoiceMediaReceiveChannel(cricket::AudioOptions(),
+                                              network_thread) {}
 
-  void SetStats(const cricket::VideoMediaInfo& video_info) {
-    switch (role()) {
-      case MediaChannel::Role::kSend:
-        send_stats_ = cricket::VideoMediaSendInfo();
-        send_stats_->senders = video_info.senders;
-        send_stats_->aggregated_senders = video_info.aggregated_senders;
-        send_stats_->send_codecs = video_info.send_codecs;
-        break;
-      case MediaChannel::Role::kReceive:
-        receive_stats_ = cricket::VideoMediaReceiveInfo();
-        receive_stats_->receivers = video_info.receivers;
-        receive_stats_->receive_codecs = video_info.receive_codecs;
-        break;
-      default:
-        RTC_CHECK_NOTREACHED();
-    }
+  void SetStats(const cricket::VoiceMediaInfo& voice_info) {
+    receive_stats_ = cricket::VoiceMediaReceiveInfo();
+    receive_stats_->receivers = voice_info.receivers;
+    receive_stats_->receive_codecs = voice_info.receive_codecs;
+    receive_stats_->device_underrun_count = voice_info.device_underrun_count;
   }
 
-  // VideoMediaChannel overrides.
-  bool GetSendStats(cricket::VideoMediaSendInfo* info) override {
-    RTC_DCHECK(role() == MediaChannel::Role::kSend);
-
-    if (send_stats_) {
-      *info = *send_stats_;
-      return true;
-    }
-    return false;
-  }
-  bool GetReceiveStats(cricket::VideoMediaReceiveInfo* info) override {
-    RTC_DCHECK(role() == MediaChannel::Role::kReceive);
+  // VoiceMediaChannel overrides.
+  bool GetStats(cricket::VoiceMediaReceiveInfo* info,
+                bool get_and_clear_legacy_stats) override {
     if (receive_stats_) {
       *info = *receive_stats_;
       return true;
@@ -118,7 +79,60 @@ class FakeVideoMediaChannelForStats : public cricket::FakeVideoMediaChannel {
   }
 
  private:
+  absl::optional<cricket::VoiceMediaReceiveInfo> receive_stats_;
+};
+
+// Fake VideoMediaChannel where the result of GetStats can be configured.
+class FakeVideoMediaSendChannelForStats
+    : public cricket::FakeVideoMediaSendChannel {
+ public:
+  explicit FakeVideoMediaSendChannelForStats(TaskQueueBase* network_thread)
+      : cricket::FakeVideoMediaSendChannel(cricket::VideoOptions(),
+                                           network_thread) {}
+
+  void SetStats(const cricket::VideoMediaInfo& video_info) {
+    send_stats_ = cricket::VideoMediaSendInfo();
+    send_stats_->senders = video_info.senders;
+    send_stats_->aggregated_senders = video_info.aggregated_senders;
+    send_stats_->send_codecs = video_info.send_codecs;
+  }
+
+  // VideoMediaChannel overrides.
+  bool GetStats(cricket::VideoMediaSendInfo* info) override {
+    if (send_stats_) {
+      *info = *send_stats_;
+      return true;
+    }
+    return false;
+  }
+
+ private:
   absl::optional<cricket::VideoMediaSendInfo> send_stats_;
+};
+
+class FakeVideoMediaReceiveChannelForStats
+    : public cricket::FakeVideoMediaReceiveChannel {
+ public:
+  explicit FakeVideoMediaReceiveChannelForStats(TaskQueueBase* network_thread)
+      : cricket::FakeVideoMediaReceiveChannel(cricket::VideoOptions(),
+                                              network_thread) {}
+
+  void SetStats(const cricket::VideoMediaInfo& video_info) {
+    receive_stats_ = cricket::VideoMediaReceiveInfo();
+    receive_stats_->receivers = video_info.receivers;
+    receive_stats_->receive_codecs = video_info.receive_codecs;
+  }
+
+  // VideoMediaChannel overrides.
+  bool GetStats(cricket::VideoMediaReceiveInfo* info) override {
+    if (receive_stats_) {
+      *info = *receive_stats_;
+      return true;
+    }
+    return false;
+  }
+
+ private:
   absl::optional<cricket::VideoMediaReceiveInfo> receive_stats_;
 };
 
@@ -131,8 +145,9 @@ class VoiceChannelForTesting : public cricket::VoiceChannel {
       rtc::Thread* worker_thread,
       rtc::Thread* network_thread,
       rtc::Thread* signaling_thread,
-      std::unique_ptr<cricket::VoiceMediaChannel> send_channel,
-      std::unique_ptr<cricket::VoiceMediaChannel> receive_channel,
+      std::unique_ptr<cricket::VoiceMediaSendChannelInterface> send_channel,
+      std::unique_ptr<cricket::VoiceMediaReceiveChannelInterface>
+          receive_channel,
       const std::string& content_name,
       bool srtp_required,
       webrtc::CryptoOptions crypto_options,
@@ -163,8 +178,9 @@ class VideoChannelForTesting : public cricket::VideoChannel {
       rtc::Thread* worker_thread,
       rtc::Thread* network_thread,
       rtc::Thread* signaling_thread,
-      std::unique_ptr<cricket::VideoMediaChannel> send_channel,
-      std::unique_ptr<cricket::VideoMediaChannel> receive_channel,
+      std::unique_ptr<cricket::VideoMediaSendChannelInterface> send_channel,
+      std::unique_ptr<cricket::VideoMediaReceiveChannelInterface>
+          receive_channel,
       const std::string& content_name,
       bool srtp_required,
       webrtc::CryptoOptions crypto_options,
@@ -266,17 +282,16 @@ class FakePeerConnectionForStats : public FakePeerConnectionBase {
         ->RemoveReceiver(receiver.get());
   }
 
-  std::pair<FakeVoiceMediaChannelForStats*, FakeVoiceMediaChannelForStats*>
+  std::pair<FakeVoiceMediaSendChannelForStats*,
+            FakeVoiceMediaReceiveChannelForStats*>
   AddVoiceChannel(
       const std::string& mid,
       const std::string& transport_name,
       cricket::VoiceMediaInfo initial_stats = cricket::VoiceMediaInfo()) {
     auto voice_media_send_channel =
-        std::make_unique<FakeVoiceMediaChannelForStats>(
-            cricket::MediaChannel::Role::kSend, network_thread_);
+        std::make_unique<FakeVoiceMediaSendChannelForStats>(network_thread_);
     auto voice_media_receive_channel =
-        std::make_unique<FakeVoiceMediaChannelForStats>(
-            cricket::MediaChannel::Role::kReceive, network_thread_);
+        std::make_unique<FakeVoiceMediaReceiveChannelForStats>(network_thread_);
     auto* voice_media_send_channel_ptr = voice_media_send_channel.get();
     auto* voice_media_receive_channel_ptr = voice_media_receive_channel.get();
     auto voice_channel = std::make_unique<VoiceChannelForTesting>(
@@ -301,17 +316,16 @@ class FakePeerConnectionForStats : public FakePeerConnectionBase {
                           voice_media_receive_channel_ptr);
   }
 
-  std::pair<FakeVideoMediaChannelForStats*, FakeVideoMediaChannelForStats*>
+  std::pair<FakeVideoMediaSendChannelForStats*,
+            FakeVideoMediaReceiveChannelForStats*>
   AddVideoChannel(
       const std::string& mid,
       const std::string& transport_name,
       cricket::VideoMediaInfo initial_stats = cricket::VideoMediaInfo()) {
     auto video_media_send_channel =
-        std::make_unique<FakeVideoMediaChannelForStats>(
-            cricket::MediaChannel::Role::kSend, network_thread_);
+        std::make_unique<FakeVideoMediaSendChannelForStats>(network_thread_);
     auto video_media_receive_channel =
-        std::make_unique<FakeVideoMediaChannelForStats>(
-            cricket::MediaChannel::Role::kReceive, network_thread_);
+        std::make_unique<FakeVideoMediaReceiveChannelForStats>(network_thread_);
     auto video_media_send_channel_ptr = video_media_send_channel.get();
     auto video_media_receive_channel_ptr = video_media_receive_channel.get();
     auto video_channel = std::make_unique<VideoChannelForTesting>(

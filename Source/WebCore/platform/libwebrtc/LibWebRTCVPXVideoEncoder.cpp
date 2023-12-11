@@ -148,9 +148,7 @@ static UniqueRef<webrtc::VideoEncoder> createInternalEncoder(LibWebRTCVPXVideoEn
     case LibWebRTCVPXVideoEncoder::Type::VP9:
         return makeUniqueRefFromNonNullUniquePtr(webrtc::VP9Encoder::Create());
     case LibWebRTCVPXVideoEncoder::Type::VP9_P2:
-        return makeUniqueRefFromNonNullUniquePtr(webrtc::VP9Encoder::Create(cricket::VideoCodec {
-            webrtc::SdpVideoFormat { cricket::kVp9CodecName, { { "profile-id", "2" } } }
-        }));
+        return makeUniqueRefFromNonNullUniquePtr(webrtc::VP9Encoder::Create(cricket::CreateVideoCodec(webrtc::SdpVideoFormat { cricket::kVp9CodecName, { { "profile-id", "2" } } } )));
     case LibWebRTCVPXVideoEncoder::Type::AV1:
         return makeUniqueRefFromNonNullUniquePtr(webrtc::CreateLibaomAv1Encoder());
     }

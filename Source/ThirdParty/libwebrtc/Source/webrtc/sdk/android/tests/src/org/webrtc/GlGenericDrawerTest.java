@@ -16,7 +16,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import org.chromium.testing.local.LocalRobolectricTestRunner;
+import androidx.test.runner.AndroidJUnit4;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 import org.robolectric.annotation.Config;
 import org.webrtc.GlShader;
 
-@RunWith(LocalRobolectricTestRunner.class)
+@RunWith(AndroidJUnit4.class)
 @Config(manifest = Config.NONE)
 public class GlGenericDrawerTest {
   // Simplest possible valid generic fragment shader.

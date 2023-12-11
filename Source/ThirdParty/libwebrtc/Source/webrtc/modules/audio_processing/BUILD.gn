@@ -371,10 +371,12 @@ if (rtc_include_tests) {
         "echo_control_mobile_unittest.cc",
         "gain_controller2_unittest.cc",
         "splitting_filter_unittest.cc",
+        "test/echo_canceller3_config_json_unittest.cc",
         "test/fake_recording_device_unittest.cc",
       ]
 
       deps = [
+        ":aec3_config_json",
         ":analog_mic_simulation",
         ":api",
         ":apm_logging",
@@ -558,6 +560,7 @@ if (rtc_include_tests) {
       ]
 
       deps = [
+        ":aec3_config_json",
         ":analog_mic_simulation",
         ":api",
         ":apm_logging",
@@ -566,7 +569,6 @@ if (rtc_include_tests) {
         ":audioproc_protobuf_utils",
         ":audioproc_test_utils",
         ":runtime_settings_protobuf_utils",
-        "../../api/audio:aec3_config_json",
         "../../api/audio:aec3_factory",
         "../../api/audio:echo_detector_creator",
         "../../common_audio",
@@ -674,4 +676,22 @@ rtc_library("audioproc_test_utils") {
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
+}
+
+rtc_library("aec3_config_json") {
+  visibility = [ "*" ]
+  testonly = true
+  sources = [
+    "test/echo_canceller3_config_json.cc",
+    "test/echo_canceller3_config_json.h",
+  ]
+  deps = [
+    "../../api/audio:aec3_config",
+    "../../rtc_base:checks",
+    "../../rtc_base:logging",
+    "../../rtc_base:rtc_json",
+    "../../rtc_base:stringutils",
+    "../../rtc_base/system:rtc_export",
+  ]
+  absl_deps = [ "//third_party/abseil-cpp/absl/strings" ]
 }

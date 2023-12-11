@@ -11,8 +11,14 @@
 #include "rtc_tools/rtc_event_log_visualizer/plot_base.h"
 
 #include <algorithm>
+#include <cstddef>
+#include <cstdio>
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
+#include "absl/strings/string_view.h"
 #include "rtc_base/checks.h"
 
 namespace webrtc {
@@ -80,6 +86,10 @@ void Plot::SetId(const std::string& id) {
   id_ = id;
 }
 
+void Plot::SetId(absl::string_view id) {
+  id_ = id;
+}
+
 void Plot::AppendTimeSeries(TimeSeries&& time_series) {
   series_list_.emplace_back(std::move(time_series));
 }
@@ -94,7 +104,7 @@ void Plot::AppendTimeSeriesIfNotEmpty(TimeSeries&& time_series) {
   }
 }
 
-void Plot::PrintPythonCode() const {
+void Plot::PrintPythonCode(absl::string_view figure_output_path) const {
   // Write python commands to stdout. Intended program usage is
   // ./event_log_visualizer event_log160330.dump | python
 
@@ -233,9 +243,20 @@ void Plot::PrintPythonCode() const {
   if (!series_list_.empty() || !interval_list_.empty()) {
     printf("handles, labels = plt.gca().get_legend_handles_labels()\n");
     printf("for lp in legend_patches:\n");
-    printf("   handles.append(lp)\n");
-    printf("   labels.append(lp.get_label())\n");
+    printf("  handles.append(lp)\n");
+    printf("  labels.append(lp.get_label())\n");
     printf("plt.legend(handles, labels, loc=\'best\', fontsize=\'small\')\n");
+  }
+  if (!figure_output_path.empty()) {
+    printf("figure_output_dir = \"%.*s\"\n",
+           static_cast<int>(figure_output_path.size()),
+           figure_output_path.data());
+    printf("if not os.path.exists(figure_output_dir):\n");
+    printf("  os.makedirs(figure_output_dir)\n");
+    printf(
+        "figure_filename = os.path.join(figure_output_dir, "
+        "fig.canvas.get_default_filename())\n");
+    printf("fig.canvas.print_png(figure_filename)\n");
   }
 }
 
@@ -283,12 +304,16 @@ void Plot::ExportProtobuf(webrtc::analytics::Chart* chart) const {
   }
 }
 
-void PlotCollection::PrintPythonCode(bool shared_xaxis) const {
+void PlotCollection::PrintPythonCode(
+    bool shared_xaxis,
+    absl::string_view figure_output_path) const {
   printf("import matplotlib.pyplot as plt\n");
   printf("plt.rcParams.update({'figure.max_open_warning': 0})\n");
   printf("import matplotlib.patches as mpatches\n");
   printf("import matplotlib.patheffects as pe\n");
   printf("import colorsys\n");
+  printf("import os\n");
+  printf("plt.rcParams['figure.figsize'] = [10, 3]\n");
   for (size_t i = 0; i < plots_.size(); i++) {
     printf("plt.figure(%zu)\n", i);
     if (shared_xaxis) {
@@ -299,9 +324,11 @@ void PlotCollection::PrintPythonCode(bool shared_xaxis) const {
         printf("plt.subplot(111, sharex=axis0)\n");
       }
     }
-    plots_[i]->PrintPythonCode();
+    plots_[i]->PrintPythonCode(figure_output_path);
   }
-  printf("plt.show()\n");
+  if (figure_output_path.empty()) {
+    printf("plt.show()\n");
+  }
 }
 
 void PlotCollection::ExportProtobuf(
@@ -318,6 +345,12 @@ void PlotCollection::ExportProtobuf(
 
 Plot* PlotCollection::AppendNewPlot() {
   plots_.push_back(std::make_unique<Plot>());
+  return plots_.back().get();
+}
+
+Plot* PlotCollection::AppendNewPlot(absl::string_view chart_id) {
+  plots_.push_back(std::make_unique<Plot>());
+  plots_.back()->SetId(chart_id);
   return plots_.back().get();
 }
 

@@ -26,6 +26,7 @@
 #include "rtc_base/nat_socket_factory.h"
 #include "rtc_base/nat_types.h"
 #include "rtc_base/net_helpers.h"
+#include "rtc_base/net_test_helpers.h"
 #include "rtc_base/network.h"
 #include "rtc_base/physical_socket_server.h"
 #include "rtc_base/socket.h"

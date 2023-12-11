@@ -99,6 +99,25 @@ class VideoSendStream : public webrtc::VideoSendStream {
 
  private:
   friend class test::VideoSendStreamPeer;
+  class OnSendPacketObserver : public SendPacketObserver {
+   public:
+    OnSendPacketObserver(SendStatisticsProxy* stats_proxy,
+                         SendDelayStats* send_delay_stats)
+        : stats_proxy_(*stats_proxy), send_delay_stats_(*send_delay_stats) {}
+
+    void OnSendPacket(absl::optional<uint16_t> packet_id,
+                      Timestamp capture_time,
+                      uint32_t ssrc) override {
+      stats_proxy_.OnSendPacket(ssrc, capture_time);
+      if (packet_id.has_value()) {
+        send_delay_stats_.OnSendPacket(*packet_id, capture_time, ssrc);
+      }
+    }
+
+   private:
+    SendStatisticsProxy& stats_proxy_;
+    SendDelayStats& send_delay_stats_;
+  };
 
   absl::optional<float> GetPacingFactorOverride() const;
 
@@ -106,6 +125,7 @@ class VideoSendStream : public webrtc::VideoSendStream {
   RtpTransportControllerSendInterface* const transport_;
 
   SendStatisticsProxy stats_proxy_;
+  OnSendPacketObserver send_packet_observer_;
   const VideoSendStream::Config config_;
   const VideoEncoderConfig::ContentType content_type_;
   std::unique_ptr<VideoStreamEncoderInterface> video_stream_encoder_;

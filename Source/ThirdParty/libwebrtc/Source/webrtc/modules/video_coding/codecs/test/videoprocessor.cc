@@ -387,7 +387,7 @@ void VideoProcessor::FrameEncoded(
   size_t temporal_idx = GetTemporalLayerIndex(codec_specific);
 
   FrameStatistics* frame_stat =
-      stats_->GetFrameWithTimestamp(encoded_image.Timestamp(), stream_idx);
+      stats_->GetFrameWithTimestamp(encoded_image.RtpTimestamp(), stream_idx);
   const size_t frame_number = frame_stat->frame_number;
 
   // Ensure that the encode order is monotonically increasing, within this
@@ -466,7 +466,7 @@ void VideoProcessor::FrameEncoded(
         if (!layer_dropped) {
           base_image = &merged_encoded_frames_[i];
           base_stat =
-              stats_->GetFrameWithTimestamp(encoded_image.Timestamp(), i);
+              stats_->GetFrameWithTimestamp(encoded_image.RtpTimestamp(), i);
         } else if (base_image && !base_stat->non_ref_for_inter_layer_pred) {
           DecodeFrame(*base_image, i);
         }
@@ -634,11 +634,11 @@ void VideoProcessor::DecodeFrame(const EncodedImage& encoded_image,
                                  size_t spatial_idx) {
   RTC_DCHECK_RUN_ON(&sequence_checker_);
   FrameStatistics* frame_stat =
-      stats_->GetFrameWithTimestamp(encoded_image.Timestamp(), spatial_idx);
+      stats_->GetFrameWithTimestamp(encoded_image.RtpTimestamp(), spatial_idx);
 
   frame_stat->decode_start_ns = rtc::TimeNanos();
   frame_stat->decode_return_code =
-      decoders_->at(spatial_idx)->Decode(encoded_image, false, 0);
+      decoders_->at(spatial_idx)->Decode(encoded_image, 0);
 }
 
 const webrtc::EncodedImage* VideoProcessor::BuildAndStoreSuperframe(
@@ -659,7 +659,7 @@ const webrtc::EncodedImage* VideoProcessor::BuildAndStoreSuperframe(
     for (int base_idx = static_cast<int>(spatial_idx) - 1; base_idx >= 0;
          --base_idx) {
       EncodedImage lower_layer = merged_encoded_frames_.at(base_idx);
-      if (lower_layer.Timestamp() == encoded_image.Timestamp()) {
+      if (lower_layer.RtpTimestamp() == encoded_image.RtpTimestamp()) {
         base_image = lower_layer;
         break;
       }

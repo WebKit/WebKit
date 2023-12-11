@@ -101,7 +101,7 @@ class VideoSendStream {
     Stats();
     ~Stats();
     std::string ToString(int64_t time_ms) const;
-    std::string encoder_implementation_name = "unknown";
+    absl::optional<std::string> encoder_implementation_name;
     double input_frame_rate = 0;
     int encode_frame_rate = 0;
     int avg_encode_time_ms = 0;

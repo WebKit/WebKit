@@ -92,11 +92,10 @@ class RtpGenerator final : public webrtc::Transport {
   // webrtc::Transport implementation
   // Captured RTP packets are written to the RTPDump file instead of over the
   // network.
-  bool SendRtp(const uint8_t* packet,
-               size_t length,
+  bool SendRtp(rtc::ArrayView<const uint8_t> packet,
                const webrtc::PacketOptions& options) override;
   // RTCP packets are ignored for now.
-  bool SendRtcp(const uint8_t* packet, size_t length) override;
+  bool SendRtcp(rtc::ArrayView<const uint8_t> packet) override;
   // Returns the maximum duration
   int GetMaxDuration() const;
   // Waits until all video streams have finished.

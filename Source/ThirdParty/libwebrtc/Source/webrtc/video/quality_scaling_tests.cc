@@ -93,7 +93,7 @@ class ScalingObserver : public test::SendTest {
               if (format.name == "VP9")
                 return VP9Encoder::Create();
               if (format.name == "H264")
-                return H264Encoder::Create(cricket::VideoCodec("H264"));
+                return H264Encoder::Create();
               RTC_DCHECK_NOTREACHED() << format.name;
               return nullptr;
             }),
@@ -157,7 +157,7 @@ class ScalingObserver : public test::SendTest {
                        test_params_.size());
   }
 
-  Action OnSendRtp(const uint8_t* packet, size_t length) override {
+  Action OnSendRtp(rtc::ArrayView<const uint8_t> packet) override {
     // The tests are expected to send at the configured start bitrate. Do not
     // send any packets to avoid receiving REMB and possibly go down in target
     // bitrate. A low bitrate estimate could result in downgrading due to other

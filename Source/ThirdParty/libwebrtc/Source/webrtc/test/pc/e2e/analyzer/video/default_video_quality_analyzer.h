@@ -107,7 +107,7 @@ class DefaultVideoQualityAnalyzer : public VideoQualityAnalyzerInterface {
   // obtained by calling GetKnownVideoStreams()
   std::map<StatsKey, StreamStats> GetStats() const;
   AnalyzerStats GetAnalyzerStats() const;
-  double GetCpuUsagePercent();
+  double GetCpuUsagePercent() const;
 
   // Returns mapping from the stream label to the history of frames that were
   // met in this stream in the order as they were captured.

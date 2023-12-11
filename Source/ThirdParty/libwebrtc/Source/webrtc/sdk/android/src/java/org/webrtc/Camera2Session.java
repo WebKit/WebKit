@@ -10,7 +10,6 @@
 
 package org.webrtc;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -29,7 +28,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.webrtc.CameraEnumerationAndroid.CaptureFormat;
 
-@TargetApi(21)
 class Camera2Session implements CameraSession {
   private static final String TAG = "Camera2Session";
 
@@ -357,7 +355,7 @@ class Camera2Session implements CameraSession {
 
     try {
       cameraManager.openCamera(cameraId, new CameraStateCallback(), cameraThreadHandler);
-    } catch (CameraAccessException | IllegalArgumentException e) {
+    } catch (CameraAccessException | IllegalArgumentException | SecurityException e) {
       reportError("Failed to open camera: " + e);
       return;
     }

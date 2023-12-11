@@ -54,7 +54,9 @@ rtc_library("libaom_av1_encoder") {
   sources = [ "libaom_av1_encoder.cc" ]
   deps = [
     "../..:video_codec_interface",
+    "../../../../api:field_trials_view",
     "../../../../api:scoped_refptr",
+    "../../../../api/transport:field_trial_based_config",
     "../../../../api/video:encoded_image",
     "../../../../api/video:video_frame",
     "../../../../api/video_codecs:scalability_mode",

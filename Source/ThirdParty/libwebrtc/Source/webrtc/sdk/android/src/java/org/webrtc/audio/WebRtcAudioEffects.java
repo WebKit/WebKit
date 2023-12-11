@@ -54,15 +54,11 @@ class WebRtcAudioEffects {
   // Returns true if all conditions for supporting HW Acoustic Echo Cancellation (AEC) are
   // fulfilled.
   public static boolean isAcousticEchoCancelerSupported() {
-    if (Build.VERSION.SDK_INT < 18)
-      return false;
     return isEffectTypeAvailable(AudioEffect.EFFECT_TYPE_AEC, AOSP_ACOUSTIC_ECHO_CANCELER);
   }
 
   // Returns true if all conditions for supporting HW Noise Suppression (NS) are fulfilled.
   public static boolean isNoiseSuppressorSupported() {
-    if (Build.VERSION.SDK_INT < 18)
-      return false;
     return isEffectTypeAvailable(AudioEffect.EFFECT_TYPE_NS, AOSP_NOISE_SUPPRESSOR);
   }
 
@@ -106,6 +102,19 @@ class WebRtcAudioEffects {
     }
     shouldEnableNs = enable;
     return true;
+  }
+
+  // Toggles an existing NoiseSuppressor to be enabled or disabled.
+  // Returns true if the toggling was successful, otherwise false is returned (this is also the case
+  // if no NoiseSuppressor was present).
+  public boolean toggleNS(boolean enable) {
+    if (ns == null) {
+      Logging.e(TAG, "Attempting to enable or disable nonexistent NoiseSuppressor.");
+      return false;
+    }
+    Logging.d(TAG, "toggleNS(" + enable + ")");
+    boolean toggling_succeeded = ns.setEnabled(enable) == AudioEffect.SUCCESS;
+    return toggling_succeeded;
   }
 
   public void enable(int audioSession) {
@@ -188,9 +197,6 @@ class WebRtcAudioEffects {
   // As an example: Samsung Galaxy S6 includes an AGC in the descriptor but
   // AutomaticGainControl.isAvailable() returns false.
   private boolean effectTypeIsVoIP(UUID type) {
-    if (Build.VERSION.SDK_INT < 18)
-      return false;
-
     return (AudioEffect.EFFECT_TYPE_AEC.equals(type) && isAcousticEchoCancelerSupported())
         || (AudioEffect.EFFECT_TYPE_NS.equals(type) && isNoiseSuppressorSupported());
   }

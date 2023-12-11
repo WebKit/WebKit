@@ -67,7 +67,7 @@ class InterleavedReassemblyStreams : public ReassemblyStreams {
           parent_(*parent),
           next_mid_(mid_unwrapper_.Unwrap(next_mid)) {}
     int Add(UnwrappedTSN tsn, Data data);
-    size_t EraseTo(MID message_id);
+    size_t EraseTo(MID mid);
     void Reset() {
       mid_unwrapper_.Reset();
       next_mid_ = mid_unwrapper_.Unwrap(MID(0));

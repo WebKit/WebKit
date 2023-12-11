@@ -67,6 +67,7 @@ rtc_library("call_interfaces") {
     "../modules/audio_processing",
     "../modules/audio_processing:api",
     "../modules/audio_processing:audio_processing_statistics",
+    "../modules/rtp_rtcp",
     "../modules/rtp_rtcp:rtp_rtcp_format",
     "../rtc_base:audio_format_to_string",
     "../rtc_base:checks",
@@ -344,7 +345,6 @@ rtc_library("call") {
   ]
   absl_deps = [
     "//third_party/abseil-cpp/absl/functional:bind_front",
-    "//third_party/abseil-cpp/absl/memory",
     "//third_party/abseil-cpp/absl/strings",
     "//third_party/abseil-cpp/absl/types:optional",
   ]
@@ -543,7 +543,6 @@ if (rtc_include_tests) {
       absl_deps = [
         "//third_party/abseil-cpp/absl/container:inlined_vector",
         "//third_party/abseil-cpp/absl/functional:any_invocable",
-        "//third_party/abseil-cpp/absl/memory",
         "//third_party/abseil-cpp/absl/strings",
         "//third_party/abseil-cpp/absl/types:optional",
         "//third_party/abseil-cpp/absl/types:variant",
@@ -605,6 +604,7 @@ if (rtc_include_tests) {
         "../test:frame_generator_capturer",
         "../test:null_transport",
         "../test:test_common",
+        "../test:test_flags",
         "../test:test_support",
         "../test:video_test_common",
         "../test:video_test_constants",

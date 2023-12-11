@@ -494,15 +494,15 @@ bool JsepTransport::SetSdes(const std::vector<CryptoParams>& cryptos,
   // If setting an SDES answer succeeded, apply the negotiated parameters
   // to the SRTP transport.
   if ((type == SdpType::kPrAnswer || type == SdpType::kAnswer) && ret) {
-    if (sdes_negotiator_.send_cipher_suite() &&
-        sdes_negotiator_.recv_cipher_suite()) {
+    if (sdes_negotiator_.send_crypto_suite() &&
+        sdes_negotiator_.recv_crypto_suite()) {
       RTC_DCHECK(send_extension_ids_);
       RTC_DCHECK(recv_extension_ids_);
       ret = sdes_transport_->SetRtpParams(
-          *(sdes_negotiator_.send_cipher_suite()),
+          *(sdes_negotiator_.send_crypto_suite()),
           sdes_negotiator_.send_key().data(),
           static_cast<int>(sdes_negotiator_.send_key().size()),
-          *(send_extension_ids_), *(sdes_negotiator_.recv_cipher_suite()),
+          *(send_extension_ids_), *(sdes_negotiator_.recv_crypto_suite()),
           sdes_negotiator_.recv_key().data(),
           static_cast<int>(sdes_negotiator_.recv_key().size()),
           *(recv_extension_ids_));
@@ -704,6 +704,8 @@ bool JsepTransport::GetTransportStats(DtlsTransportInternal* dtls_transport,
           &substats.ice_transport_stats)) {
     return false;
   }
+  substats.ssl_peer_signature_algorithm =
+      dtls_transport->GetSslPeerSignatureAlgorithm();
   stats->channel_stats.push_back(substats);
   return true;
 }

@@ -82,6 +82,29 @@ TEST_F(Y4mFrameGeneratorTest, CanReadFPSFromFileWhenRoundingIsNeeded) {
   remove(input_filepath.c_str());
 }
 
+TEST_F(Y4mFrameGeneratorTest, CanChangeResolution) {
+  constexpr int kNewWidth = 4;
+  constexpr int kNewHeight = 6;
+  constexpr int kFrameCount = 10;
+
+  Y4mFrameGenerator generator(input_filepath_,
+                              Y4mFrameGenerator::RepeatMode::kLoop);
+  FrameGeneratorInterface::Resolution res = generator.GetResolution();
+  EXPECT_EQ(res.width, 2u);
+  EXPECT_EQ(res.height, 2u);
+
+  generator.ChangeResolution(kNewWidth, kNewHeight);
+  res = generator.GetResolution();
+  EXPECT_EQ(static_cast<int>(res.width), kNewWidth);
+  EXPECT_EQ(static_cast<int>(res.height), kNewHeight);
+
+  for (int i = 0; i < kFrameCount; ++i) {
+    FrameGeneratorInterface::VideoFrameData frame = generator.NextFrame();
+    EXPECT_EQ(frame.buffer->width(), kNewWidth);
+    EXPECT_EQ(frame.buffer->height(), kNewHeight);
+  }
+}
+
 TEST_F(Y4mFrameGeneratorTest, SingleRepeatMode) {
   Y4mFrameGenerator generator(input_filepath_,
                               Y4mFrameGenerator::RepeatMode::kSingle);
