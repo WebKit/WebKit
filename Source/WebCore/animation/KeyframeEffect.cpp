@@ -1159,11 +1159,9 @@ void KeyframeEffect::animationTimelineDidChange(AnimationTimeline* timeline)
 #endif
 
     if (timeline)
-        m_inTargetEffectStack = target->ensureKeyframeEffectStack().addEffect(*this);
-    else {
+        target->ensureKeyframeEffectStack().addEffect(*this);
+    else
         target->ensureKeyframeEffectStack().removeEffect(*this);
-        m_inTargetEffectStack = false;
-    }
 }
 
 void KeyframeEffect::animationTimingDidChange()
@@ -1191,11 +1189,9 @@ void KeyframeEffect::updateEffectStackMembership()
 
     bool isRelevant = animation() && animation()->isRelevant();
     if (isRelevant && !m_inTargetEffectStack)
-        m_inTargetEffectStack = target->ensureKeyframeEffectStack().addEffect(*this);
-    else if (!isRelevant && m_inTargetEffectStack) {
+        target->ensureKeyframeEffectStack().addEffect(*this);
+    else if (!isRelevant && m_inTargetEffectStack)
         target->ensureKeyframeEffectStack().removeEffect(*this);
-        m_inTargetEffectStack = false;
-    }
 }
 
 void KeyframeEffect::setAnimation(WebAnimation* animation)
@@ -1284,13 +1280,11 @@ void KeyframeEffect::didChangeTargetStyleable(const std::optional<const Styleabl
     StackMembershipMutationScope stackMembershipMutationScope(this);
 #endif
 
-    if (previousTargetStyleable) {
+    if (previousTargetStyleable)
         previousTargetStyleable->ensureKeyframeEffectStack().removeEffect(*this);
-        m_inTargetEffectStack = false;
-    }
 
     if (newTargetStyleable)
-        m_inTargetEffectStack = newTargetStyleable->ensureKeyframeEffectStack().addEffect(*this);
+        newTargetStyleable->ensureKeyframeEffectStack().addEffect(*this);
 }
 
 void KeyframeEffect::apply(RenderStyle& targetStyle, const Style::ResolutionContext& resolutionContext, std::optional<Seconds> startTime)
@@ -1861,8 +1855,19 @@ void KeyframeEffect::animationWasCanceled()
         addPendingAcceleratedAction(AcceleratedAction::Stop);
 }
 
-void KeyframeEffect::wasRemovedFromStack()
+void KeyframeEffect::wasAddedToEffectStack()
 {
+    m_inTargetEffectStack = true;
+    invalidate();
+}
+
+void KeyframeEffect::wasRemovedFromEffectStack()
+{
+    m_inTargetEffectStack = false;
+
+    if (!canBeAccelerated())
+        return;
+
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     if (threadedAnimationResolutionEnabled())
         return;
