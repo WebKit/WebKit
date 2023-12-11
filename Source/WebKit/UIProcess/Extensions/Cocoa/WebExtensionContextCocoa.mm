@@ -2390,6 +2390,10 @@ void WebExtensionContext::loadBackgroundWebView()
     m_backgroundWebView.get().navigationDelegate = m_delegate.get();
     m_backgroundWebView.get().inspectable = m_inspectable;
 
+    auto delegate = m_extensionController->delegate();
+    if ([delegate respondsToSelector:@selector(_webExtensionController:didCreateBackgroundWebView:forExtensionContext:)])
+        [delegate _webExtensionController:m_extensionController->wrapper() didCreateBackgroundWebView:m_backgroundWebView.get() forExtensionContext:wrapper()];
+
     if (extension().backgroundContentIsServiceWorker())
         m_backgroundWebView.get()._remoteInspectionNameOverride = WEB_UI_FORMAT_CFSTRING("%@ — Extension Service Worker", "Label for an inspectable Web Extension service worker", (__bridge CFStringRef)extension().displayShortName());
     else

@@ -263,18 +263,4 @@ const LayoutPoint& MouseRelatedEvent::pageLocation() const
     return m_pageLocation;
 }
 
-int MouseRelatedEvent::x() const
-{
-    // FIXME: This is not correct.
-    // See Microsoft documentation and <http://www.quirksmode.org/dom/w3c_events.html>.
-    return m_clientLocation.x();
-}
-
-int MouseRelatedEvent::y() const
-{
-    // FIXME: This is not correct.
-    // See Microsoft documentation and <http://www.quirksmode.org/dom/w3c_events.html>.
-    return m_clientLocation.y();
-}
-
 } // namespace WebCore

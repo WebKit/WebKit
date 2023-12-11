@@ -3015,10 +3015,8 @@ static std::optional<bool> intersectsWithAncestor(const RenderLayer& child, cons
 {
     // If any layers between child and ancestor are transformed, then adjusting the offset is
     // insufficient to convert coordinates into ancestor's coordinate space.
-    for (auto* layer = &child; layer != &ancestor; layer = layer->parent()) {
-        if (!layer->canUseOffsetFromAncestor())
+    if (!child.canUseOffsetFromAncestor(ancestor))
             return std::nullopt;
-    }
 
     auto overlap = child.boundingBox(&ancestor, child.offsetFromAncestor(&ancestor), RenderLayer::UseFragmentBoxesExcludingCompositing);
     return overlap.intersects(ancestorCompositedBounds);

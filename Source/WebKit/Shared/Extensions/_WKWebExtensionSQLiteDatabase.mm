@@ -129,7 +129,9 @@ using namespace WebKit;
 
 - (BOOL)enableWAL:(NSError **)error
 {
-    return SQLiteDatabaseEnumerate(self, error, @"PRAGMA journal_mode = WAL", std::tie(std::ignore));
+    // SQLite docs: The synchronous NORMAL setting is a good choice for most applications running in WAL mode.
+    if (!SQLiteDatabaseExecuteAndReturnError(self, error, @"PRAGMA synchronous = NORMAL"))
+        return NO;
     return SQLiteDatabaseEnumerate(self, error, @"PRAGMA journal_mode = WAL", std::tie(std::ignore));
 }
 
@@ -207,7 +209,7 @@ using namespace WebKit;
     // SQLite may return a valid database handle even if an error occurred. sqlite3_close silently
     // ignores calls with a null handle so we can call it here unconditionally.
     sqlite3_close_v2(_handle);
-    _handle = 0;
+    _handle = nullptr;
 
     if (error)
         *error = [[self class] _errorWith_WKSQLiteErrorCode:result userInfo:nil];

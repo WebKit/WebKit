@@ -4697,17 +4697,25 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
     if ((renderer().hasNonVisibleOverflow() && (clipRectsContext.respectOverflowClip() || this != clipRectsContext.rootLayer)) || renderer().hasClip()) {
 #endif
         // This layer establishes a clip of some kind.
+
+        // FIXME: Transforming a clip doesn't make a whole lot of sense, since it we have to round out to the
+        // bounding box of the transformed quad.
+        // It would be better for callers to transform rects into the coordinate space of the nearest clipped layer, apply
+        // the clip in local space, and then repeat until the required coordinate space is reached.
+        bool needsTransform = clipRectsType == AbsoluteClipRects ? m_hasTransformedAncestor || !canUseOffsetFromAncestor() : !canUseOffsetFromAncestor(*clipRectsContext.rootLayer);
+
         LayoutPoint offset;
-        if (!m_hasTransformedAncestor && canUseOffsetFromAncestor())
+        if (!needsTransform)
             offset = toLayoutPoint(offsetFromAncestor(clipRectsContext.rootLayer, AdjustForColumns));
-        else
-            offset = LayoutPoint(renderer().localToContainerPoint(FloatPoint(), &clipRectsContext.rootLayer->renderer()));
 
         if (clipRects.fixed() && &clipRectsContext.rootLayer->renderer() == &renderer().view())
             offset -= toLayoutSize(renderer().view().frameView().scrollPositionForFixedPosition());
 
         if (renderer().hasNonVisibleOverflow()) {
-            ClipRect newOverflowClip = rendererOverflowClipRectForChildLayers(offset, nullptr, clipRectsContext.overlayScrollbarSizeRelevancy());
+            ClipRect newOverflowClip = rendererOverflowClipRectForChildLayers({ }, nullptr, clipRectsContext.overlayScrollbarSizeRelevancy());
+            if (needsTransform)
+                newOverflowClip = LayoutRect(renderer().localToContainerQuad(FloatRect(newOverflowClip.rect()), &clipRectsContext.rootLayer->renderer()).boundingBox());
+            newOverflowClip.moveBy(offset);
             newOverflowClip.setAffectedByRadius(renderer().style().hasBorderRadius());
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
             if (renderer().canContainAbsolutelyPositionedObjects())
@@ -4716,7 +4724,10 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
                 clipRects.setFixedClipRect(intersection(newOverflowClip, clipRects.fixedClipRect()));
         }
         if (renderer().hasClip() && is<RenderBox>(renderer())) {
-            LayoutRect newPosClip = downcast<RenderBox>(renderer()).clipRect(offset, nullptr);
+            LayoutRect newPosClip = downcast<RenderBox>(renderer()).clipRect({ }, nullptr);
+            if (needsTransform)
+                newPosClip = LayoutRect(renderer().localToContainerQuad(FloatRect(newPosClip), &clipRectsContext.rootLayer->renderer()).boundingBox());
+            newPosClip.moveBy(offset);
             clipRects.setPosClipRect(intersection(newPosClip, clipRects.posClipRect()));
             clipRects.setOverflowClipRect(intersection(newPosClip, clipRects.overflowClipRect()));
             clipRects.setFixedClipRect(intersection(newPosClip, clipRects.fixedClipRect()));
@@ -5326,6 +5337,15 @@ void RenderLayer::repaintIncludingDescendants()
     renderer().repaint();
     for (RenderLayer* current = firstChild(); current; current = current->nextSibling())
         current->repaintIncludingDescendants();
+}
+
+bool RenderLayer::canUseOffsetFromAncestor(const RenderLayer& ancestor) const
+{
+    for (auto* layer = this; layer != &ancestor; layer = layer->parent()) {
+        if (!layer->canUseOffsetFromAncestor())
+            return false;
+    }
+    return true;
 }
 
 void RenderLayer::setBackingNeedsRepaint(GraphicsLayer::ShouldClipToLayer shouldClip)
