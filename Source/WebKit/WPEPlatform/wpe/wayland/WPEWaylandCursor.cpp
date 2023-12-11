@@ -72,6 +72,8 @@ void WaylandCursor::setFromName(const char* name, double scale)
     update();
 
     wl_surface_attach(m_surface, cursor[0].buffer, 0, 0);
+    if (wl_surface_get_version(m_surface) >= WL_SURFACE_SET_BUFFER_SCALE_SINCE_VERSION)
+        wl_surface_set_buffer_scale(m_surface, scale);
     wl_surface_damage(m_surface, 0, 0, cursor[0].width, cursor[0].height);
     wl_surface_commit(m_surface);
 }
