@@ -601,6 +601,7 @@ public:
     bool hasAncestorWithFilterOutsets() const;
 
     inline bool canUseOffsetFromAncestor() const;
+    bool canUseOffsetFromAncestor(const RenderLayer& ancestor) const;
 
     // FIXME: adjustForColumns allows us to position compositing layers in columns correctly, but eventually they need to be split across columns too.
     enum ColumnOffsetAdjustment { DontAdjustForColumns, AdjustForColumns };
