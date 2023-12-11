@@ -4629,10 +4629,11 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     bool addedStartPunctuationHang = false;
     
     while (RenderObject* child = childIterator.next()) {
-        bool autoWrap = child->isReplacedOrInlineBlock() ? child->parent()->style().autoWrap() :
-            child->style().autoWrap();
-        if (child->style().display() == DisplayType::RubyAnnotation && child->style().rubyPosition() != RubyPosition::InterCharacter) {
-            // Interlinear annotation boxes don't participate in inline layout, but they opposed a minimum width on the associated ruby base.
+        bool autoWrap = child->isReplacedOrInlineBlock() ? child->parent()->style().autoWrap() : child->style().autoWrap();
+
+        // Interlinear annotations don't participate in inline layout, but they put a minimum width requirement on the associated ruby base.
+        auto isInterlinearTypeAnnotation = child->style().display() == DisplayType::RubyAnnotation && (child->style().rubyPosition() != RubyPosition::InterCharacter || !styleToUse.isHorizontalWritingMode());
+        if (isInterlinearTypeAnnotation) {
             ASSERT(!child->nextSibling());
             auto annotationMinimumIntrinsicWidth = LayoutUnit { };
             auto annotationMaximumIntrinsicWidth = LayoutUnit { };
