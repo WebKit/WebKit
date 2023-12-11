@@ -152,7 +152,7 @@ include(GStreamerDependencies)
 WEBKIT_OPTION_END()
 
 if (USE_GTK4)
-    set(GTK_MINIMUM_VERSION 4.4.0)
+    set(GTK_MINIMUM_VERSION 4.6.0)
     set(GTK_PC_NAME gtk4)
 else ()
     set(GTK_MINIMUM_VERSION 3.22.0)
