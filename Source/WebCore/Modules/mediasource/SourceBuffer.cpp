@@ -64,6 +64,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/IsoMallocInlines.h>
 #include <wtf/RunLoop.h>
+#include <wtf/Scope.h>
 #include <wtf/StringPrintStream.h>
 #include <wtf/WeakPtr.h>
 
@@ -516,7 +517,7 @@ ExceptionOr<void> SourceBuffer::appendBufferInternal(const unsigned char* data, 
     if (isRemoved() || m_updating)
         return Exception { ExceptionCode::InvalidStateError };
 
-    ALWAYS_LOG(LOGIDENTIFIER, "size = ", size, ", buffered = ", m_private->buffered(), " streaming = ", m_source->streaming());
+    ALWAYS_LOG(LOGIDENTIFIER, "size = ", size, ", buffered = ", m_buffered->ranges(), " streaming = ", m_source->streaming());
 
     // 3. If the readyState attribute of the parent media source is in the "ended" state then run the following steps:
     // 3.1. Set the readyState attribute of the parent media source to "open"
@@ -594,7 +595,7 @@ void SourceBuffer::sourceBufferPrivateAppendComplete(MediaPromise::Result&& resu
     monitorBufferingRate();
     m_private->reenqueueMediaIfNeeded(m_source->currentTime());
 
-    ALWAYS_LOG(LOGIDENTIFIER, "buffered = ", m_private->buffered(), ", totalBufferSize: ", m_private->totalTrackBufferSizeInBytes());
+    ALWAYS_LOG(LOGIDENTIFIER, "buffered = ", m_buffered->ranges(), ", totalBufferSize: ", m_private->totalTrackBufferSizeInBytes());
 }
 
 void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int64_t error)
@@ -1196,11 +1197,6 @@ bool SourceBuffer::canPlayThroughRange(const PlatformTimeRanges& ranges)
     return unbufferedTime.toDouble() / m_averageBufferRate < timeRemaining.toDouble();
 }
 
-void SourceBuffer::sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory)
-{
-    reportExtraMemoryAllocated(extraMemory);
-}
-
 void SourceBuffer::reportExtraMemoryAllocated(uint64_t extraMemory)
 {
     uint64_t extraMemoryCost = extraMemory;
@@ -1296,25 +1292,84 @@ void SourceBuffer::setShouldGenerateTimestamps(bool flag)
     m_private->setShouldGenerateTimestamps(flag);
 }
 
-Ref<MediaPromise> SourceBuffer::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& ranges)
+Ref<MediaPromise> SourceBuffer::sourceBufferPrivateBufferedChanged(const Vector<PlatformTimeRanges>& trackBuffers, uint64_t extraMemory)
 {
-    ASSERT(ranges != m_buffered->ranges(), "sourceBufferPrivateBufferedChanged should only be called if the ranges did change");
-#if ENABLE(MANAGED_MEDIA_SOURCE)
-    if (isManaged()) {
-        auto addedRanges = ranges;
-        addedRanges -= m_buffered->ranges();
-        auto addedTimeRanges = TimeRanges::create(WTFMove(addedRanges));
+    reportExtraMemoryAllocated(extraMemory);
+    m_trackBuffers = trackBuffers;
 
-        auto removedRanges = m_buffered->ranges();
-        removedRanges -= ranges;
-        auto removedTimeRanges = TimeRanges::create(WTFMove(removedRanges));
+    updateBuffered();
 
-        queueTaskToDispatchEvent(*this, TaskSource::MediaElement, BufferedChangeEvent::create(WTFMove(addedTimeRanges), WTFMove(removedTimeRanges)));
-    }
-#endif
-    m_buffered = TimeRanges::create(ranges);
-    setBufferedDirty(true);
     return MediaPromise::createAndResolve();
+}
+
+void SourceBuffer::updateBuffered()
+{
+    const auto oldRanges = m_buffered->ranges();
+    auto updatePrivate = makeScopeExit([&] {
+#if ENABLE(MANAGED_MEDIA_SOURCE)
+        if (oldRanges == m_buffered->ranges())
+            return;
+        setBufferedDirty(true);
+
+        if (isManaged()) {
+            auto addedRanges = m_buffered->ranges();
+            addedRanges -= oldRanges;
+            auto addedTimeRanges = TimeRanges::create(WTFMove(addedRanges));
+
+            auto removedRanges = oldRanges;
+            removedRanges -= m_buffered->ranges();
+            auto removedTimeRanges = TimeRanges::create(WTFMove(removedRanges));
+
+            queueTaskToDispatchEvent(*this, TaskSource::MediaElement, BufferedChangeEvent::create(WTFMove(addedTimeRanges), WTFMove(removedTimeRanges)));
+        }
+#endif
+        if (isRemoved())
+            return;
+        m_source->monitorSourceBuffers();
+    });
+
+    // 3.1 Attributes, buffered
+    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-sourcebuffer-buffered
+    // 2. Let highest end time be the largest track buffer ranges end time across all the track buffers managed by this SourceBuffer object.
+    MediaTime highestEndTime = MediaTime::negativeInfiniteTime();
+    for (auto& trackBuffer : m_trackBuffers) {
+        if (!trackBuffer.length())
+            continue;
+        highestEndTime = std::max(highestEndTime, trackBuffer.maximumBufferedTime());
+    }
+
+    // NOTE: Short circuit the following if none of the TrackBuffers have buffered ranges to avoid generating
+    // a single range of {0, 0}.
+    if (highestEndTime.isNegativeInfinite()) {
+        m_buffered = TimeRanges::create();
+        return;
+    }
+
+    // 3. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
+    PlatformTimeRanges intersectionRanges { MediaTime::zeroTime(), highestEndTime };
+
+    // 4. For each audio and video track buffer managed by this SourceBuffer, run the following steps:
+    for (auto& trackBuffer : m_trackBuffers) {
+        if (!trackBuffer.length())
+            continue;
+
+        // 4.1 Let track ranges equal the track buffer ranges for the current track buffer.
+        auto trackRanges = trackBuffer;
+
+        // 4.2 If readyState is "ended", then set the end time on the last range in track ranges to highest end time.
+        if (m_mediaSourceEnded)
+            trackRanges.add(trackRanges.maximumBufferedTime(), highestEndTime);
+
+        // 4.3 Let new intersection ranges equal the intersection between the intersection ranges and the track ranges.
+        // 4.4 Replace the ranges in intersection ranges with the new intersection ranges.
+        intersectionRanges.intersectWith(trackRanges);
+    }
+    // 5. If intersection ranges does not contain the exact same range information as the current value of this attribute,
+    //    then update the current value of this attribute to intersection ranges.
+    if (oldRanges != intersectionRanges) {
+        m_buffered = TimeRanges::create(intersectionRanges);
+        LOG(Media, "SourceBuffer::updateBuffered(%p) - buffered = %s", this, toString(intersectionRanges).utf8().data());
+    }
 }
 
 bool SourceBuffer::isBufferedDirty() const
@@ -1333,6 +1388,8 @@ void SourceBuffer::setBufferedDirty(bool flag)
 
 void SourceBuffer::setMediaSourceEnded(bool isEnded)
 {
+    m_mediaSourceEnded = isEnded;
+    updateBuffered();
     m_private->setMediaSourceEnded(isEnded);
 }
 

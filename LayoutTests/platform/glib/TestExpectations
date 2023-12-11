@@ -318,6 +318,9 @@ webkit.org/b/254222 media/media-source/media-webm-opus-codecdelay.html [ Pass ]
 # GStreamer seeks to the wrong frame
 webkit.org/b/261335 media/media-source/media-managedmse-seek.html [ Failure Timeout ImageOnlyFailure ]
 
+# GStreamer incorrectly demux the webm and creates gaps.
+webkit.org/b/266195 media/media-source/media-managedmse-multipletracks-bufferedchange.html [ Failure ]
+
 # Support to pause with 0 rate playback seems to work only in GStreamer ports
 media/media-source/media-source-play-zero-playbackrate.html [ Pass ]
 

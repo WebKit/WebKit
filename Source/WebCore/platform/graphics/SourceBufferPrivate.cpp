@@ -119,13 +119,10 @@ void SourceBufferPrivate::updateHighestPresentationTimestamp()
         client->sourceBufferPrivateHighestPresentationTimestampChanged(m_highestPresentationTimestamp);
 }
 
-Ref<MediaPromise> SourceBufferPrivate::setBufferedRanges(PlatformTimeRanges&& timeRanges)
+Ref<MediaPromise> SourceBufferPrivate::updateBuffered()
 {
-    if (m_buffered == timeRanges)
-        return MediaPromise::createAndResolve();
-    m_buffered = WTFMove(timeRanges);
     if (RefPtr client = this->client())
-        return client->sourceBufferPrivateBufferedChanged(buffered());
+        return client->sourceBufferPrivateBufferedChanged(trackBuffersRanges(), totalTrackBufferSizeInBytes());
     return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
 }
 
@@ -135,49 +132,6 @@ Vector<PlatformTimeRanges> SourceBufferPrivate::trackBuffersRanges() const
     return WTF::map(iteratorRange, [](auto& trackBuffer) {
         return trackBuffer.second->buffered();
     });
-}
-
-Ref<MediaPromise> SourceBufferPrivate::updateBufferedFromTrackBuffers(const Vector<PlatformTimeRanges>& trackBuffers)
-{
-    // 3.1 Attributes, buffered
-    // https://rawgit.com/w3c/media-source/45627646344eea0170dd1cbc5a3d508ca751abb8/media-source-respec.html#dom-sourcebuffer-buffered
-
-    // 2. Let highest end time be the largest track buffer ranges end time across all the track buffers managed by this SourceBuffer object.
-    MediaTime highestEndTime = MediaTime::negativeInfiniteTime();
-    for (auto& trackBuffer : trackBuffers) {
-        if (!trackBuffer.length())
-            continue;
-        highestEndTime = std::max(highestEndTime, trackBuffer.maximumBufferedTime());
-    }
-
-    // NOTE: Short circuit the following if none of the TrackBuffers have buffered ranges to avoid generating
-    // a single range of {0, 0}.
-    if (highestEndTime.isNegativeInfinite())
-        return setBufferedRanges({ });
-
-    // 3. Let intersection ranges equal a TimeRange object containing a single range from 0 to highest end time.
-    PlatformTimeRanges intersectionRanges { MediaTime::zeroTime(), highestEndTime };
-
-    // 4. For each audio and video track buffer managed by this SourceBuffer, run the following steps:
-    for (auto& trackBuffer : trackBuffers) {
-        if (!trackBuffer.length())
-            continue;
-
-        // 4.1 Let track ranges equal the track buffer ranges for the current track buffer.
-        auto trackRanges = trackBuffer;
-
-        // 4.2 If readyState is "ended", then set the end time on the last range in track ranges to highest end time.
-        if (m_isMediaSourceEnded)
-            trackRanges.add(trackRanges.maximumBufferedTime(), highestEndTime);
-
-        // 4.3 Let new intersection ranges equal the intersection between the intersection ranges and the track ranges.
-        // 4.4 Replace the ranges in intersection ranges with the new intersection ranges.
-        intersectionRanges.intersectWith(trackRanges);
-    }
-
-    // 5. If intersection ranges does not contain the exact same range information as the current value of this attribute,
-    //    then update the current value of this attribute to intersection ranges.
-    return setBufferedRanges(WTFMove(intersectionRanges));
 }
 
 void SourceBufferPrivate::reenqueSamples(TrackID trackID)
@@ -240,11 +194,7 @@ void SourceBufferPrivate::clearTrackBuffers(bool shouldReportToClient)
 
     updateHighestPresentationTimestamp();
 
-    if (RefPtr client = this->client()) {
-        client->sourceBufferPrivateTrackBuffersChanged({ });
-        client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
-    }
-    updateBufferedFromTrackBuffers({ });
+    updateBuffered();
 }
 
 Ref<SourceBufferPrivate::SamplesPromise> SourceBufferPrivate::bufferedSamplesForTrackId(TrackID trackId)
@@ -278,8 +228,6 @@ void SourceBufferPrivate::setMediaSourceEnded(bool isEnded)
         return;
 
     m_isMediaSourceEnded = isEnded;
-
-    updateBufferedFromTrackBuffers(trackBuffersRanges());
 
     if (m_isMediaSourceEnded) {
         for (auto& trackBufferPair : m_trackBufferMap) {
@@ -413,16 +361,17 @@ Ref<MediaPromise> SourceBufferPrivate::removeCodedFrames(const MediaTime& start,
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || !result)
             return OperationPromise::createAndReject(!result ? result.error() : PlatformMediaError::BufferRemoved);
-        return removeCodedFramesInternal(start, end, currentTime).get();
+        removeCodedFramesInternal(start, end, currentTime);
+        return updateBuffered().get();
     });
     return m_currentSourceBufferOperation.get();
 }
 
-Ref<MediaPromise> SourceBufferPrivate::removeCodedFramesInternal(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime)
+void SourceBufferPrivate::removeCodedFramesInternal(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime)
 {
     ASSERT(start < end);
     if (start >= end)
-        return MediaPromise::createAndResolve();
+        return;
 
     // 3.5.9 Coded Frame Removal Algorithm
     // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-removal
@@ -446,16 +395,6 @@ Ref<MediaPromise> SourceBufferPrivate::removeCodedFramesInternal(const MediaTime
     // No-op
 
     updateHighestPresentationTimestamp();
-
-    LOG(Media, "SourceBuffer::removeCodedFramesInternal(%p) - buffered = %s", this, toString(m_buffered).utf8().data());
-
-    auto trackBuffers = trackBuffersRanges();
-    if (RefPtr client = this->client()) {
-        client->sourceBufferPrivateTrackBuffersChanged(trackBuffers);
-        client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
-    }
-
-    return updateBufferedFromTrackBuffers(trackBuffers);
 }
 
 size_t SourceBufferPrivate::platformEvictionThreshold() const
@@ -711,18 +650,14 @@ Ref<MediaPromise> SourceBufferPrivate::append(Ref<SharedBuffer>&& buffer)
 
         // Resolve the changes in TrackBuffers' buffered ranges
         // into the SourceBuffer's buffered ranges
-        auto trackBuffers = trackBuffersRanges();
-        client->sourceBufferPrivateTrackBuffersChanged(trackBuffers);
-
         Vector<Ref<MediaPromise>> promises;
-        promises.append(updateBufferedFromTrackBuffers(trackBuffers));
+        promises.append(updateBuffered());
         if (m_groupEndTimestamp > mediaSourceDuration()) {
             // https://w3c.github.io/media-source/#sourcebuffer-coded-frame-processing
             // 5. If the media segment contains data beyond the current duration, then run the duration change algorithm with new
             // duration set to the maximum of the current duration and the group end timestamp.
             promises.append(client->sourceBufferPrivateDurationChanged(m_groupEndTimestamp));
         }
-        client->sourceBufferPrivateReportExtraMemoryCost(totalTrackBufferSizeInBytes());
 
         return MediaPromise::all(promises).get();
     });
@@ -1213,8 +1148,27 @@ void SourceBufferPrivate::memoryPressure(uint64_t maximumBufferSize, const Media
             resetTrackBuffers();
             clearTrackBuffers(true);
         }
+        updateBuffered();
         return OperationPromise::createAndSettle(WTFMove(result));
     });
+}
+
+MediaTime SourceBufferPrivate::minimumBufferedTime() const
+{
+    MediaTime minimumTime = MediaTime::positiveInfiniteTime();
+    iterateTrackBuffers([&](const TrackBuffer& trackBuffer) {
+        minimumTime = std::min(minimumTime, trackBuffer.buffered().minimumBufferedTime());
+    });
+    return minimumTime;
+}
+
+MediaTime SourceBufferPrivate::maximumBufferedTime() const
+{
+    MediaTime maximumTime = MediaTime::negativeInfiniteTime();
+    iterateTrackBuffers([&](const TrackBuffer& trackBuffer) {
+        maximumTime = std::max(maximumTime, trackBuffer.buffered().maximumBufferedTime());
+    });
+    return maximumTime;
 }
 
 bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime)
@@ -1230,7 +1184,7 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBuff
         const auto maximumRangeEnd = std::min(currentTime - timeChunk, findPreviousSyncSamplePresentationTime(currentTime));
 
         do {
-            auto rangeStart = m_buffered.minimumBufferedTime();
+            auto rangeStart = minimumBufferedTime();
             auto rangeEnd = std::min(rangeStart + timeChunk, maximumRangeEnd);
 
             if (rangeStart >= rangeEnd)
@@ -1239,7 +1193,7 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBuff
             // 4. For each range in removal ranges, run the coded frame removal algorithm with start and
             // end equal to the removal range start and end timestamp respectively.
             removeCodedFramesInternal(rangeStart, rangeEnd, currentTime);
-            if (m_buffered.minimumBufferedTime() == rangeStart)
+            if (minimumBufferedTime() == rangeStart)
                 break; // Nothing evicted.
 
             isBufferFull = isBufferFullFor(newDataSize, maximumBufferSize);
@@ -1257,17 +1211,22 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBuff
         const auto minimumRangeStart = currentTime + timeChunk;
 
         do {
-            auto rangeEnd = m_buffered.maximumBufferedTime();
+            PlatformTimeRanges buffered { MediaTime::zeroTime(), MediaTime::positiveInfiniteTime() };
+            iterateTrackBuffers([&](const TrackBuffer& trackBuffer) {
+                buffered.intersectWith(trackBuffer.buffered());
+            });
+
+            auto rangeEnd = buffered.maximumBufferedTime();
             auto rangeStart = std::max(minimumRangeStart, rangeEnd - timeChunk);
 
             if (rangeStart >= rangeEnd)
                 break;
 
             // Do not evict data from the time range that contains currentTime.
-            size_t currentTimeRange = m_buffered.find(currentTime);
-            size_t startTimeRange = m_buffered.find(rangeStart);
+            size_t currentTimeRange = buffered.find(currentTime);
+            size_t startTimeRange = buffered.find(rangeStart);
             if (currentTimeRange != notFound && startTimeRange == currentTimeRange) {
-                size_t endTimeRange = m_buffered.find(rangeEnd);
+                size_t endTimeRange = buffered.find(rangeEnd);
                 if (endTimeRange == currentTimeRange)
                     break;
             }
@@ -1275,7 +1234,7 @@ bool SourceBufferPrivate::evictFrames(uint64_t newDataSize, uint64_t maximumBuff
             // 4. For each range in removal ranges, run the coded frame removal algorithm with start and
             // end equal to the removal range start and end timestamp respectively.
             removeCodedFramesInternal(rangeStart, rangeEnd, currentTime);
-            if (m_buffered.maximumBufferedTime() == rangeEnd)
+            if (maximumBufferedTime() == rangeEnd)
                 break; // Nothing evicted.
 
             isBufferFull = isBufferFullFor(newDataSize, maximumBufferSize);

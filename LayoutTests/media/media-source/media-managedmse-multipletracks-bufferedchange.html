@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ManagedMediaSourceEnabled=true MediaSourceEnabled=true ] -->
+<html>
+<head>
+    <title>managedmediasource</title>
+    <script src="../../media/video-test.js"></script>
+    <script src="../../media/utilities.js"></script>
+    <script>
+    var source;
+    var sourceBuffer;
+    var buffer;
+
+    window.addEventListener('load', async event => {
+        try {
+            findMediaElement();
+
+            video.disableRemotePlayback = true;
+            source = new ManagedMediaSource();
+            run('video.src = URL.createObjectURL(source)');
+            await waitFor(source, 'sourceopen');
+            waitFor(video, 'error').then(failTest);
+
+            run('sourceBuffer = source.addSourceBuffer(\'video/webm; codecs="vp9,opus"\')');
+
+            sourceBuffer.onbufferedchange = (e) => {
+                consoleWrite('onbufferedchange called.')
+                consoleWrite(`e.addedRanges = ${ timeRangesToString(e.addedRanges) }`);
+                consoleWrite(`e.removedRanges = ${ timeRangesToString(e.removedRanges) }`);
+            };
+
+            const response = await fetch("./content/test-fragmented.webm");
+            buffer = await response.arrayBuffer();
+            run('sourceBuffer.appendBuffer(buffer)');
+
+            await Promise.all([waitFor(sourceBuffer, 'bufferedchange'), waitFor(sourceBuffer, 'update')]);
+            testExpected('sourceBuffer.buffered.length', '1');
+            consoleWrite(`video.buffered = ${ timeRangesToString(video.buffered) }`);
+            consoleWrite(`sourceBuffer.buffered = ${ timeRangesToString(sourceBuffer.buffered) }`);
+            run('source.endOfStream()');
+            consoleWrite(`video.buffered = ${ timeRangesToString(video.buffered) }`);
+            consoleWrite(`sourceBuffer.buffered = ${ timeRangesToString(sourceBuffer.buffered) }`);
+
+            await Promise.all([waitFor(sourceBuffer, 'bufferedchange'), waitFor(source, 'sourceended')]);
+
+            endTest();
+        } catch (e) {
+            failTest(`Caught exception: "${e}"`);
+        }
+    });
+    </script>
+</head>
+<body>
+    <video controls></video>
+</body>
+</html>

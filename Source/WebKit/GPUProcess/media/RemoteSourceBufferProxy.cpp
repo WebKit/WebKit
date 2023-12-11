@@ -131,19 +131,12 @@ Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateDurationChanged(co
     });
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateTrackBuffersChanged(const Vector<WebCore::PlatformTimeRanges>& trackBuffers)
-{
-    if (!m_connectionToWebProcess)
-        return;
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateTrackBuffersChanged(trackBuffers), m_identifier);
-}
-
-Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateBufferedChanged(const PlatformTimeRanges& buffered)
+Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateBufferedChanged(const Vector<WebCore::PlatformTimeRanges>& trackRanges, uint64_t totalMemorySize)
 {
     if (!m_connectionToWebProcess)
         return MediaPromise::createAndResolve();
 
-    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedChanged(buffered), m_identifier)->whenSettled(RunLoop::current(), [](auto&& result) {
+    return m_connectionToWebProcess->connection().sendWithPromisedReply(Messages::SourceBufferPrivateRemote::SourceBufferPrivateBufferedChanged(trackRanges, totalMemorySize), m_identifier)->whenSettled(RunLoop::current(), [](auto&& result) {
         return result ? MediaPromise::createAndResolve() : MediaPromise::createAndReject(PlatformMediaError::IPCError);
     });
 }
@@ -172,26 +165,18 @@ void RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveRenderingError(int64_
     m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateDidReceiveRenderingError(errorCode), m_identifier);
 }
 
-void RemoteSourceBufferProxy::sourceBufferPrivateReportExtraMemoryCost(uint64_t extraMemory)
-{
-    if (!m_connectionToWebProcess)
-        return;
-
-    m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::SourceBufferPrivateReportExtraMemoryCost(extraMemory), m_identifier);
-}
-
-void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, CompletionHandler<void(MediaPromise::Result, uint64_t, const MediaTime&)>&& completionHandler)
+void RemoteSourceBufferProxy::append(IPC::SharedBufferReference&& buffer, CompletionHandler<void(MediaPromise::Result, const MediaTime&)>&& completionHandler)
 {
     auto sharedMemory = buffer.sharedCopy();
     if (!sharedMemory)
-        return completionHandler(makeUnexpected(PlatformMediaError::MemoryError), m_sourceBufferPrivate->totalTrackBufferSizeInBytes(), m_sourceBufferPrivate->timestampOffset());
+        return completionHandler(makeUnexpected(PlatformMediaError::MemoryError), m_sourceBufferPrivate->timestampOffset());
 
     auto handle = sharedMemory->createHandle(SharedMemory::Protection::ReadOnly);
     if (handle && m_connectionToWebProcess)
         m_connectionToWebProcess->connection().send(Messages::SourceBufferPrivateRemote::TakeOwnershipOfMemory(WTFMove(*handle)), m_identifier);
 
     m_sourceBufferPrivate->append(sharedMemory->createSharedBuffer(buffer.size()))->whenSettled(RunLoop::current(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
-        completionHandler(WTFMove(result), m_sourceBufferPrivate->totalTrackBufferSizeInBytes(), m_sourceBufferPrivate->timestampOffset());
+        completionHandler(WTFMove(result), m_sourceBufferPrivate->timestampOffset());
     });
 }
 
@@ -235,19 +220,15 @@ void RemoteSourceBufferProxy::startChangingType()
     m_sourceBufferPrivate->startChangingType();
 }
 
-void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)
+void RemoteSourceBufferProxy::removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime, CompletionHandler<void()>&& completionHandler)
 {
-    m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime)->whenSettled(RunLoop::current(), [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
-        auto buffered = m_sourceBufferPrivate->buffered();
-        completionHandler(WTFMove(buffered), m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
-    });
+    m_sourceBufferPrivate->removeCodedFrames(start, end, currentTime)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
-void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)
+void RemoteSourceBufferProxy::evictCodedFrames(uint64_t newDataSize, uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(Vector<WebCore::PlatformTimeRanges>&&, uint64_t)>&& completionHandler)
 {
     m_sourceBufferPrivate->evictCodedFrames(newDataSize, maximumBufferSize, currentTime);
-    auto buffered = m_sourceBufferPrivate->buffered();
-    completionHandler(WTFMove(buffered), m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
+    completionHandler(m_sourceBufferPrivate->trackBuffersRanges(), m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
 }
 
 void RemoteSourceBufferProxy::addTrackBuffer(TrackID trackId)
@@ -337,11 +318,9 @@ void RemoteSourceBufferProxy::enqueuedSamplesForTrackID(TrackID trackId, Complet
     m_sourceBufferPrivate->enqueuedSamplesForTrackID(trackId)->whenSettled(RunLoop::current(), WTFMove(completionHandler));
 }
 
-void RemoteSourceBufferProxy::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime, CompletionHandler<void(WebCore::PlatformTimeRanges&&, uint64_t)>&& completionHandler)
+void RemoteSourceBufferProxy::memoryPressure(uint64_t maximumBufferSize, const MediaTime& currentTime)
 {
     m_sourceBufferPrivate->memoryPressure(maximumBufferSize, currentTime);
-    auto buffered = m_sourceBufferPrivate->buffered();
-    completionHandler(WTFMove(buffered), m_sourceBufferPrivate->totalTrackBufferSizeInBytes());
 }
 
 void RemoteSourceBufferProxy::minimumUpcomingPresentationTimeForTrackID(TrackID trackID, CompletionHandler<void(MediaTime)>&& completionHandler)
