@@ -599,11 +599,11 @@ void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&
             return MediaPromise::createAndReject(PlatformMediaError::BufferRemoved);
 
         if (abortCount != m_abortCount) {
-            processInitialisationSegment({ });
+            processInitializationSegment({ });
             return MediaPromise::createAndResolve();
         }
-        if (!result || ((m_receivedFirstInitializationSegment && !validateInitializationSegment(segment)) || !precheckInitialisationSegment(segment))) {
-            processInitialisationSegment({ });
+        if (!result || ((m_receivedFirstInitializationSegment && !validateInitializationSegment(segment)) || !precheckInitializationSegment(segment))) {
+            processInitializationSegment({ });
             return MediaPromise::createAndReject(!result ? result.error() : PlatformMediaError::ParsingError);
         }
 
@@ -617,7 +617,7 @@ void SourceBufferPrivate::didReceiveInitializationSegment(InitializationSegment&
         m_receivedFirstInitializationSegment = true;
         m_pendingInitializationSegmentForChangeType = false;
 
-        processInitialisationSegment(!result ? std::nullopt : std::make_optional(WTFMove(segment)));
+        processInitializationSegment(!result ? std::nullopt : std::make_optional(WTFMove(segment)));
 
         return MediaPromise::createAndSettle(WTFMove(result));
     });

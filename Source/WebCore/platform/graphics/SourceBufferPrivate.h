@@ -193,8 +193,8 @@ protected:
 
     void reenqueSamples(TrackID);
 
-    virtual bool precheckInitialisationSegment(const InitializationSegment&) { return true; }
-    virtual void processInitialisationSegment(std::optional<InitializationSegment>&&) { }
+    virtual bool precheckInitializationSegment(const InitializationSegment&) { return true; }
+    virtual void processInitializationSegment(std::optional<InitializationSegment>&&) { }
     virtual void processFormatDescriptionForTrackId(Ref<TrackInfo>&&, uint64_t) { }
 
     void provideMediaData(TrackID);

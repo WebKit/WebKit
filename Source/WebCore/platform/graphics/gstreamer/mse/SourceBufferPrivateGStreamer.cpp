@@ -202,7 +202,7 @@ void SourceBufferPrivateGStreamer::allSamplesInTrackEnqueued(TrackID trackId)
     track->enqueueObject(adoptGRef(GST_MINI_OBJECT(gst_event_new_eos())));
 }
 
-bool SourceBufferPrivateGStreamer::precheckInitialisationSegment(const InitializationSegment& segment)
+bool SourceBufferPrivateGStreamer::precheckInitializationSegment(const InitializationSegment& segment)
 {
     for (auto& trackInfo : segment.videoTracks) {
         auto* videoTrackInfo = static_cast<VideoTrackPrivateGStreamer*>(trackInfo.track.get());
@@ -229,7 +229,7 @@ bool SourceBufferPrivateGStreamer::precheckInitialisationSegment(const Initializ
     return true;
 }
 
-void SourceBufferPrivateGStreamer::processInitialisationSegment(std::optional<InitializationSegment>&& segment)
+void SourceBufferPrivateGStreamer::processInitializationSegment(std::optional<InitializationSegment>&& segment)
 {
     if (RefPtr mediaSource = m_mediaSource.get(); mediaSource && segment)
         static_cast<MediaSourcePrivateGStreamer*>(mediaSource.get())->startPlaybackIfHasAllTracks();

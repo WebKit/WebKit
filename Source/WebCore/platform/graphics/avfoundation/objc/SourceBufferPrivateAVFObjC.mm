@@ -411,7 +411,7 @@ void SourceBufferPrivateAVFObjC::setTrackChangeCallbacks(const InitializationSeg
     }
 }
 
-bool SourceBufferPrivateAVFObjC::precheckInitialisationSegment(const InitializationSegment& segment)
+bool SourceBufferPrivateAVFObjC::precheckInitializationSegment(const InitializationSegment& segment)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -438,7 +438,7 @@ bool SourceBufferPrivateAVFObjC::precheckInitialisationSegment(const Initializat
     return true;
 }
 
-void SourceBufferPrivateAVFObjC::processInitialisationSegment(std::optional<InitializationSegment>&& segment)
+void SourceBufferPrivateAVFObjC::processInitializationSegment(std::optional<InitializationSegment>&& segment)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 

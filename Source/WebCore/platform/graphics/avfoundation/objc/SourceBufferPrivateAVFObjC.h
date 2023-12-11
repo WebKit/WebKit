@@ -171,8 +171,8 @@ private:
     bool canSwitchToType(const ContentType&) final;
     bool isSeeking() const final;
 
-    bool precheckInitialisationSegment(const InitializationSegment&) final;
-    void processInitialisationSegment(std::optional<InitializationSegment>&&) final;
+    bool precheckInitializationSegment(const InitializationSegment&) final;
+    void processInitializationSegment(std::optional<InitializationSegment>&&) final;
     void processFormatDescriptionForTrackId(Ref<TrackInfo>&&, TrackID) final;
 
     void processPendingTrackChangeTasks();
