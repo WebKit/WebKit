@@ -162,7 +162,7 @@ jobs:
           - runner: windows-latest
             build-type: Debug
             arch: amd64
-            suffix: debug
+            suffix: -debug
     runs-on: windows-latest
     timeout-minutes: 90
     steps:
