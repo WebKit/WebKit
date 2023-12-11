@@ -32,6 +32,8 @@
 
 #include "CSSFontSelector.h"
 #include "DOMTokenList.h"
+#include "ElementAncestorIterator.h"
+#include "ElementAncestorIteratorInlines.h"
 #include "ElementInlines.h"
 #include "EventNames.h"
 #include "HTMLBodyElement.h"
@@ -54,6 +56,8 @@
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "RubyElement.h"
+#include "RubyTextElement.h"
 #include "SVGElement.h"
 #include "SVGGraphicsElement.h"
 #include "SVGNames.h"
@@ -65,6 +69,8 @@
 #include "StyleUpdate.h"
 #include "Text.h"
 #include "TouchAction.h"
+#include "TypedElementDescendantIterator.h"
+#include "TypedElementDescendantIteratorInlines.h"
 #include "WebAnimationTypes.h"
 #include <wtf/RobinHoodHashSet.h>
 
@@ -391,6 +397,40 @@ static UnicodeBidi adjustUnicodeBidiForRuby(UnicodeBidi unicodeBidi)
     }
 }
 
+static DisplayType disableStyleBasedRubyIfNeeded(const RenderStyle& style, const RenderStyle& parentBoxStyle, const Element& element)
+{
+    ASSERT(isRubyContainerOrInternalRubyBox(style));
+
+    // FIXME: Reduce this function to nothing.
+    auto shouldDisable = [&] {
+        if (is<RubyElement>(element)) {
+            if (style.textAlign() == TextAlignMode::Justify)
+                return true;
+            // Disables nesting. Making descendants affect element style is not really correct though.
+            if (ancestorsOfType<RubyElement>(element).first() || descendantsOfType<RubyElement>(element).first())
+                return true;
+            return false;
+        }
+        if (is<RubyTextElement>(element))
+            return parentBoxStyle.display() != DisplayType::Ruby && parentBoxStyle.display() != DisplayType::RubyBlock;
+
+        return true;
+    }();
+
+    if (shouldDisable) {
+        switch (style.display()) {
+        case DisplayType::Ruby:
+            return DisplayType::Inline;
+        case DisplayType::RubyBlock:
+        case DisplayType::RubyAnnotation:
+            return DisplayType::Block;
+        default:
+            break;
+        }
+    }
+    return style.display();
+}
+
 void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearanceStyle) const
 {
     if (style.display() == DisplayType::Contents)
@@ -417,6 +457,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
 
             if (m_element->hasTagName(legendTag))
                 style.setEffectiveDisplay(equivalentBlockDisplay(style));
+
+            if (isRubyContainerOrInternalRubyBox(style))
+                style.setEffectiveDisplay(disableStyleBasedRubyIfNeeded(style, m_parentBoxStyle, *m_element));
         }
 
         // Top layer elements are always position: absolute; unless the position is set to fixed.
