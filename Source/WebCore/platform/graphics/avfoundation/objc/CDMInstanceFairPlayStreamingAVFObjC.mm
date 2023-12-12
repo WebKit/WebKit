@@ -861,6 +861,7 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::updateLicense(const String&, Li
             callback(false, std::nullopt, std::nullopt, std::nullopt, Failed);
             return;
         }
+        m_renewingRequest = m_requests.last();
         ALWAYS_LOG(LOGIDENTIFIER, "\"renew\", processing renewal");
         auto session = m_session ? m_session.get() : m_instance->contentKeySession();
         [session renewExpiringResponseDataForContentKeyRequest:request];
@@ -1331,7 +1332,23 @@ void CDMInstanceSessionFairPlayStreamingAVFObjC::didProvideRenewingRequest(AVCon
 
     // The assumption here is that AVContentKeyRequest will only ever notify us of a renewing request as a result of calling
     // -renewExpiringResponseDataForContentKeyRequest: with an existing request.
-    ASSERT(m_requests.contains(m_currentRequest));
+    if (!m_renewingRequest
+        || m_renewingRequest->requests.size() != 1
+        || !m_renewingRequest->requests[0]
+        || ![[m_renewingRequest->requests[0] identifier] isEqual:request.identifier])
+    {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto renewingIndex = m_requests.find(*m_renewingRequest);
+    if (renewingIndex == notFound) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    m_requests[renewingIndex] = *m_currentRequest;
+    m_renewingRequest = std::nullopt;
 
     RetainPtr<NSData> appIdentifier;
     if (auto* certificate = m_instance->serverCertificate())
