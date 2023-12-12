@@ -26,7 +26,7 @@ body {
                     out.innerText = "Test passes if you see a contents layer 3x the size and with a negative offset equal to the size:\n\n";
                     out.innerText += internals.layerTreeAsText(document, internals.LAYER_TREE_INCLUDES_CONTENT_LAYERS);
                     document.webkitCancelFullScreen();
-                }, 0)
+                }, 100)
             } else 
                 testRunner.notifyDone();
         });
