@@ -3485,6 +3485,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     case TeeLocal: {
         uint32_t index;
         WASM_FAIL_IF_HELPER_FAILS(parseIndexForLocal(index));
+        pushLocalInitialized(index);
         return { };
     }
 
