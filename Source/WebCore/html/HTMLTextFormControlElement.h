@@ -156,6 +156,8 @@ private:
     
     void setHovered(bool, Style::InvalidationScope, HitTestRequest) final;
 
+    void effectiveSpellcheckAttributeChanged(bool) final;
+
     unsigned indexForPosition(const Position&) const;
 
     // Returns true if user-editable value is empty. Used to check placeholder visibility.
