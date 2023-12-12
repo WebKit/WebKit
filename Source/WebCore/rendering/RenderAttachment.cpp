@@ -127,8 +127,7 @@ void RenderAttachment::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& of
     auto paintRect = borderBoxRect();
     paintRect.moveBy(offset);
 
-    ControlStates controlStates;
-    theme().paint(*this, controlStates, paintInfo, paintRect);
+    theme().paint(*this, paintInfo, paintRect);
 }
 
 void RenderAttachment::layoutShadowContent(const LayoutSize& size)

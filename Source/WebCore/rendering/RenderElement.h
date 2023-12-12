@@ -237,9 +237,6 @@ public:
     bool hasPausedImageAnimations() const { return m_hasPausedImageAnimations; }
     void setHasPausedImageAnimations(bool b) { m_hasPausedImageAnimations = b; }
 
-    void setRenderBoxNeedsLazyRepaint(bool b) { m_renderBoxNeedsLazyRepaint = b; }
-    bool renderBoxNeedsLazyRepaint() const { return m_renderBoxNeedsLazyRepaint; }
-
     bool hasCounterNodeMap() const { return m_hasCounterNodeMap; }
     void setHasCounterNodeMap(bool f) { m_hasCounterNodeMap = f; }
 
@@ -412,7 +409,6 @@ private:
     unsigned m_ancestorLineBoxDirty : 1;
     unsigned m_hasInitializedStyle : 1;
 
-    unsigned m_renderBoxNeedsLazyRepaint : 1;
     unsigned m_hasPausedImageAnimations : 1;
     unsigned m_hasCounterNodeMap : 1;
     unsigned m_hasContinuationChainNode : 1;
