@@ -669,8 +669,19 @@ bool CDMInstanceFairPlayStreamingAVFObjC::isAnyKeyUsable(const Keys& keys) const
             continue;
 
         for (auto& keyStatusPair : sessionInterface->keyStatuses()) {
-            if (keyStatusPair.second != CDMInstanceSession::KeyStatus::Usable)
+            switch (keyStatusPair.second) {
+            case CDMInstanceSession::KeyStatus::Expired:
+            case CDMInstanceSession::KeyStatus::Released:
+            case CDMInstanceSession::KeyStatus::InternalError:
+                // Key is unusable.
                 continue;
+            case CDMInstanceSession::KeyStatus::Usable:
+            case CDMInstanceSession::KeyStatus::OutputRestricted:
+            case CDMInstanceSession::KeyStatus::OutputDownscaled:
+            case CDMInstanceSession::KeyStatus::StatusPending:
+                // Key is (potentially) usable.
+                break;
+            }
 
             if (keys.findIf([&] (auto& key) {
                 return key.get() == keyStatusPair.first.get();
