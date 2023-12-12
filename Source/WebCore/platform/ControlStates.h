@@ -27,20 +27,8 @@
 #define ControlStates_h
 
 #include <wtf/OptionSet.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/Seconds.h>
-
-#if PLATFORM(COCOA)
-#ifndef __OBJC__
-typedef struct objc_object *id;
-#endif
-#endif
 
 namespace WebCore {
-
-#if PLATFORM(COCOA)
-typedef id PlatformControlInstance;
-#endif
 
 class ControlStates {
     WTF_MAKE_FAST_ALLOCATED;
@@ -71,35 +59,12 @@ public:
         if (newStates == m_states)
             return;
         m_states = newStates;
-        m_isDirty = m_initialized;
-        m_initialized = true;
     }
-
-    bool needsRepaint() const { return m_needsRepaint; }
-    void setNeedsRepaint(bool r) { m_needsRepaint = r; }
-
-    bool isDirty() const { return m_isDirty; }
-    void setDirty(bool d) { m_isDirty = d; }
-
-    Seconds timeSinceControlWasFocused() const { return m_timeSinceControlWasFocused; }
-    void setTimeSinceControlWasFocused(Seconds time) { m_timeSinceControlWasFocused = time; }
-
-#if PLATFORM(COCOA)
-    PlatformControlInstance platformControl() const { return m_controlInstance.get(); }
-    void setPlatformControl(PlatformControlInstance instance) { m_controlInstance = instance; }
-#endif
 
 private:
     OptionSet<States> m_states;
-    bool m_initialized { false };
-    bool m_needsRepaint { false };
-    bool m_isDirty { false };
-    Seconds m_timeSinceControlWasFocused { 0_s };
-#if PLATFORM(COCOA)
-    RetainPtr<PlatformControlInstance> m_controlInstance;
-#endif
 };
 
-}
+} // namespace WebCore
 
 #endif

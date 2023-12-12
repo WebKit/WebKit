@@ -85,7 +85,7 @@ public:
     // text of a button, is always rendered by the engine itself. The boolean return value indicates
     // whether the CSS border/background should also be painted.
     bool paint(const RenderBox&, ControlPart&, const PaintInfo&, const LayoutRect&);
-    bool paint(const RenderBox&, ControlStates&, const PaintInfo&, const LayoutRect&);
+    bool paint(const RenderBox&, const PaintInfo&, const LayoutRect&);
     
     bool paintBorderOnly(const RenderBox&, const PaintInfo&, const LayoutRect&);
     void paintDecorations(const RenderBox&, const PaintInfo&, const LayoutRect&);
@@ -389,7 +389,6 @@ private:
     void adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(RenderStyle&, const Element*) const;
 
 public:
-    void updateControlStatesForRenderer(const RenderBox&, ControlStates&) const;
     OptionSet<ControlStates::States> extractControlStatesForRenderer(const RenderObject&) const;
     bool isWindowActive(const RenderObject&) const;
     bool isChecked(const RenderObject&) const;

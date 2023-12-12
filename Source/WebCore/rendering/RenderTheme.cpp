@@ -754,7 +754,7 @@ bool RenderTheme::paint(const RenderBox& box, ControlPart& part, const PaintInfo
     return false;
 }
 
-bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, const PaintInfo& paintInfo, const LayoutRect& rect)
+bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const LayoutRect& rect)
 {
     // If painting is disabled, but we aren't updating control tints, then just bail.
     // If we are updating control tints, just schedule a repaint if the theme supports tinting
@@ -776,11 +776,6 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
     float deviceScaleFactor = box.document().deviceScaleFactor();
     FloatRect devicePixelSnappedRect = snapRectToDevicePixels(rect, deviceScaleFactor);
 
-
-#if !USE(THEME_ADWAITA)
-    UNUSED_PARAM(controlStates);
-#endif
-
     switch (appearance) {
 #if USE(THEME_ADWAITA)
     case StyleAppearance::Checkbox:
@@ -792,10 +787,11 @@ bool RenderTheme::paint(const RenderBox& box, ControlStates& controlStates, cons
 #endif
     case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
-    case StyleAppearance::InnerSpinButton:
-        updateControlStatesForRenderer(box, controlStates);
-        Theme::singleton().paint(appearance, controlStates, paintInfo.context(), devicePixelSnappedRect, box.useDarkAppearance(), box.style().effectiveAccentColor());
+    case StyleAppearance::InnerSpinButton: {
+        ControlStates states(extractControlStatesForRenderer(box));
+        Theme::singleton().paint(appearance, states, paintInfo.context(), devicePixelSnappedRect, box.useDarkAppearance(), box.style().effectiveAccentColor());
         return false;
+    }
 #else // !USE(THEME_ADWAITA)
     case StyleAppearance::Checkbox:
         return paintCheckbox(box, paintInfo, devicePixelSnappedRect);
@@ -1146,14 +1142,6 @@ bool RenderTheme::stateChanged(const RenderObject& o, ControlStates::States stat
     // Repaint the control.
     o.repaint();
     return true;
-}
-
-void RenderTheme::updateControlStatesForRenderer(const RenderBox& box, ControlStates& controlStates) const
-{
-    ControlStates newStates = extractControlStatesForRenderer(box);
-    controlStates.setStates(newStates.states());
-    if (isFocused(box))
-        controlStates.setTimeSinceControlWasFocused(box.page().focusController().timeSinceFocusWasSet());
 }
 
 OptionSet<ControlStates::States> RenderTheme::extractControlStatesForRenderer(const RenderObject& o) const

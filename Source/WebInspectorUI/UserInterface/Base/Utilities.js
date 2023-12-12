@@ -1866,6 +1866,23 @@ function insertObjectIntoSortedArray(object, array, comparator)
     array.splice(insertionIndexForObjectInListSortedByFunction(object, array, comparator), 0, object);
 }
 
+async function retryUntil(predicate, {delay, retries} = {})
+{
+    retries ??= 100;
+    delay ??= 100;
+
+    for (let i = 0; i < retries; ++i) {
+        let result = predicate();
+        if (result)
+            return result;
+
+        await Promise.delay(delay);
+    }
+
+    console.assert(false, "retryUntil exceeded the maximum number of retries.", predicate, retries);
+    return null;
+}
+
 WI.setReentrantCheck = function(object, key)
 {
     key = "__checkReentrant_" + key;

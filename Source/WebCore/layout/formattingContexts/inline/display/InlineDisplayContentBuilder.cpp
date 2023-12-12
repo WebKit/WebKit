@@ -676,7 +676,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
             return setRightForWritingMode(displayBox, contentRightInInlineDirectionVisualOrder, writingMode);
 
         contentRightInInlineDirectionVisualOrder += borderRightInInlineDirection(boxGeometry, isLeftToRightDirection) + paddingRightInInlineDirection(boxGeometry, isLeftToRightDirection);
-        contentRightInInlineDirectionVisualOrder += layoutBox.isRubyBase() ? RubyFormattingContext::baseEndAdditionalVisualWidth(layoutBox, formattingContext()) : 0.f;
+        contentRightInInlineDirectionVisualOrder += layoutBox.isRubyBase() ? RubyFormattingContext::baseEndAdditionalVisualWidth(layoutBox, displayBox, formattingContext()) : 0.f;
         setRightForWritingMode(displayBox, contentRightInInlineDirectionVisualOrder, writingMode);
         contentRightInInlineDirectionVisualOrder += marginRightInInlineDirection(boxGeometry, isLeftToRightDirection);
     };
@@ -1099,7 +1099,14 @@ size_t InlineDisplayContentBuilder::processRubyBase(size_t rubyBaseStart, Inline
 
     if (annotationBox) {
         auto placeAndSizeAnnotationBox = [&] {
-            auto visualBorderBoxTopLeft = RubyFormattingContext::placeAnnotationBox(rubyBaseLayoutBox, baseMarginBoxRect, formattingContext);
+            auto adjustedBaseMarginBoxRect = baseMarginBoxRect;
+            if (RubyFormattingContext::hasInterCharacterAnnotation(rubyBaseLayoutBox)) {
+                auto letterSpacing = LayoutUnit { rubyBaseLayoutBox.style().letterSpacing() };
+                // FIXME: Consult the LineBox to see if letter spacing indeed applies.
+                adjustedBaseMarginBoxRect.setWidth(std::max(0_lu, adjustedBaseMarginBoxRect.width() - letterSpacing));
+            }
+
+            auto visualBorderBoxTopLeft = RubyFormattingContext::placeAnnotationBox(rubyBaseLayoutBox, adjustedBaseMarginBoxRect, formattingContext);
             auto visualContentBoxSize = RubyFormattingContext::sizeAnnotationBox(rubyBaseLayoutBox, formattingContext);
             auto& annotationBoxGeometry = formattingContext.geometryForBox(*annotationBox);
             annotationBoxGeometry.setTopLeft(toLayoutPoint(visualBorderBoxTopLeft));

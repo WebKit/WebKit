@@ -46,8 +46,8 @@ public:
     explicit RemoteScrollingTreeMac(RemoteScrollingCoordinatorProxy&);
     virtual ~RemoteScrollingTreeMac();
 
-    void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, ScrollbarOrientation, bool) override;
-    void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID, ScrollbarOrientation, int) override;
+    void scrollingTreeNodeScrollbarVisibilityDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, bool) override;
+    void scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(WebCore::ScrollingNodeID, WebCore::ScrollbarOrientation, int) override;
 
 private:
     void handleWheelEventPhase(WebCore::ScrollingNodeID, WebCore::PlatformWheelEventPhase) override;
@@ -72,7 +72,7 @@ private:
     void waitForEventDefaultHandlingCompletion(const WebCore::PlatformWheelEvent&) override;
     void receivedEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, std::optional<WebCore::WheelScrollGestureState>) override;
 
-    WheelEventHandlingResult handleWheelEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) override;
+    WebCore::WheelEventHandlingResult handleWheelEventAfterDefaultHandling(const WebCore::PlatformWheelEvent&, WebCore::ScrollingNodeID, std::optional<WebCore::WheelScrollGestureState>) override;
 
     void deferWheelEventTestCompletionForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason) override;
     void removeWheelEventTestCompletionDeferralForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason) override;
@@ -91,8 +91,8 @@ private:
     void scrollingTreeNodeDidEndScroll(WebCore::ScrollingNodeID) override;
     void clearNodesWithUserScrollInProgress() override;
 
-    void scrollingTreeNodeDidBeginScrollSnapping(ScrollingNodeID) override;
-    void scrollingTreeNodeDidEndScrollSnapping(ScrollingNodeID) override;
+    void scrollingTreeNodeDidBeginScrollSnapping(WebCore::ScrollingNodeID) override;
+    void scrollingTreeNodeDidEndScrollSnapping(WebCore::ScrollingNodeID) override;
 
     Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) override;
 

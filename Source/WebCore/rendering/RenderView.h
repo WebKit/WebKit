@@ -199,9 +199,6 @@ public:
         bool m_wasAccumulatingRepaintRegion { false };
     };
 
-    void scheduleLazyRepaint(RenderBox&);
-    void unscheduleLazyRepaint(RenderBox&);
-    
     void layerChildrenChangedDuringStyleChange(RenderLayer&);
     RenderLayer* takeStyleChangeLayerTreeMutationRoot();
 
@@ -260,11 +257,6 @@ private:
     // End deprecated members.
 
     bool shouldUsePrintingLayout() const;
-
-    void lazyRepaintTimerFired();
-
-    Timer m_lazyRepaintTimer;
-    SingleThreadWeakHashSet<RenderBox> m_renderersNeedingLazyRepaint;
 
     std::unique_ptr<ImageQualityController> m_imageQualityController;
     std::optional<LayoutSize> m_pageLogicalSize;

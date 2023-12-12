@@ -1568,6 +1568,9 @@ public:
     WEBCORE_EXPORT void updateIsPlayingMedia();
     void pageMutedStateDidChange();
 
+    bool hasEverHadSelectionInsideTextFormControl() const { return m_hasEverHadSelectionInsideTextFormControl; }
+    void setHasEverHadSelectionInsideTextFormControl() { m_hasEverHadSelectionInsideTextFormControl = true; }
+
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
     void addPlaybackTargetPickerClient(MediaPlaybackTargetClient&);
     void removePlaybackTargetPickerClient(MediaPlaybackTargetClient&);
@@ -2457,6 +2460,8 @@ private:
     bool m_mayHaveRenderedSVGRootElements { false };
 
     bool m_userHasInteractedWithMediaElement { false };
+
+    bool m_hasEverHadSelectionInsideTextFormControl { false };
 
     bool m_updateTitleTaskScheduled { false };
 

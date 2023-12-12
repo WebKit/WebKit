@@ -24,6 +24,7 @@
       <dep package="libxml2"/>
       <dep package="openjpeg"/>
       <dep package="shared-mime-info"/>
+      <dep package="wayland"/>
       <dep package="wayland-protocols"/>
       <dep package="wpebackend-fdo"/>
       <dep package="xdg-dbus-proxy"/>
@@ -43,8 +44,8 @@
       href="http://cairographics.org"/>
   <repository type="tarball" name="freedesktop.org"
       href="http://www.freedesktop.org"/>
-  <repository type="tarball" name="wayland.freedesktop.org"
-      href="http://wayland.freedesktop.org"/>
+  <repository type="git" name="git.freedesktop.org/wayland"
+      href="https://gitlab.freedesktop.org/wayland"/>
   <repository type="git" name="github.com"
       href="https://github.com"/>
   <repository type="tarball" name="github-tarball"
@@ -224,12 +225,17 @@
             version="1.5.4" repo="github-tarball"/>
   </autotools>
 
-  <autotools id="wayland-protocols" autogen-sh="configure">
-    <branch module="releases/wayland-protocols-${version}.tar.xz"
-            version="1.12"
-	    repo="wayland.freedesktop.org"
-	    hash="sha256:3b19e8a9e1e19474756a7069db23b90ca9b8ebb438448c6063b4a7fc89b7c8b2"/>
-  </autotools>
+  <meson id="wayland" mesonargs="-Dtests=false -Ddocumentation=false -Ddtd_validation=false">
+    <branch tag="1.20.0"
+            checkoutdir="wayland-protocols"
+            repo="git.freedesktop.org/wayland" />
+  </meson>
+
+  <meson id="wayland-protocols">
+    <branch tag="1.25"
+            checkoutdir="wayland-protocols"
+            repo="git.freedesktop.org/wayland" />
+  </meson>
 
   <meson id="graphene">
     <branch repo="github.com"

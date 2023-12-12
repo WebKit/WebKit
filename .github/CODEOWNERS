@@ -210,6 +210,19 @@ xdg/ @WebKit/glib-reviewers
 wpe/ @WebKit/glib-reviewers @zdobersek
 **/wpe/qt/ @philn
 
+# Don't want to own these
+/Source/ThirdParty/libwebrtc/Source/third_party/boringssl/src/util/ar/testdata/linux
+/Source/ThirdParty/libwebrtc/Source/third_party/libaom/source/config/linux
+/Source/ThirdParty/libwebrtc/Source/third_party/libvpx/source/config/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/examples/peerconnection/client/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/modules/audio_device/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/modules/desktop_capture/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/modules/video_capture/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/test/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/tools_webrtc/audio_quality/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/tools_webrtc/video_quality_toolchain/linux
+/Source/ThirdParty/libwebrtc/Source/webrtc/rtc_tools/testing/golang/linux
+
 /LayoutTests/platform/glib/
 /LayoutTests/platform/gtk/
 /LayoutTests/platform/gtk4/

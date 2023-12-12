@@ -125,7 +125,7 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
         return {"result": extensionTabID};
     }
 
-    evaluateScriptForExtension(extensionID, scriptSource, {frameURL, contextSecurityOrigin, useContentScriptContext} = {})
+    async evaluateScriptForExtension(extensionID, scriptSource, {frameURL, contextSecurityOrigin, useContentScriptContext} = {})
     {
         let extension = this._extensionForExtensionIDMap.get(extensionID);
         if (!extension) {
@@ -133,7 +133,7 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
             return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
         }
 
-        let frame = this._frameForFrameURL(frameURL);
+        let frame = await retryUntil(() => this._frameForFrameURL(frameURL));
         if (!frame) {
             WI.reportInternalError("evaluateScriptForExtension: No frame matched provided frameURL: " + frameURL);
             return WI.WebInspectorExtension.ErrorCode.InvalidRequest;
@@ -149,7 +149,7 @@ WI.WebInspectorExtensionController = class WebInspectorExtensionController exten
             return WI.WebInspectorExtension.ErrorCode.NotImplemented;
         }
 
-        let evaluationContext = frame.pageExecutionContext;
+        let evaluationContext = await retryUntil(() => frame.pageExecutionContext);
         if (!evaluationContext) {
             WI.reportInternalError("evaluateScriptForExtension: No 'pageExecutionContext' was present for frame with URL: " + frame.url);
             return WI.WebInspectorExtension.ErrorCode.ContextDestroyed;

@@ -196,6 +196,8 @@ protected:
     void updateTextDirectionalityAfterInputTypeChange();
     void updateEffectiveDirectionalityOfDirAuto();
 
+    virtual void effectiveSpellcheckAttributeChanged(bool);
+
     using EventHandlerNameMap = HashMap<AtomString, AtomString>;
     static const AtomString& eventNameForEventHandlerAttribute(const QualifiedName& attributeName, const EventHandlerNameMap&);
 

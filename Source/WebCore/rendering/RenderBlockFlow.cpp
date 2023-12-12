@@ -2031,6 +2031,14 @@ RenderBlockFlow::LinePaginationAdjustment RenderBlockFlow::computeLineAdjustment
     auto logicalOverflowHeight = logicalOverflowBottom - logicalOverflowTop;
     auto logicalTop = LayoutUnit { lineBox->logicalTop() };
     auto logicalOffset = std::min(logicalTop, logicalOverflowTop);
+
+    if (floatMinimumBottom) {
+        // Don't push a float to the next page if it is taller than the page.
+        auto floatHeight = floatMinimumBottom - logicalTop;
+        if (floatHeight > pageLogicalHeightForOffset(floatMinimumBottom))
+            floatMinimumBottom = 0_lu;
+    }
+
     auto logicalBottom = std::max(std::max(LayoutUnit { lineBox->logicalBottom() }, logicalOverflowBottom), floatMinimumBottom);
     auto lineHeight = logicalBottom - logicalOffset;
 
