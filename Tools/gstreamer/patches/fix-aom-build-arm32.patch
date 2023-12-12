@@ -1,0 +1,14 @@
+diff --git a/build/cmake/aom_configure.cmake b/build/cmake/aom_configure.cmake
+index 6c932e8..0352b6c 100644
+--- a/build/cmake/aom_configure.cmake
++++ b/build/cmake/aom_configure.cmake
+@@ -71,6 +71,9 @@ if(NOT AOM_TARGET_CPU)
+     set(AOM_TARGET_CPU "x86")
+   elseif(cpu_lowercase MATCHES "^arm")
+     set(AOM_TARGET_CPU "${cpu_lowercase}")
++    if(CMAKE_SIZEOF_VOID_P EQUAL 4)
++      set(AOM_NEON_INTRIN_FLAG "-mfpu=neon")
++    endif()
+   elseif(cpu_lowercase MATCHES "aarch64")
+     set(AOM_TARGET_CPU "arm64")
+   elseif(cpu_lowercase MATCHES "^ppc")
