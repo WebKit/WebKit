@@ -3661,6 +3661,13 @@
    },
    {
       "emails" : [
+         "james_e_kim@apple.com"
+      ],
+      "github" : "james-e-kim",
+      "name" : "James Kim"
+   },
+   {
+      "emails" : [
          "koz@chromium.org",
          "koz@google.com"
       ],
