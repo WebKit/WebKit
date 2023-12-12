@@ -114,11 +114,14 @@ Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inli
                 auto previousPageLineCount = lineIndex - previousPageBreakIndex.value_or(0);
                 auto neededLines = widows - remainingLines;
                 auto availableLines = previousPageLineCount > orphans ? previousPageLineCount - orphans : 0;
-                auto breakIndex = lineIndex - std::min(neededLines, availableLines);
-                // Set the widow break and recompute the adjustments starting from that line.
-                flow.setBreakAtLineToAvoidWidow(breakIndex + 1);
-                lineIndex = breakIndex;
-                continue;
+                auto linesToMove = std::min(neededLines, availableLines);
+                if (linesToMove) {
+                    auto breakIndex = lineIndex - linesToMove;
+                    // Set the widow break and recompute the adjustments starting from that line.
+                    flow.setBreakAtLineToAvoidWidow(breakIndex + 1);
+                    lineIndex = breakIndex;
+                    continue;
+                }
             }
 
             previousPageBreakIndex = lineIndex;
