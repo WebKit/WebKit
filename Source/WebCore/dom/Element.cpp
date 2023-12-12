@@ -1191,7 +1191,7 @@ void Element::scrollBy(double x, double y)
 
 void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, ScrollSnapPointSelectionMethod snapPointSelectionMethod, std::optional<FloatSize> originalScrollDelta)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "Element " << *this << " scrollTo " << options.left << ", " << options.top);
+    LOG_WITH_STREAM(Scrolling, stream << "Element " << *this << " scrollTo " << options.left << ", " << options.top << " behavior " << options.behavior);
 
     Ref document = this->document();
     if (!document->settings().CSSOMViewScrollingAPIEnabled()) {
@@ -1203,6 +1203,28 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
     
     if (RefPtr view = document->view())
         view->cancelScheduledScrolls();
+
+    // We can avoid triggering layout if this is a scrollTo(0,0) on a element that cannot be the scrollingElement,
+    // and was last scrolled to 0,0.
+    auto canShortCircuitScroll = [&]() {
+        if (!options.left || !options.top)
+            return false;
+
+        if (*options.left || *options.top)
+            return false;
+
+        // document().scrollingElement() requires up-to-date style, so bail if this element could be the scrollingElement().
+        if (document->documentElement() == this || document->body() == this)
+            return false;
+
+        if (hasEverHadSmoothScroll())
+            return false;
+
+        return savedLayerScrollPosition().isZero();
+    };
+
+    if (canShortCircuitScroll())
+        return;
 
     document->updateLayoutIgnorePendingStylesheets(LayoutOptions::UpdateCompositingLayers);
 
@@ -1234,6 +1256,9 @@ void Element::scrollTo(const ScrollToOptions& options, ScrollClamping clamping, 
     );
 
     auto animated = useSmoothScrolling(scrollToOptions.behavior.value_or(ScrollBehavior::Auto), this) ? ScrollIsAnimated::Yes : ScrollIsAnimated::No;
+    if (animated == ScrollIsAnimated::Yes)
+        setHasEverHadSmoothScroll(true);
+
     auto scrollPositionChangeOptions = ScrollPositionChangeOptions::createProgrammaticWithOptions(clamping, animated, snapPointSelectionMethod, originalScrollDelta);
     renderer->setScrollPosition(scrollPosition, scrollPositionChangeOptions);
 }
@@ -1562,6 +1587,8 @@ void Element::setScrollLeft(int newLeft)
 
     auto options = ScrollPositionChangeOptions::createProgrammatic();
     options.animated = useSmoothScrolling(ScrollBehavior::Auto, this) ? ScrollIsAnimated::Yes : ScrollIsAnimated::No;
+    if (options.animated == ScrollIsAnimated::Yes)
+        setHasEverHadSmoothScroll(true);
 
     if (document->scrollingElement() == this) {
         if (RefPtr frame = documentFrameWithNonNullView()) {
@@ -1586,6 +1613,8 @@ void Element::setScrollTop(int newTop)
 
     auto options = ScrollPositionChangeOptions::createProgrammatic();
     options.animated = useSmoothScrolling(ScrollBehavior::Auto, this) ? ScrollIsAnimated::Yes : ScrollIsAnimated::No;
+    if (options.animated == ScrollIsAnimated::Yes)
+        setHasEverHadSmoothScroll(true);
 
     if (document->scrollingElement() == this) {
         if (RefPtr frame = documentFrameWithNonNullView()) {
@@ -2775,7 +2804,7 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
 #endif
     }
 
-    setSavedLayerScrollPosition(ScrollPosition());
+    setSavedLayerScrollPosition({ });
 
     if (oldParentOfRemovedTree.isInTreeScope()) {
         TreeScope* oldScope = &oldParentOfRemovedTree.treeScope();
@@ -4931,7 +4960,7 @@ IntPoint Element::savedLayerScrollPosition() const
     return hasRareData() ? elementRareData()->savedLayerScrollPosition() : IntPoint();
 }
 
-void Element::setSavedLayerScrollPositionSlow(const IntPoint& position)
+void Element::setSavedLayerScrollPositionSlow(const ScrollPosition& position)
 {
     ASSERT(!position.isZero() || hasRareData());
     ensureElementRareData().setSavedLayerScrollPosition(position);

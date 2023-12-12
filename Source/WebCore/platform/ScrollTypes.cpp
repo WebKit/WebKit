@@ -27,6 +27,7 @@
 #include "config.h"
 #include "ScrollTypes.h"
 
+#include "ScrollBehavior.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -68,6 +69,16 @@ TextStream& operator<<(TextStream& ts, ScrollBehaviorForFixedElements behavior)
     case ScrollBehaviorForFixedElements::StickToViewportBounds:
         ts << 1;
         break;
+    }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, ScrollBehavior behavior)
+{
+    switch (behavior) {
+    case ScrollBehavior::Auto: ts << "auto"; break;
+    case ScrollBehavior::Instant: ts << "instant"; break;
+    case ScrollBehavior::Smooth: ts << "smooth"; break;
     }
     return ts;
 }
