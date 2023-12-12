@@ -153,8 +153,10 @@ void ProcessLauncher::launchProcess()
 #if USE(EXTENSIONKIT)
     auto handler = [](ThreadSafeWeakPtr<ProcessLauncher> weakProcessLauncher, _SEExtensionProcess* process, ASCIILiteral name, NSError* error)
     {
-        if (!weakProcessLauncher.get())
+        if (!weakProcessLauncher.get()) {
+            [process invalidate];
             return;
+        }
         if (error) {
             NSLog(@"Error launching process %@ error %@", process, error);
             callOnMainRunLoop([weakProcessLauncher = weakProcessLauncher] {
@@ -171,8 +173,10 @@ void ProcessLauncher::launchProcess()
         callOnMainRunLoop([weakProcessLauncher = weakProcessLauncher, name = name, process = RetainPtr<_SEExtensionProcess>(process)] {
             auto connection = [process makeLibXPCConnectionError:nil];
             auto launcher = weakProcessLauncher.get();
-            if (!launcher)
+            if (!launcher) {
+                [process invalidate];
                 return;
+            }
             launcher->m_xpcConnection = connection;
             launcher->m_process = WTFMove(process);
             launcher->finishLaunchingProcess(name.characters());
