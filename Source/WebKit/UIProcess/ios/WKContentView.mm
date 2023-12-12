@@ -173,7 +173,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if USE(EXTENSIONKIT)
     RetainPtr<id<UIInteraction>> _visibilityPropagationInteractionForWebProcess;
     RetainPtr<id<UIInteraction>> _visibilityPropagationInteractionForGPUProcess;
-#endif
+    RetainPtr<UIView> _visibilityPropagationViewForWebProcess;
+    RetainPtr<UIView> _visibilityPropagationViewForGPUProcess;
+#else
 #if HAVE(NON_HOSTING_VISIBILITY_PROPAGATION_VIEW)
     RetainPtr<_UINonHostingVisibilityPropagationView> _visibilityPropagationViewForWebProcess;
 #else
@@ -182,6 +184,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if ENABLE(GPU_PROCESS)
     RetainPtr<_UILayerHostView> _visibilityPropagationViewForGPUProcess;
 #endif // ENABLE(GPU_PROCESS)
+#endif // !USE(EXTENSIONKIT)
 #endif // HAVE(VISIBILITY_PROPAGATION_VIEW)
 
     WebCore::HistoricalVelocityData _historicalKinematicData;
@@ -274,12 +277,16 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 - (void)_setupVisibilityPropagationViewForWebProcess
 {
 #if USE(EXTENSIONKIT)
-    if (!_visibilityPropagationInteractionForWebProcess) {
+    if (!_visibilityPropagationInteractionForWebProcess && !_visibilityPropagationViewForWebProcess) {
         SEL selector = NSSelectorFromString(@"createVisibilityPropagationInteraction");
         if ([_page->process().extensionProcess().get() respondsToSelector:selector])
             _visibilityPropagationInteractionForWebProcess = [_page->process().extensionProcess() performSelector:selector];
-        if (_visibilityPropagationInteractionForWebProcess)
-            [self addInteraction:_visibilityPropagationInteractionForWebProcess.get()];
+        if (_visibilityPropagationInteractionForWebProcess) {
+            _visibilityPropagationViewForWebProcess = adoptNS([[UIView alloc] initWithFrame:CGRectZero]);
+            [_visibilityPropagationViewForWebProcess addInteraction:_visibilityPropagationInteractionForWebProcess.get()];
+            [self addSubview:_visibilityPropagationViewForWebProcess.get()];
+            return;
+        }
     }
 #endif
     auto processID = _page->process().processID();
@@ -310,12 +317,16 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
     if (!gpuProcess)
         return;
 #if USE(EXTENSIONKIT)
-    if (!_visibilityPropagationInteractionForGPUProcess) {
+    if (!_visibilityPropagationInteractionForGPUProcess && !_visibilityPropagationInteractionForGPUProcess) {
         SEL selector = NSSelectorFromString(@"createVisibilityPropagationInteraction");
         if ([_page->process().extensionProcess().get() respondsToSelector:selector])
             _visibilityPropagationInteractionForGPUProcess = [_page->process().extensionProcess() performSelector:selector];
-        if (_visibilityPropagationInteractionForGPUProcess)
-            [self addInteraction:_visibilityPropagationInteractionForGPUProcess.get()];
+        if (_visibilityPropagationInteractionForGPUProcess) {
+            _visibilityPropagationViewForGPUProcess = adoptNS([[UIView alloc] initWithFrame:CGRectZero]);
+            [_visibilityPropagationViewForGPUProcess addInteraction:_visibilityPropagationInteractionForGPUProcess.get()];
+            [self addSubview:_visibilityPropagationViewForGPUProcess.get()];
+            return;
+        }
     }
 #endif
 
@@ -338,7 +349,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 {
 #if USE(EXTENSIONKIT)
     if (_visibilityPropagationInteractionForWebProcess) {
-        [self removeInteraction:_visibilityPropagationInteractionForWebProcess.get()];
+        [_visibilityPropagationViewForWebProcess removeInteraction:_visibilityPropagationInteractionForWebProcess.get()];
         _visibilityPropagationInteractionForWebProcess = nullptr;
     }
 #endif
@@ -355,7 +366,7 @@ static NSArray *keyCommandsPlaceholderHackForEvernote(id self, SEL _cmd)
 {
 #if USE(EXTENSIONKIT)
     if (_visibilityPropagationInteractionForGPUProcess) {
-        [self removeInteraction:_visibilityPropagationInteractionForGPUProcess.get()];
+        [_visibilityPropagationViewForGPUProcess removeInteraction:_visibilityPropagationInteractionForGPUProcess.get()];
         _visibilityPropagationInteractionForGPUProcess = nullptr;
     }
 #endif
