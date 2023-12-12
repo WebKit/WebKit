@@ -30,6 +30,7 @@
 #include "InputMethodState.h"
 #include "PageClientImpl.h"
 #include <WebCore/PlatformEvent.h>
+#include <wpe/wpe-platform.h>
 
 #if ENABLE(ACCESSIBILITY)
 #include <atk/atk.h>

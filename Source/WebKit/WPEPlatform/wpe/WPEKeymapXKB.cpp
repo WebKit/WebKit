@@ -27,6 +27,7 @@
 #include "WPEKeymapXKB.h"
 
 #include <sys/mman.h>
+#include <unistd.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <xkbcommon/xkbcommon.h>
