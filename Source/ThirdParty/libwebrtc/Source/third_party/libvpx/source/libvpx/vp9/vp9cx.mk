@@ -40,6 +40,7 @@ VP9_CX_SRCS-yes += encoder/vp9_encodemb.h
 VP9_CX_SRCS-yes += encoder/vp9_encodemv.h
 VP9_CX_SRCS-yes += encoder/vp9_extend.h
 VP9_CX_SRCS-yes += encoder/vp9_firstpass.h
+VP9_CX_SRCS-yes += encoder/vp9_firstpass_stats.h
 VP9_CX_SRCS-yes += encoder/vp9_frame_scale.c
 VP9_CX_SRCS-yes += encoder/vp9_job_queue.h
 VP9_CX_SRCS-yes += encoder/vp9_lookahead.c
@@ -104,29 +105,32 @@ VP9_CX_SRCS-$(CONFIG_INTERNAL_STATS) += common/vp9_postproc.c
 endif
 VP9_CX_SRCS-yes += encoder/vp9_temporal_filter.c
 VP9_CX_SRCS-yes += encoder/vp9_temporal_filter.h
+VP9_CX_SRCS-yes += encoder/vp9_tpl_model.c
+VP9_CX_SRCS-yes += encoder/vp9_tpl_model.h
 VP9_CX_SRCS-yes += encoder/vp9_mbgraph.c
 VP9_CX_SRCS-yes += encoder/vp9_mbgraph.h
 
 VP9_CX_SRCS-$(HAVE_SSE4_1) += encoder/x86/temporal_filter_sse4.c
-VP9_CX_SRCS-$(HAVE_SSE4_1) += encoder/x86/temporal_filter_constants.h
+VP9_CX_SRCS-$(HAVE_SSE4_1) += encoder/vp9_temporal_filter_constants.h
+VP9_CX_SRCS-$(HAVE_NEON) += encoder/arm/neon/vp9_temporal_filter_neon.c
+VP9_CX_SRCS-$(HAVE_NEON) += encoder/vp9_temporal_filter_constants.h
 
 VP9_CX_SRCS-$(HAVE_SSE2) += encoder/x86/vp9_quantize_sse2.c
+VP9_CX_SRCS-$(HAVE_SSSE3) += encoder/x86/vp9_quantize_ssse3.c
 VP9_CX_SRCS-$(HAVE_AVX2) += encoder/x86/vp9_quantize_avx2.c
-VP9_CX_SRCS-$(HAVE_AVX) += encoder/x86/vp9_diamond_search_sad_avx.c
+VP9_CX_SRCS-$(HAVE_NEON) += encoder/arm/neon/vp9_diamond_search_sad_neon.c
 ifeq ($(CONFIG_VP9_HIGHBITDEPTH),yes)
 VP9_CX_SRCS-$(HAVE_SSE2) += encoder/x86/vp9_highbd_block_error_intrin_sse2.c
 VP9_CX_SRCS-$(HAVE_SSE4_1) += encoder/x86/highbd_temporal_filter_sse4.c
+VP9_CX_SRCS-$(HAVE_NEON) += encoder/arm/neon/vp9_highbd_temporal_filter_neon.c
 endif
 
 VP9_CX_SRCS-$(HAVE_SSE2) += encoder/x86/vp9_dct_sse2.asm
 VP9_CX_SRCS-$(HAVE_SSE2) += encoder/x86/vp9_error_sse2.asm
 
-ifeq ($(VPX_ARCH_X86_64),yes)
-VP9_CX_SRCS-$(HAVE_SSSE3) += encoder/x86/vp9_quantize_ssse3_x86_64.asm
-endif
-
 VP9_CX_SRCS-$(HAVE_SSE2) += encoder/x86/vp9_dct_intrin_sse2.c
 VP9_CX_SRCS-$(HAVE_SSSE3) += encoder/x86/vp9_frame_scale_ssse3.c
+VP9_CX_SRCS-$(HAVE_NEON) += encoder/arm/neon/vp9_dct_neon.c
 
 ifeq ($(CONFIG_VP9_TEMPORAL_DENOISING),yes)
 VP9_CX_SRCS-$(HAVE_SSE2) += encoder/x86/vp9_denoiser_sse2.c
@@ -135,11 +139,12 @@ endif
 
 VP9_CX_SRCS-$(HAVE_AVX2) += encoder/x86/vp9_error_avx2.c
 
-ifneq ($(CONFIG_VP9_HIGHBITDEPTH),yes)
 VP9_CX_SRCS-$(HAVE_NEON) += encoder/arm/neon/vp9_error_neon.c
-endif
 VP9_CX_SRCS-$(HAVE_NEON) += encoder/arm/neon/vp9_frame_scale_neon.c
 VP9_CX_SRCS-$(HAVE_NEON) += encoder/arm/neon/vp9_quantize_neon.c
+ifeq ($(CONFIG_VP9_HIGHBITDEPTH),yes)
+VP9_CX_SRCS-$(HAVE_NEON) += encoder/arm/neon/vp9_highbd_error_neon.c
+endif
 
 VP9_CX_SRCS-$(HAVE_MSA) += encoder/mips/msa/vp9_error_msa.c
 
@@ -157,8 +162,10 @@ VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/vp9_firstpass.c
 VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/vp9_mbgraph.c
 VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/vp9_temporal_filter.c
 VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/x86/temporal_filter_sse4.c
-VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/x86/temporal_filter_constants.h
+VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/vp9_temporal_filter_constants.h
 VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/x86/highbd_temporal_filter_sse4.c
+VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/arm/neon/vp9_temporal_filter_neon.c
+VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/arm/neon/vp9_highbd_temporal_filter_neon.c
 VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/vp9_alt_ref_aq.h
 VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/vp9_alt_ref_aq.c
 VP9_CX_SRCS_REMOVE-$(CONFIG_REALTIME_ONLY) += encoder/vp9_aq_variance.c

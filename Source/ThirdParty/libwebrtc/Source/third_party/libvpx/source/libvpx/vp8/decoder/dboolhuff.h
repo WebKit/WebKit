@@ -15,6 +15,7 @@
 #include <limits.h>
 
 #include "./vpx_config.h"
+#include "vpx_ports/compiler_attributes.h"
 #include "vpx_ports/mem.h"
 #include "vpx/vp8dx.h"
 #include "vpx/vpx_integer.h"
@@ -50,7 +51,8 @@ int vp8dx_start_decode(BOOL_DECODER *br, const unsigned char *source,
 
 void vp8dx_bool_decoder_fill(BOOL_DECODER *br);
 
-static int vp8dx_decode_bool(BOOL_DECODER *br, int probability) {
+static VPX_NO_UNSIGNED_SHIFT_CHECK int vp8dx_decode_bool(BOOL_DECODER *br,
+                                                         int probability) {
   unsigned int bit = 0;
   VP8_BD_VALUE value;
   unsigned int split;

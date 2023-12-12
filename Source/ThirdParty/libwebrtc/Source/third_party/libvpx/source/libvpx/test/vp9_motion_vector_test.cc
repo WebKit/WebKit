@@ -42,9 +42,9 @@ class MotionVectorTestLarge
       : EncoderTest(GET_PARAM(0)), encoding_mode_(GET_PARAM(1)),
         cpu_used_(GET_PARAM(2)), mv_test_mode_(GET_PARAM(3)) {}
 
-  virtual ~MotionVectorTestLarge() {}
+  ~MotionVectorTestLarge() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig();
     SetMode(encoding_mode_);
     if (encoding_mode_ != ::libvpx_test::kRealTime) {
@@ -59,8 +59,8 @@ class MotionVectorTestLarge
     }
   }
 
-  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                                  ::libvpx_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                          ::libvpx_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(VP8E_SET_CPUUSED, cpu_used_);
       encoder->Control(VP9E_ENABLE_MOTION_VECTOR_UNIT_TEST, mv_test_mode_);

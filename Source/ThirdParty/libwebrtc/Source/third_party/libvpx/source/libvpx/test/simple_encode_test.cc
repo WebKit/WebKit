@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include "third_party/googletest/src/include/gtest/gtest.h"
+#include "test/video_source.h"
 #include "vp9/simple_encode.h"
 
 namespace vp9 {
@@ -36,12 +37,14 @@ class SimpleEncodeTest : public ::testing::Test {
   const int frame_rate_den_ = 1;
   const int target_bitrate_ = 1000;
   const int num_frames_ = 17;
-  const std::string in_file_path_str_ = "bus_352x288_420_f20_b8.yuv";
+  const int target_level_ = LEVEL_UNKNOWN;
+  const std::string in_file_path_str_ =
+      libvpx_test::GetDataPath() + "/bus_352x288_420_f20_b8.yuv";
 };
 
 TEST_F(SimpleEncodeTest, ComputeFirstPassStats) {
   SimpleEncode simple_encode(width_, height_, frame_rate_num_, frame_rate_den_,
-                             target_bitrate_, num_frames_,
+                             target_bitrate_, num_frames_, target_level_,
                              in_file_path_str_.c_str());
   simple_encode.ComputeFirstPassStats();
   std::vector<std::vector<double>> frame_stats =
@@ -62,7 +65,7 @@ TEST_F(SimpleEncodeTest, ComputeFirstPassStats) {
 
 TEST_F(SimpleEncodeTest, ObserveFirstPassMotionVectors) {
   SimpleEncode simple_encode(width_, height_, frame_rate_num_, frame_rate_den_,
-                             target_bitrate_, num_frames_,
+                             target_bitrate_, num_frames_, target_level_,
                              in_file_path_str_.c_str());
   simple_encode.ComputeFirstPassStats();
   std::vector<std::vector<MotionVectorInfo>> fps_motion_vectors =
@@ -84,7 +87,7 @@ TEST_F(SimpleEncodeTest, ObserveFirstPassMotionVectors) {
 
 TEST_F(SimpleEncodeTest, GetCodingFrameNum) {
   SimpleEncode simple_encode(width_, height_, frame_rate_num_, frame_rate_den_,
-                             target_bitrate_, num_frames_,
+                             target_bitrate_, num_frames_, target_level_,
                              in_file_path_str_.c_str());
   simple_encode.ComputeFirstPassStats();
   const int num_coding_frames = simple_encode.GetCodingFrameNum();
@@ -93,7 +96,7 @@ TEST_F(SimpleEncodeTest, GetCodingFrameNum) {
 
 TEST_F(SimpleEncodeTest, EncodeFrame) {
   SimpleEncode simple_encode(width_, height_, frame_rate_num_, frame_rate_den_,
-                             target_bitrate_, num_frames_,
+                             target_bitrate_, num_frames_, target_level_,
                              in_file_path_str_.c_str());
   simple_encode.ComputeFirstPassStats();
   int num_coding_frames = simple_encode.GetCodingFrameNum();
@@ -136,7 +139,7 @@ TEST_F(SimpleEncodeTest, EncodeFrame) {
 
 TEST_F(SimpleEncodeTest, ObserveKeyFrameMap) {
   SimpleEncode simple_encode(width_, height_, frame_rate_num_, frame_rate_den_,
-                             target_bitrate_, num_frames_,
+                             target_bitrate_, num_frames_, target_level_,
                              in_file_path_str_.c_str());
   simple_encode.ComputeFirstPassStats();
   std::vector<int> key_frame_map = simple_encode.ObserveKeyFrameMap();
@@ -165,7 +168,7 @@ TEST_F(SimpleEncodeTest, ObserveKeyFrameMap) {
 
 TEST_F(SimpleEncodeTest, EncodeFrameWithTargetFrameBits) {
   SimpleEncode simple_encode(width_, height_, frame_rate_num_, frame_rate_den_,
-                             target_bitrate_, num_frames_,
+                             target_bitrate_, num_frames_, target_level_,
                              in_file_path_str_.c_str());
   simple_encode.ComputeFirstPassStats();
   const int num_coding_frames = simple_encode.GetCodingFrameNum();
@@ -203,7 +206,7 @@ TEST_F(SimpleEncodeTest, EncodeFrameWithTargetFrameBits) {
 
 TEST_F(SimpleEncodeTest, EncodeFrameWithQuantizeIndex) {
   SimpleEncode simple_encode(width_, height_, frame_rate_num_, frame_rate_den_,
-                             target_bitrate_, num_frames_,
+                             target_bitrate_, num_frames_, target_level_,
                              in_file_path_str_.c_str());
   simple_encode.ComputeFirstPassStats();
   const int num_coding_frames = simple_encode.GetCodingFrameNum();
@@ -235,7 +238,7 @@ TEST_F(SimpleEncodeTest, EncodeConsistencyTest) {
     // The first encode.
     SimpleEncode simple_encode(width_, height_, frame_rate_num_,
                                frame_rate_den_, target_bitrate_, num_frames_,
-                               in_file_path_str_.c_str());
+                               target_level_, in_file_path_str_.c_str());
     simple_encode.ComputeFirstPassStats();
     const int num_coding_frames = simple_encode.GetCodingFrameNum();
     simple_encode.StartEncode();
@@ -255,7 +258,7 @@ TEST_F(SimpleEncodeTest, EncodeConsistencyTest) {
     // The second encode with quantize index got from the first encode.
     SimpleEncode simple_encode(width_, height_, frame_rate_num_,
                                frame_rate_den_, target_bitrate_, num_frames_,
-                               in_file_path_str_.c_str());
+                               target_level_, in_file_path_str_.c_str());
     simple_encode.ComputeFirstPassStats();
     const int num_coding_frames = simple_encode.GetCodingFrameNum();
     EXPECT_EQ(static_cast<size_t>(num_coding_frames),
@@ -284,7 +287,7 @@ TEST_F(SimpleEncodeTest, EncodeConsistencyTest2) {
   const int num_units_4x4 = num_rows_4x4 * num_cols_4x4;
   // The first encode.
   SimpleEncode simple_encode(width_, height_, frame_rate_num_, frame_rate_den_,
-                             target_bitrate_, num_frames_,
+                             target_bitrate_, num_frames_, target_level_,
                              in_file_path_str_.c_str());
   simple_encode.ComputeFirstPassStats();
   const int num_coding_frames = simple_encode.GetCodingFrameNum();
@@ -307,7 +310,7 @@ TEST_F(SimpleEncodeTest, EncodeConsistencyTest2) {
   // The second encode.
   SimpleEncode simple_encode_2(width_, height_, frame_rate_num_,
                                frame_rate_den_, target_bitrate_, num_frames_,
-                               in_file_path_str_.c_str());
+                               target_level_, in_file_path_str_.c_str());
   simple_encode_2.ComputeFirstPassStats();
   const int num_coding_frames_2 = simple_encode_2.GetCodingFrameNum();
   simple_encode_2.StartEncode();
@@ -355,7 +358,7 @@ TEST_F(SimpleEncodeTest, EncodeConsistencyTest3) {
   const int num_units_4x4 = num_rows_4x4 * num_cols_4x4;
   // The first encode.
   SimpleEncode simple_encode(width_, height_, frame_rate_num_, frame_rate_den_,
-                             target_bitrate_, num_frames_,
+                             target_bitrate_, num_frames_, target_level_,
                              in_file_path_str_.c_str());
   simple_encode.ComputeFirstPassStats();
   const int num_coding_frames = simple_encode.GetCodingFrameNum();
@@ -375,7 +378,7 @@ TEST_F(SimpleEncodeTest, EncodeConsistencyTest3) {
   // The second encode.
   SimpleEncode simple_encode_2(width_, height_, frame_rate_num_,
                                frame_rate_den_, target_bitrate_, num_frames_,
-                               in_file_path_str_.c_str());
+                               target_level_, in_file_path_str_.c_str());
   simple_encode_2.ComputeFirstPassStats();
   const int num_coding_frames_2 = simple_encode_2.GetCodingFrameNum();
   simple_encode_2.StartEncode();
@@ -415,7 +418,7 @@ TEST_F(SimpleEncodeTest, EncodeConsistencySetExternalGroupOfPicturesMap) {
     // The first encode.
     SimpleEncode simple_encode(width_, height_, frame_rate_num_,
                                frame_rate_den_, target_bitrate_, num_frames_,
-                               in_file_path_str_.c_str());
+                               target_level_, in_file_path_str_.c_str());
     simple_encode.ComputeFirstPassStats();
     simple_encode.StartEncode();
 
@@ -447,7 +450,7 @@ TEST_F(SimpleEncodeTest, EncodeConsistencySetExternalGroupOfPicturesMap) {
     // The external arfs are the same as the first encode.
     SimpleEncode simple_encode(width_, height_, frame_rate_num_,
                                frame_rate_den_, target_bitrate_, num_frames_,
-                               in_file_path_str_.c_str());
+                               target_level_, in_file_path_str_.c_str());
     simple_encode.ComputeFirstPassStats();
     simple_encode.SetExternalGroupOfPicturesMap(gop_map.data(), gop_map.size());
     const int num_coding_frames = simple_encode.GetCodingFrameNum();
@@ -469,7 +472,7 @@ TEST_F(SimpleEncodeTest, EncodeConsistencySetExternalGroupOfPicturesMap) {
 
 TEST_F(SimpleEncodeTest, SetExternalGroupOfPicturesMap) {
   SimpleEncode simple_encode(width_, height_, frame_rate_num_, frame_rate_den_,
-                             target_bitrate_, num_frames_,
+                             target_bitrate_, num_frames_, target_level_,
                              in_file_path_str_.c_str());
   simple_encode.ComputeFirstPassStats();
 
@@ -539,7 +542,7 @@ TEST_F(SimpleEncodeTest, GetEncodeFrameInfo) {
   // Makes sure that the encode_frame_info obtained from GetEncodeFrameInfo()
   // matches the counterpart in encode_frame_result obtained from EncodeFrame()
   SimpleEncode simple_encode(width_, height_, frame_rate_num_, frame_rate_den_,
-                             target_bitrate_, num_frames_,
+                             target_bitrate_, num_frames_, target_level_,
                              in_file_path_str_.c_str());
   simple_encode.ComputeFirstPassStats();
   const int num_coding_frames = simple_encode.GetCodingFrameNum();
@@ -556,7 +559,7 @@ TEST_F(SimpleEncodeTest, GetEncodeFrameInfo) {
 
 TEST_F(SimpleEncodeTest, GetFramePixelCount) {
   SimpleEncode simple_encode(width_, height_, frame_rate_num_, frame_rate_den_,
-                             target_bitrate_, num_frames_,
+                             target_bitrate_, num_frames_, target_level_,
                              in_file_path_str_.c_str());
   EXPECT_EQ(simple_encode.GetFramePixelCount(),
             static_cast<uint64_t>(width_ * height_ * 3 / 2));

@@ -19,8 +19,8 @@
 extern "C" {
 #endif
 
-extern void vp8_update_gf_useage_maps(VP8_COMP *cpi, VP8_COMMON *cm,
-                                      MACROBLOCK *x);
+extern void vp8_update_gf_usage_maps(VP8_COMP *cpi, VP8_COMMON *cm,
+                                     MACROBLOCK *x);
 
 #ifdef __cplusplus
 }  // extern "C"

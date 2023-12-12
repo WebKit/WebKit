@@ -135,7 +135,7 @@ int vp8_denoiser_filter_c(unsigned char *mc_running_avg_y, int mc_avg_y_stride,
     // When adopting aggressive denoiser, the adj_val for each pixel
     // could be at most 8 (this is current max adjustment of the map).
     // In SSE code, we calculate the sum of adj_val for
-    // the columns, so the sum could be upto 128(16 rows). However,
+    // the columns, so the sum could be up to 128(16 rows). However,
     // the range of the value is -128 ~ 127 in SSE code, that's why
     // we do this change in C code.
     // We don't do this for UV denoiser, since there are only 8 rows,

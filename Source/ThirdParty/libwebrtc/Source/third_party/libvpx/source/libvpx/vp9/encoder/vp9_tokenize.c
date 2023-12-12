@@ -364,7 +364,7 @@ static void tokenize_b(int plane, int block, int row, int col,
   const PLANE_TYPE type = get_plane_type(plane);
   const tran_low_t *qcoeff = BLOCK_OFFSET(p->qcoeff, block);
   const int16_t *scan, *nb;
-  const scan_order *so;
+  const ScanOrder *so;
   const int ref = is_inter_block(mi);
   unsigned int(*const counts)[COEFF_CONTEXTS][ENTROPY_TOKENS] =
       td->rd_counts.coef_counts[tx_size][type][ref];

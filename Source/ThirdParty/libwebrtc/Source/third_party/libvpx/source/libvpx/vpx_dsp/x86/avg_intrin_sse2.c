@@ -15,6 +15,14 @@
 #include "vpx_dsp/x86/bitdepth_conversion_sse2.h"
 #include "vpx_ports/mem.h"
 
+static INLINE void sign_extend_16bit_to_32bit_sse2(__m128i in, __m128i zero,
+                                                   __m128i *out_lo,
+                                                   __m128i *out_hi) {
+  const __m128i sign_bits = _mm_cmplt_epi16(in, zero);
+  *out_lo = _mm_unpacklo_epi16(in, sign_bits);
+  *out_hi = _mm_unpackhi_epi16(in, sign_bits);
+}
+
 void vpx_minmax_8x8_sse2(const uint8_t *s, int p, const uint8_t *d, int dp,
                          int *min, int *max) {
   __m128i u0, s0, d0, diff, maxabsdiff, minabsdiff, negdiff, absdiff0, absdiff;
@@ -164,7 +172,7 @@ unsigned int vpx_highbd_avg_8x8_sse2(const uint8_t *s8, int p) {
   s0 = _mm_add_epi32(s0, s1);
   s0 = _mm_add_epi32(s0, _mm_srli_si128(s0, 8));
   s0 = _mm_add_epi32(s0, _mm_srli_si128(s0, 4));
-  avg = _mm_cvtsi128_si32(s0);
+  avg = (unsigned int)_mm_cvtsi128_si32(s0);
 
   return (avg + 32) >> 6;
 }
@@ -275,7 +283,7 @@ static INLINE void hadamard_8x8_sse2(const int16_t *src_diff,
   src[4] = _mm_load_si128((const __m128i *)(src_diff += src_stride));
   src[5] = _mm_load_si128((const __m128i *)(src_diff += src_stride));
   src[6] = _mm_load_si128((const __m128i *)(src_diff += src_stride));
-  src[7] = _mm_load_si128((const __m128i *)(src_diff += src_stride));
+  src[7] = _mm_load_si128((const __m128i *)(src_diff + src_stride));
 
   hadamard_col8_sse2(src, 0);
   hadamard_col8_sse2(src, 1);
@@ -400,6 +408,12 @@ void vpx_hadamard_32x32_sse2(const int16_t *src_diff, ptrdiff_t src_stride,
   int16_t *t_coeff = coeff;
 #endif
   int idx;
+  __m128i coeff0_lo, coeff1_lo, coeff2_lo, coeff3_lo, b0_lo, b1_lo, b2_lo,
+      b3_lo;
+  __m128i coeff0_hi, coeff1_hi, coeff2_hi, coeff3_hi, b0_hi, b1_hi, b2_hi,
+      b3_hi;
+  __m128i b0, b1, b2, b3;
+  const __m128i zero = _mm_setzero_si128();
   for (idx = 0; idx < 4; ++idx) {
     const int16_t *src_ptr =
         src_diff + (idx >> 1) * 16 * src_stride + (idx & 0x01) * 16;
@@ -413,15 +427,38 @@ void vpx_hadamard_32x32_sse2(const int16_t *src_diff, ptrdiff_t src_stride,
     __m128i coeff2 = _mm_load_si128((const __m128i *)(t_coeff + 512));
     __m128i coeff3 = _mm_load_si128((const __m128i *)(t_coeff + 768));
 
-    __m128i b0 = _mm_add_epi16(coeff0, coeff1);
-    __m128i b1 = _mm_sub_epi16(coeff0, coeff1);
-    __m128i b2 = _mm_add_epi16(coeff2, coeff3);
-    __m128i b3 = _mm_sub_epi16(coeff2, coeff3);
+    // Sign extend 16 bit to 32 bit.
+    sign_extend_16bit_to_32bit_sse2(coeff0, zero, &coeff0_lo, &coeff0_hi);
+    sign_extend_16bit_to_32bit_sse2(coeff1, zero, &coeff1_lo, &coeff1_hi);
+    sign_extend_16bit_to_32bit_sse2(coeff2, zero, &coeff2_lo, &coeff2_hi);
+    sign_extend_16bit_to_32bit_sse2(coeff3, zero, &coeff3_lo, &coeff3_hi);
 
-    b0 = _mm_srai_epi16(b0, 2);
-    b1 = _mm_srai_epi16(b1, 2);
-    b2 = _mm_srai_epi16(b2, 2);
-    b3 = _mm_srai_epi16(b3, 2);
+    b0_lo = _mm_add_epi32(coeff0_lo, coeff1_lo);
+    b0_hi = _mm_add_epi32(coeff0_hi, coeff1_hi);
+
+    b1_lo = _mm_sub_epi32(coeff0_lo, coeff1_lo);
+    b1_hi = _mm_sub_epi32(coeff0_hi, coeff1_hi);
+
+    b2_lo = _mm_add_epi32(coeff2_lo, coeff3_lo);
+    b2_hi = _mm_add_epi32(coeff2_hi, coeff3_hi);
+
+    b3_lo = _mm_sub_epi32(coeff2_lo, coeff3_lo);
+    b3_hi = _mm_sub_epi32(coeff2_hi, coeff3_hi);
+
+    b0_lo = _mm_srai_epi32(b0_lo, 2);
+    b1_lo = _mm_srai_epi32(b1_lo, 2);
+    b2_lo = _mm_srai_epi32(b2_lo, 2);
+    b3_lo = _mm_srai_epi32(b3_lo, 2);
+
+    b0_hi = _mm_srai_epi32(b0_hi, 2);
+    b1_hi = _mm_srai_epi32(b1_hi, 2);
+    b2_hi = _mm_srai_epi32(b2_hi, 2);
+    b3_hi = _mm_srai_epi32(b3_hi, 2);
+
+    b0 = _mm_packs_epi32(b0_lo, b0_hi);
+    b1 = _mm_packs_epi32(b1_lo, b1_hi);
+    b2 = _mm_packs_epi32(b2_lo, b2_hi);
+    b3 = _mm_packs_epi32(b3_lo, b3_hi);
 
     coeff0 = _mm_add_epi16(b0, b2);
     coeff1 = _mm_add_epi16(b1, b3);
@@ -464,7 +501,7 @@ int vpx_satd_sse2(const tran_low_t *coeff, int length) {
   return _mm_cvtsi128_si32(accum);
 }
 
-void vpx_int_pro_row_sse2(int16_t *hbuf, const uint8_t *ref,
+void vpx_int_pro_row_sse2(int16_t hbuf[16], const uint8_t *ref,
                           const int ref_stride, const int height) {
   int idx;
   __m128i zero = _mm_setzero_si128();

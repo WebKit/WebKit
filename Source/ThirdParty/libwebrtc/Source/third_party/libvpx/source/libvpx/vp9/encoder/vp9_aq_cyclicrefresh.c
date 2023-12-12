@@ -48,6 +48,7 @@ CYCLIC_REFRESH *vp9_cyclic_refresh_alloc(int mi_rows, int mi_cols) {
   assert(MAXQ <= 255);
   memset(cr->last_coded_q_map, MAXQ, last_coded_q_map_size);
   cr->counter_encode_maxq_scene_change = 0;
+  cr->content_mode = 1;
   return cr;
 }
 
@@ -326,7 +327,8 @@ void vp9_cyclic_refresh_set_golden_update(VP9_COMP *const cpi) {
   else
     rc->baseline_gf_interval = 40;
   if (cpi->oxcf.rc_mode == VPX_VBR) rc->baseline_gf_interval = 20;
-  if (rc->avg_frame_low_motion < 50 && rc->frames_since_key > 40)
+  if (rc->avg_frame_low_motion < 50 && rc->frames_since_key > 40 &&
+      cr->content_mode)
     rc->baseline_gf_interval = 10;
 }
 
@@ -388,7 +390,8 @@ static void cyclic_refresh_update_map(VP9_COMP *const cpi) {
           ? vp9_get_qindex(&cm->seg, CR_SEGMENT_ID_BOOST2, cm->base_qindex)
           : vp9_get_qindex(&cm->seg, CR_SEGMENT_ID_BOOST1, cm->base_qindex);
   // More aggressive settings for noisy content.
-  if (cpi->noise_estimate.enabled && cpi->noise_estimate.level >= kMedium) {
+  if (cpi->noise_estimate.enabled && cpi->noise_estimate.level >= kMedium &&
+      cr->content_mode) {
     consec_zero_mv_thresh = 60;
     qindex_thresh =
         VPXMAX(vp9_get_qindex(&cm->seg, CR_SEGMENT_ID_BOOST1, cm->base_qindex),
@@ -409,7 +412,7 @@ static void cyclic_refresh_update_map(VP9_COMP *const cpi) {
 #if CONFIG_VP9_HIGHBITDEPTH
     if (cpi->common.use_highbitdepth) compute_content = 0;
 #endif
-    if (cpi->Last_Source == NULL ||
+    if (cr->content_mode == 0 || cpi->Last_Source == NULL ||
         cpi->Last_Source->y_width != cpi->Source->y_width ||
         cpi->Last_Source->y_height != cpi->Source->y_height)
       compute_content = 0;
@@ -430,7 +433,8 @@ static void cyclic_refresh_update_map(VP9_COMP *const cpi) {
         // reset to 0 later depending on the coding mode.
         if (cr->map[bl_index2] == 0) {
           count_tot++;
-          if (cr->last_coded_q_map[bl_index2] > qindex_thresh ||
+          if (cr->content_mode == 0 ||
+              cr->last_coded_q_map[bl_index2] > qindex_thresh ||
               cpi->consec_zero_mv[bl_index2] < consec_zero_mv_thresh_block) {
             sum_map++;
             count_sel++;
@@ -467,7 +471,7 @@ static void cyclic_refresh_update_map(VP9_COMP *const cpi) {
   cr->sb_index = i;
   cr->reduce_refresh = 0;
   if (cpi->oxcf.content != VP9E_CONTENT_SCREEN)
-    if (count_sel<(3 * count_tot)>> 2) cr->reduce_refresh = 1;
+    if (count_sel < (3 * count_tot) >> 2) cr->reduce_refresh = 1;
 }
 
 // Set cyclic refresh parameters.
@@ -489,10 +493,13 @@ void vp9_cyclic_refresh_update_parameters(VP9_COMP *const cpi) {
       rc->avg_frame_qindex[INTER_FRAME] < qp_thresh ||
       (cpi->use_svc &&
        cpi->svc.layer_context[cpi->svc.temporal_layer_id].is_key_frame) ||
-      (!cpi->use_svc && rc->avg_frame_low_motion < thresh_low_motion &&
+      (!cpi->use_svc && cr->content_mode &&
+       rc->avg_frame_low_motion < thresh_low_motion &&
        rc->frames_since_key > 40) ||
       (!cpi->use_svc && rc->avg_frame_qindex[INTER_FRAME] > qp_max_thresh &&
-       rc->frames_since_key > 20)) {
+       rc->frames_since_key > 20) ||
+      (cpi->roi.enabled && cpi->roi.skip[BACKGROUND_SEG_SKIP_ID] &&
+       rc->frames_since_key > FRAMES_NO_SKIPPING_AFTER_KEY)) {
     cr->apply_cyclic_refresh = 0;
     return;
   }
@@ -511,7 +518,8 @@ void vp9_cyclic_refresh_update_parameters(VP9_COMP *const cpi) {
     cr->rate_ratio_qdelta = 3.0;
   } else {
     cr->rate_ratio_qdelta = 2.0;
-    if (cpi->noise_estimate.enabled && cpi->noise_estimate.level >= kMedium) {
+    if (cr->content_mode && cpi->noise_estimate.enabled &&
+        cpi->noise_estimate.level >= kMedium) {
       // Reduce the delta-qp if the estimated source noise is above threshold.
       cr->rate_ratio_qdelta = 1.7;
       cr->rate_boost_fac = 13;
@@ -528,7 +536,7 @@ void vp9_cyclic_refresh_update_parameters(VP9_COMP *const cpi) {
     cr->percent_refresh = (cr->skip_flat_static_blocks) ? 5 : 10;
     // Increase the amount of refresh on scene change that is encoded at max Q,
     // increase for a few cycles of the refresh period (~100 / percent_refresh).
-    if (cr->counter_encode_maxq_scene_change < 30)
+    if (cr->content_mode && cr->counter_encode_maxq_scene_change < 30)
       cr->percent_refresh = (cr->skip_flat_static_blocks) ? 10 : 15;
     cr->rate_ratio_qdelta = 2.0;
     cr->rate_boost_fac = 10;
@@ -550,7 +558,7 @@ void vp9_cyclic_refresh_update_parameters(VP9_COMP *const cpi) {
     cr->percent_refresh = 10;
     cr->rate_ratio_qdelta = 1.5;
     cr->rate_boost_fac = 10;
-    if (cpi->refresh_golden_frame == 1) {
+    if (cpi->refresh_golden_frame == 1 && !cpi->use_svc) {
       cr->percent_refresh = 0;
       cr->rate_ratio_qdelta = 1.0;
     }
@@ -575,6 +583,12 @@ void vp9_cyclic_refresh_update_parameters(VP9_COMP *const cpi) {
         (double)(cr->actual_num_seg1_blocks + cr->actual_num_seg2_blocks) /
         num8x8bl;
   cr->weight_segment = weight_segment;
+  if (cr->content_mode == 0) {
+    cr->actual_num_seg1_blocks =
+        cr->percent_refresh * cm->mi_rows * cm->mi_cols / 100;
+    cr->actual_num_seg2_blocks = 0;
+    cr->weight_segment = (double)(cr->actual_num_seg1_blocks) / num8x8bl;
+  }
 }
 
 // Setup cyclic background refresh: set delta q and segmentation map.

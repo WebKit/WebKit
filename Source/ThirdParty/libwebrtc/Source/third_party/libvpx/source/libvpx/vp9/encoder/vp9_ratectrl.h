@@ -27,6 +27,9 @@ extern "C" {
 // Bits Per MB at different Q (Multiplied by 512)
 #define BPER_MB_NORMBITS 9
 
+#define DEFAULT_KF_BOOST 2000
+#define DEFAULT_GF_BOOST 2000
+
 #define MIN_GF_INTERVAL 4
 #define MAX_GF_INTERVAL 16
 #define FIXED_GF_INTERVAL 8  // Used in some testing modes only
@@ -204,6 +207,14 @@ typedef struct {
   int preserve_arf_as_gld;
   int preserve_next_arf_as_gld;
   int show_arf_as_gld;
+
+  // Flag to constrain golden frame interval on key frame frequency for 1 pass
+  // VBR.
+  int constrain_gf_key_freq_onepass_vbr;
+
+  // The index of the current GOP. Start from zero.
+  // When a key frame is inserted, it resets to zero.
+  int gop_global_index;
 } RATE_CONTROL;
 
 struct VP9_COMP;
@@ -255,6 +266,9 @@ void vp9_rc_get_one_pass_vbr_params(struct VP9_COMP *cpi);
 void vp9_rc_get_one_pass_cbr_params(struct VP9_COMP *cpi);
 int vp9_calc_pframe_target_size_one_pass_cbr(const struct VP9_COMP *cpi);
 int vp9_calc_iframe_target_size_one_pass_cbr(const struct VP9_COMP *cpi);
+int vp9_calc_pframe_target_size_one_pass_vbr(const struct VP9_COMP *cpi);
+int vp9_calc_iframe_target_size_one_pass_vbr(const struct VP9_COMP *cpi);
+void vp9_set_gf_update_one_pass_vbr(struct VP9_COMP *const cpi);
 void vp9_update_buffer_level_preencode(struct VP9_COMP *cpi);
 void vp9_rc_get_svc_params(struct VP9_COMP *cpi);
 

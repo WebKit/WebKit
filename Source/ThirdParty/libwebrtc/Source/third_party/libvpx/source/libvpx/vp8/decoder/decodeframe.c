@@ -63,7 +63,7 @@ void vp8_mb_init_dequantizer(VP8D_COMP *pbi, MACROBLOCKD *xd) {
   /* Decide whether to use the default or alternate baseline Q value. */
   if (xd->segmentation_enabled) {
     /* Abs Value */
-    if (xd->mb_segement_abs_delta == SEGMENT_ABSDATA) {
+    if (xd->mb_segment_abs_delta == SEGMENT_ABSDATA) {
       QIndex = xd->segment_feature_data[MB_LVL_ALT_Q][mbmi->segment_id];
 
       /* Delta Value */
@@ -829,7 +829,7 @@ static void init_frame(VP8D_COMP *pbi) {
 
     /* reset the segment feature data to 0 with delta coding (Default state). */
     memset(xd->segment_feature_data, 0, sizeof(xd->segment_feature_data));
-    xd->mb_segement_abs_delta = SEGMENT_DELTADATA;
+    xd->mb_segment_abs_delta = SEGMENT_DELTADATA;
 
     /* reset the mode ref deltasa for loop filter */
     memset(xd->ref_lf_deltas, 0, sizeof(xd->ref_lf_deltas));
@@ -872,8 +872,8 @@ static void init_frame(VP8D_COMP *pbi) {
   xd->mode_info_stride = pc->mode_info_stride;
   xd->corrupted = 0; /* init without corruption */
 
-  xd->fullpixel_mask = 0xffffffff;
-  if (pc->full_pixel) xd->fullpixel_mask = 0xfffffff8;
+  xd->fullpixel_mask = ~0;
+  if (pc->full_pixel) xd->fullpixel_mask = ~7;
 }
 
 int vp8_decode_frame(VP8D_COMP *pbi) {
@@ -995,7 +995,7 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
     xd->update_mb_segmentation_data = (unsigned char)vp8_read_bit(bc);
 
     if (xd->update_mb_segmentation_data) {
-      xd->mb_segement_abs_delta = (unsigned char)vp8_read_bit(bc);
+      xd->mb_segment_abs_delta = (unsigned char)vp8_read_bit(bc);
 
       memset(xd->segment_feature_data, 0, sizeof(xd->segment_feature_data));
 
@@ -1166,14 +1166,6 @@ int vp8_decode_frame(VP8D_COMP *pbi) {
   xd->corrupted |= vp8dx_bool_error(bc);
   if (pbi->ec_active && xd->corrupted) pc->refresh_last_frame = 1;
 #endif
-
-  if (0) {
-    FILE *z = fopen("decodestats.stt", "a");
-    fprintf(z, "%6d F:%d,G:%d,A:%d,L:%d,Q:%d\n", pc->current_video_frame,
-            pc->frame_type, pc->refresh_golden_frame, pc->refresh_alt_ref_frame,
-            pc->refresh_last_frame, pc->base_qindex);
-    fclose(z);
-  }
 
   {
     pbi->independent_partitions = 1;

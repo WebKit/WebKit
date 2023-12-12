@@ -18,7 +18,7 @@ void vpx_lpf_horizontal_16_avx2(unsigned char *s, int pitch,
                                 const unsigned char *limit,
                                 const unsigned char *thresh) {
   __m128i mask, hev, flat, flat2;
-  const __m128i zero = _mm_set1_epi16(0);
+  const __m128i zero = _mm_setzero_si128();
   const __m128i one = _mm_set1_epi8(1);
   __m128i q7p7, q6p6, q5p5, q4p4, q3p3, q2p2, q1p1, q0p0, p0q0, p1q1;
   __m128i abs_p1p0;
@@ -372,7 +372,7 @@ void vpx_lpf_horizontal_16_dual_avx2(unsigned char *s, int pitch,
                                      const unsigned char *limit,
                                      const unsigned char *thresh) {
   __m128i mask, hev, flat, flat2;
-  const __m128i zero = _mm_set1_epi16(0);
+  const __m128i zero = _mm_setzero_si128();
   const __m128i one = _mm_set1_epi8(1);
   __m128i p7, p6, p5;
   __m128i p4, p3, p2, p1, p0, q0, q1, q2, q3, q4;

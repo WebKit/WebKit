@@ -243,7 +243,7 @@ void iadst8_sse2(__m128i *const in) {
   const __m128i k__cospi_m24_p08 = pair_set_epi16(-cospi_24_64, cospi_8_64);
   const __m128i k__cospi_p16_m16 = pair_set_epi16(cospi_16_64, -cospi_16_64);
   const __m128i k__cospi_p16_p16 = _mm_set1_epi16(cospi_16_64);
-  const __m128i kZero = _mm_set1_epi16(0);
+  const __m128i kZero = _mm_setzero_si128();
   __m128i s[8], u[16], v[8], w[16];
 
   // transpose
@@ -546,7 +546,7 @@ void vpx_iadst16_8col_sse2(__m128i *const in) {
   const __m128i k__cospi_p16_p16 = _mm_set1_epi16(cospi_16_64);
   const __m128i k__cospi_p16_m16 = pair_set_epi16(cospi_16_64, -cospi_16_64);
   const __m128i k__cospi_m16_p16 = pair_set_epi16(-cospi_16_64, cospi_16_64);
-  const __m128i kZero = _mm_set1_epi16(0);
+  const __m128i kZero = _mm_setzero_si128();
 
   u[0] = _mm_unpacklo_epi16(in[15], in[0]);
   u[1] = _mm_unpackhi_epi16(in[15], in[0]);

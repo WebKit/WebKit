@@ -1103,7 +1103,7 @@ void vp8_pick_inter_mode(VP8_COMP *cpi, MACROBLOCK *x, int recon_yoffset,
 #if CONFIG_TEMPORAL_DENOISING
     if (cpi->oxcf.noise_sensitivity) {
       /* Store for later use by denoiser. */
-      // Dont' denoise with GOLDEN OR ALTREF is they are old reference
+      // Don't denoise with GOLDEN OR ALTREF is they are old reference
       // frames (greater than MAX_GF_ARF_DENOISE_RANGE frames in past).
       int skip_old_reference = ((this_ref_frame != LAST_FRAME) &&
                                 (cpi->common.current_video_frame -

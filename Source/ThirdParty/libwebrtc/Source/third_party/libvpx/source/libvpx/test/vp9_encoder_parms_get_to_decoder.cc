@@ -62,9 +62,9 @@ class VpxEncoderParmsGetToDecoder
   VpxEncoderParmsGetToDecoder()
       : EncoderTest(GET_PARAM(0)), encode_parms(GET_PARAM(1)) {}
 
-  virtual ~VpxEncoderParmsGetToDecoder() {}
+  ~VpxEncoderParmsGetToDecoder() override = default;
 
-  virtual void SetUp() {
+  void SetUp() override {
     InitializeConfig();
     SetMode(::libvpx_test::kTwoPassGood);
     cfg_.g_lag_in_frames = 25;
@@ -74,8 +74,8 @@ class VpxEncoderParmsGetToDecoder
     cfg_.rc_target_bitrate = test_video_.bitrate;
   }
 
-  virtual void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
-                                  ::libvpx_test::Encoder *encoder) {
+  void PreEncodeFrameHook(::libvpx_test::VideoSource *video,
+                          ::libvpx_test::Encoder *encoder) override {
     if (video->frame() == 0) {
       encoder->Control(VP9E_SET_COLOR_SPACE, encode_parms.cs);
       encoder->Control(VP9E_SET_COLOR_RANGE, encode_parms.color_range);
@@ -95,9 +95,9 @@ class VpxEncoderParmsGetToDecoder
     }
   }
 
-  virtual bool HandleDecodeResult(const vpx_codec_err_t res_dec,
-                                  const libvpx_test::VideoSource & /*video*/,
-                                  libvpx_test::Decoder *decoder) {
+  bool HandleDecodeResult(const vpx_codec_err_t res_dec,
+                          const libvpx_test::VideoSource & /*video*/,
+                          libvpx_test::Decoder *decoder) override {
     vpx_codec_ctx_t *const vp9_decoder = decoder->GetDecoder();
     vpx_codec_alg_priv_t *const priv =
         reinterpret_cast<vpx_codec_alg_priv_t *>(vp9_decoder->priv);

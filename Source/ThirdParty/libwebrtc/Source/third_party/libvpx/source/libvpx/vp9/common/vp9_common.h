@@ -27,10 +27,10 @@ extern "C" {
 
 // Only need this for fixed-size arrays, for structs just assign.
 #define vp9_copy(dest, src)              \
-  {                                      \
+  do {                                   \
     assert(sizeof(dest) == sizeof(src)); \
     memcpy(dest, src, sizeof(src));      \
-  }
+  } while (0)
 
 // Use this for variably-sized arrays.
 #define vp9_copy_array(dest, src, n)           \
@@ -45,25 +45,6 @@ extern "C" {
 static INLINE int get_unsigned_bits(unsigned int num_values) {
   return num_values > 0 ? get_msb(num_values) + 1 : 0;
 }
-
-#if CONFIG_DEBUG
-#define CHECK_MEM_ERROR(cm, lval, expr)                                     \
-  do {                                                                      \
-    (lval) = (expr);                                                        \
-    if (!(lval))                                                            \
-      vpx_internal_error(&(cm)->error, VPX_CODEC_MEM_ERROR,                 \
-                         "Failed to allocate " #lval " at %s:%d", __FILE__, \
-                         __LINE__);                                         \
-  } while (0)
-#else
-#define CHECK_MEM_ERROR(cm, lval, expr)                     \
-  do {                                                      \
-    (lval) = (expr);                                        \
-    if (!(lval))                                            \
-      vpx_internal_error(&(cm)->error, VPX_CODEC_MEM_ERROR, \
-                         "Failed to allocate " #lval);      \
-  } while (0)
-#endif
 
 #define VP9_SYNC_CODE_0 0x49
 #define VP9_SYNC_CODE_1 0x83
