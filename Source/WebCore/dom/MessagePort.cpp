@@ -349,7 +349,7 @@ ExceptionOr<Vector<TransferredMessagePort>> MessagePort::disentanglePorts(Vector
         return Vector<TransferredMessagePort> { };
 
     // Walk the incoming array - if there are any duplicate ports, or null ports or cloned ports, throw an error (per section 8.3.3 of the HTML5 spec).
-    HashSet<CheckedRef<MessagePort>> portSet;
+    HashSet<Ref<MessagePort>> portSet;
     for (auto& port : ports) {
         if (!port || !port->m_entangled || !portSet.add(*port).isNewEntry)
             return Exception { ExceptionCode::DataCloneError };

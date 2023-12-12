@@ -86,7 +86,7 @@ using MutationRecordDeliveryOptions = OptionSet<MutationObserverOptionType>;
 
 using NodeOrString = std::variant<RefPtr<Node>, String>;
 
-class Node : public EventTarget {
+class Node : public EventTarget, public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(Node);
 
     friend class Document;
