@@ -937,8 +937,7 @@ sub printTagNameHeaderFile
         $lastTagEnumValue = $unadjustedTagEnumValue if $unadjustedTagEnumValue ne "";
     }
 
-    print F "inline constexpr auto lastTagNameEnumValue = TagName::$lastTagEnumValue;\n";
-    print F "inline LazyNeverDestroyed<EnumeratedArray<TagName, AtomString, lastTagNameEnumValue>> tagNameStrings;\n";
+    print F "inline LazyNeverDestroyed<EnumeratedArray<EnumeratedArrayKey<TagName, TagName::$lastTagEnumValue>, AtomString>> tagNameStrings;\n";
     print F "\n";
     print F "WEBCORE_EXPORT void initializeTagNameStrings();\n";
     print F "TagName findTagName(std::span<const UChar>);\n";

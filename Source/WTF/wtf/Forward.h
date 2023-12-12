@@ -72,7 +72,7 @@ template<typename> struct DefaultRefDerefTraits;
 template<typename> class CompactPtr;
 template<typename> class CompletionHandler;
 template<typename, size_t = 0> class Deque;
-template<typename Key, typename, Key> class EnumeratedArray;
+template<typename, typename> class EnumeratedArray;
 template<typename> class FixedVector;
 template<typename> class Function;
 template<typename, typename = AnyThreadsAccessTraits> class LazyNeverDestroyed;

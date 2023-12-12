@@ -55,7 +55,7 @@ namespace TestWebKitAPI {
 
 TEST(WTF_EnumeratedArray, Basic)
 {
-    EnumeratedArray<Foo, int, Foo::Three> array;
+    EnumeratedArray<EnumeratedArrayKey<Foo, Foo::Three>, int> array;
     array[Foo::Three] = 17;
     EXPECT_EQ(array[Foo::Three], 17);
     EXPECT_EQ(array.at(Foo::Three), 17);
@@ -67,7 +67,7 @@ TEST(WTF_EnumeratedArray, Basic)
     EXPECT_EQ(data[static_cast<size_t>(Foo::Three)], 17);
     array[Foo::Two] = 10;
     EXPECT_FALSE(array.empty());
-    EnumeratedArray<Foo, int, Foo::Three> array2;
+    EnumeratedArray<EnumeratedArrayKey<Foo, Foo::Three>, int> array2;
     array2.fill(4);
     EXPECT_EQ(array2.at(Foo::One), 4);
     EXPECT_EQ(array2.at(Foo::Two), 4);
@@ -85,7 +85,7 @@ TEST(WTF_EnumeratedArray, Basic)
 
 TEST(WTF_EnumeratedArray, Comparison)
 {
-    EnumeratedArray<Foo, int, Foo::Three> array { { 3, 10, 17 } };
+    EnumeratedArray<EnumeratedArrayKey<Foo, Foo::Three>, int> array { { 3, 10, 17 } };
     auto array2 = array;
     EXPECT_EQ(array, array2);
     EXPECT_LE(array, array2);
@@ -104,20 +104,20 @@ TEST(WTF_EnumeratedArray, Comparison)
 
 TEST(WTF_EnumeratedArray, Construction)
 {
-    EnumeratedArray<Foo, int, Foo::Three> array1 { { 3, 10, 17 } };
+    EnumeratedArray<EnumeratedArrayKey<Foo, Foo::Three>, int> array1 { { 3, 10, 17 } };
     EXPECT_EQ(array1.front(), 3);
     EXPECT_EQ(array1.back(), 17);
-    EnumeratedArray<Foo, int, Foo::Three> array2(array1);
+    EnumeratedArray<EnumeratedArrayKey<Foo, Foo::Three>, int> array2(array1);
     EXPECT_EQ(array2.front(), 3);
     EXPECT_EQ(array2.back(), 17);
-    EnumeratedArray<Foo, int, Foo::Three> array3(WTFMove(array1));
+    EnumeratedArray<EnumeratedArrayKey<Foo, Foo::Three>, int> array3(WTFMove(array1));
     EXPECT_EQ(array3.front(), 3);
     EXPECT_EQ(array3.back(), 17);
-    EnumeratedArray<Foo, int, Foo::Three> array4;
+    EnumeratedArray<EnumeratedArrayKey<Foo, Foo::Three>, int> array4;
     array4 = array2;
     EXPECT_EQ(array4.front(), 3);
     EXPECT_EQ(array4.back(), 17);
-    EnumeratedArray<Foo, int, Foo::Three> array5;
+    EnumeratedArray<EnumeratedArrayKey<Foo, Foo::Three>, int> array5;
     array5 = WTFMove(array2);
     EXPECT_EQ(array5.front(), 3);
     EXPECT_EQ(array5.back(), 17);
@@ -125,7 +125,7 @@ TEST(WTF_EnumeratedArray, Construction)
 
 TEST(WTF_EnumeratedArray, Iteration)
 {
-    EnumeratedArray<Foo, int, Foo::Three> array { { 3, 10, 17 } };
+    EnumeratedArray<EnumeratedArrayKey<Foo, Foo::Three>, int> array { { 3, 10, 17 } };
     int index = 0;
     for (int value : array) {
         switch (index) {
@@ -167,7 +167,7 @@ TEST(WTF_EnumeratedArray, Iteration)
 
 TEST(WTF_EnumeratedArray, InferMax)
 {
-    EnumeratedArray<Foo, int> array1 { { 3, 10, 17 } };
+    EnumeratedArray<EnumeratedArrayKey<Foo, Foo::Three>, int> array1 { { 3, 10, 17 } };
     EXPECT_EQ(array1.front(), 3);
     EXPECT_EQ(array1.back(), 17);
 }

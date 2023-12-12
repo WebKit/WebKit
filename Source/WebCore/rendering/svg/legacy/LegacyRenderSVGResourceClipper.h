@@ -95,7 +95,7 @@ private:
     bool drawContentIntoMaskImage(ImageBuffer&, const FloatRect& objectBoundingBox, float effectiveZoom);
     void calculateClipContentRepaintRect(RepaintRectCalculation);
 
-    EnumeratedArray<RepaintRectCalculation, FloatRect, RepaintRectCalculation::Accurate> m_clipBoundaries;
+    EnumeratedArray<EnumeratedArrayKey<RepaintRectCalculation, RepaintRectCalculation::Accurate>, FloatRect> m_clipBoundaries;
     HashMap<const RenderObject*, std::unique_ptr<ClipperData>> m_clipperMap;
 };
 

@@ -26,25 +26,28 @@
 #pragma once
 
 #include <array>
-#include <wtf/EnumTraits.h>
+#include <type_traits>
 
 namespace WTF {
+
+template<typename KeyType, KeyType lastValue>
+using EnumeratedArrayKey = std::integral_constant<KeyType, lastValue>;
 
 // This is an std::array where the indices of the array are values of an enum (rather than a size_t).
 // This assumes the values of the enum start at 0 and monotonically increase by 1
 // (so the conversion function between size_t and the enum is just a simple static_cast).
 // LastValue is the maximum value of the enum, which determines the size of the array.
-template <typename Key, typename T, Key LastValue = EnumTraits<Key>::values::max>
+template <typename Key, typename T>
 class EnumeratedArray {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     using value_type = T;
-    using size_type = Key;
+    using size_type = typename Key::value_type;
     using reference = value_type&;
     using const_reference = const value_type&;
     using pointer = value_type*;
     using const_pointer = const value_type*;
-    using UnderlyingType = std::array<T, static_cast<std::size_t>(LastValue) + 1>;
+    using UnderlyingType = std::array<T, static_cast<std::size_t>(Key::value) + 1>;
     using iterator = typename UnderlyingType::iterator;
     using const_iterator = typename UnderlyingType::const_iterator;
     using reverse_iterator = std::reverse_iterator<iterator>;
@@ -219,32 +222,32 @@ public:
         return m_storage.swap(other.m_storage);
     }
 
-    template <typename Key2, typename T2, Key2 LastValue2>
-    constexpr bool operator==(const EnumeratedArray<Key2, T2, LastValue2>& rhs) const
+    template <typename Key2, typename T2>
+    constexpr bool operator==(const EnumeratedArray<Key2, T2>& rhs) const
     {
         return m_storage == rhs.m_storage;
     }
 
-    template <typename Key2, typename T2, Key2 LastValue2>
-    bool operator<(const EnumeratedArray<Key2, T2, LastValue2>& rhs) const
+    template <typename Key2, typename T2>
+    bool operator<(const EnumeratedArray<Key2, T2>& rhs) const
     {
         return m_storage < rhs.m_storage;
     }
 
-    template <typename Key2, typename T2, Key2 LastValue2>
-    bool operator<=(const EnumeratedArray<Key2, T2, LastValue2>& rhs) const
+    template <typename Key2, typename T2>
+    bool operator<=(const EnumeratedArray<Key2, T2>& rhs) const
     {
         return m_storage <= rhs.m_storage;
     }
 
-    template <typename Key2, typename T2, Key2 LastValue2>
-    bool operator>(const EnumeratedArray<Key2, T2, LastValue2>& rhs) const
+    template <typename Key2, typename T2>
+    bool operator>(const EnumeratedArray<Key2, T2>& rhs) const
     {
         return m_storage > rhs.m_storage;
     }
 
-    template <typename Key2, typename T2, Key2 LastValue2>
-    bool operator>=(const EnumeratedArray<Key2, T2, LastValue2>& rhs) const
+    template <typename Key2, typename T2>
+    bool operator>=(const EnumeratedArray<Key2, T2>& rhs) const
     {
         return m_storage >= rhs.m_storage;
     }
@@ -260,4 +263,5 @@ private:
 
 } // namespace WTF
 
+using WTF::EnumeratedArrayKey;
 using WTF::EnumeratedArray;
