@@ -27,7 +27,7 @@
 
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
-#include <wtf/CheckedRef.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -57,7 +57,7 @@ public:
 private:
     const AtomString* item(const String& name) const;
 
-    CheckedRef<Element> m_element;
+    WeakRef<Element, WeakPtrImplWithEventTargetData> m_element;
 };
 
 } // namespace WebCore
