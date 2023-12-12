@@ -113,7 +113,9 @@ private:
     Function<void()> m_prepareForInvalidationHandler;
     Function<void()> m_invalidationHandler;
 #if USE(EXTENSIONKIT)
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<_SECapabilities> m_capabilities;
+    ALLOW_DEPRECATED_DECLARATIONS_END
     RetainPtr<_SEGrant> m_grant;
     RetainPtr<_SEExtensionProcess> m_process;
 #endif

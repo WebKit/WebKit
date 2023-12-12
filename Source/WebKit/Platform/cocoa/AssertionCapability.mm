@@ -41,7 +41,9 @@ AssertionCapability::AssertionCapability(String environmentIdentifier, String do
 {
 }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 RetainPtr<_SECapabilities> AssertionCapability::platformCapability() const
+ALLOW_DEPRECATED_DECLARATIONS_END
 {
 #if USE(EXTENSIONKIT)
 #if USE(EXTENSIONKIT_INVALIDATION_CALLBACKS)

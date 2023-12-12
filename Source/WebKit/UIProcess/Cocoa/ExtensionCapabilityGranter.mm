@@ -51,6 +51,7 @@ static WorkQueue& granterQueue()
 }
 
 #if USE(EXTENSIONKIT)
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static RetainPtr<_SEGrant> grantCapability(_SECapabilities *capability, _SEExtensionProcess *process)
 {
     ASSERT(capability);
@@ -64,6 +65,7 @@ static RetainPtr<_SEGrant> grantCapability(_SECapabilities *capability, _SEExten
 
     return grant;
 }
+ALLOW_DEPRECATED_DECLARATIONS_END
 #endif
 
 struct PlatformExtensionCapabilityGrants {

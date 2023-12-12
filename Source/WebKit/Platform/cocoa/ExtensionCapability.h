@@ -38,7 +38,9 @@ class ExtensionCapability {
 public:
     virtual ~ExtensionCapability() = default;
     virtual String environmentIdentifier() const = 0;
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     virtual RetainPtr<_SECapabilities> platformCapability() const = 0;
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
 protected:
     ExtensionCapability() = default;
