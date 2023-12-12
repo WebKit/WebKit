@@ -133,6 +133,8 @@ std::optional<RetainPtr<id>> decodeObjectFromWrapper(Decoder&, const HashSet<Cla
 
 template<typename T> void encodeObjectDirectly(Encoder&, T *);
 template<typename T> void encodeObjectDirectly(Encoder&, T);
+template<typename T> void encodeObjectDirectly(StreamConnectionEncoder&, T *);
+template<typename T> void encodeObjectDirectly(StreamConnectionEncoder&, T);
 template<typename T> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClasses(Decoder&);
 
 template<typename T, typename = IsObjCObject<T>> void encode(Encoder&, T *);
@@ -179,7 +181,7 @@ template<typename T> struct ArgumentCoder<T *> {
 };
 
 template<typename T> struct ArgumentCoder<CoreIPCRetainPtr<T>> {
-    template<typename U = T>
+    template<typename Encoder, typename U = T>
     static void encode(Encoder& encoder, const CoreIPCRetainPtr<U>& object)
     {
         encodeObjectDirectly<U>(encoder, object.get());

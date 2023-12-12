@@ -24,7 +24,7 @@
 
 webkit_platform_headers: "CoreIPCPassKit.h"
 
-[CustomHeader, WebKitPlatform] class WebKit::CoreIPCPKContact {
+[CustomHeader, WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCPKContact {
     WebKit::CoreIPCPersonNameComponents m_name;
     String m_emailAddress;
     WebKit::CoreIPCCNPhoneNumber m_phoneNumber;

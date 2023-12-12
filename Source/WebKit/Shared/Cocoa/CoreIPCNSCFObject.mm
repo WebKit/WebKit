@@ -31,6 +31,7 @@
 #import "ArgumentCodersCocoa.h"
 #import "CoreIPCTypes.h"
 #import "GeneratedWebKitSecureCoding.h"
+#import "StreamConnectionEncoder.h"
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
 namespace WebKit {
@@ -151,6 +152,11 @@ bool CoreIPCNSCFObject::valueIsAllowed(IPC::Decoder& decoder, ObjectValue& value
 namespace IPC {
 
 void ArgumentCoder<UniqueRef<WebKit::ObjectValue>>::encode(Encoder& encoder, const UniqueRef<WebKit::ObjectValue>& object)
+{
+    encoder << *object;
+}
+
+void ArgumentCoder<UniqueRef<WebKit::ObjectValue>>::encode(StreamConnectionEncoder& encoder, const UniqueRef<WebKit::ObjectValue>& object)
 {
     encoder << *object;
 }

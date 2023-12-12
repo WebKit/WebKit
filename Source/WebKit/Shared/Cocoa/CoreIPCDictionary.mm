@@ -51,6 +51,11 @@ CoreIPCDictionary::CoreIPCDictionary(NSDictionary *dictionary)
     }
 }
 
+CoreIPCDictionary::CoreIPCDictionary(CFDictionaryRef array)
+    : CoreIPCDictionary((__bridge NSDictionary *)array)
+{
+}
+
 bool CoreIPCDictionary::keyHasValueOfType(const String& key, IPC::NSType type) const
 {
     createNSDictionaryIfNeeded();
@@ -124,6 +129,12 @@ RetainPtr<id> CoreIPCDictionary::toID() const
 {
     createNSDictionaryIfNeeded();
     return m_nsDictionary;
+}
+
+RetainPtr<CFDictionaryRef> CoreIPCDictionary::createCFDictionary() const
+{
+    createNSDictionaryIfNeeded();
+    return (__bridge CFDictionaryRef)m_nsDictionary.get();
 }
 
 } // namespace WebKit

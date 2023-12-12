@@ -24,7 +24,7 @@
 
 webkit_platform_headers: "CoreIPCCFType.h"
 
-[WebKitPlatform] class WebKit::CoreIPCCFType {
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCCFType {
     IPC::CoreIPCRetainPtr<CFTypeRef> m_cfType;
 }
 

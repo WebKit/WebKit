@@ -24,7 +24,7 @@
 
 webkit_platform_headers: "CoreIPCString.h"
 
-[WebKitPlatform] class WebKit::CoreIPCString {
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCString {
     String m_string;
 }
 
