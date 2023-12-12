@@ -64,7 +64,7 @@ Vector<LineAdjustment> computeAdjustmentsForPagination(const InlineContent& inli
             continue;
 
         auto& renderer = downcast<RenderBox>(inlineContent.rendererForLayoutBox(*floatBox.layoutBox()));
-        bool isUsplittable = renderer.isUnsplittableForPagination();
+        bool isUsplittable = renderer.isUnsplittableForPagination() || renderer.style().breakInside() == BreakInside::Avoid;
 
         auto placedByLine = floatBox.placedByLine();
         if (!placedByLine) {

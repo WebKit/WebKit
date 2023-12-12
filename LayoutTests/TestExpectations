@@ -7115,7 +7115,6 @@ imported/w3c/web-platform-tests/css/css-break/fieldset-006.html [ ImageOnlyFailu
 imported/w3c/web-platform-tests/css/css-break/float-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/float-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/float-006.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-break/float-010.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/float-014.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/float-015.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-break/float-016.html [ ImageOnlyFailure ]
