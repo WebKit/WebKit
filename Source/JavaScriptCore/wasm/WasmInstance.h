@@ -248,6 +248,9 @@ private:
     {
         return roundUpToMultipleOf<sizeof(Global::Value)>(offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Table*) * numTables) + sizeof(Global::Value) * numGlobals;
     }
+
+    bool evaluateConstantExpression(uint64_t, Type, uint64_t&);
+
     VM* m_vm;
     void* m_softStackLimit { nullptr };
     JSWebAssemblyInstance* m_owner { nullptr };

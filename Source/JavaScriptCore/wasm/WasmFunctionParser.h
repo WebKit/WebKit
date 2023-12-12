@@ -1596,13 +1596,14 @@ auto FunctionParser<Context>::unify(const ControlType& controlData) -> PartialRe
 template<typename Context>
 void FunctionParser<Context>::addReferencedFunctions(const Element& segment)
 {
-    ASSERT(segment.elementType == TableElementType::Funcref);
+    if (!isSubtype(segment.elementType, funcrefType()))
+        return;
 
     // Add each function index as a referenced function. This ensures that
     // wrappers will be created for GC.
-    for (uint32_t functionIndex : segment.functionIndices) {
-        if (functionIndex != Element::nullFuncIndex)
-            m_info.addReferencedFunction(functionIndex);
+    for (uint32_t i = 0; i < segment.length(); i++) {
+        if (segment.initTypes[i] == Element::InitializationType::FromRefFunc)
+            m_info.addReferencedFunction(segment.initialBitsOrIndices[i]);
     }
 }
 
@@ -1821,7 +1822,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             TableInitImmediates immediates;
             WASM_FAIL_IF_HELPER_FAILS(parseTableInitImmediates(immediates));
 
-            WASM_VALIDATOR_FAIL_IF(m_info.tables[immediates.tableIndex].type() != m_info.elements[immediates.elementIndex].elementType, "table.init requires table's type \"", m_info.tables[immediates.tableIndex].type(), "\" and element's type \"", m_info.elements[immediates.elementIndex].elementType, "\" are the same");
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(m_info.elements[immediates.elementIndex].elementType, m_info.tables[immediates.tableIndex].wasmType()), "table.init requires table's type \"", m_info.tables[immediates.tableIndex].wasmType(), "\" and element's type \"", m_info.elements[immediates.elementIndex].elementType, "\" are the same");
 
             TypedExpression dstOffset;
             TypedExpression srcOffset;
@@ -1894,7 +1895,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             const auto srcType = m_info.table(immediates.srcTableIndex).wasmType();
             const auto dstType = m_info.table(immediates.dstTableIndex).wasmType();
-            WASM_VALIDATOR_FAIL_IF(srcType != dstType, "type mismatch at table.copy. got ", srcType, " and ", dstType);
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(srcType, dstType), "type mismatch at table.copy. got ", srcType, " and ", dstType);
 
             TypedExpression dstOffset;
             TypedExpression srcOffset;
@@ -2167,28 +2168,16 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
 
             // Get the element type for this segment
             const Element& elementsSegment = m_info.elements[elemSegmentIndex];
-            TableElementType segmentElementType = elementsSegment.elementType;
 
             // Array element type must be a supertype of the element type for this element segment
             const StorageType storageType = fieldType.type;
             WASM_VALIDATOR_FAIL_IF(storageType.is<PackedType>(), "type mismatch in array.new_elem: expected `funcref` or `externref`");
 
-            // FIXME in the current implementation, segment element types can only be `funcref` or `externref`, so subtyping is trivial
-            // this will need to be extended once https://bugs.webkit.org/show_bug.cgi?id=251874 is fixed
-            switch (segmentElementType) {
-            case TableElementType::Funcref: {
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(funcrefType(), storageType.as<Type>()), "type mismatch in array.new_elem: segment elements have type funcref but array.new_elem operation expects elements of type ", storageType);
-                // Create function wrappers for any functions in this element segment.
-                // We conservatively assume that the `array.new_canon_elem` instruction will be executed.
-                // An optimization would be to lazily create the wrappers when the array is initialized.
-                addReferencedFunctions(elementsSegment);
-                break;
-            }
-            case TableElementType::Externref: {
-                WASM_VALIDATOR_FAIL_IF(!isExternref(storageType.as<Type>()), "type mismatch in array.new_elem: segment elements have type externref but array.new_elem operation expects elements of type ", storageType);
-                break;
-            }
-            }
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(elementsSegment.elementType, storageType.unpacked()), "type mismatch in array.new_elem: segment elements have type ", elementsSegment.elementType, " but array.new_elem operation expects elements of type ", storageType.unpacked());
+            // Create function wrappers for any functions in this element segment.
+            // We conservatively assume that the `array.new_canon_elem` instruction will be executed.
+            // An optimization would be to lazily create the wrappers when the array is initialized.
+            addReferencedFunctions(elementsSegment);
 
             // Get the array size
             TypedExpression size;
@@ -3188,8 +3177,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         for (unsigned i = 0; i < targets.size(); ++i) {
             ControlType* target = targets[i];
             WASM_VALIDATOR_FAIL_IF(defaultTarget.branchTargetArity() != target->branchTargetArity(), "br_table target type size mismatch. Default has size: ", defaultTarget.branchTargetArity(), "but target: ", i, " has size: ", target->branchTargetArity());
-            for (unsigned type = 0; type < defaultTarget.branchTargetArity(); ++type)
-                WASM_VALIDATOR_FAIL_IF(defaultTarget.branchTargetType(type) != target->branchTargetType(type), "br_table target type mismatch at offset ", type, " expected: ", defaultTarget.branchTargetType(type), " but saw: ", target->branchTargetType(type), " when targeting block: ", target->signature()->toString());
+            // In the presence of subtyping, we need to check each branch target.
+            WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(*target));
         }
 
         WASM_FAIL_IF_HELPER_FAILS(checkBranchTarget(defaultTarget));

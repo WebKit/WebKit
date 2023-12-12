@@ -290,6 +290,63 @@ async function testConstExprGlobalOrdering() {
   );
 }
 
+async function testElementConstExprs() {
+  {
+    let m = instantiate(`
+      (module
+        (type (struct (field i32)))
+        (type (struct (field f32)))
+        (table 10 (ref null struct))
+        (elem (table 0) (offset (i32.const 0)) (ref struct) (struct.new 0 (i32.const 2)) (struct.new 1 (f32.const 3)))
+        (func (export "f0") (param i32) (result i32)
+          (struct.get 0 0 (ref.cast (ref 0) (table.get (local.get 0)))))
+        (func (export "f1") (param i32) (result f32)
+          (struct.get 1 0 (ref.cast (ref 1) (table.get (local.get 0)))))
+      )
+    `);
+    assert.eq(m.exports.f0(0), 2);
+    assert.eq(m.exports.f1(1), 3);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (struct (field i32)))
+        (type (struct (field f32)))
+        (table 10 (ref null struct))
+        (elem (ref struct) (struct.new 0 (i32.const 2)) (struct.new 1 (f32.const 3)))
+        (func (export "init") (table.init 0 0 (i32.const 0) (i32.const 0) (i32.const 2)))
+        (func (export "f0") (param i32) (result i32)
+          (struct.get 0 0 (ref.cast (ref 0) (table.get (local.get 0)))))
+        (func (export "f1") (param i32) (result f32)
+          (struct.get 1 0 (ref.cast (ref 1) (table.get (local.get 0)))))
+      )
+    `);
+    m.exports.init();
+    assert.eq(m.exports.f0(0), 2);
+    assert.eq(m.exports.f1(1), 3);
+  }
+
+  {
+    let m = instantiate(`
+      (module
+        (type (struct (field i32)))
+        (type (struct (field f32)))
+        (table 10 externref)
+        (elem externref (extern.convert_any (struct.new 0 (i32.const 2)))
+                        (extern.convert_any (struct.new 1 (f32.const 4.2))))
+        (func (export "init") (table.init 0 0 (i32.const 2) (i32.const 0) (i32.const 0)))
+        (func (export "f") (param i32) (result externref)
+          (table.get (local.get 0)))
+      )
+    `);
+    m.exports.init();
+    assert.isObject(m.exports.f(0));
+    assert.isObject(m.exports.f(1));
+  }
+}
+
 assert.asyncTest(testGCConstExprs());
 assert.asyncTest(testInvalidConstExprs());
 assert.asyncTest(testConstExprGlobalOrdering())
+assert.asyncTest(testElementConstExprs());

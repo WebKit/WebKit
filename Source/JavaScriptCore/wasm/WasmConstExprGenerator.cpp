@@ -672,10 +672,10 @@ Expected<void, String> parseExtendedConstExpr(const uint8_t* source, size_t leng
     return { };
 }
 
-Expected<EncodedJSValue, String> evaluateExtendedConstExpr(const Vector<uint8_t>& constantExpression, Ref<Instance> instance, const ModuleInformation& info, Type expectedType)
+Expected<EncodedJSValue, String> evaluateExtendedConstExpr(const Vector<uint8_t>& constantExpression, RefPtr<Instance> instance, const ModuleInformation& info, Type expectedType)
 {
     RELEASE_ASSERT_WITH_MESSAGE(Options::useWebAssemblyExtendedConstantExpressions(), "Wasm extended const expressions not enabled");
-    ConstExprGenerator generator(ConstExprGenerator::Mode::Evaluate, info, RefPtr { instance.ptr() });
+    ConstExprGenerator generator(ConstExprGenerator::Mode::Evaluate, info, instance);
     FunctionParser<ConstExprGenerator> parser(generator, constantExpression.data(), constantExpression.size(), *TypeInformation::typeDefinitionForFunction({ expectedType }, { }), info);
     WASM_FAIL_IF_HELPER_FAILS(parser.parseConstantExpression());
 

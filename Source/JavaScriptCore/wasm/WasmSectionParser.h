@@ -77,12 +77,12 @@ private:
     PartialResult WARN_UNUSED_RETURN parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition>&);
     PartialResult WARN_UNUSED_RETURN parseSubtype(uint32_t position, RefPtr<TypeDefinition>&, Vector<TypeIndex>&, bool);
 
-    PartialResult WARN_UNUSED_RETURN validateElementTableIdx(uint32_t, TableElementType);
+    PartialResult WARN_UNUSED_RETURN validateElementTableIdx(uint32_t, Type);
     PartialResult WARN_UNUSED_RETURN parseI32InitExprForElementSection(std::optional<I32InitExpr>&);
     PartialResult WARN_UNUSED_RETURN parseElementKind(uint8_t& elementKind);
     PartialResult WARN_UNUSED_RETURN parseIndexCountForElementSection(uint32_t&, const unsigned);
-    PartialResult WARN_UNUSED_RETURN parseElementSegmentVectorOfExpressions(TableElementType, Vector<uint32_t>&, const unsigned, const unsigned);
-    PartialResult WARN_UNUSED_RETURN parseElementSegmentVectorOfIndexes(Vector<uint32_t>&, const unsigned, const unsigned);
+    PartialResult WARN_UNUSED_RETURN parseElementSegmentVectorOfExpressions(Type, Vector<Element::InitializationType>&, Vector<uint64_t>&, const unsigned, const unsigned);
+    PartialResult WARN_UNUSED_RETURN parseElementSegmentVectorOfIndexes(Vector<Element::InitializationType>&, Vector<uint64_t>&, const unsigned, const unsigned);
 
     PartialResult WARN_UNUSED_RETURN parseI32InitExprForDataSection(std::optional<I32InitExpr>&);
 

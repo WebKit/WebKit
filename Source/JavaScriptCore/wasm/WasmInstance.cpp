@@ -32,6 +32,7 @@
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "Register.h"
+#include "WasmConstExprGenerator.h"
 #include "WasmModuleInformation.h"
 #include "WasmTag.h"
 #include "WasmTypeDefinitionInlines.h"
@@ -214,61 +215,79 @@ void Instance::initElementSegment(uint32_t tableIndex, const Element& segment, u
     for (uint32_t index = 0; index < length; ++index) {
         const auto srcIndex = srcOffset + index;
         const auto dstIndex = dstOffset + index;
+        const auto initType = segment.initTypes[srcIndex];
+        const auto initialBitsOrIndex = segment.initialBitsOrIndices[srcIndex];
 
-        if (Element::isNullFuncIndex(segment.functionIndices[srcIndex])) {
+        if (initType == Element::InitializationType::FromRefNull) {
             jsTable->clear(dstIndex);
             continue;
         }
 
-        // FIXME: This essentially means we're exporting an import.
-        // We need a story here. We need to create a WebAssemblyFunction
-        // for the import.
-        // https://bugs.webkit.org/show_bug.cgi?id=165510
-        uint32_t functionIndex = segment.functionIndices[srcIndex];
-        TypeIndex typeIndex = m_module->typeIndexFromFunctionIndexSpace(functionIndex);
-        if (isImportFunction(functionIndex)) {
-            JSObject* functionImport = importFunction(functionIndex).get();
-            if (isWebAssemblyHostFunction(functionImport)) {
-                WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(functionImport);
-                // If we ever import a WebAssemblyWrapperFunction, we set the import as the unwrapped value.
-                // Because a WebAssemblyWrapperFunction can never wrap another WebAssemblyWrapperFunction,
-                // the only type this could be is WebAssemblyFunction.
-                RELEASE_ASSERT(wasmFunction);
-                jsTable->set(dstIndex, wasmFunction);
+        if (initType == Element::InitializationType::FromRefFunc) {
+            // FIXME: This essentially means we're exporting an import.
+            // We need a story here. We need to create a WebAssemblyFunction
+            // for the import.
+            // https://bugs.webkit.org/show_bug.cgi?id=165510
+            uint32_t functionIndex = static_cast<uint32_t>(initialBitsOrIndex);
+            TypeIndex typeIndex = m_module->typeIndexFromFunctionIndexSpace(functionIndex);
+            if (isImportFunction(functionIndex)) {
+                JSObject* functionImport = importFunction(functionIndex).get();
+                if (isWebAssemblyHostFunction(functionImport)) {
+                    WebAssemblyFunction* wasmFunction = jsDynamicCast<WebAssemblyFunction*>(functionImport);
+                    // If we ever import a WebAssemblyWrapperFunction, we set the import as the unwrapped value.
+                    // Because a WebAssemblyWrapperFunction can never wrap another WebAssemblyWrapperFunction,
+                    // the only type this could be is WebAssemblyFunction.
+                    RELEASE_ASSERT(wasmFunction);
+                    jsTable->set(dstIndex, wasmFunction);
+                    continue;
+                }
+                auto* wrapperFunction = WebAssemblyWrapperFunction::create(
+                    vm,
+                    globalObject,
+                    globalObject->webAssemblyWrapperFunctionStructure(),
+                    functionImport,
+                    functionIndex,
+                    jsInstance,
+                    typeIndex,
+                    TypeInformation::getCanonicalRTT(typeIndex));
+                jsTable->set(dstIndex, wrapperFunction);
                 continue;
             }
-            auto* wrapperFunction = WebAssemblyWrapperFunction::create(
+
+            Callee& jsEntrypointCallee = calleeGroup()->jsEntrypointCalleeFromFunctionIndexSpace(functionIndex);
+            WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
+            const auto& signature = TypeInformation::getFunctionSignature(typeIndex);
+            // FIXME: Say we export local function "foo" at function index 0.
+            // What if we also set it to the table an Element w/ index 0.
+            // Does (new Instance(...)).exports.foo === table.get(0)?
+            // https://bugs.webkit.org/show_bug.cgi?id=165825
+            WebAssemblyFunction* function = WebAssemblyFunction::create(
                 vm,
                 globalObject,
-                globalObject->webAssemblyWrapperFunctionStructure(),
-                functionImport,
-                functionIndex,
+                globalObject->webAssemblyFunctionStructure(),
+                signature.argumentCount(),
+                WTF::makeString(functionIndex),
                 jsInstance,
+                jsEntrypointCallee,
+                entrypointLoadLocation,
                 typeIndex,
                 TypeInformation::getCanonicalRTT(typeIndex));
-            jsTable->set(dstIndex, wrapperFunction);
+            jsTable->set(dstIndex, function);
             continue;
         }
 
-        Callee& jsEntrypointCallee = calleeGroup()->jsEntrypointCalleeFromFunctionIndexSpace(functionIndex);
-        WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
-        const auto& signature = TypeInformation::getFunctionSignature(typeIndex);
-        // FIXME: Say we export local function "foo" at function index 0.
-        // What if we also set it to the table an Element w/ index 0.
-        // Does (new Instance(...)).exports.foo === table.get(0)?
-        // https://bugs.webkit.org/show_bug.cgi?id=165825
-        WebAssemblyFunction* function = WebAssemblyFunction::create(
-            vm,
-            globalObject,
-            globalObject->webAssemblyFunctionStructure(),
-            signature.argumentCount(),
-            WTF::makeString(functionIndex),
-            jsInstance,
-            jsEntrypointCallee,
-            entrypointLoadLocation,
-            typeIndex,
-            TypeInformation::getCanonicalRTT(typeIndex));
-        jsTable->set(dstIndex, function);
+        if (initType == Element::InitializationType::FromGlobal) {
+            jsTable->set(dstIndex, JSValue::decode(loadI64Global(initialBitsOrIndex)));
+            continue;
+        }
+
+        ASSERT(initType == Element::InitializationType::FromExtendedExpression);
+        uint64_t result;
+        bool success = evaluateConstantExpression(initialBitsOrIndex, segment.elementType, result);
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=264454
+        // Currently this should never fail, as the parse phase already validated it.
+        RELEASE_ASSERT(success);
+        jsTable->set(dstIndex, JSValue::decode(result));
     }
 }
 
@@ -313,25 +332,51 @@ void Instance::copyElementSegment(const Element& segment, uint32_t srcOffset, ui
 
     for (uint32_t srcIndex = srcOffset; srcIndex < length; ++srcIndex) {
         const auto dstIndex = srcIndex - srcOffset;
+        const auto initType = segment.initTypes[srcIndex];
+        const auto initialBitsOrIndex = segment.initialBitsOrIndices[srcIndex];
 
         // Represent the null function as the null JS value
-        if (Element::isNullFuncIndex(segment.functionIndices[srcIndex])) {
+        if (initType == Element::InitializationType::FromRefNull) {
             values[dstIndex] = static_cast<uint64_t>(JSValue::encode(jsNull()));
             continue;
         }
 
-        // FIXME
-        // This will have to be updated to handle element types other than function references
-        // when https://bugs.webkit.org/show_bug.cgi?id=251874 is fixed
-        uint32_t functionIndex = segment.functionIndices[srcIndex];
+        if (initType == Element::InitializationType::FromRefFunc) {
+            uint32_t functionIndex = static_cast<uint32_t>(initialBitsOrIndex);
 
-        // A wrapper for this function should have been created during parsing.
-        // A future optimization would be for the parser to not create the wrappers,
-        // and create them here dynamically instead.
-        JSValue value = getFunctionWrapper(functionIndex);
-        ASSERT(value.isCallable());
-        values[dstIndex] = static_cast<uint64_t>(JSValue::encode(value));
+            // A wrapper for this function should have been created during parsing.
+            // A future optimization would be for the parser to not create the wrappers,
+            // and create them here dynamically instead.
+            JSValue value = getFunctionWrapper(functionIndex);
+            ASSERT(value.isCallable());
+            values[dstIndex] = static_cast<uint64_t>(JSValue::encode(value));
+            continue;
+        }
+
+        if (initType == Element::InitializationType::FromGlobal) {
+            values[dstIndex] = loadI64Global(initialBitsOrIndex);
+            continue;
+        }
+
+        ASSERT(initType == Element::InitializationType::FromExtendedExpression);
+        uint64_t result;
+        bool success = evaluateConstantExpression(initialBitsOrIndex, segment.elementType, result);
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=264454
+        // Currently this should never fail, as the parse phase already validated it.
+        RELEASE_ASSERT(success);
+        values[dstIndex] = result;
     }
+}
+
+bool Instance::evaluateConstantExpression(uint64_t index, Type expectedType, uint64_t& result)
+{
+    const auto& constantExpression = m_module->moduleInformation().constantExpressions[index];
+    auto evalResult = evaluateExtendedConstExpr(constantExpression, this, m_module->moduleInformation(), expectedType);
+    if (UNLIKELY(!evalResult.has_value()))
+        return false;
+
+    result = evalResult.value();
+    return true;
 }
 
 void Instance::tableInit(uint32_t dstOffset, uint32_t srcOffset, uint32_t length, uint32_t elementIndex, uint32_t tableIndex)

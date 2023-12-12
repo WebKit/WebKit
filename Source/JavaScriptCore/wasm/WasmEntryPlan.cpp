@@ -149,9 +149,9 @@ void EntryPlan::prepare()
     }
 
     for (const auto& element : m_moduleInformation->elements) {
-        for (const uint32_t functionIndex : element.functionIndices) {
-            if (!Element::isNullFuncIndex(functionIndex) && functionIndex >= importFunctionCount)
-                m_exportedFunctionIndices.add(functionIndex - importFunctionCount);
+        for (uint32_t i = 0; i < element.length(); i++) {
+            if (element.initTypes[i] == Element::InitializationType::FromRefFunc && element.initialBitsOrIndices[i] >= importFunctionCount)
+                m_exportedFunctionIndices.add(element.initialBitsOrIndices[i] - importFunctionCount);
         }
     }
 
