@@ -676,7 +676,7 @@ void InlineDisplayContentBuilder::adjustVisualGeometryForDisplayBox(size_t displ
             return setRightForWritingMode(displayBox, contentRightInInlineDirectionVisualOrder, writingMode);
 
         contentRightInInlineDirectionVisualOrder += borderRightInInlineDirection(boxGeometry, isLeftToRightDirection) + paddingRightInInlineDirection(boxGeometry, isLeftToRightDirection);
-        contentRightInInlineDirectionVisualOrder += layoutBox.isRubyBase() ? RubyFormattingContext::baseEndAdditionalVisualWidth(layoutBox, formattingContext()) : 0.f;
+        contentRightInInlineDirectionVisualOrder += layoutBox.isRubyBase() ? RubyFormattingContext::baseEndAdditionalVisualWidth(layoutBox, displayBox, formattingContext()) : 0.f;
         setRightForWritingMode(displayBox, contentRightInInlineDirectionVisualOrder, writingMode);
         contentRightInInlineDirectionVisualOrder += marginRightInInlineDirection(boxGeometry, isLeftToRightDirection);
     };
