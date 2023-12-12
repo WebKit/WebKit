@@ -1,0 +1,4 @@
+
+
+PASS :user-valid and :user-invalid should invalidate after user input.
+

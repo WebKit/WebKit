@@ -14,6 +14,9 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/any-link-attribute-removal-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/any-link-attribute-removal-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/any-link-attribute-removal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/any-link-pseudo.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/attribute-or-elemental-selectors-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/attribute.html
@@ -30,16 +33,23 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/first-child-last-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/fullscreen-pseudo-class-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-complexity.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-css-nesting-shared.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-in-adjacent-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-in-ancestor-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-in-parent-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-in-sibling-position.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-invalidation-after-removing-non-first-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-invalidation-for-wiping-an-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-pseudo-element-expected.xht
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-pseudo-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-sibling-insertion-removal.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-sibling.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-side-effect.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-unstyled.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-with-not.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-with-nth-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/has-with-pseudo-class.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/host-context-pseudo-class-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/host-pseudo-class-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/input-pseudo-classes-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/insert-sibling-001.html
@@ -47,6 +57,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/insert-sibling-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/insert-sibling-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/is-pseudo-containing-complex-in-has.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/is-pseudo-containing-sibling-relationship-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/is.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/lang-pseudo-class-in-has-document-element-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/lang-pseudo-class-in-has-document-element.html
@@ -61,9 +72,16 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/media-loading-pseudo-classes-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/media-pseudo-classes-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/modal-pseudo-class-in-has.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/negated-nth-child-when-ancestor-changes-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/negated-nth-child-when-ancestor-changes-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/negated-nth-child-when-ancestor-changes.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/negated-nth-last-child-when-ancestor-changes-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/negated-nth-last-child-when-ancestor-changes-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/negated-nth-last-child-when-ancestor-changes.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/not-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/not-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/not-pseudo-containing-complex-in-has.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/not-pseudo-containing-sibling-relationship-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-containing-ancestor-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-containing-ancestor-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/nth-child-containing-ancestor.html
@@ -152,6 +170,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/nth-last-child-when-sibling-changes-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/nth-last-child-when-sibling-changes-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/nth-last-child-when-sibling-changes.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/part-pseudo-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/part-pseudo-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/part-pseudo.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/placeholder-shown.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/quirks-mode-stylesheet-dynamic-add-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/selectorText-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/sheet-going-away-001.html
@@ -163,4 +185,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/target-pseudo-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/typed-child-indexed-pseudo-classes-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/user-action-pseudo-classes-in-has.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/user-valid-user-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/invalidation/where.html
