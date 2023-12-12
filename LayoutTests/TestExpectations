@@ -6186,7 +6186,6 @@ imported/w3c/web-platform-tests/fetch/sec-metadata/redirect/multiple-redirect-sa
 imported/w3c/web-platform-tests/fetch/sec-metadata/redirect/same-origin-redirect.tentative.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/sec-metadata/track.tentative.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/fetch/sec-metadata/window-open.tentative.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/fullscreen/api/document-exit-fullscreen-nested-shadow-dom.html [ Skip ]
 imported/w3c/web-platform-tests/fullscreen/api/element-request-fullscreen-svg-rect.html [ Skip ]
 imported/w3c/web-platform-tests/fullscreen/model/move-to-inactive-document.html [ Skip ]
 imported/w3c/web-platform-tests/fullscreen/model/move-to-fullscreen-iframe.html [ Skip ]
