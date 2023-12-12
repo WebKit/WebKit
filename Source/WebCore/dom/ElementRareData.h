@@ -107,8 +107,8 @@ public:
     DatasetDOMStringMap* dataset() const { return m_dataset.get(); }
     void setDataset(std::unique_ptr<DatasetDOMStringMap>&& dataset) { m_dataset = WTFMove(dataset); }
 
-    IntPoint savedLayerScrollPosition() const { return m_savedLayerScrollPosition; }
-    void setSavedLayerScrollPosition(IntPoint position) { m_savedLayerScrollPosition = position; }
+    ScrollPosition savedLayerScrollPosition() const { return m_savedLayerScrollPosition; }
+    void setSavedLayerScrollPosition(ScrollPosition position) { m_savedLayerScrollPosition = position; }
 
     ElementAnimationRareData* animationRareData(PseudoId) const;
     ElementAnimationRareData& ensureAnimationRareData(PseudoId);
@@ -215,8 +215,8 @@ private:
     int m_unusualTabIndex { 0 }; // Keep on top for better bit packing with NodeRareData.
 
     std::optional<OptionSet<ContentRelevancy>> m_contentRelevancy;
+    ScrollPosition m_savedLayerScrollPosition;
 
-    IntPoint m_savedLayerScrollPosition;
     std::unique_ptr<RenderStyle> m_computedStyle;
     std::unique_ptr<RenderStyle> m_displayContentsStyle;
 

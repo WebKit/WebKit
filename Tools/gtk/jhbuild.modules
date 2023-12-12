@@ -533,10 +533,10 @@
 
   <distutils id="meson" python3="1">
     <branch repo="github-tarball"
-            version="0.59.0"
+            version="1.3.0"
             module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
             checkoutdir="meson-${version}"
-            hash="sha256:e376c298df64b643dfe01eccb2d7b6f1e02e95aa38c19f19d120d129612ce476"/>
+            hash="sha256:4ba253ef60e454e23234696119cbafa082a0aead0bd3bbf6991295054795f5dc"/>
     <dependencies>
       <dep package="ninja"/>
     </dependencies>

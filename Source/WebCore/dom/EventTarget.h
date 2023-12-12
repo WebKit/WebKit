@@ -162,13 +162,14 @@ protected:
     WEBCORE_EXPORT virtual ~EventTarget();
 
     enum class EventTargetFlag : uint16_t {
-        HasEventTargetData = 1 << 0,
-        IsNode = 1 << 1,
+        HasEventTargetData                          = 1 << 0,
+        IsNode                                      = 1 << 1,
         // Element bits
-        HasDuplicateAttribute = 1 << 2,
-        HasLangAttr = 1 << 3,
-        HasXMLLangAttr = 1 << 4,
-        EffectiveLangKnownToMatchDocumentElement = 1 << 5,
+        HasDuplicateAttribute                       = 1 << 2,
+        HasLangAttr                                 = 1 << 3,
+        HasXMLLangAttr                              = 1 << 4,
+        EffectiveLangKnownToMatchDocumentElement    = 1 << 5,
+        EverHadSmoothScroll                         = 1 << 6,
     };
 
     EventTargetData& ensureEventTargetData()

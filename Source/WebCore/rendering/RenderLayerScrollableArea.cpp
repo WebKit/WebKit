@@ -107,7 +107,7 @@ void RenderLayerScrollableArea::clear()
 #if ENABLE(IOS_TOUCH_EVENTS)
     unregisterAsTouchEventListenerForScrolling();
 #endif
-    if (Element* element = renderer.element())
+    if (auto* element = renderer.element())
         element->setSavedLayerScrollPosition(m_scrollPosition);
 
     destroyScrollbar(ScrollbarOrientation::Horizontal);
@@ -133,7 +133,7 @@ void RenderLayerScrollableArea::restoreScrollPosition()
             scrollAnimator().setCurrentPosition(m_scrollPosition);
     }
 
-    element->setSavedLayerScrollPosition(IntPoint());
+    element->setSavedLayerScrollPosition({ });
 }
 
 bool RenderLayerScrollableArea::shouldPlaceVerticalScrollbarOnLeft() const
@@ -351,6 +351,9 @@ void RenderLayerScrollableArea::scrollTo(const ScrollPosition& position)
     m_scrollPosition = newPosition;
 
     auto& renderer = m_layer.renderer();
+    if (auto* element = renderer.element())
+        element->setSavedLayerScrollPosition(m_scrollPosition);
+
     RenderView& view = renderer.view();
 
     // Update the positions of our child layers (if needed as only fixed layers should be impacted by a scroll).

@@ -696,12 +696,12 @@ headers: <CoreGraphics/CGGeometry.h> <CoreGraphics/CGAffineTransform.h>
     CGFloat height
 };
 
-[WebKitPlatform] struct CGPoint {
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] struct CGPoint {
     CGFloat x
     CGFloat y
 };
 
-[WebKitPlatform] struct CGRect {
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] struct CGRect {
     CGPoint origin
     CGSize size
 };

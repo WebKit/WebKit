@@ -39,12 +39,18 @@ public:
     {
     }
 
+    CoreIPCURL(CFURLRef url)
+        : m_url(url)
+    {
+    }
+
     CoreIPCURL(URL&& url)
         : m_url(WTFMove(url))
     {
     }
 
     RetainPtr<id> toID() const { return (NSURL *)m_url; }
+    RetainPtr<CFURLRef> createCFURL() const { return m_url.createCFURL(); }
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCURL, void>;

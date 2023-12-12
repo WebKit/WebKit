@@ -24,12 +24,12 @@
 
 webkit_platform_headers: "CoreIPCNSValue.h" <Foundation/NSRange.h>
 
-[WebKitPlatform] struct _NSRange {
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] struct _NSRange {
     NSUInteger location;
     NSUInteger length;
 }
 
-[WebKitPlatform] class WebKit::CoreIPCNSValue {
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCNSValue {
     WebKit::CoreIPCNSValue::Value m_value
 }
 

@@ -128,7 +128,7 @@ private:
 
     virtual bool isScriptPreventedByAttributes() const { return false; }
 
-    CheckedRef<Element> m_element;
+    WeakRef<Element, WeakPtrImplWithEventTargetData> m_element;
     OrdinalNumber m_startLineNumber { OrdinalNumber::beforeFirst() };
     JSC::SourceTaintedOrigin m_taintedOrigin;
     ParserInserted m_parserInserted : bitWidthOfParserInserted;

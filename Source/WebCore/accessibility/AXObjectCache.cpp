@@ -868,6 +868,10 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node, IsPartOfRelation isP
             return nullptr;
     }
 
+    // The object may have already been created during relations update
+    if (auto* object = get(node))
+        return object;
+
     // Fallback content is only focusable as long as the canvas is displayed and visible.
     // Update the style before Element::isFocusable() gets called.
     if (inCanvasSubtree)

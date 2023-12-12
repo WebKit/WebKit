@@ -464,7 +464,9 @@ void ProcessAssertion::acquireSync()
 #if USE(EXTENSIONKIT)
     if (m_process) {
         NSError *error = nil;
-        m_grant = [m_process.get() grantCapabilities:m_capabilities.get() error:&error];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        m_grant = [m_process grantCapabilities:m_capabilities.get() error:&error];
+        ALLOW_DEPRECATED_DECLARATIONS_END
         if (m_grant) {
             RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Successfully granted capability", this);
             return;

@@ -38,6 +38,8 @@ namespace WebCore {
 
 class IntPoint;
 
+enum class ScrollBehavior : uint8_t;
+
 // scrollPosition is in content coordinates (0,0 is at scrollOrigin), so may have negative components.
 using ScrollPosition = IntPoint;
 // scrollOffset() is the value used by scrollbars (min is 0,0), and should never have negative components.
@@ -376,6 +378,7 @@ struct ScrollPositionChangeOptions {
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollType);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollClamping);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollBehaviorForFixedElements);
+WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollBehavior);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollElasticity);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, ScrollbarMode);
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, OverflowAnchor);

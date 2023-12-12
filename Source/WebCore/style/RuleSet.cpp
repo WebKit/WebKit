@@ -473,6 +473,9 @@ Vector<Ref<const StyleRuleScope>> RuleSet::scopeRulesFor(const RuleData& ruleDat
         identifier = query.parent;
     };
 
+    // Order scopes from outermost to innermost.
+    queries.reverse();
+
     return queries;
 }
 

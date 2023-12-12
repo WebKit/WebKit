@@ -38,12 +38,14 @@ class CoreIPCNSCFObject;
 class CoreIPCArray {
 public:
     CoreIPCArray(NSArray *);
+    CoreIPCArray(CFArrayRef);
     CoreIPCArray(const RetainPtr<NSArray>& array)
         : CoreIPCArray(array.get())
     {
     }
 
     RetainPtr<id> toID() const;
+    RetainPtr<CFArrayRef> createCFArray() const { return (__bridge CFArrayRef)toID().get(); }
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCArray, void>;

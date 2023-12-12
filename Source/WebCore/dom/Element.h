@@ -629,8 +629,8 @@ public:
     inline bool hasName() const;
     inline const SpaceSplitString& classNames() const;
 
-    IntPoint savedLayerScrollPosition() const;
-    void setSavedLayerScrollPosition(const IntPoint&);
+    ScrollPosition savedLayerScrollPosition() const;
+    void setSavedLayerScrollPosition(const ScrollPosition&);
 
     enum class EventIsDefaultPrevented : bool { No, Yes };
     enum class EventIsDispatched : bool { No, Yes };
@@ -846,7 +846,7 @@ private:
     void addAttributeInternal(const QualifiedName&, const AtomString& value, InSynchronizationOfLazyAttribute);
     void removeAttributeInternal(unsigned index, InSynchronizationOfLazyAttribute);
 
-    void setSavedLayerScrollPositionSlow(const IntPoint&);
+    void setSavedLayerScrollPositionSlow(const ScrollPosition&);
     void clearBeforePseudoElementSlow();
     void clearAfterPseudoElementSlow();
 
@@ -913,13 +913,16 @@ private:
     bool hasLanguageAttribute() const { return hasLangAttr() || hasXMLLangAttr(); }
     bool hasLangAttrKnownToMatchDocumentElement() const { return hasLanguageAttribute() && effectiveLangKnownToMatchDocumentElement(); }
 
+    bool hasEverHadSmoothScroll() const { return hasEventTargetFlag(EventTargetFlag::EverHadSmoothScroll); }
+    void setHasEverHadSmoothScroll(bool value) { return setEventTargetFlag(EventTargetFlag::EverHadSmoothScroll, value); }
+
     void parentOrShadowHostNode() const = delete; // Call parentNode() instead.
 
     QualifiedName m_tagName;
     RefPtr<ElementData> m_elementData;
 };
 
-inline void Element::setSavedLayerScrollPosition(const IntPoint& position)
+inline void Element::setSavedLayerScrollPosition(const ScrollPosition& position)
 {
     if (position.isZero() && !hasRareData())
         return;

@@ -47,8 +47,8 @@ private:
     bool isValid() const;
     void setCheckedButton(HTMLInputElement*);
 
-    HashSet<CheckedRef<HTMLInputElement>> m_members;
-    CheckedPtr<HTMLInputElement> m_checkedButton;
+    HashSet<WeakRef<HTMLInputElement, WeakPtrImplWithEventTargetData>> m_members;
+    WeakPtr<HTMLInputElement, WeakPtrImplWithEventTargetData> m_checkedButton;
     size_t m_requiredCount { 0 };
 };
 

@@ -27,6 +27,7 @@
 #include "Element.h"
 #include "ExceptionOr.h"
 #include "ScriptWrappable.h"
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -59,7 +60,7 @@ public:
     Ref<Element> protectedElement() const;
 
 private:
-    CheckedRef<Element> m_element;
+    WeakRef<Element, WeakPtrImplWithEventTargetData> m_element;
 };
 
 } // namespace WebCore

@@ -29,13 +29,14 @@ import urllib.request
 from html.parser import HTMLParser
 
 REPO = "https://software.igalia.com/flatpak-refs/webkit-sdk.flatpakrepo"
-SDK_BRANCH = "22.08"
+SDK_BRANCH = "23.08"
 USER_DIR = os.path.expanduser("~/.cache/wk-nightly")
 
 def spinning_cursor():
     while True:
         for cursor in '|/-\\':
             yield cursor
+
 
 # FIXME: Might be worth adding some JSON file listing builds on the servers.
 class MyHTMLParser(HTMLParser):
@@ -44,7 +45,7 @@ class MyHTMLParser(HTMLParser):
         if tag != "a":
             return
         for (name, value) in attrs:
-            if name == "href" and (value.startswith("release") or value.startswith("debug")):
+            if name == "href" and (value.startswith("release") or value.startswith("debug")) and 'main' in value:
                 self.builds.append(value)
 
 def flatpak(*args, env=None, stdout=None):
@@ -70,9 +71,9 @@ def get_build_path(platform, build_type, revision_number):
     return os.path.join(tempfile.gettempdir(), dirname)
 
 def get_revision_number(build_name):
-    match = re.match(r'.*_([0-9@a-z]+)_\d+\.zip$', build_name)
+    match = re.match(r'.*_([0-9%40a-z]+)_\d+\.zip$', build_name)
     if match:
-        return match.groups()[0]
+        return match.groups()[0].replace('%40', '@')
 
 def ensure_extracted_build(args):
     build_type = args.build_type.lower()
@@ -124,6 +125,8 @@ def run(path, build_type, args):
     }
     flatpak("run", "--die-with-parent", "--user",
             f"--env=PATH=/app/webkit/WebKitBuild/{build_type}/bin:/usr/bin",
+            f"--env=LD_LIBRARY_PATH=/app/webkit/WebKitBuild/{build_type}/lib",
+            f"--env=WEBKIT_INJECTED_BUNDLE_PATH=/app/webkit/WebKitBuild/{build_type}/lib",
             "--device=dri",
             "--share=ipc",
             "--share=network",
@@ -150,8 +153,10 @@ def main(args):
     type_group.add_argument("--release", help="Download a release build.",
                             dest='build_type', action="store_const", const="Release")
     platform_group = parser.add_mutually_exclusive_group()
-    platform_group.add_argument('--gtk', action='store_const', dest='platform', const='webkitgtk',
-                                help='Download and run GTK port build artefacts')
+    platform_group.add_argument('--gtk', action='store_const', dest='platform', const='webkitgtk4',
+                                help='Download and run GTK port build artifacts')
+    platform_group.add_argument('--gtk3', action='store_const', dest='platform', const='webkitgtk',
+                                help='Download and run GTK3 port build artifacts')
     platform_group.add_argument('--wpe', action='store_const', dest='platform', const='wpewebkit',
                                 help=('Download and run WPE port build artefacts'))
     parser.add_argument("command", nargs=argparse.REMAINDER, help="Command to execute (example: MiniBrowser, jsc)")
@@ -218,7 +223,6 @@ def bwrap_main(args):
     os.execvpe(bwrap_args[0], bwrap_args + args, os.environ)
 
 if __name__ == "__main__":
-    ld_library_path = os.environ.get("LD_LIBRARY_PATH", "")
     if '--args' in sys.argv:
         bwrap_main(sys.argv[1:])
     else:

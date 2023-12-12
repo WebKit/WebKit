@@ -32,7 +32,9 @@
 
 namespace WebKit {
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 static RetainPtr<_SECapabilities> createPlatformCapability(const RegistrableDomain& registrableDomain)
+ALLOW_DEPRECATED_DECLARATIONS_END
 {
 #if USE(EXTENSIONKIT)
     if ([get_SECapabilitiesClass() respondsToSelector:@selector(mediaWithWebsite:)])

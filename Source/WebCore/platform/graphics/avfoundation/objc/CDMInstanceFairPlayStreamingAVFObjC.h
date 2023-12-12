@@ -259,6 +259,7 @@ private:
 
     Vector<Request> m_pendingRequests;
     Vector<Request> m_requests;
+    std::optional<Request> m_renewingRequest;
 
     LicenseCallback m_requestLicenseCallback;
     LicenseUpdateCallback m_updateLicenseCallback;

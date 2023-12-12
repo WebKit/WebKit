@@ -52,7 +52,7 @@ public:
     {
     }
 
-    RetainPtr<CFDateRef> createDate() const
+    RetainPtr<CFDateRef> createCFDate() const
     {
         return adoptCF(CFDateCreate(0, m_absoluteTime));
     }
@@ -64,7 +64,7 @@ public:
 
     RetainPtr<id> toID() const
     {
-        return bridge_cast(createDate().get());
+        return bridge_cast(createCFDate().get());
     }
 
 private:

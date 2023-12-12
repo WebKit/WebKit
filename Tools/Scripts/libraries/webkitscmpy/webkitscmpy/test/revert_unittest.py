@@ -64,7 +64,7 @@ class TestRevert(testing.PathTestCase):
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or title of new issue for the revert: \n"
+            "Enter issue URL or reason for the revert: \n"
             "Created the local development branch 'eng/Example-feature-1'\n"
             "Created 'PR 1 | Unreviewed, reverting 5@main'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
@@ -74,7 +74,7 @@ class TestRevert(testing.PathTestCase):
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/Example-feature-1'...",
-                'Reverted d8bce26fa65c6fc8f39c17927abb77f69fab82fc',
+                'Reverted 5@main',
                 "Rebasing 'eng/Example-feature-1' on 'main'...",
                 "Rebased 'eng/Example-feature-1' on 'main!'",
                 'Running pre-PR checks...',
@@ -113,7 +113,7 @@ class TestRevert(testing.PathTestCase):
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or title of new issue for the revert: \n"
+            "Enter issue URL or reason for the revert: \n"
             "Created the local development branch 'eng/Example-feature-1'\n"
             "Created 'PR 1 | Unreviewed, reverting 5@main'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n",
@@ -123,7 +123,7 @@ class TestRevert(testing.PathTestCase):
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/Example-feature-1'...",
-                'Reverted d8bce26fa65c6fc8f39c17927abb77f69fab82fc',
+                'Reverted 5@main',
                 'Using committed changes...',
                 "Rebasing 'eng/Example-feature-1' on 'main'...",
                 "Rebased 'eng/Example-feature-1' on 'main!'",
@@ -150,7 +150,7 @@ class TestRevert(testing.PathTestCase):
             ),
         ), mocks.local.Svn(), patch('webkitbugspy.Tracker._trackers', [bugzilla.Tracker(self.BUGZILLA)]):
             result = program.main(
-                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--revert-issue', '{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '-v'),
+                args=('revert', 'd8bce26fa65c6fc8f39c17927abb77f69fab82fc', '--issue', '{}/show_bug.cgi?id=2'.format(self.BUGZILLA), '-v'),
                 path=self.path,
             )
             self.assertEqual(0, result)
@@ -172,7 +172,7 @@ class TestRevert(testing.PathTestCase):
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/Example-feature-1'...",
-                'Reverted d8bce26fa65c6fc8f39c17927abb77f69fab82fc',
+                'Reverted 5@main',
                 'Using committed changes...',
                 "Rebasing 'eng/Example-feature-1' on 'main'...",
                 "Rebased 'eng/Example-feature-1' on 'main!'",
@@ -236,7 +236,7 @@ index 05e8751..0bf3c85 100644
 
         self.assertEqual(
             captured.stdout.getvalue(),
-            "Enter issue URL or title of new issue for the revert: \n"
+            "Enter issue URL or reason for the revert: \n"
             "Created the local development branch 'eng/Example-feature-1'\n"
             "Created 'PR 1 | Unreviewed, reverting 5@main'!\n"
             "https://github.example.com/WebKit/WebKit/pull/1\n"
@@ -248,7 +248,7 @@ index 05e8751..0bf3c85 100644
         self.assertEqual(
             [line for line in log if 'Mock process' not in line], [
                 "Creating the local development branch 'eng/Example-feature-1'...",
-                'Reverted d8bce26fa65c6fc8f39c17927abb77f69fab82fc',
+                'Reverted 5@main',
                 "Rebasing 'eng/Example-feature-1' on 'main'...",
                 "Rebased 'eng/Example-feature-1' on 'main!'",
                 'Running pre-PR checks...',

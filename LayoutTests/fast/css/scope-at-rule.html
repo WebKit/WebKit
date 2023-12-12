@@ -55,6 +55,21 @@ div {
   }
 }
 
+@scope (#a) {
+  @scope (#b) {
+    :scope {
+      .green-12 {
+        color: green;
+      }
+    }
+  }
+  :scope {
+    .green-12 {
+      color: red;
+    }
+  }
+}
+
 </style>
 
 <div class="a">
@@ -116,4 +131,10 @@ div {
 
 <div>
   <div class="green-11">should be green</span>
+</div>
+
+<div id="a">
+  <div id="b">
+    <span class="green-12">should be green</div>
+  </div>
 </div>
