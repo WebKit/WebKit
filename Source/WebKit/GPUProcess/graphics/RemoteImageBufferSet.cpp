@@ -181,6 +181,9 @@ void RemoteImageBufferSet::prepareBufferForDisplay(const WebCore::Region& dirtyR
 
     IntRect layerBounds = IntRect { { }, expandedIntSize(m_logicalSize) };
 
+    GraphicsContext& context = m_frontBuffer->context();
+    context.resetClip();
+
     if (m_previousFrontBuffer && m_frontBuffer != m_previousFrontBuffer && !dirtyRegion.contains(layerBounds)) {
         Region copyRegion(m_previouslyPaintedRect ? *m_previouslyPaintedRect : layerBounds);
         copyRegion.subtract(dirtyRegion);
@@ -188,9 +191,6 @@ void RemoteImageBufferSet::prepareBufferForDisplay(const WebCore::Region& dirtyR
         if (!copyRect.isEmpty())
             m_frontBuffer->context().drawImageBuffer(*m_previousFrontBuffer, copyRect, copyRect, { CompositeOperator::Copy });
     }
-
-    GraphicsContext& context = m_frontBuffer->context();
-    context.resetClip();
 
     auto dirtyRects = dirtyRegion.rects();
 #if PLATFORM(COCOA)
