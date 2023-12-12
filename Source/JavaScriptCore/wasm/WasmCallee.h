@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,6 +43,7 @@
 #include <wtf/EmbeddedFixedVector.h>
 #include <wtf/FixedVector.h>
 #include <wtf/RefCountedFixedVector.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
@@ -52,7 +53,7 @@ class LLIntOffsetsExtractor;
 namespace Wasm {
 
 class Callee : public NativeCallee {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Callee);
 public:
     IndexOrName indexOrName() const { return m_indexOrName; }
     CompilationMode compilationMode() const { return m_compilationMode; }
@@ -88,6 +89,7 @@ protected:
 
 #if ENABLE(JIT)
 class JITCallee : public Callee {
+    WTF_MAKE_TZONE_ALLOCATED(JITCallee);
 public:
     friend class Callee;
     FixedVector<UnlinkedWasmToWasmCall>& wasmToWasmCallsites() { return m_wasmToWasmCallsites; }
@@ -114,6 +116,7 @@ protected:
 };
 
 class JSEntrypointCallee final : public JITCallee {
+    WTF_MAKE_TZONE_ALLOCATED(JSEntrypointCallee);
 public:
     static Ref<JSEntrypointCallee> create()
     {
@@ -132,6 +135,7 @@ private:
 #else
 
 class JSEntrypointCallee final : public Callee {
+    WTF_MAKE_TZONE_ALLOCATED(JSEntrypointCallee);
 public:
     friend class Callee;
 
@@ -158,6 +162,7 @@ private:
 #endif // ENABLE(JIT)
 
 class WasmToJSCallee final : public Callee {
+    WTF_MAKE_TZONE_ALLOCATED(WasmToJSCallee);
 public:
     friend class Callee;
 
@@ -181,6 +186,7 @@ private:
 
 #if ENABLE(JIT)
 class JSToWasmICCallee final : public JITCallee {
+    WTF_MAKE_TZONE_ALLOCATED(JSToWasmICCallee);
 public:
     static Ref<JSToWasmICCallee> create()
     {
@@ -207,6 +213,7 @@ struct WasmCodeOrigin {
 };
 
 class OptimizingJITCallee : public JITCallee {
+    WTF_MAKE_TZONE_ALLOCATED(OptimizingJITCallee);
 public:
     const StackMap& stackmap(CallSiteIndex) const;
 
@@ -237,6 +244,7 @@ private:
 };
 
 class OMGCallee final : public OptimizingJITCallee {
+    WTF_MAKE_TZONE_ALLOCATED(OMGCallee);
 public:
     static Ref<OMGCallee> create(size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     {
@@ -253,6 +261,7 @@ private:
 };
 
 class OSREntryCallee final : public OptimizingJITCallee {
+    WTF_MAKE_TZONE_ALLOCATED(OSREntryCallee);
 public:
     static Ref<OSREntryCallee> create(CompilationMode compilationMode, size_t index, std::pair<const Name*, RefPtr<NameSection>>&& name, uint32_t loopIndex)
     {
@@ -281,6 +290,7 @@ private:
 };
 
 class BBQCallee final : public OptimizingJITCallee {
+    WTF_MAKE_TZONE_ALLOCATED(BBQCallee);
 public:
     static constexpr unsigned extraOSRValuesForLoopIndex = 1;
 
@@ -350,6 +360,7 @@ private:
 
 
 class IPIntCallee final : public Callee {
+    WTF_MAKE_TZONE_ALLOCATED(IPIntCallee);
     friend class JSC::LLIntOffsetsExtractor;
     friend class Callee;
 public:
@@ -420,6 +431,7 @@ public:
 };
 
 class LLIntCallee final : public Callee {
+    WTF_MAKE_TZONE_ALLOCATED(LLIntCallee);
     friend JSC::LLIntOffsetsExtractor;
     friend class Callee;
 public:

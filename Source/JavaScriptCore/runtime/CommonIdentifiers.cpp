@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2019 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -23,8 +23,11 @@
 
 #include "BuiltinNames.h"
 #include "IdentifierInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CommonIdentifiers);
 
 #define INITIALIZE_PROPERTY_NAME(name) , name(Identifier::fromString(vm, #name ""_s))
 #define INITIALIZE_KEYWORD(name) , name##Keyword(Identifier::fromString(vm, #name ""_s))

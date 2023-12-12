@@ -26,6 +26,7 @@
 #pragma once
 
 #include "ImplementationVisibility.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace JSC {
@@ -33,7 +34,7 @@ namespace JSC {
 class LLIntOffsetsExtractor;
 
 class NativeCallee : public ThreadSafeRefCounted<NativeCallee> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(NativeCallee);
 public:
     enum class Category : uint8_t {
         InlineCache,

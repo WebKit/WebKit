@@ -49,7 +49,6 @@ void vp8_cal_low_res_mb_cols(VP8_COMP *cpi) {
 
 void vp8_cal_dissimilarity(VP8_COMP *cpi) {
   VP8_COMMON *cm = &cpi->common;
-  int i;
 
   /* Note: The first row & first column in mip are outside the frame, which
    * were initialized to all 0.(ref_frame, mode, mv...)
@@ -67,6 +66,7 @@ void vp8_cal_dissimilarity(VP8_COMP *cpi) {
     store_info->frame_type = cm->frame_type;
 
     if (cm->frame_type != KEY_FRAME) {
+      int i;
       store_info->is_frame_dropped = 0;
       for (i = 1; i < MAX_REF_FRAMES; ++i)
         store_info->low_res_ref_frames[i] = cpi->current_ref_frames[i];

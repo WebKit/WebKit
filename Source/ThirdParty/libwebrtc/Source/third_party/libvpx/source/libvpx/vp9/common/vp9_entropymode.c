@@ -381,7 +381,6 @@ void vp9_adapt_mode_probs(VP9_COMMON *cm) {
   }
 
   if (cm->tx_mode == TX_MODE_SELECT) {
-    int j;
     unsigned int branch_ct_8x8p[TX_SIZES - 3][2];
     unsigned int branch_ct_16x16p[TX_SIZES - 2][2];
     unsigned int branch_ct_32x32p[TX_SIZES - 1][2];

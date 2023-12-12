@@ -334,19 +334,6 @@
   "paddw      %[ftmp3],   %[ftmp3],       %[ftmp1]            \n\t"
 #endif /* _MIPS_SIM == _ABIO32 */
 
-// depending on call sites, pass **ref_array to avoid & in subsequent call and
-// de-dup with 4D below.
-#define sadMxNxK_mmi(m, n, k)                                                 \
-  void vpx_sad##m##x##n##x##k##_mmi(const uint8_t *src, int src_stride,       \
-                                    const uint8_t *ref_array, int ref_stride, \
-                                    uint32_t *sad_array) {                    \
-    int i;                                                                    \
-    for (i = 0; i < (k); ++i)                                                 \
-      sad_array[i] =                                                          \
-          vpx_sad##m##x##n##_mmi(src, src_stride, &ref_array[i], ref_stride); \
-  }
-
-// This appears to be equivalent to the above when k == 4 and refs is const
 #define sadMxNx4D_mmi(m, n)                                                  \
   void vpx_sad##m##x##n##x4d_mmi(const uint8_t *src, int src_stride,         \
                                  const uint8_t *const ref_array[],           \
@@ -583,10 +570,6 @@ static inline unsigned int vpx_sad16x(const uint8_t *src, int src_stride,
 vpx_sad16xN(32);
 vpx_sad16xN(16);
 vpx_sad16xN(8);
-sadMxNxK_mmi(16, 16, 3);
-sadMxNxK_mmi(16, 16, 8);
-sadMxNxK_mmi(16, 8, 3);
-sadMxNxK_mmi(16, 8, 8);
 sadMxNx4D_mmi(16, 32);
 sadMxNx4D_mmi(16, 16);
 sadMxNx4D_mmi(16, 8);
@@ -681,10 +664,6 @@ static inline unsigned int vpx_sad8x(const uint8_t *src, int src_stride,
 vpx_sad8xN(16);
 vpx_sad8xN(8);
 vpx_sad8xN(4);
-sadMxNxK_mmi(8, 16, 3);
-sadMxNxK_mmi(8, 16, 8);
-sadMxNxK_mmi(8, 8, 3);
-sadMxNxK_mmi(8, 8, 8);
 sadMxNx4D_mmi(8, 16);
 sadMxNx4D_mmi(8, 8);
 sadMxNx4D_mmi(8, 4);
@@ -777,8 +756,6 @@ static inline unsigned int vpx_sad4x(const uint8_t *src, int src_stride,
 
 vpx_sad4xN(8);
 vpx_sad4xN(4);
-sadMxNxK_mmi(4, 4, 3);
-sadMxNxK_mmi(4, 4, 8);
 sadMxNx4D_mmi(4, 8);
 sadMxNx4D_mmi(4, 4);
 

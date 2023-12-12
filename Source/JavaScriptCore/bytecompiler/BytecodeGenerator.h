@@ -55,6 +55,7 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/SetForScope.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -243,7 +244,7 @@ namespace JSC {
     };
 
     class ForInContext : public RefCounted<ForInContext> {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(ForInContext);
         WTF_MAKE_NONCOPYABLE(ForInContext);
     public:
         using GetInst = std::tuple<unsigned, int>;
@@ -337,7 +338,7 @@ namespace JSC {
     };
 
     class BytecodeGenerator : public BytecodeGeneratorBase<JSGeneratorTraits> {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(BytecodeGenerator);
         WTF_MAKE_NONCOPYABLE(BytecodeGenerator);
 
         friend class FinallyContext;

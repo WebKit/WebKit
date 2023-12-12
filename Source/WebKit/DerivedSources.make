@@ -725,6 +725,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebGPU/WebGPUBlendState.serialization.in \
 	Shared/WebGPU/WebGPUBlendComponent.serialization.in \
 	Shared/WebGPU/WebGPUBindGroupEntry.serialization.in \
+	Shared/XR/PlatformXR.serialization.in \
 	Shared/XR/XRSystem.serialization.in \
 	Shared/WebUserContentControllerDataTypes.serialization.in \
 	WebProcess/GPU/GPUProcessConnectionInfo.serialization.in \

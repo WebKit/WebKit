@@ -28,6 +28,7 @@
 
 #include "MatchResult.h"
 #include <array>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -37,7 +38,7 @@ class JSImmutableButterfly;
 class RegExp;
 
 class StringReplaceCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StringReplaceCache);
     WTF_MAKE_NONCOPYABLE(StringReplaceCache);
 
 public:

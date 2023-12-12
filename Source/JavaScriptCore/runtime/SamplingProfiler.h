@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,6 +39,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakRandom.h>
 
@@ -48,7 +49,7 @@ class VM;
 class ExecutableBase;
 
 class SamplingProfiler : public ThreadSafeRefCounted<SamplingProfiler> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(SamplingProfiler);
 public:
 
     struct UnprocessedStackFrame {

@@ -35,6 +35,7 @@
 #include "Opcode.h"
 #include <variant>
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 #if ENABLE(C_LOOP)
 #include "CLoopStack.h"
@@ -120,7 +121,7 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
     };
 
     class Interpreter {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(Interpreter);
         friend class CachedCall;
         friend class LLIntOffsetsExtractor;
         friend class JIT;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,11 @@
 #include "AirCode.h"
 #include "AirGenerationContext.h"
 #include "B3ValueInlines.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace B3 {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(StackmapSpecial);
 
 using Arg = Air::Arg;
 using Inst = Air::Inst;

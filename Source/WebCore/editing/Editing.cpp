@@ -576,8 +576,8 @@ RefPtr<Element> enclosingTableCell(const Position& position)
 RefPtr<Element> enclosingAnchorElement(const Position& p)
 {
     for (auto node = p.protectedDeprecatedNode(); node; node = node->parentNode()) {
-        if (is<Element>(*node) && node->isLink())
-            return downcast<Element>(node.releaseNonNull());
+        if (auto* element = dynamicDowncast<Element>(*node); element && element->isLink())
+            return element;
     }
     return nullptr;
 }

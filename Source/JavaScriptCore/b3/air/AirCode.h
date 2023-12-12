@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,6 +41,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/IndexMap.h>
 #include <wtf/SmallSet.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakRandom.h>
 
 namespace JSC {
@@ -78,7 +79,7 @@ extern const char* const tierName;
 
 class Code {
     WTF_MAKE_NONCOPYABLE(Code);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Code);
 public:
     ~Code();
 

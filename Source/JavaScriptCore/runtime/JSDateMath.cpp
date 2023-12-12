@@ -77,6 +77,7 @@
 #include <limits>
 #include <wtf/DateMath.h>
 #include <wtf/Language.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
@@ -110,11 +111,14 @@ std::atomic<uint64_t> lastTimeZoneID { 1 };
 
 #if HAVE(ICU_C_TIMEZONE_API)
 class OpaqueICUTimeZone {
-    WTF_MAKE_FAST_ALLOCATED(OpaqueICUTimeZone);
+    WTF_MAKE_TZONE_ALLOCATED(OpaqueICUTimeZone);
 public:
     std::unique_ptr<UCalendar, ICUDeleter<ucal_close>> m_calendar;
     String m_canonicalTimeZoneID;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(OpaqueICUTimeZone);
+
 #else
 static icu::TimeZone* toICUTimeZone(OpaqueICUTimeZone* timeZone)
 {

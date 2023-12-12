@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2019 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #include "UnlinkedProgramCodeBlock.h"
 #include <wtf/ApproximateTime.h>
 #include <wtf/MainThread.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -220,7 +221,7 @@ private:
 
 // Caches top-level code such as <script>, window.eval(), new Function, and JSEvaluateScript().
 class CodeCache {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(CodeCache);
 public:
     UnlinkedProgramCodeBlock* getUnlinkedProgramCodeBlock(VM&, ProgramExecutable*, const SourceCode&, JSParserStrictMode, OptionSet<CodeGenerationMode>, ParserError&);
     UnlinkedEvalCodeBlock* getUnlinkedEvalCodeBlock(VM&, IndirectEvalExecutable*, const SourceCode&, JSParserStrictMode, OptionSet<CodeGenerationMode>, ParserError&, EvalContextType);

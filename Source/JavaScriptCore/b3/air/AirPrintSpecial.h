@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "AirInst.h"
 #include "AirSpecial.h"
 #include "MacroAssemblerPrinter.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -92,6 +93,7 @@ struct Printer<Reg> : public PrintRecord {
 namespace B3 { namespace Air {
 
 class PrintSpecial final : public Special {
+    WTF_MAKE_TZONE_ALLOCATED(PrintSpecial);
 public:
     PrintSpecial(Printer::PrintRecordList*);
     ~PrintSpecial() final;

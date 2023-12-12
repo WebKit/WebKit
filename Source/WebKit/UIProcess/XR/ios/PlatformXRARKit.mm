@@ -266,7 +266,7 @@ void ARKitCoordinator::renderLoop(Box<RenderState> active)
             ARFrame* frame = presentationSession.currentFrame;
             ARCamera* camera = frame.camera;
 
-            PlatformXR::Device::FrameData frameData = { };
+            PlatformXR::FrameData frameData = { };
             // FIXME: Use ARSession state to calculate correct values.
             frameData.isTrackingValid = true;
             frameData.isPositionValid = true;
@@ -290,7 +290,7 @@ void ARKitCoordinator::renderLoop(Box<RenderState> active)
             auto completionPort = MachSendRight::create([completionHandle.get() eventPort]);
 
             // FIXME: rdar://77858090 (Need to transmit color space information)
-            frameData.layers.set(defaultLayerHandle(), PlatformXR::Device::FrameData::LayerData {
+            frameData.layers.set(defaultLayerHandle(), PlatformXR::FrameData::LayerData {
                 .colorTexture = WTFMove(colorTexture),
                 .completionSyncEvent = { MachSendRight(completionPort), renderingFrameIndex }
             });

@@ -43,7 +43,7 @@ extern "C" {
     EncodedJSValue vmEntryHostFunction(JSGlobalObject*, CallFrame*, void*);
 }
 
-#if CPU(ARM64E)
+#if CPU(ARM64E) && !ENABLE(C_LOOP)
 extern "C" {
     void jitCagePtrGateAfter(void);
     void vmEntryToJavaScriptGateAfter(void);

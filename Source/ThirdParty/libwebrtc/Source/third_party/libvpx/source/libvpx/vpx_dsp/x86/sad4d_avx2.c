@@ -11,8 +11,12 @@
 #include "./vpx_dsp_rtcd.h"
 #include "vpx/vpx_integer.h"
 
+// Note with sums[4] some versions of Visual Studio may fail due to parameter
+// alignment, though the functions should be equivalent:
+// error C2719: 'sums': formal parameter with requested alignment of 32 won't be
+// aligned
 static INLINE void calc_final_4(const __m256i *const sums /*[4]*/,
-                                uint32_t *sad_array) {
+                                uint32_t sad_array[4]) {
   const __m256i t0 = _mm256_hadd_epi32(sums[0], sums[1]);
   const __m256i t1 = _mm256_hadd_epi32(sums[2], sums[3]);
   const __m256i t2 = _mm256_hadd_epi32(t0, t1);
@@ -21,9 +25,10 @@ static INLINE void calc_final_4(const __m256i *const sums /*[4]*/,
   _mm_storeu_si128((__m128i *)sad_array, sum);
 }
 
-void vpx_sad32x32x4d_avx2(const uint8_t *src_ptr, int src_stride,
-                          const uint8_t *const ref_array[4], int ref_stride,
-                          uint32_t sad_array[4]) {
+static INLINE void sad32xhx4d_avx2(const uint8_t *src_ptr, int src_stride,
+                                   const uint8_t *const ref_array[4],
+                                   int ref_stride, int h,
+                                   uint32_t sad_array[4]) {
   int i;
   const uint8_t *refs[4];
   __m256i sums[4];
@@ -37,7 +42,7 @@ void vpx_sad32x32x4d_avx2(const uint8_t *src_ptr, int src_stride,
   sums[2] = _mm256_setzero_si256();
   sums[3] = _mm256_setzero_si256();
 
-  for (i = 0; i < 32; i++) {
+  for (i = 0; i < h; i++) {
     __m256i r[4];
 
     // load src and all ref[]
@@ -69,66 +74,10 @@ void vpx_sad32x32x4d_avx2(const uint8_t *src_ptr, int src_stride,
   calc_final_4(sums, sad_array);
 }
 
-void vpx_sad32x32x8_avx2(const uint8_t *src_ptr, int src_stride,
-                         const uint8_t *ref_ptr, int ref_stride,
-                         uint32_t *sad_array) {
-  int i;
-  __m256i sums[8];
-
-  sums[0] = _mm256_setzero_si256();
-  sums[1] = _mm256_setzero_si256();
-  sums[2] = _mm256_setzero_si256();
-  sums[3] = _mm256_setzero_si256();
-  sums[4] = _mm256_setzero_si256();
-  sums[5] = _mm256_setzero_si256();
-  sums[6] = _mm256_setzero_si256();
-  sums[7] = _mm256_setzero_si256();
-
-  for (i = 0; i < 32; i++) {
-    __m256i r[8];
-
-    // load src and all ref[]
-    const __m256i s = _mm256_load_si256((const __m256i *)src_ptr);
-    r[0] = _mm256_loadu_si256((const __m256i *)&ref_ptr[0]);
-    r[1] = _mm256_loadu_si256((const __m256i *)&ref_ptr[1]);
-    r[2] = _mm256_loadu_si256((const __m256i *)&ref_ptr[2]);
-    r[3] = _mm256_loadu_si256((const __m256i *)&ref_ptr[3]);
-    r[4] = _mm256_loadu_si256((const __m256i *)&ref_ptr[4]);
-    r[5] = _mm256_loadu_si256((const __m256i *)&ref_ptr[5]);
-    r[6] = _mm256_loadu_si256((const __m256i *)&ref_ptr[6]);
-    r[7] = _mm256_loadu_si256((const __m256i *)&ref_ptr[7]);
-
-    // sum of the absolute differences between every ref[] to src
-    r[0] = _mm256_sad_epu8(r[0], s);
-    r[1] = _mm256_sad_epu8(r[1], s);
-    r[2] = _mm256_sad_epu8(r[2], s);
-    r[3] = _mm256_sad_epu8(r[3], s);
-    r[4] = _mm256_sad_epu8(r[4], s);
-    r[5] = _mm256_sad_epu8(r[5], s);
-    r[6] = _mm256_sad_epu8(r[6], s);
-    r[7] = _mm256_sad_epu8(r[7], s);
-
-    // sum every ref[]
-    sums[0] = _mm256_add_epi32(sums[0], r[0]);
-    sums[1] = _mm256_add_epi32(sums[1], r[1]);
-    sums[2] = _mm256_add_epi32(sums[2], r[2]);
-    sums[3] = _mm256_add_epi32(sums[3], r[3]);
-    sums[4] = _mm256_add_epi32(sums[4], r[4]);
-    sums[5] = _mm256_add_epi32(sums[5], r[5]);
-    sums[6] = _mm256_add_epi32(sums[6], r[6]);
-    sums[7] = _mm256_add_epi32(sums[7], r[7]);
-
-    src_ptr += src_stride;
-    ref_ptr += ref_stride;
-  }
-
-  calc_final_4(sums, sad_array);
-  calc_final_4(sums + 4, sad_array + 4);
-}
-
-void vpx_sad64x64x4d_avx2(const uint8_t *src_ptr, int src_stride,
-                          const uint8_t *const ref_array[4], int ref_stride,
-                          uint32_t sad_array[4]) {
+static INLINE void sad64xhx4d_avx2(const uint8_t *src_ptr, int src_stride,
+                                   const uint8_t *const ref_array[4],
+                                   int ref_stride, int h,
+                                   uint32_t sad_array[4]) {
   __m256i sums[4];
   int i;
   const uint8_t *refs[4];
@@ -142,7 +91,7 @@ void vpx_sad64x64x4d_avx2(const uint8_t *src_ptr, int src_stride,
   sums[2] = _mm256_setzero_si256();
   sums[3] = _mm256_setzero_si256();
 
-  for (i = 0; i < 64; i++) {
+  for (i = 0; i < h; i++) {
     __m256i r_lo[4], r_hi[4];
     // load 64 bytes from src and all ref[]
     const __m256i s_lo = _mm256_load_si256((const __m256i *)src_ptr);
@@ -185,3 +134,51 @@ void vpx_sad64x64x4d_avx2(const uint8_t *src_ptr, int src_stride,
 
   calc_final_4(sums, sad_array);
 }
+
+#define SAD64_H(h)                                                         \
+  void vpx_sad64x##h##x4d_avx2(const uint8_t *src, int src_stride,         \
+                               const uint8_t *const ref_array[4],          \
+                               int ref_stride, uint32_t sad_array[4]) {    \
+    sad64xhx4d_avx2(src, src_stride, ref_array, ref_stride, h, sad_array); \
+  }
+
+#define SAD32_H(h)                                                         \
+  void vpx_sad32x##h##x4d_avx2(const uint8_t *src, int src_stride,         \
+                               const uint8_t *const ref_array[4],          \
+                               int ref_stride, uint32_t sad_array[4]) {    \
+    sad32xhx4d_avx2(src, src_stride, ref_array, ref_stride, h, sad_array); \
+  }
+
+SAD64_H(64)
+SAD32_H(32)
+
+#define SADS64_H(h)                                                           \
+  void vpx_sad_skip_64x##h##x4d_avx2(const uint8_t *src, int src_stride,      \
+                                     const uint8_t *const ref_array[4],       \
+                                     int ref_stride, uint32_t sad_array[4]) { \
+    sad64xhx4d_avx2(src, 2 * src_stride, ref_array, 2 * ref_stride,           \
+                    ((h) >> 1), sad_array);                                   \
+    sad_array[0] <<= 1;                                                       \
+    sad_array[1] <<= 1;                                                       \
+    sad_array[2] <<= 1;                                                       \
+    sad_array[3] <<= 1;                                                       \
+  }
+
+#define SADS32_H(h)                                                           \
+  void vpx_sad_skip_32x##h##x4d_avx2(const uint8_t *src, int src_stride,      \
+                                     const uint8_t *const ref_array[4],       \
+                                     int ref_stride, uint32_t sad_array[4]) { \
+    sad32xhx4d_avx2(src, 2 * src_stride, ref_array, 2 * ref_stride,           \
+                    ((h) >> 1), sad_array);                                   \
+    sad_array[0] <<= 1;                                                       \
+    sad_array[1] <<= 1;                                                       \
+    sad_array[2] <<= 1;                                                       \
+    sad_array[3] <<= 1;                                                       \
+  }
+
+SADS64_H(64)
+SADS64_H(32)
+
+SADS32_H(64)
+SADS32_H(32)
+SADS32_H(16)

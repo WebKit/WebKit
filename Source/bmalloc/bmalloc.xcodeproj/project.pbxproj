@@ -679,6 +679,9 @@
 		E3FBB5A4225ECAD200DB6FBD /* IsoSharedHeapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FBB5A3225ECAD200DB6FBD /* IsoSharedHeapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		EB17D11123BFCD42002093A7 /* HeapConstants.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB17D11023BFC8C4002093A7 /* HeapConstants.cpp */; };
 		EB17D11223BFCD7A002093A7 /* HeapConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = EB17D10E23BE691D002093A7 /* HeapConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE0383202ABC0E9F00A576A2 /* TZoneHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = FE03831E2ABC0E9F00A576A2 /* TZoneHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		FE0383212ABC0E9F00A576A2 /* TZoneHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE03831F2ABC0E9F00A576A2 /* TZoneHeap.cpp */; };
+		FE0383232ABC988C00A576A2 /* TZoneHeapInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE0383222ABC988C00A576A2 /* TZoneHeapInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE48BD3B2321E8D700F136D0 /* FailureAction.h in Headers */ = {isa = PBXBuildFile; fileRef = FE48BD3A2321E8CC00F136D0 /* FailureAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC3A39324846A8100395B54 /* GigacageConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC3A39224846A6D00395B54 /* GigacageConfig.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FEC3A395248471FE00395B54 /* GigacageKind.h in Headers */ = {isa = PBXBuildFile; fileRef = FEC3A394248471FE00395B54 /* GigacageKind.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1381,6 +1384,9 @@
 		E3FBB5A3225ECAD200DB6FBD /* IsoSharedHeapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IsoSharedHeapInlines.h; path = bmalloc/IsoSharedHeapInlines.h; sourceTree = "<group>"; };
 		EB17D10E23BE691D002093A7 /* HeapConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeapConstants.h; path = bmalloc/HeapConstants.h; sourceTree = "<group>"; };
 		EB17D11023BFC8C4002093A7 /* HeapConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HeapConstants.cpp; path = bmalloc/HeapConstants.cpp; sourceTree = "<group>"; };
+		FE03831E2ABC0E9F00A576A2 /* TZoneHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneHeap.h; path = bmalloc/TZoneHeap.h; sourceTree = "<group>"; };
+		FE03831F2ABC0E9F00A576A2 /* TZoneHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TZoneHeap.cpp; path = bmalloc/TZoneHeap.cpp; sourceTree = "<group>"; };
+		FE0383222ABC988C00A576A2 /* TZoneHeapInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TZoneHeapInlines.h; path = bmalloc/TZoneHeapInlines.h; sourceTree = "<group>"; };
 		FE48BD3A2321E8CC00F136D0 /* FailureAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FailureAction.h; path = bmalloc/FailureAction.h; sourceTree = "<group>"; };
 		FEC3A39224846A6D00395B54 /* GigacageConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GigacageConfig.h; path = bmalloc/GigacageConfig.h; sourceTree = "<group>"; };
 		FEC3A394248471FE00395B54 /* GigacageKind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GigacageKind.h; path = bmalloc/GigacageKind.h; sourceTree = "<group>"; };
@@ -1477,6 +1483,9 @@
 				0F7EB81F1F9541B000F1ABCB /* IsoTLSInlines.h */,
 				0F7EB8181F9541AF00F1ABCB /* IsoTLSLayout.cpp */,
 				0F7EB8191F9541AF00F1ABCB /* IsoTLSLayout.h */,
+				FE03831F2ABC0E9F00A576A2 /* TZoneHeap.cpp */,
+				FE03831E2ABC0E9F00A576A2 /* TZoneHeap.h */,
+				FE0383222ABC988C00A576A2 /* TZoneHeapInlines.h */,
 			);
 			name = iso;
 			sourceTree = "<group>";
@@ -2287,6 +2296,8 @@
 				14DD78BD18F48D6B00950702 /* SmallPage.h in Headers */,
 				E31E74802238CA5C005D084A /* StaticPerProcess.h in Headers */,
 				7C571F0122388B840077A3C7 /* StdLibExtras.h in Headers */,
+				FE0383202ABC0E9F00A576A2 /* TZoneHeap.h in Headers */,
+				FE0383232ABC988C00A576A2 /* TZoneHeapInlines.h in Headers */,
 				14DD78CE18F48D7500950799 /* valgrind.h in Headers */,
 				14DD78CF18F48D7500950702 /* Vector.h in Headers */,
 				14DD78D018F48D7500950702 /* VMAllocate.h in Headers */,
@@ -2843,6 +2854,7 @@
 				0F26A7A5205483130090A141 /* PerProcess.cpp in Sources */,
 				AD14AD2A202529C700890E3B /* ProcessCheck.mm in Sources */,
 				0F5BF1521F22E1570029D91D /* Scavenger.cpp in Sources */,
+				FE0383212ABC0E9F00A576A2 /* TZoneHeap.cpp in Sources */,
 				1440AFCD1A9527AF00837FAA /* Zone.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

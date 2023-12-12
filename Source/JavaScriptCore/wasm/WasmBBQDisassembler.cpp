@@ -32,9 +32,12 @@
 #include "LinkBuffer.h"
 #include <wtf/HexNumber.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BBQDisassembler);
 
 BBQDisassembler::BBQDisassembler() = default;
 

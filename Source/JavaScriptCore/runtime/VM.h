@@ -71,6 +71,7 @@
 #include <wtf/SetForScope.h>
 #include <wtf/StackPointer.h>
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadSafeWeakHashSet.h>
 #include <wtf/UniqueArray.h>
@@ -174,7 +175,7 @@ struct EntryFrame;
 
 class MicrotaskQueue;
 class QueuedTask {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(QueuedTask);
     friend class MicrotaskQueue;
 public:
     static constexpr unsigned maxArguments = 4;
@@ -197,7 +198,7 @@ private:
 };
 
 class MicrotaskQueue {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MicrotaskQueue);
     WTF_MAKE_NONCOPYABLE(MicrotaskQueue);
 public:
     MicrotaskQueue() = default;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2010, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
 #include "InspectorBackendDispatchers.h"
 #include "InspectorFrontendDispatchers.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace Inspector {
@@ -42,7 +43,7 @@ class InspectorEnvironment;
 
 class JS_EXPORT_PRIVATE InspectorAgent final : public InspectorAgentBase, public InspectorBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorAgent);
 public:
     InspectorAgent(AgentContext&);
     ~InspectorAgent() final;

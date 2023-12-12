@@ -79,6 +79,7 @@ $(1): $($(1:.$(VCPROJ_SFX)=).SRCS) vpx.$(VCPROJ_SFX)
             --ver=$$(CONFIG_VS_VERSION)\
             --proj-guid=$$($$(@:.$(VCPROJ_SFX)=).GUID)\
             --src-path-bare="$(SRC_PATH_BARE)" \
+            --as=$$(AS) \
             $$(if $$(CONFIG_STATIC_MSVCRT),--static-crt) \
             --out=$$@ $$(INTERNAL_CFLAGS) $$(CFLAGS) \
             $$(INTERNAL_LDFLAGS) $$(LDFLAGS) $$^

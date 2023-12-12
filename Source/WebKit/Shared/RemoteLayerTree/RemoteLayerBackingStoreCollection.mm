@@ -99,6 +99,8 @@ void RemoteLayerBackingStoreCollection::prepareBackingStoresForDisplay(RemoteLay
             for (unsigned i = 0; i < swapResult.size(); ++i) {
                 auto& backingStoreSwapResult = swapResult[i];
                 auto& backingStore = backingStoreList[i];
+                if (!backingStore)
+                    continue;
                 if (backingStoreSwapResult.displayRequirement == SwapBuffersDisplayRequirement::NeedsFullDisplay)
                     backingStore->setNeedsDisplay();
                 backingStore->setBufferCacheIdentifiers(WTFMove(backingStoreSwapResult.cacheIdentifiers));

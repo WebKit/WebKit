@@ -42,8 +42,11 @@
 #include <stdio.h>
 #include <wtf/PtrTag.h>
 #include <wtf/Range.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace ARM64Disassembler {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(A64DOpcodeOpcodeGroup, A64DOpcode::OpcodeGroup);
 
 A64DOpcode::OpcodeGroup* A64DOpcode::opcodeTable[32];
 

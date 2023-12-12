@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2019 the V8 project authors. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,8 +40,8 @@
 #include <wtf/BitVector.h>
 #include <wtf/HexNumber.h>
 #include <wtf/ListDump.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Threading.h>
-
 
 #if ENABLE(YARR_JIT)
 
@@ -49,6 +49,11 @@ namespace JSC { namespace Yarr {
 namespace YarrJITInternal {
 static constexpr bool verbose = false;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BoyerMooreBitmap);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BoyerMooreFastCandidates);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(YarrBoyerMooreData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(YarrCodeBlock);
 
 #if CPU(ARM64E)
 JSC_ANNOTATE_JIT_OPERATION_RETURN(vmEntryToYarrJITAfter);
@@ -119,7 +124,7 @@ void BoyerMooreFastCandidates::dump(PrintStream& out) const
 
 class BoyerMooreInfo {
     WTF_MAKE_NONCOPYABLE(BoyerMooreInfo);
-    WTF_MAKE_FAST_ALLOCATED(BoyerMooreInfo);
+    WTF_MAKE_TZONE_ALLOCATED(BoyerMooreInfo);
 public:
     static constexpr unsigned maxLength = 32;
 
@@ -173,6 +178,8 @@ private:
     Vector<BoyerMooreBitmap> m_characters;
     CharSize m_charSize;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BoyerMooreInfo);
 
 std::tuple<int32_t, unsigned, unsigned> BoyerMooreInfo::findBestCharacterSequence(const SubjectSampler& sampler, unsigned numberOfCandidatesLimit) const
 {

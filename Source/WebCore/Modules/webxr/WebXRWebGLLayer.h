@@ -83,7 +83,7 @@ public:
     HTMLCanvasElement* canvas() const;
 
     // WebXRLayer
-    void startFrame(const PlatformXR::Device::FrameData&) final;
+    void startFrame(const PlatformXR::FrameData&) final;
     PlatformXR::Device::Layer endFrame() final;
 
 private:

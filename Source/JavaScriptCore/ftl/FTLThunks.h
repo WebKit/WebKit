@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "FTLSlowPathCallKey.h"
 #include "MacroAssemblerCodeRef.h"
 #include <wtf/HashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -75,7 +76,7 @@ typename MapType::KeyType keyForThunk(MapType& map, CodePtr<JITThunkPtrTag> ptr)
 }
 
 class Thunks {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(Thunks);
     WTF_MAKE_NONCOPYABLE(Thunks);
 public:
     Thunks() = default;

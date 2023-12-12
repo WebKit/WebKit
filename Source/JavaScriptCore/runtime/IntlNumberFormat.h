@@ -31,6 +31,7 @@
 #include "MathCommon.h"
 #include "TemporalObject.h"
 #include <unicode/unum.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
 #if !defined(HAVE_ICU_U_NUMBER_FORMATTER)
@@ -82,7 +83,7 @@ struct UNumberRangeFormatterDeleter {
 #endif
 
 class IntlMathematicalValue {
-    WTF_MAKE_FAST_ALLOCATED(IntlMathematicalValue);
+    WTF_MAKE_TZONE_ALLOCATED(IntlMathematicalValue);
 public:
     enum class NumberType { Integer, Infinity, NaN, };
     using Value = std::variant<double, CString>;

@@ -26,9 +26,12 @@
 #include "config.h"
 #include "MegamorphicCache.h"
 
+#include <wtf/TZoneMallocInlines.h>
+
 namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MegamorphicCache);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MegamorphicCache);
 
 void MegamorphicCache::age(CollectionScope collectionScope)
 {

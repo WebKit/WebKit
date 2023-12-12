@@ -87,7 +87,7 @@ WebXRSession* WebXRHand::session()
     return m_inputSource->session();
 }
 
-void WebXRHand::updateFromInputSource(const PlatformXR::Device::FrameData::InputSource& inputSource)
+void WebXRHand::updateFromInputSource(const PlatformXR::FrameData::InputSource& inputSource)
 {
     if (!inputSource.handJoints) {
         m_hasMissingPoses = true;

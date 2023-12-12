@@ -37,6 +37,8 @@
 #include "StructureChain.h"
 #include "StructureInlines.h"
 #include "StructureRareDataInlines.h"
+#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 
@@ -92,6 +94,7 @@ DEFINE_VISIT_CHILDREN(StructureRareData);
 // ----------- Cached special properties helper watchpoint classes -----------
 
 class CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint final : public AdaptiveInferredPropertyValueWatchpointBase {
+    WTF_MAKE_TZONE_ALLOCATED(CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint);
 public:
     typedef AdaptiveInferredPropertyValueWatchpointBase Base;
     CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition&, StructureRareData*);
@@ -250,6 +253,8 @@ void StructureRareData::finalizeUnconditionally(VM& vm, CollectionScope)
 }
 
 // ------------- Methods for Object.prototype.toString() helper watchpoint classes --------------
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint);
 
 CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint::CachedSpecialPropertyAdaptiveInferredPropertyValueWatchpoint(const ObjectPropertyCondition& key, StructureRareData* structureRareData)
     : Base(key)

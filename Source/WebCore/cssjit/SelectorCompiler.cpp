@@ -2282,7 +2282,7 @@ inline void SelectorCodeGenerator::generateEpilogue(StackAllocator& stackAllocat
 
 inline void SelectorCodeGenerator::generateReturn()
 {
-#if CPU(ARM64E)
+#if CPU(ARM64E) && !ENABLE(C_LOOP)
     if (JSC::Options::useJITCage()) {
         m_assembler.farJump(Assembler::TrustedImmPtr(retagCodePtr<void*, CFunctionPtrTag, JSC::OperationPtrTag>(&JSC::vmEntryToCSSJITAfter)), JSC::OperationPtrTag);
         return;

@@ -17,364 +17,212 @@
 #include "vpx_dsp/arm/mem_neon.h"
 #include "vpx_dsp/arm/sum_neon.h"
 
-static INLINE uint8x8_t load_unaligned_2_buffers(const void *const buf0,
-                                                 const void *const buf1) {
-  uint32_t a;
-  uint32x2_t aa = vdup_n_u32(0);
-  memcpy(&a, buf0, 4);
-  aa = vset_lane_u32(a, aa, 0);
-  memcpy(&a, buf1, 4);
-  aa = vset_lane_u32(a, aa, 1);
-  return vreinterpret_u8_u32(aa);
+static INLINE void sad16_neon(uint8x16_t src, uint8x16_t ref,
+                              uint16x8_t *const sad_sum) {
+  uint8x16_t abs_diff = vabdq_u8(src, ref);
+  *sad_sum = vpadalq_u8(*sad_sum, abs_diff);
 }
 
-static INLINE void sad4x_4d(const uint8_t *const src_ptr, const int src_stride,
-                            const uint8_t *const ref_array[4],
-                            const int ref_stride, const int height,
-                            uint32_t *const res) {
-  int i;
-  uint16x8_t abs[2] = { vdupq_n_u16(0), vdupq_n_u16(0) };
-  uint16x4_t a[2];
-  uint32x4_t r;
+static INLINE void sad64xhx4d_neon(const uint8_t *src, int src_stride,
+                                   const uint8_t *const ref[4], int ref_stride,
+                                   uint32_t res[4], int h) {
+  uint16x8_t sum_lo[4] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
+                           vdupq_n_u16(0) };
+  uint16x8_t sum_hi[4] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
+                           vdupq_n_u16(0) };
 
-  assert(!((intptr_t)src_ptr % sizeof(uint32_t)));
-  assert(!(src_stride % sizeof(uint32_t)));
+  int i = 0;
+  do {
+    uint8x16_t s0, s1, s2, s3;
 
-  for (i = 0; i < height; ++i) {
-    const uint8x8_t s = vreinterpret_u8_u32(
-        vld1_dup_u32((const uint32_t *)(src_ptr + i * src_stride)));
-    const uint8x8_t ref01 = load_unaligned_2_buffers(
-        ref_array[0] + i * ref_stride, ref_array[1] + i * ref_stride);
-    const uint8x8_t ref23 = load_unaligned_2_buffers(
-        ref_array[2] + i * ref_stride, ref_array[3] + i * ref_stride);
-    abs[0] = vabal_u8(abs[0], s, ref01);
-    abs[1] = vabal_u8(abs[1], s, ref23);
-  }
+    s0 = vld1q_u8(src + i * src_stride);
+    sad16_neon(s0, vld1q_u8(ref[0] + i * ref_stride), &sum_lo[0]);
+    sad16_neon(s0, vld1q_u8(ref[1] + i * ref_stride), &sum_lo[1]);
+    sad16_neon(s0, vld1q_u8(ref[2] + i * ref_stride), &sum_lo[2]);
+    sad16_neon(s0, vld1q_u8(ref[3] + i * ref_stride), &sum_lo[3]);
 
-  a[0] = vpadd_u16(vget_low_u16(abs[0]), vget_high_u16(abs[0]));
-  a[1] = vpadd_u16(vget_low_u16(abs[1]), vget_high_u16(abs[1]));
-  r = vpaddlq_u16(vcombine_u16(a[0], a[1]));
-  vst1q_u32(res, r);
+    s1 = vld1q_u8(src + i * src_stride + 16);
+    sad16_neon(s1, vld1q_u8(ref[0] + i * ref_stride + 16), &sum_hi[0]);
+    sad16_neon(s1, vld1q_u8(ref[1] + i * ref_stride + 16), &sum_hi[1]);
+    sad16_neon(s1, vld1q_u8(ref[2] + i * ref_stride + 16), &sum_hi[2]);
+    sad16_neon(s1, vld1q_u8(ref[3] + i * ref_stride + 16), &sum_hi[3]);
+
+    s2 = vld1q_u8(src + i * src_stride + 32);
+    sad16_neon(s2, vld1q_u8(ref[0] + i * ref_stride + 32), &sum_lo[0]);
+    sad16_neon(s2, vld1q_u8(ref[1] + i * ref_stride + 32), &sum_lo[1]);
+    sad16_neon(s2, vld1q_u8(ref[2] + i * ref_stride + 32), &sum_lo[2]);
+    sad16_neon(s2, vld1q_u8(ref[3] + i * ref_stride + 32), &sum_lo[3]);
+
+    s3 = vld1q_u8(src + i * src_stride + 48);
+    sad16_neon(s3, vld1q_u8(ref[0] + i * ref_stride + 48), &sum_hi[0]);
+    sad16_neon(s3, vld1q_u8(ref[1] + i * ref_stride + 48), &sum_hi[1]);
+    sad16_neon(s3, vld1q_u8(ref[2] + i * ref_stride + 48), &sum_hi[2]);
+    sad16_neon(s3, vld1q_u8(ref[3] + i * ref_stride + 48), &sum_hi[3]);
+
+    i++;
+  } while (i < h);
+
+  vst1q_u32(res, horizontal_long_add_4d_uint16x8(sum_lo, sum_hi));
 }
 
-void vpx_sad4x4x4d_neon(const uint8_t *src_ptr, int src_stride,
-                        const uint8_t *const ref_array[4], int ref_stride,
-                        uint32_t *res) {
-  sad4x_4d(src_ptr, src_stride, ref_array, ref_stride, 4, res);
+static INLINE void sad32xhx4d_neon(const uint8_t *src, int src_stride,
+                                   const uint8_t *const ref[4], int ref_stride,
+                                   uint32_t res[4], int h) {
+  uint16x8_t sum_lo[4] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
+                           vdupq_n_u16(0) };
+  uint16x8_t sum_hi[4] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
+                           vdupq_n_u16(0) };
+
+  int i = 0;
+  do {
+    uint8x16_t s0, s1;
+
+    s0 = vld1q_u8(src + i * src_stride);
+    sad16_neon(s0, vld1q_u8(ref[0] + i * ref_stride), &sum_lo[0]);
+    sad16_neon(s0, vld1q_u8(ref[1] + i * ref_stride), &sum_lo[1]);
+    sad16_neon(s0, vld1q_u8(ref[2] + i * ref_stride), &sum_lo[2]);
+    sad16_neon(s0, vld1q_u8(ref[3] + i * ref_stride), &sum_lo[3]);
+
+    s1 = vld1q_u8(src + i * src_stride + 16);
+    sad16_neon(s1, vld1q_u8(ref[0] + i * ref_stride + 16), &sum_hi[0]);
+    sad16_neon(s1, vld1q_u8(ref[1] + i * ref_stride + 16), &sum_hi[1]);
+    sad16_neon(s1, vld1q_u8(ref[2] + i * ref_stride + 16), &sum_hi[2]);
+    sad16_neon(s1, vld1q_u8(ref[3] + i * ref_stride + 16), &sum_hi[3]);
+
+    i++;
+  } while (i < h);
+
+  vst1q_u32(res, horizontal_long_add_4d_uint16x8(sum_lo, sum_hi));
 }
 
-void vpx_sad4x8x4d_neon(const uint8_t *src_ptr, int src_stride,
-                        const uint8_t *const ref_array[4], int ref_stride,
-                        uint32_t *res) {
-  sad4x_4d(src_ptr, src_stride, ref_array, ref_stride, 8, res);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// Can handle 512 pixels' sad sum (such as 16x32 or 32x16)
-static INLINE void sad_512_pel_final_neon(const uint16x8_t *sum /*[4]*/,
-                                          uint32_t *const res) {
-  const uint16x4_t a0 = vadd_u16(vget_low_u16(sum[0]), vget_high_u16(sum[0]));
-  const uint16x4_t a1 = vadd_u16(vget_low_u16(sum[1]), vget_high_u16(sum[1]));
-  const uint16x4_t a2 = vadd_u16(vget_low_u16(sum[2]), vget_high_u16(sum[2]));
-  const uint16x4_t a3 = vadd_u16(vget_low_u16(sum[3]), vget_high_u16(sum[3]));
-  const uint16x4_t b0 = vpadd_u16(a0, a1);
-  const uint16x4_t b1 = vpadd_u16(a2, a3);
-  const uint32x4_t r = vpaddlq_u16(vcombine_u16(b0, b1));
-  vst1q_u32(res, r);
-}
-
-// Can handle 1024 pixels' sad sum (such as 32x32)
-static INLINE void sad_1024_pel_final_neon(const uint16x8_t *sum /*[4]*/,
-                                           uint32_t *const res) {
-  const uint16x4_t a0 = vpadd_u16(vget_low_u16(sum[0]), vget_high_u16(sum[0]));
-  const uint16x4_t a1 = vpadd_u16(vget_low_u16(sum[1]), vget_high_u16(sum[1]));
-  const uint16x4_t a2 = vpadd_u16(vget_low_u16(sum[2]), vget_high_u16(sum[2]));
-  const uint16x4_t a3 = vpadd_u16(vget_low_u16(sum[3]), vget_high_u16(sum[3]));
-  const uint32x4_t b0 = vpaddlq_u16(vcombine_u16(a0, a1));
-  const uint32x4_t b1 = vpaddlq_u16(vcombine_u16(a2, a3));
-  const uint32x2_t c0 = vpadd_u32(vget_low_u32(b0), vget_high_u32(b0));
-  const uint32x2_t c1 = vpadd_u32(vget_low_u32(b1), vget_high_u32(b1));
-  vst1q_u32(res, vcombine_u32(c0, c1));
-}
-
-// Can handle 2048 pixels' sad sum (such as 32x64 or 64x32)
-static INLINE void sad_2048_pel_final_neon(const uint16x8_t *sum /*[4]*/,
-                                           uint32_t *const res) {
-  const uint32x4_t a0 = vpaddlq_u16(sum[0]);
-  const uint32x4_t a1 = vpaddlq_u16(sum[1]);
-  const uint32x4_t a2 = vpaddlq_u16(sum[2]);
-  const uint32x4_t a3 = vpaddlq_u16(sum[3]);
-  const uint32x2_t b0 = vadd_u32(vget_low_u32(a0), vget_high_u32(a0));
-  const uint32x2_t b1 = vadd_u32(vget_low_u32(a1), vget_high_u32(a1));
-  const uint32x2_t b2 = vadd_u32(vget_low_u32(a2), vget_high_u32(a2));
-  const uint32x2_t b3 = vadd_u32(vget_low_u32(a3), vget_high_u32(a3));
-  const uint32x2_t c0 = vpadd_u32(b0, b1);
-  const uint32x2_t c1 = vpadd_u32(b2, b3);
-  vst1q_u32(res, vcombine_u32(c0, c1));
-}
-
-// Can handle 4096 pixels' sad sum (such as 64x64)
-static INLINE void sad_4096_pel_final_neon(const uint16x8_t *sum /*[8]*/,
-                                           uint32_t *const res) {
-  const uint32x4_t a0 = vpaddlq_u16(sum[0]);
-  const uint32x4_t a1 = vpaddlq_u16(sum[1]);
-  const uint32x4_t a2 = vpaddlq_u16(sum[2]);
-  const uint32x4_t a3 = vpaddlq_u16(sum[3]);
-  const uint32x4_t a4 = vpaddlq_u16(sum[4]);
-  const uint32x4_t a5 = vpaddlq_u16(sum[5]);
-  const uint32x4_t a6 = vpaddlq_u16(sum[6]);
-  const uint32x4_t a7 = vpaddlq_u16(sum[7]);
-  const uint32x4_t b0 = vaddq_u32(a0, a1);
-  const uint32x4_t b1 = vaddq_u32(a2, a3);
-  const uint32x4_t b2 = vaddq_u32(a4, a5);
-  const uint32x4_t b3 = vaddq_u32(a6, a7);
-  const uint32x2_t c0 = vadd_u32(vget_low_u32(b0), vget_high_u32(b0));
-  const uint32x2_t c1 = vadd_u32(vget_low_u32(b1), vget_high_u32(b1));
-  const uint32x2_t c2 = vadd_u32(vget_low_u32(b2), vget_high_u32(b2));
-  const uint32x2_t c3 = vadd_u32(vget_low_u32(b3), vget_high_u32(b3));
-  const uint32x2_t d0 = vpadd_u32(c0, c1);
-  const uint32x2_t d1 = vpadd_u32(c2, c3);
-  vst1q_u32(res, vcombine_u32(d0, d1));
-}
-
-static INLINE void sad8x_4d(const uint8_t *src_ptr, int src_stride,
-                            const uint8_t *const ref_array[4], int ref_stride,
-                            uint32_t *res, const int height) {
-  int i, j;
-  const uint8_t *ref_loop[4] = { ref_array[0], ref_array[1], ref_array[2],
-                                 ref_array[3] };
+static INLINE void sad16xhx4d_neon(const uint8_t *src, int src_stride,
+                                   const uint8_t *const ref[4], int ref_stride,
+                                   uint32_t res[4], int h) {
   uint16x8_t sum[4] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
                         vdupq_n_u16(0) };
 
-  for (i = 0; i < height; ++i) {
-    const uint8x8_t s = vld1_u8(src_ptr);
-    src_ptr += src_stride;
-    for (j = 0; j < 4; ++j) {
-      const uint8x8_t b_u8 = vld1_u8(ref_loop[j]);
-      ref_loop[j] += ref_stride;
-      sum[j] = vabal_u8(sum[j], s, b_u8);
-    }
-  }
+  int i = 0;
+  do {
+    const uint8x16_t s = vld1q_u8(src + i * src_stride);
+    sad16_neon(s, vld1q_u8(ref[0] + i * ref_stride), &sum[0]);
+    sad16_neon(s, vld1q_u8(ref[1] + i * ref_stride), &sum[1]);
+    sad16_neon(s, vld1q_u8(ref[2] + i * ref_stride), &sum[2]);
+    sad16_neon(s, vld1q_u8(ref[3] + i * ref_stride), &sum[3]);
 
-  sad_512_pel_final_neon(sum, res);
+    i++;
+  } while (i < h);
+
+  vst1q_u32(res, horizontal_add_4d_uint16x8(sum));
 }
 
-void vpx_sad8x4x4d_neon(const uint8_t *src_ptr, int src_stride,
-                        const uint8_t *const ref_array[4], int ref_stride,
-                        uint32_t *res) {
-  sad8x_4d(src_ptr, src_stride, ref_array, ref_stride, res, 4);
+static INLINE void sad8_neon(uint8x8_t src, uint8x8_t ref,
+                             uint16x8_t *const sad_sum) {
+  uint8x8_t abs_diff = vabd_u8(src, ref);
+  *sad_sum = vaddw_u8(*sad_sum, abs_diff);
 }
 
-void vpx_sad8x8x4d_neon(const uint8_t *src_ptr, int src_stride,
-                        const uint8_t *const ref_array[4], int ref_stride,
-                        uint32_t *res) {
-  sad8x_4d(src_ptr, src_stride, ref_array, ref_stride, res, 8);
-}
-
-void vpx_sad8x16x4d_neon(const uint8_t *src_ptr, int src_stride,
-                         const uint8_t *const ref_array[4], int ref_stride,
-                         uint32_t *res) {
-  sad8x_4d(src_ptr, src_stride, ref_array, ref_stride, res, 16);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-static INLINE void sad16_neon(const uint8_t *ref_ptr, const uint8x16_t src_ptr,
-                              uint16x8_t *const sum) {
-  const uint8x16_t r = vld1q_u8(ref_ptr);
-  *sum = vabal_u8(*sum, vget_low_u8(src_ptr), vget_low_u8(r));
-  *sum = vabal_u8(*sum, vget_high_u8(src_ptr), vget_high_u8(r));
-}
-
-static INLINE void sad16x_4d(const uint8_t *src_ptr, int src_stride,
-                             const uint8_t *const ref_array[4], int ref_stride,
-                             uint32_t *res, const int height) {
-  int i, j;
-  const uint8_t *ref_loop[4] = { ref_array[0], ref_array[1], ref_array[2],
-                                 ref_array[3] };
+static INLINE void sad8xhx4d_neon(const uint8_t *src, int src_stride,
+                                  const uint8_t *const ref[4], int ref_stride,
+                                  uint32_t res[4], int h) {
   uint16x8_t sum[4] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
                         vdupq_n_u16(0) };
 
-  for (i = 0; i < height; ++i) {
-    const uint8x16_t s = vld1q_u8(src_ptr);
-    src_ptr += src_stride;
-    for (j = 0; j < 4; ++j) {
-      sad16_neon(ref_loop[j], s, &sum[j]);
-      ref_loop[j] += ref_stride;
-    }
-  }
+  int i = 0;
+  do {
+    const uint8x8_t s = vld1_u8(src + i * src_stride);
+    sad8_neon(s, vld1_u8(ref[0] + i * ref_stride), &sum[0]);
+    sad8_neon(s, vld1_u8(ref[1] + i * ref_stride), &sum[1]);
+    sad8_neon(s, vld1_u8(ref[2] + i * ref_stride), &sum[2]);
+    sad8_neon(s, vld1_u8(ref[3] + i * ref_stride), &sum[3]);
 
-  sad_512_pel_final_neon(sum, res);
+    i++;
+  } while (i < h);
+
+  vst1q_u32(res, horizontal_add_4d_uint16x8(sum));
 }
 
-void vpx_sad16x8x4d_neon(const uint8_t *src_ptr, int src_stride,
-                         const uint8_t *const ref_array[4], int ref_stride,
-                         uint32_t *res) {
-  sad16x_4d(src_ptr, src_stride, ref_array, ref_stride, res, 8);
-}
-
-void vpx_sad16x16x4d_neon(const uint8_t *src_ptr, int src_stride,
-                          const uint8_t *const ref_array[4], int ref_stride,
-                          uint32_t *res) {
-  sad16x_4d(src_ptr, src_stride, ref_array, ref_stride, res, 16);
-}
-
-void vpx_sad16x32x4d_neon(const uint8_t *src_ptr, int src_stride,
-                          const uint8_t *const ref_array[4], int ref_stride,
-                          uint32_t *res) {
-  sad16x_4d(src_ptr, src_stride, ref_array, ref_stride, res, 32);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-static INLINE void sad32x_4d(const uint8_t *src_ptr, int src_stride,
-                             const uint8_t *const ref_array[4], int ref_stride,
-                             const int height, uint16x8_t *const sum) {
-  int i;
-  const uint8_t *ref_loop[4] = { ref_array[0], ref_array[1], ref_array[2],
-                                 ref_array[3] };
-
-  sum[0] = sum[1] = sum[2] = sum[3] = vdupq_n_u16(0);
-
-  for (i = 0; i < height; ++i) {
-    uint8x16_t s;
-
-    s = vld1q_u8(src_ptr + 0 * 16);
-    sad16_neon(ref_loop[0] + 0 * 16, s, &sum[0]);
-    sad16_neon(ref_loop[1] + 0 * 16, s, &sum[1]);
-    sad16_neon(ref_loop[2] + 0 * 16, s, &sum[2]);
-    sad16_neon(ref_loop[3] + 0 * 16, s, &sum[3]);
-
-    s = vld1q_u8(src_ptr + 1 * 16);
-    sad16_neon(ref_loop[0] + 1 * 16, s, &sum[0]);
-    sad16_neon(ref_loop[1] + 1 * 16, s, &sum[1]);
-    sad16_neon(ref_loop[2] + 1 * 16, s, &sum[2]);
-    sad16_neon(ref_loop[3] + 1 * 16, s, &sum[3]);
-
-    src_ptr += src_stride;
-    ref_loop[0] += ref_stride;
-    ref_loop[1] += ref_stride;
-    ref_loop[2] += ref_stride;
-    ref_loop[3] += ref_stride;
-  }
-}
-
-void vpx_sad32x16x4d_neon(const uint8_t *src_ptr, int src_stride,
-                          const uint8_t *const ref_array[4], int ref_stride,
-                          uint32_t *res) {
-  uint16x8_t sum[4];
-  sad32x_4d(src_ptr, src_stride, ref_array, ref_stride, 16, sum);
-  sad_512_pel_final_neon(sum, res);
-}
-
-void vpx_sad32x32x4d_neon(const uint8_t *src_ptr, int src_stride,
-                          const uint8_t *const ref_array[4], int ref_stride,
-                          uint32_t *res) {
-  uint16x8_t sum[4];
-  sad32x_4d(src_ptr, src_stride, ref_array, ref_stride, 32, sum);
-  sad_1024_pel_final_neon(sum, res);
-}
-
-void vpx_sad32x64x4d_neon(const uint8_t *src_ptr, int src_stride,
-                          const uint8_t *const ref_array[4], int ref_stride,
-                          uint32_t *res) {
-  uint16x8_t sum[4];
-  sad32x_4d(src_ptr, src_stride, ref_array, ref_stride, 64, sum);
-  sad_2048_pel_final_neon(sum, res);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-void vpx_sad64x32x4d_neon(const uint8_t *src_ptr, int src_stride,
-                          const uint8_t *const ref_array[4], int ref_stride,
-                          uint32_t *res) {
-  int i;
-  const uint8_t *ref_loop[4] = { ref_array[0], ref_array[1], ref_array[2],
-                                 ref_array[3] };
+static INLINE void sad4xhx4d_neon(const uint8_t *src, int src_stride,
+                                  const uint8_t *const ref[4], int ref_stride,
+                                  uint32_t res[4], int h) {
   uint16x8_t sum[4] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
                         vdupq_n_u16(0) };
 
-  for (i = 0; i < 32; ++i) {
-    uint8x16_t s;
+  int i = 0;
+  do {
+    uint8x8_t s = load_unaligned_u8(src + i * src_stride, src_stride);
+    uint8x8_t r0 = load_unaligned_u8(ref[0] + i * ref_stride, ref_stride);
+    uint8x8_t r1 = load_unaligned_u8(ref[1] + i * ref_stride, ref_stride);
+    uint8x8_t r2 = load_unaligned_u8(ref[2] + i * ref_stride, ref_stride);
+    uint8x8_t r3 = load_unaligned_u8(ref[3] + i * ref_stride, ref_stride);
 
-    s = vld1q_u8(src_ptr + 0 * 16);
-    sad16_neon(ref_loop[0] + 0 * 16, s, &sum[0]);
-    sad16_neon(ref_loop[1] + 0 * 16, s, &sum[1]);
-    sad16_neon(ref_loop[2] + 0 * 16, s, &sum[2]);
-    sad16_neon(ref_loop[3] + 0 * 16, s, &sum[3]);
+    sad8_neon(s, r0, &sum[0]);
+    sad8_neon(s, r1, &sum[1]);
+    sad8_neon(s, r2, &sum[2]);
+    sad8_neon(s, r3, &sum[3]);
 
-    s = vld1q_u8(src_ptr + 1 * 16);
-    sad16_neon(ref_loop[0] + 1 * 16, s, &sum[0]);
-    sad16_neon(ref_loop[1] + 1 * 16, s, &sum[1]);
-    sad16_neon(ref_loop[2] + 1 * 16, s, &sum[2]);
-    sad16_neon(ref_loop[3] + 1 * 16, s, &sum[3]);
+    i += 2;
+  } while (i < h);
 
-    s = vld1q_u8(src_ptr + 2 * 16);
-    sad16_neon(ref_loop[0] + 2 * 16, s, &sum[0]);
-    sad16_neon(ref_loop[1] + 2 * 16, s, &sum[1]);
-    sad16_neon(ref_loop[2] + 2 * 16, s, &sum[2]);
-    sad16_neon(ref_loop[3] + 2 * 16, s, &sum[3]);
-
-    s = vld1q_u8(src_ptr + 3 * 16);
-    sad16_neon(ref_loop[0] + 3 * 16, s, &sum[0]);
-    sad16_neon(ref_loop[1] + 3 * 16, s, &sum[1]);
-    sad16_neon(ref_loop[2] + 3 * 16, s, &sum[2]);
-    sad16_neon(ref_loop[3] + 3 * 16, s, &sum[3]);
-
-    src_ptr += src_stride;
-    ref_loop[0] += ref_stride;
-    ref_loop[1] += ref_stride;
-    ref_loop[2] += ref_stride;
-    ref_loop[3] += ref_stride;
-  }
-
-  sad_2048_pel_final_neon(sum, res);
+  vst1q_u32(res, horizontal_add_4d_uint16x8(sum));
 }
 
-void vpx_sad64x64x4d_neon(const uint8_t *src_ptr, int src_stride,
-                          const uint8_t *const ref_array[4], int ref_stride,
-                          uint32_t *res) {
-  int i;
-  const uint8_t *ref_loop[4] = { ref_array[0], ref_array[1], ref_array[2],
-                                 ref_array[3] };
-  uint16x8_t sum[8] = { vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
-                        vdupq_n_u16(0), vdupq_n_u16(0), vdupq_n_u16(0),
-                        vdupq_n_u16(0), vdupq_n_u16(0) };
-
-  for (i = 0; i < 64; ++i) {
-    uint8x16_t s;
-
-    s = vld1q_u8(src_ptr + 0 * 16);
-    sad16_neon(ref_loop[0] + 0 * 16, s, &sum[0]);
-    sad16_neon(ref_loop[1] + 0 * 16, s, &sum[2]);
-    sad16_neon(ref_loop[2] + 0 * 16, s, &sum[4]);
-    sad16_neon(ref_loop[3] + 0 * 16, s, &sum[6]);
-
-    s = vld1q_u8(src_ptr + 1 * 16);
-    sad16_neon(ref_loop[0] + 1 * 16, s, &sum[0]);
-    sad16_neon(ref_loop[1] + 1 * 16, s, &sum[2]);
-    sad16_neon(ref_loop[2] + 1 * 16, s, &sum[4]);
-    sad16_neon(ref_loop[3] + 1 * 16, s, &sum[6]);
-
-    s = vld1q_u8(src_ptr + 2 * 16);
-    sad16_neon(ref_loop[0] + 2 * 16, s, &sum[1]);
-    sad16_neon(ref_loop[1] + 2 * 16, s, &sum[3]);
-    sad16_neon(ref_loop[2] + 2 * 16, s, &sum[5]);
-    sad16_neon(ref_loop[3] + 2 * 16, s, &sum[7]);
-
-    s = vld1q_u8(src_ptr + 3 * 16);
-    sad16_neon(ref_loop[0] + 3 * 16, s, &sum[1]);
-    sad16_neon(ref_loop[1] + 3 * 16, s, &sum[3]);
-    sad16_neon(ref_loop[2] + 3 * 16, s, &sum[5]);
-    sad16_neon(ref_loop[3] + 3 * 16, s, &sum[7]);
-
-    src_ptr += src_stride;
-    ref_loop[0] += ref_stride;
-    ref_loop[1] += ref_stride;
-    ref_loop[2] += ref_stride;
-    ref_loop[3] += ref_stride;
+#define SAD_WXH_4D_NEON(w, h)                                                 \
+  void vpx_sad##w##x##h##x4d_neon(const uint8_t *src_ptr, int src_stride,     \
+                                  const uint8_t *const ref_array[4],          \
+                                  int ref_stride, uint32_t sad_array[4]) {    \
+    sad##w##xhx4d_neon(src_ptr, src_stride, ref_array, ref_stride, sad_array, \
+                       (h));                                                  \
   }
 
-  sad_4096_pel_final_neon(sum, res);
-}
+SAD_WXH_4D_NEON(4, 4)
+SAD_WXH_4D_NEON(4, 8)
+
+SAD_WXH_4D_NEON(8, 4)
+SAD_WXH_4D_NEON(8, 8)
+SAD_WXH_4D_NEON(8, 16)
+
+SAD_WXH_4D_NEON(16, 8)
+SAD_WXH_4D_NEON(16, 16)
+SAD_WXH_4D_NEON(16, 32)
+
+SAD_WXH_4D_NEON(32, 16)
+SAD_WXH_4D_NEON(32, 32)
+SAD_WXH_4D_NEON(32, 64)
+
+SAD_WXH_4D_NEON(64, 32)
+SAD_WXH_4D_NEON(64, 64)
+
+#undef SAD_WXH_4D_NEON
+
+#define SAD_SKIP_WXH_4D_NEON(w, h)                                         \
+  void vpx_sad_skip_##w##x##h##x4d_neon(                                   \
+      const uint8_t *src_ptr, int src_stride,                              \
+      const uint8_t *const ref_array[4], int ref_stride,                   \
+      uint32_t sad_array[4]) {                                             \
+    sad##w##xhx4d_neon(src_ptr, 2 * src_stride, ref_array, 2 * ref_stride, \
+                       sad_array, ((h) >> 1));                             \
+    sad_array[0] <<= 1;                                                    \
+    sad_array[1] <<= 1;                                                    \
+    sad_array[2] <<= 1;                                                    \
+    sad_array[3] <<= 1;                                                    \
+  }
+
+SAD_SKIP_WXH_4D_NEON(4, 4)
+SAD_SKIP_WXH_4D_NEON(4, 8)
+
+SAD_SKIP_WXH_4D_NEON(8, 4)
+SAD_SKIP_WXH_4D_NEON(8, 8)
+SAD_SKIP_WXH_4D_NEON(8, 16)
+
+SAD_SKIP_WXH_4D_NEON(16, 8)
+SAD_SKIP_WXH_4D_NEON(16, 16)
+SAD_SKIP_WXH_4D_NEON(16, 32)
+
+SAD_SKIP_WXH_4D_NEON(32, 16)
+SAD_SKIP_WXH_4D_NEON(32, 32)
+SAD_SKIP_WXH_4D_NEON(32, 64)
+
+SAD_SKIP_WXH_4D_NEON(64, 32)
+SAD_SKIP_WXH_4D_NEON(64, 64)
+
+#undef SAD_SKIP_WXH_4D_NEON

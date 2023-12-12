@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +36,7 @@
 #include "DFGDominators.h"
 #include "DFGGraph.h"
 #include "DFGPhase.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
 
@@ -52,7 +53,7 @@ static constexpr bool verbose = false;
 
 class ImpureDataSlot {
     WTF_MAKE_NONCOPYABLE(ImpureDataSlot);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ImpureDataSlot);
 public:
     ImpureDataSlot(HeapLocation key, LazyNode value, unsigned hash)
         : key(key), value(value), hash(hash)
@@ -62,6 +63,8 @@ public:
     LazyNode value;
     unsigned hash;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImpureDataSlot);
 
 struct ImpureDataSlotHash : public DefaultHash<std::unique_ptr<ImpureDataSlot>> {
     static unsigned hash(const std::unique_ptr<ImpureDataSlot>& key)
@@ -100,7 +103,7 @@ struct ImpureDataTranslator {
 };
 
 class ImpureMap {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(ImpureMap);
     WTF_MAKE_NONCOPYABLE(ImpureMap);
 public:
     ImpureMap() = default;

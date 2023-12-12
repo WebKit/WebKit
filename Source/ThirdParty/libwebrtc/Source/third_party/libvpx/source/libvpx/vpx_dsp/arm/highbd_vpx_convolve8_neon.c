@@ -355,7 +355,6 @@ void vpx_highbd_convolve8_avg_horiz_neon(const uint16_t *src,
   } else {
     const int16x8_t filters = vld1q_s16(filter[x0_q4]);
     const uint16x8_t max = vdupq_n_u16((1 << bd) - 1);
-    uint16x8_t t0, t1, t2, t3;
 
     assert(!((intptr_t)dst & 3));
     assert(!(dst_stride & 3));
@@ -365,6 +364,7 @@ void vpx_highbd_convolve8_avg_horiz_neon(const uint16_t *src,
     if (h == 4) {
       int16x4_t s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
       int32x4_t d0, d1, d2, d3;
+      uint16x8_t t0, t1, t2, t3;
       uint16x8_t d01, d23, t01, t23;
 
       __builtin_prefetch(src + 0 * src_stride);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -529,7 +530,7 @@ struct FunctionData {
 };
 
 class I32InitExpr {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(I32InitExpr);
     enum Type : uint8_t {
         Global,
         Const,
@@ -638,7 +639,7 @@ struct Element {
 };
 
 class TableInformation {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TableInformation);
 public:
     enum InitializationType : uint8_t {
         Default,

@@ -51,6 +51,7 @@
 #include <wtf/JSONValues.h>
 #include <wtf/RefPtr.h>
 #include <wtf/StackTrace.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace JSC {
@@ -65,6 +66,8 @@ static constexpr bool sReportStats = false;
 
 using FrameType = SamplingProfiler::FrameType;
 using UnprocessedStackFrame = SamplingProfiler::UnprocessedStackFrame;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SamplingProfiler);
 
 ALWAYS_INLINE static void reportStats()
 {

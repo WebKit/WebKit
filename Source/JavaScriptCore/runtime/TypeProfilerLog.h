@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #include "JSCJSValue.h"
 #include "Structure.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -37,7 +38,7 @@ class AbstractSlotVisitor;
 class TypeLocation;
 
 class TypeProfilerLog {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TypeProfilerLog);
 public:
     struct LogEntry {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;

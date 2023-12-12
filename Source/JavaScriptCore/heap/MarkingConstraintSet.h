@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "MarkingConstraint.h"
 #include "MarkingConstraintExecutorPair.h"
 #include <wtf/BitVector.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -36,7 +37,7 @@ class Heap;
 class MarkingConstraintSolver;
 
 class MarkingConstraintSet {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MarkingConstraintSet);
     WTF_MAKE_NONCOPYABLE(MarkingConstraintSet);
 public:
     MarkingConstraintSet(Heap&);

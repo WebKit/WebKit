@@ -593,6 +593,9 @@ public:
     bool hasPendingKeyframesUpdate(PseudoId) const;
     // FIXME: do we need a counter style didChange here? (rdar://103018993).
 
+    bool isLink() const { return hasNodeFlag(NodeFlag::IsLink); }
+    void setIsLink(bool flag);
+
     bool isInTopLayer() const { return hasNodeFlag(NodeFlag::IsInTopLayer); }
     void addToTopLayer();
     void removeFromTopLayer();

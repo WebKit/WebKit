@@ -208,6 +208,101 @@ enum class HandJoint : unsigned {
 
 class TrackingAndRenderingClient;
 
+struct FrameData {
+    struct FloatQuaternion {
+        float x { 0.0f };
+        float y { 0.0f };
+        float z { 0.0f };
+        float w { 1.0f };
+    };
+
+    struct Pose {
+        WebCore::FloatPoint3D position;
+        FloatQuaternion orientation;
+    };
+
+    struct Fov {
+        // In radians
+        float up { 0.0f };
+        float down { 0.0f };
+        float left { 0.0f };
+        float right { 0.0f };
+    };
+
+    static constexpr size_t projectionMatrixSize = 16;
+    typedef std::array<float, projectionMatrixSize> ProjectionMatrix;
+
+    using Projection = std::variant<Fov, ProjectionMatrix, std::nullptr_t>;
+
+    struct View {
+        Pose offset;
+        Projection projection = { nullptr };
+    };
+
+    struct StageParameters {
+        int id { 0 };
+        Vector<WebCore::FloatPoint> bounds;
+    };
+
+    struct LayerData {
+#if PLATFORM(COCOA)
+        std::tuple<MachSendRight, bool> colorTexture = { MachSendRight(), false };
+        std::tuple<MachSendRight, bool> depthStencilBuffer = { MachSendRight(), false };
+        std::tuple<MachSendRight, uint64_t> completionSyncEvent;
+#else
+        PlatformGLObject opaqueTexture { 0 };
+#endif
+    };
+
+    struct InputSourceButton {
+        bool touched { false };
+        bool pressed { false };
+        float pressedValue { 0 };
+    };
+
+    struct InputSourcePose {
+        Pose pose;
+        bool isPositionEmulated { false };
+    };
+
+#if ENABLE(WEBXR_HANDS)
+    struct InputSourceHandJoint {
+        InputSourcePose pose;
+        float radius { 0 };
+    };
+
+    using HandJointsVector = Vector<std::optional<InputSourceHandJoint>>;
+#endif
+
+    struct InputSource {
+        InputSourceHandle handle { 0 };
+        XRHandedness handeness { XRHandedness::None };
+        XRTargetRayMode targetRayMode { XRTargetRayMode::Gaze };
+        Vector<String> profiles;
+        InputSourcePose pointerOrigin;
+        std::optional<InputSourcePose> gripOrigin;
+        Vector<InputSourceButton> buttons;
+        Vector<float> axes;
+#if ENABLE(WEBXR_HANDS)
+        std::optional<HandJointsVector> handJoints;
+#endif
+    };
+
+    bool isTrackingValid { false };
+    bool isPositionValid { false };
+    bool isPositionEmulated { false };
+    bool shouldRender { false };
+    long predictedDisplayTime { 0 };
+    Pose origin;
+    std::optional<Pose> floorTransform;
+    StageParameters stageParameters;
+    Vector<View> views;
+    HashMap<LayerHandle, LayerData> layers;
+    Vector<InputSource> inputSources;
+
+    FrameData copy() const;
+};
+
 class Device : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(Device);
@@ -249,134 +344,6 @@ public:
     virtual void initializeReferenceSpace(ReferenceSpaceType) = 0;
     virtual std::optional<LayerHandle> createLayerProjection(uint32_t width, uint32_t height, bool alpha) = 0;
     virtual void deleteLayer(LayerHandle) = 0;
-
-    struct FrameData {
-        struct FloatQuaternion {
-            float x { 0.0f };
-            float y { 0.0f };
-            float z { 0.0f };
-            float w { 1.0f };
-
-            template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static std::optional<FloatQuaternion> decode(Decoder&);
-        };
-
-        struct Pose {
-            WebCore::FloatPoint3D position;
-            FloatQuaternion orientation;
-
-            template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static std::optional<Pose> decode(Decoder&);
-        };
-
-        struct Fov {
-            // In radians
-            float up { 0.0f };
-            float down { 0.0f };
-            float left { 0.0f };
-            float right { 0.0f };
-
-            template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static std::optional<Fov> decode(Decoder&);
-        };
-
-        static constexpr size_t projectionMatrixSize = 16;
-        typedef std::array<float, projectionMatrixSize> ProjectionMatrix;
-
-        using Projection = std::variant<Fov, ProjectionMatrix, std::nullptr_t>;
-
-        struct View {
-            Pose offset;
-            Projection projection = { nullptr };
-
-            template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static std::optional<View> decode(Decoder&);
-        };
-
-        struct StageParameters {
-            int id { 0 };
-            Vector<WebCore::FloatPoint> bounds;
-
-            template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static std::optional<StageParameters> decode(Decoder&);
-        };
-
-        struct LayerData {
-#if PLATFORM(COCOA)
-            std::tuple<MachSendRight, bool> colorTexture = { MachSendRight(), false };
-            std::tuple<MachSendRight, bool> depthStencilBuffer = { MachSendRight(), false };
-            std::tuple<MachSendRight, uint64_t> completionSyncEvent;
-#else
-            PlatformGLObject opaqueTexture { 0 };
-#endif
-
-            template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static std::optional<LayerData> decode(Decoder&);
-        };
-
-        struct InputSourceButton {
-            bool touched { false };
-            bool pressed { false };
-            float pressedValue { 0 };
-
-            template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static std::optional<InputSourceButton> decode(Decoder&);
-        };
-
-        struct InputSourcePose {
-            Pose pose;
-            bool isPositionEmulated { false };
-
-            template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static std::optional<InputSourcePose> decode(Decoder&);
-        };
-
-#if ENABLE(WEBXR_HANDS)
-        struct InputSourceHandJoint {
-            InputSourcePose pose;
-            float radius { 0 };
-
-            template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static std::optional<InputSourceHandJoint> decode(Decoder&);
-        };
-
-        using HandJointsVector = Vector<std::optional<InputSourceHandJoint>>;
-#endif
-
-        struct InputSource {
-            InputSourceHandle handle { 0 };
-            XRHandedness handeness { XRHandedness::None };
-            XRTargetRayMode targetRayMode { XRTargetRayMode::Gaze };
-            Vector<String> profiles;
-            InputSourcePose pointerOrigin;
-            std::optional<InputSourcePose> gripOrigin;
-            Vector<InputSourceButton> buttons;
-            Vector<float> axes;
-#if ENABLE(WEBXR_HANDS)
-            std::optional<HandJointsVector> handJoints;
-#endif
-
-            template<class Encoder> void encode(Encoder&) const;
-            template<class Decoder> static std::optional<InputSource> decode(Decoder&);
-        };
-
-        bool isTrackingValid { false };
-        bool isPositionValid { false };
-        bool isPositionEmulated { false };
-        bool shouldRender { false };
-        long predictedDisplayTime { 0 };
-        Pose origin;
-        std::optional<Pose> floorTransform;
-        StageParameters stageParameters;
-        Vector<View> views;
-        HashMap<LayerHandle, LayerData> layers;
-        Vector<InputSource> inputSources;
-
-        FrameData copy() const;
-
-        template<class Encoder> void encode(Encoder&) const;
-        template<class Decoder> static std::optional<FrameData> decode(Decoder&);
-    };
 
     struct LayerView {
         Eye eye { Eye::None };
@@ -421,7 +388,7 @@ public:
     // This event is used to ensure that initial inputsourceschange events occur after the initial session is resolved.
     // WebxR apps can wait for the input source events before calling requestAnimationFrame.
     // Per-frame input source updates are handled via session.requestAnimationFrame which calls Device::requestFrame.
-    virtual void sessionDidInitializeInputSources(Vector<Device::FrameData::InputSource>&&) = 0;
+    virtual void sessionDidInitializeInputSources(Vector<FrameData::InputSource>&&) = 0;
     virtual void sessionDidEnd() = 0;
     virtual void updateSessionVisibilityState(VisibilityState) = 0;
     // FIXME: handle frame update
@@ -445,331 +412,9 @@ private:
     DeviceList m_immersiveXRDevices;
 };
 
-template<class Encoder>
-void Device::FrameData::FloatQuaternion::encode(Encoder& encoder) const
+inline FrameData FrameData::copy() const
 {
-    encoder << x << y << z << w;
-}
-
-template<class Decoder>
-std::optional<Device::FrameData::FloatQuaternion> Device::FrameData::FloatQuaternion::decode(Decoder& decoder)
-{
-    Device::FrameData::FloatQuaternion floatQuaternion;
-    if (!decoder.decode(floatQuaternion.x))
-        return std::nullopt;
-    if (!decoder.decode(floatQuaternion.y))
-        return std::nullopt;
-    if (!decoder.decode(floatQuaternion.z))
-        return std::nullopt;
-    if (!decoder.decode(floatQuaternion.w))
-        return std::nullopt;
-    return floatQuaternion;
-}
-
-template<class Encoder>
-void Device::FrameData::Pose::encode(Encoder& encoder) const
-{
-    encoder << position << orientation;
-}
-
-template<class Decoder>
-std::optional<Device::FrameData::Pose> Device::FrameData::Pose::decode(Decoder& decoder)
-{
-    Device::FrameData::Pose pose;
-    if (!decoder.decode(pose.position))
-        return std::nullopt;
-    if (!decoder.decode(pose.orientation))
-        return std::nullopt;
-    return pose;
-}
-
-template<class Encoder>
-void Device::FrameData::Fov::encode(Encoder& encoder) const
-{
-    encoder << up << down << left << right;
-}
-
-template<class Decoder>
-std::optional<Device::FrameData::Fov> Device::FrameData::Fov::decode(Decoder& decoder)
-{
-    Device::FrameData::Fov fov;
-    if (!decoder.decode(fov.up))
-        return std::nullopt;
-    if (!decoder.decode(fov.down))
-        return std::nullopt;
-    if (!decoder.decode(fov.left))
-        return std::nullopt;
-    if (!decoder.decode(fov.right))
-        return std::nullopt;
-    return fov;
-}
-
-template<class Encoder>
-void Device::FrameData::View::encode(Encoder& encoder) const
-{
-    encoder << offset;
-
-    bool hasFov = std::holds_alternative<PlatformXR::Device::FrameData::Fov>(projection);
-    encoder << hasFov;
-    if (hasFov) {
-        encoder << std::get<PlatformXR::Device::FrameData::Fov>(projection);
-        return;
-    }
-
-    bool hasProjectionMatrix = std::holds_alternative<PlatformXR::Device::FrameData::ProjectionMatrix>(projection);
-    encoder << hasProjectionMatrix;
-    if (hasProjectionMatrix) {
-        for (float f : std::get<PlatformXR::Device::FrameData::ProjectionMatrix>(projection))
-            encoder << f;
-        return;
-    }
-
-    ASSERT(std::holds_alternative<std::nullptr_t>(projection));
-}
-
-template<class Decoder>
-std::optional<Device::FrameData::View> Device::FrameData::View::decode(Decoder& decoder)
-{
-    PlatformXR::Device::FrameData::View view;
-    if (!decoder.decode(view.offset))
-        return std::nullopt;
-
-    bool hasFov;
-    if (!decoder.decode(hasFov))
-        return std::nullopt;
-
-    if (hasFov) {
-        PlatformXR::Device::FrameData::Fov fov;
-        if (!decoder.decode(fov))
-            return std::nullopt;
-        view.projection = { WTFMove(fov) };
-        return view;
-    }
-
-    bool hasProjectionMatrix;
-    if (!decoder.decode(hasProjectionMatrix))
-        return std::nullopt;
-
-    if (hasProjectionMatrix) {
-        PlatformXR::Device::FrameData::ProjectionMatrix projectionMatrix;
-        for (size_t i = 0; i < PlatformXR::Device::FrameData::projectionMatrixSize; ++i) {
-            float f;
-            if (!decoder.decode(f))
-                return std::nullopt;
-            projectionMatrix[i] = f;
-        }
-        view.projection = { WTFMove(projectionMatrix) };
-        return view;
-    }
-
-    view.projection = { nullptr };
-    return view;
-}
-
-template<class Encoder>
-void Device::FrameData::StageParameters::encode(Encoder& encoder) const
-{
-    encoder << id;
-    encoder << bounds;
-}
-
-template<class Decoder>
-std::optional<Device::FrameData::StageParameters> Device::FrameData::StageParameters::decode(Decoder& decoder)
-{
-    PlatformXR::Device::FrameData::StageParameters stageParameters;
-    if (!decoder.decode(stageParameters.id))
-        return std::nullopt;
-    if (!decoder.decode(stageParameters.bounds))
-        return std::nullopt;
-    return stageParameters;
-}
-
-template<class Encoder>
-void Device::FrameData::LayerData::encode(Encoder& encoder) const
-{
-#if PLATFORM(COCOA)
-    encoder << std::tuple(colorTexture);
-    encoder << std::tuple(depthStencilBuffer);
-    encoder << std::tuple(completionSyncEvent);
-#else
-    encoder << opaqueTexture;
-#endif
-}
-
-template<class Decoder>
-std::optional<Device::FrameData::LayerData> Device::FrameData::LayerData::decode(Decoder& decoder)
-{
-    PlatformXR::Device::FrameData::LayerData layerData;
-#if PLATFORM(COCOA)
-    if (!decoder.decode(layerData.colorTexture))
-        return std::nullopt;
-    if (!decoder.decode(layerData.depthStencilBuffer))
-        return std::nullopt;
-    if (!decoder.decode(layerData.completionSyncEvent))
-        return std::nullopt;
-#else
-    if (!decoder.decode(layerData.opaqueTexture))
-        return std::nullopt;
-#endif
-    return layerData;
-}
-
-template<class Encoder>
-void Device::FrameData::InputSourceButton::encode(Encoder& encoder) const
-{
-    encoder << touched;
-    encoder << pressed;
-    encoder << pressedValue;
-}
-
-template<class Decoder>
-std::optional<Device::FrameData::InputSourceButton> Device::FrameData::InputSourceButton::decode(Decoder& decoder)
-{
-    PlatformXR::Device::FrameData::InputSourceButton button;
-    if (!decoder.decode(button.touched))
-        return std::nullopt;
-    if (!decoder.decode(button.pressed))
-        return std::nullopt;
-    if (!decoder.decode(button.pressedValue))
-        return std::nullopt;
-    return button;
-}
-
-template<class Encoder>
-void Device::FrameData::InputSourcePose::encode(Encoder& encoder) const
-{
-    encoder << pose;
-    encoder << isPositionEmulated;
-}
-
-template<class Decoder>
-std::optional<Device::FrameData::InputSourcePose> Device::FrameData::InputSourcePose::decode(Decoder& decoder)
-{
-    PlatformXR::Device::FrameData::InputSourcePose inputSourcePose;
-    if (!decoder.decode(inputSourcePose.pose))
-        return std::nullopt;
-    if (!decoder.decode(inputSourcePose.isPositionEmulated))
-        return std::nullopt;
-    return inputSourcePose;
-}
-
-#if ENABLE(WEBXR_HANDS)
-template<class Encoder>
-void Device::FrameData::InputSourceHandJoint::encode(Encoder& encoder) const
-{
-    encoder << pose;
-    encoder << radius;
-}
-
-template<class Decoder>
-std::optional<Device::FrameData::InputSourceHandJoint> Device::FrameData::InputSourceHandJoint::decode(Decoder& decoder)
-{
-    std::optional<InputSourcePose> pose;
-    decoder >> pose;
-    if (!pose)
-        return std::nullopt;
-    std::optional<float> radius;
-    decoder >> radius;
-    if (!radius)
-        return std::nullopt;
-    return { { WTFMove(*pose), *radius } };
-}
-#endif
-
-template<class Encoder>
-void Device::FrameData::InputSource::encode(Encoder& encoder) const
-{
-    encoder << handle;
-    encoder << handeness;
-    encoder << targetRayMode;
-    encoder << profiles;
-    encoder << pointerOrigin;
-    encoder << gripOrigin;
-    encoder << buttons;
-    encoder << axes;
-#if ENABLE(WEBXR_HANDS)
-    encoder << handJoints;
-#endif
-}
-
-template<class Decoder>
-std::optional<Device::FrameData::InputSource> Device::FrameData::InputSource::decode(Decoder& decoder)
-{
-    PlatformXR::Device::FrameData::InputSource source;
-    if (!decoder.decode(source.handle))
-        return std::nullopt;
-    if (!decoder.decode(source.handeness))
-        return std::nullopt;
-    if (!decoder.decode(source.targetRayMode))
-        return std::nullopt;
-    if (!decoder.decode(source.profiles))
-        return std::nullopt;
-    if (!decoder.decode(source.pointerOrigin))
-        return std::nullopt;
-    if (!decoder.decode(source.gripOrigin))
-        return std::nullopt;
-    if (!decoder.decode(source.buttons))
-        return std::nullopt;
-    if (!decoder.decode(source.axes))
-        return std::nullopt;
-#if ENABLE(WEBXR_HANDS)
-    if (!decoder.decode(source.handJoints))
-        return std::nullopt;
-#endif
-    return source;
-}
-
-
-template<class Encoder>
-void Device::FrameData::encode(Encoder& encoder) const
-{
-    encoder << isTrackingValid;
-    encoder << isPositionValid;
-    encoder << isPositionEmulated;
-    encoder << shouldRender;
-    encoder << predictedDisplayTime;
-    encoder << origin;
-    encoder << floorTransform;
-    encoder << stageParameters;
-    encoder << views;
-    encoder << layers;
-    encoder << inputSources;
-}
-
-template<class Decoder>
-std::optional<Device::FrameData> Device::FrameData::decode(Decoder& decoder)
-{
-    PlatformXR::Device::FrameData frameData;
-    if (!decoder.decode(frameData.isTrackingValid))
-        return std::nullopt;
-    if (!decoder.decode(frameData.isPositionValid))
-        return std::nullopt;
-    if (!decoder.decode(frameData.isPositionEmulated))
-        return std::nullopt;
-    if (!decoder.decode(frameData.shouldRender))
-        return std::nullopt;
-    if (!decoder.decode(frameData.predictedDisplayTime))
-        return std::nullopt;
-    if (!decoder.decode(frameData.origin))
-        return std::nullopt;
-    if (!decoder.decode(frameData.floorTransform))
-        return std::nullopt;
-    if (!decoder.decode(frameData.stageParameters))
-        return std::nullopt;
-    if (!decoder.decode(frameData.views))
-        return std::nullopt;
-    if (!decoder.decode(frameData.layers))
-        return std::nullopt;
-    if (!decoder.decode(frameData.inputSources))
-        return std::nullopt;
-
-
-    return frameData;
-}
-
-inline Device::FrameData Device::FrameData::copy() const
-{
-    PlatformXR::Device::FrameData frameData;
+    PlatformXR::FrameData frameData;
     frameData.isTrackingValid = isTrackingValid;
     frameData.isPositionValid = isPositionValid;
     frameData.isPositionEmulated = isPositionEmulated;

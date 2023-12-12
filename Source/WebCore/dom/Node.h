@@ -86,7 +86,7 @@ using MutationRecordDeliveryOptions = OptionSet<MutationObserverOptionType>;
 
 using NodeOrString = std::variant<RefPtr<Node>, String>;
 
-class Node : public EventTarget {
+class Node : public EventTarget, public CanMakeCheckedPtr {
     WTF_MAKE_ISO_ALLOCATED(Node);
 
     friend class Document;
@@ -359,9 +359,6 @@ public:
     void clearChildNeedsStyleRecalc();
 
     void setHasValidStyle();
-
-    bool isLink() const { return hasNodeFlag(NodeFlag::IsLink); }
-    void setIsLink(bool flag) { setNodeFlag(NodeFlag::IsLink, flag); }
 
     bool isInGCReacheableRefMap() const { return hasNodeFlag(NodeFlag::IsInGCReachableRefMap); }
     void setIsInGCReacheableRefMap(bool flag) { setNodeFlag(NodeFlag::IsInGCReachableRefMap, flag); }

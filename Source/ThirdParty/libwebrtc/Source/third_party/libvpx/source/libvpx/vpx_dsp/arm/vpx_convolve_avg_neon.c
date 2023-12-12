@@ -43,7 +43,7 @@ void vpx_convolve_avg_neon(const uint8_t *src, ptrdiff_t src_stride,
       vst1_lane_u32((uint32_t *)dst, vreinterpret_u32_u8(dd0), 1);
       dst += dst_stride;
       h -= 2;
-    } while (h > 0);
+    } while (h != 0);
   } else if (w == 8) {  // avg8
     uint8x8_t s0, s1, d0, d1;
     uint8x16_t s01, d01;
@@ -64,7 +64,7 @@ void vpx_convolve_avg_neon(const uint8_t *src, ptrdiff_t src_stride,
       vst1_u8(dst, vget_high_u8(d01));
       dst += dst_stride;
       h -= 2;
-    } while (h > 0);
+    } while (h != 0);
   } else if (w < 32) {  // avg16
     uint8x16_t s0, s1, d0, d1;
     do {
@@ -83,7 +83,7 @@ void vpx_convolve_avg_neon(const uint8_t *src, ptrdiff_t src_stride,
       vst1q_u8(dst, d1);
       dst += dst_stride;
       h -= 2;
-    } while (h > 0);
+    } while (h != 0);
   } else if (w == 32) {  // avg32
     uint8x16_t s0, s1, s2, s3, d0, d1, d2, d3;
     do {
@@ -110,7 +110,7 @@ void vpx_convolve_avg_neon(const uint8_t *src, ptrdiff_t src_stride,
       vst1q_u8(dst + 16, d3);
       dst += dst_stride;
       h -= 2;
-    } while (h > 0);
+    } while (h != 0);
   } else {  // avg64
     uint8x16_t s0, s1, s2, s3, d0, d1, d2, d3;
     do {

@@ -81,17 +81,12 @@ ContentRuleListStore::ContentRuleListStore(const WTF::String& storePath)
 
 ContentRuleListStore::~ContentRuleListStore() = default;
 
-// FIXME: Remove legacyFilename in 2022 or 2023 after users have had a chance to run the updating logic.
-static ASCIILiteral constructedPathPrefix(bool legacyFilename)
-{
-    if (legacyFilename)
-        return "ContentExtension-"_s;
-    return "ContentRuleList-"_s;
-}
+static constexpr auto constructedPathPrefix { "ContentRuleList-"_s };
 
-static WTF::String constructedPath(const WTF::String& base, const WTF::String& identifier, bool legacyFilename)
+static WTF::String constructedPath(const WTF::String& base, const WTF::String& identifier)
 {
-    return pathByAppendingComponent(base, makeString(constructedPathPrefix(legacyFilename), encodeForFileName(identifier)));
+    RELEASE_ASSERT(!base.isEmpty());
+    return pathByAppendingComponent(base, makeString(constructedPathPrefix, encodeForFileName(identifier)));
 }
 
 // The size and offset of the densely packed bytes in the file, not sizeof and offsetof, which would
@@ -441,6 +436,7 @@ static Ref<API::ContentRuleList> createExtension(WTF::String&& identifier, Mappe
         frameURLFiltersOffset,
         data.metaData.frameURLFiltersBytecodeSize
     );
+
     RefPtr compiledContentRuleList = WebKit::WebCompiledContentRuleList::create(WTFMove(compiledContentRuleListData));
     ASSERT(compiledContentRuleList);
     return API::ContentRuleList::create(compiledContentRuleList.releaseNonNull(), WTFMove(data.data));
@@ -464,42 +460,34 @@ static WTF::String getContentRuleListSourceFromMappedFile(const MappedData& mapp
     size_t length = mappedData.metaData.sourceSize - sizeof(bool);
     if (is8Bit)
         return WTF::String(mappedData.data.data() + start, length);
+
     if (length % sizeof(UChar)) {
         ASSERT_NOT_REACHED();
         return { };
     }
+
     return WTF::String(reinterpret_cast<const UChar*>(mappedData.data.data() + start), length / sizeof(UChar));
 }
 
 void ContentRuleListStore::lookupContentRuleList(WTF::String&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
 {
-    ASSERT(RunLoop::isMain());
-    m_readQueue->dispatch([protectedThis = Ref { *this }, identifier = WTFMove(identifier).isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        auto path = constructedPath(storePath, identifier, false);
-        auto legacyPath = constructedPath(storePath, identifier, true);
-        if (fileExists(legacyPath)) {
-            // Try and delete any files at the destination instead of overwriting them
-            // in case there is already a file there and it is mmapped.
-            deleteFile(path);
-            if (!moveFile(legacyPath, path)) {
-                WTFLogAlways("Content Rule List lookup failed: Moving a legacy file failed.");
-                if (!deleteFile(legacyPath))
-                    WTFLogAlways("Content Rule List lookup failed: Deleting a legacy file failed.");
-                RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
-                    completionHandler(nullptr, Error::LookupFailed);
-                });
-                return;
-            }
-        }
+    auto filePath = constructedPath(m_storePath, identifier);
+    lookupContentRuleListFile(WTFMove(filePath), WTFMove(identifier), WTFMove(completionHandler));
+}
 
-        auto contentRuleList = openAndMapContentRuleList(path);
+void ContentRuleListStore::lookupContentRuleListFile(WTF::String&& filePath, WTF::String&& identifier, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+
+    m_readQueue->dispatch([protectedThis = Ref { *this }, filePath = WTFMove(filePath).isolatedCopy(), identifier = WTFMove(identifier).isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+        auto contentRuleList = openAndMapContentRuleList(filePath);
         if (!contentRuleList) {
             RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler(nullptr, Error::LookupFailed);
             });
             return;
         }
-        
+
         if (contentRuleList->metaData.version != ContentRuleListStore::CurrentContentRuleListFileVersion) {
             if (auto sourceFromOldVersion = getContentRuleListSourceFromMappedFile(*contentRuleList); !sourceFromOldVersion.isEmpty()) {
                 RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), sourceFromOldVersion = WTFMove(sourceFromOldVersion).isolatedCopy(), identifier = WTFMove(identifier).isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
@@ -507,12 +495,13 @@ void ContentRuleListStore::lookupContentRuleList(WTF::String&& identifier, Compl
                 });
                 return;
             }
+
             RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler(nullptr, Error::VersionMismatch);
             });
             return;
         }
-        
+
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), identifier = WTFMove(identifier).isolatedCopy(), contentRuleList = WTFMove(*contentRuleList), completionHandler = WTFMove(completionHandler)] () mutable {
             completionHandler(createExtension(WTFMove(identifier), WTFMove(contentRuleList)), { });
         });
@@ -522,18 +511,12 @@ void ContentRuleListStore::lookupContentRuleList(WTF::String&& identifier, Compl
 void ContentRuleListStore::getAvailableContentRuleListIdentifiers(CompletionHandler<void(WTF::Vector<WTF::String>)> completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    m_readQueue->dispatch([protectedThis = Ref { *this }, storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
-        auto prefix = constructedPathPrefix(false /*legacy*/);
-        auto prefixLength = strlen(prefix);
-        auto legacyPrefix = constructedPathPrefix(true /*legacy*/);
-        auto legacyPrefixLength = strlen(legacyPrefix);
 
+    m_readQueue->dispatch([protectedThis = Ref { *this }, storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         Vector<WTF::String> identifiers;
         for (auto& fileName : listDirectory(storePath)) {
-            if (fileName.startsWith(prefix))
-                identifiers.append(decodeFromFilename(fileName.substring(prefixLength)));
-            else if (fileName.startsWith(legacyPrefix))
-                identifiers.append(decodeFromFilename(fileName.substring(legacyPrefixLength)));
+            if (fileName.startsWith(constructedPathPrefix))
+                identifiers.append(decodeFromFilename(fileName.substring(constructedPathPrefix.length())));
         }
 
         RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), identifiers = WTFMove(identifiers)]() mutable {
@@ -544,18 +527,23 @@ void ContentRuleListStore::getAvailableContentRuleListIdentifiers(CompletionHand
 
 void ContentRuleListStore::compileContentRuleList(WTF::String&& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
 {
+    auto filePath = constructedPath(m_storePath, identifier);
+    compileContentRuleListFile(WTFMove(filePath), WTFMove(identifier), WTFMove(json), WTFMove(completionHandler));
+}
+
+void ContentRuleListStore::compileContentRuleListFile(WTF::String&& filePath, WTF::String&& identifier, WTF::String&& json, CompletionHandler<void(RefPtr<API::ContentRuleList>, std::error_code)> completionHandler)
+{
     ASSERT(RunLoop::isMain());
+
     WebCore::initializeCommonAtomStrings();
     WebCore::QualifiedName::init();
-    
+
     auto parsedRules = WebCore::ContentExtensions::parseRuleList(json);
     if (!parsedRules.has_value())
         return completionHandler(nullptr, parsedRules.error());
-    
-    m_compileQueue->dispatch([protectedThis = Ref { *this }, identifier = identifier.isolatedCopy(), json = WTFMove(json).isolatedCopy(), parsedRules = crossThreadCopy(WTFMove(parsedRules).value()), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
-        auto path = constructedPath(storePath, identifier, false);
 
-        auto result = compiledToFile(WTFMove(json), WTFMove(parsedRules), path);
+    m_compileQueue->dispatch([protectedThis = Ref { *this }, filePath = WTFMove(filePath).isolatedCopy(), identifier = WTFMove(identifier).isolatedCopy(), json = WTFMove(json).isolatedCopy(), parsedRules = crossThreadCopy(WTFMove(parsedRules).value()), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)] () mutable {
+        auto result = compiledToFile(WTFMove(json), WTFMove(parsedRules), filePath);
         if (!result.has_value()) {
             RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), error = WTFMove(result.error()), completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler(nullptr, error);
@@ -572,19 +560,22 @@ void ContentRuleListStore::compileContentRuleList(WTF::String&& identifier, WTF:
 
 void ContentRuleListStore::removeContentRuleList(WTF::String&& identifier, CompletionHandler<void(std::error_code)> completionHandler)
 {
+    auto filePath = constructedPath(m_storePath, identifier);
+    removeContentRuleListFile(WTFMove(filePath), WTFMove(completionHandler));
+}
+
+void ContentRuleListStore::removeContentRuleListFile(WTF::String&& filePath, CompletionHandler<void(std::error_code)> completionHandler)
+{
     ASSERT(RunLoop::isMain());
-    m_removeQueue->dispatch([protectedThis = Ref { *this }, identifier = WTFMove(identifier).isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+
+    m_removeQueue->dispatch([protectedThis = Ref { *this }, filePath = WTFMove(filePath).isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         auto complete = [protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)](std::error_code error) mutable {
             RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), error = WTFMove(error)] () mutable {
                 completionHandler(error);
             });
         };
-        if (auto legacyPath = constructedPath(storePath, identifier, true); fileExists(legacyPath)) {
-            if (!deleteFile(legacyPath))
-                return complete(Error::RemoveFailed);
-            return complete({ });
-        }
-        if (auto path = constructedPath(storePath, identifier, false); !deleteFile(path))
+
+        if (!deleteFile(filePath))
             return complete(Error::RemoveFailed);
         complete({ });
     });
@@ -598,9 +589,10 @@ void ContentRuleListStore::synchronousRemoveAllContentRuleLists()
 
 void ContentRuleListStore::invalidateContentRuleListVersion(const WTF::String& identifier)
 {
-    auto file = openFile(constructedPath(m_storePath, identifier, false), FileOpenMode::Truncate);
+    auto file = openFile(constructedPath(m_storePath, identifier), FileOpenMode::Truncate);
     if (file == invalidPlatformFileHandle)
         return;
+
     ContentRuleListMetaData invalidHeader = {0, 0, 0, 0, 0, 0};
     auto bytesWritten = writeToFile(file, &invalidHeader, sizeof(invalidHeader));
     ASSERT_UNUSED(bytesWritten, bytesWritten == sizeof(invalidHeader));
@@ -610,20 +602,18 @@ void ContentRuleListStore::invalidateContentRuleListVersion(const WTF::String& i
 void ContentRuleListStore::getContentRuleListSource(WTF::String&& identifier, CompletionHandler<void(WTF::String)> completionHandler)
 {
     ASSERT(RunLoop::isMain());
-    m_readQueue->dispatch([protectedThis = Ref { *this }, identifier = WTFMove(identifier).isolatedCopy(), storePath = m_storePath.isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
+
+    m_readQueue->dispatch([protectedThis = Ref { *this }, filePath = constructedPath(m_storePath, identifier).isolatedCopy(), completionHandler = WTFMove(completionHandler)]() mutable {
         auto complete = [protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)](WTF::String&& source) mutable {
             RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler), source = WTFMove(source).isolatedCopy()] () mutable {
                 completionHandler(source);
             });
         };
 
-        auto contentRuleList = openAndMapContentRuleList(constructedPath(storePath, identifier, false));
-        if (!contentRuleList) {
-            auto legacyContentRuleList = openAndMapContentRuleList(constructedPath(storePath, identifier, true));
-            if (!legacyContentRuleList)
-                return complete({ });
-            return complete(getContentRuleListSourceFromMappedFile(*legacyContentRuleList));
-        }
+        auto contentRuleList = openAndMapContentRuleList(filePath);
+        if (!contentRuleList)
+            return complete({ });
+
         complete(getContentRuleListSourceFromMappedFile(*contentRuleList));
     });
 }

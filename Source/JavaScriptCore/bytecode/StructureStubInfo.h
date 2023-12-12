@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,6 +40,7 @@
 #include "StubInfoSummary.h"
 #include <wtf/Box.h>
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -112,7 +113,7 @@ struct BaselineUnlinkedStructureStubInfo;
 
 class StructureStubInfo {
     WTF_MAKE_NONCOPYABLE(StructureStubInfo);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(StructureStubInfo);
 public:
     StructureStubInfo(AccessType accessType, CodeOrigin codeOrigin)
         : codeOrigin(codeOrigin)

@@ -2342,6 +2342,18 @@ URL Element::absoluteLinkURL() const
     return document().completeURL(linkAttribute);
 }
 
+void Element::setIsLink(bool flag)
+{
+    if (isLink() == flag)
+        return;
+    Style::PseudoClassChangeInvalidation styleInvalidation(*this, {
+        { CSSSelector::PseudoClassType::AnyLink, flag },
+        { CSSSelector::PseudoClassType::AnyLinkDeprecated, flag },
+        { CSSSelector::PseudoClassType::Link, flag }
+    });
+    setNodeFlag(NodeFlag::IsLink, flag);
+}
+
 #if ENABLE(TOUCH_EVENTS)
 
 bool Element::allowsDoubleTapGesture() const

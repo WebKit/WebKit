@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2015 Yusuke Suzuki <utatane.tea@gmail.com>.
- * Copyright (C) 2016-2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #include "Identifier.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -173,8 +174,8 @@ enum class LinkTimeConstant : int32_t;
     macro(sentinelSetBucket) \
 
 class BytecodeIntrinsicRegistry {
-    WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(BytecodeIntrinsicRegistry);
+    WTF_MAKE_TZONE_ALLOCATED(BytecodeIntrinsicRegistry);
 public:
     explicit BytecodeIntrinsicRegistry(VM&);
 

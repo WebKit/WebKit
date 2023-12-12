@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,11 @@
 #include "InspectorTargetAgent.h"
 
 #include "InspectorTarget.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorTargetAgent);
 
 InspectorTargetAgent::InspectorTargetAgent(FrontendRouter& frontendRouter, BackendDispatcher& backendDispatcher)
     : InspectorAgentBase("Target"_s)

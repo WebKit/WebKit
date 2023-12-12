@@ -4794,6 +4794,7 @@
 		3A18A2F02AFF006C00DB976C /* _WKArchiveConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKArchiveConfiguration.mm; sourceTree = "<group>"; };
 		3A18A2F22B02969800DB976C /* _WKArchiveExclusionRule.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKArchiveExclusionRule.mm; sourceTree = "<group>"; };
 		3A18A2F32B02969800DB976C /* _WKArchiveExclusionRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKArchiveExclusionRule.h; sourceTree = "<group>"; };
+		3A26F82D2B258CEF00FEB1B0 /* PlatformXR.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PlatformXR.serialization.in; sourceTree = "<group>"; };
 		3A5B68962AC266D400B11868 /* WKARPresentationSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKARPresentationSession.h; sourceTree = "<group>"; };
 		3A5B68972AC266D400B11868 /* WKARPresentationSession.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKARPresentationSession.mm; sourceTree = "<group>"; };
 		3A7D62D229D35D9D00D57DAC /* WebSWRegistrationStore.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebSWRegistrationStore.cpp; sourceTree = "<group>"; };
@@ -8372,6 +8373,7 @@
 		118502602673B0DA00A6425E /* XR */ = {
 			isa = PBXGroup;
 			children = (
+				3A26F82D2B258CEF00FEB1B0 /* PlatformXR.serialization.in */,
 				118502632673B0DA00A6425E /* XRDeviceIdentifier.h */,
 				118502652673B0DA00A6425E /* XRDeviceInfo.h */,
 				118502622673B0DA00A6425E /* XRDeviceProxy.cpp */,

@@ -31,10 +31,12 @@
 #include "JITInlines.h"
 #include "JSInterfaceJIT.h"
 #include "LinkBuffer.h"
+#include "MacroAssembler.h"
 
 namespace JSC {
 
     class SpecializedThunkJIT : public JSInterfaceJIT {
+        WTF_MAKE_TZONE_ALLOCATED(SpecializedThunkJIT);
     public:
         static constexpr int ThisArgument = -1;
         SpecializedThunkJIT(VM& vm, int expectedArgCount)

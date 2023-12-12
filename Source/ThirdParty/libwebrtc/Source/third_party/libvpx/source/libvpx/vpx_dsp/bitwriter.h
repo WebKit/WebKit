@@ -13,6 +13,7 @@
 
 #include <stdio.h>
 
+#include "vpx_ports/compiler_attributes.h"
 #include "vpx_ports/mem.h"
 
 #include "vpx_dsp/prob.h"
@@ -35,7 +36,9 @@ typedef struct vpx_writer {
 void vpx_start_encode(vpx_writer *br, uint8_t *source);
 void vpx_stop_encode(vpx_writer *br);
 
-static INLINE void vpx_write(vpx_writer *br, int bit, int probability) {
+static INLINE VPX_NO_UNSIGNED_SHIFT_CHECK void vpx_write(vpx_writer *br,
+                                                         int bit,
+                                                         int probability) {
   unsigned int split;
   int count = br->count;
   unsigned int range = br->range;

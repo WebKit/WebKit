@@ -45,7 +45,7 @@ class WebXRInputSourceArray final : public ScriptWrappable {
     WTF_MAKE_ISO_ALLOCATED(WebXRInputSourceArray);
     friend UniqueRef<WebXRInputSourceArray> WTF::makeUniqueRefWithoutFastMallocCheck<WebXRInputSourceArray, WebCore::WebXRSession&>(WebCore::WebXRSession&);
 public:
-    using InputSourceList = Vector<PlatformXR::Device::FrameData::InputSource>;
+    using InputSourceList = Vector<PlatformXR::FrameData::InputSource>;
     static UniqueRef<WebXRInputSourceArray> create(WebXRSession&);
     ~WebXRInputSourceArray();
 

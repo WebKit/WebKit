@@ -111,7 +111,7 @@ static void fadst4_sse2(__m128i *in) {
   const __m128i k__sinpi_p03_p04 = pair_set_epi16(sinpi_3_9, sinpi_4_9);
   const __m128i k__sinpi_m03_p02 = pair_set_epi16(-sinpi_3_9, sinpi_2_9);
   const __m128i k__sinpi_p03_p03 = _mm_set1_epi16((int16_t)sinpi_3_9);
-  const __m128i kZero = _mm_set1_epi16(0);
+  const __m128i kZero = _mm_setzero_si128();
   const __m128i k__DCT_CONST_ROUNDING = _mm_set1_epi32(DCT_CONST_ROUNDING);
   __m128i u[8], v[8];
   __m128i in7 = _mm_add_epi16(in[0], in[1]);
@@ -424,7 +424,7 @@ static void fadst8_sse2(__m128i *in) {
   const __m128i k__cospi_m24_p08 = pair_set_epi16(-cospi_24_64, cospi_8_64);
   const __m128i k__cospi_p16_m16 = pair_set_epi16(cospi_16_64, -cospi_16_64);
   const __m128i k__cospi_p16_p16 = _mm_set1_epi16(cospi_16_64);
-  const __m128i k__const_0 = _mm_set1_epi16(0);
+  const __m128i k__const_0 = _mm_setzero_si128();
   const __m128i k__DCT_CONST_ROUNDING = _mm_set1_epi32(DCT_CONST_ROUNDING);
 
   __m128i u0, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12, u13, u14, u15;
@@ -1056,7 +1056,7 @@ static void fadst16_8col(__m128i *in) {
   const __m128i k__cospi_p16_m16 = pair_set_epi16(cospi_16_64, -cospi_16_64);
   const __m128i k__cospi_m16_p16 = pair_set_epi16(-cospi_16_64, cospi_16_64);
   const __m128i k__DCT_CONST_ROUNDING = _mm_set1_epi32(DCT_CONST_ROUNDING);
-  const __m128i kZero = _mm_set1_epi16(0);
+  const __m128i kZero = _mm_setzero_si128();
 
   u[0] = _mm_unpacklo_epi16(in[15], in[0]);
   u[1] = _mm_unpackhi_epi16(in[15], in[0]);

@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- *  Copyright (C) 2007-2022 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -555,11 +555,14 @@ public:
         static constexpr bool safeToCompareToEmptyOrDeleted = false;
     };
 
-    WeakGCSet<JSCustomGetterFunction, WeakCustomGetterOrSetterHash<JSCustomGetterFunction>> m_customGetterFunctionSet;
-    WeakGCSet<JSCustomSetterFunction, WeakCustomGetterOrSetterHash<JSCustomSetterFunction>> m_customSetterFunctionSet;
+    using WeakGCSetJSCustomGetterFunction = WeakGCSet<JSCustomGetterFunction, WeakCustomGetterOrSetterHash<JSCustomGetterFunction>>;
+    using WeakGCSetJSCustomSetterFunction = WeakGCSet<JSCustomSetterFunction, WeakCustomGetterOrSetterHash<JSCustomSetterFunction>>;
 
-    WeakGCSet<JSCustomGetterFunction, WeakCustomGetterOrSetterHash<JSCustomGetterFunction>>& customGetterFunctionSet() { return m_customGetterFunctionSet; }
-    WeakGCSet<JSCustomSetterFunction, WeakCustomGetterOrSetterHash<JSCustomSetterFunction>>& customSetterFunctionSet() { return m_customSetterFunctionSet; }
+    WeakGCSetJSCustomGetterFunction m_customGetterFunctionSet;
+    WeakGCSetJSCustomSetterFunction m_customSetterFunctionSet;
+
+    WeakGCSetJSCustomGetterFunction& customGetterFunctionSet() { return m_customGetterFunctionSet; }
+    WeakGCSetJSCustomSetterFunction& customSetterFunctionSet() { return m_customSetterFunctionSet; }
 
     Ref<ImportMap> m_importMap;
 

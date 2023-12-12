@@ -1247,6 +1247,7 @@
 		65303D641447B9E100D3F904 /* ParserTokens.h in Headers */ = {isa = PBXBuildFile; fileRef = 65303D631447B9E100D3F904 /* ParserTokens.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		653BC43F26D013A600D8BE20 /* YarrJITRegisters.h in Headers */ = {isa = PBXBuildFile; fileRef = 653BC43E26D013A600D8BE20 /* YarrJITRegisters.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		65570F5A1AA4C3EA009B3C23 /* Regress141275.mm in Sources */ = {isa = PBXBuildFile; fileRef = 65570F591AA4C00A009B3C23 /* Regress141275.mm */; };
+		6571E9822B23F4D0009DF224 /* JITTZoneImpls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6571E9812B23F4D0009DF224 /* JITTZoneImpls.cpp */; };
 		657CF45919BF6662004ACBF2 /* JSCallee.h in Headers */ = {isa = PBXBuildFile; fileRef = 657CF45719BF6662004ACBF2 /* JSCallee.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		658824AF1E5CFDB000FB7359 /* ConfigFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 658824AE1E5CFDB000FB7359 /* ConfigFile.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		658D3A5619638268003C45D6 /* VMEntryRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 658D3A5519638268003C45D6 /* VMEntryRecord.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4374,6 +4375,14 @@
 		6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		65621E6B089E859700760F35 /* PropertySlot.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertySlot.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		65621E6C089E859700760F35 /* PropertySlot.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = PropertySlot.h; sourceTree = "<group>"; tabWidth = 8; };
+		6571E94C2AF2E769009DF224 /* RuntimeTZoneImpls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RuntimeTZoneImpls.cpp; sourceTree = "<group>"; };
+		6571E94E2AF315A7009DF224 /* B3TZoneImpls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = B3TZoneImpls.cpp; path = b3/B3TZoneImpls.cpp; sourceTree = "<group>"; };
+		6571E9502AF31C34009DF224 /* AirTZoneImpls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AirTZoneImpls.cpp; path = b3/air/AirTZoneImpls.cpp; sourceTree = "<group>"; };
+		6571E9542AF320AE009DF224 /* DFGTZoneImpls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGTZoneImpls.cpp; path = dfg/DFGTZoneImpls.cpp; sourceTree = "<group>"; };
+		6571E9562AF3495A009DF224 /* WasmTZoneImpls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WasmTZoneImpls.cpp; sourceTree = "<group>"; };
+		6571E9582AF35AA2009DF224 /* YarrTZoneImpls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = YarrTZoneImpls.cpp; path = yarr/YarrTZoneImpls.cpp; sourceTree = "<group>"; };
+		6571E95A2AF9B98D009DF224 /* ProfilerTZoneImpls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfilerTZoneImpls.cpp; path = profiler/ProfilerTZoneImpls.cpp; sourceTree = "<group>"; };
+		6571E9812B23F4D0009DF224 /* JITTZoneImpls.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITTZoneImpls.cpp; sourceTree = "<group>"; };
 		657CF45619BF6662004ACBF2 /* JSCallee.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallee.cpp; sourceTree = "<group>"; };
 		657CF45719BF6662004ACBF2 /* JSCallee.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallee.h; sourceTree = "<group>"; };
 		65860177185A8F5E00030EEE /* MaxFrameExtentForSlowPathCall.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MaxFrameExtentForSlowPathCall.h; sourceTree = "<group>"; };
@@ -6547,6 +6556,7 @@
 				0FEC84F11BDACDAC0080FF74 /* B3Type.cpp */,
 				0FEC84F21BDACDAC0080FF74 /* B3Type.h */,
 				DCFDFBD81D1F5D9800FE3D72 /* B3TypeMap.h */,
+				6571E94E2AF315A7009DF224 /* B3TZoneImpls.cpp */,
 				0FEC84F31BDACDAC0080FF74 /* B3UpsilonValue.cpp */,
 				0FEC84F41BDACDAC0080FF74 /* B3UpsilonValue.h */,
 				0FEC84F51BDACDAC0080FF74 /* B3UseCounts.cpp */,
@@ -6691,6 +6701,7 @@
 				0FE0E4AB1C24C94A002E17B6 /* AirTmpWidth.cpp */,
 				0FE0E4AC1C24C94A002E17B6 /* AirTmpWidth.h */,
 				0FEC858F2BDACDC70080FF74 /* AirTmpWidthInlines.h */,
+				6571E9502AF31C34009DF224 /* AirTZoneImpls.cpp */,
 				0F3730921C0D67EE00052BFA /* AirUseCounts.h */,
 				0FEC856B1BDACDC70080FF74 /* AirValidate.cpp */,
 				0FEC856C1BDACDC70080FF74 /* AirValidate.h */,
@@ -6900,6 +6911,7 @@
 				0F5EF91C16878F78003E5C25 /* JITThunks.h */,
 				0FC712E017CD878F008CC93C /* JITToDFGDeferredCompilationCallback.cpp */,
 				0FC712E117CD878F008CC93C /* JITToDFGDeferredCompilationCallback.h */,
+				6571E9812B23F4D0009DF224 /* JITTZoneImpls.cpp */,
 				DC0184171D10C1870057B053 /* JITWorklist.cpp */,
 				DC0184181D10C1870057B053 /* JITWorklist.h */,
 				72131BFB26587EFA007114CF /* JITWorklistInlines.h */,
@@ -7779,6 +7791,7 @@
 				AD7438BE1E04579200FD0C2A /* WasmTypeDefinition.cpp */,
 				AD7438BF1E04579200FD0C2A /* WasmTypeDefinition.h */,
 				30A5F403F11C4F599CD596D5 /* WasmTypeDefinitionInlines.h */,
+				6571E9562AF3495A009DF224 /* WasmTZoneImpls.cpp */,
 				863FBC5725B093B800F6C930 /* WasmValueLocation.cpp */,
 				863FBC5825B093B900F6C930 /* WasmValueLocation.h */,
 				530FB3031E7A1146003C19DD /* WasmWorklist.cpp */,
@@ -8618,6 +8631,7 @@
 				70B0A9D01A9B66200001306A /* RuntimeFlags.h */,
 				527773DD1AAF83AC00BDE7E8 /* RuntimeType.cpp */,
 				52C0611D1AA51E1B00B4ADBA /* RuntimeType.h */,
+				6571E94C2AF2E769009DF224 /* RuntimeTZoneImpls.cpp */,
 				0F7700911402FF280078EB39 /* SamplingCounter.cpp */,
 				0F77008E1402FDD60078EB39 /* SamplingCounter.h */,
 				79D5CD581C1106A900CECA07 /* SamplingProfiler.cpp */,
@@ -8904,6 +8918,7 @@
 				86704B8312DBA33700A9FE7B /* YarrPattern.h */,
 				86704B4012DB8A8100A9FE7B /* YarrSyntaxChecker.cpp */,
 				86704B4112DB8A8100A9FE7B /* YarrSyntaxChecker.h */,
+				6571E9582AF35AA2009DF224 /* YarrTZoneImpls.cpp */,
 				659CDA591F67509800D3E53F /* YarrUnicodeProperties.cpp */,
 				659CDA5A1F67509800D3E53F /* YarrUnicodeProperties.h */,
 			);
@@ -9195,6 +9210,7 @@
 				0FE7211C193B9C590031F6ED /* DFGTransition.h */,
 				0F63943C15C75F14006A597C /* DFGTypeCheckHoistingPhase.cpp */,
 				0F63943D15C75F14006A597C /* DFGTypeCheckHoistingPhase.h */,
+				6571E9542AF320AE009DF224 /* DFGTZoneImpls.cpp */,
 				0FBE0F6F16C1DB010082C5E8 /* DFGUnificationPhase.cpp */,
 				0FBE0F7016C1DB010082C5E8 /* DFGUnificationPhase.h */,
 				0F34B14716D4200E001CDA5A /* DFGUseKind.cpp */,
@@ -9270,6 +9286,7 @@
 				0FB1058A1675482E00F8AB6E /* ProfilerOSRExitSite.h */,
 				0F13912616771C30009CCB07 /* ProfilerProfiledBytecodes.cpp */,
 				0F13912716771C30009CCB07 /* ProfilerProfiledBytecodes.h */,
+				6571E95A2AF9B98D009DF224 /* ProfilerTZoneImpls.cpp */,
 				DC605B5B1CE26E9800593718 /* ProfilerUID.cpp */,
 				DC605B5C1CE26E9800593718 /* ProfilerUID.h */,
 			);
@@ -13143,6 +13160,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				44F93E0E2AE71FBD00FFA37C /* JavaScriptCoreFramework.cpp in Sources */,
+				6571E9822B23F4D0009DF224 /* JITTZoneImpls.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

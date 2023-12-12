@@ -32,6 +32,7 @@
 #include <wtf/Scope.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #define updateErrorMessage(shouldPrintToken, ...) do {\
     propagateError(); \
@@ -90,6 +91,8 @@
 namespace JSC {
 
 std::atomic<unsigned> globalParseCount { 0 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ModuleScopeData);
 
 ALWAYS_INLINE static SourceParseMode getAsyncFunctionBodyParseMode(SourceParseMode parseMode)
 {

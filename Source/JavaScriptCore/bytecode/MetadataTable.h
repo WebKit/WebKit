@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #include "UnlinkedMetadataTable.h"
 #include "ValueProfile.h"
 #include <wtf/RefCounted.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
@@ -40,7 +41,7 @@ class CodeBlock;
 //                                                   ^
 //                 The pointer of MetadataTable points at this address.
 class MetadataTable {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(MetadataTable);
     WTF_MAKE_NONCOPYABLE(MetadataTable);
     friend class LLIntOffsetsExtractor;
     friend class UnlinkedMetadataTable;

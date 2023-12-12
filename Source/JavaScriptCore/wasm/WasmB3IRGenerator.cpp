@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,6 +74,7 @@
 #include <limits>
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if !ENABLE(WEBASSEMBLY)
 #error ENABLE(WEBASSEMBLY_OMGJIT) is enabled, but ENABLE(WEBASSEMBLY) is not.
@@ -108,7 +109,7 @@ static constexpr bool traceExecutionIncludesConstructionSite = false;
 #define TRACE_CF(...) do { if constexpr (WasmB3IRGeneratorInternal::traceExecution) { traceCF(__VA_ARGS__); } } while (0)
 
 class B3IRGenerator {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(B3IRGenerator);
 public:
     using ExpressionType = Variable*;
     using ResultList = Vector<ExpressionType, 8>;
@@ -968,6 +969,12 @@ private:
     Vector<std::unique_ptr<B3IRGenerator>> m_protectedInlineeGenerators;
     Vector<std::unique_ptr<FunctionParser<B3IRGenerator>>> m_protectedInlineeParsers;
 };
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(B3IRGenerator);
+
+using FunctionParserB3IRGenerator = FunctionParser<B3IRGenerator>;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL_TEMPLATE(FunctionParserB3IRGenerator);
 
 // Memory accesses in WebAssembly have unsigned 32-bit offsets, whereas they have signed 32-bit offsets in B3.
 int32_t B3IRGenerator::fixupPointerPlusOffset(Value*& ptr, uint32_t offset)

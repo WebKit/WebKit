@@ -31,7 +31,7 @@ class Buffer {
       : width_(width), height_(height), top_padding_(top_padding),
         left_padding_(left_padding), right_padding_(right_padding),
         bottom_padding_(bottom_padding), alignment_(0), padding_value_(0),
-        stride_(0), raw_size_(0), num_elements_(0), raw_buffer_(NULL) {}
+        stride_(0), raw_size_(0), num_elements_(0), raw_buffer_(nullptr) {}
 
   Buffer(int width, int height, int top_padding, int left_padding,
          int right_padding, int bottom_padding, unsigned int alignment)
@@ -39,19 +39,19 @@ class Buffer {
         left_padding_(left_padding), right_padding_(right_padding),
         bottom_padding_(bottom_padding), alignment_(alignment),
         padding_value_(0), stride_(0), raw_size_(0), num_elements_(0),
-        raw_buffer_(NULL) {}
+        raw_buffer_(nullptr) {}
 
   Buffer(int width, int height, int padding)
       : width_(width), height_(height), top_padding_(padding),
         left_padding_(padding), right_padding_(padding),
         bottom_padding_(padding), alignment_(0), padding_value_(0), stride_(0),
-        raw_size_(0), num_elements_(0), raw_buffer_(NULL) {}
+        raw_size_(0), num_elements_(0), raw_buffer_(nullptr) {}
 
   Buffer(int width, int height, int padding, unsigned int alignment)
       : width_(width), height_(height), top_padding_(padding),
         left_padding_(padding), right_padding_(padding),
         bottom_padding_(padding), alignment_(alignment), padding_value_(0),
-        stride_(0), raw_size_(0), num_elements_(0), raw_buffer_(NULL) {}
+        stride_(0), raw_size_(0), num_elements_(0), raw_buffer_(nullptr) {}
 
   ~Buffer() {
     if (alignment_) {
@@ -103,7 +103,7 @@ class Buffer {
   bool CheckValues(const Buffer<T> &a) const;
 
   bool Init() {
-    if (raw_buffer_ != NULL) return false;
+    if (raw_buffer_ != nullptr) return false;
     EXPECT_GT(width_, 0);
     EXPECT_GT(height_, 0);
     EXPECT_GE(top_padding_, 0);
@@ -126,7 +126,7 @@ class Buffer {
     } else {
       raw_buffer_ = new (std::nothrow) T[num_elements_];
     }
-    EXPECT_TRUE(raw_buffer_ != NULL);
+    EXPECT_NE(raw_buffer_, nullptr);
     SetPadding(std::numeric_limits<T>::max());
     return !::testing::Test::HasFailure();
   }
@@ -150,7 +150,7 @@ class Buffer {
 
 template <typename T>
 T *Buffer<T>::TopLeftPixel() const {
-  if (!raw_buffer_) return NULL;
+  if (!raw_buffer_) return nullptr;
   return raw_buffer_ + (top_padding_ * stride_) + left_padding_;
 }
 

@@ -273,7 +273,7 @@ HTMLCanvasElement* WebXRWebGLLayer::canvas() const
 }
 
 
-void WebXRWebGLLayer::startFrame(const PlatformXR::Device::FrameData& data)
+void WebXRWebGLLayer::startFrame(const PlatformXR::FrameData& data)
 {
     ASSERT(m_framebuffer);
 

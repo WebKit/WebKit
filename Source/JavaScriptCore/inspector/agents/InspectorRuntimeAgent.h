@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,6 +35,7 @@
 #include "InspectorBackendDispatchers.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 class Debugger;
@@ -48,7 +49,7 @@ class InjectedScriptManager;
 
 class JS_EXPORT_PRIVATE InspectorRuntimeAgent : public InspectorAgentBase, public RuntimeBackendDispatcherHandler {
     WTF_MAKE_NONCOPYABLE(InspectorRuntimeAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorRuntimeAgent);
 public:
     ~InspectorRuntimeAgent() override;
 

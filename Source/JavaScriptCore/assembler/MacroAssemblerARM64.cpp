@@ -31,6 +31,7 @@
 #include "JSCPtrTag.h"
 #include "ProbeContext.h"
 #include <wtf/InlineASM.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #if OS(LINUX)
 #include <asm/hwcap.h>
@@ -56,6 +57,8 @@ static unsigned long getauxval(unsigned long type)
 #endif
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MacroAssemblerARM64);
 
 JSC_DECLARE_JIT_OPERATION(ctiMasmProbeTrampoline, void, ());
 JSC_ANNOTATE_JIT_OPERATION_PROBE(ctiMasmProbeTrampoline);

@@ -1,0 +1,19 @@
+
+PASS table
+FAIL colgroup assert_equals: offsetTop expected 18 but got 11
+FAIL col assert_equals: offsetTop expected 18 but got 11
+FAIL col2 assert_equals: offsetTop expected 18 but got 11
+FAIL colgroup2 assert_equals: offsetTop expected 18 but got 11
+FAIL col3 assert_equals: offsetTop expected 18 but got 11
+FAIL rowgroup assert_equals: offsetTop expected 18 but got 11
+FAIL row assert_equals: offsetLeft expected 18 but got 11
+PASS cell
+PASS content
+PASS cell2
+PASS content2
+PASS cell3
+PASS content3
+FAIL row2 assert_equals: offsetLeft expected 218 but got 211
+PASS cell4
+PASS content4
+

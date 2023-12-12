@@ -1142,7 +1142,7 @@ void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID
         if (is<RenderBox>(*renderer))
             borderRadii = downcast<RenderBox>(*renderer).borderRadii();
 
-        bool nodeHasBuiltInClickHandling = is<HTMLFormControlElement>(*node) || is<HTMLAnchorElement>(*node) || is<HTMLLabelElement>(*node) || is<HTMLSummaryElement>(*node) || node->isLink();
+        bool nodeHasBuiltInClickHandling = is<HTMLFormControlElement>(*node) || is<HTMLAnchorElement>(*node) || is<HTMLLabelElement>(*node) || is<HTMLSummaryElement>(*node) || (is<Element>(*node) && downcast<Element>(*node).isLink());
         send(Messages::WebPageProxy::DidGetTapHighlightGeometries(requestID, highlightColor, quads, roundedIntSize(borderRadii.topLeft()), roundedIntSize(borderRadii.topRight()), roundedIntSize(borderRadii.bottomLeft()), roundedIntSize(borderRadii.bottomRight()), nodeHasBuiltInClickHandling));
     }
 #else

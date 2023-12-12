@@ -225,7 +225,7 @@ static INLINE void variance(const uint8_t *src_ptr, int src_stride,
   }
 
 /* Identical to the variance call except it does not calculate the
- * sse - sum^2 / w*h and returns sse in addtion to modifying the passed in
+ * sse - sum^2 / w*h and returns sse in addition to modifying the passed in
  * variable.
  */
 #define MSE(W, H)                                                         \

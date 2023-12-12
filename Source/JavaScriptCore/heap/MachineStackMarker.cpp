@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2017 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *  Copyright (C) 2009 Acision BV. All rights reserved.
  *
@@ -27,8 +27,11 @@
 #include <wtf/BitVector.h>
 #include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MachineThreads);
 
 MachineThreads::MachineThreads()
     : m_threadGroup(ThreadGroup::create())

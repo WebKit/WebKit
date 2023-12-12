@@ -29,11 +29,11 @@
 #if ENABLE(WEBXR) && USE(ARKITXR_IOS)
 
 #import "Logging.h"
-#import "PlatformXRPose.h"
 #import "WKExtrinsicButton.h"
 
 #import <Metal/Metal.h>
 #import <WebCore/PlatformXR.h>
+#import <WebCore/PlatformXRPose.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RunLoop.h>
 #import <wtf/WeakObjCPtr.h>
@@ -114,7 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface _WKTransientGestureRecognizer : UIGestureRecognizer
 - (nullable instancetype)initWithSession:(_WKARPresentationSession *)session;
-- (Vector<PlatformXR::Device::FrameData::InputSource>)collectInputSources;
+- (Vector<PlatformXR::FrameData::InputSource>)collectInputSources;
 @end
 
 #pragma mark - _WKARPresentationSession implementation
@@ -207,7 +207,7 @@ NS_ASSUME_NONNULL_BEGIN
     return 1;
 }
 
-- (Vector<PlatformXR::Device::FrameData::InputSource>)collectInputSources
+- (Vector<PlatformXR::FrameData::InputSource>)collectInputSources
 {
     return [_touchGestureRecognizer collectInputSources];
 }
@@ -494,7 +494,7 @@ id<WKARPresentationSession> createPresesentationSession(ARSession *session, WKAR
 
 #pragma mark - Input sources collection
 
-- (std::optional<PlatformXR::Device::FrameData::InputSource>)_platformXRInputSourceFromTransientAction:(_WKTransientAction *)transientAction actionIdentifier:(int)actionIdentifier
+- (std::optional<PlatformXR::FrameData::InputSource>)_platformXRInputSourceFromTransientAction:(_WKTransientAction *)transientAction actionIdentifier:(int)actionIdentifier
 {
     dispatch_assert_queue(_accessQueue.get());
 
@@ -502,7 +502,7 @@ id<WKARPresentationSession> createPresesentationSession(ARSession *session, WKAR
     PlatformXRPose targetRay(simd_mul(multiplier, transientAction.targetRay));
     PlatformXRPose pose(transientAction.pose);
 
-    PlatformXR::Device::FrameData::InputSource data;
+    PlatformXR::FrameData::InputSource data;
     data.handeness = PlatformXR::XRHandedness::None;
     data.handle = actionIdentifier;
     data.profiles = Vector<String> { "generic-button-invisible"_s, "generic-button"_s };
@@ -511,12 +511,12 @@ id<WKARPresentationSession> createPresesentationSession(ARSession *session, WKAR
     data.pointerOrigin.pose = targetRay.pose();
     data.pointerOrigin.isPositionEmulated = false;
 
-    PlatformXR::Device::FrameData::InputSourcePose gripPose;
+    PlatformXR::FrameData::InputSourcePose gripPose;
     gripPose.pose = pose.pose();
     gripPose.isPositionEmulated = false;
     data.gripOrigin = gripPose;
 
-    PlatformXR::Device::FrameData::InputSourceButton button;
+    PlatformXR::FrameData::InputSourceButton button;
     button.pressed = true;
     button.touched = true;
     button.pressedValue = 1.0;
@@ -525,9 +525,9 @@ id<WKARPresentationSession> createPresesentationSession(ARSession *session, WKAR
     return data;
 }
 
-- (Vector<PlatformXR::Device::FrameData::InputSource>)collectInputSources
+- (Vector<PlatformXR::FrameData::InputSource>)collectInputSources
 {
-    __block Vector<PlatformXR::Device::FrameData::InputSource> result;
+    __block Vector<PlatformXR::FrameData::InputSource> result;
 
     dispatch_sync(_accessQueue.get(), ^{
         [_transientActions enumerateKeysAndObjectsUsingBlock:^(NSNumber *id, _WKTransientAction *transientAction, BOOL*) {

@@ -325,6 +325,10 @@ void AXObjectCache::postPlatformNotification(AXCoreObject* object, AXNotificatio
         return;
     }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    processQueuedIsolatedNodeUpdates();
+#endif
+
     bool skipSystemNotification = false;
     // Some notifications are unique to Safari and do not have NSAccessibility equivalents.
     NSString *macNotification;
@@ -463,6 +467,10 @@ void AXObjectCache::postPlatformAnnouncementNotification(const String& message)
 {
     ASSERT(isMainThread());
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    processQueuedIsolatedNodeUpdates();
+#endif
+
     NSDictionary *userInfo = @{ NSAccessibilityPriorityKey: @(NSAccessibilityPriorityHigh),
         NSAccessibilityAnnouncementKey: message,
     };
@@ -503,6 +511,10 @@ void AXObjectCache::postTextStateChangePlatformNotification(AccessibilityObject*
     if (!object)
         return;
     RefPtr protectedObject = object;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    processQueuedIsolatedNodeUpdates();
+#endif
 
     auto userInfo = adoptNS([[NSMutableDictionary alloc] initWithCapacity:5]);
     if (m_isSynchronizingSelection)
@@ -624,6 +636,10 @@ void AXObjectCache::postTextReplacementPlatformNotification(AccessibilityObject*
         return;
     RefPtr protectedObject = object;
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    processQueuedIsolatedNodeUpdates();
+#endif
+
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
     if (NSDictionary *change = textReplacementChangeDictionary(*object, deletionType, deletedText, position))
         [changes addObject:change];
@@ -642,6 +658,10 @@ void AXObjectCache::postTextReplacementPlatformNotificationForTextControl(Access
     if (!object)
         return;
     RefPtr protectedObject = object;
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    processQueuedIsolatedNodeUpdates();
+#endif
 
     auto changes = adoptNS([[NSMutableArray alloc] initWithCapacity:2]);
     if (NSDictionary *change = textReplacementChangeDictionary(*object, AXTextEditTypeDelete, deletedText, textControl))

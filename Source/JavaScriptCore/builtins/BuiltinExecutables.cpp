@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,8 +31,11 @@
 #include "JSCJSValueInlines.h"
 #include "Parser.h"
 #include <wtf/NeverDestroyed.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BuiltinExecutables);
 
 BuiltinExecutables::BuiltinExecutables(VM& vm)
     : m_vm(vm)

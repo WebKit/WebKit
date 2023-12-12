@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,10 +37,14 @@
 #include "CCallHelpers.h"
 #include <wtf/ListDump.h>
 #include <wtf/MathExtras.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace B3 { namespace Air {
 
 const char* const tierName = "Air ";
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CFG);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Code);
 
 static void defaultPrologueGenerator(CCallHelpers& jit, Code& code)
 {

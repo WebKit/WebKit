@@ -585,6 +585,10 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, DynamicRules)
 
     EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Unload extension");
 
+    auto *storageDirectory = manager.get().controller.configuration._storageDirectoryPath;
+    storageDirectory = [storageDirectory stringByAppendingPathComponent:manager.get().context.uniqueIdentifier];
+    EXPECT_TRUE([NSFileManager.defaultManager fileExistsAtPath:[storageDirectory stringByAppendingPathComponent:@"DeclarativeNetRequestContentRuleList.data"]]);
+
     [manager.get().controller unloadExtensionContext:manager.get().context error:nullptr];
 
     [manager loadAndRun];

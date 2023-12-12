@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ##  Copyright (c) 2012 The WebM project authors. All Rights Reserved.
 ##
 ##  Use of this source code is governed by a BSD-style license
@@ -69,7 +69,7 @@ def main():
                 break
 
     if out_hunks:
-        print FormatDiffHunks(out_hunks)
+        print(FormatDiffHunks(out_hunks))
         sys.exit(1)
 
 if __name__ == "__main__":

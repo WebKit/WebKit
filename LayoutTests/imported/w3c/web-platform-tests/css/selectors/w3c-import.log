@@ -15,10 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/META.yml
-/LayoutTests/imported/w3c/web-platform-tests/css/selectors/anplusb-selector-parsing.html
-/LayoutTests/imported/w3c/web-platform-tests/css/selectors/any-link-dynamic-001-expected.html
-/LayoutTests/imported/w3c/web-platform-tests/css/selectors/any-link-dynamic-001-ref.html
-/LayoutTests/imported/w3c/web-platform-tests/css/selectors/any-link-dynamic-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/case-insensitive-parent-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/case-insensitive-parent-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/case-insensitive-parent.html
@@ -30,6 +26,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/dir-pseudo-in-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/dir-pseudo-on-bdi-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/dir-pseudo-on-input-element.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/dir-pseudo-update-document-element-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/dir-pseudo-update-document-element-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/dir-pseudo-update-document-element.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/dir-selector-auto-direction-change-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/dir-selector-auto-direction-change-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/dir-selector-auto.html
@@ -194,6 +193,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/has-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/has-matches-to-uninserted-elements.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/has-relative-argument.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/has-sibling-chrome-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/has-specificity.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/has-style-sharing-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/has-style-sharing-001-ref.html
@@ -216,6 +216,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/has-visited-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/has-visited-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/has-visited.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/hash-collision.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/historical-xmlid-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/historical-xmlid.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/hover-002.html
@@ -231,7 +232,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/is-where-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/is-where-error-recovery.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/is-where-not.html
-/LayoutTests/imported/w3c/web-platform-tests/css/selectors/is-where-parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/is-where-pseudo-classes.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/is-where-pseudo-elements-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/is-where-pseudo-elements-ref.html
@@ -351,6 +351,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/of-type-selectors.xhtml
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/only-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/only-of-type.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/placeholder-shown.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/pseudo-enabled-disabled.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/remove-hovered-element-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/remove-hovered-element-ref.html
@@ -413,6 +414,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/spurious-brace-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/user-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/user-valid.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/valid-invalid-form-fieldset.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/visited-inheritance-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/visited-inheritance-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/visited-inheritance.html

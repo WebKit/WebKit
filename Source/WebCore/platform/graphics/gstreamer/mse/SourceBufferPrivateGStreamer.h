@@ -43,10 +43,11 @@
 #include "TrackPrivateBaseGStreamer.h"
 #include "WebKitMediaSourceGStreamer.h"
 #include <optional>
-#include <ranges>
 #include <wtf/LoggerHelper.h>
 
 namespace WebCore {
+
+using TrackID = uint64_t;
 
 class AppendPipeline;
 class MediaSourcePrivateGStreamer;
@@ -75,7 +76,7 @@ public:
     void didReceiveAllPendingSamples();
     void appendParsingFailed();
 
-    auto tracks() { return std::views::values(m_tracks); }
+    HashMap<TrackID, RefPtr<MediaSourceTrackGStreamer>>::ValuesIteratorRange tracks() { return m_tracks.values(); }
 
     ContentType type() const { return m_type; }
 
@@ -102,7 +103,7 @@ private:
     ContentType m_type;
     MediaPlayerPrivateGStreamerMSE& m_playerPrivate;
     UniqueRef<AppendPipeline> m_appendPipeline;
-    StdUnorderedMap<TrackID, RefPtr<MediaSourceTrackGStreamer>> m_tracks;
+    HashMap<TrackID, RefPtr<MediaSourceTrackGStreamer>> m_tracks;
     std::optional<MediaPromise::Producer> m_appendPromise;
 
 #if !RELEASE_LOG_DISABLED

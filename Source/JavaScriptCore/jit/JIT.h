@@ -39,6 +39,7 @@
 #include "JSInterfaceJIT.h"
 #include "LLIntData.h"
 #include "PCToCodeOriginMap.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
 namespace JSC {
@@ -149,6 +150,8 @@ namespace JSC {
     };
 
     class JIT final : public JSInterfaceJIT {
+        WTF_MAKE_TZONE_ALLOCATED(JIT);
+
         friend class JITSlowPathCall;
         friend class JITStubCall;
         friend class JITThunks;

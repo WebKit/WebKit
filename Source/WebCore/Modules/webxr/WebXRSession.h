@@ -98,7 +98,7 @@ public:
     XRSessionMode mode() const { return m_mode; }
 
     const Vector<PlatformXR::Device::ViewData>& views() const { return m_views; }
-    const PlatformXR::Device::FrameData& frameData() const { return m_frameData; }
+    const PlatformXR::FrameData& frameData() const { return m_frameData; }
     const WebXRViewerSpace& viewerReferenceSpace() const { return m_viewerReferenceSpace; }
     bool posesCanBeReported(const Document&) const;
     
@@ -119,7 +119,7 @@ private:
     void stop() override;
 
     // PlatformXR::TrackingAndRenderingClient
-    void sessionDidInitializeInputSources(Vector<PlatformXR::Device::FrameData::InputSource>&&) final;
+    void sessionDidInitializeInputSources(Vector<PlatformXR::FrameData::InputSource>&&) final;
     void sessionDidEnd() final;
     void updateSessionVisibilityState(PlatformXR::VisibilityState) final;
 
@@ -131,7 +131,7 @@ private:
 
     bool frameShouldBeRendered() const;
     void requestFrameIfNeeded();
-    void onFrame(PlatformXR::Device::FrameData&&);
+    void onFrame(PlatformXR::FrameData&&);
     void applyPendingRenderState();
 
     XREnvironmentBlendMode m_environmentBlendMode { XREnvironmentBlendMode::Opaque };
@@ -155,7 +155,7 @@ private:
     bool m_isDeviceFrameRequestPending { false };
 
     Vector<PlatformXR::Device::ViewData> m_views;
-    PlatformXR::Device::FrameData m_frameData;
+    PlatformXR::FrameData m_frameData;
 
     double m_minimumInlineFOV { 0.0 };
     double m_maximumInlineFOV { piFloat };

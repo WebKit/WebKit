@@ -37,6 +37,7 @@
 #include <wtf/SharedTask.h>
 #include <wtf/StdIntExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -430,7 +431,7 @@ JS_EXPORT_PRIVATE ASCIILiteral errorMessageForTransfer(ArrayBuffer*);
 // https://tc39.es/proposal-resizablearraybuffer/#sec-makeidempotentarraybufferbytelengthgetter
 template<std::memory_order order>
 class IdempotentArrayBufferByteLengthGetter {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(IdempotentArrayBufferByteLengthGetter);
 public:
     IdempotentArrayBufferByteLengthGetter() = default;
 

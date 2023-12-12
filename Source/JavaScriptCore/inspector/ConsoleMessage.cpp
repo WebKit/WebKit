@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2014, 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2009, 2010 Google Inc. All rights reserved.
  *
@@ -39,8 +39,11 @@
 #include "ScriptCallFrame.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ConsoleMessage);
 
 ConsoleMessage::ConsoleMessage(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned long requestIdentifier, WallTime timestamp)
     : m_source(source)

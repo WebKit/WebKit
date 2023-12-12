@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #include "PropertyOffset.h"
 #include "StructureSet.h"
 #include <wtf/Box.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 namespace DOMJIT {
@@ -42,7 +43,7 @@ class GetByStatus;
 struct DumpContext;
 
 class GetByVariant {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(GetByVariant);
 public:
     GetByVariant(
         CacheableIdentifier,

@@ -499,7 +499,7 @@ static CGSize roundScrollViewContentSize(const WebKit::WebPageProxy& page, CGSiz
         [_customContentView web_setFixedOverlayView:_customContentFixedOverlayView.get()];
 
         _perProcessState.scrollViewBackgroundColor = WebCore::Color();
-        [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
+        [self _resetContentOffset];
         [_scrollView panGestureRecognizer].allowedTouchTypes = _scrollViewDefaultAllowedTouchTypes.get();
         [_scrollView _setScrollEnabledInternal:YES];
 
@@ -835,7 +835,7 @@ static WebCore::Color scrollViewBackgroundColor(WKWebView *webView, AllowPageBac
 
     [_contentView setFrame:self.bounds];
     [_scrollView _setBackgroundColorInternal:[_contentView backgroundColor]];
-    [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
+    [self _resetContentOffset];
     [_scrollView setZoomScale:1];
 }
 
@@ -1088,7 +1088,7 @@ static void changeContentOffsetBoundedInValidRange(UIScrollView *scrollView, Web
     if (_perProcessState.needsResetViewStateAfterCommitLoadForMainFrame && layerTreeTransaction.transactionID() >= _perProcessState.firstPaintAfterCommitLoadTransactionID) {
         _perProcessState.needsResetViewStateAfterCommitLoadForMainFrame = NO;
         if (![self _scrollViewIsRubberBandingForRefreshControl])
-            [_scrollView setContentOffset:[self _initialContentOffsetForScrollView]];
+            [self _resetContentOffset];
 
         if (_observedRenderingProgressEvents & _WKRenderingProgressEventFirstPaint)
             _navigationState->didFirstPaint();

@@ -31,8 +31,11 @@
 #include "LinkBuffer.h"
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "ShadowChicken.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(CCallHelpers);
 
 void CCallHelpers::logShadowChickenProloguePacket(GPRReg shadowPacket, GPRReg scratch1, GPRReg scope)
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,13 @@
 #include "InspectorEnvironment.h"
 #include "SamplingProfiler.h"
 #include <wtf/Stopwatch.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace Inspector {
 
 using namespace JSC;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorScriptProfilerAgent);
 
 InspectorScriptProfilerAgent::InspectorScriptProfilerAgent(AgentContext& context)
     : InspectorAgentBase("ScriptProfiler"_s)

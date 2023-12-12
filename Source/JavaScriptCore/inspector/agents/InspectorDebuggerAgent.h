@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013, 2015-2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,6 +42,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace Inspector {
@@ -56,7 +57,7 @@ class JS_EXPORT_PRIVATE InspectorDebuggerAgent
     , public JSC::Debugger::Client
     , public JSC::Debugger::Observer {
     WTF_MAKE_NONCOPYABLE(InspectorDebuggerAgent);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(InspectorDebuggerAgent);
 public:
     ~InspectorDebuggerAgent() override;
 
@@ -186,7 +187,7 @@ private:
     Ref<JSON::ArrayOf<Protocol::Debugger::CallFrame>> currentCallFrames(const InjectedScript&);
 
     class ProtocolBreakpoint {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(ProtocolBreakpoint);
     public:
         static std::optional<ProtocolBreakpoint> fromPayload(Protocol::ErrorString&, JSC::SourceID, unsigned lineNumber, unsigned columnNumber, RefPtr<JSON::Object>&& options = nullptr);
         static std::optional<ProtocolBreakpoint> fromPayload(Protocol::ErrorString&, const String& url, bool isRegex, unsigned lineNumber, unsigned columnNumber, RefPtr<JSON::Object>&& options = nullptr);

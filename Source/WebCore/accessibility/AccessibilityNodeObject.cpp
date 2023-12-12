@@ -348,7 +348,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
     if (!node())
         return AccessibilityRole::Unknown;
 
-    if (node()->isLink())
+    if (RefPtr element = dynamicDowncast<Element>(*node()); element && element->isLink())
         return AccessibilityRole::WebCoreLink;
     if (node()->isTextNode())
         return AccessibilityRole::StaticText;

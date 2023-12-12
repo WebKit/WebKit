@@ -50,11 +50,14 @@
 #include "TypeProfilerLog.h"
 #include <wtf/GraphNodeWorklist.h>
 #include <wtf/SimpleStats.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
 namespace JITInternal {
 static constexpr const bool verbose = false;
 }
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JIT);
 
 Seconds totalBaselineCompileTime;
 Seconds totalDFGCompileTime;

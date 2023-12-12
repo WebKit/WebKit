@@ -233,7 +233,7 @@ static VP9_DENOISER_DECISION perform_motion_compensation(
         frame == ALTREF_FRAME ||
         (frame == GOLDEN_FRAME && use_gf_temporal_ref) ||
         (frame != LAST_FRAME &&
-         ((ctx->zeromv_lastref_sse<(5 * ctx->zeromv_sse)>> 2) ||
+         ((ctx->zeromv_lastref_sse < (5 * ctx->zeromv_sse) >> 2) ||
           denoiser->denoising_level >= kDenHigh))) {
       frame = LAST_FRAME;
       ctx->newmv_sse = ctx->zeromv_lastref_sse;
@@ -319,7 +319,7 @@ static VP9_DENOISER_DECISION perform_motion_compensation(
   filter_mbd->plane[2].dst.stride =
       denoiser->mc_running_avg_y[denoise_layer_idx].uv_stride;
 
-  set_ref_ptrs(cm, filter_mbd, saved_frame, NONE);
+  set_ref_ptrs(cm, filter_mbd, saved_frame, NO_REF_FRAME);
   vp9_build_inter_predictors_sby(filter_mbd, mi_row, mi_col, bs);
 
   // Restore everything to its original state
@@ -387,7 +387,7 @@ void vp9_denoiser_denoise(VP9_COMP *cpi, MACROBLOCK *mb, int mi_row, int mi_col,
           consec_zeromv = VPXMIN(cpi->consec_zero_mv[bl_index], consec_zeromv);
           // No need to keep checking 8x8 blocks if any of the sub-blocks
           // has small consec_zeromv (since threshold for no_skin based on
-          // zero/small motion in skin detection is high, i.e, > 4).
+          // zero/small motion in skin detection is high, i.e., > 4).
           if (consec_zeromv < 4) {
             i = ymis;
             break;
@@ -634,11 +634,11 @@ int vp9_denoiser_alloc(VP9_COMMON *cm, struct SVC *svc, VP9_DENOISER *denoiser,
   denoiser->num_ref_frames = use_svc ? SVC_REF_FRAMES : NONSVC_REF_FRAMES;
   init_num_ref_frames = use_svc ? MAX_REF_FRAMES : NONSVC_REF_FRAMES;
   denoiser->num_layers = num_layers;
-  CHECK_MEM_ERROR(cm, denoiser->running_avg_y,
+  CHECK_MEM_ERROR(&cm->error, denoiser->running_avg_y,
                   vpx_calloc(denoiser->num_ref_frames * num_layers,
                              sizeof(denoiser->running_avg_y[0])));
   CHECK_MEM_ERROR(
-      cm, denoiser->mc_running_avg_y,
+      &cm->error, denoiser->mc_running_avg_y,
       vpx_calloc(num_layers, sizeof(denoiser->mc_running_avg_y[0])));
 
   for (layer = 0; layer < num_layers; ++layer) {
@@ -764,8 +764,9 @@ int64_t vp9_scale_acskip_thresh(int64_t threshold,
                                 VP9_DENOISER_LEVEL noise_level, int abs_sumdiff,
                                 int temporal_layer_id) {
   if (noise_level >= kDenLow && abs_sumdiff < 5)
-    return threshold *=
-           (noise_level == kDenLow) ? 2 : (temporal_layer_id == 2) ? 10 : 6;
+    return threshold *= (noise_level == kDenLow)   ? 2
+                        : (temporal_layer_id == 2) ? 10
+                                                   : 6;
   else
     return threshold;
 }

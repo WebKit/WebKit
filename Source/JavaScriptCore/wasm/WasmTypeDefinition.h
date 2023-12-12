@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,6 +42,7 @@
 #include <wtf/HashTraits.h>
 #include <wtf/Lock.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
@@ -711,7 +712,7 @@ enum class TypeDefinitionKind : uint8_t {
 };
 
 class TypeDefinition : public ThreadSafeRefCounted<TypeDefinition> {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TypeDefinition);
 
     TypeDefinition() = delete;
     TypeDefinition(const TypeDefinition&) = delete;
@@ -873,7 +874,7 @@ namespace JSC { namespace Wasm {
 // Type information is held globally and shared by the entire process to allow all type definitions to be unique. This is required when wasm calls another wasm instance, and must work when modules are shared between multiple VMs.
 class TypeInformation {
     WTF_MAKE_NONCOPYABLE(TypeInformation);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(TypeInformation);
 
     TypeInformation();
 

@@ -77,7 +77,7 @@ public:
 };
 
 class BytecodeLivenessAnalysis : private BytecodeLivenessPropagation {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BytecodeLivenessAnalysis);
     WTF_MAKE_NONCOPYABLE(BytecodeLivenessAnalysis);
 public:
     friend class BytecodeLivenessPropagation;

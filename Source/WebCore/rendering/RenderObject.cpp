@@ -755,14 +755,11 @@ void RenderObject::addPDFURLRect(const PaintInfo& paintInfo, const LayoutPoint& 
 
     if (urlRect.isEmpty())
         return;
-    RefPtr element = [this]() -> RefPtr<Element> {
-        RefPtr node = this->node();
-        if (!is<Element>(node) || !node->isLink())
-            return nullptr;
-        return downcast<Element>(WTFMove(node));
-    }();
-    if (!element)
+
+    RefPtr element = dynamicDowncast<Element>(node());
+    if (!element || !element->isLink())
         return;
+
     const AtomString& href = element->getAttribute(hrefAttr);
     if (href.isNull())
         return;

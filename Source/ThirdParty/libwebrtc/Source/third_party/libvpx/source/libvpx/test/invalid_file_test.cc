@@ -40,7 +40,7 @@ class InvalidFileTest : public ::libvpx_test::DecoderTest,
  protected:
   InvalidFileTest() : DecoderTest(GET_PARAM(0)), res_file_(nullptr) {}
 
-  virtual ~InvalidFileTest() {
+  ~InvalidFileTest() override {
     if (res_file_ != nullptr) fclose(res_file_);
   }
 
@@ -50,10 +50,9 @@ class InvalidFileTest : public ::libvpx_test::DecoderTest,
         << "Result file open failed. Filename: " << res_file_name_;
   }
 
-  virtual bool HandleDecodeResult(
-      const vpx_codec_err_t res_dec,
-      const libvpx_test::CompressedVideoSource &video,
-      libvpx_test::Decoder *decoder) {
+  bool HandleDecodeResult(const vpx_codec_err_t res_dec,
+                          const libvpx_test::CompressedVideoSource &video,
+                          libvpx_test::Decoder *decoder) override {
     EXPECT_NE(res_file_, nullptr);
     int expected_res_dec;
 
@@ -172,9 +171,9 @@ VP9_INSTANTIATE_TEST_SUITE(InvalidFileTest,
 class InvalidFileInvalidPeekTest : public InvalidFileTest {
  protected:
   InvalidFileInvalidPeekTest() : InvalidFileTest() {}
-  virtual void HandlePeekResult(libvpx_test::Decoder *const /*decoder*/,
-                                libvpx_test::CompressedVideoSource * /*video*/,
-                                const vpx_codec_err_t /*res_peek*/) {}
+  void HandlePeekResult(libvpx_test::Decoder *const /*decoder*/,
+                        libvpx_test::CompressedVideoSource * /*video*/,
+                        const vpx_codec_err_t /*res_peek*/) override {}
 };
 
 TEST_P(InvalidFileInvalidPeekTest, ReturnCode) { RunTest(); }

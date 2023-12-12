@@ -42,8 +42,11 @@
 #include "ProbeContext.h"
 #include "ThunkGenerators.h"
 #include "VM.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC { namespace DFG {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JITCompiler);
 
 JITCompiler::JITCompiler(Graph& dfg)
     : CCallHelpers(dfg.m_codeBlock)

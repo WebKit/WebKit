@@ -18,7 +18,7 @@
 #include "vpx_dsp/arm/transpose_neon.h"
 #include "vpx_dsp/inv_txfm.h"
 
-// Use macros to make sure argument lane is passed in as an constant integer.
+// Use macros to make sure argument lane is passed in as a constant integer.
 
 #define vmull_lane_s32_dual(in, c, lane, out)                          \
   do {                                                                 \
@@ -64,9 +64,9 @@ highbd_dct_const_round_shift_low_8(const int64x2x2_t *const in) {
 
 #define highbd_iadst_half_butterfly(in, c, lane, out) \
   do {                                                \
-    int64x2x2_t t[2];                                 \
-    vmull_lane_s32_dual(in, c, lane, t);              \
-    out = highbd_dct_const_round_shift_low_8(t);      \
+    int64x2x2_t _t[2];                                \
+    vmull_lane_s32_dual(in, c, lane, _t);             \
+    out = highbd_dct_const_round_shift_low_8(_t);     \
   } while (0)
 
 #define highbd_iadst_butterfly(in0, in1, c, lane0, lane1, s0, s1) \

@@ -45,7 +45,7 @@ public:
     using RefCounted<WebXRLayer>::ref;
     using RefCounted<WebXRLayer>::deref;
 
-    virtual void startFrame(const PlatformXR::Device::FrameData&) = 0;
+    virtual void startFrame(const PlatformXR::FrameData&) = 0;
     virtual PlatformXR::Device::Layer endFrame() = 0;
 
 protected:

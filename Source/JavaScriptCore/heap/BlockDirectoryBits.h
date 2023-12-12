@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #include <array>
 #include <wtf/FastBitVector.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace JSC {
@@ -59,7 +60,7 @@ namespace JSC {
 // https://bugs.webkit.org/show_bug.cgi?id=162121
 
 class BlockDirectoryBits {
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BlockDirectoryBits);
 public:
     static constexpr unsigned bitsPerSegment = 32;
     static constexpr unsigned segmentShift = 5;
@@ -85,7 +86,7 @@ public:
 
     template<Kind kind>
     class BlockDirectoryBitVectorWordView {
-        WTF_MAKE_FAST_ALLOCATED;
+        WTF_MAKE_TZONE_ALLOCATED(BlockDirectoryBitVectorWordView);
     public:
         using ViewType = BlockDirectoryBitVectorWordView;
 

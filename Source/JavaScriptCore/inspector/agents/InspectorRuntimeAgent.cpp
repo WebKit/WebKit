@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,11 +44,14 @@
 #include "TypeProfiler.h"
 #include "TypeProfilerLog.h"
 #include <wtf/JSONValues.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
 namespace Inspector {
 
 using namespace JSC;
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorRuntimeAgent);
 
 InspectorRuntimeAgent::InspectorRuntimeAgent(AgentContext& context)
     : InspectorAgentBase("Runtime"_s)

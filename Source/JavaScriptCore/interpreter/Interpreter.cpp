@@ -30,6 +30,7 @@
 #include "config.h"
 #include "Interpreter.h"
 
+#include "AbortReason.h"
 #include "AbstractModuleRecord.h"
 #include "ArgList.h"
 #include "BatchedTransitionOptimizer.h"

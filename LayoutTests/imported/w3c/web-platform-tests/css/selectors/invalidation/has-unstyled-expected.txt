@@ -1,0 +1,11 @@
+
+PASS Initial color
+PASS add test to subject_descendant
+PASS remove test from subject_descendant
+PASS add test to sibling_descendant
+PASS remove test from sibling_descendant
+PASS add test_inner to subject_child
+PASS remove test_inner from subject_child
+PASS add test_inner to sibling_child
+PASS remove test_inner from sibling_child
+

@@ -1,6 +1,6 @@
 
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,12 +28,15 @@
 #include "WasmFunctionIPIntMetadataGenerator.h"
 
 #include <numeric>
+#include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(WEBASSEMBLY)
 
 namespace JSC {
 
 namespace Wasm {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(FunctionIPIntMetadataGenerator);
 
 unsigned FunctionIPIntMetadataGenerator::addSignature(const TypeDefinition& signature)
 {

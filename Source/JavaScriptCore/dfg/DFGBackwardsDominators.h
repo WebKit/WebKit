@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,14 +29,14 @@
 
 #include "DFGBackwardsCFG.h"
 #include <wtf/Dominators.h>
-#include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC { namespace DFG {
 
 class BackwardsDominators : public WTF::Dominators<BackwardsCFG> {
     WTF_MAKE_NONCOPYABLE(BackwardsDominators);
-    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_TZONE_ALLOCATED(BackwardsDominators);
 public:
     BackwardsDominators(Graph& graph)
         : WTF::Dominators<BackwardsCFG>(graph.ensureBackwardsCFG())

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,10 +27,12 @@
 
 #include "HeapCellType.h"
 #include <wtf/PtrTag.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace JSC {
 
 class JS_EXPORT_PRIVATE IsoHeapCellType final : public HeapCellType {
+    WTF_MAKE_TZONE_ALLOCATED(IsoHeapCellType);
 public:
     using DestroyFunctionPtr = void (*)(JSCell*);
 
