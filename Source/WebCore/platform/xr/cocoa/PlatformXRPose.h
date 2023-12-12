@@ -17,8 +17,8 @@ public:
     simd_float3 simdPosition() const { return m_simdTransform.columns[3].xyz; }
     simd_quatf simdOrientation() const { return simd_quaternion(m_simdTransform); }
     WEBCORE_EXPORT WebCore::FloatPoint3D position() const;
-    WEBCORE_EXPORT PlatformXR::Device::FrameData::FloatQuaternion orientation() const;
-    WEBCORE_EXPORT PlatformXR::Device::FrameData::Pose pose() const;
+    WEBCORE_EXPORT PlatformXR::FrameData::FloatQuaternion orientation() const;
+    WEBCORE_EXPORT PlatformXR::FrameData::Pose pose() const;
 
     using FloatMatrix4 = std::array<float, 16>;
     WEBCORE_EXPORT FloatMatrix4 toColumnMajorFloatArray() const;

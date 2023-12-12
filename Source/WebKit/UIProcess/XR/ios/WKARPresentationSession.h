@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (atomic, readonly, getter=isSessionEndRequested) BOOL sessionEndRequested;
 
 - (NSUInteger)startFrame;
-- (Vector<PlatformXR::Device::FrameData::InputSource>)collectInputSources;
+- (Vector<PlatformXR::FrameData::InputSource>)collectInputSources;
 - (void)present;
 - (void)terminate;
 @end

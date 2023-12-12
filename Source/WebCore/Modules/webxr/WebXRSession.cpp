@@ -422,7 +422,7 @@ void WebXRSession::stop()
 {
 }
 
-void WebXRSession::sessionDidInitializeInputSources(Vector<PlatformXR::Device::FrameData::InputSource>&& inputSources)
+void WebXRSession::sessionDidInitializeInputSources(Vector<PlatformXR::FrameData::InputSource>&& inputSources)
 {
     // https://immersive-web.github.io/webxr/#dom-xrsystem-requestsession
     // 5.4.11 Queue a task to perform the following steps: NOTE: These steps ensure that initial inputsourceschange
@@ -546,7 +546,7 @@ void WebXRSession::requestFrameIfNeeded()
     });
 }
 
-void WebXRSession::onFrame(PlatformXR::Device::FrameData&& frameData)
+void WebXRSession::onFrame(PlatformXR::FrameData&& frameData)
 {
     ASSERT(isMainThread());
 

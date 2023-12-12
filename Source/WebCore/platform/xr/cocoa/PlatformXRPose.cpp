@@ -13,15 +13,15 @@ WebCore::FloatPoint3D PlatformXRPose::position() const
     return { static_cast<float>(simdPosition.x), static_cast<float>(simdPosition.y), static_cast<float>(simdPosition.z) };
 }
 
-PlatformXR::Device::FrameData::FloatQuaternion PlatformXRPose::orientation() const
+PlatformXR::FrameData::FloatQuaternion PlatformXRPose::orientation() const
 {
     simd_quatf simdOrientation = this->simdOrientation();
     return { simdOrientation.vector.x, simdOrientation.vector.y, simdOrientation.vector.z, simdOrientation.vector.w };
 }
 
-PlatformXR::Device::FrameData::Pose PlatformXRPose::pose() const
+PlatformXR::FrameData::Pose PlatformXRPose::pose() const
 {
-    PlatformXR::Device::FrameData::Pose pose;
+    PlatformXR::FrameData::Pose pose;
     pose.position = position();
     pose.orientation = orientation();
     return pose;

@@ -111,7 +111,7 @@ void PlatformXRSystem::shutDownTrackingAndRendering()
         xrCoordinator->endSessionIfExists(m_page);
 }
 
-void PlatformXRSystem::requestFrame(CompletionHandler<void(PlatformXR::Device::FrameData&&)>&& completionHandler)
+void PlatformXRSystem::requestFrame(CompletionHandler<void(PlatformXR::FrameData&&)>&& completionHandler)
 {
     if (auto* xrCoordinator = PlatformXRSystem::xrCoordinator())
         xrCoordinator->scheduleAnimationFrame(m_page, WTFMove(completionHandler));

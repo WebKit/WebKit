@@ -627,7 +627,7 @@ void WebXRSystem::DummyInlineDevice::requestFrame(PlatformXR::Device::RequestFra
         return;
 
     auto raf = InlineRequestAnimationFrameCallback::create(*scriptExecutionContext(), [callback = WTFMove(callback)]() mutable {
-        PlatformXR::Device::FrameData data;
+        PlatformXR::FrameData data;
         data.isTrackingValid = true;
         data.isPositionValid = true;
         data.shouldRender = true;

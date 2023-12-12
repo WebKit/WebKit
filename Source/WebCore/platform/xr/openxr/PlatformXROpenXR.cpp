@@ -189,7 +189,7 @@ void OpenXRDevice::requestFrame(RequestFrameCallback&& callback)
         result = xrBeginFrame(m_session, &frameBeginInfo);
         RETURN_IF_FAILED(result, "xrBeginFrame", m_instance);
 
-        Device::FrameData frameData;
+        FrameData frameData;
         frameData.predictedDisplayTime = m_frameState.predictedDisplayTime;
         frameData.shouldRender = m_frameState.shouldRender;
         frameData.stageParameters = m_stageParameters;

@@ -746,7 +746,7 @@ def headers_for_type(type):
         'MonotonicTime': ['<wtf/MonotonicTime.h>'],
         'PAL::SessionID': ['<pal/SessionID.h>'],
         'PAL::UserInterfaceIdiom': ['<pal/system/ios/UserInterfaceIdiom.h>'],
-        'PlatformXR::Device::FrameData': ['<WebCore/PlatformXR.h>'],
+        'PlatformXR::FrameData': ['<WebCore/PlatformXR.h>'],
         'PlatformXR::ReferenceSpaceType': ['<WebCore/PlatformXR.h>'],
         'PlatformXR::SessionFeature': ['<WebCore/PlatformXR.h>'],
         'PlatformXR::SessionMode': ['<WebCore/PlatformXR.h>'],

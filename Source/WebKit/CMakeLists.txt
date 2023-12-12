@@ -546,6 +546,7 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/WebsiteData/WebsiteDataFetchOption.serialization.in
     Shared/WebsiteData/WebsiteDataType.serialization.in
 
+    Shared/XR/PlatformXR.serialization.in
     Shared/XR/XRSystem.serialization.in
 
     WebProcess/GPU/GPUProcessConnectionInfo.serialization.in

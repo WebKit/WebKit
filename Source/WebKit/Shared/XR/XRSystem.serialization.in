@@ -21,49 +21,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(WEBXR)
-enum class PlatformXR::SessionFeature : uint8_t {
-    ReferenceSpaceTypeViewer,
-    ReferenceSpaceTypeLocal,
-    ReferenceSpaceTypeLocalFloor,
-    ReferenceSpaceTypeBoundedFloor,
-    ReferenceSpaceTypeUnbounded,
-#if ENABLE(WEBXR_HANDS)
-    HandTracking,
-#endif
-};
-
-enum class PlatformXR::SessionMode : uint8_t {
-    Inline,
-    ImmersiveVr,
-    ImmersiveAr,
-};
-
-[Nested] enum class PlatformXR::ReferenceSpaceType : uint8_t {
-    Viewer,
-    Local,
-    LocalFloor,
-    BoundedFloor,
-    Unbounded
-};
-
-enum class PlatformXR::VisibilityState : uint8_t {
-    Visible,
-    VisibleBlurred,
-    Hidden
-};
-
-enum class PlatformXR::XRHandedness : uint8_t {
-    None,
-    Left,
-    Right,
-};
-
-enum class PlatformXR::XRTargetRayMode : uint8_t {
-    Gaze,
-    TrackedPointer,
-    Screen,
-    TransientPointer,
-};
 
 struct WebKit::XRDeviceInfo {
     WebKit::XRDeviceIdentifier identifier;
@@ -73,4 +30,5 @@ struct WebKit::XRDeviceInfo {
     PlatformXR::Device::FeatureList arFeatures;
     WebCore::IntSize recommendedResolution;
 };
+
 #endif

@@ -38,17 +38,17 @@ namespace WebCore {
 class WebXRInputSpace : public RefCounted<WebXRInputSpace>, public WebXRSpace {
     WTF_MAKE_ISO_ALLOCATED(WebXRInputSpace);
 public:
-    static Ref<WebXRInputSpace> create(Document&, WebXRSession&, const PlatformXR::Device::FrameData::InputSourcePose&);
+    static Ref<WebXRInputSpace> create(Document&, WebXRSession&, const PlatformXR::FrameData::InputSourcePose&);
     virtual ~WebXRInputSpace();
 
     using RefCounted<WebXRInputSpace>::ref;
     using RefCounted<WebXRInputSpace>::deref;
 
     std::optional<bool> isPositionEmulated() const final { return m_pose.isPositionEmulated; }
-    void setPose(const PlatformXR::Device::FrameData::InputSourcePose& pose) { m_pose = pose; }
+    void setPose(const PlatformXR::FrameData::InputSourcePose& pose) { m_pose = pose; }
 
 private:
-    WebXRInputSpace(Document&, WebXRSession&, const PlatformXR::Device::FrameData::InputSourcePose&);
+    WebXRInputSpace(Document&, WebXRSession&, const PlatformXR::FrameData::InputSourcePose&);
     WebXRSession* session() const final { return m_session.get(); }
     std::optional<TransformationMatrix> nativeOrigin() const final;
 
@@ -56,7 +56,7 @@ private:
     void derefEventTarget() final { deref(); }
 
     WeakPtr<WebXRSession> m_session;
-    PlatformXR::Device::FrameData::InputSourcePose m_pose;
+    PlatformXR::FrameData::InputSourcePose m_pose;
 };
 
 } // namespace WebCore

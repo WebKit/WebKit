@@ -39,7 +39,7 @@ namespace WebCore {
 constexpr int DefaultXRGamepadId = -1;
 
 // https://immersive-web.github.io/webxr-gamepads-module/#gamepad-differences
-WebXRGamepad::WebXRGamepad(double timestamp, double connectTime, const PlatformXR::Device::FrameData::InputSource& source)
+WebXRGamepad::WebXRGamepad(double timestamp, double connectTime, const PlatformXR::FrameData::InputSource& source)
     : PlatformGamepad(DefaultXRGamepadId)
 {
     m_lastUpdateTime = MonotonicTime::fromRawSeconds(Seconds::fromMilliseconds(timestamp).value());

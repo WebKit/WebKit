@@ -37,7 +37,7 @@ class OpenXRInput {
 public:
     static std::unique_ptr<OpenXRInput> create(XrInstance, XrSession, XrSpace);
 
-    Vector<Device::FrameData::InputSource> collectInputSources(const XrFrameState&) const;
+    Vector<FrameData::InputSource> collectInputSources(const XrFrameState&) const;
     void updateInteractionProfile();
 
 private:

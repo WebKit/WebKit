@@ -47,7 +47,7 @@ void FakeXRView::setProjection(const Vector<float>& projection)
 
 void FakeXRView::setFieldOfView(const FakeXRViewInit::FieldOfViewInit& fov)
 {
-    m_fov = PlatformXR::Device::FrameData::Fov { deg2rad(fov.upDegrees), deg2rad(fov.downDegrees), deg2rad(fov.leftDegrees), deg2rad(fov.rightDegrees) };
+    m_fov = PlatformXR::FrameData::Fov { deg2rad(fov.upDegrees), deg2rad(fov.downDegrees), deg2rad(fov.leftDegrees), deg2rad(fov.rightDegrees) };
 }
 
 SimulatedXRDevice::SimulatedXRDevice()
@@ -61,7 +61,7 @@ SimulatedXRDevice::~SimulatedXRDevice()
     stopTimer();
 }
 
-void SimulatedXRDevice::setViews(Vector<FrameData::View>&& views)
+void SimulatedXRDevice::setViews(Vector<PlatformXR::FrameData::View>&& views)
 {
     m_frameData.views = WTFMove(views);
 }
@@ -74,7 +74,7 @@ void SimulatedXRDevice::setNativeBoundsGeometry(const Vector<FakeXRBoundsPoint>&
         m_frameData.stageParameters.bounds.append({ static_cast<float>(point.x), static_cast<float>(point.z) });
 }
 
-void SimulatedXRDevice::setViewerOrigin(const std::optional<FrameData::Pose>& origin)
+void SimulatedXRDevice::setViewerOrigin(const std::optional<PlatformXR::FrameData::Pose>& origin)
 {
     if (origin) {
         m_frameData.origin = *origin;
@@ -83,7 +83,7 @@ void SimulatedXRDevice::setViewerOrigin(const std::optional<FrameData::Pose>& or
         return;
     }
 
-    m_frameData.origin = Device::FrameData::Pose();
+    m_frameData.origin = PlatformXR::FrameData::Pose();
     m_frameData.isPositionValid = false;
     m_frameData.isTrackingValid = false;
 }
@@ -150,15 +150,15 @@ void SimulatedXRDevice::stopTimer()
 
 void SimulatedXRDevice::frameTimerFired()
 {
-    FrameData data = m_frameData.copy();
+    PlatformXR::FrameData data = m_frameData.copy();
     data.shouldRender = true;
 
     for (auto& layer : m_layers) {
 #if PLATFORM(COCOA)
         auto surface = IOSurface::create(nullptr, recommendedResolution(PlatformXR::SessionMode::ImmersiveVr), DestinationColorSpace::SRGB());
-        data.layers.add(layer.key, FrameData::LayerData { .colorTexture = std::make_tuple(surface->createSendRight(), false) });
+        data.layers.add(layer.key, PlatformXR::FrameData::LayerData { .colorTexture = std::make_tuple(surface->createSendRight(), false) });
 #else
-        data.layers.add(layer.key, FrameData::LayerData { .opaqueTexture = layer.value });
+        data.layers.add(layer.key, PlatformXR::FrameData::LayerData { .opaqueTexture = layer.value });
 #endif
     }
 
@@ -220,13 +220,13 @@ WebFakeXRDevice::WebFakeXRDevice() = default;
 
 void WebFakeXRDevice::setViews(const Vector<FakeXRViewInit>& views)
 {
-    Vector<PlatformXR::Device::FrameData::View> deviceViews;
+    Vector<PlatformXR::FrameData::View> deviceViews;
 
     for (auto& viewInit : views) {
         auto parsedView = parseView(viewInit);
         if (!parsedView.hasException()) {
             auto fakeView = parsedView.releaseReturnValue();
-            PlatformXR::Device::FrameData::View view;
+            PlatformXR::FrameData::View view;
             view.offset = fakeView->offset();
             if (fakeView->fieldOfView())
                 view.projection = { *fakeView->fieldOfView() };
@@ -281,12 +281,12 @@ Ref<WebFakeXRInputController> WebFakeXRDevice::simulateInputSourceConnection(con
     return input;
 }
 
-ExceptionOr<PlatformXR::Device::FrameData::Pose> WebFakeXRDevice::parseRigidTransform(const FakeXRRigidTransformInit& init)
+ExceptionOr<PlatformXR::FrameData::Pose> WebFakeXRDevice::parseRigidTransform(const FakeXRRigidTransformInit& init)
 {
     if (init.position.size() != 3 || init.orientation.size() != 4)
         return Exception { ExceptionCode::TypeError };
 
-    PlatformXR::Device::FrameData::Pose pose;
+    PlatformXR::FrameData::Pose pose;
     pose.position = { init.position[0], init.position[1], init.position[2] };
     pose.orientation = { init.orientation[0], init.orientation[1], init.orientation[2], init.orientation[3] };
 
