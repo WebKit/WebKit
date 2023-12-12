@@ -165,8 +165,8 @@ public:
     // Creation/retrieval of AX objects associated with a DOM or RenderTree object.
     AccessibilityObject* getOrCreate(RenderObject*);
     AccessibilityObject* getOrCreate(Widget*);
-    enum class IsRelationTarget : bool { No, Yes };
-    WEBCORE_EXPORT AccessibilityObject* getOrCreate(Node*, IsRelationTarget = IsRelationTarget::No);
+    enum class IsPartOfRelation : bool { No, Yes };
+    WEBCORE_EXPORT AccessibilityObject* getOrCreate(Node*, IsPartOfRelation = IsPartOfRelation::No);
 
     // used for objects without backing elements
     AccessibilityObject* create(AccessibilityRole);
@@ -649,7 +649,7 @@ private:
     void relationsNeedUpdate(bool);
     HashMap<AXID, AXRelations> relations();
     const HashSet<AXID>& relationTargetIDs();
-    bool isDescendantOfRelationTarget(Node&);
+    bool isDescendantOfRelatedNode(Node&);
 
     // Object creation.
     Ref<AccessibilityObject> createObjectFromRenderer(RenderObject*);
@@ -783,7 +783,7 @@ inline AccessibilityObject* AXObjectCache::get(Node*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::get(Widget*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::getOrCreate(RenderObject*) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::create(AccessibilityRole) { return nullptr; }
-inline AccessibilityObject* AXObjectCache::getOrCreate(Node*, IsRelationTarget) { return nullptr; }
+inline AccessibilityObject* AXObjectCache::getOrCreate(Node*, IsPartOfRelation) { return nullptr; }
 inline AccessibilityObject* AXObjectCache::getOrCreate(Widget*) { return nullptr; }
 inline AXCoreObject* AXObjectCache::rootObject() { return nullptr; }
 inline AccessibilityObject* AXObjectCache::rootObjectForFrame(LocalFrame*) { return nullptr; }

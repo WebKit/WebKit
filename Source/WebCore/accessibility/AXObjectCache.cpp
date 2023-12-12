@@ -821,7 +821,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Widget* widget)
     return newObj.get();
 }
 
-AccessibilityObject* AXObjectCache::getOrCreate(Node* node, IsRelationTarget isRelationTarget)
+AccessibilityObject* AXObjectCache::getOrCreate(Node* node, IsPartOfRelation isPartOfRelation)
 {
     if (!node)
         return nullptr;
@@ -859,7 +859,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node, IsRelationTarget isR
 
     bool inCanvasSubtree = lineageOfType<HTMLCanvasElement>(*node->parentElement()).first();
     // If node is the target of a relationship or a descendant of one, create an AX object unconditionally.
-    if (isRelationTarget == IsRelationTarget::No && !isDescendantOfRelationTarget(*node)) {
+    if (isPartOfRelation == IsPartOfRelation::No && !isDescendantOfRelatedNode(*node)) {
         bool insideMeterElement = is<HTMLMeterElement>(*node->parentElement());
         auto* element = dynamicDowncast<Element>(node);
         bool hasDisplayContents = element && element->hasDisplayContents();
@@ -4614,7 +4614,7 @@ void AXObjectCache::addRelation(Element* origin, Element* target, AXRelationType
         ASSERT_NOT_REACHED();
         return;
     }
-    addRelation(getOrCreate(origin), getOrCreate(target, IsRelationTarget::Yes), relationType);
+    addRelation(getOrCreate(origin, IsPartOfRelation::Yes), getOrCreate(target, IsPartOfRelation::Yes), relationType);
 }
 
 static bool canHaveRelations(Element& element)
@@ -4837,12 +4837,12 @@ const HashSet<AXID>& AXObjectCache::relationTargetIDs()
     return m_relationTargets;
 }
 
-bool AXObjectCache::isDescendantOfRelationTarget(Node& node)
+bool AXObjectCache::isDescendantOfRelatedNode(Node& node)
 {
     auto& targetIDs = relationTargetIDs();
     for (auto* parent = node.parentNode(); parent; parent = parent->parentNode()) {
         auto* object = get(parent);
-        if (object && targetIDs.contains(object->objectID()))
+        if (object && (m_relations.contains(object->objectID()) || targetIDs.contains(object->objectID())))
             return true;
     }
     return false;
