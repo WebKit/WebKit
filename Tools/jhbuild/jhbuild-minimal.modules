@@ -32,6 +32,8 @@
       <dep package="atk"/>
       <dep package="at-spi2-atk"/>
       <dep package="libsoup"/>
+      <dep package="wayland"/>
+      <dep package="wayland-protocols"/>
     </dependencies>
   </metamodule>
 
@@ -64,8 +66,8 @@
       href="https://dri.freedesktop.org"/>
   <repository type="tarball" name="mesa.freedesktop.org"
       href="https://mesa.freedesktop.org"/>
-  <repository type="tarball" name="wayland.freedesktop.org"
-      href="http://wayland.freedesktop.org"/>
+  <repository type="git" name="git.freedesktop.org/wayland"
+      href="https://gitlab.freedesktop.org/wayland"/>
   <repository type="tarball" name="llvm.org"
       href="http://llvm.org"/>
   <repository type="tarball" name="webkitgtk-jhbuild-mirror"
@@ -248,5 +250,17 @@
       <patch file="libjxl-add-cmake-flag-provision-dependencies.patch" strip="1"/>
     </branch>
   </cmake>
+
+  <meson id="wayland" mesonargs="-Dtests=false -Ddocumentation=false -Ddtd_validation=false">
+    <branch tag="1.20.0"
+            checkoutdir="wayland-protocols"
+            repo="git.freedesktop.org/wayland" />
+  </meson>
+
+  <meson id="wayland-protocols">
+    <branch tag="1.25"
+            checkoutdir="wayland-protocols"
+            repo="git.freedesktop.org/wayland" />
+  </meson>
 
 </moduleset>
