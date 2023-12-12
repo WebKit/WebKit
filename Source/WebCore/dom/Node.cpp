@@ -2095,8 +2095,8 @@ Element* Node::enclosingLinkEventParentOrSelf()
         // For imagemaps, the enclosing link element is the associated area element not the image itself.
         // So we don't let images be the enclosing link element, even though isLink sometimes returns
         // true for them.
-        if (node->isLink() && !is<HTMLImageElement>(*node))
-            return downcast<Element>(node);
+        if (auto* element = dynamicDowncast<Element>(*node); element && element->isLink() && !is<HTMLImageElement>(*element))
+            return element;
     }
 
     return nullptr;

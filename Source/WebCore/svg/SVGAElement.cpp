@@ -95,12 +95,8 @@ void SVGAElement::attributeChanged(const QualifiedName& name, const AtomString& 
 void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     if (SVGURIReference::isKnownAttribute(attrName)) {
-        bool wasLink = isLink();
+        InstanceInvalidationGuard guard(*this);
         setIsLink(!href().isNull() && !shouldProhibitLinks(this));
-        if (wasLink != isLink()) {
-            InstanceInvalidationGuard guard(*this);
-            invalidateStyleForSubtree();
-        }
         return;
     }
 

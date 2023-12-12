@@ -2491,12 +2491,15 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
 // Looks at the ancestors of the element to determine whether we're inside an element which disallows parsing phone numbers.
 static inline bool disallowTelephoneNumberParsing(const ContainerNode& node)
 {
-    if (node.isLink() || is<HTMLFormControlElement>(node))
+    if (is<HTMLFormControlElement>(node))
         return true;
 
     auto* element = dynamicDowncast<Element>(node);
     if (!element)
         return false;
+
+    if (element->isLink())
+        return true;
 
     switch (element->elementName()) {
     case HTML::a:

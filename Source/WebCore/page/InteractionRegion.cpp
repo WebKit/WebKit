@@ -217,11 +217,14 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
 
     bool isLabelable = is<HTMLElement>(matchedElement) && downcast<HTMLElement>(matchedElement)->isLabelable();
     for (Node* node = matchedElement; node; node = node->parentInComposedTree()) {
-        bool matchedButton = is<HTMLButtonElement>(node);
-        bool matchedLabel = isLabelable && is<HTMLLabelElement>(node);
-        bool matchedLink = node->isLink();
+        auto* element = dynamicDowncast<Element>(node);
+        if (!element)
+            continue;
+        bool matchedButton = is<HTMLButtonElement>(*element);
+        bool matchedLabel = isLabelable && is<HTMLLabelElement>(*element);
+        bool matchedLink = element->isLink();
         if (matchedButton || matchedLabel || matchedLink) {
-            matchedElement = downcast<Element>(node);
+            matchedElement = element;
             break;
         }
     }

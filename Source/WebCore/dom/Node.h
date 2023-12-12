@@ -360,9 +360,6 @@ public:
 
     void setHasValidStyle();
 
-    bool isLink() const { return hasNodeFlag(NodeFlag::IsLink); }
-    void setIsLink(bool flag) { setNodeFlag(NodeFlag::IsLink, flag); }
-
     bool isInGCReacheableRefMap() const { return hasNodeFlag(NodeFlag::IsInGCReachableRefMap); }
     void setIsInGCReacheableRefMap(bool flag) { setNodeFlag(NodeFlag::IsInGCReachableRefMap, flag); }
 

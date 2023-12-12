@@ -241,10 +241,7 @@ void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomSt
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
     if (name == hrefAttr) {
-        bool wasLink = isLink();
         setIsLink(!newValue.isNull() && !shouldProhibitLinks(this));
-        if (wasLink != isLink())
-            invalidateStyleForSubtree();
         if (isLink()) {
             auto parsedURL = newValue.string().trim(isASCIIWhitespace);
             if (document().isDNSPrefetchEnabled() && document().frame()) {
