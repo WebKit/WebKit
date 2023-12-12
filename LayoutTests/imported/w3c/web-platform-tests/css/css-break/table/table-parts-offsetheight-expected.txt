@@ -1,0 +1,9 @@
+
+PASS table
+FAIL colgroup assert_equals: expected 100 but got 114
+FAIL col assert_equals: expected 100 but got 114
+FAIL rowgroup assert_equals: expected 100 but got 114
+PASS row
+PASS cell
+PASS content
+

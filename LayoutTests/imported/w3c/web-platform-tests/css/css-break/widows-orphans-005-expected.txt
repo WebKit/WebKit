@@ -1,0 +1,20 @@
+There should be three columns below. In the first column there should be a black rectangle and a yellow rectangle. In the second column there should be a cyan rectangle. In the third column there should be a hotpink rectangle.
+
+
+
+
+
+
+PASS [data-offset-x] 1
+PASS [data-offset-x] 2
+FAIL [data-offset-x] 3 assert_equals:
+<div class="ibk" style="height:285px;" data-offset-x="110">
+    <!-- The implementations differ here. Gecko lets the inline-block overflow
+         the column, while Blink slices the inline-block and puts what doesn't
+         fit in the second column into the third. Blink has a bug, but that's
+         not the bug we want to test here. -->
+    <div style="height:100px; background:cyan;"></div>
+  </div>
+offsetLeft expected 110 but got 0
+PASS [data-offset-x] 4
+
