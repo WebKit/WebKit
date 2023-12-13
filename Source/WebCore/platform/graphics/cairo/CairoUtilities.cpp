@@ -38,6 +38,7 @@
 #include "RefPtrCairo.h"
 #include "Region.h"
 #include <wtf/Assertions.h>
+#include <wtf/Atomics.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/UniqueArray.h>
 #include <wtf/Vector.h>
@@ -47,6 +48,9 @@
 #endif
 
 namespace WebCore {
+
+static cairo_user_data_key_t s_surfaceUniqueIDKey;
+static Atomic<uintptr_t> s_surfaceUniqueID = 1;
 
 #if USE(FREETYPE)
 RecursiveLock& cairoFontLock()
@@ -411,6 +415,16 @@ RefPtr<cairo_region_t> toCairoRegion(const Region& region)
 cairo_matrix_t toCairoMatrix(const AffineTransform& transform)
 {
     return cairo_matrix_t { transform.a(), transform.b(), transform.c(), transform.d(), transform.e(), transform.f() };
+}
+
+void attachSurfaceUniqueID(cairo_surface_t* surface)
+{
+    cairo_surface_set_user_data(surface, &s_surfaceUniqueIDKey, reinterpret_cast<void*>(s_surfaceUniqueID.exchangeAdd(1)), nullptr);
+}
+
+uintptr_t getSurfaceUniqueID(cairo_surface_t* surface)
+{
+    return reinterpret_cast<uintptr_t>(cairo_surface_get_user_data(surface, &s_surfaceUniqueIDKey));
 }
 
 } // namespace WebCore
