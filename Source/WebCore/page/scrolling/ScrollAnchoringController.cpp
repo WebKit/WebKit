@@ -334,6 +334,11 @@ void ScrollAnchoringController::adjustScrollPositionForAnchoring()
             return;
         }
 #endif
+        if (m_owningScrollableArea.isRubberBandInProgress()) {
+            invalidateAnchorElement();
+            updateAnchorElement();
+            return;
+        }
         auto newScrollPosition = m_owningScrollableArea.scrollPosition() + IntPoint(adjustment.width(), adjustment.height());
         LOG_WITH_STREAM(ScrollAnchoring, stream << "ScrollAnchoringController::updateScrollPosition() for frame: " << frameView() << " for scroller: " << m_owningScrollableArea << " adjusting from: " << m_owningScrollableArea.scrollPosition() << " to: " << newScrollPosition);
         auto options = ScrollPositionChangeOptions::createProgrammatic();
