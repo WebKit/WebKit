@@ -65,16 +65,17 @@ namespace JSC { namespace DFG {
 #define NodeBytecodeUsesAsOther          0x20000 // The result of this computation may be used in a context that distinguishes between NaN and other things (like undefined).
 #define NodeBytecodeUsesAsInt            0x40000 // The result of this computation is known to be used in a context that prefers, but does not require, integer values.
 #define NodeBytecodePrefersArrayIndex    0x80000 // The result of this computation is known to be used in a context that strongly prefers integer values, to the point that we should avoid using doubles if at all possible.
-#define NodeBytecodeUsesAsArrayIndex     (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodePrefersArrayIndex)
+#define NodeBytecodeObservesUnsigned     0x100000 // The result of this computation is known to be used in a context that can observe the unsignedness of a result.
+#define NodeBytecodeUsesAsArrayIndex     (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodePrefersArrayIndex | NodeBytecodeObservesUnsigned)
 #define NodeBytecodeUsesAsValue          (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsOther)
-#define NodeBytecodeBackPropMask         (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodePrefersArrayIndex)
+#define NodeBytecodeBackPropMask         (NodeBytecodeUsesAsNumber | NodeBytecodeNeedsNegZero | NodeBytecodeNeedsNaNOrInfinity | NodeBytecodeUsesAsOther | NodeBytecodeUsesAsInt | NodeBytecodePrefersArrayIndex | NodeBytecodeObservesUnsigned)
 
 #define NodeArithFlagsMask               (NodeBehaviorMask | NodeBytecodeBackPropMask)
 
-#define NodeIsFlushed                   0x100000 // Computed by CPSRethreadingPhase, will tell you which local nodes are backwards-reachable from a Flush.
+#define NodeIsFlushed                   0x200000 // Computed by CPSRethreadingPhase, will tell you which local nodes are backwards-reachable from a Flush.
 
-#define NodeMiscFlag1                   0x200000
-#define NodeMiscFlag2                   0x400000
+#define NodeMiscFlag1                   0x400000
+#define NodeMiscFlag2                   0x800000
 
 typedef uint32_t NodeFlags;
 
@@ -96,6 +97,11 @@ static inline bool bytecodeCanIgnoreNegativeZero(NodeFlags flags)
 static inline bool bytecodeCanIgnoreNaNAndInfinity(NodeFlags flags)
 {
     return !(flags & NodeBytecodeNeedsNaNOrInfinity);
+}
+
+static inline bool bytecodeCanObserveUnsigned(NodeFlags flags)
+{
+    return flags & NodeBytecodeObservesUnsigned;
 }
 
 enum RareCaseProfilingSource {
