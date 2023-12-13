@@ -1446,32 +1446,60 @@ MacroAssemblerCodeRef<JITThunkPtrTag> boundFunctionCallGenerator(VM& vm)
     jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, JSBoundFunction::offsetOfTargetFunction()), GPRInfo::regT2);
     jit.storeCell(GPRInfo::regT2, CCallHelpers::calleeFrameSlot(CallFrameSlot::callee));
     
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT2, JSFunction::offsetOfExecutableOrRareData()), GPRInfo::regT0);
-    auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT0, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
-    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT0, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), GPRInfo::regT0);
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT2, JSFunction::offsetOfExecutableOrRareData()), GPRInfo::regT1);
+    auto hasExecutable = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT1, CCallHelpers::TrustedImm32(JSFunction::rareDataTag));
+    jit.loadPtr(CCallHelpers::Address(GPRInfo::regT1, FunctionRareData::offsetOfExecutable() - JSFunction::rareDataTag), GPRInfo::regT1);
     hasExecutable.link(&jit);
 
     jit.loadPtr(
         CCallHelpers::Address(
-            GPRInfo::regT0, ExecutableBase::offsetOfJITCodeWithArityCheckFor(CodeForCall)),
-        GPRInfo::regT1);
-    jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT1).linkThunk(CodeLocationLabel<JITThunkPtrTag> { vm.jitStubs->ctiNativeTailCallWithoutSavedTags(vm) }, &jit);
+            GPRInfo::regT1, ExecutableBase::offsetOfJITCodeWithArityCheckFor(CodeForCall)),
+        GPRInfo::regT2);
+    auto codeNotExists = jit.branchTestPtr(CCallHelpers::Zero, GPRInfo::regT2);
 
-    auto isNative = jit.branchIfNotType(GPRInfo::regT0, FunctionExecutableType);
+    auto isNative = jit.branchIfNotType(GPRInfo::regT1, FunctionExecutableType);
     jit.loadPtr(
         CCallHelpers::Address(
-            GPRInfo::regT0, FunctionExecutable::offsetOfCodeBlockForCall()),
-        GPRInfo::regT2);
-    jit.storePtr(GPRInfo::regT2, CCallHelpers::calleeFrameCodeBlockBeforeCall());
+            GPRInfo::regT1, FunctionExecutable::offsetOfCodeBlockForCall()),
+        GPRInfo::regT3);
+    jit.storePtr(GPRInfo::regT3, CCallHelpers::calleeFrameCodeBlockBeforeCall());
 
     isNative.link(&jit);
+    auto dispatch = jit.label();
     
-    emitPointerValidation(jit, GPRInfo::regT1, JSEntryPtrTag);
-    jit.call(GPRInfo::regT1, JSEntryPtrTag);
+    emitPointerValidation(jit, GPRInfo::regT2, JSEntryPtrTag);
+    jit.call(GPRInfo::regT2, JSEntryPtrTag);
 
     jit.emitFunctionEpilogue();
     jit.ret();
-    
+
+    codeNotExists.link(&jit);
+
+    CCallHelpers::JumpList exceptionChecks;
+
+    // If we find that the JIT code is null (i.e. has been jettisoned), then we need to re-materialize it for the call below. Note that we know
+    // that operationMaterializeBoundFunctionTargetCode should be able to re-materialize the JIT code (except for any OOME) because we only
+    // went down this code path after we found a non-null JIT code (in the noCode check) above i.e. it should be possible to materialize the JIT code.
+    // FIXME: Windows x64 is not supported since operationMaterializeBoundFunctionTargetCode returns UGPRPair.
+    jit.setupArguments<decltype(operationMaterializeBoundFunctionTargetCode)>(GPRInfo::regT0);
+    jit.prepareCallOperation(vm);
+    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationMaterializeBoundFunctionTargetCode)), GPRInfo::nonArgGPR0);
+    emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
+    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+    exceptionChecks.append(jit.emitJumpIfException(vm));
+    jit.storePtr(GPRInfo::returnValueGPR2, CCallHelpers::calleeFrameCodeBlockBeforeCall());
+    jit.move(GPRInfo::returnValueGPR, GPRInfo::regT2);
+    jit.jump().linkTo(dispatch, &jit);
+
+    exceptionChecks.link(&jit);
+    jit.copyCalleeSavesToEntryFrameCalleeSavesBuffer(vm.topEntryFrame, GPRInfo::argumentGPR0);
+    jit.setupArguments<decltype(operationLookupExceptionHandler)>(CCallHelpers::TrustedImmPtr(&vm));
+    jit.prepareCallOperation(vm);
+    jit.move(CCallHelpers::TrustedImmPtr(tagCFunction<OperationPtrTag>(operationLookupExceptionHandler)), GPRInfo::nonArgGPR0);
+    emitPointerValidation(jit, GPRInfo::nonArgGPR0, OperationPtrTag);
+    jit.call(GPRInfo::nonArgGPR0, OperationPtrTag);
+    jit.jumpToExceptionHandler(vm);
+
     LinkBuffer linkBuffer(jit, GLOBAL_THUNK_ID, LinkBuffer::Profile::BoundFunctionThunk);
     return FINALIZE_THUNK(linkBuffer, JITThunkPtrTag, "Specialized thunk for bound function calls with no arguments");
 }
