@@ -8007,7 +8007,7 @@ WriteRichTextDataWhenCopyingOrDragging:
     WebKitLegacy:
       default: true
     WebKit:
-      "HAVE(PASTEBOARD_CONVERSION_FROM_HTML_TO_RTF)" : false
+      "PLATFORM(IOS_FAMILY)": WebKit::defaultWriteRichTextDataWhenCopyingOrDragging()
       default: true
     WebCore:
       default: true

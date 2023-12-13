@@ -42,6 +42,7 @@ bool defaultShouldPrintBackgrounds();
 bool defaultAlternateFormControlDesignEnabled();
 bool defaultVideoFullscreenRequiresElementFullscreen();
 bool defaultUseAsyncUIKitInteractions();
+bool defaultWriteRichTextDataWhenCopyingOrDragging();
 #if ENABLE(TEXT_AUTOSIZING)
 bool defaultTextAutosizingUsesIdempotentMode();
 #endif
