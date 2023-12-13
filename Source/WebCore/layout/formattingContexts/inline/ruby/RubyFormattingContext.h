@@ -49,7 +49,7 @@ public:
     static void applyAnnotationContributionToLayoutBounds(LineBox&, const InlineFormattingContext&);
 
     // Display content building
-    static InlineLayoutUnit baseEndAdditionalVisualWidth(const Box& rubyBaseLayoutBox, const InlineDisplay::Box& baseDisplayBox, const InlineFormattingContext&);
+    static InlineLayoutUnit baseEndAdditionalVisualWidth(const Box& rubyBaseLayoutBox, const InlineDisplay::Box& baseDisplayBox, InlineLayoutUnit baseContentWidth, const InlineFormattingContext&);
     static InlineLayoutPoint placeAnnotationBox(const Box& rubyBaseLayoutBox, const Rect& rubyBaseMarginBox, const InlineFormattingContext&);
     static InlineLayoutSize sizeAnnotationBox(const Box& rubyBaseLayoutBox, const InlineFormattingContext&);
 

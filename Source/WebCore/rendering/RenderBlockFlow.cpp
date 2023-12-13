@@ -4633,6 +4633,8 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     bool canHangPunctuationAtStart = styleToUse.hangingPunctuation().contains(HangingPunctuation::First);
     bool canHangPunctuationAtEnd = styleToUse.hangingPunctuation().contains(HangingPunctuation::Last);
     RenderText* lastText = nullptr;
+    float annotationMinimumIntrinsicWidth = 0.f;
+    float annotationMaximumIntrinsicWidth = 0.f;
 
     bool addedStartPunctuationHang = false;
     
@@ -4642,14 +4644,16 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
         // Interlinear annotations don't participate in inline layout, but they put a minimum width requirement on the associated ruby base.
         auto isInterlinearTypeAnnotation = child->style().display() == DisplayType::RubyAnnotation && (child->style().rubyPosition() != RubyPosition::InterCharacter || !styleToUse.isHorizontalWritingMode());
         if (isInterlinearTypeAnnotation) {
-            ASSERT(!child->nextSibling());
-            auto annotationMinimumIntrinsicWidth = LayoutUnit { };
-            auto annotationMaximumIntrinsicWidth = LayoutUnit { };
-            computeChildPreferredLogicalWidths(*child, annotationMinimumIntrinsicWidth, annotationMaximumIntrinsicWidth);
+            auto minimumWidth = LayoutUnit { };
+            auto maximumWidth = LayoutUnit { };
+            computeChildPreferredLogicalWidths(*child, minimumWidth, maximumWidth);
+
+            annotationMinimumIntrinsicWidth += minimumWidth.ceilToFloat();
+            annotationMaximumIntrinsicWidth += maximumWidth.ceilToFloat();
 
             // FIXME: Keep track of ruby base width.
-            inlineMin = std::max(inlineMin, annotationMinimumIntrinsicWidth.ceilToFloat());
-            inlineMax = std::max(inlineMax, annotationMaximumIntrinsicWidth.ceilToFloat());
+            inlineMin = std::max(inlineMin, annotationMinimumIntrinsicWidth);
+            inlineMax = std::max(inlineMax, annotationMaximumIntrinsicWidth);
             continue;
         }
         if (!child->isBR()) {

@@ -130,8 +130,8 @@ messages -> WebExtensionContext {
     TestFinished(bool result, String message, String sourceURL, unsigned lineNumber);
 
     // WebNavigation APIs
-    WebNavigationGetAllFrames(WebKit::WebExtensionTabIdentifier tabIdentifier) -> (std::optional<Vector<WebKit::WebExtensionFrameParameters>> allFrameParameters)
-    WebNavigationGetFrame(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionFrameIdentifier frameIdentifier) -> (std::optional<WebKit::WebExtensionFrameParameters> frameParameters)
+    WebNavigationGetAllFrames(WebKit::WebExtensionTabIdentifier tabIdentifier) -> (std::optional<Vector<WebKit::WebExtensionFrameParameters>> allFrameParameters, std::optional<String> error)
+    WebNavigationGetFrame(WebKit::WebExtensionTabIdentifier tabIdentifier, WebKit::WebExtensionFrameIdentifier frameIdentifier) -> (std::optional<WebKit::WebExtensionFrameParameters> frameParameters, std::optional<String> error)
 
     // Windows APIs
     WindowsCreate(WebKit::WebExtensionWindowParameters creationParameters) -> (std::optional<WebKit::WebExtensionWindowParameters> windowParameters, WebKit::WebExtensionWindow::Error error);

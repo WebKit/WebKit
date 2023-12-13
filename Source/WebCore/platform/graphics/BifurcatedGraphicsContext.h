@@ -68,6 +68,7 @@ public:
     using GraphicsContext::fillRect;
     void fillRect(const FloatRect&) final;
     void fillRect(const FloatRect&, const Color&) final;
+    void fillRect(const FloatRect&, Gradient&) final;
     void fillRoundedRectImpl(const FloatRoundedRect&, const Color&) final;
     void fillRectWithRoundedHole(const FloatRect&, const FloatRoundedRect& roundedHoleRect, const Color&) final;
     void clearRect(const FloatRect&) final;

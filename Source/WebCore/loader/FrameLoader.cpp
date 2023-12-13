@@ -3449,9 +3449,20 @@ bool FrameLoader::shouldPerformFragmentNavigation(bool isFormSubmission, const S
         && !stateMachine().isDisplayingInitialEmptyDocument();
 }
 
-static bool itemAllowsScrollRestoration(HistoryItem* historyItem)
+static bool itemAllowsScrollRestoration(HistoryItem* historyItem, FrameLoadType loadType)
 {
-    return !historyItem || historyItem->shouldRestoreScrollPosition();
+    if (!historyItem)
+        return true;
+
+    switch (loadType) {
+    case FrameLoadType::Back:
+    case FrameLoadType::Forward:
+    case FrameLoadType::IndexedBackForward:
+        return historyItem->shouldRestoreScrollPosition();
+    default:
+        break;
+    }
+    return true;
 }
 
 static bool isSameDocumentReload(bool isNewNavigation, FrameLoadType loadType)
@@ -3466,14 +3477,13 @@ void FrameLoader::scrollToFragmentWithParentBoundary(const URL& url, bool isNewN
     if (!view || !document)
         return;
 
-    if (isSameDocumentReload(isNewNavigation, m_loadType) || itemAllowsScrollRestoration(history().currentItem())) {
+    if (isSameDocumentReload(isNewNavigation, m_loadType) || itemAllowsScrollRestoration(history().currentItem(), m_loadType)) {
         // https://html.spec.whatwg.org/multipage/browsing-the-web.html#try-to-scroll-to-the-fragment
         if (!document->haveStylesheetsLoaded())
             document->setGotoAnchorNeededAfterStylesheetsLoad(true);
         else
             view->scrollToFragment(url);
     }
-
 }
 
 bool FrameLoader::shouldClose()

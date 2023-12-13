@@ -2598,6 +2598,3 @@ webkit.org/b/265685 [ Sonoma+ ] http/wpt/webcodecs/encoder-task-failing.html [ F
 # webkit.org/b/266168 Two wheel/mousewheel passive event listeners WPT test pass on macOS Sonoma and up
 [ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-mousewheel-event-listener-on-div.html [ Pass ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Pass ]
-
-# webkit.org/b/265834 ASSERTION FAILED with void WebCore::ViewTransition::ca llUpdateCallback() result of multiple tests constant crash
-[ Monterey Ventura Debug ] imported/w3c/web-platform-tests/css/css-view-transitions [ Skip ]

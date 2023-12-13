@@ -1,5 +1,5 @@
 // Load the compiled-to-JS reference interpreter for GC proposal.
-load("wast.js");
+import "./wast.js";
 
 export function compile(wat) {
     const binary = WebAssemblyText.encode(wat);

@@ -756,7 +756,7 @@ JSValue WebAssemblyModuleRecord::evaluateConstantExpression(JSGlobalObject* glob
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto evalResult = Wasm::evaluateExtendedConstExpr(constantExpression, m_instance->instance(), info, expectedType);
+    auto evalResult = Wasm::evaluateExtendedConstExpr(constantExpression, &m_instance->instance(), info, expectedType);
     if (UNLIKELY(!evalResult.has_value()))
         return JSValue(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, makeString("couldn't evaluate constant expression: "_s, evalResult.error()))));
 
@@ -792,6 +792,9 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
             // getting here.
             ASSERT(!!m_instance->table(*element.tableIndexIfActive));
 
+            // Evaluate the element segment offset, which may be an extended constant expression.
+            // We could also evaluate the vector of expressions here, but we have nowhere safe to
+            // store the resulting references so we defer that until table init.
             const auto& offset = *element.offsetIfActive;
             uint32_t elementIndex = 0;
             if (offset.isGlobalImport())
@@ -843,7 +846,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
 
     // Validation of all element ranges comes before all Table and Memory initialization.
     forEachActiveElement([&](const Wasm::Element& element, uint32_t tableIndex, uint32_t elementIndex) {
-        int64_t lastWrittenIndex = static_cast<int64_t>(elementIndex) + static_cast<int64_t>(element.functionIndices.size()) - 1;
+        int64_t lastWrittenIndex = static_cast<int64_t>(elementIndex) + static_cast<int64_t>(element.initTypes.size()) - 1;
         if (UNLIKELY(lastWrittenIndex >= m_instance->table(tableIndex)->length())) {
             exception = JSValue(throwException(globalObject, scope, createJSWebAssemblyRuntimeError(globalObject, vm, "Element is trying to set an out of bounds table index"_s)));
             return IterationStatus::Done;

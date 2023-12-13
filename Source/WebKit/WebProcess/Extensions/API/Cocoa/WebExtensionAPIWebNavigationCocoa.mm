@@ -89,7 +89,12 @@ void WebExtensionAPIWebNavigation::getAllFrames(WebPage* webPage, NSDictionary *
     if (!isValid(tabIdentifier, outExceptionString))
         return;
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetAllFrames(tabIdentifier.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Vector<WebExtensionFrameParameters>> results) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetAllFrames(tabIdentifier.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<Vector<WebExtensionFrameParameters>> results, std::optional<String> error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
         callback->call(results ? toWebAPI(results.value()) : nil);
     }, extensionContext().identifier());
 }
@@ -119,7 +124,12 @@ void WebExtensionAPIWebNavigation::getFrame(WebPage* webPage, NSDictionary *deta
         return;
     }
 
-    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetFrame(tabIdentifier.value(), frameIdentifier.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionFrameParameters> frameInfo) {
+    WebProcess::singleton().sendWithAsyncReply(Messages::WebExtensionContext::WebNavigationGetFrame(tabIdentifier.value(), frameIdentifier.value()), [protectedThis = Ref { *this }, callback = WTFMove(callback)](std::optional<WebExtensionFrameParameters> frameInfo, std::optional<String> error) {
+        if (error) {
+            callback->reportError(error.value());
+            return;
+        }
+
         callback->call(frameInfo ? toWebAPI(frameInfo.value()) : nil);
     }, extensionContext().identifier());
 }

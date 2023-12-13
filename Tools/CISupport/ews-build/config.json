@@ -221,7 +221,7 @@
     {
       "name": "macOS-Monterey-Release-Build-EWS", "shortname": "mac", "icon": "buildOnly",
       "factory": "macOSBuildFactory", "platform": "mac-monterey",
-      "configuration": "release", "architectures": ["x86_64"],
+      "configuration": "release", "architectures": ["arm64", "x86_64"],
       "triggers": ["api-tests-mac-ews", "macos-monterey-release-wk1-tests-ews", "macos-monterey-release-wk2-tests-ews", "macos-release-wk2-stress-tests-ews"],
       "workernames": ["ews101", "ews102", "ews103", "ews105","ews118", "ews119", "ews120", "ews141", "ews161", "ews162"]
     },

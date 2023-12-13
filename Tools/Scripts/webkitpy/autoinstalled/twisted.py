@@ -32,7 +32,7 @@ if sys.version_info >= (3, 0):
     AutoInstall.install(Package('incremental', Version(21, 3, 0), pypi_name='incremental'))
 
     if sys.version_info >= (3, 11):
-        AutoInstall.install(Package('twisted', Version(23, 8, 0), pypi_name='Twisted', implicit_deps=['pyparsing']))
+        AutoInstall.install(Package('twisted', Version(22, 10, 0), pypi_name='Twisted', implicit_deps=['pyparsing']))
         AutoInstall.install(Package('OpenSSL', Version(23, 2, 0), pypi_name='pyOpenSSL'))
     else:
         AutoInstall.install(Package('twisted', Version(20, 3, 0), pypi_name='Twisted', implicit_deps=['pyparsing']))

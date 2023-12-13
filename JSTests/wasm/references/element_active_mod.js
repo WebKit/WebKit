@@ -51,7 +51,7 @@ function refNullExternInElemsSection() {
   */
   assert.throws(() => module("\x00\x61\x73\x6d\x01\x00\x00\x00\x04\x04\x01\x70\x00\x0a\x09\x09\x01\x04\x41\x03\x0b\x01\xd0\x6f\x0b"),
   WebAssembly.CompileError,
-  "WebAssembly.Module doesn't parse at byte 24: ref.null extern is forbidden in element section's, 0th element's 0th index (evaluating 'new WebAssembly.Module(buffer)')");
+  "WebAssembly.Module doesn't parse at byte 25: Element section's 0th element's init_expr opcode of type Externref doesn't match element's type Funcref");
 }
 
 basicTest();
