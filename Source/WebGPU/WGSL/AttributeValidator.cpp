@@ -215,8 +215,15 @@ void AttributeValidator::visit(AST::Variable& variable)
             auto idValue = idExpression.constantValue()->integerValue();
             if (idValue < 0)
                 error(attribute.span(), "@id value must be non-negative");
-            else
-                update(attribute.span(), variable.m_id, static_cast<unsigned>(idValue));
+            else {
+                auto uintIdValue = static_cast<unsigned>(idValue);
+                if (m_shaderModule.containsOverride(uintIdValue))
+                    error(attribute.span(), "@id value must be unique");
+                else {
+                    update(attribute.span(), variable.m_id, uintIdValue);
+                    m_shaderModule.addOverride(uintIdValue);
+                }
+            }
             continue;
         }
 
