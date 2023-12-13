@@ -146,6 +146,7 @@ end
 
 $jscPath = nil
 $doNotMessWithVMPath = false
+$cloop = false
 $jitTests = true
 $memoryLimited = false
 $outputDir = Pathname.new("results")
@@ -231,6 +232,7 @@ jscArg = nil
 GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
                ['--jsc', '-j', GetoptLong::REQUIRED_ARGUMENT],
                ['--no-copy', GetoptLong::NO_ARGUMENT],
+               ['--cloop', GetoptLong::NO_ARGUMENT],
                ['--memory-limited', GetoptLong::NO_ARGUMENT],
                ['--no-jit', GetoptLong::NO_ARGUMENT],
                ['--force-collectContinuously', GetoptLong::NO_ARGUMENT],
@@ -273,6 +275,9 @@ GetoptLong.new(['--help', '-h', GetoptLong::NO_ARGUMENT],
         $doNotMessWithVMPath = true
     when '--output-dir'
         $outputDir = Pathname.new(arg)
+    when '--cloop'
+        $cloop = true
+        $jitTests = false
     when '--memory-limited'
         $memoryLimited = true
     when '--no-jit'
@@ -591,8 +596,8 @@ $hostOS = determineOS unless $hostOS
 $architecture = determineArchitecture unless $architecture
 $isFTLPlatform = !($architecture == "x86" || $architecture == "arm" || $architecture == "mips" || $architecture == "riscv64" || $hostOS == "windows" || $hostOS == "playstation")
 # Special case armv7 and windows, we want to run the wasm tests temporarily without B3/Air support
-$isWasmPlatform = $isFTLPlatform || $architecture == "arm" || ($hostOS == "windows" && $architecture == "x86_64")
-$isSIMDPlatform = $isFTLPlatform && ($architecture == "arm64" || $architecture == "x86_64")
+$isWasmPlatform = (not $cloop) && ($isFTLPlatform || $architecture == "arm" || ($hostOS == "windows" && $architecture == "x86_64"))
+$isSIMDPlatform = $isWasmPlatform && ($architecture == "arm64" || $architecture == "x86_64")
 
 # This is meant for skipping execution of tests than require a lot of address
 # space. Cf. $memoryLimited, which is meant for tests that actually make use of
