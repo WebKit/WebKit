@@ -96,7 +96,7 @@ struct BaseIndexAndOffset {
     size_t index { 0 };
     InlineLayoutUnit offset { 0.f };
 };
-static BaseIndexAndOffset shiftRubyBaseContentByAlignmentOffset(BaseIndexAndOffset baseIndexAndOffset, InlineDisplay::Boxes& displayBoxes, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, InlineFormattingContext& inlineFormattingContext)
+static BaseIndexAndOffset shiftRubyBaseContentByAlignmentOffset(BaseIndexAndOffset baseIndexAndOffset, InlineDisplay::Boxes& displayBoxes, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, InlineContentAligner::AdjustContentOnlyInsideRubyBase adjustContentOnlyInsideRubyBase, InlineFormattingContext& inlineFormattingContext)
 {
     auto baseIndex = baseIndexAndOffset.index;
     if (baseIndex >= displayBoxes.size() || !displayBoxes[baseIndex].layoutBox().isRubyBase()) {
@@ -121,12 +121,18 @@ static BaseIndexAndOffset shiftRubyBaseContentByAlignmentOffset(BaseIndexAndOffs
         if (!layoutBox.isRubyAnnotationBox())
             shiftDisplayBox(displayBox, baseOffset + baseContentOffset, inlineFormattingContext);
         if (layoutBox.isRubyBase()) {
-            baseContentIndex = shiftRubyBaseContentByAlignmentOffset({ baseContentIndex, baseOffset + baseContentOffset }, displayBoxes, alignmentOffsetList, inlineFormattingContext).index;
+            auto baseEndIndexAndAlignment = shiftRubyBaseContentByAlignmentOffset({ baseContentIndex, baseOffset + baseContentOffset }, displayBoxes, alignmentOffsetList, adjustContentOnlyInsideRubyBase, inlineFormattingContext);
+            baseContentIndex = baseEndIndexAndAlignment.index;
+            if (adjustContentOnlyInsideRubyBase == InlineContentAligner::AdjustContentOnlyInsideRubyBase::No)
+                baseOffset += baseEndIndexAndAlignment.offset;
             continue;
         }
         ++baseContentIndex;
     }
-    return { baseContentIndex, 2 * baseContentOffset };
+    auto accumulatedOffset = 2 * baseContentOffset;
+    if (adjustContentOnlyInsideRubyBase == InlineContentAligner::AdjustContentOnlyInsideRubyBase::No)
+        accumulatedOffset += baseOffset;
+    return { baseContentIndex, accumulatedOffset };
 }
 
 static void computedExpansions(const Line::RunList& runs, WTF::Range<size_t> runRange, size_t hangingTrailingWhitespaceLength, ExpansionInfo& expansionInfo)
@@ -290,7 +296,7 @@ void InlineContentAligner::applyRubyBaseAlignmentOffset(InlineDisplay::Boxes& di
             shiftDisplayBox(displayBox, contentOffset, inlineFormattingContext);
 
         if (displayBox.layoutBox().isRubyBase()) {
-            auto baseEndIndexAndAlignment = shiftRubyBaseContentByAlignmentOffset({ index, contentOffset }, displayBoxes, alignmentOffsetList, inlineFormattingContext);
+            auto baseEndIndexAndAlignment = shiftRubyBaseContentByAlignmentOffset({ index, contentOffset }, displayBoxes, alignmentOffsetList, adjustContentOnlyInsideRubyBase, inlineFormattingContext);
             index = baseEndIndexAndAlignment.index;
             if (adjustContentOnlyInsideRubyBase == AdjustContentOnlyInsideRubyBase::No)
                 contentOffset += baseEndIndexAndAlignment.offset;
