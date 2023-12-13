@@ -40,6 +40,7 @@
 #include "JSWebAssemblyArray.h"
 #include "JSWebAssemblyException.h"
 #include "JSWebAssemblyStruct.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "RegisterSet.h"
 #include "WasmB3IRGenerator.h"

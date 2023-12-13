@@ -28,6 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "Options.h"
 

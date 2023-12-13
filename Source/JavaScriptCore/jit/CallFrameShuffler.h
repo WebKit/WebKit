@@ -29,6 +29,7 @@
 
 #include "CachedRecovery.h"
 #include "CallFrameShuffleData.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "RegisterSet.h"
 #include <wtf/Vector.h>

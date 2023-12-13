@@ -39,88 +39,6 @@ namespace JSC {
 size_t LinkBuffer::s_profileCummulativeLinkedSizes[LinkBuffer::numberOfProfiles];
 size_t LinkBuffer::s_profileCummulativeLinkedCounts[LinkBuffer::numberOfProfiles];
 
-LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithoutDisassemblyImpl()
-{
-    performFinalization();
-    
-    ASSERT(m_didAllocate);
-    if (m_executableMemory)
-        return CodeRef<LinkBufferPtrTag>(*m_executableMemory);
-    
-    return CodeRef<LinkBufferPtrTag>::createSelfManagedCodeRef(m_code);
-}
-
-LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImpl(bool dumpDisassembly, const char* format, ...)
-{
-    CodeRef<LinkBufferPtrTag> result = finalizeCodeWithoutDisassemblyImpl();
-
-#if OS(LINUX) || OS(DARWIN)
-    if (Options::logJITCodeForPerf()) {
-        StringPrintStream out;
-        va_list argList;
-        va_start(argList, format);
-        out.vprintf(format, argList);
-        va_end(argList);
-        PerfLog::log(out.toCString(), result.code().untaggedPtr<const uint8_t*>(), result.size());
-    }
-#endif
-
-    if (!dumpDisassembly && !Options::logJIT())
-        return result;
-
-    bool justDumpingHeader = !dumpDisassembly || m_alreadyDisassembled;
-
-    StringPrintStream out;
-    out.printf("Generated JIT code for ");
-    va_list argList;
-    va_start(argList, format);
-
-    if (m_isThunk) {
-        va_list preflightArgs;
-        va_copy(preflightArgs, argList);
-        size_t stringLength = vsnprintf(nullptr, 0, format, preflightArgs);
-        va_end(preflightArgs);
-
-        const char prefix[] = "thunk: ";
-        char* buffer = 0;
-        size_t length = stringLength + sizeof(prefix);
-        CString label = CString::newUninitialized(length, buffer);
-        snprintf(buffer, length, "%s", prefix);
-        vsnprintf(buffer + sizeof(prefix) - 1, stringLength + 1, format, argList);
-        out.printf("%s", buffer);
-
-        registerLabel(result.code().untaggedPtr(), WTFMove(label));
-    } else
-        out.vprintf(format, argList);
-
-    va_end(argList);
-
-    uint8_t* executableAddress = result.code().untaggedPtr<uint8_t*>();
-    out.printf(": [%p, %p) %zu bytes%s\n", executableAddress, executableAddress + result.size(), result.size(), justDumpingHeader ? "." : ":");
-
-    CString header = out.toCString();
-    
-    if (justDumpingHeader) {
-        if (Options::logJIT())
-            dataLog(header);
-        return result;
-    }
-    
-    void* codeStart = entrypoint<DisassemblyPtrTag>().untaggedPtr();
-    void* codeEnd = bitwise_cast<uint8_t*>(codeStart) + size();
-
-    if (Options::asyncDisassembly()) {
-        CodeRef<DisassemblyPtrTag> codeRefForDisassembly = result.retagged<DisassemblyPtrTag>();
-        disassembleAsynchronously(header, WTFMove(codeRefForDisassembly), m_size, codeStart, codeEnd, "    ");
-        return result;
-    }
-    
-    dataLog(header);
-    disassemble(result.retaggedCode<DisassemblyPtrTag>(), m_size, codeStart, codeEnd, "    ", WTF::dataFile());
-    
-    return result;
-}
-
 #if ENABLE(BRANCH_COMPACTION)
 
 class BranchCompactionLinkBuffer;
@@ -254,17 +172,15 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     ARM64EHash<ShouldSign::No> verifyUncompactedHash;
 #endif
 
-    WTF::compilerFence();
     if (g_jscConfig.useFastJITPermissions)
-            threadSelfRestrictRWXToRW();
+        threadSelfRestrictRWXToRW();
 
     auto critical = [](LinkBuffer* thiz, MacroAssembler& macroAssembler,
         uint8_t* outData, uint8_t* codeOutData, Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink
 #if CPU(ARM64E)
         , ARM64EHash<ShouldSign::No>& verifyUncompactedHash
 #endif
-        ) __attribute__((noinline)) /*__attribute__((nospill))*/ {
-        WTF::compilerFence(); __asm__ volatile ("brk 43\n");WTF::compilerFence();
+        ) __attribute__((noinline)) {
         const size_t initialSize = macroAssembler.m_assembler.codeSize();
 
         thiz->m_assemblerStorage = macroAssembler.m_assembler.buffer().releaseAssemblerData();
@@ -395,17 +311,15 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
         WTF::compilerFence(); __asm__ volatile ("brk 43\n");WTF::compilerFence();
 
     };
-    WTF::compilerFence();
     critical(this, macroAssembler,
         outData, codeOutData, jumpsToLink
 #if CPU(ARM64E)
         , verifyUncompactedHash
 #endif
     );
-    WTF::compilerFence();
 
     if (g_jscConfig.useFastJITPermissions)
-            threadSelfRestrictRWXToRX();
+        threadSelfRestrictRWXToRX();
 
     if (m_executableMemory)
         m_executableMemory->shrink(m_size);
@@ -433,6 +347,9 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     dumpCode(codeOutData, m_size);
 #endif
 }
+
+template<>
+void LinkBuffer::copyCompactAndLinkCode<uint32_t>(MacroAssembler& macroAssembler, JITCompilationEffort effort);
 #endif // ENABLE(BRANCH_COMPACTION)
 
 

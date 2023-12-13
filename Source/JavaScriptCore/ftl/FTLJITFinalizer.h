@@ -31,6 +31,7 @@
 #include "FTLGeneratedFunction.h"
 #include "FTLJITCode.h"
 #include "LinkBuffer.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 
 namespace JSC { namespace FTL {
@@ -63,7 +64,7 @@ public:
     
     Vector<CCallHelpers::Jump> lazySlowPathGeneratorJumps;
     GeneratedFunction function;
-    RefPtr<JITCode> jitCode;
+    RefPtr<FTL::JITCode> jitCode;
 };
 
 } } // namespace JSC::FTL

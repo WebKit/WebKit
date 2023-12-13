@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirBasicBlock.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include <wtf/Box.h>
 #include <wtf/IndexMap.h>

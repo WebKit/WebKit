@@ -36,6 +36,7 @@
 #include "FPRInfo.h"
 #include "GPRInfo.h"
 #include "LinkBuffer.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "ProbeContext.h"
 

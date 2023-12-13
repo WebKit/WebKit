@@ -31,7 +31,7 @@
 
 namespace JSC {
 
-FullGCActivityCallback::FullGCActivityCallback(Heap& heap)
+FullGCActivityCallback::FullGCActivityCallback(JSC::Heap& heap)
     : GCActivityCallback(heap)
 {
 }
@@ -40,7 +40,7 @@ FullGCActivityCallback::~FullGCActivityCallback() = default;
 
 void FullGCActivityCallback::doCollection(VM& vm)
 {
-    Heap& heap = vm.heap;
+    JSC::Heap& heap = vm.heap;
     setDidGCRecently(false);
 
 #if !PLATFORM(IOS_FAMILY) || PLATFORM(MACCATALYST)
@@ -55,12 +55,12 @@ void FullGCActivityCallback::doCollection(VM& vm)
     heap.collectAsync(CollectionScope::Full);
 }
 
-Seconds FullGCActivityCallback::lastGCLength(Heap& heap)
+Seconds FullGCActivityCallback::lastGCLength(JSC::Heap& heap)
 {
     return heap.lastFullGCLength();
 }
 
-double FullGCActivityCallback::deathRate(Heap& heap)
+double FullGCActivityCallback::deathRate(JSC::Heap& heap)
 {
     size_t sizeBefore = heap.sizeBeforeLastFullCollection();
     size_t sizeAfter = heap.sizeAfterLastFullCollection();

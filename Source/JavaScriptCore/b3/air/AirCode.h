@@ -35,6 +35,7 @@
 #include "AirTmp.h"
 #include "B3SparseCollection.h"
 #include "GPRInfo.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "RegisterAtOffsetList.h"
 #include "StackAlignment.h"

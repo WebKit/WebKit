@@ -70,7 +70,7 @@ protected:
     static constexpr ptrdiff_t REPATCH_OFFSET_CALL_TO_POINTER = -((Assembler::NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS + 1) * INSTRUCTION_SIZE);
 
 public:
-    MacroAssemblerARM64()
+    ALWAYS_INLINE MacroAssemblerARM64()
         : m_dataMemoryTempRegister(this, dataTempRegister)
         , m_cachedMemoryTempRegister(this, memoryTempRegister)
         , m_makeJumpPatchable(false)

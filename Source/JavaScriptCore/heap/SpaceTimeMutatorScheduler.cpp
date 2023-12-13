@@ -51,7 +51,7 @@ private:
     double m_bytesAllocatedThisCycle;
 };
 
-SpaceTimeMutatorScheduler::SpaceTimeMutatorScheduler(Heap& heap)
+SpaceTimeMutatorScheduler::SpaceTimeMutatorScheduler(JSC::Heap& heap)
     : m_heap(heap)
     , m_period(Seconds::fromMilliseconds(Options::concurrentGCPeriodMS()))
 {

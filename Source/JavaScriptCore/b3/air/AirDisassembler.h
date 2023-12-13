@@ -27,6 +27,7 @@
 
 #if ENABLE(B3_JIT)
 
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 
 namespace JSC { 

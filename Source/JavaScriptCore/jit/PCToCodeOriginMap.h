@@ -28,6 +28,7 @@
 #if ENABLE(JIT)
 
 #include "CodeOrigin.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "VM.h"
 #include <wtf/Vector.h>

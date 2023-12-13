@@ -30,6 +30,7 @@
 #include "AccessCase.h"
 #include "JITStubRoutine.h"
 #include "JSFunctionInlines.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "ScratchRegisterAllocator.h"
 #include "StructureStubClearingWatchpoint.h"

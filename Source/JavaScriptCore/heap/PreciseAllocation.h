@@ -71,7 +71,7 @@ public:
     
     void lastChanceToFinalize();
     
-    Heap* heap() const { return m_weakSet.heap(); }
+    JSC::Heap* heap() const { return m_weakSet.heap(); }
     VM& vm() const { return m_weakSet.vm(); }
     WeakSet& weakSet() { return m_weakSet; }
 

@@ -59,7 +59,7 @@ public:
         return bitwise_cast<UnlinkedModuleProgramCodeBlock*>(Base::unlinkedCodeBlock());
     }
 
-    Ref<JITCode> generatedJITCode()
+    Ref<JSC::JITCode> generatedJITCode()
     {
         return generatedJITCodeForCall();
     }

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "JSCPtrTag.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "Printer.h"
 #include "ProbeContext.h"

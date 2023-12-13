@@ -85,7 +85,7 @@ private:
         MarkingConstraint* constraint { nullptr };
     };
     
-    Heap& m_heap;
+    JSC::Heap& m_heap;
     SlotVisitor& m_mainVisitor;
     MarkingConstraintSet& m_set;
     BitVector m_executed;

@@ -27,6 +27,7 @@
 
 #if ENABLE(ASSEMBLER)
 
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 
 namespace JSC {

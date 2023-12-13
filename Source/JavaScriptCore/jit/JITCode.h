@@ -52,6 +52,7 @@ class Signature;
 
 class TrackedReferences;
 class VM;
+class JITCode;
 
 struct StructureStubInfoIndex {
     explicit StructureStubInfoIndex(unsigned index)
@@ -72,7 +73,7 @@ enum class JITType : uint8_t {
 static constexpr unsigned widthOfJITType = 3;
 static_assert(WTF::getMSBSetConstexpr(static_cast<std::underlying_type_t<JITType>>(JITType::FTLJIT)) + 1 == widthOfJITType);
 
-class JITCode : public ThreadSafeRefCounted<JITCode> {
+class JITCode : public ThreadSafeRefCounted<JSC::JITCode> {
 public:
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
 
@@ -244,7 +245,7 @@ protected:
     CodePtr<JSEntryPtrTag> m_addressForCall;
 };
 
-class JITCodeWithCodeRef : public JITCode {
+class JITCodeWithCodeRef : public JSC::JITCode {
 protected:
     JITCodeWithCodeRef(JITType);
     JITCodeWithCodeRef(CodeRef<JSEntryPtrTag>, JITType, JITCode::ShareAttribute);

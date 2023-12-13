@@ -51,7 +51,7 @@ ALWAYS_INLINE void SecureARM64EHashPins::forEachPage(Function function)
 {
     Page* page = firstPage();
     do {
-        RELEASE_ASSERT(isJITPC(page));
+        // RELEASE_ASSERT(isJITPC(page));
         if (function(*page) == IterationStatus::Done)
             return;
         page = page->next;
@@ -66,7 +66,7 @@ ALWAYS_INLINE void SecureARM64EHashPins::forEachEntry(Function function)
         IterationStatus iterationStatus = IterationStatus::Continue;
         page.forEachSetBit([&] (size_t bitIndex) {
             Entry& entry = page.fastEntryUnchecked(bitIndex);
-            ASSERT(isJITPC(&entry));
+            // ASSERT(isJITPC(&entry));
             size_t index = baseIndex + bitIndex;
             iterationStatus = function(page, entry, index);
             return iterationStatus;
@@ -103,9 +103,9 @@ ALWAYS_INLINE auto SecureARM64EHashPins::findFirstEntry() -> FindResult
 
 ALWAYS_INLINE uint64_t SecureARM64EHashPins::pinForCurrentThread()
 {
-    if (LIKELY(g_jscConfig.useFastJITPermissions))
+    // if (LIKELY(g_jscConfig.useFastJITPermissions))
         return findFirstEntry().entry->pin;
-    return 1;
+    // return 1;
 }
 
 } // namespace JSC

@@ -13207,8 +13207,6 @@ IGNORE_CLANG_WARNINGS_END
                 RefPtr<OSRExitHandle> handle = descriptor->emitOSRExitLater(
                     *state, UncountableInvalidation, origin, params, nodeIndex, 0);
 
-                RefPtr<JITCode> jitCode = state->jitCode.get();
-
                 jit.addLinkTask(
                     [=] (LinkBuffer& linkBuffer) {
                         JumpReplacement jumpReplacement(
@@ -20327,7 +20325,7 @@ IGNORE_CLANG_WARNINGS_END
                         // runs before or after any other late paths that we might depend on, like
                         // the exception thunk.
 
-                        RefPtr<JITCode> jitCode = state->jitCode;
+                        auto jitCode = state->jitCode;
                         VM* vm = &state->graph.m_vm;
 
                         jit.addLinkTask(

@@ -30,6 +30,7 @@
 
 #include "FPRInfo.h"
 #include "GPRInfo.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "RegisterAtOffsetList.h"
 

@@ -40,6 +40,10 @@
 #include <wtf/DataLog.h>
 #include <wtf/FastMalloc.h>
 
+#include "Disassembler.h"
+#include "Options.h"
+#include "PerfLog.h"
+
 namespace JSC {
 
 // LinkBuffer:
@@ -301,7 +305,7 @@ public:
     // displaying disassembly.
 
     template<PtrTag tag>
-    CodeRef<tag> finalizeCodeWithoutDisassembly()
+    ALWAYS_INLINE CodeRef<tag> finalizeCodeWithoutDisassembly()
     {
         return finalizeCodeWithoutDisassemblyImpl().template retagged<tag>();
     }
@@ -344,8 +348,8 @@ ALLOW_NONLITERAL_FORMAT_END
     void setIsThunk() { m_isThunk = true; }
 
 private:
-    JS_EXPORT_PRIVATE CodeRef<LinkBufferPtrTag> finalizeCodeWithoutDisassemblyImpl();
-    JS_EXPORT_PRIVATE CodeRef<LinkBufferPtrTag> finalizeCodeWithDisassemblyImpl(bool dumpDisassembly, const char* format, ...) WTF_ATTRIBUTE_PRINTF(3, 4);
+    JS_EXPORT_PRIVATE ALWAYS_INLINE CodeRef<LinkBufferPtrTag> finalizeCodeWithoutDisassemblyImpl();
+    JS_EXPORT_PRIVATE ALWAYS_INLINE CodeRef<LinkBufferPtrTag> finalizeCodeWithDisassemblyImpl(bool dumpDisassembly, const char* format, ...) WTF_ATTRIBUTE_PRINTF(3, 4);
 
 #if ENABLE(BRANCH_COMPACTION)
     ALWAYS_INLINE int executableOffsetFor(int location)
@@ -470,7 +474,90 @@ private:
 #define FINALIZE_WASM_CODE_FOR_MODE(mode, linkBufferReference, resultPtrTag, ...)  \
     FINALIZE_CODE_IF(shouldDumpDisassemblyFor(mode), linkBufferReference, resultPtrTag, __VA_ARGS__)
 
+LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithoutDisassemblyImpl()
+{
+    performFinalization();
+    
+    ASSERT(m_didAllocate);
+    if (m_executableMemory)
+        return CodeRef<LinkBufferPtrTag>(*m_executableMemory);
+    
+    return CodeRef<LinkBufferPtrTag>::createSelfManagedCodeRef(m_code);
+}
 
+LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImpl(bool dumpDisassembly, const char* format, ...)
+{
+    CodeRef<LinkBufferPtrTag> result = finalizeCodeWithoutDisassemblyImpl();
+
+#if OS(LINUX) || OS(DARWIN)
+    if (Options::logJITCodeForPerf()) {
+        StringPrintStream out;
+        va_list argList;
+        va_start(argList, format);
+        out.vprintf(format, argList);
+        va_end(argList);
+        PerfLog::log(out.toCString(), result.code().untaggedPtr<const uint8_t*>(), result.size());
+    }
+#endif
+
+    if (!dumpDisassembly && !Options::logJIT())
+        return result;
+
+    bool justDumpingHeader = !dumpDisassembly || m_alreadyDisassembled;
+
+    StringPrintStream out;
+    out.printf("Generated JIT code for ");
+    va_list argList;
+    va_start(argList, format);
+
+    if (m_isThunk) {
+        va_list preflightArgs;
+        va_copy(preflightArgs, argList);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
+        size_t stringLength = vsnprintf(nullptr, 0, format, preflightArgs);
+        va_end(preflightArgs);
+
+        const char prefix[] = "thunk: ";
+        char* buffer = 0;
+        size_t length = stringLength + sizeof(prefix);
+        CString label = CString::newUninitialized(length, buffer);
+        snprintf(buffer, length, "%s", prefix);
+        vsnprintf(buffer + sizeof(prefix) - 1, stringLength + 1, format, argList);
+        out.printf("%s", buffer);
+
+        registerLabel(result.code().untaggedPtr(), WTFMove(label));
+    } else
+        out.vprintf(format, argList);
+
+    va_end(argList);
+#pragma clang diagnostic pop
+
+    uint8_t* executableAddress = result.code().untaggedPtr<uint8_t*>();
+    out.printf(": [%p, %p) %zu bytes%s\n", executableAddress, executableAddress + result.size(), result.size(), justDumpingHeader ? "." : ":");
+
+    CString header = out.toCString();
+    
+    if (justDumpingHeader) {
+        if (Options::logJIT())
+            dataLog(header);
+        return result;
+    }
+    
+    void* codeStart = entrypoint<DisassemblyPtrTag>().untaggedPtr();
+    void* codeEnd = bitwise_cast<uint8_t*>(codeStart) + size();
+
+    if (Options::asyncDisassembly()) {
+        CodeRef<DisassemblyPtrTag> codeRefForDisassembly = result.retagged<DisassemblyPtrTag>();
+        disassembleAsynchronously(header, WTFMove(codeRefForDisassembly), m_size, codeStart, codeEnd, "    ");
+        return result;
+    }
+    
+    dataLog(header);
+    disassemble(result.retaggedCode<DisassemblyPtrTag>(), m_size, codeStart, codeEnd, "    ", WTF::dataFile());
+    
+    return result;
+}
 
 } // namespace JSC
 

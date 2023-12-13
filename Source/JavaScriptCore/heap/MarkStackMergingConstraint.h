@@ -46,7 +46,7 @@ private:
     void executeImpl(AbstractSlotVisitor&) final;
     void executeImpl(SlotVisitor&) final;
     
-    Heap& m_heap;
+    JSC::Heap& m_heap;
 };
 
 } // namespace JSC

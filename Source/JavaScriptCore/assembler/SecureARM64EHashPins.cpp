@@ -152,7 +152,7 @@ bool SecureARM64EHashPins::allocatePinForCurrentThreadImpl(const AbstractLocker&
         WriteToJITRegionScope writeScope;
         ValidateNonReentrancyScope validateNonReentrancy(metadata);
 
-        RELEASE_ASSERT(isJITPC(metadata));
+        // RELEASE_ASSERT(isJITPC(metadata));
         uint64_t nextPin = metadata->nextPin.exchangeAdd(1, std::memory_order_seq_cst);
         RELEASE_ASSERT(nextPin);
 

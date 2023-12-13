@@ -31,7 +31,7 @@ namespace JSC {
 
 class EdenGCActivityCallback : public GCActivityCallback {
 public:
-    static RefPtr<EdenGCActivityCallback> tryCreate(Heap& heap)
+    static RefPtr<EdenGCActivityCallback> tryCreate(JSC::Heap& heap)
     {
         return s_shouldCreateGCTimer ? adoptRef(new EdenGCActivityCallback(heap)) : nullptr;
     }

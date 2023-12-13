@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "B3Origin.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include <wtf/Vector.h>
 

@@ -31,6 +31,7 @@
 #include "InlineCacheCompiler.h"
 #include "Instruction.h"
 #include "JITStubRoutine.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "Options.h"
 #include "RegisterSet.h"
@@ -552,7 +553,7 @@ struct UnlinkedStructureStubInfo {
     CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
 };
 
-struct BaselineUnlinkedStructureStubInfo : UnlinkedStructureStubInfo {
+struct BaselineUnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
     BytecodeIndex bytecodeIndex;
 };
 

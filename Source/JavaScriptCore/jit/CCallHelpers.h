@@ -978,6 +978,9 @@ public:
 
     void emitCTIThunkPrologue(bool returnAddressAlreadyTagged = false);
     void emitCTIThunkEpilogue();
+
+    void brk() { breakpoint(); }
+
 };
 
 } // namespace JSC

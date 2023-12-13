@@ -37,7 +37,7 @@
 namespace WTF {
 
 template<typename LockType, LockType isHeldBit, LockType hasParkedBit, typename Hooks>
-void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::lockSlow(Atomic<LockType>& lock)
+ALWAYS_INLINE void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::lockSlow(Atomic<LockType>& lock)
 {
     // This magic number turns out to be optimal based on past JikesRVM experiments.
     static constexpr unsigned spinLimit = 40;
@@ -103,7 +103,7 @@ void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::lockSlow(Atomic<Lo
 }
 
 template<typename LockType, LockType isHeldBit, LockType hasParkedBit, typename Hooks>
-void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::unlockSlow(Atomic<LockType>& lock, Fairness fairness)
+ALWAYS_INLINE void LockAlgorithm<LockType, isHeldBit, hasParkedBit, Hooks>::unlockSlow(Atomic<LockType>& lock, Fairness fairness)
 {
     // We could get here because the weak CAS in unlock() failed spuriously, or because there is
     // someone parked. So, we need a CAS loop: even if right now the lock is just held, it could

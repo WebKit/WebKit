@@ -34,6 +34,7 @@
 #include "AirSpecial.h"
 #include "B3ValueInlines.h"
 #include "B3WasmBoundsCheckValue.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 
 namespace JSC { namespace B3 { namespace Air {

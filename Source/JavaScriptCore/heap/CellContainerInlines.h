@@ -40,7 +40,7 @@ inline VM& CellContainer::vm() const
     return markedBlock().vm();
 }
 
-inline Heap* CellContainer::heap() const
+inline JSC::Heap* CellContainer::heap() const
 {
     return &vm().heap;
 }

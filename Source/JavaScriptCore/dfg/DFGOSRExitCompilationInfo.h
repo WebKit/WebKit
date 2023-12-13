@@ -27,6 +27,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 
 namespace JSC { namespace DFG {

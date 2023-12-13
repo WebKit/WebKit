@@ -27,7 +27,6 @@
 
 #if ENABLE(ASSEMBLER)
 
-#include "ExecutableAllocator.h"
 #include "JITCompilationEffort.h"
 #include "SecureARM64EHashPinsInlines.h"
 #include "stdint.h"
@@ -40,6 +39,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/UnalignedAccess.h>
+
+#include "JSCConfig.h"
 
 namespace JSC {
     class AssemblerData;
@@ -344,7 +345,7 @@ namespace JSC {
         void putInt64(int64_t value) { putIntegral(value); }
 #endif
         void putIntUnchecked(int32_t value) { putIntegralUnchecked(value); }
-        void putInt(int32_t value) { putIntegral(value); }
+        ALWAYS_INLINE void putInt(int32_t value) { putIntegral(value); }
 
         size_t codeSize() const
         {

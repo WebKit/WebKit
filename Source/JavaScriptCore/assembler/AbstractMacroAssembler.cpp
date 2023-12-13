@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h" // Have to break with style because AbstractMacroAssembler.h is a shady header.
 
 #if ENABLE(ASSEMBLER)

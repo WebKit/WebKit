@@ -33,6 +33,7 @@
 #include "Reg.h"
 #endif
 #include "JSCJSValue.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "VirtualRegister.h"
 

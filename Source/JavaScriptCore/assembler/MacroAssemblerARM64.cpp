@@ -26,6 +26,7 @@
 #include "config.h"
 
 #if ENABLE(ASSEMBLER) && CPU(ARM64)
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 
 #include "JSCPtrTag.h"

@@ -37,6 +37,7 @@
 #include "JITCode.h"
 #include "JSBigInt.h"
 #include "JSCell.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "MarkedSpace.h"
 #include "RegisterAtOffsetList.h"

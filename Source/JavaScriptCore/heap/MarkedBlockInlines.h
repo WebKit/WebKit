@@ -50,7 +50,7 @@ inline bool MarkedBlock::hasAnyNewlyAllocated()
     return !isNewlyAllocatedStale();
 }
 
-inline Heap* MarkedBlock::heap() const
+inline JSC::Heap* MarkedBlock::heap() const
 {
     return &vm().heap;
 }

@@ -29,6 +29,7 @@
 
 #include "AirGenerationContext.h"
 #include "B3ValueRep.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "RegisterSet.h"
 #include <wtf/Box.h>

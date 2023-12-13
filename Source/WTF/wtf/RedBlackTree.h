@@ -163,7 +163,7 @@ public:
     {
     }
     
-    void insert(NodeType* x)
+    ALWAYS_INLINE void insert(NodeType* x)
     {
         x->reset();
         treeInsert(x);

@@ -459,7 +459,7 @@ struct UnlinkedCallLinkInfo {
     }
 };
 
-struct BaselineUnlinkedCallLinkInfo : public UnlinkedCallLinkInfo {
+struct BaselineUnlinkedCallLinkInfo : public JSC::UnlinkedCallLinkInfo {
     BytecodeIndex bytecodeIndex; // Currently, only used by baseline, so this can trivially produce a CodeOrigin.
 
 #if ENABLE(JIT)

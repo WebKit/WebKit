@@ -34,6 +34,7 @@
 #include "AirInst.h"
 #include "AirInstInlines.h"
 #include "AirPhaseScope.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include <wtf/IndexMap.h>
 #include <wtf/IndexSet.h>

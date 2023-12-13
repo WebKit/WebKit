@@ -30,6 +30,7 @@
 #include "CodeOrigin.h"
 #include "DFGCommon.h"
 #include "DumpContext.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "ProfilerCompilation.h"
 #include <wtf/HashMap.h>

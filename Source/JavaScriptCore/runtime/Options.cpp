@@ -29,6 +29,7 @@
 #include "CPU.h"
 #include "JITOperationValidation.h"
 #include "LLIntCommon.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "MinimumReservedZoneSize.h"
 #include <algorithm>

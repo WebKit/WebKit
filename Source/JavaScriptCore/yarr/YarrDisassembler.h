@@ -27,6 +27,7 @@
 
 #if ENABLE(JIT)
 
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>

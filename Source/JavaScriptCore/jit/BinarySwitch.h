@@ -28,6 +28,7 @@
 #if ENABLE(JIT)
 
 #include "GPRInfo.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include <wtf/WeakRandom.h>
 

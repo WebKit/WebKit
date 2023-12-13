@@ -96,7 +96,7 @@ JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain,
     CodeBlock* callerBaselineCodeBlock = callerCodeBlock;
     BytecodeIndex bytecodeIndex = callerCallSiteIndex.bytecodeIndex();
 #if ENABLE(DFG_JIT)
-    if (JITCode::isOptimizingJIT(callerCodeBlock->jitType())) {
+    if (JSC::JITCode::isOptimizingJIT(callerCodeBlock->jitType())) {
         CodeOrigin codeOrigin = callerCodeBlock->codeOrigin(callerCallSiteIndex);
         callerBaselineCodeBlock = baselineCodeBlockForOriginAndBaselineCodeBlock(codeOrigin, callerCodeBlock->baselineAlternative());
         bytecodeIndex = codeOrigin.bytecodeIndex();
@@ -510,7 +510,7 @@ ALWAYS_INLINE static HandlerInfo* findExceptionHandler(StackVisitor& visitor, Co
 
     CallFrame* callFrame = visitor->callFrame();
     unsigned exceptionHandlerIndex;
-    if (JITCode::isOptimizingJIT(codeBlock->jitType()))
+    if (JSC::JITCode::isOptimizingJIT(codeBlock->jitType()))
         exceptionHandlerIndex = callFrame->callSiteIndex().bits();
     else
         exceptionHandlerIndex = callFrame->bytecodeIndex().offset();
@@ -561,7 +561,7 @@ CatchInfo::CatchInfo(const HandlerInfo* handler, CodeBlock* codeBlock)
         // with this bytecode offset in the machine frame is utterly meaningless
         // and can cause an overflow. OSR exit properly exits to handler->target
         // in the proper frame.
-        if (!JITCode::isOptimizingJIT(codeBlock->jitType()))
+        if (!JSC::JITCode::isOptimizingJIT(codeBlock->jitType()))
             m_catchPCForInterpreter = { codeBlock->instructions().at(handler->target).ptr() };
         else
             m_catchPCForInterpreter = { static_cast<JSInstruction*>(nullptr) };
@@ -1055,7 +1055,7 @@ failedJSONP:
     if (scope->structure()->isUncacheableDictionary())
         scope->flattenDictionaryObject(vm);
 
-    RefPtr<JITCode> jitCode;
+    RefPtr<JSC::JITCode> jitCode;
     ProtoCallFrame protoCallFrame;
     {
         DeferTraps deferTraps(vm); // We can't jettison this code if we're about to run it.
@@ -1150,7 +1150,7 @@ ALWAYS_INLINE JSValue Interpreter::executeCallImpl(VM& vm, JSObject* function, c
             return scope.exception();
     }
 
-    RefPtr<JITCode> jitCode;
+    RefPtr<JSC::JITCode> jitCode;
     ProtoCallFrame protoCallFrame;
     {
         DeferTraps deferTraps(vm); // We can't jettison this code if we're about to run it.
@@ -1243,7 +1243,7 @@ JSObject* Interpreter::executeConstruct(JSObject* constructor, const CallData& c
             return nullptr;
     }
 
-    RefPtr<JITCode> jitCode;
+    RefPtr<JSC::JITCode> jitCode;
     ProtoCallFrame protoCallFrame;
     {
         DeferTraps deferTraps(vm); // We can't jettison this code if we're about to run it.
@@ -1462,7 +1462,7 @@ JSValue Interpreter::executeEval(EvalExecutable* eval, JSValue thisValue, JSScop
     else
         callee = JSCallee::create(vm, globalObject, scope);
 
-    RefPtr<JITCode> jitCode;
+    RefPtr<JSC::JITCode> jitCode;
     ProtoCallFrame protoCallFrame;
     {
         DeferTraps deferTraps(vm); // We can't jettison this code if we're about to run it.
@@ -1521,7 +1521,7 @@ JSValue Interpreter::executeModuleProgram(JSModuleRecord* record, ModuleProgramE
 
     const unsigned numberOfArguments = static_cast<unsigned>(AbstractModuleRecord::Argument::NumberOfArguments);
     JSCallee* callee = JSCallee::create(vm, globalObject, scope);
-    RefPtr<JITCode> jitCode;
+    RefPtr<JSC::JITCode> jitCode;
 
     ProtoCallFrame protoCallFrame;
     EncodedJSValue args[numberOfArguments] = {

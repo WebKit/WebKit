@@ -29,6 +29,7 @@
 
 #include "DFGMinifiedID.h"
 #include "DataFormat.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "Operands.h"
 #include "VirtualRegister.h"

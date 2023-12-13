@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-MarkingConstraintSet::MarkingConstraintSet(Heap& heap)
+MarkingConstraintSet::MarkingConstraintSet(JSC::Heap& heap)
     : m_heap(heap)
 {
 }

@@ -29,6 +29,7 @@
 
 #include "AirArg.h"
 #include "AirKind.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include <wtf/ScopedLambda.h>
 

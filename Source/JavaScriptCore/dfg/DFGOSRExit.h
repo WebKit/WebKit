@@ -30,6 +30,7 @@
 #include "DFGOSRExitBase.h"
 #include "DFGVariableEventStream.h"
 #include "GPRInfo.h"
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include "MethodOfGettingAValueProfile.h"
 #include "Operands.h"

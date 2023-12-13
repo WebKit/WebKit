@@ -33,7 +33,7 @@
 
 namespace JSC {
 
-IsoSubspace::IsoSubspace(CString name, Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierCells, std::unique_ptr<IsoMemoryAllocatorBase>&& allocator)
+IsoSubspace::IsoSubspace(CString name, JSC::Heap& heap, const HeapCellType& heapCellType, size_t size, uint8_t numberOfLowerTierCells, std::unique_ptr<IsoMemoryAllocatorBase>&& allocator)
     : Subspace(name, heap)
     , m_directory(WTF::roundUpToMultipleOf<MarkedBlock::atomSize>(size))
     , m_isoAlignedMemoryAllocator(allocator ? WTFMove(allocator) : makeUnique<IsoAlignedMemoryAllocator>(name))

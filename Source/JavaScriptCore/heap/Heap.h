@@ -290,8 +290,8 @@ class Heap {
 public:
     friend class JIT;
     friend class DFG::SpeculativeJIT;
-    static Heap* heap(const JSValue); // 0 for immediate values
-    static Heap* heap(const HeapCell*);
+    static JSC::Heap* heap(const JSValue); // 0 for immediate values
+    static JSC::Heap* heap(const HeapCell*);
 
     // This constant determines how many blocks we iterate between checks of our 
     // deadline when calling Heap::isPagedOut. Decreasing it will cause us to detect 

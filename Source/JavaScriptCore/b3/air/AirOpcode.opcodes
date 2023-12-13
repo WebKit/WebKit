@@ -107,7 +107,7 @@
 
 Nop
 
-Breakpoint
+Brk
 
 Add32 U:G:32, U:G:32, ZD:G:32
     Imm, Tmp, Tmp

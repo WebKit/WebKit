@@ -83,7 +83,7 @@ public:
     void generateDFGDataICFastPath(DFG::JITCompiler&, StructureStubInfoIndex, GPRReg stubInfoGPR);
 #endif
 
-    UnlinkedStructureStubInfo* m_unlinkedStubInfo { nullptr };
+    JSC::UnlinkedStructureStubInfo* m_unlinkedStubInfo { nullptr };
 
     template<typename StubInfo>
     static void setUpStubInfoImpl(StubInfo& stubInfo, AccessType accessType, CodeOrigin codeOrigin, CallSiteIndex callSiteIndex, const RegisterSetBuilder& usedRegisters)

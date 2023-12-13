@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExecutableAllocator.h"
 #include "MacroAssembler.h"
 #include <array>
 #include <wtf/FunctionTraits.h>
