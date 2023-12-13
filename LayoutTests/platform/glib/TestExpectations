@@ -1089,8 +1089,9 @@ webkit.org/b/228820 media/media-source/media-mp4-h264-partial-abort.html [ Failu
 webkit.org/b/224767 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-implicit.html [ Crash Pass ]
 
 # See also bug #175578.
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Failure ]
-webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
+# Uncomment when webkit.org/b/266333 is fixed
+#webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Failure ]
+#webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Failure ]
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-changetype.html [ Failure Crash ]
 
 # Crash is webkit.org/b/176020.
@@ -1100,7 +1101,8 @@ webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-dur
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-endofstream.html [ Failure ]
 webkit.org/b/210486 imported/w3c/web-platform-tests/media-source/mediasource-correct-frames-after-reappend.html [ Failure ]
 
-webkit.org/b/226804 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure ]
+# Uncomment when webkit.org/b/266333 is fixed
+#webkit.org/b/226804 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure ]
 
 webkit.org/b/167108 imported/w3c/web-platform-tests/media-source/mediasource-trackdefaultlist.html [ Failure ]
 webkit.org/b/210341 media/media-source/media-mp4-h264-sequence-mode.html [ Failure ]
@@ -2387,8 +2389,9 @@ webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4
 webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-persistent-usage-record.https.html [ Skip ]
 webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-destroy-persistent-license.https.html [ Skip ]
 webkit.org/b/190991 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-usage-record.https.html [ Skip ]
-webkit.org/b/211840 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Failure ]
-webkit.org/b/211840 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-destroy-persistent-license.https.html [ Failure ]
+# Uncomment when webkit.org/b/266333 is fixed
+#webkit.org/b/211840 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Failure ]
+#webkit.org/b/211840 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-destroy-persistent-license.https.html [ Failure ]
 webkit.org/b/211375 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted-segmented.https.html [ Skip ]
 webkit.org/b/210113 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-reset-src-after-setmediakeys.https.html [ Failure ]
 webkit.org/b/178707 imported/w3c/web-platform-tests/encrypted-media/encrypted-media-default-feature-policy.https.sub.html [ Skip ]
@@ -2401,29 +2404,34 @@ imported/w3c/web-platform-tests/encrypted-media/clearkey-events-session-closed-e
 imported/w3c/web-platform-tests/encrypted-media/clearkey-invalid-license.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-keystatuses-multiple-sessions.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey.https.html [ Pass ]
+# Uncomment when webkit.org/b/266333 is fixed
+#imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.https.html [ Pass ]
+#imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https.html [ Pass ]
+#imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.https.html [ Pass ]
+#imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https.html [ Pass ]
+#imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey-sequential.https.html [ Crash Failure Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-onencrypted.https.html [ Pass ]
+# Uncomment when webkit.org/b/266333 is fixed
+#imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession.https.html [ Pass ]
+#imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https.html [ Pass ]
+#imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Pass ]
+#imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-onencrypted.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-two-videos.https.html [ Crash Failure Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https.html [ Pass ]
+# Uncomment when webkit.org/b/266333 is fixed
+#imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-requestmediakeysystemaccess.https.html [ Crash Failure Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-at-same-time.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-different-mediakeys.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.https.html [ Pass ]
+# Uncomment when webkit.org/b/266333 is fixed
+#imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysession.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeys.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-syntax-mediakeysystemaccess.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-unique-origin.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-update-disallowed-input.https.html [ Pass ]
-imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https.html [ Pass ]
+# Uncomment when webkit.org/b/266333 is fixed
+#imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-not-callable-after-createsession.https.html [ Pass ]
 imported/w3c/web-platform-tests/encrypted-media/clearkey-update-non-ascii-input.https.html [ Pass ]
 
@@ -3732,6 +3740,41 @@ webkit.org/b/264680 media/video-page-visibility-restriction.html [ Pass Timeout 
 webkit.org/b/264680 webgl/webgl-visible-after-context-restore.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run [ Slow ]
+
+webkit.org/b/266333 fast/canvas/webgl/texImage2D-mse-flipY-false.html [ Failure Crash ]
+webkit.org/b/266333 fast/canvas/webgl/texImage2D-mse-flipY-true.html [ Failure Crash ]
+webkit.org/b/266333 fast/canvas/webgl/texImage2D-mse-in-dom-flipY-false.html [ Failure Crash ]
+webkit.org/b/266333 fast/canvas/webgl/texImage2D-mse-in-dom-flipY-true.html [ Failure Crash ]
+webkit.org/b/266333 http/tests/media/media-source/media-source-video-fit-fill.html [ Failure Crash ]
+webkit.org/b/266333 http/tests/media/media-source/mediasource-play-then-seek-back-with-remote-control.html [ Failure Crash ]
+webkit.org/b/266333 http/tests/media/media-source/mediasource-rvfc.html [ Failure Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-destroy-persistent-license.https.html [ Failure Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-retrieve-persistent-license.https.html [ Failure Timeout Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-clear-encrypted.https.html [ Failure Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear-sources.https.html [ Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-encrypted-clear.https.html [ Failure Timeout Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-events.https.html [ Failure Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multikey.https.html [ Failure Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-multisession.https.html [ Failure Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-src.https.html [ Pass Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-after-update.https.html [ Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-setMediaKeys-onencrypted.https.html [ Failure Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-playback-temporary-waitingforkey.https.html [ Failure Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-setmediakeys-multiple-times-with-the-same-mediakeys.https.html [ Pass Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/encrypted-media/clearkey-mp4-waiting-for-a-key.https.html [ Failure Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/media-source/mediasource-activesourcebuffers.html [ Pass Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/media-source/mediasource-append-buffer.html [ Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/media-source/mediasource-appendbuffer-quota-exceeded.html [ Pass Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/media-source/mediasource-appendwindow.html [ Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/media-source/mediasource-avtracks.html [ Failure Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/media-source/mediasource-buffered-seek.html [ Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/media-source/mediasource-buffered.html [ Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play-without-codecs-parameter.html [ Pass Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/media-source/mediasource-changetype-play.html [ Failure Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-a-bitrate.html [ Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-audio-bitrate.html [ Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-framesize.html [ Crash ]
+webkit.org/b/266333 imported/w3c/web-platform-tests/media-source/mediasource-config-change-mp4-av-video-bitrate.html [ Crash ]
 
 # End: Common failures between GTK and WPE.
 
