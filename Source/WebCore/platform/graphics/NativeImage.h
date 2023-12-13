@@ -52,7 +52,7 @@ public:
     Color singlePixelSolidColor() const;
     WEBCORE_EXPORT DestinationColorSpace colorSpace() const;
 
-    void draw(GraphicsContext&, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions);
+    void draw(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions);
     void clearSubimages();
 
 private:

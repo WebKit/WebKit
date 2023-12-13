@@ -591,9 +591,8 @@ class DrawNativeImage {
 public:
     static constexpr char name[] = "draw-native-image";
 
-    DrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+    DrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
         : m_imageIdentifier(imageIdentifier)
-        , m_imageSize(imageSize)
         , m_destinationRect(destRect)
         , m_srcRect(srcRect)
         , m_options(options)
@@ -601,7 +600,6 @@ public:
     }
 
     RenderingResourceIdentifier imageIdentifier() const { return m_imageIdentifier; }
-    FloatSize imageSize() const { return m_imageSize; }
     const FloatRect& destinationRect() const { return m_destinationRect; }
     const FloatRect& source() const { return m_srcRect; }
     ImagePaintingOptions options() const { return m_options; }
@@ -614,7 +612,6 @@ public:
 
 private:
     RenderingResourceIdentifier m_imageIdentifier;
-    FloatSize m_imageSize;
     FloatRect m_destinationRect;
     FloatRect m_srcRect;
     ImagePaintingOptions m_options;
