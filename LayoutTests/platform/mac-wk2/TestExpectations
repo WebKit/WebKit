@@ -1999,9 +1999,9 @@ http/wpt/opener/parent-access-child-via-windowproxy.html [ Pass ]
 [ Sonoma+ Release ] fast/attachment/attachment-type-attribute.html [ Pass Failure ]
 [ Sonoma+ Release ] fast/attachment/attachment-default-icon.html [ Pass Failure ]
 
-webkit.org/b/265954 [ Ventura+ Release x86_64 ] media/video-audio-session-mode.html [ Crash ]
-
 webkit.org/b/265957 [ Release ] fullscreen/full-screen-layer-dump.html [ Pass Failure ]
 
 # rdar://102425691 ([ New Test ](256068@main): [ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html is a consistent failure)
 [ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html [ Pass Failure ]
+
+webkit.org/b/265954 [ Ventura+ Release x86_64 ] media/video-audio-session-mode.html [ Pass Crash ]
