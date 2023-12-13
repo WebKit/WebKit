@@ -1324,14 +1324,18 @@ auto LLIntGenerator::addBranch(ControlType& data, ExpressionType condition, Stac
 
 auto LLIntGenerator::addBranchNull(ControlType& data, ExpressionType reference, Stack& returnValues, bool shouldNegate, ExpressionType& result) -> PartialResult
 {
+    // Leave a hole for the reference and avoid overwriting it with the condition.
+    if (!shouldNegate)
+        push();
+
     auto condition = push();
     WasmRefIsNull::emit(this, condition, reference);
 
     if (shouldNegate)
         WasmI32Eqz::emit(this, condition, condition);
 
-    // Pop temporary condition variable.
-    --m_stackSize;
+    // Pop temporary condition variable & reference
+    m_stackSize -= (1 + (shouldNegate ? 0 : 1));
 
     WASM_FAIL_IF_HELPER_FAILS(addBranch(data, condition, returnValues));
 
