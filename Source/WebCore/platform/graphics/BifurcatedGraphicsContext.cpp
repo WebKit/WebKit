@@ -194,6 +194,14 @@ void BifurcatedGraphicsContext::fillRect(const FloatRect& rect, const Color& col
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
+void BifurcatedGraphicsContext::fillRect(const FloatRect& rect, Gradient& gradient)
+{
+    m_primaryContext.fillRect(rect, gradient);
+    m_secondaryContext.fillRect(rect, gradient);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
 void BifurcatedGraphicsContext::fillRoundedRectImpl(const FloatRoundedRect& rect, const Color& color)
 {
     m_primaryContext.fillRoundedRectImpl(rect, color);
