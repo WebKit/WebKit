@@ -68,7 +68,9 @@ void RenderSVGRect::updateShapeFromElement()
     if (boundingBoxSize.isEmpty())
         return;
 
-    if (rectElement().rx().value(lengthContext) > 0 || rectElement().ry().value(lengthContext) > 0)
+    auto& svgStyle = style().svgStyle();
+    if (lengthContext.valueForLength(svgStyle.rx(), SVGLengthMode::Width) > 0
+        || lengthContext.valueForLength(svgStyle.ry(), SVGLengthMode::Height) > 0)
         m_shapeType = ShapeType::RoundedRectangle;
     else
         m_shapeType = ShapeType::Rectangle;
@@ -79,17 +81,17 @@ void RenderSVGRect::updateShapeFromElement()
         return;
     }
 
-    m_fillBoundingBox = FloatRect(FloatPoint(lengthContext.valueForLength(style().svgStyle().x(), SVGLengthMode::Width),
-        lengthContext.valueForLength(style().svgStyle().y(), SVGLengthMode::Height)),
+    m_fillBoundingBox = FloatRect(FloatPoint(lengthContext.valueForLength(svgStyle.x(), SVGLengthMode::Width),
+        lengthContext.valueForLength(svgStyle.y(), SVGLengthMode::Height)),
         boundingBoxSize);
 
     auto strokeBoundingBox = m_fillBoundingBox;
-    if (style().svgStyle().hasStroke())
+    if (svgStyle.hasStroke())
         strokeBoundingBox.inflate(this->strokeWidth() / 2);
 
 #if USE(CG)
     // CoreGraphics can inflate the stroke by 1px when drawing a rectangle with antialiasing disabled at non-integer coordinates, we need to compensate.
-    if (style().svgStyle().shapeRendering() == ShapeRendering::CrispEdges)
+    if (svgStyle.shapeRendering() == ShapeRendering::CrispEdges)
         strokeBoundingBox.inflate(1);
 #endif
 
