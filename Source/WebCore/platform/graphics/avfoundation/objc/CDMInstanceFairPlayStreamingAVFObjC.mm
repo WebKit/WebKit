@@ -34,6 +34,7 @@
 #import "ContentKeyGroupFactoryAVFObjC.h"
 #import "InitDataRegistry.h"
 #import "Logging.h"
+#import "MediaSampleAVFObjC.h"
 #import "MediaSessionManagerCocoa.h"
 #import "NotImplemented.h"
 #import "SharedBuffer.h"
@@ -602,6 +603,21 @@ void CDMInstanceFairPlayStreamingAVFObjC::externalProtectionStatusDidChangeForCo
 {
     if (auto* session = sessionForRequest(request)) {
         session->externalProtectionStatusDidChangeForContentKeyRequest(request);
+        return;
+    }
+
+    ERROR_LOG(LOGIDENTIFIER, "- no responsible session; dropping");
+    ASSERT_NOT_REACHED();
+}
+
+void CDMInstanceFairPlayStreamingAVFObjC::attachContentKeyToSample(const MediaSampleAVFObjC& sample)
+{
+    auto& keyIDs = sample.keyIDs();
+    if (keyIDs.isEmpty())
+        return;
+
+    if (auto* session = sessionForKeyIDs(keyIDs)) {
+        session->attachContentKeyToSample(sample);
         return;
     }
 
@@ -1710,6 +1726,38 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::isLicenseTypeSupported(LicenseT
     case CDMSessionType::Temporary:
         return true;
     }
+}
+
+AVContentKey *CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyForSample(const MediaSampleAVFObjC& sample)
+{
+    auto& sampleKeyIDs = sample.keyIDs();
+    size_t keyStatusIndex = 0;
+
+    for (auto& request : contentKeyRequests()) {
+        for (auto& keyID : keyIDsForRequest(request.get())) {
+            if (m_keyStatuses[keyStatusIndex++].second != CDMInstanceSession::KeyStatus::Usable)
+                continue;
+
+            if (!sampleKeyIDs.containsIf([&](auto& sampleKeyID) { return sampleKeyID.get() == keyID.get(); }))
+                continue;
+
+            if (AVContentKey *contentKey = [request contentKey])
+                return contentKey;
+        }
+    }
+
+    return nil;
+}
+
+void CDMInstanceSessionFairPlayStreamingAVFObjC::attachContentKeyToSample(const MediaSampleAVFObjC& sample)
+{
+    AVContentKey *contentKey = contentKeyForSample(sample);
+    if (!contentKey)
+        return;
+
+    NSError *error = nil;
+    if (!AVSampleBufferAttachContentKey(sample.platformSample().sample.cmSampleBuffer, contentKey, &error))
+        ERROR_LOG(LOGIDENTIFIER, "Failed to attach content key with error: %{public}@", error);
 }
 
 Vector<RetainPtr<AVContentKey>> CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyGroupDataSourceKeys() const
