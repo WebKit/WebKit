@@ -35,7 +35,8 @@
 namespace WebCore {
 
 VTTScanner::VTTScanner(const String& line)
-    : m_is8Bit(line.is8Bit())
+    : m_source(line)
+    , m_is8Bit(line.is8Bit())
 {
     if (m_is8Bit) {
         m_data.characters8 = line.characters8();

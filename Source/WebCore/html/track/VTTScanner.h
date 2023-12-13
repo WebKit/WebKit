@@ -146,6 +146,7 @@ protected:
         const LChar* characters8;
         const UChar* characters16;
     } m_end;
+    const String m_source;
     bool m_is8Bit;
 };
 
