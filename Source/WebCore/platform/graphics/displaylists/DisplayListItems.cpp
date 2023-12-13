@@ -370,7 +370,7 @@ void DrawImageBuffer::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
 
 void DrawNativeImage::apply(GraphicsContext& context, NativeImage& image) const
 {
-    context.drawNativeImageInternal(image, m_imageSize, m_destinationRect, m_srcRect, m_options);
+    context.drawNativeImageInternal(image, m_destinationRect, m_srcRect, m_options);
 }
 
 void DrawNativeImage::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const

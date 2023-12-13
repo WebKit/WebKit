@@ -28,19 +28,16 @@
 #if ENABLE(MEDIA_SOURCE)
 #include "JSSourceBuffer.h"
 
-#if ENABLE(MANAGED_MEDIA_SOURCE)
 #include "JSManagedSourceBuffer.h"
-#endif
 
 namespace WebCore {
 using namespace JSC;
 
 JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<SourceBuffer>&& buffer)
 {
-#if ENABLE(MANAGED_MEDIA_SOURCE)
     if (buffer->isManaged())
         return createWrapper<ManagedSourceBuffer>(globalObject, WTFMove(buffer));
-#endif
+
     return createWrapper<SourceBuffer>(globalObject, WTFMove(buffer));
 }
 

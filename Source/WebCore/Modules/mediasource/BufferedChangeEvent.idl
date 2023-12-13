@@ -24,7 +24,7 @@
  */
 
 [
-    Conditional=MANAGED_MEDIA_SOURCE,
+    Conditional=MEDIA_SOURCE,
     EnabledBySetting=ManagedMediaSourceEnabled
 ]
 dictionary BufferedChangeEventInit : EventInit {
@@ -33,7 +33,7 @@ dictionary BufferedChangeEventInit : EventInit {
 };
 
 [
-    Conditional=MANAGED_MEDIA_SOURCE,
+    Conditional=MEDIA_SOURCE,
     EnabledBySetting=ManagedMediaSourceEnabled,
     Exposed=Window
 ]

@@ -2773,7 +2773,7 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext& c
         INFO_LOG(logIdentifier);
 
         FloatRect imageRect { FloatPoint::zero(), m_lastImage->size() };
-        context.drawNativeImage(*m_lastImage, imageRect.size(), outputRect, imageRect);
+        context.drawNativeImage(*m_lastImage, outputRect, imageRect);
 
         // If we have created an AVAssetImageGenerator in the past due to m_videoOutput not having an available
         // video frame, destroy it now that it is no longer needed.

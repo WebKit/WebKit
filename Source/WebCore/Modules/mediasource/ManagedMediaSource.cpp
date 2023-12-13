@@ -26,7 +26,7 @@
 #include "config.h"
 #include "ManagedMediaSource.h"
 
-#if ENABLE(MANAGED_MEDIA_SOURCE)
+#if ENABLE(MEDIA_SOURCE)
 
 #include "Event.h"
 #include "EventNames.h"
@@ -182,5 +182,6 @@ bool ManagedMediaSource::isOpen() const
 #endif
 }
 
-}
-#endif
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_SOURCE)

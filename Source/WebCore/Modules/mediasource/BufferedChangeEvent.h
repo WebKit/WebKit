@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MANAGED_MEDIA_SOURCE)
+#if ENABLE(MEDIA_SOURCE)
 
 #include "Event.h"
 
@@ -67,4 +67,4 @@ private:
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(MEDIA_SOURCE)

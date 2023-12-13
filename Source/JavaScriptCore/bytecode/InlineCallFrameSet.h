@@ -41,7 +41,7 @@ public:
     
     InlineCallFrame* add();
     
-    using FrameBag = Bag<InlineCallFrame, RawPtrTraits<InlineCallFrame>, InlineCallFrameMalloc>;
+    using FrameBag = Bag<InlineCallFrame, RawPtrTraits<InlineCallFrame>>;
     typedef FrameBag::iterator iterator;
     iterator begin() { return m_frames.begin(); }
     iterator end() { return m_frames.end(); }

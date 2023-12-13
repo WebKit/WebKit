@@ -48,7 +48,8 @@ struct LineContent {
     bool endsWithHyphen { false };
     size_t partialTrailingContentLength { 0 };
     std::optional<InlineLayoutUnit> overflowLogicalWidth { };
-    HashMap<const Box*, InlineLayoutUnit> rubyAlignmentOffsetList { };
+    HashMap<const Box*, InlineLayoutUnit> rubyBaseAlignmentOffsetList { };
+    InlineLayoutUnit rubyAnnotationOffset { 0.f };
 };
 
 static inline StringBuilder toString(const Line::RunList& runs)
@@ -261,7 +262,7 @@ LineLayoutResult LineBuilder::layoutInlineContent(const LineInput& lineInput, co
         , { !result.isHangingTrailingContentWhitespace, result.hangingTrailingContentWidth }
         , { WTFMove(visualOrderList), inlineBaseDirection }
         , { isFirstFormattedLine() ? LineLayoutResult::IsFirstLast::FirstFormattedLine::WithinIFC : LineLayoutResult::IsFirstLast::FirstFormattedLine::No, isLastLine }
-        , WTFMove(lineContent.rubyAlignmentOffsetList)
+        , { WTFMove(lineContent.rubyBaseAlignmentOffsetList), lineContent.rubyAnnotationOffset }
         , lineContent.endsWithHyphen
         , result.nonSpanningInlineLevelBoxCount
         , { }
@@ -508,13 +509,13 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
                     return;
 
                 auto spaceToDistribute = horizontalAvailableSpace - m_line.contentLogicalWidth() + (m_line.isHangingTrailingContentWhitespace() ? m_line.hangingTrailingContentWidth() : 0.f);
-                if (m_line.hasRubyContent()) {
-                    lineContent.rubyAlignmentOffsetList = RubyFormattingContext::applyRubyAlign(m_line, formattingContext());
+                if (root().isRubyAnnotationBox() && rootStyle.textAlign() == RenderStyle::initialTextAlign()) {
+                    lineContent.rubyAnnotationOffset = RubyFormattingContext::applyRubyAlignOnAnnotationBox(m_line, spaceToDistribute, formattingContext());
+                    m_line.inflateContentLogicalWidth(spaceToDistribute);
                     return;
                 }
-                if (root().isRubyAnnotationBox() && rootStyle.textAlign() == RenderStyle::initialTextAlign()) {
-                    InlineContentAligner::applyRubyAlignOnAnnotationBox(m_line.runs(), spaceToDistribute);
-                    m_line.inflateContentLogicalWidth(spaceToDistribute);
+                if (m_line.hasRubyContent()) {
+                    lineContent.rubyBaseAlignmentOffsetList = RubyFormattingContext::applyRubyAlign(m_line, formattingContext());
                     return;
                 }
                 // Text is justified according to the method specified by the text-justify property,

@@ -767,12 +767,10 @@ auto MediaControlsHost::sourceType() const -> std::optional<SourceType>
     if (m_mediaElement->hasMediaStreamSource())
         return SourceType::MediaStream;
 
-#if ENABLE(MANAGED_MEDIA_SOURCE)
+#if ENABLE(MEDIA_SOURCE)
     if (m_mediaElement->hasManagedMediaSource())
         return SourceType::ManagedMediaSource;
-#endif
 
-#if ENABLE(MEDIA_SOURCE)
     if (m_mediaElement->hasMediaSource())
         return SourceType::MediaSource;
 #endif

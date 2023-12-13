@@ -44,6 +44,7 @@ public:
     static InlineLayoutUnit annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, const InlineFormattingContext&);
     static InlineLayoutUnit baseEndAdditionalLogicalWidth(const Box& rubyBaseLayoutBox, const Line::RunList&, const InlineContentBreaker::ContinuousContent::RunList&, const InlineFormattingContext&);
     static HashMap<const Box*, InlineLayoutUnit> applyRubyAlign(Line&, const InlineFormattingContext&);
+    static InlineLayoutUnit applyRubyAlignOnAnnotationBox(Line&, InlineLayoutUnit spaceToDistribute, const InlineFormattingContext&);
 
     // Line box building
     static void applyAnnotationContributionToLayoutBounds(LineBox&, const InlineFormattingContext&);
@@ -58,6 +59,7 @@ public:
 
     enum class RubyBasesMayNeedResizing : bool { No, Yes };
     static void applyAlignmentOffsetList(InlineDisplay::Boxes&, const HashMap<const Box*, InlineLayoutUnit>& alignmentOffsetList, RubyBasesMayNeedResizing, InlineFormattingContext&);
+    static void applyAnnotationAlignmentOffset(InlineDisplay::Boxes&, InlineLayoutUnit alignmentOffset, InlineFormattingContext&);
 
     // Miscellaneous helpers
     static bool hasInterlinearAnnotation(const Box& rubyBaseLayoutBox);

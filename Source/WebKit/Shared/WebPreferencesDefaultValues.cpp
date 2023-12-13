@@ -175,7 +175,7 @@ bool defaultManageCaptureStatusBarInGPUProcessEnabled()
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#if ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(MEDIA_SOURCE)
+#if ENABLE(MEDIA_SOURCE)
 bool defaultManagedMediaSourceEnabled()
 {
 #if PLATFORM(COCOA)
@@ -186,7 +186,7 @@ bool defaultManagedMediaSourceEnabled()
 }
 #endif
 
-#if ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(MEDIA_SOURCE) && ENABLE(WIRELESS_PLAYBACK_TARGET)
+#if ENABLE(MEDIA_SOURCE) && ENABLE(WIRELESS_PLAYBACK_TARGET)
 bool defaultManagedMediaSourceNeedsAirPlay()
 {
 #if PLATFORM(IOS_FAMILY) || PLATFORM(MAC)

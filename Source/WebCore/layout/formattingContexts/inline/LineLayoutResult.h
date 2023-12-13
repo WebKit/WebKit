@@ -86,7 +86,11 @@ struct LineLayoutResult {
     };
     IsFirstLast isFirstLast { };
 
-    HashMap<const Box*, InlineLayoutUnit> rubyAlignemntOffsetList { };
+    struct Ruby {
+        HashMap<const Box*, InlineLayoutUnit> baseAlignmentOffsetList { };
+        InlineLayoutUnit annotationAlignmentOffset { 0.f };
+    };
+    Ruby ruby { };
 
     // Misc
     bool endsWithHyphen { false };

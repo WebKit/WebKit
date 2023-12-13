@@ -63,9 +63,9 @@ DestinationColorSpace NativeImage::colorSpace() const
     return DestinationColorSpace::SRGB();
 }
 
-void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
+void NativeImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
 {
-    context.drawNativeImageInternal(*this, imageSize, destinationRect, sourceRect, options);
+    context.drawNativeImageInternal(*this, destinationRect, sourceRect, options);
 }
 
 void NativeImage::clearSubimages()
