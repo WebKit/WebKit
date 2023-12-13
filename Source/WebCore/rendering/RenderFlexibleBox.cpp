@@ -235,6 +235,17 @@ private:
     std::optional<LayoutUnit> m_overridingHeight;
 };
 
+static void updateFlexItemDirtyBitsBeforeLayout(bool relayoutFlexItem, RenderBox& flexItem)
+{
+    if (flexItem.isOutOfFlowPositioned())
+        return;
+
+    // FIXME: Technically percentage height objects only need a relayout if their percentage isn't going to be turned into
+    // an auto value. Add a method to determine this, so that we can avoid the relayout.
+    if (relayoutFlexItem || flexItem.hasRelativeLogicalHeight())
+        flexItem.setChildNeedsLayout(MarkOnlyThis);
+}
+
 void RenderFlexibleBox::computeChildIntrinsicLogicalWidths(RenderObject& childObject, LayoutUnit& minPreferredLogicalWidth, LayoutUnit& maxPreferredLogicalWidth) const
 {
     ASSERT(childObject.isRenderBox());
@@ -360,15 +371,19 @@ void RenderFlexibleBox::styleDidChange(StyleDifference diff, const RenderStyle* 
     if (!oldStyle || diff != StyleDifference::Layout)
         return;
 
-    if (oldStyle->resolvedAlignItems(selfAlignmentNormalBehavior()).position() == ItemPosition::Stretch) {
+    auto oldStyleAlignItemsIsStrecth = oldStyle->resolvedAlignItems(selfAlignmentNormalBehavior()).position() == ItemPosition::Stretch;
+    for (auto& flexItem : childrenOfType<RenderBox>(*this)) {
+        if (flexItem.needsPreferredWidthsRecalculation())
+            flexItem.setPreferredLogicalWidthsDirty(true, MarkingBehavior::MarkOnlyThis);
+
         // Flex items that were previously stretching need to be relayed out so we
         // can compute new available cross axis space. This is only necessary for
         // stretching since other alignment values don't change the size of the
         // box.
-        for (auto& child : childrenOfType<RenderBox>(*this)) {
-            ItemPosition previousAlignment = child.style().resolvedAlignSelf(oldStyle, selfAlignmentNormalBehavior()).position();
-            if (previousAlignment == ItemPosition::Stretch && previousAlignment != child.style().resolvedAlignSelf(&style(), selfAlignmentNormalBehavior()).position())
-                child.setChildNeedsLayout(MarkOnlyThis);
+        if (oldStyleAlignItemsIsStrecth) {
+            ItemPosition previousAlignment = flexItem.style().resolvedAlignSelf(oldStyle, selfAlignmentNormalBehavior()).position();
+            if (previousAlignment == ItemPosition::Stretch && previousAlignment != flexItem.style().resolvedAlignSelf(&style(), selfAlignmentNormalBehavior()).position())
+                flexItem.setChildNeedsLayout(MarkOnlyThis);
         }
     }
 }
@@ -2207,7 +2222,7 @@ void RenderFlexibleBox::layoutAndPlaceChildren(LayoutUnit& crossAxisOffset, Flex
             // So, redo it here.
             forceChildRelayout = true;
         }
-        updateBlockChildDirtyBitsBeforeLayout(forceChildRelayout, child);
+        updateFlexItemDirtyBitsBeforeLayout(forceChildRelayout, child);
         if (!child.needsLayout())
             child.markForPaginationRelayoutIfNeeded();
         if (child.needsLayout())
