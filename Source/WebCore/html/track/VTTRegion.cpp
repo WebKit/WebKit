@@ -152,7 +152,8 @@ void VTTRegion::setRegionSettings(const String& inputString)
         // Step 1 - Split input on spaces.
         input.skipWhile<isASCIIWhitespace<UChar>>();
         VTTScanner::Run valueRun = input.collectUntil<isASCIIWhitespace<UChar>>();
-        VTTScanner setting(input.extractString(valueRun));
+        auto settingValue = input.extractString(valueRun);
+        VTTScanner setting(settingValue);
 
         // Step 2.2 - Let name be the leading substring of setting up to and excluding the first U+003A COLON character (:) in that string.
         RegionSetting name = scanSettingName(setting);
