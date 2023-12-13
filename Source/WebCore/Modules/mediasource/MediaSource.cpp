@@ -712,11 +712,7 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
     }
 
     Ref<SourceBuffer> buffer =
-#if ENABLE(MANAGED_MEDIA_SOURCE)
         isManaged() ? ManagedSourceBuffer::create(sourceBufferPrivate.releaseReturnValue(), downcast<ManagedMediaSource>(*this)).get() : SourceBuffer::create(sourceBufferPrivate.releaseReturnValue(), *this).get();
-#else
-        SourceBuffer::create(sourceBufferPrivate.releaseReturnValue(), *this);
-#endif
 
     DEBUG_LOG(LOGIDENTIFIER, "created SourceBuffer");
 
@@ -1307,7 +1303,6 @@ void MediaSource::setMediaPlayerReadyState(MediaPlayer::ReadyState readyState)
     m_private->setMediaPlayerReadyState(readyState);
 }
 
-#if ENABLE(MANAGED_MEDIA_SOURCE)
 void MediaSource::memoryPressure()
 {
     if (!isManaged())
@@ -1315,8 +1310,7 @@ void MediaSource::memoryPressure()
     for (auto& sourceBuffer : *m_sourceBuffers)
         sourceBuffer->memoryPressure();
 }
-#endif
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ENABLE(MEDIA_SOURCE)

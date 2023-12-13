@@ -10,7 +10,7 @@ BackgroundFetchEvent
 BackgroundFetchUpdateUIEvent
 BeforeLoadEvent interfaceName=Event
 BeforeUnloadEvent
-BufferedChangeEvent conditional=MANAGED_MEDIA_SOURCE
+BufferedChangeEvent conditional=MEDIA_SOURCE
 ClipboardEvent
 CloseEvent
 CompositionEvent

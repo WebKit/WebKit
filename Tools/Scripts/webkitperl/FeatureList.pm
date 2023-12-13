@@ -103,7 +103,6 @@ my (
     $legacyCustomProtocolManagerSupport,
     $legacyEncryptedMediaSupport,
     $macGestureEventsSupport,
-    $managedMediaSourceSupport,
     $mathmlSupport,
     $mediaCaptureSupport,
     $mediaControlsScriptSupport,
@@ -314,9 +313,6 @@ my @features = (
 
     { option => "mac-gesture-events", desc => "Toggle Mac gesture events support",
       define => "ENABLE_MAC_GESTURE_EVENTS", value => \$macGestureEventsSupport },
-
-    { option => "managed-media-source", desc => "Toggle Managed Media Source support",
-      define => "ENABLE_MANAGED_MEDIA_SOURCE", value => \$managedMediaSourceSupport },
 
     { option => "mathml", desc => "Toggle MathML support",
       define => "ENABLE_MATHML", value => \$mathmlSupport },

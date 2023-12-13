@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(MANAGED_MEDIA_SOURCE)
+#if ENABLE(MEDIA_SOURCE)
 
 #include "SourceBuffer.h"
 
@@ -51,4 +51,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ManagedSourceBuffer)
     static bool isType(const WebCore::SourceBuffer& buffer) { return buffer.isManaged(); }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif
+#endif // ENABLE(MEDIA_SOURCE)

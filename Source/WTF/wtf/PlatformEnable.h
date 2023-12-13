@@ -349,10 +349,6 @@
 #define ENABLE_MAC_GESTURE_EVENTS 0
 #endif
 
-#if !defined(ENABLE_MANAGED_MEDIA_SOURCE)
-#define ENABLE_MANAGED_MEDIA_SOURCE 0
-#endif
-
 #if !defined(ENABLE_MATHML)
 #define ENABLE_MATHML 1
 #endif

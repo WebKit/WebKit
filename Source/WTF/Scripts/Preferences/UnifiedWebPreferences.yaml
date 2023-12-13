@@ -4060,7 +4060,7 @@ ManagedMediaSourceEnabled:
   category: media
   humanReadableName: "Managed Media Source API"
   humanReadableDescription: "Managed Media Source API"
-  condition: ENABLE(MANAGED_MEDIA_SOURCE)
+  condition: ENABLE(MEDIA_SOURCE)
   defaultValue:
     WebKitLegacy:
       default: false
@@ -4072,7 +4072,7 @@ ManagedMediaSourceEnabled:
 ManagedMediaSourceHighThreshold:
   type: double
   status: embedder
-  condition: ENABLE(MANAGED_MEDIA_SOURCE)
+  condition: ENABLE(MEDIA_SOURCE)
   defaultValue:
     WebKit:
       default: 30
@@ -4082,7 +4082,7 @@ ManagedMediaSourceHighThreshold:
 ManagedMediaSourceLowThreshold:
   type: double
   status: embedder
-  condition: ENABLE(MANAGED_MEDIA_SOURCE)
+  condition: ENABLE(MEDIA_SOURCE)
   defaultValue:
     WebKit:
       default: 10
@@ -4095,7 +4095,7 @@ ManagedMediaSourceNeedsAirPlay:
   category: media
   humanReadableName: "Managed Media Source Requires AirPlay source"
   humanReadableDescription: "Managed Media Source Requires AirPlay source"
-  condition: ENABLE(MANAGED_MEDIA_SOURCE) && ENABLE(WIRELESS_PLAYBACK_TARGET)
+  condition: ENABLE(MEDIA_SOURCE) && ENABLE(WIRELESS_PLAYBACK_TARGET)
   defaultValue:
     WebKitLegacy:
       default: false

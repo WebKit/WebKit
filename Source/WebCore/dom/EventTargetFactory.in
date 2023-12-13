@@ -23,8 +23,8 @@ IDBOpenDBRequest
 IDBRequest
 IDBTransaction
 LocalDOMWindow
-ManagedMediaSource conditional=MANAGED_MEDIA_SOURCE
-ManagedSourceBuffer conditional=MANAGED_MEDIA_SOURCE
+ManagedMediaSource conditional=MEDIA_SOURCE
+ManagedSourceBuffer conditional=MEDIA_SOURCE
 MediaController conditional=VIDEO
 MediaDevices conditional=MEDIA_STREAM
 MediaKeySession conditional=ENCRYPTED_MEDIA

@@ -84,7 +84,7 @@ TEST(WebKit, MSEHasMediaStreamingActivity)
     notify_cancel(token);
 }
 
-#if ENABLE(MANAGED_MEDIA_SOURCE)
+#if ENABLE(MEDIA_SOURCE)
 TEST(WebKit, ManagedMSEHasMediaStreamingActivity)
 {
     auto configuration = adoptNS([WKWebViewConfiguration new]);

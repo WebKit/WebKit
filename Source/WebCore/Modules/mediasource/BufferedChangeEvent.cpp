@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(MANAGED_MEDIA_SOURCE)
+#if ENABLE(MEDIA_SOURCE)
 #include "BufferedChangeEvent.h"
 
 #include "Event.h"
@@ -70,4 +70,4 @@ EventInterface BufferedChangeEvent::eventInterface() const
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLE(MEDIA_SOURCE)
