@@ -83,7 +83,7 @@ void ViewTransition::skipViewTransition(ExceptionOr<JSC::JSValue>&& reason)
     ASSERT(m_document->activeViewTransition() == this);
     ASSERT(m_phase != ViewTransitionPhase::Done);
 
-    if (m_phase == ViewTransitionPhase::PendingCapture) {
+    if (m_phase < ViewTransitionPhase::UpdateCallbackCalled) {
         protectedDocument()->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [this, weakThis = WeakPtr { *this }] {
             RefPtr protectedThis = weakThis.get();
             if (protectedThis)
@@ -136,7 +136,7 @@ void ViewTransition::callUpdateCallback()
     if (!m_document)
         return;
 
-    ASSERT(m_phase == ViewTransitionPhase::Done || m_phase == ViewTransitionPhase::PendingCapture);
+    ASSERT(m_phase < ViewTransitionPhase::UpdateCallbackCalled || m_phase == ViewTransitionPhase::Done);
 
     RefPtr<DOMPromise> callbackPromise;
     if (!m_updateCallback) {
@@ -185,6 +185,10 @@ void ViewTransition::setupViewTransition()
 {
     if (!m_document)
         return;
+
+    ASSERT(m_phase == ViewTransitionPhase::PendingCapture);
+
+    m_phase = ViewTransitionPhase::CapturingOldState;
 
     auto checkFailure = captureOldState();
     if (checkFailure.hasException()) {

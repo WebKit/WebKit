@@ -41,6 +41,7 @@ class DeferredPromise;
 
 enum class ViewTransitionPhase : uint8_t {
     PendingCapture,
+    CapturingOldState, // Not part of the spec.
     UpdateCallbackCalled,
     Animating,
     Done
