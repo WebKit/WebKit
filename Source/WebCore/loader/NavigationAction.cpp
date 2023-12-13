@@ -100,30 +100,30 @@ static NavigationType navigationType(FrameLoadType frameLoadType, bool isFormSub
     return NavigationType::Other;
 }
 
-NavigationAction::NavigationAction(Document& requester, const ResourceRequest& resourceRequest, InitiatedByMainFrame initiatedByMainFrame, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomString& downloadAttribute)
+NavigationAction::NavigationAction(Document& requester, const ResourceRequest& originalRequest, InitiatedByMainFrame initiatedByMainFrame, NavigationType type, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, Event* event, const AtomString& downloadAttribute)
     : m_requester { NavigationRequester::from(requester) }
-    , m_resourceRequest { resourceRequest }
+    , m_originalRequest { originalRequest }
     , m_keyStateEventData { keyStateDataForFirstEventWithKeyState(event) }
     , m_mouseEventData { mouseEventDataForFirstMouseEvent(event) }
     , m_downloadAttribute { downloadAttribute }
     , m_type { type }
     , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
     , m_initiatedByMainFrame { initiatedByMainFrame }
-    , m_treatAsSameOriginNavigation { shouldTreatAsSameOriginNavigation(requester, resourceRequest.url()) }
+    , m_treatAsSameOriginNavigation { shouldTreatAsSameOriginNavigation(requester, originalRequest.url()) }
 
 {
 }
 
-NavigationAction::NavigationAction(Document& requester, const ResourceRequest& resourceRequest, InitiatedByMainFrame initiatedByMainFrame, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomString& downloadAttribute)
+NavigationAction::NavigationAction(Document& requester, const ResourceRequest& originalRequest, InitiatedByMainFrame initiatedByMainFrame, FrameLoadType frameLoadType, bool isFormSubmission, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy, const AtomString& downloadAttribute)
     : m_requester { NavigationRequester::from(requester) }
-    , m_resourceRequest { resourceRequest }
+    , m_originalRequest { originalRequest }
     , m_keyStateEventData { keyStateDataForFirstEventWithKeyState(event) }
     , m_mouseEventData { mouseEventDataForFirstMouseEvent(event) }
     , m_downloadAttribute { downloadAttribute }
     , m_type { navigationType(frameLoadType, isFormSubmission, !!event) }
     , m_shouldOpenExternalURLsPolicy { shouldOpenExternalURLsPolicy }
     , m_initiatedByMainFrame { initiatedByMainFrame }
-    , m_treatAsSameOriginNavigation { shouldTreatAsSameOriginNavigation(requester, resourceRequest.url()) }
+    , m_treatAsSameOriginNavigation { shouldTreatAsSameOriginNavigation(requester, originalRequest.url()) }
 {
 }
 
