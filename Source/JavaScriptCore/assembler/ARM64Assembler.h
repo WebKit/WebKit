@@ -3690,61 +3690,73 @@ public:
         return (jumpType == JumpNoCondition) || (jumpType == JumpCondition) || (jumpType == JumpCompareAndBranch) || (jumpType == JumpTestBit);
     }
 
-    static JumpLinkType computeJumpType(JumpType jumpType, const uint8_t* from, const uint8_t* to)
-    {
-        switch (jumpType) {
-        case JumpFixed:
-            return LinkInvalid;
-        case JumpNoConditionFixedSize:
-            return LinkJumpNoCondition;
-        case JumpConditionFixedSize:
-            return LinkJumpCondition;
-        case JumpCompareAndBranchFixedSize:
-            return LinkJumpCompareAndBranch;
-        case JumpTestBitFixedSize:
-            return LinkJumpTestBit;
-        case JumpNoCondition:
-            return LinkJumpNoCondition;
-        case JumpCondition: {
-            ASSERT(is4ByteAligned(from));
-            ASSERT(is4ByteAligned(to));
-            intptr_t relative = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(from));
-
-            if (isInt<21>(relative))
-                return LinkJumpConditionDirect;
-
-            return LinkJumpCondition;
-        }
-        case JumpCompareAndBranch:  {
-            ASSERT(is4ByteAligned(from));
-            ASSERT(is4ByteAligned(to));
-            intptr_t relative = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(from));
-
-            if (isInt<21>(relative))
-                return LinkJumpCompareAndBranchDirect;
-
-            return LinkJumpCompareAndBranch;
-        }
-        case JumpTestBit:   {
-            ASSERT(is4ByteAligned(from));
-            ASSERT(is4ByteAligned(to));
-            intptr_t relative = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(from));
-
-            if (isInt<14>(relative))
-                return LinkJumpTestBitDirect;
-
-            return LinkJumpTestBit;
-        }
-        default:
-            ASSERT_NOT_REACHED();
-        }
-
-        return LinkJumpNoCondition;
-    }
-
     static JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to)
     {
-        JumpLinkType linkType = computeJumpType(record.type(), from, to);
+        auto computeJumpType = [&](const uint8_t* from, const uint8_t* to) -> JumpLinkType {
+            auto jumpType = record.type();
+            switch (jumpType) {
+            case JumpFixed:
+                return LinkInvalid;
+            case JumpNoConditionFixedSize:
+                return LinkJumpNoCondition;
+            case JumpConditionFixedSize:
+                return LinkJumpCondition;
+            case JumpCompareAndBranchFixedSize:
+                return LinkJumpCompareAndBranch;
+            case JumpTestBitFixedSize:
+                return LinkJumpTestBit;
+            case JumpNoCondition:
+                return LinkJumpNoCondition;
+            case JumpCondition: {
+                ASSERT(is4ByteAligned(from));
+                ASSERT(is4ByteAligned(to));
+                intptr_t relative = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(from));
+                if (record.isThunk()) {
+                    int32_t delta = jumpSizeDelta(jumpType, LinkJumpConditionDirect);
+                    relative += delta;
+                }
+
+                if (isInt<21>(relative))
+                    return LinkJumpConditionDirect;
+
+                return LinkJumpCondition;
+            }
+            case JumpCompareAndBranch:  {
+                ASSERT(is4ByteAligned(from));
+                ASSERT(is4ByteAligned(to));
+                intptr_t relative = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(from));
+                if (record.isThunk()) {
+                    int32_t delta = jumpSizeDelta(jumpType, LinkJumpCompareAndBranchDirect);
+                    relative += delta;
+                }
+
+                if (isInt<21>(relative))
+                    return LinkJumpCompareAndBranchDirect;
+
+                return LinkJumpCompareAndBranch;
+            }
+            case JumpTestBit:   {
+                ASSERT(is4ByteAligned(from));
+                ASSERT(is4ByteAligned(to));
+                intptr_t relative = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(from));
+                if (record.isThunk()) {
+                    int32_t delta = jumpSizeDelta(jumpType, LinkJumpTestBitDirect);
+                    relative += delta;
+                }
+
+                if (isInt<14>(relative))
+                    return LinkJumpTestBitDirect;
+
+                return LinkJumpTestBit;
+            }
+            default:
+                ASSERT_NOT_REACHED();
+            }
+
+            return LinkJumpNoCondition;
+        };
+
+        JumpLinkType linkType = computeJumpType(from, to);
         record.setLinkType(linkType);
         return linkType;
     }
