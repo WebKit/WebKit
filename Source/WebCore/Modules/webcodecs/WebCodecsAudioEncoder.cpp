@@ -139,15 +139,16 @@ ExceptionOr<void> WebCodecsAudioEncoder::configure(ScriptExecutionContext&, WebC
     if (m_internalEncoder) {
         queueControlMessageAndProcess([this, config]() mutable {
             m_isMessageQueueBlocked = true;
-            m_internalEncoder->flush([this, weakedThis = WeakPtr { *this }, config = WTFMove(config)]() mutable {
-                if (!weakedThis)
+            m_internalEncoder->flush([weakThis = ThreadSafeWeakPtr { *this }, config = WTFMove(config)]() mutable {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
                     return;
 
-                if (m_state == WebCodecsCodecState::Closed || !scriptExecutionContext())
+                if (protectedThis->m_state == WebCodecsCodecState::Closed || !protectedThis->scriptExecutionContext())
                     return;
 
-                m_isMessageQueueBlocked = false;
-                processControlMessageQueue();
+                protectedThis->m_isMessageQueueBlocked = false;
+                protectedThis->processControlMessageQueue();
             });
         });
     }

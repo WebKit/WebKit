@@ -77,6 +77,7 @@ public:
     void registerChannel();
     void unregisterChannel();
     void postMessage(Ref<SerializedScriptValue>&&);
+    void detach() { m_broadcastChannel = nullptr; }
 
     String name() const { return m_name.isolatedCopy(); }
     BroadcastChannelIdentifier identifier() const { return m_identifier; }
@@ -168,6 +169,7 @@ BroadcastChannel::BroadcastChannel(ScriptExecutionContext& context, const String
 BroadcastChannel::~BroadcastChannel()
 {
     close();
+    m_mainThreadBridge->detach();
     {
         Locker locker { allBroadcastChannelsLock };
         allBroadcastChannels().remove(m_mainThreadBridge->identifier());

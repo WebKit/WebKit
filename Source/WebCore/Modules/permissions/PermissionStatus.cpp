@@ -72,7 +72,7 @@ PermissionStatus::PermissionStatus(ScriptExecutionContext& context, PermissionSt
 
     m_mainThreadPermissionObserverIdentifier = MainThreadPermissionObserverIdentifier::generate();
 
-    ensureOnMainThread([weakThis = WeakPtr { *this }, contextIdentifier = context.identifier(), state = m_state, descriptor = m_descriptor, source, page = WTFMove(page), origin = WTFMove(clientOrigin).isolatedCopy(), identifier = m_mainThreadPermissionObserverIdentifier]() mutable {
+    ensureOnMainThread([weakThis = ThreadSafeWeakPtr { *this }, contextIdentifier = context.identifier(), state = m_state, descriptor = m_descriptor, source, page = WTFMove(page), origin = WTFMove(clientOrigin).isolatedCopy(), identifier = m_mainThreadPermissionObserverIdentifier]() mutable {
         auto mainThreadPermissionObserver = makeUnique<MainThreadPermissionObserver>(WTFMove(weakThis), contextIdentifier, state, descriptor, source, WTFMove(page), WTFMove(origin));
         allMainThreadPermissionObservers().add(identifier, WTFMove(mainThreadPermissionObserver));
     });
@@ -115,7 +115,7 @@ bool PermissionStatus::virtualHasPendingActivity() const
     if (!m_hasChangeEventListener)
         return false;
 
-    if (WeakPtr document = dynamicDowncast<Document>(scriptExecutionContext()))
+    if (auto* document = dynamicDowncast<Document>(scriptExecutionContext()))
         return document->hasBrowsingContext();
 
     return true;

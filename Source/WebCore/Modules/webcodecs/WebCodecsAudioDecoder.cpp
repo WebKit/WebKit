@@ -105,11 +105,12 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebC
     bool isSupportedCodec = AudioDecoder::isCodecSupported(config.codec);
     queueControlMessageAndProcess([this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
         m_isMessageQueueBlocked = true;
-        AudioDecoder::PostTaskCallback postTaskCallback = [identifier, weakThis = WeakPtr { *this }](Function<void()>&& task) {
+        AudioDecoder::PostTaskCallback postTaskCallback = [identifier, weakThis = ThreadSafeWeakPtr { *this }](Function<void()>&& task) {
             ScriptExecutionContext::postTaskTo(identifier, [weakThis, task = WTFMove(task)](auto&) mutable {
-                if (!weakThis)
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
                     return;
-                weakThis->queueTaskKeepingObjectAlive(*weakThis, TaskSource::MediaElement, WTFMove(task));
+                protectedThis->queueTaskKeepingObjectAlive(*protectedThis, TaskSource::MediaElement, WTFMove(task));
             });
         };
 

@@ -47,9 +47,9 @@ namespace WebCore {
 WTF_MAKE_ISO_ALLOCATED_IMPL(MessagePort);
 
 static Lock allMessagePortsLock;
-static HashMap<MessagePortIdentifier, WeakPtr<MessagePort, WeakPtrImplWithEventTargetData>>& allMessagePorts() WTF_REQUIRES_LOCK(allMessagePortsLock)
+static HashMap<MessagePortIdentifier, ThreadSafeWeakPtr<MessagePort>>& allMessagePorts() WTF_REQUIRES_LOCK(allMessagePortsLock)
 {
-    static NeverDestroyed<HashMap<MessagePortIdentifier, WeakPtr<MessagePort, WeakPtrImplWithEventTargetData>>> map;
+    static NeverDestroyed<HashMap<MessagePortIdentifier, ThreadSafeWeakPtr<MessagePort>>> map;
     return map;
 }
 
@@ -57,32 +57,6 @@ static HashMap<MessagePortIdentifier, ScriptExecutionContextIdentifier>& portToC
 {
     static NeverDestroyed<HashMap<MessagePortIdentifier, ScriptExecutionContextIdentifier>> map;
     return map;
-}
-
-void MessagePort::ref() const
-{
-    ++m_refCount;
-}
-
-void MessagePort::deref() const
-{
-    // This custom deref() function ensures that as long as the lock to allMessagePortsLock is taken, no MessagePort will be destroyed.
-    // This allows notifyMessageAvailable to easily query the map and manipulate MessagePort instances.
-
-    if (!--m_refCount) {
-        Locker locker { allMessagePortsLock };
-
-        if (m_refCount)
-            return;
-
-        auto iterator = allMessagePorts().find(m_identifier);
-        if (iterator != allMessagePorts().end() && iterator->value == this) {
-            allMessagePorts().remove(iterator);
-            portToContextIdentifier().remove(m_identifier);
-        }
-
-        delete this;
-    }
 }
 
 bool MessagePort::isMessagePortAliveForTesting(const MessagePortIdentifier& identifier)
@@ -129,7 +103,7 @@ MessagePort::MessagePort(ScriptExecutionContext& scriptExecutionContext, const M
 
     Locker locker { allMessagePortsLock };
     // We disable threading assertions since the allMessagePorts() is used from multiple threads in a safe way, using a lock.
-    allMessagePorts().set(m_identifier, WeakPtr { *this, EnableWeakPtrThreadingAssertions::No });
+    allMessagePorts().set(m_identifier, ThreadSafeWeakPtr { *this });
     portToContextIdentifier().set(m_identifier, scriptExecutionContext.identifier());
 
     // Make sure the WeakPtrFactory gets initialized eagerly on the thread the MessagePort gets constructed on for thread-safety reasons.
@@ -144,7 +118,16 @@ MessagePort::~MessagePort()
 {
     LOG(MessagePorts, "Destroyed MessagePort %s (%p) in process %" PRIu64, m_identifier.logString().utf8().data(), this, Process::identifier().toUInt64());
 
-    ASSERT(allMessagePortsLock.isLocked());
+    Locker locker { allMessagePortsLock };
+
+    auto iterator = allMessagePorts().find(m_identifier);
+    if (iterator != allMessagePorts().end()) {
+        // ThreadSafeWeakPtr::get() returns null as soon as the object has started destruction.
+        if (RefPtr messagePort = iterator->value.get(); !messagePort) {
+            allMessagePorts().remove(iterator);
+            portToContextIdentifier().remove(m_identifier);
+        }
+    }
 
     if (m_entangled)
         close();

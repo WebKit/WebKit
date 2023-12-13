@@ -196,7 +196,7 @@ private:
 
     bool m_hasScheduledCommit { false };
 
-    class PlaceholderData : public ThreadSafeRefCounted<PlaceholderData> {
+    class PlaceholderData : public ThreadSafeRefCounted<PlaceholderData, WTF::DestructionThread::Main> {
     public:
         static Ref<PlaceholderData> create()
         {

@@ -132,11 +132,12 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
     bool isSupportedCodec = isSupportedDecoderCodec(config.codec, context.settingsValues());
     queueControlMessageAndProcess([this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
         m_isMessageQueueBlocked = true;
-        VideoDecoder::PostTaskCallback postTaskCallback = [identifier, weakThis = WeakPtr { *this }](auto&& task) {
+        VideoDecoder::PostTaskCallback postTaskCallback = [identifier, weakThis = ThreadSafeWeakPtr { *this }](auto&& task) {
             ScriptExecutionContext::postTaskTo(identifier, [weakThis, task = WTFMove(task)](auto&) mutable {
-                if (!weakThis)
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
                     return;
-                weakThis->queueTaskKeepingObjectAlive(*weakThis, TaskSource::MediaElement, [task = WTFMove(task)]() mutable {
+                protectedThis->queueTaskKeepingObjectAlive(*protectedThis, TaskSource::MediaElement, [task = WTFMove(task)]() mutable {
                     task();
                 });
             });

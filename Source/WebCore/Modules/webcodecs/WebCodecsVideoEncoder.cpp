@@ -127,15 +127,16 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
     if (m_internalEncoder) {
         queueControlMessageAndProcess([this, config]() mutable {
             m_isMessageQueueBlocked = true;
-            m_internalEncoder->flush([this, weakedThis = WeakPtr { *this }, config = WTFMove(config)]() mutable {
-                if (!weakedThis)
+            m_internalEncoder->flush([weakThis = ThreadSafeWeakPtr { *this }, config = WTFMove(config)]() mutable {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
                     return;
 
-                if (m_state == WebCodecsCodecState::Closed || !scriptExecutionContext())
+                if (protectedThis->m_state == WebCodecsCodecState::Closed || !protectedThis->scriptExecutionContext())
                     return;
 
-                m_isMessageQueueBlocked = false;
-                processControlMessageQueue();
+                protectedThis->m_isMessageQueueBlocked = false;
+                protectedThis->processControlMessageQueue();
             });
         });
     }
@@ -143,11 +144,12 @@ ExceptionOr<void> WebCodecsVideoEncoder::configure(ScriptExecutionContext& conte
     bool isSupportedCodec = isSupportedEncoderCodec(config.codec, context.settingsValues());
     queueControlMessageAndProcess([this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
         m_isMessageQueueBlocked = true;
-        VideoEncoder::PostTaskCallback postTaskCallback = [weakThis = WeakPtr { *this }, identifier](auto&& task) {
+        VideoEncoder::PostTaskCallback postTaskCallback = [weakThis = ThreadSafeWeakPtr { *this }, identifier](auto&& task) {
             ScriptExecutionContext::postTaskTo(identifier, [weakThis, task = WTFMove(task)](auto&) mutable {
-                if (!weakThis)
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
                     return;
-                weakThis->queueTaskKeepingObjectAlive(*weakThis, TaskSource::MediaElement, WTFMove(task));
+                protectedThis->queueTaskKeepingObjectAlive(*protectedThis, TaskSource::MediaElement, WTFMove(task));
             });
         };
 
@@ -250,15 +252,16 @@ ExceptionOr<void> WebCodecsVideoEncoder::encode(Ref<WebCodecsVideoFrame>&& frame
         ++m_beingEncodedQueueSize;
         --m_encodeQueueSize;
         scheduleDequeueEvent();
-        m_internalEncoder->encode({ WTFMove(internalFrame), timestamp, duration }, options.keyFrame, [this, weakedThis = WeakPtr { *this }](String&& result) {
-            if (!weakedThis)
+        m_internalEncoder->encode({ WTFMove(internalFrame), timestamp, duration }, options.keyFrame, [weakThis = ThreadSafeWeakPtr { *this }](String&& result) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
                 return;
 
-            --m_beingEncodedQueueSize;
+            --(protectedThis->m_beingEncodedQueueSize);
             if (!result.isNull()) {
-                if (RefPtr context = scriptExecutionContext())
+                if (RefPtr context = protectedThis->scriptExecutionContext())
                     context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("VideoEncoder encode failed: ", result));
-                closeEncoder(Exception { ExceptionCode::EncodingError, WTFMove(result) });
+                protectedThis->closeEncoder(Exception { ExceptionCode::EncodingError, WTFMove(result) });
                 return;
             }
         });
@@ -276,12 +279,13 @@ void WebCodecsVideoEncoder::flush(Ref<DeferredPromise>&& promise)
     m_pendingFlushPromises.append(promise.copyRef());
     m_isFlushing = true;
     queueControlMessageAndProcess([this, clearFlushPromiseCount = m_clearFlushPromiseCount]() mutable {
-        m_internalEncoder->flush([this, weakThis = WeakPtr { *this }, clearFlushPromiseCount] {
-            if (!weakThis || clearFlushPromiseCount != m_clearFlushPromiseCount)
+        m_internalEncoder->flush([weakThis = ThreadSafeWeakPtr { *this }, clearFlushPromiseCount] {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis || clearFlushPromiseCount != protectedThis->m_clearFlushPromiseCount)
                 return;
 
-            m_pendingFlushPromises.takeFirst()->resolve();
-            m_isFlushing = !m_pendingFlushPromises.isEmpty();
+            protectedThis->m_pendingFlushPromises.takeFirst()->resolve();
+            protectedThis->m_isFlushing = !protectedThis->m_pendingFlushPromises.isEmpty();
         });
     });
 }
