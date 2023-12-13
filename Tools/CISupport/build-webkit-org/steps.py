@@ -352,10 +352,9 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
             # without invalidating local builds made by Xcode, and we set it
             # via xcconfigs until all building of Xcode-based webkit is done in
             # workspaces (rdar://88135402).
-            self.setCommand(self.command + ['WK_VALIDATE_DEPENDENCIES=YES'])
             if architecture:
-                self.setCommand(self.command + ['ARCHS=' + architecture])
-                self.setCommand(self.command + ['ONLY_ACTIVE_ARCH=NO'])
+                self.setCommand(self.command + ['--architecture', architecture])
+            self.setCommand(self.command + ['WK_VALIDATE_DEPENDENCIES=YES'])
             if buildOnly:
                 # For build-only bots, the expectation is that tests will be run on separate machines,
                 # so we need to package debug info as dSYMs. Only generating line tables makes

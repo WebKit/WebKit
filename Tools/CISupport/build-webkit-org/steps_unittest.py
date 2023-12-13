@@ -411,6 +411,23 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='compiled')
         return self.runStep()
 
+    def test_success_architecture(self):
+        self.setupStep(CompileWebKit())
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-ventura')
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'x86_64 arm64')
+        self.expectRemoteCommands(
+            ExpectShell(
+                workdir='wkdir',
+                timeout=1800,
+                logEnviron=True,
+                command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release', '--architecture', 'x86_64 arm64', 'WK_VALIDATE_DEPENDENCIES=YES'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='compiled')
+        return self.runStep()
+
     def test_bigsur_timeout(self):
         self.setupStep(CompileWebKit())
         self.setProperty('fullPlatform', 'mac-ventura')
