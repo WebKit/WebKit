@@ -48,4 +48,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FESpecularLighting)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FESpecularLighting)

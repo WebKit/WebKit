@@ -123,4 +123,4 @@ template<> struct EnumTraits<WebCore::ComponentTransferType> {
 
 } // namespace WTF
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEComponentTransfer)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEComponentTransfer)

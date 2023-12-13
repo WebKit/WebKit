@@ -89,4 +89,4 @@ template<> struct EnumTraits<WebCore::ChannelSelectorType> {
 
 } // namespace WTF
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEDisplacementMap)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEDisplacementMap)

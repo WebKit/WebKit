@@ -45,4 +45,4 @@ private:
 
 } //namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(SourceGraphic)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(SourceGraphic)

@@ -104,4 +104,4 @@ template<> struct EnumTraits<WebCore::EdgeModeType> {
 
 } // namespace WTF
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEConvolveMatrix)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEConvolveMatrix)

@@ -71,4 +71,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEGaussianBlur)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEGaussianBlur)

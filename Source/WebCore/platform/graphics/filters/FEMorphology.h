@@ -81,4 +81,4 @@ template<> struct EnumTraits<WebCore::MorphologyOperatorType> {
 
 } // namespace WTF
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEMorphology)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEMorphology)
