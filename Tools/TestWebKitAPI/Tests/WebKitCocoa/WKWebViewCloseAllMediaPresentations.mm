@@ -33,13 +33,6 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-// FIXME when rdar://118579209 is resolved.
-#if PLATFORM(IOS) && !defined(NDEBUG)
-TEST(WKWebViewCloseAllMediaPresentations, DISABLED_ElementFullscreen)
-#else
-TEST(WKWebViewCloseAllMediaPresentations, ElementFullscreen)
-#endif
-
 #if ENABLE(FULLSCREEN_API) || ENABLE(VIDEO_PRESENTATION_MODE)
 
 static void loadPictureInPicture(RetainPtr<TestWKWebView> webView)
