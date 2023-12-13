@@ -452,7 +452,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     method_setImplementation(method, (IMP)preventAppKitFromContactingLaunchServices);
 #endif
 
-#if PLATFORM(MAC) && ENABLE(WEBPROCESS_NSRUNLOOP)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (parameters.launchServicesExtensionHandle) {
         if ((m_launchServicesExtension = SandboxExtension::create(WTFMove(*parameters.launchServicesExtensionHandle)))) {
             bool ok = m_launchServicesExtension->consume();
@@ -462,7 +462,12 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     // Register the application. This will also check in with Launch Services.
     _RegisterApplication(nullptr, nullptr);
-    
+#if PLATFORM(MACCATALYST)
+    revokeLaunchServicesSandboxExtension();
+#endif
+#endif
+
+#if PLATFORM(MAC)
     // Update process name while holding the Launch Services sandbox extension
     updateProcessName(IsInProcessInitialization::Yes);
 
