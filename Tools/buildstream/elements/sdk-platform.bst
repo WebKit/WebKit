@@ -30,6 +30,7 @@ depends:
 - sdk/libevent.bst
 - sdk/libjxl.bst
 - sdk/libmanette.bst
+- sdk/libportal.bst
 - sdk/libsecret.bst
 - sdk/libusrsctp.bst
 - sdk/libwpe.bst
