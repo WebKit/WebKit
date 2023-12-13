@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -279,6 +279,7 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
             opcodeMap[__opcode] = __opcode;
 #endif
         FOR_EACH_BYTECODE_ID(OPCODE_ENTRY)
+        FOR_EACH_BYTECODE_HELPER_ID(OPCODE_ENTRY)
         FOR_EACH_CLOOP_BYTECODE_HELPER_ID(LLINT_OPCODE_ENTRY)
         FOR_EACH_LLINT_NATIVE_HELPER(LLINT_OPCODE_ENTRY)
         FOR_EACH_CLOOP_RETURN_HELPER_ID(LLINT_OPCODE_ENTRY)
