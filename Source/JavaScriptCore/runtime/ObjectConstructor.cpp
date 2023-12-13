@@ -644,7 +644,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorValues, (JSGlobalObject* globalObject,
 }
 
 // https://tc39.github.io/ecma262/#sec-topropertydescriptor
-bool toPropertyDescriptor(JSGlobalObject* globalObject, JSValue in, PropertyDescriptor& desc)
+inline bool toPropertyDescriptor(JSGlobalObject* globalObject, JSValue in, PropertyDescriptor& desc, bool& withoutSideEffect)
 {
     ASSERT(desc.isEmpty());
     VM& vm = globalObject->vm();
@@ -656,44 +656,102 @@ bool toPropertyDescriptor(JSGlobalObject* globalObject, JSValue in, PropertyDesc
     }
     JSObject* description = asObject(in);
 
-    JSValue enumerable = description->getIfPropertyExists(globalObject, vm.propertyNames->enumerable);
-    RETURN_IF_EXCEPTION(scope, false);
-    if (enumerable)
-        desc.setEnumerable(enumerable.toBoolean(globalObject));
+    JSValue enumerable;
+    JSValue configurable;
+    JSValue value;
+    JSValue writable;
+    JSValue get;
+    JSValue set;
 
-    JSValue configurable = description->getIfPropertyExists(globalObject, vm.propertyNames->configurable);
-    RETURN_IF_EXCEPTION(scope, false);
-    if (configurable)
-        desc.setConfigurable(configurable.toBoolean(globalObject));
+    if (globalObject->propertyDescriptorFastPathWatchpointSet().state() == ClearWatchpoint)
+        globalObject->tryInstallPropertyDescriptorFastPathWatchpoint();
 
-    JSValue value = description->getIfPropertyExists(globalObject, vm.propertyNames->value);
-    RETURN_IF_EXCEPTION(scope, false);
-    if (value)
-        desc.setValue(value);
 
-    JSValue writable = description->getIfPropertyExists(globalObject, vm.propertyNames->writable);
-    RETURN_IF_EXCEPTION(scope, false);
-    if (writable)
-        desc.setWritable(writable.toBoolean(globalObject));
-
-    JSValue get = description->getIfPropertyExists(globalObject, vm.propertyNames->get);
-    RETURN_IF_EXCEPTION(scope, false);
-    if (get) {
-        if (!get.isUndefined() && !get.isCallable()) {
-            throwTypeError(globalObject, scope, "Getter must be a function."_s);
-            return false;
+    bool canUseFastPath = false;
+    if (globalObject->propertyDescriptorFastPathWatchpointSet().isStillValid() && globalObject->objectPrototypeChainIsSane() && description->inherits<JSFinalObject>() && description->getPrototypeDirect() == globalObject->objectPrototype() && description->structure()->canPerformFastPropertyEnumeration()) {
+        canUseFastPath = description->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
+            PropertyName propertyName(entry.key());
+            if (propertyName == vm.propertyNames->enumerable)
+                enumerable = description->getDirect(entry.offset());
+            else if (propertyName == vm.propertyNames->configurable)
+                configurable = description->getDirect(entry.offset());
+            else if (propertyName == vm.propertyNames->value)
+                value = description->getDirect(entry.offset());
+            else if (propertyName == vm.propertyNames->writable)
+                writable = description->getDirect(entry.offset());
+            else if (propertyName == vm.propertyNames->get)
+                get = description->getDirect(entry.offset());
+            else if (propertyName == vm.propertyNames->set)
+                set = description->getDirect(entry.offset());
+            return true;
+        });
+        if (canUseFastPath) {
+            if (enumerable)
+                desc.setEnumerable(enumerable.toBoolean(globalObject));
+            if (configurable)
+                desc.setConfigurable(configurable.toBoolean(globalObject));
+            if (value)
+                desc.setValue(value);
+            if (writable)
+                desc.setWritable(writable.toBoolean(globalObject));
+            if (get) {
+                if (!get.isUndefined() && !get.isCallable()) {
+                    throwTypeError(globalObject, scope, "Getter must be a function."_s);
+                    return false;
+                }
+                desc.setGetter(get);
+            }
+            if (set) {
+                if (!set.isUndefined() && !set.isCallable()) {
+                    throwTypeError(globalObject, scope, "Setter must be a function."_s);
+                    return false;
+                }
+                desc.setSetter(set);
+            }
+            withoutSideEffect = true;
         }
-        desc.setGetter(get);
     }
 
-    JSValue set = description->getIfPropertyExists(globalObject, vm.propertyNames->set);
-    RETURN_IF_EXCEPTION(scope, false);
-    if (set) {
-        if (!set.isUndefined() && !set.isCallable()) {
-            throwTypeError(globalObject, scope, "Setter must be a function."_s);
-            return false;
+    if (!canUseFastPath) {
+        enumerable = description->getIfPropertyExists(globalObject, vm.propertyNames->enumerable);
+        RETURN_IF_EXCEPTION(scope, false);
+        if (enumerable)
+            desc.setEnumerable(enumerable.toBoolean(globalObject));
+
+        configurable = description->getIfPropertyExists(globalObject, vm.propertyNames->configurable);
+        RETURN_IF_EXCEPTION(scope, false);
+        if (configurable)
+            desc.setConfigurable(configurable.toBoolean(globalObject));
+
+        value = description->getIfPropertyExists(globalObject, vm.propertyNames->value);
+        RETURN_IF_EXCEPTION(scope, false);
+        if (value)
+            desc.setValue(value);
+
+        writable = description->getIfPropertyExists(globalObject, vm.propertyNames->writable);
+        RETURN_IF_EXCEPTION(scope, false);
+        if (writable)
+            desc.setWritable(writable.toBoolean(globalObject));
+
+        get = description->getIfPropertyExists(globalObject, vm.propertyNames->get);
+        RETURN_IF_EXCEPTION(scope, false);
+        if (get) {
+            if (!get.isUndefined() && !get.isCallable()) {
+                throwTypeError(globalObject, scope, "Getter must be a function."_s);
+                return false;
+            }
+            desc.setGetter(get);
         }
-        desc.setSetter(set);
+
+        set = description->getIfPropertyExists(globalObject, vm.propertyNames->set);
+        RETURN_IF_EXCEPTION(scope, false);
+        if (set) {
+            if (!set.isUndefined() && !set.isCallable()) {
+                throwTypeError(globalObject, scope, "Setter must be a function."_s);
+                return false;
+            }
+            desc.setSetter(set);
+        }
     }
 
     if (!desc.isAccessorDescriptor())
@@ -710,6 +768,12 @@ bool toPropertyDescriptor(JSGlobalObject* globalObject, JSValue in, PropertyDesc
     }
 
     return true;
+}
+
+bool toPropertyDescriptor(JSGlobalObject* globalObject, JSValue value, PropertyDescriptor& desc)
+{
+    bool withoutSideEffect = false;
+    return toPropertyDescriptor(globalObject, value, desc, withoutSideEffect);
 }
 
 JSC_DEFINE_HOST_FUNCTION(objectConstructorDefineProperty, (JSGlobalObject* globalObject, CallFrame* callFrame))
@@ -733,7 +797,7 @@ JSC_DEFINE_HOST_FUNCTION(objectConstructorDefineProperty, (JSGlobalObject* globa
     RELEASE_AND_RETURN(scope, JSValue::encode(obj));
 }
 
-static JSValue defineProperties(JSGlobalObject* globalObject, JSObject* object, JSObject* properties)
+static JSValue definePropertiesSlow(JSGlobalObject* globalObject, JSObject* object, JSObject* properties)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -774,6 +838,92 @@ static JSValue defineProperties(JSGlobalObject* globalObject, JSObject* object, 
         ASSERT(!propertyName.isPrivateName());
 
         object->methodTable()->defineOwnProperty(object, globalObject, propertyName, descriptors[i], true);
+        RETURN_IF_EXCEPTION(scope, { });
+    }
+    return object;
+}
+
+static JSValue defineProperties(JSGlobalObject* globalObject, JSObject* object, JSObject* properties)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    Vector<RefPtr<UniquedStringImpl>, 8> propertyNames;
+    MarkedArgumentBuffer values;
+    bool canUseFastPath = !hasIndexedProperties(properties->indexingType()) && properties->fastForEachPropertyWithSideEffectFreeFunctor(vm, [&](const PropertyTableEntry& entry) -> bool {
+        if (entry.attributes() & PropertyAttribute::DontEnum)
+            return true;
+
+        PropertyName propertyName(entry.key());
+        if (propertyName.isPrivateName())
+            return true;
+
+        propertyNames.append(entry.key());
+        values.appendWithCrashOnOverflow(properties->getDirect(entry.offset()));
+
+        return true;
+    });
+    if (UNLIKELY(!canUseFastPath))
+        RELEASE_AND_RETURN(scope, definePropertiesSlow(globalObject, object, properties));
+
+    unsigned index = 0;
+    unsigned numProperties = propertyNames.size();
+    Vector<PropertyDescriptor> descriptors;
+    MarkedArgumentBuffer markBuffer;
+#define RETURN_IF_EXCEPTION_CLEARING_OVERFLOW(value) do { \
+    if (scope.exception()) { \
+        markBuffer.overflowCheckNotNeeded(); \
+        return value; \
+    } \
+} while (false)
+
+    for (; index < numProperties; ++index) {
+        JSValue prop = values.at(index);
+        bool withoutSideEffect = false;
+        PropertyDescriptor descriptor;
+        toPropertyDescriptor(globalObject, prop, descriptor, withoutSideEffect);
+        RETURN_IF_EXCEPTION_CLEARING_OVERFLOW({ });
+        descriptors.append(descriptor);
+        // Ensure we mark all the values that we're accumulating
+        if (descriptor.isDataDescriptor() && descriptor.value())
+            markBuffer.append(descriptor.value());
+        if (descriptor.isAccessorDescriptor()) {
+            if (descriptor.getter())
+                markBuffer.append(descriptor.getter());
+            if (descriptor.setter())
+                markBuffer.append(descriptor.setter());
+        }
+        if (UNLIKELY(!withoutSideEffect)) // Bail out to the slow code.
+            break;
+    }
+
+    if (UNLIKELY(index < numProperties)) {
+        for (; index < numProperties; ++index) {
+            JSValue prop = properties->get(globalObject, propertyNames[index].get());
+            RETURN_IF_EXCEPTION_CLEARING_OVERFLOW({ });
+            PropertyDescriptor descriptor;
+            toPropertyDescriptor(globalObject, prop, descriptor);
+            RETURN_IF_EXCEPTION_CLEARING_OVERFLOW({ });
+            descriptors.append(descriptor);
+            // Ensure we mark all the values that we're accumulating
+            if (descriptor.isDataDescriptor() && descriptor.value())
+                markBuffer.append(descriptor.value());
+            if (descriptor.isAccessorDescriptor()) {
+                if (descriptor.getter())
+                    markBuffer.append(descriptor.getter());
+                if (descriptor.setter())
+                    markBuffer.append(descriptor.setter());
+            }
+        }
+    }
+
+    RELEASE_ASSERT(!markBuffer.hasOverflowed());
+#undef RETURN_IF_EXCEPTION_CLEARING_OVERFLOW
+
+    for (unsigned index = 0; index < numProperties; index++) {
+        PropertyName propertyName(propertyNames[index].get());
+        ASSERT(!propertyName.isPrivateName());
+        object->methodTable()->defineOwnProperty(object, globalObject, propertyName, descriptors[index], true);
         RETURN_IF_EXCEPTION(scope, { });
     }
     return object;
