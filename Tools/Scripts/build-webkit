@@ -115,6 +115,7 @@ Usage: $programName [options] [options to pass to build system]
   --debug                           Compile with Debug configuration
   --release                         Compile with Release configuration
   --sdk=<sdk>                       Use a specific Xcode SDK (Apple platforms only)
+  --arch=<architecture>             Compile for a specific architecture (or architectures)
   --ios-device                      Use "iphoneos.internal" SDK if installed, else "iphoneos" SDK (iOS only)
   --device                          DEPRECATED alias of --ios-device
   --ios-simulator                   Use "iphonesimulator.internal" SDK if installed, else "iphonesimulator" SDK (iOS only)
