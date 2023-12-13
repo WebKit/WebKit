@@ -29,7 +29,6 @@
 #if PLATFORM(COCOA)
 
 #import "ArgumentCodersCF.h"
-#import "CoreIPCData.h"
 #import "CoreIPCNSCFObject.h"
 #import "CoreIPCTypes.h"
 #import "CoreTextHelpers.h"
@@ -37,7 +36,6 @@
 #import "LegacyGlobalSettings.h"
 #import "Logging.h"
 #import "MessageNames.h"
-#import "StreamConnectionEncoder.h"
 #import "WebPreferencesKeys.h"
 #import <CoreText/CTFont.h>
 #import <CoreText/CTFontDescriptor.h>
@@ -381,7 +379,7 @@ bool isSerializableValue(id value)
 
 #pragma mark - id <NSSecureCoding>
 
-template<typename Encoder> static void encodeSecureCodingDirectlyImpl(Encoder& encoder, NSObject<NSSecureCoding> *object)
+template<> void encodeObjectDirectly<NSObject<NSSecureCoding>>(Encoder& encoder, NSObject<NSSecureCoding> *object)
 {
     auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
 
@@ -430,17 +428,7 @@ template<typename Encoder> static void encodeSecureCodingDirectlyImpl(Encoder& e
     [archiver finishEncoding];
     [archiver setDelegate:nil];
 
-    encoder << WebKit::CoreIPCData { [archiver encodedData] };
-}
-
-template<> void encodeObjectDirectly<NSObject<NSSecureCoding>>(Encoder& encoder, NSObject<NSSecureCoding> *object)
-{
-    encodeSecureCodingDirectlyImpl(encoder, object);
-}
-
-template<> void encodeObjectDirectly<NSObject<NSSecureCoding>>(StreamConnectionEncoder& encoder, NSObject<NSSecureCoding> *object)
-{
-    encodeSecureCodingDirectlyImpl(encoder, object);
+    encoder << (__bridge CFDataRef)[archiver encodedData];
 }
 
 static bool shouldEnableStrictMode(Decoder& decoder, const HashSet<Class>& allowedClasses)
@@ -589,11 +577,9 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
     auto& allowedClasses = decoder.allowedClasses();
     RELEASE_ASSERT(allowedClasses.size());
 
-    auto coreIPCData = decoder.decode<WebKit::CoreIPCData>();
-    if (!coreIPCData)
+    RetainPtr<CFDataRef> data;
+    if (!decoder.decode(data))
         return std::nullopt;
-
-    RetainPtr<CFDataRef> data = coreIPCData->data();
 
     auto unarchiver = adoptNS([[NSKeyedUnarchiver alloc] initForReadingFromData:bridge_cast(data.get()) error:nullptr]);
     unarchiver.get().decodingFailurePolicy = NSDecodingFailurePolicyRaiseException;
@@ -637,11 +623,6 @@ template<> std::optional<RetainPtr<id>> decodeObjectDirectlyRequiringAllowedClas
 #pragma mark - CF
 
 template<> void encodeObjectDirectly<CFTypeRef>(Encoder& encoder, CFTypeRef cf)
-{
-    ArgumentCoder<CFTypeRef>::encode(encoder, cf);
-}
-
-template<> void encodeObjectDirectly<CFTypeRef>(StreamConnectionEncoder& encoder, CFTypeRef cf)
 {
     ArgumentCoder<CFTypeRef>::encode(encoder, cf);
 }

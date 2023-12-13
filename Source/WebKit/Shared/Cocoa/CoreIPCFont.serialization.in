@@ -24,7 +24,7 @@
 
 webkit_platform_headers: "CoreIPCFont.h"
 
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCFont {
+[WebKitPlatform] class WebKit::CoreIPCFont {
     WebKit::CoreIPCDictionary m_fontDescriptorAttributes;
 }
 

@@ -87,14 +87,12 @@ struct CFHolderForTesting {
     }
 
     typedef std::variant<
-        RetainPtr<CFArrayRef>,
-        RetainPtr<CFBooleanRef>,
-        RetainPtr<CFDataRef>,
-        RetainPtr<CFDateRef>,
-        RetainPtr<CFDictionaryRef>,
         RetainPtr<CFStringRef>,
         RetainPtr<CFURLRef>,
-        RetainPtr<CGColorRef>
+        RetainPtr<CFDataRef>,
+        RetainPtr<CFBooleanRef>,
+        RetainPtr<CGColorRef>,
+        RetainPtr<CFDictionaryRef>
     > ValueType;
 
     ValueType value;
@@ -456,7 +454,7 @@ TEST(IPCSerialization, Basic)
     auto cfData = adoptCF(CFDataCreate(kCFAllocatorDefault, (const UInt8 *)"Data test", strlen("Data test")));
     runTestCF({ cfData.get() });
 
-    // NSDate/CFDate
+    // NSDate
     NSDateComponents *dateComponents = [[NSDateComponents alloc] init];
     [dateComponents setYear:2007];
     [dateComponents setMonth:1];
@@ -464,9 +462,7 @@ TEST(IPCSerialization, Basic)
     [dateComponents setHour:10];
     [dateComponents setMinute:00];
     [dateComponents setSecond:0];
-    NSDate *date = [[NSCalendar currentCalendar] dateFromComponents:dateComponents];
-    runTestNS({ date });
-    runTestCF({ (__bridge CFDateRef)date });
+    runTestNS({ [[NSCalendar currentCalendar] dateFromComponents:dateComponents] });
 
     // CFBoolean
     runTestCF({ kCFBooleanTrue });
@@ -504,15 +500,7 @@ TEST(IPCSerialization, Basic)
     runNumberTest([NSNumber numberWithUnsignedInteger: NSUIntegerMax]);
 
     // NSArray
-    NSArray *nsArray = @[ @"Array test", @1, @{ @"hello": @9 }, @[ @"Another", @3, @"array"], [NSURL URLWithString:@"https://webkit.org/"], [NSData dataWithBytes:"Data test" length:strlen("Data test")] ];
-    runTestNS({ nsArray });
-
-    // CFArray with a non-toll-free bridged CFType, also run as NSArray
-    auto cfArray = adoptCF(CFArrayCreateMutable(kCFAllocatorDefault, 10, NULL));
-    CFArrayAppendArray(cfArray.get(), (__bridge CFArrayRef)nsArray, CFRangeMake(0, nsArray.count));
-    CFArrayAppendValue(cfArray.get(), cgColor.get());
-    runTestCF({ cfArray.get() });
-    runTestNS({ bridge_cast(cfArray.get()) });
+    runTestNS({ @[ @"Array test", @1, @{ @"hello": @9 }, @[ @"Another", @3, @"array"], [NSURL URLWithString:@"https://webkit.org/"], [NSData dataWithBytes:"Data test" length:strlen("Data test")] ] });
 
     // NSDictionary
     runTestNS({ @{ @"Dictionary": @[ @"array value", @12 ] } });

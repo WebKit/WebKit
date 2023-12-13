@@ -34,18 +34,6 @@
 [WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFNumber()] CFNumberRef wrapped by WebKit::CoreIPCNumber {
 }
 
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFArray()] CFArrayRef wrapped by WebKit::CoreIPCArray {
-}
-
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFDate()] CFDateRef wrapped by WebKit::CoreIPCDate {
-}
-
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFDictionary()] CFDictionaryRef wrapped by WebKit::CoreIPCDictionary {
-}
-
-[WebKitPlatform, CustomHeader, AdditionalEncoder=StreamConnectionEncoder, ToCFMethod=result->createCFURL()] CFURLRef wrapped by WebKit::CoreIPCURL {
-}
-
 #endif
 
 #if USE(CG)

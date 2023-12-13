@@ -24,7 +24,7 @@
 
 webkit_platform_headers: "CoreIPCURL.h"
 
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCURL {
+[WebKitPlatform] class WebKit::CoreIPCURL {
     URL m_url;
 }
 
