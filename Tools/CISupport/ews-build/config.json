@@ -171,7 +171,7 @@
     {
       "name": "GTK-WK2-Tests-EWS", "shortname": "gtk-wk2", "icon": "testOnly",
       "factory": "GTKTestsFactory", "platform": "gtk",
-      "configuration": "release", "architectures": ["x86_64"],
+      "configuration": "release",
       "triggered_by": ["gtk-build-ews"],
       "workernames": ["igalia5-gtk-wk2-ews", "igalia6-gtk-wk2-ews", "igalia7-gtk-wk2-ews", "igalia8-gtk-wk2-ews", "igalia9-gtk-wk2-ews", "igalia10-gtk-wk2-ews", "igalia11-gtk-wk2-ews", "igalia12-gtk-wk2-ews"]
     },
@@ -191,7 +191,7 @@
     {
       "name": "iOS-17-Simulator-WK2-Tests-EWS", "shortname": "ios-wk2", "icon": "testOnly",
       "factory": "iOSTestsFactory", "platform": "ios-simulator-17",
-      "configuration": "release", "architectures": ["arm64"],
+      "configuration": "release",
       "triggered_by": ["ios-17-sim-build-ews"],
       "additionalArguments": ["--child-processes=6", "--exclude-tests", "imported/w3c/web-platform-tests"],
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185"]
@@ -199,7 +199,7 @@
     {
       "name": "iOS-17-Simulator-WPT-WK2-Tests-EWS", "shortname": "ios-wk2-wpt", "icon": "testOnly",
       "factory": "iOSTestsFactory", "platform": "ios-simulator-17",
-      "configuration": "release", "architectures": ["arm64"],
+      "configuration": "release",
       "triggered_by": ["ios-17-sim-build-ews"],
       "additionalArguments": ["--child-processes=6", "imported/w3c/web-platform-tests"],
       "workernames": ["ews191", "ews192", "ews193", "ews194", "ews195", "ews196", "ews197", "ews198"]
@@ -214,7 +214,7 @@
     {
       "name": "macOS-AppleSilicon-Sonoma-Debug-WK2-Tests-EWS", "shortname": "mac-AS-debug-wk2", "icon": "testOnly",
       "factory": "macOSWK2Factory", "platform": "mac-sonoma",
-      "configuration": "debug", "architectures": ["arm64"],
+      "configuration": "debug",
       "triggered_by": ["macos-applesilicon-sonoma-debug-build-ews"],
       "workernames": ["ews138", "ews139", "ews140", "ews175", "ews176", "ews177", "ews178", "ews179", "ews180"]
     },
@@ -228,21 +228,21 @@
     {
       "name": "macOS-Monterey-Release-WK1-Tests-EWS", "shortname": "mac-wk1", "icon": "testOnly",
       "factory": "macOSWK1Factory", "platform": "mac-monterey",
-      "configuration": "release", "architectures": ["x86_64"],
+      "configuration": "release",
       "triggered_by": ["macos-monterey-release-build-ews"],
       "workernames": ["ews116", "ews112", "ews117", "ews144", "ews145", "ews146", "ews147", "ews148"]
     },
     {
       "name": "macOS-Monterey-Release-WK2-Tests-EWS", "shortname": "mac-wk2", "icon": "testOnly",
       "factory": "macOSWK2Factory", "platform": "mac-monterey",
-      "configuration": "release", "architectures": ["x86_64"],
+      "configuration": "release",
       "triggered_by": ["macos-monterey-release-build-ews"],
       "workernames": ["ews104", "ews106", "ews107", "ews113", "ews115", "ews149", "ews169", "ews186", "ews187", "ews188", "ews189"]
     },
     {
       "name": "macOS-Release-WK2-Stress-Tests-EWS", "shortname": "mac-wk2-stress", "icon": "testOnly",
       "factory": "StressTestFactory", "platform": "mac-monterey",
-      "configuration": "release", "architectures": ["x86_64"],
+      "configuration": "release",
       "triggered_by": ["macos-monterey-release-build-ews"],
       "workernames": ["ews181", "ews182"]
     },
@@ -353,7 +353,7 @@
     {
       "name": "API-Tests-GTK-EWS", "shortname": "api-gtk", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "gtk",
-      "configuration": "release", "architectures": ["x86_64"],
+      "configuration": "release",
       "triggered_by": ["gtk-build-ews"],
       "workernames": ["igalia3-gtk-wk2-ews", "igalia4-gtk-wk2-ews", "igalia14-gtk-wk2-ews", "igalia15-gtk-wk2-ews"]
     },
