@@ -685,8 +685,8 @@ Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websi
 #endif
 
 #if USE(EXTENSIONKIT)
-    bool manageWebKitProcessesAsExtensions = CFPreferencesGetAppBooleanValue(CFSTR("manageProcessesAsExtensions"), CFSTR("com.apple.WebKit"), nullptr);
-    AuxiliaryProcessProxy::setManageProcessesAsExtensions(manageWebKitProcessesAsExtensions);
+    bool manageProcessesAsExtensions = !CFPreferencesGetAppBooleanValue(CFSTR("disableProcessesAsExtensions"), kCFPreferencesCurrentApplication, nullptr);
+    AuxiliaryProcessProxy::setManageProcessesAsExtensions(manageProcessesAsExtensions);
 #endif
 
     auto processProxy = WebProcessProxy::create(*this, websiteDataStore, lockdownMode, isPrewarmed, crossOriginMode);
