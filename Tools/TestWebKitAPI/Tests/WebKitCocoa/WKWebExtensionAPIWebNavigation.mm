@@ -218,7 +218,7 @@ TEST(WKWebExtensionAPIWebNavigation, AllEventsFiredTest)
     [manager run];
 }
 
-TEST(WKWebExtensionAPIWebNavigation, GetMainFrameTest)
+TEST(WKWebExtensionAPIWebNavigation, GetMainFrame)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
@@ -267,7 +267,7 @@ TEST(WKWebExtensionAPIWebNavigation, GetMainFrameTest)
     [manager run];
 }
 
-TEST(WKWebExtensionAPIWebNavigation, GetSubframeTest)
+TEST(WKWebExtensionAPIWebNavigation, GetSubframe)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
@@ -316,7 +316,7 @@ TEST(WKWebExtensionAPIWebNavigation, GetSubframeTest)
     [manager run];
 }
 
-TEST(WKWebExtensionAPIWebNavigation, GetAllFramesTest)
+TEST(WKWebExtensionAPIWebNavigation, GetAllFrames)
 {
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
@@ -346,6 +346,53 @@ TEST(WKWebExtensionAPIWebNavigation, GetAllFramesTest)
         @"    }",
         @"    browser.test.notifyPass()",
         @"  })",
+        @"}",
+
+        // The passListener firing will consider the test passed.
+        @"browser.webNavigation.onCompleted.addListener(completedListener)",
+
+        // Yield after creating the listener so we can load a tab.
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webNavigationManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Grant the webNavigation permission.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    NSURL *requestURL = urlRequest.URL;
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:requestURL];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:[requestURL URLByAppendingPathComponent:@"frame.html"]];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtensionAPIWebNavigation, Errors)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { { { "Content-Type"_s, "text/html"_s } }, "<body style='background-color: blue'></body>"_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"async function completedListener(details) {",
+        // Only listen for when the main frame loads so we don't call this method more than once.
+        @"  if (details.frameId !== 0)",
+        @"    return",
+        @"  const activeTab = await browser.tabs.query({ active: true })",
+        // Make sure invalid tab/frame IDs vend an error message - use arbitrary frame and tabIds.
+        @"  await browser.test.assertRejects(browser.webNavigation.getFrame({tabId: (details.tabId + 1), frameId: 0}), /tab not found/i)",
+        @"  await browser.test.assertRejects(browser.webNavigation.getFrame({tabId: details.tabId, frameId: 42}), /frame not found/i)",
+        @"  browser.test.notifyPass()",
         @"}",
 
         // The passListener firing will consider the test passed.
