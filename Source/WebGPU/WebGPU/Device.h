@@ -82,7 +82,7 @@ public:
     Ref<BindGroupLayout> createBindGroupLayout(const WGPUBindGroupLayoutDescriptor&, bool isGeneratedLayout = false);
     Ref<Buffer> createBuffer(const WGPUBufferDescriptor&);
     Ref<CommandEncoder> createCommandEncoder(const WGPUCommandEncoderDescriptor&);
-    Ref<ComputePipeline> createComputePipeline(const WGPUComputePipelineDescriptor&);
+    Ref<ComputePipeline> createComputePipeline(const WGPUComputePipelineDescriptor&, bool isAsync = false);
     void createComputePipelineAsync(const WGPUComputePipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback);
     Ref<ExternalTexture> createExternalTexture(const WGPUExternalTextureDescriptor&);
     Ref<PipelineLayout> createPipelineLayout(const WGPUPipelineLayoutDescriptor&);
@@ -90,7 +90,7 @@ public:
     Ref<RenderBundleEncoder> createRenderBundleEncoder(const WGPURenderBundleEncoderDescriptor&);
     Ref<PipelineLayout> extracted(const Vector<Vector<WGPUBindGroupLayoutEntry>> &bindGroupEntries);
 
-    Ref<RenderPipeline> createRenderPipeline(const WGPURenderPipelineDescriptor&);
+    Ref<RenderPipeline> createRenderPipeline(const WGPURenderPipelineDescriptor&, bool isAsync = false);
     void createRenderPipelineAsync(const WGPURenderPipelineDescriptor&, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback);
     Ref<Sampler> createSampler(const WGPUSamplerDescriptor&);
     Ref<ShaderModule> createShaderModule(const WGPUShaderModuleDescriptor&);

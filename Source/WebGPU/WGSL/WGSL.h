@@ -126,12 +126,15 @@ struct TextureBindingLayout {
     bool multisampled;
 };
 
-/* enum class StorageTextureAccess : uint8_t {
-    writeOnly
-}; */
+enum class StorageTextureAccess : uint8_t {
+    WriteOnly,
+    ReadOnly,
+    ReadWrite,
+};
 
 struct StorageTextureBindingLayout {
-    // StorageTextureAccess access; // There's only one field in this enum
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=266306 - populate StorageTextureBindingLayout.access in the WGSL compiler
+    StorageTextureAccess access { StorageTextureAccess::WriteOnly };
     // TextureFormat format; // Not sure this is necessary
     TextureViewDimension viewDimension;
 };

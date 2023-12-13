@@ -85,6 +85,7 @@ public:
     State state() const { return m_state; }
 
     Device& device() const { return m_device; }
+    bool isDestroyed() const;
 
 private:
     Buffer(id<MTLBuffer>, uint64_t size, WGPUBufferUsageFlags, State initialState, MappingRange initialMappingRange, Device&);

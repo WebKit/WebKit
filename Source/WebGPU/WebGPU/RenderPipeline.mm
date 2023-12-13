@@ -231,7 +231,6 @@ static MTLStencilOperation convertToMTLStencilOperation(WGPUStencilOperation ope
 static MTLCompareFunction convertToMTLCompare(WGPUCompareFunction comparison)
 {
     switch (comparison) {
-    case WGPUCompareFunction_Undefined:
     case WGPUCompareFunction_Never:
         return MTLCompareFunctionNever;
     case WGPUCompareFunction_Less:
@@ -246,6 +245,7 @@ static MTLCompareFunction convertToMTLCompare(WGPUCompareFunction comparison)
         return MTLCompareFunctionEqual;
     case WGPUCompareFunction_NotEqual:
         return MTLCompareFunctionNotEqual;
+    case WGPUCompareFunction_Undefined:
     case WGPUCompareFunction_Always:
     case WGPUCompareFunction_Force32:
         return MTLCompareFunctionAlways;
@@ -451,6 +451,18 @@ static WGPUTextureViewDimension convertViewDimension(WGSL::TextureViewDimension 
     }
 }
 
+static WGPUStorageTextureAccess convertAccess(WGSL::StorageTextureAccess access)
+{
+    switch (access) {
+    case WGSL::StorageTextureAccess::WriteOnly:
+        return WGPUStorageTextureAccess_WriteOnly;
+    case WGSL::StorageTextureAccess::ReadOnly:
+        return WGPUStorageTextureAccess_ReadOnly;
+    case WGSL::StorageTextureAccess::ReadWrite:
+        return WGPUStorageTextureAccess_ReadWrite;
+    }
+}
+
 void Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& pipelineEntries, const std::optional<WGSL::PipelineLayout>& optionalPipelineLayout)
 {
     if (!optionalPipelineLayout)
@@ -509,7 +521,7 @@ void Device::addPipelineLayouts(Vector<Vector<WGPUBindGroupLayoutEntry>>& pipeli
             }, [&](const WGSL::StorageTextureBindingLayout& storageTexture) {
                 newEntry.storageTexture = WGPUStorageTextureBindingLayout {
                     .nextInChain = nullptr,
-                    .access = WGPUStorageTextureAccess_WriteOnly,
+                    .access = convertAccess(storageTexture.access),
                     .format = WGPUTextureFormat_BGRA8Unorm,
                     .viewDimension = convertViewDimension(storageTexture.viewDimension)
                 };
@@ -552,7 +564,14 @@ Ref<PipelineLayout> Device::generatePipelineLayout(const Vector<Vector<WGPUBindG
     return generatedPipelineLayout;
 }
 
-Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor)
+static Ref<RenderPipeline> returnInvalidRenderPipeline(WebGPU::Device &object, bool isAsync)
+{
+    if (!isAsync)
+        object.generateAValidationError("createRenderPipeline failed"_s);
+    return RenderPipeline::createInvalid(object);
+}
+
+Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescriptor& descriptor, bool isAsync)
 {
     if (!validateRenderPipeline(descriptor) || !isValid())
         return RenderPipeline::createInvalid(*this);
@@ -565,8 +584,11 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
     const PipelineLayout* pipelineLayout = nullptr;
     Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
     if (descriptor.layout) {
-        if (auto& layout = WebGPU::fromAPI(descriptor.layout); layout.isValid() && !layout.isAutoLayout())
+        if (auto& layout = WebGPU::fromAPI(descriptor.layout); layout.isValid() && !layout.isAutoLayout()) {
             pipelineLayout = &layout;
+            if (pipelineLayout && &pipelineLayout->device() != this)
+                return returnInvalidRenderPipeline(*this, isAsync);
+        }
     }
 
     std::optional<PipelineLayout> vertexPipelineLayout { std::nullopt };
@@ -576,20 +598,20 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
         const auto& vertexModule = WebGPU::fromAPI(descriptor.vertex.module);
         if (!vertexModule.isValid())
-            return RenderPipeline::createInvalid(*this);
+            return returnInvalidRenderPipeline(*this, isAsync);
 
         const auto& vertexFunctionName = fromAPI(descriptor.vertex.entryPoint);
         auto libraryCreationResult = createLibrary(m_device, vertexModule, pipelineLayout, vertexFunctionName.length() ? vertexFunctionName : vertexModule.defaultVertexEntryPoint(), label);
         if (!libraryCreationResult)
-            return RenderPipeline::createInvalid(*this);
+            return returnInvalidRenderPipeline(*this, isAsync);
 
         const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
         if (!pipelineLayout)
             addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout);
-        auto [constantValues, _] = createConstantValues(descriptor.vertex.constantCount, descriptor.vertex.constants, entryPointInformation);
+        auto [constantValues, wgslConstantValues] = createConstantValues(descriptor.vertex.constantCount, descriptor.vertex.constants, entryPointInformation);
         auto vertexFunction = createFunction(libraryCreationResult->library, entryPointInformation, constantValues, label);
-        if (!vertexFunction || vertexFunction.functionType != MTLFunctionTypeVertex)
-            return RenderPipeline::createInvalid(*this);
+        if (!vertexFunction || vertexFunction.functionType != MTLFunctionTypeVertex || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
+            return returnInvalidRenderPipeline(*this, isAsync);
         mtlRenderPipelineDescriptor.vertexFunction = vertexFunction;
     }
 
@@ -602,22 +624,22 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
         const auto& fragmentModule = WebGPU::fromAPI(fragmentDescriptor.module);
         if (!fragmentModule.isValid())
-            return RenderPipeline::createInvalid(*this);
+            return returnInvalidRenderPipeline(*this, isAsync);
 
         const auto& fragmentFunctionName = fromAPI(fragmentDescriptor.entryPoint);
 
         auto libraryCreationResult = createLibrary(m_device, fragmentModule, pipelineLayout, fragmentFunctionName.length() ? fragmentFunctionName : fragmentModule.defaultFragmentEntryPoint(), label);
         if (!libraryCreationResult)
-            return RenderPipeline::createInvalid(*this);
+            return returnInvalidRenderPipeline(*this, isAsync);
 
         const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
         if (!pipelineLayout)
             addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout);
 
-        auto [constantValues, _] = createConstantValues(fragmentDescriptor.constantCount, fragmentDescriptor.constants, entryPointInformation);
+        auto [constantValues, wgslConstantValues] = createConstantValues(fragmentDescriptor.constantCount, fragmentDescriptor.constants, entryPointInformation);
         auto fragmentFunction = createFunction(libraryCreationResult->library, entryPointInformation, constantValues, label);
-        if (!fragmentFunction || fragmentFunction.functionType != MTLFunctionTypeFragment)
-            return RenderPipeline::createInvalid(*this);
+        if (!fragmentFunction || fragmentFunction.functionType != MTLFunctionTypeFragment || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
+            return returnInvalidRenderPipeline(*this, isAsync);
         mtlRenderPipelineDescriptor.fragmentFunction = fragmentFunction;
 
         for (uint32_t i = 0; i < fragmentDescriptor.targetCount; ++i) {
@@ -713,9 +735,9 @@ Ref<RenderPipeline> Device::createRenderPipeline(const WGPURenderPipelineDescrip
 
 void Device::createRenderPipelineAsync(const WGPURenderPipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<RenderPipeline>&&, String&& message)>&& callback)
 {
-    auto pipeline = createRenderPipeline(descriptor);
+    auto pipeline = createRenderPipeline(descriptor, true);
     instance().scheduleWork([protectedThis = Ref { *this }, pipeline, callback = WTFMove(callback)]() mutable {
-        callback(WGPUCreatePipelineAsyncStatus_Success, WTFMove(pipeline), { });
+        callback(pipeline->isValid() ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTFMove(pipeline), { });
     });
 }
 

@@ -39,9 +39,7 @@ static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> devi
 {
     auto computePipelineDescriptor = [MTLComputePipelineDescriptor new];
     computePipelineDescriptor.computeFunction = function;
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=265910 - [WebGPU] Investigate the appropriate way to set MTLComputePipelineDescriptor.maxTotalThreadsPerThreadgroup
-    // -[MTLComputePipelineDescriptor setMaxTotalThreadsPerThreadgroup:] will release assert if maxTotalThreadsPerThreadgroup > USHRT_MAX
-    computePipelineDescriptor.maxTotalThreadsPerThreadgroup = std::min<NSUInteger>(size.width * size.height * size.depth, USHRT_MAX);
+    computePipelineDescriptor.maxTotalThreadsPerThreadgroup = size.width * size.height * size.depth;
     for (size_t i = 0; i < pipelineLayout.numberOfBindGroupLayouts(); ++i)
         computePipelineDescriptor.buffers[i].mutability = MTLMutabilityImmutable; // Argument buffers are always immutable in WebGPU.
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=249345 don't unconditionally set this to YES
@@ -65,35 +63,46 @@ static MTLSize metalSize(auto workgroupSize, const HashMap<String, WGSL::Constan
     return MTLSizeMake(width, height, depth);
 }
 
-Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDescriptor& descriptor)
+static Ref<ComputePipeline> returnInvalidComputePipeline(WebGPU::Device &object, bool isAsync)
+{
+    if (!isAsync)
+        object.generateAValidationError("createComputePipeline failed"_s);
+    return ComputePipeline::createInvalid(object);
+}
+
+Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDescriptor& descriptor, bool isAsync)
 {
     if (descriptor.nextInChain || descriptor.compute.nextInChain)
         return ComputePipeline::createInvalid(*this);
 
     ShaderModule& shaderModule = WebGPU::fromAPI(descriptor.compute.module);
-    if (!shaderModule.isValid())
-        return ComputePipeline::createInvalid(*this);
+    if (!shaderModule.isValid() || &shaderModule.device() != this)
+        return returnInvalidComputePipeline(*this, isAsync);
 
     PipelineLayout& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
     auto label = fromAPI(descriptor.label);
     auto entryPoint = fromAPI(descriptor.compute.entryPoint);
     auto libraryCreationResult = createLibrary(m_device, shaderModule, &pipelineLayout, entryPoint.length() ? entryPoint : shaderModule.defaultComputeEntryPoint(), label);
-    if (!libraryCreationResult)
-        return ComputePipeline::createInvalid(*this);
+    if (!libraryCreationResult || &pipelineLayout.device() != this)
+        return returnInvalidComputePipeline(*this, isAsync);
 
     auto library = libraryCreationResult->library;
     const auto& entryPointInformation = libraryCreationResult->entryPointInformation;
 
     if (!std::holds_alternative<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint))
-        return ComputePipeline::createInvalid(*this);
+        return returnInvalidComputePipeline(*this, isAsync);
     WGSL::Reflection::Compute computeInformation = std::get<WGSL::Reflection::Compute>(entryPointInformation.typedEntryPoint);
 
     auto [constantValues, wgslConstantValues] = createConstantValues(descriptor.compute.constantCount, descriptor.compute.constants, entryPointInformation);
     auto function = createFunction(library, entryPointInformation, constantValues, label);
-    if (!function || function.functionType != MTLFunctionTypeKernel)
-        return ComputePipeline::createInvalid(*this);
+    if (!function || function.functionType != MTLFunctionTypeKernel || entryPointInformation.specializationConstants.size() != wgslConstantValues.size())
+        return returnInvalidComputePipeline(*this, isAsync);
 
     auto size = metalSize(computeInformation.workgroupSize, wgslConstantValues);
+    auto& deviceLimits = limits();
+    if (size.width > deviceLimits.maxComputeWorkgroupSizeX || size.height > deviceLimits.maxComputeWorkgroupSizeY || size.depth > deviceLimits.maxComputeWorkgroupSizeZ || size.width * size.height * size.depth > deviceLimits.maxComputeInvocationsPerWorkgroup)
+        return returnInvalidComputePipeline(*this, isAsync);
+
     if (pipelineLayout.isAutoLayout() && entryPointInformation.defaultLayout) {
         Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
         addPipelineLayouts(bindGroupEntries, entryPointInformation.defaultLayout);
@@ -108,9 +117,9 @@ Ref<ComputePipeline> Device::createComputePipeline(const WGPUComputePipelineDesc
 
 void Device::createComputePipelineAsync(const WGPUComputePipelineDescriptor& descriptor, CompletionHandler<void(WGPUCreatePipelineAsyncStatus, Ref<ComputePipeline>&&, String&& message)>&& callback)
 {
-    auto pipeline = createComputePipeline(descriptor);
+    auto pipeline = createComputePipeline(descriptor, true);
     instance().scheduleWork([pipeline, callback = WTFMove(callback)]() mutable {
-        callback(WGPUCreatePipelineAsyncStatus_Success, WTFMove(pipeline), { });
+        callback(pipeline->isValid() ? WGPUCreatePipelineAsyncStatus_Success : WGPUCreatePipelineAsyncStatus_ValidationError, WTFMove(pipeline), { });
     });
 }
 

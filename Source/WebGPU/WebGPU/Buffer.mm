@@ -353,6 +353,11 @@ uint64_t Buffer::size() const
     return m_emptyBuffer.size() ?: m_size;
 }
 
+bool Buffer::isDestroyed() const
+{
+    return state() == State::Destroyed;
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs

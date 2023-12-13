@@ -32,6 +32,8 @@ namespace WebCore {
 
 enum class GPUStorageTextureAccess : uint8_t {
     WriteOnly,
+    ReadOnly,
+    ReadWrite
 };
 
 inline WebGPU::StorageTextureAccess convertToBacking(GPUStorageTextureAccess storageTextureAccess)
@@ -39,6 +41,10 @@ inline WebGPU::StorageTextureAccess convertToBacking(GPUStorageTextureAccess sto
     switch (storageTextureAccess) {
     case GPUStorageTextureAccess::WriteOnly:
         return WebGPU::StorageTextureAccess::WriteOnly;
+    case GPUStorageTextureAccess::ReadOnly:
+        return WebGPU::StorageTextureAccess::ReadOnly;
+    case GPUStorageTextureAccess::ReadWrite:
+        return WebGPU::StorageTextureAccess::ReadWrite;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

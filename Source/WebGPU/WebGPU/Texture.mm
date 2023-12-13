@@ -2857,6 +2857,11 @@ void Texture::setPreviouslyCleared(uint32_t mipLevel, uint32_t slice)
     m_clearedToZero.add(mipLevel, set);
 }
 
+bool Texture::isDestroyed() const
+{
+    return m_destroyed;
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
