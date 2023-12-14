@@ -320,7 +320,7 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
         syntheticClickType(navigationAction),
         webProcess.userGestureTokenIdentifier(navigationAction.userGestureToken()),
         navigationAction.userGestureToken() ? navigationAction.userGestureToken()->authorizationToken() : std::nullopt,
-        protectedPage()->canHandleRequest(navigationAction.resourceRequest()),
+        protectedPage()->canHandleRequest(navigationAction.originalRequest()),
         navigationAction.shouldOpenExternalURLsPolicy(),
         navigationAction.downloadAttribute(),
         mouseEventData ? mouseEventData->locationInRootViewCoordinates : FloatPoint { },
@@ -347,7 +347,7 @@ Page* WebChromeClient::createWindow(LocalFrame& frame, const WindowFeatures& win
 
     auto webFrame = WebFrame::fromCoreFrame(frame);
 
-    auto sendResult = webProcess.parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(webFrame->info(), webFrame->page()->webPageProxyIdentifier(), navigationAction.resourceRequest(), windowFeatures, navigationActionData), page().identifier(), IPC::Timeout::infinity(), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages });
+    auto sendResult = webProcess.parentProcessConnection()->sendSync(Messages::WebPageProxy::CreateNewPage(webFrame->info(), webFrame->page()->webPageProxyIdentifier(), navigationAction.originalRequest(), windowFeatures, navigationActionData), page().identifier(), IPC::Timeout::infinity(), { IPC::SendSyncOption::MaintainOrderingWithAsyncMessages });
     if (!sendResult.succeeded())
         return nullptr;
 

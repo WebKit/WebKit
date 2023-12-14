@@ -42,7 +42,7 @@ class MainThreadPermissionObserver final : public PermissionObserver {
     WTF_MAKE_NONCOPYABLE(MainThreadPermissionObserver);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    MainThreadPermissionObserver(WeakPtr<PermissionStatus, WeakPtrImplWithEventTargetData>&&, ScriptExecutionContextIdentifier, PermissionState, PermissionDescriptor, PermissionQuerySource, WeakPtr<Page>&&, ClientOrigin&&);
+    MainThreadPermissionObserver(ThreadSafeWeakPtr<PermissionStatus>&&, ScriptExecutionContextIdentifier, PermissionState, PermissionDescriptor, PermissionQuerySource, WeakPtr<Page>&&, ClientOrigin&&);
     ~MainThreadPermissionObserver();
 
 private:
@@ -54,7 +54,7 @@ private:
     PermissionQuerySource source() const final { return m_source; }
     const WeakPtr<Page>& page() const final { return m_page; }
 
-    WeakPtr<PermissionStatus, WeakPtrImplWithEventTargetData> m_permissionStatus;
+    ThreadSafeWeakPtr<PermissionStatus> m_permissionStatus;
     ScriptExecutionContextIdentifier m_contextIdentifier;
     PermissionState m_state;
     PermissionDescriptor m_descriptor;

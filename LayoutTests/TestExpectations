@@ -5082,10 +5082,6 @@ webkit.org/b/241778 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/co
 # Flaky css-contain test
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/animation-display-lock.html [ Failure Pass ]
 
-# Scrollbar displays are different.
-imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ ImageOnlyFailure ]
-
 # Counter style tests that fail on some platforms because of subtle character positioning differences, presumably from subpixel rounding.
 # These failures are slightly different per-platform, but it seems unwise to move the expectations into platform-specific expectations files.
 imported/w3c/web-platform-tests/css/css-counter-styles/bengali/css3-counter-styles-117.html [ Pass ImageOnlyFailure ]

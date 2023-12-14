@@ -42,11 +42,6 @@ CoreIPCArray::CoreIPCArray(NSArray *array)
     }
 }
 
-CoreIPCArray::CoreIPCArray(CFArrayRef array)
-    : CoreIPCArray((__bridge NSArray *)array)
-{
-}
-
 RetainPtr<id> CoreIPCArray::toID() const
 {
     auto result = adoptNS([[NSMutableArray alloc] initWithCapacity:m_array.size()]);

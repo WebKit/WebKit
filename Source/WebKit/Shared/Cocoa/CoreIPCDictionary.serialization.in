@@ -24,7 +24,7 @@
 
 webkit_platform_headers: "CoreIPCDictionary.h"
 
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCDictionary {
+[WebKitPlatform] class WebKit::CoreIPCDictionary {
     [NotSerialized] RetainPtr<NSDictionary> m_nsDictionary;
     Vector<KeyValuePair<UniqueRef<WebKit::CoreIPCNSCFObject>, UniqueRef<WebKit::CoreIPCNSCFObject>>> m_keyValuePairs;
 }

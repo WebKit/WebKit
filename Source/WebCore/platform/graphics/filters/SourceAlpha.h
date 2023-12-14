@@ -40,4 +40,4 @@ private:
 
 } //namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(SourceAlpha)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(SourceAlpha)

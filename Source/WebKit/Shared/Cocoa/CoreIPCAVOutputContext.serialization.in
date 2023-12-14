@@ -25,7 +25,7 @@
 # FIXME: Remove SupportWKKeyedCoder once AVOutputContext conforms to the WebKit Property List secure coding protocol, tracked by rdar://119289362
 
 secure_coding_header: <pal/cocoa/AVFoundationSoftLink.h>
-[WebKitSecureCodingClass=PAL::getAVOutputContextClass(), SupportWKKeyedCoder, AdditionalEncoder=StreamConnectionEncoder] webkit_secure_coding AVOutputContext {
+[WebKitSecureCodingClass=PAL::getAVOutputContextClass(), SupportWKKeyedCoder] webkit_secure_coding AVOutputContext {
     AVOutputContextSerializationKeyContextID: String
     AVOutputContextSerializationKeyContextType: String
 }

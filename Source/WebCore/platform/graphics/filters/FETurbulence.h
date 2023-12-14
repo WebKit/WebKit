@@ -96,4 +96,4 @@ template<> struct EnumTraits<WebCore::TurbulenceType> {
 
 } // namespace WTF
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FETurbulence)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FETurbulence)

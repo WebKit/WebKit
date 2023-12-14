@@ -123,7 +123,7 @@ static RTCRtpSFrameTransformErrorEvent::Type errorTypeFromInformation(const RTCR
     }
 }
 
-static std::optional<Vector<uint8_t>> processFrame(std::span<const uint8_t> data, RTCRtpSFrameTransformer& transformer, ScriptExecutionContextIdentifier identifier, const WeakPtr<RTCRtpSFrameTransform, WeakPtrImplWithEventTargetData>& weakTransform)
+static std::optional<Vector<uint8_t>> processFrame(std::span<const uint8_t> data, RTCRtpSFrameTransformer& transformer, ScriptExecutionContextIdentifier identifier, const ThreadSafeWeakPtr<RTCRtpSFrameTransform>& weakTransform)
 {
     auto result = transformer.transform(data);
     if (!result.has_value()) {
@@ -132,11 +132,12 @@ static std::optional<Vector<uint8_t>> processFrame(std::span<const uint8_t> data
         RELEASE_LOG_ERROR(WebRTC, "RTCRtpSFrameTransform failed transforming a frame with error %d", errorInformation.error);
         // Call the error event handler.
         ScriptExecutionContext::postTaskTo(identifier, [errorInformation, weakTransform](auto&&) {
-            if (!weakTransform || weakTransform->isContextStopped())
+            RefPtr transform = weakTransform.get();
+            if (!transform || transform->isContextStopped())
                 return;
-            if (errorInformation.error == RTCRtpSFrameTransformer::Error::KeyID && weakTransform->hasKey(errorInformation.keyId))
+            if (errorInformation.error == RTCRtpSFrameTransformer::Error::KeyID && transform->hasKey(errorInformation.keyId))
                 return;
-            weakTransform->dispatchEvent(RTCRtpSFrameTransformErrorEvent::create(Event::CanBubble::No, Event::IsCancelable::No, errorTypeFromInformation(errorInformation)));
+            transform->dispatchEvent(RTCRtpSFrameTransformErrorEvent::create(Event::CanBubble::No, Event::IsCancelable::No, errorTypeFromInformation(errorInformation)));
         });
         return { };
     }
@@ -165,7 +166,7 @@ void RTCRtpSFrameTransform::initializeTransformer(RTCRtpTransformBackend& backen
     m_transformer->setIsEncrypting(side == Side::Sender);
     m_transformer->setMediaType(backend.mediaType());
 
-    backend.setTransformableFrameCallback([transformer = m_transformer, identifier = context->identifier(), backend = Ref { backend }, weakThis = WeakPtr { *this }](auto&& frame) {
+    backend.setTransformableFrameCallback([transformer = m_transformer, identifier = context->identifier(), backend = Ref { backend }, weakThis = ThreadSafeWeakPtr { *this }](auto&& frame) {
         auto chunk = frame->data();
         if (!chunk.data() || !chunk.size())
             return;
@@ -195,7 +196,7 @@ void RTCRtpSFrameTransform::willClearBackend(RTCRtpTransformBackend& backend)
     backend.clearTransformableFrameCallback();
 }
 
-static void transformFrame(std::span<const uint8_t> data, JSDOMGlobalObject& globalObject, RTCRtpSFrameTransformer& transformer, SimpleReadableStreamSource& source, ScriptExecutionContextIdentifier identifier, const WeakPtr<RTCRtpSFrameTransform, WeakPtrImplWithEventTargetData>& weakTransform)
+static void transformFrame(std::span<const uint8_t> data, JSDOMGlobalObject& globalObject, RTCRtpSFrameTransformer& transformer, SimpleReadableStreamSource& source, ScriptExecutionContextIdentifier identifier, const ThreadSafeWeakPtr<RTCRtpSFrameTransform>& weakTransform)
 {
     auto result = processFrame(data, transformer, identifier, weakTransform);
     auto buffer = result ? SharedBuffer::create(WTFMove(*result)) : SharedBuffer::create();
@@ -203,7 +204,7 @@ static void transformFrame(std::span<const uint8_t> data, JSDOMGlobalObject& glo
 }
 
 template<typename Frame>
-void transformFrame(Frame& frame, JSDOMGlobalObject& globalObject, RTCRtpSFrameTransformer& transformer, SimpleReadableStreamSource& source, ScriptExecutionContextIdentifier identifier, const WeakPtr<RTCRtpSFrameTransform, WeakPtrImplWithEventTargetData>& weakTransform)
+void transformFrame(Frame& frame, JSDOMGlobalObject& globalObject, RTCRtpSFrameTransformer& transformer, SimpleReadableStreamSource& source, ScriptExecutionContextIdentifier identifier, const ThreadSafeWeakPtr<RTCRtpSFrameTransform>& weakTransform)
 {
     auto rtcFrame = frame.rtcFrame();
     auto chunk = rtcFrame->data();
@@ -226,7 +227,7 @@ ExceptionOr<void> RTCRtpSFrameTransform::createStreams()
     if (readable.hasException())
         return readable.releaseException();
 
-    auto writable = WritableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(globalObject), SimpleWritableStreamSink::create([transformer = m_transformer, readableStreamSource = m_readableStreamSource, weakThis = WeakPtr { *this }](auto& context, auto value) -> ExceptionOr<void> {
+    auto writable = WritableStream::create(*JSC::jsCast<JSDOMGlobalObject*>(globalObject), SimpleWritableStreamSink::create([transformer = m_transformer, readableStreamSource = m_readableStreamSource, weakThis = ThreadSafeWeakPtr { *this }](auto& context, auto value) -> ExceptionOr<void> {
         if (!context.globalObject())
             return Exception { ExceptionCode::InvalidStateError };
         auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());

@@ -4662,3 +4662,5 @@ webkit.org/b/264001 [ Debug ] imported/w3c/web-platform-tests/requestidlecallbac
 webkit.org/b/264177 requestidlecallback/requestidlecallback-deadline-shortened-by-rendering-update.html [ Pass Failure ]
 
 webkit.org/b/264527 imported/w3c/web-platform-tests/css/css-cascade/idlharness.html [ Pass Failure ]
+
+webkit.org/b/266356 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.https.html [ Pass Failure ]

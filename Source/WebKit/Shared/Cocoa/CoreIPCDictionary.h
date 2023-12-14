@@ -40,7 +40,6 @@ class CoreIPCDictionary {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     CoreIPCDictionary(NSDictionary *);
-    CoreIPCDictionary(CFDictionaryRef);
 
     CoreIPCDictionary(const RetainPtr<NSDictionary>& dictionary)
         : CoreIPCDictionary(dictionary.get())
@@ -48,7 +47,6 @@ public:
     }
 
     RetainPtr<id> toID() const;
-    RetainPtr<CFDictionaryRef> createCFDictionary() const;
 
     bool keyHasValueOfType(const String&, IPC::NSType) const;
     bool keyIsMissingOrHasValueOfType(const String&, IPC::NSType) const;

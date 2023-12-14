@@ -114,7 +114,6 @@ namespace IPC {
 // makeUniqueRefWithoutFastMallocCheck<>, since we can't make the variant fast malloc'ed
 template<> struct ArgumentCoder<UniqueRef<WebKit::ObjectValue>> {
     static void encode(Encoder&, const UniqueRef<WebKit::ObjectValue>&);
-    static void encode(StreamConnectionEncoder&, const UniqueRef<WebKit::ObjectValue>&);
     static std::optional<UniqueRef<WebKit::ObjectValue>> decode(Decoder&);
 };
 

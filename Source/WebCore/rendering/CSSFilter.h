@@ -75,6 +75,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CSSFilter)
-    static bool isType(const WebCore::Filter& filter) { return filter.isCSSFilter(); }
-SPECIALIZE_TYPE_TRAITS_END()
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(CSSFilter);

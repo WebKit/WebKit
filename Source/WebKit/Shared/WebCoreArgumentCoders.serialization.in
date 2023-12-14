@@ -696,12 +696,12 @@ headers: <CoreGraphics/CGGeometry.h> <CoreGraphics/CGAffineTransform.h>
     CGFloat height
 };
 
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] struct CGPoint {
+[WebKitPlatform] struct CGPoint {
     CGFloat x
     CGFloat y
 };
 
-[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] struct CGRect {
+[WebKitPlatform] struct CGRect {
     CGPoint origin
     CGSize size
 };
@@ -7119,6 +7119,29 @@ struct WebCore::Length {
 };
 [Nested] struct WebCore::Length::UndefinedData {
 };
+
+[AdditionalEncoder=StreamConnectionEncoder, RefCounted] class WebCore::FilterFunction subclasses {
+    WebCore::SVGFilter
+    WebCore::FEBlend
+    WebCore::FEColorMatrix
+    WebCore::FEComponentTransfer
+    WebCore::FEComposite
+    WebCore::FEConvolveMatrix
+    WebCore::FEDiffuseLighting
+    WebCore::FEDisplacementMap
+    WebCore::FEDropShadow
+    WebCore::FEFlood
+    WebCore::FEGaussianBlur
+    WebCore::FEImage
+    WebCore::FEMerge
+    WebCore::FEMorphology
+    WebCore::FEOffset
+    WebCore::FESpecularLighting
+    WebCore::FETile
+    WebCore::FETurbulence
+    WebCore::SourceAlpha
+    WebCore::SourceGraphic
+}
 
 struct WebCore::OrganizationStorageAccessPromptQuirk {
     String organizationName;

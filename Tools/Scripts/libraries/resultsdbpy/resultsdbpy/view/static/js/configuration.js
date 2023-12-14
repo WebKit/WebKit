@@ -105,6 +105,39 @@ class Configuration {
         return combined;
     }
 
+    static releaseForSDK(sdk)
+    {
+        if (!sdk)
+            return '';
+        const match = sdk.match(SDK_REGEX)
+        if (!match)
+            return '';
+        if (['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'].includes(match[2]))
+            return match[2];
+        if (['J', 'N', 'R'].includes(match[2]))
+            return 'A';
+        if (['K', 'S'].includes(match[2])) {
+            const count = parseInt(match[3]);
+            if (count < 200)
+                return 'B';
+            if (count < 500)
+                return 'C'
+            return 'D';
+        }
+        if (['L', 'T'].includes(match[2])) {
+            const count = parseInt(match[3]);
+            if (count < 400)
+                return 'E'
+            return 'F';
+        }
+        if (['M', 'U'].includes(match[2]))
+            return 'G';
+        if (match[2] == 'O')
+            return 'E';
+
+        return '';
+    }
+
     constructor(json = {}) {
         this.platform = json.platform ? json.platform : null;
         this.version = json.version ? Configuration.versionToInteger(json.version) : null;
@@ -121,17 +154,17 @@ class Configuration {
         this.model = json.model ? json.model : null;
         this.architecture = json.architecture ? json.architecture : null;
 
-        // Mid-year releases really need to be treated with an entirely different version_name. The only way to reliably
-        // identify such a release is with the SDK (version numbers have historically ranged between .2 and .4)
-        // While appending E to all realese with an SDK after a mid-year release isn't entirely correct, it's close enough
-        // that the user can quickly dicern the differences by inspecting the specific SDK differences
+        // It's useful to track versions from different major and minor SDK releases
+        // in seperate timelines. Attempt to embed a release family in the displayed
+        // version name computed from the SDK
         if (this.sdk && this.version_name && !(json instanceof Configuration)) {
-            const match = this.sdk.match(SDK_REGEX);
-            const ending = this.version_name.substring(this.version_name.length - 2)
-            if (match && ending !== ' E' && match[2].localeCompare('E') >= 0)
-                this.version_name = `${this.version_name} E`;
-            else if (!match)
-                console.error(`'${this.sdk}' does not match the SDK regular expression`);
+            const release = Configuration.releaseForSDK(this.sdk)
+            if (release) {
+                const ending = this.version_name ? this.version_name.substring(this.version_name.length - 2) : null;
+                if ([' A', ' B', ' C', ' D', ' E', ' F', ' G', ' H'].includes(ending))
+                    this.version_name = this.version_name.substring(0, this.version_name.length - 2);
+                this.version_name = `${this.version_name} ${release}`;
+            }
         }
     }
     toKey() {
@@ -252,8 +285,8 @@ class Configuration {
     toParams() {
         let version_name = this.version_name;
         const ending = this.version_name ? this.version_name.substring(this.version_name.length - 2) : null;
-        if (ending === ' E')
-            version_name = this.version_name.substring(0, this.version_name.length - 2)
+        if ([' A', ' B', ' C', ' D', ' E', ' F', ' G', ' H'].includes(ending))
+            version_name = this.version_name.substring(0, this.version_name.length - 2);
         return {
             platform: [this.platform],
             version:[this.version && !this.version_name ? Configuration.integerToVersion(this.version) : null],

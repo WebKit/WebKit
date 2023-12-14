@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012, 2013, 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,10 +46,8 @@
 
 #define FOR_EACH_LLINT_NATIVE_HELPER(macro) \
     FOR_EACH_LLINT_NOJIT_NATIVE_HELPER(macro) \
-    \
+    FOR_EACH_LLINT_NOJIT_RETURN_HELPER(macro)
+
+#define FOR_EACH_LLINT_OPCODE_EXTENSION(macro) \
     FOR_EACH_BYTECODE_HELPER_ID(macro) \
-    \
-    FOR_EACH_LLINT_NOJIT_RETURN_HELPER(macro) \
-
-
-#define FOR_EACH_LLINT_OPCODE_EXTENSION(macro) FOR_EACH_LLINT_NATIVE_HELPER(macro)
+    FOR_EACH_LLINT_NATIVE_HELPER(macro)

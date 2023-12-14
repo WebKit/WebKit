@@ -109,4 +109,4 @@ template<> struct EnumTraits<WebCore::CompositeOperationType> {
 
 } // namespace WTF
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEComposite)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEComposite)

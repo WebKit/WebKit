@@ -47,4 +47,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEDiffuseLighting)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEDiffuseLighting)

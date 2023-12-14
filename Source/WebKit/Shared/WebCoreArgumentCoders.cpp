@@ -886,54 +886,6 @@ std::optional<Ref<ControlPart>> ArgumentCoder<ControlPart>::decode(Decoder& deco
     return std::nullopt;
 }
 
-template<typename Encoder>
-void ArgumentCoder<FilterFunction>::encode(Encoder& encoder, const FilterFunction& function)
-{
-    encoder << function.filterType();
-
-    if (is<SVGFilter>(function)) {
-        encoder << downcast<Filter>(function);
-        return;
-    }
-
-    if (is<FilterEffect>(function)) {
-        encoder << downcast<FilterEffect>(function);
-        return;
-    }
-    
-    ASSERT_NOT_REACHED();
-}
-
-template
-void ArgumentCoder<FilterFunction>::encode<Encoder>(Encoder&, const FilterFunction&);
-template
-void ArgumentCoder<FilterFunction>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, const FilterFunction&);
-
-std::optional<Ref<FilterFunction>> ArgumentCoder<FilterFunction>::decode(Decoder& decoder)
-{
-    std::optional<FilterFunction::Type> type;
-    decoder >> type;
-    if (!type)
-        return std::nullopt;
-
-    if (*type == FilterFunction::Type::SVGFilter) {
-        std::optional<Ref<Filter>> filter;
-        decoder >> filter;
-        if (filter)
-            return WTFMove(*filter);
-    }
-
-    if (*type >= FilterFunction::Type::FEFirst && *type <= FilterFunction::Type::FELast) {
-        std::optional<Ref<FilterEffect>> effect;
-        decoder >> effect;
-        if (effect)
-            return WTFMove(*effect);
-    }
-
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
-}
-
 #if ENABLE(ENCRYPTED_MEDIA)
 void ArgumentCoder<WebCore::CDMInstanceSession::Message>::encode(Encoder& encoder, const WebCore::CDMInstanceSession::Message& message)
 {

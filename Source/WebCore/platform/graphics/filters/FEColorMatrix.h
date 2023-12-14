@@ -88,4 +88,4 @@ template<> struct EnumTraits<WebCore::ColorMatrixType> {
 
 } // namespace WTF
 
-SPECIALIZE_TYPE_TRAITS_FILTER_EFFECT(FEColorMatrix)
+SPECIALIZE_TYPE_TRAITS_FILTER_FUNCTION(FEColorMatrix)

@@ -251,10 +251,16 @@ Vector<double> CSSParserImpl::parseKeyframeKeyList(const String& keyList)
 
 bool CSSParserImpl::supportsDeclaration(CSSParserTokenRange& range)
 {
-    ASSERT(topContext().m_parsedProperties.isEmpty());
-    consumeDeclaration(range, StyleRuleType::Style);
-    bool result = !topContext().m_parsedProperties.isEmpty();
-    topContext().m_parsedProperties.clear();
+    bool result = false;
+
+    // We create a new nesting context to isolate the parsing of the @supports(...) prelude from declarations before or after.
+    // This only concerns the prelude,
+    // (the content of the block will also be in its own nesting context but it's not done here (cf consumeRegularRuleList))
+    runInNewNestingContext([&] {
+        ASSERT(topContext().m_parsedProperties.isEmpty());
+        result = consumeDeclaration(range, StyleRuleType::Style);
+    });
+
     return result;
 }
 

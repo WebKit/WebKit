@@ -1244,6 +1244,23 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=SUCCESS, state_string='Compiled WebKit')
         return self.runStep()
 
+    def test_success_architecture(self):
+        self.setupStep(CompileWebKit())
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-monterey')
+        self.setProperty('configuration', 'release')
+        self.setProperty('architecture', 'x86_64 arm64')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=1200,
+                        logEnviron=False,
+                        command=['perl', 'Tools/Scripts/build-webkit', '--release', '--architecture', 'x86_64 arm64', 'WK_VALIDATE_DEPENDENCIES=YES'],
+                        )
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Compiled WebKit')
+        return self.runStep()
+
     def test_success_gtk(self):
         self.setupStep(CompileWebKit())
         self.setProperty('platform', 'gtk')

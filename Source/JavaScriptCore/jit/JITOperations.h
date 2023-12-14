@@ -47,6 +47,7 @@ class CallFrame;
 class CallLinkInfo;
 class CodeBlock;
 class JSArray;
+class JSBoundFunction;
 class JSCell;
 class JSFunction;
 class JSGlobalObject;
@@ -158,6 +159,7 @@ JSC_DECLARE_JIT_OPERATION(operationThrowIteratorResultIsNotObject, void, (JSGlob
 JSC_DECLARE_JIT_OPERATION(operationGetWrappedValueForCaller, EncodedJSValue, (JSRemoteFunction*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationGetWrappedValueForTarget, EncodedJSValue, (JSRemoteFunction*, EncodedJSValue));
 JSC_DECLARE_JIT_OPERATION(operationMaterializeRemoteFunctionTargetCode, UGPRPair, (JSRemoteFunction*));
+JSC_DECLARE_JIT_OPERATION(operationMaterializeBoundFunctionTargetCode, UGPRPair, (JSBoundFunction*));
 JSC_DECLARE_JIT_OPERATION(operationThrowRemoteFunctionException, EncodedJSValue, (JSRemoteFunction*));
 
 JSC_DECLARE_JIT_OPERATION(operationThrowStackOverflowError, void, (CodeBlock*));

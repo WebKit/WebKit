@@ -46,7 +46,7 @@ class WebCodecsErrorCallback;
 class WebCodecsAudioDataOutputCallback;
 
 class WebCodecsAudioDecoder
-    : public RefCounted<WebCodecsAudioDecoder>
+    : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCodecsAudioDecoder>
     , public ActiveDOMObject
     , public EventTarget {
     WTF_MAKE_ISO_ALLOCATED(WebCodecsAudioDecoder);
@@ -71,8 +71,8 @@ public:
 
     static void isConfigSupported(ScriptExecutionContext&, WebCodecsAudioDecoderConfig&&, Ref<DeferredPromise>&&);
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref;
+    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref;
 
 private:
     WebCodecsAudioDecoder(ScriptExecutionContext&, Init&&);

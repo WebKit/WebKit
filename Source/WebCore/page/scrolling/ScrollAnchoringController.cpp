@@ -141,18 +141,14 @@ bool ScrollAnchoringController::didFindPriorityCandidate(Document& document)
         RefPtr iterElement = candidateElement;
 
         while (iterElement && iterElement.get() != elementForScrollableArea(m_owningScrollableArea)) {
-            if (auto renderer = element->renderer()) {
-                if (renderer->style().overflowAnchor() == OverflowAnchor::None)
-                    return nullptr;
-            }
+            auto candidateResult = examineAnchorCandidate(*iterElement);
+            if (candidateResult == CandidateExaminationResult::Exclude || (iterElement == candidateElement && candidateResult == CandidateExaminationResult::Skip))
+                return nullptr;
             iterElement = iterElement->parentElement();
         }
         if (!iterElement)
             return nullptr;
-        auto candidateResult = examineAnchorCandidate(*candidateElement);
-        if (candidateResult == CandidateExaminationResult::Select || candidateResult == CandidateExaminationResult::Descend)
-            return candidateElement;
-        return nullptr;
+        return candidateElement;
     };
 
     // TODO: need to check if focused element is text editable

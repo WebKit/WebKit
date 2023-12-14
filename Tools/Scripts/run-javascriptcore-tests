@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# Copyright (C) 2005-2017 Apple Inc.  All rights reserved.
+# Copyright (C) 2005-2023 Apple Inc.  All rights reserved.
 # Copyright (C) 2007 Eric Seidel <eric@webkit.org>
 #
 # Redistribution and use in source and binary forms, with or without
@@ -103,6 +103,7 @@ my $runMozillaTests = RUN_IF_NO_TESTS_SPECIFIED;
 # on the JSC stress test or mozilla tests.
 my $runJITStressTests = 1;
 
+my $runCLoopMode = 0;
 my $runQuickMode = 0;
 
 my $forceCollectContinuously = 0;
@@ -340,6 +341,7 @@ GetOptions(
     'jsc-stress!' => \$runJSCStress,
     'mozilla-tests!' => \$runMozillaTests,
     'jit-stress-tests!' => \$runJITStressTests,
+    'cloop' => \$runCLoopMode,
     'quick!' => \$runQuickMode,
     'fail-fast!' => \$failFast,
     'force-collectContinuously!' => \$forceCollectContinuously,
@@ -850,6 +852,10 @@ sub runJSCStressTests
     if ($envVars ne "") {
             push(@jscStressDriverCmd, "--env-vars");
             push(@jscStressDriverCmd, $envVars);
+    }
+
+    if ($runCLoopMode) {
+        push(@jscStressDriverCmd, "--cloop");
     }
 
     if ($runQuickMode) {

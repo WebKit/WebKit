@@ -47,12 +47,15 @@ class WebCoreOpaqueRoot;
 
 struct StructuredSerializeOptions;
 
-class MessagePort final : public ActiveDOMObject, public EventTarget {
+class MessagePort final : public ActiveDOMObject, public EventTarget, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MessagePort> {
     WTF_MAKE_NONCOPYABLE(MessagePort);
-    WTF_MAKE_ISO_ALLOCATED(MessagePort);
+    WTF_MAKE_ISO_ALLOCATED_EXPORT(MessagePort, WEBCORE_EXPORT);
 public:
     static Ref<MessagePort> create(ScriptExecutionContext&, const MessagePortIdentifier& local, const MessagePortIdentifier& remote);
-    virtual ~MessagePort();
+    WEBCORE_EXPORT virtual ~MessagePort();
+
+    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::ref;
+    using ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr::deref;
 
     ExceptionOr<void> postMessage(JSC::JSGlobalObject&, JSC::JSValue message, StructuredSerializeOptions&&);
 
@@ -80,9 +83,6 @@ public:
 
     const MessagePortIdentifier& identifier() const { return m_identifier; }
     const MessagePortIdentifier& remoteIdentifier() const { return m_remoteIdentifier; }
-
-    WEBCORE_EXPORT void ref() const;
-    WEBCORE_EXPORT void deref() const;
 
     // EventTarget.
     EventTargetInterface eventTargetInterface() const final { return MessagePortEventTargetInterfaceType; }
@@ -117,8 +117,6 @@ private:
 
     MessagePortIdentifier m_identifier;
     MessagePortIdentifier m_remoteIdentifier;
-
-    mutable std::atomic<unsigned> m_refCount { 1 };
 };
 
 WebCoreOpaqueRoot root(MessagePort*);

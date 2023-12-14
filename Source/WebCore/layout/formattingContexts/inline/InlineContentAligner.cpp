@@ -105,8 +105,8 @@ static BaseIndexAndOffset shiftRubyBaseContentByAlignmentOffset(BaseIndexAndOffs
     }
 
     // Shift base content within the base (no resize) as part of the alignment process.
+    auto& rootBox = inlineFormattingContext.root();
     auto& rubyBaseBox = displayBoxes[baseIndex].layoutBox();
-    auto& rubyBox = rubyBaseBox.parent();
     auto baseOffset = baseIndexAndOffset.offset;
     auto baseContentOffset = alignmentOffset(rubyBaseBox, alignmentOffsetList);
     size_t baseContentIndex = baseIndex + 1;
@@ -114,10 +114,18 @@ static BaseIndexAndOffset shiftRubyBaseContentByAlignmentOffset(BaseIndexAndOffs
     while (baseContentIndex < displayBoxes.size()) {
         auto& displayBox = displayBoxes[baseContentIndex];
         auto& layoutBox = displayBox.layoutBox();
-        if (&layoutBox.parent() == &rubyBox || &layoutBox.parent() == &rubyBox.parent()) {
-            // Not in this ruby base anymore.
+        auto isInsideCurrentRubyBase = [&] {
+            // Ruby content tends to produce flat structures.
+            for (auto* ancestor = &layoutBox.parent(); ancestor; ancestor = &ancestor->parent()) {
+                if (ancestor == &rubyBaseBox)
+                    return true;
+                if (ancestor->isRubyBase() || ancestor->isRuby() || ancestor == &rootBox)
+                    return false;
+            }
+            return false;
+        };
+        if (!isInsideCurrentRubyBase())
             break;
-        }
         if (!layoutBox.isRubyAnnotationBox())
             shiftDisplayBox(displayBox, baseOffset + baseContentOffset, inlineFormattingContext);
         if (layoutBox.isRubyBase()) {

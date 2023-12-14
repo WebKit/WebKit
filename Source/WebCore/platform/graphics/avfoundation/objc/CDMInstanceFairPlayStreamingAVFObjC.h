@@ -213,6 +213,7 @@ public:
 
     bool hasKey(AVContentKey *) const;
     bool hasRequest(AVContentKeyRequest*) const;
+    bool isAnyKeyUsable(const Keys&) const;
 
     const KeyStatusVector& keyStatuses() const { return m_keyStatuses; }
     KeyStatusVector copyKeyStatuses() const;

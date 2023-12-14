@@ -76,6 +76,8 @@ public:
     void getAll(CookieStoreGetOptions&&, URL&&, Function<void(CookieStore&, ExceptionOr<Vector<Cookie>>&&)>&&);
     void set(CookieInit&& options, Cookie&&, Function<void(CookieStore&, std::optional<Exception>&&)>&&);
 
+    void detach() { m_cookieStore = nullptr; }
+
 private:
     explicit MainThreadBridge(CookieStore&);
 
@@ -221,7 +223,10 @@ CookieStore::CookieStore(ScriptExecutionContext* context)
 {
 }
 
-CookieStore::~CookieStore() = default;
+CookieStore::~CookieStore()
+{
+    m_mainThreadBridge->detach();
+}
 
 void CookieStore::get(String&& name, Ref<DeferredPromise>&& promise)
 {
