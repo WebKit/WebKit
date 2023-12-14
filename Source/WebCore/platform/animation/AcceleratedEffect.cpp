@@ -29,12 +29,12 @@
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
 #include "AnimationEffect.h"
+#include "BlendingKeyframes.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyNames.h"
 #include "DeclarativeAnimation.h"
 #include "Document.h"
 #include "KeyframeEffect.h"
-#include "KeyframeList.h"
 #include "LayoutSize.h"
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"

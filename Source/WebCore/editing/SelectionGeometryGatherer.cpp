@@ -68,7 +68,7 @@ SelectionGeometryGatherer::Notifier::Notifier(SelectionGeometryGatherer& gathere
 
 SelectionGeometryGatherer::Notifier::~Notifier()
 {
-    CheckedPtr page = m_gatherer.m_renderView->view().frame().page();
+    RefPtr page = m_gatherer.m_renderView->view().frame().page();
     if (!page)
         return;
 

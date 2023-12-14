@@ -43,9 +43,9 @@ namespace Style {
 class Resolver;
 }
 
-class KeyframeValue final : public KeyframeInterpolation::Keyframe {
+class BlendingKeyframe final : public KeyframeInterpolation::Keyframe {
 public:
-    KeyframeValue(double offset, std::unique_ptr<RenderStyle> style)
+    BlendingKeyframe(double offset, std::unique_ptr<RenderStyle> style)
         : m_offset(offset)
         , m_style(WTFMove(style))
     {
@@ -55,7 +55,7 @@ public:
     double offset() const final { return m_offset; }
     std::optional<CompositeOperation> compositeOperation() const final { return m_compositeOperation; }
     bool animatesProperty(KeyframeInterpolation::Property) const final;
-    bool isKeyframeValue() const final { return true; }
+    bool isBlendingKeyframe() const final { return true; }
 
     void addProperty(const AnimatableCSSProperty&);
     const HashSet<AnimatableCSSProperty>& properties() const { return m_properties; }
@@ -82,21 +82,21 @@ private:
     bool m_containsDirectionAwareProperty { false };
 };
 
-class KeyframeList {
+class BlendingKeyframes {
 public:
-    explicit KeyframeList(const AtomString& animationName)
+    explicit BlendingKeyframes(const AtomString& animationName)
         : m_animationName(animationName)
     {
     }
-    ~KeyframeList();
+    ~BlendingKeyframes();
 
-    KeyframeList& operator=(KeyframeList&&) = default;
-    bool operator==(const KeyframeList&) const;
+    BlendingKeyframes& operator=(BlendingKeyframes&&) = default;
+    bool operator==(const BlendingKeyframes&) const;
 
     const AtomString& animationName() const { return m_animationName; }
     
-    void insert(KeyframeValue&&);
-    
+    void insert(BlendingKeyframe&&);
+
     void addProperty(const AnimatableCSSProperty&);
     bool containsProperty(const AnimatableCSSProperty&) const;
     const HashSet<AnimatableCSSProperty>& properties() const { return m_properties; }
@@ -107,9 +107,9 @@ public:
     void clear();
     bool isEmpty() const { return m_keyframes.isEmpty(); }
     size_t size() const { return m_keyframes.size(); }
-    const KeyframeValue& operator[](size_t index) const { return m_keyframes[index]; }
+    const BlendingKeyframe& operator[](size_t index) const { return m_keyframes[index]; }
 
-    void copyKeyframes(KeyframeList&);
+    void copyKeyframes(const BlendingKeyframes&);
     bool hasImplicitKeyframes() const;
     void fillImplicitKeyframes(const KeyframeEffect&, const RenderStyle& elementStyle);
 
@@ -127,7 +127,7 @@ public:
 
 private:
     AtomString m_animationName;
-    Vector<KeyframeValue> m_keyframes; // Kept sorted by key.
+    Vector<BlendingKeyframe> m_keyframes; // Kept sorted by key.
     HashSet<AnimatableCSSProperty> m_properties; // The properties being animated.
     bool m_usesRelativeFontWeight { false };
     bool m_containsCSSVariableReferences { false };
@@ -137,4 +137,4 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_KEYFRAME_INTERPOLATION_KEYFRAME(KeyframeValue, isKeyframeValue());
+SPECIALIZE_TYPE_TRAITS_KEYFRAME_INTERPOLATION_KEYFRAME(BlendingKeyframe, isBlendingKeyframe());

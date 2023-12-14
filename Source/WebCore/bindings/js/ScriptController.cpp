@@ -297,7 +297,7 @@ void ScriptController::initScriptForWindowProxy(JSWindowProxy& windowProxy)
     if (RefPtr document = m_frame.document())
         document->checkedContentSecurityPolicy()->didCreateWindowProxy(windowProxy);
 
-    if (CheckedPtr page = m_frame.page()) {
+    if (RefPtr page = m_frame.page()) {
         windowProxy.attachDebugger(page->debugger());
         windowProxy.window()->setProfileGroup(page->group().identifier());
         windowProxy.window()->setConsoleClient(page->console());

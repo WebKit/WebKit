@@ -160,6 +160,8 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
 
     tree->updateLoadingProgress(axObjectCache.loadingProgress());
 
+    tree->updateRelations(axObjectCache.relations());
+
     // Now that the tree is ready to take client requests, add it to the tree maps so that it can be found.
     storeTree(axObjectCache, tree);
     return tree;
@@ -975,6 +977,16 @@ void AXIsolatedTree::setFocusedNodeID(AXID axID)
     m_pendingFocusedNodeID = axID;
 }
 
+void AXIsolatedTree::updateRelations(const HashMap<AXID, AXRelations>& relations)
+{
+    AXTRACE("AXIsolatedTree::updateRelations"_s);
+    ASSERT(isMainThread());
+
+    Locker locker { m_changeLogLock };
+    m_relations = relations;
+    m_relationsNeedUpdate = false;
+}
+
 AXTextMarkerRange AXIsolatedTree::selectedTextMarkerRange()
 {
     AXTRACE("AXIsolatedTree::selectedTextMarkerRange"_s);
@@ -1086,15 +1098,7 @@ void AXIsolatedTree::removeSubtreeFromNodeMap(AXID objectID, AccessibilityObject
 std::optional<ListHashSet<AXID>> AXIsolatedTree::relatedObjectIDsFor(const AXIsolatedObject& object, AXRelationType relationType)
 {
     ASSERT(!isMainThread());
-
-    if (m_relationsNeedUpdate) {
-        m_relations = Accessibility::retrieveValueFromMainThread<HashMap<AXID, AXRelations>>([this] () -> HashMap<AXID, AXRelations> {
-            if (auto* cache = axObjectCache())
-                return cache->relations();
-            return { };
-        });
-        m_relationsNeedUpdate = false;
-    }
+    Locker locker { m_changeLogLock };
 
     auto relationsIterator = m_relations.find(object.objectID());
     if (relationsIterator == m_relations.end())
@@ -1305,6 +1309,9 @@ void AXIsolatedTree::processQueuedNodeUpdates()
             updateNodeProperties(*axObject, propertyUpdate.value);
     }
     m_needsPropertyUpdates.clear();
+
+    if (m_relationsNeedUpdate)
+        updateRelations(cache->relations());
 
     queueRemovalsAndUnresolvedChanges({ });
 }

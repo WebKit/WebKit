@@ -1388,7 +1388,7 @@ JSValueRef PDFPlugin::jsPDFDocPrint(JSContextRef ctx, JSObjectRef function, JSOb
     if (!coreFrame)
         return JSValueMakeUndefined(ctx);
 
-    CheckedPtr page = coreFrame->page();
+    RefPtr page = coreFrame->page();
     if (!page)
         return JSValueMakeUndefined(ctx);
 
@@ -1628,7 +1628,7 @@ void PDFPlugin::teardown()
 void PDFPlugin::paintControlForLayerInContext(CALayer *layer, CGContextRef context)
 {
 #if PLATFORM(MAC)
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
     LocalDefaultSystemAppearance localAppearance(page->useDarkAppearance());
@@ -1739,7 +1739,7 @@ FloatRect PDFPlugin::convertFromPDFViewToScreen(const FloatRect& rect) const
     return WebCore::Accessibility::retrieveValueFromMainThread<WebCore::FloatRect>([&] () -> WebCore::FloatRect {
         FloatRect updatedRect = rect;
         updatedRect.setLocation(convertFromPDFViewToRootView(IntPoint(updatedRect.location())));
-        CheckedPtr page = this->page();
+        RefPtr page = this->page();
         if (!page)
             return { };
         return page->chrome().rootViewToScreen(enclosingIntRect(updatedRect));

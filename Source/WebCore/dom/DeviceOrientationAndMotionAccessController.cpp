@@ -63,7 +63,7 @@ DeviceOrientationOrMotionPermissionState DeviceOrientationAndMotionAccessControl
 
 void DeviceOrientationAndMotionAccessController::shouldAllowAccess(const Document& document, Function<void(DeviceOrientationOrMotionPermissionState)>&& callback)
 {
-    CheckedPtr page = document.page();
+    RefPtr page = document.page();
     RefPtr frame = document.frame();
     if (!page || !frame)
         return callback(DeviceOrientationOrMotionPermissionState::Denied);

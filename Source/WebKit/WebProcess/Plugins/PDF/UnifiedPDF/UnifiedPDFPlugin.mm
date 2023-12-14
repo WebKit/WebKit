@@ -83,7 +83,7 @@ void UnifiedPDFPlugin::teardown()
     if (m_rootLayer)
         m_rootLayer->removeFromParent();
 
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (m_scrollingNodeID && page) {
         RefPtr scrollingCoordinator = page->scrollingCoordinator();
         scrollingCoordinator->unparentChildrenAndDestroyNode(m_scrollingNodeID);
@@ -119,7 +119,7 @@ void UnifiedPDFPlugin::installPDFDocument()
 
 RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(const String& name, GraphicsLayer::Type layerType)
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return nullptr;
 
@@ -131,7 +131,7 @@ RefPtr<GraphicsLayer> UnifiedPDFPlugin::createGraphicsLayer(const String& name, 
 
 void UnifiedPDFPlugin::scheduleRenderingUpdate()
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
 
@@ -140,7 +140,7 @@ void UnifiedPDFPlugin::scheduleRenderingUpdate()
 
 void UnifiedPDFPlugin::updateLayerHierarchy()
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
 
@@ -202,7 +202,7 @@ void UnifiedPDFPlugin::updateLayerHierarchy()
 
 void UnifiedPDFPlugin::didChangeSettings()
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
     Settings& settings = page->settings();
@@ -225,7 +225,7 @@ void UnifiedPDFPlugin::notifyFlushRequired(const GraphicsLayer*)
 
 void UnifiedPDFPlugin::didChangeIsInWindow()
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page || !m_contentsLayer)
         return;
     m_contentsLayer->tiledBacking()->setIsInWindow(page->isInWindow());
@@ -307,7 +307,7 @@ float UnifiedPDFPlugin::deviceScaleFactor() const
 
 float UnifiedPDFPlugin::pageScaleFactor() const
 {
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         return m_view->pageScaleFactor();
     return 1;
 }
@@ -330,7 +330,7 @@ void UnifiedPDFPlugin::setPageScaleFactor(double scale, std::optional<WebCore::I
         return;
     }
 
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
 
@@ -443,7 +443,7 @@ void UnifiedPDFPlugin::invalidateScrollCornerRect(const WebCore::IntRect&)
 
 void UnifiedPDFPlugin::updateScrollingExtents()
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
     auto& scrollingCoordinator = *page->scrollingCoordinator();

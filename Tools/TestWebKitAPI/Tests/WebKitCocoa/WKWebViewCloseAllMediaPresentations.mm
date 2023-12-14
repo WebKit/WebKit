@@ -167,7 +167,12 @@ TEST(WKWebViewCloseAllMediaPresentations, VideoFullscreen)
     EXPECT_TRUE([webView _allMediaPresentationsClosed]);
 }
 
+// FIXME: Re-enable this test once webkit.org/b/265068 is resolved
+#if PLATFORM(IOS) && !defined(NDEBUG)
+TEST(WKWebViewCloseAllMediaPresentations, DISABLED_ElementFullscreen)
+#else
 TEST(WKWebViewCloseAllMediaPresentations, ElementFullscreen)
+#endif
 {
     auto *configuration = [WKWebViewConfiguration _test_configurationWithTestPlugInClassName:@"WebProcessPlugInWithInternals" configureJSCForTesting:YES];
     [[configuration preferences] _setFullScreenEnabled:YES];

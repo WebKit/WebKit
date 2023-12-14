@@ -80,7 +80,7 @@ private:
     // FIXME: Refactor the source and target LIDs into either a std::pair<> of strings, or its own named struct.
     String m_sourceLanguageIdentifier;
     String m_targetLanguageIdentifier;
-    WeakPtr<Page> m_page;
+    SingleThreadWeakPtr<Page> m_page;
     Timer m_resumeProcessingTimer;
     WeakHashMap<HTMLImageElement, URL, WeakPtrImplWithEventTargetData> m_queuedElements;
     PriorityQueue<Task, firstIsHigherPriority> m_queue;

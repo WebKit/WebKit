@@ -355,6 +355,7 @@ public:
     // Relationships between objects.
     std::optional<ListHashSet<AXID>> relatedObjectIDsFor(const AXIsolatedObject&, AXRelationType);
     void relationsNeedUpdate(bool needUpdate) { m_relationsNeedUpdate = needUpdate; }
+    void updateRelations(const HashMap<AXID, AXRelations>&);
 
     // Called on AX thread from WebAccessibilityObjectWrapper methods.
     // During layout tests, it is called on the main thread.
@@ -463,11 +464,9 @@ private:
     std::atomic<double> m_loadingProgress { 0 };
 
     // Relationships between objects.
-    // Accessed only on the AX thread.
-    HashMap<AXID, AXRelations> m_relations;
-    // Set to true by the AXObjectCache on the main thread.
-    // Set to false on the AX thread by relatedObjectIDsFor.
-    std::atomic<bool> m_relationsNeedUpdate { true };
+    HashMap<AXID, AXRelations> m_relations WTF_GUARDED_BY_LOCK(m_changeLogLock);
+    // Set to true by the AXObjectCache and false by AXIsolatedTree.
+    bool m_relationsNeedUpdate { true };
 
     Lock m_changeLogLock;
     AXTextMarkerRange m_selectedTextMarkerRange WTF_GUARDED_BY_LOCK(m_changeLogLock);

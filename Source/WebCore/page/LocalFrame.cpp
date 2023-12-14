@@ -169,7 +169,7 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
     if (LocalFrame* parent = dynamicDowncast<LocalFrame>(tree().parent()); parent && parent->activeDOMObjectsAndAnimationsSuspended())
         suspendActiveDOMObjectsAndAnimations();
 
-    if (CheckedPtr page = this->page(); page && isRootFrame())
+    if (RefPtr page = this->page(); page && isRootFrame())
         page->removeRootFrame(*this);
 }
 
@@ -287,7 +287,7 @@ void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
     m_documentIsBeingReplaced = true;
 
     if (isMainFrame()) {
-        if (CheckedPtr page = this->page())
+        if (RefPtr page = this->page())
             page->didChangeMainDocument();
         checkedLoader()->client().dispatchDidChangeMainDocument();
 
@@ -325,7 +325,7 @@ void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
 #endif
 
     if (page() && m_doc && isMainFrame() && !loader().stateMachine().isDisplayingInitialEmptyDocument())
-        checkedPage()->mainFrameDidChangeToNonInitialEmptyDocument();
+        protectedPage()->mainFrameDidChangeToNonInitialEmptyDocument();
 
     InspectorInstrumentation::frameDocumentUpdated(*this);
 
@@ -406,7 +406,7 @@ void LocalFrame::orientationChanged()
 
 IntDegrees LocalFrame::orientation() const
 {
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         return page->chrome().client().deviceOrientation();
     return 0;
 }
@@ -707,7 +707,7 @@ void LocalFrame::injectUserScripts(UserScriptInjectionTime injectionTime)
     if (loader().stateMachine().creatingInitialEmptyDocument() && !settings().shouldInjectUserScriptsInInitialEmptyDocument())
         return;
 
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     bool pageWasNotified = page->hasBeenNotifiedToInjectUserScripts();
     page->protectedUserContentProvider()->forEachUserScript([this, protectedThis = Ref { *this }, injectionTime, pageWasNotified] (DOMWrapperWorld& world, const UserScript& script) {
         if (script.injectionTime() == injectionTime) {
@@ -816,7 +816,8 @@ void LocalFrame::willDetachPage()
 
     // FIXME: It's unclear as to why this is called more than once, but it is,
     // so page() could be NULL.
-    if (CheckedPtr page = this->page()) {
+    // Unable to ref the page as it may have started destruction.
+    if (WeakPtr page = this->page()) {
         CheckedRef focusController = page->focusController();
         if (focusController->focusedFrame() == this)
             focusController->setFocusedFrame(nullptr);
@@ -999,7 +1000,7 @@ void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomF
     if (m_pageZoomFactor == pageZoomFactor && m_textZoomFactor == textZoomFactor)
         return;
 
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
 
@@ -1044,7 +1045,7 @@ void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomF
 
 float LocalFrame::frameScaleFactor() const
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
 
     // Main frame is scaled with respect to he container but inner frames are not scaled with respect to the main frame.
     if (!page || !isMainFrame())
@@ -1128,7 +1129,7 @@ FloatSize LocalFrame::screenSize() const
     if (!loader || !loader->fingerprintingProtectionsEnabled())
         return defaultSize;
 
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         return page->chrome().client().screenSizeForFingerprintingProtections(*this, defaultSize);
 
     return defaultSize;
@@ -1232,7 +1233,7 @@ CheckedRef<const EventHandler> LocalFrame::checkedEventHandler() const
 
 void LocalFrame::documentURLDidChange(const URL& url)
 {
-    if (CheckedPtr page = this->page(); page && isMainFrame()) {
+    if (RefPtr page = this->page(); page && isMainFrame()) {
         page->setMainFrameURL(url);
         checkedLoader()->client().broadcastMainFrameURLChangeToOtherProcesses(url);
     }

@@ -128,7 +128,7 @@ void ExtensionStyleSheets::updateInjectedStyleSheetCache() const
     m_injectedAuthorStyleSheets.clear();
     m_injectedStyleSheetToSource.clear();
 
-    CheckedPtr owningPage = m_document->page();
+    RefPtr owningPage = m_document->page();
     if (!owningPage)
         return;
 

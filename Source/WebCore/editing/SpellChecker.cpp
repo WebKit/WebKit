@@ -116,7 +116,7 @@ SpellChecker::~SpellChecker()
 
 TextCheckerClient* SpellChecker::client() const
 {
-    CheckedPtr page = m_document->page();
+    RefPtr page = m_document->page();
     if (!page)
         return nullptr;
     return page->editorClient().textChecker();

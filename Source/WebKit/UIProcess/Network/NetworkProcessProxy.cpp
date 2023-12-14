@@ -40,6 +40,7 @@
 #include "DownloadProxyMessages.h"
 #include "FrameInfoData.h"
 #include "LegacyGlobalSettings.h"
+#include "LoadedWebArchive.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "NetworkContentRuleListManagerMessages.h"
@@ -1984,6 +1985,23 @@ void NetworkProcessProxy::reloadExecutionContextsForOrigin(const WebCore::Client
         if (process->canSendMessage() && !process->isDummyProcessProxy())
             process->sendWithAsyncReply(Messages::WebProcess::ReloadExecutionContextsForOrigin(origin, triggeringFrame), [callbackAggregator] { });
     }
+}
+
+void NetworkProcessProxy::addAllowedFirstPartyForCookies(WebProcessProxy& webProcessProxy, const WebCore::RegistrableDomain& firstPartyForCookies, LoadedWebArchive loadedWebArchive, CompletionHandler<void()>&& completionHandler)
+{
+    auto& pair = m_allowedFirstPartiesForCookies.ensure(webProcessProxy, [] {
+        return std::make_pair(LoadedWebArchive::No, HashSet<RegistrableDomain> { });
+    }).iterator->value;
+
+    bool madeChange = pair.second.add(firstPartyForCookies).isNewEntry;
+    if (loadedWebArchive == LoadedWebArchive::Yes && pair.first != LoadedWebArchive::Yes) {
+        madeChange = true;
+        pair.first = LoadedWebArchive::Yes;
+    }
+    if (madeChange)
+        sendWithAsyncReply(Messages::NetworkProcess::AddAllowedFirstPartyForCookies(webProcessProxy.coreProcessIdentifier(), firstPartyForCookies, loadedWebArchive), WTFMove(completionHandler));
+    else
+        completionHandler();
 }
 
 #if USE(RUNNINGBOARD)

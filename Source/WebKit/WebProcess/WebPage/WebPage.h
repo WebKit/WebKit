@@ -2167,7 +2167,7 @@ private:
 
     WebCore::PageIdentifier m_identifier;
 
-    std::unique_ptr<WebCore::Page> m_page;
+    RefPtr<WebCore::Page> m_page;
     Ref<WebFrame> m_mainFrame;
 
     RefPtr<WebPageGroupProxy> m_pageGroup;

@@ -105,7 +105,7 @@ inline CurrentEventScope::~CurrentEventScope()
 
 bool EventHandler::wheelEvent(WebEvent *event)
 {
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return false;
 
@@ -145,7 +145,7 @@ void EventHandler::touchEvent(WebEvent *event)
 
 bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
 {
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return false;
 
@@ -185,7 +185,7 @@ bool EventHandler::keyEvent(WebEvent *event)
 
 void EventHandler::focusDocumentView()
 {
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return;
 
@@ -268,7 +268,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
         return true;
     }
 
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return true;
 

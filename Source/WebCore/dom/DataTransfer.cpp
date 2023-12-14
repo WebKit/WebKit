@@ -220,13 +220,13 @@ String DataTransfer::readStringFromPasteboard(Document& document, const String& 
     }
 
     if (!is<StaticPasteboard>(*m_pasteboard) && lowercaseType == "text/uri-list"_s) {
-        return readURLsFromPasteboardAsString(document.checkedPage().get(), *m_pasteboard, [] (auto&) {
+        return readURLsFromPasteboardAsString(document.protectedPage().get(), *m_pasteboard, [] (auto&) {
             return true;
         });
     }
 
     auto string = m_pasteboard->readString(lowercaseType);
-    if (CheckedPtr page = document.page())
+    if (RefPtr page = document.page())
         return page->applyLinkDecorationFiltering(string, LinkDecorationFilteringTrigger::Paste);
 
     return string;
@@ -279,7 +279,7 @@ void DataTransfer::setDataFromItemList(Document& document, const String& type, c
         sanitizedData = data; // Nothing to sanitize.
 
     if (type == "text/uri-list"_s || type == textPlainContentTypeAtom()) {
-        if (CheckedPtr page = document.page())
+        if (RefPtr page = document.page())
             sanitizedData = page->applyLinkDecorationFiltering(sanitizedData, LinkDecorationFilteringTrigger::Copy);
     }
 

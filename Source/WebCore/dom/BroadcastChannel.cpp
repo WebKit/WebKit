@@ -114,12 +114,12 @@ void BroadcastChannel::MainThreadBridge::ensureOnMainThread(Function<void(Page*)
 
     Ref protectedThis { *this };
     if (auto* document = dynamicDowncast<Document>(*context)) {
-        task(document->checkedPage().get());
+        task(document->protectedPage().get());
         return;
     }
 
     downcast<WorkerGlobalScope>(*context).thread().workerLoaderProxy().postTaskToLoader([protectedThis = WTFMove(protectedThis), task = WTFMove(task)](auto& context) {
-        task(downcast<Document>(context).checkedPage().get());
+        task(downcast<Document>(context).protectedPage().get());
     });
 }
 

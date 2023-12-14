@@ -471,7 +471,7 @@ EncodedDataStatus SVGImage::dataChanged(bool allDataReceived)
         // This will become an issue when SVGImage will be able to load other
         // SVGImage objects, but we're safe now, because SVGImage can only be
         // loaded by a top-level document.
-        m_page = makeUnique<Page>(WTFMove(pageConfiguration));
+        m_page = Page::create(WTFMove(pageConfiguration));
 #if ENABLE(VIDEO)
         m_page->settings().setMediaEnabled(false);
 #endif

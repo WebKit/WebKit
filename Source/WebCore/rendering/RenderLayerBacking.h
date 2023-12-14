@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class KeyframeList;
+class BlendingKeyframes;
 class PaintedContentsInfo;
 class RegionContext;
 class RenderLayerCompositor;
@@ -175,7 +175,7 @@ public:
     void contentChanged(ContentChangeType);
 
     // Interface to start, finish, suspend and resume animations
-    bool startAnimation(double timeOffset, const Animation&, const KeyframeList&);
+    bool startAnimation(double timeOffset, const Animation&, const BlendingKeyframes&);
     void animationPaused(double timeOffset, const String& name);
     void animationFinished(const String& name);
     void transformRelatedPropertyDidChange();

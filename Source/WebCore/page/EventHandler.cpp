@@ -774,7 +774,7 @@ bool EventHandler::canMouseDownStartSelect(const MouseEventWithHitTestResults& e
 {
     RefPtr node = event.targetNode();
 
-    if (CheckedPtr page = m_frame->page()) {
+    if (RefPtr page = m_frame->page()) {
         if (!page->chrome().client().shouldUseMouseEventForSelection(event.event()))
             return false;
     }
@@ -980,7 +980,7 @@ bool EventHandler::eventMayStartDrag(const PlatformMouseEvent& event) const
     if (!view)
         return false;
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return false;
 
@@ -1230,7 +1230,7 @@ bool EventHandler::panScrollInProgress() const
 #if ENABLE(DRAG_SUPPORT)
 OptionSet<DragSourceAction> EventHandler::updateDragSourceActionsAllowed() const
 {
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return { };
 
@@ -1703,7 +1703,7 @@ std::optional<Cursor> EventHandler::selectCursor(const HitTestResult& result, bo
 #if ENABLE(CURSOR_VISIBILITY)
 void EventHandler::startAutoHideCursorTimer()
 {
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return;
 
@@ -1729,7 +1729,7 @@ void EventHandler::autoHideCursorTimerFired()
     if (!view || !view->isActive())
         return;
 
-    if (CheckedPtr page = m_frame->page())
+    if (RefPtr page = m_frame->page())
         page->chrome().setCursorHiddenUntilMouseMoves(true);
 }
 #endif
@@ -1783,12 +1783,12 @@ HandleUserInputEventResult EventHandler::handleMousePressEvent(const PlatformMou
 
 #if ENABLE(POINTER_LOCK)
     if (frame->page()->pointerLockController().isLocked()) {
-        frame->checkedPage()->pointerLockController().dispatchLockedMouseEvent(platformMouseEvent, eventNames().mousedownEvent);
+        frame->protectedPage()->pointerLockController().dispatchLockedMouseEvent(platformMouseEvent, eventNames().mousedownEvent);
         return true;
     }
 #endif
 
-    if (frame->checkedPage()->pageOverlayController().handleMouseEvent(platformMouseEvent))
+    if (frame->protectedPage()->pageOverlayController().handleMouseEvent(platformMouseEvent))
         return true;
 
 #if ENABLE(TOUCH_EVENTS)
@@ -2024,13 +2024,13 @@ HandleUserInputEventResult EventHandler::mouseMoved(const PlatformMouseEvent& ev
     RefPtr protectedView { frame->view() };
     MaximumDurationTracker maxDurationTracker(&m_maxMouseMovedDuration);
 
-    if (frame->page() && frame->checkedPage()->pageOverlayController().handleMouseEvent(event))
+    if (frame->page() && frame->protectedPage()->pageOverlayController().handleMouseEvent(event))
         return true;
 
     HitTestResult hitTestResult;
     auto result = handleMouseMoveEvent(event, &hitTestResult);
 
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return result;
 
@@ -2100,7 +2100,7 @@ HandleUserInputEventResult EventHandler::handleMouseMoveEvent(const PlatformMous
 
 #if ENABLE(POINTER_LOCK)
     if (frame->page()->pointerLockController().isLocked()) {
-        frame->checkedPage()->pointerLockController().dispatchLockedMouseEvent(platformMouseEvent, eventNames().mousemoveEvent);
+        frame->protectedPage()->pointerLockController().dispatchLockedMouseEvent(platformMouseEvent, eventNames().mousemoveEvent);
         return true;
     }
 #endif
@@ -2250,12 +2250,12 @@ HandleUserInputEventResult EventHandler::handleMouseReleaseEvent(const PlatformM
 
 #if ENABLE(POINTER_LOCK)
     if (frame->page()->pointerLockController().isLocked()) {
-        frame->checkedPage()->pointerLockController().dispatchLockedMouseEvent(platformMouseEvent, eventNames().mouseupEvent);
+        frame->protectedPage()->pointerLockController().dispatchLockedMouseEvent(platformMouseEvent, eventNames().mouseupEvent);
         return true;
     }
 #endif
 
-    if (frame->checkedPage()->pageOverlayController().handleMouseEvent(platformMouseEvent))
+    if (frame->protectedPage()->pageOverlayController().handleMouseEvent(platformMouseEvent))
         return true;
 
 #if ENABLE(TOUCH_EVENTS)
@@ -2745,7 +2745,7 @@ void EventHandler::updateMouseEventTargetNode(const AtomString& eventType, Node*
         m_textRecognitionHoverTimer.restart();
 #endif // ENABLE(IMAGE_ANALYSIS)
 
-    if (CheckedPtr page = frame->page())
+    if (RefPtr page = frame->page())
         page->imageOverlayController().elementUnderMouseDidChange(frame, m_elementUnderMouse.get());
 
     ASSERT_IMPLIES(m_elementUnderMouse, &m_elementUnderMouse->document() == frame->document());
@@ -2822,7 +2822,7 @@ void EventHandler::clearElementUnderMouse()
 
     m_elementUnderMouse = nullptr;
 
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return;
 
@@ -2960,7 +2960,7 @@ bool EventHandler::dispatchMouseEvent(const AtomString& eventType, Node* targetN
 #endif
 
     // If focus shift is blocked, we eat the event.
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (page && !CheckedRef(page->focusController())->setFocusedElement(element.get(), protectedFrame(), { { }, { }, { }, FocusTrigger::Click, { } }))
         return false;
 
@@ -3116,7 +3116,7 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
 
 #if ENABLE(POINTER_LOCK)
     if (frame->page()->pointerLockController().isLocked()) {
-        frame->checkedPage()->pointerLockController().dispatchLockedWheelEvent(event);
+        frame->protectedPage()->pointerLockController().dispatchLockedWheelEvent(event);
         return true;
     }
 #endif
@@ -3136,7 +3136,7 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
     setFrameWasScrolledByUser();
 
     if (m_frame->isMainFrame()) {
-        CheckedPtr page = m_frame->page();
+        RefPtr page = m_frame->page();
 #if ENABLE(WHEEL_EVENT_LATCHING)
         page->scrollLatchingController().receivedWheelEvent(event);
 #endif
@@ -3341,7 +3341,8 @@ std::optional<WheelScrollGestureState> EventHandler::updateWheelGestureState(con
 
 void EventHandler::clearLatchedState()
 {
-    CheckedPtr page = m_frame->page();
+    // Unable to ref the page as it may have started destruction.
+    WeakPtr page = m_frame->page();
     if (!page)
         return;
 
@@ -3535,7 +3536,7 @@ void EventHandler::scheduleCursorUpdate()
     if (m_hasScheduledCursorUpdate)
         return;
 
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return;
 
@@ -3555,7 +3556,7 @@ void EventHandler::dispatchFakeMouseMoveEventSoon()
     if (!m_lastKnownMousePosition)
         return;
 
-    if (CheckedPtr page = m_frame->page()) {
+    if (RefPtr page = m_frame->page()) {
         if (!page->chrome().client().shouldDispatchFakeMouseMoveEvents())
             return;
     }
@@ -3646,7 +3647,7 @@ void EventHandler::textRecognitionHoverTimerFired()
     if (!element)
         return;
 
-    if (CheckedPtr page = m_frame->page())
+    if (RefPtr page = m_frame->page())
         page->chrome().client().requestTextRecognition(*element, { });
 }
 
@@ -3742,12 +3743,12 @@ bool EventHandler::internalKeyEvent(const PlatformKeyboardEvent& initialKeyEvent
 
 #if ENABLE(POINTER_LOCK)
     if (initialKeyEvent.type() == PlatformEvent::Type::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE && frame->page()->pointerLockController().element()) {
-        frame->checkedPage()->pointerLockController().requestPointerUnlockAndForceCursorVisible();
+        frame->protectedPage()->pointerLockController().requestPointerUnlockAndForceCursorVisible();
     }
 #endif
 
     if (initialKeyEvent.type() == PlatformEvent::Type::KeyDown && initialKeyEvent.windowsVirtualKeyCode() == VK_ESCAPE) {
-        if (CheckedPtr page = frame->page()) {
+        if (RefPtr page = frame->page()) {
             if (auto* validationMessageClient = page->validationMessageClient())
                 validationMessageClient->hideAnyValidationMessage();
         }
@@ -4140,7 +4141,7 @@ static void removeDraggedContentDocumentMarkersFromAllFramesInPage(Page& page)
 void EventHandler::dragCancelled()
 {
 #if PLATFORM(IOS_FAMILY)
-    if (CheckedPtr page = m_frame->page())
+    if (RefPtr page = m_frame->page())
         removeDraggedContentDocumentMarkersFromAllFramesInPage(*page);
 #endif
 }
@@ -4186,7 +4187,7 @@ std::optional<RemoteUserInputEventData> EventHandler::dragSourceEndedAt(const Pl
     invalidateDataTransfer();
 
     if (mayExtendDragSession == MayExtendDragSession::No) {
-        if (CheckedPtr page = m_frame->page())
+        if (RefPtr page = m_frame->page())
             removeDraggedContentDocumentMarkersFromAllFramesInPage(*page);
     }
 
@@ -4217,7 +4218,7 @@ void EventHandler::dispatchEventToDragSourceElement(const AtomString& eventType,
 
 bool EventHandler::dispatchDragStartEventOnSourceElement(DataTransfer& dataTransfer)
 {
-    if (CheckedPtr page = m_frame->page())
+    if (RefPtr page = m_frame->page())
         page->dragController().prepareForDragStart(protectedFrame(), dragState().type, *dragState().source, dataTransfer, m_mouseDownContentsPosition);
     return !dispatchDragEvent(eventNames().dragstartEvent, *dragState().source, m_mouseDownEvent, dataTransfer) && !m_frame->selection().selection().isInPasswordField();
 }
@@ -4251,7 +4252,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
         // Try to find an element that wants to be dragged.
         HitTestResult result(m_mouseDownContentsPosition);
         frame->protectedDocument()->hitTest(OptionSet<HitTestRequest::Type> { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::DisallowUserAgentShadowContent }, result);
-        if (CheckedPtr page = frame->page())
+        if (RefPtr page = frame->page())
             dragState().source = page->dragController().draggableElement(frame.ptr(), result.targetElement(), m_mouseDownContentsPosition, dragState());
         
         if (!dragState().source)
@@ -4369,7 +4370,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event, CheckDr
     }
     
     if (m_mouseDownMayStartDrag) {
-        CheckedPtr page = frame->page();
+        RefPtr page = frame->page();
         m_didStartDrag = page && page->dragController().startDrag(frame, dragState(), sourceOperationMask, event.event(), m_mouseDownContentsPosition, hasNonDefaultPasteboardData);
         // In WebKit2 we could re-enter this code and start another drag.
         // On OS X this causes problems with the ownership of the pasteboard and the promised types.
@@ -4453,7 +4454,7 @@ bool EventHandler::tabsToLinks(KeyboardEvent* event) const
 {
     // FIXME: This function needs a better name. It can be called for keypresses other than Tab when spatial navigation is enabled.
 
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return false;
 
@@ -4546,7 +4547,7 @@ void EventHandler::defaultBackspaceEventHandler(KeyboardEvent& event)
     if (!m_frame->editor().behavior().shouldNavigateBackOnBackspace())
         return;
     
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return;
 
@@ -4573,7 +4574,7 @@ void EventHandler::stopKeyboardScrolling()
 bool EventHandler::beginKeyboardScrollGesture(KeyboardScrollingAnimator* animator, ScrollDirection direction, ScrollGranularity granularity, bool isKeyRepeat)
 {
     if (animator && animator->beginKeyboardScrollGesture(direction, granularity, isKeyRepeat)) {
-        m_frame->checkedPage()->setCurrentKeyboardScrollingAnimator(animator);
+        m_frame->protectedPage()->setCurrentKeyboardScrollingAnimator(animator);
         return true;
     }
 
@@ -4734,7 +4735,7 @@ void EventHandler::defaultArrowEventHandler(FocusDirection focusDirection, Keybo
     if (event.ctrlKey() || event.metaKey() || event.altGraphKey() || event.shiftKey())
         return;
 
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return;
 
@@ -4757,7 +4758,7 @@ void EventHandler::defaultTabEventHandler(KeyboardEvent& event)
     if (event.ctrlKey() || event.metaKey() || event.altGraphKey())
         return;
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return;
 
@@ -5178,7 +5179,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget*)
 
 void EventHandler::focusDocumentView()
 {
-    if (CheckedPtr page = m_frame->page())
+    if (RefPtr page = m_frame->page())
         CheckedRef(page->focusController())->setFocusedFrame(protectedFrame().ptr());
 }
 #endif // !PLATFORM(COCOA)

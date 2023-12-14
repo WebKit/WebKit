@@ -45,7 +45,7 @@ public:
         virtual bool animatesProperty(Property) const = 0;
 
         virtual bool isAcceleratedEffectKeyframe() const { return false; }
-        virtual bool isKeyframeValue() const { return false; }
+        virtual bool isBlendingKeyframe() const { return false; }
 
         virtual ~Keyframe() = default;
     };

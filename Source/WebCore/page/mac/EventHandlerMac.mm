@@ -144,7 +144,7 @@ inline CurrentEventScope::~CurrentEventScope()
 
 bool EventHandler::wheelEvent(NSEvent *event)
 {
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return false;
 
@@ -175,7 +175,7 @@ bool EventHandler::keyEvent(NSEvent *event)
 
 void EventHandler::focusDocumentView()
 {
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return;
 
@@ -259,7 +259,7 @@ bool EventHandler::passMouseDownEventToWidget(Widget* pWidget)
         return true;
     }
 
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return true;
 
@@ -734,7 +734,7 @@ bool EventHandler::passMouseReleaseEventToSubframe(MouseEventWithHitTestResults&
 PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
 {
     NSView *windowView = nil;
-    if (CheckedPtr page = m_frame->page())
+    if (RefPtr page = m_frame->page())
         windowView = page->chrome().platformPageClient();
     return PlatformEventFactory::createPlatformMouseEvent(currentNSEvent(), correspondingPressureEvent(), windowView);
 }
@@ -746,7 +746,7 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
 
 bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
 {
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return false;
 
@@ -861,7 +861,7 @@ static WeakPtr<ScrollableArea> scrollableAreaForContainerNode(ContainerNode& con
 
 void EventHandler::determineWheelEventTarget(const PlatformWheelEvent& wheelEvent, RefPtr<Element>& wheelEventTarget, WeakPtr<ScrollableArea>& scrollableArea, bool& isOverWidget)
 {
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return;
 
@@ -1038,7 +1038,7 @@ static IntSize autoscrollAdjustmentFactorForScreenBoundaries(const IntPoint& scr
 
 IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
 {
-    CheckedPtr page = m_frame->page();
+    RefPtr page = m_frame->page();
     if (!page)
         return valueOrDefault(m_lastKnownMousePosition);
 

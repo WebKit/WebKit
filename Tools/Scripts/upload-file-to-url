@@ -22,12 +22,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import webkitpy
+import sys
+
+try:
+    import webkitpy
+except Exception as e:
+    sys.stderr.write(f'Error while importing webkitpy: {e}... trying to continue\n')
 
 import argparse
 import os
 import requests
-import sys
 
 
 def upload(filename, url, max_attempts=3):
@@ -52,16 +56,15 @@ def upload(filename, url, max_attempts=3):
         for attempt in range(1, max_attempts + 1):
             try:
                 response = requests.put(url, data=data, timeout=10*60)
-                break
+                print(f'Response: {response}, status_code: {response.status_code}, {response.reason}')
             except Exception as e:
                 print(f'Exception: {e}')
+
+            if response and response.status_code // 100 == 2:
+                return 0
+
             if attempt < max_attempts:
                 print(f'Retrying, attempt {attempt + 1} of {max_attempts}')
-            else:
-                return -1
-        print(f'Response: {response}, status_code: {response.status_code}, {response.reason}')
-        if response and response.status_code // 100 == 2:
-            return 0
         return -1
 
 

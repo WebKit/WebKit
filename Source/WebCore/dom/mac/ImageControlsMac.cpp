@@ -151,7 +151,7 @@ bool handleEvent(HTMLElement& element, Event& event)
     if (!frame)
         return false;
 
-    CheckedPtr page = element.document().page();
+    RefPtr page = element.document().page();
     if (!page)
         return false;
     

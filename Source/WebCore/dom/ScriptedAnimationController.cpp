@@ -109,7 +109,7 @@ ScriptedAnimationController::CallbackId ScriptedAnimationController::registerCal
     callback->m_firedOrCancelled = false;
     callback->m_id = callbackId;
     RefPtr<ImminentlyScheduledWorkScope> workScope;
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         workScope = page->opportunisticTaskScheduler().makeScheduledWorkScope();
     m_callbackDataList.append({ WTFMove(callback), UserGestureIndicator::currentUserGesture(), WTFMove(workScope) });
 
@@ -188,7 +188,7 @@ void ScriptedAnimationController::serviceRequestAnimationFrameCallbacks(ReducedR
 
 void ScriptedAnimationController::scheduleAnimation()
 {
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::AnimationFrameCallbacks);
 }
 

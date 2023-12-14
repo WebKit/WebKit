@@ -1595,7 +1595,7 @@ void RenderElement::didRemoveCachedImageClient(CachedImage& cachedImage)
 
 void RenderElement::scheduleRenderingUpdateForImage(CachedImage&)
 {
-    if (CheckedPtr page = document().page())
+    if (RefPtr page = document().page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::Images);
 }
 

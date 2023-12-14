@@ -539,7 +539,7 @@ void Document::configureSharedLogger()
         return;
 
     bool alwaysOnLoggingAllowed = !allDocumentsMap().isEmpty() && WTF::allOf(allDocumentsMap().values(), [](auto& document) {
-        CheckedPtr page = document->page();
+        RefPtr page = document->page();
         return !page || page->sessionID().isAlwaysOnLoggingAllowed();
     });
     logger->setEnabled(sharedLoggerOwner(), alwaysOnLoggingAllowed);
@@ -1086,7 +1086,7 @@ void Document::childrenChanged(const ChildChange& change)
     // FIXME: Chrome::didReceiveDocType() used to be called only when the doctype changed. We need to check the
     // impact of calling this systematically. If the overhead is negligible, we need to rename didReceiveDocType,
     // otherwise, we need to detect the doc type changes before updating the viewport.
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->chrome().didReceiveDocType(*frame());
 
     RefPtr newDocumentElement = childrenOfType<Element>(*this).first();
@@ -1566,7 +1566,7 @@ void Document::setVisualUpdatesAllowed(bool visualUpdatesAllowed)
     if (needsLayout)
         updateLayout();
 
-    if (CheckedPtr page = this->page()) {
+    if (RefPtr page = this->page()) {
         if (frame()->isMainFrame()) {
             frameView->addPaintPendingMilestones(LayoutMilestone::DidFirstPaintAfterSuppressedIncrementalRendering);
             if (page->requestedLayoutMilestones() & LayoutMilestone::DidFirstLayoutAfterSuppressedIncrementalRendering)
@@ -2875,7 +2875,8 @@ void Document::willBeRemovedFromFrame()
     if (auto* pluginDocument = dynamicDowncast<PluginDocument>(*this))
         pluginDocument->detachFromPluginElement();
 
-    if (CheckedPtr page = this->page()) {
+    // Unable to ref the page as it may have started destruction.
+    if (WeakPtr page = this->page()) {
 #if ENABLE(POINTER_LOCK)
         page->pointerLockController().documentDetached(*this);
 #endif
@@ -2911,7 +2912,7 @@ void Document::willBeRemovedFromFrame()
 
     if (page() && !m_mediaState.isEmpty()) {
         m_mediaState = MediaProducer::IsNotPlaying;
-        checkedPage()->updateIsPlayingMedia();
+        protectedPage()->updateIsPlayingMedia();
     }
 
     selection().willBeRemovedFromFrame();
@@ -3108,7 +3109,7 @@ HighlightRegistry& Document::appHighlightRegistry()
 {
     if (!m_appHighlightRegistry) {
         m_appHighlightRegistry = HighlightRegistry::create();
-        if (CheckedPtr currentPage = page())
+        if (RefPtr currentPage = page())
             m_appHighlightRegistry->setHighlightVisibility(currentPage->chrome().client().appHighlightsVisiblility());
     }
     return *m_appHighlightRegistry;
@@ -3464,7 +3465,7 @@ void Document::implicitClose()
         // FIXME: We shouldn't be dispatching pending events globally on all Documents here.
         // For now, only do this when there is a Frame, otherwise this could cause JS reentrancy
         // below SVG font parsing, for example. <https://webkit.org/b/136269>
-        if (CheckedPtr currentPage = page()) {
+        if (RefPtr currentPage = page()) {
             ImageLoader::dispatchPendingLoadEvents(currentPage.get());
             HTMLLinkElement::dispatchPendingLoadEvents(currentPage.get());
             HTMLStyleElement::dispatchPendingLoadEvents(currentPage.get());
@@ -3651,7 +3652,7 @@ ExceptionOr<void> Document::writeln(Document* entryDocument, FixedVector<String>
 
 Seconds Document::minimumDOMTimerInterval() const
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return ScriptExecutionContext::minimumDOMTimerInterval();
     return page->settings().minimumDOMTimerInterval();
@@ -3685,7 +3686,7 @@ Seconds Document::domTimerAlignmentInterval(bool hasReachedMaxNestingLevel) cons
     if (m_isTimerThrottlingEnabled)
         alignmentInterval = std::max(alignmentInterval, DOMTimer::hiddenPageAlignmentInterval());
 
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         alignmentInterval = std::max(alignmentInterval, page->domTimerAlignmentInterval());
 
     if (!topOrigin().isSameOriginDomain(securityOrigin()) && !hasHadUserInteraction())
@@ -3915,7 +3916,7 @@ void Document::disableWebAssembly(const String& errorMessage)
 IDBClient::IDBConnectionProxy* Document::idbConnectionProxy()
 {
     if (!m_idbConnectionProxy) {
-        CheckedPtr currentPage = page();
+        RefPtr currentPage = page();
         if (!currentPage)
             return nullptr;
         m_idbConnectionProxy = &currentPage->idbConnection().proxy();
@@ -3936,7 +3937,7 @@ SocketProvider* Document::socketProvider()
 RefPtr<RTCDataChannelRemoteHandlerConnection> Document::createRTCDataChannelRemoteHandlerConnection()
 {
     ASSERT(isMainThread());
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return nullptr;
     return page->webRTCProvider().createRTCDataChannelRemoteHandlerConnection();
@@ -4249,7 +4250,7 @@ void Document::dispatchDisabledAdaptationsDidChangeForMainFrame()
     if (!frame()->isMainFrame())
         return;
 
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
 
@@ -4278,7 +4279,7 @@ void Document::processViewport(const String& features, ViewportArguments::Type o
 
 ViewportArguments Document::viewportArguments() const
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return m_viewportArguments;
     return page->overrideViewportArguments().value_or(m_viewportArguments);
@@ -4286,7 +4287,7 @@ ViewportArguments Document::viewportArguments() const
 
 void Document::updateViewportArguments()
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
 
@@ -4345,7 +4346,7 @@ void Document::themeColorChanged()
 {
     scheduleRenderingUpdate({ });
 
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->chrome().client().themeColorChanged();
 }
 
@@ -4406,7 +4407,7 @@ void Document::processColorScheme(const String& colorSchemeString)
     if (RefPtr frameView = view())
         frameView->recalculateBaseBackgroundColor();
 
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->updateStyleAfterChangeInEnvironment();
 }
 
@@ -4439,7 +4440,7 @@ void Document::processFormatDetection(const String& features)
 
 void Document::processWebAppOrientations()
 {
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->chrome().client().webAppOrientationsUpdated();
 }
 
@@ -4493,7 +4494,7 @@ MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& r
     auto captureElementChanged = CaptureChange::No;
     if (!request.readOnly()) {
         RefPtr targetElement = result.targetElement();
-        if (CheckedPtr page = this->page()) {
+        if (RefPtr page = this->page()) {
             // Before we dispatch a new mouse event, we must run the Process Pending Capture Element steps as defined
             // in https://w3c.github.io/pointerevents/#process-pending-pointer-capture.
             auto& pointerCaptureController = page->pointerCaptureController();
@@ -4766,7 +4767,7 @@ void Document::runScrollSteps()
                 scrollAnimationsInProgress = true;
         }
         if (scrollAnimationsInProgress)
-            checkedPage()->scheduleRenderingUpdate({ RenderingUpdateStep::Scroll });
+            protectedPage()->scheduleRenderingUpdate({ RenderingUpdateStep::Scroll });
 
         frameView->updateScrollAnchoringElementsForScrollableAreas();
         frameView->updateScrollAnchoringPositionForScrollableAreas();
@@ -4872,7 +4873,7 @@ void Document::updateIsPlayingMedia()
 
     m_mediaState = state;
 
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->updateIsPlayingMedia();
 
 #if ENABLE(MEDIA_STREAM)
@@ -5083,7 +5084,7 @@ void Document::invalidateRenderingDependentRegions()
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-    if (CheckedPtr page = this->page()) {
+    if (RefPtr page = this->page()) {
         if (RefPtr frameView = view()) {
             if (RefPtr scrollingCoordinator = page->scrollingCoordinator())
                 scrollingCoordinator->frameViewEventTrackingRegionsChanged(*frameView);
@@ -5147,7 +5148,7 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
             // Match the order in HTMLTextFormControlElement::dispatchBlurEvent.
             if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(*oldFocusedElement))
                 inputElement->endEditing();
-            if (CheckedPtr page = this->page())
+            if (RefPtr page = this->page())
                 page->chrome().client().elementDidBlur(*oldFocusedElement);
             ASSERT(!m_focusedElement);
         }
@@ -5254,7 +5255,7 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
             cache->onFocusChange(oldFocusedElement.get(), newFocusedElement);
     }
 
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->chrome().focusedElementChanged(protectedFocusedElement().get());
 
     return true;
@@ -5809,7 +5810,7 @@ ExceptionOr<String> Document::cookie()
         return String();
 
     if (!isDOMCookieCacheValid() && page())
-        setCachedDOMCookies(checkedPage()->cookieJar().cookies(*this, cookieURL));
+        setCachedDOMCookies(protectedPage()->cookieJar().cookies(*this, cookieURL));
 
     return String { cachedDOMCookies() };
 }
@@ -5830,7 +5831,7 @@ ExceptionOr<void> Document::setCookie(const String& value)
         return { };
 
     invalidateDOMCookieCache();
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->cookieJar().setCookies(*this, cookieURL, value);
     return { };
 }
@@ -6105,7 +6106,7 @@ bool Document::shouldMaskURLForBindingsInternal(const URL& urlToMask) const
     if (urlToMask.protocolIs(url().protocol()))
         return false;
 
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (UNLIKELY(!page))
         return false;
 
@@ -6143,7 +6144,7 @@ void Document::setBackForwardCacheState(BackForwardCacheState state)
     m_backForwardCacheState = state;
 
     RefPtr frameView = view();
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
 
     switch (state) {
     case InBackForwardCache:
@@ -6209,7 +6210,7 @@ void Document::suspend(ReasonForSuspension reason)
     m_didDispatchViewportPropertiesChanged = false;
 #endif
 
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->lockAllOverlayScrollbarsToHidden(true);
 
     if (CheckedPtr view = renderView()) {
@@ -6249,7 +6250,7 @@ void Document::resume(ReasonForSuspension reason)
     if (CheckedPtr view = renderView())
         view->setIsInWindow(true);
 
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->lockAllOverlayScrollbarsToHidden(false);
 
     ASSERT(m_frame);
@@ -6336,7 +6337,7 @@ void Document::privateBrowsingStateDidChange(PAL::SessionID sessionID)
 
 void Document::registerForCaptionPreferencesChangedCallbacks(HTMLMediaElement& element)
 {
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->group().ensureCaptionPreferences().setInterestedInCaptionPreferenceChanges();
 
     m_captionPreferencesChangedElements.add(element);
@@ -7142,7 +7143,7 @@ void Document::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& co
         return;
     }
 
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->console().addMessage(WTFMove(consoleMessage));
 }
 
@@ -7153,7 +7154,7 @@ void Document::addConsoleMessage(MessageSource source, MessageLevel level, const
         return;
     }
 
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->console().addMessage(source, level, message, requestIdentifier, this);
 
     if (RefPtr consoleMessageListener = m_consoleMessageListener)
@@ -7167,7 +7168,7 @@ void Document::addMessage(MessageSource source, MessageLevel level, const String
         return;
     }
 
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->console().addMessage(source, level, message, sourceURL, lineNumber, columnNumber, WTFMove(callStack), state, requestIdentifier);
 }
 
@@ -7180,7 +7181,7 @@ void Document::postTask(Task&& task)
         if (!document)
             return;
 
-        CheckedPtr page = document->page();
+        RefPtr page = document->page();
         if ((page && page->defersLoading() && document->activeDOMObjectsAreSuspended()) || !document->m_pendingTasks.isEmpty())
             document->m_pendingTasks.append(WTFMove(task));
         else
@@ -7314,7 +7315,7 @@ void Document::serviceRequestVideoFrameCallbacks()
     if (!isServicingRequestVideoFrameCallbacks)
         return;
 
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::VideoFrameCallbacks);
 #endif
 }
@@ -7427,7 +7428,7 @@ void Document::simulateDeviceOrientationChange(double alpha, double beta, double
 
 void Document::exitPointerLock()
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
     if (auto* target = page->pointerLockController().element()) {
@@ -7520,7 +7521,7 @@ int Document::requestIdleCallback(Ref<IdleRequestCallback>&& callback, Seconds t
 {
     if (!m_idleCallbackController)
         m_idleCallbackController = makeUnique<IdleCallbackController>(*this);
-    if (auto page = checkedPage())
+    if (RefPtr page = this->page())
         page->opportunisticTaskScheduler().willQueueIdleCallback();
     return m_idleCallbackController->queueIdleCallback(WTFMove(callback), timeout);
 }
@@ -7543,7 +7544,7 @@ HttpEquivPolicy Document::httpEquivPolicy() const
 
 void Document::wheelEventHandlersChanged(Node* node)
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
 
@@ -8148,14 +8149,14 @@ Ref<Settings> Document::protectedSettings() const
 float Document::deviceScaleFactor() const
 {
     float deviceScaleFactor = 1.0;
-    if (CheckedPtr documentPage = page())
+    if (RefPtr documentPage = page())
         deviceScaleFactor = documentPage->deviceScaleFactor();
     return deviceScaleFactor;
 }
 
 bool Document::useSystemAppearance() const
 {
-    if (CheckedPtr documentPage = page())
+    if (RefPtr documentPage = page())
         return documentPage->useSystemAppearance();
     return false;
 }
@@ -8180,7 +8181,7 @@ bool Document::useDarkAppearance(const RenderStyle* style) const
 #endif
 
     bool pageUsesDarkAppearance = false;
-    if (CheckedPtr documentPage = page())
+    if (RefPtr documentPage = page())
         pageUsesDarkAppearance = documentPage->useDarkAppearance();
 
     if (useSystemAppearance())
@@ -8196,7 +8197,7 @@ bool Document::useDarkAppearance(const RenderStyle* style) const
 
 bool Document::useElevatedUserInterfaceLevel() const
 {
-    if (CheckedPtr documentPage = page())
+    if (RefPtr documentPage = page())
         return documentPage->useElevatedUserInterfaceLevel();
     return false;
 }
@@ -8229,7 +8230,7 @@ CompositeOperator Document::compositeOperatorForBackgroundColor(const Color& col
 
 void Document::didAssociateFormControl(Element& element)
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page || !page->chrome().client().shouldNotifyOnFormChanges())
         return;
 
@@ -8246,7 +8247,7 @@ void Document::didAssociateFormControlsTimerFired()
         return std::nullopt;
     });
 
-    if (CheckedPtr page = this->page(); page && !controls.isEmpty()) {
+    if (RefPtr page = this->page(); page && !controls.isEmpty()) {
         ASSERT(m_frame);
         page->chrome().client().didAssociateFormControls(controls, protectedFrame().releaseNonNull());
     }
@@ -8272,7 +8273,7 @@ void Document::didLoadResourceSynchronously(const URL& url)
     // in this case, to be safe.
     invalidateDOMCookieCache();
 
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->cookieJar().clearCacheForHost(url.host().toString());
 }
 
@@ -8298,13 +8299,13 @@ void Document::ensurePlugInsInjectedScript(DOMWrapperWorld& world)
 
 bool Document::wrapCryptoKey(const Vector<uint8_t>& key, Vector<uint8_t>& wrappedKey)
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     return page && page->chrome().client().wrapCryptoKey(key, wrappedKey);
 }
 
 bool Document::unwrapCryptoKey(const Vector<uint8_t>& wrappedKey, Vector<uint8_t>& key)
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     return page && page->chrome().client().unwrapCryptoKey(wrappedKey, key);
 }
 
@@ -8319,7 +8320,7 @@ Element* Document::activeElement()
 
 bool Document::hasFocus() const
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page || !page->focusController().isActive() || !page->focusController().isFocused())
         return false;
     if (RefPtr focusedFrame = page->focusController().focusedFrame()) {
@@ -8333,7 +8334,7 @@ bool Document::hasFocus() const
 
 void Document::addPlaybackTargetPickerClient(MediaPlaybackTargetClient& client)
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
 
@@ -8357,13 +8358,13 @@ void Document::removePlaybackTargetPickerClient(MediaPlaybackTargetClient& clien
     m_idToClientMap.remove(clientId);
     m_clientToIDMap.remove(it);
 
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->removePlaybackTargetPickerClient(clientId);
 }
 
 void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool isVideo, RouteSharingPolicy routeSharingPolicy, const String& routingContextUID)
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
 
@@ -8381,7 +8382,7 @@ void Document::showPlaybackTargetPicker(MediaPlaybackTargetClient& client, bool 
 
 void Document::playbackTargetPickerClientStateDidChange(MediaPlaybackTargetClient& client, MediaProducerMediaStateFlags state)
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
 
@@ -8525,7 +8526,7 @@ void Document::scheduleRenderingUpdate(OptionSet<RenderingUpdateStep> requestedS
         m_intersectionObserversInitialUpdateTimer.stop();
         requestedSteps.add(RenderingUpdateStep::IntersectionObservations);
     }
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->scheduleRenderingUpdate(requestedSteps);
 }
 
@@ -8819,7 +8820,7 @@ Logger& Document::logger()
     if (!m_logger) {
         Ref logger = Logger::create(this);
         m_logger = logger.copyRef();
-        CheckedPtr page = this->page();
+        RefPtr page = this->page();
         logger->setEnabled(this, page && page->sessionID().isAlwaysOnLoggingAllowed());
         logger->addObserver(*this);
     }
@@ -9280,7 +9281,7 @@ void Document::didLogMessage(const WTFLogChannel& channel, WTFLogLevel level, Ve
         });
         return;
     }
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return;
 
@@ -9654,7 +9655,7 @@ void Document::whenVisible(Function<void()>&& callback)
 NotificationClient* Document::notificationClient()
 {
 #if ENABLE(NOTIFICATIONS)
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return nullptr;
 
@@ -9666,7 +9667,7 @@ NotificationClient* Document::notificationClient()
 
 GraphicsClient* Document::graphicsClient()
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
     if (!page)
         return nullptr;
     return &page->chrome();
@@ -9674,7 +9675,7 @@ GraphicsClient* Document::graphicsClient()
 
 std::optional<PAL::SessionID> Document::sessionID() const
 {
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         return page->sessionID();
 
     return std::nullopt;
@@ -9778,7 +9779,7 @@ std::optional<uint64_t> Document::noiseInjectionHashSalt() const
 {
     if (!page() || noiseInjectionPolicy() == NoiseInjectionPolicy::None)
         return std::nullopt;
-    return checkedPage()->noiseInjectionHashSaltForDomain(RegistrableDomain { m_url });
+    return protectedPage()->noiseInjectionHashSaltForDomain(RegistrableDomain { m_url });
 }
 
 ContentVisibilityDocumentState& Document::contentVisibilityDocumentState()
@@ -9866,7 +9867,7 @@ void Document::performPendingViewTransitions()
 
 String Document::mediaKeysStorageDirectory()
 {
-    CheckedPtr currentPage = page();
+    RefPtr currentPage = page();
     return currentPage ? currentPage->ensureMediaKeysStorageDirectoryForOrigin(securityOrigin().data()) : emptyString();
 }
 

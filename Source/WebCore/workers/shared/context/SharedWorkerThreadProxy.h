@@ -59,7 +59,7 @@ public:
     void setAsTerminatingOrTerminated() { m_isTerminatingOrTerminated = true; }
 
 private:
-    WEBCORE_EXPORT SharedWorkerThreadProxy(UniqueRef<Page>&&, SharedWorkerIdentifier, const ClientOrigin&, WorkerFetchResult&&, WorkerOptions&&, WorkerInitializationData&&, CacheStorageProvider&);
+    WEBCORE_EXPORT SharedWorkerThreadProxy(Ref<Page>&&, SharedWorkerIdentifier, const ClientOrigin&, WorkerFetchResult&&, WorkerOptions&&, WorkerInitializationData&&, CacheStorageProvider&);
 
     bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode);
 
@@ -88,7 +88,7 @@ private:
 
     ReportingClient* reportingClient() const final;
 
-    UniqueRef<Page> m_page;
+    Ref<Page> m_page;
     Ref<Document> m_document;
     ScriptExecutionContextIdentifier m_contextIdentifier;
     Ref<SharedWorkerThread> m_workerThread;

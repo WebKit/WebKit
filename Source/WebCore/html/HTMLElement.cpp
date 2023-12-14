@@ -415,7 +415,7 @@ void HTMLElement::attributeChanged(const QualifiedName& name, const AtomString& 
         return;
     case AttributeNames::inputmodeAttr:
         if (Ref document = this->document(); this == document->focusedElement()) {
-            if (CheckedPtr page = document->page())
+            if (RefPtr page = document->page())
                 page->chrome().client().focusedElementDidChangeInputMode(*this, canonicalInputMode());
         }
         return;

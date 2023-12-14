@@ -395,7 +395,7 @@ bool LocalDOMWindow::canShowModalDialog(const LocalFrame& frame)
         }
     }
 
-    CheckedPtr page = frame.page();
+    RefPtr page = frame.page();
     return page && page->chrome().canRunModal();
 }
 
@@ -432,7 +432,7 @@ void LocalDOMWindow::didSecureTransitionTo(Document& document)
 
 void LocalDOMWindow::prewarmLocalStorageIfNecessary()
 {
-    CheckedPtr page = this->page();
+    RefPtr page = this->page();
 
     // No need to prewarm for ephemeral sessions since the data is in memory only.
     if (!page || page->usesEphemeralSession())
@@ -480,7 +480,7 @@ Page* LocalDOMWindow::page() const
     return frame() ? frame()->page() : nullptr;
 }
 
-CheckedPtr<Page> LocalDOMWindow::checkedPage() const
+RefPtr<Page> LocalDOMWindow::protectedPage() const
 {
     return page();
 }
@@ -817,7 +817,7 @@ bool LocalDOMWindow::shouldHaveWebKitNamespaceForWorld(DOMWrapperWorld& world)
     if (!frame)
         return false;
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return false;
 
@@ -836,7 +836,7 @@ WebKitNamespace* LocalDOMWindow::webkitNamespace()
 {
     if (!isCurrentlyDisplayedInFrame())
         return nullptr;
-    CheckedPtr page = frame()->page();
+    RefPtr page = frame()->page();
     if (!page)
         return nullptr;
     if (!m_webkitNamespace)
@@ -861,7 +861,7 @@ ExceptionOr<Storage*> LocalDOMWindow::sessionStorage()
     if (m_sessionStorage)
         return m_sessionStorage.get();
 
-    CheckedPtr page = document->page();
+    RefPtr page = document->page();
     if (!page)
         return nullptr;
 
@@ -884,7 +884,7 @@ ExceptionOr<Storage*> LocalDOMWindow::localStorage()
     if (document->canAccessResource(ScriptExecutionContext::ResourceType::LocalStorage) == ScriptExecutionContext::HasResourceAccess::No)
         return Exception { ExceptionCode::SecurityError };
 
-    CheckedPtr page = document->page();
+    RefPtr page = document->page();
     // FIXME: We should consider supporting access/modification to local storage
     // after calling window.close(). See <https://bugs.webkit.org/show_bug.cgi?id=135330>.
     if (!page || !page->isClosing()) {
@@ -1037,7 +1037,7 @@ void LocalDOMWindow::focus(LocalDOMWindow& incumbentWindow)
         if (!openerFrame || openerFrame == frame || incumbentWindow.frame() != openerFrame)
             return false;
 
-        CheckedPtr page = openerFrame->page();
+        RefPtr page = openerFrame->page();
         return page && page->isVisibleAndActive();
     }());
 }
@@ -1048,7 +1048,7 @@ void LocalDOMWindow::focus(bool allowFocus)
     if (!frame)
         return;
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return;
 
@@ -1075,7 +1075,7 @@ void LocalDOMWindow::blur()
     if (!frame)
         return;
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return;
 
@@ -1101,7 +1101,7 @@ void LocalDOMWindow::close()
     if (!frame)
         return;
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return;
 
@@ -1133,7 +1133,7 @@ void LocalDOMWindow::print()
     if (!frame)
         return;
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return;
 
@@ -1177,7 +1177,7 @@ void LocalDOMWindow::alert(const String& message)
         return;
     }
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return;
 
@@ -1206,7 +1206,7 @@ bool LocalDOMWindow::confirmForBindings(const String& message)
         return false;
     }
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return false;
 
@@ -1235,7 +1235,7 @@ String LocalDOMWindow::prompt(const String& message, const String& defaultValue)
         return String();
     }
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return String();
 
@@ -1286,7 +1286,7 @@ int LocalDOMWindow::outerHeight() const
     if (!frame)
         return 0;
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return 0;
 
@@ -1314,7 +1314,7 @@ int LocalDOMWindow::outerWidth() const
     if (!frame)
         return 0;
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return 0;
 
@@ -1382,7 +1382,7 @@ int LocalDOMWindow::screenX() const
     if (!frame)
         return 0;
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page || page->fingerprintingProtectionsEnabled())
         return 0;
 
@@ -1395,7 +1395,7 @@ int LocalDOMWindow::screenY() const
     if (!frame)
         return 0;
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page || page->fingerprintingProtectionsEnabled())
         return 0;
 
@@ -1464,7 +1464,7 @@ bool LocalDOMWindow::closed() const
     if (!frame)
         return true;
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     return !page || page->isClosing();
 }
 
@@ -1738,7 +1738,7 @@ double LocalDOMWindow::devicePixelRatio() const
     if (!frame)
         return 0.0;
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return 0.0;
 
@@ -1829,7 +1829,7 @@ void LocalDOMWindow::moveBy(int x, int y) const
     if (!allowedToChangeWindowGeometry())
         return;
 
-    CheckedPtr page = frame()->page();
+    RefPtr page = frame()->page();
     auto fr = page->chrome().windowRect();
     auto update = fr;
     update.move(x, y);
@@ -1841,7 +1841,7 @@ void LocalDOMWindow::moveTo(int x, int y) const
     if (!allowedToChangeWindowGeometry())
         return;
 
-    CheckedPtr page = frame()->page();
+    RefPtr page = frame()->page();
     auto fr = page->chrome().windowRect();
 
     auto sr = screenAvailableRect(page->mainFrame().virtualView());
@@ -1856,7 +1856,7 @@ void LocalDOMWindow::resizeBy(int x, int y) const
     if (!allowedToChangeWindowGeometry())
         return;
 
-    CheckedPtr page = frame()->page();
+    RefPtr page = frame()->page();
     auto fr = page->chrome().windowRect();
     auto dest = fr.size() + LayoutSize(x, y);
     LayoutRect update(fr.location(), dest);
@@ -1868,7 +1868,7 @@ void LocalDOMWindow::resizeTo(int width, int height) const
     if (!allowedToChangeWindowGeometry())
         return;
 
-    CheckedPtr page = frame()->page();
+    RefPtr page = frame()->page();
     auto fr = page->chrome().windowRect();
     auto dest = LayoutSize(width, height);
     LayoutRect update(fr.location(), dest);
@@ -2072,7 +2072,7 @@ DeviceOrientationController* LocalDOMWindow::deviceOrientationController() const
 #if PLATFORM(IOS_FAMILY)
     return document() ? &document()->deviceOrientationController() : nullptr;
 #else
-    return DeviceOrientationController::from(checkedPage().get());
+    return DeviceOrientationController::from(protectedPage().get());
 #endif
 }
 
@@ -2081,7 +2081,7 @@ DeviceMotionController* LocalDOMWindow::deviceMotionController() const
 #if PLATFORM(IOS_FAMILY)
     return document() ? &document()->deviceMotionController() : nullptr;
 #else
-    return DeviceMotionController::from(checkedPage().get());
+    return DeviceMotionController::from(protectedPage().get());
 #endif
 }
 
@@ -2237,7 +2237,7 @@ void LocalDOMWindow::incrementScrollEventListenersCount()
     RefPtr document = this->document();
     if (++m_scrollEventListenerCount == 1 && document == &document->topDocument()) {
         if (RefPtr frame = this->frame(); frame && frame->page())
-            frame->checkedPage()->chrome().client().setNeedsScrollNotifications(*frame, true);
+            frame->protectedPage()->chrome().client().setNeedsScrollNotifications(*frame, true);
     }
 }
 
@@ -2247,7 +2247,7 @@ void LocalDOMWindow::decrementScrollEventListenersCount()
     if (!--m_scrollEventListenerCount && document == &document->topDocument()) {
         RefPtr frame = this->frame();
         if (frame && frame->page() && document->backForwardCacheState() == Document::NotInBackForwardCache)
-            frame->checkedPage()->chrome().client().setNeedsScrollNotifications(*frame, false);
+            frame->protectedPage()->chrome().client().setNeedsScrollNotifications(*frame, false);
     }
 }
 
@@ -2608,7 +2608,7 @@ ExceptionOr<RefPtr<LocalFrame>> LocalDOMWindow::createWindow(const String& urlSt
         newFrame->setOpener(&openerFrame);
 
     if (created)
-        newFrame->checkedPage()->setOpenedByDOM();
+        newFrame->protectedPage()->setOpenedByDOM();
 
     RefPtr localNewFrame = dynamicDowncast<LocalFrame>(newFrame);
     if (localNewFrame && localNewFrame->document()->domWindow()->isInsecureScriptAccess(activeWindow, completedURL.string()))
@@ -2653,7 +2653,7 @@ ExceptionOr<RefPtr<WindowProxy>> LocalDOMWindow::open(LocalDOMWindow& activeWind
         urlString = "about:blank"_s;
 
 #if ENABLE(CONTENT_EXTENSIONS)
-    CheckedPtr page = firstFrame->page();
+    RefPtr page = firstFrame->page();
     RefPtr firstFrameDocument = firstFrame->document();
 
     RefPtr localFrame = dynamicDowncast<LocalFrame>(firstFrame->mainFrame());
@@ -2753,13 +2753,13 @@ void LocalDOMWindow::showModalDialog(const String& urlString, const String& dial
 
 void LocalDOMWindow::enableSuddenTermination()
 {
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->chrome().enableSuddenTermination();
 }
 
 void LocalDOMWindow::disableSuddenTermination()
 {
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         page->chrome().disableSuddenTermination();
 }
 

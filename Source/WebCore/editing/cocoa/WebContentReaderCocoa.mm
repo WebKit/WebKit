@@ -448,7 +448,7 @@ static std::optional<MarkupAndArchive> extractMarkupAndArchive(SharedBuffer& buf
 
 static String sanitizeMarkupWithArchive(LocalFrame& frame, Document& destinationDocument, MarkupAndArchive& markupAndArchive, MSOListQuirks msoListQuirks, const std::function<bool(const String)>& canShowMIMETypeAsHTML)
 {
-    auto page = createPageForSanitizingWebContent();
+    Ref page = createPageForSanitizingWebContent();
     auto* localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
     if (!localMainFrame)
         return String();
@@ -680,7 +680,7 @@ bool WebContentReader::readPlainText(const String& text)
         return false;
 
     String precomposedString = [text precomposedStringWithCanonicalMapping];
-    if (CheckedPtr page = frame().page())
+    if (RefPtr page = frame().page())
         precomposedString = page->applyLinkDecorationFiltering(precomposedString, LinkDecorationFilteringTrigger::Paste);
 
     addFragment(createFragmentFromText(m_context, precomposedString));

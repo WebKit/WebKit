@@ -38,7 +38,7 @@ std::unique_ptr<WebMediaPlaybackTargetPicker> WebMediaPlaybackTargetPicker::crea
 }
 
 WebMediaPlaybackTargetPicker::WebMediaPlaybackTargetPicker(WebView *webView, WebCore::Page& page)
-    : m_page(&page)
+    : m_page(page)
     , m_webView(webView)
 {
 }

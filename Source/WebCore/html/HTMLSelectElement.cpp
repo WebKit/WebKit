@@ -816,7 +816,7 @@ void HTMLSelectElement::setRecalcListItems()
         cache->childrenChanged(this);
 
     if (Ref document = this->document(); this == document->focusedElement()) {
-        if (CheckedPtr page = document->page())
+        if (RefPtr page = document->page())
             page->chrome().client().focusedSelectElementDidChangeOptions(*this);
     }
 }

@@ -145,7 +145,7 @@ private:
     std::optional<bool> evaluationResultToBoolean(InspectorFrontendAPIDispatcher::EvaluationResult);
 
     InspectorController* m_inspectedPageController { nullptr };
-    WeakPtr<Page> m_frontendPage;
+    SingleThreadWeakPtr<Page> m_frontendPage;
     // TODO(yurys): this ref shouldn't be needed.
     RefPtr<InspectorFrontendHost> m_frontendHost;
     std::unique_ptr<InspectorFrontendClientLocal::Settings> m_settings;
