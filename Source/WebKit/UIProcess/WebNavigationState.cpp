@@ -89,8 +89,6 @@ Ref<API::Navigation> WebNavigationState::createSimulatedLoadWithDataNavigation(W
 API::Navigation* WebNavigationState::navigation(uint64_t navigationID)
 {
     ASSERT(navigationID);
-    ASSERT(m_navigations.contains(navigationID));
-
     return m_navigations.get(navigationID);
 }
 
