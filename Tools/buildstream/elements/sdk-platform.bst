@@ -21,7 +21,6 @@ depends:
 - sdk/gst-plugin-closedcaption.bst
 - sdk/gst-plugin-dav1d.bst
 - sdk/gst-plugin-rtp.bst
-- sdk/gtk+-3.bst
 - sdk/gtk.bst
 - sdk/icecc.bst
 - sdk/krb5.bst
@@ -30,6 +29,7 @@ depends:
 - sdk/libevent.bst
 - sdk/libjxl.bst
 - sdk/libmanette.bst
+- sdk/libportal.bst
 - sdk/libsecret.bst
 - sdk/libusrsctp.bst
 - sdk/libwpe.bst
@@ -101,6 +101,7 @@ depends:
 - freedesktop-sdk.bst:components/gstreamer-plugins-good.bst
 - freedesktop-sdk.bst:components/gstreamer-plugins-ugly.bst
 - freedesktop-sdk.bst:components/gstreamer.bst
+- freedesktop-sdk.bst:components/gtk3.bst
 - freedesktop-sdk.bst:components/gtk-doc.bst
 - freedesktop-sdk.bst:components/gzip.bst
 - freedesktop-sdk.bst:components/harfbuzz.bst

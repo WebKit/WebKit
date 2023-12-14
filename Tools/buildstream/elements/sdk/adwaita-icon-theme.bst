@@ -6,6 +6,6 @@ sources:
 build-depends:
 - freedesktop-sdk.bst:public-stacks/buildsystem-meson.bst
 depends:
-- sdk/gtk+-3.bst
+- freedesktop-sdk.bst:components/gtk3.bst
 - freedesktop-sdk.bst:components/librsvg.bst
 - freedesktop-sdk.bst:bootstrap-import.bst
