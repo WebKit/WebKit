@@ -104,7 +104,7 @@ void RemoteImageBufferSet::flush()
 }
 
 // This is the GPU Process version of RemoteLayerBackingStore::prepareBuffers().
-void RemoteImageBufferSet::ensureBufferForDisplay(const ImageBufferSetPrepareBufferForDisplayInputData& inputData, ImageBufferSetPrepareBufferForDisplayOutputData& outputData)
+void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferForDisplayInputData& inputData, ImageBufferSetPrepareBufferForDisplayOutputData& outputData)
 {
     assertIsCurrent(workQueue());
     auto bufferIdentifier = [](RefPtr<WebCore::ImageBuffer> buffer) -> std::optional<RenderingResourceIdentifier> {
@@ -123,8 +123,10 @@ void RemoteImageBufferSet::ensureBufferForDisplay(const ImageBufferSetPrepareBuf
     bool needsFullDisplay = false;
     if (m_frontBuffer) {
         auto previousState = m_frontBuffer->setNonVolatile();
-        if (previousState == SetNonVolatileResult::Empty)
+        if (previousState == SetNonVolatileResult::Empty) {
             needsFullDisplay = true;
+            inputData.dirtyRegion = IntRect { { }, expandedIntSize(m_logicalSize) };
+        }
     }
 
     if (!m_frontBuffer || !inputData.supportsPartialRepaint || isSmallLayerBacking(m_frontBuffer->parameters()))

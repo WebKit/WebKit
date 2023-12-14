@@ -50,7 +50,7 @@ public:
 
     // Ensures frontBuffer is valid, either by swapping an existing back
     // buffer, or allocating a new one.
-    void ensureBufferForDisplay(const ImageBufferSetPrepareBufferForDisplayInputData&, ImageBufferSetPrepareBufferForDisplayOutputData&);
+    void ensureBufferForDisplay(ImageBufferSetPrepareBufferForDisplayInputData&, ImageBufferSetPrepareBufferForDisplayOutputData&);
 
     // Initializes the contents of the new front buffer using the previous
     // frames (if applicable), clips to the dirty region, and clears the pixels
