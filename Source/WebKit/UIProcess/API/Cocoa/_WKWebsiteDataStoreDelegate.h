@@ -52,6 +52,8 @@ typedef NS_ENUM(NSInteger, WKWindowProxyProperty) {
     WKWindowProxyPropertyOther,
 } WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
+#define HAVE_WK_WINDOW_PROXY_PROPERTY 1
+
 WK_API_AVAILABLE(macos(10.15), ios(13.0))
 @protocol _WKWebsiteDataStoreDelegate <NSObject>
 
