@@ -186,7 +186,7 @@ private:
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_constructorDocument;
     WeakHashSet<ContainerNode, WeakPtrImplWithEventTargetData> m_adoptingTreeScopes;
 
-    CheckedPtr<Node> m_ownerNode;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_ownerNode;
     WeakPtr<CSSImportRule> m_ownerRule;
 
     TextPosition m_startPosition;
