@@ -31,10 +31,10 @@
 #pragma once
 
 #include "Element.h"
-#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -60,11 +60,11 @@ public:
     RefPtr<Element> getElementByName(const AtomString&, const TreeScope&) const;
     RefPtr<HTMLMapElement> getElementByMapName(const AtomString&, const TreeScope&) const;
     RefPtr<HTMLImageElement> getElementByUsemap(const AtomString&, const TreeScope&) const;
-    const Vector<CheckedRef<Element>>* getElementsByLabelForAttribute(const AtomString&, const TreeScope&) const;
+    const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* getElementsByLabelForAttribute(const AtomString&, const TreeScope&) const;
     RefPtr<Element> getElementByWindowNamedItem(const AtomString&, const TreeScope&) const;
     RefPtr<Element> getElementByDocumentNamedItem(const AtomString&, const TreeScope&) const;
 
-    const Vector<CheckedRef<Element>>* getAllElementsById(const AtomString&, const TreeScope&) const;
+    const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* getAllElementsById(const AtomString&, const TreeScope&) const;
 
     const Vector<AtomString> keys() const;
 
@@ -72,7 +72,7 @@ private:
     template <typename KeyMatchingFunction>
     RefPtr<Element> get(const AtomString&, const TreeScope&, const KeyMatchingFunction&) const;
     template <typename KeyMatchingFunction>
-    Vector<CheckedRef<Element>>* getAll(const AtomString&, const TreeScope&, const KeyMatchingFunction&) const;
+    Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* getAll(const AtomString&, const TreeScope&, const KeyMatchingFunction&) const;
 
     struct MapEntry {
         MapEntry() { }
@@ -81,11 +81,11 @@ private:
             , count(1)
         { }
 
-        CheckedPtr<Element> element;
+        WeakPtr<Element, WeakPtrImplWithEventTargetData> element;
         unsigned count { 0 };
-        Vector<CheckedRef<Element>> orderedList;
+        Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>> orderedList;
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
-        HashSet<CheckedPtr<Element>> registeredElements;
+        HashSet<WeakRef<Element, WeakPtrImplWithEventTargetData>> registeredElements;
 #endif
     };
 

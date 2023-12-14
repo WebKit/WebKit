@@ -189,7 +189,7 @@ RefPtr<Element> TreeScope::getElementById(StringView elementId) const
     return nullptr;
 }
 
-const Vector<CheckedRef<Element>>* TreeScope::getAllElementsById(const AtomString& elementId) const
+const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScope::getAllElementsById(const AtomString& elementId) const
 {
     if (elementId.isEmpty())
         return nullptr;
@@ -353,7 +353,7 @@ void TreeScope::removeLabel(const AtomString& forAttributeValue, HTMLLabelElemen
     m_labelsByForAttribute->remove(forAttributeValue, element);
 }
 
-const Vector<CheckedRef<Element>>* TreeScope::labelElementsForId(const AtomString& forAttributeValue)
+const Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>>* TreeScope::labelElementsForId(const AtomString& forAttributeValue)
 {
     if (forAttributeValue.isEmpty())
         return nullptr;
