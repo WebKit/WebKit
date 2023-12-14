@@ -72,7 +72,7 @@ protected:
     static constexpr ptrdiff_t REPATCH_OFFSET_CALL_TO_POINTER = -((Assembler::NUMBER_OF_ADDRESS_ENCODING_INSTRUCTIONS + 1) * INSTRUCTION_SIZE);
 
 public:
-    MacroAssemblerARM64()
+    ALWAYS_INLINE MacroAssemblerARM64()
         : m_dataMemoryTempRegister(this, dataTempRegister)
         , m_cachedMemoryTempRegister(this, memoryTempRegister)
         , m_makeJumpPatchable(false)
@@ -88,14 +88,14 @@ public:
     static constexpr Assembler::JumpType DefaultJump = Assembler::JumpNoConditionFixedSize;
 
     Vector<LinkRecord, 0, UnsafeVectorOverflow>& jumpsToLink() { return m_assembler.jumpsToLink(); }
-    static bool canCompact(JumpType jumpType) { return Assembler::canCompact(jumpType); }
-    static JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to) { return Assembler::computeJumpType(record, from, to); }
-    static int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return Assembler::jumpSizeDelta(jumpType, jumpLinkType); }
+    ALWAYS_INLINE static bool canCompact(JumpType jumpType) { return Assembler::canCompact(jumpType); }
+    ALWAYS_INLINE static JumpLinkType computeJumpType(LinkRecord& record, const uint8_t* from, const uint8_t* to) { return Assembler::computeJumpType(record, from, to); }
+    ALWAYS_INLINE static int jumpSizeDelta(JumpType jumpType, JumpLinkType jumpLinkType) { return Assembler::jumpSizeDelta(jumpType, jumpLinkType); }
 
     template <Assembler::CopyFunction copy>
     ALWAYS_INLINE static void link(LinkRecord& record, uint8_t* from, const uint8_t* fromInstruction, uint8_t* to) { return Assembler::link<copy>(record, from, fromInstruction, to); }
 
-    static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
+    ALWAYS_INLINE static bool isCompactPtrAlignedAddressOffset(ptrdiff_t value)
     {
         // This is the largest 32-bit access allowed, aligned to 64-bit boundary.
         return !(value & ~0x3ff8);
