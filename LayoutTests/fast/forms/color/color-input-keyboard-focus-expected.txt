@@ -1,0 +1,10 @@
+Make sure that keyboard navigation doesn't skip the input with type color.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS color is color
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

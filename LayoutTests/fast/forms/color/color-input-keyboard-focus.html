@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <script>
+            async function test()
+            {
+                description("Make sure that keyboard navigation doesn't skip the input with type color.");
+
+                if (window.testRunner) {
+                    testRunner.waitUntilDone();
+                    await UIHelper.keyDown("\t");
+                    shouldBe(document.activeElement.id, document.getElementById("color").id);
+                    testRunner.notifyDone();
+                }
+            }
+        </script>
+    </head>
+    <body onload="test()">
+        <input type="color" id="color">
+    </body>
+</html>
