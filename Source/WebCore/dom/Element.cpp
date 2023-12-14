@@ -431,7 +431,7 @@ static bool isCompatibilityMouseEvent(const MouseEvent& mouseEvent)
 enum class ShouldIgnoreMouseEvent : bool { No, Yes };
 static ShouldIgnoreMouseEvent dispatchPointerEventIfNeeded(Element& element, const MouseEvent& mouseEvent, const PlatformMouseEvent& platformEvent, bool& didNotSwallowEvent)
 {
-    if (CheckedPtr page = element.document().page()) {
+    if (RefPtr page = element.document().page()) {
         auto& pointerCaptureController = page->pointerCaptureController();
 #if ENABLE(TOUCH_EVENTS)
         if (platformEvent.pointerId() != mousePointerID && mouseEvent.type() != eventNames().clickEvent && pointerCaptureController.preventsCompatibilityMouseEventsForIdentifier(platformEvent.pointerId()))
@@ -2793,7 +2793,7 @@ bool Element::hasEffectiveLangState() const
 
 void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
-    if (CheckedPtr page = document().page()) {
+    if (RefPtr page = document().page()) {
 #if ENABLE(POINTER_LOCK)
         page->pointerLockController().elementWasRemoved(*this);
 #endif
@@ -3601,7 +3601,7 @@ void Element::focus(const FocusOptions& options)
 
     Ref document { this->document() };
     if (document->focusedElement() == this) {
-        if (CheckedPtr page = document->page())
+        if (RefPtr page = document->page())
             page->chrome().client().elementDidRefocus(*this, options);
         return;
     }
@@ -3621,7 +3621,7 @@ void Element::focus(const FocusOptions& options)
     if (RefPtr root = shadowRootWithDelegatesFocus(*this)) {
         RefPtr currentlyFocusedElement = document->focusedElement();
         if (root->containsIncludingShadowDOM(currentlyFocusedElement.get())) {
-            if (CheckedPtr page = document->page())
+            if (RefPtr page = document->page())
                 page->chrome().client().elementDidRefocus(*currentlyFocusedElement, options);
             return;
         }
@@ -3632,7 +3632,7 @@ void Element::focus(const FocusOptions& options)
     } else if (!isProgramaticallyFocusable(*newTarget))
         return;
 
-    if (CheckedPtr page = document->page()) {
+    if (RefPtr page = document->page()) {
         Ref frame = *document->frame();
         if (!frame->hasHadUserInteraction() && !frame->isMainFrame() && !document->topOrigin().isSameOriginDomain(document->securityOrigin()))
             return;
@@ -3743,14 +3743,14 @@ void Element::dispatchFocusOutEventIfNeeded(RefPtr<Element>&& newFocusedElement)
 
 void Element::dispatchFocusEvent(RefPtr<Element>&& oldFocusedElement, const FocusOptions& options)
 {
-    if (CheckedPtr page = document().page())
+    if (RefPtr page = document().page())
         page->chrome().client().elementDidFocus(*this, options);
     dispatchEvent(FocusEvent::create(eventNames().focusEvent, Event::CanBubble::No, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(oldFocusedElement)));
 }
 
 void Element::dispatchBlurEvent(RefPtr<Element>&& newFocusedElement)
 {
-    if (CheckedPtr page = document().page())
+    if (RefPtr page = document().page())
         page->chrome().client().elementDidBlur(*this);
     dispatchEvent(FocusEvent::create(eventNames().blurEvent, Event::CanBubble::No, Event::IsCancelable::No, document().windowProxy(), 0, WTFMove(newFocusedElement)));
 }
@@ -4504,21 +4504,21 @@ void Element::setIFrameFullscreenFlag(bool flag)
 
 ExceptionOr<void> Element::setPointerCapture(int32_t pointerId)
 {
-    if (CheckedPtr page  =document().page())
+    if (RefPtr page = document().page())
         return page->pointerCaptureController().setPointerCapture(this, pointerId);
     return { };
 }
 
 ExceptionOr<void> Element::releasePointerCapture(int32_t pointerId)
 {
-    if (CheckedPtr page = document().page())
+    if (RefPtr page = document().page())
         return page->pointerCaptureController().releasePointerCapture(this, pointerId);
     return { };
 }
 
 bool Element::hasPointerCapture(int32_t pointerId)
 {
-    if (CheckedPtr page = document().page())
+    if (RefPtr page = document().page())
         return page->pointerCaptureController().hasPointerCapture(this, pointerId);
     return false;
 }
@@ -4527,7 +4527,7 @@ bool Element::hasPointerCapture(int32_t pointerId)
 
 void Element::requestPointerLock()
 {
-    if (CheckedPtr page = document().page())
+    if (RefPtr page = document().page())
         page->pointerLockController().requestPointerLock(this);
 }
 

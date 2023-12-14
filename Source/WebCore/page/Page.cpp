@@ -207,9 +207,9 @@
 
 namespace WebCore {
 
-static HashSet<CheckedPtr<Page>>& allPages()
+static HashSet<SingleThreadWeakRef<Page>>& allPages()
 {
-    static NeverDestroyed<HashSet<CheckedPtr<Page>>> set;
+    static NeverDestroyed<HashSet<SingleThreadWeakRef<Page>>> set;
     return set;
 }
 
@@ -230,7 +230,7 @@ DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, pageCounter, ("Page"));
 void Page::forEachPage(const Function<void(Page&)>& function)
 {
     for (auto& page : allPages())
-        function(*page);
+        function(page);
 }
 
 void Page::updateValidationBubbleStateIfNeeded()
@@ -251,7 +251,7 @@ static void networkStateChanged(bool isOnLine)
                 continue;
             frames.append(*localFrame);
         }
-        InspectorInstrumentation::networkStateChanged(*page);
+        InspectorInstrumentation::networkStateChanged(page);
     }
 
     auto& eventName = isOnLine ? eventNames().onlineEvent : eventNames().offlineEvent;
@@ -269,6 +269,7 @@ static constexpr OptionSet<ActivityState> pageInitialActivityState()
 
 static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<LocalFrameLoaderClient>, UniqueRef<RemoteFrameClient>>&& client, FrameIdentifier identifier)
 {
+    page.relaxAdoptionRequirement();
     return switchOn(WTFMove(client), [&] (UniqueRef<LocalFrameLoaderClient>&& localFrameClient) -> Ref<Frame> {
         auto localFrame = LocalFrame::createMainFrame(page, WTFMove(localFrameClient), identifier);
         page.addRootFrame(localFrame.get());
@@ -276,6 +277,11 @@ static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<LocalFrameL
     }, [&] (UniqueRef<RemoteFrameClient>&& remoteFrameClient) -> Ref<Frame> {
         return RemoteFrame::createMainFrame(page, WTFMove(remoteFrameClient), identifier);
     });
+}
+
+Ref<Page> Page::create(PageConfiguration&& pageConfiguration)
+{
+    return adoptRef(*new Page(WTFMove(pageConfiguration)));
 }
 
 Page::Page(PageConfiguration&& pageConfiguration)
@@ -381,8 +387,8 @@ Page::Page(PageConfiguration&& pageConfiguration)
         firstTimeInitializationRan = true;
     }
 
-    ASSERT(!allPages().contains(this));
-    allPages().add(this);
+    ASSERT(!allPages().contains(*this));
+    allPages().add(*this);
 
     if (!isUtilityPage()) {
         ++gNonUtilityPageCount;
@@ -418,9 +424,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
 
 Page::~Page()
 {
-    ASSERT(!m_nestedRunLoopCount);
-    ASSERT(!m_unnestCallback);
-
     m_validationMessageClient = nullptr;
     m_diagnosticLoggingClient = nullptr;
     m_performanceLoggingClient = nullptr;
@@ -428,7 +431,7 @@ Page::~Page()
     if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get()))
         localMainFrame->setView(nullptr);
     setGroupName(String());
-    allPages().remove(this);
+    allPages().remove(*this);
     if (!isUtilityPage()) {
         --gNonUtilityPageCount;
         MemoryPressureHandler::setPageCount(gNonUtilityPageCount);
@@ -2953,40 +2956,6 @@ void Page::setFooterHeight(int footerHeight)
     frameView->updateScrollbars(frameView->scrollPosition());
     frameView->setNeedsLayoutAfterViewConfigurationChange();
     frameView->setNeedsCompositingGeometryUpdate();
-}
-
-void Page::incrementNestedRunLoopCount()
-{
-    m_nestedRunLoopCount++;
-}
-
-void Page::decrementNestedRunLoopCount()
-{
-    ASSERT(m_nestedRunLoopCount);
-    if (m_nestedRunLoopCount <= 0)
-        return;
-
-    m_nestedRunLoopCount--;
-
-    if (!m_nestedRunLoopCount && m_unnestCallback) {
-        callOnMainThread([this] {
-            if (insideNestedRunLoop())
-                return;
-
-            // This callback may destruct the Page.
-            if (m_unnestCallback) {
-                auto callback = WTFMove(m_unnestCallback);
-                callback();
-            }
-        });
-    }
-}
-
-void Page::whenUnnested(Function<void()>&& callback)
-{
-    ASSERT(!m_unnestCallback);
-
-    m_unnestCallback = WTFMove(callback);
 }
 
 void Page::setCurrentKeyboardScrollingAnimator(KeyboardScrollingAnimator* animator)

@@ -124,7 +124,7 @@ void DocumentMarkerController::invalidateRectsForAllMarkers()
             marker.invalidate();
     }
 
-    if (CheckedPtr page = m_document->page())
+    if (RefPtr page = m_document->page())
         page->chrome().client().didInvalidateDocumentMarkerRects();
 }
 
@@ -139,7 +139,7 @@ void DocumentMarkerController::invalidateRectsForMarkersInNode(Node& node)
     for (auto& marker : *markers)
         marker.invalidate();
 
-    if (CheckedPtr page = m_document->page())
+    if (RefPtr page = m_document->page())
         page->chrome().client().didInvalidateDocumentMarkerRects();
 }
 

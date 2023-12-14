@@ -116,7 +116,7 @@ InsideLink VisitedLinkState::determineLinkStateSlowCase(const Element& element)
     if (!frame)
         return InsideLink::InsideUnvisited;
 
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page)
         return InsideLink::InsideUnvisited;
 

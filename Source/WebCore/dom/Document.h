@@ -663,7 +663,7 @@ public:
     inline LocalFrameView* view() const; // Defined in LocalFrame.h.
     RefPtr<LocalFrameView> protectedView() const;
     inline Page* page() const; // Defined in Page.h.
-    inline CheckedPtr<Page> checkedPage() const; // Defined in Page.h.
+    inline RefPtr<Page> protectedPage() const; // Defined in Page.h.
     const Settings& settings() const { return m_settings.get(); }
     Ref<Settings> protectedSettings() const;
     EditingBehavior editingBehavior() const;

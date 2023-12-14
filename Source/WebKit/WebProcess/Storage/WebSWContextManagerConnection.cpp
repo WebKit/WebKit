@@ -183,7 +183,7 @@ void WebSWContextManagerConnection::installServiceWorker(ServiceWorkerContextDat
 #endif
 
         auto lastNavigationWasAppInitiated = contextData.lastNavigationWasAppInitiated;
-        auto page = makeUniqueRef<Page>(WTFMove(pageConfiguration));
+        Ref page = Page::create(WTFMove(pageConfiguration));
         if (m_preferencesStore) {
             WebPage::updateSettingsGenerated(*m_preferencesStore, page->settings());
             page->settings().setStorageBlockingPolicy(static_cast<StorageBlockingPolicy>(m_preferencesStore->getUInt32ValueForKey(WebPreferencesKey::storageBlockingPolicyKey())));

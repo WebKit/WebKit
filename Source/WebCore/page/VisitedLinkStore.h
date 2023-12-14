@@ -50,7 +50,7 @@ public:
     WEBCORE_EXPORT void invalidateStylesForLink(SharedStringHash);
 
 private:
-    WeakHashSet<Page> m_pages;
+    SingleThreadWeakHashSet<Page> m_pages;
 };
 
 } // namespace WebCore

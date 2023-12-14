@@ -208,7 +208,7 @@ void removeOverlaySoonIfNeeded(HTMLElement& element)
             overlay->remove();
 
 #if ENABLE(IMAGE_ANALYSIS)
-        if (CheckedPtr page = element->document().page())
+        if (RefPtr page = element->document().page())
             page->resetTextRecognitionResult(*element);
 #endif
     });
@@ -607,7 +607,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
     }
 
     if (!result.dataDetectors.isEmpty()) {
-        CheckedPtr page = document->page();
+        RefPtr page = document->page();
         if (auto* overlayController = page ? page->imageOverlayControllerIfExists() : nullptr)
             overlayController->textRecognitionResultsChanged(element);
     }
@@ -695,7 +695,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
         frame->eventHandler().scheduleCursorUpdate();
 
     if (cacheTextRecognitionResults == CacheTextRecognitionResults::Yes) {
-        if (CheckedPtr page = document->page())
+        if (RefPtr page = document->page())
             page->cacheTextRecognitionResult(element, containerRect, result);
     }
 }

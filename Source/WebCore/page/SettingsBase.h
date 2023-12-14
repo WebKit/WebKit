@@ -167,7 +167,7 @@ protected:
     void sampleBufferContentKeySessionSupportEnabledChanged();
 #endif
 
-    WeakPtr<Page> m_page;
+    SingleThreadWeakPtr<Page> m_page;
 
     Seconds m_minimumDOMTimerInterval;
 

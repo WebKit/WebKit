@@ -95,7 +95,7 @@ private:
     void didFinishFadeOutAnimation();
 
     WeakPtr<DataDetectorHighlightClient> m_client;
-    WeakPtr<Page> m_page;
+    SingleThreadWeakPtr<Page> m_page;
     RetainPtr<DDHighlightRef> m_highlight;
     SimpleRange m_range;
     Ref<GraphicsLayer> m_graphicsLayer;

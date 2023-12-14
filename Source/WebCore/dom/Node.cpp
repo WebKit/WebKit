@@ -791,7 +791,7 @@ bool Node::isContentRichlyEditable() const
 
 void Node::inspect()
 {
-    if (CheckedPtr page = document().page())
+    if (RefPtr page = document().page())
         page->inspectorController().inspect(this);
 }
 

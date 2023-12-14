@@ -113,7 +113,7 @@ void DocumentStorageAccess::hasStorageAccess(Ref<DeferredPromise>&& promise)
         promise->resolve<IDLBoolean>(false);
         return;
     }
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page) {
         ASSERT_NOT_REACHED();
         promise->resolve<IDLBoolean>(false);
@@ -186,7 +186,7 @@ void DocumentStorageAccess::requestStorageAccess(Ref<DeferredPromise>&& promise)
         promise->reject();
         return;
     }
-    CheckedPtr page = frame->page();
+    RefPtr page = frame->page();
     if (!page) {
         ASSERT_NOT_REACHED();
         promise->reject();
@@ -269,7 +269,7 @@ void DocumentStorageAccess::requestStorageAccessQuirk(RegistrableDomain&& reques
     auto topFrameDomain = RegistrableDomain(document->topDocument().url());
 
     RefPtr frame = document->frame();
-    frame->checkedPage()->chrome().client().requestStorageAccess(WTFMove(requestingDomain), WTFMove(topFrameDomain), *frame, m_storageAccessScope, [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (RequestStorageAccessResult result) mutable {
+    frame->protectedPage()->chrome().client().requestStorageAccess(WTFMove(requestingDomain), WTFMove(topFrameDomain), *frame, m_storageAccessScope, [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (RequestStorageAccessResult result) mutable {
         if (!weakThis)
             return;
 

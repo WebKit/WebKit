@@ -188,7 +188,7 @@ ReplacementFragment::ReplacementFragment(RefPtr<DocumentFragment>&& inputFragmen
         return;
     }
 
-    auto page = createPageForSanitizingWebContent();
+    Ref page = createPageForSanitizingWebContent();
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
     if (!localMainFrame)
         return;

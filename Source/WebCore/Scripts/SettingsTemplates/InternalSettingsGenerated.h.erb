@@ -49,7 +49,7 @@ public:
 <%- end -%>
 
 private:
-    WeakPtr<Page> m_page;
+    SingleThreadWeakPtr<Page> m_page;
 
 <%- for @setting in @allSettingsSet.settings do -%>
 <%- if @setting.excludeFromInternalSettings == false and @setting.idlType -%>

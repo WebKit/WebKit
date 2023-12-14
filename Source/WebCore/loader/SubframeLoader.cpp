@@ -225,7 +225,7 @@ bool FrameLoader::SubframeLoader::requestObject(HTMLPlugInImageElement& ownerEle
     bool useFallback;
     if (shouldUsePlugin(completedURL, mimeType, hasFallbackContent, useFallback)) {
         bool success = requestPlugin(ownerElement, completedURL, mimeType, paramNames, paramValues, useFallback);
-        logPluginRequest(document->checkedPage().get(), mimeType, completedURL);
+        logPluginRequest(document->protectedPage().get(), mimeType, completedURL);
         return success;
     }
 
@@ -254,7 +254,7 @@ LocalFrame* FrameLoader::SubframeLoader::loadOrRedirectSubframe(HTMLFrameOwnerEl
         }
 
         if (RefPtr localFrame = dynamicDowncast<LocalFrame>(*frame); localFrame && localFrame->loader().isComplete()) {
-            if (CheckedPtr page = localFrame->page())
+            if (RefPtr page = localFrame->page())
                 page->willChangeLocationInCompletelyLoadedSubframe();
         }
 

@@ -48,5 +48,5 @@ public:
     }
 
 private:
-    WeakPtr<WebCore::Page> m_page;
+    SingleThreadWeakPtr<WebCore::Page> m_page;
 };

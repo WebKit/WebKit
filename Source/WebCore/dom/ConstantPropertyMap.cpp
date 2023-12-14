@@ -132,7 +132,7 @@ Ref<Document> ConstantPropertyMap::protectedDocument() const
 
 void ConstantPropertyMap::updateConstantsForSafeAreaInsets()
 {
-    CheckedPtr page = m_document->page();
+    RefPtr page = m_document->page();
     FloatBoxExtent unobscuredSafeAreaInsets = page ? page->unobscuredSafeAreaInsets() : FloatBoxExtent();
     setValueForProperty(ConstantProperty::SafeAreaInsetTop, variableDataForPositivePixelLength(unobscuredSafeAreaInsets.top()));
     setValueForProperty(ConstantProperty::SafeAreaInsetRight, variableDataForPositivePixelLength(unobscuredSafeAreaInsets.right()));
@@ -148,7 +148,7 @@ void ConstantPropertyMap::didChangeSafeAreaInsets()
 
 void ConstantPropertyMap::updateConstantsForFullscreen()
 {
-    CheckedPtr page = m_document->page();
+    RefPtr page = m_document->page();
     FloatBoxExtent fullscreenInsets = page ? page->fullscreenInsets() : FloatBoxExtent();
     setValueForProperty(ConstantProperty::FullscreenInsetTop, variableDataForPositivePixelLength(fullscreenInsets.top()));
     setValueForProperty(ConstantProperty::FullscreenInsetRight, variableDataForPositivePixelLength(fullscreenInsets.right()));

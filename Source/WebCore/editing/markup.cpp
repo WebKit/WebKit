@@ -183,11 +183,11 @@ void removeSubresourceURLAttributes(Ref<DocumentFragment>&& fragment, Function<b
         element->removeAttribute(attribute);
 }
 
-std::unique_ptr<Page> createPageForSanitizingWebContent()
+Ref<Page> createPageForSanitizingWebContent()
 {
     auto pageConfiguration = pageConfigurationWithEmptyClients(std::nullopt, PAL::SessionID::defaultSessionID());
     
-    auto page = makeUnique<Page>(WTFMove(pageConfiguration));
+    Ref page = Page::create(WTFMove(pageConfiguration));
 #if ENABLE(VIDEO)
     page->settings().setMediaEnabled(false);
 #endif
@@ -220,7 +220,7 @@ std::unique_ptr<Page> createPageForSanitizingWebContent()
 
 String sanitizeMarkup(const String& rawHTML, MSOListQuirks msoListQuirks, std::optional<Function<void(DocumentFragment&)>> fragmentSanitizer)
 {
-    auto page = createPageForSanitizingWebContent();
+    Ref page = createPageForSanitizingWebContent();
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
     if (!localMainFrame)
         return String();

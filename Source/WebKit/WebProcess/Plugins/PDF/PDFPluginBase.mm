@@ -288,7 +288,7 @@ IntRect PDFPluginBase::boundsOnScreen() const
     return WebCore::Accessibility::retrieveValueFromMainThread<WebCore::IntRect>([&] () -> WebCore::IntRect {
         FloatRect bounds = FloatRect(FloatPoint(), size());
         FloatRect rectInRootViewCoordinates = valueOrDefault(m_rootViewToPluginTransform.inverse()).mapRect(bounds);
-        CheckedPtr page = this->page();
+        RefPtr page = this->page();
         if (!page)
             return { };
         return page->chrome().rootViewToScreen(enclosingIntRect(rectInRootViewCoordinates));
@@ -337,7 +337,7 @@ void PDFPluginBase::setScrollOffset(const ScrollOffset& offset)
 
 bool PDFPluginBase::isActive() const
 {
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         return page->focusController().isActive();
 
     return false;
@@ -345,7 +345,7 @@ bool PDFPluginBase::isActive() const
 
 bool PDFPluginBase::forceUpdateScrollbarsOnMainThreadForPerformanceTesting() const
 {
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         return page->settings().scrollingPerformanceTestingEnabled();
 
     return false;
@@ -373,7 +373,7 @@ ScrollPosition PDFPluginBase::maximumScrollPosition() const
 
 float PDFPluginBase::deviceScaleFactor() const
 {
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         return page->deviceScaleFactor();
     return 1;
 }
@@ -500,7 +500,7 @@ Ref<Scrollbar> PDFPluginBase::createScrollbar(ScrollbarOrientation orientation)
     Ref widget = Scrollbar::createNativeScrollbar(*this, orientation, ScrollbarWidth::Auto);
     didAddScrollbar(widget.ptr(), orientation);
 
-    if (CheckedPtr page = this->page()) {
+    if (RefPtr page = this->page()) {
         if (page->isMonitoringWheelEvents())
             scrollAnimator().setWheelEventTestMonitor(page->wheelEventTestMonitor());
     }
@@ -540,7 +540,7 @@ IntRect PDFPluginBase::frameForHUDInRootViewCoordinates() const
 
 bool PDFPluginBase::hudEnabled() const
 {
-    if (CheckedPtr page = this->page())
+    if (RefPtr page = this->page())
         return page->settings().pdfPluginHUDEnabled();
     return false;
 }

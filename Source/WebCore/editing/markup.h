@@ -56,7 +56,7 @@ struct SimpleRange;
 void replaceSubresourceURLs(Ref<DocumentFragment>&&, HashMap<AtomString, AtomString>&&);
 void removeSubresourceURLAttributes(Ref<DocumentFragment>&&, Function<bool(const URL&)> shouldRemoveURL);
 
-std::unique_ptr<Page> createPageForSanitizingWebContent();
+Ref<Page> createPageForSanitizingWebContent();
 enum class MSOListQuirks : bool { CheckIfNeeded, Disabled };
 String sanitizeMarkup(const String&, MSOListQuirks = MSOListQuirks::Disabled, std::optional<Function<void(DocumentFragment&)>> fragmentSanitizer = std::nullopt);
 String sanitizedMarkupForFragmentInDocument(Ref<DocumentFragment>&&, Document&, MSOListQuirks, const String& originalMarkup);

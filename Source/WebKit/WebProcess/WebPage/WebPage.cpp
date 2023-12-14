@@ -454,37 +454,6 @@ public:
     }
 };
 
-class DeferredPageDestructor {
-public:
-    static void createDeferredPageDestructor(std::unique_ptr<Page> page, WebPage* webPage)
-    {
-        new DeferredPageDestructor(WTFMove(page), webPage);
-    }
-
-private:
-    DeferredPageDestructor(std::unique_ptr<Page> page, WebPage* webPage)
-        : m_page(WTFMove(page))
-        , m_webPage(webPage)
-    {
-        tryDestruction();
-    }
-
-    void tryDestruction()
-    {
-        if (m_page->insideNestedRunLoop()) {
-            m_page->whenUnnested([this] { tryDestruction(); });
-            return;
-        }
-
-        m_page = nullptr;
-        m_webPage = nullptr;
-        delete this;
-    }
-
-    std::unique_ptr<Page> m_page;
-    RefPtr<WebPage> m_webPage;
-};
-
 DEFINE_DEBUG_ONLY_GLOBAL(WTF::RefCountedLeakCounter, webPageCounter, ("WebPage"));
 
 Ref<WebPage> WebPage::create(PageIdentifier pageID, WebPageCreationParameters&& parameters)
@@ -768,7 +737,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
 
     bool receivedMainFrameIdentifierFromUIProcess = !!parameters.subframeProcessPageParameters;
     
-    m_page = makeUnique<Page>(WTFMove(pageConfiguration));
+    m_page = Page::create(WTFMove(pageConfiguration));
 
     WebStorageNamespaceProvider::incrementUseCount(sessionStorageNamespaceIdentifier());
 
@@ -1804,8 +1773,7 @@ void WebPage::close()
 #endif
 
     m_drawingArea = nullptr;
-
-    DeferredPageDestructor::createDeferredPageDestructor(WTFMove(m_page), this);
+    m_page = nullptr;
 
     bool isRunningModal = m_isRunningModal;
     m_isRunningModal = false;

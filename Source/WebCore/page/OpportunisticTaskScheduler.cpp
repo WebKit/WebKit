@@ -48,7 +48,7 @@ OpportunisticTaskScheduler::~OpportunisticTaskScheduler() = default;
 
 void OpportunisticTaskScheduler::rescheduleIfNeeded(MonotonicTime deadline)
 {
-    auto page = checkedPage();
+    RefPtr page = m_page.get();
     if (page->isWaitingForLoadToFinish() || !page->isVisibleAndActive())
         return;
 
@@ -59,11 +59,6 @@ void OpportunisticTaskScheduler::rescheduleIfNeeded(MonotonicTime deadline)
     m_currentDeadline = deadline;
     m_runLoopObserver->invalidate();
     m_runLoopObserver->schedule();
-}
-
-CheckedPtr<Page> OpportunisticTaskScheduler::checkedPage() const
-{
-    return m_page.get();
 }
 
 Ref<ImminentlyScheduledWorkScope> OpportunisticTaskScheduler::makeScheduledWorkScope()
@@ -81,7 +76,7 @@ void OpportunisticTaskScheduler::runLoopObserverFired()
     if (UNLIKELY(!m_page))
         return;
 
-    auto page = checkedPage();
+    RefPtr page = m_page.get();
     if (page->isWaitingForLoadToFinish())
         return;
 

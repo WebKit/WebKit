@@ -98,7 +98,7 @@ private:
     ImageDrawResult drawForContainer(GraphicsContext&, const FloatSize containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& dstRect, const FloatRect& srcRect, ImagePaintingOptions = { });
     void drawPatternForContainer(GraphicsContext&, const FloatSize& containerSize, float containerZoom, const URL& initialFragmentURL, const FloatRect& srcRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, const FloatRect&, ImagePaintingOptions = { });
 
-    std::unique_ptr<Page> m_page;
+    RefPtr<Page> m_page;
     FloatSize m_intrinsicSize;
 
     Timer m_startAnimationTimer;

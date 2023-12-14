@@ -100,7 +100,7 @@ public:
     WEBCORE_EXPORT void setInspectable(bool);
 
 private:
-    WEBCORE_EXPORT ServiceWorkerThreadProxy(UniqueRef<Page>&&, ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, CacheStorageProvider&, std::unique_ptr<NotificationClient>&&);
+    WEBCORE_EXPORT ServiceWorkerThreadProxy(Ref<Page>&&, ServiceWorkerContextData&&, ServiceWorkerData&&, String&& userAgent, WorkerThreadMode, CacheStorageProvider&, std::unique_ptr<NotificationClient>&&);
 
     WEBCORE_EXPORT static void networkStateChanged(bool isOnLine);
     bool postTaskForModeToWorkerOrWorkletGlobalScope(ScriptExecutionContext::Task&&, const String& mode);
@@ -118,7 +118,7 @@ private:
     // WorkerBadgeProxy
     void setAppBadge(std::optional<uint64_t>) final;
 
-    UniqueRef<Page> m_page;
+    Ref<Page> m_page;
     Ref<Document> m_document;
 #if ENABLE(REMOTE_INSPECTOR)
     std::unique_ptr<ServiceWorkerDebuggable> m_remoteDebuggable;
