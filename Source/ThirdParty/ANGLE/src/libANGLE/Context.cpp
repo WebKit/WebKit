@@ -892,6 +892,7 @@ egl::Error Context::onDestroy(const egl::Display *display)
 
     releaseShaderCompiler();
 
+    mState.ensureNoPendingLink(this);
     mState.reset(this);
 
     releaseSharedObjects();
