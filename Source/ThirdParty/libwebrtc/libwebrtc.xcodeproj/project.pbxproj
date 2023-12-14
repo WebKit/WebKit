@@ -23616,6 +23616,7 @@
 				"$(PROJECT_DIR)/Configurations/libwebrtc.exp",
 				"$(PROJECT_DIR)/Configurations/libwebrtc.testing.exp",
 				"$(PROJECT_DIR)/Configurations/libwebrtc.debug.exp",
+				"$(WK_DERIVED_SDK_HEADERS_DIR)",
 			);
 			name = "Generate Export Files";
 			outputFileListPaths = (

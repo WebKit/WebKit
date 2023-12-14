@@ -1150,7 +1150,7 @@ void FrameLoader::resetMultipleFormSubmissionProtection()
 
 void FrameLoader::updateFirstPartyForCookies()
 {
-    if (CheckedPtr page = m_frame->page())
+    if (RefPtr page = m_frame->page())
         setFirstPartyForCookies(page->mainFrameURL());
 }
 

@@ -2727,3 +2727,7 @@ webkit.org/b/265535 inspector/layers/layers-for-node.html [ Pass Timeout ]
 webkit.org/b/265783 fast/ruby/ruby-line-height.html [ Skip ]
 
 webkit.org/b/266184 compositing/images/truncated-direct-png-image.html [ ImageOnlyFailure ]
+
+# webkit.org/b/266345 [Test Gardening] css-contain/contain-size-block-003.html and css-contain/contain-size-inline-block-003.html only fail on GTK
+imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ Failure ]
