@@ -4664,3 +4664,7 @@ webkit.org/b/264177 requestidlecallback/requestidlecallback-deadline-shortened-b
 webkit.org/b/264527 imported/w3c/web-platform-tests/css/css-cascade/idlharness.html [ Pass Failure ]
 
 webkit.org/b/266356 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.https.html [ Pass Failure ]
+
+# webkit.org/b/266345 [Test Gardening] css-contain/contain-size-block-003.html and css-contain/contain-size-inline-block-003.html only fail on GTK
+imported/w3c/web-platform-tests/css/css-contain/contain-size-block-003.html [ Failure ]
+imported/w3c/web-platform-tests/css/css-contain/contain-size-inline-block-003.html [ Failure ]
