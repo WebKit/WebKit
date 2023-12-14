@@ -8,9 +8,9 @@
 
   <!-- Yocto version: mickledore -->
 
-  <project remote="yocto"  revision="5f453b96a67acfefbabef9680a02c3763b1ac3dd" name="poky" path="sources/poky"/>
-  <project remote="github" revision="d71a08b3d8fc69d3213c10885af9cc693056a8bd" name="openembedded/meta-openembedded" path="sources/meta-openembedded"/>
-  <project remote="yocto"  revision="aa0aed9a08d6578a18c4eeb3b44ed8354a57ebee" name="meta-raspberrypi" path="sources/meta-raspberrypi"/>
-  <project remote="github" revision="26f728f6c62c61c9656b8865309fa267d6f8b70b" name="Igalia/meta-webkit.git" path="sources/meta-webkit"/>
+  <project remote="yocto"  revision="7235399a86b134e57d5eb783d7f1f57ca0439ae5" name="poky" path="sources/poky"/>
+  <project remote="github" revision="f29290563cb821fae95340ba959749641c69ed7f" name="openembedded/meta-openembedded" path="sources/meta-openembedded"/>
+  <project remote="yocto"  revision="9c81413d0b6f41f14f0f9c504d19e312c5b9958f" name="meta-raspberrypi" path="sources/meta-raspberrypi"/>
+  <project remote="github" revision="d14b0311f852651a0b0a48c4bc5be7cdde7ab2af" name="Igalia/meta-webkit.git" path="sources/meta-webkit"/>
 
 </manifest>
