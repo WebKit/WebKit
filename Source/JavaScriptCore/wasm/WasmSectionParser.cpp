@@ -1136,7 +1136,7 @@ auto SectionParser::parseSubtype(uint32_t position, RefPtr<TypeDefinition>& subt
             supertypeIndex = TypeInformation::get(m_info->typeSignatures[typeIndex]);
         // If a parent type is in the same recursion group, the index needs to refer to the projection instead.
         else {
-            RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(Projection::PlaceholderGroup, typeIndex - m_info->typeCount());
+            RefPtr<TypeDefinition> projection = TypeInformation::getPlaceholderProjection(typeIndex - m_info->typeCount());
             supertypeIndex = projection->index();
         }
     }

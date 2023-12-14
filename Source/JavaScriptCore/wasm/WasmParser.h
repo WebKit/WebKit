@@ -403,7 +403,7 @@ ALWAYS_INLINE bool Parser<SuccessType>::parseValueType(const ModuleInformation& 
             if (m_recursionGroupInformation.inRecursionGroup && static_cast<uint32_t>(heapType) >= m_recursionGroupInformation.start) {
                 ASSERT(static_cast<uint32_t>(heapType) >= info.typeCount() && static_cast<uint32_t>(heapType) < m_recursionGroupInformation.end);
                 ProjectionIndex groupIndex = static_cast<ProjectionIndex>(heapType - m_recursionGroupInformation.start);
-                RefPtr<TypeDefinition> def = TypeInformation::typeDefinitionForProjection(Projection::PlaceholderGroup, groupIndex);
+                RefPtr<TypeDefinition> def = TypeInformation::getPlaceholderProjection(groupIndex);
                 typeIndex = def->index();
             } else {
                 ASSERT(static_cast<uint32_t>(heapType) < info.typeCount());
