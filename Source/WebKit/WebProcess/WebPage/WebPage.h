@@ -2661,8 +2661,11 @@ private:
     Ref<WebHistoryItemClient> m_historyItemClient;
 
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    HashSet<String> m_linkDecorationFilteringData;
-    HashMap<WebCore::RegistrableDomain, HashSet<String>> m_domainScopedLinkDecorationFilteringData;
+    struct LinkDecorationFilteringConditionals {
+        HashSet<WebCore::RegistrableDomain> domains;
+        Vector<String> paths;
+    };
+    HashMap<String, LinkDecorationFilteringConditionals> m_linkDecorationFilteringData;
     HashMap<WebCore::RegistrableDomain, HashSet<String>> m_allowedQueryParametersForAdvancedPrivacyProtections;
 #endif
 

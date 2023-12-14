@@ -6283,6 +6283,7 @@ struct WebCore::RemoteUserInputEventData {
 
 struct WebCore::LinkDecorationFilteringData {
     WebCore::RegistrableDomain domain;
+    String path;
     String linkDecoration;
 };
 

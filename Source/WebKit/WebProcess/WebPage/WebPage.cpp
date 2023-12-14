@@ -8844,20 +8844,27 @@ bool WebPage::isUsingUISideCompositing() const
 void WebPage::setLinkDecorationFilteringData(Vector<WebCore::LinkDecorationFilteringData>&& strings)
 {
     m_linkDecorationFilteringData.clear();
-    m_domainScopedLinkDecorationFilteringData.clear();
 
     for (auto& data : strings) {
-        if (data.domain.isEmpty()) {
-            m_linkDecorationFilteringData.add(data.linkDecoration);
+        if (!m_linkDecorationFilteringData.isValidKey(data.linkDecoration)) {
+            WEBPAGE_RELEASE_LOG_ERROR(ResourceLoadStatistics, "Unable to set link decoration filtering data (invalid key)");
+            ASSERT_NOT_REACHED();
             continue;
         }
 
-        if (!m_domainScopedLinkDecorationFilteringData.isValidKey(data.domain))
-            continue;
+        auto it = m_linkDecorationFilteringData.ensure(data.linkDecoration, [] {
+            return LinkDecorationFilteringConditionals { };
+        }).iterator;
 
-        m_domainScopedLinkDecorationFilteringData.ensure(data.domain, [&] {
-            return HashSet<String> { };
-        }).iterator->value.add(data.linkDecoration);
+        if (!data.domain.isEmpty()) {
+            if (auto& domains = it->value.domains; domains.isValidValue(data.domain))
+                domains.add(data.domain);
+            else
+                ASSERT_NOT_REACHED();
+        }
+
+        if (!data.path.isEmpty())
+            it->value.paths.append(data.path);
     }
 }
 
