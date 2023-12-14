@@ -36,6 +36,9 @@ public:
     FilterStyleTargetSwitcher(Filter&, const FloatRect &sourceImageRect);
 
 private:
+    void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect, const FloatRect& clipRect) override;
+    void endClipAndDrawSourceImage(GraphicsContext& destinationContext) override { endDrawSourceImage(destinationContext); }
+
     void beginDrawSourceImage(GraphicsContext& destinationContext) override;
     void endDrawSourceImage(GraphicsContext& destinationContext) override;
 
