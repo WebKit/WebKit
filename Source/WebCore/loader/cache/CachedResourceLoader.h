@@ -180,7 +180,9 @@ private:
 
     ResourceErrorOr<CachedResourceHandle<CachedResource>> requestResource(CachedResource::Type, CachedResourceRequest&&, ForPreload = ForPreload::No, ImageLoading = ImageLoading::Immediate);
     CachedResourceHandle<CachedResource> revalidateResource(CachedResourceRequest&&, CachedResource&);
-    CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, PAL::SessionID, CachedResourceRequest&&, const CookieJar&, const Settings&);
+
+    enum class MayAddToMemoryCache : bool { No, Yes };
+    CachedResourceHandle<CachedResource> loadResource(CachedResource::Type, PAL::SessionID, CachedResourceRequest&&, const CookieJar&, const Settings&, MayAddToMemoryCache);
 
     void prepareFetch(CachedResource::Type, CachedResourceRequest&);
     void updateHTTPRequestHeaders(FrameLoader&, CachedResource::Type, CachedResourceRequest&);
