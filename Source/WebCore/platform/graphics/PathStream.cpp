@@ -30,32 +30,27 @@
 
 namespace WebCore {
 
-UniqueRef<PathStream> PathStream::create()
+Ref<PathStream> PathStream::create()
 {
-    return makeUniqueRef<PathStream>();
+    return adoptRef(*new PathStream);
 }
 
-UniqueRef<PathStream> PathStream::create(const PathStream& pathStream)
+Ref<PathStream> PathStream::create(PathSegment&& segment)
 {
-    return makeUniqueRef<PathStream>(pathStream);
+    return adoptRef(*new PathStream(WTFMove(segment)));
 }
 
-UniqueRef<PathStream> PathStream::create(PathSegment&& segment)
+Ref<PathStream> PathStream::create(Vector<PathSegment>&& segments)
 {
-    return makeUniqueRef<PathStream>(WTFMove(segment));
+    return adoptRef(*new PathStream(WTFMove(segments)));
 }
 
-UniqueRef<PathStream> PathStream::create(Vector<PathSegment>&& segments)
+Ref<PathStream> PathStream::create(const Vector<PathSegment>& segments)
 {
-    return makeUniqueRef<PathStream>(WTFMove(segments));
+    return adoptRef(*new PathStream(segments));
 }
 
-UniqueRef<PathStream> PathStream::create(const Vector<PathSegment>& segments)
-{
-    return makeUniqueRef<PathStream>(segments);
-}
-
-UniqueRef<PathStream> PathStream::create(const Vector<FloatPoint>& points)
+Ref<PathStream> PathStream::create(const Vector<FloatPoint>& points)
 {
     auto stream = PathStream::create();
     if (points.size() < 2)
@@ -69,42 +64,24 @@ UniqueRef<PathStream> PathStream::create(const Vector<FloatPoint>& points)
     return stream;
 }
 
-PathStream::PathStream()
-    : m_segmentsData(SegmentsData::create())
-{
-}
-
 PathStream::PathStream(Vector<PathSegment>&& segments)
-    : m_segmentsData(SegmentsData::create(WTFMove(segments)))
+    : m_segments(WTFMove(segments))
 {
 }
 
 PathStream::PathStream(const Vector<PathSegment>& segments)
-    : m_segmentsData(SegmentsData::create(segments))
-{
-}
-
-PathStream::PathStream(const PathStream& pathStream)
-    : m_segmentsData(pathStream.m_segmentsData)
+    : m_segments(segments)
 {
 }
 
 PathStream::PathStream(PathSegment&& segment)
-    : m_segmentsData(SegmentsData::create(WTFMove(segment)))
+    : m_segments({ WTFMove(segment) })
 {
 }
 
-UniqueRef<PathImpl> PathStream::clone() const
+Ref<PathImpl> PathStream::copy() const
 {
-    return create(*this);
-}
-
-bool PathStream::operator==(const PathImpl& other) const
-{
-    if (!is<PathStream>(other))
-        return false;
-
-    return m_segmentsData == downcast<PathStream>(other).m_segmentsData;
+    return create(m_segments);
 }
 
 const PathMoveTo* PathStream::lastIfMoveTo() const
@@ -112,7 +89,7 @@ const PathMoveTo* PathStream::lastIfMoveTo() const
     if (isEmpty())
         return nullptr;
 
-    return std::get_if<PathMoveTo>(&m_segmentsData->segments.last().data());
+    return std::get_if<PathMoveTo>(&m_segments.last().data());
 }
 
 void PathStream::moveTo(const FloatPoint& point)
@@ -182,25 +159,20 @@ void PathStream::closeSubpath()
     segments().append(PathCloseSubpath { });
 }
 
-const Vector<PathSegment>& PathStream::segments() const
-{
-    return m_segmentsData->segments;
-}
-
 void PathStream::applySegments(const PathSegmentApplier& applier) const
 {
-    for (auto& segment : m_segmentsData->segments)
+    for (auto& segment : m_segments)
         applier(segment);
 }
 
 bool PathStream::applyElements(const PathElementApplier& applier) const
 {
-    for (auto& segment : m_segmentsData->segments) {
+    for (auto& segment : m_segments) {
         if (!segment.canApplyElements())
             return false;
     }
 
-    for (auto& segment : m_segmentsData->segments)
+    for (auto& segment : m_segments)
         segment.applyElements(applier);
 
     return true;
@@ -208,12 +180,12 @@ bool PathStream::applyElements(const PathElementApplier& applier) const
 
 bool PathStream::transform(const AffineTransform& transform)
 {
-    for (auto& segment : m_segmentsData->segments) {
+    for (auto& segment : m_segments) {
         if (!segment.canTransform())
             return false;
     }
 
-    for (auto& segment : m_segmentsData.access().segments)
+    for (auto& segment : m_segments)
         segment.transform(transform);
 
     return true;
@@ -221,10 +193,10 @@ bool PathStream::transform(const AffineTransform& transform)
 
 std::optional<PathSegment> PathStream::singleSegment() const
 {
-    if (m_segmentsData->segments.size() != 1)
+    if (m_segments.size() != 1)
         return std::nullopt;
 
-    return m_segmentsData->segments.first();
+    return m_segments.first();
 }
 
 template<class DataType>
@@ -264,21 +236,21 @@ bool PathStream::isClosed() const
     if (isEmpty())
         return false;
 
-    return m_segmentsData->segments.last().isCloseSubPath();
+    return m_segments.last().isCloseSubPath();
 }
 
 FloatPoint PathStream::currentPoint() const
 {
-    if (m_segmentsData->segments.isEmpty())
+    if (m_segments.isEmpty())
         return { };
 
-    if (auto result = m_segmentsData->segments.last().tryGetEndPointWithoutContext())
+    if (auto result = m_segments.last().tryGetEndPointWithoutContext())
         return result.value();
 
     FloatPoint lastMoveToPoint;
     FloatPoint currentPoint;
 
-    for (auto& segment : m_segmentsData->segments)
+    for (auto& segment : m_segments)
         currentPoint = segment.calculateEndPoint(currentPoint, lastMoveToPoint);
 
     return currentPoint;
@@ -303,7 +275,7 @@ FloatRect PathStream::computeFastBoundingRect(std::span<const PathSegment> segme
 
 FloatRect PathStream::fastBoundingRect() const
 {
-    return computeFastBoundingRect(m_segmentsData->segments.span());
+    return computeFastBoundingRect(m_segments.span());
 }
 
 FloatRect PathStream::computeBoundingRect(std::span<const PathSegment> segments)
@@ -325,7 +297,7 @@ FloatRect PathStream::computeBoundingRect(std::span<const PathSegment> segments)
 
 FloatRect PathStream::boundingRect() const
 {
-    return computeBoundingRect(m_segmentsData->segments.span());
+    return computeBoundingRect(m_segments.span());
 }
 
 } // namespace WebCore

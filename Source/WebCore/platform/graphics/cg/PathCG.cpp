@@ -36,12 +36,19 @@
 
 namespace WebCore {
 
-UniqueRef<PathCG> PathCG::create()
+Ref<PathCG> PathCG::create()
 {
-    return makeUniqueRef<PathCG>();
+    return adoptRef(*new PathCG);
 }
 
-UniqueRef<PathCG> PathCG::create(const PathStream& stream)
+Ref<PathCG> PathCG::create(const PathSegment& segment)
+{
+    auto pathCG = PathCG::create();
+    pathCG->appendSegment(segment);
+    return pathCG;
+}
+
+Ref<PathCG> PathCG::create(const PathStream& stream)
 {
     auto pathCG = PathCG::create();
 
@@ -52,9 +59,9 @@ UniqueRef<PathCG> PathCG::create(const PathStream& stream)
     return pathCG;
 }
 
-UniqueRef<PathCG> PathCG::create(RetainPtr<CGMutablePathRef>&& platformPath)
+Ref<PathCG> PathCG::create(RetainPtr<CGMutablePathRef>&& platformPath)
 {
-    return makeUniqueRef<PathCG>(WTFMove(platformPath));
+    return adoptRef(*new PathCG(WTFMove(platformPath)));
 }
 
 PathCG::PathCG()
@@ -68,7 +75,7 @@ PathCG::PathCG(RetainPtr<CGMutablePathRef>&& platformPath)
     ASSERT(m_platformPath);
 }
 
-UniqueRef<PathImpl> PathCG::clone() const
+Ref<PathImpl> PathCG::copy() const
 {
     return create({ platformPath() });
 }
@@ -83,13 +90,6 @@ PlatformPathPtr PathCG::ensureMutablePlatformPath()
     if (CFGetRetainCount(m_platformPath.get()) > 1)
         m_platformPath = adoptCF(CGPathCreateMutableCopy(m_platformPath.get()));
     return m_platformPath.get();
-}
-
-bool PathCG::operator==(const PathImpl& other) const
-{
-    if (!is<PathCG>(other))
-        return false;
-    return m_platformPath == downcast<PathCG>(other).m_platformPath;
 }
 
 void PathCG::moveTo(const FloatPoint& point)

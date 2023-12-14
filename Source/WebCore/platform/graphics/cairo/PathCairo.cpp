@@ -36,12 +36,19 @@
 
 namespace WebCore {
 
-UniqueRef<PathCairo> PathCairo::create()
+Ref<PathCairo> PathCairo::create()
 {
-    return makeUniqueRef<PathCairo>();
+    return adoptRef(*new PathCairo);
 }
 
-UniqueRef<PathCairo> PathCairo::create(const PathStream& stream)
+Ref<PathCairo> PathCairo::create(const PathSegment& segment)
+{
+    auto pathCairo = PathCairo::create();
+    pathCairo->appendSegment(segment);
+    return pathCairo;
+}
+
+Ref<PathCairo> PathCairo::create(const PathStream& stream)
 {
     auto pathCairo = PathCairo::create();
 
@@ -52,25 +59,25 @@ UniqueRef<PathCairo> PathCairo::create(const PathStream& stream)
     return pathCairo;
 }
 
-UniqueRef<PathCairo> PathCairo::create(RefPtr<cairo_t>&& platformPath, std::unique_ptr<PathStream>&& elementsStream)
+Ref<PathCairo> PathCairo::create(RefPtr<cairo_t>&& platformPath, RefPtr<PathStream>&& elementsStream)
 {
-    return makeUniqueRef<PathCairo>(WTFMove(platformPath), WTFMove(elementsStream));
+    return adoptRef(*new PathCairo(WTFMove(platformPath), WTFMove(elementsStream)));
 }
 
 PathCairo::PathCairo()
     : m_platformPath(adoptRef(cairo_create(adoptRef(cairo_image_surface_create(CAIRO_FORMAT_A8, 1, 1)).get())))
-    , m_elementsStream(PathStream::create().moveToUniquePtr())
+    , m_elementsStream(PathStream::create())
 {
 }
 
-PathCairo::PathCairo(RefPtr<cairo_t>&& platformPath, std::unique_ptr<PathStream>&& elementsStream)
+PathCairo::PathCairo(RefPtr<cairo_t>&& platformPath, RefPtr<PathStream>&& elementsStream)
     : m_platformPath(WTFMove(platformPath))
     , m_elementsStream(WTFMove(elementsStream))
 {
     ASSERT(m_platformPath);
 }
 
-UniqueRef<PathImpl> PathCairo::clone() const
+Ref<PathImpl> PathCairo::copy() const
 {
     auto platformPathCopy = adoptRef(cairo_create(adoptRef(cairo_image_surface_create(CAIRO_FORMAT_A8, 1, 1)).get()));
 
@@ -81,21 +88,14 @@ UniqueRef<PathImpl> PathCairo::clone() const
     CairoUniquePtr<cairo_path_t> pathCopy(cairo_copy_path(platformPath()));
     cairo_append_path(platformPathCopy.get(), pathCopy.get());
 
-    auto elementsStream = m_elementsStream ? m_elementsStream->clone().moveToUniquePtr() : nullptr;
+    auto elementsStream = m_elementsStream ? RefPtr<PathImpl> { m_elementsStream->copy() } : nullptr;
 
-    return PathCairo::create(WTFMove(platformPathCopy), std::unique_ptr<PathStream> { downcast<PathStream>(elementsStream.release()) });
+    return PathCairo::create(WTFMove(platformPathCopy), downcast<PathStream>(WTFMove(elementsStream)));
 }
 
 PlatformPathPtr PathCairo::platformPath() const
 {
     return m_platformPath.get();
-}
-
-bool PathCairo::operator==(const PathImpl& other) const
-{
-    if (!is<PathCairo>(other))
-        return false;
-    return m_platformPath == downcast<PathCairo>(other).m_platformPath;
 }
 
 void PathCairo::moveTo(const FloatPoint& point)
