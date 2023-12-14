@@ -2600,3 +2600,5 @@ webkit.org/b/265685 [ Sonoma+ ] http/wpt/webcodecs/encoder-task-failing.html [ F
 [ Sonoma+ ] imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Pass ]
 
 webkit.org/b/266356 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.https.html [ Pass Failure ]
+
+webkit.org/b/265957 fullscreen/full-screen-layer-dump.html [ Failure ]
