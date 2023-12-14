@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/button-appearance-native-computed-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/button-appearance-native-horizontal.optional-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/button-appearance-native-horizontal.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/button-appearance-native-vertical.optional-expected-mismatch.html
@@ -22,6 +23,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/button-appearance-none-horizontal.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/button-appearance-none-vertical.optional-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/button-appearance-none-vertical.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/checkbox-appearance-native-vertical-lr-baseline.optional-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/checkbox-appearance-native-vertical-lr-baseline.optional-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/checkbox-appearance-native-vertical-lr-baseline.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/checkbox-appearance-native-vertical-rl-baseline.optional-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/checkbox-appearance-native-vertical-rl-baseline.optional-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/checkbox-appearance-native-vertical-rl-baseline.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/checkbox-switch-input-computed-style.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-computed-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-horizontal.optional-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-horizontal.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-native-vertical.optional-expected-mismatch.html
@@ -30,6 +39,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-none-horizontal.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-none-vertical.optional-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/color-input-appearance-none-vertical.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/date-input-appearance-native-computed-style.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/date-input-appearance-native-horizontal.optional-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/date-input-appearance-native-horizontal.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/date-input-appearance-native-vertical.optional-expected-mismatch.html
@@ -38,6 +48,13 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/date-input-appearance-none-horizontal.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/date-input-appearance-none-vertical.optional-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/date-input-appearance-none-vertical.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/file-input-computed-style.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/file-input-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/file-input-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/file-input-vertical-rtl.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/file-input-vertical-rtl.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/file-input-vertical.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/file-input-vertical.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/meter-appearance-native-computed-style.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/meter-appearance-native-horizontal.optional-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/meter-appearance-native-horizontal.optional.html
@@ -55,6 +72,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-horizontal.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-vertical.optional-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/progress-appearance-none-vertical.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/radio-appearance-native-vertical-lr-baseline.optional-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/radio-appearance-native-vertical-lr-baseline.optional-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/radio-appearance-native-vertical-lr-baseline.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/radio-appearance-native-vertical-rl-baseline.optional-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/radio-appearance-native-vertical-rl-baseline.optional-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/radio-appearance-native-vertical-rl-baseline.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-native-horizontal-rtl.optional-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-native-horizontal-rtl.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-appearance-native-horizontal.optional-expected-mismatch.html
@@ -76,6 +99,19 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-vertical-ltr-painting.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-vertical-rtl-painting-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/range-input-vertical-rtl-painting.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-appearance-native-computed-style.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-appearance-native-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-appearance-native-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-appearance-native-vertical.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-appearance-native-vertical.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-appearance-none-horizontal.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-appearance-none-horizontal.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-appearance-none-vertical-lr.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-appearance-none-vertical-lr.optional-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-appearance-none-vertical-lr.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-appearance-none-vertical-rl.optional-expected-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-appearance-none-vertical-rl.optional-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-appearance-none-vertical-rl.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-horizontal.optional-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-horizontal.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-native-vlr.optional-expected-mismatch.html
@@ -88,6 +124,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-vlr.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-vrl.optional-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-appearance-none-vrl.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-keyboard-selection.optional.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-options-visual-order.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-multiple-scrolling.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/select-size-scrolling-and-sizing.optional.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-writing-modes/forms/text-input-baseline.html
