@@ -43,11 +43,19 @@ $samplingProfilerIgnoreExternalSourceID = false
 $samplingProfilerTopFunctionsCount = 12
 $samplingProfilerTopBytecodesCount = 40
 
-GetoptLong.new(['--ignore-external-source-id', '-s', GetoptLong::NO_ARGUMENT]).each {
+GetoptLong.new(
+  ['--ignore-external-source-id', '-s', GetoptLong::NO_ARGUMENT],
+  ['--top-function-count', '-c', GetoptLong::REQUIRED_ARGUMENT],
+  ['--top-bytecode-count', '-b', GetoptLong::REQUIRED_ARGUMENT],
+).each {
     | opt, arg |
     case opt
     when '--ignore-external-source-id'
       $samplingProfilerIgnoreExternalSourceID = true
+    when '--top-function-count'
+      $samplingProfilerTopFunctionsCount = arg.to_i
+    when '--top-bytecode-count'
+      $samplingProfilerTopBytecodesCount = arg.to_i
     end
 }
 
