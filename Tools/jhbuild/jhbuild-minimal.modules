@@ -251,11 +251,11 @@
     </branch>
   </cmake>
 
-  <meson id="wayland" mesonargs="-Ddocumentation=false -Ddtd_validation=false">
+  <meson id="wayland" mesonargs="-Ddocumentation=false -Ddtd_validation=false -Dtests=false">
     <pkg-config>wayland-server.pc</pkg-config>
     <branch module="wayland/wayland"
-            version="1.18.0"
-            tag="1.18.0"
+            version="1.20.0"
+            tag="1.20.0"
             checkoutdir="wayland"
             repo="git.freedesktop.org" />
   </meson>
