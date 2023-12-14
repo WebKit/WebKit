@@ -29,12 +29,12 @@
 #include "PathElement.h"
 #include "PathSegment.h"
 #include <wtf/FastMalloc.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
-class PathImpl : public RefCounted<PathImpl> {
+class PathImpl : public ThreadSafeRefCounted<PathImpl> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual ~PathImpl() = default;
