@@ -27,6 +27,7 @@
 
 #include "AnimationEffect.h"
 #include "AnimationEffectPhase.h"
+#include "BlendingKeyframes.h"
 #include "CSSPropertyBlendingClient.h"
 #include "CompositeOperation.h"
 #include "CompositeOperationOrAuto.h"
@@ -36,7 +37,6 @@
 #include "IterationCompositeOperation.h"
 #include "KeyframeEffectOptions.h"
 #include "KeyframeInterpolation.h"
-#include "KeyframeList.h"
 #include "RenderStyle.h"
 #include "Styleable.h"
 #include "WebAnimationTypes.h"
@@ -150,7 +150,7 @@ public:
     std::optional<unsigned> transformFunctionListPrefix() const override;
 
     void computeDeclarativeAnimationBlendingKeyframes(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
-    const KeyframeList& blendingKeyframes() const { return m_blendingKeyframes; }
+    const BlendingKeyframes& blendingKeyframes() const { return m_blendingKeyframes; }
     const HashSet<AnimatableCSSProperty>& animatedProperties();
     bool animatesProperty(const AnimatableCSSProperty&) const;
 
@@ -214,7 +214,7 @@ private:
     void updateAcceleratedActions();
     void setAnimatedPropertiesInStyle(RenderStyle&, double iterationProgress, double currentIteration);
     const TimingFunction* timingFunctionForKeyframeAtIndex(size_t) const;
-    const TimingFunction* timingFunctionForBlendingKeyframe(const KeyframeValue&) const;
+    const TimingFunction* timingFunctionForBlendingKeyframe(const BlendingKeyframe&) const;
     Ref<const Animation> backingAnimationForCompositedRenderer() const;
     void computedNeedsForcedLayout();
     void computeStackingContextImpact();
@@ -224,7 +224,7 @@ private:
     void computeCSSAnimationBlendingKeyframes(const RenderStyle& unanimatedStyle, const Style::ResolutionContext&);
     void computeCSSTransitionBlendingKeyframes(const RenderStyle& oldStyle, const RenderStyle& newStyle);
     void computeAcceleratedPropertiesState();
-    void setBlendingKeyframes(KeyframeList&&);
+    void setBlendingKeyframes(BlendingKeyframes&&);
     bool isTargetingTransformRelatedProperty() const;
     void checkForMatchingTransformFunctionLists();
     void computeHasImplicitKeyframeForAcceleratedProperty();
@@ -278,7 +278,7 @@ private:
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 
     AtomString m_keyframesName;
-    KeyframeList m_blendingKeyframes { emptyAtom() };
+    BlendingKeyframes m_blendingKeyframes { emptyAtom() };
     HashSet<AnimatableCSSProperty> m_animatedProperties;
     Vector<ParsedKeyframe> m_parsedKeyframes;
     Vector<AcceleratedAction> m_pendingAcceleratedActions;

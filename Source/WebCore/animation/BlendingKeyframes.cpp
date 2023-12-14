@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "KeyframeList.h"
+#include "BlendingKeyframes.h"
 
 #include "Animation.h"
 #include "CSSAnimation.h"
@@ -39,9 +39,9 @@
 
 namespace WebCore {
 
-KeyframeList::~KeyframeList() = default;
+BlendingKeyframes::~BlendingKeyframes() = default;
 
-void KeyframeList::clear()
+void BlendingKeyframes::clear()
 {
     m_keyframes.clear();
     m_properties.clear();
@@ -51,7 +51,7 @@ void KeyframeList::clear()
     m_containsCSSVariableReferences = false;
 }
 
-bool KeyframeList::operator==(const KeyframeList& o) const
+bool BlendingKeyframes::operator==(const BlendingKeyframes& o) const
 {
     if (m_keyframes.size() != o.m_keyframes.size())
         return false;
@@ -67,7 +67,7 @@ bool KeyframeList::operator==(const KeyframeList& o) const
     return true;
 }
 
-void KeyframeList::insert(KeyframeValue&& keyframe)
+void BlendingKeyframes::insert(BlendingKeyframe&& keyframe)
 {
     if (keyframe.offset() < 0 || keyframe.offset() > 1)
         return;
@@ -91,20 +91,20 @@ void KeyframeList::insert(KeyframeValue&& keyframe)
         m_properties.add(property);
 }
 
-bool KeyframeList::hasImplicitKeyframes() const
+bool BlendingKeyframes::hasImplicitKeyframes() const
 {
     return size() && (m_keyframes[0].offset() || m_keyframes[size() - 1].offset() != 1);
 }
 
-void KeyframeList::copyKeyframes(KeyframeList& other)
+void BlendingKeyframes::copyKeyframes(const BlendingKeyframes& other)
 {
     for (auto& keyframe : other) {
-        KeyframeValue keyframeValue(keyframe.offset(), RenderStyle::clonePtr(*keyframe.style()));
+        BlendingKeyframe blendingKeyframe(keyframe.offset(), RenderStyle::clonePtr(*keyframe.style()));
         for (auto propertyId : keyframe.properties())
-            keyframeValue.addProperty(propertyId);
-        keyframeValue.setTimingFunction(keyframe.timingFunction());
-        keyframeValue.setCompositeOperation(keyframe.compositeOperation());
-        insert(WTFMove(keyframeValue));
+            blendingKeyframe.addProperty(propertyId);
+        blendingKeyframe.setTimingFunction(keyframe.timingFunction());
+        blendingKeyframe.setCompositeOperation(keyframe.compositeOperation());
+        insert(WTFMove(blendingKeyframe));
     }
 }
 
@@ -130,7 +130,7 @@ static const StyleRuleKeyframe& hundredPercentKeyframe()
     return rule.get().get();
 }
 
-void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const RenderStyle& underlyingStyle)
+void BlendingKeyframes::fillImplicitKeyframes(const KeyframeEffect& effect, const RenderStyle& underlyingStyle)
 {
     if (isEmpty())
         return;
@@ -145,10 +145,10 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
     auto zeroKeyframeImplicitProperties = m_properties;
     auto oneKeyframeImplicitProperties = m_properties;
 
-    KeyframeValue* implicitZeroKeyframe = nullptr;
-    KeyframeValue* implicitOneKeyframe = nullptr;
+    BlendingKeyframe* implicitZeroKeyframe = nullptr;
+    BlendingKeyframe* implicitOneKeyframe = nullptr;
 
-    auto isSuitableKeyframeForImplicitValues = [&](const KeyframeValue& keyframe) {
+    auto isSuitableKeyframeForImplicitValues = [&](const BlendingKeyframe& keyframe) {
         auto* timingFunction = keyframe.timingFunction();
 
         // If there is no timing function set on the keyframe, then it uses the element's
@@ -179,29 +179,29 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
         }
     }
 
-    auto addImplicitKeyframe = [&](double key, const HashSet<AnimatableCSSProperty>& implicitProperties, const StyleRuleKeyframe& keyframeRule, KeyframeValue* existingImplicitKeyframeValue) {
+    auto addImplicitKeyframe = [&](double key, const HashSet<AnimatableCSSProperty>& implicitProperties, const StyleRuleKeyframe& keyframeRule, BlendingKeyframe* existingImplicitBlendingKeyframe) {
         // If we're provided an existing implicit keyframe, we need to add all the styles for the implicit properties.
-        if (existingImplicitKeyframeValue) {
-            ASSERT(existingImplicitKeyframeValue->style());
-            auto keyframeStyle = RenderStyle::clonePtr(*existingImplicitKeyframeValue->style());
+        if (existingImplicitBlendingKeyframe) {
+            ASSERT(existingImplicitBlendingKeyframe->style());
+            auto keyframeStyle = RenderStyle::clonePtr(*existingImplicitBlendingKeyframe->style());
             for (auto property : implicitProperties) {
                 CSSPropertyAnimation::blendProperty(effect, property, *keyframeStyle, underlyingStyle, underlyingStyle, 1, CompositeOperation::Replace);
-                existingImplicitKeyframeValue->addProperty(property);
+                existingImplicitBlendingKeyframe->addProperty(property);
             }
-            existingImplicitKeyframeValue->setStyle(WTFMove(keyframeStyle));
+            existingImplicitBlendingKeyframe->setStyle(WTFMove(keyframeStyle));
             return;
         }
 
         // Otherwise we create a new keyframe.
-        KeyframeValue keyframeValue(key, nullptr);
-        keyframeValue.setStyle(styleResolver.styleForKeyframe(element, underlyingStyle, { nullptr }, keyframeRule, keyframeValue));
+        BlendingKeyframe blendingKeyframe(key, nullptr);
+        blendingKeyframe.setStyle(styleResolver.styleForKeyframe(element, underlyingStyle, { nullptr }, keyframeRule, blendingKeyframe));
         for (auto property : implicitProperties)
-            keyframeValue.addProperty(property);
+            blendingKeyframe.addProperty(property);
         // Step 2 of https://drafts.csswg.org/css-animations-2/#keyframes defines the
         // default composite property as "replace" for CSS Animations.
         if (is<CSSAnimation>(effect.animation()))
-            keyframeValue.setCompositeOperation(CompositeOperation::Replace);
-        insert(WTFMove(keyframeValue));
+            blendingKeyframe.setCompositeOperation(CompositeOperation::Replace);
+        insert(WTFMove(blendingKeyframe));
     };
 
     if (!zeroKeyframeImplicitProperties.isEmpty())
@@ -220,7 +220,7 @@ void KeyframeList::fillImplicitKeyframes(const KeyframeEffect& effect, const Ren
         addImplicitKeyframe(1, oneKeyframeImplicitProperties, hundredPercentKeyframe(), implicitOneKeyframe);
 }
 
-bool KeyframeList::containsAnimatableCSSProperty() const
+bool BlendingKeyframes::containsAnimatableCSSProperty() const
 {
     for (auto property : m_properties) {
         if (CSSPropertyAnimation::isPropertyAnimatable(property))
@@ -229,7 +229,7 @@ bool KeyframeList::containsAnimatableCSSProperty() const
     return false;
 }
 
-bool KeyframeList::containsDirectionAwareProperty() const
+bool BlendingKeyframes::containsDirectionAwareProperty() const
 {
     for (auto& keyframe : m_keyframes) {
         if (keyframe.containsDirectionAwareProperty())
@@ -238,7 +238,7 @@ bool KeyframeList::containsDirectionAwareProperty() const
     return false;
 }
 
-bool KeyframeList::usesContainerUnits() const
+bool BlendingKeyframes::usesContainerUnits() const
 {
     for (auto& keyframe : m_keyframes) {
         if (keyframe.style()->usesContainerUnits())
@@ -247,43 +247,43 @@ bool KeyframeList::usesContainerUnits() const
     return false;
 }
 
-void KeyframeList::addProperty(const AnimatableCSSProperty& property)
+void BlendingKeyframes::addProperty(const AnimatableCSSProperty& property)
 {
     ASSERT(!std::holds_alternative<CSSPropertyID>(property) || std::get<CSSPropertyID>(property) != CSSPropertyCustom);
     m_properties.add(property);
 }
 
-bool KeyframeList::containsProperty(const AnimatableCSSProperty& property) const
+bool BlendingKeyframes::containsProperty(const AnimatableCSSProperty& property) const
 {
     return m_properties.contains(property);
 }
 
-bool KeyframeList::usesRelativeFontWeight() const
+bool BlendingKeyframes::usesRelativeFontWeight() const
 {
     return m_usesRelativeFontWeight;
 }
 
-bool KeyframeList::hasCSSVariableReferences() const
+bool BlendingKeyframes::hasCSSVariableReferences() const
 {
     return m_containsCSSVariableReferences;
 }
 
-bool KeyframeList::hasColorSetToCurrentColor() const
+bool BlendingKeyframes::hasColorSetToCurrentColor() const
 {
     return m_propertiesSetToCurrentColor.contains(CSSPropertyColor);
 }
 
-bool KeyframeList::hasPropertySetToCurrentColor() const
+bool BlendingKeyframes::hasPropertySetToCurrentColor() const
 {
     return !m_propertiesSetToCurrentColor.isEmpty();
 }
 
-const HashSet<AnimatableCSSProperty>& KeyframeList::propertiesSetToInherit() const
+const HashSet<AnimatableCSSProperty>& BlendingKeyframes::propertiesSetToInherit() const
 {
     return m_propertiesSetToInherit;
 }
 
-void KeyframeList::updatePropertiesMetadata(const StyleProperties& properties)
+void BlendingKeyframes::updatePropertiesMetadata(const StyleProperties& properties)
 {
     for (auto propertyReference : properties) {
         auto* cssValue = propertyReference.value();
@@ -310,13 +310,13 @@ void KeyframeList::updatePropertiesMetadata(const StyleProperties& properties)
     }
 }
 
-void KeyframeValue::addProperty(const AnimatableCSSProperty& property)
+void BlendingKeyframe::addProperty(const AnimatableCSSProperty& property)
 {
     ASSERT(!std::holds_alternative<CSSPropertyID>(property) || std::get<CSSPropertyID>(property) != CSSPropertyCustom);
     m_properties.add(property);
 }
 
-bool KeyframeValue::animatesProperty(KeyframeInterpolation::Property property) const
+bool BlendingKeyframe::animatesProperty(KeyframeInterpolation::Property property) const
 {
     return WTF::switchOn(property, [&](AnimatableCSSProperty& animatableCSSProperty) {
         return m_properties.contains(animatableCSSProperty);

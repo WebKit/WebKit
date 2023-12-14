@@ -29,6 +29,7 @@
 
 #include "BackgroundPainter.h"
 #include "BitmapImage.h"
+#include "BlendingKeyframes.h"
 #include "CanvasRenderingContext.h"
 #include "CSSPropertyNames.h"
 #include "CachedImage.h"
@@ -46,7 +47,6 @@
 #include "HTMLPlugInElement.h"
 #include "HTMLVideoElement.h"
 #include "InspectorInstrumentation.h"
-#include "KeyframeList.h"
 #include "LayerAncestorClippingStack.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
@@ -3954,7 +3954,7 @@ void RenderLayerBacking::verifyNotPainting()
 }
 #endif
 
-bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& animation, const KeyframeList& keyframes)
+bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& animation, const BlendingKeyframes& keyframes)
 {
     bool shouldApplyAnimationsToTargetRenderer = renderer().isRenderBox() || renderer().isSVGLayerAwareRenderer();
 

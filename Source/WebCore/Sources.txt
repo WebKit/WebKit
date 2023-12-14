@@ -561,6 +561,7 @@ animation/AnimationEffectTiming.cpp
 animation/AnimationEventBase.cpp
 animation/AnimationPlaybackEvent.cpp
 animation/AnimationTimeline.cpp
+animation/BlendingKeyframes.cpp
 animation/CSSAnimation.cpp
 animation/CSSAnimationEvent.cpp
 animation/CSSPropertyAnimation.cpp
@@ -2709,7 +2710,6 @@ rendering/style/GapLength.cpp
 rendering/style/GridPosition.cpp
 rendering/style/GridPositionsResolver.cpp
 rendering/style/GridTrackSize.cpp
-rendering/style/KeyframeList.cpp
 rendering/style/ListStyleType.cpp
 rendering/style/NinePieceImage.cpp
 rendering/style/OffsetRotation.cpp

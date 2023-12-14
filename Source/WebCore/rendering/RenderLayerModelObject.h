@@ -28,7 +28,7 @@
 
 namespace WebCore {
 
-class KeyframeList;
+class BlendingKeyframes;
 class RenderLayer;
 class RenderSVGResourceClipper;
 class RenderSVGResourceMasker;
@@ -64,7 +64,7 @@ public:
 
     std::optional<LayoutRect> cachedLayerClippedOverflowRect() const;
 
-    bool startAnimation(double timeOffset, const Animation&, const KeyframeList&) override;
+    bool startAnimation(double timeOffset, const Animation&, const BlendingKeyframes&) override;
     void animationPaused(double timeOffset, const String& name) override;
     void animationFinished(const String& name) override;
     void transformRelatedPropertyDidChange() override;
