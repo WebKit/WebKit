@@ -768,7 +768,7 @@ public:
                 if (checkCasedCharacter(term, term.inputPosition))
                     return true;
             }
-            input.uncheckInput(backTrack->matchAmount);
+            input.setPos(backTrack->begin);
             break;
         }
 
