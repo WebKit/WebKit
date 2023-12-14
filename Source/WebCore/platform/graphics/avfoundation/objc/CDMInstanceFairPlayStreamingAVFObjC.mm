@@ -678,32 +678,28 @@ CDMInstanceSessionFairPlayStreamingAVFObjC* CDMInstanceFairPlayStreamingAVFObjC:
     return nullptr;
 }
 
+static bool isPotentiallyUsableKeyStatus(CDMInstanceSession::KeyStatus status)
+{
+    switch (status) {
+    case CDMInstanceSession::KeyStatus::Expired:
+    case CDMInstanceSession::KeyStatus::Released:
+    case CDMInstanceSession::KeyStatus::InternalError:
+        // Key is unusable.
+        return false;
+    case CDMInstanceSession::KeyStatus::Usable:
+    case CDMInstanceSession::KeyStatus::OutputRestricted:
+    case CDMInstanceSession::KeyStatus::OutputDownscaled:
+    case CDMInstanceSession::KeyStatus::StatusPending:
+        // Key is (potentially) usable.
+        return true;
+    }
+}
+
 bool CDMInstanceFairPlayStreamingAVFObjC::isAnyKeyUsable(const Keys& keys) const
 {
     for (auto& sessionInterface : m_sessions) {
-        if (!sessionInterface)
-            continue;
-
-        for (auto& keyStatusPair : sessionInterface->keyStatuses()) {
-            switch (keyStatusPair.second) {
-            case CDMInstanceSession::KeyStatus::Expired:
-            case CDMInstanceSession::KeyStatus::Released:
-            case CDMInstanceSession::KeyStatus::InternalError:
-                // Key is unusable.
-                continue;
-            case CDMInstanceSession::KeyStatus::Usable:
-            case CDMInstanceSession::KeyStatus::OutputRestricted:
-            case CDMInstanceSession::KeyStatus::OutputDownscaled:
-            case CDMInstanceSession::KeyStatus::StatusPending:
-                // Key is (potentially) usable.
-                break;
-            }
-
-            if (keys.findIf([&] (auto& key) {
-                return key.get() == keyStatusPair.first.get();
-            }) != notFound)
-                return true;
-        }
+        if (sessionInterface && sessionInterface->isAnyKeyUsable(keys))
+            return true;
     }
     return false;
 }
@@ -1506,6 +1502,21 @@ bool CDMInstanceSessionFairPlayStreamingAVFObjC::hasRequest(AVContentKeyRequest 
     return contentKeyRequests().contains(keyRequest);
 }
 
+bool CDMInstanceSessionFairPlayStreamingAVFObjC::isAnyKeyUsable(const Keys& keys) const
+{
+    for (auto& keyStatusPair : keyStatuses()) {
+        if (!isPotentiallyUsableKeyStatus(keyStatusPair.second))
+            continue;
+
+        if (keys.findIf([&] (auto& key) {
+            return key.get() == keyStatusPair.first.get();
+        }) != notFound)
+            return true;
+    }
+
+    return false;
+}
+
 bool CDMInstanceSessionFairPlayStreamingAVFObjC::shouldRetryRequestForReason(AVContentKeyRequest *, NSString *)
 {
     notImplemented();
@@ -1735,7 +1746,7 @@ AVContentKey *CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyForSample(co
 
     for (auto& request : contentKeyRequests()) {
         for (auto& keyID : keyIDsForRequest(request.get())) {
-            if (m_keyStatuses[keyStatusIndex++].second != CDMInstanceSession::KeyStatus::Usable)
+            if (!isPotentiallyUsableKeyStatus(m_keyStatuses[keyStatusIndex++].second))
                 continue;
 
             if (!sampleKeyIDs.containsIf([&](auto& sampleKeyID) { return sampleKeyID.get() == keyID.get(); }))
@@ -1746,6 +1757,7 @@ AVContentKey *CDMInstanceSessionFairPlayStreamingAVFObjC::contentKeyForSample(co
         }
     }
 
+    ASSERT(!isAnyKeyUsable(sampleKeyIDs));
     return nil;
 }
 
