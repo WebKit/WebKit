@@ -133,10 +133,12 @@ public:
     template<typename T>
     static IntRange rangeForMask(T mask)
     {
-        if (!(mask + 1))
+        if (mask == static_cast<T>(-1))
             return top<T>();
-        if (mask < 0)
-            return IntRange(INT_MIN & mask, mask & INT_MAX);
+        if constexpr (std::is_signed_v<T>) {
+            if (mask < 0)
+                return IntRange(std::numeric_limits<T>::min() & mask, mask & std::numeric_limits<T>::max());
+        }
         return IntRange(0, mask);
     }
 
