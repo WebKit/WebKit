@@ -78,9 +78,6 @@ public:
 
     void updateControlPartForRenderer(ControlPart&, const RenderObject&) const;
 
-    OptionSet<ControlStyle::State> extractControlStyleStatesForRenderer(const RenderObject&) const;
-    ControlStyle extractControlStyleForRenderer(const RenderBox&) const;
-
     // These methods are called to paint the widget as a background of the RenderObject. A widget's foreground, e.g., the
     // text of a button, is always rendered by the engine itself. The boolean return value indicates
     // whether the CSS border/background should also be painted.
@@ -268,6 +265,9 @@ public:
     float switchPointerTrackingMagnitudeProportion() const { return 0.4f; }
 
 protected:
+    OptionSet<ControlStyle::State> extractControlStyleStatesForRenderer(const RenderObject&) const;
+    ControlStyle extractControlStyleForRenderer(const RenderObject&) const;
+
     virtual bool canPaint(const PaintInfo&, const Settings&, StyleAppearance) const { return true; }
 
     // The platform selection color.
@@ -386,6 +386,8 @@ protected:
     virtual bool paintSwitchTrack(const RenderObject&, const PaintInfo&, const FloatRect&) { return true; }
 
 private:
+    OptionSet<ControlStyle::State> extractControlStyleStatesForRendererInternal(const RenderObject&) const;
+
     void adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(RenderStyle&, const Element*) const;
 
 public:
