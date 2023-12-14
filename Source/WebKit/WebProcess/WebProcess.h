@@ -428,7 +428,7 @@ public:
     void addAllowedFirstPartyForCookies(WebCore::RegistrableDomain&&);
     bool allowsFirstPartyForCookies(const URL&);
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     void revokeLaunchServicesSandboxExtension();
 #endif
 
@@ -760,7 +760,8 @@ private:
 
     String m_uiProcessName;
     WebCore::RegistrableDomain m_registrableDomain;
-
+#endif
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     RefPtr<SandboxExtension> m_launchServicesExtension;
 #endif
 

@@ -1507,7 +1507,9 @@ void WebProcess::openDirectoryCacheInvalidated(SandboxExtension::Handle&& handle
     if (bootstrapExtension)
         bootstrapExtension->revoke();
 }
+#endif
 
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
 void WebProcess::revokeLaunchServicesSandboxExtension()
 {
     if (m_launchServicesExtension) {

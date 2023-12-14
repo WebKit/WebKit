@@ -441,7 +441,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     parameters.mobileGestaltExtensionHandle = process.createMobileGestaltSandboxExtensionIfNeeded();
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
     if (auto launchServicesExtensionHandle = SandboxExtension::createHandleForMachLookup("com.apple.coreservices.launchservicesd"_s, std::nullopt))
         parameters.launchServicesExtensionHandle = WTFMove(*launchServicesExtensionHandle);
 #endif
