@@ -1210,14 +1210,14 @@ WebCore::FloatRect WebPageProxy::selectionBoundingRectInRootViewCoordinates() co
     return bounds;
 }
 
-void WebPageProxy::requestDocumentEditingContext(WebKit::DocumentEditingContextRequest request, CompletionHandler<void(WebKit::DocumentEditingContext)>&& completionHandler)
+void WebPageProxy::requestDocumentEditingContext(WebKit::DocumentEditingContextRequest&& request, CompletionHandler<void(WebKit::DocumentEditingContext&&)>&& completionHandler)
 {
     if (!hasRunningProcess()) {
         completionHandler({ });
         return;
     }
 
-    sendWithAsyncReply(Messages::WebPage::RequestDocumentEditingContext(request), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPage::RequestDocumentEditingContext(WTFMove(request)), WTFMove(completionHandler));
 }
 
 #if ENABLE(DRAG_SUPPORT)

@@ -53,7 +53,7 @@ void IncrementalSweeper::scheduleTimer()
     setTimeUntilFire(sweepTimeSlice * sweepTimeMultiplier);
 }
 
-IncrementalSweeper::IncrementalSweeper(Heap* heap)
+IncrementalSweeper::IncrementalSweeper(JSC::Heap* heap)
     : Base(heap->vm())
     , m_currentDirectory(nullptr)
 {
@@ -132,7 +132,7 @@ bool IncrementalSweeper::sweepNextBlock(VM& vm, SweepTrigger trigger)
     return vm.heap.sweepNextLogicallyEmptyWeakBlock();
 }
 
-void IncrementalSweeper::startSweeping(Heap& heap)
+void IncrementalSweeper::startSweeping(JSC::Heap& heap)
 {
     scheduleTimer();
     m_currentDirectory = heap.objectSpace().firstDirectory();

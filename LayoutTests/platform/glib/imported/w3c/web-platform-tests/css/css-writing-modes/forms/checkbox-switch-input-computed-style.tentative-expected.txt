@@ -1,0 +1,6 @@
+
+
+FAIL horizontal-input block size should match height and inline size should match width assert_not_equals: got disallowed value 0
+FAIL vertical-lr-input block size should match width and inline size should match height assert_not_equals: got disallowed value 0
+FAIL vertical-rl-input block size should match width and inline size should match height assert_not_equals: got disallowed value 0
+

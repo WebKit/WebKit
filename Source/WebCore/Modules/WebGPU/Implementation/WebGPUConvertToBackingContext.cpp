@@ -342,6 +342,10 @@ WGPUStorageTextureAccess ConvertToBackingContext::convertToBacking(StorageTextur
     switch (storageTextureAccess) {
     case StorageTextureAccess::WriteOnly:
         return WGPUStorageTextureAccess_WriteOnly;
+    case StorageTextureAccess::ReadOnly:
+        return WGPUStorageTextureAccess_ReadOnly;
+    case StorageTextureAccess::ReadWrite:
+        return WGPUStorageTextureAccess_ReadWrite;
     }
 }
 

@@ -858,7 +858,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::updateCachedResourceW
 {
     if (!isResourceSuitableForDirectReuse(resource, request)) {
         request.setCachingPolicy(CachingPolicy::DisallowCaching);
-        return loadResource(resource.type(), sessionID, WTFMove(request), cookieJar, settings);
+        return loadResource(resource.type(), sessionID, WTFMove(request), cookieJar, settings, MayAddToMemoryCache::Yes);
     }
 
     auto resourceHandle = createResource(resource.type(), WTFMove(request), sessionID, &cookieJar, settings);
@@ -963,6 +963,11 @@ static inline SVGImage* cachedResourceSVGImage(CachedResource* resource)
     if (!isSVGImageCachedResource(resource))
         return nullptr;
     return downcast<SVGImage>(downcast<CachedImage>(*resource).image());
+}
+
+static bool computeMayAddToMemoryCache(const CachedResourceRequest& newRequest, const CachedResource* existingResource)
+{
+    return !existingResource || !existingResource->isPreloaded() || newRequest.options().serviceWorkersMode != ServiceWorkersMode::None || existingResource->options().serviceWorkersMode == ServiceWorkersMode::None;
 }
 
 ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requestResource(CachedResource::Type type, CachedResourceRequest&& request, ForPreload forPreload, ImageLoading imageLoading)
@@ -1107,15 +1112,17 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     auto& cookieJar = page.cookieJar();
 
+    auto mayAddToMemoryCache = computeMayAddToMemoryCache(request, resource.get()) ? MayAddToMemoryCache::Yes : MayAddToMemoryCache::No;
     RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get(), forPreload, imageLoading);
     switch (policy) {
     case Reload:
-        memoryCache.remove(*resource);
+        if (mayAddToMemoryCache == MayAddToMemoryCache::Yes)
+            memoryCache.remove(*resource);
         FALLTHROUGH;
     case Load:
-        if (resource)
+        if (resource && mayAddToMemoryCache == MayAddToMemoryCache::Yes)
             memoryCache.remove(*resource);
-        resource = loadResource(type, page.sessionID(), WTFMove(request), cookieJar, page.settings());
+        resource = loadResource(type, page.sessionID(), WTFMove(request), cookieJar, page.settings(), mayAddToMemoryCache);
         break;
     case Revalidate:
         resource = revalidateResource(WTFMove(request), *resource);
@@ -1248,17 +1255,17 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(Ca
     return newResource;
 }
 
-CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedResource::Type type, PAL::SessionID sessionID, CachedResourceRequest&& request, const CookieJar& cookieJar, const Settings& settings)
+CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedResource::Type type, PAL::SessionID sessionID, CachedResourceRequest&& request, const CookieJar& cookieJar, const Settings& settings, MayAddToMemoryCache mayAddToMemoryCache)
 {
     auto& memoryCache = MemoryCache::singleton();
-    ASSERT(!request.allowsCaching() || !memoryCache.resourceForRequest(request.resourceRequest(), sessionID)
+    ASSERT(!request.allowsCaching() || mayAddToMemoryCache == MayAddToMemoryCache::No || !memoryCache.resourceForRequest(request.resourceRequest(), sessionID)
         || request.resourceRequest().cachePolicy() == ResourceRequestCachePolicy::DoNotUseAnyCache || request.resourceRequest().cachePolicy() == ResourceRequestCachePolicy::ReloadIgnoringCacheData || request.resourceRequest().cachePolicy() == ResourceRequestCachePolicy::RefreshAnyCacheData);
 
     LOG(ResourceLoading, "Loading CachedResource for '%s'.", request.resourceRequest().url().stringCenterEllipsizedToLength().latin1().data());
 
     auto resource = createResource(type, WTFMove(request), sessionID, &cookieJar, settings);
 
-    if (resource->allowsCaching())
+    if (resource->allowsCaching() && mayAddToMemoryCache == MayAddToMemoryCache::Yes)
         memoryCache.add(*resource);
 
     m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, resource->initiatorType(), frame());

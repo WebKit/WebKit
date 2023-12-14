@@ -32,6 +32,7 @@
 #include "LibWebRTCCodecs.h"
 #endif
 
+#include "LibWebRTCDnsResolverFactory.h"
 #include "LibWebRTCNetwork.h"
 #include "LibWebRTCNetworkManager.h"
 #include "RTCDataChannelRemoteManager.h"
@@ -43,25 +44,12 @@
 
 ALLOW_COMMA_BEGIN
 
-#include <webrtc/api/async_resolver_factory.h>
 #include <webrtc/pc/peer_connection_factory.h>
 
 ALLOW_COMMA_END
 
 namespace WebKit {
 using namespace WebCore;
-
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=265791
-class AsyncResolverFactory : public webrtc::AsyncResolverFactory {
-    WTF_MAKE_FAST_ALLOCATED;
-private:
-    rtc::AsyncResolverInterface* Create() final
-    {
-        return WebProcess::singleton().libWebRTCNetwork().socketFactory().createAsyncResolver();
-    }
-};
-ALLOW_DEPRECATED_DECLARATIONS_END
 
 LibWebRTCProvider::LibWebRTCProvider(WebPage& webPage)
     : m_webPage(webPage)
@@ -85,7 +73,7 @@ rtc::scoped_refptr<webrtc::PeerConnectionInterface> LibWebRTCProvider::createPee
     networkManager->setEnumeratingAllNetworkInterfacesEnabled(isEnumeratingAllNetworkInterfacesEnabled());
     networkManager->setEnumeratingVisibleNetworkInterfacesEnabled(isEnumeratingVisibleNetworkInterfacesEnabled());
 
-    return WebCore::LibWebRTCProvider::createPeerConnection(observer, *networkManager, *socketFactory, WTFMove(configuration), makeUnique<AsyncResolverFactory>());
+    return WebCore::LibWebRTCProvider::createPeerConnection(observer, *networkManager, *socketFactory, WTFMove(configuration), makeUnique<LibWebRTCDnsResolverFactory>());
 }
 
 void LibWebRTCProvider::disableNonLocalhostConnections()
@@ -105,10 +93,7 @@ private:
     rtc::AsyncPacketSocket* CreateUdpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort) final;
     rtc::AsyncListenSocket* CreateServerTcpSocket(const rtc::SocketAddress&, uint16_t minPort, uint16_t maxPort, int options) final { return nullptr; }
     rtc::AsyncPacketSocket* CreateClientTcpSocket(const rtc::SocketAddress& localAddress, const rtc::SocketAddress& remoteAddress, const rtc::ProxyInfo&, const std::string&, const rtc::PacketSocketTcpOptions&) final;
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=265791
-    rtc::AsyncResolverInterface* CreateAsyncResolver() final;
-ALLOW_DEPRECATED_DECLARATIONS_END
+    std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAsyncDnsResolver() final;
     void suspend() final;
     void resume() final;
 
@@ -140,13 +125,10 @@ rtc::AsyncPacketSocket* RTCSocketFactory::CreateClientTcpSocket(const rtc::Socke
     return WebProcess::singleton().libWebRTCNetwork().socketFactory().createClientTcpSocket(m_contextIdentifier, localAddress, remoteAddress, String { m_userAgent }, options, m_pageIdentifier, m_isFirstParty, m_isRelayDisabled, m_domain);
 }
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-// FIXME: https://bugs.webkit.org/show_bug.cgi?id=265791
-rtc::AsyncResolverInterface* RTCSocketFactory::CreateAsyncResolver()
+std::unique_ptr<webrtc::AsyncDnsResolverInterface> RTCSocketFactory::CreateAsyncDnsResolver()
 {
-    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createAsyncResolver();
+    return WebProcess::singleton().libWebRTCNetwork().socketFactory().createAsyncDnsResolver();
 }
-ALLOW_DEPRECATED_DECLARATIONS_END
 
 void RTCSocketFactory::suspend()
 {

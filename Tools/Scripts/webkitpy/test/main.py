@@ -162,7 +162,6 @@ def main():
         "webkitpy.common.editdistance_unittest",
         "webkitpy.common.find_files_unittest",
         "webkitpy.common.memoized_unittest",
-        "webkitpy.common.net.abstracttestresults_unittest",
         "webkitpy.common.net.bugzilla.attachment_unittest",
         "webkitpy.common.net.bugzilla.bug_unittest",
         "webkitpy.common.net.bugzilla.bugzilla_unittest",

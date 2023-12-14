@@ -889,9 +889,10 @@ public:
     static RefPtr<TypeDefinition> typeDefinitionForRecursionGroup(const Vector<TypeIndex>& types);
     static RefPtr<TypeDefinition> typeDefinitionForProjection(TypeIndex, ProjectionIndex);
     static RefPtr<TypeDefinition> typeDefinitionForSubtype(const Vector<TypeIndex>&, TypeIndex, bool);
+    static RefPtr<TypeDefinition> getPlaceholderProjection(ProjectionIndex);
     ALWAYS_INLINE const FunctionSignature* thunkFor(Type type) const { return thunkTypes[linearizeType(type.kind)]; }
 
-    static void addCachedUnrolling(TypeIndex, TypeIndex);
+    static void addCachedUnrolling(TypeIndex, const TypeDefinition*);
     static std::optional<TypeIndex> tryGetCachedUnrolling(TypeIndex);
 
     // Every type definition that is in a module's signature list should have a canonical RTT registered for subtyping checks.
@@ -911,8 +912,9 @@ public:
     static void tryCleanup();
 private:
     HashSet<Wasm::TypeHash> m_typeSet;
-    HashMap<TypeIndex, TypeIndex> m_unrollingCache;
+    HashMap<TypeIndex, RefPtr<const TypeDefinition>> m_unrollingCache;
     HashMap<TypeIndex, RefPtr<RTT>> m_rttMap;
+    HashSet<RefPtr<TypeDefinition>> m_placeholders;
     const FunctionSignature* thunkTypes[numTypes];
     RefPtr<TypeDefinition> m_I64_Void;
     RefPtr<TypeDefinition> m_Void_I32;

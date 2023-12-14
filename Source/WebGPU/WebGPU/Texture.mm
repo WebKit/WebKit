@@ -977,7 +977,7 @@ static uint32_t maximumMiplevelCount(WGPUTextureDimension dimension, WGPUExtent3
     return WTF::fastLog2(m);
 }
 
-static bool hasStorageBindingCapability(WGPUTextureFormat format)
+bool Texture::hasStorageBindingCapability(WGPUTextureFormat format, const Device& device, WGPUStorageTextureAccess access)
 {
     // https://gpuweb.github.io/gpuweb/#plain-color-formats
     switch (format) {
@@ -988,16 +988,20 @@ static bool hasStorageBindingCapability(WGPUTextureFormat format)
     case WGPUTextureFormat_RGBA16Uint:
     case WGPUTextureFormat_RGBA16Sint:
     case WGPUTextureFormat_RGBA16Float:
-    case WGPUTextureFormat_R32Float:
-    case WGPUTextureFormat_R32Uint:
-    case WGPUTextureFormat_R32Sint:
     case WGPUTextureFormat_RG32Float:
-    case WGPUTextureFormat_RG32Uint:
-    case WGPUTextureFormat_RG32Sint:
     case WGPUTextureFormat_RGBA32Float:
     case WGPUTextureFormat_RGBA32Uint:
     case WGPUTextureFormat_RGBA32Sint:
+    case WGPUTextureFormat_RG32Uint:
+    case WGPUTextureFormat_RG32Sint:
+        return access != WGPUStorageTextureAccess_ReadWrite;
+    case WGPUTextureFormat_BGRA8Unorm:
+        return access != WGPUStorageTextureAccess_ReadWrite && device.hasFeature(WGPUFeatureName_BGRA8UnormStorage);
+    case WGPUTextureFormat_R32Float:
+    case WGPUTextureFormat_R32Uint:
+    case WGPUTextureFormat_R32Sint:
         return true;
+    case WGPUTextureFormat_RGBA8UnormSrgb:
     case WGPUTextureFormat_R8Unorm:
     case WGPUTextureFormat_R8Snorm:
     case WGPUTextureFormat_R8Uint:
@@ -1012,8 +1016,6 @@ static bool hasStorageBindingCapability(WGPUTextureFormat format)
     case WGPUTextureFormat_RG16Uint:
     case WGPUTextureFormat_RG16Sint:
     case WGPUTextureFormat_RG16Float:
-    case WGPUTextureFormat_RGBA8UnormSrgb:
-    case WGPUTextureFormat_BGRA8Unorm:
     case WGPUTextureFormat_BGRA8UnormSrgb:
     case WGPUTextureFormat_RGB10A2Unorm:
     case WGPUTextureFormat_RG11B10Ufloat:
@@ -1328,7 +1330,7 @@ NSString *Device::errorValidatingTextureCreation(const WGPUTextureDescriptor& de
     }
 
     if (descriptor.usage & WGPUTextureUsage_StorageBinding) {
-        if (!hasStorageBindingCapability(descriptor.format))
+        if (!Texture::hasStorageBindingCapability(descriptor.format, *this))
             return @"createTexture: descriptor.usage & WGPUTextureUsage_StorageBinding && !hasStorageBindingCapability(descriptor.format)";
     }
 
@@ -2855,6 +2857,11 @@ void Texture::setPreviouslyCleared(uint32_t mipLevel, uint32_t slice)
     ClearedToZeroInnerContainer set;
     set.add(slice);
     m_clearedToZero.add(mipLevel, set);
+}
+
+bool Texture::isDestroyed() const
+{
+    return m_destroyed;
 }
 
 } // namespace WebGPU

@@ -587,6 +587,7 @@ platform/mac/RevealUtilities.mm
 platform/mac/ScrollAnimatorMac.mm @no-unify
 platform/mac/ScrollAnimationRubberBand.mm
 platform/mac/ScrollViewMac.mm
+platform/mac/ScrollbarMac.mm @no-unify
 platform/mac/ScrollbarsControllerMac.mm @no-unify
 platform/mac/ScrollbarThemeMac.mm @no-unify
 platform/mac/ScrollingEffectsController.mm

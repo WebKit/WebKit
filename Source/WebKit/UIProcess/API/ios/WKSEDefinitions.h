@@ -25,6 +25,11 @@
 
 #pragma once
 
+#if HAVE(SERVICEEXTENSIONS) && defined(__OBJC__) && __OBJC__
+#import <ServiceExtensions/ServiceExtensions.h>
+#import <ServiceExtensions/ServiceExtensions_Private.h>
+#endif
+
 #if USE(APPLE_INTERNAL_SDK)
 
 #import <WebKitAdditions/WKSEDefinitionsAdditions.h>
@@ -36,4 +41,57 @@
 
 #endif
 
-
+#ifndef SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+#define SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE 0
+#define WKSETextSuggestion                                      UITextSuggestion
+#define WKSEAutoFillTextSuggestion                              UITextAutofillSuggestion
+#define WKSEKeyEvent                                            UIKeyEvent
+#define WKSEKeyEventContext                                     UIKeyEventContext
+#define WKSETextDocumentContext                                 UIWKDocumentContext
+#define WKSETextDocumentRequest                                 UIWKDocumentRequest
+#define WKSETextDocumentRequestFlags                            UIWKDocumentRequestFlags
+#define WKSETextDocumentRequestNone                             UIWKDocumentRequestNone
+#define WKSETextDocumentRequestText                             UIWKDocumentRequestText
+#define WKSETextDocumentRequestAttributed                       UIWKDocumentRequestAttributed
+#define WKSETextDocumentRequestRects                            UIWKDocumentRequestRects
+#define WKSETextDocumentRequestSpatial                          UIWKDocumentRequestSpatial
+#define WKSETextDocumentRequestAnnotation                       UIWKDocumentRequestAnnotation
+#define WKSETextDocumentRequestMarkedTextRects                  UIWKDocumentRequestMarkedTextRects
+#define WKSETextDocumentRequestSpatialAndCurrentSelection       UIWKDocumentRequestSpatialAndCurrentSelection
+#define WKSETextDocumentRequestAutocorrectedRanges              UIWKDocumentRequestAutocorrectedRanges
+#define WKSEDirectionalTextRange                                UIDirectionalTextRange
+#define WKSETextReplacementOptions                              UITextReplacementOptions
+#define WKSETextReplacementOptionsNone                          UITextReplacementOptionsNone
+#define WKSETextReplacementOptionsAddUnderline                  UITextReplacementOptionsAddUnderline
+#define WKSEShiftKeyState                                       UIShiftKeyState
+#define WKSEShiftKeyStateNone                                   UIShiftKeyStateNone
+#define WKSEShiftKeyStateShifted                                UIShiftKeyStateShifted
+#define WKSEShiftKeyStateCapsLocked                             UIShiftKeyStateCapsLocked
+#define WKSEExtendedTextInputTraits                             UIExtendedTextInputTraits
+#define WKSETextInput                                           UIAsyncTextInputClient
+#define WKSETextInputDelegate                                   UIAsyncTextInputDelegate
+#define WKSETextInteraction                                     UIAsyncTextInteraction
+#define WKSETextInteractionDelegate                             UIAsyncTextInteractionDelegate
+#define WKSEGestureType                                         UIWKGestureType
+#define WKSEGestureLoupe                                        UIWKGestureLoupe
+#define WKSEGestureOneFingerTap                                 UIWKGestureOneFingerTap
+#define WKSEGestureTapAndAHalf                                  UIWKGestureTapAndAHalf
+#define WKSEGestureDoubleTap                                    UIWKGestureDoubleTap
+#define WKSEGestureOneFingerDoubleTap                           UIWKGestureOneFingerDoubleTap
+#define WKSEGestureOneFingerTripleTap                           UIWKGestureOneFingerTripleTap
+#define WKSEGestureTwoFingerSingleTap                           UIWKGestureTwoFingerSingleTap
+#define WKSEGestureTwoFingerRangedSelectGesture                 UIWKGestureTwoFingerRangedSelectGesture
+#define WKSEGesturePhraseBoundary                               UIWKGesturePhraseBoundary
+#define WKSESelectionTouch                                      UIWKSelectionTouch
+#define WKSESelectionTouchStarted                               UIWKSelectionTouchStarted
+#define WKSESelectionTouchMoved                                 UIWKSelectionTouchMoved
+#define WKSESelectionTouchEnded                                 UIWKSelectionTouchEnded
+#define WKSESelectionTouchEndedMovingForward                    UIWKSelectionTouchEndedMovingForward
+#define WKSESelectionTouchEndedMovingBackward                   UIWKSelectionTouchEndedMovingBackward
+#define WKSESelectionTouchEndedNotMoving                        UIWKSelectionTouchEndedNotMoving
+#define WKSESelectionFlags                                      UIWKSelectionFlags
+#define WKSESelectionFlagsNone                                  UIWKNone
+#define WKSEWordIsNearTap                                       UIWKWordIsNearTap
+#define WKSESelectionFlipped                                    UIWKSelectionFlipped
+#define WKSEPhraseBoundaryChanged                               UIWKPhraseBoundaryChanged
+#endif // !defined(SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE)

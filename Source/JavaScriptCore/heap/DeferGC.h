@@ -53,7 +53,7 @@ public:
     ~DeferGCForAWhile();
 
 private:
-    Heap& m_heap;
+    JSC::Heap& m_heap;
 };
 
 class DisallowGC : public DisallowScope<DisallowGC> {

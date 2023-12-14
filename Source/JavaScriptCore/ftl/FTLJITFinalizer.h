@@ -65,7 +65,7 @@ public:
     
     Vector<CCallHelpers::Jump> lazySlowPathGeneratorJumps;
     GeneratedFunction function;
-    RefPtr<JITCode> jitCode;
+    RefPtr<FTL::JITCode> jitCode;
 };
 
 } } // namespace JSC::FTL

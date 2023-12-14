@@ -63,7 +63,7 @@ Ref<WebCore::WebGPU::RenderPassEncoder> RemoteCommandEncoderProxy::beginRenderPa
 
     auto result = RemoteRenderPassEncoderProxy::create(*this, m_convertToBackingContext, identifier);
     result->setLabel(WTFMove(convertedDescriptor->label));
-    return WTFMove(result);
+    return result;
 }
 
 Ref<WebCore::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginComputePass(const std::optional<WebCore::WebGPU::ComputePassDescriptor>& descriptor)
@@ -83,7 +83,7 @@ Ref<WebCore::WebGPU::ComputePassEncoder> RemoteCommandEncoderProxy::beginCompute
 
     auto result = RemoteComputePassEncoderProxy::create(*this, m_convertToBackingContext, identifier);
     result->setLabel(WTFMove(convertedDescriptor->label));
-    return WTFMove(result);
+    return result;
 }
 
 void RemoteCommandEncoderProxy::copyBufferToBuffer(

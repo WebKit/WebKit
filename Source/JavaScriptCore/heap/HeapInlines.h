@@ -42,14 +42,14 @@ ALWAYS_INLINE VM& Heap::vm() const
     return *bitwise_cast<VM*>(bitwise_cast<uintptr_t>(this) - OBJECT_OFFSETOF(VM, heap));
 }
 
-ALWAYS_INLINE Heap* Heap::heap(const HeapCell* cell)
+ALWAYS_INLINE JSC::Heap* Heap::heap(const HeapCell* cell)
 {
     if (!cell)
         return nullptr;
     return cell->heap();
 }
 
-inline Heap* Heap::heap(const JSValue v)
+inline JSC::Heap* Heap::heap(const JSValue v)
 {
     if (!v.isCell())
         return nullptr;

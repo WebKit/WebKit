@@ -1,7 +1,7 @@
 kind: manual
 
 depends:
-- sdk/gtk+-3.bst
+- freedesktop-sdk.bst:components/gtk3.bst
 - freedesktop-sdk.bst:components/perl.bst
       # gtk3 seems to have all the so files that qtbase needs access to
       # perl is listed as a recommended dependency on packages.debian.org

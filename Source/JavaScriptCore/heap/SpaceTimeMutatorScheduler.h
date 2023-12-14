@@ -76,7 +76,7 @@ private:
     double phase(const Snapshot&);
     bool shouldBeResumed(const Snapshot&);
     
-    Heap& m_heap;
+    JSC::Heap& m_heap;
     Seconds m_period;
     State m_state { Normal };
     

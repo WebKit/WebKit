@@ -819,6 +819,18 @@ void RewriteGlobalVariables::collectDynamicOffsetGlobals(const PipelineLayout& p
     }
 }
 
+static WGSL::StorageTextureAccess convertAccess(const AccessMode accessMode)
+{
+    switch (accessMode) {
+    case AccessMode::Read:
+        return WGSL::StorageTextureAccess::ReadOnly;
+    case AccessMode::ReadWrite:
+        return WGSL::StorageTextureAccess::ReadWrite;
+    case AccessMode::Write:
+        return WGSL::StorageTextureAccess::WriteOnly;
+    }
+}
+
 static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
 {
     auto* variable = global.declaration;
@@ -831,7 +843,7 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
             auto& reference = downcast<AST::ReferenceTypeExpression>(*maybeReference);
             auto* referenceType = std::get_if<Types::Reference>(reference.inferredType());
             if (referenceType && referenceType->addressSpace == AddressSpace::Storage)
-                return BufferBindingType::Storage;
+                return referenceType->accessMode == AccessMode::Read ? BufferBindingType::ReadOnlyStorage : BufferBindingType::Storage;
         }
 
         return BufferBindingType::Uniform;
@@ -948,6 +960,8 @@ static BindGroupLayoutEntry::BindingMember bindingMemberForGlobal(auto& global)
         }
 
         return StorageTextureBindingLayout {
+            .access = convertAccess(texture.access),
+            .format = texture.format,
             .viewDimension = viewDimension
         };
     }, [&](const TextureDepth& texture) -> BindGroupLayoutEntry::BindingMember {

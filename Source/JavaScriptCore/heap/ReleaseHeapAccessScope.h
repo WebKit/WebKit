@@ -39,7 +39,7 @@ namespace JSC {
 // you are waiting.
 class ReleaseHeapAccessScope {
 public:
-    ReleaseHeapAccessScope(Heap& heap)
+    ReleaseHeapAccessScope(JSC::Heap& heap)
         : m_heap(heap)
     {
         m_heap.releaseAccess();
@@ -51,12 +51,12 @@ public:
     }
 
 private:
-    Heap& m_heap;
+    JSC::Heap& m_heap;
 };
 
 class ReleaseHeapAccessIfNeededScope {
 public:
-    ReleaseHeapAccessIfNeededScope(Heap& heap)
+    ReleaseHeapAccessIfNeededScope(JSC::Heap& heap)
         : m_heap(heap)
     {
         hadHeapAccess = m_heap.hasAccess();
@@ -71,7 +71,7 @@ public:
     }
 
 private:
-    Heap& m_heap;
+    JSC::Heap& m_heap;
     bool hadHeapAccess { false };
 };
 

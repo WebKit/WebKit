@@ -110,7 +110,7 @@ MarkedBlock::Handle* BlockDirectory::findBlockForAllocation(LocalAllocator& allo
     }
 }
 
-MarkedBlock::Handle* BlockDirectory::tryAllocateBlock(Heap& heap)
+MarkedBlock::Handle* BlockDirectory::tryAllocateBlock(JSC::Heap& heap)
 {
     SuperSamplerScope superSamplerScope(false);
     

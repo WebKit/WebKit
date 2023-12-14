@@ -37,3 +37,6 @@ webkit.org/b/261444 [ Debug x86_64 ] http/tests/security/referrer-policy-header.
 
 # webkit.org/b/263955 Twelve css WPTs are failing with async overflow scrolling enabled on macOS
 imported/w3c/web-platform-tests/css/cssom-view/scroll-behavior-smooth-positions.html [ Failure ]
+
+# This feature was introduced in macOS Sonoma.
+http/tests/paymentrequest/paymentrequest-applePayLaterAvailability.https.html [ Skip ]

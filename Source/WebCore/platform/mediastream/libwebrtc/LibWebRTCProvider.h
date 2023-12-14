@@ -52,7 +52,7 @@ class RTCCertificateGenerator;
 }
 
 namespace webrtc {
-class AsyncResolverFactory;
+class AsyncDnsResolverFactory;
 class PeerConnectionFactoryInterface;
 }
 
@@ -122,10 +122,7 @@ public:
 protected:
     LibWebRTCProvider();
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=265791
-    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::NetworkManager&, rtc::PacketSocketFactory&, webrtc::PeerConnectionInterface::RTCConfiguration&&, std::unique_ptr<webrtc::AsyncResolverFactory>&&);
-ALLOW_DEPRECATED_DECLARATIONS_END
+    rtc::scoped_refptr<webrtc::PeerConnectionInterface> createPeerConnection(webrtc::PeerConnectionObserver&, rtc::NetworkManager&, rtc::PacketSocketFactory&, webrtc::PeerConnectionInterface::RTCConfiguration&&, std::unique_ptr<webrtc::AsyncDnsResolverFactoryInterface>&&);
 
     rtc::scoped_refptr<webrtc::PeerConnectionFactoryInterface> createPeerConnectionFactory(rtc::Thread* networkThread, rtc::Thread* signalingThread);
     virtual std::unique_ptr<webrtc::VideoDecoderFactory> createDecoderFactory();

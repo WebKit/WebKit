@@ -126,13 +126,15 @@ struct TextureBindingLayout {
     bool multisampled;
 };
 
-/* enum class StorageTextureAccess : uint8_t {
-    writeOnly
-}; */
+enum class StorageTextureAccess : uint8_t {
+    WriteOnly,
+    ReadOnly,
+    ReadWrite,
+};
 
 struct StorageTextureBindingLayout {
-    // StorageTextureAccess access; // There's only one field in this enum
-    // TextureFormat format; // Not sure this is necessary
+    StorageTextureAccess access { StorageTextureAccess::WriteOnly };
+    TexelFormat format;
     TextureViewDimension viewDimension;
 };
 

@@ -1,0 +1,16 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(source.duration = 0)
+RUN(sourceBuffer = source.addSourceBuffer("video/mock; codecs=mock"))
+RUN(sourceBuffer.appendBuffer(initSegment))
+EXPECTED (sourceBuffer.updating == 'true') OK
+EVENT(updateend)
+EXPECTED (source.duration == '0') OK
+EXPECTED (sourceBuffer.updating == 'false') OK
+RUN(sourceBuffer.appendBuffer(mediaSegment))
+EVENT(durationchange)
+EVENT(updateend)
+EXPECTED (source.duration == '16') OK
+END OF TEST
+

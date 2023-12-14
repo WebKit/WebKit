@@ -73,6 +73,31 @@ uint32_t TextureView::height() const
     return static_cast<uint32_t>(m_texture.height);
 }
 
+WGPUTextureUsageFlags TextureView::usage() const
+{
+    return m_parentTexture.usage();
+}
+
+uint32_t TextureView::sampleCount() const
+{
+    return m_parentTexture.sampleCount();
+}
+
+WGPUTextureFormat TextureView::format() const
+{
+    return m_parentTexture.format();
+}
+
+uint32_t TextureView::mipLevelCount() const
+{
+    return m_parentTexture.mipLevelCount();
+}
+
+bool TextureView::isDestroyed() const
+{
+    return m_parentTexture.isDestroyed();
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs

@@ -117,15 +117,15 @@ private:
     void adjustSearchFieldStyle(RenderStyle&, const Element*) const override;
     void paintSearchFieldDecorations(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
-    Color checkboxRadioBorderColor(OptionSet<ControlStates::States>, OptionSet<StyleColorOptions>);
-    Color checkboxRadioBackgroundColor(bool useAlternateDesign, const RenderStyle&, OptionSet<ControlStates::States>, OptionSet<StyleColorOptions>);
-    RefPtr<Gradient> checkboxRadioBackgroundGradient(const FloatRect&, OptionSet<ControlStates::States>);
-    Color checkboxRadioIndicatorColor(OptionSet<ControlStates::States>, OptionSet<StyleColorOptions>);
+    Color checkboxRadioBorderColor(OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
+    Color checkboxRadioBackgroundColor(bool useAlternateDesign, const RenderStyle&, OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
+    RefPtr<Gradient> checkboxRadioBackgroundGradient(const FloatRect&, OptionSet<ControlStyle::State>);
+    Color checkboxRadioIndicatorColor(OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
 
     bool paintCheckbox(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     bool paintRadio(const RenderObject&, const PaintInfo&, const FloatRect&) override;
 
-    void paintCheckboxRadioInnerShadow(const PaintInfo&, const FloatRoundedRect&, OptionSet<ControlStates::States>);
+    void paintCheckboxRadioInnerShadow(const PaintInfo&, const FloatRoundedRect&, OptionSet<ControlStyle::State>);
 
     bool supportsMeter(StyleAppearance) const final;
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) final;

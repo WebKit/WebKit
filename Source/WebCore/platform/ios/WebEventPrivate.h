@@ -25,16 +25,17 @@
 
 #pragma once
 
-#import <WebCore/WebEvent.h>
-
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
 
-@class UIKeyEvent;
+#import "WebSEDefinitions.h"
+#import <WebCore/WebEvent.h>
 
-@interface WebEvent (UIAsyncTextInputSupport)
+@class WebSEKeyEvent;
 
-- (instancetype)initWithUIKeyEvent:(UIKeyEvent *)event;
-@property (nonatomic, readonly) UIKeyEvent *originalUIKeyEvent;
+@interface WebEvent (WebSEKeyEventSupport)
+
+- (instancetype)initWithKeyEvent:(WebSEKeyEvent *)event;
+@property (nonatomic, readonly) WebSEKeyEvent *originalKeyEvent;
 
 @end
 

@@ -43,6 +43,22 @@ Ref<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDescrip
             auto* bindGroupLayout = descriptor.bindGroupLayouts[i];
             return Ref<BindGroupLayout> { WebGPU::fromAPI(bindGroupLayout) };
         });
+        auto& deviceLimits = limits();
+        ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };
+        for (ShaderStage shaderStage : stages) {
+            uint32_t uniformBufferCount = 0, storageBufferCount = 0, samplerCount = 0, textureCount = 0, storageTextureCount = 0;
+            for (auto& bindGroupLayout : bindGroupLayouts) {
+                uniformBufferCount += bindGroupLayout->uniformBuffersPerStage(shaderStage);
+                storageBufferCount += bindGroupLayout->storageBuffersPerStage(shaderStage);
+                samplerCount += bindGroupLayout->samplersPerStage(shaderStage);
+                textureCount += bindGroupLayout->texturesPerStage(shaderStage);
+                storageTextureCount += bindGroupLayout->storageTexturesPerStage(shaderStage);
+                if (uniformBufferCount > deviceLimits.maxUniformBuffersPerShaderStage || storageBufferCount > deviceLimits.maxStorageBuffersPerShaderStage || samplerCount > deviceLimits.maxSamplersPerShaderStage || textureCount > deviceLimits.maxSampledTexturesPerShaderStage || storageTextureCount > deviceLimits.maxStorageTexturesPerShaderStage) {
+                    generateAValidationError("Resource usage limits exceeded"_s);
+                    return PipelineLayout::createInvalid(*this);
+                }
+            }
+        }
         optionalBindGroupLayouts = WTFMove(bindGroupLayouts);
     }
 

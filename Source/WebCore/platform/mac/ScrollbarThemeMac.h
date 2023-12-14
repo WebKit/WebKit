@@ -60,15 +60,14 @@ public:
     void registerScrollbar(Scrollbar&) override;
     void unregisterScrollbar(Scrollbar&) override;
 
-    void setNewPainterForScrollbar(Scrollbar&, RetainPtr<NSScrollerImp>&&);
-    static NSScrollerImp *painterForScrollbar(Scrollbar&);
+    static NSScrollerImp *scrollerImpForScrollbar(Scrollbar&);
 
     void setPaintCharacteristicsForScrollbar(Scrollbar&);
 
     static bool isCurrentlyDrawingIntoLayer();
     static void setIsCurrentlyDrawingIntoLayer(bool);
 
-    void didCreateScrollerImp(Scrollbar&);
+    void didCreateScrollerImp(Scrollbar&) override;
     bool isLayoutDirectionRTL(Scrollbar&);
 
 #if HAVE(RUBBER_BANDING)

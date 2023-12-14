@@ -39,7 +39,7 @@ namespace JSC { namespace DFG {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JITFinalizer);
 
-JITFinalizer::JITFinalizer(Plan& plan, Ref<JITCode>&& jitCode, std::unique_ptr<LinkBuffer> linkBuffer, CodePtr<JSEntryPtrTag> withArityCheck)
+JITFinalizer::JITFinalizer(Plan& plan, Ref<DFG::JITCode>&& jitCode, std::unique_ptr<LinkBuffer> linkBuffer, CodePtr<JSEntryPtrTag> withArityCheck)
     : Finalizer(plan)
     , m_jitCode(WTFMove(jitCode))
     , m_linkBuffer(WTFMove(linkBuffer))

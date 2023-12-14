@@ -48,7 +48,7 @@ using WebCore::windowsKeyCodeForCharCode;
 
 @implementation WebEvent {
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    RetainPtr<UIKeyEvent> _originalUIKeyEvent;
+    RetainPtr<WebSEKeyEvent> _originalKeyEvent;
 #endif
 }
 
@@ -496,14 +496,14 @@ static NSString *normalizedStringWithAppKitCompatibilityMapping(NSString *charac
 
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
 
-@implementation WebEvent (UIAsyncTextInputSupport)
+@implementation WebEvent (WebSEKeyEventSupport)
 
-static inline WebEventType webEventType(UIKeyEventType type)
+static inline WebEventType webEventType(WebSEKeyEventType type)
 {
     switch (type) {
-    case UIKeyEventKeyDown:
+    case WebSEKeyEventKeyDown:
         return WebEventKeyDown;
-    case UIKeyEventKeyUp:
+    case WebSEKeyEventKeyUp:
         return WebEventKeyUp;
     }
     ASSERT_NOT_REACHED();
@@ -526,7 +526,7 @@ static inline WebEventFlags webEventModifierFlags(UIKeyModifierFlags flags)
     return modifiers;
 }
 
-static inline bool isChangingKeyModifiers(UIKeyEvent *event)
+static inline bool isChangingKeyModifiers(WebSEKeyEvent *event)
 {
     switch (event.keyCode) {
     case VK_LWIN:
@@ -544,7 +544,7 @@ static inline bool isChangingKeyModifiers(UIKeyEvent *event)
     }
 }
 
-- (instancetype)initWithUIKeyEvent:(UIKeyEvent *)event
+- (instancetype)initWithKeyEvent:(WebSEKeyEvent *)event
 {
     if (!(self = [super init]))
         return nil;
@@ -563,14 +563,14 @@ static inline bool isChangingKeyModifiers(UIKeyEvent *event)
     _charactersIgnoringModifiers = [event.charactersIgnoringModifiers retain];
     _tabKey = NO; // FIXME: Populate this field appropriately.
     _keyRepeating = event.keyRepeating;
-    _originalUIKeyEvent = event;
+    _originalKeyEvent = event;
 
     return self;
 }
 
-- (UIKeyEvent *)originalUIKeyEvent
+- (WebSEKeyEvent *)originalKeyEvent
 {
-    return _originalUIKeyEvent.get();
+    return _originalKeyEvent.get();
 }
 
 @end

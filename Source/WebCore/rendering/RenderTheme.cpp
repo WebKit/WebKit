@@ -652,7 +652,7 @@ void RenderTheme::updateControlPartForRenderer(ControlPart& part, const RenderOb
 #endif
 }
 
-OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer(const RenderObject& renderer) const
+OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRendererInternal(const RenderObject& renderer) const
 {
     OptionSet<ControlStyle::State> states;
     if (isHovered(renderer)) {
@@ -701,25 +701,39 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
     return states;
 }
 
-ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderBox& box) const
+static const RenderObject* effectiveRendererForAppearance(const RenderObject& renderObject)
 {
-    const RenderObject* renderer = &box;
-    auto type = box.style().effectiveAppearance();
+    const RenderObject* renderer = &renderObject;
+    auto type = renderObject.style().effectiveAppearance();
 
     if (type == StyleAppearance::SearchFieldCancelButton
         || type == StyleAppearance::SwitchTrack
         || type == StyleAppearance::SwitchThumb) {
-        auto* input = box.element()->shadowHost();
+        RefPtr<Node> input = renderObject.node()->shadowHost();
         if (!input)
-            input = box.element();
+            input = renderObject.node();
 
         renderer = dynamicDowncast<RenderBox>(input->renderer());
-        if (!renderer)
-            return { };
     }
+    return renderer;
+}
+
+OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer(const RenderObject& renderObject) const
+{
+    auto renderer = effectiveRendererForAppearance(renderObject);
+    if (!renderer)
+        return { };
+    return extractControlStyleStatesForRendererInternal(*renderer);
+}
+
+ControlStyle RenderTheme::extractControlStyleForRenderer(const RenderObject& renderObject) const
+{
+    auto renderer = effectiveRendererForAppearance(renderObject);
+    if (!renderer)
+        return { };
 
     return {
-        extractControlStyleStatesForRenderer(*renderer),
+        extractControlStyleStatesForRendererInternal(*renderer),
         renderer->style().computedFontSize(),
         renderer->style().effectiveZoom(),
         renderer->style().effectiveAccentColor(),

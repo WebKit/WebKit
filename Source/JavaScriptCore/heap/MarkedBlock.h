@@ -130,7 +130,7 @@ public:
         BlockDirectory* directory() const;
         Subspace* subspace() const;
         AlignedMemoryAllocator* alignedMemoryAllocator() const;
-        Heap* heap() const;
+        JSC::Heap* heap() const;
         inline MarkedSpace* space() const;
         VM& vm() const;
         WeakSet& weakSet();
@@ -336,7 +336,7 @@ public:
     const Handle& handle() const;
         
     VM& vm() const;
-    inline Heap* heap() const;
+    inline JSC::Heap* heap() const;
     inline MarkedSpace* space() const;
 
     static bool isAtomAligned(const void*);
@@ -488,7 +488,7 @@ inline AlignedMemoryAllocator* MarkedBlock::Handle::alignedMemoryAllocator() con
     return m_alignedMemoryAllocator;
 }
 
-inline Heap* MarkedBlock::Handle::heap() const
+inline JSC::Heap* MarkedBlock::Handle::heap() const
 {
     return m_weakSet.heap();
 }

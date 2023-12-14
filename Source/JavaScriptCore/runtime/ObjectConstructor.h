@@ -34,9 +34,9 @@ JSC_DECLARE_HOST_FUNCTION(objectConstructorKeys);
 
 class ObjectPrototype;
 
-class ObjectConstructor final : public InternalFunction {
+class ObjectConstructor final : public JSC::InternalFunction {
 public:
-    typedef InternalFunction Base;
+    typedef JSC::InternalFunction Base;
     static constexpr unsigned StructureFlags = Base::StructureFlags | HasStaticPropertyTable;
 
     static ObjectConstructor* create(VM& vm, JSGlobalObject* globalObject, Structure* structure, ObjectPrototype* objectPrototype)
@@ -54,7 +54,7 @@ private:
     ObjectConstructor(VM&, Structure*);
     void finishCreation(VM&, JSGlobalObject*, ObjectPrototype*);
 };
-STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ObjectConstructor, InternalFunction);
+STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(ObjectConstructor, JSC::InternalFunction);
 
 inline JSFinalObject* constructEmptyObject(VM& vm, Structure* structure)
 {

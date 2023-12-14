@@ -1,6 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
+<meta charset=utf-8>
 <script>
 var successfullyParsed = false;
 </script>
@@ -26,9 +27,9 @@ var successfullyParsed = false;
         shouldBeFalse("timeinput.isIgnored");
         
         // Test value is exposed in AXValue.
-        shouldBe("timeinput.stringValue", "'AXValue: 8:00 AM'");
+        shouldBe("timeinput.stringValue", "'AXValue: 8:00 AM'");
         shouldBe("timeinput2.description", "'AXLabel: '");
-        shouldBe("timeinput2.stringValue", "'AXValue: 8:00 AM'");
+        shouldBe("timeinput2.stringValue", "'AXValue: 8:00 AM'");
     }
 
     successfullyParsed = true;
@@ -37,4 +38,3 @@ var successfullyParsed = false;
 <script src="../../resources/js-test-post.js"></script>
 </body>
 </html>
-

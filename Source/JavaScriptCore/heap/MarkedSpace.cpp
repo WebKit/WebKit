@@ -177,7 +177,7 @@ void MarkedSpace::initializeSizeClassForStepSize()
         });
 }
 
-MarkedSpace::MarkedSpace(Heap* heap)
+MarkedSpace::MarkedSpace(JSC::Heap* heap)
 {
     ASSERT_UNUSED(heap, heap == &this->heap());
     initializeSizeClassForStepSize();

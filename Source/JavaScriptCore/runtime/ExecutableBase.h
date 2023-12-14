@@ -106,19 +106,19 @@ public:
     DECLARE_EXPORT_INFO;
 
 public:
-    Ref<JITCode> generatedJITCodeForCall() const
+    Ref<JSC::JITCode> generatedJITCodeForCall() const
     {
         ASSERT(m_jitCodeForCall);
         return *m_jitCodeForCall;
     }
 
-    Ref<JITCode> generatedJITCodeForConstruct() const
+    Ref<JSC::JITCode> generatedJITCodeForConstruct() const
     {
         ASSERT(m_jitCodeForConstruct);
         return *m_jitCodeForConstruct;
     }
         
-    Ref<JITCode> generatedJITCodeFor(CodeSpecializationKind kind) const
+    Ref<JSC::JITCode> generatedJITCodeFor(CodeSpecializationKind kind) const
     {
         if (kind == CodeForCall)
             return generatedJITCodeForCall();
@@ -233,8 +233,8 @@ public:
     void dump(PrintStream&) const;
         
 protected:
-    RefPtr<JITCode> m_jitCodeForCall;
-    RefPtr<JITCode> m_jitCodeForConstruct;
+    RefPtr<JSC::JITCode> m_jitCodeForCall;
+    RefPtr<JSC::JITCode> m_jitCodeForConstruct;
     CodePtr<JSEntryPtrTag> m_jitCodeForCallWithArityCheck;
     CodePtr<JSEntryPtrTag> m_jitCodeForConstructWithArityCheck;
 };

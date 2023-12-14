@@ -455,7 +455,7 @@ struct ImageAnalysisContextMenuActionData {
 
 #if ENABLE(DATALIST_ELEMENT)
     RetainPtr<UIView <WKFormControl>> _dataListTextSuggestionsInputView;
-    RetainPtr<NSArray<UITextSuggestion *>> _dataListTextSuggestions;
+    RetainPtr<NSArray<WKSETextSuggestion *>> _dataListTextSuggestions;
     WeakObjCPtr<WKDataListSuggestionsControl> _dataListSuggestionsControl;
 #endif
 
@@ -583,7 +583,7 @@ struct ImageAnalysisContextMenuActionData {
     std::optional<WebKit::RemoveBackgroundData> _removeBackgroundData;
 #endif
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    __weak id<UIAsyncTextInputDelegate_Staging> _asyncSystemInputDelegate;
+    __weak id<WKSETextInputDelegate> _asyncSystemInputDelegate;
 #endif
 }
 
@@ -612,7 +612,7 @@ struct ImageAnalysisContextMenuActionData {
     , UIDragInteractionDelegate
 #endif
 #if HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
-    , UIAsyncTextInteractionDelegate
+    , WKSETextInteractionDelegate
 #endif
 >
 
@@ -642,7 +642,7 @@ struct ImageAnalysisContextMenuActionData {
 
 #if ENABLE(DATALIST_ELEMENT)
 @property (nonatomic, strong) UIView <WKFormControl> *dataListTextSuggestionsInputView;
-@property (nonatomic, strong) NSArray<UITextSuggestion *> *dataListTextSuggestions;
+@property (nonatomic, strong) NSArray<WKSETextSuggestion *> *dataListTextSuggestions;
 #endif
 
 - (void)setUpInteraction;
@@ -695,7 +695,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_didNotHandleTapAsClick:(const WebCore::IntPoint&)point;
 - (void)_didHandleTapAsHover;
 - (void)_didCompleteSyntheticClick;
-- (void)_provideSuggestionsToInputDelegate:(NSArray<UITextSuggestion *> *)suggestions;
+- (void)_provideSuggestionsToInputDelegate:(NSArray<WKSETextSuggestion *> *)suggestions;
 
 - (void)_didGetTapHighlightForRequest:(WebKit::TapIdentifier)requestID color:(const WebCore::Color&)color quads:(const Vector<WebCore::FloatQuad>&)highlightedQuads topLeftRadius:(const WebCore::IntSize&)topLeftRadius topRightRadius:(const WebCore::IntSize&)topRightRadius bottomLeftRadius:(const WebCore::IntSize&)bottomLeftRadius bottomRightRadius:(const WebCore::IntSize&)bottomRightRadius nodeHasBuiltInClickHandling:(BOOL)nodeHasBuiltInClickHandling;
 

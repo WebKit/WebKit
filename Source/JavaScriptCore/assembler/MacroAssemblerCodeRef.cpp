@@ -55,7 +55,7 @@ CString MacroAssemblerCodeRefBase::disassembly(CodePtr<DisassemblyPtrTag> codePt
 
 bool shouldDumpDisassemblyFor(CodeBlock* codeBlock)
 {
-    if (codeBlock && JITCode::isOptimizingJIT(codeBlock->jitType()) && Options::dumpDFGDisassembly())
+    if (codeBlock && JSC::JITCode::isOptimizingJIT(codeBlock->jitType()) && Options::dumpDFGDisassembly())
         return true;
     return Options::dumpDisassembly();
 }

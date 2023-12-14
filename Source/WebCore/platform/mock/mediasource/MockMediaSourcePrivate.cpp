@@ -68,6 +68,7 @@ MediaSourcePrivate::AddStatus MockMediaSourcePrivate::addSourceBuffer(const Cont
 
     m_sourceBuffers.append(MockSourceBufferPrivate::create(*this));
     outPrivate = m_sourceBuffers.last();
+    outPrivate->setMediaSourceDuration(duration());
 
     return AddStatus::Ok;
 }

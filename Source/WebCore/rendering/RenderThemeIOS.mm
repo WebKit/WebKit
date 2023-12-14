@@ -710,12 +710,12 @@ constexpr auto reducedMotionProgressAnimationMaxOpacity = 0.6f;
 constexpr auto switchHeight = 31.f;
 constexpr auto switchWidth = 51.f;
 
-static bool renderThemePaintSwitchThumb(OptionSet<ControlStates::States>, const RenderObject&, const PaintInfo&, const FloatRect&)
+static bool renderThemePaintSwitchThumb(const OptionSet<ControlStyle::State>, const RenderObject&, const PaintInfo&, const FloatRect&, const Color&)
 {
     return true;
 }
 
-static bool renderThemePaintSwitchTrack(OptionSet<ControlStates::States>, const RenderObject&, const PaintInfo&, const FloatRect&, const Color)
+static bool renderThemePaintSwitchTrack(const OptionSet<ControlStyle::State>, const RenderObject&, const PaintInfo&, const FloatRect&, const Color&)
 {
     return true;
 }
@@ -732,18 +732,21 @@ void RenderThemeIOS::adjustSwitchStyle(RenderStyle& style, const Element* elemen
     style.setWidth({ size * (switchWidth / switchHeight), LengthType::Fixed });
     style.setHeight({ size, LengthType::Fixed });
 
+    if (style.outlineStyleIsAuto() == OutlineIsAuto::On)
+        style.setOutlineStyle(BorderStyle::None);
+
     if (element->isDisabledFormControl())
         style.setOpacity(.4f);
 }
 
 bool RenderThemeIOS::paintSwitchThumb(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    return renderThemePaintSwitchThumb(extractControlStatesForRenderer(renderer), renderer, paintInfo, rect);
+    return renderThemePaintSwitchThumb(extractControlStyleStatesForRenderer(renderer), renderer, paintInfo, rect, systemFocusRingColor());
 }
 
 bool RenderThemeIOS::paintSwitchTrack(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
-    return renderThemePaintSwitchTrack(extractControlStatesForRenderer(renderer), renderer, paintInfo, rect, systemColor(CSSValueAppleSystemGreen, renderer.styleColorOptions()));
+    return renderThemePaintSwitchTrack(extractControlStyleStatesForRenderer(renderer), renderer, paintInfo, rect, systemColor(CSSValueAppleSystemGreen, renderer.styleColorOptions()));
 }
 
 bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
@@ -1403,24 +1406,24 @@ void RenderThemeIOS::paintSystemPreviewBadge(Image& image, const PaintInfo& pain
 constexpr auto checkboxRadioBorderWidth = 1.5f;
 constexpr auto checkboxRadioBorderDisabledOpacity = 0.3f;
 
-Color RenderThemeIOS::checkboxRadioBorderColor(OptionSet<ControlStates::States> states, OptionSet<StyleColorOptions> styleColorOptions)
+Color RenderThemeIOS::checkboxRadioBorderColor(OptionSet<ControlStyle::State> states, OptionSet<StyleColorOptions> styleColorOptions)
 {
     auto defaultBorderColor = systemColor(CSSValueAppleSystemSecondaryLabel, styleColorOptions);
 
-    if (!states.contains(ControlStates::States::Enabled))
+    if (!states.contains(ControlStyle::State::Enabled))
         return defaultBorderColor.colorWithAlphaMultipliedBy(checkboxRadioBorderDisabledOpacity);
 
-    if (states.contains(ControlStates::States::Pressed))
+    if (states.contains(ControlStyle::State::Pressed))
         return defaultBorderColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
 
     return defaultBorderColor;
 }
 
-Color RenderThemeIOS::checkboxRadioBackgroundColor(bool useAlternateDesign, const RenderStyle& style, OptionSet<ControlStates::States> states, OptionSet<StyleColorOptions> styleColorOptions)
+Color RenderThemeIOS::checkboxRadioBackgroundColor(bool useAlternateDesign, const RenderStyle& style, OptionSet<ControlStyle::State> states, OptionSet<StyleColorOptions> styleColorOptions)
 {
-    bool isEmpty = !states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate });
-    bool isEnabled = states.contains(ControlStates::States::Enabled);
-    bool isPressed = states.contains(ControlStates::States::Pressed);
+    bool isEmpty = !states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate });
+    bool isEnabled = states.contains(ControlStyle::State::Enabled);
+    bool isPressed = states.contains(ControlStyle::State::Pressed);
 
     if (useAlternateDesign) {
         // FIXME (rdar://problem/83895064): The disabled state for the alternate appearance is currently unspecified; this is just a guess.
@@ -1443,32 +1446,32 @@ Color RenderThemeIOS::checkboxRadioBackgroundColor(bool useAlternateDesign, cons
     return enabledBackgroundColor;
 }
 
-RefPtr<Gradient> RenderThemeIOS::checkboxRadioBackgroundGradient(const FloatRect& rect, OptionSet<ControlStates::States> states)
+RefPtr<Gradient> RenderThemeIOS::checkboxRadioBackgroundGradient(const FloatRect& rect, OptionSet<ControlStyle::State> states)
 {
-    bool isPressed = states.contains(ControlStates::States::Pressed);
+    bool isPressed = states.contains(ControlStyle::State::Pressed);
     if (isPressed)
         return nullptr;
 
-    bool isEmpty = !states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate });
+    bool isEmpty = !states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate });
     auto gradient = Gradient::create(Gradient::LinearData { rect.minXMinYCorner(), rect.maxXMaxYCorner() }, { ColorInterpolationMethod::SRGB { }, AlphaPremultiplication::Unpremultiplied });
     gradient->addColorStop({ 0.0f, DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.125f }});
     gradient->addColorStop({ 1.0f, DisplayP3<float> { 0, 0, 0, 0 }});
     return gradient;
 }
 
-Color RenderThemeIOS::checkboxRadioIndicatorColor(OptionSet<ControlStates::States> states, OptionSet<StyleColorOptions> styleColorOptions)
+Color RenderThemeIOS::checkboxRadioIndicatorColor(OptionSet<ControlStyle::State> states, OptionSet<StyleColorOptions> styleColorOptions)
 {
-    if (!states.contains(ControlStates::States::Enabled))
+    if (!states.contains(ControlStyle::State::Enabled))
         return systemColor(CSSValueAppleSystemTertiaryLabel, styleColorOptions);
 
     Color enabledIndicatorColor = systemColor(CSSValueAppleSystemLabel, styleColorOptions | StyleColorOptions::UseDarkAppearance);
-    if (states.contains(ControlStates::States::Pressed))
+    if (states.contains(ControlStyle::State::Pressed))
         return enabledIndicatorColor.colorWithAlphaMultipliedBy(pressedStateOpacity);
 
     return enabledIndicatorColor;
 }
 
-void RenderThemeIOS::paintCheckboxRadioInnerShadow(const PaintInfo& paintInfo, const FloatRoundedRect& roundedRect, OptionSet<ControlStates::States> states)
+void RenderThemeIOS::paintCheckboxRadioInnerShadow(const PaintInfo& paintInfo, const FloatRoundedRect& roundedRect, OptionSet<ControlStyle::State> states)
 {
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver { context };
@@ -1484,7 +1487,7 @@ void RenderThemeIOS::paintCheckboxRadioInnerShadow(const PaintInfo& paintInfo, c
     const FloatSize innerShadowOffset { 2, 2 };
     constexpr auto innerShadowBlur = 3.0f;
 
-    bool isEmpty = !states.containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate });
+    bool isEmpty = !states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate });
     auto firstShadowColor = DisplayP3<float> { 0, 0, 0, isEmpty ? 0.05f : 0.1f };
     context.setDropShadow({ innerShadowOffset, innerShadowBlur, firstShadowColor, ShadowRadiusMode::Default });
     context.setFillColor(Color::black);
@@ -1520,13 +1523,13 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
 
     FloatRoundedRect checkboxRect(rect, FloatRoundedRect::Radii(checkboxCornerRadius * rect.height() / checkboxHeight));
 
-    auto controlStates = extractControlStatesForRenderer(box);
+    auto controlStates = extractControlStyleStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions();
 
     auto backgroundColor = checkboxRadioBackgroundColor(useAlternateDesign, box.style(), controlStates, styleColorOptions);
 
-    bool checked = controlStates.contains(ControlStates::States::Checked);
-    bool indeterminate = controlStates.contains(ControlStates::States::Indeterminate);
+    bool checked = controlStates.contains(ControlStyle::State::Checked);
+    bool indeterminate = controlStates.contains(ControlStyle::State::Indeterminate);
     bool empty = !checked && !indeterminate;
 
     if (empty) {
@@ -1600,14 +1603,14 @@ bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintI
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
-    auto controlStates = extractControlStatesForRenderer(box);
+    auto controlStates = extractControlStyleStatesForRenderer(box);
     auto styleColorOptions = box.styleColorOptions();
 
     auto backgroundColor = checkboxRadioBackgroundColor(useAlternateDesign, box.style(), controlStates, styleColorOptions);
 
     FloatRoundedRect radioRect { rect, FloatRoundedRect::Radii(rect.width() / 2, rect.height() / 2) };
 
-    if (controlStates.contains(ControlStates::States::Checked)) {
+    if (controlStates.contains(ControlStyle::State::Checked)) {
         context.setFillColor(backgroundColor);
         context.fillEllipse(rect);
 

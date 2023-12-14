@@ -28,10 +28,11 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
+#import "WKSEDefinitions.h"
 
 @interface WKExtendedTextInputTraits : NSObject
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    <UIExtendedTextInputTraits_Staging_117880911>
+    <WKSEExtendedTextInputTraits>
 #endif
 
 @property (nonatomic) UITextAutocapitalizationType autocapitalizationType;

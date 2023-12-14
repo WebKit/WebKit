@@ -34,6 +34,7 @@
 #import "ScrollAnimator.h"
 #import "ScrollableArea.h"
 #import "Scrollbar.h"
+#import "ScrollbarMac.h"
 #import "ScrollbarThemeMac.h"
 #import "TimingFunction.h"
 #import "WheelEventTestMonitor.h" // FIXME: This is  layering violation.
@@ -53,7 +54,7 @@ static ScrollbarThemeMac* macScrollbarTheme()
 
 static NSScrollerImp *scrollerImpForScrollbar(Scrollbar& scrollbar)
 {
-    return ScrollbarThemeMac::painterForScrollbar(scrollbar);
+    return ScrollbarThemeMac::scrollerImpForScrollbar(scrollbar);
 }
 
 } // namespace WebCore
@@ -954,11 +955,10 @@ void ScrollbarsControllerMac::updateScrollerStyle()
         verticalScrollbar->invalidate();
 
         NSScrollerImp *oldVerticalPainter = [m_scrollerImpPair verticalScrollerImp];
-        auto newVerticalPainter = retainPtr([NSScrollerImp scrollerImpWithStyle:newStyle controlSize:(NSControlSize)verticalScrollbar->widthStyle() horizontal:NO replacingScrollerImp:oldVerticalPainter]);
+        auto* verticalScrollbarMac = dynamicDowncast<ScrollbarMac>(verticalScrollbar);
+        verticalScrollbarMac->createScrollerImp(WTFMove(oldVerticalPainter));
 
-        [m_scrollerImpPair setVerticalScrollerImp:newVerticalPainter.get()];
-        macTheme->setNewPainterForScrollbar(*verticalScrollbar, WTFMove(newVerticalPainter));
-        macTheme->didCreateScrollerImp(*verticalScrollbar);
+        [m_scrollerImpPair setVerticalScrollerImp:verticalScrollbarMac->scrollerImp()];
 
         // The different scrollbar styles have different thicknesses, so we must re-set the
         // frameRect to the new thickness, and the re-layout below will ensure the position
@@ -972,11 +972,10 @@ void ScrollbarsControllerMac::updateScrollerStyle()
         horizontalScrollbar->invalidate();
 
         NSScrollerImp *oldHorizontalPainter = [m_scrollerImpPair horizontalScrollerImp];
-        auto newHorizontalPainter = retainPtr([NSScrollerImp scrollerImpWithStyle:newStyle controlSize:(NSControlSize)horizontalScrollbar->widthStyle() horizontal:YES replacingScrollerImp:oldHorizontalPainter]);
+        auto* horizontalScrollbarMac = dynamicDowncast<ScrollbarMac>(horizontalScrollbar);
+        horizontalScrollbarMac->createScrollerImp(WTFMove(oldHorizontalPainter));
 
-        [m_scrollerImpPair setHorizontalScrollerImp:newHorizontalPainter.get()];
-        macTheme->setNewPainterForScrollbar(*horizontalScrollbar, WTFMove(newHorizontalPainter));
-        macTheme->didCreateScrollerImp(*horizontalScrollbar);
+        [m_scrollerImpPair setHorizontalScrollerImp:horizontalScrollbarMac->scrollerImp()];
 
         // The different scrollbar styles have different thicknesses, so we must re-set the
         // frameRect to the new thickness, and the re-layout below will ensure the position

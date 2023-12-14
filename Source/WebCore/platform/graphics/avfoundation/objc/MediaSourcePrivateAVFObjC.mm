@@ -95,6 +95,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     newSourceBuffer->setCDMInstance(m_cdmInstance.get());
 #endif
     outPrivate = newSourceBuffer.copyRef();
+    newSourceBuffer->setMediaSourceDuration(duration());
     m_sourceBuffers.append(WTFMove(newSourceBuffer));
 
     return AddStatus::Ok;

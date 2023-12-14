@@ -39,13 +39,13 @@
 #include "WebProcess.h"
 #include <WebCore/DMABufObject.h>
 #include <WebCore/GraphicsLayerContentsDisplayDelegate.h>
-#include <WebCore/NicosiaContentLayerTextureMapperImpl.h>
+#include <WebCore/NicosiaContentLayer.h>
 #include <WebCore/TextureMapperFlags.h>
 #include <WebCore/TextureMapperPlatformLayerProxyDMABuf.h>
 
 namespace WebKit {
 
-class NicosiaDisplayDelegate final : public WebCore::GraphicsLayerContentsDisplayDelegate, public Nicosia::ContentLayerTextureMapperImpl::Client {
+class NicosiaDisplayDelegate final : public WebCore::GraphicsLayerContentsDisplayDelegate, public Nicosia::ContentLayer::Client {
 public:
     explicit NicosiaDisplayDelegate(bool isOpaque);
     virtual ~NicosiaDisplayDelegate();
@@ -59,7 +59,7 @@ private:
     // WebCore::GraphicsLayerContentsDisplayDelegate
     Nicosia::PlatformLayer* platformLayer() const final;
 
-    // Nicosia::ContentLayerTextureMapperImpl::Client
+    // Nicosia::ContentLayer::Client
     void swapBuffersIfNeeded() final;
 
     bool m_isOpaque { false };
@@ -70,7 +70,7 @@ private:
 NicosiaDisplayDelegate::NicosiaDisplayDelegate(bool isOpaque)
     : m_isOpaque(isOpaque)
 {
-    m_contentLayer = Nicosia::ContentLayer::create(Nicosia::ContentLayerTextureMapperImpl::createFactory(*this, adoptRef(*new WebCore::TextureMapperPlatformLayerProxyDMABuf)));
+    m_contentLayer = Nicosia::ContentLayer::create(*this, adoptRef(*new WebCore::TextureMapperPlatformLayerProxyDMABuf));
 }
 
 NicosiaDisplayDelegate::~NicosiaDisplayDelegate()
@@ -83,7 +83,7 @@ Nicosia::PlatformLayer* NicosiaDisplayDelegate::platformLayer() const
 
 void NicosiaDisplayDelegate::swapBuffersIfNeeded()
 {
-    auto& proxy = downcast<Nicosia::ContentLayerTextureMapperImpl>(m_contentLayer->impl()).proxy();
+    auto& proxy = m_contentLayer->proxy();
     ASSERT(is<WebCore::TextureMapperPlatformLayerProxyDMABuf>(proxy));
 
     if (!!m_pending.handle) {

@@ -367,6 +367,64 @@ static auto wgslViewDimension(WGPUTextureViewDimension viewDimension)
     }
 }
 
+static WGSL::StorageTextureAccess wgslAccess(WGPUStorageTextureAccess access)
+{
+    switch (access) {
+    case WGPUStorageTextureAccess_WriteOnly:
+        return WGSL::StorageTextureAccess::WriteOnly;
+    case WGPUStorageTextureAccess_ReadOnly:
+        return WGSL::StorageTextureAccess::ReadOnly;
+    case WGPUStorageTextureAccess_ReadWrite:
+        return WGSL::StorageTextureAccess::ReadWrite;
+    case WGPUStorageTextureAccess_Undefined:
+    case WGPUStorageTextureAccess_Force32:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+static WGSL::TexelFormat wgslFormat(WGPUTextureFormat format)
+{
+    switch (format) {
+    case WGPUTextureFormat_BGRA8Unorm:
+        return WGSL::TexelFormat::BGRA8unorm;
+    case WGPUTextureFormat_R32Float:
+        return WGSL::TexelFormat::R32float;
+    case WGPUTextureFormat_R32Sint:
+        return WGSL::TexelFormat::R32sint;
+    case WGPUTextureFormat_R32Uint:
+        return WGSL::TexelFormat::R32uint;
+    case WGPUTextureFormat_RG32Float:
+        return WGSL::TexelFormat::RG32float;
+    case WGPUTextureFormat_RG32Sint:
+        return WGSL::TexelFormat::RG32sint;
+    case WGPUTextureFormat_RG32Uint:
+        return WGSL::TexelFormat::RG32uint;
+    case WGPUTextureFormat_RGBA16Float:
+        return WGSL::TexelFormat::RGBA16float;
+    case WGPUTextureFormat_RGBA16Sint:
+        return WGSL::TexelFormat::RGBA16sint;
+    case WGPUTextureFormat_RGBA16Uint:
+        return WGSL::TexelFormat::RGBA16uint;
+    case WGPUTextureFormat_RGBA32Float:
+        return WGSL::TexelFormat::RGBA32float;
+    case WGPUTextureFormat_RGBA32Sint:
+        return WGSL::TexelFormat::RGBA32sint;
+    case WGPUTextureFormat_RGBA32Uint:
+        return WGSL::TexelFormat::RGBA32uint;
+    case WGPUTextureFormat_RGBA8Sint:
+        return WGSL::TexelFormat::RGBA8sint;
+    case WGPUTextureFormat_RGBA8Snorm:
+        return WGSL::TexelFormat::RGBA8snorm;
+    case WGPUTextureFormat_RGBA8Uint:
+        return WGSL::TexelFormat::RGBA8uint;
+    case WGPUTextureFormat_RGBA8Unorm:
+        return WGSL::TexelFormat::RGBA8unorm;
+    default:
+        ASSERT_NOT_REACHED();
+        return WGSL::TexelFormat::BGRA8unorm;
+    }
+}
+
 static WGSL::BindGroupLayoutEntry::BindingMember convertBindingLayout(const BindGroupLayout::Entry::BindingLayout& bindingLayout)
 {
     return WTF::switchOn(bindingLayout, [](const WGPUBufferBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
@@ -387,6 +445,8 @@ static WGSL::BindGroupLayoutEntry::BindingMember convertBindingLayout(const Bind
         };
     }, [](const WGPUStorageTextureBindingLayout& bindingLayout) -> WGSL::BindGroupLayoutEntry::BindingMember {
         return WGSL::StorageTextureBindingLayout {
+            .access = wgslAccess(bindingLayout.access),
+            .format = wgslFormat(bindingLayout.format),
             .viewDimension = wgslViewDimension(bindingLayout.viewDimension)
         };
     }, [](const WGPUExternalTextureBindingLayout&) -> WGSL::BindGroupLayoutEntry::BindingMember {

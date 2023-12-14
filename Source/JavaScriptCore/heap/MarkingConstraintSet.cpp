@@ -37,7 +37,7 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MarkingConstraintSet);
 
-MarkingConstraintSet::MarkingConstraintSet(Heap& heap)
+MarkingConstraintSet::MarkingConstraintSet(JSC::Heap& heap)
     : m_heap(heap)
 {
 }

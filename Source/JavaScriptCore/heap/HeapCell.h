@@ -73,7 +73,7 @@ public:
     // We currently only use this hack for callees to make CallFrame::vm() fast. It's not
     // recommended to use it for too many other things, since the large allocation cutoff is
     // a runtime option and its default value is small (400 bytes).
-    Heap* heap() const;
+    JSC::Heap* heap() const;
     VM& vm() const;
     
     size_t cellSize() const;

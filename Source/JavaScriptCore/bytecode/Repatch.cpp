@@ -2131,7 +2131,7 @@ void linkPolymorphicCall(JSGlobalObject* globalObject, CallFrame* callFrame, Cal
 #if ASSERT_ENABLED
             // It needs to be LLInt or Baseline since we are using returnFromBaselineGenerator.
             if (!isWebAssembly)
-                ASSERT(!JITCode::isOptimizingJIT(callerCodeBlock->jitType()));
+                ASSERT(!JSC::JITCode::isOptimizingJIT(callerCodeBlock->jitType()));
 #endif
             if (callLinkInfo.isTailCall()) {
                 stubJit.move(CCallHelpers::TrustedImmPtr(vm.getCTIStub(CommonJITThunkID::ReturnFromBaseline).code().untaggedPtr()), GPRInfo::regT4);

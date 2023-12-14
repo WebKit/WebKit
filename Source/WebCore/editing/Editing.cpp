@@ -1052,7 +1052,7 @@ bool isRenderedAsNonInlineTableImageOrHR(const Node* node)
     if (!node)
         return false;
     RenderObject* renderer = node->renderer();
-    return renderer && ((renderer->isRenderTable() && !renderer->isInline()) || (renderer->isImage() && !renderer->isInline()) || renderer->isHR());
+    return renderer && !renderer->isInline() && (renderer->isRenderTable() || renderer->isImage() || renderer->isHR());
 }
 
 bool areIdenticalElements(const Node& first, const Node& second)

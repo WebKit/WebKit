@@ -30,16 +30,12 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "WKContentViewInteraction.h"
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK(UIKit) // NOLINT
-SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
 
 @implementation WKTextInteractionWrapper {
     __weak WKContentView *_view;
     RetainPtr<UIWKTextInteractionAssistant> _textInteractionAssistant;
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    RetainPtr<UIAsyncTextInteraction> _asyncTextInteraction;
+    RetainPtr<WKSETextInteraction> _asyncTextInteraction;
     RetainPtr<NSTimer> _showEditMenuTimer;
     BOOL _showEditMenuAfterNextSelectionChange;
 #endif
@@ -52,9 +48,8 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
         return nil;
 
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    static bool hasAsyncTextInteraction = !!getUIAsyncTextInteractionClass();
-    if (hasAsyncTextInteraction && view.shouldUseAsyncInteractions) {
-        _asyncTextInteraction = adoptNS([allocUIAsyncTextInteractionInstance() init]);
+    if (view.shouldUseAsyncInteractions) {
+        _asyncTextInteraction = adoptNS([[WKSETextInteraction alloc] init]);
 #if HAVE(UI_ASYNC_TEXT_INTERACTION_DELEGATE)
         [_asyncTextInteraction setDelegate:view];
 #endif
@@ -158,9 +153,9 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
 #endif
 }
 
-- (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(UIWKSelectionFlags)flags
+- (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(WKSEGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(WKSESelectionFlags)flags
 {
-    [_textInteractionAssistant selectionChangedWithGestureAt:point withGesture:gestureType withState:gestureState withFlags:flags];
+    [_textInteractionAssistant selectionChangedWithGestureAt:point withGesture:static_cast<UIWKGestureType>(gestureType) withState:gestureState withFlags:static_cast<UIWKSelectionFlags>(flags)];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
     [_asyncTextInteraction selectionChangedWithGestureAt:point withGesture:gestureType withState:gestureState withFlags:flags];
 #endif
@@ -174,9 +169,9 @@ SOFT_LINK_CLASS_OPTIONAL(UIKit, UIAsyncTextInteraction)
 #endif
 }
 
-- (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch withFlags:(UIWKSelectionFlags)flags
+- (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(WKSESelectionTouch)touch withFlags:(WKSESelectionFlags)flags
 {
-    [_textInteractionAssistant selectionChangedWithTouchAt:point withSelectionTouch:touch withFlags:flags];
+    [_textInteractionAssistant selectionChangedWithTouchAt:point withSelectionTouch:static_cast<UIWKSelectionTouch>(touch) withFlags:static_cast<UIWKSelectionFlags>(flags)];
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
     [_asyncTextInteraction selectionChangedWithTouchAt:point withSelectionTouch:touch withFlags:flags];
 #endif

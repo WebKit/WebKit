@@ -553,7 +553,7 @@ struct UnlinkedStructureStubInfo {
     CodeLocationLabel<JITStubRoutinePtrTag> slowPathStartLocation;
 };
 
-struct BaselineUnlinkedStructureStubInfo : UnlinkedStructureStubInfo {
+struct BaselineUnlinkedStructureStubInfo : JSC::UnlinkedStructureStubInfo {
     BytecodeIndex bytecodeIndex;
 };
 

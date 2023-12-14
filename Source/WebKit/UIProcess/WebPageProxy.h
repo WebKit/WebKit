@@ -1005,7 +1005,7 @@ public:
     void requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&&);
     void updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&&);
     WebCore::FloatRect selectionBoundingRectInRootViewCoordinates() const;
-    void requestDocumentEditingContext(DocumentEditingContextRequest, CompletionHandler<void(DocumentEditingContext)>&&);
+    void requestDocumentEditingContext(DocumentEditingContextRequest&&, CompletionHandler<void(DocumentEditingContext&&)>&&);
     void generateSyntheticEditingCommand(SyntheticEditingCommandType);
     void showDataDetectorsUIForPositionInformation(const InteractionInformationAtPosition&);
 

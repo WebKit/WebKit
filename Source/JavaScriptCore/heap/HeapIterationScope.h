@@ -37,10 +37,10 @@ public:
     ~HeapIterationScope();
 
 private:
-    Heap& m_heap;
+    JSC::Heap& m_heap;
 };
 
-inline HeapIterationScope::HeapIterationScope(Heap& heap)
+inline HeapIterationScope::HeapIterationScope(JSC::Heap& heap)
     : m_heap(heap)
 {
     m_heap.willStartIterating();

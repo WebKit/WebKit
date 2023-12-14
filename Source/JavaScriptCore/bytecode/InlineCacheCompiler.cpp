@@ -495,7 +495,7 @@ const ScalarRegisterSet& InlineCacheCompiler::calculateLiveRegistersForCallAndEx
         m_liveRegistersToPreserveAtExceptionHandlingCallSite = m_jit->codeBlock()->jitCode()->liveRegistersToPreserveAtExceptionHandlingCallSite(m_jit->codeBlock(), m_stubInfo->callSiteIndex).buildScalarRegisterSet();
         m_needsToRestoreRegistersIfException = m_liveRegistersToPreserveAtExceptionHandlingCallSite.numberOfSetRegisters() > 0;
         if (m_needsToRestoreRegistersIfException)
-            RELEASE_ASSERT(JITCode::isOptimizingJIT(m_jit->codeBlock()->jitType()));
+            RELEASE_ASSERT(JSC::JITCode::isOptimizingJIT(m_jit->codeBlock()->jitType()));
 
         auto liveRegistersForCall = RegisterSetBuilder(m_liveRegistersToPreserveAtExceptionHandlingCallSite.toRegisterSet(), m_allocator->usedRegisters());
         if (m_jit->codeBlock()->useDataIC())
@@ -4143,7 +4143,7 @@ AccessGenerationResult InlineCacheCompiler::regenerate(const GCSafeConcurrentJSL
         // We set these to indicate to the stub to remove itself from the CodeBlock's
         // exception handler table when it is deallocated.
         codeBlockThatOwnsExceptionHandlers = codeBlock;
-        ASSERT(JITCode::isOptimizingJIT(codeBlockThatOwnsExceptionHandlers->jitType()));
+        ASSERT(JSC::JITCode::isOptimizingJIT(codeBlockThatOwnsExceptionHandlers->jitType()));
         callSiteIndexForExceptionHandling = this->callSiteIndexForExceptionHandling();
     }
 

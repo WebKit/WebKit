@@ -65,19 +65,6 @@ fast/visual-viewport/rubberbanding-viewport-rects-header-footer.html  [ Pass ]
 webkit.org/b/229423 [ BigSur Debug arm64 ] http/tests/paymentrequest/payment-response-reference-cycle-leak.https.html [ Pass Crash ]
 
 http/tests/paymentrequest [ Pass ]
-http/tests/paymentrequest/ApplePayModifier-automaticReloadPaymentRequest.https.html [ Skip ]
-http/tests/paymentrequest/ApplePayModifier-multiTokenContexts.https.html [ Skip ]
-http/tests/paymentrequest/ApplePayModifier-additionalLineItems.https.html [ Skip ]
-http/tests/paymentrequest/ApplePayModifier-additionalShippingMethods.https.html [ Skip ]
-http/tests/paymentrequest/ApplePayModifier-deferredPaymentRequest.https.html [ Skip ]
-http/tests/paymentrequest/ApplePayModifier-recurringPaymentRequest.https.html [ Skip ]
-http/tests/paymentrequest/ApplePayModifier-total.https.html [ Skip ]
-http/tests/paymentrequest/ApplePayPaymentCompleteDetails-orderDetails.https.html [ Skip ]
-http/tests/paymentrequest/paymentrequest-applePayLaterAvailability.https.html [ Skip ]
-http/tests/paymentrequest/paymentmethodchange-couponCode.https.html [ Skip ]
-http/tests/paymentrequest/paymentrequest-couponCode.https.html [ Skip ]
-http/tests/paymentrequest/paymentrequest-shippingContactEditingMode.https.html [ Skip ]
-http/tests/paymentrequest/paymentrequest-supportsCouponCode.https.html [ Skip ]
 http/tests/inspector/paymentrequest [ Pass ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/allowpaymentrequest-attribute-cross-origin-bc-containers.https.html [ Skip ]
@@ -90,8 +77,6 @@ webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment/removing-allowpaymentrequest.https.sub.html [ Skip ]
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment/setting-allowpaymentrequest.https.sub.html [ Skip ]
 imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/payment-request/show-method-optional-promise-rejects.https.html [ DumpJSConsoleLogInStdErr ]
 
 # These tests are checking that WebContent is terminated when performing an invalid IPC operation for WK2.
 # They crash in debug (as expected) so we skip them there. <rdar://problem/117742950>
@@ -567,15 +552,6 @@ webkit.org/b/139820 fast/frames/lots-of-iframes.html [ Pass Timeout ]
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
-# webkit.org/b/238908 Global expectations for these until baselines are resolved
-http/tests/paymentrequest/payment-address-attributes-and-toJSON-method.https.html [ DumpJSConsoleLogInStdErr ]
-http/tests/inspector/paymentrequest/payment-request-internal-properties.https.html [ DumpJSConsoleLogInStdErr ]
-http/tests/paymentrequest/payment-request-change-shipping-option.https.html [ DumpJSConsoleLogInStdErr ]
-http/tests/paymentrequest/payment-response-retry-method.https.html [ DumpJSConsoleLogInStdErr ]
-http/tests/paymentrequest/updateWith-shippingOptions.https.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/payment-request/payment-request-constructor.https.sub.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/payment-request/payment-request-shippingOption-attribute.https.html [ DumpJSConsoleLogInStdErr ]
-
 # A lot of the disk-cache tests are flaky on mac-wk2
 webkit.org/b/149087 [ Debug ] http/tests/cache/disk-cache/disk-cache-validation-no-body.html [ Pass Failure Timeout ]
 webkit.org/b/149087 [ Debug ] http/tests/cache/disk-cache/disk-cache-validation.html [ Pass Failure Timeout ]
@@ -893,15 +869,6 @@ webkit.org/b/185994 fast/text/user-installed-fonts/shadow-postscript-family.html
 fast/text/user-installed-fonts/extended-character.html [ Pass ]
 fast/text/user-installed-fonts/extended-character-with-user-font.html [ Pass ]
 
-# <rdar://problem/25010307>
-http/tests/ssl/applepay/ApplePayError.html [ Pass ]
-http/tests/ssl/applepay/ApplePaySessionV3.html [ Pass ]
-http/tests/ssl/applepay/ApplePaySessionV4.html [ Pass ]
-http/tests/ssl/applepay/ApplePaySessionV5.html [ Pass ]
-http/tests/ssl/applepay/ApplePayRequestShippingContactV3.https.html [ Pass ]
-http/tests/ssl/applepay/ApplePayShippingAddressChangeEventErrorsV3.https.html [ Pass ]
-accessibility/mac/apple-pay-labels.html [ Pass ]
-accessibility/mac/apple-pay-session-v4.html [ Pass ]
 # <rdar://problem/31634451>
 http/tests/resourceLoadStatistics/cookies-with-and-without-user-interaction.html [ Pass ]
 http/tests/resourceLoadStatistics/cookie-deletion.html [ Pass ]

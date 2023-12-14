@@ -28,6 +28,7 @@
 
 #import "APIConversions.h"
 #import "Device.h"
+#import "Texture.h"
 
 namespace WebGPU {
 
@@ -41,11 +42,12 @@ bool BindGroupLayout::isPresent(const WGPUBufferBindingLayout& buffer)
     return buffer.type != WGPUBufferBindingType_Undefined;
 }
 
-static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLayout& buffer)
+static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLayout& buffer, const Device&, const WGPUBindGroupLayoutEntry& entry)
 {
     if (buffer.nextInChain)
         return nil;
 
+    auto visibility = entry.visibility;
     auto descriptor = [MTLArgumentDescriptor new];
     auto bufferType = buffer.type;
     if (bufferType == static_cast<uint32_t>(WGPUBufferBindingType_Float3x2)) {
@@ -63,10 +65,12 @@ static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUBufferBindingLa
     case WGPUBufferBindingType_ReadOnlyStorage:
         descriptor.access = BindGroupLayout::BindingAccessReadOnly;
         break;
-    case WGPUBufferBindingType_Storage:
+    case WGPUBufferBindingType_Storage: {
+        if (visibility & WGPUShaderStage_Vertex)
+            return nil;
         descriptor.access = BindGroupLayout::BindingAccessReadWrite;
         break;
-    case WGPUBufferBindingType_Undefined:
+    } case WGPUBufferBindingType_Undefined:
     case WGPUBufferBindingType_Force32:
         ASSERT_NOT_REACHED();
         return nil;
@@ -79,7 +83,7 @@ bool BindGroupLayout::isPresent(const WGPUSamplerBindingLayout& sampler)
     return sampler.type != WGPUSamplerBindingType_Undefined;
 }
 
-static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUSamplerBindingLayout& sampler)
+static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUSamplerBindingLayout& sampler, const Device&, const WGPUBindGroupLayoutEntry&)
 {
     if (sampler.nextInChain)
         return nil;
@@ -97,10 +101,15 @@ bool BindGroupLayout::isPresent(const WGPUTextureBindingLayout& texture)
         && texture.viewDimension != WGPUTextureViewDimension_Undefined;
 }
 
-static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUTextureBindingLayout& texture)
+static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUTextureBindingLayout& texture, const Device&, const WGPUBindGroupLayoutEntry&)
 {
     if (texture.nextInChain)
         return nil;
+
+    if (texture.multisampled) {
+        if (texture.viewDimension != WGPUTextureViewDimension_2D || texture.sampleType == WGPUTextureSampleType_Float)
+            return nil;
+    }
 
     auto descriptor = [MTLArgumentDescriptor new];
     descriptor.dataType = MTLDataTypeTexture;
@@ -115,9 +124,19 @@ bool BindGroupLayout::isPresent(const WGPUStorageTextureBindingLayout& storageTe
         && storageTexture.viewDimension != WGPUTextureViewDimension_Undefined;
 }
 
-static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUStorageTextureBindingLayout& storageTexture)
+static MTLArgumentDescriptor *createArgumentDescriptor(const WGPUStorageTextureBindingLayout& storageTexture, const Device& device, const WGPUBindGroupLayoutEntry& entry)
 {
     if (storageTexture.nextInChain)
+        return nil;
+
+    auto visibility = entry.visibility;
+    if ((visibility & WGPUShaderStage_Vertex) && storageTexture.access != WGPUStorageTextureAccess_ReadOnly)
+        return nil;
+
+    if (storageTexture.viewDimension == WGPUTextureViewDimension_Cube || storageTexture.viewDimension == WGPUTextureViewDimension_CubeArray)
+        return nil;
+
+    if (!Texture::hasStorageBindingCapability(storageTexture.format, device, storageTexture.access))
         return nil;
 
     auto descriptor = [MTLArgumentDescriptor new];
@@ -148,15 +167,27 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     constexpr uint32_t stageCount = 3;
     static_assert(stageCount == 3, "vertex, fragment, and compute stages supported");
     NSMutableArray<MTLArgumentDescriptor *> *arguments[stageCount];
-    for (uint32_t i = 0; i < stageCount; ++i)
+    BindGroupLayout::ShaderStageArray<uint32_t> uniformBuffersPerStage;
+    BindGroupLayout::ShaderStageArray<uint32_t> storageBuffersPerStage;
+    BindGroupLayout::ShaderStageArray<uint32_t> samplersPerStage;
+    BindGroupLayout::ShaderStageArray<uint32_t> texturesPerStage;
+    BindGroupLayout::ShaderStageArray<uint32_t> storageTexturesPerStage;
+    constexpr ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };
+    for (uint32_t i = 0; i < stageCount; ++i) {
+        ShaderStage shaderStage = stages[i];
         arguments[i] = [NSMutableArray arrayWithCapacity:descriptor.entryCount];
+        uniformBuffersPerStage[shaderStage] = 0;
+        storageBuffersPerStage[shaderStage] = 0;
+        samplersPerStage[shaderStage] = 0;
+        texturesPerStage[shaderStage] = 0;
+        storageTexturesPerStage[shaderStage] = 0;
+    }
 
     Vector<WGPUBindGroupLayoutEntry> descriptorEntries(descriptor.entries, descriptor.entryCount);
     std::sort(descriptorEntries.begin(), descriptorEntries.end(), [](const WGPUBindGroupLayoutEntry& a, const WGPUBindGroupLayoutEntry& b) {
         return a.metalBinding < b.metalBinding;
     });
 
-    constexpr ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };
     BindGroupLayout::EntriesContainer bindGroupLayoutEntries;
     size_t sizeOfDynamicOffsets[stageCount] = { 0, 0, 0 };
     uint32_t bindingOffset[stageCount] = { 0, 0, 0 };
@@ -165,6 +196,10 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
     bool hasCompilerGeneratedArrayLengths = false;
     const auto maxBindingIndex = limits().maxBindingsPerBindGroup;
     uint32_t bindingIndices[stageCount] = { 0, 0, 0 };
+    HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> usedBindingSlots;
+    uint32_t dynamicUniformBuffers = 0;
+    uint32_t dynamicStorageBuffers = 0;
+    auto& deviceLimits = limits();
     for (auto& entry : descriptorEntries) {
         if (entry.nextInChain) {
             if (entry.nextInChain->sType != static_cast<WGPUSType>(WGPUSTypeExtended_BindGroupLayoutEntryExternalTexture))
@@ -173,8 +208,23 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
                 return BindGroupLayout::createInvalid(*this);
         }
 
-        if (entry.binding >= maxBindingIndex)
+        if (entry.binding >= maxBindingIndex || usedBindingSlots.contains(entry.binding)) {
+            generateAValidationError("Binding index is invalid"_s);
             return BindGroupLayout::createInvalid(*this);
+        }
+        usedBindingSlots.add(entry.binding);
+
+        if (entry.buffer.hasDynamicOffset) {
+            ASSERT(entry.buffer.type != WGPUBufferBindingType_Undefined);
+            if (entry.buffer.type == WGPUBufferBindingType_Uniform && ++dynamicUniformBuffers > deviceLimits.maxDynamicUniformBuffersPerPipelineLayout) {
+                generateAValidationError("Too many dynamic uniform buffers"_s);
+                return BindGroupLayout::createInvalid(*this);
+            }
+            if ((entry.buffer.type == WGPUBufferBindingType_Storage || entry.buffer.type == WGPUBufferBindingType_ReadOnlyStorage) && ++dynamicStorageBuffers > deviceLimits.maxDynamicStorageBuffersPerPipelineLayout) {
+                generateAValidationError("Too many dynamic storage buffers"_s);
+                return BindGroupLayout::createInvalid(*this);
+            }
+        }
 
         bool isExternalTexture = false;
         constexpr int maxGeneratedDescriptors = 4;
@@ -185,7 +235,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
                 return true;
             if (descriptors[0])
                 return false;
-            descriptors[0] = createArgumentDescriptor(type);
+            descriptors[0] = createArgumentDescriptor(type, *this, entry);
             if (!descriptors[0])
                 return false;
             bindingLayout = type;
@@ -194,31 +244,37 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
 
         if (entry.texture.sampleType == WGPUTextureSampleType_ExternalTexture) {
             isExternalTexture = true;
-            descriptors[0] = createArgumentDescriptor(entry.texture);
-            descriptors[1] = createArgumentDescriptor(entry.texture);
+            descriptors[0] = createArgumentDescriptor(entry.texture, *this, entry);
+            descriptors[1] = createArgumentDescriptor(entry.texture, *this, entry);
             WGPUBufferBindingLayout bufferLayout {
                 .nextInChain = nullptr,
                 .type = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_Float3x2),
                 .hasDynamicOffset = static_cast<WGPUBool>(false),
                 .minBindingSize = 0
             };
-            descriptors[2] = createArgumentDescriptor(bufferLayout);
+            descriptors[2] = createArgumentDescriptor(bufferLayout, *this, entry);
             bufferLayout.type = static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_Float4x3);
-            descriptors[3] = createArgumentDescriptor(bufferLayout);
+            descriptors[3] = createArgumentDescriptor(bufferLayout, *this, entry);
             bindingLayout = WGPUExternalTextureBindingLayout();
         } else if (entry.buffer.type == static_cast<WGPUBufferBindingType>(WGPUBufferBindingType_ArrayLength)) {
             slotForEntry.set(entry.buffer.minBindingSize, entry.binding);
             hasCompilerGeneratedArrayLengths = true;
             continue;
         } else {
-            if (!processBindingLayout(entry.buffer))
+            if (!processBindingLayout(entry.buffer)) {
+                generateAValidationError("Buffer layout is not valid"_s);
                 return BindGroupLayout::createInvalid(*this);
+            }
             if (!processBindingLayout(entry.sampler))
                 return BindGroupLayout::createInvalid(*this);
-            if (!processBindingLayout(entry.texture))
+            if (!processBindingLayout(entry.texture)) {
+                generateAValidationError("Texture layout not valid"_s);
                 return BindGroupLayout::createInvalid(*this);
-            if (!processBindingLayout(entry.storageTexture))
+            }
+            if (!processBindingLayout(entry.storageTexture)) {
+                generateAValidationError("Storage texture layout not valid"_s);
                 return BindGroupLayout::createInvalid(*this);
+            }
         }
 
         if (!descriptors[0])
@@ -228,6 +284,7 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
         BindGroupLayout::ArgumentBufferIndices argumentBufferIndices;
         BindGroupLayout::ArgumentBufferIndices bufferSizeArgumentBufferIndices;
         for (uint32_t stage = 0; stage < stageCount; ++stage) {
+            auto shaderStage = stages[stage];
             if (containsStage(entry.visibility, stage)) {
                 indicesForBinding.add(makeKey(entry.binding, stage), descriptors[0].access);
                 auto renderStage = stages[stage];
@@ -240,6 +297,36 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
                 if (BindGroupLayout::isPresent(entry.buffer)) {
                     ++bufferCounts[stage];
                     bufferSizeArgumentBufferIndices[renderStage] = bufferCounts[stage];
+                    if (entry.buffer.type == WGPUBufferBindingType_Uniform) {
+                        if (++uniformBuffersPerStage[shaderStage] > deviceLimits.maxUniformBuffersPerShaderStage) {
+                            generateAValidationError("Uniform buffers exceeded max count per stage"_s);
+                            return BindGroupLayout::createInvalid(*this);
+                        }
+                    }
+                    if (entry.buffer.type == WGPUBufferBindingType_Storage || entry.buffer.type == WGPUBufferBindingType_ReadOnlyStorage) {
+                        if (++storageBuffersPerStage[shaderStage] > deviceLimits.maxStorageBuffersPerShaderStage) {
+                            generateAValidationError("Storage buffers exceeded max count per stage"_s);
+                            return BindGroupLayout::createInvalid(*this);
+                        }
+                    }
+                }
+                if (BindGroupLayout::isPresent(entry.sampler)) {
+                    if (++samplersPerStage[shaderStage] > deviceLimits.maxSamplersPerShaderStage) {
+                        generateAValidationError("Sampler count exceeded max count per stage"_s);
+                        return BindGroupLayout::createInvalid(*this);
+                    }
+                }
+                if (BindGroupLayout::isPresent(entry.storageTexture)) {
+                    if (++storageTexturesPerStage[shaderStage] > deviceLimits.maxStorageTexturesPerShaderStage) {
+                        generateAValidationError("Storage texture count exceeded max count per stage"_s);
+                        return BindGroupLayout::createInvalid(*this);
+                    }
+                }
+                if (BindGroupLayout::isPresent(entry.texture)) {
+                    if (++texturesPerStage[shaderStage] > deviceLimits.maxSampledTexturesPerShaderStage) {
+                        generateAValidationError("Texture count exceeded max count per stage"_s);
+                        return BindGroupLayout::createInvalid(*this);
+                    }
                 }
 
                 for (int descriptorIndex = 0; descriptorIndex < maxGeneratedDescriptors; ++descriptorIndex) {
@@ -307,10 +394,10 @@ Ref<BindGroupLayout> Device::createBindGroupLayout(const WGPUBindGroupLayoutDesc
             return BindGroupLayout::createInvalid(*this);
     }
 
-    return BindGroupLayout::create(WTFMove(indicesForBinding), argumentEncoders[0], argumentEncoders[1], argumentEncoders[2], WTFMove(bindGroupLayoutEntries), sizeOfDynamicOffsets[0], sizeOfDynamicOffsets[1], sizeOfDynamicOffsets[2]);
+    return BindGroupLayout::create(WTFMove(indicesForBinding), argumentEncoders[0], argumentEncoders[1], argumentEncoders[2], WTFMove(bindGroupLayoutEntries), sizeOfDynamicOffsets[0], sizeOfDynamicOffsets[1], sizeOfDynamicOffsets[2], isAutoGenerated, WTFMove(uniformBuffersPerStage), WTFMove(storageBuffersPerStage), WTFMove(samplersPerStage), WTFMove(texturesPerStage), WTFMove(storageTexturesPerStage), *this);
 }
 
-BindGroupLayout::BindGroupLayout(StageMapTable&& indicesForBinding, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, BindGroupLayout::EntriesContainer&& bindGroupLayoutEntries, size_t sizeOfVertexDynamicOffsets, size_t sizeOfFragmentDynamicOffsets, size_t sizeOfComputeDynamicOffsets)
+BindGroupLayout::BindGroupLayout(StageMapTable&& indicesForBinding, id<MTLArgumentEncoder> vertexArgumentEncoder, id<MTLArgumentEncoder> fragmentArgumentEncoder, id<MTLArgumentEncoder> computeArgumentEncoder, BindGroupLayout::EntriesContainer&& bindGroupLayoutEntries, size_t sizeOfVertexDynamicOffsets, size_t sizeOfFragmentDynamicOffsets, size_t sizeOfComputeDynamicOffsets, bool isAutoGenerated, ShaderStageArray<uint32_t>&& uniformBuffersPerStage, ShaderStageArray<uint32_t>&& storageBuffersPerStage, ShaderStageArray<uint32_t>&& samplersPerStage, ShaderStageArray<uint32_t>&& texturesPerStage, ShaderStageArray<uint32_t>&& storageTexturesPerStage, const Device& device)
     : m_indicesForBinding(WTFMove(indicesForBinding))
     , m_vertexArgumentEncoder(vertexArgumentEncoder)
     , m_fragmentArgumentEncoder(fragmentArgumentEncoder)
@@ -319,12 +406,41 @@ BindGroupLayout::BindGroupLayout(StageMapTable&& indicesForBinding, id<MTLArgume
     , m_sizeOfVertexDynamicOffsets(sizeOfVertexDynamicOffsets)
     , m_sizeOfFragmentDynamicOffsets(sizeOfFragmentDynamicOffsets)
     , m_sizeOfComputeDynamicOffsets(sizeOfComputeDynamicOffsets)
+    , m_device(device)
+    , m_isAutoGenerated(isAutoGenerated)
+    , m_uniformBuffersPerStage(WTFMove(uniformBuffersPerStage))
+    , m_storageBuffersPerStage(WTFMove(storageBuffersPerStage))
+    , m_samplersPerStage(WTFMove(samplersPerStage))
+    , m_texturesPerStage(WTFMove(texturesPerStage))
+    , m_storageTexturesPerStage(WTFMove(storageTexturesPerStage))
 {
 }
 
-BindGroupLayout::BindGroupLayout()
+BindGroupLayout::BindGroupLayout(const Device& device)
     : m_valid(false)
+    , m_device(device)
 {
+}
+
+uint32_t BindGroupLayout::uniformBuffersPerStage(ShaderStage shaderStage) const
+{
+    return m_uniformBuffersPerStage[shaderStage];
+}
+uint32_t BindGroupLayout::storageBuffersPerStage(ShaderStage shaderStage) const
+{
+    return m_storageBuffersPerStage[shaderStage];
+}
+uint32_t BindGroupLayout::samplersPerStage(ShaderStage shaderStage) const
+{
+    return m_samplersPerStage[shaderStage];
+}
+uint32_t BindGroupLayout::texturesPerStage(ShaderStage shaderStage) const
+{
+    return m_texturesPerStage[shaderStage];
+}
+uint32_t BindGroupLayout::storageTexturesPerStage(ShaderStage shaderStage) const
+{
+    return m_storageTexturesPerStage[shaderStage];
 }
 
 BindGroupLayout::~BindGroupLayout() = default;
@@ -389,6 +505,16 @@ std::optional<uint32_t> BindGroupLayout::bufferSizeIndexForEntryIndex(uint32_t b
         return it->value.bufferSizeArgumentBufferIndices[renderStage];
 
     return std::nullopt;
+}
+
+const Device& BindGroupLayout::device() const
+{
+    return m_device;
+}
+
+bool BindGroupLayout::isAutoGenerated() const
+{
+    return m_isAutoGenerated;
 }
 
 } // namespace WebGPU

@@ -498,7 +498,7 @@ const TypeDefinition& TypeDefinition::unroll() const
                 return TypeInformation::get(*cachedUnrolling);
 
             const TypeDefinition& unrolled = underlyingType.replacePlaceholders(projectee.index());
-            TypeInformation::addCachedUnrolling(index(), unrolled.index());
+            TypeInformation::addCachedUnrolling(index(), &unrolled);
             return unrolled;
         }
 
@@ -948,12 +948,27 @@ RefPtr<TypeDefinition> TypeInformation::typeDefinitionForSubtype(const Vector<Ty
     return addResult.iterator->key;
 }
 
-void TypeInformation::addCachedUnrolling(TypeIndex type, TypeIndex unrolled)
+RefPtr<TypeDefinition> TypeInformation::getPlaceholderProjection(ProjectionIndex index)
+{
+    TypeInformation& info = singleton();
+    auto projection = typeDefinitionForProjection(Projection::PlaceholderGroup, index);
+
+    {
+        Locker locker { info.m_lock };
+
+        if (!info.m_placeholders.contains(projection))
+            info.m_placeholders.add(projection);
+    }
+
+    return projection;
+}
+
+void TypeInformation::addCachedUnrolling(TypeIndex type, const TypeDefinition* unrolled)
 {
     TypeInformation& info = singleton();
     Locker locker { info.m_lock };
 
-    info.m_unrollingCache.add(type, unrolled);
+    info.m_unrollingCache.add(type, RefPtr { unrolled });
 }
 
 std::optional<TypeIndex> TypeInformation::tryGetCachedUnrolling(TypeIndex type)
@@ -964,7 +979,7 @@ std::optional<TypeIndex> TypeInformation::tryGetCachedUnrolling(TypeIndex type)
     const auto iterator = info.m_unrollingCache.find(type);
     if (iterator == info.m_unrollingCache.end())
         return std::nullopt;
-    return std::optional<TypeIndex>(iterator->value);
+    return std::optional<TypeIndex>(iterator->value->index());
 }
 
 void TypeInformation::registerCanonicalRTTForType(TypeIndex type)

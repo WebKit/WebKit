@@ -116,9 +116,9 @@ static MTLCompareFunction compareFunction(WGPUCompareFunction compareFunction)
         return MTLCompareFunctionEqual;
     case WGPUCompareFunction_NotEqual:
         return MTLCompareFunctionNotEqual;
+    case WGPUCompareFunction_Undefined:
     case WGPUCompareFunction_Always:
         return MTLCompareFunctionAlways;
-    case WGPUCompareFunction_Undefined:
     case WGPUCompareFunction_Force32:
         ASSERT_NOT_REACHED();
         return MTLCompareFunctionAlways;

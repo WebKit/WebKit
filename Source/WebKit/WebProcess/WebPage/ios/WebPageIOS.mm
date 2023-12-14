@@ -4835,7 +4835,7 @@ static VisiblePositionRange constrainRangeToSelection(const VisiblePositionRange
     return { position, position };
 }
 
-void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest request, CompletionHandler<void(DocumentEditingContext)>&& completionHandler)
+void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& request, CompletionHandler<void(DocumentEditingContext&&)>&& completionHandler)
 {
     if (!request.options.contains(DocumentEditingContextRequest::Options::Text) && !request.options.contains(DocumentEditingContextRequest::Options::AttributedText)) {
         completionHandler({ });
@@ -5027,7 +5027,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest reques
         }
     }
 
-    completionHandler(context);
+    completionHandler(WTFMove(context));
 }
 
 bool WebPage::shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode, const WebCore::VisibleSelection& newSelection)

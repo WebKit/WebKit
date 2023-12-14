@@ -44,7 +44,7 @@ static size_t balance;
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MarkedBlock);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MarkedBlockHandle);
 
-MarkedBlock::Handle* MarkedBlock::tryCreate(Heap& heap, AlignedMemoryAllocator* alignedMemoryAllocator)
+MarkedBlock::Handle* MarkedBlock::tryCreate(JSC::Heap& heap, AlignedMemoryAllocator* alignedMemoryAllocator)
 {
     if (computeBalance) {
         balance++;
@@ -59,7 +59,7 @@ MarkedBlock::Handle* MarkedBlock::tryCreate(Heap& heap, AlignedMemoryAllocator* 
     return new Handle(heap, alignedMemoryAllocator, blockSpace);
 }
 
-MarkedBlock::Handle::Handle(Heap& heap, AlignedMemoryAllocator* alignedMemoryAllocator, void* blockSpace)
+MarkedBlock::Handle::Handle(JSC::Heap& heap, AlignedMemoryAllocator* alignedMemoryAllocator, void* blockSpace)
     : m_alignedMemoryAllocator(alignedMemoryAllocator)
     , m_weakSet(heap.vm())
     , m_block(new (NotNull, blockSpace) MarkedBlock(heap.vm(), *this))
@@ -69,7 +69,7 @@ MarkedBlock::Handle::Handle(Heap& heap, AlignedMemoryAllocator* alignedMemoryAll
 
 MarkedBlock::Handle::~Handle()
 {
-    Heap& heap = *this->heap();
+    JSC::Heap& heap = *this->heap();
     if (computeBalance) {
         balance--;
         if (!(balance % 10))

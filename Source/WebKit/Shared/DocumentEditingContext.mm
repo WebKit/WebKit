@@ -40,7 +40,31 @@ static inline NSRange toNSRange(DocumentEditingContext::Range range)
     return NSMakeRange(range.location, range.length);
 }
 
-UIWKDocumentContext *DocumentEditingContext::toPlatformContext(OptionSet<DocumentEditingContextRequest::Options> options)
+#if HAVE(UI_WK_DOCUMENT_CONTEXT)
+
+template <typename ContextType>
+void setOptionalEditingContextProperties(const DocumentEditingContext& context, ContextType *platformContext, OptionSet<DocumentEditingContextRequest::Options> options)
+{
+    for (auto& rect : context.textRects)
+        [platformContext addTextRect:rect.rect forCharacterRange:toNSRange(rect.range)];
+
+    [platformContext setAnnotatedText:context.annotatedText.nsAttributedString().get()];
+
+#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
+    if (options.contains(DocumentEditingContextRequest::Options::AutocorrectedRanges)) {
+        auto ranges = createNSArray(context.autocorrectedRanges, [&] (DocumentEditingContext::Range range) {
+            return [NSValue valueWithRange:toNSRange(range)];
+        });
+
+        if ([platformContext respondsToSelector:@selector(setAutocorrectedRanges:)])
+            [platformContext setAutocorrectedRanges:ranges.get()];
+    }
+#endif // HAVE(AUTOCORRECTION_ENHANCEMENTS)
+}
+
+#endif // HAVE(UI_WK_DOCUMENT_CONTEXT)
+
+UIWKDocumentContext *DocumentEditingContext::toLegacyPlatformContext(OptionSet<DocumentEditingContextRequest::Options> options)
 {
 #if HAVE(UI_WK_DOCUMENT_CONTEXT)
     auto platformContext = adoptNS([[UIWKDocumentContext alloc] init]);
@@ -58,24 +82,38 @@ UIWKDocumentContext *DocumentEditingContext::toPlatformContext(OptionSet<Documen
     }
 
     [platformContext setSelectedRangeInMarkedText:toNSRange(selectedRangeInMarkedText)];
-
-    for (const auto& rect : textRects)
-        [platformContext addTextRect:rect.rect forCharacterRange:toNSRange(rect.range)];
-
-    [platformContext setAnnotatedText:annotatedText.nsAttributedString().get()];
-
-#if HAVE(AUTOCORRECTION_ENHANCEMENTS)
-    if (options.contains(DocumentEditingContextRequest::Options::AutocorrectedRanges)) {
-        auto ranges = createNSArray(autocorrectedRanges, [&] (DocumentEditingContext::Range range) {
-            return [NSValue valueWithRange:toNSRange(range)];
-        });
-
-        if ([platformContext respondsToSelector:@selector(setAutocorrectedRanges:)])
-            [platformContext setAutocorrectedRanges:ranges.get()];
-    }
-#endif
+    setOptionalEditingContextProperties(*this, platformContext.get(), options);
 
     return platformContext.autorelease();
+#else
+    UNUSED_PARAM(options);
+    return nil;
+#endif
+}
+
+WKSETextDocumentContext *DocumentEditingContext::toPlatformContext(OptionSet<DocumentEditingContextRequest::Options> options)
+{
+#if HAVE(UI_WK_DOCUMENT_CONTEXT)
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+    RetainPtr<WKSETextDocumentContext> platformContext;
+    if (options.contains(DocumentEditingContextRequest::Options::AttributedText)) {
+        platformContext = adoptNS([[WKSETextDocumentContext alloc] initWithAttributedSelectedText:selectedText.nsAttributedString().get()
+            contextBefore:contextBefore.nsAttributedString().get()
+            contextAfter:contextAfter.nsAttributedString().get()
+            markedText:markedText.nsAttributedString().get()
+            selectedRangeInMarkedText:toNSRange(selectedRangeInMarkedText)]);
+    } else {
+        platformContext = adoptNS([[WKSETextDocumentContext alloc] initWithSelectedText:[selectedText.nsAttributedString() string]
+            contextBefore:[contextBefore.nsAttributedString() string]
+            contextAfter:[contextAfter.nsAttributedString() string]
+            markedText:[markedText.nsAttributedString() string]
+            selectedRangeInMarkedText:toNSRange(selectedRangeInMarkedText)]);
+    }
+    setOptionalEditingContextProperties(*this, platformContext.get(), options);
+    return platformContext.autorelease();
+#else
+    return toLegacyPlatformContext(options);
+#endif
 #else
     UNUSED_PARAM(options);
     return nil;
