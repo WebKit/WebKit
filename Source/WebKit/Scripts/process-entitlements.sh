@@ -308,6 +308,7 @@ function maccatalyst_process_gpu_entitlements()
     plistbuddy Add :com.apple.private.pac.exception bool YES
     plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
     plistbuddy Add :com.apple.QuartzCore.webkit-limited-types bool YES
+    plistbuddy Add :com.apple.private.coremedia.allow-fps-attachment bool YES
 
     if [[ "${WK_USE_RESTRICTED_ENTITLEMENTS}" == YES ]]
     then
@@ -429,6 +430,7 @@ if [[ "${PRODUCT_NAME}" != GPUExtension ]]; then
     plistbuddy Add :com.apple.private.gpu-restricted bool YES
     plistbuddy Add :com.apple.private.pac.exception bool YES
     plistbuddy Add :com.apple.private.sandbox.profile string com.apple.WebKit.GPU
+    plistbuddy Add :com.apple.private.coremedia.allow-fps-attachment bool YES
 fi
 
     plistbuddy Add :com.apple.systemstatus.activityattribution bool YES
