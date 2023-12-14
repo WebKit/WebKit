@@ -33,7 +33,7 @@
 @class _WKTextInputContext;
 @class UIEventAttribution;
 @class UIGestureRecognizer;
-@class UIWKDocumentContext;
+@class WKSEDocumentContext;
 @class UIWKDocumentRequest;
 @class UITapGestureRecognizer;
 

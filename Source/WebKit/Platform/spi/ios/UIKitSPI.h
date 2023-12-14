@@ -1222,27 +1222,6 @@ typedef NS_ENUM(NSUInteger, _UIScrollDeviceCategory) {
 
 @end
 
-@protocol UIAsyncTextInput_Staging_117155812 <UIAsyncTextInput>
-
-- (void)deleteInDirection:(UITextStorageDirection)direction toGranularity:(UITextGranularity)granularity;
-- (void)moveInDirection:(UITextStorageDirection)direction byGranularity:(UITextGranularity)granularity;
-- (void)extendInDirection:(UITextStorageDirection)direction byGranularity:(UITextGranularity)granularity;
-- (void)moveInLayoutDirection:(UITextLayoutDirection)direction;
-- (void)extendInLayoutDirection:(UITextLayoutDirection)direction;
-
-@end
-
-@protocol UIExtendedTextInputTraits_Staging_117880911<UITextInputTraits>
-@optional
-
-@property (nonatomic, readonly) BOOL isSingleLineDocument;
-@property (nonatomic, readonly) BOOL typingAdaptationDisabled;
-@property (nonatomic, readonly) UIColor *insertionPointColor;
-@property (nonatomic, readonly) UIColor *selectionBarColor;
-@property (nonatomic, readonly) UIColor *selectionHighlightColor;
-
-@end
-
 #if !defined(UI_DIRECTIONAL_TEXT_RANGE_STRUCT)
 
 typedef struct {
@@ -1257,9 +1236,7 @@ typedef struct {
 @end
 
 @protocol UIAsyncTextInputDelegate_Staging<UIAsyncTextInputDelegate>
-- (void)invalidateTextEntryContext; // Added in rdar://118536368.
 - (void)deferReplaceTextActionToSystem:(id)sender; // Added in rdar://118307558.
-- (void)provideCandidateUISuggestions:(NSArray<UITextSuggestion*> *)suggestions; // Added in rdar://117914235.
 @end
 
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)

@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #include "ArgumentCoders.h"
+#include "WKSEDefinitions.h"
 #include <WebCore/AttributedString.h>
 #include <WebCore/ElementContext.h>
 #include <WebCore/FloatRect.h>
@@ -35,6 +36,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
+OBJC_CLASS WKSETextDocumentContext;
 OBJC_CLASS UIWKDocumentContext;
 
 namespace WebKit {
@@ -62,7 +64,8 @@ struct DocumentEditingContextRequest {
 };
 
 struct DocumentEditingContext {
-    UIWKDocumentContext *toPlatformContext(OptionSet<WebKit::DocumentEditingContextRequest::Options>);
+    WKSETextDocumentContext *toPlatformContext(OptionSet<DocumentEditingContextRequest::Options>);
+    UIWKDocumentContext *toLegacyPlatformContext(OptionSet<DocumentEditingContextRequest::Options>);
 
     WebCore::AttributedString contextBefore;
     WebCore::AttributedString selectedText;

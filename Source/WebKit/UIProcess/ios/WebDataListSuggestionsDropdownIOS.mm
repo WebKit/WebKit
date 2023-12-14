@@ -80,6 +80,16 @@ static NSString * const suggestionCellReuseIdentifier = @"WKDataListSuggestionCe
 @end
 
 @implementation WKDataListTextSuggestion
+
++ (instancetype)textSuggestionWithInputText:(NSString *)inputText
+{
+#if SERVICE_EXTENSIONS_TEXT_INPUT_IS_AVAILABLE
+    return [[[super alloc] initWithInputText:inputText] autorelease];
+#else
+    return [super textSuggestionWithInputText:inputText];
+#endif
+}
+
 @end
 
 #pragma mark - WebDataListSuggestionsDropdownIOS

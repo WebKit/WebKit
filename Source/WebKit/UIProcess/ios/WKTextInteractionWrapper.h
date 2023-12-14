@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
+#import "WKSEDefinitions.h"
 
 @class WKContentView;
 
@@ -41,9 +42,9 @@
 - (void)selectionChanged;
 - (void)setGestureRecognizers;
 - (void)willStartScrollingOverflow;
-- (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(UIWKGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(UIWKSelectionFlags)flags;
+- (void)selectionChangedWithGestureAt:(CGPoint)point withGesture:(WKSEGestureType)gestureType withState:(UIGestureRecognizerState)gestureState withFlags:(WKSESelectionFlags)flags;
 - (void)showDictionaryFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
-- (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(UIWKSelectionTouch)touch withFlags:(UIWKSelectionFlags)flags;
+- (void)selectionChangedWithTouchAt:(CGPoint)point withSelectionTouch:(WKSESelectionTouch)touch withFlags:(WKSESelectionFlags)flags;
 - (void)lookup:(NSString *)textWithContext withRange:(NSRange)range fromRect:(CGRect)presentationRect;
 - (void)showShareSheetFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;
 - (void)showTextServiceFor:(NSString *)selectedTerm fromRect:(CGRect)presentationRect;

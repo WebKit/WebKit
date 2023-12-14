@@ -25,18 +25,11 @@
 
 #pragma once
 
-#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if HAVE(SERVICEEXTENSIONS) && defined(__OBJC__) && __OBJC__
+#import <ServiceExtensions/ServiceExtensions.h>
+#import <ServiceExtensions/ServiceExtensions_Private.h>
+#endif
 
-#import "WebSEDefinitions.h"
-#import <WebCore/WebEvent.h>
-
-@class WebSEKeyEvent;
-
-@interface WebEvent (WebSEKeyEventSupport)
-
-- (instancetype)initWithKeyEvent:(WebSEKeyEvent *)event;
-@property (nonatomic, readonly) WebSEKeyEvent *originalKeyEvent;
-
-@end
-
-#endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/WebSEDefinitionsAdditions.h>
+#endif
