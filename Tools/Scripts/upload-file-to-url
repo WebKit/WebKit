@@ -22,12 +22,16 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import webkitpy
+import sys
+
+try:
+    import webkitpy
+except Exception as e:
+    sys.stderr.write(f'Error while importing webkitpy: {e}... trying to continue\n')
 
 import argparse
 import os
 import requests
-import sys
 
 
 def upload(filename, url, max_attempts=3):
