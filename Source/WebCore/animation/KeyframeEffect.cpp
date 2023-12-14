@@ -1010,6 +1010,7 @@ void KeyframeEffect::setBlendingKeyframes(KeyframeList&& blendingKeyframes)
     computeHasExplicitlyInheritedKeyframeProperty();
     computeHasAcceleratedPropertyOverriddenByCascadeProperty();
     computeHasReferenceFilter();
+    computeHasSizeDependentTransform();
 
     checkForMatchingTransformFunctionLists();
 
@@ -1619,6 +1620,9 @@ bool KeyframeEffect::canBeAccelerated() const
     if (m_hasKeyframeComposingAcceleratedProperty)
         return false;
 
+    if (m_animatesSizeAndSizeDependentTransform)
+        return false;
+
     return true;
 }
 
@@ -1965,6 +1969,10 @@ void KeyframeEffect::applyPendingAcceleratedActions()
         ASSERT(m_target);
         auto* effectStack = m_target->keyframeEffectStack(m_pseudoId);
         ASSERT(effectStack);
+
+        if ((m_hasWidthDependentTransform && effectStack->containsProperty(CSSPropertyWidth))
+            || (m_hasHeightDependentTransform && effectStack->containsProperty(CSSPropertyHeight)))
+            return RunningAccelerated::Prevented;
 
         if (!effectStack->allowsAcceleration())
             return RunningAccelerated::Prevented;
@@ -2545,6 +2553,50 @@ void KeyframeEffect::computeHasReferenceFilter()
 
         return false;
     }();
+}
+
+void KeyframeEffect::computeHasSizeDependentTransform()
+{
+    m_hasWidthDependentTransform = false;
+    m_hasHeightDependentTransform = false;
+    m_animatesSizeAndSizeDependentTransform = false;
+
+    if (m_blendingKeyframes.isEmpty())
+        return;
+
+    auto animatesTransform = m_blendingKeyframes.containsProperty(CSSPropertyTransform);
+    auto animatesTranslate = m_blendingKeyframes.containsProperty(CSSPropertyTranslate);
+
+    if (!animatesTransform && !animatesTranslate)
+        return;
+
+    for (auto& keyframe : m_blendingKeyframes) {
+        if (auto* style = keyframe.style()) {
+            if (animatesTranslate) {
+                if (auto* translate = style->translate()) {
+                    if (translate->x().isPercent())
+                        m_hasWidthDependentTransform = true;
+                    if (translate->y().isPercent())
+                        m_hasHeightDependentTransform = true;
+                }
+            }
+            if (animatesTransform) {
+                for (auto& operation : style->transform().operations()) {
+                    if (auto* translate = dynamicDowncast<TranslateTransformOperation>(operation.get())) {
+                        if (translate->x().isPercent())
+                            m_hasWidthDependentTransform = true;
+                        if (translate->y().isPercent())
+                            m_hasHeightDependentTransform = true;
+                    }
+                }
+            }
+        }
+        if (m_hasWidthDependentTransform && m_hasHeightDependentTransform)
+            break;
+    }
+
+    m_animatesSizeAndSizeDependentTransform = (m_hasWidthDependentTransform && m_blendingKeyframes.containsProperty(CSSPropertyWidth))
+        || (m_hasHeightDependentTransform && m_blendingKeyframes.containsProperty(CSSPropertyHeight));
 }
 
 void KeyframeEffect::effectStackNoLongerPreventsAcceleration()
