@@ -1136,6 +1136,9 @@ inline GridTrackSize BuilderConverter::createGridTrackSize(const CSSValue& value
     if (is<CSSPrimitiveValue>(value))
         return GridTrackSize(createGridTrackBreadth(downcast<CSSPrimitiveValue>(value), builderState));
 
+    if (!is<CSSFunctionValue>(value))
+        return GridTrackSize(GridLength(0));
+
     const auto& function = downcast<CSSFunctionValue>(value);
 
     if (function.length() == 1)
