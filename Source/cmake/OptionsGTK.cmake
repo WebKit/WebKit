@@ -379,8 +379,8 @@ if (ENABLE_WAYLAND_TARGET)
         message(FATAL_ERROR "Recompile GTK with Wayland backend to use ENABLE_WAYLAND_TARGET")
     endif ()
 
-    find_package(Wayland 1.15 REQUIRED)
-    find_package(WaylandProtocols 1.15 REQUIRED)
+    find_package(Wayland 1.18 REQUIRED)
+    find_package(WaylandProtocols 1.24 REQUIRED)
 endif ()
 
 if (USE_JPEGXL)

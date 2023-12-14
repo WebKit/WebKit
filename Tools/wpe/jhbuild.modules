@@ -44,8 +44,8 @@
       href="http://cairographics.org"/>
   <repository type="tarball" name="freedesktop.org"
       href="http://www.freedesktop.org"/>
-  <repository type="git" name="git.freedesktop.org/wayland"
-      href="https://gitlab.freedesktop.org/wayland"/>
+  <repository type="git" name="git.freedesktop.org"
+      href="https://gitlab.freedesktop.org"/>
   <repository type="git" name="github.com"
       href="https://github.com"/>
   <repository type="tarball" name="github-tarball"
@@ -225,16 +225,22 @@
             version="1.5.4" repo="github-tarball"/>
   </meson>
 
-  <meson id="wayland" mesonargs="-Dtests=false -Ddocumentation=false -Ddtd_validation=false">
-    <branch tag="1.20.0"
-            checkoutdir="wayland-protocols"
-            repo="git.freedesktop.org/wayland" />
+  <meson id="wayland" mesonargs="-Ddocumentation=false -Ddtd_validation=false">
+    <pkg-config>wayland-server.pc</pkg-config>
+    <branch module="wayland/wayland"
+            version="1.18.0"
+            tag="1.18.0"
+            checkoutdir="wayland"
+            repo="git.freedesktop.org" />
   </meson>
 
   <meson id="wayland-protocols">
-    <branch tag="1.25"
-            checkoutdir="wayland-protocols"
-            repo="git.freedesktop.org/wayland" />
+   <pkg-config>wayland-protocols.pc</pkg-config>
+   <branch module="wayland/wayland-protocols"
+           version="1.24"
+           tag="1.24"
+           checkoutdir="wayland-protocols"
+           repo="git.freedesktop.org" />
   </meson>
 
   <meson id="graphene">

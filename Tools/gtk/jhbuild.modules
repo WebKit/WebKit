@@ -69,8 +69,8 @@
       href="http://xmlsoft.org"/>
   <repository type="tarball" name="savannah.gnu.org"
       href="http://download.savannah.gnu.org/releases/"/>
-  <repository type="git" name="freedesktop-git"
-      href="http://anongit.freedesktop.org/git"/>
+  <repository type="git" name="git.freedesktop.org"
+      href="https://gitlab.freedesktop.org"/>
  <repository type="tarball" name="dri.freedesktop.org"
       href="https://dri.freedesktop.org"/>
   <repository type="tarball" name="mesa.freedesktop.org"
@@ -339,23 +339,23 @@
     </branch>
   </autotools>
 
-  <autotools id="wayland"
-             autogen-sh="configure"
-             autogenargs="--disable-documentation">
+  <meson id="wayland" mesonargs="-Ddocumentation=false -Ddtd_validation=false">
     <pkg-config>wayland-server.pc</pkg-config>
-    <branch module="releases/wayland-${version}.tar.xz"
-            version="1.16.0"
-            repo="wayland.freedesktop.org"
-            hash="sha256:4e72c2b56109ccfb6610d776e465f4ca0af2280c9c2f7d5cc23f0ed2548752f5"/>
-  </autotools>
+    <branch module="wayland/wayland"
+            version="1.18.0"
+            tag="1.18.0"
+            checkoutdir="wayland"
+            repo="git.freedesktop.org" />
+  </meson>
 
-  <autotools id="wayland-protocols"
-             autogen-sh="configure">
-    <branch module="releases/wayland-protocols-${version}.tar.xz"
-            version="1.16"
-	    repo="wayland.freedesktop.org"
-	    hash="sha256:6b1485951fdcd36a960c870c46f28b03a3e5121fb46246916333ed07f78c98c5"/>
-  </autotools>
+  <meson id="wayland-protocols">
+   <pkg-config>wayland-protocols.pc</pkg-config>
+   <branch module="wayland/wayland-protocols"
+           version="1.24"
+           tag="1.24"
+           checkoutdir="wayland-protocols"
+           repo="git.freedesktop.org" />
+  </meson>
 
   <autotools id="weston"
              autogen-sh="configure"
