@@ -56,11 +56,11 @@ Ref<PathStream> PathStream::create(const Vector<FloatPoint>& points)
     if (points.size() < 2)
         return stream;
 
-    stream->moveTo(points[0]);
+    stream->add(PathMoveTo { points[0] });
     for (size_t i = 1; i < points.size(); ++i)
-        stream->addLineTo(points[i]);
+        stream->add(PathLineTo { points[i] });
 
-    stream->closeSubpath();
+    stream->add(PathCloseSubpath { });
     return stream;
 }
 
@@ -92,69 +92,69 @@ const PathMoveTo* PathStream::lastIfMoveTo() const
     return std::get_if<PathMoveTo>(&m_segments.last().data());
 }
 
-void PathStream::moveTo(const FloatPoint& point)
+void PathStream::add(PathMoveTo moveTo)
 {
-    segments().append(PathMoveTo { point });
+    segments().append(moveTo);
 }
 
-void PathStream::addLineTo(const FloatPoint& point)
-{
-    if (const auto* moveTo = lastIfMoveTo())
-        segments().last() = { PathDataLine { moveTo->point, point } };
-    else
-        segments().append(PathLineTo { point });
-}
-
-void PathStream::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint)
+void PathStream::add(PathLineTo lineTo)
 {
     if (const auto* moveTo = lastIfMoveTo())
-        segments().last() = { PathDataQuadCurve { moveTo->point, controlPoint, endPoint } };
+        segments().last() = { PathDataLine { moveTo->point, lineTo.point } };
     else
-        segments().append(PathQuadCurveTo { controlPoint, endPoint });
+        segments().append(lineTo);
 }
 
-void PathStream::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint)
+void PathStream::add(PathQuadCurveTo quadTo)
 {
     if (const auto* moveTo = lastIfMoveTo())
-        segments().last() = { PathDataBezierCurve { moveTo->point, controlPoint1, controlPoint2, endPoint } };
+        segments().last() = { PathDataQuadCurve { moveTo->point, quadTo.controlPoint, quadTo.endPoint } };
     else
-        segments().append(PathBezierCurveTo { controlPoint1, controlPoint2, endPoint });
+        segments().append(quadTo);
 }
 
-void PathStream::addArcTo(const FloatPoint& point1, const FloatPoint& point2, float radius)
+void PathStream::add(PathBezierCurveTo bezierTo)
 {
     if (const auto* moveTo = lastIfMoveTo())
-        segments().last() = { PathDataArc { moveTo->point, point1, point2, radius } };
+        segments().last() = { PathDataBezierCurve { moveTo->point, bezierTo.controlPoint1, bezierTo.controlPoint2, bezierTo.endPoint } };
     else
-        segments().append(PathArcTo { point1, point2, radius });
+        segments().append(bezierTo);
 }
 
-void PathStream::addArc(const FloatPoint& point, float radius, float startAngle, float endAngle, RotationDirection direction)
+void PathStream::add(PathArcTo arcTo)
 {
-    segments().append(PathArc { point, radius, startAngle, endAngle, direction });
+    if (const auto* moveTo = lastIfMoveTo())
+        segments().last() = { PathDataArc { moveTo->point, arcTo.controlPoint1, arcTo.controlPoint2, arcTo.radius } };
+    else
+        segments().append(arcTo);
 }
 
-void PathStream::addRect(const FloatRect& rect)
+void PathStream::add(PathArc arc)
 {
-    segments().append(PathRect { rect });
+    segments().append(arc);
 }
 
-void PathStream::addEllipse(const FloatPoint& point, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, RotationDirection direction)
+void PathStream::add(PathRect rect)
 {
-    segments().append(PathEllipse { point, radiusX, radiusY, rotation, startAngle, endAngle, direction });
+    segments().append(rect);
 }
 
-void PathStream::addEllipseInRect(const FloatRect& rect)
+void PathStream::add(PathEllipse ellipse)
 {
-    segments().append(PathEllipseInRect { rect });
+    segments().append(ellipse);
 }
 
-void PathStream::addRoundedRect(const FloatRoundedRect& roundedRect, PathRoundedRect::Strategy strategy)
+void PathStream::add(PathEllipseInRect ellipseInRect)
 {
-    segments().append(PathRoundedRect { roundedRect, strategy });
+    segments().append(ellipseInRect);
 }
 
-void PathStream::closeSubpath()
+void PathStream::add(PathRoundedRect roundedRect)
+{
+    segments().append(roundedRect);
+}
+
+void PathStream::add(PathCloseSubpath)
 {
     segments().append(PathCloseSubpath { });
 }

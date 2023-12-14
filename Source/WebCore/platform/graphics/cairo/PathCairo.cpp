@@ -44,18 +44,15 @@ Ref<PathCairo> PathCairo::create()
 Ref<PathCairo> PathCairo::create(const PathSegment& segment)
 {
     auto pathCairo = PathCairo::create();
-    pathCairo->appendSegment(segment);
+    pathCairo->addSegment(segment);
     return pathCairo;
 }
 
 Ref<PathCairo> PathCairo::create(const PathStream& stream)
 {
     auto pathCairo = PathCairo::create();
-
-    stream.applySegments([&](const PathSegment& segment) {
-        pathCairo->appendSegment(segment);
-    });
-
+    for (auto& segment : stream.segments())
+        pathCairo->addSegment(segment);
     return pathCairo;
 }
 
@@ -98,27 +95,27 @@ PlatformPathPtr PathCairo::platformPath() const
     return m_platformPath.get();
 }
 
-void PathCairo::moveTo(const FloatPoint& point)
+void PathCairo::add(PathMoveTo moveTo)
 {
-    cairo_move_to(platformPath(), point.x(), point.y());
+    cairo_move_to(platformPath(), moveTo.point.x(), moveTo.point.y());
     if (m_elementsStream)
-        m_elementsStream->moveTo(point);
+        m_elementsStream->add(moveTo);
 }
 
-void PathCairo::addLineTo(const FloatPoint& point)
+void PathCairo::add(PathLineTo lineTo)
 {
-    cairo_line_to(platformPath(), point.x(), point.y());
+    cairo_line_to(platformPath(), lineTo.point.x(), lineTo.point.y());
     if (m_elementsStream)
-        m_elementsStream->addLineTo(point);
+        m_elementsStream->add(lineTo);
 }
 
-void PathCairo::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint& endPoint)
+void PathCairo::add(PathQuadCurveTo quadTo)
 {
     double x, y;
-    double x1 = controlPoint.x();
-    double y1 = controlPoint.y();
-    double x2 = endPoint.x();
-    double y2 = endPoint.y();
+    double x1 = quadTo.controlPoint.x();
+    double y1 = quadTo.controlPoint.y();
+    double x2 = quadTo.endPoint.x();
+    double y2 = quadTo.endPoint.y();
     cairo_t* cr = platformPath();
     cairo_get_current_point(cr, &x, &y);
     cairo_curve_to(cr,
@@ -126,14 +123,14 @@ void PathCairo::addQuadCurveTo(const FloatPoint& controlPoint, const FloatPoint&
         x2 + 2.0 / 3.0 * (x1 - x2), y2 + 2.0 / 3.0 * (y1 - y2),
         x2, y2);
     if (m_elementsStream)
-        m_elementsStream->addQuadCurveTo(controlPoint, endPoint);
+        m_elementsStream->add(quadTo);
 }
 
-void PathCairo::addBezierCurveTo(const FloatPoint& controlPoint1, const FloatPoint& controlPoint2, const FloatPoint& endPoint)
+void PathCairo::add(PathBezierCurveTo bezierTo)
 {
-    cairo_curve_to(platformPath(), controlPoint1.x(), controlPoint1.y(), controlPoint2.x(), controlPoint2.y(), endPoint.x(), endPoint.y());
+    cairo_curve_to(platformPath(), bezierTo.controlPoint1.x(), bezierTo.controlPoint1.y(), bezierTo.controlPoint2.x(), bezierTo.controlPoint2.y(), bezierTo.endPoint.x(), bezierTo.endPoint.y());
     if (m_elementsStream)
-        m_elementsStream->addBezierCurveTo(controlPoint1, controlPoint2, endPoint);
+        m_elementsStream->add(bezierTo);
 }
 
 static inline float areaOfTriangleFormedByPoints(const FloatPoint& p1, const FloatPoint& p2, const FloatPoint& p3)
@@ -141,7 +138,7 @@ static inline float areaOfTriangleFormedByPoints(const FloatPoint& p1, const Flo
     return p1.x() * (p2.y() - p3.y()) + p2.x() * (p3.y() - p1.y()) + p3.x() * (p1.y() - p2.y());
 }
 
-void PathCairo::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radius)
+void PathCairo::add(PathArcTo arcTo)
 {
     // FIXME: Why do we return if the path is empty? Can't a path start with an arc?
     if (isEmpty())
@@ -151,13 +148,16 @@ void PathCairo::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radiu
     cairo_get_current_point(platformPath(), &x0, &y0);
     FloatPoint p0(x0, y0);
 
+    const FloatPoint p1 = arcTo.controlPoint1;
+    const FloatPoint p2 = arcTo.controlPoint2;
+    const float radius = arcTo.radius;
     // Draw only a straight line to p1 if any of the points are equal or the radius is zero
     // or the points are collinear (triangle that the points form has area of zero value).
     if ((p1.x() == p0.x() && p1.y() == p0.y()) || (p1.x() == p2.x() && p1.y() == p2.y()) || !radius
         || !areaOfTriangleFormedByPoints(p0, p1, p2)) {
         cairo_line_to(platformPath(), p1.x(), p1.y());
         if (m_elementsStream)
-            m_elementsStream->addLineTo(p1);
+            m_elementsStream->add(PathLineTo { p1 });
         return;
     }
 
@@ -170,7 +170,7 @@ void PathCairo::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radiu
     if (cos_phi == -1) {
         cairo_line_to(platformPath(), p1.x(), p1.y());
         if (m_elementsStream)
-            m_elementsStream->addLineTo(p1);
+            m_elementsStream->add(PathLineTo { p1 });
         return;
     }
     if (cos_phi == 1) {
@@ -180,7 +180,7 @@ void PathCairo::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radiu
         FloatPoint ep((p0.x() + factor_max * p1p0.x()), (p0.y() + factor_max * p1p0.y()));
         cairo_line_to(platformPath(), ep.x(), ep.y());
         if (m_elementsStream)
-            m_elementsStream->addLineTo(ep);
+            m_elementsStream->add(PathLineTo { ep });
         return;
     }
 
@@ -222,14 +222,19 @@ void PathCairo::addArcTo(const FloatPoint& p1, const FloatPoint& p2, float radiu
 
     cairo_line_to(platformPath(), t_p1p0.x(), t_p1p0.y());
 
-    addArc(p, radius, sa, ea, direction);
+    add(PathArc { p, radius, sa, ea, direction });
 
     m_elementsStream = nullptr;
 }
 
-void PathCairo::addArc(const FloatPoint& p, float r, float startAngle, float endAngle, RotationDirection direction)
+void PathCairo::add(PathArc arc)
 {
     cairo_t* cr = platformPath();
+    const FloatPoint p = arc.center;
+    const float r = arc.radius;
+    const float startAngle = arc.startAngle;
+    const float endAngle = arc.endAngle;
+    const RotationDirection direction = arc.direction;
     float sweep = endAngle - startAngle;
     const float twoPI = 2 * piFloat;
     if ((sweep <= -twoPI || sweep >= twoPI)
@@ -250,31 +255,31 @@ void PathCairo::addArc(const FloatPoint& p, float r, float startAngle, float end
     m_elementsStream = nullptr;
 }
 
-void PathCairo::addEllipse(const FloatPoint& point, float radiusX, float radiusY, float rotation, float startAngle, float endAngle, RotationDirection direction)
+void PathCairo::add(PathEllipse ellipse)
 {
     cairo_t* cr = platformPath();
     cairo_save(cr);
-    cairo_translate(cr, point.x(), point.y());
-    cairo_rotate(cr, rotation);
-    cairo_scale(cr, radiusX, radiusY);
+    cairo_translate(cr, ellipse.center.x(), ellipse.center.y());
+    cairo_rotate(cr, ellipse.rotation);
+    cairo_scale(cr, ellipse.radiusX, ellipse.radiusY);
 
-    if (direction == RotationDirection::Clockwise)
-        cairo_arc(cr, 0, 0, 1, startAngle, endAngle);
+    if (ellipse.direction == RotationDirection::Clockwise)
+        cairo_arc(cr, 0, 0, 1, ellipse.startAngle, ellipse.endAngle);
     else
-        cairo_arc_negative(cr, 0, 0, 1, startAngle, endAngle);
+        cairo_arc_negative(cr, 0, 0, 1, ellipse.startAngle, ellipse.endAngle);
 
     cairo_restore(cr);
 
     m_elementsStream = nullptr;
 }
 
-void PathCairo::addEllipseInRect(const FloatRect& rect)
+void PathCairo::add(PathEllipseInRect ellipseInRect)
 {
     cairo_t* cr = platformPath();
     cairo_save(cr);
-    float yRadius = .5 * rect.height();
-    float xRadius = .5 * rect.width();
-    cairo_translate(cr, rect.x() + xRadius, rect.y() + yRadius);
+    float yRadius = .5 * ellipseInRect.rect.height();
+    float xRadius = .5 * ellipseInRect.rect.width();
+    cairo_translate(cr, ellipseInRect.rect.x() + xRadius, ellipseInRect.rect.y() + yRadius);
     cairo_scale(cr, xRadius, yRadius);
     cairo_arc(cr, 0., 0., 1., 0., 2 * piDouble);
     cairo_restore(cr);
@@ -282,23 +287,23 @@ void PathCairo::addEllipseInRect(const FloatRect& rect)
     m_elementsStream = nullptr;
 }
 
-void PathCairo::addRect(const FloatRect& rect)
+void PathCairo::add(PathRect rect)
 {
-    cairo_rectangle(platformPath(), rect.x(), rect.y(), rect.width(), rect.height());
+    cairo_rectangle(platformPath(), rect.rect.x(), rect.rect.y(), rect.rect.width(), rect.rect.height());
     if (m_elementsStream)
-        m_elementsStream->addLinesForRect(rect);
+        m_elementsStream->addLinesForRect(rect.rect);
 }
 
-void PathCairo::addRoundedRect(const FloatRoundedRect& roundedRect, PathRoundedRect::Strategy)
+void PathCairo::add(PathRoundedRect roundedRect)
 {
-    addBeziersForRoundedRect(roundedRect);
+    addBeziersForRoundedRect(roundedRect.roundedRect);
 }
 
-void PathCairo::closeSubpath()
+void PathCairo::add(PathCloseSubpath)
 {
     cairo_close_path(platformPath());
     if (m_elementsStream)
-        m_elementsStream->closeSubpath();
+        m_elementsStream->add(PathCloseSubpath { });
 }
 
 void PathCairo::addPath(const PathCairo& path, const AffineTransform& transform)
