@@ -105,6 +105,7 @@ public:
 
     virtual void registerScrollbar(Scrollbar&) { }
     virtual void unregisterScrollbar(Scrollbar&) { }
+    virtual void didCreateScrollerImp(Scrollbar&) { };
 
     virtual bool isMockTheme() const { return false; }
 
