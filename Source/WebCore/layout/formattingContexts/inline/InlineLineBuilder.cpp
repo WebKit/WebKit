@@ -1154,7 +1154,8 @@ size_t LineBuilder::rebuildLineWithInlineContent(const InlineItemRange& layoutRa
             continue;
         }
         auto& style = isFirstFormattedLine() ? inlineItem.firstLineStyle() : inlineItem.style();
-        m_line.append(inlineItem, style, formattingContext().formattingUtils().inlineItemWidth(inlineItem, m_line.contentLogicalRight(), isFirstFormattedLine()));
+        auto inlineItemWidth = !inlineItem.isOpaque() ? formattingContext().formattingUtils().inlineItemWidth(inlineItem, m_line.contentLogicalRight(), isFirstFormattedLine()) : InlineLayoutUnit();
+        m_line.append(inlineItem, style, inlineItemWidth);
         ++numberOfInlineItemsOnLine;
         if (&inlineItem == &lastInlineItemToAdd)
             break;
