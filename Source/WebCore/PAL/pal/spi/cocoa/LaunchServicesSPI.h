@@ -158,8 +158,6 @@ OSStatus _LSSetApplicationInformationItem(LSSessionID, LSASNRef, CFStringRef key
 CFTypeRef _LSCopyApplicationInformationItem(LSSessionID, LSASNRef, CFTypeRef);
 CFArrayRef _LSCopyMatchingApplicationsWithItems(LSSessionID, CFIndex count, CFTypeRef *keys, CFTypeRef *values);
 
-OSStatus _RegisterApplication(CFDictionaryRef, ProcessSerialNumber*);
-
 typedef void (^ _LSOpenCompletionHandler)(LSASNRef, Boolean, CFErrorRef);
 void _LSOpenURLsUsingBundleIdentifierWithCompletionHandler(CFArrayRef, CFStringRef, CFDictionaryRef, _LSOpenCompletionHandler);
 
@@ -173,6 +171,8 @@ WTF_EXTERN_C_BEGIN
 
 typedef bool (^LSServerConnectionAllowedBlock) (CFDictionaryRef optionsRef);
 void _LSSetApplicationLaunchServicesServerConnectionStatus(uint64_t flags, LSServerConnectionAllowedBlock block);
+
+OSStatus _RegisterApplication(CFDictionaryRef, ProcessSerialNumber*);
 
 WTF_EXTERN_C_END
 
