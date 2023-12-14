@@ -4825,6 +4825,7 @@ void AXObjectCache::relationsNeedUpdate(bool needUpdate)
     if (m_relationsNeedUpdate) {
         if (auto tree = AXIsolatedTree::treeForPageID(m_pageID))
             tree->relationsNeedUpdate(true);
+        startUpdateTreeSnapshotTimer();
     }
 #endif
 }
