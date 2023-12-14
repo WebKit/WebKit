@@ -221,4 +221,10 @@ testRegExp(/(?<=a*\1aaaaaaaaaaaaaa)x/, "aaaaaaaaaaaaaax", null, null);
 
 // Test 91
 testRegExp(/(?<=a*\1aaaaaaaaaaaaaa)x/, "\x01aaaaaaaaaaaaaax", ["x"], null);
+testRegExp(/(?<=^v?)(?:(?:\d+)\.){2}(?:\d+)|(^v)(?:(?:\d+)\.){2}(?:\d+)/, "v1.0.123", ["v1.0.123", "v"]);
+testRegExp(/(?<=^v?|\sv?)(?:(?:\d+)\.){2}(?:\d+)/, "v1.0.123", ["1.0.123"]);
+testRegExp(/(?<=^v?|\sv?)(?:(?:\d+)\.){2}(?:\d+)/, "Rev v1.0.123", ["1.0.123"]);
+testRegExp(/(?<=(^v|\sv?|Rev)+)(?:(?:\d+)\.){2}(?:\d+)/, "Rev v v1.0.123", ["1.0.123", "Rev"]);
 
+// Test 96
+testRegExp(/(?<=(ab*?))c/i, "Xbc", null);
