@@ -37,7 +37,7 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Subspace);
 
-Subspace::Subspace(CString name, Heap& heap)
+Subspace::Subspace(CString name, JSC::Heap& heap)
     : m_space(heap.objectSpace())
     , m_name(name)
 {
@@ -49,7 +49,7 @@ void Subspace::initialize(const HeapCellType& heapCellType, AlignedMemoryAllocat
     m_alignedMemoryAllocator = alignedMemoryAllocator;
     m_directoryForEmptyAllocation = m_alignedMemoryAllocator->firstDirectory();
 
-    Heap& heap = m_space.heap();
+    JSC::Heap& heap = m_space.heap();
     heap.objectSpace().m_subspaces.append(this);
     m_alignedMemoryAllocator->registerSubspace(this);
 }

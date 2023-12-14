@@ -74,7 +74,7 @@ private:
     double headroomFullness(const Snapshot&);
     double mutatorUtilization(const Snapshot&);
     
-    Heap& m_heap;
+    JSC::Heap& m_heap;
     State m_state { Normal };
     
     WeakRandom m_random;

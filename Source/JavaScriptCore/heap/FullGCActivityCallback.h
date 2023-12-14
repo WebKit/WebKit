@@ -31,7 +31,7 @@ namespace JSC {
 
 class FullGCActivityCallback : public GCActivityCallback {
 public:
-    static RefPtr<FullGCActivityCallback> tryCreate(Heap& heap, Synchronousness synchronousness = Synchronousness::Async)
+    static RefPtr<FullGCActivityCallback> tryCreate(JSC::Heap& heap, Synchronousness synchronousness = Synchronousness::Async)
     {
         return s_shouldCreateGCTimer ? adoptRef(new FullGCActivityCallback(heap, synchronousness)) : nullptr;
     }

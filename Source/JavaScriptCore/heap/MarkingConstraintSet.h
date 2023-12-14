@@ -87,7 +87,7 @@ private:
 
     bool executeConvergenceImpl(SlotVisitor&);
     
-    Heap& m_heap;
+    JSC::Heap& m_heap;
     BitVector m_unexecutedRoots;
     BitVector m_unexecutedOutgrowths;
     Vector<std::unique_ptr<MarkingConstraint>> m_set;

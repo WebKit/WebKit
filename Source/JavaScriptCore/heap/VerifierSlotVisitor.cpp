@@ -102,7 +102,7 @@ void VerifierSlotVisitor::OpaqueRootData::addMarkerData(MarkerData&& marker)
     m_marker = WTFMove(marker);
 }
 
-VerifierSlotVisitor::VerifierSlotVisitor(Heap& heap)
+VerifierSlotVisitor::VerifierSlotVisitor(JSC::Heap& heap)
     : Base(heap, "Verifier", m_opaqueRootStorage)
 {
     m_needsExtraOpaqueRootHandling = true;

@@ -187,7 +187,7 @@ public:
             m_before = MonotonicTime::now();
     }
     
-    TimingScope(Heap& heap, const char* name)
+    TimingScope(JSC::Heap& heap, const char* name)
         : TimingScope(heap.collectionScope(), name)
     {
     }
@@ -197,7 +197,7 @@ public:
         m_scope = scope;
     }
     
-    void setScope(Heap& heap)
+    void setScope(JSC::Heap& heap)
     {
         setScope(heap.collectionScope());
     }
@@ -222,7 +222,7 @@ private:
 
 class Heap::HeapThread final : public AutomaticThread {
 public:
-    HeapThread(const AbstractLocker& locker, Heap& heap)
+    HeapThread(const AbstractLocker& locker, JSC::Heap& heap)
         : AutomaticThread(locker, heap.m_threadLock, heap.m_threadCondition.copyRef())
         , m_heap(heap)
     {
@@ -264,7 +264,7 @@ private:
         m_heap.m_collectorThreadIsRunning = false;
     }
 
-    Heap& m_heap;
+    JSC::Heap& m_heap;
 };
 
 #define INIT_SERVER_ISO_SUBSPACE(name, heapCellType, type) \
@@ -2986,7 +2986,7 @@ void Heap::addCoreConstraints()
     m_constraintSet->add(
         "O", "Output",
         MAKE_MARKING_CONSTRAINT_EXECUTOR_PAIR(([] (auto& visitor) {
-            Heap* heap = visitor.heap();
+            JSC::Heap* heap = visitor.heap();
 
             // The `visitor2` argument is strangely named because the WinCairo port
             // gets confused  and thinks we're trying to capture the outer visitor

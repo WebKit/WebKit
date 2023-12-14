@@ -54,7 +54,7 @@ private:
     double m_bytesAllocatedThisCycle;
 };
 
-StochasticSpaceTimeMutatorScheduler::StochasticSpaceTimeMutatorScheduler(Heap& heap)
+StochasticSpaceTimeMutatorScheduler::StochasticSpaceTimeMutatorScheduler(JSC::Heap& heap)
     : m_heap(heap)
     , m_minimumPause(Seconds::fromMilliseconds(Options::minimumGCPauseMS()))
     , m_pauseScale(Options::gcPauseScale())

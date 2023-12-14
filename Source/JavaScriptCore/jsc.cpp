@@ -3986,7 +3986,7 @@ void CommandLine::parseArguments(int argc, char** argv)
             continue;
         }
         if (!strcmp(arg, "--disableOptionsFreezingForTesting")) {
-            Config::disableFreezingForTesting();
+            JSC::Config::disableFreezingForTesting();
             continue;
         }
 
@@ -4232,7 +4232,7 @@ extern const JITOperationAnnotation endOfJITOperationsInShell __asm("section$end
 int jscmain(int argc, char** argv)
 {
     // Need to override and enable restricted options before we start parsing options below.
-    Config::enableRestrictedOptions();
+    JSC::Config::enableRestrictedOptions();
 
     WTF::initializeMainThread();
 

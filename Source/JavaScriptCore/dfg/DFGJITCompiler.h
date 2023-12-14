@@ -301,7 +301,7 @@ public:
         return result;
     }
 
-    RefPtr<JITCode> jitCode() { return m_jitCode; }
+    RefPtr<DFG::JITCode> jitCode() { return m_jitCode; }
     
     Vector<Label>& blockHeads() { return m_blockHeads; }
 
@@ -419,7 +419,7 @@ protected:
 
     std::unique_ptr<Disassembler> m_disassembler;
     
-    RefPtr<JITCode> m_jitCode;
+    RefPtr<DFG::JITCode> m_jitCode;
     
     // Vector of calls out from JIT code, including exception handler information.
     // Count of the number of CallRecords with exception handlers.

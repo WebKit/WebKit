@@ -13207,10 +13207,10 @@ IGNORE_CLANG_WARNINGS_END
                 RefPtr<OSRExitHandle> handle = descriptor->emitOSRExitLater(
                     *state, UncountableInvalidation, origin, params, nodeIndex, 0);
 
-                RefPtr<JITCode> jitCode = state->jitCode.get();
+                RefPtr<FTL::JITCode> jitCode = state->jitCode;
 
                 jit.addLinkTask(
-                    [=] (LinkBuffer& linkBuffer) {
+                    [=, protectedJitCode = jitCode] (LinkBuffer& linkBuffer) {
                         JumpReplacement jumpReplacement(
                             linkBuffer.locationOf<JSInternalPtrTag>(label),
                             linkBuffer.locationOf<OSRExitPtrTag>(handle->label));
@@ -20326,7 +20326,7 @@ IGNORE_CLANG_WARNINGS_END
                         // runs before or after any other late paths that we might depend on, like
                         // the exception thunk.
 
-                        RefPtr<JITCode> jitCode = state->jitCode;
+                        RefPtr<FTL::JITCode> jitCode = state->jitCode;
                         jit.addLinkTask(
                             [=] (LinkBuffer& linkBuffer) {
                                 std::unique_ptr<LazySlowPath> lazySlowPath = makeUnique<LazySlowPath>();
@@ -20337,12 +20337,12 @@ IGNORE_CLANG_WARNINGS_END
 
                                 CallSiteIndex callSiteIndex =
                                     jitCode->common.codeOrigins->addUniqueCallSiteIndex(origin);
-                                    
+
                                 lazySlowPath->initialize(
                                         linkedPatchableJump, linkedDone,
                                         exceptionTarget->label(linkBuffer), usedRegisters,
                                         callSiteIndex, generator);
-                                    
+
                                 jitCode->lazySlowPaths[index] = WTFMove(lazySlowPath);
                             });
                     });

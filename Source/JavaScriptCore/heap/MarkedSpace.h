@@ -96,7 +96,7 @@ public:
     MarkedSpace(Heap*);
     ~MarkedSpace();
     
-    Heap& heap() const;
+    JSC::Heap& heap() const;
     
     void lastChanceToFinalize(); // Must call stopAllocatingForGood first.
     void freeMemory();

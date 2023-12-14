@@ -40,7 +40,7 @@ AlignedMemoryAllocator::~AlignedMemoryAllocator()
 {
 }
 
-void AlignedMemoryAllocator::registerDirectory(Heap& heap, BlockDirectory* directory)
+void AlignedMemoryAllocator::registerDirectory(JSC::Heap& heap, BlockDirectory* directory)
 {
     RELEASE_ASSERT(!directory->nextDirectoryInAlignedMemoryAllocator());
     

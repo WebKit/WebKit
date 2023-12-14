@@ -63,7 +63,7 @@ inline CallFrame* calleeFrameForVarargs(CallFrame* callFrame, unsigned numUsedSt
     return CallFrame::create(callFrame->registers() - paddedCalleeFrameOffset);
 }
 
-inline Opcode Interpreter::getOpcode(OpcodeID id)
+inline JSC::Opcode Interpreter::getOpcode(OpcodeID id)
 {
     return LLInt::getOpcode(id);
 }
@@ -71,7 +71,7 @@ inline Opcode Interpreter::getOpcode(OpcodeID id)
 // This function is only available as a debugging tool for development work.
 // It is not currently used except in a RELEASE_ASSERT to ensure that it is
 // working properly.
-inline OpcodeID Interpreter::getOpcodeID(Opcode opcode)
+inline OpcodeID Interpreter::getOpcodeID(JSC::Opcode opcode)
 {
 #if ENABLE(COMPUTED_GOTO_OPCODES)
     ASSERT(isOpcode(opcode));

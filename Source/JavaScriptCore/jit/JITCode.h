@@ -139,7 +139,7 @@ public:
 #endif
 
 
-class JITCode : public ThreadSafeRefCounted<JITCode> {
+class JITCode : public ThreadSafeRefCounted<JSC::JITCode> {
 public:
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
 
@@ -301,7 +301,7 @@ public:
 
     const RegisterAtOffsetList* calleeSaveRegisters() const;
 
-    static ptrdiff_t offsetOfJITType() { return OBJECT_OFFSETOF(JITCode, m_jitType); }
+    static ptrdiff_t offsetOfJITType() { return OBJECT_OFFSETOF(JSC::JITCode, m_jitType); }
 
 private:
     const JITType m_jitType;
@@ -311,7 +311,7 @@ protected:
     CodePtr<JSEntryPtrTag> m_addressForCall;
 };
 
-class JITCodeWithCodeRef : public JITCode {
+class JITCodeWithCodeRef : public JSC::JITCode {
 protected:
     JITCodeWithCodeRef(JITType);
     JITCodeWithCodeRef(CodeRef<JSEntryPtrTag>, JITType, JITCode::ShareAttribute);

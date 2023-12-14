@@ -139,7 +139,7 @@ public:
 
     VM& vm();
     const VM& vm() const;
-    Heap* heap() const;
+    JSC::Heap* heap() const;
 
     virtual void append(const ConservativeRoots&) = 0;
 
@@ -222,7 +222,7 @@ protected:
 
     size_t m_visitCount { 0 };
 
-    Heap& m_heap;
+    JSC::Heap& m_heap;
     ReferrerContext* m_context { nullptr };
     CString m_codeName;
 

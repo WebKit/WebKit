@@ -140,7 +140,7 @@ public:
 #endif
         };
 
-        bool shouldEmitProfiling = !JITCode::isOptimizingJIT(codeBlock->jitType());
+        bool shouldEmitProfiling = !JSC::JITCode::isOptimizingJIT(codeBlock->jitType());
 
         if (m_generateFastPathOnRepatch) {
 

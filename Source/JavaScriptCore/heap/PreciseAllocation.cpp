@@ -40,7 +40,7 @@ static inline bool isAlignedForPreciseAllocation(void* memory)
     return !(allocatedPointer & (PreciseAllocation::alignment - 1));
 }
 
-PreciseAllocation* PreciseAllocation::tryCreate(Heap& heap, size_t size, Subspace* subspace, unsigned indexInSpace)
+PreciseAllocation* PreciseAllocation::tryCreate(JSC::Heap& heap, size_t size, Subspace* subspace, unsigned indexInSpace)
 {
     if constexpr (validateDFGDoesGC)
         heap.vm().verifyCanGC();
@@ -120,7 +120,7 @@ PreciseAllocation* PreciseAllocation::tryReallocate(size_t size, Subspace* subsp
 }
 
 
-PreciseAllocation* PreciseAllocation::tryCreateForLowerTier(Heap& heap, size_t size, Subspace* subspace, uint8_t lowerTierIndex)
+PreciseAllocation* PreciseAllocation::tryCreateForLowerTier(JSC::Heap& heap, size_t size, Subspace* subspace, uint8_t lowerTierIndex)
 {
     if constexpr (validateDFGDoesGC)
         heap.vm().verifyCanGC();
@@ -147,7 +147,7 @@ PreciseAllocation* PreciseAllocation::tryCreateForLowerTier(Heap& heap, size_t s
 
 PreciseAllocation* PreciseAllocation::reuseForLowerTier()
 {
-    Heap& heap = *this->heap();
+    JSC::Heap& heap = *this->heap();
     size_t size = m_cellSize;
     Subspace* subspace = m_subspace;
     bool adjustedAlignment = m_adjustedAlignment;
@@ -167,7 +167,7 @@ PreciseAllocation* PreciseAllocation::reuseForLowerTier()
     return preciseAllocation;
 }
 
-PreciseAllocation::PreciseAllocation(Heap& heap, size_t size, Subspace* subspace, unsigned indexInSpace, bool adjustedAlignment)
+PreciseAllocation::PreciseAllocation(JSC::Heap& heap, size_t size, Subspace* subspace, unsigned indexInSpace, bool adjustedAlignment)
     : m_indexInSpace(indexInSpace)
     , m_cellSize(size)
     , m_isNewlyAllocated(true)

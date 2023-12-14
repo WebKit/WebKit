@@ -136,9 +136,9 @@ using JSOrWasmInstruction = std::variant<const JSInstruction*, const WasmInstruc
         const CLoopStack& cloopStack() const { return m_cloopStack; }
 #endif
         
-        static inline Opcode getOpcode(OpcodeID);
+        static inline JSC::Opcode getOpcode(OpcodeID);
 
-        static inline OpcodeID getOpcodeID(Opcode);
+        static inline OpcodeID getOpcodeID(JSC::Opcode);
 
 #if ASSERT_ENABLED
         static bool isOpcode(Opcode);

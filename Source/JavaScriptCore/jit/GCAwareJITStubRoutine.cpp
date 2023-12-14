@@ -190,7 +190,7 @@ Ref<PolymorphicAccessJITStubRoutine> createICJITStubRoutine(
     }
     
     if (codeBlockForExceptionHandlers) {
-        RELEASE_ASSERT(JITCode::isOptimizingJIT(codeBlockForExceptionHandlers->jitType()));
+        RELEASE_ASSERT(JSC::JITCode::isOptimizingJIT(codeBlockForExceptionHandlers->jitType()));
         auto stub = adoptRef(*new GCAwareJITStubRoutineWithExceptionHandler(code, vm, WTFMove(cases), WTFMove(weakStructures), owner, cells, WTFMove(callLinkInfos), codeBlockForExceptionHandlers, exceptionHandlerCallSiteIndex));
         stub->makeGCAware(vm);
         return stub;
