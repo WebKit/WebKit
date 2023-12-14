@@ -84,19 +84,6 @@ http/tests/ssl/applepay [ Pass ]
 webkit.org/b/212975 http/tests/ssl/applepay/PaymentRequest.https.html [ Pass Timeout ]
 
 http/tests/paymentrequest [ Pass ]
-http/tests/paymentrequest/ApplePayModifier-automaticReloadPaymentRequest.https.html [ Skip ]
-http/tests/paymentrequest/ApplePayModifier-additionalLineItems.https.html [ Skip ]
-http/tests/paymentrequest/ApplePayModifier-additionalShippingMethods.https.html [ Skip ]
-http/tests/paymentrequest/ApplePayModifier-deferredPaymentRequest.https.html [ Skip ]
-http/tests/paymentrequest/ApplePayModifier-multiTokenContexts.https.html [ Skip ]
-http/tests/paymentrequest/ApplePayModifier-recurringPaymentRequest.https.html [ Skip ]
-http/tests/paymentrequest/ApplePayModifier-total.https.html [ Skip ]
-http/tests/paymentrequest/ApplePayPaymentCompleteDetails-orderDetails.https.html [ Skip ]
-http/tests/paymentrequest/paymentmethodchange-couponCode.https.html [ Skip ]
-http/tests/paymentrequest/paymentrequest-applePayLaterAvailability.https.html [ Skip ]
-http/tests/paymentrequest/paymentrequest-couponCode.https.html [ Skip ]
-http/tests/paymentrequest/paymentrequest-shippingContactEditingMode.https.html [ Skip ]
-http/tests/paymentrequest/paymentrequest-supportsCouponCode.https.html [ Skip ]
 imported/w3c/web-platform-tests/payment-request [ Pass ]
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/allowpaymentrequest-attribute-cross-origin-bc-containers.https.html [ Skip ]
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpaymentrequest/no-attribute-cross-origin-bc-containers.https.html [ Skip ]
@@ -107,8 +94,7 @@ webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment/no-attribute-cross-origin-bc-containers.https.html [ Skip ]
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment/removing-allowpaymentrequest.https.sub.html [ Skip ]
 webkit.org/b/175611 imported/w3c/web-platform-tests/payment-request/allowpayment/setting-allowpaymentrequest.https.sub.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/payment-request-canmakepayment-method.https.html [ Skip ]
-imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https.html [ Skip ]
+imported/w3c/web-platform-tests/payment-request/payment-request-hasenrolledinstrument-method.tentative.https.html [ DumpJSConsoleLogInStdErr ]
 imported/w3c/web-platform-tests/payment-request/show-method-optional-promise-rejects.https.html [ DumpJSConsoleLogInStdErr ]
 
 # This test is failing due to lack of user activation.
@@ -1026,14 +1012,6 @@ editing/input/emacs-ctrl-o.html [ Failure ]
 fast/images/animated-gif-webkit-transform.html
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
-
-# webkit.org/b/238908 Global expectations for these until baselines are resolved
-http/tests/paymentrequest/payment-address-attributes-and-toJSON-method.https.html [ DumpJSConsoleLogInStdErr ]
-http/tests/paymentrequest/payment-request-change-shipping-option.https.html [ DumpJSConsoleLogInStdErr ]
-http/tests/paymentrequest/payment-response-retry-method.https.html [ DumpJSConsoleLogInStdErr ]
-http/tests/paymentrequest/updateWith-shippingOptions.https.html [ DumpJSConsoleLogInStdErr Pass Failure ]
-imported/w3c/web-platform-tests/payment-request/payment-request-constructor.https.sub.html [ DumpJSConsoleLogInStdErr ]
-imported/w3c/web-platform-tests/payment-request/payment-request-shippingOption-attribute.https.html [ DumpJSConsoleLogInStdErr ]
 
 # Latest iOS failures as of Sept 1, 2015
 webkit.org/b/149087 http/tests/cache/disk-cache/disk-cache-validation-back-navigation-policy.html [ Pass Timeout ]

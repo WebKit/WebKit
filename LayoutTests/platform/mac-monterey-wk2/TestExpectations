@@ -43,3 +43,10 @@ swipe/pushState-cached-back-swipe.html [ Pass Timeout ]
 
 # Asserts on pre-Sonoma macOS: rdar://116291539
 [ Debug ] http/tests/site-isolation/window-properties.html [ Skip ]
+
+# These features were introduced in macOS Ventura.
+http/tests/paymentrequest/ApplePayModifier-automaticReloadPaymentRequest.https.html [ Skip ]
+http/tests/paymentrequest/ApplePayModifier-deferredPaymentRequest.https.html [ Skip ]
+http/tests/paymentrequest/ApplePayModifier-multiTokenContexts.https.html [ Skip ]
+http/tests/paymentrequest/ApplePayModifier-recurringPaymentRequest.https.html [ Skip ]
+http/tests/paymentrequest/ApplePayPaymentCompleteDetails-orderDetails.https.html [ Skip ]
