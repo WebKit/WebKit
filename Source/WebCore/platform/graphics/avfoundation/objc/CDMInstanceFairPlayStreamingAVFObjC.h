@@ -56,6 +56,7 @@ namespace WebCore {
 
 class CDMInstanceSessionFairPlayStreamingAVFObjC;
 class CDMPrivateFairPlayStreaming;
+class MediaSampleAVFObjC;
 struct CDMMediaCapability;
 
 class AVContentKeySessionDelegateClient : public CanMakeWeakPtr<AVContentKeySessionDelegateClient> {
@@ -139,6 +140,8 @@ public:
 
     void sessionKeyStatusesChanged(const CDMInstanceSessionFairPlayStreamingAVFObjC&);
 
+    void attachContentKeyToSample(const MediaSampleAVFObjC&);
+
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }
     const Logger& logger() const { return m_logger; };
@@ -214,6 +217,8 @@ public:
     const KeyStatusVector& keyStatuses() const { return m_keyStatuses; }
     KeyStatusVector copyKeyStatuses() const;
 
+    void attachContentKeyToSample(const MediaSampleAVFObjC&);
+
 private:
     bool ensureSessionOrGroup(KeyGroupingStrategy);
     bool isLicenseTypeSupported(LicenseType) const;
@@ -227,6 +232,8 @@ private:
 
     std::optional<CDMKeyStatus> protectionStatusForRequest(AVContentKeyRequest *) const;
     void updateProtectionStatus();
+
+    AVContentKey *contentKeyForSample(const MediaSampleAVFObjC&);
 
 #if !RELEASE_LOG_DISABLED
     void setLogIdentifier(const void* logIdentifier) final { m_logIdentifier = logIdentifier; }

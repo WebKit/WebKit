@@ -723,11 +723,6 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
         [renderer flush];
         [renderer stopRequestingMediaData];
         [m_listener stopObservingRenderer:renderer.get()];
-
-#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-        if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
-            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:renderer.get()];
-#endif
     }
 
     [m_listener invalidate];
@@ -828,11 +823,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
                 return;
             }
 
-#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-        if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
-            [m_cdmInstance->contentKeySession() addContentKeyRecipient:renderer.get()];
-#endif
-
             ThreadSafeWeakPtr weakThis { *this };
             [renderer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
                 if (RefPtr protectedThis = weakThis.get())
@@ -893,24 +883,7 @@ void SourceBufferPrivateAVFObjC::setCDMInstance(CDMInstance* instance)
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    if (sampleBufferRenderersSupportKeySession() && m_cdmInstance) {
-        if (m_displayLayer)
-            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_displayLayer.get()];
-
-        for (auto& pair : m_audioRenderers)
-            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:pair.second.get()];
-    }
-
     m_cdmInstance = fpsInstance;
-
-    if (sampleBufferRenderersSupportKeySession() && m_cdmInstance) {
-        if (m_displayLayer)
-            [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_displayLayer.get()];
-
-        for (auto& pair : m_audioRenderers)
-            [m_cdmInstance->contentKeySession() addContentKeyRecipient:pair.second.get()];
-    }
-
     attemptToDecrypt();
 #else
     UNUSED_PARAM(instance);
@@ -1274,6 +1247,9 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
             return;
         }
 
+        if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
+            m_cdmInstance->attachContentKeyToSample(sample);
+
         if (auto it = m_audioRenderers.find(trackID); it != m_audioRenderers.end()) {
             RetainPtr renderer = it->second;
             [renderer enqueueSampleBuffer:platformSample.sample.cmSampleBuffer];
@@ -1285,6 +1261,9 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
 
 void SourceBufferPrivateAVFObjC::enqueueSampleBuffer(MediaSampleAVFObjC& sample)
 {
+    if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
+        m_cdmInstance->attachContentKeyToSample(sample);
+
     [m_displayLayer enqueueSampleBuffer:sample.platformSample().sample.cmSampleBuffer];
 
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
@@ -1453,21 +1432,11 @@ void SourceBufferPrivateAVFObjC::setVideoLayer(AVSampleBufferDisplayLayer* layer
         [m_displayLayer flush];
         [m_displayLayer stopRequestingMediaData];
         [m_listener stopObservingLayer:m_displayLayer.get()];
-
-#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-        if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
-            [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_displayLayer.get()];
-#endif
     }
 
     m_displayLayer = layer;
 
     if (m_displayLayer) {
-#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-        if (m_cdmInstance && sampleBufferRenderersSupportKeySession())
-            [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_displayLayer.get()];
-#endif
-
         ThreadSafeWeakPtr weakThis { *this };
         [m_displayLayer requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^ {
             if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_enabledVideoTrackID)

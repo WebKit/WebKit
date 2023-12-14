@@ -290,4 +290,6 @@ SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVCaptureMaxAvailab
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_SOURCE_WITH_EXPORT(PAL, AVFoundation, AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification, NSNotificationName, PAL_EXPORT)
 #endif
 
+SOFT_LINK_FUNCTION_FOR_SOURCE(PAL, AVFoundation, AVSampleBufferAttachContentKey, BOOL, (CMSampleBufferRef sbuf, AVContentKey *contentKey, NSError **outError), (sbuf, contentKey, outError))
+
 #endif // USE(AVFOUNDATION)

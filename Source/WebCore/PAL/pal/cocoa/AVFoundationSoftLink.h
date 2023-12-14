@@ -402,4 +402,7 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, AVFoundation, AVSampleBufferDisplayL
 #define AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification PAL::get_AVFoundation_AVSampleBufferDisplayLayerReadyForDisplayDidChangeNotification()
 #endif
 
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AVFoundation, AVSampleBufferAttachContentKey, BOOL, (CMSampleBufferRef sbuf, AVContentKey *contentKey, NSError **outError), (sbuf, contentKey, outError))
+#define AVSampleBufferAttachContentKey PAL::softLink_AVFoundation_AVSampleBufferAttachContentKey
+
 #endif // USE(AVFOUNDATION)

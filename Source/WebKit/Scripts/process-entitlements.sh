@@ -121,6 +121,7 @@ function mac_process_gpu_entitlements()
         plistbuddy Add :com.apple.private.webkit.use-xpc-endpoint bool YES
         plistbuddy Add :com.apple.rootless.storage.WebKitGPUSandbox bool YES
         plistbuddy Add :com.apple.QuartzCore.webkit-end-points bool YES
+        plistbuddy Add :com.apple.private.coremedia.allow-fps-attachment bool YES
     fi
 }
 
