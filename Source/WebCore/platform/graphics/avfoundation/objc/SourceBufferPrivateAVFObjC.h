@@ -178,6 +178,7 @@ private:
     void processPendingTrackChangeTasks();
     void enqueueSample(Ref<MediaSampleAVFObjC>&&, TrackID);
     void enqueueSampleBuffer(MediaSampleAVFObjC&);
+    void attachContentKeyToSampleIfNeeded(const MediaSampleAVFObjC&);
     void didBecomeReadyForMoreSamples(TrackID);
     void appendCompleted(bool);
     void destroyStreamDataParser();

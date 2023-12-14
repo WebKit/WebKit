@@ -30,6 +30,7 @@
 #import "OSStateSPI.h"
 #import "SharedBufferReference.h"
 #import "WKCrashReporter.h"
+#import "WKProcessExtension.h"
 #import "XPCServiceEntryPoint.h"
 #import <WebCore/FloatingPointEnvironment.h>
 #import <WebCore/RuntimeApplicationChecks.h>
@@ -85,6 +86,10 @@ void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationPa
 
     WebCore::setApplicationBundleIdentifier(parameters.clientBundleIdentifier);
     setSDKAlignedBehaviors(parameters.clientSDKAlignedBehaviors);
+
+#if USE(EXTENSIONKIT)
+    setProcessIsExtension(!!WKProcessExtension.sharedInstance);
+#endif
 }
 
 void AuxiliaryProcess::didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName messageName)
