@@ -164,7 +164,8 @@ void MediaSourcePrivateGStreamer::startPlaybackIfHasAllTracks()
     Vector<RefPtr<MediaSourceTrackGStreamer>> tracks;
     for (auto& privateSourceBuffer : m_sourceBuffers) {
         auto sourceBuffer = downcast<SourceBufferPrivateGStreamer>(privateSourceBuffer);
-        tracks.appendRange(sourceBuffer->tracks().begin(), sourceBuffer->tracks().end());
+        for (auto& [_, track] : sourceBuffer->tracks())
+            tracks.append(track);
     }
     m_playerPrivate.startSource(tracks);
 }
