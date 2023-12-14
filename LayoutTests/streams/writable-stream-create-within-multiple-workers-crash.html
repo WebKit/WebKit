@@ -1,0 +1,19 @@
+<!-- webkit-test-runner [ jscOptions=--slowPathAllocsBetweenGCs=50 ] -->
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    internals.settings.setWebRTCSFrameTransformEnabled(true);
+    testRunner.waitUntilDone();
+}
+    
+onload = () => {
+    for (let i = 0; i < 100; i++) {
+        new Worker(`data:text/javascript,for (let i = 0; i < 100; i++) new SFrameTransform().readable;`);
+    }
+    setTimeout(() => {
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 100);
+};
+</script>
+<p>This test passes if it doesn't crash.</p>
