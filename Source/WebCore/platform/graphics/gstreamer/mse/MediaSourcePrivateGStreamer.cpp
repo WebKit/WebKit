@@ -90,6 +90,7 @@ MediaSourcePrivateGStreamer::AddStatus MediaSourcePrivateGStreamer::addSourceBuf
 
     m_sourceBuffers.append(SourceBufferPrivateGStreamer::create(*this, contentType, m_playerPrivate));
     sourceBufferPrivate = m_sourceBuffers.last();
+    sourceBufferPrivate->setMediaSourceDuration(duration());
     return MediaSourcePrivateGStreamer::AddStatus::Ok;
 }
 
