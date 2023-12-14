@@ -81,7 +81,7 @@ private:
     Vector<Ref<DataTransferItem>>& ensureItems() const;
     Document* document() const;
 
-    CheckedRef<DataTransfer> m_dataTransfer;
+    WeakRef<DataTransfer> m_dataTransfer;
     mutable std::optional<Vector<Ref<DataTransferItem>>> m_items;
 };
 

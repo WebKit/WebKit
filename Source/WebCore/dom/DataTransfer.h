@@ -43,7 +43,7 @@ class Pasteboard;
 class ScriptExecutionContext;
 enum class WebContentReadingPolicy : bool;
 
-class DataTransfer : public RefCounted<DataTransfer>, public CanMakeCheckedPtr {
+class DataTransfer : public RefCounted<DataTransfer>, public CanMakeWeakPtr<DataTransfer> {
 public:
     // https://html.spec.whatwg.org/multipage/dnd.html#drag-data-store-mode
     enum class StoreMode { Invalid, ReadWrite, Readonly, Protected };

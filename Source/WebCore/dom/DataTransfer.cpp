@@ -66,7 +66,7 @@ public:
 
 private:
     void imageChanged(CachedImage*, const IntRect*) override;
-    CheckedRef<DataTransfer> m_dataTransfer;
+    WeakRef<DataTransfer> m_dataTransfer;
 };
 
 #endif
