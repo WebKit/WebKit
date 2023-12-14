@@ -21,7 +21,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -38,6 +38,7 @@
 #include "ImageOrientation.h"
 #include "Logging.h"
 #include "Path.h"
+#include "PathCG.h"
 #include "Pattern.h"
 #include "ShadowBlur.h"
 #include "Timer.h"
@@ -183,6 +184,22 @@ static void setCGBlendMode(CGContextRef context, CompositeOperator op, BlendMode
     CGContextSetBlendMode(context, selectCGBlendMode(op, blendMode));
 }
 
+static void setCGContextPath(CGContextRef context, const Path& path)
+{
+    CGContextBeginPath(context);
+    addToCGContextPath(context, path);
+}
+
+static void drawPathWithCGContext(CGContextRef context, CGPathDrawingMode drawingMode, const Path& path)
+{
+#if HAVE(CG_CONTEXT_DRAW_PATH_DIRECT)
+    CGContextDrawPathDirect(context, drawingMode, path.platformPath(), nullptr);
+#else
+    setCGContextPath(context, path);
+    CGContextDrawPath(context, drawingMode);
+#endif
+}
+
 static RenderingMode renderingModeForCGContext(CGContextRef cgContext, GraphicsContextCG::CGContextSource source)
 {
     if (!cgContext)
@@ -312,7 +329,7 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
         FloatSize size = FloatSize(CGImageGetWidth(image), CGImageGetHeight(image));
         return options.orientation().usesWidthAsHeight() ? size.transposedSize() : size;
     };
-    
+
     auto context = platformContext();
     CGContextStateSaver stateSaver(context, false);
     auto transform = CGContextGetCTM(context);
@@ -387,7 +404,7 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
         if (options.orientation().usesWidthAsHeight())
             adjustedDestRect = adjustedDestRect.transposedRect();
     }
-    
+
     // Flip the coords.
     CGContextTranslateCTM(context, 0, adjustedDestRect.height());
     CGContextScaleCTM(context, 1, -1);
@@ -446,10 +463,10 @@ void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatRect& d
 
     CGContextTranslateCTM(context, destRect.x(), destRect.y() + destRect.height());
     CGContextScaleCTM(context, 1, -1);
-    
+
     // Compute the scaled tile size.
     float scaledTileHeight = tileRect.height() * narrowPrecisionToFloat(patternTransform.d());
-    
+
     // We have to adjust the phase to deal with the fact we're in Cartesian space now (with the bottom left corner of destRect being
     // the origin).
     float adjustedX = phase.x() - destRect.x() + tileRect.x() * narrowPrecisionToFloat(patternTransform.a()); // We translated the context so that destRect.x() is the origin, so subtract it out.
@@ -486,7 +503,7 @@ void GraphicsContextCG::drawPattern(NativeImage& nativeImage, const FloatRect& d
             tileRect.width() + spacing.width() * (1 / narrowPrecisionToFloat(patternTransform.a())),
             tileRect.height() + spacing.height() * (1 / narrowPrecisionToFloat(patternTransform.d())),
             kCGPatternTilingConstantSpacing, true, &patternCallbacks));
-        
+
         if (!pattern)
             return;
 
@@ -685,15 +702,8 @@ void GraphicsContextCG::drawPath(const Path& path)
         applyStrokePattern();
 
     CGPathDrawingMode drawingMode;
-    if (calculateDrawingMode(*this, drawingMode)) {
-#if HAVE(CG_CONTEXT_DRAW_PATH_DIRECT)
-        CGContextDrawPathDirect(context, drawingMode, path.platformPath(), nullptr);
-#else
-        CGContextBeginPath(context);
-        CGContextAddPath(context, path.platformPath());
-        CGContextDrawPath(context, drawingMode);
-#endif
-    }
+    if (calculateDrawingMode(*this, drawingMode))
+        drawPathWithCGContext(context, drawingMode, path);
 }
 
 void GraphicsContextCG::fillPath(const Path& path)
@@ -713,8 +723,7 @@ void GraphicsContextCG::fillPath(const Path& path)
 
             CGContextScaleCTM(layerContext, layerSize.width() / rect.width(), layerSize.height() / rect.height());
             CGContextTranslateCTM(layerContext, -rect.x(), -rect.y());
-            CGContextBeginPath(layerContext);
-            CGContextAddPath(layerContext, path.platformPath());
+            setCGContextPath(layerContext, path);
             CGContextConcatCTM(layerContext, fillGradientSpaceTransform());
 
             if (fillRule() == WindRule::EvenOdd)
@@ -725,8 +734,7 @@ void GraphicsContextCG::fillPath(const Path& path)
             fillGradient->paint(layerContext);
             CGContextDrawLayerInRect(context, rect, layer.get());
         } else {
-            CGContextBeginPath(context);
-            CGContextAddPath(context, path.platformPath());
+            setCGContextPath(context, path);
             CGContextStateSaver stateSaver(context);
             CGContextConcatCTM(context, fillGradientSpaceTransform());
 
@@ -743,16 +751,8 @@ void GraphicsContextCG::fillPath(const Path& path)
 
     if (fillPattern())
         applyFillPattern();
-#if HAVE(CG_CONTEXT_DRAW_PATH_DIRECT)
-    CGContextDrawPathDirect(context, fillRule() == WindRule::EvenOdd ? kCGPathEOFill : kCGPathFill, path.platformPath(), nullptr);
-#else
-    CGContextBeginPath(context);
-    CGContextAddPath(context, path.platformPath());
-    if (fillRule() == WindRule::EvenOdd)
-        CGContextEOFillPath(context);
-    else
-        CGContextFillPath(context);
-#endif
+
+    drawPathWithCGContext(context, fillRule() == WindRule::EvenOdd ? kCGPathEOFill : kCGPathFill, path);
 }
 
 void GraphicsContextCG::strokePath(const Path& path)
@@ -784,7 +784,7 @@ void GraphicsContextCG::strokePath(const Path& path)
             CGContextScaleCTM(layerContext, layerSize.width() / adjustedWidth, layerSize.height() / adjustedHeight);
             CGContextTranslateCTM(layerContext, translationX, translationY);
 
-            CGContextAddPath(layerContext, path.platformPath());
+            setCGContextPath(layerContext, path);
             CGContextReplacePathWithStrokedPath(layerContext);
             CGContextClip(layerContext);
             CGContextConcatCTM(layerContext, strokeGradientSpaceTransform());
@@ -795,8 +795,7 @@ void GraphicsContextCG::strokePath(const Path& path)
             CGContextDrawLayerInRect(context, CGRectMake(destinationX, destinationY, adjustedWidth, adjustedHeight), layer.get());
         } else {
             CGContextStateSaver stateSaver(context);
-            CGContextBeginPath(context);
-            CGContextAddPath(context, path.platformPath());
+            setCGContextPath(context, path);
             CGContextReplacePathWithStrokedPath(context);
             CGContextClip(context);
             CGContextConcatCTM(context, strokeGradientSpaceTransform());
@@ -816,13 +815,7 @@ void GraphicsContextCG::strokePath(const Path& path)
     }
 #endif
 
-#if HAVE(CG_CONTEXT_DRAW_PATH_DIRECT)
-    CGContextDrawPathDirect(context, kCGPathStroke, path.platformPath(), nullptr);
-#else
-    CGContextBeginPath(context);
-    CGContextAddPath(context, path.platformPath());
-    CGContextStrokePath(context);
-#endif
+    drawPathWithCGContext(context, kCGPathStroke, path);
 }
 
 void GraphicsContextCG::fillRect(const FloatRect& rect)
@@ -892,7 +885,7 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, const Color& color)
     }
 
     CGContextFillRect(context, rect);
-    
+
     if (drawOwnShadow)
         stateSaver.restore();
 
@@ -975,7 +968,7 @@ void GraphicsContextCG::fillRectWithRoundedHole(const FloatRect& rect, const Flo
 
     if (drawOwnShadow)
         stateSaver.restore();
-    
+
     setFillRule(oldFillRule);
     setFillColor(oldFillColor);
 }
@@ -996,21 +989,23 @@ void GraphicsContextCG::clipOut(const FloatRect& rect)
     // to <rdar://problem/12584492>, CGRectInfinite can't be used with an accelerated context that
     // has certain transforms that aren't just a translation or a scale. And due to <rdar://problem/14634453>
     // we cannot use it in for a printing context either.
+    CGContextRef context = platformContext();
     const AffineTransform& ctm = getCTM();
-    bool canUseCGRectInfinite = CGContextGetType(platformContext()) != kCGContextTypePDF && (renderingMode() == RenderingMode::Unaccelerated || (!ctm.b() && !ctm.c()));
-    CGRect rects[2] = { canUseCGRectInfinite ? CGRectInfinite : CGContextGetClipBoundingBox(platformContext()), rect };
-    CGContextBeginPath(platformContext());
-    CGContextAddRects(platformContext(), rects, 2);
-    CGContextEOClip(platformContext());
+    bool canUseCGRectInfinite = CGContextGetType(context) != kCGContextTypePDF && (renderingMode() == RenderingMode::Unaccelerated || (!ctm.b() && !ctm.c()));
+    CGRect rects[2] = { canUseCGRectInfinite ? CGRectInfinite : CGContextGetClipBoundingBox(context), rect };
+    CGContextBeginPath(context);
+    CGContextAddRects(context, rects, 2);
+    CGContextEOClip(context);
 }
 
 void GraphicsContextCG::clipOut(const Path& path)
 {
-    CGContextBeginPath(platformContext());
-    CGContextAddRect(platformContext(), CGContextGetClipBoundingBox(platformContext()));
+    CGContextRef context = platformContext();
+    CGContextBeginPath(context);
+    CGContextAddRect(context, CGContextGetClipBoundingBox(context));
     if (!path.isEmpty())
-        CGContextAddPath(platformContext(), path.platformPath());
-    CGContextEOClip(platformContext());
+        addToCGContextPath(context, path);
+    CGContextEOClip(context);
 }
 
 void GraphicsContextCG::clipPath(const Path& path, WindRule clipRule)
@@ -1019,9 +1014,7 @@ void GraphicsContextCG::clipPath(const Path& path, WindRule clipRule)
     if (path.isEmpty())
         CGContextClipToRect(context, CGRectZero);
     else {
-        CGContextBeginPath(platformContext());
-        CGContextAddPath(platformContext(), path.platformPath());
-
+        setCGContextPath(context, path);
         if (clipRule == WindRule::EvenOdd)
             CGContextEOClip(context);
         else
@@ -1059,7 +1052,7 @@ void GraphicsContextCG::beginTransparencyLayer(float opacity)
     CGContextRef context = platformContext();
     CGContextSetAlpha(context, opacity);
     CGContextBeginTransparencyLayer(context, 0);
-    
+
     m_userToDeviceTransformKnownToBeIdentity = false;
 }
 
@@ -1467,7 +1460,7 @@ void GraphicsContextCG::drawLinesForText(const FloatPoint& point, float thicknes
         return;
 
     bool fillColorIsNotEqualToStrokeColor = fillColor() != localStrokeColor;
-    
+
     Vector<CGRect, 4> dashBounds;
     ASSERT(!(widths.size() % 2));
     dashBounds.reserveInitialCapacity(dashBounds.size() / 2);

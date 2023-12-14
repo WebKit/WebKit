@@ -30,6 +30,8 @@
 #include "PathImpl.h"
 #include "PlatformPath.h"
 
+typedef struct CGContext* CGContextRef;
+
 namespace WebCore {
 
 class PathStream;
@@ -84,6 +86,8 @@ private:
 
     RetainPtr<CGMutablePathRef> m_platformPath;
 };
+
+void addToCGContextPath(CGContextRef, const Path&);
 
 } // namespace WebCore
 
