@@ -1933,30 +1933,42 @@ fn testFrexp()
 {
     {
       let x: f32 = 1.5;
-      let y = frexp(x);
-      let w = frexp(1.5);
-      let z = frexp(1.5f);
+      let y: f16 = 1.5;
+      let r1 = frexp(x);
+      let r2 = frexp(y);
+      let r3 = frexp(1.5);
+      let r4 = frexp(1.5f);
+      let r5 = frexp(1.5h);
     }
 
     {
       let x: vec2<f32> = vec2(1.5);
-      let y = frexp(x);
-      let w = frexp(vec2(1.5));
-      let z = frexp(vec2(1.5f));
+      let y: vec2<f16> = vec2(1.5);
+      let r1 = frexp(x);
+      let r2 = frexp(y);
+      let r3 = frexp(vec2(1.5));
+      let r4 = frexp(vec2(1.5f));
+      let r5 = frexp(vec2(1.5h));
     }
 
     {
       let x: vec3<f32> = vec3(1.5);
-      let y = frexp(x);
-      let w = frexp(vec3(1.5));
-      let z = frexp(vec3(1.5f));
+      let y: vec3<f16> = vec3(1.5);
+      let r1 = frexp(x);
+      let r2 = frexp(y);
+      let r3 = frexp(vec3(1.5));
+      let r4 = frexp(vec3(1.5f));
+      let r5 = frexp(vec3(1.5h));
     }
 
     {
       let x: vec4<f32> = vec4(1.5);
-      let y = frexp(x);
-      let w = frexp(vec4(1.5));
-      let z = frexp(vec4(1.5f));
+      let y: vec4<f16> = vec4(1.5);
+      let r1 = frexp(x);
+      let r2 = frexp(y);
+      let r3 = frexp(vec4(1.5));
+      let r4 = frexp(vec4(1.5f));
+      let r5 = frexp(vec4(1.5h));
     }
 }
 

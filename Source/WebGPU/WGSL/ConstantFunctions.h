@@ -1080,10 +1080,11 @@ CONSTANT_FUNCTION(Frexp)
     ASSERT(arguments.size() == 1);
 
     const auto& frexpValue = [&](auto value) -> std::tuple<ConstantValue, ConstantValue> {
-        using Exp = std::conditional_t<std::is_same_v<decltype(value), double>, int64_t, int>;
+        using T = decltype(value);
+        using Exp = std::conditional_t<std::is_same_v<T, double>, int64_t, int>;
         int exp;
         auto fract = std::frexp(value, &exp);
-        return { ConstantValue(fract), ConstantValue(static_cast<Exp>(exp)) };
+        return { ConstantValue(static_cast<T>(fract)), ConstantValue(static_cast<Exp>(exp)) };
     };
 
     const auto& frexpScalar = [&](auto value) {
