@@ -226,6 +226,8 @@ enum class WebCore::WebGPU::BufferBindingType : uint8_t {
 header: <WebCore/WebGPUStorageTextureAccess.h>
 enum class WebCore::WebGPU::StorageTextureAccess : uint8_t {
     WriteOnly,
+    ReadOnly,
+    ReadWrite,
 };
 
 header: <WebCore/WebGPUFrontFace.h>

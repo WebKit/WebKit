@@ -31,6 +31,8 @@ namespace WebCore::WebGPU {
 
 enum class StorageTextureAccess : uint8_t {
     WriteOnly,
+    ReadOnly,
+    ReadWrite,
 };
 
 } // namespace WebCore::WebGPU

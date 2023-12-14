@@ -141,7 +141,7 @@ Ref<Sampler> DeviceImpl::createSampler(const SamplerDescriptor& descriptor)
         m_convertToBackingContext->convertToBacking(descriptor.mipmapFilter),
         descriptor.lodMinClamp,
         descriptor.lodMaxClamp,
-        descriptor.compare ? m_convertToBackingContext->convertToBacking(*descriptor.compare) : WGPUCompareFunction_Always,
+        descriptor.compare ? m_convertToBackingContext->convertToBacking(*descriptor.compare) : WGPUCompareFunction_Undefined,
         descriptor.maxAnisotropy,
     };
 
@@ -253,13 +253,13 @@ Ref<BindGroup> DeviceImpl::createBindGroup(const BindGroupDescriptor& descriptor
             .externalTexture = externalTexture,
         });
         return WGPUBindGroupEntry {
-            externalTexture ? reinterpret_cast<WGPUChainedStruct*>(&chainedEntries.last()) : nullptr,
-            bindGroupEntry.binding,
-            std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? convertToBackingContext.convertToBacking(std::get<BufferBinding>(bindGroupEntry.resource).buffer) : nullptr,
-            std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? std::get<BufferBinding>(bindGroupEntry.resource).offset : 0,
-            std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? std::get<BufferBinding>(bindGroupEntry.resource).size.value_or(WGPU_WHOLE_SIZE) : 0,
-            std::holds_alternative<std::reference_wrapper<Sampler>>(bindGroupEntry.resource) ? convertToBackingContext.convertToBacking(std::get<std::reference_wrapper<Sampler>>(bindGroupEntry.resource).get()) : nullptr,
-            std::holds_alternative<std::reference_wrapper<TextureView>>(bindGroupEntry.resource) ? convertToBackingContext.convertToBacking(std::get<std::reference_wrapper<TextureView>>(bindGroupEntry.resource).get()) : nullptr,
+            .nextInChain = externalTexture ? reinterpret_cast<WGPUChainedStruct*>(&chainedEntries.last()) : nullptr,
+            .binding = bindGroupEntry.binding,
+            .buffer = std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? convertToBackingContext.convertToBacking(std::get<BufferBinding>(bindGroupEntry.resource).buffer) : nullptr,
+            .offset = std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? std::get<BufferBinding>(bindGroupEntry.resource).offset : 0,
+            .size = std::holds_alternative<BufferBinding>(bindGroupEntry.resource) ? std::get<BufferBinding>(bindGroupEntry.resource).size.value_or(WGPU_WHOLE_SIZE) : 0,
+            .sampler = std::holds_alternative<std::reference_wrapper<Sampler>>(bindGroupEntry.resource) ? convertToBackingContext.convertToBacking(std::get<std::reference_wrapper<Sampler>>(bindGroupEntry.resource).get()) : nullptr,
+            .textureView = std::holds_alternative<std::reference_wrapper<TextureView>>(bindGroupEntry.resource) ? convertToBackingContext.convertToBacking(std::get<std::reference_wrapper<TextureView>>(bindGroupEntry.resource).get()) : nullptr,
         };
     });
 

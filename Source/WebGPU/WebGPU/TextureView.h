@@ -65,6 +65,11 @@ public:
     void setPreviouslyCleared();
     uint32_t width() const;
     uint32_t height() const;
+    WGPUTextureUsageFlags usage() const;
+    uint32_t sampleCount() const;
+    WGPUTextureFormat format() const;
+    uint32_t mipLevelCount() const;
+    bool isDestroyed() const;
 
 private:
     TextureView(id<MTLTexture>, const WGPUTextureViewDescriptor&, const std::optional<WGPUExtent3D>&, Texture&, Device&);
