@@ -20,6 +20,7 @@
 #pragma once
 
 #include "RenderStyleConstants.h"
+#include <wtf/WeakHashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/TypeCasts.h>
 
