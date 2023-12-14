@@ -252,8 +252,6 @@ public:
 
     WEBCORE_EXPORT void drawNativeImage(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { });
 
-    virtual bool needsCachedNativeImageInvalidationWorkaround(RenderingMode) { return true; }
-
     WEBCORE_EXPORT virtual void drawSystemImage(SystemImage&, const FloatRect&);
 
     WEBCORE_EXPORT ImageDrawResult drawImage(Image&, const FloatPoint& destination, ImagePaintingOptions = { ImageOrientation::Orientation::FromImage });

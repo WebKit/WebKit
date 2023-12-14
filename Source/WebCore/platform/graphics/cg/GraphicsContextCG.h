@@ -100,7 +100,6 @@ public:
     void setMiterLimit(float) final;
 
     void drawPattern(NativeImage&, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
-    bool needsCachedNativeImageInvalidationWorkaround(RenderingMode) override;
 
     using GraphicsContext::scale;
     void scale(const FloatSize&) final;

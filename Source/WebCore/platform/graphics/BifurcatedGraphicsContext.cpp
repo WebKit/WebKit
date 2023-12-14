@@ -373,11 +373,6 @@ void BifurcatedGraphicsContext::drawNativeImageInternal(NativeImage& nativeImage
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-bool BifurcatedGraphicsContext::needsCachedNativeImageInvalidationWorkaround(RenderingMode renderingMode)
-{
-    return m_primaryContext.needsCachedNativeImageInvalidationWorkaround(renderingMode) || m_secondaryContext.needsCachedNativeImageInvalidationWorkaround(renderingMode);
-}
-
 void BifurcatedGraphicsContext::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
 {
     m_primaryContext.drawSystemImage(systemImage, destinationRect);
