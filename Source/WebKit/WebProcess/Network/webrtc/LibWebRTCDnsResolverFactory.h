@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,39 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebRTCResolver.h"
+#pragma once
 
 #if USE(LIBWEBRTC)
 
-#include "LibWebRTCResolver.h"
-#include "LibWebRTCSocketFactory.h"
-#include <WebCore/LibWebRTCProvider.h>
+#include <WebCore/LibWebRTCMacros.h>
+
+ALLOW_COMMA_BEGIN
+#include <webrtc/api/async_dns_resolver.h>
+ALLOW_COMMA_END
+
+#include <wtf/FastMalloc.h>
 #include <wtf/Function.h>
 
 namespace WebKit {
 
-WebRTCResolver::WebRTCResolver(LibWebRTCSocketFactory& socketFactory, LibWebRTCResolverIdentifier identifier)
-    : m_socketFactory(socketFactory)
-    , m_identifier(identifier)
-{
-}
+class LibWebRTCDnsResolverFactory final : public webrtc::AsyncDnsResolverFactoryInterface {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    class Resolver : public webrtc::AsyncDnsResolverInterface {
+    public:
+        virtual void start(const rtc::SocketAddress&, Function<void()>&&) = 0;
 
-void WebRTCResolver::setResolvedAddress(const Vector<RTCNetwork::IPAddress>& addresses)
-{
-    auto& factory = m_socketFactory;
+    private:
+        // webrtc::AsyncDnsResolverInterface
+        void Start(const rtc::SocketAddress&, absl::AnyInvocable<void()>) final;
+        void Start(const rtc::SocketAddress&, int family, absl::AnyInvocable<void()>) final;
+    };
 
-    auto rtcAddresses = addresses.map([](auto& address) {
-        return address.rtcAddress();
-    });
-    WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([&factory, identifier = m_identifier, rtcAddresses = WTFMove(rtcAddresses)] () mutable {
-        if (auto resolver = factory.resolver(identifier))
-            resolver->setResolvedAddress(WTFMove(rtcAddresses));
-    });
-}
-
-void WebRTCResolver::resolvedAddressError(int error)
-{
-    auto& factory = m_socketFactory;
-    WebCore::LibWebRTCProvider::callOnWebRTCNetworkThread([&factory, identifier = m_identifier, error]() {
-        if (auto resolver = factory.resolver(identifier))
-            resolver->setError(error);
-    });
-}
+private:
+    std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAndResolve(const rtc::SocketAddress&, absl::AnyInvocable<void()>) final;
+    std::unique_ptr<webrtc::AsyncDnsResolverInterface> CreateAndResolve(const rtc::SocketAddress&, int family, absl::AnyInvocable<void()>) final;
+    std::unique_ptr<webrtc::AsyncDnsResolverInterface> Create() final;
+};
 
 } // namespace WebKit
 
