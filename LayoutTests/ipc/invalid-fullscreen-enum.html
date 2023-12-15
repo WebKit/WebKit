@@ -1,0 +1,76 @@
+<!DOCTYPE html><!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+function test() {
+  if (window.testRunner) {
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
+  }
+
+  if (window.IPC) {
+    IPC.addOutgoingMessageListener("UI", (msg) => {
+      if (msg.name == IPC.messages.VideoPresentationManagerProxy_SetHasVideo.name) {
+        parseSetHasVideo(msg);
+      }
+    });
+
+    o8=document.createElement('video');
+    o8.src='resources/1080i60_SMPTE_8CH_audible.mov';
+    document.body.appendChild(o8);
+    o9=document.createElement('canvas');
+  } else {
+    console.log("Can't run test");
+  }
+}
+function parseSetHasVideo(msg) {
+  destinationId=msg['destinationID'];
+  contextId=msg['arguments'][0]['value'];
+  window.setTimeout(timeout1,200);
+}
+function timeout1() {
+  o39=document.createElement('iframe');
+  document.body.appendChild(o39);
+  IPC.sendMessage('UI',destinationId,IPC.messages.VideoPresentationManagerProxy_SetupFullscreenWithID.name,
+                  [{type: 'uint64_t',value: contextId},                                                                             // PlaybackSessionContextIdentifier contextId
+                   {type: 'uint32_t',value: 8},                                                                                     // WebKit::LayerHostingContextID videoLayerID
+                   {type: 'float',value: 338},{type: 'float',value: -429},{type: 'float',value: 117},{type: 'float',value: 1411},   // WebCore::FloatRect& screenRect
+                   {type: 'float',value: 557},{type: 'float',value: 885},                                                           // WebCore::FloatSize& initialSize
+                   {type: 'float',value: 215},{type: 'float',value: 537},                                                           // WebCore::FloatSize& videoDimensions
+                   {type: 'float',value: 299},                                                                                      // float hostingDeviceScaleFactor
+                   {type: 'uint32_t',value: 2n},                                                                                    // HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode
+                   {type: 'bool',value: 0},                                                                                         // bool allowsPictureInPicture
+                   {type: 'bool',value: 1},                                                                                         // bool standby
+                   {type: 'bool',value: 1}                                                                                          // bool blocksReturnToFullscreenFromPictureInPicture
+                 ]);
+  window.setTimeout(timeout2,200);
+}
+function timeout2() {
+  window.open('empty.html',"InsertTab",'heigth=100,width=200');
+  IPC.sendMessage('UI',destinationId,IPC.messages.VideoPresentationManagerProxy_SetupFullscreenWithID.name,
+                  [{type: 'uint64_t',value: contextId},                                                                             // PlaybackSessionContextIdentifier contextId
+                   {type: 'uint32_t',value: 8},                                                                                     // WebKit::LayerHostingContextID videoLayerID
+                   {type: 'float',value: 2659},{type: 'float',value: 2032},{type: 'float',value: 69},{type: 'float',value: 713},    // WebCore::FloatRect& screenRect
+                   {type: 'float',value: 3444},{type: 'float',value: 23},                                                           // WebCore::FloatSize& initialSize
+                   {type: 'float',value: 463},{type: 'float',value: 938},                                                           // WebCore::FloatSize& videoDimensions
+                   {type: 'float',value: 950},                                                                                      // float hostingDeviceScaleFactor
+                   {type: 'uint32_t',value: 68n},                                                                                   // HTMLMediaElementEnums::VideoFullscreenMode videoFullscreenMode
+                   {type: 'bool',value: 1},                                                                                         // bool allowsPictureInPicture
+                   {type: 'bool',value: 0},                                                                                         // bool standby
+                   {type: 'bool',value: 0}]);                                                                                       // bool blocksReturnToFullscreenFromPictureInPicture
+  o70=document.createElement('iframe');
+  document.body.appendChild(o70);
+  o8.srcObject=o9.captureStream();
+  window.setTimeout(timeout3,200);
+}
+function timeout3() {
+  IPC.sendMessage('UI',IPC.webPageProxyID,IPC.messages.WebPageProxy_SetWindowFrame.name,[{type: 'float',value: 1142},{type: 'float',value: 1330},{type: 'float',value: 168},{type: 'float',value: 1869}]);
+  window.setTimeout(timeout4,500);
+}
+function timeout4() {
+  if (window.testRunner)
+    testRunner.notifyDone();
+}
+</script>
+<body onload='test()'>
+<div>This test should not crash</div>
+</body>
+</html>
