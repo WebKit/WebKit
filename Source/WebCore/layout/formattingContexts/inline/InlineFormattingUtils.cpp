@@ -503,6 +503,50 @@ size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const Inlin
     return layoutRange.endIndex();
 }
 
+std::pair<InlineLayoutUnit, InlineLayoutUnit> InlineFormattingUtils::textEmphasisForInlineBox(const Box& layoutBox, const ElementBox& rootBox)
+{
+    // Generic, non-inline box inline-level content (e.g. replaced elements) can't have text-emphasis annotations.
+    ASSERT(layoutBox.isInlineBox() || &layoutBox == &rootBox);
+
+    auto& style = layoutBox.style();
+    auto hasTextEmphasis =  style.textEmphasisMark() != TextEmphasisMark::None;
+    if (!hasTextEmphasis)
+        return { };
+    auto emphasisPosition = style.textEmphasisPosition();
+    // Normally we resolve visual -> logical values at pre-layout time, but emphaisis values are not part of the general box geometry.
+    auto hasAboveTextEmphasis = false;
+    auto hasUnderTextEmphasis = false;
+    if (style.isHorizontalWritingMode()) {
+        hasAboveTextEmphasis = emphasisPosition.contains(TextEmphasisPosition::Over);
+        hasUnderTextEmphasis = !hasAboveTextEmphasis && emphasisPosition.contains(TextEmphasisPosition::Under);
+    } else {
+        hasAboveTextEmphasis = emphasisPosition.contains(TextEmphasisPosition::Right) || emphasisPosition == TextEmphasisPosition::Over;
+        hasUnderTextEmphasis = !hasAboveTextEmphasis && (emphasisPosition.contains(TextEmphasisPosition::Left) || emphasisPosition == TextEmphasisPosition::Under);
+    }
+
+    if (!hasAboveTextEmphasis && !hasUnderTextEmphasis)
+        return { };
+
+    auto enclosingRubyBase = [&]() -> const ElementBox* {
+        if (&layoutBox == &rootBox)
+            return nullptr;
+        for (auto* ancestor = &layoutBox.parent(); ancestor != &rootBox; ancestor = &ancestor->parent()) {
+            if (ancestor->isRubyBase())
+                return ancestor;
+        }
+        return nullptr;
+    };
+    if (auto* rubyBase = enclosingRubyBase(); rubyBase && RubyFormattingContext::hasInterlinearAnnotation(*rubyBase)) {
+        auto annotationPosition = rubyBase->style().rubyPosition();
+        if ((hasAboveTextEmphasis && annotationPosition == RubyPosition::Before) || (hasUnderTextEmphasis && annotationPosition == RubyPosition::After)) {
+            // FIXME: Check if annotation box has content.
+            return { };
+        }
+    }
+    InlineLayoutUnit annotationSize = roundToInt(style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisMarkString()));
+    return { hasAboveTextEmphasis ? annotationSize : 0.f, hasAboveTextEmphasis ? 0.f : annotationSize };
+}
+
 const InlineLayoutState& InlineFormattingUtils::layoutState() const
 {
     return formattingContext().layoutState();

@@ -64,6 +64,8 @@ public:
 
     static size_t nextWrapOpportunity(size_t startIndex, const InlineItemRange& layoutRange, const InlineItemList&);
 
+    static std::pair<InlineLayoutUnit, InlineLayoutUnit> textEmphasisForInlineBox(const Box&, const ElementBox& rootBox);
+
 private:
     InlineLayoutUnit contentLeftAfterLastLine(const ConstraintsForInFlowContent&, std::optional<InlineLayoutUnit> lastLineLogicalBottom, const FloatingContext&) const;
 
