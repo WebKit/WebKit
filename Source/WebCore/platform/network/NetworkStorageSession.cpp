@@ -432,6 +432,8 @@ const HashMap<RegistrableDomain, HashSet<RegistrableDomain>>& NetworkStorageSess
             RegistrableDomain::uncheckedCreateFromRegistrableDomainString("sony.com"_s) });
         map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("bbc.co.uk"_s), HashSet {
             RegistrableDomain::uncheckedCreateFromRegistrableDomainString("radioplayer.co.uk"_s) });
+        map.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("gizmodo.com"_s), HashSet {
+            RegistrableDomain::uncheckedCreateFromRegistrableDomainString("kinja.com"_s) });
         return map;
     }();
     return map.get();
