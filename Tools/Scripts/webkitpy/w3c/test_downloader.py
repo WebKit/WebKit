@@ -144,7 +144,7 @@ class TestDownloader(object):
             if not already_imported:
                 import_lines[stripped_path] = "import"
 
-        self._filesystem.write_text_file(self.import_expectations_path, json.dumps(import_lines, sort_keys=True, indent=4, separators=(',', ': ')))
+        self._filesystem.write_text_file(self.import_expectations_path, json.dumps(import_lines, sort_keys=True, indent=4, separators=(',', ': ')) + "\n")
 
     def clone_tests(self, use_tip_of_tree=False):
         for test_repository in self.test_repositories:
