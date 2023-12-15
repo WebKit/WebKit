@@ -705,10 +705,10 @@ public:
         }
     }
 
-    void* makeIsland(uintptr_t jumpLocation, uintptr_t newTarget, bool concurrently)
+    void* makeIsland(uintptr_t jumpLocation, uintptr_t newTarget, bool concurrently, bool useMemcpy)
     {
         Locker locker { getLock() };
-        return islandForJumpLocation(locker, jumpLocation, newTarget, concurrently);
+        return islandForJumpLocation(locker, jumpLocation, newTarget, concurrently, useMemcpy);
     }
 
 private:
@@ -743,7 +743,7 @@ private:
         delete islands;
     }
 
-    void* islandForJumpLocation(const LockHolder& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently)
+    void* islandForJumpLocation(const LockHolder& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently, bool useMemcpy)
     {
         Islands* islands = m_islandsForJumpSourceLocation.findExact(bitwise_cast<void*>(jumpLocation));
         if (islands) {
@@ -767,21 +767,10 @@ private:
 
             auto emitJumpTo = [&] (void* target) {
                 RELEASE_ASSERT(Assembler::canEmitJump(bitwise_cast<void*>(jumpLocation), target));
-
-                MacroAssembler jit;
-                jit.nearTailCallThunk(CodeLocationLabel<NoPtrTag>(target));
-                LinkBuffer linkBuffer(jit, CodePtr<NoPtrTag>(currentIsland), islandSizeInBytes, LinkBuffer::Profile::JumpIsland, JITCompilationMustSucceed, false);
-                RELEASE_ASSERT(linkBuffer.isValid());
-
-                // We use this to appease the assertion that we're not finalizing on a compiler thread. In this situation, it's
-                // ok to do this on a compiler thread, since the compiler thread is linking a jump to this code (and no other live
-                // code can jump to these islands). It's ok because the CPU protocol for exposing code to other CPUs is:
-                // - Self modifying code fence (what FINALIZE_CODE does below). This does various memory flushes + instruction sync barrier (isb).
-                // - Any CPU that will run the code must run a crossModifyingCodeFence (isb) before running it. Since the code that
-                // has a jump linked to this island hasn't finalized yet, they're guaranteed to finalize there code and run an isb.
-                linkBuffer.setIsJumpIsland();
-
-                FINALIZE_CODE(linkBuffer, NoPtrTag, "Jump Island: %lu", jumpLocation);
+                if (useMemcpy)
+                    Assembler::fillNearTailCall<memcpyWrapper>(currentIsland, target);
+                else
+                    Assembler::fillNearTailCall<performJITMemcpy>(currentIsland, target);
             };
 
             if (Assembler::canEmitJump(bitwise_cast<void*>(jumpLocation), bitwise_cast<void*>(target))) {
@@ -1182,13 +1171,26 @@ void ExecutableAllocator::dumpProfile()
 #endif
 
 #if ENABLE(JUMP_ISLANDS)
-void* ExecutableAllocator::getJumpIslandTo(void* from, void* newDestination)
+void* ExecutableAllocator::getJumpIslandToUsingJITMemcpy(void* from, void* newDestination)
 {
     FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
     if (!allocator)
         RELEASE_ASSERT_NOT_REACHED();
 
-    return allocator->makeIsland(bitwise_cast<uintptr_t>(from), bitwise_cast<uintptr_t>(newDestination), false);
+    constexpr bool concurrently = false;
+    constexpr bool useMemcpy = false;
+    return allocator->makeIsland(bitwise_cast<uintptr_t>(from), bitwise_cast<uintptr_t>(newDestination), concurrently, useMemcpy);
+}
+
+void* ExecutableAllocator::getJumpIslandToUsingMemcpy(void* from, void* newDestination)
+{
+    FixedVMPoolExecutableAllocator* allocator = g_jscConfig.fixedVMPoolExecutableAllocator;
+    if (!allocator)
+        RELEASE_ASSERT_NOT_REACHED();
+
+    constexpr bool concurrently = false;
+    constexpr bool useMemcpy = true;
+    return allocator->makeIsland(bitwise_cast<uintptr_t>(from), bitwise_cast<uintptr_t>(newDestination), concurrently, useMemcpy);
 }
 
 void* ExecutableAllocator::getJumpIslandToConcurrently(void* from, void* newDestination)
@@ -1197,7 +1199,9 @@ void* ExecutableAllocator::getJumpIslandToConcurrently(void* from, void* newDest
     if (!allocator)
         RELEASE_ASSERT_NOT_REACHED();
 
-    return allocator->makeIsland(bitwise_cast<uintptr_t>(from), bitwise_cast<uintptr_t>(newDestination), true);
+    constexpr bool concurrently = true;
+    constexpr bool useMemcpy = false;
+    return allocator->makeIsland(bitwise_cast<uintptr_t>(from), bitwise_cast<uintptr_t>(newDestination), concurrently, useMemcpy);
 }
 #endif
 
