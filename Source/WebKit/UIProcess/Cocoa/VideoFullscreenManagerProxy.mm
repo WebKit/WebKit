@@ -57,6 +57,8 @@
 #import <pal/spi/cocoa/AVKitSPI.h>
 #endif
 
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, m_page->process().connection())
+
 @interface WKLayerHostView : PlatformView
 @property (nonatomic, assign) uint32_t contextID;
 @end
@@ -755,7 +757,7 @@ void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextId
 
     if (m_mockVideoPresentationModeEnabled) {
         if (!videoDimensions.isEmpty())
-            m_mockPictureInPictureWindowSize.setHeight(DefaultMockPictureInPictureWindowWidth /  videoDimensions.aspectRatio());
+            m_mockPictureInPictureWindowSize.setHeight(DefaultMockPictureInPictureWindowWidth / videoDimensions.aspectRatio());
 #if PLATFORM(IOS_FAMILY)
         requestVideoContentLayer(contextId);
 #else
@@ -763,6 +765,12 @@ void VideoFullscreenManagerProxy::setupFullscreenWithID(PlaybackSessionContextId
 #endif
         return;
     }
+
+#if PLATFORM(IOS_FAMILY)
+    MESSAGE_CHECK((videoFullscreenMode | HTMLMediaElementEnums::VideoFullscreenModeAllValidBitsMask) == HTMLMediaElementEnums::VideoFullscreenModeAllValidBitsMask);
+#else
+    MESSAGE_CHECK(videoFullscreenMode == HTMLMediaElementEnums::VideoFullscreenModePictureInPicture); // setupFullscreen() ASSERTs this so catch it here while we can still fail the message
+#endif
 
     RetainPtr<WKLayerHostView> view = createLayerHostViewWithID(contextId, videoLayerID, initialSize, hostingDeviceScaleFactor);
 
@@ -868,6 +876,8 @@ void VideoFullscreenManagerProxy::exitFullscreen(PlaybackSessionContextIdentifie
 
 void VideoFullscreenManagerProxy::exitFullscreenWithoutAnimationToMode(PlaybackSessionContextIdentifier contextId, WebCore::HTMLMediaElementEnums::VideoFullscreenMode targetMode)
 {
+    MESSAGE_CHECK((targetMode | HTMLMediaElementEnums::VideoFullscreenModeAllValidBitsMask) == HTMLMediaElementEnums::VideoFullscreenModeAllValidBitsMask);
+
     if (m_mockVideoPresentationModeEnabled) {
         fullscreenModeChanged(contextId, targetMode);
         return;
