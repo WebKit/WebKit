@@ -36,7 +36,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-using DOMStyleDeclarationHandleCache = HashMap<CheckedPtr<CSSStyleDeclaration>, CheckedPtr<InjectedBundleCSSStyleDeclarationHandle>>;
+using DOMStyleDeclarationHandleCache = HashMap<SingleThreadWeakRef<CSSStyleDeclaration>, CheckedPtr<InjectedBundleCSSStyleDeclarationHandle>>;
 
 static DOMStyleDeclarationHandleCache& domStyleDeclarationHandleCache()
 {
@@ -55,7 +55,7 @@ RefPtr<InjectedBundleCSSStyleDeclarationHandle> InjectedBundleCSSStyleDeclaratio
     if (!styleDeclaration)
         return nullptr;
 
-    DOMStyleDeclarationHandleCache::AddResult result = domStyleDeclarationHandleCache().add(styleDeclaration, nullptr);
+    DOMStyleDeclarationHandleCache::AddResult result = domStyleDeclarationHandleCache().add(*styleDeclaration, nullptr);
     if (!result.isNewEntry)
         return result.iterator->value.get();
 
@@ -71,7 +71,7 @@ InjectedBundleCSSStyleDeclarationHandle::InjectedBundleCSSStyleDeclarationHandle
 
 InjectedBundleCSSStyleDeclarationHandle::~InjectedBundleCSSStyleDeclarationHandle()
 {
-    domStyleDeclarationHandleCache().remove(m_styleDeclaration.ptr());
+    domStyleDeclarationHandleCache().remove(m_styleDeclaration.get());
 }
 
 CSSStyleDeclaration* InjectedBundleCSSStyleDeclarationHandle::coreCSSStyleDeclaration()
