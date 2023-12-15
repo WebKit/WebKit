@@ -365,6 +365,7 @@ body[dir=rtl] .data-grid .resizer {
     background: none;
     border: none;
     outline: none;
+    text-overflow: ellipsis;
 }
 
 body:not(.window-inactive, .window-docked-inactive) .data-grid:focus tr.editable.selected .cell-content > input {
