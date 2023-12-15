@@ -242,7 +242,7 @@ bool JSLocalDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObjec
         // FIXME: <rdar://118263337> LocalDOMWindow::length needs to include RemoteFrames.
         // This should also work if it's a RemoteFrame, it should just return a RemoteDOMWindow.
         if (auto* scopedChild = dynamicDowncast<LocalFrame>(frame->tree().scopedChild(index))) {
-            slot.setValue(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), toJS(lexicalGlobalObject, scopedChild->document()->domWindow()));
+            slot.setValue(thisObject, enumToUnderlyingType(JSC::PropertyAttribute::ReadOnly), toJS(lexicalGlobalObject, scopedChild->document()->domWindow()));
             return true;
         }
     }

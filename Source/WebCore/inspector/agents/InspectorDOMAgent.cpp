@@ -1935,7 +1935,7 @@ Ref<Protocol::DOM::Node> InspectorDOMAgent::buildObjectForNode(Node* node, int d
 
     auto value = Protocol::DOM::Node::create()
         .setNodeId(id)
-        .setNodeType(static_cast<int>(node->nodeType()))
+        .setNodeType(enumToUnderlyingType(node->nodeType()))
         .setNodeName(nodeName)
         .setLocalName(localName)
         .setNodeValue(nodeValue)

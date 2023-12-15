@@ -475,8 +475,8 @@ private:
     bool m_isAutoFilled : 1 { false };
     bool m_isAutoFilledAndViewable : 1 { false };
     bool m_isAutoFilledAndObscured : 1 { false };
-    unsigned m_autoFillButtonType : 3 { static_cast<uint8_t>(AutoFillButtonType::None) }; // AutoFillButtonType
-    unsigned m_lastAutoFillButtonType : 3 { static_cast<uint8_t>(AutoFillButtonType::None) }; // AutoFillButtonType
+    unsigned m_autoFillButtonType : 3 { enumToUnderlyingType(AutoFillButtonType::None) }; // AutoFillButtonType
+    unsigned m_lastAutoFillButtonType : 3 { enumToUnderlyingType(AutoFillButtonType::None) }; // AutoFillButtonType
     bool m_isAutoFillAvailable : 1 { false };
 #if ENABLE(DATALIST_ELEMENT)
     bool m_hasNonEmptyList : 1 { false };

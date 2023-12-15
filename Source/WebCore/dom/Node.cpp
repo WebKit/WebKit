@@ -237,7 +237,7 @@ void Node::dumpStatistics()
                 useTypeCount++;
             }
             if (useTypeCount == 1) {
-                auto result = rareDataSingleUseTypeCounts.add(static_cast<uint32_t>(*useTypes.begin()), 0);
+                auto result = rareDataSingleUseTypeCounts.add(enumToUnderlyingType(*useTypes.begin()), 0);
                 result.iterator->value++;
             } else
                 mixedRareDataUseCount++;
@@ -1007,7 +1007,7 @@ inline bool Document::shouldInvalidateNodeListAndCollectionCaches() const
 
 inline bool Document::shouldInvalidateNodeListAndCollectionCachesForAttribute(const QualifiedName& attrName) const
 {
-    return shouldInvalidateNodeListCachesForAttr<static_cast<uint8_t>(NodeListInvalidationType::DoNotInvalidateOnAttributeChanges) + 1>(m_nodeListAndCollectionCounts, attrName);
+    return shouldInvalidateNodeListCachesForAttr<enumToUnderlyingType(NodeListInvalidationType::DoNotInvalidateOnAttributeChanges) + 1>(m_nodeListAndCollectionCounts, attrName);
 }
 
 template <typename InvalidationFunction>
@@ -2729,7 +2729,7 @@ TextDirection Node::effectiveTextDirection() const
 void Node::setEffectiveTextDirection(TextDirection direction)
 {
     auto bitfields = rareDataBitfields();
-    bitfields.effectiveTextDirection = static_cast<uint16_t>(direction);
+    bitfields.effectiveTextDirection = enumToUnderlyingType(direction);
     setRareDataBitfields(bitfields);
 }
 

@@ -568,13 +568,13 @@ public:
 #else
     static uint32_t rareDataPointerMask() { return -1; }
 #endif
-    static int32_t flagIsText() { return static_cast<int32_t>(NodeFlag::IsText); }
-    static int32_t flagIsContainer() { return static_cast<int32_t>(NodeFlag::IsContainerNode); }
-    static int32_t flagIsElement() { return static_cast<int32_t>(NodeFlag::IsElement); }
-    static int32_t flagIsShadowRoot() { return static_cast<int32_t>(NodeFlag::IsShadowRoot); }
-    static int32_t flagIsHTML() { return static_cast<int32_t>(NodeFlag::IsHTMLElement); }
-    static int32_t flagIsLink() { return static_cast<int32_t>(NodeFlag::IsLink); }
-    static int32_t flagIsParsingChildrenFinished() { return static_cast<int32_t>(NodeFlag::IsParsingChildrenFinished); }
+    static auto flagIsText() { return enumToUnderlyingType(NodeFlag::IsText); }
+    static auto flagIsContainer() { return enumToUnderlyingType(NodeFlag::IsContainerNode); }
+    static auto flagIsElement() { return enumToUnderlyingType(NodeFlag::IsElement); }
+    static auto flagIsShadowRoot() { return enumToUnderlyingType(NodeFlag::IsShadowRoot); }
+    static auto flagIsHTML() { return enumToUnderlyingType(NodeFlag::IsHTMLElement); }
+    static auto flagIsLink() { return enumToUnderlyingType(NodeFlag::IsLink); }
+    static auto flagIsParsingChildrenFinished() { return enumToUnderlyingType(NodeFlag::IsParsingChildrenFinished); }
 #endif // ENABLE(JIT)
 
 protected:
@@ -704,7 +704,7 @@ protected:
         uint16_t toRaw() const { return bitwise_cast<uint16_t>(*this); }
 
         Style::Validity styleValidity() const { return static_cast<Style::Validity>(m_styleValidity); }
-        void setStyleValidity(Style::Validity validity) { m_styleValidity = static_cast<uint8_t>(validity); }
+        void setStyleValidity(Style::Validity validity) { m_styleValidity = enumToUnderlyingType(validity); }
 
         OptionSet<NodeStyleFlag> flags() const { return OptionSet<NodeStyleFlag>::fromRaw(m_flags); }
         void setFlag(NodeStyleFlag flag) { m_flags = (flags() | flag).toRaw(); }

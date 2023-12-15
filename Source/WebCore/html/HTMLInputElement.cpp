@@ -1529,7 +1529,7 @@ void HTMLInputElement::setShowAutoFillButton(AutoFillButtonType autoFillButtonTy
         return;
 
     m_lastAutoFillButtonType = m_autoFillButtonType;
-    m_autoFillButtonType = static_cast<uint8_t>(autoFillButtonType);
+    m_autoFillButtonType = enumToUnderlyingType(autoFillButtonType);
     m_inputType->updateAutoFillButton();
     updateInnerTextElementEditability();
     invalidateStyleForSubtree();

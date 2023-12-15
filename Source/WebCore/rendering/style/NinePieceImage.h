@@ -58,7 +58,7 @@ enum ImagePiece {
 
 inline ImagePiece& operator++(ImagePiece& piece)
 {
-    piece = static_cast<ImagePiece>(static_cast<int>(piece) + 1);
+    piece = static_cast<ImagePiece>(enumToUnderlyingType(piece) + 1);
     return piece;
 }
 

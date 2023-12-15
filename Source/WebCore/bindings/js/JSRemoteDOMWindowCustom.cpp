@@ -61,7 +61,7 @@ bool JSRemoteDOMWindow::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObje
         // FIXME: <rdar://118263337> This should work also if it's a RemoteFrame, it should just return a RemoteDOMWindow.
         // JSLocalDOMWindow::getOwnPropertySlotByIndex uses scopedChild. Investigate the difference.
         if (auto* child = dynamicDowncast<LocalFrame>(frame->tree().child(index))) {
-            slot.setValue(thisObject, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), toJS(lexicalGlobalObject, child->document()->domWindow()));
+            slot.setValue(thisObject, enumToUnderlyingType(JSC::PropertyAttribute::ReadOnly), toJS(lexicalGlobalObject, child->document()->domWindow()));
             return true;
         }
     }

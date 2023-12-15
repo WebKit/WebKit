@@ -65,7 +65,7 @@ protected:
     ClassType classType() const { return static_cast<ClassType>(m_classType); }
 
     DeprecatedCSSOMValue(ClassType classType, CSSStyleDeclaration& owner)
-        : m_classType(static_cast<unsigned>(classType))
+        : m_classType(enumToUnderlyingType(classType))
         , m_owner(owner)
     {
     }
