@@ -56,6 +56,7 @@ void CoordinatedBackingStoreTile::swapBuffers(TextureMapper& textureMapper)
         } else if (update.buffer->supportsAlpha() == m_texture->isOpaque())
             m_texture->reset(update.tileRect.size(), flags);
 
+        update.buffer->waitUntilPaintingComplete();
         m_texture->updateContents(update.buffer->data(), update.sourceRect, update.bufferOffset, update.buffer->stride());
         update.buffer = nullptr;
     }

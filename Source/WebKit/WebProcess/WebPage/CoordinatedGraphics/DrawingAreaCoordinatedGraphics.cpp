@@ -339,15 +339,6 @@ void DrawingAreaCoordinatedGraphics::triggerRenderingUpdate()
         scheduleDisplay();
 }
 
-#if HAVE(DISPLAY_LINK)
-void DrawingAreaCoordinatedGraphics::didCompleteRenderingUpdateDisplay()
-{
-    if (m_layerTreeHost)
-        m_layerTreeHost->didCompleteRenderingUpdateDisplay();
-    DrawingArea::didCompleteRenderingUpdateDisplay();
-}
-#endif
-
 RefPtr<DisplayRefreshMonitor> DrawingAreaCoordinatedGraphics::createDisplayRefreshMonitor(PlatformDisplayID displayID)
 {
 #if HAVE(DISPLAY_LINK)
