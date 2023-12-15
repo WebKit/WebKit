@@ -69,6 +69,11 @@ public:
     WeakPtrImpl& impl() const { return m_impl; }
     Ref<WeakPtrImpl> releaseImpl() { return WTFMove(m_impl); }
 
+    T* ptrAllowingHashTableEmptyValue() const
+    {
+        return !m_impl.isHashTableEmptyValue() ? static_cast<T*>(m_impl->template get<T>()) : nullptr;
+    }
+
     T* ptr() const
     {
         auto* ptr = static_cast<T*>(m_impl->template get<T>());
