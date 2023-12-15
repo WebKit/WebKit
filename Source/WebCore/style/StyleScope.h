@@ -213,7 +213,7 @@ private:
 
     Timer m_pendingUpdateTimer;
 
-    mutable HashSet<CheckedRef<const CSSStyleSheet>> m_weakCopyOfActiveStyleSheetListForFastLookup;
+    mutable HashSet<SingleThreadWeakRef<const CSSStyleSheet>> m_weakCopyOfActiveStyleSheetListForFastLookup;
 
     // Track the currently loading top-level stylesheets needed for rendering.
     // Sheets loaded using the @import directive are not included in this count.

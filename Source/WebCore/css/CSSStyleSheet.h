@@ -58,7 +58,7 @@ namespace Style {
 class Scope;
 }
 
-class CSSStyleSheet final : public StyleSheet, public CanMakeCheckedPtr {
+class CSSStyleSheet final : public StyleSheet, public CanMakeSingleThreadWeakPtr<CSSStyleSheet> {
 public:
     struct Init {
         String baseURL;
