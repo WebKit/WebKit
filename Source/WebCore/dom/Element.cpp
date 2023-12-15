@@ -865,7 +865,7 @@ void Element::setActive(bool value, Style::InvalidationScope invalidationScope)
         return;
 
     if (renderer->style().hasEffectiveAppearance())
-        renderer->theme().stateChanged(*renderer, ControlStates::States::Pressed);
+        renderer->theme().stateChanged(*renderer, ControlStyle::State::Pressed);
 }
 
 static bool shouldAlwaysHaveFocusVisibleWhenFocused(const Element& element)
@@ -940,7 +940,7 @@ void Element::setHovered(bool value, Style::InvalidationScope invalidationScope,
 
     if (auto* style = renderStyle(); style && style->hasEffectiveAppearance()) {
         CheckedPtr renderer = this->renderer();
-        renderer->theme().stateChanged(*renderer, ControlStates::States::Hovered);
+        renderer->theme().stateChanged(*renderer, ControlStyle::State::Hovered);
     }
 }
 

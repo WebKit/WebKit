@@ -26,7 +26,6 @@
 #include "ColorBlending.h"
 #include "ColorLuminance.h"
 #include "ColorWellPart.h"
-#include "ControlStates.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "FileList.h"
@@ -802,7 +801,7 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
     case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
     case StyleAppearance::InnerSpinButton: {
-        ControlStates states(extractControlStatesForRenderer(box));
+        auto states = extractControlStyleStatesForRenderer(box);
         Theme::singleton().paint(appearance, states, paintInfo.context(), devicePixelSnappedRect, box.useDarkAppearance(), box.style().effectiveAccentColor());
         return false;
     }
@@ -1143,49 +1142,16 @@ bool RenderTheme::supportsFocusRing(const RenderStyle& style) const
         && style.effectiveAppearance() != StyleAppearance::Listbox;
 }
 
-bool RenderTheme::stateChanged(const RenderObject& o, ControlStates::States state) const
+bool RenderTheme::stateChanged(const RenderObject& renderer, ControlStyle::State state) const
 {
-    // Default implementation assumes the controls don't respond to changes in :hover state
-    if (state == ControlStates::States::Hovered && !supportsHover(o.style()))
+    if (state == ControlStyle::State::Hovered && !supportsHover(renderer.style()))
         return false;
 
-    // Assume pressed state is only responded to if the control is enabled.
-    if (state == ControlStates::States::Pressed && !isEnabled(o))
+    if (state == ControlStyle::State::Pressed && !isEnabled(renderer))
         return false;
 
-    // Repaint the control.
-    o.repaint();
+    renderer.repaint();
     return true;
-}
-
-OptionSet<ControlStates::States> RenderTheme::extractControlStatesForRenderer(const RenderObject& o) const
-{
-    OptionSet<ControlStates::States> states;
-    if (isHovered(o)) {
-        states.add(ControlStates::States::Hovered);
-        if (isSpinUpButtonPartHovered(o))
-            states.add(ControlStates::States::SpinUp);
-    }
-    if (isPressed(o)) {
-        states.add(ControlStates::States::Pressed);
-        if (isSpinUpButtonPartPressed(o))
-            states.add(ControlStates::States::SpinUp);
-    }
-    if (isFocused(o) && o.style().outlineStyleIsAuto() == OutlineIsAuto::On)
-        states.add(ControlStates::States::Focused);
-    if (isEnabled(o))
-        states.add(ControlStates::States::Enabled);
-    if (isChecked(o))
-        states.add(ControlStates::States::Checked);
-    if (isDefault(o))
-        states.add(ControlStates::States::Default);
-    if (isWindowActive(o))
-        states.add(ControlStates::States::WindowActive);
-    if (isIndeterminate(o))
-        states.add(ControlStates::States::Indeterminate);
-    if (isPresenting(o))
-        states.add(ControlStates::States::Presenting);
-    return states;
 }
 
 bool RenderTheme::isWindowActive(const RenderObject& renderer) const

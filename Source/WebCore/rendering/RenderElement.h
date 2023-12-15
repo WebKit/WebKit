@@ -31,7 +31,6 @@ namespace WebCore {
 
 class Animation;
 class ContentData;
-class ControlStates;
 class BlendingKeyframes;
 class ReferencedSVGResources;
 class RenderBlock;

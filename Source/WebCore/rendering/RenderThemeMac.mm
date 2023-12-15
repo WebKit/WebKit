@@ -250,11 +250,10 @@ bool RenderThemeMac::supportsLargeFormControls() const
     return ThemeMac::supportsLargeFormControls();
 }
 
-NSView *RenderThemeMac::documentViewFor(const RenderObject& o) const
+NSView *RenderThemeMac::documentViewFor(const RenderObject& renderer) const
 {
-    LocalDefaultSystemAppearance localAppearance(o.useDarkAppearance());
-    ControlStates states(extractControlStatesForRenderer(o));
-    return ThemeMac::ensuredView(&o.view().frameView(), states);
+    LocalDefaultSystemAppearance localAppearance(renderer.useDarkAppearance());
+    return ThemeMac::ensuredView(&renderer.view().frameView(), extractControlStyleStatesForRenderer(renderer));
 }
 
 Color RenderThemeMac::platformActiveSelectionBackgroundColor(OptionSet<StyleColorOptions> options) const
@@ -750,7 +749,7 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject& renderer, FloatRect& 
     case StyleAppearance::Radio:
     case StyleAppearance::SquareButton:
     case StyleAppearance::Switch: {
-        ControlStates states(extractControlStatesForRenderer(renderer));
+        auto states = extractControlStyleStatesForRenderer(renderer);
         Theme::singleton().inflateControlPaintRect(renderer.style().effectiveAppearance(), states, rect, renderer.style().effectiveZoom());
         break;
     }

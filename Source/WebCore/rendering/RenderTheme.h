@@ -21,7 +21,6 @@
 #pragma once
 
 #include "ColorHash.h"
-#include "ControlStates.h"
 #include "GraphicsContext.h"
 #include "PaintInfo.h"
 #include "PopupMenuStyle.h"
@@ -140,7 +139,7 @@ public:
 
     // This method is called whenever a relevant state changes on a particular themed object, e.g., the mouse becomes pressed
     // or a control becomes disabled.
-    virtual bool stateChanged(const RenderObject&, ControlStates::States) const;
+    bool stateChanged(const RenderObject&, ControlStyle::State) const;
 
     // This method is called whenever the theme changes on the system in order to flush cached resources from the
     // old theme.
@@ -391,7 +390,6 @@ private:
     void adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioOrSwitchStyle(RenderStyle&, const Element*) const;
 
 public:
-    OptionSet<ControlStates::States> extractControlStatesForRenderer(const RenderObject&) const;
     bool isWindowActive(const RenderObject&) const;
     bool isChecked(const RenderObject&) const;
     bool isIndeterminate(const RenderObject&) const;

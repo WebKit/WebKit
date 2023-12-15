@@ -409,15 +409,14 @@ bool RenderThemeAdwaita::paintMenuList(const RenderObject& renderObject, const P
     auto& graphicsContext = paintInfo.context();
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
-    OptionSet<ControlStates::States> states;
+    OptionSet<ControlStyle::State> states;
     if (isEnabled(renderObject))
-        states.add(ControlStates::States::Enabled);
+        states.add(ControlStyle::State::Enabled);
     if (isPressed(renderObject))
-        states.add(ControlStates::States::Pressed);
+        states.add(ControlStyle::State::Pressed);
     if (isHovered(renderObject))
-        states.add(ControlStates::States::Hovered);
-    ControlStates controlStates(states);
-    Theme::singleton().paint(StyleAppearance::Button, controlStates, graphicsContext, rect, renderObject.useDarkAppearance(), renderObject.style().effectiveAccentColor());
+        states.add(ControlStyle::State::Hovered);
+    Theme::singleton().paint(StyleAppearance::Button, states, graphicsContext, rect, renderObject.useDarkAppearance(), renderObject.style().effectiveAccentColor());
 
     auto zoomedArrowSize = menuListButtonArrowSize * renderObject.style().effectiveZoom();
     FloatRect fieldRect = rect;
