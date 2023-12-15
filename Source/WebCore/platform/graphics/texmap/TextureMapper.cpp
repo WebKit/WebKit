@@ -362,7 +362,7 @@ static inline float gauss(float x, float radius)
 static int computeGaussianKernel(float radius, std::array<float, SimplifiedGaussianKernelMaxHalfSize>& kernel, std::array<float, SimplifiedGaussianKernelMaxHalfSize>& offset)
 {
     unsigned kernelHalfSize = blurRadiusToKernelHalfSize(radius);
-    ASSERT(kernelHalfSize <= GaussianKernelMaxHalfSize);
+    RELEASE_ASSERT(kernelHalfSize <= GaussianKernelMaxHalfSize);
 
     float fullKernel[GaussianKernelMaxHalfSize];
 
@@ -999,7 +999,7 @@ RefPtr<BitmapTexture> TextureMapper::applyDropShadowFilter(RefPtr<BitmapTexture>
                 std::max(textureSize.height() * scale, 1.f)
             );
             scale = float(targetSize.width()) / textureSize.width();
-            radius *= scale;
+            radius = std::min(GaussianBlurMaxRadius, radius * scale);
         }
     }
 
