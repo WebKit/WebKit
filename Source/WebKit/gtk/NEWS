@@ -1,4 +1,14 @@
 ================
+WebKitGTK 2.42.4
+================
+
+What's new in WebKitGTK 2.42.4?
+
+  - Fix incorrect random images incorrectly displayed as backgrounds of <div> elements.
+  - Fix videos displayed aliased after being resized e.g. in YouTube.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.42.3
 ================
 
