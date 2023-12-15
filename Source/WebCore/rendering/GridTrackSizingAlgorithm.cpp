@@ -1724,11 +1724,10 @@ void GridTrackSizingAlgorithm::run()
 
     // Step 3.
     m_strategy->maximizeTracks(tracks(m_direction), m_direction == GridTrackSizingDirection::ForColumns ? m_freeSpaceColumns : m_freeSpaceRows);
-    if (m_strategy->isComputingSizeOrInlineSizeContainment() && !m_renderGrid->explicitIntrinsicInnerLogicalSize(m_direction))
-        return;
 
     // Step 4.
-    stretchFlexibleTracks(initialFreeSpace);
+    if (!m_strategy->isComputingSizeOrInlineSizeContainment() || m_renderGrid->explicitIntrinsicInnerLogicalSize(m_direction))
+        stretchFlexibleTracks(initialFreeSpace);
 
     // Step 5.
     stretchAutoTracks();
