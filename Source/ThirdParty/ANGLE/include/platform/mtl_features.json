@@ -194,6 +194,13 @@
             ]
         },
         {
+            "name": "write_helper_sample_mask",
+            "category": "Workarounds",
+            "description": [
+                "Some GPUs produce incorrect derivatives unless [[sample_mask]] is written"
+            ]
+        },
+        {
             "name": "pre_transform_texture_cube_grad_derivatives",
             "category": "Workarounds",
             "description": [

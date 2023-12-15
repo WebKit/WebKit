@@ -8,25 +8,18 @@ testing against GLES 2, GLES 3, EGL, and GLES 3.1 (on supported platforms).
 ## How to build dEQP
 
 You should have dEQP as a target if you followed the [DevSetup](DevSetup.md)
-instructions. Current targets:
+instructions. Some of the current targets are:
 
-  * `angle_deqp_gles2_tests` for GLES 2.0 tests
-  * `angle_deqp_gles2_no_gtest` for GLES 2.0 tests without google test suite
-  * `angle_deqp_gles3_tests` for GLES 3.0 tests
-  * `angle_deqp_gles3_no_gtest` for GLES 3.0 tests without google test suite
   * `angle_deqp_egl_tests` for EGL 1.x tests
-  * `angle_deqp_egl_no_gtest` for EGL 1.x tests without google test suite
-  * `angle_deqp_gles31_tests` for GLES 3.1 tests (currently very experimental)
-  * `angle_deqp_gles31_no_gtest` for GLES 3.1 tests (currently very experimental) without google test suite
+  * `angle_deqp_gles2_tests` for GLES 2.0 tests
+  * `angle_deqp_gles3_tests` for GLES 3.0 tests
+  * `angle_deqp_gles31_tests` for GLES 3.1 tests
 
 ## How to use dEQP
 
 Note:
-To run an individual test, use the `--deqp-case` flag on any of the `no_gtest` targets.
-It supports simple wildcard support. For example: `--deqp-case=dEQP-
-GLES2.functional.shaders.linkage.*`.
-The `gtest` targets support wildcards via the `--gtest_filter` argument,
-but have different test names.
+To run an individual test, use the `--gtest_filter` argument.
+It supports simple wildcards. For example: `--gtest_filter=dEQP-GLES2.functional.shaders.linkage.*`.
 
 The tests lists are sourced from the Android CTS masters in
 `third_party/VK-GL-CTS/src/android/cts/master`. See `gles2-master.txt`,

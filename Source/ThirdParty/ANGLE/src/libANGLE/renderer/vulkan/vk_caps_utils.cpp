@@ -449,9 +449,6 @@ void RendererVk::ensureCapsInitialized() const
 
     mNativeExtensions.gpuShader5EXT = vk::CanSupportGPUShader5EXT(mPhysicalDeviceFeatures);
 
-    mNativeExtensions.textureFilteringHintCHROMIUM =
-        getFeatures().supportsFilteringPrecision.enabled;
-
     // Only expose texture cubemap array if the physical device supports it.
     mNativeExtensions.textureCubeMapArrayOES = getFeatures().supportsImageCubeArray.enabled;
     mNativeExtensions.textureCubeMapArrayEXT = mNativeExtensions.textureCubeMapArrayOES;

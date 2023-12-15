@@ -685,12 +685,6 @@ void main()
 
         EXPECT_EQ(data.size(), planeInfo.planeCount);
 
-        if (planeInfo.planes[0].data == nullptr)
-        {
-            WARN() << "Driver bug: AHardwareBuffer_lockPlanes succeed but data pointer is nullptr";
-            return false;
-        }
-
         for (size_t planeIdx = 0; planeIdx < data.size(); planeIdx++)
         {
             const AHBPlaneData &planeData      = data[planeIdx];
@@ -2989,6 +2983,67 @@ TEST_P(ImageTestES3, SourceYUVTextureTargetExternalRGBSampleYUVSample)
     drawQuad(mTextureYUVProgram, "position", 0.5f);
     // Expect that the rendered quad's color matches the raw YUV data
     EXPECT_PIXEL_NEAR(0, 0, yuvColor[2], yuvColor[4], yuvColor[5], 255, 1);
+
+    // Clean up
+    eglDestroyImageKHR(window->getDisplay(), image);
+}
+
+// Similar to SourceYUVTextureTargetExternalRGBSampleYUVSample, but added swizzle after
+// __samplerExternal2DY2YEXT from texture.
+TEST_P(ImageTestES3, SourceYUVTextureTargetExternalRGBSampleYUVSampleWithSwizzle)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt() ||
+                       !hasYUVInternalFormatExt() || !hasYUVTargetExt());
+
+    // Create source YUV texture
+    GLTexture yuvTexture;
+    GLubyte yuvColor[6]      = {7, 51, 197, 231, 128, 192};
+    constexpr size_t kWidth  = 2;
+    constexpr size_t kHeight = 2;
+
+    glBindTexture(GL_TEXTURE_2D, yuvTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE, kWidth, kHeight);
+    ASSERT_GL_NO_ERROR();
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, kWidth, kHeight, GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,
+                    GL_UNSIGNED_BYTE, yuvColor);
+    ASSERT_GL_NO_ERROR();
+    // Disable mipmapping
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    ASSERT_GL_NO_ERROR();
+
+    // Create the Image
+    EGLWindow *window = getEGLWindow();
+    EGLImageKHR image =
+        eglCreateImageKHR(window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
+                          reinterpretHelper<EGLClientBuffer>(yuvTexture.get()), kDefaultAttribs);
+    ASSERT_EGL_SUCCESS();
+
+    // Create a texture target to bind the egl image
+    GLTexture target;
+    createEGLImageTargetTextureExternal(image, target);
+
+    // Draw quad with program that samples raw YUV data and then swizzle
+    const char *fragmentShaderSource = R"(#version 300 es
+#extension GL_EXT_YUV_target : require
+precision highp float;
+uniform __samplerExternal2DY2YEXT tex;
+in vec2 texcoord;
+out vec4 color;
+
+void main()
+{
+    color = vec4(texture(tex, texcoord).zyx, 1.0);
+})";
+    ANGLE_GL_PROGRAM(textureYUVProgram, getVSESSL3(), fragmentShaderSource);
+    ASSERT_NE(0u, textureYUVProgram) << "shader compilation failed.";
+    glUseProgram(textureYUVProgram);
+    GLint uniformLocation = glGetUniformLocation(textureYUVProgram, "tex");
+    ASSERT_NE(-1, uniformLocation);
+    glUniform1i(uniformLocation, 0);
+    drawQuad(textureYUVProgram, "position", 0.5f);
+    // Expect that the rendered quad's color matches the raw YUV data after component swizzle
+    EXPECT_PIXEL_NEAR(0, 0, yuvColor[5], yuvColor[4], yuvColor[2], 255, 1);
 
     // Clean up
     eglDestroyImageKHR(window->getDisplay(), image);

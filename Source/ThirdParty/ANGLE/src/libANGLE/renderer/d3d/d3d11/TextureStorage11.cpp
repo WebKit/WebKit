@@ -211,8 +211,10 @@ angle::Result TextureStorage11::getSubresourceIndex(const gl::Context *context,
                                                     const gl::ImageIndex &index,
                                                     UINT *outSubresourceIndex) const
 {
-    UINT mipSlice    = static_cast<UINT>(index.getLevelIndex() + mTopLevel);
-    UINT arraySlice  = static_cast<UINT>(index.hasLayer() ? index.getLayerIndex() : 0);
+    UINT mipSlice = static_cast<UINT>(index.getLevelIndex() + mTopLevel);
+    // D3D11CalcSubresource reference: always use 0 for volume (3D) textures
+    UINT arraySlice = static_cast<UINT>(
+        (index.hasLayer() && index.getType() != gl::TextureType::_3D) ? index.getLayerIndex() : 0);
     UINT subresource = D3D11CalcSubresource(mipSlice, arraySlice, mMipLevels);
     ASSERT(subresource != std::numeric_limits<UINT>::max());
     *outSubresourceIndex = subresource;

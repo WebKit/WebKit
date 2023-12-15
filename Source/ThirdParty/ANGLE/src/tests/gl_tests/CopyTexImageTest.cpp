@@ -1263,6 +1263,56 @@ TEST_P(CopyTexImageTestES3, 3DSubImageDrawMismatchedTextureTypes)
     glBindTexture(GL_TEXTURE_3D, 0);
 }
 
+// Make sure a single-level texture can be redefined through glCopyTexImage2D from a framebuffer
+// bound to the same texture.  Regression test for a bug in the Vulkan backend where the texture was
+// released before the copy.
+TEST_P(CopyTexImageTestES3, RedefineSameLevel)
+{
+    constexpr GLsizei kSize     = 32;
+    constexpr GLsizei kHalfSize = kSize / 2;
+
+    // Create a single-level texture with four colors in different regions.
+    std::vector<GLColor> initData(kSize * kSize);
+    for (GLsizei y = 0; y < kSize; ++y)
+    {
+        const bool isTop = y < kHalfSize;
+        for (GLsizei x = 0; x < kSize; ++x)
+        {
+            const bool isLeft = x < kHalfSize;
+
+            GLColor color           = isLeft && isTop    ? GLColor::red
+                                      : isLeft && !isTop ? GLColor::green
+                                      : !isLeft && isTop ? GLColor::blue
+                                                         : GLColor::yellow;
+            color.A                 = 123;
+            initData[y * kSize + x] = color;
+        }
+    }
+
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, kSize, kSize, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 initData.data());
+
+    // Bind the framebuffer to the same texture
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
+
+    // Redefine the texture
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, kHalfSize / 2, kHalfSize / 2, kHalfSize, kHalfSize,
+                     0);
+
+    // Verify copy is done correctly.
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, kHalfSize / 2, kHalfSize / 2, GLColor::red);
+    EXPECT_PIXEL_RECT_EQ(kHalfSize / 2, 0, kHalfSize / 2, kHalfSize / 2, GLColor::blue);
+    EXPECT_PIXEL_RECT_EQ(0, kHalfSize / 2, kHalfSize / 2, kHalfSize / 2, GLColor::green);
+    EXPECT_PIXEL_RECT_EQ(kHalfSize / 2, kHalfSize / 2, kHalfSize / 2, kHalfSize / 2,
+                         GLColor::yellow);
+}
+
 ANGLE_INSTANTIATE_TEST(CopyTexImageTest,
                        ANGLE_ALL_TEST_PLATFORMS_ES2,
                        ES2_D3D11_PRESENT_PATH_FAST(),

@@ -293,7 +293,6 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::SupportsExternalSemaphoreCapabilities, "supportsExternalSemaphoreCapabilities"},
     {Feature::SupportsExternalSemaphoreFd, "supportsExternalSemaphoreFd"},
     {Feature::SupportsExternalSemaphoreFuchsia, "supportsExternalSemaphoreFuchsia"},
-    {Feature::SupportsFilteringPrecision, "supportsFilteringPrecision"},
     {Feature::SupportsFormatFeatureFlags2, "supportsFormatFeatureFlags2"},
     {Feature::SupportsFragmentShaderInterlockARB, "supportsFragmentShaderInterlockARB"},
     {Feature::SupportsFragmentShaderInterlockNV, "supportsFragmentShaderInterlockNV"},
@@ -392,6 +391,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::VertexIDDoesNotIncludeBaseVertex, "vertexIDDoesNotIncludeBaseVertex"},
     {Feature::WaitIdleBeforeSwapchainRecreation, "waitIdleBeforeSwapchainRecreation"},
     {Feature::WarmUpPipelineCacheAtLink, "warmUpPipelineCacheAtLink"},
+    {Feature::WriteHelperSampleMask, "writeHelperSampleMask"},
     {Feature::ZeroMaxLodWorkaround, "zeroMaxLodWorkaround"},
 }};
 }  // anonymous namespace

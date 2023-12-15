@@ -1181,29 +1181,22 @@ TEST_P(DrawBaseInstanceTest, DrawElementsInstancedBaseVertexBaseInstance)
     checkDrawResult(true, true);
 }
 
-const angle::PlatformParameters platforms[] = {
-    ES3_D3D11(), ES3_METAL(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN(),
-};
-
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(DrawBaseVertexBaseInstanceTest);
-INSTANTIATE_TEST_SUITE_P(
-    ,
-    DrawBaseVertexBaseInstanceTest,
-    testing::Combine(
-        testing::ValuesIn(::angle::FilterTestParams(platforms, ArraySize(platforms))),
-        testing::Values(BaseVertexOption::NoBaseVertex, BaseVertexOption::UseBaseVertex),
-        testing::Values(BaseInstanceOption::NoBaseInstance, BaseInstanceOption::UseBaseInstance),
-        testing::Values(BufferDataUsageOption::StaticDraw, BufferDataUsageOption::DynamicDraw)),
-    PrintToStringParamName());
 
-INSTANTIATE_TEST_SUITE_P(
-    ,
+ANGLE_INSTANTIATE_TEST_COMBINE_3(
+    DrawBaseVertexBaseInstanceTest,
+    PrintToStringParamName(),
+    testing::Values(BaseVertexOption::NoBaseVertex, BaseVertexOption::UseBaseVertex),
+    testing::Values(BaseInstanceOption::NoBaseInstance, BaseInstanceOption::UseBaseInstance),
+    testing::Values(BufferDataUsageOption::StaticDraw, BufferDataUsageOption::DynamicDraw),
+    ANGLE_ALL_TEST_PLATFORMS_ES3);
+
+ANGLE_INSTANTIATE_TEST_COMBINE_3(
     DrawBaseInstanceTest,
-    testing::Combine(
-        testing::ValuesIn(::angle::FilterTestParams(platforms, ArraySize(platforms))),
-        testing::Values(BaseVertexOption::NoBaseVertex, BaseVertexOption::UseBaseVertex),
-        testing::Values(BaseInstanceOption::NoBaseInstance, BaseInstanceOption::UseBaseInstance),
-        testing::Values(BufferDataUsageOption::StaticDraw, BufferDataUsageOption::DynamicDraw)),
-    PrintToStringParamName());
+    PrintToStringParamName(),
+    testing::Values(BaseVertexOption::NoBaseVertex, BaseVertexOption::UseBaseVertex),
+    testing::Values(BaseInstanceOption::NoBaseInstance, BaseInstanceOption::UseBaseInstance),
+    testing::Values(BufferDataUsageOption::StaticDraw, BufferDataUsageOption::DynamicDraw),
+    ANGLE_ALL_TEST_PLATFORMS_ES3);
 
 }  // namespace

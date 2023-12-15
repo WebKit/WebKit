@@ -1166,7 +1166,7 @@ Error Display::destroyInvalidEglObjects()
 
     while (!mInvalidSyncMap.empty())
     {
-        destroySyncImpl(mInvalidSyncMap.begin()->second, &mInvalidSyncMap);
+        destroySyncImpl(mInvalidSyncMap.begin()->second->id(), &mInvalidSyncMap);
     }
 
     return NoError();
@@ -1206,7 +1206,8 @@ Error Display::terminate(Thread *thread, TerminateReason terminateReason)
     mInvalidSurfaceMap.insert(mState.surfaceMap.begin(), mState.surfaceMap.end());
     mState.surfaceMap.clear();
 
-    mInvalidSyncMap.insert(mSyncMap.begin(), mSyncMap.end());
+    mInvalidSyncMap.insert(std::make_move_iterator(mSyncMap.begin()),
+                           std::make_move_iterator(mSyncMap.end()));
     mSyncMap.clear();
 
     // Cache total number of contexts before invalidation. This is used as a check to verify that
@@ -1260,6 +1261,8 @@ Error Display::terminate(Thread *thread, TerminateReason terminateReason)
 
     // Clean up all invalid objects
     ANGLE_TRY(destroyInvalidEglObjects());
+
+    mSyncPools.clear();
 
     mConfigSet.clear();
 
@@ -1641,17 +1644,29 @@ Error Display::createSync(const gl::Context *currentContext,
         ANGLE_TRY(restoreLostDevice());
     }
 
-    angle::UniqueObjectPointer<egl::Sync, Display> syncPtr(new Sync(mImplementation, id, type),
-                                                           this);
+    std::unique_ptr<Sync> sync;
 
-    ANGLE_TRY(syncPtr->initialize(this, currentContext, attribs));
+    SyncPool &pool = mSyncPools[type];
+    if (!pool.empty())
+    {
+        sync = std::move(pool.back());
+        pool.pop_back();
+    }
+    else
+    {
+        sync.reset(new Sync(mImplementation, type));
+    }
 
-    Sync *sync = syncPtr.release();
+    Error err = sync->initialize(this, currentContext, id, attribs);
+    if (err.isError())
+    {
+        sync->onDestroy(this);
+        return err;
+    }
 
-    sync->addRef();
-    mSyncMap.insert(std::pair(sync->id().value, sync));
+    *outSync = sync.get();
+    mSyncMap.insert(std::pair(id.value, std::move(sync)));
 
-    *outSync = sync;
     return NoError();
 }
 
@@ -1890,12 +1905,21 @@ Error Display::destroyContext(Thread *thread, gl::Context *context)
     return NoError();
 }
 
-void Display::destroySyncImpl(Sync *sync, SyncMap *syncs)
+void Display::destroySyncImpl(SyncID syncId, SyncMap *syncs)
 {
-    auto iter = syncs->find(sync->id().value);
+    auto iter = syncs->find(syncId.value);
     ASSERT(iter != syncs->end());
-    mSyncHandleAllocator.release(sync->id().value);
-    iter->second->release(this);
+    mSyncHandleAllocator.release(syncId.value);
+
+    auto &sync = iter->second;
+    sync->onDestroy(this);
+
+    SyncPool &pool = mSyncPools[sync->getType()];
+    if (pool.size() < kMaxSyncPoolSizePerType)
+    {
+        pool.push_back(std::move(sync));
+    }
+
     syncs->erase(iter);
 }
 
@@ -1916,7 +1940,7 @@ Error Display::destroySurface(Surface *surface)
 
 void Display::destroySync(Sync *sync)
 {
-    return destroySyncImpl(sync, &mSyncMap);
+    return destroySyncImpl(sync->id(), &mSyncMap);
 }
 
 bool Display::isDeviceLost() const
@@ -2628,7 +2652,7 @@ const egl::Image *Display::getImage(egl::ImageID imageID) const
 const egl::Sync *Display::getSync(egl::SyncID syncID) const
 {
     auto iter = mSyncMap.find(syncID.value);
-    return iter != mSyncMap.end() ? iter->second : nullptr;
+    return iter != mSyncMap.end() ? iter->second.get() : nullptr;
 }
 
 gl::Context *Display::getContext(gl::ContextID contextID)
@@ -2652,7 +2676,7 @@ egl::Image *Display::getImage(egl::ImageID imageID)
 egl::Sync *Display::getSync(egl::SyncID syncID)
 {
     auto iter = mSyncMap.find(syncID.value);
-    return iter != mSyncMap.end() ? iter->second : nullptr;
+    return iter != mSyncMap.end() ? iter->second.get() : nullptr;
 }
 
 // static

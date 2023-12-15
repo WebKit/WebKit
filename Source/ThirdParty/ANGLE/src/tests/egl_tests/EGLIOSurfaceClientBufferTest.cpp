@@ -627,9 +627,6 @@ TEST_P(IOSurfaceClientBufferTest, RenderToR16IOSurface)
     // This test only works on ES3 since it requires an integer texture.
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
 
-    // TODO(http://anglebug.com/7445): Fails with Metal backend.
-    ANGLE_SKIP_TEST_IF(IsMetal());
-
     // HACK(cwallez@chromium.org) 'L016' doesn't seem to be an official pixel format but it works
     // sooooooo let's test using it
     ScopedIOSurfaceRef ioSurface = CreateSinglePlaneIOSurface(1, 1, 'L016', 2);

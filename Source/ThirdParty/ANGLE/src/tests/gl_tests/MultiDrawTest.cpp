@@ -178,8 +178,7 @@ varying vec4 color;
 void main()
 {
     int id = )" << (IsDrawIDTest() ? "gl_DrawID" : "0")
-               << ";"
-               << R"(
+               << ";" << R"(
     float quad_id = float(id / 2);
     float color_id = quad_id - (3.0 * floor(quad_id / 3.0));
     if (color_id == 0.0) {
@@ -1247,48 +1246,32 @@ TEST_P(MultiDrawNoInstancingSupportTest, InvalidOperation)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
-const angle::PlatformParameters platforms[] = {
-    ES2_D3D9(),     ES2_OPENGL(), ES2_OPENGLES(),           ES2_VULKAN(), ES3_D3D11(), ES3_OPENGL(),
-    ES3_OPENGLES(), ES3_VULKAN(), ES3_VULKAN_SWIFTSHADER(),
-};
+ANGLE_INSTANTIATE_TEST_COMBINE_3(MultiDrawTest,
+                                 PrintToStringParamName(),
+                                 testing::Values(DrawIDOption::NoDrawID, DrawIDOption::UseDrawID),
+                                 testing::Values(InstancingOption::NoInstancing,
+                                                 InstancingOption::UseInstancing),
+                                 testing::Values(BufferDataUsageOption::StaticDraw,
+                                                 BufferDataUsageOption::DynamicDraw),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES2,
+                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
 
-const angle::PlatformParameters es2_platforms[] = {
-    ES2_D3D9(), ES2_OPENGL(), ES2_OPENGLES(), ES2_VULKAN(), ES2_VULKAN_SWIFTSHADER(),
-};
+ANGLE_INSTANTIATE_TEST_COMBINE_3(MultiDrawNoInstancingSupportTest,
+                                 PrintToStringParamName(),
+                                 testing::Values(DrawIDOption::NoDrawID, DrawIDOption::UseDrawID),
+                                 testing::Values(InstancingOption::UseInstancing),
+                                 testing::Values(BufferDataUsageOption::StaticDraw,
+                                                 BufferDataUsageOption::DynamicDraw),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES2);
 
-const angle::PlatformParameters es3_platforms[] = {
-    ES3_D3D11(), ES3_OPENGL(), ES3_OPENGLES(), ES3_VULKAN(), ES3_VULKAN_SWIFTSHADER(),
-};
-
-INSTANTIATE_TEST_SUITE_P(
-    ,
-    MultiDrawTest,
-    testing::Combine(
-        testing::ValuesIn(::angle::FilterTestParams(platforms, ArraySize(platforms))),
-        testing::Values(DrawIDOption::NoDrawID, DrawIDOption::UseDrawID),
-        testing::Values(InstancingOption::NoInstancing, InstancingOption::UseInstancing),
-        testing::Values(BufferDataUsageOption::StaticDraw, BufferDataUsageOption::DynamicDraw)),
-    PrintToStringParamName());
-
-INSTANTIATE_TEST_SUITE_P(
-    ,
-    MultiDrawNoInstancingSupportTest,
-    testing::Combine(
-        testing::ValuesIn(::angle::FilterTestParams(es2_platforms, ArraySize(es2_platforms))),
-        testing::Values(DrawIDOption::NoDrawID, DrawIDOption::UseDrawID),
-        testing::Values(InstancingOption::UseInstancing),
-        testing::Values(BufferDataUsageOption::StaticDraw, BufferDataUsageOption::DynamicDraw)),
-    PrintToStringParamName());
-
-INSTANTIATE_TEST_SUITE_P(
-    ,
-    MultiDrawTestES3,
-    testing::Combine(
-        testing::ValuesIn(::angle::FilterTestParams(es3_platforms, ArraySize(es3_platforms))),
-        testing::Values(DrawIDOption::NoDrawID, DrawIDOption::UseDrawID),
-        testing::Values(InstancingOption::NoInstancing, InstancingOption::UseInstancing),
-        testing::Values(BufferDataUsageOption::StaticDraw, BufferDataUsageOption::DynamicDraw)),
-    PrintToStringParamName());
+ANGLE_INSTANTIATE_TEST_COMBINE_3(MultiDrawTestES3,
+                                 PrintToStringParamName(),
+                                 testing::Values(DrawIDOption::NoDrawID, DrawIDOption::UseDrawID),
+                                 testing::Values(InstancingOption::NoInstancing,
+                                                 InstancingOption::UseInstancing),
+                                 testing::Values(BufferDataUsageOption::StaticDraw,
+                                                 BufferDataUsageOption::DynamicDraw),
+                                 ANGLE_ALL_TEST_PLATFORMS_ES3);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(MultiDrawIndirectTest);
 ANGLE_INSTANTIATE_TEST_ES31_AND(MultiDrawIndirectTest,

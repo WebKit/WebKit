@@ -613,10 +613,7 @@ angle::Result SyncVk::getStatus(const gl::Context *context, GLint *outResult)
 
 EGLSyncVk::EGLSyncVk() : EGLSyncImpl(), mSyncHelper(nullptr) {}
 
-EGLSyncVk::~EGLSyncVk()
-{
-    SafeDelete(mSyncHelper);
-}
+EGLSyncVk::~EGLSyncVk() {}
 
 void EGLSyncVk::onDestroy(const egl::Display *display)
 {
@@ -635,7 +632,7 @@ egl::Error EGLSyncVk::initialize(const egl::Display *display,
         case EGL_SYNC_FENCE_KHR:
         {
             vk::SyncHelper *syncHelper = new vk::SyncHelper();
-            mSyncHelper                = syncHelper;
+            mSyncHelper.reset(syncHelper);
             if (syncHelper->initialize(vk::GetImpl(context), true) == angle::Result::Stop)
             {
                 return egl::Error(EGL_BAD_ALLOC, "eglCreateSyncKHR failed to create sync object");
@@ -645,7 +642,7 @@ egl::Error EGLSyncVk::initialize(const egl::Display *display,
         case EGL_SYNC_NATIVE_FENCE_ANDROID:
         {
             vk::SyncHelperNativeFence *syncHelper = new vk::SyncHelperNativeFence();
-            mSyncHelper                           = syncHelper;
+            mSyncHelper.reset(syncHelper);
             EGLint nativeFenceFd =
                 attribs.getAsInt(EGL_SYNC_NATIVE_FENCE_FD_ANDROID, EGL_NO_NATIVE_FENCE_FD_ANDROID);
             return angle::ToEGL(syncHelper->initializeWithFd(vk::GetImpl(context), nativeFenceFd),

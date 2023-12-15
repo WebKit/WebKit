@@ -191,6 +191,8 @@ class TCompiler : public TShHandleBase
 
     bool hasPixelLocalStorageUniforms() const { return mHasPixelLocalStorageUniforms; }
 
+    ShPixelLocalStorageType getPixelLocalStorageType() const { return mCompileOptions.pls.type; }
+
     unsigned int getSharedMemorySize() const;
 
     sh::GLenum getShaderType() const { return mShaderType; }
@@ -226,6 +228,8 @@ class TCompiler : public TShHandleBase
     bool isClipDistanceRedeclared() const { return mClipDistanceRedeclared; }
 
     bool hasClipDistance() const { return mClipDistanceUsed; }
+
+    bool usesDerivatives() const { return mUsesDerivatives; }
 
   protected:
     // Add emulated functions to the built-in function emulator.
@@ -386,6 +390,9 @@ class TCompiler : public TShHandleBase
 
     // ANGLE_shader_pixel_local_storage.
     bool mHasPixelLocalStorageUniforms;
+
+    // Fragment shader uses screen-space derivatives
+    bool mUsesDerivatives;
 
     // name hashing.
     NameMap mNameMap;

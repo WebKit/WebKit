@@ -481,8 +481,6 @@ class PrivateState : angle::NonCopyable
     // Hint setters
     void setGenerateMipmapHint(GLenum hint);
     GLenum getGenerateMipmapHint() const { return mGenerateMipmapHint; }
-    void setTextureFilteringHint(GLenum hint);
-    GLenum getTextureFilteringHint() const { return mTextureFilteringHint; }
     GLenum getFragmentShaderDerivativeHint() const { return mFragmentShaderDerivativeHint; }
     void setFragmentShaderDerivativeHint(GLenum hint);
 
@@ -639,7 +637,6 @@ class PrivateState : angle::NonCopyable
     GLfloat mLineWidth;
 
     GLenum mGenerateMipmapHint;
-    GLenum mTextureFilteringHint;
     GLenum mFragmentShaderDerivativeHint;
 
     Rectangle mViewport;
@@ -1347,7 +1344,6 @@ class State : angle::NonCopyable
     float getLineWidth() const { return mPrivateState.getLineWidth(); }
     unsigned int getActiveSampler() const { return mPrivateState.getActiveSampler(); }
     GLenum getGenerateMipmapHint() const { return mPrivateState.getGenerateMipmapHint(); }
-    GLenum getTextureFilteringHint() const { return mPrivateState.getTextureFilteringHint(); }
     GLenum getFragmentShaderDerivativeHint() const
     {
         return mPrivateState.getFragmentShaderDerivativeHint();

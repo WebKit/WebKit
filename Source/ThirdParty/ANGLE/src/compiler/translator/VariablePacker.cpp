@@ -239,11 +239,10 @@ bool VariablePacker::checkExpandedVariablesWithinPackingLimits(
             break;
         }
         topNonFullRow_ += GetVariablePackingRows(variable);
-    }
-
-    if (topNonFullRow_ > maxRows_)
-    {
-        return false;
+        if (topNonFullRow_ > maxRows_)
+        {
+            return false;
+        }
     }
 
     // Packs the 3 column variables.
@@ -255,12 +254,12 @@ bool VariablePacker::checkExpandedVariablesWithinPackingLimits(
         {
             break;
         }
-        num3ColumnRows += GetVariablePackingRows(variable);
-    }
 
-    if (topNonFullRow_ + num3ColumnRows > maxRows_)
-    {
-        return false;
+        num3ColumnRows += GetVariablePackingRows(variable);
+        if (topNonFullRow_ + num3ColumnRows > maxRows_)
+        {
+            return false;
+        }
     }
 
     fillColumns(topNonFullRow_, num3ColumnRows, 0, 3);

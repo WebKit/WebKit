@@ -949,7 +949,27 @@ angle::Result TextureVk::copyImage(const gl::Context *context,
         gl::GetInternalFormatInfo(internalFormat, GL_UNSIGNED_BYTE);
     const vk::Format &vkFormat = renderer->getFormat(internalFormatInfo.sizedInternalFormat);
 
+    // The texture level being redefined might be the same as the one bound to the framebuffer.
+    // This _could_ be supported by using a temp image before redefining the level (and potentially
+    // discarding the image).  However, this is currently unimplemented.
+    FramebufferVk *framebufferVk = vk::GetImpl(source);
+    RenderTargetVk *colorReadRT  = framebufferVk->getColorReadRenderTarget();
+    vk::ImageHelper *srcImage    = &colorReadRT->getImageForCopy();
+    const bool isCubeMap         = index.getType() == gl::TextureType::CubeMap;
+    gl::LevelIndex levelIndex(getNativeImageIndex(index).getLevelIndex());
+    const uint32_t layerIndex    = index.hasLayer() ? index.getLayerIndex() : 0;
+    const uint32_t redefinedFace = isCubeMap ? layerIndex : 0;
+    const uint32_t sourceFace    = isCubeMap ? colorReadRT->getLayerIndex() : 0;
+    const bool isSelfCopy = mImage == srcImage && levelIndex == colorReadRT->getLevelIndex() &&
+                            redefinedFace == sourceFace;
+
     ANGLE_TRY(redefineLevel(context, index, vkFormat, newImageSize));
+
+    if (isSelfCopy)
+    {
+        UNIMPLEMENTED();
+        return angle::Result::Continue;
+    }
 
     return copySubImageImpl(context, index, gl::Offset(0, 0, 0), sourceArea, internalFormatInfo,
                             source);
@@ -2026,7 +2046,8 @@ angle::Result TextureVk::redefineLevel(const gl::Context *context,
                 mImage->getLevelCount() == 1 && mImage->getFirstAllocatedLevel() == levelIndexGL;
 
             // If incompatible, and redefining the single-level image, release it so it can be
-            // recreated immediately.  This is an optimization to avoid an extra copy.
+            // recreated immediately.  This is needed so that the texture can be reallocated with
+            // the correct format/size.
             //
             // This is not done for cubemaps because every face may be separately redefined.  Note
             // that this is not possible for texture arrays in general.

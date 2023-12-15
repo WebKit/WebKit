@@ -293,7 +293,6 @@ enum class Feature
     SupportsExternalSemaphoreCapabilities,
     SupportsExternalSemaphoreFd,
     SupportsExternalSemaphoreFuchsia,
-    SupportsFilteringPrecision,
     SupportsFormatFeatureFlags2,
     SupportsFragmentShaderInterlockARB,
     SupportsFragmentShaderInterlockNV,
@@ -392,6 +391,7 @@ enum class Feature
     VertexIDDoesNotIncludeBaseVertex,
     WaitIdleBeforeSwapchainRecreation,
     WarmUpPipelineCacheAtLink,
+    WriteHelperSampleMask,
     ZeroMaxLodWorkaround,
 
     InvalidEnum,

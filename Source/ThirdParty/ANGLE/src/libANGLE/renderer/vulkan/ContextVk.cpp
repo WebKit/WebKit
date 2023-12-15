@@ -8354,8 +8354,8 @@ angle::Result ContextVk::switchToReadOnlyDepthStencilMode(gl::Texture *texture,
     {
         if (mState.isStencilWriteEnabled())
         {
-            WARN() << "Stencil render feedback loop mode detected, content will be undefined per "
-                      "specification";
+            // This looks like a feedback loop, but we don't issue a warning because the application
+            // may have correctly used BASE and MAX levels to avoid it.  ANGLE doesn't track that.
             mDepthStencilAttachmentFlags.set(vk::RenderPassUsage::StencilFeedbackLoop);
         }
         else if (!mDepthStencilAttachmentFlags[vk::RenderPassUsage::StencilFeedbackLoop])
@@ -8368,8 +8368,8 @@ angle::Result ContextVk::switchToReadOnlyDepthStencilMode(gl::Texture *texture,
     // Switch to read-only depth feedback loop if not already
     if (mState.isDepthWriteEnabled())
     {
-        WARN() << "Depth render feedback loop mode detected, content will be undefined per "
-                  "specification";
+        // This looks like a feedback loop, but we don't issue a warning because the application
+        // may have correctly used BASE and MAX levels to avoid it.  ANGLE doesn't track that.
         mDepthStencilAttachmentFlags.set(vk::RenderPassUsage::DepthFeedbackLoop);
     }
     else if (!mDepthStencilAttachmentFlags[vk::RenderPassUsage::DepthFeedbackLoop])

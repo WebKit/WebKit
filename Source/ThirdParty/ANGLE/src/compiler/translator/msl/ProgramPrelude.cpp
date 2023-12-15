@@ -50,6 +50,13 @@ class ProgramPrelude : public TIntermTraverser
                 break;
             case MetalShaderType::Fragment:
                 functionConstants();
+                mOut << "constant bool " << mtl::kSampleMaskWriteEnabledConstName << " = "
+                     << mtl::kMultisampledRenderingConstName;
+                if (ppc.usesDerivatives)
+                {
+                    mOut << " || " << mtl::kWriteHelperSampleMaskConstName;
+                }
+                mOut << ";\n";
                 break;
             case MetalShaderType::Compute:
                 ASSERT(0 && "compute shaders not currently supported");
@@ -1557,6 +1564,7 @@ PROGRAM_PRELUDE_DECLARE(functionConstants,
 #define ANGLE_MULTISAMPLED_RENDERING_INDEX    3
 #define ANGLE_DEPTH_WRITE_ENABLED_INDEX       4
 #define ANGLE_EMULATE_ALPHA_TO_COVERAGE_INDEX 5
+#define ANGLE_WRITE_HELPER_SAMPLE_MASK_INDEX  6
 
 constant bool ANGLEUseSampleCompareGradient [[function_constant(ANGLE_SAMPLE_COMPARE_GRADIENT_INDEX)]];
 constant bool ANGLEUseSampleCompareLod      [[function_constant(ANGLE_SAMPLE_COMPARE_LOD_INDEX)]];
@@ -1564,6 +1572,7 @@ constant bool ANGLERasterizerDisabled       [[function_constant(ANGLE_RASTERIZAT
 constant bool ANGLEMultisampledRendering    [[function_constant(ANGLE_MULTISAMPLED_RENDERING_INDEX)]];
 constant bool ANGLEDepthWriteEnabled        [[function_constant(ANGLE_DEPTH_WRITE_ENABLED_INDEX)]];
 constant bool ANGLEEmulateAlphaToCoverage   [[function_constant(ANGLE_EMULATE_ALPHA_TO_COVERAGE_INDEX)]];
+constant bool ANGLEWriteHelperSampleMask    [[function_constant(ANGLE_WRITE_HELPER_SAMPLE_MASK_INDEX)]];
 
 #define ANGLE_ALPHA0
 )")

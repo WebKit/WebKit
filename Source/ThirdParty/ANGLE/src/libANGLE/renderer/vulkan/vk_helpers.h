@@ -725,11 +725,25 @@ class PipelineBarrier : angle::NonCopyable
 };
 using PipelineBarrierArray = angle::PackedEnumMap<PipelineStage, PipelineBarrier>;
 
-enum class MemoryCoherency
+enum class MemoryCoherency : uint8_t
 {
-    NonCoherent,
-    Coherent
+    CachedNonCoherent,
+    CachedCoherent,
+    UnCachedCoherent,
+
+    InvalidEnum = 3,
+    EnumCount   = 3,
 };
+ANGLE_INLINE bool IsCached(MemoryCoherency coherency)
+{
+    return coherency == MemoryCoherency::CachedNonCoherent ||
+           coherency == MemoryCoherency::CachedCoherent;
+}
+ANGLE_INLINE bool IsCoherent(MemoryCoherency coherency)
+{
+    return coherency == MemoryCoherency::UnCachedCoherent ||
+           coherency == MemoryCoherency::CachedCoherent;
+}
 
 enum class MemoryHostVisibility
 {
@@ -788,7 +802,7 @@ class BufferHelper : public ReadWriteResource
     VkDeviceSize getBlockMemorySize() const { return mSuballocation.getBlockMemorySize(); }
     bool isHostVisible() const { return mSuballocation.isHostVisible(); }
     bool isCoherent() const { return mSuballocation.isCoherent(); }
-
+    bool isCached() const { return mSuballocation.isCached(); }
     bool isMapped() const { return mSuballocation.isMapped(); }
 
     // Also implicitly sets up the correct barriers.
@@ -885,6 +899,8 @@ class BufferHelper : public ReadWriteResource
     BufferSerial mSerial;
     // Manages the descriptorSet cache that created with this BufferHelper object.
     DescriptorSetCacheManager mDescriptorSetCacheManager;
+    // For external buffer
+    GLeglClientBufferEXT mClientBuffer;
 };
 
 class BufferPool : angle::NonCopyable

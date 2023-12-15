@@ -30,14 +30,12 @@ static uint64_t makeSignalValue(EGLAttrib highPart, EGLAttrib lowPart)
 
 // SharedEvent is only available on iOS 12.0+ or mac 10.14+
 #if ANGLE_MTL_EVENT_AVAILABLE
-Sync::Sync() {}
+Sync::Sync() : mCv(new std::condition_variable()), mLock(new std::mutex()) {}
 Sync::~Sync() {}
 
 void Sync::onDestroy()
 {
     mMetalSharedEvent = nil;
-    mCv               = nullptr;
-    mLock             = nullptr;
 }
 
 angle::Result Sync::initialize(ContextMtl *contextMtl,
@@ -59,8 +57,6 @@ angle::Result Sync::initialize(ContextMtl *contextMtl,
     auto signaledValue = mMetalSharedEvent.get().signaledValue;
     mSignalValue       = signalValue.valid() ? signalValue.value() : signaledValue + 1;
 
-    mCv.reset(new std::condition_variable());
-    mLock.reset(new std::mutex());
     return angle::Result::Continue;
 }
 
