@@ -1035,6 +1035,8 @@ void TypeChecker::visit(AST::CallExpression& call)
                 m_shaderModule.setUsesWorkgroupUniformLoad();
             else if (targetName == "frexp"_s)
                 m_shaderModule.setUsesFrexp();
+            else if (targetName == "modf"_s)
+                m_shaderModule.setUsesModf();
             target.m_inferredType = result;
             return;
         }

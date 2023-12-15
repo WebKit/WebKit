@@ -70,6 +70,9 @@ void Type::dump(PrintStream& out) const
             case PrimitiveStruct::FrexpResult::kind:
                 out.print(*structure.values[PrimitiveStruct::FrexpResult::fract]);
                 break;
+            case PrimitiveStruct::ModfResult::kind:
+                out.print(*structure.values[PrimitiveStruct::ModfResult::fract]);
+                break;
             }
             out.print(">");
         },
@@ -255,6 +258,8 @@ ConversionRank conversionRank(const Type* from, const Type* to)
         switch (kind) {
         case PrimitiveStruct::FrexpResult::kind:
             return conversionRank(fromPrimitiveStruct->values[PrimitiveStruct::FrexpResult::fract], toPrimitiveStruct->values[PrimitiveStruct::FrexpResult::fract]);
+        case PrimitiveStruct::ModfResult::kind:
+            return conversionRank(fromPrimitiveStruct->values[PrimitiveStruct::ModfResult::fract], toPrimitiveStruct->values[PrimitiveStruct::ModfResult::fract]);
         }
     }
 
