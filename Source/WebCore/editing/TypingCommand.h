@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-class TypingCommand final : public TextInsertionBaseCommand, public CanMakeCheckedPtr {
+class TypingCommand final : public TextInsertionBaseCommand {
 public:
     enum class Type : uint8_t {
         DeleteSelection,
