@@ -21,8 +21,8 @@ FAIL Appending and removing children to msubsup assert_approx_equals: block posi
 FAIL Appending and removing children to msup assert_approx_equals: inline size expected 13.1875 +/- 1 but got 0
 PASS Appending and removing children to mtable
 PASS Appending and removing children to mtext
-FAIL Appending and removing children to munder assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 2.5
-FAIL Appending and removing children to munderover assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 6
+FAIL Appending and removing children to munder assert_approx_equals: block position (child 0) expected 0 +/- 1 but got 3
+FAIL Appending and removing children to munderover assert_approx_equals: block position (child 0) expected 6 +/- 1 but got 0
 PASS Appending and removing children to semantics
 maction:
 mfrac:
