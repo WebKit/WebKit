@@ -3542,7 +3542,6 @@ webkit.org/b/265157 animations/animation-playstate-paused-style-resolution.html 
 webkit.org/b/190032 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Failure ]
 webkit.org/b/190032 compositing/layer-creation/mismatched-rotated-transform-transition-overlap.html [ Failure ]
 webkit.org/b/190032 compositing/layer-creation/mismatched-transform-transition-overlap.html [ Failure ]
-webkit.org/b/190032 compositing/layer-creation/scale-rotation-transition-overlap.html [ Failure ]
 webkit.org/b/190032 compositing/layer-creation/translate-scale-transition-overlap.html [ Failure ]
 webkit.org/b/190032 compositing/layer-creation/translate-transition-overlap.html [ Failure ]
 
@@ -7448,3 +7447,5 @@ http/tests/site-isolation/touch-events [ Skip ]
 http/wpt/opener/child-access-parent-via-windowproxy.html [ Skip ]
 http/wpt/opener/iframe-access-top-via-windowproxy.html [ Skip ]
 http/wpt/opener/parent-access-child-via-windowproxy.html [ Skip ]
+
+webkit.org/b/266477 [ Debug ] compositing/layer-creation/scale-rotation-transition-overlap.html [ Failure Timeout ]
