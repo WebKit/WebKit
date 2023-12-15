@@ -442,6 +442,20 @@ RefPtr<CDMInstanceSession> CDMInstanceClearKey::createSession()
     return adoptRef(new CDMInstanceSessionClearKey(*this));
 }
 
+auto CDMInstanceClearKey::getKeyHandleValue(const KeyIDType& keyID) const -> Ref<KeyHandleValuePromise>
+{
+    auto* cdmProxy = this->cdmProxy();
+    if (!cdmProxy)
+        return KeyHandleValuePromise::createAndReject();
+
+    return cdmProxy->getKeyHandleValue(keyID)
+    ->whenSettled(RunLoop::current(), [] (const auto& result) {
+        if (!result || !std::holds_alternative<KeyHandleValue>(*result))
+            return KeyHandleValuePromise::createAndReject();
+        return KeyHandleValuePromise::createAndResolve(std::get<KeyHandleValue>(*result));
+    });
+}
+
 void CDMInstanceSessionClearKey::requestLicense(LicenseType, KeyGroupingStrategy, const AtomString& initDataType, Ref<SharedBuffer>&& initData, LicenseCallback&& callback)
 {
     static uint32_t s_sessionIdValue = 0;

@@ -1,0 +1,13 @@
+
+RUN(video.src = "../resources/hls/clearkey/prog_index.m3u8")
+EVENT(encrypted)
+EXPECTED (bufferToString(encryptedEvent.initData) == 'crypt0.key') OK
+EVENT(message)
+EXPECTED (messageEvent.messageType == 'license-request') OK
+EXPECTED (messageData.kids.length == '1') OK
+EXPECTED (atob(messageData.kids[0]) == 'crypt0.key') OK
+RUN(session.update(responseData))
+Promise resolved OK
+EVENT(canplay)
+END OF TEST
+

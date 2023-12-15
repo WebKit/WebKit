@@ -36,6 +36,7 @@
 #include <wtf/BoxPtr.h>
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
+#include <wtf/NativePromise.h>
 
 #if ENABLE(THUNDER)
 #include "CDMOpenCDMTypes.h"
@@ -53,6 +54,7 @@ using KeyHandleValueVariant = std::variant<
     , BoxPtr<OpenCDMSession>
 #endif
 >;
+using KeyHandleValuePromise = NativePromise<KeyHandleValueVariant, void, PromiseOption::Default | PromiseOption::NonExclusive>;
 
 class KeyHandle : public ThreadSafeRefCounted<KeyHandle> {
 public:
@@ -180,6 +182,8 @@ public:
     void setInstance(CDMInstanceProxy*);
     void abortWaitingForKey() const;
 
+    Ref<KeyHandleValuePromise> getKeyHandleValue(const KeyIDType&) const;
+
 protected:
     RefPtr<KeyHandle> keyHandle(const KeyIDType&) const;
     bool keyAvailable(const KeyIDType&) const;
@@ -194,6 +198,8 @@ protected:
 private:
     mutable Lock m_instanceLock;
     CDMInstanceProxy* m_instance WTF_GUARDED_BY_LOCK(m_instanceLock);
+
+    mutable HashMap<KeyIDType, std::unique_ptr<KeyHandleValuePromise::Producer>> m_keyHandlePromises;
 
     mutable Lock m_keysLock;
     mutable Condition m_keysCondition;
@@ -260,6 +266,10 @@ public:
     // Proxy methods - must be thread-safe.
     void startedWaitingForKey();
     void stoppedWaitingForKey();
+
+protected:
+    CDMProxy* cdmProxy() { return m_cdmProxy.get(); }
+    const CDMProxy* cdmProxy() const { return m_cdmProxy.get(); }
 
 private:
     RefPtr<CDMProxy> m_cdmProxy;

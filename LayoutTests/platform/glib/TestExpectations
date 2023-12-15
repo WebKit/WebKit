@@ -2682,6 +2682,7 @@ fast/shadow-dom/focus-ring-on-shadow-host-sibling.html [ Skip ]
 
 # HLS media playback support is disabled in the GStreamer ports.
 http/tests/media/clearkey/clear-key-hls-aes128.html [ Skip ]
+http/tests/media/clearkey/modern-clear-key-hls-aes128.html [ Skip ]
 http/tests/media/hls/ [ Skip ]
 http/tests/media/track-in-band-hls-metadata-crash.html [ Skip ]
 http/tests/media/track-in-band-hls-metadata.html [ Skip ]

@@ -32,12 +32,14 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDMClearKey.h"
 #include "Logging.h"
 #include "MediaPlayer.h"
 #include <wtf/HexNumber.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 #include <wtf/StringPrintStream.h>
+#include <wtf/VectorHash.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -78,7 +80,7 @@ RefPtr<CDMProxy> CDMProxyFactory::createCDMProxyForKeySystem(const String& keySy
 #if !USE(GSTREAMER)
 Vector<CDMProxyFactory*> CDMProxyFactory::platformRegisterFactories()
 {
-    Vector<CDMProxyFactory*> factories;
+    Vector<CDMProxyFactory*> factories = std::initializer_list<CDMProxyFactory*> { &CDMFactoryClearKey::singleton() };
     return factories;
 }
 #endif
@@ -235,6 +237,16 @@ void CDMProxy::updateKeyStore(const KeyStore& newKeyStore)
 {
     Locker locker { m_keysLock };
     m_keyStore.merge(newKeyStore);
+
+    for (auto& keyHandle : newKeyStore) {
+        std::unique_ptr promise = m_keyHandlePromises.take(keyHandle->id());
+        if (!promise)
+            continue;
+
+        auto& keyHandleValue = keyHandle->value();
+        promise->resolve(WTFMove(keyHandleValue));
+    }
+
     LOG(EME, "EME - CDMProxy - updating key store from a session update");
     m_keysCondition.notifyAll();
 }
@@ -330,6 +342,25 @@ bool CDMProxy::keyAvailable(const KeyIDType& keyID) const
 {
     Locker locker { m_keysLock };
     return keyAvailableUnlocked(keyID);
+}
+
+Ref<KeyHandleValuePromise> CDMProxy::getKeyHandleValue(const KeyIDType& keyID) const
+{
+    if (keyAvailable(keyID)) {
+        auto handle = keyHandle(keyID);
+        return KeyHandleValuePromise::createAndResolve(handle->value());
+    }
+
+    auto promiseIter = m_keyHandlePromises.find(keyID);
+    if (promiseIter != m_keyHandlePromises.end())
+        return *promiseIter->value;
+
+    auto producer = makeUnique<KeyHandleValuePromise::Producer>();
+    auto promise = producer->promise();
+
+    m_keyHandlePromises.set(keyID, WTFMove(producer));
+
+    return promise;
 }
 
 std::optional<Ref<KeyHandle>> CDMProxy::getOrWaitForKeyHandle(const KeyIDType& keyID, WeakPtr<CDMProxyDecryptionClient>&& client) const

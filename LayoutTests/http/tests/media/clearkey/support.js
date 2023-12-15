@@ -11,6 +11,11 @@ function uInt8ArrayToString(array) {
     return String.fromCharCode.apply(null, uint8array);
 }
 
+function bufferToString(buffer)
+{
+    return uInt8ArrayToString(new Uint8Array(buffer))
+}
+
 function base64EncodeUint8Array(input) {
     var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
     var output = "";
@@ -37,3 +42,10 @@ function base64EncodeUint8Array(input) {
     }
     return output;
 }
+
+function base64EncodeBuffer(buffer)
+{
+    return base64EncodeUint8Array(new Uint8Array(buffer))
+}
+
+
