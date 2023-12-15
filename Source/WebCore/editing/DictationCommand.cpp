@@ -53,7 +53,7 @@ public:
             Ref { m_dictationCommand.get() }->insertParagraphSeparator();
     }
 private:
-    CheckedRef<DictationCommand> m_dictationCommand;
+    WeakRef<DictationCommand> m_dictationCommand;
 };
 
 class DictationMarkerSupplier : public TextInsertionMarkerSupplier {
