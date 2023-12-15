@@ -443,6 +443,10 @@ void TestController::cocoaResetStateToConsistentValues(const TestOptions& option
         platformView._viewScale = 1;
         platformView._minimumEffectiveDeviceWidth = 0;
         platformView._editable = NO;
+#if PLATFORM(MAC)
+        platformView.allowsMagnification = NO;
+        [platformView setMagnification:1 centeredAtPoint:CGPointZero];
+#endif
         [platformView _setContinuousSpellCheckingEnabledForTesting:options.shouldShowSpellCheckingDots()];
         [platformView _setGrammarCheckingEnabledForTesting:YES];
         [platformView resetInteractionCallbacks];

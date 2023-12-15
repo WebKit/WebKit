@@ -218,6 +218,8 @@ public:
 
     virtual void setWebViewEditable(bool) { }
 
+    virtual void setWebViewAllowsMagnification(bool) { }
+
     virtual void rawKeyDown(JSStringRef) { notImplemented(); }
     virtual void rawKeyUp(JSStringRef) { notImplemented(); }
 

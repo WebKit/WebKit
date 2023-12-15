@@ -731,11 +731,13 @@ void TiledCoreAnimationDrawingArea::adjustTransientZoom(double scale, FloatPoint
     prepopulateRectForZoom(scale, origin);
 }
 
-void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint origin)
+void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint origin, CompletionHandler<void()>&& completionHandler)
 {
     Ref webPage = m_webPage.get();
-    if (!webPage->localMainFrameView())
+    if (!webPage->localMainFrameView()) {
+        completionHandler();
         return;
+    }
 
     scale *= webPage->viewScaleFactor();
 
@@ -761,6 +763,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     if (m_transientZoomScale == scale && roundedIntPoint(m_transientZoomOrigin) == roundedIntPoint(constrainedOrigin)) {
         // We're already at the right scale and position, so we don't need to animate.
         applyTransientZoomToPage(scale, origin);
+        completionHandler();
         return;
     }
 
@@ -807,6 +810,7 @@ void TiledCoreAnimationDrawingArea::commitTransientZoom(double scale, FloatPoint
     }
 
     [CATransaction commit];
+    completionHandler();
 }
 
 void TiledCoreAnimationDrawingArea::applyTransientZoomToPage(double scale, FloatPoint origin)

@@ -200,7 +200,7 @@ void TiledCoreAnimationDrawingAreaProxy::adjustTransientZoom(double scale, Float
 
 void TiledCoreAnimationDrawingAreaProxy::commitTransientZoom(double scale, FloatPoint origin)
 {
-    send(Messages::DrawingArea::CommitTransientZoom(scale, origin));
+    sendWithAsyncReply(Messages::DrawingArea::CommitTransientZoom(scale, origin), [] { });
 }
 
 void TiledCoreAnimationDrawingAreaProxy::dispatchPresentationCallbacksAfterFlushingLayers(IPC::Connection& connection, Vector<IPC::AsyncReplyID>&& callbackIDs)

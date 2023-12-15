@@ -226,7 +226,7 @@ private:
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     virtual void adjustTransientZoom(double scale, WebCore::FloatPoint origin) { }
-    virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin) { }
+    virtual void commitTransientZoom(double scale, WebCore::FloatPoint origin, CompletionHandler<void()>&&) { }
 #endif
 
     bool m_hasRemovedMessageReceiver { false };

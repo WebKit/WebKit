@@ -53,7 +53,7 @@ private:
     void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) final;
 
     void adjustTransientZoom(double scale, WebCore::FloatPoint origin) final;
-    void commitTransientZoom(double scale, WebCore::FloatPoint origin) final;
+    void commitTransientZoom(double scale, WebCore::FloatPoint origin, CompletionHandler<void()>&&) final;
     void applyTransientZoomToPage(double scale, WebCore::FloatPoint);
 
     void willCommitLayerTree(RemoteLayerTreeTransaction&) final;

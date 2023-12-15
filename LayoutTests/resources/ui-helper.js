@@ -1255,6 +1255,22 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => testRunner.runUIScript(uiScript, resolve));
     }
 
+    static async smartMagnifyAt(x, y)
+    {
+        if (!this.isWebKit2() || !this.isMac()) {
+            console.log('Smart magnify testing is currently only supported on macOS');
+            return Promise.resolve();
+        }
+
+        await UIHelper.startMonitoringWheelEvents();
+
+        // If smartMagnify is not working, ensure you've called setWebViewAllowsMagnification(true).
+        eventSender.mouseMoveTo(x, y);
+        eventSender.smartMagnify();
+
+        await UIHelper.waitForScrollCompletion();
+    }
+
     static typeCharacter(characterString)
     {
         if (!this.isWebKit2() || !this.isIOSFamily()) {
@@ -1559,6 +1575,11 @@ window.UIHelper = class UIHelper {
     static setWebViewEditable(editable)
     {
         return new Promise(resolve => testRunner.runUIScript(`uiController.setWebViewEditable(${editable ? "true" : "false"})`, resolve));
+    }
+
+    static setWebViewAllowsMagnification(allowsMagnification)
+    {
+        return new Promise(resolve => testRunner.runUIScript(`uiController.setWebViewAllowsMagnification(${allowsMagnification ? "true" : "false"})`, resolve));
     }
 
     static rectForMenuAction(action)

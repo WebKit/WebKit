@@ -183,6 +183,7 @@ TextStream& operator<<(TextStream& ts, WheelEventTestMonitor::DeferReason reason
     case WheelEventTestMonitor::DeferReason::ScrollingThreadSyncNeeded: ts << "scrolling thread sync needed"; break;
     case WheelEventTestMonitor::DeferReason::ContentScrollInProgress: ts << "content scrolling"; break;
     case WheelEventTestMonitor::DeferReason::RequestedScrollPosition: ts << "requested scroll position"; break;
+    case WheelEventTestMonitor::DeferReason::CommittingTransientZoom: ts << "committing transient zoom"; break;
     }
     return ts;
 }
