@@ -26,6 +26,7 @@
 #pragma once
 
 #include <CoreMedia/CMTime.h>
+#include <atomic>
 #include <functional>
 #include <wtf/Lock.h>
 #include <wtf/MediaTime.h>
@@ -65,7 +66,7 @@ public:
     RetainPtr<CVPixelBufferRef> decodeSampleSync(CMSampleBufferRef);
 
     void setTimebase(CMTimebaseRef);
-    CMTimebaseRef timebase() const { return m_timebase.get(); }
+    RetainPtr<CMTimebaseRef> timebase() const;
 
     enum ImageForTimeFlags { ExactTime, AllowEarlier, AllowLater };
     RetainPtr<CVPixelBufferRef> imageForTime(const MediaTime&, ImageForTimeFlags = ExactTime);
@@ -86,8 +87,9 @@ private:
     };
     WebCoreDecompressionSession(Mode);
 
-    void ensureDecompressionSessionForSample(CMSampleBufferRef);
+    RetainPtr<VTDecompressionSessionRef> ensureDecompressionSessionForSample(CMSampleBufferRef);
 
+    void setTimebaseWithLockHeld(CMTimebaseRef);
     void decodeSample(CMSampleBufferRef, bool displaying);
     void enqueueDecodedSample(CMSampleBufferRef, bool displaying);
     void handleDecompressionOutput(bool displaying, OSStatus, VTDecodeInfoFlags, CVImageBufferRef, CMTime presentationTimeStamp, CMTime presentationDuration);
@@ -112,26 +114,27 @@ private:
     static const CMItemCount kLowWaterMark = 15;
 
     Mode m_mode;
-    RetainPtr<VTDecompressionSessionRef> m_decompressionSession;
+    mutable Lock m_lock;
+    RetainPtr<VTDecompressionSessionRef> m_decompressionSession WTF_GUARDED_BY_LOCK(m_lock);
     RetainPtr<CMBufferQueueRef> m_producerQueue;
     RetainPtr<CMBufferQueueRef> m_consumerQueue;
-    RetainPtr<CMTimebaseRef> m_timebase;
-    Ref<WorkQueue> m_decompressionQueue;
-    Ref<WorkQueue> m_enqueingQueue;
-    OSObjectPtr<dispatch_source_t> m_timerSource;
-    std::function<void()> m_notificationCallback;
-    std::function<void()> m_hasAvailableFrameCallback;
-    RetainPtr<CFArrayRef> m_qosTiers;
-    int m_currentQosTier { 0 };
-    unsigned m_framesSinceLastQosCheck { 0 };
+    RetainPtr<CMTimebaseRef> m_timebase WTF_GUARDED_BY_LOCK(m_lock);
+    const Ref<WorkQueue> m_decompressionQueue;
+    const Ref<WorkQueue> m_enqueingQueue;
+    OSObjectPtr<dispatch_source_t> m_timerSource WTF_GUARDED_BY_LOCK(m_lock);
+    std::function<void()> m_notificationCallback WTF_GUARDED_BY_CAPABILITY(mainThread);
+    std::function<void()> m_hasAvailableFrameCallback WTF_GUARDED_BY_CAPABILITY(mainThread);
+    RetainPtr<CFArrayRef> m_qosTiers WTF_GUARDED_BY_LOCK(m_lock);
+    int m_currentQosTier WTF_GUARDED_BY_LOCK(m_lock) { 0 };
+    std::atomic<unsigned> m_framesSinceLastQosCheck { 0 };
     double m_decodeRatioMovingAverage { 0 };
 
-    bool m_invalidated { false };
+    std::atomic<bool> m_invalidated { false };
     bool m_hardwareDecoderEnabled { true };
-    int m_framesBeingDecoded { 0 };
-    unsigned m_totalVideoFrames { 0 };
-    unsigned m_droppedVideoFrames { 0 };
-    unsigned m_corruptedVideoFrames { 0 };
+    std::atomic<int> m_framesBeingDecoded { 0 };
+    std::atomic<unsigned> m_totalVideoFrames { 0 };
+    std::atomic<unsigned> m_droppedVideoFrames { 0 };
+    std::atomic<unsigned> m_corruptedVideoFrames { 0 };
     MediaTime m_totalFrameDelay;
 };
 
