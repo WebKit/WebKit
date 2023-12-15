@@ -2676,3 +2676,6 @@ webkit.org/b/264680 webrtc/peer-connection-audio-mute2.html [ Failure Pass Timeo
 
 webkit.org/b/266337 [ Debug ] inspector/debugger/breakpoints/resolved-dump-all-pause-locations.html [ Crash ]
 webkit.org/b/266337 [ Debug ] inspector/debugger/breakpoints/resolved-dump-each-line.html [ Crash ]
+
+webkit.org/b/266204 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Crash ]
+[ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ Crash ]
