@@ -295,6 +295,7 @@ void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOpt
         [copiedConfiguration setLimitsNavigationsToAppBoundDomains:YES];
 
     [copiedConfiguration _setAppInitiatedOverrideValueForTesting:options.isAppInitiated() ? _WKAttributionOverrideTestingAppInitiated : _WKAttributionOverrideTestingUserInitiated];
+    [copiedConfiguration _setLongPressActionsEnabled:options.longPressActionsEnabled()];
 #endif
 
     if (options.enableAttachmentElement())
