@@ -374,7 +374,7 @@ imported/w3c/web-platform-tests/selection/dir-manual.html [ Skip ]
 imported/w3c/web-platform-tests/editing/crashtests/inserthorizontalrule-in-textarea-in-editor-and-undo-on-error-events.html [ Skip ]
 
 # This test hits a debug assertion in WebKit
-imported/w3c/web-platform-tests/editing/run/delete.html?6001-7000 [ Skip ]
+webkit.org/b/266465 imported/w3c/web-platform-tests/editing/run/delete.html?6001-7000 [ Skip ]
 
 # This test's output is not stable from run to run.
 imported/w3c/web-platform-tests/editing/run/undo-redo.html [ Skip ]

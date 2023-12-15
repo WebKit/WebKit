@@ -3732,6 +3732,7 @@ webkit.org/b/264680 media/video-page-visibility-restriction.html [ Pass Timeout 
 webkit.org/b/264680 webgl/webgl-visible-after-context-restore.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run [ Slow ]
+webkit.org/b/266465 [ Debug ] imported/w3c/web-platform-tests/editing/run/delete.html?6001-7000 [ Crash ]
 
 # End: Common failures between GTK and WPE.
 
