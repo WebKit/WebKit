@@ -12,19 +12,19 @@ uniform half pill diagonal tongue degenerate changing default explicit
         (rect (0,0) width=800 height=600)
 
       (interaction regions [
-        (interaction (10,10) width=84 height=52)
+        (interaction (10,10) width=83.50 height=52)
         (borderRadius 12.00),
-        (interaction (117,10) width=83 height=52)
+        (interaction (117.50,10) width=82.50 height=52)
         (borderRadius 20 0 0 20),
-        (interaction (223,10) width=88 height=52)
+        (interaction (224,10) width=87 height=52)
         (borderRadius 16 0 16 0),
-        (interaction (334,10) width=77 height=52)
+        (interaction (335,10) width=75.50 height=52)
         (borderRadius 0 0 10 10),
-        (interaction (434,10) width=102 height=52)
+        (interaction (434.50,10) width=101 height=52)
         (borderRadius 2.00),
-        (interaction (559,10) width=92 height=52)
+        (interaction (559.50,10) width=91 height=52)
         (borderRadius 20.00),
-        (interaction (674,10) width=77 height=52)
+        (interaction (674.50,10) width=76.50 height=52)
         (borderRadius 8.00),
         (interaction (10,82) width=80 height=52)
         (borderRadius 0.00)])

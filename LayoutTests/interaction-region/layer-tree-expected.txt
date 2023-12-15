@@ -42,8 +42,8 @@
                                   (sublayers
                                     (
                                       (type 0)
-                                      (layer bounds [x: 0 y: 0 width: 59 height: 20])
-                                      (layer position [x: 29.5 y: 29.5])
+                                      (layer bounds [x: 0 y: 0 width: 58.5 height: 20])
+                                      (layer position [x: 29.25 y: 29.25])
                                       (layer cornerRadius 9))
                                     (
                                       (type 0)
@@ -68,8 +68,8 @@
                                           (sublayers
                                             (
                                               (type 0)
-                                              (layer bounds [x: 0 y: 0 width: 76 height: 27])
-                                              (layer position [x: 34 y: 34])
+                                              (layer bounds [x: 0 y: 0 width: 75.9921875 height: 27])
+                                              (layer position [x: 33.99609375 y: 33.99609375])
                                               (layer cornerRadius 8))))))
                                     (
                                       (layer bounds [x: 0 y: 0 width: 800 height: 600])
@@ -84,8 +84,8 @@
                                           (sublayers
                                             (
                                               (type 0)
-                                              (layer bounds [x: 0 y: 0 width: 33 height: 27])
-                                              (layer position [x: 12.5 y: 12.5])
+                                              (layer bounds [x: 0 y: 0 width: 32.890625 height: 27])
+                                              (layer position [x: 12.4453125 y: 12.4453125])
                                               (layer cornerRadius 8))))
                                         (
                                           (layer bounds [x: 0 y: 0 width: 800 height: 40])
@@ -99,8 +99,8 @@
                                               (sublayers
                                                 (
                                                   (type 0)
-                                                  (layer bounds [x: 0 y: 0 width: 116 height: 27])
-                                                  (layer position [x: 156 y: 156])
+                                                  (layer bounds [x: 0 y: 0 width: 115.0859375 height: 27])
+                                                  (layer position [x: 155.71484375 y: 155.71484375])
                                                   (layer cornerRadius 8))))))
                                         (
                                           (layer bounds [x: 0 y: 0 width: 800 height: 20])

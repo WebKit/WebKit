@@ -185,13 +185,12 @@ static bool shouldGetOcclusion(const RenderElement& renderer)
     return false;
 }
 
-std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject& regionRenderer, const Region& region)
+std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject& regionRenderer, const FloatRect& bounds)
 {
-    if (!regionRenderer.node())
+    if (bounds.isEmpty())
         return std::nullopt;
 
-    auto bounds = region.bounds();
-    if (bounds.isEmpty())
+    if (!regionRenderer.node())
         return std::nullopt;
 
     Ref mainFrameView = *regionRenderer.document().frame()->mainFrame().virtualView();
@@ -200,10 +199,6 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     auto scale = 1 / mainFrameView->visibleContentScaleFactor();
     frameViewSize.scale(scale, scale);
     auto frameViewArea = frameViewSize.area();
-
-    auto checkedRegionArea = bounds.area<RecordOverflow>();
-    if (checkedRegionArea.hasOverflowed())
-        return std::nullopt;
 
     auto originalElement = dynamicDowncast<Element>(regionRenderer.node());
     if (originalElement && originalElement->isPseudoElement())
@@ -244,7 +239,8 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     // FIXME: Consider also allowing elements that only receive touch events.
     bool hasListener = renderer.style().eventListenerRegionTypes().contains(EventListenerRegionType::MouseClick);
     bool hasPointer = cursorTypeForElement(*matchedElement) == CursorType::Pointer || shouldAllowNonPointerCursorForElement(*matchedElement);
-    bool isTooBigForInteraction = checkedRegionArea.value() > frameViewArea / 3;
+    bool isTooBigForInteraction = bounds.area() > frameViewArea / 3;
+    bool isTooBigForOcclusion = bounds.area() > frameViewArea * 3;
 
     auto elementIdentifier = matchedElement->identifier();
 
@@ -268,7 +264,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     }
 
     if (!hasListener || !(hasPointer || detectedHoverRules) || isTooBigForInteraction) {
-        if (isOriginalMatch && shouldGetOcclusion(renderer)) {
+        if (isOriginalMatch && shouldGetOcclusion(renderer) && !isTooBigForOcclusion) {
             return { {
                 InteractionRegion::Type::Occlusion,
                 elementIdentifier,
@@ -286,6 +282,7 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         return std::nullopt;
 
     float borderRadius = 0;
+    auto rect = bounds;
     OptionSet<InteractionRegion::CornerMask> maskedCorners;
 
     if (const auto& renderBox = dynamicDowncast<RenderBox>(regionRenderer)) {
@@ -323,13 +320,13 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
         // We can safely tweak the bounds and radius without causing visual mismatch.
         borderRadius = std::max<float>(borderRadius, regionRenderer.document().settings().interactionRegionMinimumCornerRadius());
         if (isInlineNonBlock)
-            bounds.inflate(regionRenderer.document().settings().interactionRegionInlinePadding());
+            rect.inflate(regionRenderer.document().settings().interactionRegionInlinePadding());
     }
 
     return { {
         InteractionRegion::Type::Interaction,
         elementIdentifier,
-        bounds,
+        rect,
         borderRadius,
         maskedCorners
     } };

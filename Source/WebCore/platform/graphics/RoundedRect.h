@@ -32,7 +32,6 @@ namespace WebCore {
 
 class FloatQuad;
 class FloatRoundedRect;
-class Region;
 
 class RoundedRectRadii {
 public:
@@ -125,8 +124,5 @@ private:
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const RoundedRect&);
-
-// Snip away rectangles from corners, roughly one per step length of arc.
-WEBCORE_EXPORT Region approximateAsRegion(const RoundedRect&, unsigned stepLength = 20);
 
 } // namespace WebCore

@@ -451,7 +451,7 @@ void UnifiedPDFPlugin::updateScrollingExtents()
 
     EventRegion eventRegion;
     auto eventRegionContext = eventRegion.makeContext();
-    eventRegionContext.unite(enclosingIntRect(FloatRect({ }, size())), *m_element->renderer(), m_element->renderer()->style());
+    eventRegionContext.unite(FloatRoundedRect(FloatRect({ }, size())), *m_element->renderer(), m_element->renderer()->style());
     m_scrollContainerLayer->setEventRegion(WTFMove(eventRegion));
 }
 

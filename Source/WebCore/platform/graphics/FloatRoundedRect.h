@@ -32,6 +32,7 @@
 
 #include "FloatRect.h"
 #include "FloatSize.h"
+#include "Region.h"
 #include "RoundedRect.h"
 
 namespace WebCore {
@@ -187,6 +188,9 @@ inline float calcBorderRadiiConstraintScaleFor(const FloatRect& rect, const Floa
 }
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const FloatRoundedRect&);
+
+// Snip away rectangles from corners, roughly one per step length of arc.
+WEBCORE_EXPORT Region approximateAsRegion(const FloatRoundedRect&, unsigned stepLength = 20);
 
 } // namespace WebCore
 
