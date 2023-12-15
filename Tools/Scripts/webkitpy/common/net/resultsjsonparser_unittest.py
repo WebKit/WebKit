@@ -30,8 +30,7 @@
 import unittest
 
 from webkitpy.common.net.resultsjsonparser import ParsedJSONResults
-from webkitpy.layout_tests.models import test_results
-from webkitpy.layout_tests.models import test_failures
+from webkitpy.layout_tests.models import test_failures, test_results
 
 
 class ParsedJSONResultsTest(unittest.TestCase):

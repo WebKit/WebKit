@@ -49,12 +49,23 @@ class LayoutTestResults(object):
         if not string:
             return None
         parsed_results = ParsedJSONResults(string)
-        return cls(parsed_results.test_results(), parsed_results.did_exceed_test_failure_limit())
+        return cls(
+            parsed_results.test_results(),
+            parsed_results.did_exceed_test_failure_limit(),
+            parsed_results.metadata(),
+        )
 
-    def __init__(self, test_results, did_exceed_test_failure_limit):
+    def __init__(self, test_results, did_exceed_test_failure_limit, metadata):
         self._unit_test_failures = []
         self._test_results = test_results
         self._did_exceed_test_failure_limit = did_exceed_test_failure_limit
+        self._metadata = metadata
+
+    def port_name(self):
+        return self._metadata.get("port_name")
+
+    def test_configuration(self):
+        return self._metadata.get("test_configuration")
 
     def did_exceed_test_failure_limit(self):
         return self._did_exceed_test_failure_limit

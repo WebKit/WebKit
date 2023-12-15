@@ -226,11 +226,15 @@ class ResultsFetcherTest(unittest.TestCase):
         )
 
     def test_lookup_ews_results_from_bugzilla(self):
-        with mock.patch("requests.Session.get", MockRequestsGet), mock.patch("requests.get", MockRequestsGet):
+        with mock.patch("requests.Session.get", MockRequestsGet), mock.patch(
+            "requests.get", MockRequestsGet
+        ):
             actual = lookup_ews_results_from_bugzilla("123456", True, MockBugzilla())
             expected = {
                 "mac-wk1": [
                     "https://ews-build.webkit.org/results/mac-wk1/r12345.zip",
+                ],
+                "mac-debug-wk1": [
                     "https://ews-build.webkit.org/results/mac-debug-wk1/r12345.zip",
                 ],
                 "mac-wk2": ["https://ews-build.webkit.org/results/mac-wk2/r12345.zip"],
