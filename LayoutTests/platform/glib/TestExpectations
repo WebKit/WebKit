@@ -3692,6 +3692,9 @@ webkit.org/b/266280 imported/w3c/web-platform-tests/html/semantics/forms/form-su
 webkit.org/b/266280 imported/w3c/web-platform-tests/service-workers/cache-storage/cache-abort.https.any.worker.html [ Pass Crash ]
 webkit.org/b/266280 imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-abort.https.html [ Pass Crash ]
 webkit.org/b/266280 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-headers.https.html [ Pass Crash ]
+webkit.org/b/266280 http/tests/xmlhttprequest/cross-site-denied-response-sync.html [ Pass Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/html/anonymous-iframe/require-corp-embed-anonymous-iframe.tentative.https.window.html [ Pass Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-abort.https.html [ Pass Crash ]
 
 # Flakily crashing on GTK and WPE bots
 webkit.org/b/262949 media/media-garbage-collection.html [ Pass Crash Timeout Failure ]
