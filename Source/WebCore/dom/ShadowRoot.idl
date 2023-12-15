@@ -31,6 +31,7 @@
     readonly attribute ShadowRootMode mode;
     readonly attribute boolean delegatesFocus;
     [ImplementedAs=slotAssignmentMode, EnabledBySetting=ImperativeSlotAPIEnabled] readonly attribute SlotAssignmentMode slotAssignment;
+    [ImplementedAs=isCloneable, EnabledBySetting=DeclarativeShadowRootsEnabled] readonly attribute boolean cloneable;
     readonly attribute Element host;
     attribute EventHandler onslotchange;
 };
