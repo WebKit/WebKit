@@ -4268,8 +4268,10 @@ private:
     JSValue readTerminal()
     {
         SerializationTag tag = readTag();
-        if (!isTypeExposedToGlobalObject(*m_globalObject, tag))
+        if (!isTypeExposedToGlobalObject(*m_globalObject, tag)) {
+            fail();
             return JSValue();
+        }
         switch (tag) {
         case UndefinedTag:
             return jsUndefined();
