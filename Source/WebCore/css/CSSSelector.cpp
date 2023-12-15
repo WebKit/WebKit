@@ -454,6 +454,11 @@ String CSSSelector::selectorText(StringView separator, StringView rightSide) con
 
     const CSSSelector* cs = this;
     while (true) {
+        if (cs->isImplicit()) {
+            // Remove the space before the implicit selector.
+            separator = separator.substring(1);
+            break;
+        }
         if (cs->match() == Match::Id) {
             builder.append('#');
             serializeIdentifier(cs->serializingValue(), builder);

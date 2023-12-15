@@ -10,7 +10,7 @@ PASS Inner @scope with :scope in from-selector
 PASS Multiple scopes from same @scope-rule, only one limited
 PASS Multiple scopes from same @scope-rule, both limited
 PASS Nested scopes
-FAIL Nested scopes, reverse assert_equals: expected "rgb(0, 0, 0)" but got "rgb(0, 128, 0)"
+PASS Nested scopes, reverse
 PASS Nested scopes, with to-selector
 PASS :scope selecting itself
 PASS The scoping limit is not in scope

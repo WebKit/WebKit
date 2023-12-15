@@ -25,7 +25,7 @@ test(() => {
 }, 'CSSScopeRule.cssText, root only');
 
 test(() => {
-  assert_equals(style.sheet.rules[2].cssText, '@scope (.a) to (.b) {\n  :scope div { display: block; }\n}');
+  assert_equals(style.sheet.rules[2].cssText, '@scope (.a) to (.b) {\n  div { display: block; }\n}');
 }, 'CSSScopeRule.cssText, root and limit');
 
 test(() => {

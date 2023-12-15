@@ -13,6 +13,6 @@ PASS :not(:visited) as scoping root, :scope
 PASS :not(:link) as scoping root, :scope
 PASS :link as scoping limit
 FAIL :visited as scoping limit assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 255, 255)"
-FAIL :not(:link) as scoping limit assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 255, 255)"
+PASS :not(:link) as scoping limit
 PASS :not(:visited) as scoping limit
 
