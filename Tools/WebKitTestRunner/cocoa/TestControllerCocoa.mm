@@ -57,6 +57,7 @@
 #import <WebKit/WKWebsiteDataStoreRef.h>
 #import <WebKit/_WKApplicationManifest.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <pal/spi/cocoa/LaunchServicesSPI.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/MainThread.h>
 #import <wtf/RunLoop.h>
@@ -127,6 +128,23 @@ VKImageAnalysisRequestID swizzledProcessImageAnalysisRequest(id, SEL, VKCImageAn
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS)
+
+#if ENABLE(DATA_DETECTION)
+
+NSURL *swizzledAppStoreURL(NSURL *url, SEL)
+{
+    auto components = adoptNS([[NSURLComponents alloc] initWithURL:url resolvingAgainstBaseURL:NO]);
+    if (![[components scheme] isEqualToString:@"http"] && ![[components scheme] isEqualToString:@"https"])
+        return nil;
+
+    if (![[components host] isEqualToString:@"itunes.apple.com"])
+        return nil;
+
+    [components setScheme:@"itms-appss"];
+    return [components URL];
+}
+
+#endif // ENABLE(DATA_DETECTION)
 
 namespace WTR {
 
@@ -200,6 +218,10 @@ void TestController::cocoaPlatformInitialize(const Options& options)
         @selector(processRequest:progressHandler:completionHandler:),
         reinterpret_cast<IMP>(swizzledProcessImageAnalysisRequest)
     );
+#endif
+
+#if ENABLE(DATA_DETECTION)
+    m_appStoreURLSwizzler = makeUnique<InstanceMethodSwizzler>(NSURL.class, @selector(iTunesStoreURL), reinterpret_cast<IMP>(swizzledAppStoreURL));
 #endif
 }
 

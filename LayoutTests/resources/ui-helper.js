@@ -1544,6 +1544,13 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static contextMenuPreviewRect()
+    {
+        return new Promise(resolve => {
+            testRunner.runUIScript("JSON.stringify(uiController.contextMenuPreviewRect)", result => resolve(JSON.parse(result)));
+        });
+    }
+
     static setHardwareKeyboardAttached(attached)
     {
         return new Promise(resolve => testRunner.runUIScript(`uiController.setHardwareKeyboardAttached(${attached ? "true" : "false"})`, resolve));

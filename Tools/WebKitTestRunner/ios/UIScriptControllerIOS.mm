@@ -1274,6 +1274,15 @@ JSObjectRef UIScriptControllerIOS::menuRect() const
     return containerView ? toObject([containerView convertRect:containerView.bounds toView:platformContentView()]) : nullptr;
 }
 
+JSObjectRef UIScriptControllerIOS::contextMenuPreviewRect() const
+{
+    auto *container = findAllViewsInHierarchyOfType(webView().window, internalClassNamed(@"_UIMorphingPlatterView")).firstObject;
+    if (!container)
+        return nullptr;
+
+    return toObject([container convertRect:container.bounds toView:nil]);
+}
+
 JSObjectRef UIScriptControllerIOS::contextMenuRect() const
 {
     auto *window = webView().window;
