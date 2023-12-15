@@ -94,7 +94,7 @@ RefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::tryCreate
 
     ASSERT(length || buffer->isResizableOrGrowableShared());
 
-    if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, length.value_or(0), sizeof(typename Adaptor::Type)))
+    if (!ArrayBufferView::verifySubRangeLength(buffer->byteLength(), byteOffset, length.value_or(0), sizeof(typename Adaptor::Type)))
         return nullptr;
 
     if (!verifyByteOffsetAlignment(byteOffset, sizeof(typename Adaptor::Type)))
@@ -111,7 +111,12 @@ RefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::wrappedAs
     // We do not check verifySubRangeLength for resizable buffer case since this function is only called from already created JS TypedArrays.
     // It is possible that verifySubRangeLength fails when underlying ArrayBuffer is resized, but it is OK since it will be just recognized as OOB TypedArray.
     if (!buffer->isResizableOrGrowableShared()) {
-        if (!ArrayBufferView::verifySubRangeLength(buffer.get(), byteOffset, length.value_or(0), sizeof(typename Adaptor::Type)))
+        if (!ArrayBufferView::verifySubRangeLength(buffer->byteLength(), byteOffset, length.value_or(0), sizeof(typename Adaptor::Type)))
+            return nullptr;
+    } else if (buffer->isGrowableShared()) {
+        // For growable buffer, we extra-check whether byteOffset and length are within maxByteLength.
+        // This does not hit in normal condition, just extra hardening.
+        if (!ArrayBufferView::verifySubRangeLength(buffer->maxByteLength().value(), byteOffset, length.value_or(0), sizeof(typename Adaptor::Type)))
             return nullptr;
     }
 
