@@ -367,12 +367,12 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
 
         let protocol = this._resource.protocol || "";
         let urlComponents = this._resource.urlComponents;
-        if (protocol.startsWith("http/1")) {
+        if (protocol === "http/1.1") {
             // HTTP/1.1 request line:
             // https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1
             let requestLine = `${this._resource.requestMethod} ${urlComponents.path} ${protocol.toUpperCase()}`;
             this._requestHeadersSection.appendKeyValuePair(requestLine, null, "h1-status");
-        } else if (protocol === "h2") {
+        } else {
             // HTTP/2 Request pseudo headers:
             // https://tools.ietf.org/html/rfc7540#section-8.1.2.3
             this._requestHeadersSection.appendKeyValuePair(":method", this._resource.requestMethod, "h2-pseudo-header");
@@ -401,12 +401,12 @@ WI.ResourceHeadersContentView = class ResourceHeadersContentView extends WI.Cont
         this._responseHeadersSection.toggleIncomplete(false);
 
         let protocol = this._resource.protocol || "";
-        if (protocol.startsWith("http/1")) {
+        if (protocol === "http/1.1") {
             // HTTP/1.1 response status line:
             // https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
             let responseLine = `${protocol.toUpperCase()} ${this._resource.statusCode} ${this._resource.statusText}`;
             this._responseHeadersSection.appendKeyValuePair(responseLine, null, "h1-status");
-        } else if (protocol === "h2") {
+        } else {
             // HTTP/2 Response pseudo headers:
             // https://tools.ietf.org/html/rfc7540#section-8.1.2.4
             this._responseHeadersSection.appendKeyValuePair(":status", this._resource.statusCode, "h2-pseudo-header");

@@ -1294,6 +1294,7 @@ localizedStrings["Protocol"] = "Protocol";
 /* Label for button that shows controls for toggling CSS pseudo-classes on the selected element. */
 localizedStrings["Pseudo @ Styles details sidebar panel"] = "Pseudo";
 localizedStrings["Pseudo-Element"] = "Pseudo-Element";
+localizedStrings["QUIC"] = "QUIC";
 localizedStrings["Query Parameters"] = "Query Parameters";
 localizedStrings["Query String"] = "Query String";
 localizedStrings["Query String Parameters"] = "Query String Parameters";

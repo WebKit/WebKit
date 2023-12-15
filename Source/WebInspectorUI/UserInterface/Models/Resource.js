@@ -218,18 +218,12 @@ WI.Resource = class Resource extends WI.SourceCode
     static displayNameForProtocol(protocol)
     {
         switch (protocol) {
+        case "h3":
+            return "HTTP/3";
         case "h2":
             return "HTTP/2";
-        case "http/1.0":
-            return "HTTP/1.0";
         case "http/1.1":
             return "HTTP/1.1";
-        case "spdy/2":
-            return "SPDY/2";
-        case "spdy/3":
-            return "SPDY/3";
-        case "spdy/3.1":
-            return "SPDY/3.1";
         default:
             return null;
         }
@@ -1250,17 +1244,17 @@ WI.Resource = class Resource extends WI.SourceCode
         let lines = [];
 
         let protocol = this.protocol || "";
-        if (protocol === "h2") {
+        if (protocol === "http/1.1") {
+            // HTTP/1.1 request line:
+            // https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1
+            lines.push(`${this.requestMethod} ${this.urlComponents.path}${protocol ? " " + protocol.toUpperCase() : ""}`);
+        } else {
             // HTTP/2 Request pseudo headers:
             // https://tools.ietf.org/html/rfc7540#section-8.1.2.3
             lines.push(`:method: ${this.requestMethod}`);
             lines.push(`:scheme: ${this.urlComponents.scheme}`);
             lines.push(`:authority: ${WI.h2Authority(this.urlComponents)}`);
             lines.push(`:path: ${WI.h2Path(this.urlComponents)}`);
-        } else {
-            // HTTP/1.1 request line:
-            // https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1
-            lines.push(`${this.requestMethod} ${this.urlComponents.path}${protocol ? " " + protocol.toUpperCase() : ""}`);
         }
 
         for (let key in this.requestHeaders)
@@ -1274,14 +1268,14 @@ WI.Resource = class Resource extends WI.SourceCode
         let lines = [];
 
         let protocol = this.protocol || "";
-        if (protocol === "h2") {
-            // HTTP/2 Response pseudo headers:
-            // https://tools.ietf.org/html/rfc7540#section-8.1.2.4
-            lines.push(`:status: ${this.statusCode}`);
-        } else {
+        if (protocol === "http/1.1") {
             // HTTP/1.1 response status line:
             // https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
             lines.push(`${protocol ? protocol.toUpperCase() + " " : ""}${this.statusCode} ${this.statusText}`);
+        } else {
+            // HTTP/2 Response pseudo headers:
+            // https://tools.ietf.org/html/rfc7540#section-8.1.2.4
+            lines.push(`:status: ${this.statusCode}`);
         }
 
         for (let key in this.responseHeaders)

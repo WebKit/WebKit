@@ -139,6 +139,7 @@ WI.ResourceTimingBreakdownView = class ResourceTimingBreakdownView extends WI.Vi
 
         let {startTime, redirectStart, redirectEnd, fetchStart, domainLookupStart, domainLookupEnd, connectStart, connectEnd, secureConnectionStart, requestStart, responseStart, responseEnd} = this._resource.timingData;
         let serverTiming = this._resource.serverTiming;
+        let protocol = this._resource.protocol
 
         this._tableElement = this.element.appendChild(document.createElement("table"));
         this._tableElement.className = "waterfall network";
@@ -161,10 +162,15 @@ WI.ResourceTimingBreakdownView = class ResourceTimingBreakdownView extends WI.Vi
             this._appendHeaderRow(WI.UIString("Connection:"));
             if (domainLookupStart)
                 this._appendRow(WI.UIString("DNS"), "dns", domainLookupStart, domainLookupEnd || connectStart || requestStart);
-            if (connectStart)
-                this._appendRow(WI.UIString("TCP"), "connect", connectStart, connectEnd || requestStart);
-            if (secureConnectionStart)
-                this._appendRow(WI.UIString("Secure"), "secure", secureConnectionStart, connectEnd || requestStart);
+            if (protocol === "http/1.1" || protocol === "h2") {
+                if (connectStart)
+                    this._appendRow(WI.UIString("TCP"), "connect", connectStart, connectEnd || requestStart);
+                if (secureConnectionStart)
+                    this._appendRow(WI.UIString("Secure"), "secure", secureConnectionStart, connectEnd || requestStart);
+            } else {
+                if (connectStart)
+                    this._appendRow(WI.UIString("QUIC"), "connect", connectStart, connectEnd || requestStart);
+            }
         }
 
         this._appendEmptyRow();
