@@ -1289,7 +1289,8 @@ bool CommandEncoder::validateFinish() const
     if (m_state != EncoderState::Open)
         return false;
 
-    // FIXME: "this.[[debug_group_stack]] must be empty."
+    if (m_debugGroupStackSize)
+        return false;
 
     // FIXME: "Every usage scope contained in this must satisfy the usage scope validation."
 
