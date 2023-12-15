@@ -2447,6 +2447,14 @@ public:
         }
     }
 
+    template <CopyFunction copy>
+    ALWAYS_INLINE static void fillNearTailCall(void* from, void* to)
+    {
+        uint16_t* ptr = reinterpret_cast<uint16_t*>(from) + 2;
+        linkJumpT4<copy>(ptr, ptr, to, BranchWithLink::No);
+        cacheFlush(from, sizeof(uint16_t) * 2);
+    }
+
     void dmbSY()
     {
         m_formatter.twoWordOp16Op16(OP_DMB_T1a, OP_DMB_SY_T1b);
@@ -3214,7 +3222,7 @@ private:
         intptr_t offset = bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(fromInstruction);
 #if ENABLE(JUMP_ISLANDS)
         if (!isInt<25>(offset)) {
-            to = ExecutableAllocator::singleton().getJumpIslandTo(bitwise_cast<void*>(fromInstruction), to);
+            to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(bitwise_cast<void*>(fromInstruction), to);
             offset = bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(fromInstruction);
         }
 #endif
