@@ -27,13 +27,13 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import json
 import logging
 
 from webkitpy.common.memoized import memoized
+
 # FIXME: common should never import from new-run-webkit-tests, one of these files needs to move.
 from webkitpy.layout_tests.layout_package import json_results_generator
-from webkitpy.layout_tests.models import test_expectations, test_results, test_failures
+from webkitpy.layout_tests.models import test_expectations, test_failures, test_results
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
 
 _log = logging.getLogger(__name__)
@@ -162,8 +162,14 @@ class ParsedJSONResults(object):
         self._test_results.sort(key=lambda result: result.test_name)
         self._did_exceed_test_failure_limit = json_dict["interrupted"]
 
+        del json_dict["tests"]
+        self._metadata = json_dict
+
     def did_exceed_test_failure_limit(self):
         return self._did_exceed_test_failure_limit
 
     def test_results(self):
         return self._test_results
+
+    def metadata(self):
+        return self._metadata

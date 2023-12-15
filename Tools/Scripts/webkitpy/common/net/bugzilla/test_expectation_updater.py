@@ -27,7 +27,6 @@
 # SUCH DAMAGE.
 
 import argparse
-import io
 import logging
 import zipfile
 
@@ -39,7 +38,7 @@ from webkitpy.common.net.bugzilla.results_fetcher import (
     lookup_ews_results_from_bugzilla,
 )
 from webkitpy.common.net.layouttestresults import LayoutTestResults
-from webkitpy.common.webkit_finder import WebKitFinder
+from webkitpy.common.version_name_map import VersionNameMap
 from webkitpy.layout_tests.controllers.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.models import test_expectations
 
@@ -91,46 +90,107 @@ class TestExpectationUpdater(object):
 
         self.ews_results = None
 
-    def _tests_to_update(self, platform_name):
-        urls = self.ews_results[platform_name]
-        if len(urls) == 0:
-            return {}
+    def _update_for_bot_results(
+        self, platform_name, test_configuration, results, zip_file, generic_platform_name=None
+    ):
+        split_platform_name = platform_name.split("-")
 
-        # Take the last run for a given platform. Because that's what the
-        # unittests expect.
-        url = urls[-1]
+        if test_configuration["version"] in split_platform_name:
+            split_platform_name.remove(test_configuration["version"])
 
-        _log.info("{} archive: {}".format(platform_name, url))
-        layout_tests_archive_request = requests.get(url)
-        layout_tests_archive_content = layout_tests_archive_request.content
-        zip_file = zipfile.ZipFile(io.BytesIO(layout_tests_archive_content))
-        results = LayoutTestResults.results_from_string(zip_file.read("full_results.json"))
-        results_to_update = [result.test_name for result in results.failing_test_results() if result.type in [test_expectations.TEXT, test_expectations.MISSING]]
-        return {result: zip_file.read(TestResultWriter.actual_filename(result, self.filesystem)) for result in results_to_update}
+        if split_platform_name[-1] not in ("wk1", "wk2"):
+            split_platform_name.append("wk1")
 
-    def _file_content_if_exists(self, filename):
-        return self.filesystem.read_binary_file(filename) if self.filesystem.exists(filename) else b""
+        if "simulator" in split_platform_name:
+            split_platform_name.remove("simulator")
 
-    def _update_for_generic_bot(self, platform_name):
-        for test_name, expected_content in self._tests_to_update(platform_name).items():
-            expected_filename = self.filesystem.join(self.layout_test_repository, TestResultWriter.expected_filename(test_name, self.filesystem))
-            if expected_content != self._file_content_if_exists(expected_filename):
-                _log.info("Updating " + test_name + " for " + platform_name + " (" + expected_filename + ")")
-                self.filesystem.maybe_make_directory(self.filesystem.dirname(expected_filename))
-                self.filesystem.write_binary_file(expected_filename, expected_content)
+        used_platform_name = "-".join(split_platform_name)
 
-    def _update_for_platform_specific_bot(self, platform_name):
-        for test_name, expected_content in self._tests_to_update(platform_name).items():
-            expected_filename = self.filesystem.join(self.layout_test_repository, TestResultWriter.expected_filename(test_name, self.filesystem, platform_name))
-            generic_expected_filename = self.filesystem.join(self.layout_test_repository, TestResultWriter.expected_filename(test_name, self.filesystem))
-            if expected_content != self._file_content_if_exists(generic_expected_filename):
-                if expected_content != self._file_content_if_exists(expected_filename):
-                    _log.info("Updating " + test_name + " for " + platform_name + " (" + expected_filename + ")")
-                    self.filesystem.maybe_make_directory(self.filesystem.dirname(expected_filename))
-                    self.filesystem.write_binary_file(expected_filename, expected_content)
-            elif self.filesystem.exists(expected_filename):
-                _log.info("Updating " + test_name + " for " + platform_name + " ( REMOVED: " + expected_filename + ")")
-                self.filesystem.remove(expected_filename)
+        fs = self.filesystem
+        results_to_update = [
+            result.test_name
+            for result in results.failing_test_results()
+            if result.type in [test_expectations.TEXT, test_expectations.MISSING]
+        ]
+
+        for result in results_to_update:
+            actual_filename = TestResultWriter.actual_filename(result, fs)
+            actual_info = zip_file.getinfo(actual_filename)
+            actual_size = actual_info.file_size
+
+            generic_name = fs.join(
+                self.layout_test_repository,
+                TestResultWriter.expected_filename(result, fs),
+            )
+
+            if platform_name == generic_platform_name:
+                expected_name = generic_name
+            else:
+                expected_name = fs.join(
+                    self.layout_test_repository,
+                    TestResultWriter.expected_filename(result, fs, port_name=used_platform_name),
+                )
+
+            if (
+                generic_platform_name is not None
+                and platform_name != generic_platform_name
+                and fs.exists(generic_name)
+                and fs.getsize(generic_name) == actual_size
+                and fs.read_binary_file(generic_name) == zip_file.read(actual_info)
+            ):
+                # If we have generic platform, and we're not that generic platform, but
+                # the generic result matches the actual result, we can just delete any
+                # existing expected result.
+                if fs.exists(expected_name):
+                    self.filesystem.remove(expected_name)
+
+            elif not (
+                fs.exists(expected_name)
+                and fs.getsize(expected_name) == actual_size
+                and fs.read_binary_file(expected_name) == zip_file.read(actual_info)
+            ):
+                fs.maybe_make_directory(fs.dirname(expected_name))
+                fs.write_binary_file(expected_name, zip_file.read(actual_info))
+
+    def _config_for_bot(self, bot_name):
+        # This should be effectively frozen, as it is only needed for old layout-tests
+        # results files which don't include port and test configuration within them.
+        if bot_name == "gtk-wk2":
+            return (
+                "gtk-wk2",
+                {"version": "", "architecture": "x86", "build_type": "release"},
+            )
+        elif bot_name in ("ios-wk2", "ios-wk2-wpt"):
+            return (
+                "iphone-simulator-sonoma-wk2",
+                {"version": "", "architecture": "arm64", "build_type": "release"},
+            )
+        elif bot_name == "mac-AS-debug-wk2":
+            return (
+                "mac-sonoma-wk2",
+                {"version": "sonoma", "architecture": "arm64", "build_type": "debug"},
+            )
+        elif bot_name == "mac-wk1":
+            return (
+                "mac-monterey",
+                {
+                    "version": "monterey",
+                    "architecture": "x86_64",
+                    "build_type": "release",
+                },
+            )
+        elif bot_name in ("mac-wk2", "mac-wk2-stress"):
+            return (
+                "mac-monterey-wk2",
+                {
+                    "version": "monterey",
+                    "architecture": "x86_64",
+                    "build_type": "release",
+                },
+            )
+        else:
+            msg = "unknown bot, but also why doesn't the full_results.json tell us the config?"
+            raise ValueError(msg)
 
     def do_update(self):
         self.ews_results = lookup_ews_results_from_bugzilla(
@@ -154,17 +214,71 @@ class TestExpectationUpdater(object):
             ).format(self.patch.id())
             raise RuntimeError(msg)
 
-        generic_bots = [platform_name for platform_name in self.ews_results if platform_name == "mac-wk2"]
-        platform_bots = [platform_name for platform_name in self.ews_results if platform_name != "mac-wk2"]
+        # This is order from oldest to newest.
+        mac_port_candidates = [
+            "mac-" + name.replace(" ", "").lower() + "-wk2"
+            for name in VersionNameMap().names("mac")
+        ]
 
-        # First update the generic results, so updates for platform bots can use this new generic result as base.
-        for platform_name in generic_bots:
-            _log.info("Updating results from bot {} (generic)".format(platform_name))
-            self._update_for_generic_bot(platform_name)
+        best_mac_port_idx = -1
+        generic_bots = []
+        platform_bots = []
+        skipped_bots = []
 
-        for platform_name in platform_bots:
-            _log.info("Updating results from bot {} (platform)".format(platform_name))
-            self._update_for_platform_specific_bot(platform_name)
+        for bot_name, urls in self.ews_results.items():
+            for url in urls:
+                f, path = self.filesystem.open_binary_tempfile("")
+                r = requests.get(url, stream=True)
+                for chunk in r.iter_content(chunk_size=0xFFFF):
+                    f.write(chunk)
+                # Close and reopen because we don't support seeking our writeable mock file...
+                f.close()
+                f = self.filesystem.open_binary_file_for_reading(path)
+                zip_file = zipfile.ZipFile(f, "r")
+                results = LayoutTestResults.results_from_string(
+                    zip_file.read("full_results.json")
+                )
+
+                port_name = results.port_name()
+                test_configuration = results.test_configuration()
+                if port_name is None and test_configuration is None:
+                    port_name, test_configuration = self._config_for_bot(bot_name)
+
+                archive = (
+                    path,
+                    bot_name,
+                    port_name,
+                    test_configuration,
+                    results,
+                    zip_file,
+                )
+                if test_configuration["build_type"] != "release":
+                    skipped_bots.append(archive)
+                elif port_name in mac_port_candidates:
+                    idx = mac_port_candidates.index(port_name)
+                    if idx > best_mac_port_idx:
+                        platform_bots.extend(generic_bots)
+                        generic_bots = [archive]
+                        best_mac_port_idx = idx
+                    elif idx == best_mac_port_idx:
+                        generic_bots.append(archive)
+                    else:
+                        platform_bots.append(archive)
+                else:
+                    platform_bots.append(archive)
+
+        if best_mac_port_idx == -1:
+            generic_mac_port = None
+        else:
+            generic_mac_port = mac_port_candidates[best_mac_port_idx]
+
+        # First update the generic results, so updates for platform bots can use this
+        # new generic result as base.
+        for _, _, platform_name, test_configuration, results, zip_file in (generic_bots + platform_bots):
+            _log.info("Updating results from bot {}".format(platform_name))
+            self._update_for_bot_results(
+                platform_name, test_configuration, results, zip_file, generic_platform_name=generic_mac_port
+            )
 
 
 def main(_argv, _stdout, _stderr):

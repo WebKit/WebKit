@@ -57,25 +57,6 @@ EWS_STATECODES = {
 _log = logging.getLogger(__name__)
 
 
-def _platform_name_for_bot(bot_name):
-    name = bot_name
-    if "mac" in name and name.endswith("-wk2"):
-        return "mac-wk2"
-    if "mac" in name and not name.endswith("-wk2"):
-        return "mac-wk1"
-    if "simulator" in name:
-        return "ios-wk2"
-    if "win-future" in name:
-        return "win"
-    if "gtk" in name:
-        return "gtk"
-    if "wpe" in name:
-        return "wpe"
-    if "-debug" in name:
-        name = name.replace("-debug", "")
-    return name
-
-
 def _get_first_layout_test_step(steps):
     # pick the first run as the one for updating the layout tests.
     layout_tests_steps = [step for step in steps if step["name"] == "layout-tests"]
@@ -132,7 +113,6 @@ def lookup_ews_results(ews_build_urls, bot_filter_name=None):
         steps = ews.steps_from_build_number(builder_id, build_number)
 
         bot_name = builder["description"]
-        platform = _platform_name_for_bot(bot_name)
 
         layout_tests_step = _get_first_layout_test_step(steps)
         if layout_tests_step is None:
@@ -146,7 +126,7 @@ def lookup_ews_results(ews_build_urls, bot_filter_name=None):
             if not urlsplit(tests_url).path.endswith(".zip"):
                 continue
 
-            ews_results.setdefault(platform, []).append(tests_url)
+            ews_results.setdefault(bot_name, []).append(tests_url)
             break
 
     return ews_results

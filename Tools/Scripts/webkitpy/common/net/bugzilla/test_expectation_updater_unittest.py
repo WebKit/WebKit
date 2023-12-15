@@ -464,93 +464,17 @@ _ios_zip = _make_zip_filelike(
     }
 )
 
-_win_zip = _make_zip_filelike(
-    {
-        "full_results.json": {
-            "tests": {
-                "imported": {
-                    "w3c": {
-                        "web-platform-tests": {
-                            "url": {
-                                "interfaces.html": {
-                                    "report": "REGRESSION",
-                                    "expected": "PASS",
-                                    "actual": "TEXT",
-                                }
-                            },
-                            "html": {
-                                "browsers": {
-                                    "windows": {
-                                        "browsing-context.html": {
-                                            "report": "REGRESSION",
-                                            "expected": "PASS",
-                                            "actual": "TEXT",
-                                        }
-                                    },
-                                    "the-window-object": {
-                                        "apis-for-creating-and-navigating-browsing-contexts-by-name": {
-                                            "open-features-tokenization-001.html": {
-                                                "report": "REGRESSION",
-                                                "expected": "PASS",
-                                                "actual": "TEXT",
-                                            }
-                                        }
-                                    },
-                                }
-                            },
-                            "dom": {
-                                "events": {
-                                    "EventTarget-dispatchEvent.html": {
-                                        "report": "REGRESSION",
-                                        "expected": "PASS",
-                                        "actual": "TEXT",
-                                    }
-                                }
-                            },
-                        }
-                    }
-                },
-                "animations": {
-                    "trigger-container-scroll-empty.html": {
-                        "report": "FLAKY",
-                        "expected": "PASS",
-                        "actual": "TEXT PASS",
-                    }
-                },
-            },
-            "skipped": 9881,
-            "num_regressions": 4,
-            "other_crashes": {},
-            "interrupted": False,
-            "num_missing": 0,
-            "layout_tests_dir": "/Volumes/Data/EWS/WebKit/LayoutTests",
-            "version": 4,
-            "num_passes": 38225,
-            "pixel_tests_enabled": False,
-            "date": "07:33PM on April 08, 2017",
-            "has_pretty_patch": True,
-            "fixable": 48110,
-            "num_flaky": 1,
-            "uses_expectations_file": True,
-        },
-        "imported/w3c/web-platform-tests/dom/events/EventTarget-dispatchEvent-actual.txt": "g",
-        "imported/w3c/web-platform-tests/html/browsers/the-window-object/apis-for-creating-and-navigating-browsing-contexts-by-name/open-features-tokenization-001-actual.txt": "h",
-        "imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-actual.txt": "i",
-        "imported/w3c/web-platform-tests/url/interfaces-actual.txt": "j",
-    }
-)
-
 
 class MockRequestsGet:
-    def __init__(self, url):
+    def __init__(self, url, stream=False):
         self._urls_data = {
             "https://ews-build.webkit.org/results/mac-wk1/r12345.zip": _mac_wk1a_zip.getvalue(),
             "https://ews-build.webkit.org/results/mac-debug-wk1/r12345.zip": _mac_wk1b_zip.getvalue(),
             "https://ews-build.webkit.org/results/mac-wk2/r12345.zip": _mac_wk2_zip.getvalue(),
             "https://ews-build.webkit.org/results/ios-wk2/r12345.zip": _ios_zip.getvalue(),
-            "https://ews-build.webkit.org/results/win/r12345.zip": _win_zip.getvalue(),
         }
         self._url = url
+        self._stream = stream
         if url not in self._urls_data:
             msg = 'url {} not mocked'.format(url)
             raise ValueError(msg)
@@ -564,6 +488,21 @@ class MockRequestsGet:
     @property
     def text(self):
         return self.content.decode("utf-8")
+
+    def iter_content(self, chunk_size=1, decode_unicode=False):
+        if decode_unicode:
+            s = self.text
+        else:
+            s = self.content
+
+        if chunk_size is None:
+            yield s
+            return
+
+        start = 0
+        for end in range(chunk_size, len(s) + chunk_size, chunk_size):
+            yield s[start:end]
+            start = end
 
     def raise_for_status(self):
         pass
@@ -597,7 +536,6 @@ class TestExpectationUpdaterTest(unittest.TestCase):
             ],
             "mac-wk2": ["https://ews-build.webkit.org/results/mac-wk2/r12345.zip"],
             "ios-wk2": ["https://ews-build.webkit.org/results/ios-wk2/r12345.zip"],
-            "win": ["https://ews-build.webkit.org/results/win/r12345.zip"],
         }
 
         with mock.patch('webkitpy.common.net.bugzilla.test_expectation_updater.lookup_ews_results_from_bugzilla', mock.Mock(return_value=ews_results)), mock.patch('requests.get', MockRequestsGet):
@@ -612,5 +550,3 @@ class TestExpectationUpdaterTest(unittest.TestCase):
             self.assertTrue(self._is_matching(host, "platform/ios-wk2/imported/w3c/web-platform-tests/url/interfaces-expected.txt", "j"))
             # removal of mac-wk1 expectation since no longer different
             self.assertFalse(self._exists(host, "platform/mac-wk1/imported/w3c/web-platform-tests/fetch/api/redirect/redirect-location-expected.txt"))
-            # windows specific expectation
-            self.assertTrue(self._is_matching(host, "platform/win/imported/w3c/web-platform-tests/url/interfaces-expected.txt", "j"))

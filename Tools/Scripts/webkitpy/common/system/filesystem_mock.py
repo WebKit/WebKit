@@ -488,8 +488,21 @@ class ReadableBinaryFileObject(object):
         self.offset += bytes
         return self.data[start:self.offset]
 
-    def seek(self, offset):
-        self.offset = offset
+    def seek(self, offset, whence=0):
+        if whence == 0:
+            self.offset = offset
+        elif whence == 1:
+            self.offset += offset
+        elif whence == 2:
+            self.offset = len(self.data) + offset
+        else:
+            raise OSError("unsupported whence")
+
+    def tell(self):
+        return self.offset
+
+    def seekable(self):
+        return True
 
 
 class ReadableTextFileObject(ReadableBinaryFileObject):
