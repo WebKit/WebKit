@@ -193,6 +193,8 @@ class TestImporter(object):
         self._tests_options = json.loads(self.filesystem.read_text_file(self._tests_options_json_path)) if self.filesystem.exists(self._tests_options_json_path) else None
         self._slow_tests = []
 
+        self._to_skip_new_directories = set()
+
         self.globalToSuffixes = {
             'window': ('html',),
             'worker': ('worker.html', 'serviceworker.html', 'sharedworker.html'),
@@ -248,7 +250,9 @@ class TestImporter(object):
 
         self.generate_git_submodules_description_for_all_repositories()
 
-        self.test_downloader().update_import_expectations(self.test_paths)
+        self.test_downloader().update_import_expectations(
+            self.test_paths, self._to_skip_new_directories
+        )
 
     def generate_git_submodules_description_for_all_repositories(self):
         for test_repository in self._test_downloader.test_repositories:
@@ -276,10 +280,21 @@ class TestImporter(object):
             return True
 
         downloader = self.test_downloader()
+        paths_to_skip_new_directories = {Path(p) for p in downloader.paths_to_skip_new_directories}
         paths_to_skip = {Path(p) for p in downloader.paths_to_skip}
         paths_to_import = {Path(p) for p in downloader.paths_to_import}
 
         for parent in itertools.chain([rel_path], rel_path.parents):
+            if parent in paths_to_skip_new_directories:
+                if parent != rel_path:
+                    to_skip = parent / rel_path.relative_to(parent).parts[0]
+                    if not to_skip.is_dir():
+                        # Files directly under skip-new-directories _are_ imported.
+                        assert rel_path == to_skip
+                        return False
+                    self._to_skip_new_directories.add(str(to_skip))
+                return True
+
             if parent in paths_to_skip:
                 return True
 

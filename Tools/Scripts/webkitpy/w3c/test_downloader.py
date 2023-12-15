@@ -85,6 +85,7 @@ class TestDownloader(object):
 
         self.test_repositories = self.load_test_repositories(self._filesystem)
 
+        self.paths_to_skip_new_directories = []
         self.paths_to_skip = []
         self.paths_to_import = []
         for test_repository in self.test_repositories:
@@ -120,14 +121,17 @@ class TestDownloader(object):
     def _init_paths_from_expectations(self):
         import_lines = json.loads(self._filesystem.read_text_file(self.import_expectations_path))
         for path, policy in import_lines.items():
-            if policy == 'skip':
+            if policy == 'skip-new-directories':
+                self.paths_to_skip_new_directories.append(path)
+            elif policy == 'skip':
                 self.paths_to_skip.append(path)
             elif policy == 'import':
                 self.paths_to_import.append(path)
             else:
                 _log.warning('Problem reading import lines ' + path)
 
-    def update_import_expectations(self, test_paths):
+    def update_import_expectations(self, test_paths, to_skip_new_directories=None):
+        to_skip_new_directories = set() if to_skip_new_directories is None else to_skip_new_directories
         import_lines = json.loads(self._filesystem.read_text_file(self.import_expectations_path))
         for path in test_paths:
             stripped_path = path.rstrip(self._filesystem.sep)
@@ -143,6 +147,9 @@ class TestDownloader(object):
                     break
             if not already_imported:
                 import_lines[stripped_path] = "import"
+
+        for path in to_skip_new_directories:
+            import_lines[path] = "skip"
 
         self._filesystem.write_text_file(self.import_expectations_path, json.dumps(import_lines, sort_keys=True, indent=4, separators=(',', ': ')) + "\n")
 
