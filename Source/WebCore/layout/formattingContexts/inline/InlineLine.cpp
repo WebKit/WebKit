@@ -49,6 +49,7 @@ void Line::initialize(const Vector<InlineItem>& lineSpanningInlineBoxes, bool is
     m_isFirstFormattedLine = isFirstFormattedLine;
     m_inlineBoxListWithClonedDecorationEnd.clear();
     m_clonedEndDecorationWidthForInlineBoxRuns = { };
+    m_rubyAlignContentRightOffset = { };
     m_nonSpanningInlineLevelBoxCount = 0;
     m_hasNonDefaultBidiLevelRun = false;
     m_hasRubyContent = false;
@@ -85,7 +86,7 @@ void Line::resetTrailingContent()
 
 Line::Result Line::close()
 {
-    auto contentLogicalRight = this->contentLogicalRight();
+    auto contentLogicalRight = this->contentLogicalRight() + m_rubyAlignContentRightOffset;
     return { WTFMove(m_runs)
         , contentLogicalWidth()
         , contentLogicalRight

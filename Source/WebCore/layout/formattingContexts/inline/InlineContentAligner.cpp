@@ -268,6 +268,19 @@ InlineLayoutUnit InlineContentAligner::applyRubyAlignSpaceAround(Line::RunList& 
     if (spaceToDistribute <= 0)
         return { };
 
+    auto rangeHasInlineContent = [&] {
+        if (!range.distance())
+            return false;
+        for (auto index = range.begin(); index < range.end(); ++index) {
+            auto& run = runs[index];
+            if (!run.isInlineBox() && !run.isOpaque())
+                return true;
+        }
+        return false;
+    };
+    if (!rangeHasInlineContent())
+        return { };
+
     auto expansion = ExpansionInfo { };
     computedExpansions(runs, range, { }, expansion);
     // Anything to distribute?
@@ -295,7 +308,7 @@ void InlineContentAligner::applyRubyBaseAlignmentOffset(InlineDisplay::Boxes& di
             auto baseEndIndexAndAlignment = shiftRubyBaseContentByAlignmentOffset({ index, contentOffset }, displayBoxes, alignmentOffsetList, adjustContentOnlyInsideRubyBase, inlineFormattingContext);
             index = baseEndIndexAndAlignment.index;
             if (adjustContentOnlyInsideRubyBase == AdjustContentOnlyInsideRubyBase::No)
-                contentOffset += baseEndIndexAndAlignment.offset;
+                contentOffset = baseEndIndexAndAlignment.offset;
             continue;
         }
         ++index;

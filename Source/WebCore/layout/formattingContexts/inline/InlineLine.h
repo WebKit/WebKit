@@ -195,6 +195,8 @@ public:
     const RunList& runs() const { return m_runs; }
     RunList& runs() { return m_runs; }
     void inflateContentLogicalWidth(InlineLayoutUnit delta) { m_contentLogicalWidth += delta; }
+    // FIXME: This is temporary and should be removed when annotation transitions to inline box structure.
+    void adjustContentRightWithRubyAlign(InlineLayoutUnit offset) { m_rubyAlignContentRightOffset = offset; }
 
     using InlineBoxListWithClonedDecorationEnd = HashMap<const Box*, InlineLayoutUnit>;
     const InlineBoxListWithClonedDecorationEnd& inlineBoxListWithClonedDecorationEnd() const { return m_inlineBoxListWithClonedDecorationEnd; }
@@ -303,6 +305,7 @@ private:
     bool m_hasNonDefaultBidiLevelRun { false };
     bool m_isFirstFormattedLine { false };
     bool m_hasRubyContent { false };
+    InlineLayoutUnit m_rubyAlignContentRightOffset { 0.f };
     Vector<InlineLayoutUnit> m_inlineBoxLogicalLeftStack;
 };
 

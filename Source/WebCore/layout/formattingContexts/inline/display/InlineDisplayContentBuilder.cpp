@@ -794,13 +794,24 @@ void InlineDisplayContentBuilder::processBidiContent(const LineLayoutResult& lin
                     continue;
                 }
                 auto isEmptyInlineBox = [&] {
+                    // FIXME: Maybe we should not tag ruby bases with annotation boxes only contentful?
                     if (!lineBox.inlineLevelBoxFor(lineRun).hasContent())
                         return true;
                     if (!layoutBox.isRubyBase() || !is<ElementBox>(layoutBox))
                         return false;
                     auto& rubyBaseLayoutBox = downcast<ElementBox>(layoutBox);
                     // Let's create empty inline boxes for ruby bases with annotation only.
-                    return !rubyBaseLayoutBox.firstChild() || (rubyBaseLayoutBox.firstChild() == rubyBaseLayoutBox.lastChild() && rubyBaseLayoutBox.firstChild()->isRubyAnnotationBox());
+                    if (!rubyBaseLayoutBox.firstChild() || (rubyBaseLayoutBox.firstChild() == rubyBaseLayoutBox.lastChild() && rubyBaseLayoutBox.firstChild()->isRubyAnnotationBox()))
+                        return true;
+                    // Let's check if we actually don't have a contentful run inside this ruby base.
+                    for (size_t nextLogicalRunIndex = logicalIndex + 1; nextLogicalRunIndex < inlineContent.size(); ++nextLogicalRunIndex) {
+                        auto& lineRun = inlineContent[nextLogicalRunIndex];
+                        if (lineRun.isInlineBoxEnd() && &lineRun.layoutBox() == &rubyBaseLayoutBox)
+                            break;
+                        if (lineRun.isContentful())
+                            return false;
+                    }
+                    return true;
                 };
                 if (isEmptyInlineBox()) {
                     appendInlineDisplayBoxAtBidiBoundary(layoutBox, boxes);
