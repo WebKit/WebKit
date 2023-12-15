@@ -6684,12 +6684,11 @@ void SpeculativeJIT::compileArithMul(Node* node)
         GPRReg op1GPR = op1.gpr();
         GPRReg op2GPR = op2.gpr();
         GPRReg resultGPR = result.gpr();
-        
-        move(op1GPR, resultGPR);
+
         speculationCheck(
             Int52Overflow, JSValueRegs(), nullptr,
-            branchMul64(Overflow, op2GPR, resultGPR));
-        
+            branchMul64(Overflow, op1GPR, op2GPR, resultGPR));
+
         if (shouldCheckNegativeZero(node->arithMode())) {
             Jump resultNonZero = branchTest64(
                 NonZero, resultGPR);
