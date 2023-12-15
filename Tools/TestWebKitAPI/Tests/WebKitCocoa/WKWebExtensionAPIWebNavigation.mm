@@ -218,6 +218,52 @@ TEST(WKWebExtensionAPIWebNavigation, AllEventsFiredTest)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIWebNavigation, OnErrorOccurredProvisionalLoadEvent)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='/frame.html'></iframe>"_s } },
+        { "/frame.html"_s, { HTTPResponse::TerminateConnection::Yes } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        // Setup
+        @"function errorListener(details) {",
+        // This should be a subframe
+        @"  browser.test.assertTrue(details.frameId != 0)",
+
+        // The URL of the frame that failed loading should include localhost and frame.
+        @"  browser.test.assertTrue(details.url.includes('localhost'))",
+        @"  browser.test.assertTrue(details.url.includes('frame'))",
+        @"  browser.test.notifyPass()",
+        @"}",
+
+        // The passListener firing will consider the test passed.
+        @"browser.webNavigation.onErrorOccurred.addListener(errorListener)",
+
+        // Yield after creating the listener so we can load a tab.
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:webNavigationManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    // Grant the webNavigation permission.
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:_WKWebExtensionPermissionWebNavigation];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    NSURL *requestURL = urlRequest.URL;
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:requestURL];
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:[requestURL URLByAppendingPathComponent:@"frame.html"]];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIWebNavigation, GetMainFrame)
 {
     TestWebKitAPI::HTTPServer server({
