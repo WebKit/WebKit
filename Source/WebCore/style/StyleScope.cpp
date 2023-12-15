@@ -486,7 +486,7 @@ Scope::StyleSheetChange Scope::analyzeStyleSheetChange(const Vector<RefPtr<CSSSt
     if (newStylesheetCount < oldStylesheetCount)
         return { ResolverUpdateType::Reconstruct };
 
-    Vector<CheckedRef<StyleSheetContents>> addedSheets;
+    Vector<Ref<StyleSheetContents>> addedSheets;
     unsigned newIndex = 0;
     for (unsigned oldIndex = 0; oldIndex < oldStylesheetCount; ++oldIndex) {
         if (newIndex >= newStylesheetCount)

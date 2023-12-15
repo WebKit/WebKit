@@ -79,7 +79,7 @@ static bool shouldDirtyAllStyle(const StyleSheetContents& sheet)
     return false;
 }
 
-static bool shouldDirtyAllStyle(const Vector<CheckedRef<StyleSheetContents>>& sheets)
+static bool shouldDirtyAllStyle(const Vector<Ref<StyleSheetContents>>& sheets)
 {
     for (auto& sheet : sheets) {
         if (shouldDirtyAllStyle(sheet))
@@ -88,7 +88,7 @@ static bool shouldDirtyAllStyle(const Vector<CheckedRef<StyleSheetContents>>& sh
     return false;
 }
 
-Invalidator::Invalidator(const Vector<CheckedRef<StyleSheetContents>>& sheets, const MQ::MediaQueryEvaluator& mediaQueryEvaluator)
+Invalidator::Invalidator(const Vector<Ref<StyleSheetContents>>& sheets, const MQ::MediaQueryEvaluator& mediaQueryEvaluator)
     : m_ownedRuleSet(RuleSet::create())
     , m_ruleSets({ m_ownedRuleSet })
     , m_dirtiesAllStyle(shouldDirtyAllStyle(sheets))

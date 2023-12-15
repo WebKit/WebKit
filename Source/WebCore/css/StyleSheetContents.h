@@ -45,7 +45,7 @@ class StyleRuleNamespace;
 
 enum class CachePolicy : uint8_t;
 
-class StyleSheetContents final : public RefCounted<StyleSheetContents>, public CanMakeCheckedPtr {
+class StyleSheetContents final : public RefCounted<StyleSheetContents> {
 public:
     static Ref<StyleSheetContents> create(const CSSParserContext& context = CSSParserContext(HTMLStandardMode))
     {
