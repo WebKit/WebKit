@@ -60,7 +60,10 @@ class ExternalBufferTestES31 : public ANGLETest<>
         // Need to grab the stride the implementation might have enforced
         AHardwareBuffer_describe(aHardwareBuffer, &aHardwareBufferDescription);
 
-        memcpy(mappedMemory, data, size);
+        if (data)
+        {
+            memcpy(mappedMemory, data, size);
+        }
 
         EXPECT_EQ(0, AHardwareBuffer_unlock(aHardwareBuffer, nullptr));
         return aHardwareBuffer;
@@ -343,6 +346,31 @@ TEST_P(ExternalBufferTestES31, MapBufferDoesNotCauseOrphaning)
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
     // Delete the source AHB
     destroyAndroidHardwareBuffer(aHardwareBuffer);
+}
+
+// Verify that create and destroy external buffer backed by an AHB doesn't leak AHB
+TEST_P(ExternalBufferTestES31, BufferDoesNotLeakAHB)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_external_buffer") ||
+                       !IsGLExtensionEnabled("GL_EXT_buffer_storage"));
+
+    // Create and destroy 128M AHB backed buffer in a loop. If we leak AHB, it will fail due to AHB
+    // allocation failure before loop ends.
+    constexpr size_t kBufferSize = 128 * 1024 * 1024;
+    for (int loop = 0; loop < 1000; loop++)
+    {
+        // Create the AHB
+        AHardwareBuffer *aHardwareBuffer;
+        constexpr GLbitfield kFlags = GL_DYNAMIC_STORAGE_BIT_EXT;
+        aHardwareBuffer             = createAndroidHardwareBuffer(kBufferSize, nullptr);
+        GLBuffer buffer;
+        glBindBuffer(GL_SHADER_STORAGE_BUFFER, buffer);
+        glBufferStorageExternalEXT(GL_SHADER_STORAGE_BUFFER, 0, kBufferSize,
+                                   eglGetNativeClientBufferANDROID(aHardwareBuffer), kFlags);
+        ASSERT_GL_NO_ERROR();
+        // Delete the source AHB
+        destroyAndroidHardwareBuffer(aHardwareBuffer);
+    }
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ExternalBufferTestES31);

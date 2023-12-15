@@ -139,13 +139,6 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
-    FeatureInfo supportsFilteringPrecision = {
-        "supportsFilteringPrecision",
-        FeatureCategory::VulkanFeatures,
-        "VkDevice supports the VK_GOOGLE_sampler_filtering_precision extension",
-        &members,
-    };
-
     FeatureInfo supportsExternalFenceCapabilities = {
         "supportsExternalFenceCapabilities",
         FeatureCategory::VulkanFeatures,

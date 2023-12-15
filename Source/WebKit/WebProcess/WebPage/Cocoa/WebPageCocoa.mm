@@ -738,7 +738,7 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, Completi
 std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWithResult(const URL& url, LinkDecorationFilteringTrigger trigger)
 {
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
-    if (m_linkDecorationFilteringData.isEmpty() && m_domainScopedLinkDecorationFilteringData.isEmpty()) {
+    if (m_linkDecorationFilteringData.isEmpty()) {
         RELEASE_LOG_ERROR(ResourceLoadStatistics, "Unable to filter tracking query parameters (missing data)");
         return { url, DidFilterLinkDecoration::No };
     }
@@ -768,10 +768,19 @@ std::pair<URL, DidFilterLinkDecoration> WebPage::applyLinkDecorationFilteringWit
         return { url, DidFilterLinkDecoration::No };
 
     auto sanitizedURL = url;
-
-    auto domainScopedQueryParameters = m_domainScopedLinkDecorationFilteringData.get(RegistrableDomain { sanitizedURL });
     auto removedParameters = WTF::removeQueryParameters(sanitizedURL, [&](auto& parameter) {
-        return m_linkDecorationFilteringData.contains(parameter) || domainScopedQueryParameters.contains(parameter);
+        auto it = m_linkDecorationFilteringData.find(parameter);
+        if (it == m_linkDecorationFilteringData.end())
+            return false;
+
+        const auto& conditionals = it->value;
+        bool isEmptyOrFoundDomain = conditionals.domains.isEmpty() || conditionals.domains.contains(RegistrableDomain { url });
+        bool isEmptyOrFoundPath = conditionals.paths.isEmpty() || std::any_of(conditionals.paths.begin(), conditionals.paths.end(),
+            [&url](auto& path) {
+                return url.path().contains(path);
+            });
+
+        return isEmptyOrFoundDomain && isEmptyOrFoundPath;
     });
 
     if (!removedParameters.isEmpty() && trigger != LinkDecorationFilteringTrigger::Unspecified) {

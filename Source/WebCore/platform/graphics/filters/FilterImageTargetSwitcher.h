@@ -41,8 +41,10 @@ private:
 
     bool hasSourceImage() const override { return m_sourceImage; }
 
-    void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect) override;
+    void beginClipAndDrawSourceImage(GraphicsContext& destinationContext, const FloatRect& repaintRect, const FloatRect& clipRect) override;
     void endClipAndDrawSourceImage(GraphicsContext& destinationContext) override;
+
+    void beginDrawSourceImage(GraphicsContext&) override { }
     void endDrawSourceImage(GraphicsContext& destinationContext) override;
 
     RefPtr<ImageBuffer> m_sourceImage;

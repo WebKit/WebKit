@@ -1,0 +1,50 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useEphemeralSession=true useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../../../../resources/ui-helper.js"></script>
+<script src="../../../../resources/js-test.js"></script>
+<style>
+body, html {
+    font-size: 16px;
+    font-family: system-ui;
+}
+
+.link-container {
+    margin-top: 1.5em;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that long pressing an app store URL in an ephemeral browsing session does not show a full link preview. Requires WebKitTestRunner (though you can test manually in Safari, using Private Browsing mode).");
+    fullLinkPreviewHeightThreshold = 250;
+
+    await UIHelper.longPressElement(document.getElementById("appstore-link"));
+    await UIHelper.waitForContextMenuToShow();
+    contextMenuPreviewRectForAppStoreLink = await UIHelper.contextMenuPreviewRect();
+    shouldBeLessThanOrEqual("contextMenuPreviewRectForAppStoreLink.height", "fullLinkPreviewHeightThreshold");
+    await UIHelper.activateAt(0, 0);
+    await UIHelper.waitForContextMenuToHide();
+
+    await UIHelper.longPressElement(document.getElementById("regular-link"));
+    await UIHelper.waitForContextMenuToShow();
+    contextMenuPreviewRectForRegularLink = await UIHelper.contextMenuPreviewRect();
+    shouldBeGreaterThanOrEqual("contextMenuPreviewRectForRegularLink.height", "fullLinkPreviewHeightThreshold");
+    await UIHelper.activateAt(0, 0);
+    await UIHelper.waitForContextMenuToHide();
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="link-container">
+        <a id="appstore-link" href="https://itunes.apple.com/us/app/keynote/id361285480">Download Keynote</a>
+    </div>
+    <div class="link-container">
+        <a id="regular-link" href="https://webkit.org">WebKit Home Page</a>
+    </div>
+</body>
+</html>

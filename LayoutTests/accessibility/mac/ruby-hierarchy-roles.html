@@ -1,3 +1,4 @@
+<!-- webkit-test-runner [ CSSBasedRubyEnabled=true ] -->
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
     <head>
@@ -21,17 +22,15 @@
                     var expectedRubyRole = "AXRole: AXGroup"; // all ruby containers have AXGroup role
                     var expectedRubyInlineSubrole = "AXSubrole: AXRubyInline";
                     var expectedRubyBlockSubrole = "AXSubrole: AXRubyBlock";
-                    var expectedRubyRunSubrole = "AXSubrole: AXRubyRun";
                     var expectedRubyTextSubrole = "AXSubrole: AXRubyText";
                     var expectedRubyBaseSubrole = "AXSubrole: AXRubyBase";
                     
                     // Try inline style first, block style second
                     var rubyElem = document.getElementById("rubyElemId");
                     shouldBeTrue("rubyElem != null");
-                    rubyElem.style.display = "inline";
                     checkHierarchyAndRoles(rubyElem);
                     
-                    rubyElem.style.display = "block";
+                    rubyElem.style.position = "absolute";
                     checkHierarchyAndRoles(rubyElem);
                     
                     function checkHierarchyAndRoles(rubyElem) {
@@ -40,36 +39,33 @@
                         role = axRuby.role;
                         subrole = axRuby.subrole;
                         shouldBe("role", "expectedRubyRole");
-                        if (rubyElem.style.display == "inline") {
+                        if (rubyElem.style.position != "absolute") {
                             shouldBe("subrole", "expectedRubyInlineSubrole");
                         }
                         else {
                             shouldBe("subrole", "expectedRubyBlockSubrole");
+                            axRuby = axRuby.childAtIndex(0);
+                            role = axRuby.role;
+                            subrole = axRuby.subrole;
+                            shouldBe("role", "expectedRubyRole");
+                            shouldBe("subrole", "expectedRubyInlineSubrole");
                         }
-                        
-                        // RubyRun
-                        axRubyRun = axRuby.childAtIndex(0);
-                        shouldBeTrue("axRubyRun != null");
-                        role = axRubyRun.role;
-                        subrole = axRubyRun.subrole;
-                        shouldBe("role", "expectedRubyRole");
-                        shouldBe("subrole", "expectedRubyRunSubrole");
-                        
-                        // RubyText
-                        axRubyText = axRubyRun.childAtIndex(0);
-                        shouldBeTrue("axRubyText != null");
-                        role = axRubyText.role;
-                        subrole = axRubyText.subrole;
-                        shouldBe("role", "expectedRubyRole");
-                        shouldBe("subrole", "expectedRubyTextSubrole");
-                        
+
                         // RubyBase
-                        axRubyBase = axRubyRun.childAtIndex(1);
+                        axRubyBase = axRuby.childAtIndex(0);
                         shouldBeTrue("axRubyBase != null");
                         role = axRubyBase.role;
                         subrole = axRubyBase.subrole;
                         shouldBe("role", "expectedRubyRole");
                         shouldBe("subrole", "expectedRubyBaseSubrole");
+
+                        // RubyText
+                        axRubyText = axRuby.childAtIndex(1);
+                        shouldBeTrue("axRubyText != null");
+                        role = axRubyText.role;
+                        subrole = axRubyText.subrole;
+                        shouldBe("role", "expectedRubyRole");
+                        shouldBe("subrole", "expectedRubyTextSubrole");
                     }
                 }
             }

@@ -76,7 +76,7 @@ public:
     }
     
 private:
-    CheckedRef<TypingCommand> m_typingCommand;
+    WeakRef<TypingCommand> m_typingCommand;
     bool m_selectInsertedText;
     const String& m_text;
 };

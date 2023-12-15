@@ -44,7 +44,6 @@ class [[nodiscard]] ScopedVkLoaderEnvironment : angle::NonCopyable
 
   private:
     bool setICDEnvironment(const char *icd);
-    bool setCustomExtensionsEnvironment();
 
     bool mEnableValidationLayers;
     vk::ICD mICD;

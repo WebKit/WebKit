@@ -1171,10 +1171,46 @@ TERNARY_OPERATION(Mix, Number, [&](auto e1, auto e2, auto e3) { return  e1 * (1 
 
 CONSTANT_FUNCTION(Modf)
 {
-    // FIXME: this needs the special return types __modf_result_*
     UNUSED_PARAM(resultType);
-    UNUSED_PARAM(arguments);
-    RELEASE_ASSERT_NOT_REACHED();
+    ASSERT(arguments.size() == 1);
+
+    const auto& modfValue = [&](auto value) -> std::tuple<ConstantValue, ConstantValue> {
+        using T = decltype(value);
+        using Whole = std::conditional_t<std::is_same_v<T, half>, float, T>;
+        Whole whole;
+        T fract = std::modf(value, &whole);
+        return { ConstantValue(fract), ConstantValue(static_cast<T>(whole)) };
+    };
+
+    const auto& modfScalar = [&](auto value) {
+        if (auto* f32 = std::get_if<float>(&value))
+            return modfValue(*f32);
+        if (auto* f16 = std::get_if<half>(&value))
+            return modfValue(*f16);
+        if (auto* abstractFloat = std::get_if<double>(&value))
+            return modfValue(*abstractFloat);
+        RELEASE_ASSERT_NOT_REACHED();
+    };
+
+    auto [fract, whole] = [&]() -> std::tuple<ConstantValue, ConstantValue> {
+        auto& arg = arguments[0];
+
+        if (!std::holds_alternative<ConstantVector>(arg))
+            return modfScalar(arg);
+
+        auto& argVector = std::get<ConstantVector>(arg);
+        auto size = argVector.elements.size();
+        ConstantVector fractVector(size);
+        ConstantVector wholeVector(size);
+        for (unsigned i = 0; i < size; ++i) {
+            auto [fract, whole] = modfScalar(argVector.elements[i]);
+            fractVector.elements[i] = fract;
+            wholeVector.elements[i] = whole;
+        }
+        return { fractVector, wholeVector };
+    }();
+
+    return { ConstantStruct({ { { "fract"_s, fract }, { "whole"_s, whole } } }) };
 }
 
 CONSTANT_FUNCTION(Normalize)

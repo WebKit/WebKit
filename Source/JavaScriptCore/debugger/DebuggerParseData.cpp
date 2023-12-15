@@ -75,11 +75,11 @@ std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineC
 
 std::optional<JSTextPosition> DebuggerPausePositions::breakpointLocationForLineColumn(int line, int column, DebuggerPausePositions::Positions::iterator it)
 {
-    ASSERT(line <= it->position.line);
-    ASSERT(line != it->position.line || column <= it->position.column());
-
     if (it == m_positions.end())
         return std::nullopt;
+
+    ASSERT(line <= it->position.line);
+    ASSERT(line != it->position.line || column <= it->position.column());
 
     if (line == it->position.line && column == it->position.column()) {
         // Found an exact position match. Roll forward if this was a function Entry.

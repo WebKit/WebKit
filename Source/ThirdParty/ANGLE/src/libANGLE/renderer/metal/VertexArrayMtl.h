@@ -71,10 +71,6 @@ class VertexArrayMtl : public VertexArrayImpl
   private:
     void reset(ContextMtl *context);
 
-    void getVertexAttribFormatAndArraySize(const gl::ProgramInput &var,
-                                           MTLVertexFormat *formatOut,
-                                           uint32_t *arraySizeOut);
-
     angle::Result syncDirtyAttrib(const gl::Context *glContext,
                                   const gl::VertexAttribute &attrib,
                                   const gl::VertexBinding &binding,
@@ -144,8 +140,6 @@ class VertexArrayMtl : public VertexArrayImpl
     gl::AttribArray<const mtl::VertexFormat *> mCurrentArrayBufferFormats;
 
     const mtl::VertexFormat &mDefaultFloatVertexFormat;
-    const mtl::VertexFormat &mDefaultIntVertexFormat;
-    const mtl::VertexFormat &mDefaultUIntVertexFormat;
 
     mtl::BufferPool mDynamicVertexData;
     mtl::BufferPool mDynamicIndexData;

@@ -27,7 +27,6 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/reporting/naviga
 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=nested-browsing [ Pass Timeout ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute.https.sub.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1/the-script-element/moving-between-documents/after-prepare-iframe-parse-error-external-module.html [ Pass Failure ]
-imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-webrtc.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/webrtc/RTCDTMFSender-ontonechange.https.html [ Pass Failure ]
 media/modern-media-controls/text-tracks/text-tracks-height-no-controls.html [ Pass Failure ]
 http/tests/websocket/tests/hybi/error-event-ready-state-non-existent-url-with-server-responding-404.html [ Pass Timeout ]

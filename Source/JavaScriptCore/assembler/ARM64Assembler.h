@@ -2298,7 +2298,20 @@ public:
             copy(ptr++, &insn, sizeof(int));
         }
     }
-    
+
+    template <CopyFunction copy>
+    ALWAYS_INLINE static void fillNearTailCall(void* from, void* to)
+    {
+        RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
+        intptr_t offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(from)) >> 2;
+        ASSERT(static_cast<int>(offset) == offset);
+        ASSERT(isInt<26>(offset));
+        constexpr bool isCall = false;
+        int insn = unconditionalBranchImmediate(isCall, static_cast<int>(offset));
+        copy(from, &insn, sizeof(int));
+        cacheFlush(from, sizeof(int));
+    }
+
     ALWAYS_INLINE void dmbISH()
     {
         insn(0xd5033bbf);
@@ -3512,7 +3525,7 @@ public:
 
 #if ENABLE(JUMP_ISLANDS)
         if (!isInt<26>(offset)) {
-            to = ExecutableAllocator::singleton().getJumpIslandTo(where, to);
+            to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(where, to);
             offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(where)) >> 2;
             RELEASE_ASSERT(isInt<26>(offset));
         }
@@ -3875,7 +3888,10 @@ protected:
 
 #if ENABLE(JUMP_ISLANDS)
         if (!isInt<26>(offset)) {
-            to = ExecutableAllocator::singleton().getJumpIslandTo(bitwise_cast<void*>(fromInstruction), to);
+            if constexpr (copy == performJITMemcpy)
+                to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(bitwise_cast<void*>(fromInstruction), to);
+            else
+                to = ExecutableAllocator::singleton().getJumpIslandToUsingMemcpy(bitwise_cast<void*>(fromInstruction), to);
             offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(fromInstruction)) >> 2;
             RELEASE_ASSERT(isInt<26>(offset));
         }

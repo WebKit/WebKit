@@ -64,8 +64,8 @@ void GeolocationPermissionRequestManager::startRequestForGeolocation(Geolocation
 
     GeolocationIdentifier geolocationID = GeolocationIdentifier::generate();
 
-    m_geolocationToIDMap.set(&geolocation, geolocationID);
-    m_idToGeolocationMap.set(geolocationID, &geolocation);
+    m_geolocationToIDMap.set(geolocation, geolocationID);
+    m_idToGeolocationMap.set(geolocationID, geolocation);
 
     auto webFrame = WebFrame::fromCoreFrame(*frame);
     ASSERT(webFrame);

@@ -572,7 +572,6 @@ void SerializeContextState(JsonSerializer *json, const gl::State &state)
     json->addScalar("StencilBackRef", state.getStencilBackRef());
     json->addScalar("LineWidth", state.getLineWidth());
     json->addScalar("GenerateMipmapHint", state.getGenerateMipmapHint());
-    json->addScalar("TextureFilteringHint", state.getTextureFilteringHint());
     json->addScalar("FragmentShaderDerivativeHint", state.getFragmentShaderDerivativeHint());
     json->addScalar("BindGeneratesResourceEnabled", state.isBindGeneratesResourceEnabled());
     json->addScalar("ClientArraysEnabled", state.areClientArraysEnabled());

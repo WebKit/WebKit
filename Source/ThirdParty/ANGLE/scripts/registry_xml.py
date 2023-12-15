@@ -79,7 +79,6 @@ angle_requestable_extensions = [
     "GL_CHROMIUM_color_buffer_float_rgba",
     "GL_CHROMIUM_lose_context",
     "GL_CHROMIUM_sync_query",
-    "GL_CHROMIUM_texture_filtering_hint",
 ]
 
 gles_requestable_extensions = [

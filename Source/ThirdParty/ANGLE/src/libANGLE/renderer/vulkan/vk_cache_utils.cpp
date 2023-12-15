@@ -12,7 +12,6 @@
 
 #include "common/aligned_memory.h"
 #include "common/system_utils.h"
-#include "common/vulkan/vk_google_filtering_precision.h"
 #include "libANGLE/BlobCache.h"
 #include "libANGLE/VertexAttribute.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
@@ -4971,20 +4970,6 @@ angle::Result SamplerDesc::init(ContextVk *contextVk, Sampler *sampler) const
     createInfo.maxLod                  = mMaxLod;
     createInfo.borderColor             = VK_BORDER_COLOR_INT_TRANSPARENT_BLACK;
     createInfo.unnormalizedCoordinates = VK_FALSE;
-
-    // Note: because we don't detect changes to this hint (no dirty bit), if a sampler is created
-    // with the hint enabled, and then the hint gets disabled, the next render will do so with the
-    // hint enabled.
-    VkSamplerFilteringPrecisionGOOGLE filteringInfo = {};
-    GLenum hint = contextVk->getState().getTextureFilteringHint();
-    if (hint == GL_NICEST)
-    {
-        ASSERT(extensions.textureFilteringHintCHROMIUM);
-        filteringInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_FILTERING_PRECISION_GOOGLE;
-        filteringInfo.samplerFilteringPrecisionMode =
-            VK_SAMPLER_FILTERING_PRECISION_MODE_HIGH_GOOGLE;
-        AddToPNextChain(&createInfo, &filteringInfo);
-    }
 
     VkSamplerYcbcrConversionInfo samplerYcbcrConversionInfo = {};
     if (mYcbcrConversionDesc.valid())

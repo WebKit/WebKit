@@ -197,6 +197,27 @@ class GeneratePipelineStruct : private TIntermRebuild
             mInfo.pipelineStruct.external = &pipelineStruct;
         }
 
+        if (mPipeline.type == Pipeline::Type::FragmentOut &&
+            mCompiler.hasPixelLocalStorageUniforms() &&
+            mCompiler.getPixelLocalStorageType() == ShPixelLocalStorageType::FramebufferFetch)
+        {
+            auto &fields = *new TFieldList();
+            for (const TField *field : mInfo.pipelineStruct.external->fields())
+            {
+                if (field->type()->getQualifier() == EvqFragmentInOut)
+                {
+                    fields.push_back(new TField(&CloneType(*field->type()), field->name(),
+                                                kNoSourceLoc, field->symbolType()));
+                }
+            }
+            TStructure *extraStruct =
+                new TStructure(&mSymbolTable, ImmutableString("LastFragmentOut"), &fields,
+                               SymbolType::AngleInternal);
+            seq.push_back(
+                new TIntermDeclaration{&CreateStructTypeVariable(mSymbolTable, *extraStruct)});
+            mInfo.pipelineStruct.externalExtra = extraStruct;
+        }
+
         root.insertChildNodes(FindMainIndex(&root), seq);
 
         return true;
@@ -364,9 +385,6 @@ class PipelineFunctionEnv
 
     std::unordered_map<const TFunction *, const TFunction *> mFuncMap;
 
-    // Optional expression with which to initialize mPipelineMainLocalVar.
-    TIntermTyped *mPipelineInitExpr = nullptr;
-
   public:
     PipelineFunctionEnv(TCompiler &compiler,
                         SymbolEnv &symbolEnv,
@@ -421,18 +439,20 @@ class PipelineFunctionEnv
                 newFunc = &CloneFunctionAndChangeReturnType(mSymbolTable, nullptr, func,
                                                             *mPipelineStruct.external);
                 if (mPipeline.type == Pipeline::Type::FragmentOut &&
-                    mCompiler.hasPixelLocalStorageUniforms())
+                    mCompiler.hasPixelLocalStorageUniforms() &&
+                    mCompiler.getPixelLocalStorageType() ==
+                        ShPixelLocalStorageType::FramebufferFetch)
                 {
                     // Add an input argument to main() that contains the current framebuffer
                     // attachment values, for loading pixel local storage.
-                    TType *type = new TType(mPipelineStruct.external, true);
+                    TType *type = new TType(mPipelineStruct.externalExtra, true);
                     TVariable *lastFragmentOut =
                         new TVariable(&mSymbolTable, ImmutableString("lastFragmentOut"), type,
                                       SymbolType::AngleInternal);
                     newFunc = &CloneFunctionAndPrependParam(mSymbolTable, nullptr, *newFunc,
                                                             *lastFragmentOut);
                     // Initialize the main local variable with the current framebuffer contents.
-                    mPipelineInitExpr = new TIntermSymbol(lastFragmentOut);
+                    mPipelineMainLocalVar.externalExtra = lastFragmentOut;
                 }
             }
             else if (isMain && (mPipeline.type == Pipeline::Type::InvocationVertexGlobals ||
@@ -558,9 +578,6 @@ class PipelineFunctionEnv
         const TFunction &newFunc = getUpdatedFunction(func);
         return new TIntermFunctionPrototype(&newFunc);
     }
-
-    // If not null, this is the value we need to initialize the pipeline main local variable with.
-    TIntermTyped *getOptionalPipelineInitExpr() { return mPipelineInitExpr; }
 
     size_t getFirstParamIdxInMainFn() const { return mFirstParamIdxInMainFn; }
 };
@@ -784,8 +801,7 @@ class UpdatePipelineFunctions : private TIntermRebuild
             ASSERT(mPipelineMainLocalVar.isTotallyFull());
 
             auto *newBody = new TIntermBlock();
-            newBody->appendStatement(new TIntermDeclaration(mPipelineMainLocalVar.internal,
-                                                            mEnv.getOptionalPipelineInitExpr()));
+            newBody->appendStatement(new TIntermDeclaration{mPipelineMainLocalVar.internal});
 
             if (mPipeline.type == Pipeline::Type::InvocationVertexGlobals ||
                 mPipeline.type == Pipeline::Type::InvocationFragmentGlobals)
@@ -798,6 +814,22 @@ class UpdatePipelineFunctions : private TIntermRebuild
                     auto *symbol     = new TIntermSymbol(var);
                     auto &accessNode = AccessField(*mPipelineMainLocalVar.internal, var->name());
                     auto *assignNode = new TIntermBinary(TOperator::EOpAssign, &accessNode, symbol);
+                    newBody->appendStatement(assignNode);
+                }
+            }
+            else if (mPipeline.type == Pipeline::Type::FragmentOut &&
+                     mCompiler.hasPixelLocalStorageUniforms() &&
+                     mCompiler.getPixelLocalStorageType() ==
+                         ShPixelLocalStorageType::FramebufferFetch)
+            {
+                ASSERT(mPipelineMainLocalVar.externalExtra);
+                auto &lastFragmentOut = *mPipelineMainLocalVar.externalExtra;
+                for (const TField *field : lastFragmentOut.getType().getStruct()->fields())
+                {
+                    auto &accessNode = AccessField(*mPipelineMainLocalVar.internal, field->name());
+                    auto &sourceNode = AccessField(lastFragmentOut, field->name());
+                    auto *assignNode =
+                        new TIntermBinary(TOperator::EOpAssign, &accessNode, &sourceNode);
                     newBody->appendStatement(assignNode);
                 }
             }

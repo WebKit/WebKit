@@ -629,6 +629,9 @@ private:
 #if HAVE(UIKIT_RESIZABLE_WINDOWS)
     std::unique_ptr<InstanceMethodSwizzler> m_enhancedWindowingEnabledSwizzler;
 #endif
+#if ENABLE(DATA_DETECTION)
+    std::unique_ptr<InstanceMethodSwizzler> m_appStoreURLSwizzler;
+#endif
     bool m_verbose { false };
     bool m_printSeparators { false };
     bool m_usingServerMode { false };

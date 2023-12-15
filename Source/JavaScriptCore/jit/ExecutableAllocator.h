@@ -114,6 +114,13 @@ ALWAYS_INLINE bool isJITPC(void* pc)
 
 JS_EXPORT_PRIVATE void dumpJITMemory(const void*, const void*, size_t);
 
+// We use this to prevent compile errors on some platforms that are unhappy
+// about the signature of the system's memcpy.
+ALWAYS_INLINE void* memcpyWrapper(void* dst, const void* src, size_t bytes)
+{
+    return memcpy(dst, src, bytes);
+}
+
 static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
 #if CPU(ARM64)
@@ -183,7 +190,8 @@ public:
     Lock& getLock() const;
 
 #if ENABLE(JUMP_ISLANDS)
-    JS_EXPORT_PRIVATE void* getJumpIslandTo(void* from, void* newDestination);
+    JS_EXPORT_PRIVATE void* getJumpIslandToUsingJITMemcpy(void* from, void* newDestination);
+    JS_EXPORT_PRIVATE void* getJumpIslandToUsingMemcpy(void* from, void* newDestination);
     JS_EXPORT_PRIVATE void* getJumpIslandToConcurrently(void* from, void* newDestination);
 #endif
 
@@ -205,6 +213,11 @@ private:
     ExecutableAllocator() = default;
     ~ExecutableAllocator() = default;
 };
+
+ALWAYS_INLINE void* memcpyWrapper(void* dst, const void* src, size_t bytes)
+{
+    return memcpy(dst, src, bytes);
+}
 
 static inline void* performJITMemcpy(void *dst, const void *src, size_t n)
 {

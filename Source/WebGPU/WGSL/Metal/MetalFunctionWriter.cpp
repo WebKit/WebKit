@@ -298,6 +298,28 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
         m_stringBuilder.append(m_indent, "}\n\n");
     }
 
+    if (m_callGraph.ast().usesModf()) {
+        m_stringBuilder.append(m_indent, "template<typename T, typename U>\n");
+        m_stringBuilder.append(m_indent, "struct __modf_result {\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "T fract;\n");
+            m_stringBuilder.append(m_indent, "U whole;\n");
+        }
+        m_stringBuilder.append(m_indent, "};\n\n");
+
+        m_stringBuilder.append(m_indent, "template<typename T>\n");
+        m_stringBuilder.append(m_indent, "__modf_result<T, T> __wgslModf(T value)\n");
+        m_stringBuilder.append(m_indent, "{\n");
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "__modf_result<T, T> result;\n");
+            m_stringBuilder.append(m_indent, "result.fract = modf(value, result.whole);\n");
+            m_stringBuilder.append(m_indent, "return result;\n");
+        }
+        m_stringBuilder.append(m_indent, "}\n\n");
+    }
+
     if (m_callGraph.ast().usesPackedStructs()) {
         m_callGraph.ast().clearUsesPackedStructs();
 
@@ -1652,6 +1674,7 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
             { "fwidthFine", "fwidth"_s },
             { "insertBits", "insert_bits"_s },
             { "inverseSqrt", "rsqrt"_s },
+            { "modf", "__wgslModf"_s },
             { "reverseBits", "reverse_bits"_s },
         };
         static constexpr SortedArrayMap mappedNames { directMappings };

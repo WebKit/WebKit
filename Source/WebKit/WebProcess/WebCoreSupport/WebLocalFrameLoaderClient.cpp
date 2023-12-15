@@ -640,6 +640,12 @@ void WebLocalFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceErr
     // Notify the bundle client.
     webPage->injectedBundleLoaderClient().didFailProvisionalLoadWithErrorForFrame(*webPage, m_frame, error, userData);
 
+#if ENABLE(WK_WEB_EXTENSIONS)
+    // Notify the extensions controller.
+    if (RefPtr extensionControllerProxy = webPage->webExtensionControllerProxy())
+        extensionControllerProxy->didFailLoadForFrame(*webPage, m_frame, m_frame->coreLocalFrame()->loader().provisionalLoadErrorBeingHandledURL());
+#endif
+
     webPage->sandboxExtensionTracker().didFailProvisionalLoad(m_frame.ptr());
 
     // FIXME: This is gross. This is necessary because if the client calls WKBundlePageStopLoading() from within the didFailProvisionalLoadWithErrorForFrame

@@ -174,7 +174,7 @@ void HTMLOptionElement::attributeChanged(const QualifiedName& name, const AtomSt
             Style::PseudoClassChangeInvalidation disabledInvalidation(*this, { { CSSSelector::PseudoClassType::Disabled, newDisabled },  { CSSSelector::PseudoClassType::Enabled, !newDisabled } });
             m_disabled = newDisabled;
             if (renderer() && renderer()->style().hasEffectiveAppearance())
-                renderer()->theme().stateChanged(*renderer(), ControlStates::States::Enabled);
+                renderer()->theme().stateChanged(*renderer(), ControlStyle::State::Enabled);
         }
         break;
     }

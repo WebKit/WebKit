@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2023 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -259,8 +259,8 @@ namespace JSC {
 
         static ALWAYS_INLINE uint32_t nextValue(uint64_t instruction, uint64_t index, uint32_t currentValue)
         {
-            uint64_t a = tagInt(instruction, makeDiversifier(0x12, index, currentValue));
-            uint64_t b = tagInt(instruction, makeDiversifier(0x13, index, currentValue));
+            uint64_t a = tagInt<PACKeyType::ProcessIndependent>(instruction, makeDiversifier(0x12, index, currentValue));
+            uint64_t b = tagInt<PACKeyType::ProcessIndependent>(instruction, makeDiversifier(0x13, index, currentValue));
             return (a >> 39) ^ (b >> 23);
         }
 
@@ -272,14 +272,14 @@ namespace JSC {
         ALWAYS_INLINE uint32_t currentHash(uint32_t index)
         {
             if constexpr (shouldSign == ShouldSign::Yes)
-                return untagInt(m_hash, makeDiversifier(initializationNamespace, index, pin()));
+                return untagInt<PACKeyType::ProcessIndependent>(m_hash, makeDiversifier(initializationNamespace, index, pin()));
             return m_hash;
         }
 
         ALWAYS_INLINE void setUpdatedHash(uint32_t value, uint32_t index)
         {
             if constexpr (shouldSign == ShouldSign::Yes)
-                m_hash = tagInt(static_cast<uint64_t>(value), makeDiversifier(initializationNamespace, index, pin()));
+                m_hash = tagInt<PACKeyType::ProcessIndependent>(static_cast<uint64_t>(value), makeDiversifier(initializationNamespace, index, pin()));
             else
                 m_hash = static_cast<uint64_t>(value);
         }

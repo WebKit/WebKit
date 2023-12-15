@@ -31,7 +31,6 @@
 
 #include "Color.h"
 #include "ColorBlending.h"
-#include "ControlStates.h"
 #include "FloatRoundedRect.h"
 #include "GraphicsContext.h"
 #include "LengthSize.h"
@@ -276,7 +275,7 @@ LengthBox ThemeAdwaita::controlBorder(StyleAppearance appearance, const FontCasc
     return Theme::controlBorder(appearance, font, zoomedBox, zoomFactor);
 }
 
-void ThemeAdwaita::paint(StyleAppearance appearance, ControlStates& states, GraphicsContext& context, const FloatRect& zoomedRect, bool useDarkAppearance, const Color& effectiveAccentColor)
+void ThemeAdwaita::paint(StyleAppearance appearance, OptionSet<ControlStyle::State> states, GraphicsContext& context, const FloatRect& zoomedRect, bool useDarkAppearance, const Color& effectiveAccentColor)
 {
     switch (appearance) {
     case StyleAppearance::Checkbox:
@@ -299,7 +298,7 @@ void ThemeAdwaita::paint(StyleAppearance appearance, ControlStates& states, Grap
     }
 }
 
-void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance, const Color& effectiveAccentColor)
+void ThemeAdwaita::paintCheckbox(OptionSet<ControlStyle::State> states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance, const Color& effectiveAccentColor)
 {
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
@@ -328,16 +327,16 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
     Color foregroundColor = accentColor.luminance() > 0.5 ? Color(SRGBA<uint8_t> { 0, 0, 0, 204 }) : Color::white;
     Color accentHoverColor = blendSourceOver(accentColor, foregroundColor.colorWithAlphaMultipliedBy(0.1));
 
-    if (!states.states().contains(ControlStates::States::Enabled))
+    if (!states.contains(ControlStyle::State::Enabled))
         graphicsContext.beginTransparencyLayer(disabledOpacity);
 
     FloatSize corner(2, 2);
     Path path;
 
-    if (states.states().containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate })) {
+    if (states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate })) {
         path.addRoundedRect(fieldRect, corner);
         graphicsContext.setFillRule(WindRule::NonZero);
-        if (states.states().contains(ControlStates::States::Hovered) && states.states().contains(ControlStates::States::Enabled))
+        if (states.contains(ControlStyle::State::Hovered) && states.contains(ControlStyle::State::Enabled))
             graphicsContext.setFillColor(accentHoverColor);
         else
             graphicsContext.setFillColor(accentColor);
@@ -347,7 +346,7 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
         GraphicsContextStateSaver checkedStateSaver(graphicsContext);
         graphicsContext.translate(fieldRect.x(), fieldRect.y());
         graphicsContext.scale(FloatSize::narrowPrecision(fieldRect.width() / toggleSize, fieldRect.height() / toggleSize));
-        if (states.states().contains(ControlStates::States::Indeterminate))
+        if (states.contains(ControlStyle::State::Indeterminate))
             path.addRoundedRect(FloatRect(2, 5, 10, 4), corner);
         else {
             path.moveTo({ 2.43, 6.57 });
@@ -363,7 +362,7 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
         graphicsContext.fillPath(path);
     } else {
         path.addRoundedRect(fieldRect, corner);
-        if (states.states().contains(ControlStates::States::Hovered) && states.states().contains(ControlStates::States::Enabled))
+        if (states.contains(ControlStyle::State::Hovered) && states.contains(ControlStyle::State::Enabled))
             graphicsContext.setFillColor(toggleBorderHoverColor);
         else
             graphicsContext.setFillColor(toggleBorderColor);
@@ -377,14 +376,14 @@ void ThemeAdwaita::paintCheckbox(ControlStates& states, GraphicsContext& graphic
         graphicsContext.fillPath(path);
     }
 
-    if (states.states().contains(ControlStates::States::Focused))
+    if (states.contains(ControlStyle::State::Focused))
         paintFocus(graphicsContext, zoomedRect, toggleFocusOffset, focusColor(accentColor));
 
-    if (!states.states().contains(ControlStates::States::Enabled))
+    if (!states.contains(ControlStyle::State::Enabled))
         graphicsContext.endTransparencyLayer();
 }
 
-void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance, const Color& effectiveAccentColor)
+void ThemeAdwaita::paintRadio(OptionSet<ControlStyle::State> states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance, const Color& effectiveAccentColor)
 {
     GraphicsContextStateSaver stateSaver(graphicsContext);
     FloatRect fieldRect = zoomedRect;
@@ -412,15 +411,15 @@ void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsCo
     Color foregroundColor = accentColor.luminance() > 0.5 ? Color(SRGBA<uint8_t> { 0, 0, 0, 204 }) : Color::white;
     Color accentHoverColor = blendSourceOver(accentColor, foregroundColor.colorWithAlphaMultipliedBy(0.1));
 
-    if (!states.states().contains(ControlStates::States::Enabled))
+    if (!states.contains(ControlStyle::State::Enabled))
         graphicsContext.beginTransparencyLayer(disabledOpacity);
 
     Path path;
 
-    if (states.states().containsAny({ ControlStates::States::Checked, ControlStates::States::Indeterminate })) {
+    if (states.containsAny({ ControlStyle::State::Checked, ControlStyle::State::Indeterminate })) {
         path.addEllipseInRect(fieldRect);
         graphicsContext.setFillRule(WindRule::NonZero);
-        if (states.states().contains(ControlStates::States::Hovered) && states.states().contains(ControlStates::States::Enabled))
+        if (states.contains(ControlStyle::State::Hovered) && states.contains(ControlStyle::State::Enabled))
             graphicsContext.setFillColor(accentHoverColor);
         else
             graphicsContext.setFillColor(accentColor);
@@ -433,7 +432,7 @@ void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsCo
         graphicsContext.fillPath(path);
     } else {
         path.addEllipseInRect(fieldRect);
-        if (states.states().contains(ControlStates::States::Hovered) && states.states().contains(ControlStates::States::Enabled))
+        if (states.contains(ControlStyle::State::Hovered) && states.contains(ControlStyle::State::Enabled))
             graphicsContext.setFillColor(toggleBorderHoverColor);
         else
             graphicsContext.setFillColor(toggleBorderColor);
@@ -446,14 +445,14 @@ void ThemeAdwaita::paintRadio(ControlStates& states, GraphicsContext& graphicsCo
         graphicsContext.fillPath(path);
     }
 
-    if (states.states().contains(ControlStates::States::Focused))
+    if (states.contains(ControlStyle::State::Focused))
         paintFocus(graphicsContext, zoomedRect, toggleFocusOffset, focusColor(accentColor), PaintRounded::Yes);
 
-    if (!states.states().contains(ControlStates::States::Enabled))
+    if (!states.contains(ControlStyle::State::Enabled))
         graphicsContext.endTransparencyLayer();
 }
 
-void ThemeAdwaita::paintButton(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance)
+void ThemeAdwaita::paintButton(OptionSet<ControlStyle::State> states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance)
 {
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
@@ -474,7 +473,7 @@ void ThemeAdwaita::paintButton(ControlStates& states, GraphicsContext& graphicsC
         buttonBackgroundPressedColor = buttonBackgroundPressedColorLight;
     }
 
-    if (!states.states().contains(ControlStates::States::Enabled))
+    if (!states.contains(ControlStyle::State::Enabled))
         graphicsContext.beginTransparencyLayer(disabledOpacity);
 
     FloatRect fieldRect = zoomedRect;
@@ -491,23 +490,23 @@ void ThemeAdwaita::paintButton(ControlStates& states, GraphicsContext& graphicsC
 
     path.addRoundedRect(fieldRect, corner);
     graphicsContext.setFillRule(WindRule::NonZero);
-    if (states.states().contains(ControlStates::States::Pressed))
+    if (states.contains(ControlStyle::State::Pressed))
         graphicsContext.setFillColor(buttonBackgroundPressedColor);
-    else if (states.states().contains(ControlStates::States::Enabled)
-        && states.states().contains(ControlStates::States::Hovered))
+    else if (states.contains(ControlStyle::State::Enabled)
+        && states.contains(ControlStyle::State::Hovered))
         graphicsContext.setFillColor(buttonBackgroundHoveredColor);
     else
         graphicsContext.setFillColor(buttonBackgroundColor);
     graphicsContext.fillPath(path);
 
-    if (states.states().contains(ControlStates::States::Focused))
+    if (states.contains(ControlStyle::State::Focused))
         paintFocus(graphicsContext, zoomedRect, buttonFocusOffset, focusColor(m_accentColor));
 
-    if (!states.states().contains(ControlStates::States::Enabled))
+    if (!states.contains(ControlStyle::State::Enabled))
         graphicsContext.endTransparencyLayer();
 }
 
-void ThemeAdwaita::paintSpinButton(ControlStates& states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance)
+void ThemeAdwaita::paintSpinButton(OptionSet<ControlStyle::State> states, GraphicsContext& graphicsContext, const FloatRect& zoomedRect, bool useDarkAppearance)
 {
     GraphicsContextStateSaver stateSaver(graphicsContext);
 
@@ -549,11 +548,11 @@ void ThemeAdwaita::paintSpinButton(ControlStates& states, GraphicsContext& graph
     FloatRect buttonRect = fieldRect;
     buttonRect.setHeight(fieldRect.height() / 2.0);
     {
-        if (states.states().contains(ControlStates::States::SpinUp)) {
+        if (states.contains(ControlStyle::State::SpinUp)) {
             path.addRoundedRect(FloatRoundedRect(buttonRect, corner, corner, { }, { }));
-            if (states.states().contains(ControlStates::States::Pressed))
+            if (states.contains(ControlStyle::State::Pressed))
                 graphicsContext.setFillColor(spinButtonBackgroundPressedColor);
-            else if (states.states().contains(ControlStates::States::Hovered))
+            else if (states.contains(ControlStyle::State::Hovered))
                 graphicsContext.setFillColor(spinButtonBackgroundHoveredColor);
             graphicsContext.fillPath(path);
             path.clear();
@@ -564,11 +563,11 @@ void ThemeAdwaita::paintSpinButton(ControlStates& states, GraphicsContext& graph
 
     buttonRect.move(0, buttonRect.height());
     {
-        if (!states.states().contains(ControlStates::States::SpinUp)) {
+        if (!states.contains(ControlStyle::State::SpinUp)) {
             path.addRoundedRect(FloatRoundedRect(buttonRect, { }, { }, corner, corner));
-            if (states.states().contains(ControlStates::States::Pressed))
+            if (states.contains(ControlStyle::State::Pressed))
                 graphicsContext.setFillColor(spinButtonBackgroundPressedColor);
-            else if (states.states().contains(ControlStates::States::Hovered))
+            else if (states.contains(ControlStyle::State::Hovered))
                 graphicsContext.setFillColor(spinButtonBackgroundHoveredColor);
             else
                 graphicsContext.setFillColor(spinButtonBackgroundColor);

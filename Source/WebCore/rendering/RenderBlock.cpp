@@ -1239,9 +1239,9 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
         auto borderRect = LayoutRect(paintOffset, size());
 
         if (paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeBackground) && visibleToHitTesting()) {
-            auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
-            LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " uniting region " << borderRegion << " event listener types " << style().eventListenerRegionTypes());
-            paintInfo.eventRegionContext()->unite(borderRegion, *this, style(), isRenderTextControl() && downcast<RenderTextControl>(*this).textFormControlElement().isInnerTextElementEditable());
+            auto borderRoundedRect = style().getRoundedBorderFor(borderRect);
+            LOG_WITH_STREAM(EventRegions, stream << "RenderBlock " << *this << " uniting region " << borderRoundedRect << " event listener types " << style().eventListenerRegionTypes());
+            paintInfo.eventRegionContext()->unite(FloatRoundedRect(borderRoundedRect), *this, style(), isRenderTextControl() && downcast<RenderTextControl>(*this).textFormControlElement().isInnerTextElementEditable());
         }
 
         if (!paintInfo.paintBehavior.contains(PaintBehavior::EventRegionIncludeForeground))

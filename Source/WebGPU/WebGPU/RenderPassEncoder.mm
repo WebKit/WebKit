@@ -221,6 +221,11 @@ void RenderPassEncoder::endPass()
         return;
     }
 
+    if (m_debugGroupStackSize || !isValid()) {
+        m_parentEncoder->makeInvalid();
+        return;
+    }
+
     ASSERT(m_pendingTimestampWrites.isEmpty() || m_device->baseCapabilities().counterSamplingAPI == HardwareCapabilities::BaseCapabilities::CounterSamplingAPI::CommandBoundary);
     for (const auto& pendingTimestampWrite : m_pendingTimestampWrites)
         [m_renderCommandEncoder sampleCountersInBuffer:pendingTimestampWrite.querySet->counterSampleBuffer() atSampleIndex:pendingTimestampWrite.queryIndex withBarrier:NO];

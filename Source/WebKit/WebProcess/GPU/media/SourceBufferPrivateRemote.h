@@ -145,4 +145,8 @@ private:
 
 } // namespace WebKit
 
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::SourceBufferPrivateRemote)
+static bool isType(const WebCore::SourceBufferPrivate& sourceBuffer) { return sourceBuffer.platformType() == WebCore::MediaPlatformType::Remote; }
+SPECIALIZE_TYPE_TRAITS_END()
+
 #endif // ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)

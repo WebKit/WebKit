@@ -9262,6 +9262,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         context.get()[PAL::get_DataDetectorsUI_kDataDetectorsTrailingText()] = positionInformation.textAfter;
 
     auto canShowPreview = ^{
+        if (!static_cast<NSURL *>(positionInformation.url).iTunesStoreURL)
+            return YES;
         if (!_page->websiteDataStore().isPersistent())
             return NO;
 #if ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
@@ -10334,7 +10336,14 @@ static RetainPtr<UITargetedPreview> createFallbackTargetedPreview(UIView *rootVi
         auto indicator = _positionInformation.linkIndicator;
         _positionInformationLinkIndicator = indicator;
         auto textIndicatorImage = uiImageForImage(indicator.contentImage.get());
-        targetedPreview = createTargetedPreview(textIndicatorImage.get(), self, self.containerForContextMenuHintPreviews, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, cocoaColor(indicator.estimatedBackgroundColor).get());
+        targetedPreview = createTargetedPreview(textIndicatorImage.get(), self, self.containerForContextMenuHintPreviews, indicator.textBoundingRectInRootViewCoordinates, indicator.textRectsInBoundingRectCoordinates, ^{
+            if (indicator.estimatedBackgroundColor != WebCore::Color::transparentBlack)
+                return cocoaColor(indicator.estimatedBackgroundColor).autorelease();
+            // In the case where background color estimation fails, it doesn't make sense to
+            // show a text indicator preview with a clear background in light mode. Default
+            // to the system background color instead.
+            return UIColor.systemBackgroundColor;
+        }());
     } else if ((_positionInformation.isAttachment || _positionInformation.isImage) && _positionInformation.image) {
         auto cgImage = _positionInformation.image->makeCGImageCopy();
         auto image = adoptNS([[UIImage alloc] initWithCGImage:cgImage.get()]);

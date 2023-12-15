@@ -51,8 +51,8 @@ public:
     void didReceiveGeolocationPermissionDecision(GeolocationIdentifier, const String& authorizationToken);
 
 private:
-    using IDToGeolocationMap = HashMap<GeolocationIdentifier, CheckedPtr<WebCore::Geolocation>>;
-    using GeolocationToIDMap = HashMap<CheckedPtr<WebCore::Geolocation>, GeolocationIdentifier>;
+    using IDToGeolocationMap = HashMap<GeolocationIdentifier, WeakRef<WebCore::Geolocation>>;
+    using GeolocationToIDMap = HashMap<WeakRef<WebCore::Geolocation>, GeolocationIdentifier>;
     IDToGeolocationMap m_idToGeolocationMap;
     GeolocationToIDMap m_geolocationToIDMap;
 

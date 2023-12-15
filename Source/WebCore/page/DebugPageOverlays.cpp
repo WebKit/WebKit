@@ -299,7 +299,7 @@ bool InteractionRegionOverlay::updateRegion()
     return true;
 }
 
-static Vector<Path> pathsForRect(const IntRect& rect, float borderRadius)
+static Vector<Path> pathsForRect(const FloatRect& rect, float borderRadius)
 {
     static constexpr float radius = 4;
 

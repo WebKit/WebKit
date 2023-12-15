@@ -7082,7 +7082,7 @@ TEST_P(Texture2DTest, CopyAfterCompressed)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DUnsignedIntegerAlpha1TestES3, TextureRGB8UIImplicitAlpha1)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac());
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
@@ -7100,7 +7100,7 @@ TEST_P(Texture2DUnsignedIntegerAlpha1TestES3, TextureRGB8UIImplicitAlpha1)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DIntegerAlpha1TestES3, TextureRGB8IImplicitAlpha1)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac());
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
@@ -7119,7 +7119,7 @@ TEST_P(Texture2DIntegerAlpha1TestES3, TextureRGB8IImplicitAlpha1)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DUnsignedIntegerAlpha1TestES3, TextureRGB16UIImplicitAlpha1)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac());
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
@@ -7137,7 +7137,7 @@ TEST_P(Texture2DUnsignedIntegerAlpha1TestES3, TextureRGB16UIImplicitAlpha1)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DIntegerAlpha1TestES3, TextureRGB16IImplicitAlpha1)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac());
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
@@ -7155,7 +7155,7 @@ TEST_P(Texture2DIntegerAlpha1TestES3, TextureRGB16IImplicitAlpha1)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DUnsignedIntegerAlpha1TestES3, TextureRGB32UIImplicitAlpha1)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac());
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);
@@ -7173,7 +7173,7 @@ TEST_P(Texture2DUnsignedIntegerAlpha1TestES3, TextureRGB32UIImplicitAlpha1)
 // ES 3.0.4 table 3.24
 TEST_P(Texture2DIntegerAlpha1TestES3, TextureRGB32IImplicitAlpha1)
 {
-    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac());
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, mTexture2D);

@@ -111,7 +111,7 @@ JSGenericTypedArrayView<Adaptor>* JSGenericTypedArrayView<Adaptor>::create(JSGlo
 
     ASSERT(length || buffer->isResizableOrGrowableShared());
 
-    if (!ArrayBufferView::verifySubRangeLength(*buffer, byteOffset, length.value_or(0), elementSize)) {
+    if (!ArrayBufferView::verifySubRangeLength(buffer->byteLength(), byteOffset, length.value_or(0), elementSize)) {
         throwException(globalObject, scope, createRangeError(globalObject, "Length out of range of buffer"_s));
         return nullptr;
     }

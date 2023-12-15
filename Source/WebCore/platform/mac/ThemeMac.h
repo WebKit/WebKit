@@ -35,7 +35,7 @@ class ThemeMac final : public ThemeCocoa {
 public:
     static bool supportsLargeFormControls();
 
-    static NSView *ensuredView(ScrollView*, const ControlStates&, bool useUnparentedView = false);
+    static NSView *ensuredView(ScrollView*, OptionSet<ControlStyle::State>, bool useUnparentedView = false);
     WEBCORE_EXPORT static void setUseFormSemanticContext(bool);
     static bool useFormSemanticContext();
     static void setFocusRingClipRect(const FloatRect&);
@@ -54,7 +54,7 @@ private:
 
     bool controlRequiresPreWhiteSpace(StyleAppearance appearance) const final { return appearance == StyleAppearance::PushButton; }
 
-    void inflateControlPaintRect(StyleAppearance, const ControlStates&, FloatRect&, float zoomFactor) const final;
+    void inflateControlPaintRect(StyleAppearance, OptionSet<ControlStyle::State>, FloatRect&, float zoomFactor) const final;
 
     bool userPrefersContrast() const final;
     bool userPrefersReducedMotion() const final;

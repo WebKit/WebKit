@@ -63,22 +63,22 @@ class PixelRect
         glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     }
 
-    void toTexture3D(GLuint texid, GLint depth) const
+    void toTexture3D(GLuint target, GLuint texid, GLint depth) const
     {
-        glBindTexture(GL_TEXTURE_3D, texid);
+        glBindTexture(target, texid);
 
-        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, mWidth, mHeight, depth, 0, GL_RGBA,
-                     GL_UNSIGNED_BYTE, nullptr);
+        glTexImage3D(target, 0, GL_RGBA, mWidth, mHeight, depth, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                     nullptr);
         for (GLint z = 0; z < depth; z++)
         {
-            glTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, z, mWidth, mHeight, 1, GL_RGBA,
-                            GL_UNSIGNED_BYTE, mData.data());
+            glTexSubImage3D(target, 0, 0, 0, z, mWidth, mHeight, 1, GL_RGBA, GL_UNSIGNED_BYTE,
+                            mData.data());
         }
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(target, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     }
 
     void readFB(int x, int y)
@@ -169,12 +169,24 @@ class WebGLReadOutsideFramebufferTest : public ANGLETest<>
                       pixelsOut);
     }
 
+    // Read framebuffer to 'pixelsOut' via glCopyTexSubImage3D and a 2D array texture.
+    void TestCopyTexSubImage2DArray(int x, int y, int z, PixelRect *pixelsOut)
+    {
+        // Init texture with given pixels.
+        GLTexture destTexture;
+        pixelsOut->toTexture3D(GL_TEXTURE_2D_ARRAY, destTexture.get(), kTextureDepth);
+
+        // Read framebuffer -> texture -> 'pixelsOut'
+        glCopyTexSubImage3D(GL_TEXTURE_2D_ARRAY, 0, 0, 0, z, x, y, kReadWidth, kReadHeight);
+        readTexture3D(destTexture, kReadWidth, kReadHeight, z, pixelsOut);
+    }
+
     // Read framebuffer to 'pixelsOut' via glCopyTexSubImage3D.
     void TestCopyTexSubImage3D(int x, int y, int z, PixelRect *pixelsOut)
     {
         // Init texture with given pixels.
         GLTexture destTexture;
-        pixelsOut->toTexture3D(destTexture.get(), kTextureDepth);
+        pixelsOut->toTexture3D(GL_TEXTURE_3D, destTexture.get(), kTextureDepth);
 
         // Read framebuffer -> texture -> 'pixelsOut'
         glCopyTexSubImage3D(GL_TEXTURE_3D, 0, 0, 0, z, x, y, kReadWidth, kReadHeight);
@@ -228,6 +240,7 @@ class WebGLReadOutsideFramebufferTest : public ANGLETest<>
         setConfigGreenBits(8);
         setConfigBlueBits(8);
         setConfigAlphaBits(8);
+        setRobustResourceInit(true);
         setWebGLCompatibilityEnabled(true);
     }
 
@@ -357,8 +370,6 @@ TEST_P(WebGLReadOutsideFramebufferTest, CopyTexSubImage2D)
 // Check that copyTexImage2D sets (0,0,0,0) for pixels outside the framebuffer.
 TEST_P(WebGLReadOutsideFramebufferTest, CopyTexImage2D)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(IsVulkan() || IsD3D9() || IsD3D11());
     Main2D(&WebGLReadOutsideFramebufferTest::TestCopyTexImage2D, true);
     Main2D(&WebGLReadOutsideFramebufferTest::TestCopyTexImageCube, true);
 }
@@ -367,16 +378,12 @@ TEST_P(WebGLReadOutsideFramebufferTest, CopyTexImage2D)
 // the corresponding source pixel is outside the framebuffer.
 TEST_P(WebGL2ReadOutsideFramebufferTest, CopyTexSubImage3D)
 {
-    // http://anglebug.com/4092
-    ANGLE_SKIP_TEST_IF(IsVulkan() || IsD3D9() || IsD3D11());
-    // Robust CopyTexSubImage3D behaviour is not implemented on OpenGL.
-    ANGLE_SKIP_TEST_IF(IsDesktopOpenGL() || IsOpenGLES());
-
+    Main3D(&WebGLReadOutsideFramebufferTest::TestCopyTexSubImage2DArray, false);
     Main3D(&WebGLReadOutsideFramebufferTest::TestCopyTexSubImage3D, false);
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGLReadOutsideFramebufferTest);
 
-ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(WebGL2ReadOutsideFramebufferTest);
+ANGLE_INSTANTIATE_TEST_ES3(WebGL2ReadOutsideFramebufferTest);
 
 }  // namespace angle

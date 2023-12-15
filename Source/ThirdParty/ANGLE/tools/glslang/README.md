@@ -17,4 +17,4 @@ Please update both Windows and Linux binaries at the same time. Use two CLs. One
 for each platform. Note that we don't currently support Mac on Vulkan. If we do
 we should add a glslang download for Mac as well.
 
-Contact jmadill or syoussefi for any help with the validator or updating the binaries.
+Contact syoussefi for any help with the validator or updating the binaries.

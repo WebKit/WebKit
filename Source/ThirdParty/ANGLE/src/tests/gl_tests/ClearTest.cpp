@@ -362,7 +362,7 @@ TEST_P(ClearTest, EmptyScissor)
     // These configs have bug that fails this test.
     // These configs are unmaintained so skipping.
     ANGLE_SKIP_TEST_IF(IsIntel() && IsD3D9());
-    ANGLE_SKIP_TEST_IF(IsMac());
+    ANGLE_SKIP_TEST_IF(IsIntel() && IsMac() && IsOpenGL());
     glClearColor(0.25f, 0.5f, 0.5f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glEnable(GL_SCISSOR_TEST);

@@ -773,20 +773,6 @@
 6678 UBSAN : dEQP-GLES3.functional.fragment_out.* = SKIP
 6678 UBSAN : dEQP-GLES3.functional.vertex_arrays.single_attribute.* = SKIP
 
-// https://gitlab.khronos.org/opengl/API/-/issues/179
-8048 NVIDIA : dEQP-GLES3.functional.fbo.completeness.renderable.renderbuffer.color0.r8_snorm = SKIP
-8048 NVIDIA : dEQP-GLES3.functional.fbo.completeness.renderable.renderbuffer.color0.rg8_snorm = SKIP
-8048 NVIDIA : dEQP-GLES3.functional.fbo.completeness.renderable.renderbuffer.color0.rgba8_snorm = SKIP
-8048 NVIDIA : dEQP-GLES3.functional.fbo.completeness.renderable.texture.color0.r8_snorm = SKIP
-8048 NVIDIA : dEQP-GLES3.functional.fbo.completeness.renderable.texture.color0.rg8_snorm = SKIP
-8048 NVIDIA : dEQP-GLES3.functional.fbo.completeness.renderable.texture.color0.rgba8_snorm = SKIP
-8048 MAC : dEQP-GLES3.functional.fbo.completeness.renderable.renderbuffer.color0.r8_snorm = SKIP
-8048 MAC : dEQP-GLES3.functional.fbo.completeness.renderable.renderbuffer.color0.rg8_snorm = SKIP
-8048 MAC : dEQP-GLES3.functional.fbo.completeness.renderable.renderbuffer.color0.rgba8_snorm = SKIP
-8048 MAC : dEQP-GLES3.functional.fbo.completeness.renderable.texture.color0.r8_snorm = SKIP
-8048 MAC : dEQP-GLES3.functional.fbo.completeness.renderable.texture.color0.rg8_snorm = SKIP
-8048 MAC : dEQP-GLES3.functional.fbo.completeness.renderable.texture.color0.rgba8_snorm = SKIP
-
 // Samsung Galaxy S23
 8157 GALAXYS23 VULKAN : dEQP-GLES3.functional.fbo.blit.depth_stencil.* = SKIP
 8157 GALAXYS23 VULKAN : dEQP-GLES3.functional.fbo.invalidate.format.stencil_index8 = SKIP

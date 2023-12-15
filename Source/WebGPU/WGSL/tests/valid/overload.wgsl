@@ -2280,9 +2280,77 @@ fn testMix()
 }
 
 // 16.5.42
+// RUN: %metal-compile testModf
+@compute @workgroup_size(1)
 fn testModf()
 {
-    // FIXME: this needs the special return types __modf_result_*
+    {
+      let x: f32 = 1.5;
+      let y: f16 = 1.5;
+      let r1 = modf(x);
+      let r2 = modf(y);
+      const r3 = modf(1.5);
+      const r4 = modf(1.5f);
+      const r5 = modf(1.5h);
+
+      let r6: f32 = modf(x).fract;
+      let r7: f16 = modf(y).whole;
+      const r8: f32 = modf(1.5).fract;
+      const r9: f16 = modf(1.5).whole;
+      const r10: f32 = modf(1.5f).fract;
+      const r11: f16 = modf(1.5h).whole;
+    }
+
+    {
+      let x: vec2<f32> = vec2(1.5);
+      let y: vec2<f16> = vec2(1.5);
+      let r1 = modf(x);
+      let r2 = modf(y);
+      const r3 = modf(vec2(1.5));
+      const r4 = modf(vec2(1.5f));
+      const r5 = modf(vec2(1.5h));
+
+      let r6: vec2<f32> = modf(x).fract;
+      let r7: vec2<f16> = modf(y).whole;
+      const r8: vec2<f32> = modf(vec2(1.5)).fract;
+      const r9: vec2<f16> = modf(vec2(1.5)).whole;
+      const r10: vec2<f32> = modf(vec2(1.5f)).fract;
+      const r11: vec2<f16> = modf(vec2(1.5h)).whole;
+    }
+
+    {
+      let x: vec3<f32> = vec3(1.5);
+      let y: vec3<f16> = vec3(1.5);
+      let r1 = modf(x);
+      let r2 = modf(y);
+      const r3 = modf(vec3(1.5));
+      const r4 = modf(vec3(1.5f));
+      const r5 = modf(vec3(1.5h));
+
+      let r6: vec3<f32> = modf(x).fract;
+      let r7: vec3<f16> = modf(y).whole;
+      const r8: vec3<f32> = modf(vec3(1.5)).fract;
+      const r9: vec3<f16> = modf(vec3(1.5)).whole;
+      const r10: vec3<f32> = modf(vec3(1.5f)).fract;
+      const r11: vec3<f16> = modf(vec3(1.5h)).whole;
+    }
+
+    {
+      let x: vec4<f32> = vec4(1.5);
+      let y: vec4<f16> = vec4(1.5);
+      let r1 = modf(x);
+      let r2 = modf(y);
+      const r3 = modf(vec4(1.5));
+      const r4 = modf(vec4(1.5f));
+      const r5 = modf(vec4(1.5h));
+
+      let r6: vec4<f32> = modf(x).fract;
+      let r7: vec4<f16> = modf(y).whole;
+      const r8: vec4<f32> = modf(vec4(1.5)).fract;
+      const r9: vec4<f16> = modf(vec4(1.5)).whole;
+      const r10: vec4<f32> = modf(vec4(1.5f)).fract;
+      const r11: vec4<f16> = modf(vec4(1.5h)).whole;
+    }
 }
 
 // 16.5.43

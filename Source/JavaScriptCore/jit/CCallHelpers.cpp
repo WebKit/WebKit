@@ -83,16 +83,6 @@ void CCallHelpers::logShadowChickenTailPacket(GPRReg shadowPacket, JSValueRegs t
     logShadowChickenTailPacketImpl(shadowPacket, thisRegs, scope, codeBlock, callSiteIndex);
 }
 
-void CCallHelpers::emitJITCodeOver(CodePtr<JSInternalPtrTag> where, ScopedLambda<void(CCallHelpers&)> emitCode, const char* description)
-{
-    CCallHelpers jit;
-    emitCode(jit);
-
-    constexpr bool needsBranchCompaction = false;
-    LinkBuffer linkBuffer(jit, where, jit.m_assembler.buffer().codeSize(), LinkBuffer::Profile::InlineCache, JITCompilationMustSucceed, needsBranchCompaction);
-    FINALIZE_CODE(linkBuffer, NoPtrTag, description);
-}
-
 static_assert(!((maxFrameExtentForSlowPathCall + 2 * sizeof(CPURegister)) % 16), "Stack must be aligned after CTI thunk entry");
 
 void CCallHelpers::emitCTIThunkPrologue(bool returnAddressAlreadyTagged)

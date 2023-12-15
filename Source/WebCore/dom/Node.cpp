@@ -125,9 +125,9 @@ struct SameSizeAsNode : EventTarget, CanMakeCheckedPtr {
 static_assert(sizeof(Node) == sizeof(SameSizeAsNode), "Node should stay small");
 
 #if DUMP_NODE_STATISTICS
-static HashSet<CheckedPtr<Node>>& liveNodeSet()
+static WeakHashSet<Node>& liveNodeSet()
 {
-    static NeverDestroyed<HashSet<CheckedPtr<Node>>> liveNodes;
+    static NeverDestroyed<WeakHashSet<Node>> liveNodes;
     return liveNodes;
 }
 
@@ -221,8 +221,7 @@ void Node::dumpStatistics()
     HashMap<uint32_t, size_t> rareDataSingleUseTypeCounts;
     size_t mixedRareDataUseCount = 0;
 
-    for (auto& nodePtr : liveNodeSet()) {
-        auto& node = *nodePtr.get();
+    for (auto& node : liveNodeSet()) {
         if (node.hasRareData()) {
             ++nodesWithRareData;
             if (auto* element = dynamicDowncast<Element>(node)) {
@@ -304,7 +303,7 @@ void Node::dumpStatistics()
         }
     }
 
-    printf("Number of Nodes: %d\n\n", liveNodeSet().size());
+    printf("Number of Nodes: %d\n\n", liveNodeSet().computeSize());
     printf("Number of Nodes with RareData: %zu\n", nodesWithRareData);
     printf("  Mixed use: %zu\n", mixedRareDataUseCount);
     for (auto it : rareDataSingleUseTypeCounts)
@@ -374,7 +373,7 @@ void Node::trackForDebugging()
 #endif
 
 #if DUMP_NODE_STATISTICS
-    liveNodeSet().add(this);
+    liveNodeSet().add(*this);
 #endif
 }
 
@@ -424,7 +423,7 @@ Node::~Node()
 #endif
 
 #if DUMP_NODE_STATISTICS
-    liveNodeSet().remove(this);
+    liveNodeSet().remove(*this);
 #endif
 
     ASSERT(!renderer());

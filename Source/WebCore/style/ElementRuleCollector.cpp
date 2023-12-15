@@ -610,14 +610,27 @@ std::pair<bool, std::optional<Vector<ElementRuleCollector::ScopingRootWithDistan
 
     Vector<ScopingRootWithDistance> scopingRoots;
     auto isWithinScope = [&](auto& rule) {
+        auto previousScopingRoots = WTFMove(scopingRoots);
+        // The last rule (=innermost @scope rule) determines the scoping roots
+        scopingRoots.clear();
+
         auto findScopingRoots = [&](const auto& selectorList) {
             unsigned distance = 0;
             const auto* ancestor = &element();
             while (ancestor) {
                 for (const auto* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
-                    auto match = checker.match(*selector, *ancestor, context);
-                    if (match) {
-                        scopingRoots.append({ ancestor, distance });
+                    auto appendIfMatch = [&] (const Element* previousScopingRoot = nullptr) {
+                        auto subContext = context;
+                        subContext.scope = previousScopingRoot;
+                        auto match = checker.match(*selector, *ancestor, subContext);
+                        if (match)
+                            scopingRoots.append({ ancestor, distance });
+                    };
+                    if (previousScopingRoots.isEmpty())
+                        appendIfMatch();
+                    else {
+                        for (const auto [previousScopingRoot, _] : previousScopingRoots)
+                            appendIfMatch(previousScopingRoot);
                     }
                 }
                 ancestor = ancestor->parentElement();
@@ -633,21 +646,23 @@ std::pair<bool, std::optional<Vector<ElementRuleCollector::ScopingRootWithDistan
         */
         auto isWithinScopingRootsAndScopeEnd = [&](const auto& selectorList) {
             auto match = [&] (const auto* scopingRoot, const auto* selector) {
+                auto subContext = context;
+                subContext.scope = scopingRoot;
                 const auto* ancestor = &element();
                 while (ancestor) {
-                    if (ancestor == scopingRoot) {
-                        // The end of the scope has to be a descendant of the start of the scope.
-                        return false;
-                    }
-                    auto match = checker.match(*selector, *ancestor, context);
+                    auto match = checker.match(*selector, *ancestor, subContext);
                     if (match)
                         return true;
+                    if (ancestor == scopingRoot) {
+                        // The end of the scope can't be an ancestor of the start of the scope.
+                        return false;
+                    }
                     ancestor = ancestor->parentElement();
                 }
                 return false;
             };
 
-            for (auto [scopingRoot, distance] : scopingRoots) {
+            for (auto [scopingRoot, _] : scopingRoots) {
                 for (const auto* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
                     if (!match(scopingRoot, selector))
                         return true;
@@ -664,6 +679,7 @@ std::pair<bool, std::optional<Vector<ElementRuleCollector::ScopingRootWithDistan
         } else {
             // FIXME: the scoping root is the parent element of the owner node of the stylesheet where the @scope rule is defined. (If no such element exists, then the scoping root is the root of the containing node tree.
             // We don't support those @scope rules without scope start yet
+            // https://bugs.webkit.org/show_bug.cgi?id=266399
             return false;
         }
 
@@ -678,8 +694,6 @@ std::pair<bool, std::optional<Vector<ElementRuleCollector::ScopingRootWithDistan
 
     // We need to respect each nested @scope to collect this rule
     for (auto& rule : scopeRules) {
-        // The last rule (=innermost @scope rule) determines the scoping roots
-        scopingRoots.clear();
         if (!isWithinScope(rule))
             return { false, { } };
     }

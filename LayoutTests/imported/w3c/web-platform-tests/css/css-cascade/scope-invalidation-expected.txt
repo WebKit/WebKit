@@ -19,7 +19,7 @@ PASS Element becoming root via + combinator
 PASS :not(scope) in subject
 PASS :not(scope) in ancestor
 PASS :not(scope) in limit subject
-FAIL :not(scope) in limit ancestor assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+PASS :not(scope) in limit ancestor
 FAIL :nth-child() in scope root assert_equals: expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
 PASS :nth-child() in scope limit
 

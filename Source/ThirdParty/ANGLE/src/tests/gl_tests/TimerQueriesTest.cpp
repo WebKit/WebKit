@@ -177,7 +177,7 @@ TEST_P(TimerQueriesTest, TimeElapsed)
 TEST_P(TimerQueriesTest, TimeElapsedTextureTest)
 {
     // OSX drivers don't seem to properly time non-draw calls so we skip the test on Mac
-    ANGLE_SKIP_TEST_IF(IsMac());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_disjoint_timer_query"));
 

@@ -37,7 +37,7 @@
 namespace WebKit {
 using namespace WebCore;
 
-typedef HashMap<CheckedPtr<DOMWrapperWorld>, CheckedPtr<InjectedBundleScriptWorld>> WorldMap;
+using WorldMap = HashMap<SingleThreadWeakRef<DOMWrapperWorld>, CheckedPtr<InjectedBundleScriptWorld>>;
 
 static WorldMap& allWorlds()
 {
@@ -91,14 +91,14 @@ InjectedBundleScriptWorld::InjectedBundleScriptWorld(DOMWrapperWorld& world, con
     : m_world(world)
     , m_name(name)
 {
-    ASSERT(!allWorlds().contains(m_world.ptr()));
-    allWorlds().add(m_world.ptr(), this);
+    ASSERT(!allWorlds().contains(m_world.get()));
+    allWorlds().add(m_world.get(), this);
 }
 
 InjectedBundleScriptWorld::~InjectedBundleScriptWorld()
 {
-    ASSERT(allWorlds().contains(m_world.ptr()));
-    allWorlds().remove(m_world.ptr());
+    ASSERT(allWorlds().contains(m_world.get()));
+    allWorlds().remove(m_world.get());
 }
 
 const DOMWrapperWorld& InjectedBundleScriptWorld::coreWorld() const

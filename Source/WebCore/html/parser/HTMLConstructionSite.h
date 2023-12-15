@@ -232,7 +232,7 @@ private:
     // This is the root ContainerNode to which the parser attaches all newly
     // constructed nodes. It points to a DocumentFragment when parsing fragments
     // and a Document in all other cases.
-    CheckedRef<ContainerNode> m_attachmentRoot;
+    WeakRef<ContainerNode, WeakPtrImplWithEventTargetData> m_attachmentRoot;
     
     RefPtr<HTMLFormElement> m_form;
     mutable HTMLElementStack m_openElements;

@@ -1480,8 +1480,6 @@ TEST_P(CopyTextureTest, CopyToMipmap)
     ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 &&
                        !IsGLExtensionEnabled("GL_OES_fbo_render_mipmap"));
 
-    ANGLE_SKIP_TEST_IF(IsMac() && IsIntel());
-
     GLColor pixels[] = {GLColor::red, GLColor::red, GLColor::red, GLColor::red};
 
     GLTexture textures[2];

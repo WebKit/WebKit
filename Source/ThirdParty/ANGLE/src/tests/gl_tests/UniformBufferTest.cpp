@@ -1856,7 +1856,7 @@ void main()
 TEST_P(UniformBufferTest, Std140UniformBlockWithDynamicallyIndexedRowMajorArray)
 {
     // http://anglebug.com/3837 , http://anglebug.com/2273
-    ANGLE_SKIP_TEST_IF((IsLinux() && IsIntel() && IsOpenGL()) || IsMac());
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL() && (IsIntel() || IsAMD()));
 
     constexpr char kFS[] =
         R"(#version 300 es
@@ -2545,8 +2545,6 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructFloatAndVec
 // member.
 TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructVec3AndFloat)
 {
-    ANGLE_SKIP_TEST_IF(IsMac());
-
     std::ostringstream stream;
     generateArraySizeAndDivisorsDeclaration(stream, false, false, false);
     const std::string &kFS =
@@ -3283,8 +3281,6 @@ TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructFloatAndMat
 // member.
 TEST_P(UniformBlockWithOneLargeArrayMemberTest, MemberTypeIsMixStructFloatAndVec4)
 {
-    ANGLE_SKIP_TEST_IF(IsMac());
-
     std::ostringstream stream;
     generateArraySizeAndDivisorsDeclaration(stream, false, false, false);
     const std::string &kFS =

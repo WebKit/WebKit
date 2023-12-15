@@ -440,6 +440,28 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
                       new TType(EbtUInt, EbpHigh, EvqSampleMask, 1), SymbolType::AngleInternal);
     DeclareRightBeforeMain(root, *angleSampleMask);
 
+    // Write all-enabled sample mask even for single-sampled rendering
+    // when the shader uses derivatives to workaround a driver bug.
+    if (compiler.usesDerivatives())
+    {
+        TIntermBlock *helperAssignBlock = new TIntermBlock;
+        helperAssignBlock->appendStatement(new TIntermBinary(
+            EOpAssign, new TIntermSymbol(angleSampleMask), CreateUIntNode(0xFFFFFFFFu)));
+
+        TVariable *writeHelperSampleMaskVar =
+            new TVariable(&symbolTable, sh::ImmutableString(mtl::kWriteHelperSampleMaskConstName),
+                          StaticType::Get<EbtBool, EbpUndefined, EvqSpecConst, 1, 1>(),
+                          SymbolType::AngleInternal);
+
+        if (!RunAtTheBeginningOfShader(
+                &compiler, &root,
+                new TIntermIfElse(new TIntermSymbol(writeHelperSampleMaskVar), helperAssignBlock,
+                                  nullptr)))
+        {
+            return false;
+        }
+    }
+
     // ANGLE_metal_SampleMask = ANGLE_angleUniforms.coverageMask;
     TIntermBlock *block = new TIntermBlock;
     block->appendStatement(new TIntermBinary(EOpAssign, new TIntermSymbol(angleSampleMask),
@@ -632,12 +654,13 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
     }
 
     // Sample mask assignment is guarded by ANGLEMultisampledRendering specialization constant
-    TVariable *sampleMaskEnabledVar = new TVariable(
+    TVariable *multisampledRenderingVar = new TVariable(
         &symbolTable, sh::ImmutableString(mtl::kMultisampledRenderingConstName),
         StaticType::Get<EbtBool, EbpUndefined, EvqSpecConst, 1, 1>(), SymbolType::AngleInternal);
     return RunAtTheEndOfShader(
         &compiler, &root,
-        new TIntermIfElse(new TIntermSymbol(sampleMaskEnabledVar), block, nullptr), &symbolTable);
+        new TIntermIfElse(new TIntermSymbol(multisampledRenderingVar), block, nullptr),
+        &symbolTable);
 }
 
 [[nodiscard]] bool AddFragDataDeclaration(TCompiler &compiler,
@@ -947,6 +970,7 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
     TSymbolTable &symbolTable = getSymbolTable();
     IdGen idGen;
     ProgramPreludeConfig ppc(metalShaderTypeFromGLSL(getShaderType()));
+    ppc.usesDerivatives = usesDerivatives();
 
     if (!WrapMain(*this, idGen, *root))
     {
@@ -1276,8 +1300,6 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
             }
         }
 
-        ASSERT(!usesSampleMask || isSampleMaskAllowed());
-
         if (usesPointCoord)
         {
             TIntermTyped *flipNegXY =
@@ -1411,16 +1433,13 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
     }
     else if (getShaderType() == GL_FRAGMENT_SHADER)
     {
-        if (isSampleMaskAllowed())
+        mValidateASTOptions.validateVariableReferences = false;
+        if (!AddSampleMaskDeclaration(*this, *root, symbolTable, driverUniforms,
+                                      compileOptions.emulateAlphaToCoverage ||
+                                          compileOptions.metal.generateShareableShaders,
+                                      usesSampleMask))
         {
-            mValidateASTOptions.validateVariableReferences = false;
-            if (!AddSampleMaskDeclaration(*this, *root, symbolTable, driverUniforms,
-                                          compileOptions.emulateAlphaToCoverage ||
-                                              compileOptions.metal.generateShareableShaders,
-                                          usesSampleMask))
-            {
-                return false;
-            }
+            return false;
         }
     }
 

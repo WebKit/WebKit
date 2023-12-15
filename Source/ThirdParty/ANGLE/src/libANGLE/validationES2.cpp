@@ -4677,14 +4677,6 @@ bool ValidateHint(const PrivateState &state,
         case GL_GENERATE_MIPMAP_HINT:
             break;
 
-        case GL_TEXTURE_FILTERING_HINT_CHROMIUM:
-            if (!state.getExtensions().textureFilteringHintCHROMIUM)
-            {
-                errors->validationErrorF(entryPoint, GL_INVALID_ENUM, kEnumNotSupported, target);
-                return false;
-            }
-            break;
-
         case GL_FRAGMENT_SHADER_DERIVATIVE_HINT:
             if (state.getClientVersion() < ES_3_0 && !state.getExtensions().standardDerivativesOES)
             {

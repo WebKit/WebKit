@@ -95,6 +95,8 @@ public:
 
     CSSParserSelector* tagHistory() const { return m_tagHistory.get(); }
     CSSParserSelector* leftmostSimpleSelector();
+    const CSSParserSelector* leftmostSimpleSelector() const;
+    bool startsWithExplicitCombinator() const;
     void setTagHistory(std::unique_ptr<CSSParserSelector> selector) { m_tagHistory = WTFMove(selector); }
     void clearTagHistory() { m_tagHistory.reset(); }
     void insertTagHistory(CSSSelector::RelationType before, std::unique_ptr<CSSParserSelector>, CSSSelector::RelationType after);

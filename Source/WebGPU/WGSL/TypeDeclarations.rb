@@ -736,7 +736,21 @@ function :modf, {
     must_use: true,
     const: true,
 
-    # FIXME: this needs the special return types __modf_result_*
+    [].(f32) => __modf_result_f32,
+    [].(f16) => __modf_result_f16,
+    [].(abstract_float) => __modf_result_abstract,
+
+    [].(vec2[f32]) => __modf_result_vec2_f32,
+    [].(vec2[f16]) => __modf_result_vec2_f16,
+    [].(vec2[abstract_float]) => __modf_result_vec2_abstract,
+
+    [].(vec3[f32]) => __modf_result_vec3_f32,
+    [].(vec3[f16]) => __modf_result_vec3_f16,
+    [].(vec3[abstract_float]) => __modf_result_vec3_abstract,
+
+    [].(vec4[f32]) => __modf_result_vec4_f32,
+    [].(vec4[f16]) => __modf_result_vec4_f16,
+    [].(vec4[abstract_float]) => __modf_result_vec4_abstract,
 }
 
 # 16.5.43

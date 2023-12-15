@@ -36,11 +36,12 @@ class ReswizzleYUVOpsTraverser : public TIntermTraverser
 };
 
 // OpenGLES and Vulkan has different color component mapping for YUV. OpenGL spec maps R_gl=y,
-// G_gl=u, B_gl=v, but Vulkan wants R_vulkan=u, G_vulkan=v, B_vulkan=y. We want all calculation to
-// be in OpenGLES  mapping during shader execution, but the actual buffer/image will be stored as
+// G_gl=u, B_gl=v, but Vulkan wants R_vulkan=v, G_vulkan=y, B_vulkan=u. We want all calculation to
+// be in OpenGLES mapping during shader execution, but the actual buffer/image will be stored as
 // vulkan mapping. This means when we sample from VkImage, we need to map from vulkan order back to
-// GL order, which comes out to be {1, 2, 0, 3}. This function will check if the aggregate is a
-// texture{proj|fetch}(samplerExternal,...) and if yes it will compose and return a swizzle node.
+// GL order, which comes out to be R_gl=y=G_vulkan=1, G_gl=u=B_vulkan=2, B_gl=v=R_vulkan=0. i.e, {1,
+// 2, 0, 3}. This function will check if the aggregate is a texture{proj|fetch}(samplerExternal,...)
+// and if yes it will compose and return a swizzle node.
 TIntermSwizzle *CheckTextureOpWithSamplerExternal2DY2YAndSwizzle(Visit visit,
                                                                  TIntermAggregate *node)
 {

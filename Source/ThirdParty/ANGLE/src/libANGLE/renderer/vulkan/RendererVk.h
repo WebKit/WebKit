@@ -533,9 +533,7 @@ class RendererVk : angle::NonCopyable
 
     uint32_t getStagingBufferMemoryTypeIndex(vk::MemoryCoherency coherency) const
     {
-        return coherency == vk::MemoryCoherency::Coherent
-                   ? mCoherentStagingBufferMemoryTypeIndex
-                   : mNonCoherentStagingBufferMemoryTypeIndex;
+        return mStagingBufferMemoryTypeIndex[coherency];
     }
     size_t getStagingBufferAlignment() const { return mStagingBufferAlignment; }
 
@@ -917,9 +915,8 @@ class RendererVk : angle::NonCopyable
 
     // The default alignment for BufferVk object
     size_t mDefaultBufferAlignment;
-    // The cached memory type index for staging buffer that is host visible.
-    uint32_t mCoherentStagingBufferMemoryTypeIndex;
-    uint32_t mNonCoherentStagingBufferMemoryTypeIndex;
+    // The memory type index for staging buffer that is host visible.
+    angle::PackedEnumMap<vk::MemoryCoherency, uint32_t> mStagingBufferMemoryTypeIndex;
     size_t mStagingBufferAlignment;
     // For vertex conversion buffers
     uint32_t mHostVisibleVertexConversionBufferMemoryTypeIndex;

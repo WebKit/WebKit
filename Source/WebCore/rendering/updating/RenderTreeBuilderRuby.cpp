@@ -252,6 +252,12 @@ RenderElement& RenderTreeBuilder::Ruby::findOrCreateParentForStyleBasedRubyChild
     if (!child.isRenderText() && child.style().display() == DisplayType::Ruby && parent.style().display() == DisplayType::RubyBlock)
         return parent;
 
+    if (parent.style().display() == DisplayType::RubyBlock && parent.firstChild()) {
+        // See if we have an anonymous ruby box already.
+        ASSERT(parent.firstChild()->style().display() == DisplayType::Ruby);
+        return downcast<RenderElement>(*parent.firstChild());
+    }
+
     if (parent.style().display() != DisplayType::Ruby) {
         auto rubyContainer = createRenderer<RenderInline>(RenderObject::Type::Inline, parent.document(), RenderStyle::createAnonymousStyleWithDisplay(parent.style(), DisplayType::Ruby));
         rubyContainer->initializeStyle();

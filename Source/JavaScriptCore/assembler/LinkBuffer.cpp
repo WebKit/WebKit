@@ -228,13 +228,6 @@ static ALWAYS_INLINE void recordLinkOffsets(AssemblerData& assemblerData, int32_
 #endif
 }
 
-// We use this to prevent compile errors on some platforms that are unhappy
-// about the signature of the system's memcpy.
-ALWAYS_INLINE void* memcpyWrapper(void* dst, const void* src, size_t bytes)
-{
-    return memcpy(dst, src, bytes);
-}
-
 template <typename InstructionType>
 void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompilationEffort effort)
 {

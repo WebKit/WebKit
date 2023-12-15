@@ -205,7 +205,7 @@ void LinkDecorationFilteringController::updateStrings(CompletionHandler<void()>&
         else {
             auto rules = [data rules];
             for (WPLinkFilteringRule *rule : rules)
-                result.append(WebCore::LinkDecorationFilteringData { rule.domain, rule.queryParameter });
+                result.append(WebCore::LinkDecorationFilteringData { rule.domain, [rule respondsToSelector:@selector(path)] ? rule.path : @"", rule.queryParameter });
             setCachedStrings(WTFMove(result));
         }
 
@@ -247,7 +247,7 @@ void requestLinkDecorationFilteringData(LinkFilteringRulesCallback&& callback)
         else {
             auto rules = [data rules];
             for (WPLinkFilteringRule *rule : rules)
-                result.append(WebCore::LinkDecorationFilteringData { rule.domain, rule.queryParameter });
+                result.append(WebCore::LinkDecorationFilteringData { rule.domain, { }, rule.queryParameter });
         }
 
         auto callbacks = std::exchange(lookupCallbacks.get(), { });

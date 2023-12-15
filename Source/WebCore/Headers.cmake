@@ -1638,7 +1638,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/ContentType.h
     platform/ContextMenu.h
     platform/ContextMenuItem.h
-    platform/ControlStates.h
     platform/Cookie.h
     platform/CountedUserActivity.h
     platform/Cursor.h

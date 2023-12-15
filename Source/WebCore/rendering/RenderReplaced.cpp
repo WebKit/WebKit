@@ -223,8 +223,8 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (paintInfo.phase == PaintPhase::EventRegion) {
         if (visibleToHitTesting()) {
             auto borderRect = LayoutRect(adjustedPaintOffset, size());
-            auto borderRegion = approximateAsRegion(style().getRoundedBorderFor(borderRect));
-            paintInfo.eventRegionContext()->unite(borderRegion, *this, style());
+            auto borderRoundedRect = style().getRoundedBorderFor(borderRect);
+            paintInfo.eventRegionContext()->unite(FloatRoundedRect(borderRoundedRect), *this, style());
         }
         return;
     }

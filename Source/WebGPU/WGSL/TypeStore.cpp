@@ -250,6 +250,21 @@ const Type* TypeStore::frexpResultType(const Type* fract, const Type* exp)
     return type;
 }
 
+const Type* TypeStore::modfResultType(const Type* fract, const Type* whole)
+{
+    PrimitiveStructKey key { PrimitiveStruct::ModfResult::kind, fract };
+    const Type* type = m_cache.find(key);
+    if (type)
+        return type;
+
+    FixedVector<const Type*> values(2);
+    values[PrimitiveStruct::ModfResult::fract] = fract;
+    values[PrimitiveStruct::ModfResult::whole] = whole;
+    type = allocateType<PrimitiveStruct>("__modf_result"_s, PrimitiveStruct::ModfResult::kind, values);
+    m_cache.insert(key, type);
+    return type;
+}
+
 template<typename TypeKind, typename... Arguments>
 const Type* TypeStore::allocateType(Arguments&&... arguments)
 {

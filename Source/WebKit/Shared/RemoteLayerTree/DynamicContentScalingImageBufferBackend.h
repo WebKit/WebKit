@@ -67,16 +67,6 @@ protected:
     WebCore::RenderingMode m_renderingMode;
 };
 
-class DynamicContentScalingAcceleratedImageBufferBackend final : public DynamicContentScalingImageBufferBackend {
-    WTF_MAKE_ISO_ALLOCATED(DynamicContentScalingAcceleratedImageBufferBackend);
-    WTF_MAKE_NONCOPYABLE(DynamicContentScalingAcceleratedImageBufferBackend);
-public:
-    static std::unique_ptr<DynamicContentScalingAcceleratedImageBufferBackend> create(const DynamicContentScalingImageBufferBackend::Parameters&, const WebCore::ImageBufferCreationContext&);
-
-protected:
-    DynamicContentScalingAcceleratedImageBufferBackend(const Parameters&, const WebCore::ImageBufferCreationContext&, WebCore::RenderingMode);
-};
-
 }
 
 #endif // ENABLE(RE_DYNAMIC_CONTENT_SCALING)

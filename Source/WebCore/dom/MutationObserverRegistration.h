@@ -70,7 +70,7 @@ public:
 
 private:
     Ref<MutationObserver> m_observer;
-    CheckedRef<Node> m_node;
+    WeakRef<Node, WeakPtrImplWithEventTargetData> m_node;
     RefPtr<Node> m_nodeKeptAlive;
     HashSet<GCReachableRef<Node>> m_transientRegistrationNodes;
     MutationObserverOptions m_options;

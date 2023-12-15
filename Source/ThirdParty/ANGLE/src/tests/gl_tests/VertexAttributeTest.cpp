@@ -928,6 +928,62 @@ TEST_P(VertexAttributeTest, UnsignedPacked1010102ExtensionNormalized)
     };
 }
 
+// Test that mixing array and current vertex attribute values works with the same matrix input
+TEST_P(VertexAttributeTest, MixedMatrixSources)
+{
+    constexpr char kVS[] = R"(
+attribute vec4 a_position;
+attribute mat4 a_matrix;
+varying vec4 v_color;
+void main() {
+    v_color = vec4(0.5, 0.25, 0.125, 0.0625) * a_matrix;
+    gl_Position = a_position;
+})";
+
+    constexpr char kFS[] = R"(
+precision mediump float;
+varying vec4 v_color;
+void main() {
+    gl_FragColor = v_color;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glBindAttribLocation(program, 0, "a_position");
+    glBindAttribLocation(program, 1, "a_matrix");
+    glLinkProgram(program);
+    glUseProgram(program);
+    ASSERT_GL_NO_ERROR();
+
+    GLBuffer buffer;
+    for (size_t i = 0; i < 4; ++i)
+    {
+        // Setup current attributes for all columns except one
+        for (size_t col = 0; col < 4; ++col)
+        {
+            GLfloat v[4] = {0.0, 0.0, 0.0, 0.0};
+            v[col]       = col == i ? 0.0 : 1.0;
+            glVertexAttrib4fv(1 + col, v);
+            glDisableVertexAttribArray(1 + col);
+        }
+
+        // Setup vertex array data for the i-th column
+        GLfloat data[16]{};
+        data[0 * 4 + i] = 1.0;
+        data[1 * 4 + i] = 1.0;
+        data[2 * 4 + i] = 1.0;
+        data[3 * 4 + i] = 1.0;
+        glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(data), data, GL_STATIC_DRAW);
+        glVertexAttribPointer(1 + i, 4, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<void *>(0));
+        glEnableVertexAttribArray(1 + i);
+        ASSERT_GL_NO_ERROR();
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        drawIndexedQuad(program, "a_position", 0.0f, 1.0f, true);
+        EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(128, 64, 32, 16), 1);
+    }
+}
+
 class VertexAttributeTestES3 : public VertexAttributeTest
 {
   protected:
@@ -1829,17 +1885,14 @@ void main()
 // GL_RG32_SNORM_ANGLEX is used when using glVertexAttribPointer with certain parameters.
 TEST_P(VertexAttributeTestES3, DrawWithUnalignedData)
 {
-    // http://anglebug.com/7068
-    ANGLE_SKIP_TEST_IF(IsMac());
-
     constexpr char kVS[] = R"(#version 300 es
 precision highp float;
 in highp vec4 a_position;
-in highp ivec2 a_ColorTest;
+in highp vec2 a_ColorTest;
 out highp vec2 v_colorTest;
 
 void main() {
-    v_colorTest = vec2(a_ColorTest);
+    v_colorTest = a_ColorTest;
     gl_Position = a_position;
 })";
 
@@ -1849,7 +1902,8 @@ in highp vec2 v_colorTest;
 out vec4 fragColor;
 
 void main() {
-    if(v_colorTest.x > 0.5) {
+    // The input value is 0x01000000 / 0x7FFFFFFF
+    if(abs(v_colorTest.x - 0.0078125) < 0.001) {
         fragColor = vec4(0.0, 1.0, 0.0, 1.0);
     } else {
         fragColor = vec4(1.0, 0.0, 0.0, 1.0);

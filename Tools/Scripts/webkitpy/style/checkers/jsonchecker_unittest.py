@@ -221,7 +221,10 @@ class JSONImportExpectationsCheckerTest(fake_filesystem_unittest.TestCase):
         )
         checker.check(['{"web-platform-tests/exists": "nonsense"}'])
         error_handler.assert_called_once_with(
-            1, "json/syntax", 5, 'Each value must be either "import" or "skip"'
+            1,
+            "json/syntax",
+            5,
+            'Each value must be one of "import", "skip", or "skip-new-directories"',
         )
 
     def test_skip_existence(self):
@@ -363,7 +366,10 @@ class JSONImportExpectationsCheckerTest(fake_filesystem_unittest.TestCase):
         )
         checker.check(["{", '"web-platform-tests/exists": "nonsense"', "}"])
         error_handler.assert_called_once_with(
-            2, "json/syntax", 5, 'Each value must be either "import" or "skip"'
+            2,
+            "json/syntax",
+            5,
+            'Each value must be one of "import", "skip", or "skip-new-directories"',
         )
 
         error_handler = Mock()
@@ -372,7 +378,10 @@ class JSONImportExpectationsCheckerTest(fake_filesystem_unittest.TestCase):
         )
         checker.check(["{", r'"web-pl\u0061tform-tests/exists": "nonsense"', "}"])
         error_handler.assert_called_once_with(
-            2, "json/syntax", 5, 'Each value must be either "import" or "skip"'
+            2,
+            "json/syntax",
+            5,
+            'Each value must be one of "import", "skip", or "skip-new-directories"',
         )
 
         error_handler = Mock()
@@ -389,12 +398,18 @@ class JSONImportExpectationsCheckerTest(fake_filesystem_unittest.TestCase):
         )
         self.assertEqual(error_handler.call_count, 2)
         error_handler.assert_any_call(
-            2, "json/syntax", 5, 'Each value must be either "import" or "skip"'
+            2,
+            "json/syntax",
+            5,
+            'Each value must be one of "import", "skip", or "skip-new-directories"',
         )
         # We can't uniquely determine what line "web-platform-tests/exists" is on, so we
         # return line 0.
         error_handler.assert_any_call(
-            0, "json/syntax", 5, 'Each value must be either "import" or "skip"'
+            0,
+            "json/syntax",
+            5,
+            'Each value must be one of "import", "skip", or "skip-new-directories"',
         )
 
         error_handler = Mock()
@@ -410,7 +425,10 @@ class JSONImportExpectationsCheckerTest(fake_filesystem_unittest.TestCase):
             ]
         )
         error_handler.assert_called_once_with(
-            2, "json/syntax", 5, 'Each value must be either "import" or "skip"'
+            2,
+            "json/syntax",
+            5,
+            'Each value must be one of "import", "skip", or "skip-new-directories"',
         )
 
         error_handler = Mock()
@@ -426,7 +444,10 @@ class JSONImportExpectationsCheckerTest(fake_filesystem_unittest.TestCase):
             ]
         )
         error_handler.assert_called_once_with(
-            3, "json/syntax", 5, 'Each value must be either "import" or "skip"'
+            3,
+            "json/syntax",
+            5,
+            'Each value must be one of "import", "skip", or "skip-new-directories"',
         )
 
         error_handler = Mock()
@@ -441,5 +462,8 @@ class JSONImportExpectationsCheckerTest(fake_filesystem_unittest.TestCase):
             ]
         )
         error_handler.assert_called_once_with(
-            2, "json/syntax", 5, 'Each value must be either "import" or "skip"'
+            2,
+            "json/syntax",
+            5,
+            'Each value must be one of "import", "skip", or "skip-new-directories"',
         )

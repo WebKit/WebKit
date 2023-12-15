@@ -198,7 +198,7 @@ class EGLSyncVk final : public EGLSyncImpl
 
   private:
     // SyncHelper or SyncHelperNativeFence decided at run-time.
-    vk::SyncHelperInterface *mSyncHelper;
+    std::unique_ptr<vk::SyncHelperInterface> mSyncHelper;
 };
 }  // namespace rx
 

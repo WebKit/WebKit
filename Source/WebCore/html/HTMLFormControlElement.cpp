@@ -27,7 +27,6 @@
 
 #include "AXObjectCache.h"
 #include "Autofill.h"
-#include "ControlStates.h"
 #include "ElementInlines.h"
 #include "Event.h"
 #include "EventHandler.h"
@@ -169,7 +168,7 @@ void HTMLFormControlElement::disabledStateChanged()
 {
     ValidatedFormListedElement::disabledStateChanged();
     if (renderer() && renderer()->style().hasEffectiveAppearance())
-        renderer()->theme().stateChanged(*renderer(), ControlStates::States::Enabled);
+        renderer()->theme().stateChanged(*renderer(), ControlStyle::State::Enabled);
 }
 
 void HTMLFormControlElement::readOnlyStateChanged()

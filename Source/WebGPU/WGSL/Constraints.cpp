@@ -167,6 +167,11 @@ const Type* concretize(const Type* type, TypeStore& types)
                 auto* exp = concretize(primitiveStruct.values[PrimitiveStruct::FrexpResult::exp], types);
                 return types.frexpResultType(fract, exp);
             }
+            case PrimitiveStruct::ModfResult::kind: {
+                auto* fract = concretize(primitiveStruct.values[PrimitiveStruct::ModfResult::fract], types);
+                auto* whole = concretize(primitiveStruct.values[PrimitiveStruct::ModfResult::whole], types);
+                return types.modfResultType(fract, whole);
+            }
             }
         },
         [&](const Pointer&) -> const Type* {

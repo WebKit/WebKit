@@ -104,6 +104,7 @@ public:
     const Type* atomicType(const Type*);
     const Type* typeConstructorType(ASCIILiteral, std::function<const Type*(AST::ElaboratedTypeExpression&)>&&);
     const Type* frexpResultType(const Type*, const Type*);
+    const Type* modfResultType(const Type*, const Type*);
 
 private:
     template<typename TypeKind, typename... Arguments>

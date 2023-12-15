@@ -1437,9 +1437,6 @@ TEST_P(RobustResourceInitTestES3, BlitFramebufferOutOfBounds)
 {
     ANGLE_SKIP_TEST_IF(!hasGLExtension());
 
-    // http://anglebug.com/2408
-    ANGLE_SKIP_TEST_IF(IsMac() && IsAMD());
-
     // Initiate data to read framebuffer
     constexpr int size                = 8;
     constexpr GLenum readbufferFormat = GL_RGBA8;

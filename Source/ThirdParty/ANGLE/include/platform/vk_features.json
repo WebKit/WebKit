@@ -133,13 +133,6 @@
             ]
         },
         {
-            "name": "supports_filtering_precision",
-            "category": "Features",
-            "description": [
-                "VkDevice supports the VK_GOOGLE_sampler_filtering_precision extension"
-            ]
-        },
-        {
             "name": "supports_external_fence_capabilities",
             "category": "Features",
             "description": [

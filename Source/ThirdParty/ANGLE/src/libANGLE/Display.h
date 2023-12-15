@@ -80,7 +80,7 @@ constexpr EGLAttrib kProgramCacheSizeAbsoluteMax = 0x4000000;
 
 using ImageMap  = angle::HashMap<GLuint, Image *>;
 using StreamSet = angle::HashSet<Stream *>;
-using SyncMap   = angle::HashMap<GLuint, Sync *>;
+using SyncMap   = angle::HashMap<GLuint, std::unique_ptr<Sync>>;
 
 class Display final : public LabeledObject,
                       public angle::ObserverInterface,
@@ -353,12 +353,17 @@ class Display final : public LabeledObject,
 
     ImageMap mImageMap;
     StreamSet mStreamSet;
+
     SyncMap mSyncMap;
+
+    static constexpr size_t kMaxSyncPoolSizePerType = 32;
+    using SyncPool = angle::FixedVector<std::unique_ptr<Sync>, kMaxSyncPoolSizePerType>;
+    std::map<EGLenum, SyncPool> mSyncPools;
 
     void destroyImageImpl(Image *image, ImageMap *images);
     void destroyStreamImpl(Stream *stream, StreamSet *streams);
     Error destroySurfaceImpl(Surface *surface, SurfaceMap *surfaces);
-    void destroySyncImpl(Sync *sync, SyncMap *syncs);
+    void destroySyncImpl(SyncID syncId, SyncMap *syncs);
 
     ContextMap mInvalidContextMap;
     ImageMap mInvalidImageMap;

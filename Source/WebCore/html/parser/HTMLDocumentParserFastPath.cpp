@@ -59,6 +59,7 @@
 #include <span>
 #include <wtf/CheckedRef.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/FastCharacterComparison.h>
 #include <wtf/text/StringParsingBuffer.h>
@@ -230,7 +231,7 @@ public:
 
 private:
     CheckedRef<Document> m_document;
-    CheckedRef<ContainerNode> m_destinationParent;
+    WeakRef<ContainerNode, WeakPtrImplWithEventTargetData> m_destinationParent;
 
     StringParsingBuffer<CharacterType> m_parsingBuffer;
 

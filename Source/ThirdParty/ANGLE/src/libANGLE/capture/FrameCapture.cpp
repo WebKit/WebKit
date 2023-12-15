@@ -516,6 +516,8 @@ void WriteGLFloatValue(std::ostream &out, GLfloat value)
     }
     else
     {
+        // Write a decimal point to preserve the zero sign on replay
+        out << (value == 0.0 ? std::showpoint : std::noshowpoint);
         out << std::setprecision(16);
         out << value;
     }
@@ -1640,13 +1642,16 @@ void MaybeResetContextState(ReplayWriter &replayWriter,
             stateResetHelper.setDefaultResetCalls(context, entryPoint);
         }
 
-        // Emit the calls
-        for (const auto &call : resetCalls->at(entryPoint))
+        // Emit the calls, if we added any
+        if (resetCalls->find(entryPoint) != resetCalls->end())
         {
-            out << "    ";
-            WriteCppReplayForCall(call, replayWriter, out, header, binaryData,
-                                  maxResourceIDBufferSize);
-            out << ";\n";
+            for (const auto &call : resetCalls->at(entryPoint))
+            {
+                out << "    ";
+                WriteCppReplayForCall(call, replayWriter, out, header, binaryData,
+                                      maxResourceIDBufferSize);
+                out << ";\n";
+            }
         }
     }
 
@@ -4633,11 +4638,11 @@ void CaptureShareGroupMidExecutionSetup(
     }
 
     // Capture EGL Sync Objects
-    const egl::SyncMap eglSyncMap = context->getDisplay()->getSyncsForCapture();
+    const egl::SyncMap &eglSyncMap = context->getDisplay()->getSyncsForCapture();
     for (const auto &eglSyncIter : eglSyncMap)
     {
         egl::SyncID eglSyncID    = {eglSyncIter.first};
-        const egl::Sync *eglSync = eglSyncIter.second;
+        const egl::Sync *eglSync = eglSyncIter.second.get();
         EGLSync eglSyncObject    = gl::unsafe_int_to_pointer_cast<EGLSync>(eglSyncID.value);
 
         if (!eglSync)
@@ -5745,8 +5750,10 @@ bool SkipCall(EntryPoint entryPoint)
         case EntryPoint::EGLGetConfigs:
         case EntryPoint::EGLGetSyncAttrib:
         case EntryPoint::EGLGetSyncAttribKHR:
+        case EntryPoint::EGLQueryContext:
         case EntryPoint::EGLQuerySurface:
             // Skip these calls because:
+            // - We don't use the return values.
             // - Some EGL types and pointer parameters aren't yet implemented in EGL capture.
             return true;
 

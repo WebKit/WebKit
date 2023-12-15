@@ -18,7 +18,6 @@
 #include "common/platform.h"
 #include "common/system_utils.h"
 #include "common/vulkan/libvulkan_loader.h"
-#include "common/vulkan/vk_google_filtering_precision.h"
 #include "common/vulkan/vulkan_icd.h"
 #include "gpu_info_util/SystemInfo.h"
 #include "libANGLE/Context.h"
@@ -254,6 +253,8 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-VkBufferViewCreateInfo-format-08779",
     // https://anglebug.com/8203
     "VUID-VkVertexInputBindingDivisorDescriptionEXT-divisor-01870",
+    // https://anglebug.com/8454
+    "VUID-VkVertexInputBindingDivisorDescriptionKHR-divisor-01870",
     // https://anglebug.com/8237
     "VUID-VkGraphicsPipelineCreateInfo-topology-08773",
     // https://anglebug.com/7291
@@ -265,12 +266,8 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-vkCmdDrawIndexed-None-09003",
     // https://anglebug.com/8334
     "VUID-VkDescriptorImageInfo-imageView-07796",
-    // https://anglebug.com/8349
-    "VUID-VkSamplerCreateInfo-pNext-pNext",
     // https://issuetracker.google.com/303441816
     "VUID-VkRenderPassBeginInfo-renderPass-00904",
-    // http://b/223456677 VK_ANDROID_external_format_resolve: remove once ARM/ VVL are fixed.
-    "VUID-VkImageViewCreateInfo-usage-08931", "VUID-VkImageCreateInfo-pNext-02397",
     // http://anglebug.com/8401
     "Undefined-Value-ShaderOutputNotConsumed"};
 
@@ -1413,8 +1410,6 @@ RendererVk::RendererVk()
       mDefaultUniformBufferSize(kPreferredDefaultUniformBufferSize),
       mDevice(VK_NULL_HANDLE),
       mDeviceLost(false),
-      mCoherentStagingBufferMemoryTypeIndex(kInvalidMemoryTypeIndex),
-      mNonCoherentStagingBufferMemoryTypeIndex(kInvalidMemoryTypeIndex),
       mStagingBufferAlignment(1),
       mHostVisibleVertexConversionBufferMemoryTypeIndex(kInvalidMemoryTypeIndex),
       mDeviceLocalVertexConversionBufferMemoryTypeIndex(kInvalidMemoryTypeIndex),
@@ -1430,6 +1425,7 @@ RendererVk::RendererVk()
 {
     VkFormatProperties invalid = {0, 0, kInvalidFormatFeatureFlags};
     mFormatProperties.fill(invalid);
+    mStagingBufferMemoryTypeIndex.fill(kInvalidMemoryTypeIndex);
 
     // We currently don't have any big-endian devices in the list of supported platforms.  There are
     // a number of places in the Vulkan backend that make this assumption.  This assertion is made
@@ -2005,17 +2001,30 @@ angle::Result RendererVk::initializeMemoryAllocator(DisplayVk *displayVk)
 
     // Uncached coherent staging buffer
     VkMemoryPropertyFlags preferredFlags = VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
-    ANGLE_VK_TRY(displayVk, mAllocator.findMemoryTypeIndexForBufferInfo(
-                                createInfo, requiredFlags, preferredFlags, persistentlyMapped,
-                                &mCoherentStagingBufferMemoryTypeIndex));
-    ASSERT(mCoherentStagingBufferMemoryTypeIndex != kInvalidMemoryTypeIndex);
+    ANGLE_VK_TRY(displayVk,
+                 mAllocator.findMemoryTypeIndexForBufferInfo(
+                     createInfo, requiredFlags, preferredFlags, persistentlyMapped,
+                     &mStagingBufferMemoryTypeIndex[vk::MemoryCoherency::UnCachedCoherent]));
+    ASSERT(mStagingBufferMemoryTypeIndex[vk::MemoryCoherency::UnCachedCoherent] !=
+           kInvalidMemoryTypeIndex);
 
-    // Cached (b/219974369) Non-coherent staging buffer
+    // Cached coherent staging buffer
+    preferredFlags = VK_MEMORY_PROPERTY_HOST_CACHED_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+    ANGLE_VK_TRY(displayVk,
+                 mAllocator.findMemoryTypeIndexForBufferInfo(
+                     createInfo, requiredFlags, preferredFlags, persistentlyMapped,
+                     &mStagingBufferMemoryTypeIndex[vk::MemoryCoherency::CachedCoherent]));
+    ASSERT(mStagingBufferMemoryTypeIndex[vk::MemoryCoherency::CachedCoherent] !=
+           kInvalidMemoryTypeIndex);
+
+    // Cached Non-coherent staging buffer
     preferredFlags = VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
-    ANGLE_VK_TRY(displayVk, mAllocator.findMemoryTypeIndexForBufferInfo(
-                                createInfo, requiredFlags, preferredFlags, persistentlyMapped,
-                                &mNonCoherentStagingBufferMemoryTypeIndex));
-    ASSERT(mNonCoherentStagingBufferMemoryTypeIndex != kInvalidMemoryTypeIndex);
+    ANGLE_VK_TRY(displayVk,
+                 mAllocator.findMemoryTypeIndexForBufferInfo(
+                     createInfo, requiredFlags, preferredFlags, persistentlyMapped,
+                     &mStagingBufferMemoryTypeIndex[vk::MemoryCoherency::CachedNonCoherent]));
+    ASSERT(mStagingBufferMemoryTypeIndex[vk::MemoryCoherency::CachedNonCoherent] !=
+           kInvalidMemoryTypeIndex);
 
     // Alignment
     mStagingBufferAlignment =
@@ -2042,7 +2051,8 @@ angle::Result RendererVk::initializeMemoryAllocator(DisplayVk *displayVk)
 
     // Host visible and non-coherent vertex conversion buffer, which is the same as non-coherent
     // staging buffer
-    mHostVisibleVertexConversionBufferMemoryTypeIndex = mNonCoherentStagingBufferMemoryTypeIndex;
+    mHostVisibleVertexConversionBufferMemoryTypeIndex =
+        mStagingBufferMemoryTypeIndex[vk::MemoryCoherency::CachedNonCoherent];
 
     // We may use compute shader to do conversion, so we must meet
     // minStorageBufferOffsetAlignment requirement as well. Also take into account non-coherent
@@ -4073,10 +4083,6 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
         ExtensionFound(VK_FUCHSIA_EXTERNAL_MEMORY_EXTENSION_NAME, deviceExtensionNames));
 
     ANGLE_FEATURE_CONDITION(
-        &mFeatures, supportsFilteringPrecision,
-        ExtensionFound(VK_GOOGLE_SAMPLER_FILTERING_PRECISION_EXTENSION_NAME, deviceExtensionNames));
-
-    ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsExternalSemaphoreFd,
         ExtensionFound(VK_KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME, deviceExtensionNames));
 
@@ -4407,9 +4413,8 @@ void RendererVk::initFeatures(DisplayVk *displayVk,
 
     // Testing shows that on ARM GPU, doing implicit flush at framebuffer boundary improves
     // performance. Most app traces shows frame time reduced and manhattan 3.1 offscreen score
-    // improves 7%. Enable for MESA Virtio-GPU Venus driver in virtualized environment as well.
-    ANGLE_FEATURE_CONDITION(&mFeatures, preferSubmitAtFBOBoundary,
-                            isARM || isSwiftShader || isVenus);
+    // improves 7%.
+    ANGLE_FEATURE_CONDITION(&mFeatures, preferSubmitAtFBOBoundary, isARM || isSwiftShader);
 
     // In order to support immutable samplers tied to external formats, we need to overallocate
     // descriptor counts for such immutable samplers

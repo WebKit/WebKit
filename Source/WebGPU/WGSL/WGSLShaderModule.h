@@ -88,6 +88,9 @@ public:
     bool usesFrexp() const { return m_usesFrexp; }
     void setUsesFrexp() { m_usesFrexp = true; }
 
+    bool usesModf() const { return m_usesModf; }
+    void setUsesModf() { m_usesModf = true; }
+
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
@@ -240,6 +243,7 @@ private:
     bool m_usesDivision { false };
     bool m_usesModulo { false };
     bool m_usesFrexp { false };
+    bool m_usesModf { false };
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;

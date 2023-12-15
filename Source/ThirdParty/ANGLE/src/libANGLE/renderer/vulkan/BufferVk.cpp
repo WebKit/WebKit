@@ -512,7 +512,8 @@ angle::Result BufferVk::allocStagingBuffer(ContextVk *contextVk,
     if (mStagingBuffer.valid())
     {
         if (size <= mStagingBuffer.getSize() &&
-            (coherency == vk::MemoryCoherency::Coherent) == mStagingBuffer.isCoherent() &&
+            IsCoherent(coherency) == mStagingBuffer.isCoherent() &&
+            IsCached(coherency) == mStagingBuffer.isCached() &&
             contextVk->getRenderer()->hasResourceUseFinished(mStagingBuffer.getResourceUse()))
         {
             // If size is big enough and it is idle, then just reuse the existing staging buffer
@@ -557,7 +558,7 @@ angle::Result BufferVk::handleDeviceLocalBufferMap(ContextVk *contextVk,
                                                    VkDeviceSize size,
                                                    uint8_t **mapPtr)
 {
-    ANGLE_TRY(allocStagingBuffer(contextVk, vk::MemoryCoherency::Coherent, size, mapPtr));
+    ANGLE_TRY(allocStagingBuffer(contextVk, vk::MemoryCoherency::CachedCoherent, size, mapPtr));
 
     // Copy data from device local buffer to host visible staging buffer.
     VkBufferCopy copyRegion = {mBuffer.getOffset() + offset, mStagingBuffer.getOffset(), size};
@@ -733,7 +734,7 @@ angle::Result BufferVk::mapRangeImpl(ContextVk *contextVk,
 
     if (smallMapRange && rangeInvalidate)
     {
-        ANGLE_TRY(allocStagingBuffer(contextVk, vk::MemoryCoherency::NonCoherent,
+        ANGLE_TRY(allocStagingBuffer(contextVk, vk::MemoryCoherency::CachedNonCoherent,
                                      static_cast<size_t>(length), mapPtrBytes));
         return angle::Result::Continue;
     }
@@ -921,8 +922,8 @@ angle::Result BufferVk::stagedUpdate(ContextVk *contextVk,
     if (dataSource.data != nullptr)
     {
         uint8_t *mapPointer = nullptr;
-        ANGLE_TRY(
-            allocStagingBuffer(contextVk, vk::MemoryCoherency::NonCoherent, size, &mapPointer));
+        ANGLE_TRY(allocStagingBuffer(contextVk, vk::MemoryCoherency::CachedNonCoherent, size,
+                                     &mapPointer));
         memcpy(mapPointer, dataSource.data, size);
         ANGLE_TRY(flushStagingBuffer(contextVk, offset, size));
         mIsStagingBufferMapped = false;

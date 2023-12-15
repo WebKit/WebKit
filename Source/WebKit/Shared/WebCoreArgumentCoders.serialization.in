@@ -5582,7 +5582,7 @@ struct WebCore::GlobalWindowIdentifier {
 struct WebCore::InteractionRegion {
     WebCore::InteractionRegion::Type type;
     WebCore::ElementIdentifier elementIdentifier;
-    WebCore::IntRect rectInLayerCoordinates;
+    WebCore::FloatRect rectInLayerCoordinates;
     float borderRadius;
     OptionSet<WebCore::InteractionRegion::CornerMask> maskedCorners;
 };
@@ -6283,6 +6283,7 @@ struct WebCore::RemoteUserInputEventData {
 
 struct WebCore::LinkDecorationFilteringData {
     WebCore::RegistrableDomain domain;
+    String path;
     String linkDecoration;
 };
 

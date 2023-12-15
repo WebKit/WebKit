@@ -61,6 +61,7 @@ typedef NS_ENUM(NSInteger, WPNetworkAddressVersion) {
 @interface WPLinkFilteringRule : NSObject
 @property (nonatomic, readonly) NSString *queryParameter;
 @property (nonatomic, readonly) NSString *domain;
+@property (nonatomic, readonly) NSString *path;
 @end
 
 @interface WPLinkFilteringData : NSObject
@@ -124,6 +125,12 @@ typedef void (^WPStorageAccessUserAgentStringQuirksDataCompletionHandler)(WPStor
 
 @interface WPStorageAccessUserAgentStringQuirk (Staging_119342418)
 - (void)requestStorageAccessUserAgentStringQuirksData:(WPResourceRequestOptions *)options completionHandler:(WPStorageAccessUserAgentStringQuirksDataCompletionHandler)completion;
+@end
+#endif
+
+#if !defined(HAS_WEB_PRIVACY_LINK_FILTERING_RULE_PATH) && HAVE(WEB_PRIVACY_FRAMEWORK)
+@interface WPLinkFilteringRule (Staging_119590894)
+@property (nonatomic, readonly) NSString *path;
 @end
 #endif
 

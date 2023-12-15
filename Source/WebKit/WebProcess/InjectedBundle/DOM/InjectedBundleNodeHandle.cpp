@@ -57,13 +57,14 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/WeakHashMap.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 using namespace WebCore;
 using namespace HTMLNames;
 
-using DOMNodeHandleCache = HashMap<CheckedPtr<Node>, CheckedPtr<InjectedBundleNodeHandle>>;
+using DOMNodeHandleCache = WeakHashMap<Node, CheckedPtr<InjectedBundleNodeHandle>, WeakPtrImplWithEventTargetData>;
 
 static DOMNodeHandleCache& domNodeHandleCache()
 {
@@ -87,12 +88,12 @@ RefPtr<InjectedBundleNodeHandle> InjectedBundleNodeHandle::getOrCreate(Node* nod
 
 Ref<InjectedBundleNodeHandle> InjectedBundleNodeHandle::getOrCreate(Node& node)
 {
-    if (auto existingHandle = domNodeHandleCache().get(&node))
+    if (auto existingHandle = domNodeHandleCache().get(node))
         return Ref<InjectedBundleNodeHandle>(*existingHandle);
 
     auto nodeHandle = InjectedBundleNodeHandle::create(node);
     if (nodeHandle->coreNode())
-        domNodeHandleCache().add(nodeHandle->coreNode(), nodeHandle.ptr());
+        domNodeHandleCache().add(*nodeHandle->coreNode(), nodeHandle.ptr());
     return nodeHandle;
 }
 
@@ -112,7 +113,7 @@ InjectedBundleNodeHandle::InjectedBundleNodeHandle(Node& node)
 InjectedBundleNodeHandle::~InjectedBundleNodeHandle()
 {
     if (m_node)
-        domNodeHandleCache().remove(m_node.get());
+        domNodeHandleCache().remove(*m_node);
 }
 
 Node* InjectedBundleNodeHandle::coreNode()
@@ -437,7 +438,7 @@ void InjectedBundleNodeHandle::stop()
 {
     // Invalidate handles to nodes inside documents that are about to be destroyed in order to prevent leaks.
     if (m_node) {
-        domNodeHandleCache().remove(m_node.get());
+        domNodeHandleCache().remove(*m_node);
         m_node = nullptr;
     }
 }

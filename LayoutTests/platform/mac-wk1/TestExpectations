@@ -2725,6 +2725,7 @@ fast/css/transform-function-perspective-crash.html [ Failure ]
 webkit.org/b/265535 inspector/layers/layers-for-node.html [ Pass Timeout ]
 
 webkit.org/b/265783 fast/ruby/ruby-line-height.html [ Skip ]
+webkit.org/b/265783 accessibility/mac/ruby-hierarchy-roles.html [ Skip ]
 
 webkit.org/b/266184 compositing/images/truncated-direct-png-image.html [ ImageOnlyFailure ]
 

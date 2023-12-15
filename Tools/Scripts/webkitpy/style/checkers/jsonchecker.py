@@ -490,12 +490,12 @@ class JSONImportExpectationsChecker(JSONChecker):
                 )
                 valid = False
 
-            if value not in ("import", "skip"):
+            if value not in ("import", "skip", "skip-new-directories"):
                 self._handle_style_error(
                     line_no,
                     "json/syntax",
                     5,
-                    'Each value must be either "import" or "skip"',
+                    'Each value must be one of "import", "skip", or "skip-new-directories"',
                 )
                 valid = False
 
@@ -518,21 +518,22 @@ class JSONImportExpectationsChecker(JSONChecker):
                     "'{}' has trailing slash".format(key),
                 )
 
-            for i in range(len(parsed_key) - 1, 0, -1):
-                parent_key = parsed_key[:i]
-                if parent_key in parsed_expectations:
-                    if value == parsed_expectations[parent_key]:
-                        self._handle_style_error(
-                            line_no,
-                            "json/syntax",
-                            5,
-                            "'{}' is redundant, '{}' already defines '{}'".format(
-                                key, "/".join(parent_key), value
-                            ),
-                        )
-                    break
+            if value != "skip-new-directories":
+                for i in range(len(parsed_key) - 1, 0, -1):
+                    parent_key = parsed_key[:i]
+                    if parent_key in parsed_expectations:
+                        if value == parsed_expectations[parent_key]:
+                            self._handle_style_error(
+                                line_no,
+                                "json/syntax",
+                                5,
+                                "'{}' is redundant, '{}' already defines '{}'".format(
+                                    key, "/".join(parent_key), value
+                                ),
+                            )
+                        break
 
-            is_skipped = value == "skip"
+            is_skipped = value in ("skip", "skip-new-directories")
             is_prefix = any(
                 parsed_key == k[: len(parsed_key)]
                 and len(k) > len(parsed_key)

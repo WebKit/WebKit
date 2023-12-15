@@ -111,7 +111,7 @@ void TextBoxPainter<TextBoxPath>::paint()
     if (m_paintInfo.phase == PaintPhase::EventRegion) {
         constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::IgnoreCSSPointerEventsProperty };
         if (m_renderer.parent()->visibleToHitTesting(hitType))
-            m_paintInfo.eventRegionContext()->unite(enclosingIntRect(m_paintRect), const_cast<RenderText&>(m_renderer), m_style);
+            m_paintInfo.eventRegionContext()->unite(FloatRoundedRect(m_paintRect), const_cast<RenderText&>(m_renderer), m_style);
         return;
     }
 

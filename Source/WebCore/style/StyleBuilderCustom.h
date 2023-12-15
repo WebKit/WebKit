@@ -965,7 +965,10 @@ inline void BuilderCustom::applyValueFontFamily(BuilderState& builderState, CSSV
 
     if (is<CSSPrimitiveValue>(value)) {
         auto valueID = value.valueID();
-        ASSERT(CSSPropertyParserHelpers::isSystemFontShorthand(valueID));
+        if (!CSSPropertyParserHelpers::isSystemFontShorthand(valueID)) {
+            // Early return if the invalid CSSValueID is set while using CSSOM API.
+            return;
+        }
         AtomString family = SystemFontDatabase::singleton().systemFontShorthandFamily(CSSPropertyParserHelpers::lowerFontShorthand(valueID));
         ASSERT(!family.isEmpty());
         fontDescription.setIsSpecifiedFont(false);

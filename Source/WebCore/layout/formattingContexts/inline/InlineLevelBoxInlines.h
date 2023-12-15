@@ -43,32 +43,6 @@ inline InlineLevelBox::InlineLevelBox(const Box& layoutBox, const RenderStyle& s
     m_style.verticalAlignment.type = style.verticalAlign();
     if (m_style.verticalAlignment.type == VerticalAlign::Length)
         m_style.verticalAlignment.baselineOffset = floatValueForLength(style.verticalAlignLength(), preferredLineHeight());
-
-    auto setAnnotationIfApplicable = [&] {
-        // Generic, non-inline box inline-level content (e.g. replaced elements) can't have text-emphasis annotations.
-        if (!isRootInlineBox() && !isInlineBox())
-            return;
-        auto hasTextEmphasis =  style.textEmphasisMark() != TextEmphasisMark::None;
-        if (!hasTextEmphasis)
-            return;
-        auto emphasisPosition = style.textEmphasisPosition();
-        // Normally we resolve visual -> logical values at pre-layout time, but emphaisis values are not part of the general box geometry.
-        auto hasAboveTextEmphasis = false;
-        auto hasUnderTextEmphasis = false;
-        if (style.isHorizontalWritingMode()) {
-            hasAboveTextEmphasis = emphasisPosition.contains(TextEmphasisPosition::Over);
-            hasUnderTextEmphasis = !hasAboveTextEmphasis && emphasisPosition.contains(TextEmphasisPosition::Under);
-        } else {
-            hasAboveTextEmphasis = emphasisPosition.contains(TextEmphasisPosition::Right) || emphasisPosition == TextEmphasisPosition::Over;
-            hasUnderTextEmphasis = !hasAboveTextEmphasis && (emphasisPosition.contains(TextEmphasisPosition::Left) || emphasisPosition == TextEmphasisPosition::Under);
-        }
-
-        if (hasAboveTextEmphasis || hasUnderTextEmphasis) {
-            InlineLayoutUnit annotationSize = roundToInt(style.fontCascade().floatEmphasisMarkHeight(style.textEmphasisMarkString()));
-            m_annotation = { hasAboveTextEmphasis ? annotationSize : 0, hasAboveTextEmphasis ? 0 : annotationSize };
-        }
-    };
-    setAnnotationIfApplicable();
 }
 
 inline InlineLevelBox InlineLevelBox::createAtomicInlineLevelBox(const Box& layoutBox, const RenderStyle& style, InlineLayoutUnit logicalLeft, InlineLayoutUnit logicalWidth)
@@ -113,6 +87,17 @@ inline bool InlineLevelBox::mayStretchLineBox() const
         return m_style.lineBoxContain.containsAny({ LineBoxContain::Inline, LineBoxContain::InlineBox }) || (hasContent() && m_style.lineBoxContain.containsAny({ LineBoxContain::Font, LineBoxContain::Glyphs }));
 
     return true;
+}
+
+inline void InlineLevelBox::setTextEmphasis(std::pair<InlineLayoutUnit, InlineLayoutUnit> textEmphasis)
+{
+    if (!textEmphasis.first && !textEmphasis.second)
+        return;
+    if (textEmphasis.first) {
+        m_annotation = Annotation { textEmphasis.first, 0.f };
+        return;
+    }
+    m_annotation = Annotation { 0.f, textEmphasis.second };
 }
 
 }

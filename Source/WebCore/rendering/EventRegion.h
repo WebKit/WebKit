@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AffineTransform.h"
+#include "FloatRoundedRect.h"
 #include "IntRectHash.h"
 #include "InteractionRegion.h"
 #include "Node.h"
@@ -52,12 +53,12 @@ public:
 
     bool isEventRegionContext() const final { return true; }
 
-    WEBCORE_EXPORT void unite(const Region&, RenderObject&, const RenderStyle&, bool overrideUserModifyIsEditable = false);
+    WEBCORE_EXPORT void unite(const FloatRoundedRect&, RenderObject&, const RenderStyle&, bool overrideUserModifyIsEditable = false);
     bool contains(const IntRect&) const;
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-    void uniteInteractionRegions(const Region&, RenderObject&);
-    bool shouldConsolidateInteractionRegion(IntRect, RenderObject&);
+    void uniteInteractionRegions(RenderObject&, const FloatRect&);
+    bool shouldConsolidateInteractionRegion(RenderObject&, const IntRect&);
     void removeSuperfluousInteractionRegions();
     void shrinkWrapInteractionRegions();
     void copyInteractionRegionsToEventRegion();

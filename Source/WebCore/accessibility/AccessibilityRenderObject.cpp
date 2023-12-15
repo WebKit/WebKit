@@ -1320,6 +1320,16 @@ bool AccessibilityRenderObject::computeAccessibilityIsIgnored() const
     if (m_renderer->isRenderRubyRun() || m_renderer->isRenderRubyAsBlock() || m_renderer->isRenderRubyAsInline())
         return false;
 
+    switch (m_renderer->style().display()) {
+    case DisplayType::Ruby:
+    case DisplayType::RubyBlock:
+    case DisplayType::RubyAnnotation:
+    case DisplayType::RubyBase:
+        return false;
+    default:
+        break;
+    }
+
     // Find out if this element is inside of a label element.
     // If so, it may be ignored because it's the label for a checkbox or radio button.
     auto* controlObject = correspondingControlForLabelElement();
@@ -2146,6 +2156,19 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
         return AccessibilityRole::RubyBlock;
     if (m_renderer->isRenderRubyAsInline())
         return AccessibilityRole::RubyInline;
+
+    switch (m_renderer->style().display()) {
+    case DisplayType::Ruby:
+        return AccessibilityRole::RubyInline;
+    case DisplayType::RubyBlock:
+        return AccessibilityRole::RubyBlock;
+    case DisplayType::RubyAnnotation:
+        return AccessibilityRole::RubyText;
+    case DisplayType::RubyBase:
+        return AccessibilityRole::RubyBase;
+    default:
+        break;
+    }
 
     if (m_renderer->isAnonymous() && (is<RenderTableCell>(m_renderer.get()) || is<RenderTableRow>(m_renderer.get()) || is<RenderTable>(m_renderer.get())))
         return AccessibilityRole::Ignored;

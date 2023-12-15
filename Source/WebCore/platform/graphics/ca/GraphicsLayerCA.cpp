@@ -4555,10 +4555,15 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | OpacityChanged
         | EventRegionChanged
         | NameChanged
-        | DebugIndicatorsChanged);
-    
-    if (isTiledLayer)
-        addUncommittedChanges(CoverageRectChanged);
+        | DebugIndicatorsChanged
+#if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
+        | CoverageRectChanged);
+#else
+        );
+
+        if (isTiledLayer)
+            addUncommittedChanges(CoverageRectChanged);
+#endif
 
     adjustContentsScaleLimitingFactor();
 

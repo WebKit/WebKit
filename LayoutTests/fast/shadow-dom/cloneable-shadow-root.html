@@ -12,6 +12,7 @@ function testShadowRootIsNotCloneableByDefault(mode) {
     test(() => {
         const host = document.createElement('div');
         const shadowRoot = host.attachShadow({mode});
+        assert_false(shadowRoot.cloneable);
 
         const clonedHost = host.cloneNode(true);
         assert_true(!!clonedHost.attachShadow({mode}));
@@ -28,6 +29,7 @@ function testShadowRootIsCloneable(mode) {
     test(() => {
         const host = document.createElement('div');
         const shadowRoot = host.attachShadow({mode, cloneable: true});
+        assert_true(shadowRoot.cloneable);
 
         const clonedHost = host.cloneNode(true);
         assert_throws_dom('NotSupportedError', () => {
@@ -44,6 +46,7 @@ function testShadowRootClonesShadowRootMode(mode) {
     test(() => {
         const host = document.createElement('div');
         const shadowRoot = host.attachShadow({mode, cloneable: true});
+        assert_true(shadowRoot.cloneable);
         const clonedHost = host.cloneNode(true);
         assert_equals(!!clonedHost.shadowRoot, mode == 'open');
     }, `Cloning ShadowRoot in "${mode}" mode clones shadow root mode`);
@@ -56,6 +59,7 @@ function testShadowRootClonesDelegatesFocus(mode, delegatesFocus) {
     test(() => {
         const host = document.createElement('div');
         const shadowRoot = host.attachShadow({mode, cloneable: true, delegatesFocus});
+        assert_true(shadowRoot.cloneable);
         shadowRoot.innerHTML = '<input onfocus="window.didFocusInputElement = true">';
 
         const clonedHost = host.cloneNode(true);
@@ -79,6 +83,7 @@ function testShadowRootClonesSlotAssignment(mode) {
         const host = document.createElement('span');
         host.innerHTML = '<div style="width: 100px; height: 100px; display: inline-block;"></div>';
         const shadowRoot = host.attachShadow({mode, cloneable: true, slotAssignment: 'manual'});
+        assert_true(shadowRoot.cloneable);
         shadowRoot.innerHTML = '<slot></slot>';
         const clonedHost = host.cloneNode(true);
         if (mode == 'open')
@@ -92,6 +97,7 @@ function testShadowRootClonesSlotAssignment(mode) {
         const host = document.createElement('span');
         host.innerHTML = '<div style="width: 100px; height: 100px; display: inline-block;"></div>';
         const shadowRoot = host.attachShadow({mode, cloneable: true, slotAssignment: 'named'});
+        assert_true(shadowRoot.cloneable);
         shadowRoot.innerHTML = '<slot></slot>';
         const clonedHost = host.cloneNode(true);
         if (mode == 'open')
@@ -109,6 +115,7 @@ function testShadowRootClonesShadowDescendants(mode) {
     test(() => {
         const host = document.createElement('span');
         const shadowRoot = host.attachShadow({mode, cloneable: true});
+        assert_true(shadowRoot.cloneable);
         shadowRoot.innerHTML = '<div style="width: 100px; height: 100px; display: inline-block;"><div></div></div>';
         const clonedHost = host.cloneNode(true);
         if (mode == 'open')

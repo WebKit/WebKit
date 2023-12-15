@@ -369,6 +369,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             auto logicalWidth = rootInlineBox.logicalRight() - logicalLeft;
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, logicalWidth, InlineLevelBox::LineSpanningInlineBox::Yes);
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
+            inlineBox.setTextEmphasis(InlineFormattingUtils::textEmphasisForInlineBox(layoutBox, rootBox()));
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
             m_lineHasRubyContent = m_lineHasRubyContent || layoutBox.isRubyBase();
             continue;
@@ -384,6 +385,7 @@ void LineBoxBuilder::constructInlineLevelBoxes(LineBox& lineBox)
             initialLogicalWidth = std::max(initialLogicalWidth, 0.f);
             auto inlineBox = InlineLevelBox::createInlineBox(layoutBox, style, logicalLeft, initialLogicalWidth);
             inlineBox.setIsFirstBox();
+            inlineBox.setTextEmphasis(InlineFormattingUtils::textEmphasisForInlineBox(layoutBox, rootBox()));
             setVerticalPropertiesForInlineLevelBox(lineBox, inlineBox);
             lineBox.addInlineLevelBox(WTFMove(inlineBox));
             m_lineHasRubyContent = m_lineHasRubyContent || layoutBox.isRubyBase();

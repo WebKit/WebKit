@@ -3920,7 +3920,6 @@ void Context::initCaps()
         mSupportedExtensions.textureCompressionRgtcEXT                       = false;
         mSupportedExtensions.textureCompressionS3tcSrgbEXT                   = false;
         mSupportedExtensions.textureCompressionAstcSliced3dKHR               = false;
-        mSupportedExtensions.textureFilteringHintCHROMIUM                    = false;
 
         caps->compressedTextureFormats.clear();
     }

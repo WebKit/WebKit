@@ -1051,6 +1051,10 @@ angle::Result ProgramExecutableMtl::getSpecializedShader(
         setConstantValue:&(context->getDisplay()->getFeatures().emulateAlphaToCoverage.enabled)
                     type:MTLDataTypeBool
                 withName:@"ANGLEEmulateAlphaToCoverage"];
+    [funcConstants
+        setConstantValue:&(context->getDisplay()->getFeatures().writeHelperSampleMask.enabled)
+                    type:MTLDataTypeBool
+                withName:@"ANGLEWriteHelperSampleMask"];
     // Create Metal shader object
     ANGLE_MTL_OBJC_SCOPE
     {

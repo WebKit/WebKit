@@ -132,6 +132,7 @@ private:
     bool isShowingFormValidationBubble() const override;
     JSObjectRef rectForMenuAction(JSStringRef) const override;
     JSObjectRef contextMenuRect() const override;
+    JSObjectRef contextMenuPreviewRect() const final;
     JSObjectRef menuRect() const override;
     bool isDismissingMenu() const override;
     void chooseMenuAction(JSStringRef, JSValueRef) override;

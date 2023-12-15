@@ -3755,10 +3755,10 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
         case spv::DecorationBlock:
             // If this is the Block decoration of a shader I/O block, add the transform feedback
             // decorations to its members right away.
-            if (mOptions.isTransformFeedbackStage && mVariableInfoById[id]->hasTransformFeedback)
+            if (mOptions.isTransformFeedbackStage && info->hasTransformFeedback)
             {
                 const XFBInterfaceVariableInfo &xfbInfo =
-                    mVariableInfoMap.getXFBDataForVariableInfo(mVariableInfoById[id]);
+                    mVariableInfoMap.getXFBDataForVariableInfo(info);
                 mXfbCodeGenerator.addMemberDecorate(xfbInfo, id, mSpirvBlobOut);
             }
             break;
@@ -3809,10 +3809,9 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
     }
 
     // Add Xfb decorations, if any.
-    if (mOptions.isTransformFeedbackStage && mVariableInfoById[id]->hasTransformFeedback)
+    if (mOptions.isTransformFeedbackStage && info->hasTransformFeedback)
     {
-        const XFBInterfaceVariableInfo &xfbInfo =
-            mVariableInfoMap.getXFBDataForVariableInfo(mVariableInfoById[id]);
+        const XFBInterfaceVariableInfo &xfbInfo = mVariableInfoMap.getXFBDataForVariableInfo(info);
         mXfbCodeGenerator.addDecorate(xfbInfo, id, mSpirvBlobOut);
     }
 
@@ -3892,15 +3891,16 @@ TransformationState SpirvTransformer::transformEntryPoint(const uint32_t *instru
 
     mInactiveVaryingRemover.modifyEntryPointInterfaceList(mVariableInfoById, mOptions.shaderType,
                                                           &interfaceList);
-    if (mOptions.useSpirvVaryingPrecisionFixer)
-    {
-        mVaryingPrecisionFixer.modifyEntryPointInterfaceList(&interfaceList);
-    }
 
     if (mOptions.shaderType == gl::ShaderType::Fragment)
     {
         mSecondaryOutputTransformer.modifyEntryPointInterfaceList(mVariableInfoById, &interfaceList,
                                                                   mSpirvBlobOut);
+    }
+
+    if (mOptions.useSpirvVaryingPrecisionFixer)
+    {
+        mVaryingPrecisionFixer.modifyEntryPointInterfaceList(&interfaceList);
     }
 
     mMultisampleTransformer.modifyEntryPointInterfaceList(mNonSemanticInstructions, &interfaceList,

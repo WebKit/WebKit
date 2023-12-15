@@ -144,6 +144,14 @@ void CSSParserSelector::setSelectorList(std::unique_ptr<CSSSelectorList> selecto
     m_selector->setSelectorList(WTFMove(selectorList));
 }
 
+const CSSParserSelector* CSSParserSelector::leftmostSimpleSelector() const
+{
+    auto selector = this;
+    while (auto next = selector->tagHistory())
+        selector = next;
+    return selector;
+}
+
 CSSParserSelector* CSSParserSelector::leftmostSimpleSelector()
 {
     auto selector = this;
@@ -277,6 +285,12 @@ std::unique_ptr<CSSParserSelector> CSSParserSelector::releaseTagHistory()
 bool CSSParserSelector::isHostPseudoSelector() const
 {
     return match() == CSSSelector::Match::PseudoClass && pseudoClassType() == CSSSelector::PseudoClassType::Host;
+}
+
+bool CSSParserSelector::startsWithExplicitCombinator() const
+{
+    auto relation = leftmostSimpleSelector()->selector()->relation();
+    return relation != CSSSelector::RelationType::Subselector && relation != CSSSelector::RelationType::DescendantSpace;
 }
 
 }

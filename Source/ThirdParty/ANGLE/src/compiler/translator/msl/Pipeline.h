@@ -24,7 +24,7 @@ struct PipelineScoped
     const T *external = nullptr;
 
     // Extra data that is configured to talk externally to the program.
-    // Used only for adjusting Metal's InstanceId.
+    // Used for framebuffer fetch and for adjusting Metal's InstanceId.
     const T *externalExtra = nullptr;
 
     // Data that is configured to talk internally within the program.

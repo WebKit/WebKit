@@ -3692,6 +3692,9 @@ webkit.org/b/266280 imported/w3c/web-platform-tests/html/semantics/forms/form-su
 webkit.org/b/266280 imported/w3c/web-platform-tests/service-workers/cache-storage/cache-abort.https.any.worker.html [ Pass Crash ]
 webkit.org/b/266280 imported/w3c/web-platform-tests/service-workers/cache-storage/serviceworker/cache-abort.https.html [ Pass Crash ]
 webkit.org/b/266280 imported/w3c/web-platform-tests/service-workers/service-worker/navigation-headers.https.html [ Pass Crash ]
+webkit.org/b/266280 http/tests/xmlhttprequest/cross-site-denied-response-sync.html [ Pass Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/html/anonymous-iframe/require-corp-embed-anonymous-iframe.tentative.https.window.html [ Pass Crash ]
+webkit.org/b/266280 imported/w3c/web-platform-tests/service-workers/cache-storage/window/cache-abort.https.html [ Pass Crash ]
 
 # Flakily crashing on GTK and WPE bots
 webkit.org/b/262949 media/media-garbage-collection.html [ Pass Crash Timeout Failure ]
@@ -3732,6 +3735,7 @@ webkit.org/b/264680 media/video-page-visibility-restriction.html [ Pass Timeout 
 webkit.org/b/264680 webgl/webgl-visible-after-context-restore.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/265942 imported/w3c/web-platform-tests/editing/run [ Slow ]
+webkit.org/b/266465 [ Debug ] imported/w3c/web-platform-tests/editing/run/delete.html?6001-7000 [ Crash ]
 
 # End: Common failures between GTK and WPE.
 

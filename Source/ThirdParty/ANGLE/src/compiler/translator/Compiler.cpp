@@ -376,6 +376,7 @@ TCompiler::TCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
       mHasAnyPreciseType(false),
       mAdvancedBlendEquations(0),
       mHasPixelLocalStorageUniforms(false),
+      mUsesDerivatives(false),
       mCompileOptions{}
 {}
 
@@ -594,6 +595,8 @@ void TCompiler::setASTMetadata(const TParseContext &parseContext)
 
     mHasAnyPreciseType = parseContext.hasAnyPreciseType();
 
+    mUsesDerivatives = parseContext.usesDerivatives();
+
     if (mShaderType == GL_FRAGMENT_SHADER)
     {
         mAdvancedBlendEquations       = parseContext.getAdvancedBlendEquations();
@@ -767,11 +770,6 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
 
     if (shouldRunLoopAndIndexingValidation(compileOptions) &&
         !ValidateLimitations(root, mShaderType, &mSymbolTable, &mDiagnostics))
-    {
-        return false;
-    }
-
-    if (shouldLimitTypeSizes() && !ValidateTypeSizeLimitations(root, &mSymbolTable, &mDiagnostics))
     {
         return false;
     }
@@ -1053,6 +1051,13 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     // invalid state. Relies on that PruneNoOps and RemoveUnreferencedVariables have already been
     // run.
     if (!PruneEmptyCases(this, root))
+    {
+        return false;
+    }
+
+    // Run after RemoveUnreferencedVariables, validate that the shader does not have excessively
+    // large variables.
+    if (shouldLimitTypeSizes() && !ValidateTypeSizeLimitations(root, &mSymbolTable, &mDiagnostics))
     {
         return false;
     }

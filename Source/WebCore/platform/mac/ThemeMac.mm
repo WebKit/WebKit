@@ -30,7 +30,6 @@
 
 #import "AXObjectCache.h"
 #import "ColorMac.h"
-#import "ControlStates.h"
 #import "GraphicsContext.h"
 #import "GraphicsContextCG.h"
 #import "ImageBuffer.h"
@@ -202,42 +201,35 @@ static void setControlSize(NSCell* cell, const std::array<IntSize, 4>& sizes, co
         [cell setControlSize:size];
 }
 
-static void updateStates(NSCell* cell, const ControlStates& controlStates, bool useAnimation = false)
+static void updateStates(NSCell* cell, OptionSet<ControlStyle::State> states)
 {
-    // The animated state cause this thread to start and stop repeatedly on CoreAnimation synchronize calls.
-    // This short burts of activity in between are not long enough for VoiceOver to retrieve accessibility attributes and makes the process appear unresponsive.
-    if (AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
-        useAnimation = false;
-    
-    auto states = controlStates.states();
-
     // Hover state is not supported by Aqua.
-    
+
     // Pressed state
     bool oldPressed = [cell isHighlighted];
-    bool pressed = states.contains(ControlStates::States::Pressed);
+    bool pressed = states.contains(ControlStyle::State::Pressed);
     if (pressed != oldPressed) {
-        [(NSButtonCell*)cell _setHighlighted:pressed animated:useAnimation];
+        [(NSButtonCell*)cell _setHighlighted:pressed animated:NO];
     }
-    
+
     // Enabled state
     bool oldEnabled = [cell isEnabled];
-    bool enabled = states.contains(ControlStates::States::Enabled);
+    bool enabled = states.contains(ControlStyle::State::Enabled);
     if (enabled != oldEnabled)
         [cell setEnabled:enabled];
 
     // Checked and Indeterminate
     bool oldIndeterminate = [cell state] == NSControlStateValueMixed;
-    bool indeterminate = states.contains(ControlStates::States::Indeterminate);
-    bool checked = states.contains(ControlStates::States::Checked);
+    bool indeterminate = states.contains(ControlStyle::State::Indeterminate);
+    bool checked = states.contains(ControlStyle::State::Checked);
     bool oldChecked = [cell state] == NSControlStateValueOn;
     if (oldIndeterminate != indeterminate || checked != oldChecked) {
         NSControlStateValue newState = indeterminate ? NSControlStateValueMixed : (checked ? NSControlStateValueOn : NSControlStateValueOff);
-        [(NSButtonCell*)cell _setState:newState animated:useAnimation];
+        [(NSButtonCell*)cell _setState:newState animated:NO];
     }
 
     // Presenting state
-    if (states.contains(ControlStates::States::Presenting))
+    if (states.contains(ControlStyle::State::Presenting))
         [(NSButtonCell*)cell _setHighlighted:YES animated:NO];
 
     // Window inactive state does not need to be checked explicitly, since we paint parented to 
@@ -330,13 +322,10 @@ static LengthSize radioSize(const LengthSize& zoomedSize, float zoomFactor)
     return sizeFromNSControlSize(NSControlSizeSmall, zoomedSize, zoomFactor, radioSizes());
 }
     
-static void configureToggleButton(NSCell* cell, StyleAppearance appearance, const ControlStates& states, const IntSize& zoomedSize, float zoomFactor, bool isStateChange)
+static void configureToggleButton(NSCell* cell, StyleAppearance appearance, OptionSet<ControlStyle::State> states, const IntSize& zoomedSize, float zoomFactor)
 {
-    // Set the control size based off the rectangle we're painting into.
     setControlSize(cell, appearance == StyleAppearance::Checkbox ? checkboxSizes() : radioSizes(), zoomedSize, zoomFactor);
-
-    // Update the various states we respond to.
-    updateStates(cell, states, isStateChange);
+    updateStates(cell, states);
 }
     
 static RetainPtr<NSButtonCell> createToggleButtonCell(StyleAppearance appearance)
@@ -356,19 +345,19 @@ static RetainPtr<NSButtonCell> createToggleButtonCell(StyleAppearance appearance
     return toggleButtonCell;
 }
     
-static NSButtonCell *sharedRadioCell(const ControlStates& states, const IntSize& zoomedSize, float zoomFactor)
+static NSButtonCell *sharedRadioCell(OptionSet<ControlStyle::State> states, const IntSize& zoomedSize, float zoomFactor)
 {
     static NSButtonCell *radioCell = createToggleButtonCell(StyleAppearance::Radio).leakRef();
 
-    configureToggleButton(radioCell, StyleAppearance::Radio, states, zoomedSize, zoomFactor, false);
+    configureToggleButton(radioCell, StyleAppearance::Radio, states, zoomedSize, zoomFactor);
     return radioCell;
 }
     
-static NSButtonCell *sharedCheckboxCell(const ControlStates& states, const IntSize& zoomedSize, float zoomFactor)
+static NSButtonCell *sharedCheckboxCell(OptionSet<ControlStyle::State> states, const IntSize& zoomedSize, float zoomFactor)
 {
     static NSButtonCell *checkboxCell = createToggleButtonCell(StyleAppearance::Checkbox).leakRef();
 
-    configureToggleButton(checkboxCell, StyleAppearance::Checkbox, states, zoomedSize, zoomFactor, false);
+    configureToggleButton(checkboxCell, StyleAppearance::Checkbox, states, zoomedSize, zoomFactor);
     return checkboxCell;
 }
 
@@ -408,9 +397,8 @@ static RetainPtr<NSButtonCell> buttonCell(ButtonCellType type)
     return cell;
 }
 
-static void setUpButtonCell(NSButtonCell *cell, StyleAppearance appearance, const ControlStates& states, const IntSize& zoomedSize, float zoomFactor)
+static void setUpButtonCell(NSButtonCell *cell, StyleAppearance appearance, OptionSet<ControlStyle::State> states, const IntSize& zoomedSize, float zoomFactor)
 {
-    // Set the control size based off the rectangle we're painting into.
     const std::array<IntSize, 4>& sizes = buttonSizes();
     switch (appearance) {
     case StyleAppearance::SquareButton:
@@ -429,23 +417,20 @@ static void setUpButtonCell(NSButtonCell *cell, StyleAppearance appearance, cons
     }
 
     setControlSize(cell, sizes, zoomedSize, zoomFactor);
-
-    // Update the various states we respond to.
     updateStates(cell, states);
 }
 
-static NSButtonCell *button(StyleAppearance appearance, const ControlStates& controlStates, const IntSize& zoomedSize, float zoomFactor)
+static NSButtonCell *button(StyleAppearance appearance, OptionSet<ControlStyle::State> states, const IntSize& zoomedSize, float zoomFactor)
 {
-    auto states = controlStates.states();
     NSButtonCell *cell;
-    if (states.contains(ControlStates::States::Default)) {
+    if (states.contains(ControlStyle::State::Default)) {
         static NeverDestroyed<RetainPtr<NSButtonCell>> defaultCell = buttonCell(DefaultButtonCell);
         cell = defaultCell.get().get();
     } else {
         static NeverDestroyed<RetainPtr<NSButtonCell>> normalCell = buttonCell(NormalButtonCell);
         cell = normalCell.get().get();
     }
-    setUpButtonCell(cell, appearance, controlStates, zoomedSize, zoomFactor);
+    setUpButtonCell(cell, appearance, states, zoomedSize, zoomFactor);
     return cell;
 }
 
@@ -473,7 +458,7 @@ static NSControlSize stepperControlSizeForFont(const FontCascade& font)
 
 // This will ensure that we always return a valid NSView, even if ScrollView doesn't have an associated document NSView.
 // If the ScrollView doesn't have an NSView, we will return a fake NSView set up in the way AppKit expects.
-NSView *ThemeMac::ensuredView(ScrollView* scrollView, const ControlStates& controlStates, bool useUnparentedView)
+NSView *ThemeMac::ensuredView(ScrollView* scrollView, OptionSet<ControlStyle::State> states, bool useUnparentedView)
 {
     if (!useUnparentedView) {
         if (NSView *documentView = scrollView->documentView())
@@ -490,7 +475,7 @@ NSView *ThemeMac::ensuredView(ScrollView* scrollView, const ControlStates& contr
         [themeView _setSemanticContext:NSViewSemanticContextForm];
 #endif
 
-    themeWindowHasKeyAppearance = controlStates.states().contains(ControlStates::States::WindowActive);
+    themeWindowHasKeyAppearance = states.contains(ControlStyle::State::WindowActive);
 
     return themeView;
 }
@@ -639,7 +624,7 @@ LengthBox ThemeMac::controlPadding(StyleAppearance appearance, const FontCascade
     }
 }
 
-void ThemeMac::inflateControlPaintRect(StyleAppearance appearance, const ControlStates& states, FloatRect& zoomedRect, float zoomFactor) const
+void ThemeMac::inflateControlPaintRect(StyleAppearance appearance, OptionSet<ControlStyle::State> states, FloatRect& zoomedRect, float zoomFactor) const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     IntSize zoomRectSize = IntSize(zoomedRect.size());
