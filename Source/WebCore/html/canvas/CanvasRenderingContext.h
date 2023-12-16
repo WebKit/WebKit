@@ -50,7 +50,7 @@ class SVGImageElement;
 class WebGLObject;
 enum class PixelFormat : uint8_t;
 
-class CanvasRenderingContext : public ScriptWrappable, public CanMakeWeakPtr<CanvasRenderingContext>, public CanMakeCheckedPtr {
+class CanvasRenderingContext : public ScriptWrappable, public CanMakeWeakPtr<CanvasRenderingContext> {
     WTF_MAKE_NONCOPYABLE(CanvasRenderingContext);
     WTF_MAKE_ISO_ALLOCATED(CanvasRenderingContext);
 public:
