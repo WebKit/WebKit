@@ -301,7 +301,7 @@ bool StyleSheetContents::wrapperInsertRule(Ref<StyleRuleBase>&& rule, unsigned i
             return false;
         // Inserting @namespace rule when rules other than import/namespace/charset
         // are present is not allowed.
-        if (!m_childRules.isEmpty())
+        if (!m_childRules.isEmpty() || !m_layerRulesBeforeImportRules.isEmpty())
             return false;
 
         m_namespaceRules.insert(index, *namespaceRule);
