@@ -135,7 +135,11 @@ AutoInstall.register(Package('webkitbugspy', Version(0, 3, 1)), local=True)
 import webkitscmpy
 
 # Disable IPV6 if Bugzilla can't use IPV6.
-import six
+try:
+    import six
+except Exception as e:
+    sys.stderr.write('Error while importing six: {}... trying to continue\n'.format(e))
+
 import socket
 import urllib3
 

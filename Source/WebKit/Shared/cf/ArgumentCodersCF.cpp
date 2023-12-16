@@ -431,25 +431,6 @@ std::optional<RetainPtr<CFCharacterSetRef>> ArgumentCoder<RetainPtr<CFCharacterS
 }
 
 template<typename Encoder>
-void ArgumentCoder<CFDateRef>::encode(Encoder& encoder, CFDateRef date)
-{
-    encoder << static_cast<double>(CFDateGetAbsoluteTime(date));
-}
-
-template void ArgumentCoder<CFDateRef>::encode<Encoder>(Encoder&, CFDateRef);
-template void ArgumentCoder<CFDateRef>::encode<StreamConnectionEncoder>(StreamConnectionEncoder&, CFDateRef);
-
-std::optional<RetainPtr<CFDateRef>> ArgumentCoder<RetainPtr<CFDateRef>>::decode(Decoder& decoder)
-{
-    std::optional<double> absoluteTime;
-    decoder >> absoluteTime;
-    if (!absoluteTime)
-        return std::nullopt;
-
-    return adoptCF(CFDateCreate(0, *absoluteTime));
-}
-
-template<typename Encoder>
 void ArgumentCoder<CFDictionaryRef>::encode(Encoder& encoder, CFDictionaryRef dictionary)
 {
     if (!dictionary) {

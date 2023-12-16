@@ -2316,6 +2316,7 @@ compositing/layer-creation/overlap-transformed-preserved-3d.html [ Skip ]
 compositing/layer-creation/overlap-transforms.html [ Skip ]
 compositing/layer-creation/rotate3d-overlap.html [ Skip ]
 compositing/layer-creation/scale-rotation-animation-overlap.html [ Skip ]
+compositing/layer-creation/scale-rotation-transition-overlap.html [ Skip ]
 compositing/layer-creation/scroll-partial-update.html [ Skip ]
 compositing/layer-creation/spanOverlapsCanvas.html [ Skip ]
 compositing/layer-creation/stacking-context-overlap-nested.html [ Skip ]
@@ -2730,3 +2731,8 @@ webkit.org/b/48997 animations/animation-iteration-event-destroy-renderer.html [ 
 webkit.org/b/229584 animations/fill-mode-forwards.html [ Pass Failure Timeout ]
 
 imported/w3c/web-platform-tests/css/selectors/selectors-4/lang-020.html [ Pass ]
+
+# UIHelper.initiateUserScroll() doesn't resolve the promise
+http/tests/scroll-to-text-fragment/no-scroll-after-stylesheet-load.html [ Skip ] # Timeout
+
+webkit.org/b/229764 animations/background-position.html [ Pass ImageOnlyFailure ]
