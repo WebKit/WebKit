@@ -5467,17 +5467,16 @@ void Document::nodeWillBeRemoved(Node& node)
 
 void Document::parentlessNodeMovedToNewDocument(Node& node)
 {
-    Vector<WeakPtr<Range>, 5> rangesAffected;
+    Vector<Ref<Range>, 5> rangesAffected;
 
-    for (auto& range : m_ranges) {
-        if (Ref { range.get() }->parentlessNodeMovedToNewDocumentAffectsRange(node))
-            rangesAffected.append(range.get());
+    for (auto& weakRange : m_ranges) {
+        Ref range = weakRange.get();
+        if (range->parentlessNodeMovedToNewDocumentAffectsRange(node))
+            rangesAffected.append(WTFMove(range));
     }
 
-    for (auto& weakRange : rangesAffected) {
-        if (RefPtr range = weakRange.get())
-            range->updateRangeForParentlessNodeMovedToNewDocument(node);
-    }
+    for (auto& range : rangesAffected)
+        range->updateRangeForParentlessNodeMovedToNewDocument(node);
 }
 
 static Node* fallbackFocusNavigationStartingNodeAfterRemoval(Node& node)

@@ -40,7 +40,7 @@ class Text;
 
 struct SimpleRange;
 
-class Range final : public AbstractRange, public CanMakeWeakPtr<Range>, public CanMakeCheckedPtr {
+class Range final : public AbstractRange, public CanMakeSingleThreadWeakPtr<Range> {
     WTF_MAKE_ISO_ALLOCATED(Range);
     WTF_MAKE_NONCOPYABLE(Range);
 public:
