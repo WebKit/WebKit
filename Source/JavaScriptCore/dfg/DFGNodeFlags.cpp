@@ -122,6 +122,9 @@ void dumpNodeFlags(PrintStream& actualOut, NodeFlags flags)
     if (flags & NodeIsFlushed)
         out.print(comma, "IsFlushed");
     
+    if (flags & NodeBytecodeObservesUnsigned)
+        out.print(comma, "UnsignedObserved");
+
     CString string = out.toCString();
     if (!string.length())
         actualOut.print("<empty>");
