@@ -29,9 +29,9 @@ import ServiceExtensions
 @objc
 @_spi(Private)
 open class Grant: WKGrant {
-    let inner : _Capabilities.Grant
+    let inner : _Capability.Grant
 
-    init(inner: _Capabilities.Grant) {
+    init(inner: _Capability.Grant) {
         self.inner = inner
     }
 
@@ -63,7 +63,7 @@ extension NetworkingProcessExtension : NetworkingServiceExtension {
 
     override func grant(_ domain: String, name: String) -> Any {
         do {
-            let grant = try self._request(capabilities: _Capabilities.assertion(domain, name))
+            let grant = try self._request(capabilities: _Capability.assertion(domain: domain, name: name, environmentIdentifier: nil, willInvalidate: nil, didInvalidate: nil))
             return Grant(inner: grant)
         } catch {
             return WKGrant()
