@@ -71,13 +71,13 @@ ViewGestureGeometryCollector::~ViewGestureGeometryCollector()
     WebProcess::singleton().removeMessageReceiver(Messages::ViewGestureGeometryCollector::messageReceiverName(), m_webPage.identifier());
 }
 
-void ViewGestureGeometryCollector::dispatchDidCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect targetRect, FloatRect visibleContentRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
+void ViewGestureGeometryCollector::dispatchDidCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect absoluteTargetRect, FloatRect visibleContentRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
 {
 #if PLATFORM(MAC)
-    m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForSmartMagnificationGesture(origin, targetRect, visibleContentRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
+    m_webPage.send(Messages::ViewGestureController::DidCollectGeometryForSmartMagnificationGesture(origin, absoluteTargetRect, visibleContentRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
 #endif
 #if PLATFORM(IOS_FAMILY)
-    m_webPage.send(Messages::SmartMagnificationController::DidCollectGeometryForSmartMagnificationGesture(origin, targetRect, visibleContentRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
+    m_webPage.send(Messages::SmartMagnificationController::DidCollectGeometryForSmartMagnificationGesture(origin, absoluteTargetRect, visibleContentRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale));
 #endif
 }
 
@@ -130,10 +130,10 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
     }
 
     bool isReplaced;
-    FloatRect renderRect;
+    FloatRect absoluteBoundingRect;
 
-    computeZoomInformationForNode(*node, origin, renderRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
-    dispatchDidCollectGeometryForSmartMagnificationGesture(origin, renderRect, visibleContentRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
+    computeZoomInformationForNode(*node, origin, absoluteBoundingRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
+    dispatchDidCollectGeometryForSmartMagnificationGesture(origin, absoluteBoundingRect, visibleContentRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -221,18 +221,18 @@ std::optional<std::pair<double, double>> ViewGestureGeometryCollector::computeTe
 
 #endif // PLATFORM(IOS_FAMILY)
 
-void ViewGestureGeometryCollector::computeZoomInformationForNode(Node& node, FloatPoint& origin, FloatRect& renderRect, bool& isReplaced, double& viewportMinimumScale, double& viewportMaximumScale)
+void ViewGestureGeometryCollector::computeZoomInformationForNode(Node& node, FloatPoint& origin, FloatRect& absoluteBoundingRect, bool& isReplaced, double& viewportMinimumScale, double& viewportMaximumScale)
 {
-    renderRect = node.renderRect(&isReplaced);
+    absoluteBoundingRect = node.absoluteBoundingRect(&isReplaced);
     if (node.document().isImageDocument()) {
         if (HTMLImageElement* imageElement = static_cast<ImageDocument&>(node.document()).imageElement()) {
             if (&node != imageElement) {
-                renderRect = imageElement->renderRect(&isReplaced);
+                absoluteBoundingRect = imageElement->absoluteBoundingRect(&isReplaced);
                 FloatPoint newOrigin = origin;
-                if (origin.x() < renderRect.x() || origin.x() > renderRect.maxX())
-                    newOrigin.setX(renderRect.x() + renderRect.width() / 2);
-                if (origin.y() < renderRect.y() || origin.y() > renderRect.maxY())
-                    newOrigin.setY(renderRect.y() + renderRect.height() / 2);
+                if (origin.x() < absoluteBoundingRect.x() || origin.x() > absoluteBoundingRect.maxX())
+                    newOrigin.setX(absoluteBoundingRect.x() + absoluteBoundingRect.width() / 2);
+                if (origin.y() < absoluteBoundingRect.y() || origin.y() > absoluteBoundingRect.maxY())
+                    newOrigin.setY(absoluteBoundingRect.y() + absoluteBoundingRect.height() / 2);
                 origin = newOrigin;
             }
             isReplaced = true;

@@ -385,8 +385,8 @@ public:
     WEBCORE_EXPORT Editability computeEditability(UserSelectAllTreatment, ShouldUpdateStyle) const;
     Editability computeEditabilityWithStyle(const RenderStyle*, UserSelectAllTreatment, ShouldUpdateStyle) const;
 
-    WEBCORE_EXPORT LayoutRect renderRect(bool* isReplaced);
-    IntRect pixelSnappedRenderRect(bool* isReplaced) { return snappedIntRect(renderRect(isReplaced)); }
+    WEBCORE_EXPORT LayoutRect absoluteBoundingRect(bool* isReplaced);
+    IntRect pixelSnappedAbsoluteBoundingRect(bool* isReplaced) { return snappedIntRect(absoluteBoundingRect(isReplaced)); }
 
     WEBCORE_EXPORT unsigned computeNodeIndex() const;
 

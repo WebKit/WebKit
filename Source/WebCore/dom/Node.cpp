@@ -869,7 +869,7 @@ RenderBoxModelObject* Node::renderBoxModelObject() const
     return dynamicDowncast<RenderBoxModelObject>(renderer());
 }
     
-LayoutRect Node::renderRect(bool* isReplaced)
+LayoutRect Node::absoluteBoundingRect(bool* isReplaced)
 {
     RenderObject* hitRenderer = this->renderer();
     if (!hitRenderer) {
@@ -888,7 +888,7 @@ LayoutRect Node::renderRect(bool* isReplaced)
         renderer = renderer->parent();
     }
     *isReplaced = false;
-    return LayoutRect();    
+    return { };
 }
 
 void Node::refEventTarget()

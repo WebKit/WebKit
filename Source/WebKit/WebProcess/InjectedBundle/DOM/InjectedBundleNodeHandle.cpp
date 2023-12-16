@@ -140,12 +140,12 @@ IntRect InjectedBundleNodeHandle::elementBounds()
     return downcast<Element>(*m_node).boundsInRootViewSpace();
 }
     
-IntRect InjectedBundleNodeHandle::renderRect(bool* isReplaced)
+IntRect InjectedBundleNodeHandle::absoluteBoundingRect(bool* isReplaced)
 {
     if (!m_node)
         return { };
 
-    return m_node->pixelSnappedRenderRect(isReplaced);
+    return m_node->pixelSnappedAbsoluteBoundingRect(isReplaced);
 }
 
 static RefPtr<WebImage> imageForRect(LocalFrameView* frameView, const IntRect& paintingRect, const std::optional<float>& bitmapWidth, SnapshotOptions options)

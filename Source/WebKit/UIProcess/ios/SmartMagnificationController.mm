@@ -104,14 +104,14 @@ double SmartMagnificationController::zoomFactorForTargetRect(FloatRect targetRec
     return targetScale;
 }
 
-void SmartMagnificationController::didCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect targetRect, FloatRect visibleContentRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
+void SmartMagnificationController::didCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect absoluteTargetRect, FloatRect visibleContentRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
 {
-    if (targetRect.isEmpty()) {
+    if (absoluteTargetRect.isEmpty()) {
         // FIXME: If we don't zoom, send the tap along to text selection (see <rdar://problem/6810344>).
         [m_contentView _zoomToInitialScaleWithOrigin:origin];
         return;
     }
-    auto [adjustedTargetRect, minimumScale, maximumScale] = smartMagnificationTargetRectAndZoomScales(targetRect, viewportMinimumScale, viewportMaximumScale, !fitEntireRect);
+    auto [adjustedTargetRect, minimumScale, maximumScale] = smartMagnificationTargetRectAndZoomScales(absoluteTargetRect, viewportMinimumScale, viewportMaximumScale, !fitEntireRect);
 
     // FIXME: Check if text selection wants to consume the double tap before we attempt magnification.
 
