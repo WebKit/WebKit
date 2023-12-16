@@ -75,6 +75,15 @@
   <repository type="tarball" name="gnupg.org"
       href="https://www.gnupg.org/ftp/gcrypt/"/>
 
+  <!-- meson 0.62.0  required to build gstreamer-1.22.7 -->
+  <distutils id="meson" python3="1">
+    <branch module="mesonbuild/meson"
+            version="0.62.2"
+            tag="0.62.2"
+            checkoutdir="meson-${version}"
+            repo="github.com"/>
+  </distutils>
+
 <!-- This moduleset is used when the environment variable WEBKIT_JHBUILD_MODULESET=minimal is set -->
 <!-- Its intended to allow building WebKit using as much as libraries from your distribution as possible -->
 <!-- In order to ensure its minimal, all the modules should have a pkg-config declaration line -->
@@ -139,15 +148,6 @@
             version="0.2.4"
             hash="sha256:4fe0a4bed6b4c3ae7249d341031c27b32f8d9e0ffb5337d71cbcec7160362cf7"/>
   </meson>
-
-  <!-- meson 0.56.2+ required to build atk 2.38 -->
-  <distutils id="meson" python3="1">
-    <branch repo="github-tarball"
-            version="0.61.5"
-            module="mesonbuild/meson/releases/download/${version}/meson-${version}.tar.gz"
-            checkoutdir="meson-${version}"
-            hash="sha256:5e9a0d65c1a51936362b9686d1c5e9e184a6fd245d57e7269750ce50c20f5d9a"/>
-  </distutils>
 
   <!-- OpenXR required for WebXR support -->
   <cmake id="openxr">
