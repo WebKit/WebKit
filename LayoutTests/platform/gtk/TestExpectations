@@ -2648,6 +2648,8 @@ fast/canvas/font-family-system-ui-canvas.html [ Skip ]
 
 fast/line-grid [ Skip ]
 
+http/tests/scroll-to-text-fragment/no-scroll-after-stylesheet-load.html [ Skip ]
+
 # Flaky tests Nov2023
 webkit.org/b/264680 compositing/transitions/transform-on-large-layer.html [ ImageOnlyFailure Pass ]
 webkit.org/b/264680 fast/canvas/offscreen-backing-store-attached.html [ ImageOnlyFailure Pass ]

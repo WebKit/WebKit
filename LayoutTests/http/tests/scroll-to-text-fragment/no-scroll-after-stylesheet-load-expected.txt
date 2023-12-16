@@ -1,0 +1,3 @@
+PASS: Page scrolls to correct Text Fragment.
+PASS: Addition of dynamic style element did not adjust scroll.
+

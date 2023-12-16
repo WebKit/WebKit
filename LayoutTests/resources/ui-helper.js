@@ -521,6 +521,16 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    static async initiateUserScroll()
+    {
+        if (this.isIOSFamily()) {
+            await UIHelper.scrollTo(0, 10);
+        }
+        else {
+            await UIHelper.statelessMouseWheelScrollAt(10, 10, 0, 10);
+        }
+    }
+
     static scrollTo(x, y, unconstrained)
     {
         if (!this.isWebKit2()) {
