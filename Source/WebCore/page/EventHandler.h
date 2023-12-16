@@ -497,7 +497,7 @@ private:
     void determineWheelEventTarget(const PlatformWheelEvent&, RefPtr<Element>& eventTarget, WeakPtr<ScrollableArea>&, bool& isOverWidget);
     bool processWheelEventForScrolling(const PlatformWheelEvent&, const WeakPtr<ScrollableArea>&, OptionSet<EventHandling>);
     void processWheelEventForScrollSnap(const PlatformWheelEvent&, const WeakPtr<ScrollableArea>&);
-    bool completeWidgetWheelEvent(const PlatformWheelEvent&, const WeakPtr<Widget>&, const WeakPtr<ScrollableArea>&);
+    bool completeWidgetWheelEvent(const PlatformWheelEvent&, const SingleThreadWeakPtr<Widget>&, const WeakPtr<ScrollableArea>&);
 
     bool handleWheelEventInAppropriateEnclosingBox(Node* startNode, const WheelEvent&, FloatSize& filteredPlatformDelta, const FloatSize& filteredVelocity, OptionSet<EventHandling>);
 
@@ -646,7 +646,7 @@ private:
     RefPtr<Element> m_elementUnderMouse;
     RefPtr<Element> m_lastElementUnderMouse;
     RefPtr<LocalFrame> m_lastMouseMoveEventSubframe;
-    WeakPtr<Scrollbar> m_lastScrollbarUnderMouse;
+    SingleThreadWeakPtr<Scrollbar> m_lastScrollbarUnderMouse;
     Cursor m_currentMouseCursor;
 
     RefPtr<Node> m_clickNode;

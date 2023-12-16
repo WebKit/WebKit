@@ -3057,16 +3057,16 @@ Widget* EventHandler::widgetForEventTarget(Element* eventTarget)
     return renderWidget->widget();
 }
 
-static WeakPtr<Widget> widgetForElement(const Element& element)
+static RefPtr<Widget> widgetForElement(const Element& element)
 {
     auto* renderWidget = dynamicDowncast<RenderWidget>(element.renderer());
     if (!renderWidget || !renderWidget->widget())
         return { };
 
-    return *renderWidget->widget();
+    return renderWidget->widget();
 }
 
-bool EventHandler::completeWidgetWheelEvent(const PlatformWheelEvent& event, const WeakPtr<Widget>& widget, const WeakPtr<ScrollableArea>& scrollableArea)
+bool EventHandler::completeWidgetWheelEvent(const PlatformWheelEvent& event, const SingleThreadWeakPtr<Widget>& widget, const WeakPtr<ScrollableArea>& scrollableArea)
 {
     m_isHandlingWheelEvent = false;
     
@@ -3160,8 +3160,8 @@ HandleUserInputEventResult EventHandler::handleWheelEventInternal(const Platform
             if (RefPtr remoteSubframe = dynamicDowncast<RemoteFrame>(subframeForTargetNode(result.targetNode()))) {
                 if (auto wheelEventDataForRemoteFrame = userInputEventDataForRemoteFrame(remoteSubframe.get(), result.roundedPointInInnerNodeFrame()))
                     return *wheelEventDataForRemoteFrame;
-            } else if (WeakPtr<Widget> widget = widgetForElement(*element)) {
-                if (passWheelEventToWidget(event, *widget.get(), processingSteps))
+            } else if (RefPtr widget = widgetForElement(*element)) {
+                if (passWheelEventToWidget(event, *widget, processingSteps))
                     return completeWidgetWheelEvent(event, widget, scrollableArea);
             }
         }

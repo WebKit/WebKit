@@ -36,7 +36,7 @@ namespace WebCore {
 class DOMWrapperWorld;
 class LocalFrame;
 
-class DOMWindowExtension final : public RefCounted<DOMWindowExtension>, public LocalDOMWindow::Observer, public CanMakeCheckedPtr {
+class DOMWindowExtension final : public RefCounted<DOMWindowExtension>, public LocalDOMWindow::Observer {
 public:
     static Ref<DOMWindowExtension> create(LocalDOMWindow* window, DOMWrapperWorld& world)
     {

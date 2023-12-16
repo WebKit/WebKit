@@ -417,7 +417,7 @@ static CounterNode* makeCounterNode(RenderElement& renderer, const AtomString& i
         skipDescendants = currentRenderer->shouldApplyStyleContainment();
         if (!currentRenderer->hasCounterNodeMap())
             continue;
-        CheckedPtr currentCounter = maps.find(*currentRenderer)->value->get(identifier);
+        RefPtr currentCounter = maps.find(*currentRenderer)->value->get(identifier);
         if (!currentCounter)
             continue;
         skipDescendants = true;
@@ -464,7 +464,7 @@ String RenderCounter::originalText() const
     if (!m_counterNode)
         return emptyString();
 
-    CheckedPtr child = m_counterNode;
+    RefPtr child = m_counterNode.get();
     int value = child->actsAsReset() ? child->value() : child->countInParent();
 
     auto counterText = [](const ListStyleType& styleType, int value, CSSCounterStyle* counterStyle) {

@@ -37,9 +37,9 @@
 namespace WebKit {
 using namespace WebCore;
 
-static HashMap<CheckedPtr<PageOverlay>, CheckedPtr<WebPageOverlay>>& overlayMap()
+static HashMap<WeakRef<PageOverlay>, WeakRef<WebPageOverlay>>& overlayMap()
 {
-    static NeverDestroyed<HashMap<CheckedPtr<PageOverlay>, CheckedPtr<WebPageOverlay>>> map;
+    static NeverDestroyed<HashMap<WeakRef<PageOverlay>, WeakRef<WebPageOverlay>>> map;
     return map;
 }
 
@@ -53,7 +53,7 @@ WebPageOverlay::WebPageOverlay(std::unique_ptr<WebPageOverlay::Client> client, P
     , m_client(WTFMove(client))
 {
     ASSERT(m_client);
-    overlayMap().add(m_overlay.get(), this);
+    overlayMap().add(*m_overlay, *this);
 }
 
 WebPageOverlay::~WebPageOverlay()
@@ -61,13 +61,13 @@ WebPageOverlay::~WebPageOverlay()
     if (!m_overlay)
         return;
 
-    overlayMap().remove(m_overlay.get());
+    overlayMap().remove(*m_overlay);
     m_overlay = nullptr;
 }
 
 WebPageOverlay* WebPageOverlay::fromCoreOverlay(PageOverlay& overlay)
 {
-    return overlayMap().get(&overlay);
+    return overlayMap().get(overlay);
 }
 
 void WebPageOverlay::setNeedsDisplay(const IntRect& dirtyRect)

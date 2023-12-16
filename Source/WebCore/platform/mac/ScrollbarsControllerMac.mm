@@ -314,7 +314,7 @@ using WebCore::LogOverlayScrollbars;
 @end
 
 @interface WebScrollerImpDelegate : NSObject<NSAnimationDelegate, NSScrollerImpDelegate> {
-    WeakPtr<WebCore::Scrollbar> _scrollbar;
+    SingleThreadWeakPtr<WebCore::Scrollbar> _scrollbar;
 
     RetainPtr<WebScrollbarPartAnimation> _knobAlphaAnimation;
     RetainPtr<WebScrollbarPartAnimation> _trackAlphaAnimation;

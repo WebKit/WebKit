@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-using ScrollbarSet = HashSet<CheckedPtr<Scrollbar>>;
+using ScrollbarSet = HashSet<SingleThreadWeakRef<Scrollbar>>;
 
 static ScrollbarSet& scrollbarMap()
 {
@@ -155,12 +155,12 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar& scrollbar)
     if (scrollbar.isCustomScrollbar() || !scrollbar.shouldRegisterScrollbar())
         return;
 
-    scrollbarMap().add(&scrollbar);
+    scrollbarMap().add(scrollbar);
 }
 
 void ScrollbarThemeMac::unregisterScrollbar(Scrollbar& scrollbar)
 {
-    scrollbarMap().take(&scrollbar);
+    scrollbarMap().take(scrollbar);
 }
 
 NSScrollerImp *ScrollbarThemeMac::scrollerImpForScrollbar(Scrollbar& scrollbar)

@@ -49,7 +49,7 @@
 namespace WebCore {
 
 ApplicationCacheHost::ApplicationCacheHost(DocumentLoader& documentLoader)
-    : m_documentLoader(CheckedRef { documentLoader })
+    : m_documentLoader(documentLoader)
 {
 }
 

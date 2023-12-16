@@ -233,7 +233,7 @@ protected:
     bool hudEnabled() const;
 #endif
 
-    WeakPtr<PluginView> m_view;
+    SingleThreadWeakPtr<PluginView> m_view;
     WeakPtr<WebFrame> m_frame;
     WeakPtr<WebCore::HTMLPlugInElement, WebCore::WeakPtrImplWithEventTargetData> m_element;
 

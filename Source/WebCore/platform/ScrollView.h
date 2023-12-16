@@ -159,7 +159,7 @@ public:
         ~ProhibitScrollingWhenChangingContentSizeForScope();
 
     private:
-        WeakPtr<ScrollView> m_scrollView;
+        SingleThreadWeakPtr<ScrollView> m_scrollView;
     };
 
     std::unique_ptr<ProhibitScrollingWhenChangingContentSizeForScope> prohibitScrollingWhenChangingContentSizeForScope();
