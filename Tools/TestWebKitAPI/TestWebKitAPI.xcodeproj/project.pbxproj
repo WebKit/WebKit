@@ -1131,6 +1131,7 @@
 		F402F56C23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = F402F56B23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm */; };
 		F4034FA1275D5402003A81F8 /* CookieConsent.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4034FA0275D5402003A81F8 /* CookieConsent.mm */; };
 		F4034FA3275D5AC6003A81F8 /* cookie-consent-basic.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F4034FA2275D5449003A81F8 /* cookie-consent-basic.html */; };
+		F40398922B2D0D2B00A7AA85 /* text-with-web-font.webarchive in Copy Resources */ = {isa = PBXBuildFile; fileRef = F40398892B2D0AC700A7AA85 /* text-with-web-font.webarchive */; };
 		F407FE391F1D0DFC0017CF25 /* enormous.svg in Copy Resources */ = {isa = PBXBuildFile; fileRef = F407FE381F1D0DE60017CF25 /* enormous.svg */; };
 		F4094CC725545BD5003D73E3 /* DisplayListTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F4094CC625545BD5003D73E3 /* DisplayListTests.cpp */; };
 		F40B8D5E281086E500346417 /* fade-in-image.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = F40B8D5D2810855900346417 /* fade-in-image.html */; };
@@ -1891,6 +1892,7 @@
 				2E9896151D8F093800739892 /* text-and-password-inputs.html in Copy Resources */,
 				F4CD74C620FDACFA00DE3794 /* text-with-async-script.html in Copy Resources */,
 				F44C7A0520FAAE3C0014478C /* text-with-deferred-script.html in Copy Resources */,
+				F40398922B2D0D2B00A7AA85 /* text-with-web-font.webarchive in Copy Resources */,
 				F41AB9AA1EF4696B0083FA08 /* textarea-to-input.html in Copy Resources */,
 				C22FA32D228F8AEB009D7988 /* TextWidth.html in Copy Resources */,
 				4952BE5F257816F800B0AEF1 /* try-text-select-with-disabled-text-interaction.html in Copy Resources */,
@@ -3452,6 +3454,7 @@
 		F402F56B23ECC2FB00865549 /* UIWKInteractionViewProtocol.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = UIWKInteractionViewProtocol.mm; sourceTree = "<group>"; };
 		F4034FA0275D5402003A81F8 /* CookieConsent.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieConsent.mm; sourceTree = "<group>"; };
 		F4034FA2275D5449003A81F8 /* cookie-consent-basic.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "cookie-consent-basic.html"; sourceTree = "<group>"; };
+		F40398892B2D0AC700A7AA85 /* text-with-web-font.webarchive */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = "text-with-web-font.webarchive"; sourceTree = "<group>"; };
 		F407FE381F1D0DE60017CF25 /* enormous.svg */ = {isa = PBXFileReference; lastKnownFileType = text; path = enormous.svg; sourceTree = "<group>"; };
 		F4094CC625545BD5003D73E3 /* DisplayListTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DisplayListTests.cpp; sourceTree = "<group>"; };
 		F40B8D5D2810855900346417 /* fade-in-image.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = "fade-in-image.html"; sourceTree = "<group>"; };
@@ -4934,6 +4937,7 @@
 				2E9896141D8F092B00739892 /* text-and-password-inputs.html */,
 				F4CD74C520FDACF500DE3794 /* text-with-async-script.html */,
 				F44C7A0420FAAE320014478C /* text-with-deferred-script.html */,
+				F40398892B2D0AC700A7AA85 /* text-with-web-font.webarchive */,
 				F41AB9951EF4692C0083FA08 /* textarea-to-input.html */,
 				C22FA32C228F877A009D7988 /* TextWidth.html */,
 				4952BE5C2578113900B0AEF1 /* try-text-select-with-disabled-text-interaction.html */,
