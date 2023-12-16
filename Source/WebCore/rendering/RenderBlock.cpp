@@ -304,14 +304,14 @@ private:
     bool m_hadVerticalLayoutOverflow;
 };
 
-RenderBlock::RenderBlock(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderBox(type, element, WTFMove(style), baseTypeFlags | RenderBlockFlag)
+RenderBlock::RenderBlock(Type type, Element& element, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
+    : RenderBox(type, element, WTFMove(style), baseTypeFlags | RenderElementType::RenderBlockFlag)
 {
     ASSERT(isRenderBlock());
 }
 
-RenderBlock::RenderBlock(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderBox(type, document, WTFMove(style), baseTypeFlags | RenderBlockFlag)
+RenderBlock::RenderBlock(Type type, Document& document, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
+    : RenderBox(type, document, WTFMove(style), baseTypeFlags | RenderElementType::RenderBlockFlag)
 {
     ASSERT(isRenderBlock());
 }

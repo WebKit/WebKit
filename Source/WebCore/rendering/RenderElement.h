@@ -304,7 +304,7 @@ public:
     void clearNeedsLayoutForDescendants();
 
 protected:
-    enum BaseTypeFlag {
+    enum class RenderElementType {
         RenderLayerModelObjectFlag  = 1 << 0,
         RenderBoxModelObjectFlag    = 1 << 1,
         RenderInlineFlag            = 1 << 2,
@@ -314,11 +314,9 @@ protected:
         RenderFlexibleBoxFlag       = 1 << 6,
         RenderTextControlFlag       = 1 << 7,
     };
-    
-    typedef unsigned BaseTypeFlags;
 
-    RenderElement(Type, Element&, RenderStyle&&, BaseTypeFlags);
-    RenderElement(Type, Document&, RenderStyle&&, BaseTypeFlags);
+    RenderElement(Type, Element&, RenderStyle&&, OptionSet<RenderElementType>);
+    RenderElement(Type, Document&, RenderStyle&&, OptionSet<RenderElementType>);
 
     bool layerCreationAllowedForSubtree() const;
 
@@ -361,13 +359,14 @@ protected:
     inline bool shouldApplySizeOrStyleContainment(bool) const;
 
 private:
-    RenderElement(Type, ContainerNode&, RenderStyle&&, BaseTypeFlags);
+    RenderElement(Type, ContainerNode&, RenderStyle&&, OptionSet<RenderElementType>);
     void node() const = delete;
     void nonPseudoNode() const = delete;
     void generatingNode() const = delete;
     void isRenderText() const = delete;
     void isRenderElement() const = delete;
 
+    OptionSet<RenderElementType> typeFlags() const { return OptionSet<RenderElementType>::fromRaw(m_typeFlags); }
     RenderObject* firstChildSlow() const final { return firstChild(); }
     RenderObject* lastChildSlow() const final { return lastChild(); }
 
@@ -404,7 +403,7 @@ private:
     const RenderStyle* textSegmentPseudoStyle(PseudoId) const;
 
     SingleThreadPackedWeakPtr<RenderObject> m_firstChild;
-    unsigned m_baseTypeFlags : 8;
+    unsigned m_typeFlags : 8;
     unsigned m_ancestorLineBoxDirty : 1;
     unsigned m_hasInitializedStyle : 1;
 
@@ -454,42 +453,42 @@ inline void RenderElement::setChildNeedsLayout(MarkingBehavior markParents)
 
 inline bool RenderElement::isRenderLayerModelObject() const
 {
-    return m_baseTypeFlags & RenderLayerModelObjectFlag;
+    return typeFlags().contains(RenderElementType::RenderLayerModelObjectFlag);
 }
 
 inline bool RenderElement::isRenderBoxModelObject() const
 {
-    return m_baseTypeFlags & RenderBoxModelObjectFlag;
+    return typeFlags().contains(RenderElementType::RenderBoxModelObjectFlag);
 }
 
 inline bool RenderElement::isRenderBlock() const
 {
-    return m_baseTypeFlags & RenderBlockFlag;
+    return typeFlags().contains(RenderElementType::RenderBlockFlag);
 }
 
 inline bool RenderElement::isRenderBlockFlow() const
 {
-    return m_baseTypeFlags & RenderBlockFlowFlag;
+    return typeFlags().contains(RenderElementType::RenderBlockFlowFlag);
 }
 
 inline bool RenderElement::isRenderReplaced() const
 {
-    return m_baseTypeFlags & RenderReplacedFlag;
+    return typeFlags().contains(RenderElementType::RenderReplacedFlag);
 }
 
 inline bool RenderElement::isRenderInline() const
 {
-    return m_baseTypeFlags & RenderInlineFlag;
+    return typeFlags().contains(RenderElementType::RenderInlineFlag);
 }
 
 inline bool RenderElement::isRenderFlexibleBox() const
 {
-    return m_baseTypeFlags & RenderFlexibleBoxFlag;
+    return typeFlags().contains(RenderElementType::RenderFlexibleBoxFlag);
 }
 
 inline bool RenderElement::isRenderTextControl() const
 {
-    return m_baseTypeFlags & RenderTextControlFlag;
+    return typeFlags().contains(RenderElementType::RenderTextControlFlag);
 }
 
 inline Element* RenderElement::generatingElement() const

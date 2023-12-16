@@ -91,14 +91,14 @@ static inline void updateLogicalHeightForCell(RenderTableSection::RowStruct& row
 }
 
 RenderTableSection::RenderTableSection(Element& element, RenderStyle&& style)
-    : RenderBox(Type::TableSection, element, WTFMove(style), 0)
+    : RenderBox(Type::TableSection, element, WTFMove(style), { })
 {
     setInline(false);
     ASSERT(isRenderTableSection());
 }
 
 RenderTableSection::RenderTableSection(Document& document, RenderStyle&& style)
-    : RenderBox(Type::TableSection, document, WTFMove(style), 0)
+    : RenderBox(Type::TableSection, document, WTFMove(style), { })
 {
     setInline(false);
     ASSERT(isRenderTableSection());

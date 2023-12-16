@@ -108,8 +108,8 @@ public:
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox) const;
 
 protected:
-    RenderLayerModelObject(Type, Element&, RenderStyle&&, BaseTypeFlags);
-    RenderLayerModelObject(Type, Document&, RenderStyle&&, BaseTypeFlags);
+    RenderLayerModelObject(Type, Element&, RenderStyle&&, OptionSet<RenderElementType>);
+    RenderLayerModelObject(Type, Document&, RenderStyle&&, OptionSet<RenderElementType>);
 
     void createLayer();
     void willBeDestroyed() override;

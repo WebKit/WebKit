@@ -50,7 +50,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderListMarker);
 constexpr int cMarkerPadding = 7;
 
 RenderListMarker::RenderListMarker(RenderListItem& listItem, RenderStyle&& style)
-    : RenderBox(Type::ListMarker, listItem.document(), WTFMove(style), 0)
+    : RenderBox(Type::ListMarker, listItem.document(), WTFMove(style), { })
     , m_listItem(listItem)
 {
     setInline(true);
