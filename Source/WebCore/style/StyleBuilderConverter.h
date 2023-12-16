@@ -1629,7 +1629,9 @@ inline FontSizeAdjust BuilderConverter::convertFontSizeAdjust(BuilderState&, con
         return { defaultMetric, FontSizeAdjust::ValueType::FromFont, std::nullopt };
     }
 
-    ASSERT(value.isPair());
+    if (!is<CSSValuePair>(value))
+        return FontCascadeDescription::initialFontSizeAdjust();
+
     const auto& pair = downcast<CSSValuePair>(value);
 
     auto metric = fromCSSValueID<FontSizeAdjust::Metric>(downcast<CSSPrimitiveValue>(pair.first()).valueID());
