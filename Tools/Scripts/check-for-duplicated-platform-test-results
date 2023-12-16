@@ -23,7 +23,7 @@ import logging
 import optparse
 import os
 import sys
-from webkitpy.common import webkit_finder
+
 from webkitpy.common.host import Host
 from webkitpy.common.system.logutils import configure_logging
 from webkitpy.port.config import apple_additions
@@ -32,8 +32,8 @@ _log = logging.getLogger(__name__)
 
 host = Host()
 host.initialize_scm()
-webkit_finder = webkit_finder.WebKitFinder(host.filesystem)
-layout_tests_directory = webkit_finder.layout_tests_dir()
+port = host.port_factory.get()
+layout_tests_directory = port.layout_tests_dir()
 platform_directory = os.path.join(layout_tests_directory, 'platform')
 
 txt_types = (".webarchive", ".txt")
