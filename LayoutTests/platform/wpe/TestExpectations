@@ -1674,3 +1674,13 @@ webkit.org/b/264680 tables/mozilla_expected_failures/bugs/bug2479-5.html [ Failu
 
 fast/history/page-cache-execute-script-during-restore.html [ Timeout ]
 webanimations/animation-page-cache.html [ Timeout ]
+
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-and-nested-clip-path.svg [ Failure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-nested-clip-path-006.svg [ Failure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-nested-clip-path-007.svg [ Failure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-nested-clip-path-008.svg [ Failure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-nested-clip-path-009.svg [ Failure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-objectboundingbox-content-clip-transform.svg [ Failure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-objectboundingbox-content-clip.svg [ Failure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-userspaceonuse-content-clip-transform.svg [ Failure ]
+imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-userspaceonuse-content-clip.svg [ Failure ]
