@@ -1,0 +1,12 @@
+
+FAIL Declarative DOM Parts innerHTML <div><h1>content... (expect no parts) document.getPartRoot is not a function. (In 'document.getPartRoot()', 'document.getPartRoot' is undefined)
+FAIL Declarative DOM Parts innerHTML <div><h1 parseparts>content... (expect no parts) document.getPartRoot is not a function. (In 'document.getPartRoot()', 'document.getPartRoot' is undefined)
+FAIL Declarative DOM Parts innerHTML <div parseparts=""><h1>content... (expect no parts) document.getPartRoot is not a function. (In 'document.getPartRoot()', 'document.getPartRoot' is undefined)
+FAIL Declarative DOM Parts innerHTML <div parseparts=""><h1 parseparts>content... (expect no parts) document.getPartRoot is not a function. (In 'document.getPartRoot()', 'document.getPartRoot' is undefined)
+FAIL Declarative DOM Parts innerHTML <template><h1>content... (expect no parts) contextEl.content.getPartRoot is not a function. (In 'contextEl.content.getPartRoot()', 'contextEl.content.getPartRoot' is undefined)
+FAIL Declarative DOM Parts innerHTML <template><h1 parseparts>content... (expect no parts) contextEl.content.getPartRoot is not a function. (In 'contextEl.content.getPartRoot()', 'contextEl.content.getPartRoot' is undefined)
+FAIL Declarative DOM Parts innerHTML <template parseparts="" class="expect_success"><h1>content... (expect parts) contextEl.content.getPartRoot is not a function. (In 'contextEl.content.getPartRoot()', 'contextEl.content.getPartRoot' is undefined)
+FAIL Declarative DOM Parts innerHTML <template parseparts="" class="expect_success"><h1 parseparts>content... (expect parts) contextEl.content.getPartRoot is not a function. (In 'contextEl.content.getPartRoot()', 'contextEl.content.getPartRoot' is undefined)
+FAIL Basic NodePart parsing tmpl.content.getPartRoot is not a function. (In 'tmpl.content.getPartRoot()', 'tmpl.content.getPartRoot' is undefined)
+FAIL Basic AttributePart cloning with values tmpl.content.getPartRoot is not a function. (In 'tmpl.content.getPartRoot()', 'tmpl.content.getPartRoot' is undefined)
+
