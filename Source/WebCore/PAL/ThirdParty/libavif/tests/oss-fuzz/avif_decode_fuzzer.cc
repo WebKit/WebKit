@@ -3,6 +3,8 @@
 
 #include "avif/avif.h"
 
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t * Data, size_t Size);
+
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t * Data, size_t Size)
 {
     static avifRGBFormat rgbFormats[] = { AVIF_RGB_FORMAT_RGB, AVIF_RGB_FORMAT_RGBA };
