@@ -515,18 +515,16 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
                     m_line.adjustContentRightWithRubyAlign(2 * lineContent.rubyAnnotationOffset);
                     return;
                 }
-                if (m_line.hasRubyContent()) {
-                    lineContent.rubyBaseAlignmentOffsetList = RubyFormattingContext::applyRubyAlign(m_line, formattingContext());
-                    return;
-                }
                 // Text is justified according to the method specified by the text-justify property,
                 // in order to exactly fill the line box. Unless otherwise specified by text-align-last,
                 // the last line before a forced break or the end of the block is start-aligned.
                 auto hasTextAlignJustify = (isLastLine || m_line.runs().last().isLineBreak()) ? rootStyle.textAlignLast() == TextAlignLast::Justify : rootStyle.textAlign() == TextAlignMode::Justify;
-                if (!hasTextAlignJustify)
-                    return;
-                auto additionalSpaceForAlignedContent = InlineContentAligner::applyTextAlignJustify(m_line.runs(), spaceToDistribute, m_line.hangingTrailingWhitespaceLength());
-                m_line.inflateContentLogicalWidth(additionalSpaceForAlignedContent);
+                if (hasTextAlignJustify) {
+                    auto additionalSpaceForAlignedContent = InlineContentAligner::applyTextAlignJustify(m_line.runs(), spaceToDistribute, m_line.hangingTrailingWhitespaceLength());
+                    m_line.inflateContentLogicalWidth(additionalSpaceForAlignedContent);
+                }
+                if (m_line.hasRubyContent())
+                    lineContent.rubyBaseAlignmentOffsetList = RubyFormattingContext::applyRubyAlign(m_line, formattingContext());
             };
             applyRunBasedAlignmentIfApplicable();
             auto& lastTextContent = m_line.runs().last().textContent();
