@@ -65,17 +65,11 @@ using WebCore::MediaPlayerEnums;
 using WebCore::VideoFullscreenInterfaceMac;
 using WebCore::PlaybackSessionModel;
 
-@interface WebVideoViewContainer : NSView {
-    __unsafe_unretained id <WebVideoViewContainerDelegate> _videoViewContainerDelegate;
-}
-
-@property (nonatomic, assign) id <WebVideoViewContainerDelegate> videoViewContainerDelegate;
-
+@interface WebVideoViewContainer : NSView
+@property (nonatomic, weak) id<WebVideoViewContainerDelegate> videoViewContainerDelegate;
 @end
 
 @implementation WebVideoViewContainer
-
-@synthesize videoViewContainerDelegate = _videoViewContainerDelegate;
 
 - (void)resizeWithOldSuperviewSize:(NSSize)oldBoundsSize
 {

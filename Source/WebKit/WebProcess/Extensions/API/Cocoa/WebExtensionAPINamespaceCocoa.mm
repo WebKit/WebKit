@@ -96,6 +96,16 @@ WebExtensionAPICommands& WebExtensionAPINamespace::commands()
     return *m_commands;
 }
 
+WebExtensionAPICookies& WebExtensionAPINamespace::cookies()
+{
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/cookies
+
+    if (!m_cookies)
+        m_cookies = WebExtensionAPICookies::create(forMainWorld(), runtime(), extensionContext());
+
+    return *m_cookies;
+}
+
 WebExtensionAPIDeclarativeNetRequest& WebExtensionAPINamespace::declarativeNetRequest()
 {
     if (!m_declarativeNetRequest)

@@ -167,14 +167,14 @@ bool RenderBoxModelObject::hasAcceleratedCompositing() const
     return view().compositor().hasAcceleratedCompositing();
 }
 
-RenderBoxModelObject::RenderBoxModelObject(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderLayerModelObject(type, element, WTFMove(style), baseTypeFlags | RenderBoxModelObjectFlag)
+RenderBoxModelObject::RenderBoxModelObject(Type type, Element& element, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
+    : RenderLayerModelObject(type, element, WTFMove(style), baseTypeFlags | RenderElementType::RenderBoxModelObjectFlag)
 {
     ASSERT(isRenderBoxModelObject());
 }
 
-RenderBoxModelObject::RenderBoxModelObject(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
-    : RenderLayerModelObject(type, document, WTFMove(style), baseTypeFlags | RenderBoxModelObjectFlag)
+RenderBoxModelObject::RenderBoxModelObject(Type type, Document& document, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
+    : RenderLayerModelObject(type, document, WTFMove(style), baseTypeFlags | RenderElementType::RenderBoxModelObjectFlag)
 {
     ASSERT(isRenderBoxModelObject());
 }

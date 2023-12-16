@@ -53,7 +53,7 @@ private:
     RefPtr<CSSCounterStyle> counterStyle() const;
 
     CounterContent m_counter;
-    CheckedPtr<CounterNode> m_counterNode;
+    SingleThreadWeakPtr<CounterNode> m_counterNode;
     RenderCounter* m_nextForSameCounter { nullptr };
     friend class CounterNode;
 };

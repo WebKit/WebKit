@@ -81,7 +81,7 @@ void ViewGestureGeometryCollector::dispatchDidCollectGeometryForSmartMagnificati
 #endif
 }
 
-void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(FloatPoint origin)
+void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(FloatPoint gestureLocationInViewCoordinates)
 {
     RefPtr frameView = m_webPage.localMainFrameView();
     if (!frameView)
@@ -110,19 +110,20 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
         else if (currentScale < textLegibilityScales->second - minimumScaleDifferenceForZooming)
             targetScale = textLegibilityScales->second;
 
-        FloatRect targetRectInContentCoordinates { origin, FloatSize() };
+        FloatRect targetRectInContentCoordinates { gestureLocationInViewCoordinates, FloatSize() };
         targetRectInContentCoordinates.inflate(m_webPage.viewportConfiguration().viewLayoutSize() / (2 * targetScale));
 
-        dispatchDidCollectGeometryForSmartMagnificationGesture(origin, targetRectInContentCoordinates, visibleContentRect, true, viewportMinimumScale, viewportMaximumScale);
+        dispatchDidCollectGeometryForSmartMagnificationGesture(gestureLocationInViewCoordinates, targetRectInContentCoordinates, visibleContentRect, true, viewportMinimumScale, viewportMaximumScale);
         return;
     }
 #endif // PLATFORM(IOS_FAMILY)
 
-    IntPoint originInContentsSpace = frameView->windowToContents(roundedIntPoint(origin));
+    IntPoint originInContentsSpace = frameView->windowToContents(roundedIntPoint(gestureLocationInViewCoordinates));
     HitTestResult hitTestResult = HitTestResult(originInContentsSpace);
 
     if (auto* mainFrame = dynamicDowncast<WebCore::LocalFrame>(m_webPage.mainFrame()))
         mainFrame->document()->hitTest(HitTestRequest(), hitTestResult);
+
     RefPtr node = hitTestResult.innerNode();
     if (!node) {
         dispatchDidCollectGeometryForSmartMagnificationGesture(FloatPoint(), FloatRect(), FloatRect(), false, 0, 0);
@@ -132,8 +133,8 @@ void ViewGestureGeometryCollector::collectGeometryForSmartMagnificationGesture(F
     bool isReplaced;
     FloatRect absoluteBoundingRect;
 
-    computeZoomInformationForNode(*node, origin, absoluteBoundingRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
-    dispatchDidCollectGeometryForSmartMagnificationGesture(origin, absoluteBoundingRect, visibleContentRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
+    computeZoomInformationForNode(*node, gestureLocationInViewCoordinates, absoluteBoundingRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
+    dispatchDidCollectGeometryForSmartMagnificationGesture(gestureLocationInViewCoordinates, absoluteBoundingRect, visibleContentRect, isReplaced, viewportMinimumScale, viewportMaximumScale);
 }
 
 #if PLATFORM(IOS_FAMILY)

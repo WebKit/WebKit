@@ -165,13 +165,12 @@ using ContentExtensionEnablement = std::pair<ContentExtensionDefaultEnablement, 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DocumentLoader);
 class DocumentLoader
     : public RefCounted<DocumentLoader>
-    , public CanMakeCheckedPtr
     , public FrameDestructionObserver
     , public ContentSecurityPolicyClient
 #if ENABLE(CONTENT_FILTERING)
     , public ContentFilterClient
 #endif
-    , private CachedRawResourceClient {
+    , public CachedRawResourceClient {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(DocumentLoader);
     friend class ContentFilter;
 public:
@@ -179,6 +178,10 @@ public:
     {
         return adoptRef(*new DocumentLoader(request, data));
     }
+
+    using CachedRawResourceClient::weakPtrFactory;
+    using CachedRawResourceClient::WeakValueType;
+    using CachedRawResourceClient::WeakPtrImplType;
 
     WEBCORE_EXPORT static DocumentLoader* fromScriptExecutionContextIdentifier(ScriptExecutionContextIdentifier);
 

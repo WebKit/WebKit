@@ -67,18 +67,26 @@
     </branch>
   </autotools>
 
+  <meson id="libxkbcommon" mesonargs="-Denable-docs=false">
+    <branch module="xkbcommon/libxkbcommon"
+            tag="xkbcommon-1.0.3"
+            version="1.0.3"
+            repo="github.com" />
+  </meson>
+
   <!-- GStreamer plugins have been moved with the base code to a monorepo.
   Is not longer needed to fetch different tarballs when using the main repository.
   See: https://gstreamer.freedesktop.org/documentation/frequently-asked-questions/mono-repository.html -->
   <meson id="gstreamer" mesonargs="-Dlibnice=enabled -Dpython=enabled -Dintrospection=enabled -Dgst-plugins-bad:microdns=disabled -Dgst-plugins-bad:avtp=disabled -Dexamples=disabled -Dtests=disabled -Ddoc=disabled">
     <dependencies>
-      <dep package="libva"/>
-      <dep package="orc"/>
-      <dep package="graphene"/>
-      <dep package="openh264"/>
       <dep package="aom"/>
-      <dep package="libsrtp"/>
       <dep package="ffmpeg"/>
+      <dep package="graphene"/>
+      <dep package="libsrtp"/>
+      <dep package="libva"/>
+      <dep package="libxkbcommon"/>
+      <dep package="openh264"/>
+      <dep package="orc"/>
     </dependencies>
     <branch repo="gstreamer"
             checkoutdir="gstreamer-${version}"

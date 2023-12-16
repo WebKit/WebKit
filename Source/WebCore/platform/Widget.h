@@ -85,7 +85,7 @@ enum WidgetNotification { WillPaintFlattened, DidPaintFlattened };
 // Scrollbar - Mac, Gtk
 // Plugin - Mac, Windows (windowed only), Qt (windowed only, widget is an HWND on windows), Gtk (windowed only)
 //
-class Widget : public RefCounted<Widget>, public CanMakeWeakPtr<Widget>, public CanMakeCheckedPtr {
+class Widget : public RefCounted<Widget>, public CanMakeSingleThreadWeakPtr<Widget> {
 public:
     WEBCORE_EXPORT explicit Widget(PlatformWidget = nullptr);
     WEBCORE_EXPORT virtual ~Widget();
@@ -213,7 +213,7 @@ private:
     bool m_selfVisible { false };
     bool m_parentVisible { false };
 
-    WeakPtr<ScrollView> m_parent;
+    SingleThreadWeakPtr<ScrollView> m_parent;
 #if !PLATFORM(COCOA)
     PlatformWidget m_widget;
 #else

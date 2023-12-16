@@ -261,11 +261,9 @@ void RemoteLayerTreeDrawingAreaProxyMac::adjustTransientZoom(double scale, Float
 
 void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, FloatPoint origin)
 {
-    auto constrainedOrigin = origin;
-
     auto visibleContentRect = m_webPageProxy->scrollingCoordinatorProxy()->computeVisibleContentRect();
     
-    constrainedOrigin = visibleContentRect.location();
+    auto constrainedOrigin = visibleContentRect.location();
     constrainedOrigin.moveBy(-origin);
 
     IntSize scaledTotalContentsSize = roundedIntSize(m_webPageProxy->scrollingCoordinatorProxy()->totalContentsSize());

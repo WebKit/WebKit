@@ -141,11 +141,11 @@ EventTrackingRegions ScrollingCoordinator::absoluteEventTrackingRegionsForFrame(
     }
 
     for (auto& widget : frameView->widgetsInRenderTree()) {
-        if (!is<PluginViewBase>(*widget))
+        if (!is<PluginViewBase>(widget))
             continue;
-        if (!downcast<PluginViewBase>(*widget).wantsWheelEvents())
+        if (!downcast<PluginViewBase>(widget.get()).wantsWheelEvents())
             continue;
-        auto* renderWidget = RenderWidget::find(*widget);
+        auto* renderWidget = RenderWidget::find(widget);
         if (!renderWidget)
             continue;
         nonFastScrollableRegion.unite(renderWidget->absoluteBoundingBoxRect());

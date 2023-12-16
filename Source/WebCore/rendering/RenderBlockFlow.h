@@ -54,8 +54,8 @@ enum LineCount {
 class RenderBlockFlow : public RenderBlock {
     WTF_MAKE_ISO_ALLOCATED(RenderBlockFlow);
 public:
-    RenderBlockFlow(Type, Element&, RenderStyle&&, BaseTypeFlags = 0);
-    RenderBlockFlow(Type, Document&, RenderStyle&&, BaseTypeFlags = 0);
+    RenderBlockFlow(Type, Element&, RenderStyle&&, OptionSet<RenderElementType> = { });
+    RenderBlockFlow(Type, Document&, RenderStyle&&, OptionSet<RenderElementType> = { });
     virtual ~RenderBlockFlow();
         
     void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;

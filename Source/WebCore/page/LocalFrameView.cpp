@@ -5752,19 +5752,19 @@ LayoutUnit LocalFrameView::mapFromCSSToLayoutUnits(int value) const
 
 void LocalFrameView::didAddWidgetToRenderTree(Widget& widget)
 {
-    ASSERT(!m_widgetsInRenderTree.contains(&widget));
-    m_widgetsInRenderTree.add(&widget);
+    ASSERT(!m_widgetsInRenderTree.contains(widget));
+    m_widgetsInRenderTree.add(widget);
 }
 
 void LocalFrameView::willRemoveWidgetFromRenderTree(Widget& widget)
 {
-    ASSERT(m_widgetsInRenderTree.contains(&widget));
-    m_widgetsInRenderTree.remove(&widget);
+    ASSERT(m_widgetsInRenderTree.contains(widget));
+    m_widgetsInRenderTree.remove(widget);
 }
 
-static Vector<RefPtr<Widget>> collectAndProtectWidgets(const HashSet<CheckedPtr<Widget>>& set)
+static Vector<Ref<Widget>> collectAndProtectWidgets(const HashSet<SingleThreadWeakRef<Widget>>& set)
 {
-    return WTF::map(set, [](auto& widget) -> RefPtr<Widget> {
+    return WTF::map(set, [](auto& widget) -> Ref<Widget> {
         return widget.get();
     });
 }
@@ -5776,7 +5776,7 @@ void LocalFrameView::updateWidgetPositions()
     // scripts in response to NPP_SetWindow, for example), so we need to keep the Widgets
     // alive during enumeration.
     for (auto& widget : collectAndProtectWidgets(m_widgetsInRenderTree)) {
-        if (auto* renderer = RenderWidget::find(*widget)) {
+        if (auto* renderer = RenderWidget::find(widget)) {
             auto ignoreWidgetState = renderer->updateWidgetPosition();
             UNUSED_PARAM(ignoreWidgetState);
         }

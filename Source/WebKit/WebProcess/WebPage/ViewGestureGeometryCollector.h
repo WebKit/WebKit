@@ -54,7 +54,7 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) override;
 
     // Message handlers.
-    void collectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin);
+    void collectGeometryForSmartMagnificationGesture(WebCore::FloatPoint gestureLocationInViewCoordinates);
 
 #if !PLATFORM(IOS_FAMILY)
     void collectGeometryForMagnificationGesture();

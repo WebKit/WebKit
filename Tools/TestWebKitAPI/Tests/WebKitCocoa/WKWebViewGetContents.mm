@@ -33,6 +33,7 @@
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
 #import <WebCore/ColorCocoa.h>
+#import <WebCore/FontCocoa.h>
 #import <WebKit/NSAttributedStringPrivate.h>
 #import <WebKit/_WKResourceLoadInfo.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
@@ -469,4 +470,39 @@ TEST(WKWebView, DoNotAllowNetworkLoads)
     EXPECT_EQ(helloRange.location, 0U);
     EXPECT_EQ(helloRange.length, 5U);
     EXPECT_FALSE(attemptedImageLoad);
+}
+
+TEST(WKWebView, TextWithWebFontAsAttributedString)
+{
+    auto archiveURL = [NSBundle.mainBundle URLForResource:@"text-with-web-font" withExtension:@"webarchive" subdirectory:@"TestWebKitAPI.resources"];
+    auto archiveData = adoptNS([[NSData alloc] initWithContentsOfURL:archiveURL]);
+
+    RetainPtr<NSAttributedString> result;
+    bool done = false;
+    [NSAttributedString _loadFromHTMLWithOptions:@{ } contentLoader:[&](WKWebView *webView) -> WKNavigation * {
+        return [webView loadData:archiveData.get() MIMEType:@"application/x-webarchive" characterEncodingName:@"" baseURL:NSBundle.mainBundle.bundleURL];
+    } completionHandler:[&](NSAttributedString *string, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *attributes, NSError *error) {
+        EXPECT_NULL(error);
+        result = string;
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+
+    __auto_type whitespaceSet = NSCharacterSet.whitespaceAndNewlineCharacterSet;
+    __block Vector<std::pair<RetainPtr<NSString>, WebCore::CocoaFont *>, 3> substringsAndFonts;
+    [result enumerateAttributesInRange:NSMakeRange(0, [result length]) options:0 usingBlock:^(NSDictionary<NSAttributedStringKey, id> *attributes, NSRange range, BOOL *) {
+        substringsAndFonts.append({
+            { [[[result string] substringWithRange:range] stringByTrimmingCharactersInSet:whitespaceSet] },
+            dynamic_objc_cast<WebCore::CocoaFont>(attributes[NSFontAttributeName])
+        });
+    }];
+
+    EXPECT_EQ(3U, substringsAndFonts.size());
+    EXPECT_WK_STREQ(@"Hello world in system font.", substringsAndFonts[0].first.get());
+    EXPECT_WK_STREQ(@"Hello world in Times.", substringsAndFonts[1].first.get());
+    EXPECT_WK_STREQ(@"Hello world in Ahem.", substringsAndFonts[2].first.get());
+
+    EXPECT_TRUE([substringsAndFonts[1].second.fontName containsString:@"Times"]);
+    EXPECT_WK_STREQ(substringsAndFonts[0].second.fontName, substringsAndFonts[2].second.fontName);
+    EXPECT_FALSE([substringsAndFonts[2].second.fontName containsString:@"LastResort"]);
 }

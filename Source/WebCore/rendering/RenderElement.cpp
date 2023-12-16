@@ -116,10 +116,10 @@ struct SameSizeAsRenderElement : public RenderObject {
 
 static_assert(sizeof(RenderElement) == sizeof(SameSizeAsRenderElement), "RenderElement should stay small");
 
-inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument, RenderStyle&& style, OptionSet<RenderElementType> typeFlags)
     : RenderObject(type, elementOrDocument)
     , m_firstChild(nullptr)
-    , m_baseTypeFlags(baseTypeFlags)
+    , m_typeFlags(typeFlags.toRaw())
     , m_ancestorLineBoxDirty(false)
     , m_hasInitializedStyle(false)
     , m_hasPausedImageAnimations(false)
@@ -141,12 +141,12 @@ inline RenderElement::RenderElement(Type type, ContainerNode& elementOrDocument,
     ASSERT(RenderObject::isRenderElement());
 }
 
-RenderElement::RenderElement(Type type, Element& element, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+RenderElement::RenderElement(Type type, Element& element, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
     : RenderElement(type, static_cast<ContainerNode&>(element), WTFMove(style), baseTypeFlags)
 {
 }
 
-RenderElement::RenderElement(Type type, Document& document, RenderStyle&& style, BaseTypeFlags baseTypeFlags)
+RenderElement::RenderElement(Type type, Document& document, RenderStyle&& style, OptionSet<RenderElementType> baseTypeFlags)
     : RenderElement(type, static_cast<ContainerNode&>(document), WTFMove(style), baseTypeFlags)
 {
 }

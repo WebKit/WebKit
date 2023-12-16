@@ -2187,7 +2187,7 @@ private:
     WebCore::Color m_underlayColor;
 
 #if ENABLE(PDF_PLUGIN)
-    WeakHashSet<PluginView> m_pluginViews;
+    SingleThreadWeakHashSet<PluginView> m_pluginViews;
 #endif
 #if ENABLE(PDF_HUD)
     HashMap<PDFPluginIdentifier, WeakPtr<PDFPluginBase>> m_pdfPlugInsWithHUD;

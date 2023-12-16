@@ -65,7 +65,7 @@ const int cDefaultWidth = 300;
 const int cDefaultHeight = 150;
 
 RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style)
-    : RenderBox(type, element, WTFMove(style), RenderReplacedFlag)
+    : RenderBox(type, element, WTFMove(style), RenderElementType::RenderReplacedFlag)
     , m_intrinsicSize(cDefaultWidth, cDefaultHeight)
 {
     setReplacedOrInlineBlock(true);
@@ -73,7 +73,7 @@ RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style)
 }
 
 RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style, const LayoutSize& intrinsicSize)
-    : RenderBox(type, element, WTFMove(style), RenderReplacedFlag)
+    : RenderBox(type, element, WTFMove(style), RenderElementType::RenderReplacedFlag)
     , m_intrinsicSize(intrinsicSize)
 {
     setReplacedOrInlineBlock(true);
@@ -81,7 +81,7 @@ RenderReplaced::RenderReplaced(Type type, Element& element, RenderStyle&& style,
 }
 
 RenderReplaced::RenderReplaced(Type type, Document& document, RenderStyle&& style, const LayoutSize& intrinsicSize)
-    : RenderBox(type, document, WTFMove(style), RenderReplacedFlag)
+    : RenderBox(type, document, WTFMove(style), RenderElementType::RenderReplacedFlag)
     , m_intrinsicSize(intrinsicSize)
 {
     setReplacedOrInlineBlock(true);

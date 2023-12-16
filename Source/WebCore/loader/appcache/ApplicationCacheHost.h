@@ -153,7 +153,7 @@ private:
     bool maybeLoadFallbackForMainError(const ResourceRequest&, const ResourceError&);
 
     WeakPtr<DOMApplicationCache, WeakPtrImplWithEventTargetData> m_domApplicationCache;
-    CheckedRef<DocumentLoader> m_documentLoader;
+    SingleThreadWeakRef<DocumentLoader> m_documentLoader;
 
     bool m_defersEvents { true }; // Events are deferred until after document onload.
     Vector<DeferredEvent> m_deferredEvents;

@@ -27,8 +27,8 @@
 #define InjectedBundleDOMWindowExtension_h
 
 #include "APIObject.h"
-#include <wtf/CheckedRef.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -41,7 +41,7 @@ namespace WebKit {
 class InjectedBundleScriptWorld;
 class WebFrame;
 
-class InjectedBundleDOMWindowExtension : public API::ObjectImpl<API::Object::Type::BundleDOMWindowExtension>, public CanMakeCheckedPtr {
+class InjectedBundleDOMWindowExtension : public API::ObjectImpl<API::Object::Type::BundleDOMWindowExtension>, public CanMakeWeakPtr<InjectedBundleDOMWindowExtension> {
 public:
     static Ref<InjectedBundleDOMWindowExtension> create(WebFrame*, InjectedBundleScriptWorld*);
     static InjectedBundleDOMWindowExtension* get(WebCore::DOMWindowExtension*);
@@ -54,7 +54,7 @@ public:
 private:
     InjectedBundleDOMWindowExtension(WebFrame*, InjectedBundleScriptWorld*);
 
-    RefPtr<WebCore::DOMWindowExtension> m_coreExtension;
+    Ref<WebCore::DOMWindowExtension> m_coreExtension;
     mutable RefPtr<InjectedBundleScriptWorld> m_world;
 };
 

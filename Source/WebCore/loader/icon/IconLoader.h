@@ -27,10 +27,10 @@
 
 #include "CachedRawResourceClient.h"
 #include "CachedResourceHandle.h"
-#include <wtf/CheckedRef.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/URL.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -50,7 +50,7 @@ public:
 private:
     void notifyFinished(CachedResource&, const NetworkLoadMetrics&) final;
 
-    CheckedRef<DocumentLoader> m_documentLoader;
+    SingleThreadWeakRef<DocumentLoader> m_documentLoader;
     URL m_url;
     CachedResourceHandle<CachedRawResource> m_resource;
 };
