@@ -111,7 +111,7 @@ inline bool RenderElement::shouldApplySizeOrInlineSizeContainment() const
 // FIXME: try to avoid duplication with isSkippedContentRoot.
 inline bool RenderElement::shouldApplySizeOrStyleContainment(bool containsAccordingToStyle) const
 {
-    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && !isRenderRubyText() && (!isTablePart() || isRenderTableCaption()) && !isRenderTable();
+    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && !(isRenderRubyText() || style().display() == DisplayType::RubyAnnotation) && (!isTablePart() || isRenderTableCaption()) && !isRenderTable();
 }
 
 inline bool RenderElement::shouldApplyStyleContainment() const
