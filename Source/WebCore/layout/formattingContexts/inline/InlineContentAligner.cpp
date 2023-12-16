@@ -143,7 +143,8 @@ static BaseIndexAndOffset shiftRubyBaseContentByAlignmentOffset(BaseIndexAndOffs
     return { baseContentIndex, accumulatedOffset };
 }
 
-static void computedExpansions(const Line::RunList& runs, WTF::Range<size_t> runRange, size_t hangingTrailingWhitespaceLength, ExpansionInfo& expansionInfo)
+enum class IgnoreRubyRange : bool { No, Yes };
+static void computedExpansions(const Line::RunList& runs, WTF::Range<size_t> runRange, size_t hangingTrailingWhitespaceLength, ExpansionInfo& expansionInfo, IgnoreRubyRange ignoreRuby)
 {
     // Collect and distribute the expansion opportunities.
     expansionInfo.opportunityCount = 0;
@@ -168,8 +169,28 @@ static void computedExpansions(const Line::RunList& runs, WTF::Range<size_t> run
         return { };
     }();
     for (size_t index = 0; index < rangeSize; ++index) {
-        auto runIndex = runRange.begin() + index;
-        auto& run = runs[runIndex];
+        auto runIndex = [&] {
+            return runRange.begin() + index;
+        };
+        auto skipRubyContentIfApplicable = [&] {
+            auto& rubyBox = runs[runIndex()].layoutBox();
+            if (ignoreRuby == IgnoreRubyRange::No || !rubyBox.isRuby())
+                return;
+            for (; index < rangeSize; ++index) {
+                expansionInfo.behaviorList[index] = ExpansionBehavior::defaultBehavior();
+                expansionInfo.opportunityList[index] = 0;
+                auto& run = runs[runIndex()];
+                if (run.isInlineBoxEnd() && &run.layoutBox() == &rubyBox) {
+                    ++index;
+                    return;
+                }
+            }
+        };
+        skipRubyContentIfApplicable();
+        if (index >= rangeSize)
+            break;
+        auto& run = runs[runIndex()];
+
         auto expansionBehavior = ExpansionBehavior::defaultBehavior();
         size_t expansionOpportunitiesInRun = 0;
 
@@ -184,7 +205,7 @@ static void computedExpansions(const Line::RunList& runs, WTF::Range<size_t> run
                 expansionBehavior.right = ExpansionBehavior::Behavior::Allow;
                 auto& textContent = *run.textContent();
                 auto length = textContent.length;
-                if (lastTextRunIndexForTrimming && runIndex == *lastTextRunIndexForTrimming) {
+                if (lastTextRunIndexForTrimming && runIndex() == *lastTextRunIndexForTrimming) {
                     // Trailing hanging whitespace sequence is ignored when computing the expansion opportunities.
                     length -= hangingTrailingWhitespaceLength;
                 }
@@ -251,7 +272,7 @@ InlineLayoutUnit InlineContentAligner::applyTextAlignJustify(Line::RunList& runs
 
     auto expansion = ExpansionInfo { };
     auto fullRange = WTF::Range<size_t> { 0, runs.size() };
-    computedExpansions(runs, fullRange, hangingTrailingWhitespaceLength, expansion);
+    computedExpansions(runs, fullRange, hangingTrailingWhitespaceLength, expansion, IgnoreRubyRange::Yes);
     // Anything to distribute?
     if (!expansion.opportunityCount)
         return { };
@@ -282,7 +303,7 @@ InlineLayoutUnit InlineContentAligner::applyRubyAlignSpaceAround(Line::RunList& 
         return { };
 
     auto expansion = ExpansionInfo { };
-    computedExpansions(runs, range, { }, expansion);
+    computedExpansions(runs, range, { }, expansion, IgnoreRubyRange::No);
     // Anything to distribute?
     if (!expansion.opportunityCount)
         return spaceToDistribute / 2;
