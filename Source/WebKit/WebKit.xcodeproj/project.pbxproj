@@ -435,6 +435,10 @@
 		1C3BEB7C2888A01000E66E38 /* WebExtensionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC23B1C288732A800D0A65A /* WebExtensionController.h */; };
 		1C3BEB7D2888A01600E66E38 /* WebExtensionControllerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC23B20288732F600D0A65A /* WebExtensionControllerProxy.h */; };
 		1C3D0AC1291AE6210093F67E /* WebExtensionControllerProxyCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C3D0AC0291AE6200093F67E /* WebExtensionControllerProxyCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		1C4005272B2B937E00F2D9EE /* WebExtensionAPICookies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4005262B2B937E00F2D9EE /* WebExtensionAPICookies.h */; };
+		1C4005292B2B938D00F2D9EE /* WebExtensionAPICookiesCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C4005282B2B938D00F2D9EE /* WebExtensionAPICookiesCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		1C40052C2B2B953D00F2D9EE /* JSWebExtensionAPICookies.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C40052A2B2B953C00F2D9EE /* JSWebExtensionAPICookies.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		1C40052D2B2B953D00F2D9EE /* JSWebExtensionAPICookies.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C40052B2B2B953D00F2D9EE /* JSWebExtensionAPICookies.h */; };
 		1C49579B2A9813AA007D0B64 /* WebExtensionContextAPIWindowsCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C49579A2A9813AA007D0B64 /* WebExtensionContextAPIWindowsCocoa.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1C49579D2A983DE4007D0B64 /* WebExtensionWindowParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C49579C2A983DE4007D0B64 /* WebExtensionWindowParameters.h */; };
 		1C4957A12A983E2B007D0B64 /* WebExtensionTabParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C4957A02A983E2B007D0B64 /* WebExtensionTabParameters.h */; };
@@ -3633,6 +3637,11 @@
 		1C3BEB6E288883E200E66E38 /* _WKWebExtension.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtension.mm; sourceTree = "<group>"; };
 		1C3BEB6F288883E300E66E38 /* _WKWebExtensionPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKWebExtensionPrivate.h; sourceTree = "<group>"; };
 		1C3D0AC0291AE6200093F67E /* WebExtensionControllerProxyCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionControllerProxyCocoa.mm; sourceTree = "<group>"; };
+		1C4005252B2B932800F2D9EE /* WebExtensionAPICookies.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebExtensionAPICookies.idl; sourceTree = "<group>"; };
+		1C4005262B2B937E00F2D9EE /* WebExtensionAPICookies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionAPICookies.h; sourceTree = "<group>"; };
+		1C4005282B2B938D00F2D9EE /* WebExtensionAPICookiesCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionAPICookiesCocoa.mm; sourceTree = "<group>"; };
+		1C40052A2B2B953C00F2D9EE /* JSWebExtensionAPICookies.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSWebExtensionAPICookies.mm; sourceTree = "<group>"; };
+		1C40052B2B2B953D00F2D9EE /* JSWebExtensionAPICookies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebExtensionAPICookies.h; sourceTree = "<group>"; };
 		1C49579A2A9813AA007D0B64 /* WebExtensionContextAPIWindowsCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebExtensionContextAPIWindowsCocoa.mm; sourceTree = "<group>"; };
 		1C49579C2A983DE4007D0B64 /* WebExtensionWindowParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebExtensionWindowParameters.h; sourceTree = "<group>"; };
 		1C49579E2A983DF1007D0B64 /* WebExtensionWindow.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebExtensionWindow.serialization.in; sourceTree = "<group>"; };
@@ -9203,6 +9212,7 @@
 				1CC94E552AC92F960045F269 /* WebExtensionAPIAction.h */,
 				1C2B4D452A8199CC00C528A1 /* WebExtensionAPIAlarms.h */,
 				1C8ECFE32AFC79E9007BAA62 /* WebExtensionAPICommands.h */,
+				1C4005262B2B937E00F2D9EE /* WebExtensionAPICookies.h */,
 				3311023A2B17B49E00B21C8C /* WebExtensionAPIDeclarativeNetRequest.h */,
 				B6544F912937E45000034EB0 /* WebExtensionAPIEvent.h */,
 				1C5DC468290B239C0061EC62 /* WebExtensionAPIExtension.h */,
@@ -9231,6 +9241,7 @@
 				1CC94E572AC92FA50045F269 /* WebExtensionAPIActionCocoa.mm */,
 				1C2B4D432A8199C100C528A1 /* WebExtensionAPIAlarmsCocoa.mm */,
 				1C8ECFE52AFC79F9007BAA62 /* WebExtensionAPICommandsCocoa.mm */,
+				1C4005282B2B938D00F2D9EE /* WebExtensionAPICookiesCocoa.mm */,
 				3311023C2B17B4EE00B21C8C /* WebExtensionAPIDeclarativeNetRequestCocoa.mm */,
 				B6544F952937E46900034EB0 /* WebExtensionAPIEventCocoa.mm */,
 				1C5DC465290B23890061EC62 /* WebExtensionAPIExtensionCocoa.mm */,
@@ -9396,6 +9407,7 @@
 				1CC94E502AC92E9F0045F269 /* WebExtensionAPIAction.idl */,
 				1C2B4D472A819C4700C528A1 /* WebExtensionAPIAlarms.idl */,
 				1C8ECFE22AFC79BC007BAA62 /* WebExtensionAPICommands.idl */,
+				1C4005252B2B932800F2D9EE /* WebExtensionAPICookies.idl */,
 				331102392B17AFD800B21C8C /* WebExtensionAPIDeclarativeNetRequest.idl */,
 				B6544F7C29357B1B00034EB0 /* WebExtensionAPIEvent.idl */,
 				1C9DD99028FA19A30093BDB0 /* WebExtensionAPIExtension.idl */,
@@ -14244,6 +14256,8 @@
 				1C2B4D492A819D0C00C528A1 /* JSWebExtensionAPIAlarms.mm */,
 				1C8ECFE72AFC7DCB007BAA62 /* JSWebExtensionAPICommands.h */,
 				1C8ECFE82AFC7DCB007BAA62 /* JSWebExtensionAPICommands.mm */,
+				1C40052B2B2B953D00F2D9EE /* JSWebExtensionAPICookies.h */,
+				1C40052A2B2B953C00F2D9EE /* JSWebExtensionAPICookies.mm */,
 				3311023F2B17B99800B21C8C /* JSWebExtensionAPIDeclarativeNetRequest.h */,
 				3311023E2B17B99800B21C8C /* JSWebExtensionAPIDeclarativeNetRequest.mm */,
 				B6114A7C2939498000380B1B /* JSWebExtensionAPIEvent.h */,
@@ -15472,6 +15486,7 @@
 				9B47908F253151CC00EC11AB /* JSIPCBinding.h in Headers */,
 				1CC94E542AC92F190045F269 /* JSWebExtensionAPIAction.h in Headers */,
 				1C8ECFE92AFC7DCB007BAA62 /* JSWebExtensionAPICommands.h in Headers */,
+				1C40052D2B2B953D00F2D9EE /* JSWebExtensionAPICookies.h in Headers */,
 				331102412B17B99800B21C8C /* JSWebExtensionAPIDeclarativeNetRequest.h in Headers */,
 				1CCEE4522B0989FC0034E059 /* JSWebExtensionAPIMenus.h in Headers */,
 				1C386F352AF409F9004108F0 /* JSWebExtensionAPINotifications.h in Headers */,
@@ -15951,6 +15966,7 @@
 				1CC94E562AC92F960045F269 /* WebExtensionAPIAction.h in Headers */,
 				1C2B4D462A8199CD00C528A1 /* WebExtensionAPIAlarms.h in Headers */,
 				1C8ECFE42AFC79E9007BAA62 /* WebExtensionAPICommands.h in Headers */,
+				1C4005272B2B937E00F2D9EE /* WebExtensionAPICookies.h in Headers */,
 				3311023B2B17B49E00B21C8C /* WebExtensionAPIDeclarativeNetRequest.h in Headers */,
 				B6544F932937E45100034EB0 /* WebExtensionAPIEvent.h in Headers */,
 				1C5DC46D290B271E0061EC62 /* WebExtensionAPIExtension.h in Headers */,
@@ -18286,6 +18302,7 @@
 				1CC94E532AC92F190045F269 /* JSWebExtensionAPIAction.mm in Sources */,
 				1C2B4D4B2A819D0D00C528A1 /* JSWebExtensionAPIAlarms.mm in Sources */,
 				1C8ECFEA2AFC7DCB007BAA62 /* JSWebExtensionAPICommands.mm in Sources */,
+				1C40052C2B2B953D00F2D9EE /* JSWebExtensionAPICookies.mm in Sources */,
 				331102402B17B99800B21C8C /* JSWebExtensionAPIDeclarativeNetRequest.mm in Sources */,
 				B6114A7F29394A1600380B1B /* JSWebExtensionAPIEvent.mm in Sources */,
 				1C5DC471290B33A20061EC62 /* JSWebExtensionAPIExtension.mm in Sources */,
@@ -18624,6 +18641,7 @@
 				1CC94E582AC92FA50045F269 /* WebExtensionAPIActionCocoa.mm in Sources */,
 				1C2B4D442A8199C100C528A1 /* WebExtensionAPIAlarmsCocoa.mm in Sources */,
 				1C8ECFE62AFC79F9007BAA62 /* WebExtensionAPICommandsCocoa.mm in Sources */,
+				1C4005292B2B938D00F2D9EE /* WebExtensionAPICookiesCocoa.mm in Sources */,
 				3311023D2B17B4EE00B21C8C /* WebExtensionAPIDeclarativeNetRequestCocoa.mm in Sources */,
 				B6544F972937E46900034EB0 /* WebExtensionAPIEventCocoa.mm in Sources */,
 				1C5DC467290B23890061EC62 /* WebExtensionAPIExtensionCocoa.mm in Sources */,

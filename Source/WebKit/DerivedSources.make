@@ -790,6 +790,7 @@ EXTENSION_INTERFACES = \
     WebExtensionAPIAction \
     WebExtensionAPIAlarms \
     WebExtensionAPICommands \
+    WebExtensionAPICookies \
     WebExtensionAPIDeclarativeNetRequest \
     WebExtensionAPIEvent \
     WebExtensionAPIExtension \
