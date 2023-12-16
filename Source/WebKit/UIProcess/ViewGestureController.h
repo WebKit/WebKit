@@ -145,7 +145,7 @@ public:
 
 #if PLATFORM(MAC)
     void handleMagnificationGestureEvent(PlatformScrollEvent, WebCore::FloatPoint origin);
-    void handleSmartMagnificationGesture(WebCore::FloatPoint origin);
+    void handleSmartMagnificationGesture(WebCore::FloatPoint gestureLocationInViewCoordinates);
 
     void gestureEventWasNotHandledByWebCore(PlatformScrollEvent, WebCore::FloatPoint origin);
 
@@ -369,10 +369,10 @@ private:
 
     bool m_hasOutstandingRepaintRequest { false };
 
-    double m_magnification;
+    double m_magnification { 1 };
     WebCore::FloatPoint m_magnificationOrigin;
 
-    double m_initialMagnification;
+    double m_initialMagnification { 1 };
     WebCore::FloatPoint m_initialMagnificationOrigin;
 #endif
 
