@@ -176,7 +176,7 @@ RefPtr<NativeImage> BitmapImage::preTransformedNativeImageForCurrentFrame(bool r
     FloatRect destRect(FloatPoint(), correctedSizeFloat);
     FloatRect sourceRect(FloatPoint(), sourceSize);
 
-    buffer->context().drawNativeImage(*image, destRect, sourceRect, { orientation });
+    buffer->context().drawNativeImage(*image, sourceSize, destRect, sourceRect, { orientation });
     return ImageBuffer::sinkIntoNativeImage(WTFMove(buffer));
 }
 
@@ -228,7 +228,7 @@ static inline void drawNativeImage(NativeImage& image, GraphicsContext& context,
     if (subsampledImageSize != srcSize)
         adjustedSrcRect = mapRect(srcRect, FloatRect({ }, srcSize), FloatRect({ }, subsampledImageSize));
 
-    context.drawNativeImage(image, destRect, adjustedSrcRect, options);
+    context.drawNativeImage(image, subsampledImageSize, destRect, adjustedSrcRect, options);
 }
 
 ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destRect, const FloatRect& requestedSrcRect, ImagePaintingOptions options)

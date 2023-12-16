@@ -64,7 +64,7 @@ WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
     WebCore::FloatRect rect(WebCore::FloatPoint(0, 0), imageSize);
 
     graphicsContext.clearRect(rect);
-    graphicsContext.drawNativeImage(*nativeImage, rect, rect);
+    graphicsContext.drawNativeImage(*nativeImage, imageSize, rect, rect);
     return toAPI(webImage.leakRef());
 }
 

@@ -51,7 +51,7 @@ messages -> RemoteDisplayListRecorder NotRefCounted Stream {
     DrawDisplayListItems(Vector<WebCore::DisplayList::Item> items, WebCore::FloatPoint destination)
     DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, Ref<WebCore::Filter> filter)
     DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
-    DrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
+    DrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatSize imageSize, WebCore::FloatRect destRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
     DrawSystemImage(Ref<WebCore::SystemImage> systemImage, WebCore::FloatRect destinationRect)
     DrawPattern(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect tileRect, WebCore::AffineTransform transform, WebCore::FloatPoint phase, WebCore::FloatSize spacing, struct WebCore::ImagePaintingOptions options)
     BeginTransparencyLayer(float opacity)

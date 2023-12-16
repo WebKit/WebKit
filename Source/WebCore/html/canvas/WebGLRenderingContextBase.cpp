@@ -4221,13 +4221,13 @@ RefPtr<Image> WebGLRenderingContextBase::videoFrameToImage(HTMLVideoElement& vid
             synthesizeGLError(GraphicsContextGL::INVALID_VALUE, functionName, "video visible size is empty");
             return nullptr;
         }
+        FloatRect imageRect { { }, imageSize };
         imageBuffer = m_generatedImageCache.imageBuffer(imageSize, nativeImage->colorSpace(), CompositeOperator::Copy);
         if (!imageBuffer) {
             synthesizeGLError(GraphicsContextGL::OUT_OF_MEMORY, functionName, "out of memory");
             return nullptr;
         }
-        FloatRect imageRect { { }, imageSize };
-        imageBuffer->context().drawNativeImage(*nativeImage, imageRect, imageRect, { CompositeOperator::Copy });
+        imageBuffer->context().drawNativeImage(*nativeImage, imageRect.size(), imageRect, imageRect, { CompositeOperator::Copy });
     }
 #endif
     if (!imageBuffer) {

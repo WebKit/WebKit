@@ -340,7 +340,7 @@ void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imag
     handleItem(DisplayList::DrawImageBuffer(imageBufferIdentifier, destinationRect, srcRect, options), *sourceImage);
 }
 
-void RemoteDisplayListRecorder::drawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+void RemoteDisplayListRecorder::drawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatSize& imageSize, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     RefPtr image = resourceCache().cachedNativeImage(imageIdentifier);
     if (!image) {
@@ -348,7 +348,7 @@ void RemoteDisplayListRecorder::drawNativeImage(RenderingResourceIdentifier imag
         return;
     }
 
-    handleItem(DisplayList::DrawNativeImage(imageIdentifier, destRect, srcRect, options), *image);
+    handleItem(DisplayList::DrawNativeImage(imageIdentifier, imageSize, destRect, srcRect, options), *image);
 }
 
 void RemoteDisplayListRecorder::drawSystemImage(Ref<SystemImage> systemImage, const FloatRect& destinationRect)

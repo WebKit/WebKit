@@ -119,7 +119,7 @@ void GPUImpl::paintToCanvas(WebCore::NativeImage& image, const WebCore::IntSize&
     FloatRect canvasRect(FloatPoint(), canvasSize);
     GraphicsContextStateSaver stateSaver(context);
     context.setImageInterpolationQuality(InterpolationQuality::DoNotInterpolate);
-    context.drawNativeImage(image, canvasRect, FloatRect(FloatPoint(), imageSize), { CompositeOperator::Copy });
+    context.drawNativeImage(image, imageSize, canvasRect, FloatRect(FloatPoint(), imageSize), { CompositeOperator::Copy });
 }
 
 } // namespace WebCore::WebGPU

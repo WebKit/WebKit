@@ -475,7 +475,7 @@ void VideoFrame::paintInContext(GraphicsContext& context, const FloatRect& desti
         return;
 
     FloatRect imageRect { FloatPoint::zero(), image->size() };
-    context.drawNativeImage(*image, destination, imageRect);
+    context.drawNativeImage(*image, presentationSize(), destination, imageRect);
 }
 
 Ref<VideoFrameCV> VideoFrameCV::create(CMSampleBufferRef sampleBuffer, bool isMirrored, Rotation rotation)

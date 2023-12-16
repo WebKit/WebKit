@@ -474,7 +474,7 @@ void MediaPlayerPrivateWebM::paintCurrentFrameInContext(GraphicsContext& context
 
     GraphicsContextStateSaver stateSaver(context);
     FloatRect imageRect { FloatPoint::zero(), image->size() };
-    context.drawNativeImage(*image, outputRect, imageRect);
+    context.drawNativeImage(*image, imageRect.size(), outputRect, imageRect);
 }
 
 #if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
