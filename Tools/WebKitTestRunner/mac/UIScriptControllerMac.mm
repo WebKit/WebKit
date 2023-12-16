@@ -449,4 +449,9 @@ void UIScriptControllerMac::setAppAccentColor(unsigned short red, unsigned short
     NSApp._accentColor = [NSColor colorWithRed:red / 255. green:green / 255. blue:blue / 255. alpha:1];
 }
 
+void UIScriptControllerMac::setWebViewAllowsMagnification(bool allowsMagnification)
+{
+    webView().allowsMagnification = allowsMagnification;
+}
+
 } // namespace WTR

@@ -132,18 +132,18 @@ JSC::JSValue InspectorCanvas::resolveContext(JSC::JSGlobalObject* exec)
     JSC::JSLockHolder lock(exec);
     auto* globalObject = deprecatedGlobalObjectForPrototype(exec);
     if (is<CanvasRenderingContext2D>(m_context))
-        return toJS(exec, globalObject, downcast<CanvasRenderingContext2D>(m_context));
+        return toJS(exec, globalObject, downcast<CanvasRenderingContext2D>(m_context.get()));
 #if ENABLE(OFFSCREEN_CANVAS)
     if (is<OffscreenCanvasRenderingContext2D>(m_context))
-        return toJS(exec, globalObject, downcast<OffscreenCanvasRenderingContext2D>(m_context));
+        return toJS(exec, globalObject, downcast<OffscreenCanvasRenderingContext2D>(m_context.get()));
 #endif
     if (is<ImageBitmapRenderingContext>(m_context))
-        return toJS(exec, globalObject, downcast<ImageBitmapRenderingContext>(m_context));
+        return toJS(exec, globalObject, downcast<ImageBitmapRenderingContext>(m_context.get()));
 #if ENABLE(WEBGL)
     if (is<WebGLRenderingContext>(m_context))
-        return toJS(exec, globalObject, downcast<WebGLRenderingContext>(m_context));
+        return toJS(exec, globalObject, downcast<WebGLRenderingContext>(m_context.get()));
     if (is<WebGL2RenderingContext>(m_context))
-        return toJS(exec, globalObject, downcast<WebGL2RenderingContext>(m_context));
+        return toJS(exec, globalObject, downcast<WebGL2RenderingContext>(m_context.get()));
 #endif
     RELEASE_ASSERT_NOT_REACHED();
 }
@@ -1217,9 +1217,8 @@ Ref<Protocol::Recording::InitialState> InspectorCanvas::buildInitialState()
 
     auto parametersPayload = JSON::ArrayOf<JSON::Value>::create();
 
-    if (is<CanvasRenderingContext2DBase>(m_context)) {
-        auto& context2d = downcast<CanvasRenderingContext2DBase>(m_context);
-        for (auto& state : context2d.stateStack()) {
+    if (RefPtr context2d = dynamicDowncast<CanvasRenderingContext2DBase>(m_context.get())) {
+        for (auto& state : context2d->stateStack()) {
             auto statePayload = JSON::Object::create();
 
             statePayload->setArray(stringIndexForKey("setTransform"_s), buildArrayForAffineTransform(state.transform));
@@ -1269,7 +1268,7 @@ Ref<Protocol::Recording::InitialState> InspectorCanvas::buildInitialState()
 
             // FIXME: This is wrong: it will repeat the context's current path for every level in the stack, ignoring saved paths.
             auto setPath = JSON::ArrayOf<JSON::Value>::create();
-            setPath->addItem(indexForData(buildStringFromPath(context2d.getPath()->path())));
+            setPath->addItem(indexForData(buildStringFromPath(context2d->getPath()->path())));
             statePayload->setArray(stringIndexForKey("setPath"_s), WTFMove(setPath));
 
             statesPayload->addItem(WTFMove(statePayload));

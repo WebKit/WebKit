@@ -1,0 +1,9 @@
+<script>
+    if (window.testRunner)
+        testRunner.dumpAsText();
+  onload = () => {
+    let cssStyleValue = CSSMathValue.parseAll('columns', 'auto')[0];
+    document.body.attributeStyleMap.append('grid-auto-columns', cssStyleValue);
+  };
+</script>
+<div>This test should not crash</div>

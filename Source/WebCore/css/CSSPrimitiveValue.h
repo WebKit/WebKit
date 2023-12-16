@@ -214,7 +214,7 @@ private:
     CSSPrimitiveValue(StaticCSSValueTag, ImplicitInitialValueTag);
 
     CSSUnitType primitiveUnitType() const { return static_cast<CSSUnitType>(m_primitiveUnitType); }
-    void setPrimitiveUnitType(CSSUnitType type) { m_primitiveUnitType = static_cast<unsigned>(type); }
+    void setPrimitiveUnitType(CSSUnitType type) { m_primitiveUnitType = enumToUnderlyingType(type); }
 
     std::optional<double> doubleValueInternal(CSSUnitType targetUnitType) const;
 

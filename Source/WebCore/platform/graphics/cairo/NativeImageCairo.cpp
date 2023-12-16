@@ -35,20 +35,14 @@
 
 namespace WebCore {
 
-IntSize PlatformImageNativeImageBackend::size() const
+IntSize NativeImage::size() const
 {
     return cairoSurfaceSize(m_platformImage.get());
 }
 
-bool PlatformImageNativeImageBackend::hasAlpha() const
+bool NativeImage::hasAlpha() const
 {
     return cairo_surface_get_content(m_platformImage.get()) != CAIRO_CONTENT_COLOR;
-}
-
-DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
-{
-    notImplemented();
-    return DestinationColorSpace::SRGB();
 }
 
 Color NativeImage::singlePixelSolidColor() const
@@ -56,17 +50,22 @@ Color NativeImage::singlePixelSolidColor() const
     if (size() != IntSize(1, 1))
         return Color();
 
-    auto platformImage = this->platformImage().get();
-    if (cairo_surface_get_type(platformImage) != CAIRO_SURFACE_TYPE_IMAGE)
+    if (cairo_surface_get_type(m_platformImage.get()) != CAIRO_SURFACE_TYPE_IMAGE)
         return Color();
 
-    unsigned* pixel = reinterpret_cast_ptr<unsigned*>(cairo_image_surface_get_data(platformImage));
+    unsigned* pixel = reinterpret_cast_ptr<unsigned*>(cairo_image_surface_get_data(m_platformImage.get()));
     return unpremultiplied(asSRGBA(PackedColor::ARGB { *pixel }));
 }
 
-void NativeImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
+DestinationColorSpace NativeImage::colorSpace() const
 {
-    context.drawNativeImageInternal(*this, destinationRect, sourceRect, options);
+    notImplemented();
+    return DestinationColorSpace::SRGB();
+}
+
+void NativeImage::draw(GraphicsContext& context, const FloatSize& imageSize, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)
+{
+    context.drawNativeImageInternal(*this, imageSize, destinationRect, sourceRect, options);
 }
 
 void NativeImage::clearSubimages()

@@ -106,13 +106,13 @@ struct SameSizeAsRenderStyle {
 
 static_assert(sizeof(RenderStyle) == sizeof(SameSizeAsRenderStyle), "RenderStyle should stay small");
 
-static_assert(PublicPseudoIDBits == static_cast<int>(PseudoId::FirstInternalPseudoId) - static_cast<int>(PseudoId::FirstPublicPseudoId));
+static_assert(PublicPseudoIDBits == enumToUnderlyingType(PseudoId::FirstInternalPseudoId) - enumToUnderlyingType(PseudoId::FirstPublicPseudoId));
 
 static_assert(!(static_cast<unsigned>(maxTextDecorationLineValue) >> TextDecorationLineBits));
 
 static_assert(!(static_cast<unsigned>(maxTextTransformValue) >> TextTransformBits));
 
-static_assert(!((static_cast<unsigned>(PseudoId::AfterLastInternalPseudoId) - 1) >> StyleTypeBits));
+static_assert(!((enumToUnderlyingType(PseudoId::AfterLastInternalPseudoId) - 1) >> StyleTypeBits));
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PseudoStyleCache);
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(RenderStyle);

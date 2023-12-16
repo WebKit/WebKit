@@ -211,8 +211,8 @@ RetainPtr<NSArray> AccessibilityObject::contentForRange(const SimpleRange& range
                 [result addObject:attrString.get()];
         } else {
             if (Node* replacedNode = it.node()) {
-                auto* object = axObjectCache()->getOrCreate(replacedNode->renderer());
-                if (object)
+                auto* cache = axObjectCache();
+                if (auto* object = cache ? cache->getOrCreate(replacedNode->renderer()) : nullptr)
                     addObjectWrapperToArray(*object, result.get());
             }
         }

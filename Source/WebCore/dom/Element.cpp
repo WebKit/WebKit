@@ -275,7 +275,7 @@ inline ElementRareData& Element::ensureElementRareData()
 inline void Node::setTabIndexState(TabIndexState state)
 {
     auto bitfields = rareDataBitfields();
-    bitfields.tabIndexState = static_cast<uint16_t>(state);
+    bitfields.tabIndexState = enumToUnderlyingType(state);
     setRareDataBitfields(bitfields);
 }
 
@@ -3046,7 +3046,7 @@ inline void Node::setCustomElementState(CustomElementState state)
         state == CustomElementState::Custom || state == CustomElementState::Uncustomized
     );
     auto bitfields = rareDataBitfields();
-    bitfields.customElementState = static_cast<uint16_t>(state);
+    bitfields.customElementState = enumToUnderlyingType(state);
     setRareDataBitfields(bitfields);
 }
 

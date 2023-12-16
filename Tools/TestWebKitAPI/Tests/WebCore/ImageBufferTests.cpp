@@ -293,7 +293,7 @@ TEST_P(AnyScaleTest, SinkIntoNativeImageWorks)
     ASSERT_NE(image, nullptr);
 
     EXPECT_EQ(image->size(), expandedIntSize(testSize.scaled(deviceScaleFactor())));
-    verifyBuffer->context().drawNativeImage(*image, FloatRect { { }, verifyBuffer->logicalSize() }, { { }, image->size() }, { CompositeOperator::Copy });
+    verifyBuffer->context().drawNativeImage(*image, image->size(), FloatRect { { }, verifyBuffer->logicalSize() }, { { }, image->size() }, { CompositeOperator::Copy });
     EXPECT_TRUE(hasTestPattern(*verifyBuffer, 0));
 }
 

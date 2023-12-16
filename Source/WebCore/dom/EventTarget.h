@@ -184,7 +184,7 @@ protected:
 
     virtual void eventListenersDidChange() { }
 
-    bool hasEventTargetFlag(EventTargetFlag flag) const { return weakPtrFactory().bitfield() & static_cast<uint16_t>(flag); }
+    bool hasEventTargetFlag(EventTargetFlag flag) const { return weakPtrFactory().bitfield() & enumToUnderlyingType(flag); }
     void setEventTargetFlag(EventTargetFlag, bool);
 
 private:
@@ -224,9 +224,9 @@ inline void EventTarget::setEventTargetFlag(EventTargetFlag flag, bool value)
 {
     uint16_t bitfield = weakPtrFactory().bitfield();
     if (value)
-        bitfield |= static_cast<uint16_t>(flag);
+        bitfield |= enumToUnderlyingType(flag);
     else
-        bitfield &= ~static_cast<uint16_t>(flag);
+        bitfield &= ~enumToUnderlyingType(flag);
     weakPtrFactory().setBitfield(bitfield);
 }
 

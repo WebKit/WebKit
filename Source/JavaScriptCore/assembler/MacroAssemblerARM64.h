@@ -4244,15 +4244,21 @@ public:
     Jump branchMul64(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID scratch1, RegisterID dest)
     {
         ASSERT(cond != Signed);
+        ASSERT(src1 != scratch1);
+        ASSERT(src2 != scratch1);
 
-        // This is a signed multiple of two 64-bit values, producing a 64-bit result.
-        m_assembler.mul<64>(dest, src1, src2);
-
-        if (cond != Overflow)
+        // mul<64> does a signed multiple of two 64-bit values, producing a 64-bit result.
+        if (cond != Overflow) {
+            m_assembler.mul<64>(dest, src1, src2);
             return branchTest64(cond, dest);
+        }
 
         // Compute bits 127..64 of the result into scratch1.
         m_assembler.smulh(scratch1, src1, src2);
+        // dest may equal src1 or src2. So, we should always compute dest after we've
+        // computed the smulh result in scratch1 so as not to corrupt src1 and src2.
+        m_assembler.mul<64>(dest, src1, src2);
+
         // Splat bit 63 of the result to bits 63..0 of scratch1.
         m_assembler.cmp<64>(scratch1, dest, Assembler::ASR, 63);
         // Check that bits 31..63 of the original result were all equal.
@@ -4262,11 +4268,6 @@ public:
     Jump branchMul64(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
     {
         return branchMul64(cond, src1, src2, getCachedDataTempRegisterIDAndInvalidate(), dest);
-    }
-
-    Jump branchMul64(ResultCondition cond, RegisterID src, RegisterID dest)
-    {
-        return branchMul64(cond, dest, src, dest);
     }
 
     Jump branchNeg32(ResultCondition cond, RegisterID dest)

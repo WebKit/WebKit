@@ -48,6 +48,6 @@ messages -> DrawingArea NotRefCounted {
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     AdjustTransientZoom(double scale, WebCore::FloatPoint origin)
-    CommitTransientZoom(double scale, WebCore::FloatPoint origin)
+    CommitTransientZoom(double scale, WebCore::FloatPoint origin) -> ()
 #endif
 }

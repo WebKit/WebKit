@@ -114,7 +114,7 @@ bool JSObservableArray::getOwnPropertySlot(JSObject* object, JSGlobalObject* lex
 
     std::optional<uint32_t> index = parseIndex(propertyName);
     if (index && index.value() < thisObject->length()) {
-        slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontDelete),
+        slot.setValue(thisObject, enumToUnderlyingType(PropertyAttribute::DontDelete),
             thisObject->getConcreteArray().valueAt(lexicalGlobalObject, index.value()));
         return true;
     }
@@ -126,7 +126,7 @@ bool JSObservableArray::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObje
 {
     JSObservableArray* thisObject = jsCast<JSObservableArray*>(object);
     if (index < thisObject->length()) {
-        slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontDelete),
+        slot.setValue(thisObject, enumToUnderlyingType(PropertyAttribute::DontDelete),
             thisObject->getConcreteArray().valueAt(lexicalGlobalObject, index));
         return true;
     }

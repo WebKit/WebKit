@@ -385,6 +385,9 @@ interface UIScriptController {
 
     undefined setWebViewEditable(boolean editable);
 
+    // Only affects macOS.
+    undefined setWebViewAllowsMagnification(boolean allowsMagnification);
+
     object attachmentInfo(DOMString attachmentIdentifier);
     undefined insertAttachmentForFilePath(DOMString filePath, DOMString contentType, object callback);
 

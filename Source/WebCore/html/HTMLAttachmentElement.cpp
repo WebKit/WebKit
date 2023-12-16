@@ -366,7 +366,7 @@ DOMRectReadOnly* HTMLAttachmentElement::saveButtonClientRect() const
         return nullptr;
 
     bool unusedIsReplaced;
-    auto rect = m_saveButton->pixelSnappedRenderRect(&unusedIsReplaced);
+    auto rect = m_saveButton->pixelSnappedAbsoluteBoundingRect(&unusedIsReplaced);
     m_saveButtonClientRect = DOMRectReadOnly::create(rect.x(), rect.y(), rect.width(), rect.height());
     return m_saveButtonClientRect.get();
 }

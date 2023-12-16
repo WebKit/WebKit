@@ -1096,7 +1096,26 @@ bool Quirks::isMicrosoftTeamsRedirectURL(const URL& url)
     return url.host() == "teams.microsoft.com"_s && url.query().toString().contains("Retried+3+times+without+success"_s);
 }
 
-// microsoft.com rdar://72453487
+static bool elementHasClassInClosestAncestors(const Element& element, const AtomString& className, unsigned distance)
+{
+    if (element.hasClass() && element.classNames().contains(className))
+        return true;
+
+    unsigned currentDistance = 1;
+    RefPtr ancestor = dynamicDowncast<Element>(element.parentNode());
+    while (currentDistance <= distance) {
+        if (ancestor->hasClass() && ancestor->classNames().contains(className))
+            return true;
+
+        ancestor = dynamicDowncast<Element>(ancestor->parentNode());
+        if (!ancestor)
+            return false;
+
+        ++currentDistance;
+    }
+    return false;
+}
+
 static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& element)
 {
     // Microsoft Teams login case.
@@ -1115,6 +1134,10 @@ static bool isStorageAccessQuirkDomainAndElement(const URL& url, const Element& 
         || element.classNames().contains("web-toolbar__signin-button-label"_s)
         || element.classNames().contains("sb-signin-button"_s));
     }
+
+    // Gizmodo login case: rdar://106782128.
+    if (url.host() == "gizmodo.com"_s)
+        return elementHasClassInClosestAncestors(element, "js_user-button"_s, 6);
 
     return false;
 }
@@ -1150,6 +1173,7 @@ Quirks::StorageAccessResult Quirks::requestStorageAccessAndHandleClick(Completio
         return Quirks::StorageAccessResult::ShouldNotCancelEvent;
     }
 
+    m_document->addConsoleMessage(MessageSource::Other, MessageLevel::Info, makeString("requestStorageAccess is invoked on behalf of domain \"", domainInNeedOfStorageAccess.string(), "\""));
     DocumentStorageAccess::requestStorageAccessForNonDocumentQuirk(*m_document, WTFMove(domainInNeedOfStorageAccess), [firstPartyDomain, domainInNeedOfStorageAccess, completionHandler = WTFMove(completionHandler)](StorageAccessWasGranted storageAccessGranted) mutable {
         if (storageAccessGranted == StorageAccessWasGranted::No) {
             completionHandler(ShouldDispatchClick::Yes);
@@ -1196,7 +1220,6 @@ Quirks::StorageAccessResult Quirks::triggerOptionalStorageAccessQuirk(Element& e
     static NeverDestroyed<HashSet<RegistrableDomain>> kinjaQuirks = [] {
         HashSet<RegistrableDomain> set;
         set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("avclub.com"_s));
-        set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("gizmodo.com"_s));
         set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("deadspin.com"_s));
         set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("jalopnik.com"_s));
         set.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString("jezebel.com"_s));

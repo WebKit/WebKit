@@ -2118,7 +2118,29 @@ std::optional<bool> RenderText::emphasisMarkExistsAndIsAbove(const RenderText& r
         || (!style.isHorizontalWritingMode() && (emphasisPosition & TextEmphasisPosition::Left)))
         return isAbove; // Ruby text is always over, so it cannot suppress emphasis marks under.
 
+    auto findRubyAnnotation = [&]() -> RenderBlockFlow* {
+        for (auto* baseCandidate = renderer.parent(); baseCandidate; baseCandidate = baseCandidate->parent()) {
+            if (!baseCandidate->isInline())
+                return nullptr;
+            if (baseCandidate->style().display() == DisplayType::RubyBase) {
+                auto* annotationCandidate = baseCandidate->nextSibling();
+                if (annotationCandidate && annotationCandidate->style().display() == DisplayType::RubyAnnotation)
+                    return dynamicDowncast<RenderBlockFlow>(annotationCandidate);
+                return nullptr;
+            }
+        }
+        return nullptr;
+    };
+
+    if (auto* annotation = findRubyAnnotation()) {
+        // The emphasis marks over are suppressed only if there is a ruby annotation box and it is not empty.
+        if (annotation->hasLines())
+            return { };
+        return isAbove;
+    }
+
     RenderBlock* containingBlock = renderer.containingBlock();
+
     if (!containingBlock || !containingBlock->isRenderRubyBase())
         return isAbove; // This text is not inside a ruby base, so it does not have ruby text over it.
 

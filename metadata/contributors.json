@@ -2377,12 +2377,15 @@
    {
       "emails" : [
          "dmazzoni@google.com",
-         "dmazzoni@chromium.org"
+         "dmazzoni@chromium.org",
+         "dm_mazzoni@apple.com"
       ],
+      "github" : "minorninth",
       "name" : "Dominic Mazzoni",
       "nicks" : [
          "dmazzoni"
-      ]
+      ],
+      "status" : "committer"
    },
    {
       "emails" : [

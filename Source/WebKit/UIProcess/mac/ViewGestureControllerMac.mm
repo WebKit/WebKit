@@ -163,11 +163,11 @@ static float maximumRectangleComponentDelta(FloatRect a, FloatRect b)
     return std::max(std::abs(a.x() - b.x()), std::max(std::abs(a.y() - b.y()), std::max(std::abs(a.width() - b.width()), std::abs(a.height() - b.height()))));
 }
 
-void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect renderRect, FloatRect visibleContentRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
+void ViewGestureController::didCollectGeometryForSmartMagnificationGesture(FloatPoint origin, FloatRect absoluteTargetRect, FloatRect visibleContentRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
 {
     double currentScaleFactor = m_webPageProxy.pageScaleFactor();
 
-    FloatRect unscaledTargetRect = renderRect;
+    FloatRect unscaledTargetRect = absoluteTargetRect;
 
     // If there was no usable element under the cursor, we'll scale towards the cursor instead.
     if (unscaledTargetRect.isEmpty())

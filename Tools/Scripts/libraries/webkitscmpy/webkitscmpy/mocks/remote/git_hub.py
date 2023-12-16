@@ -208,7 +208,7 @@ class GitHub(bmocks.GitHub):
         if path == 'statuses':
             return mocks.Response.fromJson([dict(
                 context=status['name'],
-                url=status.get('url'),
+                target_url=status.get('url'),
                 state=status.get('status') or 'pending',
                 description=status.get('description'),
             ) for status in self.statuses.get(ref[:Commit.HASH_LABEL_SIZE], [])], url=url)

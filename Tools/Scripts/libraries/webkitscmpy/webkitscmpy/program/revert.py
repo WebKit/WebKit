@@ -98,20 +98,21 @@ class Revert(Command):
             args.issue = args.reason
 
         issue = Tracker.from_string(args.issue)
+        commit_bugs_list = list(commit_bugs)
         if not issue and Tracker.instance() and getattr(args, 'update_issue', True):
             if getattr(Tracker.instance(), 'credentials', None):
                 Tracker.instance().credentials(required=True, validate=True)
 
             # Automatically set project, component, and version of new bug
             print('Setting bug properties...')
-            commit_bug = commit_bugs.pop()
+            commit_bug = commit_bugs_list.pop()
             project = commit_bug.project
             component = commit_bug.component
             version = commit_bug.version
 
             # Check whether properties are the same if multiple commits are reverted
-            while len(commit_bugs):
-                commit_bug = commit_bugs.pop()
+            while len(commit_bugs_list):
+                commit_bug = commit_bugs_list.pop()
                 # Setting properties to None will prompt for user input
                 if commit_bug.project != project:
                     project = None
@@ -139,6 +140,10 @@ class Revert(Command):
         rdar = Branch.cc_radar(args, repository, issue)
         if rdar:
             log.info("Created {}".format(rdar))
+
+        for c_bug in commit_bugs:
+            # TODO: relate revert bug
+            c_bug.open(why="{}, tracking revert in {}".format(issue.title, issue.link))
 
         return issue
 

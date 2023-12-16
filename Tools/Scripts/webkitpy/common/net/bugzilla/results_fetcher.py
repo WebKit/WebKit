@@ -73,6 +73,8 @@ def _platform_name_for_bot(bot_name):
         return "wpe"
     if "-debug" in name:
         name = name.replace("-debug", "")
+    if "-wpt" in name:
+        name = name.replace("-wpt", "")
     return name
 
 
@@ -207,3 +209,28 @@ def lookup_ews_results_from_bugzilla(
         raise RuntimeError(msg)
 
     return lookup_ews_results_from_bugzilla_patch(patch, bot_filter_name)
+
+
+def lookup_ews_results_from_pr(pr):
+    urls = [status.url for status in pr.statuses]
+    return lookup_ews_results(urls)
+
+
+def lookup_ews_results_from_repo_via_pr(repository):
+    source_remote = repository.default_remote
+    remote_repo = repository.remote(name=source_remote)
+    if not remote_repo.pull_requests:
+        msg = "Remote repo doesn't support pull requests"
+        raise ValueError(msg)
+
+    branch = repository.branch
+    existing_pr = None
+    for pr in remote_repo.pull_requests.find(opened=None, head=branch):
+        existing_pr = pr
+        break
+
+    if existing_pr is None:
+        msg = "No PR found for current branch"
+        raise ValueError(msg)
+
+    return lookup_ews_results_from_pr(existing_pr)

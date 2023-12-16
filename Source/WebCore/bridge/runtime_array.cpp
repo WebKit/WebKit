@@ -100,7 +100,7 @@ bool RuntimeArray::getOwnPropertySlot(JSObject* object, JSGlobalObject* lexicalG
     
     std::optional<uint32_t> index = parseIndex(propertyName);
     if (index && index.value() < thisObject->getLength()) {
-        slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontDelete),
+        slot.setValue(thisObject, enumToUnderlyingType(PropertyAttribute::DontDelete),
             thisObject->getConcreteArray()->valueAt(lexicalGlobalObject, index.value()));
         return true;
     }
@@ -112,7 +112,7 @@ bool RuntimeArray::getOwnPropertySlotByIndex(JSObject* object, JSGlobalObject* l
 {
     RuntimeArray* thisObject = jsCast<RuntimeArray*>(object);
     if (index < thisObject->getLength()) {
-        slot.setValue(thisObject, static_cast<unsigned>(PropertyAttribute::DontDelete),
+        slot.setValue(thisObject, enumToUnderlyingType(PropertyAttribute::DontDelete),
             thisObject->getConcreteArray()->valueAt(lexicalGlobalObject, index));
         return true;
     }

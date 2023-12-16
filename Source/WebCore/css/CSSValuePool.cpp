@@ -46,7 +46,7 @@ StaticCSSValuePool::StaticCSSValuePool()
     m_blackColor.construct(CSSValue::StaticCSSValue, Color::black);
 
     for (auto keyword : allCSSValueKeywords())
-        m_identifierValues[static_cast<uint16_t>(keyword)].construct(CSSValue::StaticCSSValue, keyword);
+        m_identifierValues[enumToUnderlyingType(keyword)].construct(CSSValue::StaticCSSValue, keyword);
 
     for (unsigned i = 0; i <= maximumCacheableIntegerValue; ++i) {
         m_pixelValues[i].construct(CSSValue::StaticCSSValue, i, CSSUnitType::CSS_PX);

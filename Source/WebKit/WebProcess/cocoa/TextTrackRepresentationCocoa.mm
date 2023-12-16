@@ -64,7 +64,7 @@ void WebTextTrackRepresentationCocoa::update()
     auto context = bitmap->createGraphicsContext();
     if (!context)
         return;
-    context->drawNativeImage(*image, WebCore::FloatRect({ }, imageSize), WebCore::FloatRect({ }, imageSize), { WebCore::CompositeOperator::Copy });
+    context->drawNativeImage(*image, imageSize, WebCore::FloatRect({ }, imageSize), WebCore::FloatRect({ }, imageSize), { WebCore::CompositeOperator::Copy });
     auto handle = bitmap->createHandle();
     if (!handle)
         return;

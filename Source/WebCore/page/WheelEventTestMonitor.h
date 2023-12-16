@@ -49,6 +49,7 @@ enum class WheelEventTestMonitorDeferReason : uint16_t {
     ScrollingThreadSyncNeeded           = 1 << 6,
     ContentScrollInProgress             = 1 << 7,
     RequestedScrollPosition             = 1 << 8,
+    CommittingTransientZoom             = 1 << 9,
 };
 
 class WheelEventTestMonitor : public ThreadSafeRefCounted<WheelEventTestMonitor> {

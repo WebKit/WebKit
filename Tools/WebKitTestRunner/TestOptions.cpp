@@ -192,6 +192,7 @@ const TestFeatures& TestOptions::defaults()
             { "suppressInputAccessoryView", false },
             { "allowsInlinePredictions", false },
             { "showsScrollIndicators", true },
+            { "longPressActionsEnabled", true },
             { "enhancedWindowingEnabled", false },
         };
         features.doubleTestRunnerFeatures = {
@@ -257,6 +258,7 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "suppressInputAccessoryView", TestHeaderKeyType::BoolTestRunner },
         { "allowsInlinePredictions", TestHeaderKeyType::BoolTestRunner },
         { "showsScrollIndicators", TestHeaderKeyType::BoolTestRunner },
+        { "longPressActionsEnabled", TestHeaderKeyType::BoolTestRunner },
         { "enhancedWindowingEnabled", TestHeaderKeyType::BoolTestRunner },
     
         { "contentInset.top", TestHeaderKeyType::DoubleTestRunner },

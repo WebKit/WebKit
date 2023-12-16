@@ -28,27 +28,12 @@
 
 namespace WebCore {
 
-NativeImageBackend::~NativeImageBackend() = default;
-
-PlatformImageNativeImageBackend::~PlatformImageNativeImageBackend() = default;
-
-const PlatformImagePtr& PlatformImageNativeImageBackend::platformImage() const
-{
-    return m_platformImage;
-}
-
-PlatformImageNativeImageBackend::PlatformImageNativeImageBackend(PlatformImagePtr platformImage)
-    : m_platformImage(WTFMove(platformImage))
-{
-}
-
 #if !USE(CG)
-RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage, RenderingResourceIdentifier identifier)
+RefPtr<NativeImage> NativeImage::create(PlatformImagePtr&& platformImage, RenderingResourceIdentifier renderingResourceIdentifier)
 {
     if (!platformImage)
         return nullptr;
-    UniqueRef<PlatformImageNativeImageBackend> backend { *new PlatformImageNativeImageBackend(WTFMove(platformImage)) };
-    return adoptRef(*new NativeImage(WTFMove(backend), identifier));
+    return adoptRef(*new NativeImage(WTFMove(platformImage), renderingResourceIdentifier));
 }
 
 RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image, RenderingResourceIdentifier identifier)
@@ -57,36 +42,17 @@ RefPtr<NativeImage> NativeImage::createTransient(PlatformImagePtr&& image, Rende
 }
 #endif
 
-NativeImage::NativeImage(UniqueRef<NativeImageBackend> backend, RenderingResourceIdentifier renderingResourceIdentifier)
+NativeImage::NativeImage(PlatformImagePtr&& platformImage, RenderingResourceIdentifier renderingResourceIdentifier)
     : RenderingResource(renderingResourceIdentifier)
-    , m_backend(WTFMove(backend))
+    , m_platformImage(WTFMove(platformImage))
 {
+    ASSERT(m_platformImage);
 }
 
-const PlatformImagePtr& NativeImage::platformImage() const
+void NativeImage::setPlatformImage(PlatformImagePtr&& platformImage)
 {
-    return m_backend->platformImage();
-}
-
-IntSize NativeImage::size() const
-{
-    return m_backend->size();
-}
-
-bool NativeImage::hasAlpha() const
-{
-    return m_backend->hasAlpha();
-}
-
-DestinationColorSpace NativeImage::colorSpace() const
-{
-    return m_backend->colorSpace();
-}
-
-void NativeImage::replaceContents(PlatformImagePtr platformImage)
-{
-    UniqueRef<PlatformImageNativeImageBackend> backend { *new PlatformImageNativeImageBackend(WTFMove(platformImage)) };
-    m_backend = WTFMove(backend);
+    ASSERT(platformImage);
+    m_platformImage = WTFMove(platformImage);
 }
 
 } // namespace WebCore

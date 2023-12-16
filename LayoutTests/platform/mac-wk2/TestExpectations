@@ -32,6 +32,7 @@ remote-layer-tree/ios [ Skip ]
 scrollingcoordinator [ Pass ]
 scrollingcoordinator/ios [ Skip ]
 swipe [ Pass ]
+view-gestures [ Pass ]
 http/tests/swipe [ Pass ]
 tiled-drawing [ Pass ]
 ipc/restrictedendpoints/mac [ Pass ]
@@ -1972,3 +1973,7 @@ webkit.org/b/265957 [ Release ] fullscreen/full-screen-layer-dump.html [ Pass Fa
 [ Ventura+ ] http/wpt/webcodecs/videoFrame-colorSpace.html [ Pass Failure ]
 
 webkit.org/b/265954 [ Ventura+ Release x86_64 ] media/video-audio-session-mode.html [ Pass Crash ]
+
+webkit.org/b/266490 [ Sonoma+ ] fast/scrolling/overlay-scrollbars-scroll-corner.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/266508 [ Monterey+ Release x86_64 ] fast/selectors/selection-window-inactive-stroke-color.html [ ImageOnlyFailure ]

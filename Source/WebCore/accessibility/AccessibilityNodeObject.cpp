@@ -2814,7 +2814,7 @@ AccessibilityRole AccessibilityNodeObject::determineAriaRoleAttribute() const
     if ((role == AccessibilityRole::LandmarkRegion || role == AccessibilityRole::Form) && getAttribute(aria_labelAttr).isEmpty() && getAttribute(aria_labelledbyAttr).isEmpty() && getAttribute(aria_labeledbyAttr).isEmpty())
         role = AccessibilityRole::Unknown;
 
-    if (static_cast<int>(role))
+    if (enumToUnderlyingType(role))
         return role;
 
     return AccessibilityRole::Unknown;

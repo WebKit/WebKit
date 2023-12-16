@@ -204,8 +204,13 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTree(IPC::Connection& connectio
         }
     }
 
-    for (auto& transaction : transactions)
+    WeakPtr weakThis { *this };
+
+    for (auto& transaction : transactions) {
         commitLayerTreeTransaction(connection, transaction.first, transaction.second);
+        if (!weakThis)
+            return;
+    }
 
     // Keep IOSurface send rights alive until the transaction is commited, otherwise we will
     // prematurely drop the only reference to them, and `inUse` will be wrong for a brief window.

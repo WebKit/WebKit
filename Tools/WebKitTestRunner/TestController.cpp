@@ -2091,6 +2091,13 @@ void TestController::didReceiveSynchronousMessageFromInjectedBundle(WKStringRef 
         }
 #endif
 
+#if PLATFORM(MAC)
+        if (WKStringIsEqualToUTF8CString(subMessageName, "SmartMagnify")) {
+            m_eventSenderProxy->smartMagnify();
+            return completionHandler(nullptr);
+        }
+#endif
+
 #if ENABLE(MAC_GESTURE_EVENTS)
         if (WKStringIsEqualToUTF8CString(subMessageName, "ScaleGestureStart")) {
             auto scale = doubleValue(dictionary, "Scale");

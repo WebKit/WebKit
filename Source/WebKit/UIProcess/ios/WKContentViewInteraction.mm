@@ -13419,7 +13419,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         configuration = asyncConfiguration.get();
     }
 #endif // HAVE(UI_CONTEXT_MENU_ASYNC_CONFIGURATION)
-    return configuration.get();
+    return configuration.autorelease();
 }
 
 - (void)_internalContextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location completion:(void(^)(UIContextMenuConfiguration *))completion

@@ -79,7 +79,7 @@ TEST(GraphicsContextTests, DrawNativeImageDoesNotLeakCompositeOperator)
     auto greenPixelNative = NativeImage::create(greenPixelCG.get());
     FloatRect rect(0, 0, contextWidth, contextHeight);
     FloatRect sourceRect(0, 0, contextWidth / 2, contextHeight / 2);
-    ctx.drawNativeImage(*greenPixelNative, rect, sourceRect, { WebCore::CompositeOperator::Copy });
+    ctx.drawNativeImage(*greenPixelNative, { contextWidth, contextHeight }, rect, sourceRect, { WebCore::CompositeOperator::Copy });
 
     CGContextSetRGBFillColor(cgContext.get(), 0, 0, 0, 0);
     CGContextFillRect(cgContext.get(), rect);

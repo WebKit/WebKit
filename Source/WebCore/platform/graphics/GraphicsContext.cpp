@@ -292,9 +292,9 @@ RefPtr<ImageBuffer> GraphicsContext::createAlignedImageBuffer(const FloatRect& r
     return createScaledImageBuffer(rect, scaleFactor(), colorSpace, renderingMode(), renderingMethod);
 }
 
-void GraphicsContext::drawNativeImage(NativeImage& image, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
+void GraphicsContext::drawNativeImage(NativeImage& image, const FloatSize& imageSize, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
 {
-    image.draw(*this, destination, source, options);
+    image.draw(*this, imageSize, destination, source, options);
 }
 
 void GraphicsContext::drawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
@@ -360,7 +360,7 @@ void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& desti
     FloatRect sourceScaled = source;
     sourceScaled.scale(image.resolutionScale());
     if (auto nativeImage = nativeImageForDrawing(image))
-        drawNativeImageInternal(*nativeImage, destination, sourceScaled, options);
+        drawNativeImageInternal(*nativeImage, image.backendSize(), destination, sourceScaled, options);
 }
 
 void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const FloatPoint& destination, ImagePaintingOptions imagePaintingOptions)
@@ -387,8 +387,9 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
     FloatRect scaledSource = source;
     scaledSource.scale(image->resolutionScale());
+    auto backendSize = image->backendSize();
     if (auto nativeImage = ImageBuffer::sinkIntoNativeImage(WTFMove(image)))
-        drawNativeImageInternal(*nativeImage, destination, scaledSource, options);
+        drawNativeImageInternal(*nativeImage, backendSize, destination, scaledSource, options);
 }
 
 void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)

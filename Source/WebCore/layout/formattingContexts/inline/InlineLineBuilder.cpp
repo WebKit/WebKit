@@ -512,6 +512,7 @@ LineContent LineBuilder::placeInlineAndFloatContent(const InlineItemRange& needs
                 if (root().isRubyAnnotationBox() && rootStyle.textAlign() == RenderStyle::initialTextAlign()) {
                     lineContent.rubyAnnotationOffset = RubyFormattingContext::applyRubyAlignOnAnnotationBox(m_line, spaceToDistribute, formattingContext());
                     m_line.inflateContentLogicalWidth(spaceToDistribute);
+                    m_line.adjustContentRightWithRubyAlign(2 * lineContent.rubyAnnotationOffset);
                     return;
                 }
                 if (m_line.hasRubyContent()) {
@@ -655,9 +656,9 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
             auto logicalWidth = formattingContext().formattingUtils().inlineItemWidth(inlineItem, currentLogicalRight, isFirstFormattedLine());
             if (layoutBox.isRubyBase()) {
                 if (inlineItem.isInlineBoxStart()) {
-                    // There should only be one ruby base per/annotation candidate content as we allow line breaking between bases.
-                    ASSERT(!lineCandidate.inlineContent.continuousContent().minimumRequiredWidth());
-                    lineCandidate.inlineContent.setMinimumRequiredWidth(RubyFormattingContext::annotationBoxLogicalWidth(layoutBox, formattingContext()));
+                    // There should only be one ruby base per/annotation candidate content as we allow line breaking between bases unless some special characters between ruby bases prevent us from doing so (see RubyFormattingContext::canBreakAtCharacter)
+                    auto& inlineContent = lineCandidate.inlineContent;
+                    inlineContent.setMinimumRequiredWidth(inlineContent.continuousContent().minimumRequiredWidth().value_or(InlineLayoutUnit { }) + RubyFormattingContext::annotationBoxLogicalWidth(layoutBox, formattingContext()));
                 } else
                     logicalWidth += RubyFormattingContext::baseEndAdditionalLogicalWidth(layoutBox, m_line.runs(), lineCandidate.inlineContent.continuousContent().runs(), formattingContext());
             }

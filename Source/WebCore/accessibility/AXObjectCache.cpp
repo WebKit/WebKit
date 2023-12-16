@@ -4655,10 +4655,10 @@ void AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
     auto relationsIterator = m_relations.find(origin->objectID());
     if (relationsIterator == m_relations.end()) {
         // No relations for this object, add the first one.
-        m_relations.add(origin->objectID(), AXRelations { { static_cast<uint8_t>(relationType), { target->objectID() } } });
-    } else if (auto targetsIterator = relationsIterator->value.find(static_cast<uint8_t>(relationType)); targetsIterator == relationsIterator->value.end()) {
+        m_relations.add(origin->objectID(), AXRelations { { enumToUnderlyingType(relationType), { target->objectID() } } });
+    } else if (auto targetsIterator = relationsIterator->value.find(enumToUnderlyingType(relationType)); targetsIterator == relationsIterator->value.end()) {
         // No relation of this type for this object, add the first one.
-        relationsIterator->value.add(static_cast<uint8_t>(relationType), ListHashSet { target->objectID() });
+        relationsIterator->value.add(enumToUnderlyingType(relationType), ListHashSet { target->objectID() });
     } else {
         // There are already relations of this type for the object. Add the new relation.
         if (relationType == AXRelationType::ActiveDescendant
@@ -4704,7 +4704,7 @@ void AXObjectCache::removeRelations(Element& origin, AXRelationType relationType
     if (relationsIterator == m_relations.end())
         return;
 
-    auto targetIDs = relationsIterator->value.take(static_cast<uint8_t>(relationType));
+    auto targetIDs = relationsIterator->value.take(enumToUnderlyingType(relationType));
     auto symmetric = symmetricRelation(relationType);
     if (symmetric == AXRelationType::None)
         return;
@@ -4722,7 +4722,7 @@ void AXObjectCache::removeRelationByID(AXID originID, AXID targetID, AXRelationT
     if (relationsIterator == m_relations.end())
         return;
 
-    auto targetsIterator = relationsIterator->value.find(static_cast<uint8_t>(relationType));
+    auto targetsIterator = relationsIterator->value.find(enumToUnderlyingType(relationType));
     if (targetsIterator == relationsIterator->value.end())
         return;
     targetsIterator->value.remove(targetID);
@@ -4860,7 +4860,7 @@ std::optional<ListHashSet<AXID>> AXObjectCache::relatedObjectIDsFor(const AXCore
     if (relationsIterator == m_relations.end())
         return std::nullopt;
 
-    auto targetsIterator = relationsIterator->value.find(static_cast<uint8_t>(relationType));
+    auto targetsIterator = relationsIterator->value.find(enumToUnderlyingType(relationType));
     if (targetsIterator == relationsIterator->value.end())
         return std::nullopt;
     return targetsIterator->value;

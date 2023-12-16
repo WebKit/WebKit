@@ -108,6 +108,9 @@ public:
     void cancelTouchPoint(int index);
 #endif
 
+    // Double two-finger tap on trackpad.
+    void smartMagnify();
+
 #if ENABLE(MAC_GESTURE_EVENTS)
     // Gesture events.
     void scaleGestureStart(double scale);

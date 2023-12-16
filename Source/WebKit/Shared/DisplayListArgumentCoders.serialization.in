@@ -146,6 +146,7 @@ headers: <WebCore/DisplayListItems.h>
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawNativeImage {
     WebCore::RenderingResourceIdentifier imageIdentifier();
+    WebCore::FloatSize imageSize();
     WebCore::FloatRect destinationRect();
     WebCore::FloatRect source();
     WebCore::ImagePaintingOptions options();

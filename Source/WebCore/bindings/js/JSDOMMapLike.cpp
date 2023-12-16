@@ -43,7 +43,7 @@ std::pair<bool, std::reference_wrapper<JSC::JSObject>> getBackingMap(JSC::JSGlob
         return { false, *JSC::asObject(backingMap) };
 
     backingMap = JSC::JSMap::create(vm, lexicalGlobalObject.mapStructure());
-    mapLike.putDirect(vm, builtinNames(vm).backingMapPrivateName(), backingMap, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum));
+    mapLike.putDirect(vm, builtinNames(vm).backingMapPrivateName(), backingMap, enumToUnderlyingType(JSC::PropertyAttribute::DontEnum));
     return { true, *JSC::asObject(backingMap) };
 }
 

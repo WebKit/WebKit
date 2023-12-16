@@ -41,15 +41,15 @@ public:
     // Style data for Content-Distribution properties: align-content, justify-content.
     // <content-distribution> || [ <overflow-position>? && <content-position> ]
     constexpr StyleContentAlignmentData(ContentPosition position, ContentDistribution distribution, OverflowAlignment overflow = OverflowAlignment::Default)
-        : m_position(static_cast<uint16_t>(position))
-        , m_distribution(static_cast<uint16_t>(distribution))
-        , m_overflow(static_cast<uint16_t>(overflow))
+        : m_position(enumToUnderlyingType(position))
+        , m_distribution(enumToUnderlyingType(distribution))
+        , m_overflow(enumToUnderlyingType(overflow))
     {
     }
 
-    void setPosition(ContentPosition position) { m_position = static_cast<uint16_t>(position); }
-    void setDistribution(ContentDistribution distribution) { m_distribution = static_cast<uint16_t>(distribution); }
-    void setOverflow(OverflowAlignment overflow) { m_overflow = static_cast<uint16_t>(overflow); }
+    void setPosition(ContentPosition position) { m_position = enumToUnderlyingType(position); }
+    void setDistribution(ContentDistribution distribution) { m_distribution = enumToUnderlyingType(distribution); }
+    void setOverflow(OverflowAlignment overflow) { m_overflow = enumToUnderlyingType(overflow); }
 
     ContentPosition position() const { return static_cast<ContentPosition>(m_position); }
     ContentDistribution distribution() const { return static_cast<ContentDistribution>(m_distribution); }

@@ -4665,6 +4665,10 @@ void LocalFrameView::setWasScrolledByUser(bool wasScrolledByUser)
     cancelScheduledScrolls();
     if (currentScrollType() == ScrollType::Programmatic)
         return;
+
+    if (wasScrolledByUser)
+        m_frame->document()->setGotoAnchorNeededAfterStylesheetsLoad(false);
+
     m_maintainScrollPositionAnchor = nullptr;
     if (m_wasScrolledByUser == wasScrolledByUser)
         return;

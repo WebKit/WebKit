@@ -60,7 +60,9 @@ private:
     NSView *platformContentView() const override;
     void clearAllCallbacks() override;
     void copyText(JSStringRef) override;
-    void setAppAccentColor(unsigned short red, unsigned short green, unsigned short blue) final;
+    void setAppAccentColor(unsigned short red, unsigned short green, unsigned short blue) override;
+
+    void setWebViewAllowsMagnification(bool) override;
 
     void chooseMenuAction(JSStringRef, JSValueRef) override;
 

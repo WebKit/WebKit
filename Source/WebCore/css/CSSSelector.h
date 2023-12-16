@@ -341,8 +341,8 @@ struct PossiblyQuotedIdentifier {
         bool isImplicit() const { return m_isImplicit; }
 
     private:
-        unsigned m_relation : 4 { static_cast<unsigned>(RelationType::DescendantSpace) }; // enum RelationType.
-        mutable unsigned m_match : 5 { static_cast<unsigned>(Match::Unknown) }; // enum Match.
+        unsigned m_relation : 4 { enumToUnderlyingType(RelationType::DescendantSpace) }; // enum RelationType.
+        mutable unsigned m_match : 5 { enumToUnderlyingType(Match::Unknown) }; // enum Match.
         mutable unsigned m_pseudoType : 8 { 0 }; // PseudoType.
         // 17 bits
         unsigned m_isLastInSelectorList : 1 { false };
@@ -517,7 +517,7 @@ inline CSSSelector::~CSSSelector()
     } else if (match() == Match::Tag) {
         m_data.tagQName->deref();
         m_data.tagQName = nullptr;
-        m_match = static_cast<unsigned>(Match::Unknown);
+        m_match = enumToUnderlyingType(Match::Unknown);
     } else if (m_data.value) {
         m_data.value->deref();
         m_data.value = nullptr;
@@ -596,12 +596,12 @@ inline void CSSSelector::setPagePseudoType(PagePseudoClassType pagePseudoType)
 
 inline void CSSSelector::setRelation(RelationType relation)
 {
-    m_relation = static_cast<unsigned>(relation);
+    m_relation = enumToUnderlyingType(relation);
 }
 
 inline void CSSSelector::setMatch(Match match)
 {
-    m_match = static_cast<unsigned>(match);
+    m_match = enumToUnderlyingType(match);
 }
 
 } // namespace WebCore

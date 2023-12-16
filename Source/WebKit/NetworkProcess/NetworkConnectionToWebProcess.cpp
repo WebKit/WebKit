@@ -1304,8 +1304,10 @@ void NetworkConnectionToWebProcess::establishSWServerConnection()
 void NetworkConnectionToWebProcess::establishSWContextConnection(WebPageProxyIdentifier webPageProxyID, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
 {
     auto* session = networkSession();
-    if (auto* swServer = session ? session->swServer() : nullptr)
+    if (auto* swServer = session ? session->swServer() : nullptr) {
+        NETWORK_PROCESS_MESSAGE_CHECK(session->networkProcess().allowsFirstPartyForCookies(webProcessIdentifier(), registrableDomain));
         m_swContextConnection = makeUnique<WebSWServerToContextConnection>(*this, webPageProxyID, WTFMove(registrableDomain), serviceWorkerPageIdentifier, *swServer);
+    }
     completionHandler();
 }
 
