@@ -1,9 +1,16 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#include <openssl/asm_base.h>
+#if defined(__has_feature)
+#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
+#define OPENSSL_NO_ASM
+#endif
+#endif
 
-#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__ELF__)
+#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && defined(__ELF__)
+#if defined(BORINGSSL_PREFIX)
+#include <boringssl_prefix_symbols_asm.h>
+#endif
 .text	
 .extern	OPENSSL_ia32cap_P
 .hidden OPENSSL_ia32cap_P
@@ -104,7 +111,7 @@ poly_hash_ad_internal:
 	adcq	%r9,%r11
 	adcq	$0,%r12
 
-	ret
+	.byte	0xf3,0xc3
 .Lhash_ad_loop:
 
 	cmpq	$16,%r8
@@ -213,7 +220,7 @@ poly_hash_ad_internal:
 
 
 .Lhash_ad_done:
-	ret
+	.byte	0xf3,0xc3
 .cfi_endproc	
 .size	poly_hash_ad_internal, .-poly_hash_ad_internal
 
@@ -223,7 +230,6 @@ poly_hash_ad_internal:
 .align	64
 chacha20_poly1305_open:
 .cfi_startproc	
-_CET_ENDBR
 	pushq	%rbp
 .cfi_adjust_cfa_offset	8
 .cfi_offset	%rbp,-16
@@ -1862,7 +1868,7 @@ _CET_ENDBR
 	popq	%rbp
 .cfi_adjust_cfa_offset	-8
 .cfi_restore	%rbp
-	ret
+	.byte	0xf3,0xc3
 
 .Lopen_sse_128:
 .cfi_restore_state	
@@ -2109,7 +2115,6 @@ _CET_ENDBR
 .align	64
 chacha20_poly1305_seal:
 .cfi_startproc	
-_CET_ENDBR
 	pushq	%rbp
 .cfi_adjust_cfa_offset	8
 .cfi_offset	%rbp,-16
@@ -3928,7 +3933,7 @@ process_extra_in_trailer:
 	popq	%rbp
 .cfi_adjust_cfa_offset	-8
 .cfi_restore	%rbp
-	ret
+	.byte	0xf3,0xc3
 
 .Lseal_sse_128:
 .cfi_restore_state	
@@ -8915,4 +8920,8 @@ chacha20_poly1305_seal_avx2:
 	jmp	.Lseal_sse_tail_16
 .cfi_endproc	
 .size	chacha20_poly1305_seal_avx2, .-chacha20_poly1305_seal_avx2
+#endif
+#if defined(__ELF__)
+// See https://www.airs.com/blog/archives/518.
+.section .note.GNU-stack,"",%progbits
 #endif

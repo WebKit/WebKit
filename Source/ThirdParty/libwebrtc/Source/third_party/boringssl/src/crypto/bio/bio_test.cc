@@ -14,7 +14,6 @@
 
 #include <algorithm>
 #include <string>
-#include <utility>
 
 #include <gtest/gtest.h>
 
@@ -31,7 +30,6 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <netinet/in.h>
-#include <poll.h>
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -43,289 +41,90 @@ OPENSSL_MSVC_PRAGMA(warning(push, 3))
 OPENSSL_MSVC_PRAGMA(warning(pop))
 #endif
 
+
 #if !defined(OPENSSL_WINDOWS)
-using Socket = int;
-#define INVALID_SOCKET (-1)
 static int closesocket(int sock) { return close(sock); }
 static std::string LastSocketError() { return strerror(errno); }
 #else
-using Socket = SOCKET;
 static std::string LastSocketError() {
   char buf[DECIMAL_SIZE(int) + 1];
-  snprintf(buf, sizeof(buf), "%d", WSAGetLastError());
+  BIO_snprintf(buf, sizeof(buf), "%d", WSAGetLastError());
   return buf;
 }
 #endif
 
-class OwnedSocket {
+class ScopedSocket {
  public:
-  OwnedSocket() = default;
-  explicit OwnedSocket(Socket sock) : sock_(sock) {}
-  OwnedSocket(OwnedSocket &&other) { *this = std::move(other); }
-  ~OwnedSocket() { reset(); }
-  OwnedSocket &operator=(OwnedSocket &&other) {
-    reset(other.release());
-    return *this;
-  }
-
-  bool is_valid() const { return sock_ != INVALID_SOCKET; }
-  Socket get() const { return sock_; }
-  Socket release() { return std::exchange(sock_, INVALID_SOCKET); }
-
-  void reset(Socket sock = INVALID_SOCKET) {
-    if (is_valid()) {
-      closesocket(sock_);
-    }
-
-    sock_ = sock;
+  explicit ScopedSocket(int sock) : sock_(sock) {}
+  ~ScopedSocket() {
+    closesocket(sock_);
   }
 
  private:
-  Socket sock_ = INVALID_SOCKET;
+  const int sock_;
 };
-
-struct SockaddrStorage {
-  int family() const { return storage.ss_family; }
-
-  sockaddr *addr_mut() { return reinterpret_cast<sockaddr *>(&storage); }
-  const sockaddr *addr() const {
-    return reinterpret_cast<const sockaddr *>(&storage);
-  }
-
-  sockaddr_in ToIPv4() const {
-    if (family() != AF_INET || len != sizeof(sockaddr_in)) {
-      abort();
-    }
-    // These APIs were seemingly designed before C's strict aliasing rule, and
-    // C++'s strict union handling. Make a copy so the compiler does not read
-    // this as an aliasing violation.
-    sockaddr_in ret;
-    OPENSSL_memcpy(&ret, &storage, sizeof(ret));
-    return ret;
-  }
-
-  sockaddr_in6 ToIPv6() const {
-    if (family() != AF_INET6 || len != sizeof(sockaddr_in6)) {
-      abort();
-    }
-    // These APIs were seemingly designed before C's strict aliasing rule, and
-    // C++'s strict union handling. Make a copy so the compiler does not read
-    // this as an aliasing violation.
-    sockaddr_in6 ret;
-    OPENSSL_memcpy(&ret, &storage, sizeof(ret));
-    return ret;
-  }
-
-  sockaddr_storage storage = {};
-  socklen_t len = sizeof(storage);
-};
-
-static OwnedSocket Bind(int family, const sockaddr *addr, socklen_t addr_len) {
-  OwnedSocket sock(socket(family, SOCK_STREAM, 0));
-  if (!sock.is_valid()) {
-    return OwnedSocket();
-  }
-
-  if (bind(sock.get(), addr, addr_len) != 0) {
-    return OwnedSocket();
-  }
-
-  return sock;
-}
-
-static OwnedSocket ListenLoopback(int backlog) {
-  // Try binding to IPv6.
-  sockaddr_in6 sin6;
-  OPENSSL_memset(&sin6, 0, sizeof(sin6));
-  sin6.sin6_family = AF_INET6;
-  if (inet_pton(AF_INET6, "::1", &sin6.sin6_addr) != 1) {
-    return OwnedSocket();
-  }
-  OwnedSocket sock =
-      Bind(AF_INET6, reinterpret_cast<const sockaddr *>(&sin6), sizeof(sin6));
-  if (!sock.is_valid()) {
-    // Try binding to IPv4.
-    sockaddr_in sin;
-    OPENSSL_memset(&sin, 0, sizeof(sin));
-    sin.sin_family = AF_INET;
-    if (inet_pton(AF_INET, "127.0.0.1", &sin.sin_addr) != 1) {
-      return OwnedSocket();
-    }
-    sock = Bind(AF_INET, reinterpret_cast<const sockaddr *>(&sin), sizeof(sin));
-  }
-  if (!sock.is_valid()) {
-    return OwnedSocket();
-  }
-
-  if (listen(sock.get(), backlog) != 0) {
-    return OwnedSocket();
-  }
-
-  return sock;
-}
-
-static bool SocketSetNonBlocking(Socket sock) {
-#if defined(OPENSSL_WINDOWS)
-  u_long arg = 1;
-  return ioctlsocket(sock, FIONBIO, &arg) == 0;
-#else
-  int flags = fcntl(sock, F_GETFL, 0);
-  if (flags < 0) {
-    return false;
-  }
-  flags |= O_NONBLOCK;
-  return fcntl(sock, F_SETFL, flags) == 0;
-#endif
-}
-
-enum class WaitType { kRead, kWrite };
-
-static bool WaitForSocket(Socket sock, WaitType wait_type) {
-  // Use an arbitrary 5 second timeout, so the test doesn't hang indefinitely if
-  // there's an issue.
-  static const int kTimeoutSeconds = 5;
-#if defined(OPENSSL_WINDOWS)
-  fd_set read_set, write_set;
-  FD_ZERO(&read_set);
-  FD_ZERO(&write_set);
-  fd_set *wait_set = wait_type == WaitType::kRead ? &read_set : &write_set;
-  FD_SET(sock, wait_set);
-  timeval timeout;
-  timeout.tv_sec = kTimeoutSeconds;
-  timeout.tv_usec = 0;
-  if (select(0 /* unused on Windows */, &read_set, &write_set, nullptr,
-             &timeout) <= 0) {
-    return false;
-  }
-  return FD_ISSET(sock, wait_set);
-#else
-  short events = wait_type == WaitType::kRead ? POLLIN : POLLOUT;
-  pollfd fd = {/*fd=*/sock, events, /*revents=*/0};
-  return poll(&fd, 1, kTimeoutSeconds * 1000) == 1 && (fd.revents & events);
-#endif
-}
 
 TEST(BIOTest, SocketConnect) {
   static const char kTestMessage[] = "test";
-  OwnedSocket listening_sock = ListenLoopback(/*backlog=*/1);
-  ASSERT_TRUE(listening_sock.is_valid()) << LastSocketError();
+  int listening_sock = -1;
+  socklen_t len = 0;
+  sockaddr_storage ss;
+  struct sockaddr_in6 *sin6 = (struct sockaddr_in6 *) &ss;
+  struct sockaddr_in *sin = (struct sockaddr_in *) &ss;
+  OPENSSL_memset(&ss, 0, sizeof(ss));
 
-  SockaddrStorage addr;
-  ASSERT_EQ(getsockname(listening_sock.get(), addr.addr_mut(), &addr.len), 0)
+  ss.ss_family = AF_INET6;
+  listening_sock = socket(AF_INET6, SOCK_STREAM, 0);
+  ASSERT_NE(-1, listening_sock) << LastSocketError();
+  len = sizeof(*sin6);
+  ASSERT_EQ(1, inet_pton(AF_INET6, "::1", &sin6->sin6_addr))
       << LastSocketError();
+  if (bind(listening_sock, (struct sockaddr *)sin6, sizeof(*sin6)) == -1) {
+    closesocket(listening_sock);
+
+    ss.ss_family = AF_INET;
+    listening_sock = socket(AF_INET, SOCK_STREAM, 0);
+    ASSERT_NE(-1, listening_sock) << LastSocketError();
+    len = sizeof(*sin);
+    ASSERT_EQ(1, inet_pton(AF_INET, "127.0.0.1", &sin->sin_addr))
+        << LastSocketError();
+    ASSERT_EQ(0, bind(listening_sock, (struct sockaddr *)sin, sizeof(*sin)))
+        << LastSocketError();
+  }
+
+  ScopedSocket listening_sock_closer(listening_sock);
+  ASSERT_EQ(0, listen(listening_sock, 1)) << LastSocketError();
+  ASSERT_EQ(0, getsockname(listening_sock, (struct sockaddr *)&ss, &len))
+        << LastSocketError();
 
   char hostname[80];
-  if (addr.family() == AF_INET6) {
-    snprintf(hostname, sizeof(hostname), "[::1]:%d",
-             ntohs(addr.ToIPv6().sin6_port));
-  } else {
-    snprintf(hostname, sizeof(hostname), "127.0.0.1:%d",
-             ntohs(addr.ToIPv4().sin_port));
+  if (ss.ss_family == AF_INET6) {
+    BIO_snprintf(hostname, sizeof(hostname), "[::1]:%d",
+                 ntohs(sin6->sin6_port));
+  } else if (ss.ss_family == AF_INET) {
+    BIO_snprintf(hostname, sizeof(hostname), "127.0.0.1:%d",
+                 ntohs(sin->sin_port));
   }
 
   // Connect to it with a connect BIO.
   bssl::UniquePtr<BIO> bio(BIO_new_connect(hostname));
   ASSERT_TRUE(bio);
 
-  // Write a test message to the BIO. This is assumed to be smaller than the
-  // transport buffer.
+  // Write a test message to the BIO.
   ASSERT_EQ(static_cast<int>(sizeof(kTestMessage)),
-            BIO_write(bio.get(), kTestMessage, sizeof(kTestMessage)))
-      << LastSocketError();
+            BIO_write(bio.get(), kTestMessage, sizeof(kTestMessage)));
 
   // Accept the socket.
-  OwnedSocket sock(accept(listening_sock.get(), addr.addr_mut(), &addr.len));
-  ASSERT_TRUE(sock.is_valid()) << LastSocketError();
+  int sock = accept(listening_sock, (struct sockaddr *) &ss, &len);
+  ASSERT_NE(-1, sock) << LastSocketError();
+  ScopedSocket sock_closer(sock);
 
   // Check the same message is read back out.
   char buf[sizeof(kTestMessage)];
   ASSERT_EQ(static_cast<int>(sizeof(kTestMessage)),
-            recv(sock.get(), buf, sizeof(buf), 0))
+            recv(sock, buf, sizeof(buf), 0))
       << LastSocketError();
   EXPECT_EQ(Bytes(kTestMessage, sizeof(kTestMessage)), Bytes(buf, sizeof(buf)));
-}
-
-TEST(BIOTest, SocketNonBlocking) {
-  OwnedSocket listening_sock = ListenLoopback(/*backlog=*/1);
-  ASSERT_TRUE(listening_sock.is_valid()) << LastSocketError();
-
-  // Connect to |listening_sock|.
-  SockaddrStorage addr;
-  ASSERT_EQ(getsockname(listening_sock.get(), addr.addr_mut(), &addr.len), 0)
-      << LastSocketError();
-  OwnedSocket connect_sock(socket(addr.family(), SOCK_STREAM, 0));
-  ASSERT_TRUE(connect_sock.is_valid()) << LastSocketError();
-  ASSERT_EQ(connect(connect_sock.get(), addr.addr(), addr.len), 0)
-      << LastSocketError();
-  ASSERT_TRUE(SocketSetNonBlocking(connect_sock.get())) << LastSocketError();
-  bssl::UniquePtr<BIO> connect_bio(
-      BIO_new_socket(connect_sock.get(), BIO_NOCLOSE));
-  ASSERT_TRUE(connect_bio);
-
-  // Make a corresponding accepting socket.
-  OwnedSocket accept_sock(
-      accept(listening_sock.get(), addr.addr_mut(), &addr.len));
-  ASSERT_TRUE(accept_sock.is_valid()) << LastSocketError();
-  ASSERT_TRUE(SocketSetNonBlocking(accept_sock.get())) << LastSocketError();
-  bssl::UniquePtr<BIO> accept_bio(
-      BIO_new_socket(accept_sock.get(), BIO_NOCLOSE));
-  ASSERT_TRUE(accept_bio);
-
-  // Exchange data through the socket.
-  static const char kTestMessage[] = "hello, world";
-
-  // Reading from |accept_bio| should not block.
-  char buf[sizeof(kTestMessage)];
-  int ret = BIO_read(accept_bio.get(), buf, sizeof(buf));
-  EXPECT_EQ(ret, -1);
-  EXPECT_TRUE(BIO_should_read(accept_bio.get())) << LastSocketError();
-
-  // Writing to |connect_bio| should eventually overflow the transport buffers
-  // and also give a retryable error.
-  int bytes_written = 0;
-  for (;;) {
-    ret = BIO_write(connect_bio.get(), kTestMessage, sizeof(kTestMessage));
-    if (ret <= 0) {
-      EXPECT_EQ(ret, -1);
-      EXPECT_TRUE(BIO_should_write(connect_bio.get())) << LastSocketError();
-      break;
-    }
-    bytes_written += ret;
-  }
-  EXPECT_GT(bytes_written, 0);
-
-  // |accept_bio| should readable. Drain it. Note data is not always available
-  // from loopback immediately, notably on macOS, so wait for the socket first.
-  int bytes_read = 0;
-  while (bytes_read < bytes_written) {
-    ASSERT_TRUE(WaitForSocket(accept_sock.get(), WaitType::kRead))
-        << LastSocketError();
-    ret = BIO_read(accept_bio.get(), buf, sizeof(buf));
-    ASSERT_GT(ret, 0);
-    bytes_read += ret;
-  }
-
-  // |connect_bio| should become writeable again.
-  ASSERT_TRUE(WaitForSocket(accept_sock.get(), WaitType::kWrite))
-      << LastSocketError();
-  ret = BIO_write(connect_bio.get(), kTestMessage, sizeof(kTestMessage));
-  EXPECT_EQ(static_cast<int>(sizeof(kTestMessage)), ret);
-
-  ASSERT_TRUE(WaitForSocket(accept_sock.get(), WaitType::kRead))
-      << LastSocketError();
-  ret = BIO_read(accept_bio.get(), buf, sizeof(buf));
-  EXPECT_EQ(static_cast<int>(sizeof(kTestMessage)), ret);
-  EXPECT_EQ(Bytes(buf), Bytes(kTestMessage));
-
-  // Close one socket. We should get an EOF out the other.
-  connect_bio.reset();
-  connect_sock.reset();
-
-  ASSERT_TRUE(WaitForSocket(accept_sock.get(), WaitType::kRead))
-      << LastSocketError();
-  ret = BIO_read(accept_bio.get(), buf, sizeof(buf));
-  EXPECT_EQ(ret, 0) << LastSocketError();
-  EXPECT_FALSE(BIO_should_read(accept_bio.get()));
 }
 
 TEST(BIOTest, Printf) {
@@ -488,24 +287,11 @@ TEST(BIOTest, MemWritable) {
   bssl::UniquePtr<BIO> bio(BIO_new(BIO_s_mem()));
   ASSERT_TRUE(bio);
 
-  auto check_bio_contents = [&](Bytes b) {
-    const uint8_t *contents;
-    size_t len;
-    ASSERT_TRUE(BIO_mem_contents(bio.get(), &contents, &len));
-    EXPECT_EQ(Bytes(contents, len), b);
-
-    char *contents_c;
-    long len_l = BIO_get_mem_data(bio.get(), &contents_c);
-    ASSERT_GE(len_l, 0);
-    EXPECT_EQ(Bytes(contents_c, len_l), b);
-
-    BUF_MEM *buf;
-    ASSERT_EQ(BIO_get_mem_ptr(bio.get(), &buf), 1);
-    EXPECT_EQ(Bytes(buf->data, buf->length), b);
-  };
-
   // It is initially empty.
-  check_bio_contents(Bytes(""));
+  const uint8_t *contents;
+  size_t len;
+  ASSERT_TRUE(BIO_mem_contents(bio.get(), &contents, &len));
+  EXPECT_EQ(Bytes(contents, len), Bytes(""));
   EXPECT_EQ(BIO_eof(bio.get()), 1);
 
   // Reading from it should default to returning a retryable error.
@@ -524,38 +310,44 @@ TEST(BIOTest, MemWritable) {
 
   // Writes append to the buffer.
   ASSERT_EQ(BIO_write(bio.get(), "abcdef", 6), 6);
-  check_bio_contents(Bytes("abcdef"));
+  ASSERT_TRUE(BIO_mem_contents(bio.get(), &contents, &len));
+  EXPECT_EQ(Bytes(contents, len), Bytes("abcdef"));
   EXPECT_EQ(BIO_eof(bio.get()), 0);
 
   // Writes can include embedded NULs.
   ASSERT_EQ(BIO_write(bio.get(), "\0ghijk", 6), 6);
-  check_bio_contents(Bytes("abcdef\0ghijk", 12));
+  ASSERT_TRUE(BIO_mem_contents(bio.get(), &contents, &len));
+  EXPECT_EQ(Bytes(contents, len), Bytes("abcdef\0ghijk", 12));
   EXPECT_EQ(BIO_eof(bio.get()), 0);
 
   // Do a partial read.
   int ret = BIO_read(bio.get(), buf, 4);
   ASSERT_GT(ret, 0);
   EXPECT_EQ(Bytes(buf, ret), Bytes("abcd"));
-  check_bio_contents(Bytes("ef\0ghijk", 8));
+  ASSERT_TRUE(BIO_mem_contents(bio.get(), &contents, &len));
+  EXPECT_EQ(Bytes(contents, len), Bytes("ef\0ghijk", 8));
   EXPECT_EQ(BIO_eof(bio.get()), 0);
 
   // Reads and writes may alternate.
   ASSERT_EQ(BIO_write(bio.get(), "lmnopq", 6), 6);
-  check_bio_contents(Bytes("ef\0ghijklmnopq", 14));
+  ASSERT_TRUE(BIO_mem_contents(bio.get(), &contents, &len));
+  EXPECT_EQ(Bytes(contents, len), Bytes("ef\0ghijklmnopq", 14));
   EXPECT_EQ(BIO_eof(bio.get()), 0);
 
   // Reads may consume embedded NULs.
   ret = BIO_read(bio.get(), buf, 4);
   ASSERT_GT(ret, 0);
   EXPECT_EQ(Bytes(buf, ret), Bytes("ef\0g", 4));
-  check_bio_contents(Bytes("hijklmnopq"));
+  ASSERT_TRUE(BIO_mem_contents(bio.get(), &contents, &len));
+  EXPECT_EQ(Bytes(contents, len), Bytes("hijklmnopq"));
   EXPECT_EQ(BIO_eof(bio.get()), 0);
 
   // The read buffer exceeds the |BIO|, so we consume everything.
   ret = BIO_read(bio.get(), buf, sizeof(buf));
   ASSERT_GT(ret, 0);
   EXPECT_EQ(Bytes(buf, ret), Bytes("hijklmnopq"));
-  check_bio_contents(Bytes(""));
+  ASSERT_TRUE(BIO_mem_contents(bio.get(), &contents, &len));
+  EXPECT_EQ(Bytes(contents, len), Bytes(""));
   EXPECT_EQ(BIO_eof(bio.get()), 1);
 
   // The |BIO| is now empty.
@@ -633,11 +425,8 @@ TEST(BIOTest, Gets) {
       check_bio_gets(bio.get());
     }
 
-    struct FileCloser {
-      void operator()(FILE *f) const { fclose(f); }
-    };
-    using ScopedFILE = std::unique_ptr<FILE, FileCloser>;
-    ScopedFILE file(tmpfile());
+    using ScopedFILE = std::unique_ptr<FILE, decltype(&fclose)>;
+    ScopedFILE file(tmpfile(), fclose);
 #if defined(OPENSSL_ANDROID)
     // On Android, when running from an APK, |tmpfile| does not work. See
     // b/36991167#comment8.

@@ -26,6 +26,11 @@ OPENSSL_MSVC_PRAGMA(warning(pop))
 #include <stdlib.h>
 #include <string.h>
 
+static_assert(sizeof(CRYPTO_MUTEX) >= sizeof(SRWLOCK),
+              "CRYPTO_MUTEX is too small");
+static_assert(alignof(CRYPTO_MUTEX) >= alignof(SRWLOCK),
+              "CRYPTO_MUTEX has insufficient alignment");
+
 static BOOL CALLBACK call_once_init(INIT_ONCE *once, void *arg, void **out) {
   void (**init)(void) = (void (**)(void))arg;
   (**init)();
@@ -39,27 +44,43 @@ void CRYPTO_once(CRYPTO_once_t *once, void (*init)(void)) {
 }
 
 void CRYPTO_MUTEX_init(CRYPTO_MUTEX *lock) {
-  InitializeSRWLock(lock);
+  InitializeSRWLock((SRWLOCK *) lock);
 }
 
 void CRYPTO_MUTEX_lock_read(CRYPTO_MUTEX *lock) {
-  AcquireSRWLockShared(lock);
+  AcquireSRWLockShared((SRWLOCK *) lock);
 }
 
 void CRYPTO_MUTEX_lock_write(CRYPTO_MUTEX *lock) {
-  AcquireSRWLockExclusive(lock);
+  AcquireSRWLockExclusive((SRWLOCK *) lock);
 }
 
 void CRYPTO_MUTEX_unlock_read(CRYPTO_MUTEX *lock) {
-  ReleaseSRWLockShared(lock);
+  ReleaseSRWLockShared((SRWLOCK *) lock);
 }
 
 void CRYPTO_MUTEX_unlock_write(CRYPTO_MUTEX *lock) {
-  ReleaseSRWLockExclusive(lock);
+  ReleaseSRWLockExclusive((SRWLOCK *) lock);
 }
 
 void CRYPTO_MUTEX_cleanup(CRYPTO_MUTEX *lock) {
   // SRWLOCKs require no cleanup.
+}
+
+void CRYPTO_STATIC_MUTEX_lock_read(struct CRYPTO_STATIC_MUTEX *lock) {
+  AcquireSRWLockShared(&lock->lock);
+}
+
+void CRYPTO_STATIC_MUTEX_lock_write(struct CRYPTO_STATIC_MUTEX *lock) {
+  AcquireSRWLockExclusive(&lock->lock);
+}
+
+void CRYPTO_STATIC_MUTEX_unlock_read(struct CRYPTO_STATIC_MUTEX *lock) {
+  ReleaseSRWLockShared(&lock->lock);
+}
+
+void CRYPTO_STATIC_MUTEX_unlock_write(struct CRYPTO_STATIC_MUTEX *lock) {
+  ReleaseSRWLockExclusive(&lock->lock);
 }
 
 static SRWLOCK g_destructors_lock = SRWLOCK_INIT;
