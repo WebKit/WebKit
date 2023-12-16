@@ -6786,6 +6786,10 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     ALWAYS_LOG(LOGIDENTIFIER, ", m_videoFullscreenMode = ", m_videoFullscreenMode, ", mode = ", mode);
     ASSERT(mode != VideoFullscreenModeNone);
 
+    auto* page = document().page();
+    if (!page || page->mediaPlaybackIsSuspended())
+        return;
+
     auto* window = document().domWindow();
     if (!window)
         return;
