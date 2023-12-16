@@ -32,6 +32,9 @@
 
 #include "BasicShapes.h"
 #include "CSSBasicShapes.h"
+#include "CSSCalcNegateNode.h"
+#include "CSSCalcOperationNode.h"
+#include "CSSCalcPrimitiveValueNode.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValuePair.h"
 #include "CSSValuePool.h"
@@ -80,10 +83,37 @@ static SVGPathByteStream copySVGPathByteStream(const SVGPathByteStream& source, 
 Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& basicShape, SVGPathConversion conversion)
 {
     auto createValue = [&](const Length& length) {
-        return CSSPrimitiveValue::create(length, style);
+        return CSSPrimitiveValue::create(length.isAuto() ? Length(0, LengthType::Percent) : length, style);
     };
     auto createPair = [&](const LengthSize& size) {
         return CSSValuePair::create(createValue(size.width), createValue(size.height));
+    };
+
+    auto createSumValue = [&](Vector<Ref<CSSCalcExpressionNode>> expressions) -> Ref<CSSValue> {
+        auto node = CSSCalcOperationNode::simplify(CSSCalcOperationNode::createSum(WTFMove(expressions)).releaseNonNull());
+        if (RefPtr operation = dynamicDowncast<CSSCalcOperationNode>(node); operation && operation->isIdentity()) {
+            if (RefPtr child = dynamicDowncast<CSSCalcPrimitiveValueNode>(operation->children()[0]))
+                return const_cast<CSSPrimitiveValue&>(child->value());
+        }
+        return CSSCalcValue::create(WTFMove(node));
+    };
+
+    auto createNode = [&](const Length& length) {
+        return CSSCalcPrimitiveValueNode::create(createValue(length));
+    };
+    auto create100PercentNode = [&]() {
+        return createNode(Length(100, LengthType::Percent));
+    };
+    auto createNegatedNode = [&](const Length& length) {
+        return CSSCalcNegateNode::create(createNode(length));
+    };
+    auto createReflectedSumValue = [&](const Length& a, const Length& b) {
+        return createSumValue({ create100PercentNode(), createNegatedNode(a), createNegatedNode(b) });
+    };
+    auto createReflectedValue = [&](const Length& length) -> Ref<CSSValue> {
+        if (length.isAuto())
+            return createValue(Length(0, LengthType::Percent));
+        return createSumValue({ create100PercentNode(), createNegatedNode(length) });
     };
 
     switch (basicShape.type()) {
@@ -132,15 +162,15 @@ Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const BasicShape& bas
     }
     case BasicShape::Type::Xywh: {
         auto& xywh = downcast<BasicShapeXywh>(basicShape);
-        return CSSXywhValue::create(createValue(xywh.insetX()), createValue(xywh.insetY()),
-            createValue(xywh.width()), createValue(xywh.height()),
+        return CSSInsetShapeValue::create(createValue(xywh.insetY()), createReflectedSumValue(xywh.insetX(), xywh.width()),
+            createReflectedSumValue(xywh.insetY(), xywh.height()), createValue(xywh.insetX()),
             createPair(xywh.topLeftRadius()), createPair(xywh.topRightRadius()),
             createPair(xywh.bottomRightRadius()), createPair(xywh.bottomLeftRadius()));
     }
     case BasicShape::Type::Rect: {
         auto& rect = downcast<BasicShapeRect>(basicShape);
-        return CSSRectShapeValue::create(createValue(rect.top()), createValue(rect.right()),
-            createValue(rect.bottom()), createValue(rect.left()),
+        return CSSInsetShapeValue::create(createValue(rect.top()), createReflectedValue(rect.right()),
+            createReflectedValue(rect.bottom()), createValue(rect.left()),
             createPair(rect.topLeftRadius()), createPair(rect.topRightRadius()),
             createPair(rect.bottomRightRadius()), createPair(rect.bottomLeftRadius()));
     }
