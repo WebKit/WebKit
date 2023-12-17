@@ -40,7 +40,6 @@ public:
 
 private:
     static InlineLayoutUnit applyExpansionOnRange(Line::RunList&, WTF::Range<size_t>, const ExpansionInfo&, InlineLayoutUnit spaceToDistribute);
-
 };
 
 }

@@ -176,6 +176,7 @@ static void computedExpansions(const Line::RunList& runs, WTF::Range<size_t> run
             auto& rubyBox = runs[runIndex()].layoutBox();
             if (ignoreRuby == IgnoreRubyRange::No || !rubyBox.isRuby())
                 return;
+            runIsAfterExpansion = false;
             for (; index < rangeSize; ++index) {
                 expansionInfo.behaviorList[index] = ExpansionBehavior::defaultBehavior();
                 expansionInfo.opportunityList[index] = 0;
