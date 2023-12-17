@@ -131,7 +131,6 @@ $code .= <<EOF;
 .type md5_block_asm_data_order,\@function,3
 md5_block_asm_data_order:
 .cfi_startproc
-	_CET_ENDBR
 	push	%rbp
 .cfi_push	rbp
 	push	%rbx

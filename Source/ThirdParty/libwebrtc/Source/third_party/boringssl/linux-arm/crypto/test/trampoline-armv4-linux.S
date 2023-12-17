@@ -1,9 +1,17 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#include <openssl/asm_base.h>
+#if !defined(__has_feature)
+#define __has_feature(x) 0
+#endif
+#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
+#define OPENSSL_NO_ASM
+#endif
 
-#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_ARM) && defined(__ELF__)
+#if !defined(OPENSSL_NO_ASM) && defined(__ARMEL__) && defined(__ELF__)
+#if defined(BORINGSSL_PREFIX)
+#include <boringssl_prefix_symbols_asm.h>
+#endif
 .syntax	unified
 
 .arch	armv7-a
@@ -365,4 +373,8 @@ abi_test_clobber_d15:
 	vmov	s31, r0
 	bx	lr
 .size	abi_test_clobber_d15,.-abi_test_clobber_d15
-#endif  // !OPENSSL_NO_ASM && defined(OPENSSL_ARM) && defined(__ELF__)
+#endif  // !OPENSSL_NO_ASM && defined(__ARMEL__) && defined(__ELF__)
+#if defined(__ELF__)
+// See https://www.airs.com/blog/archives/518.
+.section .note.GNU-stack,"",%progbits
+#endif
