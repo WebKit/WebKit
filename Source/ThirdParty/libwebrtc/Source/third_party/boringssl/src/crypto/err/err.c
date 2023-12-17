@@ -146,13 +146,13 @@ struct err_error_st {
 
 // ERR_STATE contains the per-thread, error queue.
 typedef struct err_state_st {
-  // errors contains the ERR_NUM_ERRORS most recent errors, organised as a ring
-  // buffer.
+  // errors contains up to ERR_NUM_ERRORS - 1 most recent errors, organised as a
+  // ring buffer.
   struct err_error_st errors[ERR_NUM_ERRORS];
-  // top contains the index one past the most recent error. If |top| equals
-  // |bottom| then the queue is empty.
+  // top contains the index of the most recent error. If |top| equals |bottom|
+  // then the queue is empty.
   unsigned top;
-  // bottom contains the index of the last error in the queue.
+  // bottom contains the index before the least recent error in the queue.
   unsigned bottom;
 
   // to_free, if not NULL, contains a pointer owned by this structure that was
@@ -192,8 +192,7 @@ static int global_next_library = ERR_NUM_LIBS;
 
 // global_next_library_mutex protects |global_next_library| from concurrent
 // updates.
-static struct CRYPTO_STATIC_MUTEX global_next_library_mutex =
-    CRYPTO_STATIC_MUTEX_INIT;
+static CRYPTO_MUTEX global_next_library_mutex = CRYPTO_MUTEX_INIT;
 
 static void err_state_free(void *statep) {
   ERR_STATE *state = statep;
@@ -367,9 +366,9 @@ void ERR_remove_thread_state(const CRYPTO_THREADID *tid) {
 int ERR_get_next_error_library(void) {
   int ret;
 
-  CRYPTO_STATIC_MUTEX_lock_write(&global_next_library_mutex);
+  CRYPTO_MUTEX_lock_write(&global_next_library_mutex);
   ret = global_next_library++;
-  CRYPTO_STATIC_MUTEX_unlock_write(&global_next_library_mutex);
+  CRYPTO_MUTEX_unlock_write(&global_next_library_mutex);
 
   return ret;
 }
@@ -553,22 +552,21 @@ char *ERR_error_string_n(uint32_t packed_error, char *buf, size_t len) {
   const char *lib_str = err_lib_error_string(packed_error);
   const char *reason_str = err_reason_error_string(packed_error);
 
-  char lib_buf[64], reason_buf[64];
+  char lib_buf[32], reason_buf[32];
   if (lib_str == NULL) {
-    BIO_snprintf(lib_buf, sizeof(lib_buf), "lib(%u)", lib);
+    snprintf(lib_buf, sizeof(lib_buf), "lib(%u)", lib);
     lib_str = lib_buf;
   }
 
- if (reason_str == NULL) {
-    BIO_snprintf(reason_buf, sizeof(reason_buf), "reason(%u)", reason);
+  if (reason_str == NULL) {
+    snprintf(reason_buf, sizeof(reason_buf), "reason(%u)", reason);
     reason_str = reason_buf;
   }
 
-  BIO_snprintf(buf, len, "error:%08" PRIx32 ":%s:OPENSSL_internal:%s",
-               packed_error, lib_str, reason_str);
-
-  if (strlen(buf) == len - 1) {
-    // output may be truncated; make sure we always have 5 colon-separated
+  int ret = snprintf(buf, len, "error:%08" PRIx32 ":%s:OPENSSL_internal:%s",
+                     packed_error, lib_str, reason_str);
+  if (ret >= 0 && (size_t)ret >= len) {
+    // The output was truncated; make sure we always have 5 colon-separated
     // fields, i.e. 4 colons.
     static const unsigned num_colons = 4;
     unsigned i;
@@ -618,8 +616,8 @@ void ERR_print_errors_cb(ERR_print_errors_callback_t callback, void *ctx) {
     }
 
     ERR_error_string_n(packed_error, buf, sizeof(buf));
-    BIO_snprintf(buf2, sizeof(buf2), "%lu:%s:%s:%d:%s\n", thread_hash, buf,
-                 file, line, (flags & ERR_FLAG_STRING) ? data : "");
+    snprintf(buf2, sizeof(buf2), "%lu:%s:%s:%d:%s\n", thread_hash, buf, file,
+             line, (flags & ERR_FLAG_STRING) ? data : "");
     if (callback(buf2, strlen(buf2), ctx) <= 0) {
       break;
     }
@@ -867,6 +865,10 @@ void ERR_restore_state(const ERR_SAVE_STATE *state) {
     return;
   }
 
+  if (state->num_errors >= ERR_NUM_ERRORS) {
+    abort();
+  }
+
   ERR_STATE *const dst = err_get_state();
   if (dst == NULL) {
     return;
@@ -875,6 +877,6 @@ void ERR_restore_state(const ERR_SAVE_STATE *state) {
   for (size_t i = 0; i < state->num_errors; i++) {
     err_copy(&dst->errors[i], &state->errors[i]);
   }
-  dst->top = state->num_errors - 1;
+  dst->top = (unsigned)(state->num_errors - 1);
   dst->bottom = ERR_NUM_ERRORS - 1;
 }

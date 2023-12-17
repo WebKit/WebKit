@@ -1051,7 +1051,11 @@ static enum ssl_hs_wait_t do_read_client_encrypted_extensions(
       return ssl_hs_error;
     }
 
-    SSLExtension application_settings(TLSEXT_TYPE_application_settings);
+    uint16_t extension_type = TLSEXT_TYPE_application_settings_old;
+    if (hs->config->alps_use_new_codepoint) {
+      extension_type = TLSEXT_TYPE_application_settings;
+    }
+    SSLExtension application_settings(extension_type);
     uint8_t alert = SSL_AD_DECODE_ERROR;
     if (!ssl_parse_extensions(&extensions, &alert, {&application_settings},
                               /*ignore_unknown=*/false)) {

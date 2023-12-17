@@ -74,6 +74,7 @@
 #include <string.h>
 
 #include <algorithm>
+#include <limits>
 #include <utility>
 
 #include <gtest/gtest.h>
@@ -457,8 +458,8 @@ static void TestSquare(BIGNUMFileTest *t, BN_CTX *ctx) {
       SCOPED_TRACE(num_a);
       size_t num_r = 2 * num_a;
       // Use newly-allocated buffers so ASan will catch out-of-bounds writes.
-      std::unique_ptr<BN_ULONG[]> a_words(new BN_ULONG[num_a]),
-          r_words(new BN_ULONG[num_r]);
+      auto a_words = std::make_unique<BN_ULONG[]>(num_a);
+      auto r_words = std::make_unique<BN_ULONG[]>(num_r);
       ASSERT_TRUE(bn_copy_words(a_words.get(), num_a, a.get()));
 
       bn_mul_small(r_words.get(), num_r, a_words.get(), num_a, a_words.get(),
@@ -524,8 +525,9 @@ static void TestProduct(BIGNUMFileTest *t, BN_CTX *ctx) {
         SCOPED_TRACE(num_b);
         size_t num_r = num_a + num_b;
         // Use newly-allocated buffers so ASan will catch out-of-bounds writes.
-        std::unique_ptr<BN_ULONG[]> a_words(new BN_ULONG[num_a]),
-            b_words(new BN_ULONG[num_b]), r_words(new BN_ULONG[num_r]);
+        auto a_words = std::make_unique<BN_ULONG[]>(num_a);
+        auto b_words = std::make_unique<BN_ULONG[]>(num_b);
+        auto r_words = std::make_unique<BN_ULONG[]>(num_r);
         ASSERT_TRUE(bn_copy_words(a_words.get(), num_a, a.get()));
         ASSERT_TRUE(bn_copy_words(b_words.get(), num_b, b.get()));
 
@@ -671,8 +673,9 @@ static void TestModMul(BIGNUMFileTest *t, BN_CTX *ctx) {
 #if !defined(BORINGSSL_SHARED_LIBRARY)
     size_t m_width = static_cast<size_t>(bn_minimal_width(m.get()));
     if (m_width <= BN_SMALL_MAX_WORDS) {
-      std::unique_ptr<BN_ULONG[]> a_words(new BN_ULONG[m_width]),
-          b_words(new BN_ULONG[m_width]), r_words(new BN_ULONG[m_width]);
+      auto a_words = std::make_unique<BN_ULONG[]>(m_width);
+      auto b_words = std::make_unique<BN_ULONG[]>(m_width);
+      auto r_words = std::make_unique<BN_ULONG[]>(m_width);
       ASSERT_TRUE(bn_copy_words(a_words.get(), m_width, a.get()));
       ASSERT_TRUE(bn_copy_words(b_words.get(), m_width, b.get()));
       bn_to_montgomery_small(a_words.get(), a_words.get(), m_width, mont.get());
@@ -690,7 +693,7 @@ static void TestModMul(BIGNUMFileTest *t, BN_CTX *ctx) {
       // inputs. Test this by running |bn_from_montgomery_small| on the result
       // of a product. Note |a_words| * |b_words| has an extra factor of R^2, so
       // we must reduce twice.
-      std::unique_ptr<BN_ULONG[]> prod_words(new BN_ULONG[m_width * 2]);
+      auto prod_words = std::make_unique<BN_ULONG[]>(m_width * 2);
       bn_mul_small(prod_words.get(), m_width * 2, a_words.get(), m_width,
                    b_words.get(), m_width);
       bn_from_montgomery_small(r_words.get(), m_width, prod_words.get(),
@@ -751,8 +754,9 @@ static void TestModSquare(BIGNUMFileTest *t, BN_CTX *ctx) {
 #if !defined(BORINGSSL_SHARED_LIBRARY)
     size_t m_width = static_cast<size_t>(bn_minimal_width(m.get()));
     if (m_width <= BN_SMALL_MAX_WORDS) {
-      std::unique_ptr<BN_ULONG[]> a_words(new BN_ULONG[m_width]),
-          a_copy_words(new BN_ULONG[m_width]), r_words(new BN_ULONG[m_width]);
+      auto a_words = std::make_unique<BN_ULONG[]>(m_width);
+      auto a_copy_words = std::make_unique<BN_ULONG[]>(m_width);
+      auto r_words = std::make_unique<BN_ULONG[]>(m_width);
       ASSERT_TRUE(bn_copy_words(a_words.get(), m_width, a.get()));
       bn_to_montgomery_small(a_words.get(), a_words.get(), m_width, mont.get());
       bn_mod_mul_montgomery_small(r_words.get(), a_words.get(), a_words.get(),
@@ -814,8 +818,8 @@ static void TestModExp(BIGNUMFileTest *t, BN_CTX *ctx) {
       bssl::UniquePtr<BN_MONT_CTX> mont(
           BN_MONT_CTX_new_for_modulus(m.get(), ctx));
       ASSERT_TRUE(mont.get());
-      std::unique_ptr<BN_ULONG[]> r_words(new BN_ULONG[m_width]),
-          a_words(new BN_ULONG[m_width]);
+      auto r_words = std::make_unique<BN_ULONG[]>(m_width);
+      auto a_words = std::make_unique<BN_ULONG[]>(m_width);
       ASSERT_TRUE(bn_copy_words(a_words.get(), m_width, a.get()));
       bn_to_montgomery_small(a_words.get(), a_words.get(), m_width, mont.get());
       bn_mod_exp_mont_small(r_words.get(), a_words.get(), m_width, e->d,
@@ -908,6 +912,14 @@ static void TestModInv(BIGNUMFileTest *t, BN_CTX *ctx) {
       bn_mod_inverse_consttime(ret.get(), &no_inverse, a.get(), m.get(), ctx));
   EXPECT_BIGNUMS_EQUAL("inv(A) (mod M) (constant-time)", mod_inv.get(),
                        ret.get());
+
+  ASSERT_TRUE(BN_copy(ret.get(), m.get()));
+  ASSERT_TRUE(BN_mod_inverse(ret.get(), a.get(), ret.get(), ctx));
+  EXPECT_BIGNUMS_EQUAL("inv(A) (mod M) (ret == m)", mod_inv.get(), ret.get());
+
+  ASSERT_TRUE(BN_copy(ret.get(), a.get()));
+  ASSERT_TRUE(BN_mod_inverse(ret.get(), ret.get(), m.get(), ctx));
+  EXPECT_BIGNUMS_EQUAL("inv(A) (mod M) (ret == a)", mod_inv.get(), ret.get());
 }
 
 static void TestGCD(BIGNUMFileTest *t, BN_CTX *ctx) {
@@ -1146,8 +1158,8 @@ TEST_F(BNTest, LittleEndian) {
   ASSERT_TRUE(BN_bn2le_padded(out, sizeof(out), x.get()));
   EXPECT_EQ(Bytes(zeros), Bytes(out));
 
-  ASSERT_TRUE(BN_le2bn(out, sizeof(out), y.get()));
-  EXPECT_BIGNUMS_EQUAL("BN_le2bn round-trip", x.get(), y.get());
+  ASSERT_TRUE(BN_lebin2bn(out, sizeof(out), y.get()));
+  EXPECT_BIGNUMS_EQUAL("BN_lebin2bn round-trip", x.get(), y.get());
 
   // Test random numbers at various byte lengths.
   for (size_t bytes = 128 - 7; bytes <= 128; bytes++) {
@@ -1170,8 +1182,8 @@ TEST_F(BNTest, LittleEndian) {
     EXPECT_EQ(Bytes(out), Bytes(expected));
 
     // Make sure the decoding produces the same BIGNUM.
-    ASSERT_TRUE(BN_le2bn(out, bytes, y.get()));
-    EXPECT_BIGNUMS_EQUAL("BN_le2bn round-trip", x.get(), y.get());
+    ASSERT_TRUE(BN_lebin2bn(out, bytes, y.get()));
+    EXPECT_BIGNUMS_EQUAL("BN_lebin2bn round-trip", x.get(), y.get());
   }
 }
 
@@ -2794,6 +2806,27 @@ TEST_F(BNTest, MontgomeryLarge) {
   EXPECT_FALSE(BN_mod_exp_mont_consttime(r.get(), BN_value_one(),
                                          large_bignum.get(), large_bignum.get(),
                                          ctx(), nullptr));
+}
+
+TEST_F(BNTest, FormatWord) {
+  char buf[32];
+  snprintf(buf, sizeof(buf), BN_DEC_FMT1, BN_ULONG{1234});
+  EXPECT_STREQ(buf, "1234");
+  snprintf(buf, sizeof(buf), BN_HEX_FMT1, BN_ULONG{1234});
+  EXPECT_STREQ(buf, "4d2");
+
+  // |BN_HEX_FMT2| is zero-padded up to the maximum value.
+#if defined(OPENSSL_64_BIT)
+  snprintf(buf, sizeof(buf), BN_HEX_FMT2, BN_ULONG{1234});
+  EXPECT_STREQ(buf, "00000000000004d2");
+  snprintf(buf, sizeof(buf), BN_HEX_FMT2, std::numeric_limits<BN_ULONG>::max());
+  EXPECT_STREQ(buf, "ffffffffffffffff");
+#else
+  snprintf(buf, sizeof(buf), BN_HEX_FMT2, BN_ULONG{1234});
+  EXPECT_STREQ(buf, "000004d2");
+  snprintf(buf, sizeof(buf), BN_HEX_FMT2, std::numeric_limits<BN_ULONG>::max());
+  EXPECT_STREQ(buf, "ffffffff");
+#endif
 }
 
 #if defined(SUPPORTS_ABI_TEST)

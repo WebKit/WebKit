@@ -164,16 +164,14 @@ static int x509_object_cmp_sk(const X509_OBJECT *const *a,
 X509_STORE *X509_STORE_new(void) {
   X509_STORE *ret;
 
-  if ((ret = (X509_STORE *)OPENSSL_malloc(sizeof(X509_STORE))) == NULL) {
+  if ((ret = (X509_STORE *)OPENSSL_zalloc(sizeof(X509_STORE))) == NULL) {
     return NULL;
   }
-  OPENSSL_memset(ret, 0, sizeof(*ret));
   CRYPTO_MUTEX_init(&ret->objs_lock);
   ret->objs = sk_X509_OBJECT_new(x509_object_cmp_sk);
   if (ret->objs == NULL) {
     goto err;
   }
-  ret->cache = 1;
   ret->get_cert_methods = sk_X509_LOOKUP_new_null();
   if (ret->get_cert_methods == NULL) {
     goto err;
@@ -423,9 +421,8 @@ static int x509_object_idx_cnt(STACK_OF(X509_OBJECT) *h, int type,
   }
 
   if (pnmatch != NULL) {
-    int tidx;
     *pnmatch = 1;
-    for (tidx = idx + 1; tidx < (int)sk_X509_OBJECT_num(h); tidx++) {
+    for (size_t tidx = idx + 1; tidx < sk_X509_OBJECT_num(h); tidx++) {
       const X509_OBJECT *tobj = sk_X509_OBJECT_value(h, tidx);
       if (x509_object_cmp(tobj, &stmp)) {
         break;
@@ -434,7 +431,7 @@ static int x509_object_idx_cnt(STACK_OF(X509_OBJECT) *h, int type,
     }
   }
 
-  return idx;
+  return (int)idx;
 }
 
 int X509_OBJECT_idx_by_subject(STACK_OF(X509_OBJECT) *h, int type,

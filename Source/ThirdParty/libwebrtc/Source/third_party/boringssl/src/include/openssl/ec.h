@@ -101,14 +101,33 @@ typedef enum {
 
 // Elliptic curve groups.
 
-// EC_GROUP_new_by_curve_name returns a fresh EC_GROUP object for the elliptic
-// curve specified by |nid|, or NULL on unsupported NID or allocation failure.
+// EC_group_p224 returns an |EC_GROUP| for P-224, also known as secp224r1.
+OPENSSL_EXPORT const EC_GROUP *EC_group_p224(void);
+
+// EC_group_p256 returns an |EC_GROUP| for P-256, also known as secp256r1 or
+// prime256v1.
+OPENSSL_EXPORT const EC_GROUP *EC_group_p256(void);
+
+// EC_group_p384 returns an |EC_GROUP| for P-384, also known as secp384r1.
+OPENSSL_EXPORT const EC_GROUP *EC_group_p384(void);
+
+// EC_group_p521 returns an |EC_GROUP| for P-521, also known as secp521r1.
+OPENSSL_EXPORT const EC_GROUP *EC_group_p521(void);
+
+// EC_GROUP_new_by_curve_name returns the |EC_GROUP| object for the elliptic
+// curve specified by |nid|, or NULL on unsupported NID.  For OpenSSL
+// compatibility, this function returns a non-const pointer which may be passed
+// to |EC_GROUP_free|. However, the resulting object is actually static and
+// calling |EC_GROUP_free| is optional.
 //
 // The supported NIDs are:
 //   NID_secp224r1 (P-224),
 //   NID_X9_62_prime256v1 (P-256),
 //   NID_secp384r1 (P-384),
 //   NID_secp521r1 (P-521)
+//
+// Calling this function causes all four curves to be linked into the binary.
+// Prefer calling |EC_group_*| to allow the static linker to drop unused curves.
 //
 // If in doubt, use |NID_X9_62_prime256v1|, or see the curve25519.h header for
 // more modern primitives.
@@ -321,24 +340,22 @@ OPENSSL_EXPORT int EC_POINT_mul(const EC_GROUP *group, EC_POINT *r,
 
 // Hash-to-curve.
 //
-// The following functions implement primitives from
-// draft-irtf-cfrg-hash-to-curve-16. The |dst| parameter in each function is the
-// domain separation tag and must be unique for each protocol and between the
-// |hash_to_curve| and |hash_to_scalar| variants. See section 3.1 of the spec
-// for additional guidance on this parameter.
+// The following functions implement primitives from RFC 9380. The |dst|
+// parameter in each function is the domain separation tag and must be unique
+// for each protocol and between the |hash_to_curve| and |hash_to_scalar|
+// variants. See section 3.1 of the spec for additional guidance on this
+// parameter.
 
 // EC_hash_to_curve_p256_xmd_sha256_sswu hashes |msg| to a point on |group| and
 // writes the result to |out|, implementing the P256_XMD:SHA-256_SSWU_RO_ suite
-// from draft-irtf-cfrg-hash-to-curve-16. It returns one on success and zero on
-// error.
+// from RFC 9380. It returns one on success and zero on error.
 OPENSSL_EXPORT int EC_hash_to_curve_p256_xmd_sha256_sswu(
     const EC_GROUP *group, EC_POINT *out, const uint8_t *dst, size_t dst_len,
     const uint8_t *msg, size_t msg_len);
 
 // EC_hash_to_curve_p384_xmd_sha384_sswu hashes |msg| to a point on |group| and
 // writes the result to |out|, implementing the P384_XMD:SHA-384_SSWU_RO_ suite
-// from draft-irtf-cfrg-hash-to-curve-16. It returns one on success and zero on
-// error.
+// from RFC 9380. It returns one on success and zero on error.
 OPENSSL_EXPORT int EC_hash_to_curve_p384_xmd_sha384_sswu(
     const EC_GROUP *group, EC_POINT *out, const uint8_t *dst, size_t dst_len,
     const uint8_t *msg, size_t msg_len);

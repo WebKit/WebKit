@@ -451,6 +451,27 @@ class GrowableArray {
 // CBBFinishArray behaves like |CBB_finish| but stores the result in an Array.
 OPENSSL_EXPORT bool CBBFinishArray(CBB *cbb, Array<uint8_t> *out);
 
+// GetAllNames helps to implement |*_get_all_*_names| style functions. It
+// writes at most |max_out| string pointers to |out| and returns the number that
+// it would have liked to have written. The strings written consist of
+// |fixed_names_len| strings from |fixed_names| followed by |objects_len|
+// strings taken by projecting |objects| through |name|.
+template <typename T, typename Name>
+inline size_t GetAllNames(const char **out, size_t max_out,
+                          Span<const char *const> fixed_names, Name(T::*name),
+                          Span<const T> objects) {
+  auto span = bssl::MakeSpan(out, max_out);
+  for (size_t i = 0; !span.empty() && i < fixed_names.size(); i++) {
+    span[0] = fixed_names[i];
+    span = span.subspan(1);
+  }
+  span = span.subspan(0, objects.size());
+  for (size_t i = 0; i < span.size(); i++) {
+    span[i] = objects[i].*name;
+  }
+  return fixed_names.size() + objects.size();
+}
+
 
 // Protocol versions.
 //
@@ -1126,6 +1147,10 @@ bool ssl_nid_to_group_id(uint16_t *out_group_id, int nid);
 // length |len|. On success, it sets |*out_group_id| to the group ID and returns
 // true. Otherwise, it returns false.
 bool ssl_name_to_group_id(uint16_t *out_group_id, const char *name, size_t len);
+
+// ssl_group_id_to_nid returns the NID corresponding to |group_id| or
+// |NID_undef| if unknown.
+int ssl_group_id_to_nid(uint16_t group_id);
 
 
 // Handshake messages.
@@ -3128,6 +3153,10 @@ struct SSL_CONFIG {
   // of support for AES hw. The value is only considered if |aes_hw_override| is
   // true.
   bool aes_hw_override_value : 1;
+
+  // alps_use_new_codepoint if set indicates we use new ALPS extension codepoint
+  // to negotiate and convey application settings.
+  bool alps_use_new_codepoint : 1;
 };
 
 // From RFC 8446, used in determining PSK modes.
@@ -3331,17 +3360,6 @@ bool tls1_check_group_id(const SSL_HANDSHAKE *ssl, uint16_t group_id);
 // group between client and server preferences and returns true. If none may be
 // found, it returns false.
 bool tls1_get_shared_group(SSL_HANDSHAKE *hs, uint16_t *out_group_id);
-
-// tls1_set_curves converts the array of NIDs in |curves| into a newly allocated
-// array of TLS group IDs. On success, the function returns true and writes the
-// array to |*out_group_ids|. Otherwise, it returns false.
-bool tls1_set_curves(Array<uint16_t> *out_group_ids, Span<const int> curves);
-
-// tls1_set_curves_list converts the string of curves pointed to by |curves|
-// into a newly allocated array of TLS group IDs. On success, the function
-// returns true and writes the array to |*out_group_ids|. Otherwise, it returns
-// false.
-bool tls1_set_curves_list(Array<uint16_t> *out_group_ids, const char *curves);
 
 // ssl_add_clienthello_tlsext writes ClientHello extensions to |out| for |type|.
 // It returns true on success and false on failure. The |header_len| argument is

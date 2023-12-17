@@ -25,8 +25,7 @@ use core::{
 /// Computes the HMAC-SHA256 of `data` as a one-shot operation.
 ///
 /// Calculates the HMAC of data, using the given `key` and returns the result.
-/// It returns the computed hmac.
-/// Can panic if memory allocation fails in the underlying BoringSSL code.
+/// It returns the computed HMAC.
 pub fn hmac_sha256(key: &[u8], data: &[u8]) -> [u8; 32] {
     hmac::<32, Sha256>(key, data)
 }
@@ -34,100 +33,117 @@ pub fn hmac_sha256(key: &[u8], data: &[u8]) -> [u8; 32] {
 /// Computes the HMAC-SHA512 of `data` as a one-shot operation.
 ///
 /// Calculates the HMAC of data, using the given `key` and returns the result.
-/// It returns the computed hmac.
-/// Can panic if memory allocation fails in the underlying BoringSSL code.
+/// It returns the computed HMAC.
 pub fn hmac_sha512(key: &[u8], data: &[u8]) -> [u8; 64] {
     hmac::<64, Sha512>(key, data)
 }
 
-/// The BoringSSL HMAC-SHA256 implementation. The operations may panic if memory allocation fails
-/// in BoringSSL.
+/// An HMAC-SHA256 operation in progress.
 pub struct HmacSha256(Hmac<32, Sha256>);
 
 impl HmacSha256 {
-    /// Create a new hmac from a fixed size key.
+    /// Creates a new HMAC operation from a fixed-length key.
     pub fn new(key: [u8; 32]) -> Self {
         Self(Hmac::new(key))
     }
 
-    /// Create new hmac value from variable size key.
+    /// Creates a new HMAC operation from a variable-length key.
     pub fn new_from_slice(key: &[u8]) -> Self {
         Self(Hmac::new_from_slice(key))
     }
 
-    /// Update state using the provided data.
+    /// Hashes the provided input into the HMAC operation.
     pub fn update(&mut self, data: &[u8]) {
         self.0.update(data)
     }
 
-    /// Obtain the hmac computation consuming the hmac instance.
+    /// Computes the final HMAC value, consuming the object.
     pub fn finalize(self) -> [u8; 32] {
         self.0.finalize()
     }
 
-    /// Check that the tag value is correct for the processed input.
+    /// Checks that the provided tag value matches the computed HMAC value.
     pub fn verify_slice(self, tag: &[u8]) -> Result<(), MacError> {
         self.0.verify_slice(tag)
     }
 
-    /// Check that the tag value is correct for the processed input.
+    /// Checks that the provided tag value matches the computed HMAC value.
     pub fn verify(self, tag: [u8; 32]) -> Result<(), MacError> {
         self.0.verify(tag)
     }
 
-    /// Check truncated tag correctness using left side bytes of the calculated tag.
+    /// Checks that the provided tag value matches the computed HMAC, truncated to the input tag's
+    /// length.
+    ///
+    /// Truncating an HMAC reduces the security of the construction. Callers must ensure `tag`'s
+    /// length matches the desired HMAC length and security level.
     pub fn verify_truncated_left(self, tag: &[u8]) -> Result<(), MacError> {
         self.0.verify_truncated_left(tag)
     }
 
-    /// Resets the hmac instance to its initial state
+    /// Resets the object to its initial state. The key is retained, but input is discarded.
     pub fn reset(&mut self) {
+        // TODO(davidben): This method is a little odd. The main use case I can imagine is
+        // computing multiple HMACs with the same key, while reusing the input-independent key
+        // setup. However, finalize consumes the object, so you cannot actually reuse the
+        // context afterwards. Moreover, even if you could, that mutates the context, so a
+        // better pattern would be to copy the initial context, or to have an HmacKey type
+        // that one could create contexts out of.
         self.0.reset()
     }
 }
 
-/// The BoringSSL HMAC-SHA512 implementation. The operations may panic if memory allocation fails
-/// in BoringSSL.
+/// An HMAC-SHA512 operation in progress.
 pub struct HmacSha512(Hmac<64, Sha512>);
 
 impl HmacSha512 {
-    /// Create a new hmac from a fixed size key.
+    /// Creates a new HMAC operation from a fixed-size key.
     pub fn new(key: [u8; 64]) -> Self {
         Self(Hmac::new(key))
     }
 
-    /// Create new hmac value from variable size key.
+    /// Creates a new HMAC operation from a variable-length key.
     pub fn new_from_slice(key: &[u8]) -> Self {
         Self(Hmac::new_from_slice(key))
     }
 
-    /// Update state using the provided data.
+    /// Hashes the provided input into the HMAC operation.
     pub fn update(&mut self, data: &[u8]) {
         self.0.update(data)
     }
 
-    /// Obtain the hmac computation consuming the hmac instance.
+    /// Computes the final HMAC value, consuming the object.
     pub fn finalize(self) -> [u8; 64] {
         self.0.finalize()
     }
 
-    /// Check that the tag value is correct for the processed input.
+    /// Checks that the provided tag value matches the computed HMAC value.
     pub fn verify_slice(self, tag: &[u8]) -> Result<(), MacError> {
         self.0.verify_slice(tag)
     }
 
-    /// Check that the tag value is correct for the processed input.
+    /// Checks that the provided tag value matches the computed HMAC value.
     pub fn verify(self, tag: [u8; 64]) -> Result<(), MacError> {
         self.0.verify(tag)
     }
 
-    /// Check truncated tag correctness using left side bytes of the calculated tag.
+    /// Checks that the provided tag value matches the computed HMAC, truncated to the input tag's
+    /// length.
+    ///
+    /// Truncating an HMAC reduces the security of the construction. Callers must ensure `tag`'s
+    /// length matches the desired HMAC length and security level.
     pub fn verify_truncated_left(self, tag: &[u8]) -> Result<(), MacError> {
         self.0.verify_truncated_left(tag)
     }
 
-    /// Resets the hmac instance to its initial state
+    /// Resets the object to its initial state. The key is retained, but input is discarded.
     pub fn reset(&mut self) {
+        // TODO(davidben): This method is a little odd. The main use case I can imagine is
+        // computing multiple HMACs with the same key, while reusing the input-independent key
+        // setup. However, finalize consumes the object, so you cannot actually reuse the
+        // context afterwards. Moreover, even if you could, that mutates the context, so a
+        // better pattern would be to copy the initial context, or to have an HmacKey type
+        // that one could create contexts out of.
         self.0.reset()
     }
 }
@@ -177,12 +193,12 @@ struct Hmac<const N: usize, M: Md> {
 }
 
 impl<const N: usize, M: Md> Hmac<N, M> {
-    /// Infallible HMAC creation from a fixed length key.
+    /// Creates a new HMAC operation from a fixed-length key.
     fn new(key: [u8; N]) -> Self {
         Self::new_from_slice(&key)
     }
 
-    /// Create new hmac value from variable size key. Panics on allocation failure
+    /// Creates a new HMAC operation from a variable-length key.
     fn new_from_slice(key: &[u8]) -> Self {
         // Safety:
         // - HMAC_CTX_new panics if allocation fails
@@ -215,7 +231,7 @@ impl<const N: usize, M: Md> Hmac<N, M> {
         }
     }
 
-    /// Update state using the provided data, can be called repeatedly.
+    /// Hashes the provided input into the HMAC operation.
     fn update(&mut self, data: &[u8]) {
         let result = unsafe {
             // Safety: HMAC_Update will always return 1, in case it doesnt we panic
@@ -224,7 +240,7 @@ impl<const N: usize, M: Md> Hmac<N, M> {
         assert_eq!(result, 1, "failure in bssl_sys::HMAC_Update");
     }
 
-    /// Obtain the hmac computation consuming the hmac instance.
+    /// Computes the final HMAC value, consuming the object.
     fn finalize(self) -> [u8; N] {
         let mut buf = [0_u8; N];
         let mut size: c_uint = 0;
@@ -238,13 +254,12 @@ impl<const N: usize, M: Md> Hmac<N, M> {
         buf
     }
 
-    /// Check that the tag value is correct for the processed input.
+    /// Checks that the provided tag value matches the computed HMAC value.
     fn verify(self, tag: [u8; N]) -> Result<(), MacError> {
         self.verify_slice(&tag)
     }
 
-    /// Check truncated tag correctness using all bytes
-    /// of calculated tag.
+    /// Checks that the provided tag value matches the computed HMAC value.
     ///
     /// Returns `Error` if `tag` is not valid or not equal in length
     /// to MAC's output.
@@ -253,10 +268,13 @@ impl<const N: usize, M: Md> Hmac<N, M> {
         self.verify_truncated_left(tag)
     }
 
-    /// Check truncated tag correctness using left side bytes
-    /// (i.e. `tag[..n]`) of calculated tag.
+    /// Checks that the provided tag value matches the computed HMAC, truncated to the input tag's
+    /// length.
     ///
     /// Returns `Error` if `tag` is not valid or empty.
+    ///
+    /// Truncating an HMAC reduces the security of the construction. Callers must ensure `tag`'s
+    /// length matches the desired HMAC length and security level.
     fn verify_truncated_left(self, tag: &[u8]) -> Result<(), MacError> {
         let len = tag.len();
         if len == 0 || len > N {

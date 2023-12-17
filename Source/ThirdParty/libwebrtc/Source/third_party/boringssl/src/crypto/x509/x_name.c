@@ -122,7 +122,6 @@ ASN1_ITEM_TEMPLATE_END(X509_NAME_INTERNAL)
 static const ASN1_EXTERN_FUNCS x509_name_ff = {
     x509_name_ex_new,
     x509_name_ex_free,
-    0,  // Default clear behaviour is OK
     x509_name_ex_d2i,
     x509_name_ex_i2d,
 };
@@ -230,7 +229,7 @@ static int x509_name_ex_d2i(ASN1_VALUE **val, const unsigned char **in,
     entries = sk_STACK_OF_X509_NAME_ENTRY_value(intname, i);
     for (j = 0; j < sk_X509_NAME_ENTRY_num(entries); j++) {
       entry = sk_X509_NAME_ENTRY_value(entries, j);
-      entry->set = i;
+      entry->set = (int)i;
       if (!sk_X509_NAME_ENTRY_push(nm->entries, entry)) {
         goto err;
       }

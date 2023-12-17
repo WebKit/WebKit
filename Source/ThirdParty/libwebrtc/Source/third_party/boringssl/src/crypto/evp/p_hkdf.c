@@ -35,12 +35,11 @@ typedef struct {
 } HKDF_PKEY_CTX;
 
 static int pkey_hkdf_init(EVP_PKEY_CTX *ctx) {
-  HKDF_PKEY_CTX *hctx = OPENSSL_malloc(sizeof(HKDF_PKEY_CTX));
+  HKDF_PKEY_CTX *hctx = OPENSSL_zalloc(sizeof(HKDF_PKEY_CTX));
   if (hctx == NULL) {
     return 0;
   }
 
-  OPENSSL_memset(hctx, 0, sizeof(HKDF_PKEY_CTX));
   if (!CBB_init(&hctx->info, 0)) {
     OPENSSL_free(hctx);
     return 0;

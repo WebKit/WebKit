@@ -67,11 +67,10 @@
 
 
 X509_PKEY *X509_PKEY_new(void) {
-  X509_PKEY *ret = OPENSSL_malloc(sizeof(X509_PKEY));
+  X509_PKEY *ret = OPENSSL_zalloc(sizeof(X509_PKEY));
   if (ret == NULL) {
     goto err;
   }
-  OPENSSL_memset(ret, 0, sizeof(X509_PKEY));
 
   ret->enc_algor = X509_ALGOR_new();
   if (ret->enc_algor == NULL) {

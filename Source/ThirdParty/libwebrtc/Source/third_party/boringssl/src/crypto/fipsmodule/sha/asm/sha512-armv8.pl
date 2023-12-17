@@ -39,8 +39,29 @@
 #	generated with -mgeneral-regs-only is significantly faster
 #	and the gap is only 40-90%.
 
-$output=pop;
-$flavour=pop;
+my ($flavour, $hash, $output) = @ARGV;
+
+if ($hash eq "sha512") {
+	$BITS=512;
+	$SZ=8;
+	@Sigma0=(28,34,39);
+	@Sigma1=(14,18,41);
+	@sigma0=(1,  8, 7);
+	@sigma1=(19,61, 6);
+	$rounds=80;
+	$reg_t="x";
+} elsif ($hash eq "sha256") {
+	$BITS=256;
+	$SZ=4;
+	@Sigma0=( 2,13,22);
+	@Sigma1=( 6,11,25);
+	@sigma0=( 7,18, 3);
+	@sigma1=(17,19,10);
+	$rounds=64;
+	$reg_t="w";
+} else {
+	die "unknown hash: $hash";
+}
 
 if ($flavour && $flavour ne "void") {
     $0 =~ m/(.*[\/\\])[^\/\\]+$/; $dir=$1;
@@ -53,26 +74,6 @@ if ($flavour && $flavour ne "void") {
 } else {
     open OUT,">$output";
     *STDOUT=*OUT;
-}
-
-if ($output =~ /512/) {
-	$BITS=512;
-	$SZ=8;
-	@Sigma0=(28,34,39);
-	@Sigma1=(14,18,41);
-	@sigma0=(1,  8, 7);
-	@sigma1=(19,61, 6);
-	$rounds=80;
-	$reg_t="x";
-} else {
-	$BITS=256;
-	$SZ=4;
-	@Sigma0=( 2,13,22);
-	@Sigma1=( 6,11,25);
-	@sigma0=( 7,18, 3);
-	@sigma1=(17,19,10);
-	$rounds=64;
-	$reg_t="w";
 }
 
 $func="sha${BITS}_block_data_order";
@@ -187,7 +188,7 @@ $code.=<<___;
 $func:
 	AARCH64_VALID_CALL_TARGET
 #ifndef	__KERNEL__
-#if __has_feature(hwaddress_sanitizer) && __clang_major__ >= 10
+#if defined(OPENSSL_HWASAN) && __clang_major__ >= 10
 	adrp	x16,:pg_hi21_nc:OPENSSL_armcap_P
 #else
 	adrp	x16,:pg_hi21:OPENSSL_armcap_P

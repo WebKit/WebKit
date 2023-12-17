@@ -3,6 +3,11 @@
 **Note**: if your target project is not a Google project then first read the
 [main README](/README.md) about the purpose of BoringSSL.
 
+If you are porting BoringSSL to a new platform see
+["go/boringssl-on-new-platform"](https://goto.corp.google.com/boringssl-on-new-platform) (Google
+Internal) for information about porting BoringSSL to a new platform for a Google
+project.
+
 ## Which branch to use
 
 BoringSSL usage typically follows a

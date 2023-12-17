@@ -65,6 +65,9 @@ struct rand_thread_state {
   // last_block_valid is non-zero iff |last_block| contains data from
   // |get_seed_entropy|.
   int last_block_valid;
+  // fork_unsafe_buffering is non-zero iff, when |drbg| was last (re)seeded,
+  // fork-unsafe buffering was enabled.
+  int fork_unsafe_buffering;
 
 #if defined(BORINGSSL_FIPS)
   // last_block contains the previous block from |get_seed_entropy|.
@@ -72,6 +75,10 @@ struct rand_thread_state {
   // next and prev form a NULL-terminated, double-linked list of all states in
   // a process.
   struct rand_thread_state *next, *prev;
+  // clear_drbg_lock synchronizes between uses of |drbg| and
+  // |rand_thread_state_clear_all| clearing it. This lock should be uncontended
+  // in the common case, except on shutdown.
+  CRYPTO_MUTEX clear_drbg_lock;
 #endif
 };
 
@@ -82,18 +89,19 @@ struct rand_thread_state {
 // called when the whole process is exiting.
 DEFINE_BSS_GET(struct rand_thread_state *, thread_states_list);
 DEFINE_STATIC_MUTEX(thread_states_list_lock);
-DEFINE_STATIC_MUTEX(state_clear_all_lock);
 
 static void rand_thread_state_clear_all(void) __attribute__((destructor));
 static void rand_thread_state_clear_all(void) {
-  CRYPTO_STATIC_MUTEX_lock_write(thread_states_list_lock_bss_get());
-  CRYPTO_STATIC_MUTEX_lock_write(state_clear_all_lock_bss_get());
+  CRYPTO_MUTEX_lock_write(thread_states_list_lock_bss_get());
   for (struct rand_thread_state *cur = *thread_states_list_bss_get();
        cur != NULL; cur = cur->next) {
+    CRYPTO_MUTEX_lock_write(&cur->clear_drbg_lock);
     CTR_DRBG_clear(&cur->drbg);
   }
   // The locks are deliberately left locked so that any threads that are still
-  // running will hang if they try to call |RAND_bytes|.
+  // running will hang if they try to call |RAND_bytes|. It also ensures
+  // |rand_thread_state_free| cannot free any thread state while we've taken the
+  // lock.
 }
 #endif
 
@@ -107,7 +115,7 @@ static void rand_thread_state_free(void *state_in) {
   }
 
 #if defined(BORINGSSL_FIPS)
-  CRYPTO_STATIC_MUTEX_lock_write(thread_states_list_lock_bss_get());
+  CRYPTO_MUTEX_lock_write(thread_states_list_lock_bss_get());
 
   if (state->prev != NULL) {
     state->prev->next = state->next;
@@ -119,7 +127,7 @@ static void rand_thread_state_free(void *state_in) {
     state->next->prev = state->prev;
   }
 
-  CRYPTO_STATIC_MUTEX_unlock_write(thread_states_list_lock_bss_get());
+  CRYPTO_MUTEX_unlock_write(thread_states_list_lock_bss_get());
 
   CTR_DRBG_clear(&state->drbg);
 #endif
@@ -195,7 +203,7 @@ void RAND_load_entropy(const uint8_t *entropy, size_t entropy_len,
                        int want_additional_input) {
   struct entropy_buffer *const buffer = entropy_buffer_bss_get();
 
-  CRYPTO_STATIC_MUTEX_lock_write(entropy_buffer_lock_bss_get());
+  CRYPTO_MUTEX_lock_write(entropy_buffer_lock_bss_get());
   const size_t space = sizeof(buffer->bytes) - buffer->bytes_valid;
   if (entropy_len > space) {
     entropy_len = space;
@@ -205,7 +213,7 @@ void RAND_load_entropy(const uint8_t *entropy, size_t entropy_len,
   buffer->bytes_valid += entropy_len;
   buffer->want_additional_input |=
       want_additional_input && (entropy_len != 0);
-  CRYPTO_STATIC_MUTEX_unlock_write(entropy_buffer_lock_bss_get());
+  CRYPTO_MUTEX_unlock_write(entropy_buffer_lock_bss_get());
 }
 
 // get_seed_entropy fills |out_entropy_len| bytes of |out_entropy| from the
@@ -217,11 +225,11 @@ static void get_seed_entropy(uint8_t *out_entropy, size_t out_entropy_len,
     abort();
   }
 
-  CRYPTO_STATIC_MUTEX_lock_write(entropy_buffer_lock_bss_get());
+  CRYPTO_MUTEX_lock_write(entropy_buffer_lock_bss_get());
   while (buffer->bytes_valid < out_entropy_len) {
-    CRYPTO_STATIC_MUTEX_unlock_write(entropy_buffer_lock_bss_get());
+    CRYPTO_MUTEX_unlock_write(entropy_buffer_lock_bss_get());
     RAND_need_entropy(out_entropy_len - buffer->bytes_valid);
-    CRYPTO_STATIC_MUTEX_lock_write(entropy_buffer_lock_bss_get());
+    CRYPTO_MUTEX_lock_write(entropy_buffer_lock_bss_get());
   }
 
   *out_want_additional_input = buffer->want_additional_input;
@@ -233,7 +241,7 @@ static void get_seed_entropy(uint8_t *out_entropy, size_t out_entropy_len,
     buffer->want_additional_input = 0;
   }
 
-  CRYPTO_STATIC_MUTEX_unlock_write(entropy_buffer_lock_bss_get());
+  CRYPTO_MUTEX_unlock_write(entropy_buffer_lock_bss_get());
 }
 
 // rand_get_seed fills |seed| with entropy. In some cases, it will additionally
@@ -326,6 +334,7 @@ void RAND_bytes_with_additional_data(uint8_t *out, size_t out_len,
   }
 
   const uint64_t fork_generation = CRYPTO_get_fork_generation();
+  const int fork_unsafe_buffering = rand_fork_unsafe_buffering_enabled();
 
   // Additional data is mixed into every CTR-DRBG call to protect, as best we
   // can, against forks & VM clones. We do not over-read this information and
@@ -340,7 +349,7 @@ void RAND_bytes_with_additional_data(uint8_t *out, size_t out_len,
     // entropy is used. This can be expensive (one read per |RAND_bytes| call)
     // and so is disabled when we have fork detection, or if the application has
     // promised not to fork.
-    if (fork_generation != 0 || rand_fork_unsafe_buffering_enabled()) {
+    if (fork_generation != 0 || fork_unsafe_buffering) {
       OPENSSL_memset(additional_data, 0, sizeof(additional_data));
     } else if (!have_rdrand()) {
       // No alternative so block for OS entropy.
@@ -383,10 +392,12 @@ void RAND_bytes_with_additional_data(uint8_t *out, size_t out_len,
     }
     state->calls = 0;
     state->fork_generation = fork_generation;
+    state->fork_unsafe_buffering = fork_unsafe_buffering;
 
 #if defined(BORINGSSL_FIPS)
+    CRYPTO_MUTEX_init(&state->clear_drbg_lock);
     if (state != &stack_state) {
-      CRYPTO_STATIC_MUTEX_lock_write(thread_states_list_lock_bss_get());
+      CRYPTO_MUTEX_lock_write(thread_states_list_lock_bss_get());
       struct rand_thread_state **states_list = thread_states_list_bss_get();
       state->next = *states_list;
       if (state->next != NULL) {
@@ -394,13 +405,20 @@ void RAND_bytes_with_additional_data(uint8_t *out, size_t out_len,
       }
       state->prev = NULL;
       *states_list = state;
-      CRYPTO_STATIC_MUTEX_unlock_write(thread_states_list_lock_bss_get());
+      CRYPTO_MUTEX_unlock_write(thread_states_list_lock_bss_get());
     }
 #endif
   }
 
   if (state->calls >= kReseedInterval ||
-      state->fork_generation != fork_generation) {
+      // If we've forked since |state| was last seeded, reseed.
+      state->fork_generation != fork_generation ||
+      // If |state| was seeded from a state with different fork-safety
+      // preferences, reseed. Suppose |state| was fork-safe, then forked into
+      // two children, but each of the children never fork and disable fork
+      // safety. The children must reseed to avoid working from the same PRNG
+      // state.
+      state->fork_unsafe_buffering != fork_unsafe_buffering) {
     uint8_t seed[CTR_DRBG_ENTROPY_LEN];
     uint8_t reseed_additional_data[CTR_DRBG_ENTROPY_LEN] = {0};
     size_t reseed_additional_data_len = 0;
@@ -410,7 +428,7 @@ void RAND_bytes_with_additional_data(uint8_t *out, size_t out_len,
     // Take a read lock around accesses to |state->drbg|. This is needed to
     // avoid returning bad entropy if we race with
     // |rand_thread_state_clear_all|.
-    CRYPTO_STATIC_MUTEX_lock_read(state_clear_all_lock_bss_get());
+    CRYPTO_MUTEX_lock_read(&state->clear_drbg_lock);
 #endif
     if (!CTR_DRBG_reseed(&state->drbg, seed, reseed_additional_data,
                          reseed_additional_data_len)) {
@@ -418,9 +436,10 @@ void RAND_bytes_with_additional_data(uint8_t *out, size_t out_len,
     }
     state->calls = 0;
     state->fork_generation = fork_generation;
+    state->fork_unsafe_buffering = fork_unsafe_buffering;
   } else {
 #if defined(BORINGSSL_FIPS)
-    CRYPTO_STATIC_MUTEX_lock_read(state_clear_all_lock_bss_get());
+    CRYPTO_MUTEX_lock_read(&state->clear_drbg_lock);
 #endif
   }
 
@@ -449,7 +468,7 @@ void RAND_bytes_with_additional_data(uint8_t *out, size_t out_len,
   }
 
 #if defined(BORINGSSL_FIPS)
-  CRYPTO_STATIC_MUTEX_unlock_read(state_clear_all_lock_bss_get());
+  CRYPTO_MUTEX_unlock_read(&state->clear_drbg_lock);
 #endif
 }
 

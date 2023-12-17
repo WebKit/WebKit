@@ -850,7 +850,7 @@ static int asn1_ex_c2i(ASN1_VALUE **pval, const unsigned char *cont, long len,
       if (utype == V_ASN1_BMPSTRING) {
         while (CBS_len(&cbs) != 0) {
           uint32_t c;
-          if (!cbs_get_ucs2_be(&cbs, &c)) {
+          if (!CBS_get_ucs2_be(&cbs, &c)) {
             OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_BMPSTRING);
             goto err;
           }
@@ -859,7 +859,7 @@ static int asn1_ex_c2i(ASN1_VALUE **pval, const unsigned char *cont, long len,
       if (utype == V_ASN1_UNIVERSALSTRING) {
         while (CBS_len(&cbs) != 0) {
           uint32_t c;
-          if (!cbs_get_utf32_be(&cbs, &c)) {
+          if (!CBS_get_utf32_be(&cbs, &c)) {
             OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_UNIVERSALSTRING);
             goto err;
           }
@@ -868,7 +868,7 @@ static int asn1_ex_c2i(ASN1_VALUE **pval, const unsigned char *cont, long len,
       if (utype == V_ASN1_UTF8STRING) {
         while (CBS_len(&cbs) != 0) {
           uint32_t c;
-          if (!cbs_get_utf8(&cbs, &c)) {
+          if (!CBS_get_utf8(&cbs, &c)) {
             OPENSSL_PUT_ERROR(ASN1, ASN1_R_INVALID_UTF8STRING);
             goto err;
           }

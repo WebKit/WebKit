@@ -142,7 +142,7 @@ $code.=<<___;
 ChaCha20_ctr32:
 	AARCH64_VALID_CALL_TARGET
 	cbz	$len,.Labort
-#if __has_feature(hwaddress_sanitizer) && __clang_major__ >= 10
+#if defined(OPENSSL_HWASAN) && __clang_major__ >= 10
 	adrp	@x[0],:pg_hi21_nc:OPENSSL_armcap_P
 #else
 	adrp	@x[0],:pg_hi21:OPENSSL_armcap_P

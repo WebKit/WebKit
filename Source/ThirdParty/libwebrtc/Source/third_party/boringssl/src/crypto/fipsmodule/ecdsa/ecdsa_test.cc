@@ -223,16 +223,15 @@ TEST(ECDSATest, BuiltinCurves) {
 
     // Test ASN.1-encoded signatures.
     // Create a signature.
-    unsigned sig_len = ECDSA_size(eckey.get());
-    std::vector<uint8_t> signature(sig_len);
+    std::vector<uint8_t> signature(ECDSA_size(eckey.get()));
+    unsigned sig_len;
     ASSERT_TRUE(
         ECDSA_sign(0, digest, 20, signature.data(), &sig_len, eckey.get()));
     signature.resize(sig_len);
 
     // ECDSA signing should be non-deterministic. This does not verify k is
     // generated securely but at least checks it was randomized at all.
-    sig_len = ECDSA_size(eckey.get());
-    std::vector<uint8_t> signature2(sig_len);
+    std::vector<uint8_t> signature2(ECDSA_size(eckey.get()));
     ASSERT_TRUE(
         ECDSA_sign(0, digest, 20, signature2.data(), &sig_len, eckey.get()));
     signature2.resize(sig_len);
@@ -320,17 +319,16 @@ static bssl::UniquePtr<EC_GROUP> GetCurve(FileTest *t, const char *key) {
   }
 
   if (curve_name == "P-224") {
-    return bssl::UniquePtr<EC_GROUP>(EC_GROUP_new_by_curve_name(NID_secp224r1));
+    return bssl::UniquePtr<EC_GROUP>(const_cast<EC_GROUP *>(EC_group_p224()));
   }
   if (curve_name == "P-256") {
-    return bssl::UniquePtr<EC_GROUP>(
-        EC_GROUP_new_by_curve_name(NID_X9_62_prime256v1));
+    return bssl::UniquePtr<EC_GROUP>(const_cast<EC_GROUP *>(EC_group_p256()));
   }
   if (curve_name == "P-384") {
-    return bssl::UniquePtr<EC_GROUP>(EC_GROUP_new_by_curve_name(NID_secp384r1));
+    return bssl::UniquePtr<EC_GROUP>(const_cast<EC_GROUP *>(EC_group_p384()));
   }
   if (curve_name == "P-521") {
-    return bssl::UniquePtr<EC_GROUP>(EC_GROUP_new_by_curve_name(NID_secp521r1));
+    return bssl::UniquePtr<EC_GROUP>(const_cast<EC_GROUP *>(EC_group_p521()));
   }
   if (curve_name == "secp160r1") {
     return NewSecp160r1Group();

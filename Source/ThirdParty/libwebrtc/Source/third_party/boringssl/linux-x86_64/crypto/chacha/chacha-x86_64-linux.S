@@ -1,16 +1,9 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#if defined(__has_feature)
-#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
-#define OPENSSL_NO_ASM
-#endif
-#endif
+#include <openssl/asm_base.h>
 
-#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && defined(__ELF__)
-#if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols_asm.h>
-#endif
+#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__ELF__)
 .text	
 
 .extern	OPENSSL_ia32cap_P
@@ -53,6 +46,7 @@
 .align	64
 ChaCha20_ctr32:
 .cfi_startproc	
+_CET_ENDBR
 	cmpq	$0,%rdx
 	je	.Lno_data
 	movq	OPENSSL_ia32cap_P+4(%rip),%r10
@@ -333,7 +327,7 @@ ChaCha20_ctr32:
 	leaq	(%rsi),%rsp
 .cfi_adjust_cfa_offset	-136
 .Lno_data:
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	ChaCha20_ctr32,.-ChaCha20_ctr32
 .type	ChaCha20_ssse3,@function
@@ -470,7 +464,7 @@ ChaCha20_ssse3:
 	leaq	(%r9),%rsp
 .cfi_def_cfa_register	rsp
 .Lssse3_epilogue:
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	ChaCha20_ssse3,.-ChaCha20_ssse3
 .type	ChaCha20_4x,@function
@@ -1022,7 +1016,7 @@ ChaCha20_4x:
 	leaq	(%r9),%rsp
 .cfi_def_cfa_register	rsp
 .L4x_epilogue:
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	ChaCha20_4x,.-ChaCha20_4x
 .type	ChaCha20_8x,@function
@@ -1628,11 +1622,7 @@ ChaCha20_8x:
 	leaq	(%r9),%rsp
 .cfi_def_cfa_register	rsp
 .L8x_epilogue:
-	.byte	0xf3,0xc3
+	ret
 .cfi_endproc	
 .size	ChaCha20_8x,.-ChaCha20_8x
-#endif
-#if defined(__ELF__)
-// See https://www.airs.com/blog/archives/518.
-.section .note.GNU-stack,"",%progbits
 #endif

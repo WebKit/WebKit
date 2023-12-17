@@ -1,16 +1,9 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#if defined(__has_feature)
-#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
-#define OPENSSL_NO_ASM
-#endif
-#endif
+#include <openssl/asm_base.h>
 
-#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && defined(__APPLE__)
-#if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols_asm.h>
-#endif
+#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__APPLE__)
 .text	
 
 .globl	_rsaz_1024_sqr_avx2
@@ -19,6 +12,7 @@
 .p2align	6
 _rsaz_1024_sqr_avx2:
 
+_CET_ENDBR
 	leaq	(%rsp),%rax
 
 	pushq	%rbx
@@ -664,7 +658,7 @@ L$OOP_REDUCE_1024:
 	leaq	(%rax),%rsp
 
 L$sqr_1024_epilogue:
-	.byte	0xf3,0xc3
+	ret
 
 
 .globl	_rsaz_1024_mul_avx2
@@ -673,6 +667,7 @@ L$sqr_1024_epilogue:
 .p2align	6
 _rsaz_1024_mul_avx2:
 
+_CET_ENDBR
 	leaq	(%rsp),%rax
 
 	pushq	%rbx
@@ -1220,7 +1215,7 @@ L$oop_mul_1024:
 	leaq	(%rax),%rsp
 
 L$mul_1024_epilogue:
-	.byte	0xf3,0xc3
+	ret
 
 
 .globl	_rsaz_1024_red2norm_avx2
@@ -1229,6 +1224,7 @@ L$mul_1024_epilogue:
 .p2align	5
 _rsaz_1024_red2norm_avx2:
 
+_CET_ENDBR
 	subq	$-128,%rsi
 	xorq	%rax,%rax
 	movq	-128(%rsi),%r8
@@ -1419,7 +1415,7 @@ _rsaz_1024_red2norm_avx2:
 	adcq	$0,%r11
 	movq	%rax,120(%rdi)
 	movq	%r11,%rax
-	.byte	0xf3,0xc3
+	ret
 
 
 
@@ -1429,6 +1425,7 @@ _rsaz_1024_red2norm_avx2:
 .p2align	5
 _rsaz_1024_norm2red_avx2:
 
+_CET_ENDBR
 	subq	$-128,%rdi
 	movq	(%rsi),%r8
 	movl	$0x1fffffff,%eax
@@ -1580,7 +1577,7 @@ _rsaz_1024_norm2red_avx2:
 	movq	%r8,168(%rdi)
 	movq	%r8,176(%rdi)
 	movq	%r8,184(%rdi)
-	.byte	0xf3,0xc3
+	ret
 
 
 .globl	_rsaz_1024_scatter5_avx2
@@ -1589,6 +1586,7 @@ _rsaz_1024_norm2red_avx2:
 .p2align	5
 _rsaz_1024_scatter5_avx2:
 
+_CET_ENDBR
 	vzeroupper
 	vmovdqu	L$scatter_permd(%rip),%ymm5
 	shll	$4,%edx
@@ -1607,7 +1605,7 @@ L$oop_scatter_1024:
 	jnz	L$oop_scatter_1024
 
 	vzeroupper
-	.byte	0xf3,0xc3
+	ret
 
 
 
@@ -1617,6 +1615,7 @@ L$oop_scatter_1024:
 .p2align	5
 _rsaz_1024_gather5_avx2:
 
+_CET_ENDBR
 	vzeroupper
 	movq	%rsp,%r11
 
@@ -1729,7 +1728,7 @@ L$oop_gather_1024:
 	vzeroupper
 	leaq	(%r11),%rsp
 
-	.byte	0xf3,0xc3
+	ret
 
 L$SEH_end_rsaz_1024_gather5:
 
@@ -1747,8 +1746,4 @@ L$inc:
 .long	4,4,4,4, 4,4,4,4
 .p2align	6
 .text	
-#endif
-#if defined(__ELF__)
-// See https://www.airs.com/blog/archives/518.
-.section .note.GNU-stack,"",%progbits
 #endif

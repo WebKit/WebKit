@@ -485,12 +485,14 @@ void SSL_CTX_set_private_key_method(SSL_CTX *ctx,
 
 static constexpr size_t kMaxSignatureAlgorithmNameLen = 23;
 
-// This was "constexpr" rather than "const", but that triggered a bug in MSVC
-// where it didn't pad the strings to the correct length.
-static const struct {
+struct SignatureAlgorithmName {
   uint16_t signature_algorithm;
   const char name[kMaxSignatureAlgorithmNameLen];
-} kSignatureAlgorithmNames[] = {
+};
+
+// This was "constexpr" rather than "const", but that triggered a bug in MSVC
+// where it didn't pad the strings to the correct length.
+static const SignatureAlgorithmName kSignatureAlgorithmNames[] = {
     {SSL_SIGN_RSA_PKCS1_MD5_SHA1, "rsa_pkcs1_md5_sha1"},
     {SSL_SIGN_RSA_PKCS1_SHA1, "rsa_pkcs1_sha1"},
     {SSL_SIGN_RSA_PKCS1_SHA256, "rsa_pkcs1_sha256"},
@@ -516,6 +518,8 @@ const char *SSL_get_signature_algorithm_name(uint16_t sigalg,
         return "ecdsa_sha384";
       case SSL_SIGN_ECDSA_SECP521R1_SHA512:
         return "ecdsa_sha512";
+        // If adding more here, also update
+        // |SSL_get_all_signature_algorithm_names|.
     }
   }
 
@@ -529,24 +533,11 @@ const char *SSL_get_signature_algorithm_name(uint16_t sigalg,
 }
 
 size_t SSL_get_all_signature_algorithm_names(const char **out, size_t max_out) {
-  auto span = MakeSpan(out, max_out);
-  if (!span.empty()) {
-    span[0] = "ecdsa_sha256";
-    span = span.subspan(1);
-  }
-  if (!span.empty()) {
-    span[0] = "ecdsa_sha384";
-    span = span.subspan(1);
-  }
-  if (!span.empty()) {
-    span[0] = "ecdsa_sha512";
-    span = span.subspan(1);
-  }
-  span = span.subspan(0, OPENSSL_ARRAY_SIZE(kSignatureAlgorithmNames));
-  for (size_t i = 0; i < span.size(); i++) {
-    span[i] = kSignatureAlgorithmNames[i].name;
-  }
-  return 3 + OPENSSL_ARRAY_SIZE(kSignatureAlgorithmNames);
+  const char *kPredefinedNames[] = {"ecdsa_sha256", "ecdsa_sha384",
+                                    "ecdsa_sha512"};
+  return GetAllNames(out, max_out, MakeConstSpan(kPredefinedNames),
+                     &SignatureAlgorithmName::name,
+                     MakeConstSpan(kSignatureAlgorithmNames));
 }
 
 int SSL_get_signature_algorithm_key_type(uint16_t sigalg) {

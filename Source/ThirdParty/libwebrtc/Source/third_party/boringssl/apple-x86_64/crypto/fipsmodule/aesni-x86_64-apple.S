@@ -1,16 +1,9 @@
 // This file is generated from a similarly-named Perl script in the BoringSSL
 // source tree. Do not edit by hand.
 
-#if defined(__has_feature)
-#if __has_feature(memory_sanitizer) && !defined(OPENSSL_NO_ASM)
-#define OPENSSL_NO_ASM
-#endif
-#endif
+#include <openssl/asm_base.h>
 
-#if defined(__x86_64__) && !defined(OPENSSL_NO_ASM) && defined(__APPLE__)
-#if defined(BORINGSSL_PREFIX)
-#include <boringssl_prefix_symbols_asm.h>
-#endif
+#if !defined(OPENSSL_NO_ASM) && defined(OPENSSL_X86_64) && defined(__APPLE__)
 .text	
 
 .globl	_aes_hw_encrypt
@@ -19,6 +12,7 @@
 .p2align	4
 _aes_hw_encrypt:
 
+_CET_ENDBR
 #ifdef BORINGSSL_DISPATCH_TEST
 
 	movb	$1,_BORINGSSL_function_hit+1(%rip)
@@ -40,7 +34,7 @@ L$oop_enc1_1:
 	pxor	%xmm1,%xmm1
 	movups	%xmm2,(%rsi)
 	pxor	%xmm2,%xmm2
-	.byte	0xf3,0xc3
+	ret
 
 
 
@@ -50,6 +44,7 @@ L$oop_enc1_1:
 .p2align	4
 _aes_hw_decrypt:
 
+_CET_ENDBR
 	movups	(%rdi),%xmm2
 	movl	240(%rdx),%eax
 	movups	(%rdx),%xmm0
@@ -67,7 +62,7 @@ L$oop_dec1_2:
 	pxor	%xmm1,%xmm1
 	movups	%xmm2,(%rsi)
 	pxor	%xmm2,%xmm2
-	.byte	0xf3,0xc3
+	ret
 
 
 
@@ -98,7 +93,7 @@ L$enc_loop2:
 .byte	102,15,56,220,217
 .byte	102,15,56,221,208
 .byte	102,15,56,221,216
-	.byte	0xf3,0xc3
+	ret
 
 
 
@@ -129,7 +124,7 @@ L$dec_loop2:
 .byte	102,15,56,222,217
 .byte	102,15,56,223,208
 .byte	102,15,56,223,216
-	.byte	0xf3,0xc3
+	ret
 
 
 
@@ -165,7 +160,7 @@ L$enc_loop3:
 .byte	102,15,56,221,208
 .byte	102,15,56,221,216
 .byte	102,15,56,221,224
-	.byte	0xf3,0xc3
+	ret
 
 
 
@@ -201,7 +196,7 @@ L$dec_loop3:
 .byte	102,15,56,223,208
 .byte	102,15,56,223,216
 .byte	102,15,56,223,224
-	.byte	0xf3,0xc3
+	ret
 
 
 
@@ -243,7 +238,7 @@ L$enc_loop4:
 .byte	102,15,56,221,216
 .byte	102,15,56,221,224
 .byte	102,15,56,221,232
-	.byte	0xf3,0xc3
+	ret
 
 
 
@@ -285,7 +280,7 @@ L$dec_loop4:
 .byte	102,15,56,223,216
 .byte	102,15,56,223,224
 .byte	102,15,56,223,232
-	.byte	0xf3,0xc3
+	ret
 
 
 
@@ -341,7 +336,7 @@ L$enc_loop6_enter:
 .byte	102,15,56,221,232
 .byte	102,15,56,221,240
 .byte	102,15,56,221,248
-	.byte	0xf3,0xc3
+	ret
 
 
 
@@ -397,7 +392,7 @@ L$dec_loop6_enter:
 .byte	102,15,56,223,232
 .byte	102,15,56,223,240
 .byte	102,15,56,223,248
-	.byte	0xf3,0xc3
+	ret
 
 
 
@@ -463,7 +458,7 @@ L$enc_loop8_enter:
 .byte	102,15,56,221,248
 .byte	102,68,15,56,221,192
 .byte	102,68,15,56,221,200
-	.byte	0xf3,0xc3
+	ret
 
 
 
@@ -529,7 +524,7 @@ L$dec_loop8_enter:
 .byte	102,15,56,223,248
 .byte	102,68,15,56,223,192
 .byte	102,68,15,56,223,200
-	.byte	0xf3,0xc3
+	ret
 
 
 .globl	_aes_hw_ecb_encrypt
@@ -538,6 +533,7 @@ L$dec_loop8_enter:
 .p2align	4
 _aes_hw_ecb_encrypt:
 
+_CET_ENDBR
 	andq	$-16,%rdx
 	jz	L$ecb_ret
 
@@ -874,7 +870,7 @@ L$ecb_dec_six:
 L$ecb_ret:
 	xorps	%xmm0,%xmm0
 	pxor	%xmm1,%xmm1
-	.byte	0xf3,0xc3
+	ret
 
 
 .globl	_aes_hw_ctr32_encrypt_blocks
@@ -883,6 +879,7 @@ L$ecb_ret:
 .p2align	4
 _aes_hw_ctr32_encrypt_blocks:
 
+_CET_ENDBR
 #ifdef BORINGSSL_DISPATCH_TEST
 	movb	$1,_BORINGSSL_function_hit(%rip)
 #endif
@@ -1260,6 +1257,8 @@ L$ctr32_enc_done:
 	pxor	%xmm0,%xmm13
 	movdqu	80(%rdi),%xmm15
 	pxor	%xmm0,%xmm14
+	prefetcht0	448(%rdi)
+	prefetcht0	512(%rdi)
 	pxor	%xmm0,%xmm15
 .byte	102,15,56,220,209
 .byte	102,15,56,220,217
@@ -1457,7 +1456,7 @@ L$ctr32_done:
 	leaq	(%r11),%rsp
 
 L$ctr32_epilogue:
-	.byte	0xf3,0xc3
+	ret
 
 
 .globl	_aes_hw_cbc_encrypt
@@ -1466,6 +1465,7 @@ L$ctr32_epilogue:
 .p2align	4
 _aes_hw_cbc_encrypt:
 
+_CET_ENDBR
 	testq	%rdx,%rdx
 	jz	L$cbc_ret
 
@@ -2050,7 +2050,7 @@ L$cbc_dec_ret:
 	leaq	(%r11),%rsp
 
 L$cbc_ret:
-	.byte	0xf3,0xc3
+	ret
 
 
 .globl	_aes_hw_set_decrypt_key
@@ -2059,6 +2059,7 @@ L$cbc_ret:
 .p2align	4
 _aes_hw_set_decrypt_key:
 
+_CET_ENDBR
 .byte	0x48,0x83,0xEC,0x08
 
 	call	__aesni_set_encrypt_key
@@ -2094,7 +2095,7 @@ L$dec_key_inverse:
 L$dec_key_ret:
 	addq	$8,%rsp
 
-	.byte	0xf3,0xc3
+	ret
 
 L$SEH_end_set_decrypt_key:
 
@@ -2105,6 +2106,7 @@ L$SEH_end_set_decrypt_key:
 _aes_hw_set_encrypt_key:
 __aesni_set_encrypt_key:
 
+_CET_ENDBR
 #ifdef BORINGSSL_DISPATCH_TEST
 	movb	$1,_BORINGSSL_function_hit+3(%rip)
 #endif
@@ -2404,7 +2406,7 @@ L$enc_key_ret:
 	pxor	%xmm5,%xmm5
 	addq	$8,%rsp
 
-	.byte	0xf3,0xc3
+	ret
 
 L$SEH_end_set_encrypt_key:
 
@@ -2419,7 +2421,7 @@ L$key_expansion_128_cold:
 	xorps	%xmm4,%xmm0
 	shufps	$255,%xmm1,%xmm1
 	xorps	%xmm1,%xmm0
-	.byte	0xf3,0xc3
+	ret
 
 .p2align	4
 L$key_expansion_192a:
@@ -2439,7 +2441,7 @@ L$key_expansion_192b_warm:
 	pxor	%xmm1,%xmm0
 	pshufd	$255,%xmm0,%xmm3
 	pxor	%xmm3,%xmm2
-	.byte	0xf3,0xc3
+	ret
 
 .p2align	4
 L$key_expansion_192b:
@@ -2462,7 +2464,7 @@ L$key_expansion_256a_cold:
 	xorps	%xmm4,%xmm0
 	shufps	$255,%xmm1,%xmm1
 	xorps	%xmm1,%xmm0
-	.byte	0xf3,0xc3
+	ret
 
 .p2align	4
 L$key_expansion_256b:
@@ -2475,7 +2477,7 @@ L$key_expansion_256b:
 	xorps	%xmm4,%xmm2
 	shufps	$170,%xmm1,%xmm1
 	xorps	%xmm1,%xmm2
-	.byte	0xf3,0xc3
+	ret
 
 
 .section	__DATA,__const
@@ -2502,8 +2504,4 @@ L$key_rcon1b:
 .byte	65,69,83,32,102,111,114,32,73,110,116,101,108,32,65,69,83,45,78,73,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
 .p2align	6
 .text	
-#endif
-#if defined(__ELF__)
-// See https://www.airs.com/blog/archives/518.
-.section .note.GNU-stack,"",%progbits
 #endif

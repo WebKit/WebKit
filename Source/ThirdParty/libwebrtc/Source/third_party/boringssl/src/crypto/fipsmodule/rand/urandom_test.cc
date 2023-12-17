@@ -22,9 +22,9 @@
 #include "getrandom_fillin.h"
 #include "internal.h"
 
-#if (defined(OPENSSL_X86_64) || defined(OPENSSL_AARCH64)) && \
-    !defined(BORINGSSL_SHARED_LIBRARY) &&                    \
-    defined(OPENSSL_URANDOM) && defined(USE_NR_getrandom)
+#if (defined(OPENSSL_X86_64) || defined(OPENSSL_AARCH64)) &&               \
+    !defined(BORINGSSL_SHARED_LIBRARY) && defined(OPENSSL_RAND_URANDOM) && \
+    defined(USE_NR_getrandom)
 
 #include <elf.h>
 #include <linux/random.h>

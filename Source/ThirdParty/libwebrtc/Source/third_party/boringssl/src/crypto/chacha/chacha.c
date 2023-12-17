@@ -91,7 +91,25 @@ void CRYPTO_chacha_20(uint8_t *out, const uint8_t *in, size_t in_len,
   }
 #endif
 
-  ChaCha20_ctr32(out, in, in_len, key_ptr, counter_nonce);
+  while (in_len > 0) {
+    // The assembly functions do not have defined overflow behavior. While
+    // overflow is almost always a bug in the caller, we prefer our functions to
+    // behave the same across platforms, so divide into multiple calls to avoid
+    // this case.
+    uint64_t todo = 64 * ((UINT64_C(1) << 32) - counter_nonce[0]);
+    if (todo > in_len) {
+      todo = in_len;
+    }
+
+    ChaCha20_ctr32(out, in, (size_t)todo, key_ptr, counter_nonce);
+    in += todo;
+    out += todo;
+    in_len -= todo;
+
+    // We're either done and will next break out of the loop, or we stopped at
+    // the wraparound point and the counter should continue at zero.
+    counter_nonce[0] = 0;
+  }
 }
 
 #else

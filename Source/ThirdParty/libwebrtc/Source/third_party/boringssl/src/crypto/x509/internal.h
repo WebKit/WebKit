@@ -64,6 +64,7 @@
 #include <openssl/x509.h>
 
 #include "../asn1/internal.h"
+#include "../internal.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -274,7 +275,6 @@ struct x509_lookup_method_st {
 // function is then called to actually check the cert chain.
 struct x509_store_st {
   // The following is a cache of trusted certs
-  int cache;                    // if true, stash any hits
   STACK_OF(X509_OBJECT) *objs;  // Cache of all objects
   CRYPTO_MUTEX objs_lock;
 

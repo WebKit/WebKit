@@ -57,6 +57,7 @@
 #include <string.h>
 
 #include <openssl/asn1.h>
+#include <openssl/bytestring.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/obj.h>
@@ -86,20 +87,41 @@ int X509_NAME_get_text_by_OBJ(const X509_NAME *name, const ASN1_OBJECT *obj,
   }
   const ASN1_STRING *data =
       X509_NAME_ENTRY_get_data(X509_NAME_get_entry(name, i));
-  i = (data->length > (len - 1)) ? (len - 1) : data->length;
-  if (buf == NULL) {
-    return data->length;
+  unsigned char *text = NULL;
+  int ret = -1;
+  int text_len = ASN1_STRING_to_UTF8(&text, data);
+  // Fail if we could not encode as UTF-8.
+  if (text_len < 0) {
+    goto out;
   }
-  OPENSSL_memcpy(buf, data->data, i);
-  buf[i] = '\0';
-  return i;
+  CBS cbs;
+  CBS_init(&cbs, text, text_len);
+  // Fail if the UTF-8 encoding constains a 0 byte because this is
+  // returned as a C string and callers very often do not check.
+  if (CBS_contains_zero_byte(&cbs)) {
+    goto out;
+  }
+  // We still support the "pass NULL to find out how much" API
+  if (buf != NULL) {
+    if (text_len >= len || len <= 0 ||
+        !CBS_copy_bytes(&cbs, (uint8_t *)buf, text_len)) {
+      goto out;
+    }
+    // It must be a C string
+    buf[text_len] = '\0';
+  }
+  ret = text_len;
+
+out:
+  OPENSSL_free(text);
+  return ret;
 }
 
 int X509_NAME_entry_count(const X509_NAME *name) {
   if (name == NULL) {
     return 0;
   }
-  return (sk_X509_NAME_ENTRY_num(name->entries));
+  return (int)sk_X509_NAME_ENTRY_num(name->entries);
 }
 
 int X509_NAME_get_index_by_NID(const X509_NAME *name, int nid, int lastpos) {
@@ -109,26 +131,22 @@ int X509_NAME_get_index_by_NID(const X509_NAME *name, int nid, int lastpos) {
   if (obj == NULL) {
     return -2;
   }
-  return (X509_NAME_get_index_by_OBJ(name, obj, lastpos));
+  return X509_NAME_get_index_by_OBJ(name, obj, lastpos);
 }
 
 // NOTE: you should be passsing -1, not 0 as lastpos
 int X509_NAME_get_index_by_OBJ(const X509_NAME *name, const ASN1_OBJECT *obj,
                                int lastpos) {
-  int n;
-  X509_NAME_ENTRY *ne;
-  STACK_OF(X509_NAME_ENTRY) *sk;
-
   if (name == NULL) {
     return -1;
   }
   if (lastpos < 0) {
     lastpos = -1;
   }
-  sk = name->entries;
-  n = sk_X509_NAME_ENTRY_num(sk);
+  const STACK_OF(X509_NAME_ENTRY) *sk = name->entries;
+  int n = (int)sk_X509_NAME_ENTRY_num(sk);
   for (lastpos++; lastpos < n; lastpos++) {
-    ne = sk_X509_NAME_ENTRY_value(sk, lastpos);
+    const X509_NAME_ENTRY *ne = sk_X509_NAME_ENTRY_value(sk, lastpos);
     if (OBJ_cmp(ne->object, obj) == 0) {
       return lastpos;
     }
@@ -153,9 +171,9 @@ X509_NAME_ENTRY *X509_NAME_delete_entry(X509_NAME *name, int loc) {
 
   STACK_OF(X509_NAME_ENTRY) *sk = name->entries;
   X509_NAME_ENTRY *ret = sk_X509_NAME_ENTRY_delete(sk, loc);
-  int n = sk_X509_NAME_ENTRY_num(sk);
+  size_t n = sk_X509_NAME_ENTRY_num(sk);
   name->modified = 1;
-  if (loc == n) {
+  if ((size_t)loc == n) {
     return ret;
   }
 
@@ -170,7 +188,7 @@ X509_NAME_ENTRY *X509_NAME_delete_entry(X509_NAME *name, int loc) {
   // If we removed a singleton RDN, update the RDN indices so they are
   // consecutive again.
   if (set_prev + 1 < set_next) {
-    for (int i = loc; i < n; i++) {
+    for (size_t i = loc; i < n; i++) {
       sk_X509_NAME_ENTRY_value(sk, i)->set--;
     }
   }
@@ -221,14 +239,14 @@ int X509_NAME_add_entry_by_txt(X509_NAME *name, const char *field, int type,
 int X509_NAME_add_entry(X509_NAME *name, const X509_NAME_ENTRY *entry, int loc,
                         int set) {
   X509_NAME_ENTRY *new_name = NULL;
-  int n, i, inc;
+  int i, inc;
   STACK_OF(X509_NAME_ENTRY) *sk;
 
   if (name == NULL) {
     return 0;
   }
   sk = name->entries;
-  n = sk_X509_NAME_ENTRY_num(sk);
+  int n = (int)sk_X509_NAME_ENTRY_num(sk);
   if (loc > n) {
     loc = n;
   } else if (loc < 0) {
@@ -266,7 +284,7 @@ int X509_NAME_add_entry(X509_NAME *name, const X509_NAME_ENTRY *entry, int loc,
     goto err;
   }
   if (inc) {
-    n = sk_X509_NAME_ENTRY_num(sk);
+    n = (int)sk_X509_NAME_ENTRY_num(sk);
     for (i = loc + 1; i < n; i++) {
       sk_X509_NAME_ENTRY_value(sk, i)->set += 1;
     }

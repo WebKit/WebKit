@@ -6,6 +6,7 @@ default	rel
 %define XMMWORD
 %define YMMWORD
 %define ZMMWORD
+%define _CET_ENDBR
 
 %ifdef BORINGSSL_PREFIX
 %include "boringssl_prefix_symbols_nasm.inc"
@@ -343,7 +344,7 @@ $L$6x_done:
 	vpxor	xmm8,xmm8,XMMWORD[((16+8))+rsp]
 	vpxor	xmm8,xmm8,xmm4
 
-	DB	0F3h,0C3h		;repret
+	ret
 
 
 global	aesni_gcm_decrypt
@@ -352,6 +353,7 @@ ALIGN	32
 aesni_gcm_decrypt:
 
 $L$SEH_begin_aesni_gcm_decrypt_1:
+_CET_ENDBR
 	xor	rax,rax
 
 
@@ -509,7 +511,7 @@ $L$dec_no_key_aliasing:
 	pop	rbp
 
 $L$gcm_dec_abort:
-	DB	0F3h,0C3h		;repret
+	ret
 $L$SEH_end_aesni_gcm_decrypt_22:
 
 
@@ -580,7 +582,7 @@ $L$oop_ctr32:
 	vmovups	XMMWORD[80+rdx],xmm14
 	lea	rdx,[96+rdx]
 
-	DB	0F3h,0C3h		;repret
+	ret
 ALIGN	32
 $L$handle_ctr32_2:
 	vpshufb	xmm6,xmm1,xmm0
@@ -612,6 +614,7 @@ ALIGN	32
 aesni_gcm_encrypt:
 
 $L$SEH_begin_aesni_gcm_encrypt_1:
+_CET_ENDBR
 %ifdef BORINGSSL_DISPATCH_TEST
 EXTERN	BORINGSSL_function_hit
 	mov	BYTE[((BORINGSSL_function_hit+2))],1
@@ -939,7 +942,7 @@ $L$enc_no_key_aliasing:
 	pop	rbp
 
 $L$gcm_enc_abort:
-	DB	0F3h,0C3h		;repret
+	ret
 $L$SEH_end_aesni_gcm_encrypt_22:
 
 
