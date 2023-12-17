@@ -62,6 +62,7 @@ WTF_MAKE_ISO_ALLOCATED_IMPL(RenderTextControlInnerBlock);
 RenderTextControlSingleLine::RenderTextControlSingleLine(Type type, HTMLInputElement& element, RenderStyle&& style)
     : RenderTextControl(type, element, WTFMove(style))
 {
+    ASSERT(isRenderTextControlSingleLine());
 }
 
 RenderTextControlSingleLine::~RenderTextControlSingleLine() = default;

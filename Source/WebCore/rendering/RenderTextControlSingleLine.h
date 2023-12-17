@@ -43,7 +43,6 @@ private:
 
     bool hasControlClip() const override;
     LayoutRect controlClipRect(const LayoutPoint&) const override;
-    bool isRenderTextControlSingleLine() const final { return true; }
 
     void layout() override;
 
