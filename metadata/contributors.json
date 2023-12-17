@@ -5088,7 +5088,8 @@
    },
    {
       "emails" : [
-         "luke@warlow.dev"
+         "luke@warlow.dev",
+         "lwarlow@igalia.com"
       ],
       "github" : "lukewarlow",
       "name" : "Luke Warlow",
