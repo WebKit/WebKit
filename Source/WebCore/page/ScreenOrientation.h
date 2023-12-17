@@ -26,8 +26,8 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "ContextDestructionObserverInlines.h"
 #include "EventTarget.h"
-
 #include "ScreenOrientationLockType.h"
 #include "ScreenOrientationManager.h"
 #include "ScreenOrientationType.h"

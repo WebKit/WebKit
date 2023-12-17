@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestCallbackFunction.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "JSDOMConvertNumbers.h"
 #include "JSDOMConvertStrings.h"
 #include "JSDOMExceptionHandling.h"

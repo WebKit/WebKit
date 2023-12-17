@@ -93,12 +93,6 @@ public:
     static bool calculateKernelsForAzimuthElevation(int azimuth, int elevation, float sampleRate, const String& subjectName,
                                                     RefPtr<HRTFKernel>& kernelL, RefPtr<HRTFKernel>& kernelR);
 
-    // Given a specific azimuth and elevation angle, returns the left and right HRTFKernel in kernelL and kernelR.
-    // This method averages the measured response using symmetry of azimuth (for example by averaging the -30.0 and +30.0 azimuth responses).
-    // Returns true on success.
-    static bool calculateSymmetricKernelsForAzimuthElevation(int azimuth, int elevation, float sampleRate, const String& subjectName,
-                                                             RefPtr<HRTFKernel>& kernelL, RefPtr<HRTFKernel>& kernelR);
-
 private:
     std::unique_ptr<HRTFKernelList> m_kernelListL;
     std::unique_ptr<HRTFKernelList> m_kernelListR;

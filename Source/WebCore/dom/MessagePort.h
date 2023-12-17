@@ -27,6 +27,7 @@
 #pragma once
 
 #include "ActiveDOMObject.h"
+#include "ContextDestructionObserverInlines.h"
 #include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "MessagePortChannel.h"

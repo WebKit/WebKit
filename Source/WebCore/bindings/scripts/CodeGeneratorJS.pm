@@ -6713,6 +6713,7 @@ sub GenerateCallbackImplementationContent
     my $className = "JS${name}";
 
     $includesRef->{"ScriptExecutionContext.h"} = 1;
+    $includesRef->{"ContextDestructionObserverInlines.h"} = 1;
 
     # Constructor
     push(@$contentRef, "${className}::${className}(JSObject* callback, JSDOMGlobalObject* globalObject)\n");

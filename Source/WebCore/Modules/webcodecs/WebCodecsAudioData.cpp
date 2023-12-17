@@ -29,6 +29,7 @@
 
 #if ENABLE(WEB_CODECS)
 
+#include "ContextDestructionObserverInlines.h"
 #include "ExceptionOr.h"
 #include "JSDOMPromiseDeferred.h"
 #include "PlatformRawAudioData.h"

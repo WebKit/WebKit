@@ -509,6 +509,7 @@ struct ImageAnalysisContextMenuActionData {
 
     BOOL _focusRequiresStrongPasswordAssistance;
     BOOL _waitingForEditDragSnapshot;
+    std::optional<BOOL> _cachedRequiresLegacyTextInputTraits;
     NSInteger _dropAnimationCount;
 
     BOOL _hasSetUpInteractions;

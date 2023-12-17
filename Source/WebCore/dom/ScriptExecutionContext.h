@@ -94,7 +94,7 @@ namespace IDBClient {
 class IDBConnectionProxy;
 }
 
-class ScriptExecutionContext : public SecurityContext, public CanMakeCheckedPtr, public TimerAlignment {
+class ScriptExecutionContext : public SecurityContext, public TimerAlignment {
 public:
     explicit ScriptExecutionContext(ScriptExecutionContextIdentifier = { });
     virtual ~ScriptExecutionContext();

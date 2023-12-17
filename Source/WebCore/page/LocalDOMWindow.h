@@ -27,7 +27,7 @@
 #pragma once
 
 #include "Base64Utilities.h"
-#include "ContextDestructionObserver.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DOMWindow.h"
 #include "ExceptionOr.h"
 #include "ImageBitmap.h"
