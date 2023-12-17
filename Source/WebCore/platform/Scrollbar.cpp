@@ -286,7 +286,7 @@ void Scrollbar::moveThumb(int pos, bool draggingDocument)
             destinationPosition = std::min(destinationPosition + delta, maximum());
         else if (delta < 0)
             destinationPosition = std::max(destinationPosition + delta, 0);
-        m_scrollableArea.scrollToOffsetWithoutAnimation(m_orientation, destinationPosition);
+        m_scrollableArea.scrollToPositionWithoutAnimation(m_orientation, destinationPosition);
         m_documentDragPos = pos;
         return;
     }
@@ -307,8 +307,8 @@ void Scrollbar::moveThumb(int pos, bool draggingDocument)
         delta = std::max(-thumbPos, delta);
     
     if (delta) {
-        float newPosition = static_cast<float>(thumbPos + delta) * maximum() / (trackLen - thumbLen);
-        m_scrollableArea.scrollToOffsetWithoutAnimation(m_orientation, newPosition);
+        float newOffset = static_cast<float>(thumbPos + delta) * maximum() / (trackLen - thumbLen);
+        m_scrollableArea.scrollToOffsetWithoutAnimation(m_orientation, newOffset);
     }
 }
 

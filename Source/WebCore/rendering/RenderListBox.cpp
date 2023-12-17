@@ -184,7 +184,7 @@ void RenderListBox::layout()
         m_scrollbar->setSteps(1, std::max(1, numVisibleItems() - 1), itemLogicalHeight());
         m_scrollbar->setProportion(numVisibleItems(), numItems());
         if (!enabled) {
-            scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), 0);
+            scrollToPositionWithoutAnimation(m_scrollbar->orientation(), 0);
             m_scrollPosition = { };
         }
 
@@ -722,16 +722,16 @@ bool RenderListBox::scrollToRevealElementAtListIndex(int index)
     if (index < 0 || index >= numItems() || listIndexIsVisible(index))
         return false;
 
-    int newOffset;
+    int newIndex;
     if (index < indexOffset())
-        newOffset = index;
+        newIndex = index;
     else
-        newOffset = index - numVisibleItems() + 1;
+        newIndex = index - numVisibleItems() + 1;
 
     if (style().isFlippedBlocksWritingMode())
-        newOffset *= -1;
+        newIndex *= -1;
 
-    scrollToOffsetWithoutAnimation(scrollbarOrientationForWritingMode(), newOffset);
+    scrollToPositionWithoutAnimation(scrollbarOrientationForWritingMode(), newIndex);
 
     return true;
 }
@@ -963,7 +963,7 @@ void RenderListBox::setLogicalScrollTop(int newLogicalScrollTop)
         index *= -1;
 
     setupWheelEventTestMonitor(*this);
-    scrollToOffsetWithoutAnimation(scrollbarOrientationForWritingMode(), index);
+    scrollToPositionWithoutAnimation(scrollbarOrientationForWritingMode(), index);
 }
 
 bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)

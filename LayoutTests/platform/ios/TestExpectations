@@ -2418,6 +2418,7 @@ fast/images/image-map-outline-with-scale-transform.html [ Pass ImageOnlyFailure 
 fast/dom/Window/child-window-focus.html
 
 # iOS does not allow you to scroll by dragging the scrollbar thumb.
+webkit.org/b/266555 fast/scrolling/rtl-bt-drag-scroller.html [ Failure ]
 webkit.org/b/157201 fast/scrolling/rtl-drag-vertical-scroller.html [ Failure ]
 webkit.org/b/157201 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb.html [ Failure ]
 webkit.org/b/157201 css3/scroll-snap/scroll-snap-drag-scrollbar-thumb-with-relayouts.html [ Failure ]

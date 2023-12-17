@@ -172,6 +172,15 @@ void ScrollableArea::scrollToPositionWithoutAnimation(const FloatPoint& position
     scrollAnimator().scrollToPositionWithoutAnimation(position, clamping);
 }
 
+void ScrollableArea::scrollToPositionWithoutAnimation(ScrollbarOrientation orientation, float position)
+{
+    auto currentPosition = scrollAnimator().currentPosition();
+    if (orientation == ScrollbarOrientation::Horizontal)
+        scrollAnimator().scrollToPositionWithoutAnimation(FloatPoint(position, currentPosition.y()));
+    else
+        scrollAnimator().scrollToPositionWithoutAnimation(FloatPoint(currentPosition.x(), position));
+}
+
 void ScrollableArea::scrollToPositionWithAnimation(const FloatPoint& position, const ScrollPositionChangeOptions& options)
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollableArea " << this << " scrollToPositionWithAnimation " << position);
@@ -205,11 +214,11 @@ void ScrollableArea::scrollToOffsetWithoutAnimation(const FloatPoint& offset, Sc
 
 void ScrollableArea::scrollToOffsetWithoutAnimation(ScrollbarOrientation orientation, float offset)
 {
-    auto currentPosition = scrollAnimator().currentPosition();
+    auto currentOffset = scrollOffsetFromPosition(scrollAnimator().currentPosition(), toFloatSize(scrollOrigin()));
     if (orientation == ScrollbarOrientation::Horizontal)
-        scrollAnimator().scrollToPositionWithoutAnimation(FloatPoint(offset, currentPosition.y()));
+        scrollToOffsetWithoutAnimation(FloatPoint(offset, currentOffset.y()));
     else
-        scrollAnimator().scrollToPositionWithoutAnimation(FloatPoint(currentPosition.x(), offset));
+        scrollToOffsetWithoutAnimation(FloatPoint(currentOffset.x(), offset));
 }
 
 void ScrollableArea::notifyScrollPositionChanged(const ScrollPosition& position)

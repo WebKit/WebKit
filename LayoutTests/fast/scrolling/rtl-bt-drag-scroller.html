@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body style="margin: 0px;">
+<div id="scrollMe" style="writing-mode: vertical-rl; direction: rtl; width: 100px; height: 100px; position: absolute; left: 0px; top: 0px; overflow: scroll;">
+<div style="width: 300px; height: 300px; background-color: yellow;"></div>
+</div>
+<script>
+description("This test makes sure that a div with right-to-left or bottom-to-top scroll directions can be scrolled by dragging the scrollbar.");
+
+if (window.eventSender) {
+    eventSender.mouseMoveTo(96, 96);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(4, 96);
+    eventSender.mouseUp();
+
+    eventSender.mouseMoveTo(4, 81);
+    eventSender.mouseDown();
+    eventSender.mouseMoveTo(4, 4);
+    eventSender.mouseUp();
+}
+
+var scrollMe = document.getElementById("scrollMe");
+shouldNotBe("scrollMe.scrollLeft", "0");
+shouldNotBe("scrollMe.scrollTop", "0");
+</script>
+</body>
+</html>
