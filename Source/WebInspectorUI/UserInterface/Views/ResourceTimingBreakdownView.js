@@ -162,7 +162,7 @@ WI.ResourceTimingBreakdownView = class ResourceTimingBreakdownView extends WI.Vi
             this._appendHeaderRow(WI.UIString("Connection:"));
             if (domainLookupStart)
                 this._appendRow(WI.UIString("DNS"), "dns", domainLookupStart, domainLookupEnd || connectStart || requestStart);
-            if (protocol === "http/1.1" || protocol === "h2") {
+            if (!protocol || protocol === "http/1.1" || protocol === "h2") {
                 if (connectStart)
                     this._appendRow(WI.UIString("TCP"), "connect", connectStart, connectEnd || requestStart);
                 if (secureConnectionStart)

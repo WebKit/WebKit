@@ -1244,7 +1244,7 @@ WI.Resource = class Resource extends WI.SourceCode
         let lines = [];
 
         let protocol = this.protocol || "";
-        if (protocol === "http/1.1") {
+        if (!protocol || protocol === "http/1.1") {
             // HTTP/1.1 request line:
             // https://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1
             lines.push(`${this.requestMethod} ${this.urlComponents.path}${protocol ? " " + protocol.toUpperCase() : ""}`);
@@ -1268,7 +1268,7 @@ WI.Resource = class Resource extends WI.SourceCode
         let lines = [];
 
         let protocol = this.protocol || "";
-        if (protocol === "http/1.1") {
+        if (!protocol || protocol === "http/1.1") {
             // HTTP/1.1 response status line:
             // https://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
             lines.push(`${protocol ? protocol.toUpperCase() + " " : ""}${this.statusCode} ${this.statusText}`);
