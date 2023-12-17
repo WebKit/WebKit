@@ -34,6 +34,7 @@
 #if ENABLE(NOTIFICATIONS)
 
 #include "ActiveDOMObject.h"
+#include "ContextDestructionObserverInlines.h"
 #include "EventTarget.h"
 #include "NotificationDirection.h"
 #include "NotificationPayload.h"

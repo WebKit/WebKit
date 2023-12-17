@@ -24,6 +24,7 @@
 
 #include "JSTestCallbackInterface.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "JSDOMConstructorNotConstructable.h"
 #include "JSDOMConvertBase.h"
 #include "JSDOMConvertBoolean.h"

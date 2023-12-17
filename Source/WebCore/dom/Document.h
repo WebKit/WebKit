@@ -30,6 +30,7 @@
 #include "CanvasObserver.h"
 #include "Color.h"
 #include "ContainerNode.h"
+#include "ContextDestructionObserverInlines.h"
 #include "DocumentEventTiming.h"
 #include "FontSelectorClient.h"
 #include "FrameDestructionObserver.h"

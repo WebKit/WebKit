@@ -246,7 +246,7 @@ private:
     void reportBlockedScriptExecutionToInspector(const String& directiveText) const;
 
     // We can never have both a script execution context and a ContentSecurityPolicyClient.
-    CheckedPtr<ScriptExecutionContext> m_scriptExecutionContext;
+    WeakPtr<ScriptExecutionContext> m_scriptExecutionContext;
     ContentSecurityPolicyClient* m_client { nullptr };
     mutable ReportingClient* m_reportingClient { nullptr };
 

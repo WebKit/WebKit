@@ -24,6 +24,7 @@
 
 #include "JSTestVoidCallbackFunction.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "JSDOMConvertBase.h"
 #include "JSDOMConvertBoolean.h"
 #include "JSDOMConvertBufferSource.h"

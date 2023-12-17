@@ -48,7 +48,7 @@ void ContextDestructionObserver::observeContext(ScriptExecutionContext* scriptEx
         m_scriptExecutionContext->willDestroyDestructionObserver(*this);
     }
 
-    m_scriptExecutionContext = scriptExecutionContext;
+    m_scriptExecutionContext = WeakPtr { scriptExecutionContext, EnableWeakPtrThreadingAssertions::No };
 
     if (m_scriptExecutionContext) {
         ASSERT(m_scriptExecutionContext->isContextThread());

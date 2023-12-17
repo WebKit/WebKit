@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestCallbackFunctionWithThisObject.h"
 
+#include "ContextDestructionObserverInlines.h"
 #include "JSDOMConvertBase.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertSequences.h"

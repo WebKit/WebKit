@@ -30,6 +30,7 @@
 
 #include "CDMFactory.h"
 #include "CDMPrivate.h"
+#include "ContextDestructionObserverInlines.h"
 #include "Document.h"
 #include "InitDataRegistry.h"
 #include "MediaKeysRequirement.h"

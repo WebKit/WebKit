@@ -28,7 +28,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "ContextDestructionObserver.h"
+#include "ContextDestructionObserverInlines.h"
 #include "PlatformTimeRanges.h"
 #include "TextTrackCue.h"
 #include "TrackBase.h"
