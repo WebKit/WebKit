@@ -6691,7 +6691,7 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     if (_cachedRequiresLegacyTextInputTraits.has_value())
         return *_cachedRequiresLegacyTextInputTraits;
 
-    _cachedRequiresLegacyTextInputTraits = [&] {
+    _cachedRequiresLegacyTextInputTraits = [&]() -> BOOL {
         if (!self.shouldUseAsyncInteractions)
             return YES;
 
