@@ -4286,7 +4286,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
     return [self _cascadeInteractionTintColor];
 #else
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    if (self.shouldUseAsyncInteractions)
+    if (!self._requiresLegacyTextInputTraits)
         return self.extendedTraitsDelegate.insertionPointColor;
 #endif
     return [self.textInputTraits insertionPointColor];
@@ -4296,7 +4296,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 - (UIColor *)selectionBarColor
 {
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    if (self.shouldUseAsyncInteractions)
+    if (!self._requiresLegacyTextInputTraits)
         return self.extendedTraitsDelegate.selectionBarColor;
 #endif
     return [self.textInputTraits selectionBarColor];
@@ -4305,7 +4305,7 @@ WEBCORE_COMMAND_FOR_WEBVIEW(pasteAndMatchStyle);
 - (UIColor *)selectionHighlightColor
 {
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    if (self.shouldUseAsyncInteractions)
+    if (!self._requiresLegacyTextInputTraits)
         return self.extendedTraitsDelegate.selectionHighlightColor;
 #endif
     return [self.textInputTraits selectionHighlightColor];
@@ -6686,11 +6686,30 @@ static UITextAutocapitalizationType toUITextAutocapitalize(WebCore::Autocapitali
     return nil;
 }
 
+- (BOOL)_requiresLegacyTextInputTraits
+{
+    if (_cachedRequiresLegacyTextInputTraits.has_value())
+        return *_cachedRequiresLegacyTextInputTraits;
+
+    _cachedRequiresLegacyTextInputTraits = [&] {
+        if (!self.shouldUseAsyncInteractions)
+            return YES;
+
+        if ([_webView class] == WKWebView.class)
+            return NO;
+
+        static auto defaultTextInputTraitsMethod = class_getMethodImplementation(WKWebView.class, @selector(_textInputTraits));
+        return defaultTextInputTraitsMethod != class_getMethodImplementation([_webView class], @selector(_textInputTraits));
+    }();
+    return *_cachedRequiresLegacyTextInputTraits;
+}
+
 // UITextInputPrivate protocol
 // Direct access to the (private) UITextInputTraits object.
 - (UITextInputTraits *)textInputTraits
 {
-    RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
+    if (!self._requiresLegacyTextInputTraits)
+        RELEASE_ASSERT_ASYNC_TEXT_INTERACTIONS_DISABLED();
 
     _legacyTextInputTraits = [_webView _textInputTraits];
     return _legacyTextInputTraits.get();
@@ -12773,8 +12792,11 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
     [self _internalAdjustSelectionWithOffset:range.offset lengthDelta:range.length completionHandler:completionHandler];
 }
 
-- (WKExtendedTextInputTraits *)extendedTraitsDelegate
+- (id<WKSEExtendedTextInputTraits>)extendedTraitsDelegate
 {
+    if (self._requiresLegacyTextInputTraits)
+        return static_cast<id<WKSEExtendedTextInputTraits>>(self.textInputTraits);
+
     if (!_extendedTextInputTraits)
         _extendedTextInputTraits = adoptNS([WKExtendedTextInputTraits new]);
 
@@ -12990,7 +13012,7 @@ inline static NSString *extendSelectionCommand(UITextLayoutDirection direction)
 #endif // HAVE(QUICKBOARD_CONTROLLER)
 #endif // HAVE(PEPPER_UI_CORE)
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    if (self.shouldUseAsyncInteractions)
+    if (!self._requiresLegacyTextInputTraits)
         return self.extendedTraitsDelegate.textContentType;
 #endif
     return self.textInputTraits.textContentType;
