@@ -684,11 +684,6 @@ Ref<WebProcessProxy> WebProcessPool::createNewWebProcess(WebsiteDataStore* websi
         websiteDataStore->setTrackingPreventionEnabled(m_tccPreferenceEnabled);
 #endif
 
-#if USE(EXTENSIONKIT)
-    bool manageWebKitProcessesAsExtensions = CFPreferencesGetAppBooleanValue(CFSTR("manageProcessesAsExtensions"), CFSTR("com.apple.WebKit"), nullptr);
-    AuxiliaryProcessProxy::setManageProcessesAsExtensions(manageWebKitProcessesAsExtensions);
-#endif
-
     auto processProxy = WebProcessProxy::create(*this, websiteDataStore, lockdownMode, isPrewarmed, crossOriginMode);
     initializeNewWebProcess(processProxy, websiteDataStore, isPrewarmed);
     m_processes.append(processProxy.copyRef());
@@ -1155,6 +1150,11 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         // But if there is an attempt to create a web page without any specified data store, then we have to create it.
         pageConfiguration->setWebsiteDataStore(WebKit::WebsiteDataStore::defaultDataStore());
     }
+
+#if USE(EXTENSIONKIT)
+    auto manageWebKitProcessesAsExtensions = pageConfiguration->preferences()->store().getBoolValueForKey(WebPreferencesKey::manageWebKitProcessesAsExtensionsKey());
+    AuxiliaryProcessProxy::setManageProcessesAsExtensions(manageWebKitProcessesAsExtensions);
+#endif
 
     RefPtr<WebProcessProxy> process;
     auto lockdownMode = pageConfiguration->lockdownModeEnabled() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled;
