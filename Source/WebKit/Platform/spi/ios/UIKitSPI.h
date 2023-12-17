@@ -1241,6 +1241,14 @@ typedef struct {
 
 #endif // HAVE(UI_ASYNC_TEXT_INTERACTION)
 
+#if HAVE(UI_CONTEXT_MENU_ASYNC_CONFIGURATION)
+
+@interface _UIContextMenuAsyncConfiguration (Staging_119442063)
+- (BOOL)fulfillUsingConfiguration:(UIContextMenuConfiguration *)configuration;
+@end
+
+#endif
+
 @interface UIResponder (Staging_118307086)
 
 - (void)addShortcut:(id)sender;

@@ -13433,7 +13433,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         auto asyncConfiguration = adoptNS([[WKSEContextMenuConfiguration alloc] init]);
         [self _internalContextMenuInteraction:interaction configurationForMenuAtLocation:location completion:[asyncConfiguration](UIContextMenuConfiguration *finalConfiguration) {
 #if SERVICE_EXTENSIONS_CONTEXT_MENU_CONFIGURATION_IS_AVAILABLE
-            [asyncConfiguration fulfillUsingConfiguration:finalConfiguration];
+            if ([asyncConfiguration respondsToSelector:@selector(fulfillUsingConfiguration:)])
+                [(id)asyncConfiguration.get() fulfillUsingConfiguration:finalConfiguration];
+            else
+                [(id)asyncConfiguration.get() fulfillWithConfiguration:finalConfiguration];
 #else
             [asyncConfiguration fulfillWithConfiguration:finalConfiguration];
 #endif
