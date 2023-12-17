@@ -3859,9 +3859,7 @@ webkit.org/b/230083 imported/w3c/web-platform-tests/css/css-text-decor/text-deco
 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-skip-ink-upright-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-skip-ink-vertical-001.html [ ImageOnlyFailure ]
 webkit.org/b/230083 imported/w3c/web-platform-tests/css/css-text-decor/text-decoration-thickness-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-over-left-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-over-left-002.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-over-right-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-over-right-002.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-under-left-001.xht [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text-decor/text-emphasis-position-under-left-002.xht [ ImageOnlyFailure ]
@@ -6431,13 +6429,9 @@ imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-formal/count
 imported/w3c/web-platform-tests/css/css-counter-styles/trad-chinese-informal/counter-trad-chinese-informal.html [ ImageOnlyFailure ]
 
 # Newly imported ruby WPTs
-imported/w3c/web-platform-tests/css/css-ruby/abs-in-ruby-base-container.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ruby/abs-in-ruby-base.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/block-ruby-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/block-ruby-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/block-ruby-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ruby/empty-ruby-base-container.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ruby/empty-ruby-text-container-float.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/improperly-contained-annotation-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/intra-base-white-space-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/nested-ruby-pairing-001.html [ ImageOnlyFailure ]
@@ -6455,7 +6449,6 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-autohide-001.html [ ImageOnlyF
 imported/w3c/web-platform-tests/css/css-ruby/ruby-autohide-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-autohide-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-autohide-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ruby/ruby-base-container-float.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-bidi-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-bidi-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-box-generation-001.html [ ImageOnlyFailure ]
@@ -6477,12 +6470,8 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-lang-specific-style-001.html [
 imported/w3c/web-platform-tests/css/css-ruby/ruby-line-break-suppression-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-line-break-suppression-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-line-break-suppression-003.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ruby/ruby-line-break-suppression-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-line-breaking-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ruby/ruby-line-breaking-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-text-collapse.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-002a.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ruby/ruby-text-combine-upright-002b.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-whitespace-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-whitespace-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/ruby-with-floats-002.html [ ImageOnlyFailure ]
@@ -7448,6 +7437,26 @@ imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-m
 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-wheel-event-listener-on-div.html [ Failure ]
 
 http/tests/site-isolation/touch-events [ Skip ]
+
+# CSS Ruby
+# inline boxes (e.g. ruby base) are not supposed to get stretched by their content (needs clarification)
+imported/w3c/web-platform-tests/css/css-break/ruby-000.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-break/ruby-001.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-base-different-size.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-ruby/ruby-bidi-004.html [ ImageOnlyFailure ]
+# <rt> is not a block so should not respect ::first-letter (needs clarification)
+imported/blink/fast/ruby/ruby-first-letter.html [ ImageOnlyFailure ]
+# slightly incorrect expansion opportunities
+webkit.org/b/266500 fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
+webkit.org/b/266500 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
+webkit.org/b/266500 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
+webkit.org/b/266500 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
+webkit.org/b/266500 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
+webkit.org/b/266500 fast/ruby/ruby-justification.html [ ImageOnlyFailure ]
+# Needs content adjustment
+fast/ruby/ruby-punctuation-avoid-breaking.html [ ImageOnlyFailure ]
+
+webkit.org/b/266537 [ Debug ] imported/w3c/web-platform-tests/css/css-ruby/empty-ruby-text-container-float.html [ Skip ]
 
 # WindowProxy property access delegate callbacks are only implemented on Mac and iOS WK2.
 http/wpt/opener/child-access-parent-via-windowproxy.html [ Skip ]

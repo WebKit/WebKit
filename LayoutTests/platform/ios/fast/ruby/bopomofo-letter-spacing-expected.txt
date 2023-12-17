@@ -3,125 +3,107 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x112
   RenderBlock {HTML} at (0,0) size 800x112
     RenderBody {BODY} at (8,8) size 784x96
-      RenderRuby (inline) {RUBY} at (0,0) size 570x36
-        RenderRubyRun (anonymous) at (0,0) size 57x48
-          RenderRubyText {RT} at (32,20) size 12x8
-            RenderRuby (inline) {RUBY} at (0,0) size 10x8
-              RenderRubyRun (anonymous) at (0,0) size 12x8
-                RenderRubyText {RT} at (11,0) size 11x8
-                  RenderText {#text} at (0,2) size 10x4
-                    text run at (0,2) width 3: "\x{2CB}"
-                RenderRubyBase (anonymous) at (0,0) size 12x8
-                  RenderText {#text} at (1,0) size 10x8
-                    text run at (1,0) width 8: "\x{3115}"
-          RenderRubyBase (anonymous) at (0,0) size 57x48
-            RenderText {#text} at (0,6) size 57x36
-              text run at (0,6) width 57: "\x{4E16}"
-        RenderRubyRun (anonymous) at (57,0) size 57x48
-          RenderRubyText {RT} at (32,16) size 12x16
-            RenderRuby (inline) {RUBY} at (0,0) size 10x16
-              RenderRubyRun (anonymous) at (0,0) size 12x16
-                RenderRubyText {RT} at (11,0) size 11x16
-                  RenderText {#text} at (0,6) size 10x4
-                    text run at (0,6) width 3: "\x{2CB}"
-                RenderRubyBase (anonymous) at (0,0) size 12x16
-                  RenderText {#text} at (1,0) size 10x16
-                    text run at (1,0) width 16: "\x{3115}\x{3124}"
-          RenderRubyBase (anonymous) at (0,0) size 57x48
-            RenderText {#text} at (0,6) size 57x36
-              text run at (0,6) width 57: "\x{4E0A}"
-        RenderRubyRun (anonymous) at (114,0) size 57x48
-          RenderRubyText {RT} at (32,20) size 12x8
-            RenderRuby (inline) {RUBY} at (0,0) size 10x8
-              RenderRubyRun (anonymous) at (0,0) size 12x8
-                RenderRubyText {RT} at (11,0) size 11x8
-                  RenderText {#text} at (0,2) size 10x4
-                    text run at (0,2) width 3: "\x{2CA}"
-                RenderRubyBase (anonymous) at (0,0) size 12x8
-                  RenderText {#text} at (1,0) size 10x8
-                    text run at (1,0) width 8: "\x{3128}"
-          RenderRubyBase (anonymous) at (0,0) size 57x48
-            RenderText {#text} at (0,6) size 57x36
-              text run at (0,6) width 57: "\x{7121}"
-        RenderRubyRun (anonymous) at (171,0) size 57x48
-          RenderRubyText {RT} at (32,16) size 12x16
-            RenderRuby (inline) {RUBY} at (0,0) size 10x16
-              RenderRubyRun (anonymous) at (0,0) size 12x16
-                RenderRubyText {RT} at (11,0) size 11x16
-                  RenderText {#text} at (0,6) size 10x4
-                    text run at (0,6) width 3: "\x{2CA}"
-                RenderRubyBase (anonymous) at (0,0) size 12x16
-                  RenderText {#text} at (1,0) size 10x16
-                    text run at (1,0) width 16: "\x{310B}\x{3122}"
-          RenderRubyBase (anonymous) at (0,0) size 57x48
-            RenderText {#text} at (0,6) size 57x36
-              text run at (0,6) width 57: "\x{96E3}"
-        RenderRubyRun (anonymous) at (228,0) size 57x48
-          RenderRubyText {RT} at (32,20) size 12x8
-            RenderRuby (inline) {RUBY} at (0,0) size 10x8
-              RenderRubyRun (anonymous) at (0,0) size 12x8
-                RenderRubyText {RT} at (11,0) size 11x8
-                  RenderText {#text} at (0,2) size 10x4
-                    text run at (0,2) width 3: "\x{2CB}"
-                RenderRubyBase (anonymous) at (0,0) size 12x8
-                  RenderText {#text} at (1,0) size 10x8
-                    text run at (1,0) width 8: "\x{3115}"
-          RenderRubyBase (anonymous) at (0,0) size 57x48
-            RenderText {#text} at (0,6) size 57x36
-              text run at (0,6) width 57: "\x{4E8B}"
-        RenderRubyRun (anonymous) at (285,0) size 57x48
-          RenderRubyText {RT} at (32,18) size 12x12
-            RenderText {#text} at (1,0) size 10x11
-              text run at (1,0) width 11: "\x{3113}\x{2C7}"
-          RenderRubyBase (anonymous) at (0,0) size 57x48
-            RenderText {#text} at (0,6) size 57x36
-              text run at (0,6) width 57: "\x{53EA}"
-        RenderRubyRun (anonymous) at (342,0) size 57x48
-          RenderRubyText {RT} at (32,16) size 12x16
-            RenderRuby (inline) {RUBY} at (0,0) size 10x16
-              RenderRubyRun (anonymous) at (0,0) size 12x16
-                RenderRubyText {RT} at (11,0) size 11x16
-                  RenderText {#text} at (0,6) size 10x4
-                    text run at (0,6) width 3: "\x{2CB}"
-                RenderRubyBase (anonymous) at (0,0) size 12x16
-                  RenderText {#text} at (1,0) size 10x16
-                    text run at (1,0) width 16: "\x{3106}\x{311A}"
-          RenderRubyBase (anonymous) at (0,0) size 57x48
-            RenderText {#text} at (0,6) size 57x36
-              text run at (0,6) width 57: "\x{6015}"
-        RenderRubyRun (anonymous) at (399,0) size 57x48
-          RenderRubyText {RT} at (32,16) size 12x16
-            RenderRuby (inline) {RUBY} at (0,0) size 10x16
-              RenderRubyRun (anonymous) at (0,0) size 12x16
-                RenderRubyText {RT} at (11,0) size 11x16
-                  RenderText {#text} at (0,6) size 10x4
-                    text run at (0,6) width 3: "\x{2C7}"
-                RenderRubyBase (anonymous) at (0,0) size 12x16
-                  RenderText {#text} at (1,0) size 10x16
-                    text run at (1,0) width 16: "\x{3127}\x{3121}"
-          RenderRubyBase (anonymous) at (0,0) size 57x48
-            RenderText {#text} at (0,6) size 57x36
-              text run at (0,6) width 57: "\x{6709}"
-        RenderRubyRun (anonymous) at (456,0) size 57x48
-          RenderRubyText {RT} at (32,12) size 12x24
-            RenderText {#text} at (1,0) size 10x24
-              text run at (1,0) width 24: "\x{3112}\x{3127}\x{3123}"
-          RenderRubyBase (anonymous) at (0,0) size 57x48
-            RenderText {#text} at (0,6) size 57x36
-              text run at (0,6) width 57: "\x{5FC3}"
-        RenderRubyRun (anonymous) at (513,0) size 57x48
-          RenderRubyText {RT} at (32,16) size 12x16
-            RenderRuby (inline) {RUBY} at (0,0) size 10x16
-              RenderRubyRun (anonymous) at (0,0) size 12x16
-                RenderRubyText {RT} at (11,0) size 11x16
-                  RenderText {#text} at (0,6) size 10x4
-                    text run at (0,6) width 3: "\x{2CA}"
-                RenderRubyBase (anonymous) at (0,0) size 12x16
-                  RenderText {#text} at (1,0) size 10x16
-                    text run at (1,0) width 16: "\x{3116}\x{3123}"
-          RenderRubyBase (anonymous) at (0,0) size 57x48
-            RenderText {#text} at (0,6) size 57x36
-              text run at (0,6) width 57: "\x{4EBA}"
-      RenderBR {BR} at (570,6) size 0x36
+      RenderInline {RUBY} at (0,0) size 778x36
+        RenderInline (generated) at (0,0) size 80x36
+          RenderText {#text} at (0,6) size 57x36
+            text run at (0,6) width 57: "\x{4E16}"
+        RenderBlock {RT} at (32,20) size 23x8
+          RenderInline {RUBY} at (0,0) size 10x8
+            RenderInline (generated) at (0,0) size 10x8
+              RenderText {#text} at (1,0) size 10x8
+                text run at (1,0) width 8: "\x{3115}"
+            RenderBlock {RT} at (11,0) size 11x8
+              RenderText {#text} at (1,2) size 10x4
+                text run at (1,2) width 3: "\x{2CB}"
+        RenderInline (generated) at (0,0) size 80x36
+          RenderText {#text} at (80,6) size 57x36
+            text run at (80,6) width 57: "\x{4E0A}"
+        RenderBlock {RT} at (112,16) size 23x16
+          RenderInline {RUBY} at (0,0) size 10x16
+            RenderInline (generated) at (0,0) size 10x16
+              RenderText {#text} at (1,0) size 10x16
+                text run at (1,0) width 16: "\x{3115}\x{3124}"
+            RenderBlock {RT} at (11,0) size 11x16
+              RenderText {#text} at (1,6) size 10x4
+                text run at (1,6) width 3: "\x{2CB}"
+        RenderInline (generated) at (0,0) size 80x36
+          RenderText {#text} at (160,6) size 57x36
+            text run at (160,6) width 57: "\x{7121}"
+        RenderBlock {RT} at (192,20) size 23x8
+          RenderInline {RUBY} at (0,0) size 10x8
+            RenderInline (generated) at (0,0) size 10x8
+              RenderText {#text} at (1,0) size 10x8
+                text run at (1,0) width 8: "\x{3128}"
+            RenderBlock {RT} at (11,0) size 11x8
+              RenderText {#text} at (1,2) size 10x4
+                text run at (1,2) width 3: "\x{2CA}"
+        RenderInline (generated) at (0,0) size 80x36
+          RenderText {#text} at (240,6) size 57x36
+            text run at (240,6) width 57: "\x{96E3}"
+        RenderBlock {RT} at (272,16) size 23x16
+          RenderInline {RUBY} at (0,0) size 10x16
+            RenderInline (generated) at (0,0) size 10x16
+              RenderText {#text} at (1,0) size 10x16
+                text run at (1,0) width 16: "\x{310B}\x{3122}"
+            RenderBlock {RT} at (11,0) size 11x16
+              RenderText {#text} at (1,6) size 10x4
+                text run at (1,6) width 3: "\x{2CA}"
+        RenderInline (generated) at (0,0) size 80x36
+          RenderText {#text} at (320,6) size 57x36
+            text run at (320,6) width 57: "\x{4E8B}"
+        RenderBlock {RT} at (352,20) size 23x8
+          RenderInline {RUBY} at (0,0) size 10x8
+            RenderInline (generated) at (0,0) size 10x8
+              RenderText {#text} at (1,0) size 10x8
+                text run at (1,0) width 8: "\x{3115}"
+            RenderBlock {RT} at (11,0) size 11x8
+              RenderText {#text} at (1,2) size 10x4
+                text run at (1,2) width 3: "\x{2CB}"
+        RenderInline (generated) at (0,0) size 69x36
+          RenderText {#text} at (400,6) size 57x36
+            text run at (400,6) width 57: "\x{53EA}"
+        RenderBlock {RT} at (432,18) size 12x12
+          RenderText {#text} at (1,0) size 10x11
+            text run at (1,0) width 11: "\x{3113}\x{2C7}"
+        RenderInline (generated) at (0,0) size 80x36
+          RenderText {#text} at (469,6) size 57x36
+            text run at (469,6) width 57: "\x{6015}"
+        RenderBlock {RT} at (501,16) size 23x16
+          RenderInline {RUBY} at (0,0) size 10x16
+            RenderInline (generated) at (0,0) size 10x16
+              RenderText {#text} at (1,0) size 10x16
+                text run at (1,0) width 16: "\x{3106}\x{311A}"
+            RenderBlock {RT} at (11,0) size 11x16
+              RenderText {#text} at (1,6) size 10x4
+                text run at (1,6) width 3: "\x{2CB}"
+        RenderInline (generated) at (0,0) size 80x36
+          RenderText {#text} at (549,6) size 57x36
+            text run at (549,6) width 57: "\x{6709}"
+        RenderBlock {RT} at (581,16) size 23x16
+          RenderInline {RUBY} at (0,0) size 10x16
+            RenderInline (generated) at (0,0) size 10x16
+              RenderText {#text} at (1,0) size 10x16
+                text run at (1,0) width 16: "\x{3127}\x{3121}"
+            RenderBlock {RT} at (11,0) size 11x16
+              RenderText {#text} at (1,6) size 10x4
+                text run at (1,6) width 3: "\x{2C7}"
+        RenderInline (generated) at (0,0) size 69x36
+          RenderText {#text} at (629,6) size 57x36
+            text run at (629,6) width 57: "\x{5FC3}"
+        RenderBlock {RT} at (661,12) size 12x24
+          RenderText {#text} at (1,0) size 10x24
+            text run at (1,0) width 24: "\x{3112}\x{3127}\x{3123}"
+        RenderInline (generated) at (0,0) size 80x36
+          RenderText {#text} at (698,6) size 57x36
+            text run at (698,6) width 57: "\x{4EBA}"
+        RenderBlock {RT} at (730,16) size 23x16
+          RenderInline {RUBY} at (0,0) size 10x16
+            RenderInline (generated) at (0,0) size 10x16
+              RenderText {#text} at (1,0) size 10x16
+                text run at (1,0) width 16: "\x{3116}\x{3123}"
+            RenderBlock {RT} at (11,0) size 11x16
+              RenderText {#text} at (1,6) size 10x4
+                text run at (1,6) width 3: "\x{2CA}"
+      RenderBR {BR} at (778,6) size 0x36
       RenderText {#text} at (0,54) size 570x36
         text run at (0,54) width 570: "\x{4E16}\x{4E0A}\x{7121}\x{96E3}\x{4E8B}\x{53EA}\x{6015}\x{6709}\x{5FC3}\x{4EBA}"
