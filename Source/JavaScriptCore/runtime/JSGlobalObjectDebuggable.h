@@ -40,7 +40,7 @@ namespace JSC {
 
 class JSGlobalObject;
 
-class JSGlobalObjectDebuggable final : public Inspector::RemoteInspectionTarget {
+class JSGlobalObjectDebuggable : public Inspector::RemoteInspectionTarget {
     WTF_MAKE_TZONE_ALLOCATED(JSGlobalObjectDebuggable);
     WTF_MAKE_NONCOPYABLE(JSGlobalObjectDebuggable);
 public:
