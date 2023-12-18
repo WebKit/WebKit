@@ -53,6 +53,8 @@ public:
 
     void updateZoomTransactionID();
     WebCore::PlatformLayerIdentifier pageScalingLayerID() { return m_pageScalingLayerID; }
+    WebCore::PlatformLayerIdentifier pageScrollingLayerID() { return m_pageScrollingLayerID; }
+
 private:
     WebCore::DelegatedScrollingMode delegatedScrollingMode() const override;
     std::unique_ptr<RemoteScrollingCoordinatorProxy> createScrollingCoordinatorProxy() const override;
@@ -93,7 +95,10 @@ private:
     std::optional<DisplayLinkObserverID> m_displayRefreshObserverID;
     std::optional<DisplayLinkObserverID> m_fullSpeedUpdateObserverID;
     std::unique_ptr<RemoteLayerTreeDisplayLinkClient> m_displayLinkClient;
+
     WebCore::PlatformLayerIdentifier m_pageScalingLayerID;
+    WebCore::PlatformLayerIdentifier m_pageScrollingLayerID;
+
     bool m_usesOverlayScrollbars { false };
 
     std::optional<TransactionID> m_transactionIDAfterEndingTransientZoom;
