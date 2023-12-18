@@ -853,10 +853,11 @@ auto SectionParser::parseFunctionType(uint32_t position, RefPtr<TypeDefinition>&
     Vector<Type, 16> argumentTypes;
     WASM_PARSER_FAIL_IF(!argumentTypes.tryReserveInitialCapacity(argumentCount), "can't allocate enough memory for Type section's ", position, "th signature");
 
+    argumentTypes.resize(argumentCount);
     for (unsigned i = 0; i < argumentCount; ++i) {
         Type argumentType;
         WASM_PARSER_FAIL_IF(!parseValueType(m_info, argumentType), "can't get ", i, "th argument Type");
-        argumentTypes.unsafeAppendWithoutCapacityCheck(argumentType);
+        argumentTypes[i] = argumentType;
     }
 
     uint32_t returnCount;
@@ -865,10 +866,11 @@ auto SectionParser::parseFunctionType(uint32_t position, RefPtr<TypeDefinition>&
 
     Vector<Type, 16> returnTypes;
     WASM_PARSER_FAIL_IF(!returnTypes.tryReserveInitialCapacity(returnCount), "can't allocate enough memory for Type section's ", position, "th signature");
+    returnTypes.resize(returnCount);
     for (unsigned i = 0; i < returnCount; ++i) {
         Type value;
         WASM_PARSER_FAIL_IF(!parseValueType(m_info, value), "can't get ", i, "th Type's return value");
-        returnTypes.unsafeAppendWithoutCapacityCheck(value);
+        returnTypes[i] = value;
     }
 
     functionSignature = TypeInformation::typeDefinitionForFunction(returnTypes, argumentTypes);
@@ -914,6 +916,7 @@ auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& s
     WASM_PARSER_FAIL_IF(fieldCount > maxStructFieldCount, "number of fields for struct type at position ", position, " is too big ", fieldCount, " maximum ", maxStructFieldCount);
     Vector<FieldType> fields;
     WASM_PARSER_FAIL_IF(!fields.tryReserveInitialCapacity(fieldCount), "can't allocate enough memory for struct fields ", fieldCount, " entries");
+    fields.resize(fieldCount);
 
     Checked<unsigned, RecordOverflow> structInstancePayloadSize { 0 };
     for (uint32_t fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex) {
@@ -924,7 +927,7 @@ auto SectionParser::parseStructType(uint32_t position, RefPtr<TypeDefinition>& s
         WASM_PARSER_FAIL_IF(!parseUInt8(mutability), position, "can't get ", fieldIndex, "th field mutability");
         WASM_PARSER_FAIL_IF(mutability != 0x0 && mutability != 0x1, "invalid Field's mutability: 0x", hex(mutability, 2, Lowercase));
 
-        fields.unsafeAppendWithoutCapacityCheck(FieldType { fieldType, static_cast<Mutability>(mutability) });
+        fields[fieldIndex] = FieldType { fieldType, static_cast<Mutability>(mutability) };
         structInstancePayloadSize += typeSizeInBytes(fieldType);
         WASM_PARSER_FAIL_IF(structInstancePayloadSize.hasOverflowed(), "struct layout is too big");
     }
@@ -1392,10 +1395,11 @@ auto SectionParser::parseCustom() -> PartialResult
 
     uint32_t payloadBytes = length() - m_offset;
     WASM_PARSER_FAIL_IF(!section.payload.tryReserveInitialCapacity(payloadBytes), "can't allocate enough memory for ", customSectionNumber, "th custom section's ", payloadBytes, " bytes");
+    section.payload.resize(payloadBytes);
     for (uint32_t byteNumber = 0; byteNumber < payloadBytes; ++byteNumber) {
         uint8_t byte;
         WASM_PARSER_FAIL_IF(!parseUInt8(byte), "can't get ", byteNumber, "th data byte from ", customSectionNumber, "th custom section");
-        section.payload.unsafeAppendWithoutCapacityCheck(byte);
+        section.payload[byteNumber] = byte;
     }
 
     Name nameName = { 'n', 'a', 'm', 'e' };
