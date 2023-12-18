@@ -78,7 +78,7 @@ Ref<Gamepad> NavigatorGamepad::gamepadFromPlatformGamepad(PlatformGamepad& platf
 ExceptionOr<const Vector<RefPtr<Gamepad>>&> NavigatorGamepad::getGamepads(Navigator& navigator)
 {
     RefPtr document = navigator.document() ? navigator.document() : nullptr;
-    if (!document) {
+    if (!document || !document->isFullyActive()) {
         static NeverDestroyed<Vector<RefPtr<Gamepad>>> emptyGamepads;
         return { emptyGamepads.get() };
     }
