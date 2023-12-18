@@ -80,6 +80,49 @@ TEST(VerifyUserGesture, WindowOpenMouseEvent)
         Util::spinRunLoop();
     EXPECT_FALSE(consumed);
 }
+
+TEST(VerifyUserGesture, WindowOpenKeyEvent)
+{
+    auto openerHTML = "<script>"
+    "addEventListener('keyup', () => {"
+    "    window.open('https://domain2.com/opened');"
+    "})"
+    "</script>"_s;
+    HTTPServer server({
+        { "/opener"_s, { openerHTML } },
+        { "/opened"_s, { ""_s } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto configuration = server.httpsProxyConfiguration();
+    [[configuration preferences] _setVerifyWindowOpenUserGestureFromUIProcess:YES];
+    auto navigationDelegate = adoptNS([TestNavigationDelegate new]);
+    [navigationDelegate allowAnyTLSCertificate];
+    auto uiDelegate = adoptNS([TestUIDelegate new]);
+    auto openerWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+    [openerWebView setNavigationDelegate:navigationDelegate.get()];
+    [openerWebView setUIDelegate:uiDelegate.get()];
+
+    __block BOOL consumed = NO;
+    __block RetainPtr<TestWKWebView> openedWebView;
+    uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *navigationAction, WKWindowFeatures *) {
+        consumed = navigationAction._userInitiatedAction.consumed;
+        openedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
+        return openedWebView.get();
+    };
+
+    [openerWebView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/opener"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+    [openerWebView evaluateJavaScript:@"window.open('https://domain2.com/opened');" completionHandler:nil];
+    while (!openedWebView)
+        Util::spinRunLoop();
+    EXPECT_TRUE(consumed);
+
+    openedWebView = nullptr;
+    [openerWebView typeCharacter:'a'];
+    while (!openedWebView)
+        Util::spinRunLoop();
+    EXPECT_FALSE(consumed);
+}
 #endif
 
 }
