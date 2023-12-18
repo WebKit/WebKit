@@ -1184,13 +1184,17 @@ TEST(WKWebExtensionAPITabs, SendMessage)
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *backgroundScript = Util::constructScript(@[
-        @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
-        @"const tabId = tabs[0].id",
+        @"browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message, 'Ready')",
 
-        @"const response = await browser.test.assertSafeResolve(() => browser.tabs.sendMessage(tabId, { content: 'Hello' }))",
-        @"browser.test.assertEq(response.content, 'Received', 'Should get the response from the content script')",
+        @"  const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"  const tabId = tabs[0].id",
 
-        @"browser.test.notifyPass()"
+        @"  const response = await browser.test.assertSafeResolve(() => browser.tabs.sendMessage(tabId, { content: 'Hello' }))",
+        @"  browser.test.assertEq(response?.content, 'Received', 'Should get the response from the content script')",
+
+        @"  browser.test.notifyPass()",
+        @"})"
     ]);
 
     auto *contentScript = Util::constructScript(@[
@@ -1209,7 +1213,62 @@ TEST(WKWebExtensionAPITabs, SendMessage)
         @"  browser.test.assertEq(sender.frameId, undefined, 'sender.frameId should be undefined')",
 
         @"  sendResponse({ content: 'Received' })",
+        @"})",
+
+        @"setTimeout(() => browser.runtime.sendMessage('Ready'), 1000)"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, SendMessageWithAsyncReply)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message, 'Ready')",
+
+        @"  const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"  const tabId = tabs[0].id",
+
+        @"  const response = await browser.test.assertSafeResolve(() => browser.tabs.sendMessage(tabId, { content: 'Hello' }))",
+        @"  browser.test.assertEq(response?.content, 'Received', 'Should get the response from the content script')",
+
+        @"  browser.test.notifyPass()",
         @"})"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender, sendResponse) => {",
+        @"  browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message content')",
+
+        @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
+
+        @"  browser.test.assertEq(typeof sender.url, 'string', 'sender.url should be a string')",
+        @"  browser.test.assertEq(typeof sender.origin, 'string', 'sender.origin should be a string')",
+
+        @"  browser.test.assertTrue(sender.url.startsWith('webkit-extension://'), 'sender.url should start with webkit-extension://')",
+        @"  browser.test.assertTrue(sender.origin.startsWith('webkit-extension://'), 'sender.origin should start with webkit-extension://')",
+
+        @"  browser.test.assertEq(sender.tab, undefined, 'sender.tab should be undefined')",
+        @"  browser.test.assertEq(sender.frameId, undefined, 'sender.frameId should be undefined')",
+
+        @"  setTimeout(() => sendResponse({ content: 'Received' }), 1000)",
+
+        @"  return true",
+        @"})",
+
+        @"setTimeout(() => browser.runtime.sendMessage('Ready'), 1000)"
     ]);
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
@@ -1229,13 +1288,17 @@ TEST(WKWebExtensionAPITabs, SendMessageWithPromiseReply)
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *backgroundScript = Util::constructScript(@[
-        @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
-        @"const tabId = tabs[0].id",
+        @"browser.runtime.onMessage.addListener(async (message, sender) => {",
+        @"  browser.test.assertEq(message, 'Ready')",
 
-        @"const response = await browser.test.assertSafeResolve(() => browser.tabs.sendMessage(tabId, { content: 'Hello' }))",
-        @"browser.test.assertEq(response.content, 'Received', 'Should get the response from the content script')",
+        @"  const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"  const tabId = tabs[0].id",
 
-        @"browser.test.notifyPass()"
+        @"  const response = await browser.test.assertSafeResolve(() => browser.tabs.sendMessage(tabId, { content: 'Hello' }))",
+        @"  browser.test.assertEq(response?.content, 'Received', 'Should get the response from the content script')",
+
+        @"  browser.test.notifyPass()",
+        @"})"
     ]);
 
     auto *contentScript = Util::constructScript(@[
@@ -1254,7 +1317,62 @@ TEST(WKWebExtensionAPITabs, SendMessageWithPromiseReply)
         @"  browser.test.assertEq(sender.frameId, undefined, 'sender.frameId should be undefined')",
 
         @"  return Promise.resolve({ content: 'Received' })",
+        @"})",
+
+        @"setTimeout(() => browser.runtime.sendMessage('Ready'), 1000)"
+    ]);
+
+    auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:_WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.mainWebView loadRequest:urlRequest];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPITabs, SendMessageWithAsyncPromiseReply)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener(async (message, sender) => {",
+        @"  browser.test.assertEq(message, 'Ready')",
+
+        @"  const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"  const tabId = tabs[0].id",
+
+        @"  const response = await browser.test.assertSafeResolve(() => browser.tabs.sendMessage(tabId, { content: 'Hello' }))",
+        @"  browser.test.assertEq(response?.content, 'Received', 'Should get the response from the content script')",
+
+        @"  browser.test.notifyPass()",
         @"})"
+    ]);
+
+    auto *contentScript = Util::constructScript(@[
+        @"browser.runtime.onMessage.addListener((message, sender) => {",
+        @"  browser.test.assertEq(message.content, 'Hello', 'Should receive the correct message content')",
+
+        @"  browser.test.assertEq(typeof sender, 'object', 'sender should be an object')",
+
+        @"  browser.test.assertEq(typeof sender.url, 'string', 'sender.url should be a string')",
+        @"  browser.test.assertEq(typeof sender.origin, 'string', 'sender.origin should be a string')",
+
+        @"  browser.test.assertTrue(sender.url.startsWith('webkit-extension://'), 'sender.url should start with webkit-extension://')",
+        @"  browser.test.assertTrue(sender.origin.startsWith('webkit-extension://'), 'sender.origin should start with webkit-extension://')",
+
+        @"  browser.test.assertEq(sender.tab, undefined, 'sender.tab should be undefined')",
+        @"  browser.test.assertEq(sender.frameId, undefined, 'sender.frameId should be undefined')",
+
+        @"  return new Promise((resolve) => {",
+        @"    setTimeout(() => resolve({ content: 'Received' }), 1000)",
+        @"  })",
+        @"})",
+
+        @"setTimeout(() => browser.runtime.sendMessage('Ready'), 1000)"
     ]);
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
@@ -1274,13 +1392,15 @@ TEST(WKWebExtensionAPITabs, SendMessageWithoutReply)
     }, TestWebKitAPI::HTTPServer::Protocol::Http);
 
     auto *backgroundScript = Util::constructScript(@[
-        @"const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
-        @"const tabId = tabs[0].id",
+        @"browser.runtime.onMessage.addListener(async (message, sender) => {",
+        @"  const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
+        @"  const tabId = tabs[0].id",
 
-        @"const response = await browser.tabs.sendMessage(tabId, { content: 'Hello' })",
-        @"browser.test.assertEq(response, undefined, 'Should resolve with undefined as there was no reply')",
+        @"  const response = await browser.tabs.sendMessage(tabId, { content: 'Hello' })",
+        @"  browser.test.assertEq(response, undefined, 'Should resolve with undefined as there was no reply')",
 
-        @"browser.test.notifyPass()"
+        @"  browser.test.notifyPass()",
+        @"})"
     ]);
 
     auto *contentScript = Util::constructScript(@[
@@ -1297,7 +1417,11 @@ TEST(WKWebExtensionAPITabs, SendMessageWithoutReply)
 
         @"  browser.test.assertEq(sender.tab, undefined, 'sender.tab should be undefined')",
         @"  browser.test.assertEq(sender.frameId, undefined, 'sender.frameId should be undefined')",
-        @"})"
+
+        @"  return false",
+        @"})",
+
+        @"setTimeout(() => browser.runtime.sendMessage('Ready'), 1000)"
     ]);
 
     auto extension = adoptNS([[_WKWebExtension alloc] _initWithManifestDictionary:tabsContentScriptManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
@@ -1318,7 +1442,7 @@ TEST(WKWebExtensionAPITabs, Connect)
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.runtime.onMessage.addListener(async (message, sender) => {",
-        @"  browser.test.assertEq(message.readyToConnect, true, 'Should be ready to connect')",
+        @"  browser.test.assertEq(message?.readyToConnect, true, 'Should be ready to connect')",
 
         @"  const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
         @"  const tabId = tabs[0].id",
@@ -1376,7 +1500,7 @@ TEST(WKWebExtensionAPITabs, PortDisconnect)
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.runtime.onMessage.addListener(async (message, sender) => {",
-        @"  browser.test.assertEq(message.readyToConnect, true, 'Should be ready to connect')",
+        @"  browser.test.assertEq(message?.readyToConnect, true, 'Should be ready to connect')",
 
         @"  const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
         @"  const tabId = tabs[0].id",
@@ -1427,7 +1551,7 @@ TEST(WKWebExtensionAPITabs, ConnectWithMultipleListeners)
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.runtime.onMessage.addListener(async (message, sender) => {",
-        @"  browser.test.assertEq(message.readyToConnect, true, 'Should be ready to connect')",
+        @"  browser.test.assertEq(message?.readyToConnect, true, 'Should be ready to connect')",
 
         @"  const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
         @"  const tabId = tabs[0].id",
@@ -1492,7 +1616,7 @@ TEST(WKWebExtensionAPITabs, PortDisconnectWithMultipleListeners)
 
     auto *backgroundScript = Util::constructScript(@[
         @"browser.runtime.onMessage.addListener(async (message, sender) => {",
-        @"  browser.test.assertEq(message.readyToConnect, true, 'Should be ready to connect')",
+        @"  browser.test.assertEq(message?.readyToConnect, true, 'Should be ready to connect')",
 
         @"  const tabs = await browser.tabs.query({ active: true, currentWindow: true })",
         @"  const tabId = tabs[0].id",
