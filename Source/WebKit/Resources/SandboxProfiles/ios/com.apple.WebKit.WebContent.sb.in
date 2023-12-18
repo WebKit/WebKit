@@ -37,6 +37,9 @@
 (allow process-info-codesignature)
 #endif
 
+(deny file-read-metadata
+    (literal "/private/var/db/MobileIdentityData/Version.plist"))
+
 ;;;
 ;;; The following rules were originally contained in 'common.sb'. We are duplicating them here so we can
 ;;; remove unneeded sandbox extensions.
