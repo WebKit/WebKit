@@ -198,26 +198,26 @@ size=1 clientWidth=18
 size=2 clientWidth=23
 size=3 clientWidth=28
 size=4 clientWidth=33
-size=5 clientWidth=38
-size=10 clientWidth=63
-size=20 clientWidth=113
-size=50 clientWidth=263
-size=100 clientWidth=513
-size=500 clientWidth=2513
-size=1000 clientWidth=5013
+size=5 clientWidth=39
+size=10 clientWidth=64
+size=20 clientWidth=116
+size=50 clientWidth=270
+size=100 clientWidth=528
+size=500 clientWidth=2588
+size=1000 clientWidth=5164
 
 textarea
-cols=1 clientWidth=24
-cols=2 clientWidth=29
-cols=3 clientWidth=34
-cols=4 clientWidth=39
-cols=5 clientWidth=44
-cols=10 clientWidth=69
-cols=20 clientWidth=119
-cols=50 clientWidth=269
-cols=100 clientWidth=519
-cols=500 clientWidth=2519
-cols=1000 clientWidth=5019
+cols=1 clientWidth=25
+cols=2 clientWidth=30
+cols=3 clientWidth=35
+cols=4 clientWidth=40
+cols=5 clientWidth=45
+cols=10 clientWidth=71
+cols=20 clientWidth=123
+cols=50 clientWidth=277
+cols=100 clientWidth=535
+cols=500 clientWidth=2595
+cols=1000 clientWidth=5170
 
 Courier New
 input
@@ -277,28 +277,28 @@ Times New Roman
 input
 size=1 clientWidth=32
 size=2 clientWidth=36
-size=3 clientWidth=40
-size=4 clientWidth=44
-size=5 clientWidth=48
-size=10 clientWidth=68
-size=20 clientWidth=108
-size=50 clientWidth=228
-size=100 clientWidth=428
-size=500 clientWidth=2028
-size=1000 clientWidth=4028
+size=3 clientWidth=41
+size=4 clientWidth=45
+size=5 clientWidth=50
+size=10 clientWidth=72
+size=20 clientWidth=116
+size=50 clientWidth=248
+size=100 clientWidth=469
+size=500 clientWidth=2232
+size=1000 clientWidth=4437
 
 textarea
-cols=1 clientWidth=23
-cols=2 clientWidth=27
-cols=3 clientWidth=31
-cols=4 clientWidth=35
-cols=5 clientWidth=39
-cols=10 clientWidth=59
-cols=20 clientWidth=99
-cols=50 clientWidth=219
-cols=100 clientWidth=419
-cols=500 clientWidth=2019
-cols=1000 clientWidth=4019
+cols=1 clientWidth=24
+cols=2 clientWidth=28
+cols=3 clientWidth=33
+cols=4 clientWidth=37
+cols=5 clientWidth=42
+cols=10 clientWidth=64
+cols=20 clientWidth=108
+cols=50 clientWidth=240
+cols=100 clientWidth=460
+cols=500 clientWidth=2224
+cols=1000 clientWidth=4429
 
 Trebuchet MS
 input

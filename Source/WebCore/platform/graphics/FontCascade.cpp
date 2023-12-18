@@ -494,7 +494,7 @@ bool FontCascade::fastAverageCharWidthIfAvailable(float& width) const
 {
     bool success = hasValidAverageCharWidth();
     if (success)
-        width = roundf(primaryFont().avgCharWidth()); // FIXME: primaryFont() might not correspond to firstFamily().
+        width = std::max<float>(primaryFont().avgCharWidth(), roundf(primaryFont().avgCharWidth())); // FIXME: primaryFont() might not correspond to firstFamily().
     return success;
 }
 
