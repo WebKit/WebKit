@@ -231,10 +231,10 @@ static String decodeEscapeSequencesFromParsedURLForWindowsPath(StringView input)
     percentDecoded.reserveInitialCapacity(length);
     for (unsigned i = 1; i < length; ) {
         if (auto decodedCharacter = decodeEscapeSequence(input, i, length)) {
-            percentDecoded.uncheckedAppend(*decodedCharacter);
+            percentDecoded.unsafeAppendWithoutCapacityCheck(*decodedCharacter);
             i += 3;
         } else {
-            percentDecoded.uncheckedAppend(UNLIKELY(input[i]) == '/' ? '\\' : input[i]);
+            percentDecoded.unsafeAppendWithoutCapacityCheck(UNLIKELY(input[i]) == '/' ? '\\' : input[i]);
             ++i;
         }
     }
