@@ -43,6 +43,8 @@
 #include "RenderingUpdateID.h"
 #include "SharedMemory.h"
 #include "StreamClientConnection.h"
+#include "ThreadSafeObjectHeap.h"
+#include "WorkQueueMessageReceiver.h"
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <WebCore/Timer.h>
 #include <span>
@@ -71,6 +73,8 @@ class RemoteLayerBackingStore;
 
 class RemoteImageBufferProxyFlushState;
 class RemoteImageBufferSetProxy;
+
+class RemoteRenderingBackendProxyBackground;
 
 class RemoteRenderingBackendProxy
     : public IPC::Connection::Client, SerialFunctionDispatcher {
@@ -135,14 +139,7 @@ public:
     };
 
 #if PLATFORM(COCOA)
-    struct SwapBuffersResult {
-        std::optional<ImageBufferBackendHandle> backendHandle;
-        SwapBuffersDisplayRequirement displayRequirement;
-        BufferIdentifierSet cacheIdentifiers;
-    };
-
-    void prepareImageBufferSetsForDisplay(Vector<LayerPrepareBuffersData>&&, CompletionHandler<void(Vector<SwapBuffersResult>&&)>);
-    void ensurePrepareCompleted();
+    Vector<SwapBuffersDisplayRequirement> prepareImageBufferSetsForDisplay(Vector<LayerPrepareBuffersData>&&);
 #endif
 
     void finalizeRenderingUpdate();
@@ -163,6 +160,8 @@ public:
     IPC::Connection* connection() { return m_connection.get(); }
 
     SerialFunctionDispatcher& dispatcher() { return m_dispatcher; }
+
+    RemoteRenderingBackendProxyBackground& background() const { return m_background; }
 
     static constexpr Seconds defaultTimeout = 15_s;
 private:
@@ -209,7 +208,8 @@ private:
     RenderingUpdateID m_renderingUpdateID;
     RenderingUpdateID m_didRenderingUpdateID;
 
-    IPC::Connection::AsyncReplyID m_prepareReply;
+    Ref<WorkQueue> m_queue;
+    Ref<RemoteRenderingBackendProxyBackground> m_background;
 };
 
 } // namespace WebKit

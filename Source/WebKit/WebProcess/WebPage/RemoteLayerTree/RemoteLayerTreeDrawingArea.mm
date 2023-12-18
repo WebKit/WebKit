@@ -30,6 +30,7 @@
 #import "GraphicsLayerCARemote.h"
 #import "MessageSenderInlines.h"
 #import "PlatformCALayerRemote.h"
+#import "RemoteImageBufferSetProxy.h"
 #import "RemoteLayerBackingStoreCollection.h"
 #import "RemoteLayerTreeContext.h"
 #import "RemoteLayerTreeDrawingAreaProxyMessages.h"
@@ -397,11 +398,10 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     for (auto& transaction : transactions)
         backingStoreCollection.willCommitLayerTree(transaction.first);
 
-    Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree message(transactions);
     auto commitEncoder = makeUniqueRef<IPC::Encoder>(Messages::RemoteLayerTreeDrawingAreaProxy::CommitLayerTree::name(), m_identifier.toUInt64());
-    commitEncoder.get() << WTFMove(message).arguments();
+    commitEncoder.get() << transactions;
 
-    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> flushers;
+    Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>> flushers;
     for (auto& transaction : transactions)
         flushers.appendVector(backingStoreCollection.didFlushLayers(transaction.first));
     bool haveFlushers = flushers.size();
@@ -488,14 +488,17 @@ RemoteLayerTreeDrawingArea::BackingStoreFlusher::BackingStoreFlusher(Ref<IPC::Co
 {
 }
 
-void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush(UniqueRef<IPC::Encoder>&& commitEncoder, Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>&& flushers)
+void RemoteLayerTreeDrawingArea::BackingStoreFlusher::flush(UniqueRef<IPC::Encoder>&& commitEncoder, Vector<std::unique_ptr<ThreadSafeImageBufferSetFlusher>>&& flushers)
 {
     ASSERT(m_hasPendingFlush);
 
     TraceScope tracingScope(BackingStoreFlushStart, BackingStoreFlushEnd);
     
+    HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>> handles;
     for (auto& flusher : flushers)
-        flusher->flush();
+        flusher->flushAndCollectHandles(handles);
+
+    commitEncoder.get() << WTFMove(handles);
 
     m_hasPendingFlush = false;
 

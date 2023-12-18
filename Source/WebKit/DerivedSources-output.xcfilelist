@@ -314,6 +314,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteRenderingBackendMessageReceive
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteRenderingBackendMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteRenderingBackendProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteRenderingBackendProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteRenderingBackendProxyBackgroundMessageReceiver.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteRenderingBackendProxyBackgroundMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSampleBufferDisplayLayerManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSampleBufferDisplayLayerManagerMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/RemoteSampleBufferDisplayLayerMessageReceiver.cpp

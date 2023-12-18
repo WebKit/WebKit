@@ -195,6 +195,7 @@ MESSAGE_RECEIVERS = \
 	WebProcess/GPU/GPUProcessConnection \
 	WebProcess/GPU/graphics/RemoteImageBufferProxy \
 	WebProcess/GPU/graphics/RemoteRenderingBackendProxy \
+	WebProcess/GPU/graphics/RemoteRenderingBackendProxyBackground \
 	WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy \
 	WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy \
 	WebProcess/GPU/webrtc/LibWebRTCCodecs \

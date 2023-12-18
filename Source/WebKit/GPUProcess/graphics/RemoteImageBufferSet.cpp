@@ -30,6 +30,7 @@
 #include "Logging.h"
 #include "RemoteImageBufferSetMessages.h"
 #include "RemoteRenderingBackend.h"
+#include "RemoteRenderingBackendProxyBackgroundMessages.h"
 #include <WebCore/GraphicsContext.h>
 
 #if PLATFORM(COCOA)
@@ -105,7 +106,7 @@ void RemoteImageBufferSet::flush()
 }
 
 // This is the GPU Process version of RemoteLayerBackingStore::prepareBuffers().
-void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferForDisplayInputData& inputData, ImageBufferSetPrepareBufferForDisplayOutputData& outputData)
+void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferForDisplayInputData& inputData, SwapBuffersDisplayRequirement& displayRequirement)
 {
     assertIsCurrent(workQueue());
     auto bufferIdentifier = [](RefPtr<WebCore::ImageBuffer> buffer) -> std::optional<WebCore::RenderingResourceIdentifier> {
@@ -147,10 +148,9 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
 
     if (m_frontBuffer && !needsFullDisplay && inputData.hasEmptyDirtyRegion) {
         // No swap necessary.
-        outputData.displayRequirement = SwapBuffersDisplayRequirement::NeedsNoDisplay;
+        displayRequirement = SwapBuffersDisplayRequirement::NeedsNoDisplay;
     } else {
-        outputData.displayRequirement = needsFullDisplay ? SwapBuffersDisplayRequirement::NeedsFullDisplay : SwapBuffersDisplayRequirement::NeedsNormalDisplay;
-
+        displayRequirement = needsFullDisplay ? SwapBuffersDisplayRequirement::NeedsFullDisplay : SwapBuffersDisplayRequirement::NeedsNormalDisplay;
         std::swap(m_frontBuffer, m_backBuffer);
 
         if (m_frontBuffer) {
@@ -168,15 +168,17 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "GPU Process: ensureFrontBufferForDisplay - swapped to ["
         << m_frontBuffer << ", " << m_backBuffer << ", " << m_secondaryBackBuffer << "]");
 
-    if (outputData.displayRequirement != SwapBuffersDisplayRequirement::NeedsNoDisplay)
+    if (displayRequirement != SwapBuffersDisplayRequirement::NeedsNoDisplay)
         m_backend->createDisplayListRecorder(m_frontBuffer, m_displayListIdentifier);
 
+    ImageBufferSetPrepareBufferForDisplayOutputData outputData;
     if (m_frontBuffer) {
         auto* sharing = m_frontBuffer->toBackendSharing();
         outputData.backendHandle = downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle();
     }
 
     outputData.bufferCacheIdentifiers = BufferIdentifierSet { bufferIdentifier(m_frontBuffer), bufferIdentifier(m_backBuffer), bufferIdentifier(m_secondaryBackBuffer) };
+    m_backend->streamConnection().send(Messages::RemoteRenderingBackendProxyBackground::ImageBufferSetDidPrepareForDisplay(m_identifier, WTFMove(outputData)), m_backend->identifier());
 }
 
 void RemoteImageBufferSet::prepareBufferForDisplay(const WebCore::Region& dirtyRegion, bool requiresClearedPixels)

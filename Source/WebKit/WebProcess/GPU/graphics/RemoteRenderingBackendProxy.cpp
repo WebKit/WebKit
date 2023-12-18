@@ -38,6 +38,8 @@
 #include "RemoteImageBufferProxyMessages.h"
 #include "RemoteImageBufferSetProxy.h"
 #include "RemoteRenderingBackendMessages.h"
+#include "RemoteRenderingBackendProxyBackground.h"
+#include "RemoteRenderingBackendProxyBackgroundMessages.h"
 #include "RemoteRenderingBackendProxyMessages.h"
 #include "SwapBuffersDisplayRequirement.h"
 #include "WebCoreArgumentCoders.h"
@@ -69,6 +71,8 @@ std::unique_ptr<RemoteRenderingBackendProxy> RemoteRenderingBackendProxy::create
 RemoteRenderingBackendProxy::RemoteRenderingBackendProxy(const RemoteRenderingBackendCreationParameters& parameters, SerialFunctionDispatcher& dispatcher)
     : m_parameters(parameters)
     , m_dispatcher(dispatcher)
+    , m_queue(WorkQueue::create("RemoteRenderingBackendProxy", WorkQueue::QOS::UserInteractive))
+    , m_background(adoptRef(*new RemoteRenderingBackendProxyBackground))
 {
 }
 
@@ -99,6 +103,8 @@ void RemoteRenderingBackendProxy::ensureGPUProcessConnection()
         // RemoteRenderingBackendProxy behaves as the dispatcher for the connection to obtain isolated state for its
         // connection. This prevents waits on RemoteRenderingBackendProxy to process messages from other connections.
         m_streamConnection->open(*this, *this);
+
+        m_streamConnection->connectionForTesting().addWorkQueueMessageReceiver(Messages::RemoteRenderingBackendProxyBackground::messageReceiverName(), m_queue, m_background.get(), m_parameters.identifier.toUInt64());
 
         callOnMainRunLoopAndWait([this, serverHandle = WTFMove(serverHandle)]() mutable {
             m_connection = &WebProcess::singleton().ensureGPUProcessConnection().connection();
@@ -358,12 +364,10 @@ void RemoteRenderingBackendProxy::releaseAllImageResources()
 }
 
 #if PLATFORM(COCOA)
-void RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay(Vector<LayerPrepareBuffersData>&& prepareBuffersInput, CompletionHandler<void(Vector<SwapBuffersResult>&&)> callback)
+Vector<SwapBuffersDisplayRequirement> RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay(Vector<LayerPrepareBuffersData>&& prepareBuffersInput)
 {
-    if (prepareBuffersInput.isEmpty()) {
-        callback(Vector<SwapBuffersResult>());
-        return;
-    }
+    if (prepareBuffersInput.isEmpty())
+        return Vector<SwapBuffersDisplayRequirement>();
 
     bool needsSync = false;
 
@@ -389,23 +393,22 @@ void RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay(Vector<LayerP
 
     LOG_WITH_STREAM(RemoteLayerBuffers, stream << "RemoteRenderingBackendProxy::prepareImageBufferSetsForDisplay - input buffers  " << inputData);
 
-    m_prepareReply = streamConnection().sendWithAsyncReply(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplay(inputData), [prepareBuffersInput = WTFMove(prepareBuffersInput), callback = WTFMove(callback)](Vector<ImageBufferSetPrepareBufferForDisplayOutputData>&& outputData) mutable {
-        Vector<SwapBuffersResult> result;
-        for (auto& data : outputData)
-            result.append(SwapBuffersResult { WTFMove(data.backendHandle), data.displayRequirement, data.bufferCacheIdentifiers });
-        callback(WTFMove(result));
-    }, renderingBackendIdentifier(), defaultTimeout);
-
-    if (needsSync)
-        ensurePrepareCompleted();
-}
-
-void RemoteRenderingBackendProxy::ensurePrepareCompleted()
-{
-    if (m_prepareReply) {
-        streamConnection().waitForAsyncReplyAndDispatchImmediately<Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplay>(m_prepareReply, defaultTimeout);
-        m_prepareReply = { };
+    Vector<SwapBuffersDisplayRequirement> result;
+    if (needsSync) {
+        auto sendResult = streamConnection().sendSync(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplaySync(inputData), renderingBackendIdentifier(), defaultTimeout);
+        if (!sendResult.succeeded()) {
+            result.grow(inputData.size());
+            for (auto& displayRequirement : result)
+                displayRequirement = SwapBuffersDisplayRequirement::NeedsFullDisplay;
+        } else
+            std::tie(result) = sendResult.takeReply();
+    } else {
+        streamConnection().send(Messages::RemoteRenderingBackend::PrepareImageBufferSetsForDisplay(inputData), renderingBackendIdentifier(), defaultTimeout);
+        result.grow(inputData.size());
+        for (auto& displayRequirement : result)
+            displayRequirement = SwapBuffersDisplayRequirement::NeedsNormalDisplay;
     }
+    return result;
 }
 #endif
 
@@ -513,6 +516,19 @@ bool RemoteRenderingBackendProxy::isCached(const ImageBuffer& imageBuffer) const
         return true;
     }
     return false;
+}
+
+void RemoteRenderingBackendProxyBackground::imageBufferSetDidPrepareForDisplay(WebKit::RemoteImageBufferSetIdentifier bufferSet, WebKit::ImageBufferSetPrepareBufferForDisplayOutputData outputData)
+{
+    m_imageBufferSetsOutputData.add({ bufferSet, 0 }, adoptRef(new ImageBufferSetPrepareBufferForDisplayOutputDataWrapper { WTFMove(outputData) }));
+}
+
+ImageBufferSetPrepareBufferForDisplayOutputData RemoteRenderingBackendProxyBackground::takeImageBufferSetPrepareForDisplayOutputData(RemoteImageBufferSetIdentifier bufferSet)
+{
+    auto handles = m_imageBufferSetsOutputData.take({ { bufferSet, 0 }, 0 }, IPC::Timeout::infinity());
+    ASSERT(handles);
+    ASSERT(handles->hasOneRef());
+    return WTFMove(handles->m_outputData);
 }
 
 #if USE(GRAPHICS_LAYER_WC)

@@ -26,9 +26,11 @@
 #include "config.h"
 #include "RemoteImageBufferSetProxy.h"
 
+#include "BufferAndBackendInfo.h"
 #include "Logging.h"
 #include "RemoteImageBufferSetMessages.h"
 #include "RemoteRenderingBackendProxy.h"
+#include "RemoteRenderingBackendProxyBackground.h"
 #include <wtf/SystemTracing.h>
 
 #if ENABLE(GPU_PROCESS)
@@ -83,20 +85,42 @@ private:
 
 namespace {
 
-class RemoteImageBufferSetProxyFlusher final : public ThreadSafeImageBufferFlusher {
+class RemoteImageBufferSetProxyFlusher final : public ThreadSafeImageBufferSetFlusher {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    RemoteImageBufferSetProxyFlusher(Ref<RemoteImageBufferSetProxyFlushFence> flushState)
-        : m_flushState(WTFMove(flushState))
+    RemoteImageBufferSetProxyFlusher(RemoteImageBufferSetIdentifier identifier, Ref<RemoteImageBufferSetProxyFlushFence> flushState, Ref<RemoteRenderingBackendProxyBackground> background, unsigned generation)
+        : m_identifier(identifier)
+        , m_flushState(WTFMove(flushState))
+        , m_background(WTFMove(background))
+        , m_generation(generation)
     { }
 
-    void flush() final
+    void flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>& handlesMap) final
     {
         m_flushState->waitFor(RemoteRenderingBackendProxy::defaultTimeout);
+        BufferSetBackendHandle handle;
+
+        ImageBufferSetPrepareBufferForDisplayOutputData outputData = m_background->takeImageBufferSetPrepareForDisplayOutputData(m_identifier);
+        handle.bufferHandle = WTFMove(outputData.backendHandle);
+
+        auto createBufferAndBackendInfo = [&](const  std::optional<WebCore::RenderingResourceIdentifier>& bufferIdentifier) {
+            if (bufferIdentifier)
+                return std::optional { BufferAndBackendInfo { *bufferIdentifier, m_generation } };
+            return std::optional<BufferAndBackendInfo>();
+        };
+
+        handle.frontBufferInfo = createBufferAndBackendInfo(outputData.bufferCacheIdentifiers.front);
+        handle.backBufferInfo = createBufferAndBackendInfo(outputData.bufferCacheIdentifiers.back);
+        handle.secondaryBackBufferInfo = createBufferAndBackendInfo(outputData.bufferCacheIdentifiers.secondaryBack);
+
+        handlesMap.add(m_identifier, makeUnique<BufferSetBackendHandle>(WTFMove(handle)));
     }
 
 private:
+    RemoteImageBufferSetIdentifier m_identifier;
     Ref<RemoteImageBufferSetProxyFlushFence> m_flushState;
+    Ref<RemoteRenderingBackendProxyBackground> m_background;
+    unsigned m_generation;
 };
 
 }
@@ -179,7 +203,7 @@ void RemoteImageBufferSetProxy::setConfiguration(WebCore::FloatSize size, float 
     m_remoteNeedsConfigurationUpdate = true;
 }
 
-std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> RemoteImageBufferSetProxy::flushFrontBufferAsync()
+std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteImageBufferSetProxy::flushFrontBufferAsync()
 {
     if (!m_remoteRenderingBackendProxy)
         return nullptr;
@@ -199,7 +223,7 @@ std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> RemoteImageBufferSetProxy
     send(Messages::RemoteImageBufferSet::Flush());
     m_pendingFlush = RemoteImageBufferSetProxyFlushFence::create(WTFMove(*event));
 
-    return makeUnique<RemoteImageBufferSetProxyFlusher>(Ref { *m_pendingFlush });
+    return makeUnique<RemoteImageBufferSetProxyFlusher>(m_identifier, Ref { *m_pendingFlush }, m_remoteRenderingBackendProxy->background(), m_generation);
 }
 
 void RemoteImageBufferSetProxy::willPrepareForDisplay()

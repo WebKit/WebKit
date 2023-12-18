@@ -73,11 +73,11 @@ void RemoteLayerWithRemoteRenderingBackingStore::clearBackingStore()
     m_cleared = true;
 }
 
-Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> RemoteLayerWithRemoteRenderingBackingStore::createFlushers()
+std::unique_ptr<ThreadSafeImageBufferSetFlusher> RemoteLayerWithRemoteRenderingBackingStore::createFlusher()
 {
     if (!m_bufferSet)
         return { };
-    return Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>>::from(m_bufferSet->flushFrontBufferAsync());
+    return m_bufferSet->flushFrontBufferAsync();
 }
 
 void RemoteLayerWithRemoteRenderingBackingStore::createContextAndPaintContents()
@@ -120,6 +120,13 @@ void RemoteLayerWithRemoteRenderingBackingStore::encodeBufferAndBackendInfos(IPC
     encodeBuffer(m_bufferCacheIdentifiers.front);
     encodeBuffer(m_bufferCacheIdentifiers.back);
     encodeBuffer(m_bufferCacheIdentifiers.secondaryBack);
+}
+
+std::optional<RemoteImageBufferSetIdentifier> RemoteLayerWithRemoteRenderingBackingStore::bufferSetIdentifier() const
+{
+    if (!m_bufferSet)
+        return std::nullopt;
+    return m_bufferSet->identifier();
 }
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)

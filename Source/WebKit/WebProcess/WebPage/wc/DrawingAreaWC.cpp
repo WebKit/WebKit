@@ -32,6 +32,7 @@
 #include "GraphicsLayerWC.h"
 #include "ImageBufferShareableBitmapBackend.h"
 #include "MessageSenderInlines.h"
+#include "RemoteImageBufferSetProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "RemoteWCLayerTreeHostProxy.h"
 #include "UpdateInfo.h"

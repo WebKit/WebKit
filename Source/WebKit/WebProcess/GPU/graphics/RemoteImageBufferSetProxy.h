@@ -35,6 +35,19 @@
 namespace WebKit {
 
 class RemoteImageBufferSetProxyFlushFence;
+struct BufferSetBackendHandle;
+
+// FIXME: We should have a generic 'ImageBufferSet' class that contains
+// the code that isn't specific to being remote, and this helper belongs
+// there.
+class ThreadSafeImageBufferSetFlusher {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_MAKE_NONCOPYABLE(ThreadSafeImageBufferSetFlusher);
+public:
+    ThreadSafeImageBufferSetFlusher() = default;
+    virtual ~ThreadSafeImageBufferSetFlusher() = default;
+    virtual void flushAndCollectHandles(HashMap<RemoteImageBufferSetIdentifier, std::unique_ptr<BufferSetBackendHandle>>&) = 0;
+};
 
 // A RemoteImageBufferSet is a set of three ImageBuffers (front, back,
 // secondary back) owned by the GPU process, for the purpose of drawing
@@ -65,7 +78,7 @@ public:
 
     WebCore::RenderingResourceIdentifier displayListResourceIdentifier() const { return m_displayListIdentifier; }
 
-    std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher> flushFrontBufferAsync();
+    std::unique_ptr<ThreadSafeImageBufferSetFlusher> flushFrontBufferAsync();
 
     void setConfiguration(WebCore::FloatSize, float, const WebCore::DestinationColorSpace&, WebCore::PixelFormat, WebCore::RenderingMode, WebCore::RenderingPurpose);
     void willPrepareForDisplay();

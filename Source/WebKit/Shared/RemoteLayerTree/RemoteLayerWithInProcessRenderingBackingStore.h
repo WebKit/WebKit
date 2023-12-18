@@ -37,7 +37,7 @@ public:
 
     void prepareToDisplay() final;
     void createContextAndPaintContents() final;
-    Vector<std::unique_ptr<WebCore::ThreadSafeImageBufferFlusher>> createFlushers() final;
+    std::unique_ptr<ThreadSafeImageBufferSetFlusher> createFlusher() final;
 
     void clearBackingStore() final;
 
