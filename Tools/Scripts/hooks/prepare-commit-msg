@@ -133,16 +133,14 @@ def message(source=None, sha=None):
 
     parseChanges(command, commit_message)
 
-    bugs_string = get_bugs_string()
-
     revert_msg = os.environ.get('COMMIT_MESSAGE_REVERT', '')
     if revert_msg:
-        return '''{title}\n{revert}\n{bugs}\n'''.format(
+        return '''{title}\n{revert}'''.format(
             title=os.environ.get('COMMIT_MESSAGE_TITLE', ''),
             revert=revert_msg,
-            bugs=bugs_string,
         )
     else:
+        bugs_string = get_bugs_string()
         return '''{title}
 {bugs}
 

@@ -29,9 +29,10 @@ import re
 from .command import Command
 from .branch import Branch
 from .pull_request import PullRequest
+from .commit import Commit as CommitProgram
 
 from webkitbugspy import Tracker
-from webkitcorepy import arguments, run, Terminal
+from webkitcorepy import arguments, run, Terminal, string_utils
 from webkitscmpy import local, log, remote
 from ..commit import Commit
 
@@ -41,14 +42,20 @@ class Revert(Command):
     help = 'Revert provided list of commits and create a pull-request with this revert commit'
     REVERT_TITLE_TEMPLATE = 'Unreviewed, reverting {}'
     REVERT_TITLE_RE = re.compile(r'^Unreviewed, reverting {}'.format(Commit.IDENTIFIER_RE.pattern))
+    RES = [
+        re.compile(r'<?rdar://problem/(?P<id>\d+)>?'),
+        re.compile(r'<?radar://problem/(?P<id>\d+)>?'),
+        re.compile(r'<?rdar:\/\/(?P<id>\d+)>?'),
+        re.compile(r'<?radar:\/\/(?P<id>\d+)>?'),
+    ]
 
     @classmethod
     def parser(cls, parser, loggers=None):
         PullRequest.parser(parser, loggers=loggers)
-        # Only allow revert one commit one time, because git automatically generate mesaage will only contain one commit information
         parser.add_argument(
             'commit',
-            help='git hash, svn revision or identifier you want to revert'
+            nargs='+',
+            help='git hash, svn revision or identifier of commits to revert'
         )
 
         parser.add_argument(
@@ -87,55 +94,75 @@ class Revert(Command):
             if not issue:
                 sys.stderr.write('Failed to create new issue\n')
                 return None
+            args.issue = issue.link
             print("Created '{}'".format(issue))
         elif not Tracker.instance():
             sys.stderr.write('Could not find tracker instance.\n')
+
+        rdar = Branch.cc_radar(args, repository, issue)
+        if rdar:
+            log.info("Created {}".format(rdar))
+
         return issue
 
     @classmethod
     def create_revert_commit_msg(cls, args, repository, **kwargs):
-        # Make sure we have the commit that user want to revert
-        try:
-            commit = repository.find(args.commit, include_log=True)
-        except (local.Scm.Exception, ValueError) as exception:
-            # ValueErrors and Scm exceptions usually contain enough information to be displayed
-            # to the user as an error
-            sys.stderr.write('Could not find "{}"'.format(args.commit) + '\n')
-            return 1
-        bug_urls = []
-        commit_title = None
-        for line in commit.message.splitlines():
-            if not commit_title:
-                commit_title = line
-            tracker = Tracker.from_string(line)
-            if tracker:
-                bug_urls.append(line)
+        commit_identifiers = []
+        commits_to_revert = []
+        reverted_changeset = ''
+        # Retrieve information for commits to be reverted.
+        for c in args.commit:
+            try:
+                commit = repository.find(c, include_log=True)
+            except (local.Scm.Exception, ValueError) as exception:
+                # ValueErrors and Scm exceptions usually contain enough information to be displayed
+                # to the user as an error
+                sys.stderr.write('Could not find "{}"'.format(c) + '\n')
+                return None, None
+            commits_to_revert.append(commit.hash)
+            commit_title = None
+            for line in commit.message.splitlines():
+                if not commit_title:
+                    commit_title = line
+            bug_urls = [i.link for i in commit.issues]
+
+            reverted_changeset += '\n{}\n'.format(commit_title)
+            reverted_changeset += '\n'.join(bug_urls)
+            if commit.identifier and commit.branch:
+                commit_identifiers.append('{}@{}'.format(commit.identifier, commit.branch))
+                reverted_changeset += '\nhttps://commits.webkit.org/{}@{}\n'.format(commit.identifier, commit.branch)
+            else:
+                sys.stderr.write('Could not find "{}"'.format(', '.join(args.commit)) + '\n')
+                return None, None
+
+        # Retrieve information for the issue tracking the revert.
         revert_issue = Tracker.from_string(args.issue)
         if not revert_issue:
             sys.stderr.write('Could not find issue {}'.format(revert_issue))
+            return None, None
+        revert_issue_radar = None
+        for bug in CommitProgram.bug_urls(revert_issue):
+            for regex in cls.RES:
+                if regex.match(bug):
+                    revert_issue_radar = bug
+                    break
+            if revert_issue_radar:
+                break
 
         env = os.environ
-        env['COMMIT_MESSAGE_TITLE'] = cls.REVERT_TITLE_TEMPLATE.format(commit, commit_title)
-        env['COMMIT_MESSAGE_REVERT'] = '{}\n\n{}\n\nReverted changeset:\n\n{}'.format(revert_issue.link, revert_issue.title, commit_title)
-        env['COMMIT_MESSAGE_BUG'] = '\n'.join(bug_urls)
-
-        if commit.identifier and commit.branch:
-            env['COMMIT_MESSAGE_BUG'] += '\nhttps://commits.webkit.org/{}@{}'.format(commit.identifier, commit.branch)
-        else:
-            sys.stderr.write('Could not find "{}"'.format(args.commit) + '\n')
-            return 1
-
-        return commit, commit_title, bug_urls
+        env['COMMIT_MESSAGE_TITLE'] = cls.REVERT_TITLE_TEMPLATE.format(string_utils.join(commit_identifiers))
+        env['COMMIT_MESSAGE_REVERT'] = '{}\n{}\n\n{}\n\n'.format(revert_issue.link, revert_issue_radar or 'Include a Radar link (OOPS!).', revert_issue.title)
+        env['COMMIT_MESSAGE_REVERT'] += 'Reverted {}:\n{}'.format('changes' if len(commit_identifiers) > 1 else 'change', reverted_changeset)
+        return commit_identifiers, commits_to_revert
 
     @classmethod
-    def revert_commit(cls, args, repository, issue, commit, commit_title, bug_urls, **kwargs):
-        result = run([repository.executable(), 'revert', '--no-commit'] + [commit.hash], cwd=repository.root_path, capture_output=True)
+    def revert_commit(cls, args, repository, issue, commit_identifiers, commits_to_revert, **kwargs):
+        result = run([repository.executable(), 'revert', '--no-commit'] + commits_to_revert, cwd=repository.root_path, capture_output=True)
         if result.returncode:
             # git revert will output nothing if this commit is already reverted
             if not result.stdout.strip():
-                sys.stderr.write('The commit(s) you specified seem(s) to be already reverted.')
+                sys.stderr.write('The commit(s) you specified seem(s) to already be reverted.')
                 return 2
-            # print out
             sys.stderr.write(result.stdout.decode('utf-8'))
             sys.stderr.write(result.stderr.decode('utf-8'))
             sys.stderr.write('If you have merge conflicts, after resolving them, please use git-webkit pfr to publish your pull request')
@@ -143,8 +170,8 @@ class Revert(Command):
 
         cls.write_branch_variables(
             repository, repository.branch,
-            title=cls.REVERT_TITLE_TEMPLATE.format(commit, commit_title),
-            bug=bug_urls,
+            title=cls.REVERT_TITLE_TEMPLATE.format(', '.join(commit_identifiers)),
+            bug=[issue],
         )
 
         result = run([repository.executable(), 'commit', '--date=now'], cwd=repository.root_path, env=os.environ)
@@ -152,7 +179,7 @@ class Revert(Command):
             run([repository.executable(), 'revert', '--abort'], cwd=repository.root_path)
             sys.stderr.write('Failed revert commit')
             return 1
-        log.info('Reverted {}'.format(commit.hash))
+        log.info('Reverted {}'.format(', '.join(args.commit)))
         return 0
 
     @classmethod
@@ -163,7 +190,7 @@ class Revert(Command):
 
         # Check if there are any outstanding changes:
         if repository.modified():
-            sys.stderr.write('Please commit your changes or stash them before you revert commit: {}'.format(args.commit))
+            sys.stderr.write('Please commit your changes or stash them before you revert commit: {}'.format(', '.join(args.commit)))
             return 1
 
         if not PullRequest.check_pull_request_args(repository, args):
@@ -173,15 +200,15 @@ class Revert(Command):
         if not issue:
             return 1
 
-        commit, commit_title, bug_urls = cls.create_revert_commit_msg(args, repository, **kwargs)
-        if not commit or not commit_title:
+        commit_identifiers, commits_to_revert = cls.create_revert_commit_msg(args, repository, **kwargs)
+        if not commit_identifiers or not commits_to_revert:
             return 1
 
         branch_point = PullRequest.pull_request_branch_point(repository, args, **kwargs)
         if not branch_point:
             return 1
 
-        result = cls.revert_commit(args, repository, issue, commit, commit_title, bug_urls, **kwargs)
+        result = cls.revert_commit(args, repository, issue, commit_identifiers, commits_to_revert, **kwargs)
         if result:
             return result
 
