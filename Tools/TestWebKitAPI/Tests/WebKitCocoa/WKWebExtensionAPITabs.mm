@@ -950,14 +950,14 @@ TEST(WKWebExtensionAPITabs, UpdatedEvent)
         @"}",
 
         @"browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {",
-        @"  if (changeInfo.hasOwnProperty('mutedInfo')) {",
+        @"  if ('mutedInfo' in changeInfo) {",
         @"    browser.test.assertEq(tabId, newTab.id, 'The updated tab should have the correct id for muted change')",
         @"    browser.test.assertTrue(changeInfo.mutedInfo.muted, 'The tab should be muted')",
         @"    browser.test.assertDeepEq(changeInfo.mutedInfo, tab.mutedInfo, 'The mutedInfo in changeInfo should match the mutedInfo of the tab')",
         @"    mutedUpdated = true",
         @"  }",
 
-        @"  if (changeInfo.hasOwnProperty('pinned')) {",
+        @"  if ('pinned' in changeInfo) {",
         @"    browser.test.assertEq(tabId, newTab.id, 'The updated tab should have the correct id for pinned change')",
         @"    browser.test.assertTrue(changeInfo.pinned, 'The tab should be pinned')",
         @"    browser.test.assertEq(changeInfo.pinned, tab.pinned, 'The pinned status in changeInfo should match the pinned status of the tab')",
@@ -1678,7 +1678,7 @@ TEST(WKWebExtensionAPITabs, ExecuteScript)
         @"const tabId = tabs[0].id",
 
         @"browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {",
-        @"  if (changeInfo.url) {",
+        @"  if ('url' in changeInfo) {",
         @"    let results = await browser.tabs.executeScript(tabId, { allFrames: false, file: 'executeScript.js' })",
         @"    browser.test.assertEq(results[0], 'pink')",
 
