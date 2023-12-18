@@ -28,13 +28,14 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIScriptControllerCocoa.h"
+#import "WKSEDefinitions.h"
 #import <wtf/BlockPtr.h>
 
 typedef struct CGRect CGRect;
 OBJC_CLASS UITextSelectionDisplayInteraction;
 
-@protocol UIAsyncTextInput_Staging;
 @protocol UICoordinateSpace;
+@protocol WKSETextInput;
 
 namespace WebCore {
 class FloatPoint;
@@ -201,7 +202,7 @@ private:
     void clipSelectionViewRectToContentView(CGRect&) const;
 
 #if HAVE(UI_ASYNC_TEXT_INTERACTION)
-    id<UIAsyncTextInput_Staging> asyncTextInput() const;
+    id<WKSETextInput> asyncTextInput() const;
 #endif
 
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)

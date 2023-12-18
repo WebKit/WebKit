@@ -1996,6 +1996,7 @@
 
 /* Begin PBXFileReference section */
 		00CD9F6215BE312C002DA2CE /* BackForwardList.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BackForwardList.mm; sourceTree = "<group>"; };
+		02238A3D2B2FB47C00442B86 /* VerifyUserGestureFromUIProcess.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = VerifyUserGestureFromUIProcess.mm; sourceTree = "<group>"; };
 		041A1E33216FFDBC00789E0A /* PublicSuffix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublicSuffix.cpp; sourceTree = "<group>"; };
 		0451A5A6235E438E009DF945 /* BumpPointerAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BumpPointerAllocator.cpp; sourceTree = "<group>"; };
 		0711DF51226A95FB003DD2F7 /* AVFoundationSoftLinkTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AVFoundationSoftLinkTest.mm; sourceTree = "<group>"; };
@@ -4212,6 +4213,7 @@
 				07EDEFAC1EB9400C00D43292 /* UserMediaDisabled.mm */,
 				07F4E92D20AF58D3002E3803 /* UserMediaSimulateFailedSandbox.mm */,
 				2E133B4F21D40AF000ED1CB2 /* UseSelectionAsFindString.mm */,
+				02238A3D2B2FB47C00442B86 /* VerifyUserGestureFromUIProcess.mm */,
 				93E943F11CD3E87E00AC08C2 /* VideoControlsManager.mm */,
 				CD3065DF2165682E00E895DF /* VideoQualityDisplayCompositing.mm */,
 				2D520634245A603C00338F88 /* ViewExposedRect.mm */,

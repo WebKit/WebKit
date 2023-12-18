@@ -364,14 +364,13 @@ TEST(KeyboardInputTests, CanHandleKeyEventInCompletionHandler)
     auto [webView, inputDelegate] = webViewAndInputDelegateWithAutofocusedInput();
     bool doneWaiting = false;
 
-    id <UITextInputPrivate> contentView = (id <UITextInputPrivate>)[webView firstResponder];
     auto firstWebEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:NO]);
     auto secondWebEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:NO]);
-    [contentView handleKeyWebEvent:firstWebEvent.get() withCompletionHandler:[&] (WebEvent *event, BOOL) {
+    [webView handleKeyEvent:firstWebEvent.get() completion:[&](WebEvent *event, BOOL) {
         EXPECT_TRUE([event isEqual:firstWebEvent.get()]);
-        [contentView handleKeyWebEvent:secondWebEvent.get() withCompletionHandler:[&] (WebEvent *event, BOOL) {
+        [webView handleKeyEvent:secondWebEvent.get() completion:[&] (WebEvent *event, BOOL) {
             EXPECT_TRUE([event isEqual:secondWebEvent.get()]);
-            [contentView insertText:@"a"];
+            [(id<UITextInput>)[webView firstResponder] insertText:@"a"];
             doneWaiting = true;
         }];
     }];
@@ -383,14 +382,13 @@ TEST(KeyboardInputTests, CanHandleKeyEventInCompletionHandler)
 TEST(KeyboardInputTests, ResigningFirstResponderCancelsKeyEvents)
 {
     auto [webView, inputDelegate] = webViewAndInputDelegateWithAutofocusedInput();
-    auto contentView = [webView textInputContentView];
     auto keyDownEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:NO]);
 
     [webView becomeFirstResponder];
     [webView evaluateJavaScript:@"while(1);" completionHandler:nil];
 
     bool doneWaiting = false;
-    [contentView handleKeyWebEvent:keyDownEvent.get() withCompletionHandler:[&] (WebEvent *event, BOOL handled) {
+    [webView handleKeyEvent:keyDownEvent.get() completion:[&] (WebEvent *event, BOOL handled) {
         EXPECT_TRUE([event isEqual:keyDownEvent.get()]);
         EXPECT_TRUE(handled);
         doneWaiting = true;
@@ -403,7 +401,6 @@ TEST(KeyboardInputTests, ResigningFirstResponderCancelsKeyEvents)
 TEST(KeyboardInputTests, WaitForKeyEventHandlerInFirstResponder)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    auto contentView = [webView textInputContentView];
     auto keyDownEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:0 isTabKey:NO]);
 
     [webView becomeFirstResponder];
@@ -411,7 +408,7 @@ TEST(KeyboardInputTests, WaitForKeyEventHandlerInFirstResponder)
     [webView evaluateJavaScript:@"start = Date.now(); while(Date.now() - start < 500);" completionHandler:nil];
 
     bool doneWaiting = false;
-    [contentView handleKeyWebEvent:keyDownEvent.get() withCompletionHandler:[&] (WebEvent *event, BOOL handled) {
+    [webView handleKeyEvent:keyDownEvent.get() completion:[&] (WebEvent *event, BOOL handled) {
         EXPECT_TRUE([event isEqual:keyDownEvent.get()]);
         EXPECT_FALSE(handled);
         doneWaiting = true;
@@ -423,13 +420,12 @@ TEST(KeyboardInputTests, WaitForKeyEventHandlerInFirstResponder)
 TEST(KeyboardInputTests, HandleKeyEventsInCrashedOrUninitializedWebProcess)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
-    auto contentView = [webView textInputContentView];
     {
         auto keyDownEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:65 isTabKey:NO]);
         bool doneWaiting = false;
         [webView synchronouslyLoadHTMLString:@"<body></body>"];
         [webView evaluateJavaScript:@"while (1);" completionHandler:nil];
-        [contentView handleKeyWebEvent:keyDownEvent.get() withCompletionHandler:[&](WebEvent *event, BOOL handled) {
+        [webView handleKeyEvent:keyDownEvent.get() completion:[&](WebEvent *event, BOOL handled) {
             EXPECT_TRUE([event isEqual:keyDownEvent.get()]);
             EXPECT_FALSE(handled);
             doneWaiting = true;
@@ -441,7 +437,7 @@ TEST(KeyboardInputTests, HandleKeyEventsInCrashedOrUninitializedWebProcess)
         auto keyUpEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyUp timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:65 isTabKey:NO]);
         bool doneWaiting = false;
         [webView _close];
-        [contentView handleKeyWebEvent:keyUpEvent.get() withCompletionHandler:[&](WebEvent *event, BOOL handled) {
+        [webView handleKeyEvent:keyUpEvent.get() completion:[&](WebEvent *event, BOOL handled) {
             EXPECT_TRUE([event isEqual:keyUpEvent.get()]);
             EXPECT_FALSE(handled);
             doneWaiting = true;
@@ -472,7 +468,7 @@ TEST(KeyboardInputTests, HandleKeyEventsWhileSwappingWebProcess)
     bool done = false;
     auto keyEvent = adoptNS([[WebEvent alloc] initWithKeyEventType:WebEventKeyDown timeStamp:CFAbsoluteTimeGetCurrent() characters:@"a" charactersIgnoringModifiers:@"a" modifiers:0 isRepeating:NO withFlags:0 withInputManagerHint:nil keyCode:65 isTabKey:NO]);
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.01 * NSEC_PER_SEC)), dispatch_get_main_queue(), [keyEvent, webView, &done] {
-        [[webView textInputContentView] handleKeyWebEvent:keyEvent.get() withCompletionHandler:[keyEvent, &done](WebEvent *event, BOOL handled) {
+        [webView handleKeyEvent:keyEvent.get() completion:[keyEvent, &done](WebEvent *event, BOOL handled) {
             EXPECT_TRUE([event isEqual:keyEvent.get()]);
             EXPECT_FALSE(handled);
             done = true;
@@ -558,15 +554,15 @@ TEST(KeyboardInputTests, IsSingleLineDocument)
 
     // Text field
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('first').focus()"];
-    EXPECT_TRUE([webView textInputContentView].textInputTraits.isSingleLineDocument);
+    EXPECT_TRUE([webView effectiveTextInputTraits].isSingleLineDocument);
 
     // Text area
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('second').focus()"];
-    EXPECT_FALSE([webView textInputContentView].textInputTraits.isSingleLineDocument);
+    EXPECT_FALSE([webView effectiveTextInputTraits].isSingleLineDocument);
 
     // Content editable
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('third').focus()"];
-    EXPECT_FALSE([webView textInputContentView].textInputTraits.isSingleLineDocument);
+    EXPECT_FALSE([webView effectiveTextInputTraits].isSingleLineDocument);
 }
 
 TEST(KeyboardInputTests, KeyboardTypeForInput)
@@ -585,8 +581,7 @@ TEST(KeyboardInputTests, KeyboardTypeForInput)
         [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"input.blur()"];
         [webView evaluateJavaScriptAndWaitForInputSessionToChange:[NSString stringWithFormat:@"input.type = '%@'; input.inputMode = '%@'; input.pattern = '%@'; input.focus()", inputType, inputMode, pattern]];
 
-        UIView<UITextInputPrivate> *textInput = (UIView<UITextInputPrivate> *)[webView textInputContentView];
-        UIKeyboardType keyboardType = [textInput textInputTraits].keyboardType;
+        UIKeyboardType keyboardType = [webView effectiveTextInputTraits].keyboardType;
 
         bool success = keyboardType == expectedKeyboardType;
         if (!success)
@@ -667,7 +662,7 @@ TEST(KeyboardInputTests, OverrideTextInputTraits)
     [webView synchronouslyLoadHTMLString:@"<body><div id='editor' contenteditable='true'></div></body>"];
 
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.getElementById('editor').focus()"];
-    EXPECT_EQ(keyboardType, [webView textInputContentView].textInputTraits.keyboardType);
+    EXPECT_EQ(keyboardType, [webView effectiveTextInputTraits].keyboardType);
 }
 
 TEST(KeyboardInputTests, DisableSpellChecking)
@@ -680,7 +675,7 @@ TEST(KeyboardInputTests, DisableSpellChecking)
     [webView _setInputDelegate:inputDelegate.get()];
 
     auto checkSmartQuotesAndDashesType = [&] (UITextSmartDashesType dashesType, UITextSmartQuotesType quotesType, UITextSpellCheckingType spellCheckingType) {
-        UITextInputTraits *traits = [[webView textInputContentView] textInputTraits];
+        auto traits = [webView effectiveTextInputTraits];
         EXPECT_EQ(dashesType, traits.smartDashesType);
         EXPECT_EQ(quotesType, traits.smartQuotesType);
         EXPECT_EQ(spellCheckingType, traits.spellCheckingType);
@@ -713,7 +708,7 @@ TEST(KeyboardInputTests, SelectionClipRectsWhenPresentingInputView)
 
     CGRect selectionClipRect = CGRectNull;
     [inputDelegate setDidStartInputSessionHandler:[&] (WKWebView *, id <_WKFormInputSession>) {
-        selectionClipRect = [[webView textInputContentView] _selectionClipRect];
+        selectionClipRect = [webView selectionClipRect];
     }];
     [webView _setInputDelegate:inputDelegate.get()];
     [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width, initial-scale=1'><input>"];
@@ -1155,7 +1150,7 @@ TEST(KeyboardInputTests, AutocorrectionIndicatorColorNotAffectedByAuthorDefinedA
 
         __block bool done = false;
 
-        [[webView textInputContentView] applyAutocorrection:@"different" toString:@"diferent" shouldUnderline:YES withCompletionHandler:^(UIWKAutocorrectionRects *) {
+        [webView replaceText:@"diferent" withText:@"different" shouldUnderline:YES completion:^{
             NSString *hasCorrectionIndicatorMarker = [webView stringByEvaluatingJavaScript:hasCorrectionIndicatorMarkerJavaScript];
             EXPECT_WK_STREQ("1", hasCorrectionIndicatorMarker);
             done = true;
@@ -1253,19 +1248,19 @@ TEST(KeyboardInputTests, DeviceEIDAndIMEIAutoFill)
 
     loadSimulatedRequest(@"https://webkit.org"); // AutoFill is allowed here.
     focusElementWithID(@"imei");
-    EXPECT_WK_STREQ(UITextContentTypeCellularIMEI, [webView _textInputTraits].textContentType);
+    EXPECT_WK_STREQ(UITextContentTypeCellularIMEI, [webView effectiveTextInputTraits].textContentType);
 
     blurActiveElement();
     focusElementWithID(@"eid");
-    EXPECT_WK_STREQ(UITextContentTypeCellularEID, [webView _textInputTraits].textContentType);
+    EXPECT_WK_STREQ(UITextContentTypeCellularEID, [webView effectiveTextInputTraits].textContentType);
 
     loadSimulatedRequest(@"https://apple.com"); // AutoFill is not allowed here.
     focusElementWithID(@"imei");
-    EXPECT_NULL([webView _textInputTraits].textContentType);
+    EXPECT_NULL([webView effectiveTextInputTraits].textContentType);
 
     blurActiveElement();
     focusElementWithID(@"eid");
-    EXPECT_NULL([webView _textInputTraits].textContentType);
+    EXPECT_NULL([webView effectiveTextInputTraits].textContentType);
 }
 
 #endif // HAVE(ESIM_AUTOFILL_SYSTEM_SUPPORT)

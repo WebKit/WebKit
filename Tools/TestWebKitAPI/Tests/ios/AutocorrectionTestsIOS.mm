@@ -37,39 +37,6 @@
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 
-@interface TestWKWebView (AutocorrectionTests)
-- (UIWKAutocorrectionRects *)autocorrectionRectsForString:(NSString *)string;
-- (UIWKAutocorrectionContext *)synchronouslyRequestAutocorrectionContext;
-@end
-
-@implementation TestWKWebView (AutocorrectionTests)
-
-- (UIWKAutocorrectionRects *)autocorrectionRectsForString:(NSString *)string
-{
-    RetainPtr<UIWKAutocorrectionRects> result;
-    bool done = false;
-    [self.textInputContentView requestAutocorrectionRectsForString:string withCompletionHandler:[&] (UIWKAutocorrectionRects *rects) {
-        result = rects;
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    return result.autorelease();
-}
-
-- (UIWKAutocorrectionContext *)synchronouslyRequestAutocorrectionContext
-{
-    RetainPtr<UIWKAutocorrectionContext> result;
-    bool done = false;
-    [self.textInputContentView requestAutocorrectionContextWithCompletionHandler:[&] (UIWKAutocorrectionContext *context) {
-        result = context;
-        done = true;
-    }];
-    TestWebKitAPI::Util::run(&done);
-    return result.autorelease();
-}
-
-@end
-
 static void checkCGRectIsNotEmpty(CGRect rect)
 {
     BOOL isEmpty = CGRectIsEmpty(rect);
@@ -92,9 +59,9 @@ TEST(AutocorrectionTests, FontAtCaretWhenUsingUICTFontTextStyle)
     [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.body.focus()"];
     [webView _executeEditCommand:@"MoveToEndOfLine" argument:nil completion:nil];
 
-    RetainPtr autocorrectionRects = [webView autocorrectionRectsForString:@"Wulk"];
-    checkCGRectIsNotEmpty([autocorrectionRects firstRect]);
-    checkCGRectIsNotEmpty([autocorrectionRects lastRect]);
+    auto [firstRect, lastRect] = [webView autocorrectionRectsForString:@"Wulk"];
+    checkCGRectIsNotEmpty(firstRect);
+    checkCGRectIsNotEmpty(lastRect);
 
     auto contentView = [webView textInputContentView];
     auto selectedTextRangeBeforeScaling = contentView.selectedTextRange;
@@ -126,7 +93,7 @@ TEST(AutocorrectionTests, RequestAutocorrectionContextAfterClosingPage)
 
     // This test just verifies that attempting to request an autocorrection context in this state
     // does not trigger a crash or hang, and also still invokes the given completion handler.
-    [webView synchronouslyRequestAutocorrectionContext];
+    [webView autocorrectionContext];
 }
 
 TEST(AutocorrectionTests, AutocorrectionContextDoesNotIncludeNewlineInTextField)
@@ -136,18 +103,18 @@ TEST(AutocorrectionTests, AutocorrectionContextDoesNotIncludeNewlineInTextField)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 568)]);
     [webView synchronouslyLoadTestPageNamed:@"autofocused-text-input"];
 
-    RetainPtr contextBeforeTyping = [webView synchronouslyRequestAutocorrectionContext];
-    EXPECT_EQ(0U, [contextBeforeTyping contextBeforeSelection].length);
-    EXPECT_EQ(0U, [contextBeforeTyping selectedText].length);
-    EXPECT_EQ(0U, [contextBeforeTyping contextAfterSelection].length);
+    auto contextBeforeTyping = [webView autocorrectionContext];
+    EXPECT_TRUE(contextBeforeTyping.contextBeforeSelection.isEmpty());
+    EXPECT_TRUE(contextBeforeTyping.selectedText.isEmpty());
+    EXPECT_TRUE(contextBeforeTyping.contextAfterSelection.isEmpty());
 
     [[webView textInputContentView] insertText:@"a"];
     [webView waitForNextPresentationUpdate];
 
-    RetainPtr contextAfterTyping = [webView synchronouslyRequestAutocorrectionContext];
-    EXPECT_WK_STREQ(@"a", [contextAfterTyping contextBeforeSelection]);
-    EXPECT_EQ(0U, [contextAfterTyping selectedText].length);
-    EXPECT_EQ(0U, [contextAfterTyping contextAfterSelection].length);
+    auto contextAfterTyping = [webView autocorrectionContext];
+    EXPECT_WK_STREQ(@"a", contextAfterTyping.contextBeforeSelection);
+    EXPECT_TRUE(contextAfterTyping.selectedText.isEmpty());
+    EXPECT_TRUE(contextAfterTyping.contextAfterSelection.isEmpty());
 }
 
 TEST(AutocorrectionTests, DoNotLearnCorrectionsAfterChangingInputTypeFromPassword)
@@ -166,7 +133,11 @@ TEST(AutocorrectionTests, DoNotLearnCorrectionsAfterChangingInputTypeFromPasswor
     TestWebKitAPI::Util::run(&startedInputSession);
 
     auto learnsCorrections = [&] {
-        return static_cast<id<UITextInputTraits_Private>>([webView textInputContentView].textInputTraits).learnsCorrections;
+#if HAVE(UI_ASYNC_TEXT_INTERACTION)
+        if ([webView hasAsyncTextInput])
+            return ![webView extendedTextInputTraits].typingAdaptationDisabled;
+#endif
+        return [webView effectiveTextInputTraits].learnsCorrections;
     };
     EXPECT_FALSE(learnsCorrections());
 
@@ -200,7 +171,7 @@ TEST(AutocorrectionTests, AutocorrectionIndicatorsDismissAfterNextWord)
 
     __block bool done = false;
 
-    [[webView textInputContentView] applyAutocorrection:@"different" toString:@"diferent" shouldUnderline:YES withCompletionHandler:^(UIWKAutocorrectionRects *) {
+    [webView replaceText:@"diferent" withText:@"different" shouldUnderline:YES completion:^{
         NSString *hasCorrectionIndicatorMarker = [webView stringByEvaluatingJavaScript:hasCorrectionIndicatorMarkerJavaScript];
         EXPECT_WK_STREQ("1", hasCorrectionIndicatorMarker);
         done = true;
@@ -242,7 +213,7 @@ TEST(AutocorrectionTests, AutocorrectionIndicatorsMultiWord)
 
     __block bool done = false;
 
-    [[webView textInputContentView] applyAutocorrection:@"tomorrow night" toString:@"tomorrownight" shouldUnderline:YES withCompletionHandler:^(UIWKAutocorrectionRects *) {
+    [webView replaceText:@"tomorrownight" withText:@"tomorrow night" shouldUnderline:YES completion:^{
         NSString *hasCorrectionIndicatorMarker = [webView stringByEvaluatingJavaScript:hasCorrectionIndicatorMarkerJavaScript];
         EXPECT_WK_STREQ("1", hasCorrectionIndicatorMarker);
         done = true;
@@ -274,22 +245,22 @@ TEST(AutocorrectionTests, AutocorrectionContextBeforeAndAfterEditing)
     [webView synchronouslyLoadTestPageNamed:@"autofocused-text-input"];
 
     auto *contentView = [webView textInputContentView];
-    RetainPtr contextBeforeInsertingText = [webView synchronouslyRequestAutocorrectionContext];
-    EXPECT_EQ(0U, [contextBeforeInsertingText contextBeforeSelection].length);
-    EXPECT_EQ(0U, [contextBeforeInsertingText selectedText].length);
-    EXPECT_EQ(0U, [contextBeforeInsertingText contextAfterSelection].length);
+    auto contextBeforeInsertingText = [webView autocorrectionContext];
+    EXPECT_TRUE(contextBeforeInsertingText.contextBeforeSelection.isEmpty());
+    EXPECT_TRUE(contextBeforeInsertingText.selectedText.isEmpty());
+    EXPECT_TRUE(contextBeforeInsertingText.contextAfterSelection.isEmpty());
 
     [contentView insertText:@"hello"];
-    RetainPtr contextAfterInsertingText = [webView synchronouslyRequestAutocorrectionContext];
-    EXPECT_WK_STREQ("hello", [contextAfterInsertingText contextBeforeSelection]);
-    EXPECT_EQ(0U, [contextAfterInsertingText selectedText].length);
-    EXPECT_EQ(0U, [contextAfterInsertingText contextAfterSelection].length);
+    auto contextAfterInsertingText = [webView autocorrectionContext];
+    EXPECT_WK_STREQ("hello", contextAfterInsertingText.contextBeforeSelection);
+    EXPECT_TRUE(contextAfterInsertingText.selectedText.isEmpty());
+    EXPECT_TRUE(contextAfterInsertingText.contextAfterSelection.isEmpty());
 
     [contentView selectAll:nil];
-    RetainPtr contextAfterSelecting = [webView synchronouslyRequestAutocorrectionContext];
-    EXPECT_EQ(0U, [contextAfterSelecting contextBeforeSelection].length);
-    EXPECT_WK_STREQ("hello", [contextAfterSelecting selectedText]);
-    EXPECT_EQ(0U, [contextAfterSelecting contextAfterSelection].length);
+    auto contextAfterSelecting = [webView autocorrectionContext];
+    EXPECT_TRUE(contextAfterSelecting.contextBeforeSelection.isEmpty());
+    EXPECT_WK_STREQ("hello", contextAfterSelecting.selectedText);
+    EXPECT_TRUE(contextAfterSelecting.contextAfterSelection.isEmpty());
 }
 
 TEST(AutocorrectionTests, AvoidDeadlockWithGPUProcessCreationInEmptyView)
@@ -305,7 +276,7 @@ TEST(AutocorrectionTests, AvoidDeadlockWithGPUProcessCreationInEmptyView)
 
     [webView _setInputDelegate:inputDelegate.get()];
     [webView synchronouslyLoadTestPageNamed:@"autofocused-text-input"];
-    [webView synchronouslyRequestAutocorrectionContext];
+    [webView autocorrectionContext];
 }
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -168,7 +168,7 @@ public:
     CheckedRef<const ScriptController> checkedScript() const;
     void resetScript();
 
-    WEBCORE_EXPORT bool isRootFrame() const;
+    WEBCORE_EXPORT bool isRootFrame() const final;
 
     WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
 
@@ -367,6 +367,7 @@ private:
     unsigned m_navigationDisableCount { 0 };
     unsigned m_selfOnlyRefCount { 0 };
     bool m_hasHadUserInteraction { false };
+    const bool m_isRootFrame { false };
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)
     OptionSet<WindowProxyProperty> m_accessedWindowProxyPropertiesViaOpener;

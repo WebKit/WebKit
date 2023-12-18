@@ -220,7 +220,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                     function = wasmWrapperFunction->function();
                 }
                 Wasm::TypeIndex expectedTypeIndex = moduleInformation.importFunctionTypeIndices[import.kindIndex];
-                if (importedTypeIndex != expectedTypeIndex)
+                if (!Wasm::isSubtypeIndex(importedTypeIndex, expectedTypeIndex))
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported function", "signature doesn't match the provided WebAssembly function's signature")));
             }
             // iii. Otherwise:
@@ -242,7 +242,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             if (global.mutability == Wasm::Immutable) {
                 if (value.inherits<JSWebAssemblyGlobal>()) {
                     JSWebAssemblyGlobal* globalValue = jsCast<JSWebAssemblyGlobal*>(value);
-                    if (!isSubtype(globalValue->global()->type(), global.type))
+                    if (!Wasm::isSubtype(globalValue->global()->type(), global.type))
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same type")));
                     if (globalValue->global()->mutability() != Wasm::Immutable)
                         return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same mutability")));
@@ -347,7 +347,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                 if (!value.inherits<JSWebAssemblyGlobal>())
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a WebAssembly.Global object since it is mutable")));
                 JSWebAssemblyGlobal* globalValue = jsCast<JSWebAssemblyGlobal*>(value);
-                if (globalValue->global()->type() != global.type)
+                if (!isSubtype(globalValue->global()->type(), global.type))
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same type")));
                 if (globalValue->global()->mutability() != global.mutability)
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported global", "must be a same mutability")));
@@ -377,9 +377,9 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                     return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Imported Table", "'maximum' is larger than the module's expected 'maximum'")));
             }
 
-            auto expectedType = moduleInformation.tables[import.kindIndex].type();
-            auto actualType = table->table()->type();
-            if (expectedType != actualType)
+            auto expectedType = moduleInformation.tables[import.kindIndex].wasmType();
+            auto actualType = table->table()->wasmType();
+            if (!Wasm::isSubtype(actualType, expectedType))
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "Table import", "provided a 'type' that is wrong")));
 
             // ii. Append v to tables.
@@ -396,6 +396,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
 
             Wasm::TypeIndex expectedTypeIndex = moduleInformation.importExceptionTypeIndices[import.kindIndex];
 
+            // FIXME: change this to subtyping if the final exception proposal specifies it.
             if (expectedTypeIndex != tag->tag().typeIndex())
                 return exception(createJSWebAssemblyLinkError(globalObject, vm, importFailMessage(import, "imported Tag", "signature doesn't match the imported WebAssembly Tag's signature")));
 

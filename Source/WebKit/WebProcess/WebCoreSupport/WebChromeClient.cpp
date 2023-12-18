@@ -509,6 +509,18 @@ void WebChromeClient::closeWindow()
     page->sendClose();
 }
 
+void WebChromeClient::rootFrameAdded(const WebCore::LocalFrame& frame)
+{
+    if (auto* drawingArea = page().drawingArea())
+        drawingArea->addRootFrame(frame.frameID());
+}
+
+void WebChromeClient::rootFrameRemoved(const WebCore::LocalFrame& frame)
+{
+    if (auto* drawingArea = page().drawingArea())
+        drawingArea->removeRootFrame(frame.frameID());
+}
+
 static bool shouldSuppressJavaScriptDialogs(LocalFrame& frame)
 {
     if (frame.loader().opener() && frame.loader().stateMachine().isDisplayingInitialEmptyDocument() && frame.loader().provisionalDocumentLoader())

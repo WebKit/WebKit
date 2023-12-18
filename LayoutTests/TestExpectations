@@ -7446,13 +7446,9 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-base-different-size.html [ Ima
 imported/w3c/web-platform-tests/css/css-ruby/ruby-bidi-004.html [ ImageOnlyFailure ]
 # <rt> is not a block so should not respect ::first-letter (needs clarification)
 imported/blink/fast/ruby/ruby-first-letter.html [ ImageOnlyFailure ]
-# slightly incorrect expansion opportunities
-webkit.org/b/266500 fast/ruby/ruby-expansion-cjk.html [ ImageOnlyFailure ]
-webkit.org/b/266500 fast/ruby/ruby-expansion-cjk-2.html [ ImageOnlyFailure ]
-webkit.org/b/266500 fast/ruby/ruby-expansion-cjk-3.html [ ImageOnlyFailure ]
-webkit.org/b/266500 fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
-webkit.org/b/266500 fast/ruby/ruby-expansion-cjk-5.html [ ImageOnlyFailure ]
-webkit.org/b/266500 fast/ruby/ruby-justification.html [ ImageOnlyFailure ]
+
+# needs reasonable -expectation.html
+fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
 # Needs content adjustment
 fast/ruby/ruby-punctuation-avoid-breaking.html [ ImageOnlyFailure ]
 

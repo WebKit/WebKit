@@ -73,10 +73,6 @@
 
 @end
 
-@interface WKContentView ()
-- (void)prepareSelectionForContextMenuWithLocationInView:(CGPoint)locationInView completionHandler:(void(^)(BOOL shouldPresentMenu, RVItem *item))completionHandler;
-@end
-
 @interface WKTestingTouch : UITouch
 @end
 
@@ -335,10 +331,8 @@ TEST(iOSMouseSupport, RightClickOutsideOfTextNodeDoesNotSelect)
     [webView synchronouslyLoadTestPageNamed:@"emptyTable"];
     [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.getElementById('target'))"];
 
-    auto contentView = [webView wkContentView];
-
     __block bool done = false;
-    [contentView prepareSelectionForContextMenuWithLocationInView:CGPointMake(100, 10) completionHandler:^(BOOL, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:CGPointMake(100, 10) completion:^(BOOL) {
         NSNumber *result = [webView objectByEvaluatingJavaScript:@"window.getSelection().isCollapsed"];
         EXPECT_FALSE([result boolValue]);
         done = true;
@@ -360,7 +354,7 @@ TEST(iOSMouseSupport, RightClickDoesNotShowMenuIfPreventDefault)
     testHarness.mouseUp();
 
     __block bool done = false;
-    [[webView wkContentView] prepareSelectionForContextMenuWithLocationInView:CGPointMake(10, 10) completionHandler:^(BOOL shouldPresentMenu, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:CGPointMake(10, 10) completion:^(BOOL shouldPresentMenu) {
         EXPECT_FALSE(shouldPresentMenu);
 
         NSNumber *didContextMenu = [webView objectByEvaluatingJavaScript:@"window.didContextMenu"];
@@ -513,10 +507,9 @@ TEST(iOSMouseSupport, SelectionUpdatesBeforeContextMenuAppears)
     [webView synchronouslyLoadTestPageNamed:@"simple"];
     [webView objectByEvaluatingJavaScript:@"document.body.setAttribute('contenteditable','');"];
 
-    auto contentView = [webView wkContentView];
     [webView _simulateSelectionStart];
     __block bool done = false;
-    [contentView prepareSelectionForContextMenuWithLocationInView:CGPointZero completionHandler:^(BOOL, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:CGPointZero completion:^(BOOL) {
         EXPECT_TRUE(selectionUpdated);
         done = true;
     }];
@@ -535,7 +528,7 @@ TEST(iOSMouseSupport, DisablingTextIteractionPreventsSelectionWhenShowingContext
     [webView synchronouslyLoadHTMLString:@(largeResponsiveHelloMarkup)];
 
     __block bool done = false;
-    [[webView wkContentView] prepareSelectionForContextMenuWithLocationInView:CGPointMake(100, 100) completionHandler:^(BOOL, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:CGPointMake(100, 100) completion:^(BOOL) {
         done = true;
     }];
 
@@ -550,7 +543,7 @@ TEST(iOSMouseSupport, ShowingContextMenuSelectsEditableText)
     [webView synchronouslyLoadHTMLString:@(largeResponsiveHelloMarkup)];
 
     __block bool done = false;
-    [[webView wkContentView] prepareSelectionForContextMenuWithLocationInView:CGPointMake(100, 100) completionHandler:^(BOOL, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:CGPointMake(100, 100) completion:^(BOOL) {
         done = true;
     }];
 
@@ -565,7 +558,7 @@ TEST(iOSMouseSupport, ShowingContextMenuSelectsNonEditableText)
     [webView synchronouslyLoadHTMLString:@(largeResponsiveHelloMarkup)];
 
     __block bool done = false;
-    [[webView wkContentView] prepareSelectionForContextMenuWithLocationInView:CGPointMake(100, 100) completionHandler:^(BOOL, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:CGPointMake(100, 100) completion:^(BOOL) {
         done = true;
     }];
 
@@ -577,7 +570,7 @@ TEST(iOSMouseSupport, ShowingContextMenuSelectsNonEditableText)
 static void simulateEditContextMenuAppearance(TestWKWebView *webView, CGPoint location)
 {
     __block bool done = false;
-    [webView.textInputContentView prepareSelectionForContextMenuWithLocationInView:location completionHandler:^(BOOL, RVItem *) {
+    [webView selectTextForContextMenuWithLocationInView:location completion:^(BOOL) {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);

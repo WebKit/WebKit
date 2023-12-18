@@ -1770,6 +1770,7 @@ private:
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(CompletionHandler<void(bool)>&&);
 
     void updateDrawingAreaLayerTreeFreezeState();
+    void updateAfterDrawingAreaCreation(const WebPageCreationParameters&);
 
     enum class MarkLayersVolatileDontRetryReason : uint8_t { None, SuspendedUnderLock, TimedOut };
     void markLayersVolatileOrRetry(MarkLayersVolatileDontRetryReason);
@@ -2168,14 +2169,17 @@ private:
     WebCore::PageIdentifier m_identifier;
 
     RefPtr<WebCore::Page> m_page;
+
+    WebCore::IntSize m_viewSize;
+    LayerHostingMode m_layerHostingMode;
+    std::unique_ptr<DrawingArea> m_drawingArea;
+
     Ref<WebFrame> m_mainFrame;
 
     RefPtr<WebPageGroupProxy> m_pageGroup;
 
     String m_userAgent;
 
-    WebCore::IntSize m_viewSize;
-    std::unique_ptr<DrawingArea> m_drawingArea;
     DrawingAreaType m_drawingAreaType;
 
     HashMap<TextCheckerRequestID, RefPtr<WebCore::TextCheckingRequest>> m_pendingTextCheckingRequestMap;
@@ -2214,9 +2218,6 @@ private:
 #if ENABLE(APP_BOUND_DOMAINS)
     bool m_needsInAppBrowserPrivacyQuirks { false };
 #endif
-
-    // The layer hosting mode.
-    LayerHostingMode m_layerHostingMode;
 
 #if ENABLE(APP_HIGHLIGHTS)
     WebCore::CreateNewGroupForHighlight m_highlightIsNewGroup { WebCore::CreateNewGroupForHighlight::No };

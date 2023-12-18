@@ -71,6 +71,7 @@ private:
     void changeLocation(FrameLoadRequest&&) final;
     void broadcastFrameRemovalToOtherProcesses() final;
     void didFinishLoadInAnotherProcess() final;
+    bool isRootFrame() const final { return false; }
 
     FrameView* virtualView() const final;
     void disconnectView() final;

@@ -693,6 +693,8 @@ http/tests/fileapi [ Skip ]
 http/tests/frame-throttling [ Skip ]
 http/tests/fullscreen [ Skip ]
 
+http/tests/gamepad [ Skip ]
+  
 http/tests/globalhistory/history-delegate-basic-refresh-redirect.html [ Failure ]
 http/tests/globalhistory/history-delegate-basic-visited-links.html [ Failure ]
 
@@ -2737,4 +2739,5 @@ http/tests/scroll-to-text-fragment/no-scroll-after-stylesheet-load.html [ Skip ]
 webkit.org/b/229764 animations/background-position.html [ Pass ImageOnlyFailure ]
 
 fast/css/bidi-override-in-anonymous-block.html [ Failure ]
-fast/text/ruby-justification-flush.html [ ImageOnlyFailure ]
+
+webkit.org/b/227753 [ Debug ] fast/dom/Window/post-message-large-array-buffer-should-not-crash.html [ Pass Failure ]

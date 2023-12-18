@@ -199,7 +199,8 @@ class GitHubEWS(GitHub):
     ICON_BUILD_FAIL = u'\U0000274C'
     ICON_BUILD_WAITING = u'\U000023F3'
     ICON_BUILD_ONGOING = u'![loading](https://user-images.githubusercontent.com/3098702/171232313-daa606f1-8fd6-4b0f-a20b-2cb93c43d19b.png)'
-    ICON_BUILD_ONGOING_WITH_FAILURES = ICON_BUILD_ONGOING  # FIXME: Update icon for this case
+    ICON_BUILD_ONGOING_WITH_FAILURES = u'![loading-orange](https://github-production-user-asset-6210df.s3.amazonaws.com/3098702/291015173-08c448be-ac0a-4fd6-92a3-8165057445b7.png)'
+    # FIXME: Make ICON_BUILD_ONGOING_WITH_FAILURES more accessible
     ICON_BUILD_ERROR = u'\U0001F4A5'
     ICON_EMPTY_SPACE = u'\U00002003'
     STATUS_BUBBLE_START = u'<!--EWS-Status-Bubble-Start-->'
