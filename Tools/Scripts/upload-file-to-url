@@ -39,8 +39,8 @@ def upload(filename, url, max_attempts=3):
         print(f'Error: missing url, either pass --url or set UPLOAD_URL environment variable.')
         return -1
 
-    filesize = os.stat(filename).st_size // 1024 ;
-    print(f'Uploading {filename}, size: {filesize} KB')
+    filesize = os.stat(filename).st_size / 1024 / 1024;
+    print(f'Uploading {filename}, size: {filesize:.2f} MB')
 
     with open(filename, 'rb') as f:
         try:
