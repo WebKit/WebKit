@@ -51,7 +51,9 @@ public:
 
     void cancelIfNotFinishing();
     bool isSubresourceLoader() const override;
-    CachedResource* cachedResource() const override { return m_resource.get(); };
+    CachedResource* cachedResource() const override { return m_resource.get(); }
+    CachedResourceHandle<CachedResource> protectedCachedResource() const { return cachedResource(); }
+
     WEBCORE_EXPORT const HTTPHeaderMap* originalHeaders() const;
 
     const SecurityOrigin* origin() const { return m_origin.get(); }
