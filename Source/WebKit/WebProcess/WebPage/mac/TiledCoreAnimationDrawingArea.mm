@@ -78,8 +78,6 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     : DrawingArea(DrawingAreaType::TiledCoreAnimation, parameters.drawingAreaIdentifier, webPage)
     , m_isPaintingSuspended(!(parameters.activityState & ActivityState::IsVisible))
 {
-    webPage.corePage()->settings().setForceCompositingMode(true);
-
     m_hostingLayer = [CALayer layer];
     [m_hostingLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
     [m_hostingLayer setFrame:webPage.bounds()];
@@ -97,9 +95,6 @@ TiledCoreAnimationDrawingArea::TiledCoreAnimationDrawingArea(WebPage& webPage, c
     updateLayerHostingContext();
     
     setColorSpace(parameters.colorSpace);
-
-    if (auto viewExposedRect = parameters.viewExposedRect)
-        setViewExposedRect(viewExposedRect);
 
     if (!parameters.isProcessSwap)
         sendEnterAcceleratedCompositingModeIfNeeded();

@@ -208,6 +208,9 @@ public:
 
     virtual void closeWindow() = 0;
 
+    virtual void rootFrameAdded(const LocalFrame&) = 0;
+    virtual void rootFrameRemoved(const LocalFrame&) = 0;
+
     virtual void runJavaScriptAlert(LocalFrame&, const String&) = 0;
     virtual bool runJavaScriptConfirm(LocalFrame&, const String&) = 0;
     virtual bool runJavaScriptPrompt(LocalFrame&, const String& message, const String& defaultValue, String& result) = 0;

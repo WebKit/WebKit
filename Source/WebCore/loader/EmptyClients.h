@@ -90,6 +90,9 @@ class EmptyChromeClient : public ChromeClient {
 
     void closeWindow() final { }
 
+    void rootFrameAdded(const LocalFrame&) final { }
+    void rootFrameRemoved(const LocalFrame&) final { }
+
     void runJavaScriptAlert(LocalFrame&, const String&) final { }
     bool runJavaScriptConfirm(LocalFrame&, const String&) final { return false; }
     bool runJavaScriptPrompt(LocalFrame&, const String&, const String&, String&) final { return false; }

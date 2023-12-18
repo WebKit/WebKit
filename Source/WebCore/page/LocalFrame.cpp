@@ -147,12 +147,21 @@ static inline float parentTextZoomFactor(LocalFrame* frame)
     return parent->textZoomFactor();
 }
 
+static bool isRootFrame(const Frame& frame)
+{
+    if (auto* parent = frame.tree().parent())
+        return is<RemoteFrame>(parent);
+    ASSERT(&frame.mainFrame() == &frame);
+    return true;
+}
+
 LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoaderClient, FrameIdentifier identifier, HTMLFrameOwnerElement* ownerElement, Frame* parent)
     : Frame(page, identifier, FrameType::Local, ownerElement, parent)
     , m_loader(makeUniqueRef<FrameLoader>(*this, WTFMove(frameLoaderClient)))
     , m_script(makeUniqueRef<ScriptController>(*this))
     , m_pageZoomFactor(parentPageZoomFactor(this))
     , m_textZoomFactor(parentTextZoomFactor(this))
+    , m_isRootFrame(WebCore::isRootFrame(*this))
     , m_eventHandler(makeUniqueRef<EventHandler>(*this))
 {
     ProcessWarming::initializeNames();
@@ -169,8 +178,8 @@ LocalFrame::LocalFrame(Page& page, UniqueRef<LocalFrameLoaderClient>&& frameLoad
     if (LocalFrame* parent = dynamicDowncast<LocalFrame>(tree().parent()); parent && parent->activeDOMObjectsAndAnimationsSuspended())
         suspendActiveDOMObjectsAndAnimations();
 
-    if (RefPtr page = this->page(); page && isRootFrame())
-        page->removeRootFrame(*this);
+    if (isRootFrame())
+        page.addRootFrame(*this);
 }
 
 void LocalFrame::init()
@@ -218,14 +227,16 @@ LocalFrame::~LocalFrame()
     auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
     if (!isMainFrame() && localMainFrame)
         localMainFrame->selfOnlyDeref();
+
+    if (isRootFrame()) {
+        if (auto* page = this->page())
+            page->removeRootFrame(*this);
+    }
 }
 
 bool LocalFrame::isRootFrame() const
 {
-    if (auto* parent = tree().parent())
-        return is<RemoteFrame>(parent);
-    ASSERT(&mainFrame() == this);
-    return true;
+    return m_isRootFrame;
 }
 
 void LocalFrame::addDestructionObserver(FrameDestructionObserver& observer)
@@ -1189,6 +1200,8 @@ TextStream& operator<<(TextStream& ts, const LocalFrame& frame)
 
 void LocalFrame::resetScript()
 {
+    ASSERT(windowProxy().frame() == this);
+    windowProxy().detachFromFrame();
     resetWindowProxy();
     m_script = makeUniqueRef<ScriptController>(*this);
 }

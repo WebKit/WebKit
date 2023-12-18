@@ -122,7 +122,7 @@ private:
     void focusRepaintTimerFired();
 
     Page& m_page;
-    RefPtr<Frame> m_focusedFrame;
+    WeakPtr<Frame> m_focusedFrame;
     bool m_isChangingFocusedFrame;
     OptionSet<ActivityState> m_activityState;
 

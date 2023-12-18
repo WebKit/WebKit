@@ -67,7 +67,7 @@ public:
     Settings& settings() const { return m_settings.get(); }
     Frame& mainFrame() const { return m_mainFrame.get(); }
     bool isMainFrame() const { return this == m_mainFrame.ptr(); }
-    WEBCORE_EXPORT bool isRootFrame() const;
+    virtual bool isRootFrame() const = 0;
 
     WEBCORE_EXPORT void detachFromPage();
 

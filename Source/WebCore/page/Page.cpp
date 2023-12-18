@@ -271,9 +271,7 @@ static Ref<Frame> createMainFrame(Page& page, std::variant<UniqueRef<LocalFrameL
 {
     page.relaxAdoptionRequirement();
     return switchOn(WTFMove(client), [&] (UniqueRef<LocalFrameLoaderClient>&& localFrameClient) -> Ref<Frame> {
-        auto localFrame = LocalFrame::createMainFrame(page, WTFMove(localFrameClient), identifier);
-        page.addRootFrame(localFrame.get());
-        return localFrame;
+        return LocalFrame::createMainFrame(page, WTFMove(localFrameClient), identifier);
     }, [&] (UniqueRef<RemoteFrameClient>&& remoteFrameClient) -> Ref<Frame> {
         return RemoteFrame::createMainFrame(page, WTFMove(remoteFrameClient), identifier);
     });
@@ -4526,12 +4524,15 @@ void Page::addRootFrame(LocalFrame& frame)
     ASSERT(frame.isRootFrame());
     ASSERT(!m_rootFrames.contains(frame));
     m_rootFrames.add(frame);
+    chrome().client().rootFrameAdded(frame);
 }
 
 void Page::removeRootFrame(LocalFrame& frame)
 {
     ASSERT(frame.isRootFrame());
+    ASSERT(m_rootFrames.contains(frame));
     m_rootFrames.remove(frame);
+    chrome().client().rootFrameRemoved(frame);
 }
 
 String Page::ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData& origin)
