@@ -459,7 +459,7 @@ class AutoInstall(object):
     CA_CERT_PATH_ENV_VAR = 'AUTOINSTALL_CA_CERT_PATH'
 
     # This list of libraries is required to install other libraries, and must be installed first
-    BASE_LIBRARIES = ['setuptools', 'wheel', 'pyparsing', 'packaging', 'setuptools_scm']
+    BASE_LIBRARIES = ['setuptools', 'wheel', 'six', 'pyparsing', 'packaging', 'setuptools_scm']
     if sys.version_info >= (3, 0):
         BASE_LIBRARIES.insert(-1, 'tomli')
 

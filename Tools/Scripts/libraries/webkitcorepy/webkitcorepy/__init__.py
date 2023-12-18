@@ -77,9 +77,9 @@ AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
 AutoInstall.register(Package('idna', Version(2, 10)))
 
 if sys.version_info > (3, 0):
-    AutoInstall.register(Package('packaging', Version(21, 3)))
+    AutoInstall.register(Package('packaging', Version(21, 3), implicit_deps=['pyparsing']))
 else:
-    AutoInstall.register(Package('packaging', Version(20, 4)))
+    AutoInstall.register(Package('packaging', Version(20, 4), implicit_deps=['pyparsing', 'six']))
 
 AutoInstall.register(Package('pyparsing', Version(2, 4, 7)))
 
