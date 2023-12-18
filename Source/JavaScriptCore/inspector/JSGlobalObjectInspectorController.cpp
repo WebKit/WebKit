@@ -60,7 +60,8 @@ namespace Inspector {
 
 using namespace JSC;
 
-<<<<<<< HEAD
+WTF_MAKE_TZONE_ALLOCATED_IMPL(JSGlobalObjectInspectorController);
+
 #if USE(BUN_JSC_ADDITIONS)
 JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObject& globalObject, Ref<InjectedScriptHost>&& host)
     : m_globalObject(globalObject)
@@ -80,9 +81,6 @@ JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObj
     m_executionStopwatch->start();
 }
 #endif
-=======
-WTF_MAKE_TZONE_ALLOCATED_IMPL(JSGlobalObjectInspectorController);
->>>>>>> upstream
 
 JSGlobalObjectInspectorController::JSGlobalObjectInspectorController(JSGlobalObject& globalObject)
     : m_globalObject(globalObject)
