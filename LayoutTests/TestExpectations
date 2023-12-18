@@ -7459,4 +7459,4 @@ http/wpt/opener/child-access-parent-via-windowproxy.html [ Skip ]
 http/wpt/opener/iframe-access-top-via-windowproxy.html [ Skip ]
 http/wpt/opener/parent-access-child-via-windowproxy.html [ Skip ]
 
-webkit.org/b/266477 [ Debug ] compositing/layer-creation/scale-rotation-transition-overlap.html [ Failure Timeout ]
+webkit.org/b/266477 compositing/layer-creation/scale-rotation-transition-overlap.html [ Failure Timeout ]
