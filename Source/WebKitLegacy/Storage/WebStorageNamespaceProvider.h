@@ -35,7 +35,7 @@ class SecurityOriginData;
 
 namespace WebKit {
 
-class WebStorageNamespaceProvider final : public WebCore::StorageNamespaceProvider, public CanMakeCheckedPtr {
+class WebStorageNamespaceProvider final : public WebCore::StorageNamespaceProvider, public CanMakeWeakPtr<WebStorageNamespaceProvider> {
 public:
     static Ref<WebStorageNamespaceProvider> create(const String& localStorageDatabasePath);
     virtual ~WebStorageNamespaceProvider();

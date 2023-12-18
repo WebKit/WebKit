@@ -40,9 +40,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static HashMap<String, CheckedPtr<StorageNamespaceImpl>>& localStorageNamespaceMap()
+static HashMap<String, WeakRef<StorageNamespaceImpl>>& localStorageNamespaceMap()
 {
-    static NeverDestroyed<HashMap<String, CheckedPtr<StorageNamespaceImpl>>> localStorageNamespaceMap;
+    static NeverDestroyed<HashMap<String, WeakRef<StorageNamespaceImpl>>> localStorageNamespaceMap;
 
     return localStorageNamespaceMap;
 }
@@ -56,14 +56,12 @@ Ref<StorageNamespaceImpl> StorageNamespaceImpl::getOrCreateLocalStorageNamespace
 {
     ASSERT(!databasePath.isNull());
 
-    auto& slot = localStorageNamespaceMap().add(databasePath, nullptr).iterator->value;
-    if (slot)
-        return *slot;
-
-    Ref<StorageNamespaceImpl> storageNamespace = adoptRef(*new StorageNamespaceImpl(StorageType::Local, databasePath, quota, sessionID));
-    slot = storageNamespace.ptr();
-
-    return storageNamespace;
+    RefPtr<StorageNamespaceImpl> storageNamespace;
+    auto& slot = localStorageNamespaceMap().ensure(databasePath, [&] {
+        storageNamespace = adoptRef(*new StorageNamespaceImpl(StorageType::Local, databasePath, quota, sessionID));
+        return WeakRef { *storageNamespace };
+    }).iterator->value;
+    return storageNamespace ? storageNamespace.releaseNonNull() : Ref { slot.get() };
 }
 
 StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String& path, unsigned quota, PAL::SessionID sessionID)

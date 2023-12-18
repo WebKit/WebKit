@@ -38,7 +38,7 @@ namespace WebKit {
 
 class StorageAreaImpl;
 
-class StorageNamespaceImpl final : public WebCore::StorageNamespace, public CanMakeCheckedPtr {
+class StorageNamespaceImpl final : public WebCore::StorageNamespace, public CanMakeWeakPtr<StorageNamespaceImpl> {
 public:
     static Ref<StorageNamespaceImpl> createSessionStorageNamespace(unsigned quota, PAL::SessionID);
     static Ref<StorageNamespaceImpl> getOrCreateLocalStorageNamespace(const String& databasePath, unsigned quota, PAL::SessionID);
