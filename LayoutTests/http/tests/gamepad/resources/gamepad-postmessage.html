@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<meta viewport="width=device-width, initial-scale=1.0" />
+<body>
+    <script>
+        window.addEventListener(
+            "message",
+            (event) => {
+                const { action } = event.data;
+                let result = null;
+                let exceptionMessage;
+                let exceptionName;
+                switch (action) {
+                    case "call getGamepads()":
+                        try {
+                            result = navigator.getGamepads();
+                            result = JSON.stringify(result);
+                        } catch (e) {
+                            exceptionMessage = e.message;
+                            exceptionName = e.name;
+                            result = "exception";
+                        }
+                        break;
+                    default:
+                        throw new Error(`Unknown action: ${action}`);
+                }
+                event.source.postMessage(
+                    { action, result, exceptionMessage, exceptionName },
+                    event.origin
+                );
+            },
+            { once: true }
+        );
+    </script>
+</body>

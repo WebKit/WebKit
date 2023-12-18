@@ -33,9 +33,9 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static HashSet<CheckedRef<WebStorageNamespaceProvider>>& storageNamespaceProviders()
+static HashSet<WeakRef<WebStorageNamespaceProvider>>& storageNamespaceProviders()
 {
-    static NeverDestroyed<HashSet<CheckedRef<WebStorageNamespaceProvider>>> storageNamespaceProviders;
+    static NeverDestroyed<HashSet<WeakRef<WebStorageNamespaceProvider>>> storageNamespaceProviders;
 
     return storageNamespaceProviders;
 }

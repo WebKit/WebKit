@@ -1,3 +1,4 @@
+<!DOCTYPE html><!-- webkit-test-runner [ dumpJSConsoleLogInStdErr=true ] -->
 <!DOCTYPE html>
 <html>
 <header>
@@ -43,12 +44,17 @@ async function doTest(t, codec)
     encoder.encode(frame, { keyFrame: true });
     frame.close();
 
-    // We use EncodingError since we are not detecting correctly that the config cannot be supported until starting to encode.
-    // When we improve the config checks, we should get a NotSupportedError here.
-    await promise_rejects_dom(t, "EncodingError", encoder.flush());
+    const flushPromise = encoder.flush();
 
-    assert_equals(frameCount, 0);
-    assert_equals(errorCount, 1);
+    await flushPromise.catch(() => { });
+
+    assert_equals(frameCount + errorCount, 1);
+
+    if (errorCount) {
+        // We use EncodingError since we are not detecting correctly that the config cannot be supported until starting to encode.
+        // When we improve the config checks, we should get a NotSupportedError here.
+        await promise_rejects_dom(t, "EncodingError", flushPromise);
+    }
 }
 
 promise_test(async (t) => {

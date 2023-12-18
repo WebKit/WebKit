@@ -49,6 +49,8 @@ static const char* policyTypeName(FeaturePolicy::Type type)
         return "SpeakerSelection";
     case FeaturePolicy::Type::DisplayCapture:
         return "DisplayCapture";
+    case FeaturePolicy::Type::Gamepad:
+        return "Gamepad";
     case FeaturePolicy::Type::Geolocation:
         return "Geolocation";
     case FeaturePolicy::Type::Payment:
@@ -198,6 +200,7 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
     bool isMicrophoneInitialized = false;
     bool isSpeakerSelectionInitialized = false;
     bool isDisplayCaptureInitialized = false;
+    bool isGamepadInitialized = false;
     bool isGeolocationInitialized = false;
     bool isPaymentInitialized = false;
     bool isScreenWakeLockInitialized = false;
@@ -235,6 +238,11 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
         if (item.startsWith("display-capture"_s)) {
             isDisplayCaptureInitialized = true;
             updateList(document, iframe, policy.m_displayCaptureRule, item.substring(16));
+            continue;
+        }
+        if (item.startsWith("gamepad"_s)) {
+            isGamepadInitialized = true;
+            updateList(document, iframe, policy.m_gamepadRule, item.substring(8));
             continue;
         }
         if (item.startsWith("geolocation"_s)) {
@@ -309,6 +317,8 @@ FeaturePolicy FeaturePolicy::parse(Document& document, const HTMLIFrameElement& 
         policy.m_speakerSelectionRule.allowedList.add(document.securityOrigin().data());
     if (!isDisplayCaptureInitialized)
         policy.m_displayCaptureRule.allowedList.add(document.securityOrigin().data());
+    if (!isGamepadInitialized)
+        policy.m_gamepadRule.type = FeaturePolicy::AllowRule::Type::All;
     if (!isScreenWakeLockInitialized)
         policy.m_screenWakeLockRule.allowedList.add(document.securityOrigin().data());
     if (!isGeolocationInitialized)
@@ -366,6 +376,8 @@ bool FeaturePolicy::allows(Type type, const SecurityOriginData& origin) const
         return isAllowedByFeaturePolicy(m_speakerSelectionRule, origin);
     case Type::DisplayCapture:
         return isAllowedByFeaturePolicy(m_displayCaptureRule, origin);
+    case Type::Gamepad:
+        return isAllowedByFeaturePolicy(m_gamepadRule, origin);
     case Type::Geolocation:
         return isAllowedByFeaturePolicy(m_geolocationRule, origin);
     case Type::Payment:

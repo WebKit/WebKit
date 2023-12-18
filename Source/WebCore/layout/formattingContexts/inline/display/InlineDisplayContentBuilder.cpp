@@ -1203,8 +1203,26 @@ void InlineDisplayContentBuilder::applyRubyOverhang(InlineDisplay::Boxes& displa
         };
         if (beforeOverhang)
             moveBoxRangeToVisualLeft(rubyBaseStart, displayBoxes.size() - 1, beforeOverhang);
-        if (afterOverhang)
+        if (afterOverhang) {
+            auto hasJustifiedAdjacentAfterContent = [&] {
+                if (startEndPair.end() == displayBoxes.size())
+                    return false;
+                auto& afterRubyBaseDisplayBox = displayBoxes[startEndPair.end()];
+                if (afterRubyBaseDisplayBox.layoutBox().isRubyBase()) {
+                    // Adjacent content is also a ruby base.
+                    return false;
+                }
+                return !!afterRubyBaseDisplayBox.expansion().horizontalExpansion;
+            };
+            if (hasJustifiedAdjacentAfterContent()) {
+                auto& afterRubyBaseDisplayBox = displayBoxes[startEndPair.end()];
+                auto expansion = afterRubyBaseDisplayBox.expansion();
+                auto inflateValue = afterOverhang + beforeOverhang;
+                afterRubyBaseDisplayBox.setExpansion({ expansion.behavior, expansion.horizontalExpansion + inflateValue });
+                afterRubyBaseDisplayBox.expandHorizontally(inflateValue);
+            }
             moveBoxRangeToVisualLeft(startEndPair.end(), displayBoxes.size() - 1, afterOverhang);
+        }
     }
 }
 

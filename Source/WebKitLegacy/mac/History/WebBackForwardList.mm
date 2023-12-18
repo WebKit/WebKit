@@ -52,7 +52,7 @@
 #import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
-using BackForwardListMap = HashMap<CheckedRef<BackForwardList>, WebBackForwardList*>;
+using BackForwardListMap = HashMap<WeakRef<BackForwardList>, WebBackForwardList*>;
 
 // FIXME: Instead of this we could just create a class derived from BackForwardList
 // with a pointer to a WebBackForwardList in it.
